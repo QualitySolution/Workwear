@@ -60,6 +60,9 @@
     <Compile Include="gtk-gui\workwear.ItemType.cs" />
     <Compile Include="Nomenclature.cs" />
     <Compile Include="gtk-gui\workwear.Nomenclature.cs" />
+    <Compile Include="MainWinObject.cs" />
+    <Compile Include="ObjectDlg.cs" />
+    <Compile Include="gtk-gui\workwear.ObjectDlg.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

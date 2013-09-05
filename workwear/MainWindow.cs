@@ -77,6 +77,9 @@ public partial class MainWindow: Gtk.Window
 		UsersAction.Sensitive = QSMain.User.admin;
 		labelUser.LabelProp = QSMain.User.Name;
 
+		PrepareObject();
+		UpdateObject();
+		notebookMain.CurrentPage = 0;
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -192,6 +195,126 @@ public partial class MainWindow: Gtk.Window
 		winref.Show();
 		winref.Run();
 		winref.Destroy();
+
+	}
+
+	protected void OnAboutActionActivated(object sender, EventArgs e)
+	{
+		AboutDialog dialog = new AboutDialog ();
+		dialog.ProgramName = "QS:Учет спецодежды";
+
+		Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+		dialog.Version = String.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build);
+
+		dialog.Logo = Gdk.Pixbuf.LoadFromResource ("workwear.icon.logo.png");
+
+		dialog.Comments = "Программа позволяет вести учет спецодежды." +
+			"\nРазработана на MonoDevelop с использованием открытых технологий Mono, GTK#, MySQL." +
+			"\nТелефон тех. поддержки +7(812)575-79-44";
+
+		dialog.Copyright = "Quality Solution 2013";
+
+		dialog.Authors = new string [] {"Ганьков Андрей <gav@qsolution.ru>"};
+
+		dialog.Website = "http://www.qsolution.ru/";
+
+		dialog.Run ();
+		dialog.Destroy();
+	}
+	
+	protected void OnButtonRefreshClicked(object sender, EventArgs e)
+	{
+		switch (notebookMain.CurrentPage) {
+			case 0:
+				UpdateObject();
+				break;
+				case 1:
+				//UpdateLessees();
+				break;
+				case 2:
+				//UpdateContract();
+				break;
+				default:
+				break;
+		}
+	}
+
+	protected void OnButtonAddClicked(object sender, EventArgs e)
+	{
+		switch (notebookMain.CurrentPage) {
+			case 0:
+				ObjectDlg winObject = new ObjectDlg();
+				winObject.NewItem = true;
+				winObject.Show();
+				winObject.Run();
+				winObject.Destroy();
+				UpdateObject();
+				break;
+				case 1:
+	/*			lessee winLessee = new lessee();
+				winLessee.NewLessee = true;
+				winLessee.Show();
+				winLessee.Run();
+				winLessee.Destroy();
+				UpdateLessees();
+				break;
+				case 2:
+				Contract winContract = new Contract();
+				winContract.NewContract = true;
+				winContract.Show();
+				winContract.Run();
+				winContract.Destroy();
+				UpdateContract();
+				break; */
+				default:
+				break;
+		}
+
+	}
+
+	protected void OnButtonEditClicked(object sender, EventArgs e)
+	{
+		TreeIter iter;
+		int itemid;
+		ResponseType result;
+
+		switch (notebookMain.CurrentPage) {
+			case 0:
+				treeviewObjects.Selection.GetSelected(out iter);
+				itemid = (int) ObjectFilter.GetValue(iter,0);
+				ObjectDlg winObject = new ObjectDlg();
+				winObject.Fill(itemid);
+				winObject.Show();
+				result = (ResponseType)winObject.Run();
+				winObject.Destroy();
+				if(result == ResponseType.Ok)
+					UpdateObject();
+				break;
+	/*			case 1:
+				treeviewLessees.Selection.GetSelected(out iter);
+				itemid = Convert.ToInt32(Lesseesfilter.GetValue(iter,0));
+				lessee winLessee = new lessee();
+				winLessee.LesseeFill(itemid);
+				winLessee.Show();
+				result = (ResponseType)winLessee.Run();
+				winLessee.Destroy();
+				if(result == ResponseType.Ok)
+					UpdateLessees();
+				break;
+				case 2:
+				treeviewContract.Selection.GetSelected(out iter);
+				itemid = (int) Contractfilter.GetValue(iter, 0);
+				Contract winContract = new Contract();
+				winContract.ContractFill(itemid);
+				winContract.Show();
+				result = (ResponseType)winContract.Run();
+				winContract.Destroy();
+				if(result == ResponseType.Ok)
+					UpdateContract();
+				break; */
+				default:
+				break;
+		}
 
 	}
 }

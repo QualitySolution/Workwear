@@ -219,6 +219,7 @@ namespace workwear
 			this.DefaultWidth = 337;
 			this.DefaultHeight = 205;
 			this.Show ();
+			this.entryName.Changed += new global::System.EventHandler (this.OnEntryNameChanged);
 			this.buttonOk.Clicked += new global::System.EventHandler (this.OnButtonOkClicked);
 		}
 	}
