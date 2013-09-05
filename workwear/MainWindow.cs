@@ -317,4 +317,38 @@ public partial class MainWindow: Gtk.Window
 		}
 
 	}
+
+	protected void OnButtonDeleteClicked(object sender, EventArgs e)
+	{
+		// Удаление
+		TreeIter iter;
+		int itemid;
+		Delete winDelete = new Delete();
+
+		switch (notebookMain.CurrentPage) 
+		{
+			case 0:
+				treeviewObjects.Selection.GetSelected(out iter);
+				itemid = (int) ObjectFilter.GetValue(iter,0);
+				winDelete.RunDeletion("objects", itemid);
+				UpdateObject();
+				break;
+/*				case 1:
+				treeviewLessees.Selection.GetSelected(out iter);
+				itemid = Convert.ToInt32(Lesseesfilter.GetValue(iter,0));
+				winDelete.RunDeletion("lessees", itemid);
+				UpdateLessees();
+				break;
+				case 2:
+				treeviewContract.Selection.GetSelected(out iter);
+				itemid = Convert.ToInt32(Contractfilter.GetValue(iter, 1));
+				winDelete.RunDeletion("contracts", itemid);
+				UpdateContract();
+				break; */
+			default:
+				break;
+		}
+		winDelete.Destroy();
+
+	}
 }

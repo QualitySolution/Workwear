@@ -368,6 +368,7 @@ public partial class MainWindow
 		this.treeviewObjects.RowActivated += new global::Gtk.RowActivatedHandler (this.OnTreeviewObjectsRowActivated);
 		this.buttonAdd.Clicked += new global::System.EventHandler (this.OnButtonAddClicked);
 		this.buttonEdit.Clicked += new global::System.EventHandler (this.OnButtonEditClicked);
+		this.buttonDelete.Clicked += new global::System.EventHandler (this.OnButtonDeleteClicked);
 		this.buttonRefresh.Clicked += new global::System.EventHandler (this.OnButtonRefreshClicked);
 	}
 }

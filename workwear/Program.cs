@@ -56,12 +56,28 @@ namespace workwear
 
 		static void CreateProjectParam()
 		{
+			// Создаем параметы пользователей
 			QSMain.AdminFieldName = "admin";
 			QSMain.ProjectPermission = new Dictionary<string, UserPermission>();
 			//QSMain.ProjectPermission.Add ("edit_slips", new UserPermission("edit_slips", "Изменение кассы задним числом",
 			//                                                             "Пользователь может изменять или добавлять кассовые документы задним числом."));
 
 			QSMain.User = new UserInfo();
+
+			//Создаем параметры удаления
+			QSMain.ProjectTables = new Dictionary<string, TableInfo>();
+			TableInfo PrepareTable;
+
+			PrepareTable = new TableInfo();
+			PrepareTable.ObjectsName = "Объекты";
+			PrepareTable.ObjectName = "объект";
+			PrepareTable.SqlSelect = "SELECT name FROM objects ";
+			PrepareTable.DisplayString = "Объект {0}";
+			PrepareTable.PrimaryKey = new TableInfo.PrimaryKeys("id");
+			PrepareTable.ClearItems.Add ("wear_cards", 
+			                             new TableInfo.ClearDependenceItem ("WHERE object_id = @id", "", "@id", "object_id"));
+			QSMain.ProjectTables.Add ("objects", PrepareTable);
+
 		}
 		
 		public static void StatusMessage(string message)
