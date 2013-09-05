@@ -58,6 +58,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ItemType.cs" />
     <Compile Include="gtk-gui\workwear.ItemType.cs" />
+    <Compile Include="Nomenclature.cs" />
+    <Compile Include="gtk-gui\workwear.Nomenclature.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

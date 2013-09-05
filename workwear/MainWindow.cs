@@ -127,6 +127,16 @@ public partial class MainWindow: Gtk.Window
 			Result = (ResponseType)ItemTypeEdit.Run();
 			ItemTypeEdit.Destroy();
 			break;
+		case "nomenclature":
+			Nomenclature NomenclatureEdit = new Nomenclature();
+			if(e.NewItem)
+				NomenclatureEdit.NewItem = true;
+			else 
+				NomenclatureEdit.Fill(e.ItemId);
+			NomenclatureEdit.Show();
+			Result = (ResponseType)NomenclatureEdit.Run();
+			NomenclatureEdit.Destroy();
+			break;
 		default:
 			Result = ResponseType.None;
 			break;
@@ -172,5 +182,16 @@ public partial class MainWindow: Gtk.Window
 		winref.Show();
 		winref.Run();
 		winref.Destroy();
+	}
+
+	protected void OnAction6Activated(object sender, EventArgs e)
+	{
+		Reference winref = new Reference();
+		winref.SetMode(false, false, true, true, true);
+		winref.FillList("nomenclature","Номенклатура", "Номенклатуры");
+		winref.Show();
+		winref.Run();
+		winref.Destroy();
+
 	}
 }

@@ -89,6 +89,11 @@ namespace workwear
 				QSMain.ErrorMessage(this,ex);
 			}
 		}
+
+		protected void OnEntryNameChanged(object sender, EventArgs e)
+		{
+			TestCanSave();
+		}
 	}
 }
 

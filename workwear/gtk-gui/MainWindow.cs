@@ -163,6 +163,7 @@ public partial class MainWindow
 		this.UsersAction.Activated += new global::System.EventHandler (this.OnAction10Activated);
 		this.quitAction.Activated += new global::System.EventHandler (this.OnQuitActionActivated);
 		this.Action5.Activated += new global::System.EventHandler (this.OnAction5Activated);
+		this.Action6.Activated += new global::System.EventHandler (this.OnAction6Activated);
 		this.Action7.Activated += new global::System.EventHandler (this.OnAction7Activated);
 		this.Action8.Activated += new global::System.EventHandler (this.OnAction8Activated);
 		this.Action9.Activated += new global::System.EventHandler (this.OnAction9Activated);
