@@ -94,11 +94,11 @@ namespace workwear
 				
 				cmd.Parameters.AddWithValue("@id", Itemid);
 				cmd.Parameters.AddWithValue("@name", entryName.Text);
-				if(comboentrySize.ActiveText != "")
+				if(comboentrySize.Entry.Text != "")
 					cmd.Parameters.AddWithValue("@size", comboentrySize.Entry.Text);
 				else 
 					cmd.Parameters.AddWithValue("@size", DBNull.Value);
-				if (comboentryGrowth.ActiveText != "")
+				if (comboentryGrowth.Entry.Text != "")
 					cmd.Parameters.AddWithValue("@growth", comboentryGrowth.Entry.Text);
 				else
 					cmd.Parameters.AddWithValue("@growth", DBNull.Value);
