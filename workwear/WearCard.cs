@@ -101,6 +101,7 @@ namespace workwear
 						rdr.GetBytes(rdr.GetOrdinal("photo"), 0, PhotoFile, 0, rdr.GetInt32("photo_size"));
 						ImageChanged = false;
 						ReadImage();
+						buttonSavePhoto.Sensitive = true;
 					}
 				}
 				MainClass.StatusMessage("Ok");
@@ -321,6 +322,7 @@ namespace workwear
 				fs.Close();
 				ImageChanged = true;
 				ReadImage();
+				buttonSavePhoto.Sensitive = true;
 				MainClass.StatusMessage("Ok");
 			}
 			Chooser.Destroy ();

@@ -564,6 +564,7 @@ namespace workwear
 			w79.Fill = false;
 			// Container child hbox2.Gtk.Box+BoxChild
 			this.buttonSavePhoto = new global::Gtk.Button ();
+			this.buttonSavePhoto.Sensitive = false;
 			this.buttonSavePhoto.CanFocus = true;
 			this.buttonSavePhoto.Name = "buttonSavePhoto";
 			this.buttonSavePhoto.UseUnderline = true;
