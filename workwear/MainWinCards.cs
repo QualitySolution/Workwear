@@ -29,6 +29,10 @@ public partial class MainWindow : Gtk.Window
 
 		string sql = "SELECT wear_cards.id, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object FROM wear_cards " +
 		"LEFT JOIN objects ON objects.id = wear_cards.object_id ";
+		if(checkCardsOnlyActual.Active)
+		{
+			sql += "WHERE wear_cards.dismiss_date IS NULL";
+		}
 		MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 
 		MySqlDataReader rdr = cmd.ExecuteReader();
@@ -88,5 +92,9 @@ public partial class MainWindow : Gtk.Window
 		buttonEdit.Click();
 	}
 
+	protected void OnCheckOnlyActualClicked(object sender, EventArgs e)
+	{
+		buttonRefresh.Click();
+	}
 }
 
