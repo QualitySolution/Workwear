@@ -63,6 +63,9 @@
     <Compile Include="MainWinObject.cs" />
     <Compile Include="ObjectDlg.cs" />
     <Compile Include="gtk-gui\workwear.ObjectDlg.cs" />
+    <Compile Include="MainWinCards.cs" />
+    <Compile Include="WearCard.cs" />
+    <Compile Include="gtk-gui\workwear.WearCard.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

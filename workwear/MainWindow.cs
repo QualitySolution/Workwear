@@ -78,6 +78,7 @@ public partial class MainWindow: Gtk.Window
 		labelUser.LabelProp = QSMain.User.Name;
 
 		PrepareObject();
+		PrepareCards();
 		UpdateObject();
 		notebookMain.CurrentPage = 0;
 	}
@@ -229,7 +230,7 @@ public partial class MainWindow: Gtk.Window
 				UpdateObject();
 				break;
 				case 1:
-				//UpdateLessees();
+				UpdateCards();
 				break;
 				case 2:
 				//UpdateContract();
@@ -250,15 +251,15 @@ public partial class MainWindow: Gtk.Window
 				winObject.Destroy();
 				UpdateObject();
 				break;
-				case 1:
-	/*			lessee winLessee = new lessee();
-				winLessee.NewLessee = true;
-				winLessee.Show();
-				winLessee.Run();
-				winLessee.Destroy();
-				UpdateLessees();
+			case 1:
+				WearCard winWearCard = new WearCard();
+				winWearCard.NewItem = true;
+				winWearCard.Show();
+				winWearCard.Run();
+				winWearCard.Destroy();
+				UpdateCards();
 				break;
-				case 2:
+	/*			case 2:
 				Contract winContract = new Contract();
 				winContract.NewContract = true;
 				winContract.Show();
@@ -290,18 +291,18 @@ public partial class MainWindow: Gtk.Window
 				if(result == ResponseType.Ok)
 					UpdateObject();
 				break;
-	/*			case 1:
-				treeviewLessees.Selection.GetSelected(out iter);
-				itemid = Convert.ToInt32(Lesseesfilter.GetValue(iter,0));
-				lessee winLessee = new lessee();
-				winLessee.LesseeFill(itemid);
-				winLessee.Show();
-				result = (ResponseType)winLessee.Run();
-				winLessee.Destroy();
+			case 1:
+				treeviewCards.Selection.GetSelected(out iter);
+				itemid = (int) CardsFilter.GetValue(iter,0);
+				WearCard winWearCadr = new WearCard();
+				winWearCadr.Fill(itemid);
+				winWearCadr.Show();
+				result = (ResponseType)winWearCadr.Run();
+				winWearCadr.Destroy();
 				if(result == ResponseType.Ok)
-					UpdateLessees();
+					UpdateCards();
 				break;
-				case 2:
+	/*			case 2:
 				treeviewContract.Selection.GetSelected(out iter);
 				itemid = (int) Contractfilter.GetValue(iter, 0);
 				Contract winContract = new Contract();
@@ -333,13 +334,13 @@ public partial class MainWindow: Gtk.Window
 				winDelete.RunDeletion("objects", itemid);
 				UpdateObject();
 				break;
-/*				case 1:
-				treeviewLessees.Selection.GetSelected(out iter);
-				itemid = Convert.ToInt32(Lesseesfilter.GetValue(iter,0));
-				winDelete.RunDeletion("lessees", itemid);
-				UpdateLessees();
+			case 1:
+				treeviewCards.Selection.GetSelected(out iter);
+				itemid = (int) CardsFilter.GetValue(iter,0);
+				winDelete.RunDeletion("wear_cards", itemid);
+				UpdateCards();
 				break;
-				case 2:
+/*				case 2:
 				treeviewContract.Selection.GetSelected(out iter);
 				itemid = Convert.ToInt32(Contractfilter.GetValue(iter, 1));
 				winDelete.RunDeletion("contracts", itemid);
@@ -350,5 +351,10 @@ public partial class MainWindow: Gtk.Window
 		}
 		winDelete.Destroy();
 
+	}
+
+	protected void OnNotebookMainSwitchPage(object o, SwitchPageArgs args)
+	{
+		buttonRefresh.Click();
 	}
 }
