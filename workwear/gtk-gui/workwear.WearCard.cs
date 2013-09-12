@@ -697,7 +697,7 @@ namespace workwear
 			w114.Add (w117);
 			w113.Add (w114);
 			this.buttonOk.Add (w113);
-			this.AddActionWidget (this.buttonOk, -5);
+			w94.Add (this.buttonOk);
 			global::Gtk.ButtonBox.ButtonBoxChild w121 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w94 [this.buttonOk]));
 			w121.Position = 2;
 			w121.Expand = false;

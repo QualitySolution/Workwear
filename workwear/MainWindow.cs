@@ -79,6 +79,7 @@ public partial class MainWindow: Gtk.Window
 
 		PrepareObject();
 		PrepareCards();
+		PrepareStock();
 		UpdateObject();
 		notebookMain.CurrentPage = 0;
 	}
@@ -233,9 +234,7 @@ public partial class MainWindow: Gtk.Window
 				UpdateCards();
 				break;
 				case 2:
-				//UpdateContract();
-				break;
-				default:
+				UpdateStock();
 				break;
 		}
 	}
@@ -259,15 +258,18 @@ public partial class MainWindow: Gtk.Window
 				winWearCard.Destroy();
 				UpdateCards();
 				break;
-	/*			case 2:
-				Contract winContract = new Contract();
-				winContract.NewContract = true;
-				winContract.Show();
-				winContract.Run();
-				winContract.Destroy();
-				UpdateContract();
-				break; */
-				default:
+				case 2:
+				switch (notebookStock.CurrentPage)
+				{
+					case 0:
+						IncomeDoc winIncome = new IncomeDoc();
+						winIncome.NewItem = true;
+						winIncome.Show();
+						winIncome.Run();
+						winIncome.Destroy();
+						break;
+				}
+				UpdateStock();
 				break;
 		}
 
@@ -302,18 +304,24 @@ public partial class MainWindow: Gtk.Window
 				if(result == ResponseType.Ok)
 					UpdateCards();
 				break;
-	/*			case 2:
-				treeviewContract.Selection.GetSelected(out iter);
-				itemid = (int) Contractfilter.GetValue(iter, 0);
-				Contract winContract = new Contract();
-				winContract.ContractFill(itemid);
-				winContract.Show();
-				result = (ResponseType)winContract.Run();
-				winContract.Destroy();
+				case 2:
+				switch (notebookStock.CurrentPage)
+				{
+					case 0:
+						treeviewIncome.Selection.GetSelected(out iter);
+						itemid = (int)IncomeFilter.GetValue(iter, 0);
+						IncomeDoc winIncome = new IncomeDoc();
+						winIncome.Fill(itemid);
+						winIncome.Show();
+						result = (ResponseType) winIncome.Run();
+						winIncome.Destroy();
+						break;
+					default:
+						result = ResponseType.Reject;
+						break;
+				}
 				if(result == ResponseType.Ok)
-					UpdateContract();
-				break; */
-				default:
+					UpdateStock();
 				break;
 		}
 
@@ -340,13 +348,16 @@ public partial class MainWindow: Gtk.Window
 				winDelete.RunDeletion("wear_cards", itemid);
 				UpdateCards();
 				break;
-/*				case 2:
-				treeviewContract.Selection.GetSelected(out iter);
-				itemid = Convert.ToInt32(Contractfilter.GetValue(iter, 1));
-				winDelete.RunDeletion("contracts", itemid);
-				UpdateContract();
-				break; */
-			default:
+			case 2:
+				switch (notebookStock.CurrentPage)
+				{
+					case 0:
+						treeviewIncome.Selection.GetSelected(out iter);
+						itemid = (int)IncomeFilter.GetValue(iter, 0);
+						winDelete.RunDeletion("stock_income", itemid);
+						break;
+				}
+				UpdateStock();
 				break;
 		}
 		winDelete.Destroy();
@@ -357,5 +368,4 @@ public partial class MainWindow: Gtk.Window
 	{
 		buttonRefresh.Click();
 	}
-
 }
