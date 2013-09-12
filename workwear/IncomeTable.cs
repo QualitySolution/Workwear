@@ -124,7 +124,7 @@ namespace workwear
 					"LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id " +
 					"LEFT JOIN item_types ON nomenclature.type_id = item_types.id " +
 					"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id \n" +
-					"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.enter_row_id \n" +
+					"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id \n" +
 					"WHERE stock_expense.wear_card_id = @id AND (spent.count IS NULL OR spent.count < stock_expense_detail.quantity )";
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@id", _WorkerId);
@@ -332,7 +332,6 @@ namespace workwear
 
 		public bool SaveIncomeDetails(int IncomeDoc_id, MySqlTransaction trans)
 		{
-			// Записываем строки оплаты
 			string sql;
 			MySqlCommand cmd;
 			try
@@ -351,7 +350,7 @@ namespace workwear
 					cmd.Parameters.AddWithValue("@stock_income_id", IncomeDoc_id);
 					cmd.Parameters.AddWithValue("@nomenclature_id", row[2]);
 					cmd.Parameters.AddWithValue("@quantity", row[4]);
-					cmd.Parameters.AddWithValue("@life_percent", (double)row[5]/100);
+					cmd.Parameters.AddWithValue("@life_percent", (double)row[5]/100.0);
 					if((long)row[1] > 0)
 						cmd.Parameters.AddWithValue("@stock_expense_detail_id", row[1]);
 					else

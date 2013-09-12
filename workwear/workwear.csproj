@@ -73,6 +73,12 @@
     <Compile Include="gtk-gui\workwear.IncomeTable.cs" />
     <Compile Include="SelectWearCardRow.cs" />
     <Compile Include="gtk-gui\workwear.SelectWearCardRow.cs" />
+    <Compile Include="ExpenseDoc.cs" />
+    <Compile Include="ExpenseTable.cs" />
+    <Compile Include="gtk-gui\workwear.ExpenseDoc.cs" />
+    <Compile Include="gtk-gui\workwear.ExpenseTable.cs" />
+    <Compile Include="SelectStockItem.cs" />
+    <Compile Include="gtk-gui\workwear.SelectStockItem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

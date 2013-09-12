@@ -569,6 +569,7 @@ public partial class MainWindow
 		this.checkCardsOnlyActual.Clicked += new global::System.EventHandler (this.OnCheckOnlyActualClicked);
 		this.treeviewCards.RowActivated += new global::Gtk.RowActivatedHandler (this.OnTreeviewCardsRowActivated);
 		this.treeviewCards.CursorChanged += new global::System.EventHandler (this.OnTreeviewCardsCursorChanged);
+		this.notebookStock.SwitchPage += new global::Gtk.SwitchPageHandler (this.OnNotebookStockSwitchPage);
 		this.treeviewIncome.RowActivated += new global::Gtk.RowActivatedHandler (this.OnTreeviewIncomeRowActivated);
 		this.treeviewIncome.CursorChanged += new global::System.EventHandler (this.OnTreeviewIncomeCursorChanged);
 		this.treeviewExpense.CursorChanged += new global::System.EventHandler (this.OnTreeviewExpenseCursorChanged);

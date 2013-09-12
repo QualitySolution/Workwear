@@ -148,7 +148,7 @@ public partial class MainWindow : Gtk.Window
 			while (rdr.Read())
 			{
 				ExpenseListStore.AppendValues(rdr.GetInt32("id"),
-				                             String.Format("{0}", rdr.GetDateTime("date")),
+				                             String.Format("{0:d}", rdr.GetDateTime("date")),
 				                             doc,
 				                             String.Format("{0} {1} {2}", rdr["last_name"].ToString(), rdr["first_name"].ToString(), rdr["patronymic_name"].ToString())
 				                             );
@@ -181,7 +181,7 @@ public partial class MainWindow : Gtk.Window
 			while (rdr.Read())
 			{
 				ExpenseListStore.AppendValues(rdr.GetInt32("id"),
-				                              String.Format("{0}", rdr.GetDateTime("date")),
+				                              String.Format("{0:d}", rdr.GetDateTime("date")),
 				                              doc,
 				                              rdr.GetString("user")
 				                              );

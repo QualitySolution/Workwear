@@ -16,7 +16,6 @@ public partial class MainWindow: Gtk.Window
 		Reference.RunReferenceItemDlg += OnRunReferenceItemDialog;
 		QSMain.ReferenceUpdated += OnReferenceUpdate;
 
-
 		try
 		{
 			MainSupport.Param = new BaseParam(QSMain.connectionDB);
@@ -183,6 +182,9 @@ public partial class MainWindow: Gtk.Window
 	{
 		Reference winref = new Reference();
 		winref.SetMode(false, false, true, true, true);
+		winref.SqlSelect = "SELECT id, name, norm_quantity, norm_life FROM @tablename ";
+		winref.Columns.Add(new Reference.ColumnInfo("Норма выдачи", "{2}", false));
+		winref.Columns.Add(new Reference.ColumnInfo("Срок носки", "{3} мес.", false));
 		winref.FillList("item_types","Тип номенклатуры", "Виды номенклатуры");
 		winref.Show();
 		winref.Run();
@@ -268,6 +270,13 @@ public partial class MainWindow: Gtk.Window
 						winIncome.Run();
 						winIncome.Destroy();
 						break;
+					case 1:
+						ExpenseDoc winExpense = new ExpenseDoc();
+						winExpense.NewItem = true;
+						winExpense.Show();
+						winExpense.Run();
+						winExpense.Destroy();
+						break;
 				}
 				UpdateStock();
 				break;
@@ -316,6 +325,15 @@ public partial class MainWindow: Gtk.Window
 						result = (ResponseType) winIncome.Run();
 						winIncome.Destroy();
 						break;
+					case 1:
+						treeviewExpense.Selection.GetSelected(out iter);
+						itemid = (int)ExpenseFilter.GetValue(iter, 0);
+						ExpenseDoc winExpense = new ExpenseDoc();
+						winExpense.Fill(itemid);
+						winExpense.Show();
+						result = (ResponseType) winExpense.Run();
+						winExpense.Destroy();
+						break;
 					default:
 						result = ResponseType.Reject;
 						break;
@@ -356,6 +374,11 @@ public partial class MainWindow: Gtk.Window
 						itemid = (int)IncomeFilter.GetValue(iter, 0);
 						winDelete.RunDeletion("stock_income", itemid);
 						break;
+					case 1:
+						treeviewExpense.Selection.GetSelected(out iter);
+						itemid = (int)ExpenseFilter.GetValue(iter, 0);
+						winDelete.RunDeletion("stock_expense", itemid);
+						break;
 				}
 				UpdateStock();
 				break;
@@ -365,6 +388,11 @@ public partial class MainWindow: Gtk.Window
 	}
 
 	protected void OnNotebookMainSwitchPage(object o, SwitchPageArgs args)
+	{
+		buttonRefresh.Click();
+	}
+
+	protected void OnNotebookStockSwitchPage(object o, SwitchPageArgs args)
 	{
 		buttonRefresh.Click();
 	}

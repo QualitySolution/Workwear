@@ -14,6 +14,7 @@ namespace workwear
 			global::Stetic.Gui.Initialize (this);
 			// Widget workwear.SelectWearCardRow
 			this.Name = "workwear.SelectWearCardRow";
+			this.Title = global::Mono.Unix.Catalog.GetString ("Выданные ТМЦ");
 			this.WindowPosition = ((global::Gtk.WindowPosition)(4));
 			// Internal child workwear.SelectWearCardRow.VBox
 			global::Gtk.VBox w1 = this.VBox;
