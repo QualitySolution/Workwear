@@ -116,27 +116,31 @@ namespace workwear
 					"WHERE spent.count IS NULL OR spent.count < stock_income_detail.quantity";
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@current_expense", _ExpenseDocId);
-				MySqlDataReader rdr = cmd.ExecuteReader();
-
-				while (rdr.Read())
+				using(MySqlDataReader rdr = cmd.ExecuteReader())
 				{
-					int Quantity;
-					if(rdr["count"] == DBNull.Value)
-					 	Quantity = rdr.GetInt32("quantity");
-					else
-						Quantity = rdr.GetInt32("quantity") - rdr.GetInt32("count");
+					while (rdr.Read())
+					{
+						int Quantity, Norm_Quantity;
+						if(rdr["count"] == DBNull.Value)
+						 	Quantity = rdr.GetInt32("quantity");
+						else
+							Quantity = rdr.GetInt32("quantity") - rdr.GetInt32("count");
+						if(rdr["norm_quantity"] != DBNull.Value)
+							Norm_Quantity = rdr.GetInt32("norm_quantity");
+						else
+							Norm_Quantity = 0;
 
-					StockListStore.AppendValues(rdr.GetInt64("id"),
-					                            rdr.GetInt32("nomenclature_id"),
-					                            rdr.GetString ("nomenclature"),
-					                            rdr["size"].ToString(),
-					                            rdr["growth"].ToString(),
-					                            Quantity,
-					                            rdr["unit"],
-					                            rdr.GetDouble("life_percent") * 100,
-					                            rdr.GetInt32("norm_quantity"));
+						StockListStore.AppendValues(rdr.GetInt64("id"),
+						                            rdr.GetInt32("nomenclature_id"),
+						                            rdr.GetString ("nomenclature"),
+						                            rdr["size"].ToString(),
+						                            rdr["growth"].ToString(),
+						                            Quantity,
+						                            rdr["unit"],
+						                            rdr.GetDouble("life_percent") * 100.0,
+						                            Norm_Quantity);
+					}
 				}
-				rdr.Close();
 				MainClass.StatusMessage("Ok");
 				buttonAdd.Sensitive = true;
 				return true;
@@ -144,7 +148,7 @@ namespace workwear
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения начисления!");
+				MainClass.StatusMessage("Ошибка получения информации по складу!");
 				return false;
 			}
 		}
