@@ -150,7 +150,7 @@ namespace workwear
 					                               	Quantity,
 					                                  String.Format ("{0} %", rdr.GetDecimal("life_percent") * 100),
 					                               String.Format ("{0} %", Life),
-					                               Life);
+					                               (double) Life);
 				}
 				rdr.Close();
 				MainClass.StatusMessage("Ok");
