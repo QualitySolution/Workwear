@@ -126,7 +126,7 @@ public partial class MainWindow
 		this.notebookMain = new global::Gtk.Notebook ();
 		this.notebookMain.CanFocus = true;
 		this.notebookMain.Name = "notebookMain";
-		this.notebookMain.CurrentPage = 2;
+		this.notebookMain.CurrentPage = 1;
 		// Container child notebookMain.Gtk.Notebook+NotebookChild
 		this.vbox2 = new global::Gtk.VBox ();
 		this.vbox2.Name = "vbox2";

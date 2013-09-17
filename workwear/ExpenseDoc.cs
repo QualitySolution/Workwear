@@ -142,14 +142,19 @@ namespace workwear
 			int result = WorkerSelect.Run();
 			if((ResponseType)result == ResponseType.Ok)
 			{
-				Worker_id = WorkerSelect.SelectedID;
-				string[] Parts = WorkerSelect.SelectedName.Split(new char[] {' '});
-				entryWorker.Text = String.Format("{0} {1}. {2}.", Parts[0], Parts[1][0], Parts[2][0]);
-				entryWorker.TooltipText = WorkerSelect.SelectedName;
-				ItemsTable.WorkerId = Worker_id;
+				SetWorker(WorkerSelect.SelectedID, WorkerSelect.SelectedName);
 			}
 			WorkerSelect.Destroy();
 			TestCanSave();
+		}
+
+		public void SetWorker(int id, string name)
+		{
+			Worker_id = id;
+			string[] Parts = name.Split(new char[] {' '});
+			entryWorker.Text = String.Format("{0} {1}. {2}.", Parts[0], Parts[1][0], Parts[2][0]);
+			entryWorker.TooltipText = name;
+			ItemsTable.WorkerId = Worker_id;
 		}
 	}
 }

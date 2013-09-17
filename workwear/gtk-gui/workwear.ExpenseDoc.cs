@@ -181,6 +181,7 @@ namespace workwear
 			this.ItemsTable = new global::workwear.ExpenseTable ();
 			this.ItemsTable.Events = ((global::Gdk.EventMask)(256));
 			this.ItemsTable.Name = "ItemsTable";
+			this.ItemsTable.ExpenseDocId = 0;
 			this.ItemsTable.WorkerId = 0;
 			w1.Add (this.ItemsTable);
 			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(w1 [this.ItemsTable]));

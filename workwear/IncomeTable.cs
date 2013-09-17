@@ -10,15 +10,13 @@ namespace workwear
 	public partial class IncomeTable : Gtk.Bin
 	{
 		private int _WorkerId, _IncomeDocId;
-		private Operations _Operation;
+		private IncomeDoc.Operations _Operation;
 		private bool _CanSave = false;
 		private Gtk.ListStore ItemsListStore, CardRowsListStore;
 		TreeModelFilter CardRowsFilter;
 		private List<long> DeletedRowId = new List<long>();
 
 		public event EventHandler CanSaveStateChanged;
-
-		public enum Operations {Enter, Return};
 
 		public int IncomeDocId {
 			get {return _IncomeDocId;}
@@ -32,9 +30,9 @@ namespace workwear
 				FillCardRowsList ();}
 		}
 
-		public Operations Operation {
+		public IncomeDoc.Operations Operation {
 			get {return _Operation;}
-			set {if (value == Operations.Enter)
+			set {if (value == IncomeDoc.Operations.Enter)
 					buttonAdd.Sensitive = true;
 
 				if (_Operation == value)
@@ -226,7 +224,7 @@ namespace workwear
 		protected void OnButtonAddClicked (object sender, EventArgs e)
 		{
 			TreeIter iter;
-			if (_Operation == Operations.Return)
+			if (_Operation == IncomeDoc.Operations.Return)
 			{
 				SelectWearCardRow WinSelect = new SelectWearCardRow(CardRowsFilter);
 				if (WinSelect.GetResult(out iter))

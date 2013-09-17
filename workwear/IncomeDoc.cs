@@ -11,12 +11,20 @@ namespace workwear
 		int Itemid, Worker_id;
 		string DocName;
 
+		public enum Operations {Enter, Return};
+
 		public IncomeDoc()
 		{
 			this.Build();
 			dateDoc.Date = DateTime.Today;
 			labelUser.LabelProp = QSMain.User.Name;
 			comboOperation.Active = 0;
+		}
+
+		public Operations Operation
+		{
+			get {return (Operations)comboOperation.Active;}
+			set	{comboOperation.Active = (int) value;}
 		}
 
 		protected void OnComboOperationChanged(object sender, EventArgs e)
@@ -30,7 +38,7 @@ namespace workwear
 					hboxWorker.Visible = false;
 					DocName = "Приходная накладная № ";
 					this.Title = "Новая приходная накладная";
-					ItemsTable.Operation = IncomeTable.Operations.Enter;
+					ItemsTable.Operation = Operations.Enter;
 					break;
 				case 1:
 					labelTTN.Visible = false;
@@ -39,7 +47,7 @@ namespace workwear
 					hboxWorker.Visible = true;
 					DocName = "Возврат от работника № ";
 					this.Title = "Новый возврат от работника";
-					ItemsTable.Operation = IncomeTable.Operations.Return;
+					ItemsTable.Operation = Operations.Return;
 					break;
 			}
 			TestCanSave();
@@ -215,14 +223,19 @@ namespace workwear
 			int result = WorkerSelect.Run();
 			if((ResponseType)result == ResponseType.Ok)
 			{
-				Worker_id = WorkerSelect.SelectedID;
-				string[] Parts = WorkerSelect.SelectedName.Split(new char[] {' '});
-				entryWorker.Text = String.Format("{0} {1}. {2}.", Parts[0], Parts[1][0], Parts[2][0]);
-				entryWorker.TooltipText = WorkerSelect.SelectedName;
-				ItemsTable.WorkerId = Worker_id;
+				SetWorker(WorkerSelect.SelectedID, WorkerSelect.SelectedName);
 			}
 			WorkerSelect.Destroy();
 			TestCanSave();
+		}
+
+		public void SetWorker(int id, string name)
+		{
+			Worker_id = id;
+			string[] Parts = name.Split(new char[] {' '});
+			entryWorker.Text = String.Format("{0} {1}. {2}.", Parts[0], Parts[1][0], Parts[2][0]);
+			entryWorker.TooltipText = name;
+			ItemsTable.WorkerId = Worker_id;
 		}
 	}
 }
