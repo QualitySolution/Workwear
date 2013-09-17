@@ -831,8 +831,8 @@ namespace workwear
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
-			this.DefaultWidth = 839;
-			this.DefaultHeight = 510;
+			this.DefaultWidth = 847;
+			this.DefaultHeight = 569;
 			this.Show ();
 			this.buttonObjectClear.Clicked += new global::System.EventHandler (this.OnButtonObjectClearClicked);
 			this.buttonObject.Clicked += new global::System.EventHandler (this.OnButtonObjectClicked);

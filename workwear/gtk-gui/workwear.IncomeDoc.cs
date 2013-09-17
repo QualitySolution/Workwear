@@ -160,8 +160,8 @@ namespace workwear
 			this.dateDoc.Events = ((global::Gdk.EventMask)(256));
 			this.dateDoc.Name = "dateDoc";
 			this.dateDoc.Date = new global::System.DateTime (0);
-			this.dateDoc.IsEditable = false;
-			this.dateDoc.AutoSeparation = false;
+			this.dateDoc.IsEditable = true;
+			this.dateDoc.AutoSeparation = true;
 			this.table3.Add (this.dateDoc);
 			global::Gtk.Table.TableChild w19 = ((global::Gtk.Table.TableChild)(this.table3 [this.dateDoc]));
 			w19.TopAttach = ((uint)(2));
