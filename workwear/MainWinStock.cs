@@ -66,6 +66,8 @@ public partial class MainWindow : Gtk.Window
 		WriteOffFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeIncome); //FIXME
 		treeviewWriteOff.Model = WriteOffFilter;
 		treeviewWriteOff.ShowAll();
+
+		selectStockDates.ActiveRadio = QSWidgetLib.SelectPeriod.Period.Month;
 	}
 
 	void UpdateStock()

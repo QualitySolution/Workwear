@@ -135,7 +135,7 @@
           <widget class="Gtk.Notebook" id="notebookMain">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">1</property>
+            <property name="CurrentPage">2</property>
             <signal name="SwitchPage" handler="OnNotebookMainSwitchPage" />
             <child>
               <widget class="Gtk.VBox" id="vbox2">
@@ -364,6 +364,7 @@
                         <property name="ShowCurMonth">False</property>
                         <property name="ShowCurQuarter">False</property>
                         <property name="ShowCurYear">False</property>
+                        <signal name="DatesChanged" handler="OnSelectStockDatesDatesChanged" />
                       </widget>
                       <packing>
                         <property name="Position">1</property>

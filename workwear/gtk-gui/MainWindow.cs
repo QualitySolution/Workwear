@@ -126,7 +126,7 @@ public partial class MainWindow
 		this.notebookMain = new global::Gtk.Notebook ();
 		this.notebookMain.CanFocus = true;
 		this.notebookMain.Name = "notebookMain";
-		this.notebookMain.CurrentPage = 1;
+		this.notebookMain.CurrentPage = 2;
 		// Container child notebookMain.Gtk.Notebook+NotebookChild
 		this.vbox2 = new global::Gtk.VBox ();
 		this.vbox2.Name = "vbox2";
@@ -569,6 +569,7 @@ public partial class MainWindow
 		this.checkCardsOnlyActual.Clicked += new global::System.EventHandler (this.OnCheckOnlyActualClicked);
 		this.treeviewCards.RowActivated += new global::Gtk.RowActivatedHandler (this.OnTreeviewCardsRowActivated);
 		this.treeviewCards.CursorChanged += new global::System.EventHandler (this.OnTreeviewCardsCursorChanged);
+		this.selectStockDates.DatesChanged += new global::System.EventHandler (this.OnSelectStockDatesDatesChanged);
 		this.notebookStock.SwitchPage += new global::Gtk.SwitchPageHandler (this.OnNotebookStockSwitchPage);
 		this.treeviewIncome.RowActivated += new global::Gtk.RowActivatedHandler (this.OnTreeviewIncomeRowActivated);
 		this.treeviewIncome.CursorChanged += new global::System.EventHandler (this.OnTreeviewIncomeCursorChanged);

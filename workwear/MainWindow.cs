@@ -396,4 +396,9 @@ public partial class MainWindow: Gtk.Window
 	{
 		buttonRefresh.Click();
 	}
+
+	protected void OnSelectStockDatesDatesChanged(object sender, EventArgs e)
+	{
+		buttonRefresh.Click();
+	}
 }
