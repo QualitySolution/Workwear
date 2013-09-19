@@ -76,7 +76,8 @@ namespace workwear
 		{
 			bool Dateok = !dateDoc.IsEmpty;
 			bool WorkerOk = Worker_id > 0;
-			buttonOk.Sensitive = Dateok && WorkerOk ;
+			bool DetailOk = ItemsTable.CanSave;
+			buttonOk.Sensitive = Dateok && WorkerOk && DetailOk;
 		}
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
@@ -155,6 +156,11 @@ namespace workwear
 			entryWorker.Text = String.Format("{0} {1}. {2}.", Parts[0], Parts[1][0], Parts[2][0]);
 			entryWorker.TooltipText = name;
 			ItemsTable.WorkerId = Worker_id;
+		}
+
+		protected void OnItemsTableCanSaveStateChanged(object sender, EventArgs e)
+		{
+			TestCanSave();
 		}
 	}
 }

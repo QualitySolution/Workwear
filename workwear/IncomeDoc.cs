@@ -125,6 +125,7 @@ namespace workwear
 			bool OperationOk;
 			bool NumberOk = entryTTN.Text != "";
 			bool WorkerOk = Worker_id > 0;
+			bool DetailOk = ItemsTable.CanSave;
 			switch (comboOperation.Active)
 			{
 				case 0:
@@ -137,7 +138,7 @@ namespace workwear
 					OperationOk = false;
 					break;
 			}
-			buttonOk.Sensitive = Dateok && OperationOk ;
+			buttonOk.Sensitive = Dateok && OperationOk && DetailOk ;
 		}
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
@@ -180,7 +181,6 @@ namespace workwear
 						default: cmd.Parameters.AddWithValue("@operation", DBNull.Value);
 						break;
 				}
-
 
 				cmd.ExecuteNonQuery();
 				if(NewItem)
@@ -237,6 +237,12 @@ namespace workwear
 			entryWorker.TooltipText = name;
 			ItemsTable.WorkerId = Worker_id;
 		}
+
+		protected void OnItemsTableCanSaveStateChanged(object sender, EventArgs e)
+		{
+			TestCanSave();
+		}
+
 	}
 }
 

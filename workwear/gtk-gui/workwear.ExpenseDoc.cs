@@ -253,6 +253,7 @@ namespace workwear
 			this.Show ();
 			this.buttonWorkerEdit.Clicked += new global::System.EventHandler (this.OnButtonWorkerEditClicked);
 			this.dateDoc.DateChanged += new global::System.EventHandler (this.OnDateDocDateChanged);
+			this.ItemsTable.CanSaveStateChanged += new global::System.EventHandler (this.OnItemsTableCanSaveStateChanged);
 			this.buttonOk.Clicked += new global::System.EventHandler (this.OnButtonOkClicked);
 		}
 	}

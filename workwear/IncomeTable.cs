@@ -262,6 +262,7 @@ namespace workwear
 					                            CardRowsFilter.GetValue(iter, 7),
 					                            0.0);
 					CardRowsFilter.Refilter();
+					CalculateTotal();
 				}
 			}
 			else
@@ -282,6 +283,7 @@ namespace workwear
 					                            1,
 					                            100.0,
 					                            0.0);
+					CalculateTotal();
 				}
 				NomenclatureSelect.Destroy();
 			}
@@ -352,6 +354,7 @@ namespace workwear
 			ItemsListStore.Remove(ref iter);
 			CardRowsFilter.Refilter ();
 			OnTreeviewItemsCursorChanged (null, null);
+			CalculateTotal();
 		}
 
 		protected void OnTreeviewItemsCursorChanged (object sender, EventArgs e)

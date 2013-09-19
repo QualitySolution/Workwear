@@ -74,7 +74,8 @@ namespace workwear
 		protected void TestCanSave ()
 		{
 			bool Dateok = !dateDoc.IsEmpty;
-			buttonOk.Sensitive = Dateok;
+			bool DetailOk = ItemsTable.CanSave;
+			buttonOk.Sensitive = Dateok && DetailOk;
 		}
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
@@ -125,6 +126,10 @@ namespace workwear
 			TestCanSave();
 		}
 
+		protected void OnItemsTableCanSaveStateChanged(object sender, EventArgs e)
+		{
+			TestCanSave();
+		}
 	}
 }
 

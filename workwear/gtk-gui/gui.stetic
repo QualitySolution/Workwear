@@ -2703,6 +2703,7 @@
             <property name="Events">ButtonPressMask</property>
             <property name="IncomeDocId">0</property>
             <property name="WorkerId">0</property>
+            <signal name="CanSaveStateChanged" handler="OnItemsTableCanSaveStateChanged" />
           </widget>
           <packing>
             <property name="Position">1</property>
@@ -3099,6 +3100,7 @@
             <property name="Events">ButtonPressMask</property>
             <property name="ExpenseDocId">0</property>
             <property name="WorkerId">0</property>
+            <signal name="CanSaveStateChanged" handler="OnItemsTableCanSaveStateChanged" />
           </widget>
           <packing>
             <property name="Position">1</property>
@@ -3431,6 +3433,7 @@
             <property name="Events">ButtonPressMask</property>
             <property name="WriteOffDocId">0</property>
             <property name="CurWorkerId">0</property>
+            <signal name="CanSaveStateChanged" handler="OnItemsTableCanSaveStateChanged" />
           </widget>
           <packing>
             <property name="Position">1</property>

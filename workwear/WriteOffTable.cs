@@ -337,6 +337,7 @@ namespace workwear
 				                            StockFilter.GetValue(iter, 5),
 				                            StockFilter.GetValue(iter, 6));
 				StockFilter.Refilter();
+				CalculateTotal();
 			}
 		}
 
@@ -369,6 +370,7 @@ namespace workwear
 			ItemsListStore.Remove(ref iter);
 			StockFilter.Refilter ();
 			OnTreeviewItemsCursorChanged (null, null);
+			CalculateTotal();
 		}
 
 		protected void OnTreeviewItemsCursorChanged (object sender, EventArgs e)
@@ -386,7 +388,7 @@ namespace workwear
 			}
 			labelSum.Text = String.Format ("Количество: {0}", Count);
 			bool OldCanSave = _CanSave;
-			_CanSave = (Count <= 0);
+			_CanSave = (Count > 0);
 			if(_CanSave != OldCanSave && CanSaveStateChanged != null)
 				CanSaveStateChanged(this, EventArgs.Empty);
 		} 
@@ -474,6 +476,7 @@ namespace workwear
 				                            CardRowsFilter.GetValue(iter, 4),
 				                            CardRowsFilter.GetValue(iter, 10));
 				CardRowsFilter.Refilter();
+				CalculateTotal();
 			}
 
 		}

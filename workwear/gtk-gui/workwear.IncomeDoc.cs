@@ -309,6 +309,7 @@ namespace workwear
 			this.entryTTN.Changed += new global::System.EventHandler (this.OnEntryTTNChanged);
 			this.comboOperation.Changed += new global::System.EventHandler (this.OnComboOperationChanged);
 			this.dateDoc.DateChanged += new global::System.EventHandler (this.OnDateDocDateChanged);
+			this.ItemsTable.CanSaveStateChanged += new global::System.EventHandler (this.OnItemsTableCanSaveStateChanged);
 			this.buttonOk.Clicked += new global::System.EventHandler (this.OnButtonOkClicked);
 		}
 	}
