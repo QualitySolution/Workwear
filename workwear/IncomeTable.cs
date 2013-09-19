@@ -32,8 +32,8 @@ namespace workwear
 
 		public IncomeDoc.Operations Operation {
 			get {return _Operation;}
-			set {if (value == IncomeDoc.Operations.Enter)
-					buttonAdd.Sensitive = true;
+			set {
+				buttonAdd.Sensitive = !(WorkerId <= 0  && value == IncomeDoc.Operations.Return);
 
 				if (_Operation == value)
 					return;
@@ -83,7 +83,7 @@ namespace workwear
 			treeviewItems.AppendColumn (LifeColumn);
 			LifeColumn.AddAttribute (CellLife, "text" , 5);
 
-			LifeColumn.SetCellDataFunc (CellQuantity, RenderQuantityColumn);
+			QuantityColumn.SetCellDataFunc (CellQuantity, RenderQuantityColumn);
 			LifeColumn.SetCellDataFunc (CellLife, RenderLifeColumn);
 
 			treeviewItems.Model = ItemsListStore;
@@ -97,14 +97,18 @@ namespace workwear
 		{
 			if(_WorkerId <= 0)
 				return false;
-			CardRowsListStore = new ListStore (typeof (long), // 0 - ID expense row
-			                                      typeof (int), //1 - nomenclature id
-			                                      typeof (string), //2 - nomenclature name
-			                                      typeof (string), //3 - date
-			                                      typeof (int), //4 - quantity
-			                                      typeof (string), // 5 - % of life
-			                                   typeof (string), // 6 - today % of life
-			                                   typeof(double)); // 7 - today % of life
+			CardRowsListStore = new ListStore(typeof(long), // 0 - ID expense row
+			                                   typeof(int), //1 - nomenclature id
+			                                   typeof(string), //2 - nomenclature name
+			                                   typeof(string), //3 - date
+			                                   typeof(int), //4 - quantity
+			                                   typeof(string), // 5 - % of life
+			                                   typeof(string), // 6 - today % of life
+			                                   typeof(double), // 7 - today % of life
+			                                   typeof(int), // 8 - worker id
+			                                  typeof(string), // 9 - worker name
+			                                  typeof(string) // 10 - units
+			);
 			CardRowsFilter = new TreeModelFilter( CardRowsListStore, null);
 			CardRowsFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeAccrualRows);
 
@@ -112,7 +116,7 @@ namespace workwear
 			try
 			{
 				string sql = "SELECT stock_expense_detail.id, stock_expense_detail.nomenclature_id, stock_expense_detail.quantity,\n" +
-					"nomenclature.name, stock_expense.date, stock_income_detail.life_percent, spent.count, item_types.norm_life " +
+					"nomenclature.name, stock_expense.date, stock_income_detail.life_percent, spent.count, item_types.norm_life, units.name as unit " +
 					"FROM stock_expense_detail \n" +
 					"LEFT JOIN (\nSELECT id, SUM(count) as count FROM \n" +
 						"(SELECT stock_income_detail.stock_expense_detail_id as id, stock_income_detail.quantity as count FROM stock_income_detail WHERE stock_expense_detail_id IS NOT NULL AND stock_income_id <> @current_income\n" +
@@ -122,7 +126,8 @@ namespace workwear
 					"LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id " +
 					"LEFT JOIN item_types ON nomenclature.type_id = item_types.id " +
 					"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id \n" +
-					"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id \n" +
+					"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
+					"LEFT JOIN units ON nomenclature.units_id = units.id " +
 					"WHERE stock_expense.wear_card_id = @id AND (spent.count IS NULL OR spent.count < stock_expense_detail.quantity )";
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@id", _WorkerId);
@@ -148,7 +153,11 @@ namespace workwear
 					                               	Quantity,
 					                                  String.Format ("{0} %", rdr.GetDecimal("life_percent") * 100),
 					                               String.Format ("{0} %", Life),
-					                               (double) Life);
+					                               (double) Life,
+					                               WorkerId,
+					                               String.Empty,
+					                               rdr["unit"].ToString()
+					                               );
 				}
 				rdr.Close();
 				MainClass.StatusMessage("Ok");
@@ -158,7 +167,7 @@ namespace workwear
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения начисления!");
+				MainClass.StatusMessage("Ошибка получения о выданной одежде!");
 				return false;
 			}
 		}
@@ -227,6 +236,7 @@ namespace workwear
 			if (_Operation == IncomeDoc.Operations.Return)
 			{
 				SelectWearCardRow WinSelect = new SelectWearCardRow(CardRowsFilter);
+				WinSelect.WorkerComboActive = false;
 				if (WinSelect.GetResult(out iter))
 				{
 					ItemsListStore.AppendValues(null,

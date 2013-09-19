@@ -80,7 +80,7 @@ public partial class MainWindow : Gtk.Window
 			case 1:
 				UpdateStockExpense();
 				break;
-			case 3:
+			case 2:
 				UpdateStockWriteOff();
 				break;
 		}
@@ -182,7 +182,7 @@ public partial class MainWindow : Gtk.Window
 			string doc = "Акт списания";
 			while (rdr.Read())
 			{
-				ExpenseListStore.AppendValues(rdr.GetInt32("id"),
+				WriteOffListStore.AppendValues(rdr.GetInt32("id"),
 				                              String.Format("{0:d}", rdr.GetDateTime("date")),
 				                              doc,
 				                              rdr.GetString("user")

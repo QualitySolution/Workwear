@@ -21,7 +21,7 @@ namespace workwear
 		public int ExpenseDocId {
 			get {return _ExpenseDocId;}
 			set {_ExpenseDocId = value;
-				FillIncomeDetails ();}
+				FillExpenseDetails ();}
 		}
 
 		public int WorkerId {
@@ -72,7 +72,7 @@ namespace workwear
 			treeviewItems.AppendColumn (LifeColumn);
 			LifeColumn.AddAttribute (CellLife, "text" , 5);
 
-			LifeColumn.SetCellDataFunc (CellQuantity, RenderQuantityColumn);
+			QuantityColumn.SetCellDataFunc (CellQuantity, RenderQuantityColumn);
 			LifeColumn.SetCellDataFunc (CellLife, RenderLifeColumn);
 
 			treeviewItems.Model = ItemsListStore;
@@ -153,7 +153,7 @@ namespace workwear
 			}
 		}
 
-		private void FillIncomeDetails()
+		private void FillExpenseDetails()
 		{
 			MainClass.StatusMessage("Запрос деталей документа №" + _ExpenseDocId +"...");
 			try

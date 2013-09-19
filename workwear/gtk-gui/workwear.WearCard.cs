@@ -843,6 +843,7 @@ namespace workwear
 			this.checkShowHistory.Clicked += new global::System.EventHandler (this.OnCheckShowHistoryClicked);
 			this.buttonGiveWear.Clicked += new global::System.EventHandler (this.OnButtonGiveWearClicked);
 			this.buttonReturnWear.Clicked += new global::System.EventHandler (this.OnButtonReturnWearClicked);
+			this.buttonWriteOffWear.Clicked += new global::System.EventHandler (this.OnButtonWriteOffWearClicked);
 			this.buttonOk.Clicked += new global::System.EventHandler (this.OnButtonOkClicked);
 		}
 	}

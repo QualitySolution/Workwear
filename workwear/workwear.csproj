@@ -75,10 +75,14 @@
     <Compile Include="gtk-gui\workwear.SelectWearCardRow.cs" />
     <Compile Include="ExpenseDoc.cs" />
     <Compile Include="ExpenseTable.cs" />
+    <Compile Include="WriteOffDoc.cs" />
+    <Compile Include="WriteOffTable.cs" />
     <Compile Include="gtk-gui\workwear.ExpenseDoc.cs" />
     <Compile Include="gtk-gui\workwear.ExpenseTable.cs" />
     <Compile Include="SelectStockItem.cs" />
     <Compile Include="gtk-gui\workwear.SelectStockItem.cs" />
+    <Compile Include="gtk-gui\workwear.WriteOffDoc.cs" />
+    <Compile Include="gtk-gui\workwear.WriteOffTable.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -277,6 +277,13 @@ public partial class MainWindow: Gtk.Window
 						winExpense.Run();
 						winExpense.Destroy();
 						break;
+					case 2:
+						WriteOffDoc winWriteOff = new WriteOffDoc();
+						winWriteOff.NewItem = true;
+						winWriteOff.Show();
+						winWriteOff.Run();
+						winWriteOff.Destroy();
+						break;
 				}
 				UpdateStock();
 				break;
@@ -334,6 +341,15 @@ public partial class MainWindow: Gtk.Window
 						result = (ResponseType) winExpense.Run();
 						winExpense.Destroy();
 						break;
+					case 2:
+						treeviewWriteOff.Selection.GetSelected(out iter);
+						itemid = (int)WriteOffFilter.GetValue(iter, 0);
+						WriteOffDoc winWriteOff = new WriteOffDoc();
+						winWriteOff.Fill(itemid);
+						winWriteOff.Show();
+						result = (ResponseType) winWriteOff.Run();
+						winWriteOff.Destroy();
+						break;
 					default:
 						result = ResponseType.Reject;
 						break;
@@ -378,6 +394,11 @@ public partial class MainWindow: Gtk.Window
 						treeviewExpense.Selection.GetSelected(out iter);
 						itemid = (int)ExpenseFilter.GetValue(iter, 0);
 						winDelete.RunDeletion("stock_expense", itemid);
+						break;
+					case 2:
+						treeviewWriteOff.Selection.GetSelected(out iter);
+						itemid = (int)WriteOffFilter.GetValue(iter, 0);
+						winDelete.RunDeletion("stock_write_off", itemid);
 						break;
 				}
 				UpdateStock();

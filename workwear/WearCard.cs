@@ -567,5 +567,16 @@ namespace workwear
 			UpdateWear();
 		}
 
+		protected void OnButtonWriteOffWearClicked(object sender, EventArgs e)
+		{
+			WriteOffDoc winWriteOff = new WriteOffDoc();
+			winWriteOff.NewItem = true;
+			winWriteOff.CurrentWorkerId = Itemid;
+			winWriteOff.Show();
+			winWriteOff.Run();
+			winWriteOff.Destroy();
+			UpdateWear();
+		}
+
 	}
 }
