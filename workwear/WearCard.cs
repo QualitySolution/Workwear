@@ -187,10 +187,11 @@ namespace workwear
 					"WHERE id = @id";
 			}
 			MainClass.StatusMessage("Запись карточки...");
+			MySqlTransaction trans = QSMain.connectionDB.BeginTransaction();
 			try 
 			{
 				TreeIter iter;
-				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
+				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB, trans);
 				
 				cmd.Parameters.AddWithValue("@id", Itemid);
 				cmd.Parameters.AddWithValue("@last_name", entryLastName.Text);
@@ -238,19 +239,20 @@ namespace workwear
 				{
 					MainClass.StatusMessage("Запись фотографии в базу...");
 					sql = "UPDATE wear_cards SET photo = @photo, photo_size = @photo_size WHERE id = @id";
-					cmd = new MySqlCommand(sql, QSMain.connectionDB);
+					cmd = new MySqlCommand(sql, QSMain.connectionDB, trans);
 
 					cmd.Parameters.AddWithValue("@id", Itemid);
 					cmd.Parameters.AddWithValue("@photo_size", PhotoFile.LongLength);
 					cmd.Parameters.AddWithValue("@photo", PhotoFile);
 					cmd.ExecuteNonQuery();
 				}
-
+				trans.Commit();
 				MainClass.StatusMessage("Ok");
 				Respond (Gtk.ResponseType.Ok);
 			} 
 			catch (Exception ex) 
 			{
+				trans.Rollback();
 				Console.WriteLine(ex.ToString());
 				MainClass.StatusMessage("Ошибка записи карточки!");
 				QSMain.ErrorMessage(this,ex);
