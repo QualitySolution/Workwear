@@ -108,6 +108,7 @@ public partial class MainWindow
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
 		this.Title = global::Mono.Unix.Catalog.GetString ("QS: Учет спецодежды");
+		this.Icon = global::Gdk.Pixbuf.LoadFromResource ("workwear.icon.logo.ico");
 		this.WindowPosition = ((global::Gtk.WindowPosition)(4));
 		// Container child MainWindow.Gtk.Container+ContainerChild
 		this.vbox1 = new global::Gtk.VBox ();
@@ -330,7 +331,7 @@ public partial class MainWindow
 		this.notebookStock = new global::Gtk.Notebook ();
 		this.notebookStock.CanFocus = true;
 		this.notebookStock.Name = "notebookStock";
-		this.notebookStock.CurrentPage = 2;
+		this.notebookStock.CurrentPage = 0;
 		this.notebookStock.TabPos = ((global::Gtk.PositionType)(0));
 		// Container child notebookStock.Gtk.Notebook+NotebookChild
 		this.GtkScrolledWindow2 = new global::Gtk.ScrolledWindow ();

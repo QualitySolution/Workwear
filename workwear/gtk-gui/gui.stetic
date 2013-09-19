@@ -93,6 +93,7 @@
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Учет спецодежды</property>
+    <property name="Icon">resource:workwear.icon.logo.ico</property>
     <property name="WindowPosition">CenterOnParent</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>
@@ -387,7 +388,7 @@
                   <widget class="Gtk.Notebook" id="notebookStock">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
-                    <property name="CurrentPage">2</property>
+                    <property name="CurrentPage">0</property>
                     <property name="TabPos">Left</property>
                     <signal name="SwitchPage" handler="OnNotebookStockSwitchPage" />
                     <child>

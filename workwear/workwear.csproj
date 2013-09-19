@@ -9,6 +9,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>workwear</RootNamespace>
     <AssemblyName>workwear</AssemblyName>
+    <ApplicationIcon>icon\logo.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,6 +50,7 @@
       <LogicalName>gui.stetic</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="icon\logo.png" />
+    <EmbeddedResource Include="icon\logo.ico" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
