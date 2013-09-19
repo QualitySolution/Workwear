@@ -74,10 +74,11 @@ namespace workwear
 			NewItem = false;
 			
 			MainClass.StatusMessage(String.Format("Запрос карточки №{0}...", id));
-			string sql = "SELECT wear_cards.*, leaders.name as leader, objects.name as object, objects.address as address " +
+			string sql = "SELECT wear_cards.*, leaders.name as leader, objects.name as object, objects.address as address, users.name as user " +
 			"FROM wear_cards " +
 			"LEFT JOIN leaders ON leaders.id = wear_cards.leader_id " +
 			"LEFT JOIN objects ON objects.id = wear_cards.object_id " +
+			"LEFT JOIN users ON wear_cards.user_id = users.id " +
 			"WHERE wear_cards.id = @id";
 			try
 			{
@@ -92,6 +93,7 @@ namespace workwear
 					rdr.Read();
 					
 					labelId.LabelProp = rdr["id"].ToString();
+					labelUser.LabelProp = DBWorks.GetString(rdr, "user", "не указан");
 					entryLastName.Text = rdr["last_name"].ToString();
 					entryFirstName.Text = rdr["first_name"].ToString();
 					entryPatronymic.Text = rdr["patronymic_name"].ToString();
@@ -174,9 +176,9 @@ namespace workwear
 			if(NewItem)
 			{
 				sql = "INSERT INTO wear_cards (last_name, first_name, patronymic_name, " +
-					"wear_size, growth, post_id, leader_id, hire_date, dismiss_date, sex, object_id) " +
+					"wear_size, growth, post_id, leader_id, hire_date, dismiss_date, sex, object_id, user_id) " +
 						"VALUES (@last_name, @first_name, @patronymic_name, @wear_size, @growth, " +
-						"@post_id, @leader_id, @hire_date, @dismiss_date, @sex, @object_id)";
+						"@post_id, @leader_id, @hire_date, @dismiss_date, @sex, @object_id, @user_id)";
 			}
 			else
 			{
@@ -197,6 +199,7 @@ namespace workwear
 				cmd.Parameters.AddWithValue("@last_name", entryLastName.Text);
 				cmd.Parameters.AddWithValue("@first_name", entryFirstName.Text);
 				cmd.Parameters.AddWithValue("@patronymic_name", entryPatronymic.Text);
+				cmd.Parameters.AddWithValue("@user_id", QSMain.User.id);
 				if(comboentryWearSize.Entry.Text != "")
 					cmd.Parameters.AddWithValue("@wear_size", comboentryWearSize.Entry.Text);
 				else 

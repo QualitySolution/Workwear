@@ -109,7 +109,7 @@ public partial class MainWindow
 		this.Name = "MainWindow";
 		this.Title = global::Mono.Unix.Catalog.GetString ("QS: Учет спецодежды");
 		this.Icon = global::Gdk.Pixbuf.LoadFromResource ("workwear.icon.logo.ico");
-		this.WindowPosition = ((global::Gtk.WindowPosition)(4));
+		this.WindowPosition = ((global::Gtk.WindowPosition)(1));
 		// Container child MainWindow.Gtk.Container+ContainerChild
 		this.vbox1 = new global::Gtk.VBox ();
 		this.vbox1.Name = "vbox1";

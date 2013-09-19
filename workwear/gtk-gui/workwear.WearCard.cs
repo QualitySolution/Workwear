@@ -381,7 +381,7 @@ namespace workwear
 			this.label17 = new global::Gtk.Label ();
 			this.label17.Name = "label17";
 			this.label17.Xalign = 1F;
-			this.label17.LabelProp = global::Mono.Unix.Catalog.GetString ("Пользователь:");
+			this.label17.LabelProp = global::Mono.Unix.Catalog.GetString ("Карточку создал:");
 			this.table1.Add (this.label17);
 			global::Gtk.Table.TableChild w56 = ((global::Gtk.Table.TableChild)(this.table1 [this.label17]));
 			w56.LeftAttach = ((uint)(2));

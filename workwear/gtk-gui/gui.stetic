@@ -94,7 +94,7 @@
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Учет спецодежды</property>
     <property name="Icon">resource:workwear.icon.logo.ico</property>
-    <property name="WindowPosition">CenterOnParent</property>
+    <property name="WindowPosition">Center</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>
       <widget class="Gtk.VBox" id="vbox1">
@@ -1844,7 +1844,7 @@
                   <widget class="Gtk.Label" id="label17">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Пользователь:</property>
+                    <property name="LabelProp" translatable="yes">Карточку создал:</property>
                   </widget>
                   <packing>
                     <property name="LeftAttach">2</property>
@@ -2510,7 +2510,7 @@
                   <widget class="Gtk.Label" id="labelTTN">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">ТТН №&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
+                    <property name="LabelProp" translatable="yes">ТН №&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
                     <property name="UseMarkup">True</property>
                   </widget>
                   <packing>
