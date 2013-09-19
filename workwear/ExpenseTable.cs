@@ -147,7 +147,7 @@ namespace workwear
 			{
 				Console.WriteLine(ex.ToString());
 				MainClass.StatusMessage("Ошибка получения информации по складу!");
-				return false;
+				throw;
 			}
 		}
 
@@ -167,21 +167,20 @@ namespace workwear
 
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue("@id", _ExpenseDocId);
-				MySqlDataReader rdr = cmd.ExecuteReader();
-
-				while (rdr.Read())
+				using( MySqlDataReader rdr = cmd.ExecuteReader())
 				{
-					ItemsListStore.AppendValues(rdr.GetInt64("id"),
-					                            rdr.GetInt64("stock_income_detail_id"),
-					                              rdr.GetInt32 ("nomenclature_id"),
-					                              rdr["nomenclature"].ToString(),
-					                              rdr.GetInt32("quantity"),
-					                              rdr.GetDouble("life_percent") * 100,
-					                            rdr["unit"].ToString()
-					                              );
+					while (rdr.Read())
+					{
+						ItemsListStore.AppendValues(rdr.GetInt64("id"),
+						                            rdr.GetInt64("stock_income_detail_id"),
+						                              rdr.GetInt32 ("nomenclature_id"),
+						                              rdr["nomenclature"].ToString(),
+						                              rdr.GetInt32("quantity"),
+						                              rdr.GetDouble("life_percent") * 100,
+						                            rdr["unit"].ToString()
+						                              );
+					}
 				}
-				rdr.Close();
-
 				MainClass.StatusMessage("Ok");
 				CalculateTotal();
 			}
@@ -189,6 +188,7 @@ namespace workwear
 			{
 				Console.WriteLine(ex.ToString());
 				MainClass.StatusMessage("Ошибка получения деталей расхода!");
+				throw;
 			}
 		}
 
@@ -345,7 +345,7 @@ namespace workwear
 			{
 				Console.WriteLine(ex.ToString());
 				MainClass.StatusMessage("Ошибка записи строк расхода!");
-				return false;
+				throw;
 			}
 		}
 

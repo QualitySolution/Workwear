@@ -143,34 +143,36 @@ namespace workwear
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@id", _WorkerId);
 				cmd.Parameters.AddWithValue ("@current_income", _IncomeDocId);
-				MySqlDataReader rdr = cmd.ExecuteReader();
-
-				while (rdr.Read())
+				using( MySqlDataReader rdr = cmd.ExecuteReader())
 				{
-					int Quantity;
-					if(rdr["count"] == DBNull.Value)
-					 	Quantity = rdr.GetInt32("quantity");
-					else
-						Quantity = rdr.GetInt32("quantity") - rdr.GetInt32("count");
-					 ;
-					double MonthUsing = ((DateTime.Today - rdr.GetDateTime ("date")).TotalDays / 365) * 12;
-					int Life = (int) (rdr.GetDecimal("life_percent") * 100) - (int) (MonthUsing / rdr.GetInt32("norm_life") * 100);
-					if(Life < 0) 
-						Life = 0;
-					CardRowsListStore.AppendValues(rdr.GetInt64("id"),
-					                                  rdr.GetInt32("nomenclature_id"),
-					                                  rdr.GetString ("name"),
-					                                  String.Format ("{0:d}", rdr.GetDateTime ("date")),
-					                               	Quantity,
-					                                  String.Format ("{0} %", rdr.GetDecimal("life_percent") * 100),
-					                               String.Format ("{0} %", Life),
-					                               (double) Life,
-					                               WorkerId,
-					                               String.Empty,
-					                               rdr["unit"].ToString()
-					                               );
+					while (rdr.Read())
+					{
+						int Quantity, Life;
+						if(rdr["count"] == DBNull.Value)
+						 	Quantity = rdr.GetInt32("quantity");
+						else
+							Quantity = rdr.GetInt32("quantity") - rdr.GetInt32("count");
+						double MonthUsing = ((DateTime.Today - rdr.GetDateTime ("date")).TotalDays / 365) * 12;
+						if(rdr["norm_life"] != DBNull.Value)
+							Life = (int) (rdr.GetDecimal("life_percent") * 100) - (int) (MonthUsing / rdr.GetInt32("norm_life") * 100);
+						else
+							Life = (int) (rdr.GetDecimal("life_percent") * 100);
+						if(Life < 0) 
+							Life = 0;
+						CardRowsListStore.AppendValues(rdr.GetInt64("id"),
+						                                  rdr.GetInt32("nomenclature_id"),
+						                                  rdr.GetString ("name"),
+						                                  String.Format ("{0:d}", rdr.GetDateTime ("date")),
+						                               	Quantity,
+						                                  String.Format ("{0} %", rdr.GetDecimal("life_percent") * 100),
+						                               String.Format ("{0} %", Life),
+						                               (double) Life,
+						                               WorkerId,
+						                               String.Empty,
+						                               rdr["unit"].ToString()
+						                               );
+					}
 				}
-				rdr.Close();
 				MainClass.StatusMessage("Ok");
 				buttonAdd.Sensitive = true;
 				return true;
@@ -179,7 +181,7 @@ namespace workwear
 			{
 				Console.WriteLine(ex.ToString());
 				MainClass.StatusMessage("Ошибка получения о выданной одежде!");
-				return false;
+				throw;
 			}
 		}
 
@@ -197,25 +199,25 @@ namespace workwear
 
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue("@id", _IncomeDocId);
-				MySqlDataReader rdr = cmd.ExecuteReader();
-
-				while (rdr.Read())
+				using( MySqlDataReader rdr = cmd.ExecuteReader())
 				{
-					long ExpenseRow;
-					if(rdr["stock_expense_detail_id"] != DBNull.Value)
-						ExpenseRow = rdr.GetInt64("stock_expense_detail_id");
-					else
-						ExpenseRow = -1;
-					ItemsListStore.AppendValues(rdr.GetInt64("id"),
-					                            ExpenseRow,
-					                              rdr.GetInt32 ("nomenclature_id"),
-					                              rdr["name"].ToString(),
-					                              rdr.GetInt32("quantity"),
-					                              rdr.GetDouble("life_percent") * 100,
-					                            rdr.GetDouble("cost")
-					                              );
+					while (rdr.Read())
+					{
+						long ExpenseRow;
+						if(rdr["stock_expense_detail_id"] != DBNull.Value)
+							ExpenseRow = rdr.GetInt64("stock_expense_detail_id");
+						else
+							ExpenseRow = -1;
+						ItemsListStore.AppendValues(rdr.GetInt64("id"),
+						                            ExpenseRow,
+						                              rdr.GetInt32 ("nomenclature_id"),
+						                              rdr["name"].ToString(),
+						                              rdr.GetInt32("quantity"),
+						                              rdr.GetDouble("life_percent") * 100,
+						                            rdr.GetDouble("cost")
+						                              );
+					}
 				}
-				rdr.Close();
 
 				MainClass.StatusMessage("Ok");
 				CalculateTotal();
@@ -224,6 +226,7 @@ namespace workwear
 			{
 				Console.WriteLine(ex.ToString());
 				MainClass.StatusMessage("Ошибка получения деталей прихода!");
+				throw;
 			}
 		}
 
@@ -366,7 +369,7 @@ namespace workwear
 			}
 			labelSum.Text = String.Format ("Количество: {0}", Count);
 			bool OldCanSave = _CanSave;
-			_CanSave = (Count <= 0);
+			_CanSave = (Count > 0);
 			if(_CanSave != OldCanSave && CanSaveStateChanged != null)
 				CanSaveStateChanged(this, EventArgs.Empty);
 		} 
@@ -417,7 +420,6 @@ namespace workwear
 				Console.WriteLine(ex.ToString());
 				MainClass.StatusMessage("Ошибка записи строк прихода!");
 				throw;
-				return false;
 			}
 		}
 	}

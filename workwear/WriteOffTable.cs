@@ -139,7 +139,7 @@ namespace workwear
 			{
 				Console.WriteLine(ex.ToString());
 				MainClass.StatusMessage("Ошибка получения информации по складу!");
-				return false;
+				throw;
 			}
 		}
 
@@ -161,29 +161,28 @@ namespace workwear
 
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue("@id", _WriteOffDocId);
-				MySqlDataReader rdr = cmd.ExecuteReader();
-
-				while (rdr.Read())
+				using( MySqlDataReader rdr = cmd.ExecuteReader())
 				{
-					string FromName;
-					if(rdr["stock_income_detail_id"] != DBNull.Value)
-						FromName = "склад";
-					else if (rdr["stock_expense_detail_id"] != DBNull.Value)
-						FromName = String.Format("{0} {1}. {2}.", rdr["last_name"].ToString(), rdr["first_name"].ToString()[0], rdr["patronymic_name"].ToString()[0]);
-					else 
-						FromName = String.Empty;
-					ItemsListStore.AppendValues(rdr.GetInt64("id"),
-					                            DBWorks.GetLong(rdr, "stock_income_detail_id", -1),
-					                            DBWorks.GetLong(rdr, "stock_expense_detail_id", -1),
-					                            rdr.GetInt32 ("nomenclature_id"),
-					                            rdr["nomenclature"].ToString(),
-					                            FromName,
-					                            rdr.GetInt32("quantity"),
-					                            rdr["unit"].ToString()
-					                            );
+					while (rdr.Read())
+					{
+						string FromName;
+						if(rdr["stock_income_detail_id"] != DBNull.Value)
+							FromName = "склад";
+						else if (rdr["stock_expense_detail_id"] != DBNull.Value)
+							FromName = String.Format("{0} {1}. {2}.", rdr["last_name"].ToString(), rdr["first_name"].ToString()[0], rdr["patronymic_name"].ToString()[0]);
+						else 
+							FromName = String.Empty;
+						ItemsListStore.AppendValues(rdr.GetInt64("id"),
+						                            DBWorks.GetLong(rdr, "stock_income_detail_id", -1),
+						                            DBWorks.GetLong(rdr, "stock_expense_detail_id", -1),
+						                            rdr.GetInt32 ("nomenclature_id"),
+						                            rdr["nomenclature"].ToString(),
+						                            FromName,
+						                            rdr.GetInt32("quantity"),
+						                            rdr["unit"].ToString()
+						                            );
+					}
 				}
-				rdr.Close();
-
 				MainClass.StatusMessage("Ok");
 				CalculateTotal();
 			}
@@ -191,6 +190,7 @@ namespace workwear
 			{
 				Console.WriteLine(ex.ToString());
 				MainClass.StatusMessage("Ошибка получения деталей списания!");
+				throw;
 			}
 		}
 
@@ -232,34 +232,37 @@ namespace workwear
 						"WHERE spent.count IS NULL OR spent.count < stock_expense_detail.quantity ";
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@current_write_off", _WriteOffDocId);
-				MySqlDataReader rdr = cmd.ExecuteReader();
-
-				while (rdr.Read())
+				using( MySqlDataReader rdr = cmd.ExecuteReader())
 				{
-					int Quantity;
-					if(rdr["count"] == DBNull.Value)
-						Quantity = rdr.GetInt32("quantity");
-					else
-						Quantity = rdr.GetInt32("quantity") - rdr.GetInt32("count");
+					while (rdr.Read())
+					{
+						int Quantity, Life;
+						if(rdr["count"] == DBNull.Value)
+							Quantity = rdr.GetInt32("quantity");
+						else
+							Quantity = rdr.GetInt32("quantity") - rdr.GetInt32("count");
 
-					double MonthUsing = ((DateTime.Today - rdr.GetDateTime ("date")).TotalDays / 365) * 12;
-					int Life = (int) (rdr.GetDecimal("life_percent") * 100) - (int) (MonthUsing / rdr.GetInt32("norm_life") * 100);
-					if(Life < 0) 
-						Life = 0;
-					CardRowsListStore.AppendValues(rdr.GetInt64("id"),
-					                               rdr.GetInt32("nomenclature_id"),
-					                               rdr.GetString ("name"),
-					                               String.Format ("{0:d}", rdr.GetDateTime ("date")),
-					                               Quantity,
-					                               String.Format ("{0} %", rdr.GetDecimal("life_percent") * 100),
-					                               String.Format ("{0} %", Life),
-					                               (double) Life,
-					                               rdr.GetInt32("wear_card_id"),
-					                               String.Format("{0} {1}. {2}.", rdr["last_name"].ToString(), rdr["first_name"].ToString()[0], rdr["patronymic_name"].ToString()[0]),
-					                               rdr["unit"].ToString()
-					                               );
+						double MonthUsing = ((DateTime.Today - rdr.GetDateTime ("date")).TotalDays / 365) * 12;
+						if(rdr["norm_life"] != DBNull.Value)
+							Life = (int) (rdr.GetDecimal("life_percent") * 100) - (int) (MonthUsing / rdr.GetInt32("norm_life") * 100);
+						else
+							Life = (int) (rdr.GetDecimal("life_percent") * 100);
+						if(Life < 0) 
+							Life = 0;
+						CardRowsListStore.AppendValues(rdr.GetInt64("id"),
+						                               rdr.GetInt32("nomenclature_id"),
+						                               rdr.GetString ("name"),
+						                               String.Format ("{0:d}", rdr.GetDateTime ("date")),
+						                               Quantity,
+						                               String.Format ("{0} %", rdr.GetDecimal("life_percent") * 100),
+						                               String.Format ("{0} %", Life),
+						                               (double) Life,
+						                               rdr.GetInt32("wear_card_id"),
+						                               String.Format("{0} {1}. {2}.", rdr["last_name"].ToString(), rdr["first_name"].ToString()[0], rdr["patronymic_name"].ToString()[0]),
+						                               rdr["unit"].ToString()
+						                               );
+					}
 				}
-				rdr.Close();
 				MainClass.StatusMessage("Ok");
 				buttonAddWorker.Sensitive = true;
 				return true;
@@ -268,7 +271,7 @@ namespace workwear
 			{
 				Console.WriteLine(ex.ToString());
 				MainClass.StatusMessage("Ошибка получения о выданной одежде!");
-				return false;
+				throw;
 			}
 		}
 
@@ -435,7 +438,7 @@ namespace workwear
 			{
 				Console.WriteLine(ex.ToString());
 				MainClass.StatusMessage("Ошибка записи строк списания!");
-				return false;
+				throw;
 			}
 		}
 
