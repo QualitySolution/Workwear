@@ -111,7 +111,7 @@ namespace workwear
 				if(NewItem)
 					Itemid = (int) cmd.LastInsertedId;
 
-				if(ItemsTable.SaveIncomeDetails(Itemid, trans))
+				if(ItemsTable.SaveExpenseDetails(Itemid, trans))
 					trans.Commit();
 				else
 					trans.Rollback();

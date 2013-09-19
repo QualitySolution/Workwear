@@ -304,7 +304,7 @@ namespace workwear
 				CanSaveStateChanged(this, EventArgs.Empty);
 		} 
 
-		public bool SaveIncomeDetails(int ExpenseDoc_id, MySqlTransaction trans)
+		public bool SaveExpenseDetails(int ExpenseDoc_id, MySqlTransaction trans)
 		{
 			string sql;
 			MySqlCommand cmd;
