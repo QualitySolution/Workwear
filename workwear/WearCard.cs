@@ -253,12 +253,26 @@ namespace workwear
 				MainClass.StatusMessage("Ok");
 				Respond (Gtk.ResponseType.Ok);
 			} 
-			catch (Exception ex) 
+			catch (MySqlException ex) 
 			{
 				trans.Rollback();
 				Console.WriteLine(ex.ToString());
 				MainClass.StatusMessage("Ошибка записи карточки!");
-				QSMain.ErrorMessage(this,ex);
+				if(ex.Number == 1153)
+				{
+					string Text = "Превышен максимальный размер пакета для передачи на сервер базы данных. " +
+						"Это значение настраивается на сервере, по умолчанию для MySQL оно равняется 1Мб. " +
+						"Максимальный размер фотографии поддерживаемый программой составляет 16Мб, мы рекомендуем " +
+						"установить в настройках сервера параметр <b>max_allowed_packet=16M</b>. Подробнее о настройке здесь " +
+						"http://dev.mysql.com/doc/refman/5.6/en/packet-too-large.html";
+					MessageDialog md = new MessageDialog( this, DialogFlags.Modal,
+					                                     MessageType.Error, 
+					                                     ButtonsType.Ok, Text);
+					md.Run ();
+					md.Destroy();
+				}
+				else
+					QSMain.ErrorMessage(this,ex);
 			}
 		}
 
