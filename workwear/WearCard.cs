@@ -55,22 +55,17 @@ namespace workwear
 
 			treeviewWear.AppendColumn ("Наименование", new Gtk.CellRendererText (), "text", 2);
 			treeviewWear.AppendColumn ("Дата", new Gtk.CellRendererText (), "text", 8);
-			treeviewWear.AppendColumn ("Кол-во", CellQuantityIn, "text", 5);
+			treeviewWear.AppendColumn ("Кол-во", CellQuantityIn, RenderQuantityInColumn);
 			treeviewWear.AppendColumn ("% годности", new Gtk.CellRendererText (), "text", 6);
-			treeviewWear.AppendColumn ("Стоимость", CellCost, "text", 9);
+			treeviewWear.AppendColumn ("Стоимость", CellCost, RenderCostColumn);
 			treeviewWear.AppendColumn ("№ТН", new Gtk.CellRendererText (), "text", 10);
 
 			treeviewWear.AppendColumn ("Дата", new Gtk.CellRendererText (), "text", 12);
-			treeviewWear.AppendColumn ("Кол-во", CellQuantityOut, "text", 13);
+			treeviewWear.AppendColumn ("Кол-во", CellQuantityOut, RenderQuantityOutColumn);
 			treeviewWear.AppendColumn ("% годности", new Gtk.CellRendererText (), "text", 15);
-
-			treeviewWear.Columns[2].SetCellDataFunc(CellQuantityIn, RenderQuantityInColumn);
-			treeviewWear.Columns[4].SetCellDataFunc(CellCost, RenderCostColumn);
-			treeviewWear.Columns[7].SetCellDataFunc(CellQuantityOut, RenderQuantityOutColumn);
 
 			treeviewWear.Model = ItemsListStore;
 			treeviewWear.ShowAll();
-
 		}
 		
 		public void Fill(int id)
@@ -492,15 +487,15 @@ namespace workwear
 					{
 						ItemsListStore.AppendValues(rdr.GetInt64("idin"),
 						                            rdr.GetInt32("nomenclature_id"),
-						                            String.Empty,
-						                            String.Empty,
-						                            String.Empty,
+						                            string.Empty,
+						                            string.Empty,
+						                            string.Empty,
 						                            -1,
-						                            String.Empty,
+						                            string.Empty,
 						                            rdr["unit"].ToString(),
-						                            String.Empty,
-						                            -1,
-						                            String.Empty,
+						                            string.Empty,
+						                            -1m,
+						                            string.Empty,
 						                            OutRowId,
 						                            DateOut,
 						                            DBWorks.GetInt(rdr, "count", 0),
@@ -512,12 +507,12 @@ namespace workwear
 					ItemsListStore.AppendValues(rdr.GetInt64("idin"),
 					                            rdr.GetInt32("nomenclature_id"),
 					                            rdr.GetString ("name"),
-					                            String.Empty,
-					                            String.Empty,
+						                        string.Empty,
+						                        string.Empty,
 					                            rdr.GetInt32("quantityin"),
-					                            String.Format ("{0:P0}", rdr.GetDecimal("lifein")),
+						                        String.Format ("{0:P0}", rdr.GetDecimal("lifein")),
 					                            rdr["unit"].ToString(),
-					                            String.Format ("{0:d}", rdr.GetDateTime ("datein")),
+						                        String.Format ("{0:d}", rdr.GetDateTime ("datein")),
 					                            DBWorks.GetDecimal(rdr, "cost", -1),
 					                            rdr["tnnumber"].ToString(),
 					                            OutRowId,

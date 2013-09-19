@@ -56,7 +56,8 @@ namespace workwear
 			                                    typeof (int), //2 nomenclature id
 			                                    typeof (string),//3 nomenclature name
 			                                    typeof (int), //4 quantity
-			                                    typeof (double) // 5 life
+			                                    typeof (double), // 5 life
+			                                    typeof (double) // 6 cost
 			                                    );
 
 			Gtk.TreeViewColumn QuantityColumn = new Gtk.TreeViewColumn ();
@@ -67,6 +68,16 @@ namespace workwear
 			CellQuantity.Adjustment = adjQuantity;
 			CellQuantity.Edited += OnQuantitySpinEdited;
 			QuantityColumn.PackStart (CellQuantity, true);
+
+			Gtk.TreeViewColumn CostColumn = new Gtk.TreeViewColumn ();
+			CostColumn.Title = "Стоимость";
+			Gtk.CellRendererSpin CellCost = new CellRendererSpin();
+			CellCost.Editable = true;
+			CellCost.Digits = 2;
+			Adjustment adjCost = new Adjustment(0,0,100000000,100,1000,0);
+			CellCost.Adjustment = adjCost;
+			CellCost.Edited += OnCostSpinEdited;
+			CostColumn.PackStart (CellCost, true);
 
 			Gtk.TreeViewColumn LifeColumn = new Gtk.TreeViewColumn ();
 			LifeColumn.Title = "% годности";
@@ -79,12 +90,12 @@ namespace workwear
 
 			treeviewItems.AppendColumn ("Наименование", new Gtk.CellRendererText (), "text", 3);
 			treeviewItems.AppendColumn (QuantityColumn);
-			QuantityColumn.AddAttribute (CellQuantity, "text" , 4);
 			treeviewItems.AppendColumn (LifeColumn);
-			LifeColumn.AddAttribute (CellLife, "text" , 5);
+			treeviewItems.AppendColumn (CostColumn);
 
 			QuantityColumn.SetCellDataFunc (CellQuantity, RenderQuantityColumn);
 			LifeColumn.SetCellDataFunc (CellLife, RenderLifeColumn);
+			CostColumn.SetCellDataFunc (CellCost, RenderCostColumn);
 
 			treeviewItems.Model = ItemsListStore;
 			treeviewItems.ShowAll();
@@ -110,7 +121,7 @@ namespace workwear
 			                                  typeof(string) // 10 - units
 			);
 			CardRowsFilter = new TreeModelFilter( CardRowsListStore, null);
-			CardRowsFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeAccrualRows);
+			CardRowsFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeCardRows);
 
 			MainClass.StatusMessage("Запрос спецодежды по работнику...");
 			try
@@ -179,7 +190,7 @@ namespace workwear
 			{
 				string sql = "SELECT stock_income_detail.id, stock_income_detail.stock_expense_detail_id, " +
 					"stock_income_detail.nomenclature_id, nomenclature.name, stock_income_detail.quantity, " +
-					"stock_income_detail.life_percent " +
+					"stock_income_detail.life_percent, stock_income_detail.cost " +
 					"FROM stock_income_detail " +
 					"LEFT JOIN nomenclature ON nomenclature.id = stock_income_detail.nomenclature_id " +
 					"WHERE stock_income_detail.stock_income_id = @id";
@@ -200,7 +211,8 @@ namespace workwear
 					                              rdr.GetInt32 ("nomenclature_id"),
 					                              rdr["name"].ToString(),
 					                              rdr.GetInt32("quantity"),
-					                              rdr.GetDouble("life_percent") * 100
+					                              rdr.GetDouble("life_percent") * 100,
+					                            rdr.GetDouble("cost")
 					                              );
 				}
 				rdr.Close();
@@ -215,7 +227,7 @@ namespace workwear
 			}
 		}
 
-		private bool FilterTreeAccrualRows (Gtk.TreeModel model, Gtk.TreeIter iter)
+		private bool FilterTreeCardRows (Gtk.TreeModel model, Gtk.TreeIter iter)
 		{
 			if(model.GetValue (iter, 0) == null)
 				return false;
@@ -244,7 +256,8 @@ namespace workwear
 					                            CardRowsFilter.GetValue(iter, 1),
 					                            CardRowsFilter.GetValue(iter, 2),
 					                            CardRowsFilter.GetValue(iter, 4),
-					                            CardRowsFilter.GetValue(iter, 7));
+					                            CardRowsFilter.GetValue(iter, 7),
+					                            0.0);
 					CardRowsFilter.Refilter();
 				}
 			}
@@ -264,7 +277,8 @@ namespace workwear
 					                            NomenclatureSelect.SelectedID,
 					                            NomenclatureSelect.SelectedName,
 					                            1,
-					                            100.0);
+					                            100.0,
+					                            0.0);
 				}
 				NomenclatureSelect.Destroy();
 			}
@@ -279,6 +293,19 @@ namespace workwear
 			if (int.TryParse (args.NewText, out Quantity)) 
 			{
 				ItemsListStore.SetValue (iter, 4, Quantity);
+				CalculateTotal ();
+			}
+		}
+
+		void OnCostSpinEdited (object o, EditedArgs args)
+		{
+			TreeIter iter;
+			if (!ItemsListStore.GetIterFromString (out iter, args.Path))
+				return;
+			double Cost;
+			if (double.TryParse (args.NewText, out Cost)) 
+			{
+				ItemsListStore.SetValue (iter, 6, Cost);
 				CalculateTotal ();
 			}
 		}
@@ -298,7 +325,13 @@ namespace workwear
 		private void RenderQuantityColumn (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
 		{
 			int Quantity = (int) model.GetValue (iter, 4);
-			(cell as Gtk.CellRendererText).Text = String.Format("{0}", Quantity);
+			(cell as Gtk.CellRendererSpin).Text = String.Format("{0}", Quantity);
+		}
+
+		private void RenderCostColumn (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
+		{
+			double Cost = (double) model.GetValue (iter, 6);
+			(cell as Gtk.CellRendererSpin).Text = String.Format("{0:0.00}", Cost); //Установить отображение денежных знаков не получилось значение портится при повторном редактировании.
 		}
 
 		private void RenderLifeColumn (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
@@ -348,10 +381,10 @@ namespace workwear
 				{
 					if((long)row[0] > 0)
 						sql = "UPDATE stock_income_detail SET stock_income_id = @stock_income_id, nomenclature_id = @nomenclature_id, " +
-							"quantity = @quantity, life_percent = @life_percent, stock_expense_detail_id = @stock_expense_detail_id WHERE id = @id";
+							"quantity = @quantity, life_percent = @life_percent, cost = @cost, stock_expense_detail_id = @stock_expense_detail_id WHERE id = @id";
 					else
-						sql = "INSERT INTO stock_income_detail(stock_income_id, nomenclature_id, quantity, life_percent, stock_expense_detail_id)" +
-							"VALUES (@stock_income_id, @nomenclature_id, @quantity, @life_percent, @stock_expense_detail_id)";
+						sql = "INSERT INTO stock_income_detail(stock_income_id, nomenclature_id, quantity, life_percent, cost, stock_expense_detail_id)" +
+							"VALUES (@stock_income_id, @nomenclature_id, @quantity, @life_percent, @cost, @stock_expense_detail_id)";
 
 					cmd = new MySqlCommand(sql, QSMain.connectionDB, trans);
 					cmd.Parameters.AddWithValue("@id", row[0]);
@@ -359,6 +392,7 @@ namespace workwear
 					cmd.Parameters.AddWithValue("@nomenclature_id", row[2]);
 					cmd.Parameters.AddWithValue("@quantity", row[4]);
 					cmd.Parameters.AddWithValue("@life_percent", (double)row[5]/100.0);
+					cmd.Parameters.AddWithValue("@cost", row[6]);
 					if((long)row[1] > 0)
 						cmd.Parameters.AddWithValue("@stock_expense_detail_id", row[1]);
 					else
@@ -382,6 +416,7 @@ namespace workwear
 			{
 				Console.WriteLine(ex.ToString());
 				MainClass.StatusMessage("Ошибка записи строк прихода!");
+				throw;
 				return false;
 			}
 		}

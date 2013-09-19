@@ -68,9 +68,7 @@ namespace workwear
 
 			treeviewItems.AppendColumn ("Наименование", new Gtk.CellRendererText (), "text", 3);
 			treeviewItems.AppendColumn (QuantityColumn);
-			QuantityColumn.AddAttribute (CellQuantity, "text" , 4);
 			treeviewItems.AppendColumn (LifeColumn);
-			LifeColumn.AddAttribute (CellLife, "text" , 5);
 
 			QuantityColumn.SetCellDataFunc (CellQuantity, RenderQuantityColumn);
 			LifeColumn.SetCellDataFunc (CellLife, RenderLifeColumn);
