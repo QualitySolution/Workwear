@@ -469,7 +469,13 @@ namespace workwear
 					"LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id " +
 					"WHERE stock_expense.wear_card_id = @id ";
 				if(!checkShowHistory.Active)
-					sql += " AND (spent.count IS NULL OR spent.count < stock_expense_detail.quantity)";
+					sql += " AND (spent.count IS NULL OR stock_expense_detail.quantity > (" +
+						"SELECT SUM(count) as count FROM " +
+						"(SELECT stock_income_detail.stock_expense_detail_id as id, stock_income_detail.quantity as count FROM stock_income_detail WHERE stock_expense_detail_id IS NOT NULL " +
+						"UNION ALL " +
+						"SELECT stock_write_off_detail.stock_expense_detail_id as id, stock_write_off_detail.quantity as count FROM stock_write_off_detail WHERE stock_expense_detail_id IS NOT NULL) as table1 " +
+						"WHERE stock_expense_detail.id = table1.id " +
+						"GROUP BY id) )";
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@id", Itemid);
 				MySqlDataReader rdr = cmd.ExecuteReader();
