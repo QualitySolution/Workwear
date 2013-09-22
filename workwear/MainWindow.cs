@@ -94,7 +94,7 @@ public partial class MainWindow: Gtk.Window
 		QSMain.User.ChangeUserPassword (this);
 	}
 	
-	protected void OnAction10Activated(object sender, EventArgs e)
+	protected void OnUsersActionActivated(object sender, EventArgs e)
 	{
 		Users winUsers = new Users();
 		winUsers.Show();
@@ -422,4 +422,23 @@ public partial class MainWindow: Gtk.Window
 	{
 		buttonRefresh.Click();
 	}
+
+	protected void OnAction11Activated(object sender, EventArgs e)
+	{
+		ViewReportExt.Run("StockAllWear", "");
+	}
+	
+	protected void OnAction10Activated(object sender, EventArgs e)
+	{
+		WearStatement WinStat = new WearStatement();
+		WinStat.Show();
+		WinStat.Run();
+		WinStat.Destroy();
+	}
+
+	protected void OnAction12Activated(object sender, EventArgs e)
+	{
+		ViewReportExt.Run("ListBySize", "", true);
+	}
+
 }

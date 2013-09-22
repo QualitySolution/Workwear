@@ -152,6 +152,7 @@ namespace workwear
 				buttonGiveWear.Sensitive = true;
 				buttonReturnWear.Sensitive = true;
 				buttonWriteOffWear.Sensitive = true;
+				buttonPrint.Sensitive = true;
 				this.Title = entryLastName.Text + " " + entryFirstName.Text;
 			}
 			catch (Exception ex)
@@ -468,7 +469,7 @@ namespace workwear
 					"LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id " +
 					"WHERE stock_expense.wear_card_id = @id ";
 				if(!checkShowHistory.Active)
-					sql += " AND (spent.count IS NULL OR spent.count < stock_expense_detail.quantity )";
+					sql += " AND (spent.count IS NULL OR spent.count < stock_expense_detail.quantity)";
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@id", Itemid);
 				MySqlDataReader rdr = cmd.ExecuteReader();
@@ -590,6 +591,12 @@ namespace workwear
 			winWriteOff.Run();
 			winWriteOff.Destroy();
 			UpdateWear();
+		}
+
+		protected void OnButtonPrintClicked(object sender, EventArgs e)
+		{
+			string param = String.Format("id={0}", Itemid) ;
+			ViewReportExt.Run("WearCard", param);
 		}
 
 	}

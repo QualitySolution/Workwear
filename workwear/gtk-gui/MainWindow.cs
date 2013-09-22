@@ -16,6 +16,9 @@ public partial class MainWindow
 	private global::Gtk.Action Action8;
 	private global::Gtk.Action Action9;
 	private global::Gtk.Action aboutAction;
+	private global::Gtk.Action Action10;
+	private global::Gtk.Action Action11;
+	private global::Gtk.Action Action12;
 	private global::Gtk.VBox vbox1;
 	private global::Gtk.MenuBar menubar1;
 	private global::Gtk.Notebook notebookMain;
@@ -104,6 +107,15 @@ public partial class MainWindow
 		this.aboutAction = new global::Gtk.Action ("aboutAction", global::Mono.Unix.Catalog.GetString ("_О программе"), null, "gtk-about");
 		this.aboutAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("_О программе");
 		w1.Add (this.aboutAction, null);
+		this.Action10 = new global::Gtk.Action ("Action10", global::Mono.Unix.Catalog.GetString ("Сводная ведомость"), null, null);
+		this.Action10.ShortLabel = global::Mono.Unix.Catalog.GetString ("Сводная ведомость");
+		w1.Add (this.Action10, null);
+		this.Action11 = new global::Gtk.Action ("Action11", global::Mono.Unix.Catalog.GetString ("Складская ведомость"), null, null);
+		this.Action11.ShortLabel = global::Mono.Unix.Catalog.GetString ("Складская ведомость");
+		w1.Add (this.Action11, null);
+		this.Action12 = new global::Gtk.Action ("Action12", global::Mono.Unix.Catalog.GetString ("Список по размерам"), null, null);
+		this.Action12.ShortLabel = global::Mono.Unix.Catalog.GetString ("Список по размерам");
+		w1.Add (this.Action12, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -115,7 +127,7 @@ public partial class MainWindow
 		this.vbox1.Name = "vbox1";
 		this.vbox1.Spacing = 6;
 		// Container child vbox1.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='Action' action='Action'><menuitem name='dialogAuthenticationAction' action='dialogAuthenticationAction'/><menuitem name='UsersAction' action='UsersAction'/><separator/><menuitem name='quitAction' action='quitAction'/></menu><menu name='Action1' action='Action1'><menuitem name='Action5' action='Action5'/><menuitem name='Action6' action='Action6'/><separator/><menuitem name='Action7' action='Action7'/><separator/><menuitem name='Action8' action='Action8'/><menuitem name='Action9' action='Action9'/></menu><menu name='Action2' action='Action2'/><menu name='Action3' action='Action3'><menuitem name='aboutAction' action='aboutAction'/></menu></menubar></ui>");
+		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='Action' action='Action'><menuitem name='dialogAuthenticationAction' action='dialogAuthenticationAction'/><menuitem name='UsersAction' action='UsersAction'/><separator/><menuitem name='quitAction' action='quitAction'/></menu><menu name='Action1' action='Action1'><menuitem name='Action5' action='Action5'/><menuitem name='Action6' action='Action6'/><separator/><menuitem name='Action7' action='Action7'/><separator/><menuitem name='Action8' action='Action8'/><menuitem name='Action9' action='Action9'/></menu><menu name='Action2' action='Action2'><menuitem name='Action10' action='Action10'/><menuitem name='Action11' action='Action11'/><separator/><menuitem name='Action12' action='Action12'/></menu><menu name='Action3' action='Action3'><menuitem name='aboutAction' action='aboutAction'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add (this.menubar1);
@@ -552,7 +564,7 @@ public partial class MainWindow
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
 		this.dialogAuthenticationAction.Activated += new global::System.EventHandler (this.OnDialogAuthenticationActionActivated);
-		this.UsersAction.Activated += new global::System.EventHandler (this.OnAction10Activated);
+		this.UsersAction.Activated += new global::System.EventHandler (this.OnUsersActionActivated);
 		this.quitAction.Activated += new global::System.EventHandler (this.OnQuitActionActivated);
 		this.Action5.Activated += new global::System.EventHandler (this.OnAction5Activated);
 		this.Action6.Activated += new global::System.EventHandler (this.OnAction6Activated);
@@ -560,6 +572,9 @@ public partial class MainWindow
 		this.Action8.Activated += new global::System.EventHandler (this.OnAction8Activated);
 		this.Action9.Activated += new global::System.EventHandler (this.OnAction9Activated);
 		this.aboutAction.Activated += new global::System.EventHandler (this.OnAboutActionActivated);
+		this.Action10.Activated += new global::System.EventHandler (this.OnAction10Activated);
+		this.Action11.Activated += new global::System.EventHandler (this.OnAction11Activated);
+		this.Action12.Activated += new global::System.EventHandler (this.OnAction12Activated);
 		this.notebookMain.SwitchPage += new global::Gtk.SwitchPageHandler (this.OnNotebookMainSwitchPage);
 		this.entryObjectSearch.Changed += new global::System.EventHandler (this.OnEntryObjectSearchChanged);
 		this.buttonObjectSearchClean.Clicked += new global::System.EventHandler (this.OnButtonObjectSearchCleanClicked);
