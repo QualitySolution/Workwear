@@ -475,10 +475,10 @@ namespace workwear
 				                            CardRowsFilter.GetValue(iter, 9),
 				                            CardRowsFilter.GetValue(iter, 4),
 				                            CardRowsFilter.GetValue(iter, 10));
+				CardRowsWorkerId = -1;
 				CardRowsFilter.Refilter();
 				CalculateTotal();
 			}
-
 		}
 	}
 }
