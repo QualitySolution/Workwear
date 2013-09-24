@@ -57,7 +57,8 @@ namespace workwear
 			                                    typeof (string),//3 nomenclature name
 			                                    typeof (int), //4 quantity
 			                                    typeof (double), // 5 life
-			                                    typeof (double) // 6 cost
+			                                    typeof (double), // 6 cost
+			                                    typeof (string) // 7 units
 			                                    );
 
 			Gtk.TreeViewColumn QuantityColumn = new Gtk.TreeViewColumn ();
@@ -192,9 +193,10 @@ namespace workwear
 			{
 				string sql = "SELECT stock_income_detail.id, stock_income_detail.stock_expense_detail_id, " +
 					"stock_income_detail.nomenclature_id, nomenclature.name, stock_income_detail.quantity, " +
-					"stock_income_detail.life_percent, stock_income_detail.cost " +
+					"stock_income_detail.life_percent, stock_income_detail.cost, units.name as unit " +
 					"FROM stock_income_detail " +
 					"LEFT JOIN nomenclature ON nomenclature.id = stock_income_detail.nomenclature_id " +
+					"LEFT JOIN units ON units.id = nomenclature.units_id " +
 					"WHERE stock_income_detail.stock_income_id = @id";
 
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
@@ -214,8 +216,9 @@ namespace workwear
 						                              rdr["name"].ToString(),
 						                              rdr.GetInt32("quantity"),
 						                              rdr.GetDouble("life_percent") * 100,
-						                            rdr.GetDouble("cost")
-						                              );
+						                            rdr.GetDouble("cost"),
+						                            rdr["unit"].ToString()
+						                            );
 					}
 				}
 
@@ -260,7 +263,9 @@ namespace workwear
 					                            CardRowsFilter.GetValue(iter, 2),
 					                            CardRowsFilter.GetValue(iter, 4),
 					                            CardRowsFilter.GetValue(iter, 7),
-					                            0.0);
+					                            0.0,
+					                            CardRowsFilter.GetValue(iter, 10)
+					                            );
 					CardRowsFilter.Refilter();
 					CalculateTotal();
 				}
@@ -282,7 +287,8 @@ namespace workwear
 					                            NomenclatureSelect.SelectedName,
 					                            1,
 					                            100.0,
-					                            0.0);
+					                            0.0,
+					                            "");
 					CalculateTotal();
 				}
 				NomenclatureSelect.Destroy();
@@ -330,7 +336,8 @@ namespace workwear
 		private void RenderQuantityColumn (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
 		{
 			int Quantity = (int) model.GetValue (iter, 4);
-			(cell as Gtk.CellRendererSpin).Text = String.Format("{0}", Quantity);
+			string units = (string) model.GetValue (iter, 7);
+			(cell as Gtk.CellRendererSpin).Text = String.Format("{0} {1}", Quantity, units);
 		}
 
 		private void RenderCostColumn (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
