@@ -43,7 +43,10 @@ namespace workwear
 					if(rdr["wear_card_id"] != DBNull.Value)
 					{
 						Worker_id = rdr.GetInt32("wear_card_id");
-						entryWorker.Text = String.Format("{0} {1}. {2}.", rdr["last_name"].ToString(), rdr["first_name"].ToString()[0], rdr["patronymic_name"].ToString()[0]);
+						if(rdr["first_name"].ToString() == "" || rdr["patronymic_name"].ToString() == "")
+							entryWorker.Text = String.Format("{0} {1} {2}", rdr["last_name"].ToString(), rdr["first_name"].ToString(), rdr["patronymic_name"].ToString());
+						else
+							entryWorker.Text = String.Format("{0} {1}. {2}.", rdr["last_name"].ToString(), rdr["first_name"].ToString()[0], rdr["patronymic_name"].ToString()[0]);
 						entryWorker.TooltipText = String.Format("{0} {1} {2}", rdr["last_name"].ToString(), rdr["first_name"].ToString(), rdr["patronymic_name"].ToString());
 					}
 					else
@@ -152,8 +155,12 @@ namespace workwear
 		public void SetWorker(int id, string name)
 		{
 			Worker_id = id;
+			name = name.Trim();
 			string[] Parts = name.Split(new char[] {' '});
-			entryWorker.Text = String.Format("{0} {1}. {2}.", Parts[0], Parts[1][0], Parts[2][0]);
+			if(Parts.Length == 3)
+				entryWorker.Text = String.Format("{0} {1}. {2}.", Parts[0], Parts[1][0], Parts[2][0]);
+			else
+				entryWorker.Text = String.Format("{0}", name);
 			entryWorker.TooltipText = name;
 			ItemsTable.WorkerId = Worker_id;
 		}

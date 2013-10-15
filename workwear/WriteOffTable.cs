@@ -169,7 +169,12 @@ namespace workwear
 						if(rdr["stock_income_detail_id"] != DBNull.Value)
 							FromName = "склад";
 						else if (rdr["stock_expense_detail_id"] != DBNull.Value)
-							FromName = String.Format("{0} {1}. {2}.", rdr["last_name"].ToString(), rdr["first_name"].ToString()[0], rdr["patronymic_name"].ToString()[0]);
+						{
+							if(rdr["first_name"].ToString() == "" || rdr["patronymic_name"].ToString() == "")
+								FromName = String.Format("{0} {1} {2}", rdr["last_name"].ToString(), rdr["first_name"].ToString(), rdr["patronymic_name"].ToString());
+							else
+								FromName = String.Format("{0} {1}. {2}.", rdr["last_name"].ToString(), rdr["first_name"].ToString()[0], rdr["patronymic_name"].ToString()[0]);
+						}
 						else 
 							FromName = String.Empty;
 						ItemsListStore.AppendValues(rdr.GetInt64("id"),
@@ -237,6 +242,7 @@ namespace workwear
 					while (rdr.Read())
 					{
 						int Quantity, Life;
+						string WorkerName;
 						if(rdr["count"] == DBNull.Value)
 							Quantity = rdr.GetInt32("quantity");
 						else
@@ -249,6 +255,10 @@ namespace workwear
 							Life = (int) (rdr.GetDecimal("life_percent") * 100);
 						if(Life < 0) 
 							Life = 0;
+						if(rdr["first_name"].ToString() == "" || rdr["patronymic_name"].ToString() == "")
+							WorkerName = String.Format("{0} {1} {2}", rdr["last_name"].ToString(), rdr["first_name"].ToString(), rdr["patronymic_name"].ToString());
+						else
+							WorkerName = String.Format("{0} {1}. {2}.", rdr["last_name"].ToString(), rdr["first_name"].ToString()[0], rdr["patronymic_name"].ToString()[0]);
 						CardRowsListStore.AppendValues(rdr.GetInt64("id"),
 						                               rdr.GetInt32("nomenclature_id"),
 						                               rdr.GetString ("name"),
@@ -258,7 +268,7 @@ namespace workwear
 						                               String.Format ("{0} %", Life),
 						                               (double) Life,
 						                               rdr.GetInt32("wear_card_id"),
-						                               String.Format("{0} {1}. {2}.", rdr["last_name"].ToString(), rdr["first_name"].ToString()[0], rdr["patronymic_name"].ToString()[0]),
+						                               WorkerName,
 						                               rdr["unit"].ToString()
 						                               );
 					}
