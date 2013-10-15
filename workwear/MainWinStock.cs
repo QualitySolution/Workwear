@@ -197,7 +197,7 @@ public partial class MainWindow : Gtk.Window
 
 	private bool FilterTreeIncome (Gtk.TreeModel model, Gtk.TreeIter iter)
 	{
-		if (entryCardsSearch.Text == "")
+	/*	if (entryCardsSearch.Text == "")
 			return true;
 		bool filterName = true;
 		//bool filterAddress = true;
@@ -211,7 +211,8 @@ public partial class MainWindow : Gtk.Window
 			cellvalue  = model.GetValue (iter, 1).ToString();
 			filterName = cellvalue.IndexOf (entryCardsSearch.Text, StringComparison.CurrentCultureIgnoreCase) > -1;
 		}
-		return (filterName);
+		return (filterName); */
+		return true;
 	}
 
 	protected void OnTreeviewIncomeRowActivated(object o, RowActivatedArgs args)
