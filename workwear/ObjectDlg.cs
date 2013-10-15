@@ -33,7 +33,7 @@ namespace workwear
 
 					labelID.Text = rdr["id"].ToString();
 					entryName.Text = rdr["name"].ToString();
-					entryAddress.Text = rdr.GetString("address");
+					textviewAddress.Buffer.Text = rdr.GetString("address");
 
 					MainClass.StatusMessage("Ok");
 				}
@@ -74,7 +74,7 @@ namespace workwear
 
 				cmd.Parameters.AddWithValue("@id", Itemid);
 				cmd.Parameters.AddWithValue("@name", entryName.Text);
-				cmd.Parameters.AddWithValue("@address", entryAddress.Text);
+				cmd.Parameters.AddWithValue("@address", textviewAddress.Buffer.Text);
 
 				cmd.ExecuteNonQuery();
 				MainClass.StatusMessage("Ok");
