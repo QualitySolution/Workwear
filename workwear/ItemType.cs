@@ -35,6 +35,7 @@ namespace workwear
 					entryName.Text = rdr["name"].ToString();
 					spinQuantity.Value = rdr.GetDouble("norm_quantity");
 					spinLife.Value = rdr.GetDouble("norm_life");
+					comboCategory.Active = DBWorks.GetInt(rdr, "category", -1);
 					
 					MainClass.StatusMessage("Ok");
 				}
@@ -53,7 +54,8 @@ namespace workwear
 		protected	void TestCanSave ()
 		{
 			bool Nameok = entryName.Text != "";
-			buttonOk.Sensitive = Nameok;
+			bool CategoryOk = comboCategory.Active >= 0;
+			buttonOk.Sensitive = Nameok && CategoryOk;
 		}
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
@@ -61,12 +63,12 @@ namespace workwear
 			string sql;
 			if(NewItem)
 			{
-				sql = "INSERT INTO item_types (name, norm_quantity, norm_life) " +
-					"VALUES (@name, @norm_quantity, @norm_life)";
+				sql = "INSERT INTO item_types (name, category, norm_quantity, norm_life) " +
+					"VALUES (@name, @category, @norm_quantity, @norm_life)";
 			}
 			else
 			{
-				sql = "UPDATE item_types SET name = @name, norm_quantity = @norm_quantity, norm_life = @norm_life WHERE id = @id";
+				sql = "UPDATE item_types SET name = @name, category = @category, norm_quantity = @norm_quantity, norm_life = @norm_life WHERE id = @id";
 			}
 			MainClass.StatusMessage("Запись тип номенклатуры...");
 			try 
@@ -77,6 +79,14 @@ namespace workwear
 				cmd.Parameters.AddWithValue("@name", entryName.Text);
 				cmd.Parameters.AddWithValue("@norm_quantity", spinQuantity.Value);
 				cmd.Parameters.AddWithValue("@norm_life", spinLife.Value);
+				switch (comboCategory.Active) {
+					case 0:
+						cmd.Parameters.AddWithValue("@category", "wear");
+						break;
+					case 1:
+						cmd.Parameters.AddWithValue("@category", "property");
+						break;
+				}
 				
 				cmd.ExecuteNonQuery();
 				MainClass.StatusMessage("Ok");
@@ -91,6 +101,11 @@ namespace workwear
 		}
 
 		protected void OnEntryNameChanged(object sender, EventArgs e)
+		{
+			TestCanSave();
+		}
+
+		protected void OnComboCategoryChanged(object sender, EventArgs e)
 		{
 			TestCanSave();
 		}
