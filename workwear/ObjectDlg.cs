@@ -37,6 +37,7 @@ namespace workwear
 
 					MainClass.StatusMessage("Ok");
 				}
+				buttonPlacement.Sensitive = true;
 				this.Title = entryName.Text;
 			}
 			catch (Exception ex)
@@ -93,6 +94,18 @@ namespace workwear
 			TestCanSave();
 		}
 
+		protected void OnButtonPlacementClicked(object sender, EventArgs e)
+		{
+			Reference WinPlacement = new Reference(false);
+			WinPlacement.ParentFieldName = "object_id";
+			WinPlacement.ParentId = Itemid;
+			WinPlacement.SqlSelect = "SELECT id, name FROM @tablename WHERE object_id = " + Itemid.ToString();
+			WinPlacement.SetMode(true, false, true, true, true);
+			WinPlacement.FillList("object_places", "размещение", "Размещения объекта");
+			WinPlacement.Show();
+			WinPlacement.Run();
+			WinPlacement.Destroy();
+		}
 	}
 }
 
