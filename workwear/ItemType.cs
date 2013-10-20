@@ -33,8 +33,8 @@ namespace workwear
 					
 					labelId.Text = rdr["id"].ToString();
 					entryName.Text = rdr["name"].ToString();
-					spinQuantity.Value = rdr.GetDouble("norm_quantity");
-					spinLife.Value = rdr.GetDouble("norm_life");
+					spinQuantity.Value = DBWorks.GetDouble(rdr, "norm_quantity", 0);
+					spinLife.Value = DBWorks.GetDouble(rdr, "norm_life", 0);
 					switch (DBWorks.GetString(rdr, "category", "")) {
 						case "wear":
 							comboCategory.Active = 0;
@@ -83,8 +83,8 @@ namespace workwear
 				
 				cmd.Parameters.AddWithValue("@id", Itemid);
 				cmd.Parameters.AddWithValue("@name", entryName.Text);
-				cmd.Parameters.AddWithValue("@norm_quantity", spinQuantity.Value);
-				cmd.Parameters.AddWithValue("@norm_life", spinLife.Value);
+				cmd.Parameters.AddWithValue("@norm_quantity", DBWorks.ValueOrNull(spinQuantity.Value > 0,  spinQuantity.Value));
+				cmd.Parameters.AddWithValue("@norm_life", DBWorks.ValueOrNull(spinLife.Value > 0, spinLife.Value));
 				switch (comboCategory.Active) {
 					case 0:
 						cmd.Parameters.AddWithValue("@category", "wear");
