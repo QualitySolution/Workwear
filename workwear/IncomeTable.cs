@@ -9,11 +9,11 @@ namespace workwear
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class IncomeTable : Gtk.Bin
 	{
-		private int _WorkerId, _IncomeDocId;
+		private int _WorkerId, _ObjectId, _IncomeDocId;
 		private IncomeDoc.Operations _Operation;
 		private bool _CanSave = false;
-		private Gtk.ListStore ItemsListStore, CardRowsListStore;
-		TreeModelFilter CardRowsFilter;
+		private Gtk.ListStore ItemsListStore, CardRowsListStore, PropertyListStore;
+		TreeModelFilter CardRowsFilter, PropertyFilter;
 		private List<long> DeletedRowId = new List<long>();
 
 		public event EventHandler CanSaveStateChanged;
@@ -30,10 +30,19 @@ namespace workwear
 				FillCardRowsList ();}
 		}
 
+		public int ObjectId {
+			get {return _ObjectId;}
+			set {_ObjectId = value;
+
+				FillObjectPropertyList ();
+			}
+		}
+
 		public IncomeDoc.Operations Operation {
 			get {return _Operation;}
 			set {
-				buttonAdd.Sensitive = !(WorkerId <= 0  && value == IncomeDoc.Operations.Return);
+				buttonAdd.Sensitive = (WorkerId > 0  && value == IncomeDoc.Operations.Return) || 
+					(ObjectId > 0 && value == IncomeDoc.Operations.Object) || value == IncomeDoc.Operations.Enter;
 
 				if (_Operation == value)
 					return;
@@ -186,6 +195,87 @@ namespace workwear
 			}
 		}
 
+		private bool FillObjectPropertyList()
+		{
+			if(_ObjectId <= 0)
+				return false;
+			PropertyListStore = new ListStore(typeof(long), // 0 - ID expense row
+			                                  typeof(int), //1 - nomenclature id
+			                                  typeof(string), //2 - nomenclature name
+			                                  typeof(string), //3 - date
+			                                  typeof(int), //4 - quantity
+			                                  typeof(string), // 5 - % of life
+			                                  typeof(string), // 6 - today % of life
+			                                  typeof(double), // 7 - today % of life
+			                                  typeof(int), // 8 - object id
+			                                  typeof(string), // 9 - object name
+			                                  typeof(string) // 10 - units
+			                                  );
+			PropertyFilter = new TreeModelFilter( PropertyListStore, null);
+			PropertyFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeProperty);
+
+			MainClass.StatusMessage("Запрос имужества по объекту...");
+			try
+			{
+				string sql = "SELECT stock_expense_detail.id, stock_expense_detail.nomenclature_id, stock_expense_detail.quantity,\n" +
+					"nomenclature.name, stock_expense.date, stock_income_detail.life_percent, spent.count, item_types.norm_life, units.name as unit " +
+						"FROM stock_expense_detail \n" +
+						"LEFT JOIN (\nSELECT id, SUM(count) as count FROM \n" +
+						"(SELECT stock_income_detail.stock_expense_detail_id as id, stock_income_detail.quantity as count FROM stock_income_detail WHERE stock_expense_detail_id IS NOT NULL AND stock_income_id <> @current_income\n" +
+						"UNION ALL\n" +
+						"SELECT stock_write_off_detail.stock_expense_detail_id as id, stock_write_off_detail.quantity as count FROM stock_write_off_detail WHERE stock_expense_detail_id IS NOT NULL) as table1\n" +
+						"GROUP BY id) as spent ON spent.id = stock_expense_detail.id \n" +
+						"LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id " +
+						"LEFT JOIN item_types ON nomenclature.type_id = item_types.id " +
+						"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id \n" +
+						"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
+						"LEFT JOIN units ON nomenclature.units_id = units.id " +
+						"WHERE stock_expense.object_id = @id AND (spent.count IS NULL OR spent.count < stock_expense_detail.quantity )";
+				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
+				cmd.Parameters.AddWithValue ("@id", _ObjectId);
+				cmd.Parameters.AddWithValue ("@current_income", _IncomeDocId);
+				using( MySqlDataReader rdr = cmd.ExecuteReader())
+				{
+					while (rdr.Read())
+					{
+						int Quantity, Life;
+						if(rdr["count"] == DBNull.Value)
+							Quantity = rdr.GetInt32("quantity");
+						else
+							Quantity = rdr.GetInt32("quantity") - rdr.GetInt32("count");
+						double MonthUsing = ((DateTime.Today - rdr.GetDateTime ("date")).TotalDays / 365) * 12;
+						if(rdr["norm_life"] != DBNull.Value)
+							Life = (int) (rdr.GetDecimal("life_percent") * 100) - (int) (MonthUsing / rdr.GetInt32("norm_life") * 100);
+						else
+							Life = (int) (rdr.GetDecimal("life_percent") * 100);
+						if(Life < 0) 
+							Life = 0;
+						PropertyListStore.AppendValues(rdr.GetInt64("id"),
+						                               rdr.GetInt32("nomenclature_id"),
+						                               rdr.GetString ("name"),
+						                               String.Format ("{0:d}", rdr.GetDateTime ("date")),
+						                               Quantity,
+						                               String.Format ("{0} %", rdr.GetDecimal("life_percent") * 100),
+						                               String.Format ("{0} %", Life),
+						                               (double) Life,
+						                               ObjectId,
+						                               String.Empty,
+						                               rdr["unit"].ToString()
+						                               );
+					}
+				}
+				MainClass.StatusMessage("Ok");
+				buttonAdd.Sensitive = true;
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				MainClass.StatusMessage("Ошибка получения о выданного имущества!");
+				throw;
+			}
+		}
+
 		private void FillIncomeDetails()
 		{
 			MainClass.StatusMessage("Запрос деталей документа №" + _IncomeDocId +"...");
@@ -248,6 +338,21 @@ namespace workwear
 			return true;
 		}
 
+		private bool FilterTreeProperty (Gtk.TreeModel model, Gtk.TreeIter iter)
+		{
+			if(model.GetValue (iter, 0) == null)
+				return false;
+			long rowid = (long) model.GetValue (iter, 0);
+
+			foreach (object[] row in ItemsListStore)
+			{
+				if((long)row[1] == rowid)
+					return false;
+			}
+
+			return true;
+		}
+
 		protected void OnButtonAddClicked (object sender, EventArgs e)
 		{
 			TreeIter iter;
@@ -267,6 +372,25 @@ namespace workwear
 					                            CardRowsFilter.GetValue(iter, 10)
 					                            );
 					CardRowsFilter.Refilter();
+					CalculateTotal();
+				}
+			}
+			else if (_Operation == IncomeDoc.Operations.Object)
+			{
+				SelectObjectProperty WinSelect = new SelectObjectProperty(PropertyFilter);
+				WinSelect.ObjectComboActive = false;
+				if (WinSelect.GetResult(out iter))
+				{
+					ItemsListStore.AppendValues(null,
+					                            PropertyFilter.GetValue(iter, 0),
+					                            PropertyFilter.GetValue(iter, 1),
+					                            PropertyFilter.GetValue(iter, 2),
+					                            PropertyFilter.GetValue(iter, 4),
+					                            PropertyFilter.GetValue(iter, 7),
+					                            0.0,
+					                            PropertyFilter.GetValue(iter, 10)
+					                            );
+					PropertyFilter.Refilter();
 					CalculateTotal();
 				}
 			}

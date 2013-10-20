@@ -28,7 +28,7 @@ public partial class MainWindow : Gtk.Window
 		treeviewIncome.AppendColumn("Дата", new Gtk.CellRendererText (), "text", 1);
 		treeviewIncome.AppendColumn("Документ", new Gtk.CellRendererText (), "text", 2);
 		treeviewIncome.AppendColumn("ТТН", new Gtk.CellRendererText (), "text", 3);
-		treeviewIncome.AppendColumn("Сотрудник", new Gtk.CellRendererText (), "text", 4);
+		treeviewIncome.AppendColumn("Сотрудник/Объект", new Gtk.CellRendererText (), "text", 4);
 
 		IncomeFilter = new Gtk.TreeModelFilter (IncomeListStore, null);
 		IncomeFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeIncome);
@@ -90,8 +90,10 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainClass.StatusMessage("Получаем таблицу приходных документов...");
 
-		string sql = "SELECT stock_income.*, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name FROM stock_income " +
-			"LEFT JOIN wear_cards ON wear_cards.id = stock_income.wear_card_id ";
+		string sql = "SELECT stock_income.*, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object " +
+			"FROM stock_income " +
+			"LEFT JOIN wear_cards ON wear_cards.id = stock_income.wear_card_id " +
+			"LEFT JOIN objects ON objects.id = stock_income.object_id ";
 		if (!selectStockDates.IsAllTime)
 		{
 			sql += "WHERE stock_income.date BETWEEN @start AND @end";
@@ -103,23 +105,29 @@ public partial class MainWindow : Gtk.Window
 		using (MySqlDataReader rdr = cmd.ExecuteReader())
 		{
 			IncomeListStore.Clear();
-			string doc = "";
+			string doc = "", name = "";
 			while (rdr.Read())
 			{
 				switch (rdr.GetString("operation"))
 				{
 					case "enter":
 						doc = "Приходная накладная";
+						name = "";
 						break;
 					case "return":
 						doc = "Возврат от сотрудника";
+						name = String.Format("{0} {1} {2}", rdr["last_name"].ToString(), rdr["first_name"].ToString(), rdr["patronymic_name"].ToString());
+						break;
+					case "object":
+						doc = "Возврат с объекта";
+						name = rdr.GetString("object");
 						break;
 				}
 				IncomeListStore.AppendValues(rdr.GetInt32("id"),
 				                            String.Format("{0:d}", rdr.GetDateTime("date")),
 				                            doc,
 				                            rdr["number"].ToString(),
-				                            String.Format("{0} {1} {2}", rdr["last_name"].ToString(), rdr["first_name"].ToString(), rdr["patronymic_name"].ToString())
+				                            name
 				);
 			}
 		}

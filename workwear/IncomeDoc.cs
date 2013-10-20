@@ -8,10 +8,10 @@ namespace workwear
 	public partial class IncomeDoc : Gtk.Dialog
 	{
 		public bool NewItem;
-		int Itemid, Worker_id;
+		int Itemid, Worker_id, Object_id;
 		string DocName;
 
-		public enum Operations {Enter, Return};
+		public enum Operations {Enter, Return, Object};
 
 		public IncomeDoc()
 		{
@@ -32,24 +32,26 @@ namespace workwear
 			switch (comboOperation.Active)
 			{
 				case 0:
-					labelTTN.Visible = true;
-					labelWorker.Visible = false;
-					entryTTN.Visible = true;
-					hboxWorker.Visible = false;
 					DocName = "Приходная накладная № ";
 					this.Title = "Новая приходная накладная";
-					ItemsTable.Operation = Operations.Enter;
 					break;
 				case 1:
-					labelTTN.Visible = false;
-					labelWorker.Visible = true;
-					entryTTN.Visible = false;
-					hboxWorker.Visible = true;
 					DocName = "Возврат от работника № ";
 					this.Title = "Новый возврат от работника";
-					ItemsTable.Operation = Operations.Return;
+					break;
+				case 2:
+					DocName = "Возврат c объекта № ";
+					this.Title = "Новый возврат c объекта";
 					break;
 			}
+			labelTTN.Visible = Operation == Operations.Enter;
+			entryTTN.Visible = Operation == Operations.Enter;
+			labelWorker.Visible = Operation == Operations.Return;
+			hboxWorker.Visible = Operation == Operations.Return;
+			labelObject.Visible = Operation == Operations.Object;
+			hboxObject.Visible = Operation == Operations.Object;
+			ItemsTable.Operation = Operation;
+
 			TestCanSave();
 		}
 
@@ -60,10 +62,11 @@ namespace workwear
 			comboOperation.Sensitive = false;
 
 			MainClass.StatusMessage(String.Format("Запрос приходного документа №{0}...", id));
-			string sql = "SELECT stock_income.*, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, users.name as user " +
+			string sql = "SELECT stock_income.*, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object, objects.address, users.name as user " +
 				"FROM stock_income " +
 				"LEFT JOIN wear_cards ON wear_cards.id = stock_income.wear_card_id " +
 				"LEFT JOIN users ON stock_income.user_id = users.id " +
+				"LEFT JOIN objects ON objects.id = stock_income.object_id " +
 				"WHERE stock_income.id = @id";
 			try
 			{
@@ -91,6 +94,9 @@ namespace workwear
 					{
 						Worker_id = -1;
 					}
+					Object_id = DBWorks.GetInt(rdr, "object_id", -1);
+					entryObject.Text = DBWorks.GetString(rdr, "object", "");
+					entryObject.TooltipText = String.Format("{0}\n{1}", DBWorks.GetString(rdr, "object", ""), DBWorks.GetString(rdr, "address", ""));
 					if(rdr["date"] != DBNull.Value)
 					{
 						dateDoc.Date = rdr.GetDateTime("date");
@@ -103,11 +109,16 @@ namespace workwear
 						case "return":
 							comboOperation.Active = 1;
 							break;
+						case "object":
+							comboOperation.Active = 2;
+							break;
 					}
 				}
 				ItemsTable.IncomeDocId = Itemid;
 				if(Worker_id > 0)
 					ItemsTable.WorkerId = Worker_id;
+				if(Object_id > 0)
+					ItemsTable.ObjectId = Object_id;
 				MainClass.StatusMessage("Ok");
 
 				this.Title =  DocName + labelId.LabelProp;
@@ -128,14 +139,18 @@ namespace workwear
 			bool OperationOk;
 			bool NumberOk = entryTTN.Text != "";
 			bool WorkerOk = Worker_id > 0;
+			bool ObjectOk = Object_id > 0;
 			bool DetailOk = ItemsTable.CanSave;
-			switch (comboOperation.Active)
+			switch (Operation)
 			{
-				case 0:
+				case Operations.Enter:
 					OperationOk = NumberOk;
 					break;
-				case 1:
+				case Operations.Return:
 					OperationOk = WorkerOk;
+					break;
+				case Operations.Object:
+					OperationOk = ObjectOk;
 					break;
 				default:
 					OperationOk = false;
@@ -150,13 +165,13 @@ namespace workwear
 			if(NewItem)
 			{
 				sql = "INSERT INTO stock_income (operation, number, date, " +
-					"wear_card_id, user_id) " +
-						"VALUES (@operation, @number, @date, @wear_card_id, @user_id)";
+					"wear_card_id, object_id, user_id) " +
+					"VALUES (@operation, @number, @date, @wear_card_id, @object_id, @user_id)";
 			}
 			else
 			{
 				sql = "UPDATE stock_income SET operation = @operation, number = @number, " +
-					"date = @date, wear_card_id = @wear_card_id " +
+					"date = @date, wear_card_id = @wear_card_id, object_id = @object_id " +
 					"WHERE id = @id";
 			}
 			MainClass.StatusMessage("Запись документа...");
@@ -168,10 +183,8 @@ namespace workwear
 				cmd.Parameters.AddWithValue("@id", Itemid);
 				cmd.Parameters.AddWithValue("@date", dateDoc.Date);
 				cmd.Parameters.AddWithValue("@user_id", QSMain.User.id);
-				if (Worker_id > 0 && comboOperation.Active == 1)
-					cmd.Parameters.AddWithValue("@wear_card_id", Worker_id);
-				else
-					cmd.Parameters.AddWithValue("@wear_card_id", DBNull.Value);
+				cmd.Parameters.AddWithValue("@wear_card_id", DBWorks.ValueOrNull((Worker_id > 0 && comboOperation.Active == 1), Worker_id));
+				cmd.Parameters.AddWithValue("@object_id", DBWorks.ValueOrNull((Object_id > 0 && comboOperation.Active == 2), Object_id));
 				if(entryTTN.Text != "" && comboOperation.Active == 0)
 					cmd.Parameters.AddWithValue("@number", entryTTN.Text);
 				else
@@ -179,9 +192,11 @@ namespace workwear
 				switch (comboOperation.Active) {
 					case 0: cmd.Parameters.AddWithValue("@operation", "enter");
 						break;
-						case 1: cmd.Parameters.AddWithValue("@operation", "return");
+					case 1: cmd.Parameters.AddWithValue("@operation", "return");
 						break;
-						default: cmd.Parameters.AddWithValue("@operation", DBNull.Value);
+					case 2: cmd.Parameters.AddWithValue("@operation", "object");
+						break;
+					default: cmd.Parameters.AddWithValue("@operation", DBNull.Value);
 						break;
 				}
 
@@ -248,6 +263,45 @@ namespace workwear
 		protected void OnItemsTableCanSaveStateChanged(object sender, EventArgs e)
 		{
 			TestCanSave();
+		}
+
+		protected void OnButtonEditObjectClicked(object sender, EventArgs e)
+		{
+			Reference ObjectSelect = new Reference();
+			ObjectSelect.SetMode(false, true, true, true, false);
+			ObjectSelect.FillList("objects","объект", "Объекты");
+			ObjectSelect.Show();
+			int result = ObjectSelect.Run();
+			if((ResponseType)result == ResponseType.Ok)
+			{
+				SetObject(ObjectSelect.SelectedID);
+			}
+			ObjectSelect.Destroy();
+			TestCanSave();
+		}
+
+		protected void SetObject(int id)
+		{
+			string sql = "SELECT name, address FROM objects WHERE id = @id";
+			try
+			{
+				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
+				cmd.Parameters.AddWithValue("@id", id);
+				using( MySqlDataReader rdr = cmd.ExecuteReader())
+				{
+					rdr.Read();
+					entryObject.Text = rdr.GetString("name");
+					entryObject.TooltipText = String.Format("{0}\n{1}", DBWorks.GetString(rdr, "name", ""), DBWorks.GetString(rdr, "address", ""));
+					Object_id = id;
+				}
+				ItemsTable.ObjectId = Object_id;
+			}
+			catch (Exception ex) 
+			{
+				Console.WriteLine(ex.ToString());
+				MainClass.StatusMessage("Ошибка чтения объекта!");
+				QSMain.ErrorMessage(this,ex);
+			}
 		}
 
 	}
