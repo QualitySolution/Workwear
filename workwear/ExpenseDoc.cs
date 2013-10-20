@@ -162,7 +162,7 @@ namespace workwear
 		{
 			Reference WorkerSelect = new Reference();
 			WorkerSelect.SetMode(false, true, true, true, false);
-			WorkerSelect.SqlSelect = "SELECT id, last_name, first_name, patronymic_name FROM @tablename ";
+			WorkerSelect.SqlSelect = "SELECT id, last_name, first_name, patronymic_name FROM @tablename WHERE dismiss_date IS NULL";
 			WorkerSelect.Columns[1].DisplayFormat = "{1} {2} {3}";
 			WorkerSelect.FillList("wear_cards","Работника", "Карточки работников");
 			WorkerSelect.Show();
