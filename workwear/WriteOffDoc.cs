@@ -88,7 +88,7 @@ namespace workwear
 			}
 			else
 			{
-				sql = "UPDATE stock_write_off SET date = @date, " +
+				sql = "UPDATE stock_write_off SET date = @date " +
 					"WHERE id = @id";
 			}
 			MainClass.StatusMessage("Запись документа...");
