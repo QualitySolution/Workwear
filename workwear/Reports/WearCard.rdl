@@ -211,7 +211,7 @@ WHERE wear_cards.id = @id</CommandText>
     <DataSet Name="Norm">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT * FROM item_types WHERE norm_quantity IS NOT NULL AND norm_life IS NOT NULL</CommandText>
+        <CommandText>SELECT * FROM item_types WHERE category = 'wear' AND norm_quantity IS NOT NULL AND norm_life IS NOT NULL</CommandText>
       </Query>
       <Fields>
         <Field Name="id">
