@@ -9,12 +9,12 @@ namespace workwear
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class WriteOffTable : Gtk.Bin
 	{
-		private int _CurWorkerId, _WriteOffDocId;
+		private int _CurWorkerId, _CurObjectId, _WriteOffDocId;
 		private bool _CanSave = false;
-		private Gtk.ListStore ItemsListStore, StockListStore, CardRowsListStore;
+		private Gtk.ListStore ItemsListStore, StockListStore, CardRowsListStore, ObjectRowsListStore;
 		private string StockSearchText = "";
-		private int CardRowsWorkerId;
-		TreeModelFilter StockFilter, CardRowsFilter;
+		private int CardRowsWorkerId, RowsObjectId;
+		TreeModelFilter StockFilter, CardRowsFilter, ObjectRowsFilter;
 		private List<long> DeletedRowId = new List<long>();
 
 		public event EventHandler CanSaveStateChanged;
@@ -31,6 +31,12 @@ namespace workwear
 				}
 		}
 
+		public int CurObjectId {
+			get {return _CurObjectId;}
+			set {_CurObjectId = value;
+			}
+		}
+
 		public bool CanSave {
 			get {return _CanSave;}
 		}
@@ -42,7 +48,7 @@ namespace workwear
 			//Создаем таблицу "материальных ценностей"
 			ItemsListStore = new Gtk.ListStore (typeof (long), //0 this row id
 			                                    typeof (long), //1 enter store row id
-			                                    typeof (long), //2 enter card row id
+			                                    typeof (long), //2 expense row id
 			                                    typeof (int), //3 nomenclature id
 			                                    typeof (string),//4 nomenclature name
 			                                    typeof (string), //5 write off from
@@ -70,6 +76,7 @@ namespace workwear
 
 			FillStockList();
 			FillCardRowsList();
+			FillObjectRowsList();
 
 			buttonDel.Sensitive = false;
 		}
@@ -150,13 +157,15 @@ namespace workwear
 			{
 				string sql = "SELECT stock_write_off_detail.id, stock_write_off_detail.stock_income_detail_id, stock_write_off_detail.stock_expense_detail_id," +
 						"stock_write_off_detail.nomenclature_id, nomenclature.name as nomenclature, stock_write_off_detail.quantity, " +
-						"wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, units.name as unit " +
+						"wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object, units.name as unit, " +
+						"stock_expense.wear_card_id, stock_expense.object_id " +
 						"FROM stock_write_off_detail " +
 						"LEFT JOIN nomenclature ON nomenclature.id = stock_write_off_detail.nomenclature_id " +
 						"LEFT JOIN units ON nomenclature.units_id = units.id " +
 						"LEFT JOIN stock_expense_detail ON stock_write_off_detail.stock_expense_detail_id = stock_expense_detail.id " +
 						"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id " +
 						"LEFT JOIN wear_cards ON stock_expense.wear_card_id = wear_cards.id " +
+						"LEFT JOIN objects ON stock_expense.object_id = objects.id " +
 						"WHERE stock_write_off_detail.stock_write_off_id = @id";
 
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
@@ -168,12 +177,16 @@ namespace workwear
 						string FromName;
 						if(rdr["stock_income_detail_id"] != DBNull.Value)
 							FromName = "склад";
-						else if (rdr["stock_expense_detail_id"] != DBNull.Value)
+						else if (rdr["stock_expense_detail_id"] != DBNull.Value && rdr["wear_card_id"] != DBNull.Value)
 						{
 							if(rdr["first_name"].ToString() == "" || rdr["patronymic_name"].ToString() == "")
 								FromName = String.Format("{0} {1} {2}", rdr["last_name"].ToString(), rdr["first_name"].ToString(), rdr["patronymic_name"].ToString());
 							else
 								FromName = String.Format("{0} {1}. {2}.", rdr["last_name"].ToString(), rdr["first_name"].ToString()[0], rdr["patronymic_name"].ToString()[0]);
+						}
+						else if (rdr["stock_expense_detail_id"] != DBNull.Value && rdr["object_id"] != DBNull.Value)
+						{
+							FromName = String.Format("{0}", rdr["object"].ToString());
 						}
 						else 
 							FromName = String.Empty;
@@ -234,7 +247,7 @@ namespace workwear
 						"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
 						"LEFT JOIN wear_cards ON stock_expense.wear_card_id = wear_cards.id " +
 						"LEFT JOIN units ON units.id = nomenclature.units_id " +
-						"WHERE spent.count IS NULL OR spent.count < stock_expense_detail.quantity ";
+						"WHERE stock_expense.wear_card_id IS NOT NULL AND (spent.count IS NULL OR spent.count < stock_expense_detail.quantity) ";
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@current_write_off", _WriteOffDocId);
 				using( MySqlDataReader rdr = cmd.ExecuteReader())
@@ -280,7 +293,90 @@ namespace workwear
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения о выданной одежде!");
+				MainClass.StatusMessage("Ошибка получения информации о выданной одежде!");
+				throw;
+			}
+		}
+
+		private bool FillObjectRowsList()
+		{
+			ObjectRowsListStore = new ListStore(typeof(long), // 0 - ID expense row
+			                                  typeof(int), //1 - nomenclature id
+			                                  typeof(string), //2 - nomenclature name
+			                                  typeof(string), //3 - date
+			                                  typeof(int), //4 - quantity
+			                                  typeof(string), // 5 - % of life
+			                                  typeof(string), // 6 - today % of life
+			                                  typeof(double), // 7 - today % of life
+			                                  typeof(int), // 8 - object id
+			                                  typeof(string), //9 - object name
+			                                  typeof(string) //10 - units
+			                                  );
+			ObjectRowsFilter = new TreeModelFilter( ObjectRowsListStore, null);
+			ObjectRowsFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeObjectRows);
+
+			MainClass.StatusMessage("Запрос имущества по объекту...");
+			try
+			{
+				string sql = "SELECT stock_expense_detail.id, stock_expense_detail.nomenclature_id, stock_expense_detail.quantity, " +
+					"nomenclature.name, stock_expense.date, stock_income_detail.life_percent, spent.count, item_types.norm_life, " +
+						"objects.name as object, units.name as unit, stock_expense.object_id " +
+						"FROM stock_expense_detail \n" +
+						"LEFT JOIN (\nSELECT id, SUM(count) as count FROM \n" +
+						"(SELECT stock_income_detail.stock_expense_detail_id as id, stock_income_detail.quantity as count FROM stock_income_detail WHERE stock_expense_detail_id IS NOT NULL " +
+						"UNION ALL\n" +
+						"SELECT stock_write_off_detail.stock_expense_detail_id as id, stock_write_off_detail.quantity as count FROM stock_write_off_detail WHERE stock_expense_detail_id IS NOT NULL AND stock_write_off_id <> @current_write_off) as table1 " +
+						"GROUP BY id) as spent ON spent.id = stock_expense_detail.id \n" +
+						"LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id " +
+						"LEFT JOIN item_types ON nomenclature.type_id = item_types.id " +
+						"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id \n" +
+						"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
+						"LEFT JOIN objects ON stock_expense.object_id = objects.id " +
+						"LEFT JOIN units ON units.id = nomenclature.units_id " +
+						"WHERE stock_expense.object_id IS NOT NULL AND (spent.count IS NULL OR spent.count < stock_expense_detail.quantity) ";
+				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
+				cmd.Parameters.AddWithValue ("@current_write_off", _WriteOffDocId);
+				using( MySqlDataReader rdr = cmd.ExecuteReader())
+				{
+					while (rdr.Read())
+					{
+						int Quantity, Life;
+						string ObjectName;
+						if(rdr["count"] == DBNull.Value)
+							Quantity = rdr.GetInt32("quantity");
+						else
+							Quantity = rdr.GetInt32("quantity") - rdr.GetInt32("count");
+
+						double MonthUsing = ((DateTime.Today - rdr.GetDateTime ("date")).TotalDays / 365) * 12;
+						if(rdr["norm_life"] != DBNull.Value)
+							Life = (int) (rdr.GetDecimal("life_percent") * 100) - (int) (MonthUsing / rdr.GetInt32("norm_life") * 100);
+						else
+							Life = (int) (rdr.GetDecimal("life_percent") * 100);
+						if(Life < 0) 
+							Life = 0;
+						ObjectName = String.Format("{0}", rdr["object"].ToString());
+						ObjectRowsListStore.AppendValues(rdr.GetInt64("id"),
+						                               rdr.GetInt32("nomenclature_id"),
+						                               rdr.GetString ("name"),
+						                               String.Format ("{0:d}", rdr.GetDateTime ("date")),
+						                               Quantity,
+						                               String.Format ("{0} %", rdr.GetDecimal("life_percent") * 100),
+						                               String.Format ("{0} %", Life),
+						                               (double) Life,
+						                               rdr.GetInt32("object_id"),
+						                               ObjectName,
+						                               rdr["unit"].ToString()
+						                               );
+					}
+				}
+				MainClass.StatusMessage("Ok");
+				buttonAddObject.Sensitive = true;
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				MainClass.StatusMessage("Ошибка получения информации о выданном имуществе!");
 				throw;
 			}
 		}
@@ -294,6 +390,29 @@ namespace workwear
 			{
 				int Id = (int) model.GetValue(iter, 8);
 				if (CardRowsWorkerId != Id )
+					return false;
+			}
+
+			long rowid = (long) model.GetValue (iter, 0);
+
+			foreach (object[] row in ItemsListStore)
+			{
+				if((long)row[1] == rowid)
+					return false;
+			}
+
+			return true;
+		}
+
+		private bool FilterTreeObjectRows (Gtk.TreeModel model, Gtk.TreeIter iter)
+		{
+			if(model.GetValue (iter, 0) == null)
+				return false;
+
+			if (RowsObjectId > 0)
+			{
+				int Id = (int) model.GetValue(iter, 8);
+				if (RowsObjectId != Id )
 					return false;
 			}
 
@@ -466,6 +585,12 @@ namespace workwear
 			CardRowsFilter.Refilter();
 		}
 
+		protected void OnSelectObjectRowsSearch(object sender, EventArgs e)
+		{
+			RowsObjectId = ((SelectObjectProperty)sender).ObjectId;
+			ObjectRowsFilter.Refilter();
+		}
+
 		protected void OnButtonAddWorkerClicked(object sender, EventArgs e)
 		{
 			TreeIter iter;
@@ -490,6 +615,32 @@ namespace workwear
 				CalculateTotal();
 			}
 		}
+
+		protected void OnButtonAddObjectClicked(object sender, EventArgs e)
+		{
+			TreeIter iter;
+
+			SelectObjectProperty WinSelect = new SelectObjectProperty(ObjectRowsFilter);
+			WinSelect.ObjectComboActive = true;
+			if (CurObjectId > 0)
+				WinSelect.ObjectId = CurObjectId;
+			WinSelect.ObjectIdChanged += OnSelectObjectRowsSearch;
+			if (WinSelect.GetResult(out iter))
+			{
+				ItemsListStore.AppendValues(-1,
+				                            -1,
+				                            ObjectRowsFilter.GetValue(iter, 0),
+				                            ObjectRowsFilter.GetValue(iter, 1),
+				                            ObjectRowsFilter.GetValue(iter, 2),
+				                            ObjectRowsFilter.GetValue(iter, 9),
+				                            ObjectRowsFilter.GetValue(iter, 4),
+				                            ObjectRowsFilter.GetValue(iter, 10));
+				RowsObjectId = -1;
+				ObjectRowsFilter.Refilter();
+				CalculateTotal();
+			}
+		}
+
 	}
 }
 

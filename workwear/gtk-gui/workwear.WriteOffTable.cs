@@ -11,6 +11,7 @@ namespace workwear
 		private global::Gtk.HBox hbox1;
 		private global::Gtk.Button buttonAddStore;
 		private global::Gtk.Button buttonAddWorker;
+		private global::Gtk.Button buttonAddObject;
 		private global::Gtk.Button buttonDel;
 		private global::Gtk.Label labelSum;
 
@@ -68,7 +69,7 @@ namespace workwear
 			w5.Add (w6);
 			// Container child GtkHBox.Gtk.Container+ContainerChild
 			global::Gtk.Label w8 = new global::Gtk.Label ();
-			w8.LabelProp = global::Mono.Unix.Catalog.GetString ("Списать со склада");
+			w8.LabelProp = global::Mono.Unix.Catalog.GetString ("Со склада");
 			w8.UseUnderline = true;
 			w5.Add (w8);
 			w4.Add (w5);
@@ -95,7 +96,7 @@ namespace workwear
 			w14.Add (w15);
 			// Container child GtkHBox.Gtk.Container+ContainerChild
 			global::Gtk.Label w17 = new global::Gtk.Label ();
-			w17.LabelProp = global::Mono.Unix.Catalog.GetString ("Списать с работника");
+			w17.LabelProp = global::Mono.Unix.Catalog.GetString ("С работника");
 			w17.UseUnderline = true;
 			w14.Add (w17);
 			w13.Add (w14);
@@ -106,44 +107,70 @@ namespace workwear
 			w21.Expand = false;
 			w21.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.buttonDel = new global::Gtk.Button ();
-			this.buttonDel.CanFocus = true;
-			this.buttonDel.Name = "buttonDel";
-			this.buttonDel.UseUnderline = true;
-			// Container child buttonDel.Gtk.Container+ContainerChild
+			this.buttonAddObject = new global::Gtk.Button ();
+			this.buttonAddObject.CanFocus = true;
+			this.buttonAddObject.Name = "buttonAddObject";
+			this.buttonAddObject.UseUnderline = true;
+			// Container child buttonAddObject.Gtk.Container+ContainerChild
 			global::Gtk.Alignment w22 = new global::Gtk.Alignment (0.5F, 0.5F, 0F, 0F);
 			// Container child GtkAlignment.Gtk.Container+ContainerChild
 			global::Gtk.HBox w23 = new global::Gtk.HBox ();
 			w23.Spacing = 2;
 			// Container child GtkHBox.Gtk.Container+ContainerChild
 			global::Gtk.Image w24 = new global::Gtk.Image ();
-			w24.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-remove", global::Gtk.IconSize.Menu);
+			w24.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-add", global::Gtk.IconSize.Menu);
 			w23.Add (w24);
 			// Container child GtkHBox.Gtk.Container+ContainerChild
 			global::Gtk.Label w26 = new global::Gtk.Label ();
-			w26.LabelProp = global::Mono.Unix.Catalog.GetString ("Удалить");
+			w26.LabelProp = global::Mono.Unix.Catalog.GetString ("С объекта");
 			w26.UseUnderline = true;
 			w23.Add (w26);
 			w22.Add (w23);
-			this.buttonDel.Add (w22);
-			this.hbox1.Add (this.buttonDel);
-			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.buttonDel]));
+			this.buttonAddObject.Add (w22);
+			this.hbox1.Add (this.buttonAddObject);
+			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.buttonAddObject]));
 			w30.Position = 2;
 			w30.Expand = false;
 			w30.Fill = false;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.buttonDel = new global::Gtk.Button ();
+			this.buttonDel.CanFocus = true;
+			this.buttonDel.Name = "buttonDel";
+			this.buttonDel.UseUnderline = true;
+			// Container child buttonDel.Gtk.Container+ContainerChild
+			global::Gtk.Alignment w31 = new global::Gtk.Alignment (0.5F, 0.5F, 0F, 0F);
+			// Container child GtkAlignment.Gtk.Container+ContainerChild
+			global::Gtk.HBox w32 = new global::Gtk.HBox ();
+			w32.Spacing = 2;
+			// Container child GtkHBox.Gtk.Container+ContainerChild
+			global::Gtk.Image w33 = new global::Gtk.Image ();
+			w33.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-remove", global::Gtk.IconSize.Menu);
+			w32.Add (w33);
+			// Container child GtkHBox.Gtk.Container+ContainerChild
+			global::Gtk.Label w35 = new global::Gtk.Label ();
+			w35.LabelProp = global::Mono.Unix.Catalog.GetString ("Удалить");
+			w35.UseUnderline = true;
+			w32.Add (w35);
+			w31.Add (w32);
+			this.buttonDel.Add (w31);
+			this.hbox1.Add (this.buttonDel);
+			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.buttonDel]));
+			w39.Position = 3;
+			w39.Expand = false;
+			w39.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.labelSum = new global::Gtk.Label ();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString ("Количество:");
 			this.hbox1.Add (this.labelSum);
-			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.labelSum]));
-			w31.Position = 3;
+			global::Gtk.Box.BoxChild w40 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.labelSum]));
+			w40.Position = 4;
 			this.vbox2.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hbox1]));
-			w32.Position = 2;
-			w32.Expand = false;
-			w32.Fill = false;
+			global::Gtk.Box.BoxChild w41 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hbox1]));
+			w41.Position = 2;
+			w41.Expand = false;
+			w41.Fill = false;
 			this.Add (this.vbox2);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
@@ -152,6 +179,7 @@ namespace workwear
 			this.treeviewItems.CursorChanged += new global::System.EventHandler (this.OnTreeviewItemsCursorChanged);
 			this.buttonAddStore.Clicked += new global::System.EventHandler (this.OnButtonAddStoreClicked);
 			this.buttonAddWorker.Clicked += new global::System.EventHandler (this.OnButtonAddWorkerClicked);
+			this.buttonAddObject.Clicked += new global::System.EventHandler (this.OnButtonAddObjectClicked);
 			this.buttonDel.Clicked += new global::System.EventHandler (this.OnButtonDelClicked);
 		}
 	}
