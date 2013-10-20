@@ -35,8 +35,14 @@ namespace workwear
 					entryName.Text = rdr["name"].ToString();
 					spinQuantity.Value = rdr.GetDouble("norm_quantity");
 					spinLife.Value = rdr.GetDouble("norm_life");
-					comboCategory.Active = DBWorks.GetInt(rdr, "category", -1);
-					
+					switch (DBWorks.GetString(rdr, "category", "")) {
+						case "wear":
+							comboCategory.Active = 0;
+							break;
+						case "property":
+							comboCategory.Active = 1;
+							break;
+					}
 					MainClass.StatusMessage("Ok");
 				}
 				this.Title = entryName.Text;
