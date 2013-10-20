@@ -483,7 +483,10 @@ namespace workwear
 			if((long)ItemsListStore.GetValue(iter, 0) > 0)
 				DeletedRowId.Add ((long)ItemsListStore.GetValue(iter, 0));
 			ItemsListStore.Remove(ref iter);
-			CardRowsFilter.Refilter ();
+			if(Operation == IncomeDoc.Operations.Return)
+				CardRowsFilter.Refilter ();
+			if(Operation == IncomeDoc.Operations.Object)
+				CardRowsFilter.Refilter ();
 			OnTreeviewItemsCursorChanged (null, null);
 			CalculateTotal();
 		}
