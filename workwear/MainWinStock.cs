@@ -44,7 +44,7 @@ public partial class MainWindow : Gtk.Window
 		treeviewExpense.AppendColumn("Номер", new Gtk.CellRendererText (), "text", 0);
 		treeviewExpense.AppendColumn("Дата", new Gtk.CellRendererText (), "text", 1);
 		treeviewExpense.AppendColumn("Документ", new Gtk.CellRendererText (), "text", 2);
-		treeviewExpense.AppendColumn("Сотрудник", new Gtk.CellRendererText (), "text", 3);
+		treeviewExpense.AppendColumn("Получатель", new Gtk.CellRendererText (), "text", 3);
 
 		ExpenseFilter = new Gtk.TreeModelFilter (ExpenseListStore, null);
 		ExpenseFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeIncome); //FIXME
@@ -133,8 +133,10 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainClass.StatusMessage("Получаем таблицу расходных документов...");
 
-		string sql = "SELECT stock_expense.*, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name FROM stock_expense " +
-			"LEFT JOIN wear_cards ON wear_cards.id = stock_expense.wear_card_id ";
+		string sql = "SELECT stock_expense.*, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object " +
+			"FROM stock_expense " +
+			"LEFT JOIN wear_cards ON wear_cards.id = stock_expense.wear_card_id " +
+			"LEFT JOIN objects ON objects.id = stock_expense.object_id ";
 		if (!selectStockDates.IsAllTime)
 		{
 			sql += "WHERE stock_expense.date BETWEEN @start AND @end";
@@ -146,13 +148,24 @@ public partial class MainWindow : Gtk.Window
 		using (MySqlDataReader rdr = cmd.ExecuteReader())
 		{
 			ExpenseListStore.Clear();
-			string doc = "Выдача сотруднику";
+			string doc = "", recipient = "";
 			while (rdr.Read())
 			{
+				switch (rdr.GetString("operation"))
+				{
+					case "object":
+						doc = "Выдача на объект";
+						recipient = rdr.GetString("object");
+						break;
+					case "employee":
+						doc = "Выдача сотруднику";
+						recipient = String.Format("{0} {1} {2}", rdr["last_name"].ToString(), rdr["first_name"].ToString(), rdr["patronymic_name"].ToString());
+						break;
+				}
 				ExpenseListStore.AppendValues(rdr.GetInt32("id"),
 				                             String.Format("{0:d}", rdr.GetDateTime("date")),
 				                             doc,
-				                             String.Format("{0} {1} {2}", rdr["last_name"].ToString(), rdr["first_name"].ToString(), rdr["patronymic_name"].ToString())
+				                             recipient
 				                             );
 			}
 		}

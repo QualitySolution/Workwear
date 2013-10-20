@@ -8,13 +8,16 @@ namespace workwear
 	public partial class ExpenseDoc : Gtk.Dialog
 	{
 		public bool NewItem;
-		int Itemid, Worker_id;
+		private int Itemid, Worker_id, Object_id;
+
+		public enum Operations {Employee, Object};
 
 		public ExpenseDoc()
 		{
 			this.Build();
 			dateDoc.Date = DateTime.Today;
 			labelUser.LabelProp = QSMain.User.Name;
+			comboOperation.Active = 0;
 		}
 
 		public void Fill(int id)
@@ -23,10 +26,11 @@ namespace workwear
 			NewItem = false;
 
 			MainClass.StatusMessage(String.Format("Запрос расходного документа №{0}...", id));
-			string sql = "SELECT stock_expense.*, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, users.name as user " +
+			string sql = "SELECT stock_expense.*, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object, objects.address, users.name as user " +
 				"FROM stock_expense " +
 				"LEFT JOIN wear_cards ON wear_cards.id = stock_expense.wear_card_id " +
 				"LEFT JOIN users ON stock_expense.user_id = users.id " +
+				"LEFT JOIN objects ON objects.id = stock_expense.object_id " +
 				"WHERE stock_expense.id = @id";
 			try
 			{
@@ -40,6 +44,16 @@ namespace workwear
 
 					labelId.LabelProp = rdr["id"].ToString();
 					labelUser.LabelProp = rdr["user"].ToString();
+					switch (rdr.GetString("operation")) 
+					{
+						case "employee":
+							comboOperation.Active = 0;
+							break;
+						case "object":
+							comboOperation.Active = 1;
+							break;
+					}
+					comboOperation.Sensitive = false;
 					if(rdr["wear_card_id"] != DBNull.Value)
 					{
 						Worker_id = rdr.GetInt32("wear_card_id");
@@ -53,6 +67,9 @@ namespace workwear
 					{
 						Worker_id = -1;
 					}
+					Object_id = DBWorks.GetInt(rdr, "object_id", -1);
+					entryObject.Text = DBWorks.GetString(rdr, "object", "");
+					entryObject.TooltipText = String.Format("{0}\n{1}", DBWorks.GetString(rdr, "object", ""), DBWorks.GetString(rdr, "address", ""));
 					if(rdr["date"] != DBNull.Value)
 					{
 						dateDoc.Date = rdr.GetDateTime("date");
@@ -61,6 +78,8 @@ namespace workwear
 				ItemsTable.ExpenseDocId = Itemid;
 				if(Worker_id > 0)
 					ItemsTable.WorkerId = Worker_id;
+				if(Object_id > 0)
+					ItemsTable.ObjectId = Object_id;
 				MainClass.StatusMessage("Ok");
 
 				this.Title =  "Выдача №" + labelId.LabelProp;
@@ -79,8 +98,9 @@ namespace workwear
 		{
 			bool Dateok = !dateDoc.IsEmpty;
 			bool WorkerOk = Worker_id > 0;
+			bool ObjectOk = Object_id > 0;
 			bool DetailOk = ItemsTable.CanSave;
-			buttonOk.Sensitive = Dateok && WorkerOk && DetailOk;
+			buttonOk.Sensitive = Dateok && DetailOk && ((WorkerOk && comboOperation.Active == 0) || (ObjectOk && comboOperation.Active == 1) );
 		}
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
@@ -88,12 +108,12 @@ namespace workwear
 			string sql;
 			if(NewItem)
 			{
-				sql = "INSERT INTO stock_expense (date, wear_card_id, user_id) " +
-						"VALUES (@date, @wear_card_id, @user_id)";
+				sql = "INSERT INTO stock_expense (operation, date, wear_card_id, object_id, user_id) " +
+					"VALUES (@operation, @date, @wear_card_id, @object_id, @user_id)";
 			}
 			else
 			{
-				sql = "UPDATE stock_expense SET date = @date, wear_card_id = @wear_card_id " +
+				sql = "UPDATE stock_expense SET operation = @operation, date = @date, wear_card_id = @wear_card_id, object_id = @object_id " +
 					"WHERE id = @id";
 			}
 			MainClass.StatusMessage("Запись документа...");
@@ -103,13 +123,16 @@ namespace workwear
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB, trans);
 
 				cmd.Parameters.AddWithValue("@id", Itemid);
+				switch (comboOperation.Active) {
+					case 0: cmd.Parameters.AddWithValue("@operation", "employee");
+						break;
+					case 1: cmd.Parameters.AddWithValue("@operation", "object");
+						break;
+				}
 				cmd.Parameters.AddWithValue("@date", dateDoc.Date);
 				cmd.Parameters.AddWithValue("@user_id", QSMain.User.id);
-				if (Worker_id > 0)
-					cmd.Parameters.AddWithValue("@wear_card_id", Worker_id);
-				else
-					cmd.Parameters.AddWithValue("@wear_card_id", DBNull.Value);
-
+				cmd.Parameters.AddWithValue("@wear_card_id", DBWorks.ValueOrNull(Worker_id > 0, Worker_id));
+				cmd.Parameters.AddWithValue("@object_id", DBWorks.ValueOrNull(Object_id > 0, Object_id));
 				cmd.ExecuteNonQuery();
 				if(NewItem)
 					Itemid = (int) cmd.LastInsertedId;
@@ -168,6 +191,63 @@ namespace workwear
 		protected void OnItemsTableCanSaveStateChanged(object sender, EventArgs e)
 		{
 			TestCanSave();
+		}
+
+		protected void OnComboOperationChanged(object sender, EventArgs e)
+		{
+			labelWorker.Visible = comboOperation.Active == 0;
+			hboxWorker.Visible = comboOperation.Active == 0;
+			labelObject.Visible = comboOperation.Active == 1;
+			hboxObject.Visible = comboOperation.Active == 1;
+			switch (comboOperation.Active)
+			{
+				case 0:
+					ItemsTable.Operation = Operations.Employee;
+					break;
+				case 1:
+					ItemsTable.Operation = Operations.Object;
+					break;
+			}
+			TestCanSave();
+		}
+
+		protected void OnButtonEditObjectClicked(object sender, EventArgs e)
+		{
+			Reference ObjectSelect = new Reference();
+			ObjectSelect.SetMode(false, true, true, true, false);
+			ObjectSelect.FillList("objects","объект", "Объекты");
+			ObjectSelect.Show();
+			int result = ObjectSelect.Run();
+			if((ResponseType)result == ResponseType.Ok)
+			{
+				SetObject(ObjectSelect.SelectedID);
+			}
+			ObjectSelect.Destroy();
+			TestCanSave();
+		}
+
+		protected void SetObject(int id)
+		{
+			string sql = "SELECT name, address FROM objects WHERE id = @id";
+			try
+			{
+				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
+				cmd.Parameters.AddWithValue("@id", id);
+				using( MySqlDataReader rdr = cmd.ExecuteReader())
+				{
+					rdr.Read();
+					entryObject.Text = rdr.GetString("name");
+					entryObject.TooltipText = String.Format("{0}\n{1}", DBWorks.GetString(rdr, "name", ""), DBWorks.GetString(rdr, "address", ""));
+					Object_id = id;
+				}
+				ItemsTable.ObjectId = Object_id;
+			}
+			catch (Exception ex) 
+			{
+				Console.WriteLine(ex.ToString());
+				MainClass.StatusMessage("Ошибка чтения объекта!");
+				QSMain.ErrorMessage(this,ex);
+			}
 		}
 	}
 }

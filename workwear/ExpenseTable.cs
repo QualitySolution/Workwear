@@ -9,12 +9,16 @@ namespace workwear
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class ExpenseTable : Gtk.Bin
 	{
-		private int _WorkerId, _ExpenseDocId;
+		private int _WorkerId, _ObjectId, _ExpenseDocId;
+		private ExpenseDoc.Operations _Operation;
 		private bool _CanSave = false;
 		private Gtk.ListStore ItemsListStore, StockListStore;
 		private string StockSearchText = "";
 		TreeModelFilter StockFilter;
 		private List<long> DeletedRowId = new List<long>();
+		private TreeModel PlacementList;
+		private TreeViewColumn PlacementColumn;
+		private Gtk.CellRendererCombo CellPlacement;
 
 		public event EventHandler CanSaveStateChanged;
 
@@ -30,6 +34,34 @@ namespace workwear
 				FillStockList ();}
 		}
 
+		public int ObjectId {
+			get {return _ObjectId;}
+			set {_ObjectId = value;
+
+				string sql = "SELECT name, id FROM object_places WHERE object_id = @id";
+				MySqlParameter[] param = new MySqlParameter[]{ new MySqlParameter("@id", value)};
+				ComboBox PlacementCombo = new ComboBox();
+				ComboWorks.ComboFillUniversal(PlacementCombo, sql, "{0}", param, 1, 2);
+				CellPlacement.Model = PlacementList = PlacementCombo.Model;
+				PlacementCombo.Destroy ();
+
+				FillStockList ();}
+		}
+
+		public ExpenseDoc.Operations Operation {
+			get {return _Operation;}
+			set {
+				buttonAdd.Sensitive = (WorkerId > 0  && value == ExpenseDoc.Operations.Employee) || 
+					(ObjectId > 0 && value == ExpenseDoc.Operations.Object);
+				PlacementColumn.Visible = value == ExpenseDoc.Operations.Object;
+
+				if (_Operation == value)
+					return;
+				_Operation = value;
+				ItemsListStore.Clear();
+			}
+		}
+
 		public bool CanSave {
 			get {return _CanSave;}
 		}
@@ -39,13 +71,15 @@ namespace workwear
 			this.Build();
 
 			//Создаем таблицу "материальных ценностей"
-			ItemsListStore = new Gtk.ListStore (typeof (long), //0 this row id
-			                                    typeof (long), //1 enter row id
-			                                    typeof (int), //2 nomenclature id
+			ItemsListStore = new Gtk.ListStore (typeof (long), 	//0 this row id
+			                                    typeof (long), 	//1 enter row id
+			                                    typeof (int), 	//2 nomenclature id
 			                                    typeof (string),//3 nomenclature name
-			                                    typeof (int), //4 quantity
-			                                    typeof (double), // 5 life
-			                                    typeof (string) //6 units
+			                                    typeof (int), 	//4 quantity
+			                                    typeof (double), //5 life
+			                                    typeof (string), //6 units
+			                                    typeof (int), 	//7 - Placement id
+			                                    typeof (string) //8 - Placement name
 			                                    );
 
 			Gtk.TreeViewColumn QuantityColumn = new Gtk.TreeViewColumn ();
@@ -66,9 +100,21 @@ namespace workwear
 			CellLife.Edited += OnLifeSpinEdited;
 			LifeColumn.PackStart (CellLife, true);
 
+			PlacementColumn = new Gtk.TreeViewColumn ();
+			PlacementColumn.Title = "Расположение";
+			CellPlacement = new CellRendererCombo();
+			CellPlacement.TextColumn = 0;
+			CellPlacement.Editable = true;
+			CellPlacement.HasEntry = false;
+			CellPlacement.Edited += OnPlacementComboEdited;
+			PlacementColumn.PackStart(CellPlacement, true);
+
 			treeviewItems.AppendColumn ("Наименование", new Gtk.CellRendererText (), "text", 3);
 			treeviewItems.AppendColumn (QuantityColumn);
 			treeviewItems.AppendColumn (LifeColumn);
+			treeviewItems.AppendColumn (PlacementColumn);
+
+			PlacementColumn.AddAttribute (CellPlacement, "text", 8);
 
 			QuantityColumn.SetCellDataFunc (CellQuantity, RenderQuantityColumn);
 			LifeColumn.SetCellDataFunc (CellLife, RenderLifeColumn);
@@ -82,7 +128,8 @@ namespace workwear
 
 		private bool FillStockList()
 		{
-			if(_WorkerId <= 0)
+			if((Operation == ExpenseDoc.Operations.Employee && _WorkerId <= 0) 
+			   || (Operation == ExpenseDoc.Operations.Object && _ObjectId <= 0))
 				return false;
 			StockListStore = new ListStore(typeof(long), // 0 - ID income row
 			                                typeof(int), //1 - nomenclature id
@@ -111,7 +158,11 @@ namespace workwear
 					"LEFT JOIN nomenclature ON nomenclature.id = stock_income_detail.nomenclature_id " +
 					"LEFT JOIN units ON units.id = nomenclature.units_id " +
 					"LEFT JOIN item_types ON nomenclature.type_id = item_types.id " +
-					"WHERE spent.count IS NULL OR spent.count < stock_income_detail.quantity";
+					"WHERE (spent.count IS NULL OR spent.count < stock_income_detail.quantity) ";
+				if(Operation == ExpenseDoc.Operations.Employee)
+					sql += "AND item_types.category = 'wear' ";
+				else
+					sql += "AND item_types.category = 'property' ";
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@current_expense", _ExpenseDocId);
 				using(MySqlDataReader rdr = cmd.ExecuteReader())
@@ -158,11 +209,12 @@ namespace workwear
 			{
 				string sql = "SELECT stock_expense_detail.id, stock_expense_detail.stock_income_detail_id, " +
 					"stock_expense_detail.nomenclature_id, nomenclature.name as nomenclature, stock_expense_detail.quantity, " +
-					"stock_income_detail.life_percent, units.name as unit " +
-						"FROM stock_expense_detail " +
+					"stock_income_detail.life_percent, units.name as unit, stock_expense_detail.object_place_id, object_places.name as object_place " +
+					"FROM stock_expense_detail " +
 					"LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id " +
 					"LEFT JOIN units ON nomenclature.units_id = units.id " +
-						"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
+					"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
+					"LEFT JOIN object_places ON object_places.id = stock_expense_detail.object_place_id " +
 					"WHERE stock_expense_detail.stock_expense_id = @id";
 
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
@@ -177,7 +229,9 @@ namespace workwear
 						                              rdr["nomenclature"].ToString(),
 						                              rdr.GetInt32("quantity"),
 						                              rdr.GetDouble("life_percent") * 100,
-						                            rdr["unit"].ToString()
+						                            rdr["unit"].ToString(),
+						                            DBWorks.GetInt(rdr, "object_place_id", -1),
+						                            DBWorks.GetString(rdr, "object_place", "нет")
 						                              );
 					}
 				}
@@ -314,21 +368,18 @@ namespace workwear
 				{
 					if((long)row[0] > 0)
 						sql = "UPDATE stock_expense_detail SET stock_expense_id = @stock_expense_id, nomenclature_id = @nomenclature_id, " +
-							"quantity = @quantity, stock_income_detail_id = @stock_income_detail_id WHERE id = @id";
+							"quantity = @quantity, stock_income_detail_id = @stock_income_detail_id, object_place_id = @object_place_id WHERE id = @id";
 					else
-						sql = "INSERT INTO stock_expense_detail(stock_expense_id, nomenclature_id, quantity, stock_income_detail_id)" +
-							"VALUES (@stock_expense_id, @nomenclature_id, @quantity, @stock_income_detail_id)";
+						sql = "INSERT INTO stock_expense_detail(stock_expense_id, nomenclature_id, quantity, stock_income_detail_id, object_place_id)" +
+							"VALUES (@stock_expense_id, @nomenclature_id, @quantity, @stock_income_detail_id, @object_place_id)";
 
 					cmd = new MySqlCommand(sql, QSMain.connectionDB, trans);
 					cmd.Parameters.AddWithValue("@id", row[0]);
 					cmd.Parameters.AddWithValue("@stock_expense_id", ExpenseDoc_id);
 					cmd.Parameters.AddWithValue("@nomenclature_id", row[2]);
 					cmd.Parameters.AddWithValue("@quantity", row[4]);
-					if((long)row[1] > 0)
-						cmd.Parameters.AddWithValue("@stock_income_detail_id", row[1]);
-					else
-						cmd.Parameters.AddWithValue("@stock_income_detail_id", DBNull.Value);
-
+					cmd.Parameters.AddWithValue("@stock_income_detail_id", DBWorks.ValueOrNull((long)row[1] > 0, row[1]) );
+					cmd.Parameters.AddWithValue("@object_place_id", DBWorks.ValueOrNull((int)row[7] > 0, row[7]) );
 					cmd.ExecuteNonQuery ();
 				}
 
@@ -356,6 +407,23 @@ namespace workwear
 			StockSearchText = ((SelectStockItem)sender).SearchText;
 			StockFilter.Refilter();
 		}
+
+		void OnPlacementComboEdited (object o, EditedArgs args)
+		{
+			TreeIter iter;
+			if (!ItemsListStore.GetIterFromString (out iter, args.Path))
+				return;
+			if(args.NewText == null)
+			{
+				Console.WriteLine("newtext is empty");
+				return;
+			}
+			ItemsListStore.SetValue(iter, 8, args.NewText);
+			TreeIter PlacementIter;
+			ListStoreWorks.SearchListStore((ListStore)PlacementList, args.NewText, out PlacementIter);
+			ItemsListStore.SetValue(iter, 7, PlacementList.GetValue(PlacementIter, 1));
+		}
+
 
 	}
 }
