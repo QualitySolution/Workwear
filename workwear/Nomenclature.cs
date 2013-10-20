@@ -14,9 +14,11 @@ namespace workwear
 		{
 			this.Build();
 			ComboWorks.ComboFillReference(comboUnits, "units", 2);
-			ComboWorks.ComboFillReference(comboType, "item_types", 2);
 			ComboWorks.ComboFillUniqueValue(comboentrySize, "nomenclature", "size");
 			ComboWorks.ComboFillUniqueValue(comboentryGrowth, "nomenclature", "growth");
+
+			string sql = "SELECT name, id, category FROM item_types";
+			ComboWorks.ComboFillUniversal(comboType, sql, "{0}", null, 1, 2, true);
 		}
 
 		public void Fill(int id)
@@ -70,7 +72,8 @@ namespace workwear
 		protected void TestCanSave ()
 		{
 			bool Nameok = entryName.Text != "";
-			buttonOk.Sensitive = Nameok;
+			bool TypeOk = comboType.Active > 0;
+			buttonOk.Sensitive = Nameok && TypeOk;
 		}
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
@@ -125,6 +128,19 @@ namespace workwear
 
 		protected void OnEntryNameChanged(object sender, EventArgs e)
 		{
+			TestCanSave();
+		}
+
+		protected void OnComboTypeChanged(object sender, EventArgs e)
+		{
+			TreeIter iter;
+			comboType.GetActiveIter(out iter);
+			object[] Values = (object[]) comboType.Model.GetValue(iter, 2);
+			bool IsWear = Values[2].ToString() == "wear";
+			labelSize.Visible = IsWear;
+			labelGrowth.Visible = IsWear;
+			comboentrySize.Visible = IsWear;
+			comboentryGrowth.Visible = IsWear;
 			TestCanSave();
 		}
 	}
