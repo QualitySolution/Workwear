@@ -8,7 +8,7 @@ namespace workwear
 	public partial class WriteOffDoc : Gtk.Dialog
 	{
 		public bool NewItem;
-		private int _CurrentWorkerId = -1;
+		private int _CurrentWorkerId = -1, _CurrentObjectId = -1;
 		int Itemid;
 
 		public WriteOffDoc()
@@ -25,6 +25,17 @@ namespace workwear
 				{
 					_CurrentWorkerId = value;
 					ItemsTable.CurWorkerId = value;
+				}
+			}
+		}
+
+		public int CurrentObjectId
+		{
+			get {return _CurrentObjectId;} 
+			set {if(_CurrentObjectId != value)
+				{
+					_CurrentObjectId = value;
+					ItemsTable.CurObjectId = value;
 				}
 			}
 		}

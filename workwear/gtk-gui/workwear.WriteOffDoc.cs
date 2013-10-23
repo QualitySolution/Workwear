@@ -124,6 +124,7 @@ namespace workwear
 			this.ItemsTable.Name = "ItemsTable";
 			this.ItemsTable.WriteOffDocId = 0;
 			this.ItemsTable.CurWorkerId = 0;
+			this.ItemsTable.CurObjectId = 0;
 			w1.Add (this.ItemsTable);
 			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(w1 [this.ItemsTable]));
 			w11.Position = 1;

@@ -20,6 +20,12 @@ namespace workwear
 			comboOperation.Active = 0;
 		}
 
+		public Operations Operation
+		{
+			get {return (Operations)comboOperation.Active;}
+			set	{comboOperation.Active = (int) value;}
+		}
+
 		public void Fill(int id)
 		{
 			Itemid = id;
@@ -226,7 +232,7 @@ namespace workwear
 			TestCanSave();
 		}
 
-		protected void SetObject(int id)
+		public void SetObject(int id)
 		{
 			string sql = "SELECT name, address FROM objects WHERE id = @id";
 			try

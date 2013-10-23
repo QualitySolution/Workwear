@@ -569,6 +569,7 @@ namespace workwear
 		{
 			ExpenseDoc winExpense = new ExpenseDoc();
 			winExpense.NewItem = true;
+			winExpense.Operation = ExpenseDoc.Operations.Employee;
 			winExpense.SetWorker(Itemid, String.Format("{0} {1} {2}", entryLastName.Text, entryFirstName.Text, entryPatronymic.Text));
 			winExpense.Show();
 			winExpense.Run();

@@ -280,7 +280,7 @@ namespace workwear
 			TestCanSave();
 		}
 
-		protected void SetObject(int id)
+		public void SetObject(int id)
 		{
 			string sql = "SELECT name, address FROM objects WHERE id = @id";
 			try
