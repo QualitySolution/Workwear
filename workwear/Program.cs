@@ -84,8 +84,8 @@ namespace workwear
 			PrepareTable.SqlSelect = "SELECT name, id FROM item_types ";
 			PrepareTable.DisplayString = "{0}";
 			PrepareTable.PrimaryKey = new TableInfo.PrimaryKeys("id");
-			PrepareTable.ClearItems.Add ("nomenclature", 
-			                             new TableInfo.ClearDependenceItem ("WHERE type_id = @id", "", "@id", "type_id"));
+			PrepareTable.DeleteItems.Add ("nomenclature", 
+										new TableInfo.DeleteDependenceItem ("WHERE type_id = @id ", "", "@id"));
 			QSMain.ProjectTables.Add ("item_types", PrepareTable);
 
 			PrepareTable = new TableInfo();
