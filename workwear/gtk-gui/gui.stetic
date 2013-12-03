@@ -1610,6 +1610,7 @@
   </widget>
   <widget class="Gtk.Dialog" id="workwear.WearCard" design-size="847 569">
     <property name="MemberName" />
+    <property name="Title" translatable="yes">Новая карточка сотрудника</property>
     <property name="WindowPosition">CenterOnParent</property>
     <property name="Buttons">3</property>
     <property name="HelpButton">False</property>
@@ -3647,7 +3648,7 @@
   </widget>
   <widget class="Gtk.Dialog" id="workwear.WriteOffDoc" design-size="582 436">
     <property name="MemberName" />
-    <property name="Title" translatable="yes">Новая выдача</property>
+    <property name="Title" translatable="yes">Новое списание</property>
     <property name="WindowPosition">CenterOnParent</property>
     <property name="Buttons">2</property>
     <property name="HelpButton">False</property>
