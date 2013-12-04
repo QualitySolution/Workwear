@@ -131,7 +131,7 @@ namespace workwear
 					if(rdr["object_id"] != DBNull.Value)
 					{
 						Object_id = rdr.GetInt32("object_id");
-						labelObjectName.LabelProp = rdr.GetString("object");
+						entryObject.Text = rdr.GetString("object");
 						labelObjectAddress.LabelProp = rdr.GetString("address");
 					}
 					else
@@ -287,7 +287,7 @@ namespace workwear
 		protected void OnButtonObjectClearClicked(object sender, EventArgs e)
 		{
 			Object_id = -1;
-			labelObjectName.LabelProp = "---";
+			entryObject.Text = "---";
 			labelObjectAddress.LabelProp = "---";
 		}
 
@@ -317,7 +317,7 @@ namespace workwear
 			if((ResponseType)result == ResponseType.Ok)
 			{
 				Object_id = ObjectSelect.SelectedID;
-				labelObjectName.LabelProp = ObjectSelect.SelectedName;
+				entryObject.Text = ObjectSelect.SelectedName;
 				string sql = "SELECT address FROM objects WHERE id = @id";
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue("@id", Object_id);
