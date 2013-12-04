@@ -140,7 +140,7 @@ public partial class MainWindow
 		this.notebookMain = new global::Gtk.Notebook ();
 		this.notebookMain.CanFocus = true;
 		this.notebookMain.Name = "notebookMain";
-		this.notebookMain.CurrentPage = 2;
+		this.notebookMain.CurrentPage = 0;
 		// Container child notebookMain.Gtk.Notebook+NotebookChild
 		this.vbox2 = new global::Gtk.VBox ();
 		this.vbox2.Name = "vbox2";
@@ -280,7 +280,7 @@ public partial class MainWindow
 		// Notebook tab
 		this.label2 = new global::Gtk.Label ();
 		this.label2.Name = "label2";
-		this.label2.LabelProp = global::Mono.Unix.Catalog.GetString ("Карточки учета");
+		this.label2.LabelProp = global::Mono.Unix.Catalog.GetString ("Карточки сотрудников");
 		this.notebookMain.SetTabLabel (this.vbox3, this.label2);
 		this.label2.ShowAll ();
 		// Container child notebookMain.Gtk.Notebook+NotebookChild
