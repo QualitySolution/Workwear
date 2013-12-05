@@ -52,30 +52,19 @@ namespace workwear
 			this.buttonSearchClean.CanFocus = true;
 			this.buttonSearchClean.Name = "buttonSearchClean";
 			this.buttonSearchClean.UseUnderline = true;
-			// Container child buttonSearchClean.Gtk.Container+ContainerChild
-			global::Gtk.Alignment w4 = new global::Gtk.Alignment (0.5F, 0.5F, 0F, 0F);
-			// Container child GtkAlignment.Gtk.Container+ContainerChild
-			global::Gtk.HBox w5 = new global::Gtk.HBox ();
-			w5.Spacing = 2;
-			// Container child GtkHBox.Gtk.Container+ContainerChild
-			global::Gtk.Image w6 = new global::Gtk.Image ();
-			w6.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-clear", global::Gtk.IconSize.Menu);
-			w5.Add (w6);
-			// Container child GtkHBox.Gtk.Container+ContainerChild
-			global::Gtk.Label w8 = new global::Gtk.Label ();
-			w5.Add (w8);
-			w4.Add (w5);
-			this.buttonSearchClean.Add (w4);
+			global::Gtk.Image w4 = new global::Gtk.Image ();
+			w4.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-clear", global::Gtk.IconSize.Menu);
+			this.buttonSearchClean.Image = w4;
 			this.hbox1.Add (this.buttonSearchClean);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.buttonSearchClean]));
-			w12.Position = 2;
-			w12.Expand = false;
-			w12.Fill = false;
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.buttonSearchClean]));
+			w5.Position = 2;
+			w5.Expand = false;
+			w5.Fill = false;
 			w1.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(w1 [this.hbox1]));
-			w13.Position = 0;
-			w13.Expand = false;
-			w13.Fill = false;
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(w1 [this.hbox1]));
+			w6.Position = 0;
+			w6.Expand = false;
+			w6.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow ();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -87,67 +76,43 @@ namespace workwear
 			this.treeviewStock.Name = "treeviewStock";
 			this.GtkScrolledWindow.Add (this.treeviewStock);
 			w1.Add (this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(w1 [this.GtkScrolledWindow]));
-			w15.Position = 1;
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(w1 [this.GtkScrolledWindow]));
+			w8.Position = 1;
 			// Internal child workwear.SelectStockItem.ActionArea
-			global::Gtk.HButtonBox w16 = this.ActionArea;
-			w16.Name = "dialog1_ActionArea";
-			w16.Spacing = 10;
-			w16.BorderWidth = ((uint)(5));
-			w16.LayoutStyle = ((global::Gtk.ButtonBoxStyle)(4));
+			global::Gtk.HButtonBox w9 = this.ActionArea;
+			w9.Name = "dialog1_ActionArea";
+			w9.Spacing = 10;
+			w9.BorderWidth = ((uint)(5));
+			w9.LayoutStyle = ((global::Gtk.ButtonBoxStyle)(4));
 			// Container child dialog1_ActionArea.Gtk.ButtonBox+ButtonBoxChild
 			this.buttonCancel = new global::Gtk.Button ();
 			this.buttonCancel.CanDefault = true;
 			this.buttonCancel.CanFocus = true;
 			this.buttonCancel.Name = "buttonCancel";
 			this.buttonCancel.UseUnderline = true;
-			// Container child buttonCancel.Gtk.Container+ContainerChild
-			global::Gtk.Alignment w17 = new global::Gtk.Alignment (0.5F, 0.5F, 0F, 0F);
-			// Container child GtkAlignment.Gtk.Container+ContainerChild
-			global::Gtk.HBox w18 = new global::Gtk.HBox ();
-			w18.Spacing = 2;
-			// Container child GtkHBox.Gtk.Container+ContainerChild
-			global::Gtk.Image w19 = new global::Gtk.Image ();
-			w19.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-cancel", global::Gtk.IconSize.Menu);
-			w18.Add (w19);
-			// Container child GtkHBox.Gtk.Container+ContainerChild
-			global::Gtk.Label w21 = new global::Gtk.Label ();
-			w21.LabelProp = global::Mono.Unix.Catalog.GetString ("О_тменить");
-			w21.UseUnderline = true;
-			w18.Add (w21);
-			w17.Add (w18);
-			this.buttonCancel.Add (w17);
+			this.buttonCancel.Label = global::Mono.Unix.Catalog.GetString ("О_тменить");
+			global::Gtk.Image w10 = new global::Gtk.Image ();
+			w10.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-cancel", global::Gtk.IconSize.Menu);
+			this.buttonCancel.Image = w10;
 			this.AddActionWidget (this.buttonCancel, -6);
-			global::Gtk.ButtonBox.ButtonBoxChild w25 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w16 [this.buttonCancel]));
-			w25.Expand = false;
-			w25.Fill = false;
+			global::Gtk.ButtonBox.ButtonBoxChild w11 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w9 [this.buttonCancel]));
+			w11.Expand = false;
+			w11.Fill = false;
 			// Container child dialog1_ActionArea.Gtk.ButtonBox+ButtonBoxChild
 			this.buttonOk = new global::Gtk.Button ();
 			this.buttonOk.CanDefault = true;
 			this.buttonOk.CanFocus = true;
 			this.buttonOk.Name = "buttonOk";
 			this.buttonOk.UseUnderline = true;
-			// Container child buttonOk.Gtk.Container+ContainerChild
-			global::Gtk.Alignment w26 = new global::Gtk.Alignment (0.5F, 0.5F, 0F, 0F);
-			// Container child GtkAlignment.Gtk.Container+ContainerChild
-			global::Gtk.HBox w27 = new global::Gtk.HBox ();
-			w27.Spacing = 2;
-			// Container child GtkHBox.Gtk.Container+ContainerChild
-			global::Gtk.Image w28 = new global::Gtk.Image ();
-			w28.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-ok", global::Gtk.IconSize.Menu);
-			w27.Add (w28);
-			// Container child GtkHBox.Gtk.Container+ContainerChild
-			global::Gtk.Label w30 = new global::Gtk.Label ();
-			w30.LabelProp = global::Mono.Unix.Catalog.GetString ("_OK");
-			w30.UseUnderline = true;
-			w27.Add (w30);
-			w26.Add (w27);
-			this.buttonOk.Add (w26);
+			this.buttonOk.Label = global::Mono.Unix.Catalog.GetString ("_OK");
+			global::Gtk.Image w12 = new global::Gtk.Image ();
+			w12.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-ok", global::Gtk.IconSize.Menu);
+			this.buttonOk.Image = w12;
 			this.AddActionWidget (this.buttonOk, -5);
-			global::Gtk.ButtonBox.ButtonBoxChild w34 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w16 [this.buttonOk]));
-			w34.Position = 1;
-			w34.Expand = false;
-			w34.Fill = false;
+			global::Gtk.ButtonBox.ButtonBoxChild w13 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w9 [this.buttonOk]));
+			w13.Position = 1;
+			w13.Expand = false;
+			w13.Fill = false;
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
