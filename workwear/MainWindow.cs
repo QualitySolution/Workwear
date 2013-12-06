@@ -59,8 +59,7 @@ public partial class MainWindow: Gtk.Window
 				"возможностей программы, не используйте его для работы, так как ваши данные будут доступны " +
 				"любому пользователю через интернет.\n\nДля полноценного использования программы вам необходимо " +
 				"установить собственный сервер. Для его установки обратитесь к документации.\n\nЕсли у вас возникнут " +
-				"вопросы вы можете задать их на форуме программы: https://groups.google.com/forum/?fromgroups#!forum/bazarsoft " +
-				"или обратится в нашу тех. поддержку.";
+				"вопросы вы можете обратится в нашу тех. поддержку.";
 			MessageDialog md = new MessageDialog ( this, DialogFlags.DestroyWithParent,
 			                                      MessageType.Info, 
 			                                      ButtonsType.Ok,
@@ -205,14 +204,14 @@ public partial class MainWindow: Gtk.Window
 	protected void OnAboutActionActivated(object sender, EventArgs e)
 	{
 		AboutDialog dialog = new AboutDialog ();
-		dialog.ProgramName = "QS:Учет спецодежды";
+		dialog.ProgramName = "QS: Cпецодежда и имущество";
 
 		Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 		dialog.Version = String.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build);
 
 		dialog.Logo = Gdk.Pixbuf.LoadFromResource ("workwear.icon.logo.png");
 
-		dialog.Comments = "Программа позволяет вести учет спецодежды." +
+		dialog.Comments = "Программа позволяет вести учет спецодежды и выдаваемого имущества на предприятии любого масштаба." +
 			"\nРазработана на MonoDevelop с использованием открытых технологий Mono, GTK#, MySQL." +
 			"\nТелефон тех. поддержки +7(812)575-79-44";
 
