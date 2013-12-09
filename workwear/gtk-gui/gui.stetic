@@ -108,6 +108,13 @@
         <property name="ShortLabel" translatable="yes">Список по размерам</property>
         <signal name="Activated" handler="OnAction12Activated" />
       </action>
+      <action id="helpAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Документация</property>
+        <property name="ShortLabel" translatable="yes">Документация</property>
+        <property name="StockId">gtk-help</property>
+        <signal name="Activated" handler="OnHelpActionActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -144,6 +151,8 @@
                 <node type="Menuitem" action="Action12" />
               </node>
               <node type="Menu" action="Action3">
+                <node type="Menuitem" action="helpAction" />
+                <node type="Separator" />
                 <node type="Menuitem" action="aboutAction" />
               </node>
             </node>

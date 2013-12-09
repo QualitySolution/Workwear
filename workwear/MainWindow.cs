@@ -440,4 +440,9 @@ public partial class MainWindow: Gtk.Window
 		ViewReportExt.Run("ListBySize", "", true);
 	}
 
+	protected void OnHelpActionActivated(object sender, EventArgs e)
+	{
+		System.Diagnostics.Process.Start("workwear_ru.pdf");
+	}
+
 }
