@@ -11,6 +11,8 @@
     <AssemblyName>workwear</AssemblyName>
     <ApplicationIcon>icon\logo.ico</ApplicationIcon>
     <StartupObject>workwear.MainClass</StartupObject>
+    <UseMSBuildEngine>False</UseMSBuildEngine>
+    <ReleaseVersion>1.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
