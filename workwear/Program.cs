@@ -74,9 +74,25 @@ namespace workwear
 			PrepareTable.SqlSelect = "SELECT name, id FROM objects ";
 			PrepareTable.DisplayString = "Объект {0}";
 			PrepareTable.PrimaryKey = new TableInfo.PrimaryKeys("id");
+			PrepareTable.DeleteItems.Add ("object_places", 
+				new TableInfo.DeleteDependenceItem ("WHERE object_id = @id ", "", "@id"));
+			PrepareTable.DeleteItems.Add ("stock_expense", 
+				new TableInfo.DeleteDependenceItem ("WHERE object_id = @id ", "", "@id"));
+			PrepareTable.DeleteItems.Add ("stock_income", 
+				new TableInfo.DeleteDependenceItem ("WHERE object_id = @id ", "", "@id"));
 			PrepareTable.ClearItems.Add ("wear_cards", 
 			                             new TableInfo.ClearDependenceItem ("WHERE object_id = @id", "", "@id", "object_id"));
 			QSMain.ProjectTables.Add ("objects", PrepareTable);
+
+			PrepareTable = new TableInfo();
+			PrepareTable.ObjectsName = "Размещения в объекте";
+			PrepareTable.ObjectName = "размещение";
+			PrepareTable.SqlSelect = "SELECT name, id FROM object_places ";
+			PrepareTable.DisplayString = "{0}";
+			PrepareTable.PrimaryKey = new TableInfo.PrimaryKeys("id");
+			PrepareTable.ClearItems.Add ("stock_expense_detail", 
+				new TableInfo.ClearDependenceItem ("WHERE object_place_id = @id", "", "@id", "object_place_id"));
+			QSMain.ProjectTables.Add ("object_places", PrepareTable);
 
 			PrepareTable = new TableInfo();
 			PrepareTable.ObjectsName = "Виды номенклатуры";
