@@ -203,26 +203,7 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnAboutActionActivated(object sender, EventArgs e)
 	{
-		AboutDialog dialog = new AboutDialog ();
-		dialog.ProgramName = "QS: Cпецодежда и имущество";
-
-		Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-		dialog.Version = String.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build);
-
-		dialog.Logo = Gdk.Pixbuf.LoadFromResource ("workwear.icon.logo.png");
-
-		dialog.Comments = "Программа позволяет вести учет спецодежды и выдаваемого имущества на предприятии любого масштаба." +
-			"\nРазработана на MonoDevelop с использованием открытых технологий Mono, GTK#, MySQL." +
-			"\nТелефон тех. поддержки +7(812)575-79-44";
-
-		dialog.Copyright = "Quality Solution 2013";
-
-		dialog.Authors = new string [] {"Ганьков Андрей <gav@qsolution.ru>"};
-
-		dialog.Website = "http://www.qsolution.ru/";
-
-		dialog.Run ();
-		dialog.Destroy();
+		QSMain.RunAboutDialog();
 	}
 	
 	protected void OnButtonRefreshClicked(object sender, EventArgs e)
