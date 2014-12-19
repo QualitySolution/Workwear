@@ -44,7 +44,7 @@ namespace workwear
 		{
 			string sql = "SELECT id, last_name, first_name, patronymic_name FROM wear_cards";
 			string Display = "{1} {2} {3}";
-			ComboWorks.ComboFillUniversal (comboWorker, sql, Display, null, 0, 1);
+			ComboWorks.ComboFillUniversal (comboWorker, sql, Display, null, 0, ComboWorks.ListMode.WithAll);
 		}
 
 		private void RenderQuantityColumn (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)

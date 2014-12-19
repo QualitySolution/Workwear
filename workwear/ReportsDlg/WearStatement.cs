@@ -8,7 +8,7 @@ namespace workwear
 		public WearStatement()
 		{
 			this.Build();
-			ComboWorks.ComboFillReference(comboObject, "objects", 0);
+			ComboWorks.ComboFillReference(comboObject, "objects", ComboWorks.ListMode.OnlyItems);
 			comboObject.Active = 0;
 		}
 

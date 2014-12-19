@@ -15,12 +15,12 @@ namespace workwear
 		public Nomenclature()
 		{
 			this.Build();
-			ComboWorks.ComboFillReference(comboUnits, "units", 2);
+			ComboWorks.ComboFillReference(comboUnits, "units", ComboWorks.ListMode.WithNo);
 			ComboWorks.ComboFillUniqueValue(comboentrySize, "nomenclature", "size");
 			ComboWorks.ComboFillUniqueValue(comboentryGrowth, "nomenclature", "growth");
 
 			string sql = "SELECT name, id, category FROM item_types";
-			ComboWorks.ComboFillUniversal(comboType, sql, "{0}", null, 1, 2, true);
+			ComboWorks.ComboFillUniversal(comboType, sql, "{0}", null, 1, ComboWorks.ListMode.WithNo, true);
 		}
 
 		public void Fill(int id)

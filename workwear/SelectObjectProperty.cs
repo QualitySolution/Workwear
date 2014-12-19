@@ -44,7 +44,7 @@ namespace workwear
 		{
 			string sql = "SELECT id, name FROM objects";
 			string Display = "{1}";
-			ComboWorks.ComboFillUniversal (comboObject, sql, Display, null, 0, 1);
+			ComboWorks.ComboFillUniversal (comboObject, sql, Display, null, 0, ComboWorks.ListMode.WithAll);
 		}
 
 		private void RenderQuantityColumn (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)

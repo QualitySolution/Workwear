@@ -23,7 +23,7 @@ namespace workwear
 		{
 			this.Build();
 			
-			ComboWorks.ComboFillReference(comboPost, "posts", 2);
+			ComboWorks.ComboFillReference(comboPost, "posts", ComboWorks.ListMode.WithNo);
 			ComboWorks.ComboFillUniqueValue(comboentryWearSize, "wear_cards", "wear_size");
 			//Устанавливаем последовательность заполнения
 			table1.FocusChain = new Widget[]

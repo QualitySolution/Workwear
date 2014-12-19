@@ -43,7 +43,7 @@ namespace workwear
 				string sql = "SELECT name, id FROM object_places WHERE object_id = @id";
 				MySqlParameter[] param = new MySqlParameter[]{ new MySqlParameter("@id", value)};
 				ComboBox PlacementCombo = new ComboBox();
-				ComboWorks.ComboFillUniversal(PlacementCombo, sql, "{0}", param, 1, 2);
+				ComboWorks.ComboFillUniversal(PlacementCombo, sql, "{0}", param, 1, ComboWorks.ListMode.WithNo);
 				CellPlacement.Model = PlacementList = PlacementCombo.Model;
 				PlacementCombo.Destroy ();
 
