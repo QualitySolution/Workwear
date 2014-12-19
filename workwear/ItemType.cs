@@ -1,11 +1,13 @@
 using System;
 using MySql.Data.MySqlClient;
+using NLog;
 using QSProjectsLib;
 
 namespace workwear
 {
 	public partial class ItemType : Gtk.Dialog
 	{
+		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public bool NewItem;
 		int Itemid;
 		
@@ -19,7 +21,7 @@ namespace workwear
 			Itemid = id;
 			NewItem = false;
 			
-			MainClass.StatusMessage(String.Format("Запрос типа номенклатуры №{0}...", id));
+			logger.Info("Запрос типа номенклатуры №{0}...", id);
 			string sql = "SELECT * FROM item_types WHERE item_types.id = @id";
 			try
 			{
@@ -43,15 +45,13 @@ namespace workwear
 							comboCategory.Active = 1;
 							break;
 					}
-					MainClass.StatusMessage("Ok");
+					logger.Info("Ok");
 				}
 				this.Title = entryName.Text;
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения информации о услуге!");
-				QSMain.ErrorMessage(this, ex);
+				QSMain.ErrorMessageWithLog(this, "Ошибка получения информации о услуге!", logger, ex);
 				this.Respond(Gtk.ResponseType.Reject);
 			}
 			TestCanSave();
@@ -76,7 +76,7 @@ namespace workwear
 			{
 				sql = "UPDATE item_types SET name = @name, category = @category, norm_quantity = @norm_quantity, norm_life = @norm_life WHERE id = @id";
 			}
-			MainClass.StatusMessage("Запись тип номенклатуры...");
+			logger.Info("Запись тип номенклатуры...");
 			try 
 			{
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
@@ -95,14 +95,12 @@ namespace workwear
 				}
 				
 				cmd.ExecuteNonQuery();
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 				Respond (Gtk.ResponseType.Ok);
 			} 
 			catch (Exception ex) 
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка записи типа номенклатуры!");
-				QSMain.ErrorMessage(this,ex);
+				QSMain.ErrorMessageWithLog(this, "Ошибка записи типа номенклатуры!", logger, ex);
 			}
 		}
 

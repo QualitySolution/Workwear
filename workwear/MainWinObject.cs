@@ -25,7 +25,7 @@ public partial class MainWindow : Gtk.Window
 
 	void UpdateObject()
 	{
-		MainClass.StatusMessage("Получаем таблицу объектов...");
+		logger.Info("Получаем таблицу объектов...");
 
 		string sql = "SELECT objects.* FROM objects";
 		MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
@@ -40,7 +40,7 @@ public partial class MainWindow : Gtk.Window
 			                              rdr["address"].ToString());
 		}
 		rdr.Close();
-		MainClass.StatusMessage("Ok");
+		logger.Info("Ok");
 		bool isSelect = treeviewObjects.Selection.CountSelectedRows() == 1;
 		buttonEdit.Sensitive = isSelect;
 		buttonDelete.Sensitive = isSelect;

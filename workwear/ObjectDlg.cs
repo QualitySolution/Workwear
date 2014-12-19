@@ -1,12 +1,14 @@
 using System;
-using MySql.Data.MySqlClient;
-using QSProjectsLib;
 using Gtk;
+using MySql.Data.MySqlClient;
+using NLog;
+using QSProjectsLib;
 
 namespace workwear
 {
 	public partial class ObjectDlg : Gtk.Dialog
 	{
+		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public bool NewItem;
 		int Itemid;
 		private Gtk.ListStore ItemsListStore;
@@ -60,7 +62,7 @@ namespace workwear
 			Itemid = id;
 			NewItem = false;
 
-			MainClass.StatusMessage(String.Format("Запрос объекта №{0}...", id));
+			logger.Info("Запрос объекта №{0}...", id);
 			string sql = "SELECT * FROM objects WHERE id = @id";
 			try
 			{
@@ -76,7 +78,7 @@ namespace workwear
 					entryName.Text = rdr["name"].ToString();
 					textviewAddress.Buffer.Text = rdr.GetString("address");
 
-					MainClass.StatusMessage("Ok");
+					logger.Info("Ok");
 				}
 
 				UpdatePlacementCombo();
@@ -89,9 +91,7 @@ namespace workwear
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения информации о объекте!");
-				QSMain.ErrorMessage(this, ex);
+				QSMain.ErrorMessageWithLog(this, "Ошибка получения информации о объекте!", logger, ex);
 				this.Respond(Gtk.ResponseType.Reject);
 			}
 			TestCanSave();
@@ -115,7 +115,7 @@ namespace workwear
 			{
 				sql = "UPDATE objects SET name = @name, address = @address WHERE id = @id";
 			}
-			MainClass.StatusMessage("Запись объекта...");
+			logger.Info("Запись объекта...");
 			try 
 			{
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
@@ -128,14 +128,12 @@ namespace workwear
 
 				SaveProperty();
 
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 				Respond (Gtk.ResponseType.Ok);
 			} 
 			catch (Exception ex) 
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка записи объекта!");
-				QSMain.ErrorMessage(this,ex);
+				QSMain.ErrorMessageWithLog(this, "Ошибка записи объекта!", logger, ex);
 			}
 		}
 
@@ -240,7 +238,7 @@ namespace workwear
 
 		private void UpdateProperty()
 		{
-			MainClass.StatusMessage("Запрос выданного имущества...");
+			logger.Info("Запрос выданного имущества...");
 			try
 			{
 				string sql = "SELECT stock_expense_detail.id, stock_expense_detail.nomenclature_id, stock_expense_detail.quantity, stock_expense_detail.object_place_id, " +
@@ -293,12 +291,12 @@ namespace workwear
 						                        );
 				}
 				rdr.Close();
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения имущества на объекте!");
+				logger.Warn("Ошибка получения имущества на объекте!");
 			}
 
 		}

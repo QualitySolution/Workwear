@@ -1,12 +1,14 @@
 using System;
 using Gtk;
 using MySql.Data.MySqlClient;
+using NLog;
 using QSProjectsLib;
 
 namespace workwear
 {
 	public partial class WriteOffDoc : Gtk.Dialog
 	{
+		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public bool NewItem;
 		private int _CurrentWorkerId = -1, _CurrentObjectId = -1;
 		int Itemid;
@@ -45,7 +47,7 @@ namespace workwear
 			Itemid = id;
 			NewItem = false;
 
-			MainClass.StatusMessage(String.Format("Запрос акта списания №{0}...", id));
+			logger.Info("Запрос акта списания №{0}...", id);
 			string sql = "SELECT stock_write_off.*, users.name as user " +
 				"FROM stock_write_off " +
 				"LEFT JOIN users ON stock_write_off.user_id = users.id " +
@@ -68,15 +70,13 @@ namespace workwear
 					}
 				}
 				ItemsTable.WriteOffDocId = Itemid;
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 
 				this.Title =  "Списание №" + labelId.LabelProp;
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения документа!");
-				QSMain.ErrorMessage(this, ex);
+				QSMain.ErrorMessageWithLog(this, "Ошибка получения документа!", logger, ex);
 				this.Respond(Gtk.ResponseType.Reject);
 			}
 			TestCanSave();
@@ -102,7 +102,7 @@ namespace workwear
 				sql = "UPDATE stock_write_off SET date = @date " +
 					"WHERE id = @id";
 			}
-			MainClass.StatusMessage("Запись документа...");
+			logger.Info("Запись документа...");
 			MySqlTransaction trans = QSMain.connectionDB.BeginTransaction();
 			try 
 			{
@@ -120,15 +120,13 @@ namespace workwear
 					trans.Commit();
 				else
 					trans.Rollback();
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 				Respond (Gtk.ResponseType.Ok);
 			} 
 			catch (Exception ex) 
 			{
 				trans.Rollback();
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка записи документа!");
-				QSMain.ErrorMessage(this,ex);
+				QSMain.ErrorMessageWithLog(this, "Ошибка записи документа!", logger, ex);
 			}
 		}
 

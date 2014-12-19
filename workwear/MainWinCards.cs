@@ -25,7 +25,7 @@ public partial class MainWindow : Gtk.Window
 
 	void UpdateCards()
 	{
-		MainClass.StatusMessage("Получаем таблицу Карточек...");
+		logger.Info("Получаем таблицу Карточек...");
 
 		string sql = "SELECT wear_cards.id, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object FROM wear_cards " +
 		"LEFT JOIN objects ON objects.id = wear_cards.object_id ";
@@ -45,7 +45,7 @@ public partial class MainWindow : Gtk.Window
 			                            rdr["object"].ToString());
 		}
 		rdr.Close();
-		MainClass.StatusMessage("Ok");
+		logger.Info("Ok");
 		bool isSelect = treeviewCards.Selection.CountSelectedRows() == 1;
 		buttonEdit.Sensitive = isSelect;
 		buttonDelete.Sensitive = isSelect;

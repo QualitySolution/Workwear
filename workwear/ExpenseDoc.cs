@@ -1,12 +1,14 @@
 using System;
 using Gtk;
 using MySql.Data.MySqlClient;
+using NLog;
 using QSProjectsLib;
 
 namespace workwear
 {
 	public partial class ExpenseDoc : Gtk.Dialog
 	{
+		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public bool NewItem;
 		private int Itemid, Worker_id, Object_id;
 
@@ -31,7 +33,7 @@ namespace workwear
 			Itemid = id;
 			NewItem = false;
 
-			MainClass.StatusMessage(String.Format("Запрос расходного документа №{0}...", id));
+			logger.Info("Запрос расходного документа №{0}...", id);
 			string sql = "SELECT stock_expense.*, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object, objects.address, users.name as user " +
 				"FROM stock_expense " +
 				"LEFT JOIN wear_cards ON wear_cards.id = stock_expense.wear_card_id " +
@@ -86,15 +88,13 @@ namespace workwear
 					ItemsTable.WorkerId = Worker_id;
 				if(Object_id > 0)
 					ItemsTable.ObjectId = Object_id;
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 
 				this.Title =  "Выдача №" + labelId.LabelProp;
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения документа!");
-				QSMain.ErrorMessage(this, ex);
+				QSMain.ErrorMessageWithLog(this, "Ошибка получения документа!", logger, ex);
 				this.Respond(Gtk.ResponseType.Reject);
 			}
 			TestCanSave();
@@ -122,7 +122,7 @@ namespace workwear
 				sql = "UPDATE stock_expense SET operation = @operation, date = @date, wear_card_id = @wear_card_id, object_id = @object_id " +
 					"WHERE id = @id";
 			}
-			MainClass.StatusMessage("Запись документа...");
+			logger.Info("Запись документа...");
 			MySqlTransaction trans = QSMain.connectionDB.BeginTransaction();
 			try 
 			{
@@ -147,15 +147,13 @@ namespace workwear
 					trans.Commit();
 				else
 					trans.Rollback();
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 				Respond (Gtk.ResponseType.Ok);
 			} 
 			catch (Exception ex) 
 			{
 				trans.Rollback();
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка записи документа!");
-				QSMain.ErrorMessage(this,ex);
+				QSMain.ErrorMessageWithLog(this, "Ошибка записи документа!", logger, ex);
 			}
 		}
 
@@ -250,9 +248,7 @@ namespace workwear
 			}
 			catch (Exception ex) 
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка чтения объекта!");
-				QSMain.ErrorMessage(this,ex);
+				QSMain.ErrorMessageWithLog(this, "Ошибка чтения объекта!", logger, ex);
 			}
 		}
 	}

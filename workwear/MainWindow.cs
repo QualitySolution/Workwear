@@ -1,18 +1,24 @@
 using System;
 using Gtk;
-using workwear;
+using MySql.Data.MySqlClient;
+using NLog;
 using QSProjectsLib;
 using QSSupportLib;
-using MySql.Data.MySqlClient;
+using workwear;
 
 public partial class MainWindow: Gtk.Window
 {	
+	private static Logger logger = LogManager.GetCurrentClassLogger();
+
 	public MainWindow(): base (Gtk.WindowType.Toplevel)
 	{
 		Build();
 		
 		//Передаем лебл
 		MainClass.StatusBarLabel = labelStatus;
+		this.Title = QSSupportLib.MainSupport.GetTitle();
+		QSMain.MakeNewStatusTargetForNlog("StatusMessage", "workwear.MainClass, workwear");
+
 		Reference.RunReferenceItemDlg += OnRunReferenceItemDialog;
 		QSMain.ReferenceUpdated += OnReferenceUpdate;
 

@@ -1,7 +1,8 @@
 using System;
+using System.Collections.Generic;
 using Gtk;
 using MySql.Data.MySqlClient;
-using System.Collections.Generic;
+using NLog;
 using QSProjectsLib;
 
 namespace workwear
@@ -9,6 +10,7 @@ namespace workwear
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class IncomeTable : Gtk.Bin
 	{
+		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private int _WorkerId, _ObjectId, _IncomeDocId;
 		private IncomeDoc.Operations _Operation;
 		private bool _CanSave = false;
@@ -133,7 +135,7 @@ namespace workwear
 			CardRowsFilter = new TreeModelFilter( CardRowsListStore, null);
 			CardRowsFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeCardRows);
 
-			MainClass.StatusMessage("Запрос спецодежды по работнику...");
+			logger.Info("Запрос спецодежды по работнику...");
 			try
 			{
 				string sql = "SELECT stock_expense_detail.id, stock_expense_detail.nomenclature_id, stock_expense_detail.quantity,\n" +
@@ -183,14 +185,13 @@ namespace workwear
 						                               );
 					}
 				}
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 				buttonAdd.Sensitive = true;
 				return true;
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения о выданной одежде!");
+				logger.WarnException("Ошибка получения о выданной одежде!", ex);
 				throw;
 			}
 		}
@@ -214,7 +215,7 @@ namespace workwear
 			PropertyFilter = new TreeModelFilter( PropertyListStore, null);
 			PropertyFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeProperty);
 
-			MainClass.StatusMessage("Запрос имужества по объекту...");
+			logger.Info("Запрос имужества по объекту...");
 			try
 			{
 				string sql = "SELECT stock_expense_detail.id, stock_expense_detail.nomenclature_id, stock_expense_detail.quantity,\n" +
@@ -264,21 +265,20 @@ namespace workwear
 						                               );
 					}
 				}
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 				buttonAdd.Sensitive = true;
 				return true;
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения о выданного имущества!");
+				logger.WarnException("Ошибка получения о выданного имущества!", ex);
 				throw;
 			}
 		}
 
 		private void FillIncomeDetails()
 		{
-			MainClass.StatusMessage("Запрос деталей документа №" + _IncomeDocId +"...");
+			logger.Info("Запрос деталей документа №" + _IncomeDocId +"...");
 			try
 			{
 				string sql = "SELECT stock_income_detail.id, stock_income_detail.stock_expense_detail_id, " +
@@ -312,13 +312,12 @@ namespace workwear
 					}
 				}
 
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 				CalculateTotal();
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения деталей прихода!");
+				logger.WarnException("Ошибка получения деталей прихода!", ex);
 				throw;
 			}
 		}
@@ -554,8 +553,7 @@ namespace workwear
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка записи строк прихода!");
+				logger.WarnException("Ошибка записи строк прихода!", ex);
 				throw;
 			}
 		}

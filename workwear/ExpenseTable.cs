@@ -1,7 +1,8 @@
 using System;
+using System.Collections.Generic;
 using Gtk;
 using MySql.Data.MySqlClient;
-using System.Collections.Generic;
+using NLog;
 using QSProjectsLib;
 
 namespace workwear
@@ -9,6 +10,7 @@ namespace workwear
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class ExpenseTable : Gtk.Bin
 	{
+		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private int _WorkerId, _ObjectId, _ExpenseDocId;
 		private ExpenseDoc.Operations _Operation;
 		private bool _CanSave = false;
@@ -143,7 +145,7 @@ namespace workwear
 			StockFilter = new TreeModelFilter( StockListStore, null);
 			StockFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeStock);
 
-			MainClass.StatusMessage("Запрос спецодежды на складе...");
+			logger.Info("Запрос спецодежды на складе...");
 			try
 			{
 				string sql = "SELECT stock_income_detail.id, stock_income_detail.nomenclature_id, stock_income_detail.quantity, " +
@@ -190,21 +192,20 @@ namespace workwear
 						                            Norm_Quantity);
 					}
 				}
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 				buttonAdd.Sensitive = true;
 				return true;
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения информации по складу!");
+				logger.WarnException("Ошибка получения информации по складу!", ex);
 				throw;
 			}
 		}
 
 		private void FillExpenseDetails()
 		{
-			MainClass.StatusMessage("Запрос деталей документа №" + _ExpenseDocId +"...");
+			logger.Info("Запрос деталей документа №" + _ExpenseDocId +"...");
 			try
 			{
 				string sql = "SELECT stock_expense_detail.id, stock_expense_detail.stock_income_detail_id, " +
@@ -235,13 +236,12 @@ namespace workwear
 						                              );
 					}
 				}
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 				CalculateTotal();
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения деталей расхода!");
+				logger.WarnException("Ошибка получения деталей расхода!", ex);
 				throw;
 			}
 		}
@@ -396,8 +396,7 @@ namespace workwear
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка записи строк расхода!");
+				logger.WarnException("Ошибка записи строк расхода!", ex);
 				throw;
 			}
 		}

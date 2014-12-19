@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using Gtk;
+using NLog;
 using QSProjectsLib;
 
 namespace workwear
 {
 	class MainClass
 	{
+		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public static Label StatusBarLabel;
 		public static MainWindow MainWin;
 		
@@ -15,14 +17,10 @@ namespace workwear
 			Application.Init();
 			AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e) 
 			{
+				logger.FatalException("Поймано не обработаное исключение.", (Exception) e.ExceptionObject);
 				QSMain.ErrorMessage(MainWin, (Exception) e.ExceptionObject);
 			};
 			CreateProjectParam();
-			//Настраиваем общую билиотеку
-			QSMain.NewStatusText += delegate(object sender, QSProjectsLib.QSMain.NewStatusTextEventArgs e) 
-			{
-				StatusMessage (e.NewText);
-			};
 			// Создаем окно входа
 			Login LoginDialog = new QSProjectsLib.Login ();
 			LoginDialog.Logo = Gdk.Pixbuf.LoadFromResource ("workwear.icon.logo.png");
@@ -254,7 +252,6 @@ namespace workwear
 		public static void StatusMessage(string message)
 		{
 			StatusBarLabel.Text = message;
-			Console.WriteLine (message);
 			while (GLib.MainContext.Pending())
 			{
    				Gtk.Main.Iteration();

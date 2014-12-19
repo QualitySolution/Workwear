@@ -1,12 +1,14 @@
 using System;
-using MySql.Data.MySqlClient;
-using QSProjectsLib;
 using Gtk;
+using MySql.Data.MySqlClient;
+using NLog;
+using QSProjectsLib;
 
 namespace workwear
 {
 	public partial class Nomenclature : Gtk.Dialog
 	{
+		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public bool NewItem;
 		int Itemid;
 		
@@ -26,7 +28,7 @@ namespace workwear
 			Itemid = id;
 			NewItem = false;
 			
-			MainClass.StatusMessage(String.Format("Запрос номенклатуры №{0}...", id));
+			logger.Info("Запрос номенклатуры №{0}...", id);
 			string sql = "SELECT * FROM nomenclature WHERE nomenclature.id = @id";
 			try
 			{
@@ -55,15 +57,13 @@ namespace workwear
 						comboType.SetActiveIter(iter);
 					}
 					
-					MainClass.StatusMessage("Ok");
+					logger.Info("Ok");
 				}
 				this.Title = entryName.Text;
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения информации о номенклатуре!");
-				QSMain.ErrorMessage(this, ex);
+				QSMain.ErrorMessageWithLog(this, "Ошибка получения информации о номенклатуре!", logger, ex);
 				this.Respond(Gtk.ResponseType.Reject);
 			}
 			TestCanSave();
@@ -89,7 +89,7 @@ namespace workwear
 				sql = "UPDATE nomenclature SET name = @name, type_id = @type_id, units_id = @units_id, " +
 				"size = @size, growth = @growth WHERE id = @id";
 			}
-			MainClass.StatusMessage("Запись номенклатуры...");
+			logger.Info("Запись номенклатуры...");
 			try 
 			{
 				TreeIter iter;
@@ -115,14 +115,12 @@ namespace workwear
 					cmd.Parameters.AddWithValue("@type_id", DBNull.Value);
 				
 				cmd.ExecuteNonQuery();
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 				Respond (Gtk.ResponseType.Ok);
 			} 
 			catch (Exception ex) 
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка записи номенклатуры!");
-				QSMain.ErrorMessage(this,ex);
+				QSMain.ErrorMessageWithLog(this, "Ошибка записи номенклатуры!", logger, ex);
 			}
 		}
 

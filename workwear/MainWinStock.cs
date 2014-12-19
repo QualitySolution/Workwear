@@ -88,7 +88,7 @@ public partial class MainWindow : Gtk.Window
 
 	void UpdateStockIncome()
 	{
-		MainClass.StatusMessage("Получаем таблицу приходных документов...");
+		logger.Info("Получаем таблицу приходных документов...");
 
 		string sql = "SELECT stock_income.*, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object " +
 			"FROM stock_income " +
@@ -131,7 +131,7 @@ public partial class MainWindow : Gtk.Window
 				);
 			}
 		}
-		MainClass.StatusMessage("Ok");
+		logger.Info("Ok");
 		bool isSelect = treeviewIncome.Selection.CountSelectedRows() == 1;
 		buttonEdit.Sensitive = isSelect;
 		buttonDelete.Sensitive = isSelect;
@@ -139,7 +139,7 @@ public partial class MainWindow : Gtk.Window
 
 	void UpdateStockExpense()
 	{
-		MainClass.StatusMessage("Получаем таблицу расходных документов...");
+		logger.Info("Получаем таблицу расходных документов...");
 
 		string sql = "SELECT stock_expense.*, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object " +
 			"FROM stock_expense " +
@@ -177,7 +177,7 @@ public partial class MainWindow : Gtk.Window
 				                             );
 			}
 		}
-		MainClass.StatusMessage("Ok");
+		logger.Info("Ok");
 		bool isSelect = treeviewExpense.Selection.CountSelectedRows() == 1;
 		buttonEdit.Sensitive = isSelect;
 		buttonDelete.Sensitive = isSelect;
@@ -185,7 +185,7 @@ public partial class MainWindow : Gtk.Window
 
 	void UpdateStockWriteOff()
 	{
-		MainClass.StatusMessage("Получаем таблицу актов списания...");
+		logger.Info("Получаем таблицу актов списания...");
 
 		string sql = "SELECT stock_write_off.*, users.name as user FROM stock_write_off " +
 			"LEFT JOIN users ON users.id = stock_write_off.user_id ";
@@ -210,7 +210,7 @@ public partial class MainWindow : Gtk.Window
 				                              );
 			}
 		}
-		MainClass.StatusMessage("Ok");
+		logger.Info("Ok");
 		bool isSelect = treeviewWriteOff.Selection.CountSelectedRows() == 1;
 		buttonEdit.Sensitive = isSelect;
 		buttonDelete.Sensitive = isSelect;

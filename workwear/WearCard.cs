@@ -1,14 +1,16 @@
 using System;
 using System.IO;
-using MySql.Data.MySqlClient;
-using QSProjectsLib;
-using Gtk;
 using Gdk;
+using Gtk;
+using MySql.Data.MySqlClient;
+using NLog;
+using QSProjectsLib;
 
 namespace workwear
 {
 	public partial class WearCard : Gtk.Dialog
 	{
+		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public bool NewItem;
 		int Itemid, Leader_id, Object_id;
 		byte[] PhotoFile;
@@ -73,7 +75,7 @@ namespace workwear
 			Itemid = id;
 			NewItem = false;
 			
-			MainClass.StatusMessage(String.Format("Запрос карточки №{0}...", id));
+			logger.Info("Запрос карточки №{0}...", id);
 			string sql = "SELECT wear_cards.*, leaders.name as leader, objects.name as object, objects.address as address, users.name as user " +
 			"FROM wear_cards " +
 			"LEFT JOIN leaders ON leaders.id = wear_cards.leader_id " +
@@ -147,7 +149,7 @@ namespace workwear
 						buttonSavePhoto.Sensitive = true;
 					}
 				}
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 				UpdateWear();
 				buttonGiveWear.Sensitive = true;
 				buttonReturnWear.Sensitive = true;
@@ -157,9 +159,7 @@ namespace workwear
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения карточки!");
-				QSMain.ErrorMessage(this, ex);
+				QSMain.ErrorMessageWithLog(this, "Ошибка получения карточки!", logger, ex);
 				this.Respond(Gtk.ResponseType.Reject);
 			}
 			TestCanSave();
@@ -189,7 +189,7 @@ namespace workwear
 					"dismiss_date = @dismiss_date, sex = @sex, object_id = @object_id " +
 					"WHERE id = @id";
 			}
-			MainClass.StatusMessage("Запись карточки...");
+			logger.Info("Запись карточки...");
 			MySqlTransaction trans = QSMain.connectionDB.BeginTransaction();
 			try 
 			{
@@ -241,7 +241,7 @@ namespace workwear
 
 				if(PhotoFile != null && ImageChanged)
 				{
-					MainClass.StatusMessage("Запись фотографии в базу...");
+					logger.Info("Запись фотографии в базу...");
 					sql = "UPDATE wear_cards SET photo = @photo, photo_size = @photo_size WHERE id = @id";
 					cmd = new MySqlCommand(sql, QSMain.connectionDB, trans);
 
@@ -251,16 +251,15 @@ namespace workwear
 					cmd.ExecuteNonQuery();
 				}
 				trans.Commit();
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 				Respond (Gtk.ResponseType.Ok);
 			} 
 			catch (MySqlException ex) 
 			{
 				trans.Rollback();
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка записи карточки!");
 				if(ex.Number == 1153)
 				{
+					logger.WarnException ("Превышен максимальный размер пакета", ex);
 					string Text = "Превышен максимальный размер пакета для передачи на сервер базы данных. " +
 						"Это значение настраивается на сервере, по умолчанию для MySQL оно равняется 1Мб. " +
 						"Максимальный размер фотографии поддерживаемый программой составляет 16Мб, мы рекомендуем " +
@@ -273,7 +272,7 @@ namespace workwear
 					md.Destroy();
 				}
 				else
-					QSMain.ErrorMessage(this,ex);
+					QSMain.ErrorMessageWithLog(this,"Ошибка записи карточки!", logger, ex);
 			}
 		}
 
@@ -330,7 +329,7 @@ namespace workwear
 		{
 			int MaxWidth = imagePhoto.Allocation.Size.Width;
 			int MaxHeight = imagePhoto.Allocation.Size.Height;
-			Console.WriteLine("W: {0} H: {1}", MaxWidth, MaxHeight);
+			logger.Debug("W: {0} H: {1}", MaxWidth, MaxHeight);
 
 			Pixbuf pix = new Pixbuf(PhotoFile);
 			double vratio = (double) MaxHeight / pix.Height;
@@ -367,7 +366,7 @@ namespace workwear
 			if((ResponseType) Chooser.Run () == ResponseType.Accept)
 			{
 				Chooser.Hide();
-				MainClass.StatusMessage("Загрузка фотографии...");
+				logger.Info("Загрузка фотографии...");
 
 				FileStream fs = new FileStream(Chooser.Filename, FileMode.Open, FileAccess.Read);
 				if(Chooser.Filename.ToLower().EndsWith (".jpg"))
@@ -380,7 +379,7 @@ namespace workwear
 				}
 				else 
 				{
-					MainClass.StatusMessage("Конвертация в jpg ...");
+					logger.Info("Конвертация в jpg ...");
 					Pixbuf image = new Pixbuf(fs);
 					PhotoFile = image.SaveToBuffer("jpeg");
 				}
@@ -388,7 +387,7 @@ namespace workwear
 				ImageChanged = true;
 				ReadImage();
 				buttonSavePhoto.Sensitive = true;
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 			}
 			Chooser.Destroy ();
 		}
@@ -446,7 +445,7 @@ namespace workwear
 
 		private void UpdateWear()
 		{
-			MainClass.StatusMessage("Запрос спецодежды по работнику...");
+			logger.Info("Запрос спецодежды по работнику...");
 			try
 			{
 				string sql = "SELECT stock_expense_detail.id as idin, stock_expense_detail.nomenclature_id, stock_expense_detail.quantity as quantityin, stock_income_detail.cost, " +
@@ -550,12 +549,11 @@ namespace workwear
 					}
 				}
 				rdr.Close();
-				MainClass.StatusMessage("Ok");
+				logger.Info("Ok");
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
-				MainClass.StatusMessage("Ошибка получения спецодежды по работнику!");
+				logger.WarnException("Ошибка получения спецодежды по работнику!", ex);
 			}
 
 		}
