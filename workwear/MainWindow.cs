@@ -432,4 +432,8 @@ public partial class MainWindow: Gtk.Window
 		System.Diagnostics.Process.Start("workwear_ru.pdf");
 	}
 
+	protected void OnActionHistoryActivated (object sender, EventArgs e)
+	{
+		QSMain.RunChangeLogDlg (this);
+	}
 }

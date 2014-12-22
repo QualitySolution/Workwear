@@ -115,6 +115,13 @@
         <property name="StockId">gtk-help</property>
         <signal name="Activated" handler="OnHelpActionActivated" />
       </action>
+      <action id="ActionHistory">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">История версий</property>
+        <property name="ShortLabel" translatable="yes">История версий</property>
+        <property name="StockId">gtk-file</property>
+        <signal name="Activated" handler="OnActionHistoryActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -152,6 +159,7 @@
               </node>
               <node type="Menu" action="Action3">
                 <node type="Menuitem" action="helpAction" />
+                <node type="Menuitem" action="ActionHistory" />
                 <node type="Separator" />
                 <node type="Menuitem" action="aboutAction" />
               </node>
