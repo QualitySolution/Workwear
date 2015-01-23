@@ -74,7 +74,8 @@ namespace workwear
 		{
 			Itemid = id;
 			NewItem = false;
-			
+
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запрос карточки №{0}...", id);
 			string sql = "SELECT wear_cards.*, leaders.name as leader, objects.name as object, objects.address as address, users.name as user " +
 			"FROM wear_cards " +
@@ -189,6 +190,7 @@ namespace workwear
 					"dismiss_date = @dismiss_date, sex = @sex, object_id = @object_id " +
 					"WHERE id = @id";
 			}
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запись карточки...");
 			MySqlTransaction trans = QSMain.connectionDB.BeginTransaction();
 			try 
@@ -445,6 +447,7 @@ namespace workwear
 
 		private void UpdateWear()
 		{
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запрос спецодежды по работнику...");
 			try
 			{

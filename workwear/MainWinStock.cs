@@ -88,6 +88,7 @@ public partial class MainWindow : Gtk.Window
 
 	void UpdateStockIncome()
 	{
+		QSMain.CheckConnectionAlive ();
 		logger.Info("Получаем таблицу приходных документов...");
 
 		string sql = "SELECT stock_income.*, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object " +
@@ -139,6 +140,7 @@ public partial class MainWindow : Gtk.Window
 
 	void UpdateStockExpense()
 	{
+		QSMain.CheckConnectionAlive ();
 		logger.Info("Получаем таблицу расходных документов...");
 
 		string sql = "SELECT stock_expense.*, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object " +
@@ -185,6 +187,7 @@ public partial class MainWindow : Gtk.Window
 
 	void UpdateStockWriteOff()
 	{
+		QSMain.CheckConnectionAlive ();
 		logger.Info("Получаем таблицу актов списания...");
 
 		string sql = "SELECT stock_write_off.*, users.name as user FROM stock_write_off " +

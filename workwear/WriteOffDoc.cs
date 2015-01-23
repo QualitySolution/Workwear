@@ -47,6 +47,7 @@ namespace workwear
 			Itemid = id;
 			NewItem = false;
 
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запрос акта списания №{0}...", id);
 			string sql = "SELECT stock_write_off.*, users.name as user " +
 				"FROM stock_write_off " +
@@ -102,6 +103,7 @@ namespace workwear
 				sql = "UPDATE stock_write_off SET date = @date " +
 					"WHERE id = @id";
 			}
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запись документа...");
 			MySqlTransaction trans = QSMain.connectionDB.BeginTransaction();
 			try 

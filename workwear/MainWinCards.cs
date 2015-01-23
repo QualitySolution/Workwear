@@ -25,6 +25,7 @@ public partial class MainWindow : Gtk.Window
 
 	void UpdateCards()
 	{
+		QSMain.CheckConnectionAlive ();
 		logger.Info("Получаем таблицу Карточек...");
 
 		string sql = "SELECT wear_cards.id, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object FROM wear_cards " +

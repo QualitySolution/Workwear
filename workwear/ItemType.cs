@@ -20,7 +20,8 @@ namespace workwear
 		{
 			Itemid = id;
 			NewItem = false;
-			
+
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запрос типа номенклатуры №{0}...", id);
 			string sql = "SELECT * FROM item_types WHERE item_types.id = @id";
 			try
@@ -76,6 +77,7 @@ namespace workwear
 			{
 				sql = "UPDATE item_types SET name = @name, category = @category, norm_quantity = @norm_quantity, norm_life = @norm_life WHERE id = @id";
 			}
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запись тип номенклатуры...");
 			try 
 			{

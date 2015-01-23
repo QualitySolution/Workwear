@@ -97,6 +97,7 @@ namespace workwear
 			StockFilter = new TreeModelFilter( StockListStore, null);
 			StockFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeStock);
 
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запрос спецодежды на складе...");
 			try
 			{
@@ -154,6 +155,7 @@ namespace workwear
 
 		private void FillWriteOffDetails()
 		{
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запрос деталей документа №" + _WriteOffDocId +"...");
 			try
 			{
@@ -230,6 +232,7 @@ namespace workwear
 			CardRowsFilter = new TreeModelFilter( CardRowsListStore, null);
 			CardRowsFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeCardRows);
 
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запрос спецодежды по работнику...");
 			try
 			{
@@ -315,6 +318,7 @@ namespace workwear
 			ObjectRowsFilter = new TreeModelFilter( ObjectRowsListStore, null);
 			ObjectRowsFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeObjectRows);
 
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запрос имущества по объекту...");
 			try
 			{

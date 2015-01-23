@@ -145,6 +145,7 @@ namespace workwear
 			StockFilter = new TreeModelFilter( StockListStore, null);
 			StockFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeStock);
 
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запрос спецодежды на складе...");
 			try
 			{
@@ -205,6 +206,7 @@ namespace workwear
 
 		private void FillExpenseDetails()
 		{
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запрос деталей документа №" + _ExpenseDocId +"...");
 			try
 			{

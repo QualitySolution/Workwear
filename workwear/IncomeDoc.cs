@@ -63,6 +63,7 @@ namespace workwear
 			NewItem = false;
 			comboOperation.Sensitive = false;
 
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запрос приходного документа №{0}...", id);
 			string sql = "SELECT stock_income.*, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object, objects.address, users.name as user " +
 				"FROM stock_income " +
@@ -174,6 +175,7 @@ namespace workwear
 					"date = @date, wear_card_id = @wear_card_id, object_id = @object_id " +
 					"WHERE id = @id";
 			}
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запись документа...");
 			MySqlTransaction trans = QSMain.connectionDB.BeginTransaction();
 			try 
@@ -281,6 +283,7 @@ namespace workwear
 		public void SetObject(int id)
 		{
 			string sql = "SELECT name, address FROM objects WHERE id = @id";
+			QSMain.CheckConnectionAlive ();
 			try
 			{
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);

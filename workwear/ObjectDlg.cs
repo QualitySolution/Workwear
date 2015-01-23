@@ -62,6 +62,7 @@ namespace workwear
 			Itemid = id;
 			NewItem = false;
 
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запрос объекта №{0}...", id);
 			string sql = "SELECT * FROM objects WHERE id = @id";
 			try
@@ -115,6 +116,7 @@ namespace workwear
 			{
 				sql = "UPDATE objects SET name = @name, address = @address WHERE id = @id";
 			}
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запись объекта...");
 			try 
 			{
@@ -139,6 +141,7 @@ namespace workwear
 
 		void SaveProperty()
 		{
+			QSMain.CheckConnectionAlive ();
 			string sql = "UPDATE stock_expense_detail SET object_place_id = @object_place_id WHERE id = @id ";
 			foreach(object[] row in ItemsListStore)
 			{
@@ -238,6 +241,7 @@ namespace workwear
 
 		private void UpdateProperty()
 		{
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запрос выданного имущества...");
 			try
 			{

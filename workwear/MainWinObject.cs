@@ -25,6 +25,7 @@ public partial class MainWindow : Gtk.Window
 
 	void UpdateObject()
 	{
+		QSMain.CheckConnectionAlive ();
 		logger.Info("Получаем таблицу объектов...");
 
 		string sql = "SELECT objects.* FROM objects";

@@ -27,7 +27,8 @@ namespace workwear
 		{
 			Itemid = id;
 			NewItem = false;
-			
+
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запрос номенклатуры №{0}...", id);
 			string sql = "SELECT * FROM nomenclature WHERE nomenclature.id = @id";
 			try
@@ -89,6 +90,7 @@ namespace workwear
 				sql = "UPDATE nomenclature SET name = @name, type_id = @type_id, units_id = @units_id, " +
 				"size = @size, growth = @growth WHERE id = @id";
 			}
+			QSMain.CheckConnectionAlive ();
 			logger.Info("Запись номенклатуры...");
 			try 
 			{
