@@ -15,9 +15,9 @@ public partial class MainWindow: Gtk.Window
 		Build();
 		
 		//Передаем лебл
-		MainClass.StatusBarLabel = labelStatus;
+		QSMain.StatusBarLabel = labelStatus;
 		this.Title = QSSupportLib.MainSupport.GetTitle();
-		QSMain.MakeNewStatusTargetForNlog("StatusMessage", "workwear.MainClass, workwear");
+		QSMain.MakeNewStatusTargetForNlog();
 
 		Reference.RunReferenceItemDlg += OnRunReferenceItemDialog;
 		QSMain.ReferenceUpdated += OnReferenceUpdate;

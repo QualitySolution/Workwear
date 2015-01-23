@@ -9,7 +9,6 @@ namespace workwear
 	class MainClass
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
-		public static Label StatusBarLabel;
 		public static MainWindow MainWin;
 		
 		public static void Main(string[] args)
@@ -20,6 +19,7 @@ namespace workwear
 				logger.FatalException("Поймано не обработаное исключение.", (Exception) e.ExceptionObject);
 				QSMain.ErrorMessage(MainWin, (Exception) e.ExceptionObject);
 			};
+			QSMain.GuiThread = System.Threading.Thread.CurrentThread;
 			CreateProjectParam();
 			// Создаем окно входа
 			Login LoginDialog = new QSProjectsLib.Login ();
@@ -248,15 +248,5 @@ namespace workwear
 			PrepareTable.PrimaryKey = new TableInfo.PrimaryKeys("id");
 			QSMain.ProjectTables.Add ("stock_write_off_detail", PrepareTable);
 		}
-		
-		public static void StatusMessage(string message)
-		{
-			StatusBarLabel.Text = message;
-			while (GLib.MainContext.Pending())
-			{
-   				Gtk.Main.Iteration();
-			}
-		}
-
 	}
 }
