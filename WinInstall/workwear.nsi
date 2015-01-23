@@ -1,5 +1,5 @@
 ;--------------------------------
-!define PRODUCT_VERSION "1.0"
+!define PRODUCT_VERSION "1.0.2"
 !define MIN_NET_MAJOR "4"
 !define MIN_NET_MINOR "0"
 !define MIN_NET_BUILD "*"
@@ -364,6 +364,9 @@ Section "GTK# 2.12.21" SecGTK
 ; Setup Gtk style
   ${ConfigWrite} "$PROGRAMFILES\GtkSharp\2.12\share\themes\MS-Windows\gtk-2.0\gtkrc" "gtk-button-images =" "1" $R0
 
+; Fix Localication
+  SetOutPath "$PROGRAMFILES\GtkSharp\2.12\share\locale\ru\LC_MESSAGES"
+  File "LC_MESSAGES\*"
   GTKDone:
 SectionEnd
 
