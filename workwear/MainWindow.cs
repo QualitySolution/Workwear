@@ -5,6 +5,7 @@ using NLog;
 using QSProjectsLib;
 using QSSupportLib;
 using workwear;
+using System.Collections.Generic;
 
 public partial class MainWindow: Gtk.Window
 {	
@@ -80,6 +81,15 @@ public partial class MainWindow: Gtk.Window
 			QSMain.User.UpdateUserInfoByLogin ();
 		UsersAction.Sensitive = QSMain.User.admin;
 		labelUser.LabelProp = QSMain.User.Name;
+
+		//Настраиваем новости
+		MainNewsFeed.NewsFeeds = new List<NewsFeed>(){
+			new NewsFeed("workwearnews", "Новости программы", "http://news.qsolution.ru/workwear.atom")
+			};
+		MainNewsFeed.LoadReadFeed ();
+		var newsmenu = new NewsMenuItem ();
+		menubar1.Add (newsmenu);
+		newsmenu.LoadFeed ();
 
 		PrepareObject();
 		PrepareCards();
