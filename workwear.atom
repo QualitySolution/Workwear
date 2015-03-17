@@ -1,0 +1,32 @@
+<feed xml:lang="ru-ru" CustomAttribute="Value" xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">QS: Спецодежда и имущество</title>
+  <subtitle type="text">Новости программы QS: Спецодежда и имущество</subtitle>
+  <id>workwearnews</id>
+
+  <rights type="text">Quality Solution 2015</rights>
+  <updated>2015-03-17T18:13:00+03:00</updated>
+  <entry>
+    <id>urn:uuid:dd71066f-debe-49ae-ba00-2de3e869e3b6</id>
+    <title type="text">Сайт программы</title>
+    <updated>2015-03-17T18:13:00+03:00</updated>
+    <published>2015-03-17T18:13:00+03:00</published>
+    <link rel="alternate" href="http://www.qsolution.ru/novosti/nashi-produkty/sait-qs-specodejda-i-imushestvo.html" />
+    <summary>Запущен сайт программы "QS: Спецодежда и имущество".</summary>
+  </entry>
+  <entry>
+    <id>urn:uuid:566e9e06-874b-4168-9157-808d175edfcb</id>
+    <title type="text">QS: Спецодежда и имущество 1.0.2</title>
+    <updated>2015-01-26T12:00:00+03:00</updated>
+    <published>2015-01-26T12:00:00+03:00</published>
+    <link rel="alternate" href="http://www.qsolution.ru/novosti/nashi-produkty/reliz-qs-cpecodejda-i-imushestvo-1-0-2.html" />
+    <summary>Минорное обновление QS: Спецодежда и имущество до версии 1.0.2</summary>
+  </entry>
+  <entry>
+    <id>urn:uuid:e678c014-9af2-48e1-99aa-a08e00f1256f</id>
+    <title type="text">QS: Учет спецодежды и имущества 1.0</title>
+    <updated>2014-05-27T13:00:00+03:00</updated>
+	<published>2014-05-27T13:00:00+03:00</published>
+    <link rel="alternate" href="http://www.qsolution.ru/novosti/nashi-produkty/qs-uchet-specodejdy-i-imushestva-1-0.html" />
+    <summary>Представлен первый публичный релиз программы "QS: Учет спецодежды и имущества 1.0"...</summary>
+  </entry>
+</feed>
