@@ -9,12 +9,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSSupportLib", "..\QSProjec
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSWidgetLib", "..\QSProjects\QSWidgetLib\QSWidgetLib.csproj", "{5A2BB01E-E124-432E-8099-D1343D3897B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSSaaS", "..\QSProjects\QSSaaS\QSSaaS.csproj", "{4B502FE5-D419-4B5C-9276-0A25EF2F508A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4B502FE5-D419-4B5C-9276-0A25EF2F508A}.Debug|x86.ActiveCfg = Debug|x86
+		{4B502FE5-D419-4B5C-9276-0A25EF2F508A}.Debug|x86.Build.0 = Debug|x86
+		{4B502FE5-D419-4B5C-9276-0A25EF2F508A}.Release|x86.ActiveCfg = Release|x86
+		{4B502FE5-D419-4B5C-9276-0A25EF2F508A}.Release|x86.Build.0 = Release|x86
 		{5A2BB01E-E124-432E-8099-D1343D3897B9}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{5A2BB01E-E124-432E-8099-D1343D3897B9}.Debug|x86.Build.0 = Debug|Any CPU
 		{5A2BB01E-E124-432E-8099-D1343D3897B9}.Release|x86.ActiveCfg = Release|Any CPU
@@ -33,7 +39,6 @@ Global
 		{A6C1914F-7732-49F5-BABA-8BBBA521FAAB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = workwear\workwear.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = None
