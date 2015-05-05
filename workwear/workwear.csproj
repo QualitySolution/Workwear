@@ -47,7 +47,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="NLog">
-      <HintPath>..\packages\NLog.3.2.0.0\lib\net40\NLog.dll</HintPath>
+      <HintPath>..\..\QSProjects\packages\NLog.3.2.1\lib\net40\NLog.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +109,10 @@
       <Project>{5A2BB01E-E124-432E-8099-D1343D3897B9}</Project>
       <Name>QSWidgetLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QSSaaS\QSSaaS.csproj">
+      <Project>{4B502FE5-D419-4B5C-9276-0A25EF2F508A}</Project>
+      <Name>QSSaaS</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
@@ -133,6 +137,5 @@
     <None Include="changes.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>
