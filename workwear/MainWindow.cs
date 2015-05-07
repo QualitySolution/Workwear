@@ -77,9 +77,6 @@ public partial class MainWindow: Gtk.Window
 			dialogAuthenticationAction.Sensitive = false;
 		}
 
-		//Загружаем информацию о пользователе
-		if(QSMain.User.TestUserExistByLogin (true))
-			QSMain.User.UpdateUserInfoByLogin ();
 		UsersAction.Sensitive = QSMain.User.admin;
 		labelUser.LabelProp = QSMain.User.Name;
 

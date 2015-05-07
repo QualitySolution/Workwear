@@ -42,6 +42,7 @@ namespace workwear
 				return;
 
 			LoginDialog.Destroy ();
+			QSSaaS.Session.StartSessionRefresh();
 
 			//Запускаем программу
 			MainWin = new MainWindow ();
@@ -49,12 +50,12 @@ namespace workwear
 				return;
 			MainWin.Show ();
 			Application.Run ();
+			QSSaaS.Session.StopSessionRefresh();
 		}
 
 		static void CreateProjectParam ()
 		{
 			// Создаем параметы пользователей
-			QSMain.AdminFieldName = "admin";
 			QSMain.ProjectPermission = new Dictionary<string, UserPermission> ();
 			//QSMain.ProjectPermission.Add ("edit_slips", new UserPermission("edit_slips", "Изменение кассы задним числом",
 			//                                                             "Пользователь может изменять или добавлять кассовые документы задним числом."));
