@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSWidgetLib", "..\QSProject
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSSaaS", "..\QSProjects\QSSaaS\QSSaaS.csproj", "{4B502FE5-D419-4B5C-9276-0A25EF2F508A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSUpdater", "..\QSProjects\QSUpdater\QSUpdater.csproj", "{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -29,6 +31,10 @@ Global
 		{63B06122-016A-42D4-B621-8E0F9FA8E738}.Debug|x86.Build.0 = Debug|x86
 		{63B06122-016A-42D4-B621-8E0F9FA8E738}.Release|x86.ActiveCfg = Release|x86
 		{63B06122-016A-42D4-B621-8E0F9FA8E738}.Release|x86.Build.0 = Release|x86
+		{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}.Debug|x86.ActiveCfg = Debug|x86
+		{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}.Debug|x86.Build.0 = Debug|x86
+		{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}.Release|x86.ActiveCfg = Release|x86
+		{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}.Release|x86.Build.0 = Release|x86
 		{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}.Debug|x86.Build.0 = Debug|Any CPU
 		{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}.Release|x86.ActiveCfg = Release|Any CPU

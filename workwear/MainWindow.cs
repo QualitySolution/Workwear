@@ -1,11 +1,11 @@
 using System;
 using Gtk;
-using MySql.Data.MySqlClient;
 using NLog;
 using QSProjectsLib;
 using QSSupportLib;
 using workwear;
 using System.Collections.Generic;
+using QSUpdater;
 
 public partial class MainWindow: Gtk.Window
 {	
@@ -17,33 +17,17 @@ public partial class MainWindow: Gtk.Window
 		
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
-		this.Title = QSSupportLib.MainSupport.GetTitle();
+		this.Title = MainSupport.GetTitle();
 		QSMain.MakeNewStatusTargetForNlog();
 
 		Reference.RunReferenceItemDlg += OnRunReferenceItemDialog;
 		QSMain.ReferenceUpdated += OnReferenceUpdate;
+		QSSupportLib.MainSupport.LoadBaseParameters ();
 
-		try
-		{
-			MainSupport.BaseParameters = new BaseParam(QSMain.connectionDB);
-		}
-		catch(MySqlException e)
-		{
-			Console.WriteLine(e.Message);
-			MessageDialog BaseError = new MessageDialog ( this, DialogFlags.DestroyWithParent,
-	                                      MessageType.Warning, 
-	                                      ButtonsType.Close, 
-	                                      "Не удалось получить информацию о базе данных.");
-			BaseError.Run();
-			BaseError.Destroy();
-			Environment.Exit(0);
-		}
-		
-		MainSupport.ProjectVerion = new AppVersion(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name.ToString(),
-		 	"gpl",
-		 	System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
-		MainSupport.TestVersion(this);
-		MainNewsFeed.CheckNewsReads (); //Создаем при необходимости таблицу новостей.
+		if (!QSSupportLib.MainSupport.CheckVersion (this)) {//Проверяем версию базы
+			CheckUpdate.StartCheckUpdateThread (UpdaterFlags.ShowAnyway | UpdaterFlags.UpdateRequired);
+			return;
+		}		MainNewsFeed.CheckNewsReads (); //Создаем при необходимости таблицу новостей.
 
 		if(QSMain.User.Login == "root")
 		{
@@ -88,6 +72,8 @@ public partial class MainWindow: Gtk.Window
 		var newsmenu = new NewsMenuItem ();
 		menubar1.Add (newsmenu);
 		newsmenu.LoadFeed ();
+
+		CheckUpdate.StartCheckUpdateThread (UpdaterFlags.StartInThread);
 
 		PrepareObject();
 		PrepareCards();
@@ -443,5 +429,10 @@ public partial class MainWindow: Gtk.Window
 	protected void OnActionHistoryActivated (object sender, EventArgs e)
 	{
 		QSMain.RunChangeLogDlg (this);
+	}
+
+	protected void OnActionUpdateActivated (object sender, EventArgs e)
+	{
+		CheckUpdate.StartCheckUpdateThread (UpdaterFlags.ShowAnyway);
 	}
 }

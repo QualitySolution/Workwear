@@ -10,6 +10,7 @@
     <widget-library name="../../../QSProjects/QSSupportLib/bin/Debug/QSSupportLib.dll" />
     <widget-library name="../../../QSProjects/QSWidgetLib/bin/Debug/QSWidgetLib.dll" />
     <widget-library name="../bin/Debug/workwear.exe" internal="true" />
+    <widget-library name="../../../QSProjects/QSUpdater/bin/Debug/QSUpdater.dll" />
   </import>
   <widget class="Gtk.Window" id="MainWindow" design-size="709 458">
     <action-group name="Default">
@@ -122,6 +123,13 @@
         <property name="StockId">gtk-file</property>
         <signal name="Activated" handler="OnActionHistoryActivated" />
       </action>
+      <action id="ActionUpdate">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Проверить обновление...</property>
+        <property name="ShortLabel" translatable="yes">Проверить обновление...</property>
+        <property name="StockId">gtk-go-down</property>
+        <signal name="Activated" handler="OnActionUpdateActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -160,6 +168,7 @@
               <node type="Menu" action="Action3">
                 <node type="Menuitem" action="helpAction" />
                 <node type="Menuitem" action="ActionHistory" />
+                <node type="Menuitem" action="ActionUpdate" />
                 <node type="Separator" />
                 <node type="Menuitem" action="aboutAction" />
               </node>

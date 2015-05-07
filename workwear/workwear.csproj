@@ -113,6 +113,10 @@
       <Project>{4B502FE5-D419-4B5C-9276-0A25EF2F508A}</Project>
       <Name>QSSaaS</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QSUpdater\QSUpdater.csproj">
+      <Project>{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}</Project>
+      <Name>QSUpdater</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />

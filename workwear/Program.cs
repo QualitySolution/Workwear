@@ -18,7 +18,7 @@ namespace workwear
 			QSMain.GuiThread = System.Threading.Thread.CurrentThread;
 			CreateProjectParam ();
 			// Создаем окно входа
-			Login LoginDialog = new QSProjectsLib.Login ();
+			Login LoginDialog = new Login ();
 			LoginDialog.Logo = Gdk.Pixbuf.LoadFromResource ("workwear.icon.logo.png");
 			LoginDialog.SetDefaultNames ("workwear");
 			LoginDialog.DefaultLogin = "demo";
@@ -56,8 +56,6 @@ namespace workwear
 			QSMain.ProjectPermission = new Dictionary<string, UserPermission> ();
 			//QSMain.ProjectPermission.Add ("edit_slips", new UserPermission("edit_slips", "Изменение кассы задним числом",
 			//                                                             "Пользователь может изменять или добавлять кассовые документы задним числом."));
-
-			QSMain.User = new UserInfo ();
 
 			//Создаем параметры удаления
 			QSMain.ProjectTables = new Dictionary<string, TableInfo> ();
