@@ -112,7 +112,6 @@ namespace workwear
 			this.DefaultHeight = 304;
 			this.Show ();
 			this.comboObject.Changed += new global::System.EventHandler (this.OnComboWorkerChanged);
-			this.treeviewObjectProperty.CursorChanged += new global::System.EventHandler (this.OnTreeviewCardRowsCursorChanged);
 			this.treeviewObjectProperty.RowActivated += new global::Gtk.RowActivatedHandler (this.OnTreeviewCardRowsRowActivated);
 			this.buttonOk.Clicked += new global::System.EventHandler (this.OnButtonOkClicked);
 		}

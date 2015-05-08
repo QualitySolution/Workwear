@@ -68,12 +68,6 @@ namespace workwear
 			treeviewStock.Selection.GetSelected(out SelectedIter);
 		}
 
-		protected void OnTreeviewStockCursorChanged(object sender, EventArgs e)
-		{
-			bool isSelect = treeviewStock.Selection.CountSelectedRows() == 1;
-			buttonOk.Sensitive = isSelect;
-		}
-
 		protected void OnTreeviewStockRowActivated(object o, RowActivatedArgs args)
 		{
 			buttonOk.Click ();

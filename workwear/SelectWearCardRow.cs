@@ -81,12 +81,6 @@ namespace workwear
 			treeviewCardRows.Selection.GetSelected(out SelectedIter);
 		}
 
-		protected void OnTreeviewCardRowsCursorChanged(object sender, EventArgs e)
-		{
-			bool isSelect = treeviewCardRows.Selection.CountSelectedRows() == 1;
-			buttonOk.Sensitive = isSelect;
-		}
-
 		protected void OnTreeviewCardRowsRowActivated(object o, RowActivatedArgs args)
 		{
 			buttonOk.Click ();

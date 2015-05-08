@@ -129,7 +129,6 @@ namespace workwear
 			this.Show ();
 			this.entrySearch.Changed += new global::System.EventHandler (this.OnEntrySearchChanged);
 			this.buttonSearchClean.Clicked += new global::System.EventHandler (this.OnButtonSearchCleanClicked);
-			this.treeviewStock.CursorChanged += new global::System.EventHandler (this.OnTreeviewStockCursorChanged);
 			this.treeviewStock.RowActivated += new global::Gtk.RowActivatedHandler (this.OnTreeviewStockRowActivated);
 			this.buttonOk.Clicked += new global::System.EventHandler (this.OnButtonOkClicked);
 		}

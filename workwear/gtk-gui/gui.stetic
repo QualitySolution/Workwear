@@ -4128,7 +4128,6 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>
-                <signal name="CursorChanged" handler="OnTreeviewCardRowsCursorChanged" />
                 <signal name="RowActivated" handler="OnTreeviewCardRowsRowActivated" />
               </widget>
             </child>
@@ -4247,7 +4246,6 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>
-                <signal name="CursorChanged" handler="OnTreeviewCardRowsCursorChanged" />
                 <signal name="RowActivated" handler="OnTreeviewCardRowsRowActivated" />
               </widget>
             </child>
@@ -4379,7 +4377,6 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>
-                <signal name="CursorChanged" handler="OnTreeviewStockCursorChanged" />
                 <signal name="RowActivated" handler="OnTreeviewStockRowActivated" />
               </widget>
             </child>
