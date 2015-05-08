@@ -25,7 +25,13 @@ namespace workwear
 			treeviewStock.Columns[4].SetCellDataFunc(LifeCell, RenderLifeColumn);
 
 			treeviewStock.Model = TableRows;
+			treeviewStock.Selection.Changed += OnTreeviewStock_Selection_Changed;
 			treeviewStock.ShowAll();
+		}
+
+		void OnTreeviewStock_Selection_Changed (object sender, EventArgs e)
+		{
+			buttonOk.Sensitive = treeviewStock.Selection.CountSelectedRows() > 0;
 		}
 
 		public bool GetResult(out TreeIter iter)

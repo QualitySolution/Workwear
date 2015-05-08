@@ -37,7 +37,13 @@ namespace workwear
 			treeviewCardRows.Columns[2].SetCellDataFunc(QuantityCell, RenderQuantityColumn);
 
 			treeviewCardRows.Model = TableRows;
+			treeviewCardRows.Selection.Changed += OnTreeviewCardRows_Selection_Changed;
 			treeviewCardRows.ShowAll();
+		}
+
+		void OnTreeviewCardRows_Selection_Changed (object sender, EventArgs e)
+		{
+			buttonOk.Sensitive = treeviewCardRows.Selection.CountSelectedRows() > 0;
 		}
 
 		private void FillWorkerCombo()

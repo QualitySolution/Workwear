@@ -5,12 +5,19 @@ namespace workwear
 	public partial class SelectStockItem
 	{
 		private global::Gtk.HBox hbox1;
+		
 		private global::Gtk.Label label2;
+		
 		private global::Gtk.Entry entrySearch;
+		
 		private global::Gtk.Button buttonSearchClean;
+		
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
+		
 		private global::Gtk.TreeView treeviewStock;
+		
 		private global::Gtk.Button buttonCancel;
+		
 		private global::Gtk.Button buttonOk;
 
 		protected virtual void Build ()
@@ -100,6 +107,7 @@ namespace workwear
 			w11.Fill = false;
 			// Container child dialog1_ActionArea.Gtk.ButtonBox+ButtonBoxChild
 			this.buttonOk = new global::Gtk.Button ();
+			this.buttonOk.Sensitive = false;
 			this.buttonOk.CanDefault = true;
 			this.buttonOk.CanFocus = true;
 			this.buttonOk.Name = "buttonOk";
