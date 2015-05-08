@@ -12,7 +12,7 @@ namespace workwear
 		
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 		
-		private global::Gtk.TreeView treeviewCardRows;
+		private global::Gtk.TreeView treeviewObjectProperty;
 		
 		private global::Gtk.Button buttonCancel;
 		
@@ -62,10 +62,10 @@ namespace workwear
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 			this.GtkScrolledWindow.BorderWidth = ((uint)(6));
 			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
-			this.treeviewCardRows = new global::Gtk.TreeView ();
-			this.treeviewCardRows.CanFocus = true;
-			this.treeviewCardRows.Name = "treeviewCardRows";
-			this.GtkScrolledWindow.Add (this.treeviewCardRows);
+			this.treeviewObjectProperty = new global::Gtk.TreeView ();
+			this.treeviewObjectProperty.CanFocus = true;
+			this.treeviewObjectProperty.Name = "treeviewObjectProperty";
+			this.GtkScrolledWindow.Add (this.treeviewObjectProperty);
 			w1.Add (this.GtkScrolledWindow);
 			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(w1 [this.GtkScrolledWindow]));
 			w6.Position = 1;
@@ -112,8 +112,8 @@ namespace workwear
 			this.DefaultHeight = 304;
 			this.Show ();
 			this.comboObject.Changed += new global::System.EventHandler (this.OnComboWorkerChanged);
-			this.treeviewCardRows.CursorChanged += new global::System.EventHandler (this.OnTreeviewCardRowsCursorChanged);
-			this.treeviewCardRows.RowActivated += new global::Gtk.RowActivatedHandler (this.OnTreeviewCardRowsRowActivated);
+			this.treeviewObjectProperty.CursorChanged += new global::System.EventHandler (this.OnTreeviewCardRowsCursorChanged);
+			this.treeviewObjectProperty.RowActivated += new global::Gtk.RowActivatedHandler (this.OnTreeviewCardRowsRowActivated);
 			this.buttonOk.Clicked += new global::System.EventHandler (this.OnButtonOkClicked);
 		}
 	}

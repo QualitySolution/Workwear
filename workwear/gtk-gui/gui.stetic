@@ -4243,7 +4243,7 @@
             <property name="ShadowType">In</property>
             <property name="BorderWidth">6</property>
             <child>
-              <widget class="Gtk.TreeView" id="treeviewCardRows">
+              <widget class="Gtk.TreeView" id="treeviewObjectProperty">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>

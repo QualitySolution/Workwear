@@ -27,23 +27,23 @@ namespace workwear
 		{
 			this.Build();
 
-			treeviewCardRows.AppendColumn ("Наименование", new Gtk.CellRendererText (), "text", 2);
-			treeviewCardRows.AppendColumn ("Дата выдачи", new Gtk.CellRendererText (), "text", 3);
+			treeviewObjectProperty.AppendColumn ("Наименование", new Gtk.CellRendererText (), "text", 2);
+			treeviewObjectProperty.AppendColumn ("Дата выдачи", new Gtk.CellRendererText (), "text", 3);
 			CellRendererText QuantityCell = new Gtk.CellRendererText();
-			treeviewCardRows.AppendColumn ("Количество", QuantityCell, "text", 4);
-			treeviewCardRows.AppendColumn ("Годность(выдано)", new Gtk.CellRendererText (), "text", 5);
-			treeviewCardRows.AppendColumn ("Годность(на сегодня)", new Gtk.CellRendererText (), "text", 6);
+			treeviewObjectProperty.AppendColumn ("Количество", QuantityCell, "text", 4);
+			treeviewObjectProperty.AppendColumn ("Годность(выдано)", new Gtk.CellRendererText (), "text", 5);
+			treeviewObjectProperty.AppendColumn ("Годность(на сегодня)", new Gtk.CellRendererText (), "text", 6);
 
-			treeviewCardRows.Columns[2].SetCellDataFunc(QuantityCell, RenderQuantityColumn);
+			treeviewObjectProperty.Columns[2].SetCellDataFunc(QuantityCell, RenderQuantityColumn);
 
-			treeviewCardRows.Model = TableRows;
-			treeviewCardRows.Selection.Changed += OnTreeviewCardRows_Selection_Changed;
-			treeviewCardRows.ShowAll();
+			treeviewObjectProperty.Model = TableRows;
+			treeviewObjectProperty.Selection.Changed += OnTreeviewCardRows_Selection_Changed;
+			treeviewObjectProperty.ShowAll();
 		}
 
 		void OnTreeviewCardRows_Selection_Changed (object sender, EventArgs e)
 		{
-			buttonOk.Sensitive = treeviewCardRows.Selection.CountSelectedRows() > 0;
+			buttonOk.Sensitive = treeviewObjectProperty.Selection.CountSelectedRows() > 0;
 		}
 
 		private void FillWorkerCombo()
@@ -78,12 +78,12 @@ namespace workwear
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
 		{
-			treeviewCardRows.Selection.GetSelected(out SelectedIter);
+			treeviewObjectProperty.Selection.GetSelected(out SelectedIter);
 		}
 
 		protected void OnTreeviewCardRowsCursorChanged(object sender, EventArgs e)
 		{
-			bool isSelect = treeviewCardRows.Selection.CountSelectedRows() == 1;
+			bool isSelect = treeviewObjectProperty.Selection.CountSelectedRows() == 1;
 			buttonOk.Sensitive = isSelect;
 		}
 
