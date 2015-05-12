@@ -5,28 +5,51 @@ namespace workwear
 	public partial class IncomeDoc
 	{
 		private global::Gtk.HBox hbox1;
+		
 		private global::Gtk.Table table2;
+		
 		private global::Gtk.ComboBox comboOperation;
+		
 		private global::Gtk.Entry entryTTN;
+		
 		private global::Gtk.HBox hboxObject;
+		
 		private global::Gtk.Entry entryObject;
+		
 		private global::Gtk.Button buttonEditObject;
+		
 		private global::Gtk.HBox hboxWorker;
+		
 		private global::Gtk.Entry entryWorker;
+		
 		private global::Gtk.Button buttonWorkerEdit;
+		
 		private global::Gtk.Label label1;
+		
 		private global::Gtk.Label labelObject;
+		
 		private global::Gtk.Label labelTTN;
+		
 		private global::Gtk.Label labelWorker;
+		
 		private global::Gtk.Table table3;
+		
 		private global::QSWidgetLib.DatePicker dateDoc;
+		
 		private global::Gtk.Label label4;
+		
 		private global::Gtk.Label label5;
+		
 		private global::Gtk.Label label6;
+		
 		private global::Gtk.Label labelId;
+		
 		private global::Gtk.Label labelUser;
+		
 		private global::workwear.IncomeTable ItemsTable;
+		
 		private global::Gtk.Button buttonCancel;
+		
 		private global::Gtk.Button buttonOk;
 
 		protected virtual void Build ()
@@ -66,6 +89,7 @@ namespace workwear
 			this.entryTTN.CanFocus = true;
 			this.entryTTN.Name = "entryTTN";
 			this.entryTTN.IsEditable = true;
+			this.entryTTN.MaxLength = 8;
 			this.entryTTN.InvisibleChar = '●';
 			this.table2.Add (this.entryTTN);
 			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table2 [this.entryTTN]));
