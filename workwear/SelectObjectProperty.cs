@@ -1,12 +1,14 @@
 using System;
 using Gtk;
 using QSProjectsLib;
+using System.Collections.Generic;
 
 namespace workwear
 {
 	public partial class SelectObjectProperty : Gtk.Dialog
 	{
-		private TreeIter SelectedIter;
+		private List<TreeIter> SelectedItems;
+
 		public event EventHandler ObjectIdChanged;
 
 		public bool ObjectComboActive
@@ -38,6 +40,7 @@ namespace workwear
 
 			treeviewObjectProperty.Model = TableRows;
 			treeviewObjectProperty.Selection.Changed += OnTreeviewCardRows_Selection_Changed;
+			treeviewObjectProperty.Selection.Mode = SelectionMode.Multiple;
 			treeviewObjectProperty.ShowAll();
 		}
 
@@ -60,17 +63,17 @@ namespace workwear
 			(cell as Gtk.CellRendererText).Text = String.Format("{0} {1}", Quantity, unit);
 		}
 
-		public bool GetResult(out TreeIter iter)
+		public bool GetResult(out TreeIter[] items)
 		{
 			bool Result = false;
 			this.Show ();
 			if((ResponseType) this.Run () == ResponseType.Ok)
 			{
-				iter = SelectedIter;
+				items = SelectedItems.ToArray();
 				Result = true;
 			}
 			else
-				iter = new TreeIter();
+				items = null;
 			this.Destroy ();
 
 			return Result;
@@ -78,7 +81,8 @@ namespace workwear
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
 		{
-			treeviewObjectProperty.Selection.GetSelected(out SelectedIter);
+			SelectedItems = new List<TreeIter>();
+			treeviewObjectProperty.Selection.SelectedForeach((model, path, iter) => SelectedItems.Add(iter));
 		}
 
 		protected void OnTreeviewCardRowsRowActivated(object o, RowActivatedArgs args)

@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using Gtk;
 
 namespace workwear
 {
 	public partial class SelectStockItem : Gtk.Dialog
 	{
-		private TreeIter SelectedIter;
+		private List<TreeIter> selectedItems;
 		public event EventHandler SearchTextChanged;
 		public string SearchText;
 
@@ -26,6 +27,7 @@ namespace workwear
 
 			treeviewStock.Model = TableRows;
 			treeviewStock.Selection.Changed += OnTreeviewStock_Selection_Changed;
+			treeviewStock.Selection.Mode = SelectionMode.Multiple;
 			treeviewStock.ShowAll();
 		}
 
@@ -34,17 +36,17 @@ namespace workwear
 			buttonOk.Sensitive = treeviewStock.Selection.CountSelectedRows() > 0;
 		}
 
-		public bool GetResult(out TreeIter iter)
+		public bool GetResult(out TreeIter[] items)
 		{
 			bool Result = false;
 			this.Show ();
 			if((ResponseType) this.Run () == ResponseType.Ok)
 			{
-				iter = SelectedIter;
+				items = selectedItems.ToArray();
 				Result = true;
 			}
 			else
-				iter = new TreeIter();
+				items = null;
 			this.Destroy ();
 
 			return Result;
@@ -65,7 +67,8 @@ namespace workwear
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
 		{
-			treeviewStock.Selection.GetSelected(out SelectedIter);
+			selectedItems = new List<TreeIter>();
+			treeviewStock.Selection.SelectedForeach((model, path, iter) => selectedItems.Add(iter));
 		}
 
 		protected void OnTreeviewStockRowActivated(object o, RowActivatedArgs args)

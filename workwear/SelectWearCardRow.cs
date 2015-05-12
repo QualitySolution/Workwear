@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Gtk;
 using QSProjectsLib;
 
@@ -6,7 +7,7 @@ namespace workwear
 {
 	public partial class SelectWearCardRow : Gtk.Dialog
 	{
-		private TreeIter SelectedIter;
+		private List<TreeIter> selectedItems;
 		public event EventHandler WorkerIdChanged;
 
 		public bool WorkerComboActive
@@ -38,6 +39,7 @@ namespace workwear
 
 			treeviewCardRows.Model = TableRows;
 			treeviewCardRows.Selection.Changed += OnTreeviewCardRows_Selection_Changed;
+			treeviewCardRows.Selection.Mode = SelectionMode.Multiple;
 			treeviewCardRows.ShowAll();
 		}
 
@@ -60,17 +62,17 @@ namespace workwear
 			(cell as Gtk.CellRendererText).Text = String.Format("{0} {1}", Quantity, unit);
 		}
 
-		public bool GetResult(out TreeIter iter)
+		public bool GetResult(out TreeIter[] items)
 		{
 			bool Result = false;
 			this.Show ();
 			if((ResponseType) this.Run () == ResponseType.Ok)
 			{
-				iter = SelectedIter;
+				items = selectedItems.ToArray();
 				Result = true;
 			}
 			else
-				iter = new TreeIter();
+				items = null;
 			this.Destroy ();
 
 			return Result;
@@ -78,7 +80,8 @@ namespace workwear
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
 		{
-			treeviewCardRows.Selection.GetSelected(out SelectedIter);
+			selectedItems = new List<TreeIter>();
+			treeviewCardRows.Selection.SelectedForeach((model, path, iter) => selectedItems.Add(iter));
 		}
 
 		protected void OnTreeviewCardRowsRowActivated(object o, RowActivatedArgs args)
@@ -90,7 +93,6 @@ namespace workwear
 		{
 			if(WorkerIdChanged != null)
 				WorkerIdChanged(this, EventArgs.Empty);
-
 		}
 	}
 }

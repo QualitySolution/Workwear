@@ -273,18 +273,21 @@ namespace workwear
 
 		protected void OnButtonAddClicked (object sender, EventArgs e)
 		{
-			TreeIter iter;
+			TreeIter[] iters;
 			SelectStockItem WinSelect = new SelectStockItem(StockFilter);
 			WinSelect.SearchTextChanged += OnSelectStockSearch;
-			if (WinSelect.GetResult(out iter))
+			if (WinSelect.GetResult(out iters))
 			{
-				ItemsListStore.AppendValues(null,
-				                            StockFilter.GetValue(iter, 0),
-				                            StockFilter.GetValue(iter, 1),
-				                            StockFilter.GetValue(iter, 2),
-				                            StockFilter.GetValue(iter, 8), // from norm
-				                            StockFilter.GetValue(iter, 7),
-				                            StockFilter.GetValue(iter, 6));
+				foreach (var iter in iters)
+				{
+					ItemsListStore.AppendValues(null,
+						StockFilter.GetValue(iter, 0),
+						StockFilter.GetValue(iter, 1),
+						StockFilter.GetValue(iter, 2),
+						StockFilter.GetValue(iter, 8), // from norm
+						StockFilter.GetValue(iter, 7),
+						StockFilter.GetValue(iter, 6));
+				}
 				StockFilter.Refilter();
 				CalculateTotal();
 			}

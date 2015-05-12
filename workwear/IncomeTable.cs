@@ -357,22 +357,25 @@ namespace workwear
 
 		protected void OnButtonAddClicked (object sender, EventArgs e)
 		{
-			TreeIter iter;
+			TreeIter[] items;
 			if (_Operation == IncomeDoc.Operations.Return)
 			{
 				SelectWearCardRow WinSelect = new SelectWearCardRow(CardRowsFilter);
 				WinSelect.WorkerComboActive = false;
-				if (WinSelect.GetResult(out iter))
+				if (WinSelect.GetResult(out items))
 				{
-					ItemsListStore.AppendValues(null,
-					                            CardRowsFilter.GetValue(iter, 0),
-					                            CardRowsFilter.GetValue(iter, 1),
-					                            CardRowsFilter.GetValue(iter, 2),
-					                            CardRowsFilter.GetValue(iter, 4),
-					                            CardRowsFilter.GetValue(iter, 7),
-					                            0.0,
-					                            CardRowsFilter.GetValue(iter, 10)
-					                            );
+					foreach (var iter in items)
+					{
+						ItemsListStore.AppendValues(null,
+							CardRowsFilter.GetValue(iter, 0),
+							CardRowsFilter.GetValue(iter, 1),
+							CardRowsFilter.GetValue(iter, 2),
+							CardRowsFilter.GetValue(iter, 4),
+							CardRowsFilter.GetValue(iter, 7),
+							0.0,
+							CardRowsFilter.GetValue(iter, 10)
+						);
+					}
 					CardRowsFilter.Refilter();
 					CalculateTotal();
 				}
@@ -381,17 +384,20 @@ namespace workwear
 			{
 				SelectObjectProperty WinSelect = new SelectObjectProperty(PropertyFilter);
 				WinSelect.ObjectComboActive = false;
-				if (WinSelect.GetResult(out iter))
+				if (WinSelect.GetResult(out items))
 				{
-					ItemsListStore.AppendValues(null,
-					                            PropertyFilter.GetValue(iter, 0),
-					                            PropertyFilter.GetValue(iter, 1),
-					                            PropertyFilter.GetValue(iter, 2),
-					                            PropertyFilter.GetValue(iter, 4),
-					                            PropertyFilter.GetValue(iter, 7),
-					                            0.0,
-					                            PropertyFilter.GetValue(iter, 10)
-					                            );
+					foreach (var item in items)
+					{
+						ItemsListStore.AppendValues(null,
+							PropertyFilter.GetValue(item, 0),
+							PropertyFilter.GetValue(item, 1),
+							PropertyFilter.GetValue(item, 2),
+							PropertyFilter.GetValue(item, 4),
+							PropertyFilter.GetValue(item, 7),
+							0.0,
+							PropertyFilter.GetValue(item, 10)
+						);
+					}
 					PropertyFilter.Refilter();
 					CalculateTotal();
 				}

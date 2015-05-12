@@ -455,19 +455,22 @@ namespace workwear
 
 		protected void OnButtonAddStoreClicked (object sender, EventArgs e)
 		{
-			TreeIter iter;
+			TreeIter[] iters;
 			SelectStockItem WinSelect = new SelectStockItem(StockFilter);
 			WinSelect.SearchTextChanged += OnSelectStockSearch;
-			if (WinSelect.GetResult(out iter))
+			if (WinSelect.GetResult(out iters))
 			{
-				ItemsListStore.AppendValues(-1,
-				                            StockFilter.GetValue(iter, 0),
-				                            -1,
-				                            StockFilter.GetValue(iter, 1),
-				                            StockFilter.GetValue(iter, 2),
-				                            "склад",
-				                            StockFilter.GetValue(iter, 5),
-				                            StockFilter.GetValue(iter, 6));
+				foreach (var iter in iters)
+				{
+					ItemsListStore.AppendValues(-1,
+						StockFilter.GetValue(iter, 0),
+						-1,
+						StockFilter.GetValue(iter, 1),
+						StockFilter.GetValue(iter, 2),
+						"склад",
+						StockFilter.GetValue(iter, 5),
+						StockFilter.GetValue(iter, 6));
+				}
 				StockFilter.Refilter();
 				CalculateTotal();
 			}
@@ -595,23 +598,26 @@ namespace workwear
 
 		protected void OnButtonAddWorkerClicked(object sender, EventArgs e)
 		{
-			TreeIter iter;
+			TreeIter[] iters;
 
 			SelectWearCardRow WinSelect = new SelectWearCardRow(CardRowsFilter);
 			WinSelect.WorkerComboActive = true;
 			if (CurWorkerId > 0)
 				WinSelect.WorkerId = CurWorkerId;
 			WinSelect.WorkerIdChanged += OnSelectCardRowsSearch;
-			if (WinSelect.GetResult(out iter))
+			if (WinSelect.GetResult(out iters))
 			{
-				ItemsListStore.AppendValues(-1,
-				                            -1,
-				                            CardRowsFilter.GetValue(iter, 0),
-				                            CardRowsFilter.GetValue(iter, 1),
-				                            CardRowsFilter.GetValue(iter, 2),
-				                            CardRowsFilter.GetValue(iter, 9),
-				                            CardRowsFilter.GetValue(iter, 4),
-				                            CardRowsFilter.GetValue(iter, 10));
+				foreach (var iter in iters)
+				{
+					ItemsListStore.AppendValues(-1,
+						-1,
+						CardRowsFilter.GetValue(iter, 0),
+						CardRowsFilter.GetValue(iter, 1),
+						CardRowsFilter.GetValue(iter, 2),
+						CardRowsFilter.GetValue(iter, 9),
+						CardRowsFilter.GetValue(iter, 4),
+						CardRowsFilter.GetValue(iter, 10));
+				}
 				CardRowsWorkerId = -1;
 				CardRowsFilter.Refilter();
 				CalculateTotal();
@@ -620,23 +626,26 @@ namespace workwear
 
 		protected void OnButtonAddObjectClicked(object sender, EventArgs e)
 		{
-			TreeIter iter;
+			TreeIter[] iters;
 
 			SelectObjectProperty WinSelect = new SelectObjectProperty(ObjectRowsFilter);
 			WinSelect.ObjectComboActive = true;
 			if (CurObjectId > 0)
 				WinSelect.ObjectId = CurObjectId;
 			WinSelect.ObjectIdChanged += OnSelectObjectRowsSearch;
-			if (WinSelect.GetResult(out iter))
+			if (WinSelect.GetResult(out iters))
 			{
-				ItemsListStore.AppendValues(-1,
-				                            -1,
-				                            ObjectRowsFilter.GetValue(iter, 0),
-				                            ObjectRowsFilter.GetValue(iter, 1),
-				                            ObjectRowsFilter.GetValue(iter, 2),
-				                            ObjectRowsFilter.GetValue(iter, 9),
-				                            ObjectRowsFilter.GetValue(iter, 4),
-				                            ObjectRowsFilter.GetValue(iter, 10));
+				foreach (var iter in iters)
+				{
+					ItemsListStore.AppendValues(-1,
+						-1,
+						ObjectRowsFilter.GetValue(iter, 0),
+						ObjectRowsFilter.GetValue(iter, 1),
+						ObjectRowsFilter.GetValue(iter, 2),
+						ObjectRowsFilter.GetValue(iter, 9),
+						ObjectRowsFilter.GetValue(iter, 4),
+						ObjectRowsFilter.GetValue(iter, 10));
+				}
 				RowsObjectId = -1;
 				ObjectRowsFilter.Refilter();
 				CalculateTotal();
