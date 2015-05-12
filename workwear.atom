@@ -4,7 +4,15 @@
   <id>workwearnews</id>
 
   <rights type="text">Quality Solution 2015</rights>
-  <updated>2015-03-17T18:13:00+03:00</updated>
+  <updated>2015-05-12T17:10:00+03:00</updated>
+  <entry>
+    <id>urn:uuid:31e7dad3-da6c-40a3-8f5d-8088a8d7521d</id>
+    <title type="text">QS: Спецодежда и имущество 1.0.3</title>
+    <updated>2015-05-12T17:10:00+03:00</updated>
+    <published>2015-05-12T17:10:00+03:00</published>
+    <link rel="alternate" href="http://workwear.qsolution.ru/?p=84" />
+    <summary>Вышло очередное обновление программы «QS: Спецодежда и имущество» с добавлением QS: Облако и упрощением работы с большими списками номенклатур.</summary>
+  </entry>
   <entry>
     <id>urn:uuid:dd71066f-debe-49ae-ba00-2de3e869e3b6</id>
     <title type="text">Сайт программы</title>
