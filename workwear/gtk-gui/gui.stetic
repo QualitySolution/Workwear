@@ -130,6 +130,12 @@
         <property name="StockId">gtk-go-down</property>
         <signal name="Activated" handler="OnActionUpdateActivated" />
       </action>
+      <action id="ActionSN">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Ввести серийный номер...</property>
+        <property name="ShortLabel" translatable="yes">Ввести серийный номер...</property>
+        <signal name="Activated" handler="OnActionSNActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -169,6 +175,8 @@
                 <node type="Menuitem" action="helpAction" />
                 <node type="Menuitem" action="ActionHistory" />
                 <node type="Menuitem" action="ActionUpdate" />
+                <node type="Separator" />
+                <node type="Menuitem" action="ActionSN" />
                 <node type="Separator" />
                 <node type="Menuitem" action="aboutAction" />
               </node>

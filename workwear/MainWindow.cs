@@ -1,11 +1,11 @@
 using System;
+using System.Collections.Generic;
 using Gtk;
 using NLog;
 using QSProjectsLib;
 using QSSupportLib;
-using workwear;
-using System.Collections.Generic;
 using QSUpdater;
+using workwear;
 
 public partial class MainWindow: Gtk.Window
 {	
@@ -434,5 +434,10 @@ public partial class MainWindow: Gtk.Window
 	protected void OnActionUpdateActivated (object sender, EventArgs e)
 	{
 		CheckUpdate.StartCheckUpdateThread (UpdaterFlags.ShowAnyway);
+	}
+
+	protected void OnActionSNActivated(object sender, EventArgs e)
+	{
+		EditSerialNumber.RunDialog();
 	}
 }
