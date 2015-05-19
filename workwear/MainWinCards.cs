@@ -9,45 +9,44 @@ public partial class MainWindow : Gtk.Window
 	Gtk.ListStore CardsListStore;
 	Gtk.TreeModelFilter CardsFilter;
 
-	void PrepareCards()
+	void PrepareCards ()
 	{
-		CardsListStore = new Gtk.ListStore (typeof (int),typeof (string), typeof (string));
+		CardsListStore = new Gtk.ListStore (typeof(int), typeof(string), typeof(string), typeof(string));
 
-		treeviewCards.AppendColumn("Код", new Gtk.CellRendererText (), "text", 0);
-		treeviewCards.AppendColumn("Ф.И.О.", new Gtk.CellRendererText (), "text", 1);
-		treeviewCards.AppendColumn("Объект", new Gtk.CellRendererText (), "text", 2);
+		treeviewCards.AppendColumn ("Номер", new Gtk.CellRendererText (), "text", 1);
+		treeviewCards.AppendColumn ("Ф.И.О.", new Gtk.CellRendererText (), "text", 2);
+		treeviewCards.AppendColumn ("Объект", new Gtk.CellRendererText (), "text", 3);
 
 		CardsFilter = new Gtk.TreeModelFilter (CardsListStore, null);
 		CardsFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FilterTreeCards);
 		treeviewCards.Model = CardsFilter;
-		treeviewCards.ShowAll();
+		treeviewCards.ShowAll ();
 	}
 
-	void UpdateCards()
+	void UpdateCards ()
 	{
 		QSMain.CheckConnectionAlive ();
-		logger.Info("Получаем таблицу Карточек...");
+		logger.Info ("Получаем таблицу Карточек...");
 
-		string sql = "SELECT wear_cards.id, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object FROM wear_cards " +
-		"LEFT JOIN objects ON objects.id = wear_cards.object_id ";
-		if(checkCardsOnlyActual.Active)
-		{
+		string sql = "SELECT wear_cards.id, wear_cards.card_number, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, objects.name as object FROM wear_cards " +
+		             "LEFT JOIN objects ON objects.id = wear_cards.object_id ";
+		if (checkCardsOnlyActual.Active) {
 			sql += "WHERE wear_cards.dismiss_date IS NULL";
 		}
-		MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
+		MySqlCommand cmd = new MySqlCommand (sql, QSMain.connectionDB);
 
-		MySqlDataReader rdr = cmd.ExecuteReader();
+		MySqlDataReader rdr = cmd.ExecuteReader ();
 
-		CardsListStore.Clear();
-		while (rdr.Read())
-		{
-			CardsListStore.AppendValues(rdr.GetInt32("id"),
-			                            String.Format("{0} {1} {2}", rdr["last_name"].ToString(), rdr["first_name"].ToString(), rdr["patronymic_name"].ToString()),
-			                            rdr["object"].ToString());
+		CardsListStore.Clear ();
+		while (rdr.Read ()) {
+			CardsListStore.AppendValues (rdr.GetInt32 ("id"),
+				DBWorks.GetString (rdr, "card_number", rdr.GetInt32 ("id").ToString ()),
+				String.Format ("{0} {1} {2}", rdr ["last_name"].ToString (), rdr ["first_name"].ToString (), rdr ["patronymic_name"].ToString ()),
+				rdr ["object"].ToString ());
 		}
-		rdr.Close();
-		logger.Info("Ok");
-		bool isSelect = treeviewCards.Selection.CountSelectedRows() == 1;
+		rdr.Close ();
+		logger.Info ("Ok");
+		bool isSelect = treeviewCards.Selection.CountSelectedRows () == 1;
 		buttonEdit.Sensitive = isSelect;
 		buttonDelete.Sensitive = isSelect;
 	}
@@ -60,42 +59,41 @@ public partial class MainWindow : Gtk.Window
 		//bool filterAddress = true;
 		string cellvalue;
 
-		if(model.GetValue (iter, 1) == null)
+		if (model.GetValue (iter, 2) == null)
 			return false;
 
-		if (entryCardsSearch.Text != "" && model.GetValue (iter, 1) != null)
-		{
-			cellvalue  = model.GetValue (iter, 1).ToString();
+		if (entryCardsSearch.Text != "" && model.GetValue (iter, 2) != null) {
+			cellvalue = model.GetValue (iter, 2).ToString ();
 			filterName = cellvalue.IndexOf (entryCardsSearch.Text, StringComparison.CurrentCultureIgnoreCase) > -1;
 		}
 		return (filterName);
 	}
 
-	protected void OnButtonCardsSearchClearClicked(object sender, EventArgs e)
+	protected void OnButtonCardsSearchClearClicked (object sender, EventArgs e)
 	{
 		entryCardsSearch.Text = "";
 	}
 
-	protected void OnEntryCardsSearchChanged(object sender, EventArgs e)
+	protected void OnEntryCardsSearchChanged (object sender, EventArgs e)
 	{
-		CardsFilter.Refilter();
+		CardsFilter.Refilter ();
 	}
 
-	protected void OnTreeviewCardsCursorChanged(object sender, EventArgs e)
+	protected void OnTreeviewCardsCursorChanged (object sender, EventArgs e)
 	{
-		bool isSelect = treeviewCards.Selection.CountSelectedRows() == 1;
+		bool isSelect = treeviewCards.Selection.CountSelectedRows () == 1;
 		buttonEdit.Sensitive = isSelect;
 		buttonDelete.Sensitive = isSelect;
 	}
 
-	protected void OnTreeviewCardsRowActivated(object o, RowActivatedArgs args)
+	protected void OnTreeviewCardsRowActivated (object o, RowActivatedArgs args)
 	{
-		buttonEdit.Click();
+		buttonEdit.Click ();
 	}
 
-	protected void OnCheckOnlyActualClicked(object sender, EventArgs e)
+	protected void OnCheckOnlyActualClicked (object sender, EventArgs e)
 	{
-		buttonRefresh.Click();
+		buttonRefresh.Click ();
 	}
 }
 

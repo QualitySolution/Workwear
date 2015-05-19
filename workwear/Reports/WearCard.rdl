@@ -6,14 +6,6 @@
   </Author>
   <PageHeight>11in</PageHeight>
   <PageWidth>8.5in</PageWidth>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>server=10.0.2.2;user=admin;database=workwear;port=3306;password=123;</ConnectString>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -206,6 +198,10 @@ WHERE wear_cards.id = @id</CommandText>
           <DataField>leader</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="card_number">
+          <DataField>card_number</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="Norm">
@@ -247,8 +243,8 @@ WHERE wear_cards.id = @id</CommandText>
           <BorderStyle>
             <Default>Solid</Default>
           </BorderStyle>
-          <BorderColor  />
-          <BorderWidth  />
+          <BorderColor />
+          <BorderWidth />
         </Style>
         <TableColumns>
           <TableColumn>
@@ -830,7 +826,7 @@ WHERE wear_cards.id = @id</CommandText>
           <Textbox Name="Textbox63">
             <Height>18.04pt</Height>
             <Width>303.34pt</Width>
-            <Value>= "Личная карточка учета спецодежды № " + {?id}</Value>
+            <Value>= "Личная карточка учета спецодежды № " + Iif(Fields!card_number.IsMissing, Fields!id.Value, Fields!card_number.Value)</Value>
             <ZIndex>1</ZIndex>
             <Left>105.4pt</Left>
             <Top>44.0pt</Top>
@@ -901,7 +897,7 @@ WHERE wear_cards.id = @id</CommandText>
           <Textbox Name="Textbox66">
             <Height>15.00pt</Height>
             <Width>144.54pt</Width>
-            <Value>Автостоянка</Value>
+            <Value>Объект</Value>
             <ZIndex>1</ZIndex>
             <Left>2.1pt</Left>
             <Top>116.9pt</Top>
@@ -939,7 +935,7 @@ WHERE wear_cards.id = @id</CommandText>
           <Textbox Name="Textbox68">
             <Height>15.00pt</Height>
             <Width>2in</Width>
-            <Value>Дата поступления на работу</Value>
+            <Value>=Iif(Fields!sex.Value = 'F', "Принята","Принят") + " на работу"</Value>
             <ZIndex>1</ZIndex>
             <Left>2.1pt</Left>
             <Top>147.0pt</Top>
@@ -954,6 +950,7 @@ WHERE wear_cards.id = @id</CommandText>
               <BorderColor />
               <BorderWidth />
             </Style>
+            <CanGrow >false</CanGrow>
           </Textbox>
           <Textbox Name="Textbox69">
             <Height>15.00pt</Height>
@@ -1036,7 +1033,7 @@ WHERE wear_cards.id = @id</CommandText>
             <Width>270pt</Width>
             <Value>=Fields!hire_date.Value</Value>
             <ZIndex>1</ZIndex>
-            <Left>146.90pt</Left>
+            <Left>146.9pt</Left>
             <Top>147.0pt</Top>
             <Style>
               <BorderStyle>
@@ -1206,7 +1203,7 @@ WHERE wear_cards.id = @id</CommandText>
           <Textbox Name="Textbox23">
             <Height>15.00pt</Height>
             <Width>56.75pt</Width>
-            <Value>=Fields!sex.Value</Value>
+            <Value>=Iif(Fields!sex.Value = 'F', "Жен.","Муж.")</Value>
             <ZIndex>1</ZIndex>
             <Left>510.7pt</Left>
             <Top>203.4pt</Top>
@@ -1459,7 +1456,7 @@ WHERE wear_cards.id = @id</CommandText>
       <Textbox Name="Textbox38">
         <Height>18.75pt</Height>
         <Width>390.00pt</Width>
-        <Value>Подпись сотрудника _________/__________</Value>
+        <Value>= "Подпись " + Iif(First(Fields!sex.Value,"Card") = 'F', "сотрудницы","сотрудника") + " _________/__________"</Value>
         <ZIndex>1</ZIndex>
         <Left>183.2pt</Left>
         <Top>392.9pt</Top>
@@ -1518,6 +1515,7 @@ WHERE wear_cards.id = @id</CommandText>
       </Textbox>
     </ReportItems>
     <Height>470.2pt</Height>
+    <Columns>1</Columns>
   </Body>
   <PageFooter>
     <Height>14pt</Height>
@@ -1540,12 +1538,21 @@ WHERE wear_cards.id = @id</CommandText>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageFooter>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySQL.NET</DataProvider>
+        <ConnectString>server=demo.qsolution.ru;user=demo;database=workwear;port=3306;password=demo;</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
   <ReportParameters>
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>1</Value>
+          <Value>9</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -1555,4 +1562,6 @@ WHERE wear_cards.id = @id</CommandText>
       </Prompt>
     </ReportParameter>
   </ReportParameters>
+  <DataElementName>Report</DataElementName>
+  <DataElementStyle>AttributeNormal</DataElementStyle>
 </Report>
