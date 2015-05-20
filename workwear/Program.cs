@@ -57,6 +57,12 @@ namespace workwear
 			//QSMain.ProjectPermission.Add ("edit_slips", new UserPermission("edit_slips", "Изменение кассы задним числом",
 			//                                                             "Пользователь может изменять или добавлять кассовые документы задним числом."));
 
+			//Настраиваем обновления
+			QSUpdater.DB.DBUpdater.AddMicroUpdate(
+				new Version(1, 0),
+				new Version(1, 0, 3, 1),
+				"workwear.Updates.1.0.3.1.sql");
+
 			//Создаем параметры удаления
 			QSMain.ProjectTables = new Dictionary<string, TableInfo> ();
 			TableInfo PrepareTable;

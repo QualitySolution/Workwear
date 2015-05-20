@@ -27,7 +27,9 @@ public partial class MainWindow: Gtk.Window
 		if (!QSSupportLib.MainSupport.CheckVersion (this)) {//Проверяем версию базы
 			CheckUpdate.StartCheckUpdateThread (UpdaterFlags.ShowAnyway | UpdaterFlags.UpdateRequired);
 			return;
-		}		MainNewsFeed.CheckNewsReads (); //Создаем при необходимости таблицу новостей.
+		}
+		QSUpdater.DB.DBUpdater.CheckMicroUpdates();
+		MainNewsFeed.CheckNewsReads (); //Создаем при необходимости таблицу новостей.
 
 		if(QSMain.User.Login == "root")
 		{
