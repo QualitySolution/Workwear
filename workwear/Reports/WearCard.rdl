@@ -826,7 +826,7 @@ WHERE wear_cards.id = @id</CommandText>
           <Textbox Name="Textbox63">
             <Height>18.04pt</Height>
             <Width>303.34pt</Width>
-            <Value>= "Личная карточка учета спецодежды № " + Iif(Fields!card_number.IsMissing, Fields!id.Value, Fields!card_number.Value)</Value>
+            <Value>= "Личная карточка учета спецодежды № " + Iif(Fields!card_number.IsMissing, Convert.ToString(Fields!id.Value), Fields!card_number.Value)</Value>
             <ZIndex>1</ZIndex>
             <Left>105.4pt</Left>
             <Top>44.0pt</Top>
@@ -950,7 +950,7 @@ WHERE wear_cards.id = @id</CommandText>
               <BorderColor />
               <BorderWidth />
             </Style>
-            <CanGrow >false</CanGrow>
+            <CanGrow>false</CanGrow>
           </Textbox>
           <Textbox Name="Textbox69">
             <Height>15.00pt</Height>
@@ -1236,6 +1236,7 @@ WHERE wear_cards.id = @id</CommandText>
               </BorderStyle>
               <BorderColor />
               <BorderWidth />
+              <TextAlign >Left</TextAlign>
             </Style>
           </Textbox>
           <Textbox Name="Textbox25">
