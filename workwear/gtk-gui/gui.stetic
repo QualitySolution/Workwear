@@ -1642,7 +1642,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.WearCard" design-size="847 569">
+  <widget class="Gtk.Dialog" id="workwear.WearCard" design-size="871 569">
     <property name="MemberName" />
     <property name="Title" translatable="yes">Новая карточка сотрудника</property>
     <property name="WindowPosition">CenterOnParent</property>
@@ -1857,6 +1857,7 @@
                         <property name="CanFocus">True</property>
                         <property name="Text" translatable="yes">авто</property>
                         <property name="IsEditable">True</property>
+                        <property name="MaxLength">15</property>
                         <property name="InvisibleChar">●</property>
                       </widget>
                       <packing>

@@ -253,6 +253,7 @@ namespace workwear
 			this.entryId.Name = "entryId";
 			this.entryId.Text = global::Mono.Unix.Catalog.GetString ("авто");
 			this.entryId.IsEditable = true;
+			this.entryId.MaxLength = 15;
 			this.entryId.InvisibleChar = '●';
 			this.hbox7.Add (this.entryId);
 			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox7 [this.entryId]));
@@ -785,7 +786,7 @@ namespace workwear
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
-			this.DefaultWidth = 847;
+			this.DefaultWidth = 871;
 			this.DefaultHeight = 569;
 			this.Show ();
 			this.buttonObjectClear.Clicked += new global::System.EventHandler (this.OnButtonObjectClearClicked);
