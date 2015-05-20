@@ -165,7 +165,8 @@ namespace workwear
 		protected void TestCanSave ()
 		{
 			//bool Nameok = entryName.Text != "";
-			buttonOk.Sensitive = true;
+			bool Numberok = checkAuto.Active || (!String.IsNullOrWhiteSpace(entryId.Text) && entryId.Text != "авто") ;
+			buttonOk.Sensitive = Numberok;
 		}
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
@@ -580,6 +581,12 @@ namespace workwear
 			entryId.Sensitive = !checkAuto.Active;
 			if (checkAuto.Active)
 				entryId.Text = Itemid.ToString ();
+			TestCanSave();
+		}
+
+		protected void OnEntryIdChanged(object sender, EventArgs e)
+		{
+			TestCanSave();
 		}
 
 	}

@@ -1859,6 +1859,7 @@
                         <property name="IsEditable">True</property>
                         <property name="MaxLength">15</property>
                         <property name="InvisibleChar">●</property>
+                        <signal name="Changed" handler="OnEntryIdChanged" />
                       </widget>
                       <packing>
                         <property name="Position">0</property>

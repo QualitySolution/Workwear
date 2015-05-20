@@ -793,6 +793,7 @@ namespace workwear
 			this.buttonObject.Clicked += new global::System.EventHandler (this.OnButtonObjectClicked);
 			this.buttonLeaderClear.Clicked += new global::System.EventHandler (this.OnButtonLeaderClearClicked);
 			this.buttonLeader.Clicked += new global::System.EventHandler (this.OnButtonLeaderClicked);
+			this.entryId.Changed += new global::System.EventHandler (this.OnEntryIdChanged);
 			this.checkAuto.Toggled += new global::System.EventHandler (this.OnCheckAutoToggled);
 			this.buttonLoadPhoto.Clicked += new global::System.EventHandler (this.OnButtonLoadPhotoClicked);
 			this.buttonSavePhoto.Clicked += new global::System.EventHandler (this.OnButtonSavePhotoClicked);
