@@ -4,7 +4,15 @@
   <id>workwearnews</id>
 
   <rights type="text">Quality Solution 2015</rights>
-  <updated>2015-05-12T17:10:00+03:00</updated>
+  <updated>2015-05-20T17:40:00+03:00</updated>
+  <entry>
+    <id>urn:uuid:baad3e93-eee5-4ab1-aef0-5ba5140c62e9</id>
+    <title type="text">QS: Спецодежда и имущество 1.0.4</title>
+    <updated>2015-05-20T17:40:00+03:00</updated>
+    <published>2015-05-20T17:40:00+03:00</published>
+    <link rel="alternate" href="http://workwear.qsolution.ru/?p=100" />
+    <summary>Незначительное обновление по горячим следам, с возможностью изменять номер карточки сотрудника.</summary>
+  </entry>
   <entry>
     <id>urn:uuid:31e7dad3-da6c-40a3-8f5d-8088a8d7521d</id>
     <title type="text">QS: Спецодежда и имущество 1.0.3</title>
