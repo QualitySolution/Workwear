@@ -1,0 +1,3 @@
+ALTER TABLE `users` 
+ADD COLUMN `deactivated` TINYINT(1) NOT NULL DEFAULT 0 AFTER `edit_slips`,
+ADD COLUMN `email` VARCHAR(60) NULL DEFAULT NULL AFTER `deactivated`;

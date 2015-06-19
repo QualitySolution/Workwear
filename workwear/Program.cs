@@ -39,7 +39,7 @@ namespace workwear
 				return;
 
 			LoginDialog.Destroy ();
-			QSSaaS.Session.StartSessionRefresh();
+			QSSaaS.Session.StartSessionRefresh ();
 
 			//Запускаем программу
 			MainWin = new MainWindow ();
@@ -47,7 +47,7 @@ namespace workwear
 				return;
 			MainWin.Show ();
 			Application.Run ();
-			QSSaaS.Session.StopSessionRefresh();
+			QSSaaS.Session.StopSessionRefresh ();
 		}
 
 		static void CreateProjectParam ()
@@ -58,11 +58,15 @@ namespace workwear
 			//                                                             "Пользователь может изменять или добавлять кассовые документы задним числом."));
 
 			//Настраиваем обновления
-			QSUpdater.DB.DBUpdater.AddMicroUpdate(
-				new Version(1, 0),
-				new Version(1, 0, 4),
+			QSUpdater.DB.DBUpdater.AddMicroUpdate (
+				new Version (1, 0),
+				new Version (1, 0, 4),
 				"workwear.Updates.1.0.4.sql");
-
+			QSUpdater.DB.DBUpdater.AddMicroUpdate (
+				new Version (1, 0, 4),
+				new Version (1, 0, 5),
+				"workwear.Updates.1.0.5.sql");
+			
 			//Создаем параметры удаления
 			QSMain.ProjectTables = new Dictionary<string, TableInfo> ();
 			TableInfo PrepareTable;

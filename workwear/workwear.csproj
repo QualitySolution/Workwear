@@ -57,6 +57,7 @@
     <EmbeddedResource Include="icon\logo.png" />
     <EmbeddedResource Include="icon\logo.ico" />
     <EmbeddedResource Include="Updates\1.0.4.sql" />
+    <EmbeddedResource Include="Updates\1.0.5.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
