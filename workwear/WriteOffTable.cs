@@ -148,7 +148,7 @@ namespace workwear
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.ToString());
-				logger.WarnException("Ошибка получения информации по складу!", ex);
+				logger.Warn(ex, "Ошибка получения информации по складу!");
 				throw;
 			}
 		}
@@ -210,7 +210,7 @@ namespace workwear
 			}
 			catch (Exception ex)
 			{
-				logger.WarnException("Ошибка получения деталей списания!", ex);
+				logger.Warn(ex, "Ошибка получения деталей списания!");
 				throw;
 			}
 		}
@@ -296,7 +296,7 @@ namespace workwear
 			}
 			catch (Exception ex)
 			{
-				logger.WarnException("Ошибка получения информации о выданной одежде!", ex);
+				logger.Warn(ex, "Ошибка получения информации о выданной одежде!");
 				throw;
 			}
 		}
@@ -379,7 +379,7 @@ namespace workwear
 			}
 			catch (Exception ex)
 			{
-				logger.WarnException("Ошибка получения информации о выданном имуществе!", ex);
+				logger.Warn(ex, "Ошибка получения информации о выданном имуществе!");
 				throw;
 			}
 		}
@@ -573,7 +573,7 @@ namespace workwear
 			}
 			catch (Exception ex)
 			{
-				logger.WarnException("Ошибка записи строк списания!", ex);
+				logger.Warn(ex, "Ошибка записи строк списания!");
 				throw;
 			}
 		}

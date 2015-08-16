@@ -254,7 +254,7 @@ namespace workwear
 			} catch (MySqlException ex) {
 				trans.Rollback ();
 				if (ex.Number == 1153) {
-					logger.WarnException ("Превышен максимальный размер пакета", ex);
+					logger.Warn (ex, "Превышен максимальный размер пакета");
 					string Text = "Превышен максимальный размер пакета для передачи на сервер базы данных. " +
 					              "Это значение настраивается на сервере, по умолчанию для MySQL оно равняется 1Мб. " +
 					              "Максимальный размер фотографии поддерживаемый программой составляет 16Мб, мы рекомендуем " +
@@ -525,7 +525,7 @@ namespace workwear
 				rdr.Close ();
 				logger.Info ("Ok");
 			} catch (Exception ex) {
-				logger.WarnException ("Ошибка получения спецодежды по работнику!", ex);
+				logger.Warn (ex, "Ошибка получения спецодежды по работнику!");
 			}
 
 		}

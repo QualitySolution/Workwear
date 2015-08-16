@@ -199,7 +199,7 @@ namespace workwear
 			}
 			catch (Exception ex)
 			{
-				logger.WarnException("Ошибка получения информации по складу!", ex);
+				logger.Warn(ex, "Ошибка получения информации по складу!");
 				throw;
 			}
 		}
@@ -243,7 +243,7 @@ namespace workwear
 			}
 			catch (Exception ex)
 			{
-				logger.WarnException("Ошибка получения деталей расхода!", ex);
+				logger.Warn(ex, "Ошибка получения деталей расхода!");
 				throw;
 			}
 		}
@@ -401,7 +401,7 @@ namespace workwear
 			}
 			catch (Exception ex)
 			{
-				logger.WarnException("Ошибка записи строк расхода!", ex);
+				logger.Warn(ex, "Ошибка записи строк расхода!");
 				throw;
 			}
 		}
