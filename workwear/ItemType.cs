@@ -14,6 +14,8 @@ namespace workwear
 		public ItemType()
 		{
 			this.Build();
+
+			ComboWorks.ComboFillReference(comboUnits, "units", ComboWorks.ListMode.WithNo);
 		}
 
 		public void Fill(int id)
@@ -33,12 +35,13 @@ namespace workwear
 				using(MySqlDataReader rdr = cmd.ExecuteReader())
 				{		
 					rdr.Read();
-					
+
 					labelId.Text = rdr["id"].ToString();
 					entryName.Text = rdr["name"].ToString();
 					spinQuantity.Value = DBWorks.GetDouble(rdr, "norm_quantity", 0);
 					spinLife.Value = DBWorks.GetDouble(rdr, "norm_life", 0);
 					checkOnNorms.Active = DBWorks.GetBoolean (rdr, "on_norms", false);
+					ComboWorks.SetActiveItem (comboUnits, DBWorks.GetInt (rdr, "units_id", -1));
 					switch (DBWorks.GetString(rdr, "category", "")) {
 						case "wear":
 							comboCategory.Active = 0;
@@ -71,12 +74,12 @@ namespace workwear
 			string sql;
 			if(NewItem)
 			{
-				sql = "INSERT INTO item_types (name, category, on_norms, norm_quantity, norm_life) " +
-					"VALUES (@name, @category, @on_norms, @norm_quantity, @norm_life)";
+				sql = "INSERT INTO item_types (name, category, units_id, on_norms, norm_quantity, norm_life) " +
+					"VALUES (@name, @category, @units_id, @on_norms, @norm_quantity, @norm_life)";
 			}
 			else
 			{
-				sql = "UPDATE item_types SET name = @name, category = @category, on_norms = @on_norms, " +
+				sql = "UPDATE item_types SET name = @name, category = @category, units_id = @units_id, on_norms = @on_norms, " +
 					"norm_quantity = @norm_quantity, norm_life = @norm_life WHERE id = @id";
 			}
 			QSMain.CheckConnectionAlive ();
@@ -87,6 +90,7 @@ namespace workwear
 				
 				cmd.Parameters.AddWithValue("@id", Itemid);
 				cmd.Parameters.AddWithValue("@name", entryName.Text);
+				cmd.Parameters.AddWithValue("@units_id", ComboWorks.GetActiveIdOrNull (comboUnits));
 				cmd.Parameters.AddWithValue("@on_norms", checkOnNorms.Active);
 				cmd.Parameters.AddWithValue("@norm_quantity", DBWorks.ValueOrNull(checkOnNorms.Active, spinQuantity.Value));
 				cmd.Parameters.AddWithValue("@norm_life", DBWorks.ValueOrNull(checkOnNorms.Active, spinLife.Value));

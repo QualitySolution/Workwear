@@ -15,7 +15,6 @@ namespace workwear
 		public Nomenclature()
 		{
 			this.Build();
-			ComboWorks.ComboFillReference(comboUnits, "units", ComboWorks.ListMode.WithNo);
 			ComboWorks.ComboFillUniqueValue(comboentrySize, "nomenclature", "size");
 			ComboWorks.ComboFillUniqueValue(comboentryGrowth, "nomenclature", "growth");
 
@@ -47,11 +46,6 @@ namespace workwear
 					entryName.Text = rdr["name"].ToString();
 					comboentrySize.Entry.Text = rdr["size"].ToString();
 					comboentryGrowth.Entry.Text = rdr["growth"].ToString();
-					if(rdr["units_id"] != DBNull.Value)
-					{
-						ListStoreWorks.SearchListStore((ListStore)comboUnits.Model, rdr.GetInt32("units_id"), out iter);
-						comboUnits.SetActiveIter(iter);
-					}
 					if(rdr["type_id"] != DBNull.Value)
 					{
 						ListStoreWorks.SearchListStore((ListStore)comboType.Model, rdr.GetInt32("type_id"), out iter);
@@ -82,12 +76,12 @@ namespace workwear
 			string sql;
 			if(NewItem)
 			{
-				sql = "INSERT INTO nomenclature (name, type_id, units_id, size, growth) " +
-					"VALUES (@name, @type_id, @units_id, @size, @growth)";
+				sql = "INSERT INTO nomenclature (name, type_id, size, growth) " +
+					"VALUES (@name, @type_id, @size, @growth)";
 			}
 			else
 			{
-				sql = "UPDATE nomenclature SET name = @name, type_id = @type_id, units_id = @units_id, " +
+				sql = "UPDATE nomenclature SET name = @name, type_id = @type_id, " +
 				"size = @size, growth = @growth WHERE id = @id";
 			}
 			QSMain.CheckConnectionAlive ();
@@ -107,10 +101,6 @@ namespace workwear
 					cmd.Parameters.AddWithValue("@growth", comboentryGrowth.Entry.Text);
 				else
 					cmd.Parameters.AddWithValue("@growth", DBNull.Value);
-				if(comboUnits.Active > 0 && comboUnits.GetActiveIter(out iter))
-					cmd.Parameters.AddWithValue("@units_id", comboUnits.Model.GetValue(iter,1));
-				else
-					cmd.Parameters.AddWithValue("@units_id", DBNull.Value);
 				if(comboType.Active > 0 && comboType.GetActiveIter(out iter))
 					cmd.Parameters.AddWithValue("@type_id", comboType.Model.GetValue(iter,1));
 				else
