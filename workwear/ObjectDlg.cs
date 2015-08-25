@@ -258,7 +258,7 @@ namespace workwear
 						"LEFT JOIN item_types ON nomenclature.type_id = item_types.id " +
 						"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id \n" +
 						"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
-						"LEFT JOIN units ON nomenclature.units_id = units.id " +
+						"LEFT JOIN units ON item_types.units_id = units.id " +
 						"LEFT JOIN object_places ON object_places.id = stock_expense_detail.object_place_id " +
 						"WHERE stock_expense.object_id = @id AND (spent.count IS NULL OR spent.count < stock_expense_detail.quantity )";
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);

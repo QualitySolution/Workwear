@@ -27,7 +27,8 @@ LEFT JOIN stock_write_off ON stock_write_off_detail.stock_write_off_id = stock_w
 WHERE stock_expense_detail_id IS NOT NULL
 ) as spent ON spent.idin2 = stock_expense_detail.id 
 LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id
-LEFT JOIN units ON nomenclature.units_id = units.id 
+LEFT JOIN item_types ON item_types.id = nomenclature.type_id 
+LEFT JOIN units ON item_types.units_id = units.id 
 LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id 
 LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id
 LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id

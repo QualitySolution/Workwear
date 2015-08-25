@@ -33,8 +33,8 @@ UNION ALL
 SELECT stock_write_off_detail.stock_income_detail_id as id, stock_write_off_detail.quantity as count FROM stock_write_off_detail WHERE stock_income_detail_id IS NOT NULL) as table1 
 GROUP BY id) as spent ON spent.id = stock_income_detail.id 
 LEFT JOIN nomenclature ON nomenclature.id = stock_income_detail.nomenclature_id 
-LEFT JOIN units ON units.id = nomenclature.units_id 
 LEFT JOIN item_types ON nomenclature.type_id = item_types.id 
+LEFT JOIN units ON units.id = item_types.units_id 
 LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id
 WHERE spent.count IS NULL OR spent.count &lt; stock_income_detail.quantity</CommandText>
       </Query>

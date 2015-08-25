@@ -159,8 +159,8 @@ namespace workwear
 					"SELECT stock_write_off_detail.stock_income_detail_id as id, stock_write_off_detail.quantity as count FROM stock_write_off_detail WHERE stock_income_detail_id IS NOT NULL) as table1 " +
 					"GROUP BY id) as spent ON spent.id = stock_income_detail.id " +
 					"LEFT JOIN nomenclature ON nomenclature.id = stock_income_detail.nomenclature_id " +
-					"LEFT JOIN units ON units.id = nomenclature.units_id " +
 					"LEFT JOIN item_types ON nomenclature.type_id = item_types.id " +
+					"LEFT JOIN units ON units.id = item_types.units_id " +
 					"WHERE (spent.count IS NULL OR spent.count < stock_income_detail.quantity) ";
 				if(Operation == ExpenseDoc.Operations.Employee)
 					sql += "AND item_types.category = 'wear' ";
@@ -215,7 +215,8 @@ namespace workwear
 					"stock_income_detail.life_percent, units.name as unit, stock_expense_detail.object_place_id, object_places.name as object_place " +
 					"FROM stock_expense_detail " +
 					"LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id " +
-					"LEFT JOIN units ON nomenclature.units_id = units.id " +
+					"LEFT JOIN item_types ON item_types.id = nomenclature.type_id " +
+					"LEFT JOIN units ON item_types.units_id = units.id " +
 					"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
 					"LEFT JOIN object_places ON object_places.id = stock_expense_detail.object_place_id " +
 					"WHERE stock_expense_detail.stock_expense_id = @id";

@@ -50,7 +50,7 @@ LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense
 LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id 
 LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id 
 LEFT JOIN wear_cards ON stock_expense.wear_card_id = wear_cards.id 
-LEFT JOIN units ON units.id = nomenclature.units_id 
+LEFT JOIN units ON units.id = item_types.units_id 
 WHERE wear_cards.object_id = @id AND (spent.count IS NULL OR spent.count &lt; stock_expense_detail.quantity)</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
