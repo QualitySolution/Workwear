@@ -5,6 +5,7 @@ using Gtk;
 using MySql.Data.MySqlClient;
 using NLog;
 using QSProjectsLib;
+using System.Collections.Generic;
 
 namespace workwear
 {
@@ -16,14 +17,14 @@ namespace workwear
 		byte[] PhotoFile;
 		bool ImageChanged = false;
 		private Gtk.ListStore ItemsListStore;
+		List<EmployeeCardItems> listedItems;
 
 		enum ReturnType
 		{
 			none,
 			returnwear,
-			writeoff}
-
-		;
+			writeoff
+		};
 
 		public WearCard ()
 		{
@@ -73,6 +74,13 @@ namespace workwear
 
 			treeviewWear.Model = ItemsListStore;
 			treeviewWear.ShowAll ();
+
+			ytreeListedItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItems> ()
+				.AddColumn ("Наименование").AddTextRenderer (e => e.ItemTypeName)
+				.AddColumn ("Количество").AddTextRenderer (e => e.AmountText)
+				.AddColumn ("Средняя стоимость").AddTextRenderer (e => e.AvgCostText)
+				.Finish ();
+			ytreeListedItems.ShowAll ();
 		}
 
 		public void Fill (int id)
@@ -150,6 +158,7 @@ namespace workwear
 				}
 				logger.Info ("Ok");
 				UpdateWear ();
+				UpdateListedItems ();
 				buttonGiveWear.Sensitive = true;
 				buttonReturnWear.Sensitive = true;
 				buttonWriteOffWear.Sensitive = true;
@@ -436,7 +445,7 @@ namespace workwear
 				             "spent.*  FROM stock_expense_detail " +
 				             "LEFT JOIN " +
 				             "(SELECT stock_income_detail.stock_expense_detail_id as idin, stock_income_detail.id as income_id, NULL as write_off_id, " +
-				             "stock_income_detail.quantity as count, stock_income.date as dateout, stock_income_detail.life_percent as lifeout  FROM stock_income_detail " +
+				             "stock_income_detail.quantity as count, stock_income.date as dateout, stock_income_detail.life_percent as lifeout FROM stock_income_detail " +
 				             "LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id WHERE stock_expense_detail_id IS NOT NULL " +
 				             "UNION ALL " +
 				             "SELECT stock_write_off_detail.stock_expense_detail_id as idin, NULL as income_id, stock_write_off_detail.id as write_off_id, " +
@@ -450,7 +459,7 @@ namespace workwear
 				             "LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
 				             "LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id " +
 				             "WHERE stock_expense.wear_card_id = @id ";
-				if (!checkShowHistory.Active)
+				if (true)
 					sql += " AND (spent.count IS NULL OR stock_expense_detail.quantity > (" +
 					"SELECT SUM(count) as count FROM " +
 					"(SELECT stock_income_detail.stock_expense_detail_id as id, stock_income_detail.quantity as count FROM stock_income_detail WHERE stock_expense_detail_id IS NOT NULL " +
@@ -526,6 +535,58 @@ namespace workwear
 				logger.Info ("Ok");
 			} catch (Exception ex) {
 				logger.Warn (ex, "Ошибка получения спецодежды по работнику!");
+			}
+
+		}
+
+		private void UpdateListedItems ()
+		{
+			QSMain.CheckConnectionAlive ();
+			logger.Info ("Запрос числящегося за сотрудником...");
+			try {
+				string sql = "SELECT item_types.id as item_types_id, " +
+					"SUM(stock_expense_detail.quantity - ifnull(spent.count, 0)) as quantity, " +
+					"item_types.name, units.name as unit, " +
+					"SUM(stock_income_detail.cost * (stock_expense_detail.quantity - ifnull(spent.count, 0)))/SUM(stock_expense_detail.quantity - ifnull(spent.count, 0)) as avgcost " +
+					"FROM stock_expense_detail " +
+					"LEFT JOIN " +
+					"(SELECT stock_income_detail.stock_expense_detail_id as idin, stock_income_detail.id as income_id, NULL as write_off_id, stock_income_detail.quantity as count " +
+					"FROM stock_income_detail " +
+					"LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id " +
+					"WHERE stock_expense_detail_id IS NOT NULL " +
+					"UNION ALL " +
+					"SELECT stock_write_off_detail.stock_expense_detail_id as idin, NULL as income_id, stock_write_off_detail.id as write_off_id, stock_write_off_detail.quantity as count FROM stock_write_off_detail " +
+					"LEFT JOIN stock_write_off ON stock_write_off_detail.stock_write_off_id = stock_write_off.id " +
+					"WHERE stock_expense_detail_id IS NOT NULL" +
+					") as spent ON spent.idin = stock_expense_detail.id " +
+					"LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id " +
+					"LEFT JOIN item_types ON item_types.id = nomenclature.type_id " +
+					"LEFT JOIN units ON item_types.units_id = units.id " +
+					"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id " +
+					"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
+					"WHERE stock_expense.wear_card_id = @id AND (spent.count IS NULL OR spent.count < stock_expense_detail.quantity ) " +
+					"GROUP BY nomenclature.type_id";
+				MySqlCommand cmd = new MySqlCommand (sql, QSMain.connectionDB);
+				cmd.Parameters.AddWithValue ("@id", Itemid);
+
+				listedItems = new List<EmployeeCardItems>();
+
+				using(MySqlDataReader rdr = cmd.ExecuteReader ())
+				{
+					while (rdr.Read ()) {
+						listedItems.Add (new EmployeeCardItems{
+							ItemTypeId = rdr.GetInt32 ("item_types_id"),
+							ItemTypeName = rdr.GetString ("name"),
+							UnitsName = DBWorks.GetString (rdr, "unit", String.Empty),
+							Amount = rdr.GetInt32 ("quantity"),
+							AvgCost = rdr.GetDecimal ("avgcost")
+						});
+					}
+				}
+				ytreeListedItems.ItemsDataSource = listedItems;
+				logger.Info ("Ok");
+			} catch (Exception ex) {
+				QSMain.ErrorMessageWithLog(this, "Ошибка получения числящегося за сотрудником!", logger, ex);
 			}
 
 		}

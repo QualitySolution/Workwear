@@ -96,6 +96,7 @@
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
     <Compile Include="SelectObjectProperty.cs" />
     <Compile Include="gtk-gui\workwear.SelectObjectProperty.cs" />
+    <Compile Include="viewDTOs\EmployeeCardItems.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -128,6 +129,7 @@
     <Folder Include="ReportsDlg\" />
     <Folder Include="Reports\" />
     <Folder Include="Updates\" />
+    <Folder Include="viewDTOs\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
