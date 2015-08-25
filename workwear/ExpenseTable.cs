@@ -162,9 +162,7 @@ namespace workwear
 					"LEFT JOIN item_types ON nomenclature.type_id = item_types.id " +
 					"LEFT JOIN units ON units.id = item_types.units_id " +
 					"WHERE (spent.count IS NULL OR spent.count < stock_income_detail.quantity) ";
-				if(Operation == ExpenseDoc.Operations.Employee)
-					sql += "AND item_types.category = 'wear' ";
-				else
+				if(Operation == ExpenseDoc.Operations.Object)
 					sql += "AND item_types.category = 'property' ";
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@current_expense", _ExpenseDocId);
