@@ -195,7 +195,7 @@ namespace workwear
 				cmd.Parameters.AddWithValue ("@last_name", entryLastName.Text);
 				cmd.Parameters.AddWithValue ("@first_name", entryFirstName.Text);
 				cmd.Parameters.AddWithValue ("@patronymic_name", entryPatronymic.Text);
-				cmd.Parameters.AddWithValue ("@user_id", QSMain.User.id);
+				cmd.Parameters.AddWithValue ("@user_id", QSMain.User.Id);
 				cmd.Parameters.AddWithValue ("@card_number", checkAuto.Active ? null : entryId.Text);
 				if (comboentryWearSize.Entry.Text != "")
 					cmd.Parameters.AddWithValue ("@wear_size", comboentryWearSize.Entry.Text);

@@ -184,7 +184,7 @@ namespace workwear
 
 				cmd.Parameters.AddWithValue("@id", Itemid);
 				cmd.Parameters.AddWithValue("@date", dateDoc.Date);
-				cmd.Parameters.AddWithValue("@user_id", QSMain.User.id);
+				cmd.Parameters.AddWithValue("@user_id", QSMain.User.Id);
 				cmd.Parameters.AddWithValue("@wear_card_id", DBWorks.ValueOrNull((Worker_id > 0 && comboOperation.Active == 1), Worker_id));
 				cmd.Parameters.AddWithValue("@object_id", DBWorks.ValueOrNull((Object_id > 0 && comboOperation.Active == 2), Object_id));
 				if(entryTTN.Text != "" && comboOperation.Active == 0)

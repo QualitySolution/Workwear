@@ -138,7 +138,7 @@ namespace workwear
 						break;
 				}
 				cmd.Parameters.AddWithValue("@date", dateDoc.Date);
-				cmd.Parameters.AddWithValue("@user_id", QSMain.User.id);
+				cmd.Parameters.AddWithValue("@user_id", QSMain.User.Id);
 				cmd.Parameters.AddWithValue("@wear_card_id", DBWorks.ValueOrNull(Worker_id > 0, Worker_id));
 				cmd.Parameters.AddWithValue("@object_id", DBWorks.ValueOrNull(Object_id > 0, Object_id));
 				cmd.ExecuteNonQuery();

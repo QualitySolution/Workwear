@@ -63,7 +63,7 @@ public partial class MainWindow: Gtk.Window
 			dialogAuthenticationAction.Sensitive = false;
 		}
 
-		UsersAction.Sensitive = QSMain.User.admin;
+		UsersAction.Sensitive = QSMain.User.Admin;
 		labelUser.LabelProp = QSMain.User.Name;
 
 		//Настраиваем новости
