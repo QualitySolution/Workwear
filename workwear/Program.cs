@@ -113,7 +113,7 @@ namespace workwear
 			PrepareTable.SqlSelect = "SELECT name, id FROM units ";
 			PrepareTable.DisplayString = "ед. изм. {0}";
 			PrepareTable.PrimaryKey = new TableInfo.PrimaryKeys ("id");
-			PrepareTable.ClearItems.Add ("nomenclature", 
+			PrepareTable.ClearItems.Add ("item_types", 
 				new TableInfo.ClearDependenceItem ("WHERE units_id = @id", "", "@id", "units_id"));
 			QSMain.ProjectTables.Add ("units", PrepareTable);
 
