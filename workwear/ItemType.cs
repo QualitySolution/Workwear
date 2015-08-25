@@ -38,6 +38,7 @@ namespace workwear
 					entryName.Text = rdr["name"].ToString();
 					spinQuantity.Value = DBWorks.GetDouble(rdr, "norm_quantity", 0);
 					spinLife.Value = DBWorks.GetDouble(rdr, "norm_life", 0);
+					checkOnNorms.Active = DBWorks.GetBoolean (rdr, "on_norms", false);
 					switch (DBWorks.GetString(rdr, "category", "")) {
 						case "wear":
 							comboCategory.Active = 0;
@@ -70,23 +71,25 @@ namespace workwear
 			string sql;
 			if(NewItem)
 			{
-				sql = "INSERT INTO item_types (name, category, norm_quantity, norm_life) " +
-					"VALUES (@name, @category, @norm_quantity, @norm_life)";
+				sql = "INSERT INTO item_types (name, category, on_norms, norm_quantity, norm_life) " +
+					"VALUES (@name, @category, @on_norms, @norm_quantity, @norm_life)";
 			}
 			else
 			{
-				sql = "UPDATE item_types SET name = @name, category = @category, norm_quantity = @norm_quantity, norm_life = @norm_life WHERE id = @id";
+				sql = "UPDATE item_types SET name = @name, category = @category, on_norms = @on_norms, " +
+					"norm_quantity = @norm_quantity, norm_life = @norm_life WHERE id = @id";
 			}
 			QSMain.CheckConnectionAlive ();
-			logger.Info("Запись тип номенклатуры...");
+			logger.Info("Запись типа номенклатуры...");
 			try 
 			{
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				
 				cmd.Parameters.AddWithValue("@id", Itemid);
 				cmd.Parameters.AddWithValue("@name", entryName.Text);
-				cmd.Parameters.AddWithValue("@norm_quantity", DBWorks.ValueOrNull(spinQuantity.Value > 0,  spinQuantity.Value));
-				cmd.Parameters.AddWithValue("@norm_life", DBWorks.ValueOrNull(spinLife.Value > 0, spinLife.Value));
+				cmd.Parameters.AddWithValue("@on_norms", checkOnNorms.Active);
+				cmd.Parameters.AddWithValue("@norm_quantity", DBWorks.ValueOrNull(checkOnNorms.Active, spinQuantity.Value));
+				cmd.Parameters.AddWithValue("@norm_life", DBWorks.ValueOrNull(checkOnNorms.Active, spinLife.Value));
 				switch (comboCategory.Active) {
 					case 0:
 						cmd.Parameters.AddWithValue("@category", "wear");
@@ -114,6 +117,12 @@ namespace workwear
 		protected void OnComboCategoryChanged(object sender, EventArgs e)
 		{
 			TestCanSave();
+		}
+
+		protected void OnCheckOnNormsToggled (object sender, EventArgs e)
+		{
+			spinLife.Sensitive = spinQuantity.Sensitive = labelLife.Sensitive = labelQuality.Sensitive 
+				= checkOnNorms.Active;
 		}
 	}
 }
