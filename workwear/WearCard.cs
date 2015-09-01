@@ -6,6 +6,7 @@ using MySql.Data.MySqlClient;
 using NLog;
 using QSProjectsLib;
 using System.Collections.Generic;
+using workwear.DTO;
 
 namespace workwear
 {
@@ -16,15 +17,8 @@ namespace workwear
 		int Itemid, Leader_id, Object_id;
 		byte[] PhotoFile;
 		bool ImageChanged = false;
-		private Gtk.ListStore ItemsListStore;
 		List<EmployeeCardItems> listedItems;
-
-		enum ReturnType
-		{
-			none,
-			returnwear,
-			writeoff
-		};
+		List<EmployeeCardMovements> Movements;
 
 		public WearCard ()
 		{
@@ -37,50 +31,23 @@ namespace workwear
 				comboSex, spinGrowth, comboentryWearSize, comboPost, hboxLeader, hboxObject
 			};
 
-			//Создаем таблицу "материальных ценностей"
-			ItemsListStore = new Gtk.ListStore (typeof(long), //0 in row id
-				typeof(int), //1 nomenclature id
-				typeof(string),//2 nomenclature name
-				typeof(string), //3 type nomenclature
-				typeof(string), // 4 nomenclature number
-				typeof(int), //5 income quantity
-				typeof(string), // 6 life
-				typeof(string), //7 units
-				typeof(string), // 8 income date
-				typeof(decimal), // 9 cost
-				typeof(string), // 10 tn number
-			                                    // ----- выдача
-				typeof(long), // 11 out row id
-				typeof(string), // 12 out date
-				typeof(int), // 13 out quantity
-				typeof(ReturnType), // 14 type write off
-				typeof(string) // 15 life
-			);
-
-			Gtk.CellRendererText CellQuantityIn = new CellRendererText ();
-			Gtk.CellRendererText CellQuantityOut = new CellRendererText ();
-			Gtk.CellRendererText CellCost = new CellRendererText ();
-
-			treeviewWear.AppendColumn ("Наименование", new Gtk.CellRendererText (), "text", 2);
-			treeviewWear.AppendColumn ("Дата", new Gtk.CellRendererText (), "text", 8);
-			treeviewWear.AppendColumn ("Кол-во", CellQuantityIn, RenderQuantityInColumn);
-			treeviewWear.AppendColumn ("% годности", new Gtk.CellRendererText (), "text", 6);
-			treeviewWear.AppendColumn ("Стоимость", CellCost, RenderCostColumn);
-			treeviewWear.AppendColumn ("№ТН", new Gtk.CellRendererText (), "text", 10);
-
-			treeviewWear.AppendColumn ("Дата", new Gtk.CellRendererText (), "text", 12);
-			treeviewWear.AppendColumn ("Кол-во", CellQuantityOut, RenderQuantityOutColumn);
-			treeviewWear.AppendColumn ("% годности", new Gtk.CellRendererText (), "text", 15);
-
-			treeviewWear.Model = ItemsListStore;
-			treeviewWear.ShowAll ();
-
 			ytreeListedItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItems> ()
 				.AddColumn ("Наименование").AddTextRenderer (e => e.ItemTypeName)
 				.AddColumn ("Количество").AddTextRenderer (e => e.AmountText)
 				.AddColumn ("Средняя стоимость").AddTextRenderer (e => e.AvgCostText)
 				.Finish ();
 			ytreeListedItems.ShowAll ();
+
+			treeviewMovements.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardMovements> ()
+				.AddColumn ("Дата").AddTextRenderer (e => e.Date.ToShortDateString ())
+				.AddColumn ("Документ").AddTextRenderer (e => e.DocumentName)
+				.AddColumn ("Номенклатура").AddTextRenderer (e => e.NomenclatureName)
+				.AddColumn ("% годности").AddTextRenderer (e => e.LifeText)
+				.AddColumn ("Стоимость").AddTextRenderer (e => e.CostText )
+				.AddColumn ("Получено").AddTextRenderer (e => e.AmountReceivedText)
+				.AddColumn ("Сдано\\списано").AddTextRenderer (e => e.AmountReturnedText)
+				.Finish ();
+			treeviewMovements.ShowAll ();
 		}
 
 		public void Fill (int id)
@@ -157,7 +124,7 @@ namespace workwear
 					}
 				}
 				logger.Info ("Ok");
-				UpdateWear ();
+				UpdateMovements ();
 				UpdateListedItems ();
 				buttonGiveWear.Sensitive = true;
 				buttonReturnWear.Sensitive = true;
@@ -404,139 +371,83 @@ namespace workwear
 			fc.Destroy ();
 		}
 
-		private void RenderQuantityInColumn (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
-		{
-			int Quantity = (int)model.GetValue (iter, 5);
-			string unit = (string)model.GetValue (iter, 7);
-			if (Quantity > 0)
-				(cell as Gtk.CellRendererText).Text = String.Format ("{0} {1}", Quantity, unit);
-			else
-				(cell as Gtk.CellRendererText).Text = "";
-		}
-
-		private void RenderQuantityOutColumn (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
-		{
-			int Quantity = (int)model.GetValue (iter, 13);
-			string unit = (string)model.GetValue (iter, 7);
-			if (Quantity > 0)
-				(cell as Gtk.CellRendererText).Text = String.Format ("{0} {1}", Quantity, unit);
-			else
-				(cell as Gtk.CellRendererText).Text = "";
-		}
-
-		private void RenderCostColumn (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
-		{
-			if (model.GetValue (iter, 9) == null)
-				return;
-			decimal Cost = (decimal)model.GetValue (iter, 9);
-			if (Cost >= 0)
-				(cell as Gtk.CellRendererText).Text = String.Format ("{0:C}", Cost);
-			else
-				(cell as Gtk.CellRendererText).Text = String.Empty;
-		}
-
-		private void UpdateWear ()
+		private void UpdateMovements ()
 		{
 			QSMain.CheckConnectionAlive ();
-			logger.Info ("Запрос спецодежды по работнику...");
+			logger.Info ("Запрос движений по работнику...");
 			try {
-				string sql = "SELECT stock_expense_detail.id as idin, stock_expense_detail.nomenclature_id, stock_expense_detail.quantity as quantityin, stock_income_detail.cost, " +
-				             "nomenclature.name, units.name as unit, stock_expense.date as datein, stock_income_detail.life_percent as lifein, stock_income.number as tnnumber, " +
-				             "spent.*  FROM stock_expense_detail " +
-				             "LEFT JOIN " +
-				             "(SELECT stock_income_detail.stock_expense_detail_id as idin, stock_income_detail.id as income_id, NULL as write_off_id, " +
-				             "stock_income_detail.quantity as count, stock_income.date as dateout, stock_income_detail.life_percent as lifeout FROM stock_income_detail " +
-				             "LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id WHERE stock_expense_detail_id IS NOT NULL " +
-				             "UNION ALL " +
-				             "SELECT stock_write_off_detail.stock_expense_detail_id as idin, NULL as income_id, stock_write_off_detail.id as write_off_id, " +
-				             "stock_write_off_detail.quantity as count, stock_write_off.date as dateout, NULL as lifeout FROM stock_write_off_detail " +
-				             "LEFT JOIN stock_write_off ON stock_write_off_detail.stock_write_off_id = stock_write_off.id " +
-				             "WHERE stock_expense_detail_id IS NOT NULL" +
-				             ") as spent ON spent.idin = stock_expense_detail.id " +
-				             "LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id " +
-				             "LEFT JOIN units ON nomenclature.units_id = units.id " +
-				             "LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id " +
-				             "LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
-				             "LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id " +
-				             "WHERE stock_expense.wear_card_id = @id ";
-				if (true)
-					sql += " AND (spent.count IS NULL OR stock_expense_detail.quantity > (" +
-					"SELECT SUM(count) as count FROM " +
-					"(SELECT stock_income_detail.stock_expense_detail_id as id, stock_income_detail.quantity as count FROM stock_income_detail WHERE stock_expense_detail_id IS NOT NULL " +
+				string sql = "SELECT movements.*, nomenclature.name as nomenclature_name, units.name as unit " +
+					"FROM (" +
+					"SELECT stock_expense.date, stock_expense_detail.stock_expense_id, NULL as stock_income_id, NULL as stock_write_off_id, " +
+					"stock_expense_detail.nomenclature_id, stock_expense_detail.quantity, stock_income_detail.life_percent, stock_income_detail.cost " +
+					"FROM stock_expense_detail " +
+					"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id " +
+					"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
+					"WHERE stock_expense.wear_card_id = @id " +
 					"UNION ALL " +
-					"SELECT stock_write_off_detail.stock_expense_detail_id as id, stock_write_off_detail.quantity as count FROM stock_write_off_detail WHERE stock_expense_detail_id IS NOT NULL) as table1 " +
-					"WHERE stock_expense_detail.id = table1.id " +
-					"GROUP BY id) )";
+					"SELECT stock_income.date, NULL as stock_expense_id, stock_income_detail.stock_income_id, NULL as stock_write_off_id, " +
+					"stock_income_detail.nomenclature_id, stock_income_detail.quantity, stock_income_detail.life_percent, stock_income_detail.cost " +
+					"FROM stock_income_detail " +
+					"LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id " +
+					"WHERE stock_income.wear_card_id = @id " +
+					"UNION ALL " +
+					"SELECT stock_write_off.date, NULL as stock_expense_id, NULL as stock_income_id, stock_write_off_detail.stock_write_off_id, " +
+					"stock_write_off_detail.nomenclature_id, stock_write_off_detail.quantity, NULL as life_percent, NULL as cost " +
+					"FROM stock_write_off_detail " +
+					"LEFT JOIN stock_write_off ON stock_write_off.id = stock_write_off_detail.stock_write_off_id " +
+					"LEFT JOIN stock_expense_detail ON stock_write_off_detail.stock_expense_detail_id = stock_expense_detail.id " +
+					"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id " +
+					"WHERE stock_expense.wear_card_id = @id " +
+					") as movements " +
+					"LEFT JOIN nomenclature ON nomenclature.id = movements.nomenclature_id " +
+					"LEFT JOIN item_types ON item_types.id = nomenclature.type_id " +
+					"LEFT JOIN units ON item_types.units_id = units.id " +
+					"ORDER BY movements.date, movements.stock_write_off_id, movements.stock_income_id, movements.stock_expense_id";
 				MySqlCommand cmd = new MySqlCommand (sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@id", Itemid);
-				MySqlDataReader rdr = cmd.ExecuteReader ();
 
-				ItemsListStore.Clear ();
-				long LastId = -1;
-				while (rdr.Read ()) {
-					long OutRowId;
-					string LifeOut, DateOut;
-					ReturnType Mode;
+				Movements = new List<EmployeeCardMovements>();
 
-					if (rdr ["write_off_id"] != DBNull.Value) {
-						OutRowId = rdr.GetInt64 ("write_off_id");
-						LifeOut = "списано";
-						Mode = ReturnType.writeoff;
-						DateOut = String.Format ("{0:d}", rdr.GetDateTime ("dateout"));
-					} else if (rdr ["income_id"] != DBNull.Value) {
-						OutRowId = rdr.GetInt64 ("income_id");
-						LifeOut = String.Format ("{0:P0}", rdr.GetDecimal ("lifeout"));
-						Mode = ReturnType.returnwear;
-						DateOut = String.Format ("{0:d}", rdr.GetDateTime ("dateout"));
-					} else {
-						LifeOut = "";
-						Mode = ReturnType.none;
-						OutRowId = -1;
-						DateOut = "";
-					}
-					if (LastId == rdr.GetInt64 ("idin")) {
-						ItemsListStore.AppendValues (rdr.GetInt64 ("idin"),
-							rdr.GetInt32 ("nomenclature_id"),
-							string.Empty,
-							string.Empty,
-							string.Empty,
-							-1,
-							string.Empty,
-							rdr ["unit"].ToString (),
-							string.Empty,
-							-1m,
-							string.Empty,
-							OutRowId,
-							DateOut,
-							DBWorks.GetInt (rdr, "count", 0),
-							Mode,
-							LifeOut);
-					} else {
-						ItemsListStore.AppendValues (rdr.GetInt64 ("idin"),
-							rdr.GetInt32 ("nomenclature_id"),
-							rdr.GetString ("name"),
-							string.Empty,
-							string.Empty,
-							rdr.GetInt32 ("quantityin"),
-							String.Format ("{0:P0}", rdr.GetDecimal ("lifein")),
-							rdr ["unit"].ToString (),
-							String.Format ("{0:d}", rdr.GetDateTime ("datein")),
-							DBWorks.GetDecimal (rdr, "cost", -1),
-							rdr ["tnnumber"].ToString (),
-							OutRowId,
-							DateOut,
-							DBWorks.GetInt (rdr, "count", 0),
-							Mode,
-							LifeOut);
-						LastId = rdr.GetInt64 ("idin");
+				using( MySqlDataReader rdr = cmd.ExecuteReader ())
+				{
+					while (rdr.Read ()) {
+						var move = new EmployeeCardMovements{
+							Date = rdr.GetDateTime ("date"),
+							NomenclatureName = rdr.GetString ("nomenclature_name"),
+							Cost = DBWorks.GetDecimal (rdr, "cost"),
+							Life = DBWorks.GetDecimal (rdr, "life_percent"),
+							UnitsName = DBWorks.GetString (rdr, "unit", String.Empty)
+						};
+
+						if(rdr["stock_expense_id"] != DBNull.Value)
+						{
+							move.MovementType = MovementType.Received;
+							move.AmountReceived = rdr.GetInt32 ("quantity");
+							move.DocumentId = rdr.GetInt32 ("stock_expense_id");
+						}
+
+						if(rdr["stock_income_id"] != DBNull.Value)
+						{
+							move.MovementType = MovementType.Returned;
+							move.AmountReturned = rdr.GetInt32 ("quantity");
+							move.DocumentId = rdr.GetInt32 ("stock_income_id");
+						}
+
+						if(rdr["stock_write_off_id"] != DBNull.Value)
+						{
+							move.MovementType = MovementType.Writeoff;
+							move.AmountReturned = rdr.GetInt32 ("quantity");
+							move.DocumentId = rdr.GetInt32 ("stock_write_off_id");
+						}
+
+						Movements.Add (move);
 					}
 				}
-				rdr.Close ();
+				treeviewMovements.ItemsDataSource = Movements;
 				logger.Info ("Ok");
 			} catch (Exception ex) {
-				logger.Warn (ex, "Ошибка получения спецодежды по работнику!");
+				QSMain.ErrorMessageWithLog(this, "Ошибка получения движений по работнику!", logger, ex);
 			}
-
 		}
 
 		private void UpdateListedItems ()
@@ -591,11 +502,6 @@ namespace workwear
 
 		}
 
-		protected void OnCheckShowHistoryClicked (object sender, EventArgs e)
-		{
-			UpdateWear ();
-		}
-
 		protected void OnButtonGiveWearClicked (object sender, EventArgs e)
 		{
 			ExpenseDoc winExpense = new ExpenseDoc ();
@@ -605,7 +511,8 @@ namespace workwear
 			winExpense.Show ();
 			winExpense.Run ();
 			winExpense.Destroy ();
-			UpdateWear ();
+			UpdateMovements ();
+			UpdateListedItems ();
 		}
 
 		protected void OnButtonReturnWearClicked (object sender, EventArgs e)
@@ -617,7 +524,8 @@ namespace workwear
 			winIncome.Show ();
 			winIncome.Run ();
 			winIncome.Destroy ();
-			UpdateWear ();
+			UpdateMovements ();
+			UpdateListedItems ();
 		}
 
 		protected void OnButtonWriteOffWearClicked (object sender, EventArgs e)
@@ -628,7 +536,8 @@ namespace workwear
 			winWriteOff.Show ();
 			winWriteOff.Run ();
 			winWriteOff.Destroy ();
-			UpdateWear ();
+			UpdateMovements ();
+			UpdateListedItems ();
 		}
 
 		protected void OnButtonPrintClicked (object sender, EventArgs e)

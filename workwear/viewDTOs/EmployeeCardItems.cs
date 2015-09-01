@@ -1,7 +1,7 @@
 ﻿using System;
 using QSProjectsLib;
 
-namespace workwear
+namespace workwear.DTO
 {
 	public class EmployeeCardItems
 	{
@@ -15,7 +15,8 @@ namespace workwear
 		public string AmountText {get{ return String.Format ("{0} {1}", Amount, UnitsName);
 			}}
 
-		public string AvgCostText {get { return CurrencyWorks.GetShortCurrencyString (AvgCost);
+		public string AvgCostText {get { 
+				return AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString (AvgCost) : String.Empty;
 			}}
 
 		public EmployeeCardItems ()

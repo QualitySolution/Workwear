@@ -97,6 +97,7 @@
     <Compile Include="SelectObjectProperty.cs" />
     <Compile Include="gtk-gui\workwear.SelectObjectProperty.cs" />
     <Compile Include="viewDTOs\EmployeeCardItems.cs" />
+    <Compile Include="viewDTOs\EmployeeCardMovements.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
