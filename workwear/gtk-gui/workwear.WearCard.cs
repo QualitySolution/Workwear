@@ -651,7 +651,7 @@ namespace workwear
 			this.notebook1 = new global::Gtk.Notebook ();
 			this.notebook1.CanFocus = true;
 			this.notebook1.Name = "notebook1";
-			this.notebook1.CurrentPage = 1;
+			this.notebook1.CurrentPage = 0;
 			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.vbox4 = new global::Gtk.VBox ();
 			this.vbox4.Name = "vbox4";
@@ -828,6 +828,7 @@ namespace workwear
 			this.checkAuto.Toggled += new global::System.EventHandler (this.OnCheckAutoToggled);
 			this.buttonLoadPhoto.Clicked += new global::System.EventHandler (this.OnButtonLoadPhotoClicked);
 			this.buttonSavePhoto.Clicked += new global::System.EventHandler (this.OnButtonSavePhotoClicked);
+			this.notebook1.SwitchPage += new global::Gtk.SwitchPageHandler (this.OnNotebook1SwitchPage);
 			this.buttonGiveWear.Clicked += new global::System.EventHandler (this.OnButtonGiveWearClicked);
 			this.buttonReturnWear.Clicked += new global::System.EventHandler (this.OnButtonReturnWearClicked);
 			this.buttonWriteOffWear.Clicked += new global::System.EventHandler (this.OnButtonWriteOffWearClicked);

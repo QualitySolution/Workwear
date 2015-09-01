@@ -19,6 +19,7 @@ namespace workwear
 		bool ImageChanged = false;
 		List<EmployeeCardItems> listedItems;
 		List<EmployeeCardMovements> Movements;
+		bool IsShowedMovementsTable = false;
 
 		public WearCard ()
 		{
@@ -373,6 +374,8 @@ namespace workwear
 
 		private void UpdateMovements ()
 		{
+			if (!IsShowedMovementsTable)
+				return;
 			QSMain.CheckConnectionAlive ();
 			logger.Info ("Запрос движений по работнику...");
 			try {
@@ -559,5 +562,13 @@ namespace workwear
 			TestCanSave();
 		}
 
+		protected void OnNotebook1SwitchPage (object o, SwitchPageArgs args)
+		{
+			if(notebook1.CurrentPage == 1 && !IsShowedMovementsTable)
+			{
+				IsShowedMovementsTable = true;
+				UpdateMovements ();
+			}
+		}
 	}
 }
