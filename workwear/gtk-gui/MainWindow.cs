@@ -113,6 +113,10 @@ public partial class MainWindow
 	
 	private global::Gtk.Label label9;
 	
+	private global::workwear.StockBalanceView stockbalanceview1;
+	
+	private global::Gtk.Label label11;
+	
 	private global::Gtk.HBox hbox7;
 	
 	private global::Gtk.Button buttonAdd;
@@ -463,12 +467,25 @@ public partial class MainWindow
 		// Notebook tab
 		this.label9 = new global::Gtk.Label ();
 		this.label9.Name = "label9";
-		this.label9.LabelProp = global::Mono.Unix.Catalog.GetString ("Склад");
+		this.label9.LabelProp = global::Mono.Unix.Catalog.GetString ("Складские документы");
 		this.notebookMain.SetTabLabel (this.vbox4, this.label9);
 		this.label9.ShowAll ();
+		// Container child notebookMain.Gtk.Notebook+NotebookChild
+		this.stockbalanceview1 = new global::workwear.StockBalanceView ();
+		this.stockbalanceview1.Events = ((global::Gdk.EventMask)(256));
+		this.stockbalanceview1.Name = "stockbalanceview1";
+		this.notebookMain.Add (this.stockbalanceview1);
+		global::Gtk.Notebook.NotebookChild w30 = ((global::Gtk.Notebook.NotebookChild)(this.notebookMain [this.stockbalanceview1]));
+		w30.Position = 3;
+		// Notebook tab
+		this.label11 = new global::Gtk.Label ();
+		this.label11.Name = "label11";
+		this.label11.LabelProp = global::Mono.Unix.Catalog.GetString ("Остатки");
+		this.notebookMain.SetTabLabel (this.stockbalanceview1, this.label11);
+		this.label11.ShowAll ();
 		this.vbox1.Add (this.notebookMain);
-		global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.notebookMain]));
-		w30.Position = 1;
+		global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.notebookMain]));
+		w31.Position = 1;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.hbox7 = new global::Gtk.HBox ();
 		this.hbox7.Name = "hbox7";
@@ -480,42 +497,42 @@ public partial class MainWindow
 		this.buttonAdd.Name = "buttonAdd";
 		this.buttonAdd.UseUnderline = true;
 		this.buttonAdd.Label = global::Mono.Unix.Catalog.GetString ("Добавить");
-		global::Gtk.Image w31 = new global::Gtk.Image ();
-		w31.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-add", global::Gtk.IconSize.Menu);
-		this.buttonAdd.Image = w31;
+		global::Gtk.Image w32 = new global::Gtk.Image ();
+		w32.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-add", global::Gtk.IconSize.Menu);
+		this.buttonAdd.Image = w32;
 		this.hbox7.Add (this.buttonAdd);
-		global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.hbox7 [this.buttonAdd]));
-		w32.Position = 0;
-		w32.Expand = false;
-		w32.Fill = false;
+		global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.hbox7 [this.buttonAdd]));
+		w33.Position = 0;
+		w33.Expand = false;
+		w33.Fill = false;
 		// Container child hbox7.Gtk.Box+BoxChild
 		this.buttonEdit = new global::Gtk.Button ();
 		this.buttonEdit.CanFocus = true;
 		this.buttonEdit.Name = "buttonEdit";
 		this.buttonEdit.UseUnderline = true;
 		this.buttonEdit.Label = global::Mono.Unix.Catalog.GetString ("Изменить");
-		global::Gtk.Image w33 = new global::Gtk.Image ();
-		w33.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-edit", global::Gtk.IconSize.Menu);
-		this.buttonEdit.Image = w33;
+		global::Gtk.Image w34 = new global::Gtk.Image ();
+		w34.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-edit", global::Gtk.IconSize.Menu);
+		this.buttonEdit.Image = w34;
 		this.hbox7.Add (this.buttonEdit);
-		global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.hbox7 [this.buttonEdit]));
-		w34.Position = 1;
-		w34.Expand = false;
-		w34.Fill = false;
+		global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.hbox7 [this.buttonEdit]));
+		w35.Position = 1;
+		w35.Expand = false;
+		w35.Fill = false;
 		// Container child hbox7.Gtk.Box+BoxChild
 		this.buttonDelete = new global::Gtk.Button ();
 		this.buttonDelete.CanFocus = true;
 		this.buttonDelete.Name = "buttonDelete";
 		this.buttonDelete.UseUnderline = true;
 		this.buttonDelete.Label = global::Mono.Unix.Catalog.GetString ("Удалить");
-		global::Gtk.Image w35 = new global::Gtk.Image ();
-		w35.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-remove", global::Gtk.IconSize.Menu);
-		this.buttonDelete.Image = w35;
+		global::Gtk.Image w36 = new global::Gtk.Image ();
+		w36.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-remove", global::Gtk.IconSize.Menu);
+		this.buttonDelete.Image = w36;
 		this.hbox7.Add (this.buttonDelete);
-		global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.hbox7 [this.buttonDelete]));
-		w36.Position = 2;
-		w36.Expand = false;
-		w36.Fill = false;
+		global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.hbox7 [this.buttonDelete]));
+		w37.Position = 2;
+		w37.Expand = false;
+		w37.Fill = false;
 		// Container child hbox7.Gtk.Box+BoxChild
 		this.buttonRefresh = new global::Gtk.Button ();
 		this.buttonRefresh.TooltipMarkup = "Обновить текущую таблицу.";
@@ -523,20 +540,20 @@ public partial class MainWindow
 		this.buttonRefresh.Name = "buttonRefresh";
 		this.buttonRefresh.UseUnderline = true;
 		this.buttonRefresh.Label = global::Mono.Unix.Catalog.GetString ("Обновить");
-		global::Gtk.Image w37 = new global::Gtk.Image ();
-		w37.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-refresh", global::Gtk.IconSize.Menu);
-		this.buttonRefresh.Image = w37;
+		global::Gtk.Image w38 = new global::Gtk.Image ();
+		w38.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-refresh", global::Gtk.IconSize.Menu);
+		this.buttonRefresh.Image = w38;
 		this.hbox7.Add (this.buttonRefresh);
-		global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.hbox7 [this.buttonRefresh]));
-		w38.PackType = ((global::Gtk.PackType)(1));
-		w38.Position = 3;
-		w38.Expand = false;
-		w38.Fill = false;
-		this.vbox1.Add (this.hbox7);
-		global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox7]));
-		w39.Position = 2;
+		global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.hbox7 [this.buttonRefresh]));
+		w39.PackType = ((global::Gtk.PackType)(1));
+		w39.Position = 3;
 		w39.Expand = false;
 		w39.Fill = false;
+		this.vbox1.Add (this.hbox7);
+		global::Gtk.Box.BoxChild w40 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox7]));
+		w40.Position = 2;
+		w40.Expand = false;
+		w40.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.MainStatusBar = new global::Gtk.Statusbar ();
 		this.MainStatusBar.Name = "MainStatusBar";
@@ -546,24 +563,24 @@ public partial class MainWindow
 		this.labelUser.Name = "labelUser";
 		this.labelUser.LabelProp = global::Mono.Unix.Catalog.GetString ("Пользователь");
 		this.MainStatusBar.Add (this.labelUser);
-		global::Gtk.Box.BoxChild w40 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar [this.labelUser]));
-		w40.Position = 0;
-		w40.Expand = false;
-		w40.Fill = false;
+		global::Gtk.Box.BoxChild w41 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar [this.labelUser]));
+		w41.Position = 0;
+		w41.Expand = false;
+		w41.Fill = false;
 		// Container child MainStatusBar.Gtk.Box+BoxChild
 		this.labelStatus = new global::Gtk.Label ();
 		this.labelStatus.Name = "labelStatus";
 		this.labelStatus.LabelProp = global::Mono.Unix.Catalog.GetString ("Ok");
 		this.MainStatusBar.Add (this.labelStatus);
-		global::Gtk.Box.BoxChild w41 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar [this.labelStatus]));
-		w41.Position = 2;
-		w41.Expand = false;
-		w41.Fill = false;
-		this.vbox1.Add (this.MainStatusBar);
-		global::Gtk.Box.BoxChild w42 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.MainStatusBar]));
-		w42.Position = 3;
+		global::Gtk.Box.BoxChild w42 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar [this.labelStatus]));
+		w42.Position = 2;
 		w42.Expand = false;
 		w42.Fill = false;
+		this.vbox1.Add (this.MainStatusBar);
+		global::Gtk.Box.BoxChild w43 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.MainStatusBar]));
+		w43.Position = 3;
+		w43.Expand = false;
+		w43.Fill = false;
 		this.Add (this.vbox1);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();

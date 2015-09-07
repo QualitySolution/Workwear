@@ -200,7 +200,6 @@ public partial class MainWindow: Gtk.Window
 		winref.Show();
 		winref.Run();
 		winref.Destroy();
-
 	}
 
 	protected void OnAboutActionActivated(object sender, EventArgs e)
@@ -220,6 +219,9 @@ public partial class MainWindow: Gtk.Window
 				case 2:
 				UpdateStock();
 				break;
+		case 3:
+			stockbalanceview1.RefreshView ();
+			break;
 		}
 	}
 
@@ -392,6 +394,7 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnNotebookMainSwitchPage(object o, SwitchPageArgs args)
 	{
+		buttonAdd.Visible = buttonDelete.Visible = buttonEdit.Visible = notebookMain.CurrentPage != 3;
 		buttonRefresh.Click();
 	}
 
@@ -442,4 +445,5 @@ public partial class MainWindow: Gtk.Window
 	{
 		EditSerialNumber.RunDialog();
 	}
+
 }

@@ -62,7 +62,6 @@
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="MainWindow.cs" />
-    <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ItemType.cs" />
@@ -98,6 +97,10 @@
     <Compile Include="gtk-gui\workwear.SelectObjectProperty.cs" />
     <Compile Include="viewDTOs\EmployeeCardItems.cs" />
     <Compile Include="viewDTOs\EmployeeCardMovements.cs" />
+    <Compile Include="ViewWidgets\StockBalanceView.cs" />
+    <Compile Include="gtk-gui\workwear.StockBalanceView.cs" />
+    <Compile Include="viewDTOs\StockBalanceItems.cs" />
+    <Compile Include="gtk-gui\MainWindow.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -125,12 +128,17 @@
       <Project>{190CEA0D-EA23-4C91-8030-203A5AFED7B7}</Project>
       <Name>GammaBinding</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Gtk.DataBindings\System.Data.Bindings\System.Data.Bindings.csproj">
+      <Project>{54F958F5-7E58-4C89-9A04-8835E63B97C3}</Project>
+      <Name>System.Data.Bindings</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
     <Folder Include="Reports\" />
     <Folder Include="Updates\" />
     <Folder Include="viewDTOs\" />
+    <Folder Include="ViewWidgets\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

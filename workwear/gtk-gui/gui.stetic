@@ -13,668 +13,6 @@
     <widget-library name="../../../QSProjects/QSUpdater/bin/Debug/QSUpdater.dll" />
     <widget-library name="../../../GammaBinding/GammaBinding/bin/Debug/GammaBinding.dll" />
   </import>
-  <widget class="Gtk.Window" id="MainWindow" design-size="709 458">
-    <action-group name="Default">
-      <action id="Action">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Файл</property>
-        <property name="ShortLabel" translatable="yes">Файл</property>
-      </action>
-      <action id="Action1">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Справочники</property>
-        <property name="ShortLabel" translatable="yes">Справочники</property>
-      </action>
-      <action id="Action2">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Ведомости</property>
-        <property name="ShortLabel" translatable="yes">Ведомости</property>
-      </action>
-      <action id="Action3">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Справка</property>
-        <property name="ShortLabel" translatable="yes">Справка</property>
-      </action>
-      <action id="dialogAuthenticationAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Изменить пароль</property>
-        <property name="ShortLabel" translatable="yes">Изменить пароль</property>
-        <property name="StockId">gtk-dialog-authentication</property>
-        <signal name="Activated" handler="OnDialogAuthenticationActionActivated" />
-      </action>
-      <action id="UsersAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Пользователи</property>
-        <property name="ShortLabel" translatable="yes">Пользователи</property>
-        <signal name="Activated" handler="OnUsersActionActivated" />
-      </action>
-      <action id="quitAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Выход</property>
-        <property name="ShortLabel" translatable="yes">Выход</property>
-        <property name="StockId">gtk-quit</property>
-        <signal name="Activated" handler="OnQuitActionActivated" />
-      </action>
-      <action id="Action5">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Типы номенклатуры</property>
-        <property name="ShortLabel" translatable="yes">Типы номенклатуры</property>
-        <signal name="Activated" handler="OnAction5Activated" />
-      </action>
-      <action id="Action6">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Номенклатура</property>
-        <property name="ShortLabel" translatable="yes">Номенклатура</property>
-        <signal name="Activated" handler="OnAction6Activated" />
-      </action>
-      <action id="Action7">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Единицы измерения</property>
-        <property name="ShortLabel" translatable="yes">Единицы измерения</property>
-        <signal name="Activated" handler="OnAction7Activated" />
-      </action>
-      <action id="Action8">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Должности</property>
-        <property name="ShortLabel" translatable="yes">Должности</property>
-        <signal name="Activated" handler="OnAction8Activated" />
-      </action>
-      <action id="Action9">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Руководители</property>
-        <property name="ShortLabel" translatable="yes">Руководители</property>
-        <signal name="Activated" handler="OnAction9Activated" />
-      </action>
-      <action id="aboutAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">_О программе</property>
-        <property name="ShortLabel" translatable="yes">_О программе</property>
-        <property name="StockId">gtk-about</property>
-        <signal name="Activated" handler="OnAboutActionActivated" />
-      </action>
-      <action id="Action10">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Сводная ведомость</property>
-        <property name="ShortLabel" translatable="yes">Сводная ведомость</property>
-        <signal name="Activated" handler="OnAction10Activated" />
-      </action>
-      <action id="Action11">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Складская ведомость</property>
-        <property name="ShortLabel" translatable="yes">Складская ведомость</property>
-        <signal name="Activated" handler="OnAction11Activated" />
-      </action>
-      <action id="Action12">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Список по размерам</property>
-        <property name="ShortLabel" translatable="yes">Список по размерам</property>
-        <signal name="Activated" handler="OnAction12Activated" />
-      </action>
-      <action id="helpAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Документация</property>
-        <property name="ShortLabel" translatable="yes">Документация</property>
-        <property name="StockId">gtk-help</property>
-        <signal name="Activated" handler="OnHelpActionActivated" />
-      </action>
-      <action id="ActionHistory">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">История версий</property>
-        <property name="ShortLabel" translatable="yes">История версий</property>
-        <property name="StockId">gtk-file</property>
-        <signal name="Activated" handler="OnActionHistoryActivated" />
-      </action>
-      <action id="ActionUpdate">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Проверить обновление...</property>
-        <property name="ShortLabel" translatable="yes">Проверить обновление...</property>
-        <property name="StockId">gtk-go-down</property>
-        <signal name="Activated" handler="OnActionUpdateActivated" />
-      </action>
-      <action id="ActionSN">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Ввести серийный номер...</property>
-        <property name="ShortLabel" translatable="yes">Ввести серийный номер...</property>
-        <signal name="Activated" handler="OnActionSNActivated" />
-      </action>
-    </action-group>
-    <property name="MemberName" />
-    <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
-    <property name="Icon">resource:workwear.icon.logo.ico</property>
-    <property name="WindowPosition">Center</property>
-    <signal name="DeleteEvent" handler="OnDeleteEvent" />
-    <child>
-      <widget class="Gtk.VBox" id="vbox1">
-        <property name="MemberName" />
-        <property name="Spacing">6</property>
-        <child>
-          <widget class="Gtk.MenuBar" id="menubar1">
-            <property name="MemberName" />
-            <node name="menubar1" type="Menubar">
-              <node type="Menu" action="Action">
-                <node type="Menuitem" action="dialogAuthenticationAction" />
-                <node type="Menuitem" action="UsersAction" />
-                <node type="Separator" />
-                <node type="Menuitem" action="quitAction" />
-              </node>
-              <node type="Menu" action="Action1">
-                <node type="Menuitem" action="Action5" />
-                <node type="Menuitem" action="Action6" />
-                <node type="Separator" />
-                <node type="Menuitem" action="Action7" />
-                <node type="Separator" />
-                <node type="Menuitem" action="Action8" />
-                <node type="Menuitem" action="Action9" />
-              </node>
-              <node type="Menu" action="Action2">
-                <node type="Menuitem" action="Action10" />
-                <node type="Menuitem" action="Action11" />
-                <node type="Separator" />
-                <node type="Menuitem" action="Action12" />
-              </node>
-              <node type="Menu" action="Action3">
-                <node type="Menuitem" action="helpAction" />
-                <node type="Menuitem" action="ActionHistory" />
-                <node type="Menuitem" action="ActionUpdate" />
-                <node type="Separator" />
-                <node type="Menuitem" action="ActionSN" />
-                <node type="Separator" />
-                <node type="Menuitem" action="aboutAction" />
-              </node>
-            </node>
-          </widget>
-          <packing>
-            <property name="Position">0</property>
-            <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Notebook" id="notebookMain">
-            <property name="MemberName" />
-            <property name="CanFocus">True</property>
-            <property name="CurrentPage">1</property>
-            <signal name="SwitchPage" handler="OnNotebookMainSwitchPage" />
-            <child>
-              <widget class="Gtk.VBox" id="vbox2">
-                <property name="MemberName" />
-                <property name="Spacing">6</property>
-                <property name="BorderWidth">3</property>
-                <child>
-                  <widget class="Gtk.HBox" id="hbox2">
-                    <property name="MemberName" />
-                    <property name="Spacing">6</property>
-                    <child>
-                      <widget class="Gtk.Label" id="label4">
-                        <property name="MemberName" />
-                        <property name="LabelProp" translatable="yes">Поиск по имени и адресу:</property>
-                      </widget>
-                      <packing>
-                        <property name="Position">0</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Entry" id="entryObjectSearch">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="IsEditable">True</property>
-                        <property name="InvisibleChar">●</property>
-                        <signal name="Changed" handler="OnEntryObjectSearchChanged" />
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">True</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Button" id="buttonObjectSearchClean">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-clear Menu</property>
-                        <property name="Label" translatable="yes" />
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonObjectSearchCleanClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">2</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">0</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
-                    <property name="MemberName" />
-                    <property name="ShadowType">In</property>
-                    <child>
-                      <widget class="Gtk.TreeView" id="treeviewObjects">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="ShowScrollbars">True</property>
-                        <signal name="CursorChanged" handler="OnTreeviewObjectsCursorChanged" />
-                        <signal name="RowActivated" handler="OnTreeviewObjectsRowActivated" />
-                      </widget>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">1</property>
-                    <property name="AutoSize">True</property>
-                  </packing>
-                </child>
-              </widget>
-            </child>
-            <child>
-              <widget class="Gtk.Label" id="label1">
-                <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Объекты</property>
-              </widget>
-              <packing>
-                <property name="type">tab</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.VBox" id="vbox3">
-                <property name="MemberName" />
-                <property name="Spacing">6</property>
-                <property name="BorderWidth">3</property>
-                <child>
-                  <widget class="Gtk.HBox" id="hbox3">
-                    <property name="MemberName" />
-                    <property name="Spacing">6</property>
-                    <child>
-                      <widget class="Gtk.Label" id="label5">
-                        <property name="MemberName" />
-                        <property name="LabelProp" translatable="yes">Поиск по имени:</property>
-                      </widget>
-                      <packing>
-                        <property name="Position">0</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Entry" id="entryCardsSearch">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="IsEditable">True</property>
-                        <property name="InvisibleChar">●</property>
-                        <signal name="Changed" handler="OnEntryCardsSearchChanged" />
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">True</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Button" id="buttonCardsSearchClear">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-clear Menu</property>
-                        <property name="Label" translatable="yes" />
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonCardsSearchClearClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">2</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.CheckButton" id="checkCardsOnlyActual">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="Label" translatable="yes">Только работающие</property>
-                        <property name="Active">True</property>
-                        <property name="DrawIndicator">True</property>
-                        <property name="HasLabel">True</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnCheckOnlyActualClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">3</property>
-                        <property name="AutoSize">False</property>
-                        <property name="Expand">False</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">0</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow1">
-                    <property name="MemberName" />
-                    <property name="ShadowType">In</property>
-                    <child>
-                      <widget class="Gtk.TreeView" id="treeviewCards">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="ShowScrollbars">True</property>
-                        <signal name="RowActivated" handler="OnTreeviewCardsRowActivated" />
-                        <signal name="CursorChanged" handler="OnTreeviewCardsCursorChanged" />
-                      </widget>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">1</property>
-                    <property name="AutoSize">True</property>
-                  </packing>
-                </child>
-              </widget>
-              <packing>
-                <property name="Position">1</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.Label" id="label2">
-                <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Карточки сотрудников</property>
-              </widget>
-              <packing>
-                <property name="type">tab</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.VBox" id="vbox4">
-                <property name="MemberName" />
-                <property name="Spacing">6</property>
-                <child>
-                  <widget class="Gtk.HBox" id="hbox4">
-                    <property name="MemberName" />
-                    <property name="Spacing">6</property>
-                    <child>
-                      <placeholder />
-                    </child>
-                    <child>
-                      <widget class="QSWidgetLib.SelectPeriod" id="selectStockDates">
-                        <property name="MemberName" />
-                        <property name="Events">ButtonPressMask</property>
-                        <property name="DateBegin">0</property>
-                        <property name="DateEnd">0</property>
-                        <property name="AutoDateSeparation">True</property>
-                        <property name="ShowToday">True</property>
-                        <property name="ShowWeek">False</property>
-                        <property name="ShowMonth">True</property>
-                        <property name="Show3Month">False</property>
-                        <property name="Show6Month">True</property>
-                        <property name="ShowYear">True</property>
-                        <property name="ShowAllTime">False</property>
-                        <property name="ShowCurWeek">False</property>
-                        <property name="ShowCurMonth">False</property>
-                        <property name="ShowCurQuarter">False</property>
-                        <property name="ShowCurYear">False</property>
-                        <signal name="DatesChanged" handler="OnSelectStockDatesDatesChanged" />
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <placeholder />
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">0</property>
-                    <property name="AutoSize">False</property>
-                    <property name="Expand">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gtk.Notebook" id="notebookStock">
-                    <property name="MemberName" />
-                    <property name="CanFocus">True</property>
-                    <property name="CurrentPage">0</property>
-                    <property name="TabPos">Left</property>
-                    <signal name="SwitchPage" handler="OnNotebookStockSwitchPage" />
-                    <child>
-                      <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow2">
-                        <property name="MemberName" />
-                        <property name="ShadowType">In</property>
-                        <child>
-                          <widget class="Gtk.TreeView" id="treeviewIncome">
-                            <property name="MemberName" />
-                            <property name="CanFocus">True</property>
-                            <property name="ShowScrollbars">True</property>
-                            <signal name="RowActivated" handler="OnTreeviewIncomeRowActivated" />
-                            <signal name="CursorChanged" handler="OnTreeviewIncomeCursorChanged" />
-                          </widget>
-                        </child>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Label" id="label7">
-                        <property name="MemberName" />
-                        <property name="LabelProp" translatable="yes">Приход</property>
-                      </widget>
-                      <packing>
-                        <property name="type">tab</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow3">
-                        <property name="MemberName" />
-                        <property name="ShadowType">In</property>
-                        <child>
-                          <widget class="Gtk.TreeView" id="treeviewExpense">
-                            <property name="MemberName" />
-                            <property name="CanFocus">True</property>
-                            <property name="ShowScrollbars">True</property>
-                            <signal name="CursorChanged" handler="OnTreeviewExpenseCursorChanged" />
-                            <signal name="RowActivated" handler="OnTreeviewExpenseRowActivated" />
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Label" id="label8">
-                        <property name="MemberName" />
-                        <property name="LabelProp" translatable="yes">Расход</property>
-                      </widget>
-                      <packing>
-                        <property name="type">tab</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow4">
-                        <property name="MemberName" />
-                        <property name="ShadowType">In</property>
-                        <child>
-                          <widget class="Gtk.TreeView" id="treeviewWriteOff">
-                            <property name="MemberName" />
-                            <property name="CanFocus">True</property>
-                            <property name="ShowScrollbars">True</property>
-                            <signal name="CursorChanged" handler="OnTreeviewWriteOffCursorChanged" />
-                            <signal name="RowActivated" handler="OnTreeviewWriteOffRowActivated" />
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Label" id="label10">
-                        <property name="MemberName" />
-                        <property name="LabelProp" translatable="yes">Списание</property>
-                      </widget>
-                      <packing>
-                        <property name="type">tab</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">1</property>
-                    <property name="AutoSize">True</property>
-                  </packing>
-                </child>
-              </widget>
-              <packing>
-                <property name="Position">2</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.Label" id="label9">
-                <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Склад</property>
-              </widget>
-              <packing>
-                <property name="type">tab</property>
-              </packing>
-            </child>
-          </widget>
-          <packing>
-            <property name="Position">1</property>
-            <property name="AutoSize">True</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.HBox" id="hbox7">
-            <property name="MemberName" />
-            <property name="Spacing">6</property>
-            <property name="BorderWidth">3</property>
-            <child>
-              <widget class="Gtk.Button" id="buttonAdd">
-                <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="Type">TextAndIcon</property>
-                <property name="Icon">stock:gtk-add Menu</property>
-                <property name="Label" translatable="yes">Добавить</property>
-                <property name="UseUnderline">True</property>
-                <signal name="Clicked" handler="OnButtonAddClicked" />
-              </widget>
-              <packing>
-                <property name="Position">0</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.Button" id="buttonEdit">
-                <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="Type">TextAndIcon</property>
-                <property name="Icon">stock:gtk-edit Menu</property>
-                <property name="Label" translatable="yes">Изменить</property>
-                <property name="UseUnderline">True</property>
-                <signal name="Clicked" handler="OnButtonEditClicked" />
-              </widget>
-              <packing>
-                <property name="Position">1</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.Button" id="buttonDelete">
-                <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="Type">TextAndIcon</property>
-                <property name="Icon">stock:gtk-remove Menu</property>
-                <property name="Label" translatable="yes">Удалить</property>
-                <property name="UseUnderline">True</property>
-                <signal name="Clicked" handler="OnButtonDeleteClicked" />
-              </widget>
-              <packing>
-                <property name="Position">2</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.Button" id="buttonRefresh">
-                <property name="MemberName" />
-                <property name="Tooltip" translatable="yes">Обновить текущую таблицу.</property>
-                <property name="CanFocus">True</property>
-                <property name="Type">TextAndIcon</property>
-                <property name="Icon">stock:gtk-refresh Menu</property>
-                <property name="Label" translatable="yes">Обновить</property>
-                <property name="UseUnderline">True</property>
-                <signal name="Clicked" handler="OnButtonRefreshClicked" />
-              </widget>
-              <packing>
-                <property name="PackType">End</property>
-                <property name="Position">3</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-              </packing>
-            </child>
-          </widget>
-          <packing>
-            <property name="Position">2</property>
-            <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Statusbar" id="MainStatusBar">
-            <property name="MemberName" />
-            <property name="Spacing">6</property>
-            <child>
-              <widget class="Gtk.Label" id="labelUser">
-                <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Пользователь</property>
-              </widget>
-              <packing>
-                <property name="Position">0</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.Label" id="labelStatus">
-                <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Ok</property>
-              </widget>
-              <packing>
-                <property name="Position">2</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-              </packing>
-            </child>
-          </widget>
-          <packing>
-            <property name="Position">3</property>
-            <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-      </widget>
-    </child>
-  </widget>
   <widget class="Gtk.Dialog" id="workwear.ItemType" design-size="337 297">
     <property name="MemberName" />
     <property name="Title" translatable="yes">Новый тип номенклатуры</property>
@@ -4648,6 +3986,768 @@
           </widget>
           <packing>
             <property name="Position">1</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="workwear.StockBalanceView" design-size="300 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox2">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.HBox" id="hbox8">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gtk.Label" id="label12">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Поиск:</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Entry" id="entryStockBalanceSearch">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="IsEditable">True</property>
+                <property name="InvisibleChar">●</property>
+                <signal name="Changed" handler="OnEntryStockBalanceSearchChanged" />
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonSearchClean">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-clear Menu</property>
+                <property name="Label" translatable="yes" />
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonSearchCleanClicked" />
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow5">
+            <property name="MemberName" />
+            <property name="ShadowType">In</property>
+            <child>
+              <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeviewStockBalance">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="ShowScrollbars">True</property>
+                <property name="EnableSearch">False</property>
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Window" id="MainWindow" design-size="709 458">
+    <action-group name="Default">
+      <action id="Action">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Файл</property>
+        <property name="ShortLabel" translatable="yes">Файл</property>
+      </action>
+      <action id="Action1">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Справочники</property>
+        <property name="ShortLabel" translatable="yes">Справочники</property>
+      </action>
+      <action id="Action2">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Ведомости</property>
+        <property name="ShortLabel" translatable="yes">Ведомости</property>
+      </action>
+      <action id="Action3">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Справка</property>
+        <property name="ShortLabel" translatable="yes">Справка</property>
+      </action>
+      <action id="dialogAuthenticationAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Изменить пароль</property>
+        <property name="ShortLabel" translatable="yes">Изменить пароль</property>
+        <property name="StockId">gtk-dialog-authentication</property>
+        <signal name="Activated" handler="OnDialogAuthenticationActionActivated" />
+      </action>
+      <action id="UsersAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Пользователи</property>
+        <property name="ShortLabel" translatable="yes">Пользователи</property>
+        <signal name="Activated" handler="OnUsersActionActivated" />
+      </action>
+      <action id="quitAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Выход</property>
+        <property name="ShortLabel" translatable="yes">Выход</property>
+        <property name="StockId">gtk-quit</property>
+        <signal name="Activated" handler="OnQuitActionActivated" />
+      </action>
+      <action id="Action5">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Типы номенклатуры</property>
+        <property name="ShortLabel" translatable="yes">Типы номенклатуры</property>
+        <signal name="Activated" handler="OnAction5Activated" />
+      </action>
+      <action id="Action6">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Номенклатура</property>
+        <property name="ShortLabel" translatable="yes">Номенклатура</property>
+        <signal name="Activated" handler="OnAction6Activated" />
+      </action>
+      <action id="Action7">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Единицы измерения</property>
+        <property name="ShortLabel" translatable="yes">Единицы измерения</property>
+        <signal name="Activated" handler="OnAction7Activated" />
+      </action>
+      <action id="Action8">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Должности</property>
+        <property name="ShortLabel" translatable="yes">Должности</property>
+        <signal name="Activated" handler="OnAction8Activated" />
+      </action>
+      <action id="Action9">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Руководители</property>
+        <property name="ShortLabel" translatable="yes">Руководители</property>
+        <signal name="Activated" handler="OnAction9Activated" />
+      </action>
+      <action id="aboutAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">_О программе</property>
+        <property name="ShortLabel" translatable="yes">_О программе</property>
+        <property name="StockId">gtk-about</property>
+        <signal name="Activated" handler="OnAboutActionActivated" />
+      </action>
+      <action id="Action10">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Сводная ведомость</property>
+        <property name="ShortLabel" translatable="yes">Сводная ведомость</property>
+        <signal name="Activated" handler="OnAction10Activated" />
+      </action>
+      <action id="Action11">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Складская ведомость</property>
+        <property name="ShortLabel" translatable="yes">Складская ведомость</property>
+        <signal name="Activated" handler="OnAction11Activated" />
+      </action>
+      <action id="Action12">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Список по размерам</property>
+        <property name="ShortLabel" translatable="yes">Список по размерам</property>
+        <signal name="Activated" handler="OnAction12Activated" />
+      </action>
+      <action id="helpAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Документация</property>
+        <property name="ShortLabel" translatable="yes">Документация</property>
+        <property name="StockId">gtk-help</property>
+        <signal name="Activated" handler="OnHelpActionActivated" />
+      </action>
+      <action id="ActionHistory">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">История версий</property>
+        <property name="ShortLabel" translatable="yes">История версий</property>
+        <property name="StockId">gtk-file</property>
+        <signal name="Activated" handler="OnActionHistoryActivated" />
+      </action>
+      <action id="ActionUpdate">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Проверить обновление...</property>
+        <property name="ShortLabel" translatable="yes">Проверить обновление...</property>
+        <property name="StockId">gtk-go-down</property>
+        <signal name="Activated" handler="OnActionUpdateActivated" />
+      </action>
+      <action id="ActionSN">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Ввести серийный номер...</property>
+        <property name="ShortLabel" translatable="yes">Ввести серийный номер...</property>
+        <signal name="Activated" handler="OnActionSNActivated" />
+      </action>
+    </action-group>
+    <property name="MemberName" />
+    <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
+    <property name="Icon">resource:workwear.icon.logo.ico</property>
+    <property name="WindowPosition">Center</property>
+    <signal name="DeleteEvent" handler="OnDeleteEvent" />
+    <child>
+      <widget class="Gtk.VBox" id="vbox1">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.MenuBar" id="menubar1">
+            <property name="MemberName" />
+            <node name="menubar1" type="Menubar">
+              <node type="Menu" action="Action">
+                <node type="Menuitem" action="dialogAuthenticationAction" />
+                <node type="Menuitem" action="UsersAction" />
+                <node type="Separator" />
+                <node type="Menuitem" action="quitAction" />
+              </node>
+              <node type="Menu" action="Action1">
+                <node type="Menuitem" action="Action5" />
+                <node type="Menuitem" action="Action6" />
+                <node type="Separator" />
+                <node type="Menuitem" action="Action7" />
+                <node type="Separator" />
+                <node type="Menuitem" action="Action8" />
+                <node type="Menuitem" action="Action9" />
+              </node>
+              <node type="Menu" action="Action2">
+                <node type="Menuitem" action="Action10" />
+                <node type="Menuitem" action="Action11" />
+                <node type="Separator" />
+                <node type="Menuitem" action="Action12" />
+              </node>
+              <node type="Menu" action="Action3">
+                <node type="Menuitem" action="helpAction" />
+                <node type="Menuitem" action="ActionHistory" />
+                <node type="Menuitem" action="ActionUpdate" />
+                <node type="Separator" />
+                <node type="Menuitem" action="ActionSN" />
+                <node type="Separator" />
+                <node type="Menuitem" action="aboutAction" />
+              </node>
+            </node>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Notebook" id="notebookMain">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="CurrentPage">0</property>
+            <signal name="SwitchPage" handler="OnNotebookMainSwitchPage" />
+            <child>
+              <widget class="Gtk.VBox" id="vbox2">
+                <property name="MemberName" />
+                <property name="Spacing">6</property>
+                <property name="BorderWidth">3</property>
+                <child>
+                  <widget class="Gtk.HBox" id="hbox2">
+                    <property name="MemberName" />
+                    <property name="Spacing">6</property>
+                    <child>
+                      <widget class="Gtk.Label" id="label4">
+                        <property name="MemberName" />
+                        <property name="LabelProp" translatable="yes">Поиск по имени и адресу:</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Entry" id="entryObjectSearch">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="IsEditable">True</property>
+                        <property name="InvisibleChar">●</property>
+                        <signal name="Changed" handler="OnEntryObjectSearchChanged" />
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Button" id="buttonObjectSearchClean">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextAndIcon</property>
+                        <property name="Icon">stock:gtk-clear Menu</property>
+                        <property name="Label" translatable="yes" />
+                        <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonObjectSearchCleanClicked" />
+                      </widget>
+                      <packing>
+                        <property name="Position">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+                    <property name="MemberName" />
+                    <property name="ShadowType">In</property>
+                    <child>
+                      <widget class="Gtk.TreeView" id="treeviewObjects">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="ShowScrollbars">True</property>
+                        <signal name="CursorChanged" handler="OnTreeviewObjectsCursorChanged" />
+                        <signal name="RowActivated" handler="OnTreeviewObjectsRowActivated" />
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                  </packing>
+                </child>
+              </widget>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label1">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Объекты</property>
+              </widget>
+              <packing>
+                <property name="type">tab</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.VBox" id="vbox3">
+                <property name="MemberName" />
+                <property name="Spacing">6</property>
+                <property name="BorderWidth">3</property>
+                <child>
+                  <widget class="Gtk.HBox" id="hbox3">
+                    <property name="MemberName" />
+                    <property name="Spacing">6</property>
+                    <child>
+                      <widget class="Gtk.Label" id="label5">
+                        <property name="MemberName" />
+                        <property name="LabelProp" translatable="yes">Поиск по имени:</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Entry" id="entryCardsSearch">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="IsEditable">True</property>
+                        <property name="InvisibleChar">●</property>
+                        <signal name="Changed" handler="OnEntryCardsSearchChanged" />
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Button" id="buttonCardsSearchClear">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextAndIcon</property>
+                        <property name="Icon">stock:gtk-clear Menu</property>
+                        <property name="Label" translatable="yes" />
+                        <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonCardsSearchClearClicked" />
+                      </widget>
+                      <packing>
+                        <property name="Position">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.CheckButton" id="checkCardsOnlyActual">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="Label" translatable="yes">Только работающие</property>
+                        <property name="Active">True</property>
+                        <property name="DrawIndicator">True</property>
+                        <property name="HasLabel">True</property>
+                        <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnCheckOnlyActualClicked" />
+                      </widget>
+                      <packing>
+                        <property name="Position">3</property>
+                        <property name="AutoSize">False</property>
+                        <property name="Expand">False</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow1">
+                    <property name="MemberName" />
+                    <property name="ShadowType">In</property>
+                    <child>
+                      <widget class="Gtk.TreeView" id="treeviewCards">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="ShowScrollbars">True</property>
+                        <signal name="RowActivated" handler="OnTreeviewCardsRowActivated" />
+                        <signal name="CursorChanged" handler="OnTreeviewCardsCursorChanged" />
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label2">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Карточки сотрудников</property>
+              </widget>
+              <packing>
+                <property name="type">tab</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.VBox" id="vbox4">
+                <property name="MemberName" />
+                <property name="Spacing">6</property>
+                <child>
+                  <widget class="Gtk.HBox" id="hbox4">
+                    <property name="MemberName" />
+                    <property name="Spacing">6</property>
+                    <child>
+                      <placeholder />
+                    </child>
+                    <child>
+                      <widget class="QSWidgetLib.SelectPeriod" id="selectStockDates">
+                        <property name="MemberName" />
+                        <property name="Events">ButtonPressMask</property>
+                        <property name="DateBegin">0</property>
+                        <property name="DateEnd">0</property>
+                        <property name="AutoDateSeparation">True</property>
+                        <property name="ShowToday">True</property>
+                        <property name="ShowWeek">False</property>
+                        <property name="ShowMonth">True</property>
+                        <property name="Show3Month">False</property>
+                        <property name="Show6Month">True</property>
+                        <property name="ShowYear">True</property>
+                        <property name="ShowAllTime">False</property>
+                        <property name="ShowCurWeek">False</property>
+                        <property name="ShowCurMonth">False</property>
+                        <property name="ShowCurQuarter">False</property>
+                        <property name="ShowCurYear">False</property>
+                        <signal name="DatesChanged" handler="OnSelectStockDatesDatesChanged" />
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <placeholder />
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">False</property>
+                    <property name="Expand">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.Notebook" id="notebookStock">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="CurrentPage">0</property>
+                    <property name="TabPos">Left</property>
+                    <signal name="SwitchPage" handler="OnNotebookStockSwitchPage" />
+                    <child>
+                      <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow2">
+                        <property name="MemberName" />
+                        <property name="ShadowType">In</property>
+                        <child>
+                          <widget class="Gtk.TreeView" id="treeviewIncome">
+                            <property name="MemberName" />
+                            <property name="CanFocus">True</property>
+                            <property name="ShowScrollbars">True</property>
+                            <signal name="RowActivated" handler="OnTreeviewIncomeRowActivated" />
+                            <signal name="CursorChanged" handler="OnTreeviewIncomeCursorChanged" />
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Label" id="label7">
+                        <property name="MemberName" />
+                        <property name="LabelProp" translatable="yes">Приход</property>
+                      </widget>
+                      <packing>
+                        <property name="type">tab</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow3">
+                        <property name="MemberName" />
+                        <property name="ShadowType">In</property>
+                        <child>
+                          <widget class="Gtk.TreeView" id="treeviewExpense">
+                            <property name="MemberName" />
+                            <property name="CanFocus">True</property>
+                            <property name="ShowScrollbars">True</property>
+                            <signal name="CursorChanged" handler="OnTreeviewExpenseCursorChanged" />
+                            <signal name="RowActivated" handler="OnTreeviewExpenseRowActivated" />
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Label" id="label8">
+                        <property name="MemberName" />
+                        <property name="LabelProp" translatable="yes">Расход</property>
+                      </widget>
+                      <packing>
+                        <property name="type">tab</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow4">
+                        <property name="MemberName" />
+                        <property name="ShadowType">In</property>
+                        <child>
+                          <widget class="Gtk.TreeView" id="treeviewWriteOff">
+                            <property name="MemberName" />
+                            <property name="CanFocus">True</property>
+                            <property name="ShowScrollbars">True</property>
+                            <signal name="CursorChanged" handler="OnTreeviewWriteOffCursorChanged" />
+                            <signal name="RowActivated" handler="OnTreeviewWriteOffRowActivated" />
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="Position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Label" id="label10">
+                        <property name="MemberName" />
+                        <property name="LabelProp" translatable="yes">Списание</property>
+                      </widget>
+                      <packing>
+                        <property name="type">tab</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label9">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Складские документы</property>
+              </widget>
+              <packing>
+                <property name="type">tab</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="workwear.StockBalanceView" id="stockbalanceview1">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+              <packing>
+                <property name="Position">3</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label11">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Остатки</property>
+              </widget>
+              <packing>
+                <property name="type">tab</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HBox" id="hbox7">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <property name="BorderWidth">3</property>
+            <child>
+              <widget class="Gtk.Button" id="buttonAdd">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-add Menu</property>
+                <property name="Label" translatable="yes">Добавить</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonAddClicked" />
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonEdit">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-edit Menu</property>
+                <property name="Label" translatable="yes">Изменить</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonEditClicked" />
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonDelete">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-remove Menu</property>
+                <property name="Label" translatable="yes">Удалить</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonDeleteClicked" />
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonRefresh">
+                <property name="MemberName" />
+                <property name="Tooltip" translatable="yes">Обновить текущую таблицу.</property>
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-refresh Menu</property>
+                <property name="Label" translatable="yes">Обновить</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonRefreshClicked" />
+              </widget>
+              <packing>
+                <property name="PackType">End</property>
+                <property name="Position">3</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Statusbar" id="MainStatusBar">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gtk.Label" id="labelUser">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Пользователь</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="labelStatus">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Ok</property>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">3</property>
+            <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
           </packing>
