@@ -185,7 +185,7 @@ public partial class MainWindow: Gtk.Window
 		winref.SetMode(false, false, true, true, true);
 		winref.SqlSelect = "SELECT id, name, norm_quantity, norm_life FROM @tablename ";
 		winref.Columns.Add(new Reference.ColumnInfo("Норма выдачи", "{2}", false));
-		winref.Columns.Add(new Reference.ColumnInfo("Срок носки", "{3} мес.", false));
+		winref.Columns.Add(new Reference.ColumnInfo("Срок службы", "{3} мес.", false));
 		winref.FillList("item_types","Тип номенклатуры", "Виды номенклатуры");
 		winref.Show();
 		winref.Run();
