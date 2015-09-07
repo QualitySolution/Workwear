@@ -43,6 +43,7 @@ namespace workwear
 
 			//Запускаем программу
 			MainWin = new MainWindow ();
+			QSMain.ErrorDlgParrent = MainWin;
 			if (QSMain.User.Login == "root")
 				return;
 			MainWin.Show ();
