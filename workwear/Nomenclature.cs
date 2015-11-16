@@ -126,11 +126,14 @@ namespace workwear
 			TreeIter iter;
 			comboType.GetActiveIter(out iter);
 			object[] Values = (object[]) comboType.Model.GetValue(iter, 2);
-			bool IsWear = Values[2].ToString() == "wear";
-			labelSize.Visible = IsWear;
-			labelGrowth.Visible = IsWear;
-			comboentrySize.Visible = IsWear;
-			comboentryGrowth.Visible = IsWear;
+			if (Values != null)
+			{
+				bool IsWear = Values[2].ToString() == "wear";
+				labelSize.Visible = IsWear;
+				labelGrowth.Visible = IsWear;
+				comboentrySize.Visible = IsWear;
+				comboentryGrowth.Visible = IsWear;
+			}
 			TestCanSave();
 		}
 	}
