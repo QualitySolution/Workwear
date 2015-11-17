@@ -22,13 +22,10 @@ public partial class MainWindow: Gtk.Window
 
 		Reference.RunReferenceItemDlg += OnRunReferenceItemDialog;
 		QSMain.ReferenceUpdated += OnReferenceUpdate;
-		QSSupportLib.MainSupport.LoadBaseParameters ();
+		MainSupport.LoadBaseParameters ();
 
-		if (!QSSupportLib.MainSupport.CheckVersion (this)) {//Проверяем версию базы
-			CheckUpdate.StartCheckUpdateThread (UpdaterFlags.ShowAnyway | UpdaterFlags.UpdateRequired);
-			return;
-		}
-		QSUpdater.DB.DBUpdater.CheckMicroUpdates();
+		MainUpdater.RunCheckVersion (true, true, true);
+
 		MainNewsFeed.CheckNewsReads (); //Создаем при необходимости таблицу новостей.
 
 		if(QSMain.User.Login == "root")
@@ -74,8 +71,6 @@ public partial class MainWindow: Gtk.Window
 		var newsmenu = new NewsMenuItem ();
 		menubar1.Add (newsmenu);
 		newsmenu.LoadFeed ();
-
-		CheckUpdate.StartCheckUpdateThread (UpdaterFlags.StartInThread);
 
 		PrepareObject();
 		PrepareCards();

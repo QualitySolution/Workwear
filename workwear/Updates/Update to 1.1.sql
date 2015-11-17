@@ -11,11 +11,6 @@ DROP FOREIGN KEY `fk_stock_expense_object_id`;
 ALTER TABLE `stock_expense_detail` 
 DROP FOREIGN KEY `fk_stock_expense_detail_enter_row`;
 
-ALTER TABLE `users` 
-CHANGE COLUMN `admin` `admin` TINYINT(1) NOT NULL DEFAULT FALSE ,
-ADD COLUMN `deactivated` TINYINT(1) NOT NULL DEFAULT 0 AFTER `login`,
-ADD COLUMN `email` VARCHAR(60) NULL DEFAULT NULL AFTER `deactivated`;
-
 ALTER TABLE `item_types` 
 CHANGE COLUMN `category` `category` ENUM('wear', 'property') NULL DEFAULT 'wear' AFTER `name`,
 ADD COLUMN `units_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `category`,
@@ -31,9 +26,6 @@ DROP FOREIGN KEY `fk_nomenclature_units`;
 ALTER TABLE `nomenclature` 
 DROP COLUMN `units_id`,
 DROP INDEX `fk_nomenclature_units_idx` ;
-
-ALTER TABLE `wear_cards` 
-ADD COLUMN `card_number` VARCHAR(15) NULL DEFAULT NULL AFTER `id`;
 
 ALTER TABLE `stock_income_detail` 
 CHANGE COLUMN `life_percent` `life_percent` DECIMAL(3,2) UNSIGNED NOT NULL DEFAULT 1 ;

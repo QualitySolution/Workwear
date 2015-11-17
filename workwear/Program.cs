@@ -67,6 +67,10 @@ namespace workwear
 				new Version (1, 0, 4),
 				new Version (1, 0, 5),
 				"workwear.Updates.1.0.5.sql");
+			QSUpdater.DB.DBUpdater.AddUpdate (
+				new Version (1, 0),
+				new Version (1, 1),
+				"workwear.Updates.Update to 1.1.sql");
 			
 			//Создаем параметры удаления
 			QSMain.ProjectTables = new Dictionary<string, TableInfo> ();
