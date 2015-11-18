@@ -4,7 +4,15 @@
   <id>workwearnews</id>
 
   <rights type="text">Quality Solution 2015</rights>
-  <updated>2015-05-20T17:40:00+03:00</updated>
+  <updated>2015-11-18T15:20:00+03:00</updated>
+  <entry>
+    <id>urn:uuid:1fa9bc46-1d34-4748-96df-0746a1f57dcb</id>
+    <title type="text">QS: Спецодежда и имущество 1.1</title>
+    <updated>2015-11-18T15:20:00+03:00</updated>
+    <published>2015-11-18T15:20:00+03:00</published>
+    <link rel="alternate" href="http://workwear.qsolution.ru/?p=112" />
+    <summary>В новой версии значительно упрощена работа со складом. Выдачи стали более универсальные. Переработан подход к единицам измерения.</summary>
+  </entry>
   <entry>
     <id>urn:uuid:baad3e93-eee5-4ab1-aef0-5ba5140c62e9</id>
     <title type="text">QS: Спецодежда и имущество 1.0.4</title>
