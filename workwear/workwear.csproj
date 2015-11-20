@@ -74,8 +74,6 @@
     <Compile Include="ObjectDlg.cs" />
     <Compile Include="gtk-gui\workwear.ObjectDlg.cs" />
     <Compile Include="MainWinCards.cs" />
-    <Compile Include="WearCard.cs" />
-    <Compile Include="gtk-gui\workwear.WearCard.cs" />
     <Compile Include="MainWinStock.cs" />
     <Compile Include="IncomeDoc.cs" />
     <Compile Include="gtk-gui\workwear.IncomeDoc.cs" />
@@ -107,6 +105,8 @@
     <Compile Include="Domain\Measurements\SizeStandart.cs" />
     <Compile Include="Domain\Measurements\Measurements.cs" />
     <Compile Include="Domain\Measurements\SizeStandartEnums.cs" />
+    <Compile Include="Dialogs\EmployeeCardDlg.cs" />
+    <Compile Include="gtk-gui\workwear.EmployeeCardDlg.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -151,6 +151,7 @@
     <Folder Include="ViewWidgets\" />
     <Folder Include="Domain\" />
     <Folder Include="Domain\Measurements\" />
+    <Folder Include="Dialogs\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

@@ -11,6 +11,7 @@
     <widget-library name="../../../QSProjects/QSWidgetLib/bin/Debug/QSWidgetLib.dll" />
     <widget-library name="../../../QSProjects/QSUpdater/bin/Debug/QSUpdater.dll" />
     <widget-library name="../../../GammaBinding/GammaBinding/bin/Debug/GammaBinding.dll" />
+    <widget-library name="../../../QSProjects/QSOrmProject/bin/Debug/QSOrmProject.dll" />
     <widget-library name="../bin/Debug/workwear.exe" internal="true" />
   </import>
   <widget class="Gtk.Dialog" id="workwear.ItemType" design-size="337 297">
@@ -1010,7 +1011,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.WearCard" design-size="1048 569">
+  <widget class="Gtk.Dialog" id="workwear.EmployeeCardDlg" design-size="1048 569">
     <property name="MemberName" />
     <property name="Title" translatable="yes">Новая карточка сотрудника</property>
     <property name="WindowPosition">CenterOnParent</property>
@@ -2079,7 +2080,7 @@
           <widget class="Gtk.Notebook" id="notebook1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">0</property>
+            <property name="CurrentPage">1</property>
             <signal name="SwitchPage" handler="OnNotebook1SwitchPage" />
             <child>
               <widget class="Gtk.VBox" id="vbox4">

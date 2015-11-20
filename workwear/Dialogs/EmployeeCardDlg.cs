@@ -11,7 +11,7 @@ using workwear.Domain;
 
 namespace workwear
 {
-	public partial class WearCard : Gtk.Dialog
+	public partial class EmployeeCardDlg : Gtk.Dialog
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
 		public bool NewItem;
@@ -22,7 +22,7 @@ namespace workwear
 		List<EmployeeCardMovements> Movements;
 		bool IsShowedMovementsTable = false;
 
-		public WearCard ()
+		public EmployeeCardDlg ()
 		{
 			this.Build ();
 			
