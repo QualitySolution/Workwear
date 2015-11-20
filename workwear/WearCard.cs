@@ -7,6 +7,7 @@ using NLog;
 using QSProjectsLib;
 using System.Collections.Generic;
 using workwear.DTO;
+using workwear.Domain;
 
 namespace workwear
 {
@@ -26,10 +27,14 @@ namespace workwear
 			this.Build ();
 			
 			ComboWorks.ComboFillReference (comboPost, "posts", ComboWorks.ListMode.WithNo);
-			ComboWorks.ComboFillUniqueValue (comboentryWearSize, "wear_cards", "wear_size");
+			ycomboWearStd.ItemsEnum = typeof(SizeStandartWear);
+			ycomboShoesStd.ItemsEnum = typeof(SizeStandartShoes);
+			ycomboHeaddress.ItemsEnum = typeof(SizeStandartHeaddress);
+			ycomboGloves.ItemsEnum = typeof(SizeStandartGloves);
+
 			//Устанавливаем последовательность заполнения
 			table1.FocusChain = new Widget[] {entryLastName, entryFirstName, entryPatronymic, dateHire, dateDismiss, 
-				comboSex, spinGrowth, comboentryWearSize, comboPost, hboxLeader, hboxObject
+				comboSex, comboPost, hboxLeader, hboxObject
 			};
 
 			ytreeListedItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItems> ()
@@ -82,8 +87,8 @@ namespace workwear
 					entryLastName.Text = rdr ["last_name"].ToString ();
 					entryFirstName.Text = rdr ["first_name"].ToString ();
 					entryPatronymic.Text = rdr ["patronymic_name"].ToString ();
-					comboentryWearSize.Entry.Text = rdr ["wear_size"].ToString ();
-					spinGrowth.Value = rdr.GetDouble ("growth");
+					//comboentryWearSize.Entry.Text = rdr ["wear_size"].ToString ();
+					//spinGrowth.Value = rdr.GetDouble ("growth");
 					if (rdr ["post_id"] != DBNull.Value) {
 						ListStoreWorks.SearchListStore ((ListStore)comboPost.Model, rdr.GetInt32 ("post_id"), out iter);
 						comboPost.SetActiveIter (iter);
@@ -174,12 +179,12 @@ namespace workwear
 				cmd.Parameters.AddWithValue ("@patronymic_name", entryPatronymic.Text);
 				cmd.Parameters.AddWithValue ("@user_id", QSMain.User.Id);
 				cmd.Parameters.AddWithValue ("@card_number", checkAuto.Active ? null : entryId.Text);
-				if (comboentryWearSize.Entry.Text != "")
+/*				if (comboentryWearSize.Entry.Text != "")
 					cmd.Parameters.AddWithValue ("@wear_size", comboentryWearSize.Entry.Text);
 				else
 					cmd.Parameters.AddWithValue ("@wear_size", DBNull.Value);
 				cmd.Parameters.AddWithValue ("@growth", spinGrowth.ValueAsInt);
-				if (Leader_id > 0)
+*/				if (Leader_id > 0)
 					cmd.Parameters.AddWithValue ("@leader_id", Leader_id);
 				else
 					cmd.Parameters.AddWithValue ("@leader_id", DBNull.Value);
