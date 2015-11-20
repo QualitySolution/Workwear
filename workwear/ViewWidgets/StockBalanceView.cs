@@ -25,7 +25,7 @@ namespace workwear
 				.AddColumn ("Рост").AddTextRenderer (e => e.Growth)
 				.AddColumn ("Количество").AddTextRenderer (e => e.AmountText)
 				.AddColumn ("Средняя стоимость").AddTextRenderer (e => e.AvgCostText)
-				.AddColumn ("Среднее состояние").AddTextRenderer (e => e.AvgCostText)
+				.AddColumn ("Среднее состояние").AddTextRenderer (e => e.AvgLifeText)
 				.Finish ();
 			ytreeviewStockBalance.ShowAll ();
 		}
