@@ -49,6 +49,7 @@
     <Reference Include="MySql.Data">
       <HintPath>..\..\QSProjects\packages\MySql.Data.6.9.7\lib\net40\MySql.Data.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -102,6 +103,10 @@
     <Compile Include="gtk-gui\workwear.StockBalanceView.cs" />
     <Compile Include="viewDTOs\StockBalanceItems.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
+    <Compile Include="Domain\Measurements\СlothesType.cs" />
+    <Compile Include="Domain\Measurements\SizeStandart.cs" />
+    <Compile Include="Domain\Measurements\Measurements.cs" />
+    <Compile Include="Domain\Measurements\SizeStandartEnums.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -133,6 +138,10 @@
       <Project>{54F958F5-7E58-4C89-9A04-8835E63B97C3}</Project>
       <Name>System.Data.Bindings</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QSOrmProject\QSOrmProject.csproj">
+      <Project>{00D32969-612C-417E-9565-BEC6A7719F80}</Project>
+      <Name>QSOrmProject</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
@@ -140,6 +149,8 @@
     <Folder Include="Updates\" />
     <Folder Include="viewDTOs\" />
     <Folder Include="ViewWidgets\" />
+    <Folder Include="Domain\" />
+    <Folder Include="Domain\Measurements\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
