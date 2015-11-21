@@ -6,7 +6,7 @@ using QSProjectsLib;
 
 namespace workwear
 {
-	class MainClass
+	partial class MainClass
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
 		public static MainWindow MainWin;
@@ -40,6 +40,9 @@ namespace workwear
 
 			LoginDialog.Destroy ();
 			QSSaaS.Session.StartSessionRefresh ();
+
+			//Настройка базы
+			CreateBaseConfig ();
 
 			//Запускаем программу
 			MainWin = new MainWindow ();

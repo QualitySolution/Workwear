@@ -50,6 +50,9 @@
       <HintPath>..\..\QSProjects\packages\MySql.Data.6.9.7\lib\net40\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\..\QSProjects\packages\FluentNHibernate.2.0.3.0\lib\net40\FluentNHibernate.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -71,7 +74,6 @@
     <Compile Include="Nomenclature.cs" />
     <Compile Include="gtk-gui\workwear.Nomenclature.cs" />
     <Compile Include="MainWinObject.cs" />
-    <Compile Include="ObjectDlg.cs" />
     <Compile Include="gtk-gui\workwear.ObjectDlg.cs" />
     <Compile Include="MainWinCards.cs" />
     <Compile Include="MainWinStock.cs" />
@@ -107,6 +109,18 @@
     <Compile Include="Domain\Measurements\SizeStandartEnums.cs" />
     <Compile Include="Dialogs\EmployeeCardDlg.cs" />
     <Compile Include="gtk-gui\workwear.EmployeeCardDlg.cs" />
+    <Compile Include="Domain\EmployeeCard.cs" />
+    <Compile Include="Domain\Post.cs" />
+    <Compile Include="Domain\Leader.cs" />
+    <Compile Include="Domain\User.cs" />
+    <Compile Include="Dialogs\ObjectDlg.cs" />
+    <Compile Include="Domain\Facility.cs" />
+    <Compile Include="HibernateMapping\EmployeeCardMap.cs" />
+    <Compile Include="HibernateMapping\FacilityMap.cs" />
+    <Compile Include="HibernateMapping\LeaderMap.cs" />
+    <Compile Include="HibernateMapping\PostMap.cs" />
+    <Compile Include="HibernateMapping\UserMap.cs" />
+    <Compile Include="CreateProjectParam.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -152,6 +166,7 @@
     <Folder Include="Domain\" />
     <Folder Include="Domain\Measurements\" />
     <Folder Include="Dialogs\" />
+    <Folder Include="HibernateMapping\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
