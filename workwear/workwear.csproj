@@ -53,6 +53,9 @@
     <Reference Include="FluentNHibernate">
       <HintPath>..\..\QSProjects\packages\FluentNHibernate.2.0.3.0\lib\net40\FluentNHibernate.dll</HintPath>
     </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\QSProjects\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -121,6 +124,7 @@
     <Compile Include="HibernateMapping\PostMap.cs" />
     <Compile Include="HibernateMapping\UserMap.cs" />
     <Compile Include="CreateProjectParam.cs" />
+    <Compile Include="Repository\UserRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -156,6 +160,14 @@
       <Project>{00D32969-612C-417E-9565-BEC6A7719F80}</Project>
       <Name>QSOrmProject</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QSTDI\QSTDI.csproj">
+      <Project>{4B35C969-8C74-440F-8189-57047C9215FD}</Project>
+      <Name>QSTDI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QSValidation\QSValidation.csproj">
+      <Project>{CE5179E8-3172-4C08-9FE3-9C48C58A3831}</Project>
+      <Name>QSValidation</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
@@ -167,6 +179,7 @@
     <Folder Include="Domain\Measurements\" />
     <Folder Include="Dialogs\" />
     <Folder Include="HibernateMapping\" />
+    <Folder Include="Repository\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

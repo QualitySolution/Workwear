@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using QSOrmProject;
 using QSOrmProject.DomainMapping;
 using QSProjectsLib;
@@ -23,11 +22,11 @@ namespace workwear
 				System.Reflection.Assembly.GetAssembly (typeof(MainClass)),
 			});
 			OrmMain.ClassMappingList = new System.Collections.Generic.List<IOrmObjectMapping> {
-				OrmObjectMapping<Facility>.Create ().Dialog<ObjectDlg> (),
-				OrmObjectMapping<Post>.Create (),
-				OrmObjectMapping<Leader>.Create (),
-				OrmObjectMapping<User>.Create (),
-				OrmObjectMapping<EmployeeCard>.Create ().Dialog<EmployeeCardDlg>()
+				OrmObjectMapping<Facility>.Create ().Dialog<ObjectDlg> ().SimpleDisplay ().Column ("Название", e => e.Name).Column ("Адрес", e => e.Address).End (),
+				OrmObjectMapping<Post>.Create ().SimpleDisplay ().Column ("Название", e => e.Name).End (),
+				OrmObjectMapping<Leader>.Create ().SimpleDisplay ().Column ("Имя", e => e.Name).End (),
+				OrmObjectMapping<User>.Create ().SimpleDisplay ().Column ("Имя", e => e.Name).End (),
+				OrmObjectMapping<EmployeeCard>.Create ().Dialog<EmployeeCardDlg>().SimpleDisplay ().Column ("Имя", e => e.FullName).End ()
 			};
 		}
 	}

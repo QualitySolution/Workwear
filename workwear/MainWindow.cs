@@ -24,8 +24,6 @@ public partial class MainWindow: Gtk.Window
 		QSMain.ReferenceUpdated += OnReferenceUpdate;
 		MainSupport.LoadBaseParameters ();
 
-		MainNewsFeed.CheckNewsReads (); //Создаем при необходимости таблицу новостей.
-
 		MainUpdater.RunCheckVersion (true, true, true);
 
 		if(QSMain.User.Login == "root")
@@ -81,8 +79,8 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
-		Application.Quit();
 		a.RetVal = true;
+		Application.Quit();
 	}
 	
 	protected void OnDialogAuthenticationActionActivated(object sender, EventArgs e)
@@ -233,7 +231,6 @@ public partial class MainWindow: Gtk.Window
 				break;
 			case 1:
 				EmployeeCardDlg winWearCard = new EmployeeCardDlg();
-				winWearCard.NewItem = true;
 				winWearCard.Show();
 				winWearCard.Run();
 				winWearCard.Destroy();
@@ -291,8 +288,7 @@ public partial class MainWindow: Gtk.Window
 			case 1:
 				treeviewCards.Selection.GetSelected(out iter);
 				itemid = (int) CardsFilter.GetValue(iter,0);
-				EmployeeCardDlg winWearCadr = new EmployeeCardDlg();
-				winWearCadr.Fill(itemid);
+				EmployeeCardDlg winWearCadr = new EmployeeCardDlg(itemid);
 				winWearCadr.Show();
 				result = (ResponseType)winWearCadr.Run();
 				winWearCadr.Destroy();

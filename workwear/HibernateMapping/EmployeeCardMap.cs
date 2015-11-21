@@ -18,7 +18,7 @@ namespace workwear.HMap
 			Map (x => x.DismissDate).Column ("dismiss_date");
 
 			Map (x => x.Photo).Column ("photo").CustomSqlType ("BinaryBlob");
-			//Map (x => x.Patronymic).Column ("patronymic_name");
+			Map (x => x.Sex).Column ("sex").CustomType<SexStringType> ();
 
 			References (x => x.Facility).Column ("object_id");
 			References (x => x.Post).Column ("post_id");

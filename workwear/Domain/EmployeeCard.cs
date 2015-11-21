@@ -1,6 +1,8 @@
 ﻿using System;
 using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using QSProjectsLib;
 
 namespace workwear.Domain
 {
@@ -8,7 +10,7 @@ namespace workwear.Domain
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
 		NominativePlural = "карточки сотрудников",
 		Nominative = "карточка сотрудника")]
-	public class EmployeeCard: PropertyChangedBase, IDomainObject
+	public class EmployeeCard: PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства
 
@@ -62,18 +64,18 @@ namespace workwear.Domain
 			set { SetField (ref leader, value, () => Leader); }
 		}
 
-		DateTime hireDate;
+		DateTime? hireDate;
 
 		[Display (Name = "Дата поступления")]
-		public virtual DateTime HireDate {
+		public virtual DateTime? HireDate {
 			get { return hireDate; }
 			set { SetField (ref hireDate, value, () => HireDate); }
 		}
 
-		DateTime dismissDate;
+		DateTime? dismissDate;
 
 		[Display (Name = "Дата увольнения")]
-		public virtual DateTime DismissDate {
+		public virtual DateTime? DismissDate {
 			get { return dismissDate; }
 			set { SetField (ref dismissDate, value, () => DismissDate); }
 		}
@@ -120,12 +122,38 @@ namespace workwear.Domain
 
 		#endregion
 
+		public virtual string Title {
+			get{ return StringWorks.PersonNameWithInitials (LastName, FirstName, Patronymic);
+			}
+		}
 
+		public virtual string FullName {
+			get { return String.Format ("{0} {1} {2}", LastName, FirstName, Patronymic).Trim (); }
+		}
 
+		public virtual string ShortName {
+			get { return StringWorks.PersonNameWithInitials (LastName, FirstName, Patronymic); }
+		}
 
 		public EmployeeCard ()
 		{
 		}
+
+		#region IValidatableObject implementation
+
+		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
+		{
+			if (String.IsNullOrEmpty (FirstName) && String.IsNullOrEmpty (LastName) && String.IsNullOrEmpty (Patronymic))
+				yield return new ValidationResult ("Должно быть заполнено хотя бы одно из следующих полей: " +
+					"Фамилия, Имя, Отчество)", 
+					new[] { this.GetPropertyName (o => o.FirstName), this.GetPropertyName (o => o.LastName), this.GetPropertyName (o => o.Patronymic) });
+
+			if (Sex == Sex.None)
+				yield return new ValidationResult ("Пол должен быть указан.", new[] { this.GetPropertyName (o => o.Sex) });
+			
+		}
+
+		#endregion
 	}
 
 	public enum Sex{
@@ -135,6 +163,13 @@ namespace workwear.Domain
 		M,
 		[Display(Name = "Женский")]
 		F
+	}
+
+	public class SexStringType : NHibernate.Type.EnumStringType
+	{
+		public SexStringType () : base (typeof(Sex))
+		{
+		}
 	}
 
 }
