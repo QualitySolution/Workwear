@@ -10,6 +10,7 @@ using workwear.Domain;
 using QSOrmProject;
 using QSValidation;
 using workwear.Repository;
+using workwear.Measurements;
 
 namespace workwear
 {

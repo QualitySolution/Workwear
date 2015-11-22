@@ -106,10 +106,6 @@
     <Compile Include="gtk-gui\workwear.StockBalanceView.cs" />
     <Compile Include="viewDTOs\StockBalanceItems.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
-    <Compile Include="Domain\Measurements\СlothesType.cs" />
-    <Compile Include="Domain\Measurements\SizeStandart.cs" />
-    <Compile Include="Domain\Measurements\Measurements.cs" />
-    <Compile Include="Domain\Measurements\SizeStandartEnums.cs" />
     <Compile Include="Dialogs\EmployeeCardDlg.cs" />
     <Compile Include="gtk-gui\workwear.EmployeeCardDlg.cs" />
     <Compile Include="Domain\EmployeeCard.cs" />
@@ -125,7 +121,11 @@
     <Compile Include="HibernateMapping\UserMap.cs" />
     <Compile Include="CreateProjectParam.cs" />
     <Compile Include="Repository\UserRepository.cs" />
-    <Compile Include="Domain\Measurements\SizeStandardConverter.cs" />
+    <Compile Include="Measurements\SizeStandardConverter.cs" />
+    <Compile Include="Measurements\SizeStandart.cs" />
+    <Compile Include="Measurements\SizeStandartEnums.cs" />
+    <Compile Include="Measurements\СlothesType.cs" />
+    <Compile Include="Measurements\SizeHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -181,7 +181,6 @@
     <Folder Include="viewDTOs\" />
     <Folder Include="ViewWidgets\" />
     <Folder Include="Domain\" />
-    <Folder Include="Domain\Measurements\" />
     <Folder Include="Dialogs\" />
     <Folder Include="HibernateMapping\" />
     <Folder Include="Repository\" />

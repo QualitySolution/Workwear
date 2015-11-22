@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace workwear.Domain
+namespace workwear.Measurements
 {
 	public enum СlothesType
 	{

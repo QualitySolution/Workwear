@@ -2,7 +2,7 @@
 using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
 
-namespace workwear.Domain
+namespace workwear.Measurements
 {
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Masculine,
 		NominativePlural = "стандарты размеров",

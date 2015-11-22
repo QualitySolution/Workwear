@@ -1,9 +1,9 @@
 ﻿using System;
 using Gamma.Utilities;
 
-namespace workwear.Domain
+namespace workwear.Measurements
 {
-	public static class Measurements
+	public static class SizeHelper
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
