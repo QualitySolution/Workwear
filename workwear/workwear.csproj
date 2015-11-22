@@ -125,6 +125,7 @@
     <Compile Include="HibernateMapping\UserMap.cs" />
     <Compile Include="CreateProjectParam.cs" />
     <Compile Include="Repository\UserRepository.cs" />
+    <Compile Include="Domain\Measurements\SizeStandardConverter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -167,6 +168,10 @@
     <ProjectReference Include="..\..\QSProjects\QSValidation\QSValidation.csproj">
       <Project>{CE5179E8-3172-4C08-9FE3-9C48C58A3831}</Project>
       <Name>QSValidation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\GammaBinding\GammaUtil\GammaUtil.csproj">
+      <Project>{1BF2A638-420D-456C-96A7-36873A0FB894}</Project>
+      <Name>GammaUtil</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

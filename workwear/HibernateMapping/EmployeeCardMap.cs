@@ -20,6 +20,15 @@ namespace workwear.HMap
 			Map (x => x.Photo).Column ("photo").CustomSqlType ("BinaryBlob");
 			Map (x => x.Sex).Column ("sex").CustomType<SexStringType> ();
 
+			Map (x => x.WearSize).Column ("size_wear");
+			Map (x => x.WearSizeStd).Column ("size_wear_std");
+			Map (x => x.ShoesSize).Column ("size_shoes");
+			Map (x => x.ShoesSizeStd).Column ("size_shoes_std");
+			Map (x => x.HeaddressSize).Column ("size_headdress");
+			Map (x => x.HeaddressSizeStd).Column ("size_headdress_std");
+			Map (x => x.GlovesSize).Column ("size_gloves");
+			Map (x => x.GlovesSizeStd).Column ("size_gloves_std");
+
 			References (x => x.Facility).Column ("object_id");
 			References (x => x.Post).Column ("post_id");
 			References (x => x.Leader).Column ("leader_id");

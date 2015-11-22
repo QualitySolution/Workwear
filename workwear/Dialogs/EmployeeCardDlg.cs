@@ -30,10 +30,17 @@ namespace workwear
 
 		private void ConfigureDlg()
 		{
-			ycomboWearStd.ItemsEnum = typeof(SizeStandartWear);
-			ycomboShoesStd.ItemsEnum = typeof(SizeStandartShoes);
+			comboSex.ItemsEnum = typeof(Sex);
+			comboSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItem).InitializeFromSource ();
+
+			var stdConverter = new SizeStandardCodeConverter ();
+
+			ycomboWearStd.Binding.AddBinding (Entity, e => e.WearSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
+			ycomboShoesStd.Binding.AddBinding (Entity, e => e.ShoesSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
 			ycomboHeaddress.ItemsEnum = typeof(SizeStandartHeaddress);
+			ycomboHeaddress.Binding.AddBinding (Entity, e => e.HeaddressSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
 			ycomboGloves.ItemsEnum = typeof(SizeStandartGloves);
+			ycomboGloves.Binding.AddBinding (Entity, e => e.GlovesSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
 
 			entryFirstName.Binding.AddBinding (Entity, e => e.FirstName, w => w.Text).InitializeFromSource ();
 			entryLastName.Binding.AddBinding (Entity, e => e.LastName, w => w.Text).InitializeFromSource ();
@@ -48,9 +55,6 @@ namespace workwear
 			yentryLeader.Binding.AddBinding (Entity, e => e.Leader, w => w.Subject).InitializeFromSource ();
 			yentryObject.SubjectType = typeof(Facility);
 			yentryObject.Binding.AddBinding (Entity, e => e.Facility, w => w.Subject).InitializeFromSource ();
-
-			comboSex.ItemsEnum = typeof(Sex);
-			comboSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItem).InitializeFromSource ();
 
 			yimagePhoto.Binding.AddBinding (Entity, e => e.Photo, w => w.ImageFile).InitializeFromSource ();
 
@@ -405,6 +409,25 @@ namespace workwear
 				fs.Write (UoWGeneric.Root.Photo, 0, UoWGeneric.Root.Photo.Length);
 				fs.Close ();
 				System.Diagnostics.Process.Start (filePath);
+			}
+		}
+
+		protected void OnComboSexChanged (object sender, EventArgs e)
+		{
+			if(Entity.Sex == Sex.M)
+			{
+				ycomboWearStd.ItemsEnum = typeof(SizeStandartMenWear);
+				ycomboShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
+			}
+			else if(Entity.Sex == Sex.F)
+			{
+				ycomboWearStd.ItemsEnum = typeof(SizeStandartWomenWear);
+				ycomboShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
+			}
+			else
+			{
+				ycomboWearStd.ItemsEnum = null;
+				ycomboShoesStd.ItemsEnum = null;
 			}
 		}
 	}

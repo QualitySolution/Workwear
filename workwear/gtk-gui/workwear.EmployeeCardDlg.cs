@@ -869,6 +869,7 @@ namespace workwear
 			this.Show ();
 			this.entryId.Changed += new global::System.EventHandler (this.OnEntryIdChanged);
 			this.checkAuto.Toggled += new global::System.EventHandler (this.OnCheckAutoToggled);
+			this.comboSex.Changed += new global::System.EventHandler (this.OnComboSexChanged);
 			this.yimagePhoto.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler (this.OnYimagePhotoButtonPressEvent);
 			this.buttonLoadPhoto.Clicked += new global::System.EventHandler (this.OnButtonLoadPhotoClicked);
 			this.buttonSavePhoto.Clicked += new global::System.EventHandler (this.OnButtonSavePhotoClicked);

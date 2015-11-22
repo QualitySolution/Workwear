@@ -119,6 +119,74 @@ namespace workwear.Domain
 			get { return photo; }
 			set { SetField (ref photo, value, () => Photo); }
 		}
+			
+		#endregion
+
+		#region Размеры одежды
+
+		string wearSizeStd;
+
+		[Display (Name = "Стандарт размера одежды")]
+		public virtual string WearSizeStd {
+			get { return wearSizeStd; }
+			set { SetField (ref wearSizeStd, value, () => WearSizeStd); }
+		}
+
+		string wearSize;
+
+		[Display (Name = "Размер одежды")]
+		public virtual string WearSize { 
+			get { return wearSize; } 
+			set	{ SetField (ref wearSize, value, () => WearSize); }
+		}
+
+		string shoesSizeStd;
+
+		[Display (Name = "Стандарт размера обуви")]
+		public virtual string ShoesSizeStd {
+			get { return shoesSizeStd; }
+			set { SetField (ref shoesSizeStd, value, () => ShoesSizeStd); }
+		}
+
+		string shoesSize;
+
+		[Display (Name = "Размер обуви")]
+		public virtual string ShoesSize { 
+			get { return shoesSize; } 
+			set	{ SetField (ref shoesSize, value, () => ShoesSize); }
+		}
+
+		string headdressSizeStd;
+
+		[Display (Name = "Стандарт размера головного убора")]
+		public virtual string HeaddressSizeStd {
+			get { return headdressSizeStd; }
+			set { SetField (ref headdressSizeStd, value, () => HeaddressSizeStd); }
+		}
+
+		string headdressSize;
+
+		[Display (Name = "Размер головного убора")]
+		public virtual string HeaddressSize { 
+			get { return headdressSize; } 
+			set	{ SetField (ref headdressSize, value, () => HeaddressSize); }
+		}
+
+		string glovesSizeStd;
+
+		[Display (Name = "Стандарт размера одежды")]
+		public virtual string GlovesSizeStd {
+			get { return glovesSizeStd; }
+			set { SetField (ref glovesSizeStd, value, () => GlovesSizeStd); }
+		}
+
+		string glovesSize;
+
+		[Display (Name = "Размер одежды")]
+		public virtual string GlovesSize { 
+			get { return glovesSize; } 
+			set	{ SetField (ref glovesSize, value, () => GlovesSize); }
+		}
 
 		#endregion
 
