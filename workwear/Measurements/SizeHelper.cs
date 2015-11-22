@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Gamma.Utilities;
 
 namespace workwear.Measurements
@@ -45,6 +47,43 @@ namespace workwear.Measurements
 			}
 			logger.Warn ("Код размера {0} не найден.", code);
 			return null;
+		}
+
+		public static string[] GetSizesList (object stdEnum)
+		{
+			if (stdEnum is SizeStandartMenWear)
+				return ReadSizeArray (LookupSizes.MenWear, (int)stdEnum);
+			
+			if (stdEnum is SizeStandartWomenWear)
+				return ReadSizeArray (LookupSizes.WomenWear, (int)stdEnum);
+
+			if (stdEnum is SizeStandartMenShoes)
+				return ReadSizeArray (LookupSizes.MenShoes, (int)stdEnum);
+
+			if (stdEnum is SizeStandartWomenShoes)
+				return ReadSizeArray (LookupSizes.WomenShoes, (int)stdEnum);
+
+			if (stdEnum is SizeStandartHeaddress)
+				return ReadSizeArray (LookupSizes.Headdress, (int)stdEnum);
+
+			if (stdEnum is SizeStandartGloves)
+				return ReadSizeArray (LookupSizes.Gloves, (int)stdEnum);
+
+			throw new ArgumentException ( String.Format ("Неизвестный стандарт размера {0}", stdEnum.ToString ()), "stdEnum");
+		}
+
+		private static string[] ReadSizeArray(string[,] array, int column)
+		{
+			var list = new List<string> ();
+
+			for(int i = 0; i < array.GetLength (0); i++)
+			{
+				if (string.IsNullOrEmpty (array [i, column]))
+					continue;
+				list.Add (array[i, column]);
+			}
+
+			return list.Distinct ().ToArray ();
 		}
 	}
 }

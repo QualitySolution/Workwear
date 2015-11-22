@@ -1078,12 +1078,6 @@
                   <placeholder />
                 </child>
                 <child>
-                  <placeholder />
-                </child>
-                <child>
-                  <placeholder />
-                </child>
-                <child>
                   <widget class="Gamma.Widgets.yEnumComboBox" id="comboSex">
                     <property name="MemberName" />
                     <property name="IsTextCombo">False</property>
@@ -1693,13 +1687,36 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gamma.Widgets.yEnumComboBox" id="ycomboGloves">
+                  <widget class="Gamma.GtkWidgets.yComboBox" id="ycomboGlovesSize">
+                    <property name="MemberName" />
+                    <property name="IsTextCombo">False</property>
+                    <property name="Items" translatable="yes" />
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">5</property>
+                    <property name="BottomAttach">6</property>
+                    <property name="LeftAttach">6</property>
+                    <property name="RightAttach">7</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.Widgets.yEnumComboBox" id="ycomboGlovesStd">
                     <property name="MemberName" />
                     <property name="IsTextCombo">False</property>
                     <property name="Items" translatable="yes" />
                     <property name="ShowSpecialStateAll">False</property>
                     <property name="ShowSpecialStateNot">False</property>
                     <property name="UseShortTitle">True</property>
+                    <signal name="Changed" handler="OnYcomboGlovesStdChanged" />
                   </widget>
                   <packing>
                     <property name="TopAttach">5</property>
@@ -1718,19 +1735,64 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gamma.Widgets.yEnumComboBox" id="ycomboHeaddress">
+                  <widget class="Gamma.GtkWidgets.yComboBox" id="ycomboHeaddressSize">
+                    <property name="MemberName" />
+                    <property name="IsTextCombo">False</property>
+                    <property name="Items" translatable="yes" />
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">4</property>
+                    <property name="BottomAttach">5</property>
+                    <property name="LeftAttach">6</property>
+                    <property name="RightAttach">7</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.Widgets.yEnumComboBox" id="ycomboHeaddressStd">
                     <property name="MemberName" />
                     <property name="IsTextCombo">False</property>
                     <property name="Items" translatable="yes" />
                     <property name="ShowSpecialStateAll">False</property>
                     <property name="ShowSpecialStateNot">False</property>
                     <property name="UseShortTitle">True</property>
+                    <signal name="Changed" handler="OnYcomboHeaddressChanged" />
                   </widget>
                   <packing>
                     <property name="TopAttach">4</property>
                     <property name="BottomAttach">5</property>
                     <property name="LeftAttach">5</property>
                     <property name="RightAttach">6</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yComboBox" id="ycomboShoesSize">
+                    <property name="MemberName" />
+                    <property name="IsTextCombo">False</property>
+                    <property name="Items" translatable="yes" />
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">3</property>
+                    <property name="BottomAttach">4</property>
+                    <property name="LeftAttach">6</property>
+                    <property name="RightAttach">7</property>
                     <property name="AutoSize">True</property>
                     <property name="XOptions">Fill</property>
                     <property name="YOptions">Fill</property>
@@ -1750,6 +1812,7 @@
                     <property name="ShowSpecialStateAll">False</property>
                     <property name="ShowSpecialStateNot">False</property>
                     <property name="UseShortTitle">True</property>
+                    <signal name="Changed" handler="OnYcomboShoesStdChanged" />
                   </widget>
                   <packing>
                     <property name="TopAttach">3</property>
@@ -1768,13 +1831,13 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gamma.Widgets.yEnumComboBox" id="ycomboWearSize">
+                  <widget class="Gamma.GtkWidgets.yComboBox" id="ycomboWearSize">
                     <property name="MemberName" />
                     <property name="IsTextCombo">False</property>
-                    <property name="Items" translatable="yes" />
-                    <property name="ShowSpecialStateAll">False</property>
-                    <property name="ShowSpecialStateNot">False</property>
-                    <property name="UseShortTitle">False</property>
+                    <property name="Items" translatable="yes">1
+2
+3
+4</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">2</property>
@@ -1800,6 +1863,7 @@
                     <property name="ShowSpecialStateAll">False</property>
                     <property name="ShowSpecialStateNot">False</property>
                     <property name="UseShortTitle">True</property>
+                    <signal name="Changed" handler="OnYcomboWearStdChanged" />
                   </widget>
                   <packing>
                     <property name="TopAttach">2</property>
@@ -1870,31 +1934,6 @@
                     <property name="LeftAttach">1</property>
                     <property name="RightAttach">2</property>
                     <property name="AutoSize">False</property>
-                    <property name="XOptions">Fill</property>
-                    <property name="YOptions">Fill</property>
-                    <property name="XExpand">False</property>
-                    <property name="XFill">True</property>
-                    <property name="XShrink">False</property>
-                    <property name="YExpand">False</property>
-                    <property name="YFill">True</property>
-                    <property name="YShrink">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gamma.Widgets.yEnumComboBox" id="yenumcombobox5">
-                    <property name="MemberName" />
-                    <property name="IsTextCombo">False</property>
-                    <property name="Items" translatable="yes" />
-                    <property name="ShowSpecialStateAll">False</property>
-                    <property name="ShowSpecialStateNot">False</property>
-                    <property name="UseShortTitle">False</property>
-                  </widget>
-                  <packing>
-                    <property name="TopAttach">3</property>
-                    <property name="BottomAttach">4</property>
-                    <property name="LeftAttach">6</property>
-                    <property name="RightAttach">7</property>
-                    <property name="AutoSize">True</property>
                     <property name="XOptions">Fill</property>
                     <property name="YOptions">Fill</property>
                     <property name="XExpand">False</property>

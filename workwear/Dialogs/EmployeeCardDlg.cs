@@ -1,16 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Gtk;
 using MySql.Data.MySqlClient;
 using NLog;
-using QSProjectsLib;
-using System.Collections.Generic;
-using workwear.DTO;
-using workwear.Domain;
 using QSOrmProject;
+using QSProjectsLib;
 using QSValidation;
-using workwear.Repository;
+using workwear.Domain;
+using workwear.DTO;
 using workwear.Measurements;
+using workwear.Repository;
 
 namespace workwear
 {
@@ -38,10 +38,15 @@ namespace workwear
 
 			ycomboWearStd.Binding.AddBinding (Entity, e => e.WearSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
 			ycomboShoesStd.Binding.AddBinding (Entity, e => e.ShoesSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
-			ycomboHeaddress.ItemsEnum = typeof(SizeStandartHeaddress);
-			ycomboHeaddress.Binding.AddBinding (Entity, e => e.HeaddressSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
-			ycomboGloves.ItemsEnum = typeof(SizeStandartGloves);
-			ycomboGloves.Binding.AddBinding (Entity, e => e.GlovesSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
+			ycomboHeaddressStd.ItemsEnum = typeof(SizeStandartHeaddress);
+			ycomboHeaddressStd.Binding.AddBinding (Entity, e => e.HeaddressSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
+			ycomboGlovesStd.ItemsEnum = typeof(SizeStandartGloves);
+			ycomboGlovesStd.Binding.AddBinding (Entity, e => e.GlovesSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
+
+			ycomboWearSize.Binding.AddBinding (Entity, e => e.WearSize, w => w.ActiveText).InitializeFromSource ();
+			ycomboShoesSize.Binding.AddBinding (Entity, e => e.ShoesSize, w => w.ActiveText).InitializeFromSource ();
+			ycomboHeaddressSize.Binding.AddBinding (Entity, e => e.HeaddressSize, w => w.ActiveText).InitializeFromSource ();
+			ycomboGlovesSize.Binding.AddBinding (Entity, e => e.GlovesSize, w => w.ActiveText).InitializeFromSource ();
 
 			entryFirstName.Binding.AddBinding (Entity, e => e.FirstName, w => w.Text).InitializeFromSource ();
 			entryLastName.Binding.AddBinding (Entity, e => e.LastName, w => w.Text).InitializeFromSource ();
@@ -430,6 +435,50 @@ namespace workwear
 				ycomboWearStd.ItemsEnum = null;
 				ycomboShoesStd.ItemsEnum = null;
 			}
+		}
+
+		protected void OnYcomboHeaddressChanged (object sender, EventArgs e)
+		{
+			if (ycomboHeaddressStd.SelectedItemOrNull != null)
+				FillSizeCombo (ycomboHeaddressSize, SizeHelper.GetSizesList (ycomboHeaddressStd.SelectedItem));
+			else
+				ycomboHeaddressSize.Clear ();
+		}
+
+		private void FillSizeCombo(ComboBox combo, string[] sizes)
+		{
+			combo.Clear ();
+			var list = new ListStore (typeof(string));
+			foreach (var size in sizes)
+				list.AppendValues (size);
+			combo.Model = list;
+			CellRendererText text = new CellRendererText ();
+			combo.PackStart (text, true);
+			combo.AddAttribute (text, "text", 0);
+		}
+
+		protected void OnYcomboWearStdChanged (object sender, EventArgs e)
+		{
+			if (ycomboWearStd.SelectedItemOrNull != null)
+				FillSizeCombo (ycomboWearSize, SizeHelper.GetSizesList (ycomboWearStd.SelectedItem));
+			else
+				ycomboWearSize.Clear ();
+		}
+
+		protected void OnYcomboShoesStdChanged (object sender, EventArgs e)
+		{
+			if (ycomboShoesStd.SelectedItemOrNull != null)
+				FillSizeCombo (ycomboShoesSize, SizeHelper.GetSizesList (ycomboShoesStd.SelectedItem));
+			else
+				ycomboShoesSize.Clear ();
+		}
+
+		protected void OnYcomboGlovesStdChanged (object sender, EventArgs e)
+		{
+			if (ycomboGlovesStd.SelectedItemOrNull != null)
+				FillSizeCombo (ycomboGlovesSize, SizeHelper.GetSizesList (ycomboGlovesStd.SelectedItem));
+			else
+				ycomboGlovesSize.Clear ();
 		}
 	}
 }

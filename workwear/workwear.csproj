@@ -126,6 +126,7 @@
     <Compile Include="Measurements\SizeStandartEnums.cs" />
     <Compile Include="Measurements\СlothesType.cs" />
     <Compile Include="Measurements\SizeHelper.cs" />
+    <Compile Include="Measurements\LookupSizes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

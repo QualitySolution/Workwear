@@ -28,9 +28,9 @@ namespace workwear.Measurements
 		[StdCode("MenShoesRus")]
 		[Display(Name = "Российский", ShortName = "РФ")]
 		Rus,
-		[StdCode("MenShoesIntl")]
-		[Display(Name = "Международный", ShortName = "Межд.")]
-		Intl,
+		[StdCode("MenShoesEU")]
+		[Display(Name = "Европа", ShortName = "EU")]
+		EU,
 	}
 
 	public enum SizeStandartWomenShoes
@@ -38,9 +38,9 @@ namespace workwear.Measurements
 		[StdCode("WomenShoesRus")]
 		[Display(Name = "Российский", ShortName = "РФ")]
 		Rus,
-		[StdCode("WomenShoesIntl")]
-		[Display(Name = "Международный", ShortName = "Межд.")]
-		Intl,
+		[StdCode("WomenShoesEU")]
+		[Display(Name = "Европа", ShortName = "EU")]
+		EU,
 	}
 
 
