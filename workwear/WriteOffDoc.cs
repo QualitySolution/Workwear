@@ -112,7 +112,7 @@ namespace workwear
 
 				cmd.Parameters.AddWithValue("@id", Itemid);
 				cmd.Parameters.AddWithValue("@date", dateDoc.Date);
-				cmd.Parameters.AddWithValue("@user_id", QSMain.User.id);
+				cmd.Parameters.AddWithValue("@user_id", QSMain.User.Id);
 
 				cmd.ExecuteNonQuery();
 				if(NewItem)
