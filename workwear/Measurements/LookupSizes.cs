@@ -4,6 +4,25 @@ namespace workwear.Measurements
 {
 	public static class LookupSizes
 	{
+		public static readonly WearGrowth[] WomenGrowth = new WearGrowth[] {
+			new WearGrowth("146", 143, 149),
+			new WearGrowth("152", 149, 155),
+			new WearGrowth("158", 155, 161),
+			new WearGrowth("164", 161, 167),
+			new WearGrowth("170", 167, 173),
+			new WearGrowth("176", 173, 179),
+		};
+
+		public static readonly WearGrowth[] MenGrowth = new WearGrowth[] {
+			new WearGrowth("158", 155, 161),
+			new WearGrowth("164", 161, 167),
+			new WearGrowth("170", 167, 173),
+			new WearGrowth("176", 173, 179),
+			new WearGrowth("182", 179, 185),
+			new WearGrowth("188", 185, 191),
+			new WearGrowth("194", 191, 197),
+		};
+
 		public static readonly string[,] MenWear = new string[,] {
 			{ "44", "XXS" },
 			{ "46", "XS" },
@@ -107,6 +126,19 @@ namespace workwear.Measurements
 			{ "12", null },
 		};
 
+	}
+
+	public struct WearGrowth{
+		public string Name;
+		public int Upper;
+		public int Lower;
+
+		public WearGrowth(string name, int upper, int lower)
+		{
+			Name = name;
+			Upper = upper;
+			Lower = lower;
+		}
 	}
 }
 

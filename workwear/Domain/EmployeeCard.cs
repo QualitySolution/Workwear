@@ -124,6 +124,14 @@ namespace workwear.Domain
 
 		#region Размеры одежды
 
+		string wearGrowth;
+
+		[Display (Name = "Рост одежды")]
+		public virtual string WearGrowth { 
+			get { return wearGrowth; } 
+			set	{ SetField (ref wearGrowth, value, () => WearGrowth); }
+		}
+
 		string wearSizeStd;
 
 		[Display (Name = "Стандарт размера одежды")]

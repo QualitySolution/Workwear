@@ -1013,7 +1013,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.EmployeeCardDlg" design-size="1085 569">
+  <widget class="Gtk.Dialog" id="workwear.EmployeeCardDlg" design-size="1062 569">
     <property name="MemberName" />
     <property name="Title" translatable="yes">Новая карточка сотрудника</property>
     <property name="WindowPosition">CenterOnParent</property>
@@ -1072,12 +1072,6 @@
                   <placeholder />
                 </child>
                 <child>
-                  <placeholder />
-                </child>
-                <child>
-                  <placeholder />
-                </child>
-                <child>
                   <widget class="Gamma.Widgets.yEnumComboBox" id="comboSex">
                     <property name="MemberName" />
                     <property name="IsTextCombo">False</property>
@@ -1093,7 +1087,7 @@
                     <property name="BottomAttach">4</property>
                     <property name="LeftAttach">3</property>
                     <property name="RightAttach">4</property>
-                    <property name="AutoSize">True</property>
+                    <property name="AutoSize">False</property>
                     <property name="XOptions">Fill</property>
                     <property name="YOptions">Fill</property>
                     <property name="XExpand">False</property>
@@ -1819,6 +1813,28 @@
                     <property name="BottomAttach">4</property>
                     <property name="LeftAttach">5</property>
                     <property name="RightAttach">6</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yComboBox" id="ycomboWearGrowth">
+                    <property name="MemberName" />
+                    <property name="IsTextCombo">False</property>
+                    <property name="Items" translatable="yes" />
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">1</property>
+                    <property name="BottomAttach">2</property>
+                    <property name="LeftAttach">5</property>
+                    <property name="RightAttach">7</property>
                     <property name="AutoSize">True</property>
                     <property name="XOptions">Fill</property>
                     <property name="YOptions">Fill</property>

@@ -69,6 +69,14 @@ namespace workwear.Measurements
 			if (stdEnum is SizeStandartGloves)
 				return ReadSizeArray (LookupSizes.Gloves, (int)stdEnum);
 
+			if (stdEnum is GrowthStandartWear)
+			{
+				if ((GrowthStandartWear)stdEnum == GrowthStandartWear.Men)
+					return LookupSizes.MenGrowth.Select (g => g.Name).ToArray ();
+				else
+					return LookupSizes.WomenGrowth.Select (g => g.Name).ToArray ();
+			}
+
 			throw new ArgumentException ( String.Format ("Неизвестный стандарт размера {0}", stdEnum.ToString ()), "stdEnum");
 		}
 
