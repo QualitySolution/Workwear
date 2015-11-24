@@ -129,6 +129,10 @@
     <Compile Include="Domain\AllowanceItem.cs" />
     <Compile Include="gtk-gui\workwear.ItemTypeDlg.cs" />
     <Compile Include="Dialogs\ItemTypeDlg.cs" />
+    <Compile Include="Domain\MeasurementUnits.cs" />
+    <Compile Include="Domain\ItemsType.cs" />
+    <Compile Include="HibernateMapping\ItemsTypeMap.cs" />
+    <Compile Include="HibernateMapping\MeasurementUnitsMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
