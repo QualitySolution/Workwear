@@ -125,14 +125,16 @@
     <Compile Include="Measurements\СlothesType.cs" />
     <Compile Include="Measurements\SizeHelper.cs" />
     <Compile Include="Measurements\LookupSizes.cs" />
-    <Compile Include="Domain\Allowance.cs" />
-    <Compile Include="Domain\AllowanceItem.cs" />
     <Compile Include="gtk-gui\workwear.ItemTypeDlg.cs" />
     <Compile Include="Dialogs\ItemTypeDlg.cs" />
     <Compile Include="Domain\MeasurementUnits.cs" />
     <Compile Include="Domain\ItemsType.cs" />
     <Compile Include="HibernateMapping\ItemsTypeMap.cs" />
     <Compile Include="HibernateMapping\MeasurementUnitsMap.cs" />
+    <Compile Include="Domain\Norm.cs" />
+    <Compile Include="Domain\NormItem.cs" />
+    <Compile Include="HibernateMapping\NormMap.cs" />
+    <Compile Include="HibernateMapping\NormItemMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
