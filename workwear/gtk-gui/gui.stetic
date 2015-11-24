@@ -16,7 +16,7 @@
     <widget-library name="../../../QSProjects/QSTDI/bin/Debug/QSTDI.dll" />
     <widget-library name="../../../QSProjects/QSValidation/bin/Debug/QSValidation.dll" />
   </import>
-  <widget class="Gtk.Dialog" id="workwear.ItemType" design-size="337 297">
+  <widget class="Gtk.Dialog" id="workwear.ItemTypeDlg" design-size="337 297">
     <property name="MemberName" />
     <property name="Title" translatable="yes">Новый тип номенклатуры</property>
     <property name="WindowPosition">CenterOnParent</property>

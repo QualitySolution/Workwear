@@ -5,13 +5,13 @@ using QSProjectsLib;
 
 namespace workwear
 {
-	public partial class ItemType : Gtk.Dialog
+	public partial class ItemTypeDlg : Gtk.Dialog
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public bool NewItem;
 		int Itemid;
 		
-		public ItemType()
+		public ItemTypeDlg()
 		{
 			this.Build();
 

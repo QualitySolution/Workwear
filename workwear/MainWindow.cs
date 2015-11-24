@@ -116,7 +116,7 @@ public partial class MainWindow: Gtk.Window
 		switch (e.TableName)
 		{
 		case "item_types":
-			ItemType ItemTypeEdit = new ItemType();
+			ItemTypeDlg ItemTypeEdit = new ItemTypeDlg();
 			if(e.NewItem)
 				ItemTypeEdit.NewItem = true;
 			else 
