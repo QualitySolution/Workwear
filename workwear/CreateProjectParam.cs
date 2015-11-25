@@ -22,6 +22,8 @@ namespace workwear
 				System.Reflection.Assembly.GetAssembly (typeof(MainClass)),
 			});
 			OrmMain.ClassMappingList = new System.Collections.Generic.List<IOrmObjectMapping> {
+				OrmObjectMapping<Norm>.Create ().Dialog<NormDlg> (),
+				OrmObjectMapping<ItemsType>.Create ().Dialog<ItemTypeDlg> ().SimpleDisplay ().Column ("Наименование", i => i.Name).End (),
 				OrmObjectMapping<Facility>.Create ().Dialog<ObjectDlg> ().SimpleDisplay ().Column ("Название", e => e.Name).Column ("Адрес", e => e.Address).End (),
 				OrmObjectMapping<Post>.Create ().SimpleDisplay ().Column ("Название", e => e.Name).End (),
 				OrmObjectMapping<Leader>.Create ().SimpleDisplay ().Column ("Имя", e => e.Name).End (),

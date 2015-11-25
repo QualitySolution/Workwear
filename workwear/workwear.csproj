@@ -135,6 +135,9 @@
     <Compile Include="Domain\NormItem.cs" />
     <Compile Include="HibernateMapping\NormMap.cs" />
     <Compile Include="HibernateMapping\NormItemMap.cs" />
+    <Compile Include="Dialogs\NormDlg.cs" />
+    <Compile Include="gtk-gui\workwear.NormDlg.cs" />
+    <Compile Include="Representations\NormVM.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -193,6 +196,7 @@
     <Folder Include="Dialogs\" />
     <Folder Include="HibernateMapping\" />
     <Folder Include="Repository\" />
+    <Folder Include="Representations\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

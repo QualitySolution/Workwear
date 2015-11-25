@@ -19,7 +19,7 @@ namespace workwear.HMap
 				.ChildKeyColumn ("profession_id")
 				.Cascade.AllDeleteOrphan ().LazyLoad ();
 
-			HasMany (x => x.Items).KeyColumn ("norm_id").Cascade.AllDeleteOrphan ()
+			HasMany (x => x.Items).KeyColumn ("norm_id").Not.KeyNullable ().Cascade.AllDeleteOrphan ()
 				.LazyLoad ();
 		}
 	}

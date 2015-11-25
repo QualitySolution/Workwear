@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
+using System.Linq;
 using QSOrmProject;
 
 namespace workwear.Domain
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Neuter,
+	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
 		NominativePlural = "нормы выдачи",
 		Nominative = "норма выдачи")]
 	public class Norm : PropertyChangedBase, IDomainObject
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+
 		#region Свойства
 
 		public virtual int Id { get; set; }
@@ -83,6 +86,45 @@ namespace workwear.Domain
 		public Norm ()
 		{
 		}
+
+		public virtual void AddProfession(Post prof)
+		{
+			if(Professions.Any (p => DomainHelper.EqualDomainObjects (p, prof)))
+			{
+				logger.Warn ("Такая профессия уже добавлена. Пропускаем...");
+				return;
+			}
+			ObservableProfessions.Add (prof);
+		}
+
+		public virtual void RemoveProfession(Post prof)
+		{
+			ObservableProfessions.Remove (prof);
+		}
+
+		public virtual void AddItem(ItemsType itemtype)
+		{
+			if(Items.Any (i => DomainHelper.EqualDomainObjects (i.Item, itemtype)))
+			{
+				logger.Warn ("Такое наименование уже добавлено. Пропускаем...");
+				return;
+			}
+
+			var item = new NormItem () {
+				Item = itemtype,
+				Amount = 1,
+				NormPeriod = NormPeriodType.Year,
+				PeriodCount = 1
+			};
+
+			ObservableItems.Add (item);
+		}
+
+		public virtual void RemoveItem(NormItem item)
+		{
+			ObservableItems.Remove (item);
+		}
+
 	}
 }
 
