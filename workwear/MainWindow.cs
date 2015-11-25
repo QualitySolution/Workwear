@@ -6,6 +6,7 @@ using QSProjectsLib;
 using QSSupportLib;
 using QSUpdater;
 using workwear;
+using QSOrmProject;
 
 public partial class MainWindow: Gtk.Window
 {	
@@ -437,4 +438,12 @@ public partial class MainWindow: Gtk.Window
 		EditSerialNumber.RunDialog();
 	}
 
+	protected void OnActionNormsActivated (object sender, EventArgs e)
+	{
+		var refWin = new ReferenceRepresentation (new workwear.ViewModel.NormVM ());
+		var dialog = new OneWidgetDialog (refWin);
+		dialog.Show ();
+		dialog.Run ();
+		dialog.Destroy ();
+	}
 }
