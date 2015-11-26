@@ -138,6 +138,7 @@
     <Compile Include="Dialogs\NormDlg.cs" />
     <Compile Include="gtk-gui\workwear.NormDlg.cs" />
     <Compile Include="Representations\NormVM.cs" />
+    <Compile Include="Repository\MeasurementUnitsRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

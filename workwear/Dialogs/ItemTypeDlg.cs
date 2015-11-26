@@ -1,132 +1,63 @@
 using System;
-using MySql.Data.MySqlClient;
 using NLog;
+using QSOrmProject;
 using QSProjectsLib;
+using workwear.Domain;
 
 namespace workwear
 {
-	public partial class ItemTypeDlg : Gtk.Dialog
+	public partial class ItemTypeDlg : FakeTDIEntityGtkDialogBase<ItemsType>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
-		public bool NewItem;
-		int Itemid;
 		
 		public ItemTypeDlg()
 		{
 			this.Build();
-
-			ComboWorks.ComboFillReference(comboUnits, "units", ComboWorks.ListMode.WithNo);
+			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<ItemsType> ();
+			ConfigureDlg ();
 		}
 
-		public void Fill(int id)
+		public ItemTypeDlg (int id)
 		{
-			Itemid = id;
-			NewItem = false;
-
-			QSMain.CheckConnectionAlive ();
-			logger.Info("Запрос типа номенклатуры №{0}...", id);
-			string sql = "SELECT * FROM item_types WHERE item_types.id = @id";
-			try
-			{
-				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
-				
-				cmd.Parameters.AddWithValue("@id", id);
-				
-				using(MySqlDataReader rdr = cmd.ExecuteReader())
-				{		
-					rdr.Read();
-
-					labelId.Text = rdr["id"].ToString();
-					entryName.Text = rdr["name"].ToString();
-					spinQuantity.Value = DBWorks.GetDouble(rdr, "norm_quantity", 0);
-					spinLife.Value = DBWorks.GetDouble(rdr, "norm_life", 0);
-					checkOnNorms.Active = DBWorks.GetBoolean (rdr, "on_norms", false);
-					ComboWorks.SetActiveItem (comboUnits, DBWorks.GetInt (rdr, "units_id", -1));
-					switch (DBWorks.GetString(rdr, "category", "")) {
-						case "wear":
-							comboCategory.Active = 0;
-							break;
-						case "property":
-							comboCategory.Active = 1;
-							break;
-					}
-					logger.Info("Ok");
-				}
-				this.Title = entryName.Text;
-			}
-			catch (Exception ex)
-			{
-				QSMain.ErrorMessageWithLog(this, "Ошибка получения информации о услуге!", logger, ex);
-				this.Respond(Gtk.ResponseType.Reject);
-			}
-			TestCanSave();
+			this.Build ();
+			UoWGeneric = UnitOfWorkFactory.CreateForRoot<ItemsType> (id);
+			ConfigureDlg ();
 		}
 
-		protected	void TestCanSave ()
+		private void ConfigureDlg()
 		{
-			bool Nameok = entryName.Text != "";
-			bool CategoryOk = comboCategory.Active >= 0;
-			buttonOk.Sensitive = Nameok && CategoryOk;
+			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource ();
+
+			yentryName.Binding.AddBinding (Entity, e => e.Name, w => w.Text).InitializeFromSource ();
+
+			ycomboCategory.ItemsEnum = typeof(ItemTypeCategory);
+			ycomboCategory.Binding.AddBinding (Entity, e => e.Category, w => w.SelectedItemOrNull).InitializeFromSource ();
+
+			ycomboUnits.ItemsList = Repository.MeasurementUnitsRepository.GetActiveUnits (UoWGeneric);
+			ycomboUnits.Binding.AddBinding (Entity, e => e.Units, w => w.SelectedItem).InitializeFromSource ();
+		}
+
+		public override bool Save ()
+		{
+			logger.Info ("Запись типа номенклатуры...");
+			var valid = new QSValidation.QSValidator<ItemsType> (UoWGeneric.Root);
+			if (valid.RunDlgIfNotValid ((Gtk.Window)this.Toplevel))
+				return false;
+
+			try {
+				UoWGeneric.Save ();
+			} catch (Exception ex) {
+				QSMain.ErrorMessageWithLog (this, "Не удалось записать тип номенклатуры.", logger, ex);
+				return false;
+			}
+			logger.Info ("Ok");
+			return true;
 		}
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
 		{
-			string sql;
-			if(NewItem)
-			{
-				sql = "INSERT INTO item_types (name, category, units_id, on_norms, norm_quantity, norm_life) " +
-					"VALUES (@name, @category, @units_id, @on_norms, @norm_quantity, @norm_life)";
-			}
-			else
-			{
-				sql = "UPDATE item_types SET name = @name, category = @category, units_id = @units_id, on_norms = @on_norms, " +
-					"norm_quantity = @norm_quantity, norm_life = @norm_life WHERE id = @id";
-			}
-			QSMain.CheckConnectionAlive ();
-			logger.Info("Запись типа номенклатуры...");
-			try 
-			{
-				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
-				
-				cmd.Parameters.AddWithValue("@id", Itemid);
-				cmd.Parameters.AddWithValue("@name", entryName.Text);
-				cmd.Parameters.AddWithValue("@units_id", ComboWorks.GetActiveIdOrNull (comboUnits));
-				cmd.Parameters.AddWithValue("@on_norms", checkOnNorms.Active);
-				cmd.Parameters.AddWithValue("@norm_quantity", DBWorks.ValueOrNull(checkOnNorms.Active, spinQuantity.Value));
-				cmd.Parameters.AddWithValue("@norm_life", DBWorks.ValueOrNull(checkOnNorms.Active, spinLife.Value));
-				switch (comboCategory.Active) {
-					case 0:
-						cmd.Parameters.AddWithValue("@category", "wear");
-						break;
-					case 1:
-						cmd.Parameters.AddWithValue("@category", "property");
-						break;
-				}
-				
-				cmd.ExecuteNonQuery();
-				logger.Info("Ok");
+			if (Save ())
 				Respond (Gtk.ResponseType.Ok);
-			} 
-			catch (Exception ex) 
-			{
-				QSMain.ErrorMessageWithLog(this, "Ошибка записи типа номенклатуры!", logger, ex);
-			}
-		}
-
-		protected void OnEntryNameChanged(object sender, EventArgs e)
-		{
-			TestCanSave();
-		}
-
-		protected void OnComboCategoryChanged(object sender, EventArgs e)
-		{
-			TestCanSave();
-		}
-
-		protected void OnCheckOnNormsToggled (object sender, EventArgs e)
-		{
-			spinLife.Sensitive = spinQuantity.Sensitive = labelLife.Sensitive = labelQuality.Sensitive 
-				= checkOnNorms.Active;
 		}
 	}
 }

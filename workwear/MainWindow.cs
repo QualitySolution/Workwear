@@ -22,7 +22,6 @@ public partial class MainWindow: Gtk.Window
 		QSMain.MakeNewStatusTargetForNlog();
 
 		Reference.RunReferenceItemDlg += OnRunReferenceItemDialog;
-		QSMain.ReferenceUpdated += OnReferenceUpdate;
 		MainSupport.LoadBaseParameters ();
 
 		MainUpdater.RunCheckVersion (true, true, true);
@@ -102,26 +101,17 @@ public partial class MainWindow: Gtk.Window
 		Application.Quit();
 	}
 	
-	protected void OnReferenceUpdate(object sender, QSMain.ReferenceUpdatedEventArgs e)
-	{
-	/*	switch (e.ReferenceTable) {
-		case "doc_types":
-			ComboWorks.ComboFillReference (comboDocType, "doc_types", 0);
-		break;
-		} */
-	}
-	
 	protected void OnRunReferenceItemDialog(object sender, Reference.RunReferenceItemDlgEventArgs e)
 	{
 		ResponseType Result;
 		switch (e.TableName)
 		{
 		case "item_types":
-			ItemTypeDlg ItemTypeEdit = new ItemTypeDlg();
+			ItemTypeDlg ItemTypeEdit;
 			if(e.NewItem)
-				ItemTypeEdit.NewItem = true;
+				ItemTypeEdit = new ItemTypeDlg();
 			else 
-				ItemTypeEdit.Fill(e.ItemId);
+				ItemTypeEdit = new ItemTypeDlg(e.ItemId);
 			ItemTypeEdit.Show();
 			Result = (ResponseType)ItemTypeEdit.Run();
 			ItemTypeEdit.Destroy();
