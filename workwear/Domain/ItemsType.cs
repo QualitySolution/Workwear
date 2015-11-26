@@ -24,6 +24,7 @@ namespace workwear.Domain
 		MeasurementUnits units;
 
 		[Display (Name = "Единица измерения")]
+		[Required(ErrorMessage = "Единица измерения должна быть указана.")]
 		public virtual MeasurementUnits Units {
 			get { return units; }
 			set { SetField (ref units, value, () => Units); }

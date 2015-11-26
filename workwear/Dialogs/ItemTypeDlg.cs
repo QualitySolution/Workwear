@@ -17,6 +17,8 @@ namespace workwear
 			ConfigureDlg ();
 		}
 
+		public ItemTypeDlg (ItemsType item) : this (item.Id) {}
+
 		public ItemTypeDlg (int id)
 		{
 			this.Build ();

@@ -45,7 +45,7 @@ namespace workwear.Domain
 			set { SetField (ref tonParagraph, value, () => TONParagraph); }
 		}
 
-		private IList<Post> professions;
+		private IList<Post> professions = new List<Post>();
 
 		[Display (Name = "Профессии")]
 		public virtual IList<Post> Professions {
@@ -63,7 +63,7 @@ namespace workwear.Domain
 			}
 		}
 
-		private IList<NormItem> items;
+		private IList<NormItem> items = new List<NormItem>();
 
 		[Display (Name = "Строки норм")]
 		public virtual IList<NormItem> Items {
