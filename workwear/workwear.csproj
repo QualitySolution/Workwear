@@ -218,5 +218,9 @@
     <None Include="changes.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Reports\MonthIssueSheet.rdl" />
+    <None Include="Reports\NotIssuedSheet.rdl" />
+    <None Include="Reports\QuarterRequestSheet.rdl" />
+    <None Include="Reports\YearRequestSheet.rdl" />
   </ItemGroup>
 </Project>
