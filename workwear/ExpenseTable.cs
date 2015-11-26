@@ -151,7 +151,7 @@ namespace workwear
 			{
 				string sql = "SELECT stock_income_detail.id, stock_income_detail.nomenclature_id, stock_income_detail.quantity, " +
 					"nomenclature.name as nomenclature, stock_income_detail.life_percent, spent.count, item_types.name as type, " +
-					"nomenclature.size, nomenclature.growth, units.name as unit, item_types.norm_quantity " +
+					"nomenclature.size, nomenclature.growth, units.name as unit, 1 as norm_quantity " +
 					"FROM stock_income_detail " +
 					"LEFT JOIN (SELECT id, SUM(count) as count FROM " +
 					"(SELECT stock_expense_detail.stock_income_detail_id as id, stock_expense_detail.quantity as count FROM stock_expense_detail WHERE stock_expense_id <> @current_expense " +
