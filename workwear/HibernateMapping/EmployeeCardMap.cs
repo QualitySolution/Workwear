@@ -34,6 +34,11 @@ namespace workwear.HMap
 			References (x => x.Post).Column ("post_id");
 			References (x => x.Leader).Column ("leader_id");
 			References (x => x.CreatedbyUser).Column ("user_id");
+
+			HasManyToMany (x => x.UsedNorms).Table ("wear_cards_norms")
+				.ParentKeyColumn ("wear_card_id")
+				.ChildKeyColumn ("norm_id")
+				.Cascade.AllDeleteOrphan ().LazyLoad ();
 		}
 	}
 }

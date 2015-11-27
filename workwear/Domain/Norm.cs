@@ -83,6 +83,11 @@ namespace workwear.Domain
 
 		#endregion
 
+		public virtual string ProfessionsText {
+			get{ return String.Join ("; ", Professions.Select (p => p.Name));
+			}
+		}
+
 		public Norm ()
 		{
 		}

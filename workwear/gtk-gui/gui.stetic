@@ -1801,6 +1801,7 @@
                   <widget class="Gamma.Widgets.yEntryReference" id="yentryPost">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
+                    <signal name="Changed" handler="OnYentryPostChanged" />
                   </widget>
                   <packing>
                     <property name="TopAttach">4</property>
@@ -1915,8 +1916,118 @@
           <widget class="Gtk.Notebook" id="notebook1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">1</property>
-            <signal name="SwitchPage" handler="OnNotebook1SwitchPage" />
+            <property name="CurrentPage">0</property>
+            <child>
+              <widget class="Gtk.VBox" id="vbox6">
+                <property name="MemberName" />
+                <property name="Spacing">6</property>
+                <child>
+                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow2">
+                    <property name="MemberName" />
+                    <property name="ShadowType">In</property>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeNorms">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="ShowScrollbars">True</property>
+                        <property name="EnableSearch">False</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.HBox" id="hbox10">
+                    <property name="MemberName" />
+                    <property name="Spacing">6</property>
+                    <child>
+                      <widget class="Gtk.Button" id="buttonAddNorm">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextAndIcon</property>
+                        <property name="Icon">stock:gtk-add Menu</property>
+                        <property name="Label" translatable="yes">Добавить норму</property>
+                        <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonAddNormClicked" />
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Button" id="buttonNormFromPost">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextAndIcon</property>
+                        <property name="Icon">stock:gtk-add Menu</property>
+                        <property name="Label" translatable="yes">По должности</property>
+                        <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonNormFromPostClicked" />
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Button" id="buttonRemoveNorm">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextAndIcon</property>
+                        <property name="Icon">stock:gtk-remove Menu</property>
+                        <property name="Label" translatable="yes">Удалить норму</property>
+                        <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonRemoveNormClicked" />
+                      </widget>
+                      <packing>
+                        <property name="Position">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <placeholder />
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+              </widget>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label13">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Применённые нормы</property>
+              </widget>
+              <packing>
+                <property name="type">tab</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder />
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label15">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Спецодежда</property>
+              </widget>
+              <packing>
+                <property name="type">tab</property>
+              </packing>
+            </child>
             <child>
               <widget class="Gtk.VBox" id="vbox4">
                 <property name="MemberName" />
@@ -2005,9 +2116,12 @@
                   </packing>
                 </child>
               </widget>
+              <packing>
+                <property name="Position">2</property>
+              </packing>
             </child>
             <child>
-              <widget class="Gtk.Label" id="label13">
+              <widget class="Gtk.Label" id="label21">
                 <property name="MemberName" />
                 <property name="LabelProp" translatable="yes">Числится за сотрудником</property>
               </widget>
@@ -2048,11 +2162,11 @@
                 </child>
               </widget>
               <packing>
-                <property name="Position">1</property>
+                <property name="Position">3</property>
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Label" id="label15">
+              <widget class="Gtk.Label" id="label22">
                 <property name="MemberName" />
                 <property name="LabelProp" translatable="yes">История выдач</property>
               </widget>

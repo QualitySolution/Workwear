@@ -3,6 +3,8 @@ using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 using QSProjectsLib;
+using System.Data.Bindings.Collections.Generic;
+using System.Linq;
 
 namespace workwear.Domain
 {
@@ -12,6 +14,8 @@ namespace workwear.Domain
 		Nominative = "карточка сотрудника")]
 	public class EmployeeCard: PropertyChangedBase, IDomainObject, IValidatableObject
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+
 		#region Свойства
 
 		public virtual int Id { get; set; }
@@ -196,6 +200,24 @@ namespace workwear.Domain
 			set	{ SetField (ref glovesSize, value, () => GlovesSize); }
 		}
 
+		private IList<Norm> usedNorms = new List<Norm>();
+
+		[Display (Name = "Примененные нормы")]
+		public virtual IList<Norm> UsedNorms {
+			get { return usedNorms; }
+			set { SetField (ref usedNorms, value, () => UsedNorms); }
+		}
+
+		GenericObservableList<Norm> observableUsedNorms;
+		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		public virtual GenericObservableList<Norm> ObservableUsedNorms {
+			get {
+				if (observableUsedNorms == null)
+					observableUsedNorms = new GenericObservableList<Norm> (UsedNorms);
+				return observableUsedNorms;
+			}
+		}
+
 		#endregion
 
 		public virtual string Title {
@@ -230,6 +252,22 @@ namespace workwear.Domain
 		}
 
 		#endregion
+
+		public virtual void AddUsedNorm(Norm norm)
+		{
+			if(UsedNorms.Any (p => DomainHelper.EqualDomainObjects (p, norm)))
+			{
+				logger.Warn ("Такая норма уже добавлена. Пропускаем...");
+				return;
+			}
+			ObservableUsedNorms.Add (norm);
+		}
+
+		public virtual void RemoveUsedNorm(Norm norm)
+		{
+			ObservableUsedNorms.Remove (norm);
+		}
+
 	}
 
 	public enum Sex{

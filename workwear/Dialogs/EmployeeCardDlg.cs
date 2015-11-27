@@ -58,6 +58,7 @@ namespace workwear
 
 			yentryPost.SubjectType = typeof(Post);
 			yentryPost.Binding.AddBinding (Entity, e => e.Post, w => w.Subject).InitializeFromSource ();
+			OnYentryPostChanged (null, null);
 			yentryLeader.SubjectType = typeof(Leader);
 			yentryLeader.Binding.AddBinding (Entity, e => e.Leader, w => w.Subject).InitializeFromSource ();
 			yentryObject.SubjectType = typeof(Facility);
@@ -69,6 +70,15 @@ namespace workwear
 			table1.FocusChain = new Widget[] {entryLastName, entryFirstName, entryPatronymic, dateHire, dateDismiss, 
 				comboSex, yentryPost, yentryLeader, yentryObject
 			};
+
+			ytreeNorms.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<Norm> ()
+				.AddColumn ("№ ТОН").SetDataProperty (node => node.TONNumber)
+				.AddColumn ("№ Приложения").SetDataProperty (node => node.TONAttachment)
+				.AddColumn ("№ Пункта").SetDataProperty (node => node.TONParagraph)
+				.AddColumn ("Профессии").AddTextRenderer (node => node.ProfessionsText)
+				.Finish ();
+			ytreeNorms.Selection.Changed += YtreeNorms_Selection_Changed;
+			ytreeNorms.ItemsDataSource = Entity.ObservableUsedNorms;
 
 			ytreeListedItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItems> ()
 				.AddColumn ("Наименование").AddTextRenderer (e => e.ItemTypeName)
@@ -87,6 +97,11 @@ namespace workwear
 				.AddColumn ("Сдано\\списано").AddTextRenderer (e => e.AmountReturnedText)
 				.Finish ();
 			treeviewMovements.ShowAll ();
+		}
+
+		void YtreeNorms_Selection_Changed (object sender, EventArgs e)
+		{
+			buttonRemoveNorm.Sensitive = ytreeNorms.Selection.CountSelectedRows () > 0;
 		}
 
 		public EmployeeCardDlg (int id)
@@ -483,6 +498,39 @@ namespace workwear
 				FillSizeCombo (ycomboGlovesSize, SizeHelper.GetSizesList (ycomboGlovesStd.SelectedItem));
 			else
 				ycomboGlovesSize.Clear ();
+		}
+
+		protected void OnButtonAddNormClicked (object sender, EventArgs e)
+		{
+			var refWin = new ReferenceRepresentation (new workwear.ViewModel.NormVM ());
+			refWin.Mode = OrmReferenceMode.Select;
+			refWin.ObjectSelected += RefWin_ObjectSelected;
+			var dialog = new OneWidgetDialog (refWin);
+			dialog.Show ();
+			dialog.Run ();
+			dialog.Destroy ();
+		}
+
+		void RefWin_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)
+		{
+			Entity.AddUsedNorm (UoW.GetById<Norm> (e.ObjectId));
+		}
+
+		protected void OnButtonRemoveNormClicked (object sender, EventArgs e)
+		{
+			Entity.RemoveUsedNorm (ytreeNorms.GetSelectedObject<Norm> ());
+		}
+
+		protected void OnYentryPostChanged (object sender, EventArgs e)
+		{
+			buttonNormFromPost.Sensitive = Entity.Post != null;
+		}
+
+		protected void OnButtonNormFromPostClicked (object sender, EventArgs e)
+		{
+			var norms = Repository.NormRepository.GetNormForPost (UoWGeneric, Entity.Post);
+			foreach (var norm in norms)
+				Entity.AddUsedNorm (norm);
 		}
 	}
 }
