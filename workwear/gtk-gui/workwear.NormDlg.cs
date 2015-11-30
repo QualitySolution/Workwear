@@ -340,6 +340,7 @@ namespace workwear
 			this.DefaultWidth = 699;
 			this.DefaultHeight = 368;
 			this.Show ();
+			this.buttonNewProfession.Clicked += new global::System.EventHandler (this.OnButtonNewProfessionClicked);
 			this.buttonAddProfession.Clicked += new global::System.EventHandler (this.OnButtonAddProfessionClicked);
 			this.buttonRemoveProfession.Clicked += new global::System.EventHandler (this.OnButtonRemoveProfessionClicked);
 			this.buttonAddItem.Clicked += new global::System.EventHandler (this.OnButtonAddItemClicked);

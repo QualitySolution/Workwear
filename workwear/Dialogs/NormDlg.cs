@@ -122,6 +122,13 @@ namespace workwear
 		{
 			Entity.RemoveItem (ytreeItems.GetSelectedObject<NormItem> ());
 		}
+
+		protected void OnButtonNewProfessionClicked (object sender, EventArgs e)
+		{
+			var prof = OrmSimpleDialog.RunSimpleDialog (this, typeof(Post), null) as Post;
+			if (prof != null)
+				Entity.AddProfession (prof);
+		}
 	}
 }
 

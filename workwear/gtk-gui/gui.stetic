@@ -5170,6 +5170,7 @@
                         <property name="Icon">stock:gtk-new Menu</property>
                         <property name="Label" translatable="yes">Новая</property>
                         <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonNewProfessionClicked" />
                       </widget>
                       <packing>
                         <property name="Position">0</property>
