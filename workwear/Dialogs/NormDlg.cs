@@ -88,7 +88,6 @@ namespace workwear
 		{
 			OrmReference SelectDialog = new OrmReference(typeof(Post));
 			SelectDialog.Mode = OrmReferenceMode.Select;
-			SelectDialog.ButtonMode = ReferenceButtonMode.CanAdd;
 			SelectDialog.ObjectSelected += SelectDialog_ObjectSelected;
 
 			TabParent.AddSlaveTab (this, SelectDialog);
