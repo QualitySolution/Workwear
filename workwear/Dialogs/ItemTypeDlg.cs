@@ -59,7 +59,10 @@ namespace workwear
 		protected void OnButtonOkClicked (object sender, EventArgs e)
 		{
 			if (Save ())
+			{
+				OnEntitySaved (true);
 				Respond (Gtk.ResponseType.Ok);
+			}
 		}
 	}
 }
