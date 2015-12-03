@@ -35,6 +35,10 @@ namespace workwear.HMap
 			References (x => x.Leader).Column ("leader_id");
 			References (x => x.CreatedbyUser).Column ("user_id");
 
+			HasMany (x => x.WorkwearItems)
+				.KeyColumn ("wear_card_id")
+				.LazyLoad ();
+
 			HasManyToMany (x => x.UsedNorms).Table ("wear_cards_norms")
 				.ParentKeyColumn ("wear_card_id")
 				.ChildKeyColumn ("norm_id")

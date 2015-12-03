@@ -218,6 +218,24 @@ namespace workwear.Domain
 			}
 		}
 
+		private IList<Norm> workwearItems = new List<Norm>();
+
+		[Display (Name = "Спецодежда")]
+		public virtual IList<Norm> WorkwearItems {
+			get { return workwearItems; }
+			set { SetField (ref workwearItems, value, () => WorkwearItems); }
+		}
+
+		GenericObservableList<Norm> observableWorkwearItems;
+		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		public virtual GenericObservableList<Norm> ObservableWorkwearItems {
+			get {
+				if (observableWorkwearItems == null)
+					observableWorkwearItems = new GenericObservableList<Norm> (WorkwearItems);
+				return observableWorkwearItems;
+			}
+		}
+
 		#endregion
 
 		public virtual string Title {

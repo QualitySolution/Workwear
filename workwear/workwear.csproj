@@ -140,6 +140,8 @@
     <Compile Include="Representations\NormVM.cs" />
     <Compile Include="Repository\MeasurementUnitsRepository.cs" />
     <Compile Include="Repository\NormRepository.cs" />
+    <Compile Include="Domain\EmployeeCardItem.cs" />
+    <Compile Include="HibernateMapping\EmployeeCardItemMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
