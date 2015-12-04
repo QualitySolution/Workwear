@@ -235,7 +235,7 @@ public partial class MainWindow: Gtk.Window
 						winIncome.Destroy();
 						break;
 					case 1:
-						ExpenseDoc winExpense = new ExpenseDoc();
+						ExpenseDocDlg winExpense = new ExpenseDocDlg();
 						winExpense.NewItem = true;
 						winExpense.Show();
 						winExpense.Run();
@@ -298,7 +298,7 @@ public partial class MainWindow: Gtk.Window
 					case 1:
 						treeviewExpense.Selection.GetSelected(out iter);
 						itemid = (int)ExpenseFilter.GetValue(iter, 0);
-						ExpenseDoc winExpense = new ExpenseDoc();
+						ExpenseDocDlg winExpense = new ExpenseDocDlg();
 						winExpense.Fill(itemid);
 						winExpense.Show();
 						result = (ResponseType) winExpense.Run();

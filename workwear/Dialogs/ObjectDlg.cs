@@ -318,9 +318,9 @@ namespace workwear
 		protected void OnButtonGiveClicked(object sender, EventArgs e)
 		{
 			SaveIfPropertyChanged();
-			ExpenseDoc winExpense = new ExpenseDoc();
+			ExpenseDocDlg winExpense = new ExpenseDocDlg();
 			winExpense.NewItem = true;
-			winExpense.Operation = ExpenseDoc.Operations.Object;
+			winExpense.Operation = ExpenseDocDlg.Operations.Object;
 			winExpense.SetObject(Itemid);
 			winExpense.Show();
 			int result = (int) winExpense.Run();

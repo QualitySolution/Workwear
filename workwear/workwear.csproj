@@ -84,11 +84,9 @@
     <Compile Include="gtk-gui\workwear.IncomeTable.cs" />
     <Compile Include="SelectWearCardRow.cs" />
     <Compile Include="gtk-gui\workwear.SelectWearCardRow.cs" />
-    <Compile Include="ExpenseDoc.cs" />
     <Compile Include="ExpenseTable.cs" />
     <Compile Include="WriteOffDoc.cs" />
     <Compile Include="WriteOffTable.cs" />
-    <Compile Include="gtk-gui\workwear.ExpenseDoc.cs" />
     <Compile Include="gtk-gui\workwear.ExpenseTable.cs" />
     <Compile Include="SelectStockItem.cs" />
     <Compile Include="gtk-gui\workwear.SelectStockItem.cs" />
@@ -142,6 +140,9 @@
     <Compile Include="Repository\NormRepository.cs" />
     <Compile Include="Domain\EmployeeCardItem.cs" />
     <Compile Include="HibernateMapping\EmployeeCardItemMap.cs" />
+    <Compile Include="Domain\Stock\Expense.cs" />
+    <Compile Include="Dialogs\Stock\ExpenseDocDlg.cs" />
+    <Compile Include="gtk-gui\workwear.ExpenseDocDlg.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -201,6 +202,8 @@
     <Folder Include="HibernateMapping\" />
     <Folder Include="Repository\" />
     <Folder Include="Representations\" />
+    <Folder Include="Dialogs\Stock\" />
+    <Folder Include="Domain\Stock\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

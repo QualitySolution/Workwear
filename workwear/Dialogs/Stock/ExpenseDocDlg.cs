@@ -6,7 +6,7 @@ using QSProjectsLib;
 
 namespace workwear
 {
-	public partial class ExpenseDoc : Gtk.Dialog
+	public partial class ExpenseDocDlg : Gtk.Dialog
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public bool NewItem;
@@ -14,7 +14,7 @@ namespace workwear
 
 		public enum Operations {Employee, Object};
 
-		public ExpenseDoc()
+		public ExpenseDocDlg()
 		{
 			this.Build();
 			dateDoc.Date = DateTime.Today;

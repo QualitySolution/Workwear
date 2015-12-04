@@ -311,14 +311,13 @@ namespace workwear
 			} catch (Exception ex) {
 				QSMain.ErrorMessageWithLog(this, "Ошибка получения числящегося за сотрудником!", logger, ex);
 			}
-
 		}
 
 		protected void OnButtonGiveWearClicked (object sender, EventArgs e)
 		{
-			ExpenseDoc winExpense = new ExpenseDoc ();
+			ExpenseDocDlg winExpense = new ExpenseDocDlg ();
 			winExpense.NewItem = true;
-			winExpense.Operation = ExpenseDoc.Operations.Employee;
+			winExpense.Operation = ExpenseDocDlg.Operations.Employee;
 			winExpense.SetWorker (Entity.Id, String.Format ("{0} {1} {2}", entryLastName.Text, entryFirstName.Text, entryPatronymic.Text));
 			winExpense.Show ();
 			winExpense.Run ();

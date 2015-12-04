@@ -12,7 +12,7 @@ namespace workwear
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private int _WorkerId, _ObjectId, _ExpenseDocId;
-		private ExpenseDoc.Operations _Operation;
+		private ExpenseDocDlg.Operations _Operation;
 		private bool _CanSave = false;
 		private Gtk.ListStore ItemsListStore, StockListStore;
 		private string StockSearchText = "";
@@ -50,12 +50,12 @@ namespace workwear
 				FillStockList ();}
 		}
 
-		public ExpenseDoc.Operations Operation {
+		public ExpenseDocDlg.Operations Operation {
 			get {return _Operation;}
 			set {
-				buttonAdd.Sensitive = (WorkerId > 0  && value == ExpenseDoc.Operations.Employee) || 
-					(ObjectId > 0 && value == ExpenseDoc.Operations.Object);
-				PlacementColumn.Visible = value == ExpenseDoc.Operations.Object;
+				buttonAdd.Sensitive = (WorkerId > 0  && value == ExpenseDocDlg.Operations.Employee) || 
+					(ObjectId > 0 && value == ExpenseDocDlg.Operations.Object);
+				PlacementColumn.Visible = value == ExpenseDocDlg.Operations.Object;
 
 				if (_Operation == value)
 					return;
@@ -130,8 +130,8 @@ namespace workwear
 
 		private bool FillStockList()
 		{
-			if((Operation == ExpenseDoc.Operations.Employee && _WorkerId <= 0) 
-			   || (Operation == ExpenseDoc.Operations.Object && _ObjectId <= 0))
+			if((Operation == ExpenseDocDlg.Operations.Employee && _WorkerId <= 0) 
+			   || (Operation == ExpenseDocDlg.Operations.Object && _ObjectId <= 0))
 				return false;
 			StockListStore = new ListStore(typeof(long), // 0 - ID income row
 			                                typeof(int), //1 - nomenclature id
@@ -162,7 +162,7 @@ namespace workwear
 					"LEFT JOIN item_types ON nomenclature.type_id = item_types.id " +
 					"LEFT JOIN units ON units.id = item_types.units_id " +
 					"WHERE (spent.count IS NULL OR spent.count < stock_income_detail.quantity) ";
-				if(Operation == ExpenseDoc.Operations.Object)
+				if(Operation == ExpenseDocDlg.Operations.Object)
 					sql += "AND item_types.category = 'property' ";
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@current_expense", _ExpenseDocId);
