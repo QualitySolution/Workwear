@@ -14,6 +14,7 @@ namespace workwear.HMap
 			Map (x => x.NormPeriod).Column ("period_type").CustomType<NormPeriodTypeType> ();
 			Map (x => x.PeriodCount).Column ("period_count");
 
+			References (x => x.Norm).Column ("norm_id").Not.Nullable ();
 			References (x => x.Item).Column ("itemtype_id").Not.Nullable ();
 		}
 	}

@@ -36,7 +36,8 @@ namespace workwear.HMap
 			References (x => x.CreatedbyUser).Column ("user_id");
 
 			HasMany (x => x.WorkwearItems)
-				.KeyColumn ("wear_card_id")
+				.KeyColumn ("wear_card_id").Not.KeyNullable ()
+				.Cascade.AllDeleteOrphan ()
 				.LazyLoad ();
 
 			HasManyToMany (x => x.UsedNorms).Table ("wear_cards_norms")

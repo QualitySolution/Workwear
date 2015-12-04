@@ -80,6 +80,23 @@ namespace workwear
 			ytreeNorms.Selection.Changed += YtreeNorms_Selection_Changed;
 			ytreeNorms.ItemsDataSource = Entity.ObservableUsedNorms;
 
+			ytreeWorkwear.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItem> ()
+				.AddColumn ("ТОН").AddTextRenderer (node => node.ActiveNormItem.Norm.Title)
+				.AddColumn ("Наименование").AddTextRenderer (node => node.Item.Name)
+				.AddColumn ("По норме").AddTextRenderer (node => node.ActiveNormItem.Amount.ToString ())
+				.AddColumn ("Срок службы").AddTextRenderer (node => node.ActiveNormItem.LifeText)
+				.AddColumn ("Дата получения").AddTextRenderer (node => String.Format ("{0:d}", node.LastIssue))
+				.AddColumn ("Количество").AddTextRenderer (node => node.Amount.ToString ())
+				.AddColumn ("След. получение").AddTextRenderer (node => String.Format ("{0:d}", node.NextIssue))
+				.AddColumn ("Просрочка").AddTextRenderer (
+					node => node.NextIssue.HasValue && node.NextIssue.Value < DateTime.Today 
+					? RusNumber.FormatCase((int) (DateTime.Today - node.NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} деней") 
+					: String.Empty)
+				.AddColumn ("На складе").AddTextRenderer (node => "#не реализовано#")
+				.Finish ();
+			//ytreeWorkwear.Selection.Changed += YtreeNorms_Selection_Changed;
+			ytreeWorkwear.ItemsDataSource = Entity.ObservableWorkwearItems;
+
 			ytreeListedItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItems> ()
 				.AddColumn ("Наименование").AddTextRenderer (e => e.ItemTypeName)
 				.AddColumn ("Количество").AddTextRenderer (e => e.AmountText)

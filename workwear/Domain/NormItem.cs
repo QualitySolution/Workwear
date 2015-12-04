@@ -1,6 +1,7 @@
 ﻿using System;
 using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
+using QSProjectsLib;
 
 namespace workwear.Domain
 {
@@ -12,6 +13,14 @@ namespace workwear.Domain
 		#region Свойства
 
 		public virtual int Id { get; set; }
+
+		Norm norm;
+
+		[Display (Name = "Норма")]
+		public virtual Norm Norm {
+			get { return norm; }
+			set { SetField (ref norm, value, () => Norm); }
+		}
 
 		ItemsType item;
 
@@ -47,6 +56,40 @@ namespace workwear.Domain
 
 		#endregion
 
+		public virtual double AmountPerYear
+		{
+			get{
+				double years = -1;
+				switch(NormPeriod)
+				{
+				case NormPeriodType.Year:
+					years = PeriodCount;
+					break;
+				case NormPeriodType.Month:
+					years = (double)PeriodCount / 12;
+					break;
+				case NormPeriodType.Shift:
+					years = (double)PeriodCount / 247;
+					break;
+				}
+				return Amount / years;
+			}
+		}
+
+		public virtual string LifeText{
+			get{
+				switch(NormPeriod)
+				{
+				case NormPeriodType.Year:
+					return RusNumber.FormatCase (PeriodCount, "{0} год", "{0} года", "{0} лет");
+				case NormPeriodType.Month:
+					return RusNumber.FormatCase (PeriodCount, "{0} месяц", "{0} месяца", "{0} месяцев");
+				case NormPeriodType.Shift:
+					return RusNumber.FormatCase (PeriodCount, "{0} смена", "{0} смены", "{0} смен");
+				}
+				return String.Empty;
+			}
+		}
 
 		public NormItem ()
 		{

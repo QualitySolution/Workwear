@@ -29,6 +29,14 @@ namespace workwear.Domain
 			set { SetField (ref activeNormItem, value, () => ActiveNormItem); }
 		}
 
+		DateTime created;
+
+		[Display (Name = "Создана")]
+		public virtual DateTime Created {
+			get { return created; }
+			set { SetField (ref created, value, () => Created); }
+		}
+
 		int amount;
 
 		[Display (Name = "Выданное количество")]
@@ -37,20 +45,28 @@ namespace workwear.Domain
 			set { SetField (ref amount, value, () => Amount); }
 		}
 
-		DateTime lastIssue;
+		DateTime? lastIssue;
 
 		[Display (Name = "Последняя выдача")]
-		public virtual DateTime LastIssue {
+		public virtual DateTime? LastIssue {
 			get { return lastIssue; }
 			set { SetField (ref lastIssue, value, () => LastIssue); }
 		}
 
-		DateTime nextIssue;
+		DateTime? nextIssue;
 
 		[Display (Name = "Следующая выдача")]
-		public virtual DateTime NextIssue {
+		public virtual DateTime? NextIssue {
 			get { return nextIssue; }
 			set { SetField (ref nextIssue, value, () => NextIssue); }
+		}
+
+		bool requiredByNorm;
+
+		[Display (Name = "Активная норма")]
+		public virtual bool RequiredByNorm {
+			get { return requiredByNorm; }
+			set { SetField (ref requiredByNorm, value, () => RequiredByNorm); }
 		}
 
 		#endregion
@@ -59,6 +75,14 @@ namespace workwear.Domain
 		public EmployeeCardItem ()
 		{
 		}
+
+		public EmployeeCardItem (NormItem normItem)
+		{
+			ActiveNormItem = normItem;
+			Item = normItem.Item;
+			NextIssue = Created = DateTime.Today;
+		}
+
 	}
 }
 

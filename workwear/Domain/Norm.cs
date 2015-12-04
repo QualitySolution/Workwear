@@ -45,6 +45,22 @@ namespace workwear.Domain
 			set { SetField (ref tonParagraph, value, () => TONParagraph); }
 		}
 
+		public virtual string Title{
+			get{
+				string str = string.Empty;
+				if(!String.IsNullOrWhiteSpace (TONNumber) || !String.IsNullOrWhiteSpace (TONAttachment))
+					str += "ТОН ";
+				if (!String.IsNullOrWhiteSpace (TONNumber))
+					str += TONNumber;
+				if(!String.IsNullOrWhiteSpace (TONAttachment))
+					str += "-" + TONAttachment;
+
+				if (!String.IsNullOrWhiteSpace (TONParagraph))
+					str += String.Format (" п. {0}", TONParagraph);
+				return str.Trim ();
+			}
+		}
+
 		private IList<Post> professions = new List<Post>();
 
 		[Display (Name = "Профессии")]

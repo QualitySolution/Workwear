@@ -218,20 +218,20 @@ namespace workwear.Domain
 			}
 		}
 
-		private IList<Norm> workwearItems = new List<Norm>();
+		private IList<EmployeeCardItem> workwearItems = new List<EmployeeCardItem>();
 
 		[Display (Name = "Спецодежда")]
-		public virtual IList<Norm> WorkwearItems {
+		public virtual IList<EmployeeCardItem> WorkwearItems {
 			get { return workwearItems; }
 			set { SetField (ref workwearItems, value, () => WorkwearItems); }
 		}
 
-		GenericObservableList<Norm> observableWorkwearItems;
+		GenericObservableList<EmployeeCardItem> observableWorkwearItems;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<Norm> ObservableWorkwearItems {
+		public virtual GenericObservableList<EmployeeCardItem> ObservableWorkwearItems {
 			get {
 				if (observableWorkwearItems == null)
-					observableWorkwearItems = new GenericObservableList<Norm> (WorkwearItems);
+					observableWorkwearItems = new GenericObservableList<EmployeeCardItem> (WorkwearItems);
 				return observableWorkwearItems;
 			}
 		}
@@ -279,13 +279,54 @@ namespace workwear.Domain
 				return;
 			}
 			ObservableUsedNorms.Add (norm);
+			UpdateWorkwearItems ();
 		}
 
 		public virtual void RemoveUsedNorm(Norm norm)
 		{
 			ObservableUsedNorms.Remove (norm);
+			UpdateWorkwearItems ();
 		}
 
+		private void UpdateWorkwearItems()
+		{
+			//Проверяем нужно ли добавлять
+			var activeItems = WorkwearItems.OrderByDescending (i => i.Created);
+			var processed = new List<EmployeeCardItem>();
+			foreach(var norm in UsedNorms)
+			{
+				foreach (var normItem in norm.Items)
+				{
+					var currentItem = activeItems.FirstOrDefault (i => i.Item == normItem.Item);
+					if (currentItem == null)
+					{
+						currentItem = new EmployeeCardItem (normItem);
+						ObservableWorkwearItems.Add (currentItem);
+					}
+						
+
+					if(processed.Contains (currentItem))
+					{
+						if (normItem.AmountPerYear > currentItem.ActiveNormItem.AmountPerYear)
+							currentItem.ActiveNormItem = normItem;
+					}
+					else
+					{
+						processed.Add (currentItem);
+						currentItem.ActiveNormItem = normItem;
+					}
+				}
+			}
+			//Проставляем значение используется ли по норме.
+			WorkwearItems.ToList ().ForEach (i => i.RequiredByNorm = processed.Contains (i));
+
+			// Удаляем больше ненужные
+			var needRemove = WorkwearItems
+				.Where (i => !i.RequiredByNorm)
+				.Where (i => !i.LastIssue.HasValue);
+
+			needRemove.ToList ().ForEach (i => ObservableWorkwearItems.Remove (i));
+		}
 	}
 
 	public enum Sex{
