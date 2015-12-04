@@ -126,6 +126,14 @@ namespace workwear
 		
 		private global::Gamma.GtkWidgets.yTreeView ytreeWorkwear;
 		
+		private global::Gtk.HBox hbox11;
+		
+		private global::Gtk.Button buttonGiveWear1;
+		
+		private global::Gtk.Button buttonReturnWear1;
+		
+		private global::Gtk.Button buttonWriteOffWear1;
+		
 		private global::Gtk.Label label15;
 		
 		private global::Gtk.VBox vbox4;
@@ -755,7 +763,7 @@ namespace workwear
 			this.notebook1 = new global::Gtk.Notebook ();
 			this.notebook1.CanFocus = true;
 			this.notebook1.Name = "notebook1";
-			this.notebook1.CurrentPage = 1;
+			this.notebook1.CurrentPage = 0;
 			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.vbox6 = new global::Gtk.VBox ();
 			this.vbox6.Name = "vbox6";
@@ -847,9 +855,63 @@ namespace workwear
 			this.vbox7.Add (this.GtkScrolledWindow3);
 			global::Gtk.Box.BoxChild w64 = ((global::Gtk.Box.BoxChild)(this.vbox7 [this.GtkScrolledWindow3]));
 			w64.Position = 0;
+			// Container child vbox7.Gtk.Box+BoxChild
+			this.hbox11 = new global::Gtk.HBox ();
+			this.hbox11.Name = "hbox11";
+			this.hbox11.Spacing = 6;
+			// Container child hbox11.Gtk.Box+BoxChild
+			this.buttonGiveWear1 = new global::Gtk.Button ();
+			this.buttonGiveWear1.Sensitive = false;
+			this.buttonGiveWear1.CanFocus = true;
+			this.buttonGiveWear1.Name = "buttonGiveWear1";
+			this.buttonGiveWear1.UseUnderline = true;
+			this.buttonGiveWear1.Label = global::Mono.Unix.Catalog.GetString ("Выдача сотруднику");
+			global::Gtk.Image w65 = new global::Gtk.Image ();
+			w65.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.buttonGiveWear1.Image = w65;
+			this.hbox11.Add (this.buttonGiveWear1);
+			global::Gtk.Box.BoxChild w66 = ((global::Gtk.Box.BoxChild)(this.hbox11 [this.buttonGiveWear1]));
+			w66.Position = 0;
+			w66.Expand = false;
+			w66.Fill = false;
+			// Container child hbox11.Gtk.Box+BoxChild
+			this.buttonReturnWear1 = new global::Gtk.Button ();
+			this.buttonReturnWear1.Sensitive = false;
+			this.buttonReturnWear1.CanFocus = true;
+			this.buttonReturnWear1.Name = "buttonReturnWear1";
+			this.buttonReturnWear1.UseUnderline = true;
+			this.buttonReturnWear1.Label = global::Mono.Unix.Catalog.GetString ("Возврат на склад");
+			global::Gtk.Image w67 = new global::Gtk.Image ();
+			w67.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-redo", global::Gtk.IconSize.Menu);
+			this.buttonReturnWear1.Image = w67;
+			this.hbox11.Add (this.buttonReturnWear1);
+			global::Gtk.Box.BoxChild w68 = ((global::Gtk.Box.BoxChild)(this.hbox11 [this.buttonReturnWear1]));
+			w68.Position = 1;
+			w68.Expand = false;
+			w68.Fill = false;
+			// Container child hbox11.Gtk.Box+BoxChild
+			this.buttonWriteOffWear1 = new global::Gtk.Button ();
+			this.buttonWriteOffWear1.Sensitive = false;
+			this.buttonWriteOffWear1.CanFocus = true;
+			this.buttonWriteOffWear1.Name = "buttonWriteOffWear1";
+			this.buttonWriteOffWear1.UseUnderline = true;
+			this.buttonWriteOffWear1.Label = global::Mono.Unix.Catalog.GetString ("Списание");
+			global::Gtk.Image w69 = new global::Gtk.Image ();
+			w69.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-delete", global::Gtk.IconSize.Menu);
+			this.buttonWriteOffWear1.Image = w69;
+			this.hbox11.Add (this.buttonWriteOffWear1);
+			global::Gtk.Box.BoxChild w70 = ((global::Gtk.Box.BoxChild)(this.hbox11 [this.buttonWriteOffWear1]));
+			w70.Position = 2;
+			w70.Expand = false;
+			w70.Fill = false;
+			this.vbox7.Add (this.hbox11);
+			global::Gtk.Box.BoxChild w71 = ((global::Gtk.Box.BoxChild)(this.vbox7 [this.hbox11]));
+			w71.Position = 1;
+			w71.Expand = false;
+			w71.Fill = false;
 			this.notebook1.Add (this.vbox7);
-			global::Gtk.Notebook.NotebookChild w65 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1 [this.vbox7]));
-			w65.Position = 1;
+			global::Gtk.Notebook.NotebookChild w72 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1 [this.vbox7]));
+			w72.Position = 1;
 			// Notebook tab
 			this.label15 = new global::Gtk.Label ();
 			this.label15.Name = "label15";
@@ -870,8 +932,8 @@ namespace workwear
 			this.ytreeListedItems.Name = "ytreeListedItems";
 			this.GtkScrolledWindow1.Add (this.ytreeListedItems);
 			this.vbox4.Add (this.GtkScrolledWindow1);
-			global::Gtk.Box.BoxChild w67 = ((global::Gtk.Box.BoxChild)(this.vbox4 [this.GtkScrolledWindow1]));
-			w67.Position = 0;
+			global::Gtk.Box.BoxChild w74 = ((global::Gtk.Box.BoxChild)(this.vbox4 [this.GtkScrolledWindow1]));
+			w74.Position = 0;
 			// Container child vbox4.Gtk.Box+BoxChild
 			this.hbox9 = new global::Gtk.HBox ();
 			this.hbox9.Name = "hbox9";
@@ -883,14 +945,14 @@ namespace workwear
 			this.buttonGiveWear.Name = "buttonGiveWear";
 			this.buttonGiveWear.UseUnderline = true;
 			this.buttonGiveWear.Label = global::Mono.Unix.Catalog.GetString ("Выдача сотруднику");
-			global::Gtk.Image w68 = new global::Gtk.Image ();
-			w68.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonGiveWear.Image = w68;
+			global::Gtk.Image w75 = new global::Gtk.Image ();
+			w75.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.buttonGiveWear.Image = w75;
 			this.hbox9.Add (this.buttonGiveWear);
-			global::Gtk.Box.BoxChild w69 = ((global::Gtk.Box.BoxChild)(this.hbox9 [this.buttonGiveWear]));
-			w69.Position = 0;
-			w69.Expand = false;
-			w69.Fill = false;
+			global::Gtk.Box.BoxChild w76 = ((global::Gtk.Box.BoxChild)(this.hbox9 [this.buttonGiveWear]));
+			w76.Position = 0;
+			w76.Expand = false;
+			w76.Fill = false;
 			// Container child hbox9.Gtk.Box+BoxChild
 			this.buttonReturnWear = new global::Gtk.Button ();
 			this.buttonReturnWear.Sensitive = false;
@@ -898,14 +960,14 @@ namespace workwear
 			this.buttonReturnWear.Name = "buttonReturnWear";
 			this.buttonReturnWear.UseUnderline = true;
 			this.buttonReturnWear.Label = global::Mono.Unix.Catalog.GetString ("Возврат на склад");
-			global::Gtk.Image w70 = new global::Gtk.Image ();
-			w70.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-redo", global::Gtk.IconSize.Menu);
-			this.buttonReturnWear.Image = w70;
+			global::Gtk.Image w77 = new global::Gtk.Image ();
+			w77.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-redo", global::Gtk.IconSize.Menu);
+			this.buttonReturnWear.Image = w77;
 			this.hbox9.Add (this.buttonReturnWear);
-			global::Gtk.Box.BoxChild w71 = ((global::Gtk.Box.BoxChild)(this.hbox9 [this.buttonReturnWear]));
-			w71.Position = 1;
-			w71.Expand = false;
-			w71.Fill = false;
+			global::Gtk.Box.BoxChild w78 = ((global::Gtk.Box.BoxChild)(this.hbox9 [this.buttonReturnWear]));
+			w78.Position = 1;
+			w78.Expand = false;
+			w78.Fill = false;
 			// Container child hbox9.Gtk.Box+BoxChild
 			this.buttonWriteOffWear = new global::Gtk.Button ();
 			this.buttonWriteOffWear.Sensitive = false;
@@ -913,22 +975,22 @@ namespace workwear
 			this.buttonWriteOffWear.Name = "buttonWriteOffWear";
 			this.buttonWriteOffWear.UseUnderline = true;
 			this.buttonWriteOffWear.Label = global::Mono.Unix.Catalog.GetString ("Списание");
-			global::Gtk.Image w72 = new global::Gtk.Image ();
-			w72.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-delete", global::Gtk.IconSize.Menu);
-			this.buttonWriteOffWear.Image = w72;
+			global::Gtk.Image w79 = new global::Gtk.Image ();
+			w79.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-delete", global::Gtk.IconSize.Menu);
+			this.buttonWriteOffWear.Image = w79;
 			this.hbox9.Add (this.buttonWriteOffWear);
-			global::Gtk.Box.BoxChild w73 = ((global::Gtk.Box.BoxChild)(this.hbox9 [this.buttonWriteOffWear]));
-			w73.Position = 2;
-			w73.Expand = false;
-			w73.Fill = false;
+			global::Gtk.Box.BoxChild w80 = ((global::Gtk.Box.BoxChild)(this.hbox9 [this.buttonWriteOffWear]));
+			w80.Position = 2;
+			w80.Expand = false;
+			w80.Fill = false;
 			this.vbox4.Add (this.hbox9);
-			global::Gtk.Box.BoxChild w74 = ((global::Gtk.Box.BoxChild)(this.vbox4 [this.hbox9]));
-			w74.Position = 1;
-			w74.Expand = false;
-			w74.Fill = false;
+			global::Gtk.Box.BoxChild w81 = ((global::Gtk.Box.BoxChild)(this.vbox4 [this.hbox9]));
+			w81.Position = 1;
+			w81.Expand = false;
+			w81.Fill = false;
 			this.notebook1.Add (this.vbox4);
-			global::Gtk.Notebook.NotebookChild w75 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1 [this.vbox4]));
-			w75.Position = 2;
+			global::Gtk.Notebook.NotebookChild w82 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1 [this.vbox4]));
+			w82.Position = 2;
 			// Notebook tab
 			this.label21 = new global::Gtk.Label ();
 			this.label21.Name = "label21";
@@ -953,14 +1015,14 @@ namespace workwear
 			this.treeviewMovements.Name = "treeviewMovements";
 			this.GtkScrolledWindow.Add (this.treeviewMovements);
 			this.vbox5.Add (this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w77 = ((global::Gtk.Box.BoxChild)(this.vbox5 [this.GtkScrolledWindow]));
-			w77.Position = 0;
+			global::Gtk.Box.BoxChild w84 = ((global::Gtk.Box.BoxChild)(this.vbox5 [this.GtkScrolledWindow]));
+			w84.Position = 0;
 			this.vbox3.Add (this.vbox5);
-			global::Gtk.Box.BoxChild w78 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.vbox5]));
-			w78.Position = 0;
+			global::Gtk.Box.BoxChild w85 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.vbox5]));
+			w85.Position = 0;
 			this.notebook1.Add (this.vbox3);
-			global::Gtk.Notebook.NotebookChild w79 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1 [this.vbox3]));
-			w79.Position = 3;
+			global::Gtk.Notebook.NotebookChild w86 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1 [this.vbox3]));
+			w86.Position = 3;
 			// Notebook tab
 			this.label22 = new global::Gtk.Label ();
 			this.label22.Name = "label22";
@@ -968,14 +1030,14 @@ namespace workwear
 			this.notebook1.SetTabLabel (this.vbox3, this.label22);
 			this.label22.ShowAll ();
 			w1.Add (this.notebook1);
-			global::Gtk.Box.BoxChild w80 = ((global::Gtk.Box.BoxChild)(w1 [this.notebook1]));
-			w80.Position = 1;
+			global::Gtk.Box.BoxChild w87 = ((global::Gtk.Box.BoxChild)(w1 [this.notebook1]));
+			w87.Position = 1;
 			// Internal child workwear.EmployeeCardDlg.ActionArea
-			global::Gtk.HButtonBox w81 = this.ActionArea;
-			w81.Name = "dialog1_ActionArea";
-			w81.Spacing = 10;
-			w81.BorderWidth = ((uint)(5));
-			w81.LayoutStyle = ((global::Gtk.ButtonBoxStyle)(4));
+			global::Gtk.HButtonBox w88 = this.ActionArea;
+			w88.Name = "dialog1_ActionArea";
+			w88.Spacing = 10;
+			w88.BorderWidth = ((uint)(5));
+			w88.LayoutStyle = ((global::Gtk.ButtonBoxStyle)(4));
 			// Container child dialog1_ActionArea.Gtk.ButtonBox+ButtonBoxChild
 			this.buttonPrint = new global::Gtk.Button ();
 			this.buttonPrint.Sensitive = false;
@@ -983,13 +1045,13 @@ namespace workwear
 			this.buttonPrint.Name = "buttonPrint";
 			this.buttonPrint.UseUnderline = true;
 			this.buttonPrint.Label = global::Mono.Unix.Catalog.GetString ("Печать");
-			global::Gtk.Image w82 = new global::Gtk.Image ();
-			w82.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-print", global::Gtk.IconSize.Menu);
-			this.buttonPrint.Image = w82;
+			global::Gtk.Image w89 = new global::Gtk.Image ();
+			w89.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-print", global::Gtk.IconSize.Menu);
+			this.buttonPrint.Image = w89;
 			this.AddActionWidget (this.buttonPrint, 0);
-			global::Gtk.ButtonBox.ButtonBoxChild w83 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w81 [this.buttonPrint]));
-			w83.Expand = false;
-			w83.Fill = false;
+			global::Gtk.ButtonBox.ButtonBoxChild w90 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w88 [this.buttonPrint]));
+			w90.Expand = false;
+			w90.Fill = false;
 			// Container child dialog1_ActionArea.Gtk.ButtonBox+ButtonBoxChild
 			this.buttonCancel = new global::Gtk.Button ();
 			this.buttonCancel.CanDefault = true;
@@ -997,14 +1059,14 @@ namespace workwear
 			this.buttonCancel.Name = "buttonCancel";
 			this.buttonCancel.UseUnderline = true;
 			this.buttonCancel.Label = global::Mono.Unix.Catalog.GetString ("О_тменить");
-			global::Gtk.Image w84 = new global::Gtk.Image ();
-			w84.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-cancel", global::Gtk.IconSize.Menu);
-			this.buttonCancel.Image = w84;
+			global::Gtk.Image w91 = new global::Gtk.Image ();
+			w91.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-cancel", global::Gtk.IconSize.Menu);
+			this.buttonCancel.Image = w91;
 			this.AddActionWidget (this.buttonCancel, -6);
-			global::Gtk.ButtonBox.ButtonBoxChild w85 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w81 [this.buttonCancel]));
-			w85.Position = 1;
-			w85.Expand = false;
-			w85.Fill = false;
+			global::Gtk.ButtonBox.ButtonBoxChild w92 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w88 [this.buttonCancel]));
+			w92.Position = 1;
+			w92.Expand = false;
+			w92.Fill = false;
 			// Container child dialog1_ActionArea.Gtk.ButtonBox+ButtonBoxChild
 			this.buttonOk = new global::Gtk.Button ();
 			this.buttonOk.CanDefault = true;
@@ -1012,14 +1074,14 @@ namespace workwear
 			this.buttonOk.Name = "buttonOk";
 			this.buttonOk.UseUnderline = true;
 			this.buttonOk.Label = global::Mono.Unix.Catalog.GetString ("_OK");
-			global::Gtk.Image w86 = new global::Gtk.Image ();
-			w86.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-ok", global::Gtk.IconSize.Menu);
-			this.buttonOk.Image = w86;
-			w81.Add (this.buttonOk);
-			global::Gtk.ButtonBox.ButtonBoxChild w87 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w81 [this.buttonOk]));
-			w87.Position = 2;
-			w87.Expand = false;
-			w87.Fill = false;
+			global::Gtk.Image w93 = new global::Gtk.Image ();
+			w93.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-ok", global::Gtk.IconSize.Menu);
+			this.buttonOk.Image = w93;
+			w88.Add (this.buttonOk);
+			global::Gtk.ButtonBox.ButtonBoxChild w94 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w88 [this.buttonOk]));
+			w94.Position = 2;
+			w94.Expand = false;
+			w94.Fill = false;
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
@@ -1040,6 +1102,9 @@ namespace workwear
 			this.buttonAddNorm.Clicked += new global::System.EventHandler (this.OnButtonAddNormClicked);
 			this.buttonNormFromPost.Clicked += new global::System.EventHandler (this.OnButtonNormFromPostClicked);
 			this.buttonRemoveNorm.Clicked += new global::System.EventHandler (this.OnButtonRemoveNormClicked);
+			this.buttonGiveWear1.Clicked += new global::System.EventHandler (this.OnButtonGiveWearClicked);
+			this.buttonReturnWear1.Clicked += new global::System.EventHandler (this.OnButtonReturnWearClicked);
+			this.buttonWriteOffWear1.Clicked += new global::System.EventHandler (this.OnButtonWriteOffWearClicked);
 			this.buttonGiveWear.Clicked += new global::System.EventHandler (this.OnButtonGiveWearClicked);
 			this.buttonReturnWear.Clicked += new global::System.EventHandler (this.OnButtonReturnWearClicked);
 			this.buttonWriteOffWear.Clicked += new global::System.EventHandler (this.OnButtonWriteOffWearClicked);
