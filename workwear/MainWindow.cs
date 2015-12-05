@@ -8,6 +8,7 @@ using QSUpdater;
 using workwear;
 using QSOrmProject;
 using workwear.Domain;
+using workwear.Domain.Stock;
 
 public partial class MainWindow: Gtk.Window
 {	
@@ -22,7 +23,6 @@ public partial class MainWindow: Gtk.Window
 		this.Title = MainSupport.GetTitle();
 		QSMain.MakeNewStatusTargetForNlog();
 
-		Reference.RunReferenceItemDlg += OnRunReferenceItemDialog;
 		MainSupport.LoadBaseParameters ();
 
 		MainUpdater.RunCheckVersion (true, true, true);
@@ -101,67 +101,32 @@ public partial class MainWindow: Gtk.Window
 	{
 		Application.Quit();
 	}
-	
-	protected void OnRunReferenceItemDialog(object sender, Reference.RunReferenceItemDlgEventArgs e)
-	{
-		ResponseType Result;
-		switch (e.TableName)
-		{
-		case "item_types":
-			ItemTypeDlg ItemTypeEdit;
-			if(e.NewItem)
-				ItemTypeEdit = new ItemTypeDlg();
-			else 
-				ItemTypeEdit = new ItemTypeDlg(e.ItemId);
-			ItemTypeEdit.Show();
-			Result = (ResponseType)ItemTypeEdit.Run();
-			ItemTypeEdit.Destroy();
-			break;
-		case "nomenclature":
-			Nomenclature NomenclatureEdit = new Nomenclature();
-			if(e.NewItem)
-				NomenclatureEdit.NewItem = true;
-			else 
-				NomenclatureEdit.Fill(e.ItemId);
-			NomenclatureEdit.Show();
-			Result = (ResponseType)NomenclatureEdit.Run();
-			NomenclatureEdit.Destroy();
-			break;
-		default:
-			Result = ResponseType.None;
-			break;
-		}
-		e.Result = Result;
-	}
-	
+
 	protected void OnAction7Activated(object sender, EventArgs e)
 	{
-		Reference winref = new Reference();
-		winref.SetMode(true,false,true,true,true);
-		winref.FillList("units","Единица измерения", "Единицы измерения");
-		winref.Show();
-		winref.Run();
-		winref.Destroy();
+		var refWin = new OrmReference (typeof(MeasurementUnits));
+		var dialog = new OneWidgetDialog (refWin);
+		dialog.Show ();
+		dialog.Run ();
+		dialog.Destroy ();
 	}
 
 	protected void OnAction8Activated(object sender, EventArgs e)
 	{
-		Reference winref = new Reference();
-		winref.SetMode(true,false,true,true,true);
-		winref.FillList("posts","Должность", "Должности");
-		winref.Show();
-		winref.Run();
-		winref.Destroy();
+		var refWin = new OrmReference (typeof(Post));
+		var dialog = new OneWidgetDialog (refWin);
+		dialog.Show ();
+		dialog.Run ();
+		dialog.Destroy ();
 	}
 	
 	protected void OnAction9Activated(object sender, EventArgs e)
 	{
-		Reference winref = new Reference();
-		winref.SetMode(true,false,true,true,true);
-		winref.FillList("leaders","Руководитель", "Руководители");
-		winref.Show();
-		winref.Run();
-		winref.Destroy();
+		var refWin = new OrmReference (typeof(Leader));
+		var dialog = new OneWidgetDialog (refWin);
+		dialog.Show ();
+		dialog.Run ();
+		dialog.Destroy ();
 	}
 	
 	protected void OnAction5Activated(object sender, EventArgs e)
@@ -175,12 +140,11 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnAction6Activated(object sender, EventArgs e)
 	{
-		Reference winref = new Reference();
-		winref.SetMode(false, false, true, true, true);
-		winref.FillList("nomenclature","Номенклатура", "Номенклатуры");
-		winref.Show();
-		winref.Run();
-		winref.Destroy();
+		var refWin = new OrmReference (typeof(Nomenclature));
+		var dialog = new OneWidgetDialog (refWin);
+		dialog.Show ();
+		dialog.Run ();
+		dialog.Destroy ();
 	}
 
 	protected void OnAboutActionActivated(object sender, EventArgs e)
