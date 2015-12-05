@@ -6,13 +6,13 @@ using QSProjectsLib;
 
 namespace workwear
 {
-	public partial class Nomenclature : Gtk.Dialog
+	public partial class NomenclatureDlg : Gtk.Dialog
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public bool NewItem;
 		int Itemid;
 		
-		public Nomenclature()
+		public NomenclatureDlg()
 		{
 			this.Build();
 			ComboWorks.ComboFillUniqueValue(comboentrySize, "nomenclature", "size");
