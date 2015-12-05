@@ -8,6 +8,7 @@ using QSOrmProject;
 using QSProjectsLib;
 using QSValidation;
 using workwear.Domain;
+using workwear.Domain.Stock;
 using workwear.DTO;
 using workwear.Measurements;
 using workwear.Repository;
@@ -317,7 +318,7 @@ namespace workwear
 		{
 			ExpenseDocDlg winExpense = new ExpenseDocDlg ();
 			winExpense.NewItem = true;
-			winExpense.Operation = ExpenseDocDlg.Operations.Employee;
+			winExpense.Operation = ExpenseOperations.Employee;
 			winExpense.SetWorker (Entity.Id, String.Format ("{0} {1} {2}", entryLastName.Text, entryFirstName.Text, entryPatronymic.Text));
 			winExpense.Show ();
 			winExpense.Run ();
@@ -456,13 +457,13 @@ namespace workwear
 			{
 				ycomboWearStd.ItemsEnum = typeof(SizeStandartMenWear);
 				ycomboShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
-				FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (GrowthStandartWear.Men));
+				SizeHelper.FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (GrowthStandartWear.Men));
 			}
 			else if(Entity.Sex == Sex.F)
 			{
 				ycomboWearStd.ItemsEnum = typeof(SizeStandartWomenWear);
 				ycomboShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
-				FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (GrowthStandartWear.Women));
+				SizeHelper.FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (GrowthStandartWear.Women));
 			}
 			else
 			{
@@ -475,27 +476,15 @@ namespace workwear
 		protected void OnYcomboHeaddressChanged (object sender, EventArgs e)
 		{
 			if (ycomboHeaddressStd.SelectedItemOrNull != null)
-				FillSizeCombo (ycomboHeaddressSize, SizeHelper.GetSizesList (ycomboHeaddressStd.SelectedItem));
+				SizeHelper.FillSizeCombo (ycomboHeaddressSize, SizeHelper.GetSizesList (ycomboHeaddressStd.SelectedItem));
 			else
 				ycomboHeaddressSize.Clear ();
-		}
-
-		private void FillSizeCombo(ComboBox combo, string[] sizes)
-		{
-			combo.Clear ();
-			var list = new ListStore (typeof(string));
-			foreach (var size in sizes)
-				list.AppendValues (size);
-			combo.Model = list;
-			CellRendererText text = new CellRendererText ();
-			combo.PackStart (text, true);
-			combo.AddAttribute (text, "text", 0);
 		}
 
 		protected void OnYcomboWearStdChanged (object sender, EventArgs e)
 		{
 			if (ycomboWearStd.SelectedItemOrNull != null)
-				FillSizeCombo (ycomboWearSize, SizeHelper.GetSizesList (ycomboWearStd.SelectedItem));
+				SizeHelper.FillSizeCombo (ycomboWearSize, SizeHelper.GetSizesList (ycomboWearStd.SelectedItem));
 			else
 				ycomboWearSize.Clear ();
 		}
@@ -503,7 +492,7 @@ namespace workwear
 		protected void OnYcomboShoesStdChanged (object sender, EventArgs e)
 		{
 			if (ycomboShoesStd.SelectedItemOrNull != null)
-				FillSizeCombo (ycomboShoesSize, SizeHelper.GetSizesList (ycomboShoesStd.SelectedItem));
+				SizeHelper.FillSizeCombo (ycomboShoesSize, SizeHelper.GetSizesList (ycomboShoesStd.SelectedItem));
 			else
 				ycomboShoesSize.Clear ();
 		}
@@ -511,7 +500,7 @@ namespace workwear
 		protected void OnYcomboGlovesStdChanged (object sender, EventArgs e)
 		{
 			if (ycomboGlovesStd.SelectedItemOrNull != null)
-				FillSizeCombo (ycomboGlovesSize, SizeHelper.GetSizesList (ycomboGlovesStd.SelectedItem));
+				SizeHelper.FillSizeCombo (ycomboGlovesSize, SizeHelper.GetSizesList (ycomboGlovesStd.SelectedItem));
 			else
 				ycomboGlovesSize.Clear ();
 		}

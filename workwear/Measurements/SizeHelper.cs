@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
+using Gtk;
 
 namespace workwear.Measurements
 {
@@ -93,6 +94,19 @@ namespace workwear.Measurements
 
 			return list.Distinct ().ToArray ();
 		}
+
+		public static void FillSizeCombo(ComboBox combo, string[] sizes)
+		{
+			combo.Clear ();
+			var list = new ListStore (typeof(string));
+			foreach (var size in sizes)
+				list.AppendValues (size);
+			combo.Model = list;
+			CellRendererText text = new CellRendererText ();
+			combo.PackStart (text, true);
+			combo.AddAttribute (text, "text", 0);
+		}
+
 	}
 }
 
