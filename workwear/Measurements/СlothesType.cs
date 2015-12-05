@@ -5,19 +5,22 @@ namespace workwear.Measurements
 {
 	public enum СlothesType
 	{
-		[Display(Name = "Блузки, туники, куртки, платья")]
+		[Display(Name = "Женская одежда",
+			Description = "Блузки, туники, куртки, платья")]
 		[OnlyWoman]
-		WomanJacket,
-		[Display(Name = "Брюки, юбки, шорты")]
+		[SizeStandarts(typeof(SizeStandartWomenWear))]
+		WomanWear,
+/*		[Display(Name = "Брюки, юбки, шорты")]
 		[OnlyWoman]
 		WomanPants,
 		[Display(Name = "Женские джинсы")]
 		[OnlyWoman]
 		WomanJeans,
-		[Display(Name = "Женская обувь")]
+*/		[Display(Name = "Женская обувь")]
 		[OnlyWoman]
+		[SizeStandarts(typeof(SizeStandartWomenShoes))]
 		WomanShoes,
-		[Display(Name = "Женские колготки и чулки")]
+/*		[Display(Name = "Женские колготки и чулки")]
 		[OnlyWoman]
 		WomanTights,
 		[Display(Name = "Женские носки")]
@@ -29,10 +32,12 @@ namespace workwear.Measurements
 		[Display(Name = "Женское нижнее белье")]
 		[OnlyWoman]
 		WomanUnderwear,
-		[Display(Name = "Пиджаки, джемпера, жилеты, халаты, свитера, куртки, рубашки")]
+*/		[Display(Name = "Мужская одежда",
+			Description = "Пиджаки, джемпера, жилеты, халаты, свитера, куртки, рубашки")]
 		[OnlyMen]
-		MenJacket,
-		[Display(Name = "Сорочки")]
+		[SizeStandarts(typeof(SizeStandartMenWear))]
+		MenWear,
+/*		[Display(Name = "Сорочки")]
 		[OnlyMen]
 		MenShirts,
 		[Display(Name = "Мужские Брюки, шорты")]
@@ -47,15 +52,25 @@ namespace workwear.Measurements
 		[Display(Name = "Мужские носки")]
 		[OnlyMen]
 		MenSocks,
-		[Display(Name = "Мужская обувь")]
+*/		[Display(Name = "Мужская обувь")]
 		[OnlyMen]
+		[SizeStandarts(typeof(SizeStandartMenShoes))]
 		MenShoes,
 		[Display(Name = "Головные уборы")]
+		[SizeStandarts(typeof(SizeStandartHeaddress))]
 		Headgear,
-		[Display(Name = "Ремни")]
+/*		[Display(Name = "Ремни")]
 		Belts,
-		[Display(Name = "Перчатки")]
+*/		[Display(Name = "Перчатки")]
+		[SizeStandarts(typeof(SizeStandartGloves))]
 		Gloves,
+	}
+
+	public class СlothesTypeType : NHibernate.Type.EnumStringType
+	{
+		public СlothesTypeType () : base (typeof(СlothesType))
+		{
+		}
 	}
 
 	[AttributeUsage(AttributeTargets.Field)]
@@ -69,5 +84,17 @@ namespace workwear.Measurements
 	{
 
 	}
+
+	[AttributeUsage(AttributeTargets.Field)]
+	public class SizeStandartsAttribute : Attribute 
+	{
+		public Type StandartsEnumType { get; set;}
+
+		public SizeStandartsAttribute(Type enumStd)
+		{
+			StandartsEnumType = enumStd;
+		}
+	}
+
 }
 

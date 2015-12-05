@@ -1,13 +1,15 @@
 ﻿using System;
 using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
+using workwear.Measurements;
+using System.Collections.Generic;
 
 namespace workwear.Domain
 {
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Masculine,
 		NominativePlural = "типы номерклатуры",
 		Nominative = "тип номенклатуры")]
-	public class ItemsType : PropertyChangedBase, IDomainObject
+	public class ItemsType : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства
 
@@ -35,15 +37,39 @@ namespace workwear.Domain
 		[Display (Name = "Категория")]
 		public virtual ItemTypeCategory Category {
 			get { return category; }
-			set { SetField (ref category, value, () => Category); }
+			set { if(SetField (ref category, value, () => Category))
+				{
+					if (Category != ItemTypeCategory.wear)
+						WearCategory = null;
+				}
+			}
+		}
+
+		СlothesType? wearCategory;
+
+		[Display (Name = "Вид одежды")]
+		public virtual СlothesType? WearCategory {
+			get { return wearCategory; }
+			set { SetField (ref wearCategory, value, () => WearCategory); }
 		}
 
 		#endregion
 
-
 		public ItemsType ()
 		{
 		}
+
+		#region IValidatableObject implementation
+
+		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
+		{
+			if (Category == ItemTypeCategory.wear && WearCategory == null)
+				yield return new ValidationResult ("Вид одежды должен быть указан.", 
+					new[] { this.GetPropertyName (o => o.WearCategory)});
+		}
+
+		#endregion
+
 	}
 
 	public enum ItemTypeCategory{

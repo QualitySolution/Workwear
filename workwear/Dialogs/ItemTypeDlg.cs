@@ -3,6 +3,7 @@ using NLog;
 using QSOrmProject;
 using QSProjectsLib;
 using workwear.Domain;
+using workwear.Measurements;
 
 namespace workwear
 {
@@ -35,6 +36,9 @@ namespace workwear
 			ycomboCategory.ItemsEnum = typeof(ItemTypeCategory);
 			ycomboCategory.Binding.AddBinding (Entity, e => e.Category, w => w.SelectedItemOrNull).InitializeFromSource ();
 
+			ycomboWearCategory.ItemsEnum = typeof(СlothesType);
+			ycomboWearCategory.Binding.AddBinding (Entity, e => e.WearCategory, w => w.SelectedItemOrNull).InitializeFromSource ();
+
 			ycomboUnits.ItemsList = Repository.MeasurementUnitsRepository.GetActiveUnits (UoWGeneric);
 			ycomboUnits.Binding.AddBinding (Entity, e => e.Units, w => w.SelectedItem).InitializeFromSource ();
 		}
@@ -63,6 +67,11 @@ namespace workwear
 				OnEntitySaved (true);
 				Respond (Gtk.ResponseType.Ok);
 			}
+		}
+
+		protected void OnYcomboCategoryChanged (object sender, EventArgs e)
+		{
+			ycomboWearCategory.Sensitive = Entity.Category == ItemTypeCategory.wear;
 		}
 	}
 }
