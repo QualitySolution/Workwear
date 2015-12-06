@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using workwear.Domain;
 
 namespace workwear.Measurements
 {
@@ -8,6 +9,7 @@ namespace workwear.Measurements
 		[Display(Name = "Женская одежда",
 			Description = "Блузки, туники, куртки, платья")]
 		[OnlyWoman]
+		[NeedGrowth(Sex.F)]
 		[SizeStandarts(typeof(SizeStandartWomenWear))]
 		WomanWear,
 /*		[Display(Name = "Брюки, юбки, шорты")]
@@ -35,6 +37,7 @@ namespace workwear.Measurements
 */		[Display(Name = "Мужская одежда",
 			Description = "Пиджаки, джемпера, жилеты, халаты, свитера, куртки, рубашки")]
 		[OnlyMen]
+		[NeedGrowth(Sex.M)]
 		[SizeStandarts(typeof(SizeStandartMenWear))]
 		MenWear,
 /*		[Display(Name = "Сорочки")]
@@ -83,6 +86,17 @@ namespace workwear.Measurements
 	public class OnlyMenAttribute : Attribute 
 	{
 
+	}
+
+	[AttributeUsage(AttributeTargets.Field)]
+	public class NeedGrowthAttribute : Attribute 
+	{
+		public Sex Sex { set; get;}
+
+		public NeedGrowthAttribute (Sex sex)
+		{
+			Sex = sex;
+		}
 	}
 
 	[AttributeUsage(AttributeTargets.Field)]

@@ -107,6 +107,24 @@ namespace workwear.Measurements
 			combo.AddAttribute (text, "text", 0);
 		}
 
+		public static Type GetSizeStandartsEnum(СlothesType wearCategory)
+		{
+			var att = wearCategory.GetAttribute<SizeStandartsAttribute> ();
+			if (att == null)
+				throw new InvalidOperationException (String.Format ("У вида одежды {0} отсутствует атрибут SizeStandartsAttribute.", wearCategory));
+
+			return att.StandartsEnumType;
+		}
+
+		public static GrowthStandartWear? GetGrowthStandart(СlothesType wearCategory)
+		{
+			var att = wearCategory.GetAttribute<NeedGrowthAttribute> ();
+			if (att == null)
+				return null;
+
+			return att.Sex == workwear.Domain.Sex.F ? GrowthStandartWear.Women : GrowthStandartWear.Men;
+		}
+
 	}
 }
 

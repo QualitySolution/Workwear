@@ -1,140 +1,99 @@
 using System;
-using Gtk;
-using MySql.Data.MySqlClient;
 using NLog;
+using QSOrmProject;
 using QSProjectsLib;
+using workwear.Domain;
+using workwear.Domain.Stock;
+using workwear.Measurements;
 
 namespace workwear
 {
-	public partial class NomenclatureDlg : Gtk.Dialog
+	public partial class NomenclatureDlg : FakeTDIEntityGtkDialogBase<Nomenclature>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
-		public bool NewItem;
-		int Itemid;
-		
+
 		public NomenclatureDlg()
 		{
 			this.Build();
-			ComboWorks.ComboFillUniqueValue(comboentrySize, "nomenclature", "size");
-			ComboWorks.ComboFillUniqueValue(comboentryGrowth, "nomenclature", "growth");
-
-			string sql = "SELECT name, id, category FROM item_types";
-			ComboWorks.ComboFillUniversal(comboType, sql, "{0}", null, 1, ComboWorks.ListMode.WithNo, true);
+			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Nomenclature> ();
+			ConfigureDlg ();
 		}
 
-		public void Fill(int id)
+		public NomenclatureDlg (Nomenclature item) : this (item.Id) {}
+
+		public NomenclatureDlg(int id)
 		{
-			Itemid = id;
-			NewItem = false;
-
-			QSMain.CheckConnectionAlive ();
-			logger.Info("Запрос номенклатуры №{0}...", id);
-			string sql = "SELECT * FROM nomenclature WHERE nomenclature.id = @id";
-			try
-			{
-				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
-				
-				cmd.Parameters.AddWithValue("@id", id);
-				
-				using(MySqlDataReader rdr = cmd.ExecuteReader())
-				{		
-					TreeIter iter;
-					
-					rdr.Read();
-					
-					entryID.Text = rdr["id"].ToString();
-					entryName.Text = rdr["name"].ToString();
-					comboentrySize.Entry.Text = rdr["size"].ToString();
-					comboentryGrowth.Entry.Text = rdr["growth"].ToString();
-					if(rdr["type_id"] != DBNull.Value)
-					{
-						ListStoreWorks.SearchListStore((ListStore)comboType.Model, rdr.GetInt32("type_id"), out iter);
-						comboType.SetActiveIter(iter);
-					}
-					
-					logger.Info("Ok");
-				}
-				this.Title = entryName.Text;
-			}
-			catch (Exception ex)
-			{
-				QSMain.ErrorMessageWithLog(this, "Ошибка получения информации о номенклатуре!", logger, ex);
-				this.Respond(Gtk.ResponseType.Reject);
-			}
-			TestCanSave();
+			this.Build();
+			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Nomenclature> (id);
+			ConfigureDlg ();
 		}
 
-		protected void TestCanSave ()
+		private void ConfigureDlg()
 		{
-			bool Nameok = entryName.Text != "";
-			bool TypeOk = comboType.Active > 0;
-			buttonOk.Sensitive = Nameok && TypeOk;
-		}
+			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource ();
 
+			yentryName.Binding.AddBinding (Entity, e => e.Name, w => w.Text).InitializeFromSource ();
+
+			yentryItemsType.SubjectType = typeof(ItemsType);
+			yentryItemsType.Binding.AddBinding (Entity, e => e.Type, w => w.Subject).InitializeFromSource ();
+
+			var stdConverter = new SizeStandardCodeConverter ();
+
+			ycomboWearStd.Binding.AddBinding (Entity, e => e.SizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
+			ycomboWearSize.Binding.AddBinding (Entity, e => e.Size, w => w.ActiveText).InitializeFromSource ();
+			ycomboWearGrowth.Binding.AddBinding (Entity, e => e.WearGrowth, w => w.ActiveText).InitializeFromSource ();
+		}
+			
 		protected void OnButtonOkClicked (object sender, EventArgs e)
 		{
-			string sql;
-			if(NewItem)
+			if (Save ())
 			{
-				sql = "INSERT INTO nomenclature (name, type_id, size, growth) " +
-					"VALUES (@name, @type_id, @size, @growth)";
+				OnEntitySaved (true);
+				Respond (Gtk.ResponseType.Ok);
+			}
+		}
+
+		public override bool Save ()
+		{
+			logger.Info ("Запись номенклатуры...");
+			var valid = new QSValidation.QSValidator<Nomenclature> (UoWGeneric.Root);
+			if (valid.RunDlgIfNotValid (this))
+				return false;
+
+			try {
+				UoWGeneric.Save ();
+			} catch (Exception ex) {
+				QSMain.ErrorMessageWithLog (this, "Не удалось записать номенклатуру.", logger, ex);
+				return false;
+			}
+			logger.Info ("Ok");
+			return true;
+		}
+
+		protected void OnYentryItemsTypeChanged (object sender, EventArgs e)
+		{
+			if (Entity.Type != null && String.IsNullOrWhiteSpace (Entity.Name))
+				Entity.Name = Entity.Type.Name;
+
+			if(Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear && Entity.Type.WearCategory.HasValue)
+			{
+				ycomboWearStd.ItemsEnum = SizeHelper.GetSizeStandartsEnum (Entity.Type.WearCategory.Value);
+				ycomboWearStd.Sensitive = ycomboWearSize.Sensitive = true;
+
+				var growthStd = SizeHelper.GetGrowthStandart (Entity.Type.WearCategory.Value);
+				ycomboWearGrowth.Sensitive = growthStd != null;
+				if (growthStd != null) {
+					SizeHelper.FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (growthStd.Value));
+				} else
+					ycomboWearGrowth.Clear ();
 			}
 			else
-			{
-				sql = "UPDATE nomenclature SET name = @name, type_id = @type_id, " +
-				"size = @size, growth = @growth WHERE id = @id";
-			}
-			QSMain.CheckConnectionAlive ();
-			logger.Info("Запись номенклатуры...");
-			try 
-			{
-				TreeIter iter;
-				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
-				
-				cmd.Parameters.AddWithValue("@id", Itemid);
-				cmd.Parameters.AddWithValue("@name", entryName.Text);
-				if(comboentrySize.Entry.Text != "")
-					cmd.Parameters.AddWithValue("@size", comboentrySize.Entry.Text);
-				else 
-					cmd.Parameters.AddWithValue("@size", DBNull.Value);
-				if (comboentryGrowth.Entry.Text != "")
-					cmd.Parameters.AddWithValue("@growth", comboentryGrowth.Entry.Text);
-				else
-					cmd.Parameters.AddWithValue("@growth", DBNull.Value);
-				if(comboType.Active > 0 && comboType.GetActiveIter(out iter))
-					cmd.Parameters.AddWithValue("@type_id", comboType.Model.GetValue(iter,1));
-				else
-					cmd.Parameters.AddWithValue("@type_id", DBNull.Value);
-				
-				cmd.ExecuteNonQuery();
-				logger.Info("Ok");
-				Respond (Gtk.ResponseType.Ok);
-			} 
-			catch (Exception ex) 
-			{
-				QSMain.ErrorMessageWithLog(this, "Ошибка записи номенклатуры!", logger, ex);
-			}
+				ycomboWearStd.Sensitive = ycomboWearSize.Sensitive = ycomboWearGrowth.Sensitive = false;
 		}
 
-		protected void OnEntryNameChanged(object sender, EventArgs e)
+		protected void OnYcomboWearStdChanged (object sender, EventArgs e)
 		{
-			TestCanSave();
-		}
-
-		protected void OnComboTypeChanged(object sender, EventArgs e)
-		{
-			TreeIter iter;
-			comboType.GetActiveIter(out iter);
-			object[] Values = (object[]) comboType.Model.GetValue(iter, 2);
-			if (Values != null)
-			{
-				bool IsWear = Values[2].ToString() == "wear";
-				labelSize.Visible = IsWear;
-				labelGrowth.Visible = IsWear;
-				comboentrySize.Visible = IsWear;
-				comboentryGrowth.Visible = IsWear;
-			}
-			TestCanSave();
+			SizeHelper.FillSizeCombo (ycomboWearSize, SizeHelper.GetSizesList (ycomboWearStd.SelectedItem));
 		}
 	}
 }
