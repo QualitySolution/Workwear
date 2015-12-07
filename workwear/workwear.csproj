@@ -82,10 +82,8 @@
     <Compile Include="gtk-gui\workwear.IncomeTable.cs" />
     <Compile Include="SelectWearCardRow.cs" />
     <Compile Include="gtk-gui\workwear.SelectWearCardRow.cs" />
-    <Compile Include="ExpenseTable.cs" />
     <Compile Include="WriteOffDoc.cs" />
     <Compile Include="WriteOffTable.cs" />
-    <Compile Include="gtk-gui\workwear.ExpenseTable.cs" />
     <Compile Include="SelectStockItem.cs" />
     <Compile Include="gtk-gui\workwear.SelectStockItem.cs" />
     <Compile Include="gtk-gui\workwear.WriteOffDoc.cs" />
@@ -152,6 +150,8 @@
     <Compile Include="HibernateMapping\Stock\IncomeMap.cs" />
     <Compile Include="HibernateMapping\Stock\ExpenseItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\IncomeItemMap.cs" />
+    <Compile Include="Dialogs\Stock\ExpenseDocItemsView.cs" />
+    <Compile Include="gtk-gui\workwear.ExpenseDocItemsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

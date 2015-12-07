@@ -9,7 +9,7 @@ using workwear.Domain.Stock;
 namespace workwear
 {
 	[System.ComponentModel.ToolboxItem(true)]
-	public partial class ExpenseTable : Gtk.Bin
+	public partial class ExpenseDocItemsView : Gtk.Bin
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private int _WorkerId, _ObjectId, _ExpenseDocId;
@@ -69,7 +69,7 @@ namespace workwear
 			get {return _CanSave;}
 		}
 
-		public ExpenseTable()
+		public ExpenseDocItemsView()
 		{
 			this.Build();
 
