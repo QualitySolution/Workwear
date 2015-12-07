@@ -3,6 +3,7 @@ using Gtk;
 using MySql.Data.MySqlClient;
 using NLog;
 using QSProjectsLib;
+using workwear.Domain.Stock;
 
 namespace workwear
 {
@@ -12,7 +13,7 @@ namespace workwear
 		public bool NewItem;
 		private int Itemid, Worker_id, Object_id;
 
-		public enum Operations {Employee, Object};
+
 
 		public ExpenseDocDlg()
 		{
@@ -22,9 +23,9 @@ namespace workwear
 			comboOperation.Active = 0;
 		}
 
-		public Operations Operation
+		public ExpenseOperations Operation
 		{
-			get {return (Operations)comboOperation.Active;}
+			get {return (ExpenseOperations)comboOperation.Active;}
 			set	{comboOperation.Active = (int) value;}
 		}
 
@@ -208,10 +209,10 @@ namespace workwear
 			switch (comboOperation.Active)
 			{
 				case 0:
-					ItemsTable.Operation = Operations.Employee;
+					ItemsTable.Operation = ExpenseOperations.Employee;
 					break;
 				case 1:
-					ItemsTable.Operation = Operations.Object;
+					ItemsTable.Operation = ExpenseOperations.Object;
 					break;
 			}
 			TestCanSave();

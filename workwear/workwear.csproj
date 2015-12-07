@@ -72,8 +72,6 @@
     <Compile Include="MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Nomenclature.cs" />
-    <Compile Include="gtk-gui\workwear.Nomenclature.cs" />
     <Compile Include="MainWinObject.cs" />
     <Compile Include="gtk-gui\workwear.ObjectDlg.cs" />
     <Compile Include="MainWinCards.cs" />
@@ -143,6 +141,17 @@
     <Compile Include="Domain\Stock\Expense.cs" />
     <Compile Include="Dialogs\Stock\ExpenseDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.ExpenseDocDlg.cs" />
+    <Compile Include="HibernateMapping\Stock\ExpenseMap.cs" />
+    <Compile Include="Domain\Stock\ExpenseItem.cs" />
+    <Compile Include="Domain\Stock\Nomenclature.cs" />
+    <Compile Include="HibernateMapping\Stock\NomenclatureMap.cs" />
+    <Compile Include="gtk-gui\workwear.NomenclatureDlg.cs" />
+    <Compile Include="Dialogs\Stock\NomenclatureDlg.cs" />
+    <Compile Include="Domain\Stock\IncomeItem.cs" />
+    <Compile Include="Domain\Stock\Income.cs" />
+    <Compile Include="HibernateMapping\Stock\IncomeMap.cs" />
+    <Compile Include="HibernateMapping\Stock\ExpenseItemMap.cs" />
+    <Compile Include="HibernateMapping\Stock\IncomeItemMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -204,6 +213,7 @@
     <Folder Include="Representations\" />
     <Folder Include="Dialogs\Stock\" />
     <Folder Include="Domain\Stock\" />
+    <Folder Include="HibernateMapping\Stock\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

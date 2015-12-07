@@ -3,6 +3,7 @@ using Gtk;
 using MySql.Data.MySqlClient;
 using NLog;
 using QSProjectsLib;
+using workwear.Domain.Stock;
 
 namespace workwear
 {
@@ -320,7 +321,7 @@ namespace workwear
 			SaveIfPropertyChanged();
 			ExpenseDocDlg winExpense = new ExpenseDocDlg();
 			winExpense.NewItem = true;
-			winExpense.Operation = ExpenseDocDlg.Operations.Object;
+			winExpense.Operation = ExpenseOperations.Object;
 			winExpense.SetObject(Itemid);
 			winExpense.Show();
 			int result = (int) winExpense.Run();

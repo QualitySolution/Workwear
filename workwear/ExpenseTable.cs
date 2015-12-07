@@ -4,6 +4,7 @@ using Gtk;
 using MySql.Data.MySqlClient;
 using NLog;
 using QSProjectsLib;
+using workwear.Domain.Stock;
 
 namespace workwear
 {
@@ -12,7 +13,7 @@ namespace workwear
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private int _WorkerId, _ObjectId, _ExpenseDocId;
-		private ExpenseDocDlg.Operations _Operation;
+		private ExpenseOperations _Operation;
 		private bool _CanSave = false;
 		private Gtk.ListStore ItemsListStore, StockListStore;
 		private string StockSearchText = "";
@@ -50,12 +51,12 @@ namespace workwear
 				FillStockList ();}
 		}
 
-		public ExpenseDocDlg.Operations Operation {
+		public ExpenseOperations Operation {
 			get {return _Operation;}
 			set {
-				buttonAdd.Sensitive = (WorkerId > 0  && value == ExpenseDocDlg.Operations.Employee) || 
-					(ObjectId > 0 && value == ExpenseDocDlg.Operations.Object);
-				PlacementColumn.Visible = value == ExpenseDocDlg.Operations.Object;
+				buttonAdd.Sensitive = (WorkerId > 0  && value == ExpenseOperations.Employee) || 
+					(ObjectId > 0 && value == ExpenseOperations.Object);
+				PlacementColumn.Visible = value == ExpenseOperations.Object;
 
 				if (_Operation == value)
 					return;
@@ -130,8 +131,8 @@ namespace workwear
 
 		private bool FillStockList()
 		{
-			if((Operation == ExpenseDocDlg.Operations.Employee && _WorkerId <= 0) 
-			   || (Operation == ExpenseDocDlg.Operations.Object && _ObjectId <= 0))
+			if((Operation == ExpenseOperations.Employee && _WorkerId <= 0) 
+			   || (Operation == ExpenseOperations.Object && _ObjectId <= 0))
 				return false;
 			StockListStore = new ListStore(typeof(long), // 0 - ID income row
 			                                typeof(int), //1 - nomenclature id
@@ -162,7 +163,7 @@ namespace workwear
 					"LEFT JOIN item_types ON nomenclature.type_id = item_types.id " +
 					"LEFT JOIN units ON units.id = item_types.units_id " +
 					"WHERE (spent.count IS NULL OR spent.count < stock_income_detail.quantity) ";
-				if(Operation == ExpenseDocDlg.Operations.Object)
+				if(Operation == ExpenseOperations.Object)
 					sql += "AND item_types.category = 'property' ";
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@current_expense", _ExpenseDocId);
