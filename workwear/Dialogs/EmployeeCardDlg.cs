@@ -316,10 +316,7 @@ namespace workwear
 
 		protected void OnButtonGiveWearClicked (object sender, EventArgs e)
 		{
-			ExpenseDocDlg winExpense = new ExpenseDocDlg ();
-			winExpense.NewItem = true;
-			winExpense.Operation = ExpenseOperations.Employee;
-			winExpense.SetWorker (Entity.Id, String.Format ("{0} {1} {2}", entryLastName.Text, entryFirstName.Text, entryPatronymic.Text));
+			ExpenseDocDlg winExpense = new ExpenseDocDlg (Entity);
 			winExpense.Show ();
 			winExpense.Run ();
 			winExpense.Destroy ();

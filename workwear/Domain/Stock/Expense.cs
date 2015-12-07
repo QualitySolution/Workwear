@@ -80,9 +80,34 @@ namespace workwear.Domain.Stock
 		public Expense ()
 		{
 		}
+
+		#region IValidatableObject implementation
+
+		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
+		{
+			if (Date > new DateTime(2010,1,1))
+				yield return new ValidationResult ("Дата должны указана (не ранее 2010-го)", 
+					new[] { this.GetPropertyName (o => o.Date)});
+
+			if(Operation == ExpenseOperations.Object && Facility == null)
+				yield return new ValidationResult ("Объект должен быть указан", 
+					new[] { this.GetPropertyName (o => o.Date)});
+
+			if(Operation == ExpenseOperations.Employee && EmployeeCard == null)
+				yield return new ValidationResult ("Сотрудник должен быть указан", 
+					new[] { this.GetPropertyName (o => o.Date)});
+		}
+
+		#endregion
+
 	}
 
-	public enum ExpenseOperations {Employee, Object}
+	public enum ExpenseOperations {
+		[Display(Name = "Выдача сотруднику")]
+		Employee,
+		[Display(Name = "Выдача на объект")]
+		Object
+	}
 
 	public class ExpenseOperationsType : NHibernate.Type.EnumStringType
 	{

@@ -320,9 +320,10 @@ namespace workwear
 		{
 			SaveIfPropertyChanged();
 			ExpenseDocDlg winExpense = new ExpenseDocDlg();
-			winExpense.NewItem = true;
-			winExpense.Operation = ExpenseOperations.Object;
-			winExpense.SetObject(Itemid);
+			//FIXME Нужно реализовать передачу объекта.
+			throw new NotImplementedException ();
+			//winExpense.Operation = ExpenseOperations.Object;
+			//winExpense.SetObject(Itemid);
 			winExpense.Show();
 			int result = (int) winExpense.Run();
 			winExpense.Destroy();
