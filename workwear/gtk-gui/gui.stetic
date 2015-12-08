@@ -3260,9 +3260,6 @@
           <widget class="workwear.ExpenseDocItemsView" id="ItemsTable">
             <property name="MemberName" />
             <property name="Events">ButtonPressMask</property>
-            <property name="ExpenseDocId">0</property>
-            <property name="WorkerId">0</property>
-            <property name="ObjectId">0</property>
           </widget>
           <packing>
             <property name="Position">1</property>
@@ -3340,12 +3337,10 @@
             <property name="MemberName" />
             <property name="ShadowType">In</property>
             <child>
-              <widget class="Gtk.TreeView" id="treeviewItems">
+              <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeItems">
                 <property name="MemberName" />
-                <property name="HeightRequest">120</property>
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>
-                <signal name="CursorChanged" handler="OnTreeviewItemsCursorChanged" />
               </widget>
             </child>
           </widget>
@@ -3379,6 +3374,7 @@
             <child>
               <widget class="Gtk.Button" id="buttonDel">
                 <property name="MemberName" />
+                <property name="Sensitive">False</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-remove Menu</property>

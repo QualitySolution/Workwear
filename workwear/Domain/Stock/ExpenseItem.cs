@@ -23,7 +23,7 @@ namespace workwear.Domain.Stock
 
 		IncomeItem incomeOn;
 
-		[Display (Name = "Опирация прихода")]
+		[Display (Name = "Операция прихода")]
 		public virtual IncomeItem IncomeOn {
 			get { return incomeOn; }
 			set { SetField (ref incomeOn, value, () => IncomeOn); }

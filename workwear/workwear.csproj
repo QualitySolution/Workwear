@@ -152,6 +152,7 @@
     <Compile Include="HibernateMapping\Stock\IncomeItemMap.cs" />
     <Compile Include="Dialogs\Stock\ExpenseDocItemsView.cs" />
     <Compile Include="gtk-gui\workwear.ExpenseDocItemsView.cs" />
+    <Compile Include="Representations\StockBalanceVM.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

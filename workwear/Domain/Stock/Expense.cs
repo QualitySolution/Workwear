@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
+using System.Linq;
 using QSOrmProject;
 
 namespace workwear.Domain.Stock
@@ -9,8 +10,9 @@ namespace workwear.Domain.Stock
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
 		NominativePlural = "выдачи",
 		Nominative = "выдача")]
-	public class Expense : PropertyChangedBase, IDomainObject
+	public class Expense : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
 		#region Свойства
 
@@ -85,8 +87,8 @@ namespace workwear.Domain.Stock
 
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
 		{
-			if (Date > new DateTime(2010,1,1))
-				yield return new ValidationResult ("Дата должны указана (не ранее 2010-го)", 
+			if (Date < new DateTime(2008, 1, 1))
+				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
 					new[] { this.GetPropertyName (o => o.Date)});
 
 			if(Operation == ExpenseOperations.Object && Facility == null)
@@ -99,6 +101,27 @@ namespace workwear.Domain.Stock
 		}
 
 		#endregion
+
+		public virtual void AddItem(IncomeItem fromIncomeItem)
+		{
+			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.Nomenclature, fromIncomeItem.Nomenclature)))
+			{
+				logger.Warn ("Такая номенклатура уже добавлена. Пропускаем...");
+				return;
+			}
+			var newItem = new ExpenseItem () {
+				Amount = 1,
+				Nomenclature = fromIncomeItem.Nomenclature,
+				IncomeOn = fromIncomeItem
+			};
+
+			ObservableItems.Add (newItem);
+		}
+
+		public virtual void RemoveItem(ExpenseItem item)
+		{
+			ObservableItems.Remove (item);
+		}
 
 	}
 

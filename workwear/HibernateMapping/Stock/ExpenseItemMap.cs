@@ -12,8 +12,8 @@ namespace workwear.HMap
 			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
 			Map (x => x.Amount).Column ("quantity");
 
-			References (x => x.Nomenclature).Column ("nomenclature_id");
-			References (x => x.IncomeOn).Column ("stock_income_detail_id");
+			References (x => x.Nomenclature).Column ("nomenclature_id").Not.Nullable ();
+			References (x => x.IncomeOn).Column ("stock_income_detail_id").Not.Nullable ();
 		}
 	}
 }

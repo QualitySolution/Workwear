@@ -10,7 +10,7 @@ namespace workwear.HMap
 			Table ("stock_income");
 
 			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
-			Map (x => x.Operation).Column ("operation").CustomType<IncomeOperations> ();
+			Map (x => x.Operation).Column ("operation").CustomType<IncomeOperationsType> ();
 			Map (x => x.Date).Column ("date");
 			Map (x => x.Number).Column ("number");
 

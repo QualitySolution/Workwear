@@ -57,6 +57,8 @@ namespace workwear
 
 			yentryObject.SubjectType = typeof(Facility);
 			yentryObject.Binding.AddBinding (Entity, e => e.Facility, w => w.Subject).InitializeFromSource ();
+
+			ItemsTable.ExpenceDoc = Entity;
 		}			
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
