@@ -192,7 +192,7 @@ public partial class MainWindow: Gtk.Window
 				switch (notebookStock.CurrentPage)
 				{
 					case 0:
-						IncomeDoc winIncome = new IncomeDoc();
+						IncomeDocDlg winIncome = new IncomeDocDlg();
 						winIncome.NewItem = true;
 						winIncome.Show();
 						winIncome.Run();
@@ -252,7 +252,7 @@ public partial class MainWindow: Gtk.Window
 					case 0:
 						treeviewIncome.Selection.GetSelected(out iter);
 						itemid = (int)IncomeFilter.GetValue(iter, 0);
-						IncomeDoc winIncome = new IncomeDoc();
+						IncomeDocDlg winIncome = new IncomeDocDlg();
 						winIncome.Fill(itemid);
 						winIncome.Show();
 						result = (ResponseType) winIncome.Run();

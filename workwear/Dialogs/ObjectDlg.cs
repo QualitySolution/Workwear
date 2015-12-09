@@ -334,9 +334,9 @@ namespace workwear
 		protected void OnButtonReturnClicked(object sender, EventArgs e)
 		{
 			SaveIfPropertyChanged();
-			IncomeDoc winIncome = new IncomeDoc();
+			IncomeDocDlg winIncome = new IncomeDocDlg();
 			winIncome.NewItem = true;
-			winIncome.Operation = IncomeDoc.Operations.Object;
+			winIncome.Operation = IncomeDocDlg.Operations.Object;
 			winIncome.SetObject(Itemid);
 			winIncome.Show();
 			int result = (int) winIncome.Run();

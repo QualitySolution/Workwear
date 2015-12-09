@@ -8,11 +8,11 @@ using QSProjectsLib;
 namespace workwear
 {
 	[System.ComponentModel.ToolboxItem(true)]
-	public partial class IncomeTable : Gtk.Bin
+	public partial class IncomeDocItemsView : Gtk.Bin
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private int _WorkerId, _ObjectId, _IncomeDocId;
-		private IncomeDoc.Operations _Operation;
+		private IncomeDocDlg.Operations _Operation;
 		private bool _CanSave = false;
 		private Gtk.ListStore ItemsListStore, CardRowsListStore, PropertyListStore;
 		TreeModelFilter CardRowsFilter, PropertyFilter;
@@ -40,11 +40,11 @@ namespace workwear
 			}
 		}
 
-		public IncomeDoc.Operations Operation {
+		public IncomeDocDlg.Operations Operation {
 			get {return _Operation;}
 			set {
-				buttonAdd.Sensitive = (WorkerId > 0  && value == IncomeDoc.Operations.Return) || 
-					(ObjectId > 0 && value == IncomeDoc.Operations.Object) || value == IncomeDoc.Operations.Enter;
+				buttonAdd.Sensitive = (WorkerId > 0  && value == IncomeDocDlg.Operations.Return) || 
+					(ObjectId > 0 && value == IncomeDocDlg.Operations.Object) || value == IncomeDocDlg.Operations.Enter;
 
 				if (_Operation == value)
 					return;
@@ -57,7 +57,7 @@ namespace workwear
 			get {return _CanSave;}
 		}
 
-		public IncomeTable()
+		public IncomeDocItemsView()
 		{
 			this.Build();
 
@@ -359,7 +359,7 @@ namespace workwear
 		protected void OnButtonAddClicked (object sender, EventArgs e)
 		{
 			TreeIter[] items;
-			if (_Operation == IncomeDoc.Operations.Return)
+			if (_Operation == IncomeDocDlg.Operations.Return)
 			{
 				SelectWearCardRow WinSelect = new SelectWearCardRow(CardRowsFilter);
 				WinSelect.WorkerComboActive = false;
@@ -381,7 +381,7 @@ namespace workwear
 					CalculateTotal();
 				}
 			}
-			else if (_Operation == IncomeDoc.Operations.Object)
+			else if (_Operation == IncomeDocDlg.Operations.Object)
 			{
 				SelectObjectProperty WinSelect = new SelectObjectProperty(PropertyFilter);
 				WinSelect.ObjectComboActive = false;
@@ -492,9 +492,9 @@ namespace workwear
 			if((long)ItemsListStore.GetValue(iter, 0) > 0)
 				DeletedRowId.Add ((long)ItemsListStore.GetValue(iter, 0));
 			ItemsListStore.Remove(ref iter);
-			if(Operation == IncomeDoc.Operations.Return)
+			if(Operation == IncomeDocDlg.Operations.Return)
 				CardRowsFilter.Refilter ();
-			if(Operation == IncomeDoc.Operations.Object)
+			if(Operation == IncomeDocDlg.Operations.Object)
 				CardRowsFilter.Refilter ();
 			OnTreeviewItemsCursorChanged (null, null);
 			CalculateTotal();

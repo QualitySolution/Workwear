@@ -76,10 +76,6 @@
     <Compile Include="gtk-gui\workwear.ObjectDlg.cs" />
     <Compile Include="MainWinCards.cs" />
     <Compile Include="MainWinStock.cs" />
-    <Compile Include="IncomeDoc.cs" />
-    <Compile Include="gtk-gui\workwear.IncomeDoc.cs" />
-    <Compile Include="IncomeTable.cs" />
-    <Compile Include="gtk-gui\workwear.IncomeTable.cs" />
     <Compile Include="SelectWearCardRow.cs" />
     <Compile Include="gtk-gui\workwear.SelectWearCardRow.cs" />
     <Compile Include="WriteOffDoc.cs" />
@@ -153,6 +149,10 @@
     <Compile Include="Dialogs\Stock\ExpenseDocItemsView.cs" />
     <Compile Include="gtk-gui\workwear.ExpenseDocItemsView.cs" />
     <Compile Include="Representations\StockBalanceVM.cs" />
+    <Compile Include="Dialogs\Stock\IncomeDocDlg.cs" />
+    <Compile Include="Dialogs\Stock\IncomeDocItemsView.cs" />
+    <Compile Include="gtk-gui\workwear.IncomeDocDlg.cs" />
+    <Compile Include="gtk-gui\workwear.IncomeDocItemsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

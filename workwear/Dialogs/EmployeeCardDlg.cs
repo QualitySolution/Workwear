@@ -326,9 +326,9 @@ namespace workwear
 
 		protected void OnButtonReturnWearClicked (object sender, EventArgs e)
 		{
-			IncomeDoc winIncome = new IncomeDoc ();
+			IncomeDocDlg winIncome = new IncomeDocDlg ();
 			winIncome.NewItem = true;
-			winIncome.Operation = IncomeDoc.Operations.Return;
+			winIncome.Operation = IncomeDocDlg.Operations.Return;
 			winIncome.SetWorker (Entity.Id, String.Format ("{0} {1} {2}", entryLastName.Text, entryFirstName.Text, entryPatronymic.Text));
 			winIncome.Show ();
 			winIncome.Run ();
