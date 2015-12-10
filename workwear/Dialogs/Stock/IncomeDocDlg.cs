@@ -23,6 +23,18 @@ namespace workwear
 			ConfigureDlg ();
 		}
 
+		public IncomeDocDlg (EmployeeCard employee) : this () 
+		{
+			Entity.Operation = IncomeOperations.Return;
+			Entity.EmployeeCard = employee;
+		}
+
+		public IncomeDocDlg (Facility facility) : this () 
+		{
+			Entity.Operation = IncomeOperations.Object;
+			Entity.Facility = facility;
+		}
+
 		public IncomeDocDlg (Income item) : this (item.Id) {}
 
 		public IncomeDocDlg (int id)

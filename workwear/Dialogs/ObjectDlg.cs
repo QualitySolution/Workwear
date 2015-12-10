@@ -335,9 +335,10 @@ namespace workwear
 		{
 			SaveIfPropertyChanged();
 			IncomeDocDlg winIncome = new IncomeDocDlg();
-			winIncome.NewItem = true;
-			winIncome.Operation = IncomeDocDlg.Operations.Object;
-			winIncome.SetObject(Itemid);
+			//FIXME Нужно реализовать передачу объекта.
+			throw new NotImplementedException ();
+			//winIncome.Operation = IncomeDocDlg.IncomeOperations.Object;
+			//winIncome.SetObject(Itemid);
 			winIncome.Show();
 			int result = (int) winIncome.Run();
 			winIncome.Destroy();

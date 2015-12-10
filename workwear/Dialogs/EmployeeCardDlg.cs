@@ -21,6 +21,7 @@ namespace workwear
 		List<EmployeeCardItems> listedItems;
 		List<EmployeeCardMovements> Movements;
 		bool IsShowedMovementsTable = false;
+		bool IsShowedItemsTable = false;
 
 		public EmployeeCardDlg ()
 		{
@@ -32,6 +33,9 @@ namespace workwear
 
 		private void ConfigureDlg()
 		{
+			notebook1.GetNthPage (2).Visible = !UoWGeneric.IsNew;
+			notebook1.GetNthPage (3).Visible = !UoWGeneric.IsNew;
+
 			comboSex.ItemsEnum = typeof(Sex);
 			comboSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItem).InitializeFromSource ();
 
@@ -172,6 +176,8 @@ namespace workwear
 				QSMain.ErrorMessageWithLog (this, "Не удалось записать сотрудника.", logger, ex);
 				return false;
 			}
+			notebook1.GetNthPage (2).Visible = true;
+			notebook1.GetNthPage (3).Visible = true;
 			logger.Info ("Ok");
 			return true;
 		}
@@ -326,10 +332,7 @@ namespace workwear
 
 		protected void OnButtonReturnWearClicked (object sender, EventArgs e)
 		{
-			IncomeDocDlg winIncome = new IncomeDocDlg ();
-			winIncome.NewItem = true;
-			winIncome.Operation = IncomeDocDlg.Operations.Return;
-			winIncome.SetWorker (Entity.Id, String.Format ("{0} {1} {2}", entryLastName.Text, entryFirstName.Text, entryPatronymic.Text));
+			IncomeDocDlg winIncome = new IncomeDocDlg (Entity);
 			winIncome.Show ();
 			winIncome.Run ();
 			winIncome.Destroy ();
@@ -371,11 +374,18 @@ namespace workwear
 
 		protected void OnNotebook1SwitchPage (object o, SwitchPageArgs args)
 		{
-			if(notebook1.CurrentPage == 1 && !IsShowedMovementsTable)
+			if(notebook1.CurrentPage == 3 && !IsShowedMovementsTable)
 			{
 				IsShowedMovementsTable = true;
 				UpdateMovements ();
 			}
+
+			if(notebook1.CurrentPage == 2 && !IsShowedItemsTable)
+			{
+				IsShowedItemsTable = true;
+				UpdateListedItems ();
+			}
+
 		}
 
 		protected void OnYentryObjectChanged (object sender, EventArgs e)
