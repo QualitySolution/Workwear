@@ -104,12 +104,13 @@ namespace workwear.Domain.Stock
 
 		public virtual void AddItem(IncomeItem fromIncomeItem)
 		{
-			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.Nomenclature, fromIncomeItem.Nomenclature)))
+			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IncomeOn, fromIncomeItem)))
 			{
-				logger.Warn ("Такая номенклатура уже добавлена. Пропускаем...");
+				logger.Warn ("Номенклатура из этого поступления уже добавлена. Пропускаем...");
 				return;
 			}
 			var newItem = new ExpenseItem () {
+				ExpenseDoc = this,
 				Amount = 1,
 				Nomenclature = fromIncomeItem.Nomenclature,
 				IncomeOn = fromIncomeItem

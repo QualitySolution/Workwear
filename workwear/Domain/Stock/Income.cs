@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using QSOrmProject;
+using System.Linq;
 
 namespace workwear.Domain.Stock
 {
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
 		NominativePlural = "выдачи",
 		Nominative = "выдача")]
-	public class Income : PropertyChangedBase, IDomainObject
+	public class Income : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
 		#region Свойства
 
@@ -64,20 +66,20 @@ namespace workwear.Domain.Stock
 			set { SetField (ref createdbyUser, value, () => CreatedbyUser); }
 		}
 
-		private IList<ExpenseItem> items = new List<ExpenseItem>();
+		private IList<IncomeItem> items = new List<IncomeItem>();
 
 		[Display (Name = "Строки документа")]
-		public virtual IList<ExpenseItem> Items {
+		public virtual IList<IncomeItem> Items {
 			get { return items; }
 			set { SetField (ref items, value, () => Items); }
 		}
 
-		GenericObservableList<ExpenseItem> observableItems;
+		GenericObservableList<IncomeItem> observableItems;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<ExpenseItem> ObservableItems {
+		public virtual GenericObservableList<IncomeItem> ObservableItems {
 			get {
 				if (observableItems == null)
-					observableItems = new GenericObservableList<ExpenseItem> (Items);
+					observableItems = new GenericObservableList<IncomeItem> (Items);
 				return observableItems;
 			}
 		}
@@ -85,12 +87,93 @@ namespace workwear.Domain.Stock
 		#endregion
 
 
+		#region IValidatableObject implementation
+
+		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
+		{
+			if (Date < new DateTime(2008, 1, 1))
+				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
+					new[] { this.GetPropertyName (o => o.Date)});
+
+			if(Operation == IncomeOperations.Object && Facility == null)
+				yield return new ValidationResult ("Объект должен быть указан", 
+					new[] { this.GetPropertyName (o => o.Date)});
+
+			if(Operation == IncomeOperations.Return && EmployeeCard == null)
+				yield return new ValidationResult ("Сотрудник должен быть указан", 
+					new[] { this.GetPropertyName (o => o.Date)});
+		}
+
+		#endregion
+
+
 		public Income ()
 		{
 		}
+
+		public virtual void AddItem(ExpenseItem expenseFromItem, int count)
+		{
+			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IssuedOn, expenseFromItem)))
+			{
+				logger.Warn ("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
+				return;
+			}
+			decimal life = expenseFromItem.IncomeOn.LifePercent;
+			decimal cost = expenseFromItem.IncomeOn.Cost;
+			if(expenseFromItem.AutoWriteoffDate.HasValue)
+			{
+				double multiplier = (expenseFromItem.AutoWriteoffDate.Value - DateTime.Today).TotalDays / (expenseFromItem.AutoWriteoffDate.Value - expenseFromItem.ExpenseDoc.Date).TotalDays;
+				life = (life * (decimal)multiplier);
+				cost = (cost * (decimal)multiplier);
+			}
+				
+			var newItem = new IncomeItem () {
+				Amount = count,
+				Nomenclature = expenseFromItem.Nomenclature,
+				IssuedOn = expenseFromItem,
+				Cost = cost,
+				LifePercent = life
+			};
+
+			ObservableItems.Add (newItem);
+		}
+
+		public virtual void AddItem(Nomenclature nomenclature)
+		{
+			if (Operation != IncomeOperations.Enter)
+				throw new InvalidOperationException ("Добавление номенклатуры возможно только во входящую накладную. Возвраты должны добавляться с указанием строки выдачи.");
+
+			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.Nomenclature, nomenclature)))
+			{
+				logger.Warn ("Номенклатура из уже добавлена. Пропускаем...");
+				return;
+			}
+
+			var newItem = new IncomeItem () {
+				Amount = 1,
+				Nomenclature = nomenclature,
+				Cost = 0,
+				LifePercent = 1,
+			};
+
+			ObservableItems.Add (newItem);
+		}
+
+		public virtual void RemoveItem(IncomeItem item)
+		{
+			ObservableItems.Remove (item);
+		}
+
 	}
 
-	public enum IncomeOperations {Enter, Return, Object}
+	public enum IncomeOperations {
+		[Display(Name = "Приходная накладная")]
+		Enter,
+		[Display(Name = "Возврат от работника")]
+		Return,
+		[Display(Name = "Возврат с объекта")]
+		Object
+	}
 
 	public class IncomeOperationsType : NHibernate.Type.EnumStringType
 	{

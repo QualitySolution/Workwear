@@ -153,6 +153,7 @@
     <Compile Include="Dialogs\Stock\IncomeDocItemsView.cs" />
     <Compile Include="gtk-gui\workwear.IncomeDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.IncomeDocItemsView.cs" />
+    <Compile Include="Representations\EmployeeBalanceVM.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

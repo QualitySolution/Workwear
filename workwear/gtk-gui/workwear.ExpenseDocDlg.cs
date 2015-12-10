@@ -173,8 +173,8 @@ namespace workwear
 			this.ydateDoc.Events = ((global::Gdk.EventMask)(256));
 			this.ydateDoc.Name = "ydateDoc";
 			this.ydateDoc.Date = new global::System.DateTime (0);
-			this.ydateDoc.IsEditable = false;
-			this.ydateDoc.AutoSeparation = false;
+			this.ydateDoc.IsEditable = true;
+			this.ydateDoc.AutoSeparation = true;
 			this.table3.Add (this.ydateDoc);
 			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table3 [this.ydateDoc]));
 			w12.TopAttach = ((uint)(2));

@@ -13,6 +13,14 @@ namespace workwear.Domain.Stock
 
 		public virtual int Id { get; set; }
 
+		Expense expenseDoc;
+
+		[Display (Name = "Документ")]
+		public virtual Expense ExpenseDoc {
+			get { return expenseDoc; }
+			set { SetField (ref expenseDoc, value, () => ExpenseDoc); }
+		}
+
 		Nomenclature nomenclature;
 
 		[Display (Name = "Номеклатура")]
@@ -37,6 +45,13 @@ namespace workwear.Domain.Stock
 			set { SetField (ref amount, value, () => Amount); }
 		}
 
+		DateTime? autoWriteoffDate;
+
+		[Display (Name = "День автосписания")]
+		public virtual DateTime? AutoWriteoffDate {
+			get { return autoWriteoffDate; }
+			set { SetField (ref autoWriteoffDate, value, () => AutoWriteoffDate); }
+		}
 
 		#endregion
 
