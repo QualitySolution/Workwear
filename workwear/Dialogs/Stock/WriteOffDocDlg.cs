@@ -6,14 +6,14 @@ using QSProjectsLib;
 
 namespace workwear
 {
-	public partial class WriteOffDoc : Gtk.Dialog
+	public partial class WriteOffDocDlg : Gtk.Dialog
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public bool NewItem;
 		private int _CurrentWorkerId = -1, _CurrentObjectId = -1;
 		int Itemid;
 
-		public WriteOffDoc()
+		public WriteOffDocDlg()
 		{
 			this.Build();
 			dateDoc.Date = DateTime.Today;

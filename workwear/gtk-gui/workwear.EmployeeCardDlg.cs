@@ -128,7 +128,7 @@ namespace workwear
 		
 		private global::Gtk.HBox hbox11;
 		
-		private global::Gtk.Button buttonGiveWear1;
+		private global::Gtk.Button buttonGiveWearByNorm;
 		
 		private global::Gtk.Button buttonReturnWear1;
 		
@@ -763,7 +763,7 @@ namespace workwear
 			this.notebook1 = new global::Gtk.Notebook ();
 			this.notebook1.CanFocus = true;
 			this.notebook1.Name = "notebook1";
-			this.notebook1.CurrentPage = 0;
+			this.notebook1.CurrentPage = 1;
 			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.vbox6 = new global::Gtk.VBox ();
 			this.vbox6.Name = "vbox6";
@@ -860,23 +860,21 @@ namespace workwear
 			this.hbox11.Name = "hbox11";
 			this.hbox11.Spacing = 6;
 			// Container child hbox11.Gtk.Box+BoxChild
-			this.buttonGiveWear1 = new global::Gtk.Button ();
-			this.buttonGiveWear1.Sensitive = false;
-			this.buttonGiveWear1.CanFocus = true;
-			this.buttonGiveWear1.Name = "buttonGiveWear1";
-			this.buttonGiveWear1.UseUnderline = true;
-			this.buttonGiveWear1.Label = global::Mono.Unix.Catalog.GetString ("Выдача сотруднику");
+			this.buttonGiveWearByNorm = new global::Gtk.Button ();
+			this.buttonGiveWearByNorm.CanFocus = true;
+			this.buttonGiveWearByNorm.Name = "buttonGiveWearByNorm";
+			this.buttonGiveWearByNorm.UseUnderline = true;
+			this.buttonGiveWearByNorm.Label = global::Mono.Unix.Catalog.GetString ("Выдать неполученное");
 			global::Gtk.Image w65 = new global::Gtk.Image ();
 			w65.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonGiveWear1.Image = w65;
-			this.hbox11.Add (this.buttonGiveWear1);
-			global::Gtk.Box.BoxChild w66 = ((global::Gtk.Box.BoxChild)(this.hbox11 [this.buttonGiveWear1]));
+			this.buttonGiveWearByNorm.Image = w65;
+			this.hbox11.Add (this.buttonGiveWearByNorm);
+			global::Gtk.Box.BoxChild w66 = ((global::Gtk.Box.BoxChild)(this.hbox11 [this.buttonGiveWearByNorm]));
 			w66.Position = 0;
 			w66.Expand = false;
 			w66.Fill = false;
 			// Container child hbox11.Gtk.Box+BoxChild
 			this.buttonReturnWear1 = new global::Gtk.Button ();
-			this.buttonReturnWear1.Sensitive = false;
 			this.buttonReturnWear1.CanFocus = true;
 			this.buttonReturnWear1.Name = "buttonReturnWear1";
 			this.buttonReturnWear1.UseUnderline = true;
@@ -891,7 +889,6 @@ namespace workwear
 			w68.Fill = false;
 			// Container child hbox11.Gtk.Box+BoxChild
 			this.buttonWriteOffWear1 = new global::Gtk.Button ();
-			this.buttonWriteOffWear1.Sensitive = false;
 			this.buttonWriteOffWear1.CanFocus = true;
 			this.buttonWriteOffWear1.Name = "buttonWriteOffWear1";
 			this.buttonWriteOffWear1.UseUnderline = true;
@@ -1099,10 +1096,11 @@ namespace workwear
 			this.yimagePhoto.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler (this.OnYimagePhotoButtonPressEvent);
 			this.buttonLoadPhoto.Clicked += new global::System.EventHandler (this.OnButtonLoadPhotoClicked);
 			this.buttonSavePhoto.Clicked += new global::System.EventHandler (this.OnButtonSavePhotoClicked);
+			this.notebook1.SwitchPage += new global::Gtk.SwitchPageHandler (this.OnNotebook1SwitchPage);
 			this.buttonAddNorm.Clicked += new global::System.EventHandler (this.OnButtonAddNormClicked);
 			this.buttonNormFromPost.Clicked += new global::System.EventHandler (this.OnButtonNormFromPostClicked);
 			this.buttonRemoveNorm.Clicked += new global::System.EventHandler (this.OnButtonRemoveNormClicked);
-			this.buttonGiveWear1.Clicked += new global::System.EventHandler (this.OnButtonGiveWearClicked);
+			this.buttonGiveWearByNorm.Clicked += new global::System.EventHandler (this.OnButtonGiveWearByNormClicked);
 			this.buttonReturnWear1.Clicked += new global::System.EventHandler (this.OnButtonReturnWearClicked);
 			this.buttonWriteOffWear1.Clicked += new global::System.EventHandler (this.OnButtonWriteOffWearClicked);
 			this.buttonGiveWear.Clicked += new global::System.EventHandler (this.OnButtonGiveWearClicked);

@@ -78,12 +78,8 @@
     <Compile Include="MainWinStock.cs" />
     <Compile Include="SelectWearCardRow.cs" />
     <Compile Include="gtk-gui\workwear.SelectWearCardRow.cs" />
-    <Compile Include="WriteOffDoc.cs" />
-    <Compile Include="WriteOffTable.cs" />
     <Compile Include="SelectStockItem.cs" />
     <Compile Include="gtk-gui\workwear.SelectStockItem.cs" />
-    <Compile Include="gtk-gui\workwear.WriteOffDoc.cs" />
-    <Compile Include="gtk-gui\workwear.WriteOffTable.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
     <Compile Include="SelectObjectProperty.cs" />
@@ -154,6 +150,10 @@
     <Compile Include="gtk-gui\workwear.IncomeDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.IncomeDocItemsView.cs" />
     <Compile Include="Representations\EmployeeBalanceVM.cs" />
+    <Compile Include="Dialogs\Stock\WriteOffItemsView.cs" />
+    <Compile Include="gtk-gui\workwear.WriteOffItemsView.cs" />
+    <Compile Include="Dialogs\Stock\WriteOffDocDlg.cs" />
+    <Compile Include="gtk-gui\workwear.WriteOffDocDlg.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

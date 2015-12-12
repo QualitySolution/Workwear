@@ -204,7 +204,7 @@ public partial class MainWindow: Gtk.Window
 						winExpense.Destroy();
 						break;
 					case 2:
-						WriteOffDoc winWriteOff = new WriteOffDoc();
+						WriteOffDocDlg winWriteOff = new WriteOffDocDlg();
 						winWriteOff.NewItem = true;
 						winWriteOff.Show();
 						winWriteOff.Run();
@@ -267,7 +267,7 @@ public partial class MainWindow: Gtk.Window
 					case 2:
 						treeviewWriteOff.Selection.GetSelected(out iter);
 						itemid = (int)WriteOffFilter.GetValue(iter, 0);
-						WriteOffDoc winWriteOff = new WriteOffDoc();
+						WriteOffDocDlg winWriteOff = new WriteOffDocDlg();
 						winWriteOff.Fill(itemid);
 						winWriteOff.Show();
 						result = (ResponseType) winWriteOff.Run();

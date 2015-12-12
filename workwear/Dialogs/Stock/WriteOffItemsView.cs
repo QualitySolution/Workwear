@@ -8,7 +8,7 @@ using QSProjectsLib;
 namespace workwear
 {
 	[System.ComponentModel.ToolboxItem(true)]
-	public partial class WriteOffTable : Gtk.Bin
+	public partial class WriteOffItemsView : Gtk.Bin
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private int _CurWorkerId, _CurObjectId, _WriteOffDocId;
@@ -43,7 +43,7 @@ namespace workwear
 			get {return _CanSave;}
 		}
 
-		public WriteOffTable()
+		public WriteOffItemsView()
 		{
 			this.Build();
 

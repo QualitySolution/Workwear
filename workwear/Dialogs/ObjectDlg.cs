@@ -349,7 +349,7 @@ namespace workwear
 		protected void OnButtonWriteOffClicked(object sender, EventArgs e)
 		{
 			SaveIfPropertyChanged();
-			WriteOffDoc winWriteOff = new WriteOffDoc();
+			WriteOffDocDlg winWriteOff = new WriteOffDocDlg();
 			winWriteOff.NewItem = true;
 			winWriteOff.CurrentObjectId = Itemid;
 			winWriteOff.Show();

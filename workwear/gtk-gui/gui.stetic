@@ -1984,7 +1984,8 @@
           <widget class="Gtk.Notebook" id="notebook1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">0</property>
+            <property name="CurrentPage">1</property>
+            <signal name="SwitchPage" handler="OnNotebook1SwitchPage" />
             <child>
               <widget class="Gtk.VBox" id="vbox6">
                 <property name="MemberName" />
@@ -2110,15 +2111,14 @@
                     <property name="MemberName" />
                     <property name="Spacing">6</property>
                     <child>
-                      <widget class="Gtk.Button" id="buttonGiveWear1">
+                      <widget class="Gtk.Button" id="buttonGiveWearByNorm">
                         <property name="MemberName" />
-                        <property name="Sensitive">False</property>
                         <property name="CanFocus">True</property>
                         <property name="Type">TextAndIcon</property>
                         <property name="Icon">stock:gtk-add Menu</property>
-                        <property name="Label" translatable="yes">Выдача сотруднику</property>
+                        <property name="Label" translatable="yes">Выдать неполученное</property>
                         <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonGiveWearClicked" />
+                        <signal name="Clicked" handler="OnButtonGiveWearByNormClicked" />
                       </widget>
                       <packing>
                         <property name="Position">0</property>
@@ -2130,7 +2130,6 @@
                     <child>
                       <widget class="Gtk.Button" id="buttonReturnWear1">
                         <property name="MemberName" />
-                        <property name="Sensitive">False</property>
                         <property name="CanFocus">True</property>
                         <property name="Type">TextAndIcon</property>
                         <property name="Icon">stock:gtk-redo Menu</property>
@@ -2148,7 +2147,6 @@
                     <child>
                       <widget class="Gtk.Button" id="buttonWriteOffWear1">
                         <property name="MemberName" />
-                        <property name="Sensitive">False</property>
                         <property name="CanFocus">True</property>
                         <property name="Type">TextAndIcon</property>
                         <property name="Icon">stock:gtk-delete Menu</property>
@@ -3345,7 +3343,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.WriteOffDoc" design-size="582 436">
+  <widget class="Gtk.Dialog" id="workwear.WriteOffDocDlg" design-size="582 436">
     <property name="MemberName" />
     <property name="Title" translatable="yes">Новое списание</property>
     <property name="WindowPosition">CenterOnParent</property>
@@ -3520,7 +3518,7 @@
           </packing>
         </child>
         <child>
-          <widget class="workwear.WriteOffTable" id="ItemsTable">
+          <widget class="workwear.WriteOffItemsView" id="ItemsTable">
             <property name="MemberName" />
             <property name="Events">ButtonPressMask</property>
             <property name="WriteOffDocId">0</property>
@@ -3579,7 +3577,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.WriteOffTable" design-size="572 263">
+  <widget class="Gtk.Bin" id="workwear.WriteOffItemsView" design-size="572 263">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>

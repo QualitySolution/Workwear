@@ -342,7 +342,7 @@ namespace workwear
 
 		protected void OnButtonWriteOffWearClicked (object sender, EventArgs e)
 		{
-			WriteOffDoc winWriteOff = new WriteOffDoc ();
+			WriteOffDocDlg winWriteOff = new WriteOffDocDlg ();
 			winWriteOff.NewItem = true;
 			winWriteOff.CurrentWorkerId = Entity.Id;
 			winWriteOff.Show ();
@@ -543,6 +543,11 @@ namespace workwear
 			var norms = Repository.NormRepository.GetNormForPost (UoWGeneric, Entity.Post);
 			foreach (var norm in norms)
 				Entity.AddUsedNorm (norm);
+		}
+
+		protected void OnButtonGiveWearByNormClicked (object sender, EventArgs e)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
