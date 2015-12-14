@@ -1,145 +1,78 @@
 using System;
-using Gtk;
-using MySql.Data.MySqlClient;
 using NLog;
+using QSOrmProject;
 using QSProjectsLib;
+using workwear.Domain.Stock;
+using workwear.Repository;
+using workwear.Domain;
 
 namespace workwear
 {
-	public partial class WriteOffDocDlg : Gtk.Dialog
+	public partial class WriteOffDocDlg : FakeTDIEntityGtkDialogBase<Writeoff>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
-		public bool NewItem;
-		private int _CurrentWorkerId = -1, _CurrentObjectId = -1;
-		int Itemid;
 
 		public WriteOffDocDlg()
 		{
 			this.Build();
-			dateDoc.Date = DateTime.Today;
-			labelUser.LabelProp = QSMain.User.Name;
+			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Writeoff> ();
+			Entity.Date = DateTime.Today;
+			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
+			ConfigureDlg ();
 		}
 
-		public int CurrentWorkerId
+		public WriteOffDocDlg (EmployeeCard employee) : this () 
 		{
-			get {return _CurrentWorkerId;} 
-			set {if(_CurrentWorkerId != value)
-				{
-					_CurrentWorkerId = value;
-					ItemsTable.CurWorkerId = value;
-				}
-			}
+			ItemsTable.CurWorker = employee;
 		}
 
-		public int CurrentObjectId
+		public WriteOffDocDlg (Facility facility) : this () 
 		{
-			get {return _CurrentObjectId;} 
-			set {if(_CurrentObjectId != value)
-				{
-					_CurrentObjectId = value;
-					ItemsTable.CurObjectId = value;
-				}
-			}
+			//Entity.Facility = facility;
+			//FIXME
 		}
 
-		public void Fill(int id)
+		public WriteOffDocDlg (Writeoff item) : this (item.Id) {}
+
+		public WriteOffDocDlg (int id)
 		{
-			Itemid = id;
-			NewItem = false;
-
-			QSMain.CheckConnectionAlive ();
-			logger.Info("Запрос акта списания №{0}...", id);
-			string sql = "SELECT stock_write_off.*, users.name as user " +
-				"FROM stock_write_off " +
-				"LEFT JOIN users ON stock_write_off.user_id = users.id " +
-				"WHERE stock_write_off.id = @id";
-			try
-			{
-				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
-
-				cmd.Parameters.AddWithValue("@id", id);
-
-				using(MySqlDataReader rdr = cmd.ExecuteReader())
-				{		
-					rdr.Read();
-
-					labelId.LabelProp = rdr["id"].ToString();
-					labelUser.LabelProp = rdr["user"].ToString();
-					if(rdr["date"] != DBNull.Value)
-					{
-						dateDoc.Date = rdr.GetDateTime("date");
-					}
-				}
-				ItemsTable.WriteOffDocId = Itemid;
-				logger.Info("Ok");
-
-				this.Title =  "Списание №" + labelId.LabelProp;
-			}
-			catch (Exception ex)
-			{
-				QSMain.ErrorMessageWithLog(this, "Ошибка получения документа!", logger, ex);
-				this.Respond(Gtk.ResponseType.Reject);
-			}
-			TestCanSave();
+			this.Build ();
+			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Writeoff> (id);
+			ConfigureDlg ();
 		}
 
-		protected void TestCanSave ()
+		private void ConfigureDlg()
 		{
-			bool Dateok = !dateDoc.IsEmpty;
-			bool DetailOk = ItemsTable.CanSave;
-			buttonOk.Sensitive = Dateok && DetailOk;
+			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource ();
+
+			ylabelCreatedBy.Binding.AddFuncBinding (Entity, e => e.CreatedbyUser.Name, w => w.LabelProp).InitializeFromSource ();
+
+			ydateDoc.Binding.AddBinding (Entity, e => e.Date, w => w.Date).InitializeFromSource ();
+
+			ItemsTable.WriteoffDoc = Entity;
+		}			
+
+		public override bool Save()
+		{
+			logger.Info ("Запись документа...");
+			var valid = new QSValidation.QSValidator<Writeoff> (UoWGeneric.Root);
+			if (valid.RunDlgIfNotValid ((Gtk.Window)this.Toplevel))
+				return false;
+
+			try {
+				UoWGeneric.Save ();
+			} catch (Exception ex) {
+				QSMain.ErrorMessageWithLog (this, "Не удалось записать документ.", logger, ex);
+				return false;
+			}
+			logger.Info ("Ok");
+			return true;
 		}
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
 		{
-			string sql;
-			if(NewItem)
-			{
-				sql = "INSERT INTO stock_write_off (date, user_id) " +
-						"VALUES (@date, @user_id)";
-			}
-			else
-			{
-				sql = "UPDATE stock_write_off SET date = @date " +
-					"WHERE id = @id";
-			}
-			QSMain.CheckConnectionAlive ();
-			logger.Info("Запись документа...");
-			MySqlTransaction trans = QSMain.connectionDB.BeginTransaction();
-			try 
-			{
-				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB, trans);
-
-				cmd.Parameters.AddWithValue("@id", Itemid);
-				cmd.Parameters.AddWithValue("@date", dateDoc.Date);
-				cmd.Parameters.AddWithValue("@user_id", QSMain.User.Id);
-
-				cmd.ExecuteNonQuery();
-				if(NewItem)
-					Itemid = (int) cmd.LastInsertedId;
-
-				if(ItemsTable.SaveWriteOffDetails(Itemid, trans))
-					trans.Commit();
-				else
-					trans.Rollback();
-				logger.Info("Ok");
+			if(Save ())
 				Respond (Gtk.ResponseType.Ok);
-			} 
-			catch (Exception ex) 
-			{
-				trans.Rollback();
-				QSMain.ErrorMessageWithLog(this, "Ошибка записи документа!", logger, ex);
-			}
-		}
-
-		protected void OnDateDocDateChanged(object sender, EventArgs e)
-		{
-			TestCanSave();
-		}
-
-		protected void OnItemsTableCanSaveStateChanged(object sender, EventArgs e)
-		{
-			TestCanSave();
 		}
 	}
 }

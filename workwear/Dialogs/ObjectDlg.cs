@@ -350,8 +350,11 @@ namespace workwear
 		{
 			SaveIfPropertyChanged();
 			WriteOffDocDlg winWriteOff = new WriteOffDocDlg();
-			winWriteOff.NewItem = true;
-			winWriteOff.CurrentObjectId = Itemid;
+			//FIXME Нужно реализовать передачу объекта.
+			throw new NotImplementedException ();
+
+			//winWriteOff.NewItem = true;
+			//winWriteOff.CurrentObjectId = Itemid;
 			winWriteOff.Show();
 			int result = (int) winWriteOff.Run();
 			winWriteOff.Destroy();

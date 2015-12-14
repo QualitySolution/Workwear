@@ -342,9 +342,7 @@ namespace workwear
 
 		protected void OnButtonWriteOffWearClicked (object sender, EventArgs e)
 		{
-			WriteOffDocDlg winWriteOff = new WriteOffDocDlg ();
-			winWriteOff.NewItem = true;
-			winWriteOff.CurrentWorkerId = Entity.Id;
+			WriteOffDocDlg winWriteOff = new WriteOffDocDlg (Entity);
 			winWriteOff.Show ();
 			winWriteOff.Run ();
 			winWriteOff.Destroy ();

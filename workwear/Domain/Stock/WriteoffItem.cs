@@ -47,6 +47,21 @@ namespace workwear.Domain.Stock
 
 		#endregion
 
+		public virtual string LastOwnText{
+			get{
+				if (IncomeOn != null)
+					return "склад";
+				if(IssuedOn != null)
+				{
+					if (IssuedOn.ExpenseDoc.Operation == ExpenseOperations.Employee)
+						return IssuedOn.ExpenseDoc.EmployeeCard.ShortName;
+
+					if (IssuedOn.ExpenseDoc.Operation == ExpenseOperations.Object)
+						return IssuedOn.ExpenseDoc.Facility.Name;
+				}
+				return String.Empty;
+			}
+		}
 
 		public WriteoffItem ()
 		{

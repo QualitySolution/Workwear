@@ -10,7 +10,7 @@ namespace workwear
 		
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 		
-		private global::Gtk.TreeView treeviewItems;
+		private global::Gamma.GtkWidgets.yTreeView ytreeItems;
 		
 		private global::Gtk.HBox hbox1;
 		
@@ -49,11 +49,10 @@ namespace workwear
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
-			this.treeviewItems = new global::Gtk.TreeView ();
-			this.treeviewItems.HeightRequest = 120;
-			this.treeviewItems.CanFocus = true;
-			this.treeviewItems.Name = "treeviewItems";
-			this.GtkScrolledWindow.Add (this.treeviewItems);
+			this.ytreeItems = new global::Gamma.GtkWidgets.yTreeView ();
+			this.ytreeItems.CanFocus = true;
+			this.ytreeItems.Name = "ytreeItems";
+			this.GtkScrolledWindow.Add (this.ytreeItems);
 			this.vbox2.Add (this.GtkScrolledWindow);
 			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.GtkScrolledWindow]));
 			w3.Position = 1;
@@ -137,7 +136,6 @@ namespace workwear
 				this.Child.ShowAll ();
 			}
 			this.Hide ();
-			this.treeviewItems.CursorChanged += new global::System.EventHandler (this.OnTreeviewItemsCursorChanged);
 			this.buttonAddStore.Clicked += new global::System.EventHandler (this.OnButtonAddStoreClicked);
 			this.buttonAddWorker.Clicked += new global::System.EventHandler (this.OnButtonAddWorkerClicked);
 			this.buttonAddObject.Clicked += new global::System.EventHandler (this.OnButtonAddObjectClicked);

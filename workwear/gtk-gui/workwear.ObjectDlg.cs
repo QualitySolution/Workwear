@@ -5,23 +5,41 @@ namespace workwear
 	public partial class ObjectDlg
 	{
 		private global::Gtk.Table table1;
+		
 		private global::Gtk.Entry entryName;
+		
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
+		
 		private global::Gtk.TextView textviewAddress;
+		
 		private global::Gtk.HBox hbox1;
+		
 		private global::Gtk.Label labelID;
+		
 		private global::Gtk.Button buttonPlacement;
+		
 		private global::Gtk.Label label2;
+		
 		private global::Gtk.Label label3;
+		
 		private global::Gtk.Label label4;
+		
 		private global::Gtk.Label label1;
+		
 		private global::Gtk.ScrolledWindow GtkScrolledWindow1;
+		
 		private global::Gtk.TreeView treeviewProperty;
+		
 		private global::Gtk.HBox hbox6;
+		
 		private global::Gtk.Button buttonGive;
+		
 		private global::Gtk.Button buttonReturn;
+		
 		private global::Gtk.Button buttonWriteOff;
+		
 		private global::Gtk.Button buttonCancel;
+		
 		private global::Gtk.Button buttonOk;
 
 		protected virtual void Build ()

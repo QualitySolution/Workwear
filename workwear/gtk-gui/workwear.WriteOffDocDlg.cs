@@ -10,17 +10,17 @@ namespace workwear
 		
 		private global::Gtk.Label label4;
 		
-		private global::Gtk.Label labelId;
+		private global::Gamma.GtkWidgets.yLabel ylabelId;
 		
 		private global::Gtk.Table table3;
-		
-		private global::QSWidgetLib.DatePicker dateDoc;
 		
 		private global::Gtk.Label label5;
 		
 		private global::Gtk.Label label6;
 		
-		private global::Gtk.Label labelUser;
+		private global::Gamma.Widgets.yDatePicker ydateDoc;
+		
+		private global::Gamma.GtkWidgets.yLabel ylabelCreatedBy;
 		
 		private global::workwear.WriteOffItemsView ItemsTable;
 		
@@ -59,14 +59,13 @@ namespace workwear
 			w2.XOptions = ((global::Gtk.AttachOptions)(4));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
-			this.labelId = new global::Gtk.Label ();
-			this.labelId.Name = "labelId";
-			this.labelId.LabelProp = global::Mono.Unix.Catalog.GetString ("не определен");
-			this.table2.Add (this.labelId);
-			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table2 [this.labelId]));
+			this.ylabelId = new global::Gamma.GtkWidgets.yLabel ();
+			this.ylabelId.Name = "ylabelId";
+			this.ylabelId.LabelProp = global::Mono.Unix.Catalog.GetString ("ylabel3");
+			this.table2.Add (this.ylabelId);
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table2 [this.ylabelId]));
 			w3.LeftAttach = ((uint)(1));
 			w3.RightAttach = ((uint)(2));
-			w3.XOptions = ((global::Gtk.AttachOptions)(4));
 			w3.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.hbox1.Add (this.table2);
 			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.table2]));
@@ -77,28 +76,14 @@ namespace workwear
 			this.table3.RowSpacing = ((uint)(6));
 			this.table3.ColumnSpacing = ((uint)(6));
 			// Container child table3.Gtk.Table+TableChild
-			this.dateDoc = new global::QSWidgetLib.DatePicker ();
-			this.dateDoc.Events = ((global::Gdk.EventMask)(256));
-			this.dateDoc.Name = "dateDoc";
-			this.dateDoc.Date = new global::System.DateTime (0);
-			this.dateDoc.IsEditable = true;
-			this.dateDoc.AutoSeparation = true;
-			this.table3.Add (this.dateDoc);
-			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table3 [this.dateDoc]));
-			w5.TopAttach = ((uint)(1));
-			w5.BottomAttach = ((uint)(2));
-			w5.LeftAttach = ((uint)(1));
-			w5.RightAttach = ((uint)(2));
-			w5.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table3.Gtk.Table+TableChild
 			this.label5 = new global::Gtk.Label ();
 			this.label5.Name = "label5";
 			this.label5.Xalign = 1F;
 			this.label5.LabelProp = global::Mono.Unix.Catalog.GetString ("Пользователь:");
 			this.table3.Add (this.label5);
-			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table3 [this.label5]));
-			w6.XOptions = ((global::Gtk.AttachOptions)(4));
-			w6.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table3 [this.label5]));
+			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table3.Gtk.Table+TableChild
 			this.label6 = new global::Gtk.Label ();
 			this.label6.Name = "label6";
@@ -106,17 +91,31 @@ namespace workwear
 			this.label6.LabelProp = global::Mono.Unix.Catalog.GetString ("Дата<span foreground=\"red\">*</span>:");
 			this.label6.UseMarkup = true;
 			this.table3.Add (this.label6);
-			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table3 [this.label6]));
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table3 [this.label6]));
+			w6.TopAttach = ((uint)(1));
+			w6.BottomAttach = ((uint)(2));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table3.Gtk.Table+TableChild
+			this.ydateDoc = new global::Gamma.Widgets.yDatePicker ();
+			this.ydateDoc.Events = ((global::Gdk.EventMask)(256));
+			this.ydateDoc.Name = "ydateDoc";
+			this.ydateDoc.Date = new global::System.DateTime (0);
+			this.ydateDoc.IsEditable = true;
+			this.ydateDoc.AutoSeparation = true;
+			this.table3.Add (this.ydateDoc);
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table3 [this.ydateDoc]));
 			w7.TopAttach = ((uint)(1));
 			w7.BottomAttach = ((uint)(2));
-			w7.XOptions = ((global::Gtk.AttachOptions)(4));
+			w7.LeftAttach = ((uint)(1));
+			w7.RightAttach = ((uint)(2));
 			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table3.Gtk.Table+TableChild
-			this.labelUser = new global::Gtk.Label ();
-			this.labelUser.Name = "labelUser";
-			this.labelUser.LabelProp = global::Mono.Unix.Catalog.GetString ("неизвестен");
-			this.table3.Add (this.labelUser);
-			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table3 [this.labelUser]));
+			this.ylabelCreatedBy = new global::Gamma.GtkWidgets.yLabel ();
+			this.ylabelCreatedBy.Name = "ylabelCreatedBy";
+			this.ylabelCreatedBy.LabelProp = global::Mono.Unix.Catalog.GetString ("ylabel1");
+			this.table3.Add (this.ylabelCreatedBy);
+			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table3 [this.ylabelCreatedBy]));
 			w8.LeftAttach = ((uint)(1));
 			w8.RightAttach = ((uint)(2));
 			w8.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -133,9 +132,6 @@ namespace workwear
 			this.ItemsTable = new global::workwear.WriteOffItemsView ();
 			this.ItemsTable.Events = ((global::Gdk.EventMask)(256));
 			this.ItemsTable.Name = "ItemsTable";
-			this.ItemsTable.WriteOffDocId = 0;
-			this.ItemsTable.CurWorkerId = 0;
-			this.ItemsTable.CurObjectId = 0;
 			w1.Add (this.ItemsTable);
 			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(w1 [this.ItemsTable]));
 			w11.Position = 1;
@@ -180,8 +176,6 @@ namespace workwear
 			this.DefaultWidth = 582;
 			this.DefaultHeight = 436;
 			this.Show ();
-			this.dateDoc.DateChanged += new global::System.EventHandler (this.OnDateDocDateChanged);
-			this.ItemsTable.CanSaveStateChanged += new global::System.EventHandler (this.OnItemsTableCanSaveStateChanged);
 			this.buttonOk.Clicked += new global::System.EventHandler (this.OnButtonOkClicked);
 		}
 	}
