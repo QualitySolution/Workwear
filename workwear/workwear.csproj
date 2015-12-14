@@ -154,6 +154,10 @@
     <Compile Include="gtk-gui\workwear.WriteOffItemsView.cs" />
     <Compile Include="Dialogs\Stock\WriteOffDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.WriteOffDocDlg.cs" />
+    <Compile Include="Domain\Stock\Writeoff.cs" />
+    <Compile Include="Domain\Stock\WriteoffItem.cs" />
+    <Compile Include="HibernateMapping\Stock\WriteoffMap.cs" />
+    <Compile Include="HibernateMapping\Stock\WriteoffItemMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
