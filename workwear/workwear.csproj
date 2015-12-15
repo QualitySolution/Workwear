@@ -158,6 +158,9 @@
     <Compile Include="Domain\Stock\WriteoffItem.cs" />
     <Compile Include="HibernateMapping\Stock\WriteoffMap.cs" />
     <Compile Include="HibernateMapping\Stock\WriteoffItemMap.cs" />
+    <Compile Include="JournalFilters\EmployeeBalanceFilter.cs" />
+    <Compile Include="gtk-gui\workwear.EmployeeBalanceFilter.cs" />
+    <Compile Include="Repository\EmployeeRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -220,6 +223,7 @@
     <Folder Include="Dialogs\Stock\" />
     <Folder Include="Domain\Stock\" />
     <Folder Include="HibernateMapping\Stock\" />
+    <Folder Include="JournalFilters\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

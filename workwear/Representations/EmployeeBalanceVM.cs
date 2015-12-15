@@ -16,12 +16,38 @@ namespace workwear.ViewModel
 {
 	public class EmployeeBalanceVM : RepresentationModelWithoutEntityBase<EmployeeBalanceVMNode>
 	{
-		EmployeeCard Employee { get; set;}
+		EmployeeCard employee;
+
+		EmployeeCard Employee {
+			get {
+				if (Filter != null)
+					return Filter.RestrictEmployee;
+				else
+					return employee;
+			}
+			set {
+				employee = value;
+			}
+		}
+
+		public EmployeeBalanceFilter Filter {
+			get {
+				return RepresentationFilter as EmployeeBalanceFilter;
+			}
+			set { RepresentationFilter = value as IRepresentationFilter;
+			}
+		}
 
 		#region IRepresentationModel implementation
 
 		public override void UpdateNodes ()
 		{
+			if(Employee == null)
+			{
+				SetItemsSource (new List<EmployeeBalanceVMNode> ());
+				return;
+			}
+
 			EmployeeBalanceVMNode resultAlias = null;
 
 			Expense expenseAlias = null;
@@ -89,6 +115,11 @@ namespace workwear.ViewModel
 		}
 
 		#endregion
+
+		public EmployeeBalanceVM (EmployeeBalanceFilter filter) : this(filter.UoW)
+		{
+			Filter = filter;
+		}
 
 		public EmployeeBalanceVM (EmployeeCard employee) : this(UnitOfWorkFactory.CreateWithoutRoot ())
 		{

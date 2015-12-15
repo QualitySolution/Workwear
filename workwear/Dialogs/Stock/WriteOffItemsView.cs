@@ -76,17 +76,19 @@ namespace workwear
 
 		protected void OnButtonAddWorkerClicked(object sender, EventArgs e)
 		{
-			if(CurWorker != null)
-			{
-				var selectFromEmployeeDlg = new ReferenceRepresentation (new ViewModel.EmployeeBalanceVM (CurWorker));
-				selectFromEmployeeDlg.Mode = OrmReferenceMode.MultiSelect;
-				selectFromEmployeeDlg.ObjectSelected += SelectFromEmployeeDlg_ObjectSelected;
+			var filter = new EmployeeBalanceFilter (MyOrmDialog.UoW);
+			if (CurWorker != null)
+				filter.RestrictEmployee = CurWorker;
 
-				var dialog = new OneWidgetDialog (selectFromEmployeeDlg);
-				dialog.Show ();
-				dialog.Run ();
-				dialog.Destroy ();
-			}
+			var selectFromEmployeeDlg = new ReferenceRepresentation (new ViewModel.EmployeeBalanceVM (filter));
+			selectFromEmployeeDlg.ShowFilter = CurWorker == null;
+			selectFromEmployeeDlg.Mode = OrmReferenceMode.MultiSelect;
+			selectFromEmployeeDlg.ObjectSelected += SelectFromEmployeeDlg_ObjectSelected;
+
+			var dialog = new OneWidgetDialog (selectFromEmployeeDlg);
+			dialog.Show ();
+			dialog.Run ();
+			dialog.Destroy ();
 		}
 
 		protected void OnButtonAddObjectClicked(object sender, EventArgs e)
