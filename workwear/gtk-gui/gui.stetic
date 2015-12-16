@@ -142,6 +142,7 @@
                 <property name="ShowSpecialStateAll">False</property>
                 <property name="ShowSpecialStateNot">False</property>
                 <property name="UseShortTitle">False</property>
+                <property name="DefaultFirst">False</property>
                 <signal name="Changed" handler="OnYcomboCategoryChanged" />
               </widget>
               <packing>
@@ -193,6 +194,7 @@
                 <property name="ShowSpecialStateAll">False</property>
                 <property name="ShowSpecialStateNot">True</property>
                 <property name="UseShortTitle">False</property>
+                <property name="DefaultFirst">False</property>
               </widget>
               <packing>
                 <property name="TopAttach">3</property>
@@ -305,7 +307,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.NomenclatureDlg" design-size="424 225">
+  <widget class="Gtk.Dialog" id="workwear.NomenclatureDlg" design-size="424 250">
     <property name="MemberName" />
     <property name="Title" translatable="yes">Новая номенклатура</property>
     <property name="WindowPosition">CenterOnParent</property>
@@ -318,7 +320,7 @@
         <child>
           <widget class="Gtk.Table" id="table2">
             <property name="MemberName" />
-            <property name="NRows">5</property>
+            <property name="NRows">6</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
@@ -334,6 +336,7 @@
                     <property name="ShowSpecialStateAll">False</property>
                     <property name="ShowSpecialStateNot">False</property>
                     <property name="UseShortTitle">True</property>
+                    <property name="DefaultFirst">True</property>
                     <signal name="Changed" handler="OnYcomboWearStdChanged" />
                   </widget>
                   <packing>
@@ -357,8 +360,8 @@
                 </child>
               </widget>
               <packing>
-                <property name="TopAttach">3</property>
-                <property name="BottomAttach">4</property>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">False</property>
@@ -439,8 +442,8 @@
                 <property name="LabelProp" translatable="yes">Рост:</property>
               </widget>
               <packing>
-                <property name="TopAttach">4</property>
-                <property name="BottomAttach">5</property>
+                <property name="TopAttach">5</property>
+                <property name="BottomAttach">6</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -459,8 +462,35 @@
                 <property name="LabelProp" translatable="yes">Размер:</property>
               </widget>
               <packing>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.Widgets.yEnumComboBox" id="ycomboClothesSex">
+                <property name="MemberName" />
+                <property name="IsTextCombo">False</property>
+                <property name="Items" translatable="yes" />
+                <property name="ShowSpecialStateAll">False</property>
+                <property name="ShowSpecialStateNot">False</property>
+                <property name="UseShortTitle">False</property>
+                <property name="DefaultFirst">False</property>
+                <signal name="Changed" handler="OnYcomboClothesSexChanged" />
+              </widget>
+              <packing>
                 <property name="TopAttach">3</property>
                 <property name="BottomAttach">4</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -479,8 +509,8 @@
                 <property name="Items" translatable="yes" />
               </widget>
               <packing>
-                <property name="TopAttach">4</property>
-                <property name="BottomAttach">5</property>
+                <property name="TopAttach">5</property>
+                <property name="BottomAttach">6</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -531,6 +561,26 @@
                 <property name="AutoSize">False</property>
                 <property name="YOptions">Fill</property>
                 <property name="XExpand">True</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelClothesSex">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">ylabel1</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
                 <property name="XFill">True</property>
                 <property name="XShrink">False</property>
                 <property name="YExpand">False</property>
@@ -1006,6 +1056,7 @@
                     <property name="ShowSpecialStateAll">False</property>
                     <property name="ShowSpecialStateNot">False</property>
                     <property name="UseShortTitle">False</property>
+                    <property name="DefaultFirst">False</property>
                     <signal name="Changed" handler="OnComboSexChanged" />
                   </widget>
                   <packing>
@@ -1636,6 +1687,7 @@
                     <property name="ShowSpecialStateAll">False</property>
                     <property name="ShowSpecialStateNot">False</property>
                     <property name="UseShortTitle">True</property>
+                    <property name="DefaultFirst">False</property>
                     <signal name="Changed" handler="OnYcomboGlovesStdChanged" />
                   </widget>
                   <packing>
@@ -1684,6 +1736,7 @@
                     <property name="ShowSpecialStateAll">False</property>
                     <property name="ShowSpecialStateNot">False</property>
                     <property name="UseShortTitle">True</property>
+                    <property name="DefaultFirst">False</property>
                     <signal name="Changed" handler="OnYcomboHeaddressChanged" />
                   </widget>
                   <packing>
@@ -1732,6 +1785,7 @@
                     <property name="ShowSpecialStateAll">False</property>
                     <property name="ShowSpecialStateNot">False</property>
                     <property name="UseShortTitle">True</property>
+                    <property name="DefaultFirst">False</property>
                     <signal name="Changed" handler="OnYcomboShoesStdChanged" />
                   </widget>
                   <packing>
@@ -1805,6 +1859,7 @@
                     <property name="ShowSpecialStateAll">False</property>
                     <property name="ShowSpecialStateNot">False</property>
                     <property name="UseShortTitle">True</property>
+                    <property name="DefaultFirst">False</property>
                     <signal name="Changed" handler="OnYcomboWearStdChanged" />
                   </widget>
                   <packing>
@@ -2509,6 +2564,7 @@
                     <property name="ShowSpecialStateAll">False</property>
                     <property name="ShowSpecialStateNot">False</property>
                     <property name="UseShortTitle">False</property>
+                    <property name="DefaultFirst">False</property>
                     <signal name="Changed" handler="OnYcomboOperationChanged" />
                   </widget>
                   <packing>
@@ -2982,6 +3038,7 @@
                     <property name="ShowSpecialStateAll">False</property>
                     <property name="ShowSpecialStateNot">False</property>
                     <property name="UseShortTitle">False</property>
+                    <property name="DefaultFirst">False</property>
                     <signal name="Changed" handler="OnYcomboOperationChanged" />
                   </widget>
                   <packing>

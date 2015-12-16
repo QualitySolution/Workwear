@@ -5,6 +5,7 @@ using QSProjectsLib;
 using workwear.Domain;
 using workwear.Domain.Stock;
 using workwear.Measurements;
+using Gamma.Utilities;
 
 namespace workwear
 {
@@ -36,6 +37,9 @@ namespace workwear
 
 			yentryItemsType.SubjectType = typeof(ItemsType);
 			yentryItemsType.Binding.AddBinding (Entity, e => e.Type, w => w.Subject).InitializeFromSource ();
+
+			ycomboClothesSex.ItemsEnum = typeof(ClothesSex);
+			ycomboClothesSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItemOrNull).InitializeFromSource ();
 
 			var stdConverter = new SizeStandardCodeConverter ();
 
@@ -77,23 +81,57 @@ namespace workwear
 
 			if(Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear && Entity.Type.WearCategory.HasValue)
 			{
-				ycomboWearStd.ItemsEnum = SizeHelper.GetSizeStandartsEnum (Entity.Type.WearCategory.Value);
-				ycomboWearStd.Sensitive = ycomboWearSize.Sensitive = true;
+				ylabelClothesSex.Visible = ycomboClothesSex.Visible = true;
 
-				var growthStd = SizeHelper.GetGrowthStandart (Entity.Type.WearCategory.Value);
-				ycomboWearGrowth.Sensitive = growthStd != null;
-				if (growthStd != null) {
-					SizeHelper.FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (growthStd.Value));
-				} else
-					ycomboWearGrowth.Clear ();
+				ylabelClothesSex.Text = Entity.Type.WearCategory.Value.GetEnumTitle() + ":";
+
+				if(SizeHelper.IsUniversalСlothes (Entity.Type.WearCategory.Value))
+				{
+					Entity.Sex = ClothesSex.Universal;
+					ycomboClothesSex.Sensitive = false;
+				}
+				else
+					ycomboClothesSex.Sensitive = true;
+				OnYcomboClothesSexChanged (null, null);
 			}
 			else
+			{
+				ylabelClothesSex.Visible = ycomboClothesSex.Visible = false;
 				ycomboWearStd.Sensitive = ycomboWearSize.Sensitive = ycomboWearGrowth.Sensitive = false;
+			}
+				
 		}
 
 		protected void OnYcomboWearStdChanged (object sender, EventArgs e)
 		{
-			SizeHelper.FillSizeCombo (ycomboWearSize, SizeHelper.GetSizesList (ycomboWearStd.SelectedItem));
+			if (ycomboWearStd.SelectedItemOrNull != null)
+			{
+				SizeHelper.FillSizeCombo (ycomboWearSize, SizeHelper.GetSizesList (ycomboWearStd.SelectedItem));
+				ycomboWearSize.Sensitive = true;
+			}
+			else
+			{
+				ycomboWearSize.Clear ();
+				ycomboWearSize.Sensitive = false;
+			}
+		}
+
+		protected void OnYcomboClothesSexChanged (object sender, EventArgs e)
+		{
+			if (!Entity.Sex.HasValue)
+				return;
+
+			ycomboWearStd.ItemsEnum = SizeHelper.GetSizeStandartsEnum (Entity.Type.WearCategory.Value, Entity.Sex.Value);
+			if (ycomboWearStd.ItemsEnum != null)
+				ycomboWearStd.Sensitive = true;
+
+			var growthStd = SizeHelper.GetGrowthStandart (Entity.Type.WearCategory.Value, Entity.Sex.Value);
+			ycomboWearGrowth.Sensitive = growthStd != null;
+			if (growthStd != null) {
+				SizeHelper.FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (growthStd.Value));
+			} 
+			else
+				ycomboWearGrowth.Clear ();
 		}
 	}
 }

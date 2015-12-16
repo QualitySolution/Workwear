@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using Gtk;
+using workwear.Domain.Stock;
 
 namespace workwear.Measurements
 {
@@ -107,22 +108,41 @@ namespace workwear.Measurements
 			combo.AddAttribute (text, "text", 0);
 		}
 
-		public static Type GetSizeStandartsEnum(СlothesType wearCategory)
+		public static Type GetSizeStandartsEnum(СlothesType wearCategory, ClothesSex sex)
 		{
-			var att = wearCategory.GetAttribute<SizeStandartsAttribute> ();
-			if (att == null)
+			var att = wearCategory.GetAttributes<SizeStandartsAttribute> ();
+			if (att.Length == 0)
 				throw new InvalidOperationException (String.Format ("У вида одежды {0} отсутствует атрибут SizeStandartsAttribute.", wearCategory));
 
-			return att.StandartsEnumType;
+			var found = att.FirstOrDefault (a => a.Sex == sex);
+
+			return found != null ? found.StandartsEnumType : null;
 		}
 
-		public static GrowthStandartWear? GetGrowthStandart(СlothesType wearCategory)
+		public static bool IsUniversalСlothes(СlothesType wearCategory)
+		{
+			var att = wearCategory.GetAttributes<SizeStandartsAttribute> ();
+			if (att.Length == 0)
+				throw new InvalidOperationException (String.Format ("У вида одежды {0} отсутствует атрибут SizeStandartsAttribute.", wearCategory));
+
+			var found = att.FirstOrDefault (a => a.Sex == ClothesSex.Universal);
+
+			return found != null;
+		}
+
+		public static GrowthStandartWear? GetGrowthStandart(СlothesType wearCategory, ClothesSex sex)
 		{
 			var att = wearCategory.GetAttribute<NeedGrowthAttribute> ();
 			if (att == null)
 				return null;
 
-			return att.Sex == workwear.Domain.Sex.F ? GrowthStandartWear.Women : GrowthStandartWear.Men;
+			if (sex == ClothesSex.Women)
+				return GrowthStandartWear.Women;
+
+			if (sex == ClothesSex.Men)
+				return GrowthStandartWear.Men;
+
+			return null;
 		}
 
 	}

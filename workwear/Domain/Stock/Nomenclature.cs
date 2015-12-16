@@ -1,13 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QSOrmProject;
+using workwear.Measurements;
 
 namespace workwear.Domain.Stock
 {
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
 		NominativePlural = "номенклатуры",
 		Nominative = "номенклатура")]
-	public class Nomenclature: PropertyChangedBase, IDomainObject
+	public class Nomenclature: PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства
 
@@ -25,9 +26,18 @@ namespace workwear.Domain.Stock
 		ItemsType type;
 
 		[Display (Name = "Группа номенклатур")]
+		[Required (ErrorMessage = "Номенклатурная группа должна быть указана.")]
 		public virtual ItemsType Type {
 			get { return type; }
 			set { SetField (ref type, value, () => Type); }
+		}
+
+		ClothesSex? sex;
+
+		[Display (Name = "Пол одежды")]
+		public virtual ClothesSex? Sex {
+			get { return sex; }
+			set { SetField (ref sex, value, () => Sex); }
 		}
 
 		string sizeStd;
@@ -68,6 +78,19 @@ namespace workwear.Domain.Stock
 		{
 			
 		}
+
+		#region IValidatableObject implementation
+
+		public virtual System.Collections.Generic.IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
+		{
+
+			if (Type != null && Type.WearCategory != null && Sex.HasValue 
+				&& Sex == ClothesSex.Universal && !SizeHelper.IsUniversalСlothes (Type.WearCategory.Value))
+				yield return new ValidationResult ("Данный вид одежды не имеет универсальных размеров.", 
+					new[] { this.GetPropertyName (o => o.Sex) });			
+		}
+
+		#endregion
 	}
 }
 
