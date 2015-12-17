@@ -28,6 +28,14 @@ namespace workwear.Domain
 			set { SetField (ref cardNumber, value, () => CardNumber); }
 		}
 
+		string personnelNumber;
+
+		[Display (Name = "Табельный номер")]
+		public virtual string PersonnelNumber {
+			get { return personnelNumber; }
+			set { SetField (ref personnelNumber, value, () => PersonnelNumber); }
+		}
+
 		string name;
 
 		[Display (Name = "Имя")]
