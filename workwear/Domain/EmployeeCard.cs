@@ -108,14 +108,6 @@ namespace workwear.Domain
 			set { SetField (ref facility, value, () => Facility); }
 		}
 
-		User user;
-
-		[Display (Name = "Пользователь")]
-		public virtual User User {
-			get { return user; }
-			set { SetField (ref user, value, () => User); }
-		}
-
 		byte[] photo;
 
 		[Display (Name = "Фотография")]
