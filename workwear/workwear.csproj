@@ -113,10 +113,8 @@
     <Compile Include="Measurements\LookupSizes.cs" />
     <Compile Include="gtk-gui\workwear.ItemTypeDlg.cs" />
     <Compile Include="Dialogs\ItemTypeDlg.cs" />
-    <Compile Include="Domain\MeasurementUnits.cs" />
     <Compile Include="Domain\ItemsType.cs" />
     <Compile Include="HibernateMapping\ItemsTypeMap.cs" />
-    <Compile Include="HibernateMapping\MeasurementUnitsMap.cs" />
     <Compile Include="Domain\Norm.cs" />
     <Compile Include="Domain\NormItem.cs" />
     <Compile Include="HibernateMapping\NormMap.cs" />
@@ -124,7 +122,6 @@
     <Compile Include="Dialogs\NormDlg.cs" />
     <Compile Include="gtk-gui\workwear.NormDlg.cs" />
     <Compile Include="Representations\NormVM.cs" />
-    <Compile Include="Repository\MeasurementUnitsRepository.cs" />
     <Compile Include="Repository\NormRepository.cs" />
     <Compile Include="Domain\EmployeeCardItem.cs" />
     <Compile Include="HibernateMapping\EmployeeCardItemMap.cs" />
@@ -208,6 +205,10 @@
       <Project>{1BF2A638-420D-456C-96A7-36873A0FB894}</Project>
       <Name>GammaUtil</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\Modules\QSBusinessCommon\QSBusinessCommon.csproj">
+      <Project>{AD329D59-938D-42AC-ABE2-B0F14FDBB7C6}</Project>
+      <Name>QSBusinessCommon</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
@@ -244,9 +245,17 @@
     <None Include="changes.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Reports\MonthIssueSheet.rdl" />
-    <None Include="Reports\NotIssuedSheet.rdl" />
-    <None Include="Reports\QuarterRequestSheet.rdl" />
-    <None Include="Reports\YearRequestSheet.rdl" />
+    <None Include="Reports\MonthIssueSheet.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\NotIssuedSheet.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\QuarterRequestSheet.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\YearRequestSheet.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

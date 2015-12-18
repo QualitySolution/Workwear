@@ -1,8 +1,9 @@
 ﻿using System;
-using QSOrmProject;
-using System.ComponentModel.DataAnnotations;
-using workwear.Measurements;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using QSBusinessCommon.Domain;
+using QSOrmProject;
+using workwear.Measurements;
 
 namespace workwear.Domain
 {

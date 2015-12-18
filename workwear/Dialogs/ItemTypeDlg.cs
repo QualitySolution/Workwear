@@ -1,5 +1,6 @@
 using System;
 using NLog;
+using QSBusinessCommon.Repository;
 using QSOrmProject;
 using QSProjectsLib;
 using workwear.Domain;
@@ -39,7 +40,7 @@ namespace workwear
 			ycomboWearCategory.ItemsEnum = typeof(СlothesType);
 			ycomboWearCategory.Binding.AddBinding (Entity, e => e.WearCategory, w => w.SelectedItemOrNull).InitializeFromSource ();
 
-			ycomboUnits.ItemsList = Repository.MeasurementUnitsRepository.GetActiveUnits (UoWGeneric);
+			ycomboUnits.ItemsList = MeasurementUnitsRepository.GetActiveUnits (UoWGeneric);
 			ycomboUnits.Binding.AddBinding (Entity, e => e.Units, w => w.SelectedItem).InitializeFromSource ();
 		}
 

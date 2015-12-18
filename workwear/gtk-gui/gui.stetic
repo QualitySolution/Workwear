@@ -15,6 +15,7 @@
     <widget-library name="../bin/Debug/workwear.exe" internal="true" />
     <widget-library name="../../../QSProjects/QSTDI/bin/Debug/QSTDI.dll" />
     <widget-library name="../../../QSProjects/QSValidation/bin/Debug/QSValidation.dll" />
+    <widget-library name="../../../QSProjects/Modules/QSBusinessCommon/bin/Debug/QSBusinessCommon.dll" />
   </import>
   <widget class="Gtk.Dialog" id="workwear.ItemTypeDlg" design-size="454 235">
     <property name="MemberName" />

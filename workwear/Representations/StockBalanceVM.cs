@@ -7,10 +7,11 @@ using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
 using NHibernate.Transform;
+using QSBusinessCommon.Domain;
 using QSOrmProject;
 using QSOrmProject.RepresentationModel;
-using workwear.Domain;
 using QSProjectsLib;
+using workwear.Domain;
 using workwear.Domain.Stock;
 
 namespace workwear.ViewModel
