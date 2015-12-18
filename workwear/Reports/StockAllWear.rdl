@@ -21,7 +21,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     stock_income.number,
@@ -64,7 +64,7 @@ WHERE
     spent.count IS NULL
         OR spent.count &lt; stock_income_detail.quantity</CommandText>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="number">
           <DataField>number</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -391,8 +391,7 @@ WHERE
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox17">
-                          <Value>
-                          </Value>
+                          <Value>Итого по виду:</Value>
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
@@ -401,27 +400,11 @@ WHERE
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
+                            <TextAlign >Right</TextAlign>
                           </Style>
                         </Textbox>
                       </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox6" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                          <Value>Итого по виду:</Value>
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Left>None</Left>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <FontWeight>Bold</FontWeight>
-                            <TextAlign>Right</TextAlign>
-                          </Style>
-                        </Textbox>
-                      </ReportItems>
-                      <ColSpan>1</ColSpan>
+                      <ColSpan >2</ColSpan>
                     </TableCell>
                     <TableCell>
                       <ReportItems>
@@ -649,8 +632,7 @@ WHERE
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox28">
-                      <Value>
-                      </Value>
+                      <Value>Общий итог:</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -659,27 +641,12 @@ WHERE
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <FontWeight >Bold</FontWeight>
+                        <TextAlign >Right</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox29">
-                      <Value>Общий итог:</Value>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Left>None</Left>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <FontWeight>Bold</FontWeight>
-                        <TextAlign>Right</TextAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                  <ColSpan>1</ColSpan>
+                  <ColSpan >2</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
