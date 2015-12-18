@@ -196,7 +196,7 @@ namespace workwear
 			QSMain.CheckConnectionAlive ();
 			logger.Info ("Запрос движений по работнику...");
 			try {
-				string sql = "SELECT movements.*, nomenclature.name as nomenclature_name, units.name as unit " +
+				string sql = "SELECT movements.*, nomenclature.name as nomenclature_name, measurement_units.name as unit " +
 					"FROM (" +
 					"SELECT stock_expense.date, stock_expense_detail.stock_expense_id, NULL as stock_income_id, NULL as stock_write_off_id, " +
 					"stock_expense_detail.nomenclature_id, stock_expense_detail.quantity, stock_income_detail.life_percent, stock_income_detail.cost " +
@@ -221,7 +221,7 @@ namespace workwear
 					") as movements " +
 					"LEFT JOIN nomenclature ON nomenclature.id = movements.nomenclature_id " +
 					"LEFT JOIN item_types ON item_types.id = nomenclature.type_id " +
-					"LEFT JOIN units ON item_types.units_id = units.id " +
+					"LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id " +
 					"ORDER BY movements.date, movements.stock_write_off_id, movements.stock_income_id, movements.stock_expense_id";
 				MySqlCommand cmd = new MySqlCommand (sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@id", Entity.Id);
@@ -277,7 +277,7 @@ namespace workwear
 			try {
 				string sql = "SELECT item_types.id as item_types_id, " +
 					"SUM(stock_expense_detail.quantity - ifnull(spent.count, 0)) as quantity, " +
-					"item_types.name, units.name as unit, " +
+					"item_types.name, measurement_units.name as unit, " +
 					"SUM(stock_income_detail.cost * (stock_expense_detail.quantity - ifnull(spent.count, 0)))/SUM(stock_expense_detail.quantity - ifnull(spent.count, 0)) as avgcost " +
 					"FROM stock_expense_detail " +
 					"LEFT JOIN " +
@@ -292,7 +292,7 @@ namespace workwear
 					") as spent ON spent.idin = stock_expense_detail.id " +
 					"LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id " +
 					"LEFT JOIN item_types ON item_types.id = nomenclature.type_id " +
-					"LEFT JOIN units ON item_types.units_id = units.id " +
+					"LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id " +
 					"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id " +
 					"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
 					"WHERE stock_expense.wear_card_id = @id AND (spent.count IS NULL OR spent.count < stock_expense_detail.quantity ) " +

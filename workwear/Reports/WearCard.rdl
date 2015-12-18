@@ -1683,7 +1683,7 @@ WHERE wear_cards.id = @id;</CommandText>
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT stock_expense_detail.id as idin, stock_expense_detail.nomenclature_id, stock_expense_detail.quantity as quantityin,
-nomenclature.name, nomenclature.size, nomenclature.growth, units.name as unit, stock_expense.date as datein, stock_income.number,
+nomenclature.name, nomenclature.size, nomenclature.growth, measurement_units.name as unit, stock_expense.date as datein, stock_income.number,
 total.remainings 
 FROM stock_expense_detail 
 LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id
@@ -1701,7 +1701,7 @@ GROUP BY stock_income_detail.nomenclature_id
 ) AS total ON total.nom = nomenclature.id
 
 LEFT JOIN item_types ON item_types.id = nomenclature.type_id 
-LEFT JOIN units ON item_types.units_id = units.id 
+LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id 
 LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id 
 LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id
 LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id

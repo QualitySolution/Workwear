@@ -119,12 +119,12 @@ namespace workwear
 			PrepareTable = new TableInfo ();
 			PrepareTable.ObjectsName = "Единицы измерения";
 			PrepareTable.ObjectName = "единицу измерения";
-			PrepareTable.SqlSelect = "SELECT name, id FROM units ";
+			PrepareTable.SqlSelect = "SELECT name, id FROM measurement_units ";
 			PrepareTable.DisplayString = "ед. изм. {0}";
 			PrepareTable.PrimaryKey = new TableInfo.PrimaryKeys ("id");
 			PrepareTable.ClearItems.Add ("item_types", 
 				new TableInfo.ClearDependenceItem ("WHERE units_id = @id", "", "@id", "units_id"));
-			QSMain.ProjectTables.Add ("units", PrepareTable);
+			QSMain.ProjectTables.Add ("measurement_units", PrepareTable);
 
 			PrepareTable = new TableInfo ();
 			PrepareTable.ObjectsName = "Пользователи";
@@ -221,11 +221,11 @@ namespace workwear
 			PrepareTable = new TableInfo ();
 			PrepareTable.ObjectsName = "Строки приходного документа";
 			PrepareTable.ObjectName = "строку приходного документа";
-			PrepareTable.SqlSelect = "SELECT nomenclature.name, stock_income_detail.quantity, units.name, stock_income.date, stock_income_detail.id " +
+			PrepareTable.SqlSelect = "SELECT nomenclature.name, stock_income_detail.quantity, measurement_units.name, stock_income.date, stock_income_detail.id " +
 			"FROM stock_income_detail " +
 			"LEFT JOIN nomenclature ON nomenclature.id = stock_income_detail.nomenclature_id " +
 			"LEFT JOIN item_types ON item_types.id = nomenclature.type_id " +
-			"LEFT JOIN units ON units.id = item_types.units_id " +
+				"LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id " +
 			"LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id ";
 			PrepareTable.DisplayString = "Строка поступления на склад {0} в количестве {1} {2} от {3:d}";
 			PrepareTable.PrimaryKey = new TableInfo.PrimaryKeys ("id");
@@ -238,11 +238,11 @@ namespace workwear
 			PrepareTable = new TableInfo ();
 			PrepareTable.ObjectsName = "Строки расходного документа";
 			PrepareTable.ObjectName = "строку расходного документа";
-			PrepareTable.SqlSelect = "SELECT nomenclature.name, stock_expense_detail.quantity, units.name, stock_expense.date, stock_expense_detail.id " +
+			PrepareTable.SqlSelect = "SELECT nomenclature.name, stock_expense_detail.quantity, measurement_units.name, stock_expense.date, stock_expense_detail.id " +
 			"FROM stock_expense_detail " +
 			"LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id " +
 			"LEFT JOIN item_types ON item_types.id = nomenclature.type_id " +
-			"LEFT JOIN units ON units.id = item_types.units_id " +
+				"LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id " +
 			"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id ";
 			PrepareTable.DisplayString = "Строка выдачи со склада {0} в количестве {1} {2} от {3:d}";
 			PrepareTable.PrimaryKey = new TableInfo.PrimaryKeys ("id");
@@ -255,11 +255,11 @@ namespace workwear
 			PrepareTable = new TableInfo ();
 			PrepareTable.ObjectsName = "Строки акта списания";
 			PrepareTable.ObjectName = "строку акта списания";
-			PrepareTable.SqlSelect = "SELECT nomenclature.name, stock_write_off_detail.quantity, units.name, stock_write_off.date, stock_write_off_detail.id " +
+			PrepareTable.SqlSelect = "SELECT nomenclature.name, stock_write_off_detail.quantity, measurement_units.name, stock_write_off.date, stock_write_off_detail.id " +
 			"FROM stock_write_off_detail " +
 			"LEFT JOIN nomenclature ON nomenclature.id = stock_write_off_detail.nomenclature_id " +
 			"LEFT JOIN item_types ON item_types.id = nomenclature.type_id " +
-			"LEFT JOIN units ON units.id = item_types.units_id " +
+				"LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id " +
 			"LEFT JOIN stock_write_off ON stock_write_off.id = stock_write_off_detail.stock_write_off_id ";
 			PrepareTable.DisplayString = "Строка списания {0} в количестве {1} {2} от {3:d}";
 			PrepareTable.PrimaryKey = new TableInfo.PrimaryKeys ("id");
