@@ -158,6 +158,8 @@
     <Compile Include="JournalFilters\EmployeeBalanceFilter.cs" />
     <Compile Include="gtk-gui\workwear.EmployeeBalanceFilter.cs" />
     <Compile Include="Repository\EmployeeRepository.cs" />
+    <Compile Include="ReportsDlg\OnIssueStatement.cs" />
+    <Compile Include="gtk-gui\workwear.OnIssueStatement.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -392,4 +392,12 @@ public partial class MainWindow: Gtk.Window
 		dialog.Run ();
 		dialog.Destroy ();
 	}
+
+	protected void OnAction13Activated (object sender, EventArgs e)
+	{
+		var dlg = new OnIssueStatement ();
+		dlg.Show ();
+		dlg.Run ();
+		dlg.Destroy ();
+	}
 }
