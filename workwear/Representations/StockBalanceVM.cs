@@ -29,12 +29,17 @@ namespace workwear.ViewModel
 			ItemsType itemtypesAlias = null;
 			MeasurementUnits unitsAlias = null;
 			ExpenseItem expenseItemAlias = null;
+			WriteoffItem writeoffItemAlias = null;
 
 			var incomes = UoW.Session.QueryOver<IncomeItem> (() => incomeItemAlias);
 
 			var subqueryRemove = QueryOver.Of<ExpenseItem>(() => expenseItemAlias)
 				.Where(() => expenseItemAlias.IncomeOn.Id == incomeItemAlias.Id)
 				.Select (Projections.Sum<ExpenseItem> (o => o.Amount));
+
+			var subqueryWriteOff = QueryOver.Of<WriteoffItem>(() => writeoffItemAlias)
+				.Where(() => writeoffItemAlias.IncomeOn.Id == incomeItemAlias.Id)
+				.Select (Projections.Sum<WriteoffItem> (o => o.Amount));
 
 			var incomeList = incomes
 				.JoinAlias (() => incomeItemAlias.Nomenclature, () => nomenclatureAlias)
@@ -45,7 +50,16 @@ namespace workwear.ViewModel
 						new VarArgsSQLFunction("(", "-", ")"),
 						NHibernateUtil.Int32,
 						Projections.Property (() => incomeItemAlias.Amount),
-						Projections.SubQuery (subqueryRemove)
+						Projections.SqlFunction("COALESCE", 
+							NHibernateUtil.Int32,
+							Projections.SubQuery (subqueryRemove),
+							Projections.Constant (0)
+						),
+						Projections.SqlFunction("COALESCE", 
+							NHibernateUtil.Int32,
+							Projections.SubQuery (subqueryWriteOff),
+							Projections.Constant (0)
+						)
 					), 0)
 				)
 				.SelectList (list => list
@@ -58,8 +72,10 @@ namespace workwear.ViewModel
 					.Select (() => incomeItemAlias.LifePercent).WithAlias (() => resultAlias.AvgLife)
 					.Select (() => incomeItemAlias.Amount).WithAlias (() => resultAlias.Income)
 					.SelectSubQuery (subqueryRemove).WithAlias (() => resultAlias.Expense)
+					.SelectSubQuery (subqueryWriteOff).WithAlias (() => resultAlias.Writeoff)
 				)
 				.TransformUsing (Transformers.AliasToBean<StockBalanceVMNode> ())
+
 				.List<StockBalanceVMNode> ();
 
 			SetItemsSource (incomeList.ToList ());
@@ -114,8 +130,9 @@ namespace workwear.ViewModel
 
 		public int Income { get; set;}
 		public int Expense { get; set;}
+		public int Writeoff { get; set;}
 
-		public string BalanceText {get{ return String.Format ("{0} {1}", Income - Expense, UnitsName);
+		public string BalanceText {get{ return String.Format ("{0} {1}", Income - Expense - Writeoff, UnitsName);
 			}}
 
 		public string AvgCostText {get { 
