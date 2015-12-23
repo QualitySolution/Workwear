@@ -35,6 +35,7 @@ namespace workwear
 
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<WriteoffItem> ()
 				.AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
+				.AddColumn ("% годности").AddTextRenderer (e => e.IncomeOn != null ? e.IncomeOn.LifePercent.ToString ("P0") : String.Empty)
 				.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1))
 				.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
