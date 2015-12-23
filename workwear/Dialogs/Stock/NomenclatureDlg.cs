@@ -129,9 +129,13 @@ namespace workwear
 			ycomboWearGrowth.Sensitive = growthStd != null;
 			if (growthStd != null) {
 				SizeHelper.FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (growthStd.Value));
+				Entity.WearGrowthStd = SizeHelper.GetSizeStdCode (growthStd);
 			} 
 			else
+			{
+				Entity.WearGrowthStd = null;
 				ycomboWearGrowth.Clear ();
+			}
 		}
 	}
 }
