@@ -16,6 +16,7 @@ namespace workwear.HMap
 			Map (x => x.NextIssue).Column ("next_issue");
 			Map (x => x.RequiredByNorm).Column ("required_by_norm");
 
+			References (x => x.EmployeeCard).Column ("wear_card_id");
 			References (x => x.ActiveNormItem).Column ("norm_item_id");
 			References (x => x.Item).Column ("itemtype_id");
 		}

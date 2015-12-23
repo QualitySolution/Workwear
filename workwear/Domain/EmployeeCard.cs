@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using QSProjectsLib;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
+using workwear.Measurements;
 
 namespace workwear.Domain
 {
@@ -271,6 +272,23 @@ namespace workwear.Domain
 
 		#endregion
 
+		public virtual SizePair GetSize(СlothesType wearCategory)
+		{
+			switch(wearCategory)
+			{
+			case СlothesType.Wear:
+				return new SizePair (WearSizeStd, WearSize);
+			case СlothesType.Shoes:
+				return new SizePair (ShoesSizeStd, ShoesSize);
+			case СlothesType.Gloves:
+				return new SizePair (GlovesSizeStd, GlovesSize);
+			case СlothesType.Headgear:
+				return new SizePair (HeaddressSizeStd, HeaddressSize);
+			default:
+				return null;
+			}
+		}
+
 		public virtual void AddUsedNorm(Norm norm)
 		{
 			if(UsedNorms.Any (p => DomainHelper.EqualDomainObjects (p, norm)))
@@ -300,7 +318,8 @@ namespace workwear.Domain
 					var currentItem = activeItems.FirstOrDefault (i => i.Item == normItem.Item);
 					if (currentItem == null)
 					{
-						currentItem = new EmployeeCardItem (normItem);
+						currentItem = new EmployeeCardItem (this, normItem);
+
 						ObservableWorkwearItems.Add (currentItem);
 					}
 						

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using Gtk;
+using workwear.Domain;
 using workwear.Domain.Stock;
 
 namespace workwear.Measurements
@@ -53,23 +54,10 @@ namespace workwear.Measurements
 
 		public static string[] GetSizesList (object stdEnum)
 		{
-			if (stdEnum is SizeStandartMenWear)
-				return ReadSizeArray (LookupSizes.MenWear, (int)stdEnum);
-			
-			if (stdEnum is SizeStandartWomenWear)
-				return ReadSizeArray (LookupSizes.WomenWear, (int)stdEnum);
+			var array = GetSizeLookup (stdEnum);
 
-			if (stdEnum is SizeStandartMenShoes)
-				return ReadSizeArray (LookupSizes.MenShoes, (int)stdEnum);
-
-			if (stdEnum is SizeStandartWomenShoes)
-				return ReadSizeArray (LookupSizes.WomenShoes, (int)stdEnum);
-
-			if (stdEnum is SizeStandartHeaddress)
-				return ReadSizeArray (LookupSizes.Headdress, (int)stdEnum);
-
-			if (stdEnum is SizeStandartGloves)
-				return ReadSizeArray (LookupSizes.Gloves, (int)stdEnum);
+			if (array != null)
+				return ReadSizeArray (array, (int)stdEnum);
 
 			if (stdEnum is GrowthStandartWear)
 			{
@@ -80,6 +68,29 @@ namespace workwear.Measurements
 			}
 
 			throw new ArgumentException ( String.Format ("Неизвестный стандарт размера {0}", stdEnum.ToString ()), "stdEnum");
+		}
+
+		private static string[,] GetSizeLookup(object stdEnum)
+		{
+			if (stdEnum is SizeStandartMenWear)
+				return LookupSizes.MenWear;
+
+			if (stdEnum is SizeStandartWomenWear)
+				return LookupSizes.WomenWear;
+
+			if (stdEnum is SizeStandartMenShoes)
+				return LookupSizes.MenShoes;
+
+			if (stdEnum is SizeStandartWomenShoes)
+				return LookupSizes.WomenShoes;
+
+			if (stdEnum is SizeStandartHeaddress)
+				return LookupSizes.Headdress;
+
+			if (stdEnum is SizeStandartGloves)
+				return LookupSizes.Gloves;
+
+			return null;
 		}
 
 		private static string[] ReadSizeArray(string[,] array, int column)
@@ -108,6 +119,11 @@ namespace workwear.Measurements
 			combo.AddAttribute (text, "text", 0);
 		}
 
+		public static Type GetSizeStandartsEnum(СlothesType wearCategory, Sex sex)
+		{
+			return GetSizeStandartsEnum (wearCategory, sex == Sex.F ? ClothesSex.Women : ClothesSex.Men);
+		}
+
 		public static Type GetSizeStandartsEnum(СlothesType wearCategory, ClothesSex sex)
 		{
 			var att = wearCategory.GetAttributes<SizeStandartsAttribute> ();
@@ -130,6 +146,11 @@ namespace workwear.Measurements
 			return found != null;
 		}
 
+		public static GrowthStandartWear? GetGrowthStandart(СlothesType wearCategory, Sex sex)
+		{
+			return GetGrowthStandart (wearCategory, sex == Sex.F ? ClothesSex.Women : ClothesSex.Men);
+		}
+
 		public static GrowthStandartWear? GetGrowthStandart(СlothesType wearCategory, ClothesSex sex)
 		{
 			var att = wearCategory.GetAttribute<NeedGrowthAttribute> ();
@@ -145,6 +166,54 @@ namespace workwear.Measurements
 			return null;
 		}
 
+		public static List<SizePair> MatchSize(SizePair sizePair)
+		{
+			return MatchSize (sizePair.StandardCode, sizePair.Size);
+		}
+
+		public static List<SizePair> MatchSize(string sizeStdCode, string size)
+		{
+			return MatchSize (SizeHelper.GetSizeStdEnum (sizeStdCode), size);
+		}
+
+		public static List<SizePair> MatchSize(object sizeStd, string size)
+		{
+			var lookupArray = GetSizeLookup (sizeStd);
+			if (lookupArray == null)
+				return null;
+
+			var result = new List<SizePair> ();
+
+			int original = (int)sizeStd;
+			for(int sizeIx = 0; sizeIx < lookupArray.GetLength (0); sizeIx++)
+			{
+				if(lookupArray[sizeIx, original] == size)
+				{
+					foreach (var std in Enum.GetValues(sizeStd.GetType ()))
+					{
+						var newPiar = new SizePair (GetSizeStdCode (std), lookupArray[sizeIx, (int)std]);
+
+						if (newPiar.Size == null)
+							continue;
+
+						if (!result.Any (pair => pair.StandardCode == newPiar.StandardCode && pair.Size == newPiar.Size))
+							result.Add (newPiar);
+					}
+				}
+			}
+			return result;
+		}
+	}
+
+	public class SizePair{
+		public string StandardCode { get; private set;}
+		public string Size { get; private set;}
+
+		public SizePair(string std, string size)
+		{
+			StandardCode = std;
+			Size = size;
+		}
 	}
 }
 

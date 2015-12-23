@@ -1,6 +1,7 @@
 ﻿using System;
 using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
+using workwear.Domain.Stock;
 
 namespace workwear.Domain
 {
@@ -9,9 +10,19 @@ namespace workwear.Domain
 		Nominative = "строка нормы карточки")]
 	public class EmployeeCardItem : PropertyChangedBase, IDomainObject
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+
 		#region Свойства
 
 		public virtual int Id { get; set; }
+
+		EmployeeCard employeeCard;
+
+		[Display (Name = "Сотрудник")]
+		public virtual EmployeeCard EmployeeCard {
+			get { return employeeCard; }
+			set { SetField (ref employeeCard, value, () => EmployeeCard); }
+		}
 
 		ItemsType item;
 
@@ -27,6 +38,14 @@ namespace workwear.Domain
 		public virtual NormItem ActiveNormItem {
 			get { return activeNormItem; }
 			set { SetField (ref activeNormItem, value, () => ActiveNormItem); }
+		}
+
+		Nomenclature matchedNomenclature;
+
+		[Display (Name = "Подобранная номенклатура")]
+		public virtual Nomenclature MatchedNomenclature {
+			get { return matchedNomenclature; }
+			set { SetField (ref matchedNomenclature, value, () => MatchedNomenclature); }
 		}
 
 		DateTime created;
@@ -76,13 +95,25 @@ namespace workwear.Domain
 		{
 		}
 
-		public EmployeeCardItem (NormItem normItem)
+		public EmployeeCardItem (EmployeeCard employee, NormItem normItem)
 		{
+			EmployeeCard = employee;
 			ActiveNormItem = normItem;
 			Item = normItem.Item;
 			NextIssue = Created = DateTime.Today;
 		}
 
+		public virtual void FindMatchedNomenclature(IUnitOfWork uow)
+		{
+			var nomenclatures = StockRepository.MatchNomenclaturesBySize (uow, Item, EmployeeCard);
+			if(nomenclatures == null || nomenclatures.Count == 0)
+			{
+				logger.Warn ("Подходящая по размерам номенклатура, для типа <{0}> не найдена.", Item.Name);
+				return;
+			}
+			var stock = StockRepository.BalanceInStockDetail (uow, nomenclatures);
+			Console.WriteLine (stock.Count);
+		}
 	}
 }
 

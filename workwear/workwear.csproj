@@ -160,6 +160,7 @@
     <Compile Include="Repository\EmployeeRepository.cs" />
     <Compile Include="ReportsDlg\OnIssueStatement.cs" />
     <Compile Include="gtk-gui\workwear.OnIssueStatement.cs" />
+    <Compile Include="Repository\StockRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
