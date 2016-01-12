@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using NLog;
 using QSOrmProject;
 using QSProjectsLib;
@@ -30,6 +32,18 @@ namespace workwear
 		public ExpenseDocDlg (EmployeeCard employee) : this () {
 			Entity.Operation = ExpenseOperations.Employee;
 			Entity.EmployeeCard = employee;
+		}
+
+		public ExpenseDocDlg (EmployeeCard employee, Dictionary<Nomenclature, int> addItems) : this (employee) {
+			
+			var stock = StockRepository.BalanceInStockDetail (UoW, addItems.Keys.ToList ());
+
+			foreach(var pair in addItems)
+			{
+				var inStock = stock.First (s => s.Nomenclature == pair.Key);
+				var incomeItem = UoW.GetById<IncomeItem> (inStock.IncomeItemId);
+				Entity.AddItem (incomeItem, pair.Value);
+			}
 		}
 
 		public ExpenseDocDlg (Expense item) : this (item.Id) {}

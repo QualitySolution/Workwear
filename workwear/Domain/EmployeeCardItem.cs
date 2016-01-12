@@ -127,6 +127,10 @@ namespace workwear.Domain
 			}
 		}
 
+		public virtual int NeededAmount{
+			get{ return ActiveNormItem.Amount - Amount;	}
+		}
+
 		#endregion
 
 		public EmployeeCardItem ()

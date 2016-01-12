@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using Gamma.Utilities;
 using Gtk;
 using MySql.Data.MySqlClient;
 using NLog;
@@ -8,11 +10,10 @@ using QSOrmProject;
 using QSProjectsLib;
 using QSValidation;
 using workwear.Domain;
-using workwear.Domain.Stock;
 using workwear.DTO;
 using workwear.Measurements;
 using workwear.Repository;
-using Gamma.Utilities;
+using workwear.Domain.Stock;
 
 namespace workwear
 {
@@ -23,6 +24,7 @@ namespace workwear
 		List<EmployeeCardMovements> Movements;
 		bool IsShowedMovementsTable = false;
 		bool IsShowedItemsTable = false;
+		bool IsNomenclaturePickuped = false;
 
 		public EmployeeCardDlg ()
 		{
@@ -556,13 +558,42 @@ namespace workwear
 
 		protected void OnButtonGiveWearByNormClicked (object sender, EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (IsNomenclaturePickuped == false &&
+				Entity.WorkwearItems.Any (i => i.Amount < i.ActiveNormItem.Amount 
+					&& 
+					(i.InStockState == StockStateInfo.NotEnough
+				   || i.InStockState == StockStateInfo.OutOfStock
+				   || i.MatchedNomenclature == null
+					)
+				))
+			{
+				if (MessageDialogWorks.RunQuestionDialog ("Некоторые позиции отсутствуют на складе в достаточном количестве. Попробовать подобрать подходящую номенклатуру?"))
+					buttonPickNomenclature.Click ();
+			}
+
+			var addItems = new Dictionary<Nomenclature, int> ();
+			foreach(var item in Entity.WorkwearItems)
+			{
+				if(item.NeededAmount > 0 && (item.InStockState == StockStateInfo.Enough || item.InStockState == StockStateInfo.NotEnough))
+				{
+					int amount = item.InStockState == StockStateInfo.Enough ? item.NeededAmount : item.InStock;
+					addItems.Add (item.MatchedNomenclature, amount);
+				}
+			}
+
+			ExpenseDocDlg winExpense = new ExpenseDocDlg (Entity, addItems);
+			winExpense.Show ();
+			winExpense.Run ();
+			winExpense.Destroy ();
+			UpdateMovements ();
+			UpdateListedItems ();
 		}
 
 		protected void OnButtonPickNomenclatureClicked (object sender, EventArgs e)
 		{
 			foreach (var item in Entity.WorkwearItems)
 				item.FindMatchedNomenclature (UoW);
+			IsNomenclaturePickuped = true;
 		}
 	}
 }
