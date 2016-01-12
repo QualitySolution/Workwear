@@ -12,6 +12,7 @@ using workwear.Domain.Stock;
 using workwear.DTO;
 using workwear.Measurements;
 using workwear.Repository;
+using Gamma.Utilities;
 
 namespace workwear
 {
@@ -92,16 +93,19 @@ namespace workwear
 				.AddColumn ("По норме").AddTextRenderer (node => node.ActiveNormItem.Amount.ToString ())
 				.AddColumn ("Срок службы").AddTextRenderer (node => node.ActiveNormItem.LifeText)
 				.AddColumn ("Дата получения").AddTextRenderer (node => String.Format ("{0:d}", node.LastIssue))
-				.AddColumn ("Количество").AddTextRenderer (node => node.Amount.ToString ())
+				.AddColumn ("Получено").AddTextRenderer (node => node.Amount.ToString ())
+					.AddSetter ((w, node) => w.Foreground = node.AmountColor)
 				.AddColumn ("След. получение").AddTextRenderer (node => String.Format ("{0:d}", node.NextIssue))
 				.AddColumn ("Просрочка").AddTextRenderer (
 					node => node.NextIssue.HasValue && node.NextIssue.Value < DateTime.Today 
 					? RusNumber.FormatCase((int) (DateTime.Today - node.NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} деней") 
 					: String.Empty)
-				.AddColumn ("На складе").AddTextRenderer (node => "#не реализовано#")
+				.AddColumn ("На складе").AddTextRenderer (node => node.Item.Units.MakeAmountShortStr (node.InStock))
+				 .AddSetter ((w, node) => w.Foreground = node.InStockState.GetEnumColor ())
+				.AddColumn ("Подобранная номенклатура").AddTextRenderer (node => node.MatchedNomenclature != null ? node.MatchedNomenclature.Name : (node.InStockState == StockStateInfo.UnknownNomenclature ? "нет подходящей" : String.Empty))
+				.AddSetter ((w, node) => w.Foreground = node.InStockState.GetEnumColor ())
 				.Finish ();
 			//ytreeWorkwear.Selection.Changed += YtreeNorms_Selection_Changed;
-			ytreeWorkwear.ItemsDataSource = Entity.ObservableWorkwearItems;
 
 			ytreeListedItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItems> ()
 				.AddColumn ("Наименование").AddTextRenderer (e => e.ItemTypeName)
@@ -373,6 +377,12 @@ namespace workwear
 
 		protected void OnNotebook1SwitchPage (object o, SwitchPageArgs args)
 		{
+			if(notebook1.CurrentPage == 1 && ytreeWorkwear.ItemsDataSource == null)
+			{
+				Entity.FillWearInStockInfo (UoW);
+				ytreeWorkwear.ItemsDataSource = Entity.ObservableWorkwearItems;
+			}
+
 			if(notebook1.CurrentPage == 3 && !IsShowedMovementsTable)
 			{
 				IsShowedMovementsTable = true;
@@ -547,6 +557,12 @@ namespace workwear
 		protected void OnButtonGiveWearByNormClicked (object sender, EventArgs e)
 		{
 			throw new NotImplementedException ();
+		}
+
+		protected void OnButtonPickNomenclatureClicked (object sender, EventArgs e)
+		{
+			foreach (var item in Entity.WorkwearItems)
+				item.FindMatchedNomenclature (UoW);
 		}
 	}
 }

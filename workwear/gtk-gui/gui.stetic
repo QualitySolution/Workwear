@@ -2207,6 +2207,22 @@
                     <property name="MemberName" />
                     <property name="Spacing">6</property>
                     <child>
+                      <widget class="Gtk.Button" id="buttonPickNomenclature">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextAndIcon</property>
+                        <property name="Label" translatable="yes">Подобрать по складу</property>
+                        <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonPickNomenclatureClicked" />
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
                       <widget class="Gtk.Button" id="buttonGiveWearByNorm">
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
@@ -2217,7 +2233,7 @@
                         <signal name="Clicked" handler="OnButtonGiveWearByNormClicked" />
                       </widget>
                       <packing>
-                        <property name="Position">0</property>
+                        <property name="Position">1</property>
                         <property name="AutoSize">True</property>
                         <property name="Expand">False</property>
                         <property name="Fill">False</property>
@@ -2234,7 +2250,7 @@
                         <signal name="Clicked" handler="OnButtonReturnWearClicked" />
                       </widget>
                       <packing>
-                        <property name="Position">1</property>
+                        <property name="Position">2</property>
                         <property name="AutoSize">True</property>
                         <property name="Expand">False</property>
                         <property name="Fill">False</property>
@@ -2251,7 +2267,7 @@
                         <signal name="Clicked" handler="OnButtonWriteOffWearClicked" />
                       </widget>
                       <packing>
-                        <property name="Position">2</property>
+                        <property name="Position">3</property>
                         <property name="AutoSize">True</property>
                         <property name="Expand">False</property>
                         <property name="Fill">False</property>

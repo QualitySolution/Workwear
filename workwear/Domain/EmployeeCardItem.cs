@@ -1,7 +1,9 @@
 ﻿using System;
-using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using QSOrmProject;
 using workwear.Domain.Stock;
+using Gamma.Utilities;
 
 namespace workwear.Domain
 {
@@ -90,6 +92,42 @@ namespace workwear.Domain
 
 		#endregion
 
+		#region Не хранимое в базе значение
+
+		int inStock;
+
+		[Display (Name = "На складе")]
+		public virtual int InStock {
+			get { return inStock; }
+			set { SetField (ref inStock, value, () => InStock); }
+		}
+
+		StockStateInfo inStockState;
+
+		[Display (Name = "Статус")]
+		public virtual StockStateInfo InStockState {
+			get { return inStockState; }
+			set { SetField (ref inStockState, value, () => InStockState); }
+		}
+
+		#endregion
+
+		#region Расчетное
+
+		public virtual string AmountColor {
+			get{
+				if (ActiveNormItem.Amount == Amount)
+					return "darkgreen";
+				else if (ActiveNormItem.Amount < Amount)
+					return "blue";
+				else if (Amount == 0)
+					return "red";
+				else
+					return "orange";
+			}
+		}
+
+		#endregion
 
 		public EmployeeCardItem ()
 		{
@@ -105,15 +143,68 @@ namespace workwear.Domain
 
 		public virtual void FindMatchedNomenclature(IUnitOfWork uow)
 		{
+			int neededCount = ActiveNormItem.Amount - Amount;
+
+			if (neededCount <= 0)
+			{
+				logger.Debug ("Нет необходимости в выдаче <{0}>, пропускаем подбор...", Item.Name);
+				return;
+			}
+
 			var nomenclatures = StockRepository.MatchNomenclaturesBySize (uow, Item, EmployeeCard);
 			if(nomenclatures == null || nomenclatures.Count == 0)
 			{
 				logger.Warn ("Подходящая по размерам номенклатура, для типа <{0}> не найдена.", Item.Name);
+				InStockState = StockStateInfo.UnknownNomenclature;
 				return;
 			}
 			var stock = StockRepository.BalanceInStockDetail (uow, nomenclatures);
-			Console.WriteLine (stock.Count);
+
+			var suggested = stock.First (s => s.Amount >= neededCount && s.Life == 1);
+			if (suggested == null) {
+				logger.Debug ("Достаточного количества новых <{0}> на складе не найдено.", Item.Name);
+				suggested = stock.Aggregate ((agr, cur) => cur.Amount > agr.Amount ? cur : agr);
+			}	
+				
+			if(DomainHelper.EqualDomainObjects (MatchedNomenclature, suggested))
+			{
+				logger.Debug ("Только обновляем количество на складе <{0}> -> <{1}>", InStock, suggested.Amount);
+			}
+			else
+			{
+				logger.Debug ("Изменяем подобранную номенклатуру <{0}> -> <{1}>", 
+					MatchedNomenclature != null ? MatchedNomenclature.Name : String.Empty,
+					suggested.Nomenclature);
+				MatchedNomenclature = suggested.Nomenclature;
+			}
+
+			SetInStockAmount (suggested.Amount);
 		}
+
+		public virtual void SetInStockAmount(int inStock)
+		{
+			int neededCount = ActiveNormItem.Amount - Amount;
+			InStock = inStock;
+			if (InStock >= neededCount)
+				InStockState = StockStateInfo.Enough;
+			else if(InStock == 0)
+				InStockState = StockStateInfo.OutOfStock;
+			else
+				InStockState = StockStateInfo.NotEnough;
+		}
+	}
+
+	public enum StockStateInfo{
+		[GtkColor("gray")]
+		NotLoaded,
+		[GtkColor("orange")]
+		UnknownNomenclature,
+		[GtkColor("green")]
+		Enough,
+		[GtkColor("blue")]
+		NotEnough,
+		[GtkColor("red")]
+		OutOfStock,
 	}
 }
 

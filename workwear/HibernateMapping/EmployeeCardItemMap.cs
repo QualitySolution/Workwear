@@ -19,6 +19,7 @@ namespace workwear.HMap
 			References (x => x.EmployeeCard).Column ("wear_card_id");
 			References (x => x.ActiveNormItem).Column ("norm_item_id");
 			References (x => x.Item).Column ("itemtype_id");
+			References (x => x.MatchedNomenclature).Column ("matched_nomenclature_id");
 		}
 	}
 }
