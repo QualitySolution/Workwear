@@ -302,7 +302,9 @@ namespace workwear
 					"LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id " +
 					"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id " +
 					"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
-					"WHERE stock_expense.wear_card_id = @id AND (spent.count IS NULL OR spent.count < stock_expense_detail.quantity ) " +
+					"WHERE stock_expense.wear_card_id = @id AND " +
+					"(stock_expense_detail.auto_writeoff_date IS NULL OR stock_expense_detail.auto_writeoff_date > CURDATE() ) AND " +
+					"(spent.count IS NULL OR spent.count < stock_expense_detail.quantity ) " +
 					"GROUP BY nomenclature.type_id";
 				MySqlCommand cmd = new MySqlCommand (sql, QSMain.connectionDB);
 				cmd.Parameters.AddWithValue ("@id", Entity.Id);
