@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace workwear.Domain.Stock
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
+	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Masculine,
 		NominativePlural = "акты списания",
 		Nominative = "акт списания")]
 	public class Writeoff : PropertyChangedBase, IDomainObject, IValidatableObject
@@ -54,6 +54,9 @@ namespace workwear.Domain.Stock
 			
 		#endregion
 
+		public virtual string Title{
+			get{ return String.Format ("Акт списания №{0}", Id);}
+		}
 
 		#region IValidatableObject implementation
 

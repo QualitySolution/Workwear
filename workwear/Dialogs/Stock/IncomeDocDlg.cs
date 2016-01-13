@@ -12,7 +12,6 @@ namespace workwear
 	public partial class IncomeDocDlg : FakeTDIEntityGtkDialogBase<Income>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
-		string DocName;
 
 		public IncomeDocDlg()
 		{
@@ -91,25 +90,26 @@ namespace workwear
 
 		protected void OnYcomboOperationChanged (object sender, EventArgs e)
 		{
+			labelTTN.Visible = yentryNumber.Visible = Entity.Operation == IncomeOperations.Enter;
+			labelWorker.Visible = yentryEmployee.Visible = Entity.Operation == IncomeOperations.Return;
+			labelObject.Visible = yentryObject.Visible = Entity.Operation == IncomeOperations.Object;
+
+			if (!UoWGeneric.IsNew)
+				return;
+			
 			switch (Entity.Operation)
 			{
 			case IncomeOperations.Enter:
-				DocName = "Приходная накладная № ";
 				this.Title = "Новая приходная накладная";
 				break;
 			case IncomeOperations.Return:
-				DocName = "Возврат от работника № ";
 				this.Title = "Новый возврат от работника";
 				break;
 			case IncomeOperations.Object:
-				DocName = "Возврат c объекта № ";
 				this.Title = "Новый возврат c объекта";
 				break;
 			}
 
-			labelTTN.Visible = yentryNumber.Visible = Entity.Operation == IncomeOperations.Enter;
-			labelWorker.Visible = yentryEmployee.Visible = Entity.Operation == IncomeOperations.Return;
-			labelObject.Visible = yentryObject.Visible = Entity.Operation == IncomeOperations.Object;
 		}
 	}
 }

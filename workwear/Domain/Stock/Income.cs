@@ -86,6 +86,20 @@ namespace workwear.Domain.Stock
 			
 		#endregion
 
+		public virtual string Title{
+			get{
+				switch (Operation) {
+				case IncomeOperations.Enter:
+					return "Приходная накладная № " + Id;
+				case IncomeOperations.Return:
+					return "Возврат от работника № " + Id;
+				case IncomeOperations.Object:
+					return "Возврат c объекта № " + Id;
+				default:
+					return null;
+				}
+			}
+		}
 
 		#region IValidatableObject implementation
 

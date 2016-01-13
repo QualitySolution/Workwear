@@ -78,6 +78,9 @@ namespace workwear.Domain.Stock
 			
 		#endregion
 
+		public virtual string Title{
+			get{ return String.Format ("Выдача №{0}", Id);}
+		}
 
 		public Expense ()
 		{
