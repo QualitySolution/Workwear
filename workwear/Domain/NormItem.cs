@@ -76,6 +76,22 @@ namespace workwear.Domain
 			}
 		}
 
+		public virtual int PeriodInMonths
+		{
+			get{
+				switch(NormPeriod)
+				{
+				case NormPeriodType.Year:
+					return PeriodCount * 12;
+				case NormPeriodType.Month:
+					return PeriodCount;
+				case NormPeriodType.Shift:
+					return PeriodCount / 21;
+				}
+				return -1;
+			}
+		}
+
 		public virtual string LifeText{
 			get{
 				switch(NormPeriod)
@@ -89,6 +105,16 @@ namespace workwear.Domain
 				}
 				return String.Empty;
 			}
+		}
+
+		public virtual DateTime CalculateExpireDate(DateTime issueDate, int amount)
+		{
+			//TODO Некорретно считаем смены
+			double oneItemByMonths = (double)PeriodInMonths / Amount;
+			double months = amount * oneItemByMonths;
+			int wholeMonths = (int)months;
+			int addintionDays = (int)Math.Round ((months - wholeMonths) * 30);
+			return issueDate.AddMonths (wholeMonths).AddDays (addintionDays);
 		}
 
 		public NormItem ()

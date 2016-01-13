@@ -196,6 +196,53 @@ namespace workwear.Domain
 			else
 				InStockState = StockStateInfo.NotEnough;
 		}
+
+		public virtual void UpdateNextIssue(IUnitOfWork uow, ExpenseItem[] resaveItems)
+		{
+			ExpenseItem expenseItemAlias = null;
+			Nomenclature nomenclatureAlias = null;
+
+			var expenseItems = uow.Session.QueryOver<ExpenseItem> (() => expenseItemAlias)
+				.JoinQueryOver (ei => ei.ExpenseDoc)
+				.Where (e => e.EmployeeCard == EmployeeCard)
+				.JoinAlias (() => expenseItemAlias.Nomenclature, () => nomenclatureAlias)
+				.Where (() => nomenclatureAlias.Type.Id == Item.Id)
+				.OrderBy (e => e.Date).Asc
+				.List ();
+
+			var lastExpire = new DateTime();
+
+			foreach(var expenseItem in expenseItems)
+			{
+				bool noChange = expenseItem.AutoWriteoffDate.HasValue && expenseItem.AutoWriteoffDate.Value < DateTime.Today && !resaveItems.Contains (expenseItem);
+
+				var returned = uow.Session.QueryOver<IncomeItem> ()
+					.Where (i => i.IssuedOn == expenseItem).List ();
+				var writeoff = uow.Session.QueryOver<WriteoffItem> ()
+					.Where (w => w.IssuedOn == expenseItem).List ();
+
+				int realAmount = expenseItem.Amount - returned.Sum (r => r.Amount) - writeoff.Sum (w => w.Amount);
+
+				DateTime virtualIssue = lastExpire > expenseItem.ExpenseDoc.Date ? lastExpire : expenseItem.ExpenseDoc.Date;
+
+				DateTime newExpireDate = ActiveNormItem.CalculateExpireDate (virtualIssue, realAmount);
+
+				if (newExpireDate > DateTime.Today)
+					noChange = false;
+
+				lastExpire = newExpireDate;
+				if(!noChange && expenseItem.AutoWriteoffDate != (DateTime?)newExpireDate)
+				{
+					expenseItem.AutoWriteoffDate = newExpireDate;
+					uow.Save (expenseItem);
+				}
+			}
+			if(lastExpire != default(DateTime) && NextIssue != lastExpire)
+			{
+				NextIssue = lastExpire;
+				uow.Save (this);
+			}
+		}
 	}
 
 	public enum StockStateInfo{

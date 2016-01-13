@@ -347,11 +347,6 @@ namespace workwear.Domain
 			needRemove.ToList ().ForEach (i => ObservableWorkwearItems.Remove (i));
 		}
 
-		public virtual void UpdateWorkwearNextIssue()
-		{
-			
-		}
-
 		public virtual void FillWearRecivedInfo(IUnitOfWork uow)
 		{
 			var receiveds = Repository.EmployeeRepository.ItemsBalance (uow, this);
