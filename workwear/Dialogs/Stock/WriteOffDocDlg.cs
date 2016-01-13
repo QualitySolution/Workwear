@@ -1,10 +1,11 @@
 using System;
+using System.Linq;
 using NLog;
 using QSOrmProject;
 using QSProjectsLib;
+using workwear.Domain;
 using workwear.Domain.Stock;
 using workwear.Repository;
-using workwear.Domain;
 
 namespace workwear
 {
@@ -61,6 +62,26 @@ namespace workwear
 
 			try {
 				UoWGeneric.Save ();
+				if(Entity.Items.Any (w => w.IssuedOn != null))
+				{
+					logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
+					foreach(var employeeGroup in Entity.Items.Where (w => w.IssuedOn != null).GroupBy (w => w.IssuedOn.ExpenseDoc.EmployeeCard.Id))
+					{
+						var employee = employeeGroup.Select (eg => eg.IssuedOn.ExpenseDoc.EmployeeCard).First ();
+						foreach(var itemsGroup in employeeGroup.GroupBy (i => i.Nomenclature.Type.Id))
+						{
+							var wearItem = employee.WorkwearItems.FirstOrDefault (i => i.Item.Id == itemsGroup.Key);
+							if(wearItem == null)
+							{
+								logger.Debug ("Позиции <{0}> не требуется к выдаче, пропускаем...", itemsGroup.First ().Nomenclature.Type.Name);
+								continue;
+							}
+
+							wearItem.UpdateNextIssue (UoW, itemsGroup.Select (i => i.IssuedOn).ToArray ());
+						}
+					}
+					UoWGeneric.Commit ();
+				}
 			} catch (Exception ex) {
 				QSMain.ErrorMessageWithLog (this, "Не удалось записать документ.", logger, ex);
 				return false;
