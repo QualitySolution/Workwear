@@ -347,6 +347,27 @@ namespace workwear.Domain
 			needRemove.ToList ().ForEach (i => ObservableWorkwearItems.Remove (i));
 		}
 
+		public virtual void UpdateWorkwearNextIssue()
+		{
+			
+		}
+
+		public virtual void FillWearRecivedInfo(IUnitOfWork uow)
+		{
+			var receiveds = Repository.EmployeeRepository.ItemsBalance (uow, this);
+			var summary = receiveds.GroupBy (r => r.ItemsTypeId).Select (gr => new {
+				ItemsTypeId = gr.Key,
+				Amount = gr.Sum (r => r.Amount),
+				LastReceive = gr.Max (r => r.LastReceive)
+			}).ToArray ();
+			foreach(var item in WorkwearItems)
+			{
+				var receive = summary.FirstOrDefault (dto => dto.ItemsTypeId == item.Item.Id);
+				item.Amount = receive != null ? receive.Amount : 0;
+				item.LastIssue = receive != null ? receive.LastReceive : (DateTime?)null;
+			}
+		}
+
 		public virtual void FillWearInStockInfo(IUnitOfWork uow)
 		{
 			var nomenclatures = WorkwearItems.Where (i => i.MatchedNomenclature != null).Select (i => i.MatchedNomenclature).ToList ();

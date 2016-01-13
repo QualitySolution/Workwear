@@ -382,6 +382,7 @@ namespace workwear
 			if(notebook1.CurrentPage == 1 && ytreeWorkwear.ItemsDataSource == null)
 			{
 				Entity.FillWearInStockInfo (UoW);
+				Entity.FillWearRecivedInfo (UoW);
 				ytreeWorkwear.ItemsDataSource = Entity.ObservableWorkwearItems;
 			}
 
