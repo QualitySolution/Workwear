@@ -93,10 +93,10 @@ namespace workwear
 			ytreeWorkwear.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItem> ()
 				.AddColumn ("ТОН").AddTextRenderer (node => node.ActiveNormItem.Norm.Title)
 				.AddColumn ("Наименование").AddTextRenderer (node => node.Item.Name)
-				.AddColumn ("По норме").AddTextRenderer (node => node.ActiveNormItem.Amount.ToString ())
+				.AddColumn ("По норме").AddTextRenderer (node => node.Item.Units.MakeAmountShortStr (node.ActiveNormItem.Amount))
 				.AddColumn ("Срок службы").AddTextRenderer (node => node.ActiveNormItem.LifeText)
 				.AddColumn ("Дата получения").AddTextRenderer (node => String.Format ("{0:d}", node.LastIssue))
-				.AddColumn ("Получено").AddTextRenderer (node => node.Amount.ToString ())
+				.AddColumn ("Получено").AddTextRenderer (node => node.Item.Units.MakeAmountShortStr (node.Amount))
 					.AddSetter ((w, node) => w.Foreground = node.AmountColor)
 				.AddColumn ("След. получение").AddTextRenderer (node => String.Format ("{0:d}", node.NextIssue))
 				.AddColumn ("Просрочка").AddTextRenderer (
