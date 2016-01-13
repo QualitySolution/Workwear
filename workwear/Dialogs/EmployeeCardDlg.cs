@@ -5,15 +5,16 @@ using System.Linq;
 using Gamma.Utilities;
 using Gtk;
 using MySql.Data.MySqlClient;
+using NHibernate;
 using NLog;
 using QSOrmProject;
 using QSProjectsLib;
 using QSValidation;
 using workwear.Domain;
+using workwear.Domain.Stock;
 using workwear.DTO;
 using workwear.Measurements;
 using workwear.Repository;
-using workwear.Domain.Stock;
 
 namespace workwear
 {
@@ -331,30 +332,42 @@ namespace workwear
 		{
 			ExpenseDocDlg winExpense = new ExpenseDocDlg (Entity);
 			winExpense.Show ();
-			winExpense.Run ();
+			int result = winExpense.Run ();
 			winExpense.Destroy ();
-			UpdateMovements ();
-			UpdateListedItems ();
+			if(result == (int)ResponseType.Ok)
+			{
+				RefreshWorkItems ();
+				UpdateMovements ();
+				UpdateListedItems ();
+			}
 		}
 
 		protected void OnButtonReturnWearClicked (object sender, EventArgs e)
 		{
 			IncomeDocDlg winIncome = new IncomeDocDlg (Entity);
 			winIncome.Show ();
-			winIncome.Run ();
+			int result = winIncome.Run ();
 			winIncome.Destroy ();
-			UpdateMovements ();
-			UpdateListedItems ();
+			if(result == (int)ResponseType.Ok)
+			{
+				RefreshWorkItems ();
+				UpdateMovements ();
+				UpdateListedItems ();
+			}
 		}
 
 		protected void OnButtonWriteOffWearClicked (object sender, EventArgs e)
 		{
 			WriteOffDocDlg winWriteOff = new WriteOffDocDlg (Entity);
 			winWriteOff.Show ();
-			winWriteOff.Run ();
+			int result = winWriteOff.Run ();
 			winWriteOff.Destroy ();
-			UpdateMovements ();
-			UpdateListedItems ();
+			if(result == (int)ResponseType.Ok)
+			{
+				RefreshWorkItems ();
+				UpdateMovements ();
+				UpdateListedItems ();
+			}
 		}
 
 		protected void OnButtonPrintClicked (object sender, EventArgs e)
@@ -572,6 +585,9 @@ namespace workwear
 					buttonPickNomenclature.Click ();
 			}
 
+			if (!Save ())
+				return;
+
 			var addItems = new Dictionary<Nomenclature, int> ();
 			foreach(var item in Entity.WorkwearItems)
 			{
@@ -584,10 +600,14 @@ namespace workwear
 
 			ExpenseDocDlg winExpense = new ExpenseDocDlg (Entity, addItems);
 			winExpense.Show ();
-			winExpense.Run ();
+			int result = winExpense.Run ();
 			winExpense.Destroy ();
-			UpdateMovements ();
-			UpdateListedItems ();
+			if(result == (int)ResponseType.Ok)
+			{
+				RefreshWorkItems ();
+				UpdateMovements ();
+				UpdateListedItems ();
+			}
 		}
 
 		protected void OnButtonPickNomenclatureClicked (object sender, EventArgs e)
@@ -595,6 +615,19 @@ namespace workwear
 			foreach (var item in Entity.WorkwearItems)
 				item.FindMatchedNomenclature (UoW);
 			IsNomenclaturePickuped = true;
+		}
+
+		protected void RefreshWorkItems()
+		{
+			if (!NHibernateUtil.IsInitialized (Entity.WorkwearItems))
+				return;
+
+			foreach (var item in Entity.WorkwearItems)
+			{
+				UoW.Session.Refresh (item);
+			}
+			Entity.FillWearInStockInfo (UoW);
+			Entity.FillWearRecivedInfo (UoW);
 		}
 	}
 }
