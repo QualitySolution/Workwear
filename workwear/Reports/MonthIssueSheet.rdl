@@ -973,12 +973,12 @@
         </Style>
       </Textbox>
       <Textbox Name="Textbox51">
-        <Height>30.79pt</Height>
-        <Width>103.02pt</Width>
+        <Height>27.79pt</Height>
+        <Width>121.03pt</Width>
         <Value>Материально ответственное лицо</Value>
         <ZIndex>1</ZIndex>
-        <Left>0.0pt</Left>
-        <Top>140pt</Top>
+        <Left>0.00pt</Left>
+        <Top>140.00pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -987,11 +987,11 @@
       </Textbox>
       <Textbox Name="Textbox52">
         <Height>24.76pt</Height>
-        <Width>84.32pt</Width>
+        <Width>103.12pt</Width>
         <Value>Руководитель подразделения</Value>
         <ZIndex>1</ZIndex>
-        <Left>311.6pt</Left>
-        <Top>138.5pt</Top>
+        <Left>311.60pt</Left>
+        <Top>138.50pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -1407,7 +1407,7 @@
     End Function</Code>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     CONCAT_WS(' ',
@@ -1422,8 +1422,8 @@
         WHEN 'Headgear' THEN wear_cards.size_headdress
         WHEN 'Gloves' THEN wear_cards.size_gloves
     END) as size,
-    NULLIF(item_types.wear_category &lt;&gt; 'Wear',
-            wear_cards.wear_growth) as growth,
+   IF(item_types.wear_category = 'Wear',
+            wear_cards.wear_growth, NULL) as growth,
     measurement_units.name as units,
     measurement_units.okei as okei,
     wear_cards_item.next_issue plan_date,
@@ -1453,7 +1453,7 @@ ORDER BY employee;</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="employee">
           <DataField>employee</DataField>
           <TypeName>System.String</TypeName>
