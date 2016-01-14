@@ -6,11 +6,12 @@ using QSProjectsLib;
 // Change them to the values specific to your project.
 [assembly: AssemblyTitle("QS: Спецодежда и имущество")]
 [assembly: AssemblyEdition("gpl")]
+[assembly: AssemblyBetaBuild]
 [assembly: AssemblyDescription("Программа позволяет вести учет внутреннего склада спецодежды и имущества выдаваемого на объекты.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]
 [assembly: AssemblyProduct("QS: Спецодежда и имущество")]
-[assembly: AssemblyCopyright("Quality Solution 2015")]
+[assembly: AssemblyCopyright("Quality Solution 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyLogoIcon("workwear.icon.logo.png")]
