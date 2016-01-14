@@ -1053,6 +1053,7 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign >Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1060,7 +1061,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox41">
-                      <Value>={name}</Value>
+                      <Value>=Iif(Fields!nomenclature_name.IsMissing, {type_name},{nomenclature_name})</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -1082,6 +1083,7 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign >Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1096,6 +1098,7 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign >Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1110,6 +1113,7 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign >Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1117,12 +1121,15 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox49">
-                      <Value>
-                      </Value>
+                      <Value>={life_in_months}</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
+                        <BorderColor  />
+                        <BorderWidth  />
+                        <TextAlign >Center</TextAlign>
+                        <Format >0</Format>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1130,13 +1137,15 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox51">
-                      <Value>={datein}</Value>
+                      <Value>={last_issue}</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign >Center</TextAlign>
+                        <Format >d</Format>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1144,13 +1153,14 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox53">
-                      <Value>={quantityin}</Value>
+                      <Value>={received}</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign >Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1158,12 +1168,15 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox55">
-                      <Value>
-                      </Value>
+                      <Value>={next_issue}</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
+                        <BorderColor  />
+                        <BorderWidth  />
+                        <Format >d</Format>
+                        <TextAlign >Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1171,12 +1184,14 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox57">
-                      <Value>
-                      </Value>
+                      <Value>={delay}</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
+                        <BorderColor  />
+                        <BorderWidth  />
+                        <TextAlign >Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1184,13 +1199,14 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox59">
-                      <Value>={remainings}</Value>
+                      <Value>={in_stock}</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign >Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1680,66 +1696,100 @@ WHERE wear_cards.id = @id;</CommandText>
       </Fields>
     </DataSet>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT stock_expense_detail.id as idin, stock_expense_detail.nomenclature_id, stock_expense_detail.quantity as quantityin,
-nomenclature.name, nomenclature.size, nomenclature.growth, measurement_units.name as unit, stock_expense.date as datein, stock_income.number,
-total.remainings 
-FROM stock_expense_detail 
-LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id
-
-LEFT JOIN 
-(SELECT 
-stock_income_detail.nomenclature_id AS nom, 
-IF(SUM(stock_income_detail.quantity) IS NULL, 0, SUM(stock_income_detail.quantity)) - 
-IF(SUM(stock_expense_detail.quantity) IS NULL, 0, SUM(stock_expense_detail.quantity)) - 
-IF(SUM(stock_write_off_detail.quantity) IS NULL, 0,SUM(stock_write_off_detail.quantity))  AS remainings
-FROM stock_income_detail
-LEFT JOIN stock_expense_detail ON stock_expense_detail.nomenclature_id = stock_income_detail.nomenclature_id
-LEFT JOIN stock_write_off_detail ON stock_write_off_detail.nomenclature_id = stock_income_detail.nomenclature_id
-GROUP BY stock_income_detail.nomenclature_id
-) AS total ON total.nom = nomenclature.id
-
-LEFT JOIN item_types ON item_types.id = nomenclature.type_id 
-LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id 
-LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id 
-LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id
-LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id
-WHERE stock_expense.wear_card_id = @id;</CommandText>
+        <CommandText>SELECT 
+    wear_cards_item.id,
+    wear_cards_item.next_issue,
+    IF(wear_cards_item.next_issue &lt;= CURDATE(),
+        DATEDIFF(CURDATE(), wear_cards_item.next_issue),
+        NULL) AS delay,
+    item_types.name AS type_name,
+    nomenclature.name AS nomenclature_name,
+    nomenclature.size,
+    nomenclature.growth,
+    measurement_units.name AS unit,
+    CASE norms_item.period_type
+        WHEN 'Year' THEN norms_item.period_count * 12
+        WHEN 'Month' THEN norms_item.period_count
+        WHEN 'Shift' THEN norms_item.period_count / 21
+    END AS life_in_months,
+    (SELECT 
+            MAX(stock_expense.date)
+        FROM
+            stock_expense_detail
+                LEFT JOIN
+            stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id
+                LEFT JOIN
+            nomenclature ON stock_expense_detail.nomenclature_id = nomenclature.id
+        WHERE
+            nomenclature.type_id = wear_cards_item.itemtype_id
+                AND stock_expense.wear_card_id = @id) AS last_issue,
+    (SELECT 
+            SUM(stock_expense_detail.quantity) - IFNULL(SUM(stock_write_off_detail.quantity), 0) - IFNULL(SUM(stock_income_detail.quantity), 0)
+        FROM
+            stock_expense_detail
+                LEFT JOIN
+            stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id
+                LEFT JOIN
+            nomenclature ON stock_expense_detail.nomenclature_id = nomenclature.id
+                LEFT JOIN
+            stock_write_off_detail ON stock_write_off_detail.stock_expense_detail_id = stock_expense_detail.id
+                LEFT JOIN
+            stock_income_detail ON stock_income_detail.stock_expense_detail_id = stock_expense_detail.id
+        WHERE
+            stock_expense.wear_card_id = @id
+                AND (stock_expense_detail.auto_writeoff_date IS NULL
+                OR stock_expense_detail.auto_writeoff_date &gt; CURDATE())
+                AND nomenclature.type_id = wear_cards_item.itemtype_id) AS received,
+    (SELECT 
+            SUM(stock_income_detail.quantity) - IFNULL(SUM(stock_write_off_detail.quantity), 0) - IFNULL(SUM(stock_expense_detail.quantity), 0)
+        FROM
+            stock_income_detail
+                LEFT JOIN
+            stock_write_off_detail ON stock_write_off_detail.stock_income_detail_id = stock_income_detail.id
+                LEFT JOIN
+            stock_expense_detail ON stock_expense_detail.stock_income_detail_id = stock_income_detail.id
+        WHERE
+            stock_income_detail.nomenclature_id = wear_cards_item.matched_nomenclature_id) AS in_stock
+FROM
+    wear_cards_item
+        LEFT JOIN
+    nomenclature ON nomenclature.id = wear_cards_item.matched_nomenclature_id
+        LEFT JOIN
+    item_types ON item_types.id = wear_cards_item.itemtype_id
+        LEFT JOIN
+    measurement_units ON item_types.units_id = measurement_units.id
+        LEFT JOIN
+    norms_item ON wear_cards_item.norm_item_id = norms_item.id
+WHERE
+    wear_cards_item.wear_card_id = @id;</CommandText>
         <QueryParameters>
           <QueryParameter Name="@id">
             <Value>=Parameters!id</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
-        <Field Name="idin">
-          <DataField>idin</DataField>
-          <TypeName>System.Int32</TypeName>
+      <Fields >
+        <Field Name="id">
+          <DataField>id</DataField>
+          <TypeName>System.UInt32</TypeName>
         </Field>
-        <Field Name="nomenclature_id">
-          <DataField>nomenclature_id</DataField>
-          <TypeName>System.Int32</TypeName>
-        </Field>
-        <Field Name="quantityin">
-          <DataField>quantityin</DataField>
-          <TypeName>System.Int32</TypeName>
-        </Field>
-        <Field Name="name">
-          <DataField>name</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="unit">
-          <DataField>unit</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="datein">
-          <DataField>datein</DataField>
+        <Field Name="next_issue">
+          <DataField>next_issue</DataField>
           <TypeName>System.DateTime</TypeName>
         </Field>
-        <Field Name="number">
-          <DataField>number</DataField>
-          <TypeName>System.Int32</TypeName>
+        <Field Name="delay">
+          <DataField>delay</DataField>
+          <TypeName>System.Int64</TypeName>
+        </Field>
+        <Field Name="type_name">
+          <DataField>type_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="nomenclature_name">
+          <DataField>nomenclature_name</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
         <Field Name="size">
           <DataField>size</DataField>
@@ -1749,9 +1799,25 @@ WHERE stock_expense.wear_card_id = @id;</CommandText>
           <DataField>growth</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="remainings">
-          <DataField>remainings</DataField>
-          <TypeName>System.Int32</TypeName>
+        <Field Name="unit">
+          <DataField>unit</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="life_in_months">
+          <DataField>life_in_months</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
+        <Field Name="last_issue">
+          <DataField>last_issue</DataField>
+          <TypeName>System.DateTime</TypeName>
+        </Field>
+        <Field Name="received">
+          <DataField>received</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
+        <Field Name="in_stock">
+          <DataField>in_stock</DataField>
+          <TypeName>System.Decimal</TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -1771,11 +1837,11 @@ WHERE stock_expense.wear_card_id = @id;</CommandText>
       </Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources>
+  <DataSources >
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>database=;user=;password=;port=3306;server=</ConnectString>
+        <ConnectString>database=workwear_depot;user=depot_demo;password=beta;port=3306;server=192.168.1.5</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
