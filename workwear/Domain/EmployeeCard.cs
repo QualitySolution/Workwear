@@ -373,8 +373,8 @@ namespace workwear.Domain
 			{
 				if (item.MatchedNomenclature == null)
 					continue;
-				var inStock = stock.First (s => s.Nomenclature == item.MatchedNomenclature);
-				item.SetInStockAmount (inStock.Amount);
+				var inStock = stock.FirstOrDefault (s => s.Nomenclature == item.MatchedNomenclature);
+				item.SetInStockAmount (inStock == null ? 0 : inStock.Amount);
 			}
 		}
 	}
