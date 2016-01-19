@@ -400,4 +400,12 @@ public partial class MainWindow: Gtk.Window
 		dlg.Run ();
 		dlg.Destroy ();
 	}
+
+	protected void OnAction17Activated (object sender, EventArgs e)
+	{
+		var dlg = new NotIssuedSheetReportDlg ();
+		dlg.Show ();
+		dlg.Run ();
+		dlg.Destroy ();
+	}
 }
