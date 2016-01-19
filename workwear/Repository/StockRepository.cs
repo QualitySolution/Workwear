@@ -105,6 +105,42 @@ namespace workwear
 
 			return incomeList;
 		}
+
+		public static IList<StockBalanceDTO> BalanceInStockSummary(IUnitOfWork uow, IList<Nomenclature> nomenclatures)
+		{
+			StockBalanceDTO resultAlias = null;
+
+			IncomeItem incomeItemAlias = null;
+			ExpenseItem expenseItemAlias = null;
+			WriteoffItem writeoffItemAlias = null;
+
+			var incomes = uow.Session.QueryOver<IncomeItem> (() => incomeItemAlias)
+				.WhereRestrictionOn (i => i.Nomenclature).IsInG (nomenclatures);
+
+			var subqueryRemove = QueryOver.Of<ExpenseItem>(() => expenseItemAlias)
+				.Where(() => expenseItemAlias.IncomeOn.Id == incomeItemAlias.Id)
+				.Select (Projections.Sum<ExpenseItem> (o => o.Amount));
+
+			var subqueryWriteOff = QueryOver.Of<WriteoffItem>(() => writeoffItemAlias)
+				.Where(() => writeoffItemAlias.IncomeOn.Id == incomeItemAlias.Id)
+				.Select (Projections.Sum<WriteoffItem> (o => o.Amount));
+
+			var incomeList = incomes
+				.SelectList (list => list
+					.SelectGroup (() => incomeItemAlias.Nomenclature.Id).WithAlias (() => resultAlias.NomenclatureId)
+					//.SelectAvg (() => incomeItemAlias.LifePercent).WithAlias (() => resultAlias.Life)
+					.SelectSum (() => incomeItemAlias.Amount).WithAlias (() => resultAlias.Income)
+					.SelectSubQuery (subqueryRemove).WithAlias (() => resultAlias.Expense)
+					.SelectSubQuery (subqueryWriteOff).WithAlias (() => resultAlias.Writeoff)
+				)
+				.TransformUsing (Transformers.AliasToBean<StockBalanceDTO> ())
+				.List<StockBalanceDTO> ();
+
+			//Проставляем номенклатуру.
+			incomeList.ToList ().ForEach (item => item.Nomenclature = nomenclatures.First (n => n.Id == item.NomenclatureId));
+
+			return incomeList;
+		}
 	}
 
 	public class StockBalanceDTO
@@ -120,13 +156,6 @@ namespace workwear
 		public int Amount { get{ return Income - Expense - Writeoff;
 			}}
 		public decimal Life { get; set;}
-
-/*		public StockBalanceDTO(Nomenclature nomenclature, int amount, decimal life)
-		{
-			Nomenclature = nomenclature;
-			Amount = amount;
-			Life = life;
-		}
-*/	}
+	}
 }
 

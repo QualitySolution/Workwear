@@ -368,7 +368,7 @@ namespace workwear.Domain
 			var nomenclatures = WorkwearItems.Where (i => i.MatchedNomenclature != null).Select (i => i.MatchedNomenclature).ToList ();
 			if (nomenclatures.Count == 0)
 				return;
-			var stock = StockRepository.BalanceInStockDetail (uow, nomenclatures);
+			var stock = StockRepository.BalanceInStockSummary (uow, nomenclatures);
 			foreach(var item in WorkwearItems)
 			{
 				if (item.MatchedNomenclature == null)
