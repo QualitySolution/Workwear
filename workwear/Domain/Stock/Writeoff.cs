@@ -65,6 +65,15 @@ namespace workwear.Domain.Stock
 			if (Date < new DateTime(2008, 1, 1))
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
 					new[] { this.GetPropertyName (o => o.Date)});
+
+			if(Items.Count == 0)
+				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку.", 
+					new[] { this.GetPropertyName (o => o.Items)});
+
+			if(Items.Any (i => i.Amount <= 0))
+				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.", 
+					new[] { this.GetPropertyName (o => o.Items)});
+			
 		}
 
 		#endregion

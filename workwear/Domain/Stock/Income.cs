@@ -116,6 +116,14 @@ namespace workwear.Domain.Stock
 			if(Operation == IncomeOperations.Return && EmployeeCard == null)
 				yield return new ValidationResult ("Сотрудник должен быть указан", 
 					new[] { this.GetPropertyName (o => o.Date)});
+
+			if(Items.Count == 0)
+				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку.", 
+					new[] { this.GetPropertyName (o => o.Items)});
+
+			if(Items.Any (i => i.Amount <= 0))
+				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.", 
+					new[] { this.GetPropertyName (o => o.Items)});
 		}
 
 		#endregion
