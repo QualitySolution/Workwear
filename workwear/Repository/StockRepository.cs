@@ -53,8 +53,6 @@ namespace workwear
 			StockBalanceDTO resultAlias = null;
 
 			IncomeItem incomeItemAlias = null;
-			Nomenclature nomenclatureAlias = null;
-			ItemsType itemtypesAlias = null;
 			ExpenseItem expenseItemAlias = null;
 			WriteoffItem writeoffItemAlias = null;
 
@@ -70,8 +68,6 @@ namespace workwear
 				.Select (Projections.Sum<WriteoffItem> (o => o.Amount));
 
 			var incomeList = incomes
-				.JoinAlias (() => incomeItemAlias.Nomenclature, () => nomenclatureAlias)
-				.JoinAlias (() => nomenclatureAlias.Type, () => itemtypesAlias)
 				.Where (Restrictions.Gt (
 					Projections.SqlFunction(
 						new VarArgsSQLFunction("(", "-", ")"),
@@ -91,7 +87,7 @@ namespace workwear
 				)
 				.SelectList (list => list
 					.SelectGroup (() => incomeItemAlias.Id).WithAlias (() => resultAlias.IncomeItemId)
-					.Select (() => nomenclatureAlias.Id).WithAlias (() => resultAlias.NomenclatureId)
+					.Select (() => incomeItemAlias.Nomenclature.Id).WithAlias (() => resultAlias.NomenclatureId)
 					.Select (() => incomeItemAlias.LifePercent).WithAlias (() => resultAlias.Life)
 					.Select (() => incomeItemAlias.Amount).WithAlias (() => resultAlias.Income)
 					.SelectSubQuery (subqueryRemove).WithAlias (() => resultAlias.Expense)
