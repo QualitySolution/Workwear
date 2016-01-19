@@ -164,25 +164,55 @@ namespace workwear.Domain
 			}
 			var stock = StockRepository.BalanceInStockDetail (uow, nomenclatures);
 
-			var suggested = stock.First (s => s.Amount >= neededCount && s.Life == 1);
+			if(stock.Count == 0)
+			{
+				if(MatchedNomenclature == null)
+				{
+					logger.Debug ("Подходящие номенклатуры на складе отсутствуют, выбираем любую...");
+					matchedNomenclature = nomenclatures.OrderBy (n => n.Id).Last ();
+					SetInStockAmount (0);
+				}
+				else
+					logger.Debug ("Подходящие номенклатуры на складе отсутствуют, отставляем старую...");
+				return;
+			}
+
+			var grouped = stock.GroupBy (s => s.NomenclatureId);
+
+			var fullLife = grouped.FirstOrDefault (gp => gp.Where (s => s.Life == 1).Sum (s => s.Amount) >= neededCount);
+
+			Nomenclature suggested = fullLife != null ? fullLife.First ().Nomenclature : null;
+
 			if (suggested == null) {
 				logger.Debug ("Достаточного количества новых <{0}> на складе не найдено.", Item.Name);
-				suggested = stock.Aggregate ((agr, cur) => cur.Amount > agr.Amount ? cur : agr);
+
+				int lastSum = -1;
+				foreach(var gr in grouped)
+				{
+					int newSum = gr.Sum (s => s.Amount);
+					if(newSum > lastSum)
+					{
+						suggested = gr.First ().Nomenclature;
+						lastSum = newSum;
+					}
+				}
 			}	
 				
+			int suggestedAmount = grouped.First (gp => gp.Key == suggested.Id).Sum (s => s.Amount);
+
 			if(DomainHelper.EqualDomainObjects (MatchedNomenclature, suggested))
 			{
-				logger.Debug ("Только обновляем количество на складе <{0}> -> <{1}>", InStock, suggested.Amount);
+				logger.Debug ("Только обновляем количество на складе <{0}> -> <{1}>", InStock, suggestedAmount);
 			}
 			else
 			{
 				logger.Debug ("Изменяем подобранную номенклатуру <{0}> -> <{1}>", 
 					MatchedNomenclature != null ? MatchedNomenclature.Name : String.Empty,
-					suggested.Nomenclature);
-				MatchedNomenclature = suggested.Nomenclature;
+					suggested);
+				MatchedNomenclature = suggested;
 			}
 
-			SetInStockAmount (suggested.Amount);
+			SetInStockAmount (suggestedAmount);
 		}
 
 		public virtual void SetInStockAmount(int inStock)
