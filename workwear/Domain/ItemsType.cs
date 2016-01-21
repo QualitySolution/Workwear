@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Gamma.Utilities;
 using QSBusinessCommon.Domain;
 using QSOrmProject;
 using workwear.Measurements;

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
-using QSOrmProject;
 using System.Linq;
+using Gamma.Utilities;
+using QSOrmProject;
 
 namespace workwear.Domain.Stock
 {
