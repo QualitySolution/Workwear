@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations;
 namespace workwear.Domain.Stock
 {
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
-		NominativePlural = "строки выдачи",
-		Nominative = "строка выдачи")]
+		NominativePlural = "строки прихода",
+		Nominative = "строка прихода")]
 	public class IncomeItem : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства
@@ -55,6 +55,13 @@ namespace workwear.Domain.Stock
 
 		#endregion
 
+		public virtual string Title {
+			get { return String.Format ("Поступление на склад {0} в количестве {1} {2}",
+				Nomenclature.Name,
+				Amount,
+				Nomenclature.Type.Units.Name
+			);}
+		}
 
 		public IncomeItem ()
 		{

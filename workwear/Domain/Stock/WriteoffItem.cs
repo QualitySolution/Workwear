@@ -6,7 +6,7 @@ namespace workwear.Domain.Stock
 {
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
 		NominativePlural = "строки списания",
-		Nominative = "строка строка")]
+		Nominative = "строка списания")]
 	public class WriteoffItem : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства
@@ -61,6 +61,14 @@ namespace workwear.Domain.Stock
 				}
 				return String.Empty;
 			}
+		}
+
+		public virtual string Title {
+			get { return String.Format ("Списание {0} в количестве {1} {2}",
+				Nomenclature.Name,
+				Amount,
+				Nomenclature.Type.Units.Name
+			);}
 		}
 
 		public WriteoffItem ()

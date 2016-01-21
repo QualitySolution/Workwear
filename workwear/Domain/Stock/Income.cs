@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
-using QSOrmProject;
 using System.Linq;
+using QSOrmProject;
 
 namespace workwear.Domain.Stock
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
-		NominativePlural = "выдачи",
-		Nominative = "выдача")]
+	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Masculine,
+		NominativePlural = "приходные документы",
+		Nominative = "приходный документ")]
 	public class Income : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
@@ -90,11 +90,11 @@ namespace workwear.Domain.Stock
 			get{
 				switch (Operation) {
 				case IncomeOperations.Enter:
-					return "Приходная накладная № " + Id;
+					return String.Format ("Приходная накладная №{0} от {1:d}", Id, Date);
 				case IncomeOperations.Return:
-					return "Возврат от работника № " + Id;
+					return String.Format ("Возврат от работника №{0} от {1:d}", Id, Date);
 				case IncomeOperations.Object:
-					return "Возврат c объекта № " + Id;
+					return String.Format ("Возврат c объекта №{0} от {1:d}", Id, Date);
 				default:
 					return null;
 				}

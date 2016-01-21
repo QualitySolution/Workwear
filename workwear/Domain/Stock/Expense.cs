@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
-using QSOrmProject;
+using Gamma.Utilities;
 
 namespace workwear.Domain.Stock
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
-		NominativePlural = "выдачи",
-		Nominative = "выдача")]
-	public class Expense : PropertyChangedBase, IDomainObject, IValidatableObject
+	[QSOrmProject.OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Masculine,
+		NominativePlural = "расходные документы",
+		Nominative = "расходный документ")]
+	public class Expense : QSOrmProject.PropertyChangedBase, QSOrmProject.IDomainObject, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
@@ -66,12 +65,12 @@ namespace workwear.Domain.Stock
 			set { SetField (ref items, value, () => Items); }
 		}
 
-		GenericObservableList<ExpenseItem> observableItems;
+		System.Data.Bindings.Collections.Generic.GenericObservableList<ExpenseItem> observableItems;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<ExpenseItem> ObservableItems {
+		public virtual System.Data.Bindings.Collections.Generic.GenericObservableList<ExpenseItem> ObservableItems {
 			get {
 				if (observableItems == null)
-					observableItems = new GenericObservableList<ExpenseItem> (Items);
+					observableItems = new System.Data.Bindings.Collections.Generic.GenericObservableList<ExpenseItem> (Items);
 				return observableItems;
 			}
 		}
@@ -79,7 +78,7 @@ namespace workwear.Domain.Stock
 		#endregion
 
 		public virtual string Title{
-			get{ return String.Format ("Выдача №{0}", Id);}
+			get{ return String.Format ("{0} №{1} от {2:d}", Operation.GetEnumTitle (), Id, Date);}
 		}
 
 		public Expense ()
@@ -119,7 +118,7 @@ namespace workwear.Domain.Stock
 
 		public virtual void AddItem(IncomeItem fromIncomeItem, int amount)
 		{
-			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IncomeOn, fromIncomeItem)))
+			if(Items.Any (p => QSOrmProject.DomainHelper.EqualDomainObjects (p.IncomeOn, fromIncomeItem)))
 			{
 				logger.Warn ("Номенклатура из этого поступления уже добавлена. Пропускаем...");
 				return;

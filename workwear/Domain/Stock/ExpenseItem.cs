@@ -55,6 +55,13 @@ namespace workwear.Domain.Stock
 
 		#endregion
 
+		public virtual string Title {
+			get { return String.Format ("Выдача со склада {0} в количестве {1} {2}",
+				Nomenclature.Name,
+				Amount,
+				Nomenclature.Type.Units.Name
+			);}
+		}
 
 		public ExpenseItem ()
 		{
