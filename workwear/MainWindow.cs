@@ -288,46 +288,43 @@ public partial class MainWindow: Gtk.Window
 		// Удаление
 		TreeIter iter;
 		int itemid;
-		Delete winDelete = new Delete();
 
 		switch (notebookMain.CurrentPage) 
 		{
 			case 0:
 				treeviewObjects.Selection.GetSelected(out iter);
 				itemid = (int) ObjectFilter.GetValue(iter,0);
-				winDelete.RunDeletion("objects", itemid);
-				UpdateObject();
+				if(OrmMain.DeleteObject<Facility> (itemid))
+					UpdateObject();
 				break;
 			case 1:
 				treeviewCards.Selection.GetSelected(out iter);
 				itemid = (int) CardsFilter.GetValue(iter,0);
-				winDelete.RunDeletion("wear_cards", itemid);
-				UpdateCards();
+				if(OrmMain.DeleteObject<EmployeeCard> (itemid))
+					UpdateCards();
 				break;
 			case 2:
 				switch (notebookStock.CurrentPage)
 				{
 					case 0:
-						treeviewIncome.Selection.GetSelected(out iter);
-						itemid = (int)IncomeFilter.GetValue(iter, 0);
-						winDelete.RunDeletion("stock_income", itemid);
+						treeviewIncome.Selection.GetSelected (out iter);
+						itemid = (int)IncomeFilter.GetValue (iter, 0);
+						OrmMain.DeleteObject<Income> (itemid);
 						break;
 					case 1:
 						treeviewExpense.Selection.GetSelected(out iter);
 						itemid = (int)ExpenseFilter.GetValue(iter, 0);
-						winDelete.RunDeletion("stock_expense", itemid);
+						OrmMain.DeleteObject<Expense> (itemid);
 						break;
 					case 2:
 						treeviewWriteOff.Selection.GetSelected(out iter);
 						itemid = (int)WriteOffFilter.GetValue(iter, 0);
-						winDelete.RunDeletion("stock_write_off", itemid);
+						OrmMain.DeleteObject<Writeoff> (itemid);
 						break;
 				}
 				UpdateStock();
 				break;
 		}
-		winDelete.Destroy();
-
 	}
 
 	protected void OnNotebookMainSwitchPage(object o, SwitchPageArgs args)
