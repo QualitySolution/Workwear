@@ -4,7 +4,6 @@ using workwear.Domain.Stock;
 using System.Collections.Generic;
 using QSBusinessCommon.Domain;
 
-
 namespace workwear
 {
 	partial class MainClass
@@ -35,11 +34,12 @@ namespace workwear
 				.AddDeleteDependence<NormItem> (x => x.Item);
 
 			DeleteConfig.AddHibernateDeleteInfo<Norm> ()
-				.AddDeleteDependence<NormItem> (x => x.Norm)
-				.AddRemoveFromDependence<EmployeeCard> (x => x.UsedNorms);
+				.AddRemoveFromDependence<EmployeeCard> (x => x.UsedNorms, x => x.RemoveUsedNorm)
+				.AddDeleteDependence<NormItem> (x => x.Norm);
+
 
 			DeleteConfig.AddHibernateDeleteInfo<NormItem> ()
-				.AddClearDependence<EmployeeCardItem> (x => x.ActiveNormItem) //FIXME После этого нужно пересчитать требования к выдаче, то новому списку норм.
+				//Ну нужна так как должна удалятся через пересчет. .AddClearDependence<EmployeeCardItem> (x => x.ActiveNormItem) //FIXME После этого нужно пересчитать требования к выдаче, то новому списку норм.
 				; 
 
 			DeleteConfig.AddHibernateDeleteInfo<MeasurementUnits> ()
