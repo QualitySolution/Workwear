@@ -312,20 +312,19 @@ namespace workwear.Domain
 		private void UpdateWorkwearItems()
 		{
 			//Проверяем нужно ли добавлять
-			var activeItems = WorkwearItems.OrderByDescending (i => i.Created);
 			var processed = new List<EmployeeCardItem>();
 			foreach(var norm in UsedNorms)
 			{
 				foreach (var normItem in norm.Items)
 				{
-					var currentItem = activeItems.FirstOrDefault (i => i.Item == normItem.Item);
+					var currentItem = WorkwearItems.FirstOrDefault (i => i.Item == normItem.Item);
 					if (currentItem == null)
 					{
+						//FIXME Возможно нужно проверять если что-то подходящее уже выдавалось то пересчитывать.
 						currentItem = new EmployeeCardItem (this, normItem);
 
 						ObservableWorkwearItems.Add (currentItem);
 					}
-						
 
 					if(processed.Contains (currentItem))
 					{
@@ -339,13 +338,9 @@ namespace workwear.Domain
 					}
 				}
 			}
-			//Проставляем значение используется ли по норме.
-			WorkwearItems.ToList ().ForEach (i => i.RequiredByNorm = processed.Contains (i));
 
 			// Удаляем больше ненужные
-			var needRemove = WorkwearItems
-				.Where (i => !i.RequiredByNorm)
-				.Where (i => !i.LastIssue.HasValue);
+			var needRemove = WorkwearItems.Where (i => !processed.Contains (i));
 
 			needRemove.ToList ().ForEach (i => ObservableWorkwearItems.Remove (i));
 		}

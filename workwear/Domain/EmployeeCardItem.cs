@@ -82,14 +82,6 @@ namespace workwear.Domain
 			set { SetField (ref nextIssue, value, () => NextIssue); }
 		}
 
-		bool requiredByNorm;
-
-		[Display (Name = "Активная норма")]
-		public virtual bool RequiredByNorm {
-			get { return requiredByNorm; }
-			set { SetField (ref requiredByNorm, value, () => RequiredByNorm); }
-		}
-
 		#endregion
 
 		#region Не хранимое в базе значение
