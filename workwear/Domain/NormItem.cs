@@ -5,7 +5,7 @@ using QSProjectsLib;
 
 namespace workwear.Domain
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
+	[OrmSubject (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки нормы",
 		Nominative = "строка нормы")]
 	public class NormItem : PropertyChangedBase, IDomainObject
@@ -115,6 +115,11 @@ namespace workwear.Domain
 			int wholeMonths = (int)months;
 			int addintionDays = (int)Math.Round ((months - wholeMonths) * 30);
 			return issueDate.AddMonths (wholeMonths).AddDays (addintionDays);
+		}
+
+		public virtual string Title{
+			get{ return String.Format ("{0} в количестве {1} на {2}", Item.Name, Item.Units.MakeAmountShortStr (Amount), LifeText);
+			}
 		}
 
 		public NormItem ()

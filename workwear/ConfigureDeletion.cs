@@ -36,8 +36,7 @@ namespace workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<Norm> ()
 				.AddDeleteDependence<NormItem> (x => x.Norm)
-				//FIXME возможно нужно реализовать очистку нормы из карточки сотрудника.
-				;
+				.AddRemoveFromDependence<EmployeeCard> (x => x.UsedNorms);
 
 			DeleteConfig.AddHibernateDeleteInfo<NormItem> ()
 				.AddClearDependence<EmployeeCardItem> (x => x.ActiveNormItem) //FIXME После этого нужно пересчитать требования к выдаче, то новому списку норм.
@@ -56,7 +55,7 @@ namespace workwear
 				.AddClearDependence<EmployeeCard> (x => x.Leader);
 
 			DeleteConfig.AddHibernateDeleteInfo<Post> ()
-			//FIXME Возможно нужно добавить удаление профессии из нормы.
+				.AddRemoveFromDependence<Norm> (x => x.Professions)
 				.AddClearDependence<EmployeeCard> (x => x.Post);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCard> ()

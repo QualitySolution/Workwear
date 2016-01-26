@@ -17,7 +17,7 @@ namespace workwear.HMap
 			HasManyToMany (x => x.Professions).Table ("norms_professions")
 				.ParentKeyColumn ("norm_id")
 				.ChildKeyColumn ("profession_id")
-				.Cascade.AllDeleteOrphan ().LazyLoad ();
+				.Cascade.All ().LazyLoad ();
 
 			HasMany (x => x.Items).KeyColumn ("norm_id").Not.KeyNullable ().Inverse ().Cascade.AllDeleteOrphan ()
 				.LazyLoad ();

@@ -9,7 +9,9 @@ namespace workwear.Domain
 {
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
 		NominativePlural = "нормы выдачи",
-		Nominative = "норма выдачи")]
+		Nominative = "норма выдачи",
+		PrepositionalPlural = "нормах выдачи"
+	)]
 	public class Norm : PropertyChangedBase, IDomainObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();

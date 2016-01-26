@@ -13,7 +13,9 @@ namespace workwear.Domain
 
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
 		NominativePlural = "карточки сотрудников",
-		Nominative = "карточка сотрудника")]
+		Nominative = "карточка сотрудника",
+		PrepositionalPlural = "карточках сотрудников"
+	)]
 	public class EmployeeCard: PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
