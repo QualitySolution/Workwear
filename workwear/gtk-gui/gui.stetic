@@ -12,10 +12,10 @@
     <widget-library name="../../../QSProjects/QSUpdater/bin/Debug/QSUpdater.dll" />
     <widget-library name="../../../GammaBinding/GammaBinding/bin/Debug/GammaBinding.dll" />
     <widget-library name="../../../QSProjects/QSOrmProject/bin/Debug/QSOrmProject.dll" />
-    <widget-library name="../bin/Debug/workwear.exe" internal="true" />
     <widget-library name="../../../QSProjects/QSTDI/bin/Debug/QSTDI.dll" />
     <widget-library name="../../../QSProjects/QSValidation/bin/Debug/QSValidation.dll" />
     <widget-library name="../../../QSProjects/Modules/QSBusinessCommon/bin/Debug/QSBusinessCommon.dll" />
+    <widget-library name="../bin/Debug/workwear.exe" internal="true" />
   </import>
   <widget class="Gtk.Dialog" id="workwear.ItemTypeDlg" design-size="454 235">
     <property name="MemberName" />
@@ -4526,15 +4526,16 @@
         <property name="ShortLabel" translatable="yes">Ведомость на выдачу</property>
         <signal name="Activated" handler="OnAction13Activated" />
       </action>
-      <action id="Action15">
+      <action id="Action21">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Месячная заявка</property>
+        <property name="Label" translatable="yes">Квартальная заявка</property>
         <property name="ShortLabel" translatable="yes">Месячная заявка</property>
       </action>
-      <action id="Action16">
+      <action id="ActionYearRequestSheet">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Сводная заявка</property>
+        <property name="Label" translatable="yes">Годовая заявка</property>
         <property name="ShortLabel" translatable="yes">Сводная заявка</property>
+        <signal name="Activated" handler="OnActionYearRequestSheetActivated" />
       </action>
       <action id="Action17">
         <property name="Type">Action</property>
@@ -4579,8 +4580,8 @@
                 <node type="Menuitem" action="Action12" />
                 <node type="Separator" />
                 <node type="Menuitem" action="Action13" />
-                <node type="Menuitem" action="Action15" />
-                <node type="Menuitem" action="Action16" />
+                <node type="Menuitem" action="Action21" />
+                <node type="Menuitem" action="ActionYearRequestSheet" />
                 <node type="Menuitem" action="Action17" />
               </node>
               <node type="Menu" action="Action3">

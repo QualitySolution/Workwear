@@ -358,7 +358,7 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnAction12Activated(object sender, EventArgs e)
 	{
-		ViewReportExt.Run("ListBySize", "", true);
+		ViewReportExt.Run("ListBySize", "");
 	}
 
 	protected void OnHelpActionActivated(object sender, EventArgs e)
@@ -404,5 +404,10 @@ public partial class MainWindow: Gtk.Window
 		dlg.Show ();
 		dlg.Run ();
 		dlg.Destroy ();
+	}
+
+	protected void OnActionYearRequestSheetActivated (object sender, EventArgs e)
+	{
+		ViewReportExt.Run("YearRequestSheet", "");
 	}
 }
