@@ -164,6 +164,8 @@
     <Compile Include="ReportsDlg\NotIssuedSheetReportDlg.cs" />
     <Compile Include="gtk-gui\workwear.NotIssuedSheetReportDlg.cs" />
     <Compile Include="ConfigureDeletion.cs" />
+    <Compile Include="ReportsDlg\QuarterRequestSheetDlg.cs" />
+    <Compile Include="gtk-gui\workwear.QuarterRequestSheetDlg.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

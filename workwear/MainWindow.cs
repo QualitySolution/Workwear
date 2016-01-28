@@ -410,4 +410,12 @@ public partial class MainWindow: Gtk.Window
 	{
 		ViewReportExt.Run("YearRequestSheet", "");
 	}
+
+	protected void OnAction21Activated (object sender, EventArgs e)
+	{
+		var dlg = new QuarterRequestSheetDlg ();
+		dlg.Show ();
+		dlg.Run ();
+		dlg.Destroy ();
+	}
 }
