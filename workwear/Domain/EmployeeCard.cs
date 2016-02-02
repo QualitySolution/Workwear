@@ -347,6 +347,8 @@ namespace workwear.Domain
 
 		public virtual void FillWearRecivedInfo(IUnitOfWork uow)
 		{
+			if (Id == 0) // Не надо проверять выдачи, так как сотрудник еще не сохранен.
+				return; 
 			var receiveds = Repository.EmployeeRepository.ItemsBalance (uow, this);
 			var summary = receiveds.GroupBy (r => r.ItemsTypeId).Select (gr => new {
 				ItemsTypeId = gr.Key,
