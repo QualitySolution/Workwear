@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QSOrmProject;
+using Gamma.Utilities;
 
 namespace workwear.Domain
 {
@@ -12,7 +13,7 @@ namespace workwear.Domain
 		Nominative = "норма выдачи",
 		PrepositionalPlural = "нормах выдачи"
 	)]
-	public class Norm : PropertyChangedBase, IDomainObject
+	public class Norm : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
@@ -110,6 +111,22 @@ namespace workwear.Domain
 		{
 		}
 
+		#region IValidatableObject implementation
+
+		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
+		{
+			if (Professions.Count == 0)
+				yield return new ValidationResult ("Норма должна содержать хотя бы одну профессию.", 
+					new[] { this.GetPropertyName (o => o.Professions) });
+
+			if (Items.Count == 0)
+				yield return new ValidationResult ("Норма должна содержать хотя бы одну номенклатуру.", 
+					new[] { this.GetPropertyName (o => o.Items) });
+		}
+
+		#endregion
+
+
 		public virtual void AddProfession(Post prof)
 		{
 			if(Professions.Any (p => DomainHelper.EqualDomainObjects (p, prof)))
@@ -134,6 +151,7 @@ namespace workwear.Domain
 			}
 
 			var item = new NormItem () {
+				Norm = this,
 				Item = itemtype,
 				Amount = 1,
 				NormPeriod = NormPeriodType.Year,
