@@ -20,7 +20,7 @@ namespace workwear
 		{
 			if(itemType.WearCategory == null)
 			{
-				logger.Warn ("Вызван подбор номерклатур по размеру, для типа <{0}>, но в нем указан вид спецодежды.", itemType.Name);
+				logger.Warn ("Вызван подбор номерклатур по размеру, для типа <{0}>, но в нем не указан вид спецодежды.", itemType.Name);
 				return null;
 			}
 
@@ -29,6 +29,12 @@ namespace workwear
 
 			var disjunction= new Disjunction();
 			var employeeSize = employee.GetSize (itemType.WearCategory.Value);
+
+			if(employeeSize == null || String.IsNullOrEmpty (employeeSize.Size) || String.IsNullOrEmpty (employeeSize.StandardCode))
+			{
+				logger.Warn ("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", itemType.Name);
+				return null;
+			}
 
 			foreach(var pair in SizeHelper.MatchSize (employeeSize))
 			{
