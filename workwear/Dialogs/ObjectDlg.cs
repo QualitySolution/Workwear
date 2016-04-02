@@ -2,7 +2,9 @@ using System;
 using Gtk;
 using MySql.Data.MySqlClient;
 using NLog;
+using QSOrmProject;
 using QSProjectsLib;
+using workwear.Domain;
 using workwear.Domain.Stock;
 
 namespace workwear
@@ -15,6 +17,16 @@ namespace workwear
 		private Gtk.ListStore ItemsListStore;
 		private TreeModel PlacementList;
 		CellRendererCombo CellPlacement;
+
+		IUnitOfWork uow;
+
+		IUnitOfWork UoW{
+			get{
+				if (uow == null)
+					uow = UnitOfWorkFactory.CreateWithoutRoot();
+				return uow;
+			}
+		}
 
 		public ObjectDlg()
 		{
@@ -319,11 +331,8 @@ namespace workwear
 		protected void OnButtonGiveClicked(object sender, EventArgs e)
 		{
 			SaveIfPropertyChanged();
-			ExpenseDocDlg winExpense = new ExpenseDocDlg();
-			//FIXME Нужно реализовать передачу объекта.
-			throw new NotImplementedException ();
-			//winExpense.Operation = ExpenseOperations.Object;
-			//winExpense.SetObject(Itemid);
+			Facility obj = UoW.GetById<Facility>(Itemid);
+			ExpenseDocDlg winExpense = new ExpenseDocDlg(obj);
 			winExpense.Show();
 			int result = (int) winExpense.Run();
 			winExpense.Destroy();

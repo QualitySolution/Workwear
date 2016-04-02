@@ -45,6 +45,14 @@ namespace workwear.Domain.Stock
 			set { SetField (ref amount, value, () => Amount); }
 		}
 
+		FacilityPlace facilityPlace;
+
+		[Display (Name = "Размещение на объекте")]
+		public virtual FacilityPlace FacilityPlace {
+			get { return facilityPlace; }
+			set { SetField (ref facilityPlace, value, () => FacilityPlace); }
+		}
+
 		DateTime? autoWriteoffDate;
 
 		[Display (Name = "День автосписания")]

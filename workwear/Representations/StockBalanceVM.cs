@@ -18,6 +18,8 @@ namespace workwear.ViewModel
 {
 	public class StockBalanceVM : RepresentationModelWithoutEntityBase<StockBalanceVMNode>
 	{
+		StockBalanceVMMode mode;
+
 		#region IRepresentationModel implementation
 
 		public override void UpdateNodes ()
@@ -31,7 +33,14 @@ namespace workwear.ViewModel
 			ExpenseItem expenseItemAlias = null;
 			WriteoffItem writeoffItemAlias = null;
 
-			var incomes = UoW.Session.QueryOver<IncomeItem> (() => incomeItemAlias);
+			var incomes = UoW.Session.QueryOver<IncomeItem> (() => incomeItemAlias)
+				.JoinAlias (() => incomeItemAlias.Nomenclature, () => nomenclatureAlias)
+				.JoinAlias (() => nomenclatureAlias.Type, () => itemtypesAlias);
+			
+			if(mode == StockBalanceVMMode.OnlyProperties)
+			{
+				incomes.Where( () => itemtypesAlias.Category == ItemTypeCategory.property);
+			}
 
 			var subqueryRemove = QueryOver.Of<ExpenseItem>(() => expenseItemAlias)
 				.Where(() => expenseItemAlias.IncomeOn.Id == incomeItemAlias.Id)
@@ -42,8 +51,6 @@ namespace workwear.ViewModel
 				.Select (Projections.Sum<WriteoffItem> (o => o.Amount));
 
 			var incomeList = incomes
-				.JoinAlias (() => incomeItemAlias.Nomenclature, () => nomenclatureAlias)
-				.JoinAlias (() => nomenclatureAlias.Type, () => itemtypesAlias)
 				.JoinAlias (() => itemtypesAlias.Units, () => unitsAlias)
 				.Where (Restrictions.Gt (
 					Projections.SqlFunction(
@@ -81,17 +88,27 @@ namespace workwear.ViewModel
 			SetItemsSource (incomeList.ToList ());
 		}
 
-		IColumnsConfig treeViewConfig = ColumnsConfigFactory.Create<StockBalanceVMNode> ()
-			.AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName)
-			.AddColumn ("Размер").AddTextRenderer (e => e.Size)
-			.AddColumn ("Рост").AddTextRenderer (e => e.Growth)
-			.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
-			.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
-			.AddColumn ("Cостояние").AddTextRenderer (e => e.AvgLifeText)
-			.Finish ();
+		IColumnsConfig treeViewConfig;
 
 		public override IColumnsConfig ColumnsConfig {
-			get { return treeViewConfig; }
+			get { if(treeViewConfig == null)
+				{
+					var tempConfig = ColumnsConfigFactory.Create<StockBalanceVMNode>()
+						.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName);
+					if(mode != StockBalanceVMMode.OnlyProperties)
+					{
+						tempConfig
+							.AddColumn("Размер").AddTextRenderer(e => e.Size)
+							.AddColumn("Рост").AddTextRenderer(e => e.Growth);
+					}
+					tempConfig
+						.AddColumn("Количество").AddTextRenderer(e => e.BalanceText)
+						.AddColumn("Cтоимость").AddTextRenderer(e => e.AvgCostText)
+						.AddColumn("Cостояние").AddTextRenderer(e => e.AvgLifeText);
+					treeViewConfig = tempConfig.Finish();
+				}
+
+				return treeViewConfig; }
 		}
 
 		#endregion
@@ -110,7 +127,12 @@ namespace workwear.ViewModel
 			
 		}
 
-		public StockBalanceVM (IUnitOfWork uow) : base (typeof(Expense), typeof(Income)) //FIXME Добавить списание.
+		public StockBalanceVM(IUnitOfWork uow, StockBalanceVMMode mode) : this(uow)
+		{
+			this.mode = mode;
+		}
+
+		public StockBalanceVM (IUnitOfWork uow) : base (typeof(Expense), typeof(Income), typeof(Writeoff))
 		{
 			this.UoW = uow;
 		}
@@ -142,6 +164,12 @@ namespace workwear.ViewModel
 		public string AvgLifeText {get { 
 				return AvgLife.ToString ("P");
 			}}
+	}
+
+	public enum StockBalanceVMMode
+	{
+		DisplayAll,
+		OnlyProperties
 	}
 }
 

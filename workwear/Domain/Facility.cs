@@ -32,10 +32,10 @@ namespace workwear.Domain
 			set { SetField (ref address, value, () => Address); }
 		}
 
-		private IList<EmployeeCardItem> places = new List<EmployeeCardItem>();
+		private IList<FacilityPlace> places = new List<FacilityPlace>();
 
 		[Display (Name = "Места размещения")]
-		public virtual IList<EmployeeCardItem> Places {
+		public virtual IList<FacilityPlace> Places {
 			get { return places; }
 			set { SetField (ref places, value, () => Places); }
 		}
