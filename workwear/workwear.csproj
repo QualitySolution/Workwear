@@ -166,6 +166,8 @@
     <Compile Include="ConfigureDeletion.cs" />
     <Compile Include="ReportsDlg\QuarterRequestSheetDlg.cs" />
     <Compile Include="gtk-gui\workwear.QuarterRequestSheetDlg.cs" />
+    <Compile Include="Domain\FacilityPlace.cs" />
+    <Compile Include="HibernateMapping\FacilityPlaceMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using System;
-using QSOrmProject;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using QSOrmProject;
 
 namespace workwear.Domain
 {
@@ -29,6 +30,14 @@ namespace workwear.Domain
 		public virtual string Address {
 			get { return address; }
 			set { SetField (ref address, value, () => Address); }
+		}
+
+		private IList<EmployeeCardItem> places = new List<EmployeeCardItem>();
+
+		[Display (Name = "Места размещения")]
+		public virtual IList<EmployeeCardItem> Places {
+			get { return places; }
+			set { SetField (ref places, value, () => Places); }
 		}
 
 		#endregion
