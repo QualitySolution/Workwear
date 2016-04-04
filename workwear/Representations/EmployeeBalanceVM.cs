@@ -127,7 +127,7 @@ namespace workwear.ViewModel
 			Employee = employee;
 		}
 
-		public EmployeeBalanceVM (IUnitOfWork uow) : base (typeof(Expense), typeof(Income)) //FIXME Добавить списание.
+		public EmployeeBalanceVM (IUnitOfWork uow) : base (typeof(Expense), typeof(Income), typeof(Writeoff))
 		{
 			this.UoW = uow;
 		}
