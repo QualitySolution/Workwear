@@ -28,7 +28,6 @@ namespace workwear
 
 		public Facility CurObject { get; set;}
 
-
 		public WriteOffItemsView()
 		{
 			this.Build();
@@ -94,7 +93,27 @@ namespace workwear
 
 		protected void OnButtonAddObjectClicked(object sender, EventArgs e)
 		{
-			throw new NotImplementedException ();
+			var filter = new ObjectBalanceFilter (MyOrmDialog.UoW);
+			if (CurObject != null)
+				filter.RestrictObject = CurObject;
+
+			var selectFromObjectDlg = new ReferenceRepresentation (new ViewModel.ObjectBalanceVM (filter));
+			selectFromObjectDlg.ShowFilter = CurObject == null;
+			selectFromObjectDlg.Mode = OrmReferenceMode.MultiSelect;
+			selectFromObjectDlg.ObjectSelected += SelectFromObjectDlg_ObjectSelected;;
+
+			var dialog = new OneWidgetDialog (selectFromObjectDlg);
+			dialog.Show ();
+			dialog.Run ();
+			dialog.Destroy ();
+		}
+
+		void SelectFromObjectDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)
+		{
+			foreach(var node in e.GetNodes<ViewModel.ObjectBalanceVMNode> ())
+			{
+				WriteoffDoc.AddItem (MyOrmDialog.UoW.GetById<ExpenseItem> (node.Id), node.Added - node.Removed);
+			}
 			CalculateTotal();
 		}
 

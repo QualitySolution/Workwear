@@ -29,8 +29,7 @@ namespace workwear
 
 		public WriteOffDocDlg (Facility facility) : this () 
 		{
-			//Entity.Facility = facility;
-			//FIXME
+			ItemsTable.CurObject = facility;
 		}
 
 		public WriteOffDocDlg (Writeoff item) : this (item.Id) {}
@@ -65,7 +64,7 @@ namespace workwear
 				if(Entity.Items.Any (w => w.IssuedOn != null))
 				{
 					logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
-					foreach(var employeeGroup in Entity.Items.Where (w => w.IssuedOn != null).GroupBy (w => w.IssuedOn.ExpenseDoc.EmployeeCard.Id))
+					foreach(var employeeGroup in Entity.Items.Where (w => w.IssuedOn != null && w.IssuedOn.ExpenseDoc.EmployeeCard != null).GroupBy (w => w.IssuedOn.ExpenseDoc.EmployeeCard.Id))
 					{
 						var employee = employeeGroup.Select (eg => eg.IssuedOn.ExpenseDoc.EmployeeCard).First ();
 						foreach(var itemsGroup in employeeGroup.GroupBy (i => i.Nomenclature.Type.Id))

@@ -5608,7 +5608,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.EmployeeBalanceFilter" design-size="337 31">
+  <widget class="Gtk.Bin" id="workwear.EmployeeBalanceFilter" design-size="337 35">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -5639,6 +5639,55 @@
             <property name="MemberName" />
             <property name="Events">ButtonPressMask</property>
             <signal name="Changed" handler="OnYentryEmployeeChanged" />
+          </widget>
+          <packing>
+            <property name="LeftAttach">1</property>
+            <property name="RightAttach">2</property>
+            <property name="AutoSize">False</property>
+            <property name="XOptions">Fill</property>
+            <property name="YOptions">Fill</property>
+            <property name="XExpand">False</property>
+            <property name="XFill">True</property>
+            <property name="XShrink">False</property>
+            <property name="YExpand">False</property>
+            <property name="YFill">True</property>
+            <property name="YShrink">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="workwear.ObjectBalanceFilter" design-size="337 35">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.Table" id="table1">
+        <property name="MemberName" />
+        <property name="NColumns">2</property>
+        <property name="RowSpacing">6</property>
+        <property name="ColumnSpacing">6</property>
+        <child>
+          <widget class="Gtk.Label" id="label1">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Объект:</property>
+          </widget>
+          <packing>
+            <property name="AutoSize">True</property>
+            <property name="XOptions">Fill</property>
+            <property name="YOptions">Fill</property>
+            <property name="XExpand">False</property>
+            <property name="XFill">True</property>
+            <property name="XShrink">False</property>
+            <property name="YExpand">False</property>
+            <property name="YFill">True</property>
+            <property name="YShrink">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gamma.Widgets.yEntryReference" id="yentryObject">
+            <property name="MemberName" />
+            <property name="Events">ButtonPressMask</property>
+            <signal name="Changed" handler="OnYentryObjectChanged" />
           </widget>
           <packing>
             <property name="LeftAttach">1</property>

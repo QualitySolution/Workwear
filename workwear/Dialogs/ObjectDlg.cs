@@ -343,11 +343,8 @@ namespace workwear
 		protected void OnButtonReturnClicked(object sender, EventArgs e)
 		{
 			SaveIfPropertyChanged();
-			IncomeDocDlg winIncome = new IncomeDocDlg();
-			//FIXME Нужно реализовать передачу объекта.
-			throw new NotImplementedException ();
-			//winIncome.Operation = IncomeDocDlg.IncomeOperations.Object;
-			//winIncome.SetObject(Itemid);
+			Facility obj = UoW.GetById<Facility>(Itemid);
+			IncomeDocDlg winIncome = new IncomeDocDlg(obj);
 			winIncome.Show();
 			int result = (int) winIncome.Run();
 			winIncome.Destroy();
@@ -358,12 +355,8 @@ namespace workwear
 		protected void OnButtonWriteOffClicked(object sender, EventArgs e)
 		{
 			SaveIfPropertyChanged();
-			WriteOffDocDlg winWriteOff = new WriteOffDocDlg();
-			//FIXME Нужно реализовать передачу объекта.
-			throw new NotImplementedException ();
-
-			//winWriteOff.NewItem = true;
-			//winWriteOff.CurrentObjectId = Itemid;
+			Facility obj = UoW.GetById<Facility>(Itemid);
+			WriteOffDocDlg winWriteOff = new WriteOffDocDlg(obj);
 			winWriteOff.Show();
 			int result = (int) winWriteOff.Run();
 			winWriteOff.Destroy();
