@@ -5,11 +5,10 @@ using NLog;
 using QSOrmProject;
 using QSProjectsLib;
 using workwear.Domain;
-using workwear.Domain.Stock;
 
 namespace workwear
 {
-	public partial class ObjectDlg : Gtk.Dialog
+	public partial class ObjectDlg : FakeTDIEntityGtkDialogBase<Facility>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public bool NewItem;
@@ -26,6 +25,13 @@ namespace workwear
 					uow = UnitOfWorkFactory.CreateWithoutRoot();
 				return uow;
 			}
+		}
+
+		public ObjectDlg (Facility obj) : this(obj.Id) {}
+
+		public ObjectDlg (int id) : this()
+		{
+			Fill(id);
 		}
 
 		public ObjectDlg()
@@ -119,6 +125,12 @@ namespace workwear
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
 		{
+			if(Save())
+				Respond (Gtk.ResponseType.Ok);
+		}
+
+		public override bool Save ()
+		{
 			string sql;
 			if(NewItem)
 			{
@@ -144,12 +156,13 @@ namespace workwear
 				SaveProperty();
 
 				logger.Info("Ok");
-				Respond (Gtk.ResponseType.Ok);
+				return true;
 			} 
 			catch (Exception ex) 
 			{
 				QSMain.ErrorMessageWithLog(this, "Ошибка записи объекта!", logger, ex);
 			}
+			return false;
 		}
 
 		void SaveProperty()
