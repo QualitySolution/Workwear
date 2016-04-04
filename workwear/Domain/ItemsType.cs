@@ -43,6 +43,8 @@ namespace workwear.Domain
 				{
 					if (Category != ItemTypeCategory.wear)
 						WearCategory = null;
+					if (Category != ItemTypeCategory.property)
+						LifeMonths = null;
 				}
 			}
 		}
@@ -53,6 +55,14 @@ namespace workwear.Domain
 		public virtual СlothesType? WearCategory {
 			get { return wearCategory; }
 			set { SetField (ref wearCategory, value, () => WearCategory); }
+		}
+
+		int? lifeMonths;
+
+		[Display (Name = "Срок службы")]
+		public virtual int? LifeMonths {
+			get { return lifeMonths; }
+			set { SetField (ref lifeMonths, value, () => LifeMonths); }
 		}
 
 		#endregion

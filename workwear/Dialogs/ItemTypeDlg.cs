@@ -42,6 +42,9 @@ namespace workwear
 
 			ycomboUnits.ItemsList = MeasurementUnitsRepository.GetActiveUnits (UoWGeneric);
 			ycomboUnits.Binding.AddBinding (Entity, e => e.Units, w => w.SelectedItem).InitializeFromSource ();
+
+			yspinMonths.Binding.AddBinding(Entity, e => e.LifeMonths, w => w.ValueAsInt, new NullToZeroConverter()).InitializeFromSource();
+			ycheckLife.Active = Entity.LifeMonths.HasValue;
 		}
 
 		public override bool Save ()
@@ -73,6 +76,16 @@ namespace workwear
 		protected void OnYcomboCategoryChanged (object sender, EventArgs e)
 		{
 			ycomboWearCategory.Sensitive = Entity.Category == ItemTypeCategory.wear;
+			hboxLife.Visible = labelLife.Visible = Entity.Category == ItemTypeCategory.property;
+		}
+
+		protected void OnYcheckLifeToggled(object sender, EventArgs e)
+		{
+			yspinMonths.Sensitive = ycheckLife.Active;
+			if(!ycheckLife.Active)
+			{
+				Entity.LifeMonths = null;
+			}
 		}
 	}
 }
