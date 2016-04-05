@@ -66,6 +66,7 @@
     <EmbeddedResource Include="Updates\1.0.4.sql" />
     <EmbeddedResource Include="Updates\1.0.5.sql" />
     <EmbeddedResource Include="Updates\Update to 1.1.sql" />
+    <EmbeddedResource Include="Updates\Update to 1.2.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
