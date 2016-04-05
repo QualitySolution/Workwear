@@ -23,20 +23,46 @@
     <DataSet Name="Data">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT stock_income.number, stock_income_detail.nomenclature_id, (stock_income_detail.quantity - IFNULL(count, 0)) as quantity, 
-nomenclature.name as nomenclature, stock_income_detail.life_percent, spent.count, item_types.name as type, 
-nomenclature.size, nomenclature.growth, units.name as unit, item_types.norm_quantity 
-FROM stock_income_detail 
-LEFT JOIN (SELECT id, SUM(count) as count FROM 
-(SELECT stock_expense_detail.stock_income_detail_id as id, stock_expense_detail.quantity as count FROM stock_expense_detail
-UNION ALL 
-SELECT stock_write_off_detail.stock_income_detail_id as id, stock_write_off_detail.quantity as count FROM stock_write_off_detail WHERE stock_income_detail_id IS NOT NULL) as table1 
-GROUP BY id) as spent ON spent.id = stock_income_detail.id 
-LEFT JOIN nomenclature ON nomenclature.id = stock_income_detail.nomenclature_id 
-LEFT JOIN item_types ON nomenclature.type_id = item_types.id 
-LEFT JOIN units ON units.id = item_types.units_id 
-LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id
-WHERE spent.count IS NULL OR spent.count &lt; stock_income_detail.quantity</CommandText>
+        <CommandText>SELECT 
+    stock_income.number,
+    stock_income_detail.nomenclature_id,
+    (stock_income_detail.quantity - IFNULL(count, 0)) as quantity,
+    nomenclature.name as nomenclature,
+    stock_income_detail.life_percent,
+    spent.count,
+    item_types.name as type,
+    nomenclature.size,
+    nomenclature.growth,
+    measurement_units.name as unit
+FROM
+    stock_income_detail
+        LEFT JOIN
+    (SELECT 
+        id, SUM(count) as count
+    FROM
+        (SELECT 
+        stock_expense_detail.stock_income_detail_id as id,
+            stock_expense_detail.quantity as count
+    FROM
+        stock_expense_detail UNION ALL SELECT 
+        stock_write_off_detail.stock_income_detail_id as id,
+            stock_write_off_detail.quantity as count
+    FROM
+        stock_write_off_detail
+    WHERE
+        stock_income_detail_id IS NOT NULL) as table1
+    GROUP BY id) as spent ON spent.id = stock_income_detail.id
+        LEFT JOIN
+    nomenclature ON nomenclature.id = stock_income_detail.nomenclature_id
+        LEFT JOIN
+    item_types ON nomenclature.type_id = item_types.id
+        LEFT JOIN
+    measurement_units ON measurement_units.id = item_types.units_id
+        LEFT JOIN
+    stock_income ON stock_income.id = stock_income_detail.stock_income_id
+WHERE
+    spent.count IS NULL
+        OR spent.count &lt; stock_income_detail.quantity</CommandText>
       </Query>
       <Fields>
         <Field Name="number">
@@ -79,10 +105,6 @@ WHERE spent.count IS NULL OR spent.count &lt; stock_income_detail.quantity</Comm
           <DataField>unit</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="norm_quantity">
-          <DataField>norm_quantity</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -117,25 +139,25 @@ WHERE spent.count IS NULL OR spent.count &lt; stock_income_detail.quantity</Comm
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>1in</Width>
+            <Width>69.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>165.6pt</Width>
+            <Width>335.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>101.3pt</Width>
+            <Width>96.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>85.0pt</Width>
+            <Width>49.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>1.5in</Width>
+            <Width>55.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>97.3pt</Width>
+            <Width>66.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>103.4pt</Width>
+            <Width>69.7pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -195,7 +217,7 @@ WHERE spent.count IS NULL OR spent.count &lt; stock_income_detail.quantity</Comm
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox2" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                      <Value>размер</Value>
+                      <Value>Размер</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -211,7 +233,7 @@ WHERE spent.count IS NULL OR spent.count &lt; stock_income_detail.quantity</Comm
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox14" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                      <Value>рост</Value>
+                      <Value>Рост</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -243,7 +265,7 @@ WHERE spent.count IS NULL OR spent.count &lt; stock_income_detail.quantity</Comm
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox36" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                      <Value>количество</Value>
+                      <Value>Количество</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -369,8 +391,7 @@ WHERE spent.count IS NULL OR spent.count &lt; stock_income_detail.quantity</Comm
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox17">
-                          <Value>
-                          </Value>
+                          <Value>Итого по виду:</Value>
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
@@ -379,27 +400,11 @@ WHERE spent.count IS NULL OR spent.count &lt; stock_income_detail.quantity</Comm
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
+                            <TextAlign >Right</TextAlign>
                           </Style>
                         </Textbox>
                       </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox6" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                          <Value>Итого по виду:</Value>
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Left>None</Left>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <FontWeight>Bold</FontWeight>
-                            <TextAlign>Right</TextAlign>
-                          </Style>
-                        </Textbox>
-                      </ReportItems>
-                      <ColSpan>1</ColSpan>
+                      <ColSpan >2</ColSpan>
                     </TableCell>
                     <TableCell>
                       <ReportItems>
@@ -627,8 +632,7 @@ WHERE spent.count IS NULL OR spent.count &lt; stock_income_detail.quantity</Comm
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox28">
-                      <Value>
-                      </Value>
+                      <Value>Общий итог:</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -637,27 +641,12 @@ WHERE spent.count IS NULL OR spent.count &lt; stock_income_detail.quantity</Comm
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <FontWeight >Bold</FontWeight>
+                        <TextAlign >Right</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox29">
-                      <Value>Общий итог:</Value>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Left>None</Left>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <FontWeight>Bold</FontWeight>
-                        <TextAlign>Right</TextAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                  <ColSpan>1</ColSpan>
+                  <ColSpan >2</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
@@ -709,7 +698,7 @@ WHERE spent.count IS NULL OR spent.count &lt; stock_income_detail.quantity</Comm
       </Textbox>
       <Textbox Name="Textbox21">
         <Height>15.75pt</Height>
-        <Width>361.88pt</Width>
+        <Width>345.37pt</Width>
         <Value>Подпись Главного бухгалтера ______________/_______________</Value>
         <ZIndex>1</ZIndex>
         <Left>411.40pt</Left>

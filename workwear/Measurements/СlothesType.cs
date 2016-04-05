@@ -1,0 +1,129 @@
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using workwear.Domain;
+using workwear.Domain.Stock;
+
+namespace workwear.Measurements
+{
+	public enum СlothesType
+	{
+		[Display(Name = "Одежда")]
+		[NeedGrowth]
+		[SizeStandarts(typeof(SizeStandartWomenWear), ClothesSex.Women)]
+		[SizeStandarts(typeof(SizeStandartMenWear), ClothesSex.Men)]
+		Wear,
+/*		[Display(Name = "Брюки, юбки, шорты")]
+		[OnlyWoman]
+		WomanPants,
+		[Display(Name = "Женские джинсы")]
+		[OnlyWoman]
+		WomanJeans,
+*/		[Display(Name = "Обувь")]
+		[SizeStandarts(typeof(SizeStandartWomenShoes), ClothesSex.Women)]
+		[SizeStandarts(typeof(SizeStandartMenShoes), ClothesSex.Men)]
+		Shoes,
+/*		[Display(Name = "Женские колготки и чулки")]
+		[OnlyWoman]
+		WomanTights,
+		[Display(Name = "Женские носки")]
+		[OnlyWoman]
+		WomanSocks,
+		[Display(Name = "Бюстгальтеры")]
+		[OnlyWoman]
+		WomanBras,
+		[Display(Name = "Женское нижнее белье")]
+		[OnlyWoman]
+		WomanUnderwear,
+*/		
+/*		[Display(Name = "Сорочки")]
+		[OnlyMen]
+		MenShirts,
+		[Display(Name = "Мужские Брюки, шорты")]
+		[OnlyMen]
+		MenPants,
+		[Display(Name = "Мужские джинсы")]
+		[OnlyMen]
+		MenJeans,
+		[Display(Name = "Мужское нижнее бельё")]
+		[OnlyMen]
+		MenUnderwear,
+		[Display(Name = "Мужские носки")]
+		[OnlyMen]
+		MenSocks,
+*/
+		[Display(Name = "Головные уборы")]
+		[SizeStandarts(typeof(SizeStandartHeaddress))]
+		Headgear,
+/*		[Display(Name = "Ремни")]
+		Belts,
+*/		[Display(Name = "Перчатки")]
+		[SizeStandarts(typeof(SizeStandartGloves))]
+		Gloves,
+	}
+
+	public class СlothesTypeType : NHibernate.Type.EnumStringType
+	{
+		public СlothesTypeType () : base (typeof(СlothesType))
+		{
+		}
+	}
+
+	public enum ClothesSex
+	{
+		[Display(Name = "Женская")]
+		Women,
+		[Display(Name = "Мужская")]
+		Men,
+		[Display(Name = "Универсальная")]
+		Universal,
+	}
+
+	public class ClothesSexType : NHibernate.Type.EnumStringType
+	{
+		public ClothesSexType () : base (typeof(ClothesSex))
+		{
+		}
+	}
+
+	[AttributeUsage(AttributeTargets.Field)]
+	public class OnlyWomanAttribute : Attribute 
+	{
+
+	}
+
+	[AttributeUsage(AttributeTargets.Field)]
+	public class OnlyMenAttribute : Attribute 
+	{
+
+	}
+
+	[AttributeUsage(AttributeTargets.Field)]
+	public class NeedGrowthAttribute : Attribute 
+	{
+		public NeedGrowthAttribute ()
+		{
+			
+		}
+	}
+
+	[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
+	public class SizeStandartsAttribute : Attribute 
+	{
+		public Type StandartsEnumType { get; set;}
+		public ClothesSex Sex { set; get;}
+
+		public SizeStandartsAttribute(Type enumStd)
+		{
+			StandartsEnumType = enumStd;
+			Sex = ClothesSex.Universal;
+		}
+
+		public SizeStandartsAttribute(Type enumStd, ClothesSex sex)
+		{
+			StandartsEnumType = enumStd;
+			Sex = sex;
+		}
+	}
+
+}
+

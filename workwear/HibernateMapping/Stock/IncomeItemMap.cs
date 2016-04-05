@@ -1,0 +1,21 @@
+﻿using FluentNHibernate.Mapping;
+using workwear.Domain.Stock;
+
+namespace workwear.HMap
+{
+	public class IncomeItemMap : ClassMap<IncomeItem>
+	{
+		public IncomeItemMap ()
+		{
+			Table ("stock_income_detail");
+
+			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
+			Map (x => x.Amount).Column ("quantity");
+			Map (x => x.LifePercent).Column ("life_percent");
+			Map (x => x.Cost).Column ("cost");
+
+			References (x => x.Nomenclature).Column ("nomenclature_id");
+			References (x => x.IssuedOn).Column ("stock_expense_detail_id");
+		}
+	}
+}

@@ -3,6 +3,7 @@ using Gtk;
 using MySql.Data.MySqlClient;
 using QSProjectsLib;
 using workwear;
+using workwear.Domain.Stock;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -109,17 +110,17 @@ public partial class MainWindow : Gtk.Window
 			string doc = "", name = "";
 			while (rdr.Read())
 			{
-				switch (rdr.GetString("operation"))
+				switch ((IncomeOperations) Enum.Parse (typeof(IncomeOperations), rdr.GetString("operation")))
 				{
-					case "enter":
+					case IncomeOperations.Enter:
 						doc = "Приходная накладная";
 						name = "";
 						break;
-					case "return":
+				case IncomeOperations.Return:
 						doc = "Возврат от сотрудника";
 						name = String.Format("{0} {1} {2}", rdr["last_name"].ToString(), rdr["first_name"].ToString(), rdr["patronymic_name"].ToString());
 						break;
-					case "object":
+				case IncomeOperations.Object:
 						doc = "Возврат с объекта";
 						name = rdr.GetString("object");
 						break;
@@ -161,13 +162,13 @@ public partial class MainWindow : Gtk.Window
 			string doc = "", recipient = "";
 			while (rdr.Read())
 			{
-				switch (rdr.GetString("operation"))
+				switch ((ExpenseOperations) Enum.Parse (typeof(ExpenseOperations), rdr.GetString("operation")))
 				{
-					case "object":
+				case ExpenseOperations.Object:
 						doc = "Выдача на объект";
 						recipient = rdr.GetString("object");
 						break;
-					case "employee":
+				case ExpenseOperations.Employee:
 						doc = "Выдача сотруднику";
 						recipient = String.Format("{0} {1} {2}", rdr["last_name"].ToString(), rdr["first_name"].ToString(), rdr["patronymic_name"].ToString());
 						break;

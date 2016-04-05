@@ -44,7 +44,7 @@ namespace workwear
 					"SUM(stock_income_detail.quantity - ifnull(spent.count, 0)) as quantity, " +
 					"nomenclature.name as nomenclature, " +
 					"SUM(stock_income_detail.life_percent * (stock_income_detail.quantity - ifnull(spent.count, 0)))/SUM(stock_income_detail.quantity - ifnull(spent.count, 0))as avg_life, " +
-					"nomenclature.size, nomenclature.growth, units.name as unit, " +
+					"nomenclature.size, nomenclature.growth, measurement_units.name as unit, " +
 					"SUM(stock_income_detail.cost * (stock_income_detail.quantity - ifnull(spent.count, 0)))/SUM(stock_income_detail.quantity - ifnull(spent.count, 0)) as avgcost " +
 					"FROM stock_income_detail " +
 					"LEFT JOIN (SELECT id, SUM(count) as count FROM " +
@@ -55,7 +55,7 @@ namespace workwear
 					"GROUP BY id) as spent ON spent.id = stock_income_detail.id " +
 					"LEFT JOIN nomenclature ON nomenclature.id = stock_income_detail.nomenclature_id " +
 					"LEFT JOIN item_types ON nomenclature.type_id = item_types.id " +
-					"LEFT JOIN units ON units.id = item_types.units_id " +
+					"LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id " +
 					"WHERE spent.count IS NULL OR spent.count < stock_income_detail.quantity " +
 					"GROUP BY stock_income_detail.nomenclature_id";
 				MySqlCommand cmd = new MySqlCommand (sql, QSMain.connectionDB);

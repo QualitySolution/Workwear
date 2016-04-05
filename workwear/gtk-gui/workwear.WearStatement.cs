@@ -5,9 +5,13 @@ namespace workwear
 	public partial class WearStatement
 	{
 		private global::Gtk.Table table1;
+		
 		private global::Gtk.ComboBox comboObject;
+		
 		private global::Gtk.Label label1;
+		
 		private global::Gtk.Button buttonCancel;
+		
 		private global::Gtk.Button buttonOk;
 
 		protected virtual void Build ()

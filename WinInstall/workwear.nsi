@@ -1,5 +1,5 @@
 ;--------------------------------
-!define PRODUCT_VERSION "1.1"
+!define PRODUCT_VERSION "1.2"
 !define MIN_NET_MAJOR "4"
 !define MIN_NET_MINOR "0"
 !define MIN_NET_BUILD "*"
@@ -15,7 +15,7 @@ var NETInstalled
 Name "${PRODUCT_NAME}"
 
 ; The file to write
-OutFile "${EXE_NAME}-${PRODUCT_VERSION}.exe"
+OutFile "${EXE_NAME}-1.2.x.exe"
 
 !include "MUI.nsh"
 !include "x64.nsh"
@@ -341,6 +341,11 @@ SectionEnd
 
 Section "GTK# 2.12.21" SecGTK
   SectionIn RO
+
+  ; Test 2.12.30
+  System::Call "msi::MsiQueryProductStateA(t '{CA8017BD-8271-4C93-A409-186375C5A5CA}') i.r0"
+  StrCmp $0 "5" GTKDone
+  DetailPrint "GTK# 2.12.30 не установлен"
 
   ; Test 2.12.26
   System::Call "msi::MsiQueryProductStateA(t '{BC25B808-A11C-4C9F-9C0A-6682E47AAB83}') i.r0"

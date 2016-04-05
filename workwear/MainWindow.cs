@@ -2,10 +2,14 @@ using System;
 using System.Collections.Generic;
 using Gtk;
 using NLog;
+using QSBusinessCommon.Domain;
+using QSOrmProject;
 using QSProjectsLib;
 using QSSupportLib;
 using QSUpdater;
 using workwear;
+using workwear.Domain;
+using workwear.Domain.Stock;
 
 public partial class MainWindow: Gtk.Window
 {	
@@ -20,13 +24,9 @@ public partial class MainWindow: Gtk.Window
 		this.Title = MainSupport.GetTitle();
 		QSMain.MakeNewStatusTargetForNlog();
 
-		Reference.RunReferenceItemDlg += OnRunReferenceItemDialog;
-		QSMain.ReferenceUpdated += OnReferenceUpdate;
 		MainSupport.LoadBaseParameters ();
 
 		MainUpdater.RunCheckVersion (true, true, true);
-
-		MainNewsFeed.CheckNewsReads (); //Создаем при необходимости таблицу новостей.
 
 		if(QSMain.User.Login == "root")
 		{
@@ -81,8 +81,8 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
-		Application.Quit();
 		a.RetVal = true;
+		Application.Quit();
 	}
 	
 	protected void OnDialogAuthenticationActionActivated(object sender, EventArgs e)
@@ -102,99 +102,50 @@ public partial class MainWindow: Gtk.Window
 	{
 		Application.Quit();
 	}
-	
-	protected void OnReferenceUpdate(object sender, QSMain.ReferenceUpdatedEventArgs e)
-	{
-	/*	switch (e.ReferenceTable) {
-		case "doc_types":
-			ComboWorks.ComboFillReference (comboDocType, "doc_types", 0);
-		break;
-		} */
-	}
-	
-	protected void OnRunReferenceItemDialog(object sender, Reference.RunReferenceItemDlgEventArgs e)
-	{
-		ResponseType Result;
-		switch (e.TableName)
-		{
-		case "item_types":
-			ItemType ItemTypeEdit = new ItemType();
-			if(e.NewItem)
-				ItemTypeEdit.NewItem = true;
-			else 
-				ItemTypeEdit.Fill(e.ItemId);
-			ItemTypeEdit.Show();
-			Result = (ResponseType)ItemTypeEdit.Run();
-			ItemTypeEdit.Destroy();
-			break;
-		case "nomenclature":
-			Nomenclature NomenclatureEdit = new Nomenclature();
-			if(e.NewItem)
-				NomenclatureEdit.NewItem = true;
-			else 
-				NomenclatureEdit.Fill(e.ItemId);
-			NomenclatureEdit.Show();
-			Result = (ResponseType)NomenclatureEdit.Run();
-			NomenclatureEdit.Destroy();
-			break;
-		default:
-			Result = ResponseType.None;
-			break;
-		}
-		e.Result = Result;
-	}
-	
+
 	protected void OnAction7Activated(object sender, EventArgs e)
 	{
-		Reference winref = new Reference();
-		winref.SetMode(true,false,true,true,true);
-		winref.FillList("units","Единица измерения", "Единицы измерения");
-		winref.Show();
-		winref.Run();
-		winref.Destroy();
+		var refWin = new OrmReference (typeof(MeasurementUnits));
+		var dialog = new OneWidgetDialog (refWin);
+		dialog.Show ();
+		dialog.Run ();
+		dialog.Destroy ();
 	}
 
 	protected void OnAction8Activated(object sender, EventArgs e)
 	{
-		Reference winref = new Reference();
-		winref.SetMode(true,false,true,true,true);
-		winref.FillList("posts","Должность", "Должности");
-		winref.Show();
-		winref.Run();
-		winref.Destroy();
+		var refWin = new OrmReference (typeof(Post));
+		var dialog = new OneWidgetDialog (refWin);
+		dialog.Show ();
+		dialog.Run ();
+		dialog.Destroy ();
 	}
 	
 	protected void OnAction9Activated(object sender, EventArgs e)
 	{
-		Reference winref = new Reference();
-		winref.SetMode(true,false,true,true,true);
-		winref.FillList("leaders","Руководитель", "Руководители");
-		winref.Show();
-		winref.Run();
-		winref.Destroy();
+		var refWin = new OrmReference (typeof(Leader));
+		var dialog = new OneWidgetDialog (refWin);
+		dialog.Show ();
+		dialog.Run ();
+		dialog.Destroy ();
 	}
 	
 	protected void OnAction5Activated(object sender, EventArgs e)
 	{
-		Reference winref = new Reference();
-		winref.SetMode(false, false, true, true, true);
-		winref.SqlSelect = "SELECT id, name, norm_quantity, norm_life FROM @tablename ";
-		winref.Columns.Add(new Reference.ColumnInfo("Норма выдачи", "{2}", false));
-		winref.Columns.Add(new Reference.ColumnInfo("Срок службы", "{3} мес.", false));
-		winref.FillList("item_types","Тип номенклатуры", "Виды номенклатуры");
-		winref.Show();
-		winref.Run();
-		winref.Destroy();
+		var refWin = new OrmReference (typeof(ItemsType));
+		var dialog = new OneWidgetDialog (refWin);
+		dialog.Show ();
+		dialog.Run ();
+		dialog.Destroy ();
 	}
 
 	protected void OnAction6Activated(object sender, EventArgs e)
 	{
-		Reference winref = new Reference();
-		winref.SetMode(false, false, true, true, true);
-		winref.FillList("nomenclature","Номенклатура", "Номенклатуры");
-		winref.Show();
-		winref.Run();
-		winref.Destroy();
+		var refWin = new OrmReference (typeof(Nomenclature));
+		var dialog = new OneWidgetDialog (refWin);
+		dialog.Show ();
+		dialog.Run ();
+		dialog.Destroy ();
 	}
 
 	protected void OnAboutActionActivated(object sender, EventArgs e)
@@ -232,8 +183,7 @@ public partial class MainWindow: Gtk.Window
 				UpdateObject();
 				break;
 			case 1:
-				WearCard winWearCard = new WearCard();
-				winWearCard.NewItem = true;
+				EmployeeCardDlg winWearCard = new EmployeeCardDlg();
 				winWearCard.Show();
 				winWearCard.Run();
 				winWearCard.Destroy();
@@ -243,22 +193,19 @@ public partial class MainWindow: Gtk.Window
 				switch (notebookStock.CurrentPage)
 				{
 					case 0:
-						IncomeDoc winIncome = new IncomeDoc();
-						winIncome.NewItem = true;
+						IncomeDocDlg winIncome = new IncomeDocDlg();
 						winIncome.Show();
 						winIncome.Run();
 						winIncome.Destroy();
 						break;
 					case 1:
-						ExpenseDoc winExpense = new ExpenseDoc();
-						winExpense.NewItem = true;
+						ExpenseDocDlg winExpense = new ExpenseDocDlg();
 						winExpense.Show();
 						winExpense.Run();
 						winExpense.Destroy();
 						break;
 					case 2:
-						WriteOffDoc winWriteOff = new WriteOffDoc();
-						winWriteOff.NewItem = true;
+						WriteOffDocDlg winWriteOff = new WriteOffDocDlg();
 						winWriteOff.Show();
 						winWriteOff.Run();
 						winWriteOff.Destroy();
@@ -291,8 +238,7 @@ public partial class MainWindow: Gtk.Window
 			case 1:
 				treeviewCards.Selection.GetSelected(out iter);
 				itemid = (int) CardsFilter.GetValue(iter,0);
-				WearCard winWearCadr = new WearCard();
-				winWearCadr.Fill(itemid);
+				EmployeeCardDlg winWearCadr = new EmployeeCardDlg(itemid);
 				winWearCadr.Show();
 				result = (ResponseType)winWearCadr.Run();
 				winWearCadr.Destroy();
@@ -305,8 +251,7 @@ public partial class MainWindow: Gtk.Window
 					case 0:
 						treeviewIncome.Selection.GetSelected(out iter);
 						itemid = (int)IncomeFilter.GetValue(iter, 0);
-						IncomeDoc winIncome = new IncomeDoc();
-						winIncome.Fill(itemid);
+						IncomeDocDlg winIncome = new IncomeDocDlg(itemid);
 						winIncome.Show();
 						result = (ResponseType) winIncome.Run();
 						winIncome.Destroy();
@@ -314,8 +259,7 @@ public partial class MainWindow: Gtk.Window
 					case 1:
 						treeviewExpense.Selection.GetSelected(out iter);
 						itemid = (int)ExpenseFilter.GetValue(iter, 0);
-						ExpenseDoc winExpense = new ExpenseDoc();
-						winExpense.Fill(itemid);
+						ExpenseDocDlg winExpense = new ExpenseDocDlg(itemid);
 						winExpense.Show();
 						result = (ResponseType) winExpense.Run();
 						winExpense.Destroy();
@@ -323,8 +267,7 @@ public partial class MainWindow: Gtk.Window
 					case 2:
 						treeviewWriteOff.Selection.GetSelected(out iter);
 						itemid = (int)WriteOffFilter.GetValue(iter, 0);
-						WriteOffDoc winWriteOff = new WriteOffDoc();
-						winWriteOff.Fill(itemid);
+						WriteOffDocDlg winWriteOff = new WriteOffDocDlg(itemid);
 						winWriteOff.Show();
 						result = (ResponseType) winWriteOff.Run();
 						winWriteOff.Destroy();
@@ -345,46 +288,43 @@ public partial class MainWindow: Gtk.Window
 		// Удаление
 		TreeIter iter;
 		int itemid;
-		Delete winDelete = new Delete();
 
 		switch (notebookMain.CurrentPage) 
 		{
 			case 0:
 				treeviewObjects.Selection.GetSelected(out iter);
 				itemid = (int) ObjectFilter.GetValue(iter,0);
-				winDelete.RunDeletion("objects", itemid);
-				UpdateObject();
+				if(OrmMain.DeleteObject<Facility> (itemid))
+					UpdateObject();
 				break;
 			case 1:
 				treeviewCards.Selection.GetSelected(out iter);
 				itemid = (int) CardsFilter.GetValue(iter,0);
-				winDelete.RunDeletion("wear_cards", itemid);
-				UpdateCards();
+				if(OrmMain.DeleteObject<EmployeeCard> (itemid))
+					UpdateCards();
 				break;
 			case 2:
 				switch (notebookStock.CurrentPage)
 				{
 					case 0:
-						treeviewIncome.Selection.GetSelected(out iter);
-						itemid = (int)IncomeFilter.GetValue(iter, 0);
-						winDelete.RunDeletion("stock_income", itemid);
+						treeviewIncome.Selection.GetSelected (out iter);
+						itemid = (int)IncomeFilter.GetValue (iter, 0);
+						OrmMain.DeleteObject<Income> (itemid);
 						break;
 					case 1:
 						treeviewExpense.Selection.GetSelected(out iter);
 						itemid = (int)ExpenseFilter.GetValue(iter, 0);
-						winDelete.RunDeletion("stock_expense", itemid);
+						OrmMain.DeleteObject<Expense> (itemid);
 						break;
 					case 2:
 						treeviewWriteOff.Selection.GetSelected(out iter);
 						itemid = (int)WriteOffFilter.GetValue(iter, 0);
-						winDelete.RunDeletion("stock_write_off", itemid);
+						OrmMain.DeleteObject<Writeoff> (itemid);
 						break;
 				}
 				UpdateStock();
 				break;
 		}
-		winDelete.Destroy();
-
 	}
 
 	protected void OnNotebookMainSwitchPage(object o, SwitchPageArgs args)
@@ -418,7 +358,7 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnAction12Activated(object sender, EventArgs e)
 	{
-		ViewReportExt.Run("ListBySize", "", true);
+		ViewReportExt.Run("ListBySize", "");
 	}
 
 	protected void OnHelpActionActivated(object sender, EventArgs e)
@@ -441,4 +381,41 @@ public partial class MainWindow: Gtk.Window
 		EditSerialNumber.RunDialog();
 	}
 
+	protected void OnActionNormsActivated (object sender, EventArgs e)
+	{
+		var refWin = new ReferenceRepresentation (new workwear.ViewModel.NormVM ());
+		var dialog = new OneWidgetDialog (refWin);
+		dialog.Show ();
+		dialog.Run ();
+		dialog.Destroy ();
+	}
+
+	protected void OnAction13Activated (object sender, EventArgs e)
+	{
+		var dlg = new OnIssueStatement ();
+		dlg.Show ();
+		dlg.Run ();
+		dlg.Destroy ();
+	}
+
+	protected void OnAction17Activated (object sender, EventArgs e)
+	{
+		var dlg = new NotIssuedSheetReportDlg ();
+		dlg.Show ();
+		dlg.Run ();
+		dlg.Destroy ();
+	}
+
+	protected void OnActionYearRequestSheetActivated (object sender, EventArgs e)
+	{
+		ViewReportExt.Run("YearRequestSheet", "");
+	}
+
+	protected void OnAction21Activated (object sender, EventArgs e)
+	{
+		var dlg = new QuarterRequestSheetDlg ();
+		dlg.Show ();
+		dlg.Run ();
+		dlg.Destroy ();
+	}
 }

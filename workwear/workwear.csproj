@@ -44,7 +44,14 @@
     <Reference Include="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="System.Data" />
     <Reference Include="NLog">
-      <HintPath>..\..\QSProjects\packages\NLog.4.2.0\lib\net40\NLog.dll</HintPath>
+      <HintPath>..\..\QSProjects\packages\NLog.4.2.3\lib\net40\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\..\QSProjects\packages\FluentNHibernate.2.0.3.0\lib\net40\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\QSProjects\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data">
       <HintPath>..\..\QSProjects\packages\MySql.Data.6.9.7\lib\net40\MySql.Data.dll</HintPath>
@@ -65,33 +72,14 @@
     <Compile Include="MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ItemType.cs" />
-    <Compile Include="gtk-gui\workwear.ItemType.cs" />
-    <Compile Include="Nomenclature.cs" />
-    <Compile Include="gtk-gui\workwear.Nomenclature.cs" />
     <Compile Include="MainWinObject.cs" />
-    <Compile Include="ObjectDlg.cs" />
     <Compile Include="gtk-gui\workwear.ObjectDlg.cs" />
     <Compile Include="MainWinCards.cs" />
-    <Compile Include="WearCard.cs" />
-    <Compile Include="gtk-gui\workwear.WearCard.cs" />
     <Compile Include="MainWinStock.cs" />
-    <Compile Include="IncomeDoc.cs" />
-    <Compile Include="gtk-gui\workwear.IncomeDoc.cs" />
-    <Compile Include="IncomeTable.cs" />
-    <Compile Include="gtk-gui\workwear.IncomeTable.cs" />
     <Compile Include="SelectWearCardRow.cs" />
     <Compile Include="gtk-gui\workwear.SelectWearCardRow.cs" />
-    <Compile Include="ExpenseDoc.cs" />
-    <Compile Include="ExpenseTable.cs" />
-    <Compile Include="WriteOffDoc.cs" />
-    <Compile Include="WriteOffTable.cs" />
-    <Compile Include="gtk-gui\workwear.ExpenseDoc.cs" />
-    <Compile Include="gtk-gui\workwear.ExpenseTable.cs" />
     <Compile Include="SelectStockItem.cs" />
     <Compile Include="gtk-gui\workwear.SelectStockItem.cs" />
-    <Compile Include="gtk-gui\workwear.WriteOffDoc.cs" />
-    <Compile Include="gtk-gui\workwear.WriteOffTable.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
     <Compile Include="SelectObjectProperty.cs" />
@@ -102,6 +90,88 @@
     <Compile Include="gtk-gui\workwear.StockBalanceView.cs" />
     <Compile Include="viewDTOs\StockBalanceItems.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
+    <Compile Include="Dialogs\EmployeeCardDlg.cs" />
+    <Compile Include="gtk-gui\workwear.EmployeeCardDlg.cs" />
+    <Compile Include="Domain\EmployeeCard.cs" />
+    <Compile Include="Domain\Post.cs" />
+    <Compile Include="Domain\Leader.cs" />
+    <Compile Include="Domain\User.cs" />
+    <Compile Include="Dialogs\ObjectDlg.cs" />
+    <Compile Include="Domain\Facility.cs" />
+    <Compile Include="HibernateMapping\EmployeeCardMap.cs" />
+    <Compile Include="HibernateMapping\FacilityMap.cs" />
+    <Compile Include="HibernateMapping\LeaderMap.cs" />
+    <Compile Include="HibernateMapping\PostMap.cs" />
+    <Compile Include="HibernateMapping\UserMap.cs" />
+    <Compile Include="CreateProjectParam.cs" />
+    <Compile Include="Repository\UserRepository.cs" />
+    <Compile Include="Measurements\SizeStandardConverter.cs" />
+    <Compile Include="Measurements\SizeStandart.cs" />
+    <Compile Include="Measurements\SizeStandartEnums.cs" />
+    <Compile Include="Measurements\СlothesType.cs" />
+    <Compile Include="Measurements\SizeHelper.cs" />
+    <Compile Include="Measurements\LookupSizes.cs" />
+    <Compile Include="gtk-gui\workwear.ItemTypeDlg.cs" />
+    <Compile Include="Dialogs\ItemTypeDlg.cs" />
+    <Compile Include="Domain\ItemsType.cs" />
+    <Compile Include="HibernateMapping\ItemsTypeMap.cs" />
+    <Compile Include="Domain\Norm.cs" />
+    <Compile Include="Domain\NormItem.cs" />
+    <Compile Include="HibernateMapping\NormMap.cs" />
+    <Compile Include="HibernateMapping\NormItemMap.cs" />
+    <Compile Include="Dialogs\NormDlg.cs" />
+    <Compile Include="gtk-gui\workwear.NormDlg.cs" />
+    <Compile Include="Representations\NormVM.cs" />
+    <Compile Include="Repository\NormRepository.cs" />
+    <Compile Include="Domain\EmployeeCardItem.cs" />
+    <Compile Include="HibernateMapping\EmployeeCardItemMap.cs" />
+    <Compile Include="Domain\Stock\Expense.cs" />
+    <Compile Include="Dialogs\Stock\ExpenseDocDlg.cs" />
+    <Compile Include="gtk-gui\workwear.ExpenseDocDlg.cs" />
+    <Compile Include="HibernateMapping\Stock\ExpenseMap.cs" />
+    <Compile Include="Domain\Stock\ExpenseItem.cs" />
+    <Compile Include="Domain\Stock\Nomenclature.cs" />
+    <Compile Include="HibernateMapping\Stock\NomenclatureMap.cs" />
+    <Compile Include="gtk-gui\workwear.NomenclatureDlg.cs" />
+    <Compile Include="Dialogs\Stock\NomenclatureDlg.cs" />
+    <Compile Include="Domain\Stock\IncomeItem.cs" />
+    <Compile Include="Domain\Stock\Income.cs" />
+    <Compile Include="HibernateMapping\Stock\IncomeMap.cs" />
+    <Compile Include="HibernateMapping\Stock\ExpenseItemMap.cs" />
+    <Compile Include="HibernateMapping\Stock\IncomeItemMap.cs" />
+    <Compile Include="Dialogs\Stock\ExpenseDocItemsView.cs" />
+    <Compile Include="gtk-gui\workwear.ExpenseDocItemsView.cs" />
+    <Compile Include="Representations\StockBalanceVM.cs" />
+    <Compile Include="Dialogs\Stock\IncomeDocDlg.cs" />
+    <Compile Include="Dialogs\Stock\IncomeDocItemsView.cs" />
+    <Compile Include="gtk-gui\workwear.IncomeDocDlg.cs" />
+    <Compile Include="gtk-gui\workwear.IncomeDocItemsView.cs" />
+    <Compile Include="Representations\EmployeeBalanceVM.cs" />
+    <Compile Include="Dialogs\Stock\WriteOffItemsView.cs" />
+    <Compile Include="gtk-gui\workwear.WriteOffItemsView.cs" />
+    <Compile Include="Dialogs\Stock\WriteOffDocDlg.cs" />
+    <Compile Include="gtk-gui\workwear.WriteOffDocDlg.cs" />
+    <Compile Include="Domain\Stock\Writeoff.cs" />
+    <Compile Include="Domain\Stock\WriteoffItem.cs" />
+    <Compile Include="HibernateMapping\Stock\WriteoffMap.cs" />
+    <Compile Include="HibernateMapping\Stock\WriteoffItemMap.cs" />
+    <Compile Include="JournalFilters\EmployeeBalanceFilter.cs" />
+    <Compile Include="gtk-gui\workwear.EmployeeBalanceFilter.cs" />
+    <Compile Include="Repository\EmployeeRepository.cs" />
+    <Compile Include="ReportsDlg\OnIssueStatement.cs" />
+    <Compile Include="gtk-gui\workwear.OnIssueStatement.cs" />
+    <Compile Include="Repository\StockRepository.cs" />
+    <Compile Include="ReportsDlg\NotIssuedSheetReportDlg.cs" />
+    <Compile Include="gtk-gui\workwear.NotIssuedSheetReportDlg.cs" />
+    <Compile Include="ConfigureDeletion.cs" />
+    <Compile Include="ReportsDlg\QuarterRequestSheetDlg.cs" />
+    <Compile Include="gtk-gui\workwear.QuarterRequestSheetDlg.cs" />
+    <Compile Include="Domain\FacilityPlace.cs" />
+    <Compile Include="HibernateMapping\FacilityPlaceMap.cs" />
+    <Compile Include="Representations\ObjectBalanceVM.cs" />
+    <Compile Include="JournalFilters\ObjectBalanceFilter.cs" />
+    <Compile Include="gtk-gui\workwear.ObjectBalanceFilter.cs" />
+    <Compile Include="Repository\FacilityRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -133,6 +203,26 @@
       <Project>{54F958F5-7E58-4C89-9A04-8835E63B97C3}</Project>
       <Name>System.Data.Bindings</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QSOrmProject\QSOrmProject.csproj">
+      <Project>{00D32969-612C-417E-9565-BEC6A7719F80}</Project>
+      <Name>QSOrmProject</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QSTDI\QSTDI.csproj">
+      <Project>{4B35C969-8C74-440F-8189-57047C9215FD}</Project>
+      <Name>QSTDI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QSValidation\QSValidation.csproj">
+      <Project>{CE5179E8-3172-4C08-9FE3-9C48C58A3831}</Project>
+      <Name>QSValidation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\GammaBinding\GammaUtil\GammaUtil.csproj">
+      <Project>{1BF2A638-420D-456C-96A7-36873A0FB894}</Project>
+      <Name>GammaUtil</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\Modules\QSBusinessCommon\QSBusinessCommon.csproj">
+      <Project>{AD329D59-938D-42AC-ABE2-B0F14FDBB7C6}</Project>
+      <Name>QSBusinessCommon</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
@@ -140,6 +230,15 @@
     <Folder Include="Updates\" />
     <Folder Include="viewDTOs\" />
     <Folder Include="ViewWidgets\" />
+    <Folder Include="Domain\" />
+    <Folder Include="Dialogs\" />
+    <Folder Include="HibernateMapping\" />
+    <Folder Include="Repository\" />
+    <Folder Include="Representations\" />
+    <Folder Include="Dialogs\Stock\" />
+    <Folder Include="Domain\Stock\" />
+    <Folder Include="HibernateMapping\Stock\" />
+    <Folder Include="JournalFilters\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
@@ -158,6 +257,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="changes.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\MonthIssueSheet.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\NotIssuedSheet.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\QuarterRequestSheet.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\YearRequestSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
