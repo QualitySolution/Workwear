@@ -13,7 +13,7 @@ namespace workwear
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
 		{
-			string param = String.Format("report_date={0}&only_missing={1}", ydateReport.Date, checkOnlyMissing.Active.ToString ()) ;
+			string param = String.Format("report_date={0}&only_missing={1}", ydateReport.Date.ToString("s"), checkOnlyMissing.Active.ToString ()) ;
 			ViewReportExt.Run("NotIssuedSheet", param);
 		}
 	}
