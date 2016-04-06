@@ -43,6 +43,10 @@ namespace workwear
 			LoginDialog.Destroy ();
 			QSSaaS.Session.StartSessionRefresh ();
 
+			//Прописываем системную валюту
+			CurrencyWorks.CurrencyShortFomat = "{0:C}";
+			CurrencyWorks.CurrencyShortName = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
+
 			//Настройка базы
 			CreateBaseConfig ();
 
