@@ -19,6 +19,7 @@ namespace workwear.Domain.Stock
 
 		[Display (Name = "Название")]
 		[Required (ErrorMessage = "Название номенклатуры должно быть заполнено.")]
+		[StringLength(100)]
 		public virtual string Name {
 			get { return name; }
 			set { SetField (ref name, value, () => Name); }

@@ -180,6 +180,7 @@ namespace workwear
 			this.yentryName.CanFocus = true;
 			this.yentryName.Name = "yentryName";
 			this.yentryName.IsEditable = true;
+			this.yentryName.MaxLength = 100;
 			this.yentryName.InvisibleChar = '●';
 			this.table2.Add (this.yentryName);
 			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table2 [this.yentryName]));
@@ -252,8 +253,8 @@ namespace workwear
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
-			this.DefaultWidth = 424;
-			this.DefaultHeight = 250;
+			this.DefaultWidth = 425;
+			this.DefaultHeight = 269;
 			this.Show ();
 			this.yentryItemsType.Changed += new global::System.EventHandler (this.OnYentryItemsTypeChanged);
 			this.ycomboClothesSex.Changed += new global::System.EventHandler (this.OnYcomboClothesSexChanged);

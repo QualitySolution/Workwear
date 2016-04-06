@@ -306,6 +306,7 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="IsEditable">True</property>
+                <property name="MaxLength">180</property>
                 <property name="InvisibleChar">●</property>
               </widget>
               <packing>
@@ -396,7 +397,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.NomenclatureDlg" design-size="424 250">
+  <widget class="Gtk.Dialog" id="workwear.NomenclatureDlg" design-size="425 269">
     <property name="MemberName" />
     <property name="Title" translatable="yes">Новая номенклатура</property>
     <property name="WindowPosition">CenterOnParent</property>
@@ -640,6 +641,7 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="IsEditable">True</property>
+                <property name="MaxLength">100</property>
                 <property name="InvisibleChar">●</property>
               </widget>
               <packing>
