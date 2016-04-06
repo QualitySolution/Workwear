@@ -10,7 +10,7 @@ namespace workwear
 		{
 			this.Build ();
 			var list = new List<Quarter> ();
-			var quarter = new Quarter (DateTime.Today.Month + 2 / 3, DateTime.Today.Year);
+			var quarter = new Quarter ((DateTime.Today.Month + 2) / 3, DateTime.Today.Year);
 			for(int i = 0; i < 5; i++)
 			{
 				list.Add (quarter);
