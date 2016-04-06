@@ -24,6 +24,7 @@ namespace workwear
 			LoginDialog.SetDefaultNames ("workwear");
 			LoginDialog.DefaultLogin = "demo";
 			LoginDialog.DefaultServer = "demo.qsolution.ru";
+			LoginDialog.DefaultConnection = "Демонстрационная база";
 			LoginDialog.DemoServer = "demo.qsolution.ru";
 			LoginDialog.DemoMessage = "Для подключения к демострационному серверу используйте следующие настройки:\n" +
 			"\n" +
