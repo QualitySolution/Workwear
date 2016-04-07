@@ -955,11 +955,14 @@
           <BorderColor />
           <BorderWidth />
         </Style>
+        <Visibility >
+          <Hidden>True</Hidden>
+        </Visibility>
       </Textbox>
       <Textbox Name="Textbox50">
         <Height>20.21pt</Height>
         <Width>808.39pt</Width>
-        <Value>= "Ведомость на выдачу на " + MonthName({?month}) + " " + {?year}  + "г."</Value>
+        <Value>= "Ведомость выдачи спецодежды на " + MonthName({?month}) + " " + {?year}  + "г."</Value>
         <ZIndex>1</ZIndex>
         <Left>0.0pt</Left>
         <Top>5.7pt</Top>
@@ -1407,7 +1410,7 @@
     End Function</Code>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     CONCAT_WS(' ',
@@ -1453,7 +1456,7 @@ ORDER BY employee;</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="employee">
           <DataField>employee</DataField>
           <TypeName>System.String</TypeName>
