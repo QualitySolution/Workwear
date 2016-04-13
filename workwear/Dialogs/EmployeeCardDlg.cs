@@ -101,7 +101,7 @@ namespace workwear
 				.AddColumn ("След. получение").AddTextRenderer (node => String.Format ("{0:d}", node.NextIssue))
 				.AddColumn ("Просрочка").AddTextRenderer (
 					node => node.NextIssue.HasValue && node.NextIssue.Value < DateTime.Today 
-					? RusNumber.FormatCase((int) (DateTime.Today - node.NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} деней") 
+					? RusNumber.FormatCase((int) (DateTime.Today - node.NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней") 
 					: String.Empty)
 				.AddColumn ("На складе").AddTextRenderer (node => node.Item.Units.MakeAmountShortStr (node.InStock))
 				 .AddSetter ((w, node) => w.Foreground = node.InStockState.GetEnumColor ())
