@@ -1,1 +1,9 @@
-﻿
+﻿ALTER TABLE `objects` 
+CHANGE COLUMN `name` `name` VARCHAR(240) NOT NULL ,
+CHANGE COLUMN `address` `address` TEXT NULL DEFAULT NULL ;
+
+ALTER TABLE `nomenclature` 
+CHANGE COLUMN `name` `name` VARCHAR(240) NOT NULL ;
+
+ALTER TABLE `item_types` 
+CHANGE COLUMN `name` `name` VARCHAR(240) NOT NULL ;

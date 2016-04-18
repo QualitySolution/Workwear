@@ -87,6 +87,10 @@ namespace workwear
 				new Version (1, 1),
 				new Version (1, 2),
 				"workwear.Updates.Update to 1.2.sql");			
+			QSUpdater.DB.DBUpdater.AddMicroUpdate (
+				new Version (1, 2),
+				new Version (1, 2, 1),
+				"workwear.Updates.1.2.1.sql");
 			
 		}
 	}
