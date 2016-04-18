@@ -218,7 +218,7 @@ namespace workwear
 			this.yentryName.CanFocus = true;
 			this.yentryName.Name = "yentryName";
 			this.yentryName.IsEditable = true;
-			this.yentryName.MaxLength = 180;
+			this.yentryName.MaxLength = 240;
 			this.yentryName.InvisibleChar = '●';
 			this.table1.Add (this.yentryName);
 			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table1 [this.yentryName]));

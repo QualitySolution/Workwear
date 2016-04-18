@@ -20,7 +20,7 @@ namespace workwear.Domain
 		string name;
 
 		[Display (Name = "Название")]
-		[StringLength(180)]
+		[StringLength(240)]
 		public virtual string Name {
 			get { return name; }
 			set { SetField (ref name, value, () => Name); }
