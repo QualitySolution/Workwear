@@ -40,7 +40,12 @@ namespace workwear
 
 			foreach(var pair in addItems)
 			{
-				var inStock = stock.First (s => s.Nomenclature == pair.Key);
+				var inStock = stock.FirstOrDefault (s => s.Nomenclature == pair.Key);
+				if(inStock == null)
+				{
+					logger.Warn("Количество по складу для номенклатуры {0}, не получено. Пропускаем.");
+					continue;
+				}
 				var incomeItem = UoW.GetById<IncomeItem> (inStock.IncomeItemId);
 				Entity.AddItem (incomeItem, pair.Value);
 			}
