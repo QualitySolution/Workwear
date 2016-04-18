@@ -71,7 +71,7 @@ namespace workwear
 			try {
 				UoWGeneric.Save ();
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog (this, "Не удалось норму.", logger, ex);
+				QSMain.ErrorMessageWithLog (this, "Не удалось сохранить норму.", logger, ex);
 				return false;
 			}
 			logger.Info ("Ok");
