@@ -309,7 +309,7 @@ namespace workwear.Domain
 			UpdateWorkwearItems ();
 		}
 
-		private void UpdateWorkwearItems()
+		public virtual void UpdateWorkwearItems()
 		{
 			//Проверяем нужно ли добавлять
 			var processed = new List<EmployeeCardItem>();

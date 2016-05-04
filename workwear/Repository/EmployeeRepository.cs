@@ -77,6 +77,14 @@ namespace workwear.Repository
 			return incomeList;
 		}
 
+		public static IList<EmployeeCard> GetEmployeesDependenceOnNormItem(IUnitOfWork uow, NormItem item)
+		{
+			EmployeeCardItem employeeItemAlias = null;
+			return uow.Session.QueryOver<EmployeeCard>()
+				.JoinQueryOver(e => e.WorkwearItems, () => employeeItemAlias)
+				.Where(() => employeeItemAlias.ActiveNormItem == item)
+				.List();
+		}
 	}
 
 	public class EmployeeItemsBalanceDTO

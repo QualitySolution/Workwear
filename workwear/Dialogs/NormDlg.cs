@@ -1,8 +1,10 @@
 ﻿using System;
-using QSOrmProject;
-using workwear.Domain;
-using QSProjectsLib;
+using System.Collections.Generic;
+using System.Linq;
 using Gamma.ColumnConfig;
+using QSOrmProject;
+using QSProjectsLib;
+using workwear.Domain;
 
 namespace workwear
 {
@@ -119,7 +121,44 @@ namespace workwear
 
 		protected void OnButtonRemoveItemClicked (object sender, EventArgs e)
 		{
+			var toRemove = ytreeItems.GetSelectedObject<NormItem>();
+			IList<EmployeeCard> worksEmployees = null;
+
+			if (toRemove.Id > 0)
+			{
+				worksEmployees = Repository.EmployeeRepository.GetEmployeesDependenceOnNormItem(UoW, toRemove);
+				if (worksEmployees.Count > 0)
+				{
+					List<string> operations = new List<string>();
+					foreach (var emp in worksEmployees)
+					{
+						bool canSwitch = emp.UsedNorms.SelectMany(x => x.Items)
+							.Any(i => i.Id != toRemove.Id && i.Item.Id == toRemove.Item.Id);
+						if (canSwitch)
+							operations.Add(String.Format("* У сотрудника {0} требование спецодежды будет пререключено на другую норму.", emp.ShortName));
+						else
+							operations.Add(String.Format("* У сотрудника {0} будет удалено требование выдачи спецодежды.", emp.ShortName));
+					}
+
+					var mes = "При удалении строки нормы будут выполнены следующие операции:\n";
+					mes += String.Join("\n", operations.Take(10));
+					if (operations.Count > 10)
+						mes += String.Format("\n... и еще {0}", operations.Count - 10);
+					mes += "\nВы уверены что хотите выполнить удаление?";
+					if (!MessageDialogWorks.RunQuestionDialog(mes))
+						return;
+				}
+			}
 			Entity.RemoveItem (ytreeItems.GetSelectedObject<NormItem> ());
+
+			if(worksEmployees != null)
+			{
+				foreach(var emp in worksEmployees)
+				{
+					emp.UpdateWorkwearItems();
+					UoW.Save(emp);
+				}
+			}
 		}
 
 		protected void OnButtonNewProfessionClicked (object sender, EventArgs e)
