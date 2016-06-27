@@ -44,7 +44,7 @@ namespace workwear
 				.AddColumn ("Наименование").AddTextRenderer (p => p.Item.Name)
 				.AddColumn ("Количество")
 				.AddNumericRenderer (i => i.Amount).WidthChars (10).Editing ().Adjustment (new Gtk.Adjustment(1, 0, 1000000, 1, 10, 10))
-				.AddTextRenderer (i => i.Item.Units.Name)
+				.AddTextRenderer (i => i.Item != null && i.Item.Units != null ? i.Item.Units.Name : String.Empty)
 				.AddColumn ("Период")
 				.AddNumericRenderer (i => i.PeriodCount).Editing ().Adjustment (new Gtk.Adjustment(1, 0, 100, 1, 10, 10))
 				.AddEnumRenderer (i => i.NormPeriod).Editing ()
