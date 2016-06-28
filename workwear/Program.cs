@@ -70,6 +70,13 @@ namespace workwear
 			//QSMain.ProjectPermission.Add ("edit_slips", new UserPermission("edit_slips", "Изменение кассы задним числом",
 			//                                                             "Пользователь может изменять или добавлять кассовые документы задним числом."));
 
+			//Скрипты создания базы
+			DBCreator.AddBaseScript (
+				new Version(1, 2),
+				"Чистая база",
+				"workwear.SQLScripts.new-1.2.sql"
+			);
+
 			//Настраиваем обновления
 			QSUpdater.DB.DBUpdater.AddMicroUpdate (
 				new Version (1, 0),
