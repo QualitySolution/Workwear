@@ -176,7 +176,6 @@ public partial class MainWindow: Gtk.Window
 		switch (notebookMain.CurrentPage) {
 			case 0:
 				ObjectDlg winObject = new ObjectDlg();
-				winObject.NewItem = true;
 				winObject.Show();
 				winObject.Run();
 				winObject.Destroy();
@@ -227,8 +226,7 @@ public partial class MainWindow: Gtk.Window
 			case 0:
 				treeviewObjects.Selection.GetSelected(out iter);
 				itemid = (int) ObjectFilter.GetValue(iter,0);
-				ObjectDlg winObject = new ObjectDlg();
-				winObject.Fill(itemid);
+				ObjectDlg winObject = new ObjectDlg(itemid);
 				winObject.Show();
 				result = (ResponseType)winObject.Run();
 				winObject.Destroy();

@@ -11,7 +11,7 @@ namespace workwear
 	public partial class ObjectDlg : FakeTDIEntityGtkDialogBase<Facility>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
-		public bool NewItem;
+		public bool NewItem = true;
 		int Itemid;
 		private Gtk.ListStore ItemsListStore;
 		private TreeModel PlacementList;
@@ -76,7 +76,7 @@ namespace workwear
 			treeviewProperty.ShowAll();
 		}
 
-		public void Fill(int id)
+		private void Fill(int id)
 		{
 			Itemid = id;
 			NewItem = false;
@@ -152,10 +152,15 @@ namespace workwear
 				cmd.Parameters.AddWithValue("@address", textviewAddress.Buffer.Text);
 
 				cmd.ExecuteNonQuery();
+				if(NewItem)
+					Itemid = (int)cmd.LastInsertedId;
 
 				SaveProperty();
 
 				logger.Info("Ok");
+				//FIXME Временно пока не переведем диалог на ORM.
+				var facility = UoW.GetById<Facility>(Itemid);
+				OrmMain.NotifyObjectUpdated(facility);
 				return true;
 			} 
 			catch (Exception ex) 
