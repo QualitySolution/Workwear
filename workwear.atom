@@ -2,16 +2,23 @@
   <title type="text">QS: Спецодежда и имущество</title>
   <subtitle type="text">Новости программы QS: Спецодежда и имущество</subtitle>
   <id>workwearnews</id>
-
   <rights type="text">Quality Solution 2016</rights>
-  <updated>2016-04-07T10:42:00+03:00</updated>
+  <updated>2016-06-28T20:37:00+03:00</updated>
+  <entry>
+    <id>urn:uuid:636b0b18-9dfd-47b3-9217-ef9ba01a96f3</id>
+    <title type="text">QS: Спецодежда и имущество 1.2.2</title>
+    <updated>2016-06-28T20:37:00+03:00</updated>
+    <published>2016-06-28T20:37:00+03:00</published>
+    <link rel="alternate" href="http://workwear.qsolution.ru/?p=159" />
+    <summary>В новой версии добавлен механизм простой установки новой базы и вид спецодежды СИЗ.</summary>
+  </entry>
   <entry>
     <id>urn:uuid:e0a0b8b1-a53e-485e-b285-d0a51d2858b1</id>
     <title type="text">QS: Спецодежда и имущество 1.2</title>
     <updated>2016-04-07T10:42:00+03:00</updated>
     <published>2016-04-07T10:42:00+03:00</published>
     <link rel="alternate" href="http://workwear.qsolution.ru/?p=133" />
-    <summary>Добавлены нормы по профессиям и карденально переработан процесс выдачи.</summary>
+    <summary>Добавлены нормы по профессиям и кардинально переработан процесс выдачи.</summary>
   </entry>
   <entry>
     <id>urn:uuid:1fa9bc46-1d34-4748-96df-0746a1f57dcb</id>
