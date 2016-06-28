@@ -489,12 +489,14 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox12">
-                      <Value>
-                      </Value>
+                      <Value>=Fields!type_id.Value</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
+                        <BorderColor  />
+                        <BorderWidth  />
+                        <TextAlign >Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -789,10 +791,11 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     item_types.name AS type_name,
+    item_types.id AS type_id,
     CASE item_types.wear_category
         WHEN 'Wear' THEN wear_cards.wear_growth
         ELSE NULL
@@ -843,10 +846,14 @@ ORDER BY type_name , size , growth</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="type_name">
           <DataField>type_name</DataField>
           <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="type_id">
+          <DataField>type_id</DataField>
+          <TypeName>System.UInt32</TypeName>
         </Field>
         <Field Name="growth">
           <DataField>growth</DataField>

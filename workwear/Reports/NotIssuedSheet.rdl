@@ -793,8 +793,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox12">
-                      <Value>
-                      </Value>
+                      <Value>=Fields!type_id.Value</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -869,7 +868,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox30">
-                      <Value>={amount_by_norm}-{received}</Value>
+                      <Value>={amount_by_norm}-Iif(Fields!received.IsMissing, 0, {received})</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -980,6 +979,7 @@
         DATEDIFF(@report_date, wear_cards_item.next_issue),
         NULL) AS delay,
     item_types.name AS type_name,
+    item_types.id AS type_id,
     nomenclature.name AS nomenclature_name,
     nomenclature.size,
     nomenclature.growth,
@@ -1076,6 +1076,10 @@ ORDER BY employee, type_name;</CommandText>
         <Field Name="type_name">
           <DataField>type_name</DataField>
           <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="type_id">
+          <DataField>type_id</DataField>
+          <TypeName>System.UInt32</TypeName>
         </Field>
         <Field Name="nomenclature_name">
           <DataField>nomenclature_name</DataField>

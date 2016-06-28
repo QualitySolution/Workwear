@@ -799,14 +799,14 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox12">
-                      <Value>
-                      </Value>
+                      <Value>=Fields!nomenclatureId.Value</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -955,7 +955,7 @@
           <BorderColor />
           <BorderWidth />
         </Style>
-        <Visibility >
+        <Visibility>
           <Hidden>True</Hidden>
         </Visibility>
       </Textbox>
@@ -1419,6 +1419,7 @@
             wear_cards.patronymic_name) as employee,
     wear_cards.personnel_number,
     item_types.name as nomenclatureName,
+    item_types.id as nomenclatureId,
     (CASE item_types.wear_category
         WHEN 'Wear' THEN wear_cards.size_wear
         WHEN 'Shoes' THEN wear_cards.size_shoes
@@ -1469,13 +1470,17 @@ ORDER BY employee;</CommandText>
           <DataField>nomenclatureName</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="nomenclatureId">
+          <DataField>nomenclatureId</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
         <Field Name="size">
           <DataField>size</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="growth">
           <DataField>growth</DataField>
-          <TypeName>System.Int64</TypeName>
+          <TypeName>System.String</TypeName>
         </Field>
         <Field Name="units">
           <DataField>units</DataField>
