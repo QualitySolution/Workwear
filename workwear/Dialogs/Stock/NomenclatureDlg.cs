@@ -92,6 +92,12 @@ namespace workwear
 				}
 				else
 					ycomboClothesSex.Sensitive = true;
+
+				if(!SizeHelper.HasСlothesSizeStd(Entity.Type.WearCategory.Value))
+				{
+					Entity.Size = Entity.SizeStd = Entity.WearGrowth = Entity.WearGrowthStd = null;
+				}
+
 				OnYcomboClothesSexChanged (null, null);
 			}
 			else
