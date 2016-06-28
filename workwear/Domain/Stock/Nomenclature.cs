@@ -87,7 +87,7 @@ namespace workwear.Domain.Stock
 		{
 
 			if (Type != null && Type.WearCategory != null && Sex.HasValue 
-				&& Sex == ClothesSex.Universal && !SizeHelper.IsUniversalСlothes (Type.WearCategory.Value))
+				&& Sex == ClothesSex.Universal && SizeHelper.HasСlothesSizeStd(Type.WearCategory.Value) && !SizeHelper.IsUniversalСlothes (Type.WearCategory.Value))
 				yield return new ValidationResult ("Данный вид одежды не имеет универсальных размеров.", 
 					new[] { this.GetPropertyName (o => o.Sex) });			
 		}

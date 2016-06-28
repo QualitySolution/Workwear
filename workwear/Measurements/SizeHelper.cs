@@ -128,11 +128,17 @@ namespace workwear.Measurements
 		{
 			var att = wearCategory.GetAttributes<SizeStandartsAttribute> ();
 			if (att.Length == 0)
-				throw new InvalidOperationException (String.Format ("У вида одежды {0} отсутствует атрибут SizeStandartsAttribute.", wearCategory));
+				return null;
 
 			var found = att.FirstOrDefault (a => a.Sex == sex);
 
 			return found != null ? found.StandartsEnumType : null;
+		}
+
+		public static bool HasСlothesSizeStd(СlothesType wearCategory)
+		{
+			var att = wearCategory.GetAttributes<SizeStandartsAttribute> ();
+			return att.Length > 0;
 		}
 
 		public static bool IsUniversalСlothes(СlothesType wearCategory)

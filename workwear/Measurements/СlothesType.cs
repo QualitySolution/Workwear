@@ -1,7 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using workwear.Domain;
-using workwear.Domain.Stock;
 
 namespace workwear.Measurements
 {
@@ -59,6 +57,8 @@ namespace workwear.Measurements
 */		[Display(Name = "Перчатки")]
 		[SizeStandarts(typeof(SizeStandartGloves))]
 		Gloves,
+		[Display(Name = "СИЗ")]
+		PPE,
 	}
 
 	public class СlothesTypeType : NHibernate.Type.EnumStringType

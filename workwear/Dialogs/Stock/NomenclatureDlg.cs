@@ -85,7 +85,7 @@ namespace workwear
 
 				ylabelClothesSex.Text = Entity.Type.WearCategory.Value.GetEnumTitle() + ":";
 
-				if(SizeHelper.IsUniversalСlothes (Entity.Type.WearCategory.Value))
+				if(!SizeHelper.HasСlothesSizeStd(Entity.Type.WearCategory.Value) || SizeHelper.IsUniversalСlothes (Entity.Type.WearCategory.Value))
 				{
 					Entity.Sex = ClothesSex.Universal;
 					ycomboClothesSex.Sensitive = false;

@@ -27,28 +27,31 @@ namespace workwear
 			var query = uow.Session.QueryOver<Nomenclature> ()
 				.Where (n => n.Type == itemType);
 
-			var disjunction= new Disjunction();
-			var employeeSize = employee.GetSize (itemType.WearCategory.Value);
+			if (SizeHelper.HasСlothesSizeStd(itemType.WearCategory.Value))
+			{
+				var disjunction = new Disjunction();
+				var employeeSize = employee.GetSize(itemType.WearCategory.Value);
 
-			if(employeeSize == null || String.IsNullOrEmpty (employeeSize.Size) || String.IsNullOrEmpty (employeeSize.StandardCode))
-			{
-				logger.Warn ("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", itemType.Name);
-				return null;
-			}
+				if (employeeSize == null || String.IsNullOrEmpty(employeeSize.Size) || String.IsNullOrEmpty(employeeSize.StandardCode))
+				{
+					logger.Warn("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", itemType.Name);
+					return null;
+				}
 
-			foreach(var pair in SizeHelper.MatchSize (employeeSize))
-			{
-				disjunction.Add (
-					Restrictions.And (
-						Restrictions.Eq (Projections.Property<Nomenclature>(n => n.SizeStd), pair.StandardCode),
-						Restrictions.Eq (Projections.Property<Nomenclature>(n => n.Size), pair.Size)
-					));
-			}
-			query.Where (disjunction);
-			var growthStd = SizeHelper.GetGrowthStandart (itemType.WearCategory.Value, employee.Sex);
-			if(growthStd != null)
-			{
-				query.Where (n => n.WearGrowthStd == SizeHelper.GetSizeStdCode (growthStd) && n.WearGrowth == employee.WearGrowth);
+				foreach (var pair in SizeHelper.MatchSize (employeeSize))
+				{
+					disjunction.Add(
+						Restrictions.And(
+							Restrictions.Eq(Projections.Property<Nomenclature>(n => n.SizeStd), pair.StandardCode),
+							Restrictions.Eq(Projections.Property<Nomenclature>(n => n.Size), pair.Size)
+						));
+				}
+				query.Where(disjunction);
+				var growthStd = SizeHelper.GetGrowthStandart(itemType.WearCategory.Value, employee.Sex);
+				if (growthStd != null)
+				{
+					query.Where(n => n.WearGrowthStd == SizeHelper.GetSizeStdCode(growthStd) && n.WearGrowth == employee.WearGrowth);
+				}
 			}
 
 			return query.List ();
