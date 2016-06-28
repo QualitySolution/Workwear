@@ -115,6 +115,7 @@ namespace workwear
 			this.ycomboOperation.ShowSpecialStateAll = false;
 			this.ycomboOperation.ShowSpecialStateNot = false;
 			this.ycomboOperation.UseShortTitle = false;
+			this.ycomboOperation.DefaultFirst = false;
 			this.table2.Add (this.ycomboOperation);
 			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table2 [this.ycomboOperation]));
 			w6.LeftAttach = ((uint)(1));
@@ -137,6 +138,7 @@ namespace workwear
 			this.yentryNumber.CanFocus = true;
 			this.yentryNumber.Name = "yentryNumber";
 			this.yentryNumber.IsEditable = true;
+			this.yentryNumber.MaxLength = 8;
 			this.yentryNumber.InvisibleChar = '●';
 			this.table2.Add (this.yentryNumber);
 			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table2 [this.yentryNumber]));
@@ -202,6 +204,7 @@ namespace workwear
 			this.ydateDoc = new global::Gamma.Widgets.yDatePicker ();
 			this.ydateDoc.Events = ((global::Gdk.EventMask)(256));
 			this.ydateDoc.Name = "ydateDoc";
+			this.ydateDoc.WithTime = false;
 			this.ydateDoc.Date = new global::System.DateTime (0);
 			this.ydateDoc.IsEditable = true;
 			this.ydateDoc.AutoSeparation = true;
