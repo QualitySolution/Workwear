@@ -1,8 +1,7 @@
-﻿using QSOrmProject.Deletion;
+﻿using QSBusinessCommon.Domain;
+using QSOrmProject.Deletion;
 using workwear.Domain;
 using workwear.Domain.Stock;
-using System.Collections.Generic;
-using QSBusinessCommon.Domain;
 
 namespace workwear
 {
@@ -13,20 +12,13 @@ namespace workwear
 			logger.Info ("Настройка параметров удаления...");
 
 			DeleteConfig.AddHibernateDeleteInfo<Facility> ()
-				.AddDeleteDependence (new DeleteDependenceInfo ("object_places", "WHERE object_id = @id "))
+				.AddDeleteDependence<FacilityPlace>(x => x.Facility)
 				.AddDeleteDependence<Expense> (x => x.Facility)
 				.AddDeleteDependence<Income> (x => x.Facility)
 				.AddClearDependence<EmployeeCard> (x => x.Facility);
 
-			DeleteConfig.AddDeleteInfo (new DeleteInfo {
-				ObjectsName = "Размещения в объекте",
-				TableName = "object_places",
-				SqlSelect = "SELECT id, name FROM @tablename ",
-				DisplayString = "{1}",
-				ClearItems = new List<ClearDependenceInfo> {
-					new ClearDependenceInfo (typeof(ExpenseItem), "WHERE object_place_id = @id", "object_place_id")
-				}
-			});
+			DeleteConfig.AddHibernateDeleteInfo<FacilityPlace>()
+				.AddClearDependence<ExpenseItem>(x => x.FacilityPlace);
 
 			DeleteConfig.AddHibernateDeleteInfo<ItemsType> ()
 				.AddDeleteDependence<Nomenclature> (x => x.Type)
