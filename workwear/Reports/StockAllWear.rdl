@@ -391,7 +391,7 @@ WHERE
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox17">
-                          <Value>Итого по виду:</Value>
+                          <Value>Итого по типу:</Value>
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
