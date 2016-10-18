@@ -91,7 +91,7 @@ public partial class MainWindow
 	
 	private global::Gtk.ScrolledWindow GtkScrolledWindow1;
 	
-	private global::Gtk.TreeView treeviewCards;
+	private global::QSOrmProject.RepresentationTreeView treeviewEmployees;
 	
 	private global::Gtk.Label label2;
 	
@@ -247,7 +247,7 @@ public partial class MainWindow
 		this.notebookMain = new global::Gtk.Notebook ();
 		this.notebookMain.CanFocus = true;
 		this.notebookMain.Name = "notebookMain";
-		this.notebookMain.CurrentPage = 0;
+		this.notebookMain.CurrentPage = 1;
 		// Container child notebookMain.Gtk.Notebook+NotebookChild
 		this.vbox2 = new global::Gtk.VBox ();
 		this.vbox2.Name = "vbox2";
@@ -374,10 +374,10 @@ public partial class MainWindow
 		this.GtkScrolledWindow1.Name = "GtkScrolledWindow1";
 		this.GtkScrolledWindow1.ShadowType = ((global::Gtk.ShadowType)(1));
 		// Container child GtkScrolledWindow1.Gtk.Container+ContainerChild
-		this.treeviewCards = new global::Gtk.TreeView ();
-		this.treeviewCards.CanFocus = true;
-		this.treeviewCards.Name = "treeviewCards";
-		this.GtkScrolledWindow1.Add (this.treeviewCards);
+		this.treeviewEmployees = new global::QSOrmProject.RepresentationTreeView ();
+		this.treeviewEmployees.CanFocus = true;
+		this.treeviewEmployees.Name = "treeviewEmployees";
+		this.GtkScrolledWindow1.Add (this.treeviewEmployees);
 		this.vbox3.Add (this.GtkScrolledWindow1);
 		global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.GtkScrolledWindow1]));
 		w18.Position = 1;
@@ -643,8 +643,7 @@ public partial class MainWindow
 		this.entryCardsSearch.Changed += new global::System.EventHandler (this.OnEntryCardsSearchChanged);
 		this.buttonCardsSearchClear.Clicked += new global::System.EventHandler (this.OnButtonCardsSearchClearClicked);
 		this.checkCardsOnlyActual.Clicked += new global::System.EventHandler (this.OnCheckOnlyActualClicked);
-		this.treeviewCards.RowActivated += new global::Gtk.RowActivatedHandler (this.OnTreeviewCardsRowActivated);
-		this.treeviewCards.CursorChanged += new global::System.EventHandler (this.OnTreeviewCardsCursorChanged);
+		this.treeviewEmployees.RowActivated += new global::Gtk.RowActivatedHandler (this.OnTreeviewEmployeesRowActivated);
 		this.selectStockDates.DatesChanged += new global::System.EventHandler (this.OnSelectStockDatesDatesChanged);
 		this.notebookStock.SwitchPage += new global::Gtk.SwitchPageHandler (this.OnNotebookStockSwitchPage);
 		this.treeviewIncome.RowActivated += new global::Gtk.RowActivatedHandler (this.OnTreeviewIncomeRowActivated);

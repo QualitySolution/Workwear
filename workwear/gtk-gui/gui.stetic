@@ -1082,7 +1082,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.EmployeeCardDlg" design-size="1102 569">
+  <widget class="Gtk.Dialog" id="workwear.EmployeeCardDlg" design-size="1148 569">
     <property name="MemberName" />
     <property name="Title" translatable="yes">Новая карточка сотрудника</property>
     <property name="WindowPosition">CenterOnParent</property>
@@ -4705,7 +4705,7 @@
           <widget class="Gtk.Notebook" id="notebookMain">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">0</property>
+            <property name="CurrentPage">1</property>
             <signal name="SwitchPage" handler="OnNotebookMainSwitchPage" />
             <child>
               <widget class="Gtk.VBox" id="vbox2">
@@ -4877,12 +4877,11 @@
                     <property name="MemberName" />
                     <property name="ShadowType">In</property>
                     <child>
-                      <widget class="Gtk.TreeView" id="treeviewCards">
+                      <widget class="QSOrmProject.RepresentationTreeView" id="treeviewEmployees">
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
                         <property name="ShowScrollbars">True</property>
-                        <signal name="RowActivated" handler="OnTreeviewCardsRowActivated" />
-                        <signal name="CursorChanged" handler="OnTreeviewCardsCursorChanged" />
+                        <signal name="RowActivated" handler="OnTreeviewEmployeesRowActivated" />
                       </widget>
                     </child>
                   </widget>

@@ -10,6 +10,7 @@ using QSUpdater;
 using workwear;
 using workwear.Domain;
 using workwear.Domain.Stock;
+using workwear.ViewModel;
 
 public partial class MainWindow: Gtk.Window
 {	
@@ -234,8 +235,7 @@ public partial class MainWindow: Gtk.Window
 					UpdateObject();
 				break;
 			case 1:
-				treeviewCards.Selection.GetSelected(out iter);
-				itemid = (int) CardsFilter.GetValue(iter,0);
+				itemid = treeviewEmployees.GetSelectedObject<EmployeesVMNode>().Id;
 				EmployeeCardDlg winWearCadr = new EmployeeCardDlg(itemid);
 				winWearCadr.Show();
 				result = (ResponseType)winWearCadr.Run();
@@ -296,8 +296,7 @@ public partial class MainWindow: Gtk.Window
 					UpdateObject();
 				break;
 			case 1:
-				treeviewCards.Selection.GetSelected(out iter);
-				itemid = (int) CardsFilter.GetValue(iter,0);
+				itemid = treeviewEmployees.GetSelectedObject<EmployeesVMNode>().Id;
 				if(OrmMain.DeleteObject<EmployeeCard> (itemid))
 					UpdateCards();
 				break;
@@ -416,4 +415,6 @@ public partial class MainWindow: Gtk.Window
 		dlg.Run ();
 		dlg.Destroy ();
 	}
+
+
 }
