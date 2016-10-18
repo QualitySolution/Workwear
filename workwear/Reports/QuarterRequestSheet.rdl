@@ -825,6 +825,7 @@ FROM
         LEFT JOIN
     norms_item ON wear_cards_item.norm_item_id = norms_item.id
 WHERE
+	wear_cards.dismiss_date IS NULL AND
     wear_cards_item.next_issue &gt;= CONCAT(@year,
             '-',
             LPAD((@quarter * 3) - 2, 2, '00'),

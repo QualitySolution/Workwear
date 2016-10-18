@@ -824,6 +824,7 @@ FROM
     measurement_units ON item_types.units_id = measurement_units.id
         LEFT JOIN
     norms_item ON wear_cards_item.norm_item_id = norms_item.id
+WHERE wear_cards.dismiss_date IS NULL
 GROUP BY item_types.id , size , growth
 ORDER BY type_name , size , growth</CommandText>
       </Query>
