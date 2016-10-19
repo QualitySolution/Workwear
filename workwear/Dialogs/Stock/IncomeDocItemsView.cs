@@ -44,6 +44,8 @@ namespace workwear
 
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<IncomeItem> ()
 				.AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
+				.AddColumn ("Размер").AddTextRenderer (e => e.Nomenclature.Size)
+				.AddColumn ("Рост").AddTextRenderer (e => e.Nomenclature.WearGrowth)
 				.AddColumn ("Состояние").AddNumericRenderer (e => e.LifePercent, new MultiplierToPercentConverter()).Editing (new Adjustment(0,0,100,1,10,0))
 				.AddTextRenderer (e => "%")
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1))
