@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Gamma.Utilities;
 using Gtk;
 using NLog;
@@ -89,7 +90,7 @@ namespace workwear
 			if(IncomeDoc.Operation == IncomeOperations.Enter)
 			{
 				var selectNomenclatureDlg = new OrmReference (typeof(Nomenclature));
-				selectNomenclatureDlg.Mode = OrmReferenceMode.Select;
+				selectNomenclatureDlg.Mode = OrmReferenceMode.MultiSelect;
 				selectNomenclatureDlg.ObjectSelected += SelectNomenclatureDlg_ObjectSelected;
 
 				var dialog = new OneWidgetDialog (selectNomenclatureDlg);
@@ -120,7 +121,7 @@ namespace workwear
 
 		void SelectNomenclatureDlg_ObjectSelected (object sender, OrmReferenceObjectSectedEventArgs e)
 		{
-			IncomeDoc.AddItem (e.Subject as Nomenclature);
+			e.GetEntities<Nomenclature>().ToList().ForEach(IncomeDoc.AddItem);
 			CalculateTotal();
 		}
 
