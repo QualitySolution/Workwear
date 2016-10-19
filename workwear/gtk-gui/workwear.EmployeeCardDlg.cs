@@ -214,6 +214,7 @@ namespace workwear
 			this.dateDismiss = new global::Gamma.Widgets.yDatePicker ();
 			this.dateDismiss.Events = ((global::Gdk.EventMask)(256));
 			this.dateDismiss.Name = "dateDismiss";
+			this.dateDismiss.WithTime = false;
 			this.dateDismiss.Date = new global::System.DateTime (0);
 			this.dateDismiss.IsEditable = true;
 			this.dateDismiss.AutoSeparation = true;
@@ -229,6 +230,7 @@ namespace workwear
 			this.dateHire = new global::Gamma.Widgets.yDatePicker ();
 			this.dateHire.Events = ((global::Gdk.EventMask)(256));
 			this.dateHire.Name = "dateHire";
+			this.dateHire.WithTime = false;
 			this.dateHire.Date = new global::System.DateTime (0);
 			this.dateHire.IsEditable = true;
 			this.dateHire.AutoSeparation = true;
@@ -245,6 +247,7 @@ namespace workwear
 			this.entryFirstName.CanFocus = true;
 			this.entryFirstName.Name = "entryFirstName";
 			this.entryFirstName.IsEditable = true;
+			this.entryFirstName.MaxLength = 20;
 			this.entryFirstName.InvisibleChar = '●';
 			this.table1.Add (this.entryFirstName);
 			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1 [this.entryFirstName]));
@@ -258,6 +261,7 @@ namespace workwear
 			this.entryLastName.CanFocus = true;
 			this.entryLastName.Name = "entryLastName";
 			this.entryLastName.IsEditable = true;
+			this.entryLastName.MaxLength = 20;
 			this.entryLastName.InvisibleChar = '●';
 			this.table1.Add (this.entryLastName);
 			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1 [this.entryLastName]));
@@ -271,6 +275,7 @@ namespace workwear
 			this.entryPatronymic.CanFocus = true;
 			this.entryPatronymic.Name = "entryPatronymic";
 			this.entryPatronymic.IsEditable = true;
+			this.entryPatronymic.MaxLength = 20;
 			this.entryPatronymic.InvisibleChar = '●';
 			this.table1.Add (this.entryPatronymic);
 			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1 [this.entryPatronymic]));
@@ -802,7 +807,7 @@ namespace workwear
 			this.notebook1 = new global::Gtk.Notebook ();
 			this.notebook1.CanFocus = true;
 			this.notebook1.Name = "notebook1";
-			this.notebook1.CurrentPage = 1;
+			this.notebook1.CurrentPage = 3;
 			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.vbox6 = new global::Gtk.VBox ();
 			this.vbox6.Name = "vbox6";
@@ -1134,7 +1139,7 @@ namespace workwear
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
-			this.DefaultWidth = 1102;
+			this.DefaultWidth = 1148;
 			this.DefaultHeight = 569;
 			this.Show ();
 			this.yentryPost.Changed += new global::System.EventHandler (this.OnYentryPostChanged);
