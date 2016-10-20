@@ -12,6 +12,8 @@ namespace workwear.Measurements
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
+		#region Стандарты
+
 		public static readonly Type[] AllSizeStdEnums = new[] {
 			typeof(SizeStandartMenWear),
 			typeof(SizeStandartWomenWear),
@@ -51,6 +53,63 @@ namespace workwear.Measurements
 			logger.Warn ("Код размера {0} не найден.", code);
 			return null;
 		}
+
+		public static Type GetSizeStandartsEnum(СlothesType wearCategory, Sex sex)
+		{
+			return GetSizeStandartsEnum (wearCategory, sex == Sex.F ? ClothesSex.Women : ClothesSex.Men);
+		}
+
+		public static Type GetSizeStandartsEnum(СlothesType wearCategory, ClothesSex sex)
+		{
+			var att = wearCategory.GetAttributes<SizeStandartsAttribute> ();
+			if (att.Length == 0)
+				return null;
+
+			var found = att.FirstOrDefault (a => a.Sex == sex);
+
+			return found != null ? found.StandartsEnumType : null;
+		}
+
+		public static bool HasСlothesSizeStd(СlothesType wearCategory)
+		{
+			var att = wearCategory.GetAttributes<SizeStandartsAttribute> ();
+			return att.Length > 0;
+		}
+
+		public static GrowthStandartWear? GetGrowthStandart(СlothesType wearCategory, Sex sex)
+		{
+			return GetGrowthStandart (wearCategory, sex == Sex.F ? ClothesSex.Women : ClothesSex.Men);
+		}
+
+		public static GrowthStandartWear? GetGrowthStandart(СlothesType wearCategory, ClothesSex sex)
+		{
+			var att = wearCategory.GetAttribute<NeedGrowthAttribute> ();
+			if (att == null)
+				return null;
+
+			if (sex == ClothesSex.Women)
+				return GrowthStandartWear.Women;
+
+			if (sex == ClothesSex.Men)
+				return GrowthStandartWear.Men;
+
+			return null;
+		}
+
+		public static bool IsUniversalСlothes(СlothesType wearCategory)
+		{
+			var att = wearCategory.GetAttributes<SizeStandartsAttribute> ();
+			if (att.Length == 0)
+				throw new InvalidOperationException (String.Format ("У вида одежды {0} отсутствует атрибут SizeStandartsAttribute.", wearCategory));
+
+			var found = att.FirstOrDefault (a => a.Sex == ClothesSex.Universal);
+
+			return found != null;
+		}
+
+		#endregion
+
+		#region Размеры
 
 		public static string[] GetSizesList (object stdEnum)
 		{
@@ -119,59 +178,6 @@ namespace workwear.Measurements
 			combo.AddAttribute (text, "text", 0);
 		}
 
-		public static Type GetSizeStandartsEnum(СlothesType wearCategory, Sex sex)
-		{
-			return GetSizeStandartsEnum (wearCategory, sex == Sex.F ? ClothesSex.Women : ClothesSex.Men);
-		}
-
-		public static Type GetSizeStandartsEnum(СlothesType wearCategory, ClothesSex sex)
-		{
-			var att = wearCategory.GetAttributes<SizeStandartsAttribute> ();
-			if (att.Length == 0)
-				return null;
-
-			var found = att.FirstOrDefault (a => a.Sex == sex);
-
-			return found != null ? found.StandartsEnumType : null;
-		}
-
-		public static bool HasСlothesSizeStd(СlothesType wearCategory)
-		{
-			var att = wearCategory.GetAttributes<SizeStandartsAttribute> ();
-			return att.Length > 0;
-		}
-
-		public static bool IsUniversalСlothes(СlothesType wearCategory)
-		{
-			var att = wearCategory.GetAttributes<SizeStandartsAttribute> ();
-			if (att.Length == 0)
-				throw new InvalidOperationException (String.Format ("У вида одежды {0} отсутствует атрибут SizeStandartsAttribute.", wearCategory));
-
-			var found = att.FirstOrDefault (a => a.Sex == ClothesSex.Universal);
-
-			return found != null;
-		}
-
-		public static GrowthStandartWear? GetGrowthStandart(СlothesType wearCategory, Sex sex)
-		{
-			return GetGrowthStandart (wearCategory, sex == Sex.F ? ClothesSex.Women : ClothesSex.Men);
-		}
-
-		public static GrowthStandartWear? GetGrowthStandart(СlothesType wearCategory, ClothesSex sex)
-		{
-			var att = wearCategory.GetAttribute<NeedGrowthAttribute> ();
-			if (att == null)
-				return null;
-
-			if (sex == ClothesSex.Women)
-				return GrowthStandartWear.Women;
-
-			if (sex == ClothesSex.Men)
-				return GrowthStandartWear.Men;
-
-			return null;
-		}
-
 		public static List<SizePair> MatchSize(SizePair sizePair)
 		{
 			return MatchSize (sizePair.StandardCode, sizePair.Size);
@@ -209,6 +215,8 @@ namespace workwear.Measurements
 			}
 			return result;
 		}
+
+		#endregion
 	}
 
 	public class SizePair{
