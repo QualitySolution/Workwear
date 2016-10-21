@@ -11,6 +11,9 @@ namespace workwear.Measurements
 		[StdCode("WomenGrowth")]
 		[Display(Name = "Женский рост", ShortName = "Жен.")]
 		Women,
+		[StdCode("UnisexGrowth")]
+		[Display(Name = "Универсальный рост", ShortName = "Уни.")]
+		Universal,
 	}
 
 	public enum SizeStandartMenWear
@@ -19,6 +22,16 @@ namespace workwear.Measurements
 		[Display(Name = "Российский", ShortName = "РФ")]
 		Rus,
 		[StdCode("MenWearIntl")]
+		[Display(Name = "Международный", ShortName = "Межд.")]
+		Intl,
+	}
+
+	public enum SizeStandartUnisexWear
+	{
+		[StdCode("UnisexWearRus")]
+		[Display(Name = "Российский", ShortName = "РФ")]
+		Rus,
+		[StdCode("UnisexWearIntl")]
 		[Display(Name = "Международный", ShortName = "Межд.")]
 		Intl,
 	}

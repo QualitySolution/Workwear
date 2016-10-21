@@ -16,8 +16,10 @@ namespace workwear.Measurements
 		public static readonly Type[] AllSizeStdEnums = new[] {
 			typeof(SizeStandartMenWear),
 			typeof(SizeStandartWomenWear),
+			typeof(SizeStandartUnisexWear),
 			typeof(SizeStandartMenShoes),
 			typeof(SizeStandartWomenShoes),
+			typeof(SizeStandartUnisexShoes),
 			typeof(SizeStandartHeaddress),
 			typeof(SizeStandartGloves),
 		};
@@ -92,6 +94,9 @@ namespace workwear.Measurements
 			if (sex == ClothesSex.Men)
 				return GrowthStandartWear.Men;
 
+			if (sex == ClothesSex.Universal)
+				return GrowthStandartWear.Universal;
+
 			return null;
 		}
 
@@ -124,10 +129,15 @@ namespace workwear.Measurements
 
 			if (stdEnum is GrowthStandartWear)
 			{
-				if ((GrowthStandartWear)stdEnum == GrowthStandartWear.Men)
-					return LookupSizes.MenGrowth.Select (g => g.Name).ToArray ();
-				else
-					return LookupSizes.WomenGrowth.Select (g => g.Name).ToArray ();
+				switch ((GrowthStandartWear)stdEnum)
+				{
+					case GrowthStandartWear.Men:
+						return LookupSizes.MenGrowth.Select(g => g.Name).ToArray();
+					case GrowthStandartWear.Women:
+						return LookupSizes.WomenGrowth.Select(g => g.Name).ToArray();
+					case GrowthStandartWear.Universal:
+						return LookupSizes.UniversalGrowth.Select(g => g.Name).ToArray();
+				}
 			}
 
 			throw new ArgumentException ( String.Format ("Неизвестный стандарт размера {0}", stdEnum.ToString ()), "stdEnum");
@@ -140,6 +150,9 @@ namespace workwear.Measurements
 
 			if (stdEnum is SizeStandartWomenWear)
 				return LookupSizes.WomenWear;
+
+			if (stdEnum is SizeStandartUnisexWear)
+				return LookupSizes.UnisexWear;
 
 			if (stdEnum is SizeStandartMenShoes)
 				return LookupSizes.MenShoes;

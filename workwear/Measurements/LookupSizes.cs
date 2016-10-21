@@ -21,6 +21,19 @@ namespace workwear.Measurements
 			new WearGrowth("182", 179, 185),
 			new WearGrowth("188", 185, 191),
 			new WearGrowth("194", 191, 197),
+			new WearGrowth("200", 197, 203),
+		};
+
+		public static readonly WearGrowth[] UniversalGrowth = new WearGrowth[] {
+			new WearGrowth("152", 149, 155),
+			new WearGrowth("158", 155, 161),
+			new WearGrowth("164", 161, 167),
+			new WearGrowth("170", 167, 173),
+			new WearGrowth("176", 173, 179),
+			new WearGrowth("182", 179, 185),
+			new WearGrowth("188", 185, 191),
+			new WearGrowth("194", 191, 197),
+			new WearGrowth("200", 197, 203),
 		};
 
 		public static readonly string[,] MenWear = new string[,] {
@@ -41,6 +54,26 @@ namespace workwear.Measurements
 		};
 
 		public static readonly string[,] WomenWear = new string[,] {
+			{ "38", "XXS" },
+			{ "40", "XS" },
+			{ "42", "S" },
+			{ "44", "M" },
+			{ "46", "M" },
+			{ "48", "L" },
+			{ "50", "L" },
+			{ "52", "XL" },
+			{ "54", "XXL" },
+			{ "56", "XXL" },
+			{ "58", "XXXL" },
+			{ "60", "4XL" },
+			{ "62", "4XL" },
+			{ "64", "4XL" },
+			{ "66", "5XL" },
+			{ "68", "5XL" },
+			{ "70", "5XL" },
+		};
+
+		public static readonly string[,] UnisexWear = new string[,] {
 			{ "38", "XXS" },
 			{ "40", "XS" },
 			{ "42", "S" },

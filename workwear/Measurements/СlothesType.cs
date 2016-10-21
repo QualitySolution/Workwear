@@ -9,6 +9,7 @@ namespace workwear.Measurements
 		[NeedGrowth]
 		[SizeStandarts(typeof(SizeStandartWomenWear), ClothesSex.Women)]
 		[SizeStandarts(typeof(SizeStandartMenWear), ClothesSex.Men)]
+		[SizeStandarts(typeof(SizeStandartUnisexWear), ClothesSex.Universal, SizeUse.СlothesOnly)]
 		Wear,
 /*		[Display(Name = "Брюки, юбки, шорты")]
 		[OnlyWoman]
