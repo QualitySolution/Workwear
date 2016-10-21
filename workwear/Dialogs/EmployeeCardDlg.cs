@@ -631,5 +631,10 @@ namespace workwear
 			Entity.FillWearInStockInfo (UoW);
 			Entity.FillWearRecivedInfo (UoW);
 		}
+
+		protected void OnButtonRefreshWorkwearItemsClicked(object sender, EventArgs e)
+		{
+			Entity.UpdateWorkwearItems();
+		}
 	}
 }
