@@ -1,11 +1,13 @@
 using System;
+using System.Linq;
+using Gamma.Utilities;
 using NLog;
 using QSOrmProject;
 using QSProjectsLib;
 using workwear.Domain;
 using workwear.Domain.Stock;
 using workwear.Measurements;
-using Gamma.Utilities;
+using System.Collections.Generic;
 
 namespace workwear
 {
@@ -85,13 +87,21 @@ namespace workwear
 
 				ylabelClothesSex.Text = Entity.Type.WearCategory.Value.GetEnumTitle() + ":";
 
-				if(!SizeHelper.HasСlothesSizeStd(Entity.Type.WearCategory.Value) || SizeHelper.IsUniversalСlothes (Entity.Type.WearCategory.Value))
+				//Скрываем лишние варианты пола.
+				ycomboClothesSex.ClearEnumHideList();
+				var standarts = SizeHelper.GetStandartsForСlothes(Entity.Type.WearCategory.Value);
+				var toHide = new List<object>();
+				foreach(var sexInfo in typeof(ClothesSex).GetFields())
 				{
-					Entity.Sex = ClothesSex.Universal;
-					ycomboClothesSex.Sensitive = false;
+					if (sexInfo.Name.Equals ("value__"))
+						continue;
+					
+					var sexEnum = (ClothesSex)sexInfo.GetValue(null);
+					if (!standarts.Any(x => x.Sex == sexEnum && x.Use != SizeUse.HumanOnly))
+						toHide.Add(sexEnum);
 				}
-				else
-					ycomboClothesSex.Sensitive = true;
+				if(toHide.Count > 0)
+					ycomboClothesSex.AddEnumToHideList(toHide.ToArray());
 
 				if(!SizeHelper.HasСlothesSizeStd(Entity.Type.WearCategory.Value))
 				{

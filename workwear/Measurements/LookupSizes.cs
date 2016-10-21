@@ -10,7 +10,7 @@ namespace workwear.Measurements
 			new WearGrowth("158", 155, 161),
 			new WearGrowth("164", 161, 167),
 			new WearGrowth("170", 167, 173),
-			new WearGrowth("176", 173, 179),
+			new WearGrowth("176", 173, 179), 
 		};
 
 		public static readonly WearGrowth[] MenGrowth = new WearGrowth[] {
@@ -93,6 +93,24 @@ namespace workwear.Measurements
 			{ "42", "42" },
 			{ "43", "43" },
 			{ null, "44" },
+		};
+
+		public static readonly string[,] UnisexShoes = new string[,] {
+			{ "34", "34" },
+			{ "35", "35,5" },
+			{ "36", "36" },
+			{ "37", "37" },
+			{ "38", "38,5" },
+			{ "39", "39,5" },
+			{ "40", "40" },
+			{ "41", "41,5" },
+			{ "42", "42" },
+			{ "43", "43" },
+			{ "44", "44,5" },
+			{ "45", "45" },
+			{ "46", "46" },
+			{ "47", "47,5" },
+			{ "48", "48" },
 		};
 
 		public static readonly string[,] Headdress = new string[,] {

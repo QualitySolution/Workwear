@@ -4,7 +4,6 @@ using System.Linq;
 using Gamma.Utilities;
 using Gtk;
 using workwear.Domain;
-using workwear.Domain.Stock;
 
 namespace workwear.Measurements
 {
@@ -107,6 +106,11 @@ namespace workwear.Measurements
 			return found != null;
 		}
 
+		public static SizeStandartsAttribute[] GetStandartsForСlothes(СlothesType wearCategory)
+		{
+			return wearCategory.GetAttributes<SizeStandartsAttribute> ();
+		}
+
 		#endregion
 
 		#region Размеры
@@ -141,6 +145,12 @@ namespace workwear.Measurements
 				return LookupSizes.MenShoes;
 
 			if (stdEnum is SizeStandartWomenShoes)
+				return LookupSizes.WomenShoes;
+
+			if (stdEnum is SizeStandartUnisexShoes)
+				return LookupSizes.UnisexShoes;
+
+			if (stdEnum is SizeStandartUnisexShoes)
 				return LookupSizes.WomenShoes;
 
 			if (stdEnum is SizeStandartHeaddress)

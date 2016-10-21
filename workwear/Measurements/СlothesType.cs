@@ -19,6 +19,7 @@ namespace workwear.Measurements
 */		[Display(Name = "Обувь")]
 		[SizeStandarts(typeof(SizeStandartWomenShoes), ClothesSex.Women)]
 		[SizeStandarts(typeof(SizeStandartMenShoes), ClothesSex.Men)]
+		[SizeStandarts(typeof(SizeStandartUnisexShoes), ClothesSex.Universal, SizeUse.СlothesOnly)]
 		Shoes,
 /*		[Display(Name = "Женские колготки и чулки")]
 		[OnlyWoman]
@@ -78,6 +79,12 @@ namespace workwear.Measurements
 		Universal,
 	}
 
+	public enum SizeUse{
+		Both,
+		HumanOnly,
+		СlothesOnly,
+	}
+
 	public class ClothesSexType : NHibernate.Type.EnumStringType
 	{
 		public ClothesSexType () : base (typeof(ClothesSex))
@@ -109,8 +116,9 @@ namespace workwear.Measurements
 	[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
 	public class SizeStandartsAttribute : Attribute 
 	{
-		public Type StandartsEnumType { get; set;}
-		public ClothesSex Sex { set; get;}
+		public Type StandartsEnumType { get; private set;}
+		public ClothesSex Sex { get; private set;}
+		public SizeUse Use { get; private set;}
 
 		public SizeStandartsAttribute(Type enumStd)
 		{
@@ -118,10 +126,11 @@ namespace workwear.Measurements
 			Sex = ClothesSex.Universal;
 		}
 
-		public SizeStandartsAttribute(Type enumStd, ClothesSex sex)
+		public SizeStandartsAttribute(Type enumStd, ClothesSex sex, SizeUse use = SizeUse.Both)
 		{
 			StandartsEnumType = enumStd;
 			Sex = sex;
+			Use = use;
 		}
 	}
 

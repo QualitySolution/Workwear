@@ -53,6 +53,15 @@ namespace workwear.Measurements
 		EU,
 	}
 
+	public enum SizeStandartUnisexShoes
+	{
+		[StdCode("UnisexShoesRus")]
+		[Display(Name = "Российский", ShortName = "РФ")]
+		Rus,
+		[StdCode("UnisexShoesEU")]
+		[Display(Name = "Европа", ShortName = "EU")]
+		EU,
+	}
 
 	public enum SizeStandartHeaddress
 	{
