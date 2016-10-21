@@ -120,7 +120,7 @@ namespace workwear.Measurements
 
 		#region Размеры
 
-		public static string[] GetSizesList (object stdEnum)
+		public static string[] GetSizesList (object stdEnum, params SizeUse[] excludeUse)
 		{
 			var array = GetSizeLookup (stdEnum);
 
@@ -132,11 +132,11 @@ namespace workwear.Measurements
 				switch ((GrowthStandartWear)stdEnum)
 				{
 					case GrowthStandartWear.Men:
-						return LookupSizes.MenGrowth.Select(g => g.Name).ToArray();
+						return LookupSizes.MenGrowth.Where(x => !excludeUse.Contains(x.Use)).Select(g => g.Name).ToArray();
 					case GrowthStandartWear.Women:
-						return LookupSizes.WomenGrowth.Select(g => g.Name).ToArray();
+						return LookupSizes.WomenGrowth.Where(x => !excludeUse.Contains(x.Use)).Select(g => g.Name).ToArray();
 					case GrowthStandartWear.Universal:
-						return LookupSizes.UniversalGrowth.Select(g => g.Name).ToArray();
+						return LookupSizes.UniversalGrowth.Where(x => !excludeUse.Contains(x.Use)).Select(g => g.Name).ToArray();
 				}
 			}
 

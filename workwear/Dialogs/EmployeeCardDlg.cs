@@ -491,13 +491,13 @@ namespace workwear
 			{
 				ycomboWearStd.ItemsEnum = typeof(SizeStandartMenWear);
 				ycomboShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
-				SizeHelper.FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (GrowthStandartWear.Men));
+				SizeHelper.FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (GrowthStandartWear.Men, SizeUse.СlothesOnly));
 			}
 			else if(Entity.Sex == Sex.F)
 			{
 				ycomboWearStd.ItemsEnum = typeof(SizeStandartWomenWear);
 				ycomboShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
-				SizeHelper.FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (GrowthStandartWear.Women));
+				SizeHelper.FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (GrowthStandartWear.Women, SizeUse.СlothesOnly));
 			}
 			else
 			{
