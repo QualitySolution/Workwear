@@ -105,7 +105,7 @@ namespace workwear
 					: String.Empty)
 				.AddColumn ("На складе").AddTextRenderer (node => node.Item.Units.MakeAmountShortStr (node.InStock))
 				 .AddSetter ((w, node) => w.Foreground = node.InStockState.GetEnumColor ())
-				.AddColumn ("Подобранная номенклатура").AddTextRenderer (node => node.MatchedNomenclature != null ? node.MatchedNomenclature.Name : (node.InStockState == StockStateInfo.UnknownNomenclature ? "нет подходящей" : String.Empty))
+				.AddColumn ("Подобранная номенклатура").AddTextRenderer (node => node.MatchedNomenclature != null ? node.MatchedNomenclature.NameAndSize : (node.InStockState == StockStateInfo.UnknownNomenclature ? "нет подходящей" : String.Empty))
 				.AddSetter ((w, node) => w.Foreground = node.InStockState.GetEnumColor ())
 				.Finish ();
 			//ytreeWorkwear.Selection.Changed += YtreeNorms_Selection_Changed;
