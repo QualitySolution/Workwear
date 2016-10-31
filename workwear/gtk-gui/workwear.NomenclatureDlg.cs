@@ -255,6 +255,8 @@ namespace workwear
 			}
 			this.DefaultWidth = 425;
 			this.DefaultHeight = 269;
+			this.ycomboClothesSex.Hide ();
+			this.ylabelClothesSex.Hide ();
 			this.Show ();
 			this.yentryItemsType.Changed += new global::System.EventHandler (this.OnYentryItemsTypeChanged);
 			this.ycomboClothesSex.Changed += new global::System.EventHandler (this.OnYcomboClothesSexChanged);

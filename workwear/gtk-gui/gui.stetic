@@ -569,6 +569,7 @@
             <child>
               <widget class="Gamma.Widgets.yEnumComboBox" id="ycomboClothesSex">
                 <property name="MemberName" />
+                <property name="Visible">False</property>
                 <property name="IsTextCombo">False</property>
                 <property name="Items" translatable="yes" />
                 <property name="ShowSpecialStateAll">False</property>
@@ -663,6 +664,7 @@
             <child>
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabelClothesSex">
                 <property name="MemberName" />
+                <property name="Visible">False</property>
                 <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">ylabel1</property>
               </widget>
