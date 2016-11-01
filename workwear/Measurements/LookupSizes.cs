@@ -6,41 +6,44 @@ namespace workwear.Measurements
 	{
 		public static readonly WearGrowth[] WomenGrowth = new WearGrowth[] {
 			new WearGrowth("146", 143, 149),
+			new WearGrowth("146-152", 155, 167, SizeUse.СlothesOnly, "146", "152"),
 			new WearGrowth("152", 149, 155),
 			new WearGrowth("158", 155, 161),
-			new WearGrowth("158-164", 155, 167, SizeUse.СlothesOnly),
+			new WearGrowth("158-164", 155, 167, SizeUse.СlothesOnly, "158", "164"),
 			new WearGrowth("164", 161, 167),
 			new WearGrowth("170", 167, 173),
-			new WearGrowth("170-176", 167, 179, SizeUse.СlothesOnly),
+			new WearGrowth("170-176", 167, 179, SizeUse.СlothesOnly, "170", "176"),
 			new WearGrowth("176", 173, 179), 
 		};
 
 		public static readonly WearGrowth[] MenGrowth = new WearGrowth[] {
 			new WearGrowth("158", 155, 161),
-			new WearGrowth("158-164", 155, 167, SizeUse.СlothesOnly),
+			new WearGrowth("158-164", 155, 167, SizeUse.СlothesOnly, "158", "164"),
 			new WearGrowth("164", 161, 167),
 			new WearGrowth("170", 167, 173),
-			new WearGrowth("170-176", 167, 179, SizeUse.СlothesOnly),
+			new WearGrowth("170-176", 167, 179, SizeUse.СlothesOnly, "170", "176"),
 			new WearGrowth("176", 173, 179),
 			new WearGrowth("182", 179, 185),
-			new WearGrowth("182-188", 179, 191, SizeUse.СlothesOnly),
+			new WearGrowth("182-188", 179, 191, SizeUse.СlothesOnly, "182", "188"),
 			new WearGrowth("188", 185, 191),
 			new WearGrowth("194", 191, 197),
+			new WearGrowth("194-200", 191, 203, SizeUse.СlothesOnly, "194", "200"),
 			new WearGrowth("200", 197, 203),
 		};
 
 		public static readonly WearGrowth[] UniversalGrowth = new WearGrowth[] {
 			new WearGrowth("152", 149, 155),
 			new WearGrowth("158", 155, 161),
-			new WearGrowth("158-164", 155, 167, SizeUse.СlothesOnly),
+			new WearGrowth("158-164", 155, 167, SizeUse.СlothesOnly, "158", "164"),
 			new WearGrowth("164", 161, 167),
 			new WearGrowth("170", 167, 173),
-			new WearGrowth("170-176", 167, 179, SizeUse.СlothesOnly),
+			new WearGrowth("170-176", 167, 179, SizeUse.СlothesOnly, "170", "176"),
 			new WearGrowth("176", 173, 179),
 			new WearGrowth("182", 179, 185),
-			new WearGrowth("182-188", 179, 191, SizeUse.СlothesOnly),
+			new WearGrowth("182-188", 179, 191, SizeUse.СlothesOnly, "182", "188"),
 			new WearGrowth("188", 185, 191),
 			new WearGrowth("194", 191, 197),
+			new WearGrowth("194-200", 191, 203, SizeUse.СlothesOnly, "194", "200"),
 			new WearGrowth("200", 197, 203),
 		};
 
@@ -185,21 +188,6 @@ namespace workwear.Measurements
 			{ "12", null },
 		};
 
-	}
-
-	public struct WearGrowth{
-		public string Name;
-		public int Upper;
-		public int Lower;
-		public SizeUse Use;
-
-		public WearGrowth(string name, int upper, int lower, SizeUse use = SizeUse.Both)
-		{
-			Name = name;
-			Upper = upper;
-			Lower = lower;
-			Use = use;
-		}
 	}
 }
 

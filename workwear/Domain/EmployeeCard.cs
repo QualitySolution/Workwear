@@ -292,6 +292,14 @@ namespace workwear.Domain
 			}
 		}
 
+		public virtual SizePair GetGrow()
+		{
+			var growStd = SizeHelper.GetGrowthStandart(СlothesType.Wear, Sex, SizeUsePlace.Human);
+			if (growStd == null || growStd.Length == 0)
+				return null;
+			return new SizePair(SizeHelper.GetSizeStdCode(growStd[0]), WearGrowth);
+		}
+
 		public virtual void AddUsedNorm(Norm norm)
 		{
 			if(UsedNorms.Any (p => DomainHelper.EqualDomainObjects (p, norm)))

@@ -47,10 +47,20 @@ namespace workwear
 						));
 				}
 				query.Where(disjunction);
-				var growthStd = SizeHelper.GetGrowthStandart(itemType.WearCategory.Value, employee.Sex);
-				if (growthStd != null)
+				if (SizeHelper.HasGrowthStandart(itemType.WearCategory.Value))
 				{
-					query.Where(n => n.WearGrowthStd == SizeHelper.GetSizeStdCode(growthStd) && n.WearGrowth == employee.WearGrowth);
+					var growDisjunction = new Disjunction();
+					var growStds = SizeHelper.GetGrowthStandart(itemType.WearCategory.Value, employee.Sex, SizeUsePlace.Сlothes);
+					foreach (var pair in SizeHelper.MatchGrow (growStds, employee.WearGrowth, SizeUsePlace.Сlothes))
+					{
+						growDisjunction.Add(
+							Restrictions.And(
+								Restrictions.Eq(Projections.Property<Nomenclature>(n => n.WearGrowthStd), pair.StandardCode),
+								Restrictions.Eq(Projections.Property<Nomenclature>(n => n.WearGrowth), pair.Size)
+							));
+					}
+
+					query.Where(growDisjunction);
 				}
 			}
 

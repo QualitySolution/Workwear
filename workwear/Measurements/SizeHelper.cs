@@ -77,9 +77,23 @@ namespace workwear.Measurements
 			return att.Length > 0;
 		}
 
-		public static GrowthStandartWear? GetGrowthStandart(СlothesType wearCategory, Sex sex)
+		public static bool HasGrowthStandart(СlothesType wearCategory)
 		{
-			return GetGrowthStandart (wearCategory, sex == Sex.F ? ClothesSex.Women : ClothesSex.Men);
+			var att = wearCategory.GetAttribute<NeedGrowthAttribute>();
+			return att != null;
+		}
+
+		public static GrowthStandartWear[] GetGrowthStandart(СlothesType wearCategory, Sex sex, SizeUsePlace place)
+		{
+			var att = wearCategory.GetAttribute<NeedGrowthAttribute> ();
+			if (att == null)
+				return null;
+			
+			var list = new List<GrowthStandartWear>();
+			list.Add(GetGrowthStandart (wearCategory, sex == Sex.F ? ClothesSex.Women : ClothesSex.Men).Value);
+			if (place == SizeUsePlace.Сlothes)
+				list.Add(GetGrowthStandart(wearCategory, ClothesSex.Universal).Value);
+			return list.ToArray();
 		}
 
 		public static GrowthStandartWear? GetGrowthStandart(СlothesType wearCategory, ClothesSex sex)
@@ -141,6 +155,20 @@ namespace workwear.Measurements
 			}
 
 			throw new ArgumentException ( String.Format ("Неизвестный стандарт размера {0}", stdEnum.ToString ()), "stdEnum");
+		}
+
+		private static WearGrowth[] GetWearGrowthLookup(GrowthStandartWear std)
+		{
+			switch (std) {
+				case GrowthStandartWear.Men:
+					return LookupSizes.MenGrowth;
+				case GrowthStandartWear.Women:
+					return LookupSizes.WomenGrowth;
+				case GrowthStandartWear.Universal:
+					return LookupSizes.UniversalGrowth;
+				default:
+					return null;
+			}
 		}
 
 		private static string[,] GetSizeLookup(object stdEnum)
@@ -234,6 +262,24 @@ namespace workwear.Measurements
 						if (!result.Any (pair => pair.StandardCode == newPiar.StandardCode && pair.Size == newPiar.Size))
 							result.Add (newPiar);
 					}
+				}
+			}
+			return result;
+		}
+
+		public static List<SizePair> MatchGrow(GrowthStandartWear[] stds, string grow, SizeUsePlace place)
+		{
+			var result = new List<SizePair>();
+			foreach(var std in stds)
+			{
+				foreach(var lookupGrow in SizeHelper.GetWearGrowthLookup(std))
+				{
+					if (lookupGrow.Use == SizeUse.СlothesOnly && place == SizeUsePlace.Human)
+						continue;
+					if (lookupGrow.Use == SizeUse.HumanOnly && place == SizeUsePlace.Сlothes)
+						continue;
+					if (lookupGrow.Appropriated.Contains(grow))
+						result.Add(new SizePair(SizeHelper.GetSizeStdCode(std), lookupGrow.Name));
 				}
 			}
 			return result;

@@ -86,6 +86,11 @@ namespace workwear.Measurements
 		СlothesOnly,
 	}
 
+	public enum SizeUsePlace{
+		Human,
+		Сlothes,
+	}
+
 	public class ClothesSexType : NHibernate.Type.EnumStringType
 	{
 		public ClothesSexType () : base (typeof(ClothesSex))
