@@ -510,7 +510,7 @@ namespace workwear
 		protected void OnYcomboHeaddressChanged (object sender, EventArgs e)
 		{
 			if (ycomboHeaddressStd.SelectedItemOrNull != null)
-				SizeHelper.FillSizeCombo (ycomboHeaddressSize, SizeHelper.GetSizesList (ycomboHeaddressStd.SelectedItem));
+				SizeHelper.FillSizeCombo (ycomboHeaddressSize, SizeHelper.GetSizesList (ycomboHeaddressStd.SelectedItem, SizeUse.СlothesOnly));
 			else
 				ycomboHeaddressSize.Clear ();
 		}
@@ -518,7 +518,7 @@ namespace workwear
 		protected void OnYcomboWearStdChanged (object sender, EventArgs e)
 		{
 			if (ycomboWearStd.SelectedItemOrNull != null)
-				SizeHelper.FillSizeCombo (ycomboWearSize, SizeHelper.GetSizesList (ycomboWearStd.SelectedItem));
+				SizeHelper.FillSizeCombo (ycomboWearSize, SizeHelper.GetSizesList (ycomboWearStd.SelectedItem, SizeUse.СlothesOnly));
 			else
 				ycomboWearSize.Clear ();
 		}
@@ -526,7 +526,7 @@ namespace workwear
 		protected void OnYcomboShoesStdChanged (object sender, EventArgs e)
 		{
 			if (ycomboShoesStd.SelectedItemOrNull != null)
-				SizeHelper.FillSizeCombo (ycomboShoesSize, SizeHelper.GetSizesList (ycomboShoesStd.SelectedItem));
+				SizeHelper.FillSizeCombo (ycomboShoesSize, SizeHelper.GetSizesList (ycomboShoesStd.SelectedItem, SizeUse.СlothesOnly));
 			else
 				ycomboShoesSize.Clear ();
 		}
@@ -534,7 +534,7 @@ namespace workwear
 		protected void OnYcomboGlovesStdChanged (object sender, EventArgs e)
 		{
 			if (ycomboGlovesStd.SelectedItemOrNull != null)
-				SizeHelper.FillSizeCombo (ycomboGlovesSize, SizeHelper.GetSizesList (ycomboGlovesStd.SelectedItem));
+				SizeHelper.FillSizeCombo (ycomboGlovesSize, SizeHelper.GetSizesList (ycomboGlovesStd.SelectedItem, SizeUse.СlothesOnly));
 			else
 				ycomboGlovesSize.Clear ();
 		}

@@ -122,7 +122,7 @@ namespace workwear
 		{
 			if (ycomboWearStd.SelectedItemOrNull != null)
 			{
-				SizeHelper.FillSizeCombo (ycomboWearSize, SizeHelper.GetSizesList (ycomboWearStd.SelectedItem));
+				SizeHelper.FillSizeCombo (ycomboWearSize, SizeHelper.GetSizesList (ycomboWearStd.SelectedItem, SizeUse.HumanOnly));
 				ycomboWearSize.Sensitive = true;
 			}
 			else
@@ -144,7 +144,7 @@ namespace workwear
 			var growthStd = SizeHelper.GetGrowthStandart (Entity.Type.WearCategory.Value, Entity.Sex.Value);
 			ycomboWearGrowth.Sensitive = growthStd != null;
 			if (growthStd != null) {
-				SizeHelper.FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (growthStd.Value));
+				SizeHelper.FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (growthStd.Value, SizeUse.HumanOnly));
 				Entity.WearGrowthStd = SizeHelper.GetSizeStdCode (growthStd);
 			} 
 			else

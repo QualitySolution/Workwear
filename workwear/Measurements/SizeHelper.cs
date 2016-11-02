@@ -139,7 +139,14 @@ namespace workwear.Measurements
 			var array = GetSizeLookup (stdEnum);
 
 			if (array != null)
-				return ReadSizeArray (array, (int)stdEnum);
+			{
+				return array
+					.Where(x => !excludeUse.Contains(x.Use))
+					.Select(x => x.Names[(int)stdEnum])
+					.Where(x => !String.IsNullOrEmpty(x))
+					.Distinct().ToArray();
+			}
+				
 
 			if (stdEnum is GrowthStandartWear)
 			{
@@ -201,11 +208,6 @@ namespace workwear.Measurements
 				return LookupSizes.Gloves;
 
 			return null;
-		}
-
-		private static string[] ReadSizeArray(WearSize[] array, int column)
-		{
-			return array.Select(x => x.Names[column]).Where(x => !String.IsNullOrEmpty(x)).Distinct().ToArray();
 		}
 
 		public static void FillSizeCombo(ComboBox combo, string[] sizes)
