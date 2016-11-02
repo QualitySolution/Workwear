@@ -178,6 +178,7 @@
     <Compile Include="Repository\FacilityRepository.cs" />
     <Compile Include="Representations\EmployeesVM.cs" />
     <Compile Include="Measurements\WearGrowth.cs" />
+    <Compile Include="Measurements\WearSize.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

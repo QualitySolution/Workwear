@@ -171,7 +171,7 @@ namespace workwear.Measurements
 			}
 		}
 
-		private static string[,] GetSizeLookup(object stdEnum)
+		private static WearSize[] GetSizeLookup(object stdEnum)
 		{
 			if (stdEnum is SizeStandartMenWear)
 				return LookupSizes.MenWear;
@@ -203,18 +203,9 @@ namespace workwear.Measurements
 			return null;
 		}
 
-		private static string[] ReadSizeArray(string[,] array, int column)
+		private static string[] ReadSizeArray(WearSize[] array, int column)
 		{
-			var list = new List<string> ();
-
-			for(int i = 0; i < array.GetLength (0); i++)
-			{
-				if (string.IsNullOrEmpty (array [i, column]))
-					continue;
-				list.Add (array[i, column]);
-			}
-
-			return list.Distinct ().ToArray ();
+			return array.Select(x => x.Names[column]).Where(x => !String.IsNullOrEmpty(x)).Distinct().ToArray();
 		}
 
 		public static void FillSizeCombo(ComboBox combo, string[] sizes)
@@ -250,11 +241,11 @@ namespace workwear.Measurements
 			int original = (int)sizeStd;
 			for(int sizeIx = 0; sizeIx < lookupArray.GetLength (0); sizeIx++)
 			{
-				if(lookupArray[sizeIx, original] == size)
+				if(lookupArray[sizeIx].Names[original] == size)
 				{
 					foreach (var std in Enum.GetValues(sizeStd.GetType ()))
 					{
-						var newPiar = new SizePair (GetSizeStdCode (std), lookupArray[sizeIx, (int)std]);
+						var newPiar = new SizePair (GetSizeStdCode (std), lookupArray[sizeIx].Names[(int)std]);
 
 						if (newPiar.Size == null)
 							continue;
