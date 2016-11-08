@@ -96,6 +96,20 @@ namespace workwear.Measurements
 			return list.ToArray();
 		}
 
+		public static SizeStandartsAttribute GetSizeStandartAttributeFromStd(object std)
+		{
+			return typeof(СlothesType).GetFields()
+				.SelectMany(x => x.GetCustomAttributes(false).OfType<SizeStandartsAttribute>())
+				.First(att => att.StandartsEnumType == std.GetType());
+		}
+
+		public static СlothesType GetСlothesTypeFromStd(object std)
+		{
+			return (СlothesType)typeof(СlothesType).GetFields()
+				.Where(x => x.GetCustomAttributes(false).OfType<SizeStandartsAttribute>().Any(att => att.StandartsEnumType == std.GetType()))
+				.First().GetValue(null);
+		}
+
 		public static GrowthStandartWear? GetGrowthStandart(СlothesType wearCategory, ClothesSex sex)
 		{
 			var att = wearCategory.GetAttribute<NeedGrowthAttribute> ();
@@ -136,7 +150,7 @@ namespace workwear.Measurements
 
 		public static string[] GetSizesList (object stdEnum, params SizeUse[] excludeUse)
 		{
-			var array = GetSizeLookup (stdEnum);
+			var array = GetSizeLookup (stdEnum.GetType());
 
 			if (array != null)
 			{
@@ -178,33 +192,33 @@ namespace workwear.Measurements
 			}
 		}
 
-		private static WearSize[] GetSizeLookup(object stdEnum)
+		private static WearSize[] GetSizeLookup(Type stdEnum)
 		{
-			if (stdEnum is SizeStandartMenWear)
+			if (stdEnum == typeof(SizeStandartMenWear))
 				return LookupSizes.MenWear;
 
-			if (stdEnum is SizeStandartWomenWear)
+			if (stdEnum == typeof(SizeStandartWomenWear))
 				return LookupSizes.WomenWear;
 
-			if (stdEnum is SizeStandartUnisexWear)
+			if (stdEnum == typeof(SizeStandartUnisexWear))
 				return LookupSizes.UnisexWear;
 
-			if (stdEnum is SizeStandartMenShoes)
+			if (stdEnum == typeof(SizeStandartMenShoes))
 				return LookupSizes.MenShoes;
 
-			if (stdEnum is SizeStandartWomenShoes)
+			if (stdEnum == typeof(SizeStandartWomenShoes))
 				return LookupSizes.WomenShoes;
 
-			if (stdEnum is SizeStandartUnisexShoes)
+			if (stdEnum == typeof(SizeStandartUnisexShoes))
 				return LookupSizes.UnisexShoes;
 
-			if (stdEnum is SizeStandartUnisexShoes)
+			if (stdEnum == typeof(SizeStandartUnisexShoes))
 				return LookupSizes.WomenShoes;
 
-			if (stdEnum is SizeStandartHeaddress)
+			if (stdEnum == typeof(SizeStandartHeaddress))
 				return LookupSizes.Headdress;
 
-			if (stdEnum is SizeStandartGloves)
+			if (stdEnum == typeof(SizeStandartGloves))
 				return LookupSizes.Gloves;
 
 			return null;
@@ -222,38 +236,57 @@ namespace workwear.Measurements
 			combo.AddAttribute (text, "text", 0);
 		}
 
-		public static List<SizePair> MatchSize(SizePair sizePair)
+		public static List<SizePair> MatchSize(SizePair sizePair, SizeUsePlace place)
 		{
-			return MatchSize (sizePair.StandardCode, sizePair.Size);
+			return MatchSize (sizePair.StandardCode, sizePair.Size, place);
 		}
 
-		public static List<SizePair> MatchSize(string sizeStdCode, string size)
+		public static List<SizePair> MatchSize(string sizeStdCode, string size, SizeUsePlace place)
 		{
-			return MatchSize (SizeHelper.GetSizeStdEnum (sizeStdCode), size);
+			return MatchSize (SizeHelper.GetSizeStdEnum (sizeStdCode), size, place);
 		}
 
-		public static List<SizePair> MatchSize(object sizeStd, string size)
+		public static List<SizePair> MatchSize(object sizeStd, string size, SizeUsePlace place)
 		{
-			var lookupArray = GetSizeLookup (sizeStd);
-			if (lookupArray == null)
-				return null;
+			var stdAtt = GetSizeStandartAttributeFromStd(sizeStd);
+			var stds = new List<Type>();
+			stds.Add(sizeStd.GetType());
+			if(place == SizeUsePlace.Сlothes && stdAtt.Sex != ClothesSex.Universal)
+			{
+				var type = GetСlothesTypeFromStd(sizeStd);
+				var unisex = GetStandartsForСlothes(type).FirstOrDefault(x => x.Sex == ClothesSex.Universal);
+				if (unisex != null)
+					stds.Add(unisex.StandartsEnumType);
+			}
 
 			var result = new List<SizePair> ();
 
-			int original = (int)sizeStd;
-			for(int sizeIx = 0; sizeIx < lookupArray.GetLength (0); sizeIx++)
+			foreach(var sizeType in stds)
 			{
-				if(lookupArray[sizeIx].Names[original] == size)
+				var lookupArray = GetSizeLookup (sizeType);
+				if (lookupArray == null)
+					continue;
+
+				int original = (int)sizeStd;
+				foreach(var lookup in lookupArray)
 				{
-					foreach (var std in Enum.GetValues(sizeStd.GetType ()))
+					if (lookup.Use == SizeUse.СlothesOnly && place == SizeUsePlace.Human)
+						continue;
+					if (lookup.Use == SizeUse.HumanOnly && place == SizeUsePlace.Сlothes)
+						continue;
+					
+					if(lookup.Appropriated.Any(x => x[original] == size))
 					{
-						var newPiar = new SizePair (GetSizeStdCode (std), lookupArray[sizeIx].Names[(int)std]);
+						foreach (var std in Enum.GetValues(sizeType))
+						{
+							var newPiar = new SizePair (GetSizeStdCode (std), lookup.Names[(int)std]);
 
-						if (newPiar.Size == null)
-							continue;
+							if (newPiar.Size == null)
+								continue;
 
-						if (!result.Any (pair => pair.StandardCode == newPiar.StandardCode && pair.Size == newPiar.Size))
-							result.Add (newPiar);
+							if (!result.Any (pair => pair.StandardCode == newPiar.StandardCode && pair.Size == newPiar.Size))
+								result.Add (newPiar);
+						}
 					}
 				}
 			}

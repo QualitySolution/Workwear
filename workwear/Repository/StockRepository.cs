@@ -38,7 +38,7 @@ namespace workwear
 					return null;
 				}
 
-				foreach (var pair in SizeHelper.MatchSize (employeeSize))
+				foreach (var pair in SizeHelper.MatchSize (employeeSize, SizeUsePlace.Сlothes))
 				{
 					disjunction.Add(
 						Restrictions.And(
