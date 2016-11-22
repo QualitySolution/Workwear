@@ -1,5 +1,5 @@
 ;--------------------------------
-!define PRODUCT_VERSION "1.2.3.2"
+!define PRODUCT_VERSION "1.2.4"
 !define MIN_NET_MAJOR "4"
 !define MIN_NET_MINOR "0"
 !define MIN_NET_BUILD "*"
