@@ -13,7 +13,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     CONCAT_WS(' ',
@@ -33,7 +33,7 @@ WHERE
     dismiss_date IS NULL
 ORDER BY last_name , first_name , patronymic_name</CommandText>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="employee">
           <DataField>employee</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -116,19 +116,19 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
           <TableColumn>
             <Width>50.8pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>43.6pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>40.6pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>52.4pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
           <TableRows>
-            <TableRow >
+            <TableRow>
               <Height>12pt</Height>
               <TableCells>
                 <TableCell>
@@ -140,7 +140,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Bottom >None</Bottom>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -158,7 +158,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Bottom >None</Bottom>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -176,7 +176,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Bottom >None</Bottom>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -194,7 +194,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Bottom >None</Bottom>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -233,7 +233,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Top >None</Top>
+                          <Top>None</Top>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -250,7 +250,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Top >None</Top>
+                          <Top>None</Top>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -267,7 +267,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Top >None</Top>
+                          <Top>None</Top>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -284,7 +284,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Top >None</Top>
+                          <Top>None</Top>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -325,7 +325,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox22">
                       <Value>Обувь</Value>
@@ -341,7 +341,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox19">
                       <Value>Шапка</Value>
@@ -357,7 +357,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox16">
                       <Value>Перчатки</Value>
@@ -428,7 +428,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
-                        <TextAlign >Center</TextAlign>
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -443,9 +443,9 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
-                        <BorderColor  />
-                        <BorderWidth  />
-                        <TextAlign >Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -461,8 +461,8 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
                         <TextAlign>Center</TextAlign>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -478,29 +478,29 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
                         <TextAlign>Center</TextAlign>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox23">
-                      <Value>={size_wear}</Value>
+                      <Value>={size_shoes}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
                         <TextAlign>Center</TextAlign>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox20">
                       <Value>={size_headdress}</Value>
@@ -510,13 +510,13 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
                         <TextAlign>Center</TextAlign>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox17">
                       <Value>={size_gloves}</Value>
@@ -526,8 +526,8 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
                         <TextAlign>Center</TextAlign>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
