@@ -13,7 +13,10 @@ namespace workwear.Measurements
 			new WearGrowth("164", 161, 167),
 			new WearGrowth("170", 167, 173),
 			new WearGrowth("170-176", 167, 179, SizeUse.СlothesOnly, "170", "176"),
-			new WearGrowth("176", 173, 179), 
+			new WearGrowth("176", 173, 179),
+			new WearGrowth("182", 179, 185),
+			new WearGrowth("182-188", 179, 191, SizeUse.СlothesOnly, "182", "188"),
+			new WearGrowth("188", 185, 191),
 		};
 
 		public static readonly WearGrowth[] MenGrowth = new WearGrowth[] {
