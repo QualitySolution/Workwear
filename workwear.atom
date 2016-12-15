@@ -3,7 +3,15 @@
   <subtitle type="text">Новости программы QS: Спецодежда и имущество</subtitle>
   <id>workwearnews</id>
   <rights type="text">Quality Solution 2016</rights>
-  <updated>2016-06-28T20:37:00+03:00</updated>
+  <updated>2016-12-15T18:00:00+03:00</updated>
+  <entry>
+    <id>urn:uuid:9181d3d0-fb32-4333-81fd-3bb4433c0a08</id>
+    <title type="text">QS: Спецодежда и имущество 1.2.4</title>
+    <updated>2016-12-15T18:00:00+03:00</updated>
+    <published>2016-12-15T18:00:00+03:00</published>
+    <link rel="alternate" href="http://workwear.qsolution.ru/?p=198" />
+    <summary>Основные исправления и улучшения в этом релизе касались размеров одежды.</summary>
+  </entry>
   <entry>
     <id>urn:uuid:636b0b18-9dfd-47b3-9217-ef9ba01a96f3</id>
     <title type="text">QS: Спецодежда и имущество 1.2.2</title>
