@@ -342,6 +342,11 @@ SectionEnd
 Section "GTK# 2.12.21" SecGTK
   SectionIn RO
 
+  ; Test 2.12.38
+  System::Call "msi::MsiQueryProductStateA(t '{C7A0CF1E-A936-426A-9694-035636DCD356}') i.r0"
+  StrCmp $0 "5" GTKDone
+  DetailPrint "GTK# 2.12.38 не установлен"
+
   ; Test 2.12.30
   System::Call "msi::MsiQueryProductStateA(t '{CA8017BD-8271-4C93-A409-186375C5A5CA}') i.r0"
   StrCmp $0 "5" GTKDone
