@@ -4,6 +4,7 @@ using NLog;
 using QSOrmProject;
 using workwear.Domain;
 using workwear.Domain.Stock;
+using System.Linq;
 
 namespace workwear
 {
@@ -21,7 +22,14 @@ namespace workwear
 					return;
 				writeoffDoc = value;
 				ytreeItems.ItemsDataSource = writeoffDoc.ObservableItems;
+				writeoffDoc.ObservableItems.ListContentChanged += WriteoffDoc_ObservableItems_ListContentChanged;
+				CalculateTotal();
 			}
+		}
+
+		void WriteoffDoc_ObservableItems_ListContentChanged (object sender, EventArgs e)
+		{
+			CalculateTotal();
 		}
 
 		public EmployeeCard CurWorker { get; set;}
@@ -38,7 +46,7 @@ namespace workwear
 				.AddColumn ("Рост").AddTextRenderer (e => e.Nomenclature.WearGrowth)
 				.AddColumn ("% годности").AddTextRenderer (e => e.IncomeOn != null ? e.IncomeOn.LifePercent.ToString ("P0") : String.Empty)
 				.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
-				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1))
+				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
 				.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
@@ -130,7 +138,10 @@ namespace workwear
 
 		private void CalculateTotal()
 		{
-			labelSum.Text = String.Format ("Количество: {0}", WriteoffDoc.Items.Count);
+			labelSum.Markup = String.Format ("Позиций в документе: <u>{0}</u>  Количество единиц: <u>{1}</u>",
+				WriteoffDoc.Items.Count,
+				WriteoffDoc.Items.Sum(x => x.Amount)
+			);
 		} 
 
 	}

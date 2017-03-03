@@ -100,6 +100,7 @@ namespace workwear
 			this.ydateDoc = new global::Gamma.Widgets.yDatePicker ();
 			this.ydateDoc.Events = ((global::Gdk.EventMask)(256));
 			this.ydateDoc.Name = "ydateDoc";
+			this.ydateDoc.WithTime = false;
 			this.ydateDoc.Date = new global::System.DateTime (0);
 			this.ydateDoc.IsEditable = true;
 			this.ydateDoc.AutoSeparation = true;
@@ -173,8 +174,8 @@ namespace workwear
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
-			this.DefaultWidth = 582;
-			this.DefaultHeight = 436;
+			this.DefaultWidth = 721;
+			this.DefaultHeight = 496;
 			this.Show ();
 			this.buttonOk.Clicked += new global::System.EventHandler (this.OnButtonOkClicked);
 		}

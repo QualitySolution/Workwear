@@ -33,10 +33,17 @@ namespace workwear
 					expenceDoc.PropertyChanged += ExpenceDoc_PropertyChanged;
 				}
 				ytreeItems.ItemsDataSource = expenceDoc.ObservableItems;
+				expenceDoc.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 				ExpenceDoc_PropertyChanged(expenceDoc, new System.ComponentModel.PropertyChangedEventArgs(expenceDoc.GetPropertyName(x => x.Operation)));
 				if(ExpenceDoc.Operation == ExpenseOperations.Object)
 					ExpenceDoc_PropertyChanged(expenceDoc, new System.ComponentModel.PropertyChangedEventArgs(expenceDoc.GetPropertyName(x => x.Facility)));
+				CalculateTotal();
 			}
+		}
+
+		void ExpenceDoc_ObservableItems_ListContentChanged (object sender, EventArgs e)
+		{
+			CalculateTotal();
 		}
 
 		void ExpenceDoc_PropertyChanged (object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -115,7 +122,10 @@ namespace workwear
 
 		private void CalculateTotal()
 		{
-			labelSum.Text = String.Format ("Количество: {0}", ExpenceDoc.Items.Count);
+			labelSum.Markup = String.Format ("Позиций в документе: <u>{0}</u>  Количество единиц: <u>{1}</u>", 
+				ExpenceDoc.Items.Count,
+				ExpenceDoc.Items.Sum(x => x.Amount)
+			);
 		} 
 	}
 }

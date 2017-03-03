@@ -99,6 +99,7 @@ namespace workwear
 			this.ycomboOperation.ShowSpecialStateAll = false;
 			this.ycomboOperation.ShowSpecialStateNot = false;
 			this.ycomboOperation.UseShortTitle = false;
+			this.ycomboOperation.DefaultFirst = false;
 			this.table2.Add (this.ycomboOperation);
 			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table2 [this.ycomboOperation]));
 			w5.LeftAttach = ((uint)(1));
@@ -172,6 +173,7 @@ namespace workwear
 			this.ydateDoc = new global::Gamma.Widgets.yDatePicker ();
 			this.ydateDoc.Events = ((global::Gdk.EventMask)(256));
 			this.ydateDoc.Name = "ydateDoc";
+			this.ydateDoc.WithTime = false;
 			this.ydateDoc.Date = new global::System.DateTime (0);
 			this.ydateDoc.IsEditable = true;
 			this.ydateDoc.AutoSeparation = true;
@@ -257,8 +259,8 @@ namespace workwear
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
-			this.DefaultWidth = 614;
-			this.DefaultHeight = 392;
+			this.DefaultWidth = 655;
+			this.DefaultHeight = 418;
 			this.Show ();
 			this.ycomboOperation.Changed += new global::System.EventHandler (this.OnYcomboOperationChanged);
 			this.buttonOk.Clicked += new global::System.EventHandler (this.OnButtonOkClicked);

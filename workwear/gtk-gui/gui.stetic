@@ -3121,7 +3121,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.ExpenseDocDlg" design-size="614 392">
+  <widget class="Gtk.Dialog" id="workwear.ExpenseDocDlg" design-size="655 418">
     <property name="MemberName" />
     <property name="Title" translatable="yes">Новая выдача</property>
     <property name="WindowPosition">CenterOnParent</property>
@@ -3573,7 +3573,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.WriteOffDocDlg" design-size="582 436">
+  <widget class="Gtk.Dialog" id="workwear.WriteOffDocDlg" design-size="721 496">
     <property name="MemberName" />
     <property name="Title" translatable="yes">Новое списание</property>
     <property name="WindowPosition">CenterOnParent</property>
