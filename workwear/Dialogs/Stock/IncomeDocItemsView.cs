@@ -52,6 +52,7 @@ namespace workwear
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1))
 				.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				.AddColumn ("Стоимость").AddNumericRenderer (e => e.Cost).Editing (new Adjustment(0,0,100000000,100,1000,0)).Digits (2)
+				.AddColumn("Сумма").AddNumericRenderer(x => x.Total).Digits(2)
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 		}

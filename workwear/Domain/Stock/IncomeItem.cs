@@ -40,6 +40,7 @@ namespace workwear.Domain.Stock
 		int amount;
 
 		[Display (Name = "Количество")]
+		[PropertyChangedAlso("Total")]
 		public virtual int Amount {
 			get { return amount; }
 			set { SetField (ref amount, value, () => Amount); }
@@ -48,12 +49,15 @@ namespace workwear.Domain.Stock
 		decimal cost;
 
 		[Display (Name = "Цена")]
+		[PropertyChangedAlso("Total")]
 		public virtual decimal Cost {
 			get { return cost; }
 			set { SetField (ref cost, value, () => Cost); }
 		}
 
 		#endregion
+
+		#region Расчетные
 
 		public virtual string Title {
 			get { return String.Format ("Поступление на склад {0} в количестве {1} {2}",
@@ -62,6 +66,11 @@ namespace workwear.Domain.Stock
 				Nomenclature.Type.Units.Name
 			);}
 		}
+
+		public virtual decimal Total{ get{	return Cost * Amount; }}
+
+		#endregion
+
 
 		public IncomeItem ()
 		{
