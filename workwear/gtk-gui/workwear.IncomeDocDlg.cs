@@ -290,8 +290,8 @@ namespace workwear
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
-			this.DefaultWidth = 582;
-			this.DefaultHeight = 436;
+			this.DefaultWidth = 749;
+			this.DefaultHeight = 514;
 			this.Show ();
 			this.ycomboOperation.Changed += new global::System.EventHandler (this.OnYcomboOperationChanged);
 			this.buttonOk.Clicked += new global::System.EventHandler (this.OnButtonOkClicked);

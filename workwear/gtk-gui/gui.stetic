@@ -2624,7 +2624,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.IncomeDocDlg" design-size="582 436">
+  <widget class="Gtk.Dialog" id="workwear.IncomeDocDlg" design-size="749 514">
     <property name="MemberName" />
     <property name="WindowPosition">CenterOnParent</property>
     <property name="Buttons">2</property>
@@ -3022,7 +3022,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.IncomeDocItemsView" design-size="575 234">
+  <widget class="Gtk.Bin" id="workwear.IncomeDocItemsView" design-size="414 250">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
