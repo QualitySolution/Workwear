@@ -4643,9 +4643,9 @@
         <property name="ShortLabel" translatable="yes">Ведомость на выдачу</property>
         <signal name="Activated" handler="OnAction13Activated" />
       </action>
-      <action id="Action21">
+      <action id="Action19">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Квартальная заявка</property>
+        <property name="Label" translatable="yes">Квартальная/месячная заявка</property>
         <property name="ShortLabel" translatable="yes">Месячная заявка</property>
         <signal name="Activated" handler="OnAction21Activated" />
       </action>
@@ -4698,7 +4698,7 @@
                 <node type="Menuitem" action="Action12" />
                 <node type="Separator" />
                 <node type="Menuitem" action="Action13" />
-                <node type="Menuitem" action="Action21" />
+                <node type="Menuitem" action="Action19" />
                 <node type="Menuitem" action="ActionYearRequestSheet" />
                 <node type="Menuitem" action="Action17" />
               </node>
@@ -6059,8 +6059,9 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.QuarterRequestSheetDlg" design-size="294 153">
+  <widget class="Gtk.Dialog" id="workwear.QuarterRequestSheetDlg" design-size="290 186">
     <property name="MemberName" />
+    <property name="Title" translatable="yes">Формирование заявки</property>
     <property name="WindowPosition">CenterOnParent</property>
     <property name="Buttons">2</property>
     <property name="HelpButton">False</property>
@@ -6071,6 +6072,7 @@
         <child>
           <widget class="Gtk.Table" id="table1">
             <property name="MemberName" />
+            <property name="NRows">2</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
@@ -6086,6 +6088,8 @@
                 <property name="ShowSpecialStateNot">False</property>
               </widget>
               <packing>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">2</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">False</property>
@@ -6099,11 +6103,82 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Label" id="label1">
+              <widget class="Gtk.HBox" id="hbox1">
+                <property name="MemberName" />
+                <property name="Spacing">6</property>
+                <child>
+                  <widget class="Gtk.RadioButton" id="radioMonth">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="Label" translatable="yes">Месяц</property>
+                    <property name="Active">True</property>
+                    <property name="DrawIndicator">True</property>
+                    <property name="HasLabel">True</property>
+                    <property name="UseUnderline">True</property>
+                    <property name="Group">group1</property>
+                    <signal name="Toggled" handler="OnRadioMonthToggled" />
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.RadioButton" id="radioQuarter">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="Label" translatable="yes">Квартал</property>
+                    <property name="DrawIndicator">True</property>
+                    <property name="HasLabel">True</property>
+                    <property name="UseUnderline">True</property>
+                    <property name="Group">group1</property>
+                    <signal name="Toggled" handler="OnRadioQuarterToggled" />
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label2">
                 <property name="MemberName" />
                 <property name="LabelProp" translatable="yes">Период:</property>
               </widget>
               <packing>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="labelPeriodType">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Квартал:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">2</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
