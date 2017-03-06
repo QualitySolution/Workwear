@@ -16,7 +16,7 @@ namespace workwear.Domain
 		Nominative = "карточка сотрудника",
 		PrepositionalPlural = "карточках сотрудников"
 	)]
-	public class EmployeeCard: PropertyChangedBase, IDomainObject, IValidatableObject
+	public class EmployeeCard: BusinessObjectBase<EmployeeCard>, IDomainObject, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
@@ -317,8 +317,12 @@ namespace workwear.Domain
 			UpdateWorkwearItems ();
 		}
 
+		/// <summary>
+		/// Для работы функции необходимо иметь заполненый UoW.
+		/// </summary>
 		public virtual void UpdateWorkwearItems()
 		{
+			logger.Info("Пересчитываем требования по спецодежде для сотрудника");
 			//Проверяем нужно ли добавлять
 			var processed = new List<EmployeeCardItem>();
 			foreach(var norm in UsedNorms)
@@ -330,7 +334,6 @@ namespace workwear.Domain
 					{
 						//FIXME Возможно нужно проверять если что-то подходящее уже выдавалось то пересчитывать.
 						currentItem = new EmployeeCardItem (this, normItem);
-
 						ObservableWorkwearItems.Add (currentItem);
 					}
 
@@ -351,6 +354,12 @@ namespace workwear.Domain
 			var needRemove = WorkwearItems.Where (i => !processed.Contains (i));
 
 			needRemove.ToList ().ForEach (i => ObservableWorkwearItems.Remove (i));
+			//Обновляем срок следующей выдачи
+			foreach(var item in processed)
+			{
+				item.UpdateNextIssue(UoW, new workwear.Domain.Stock.ExpenseItem[0]);
+			}
+			logger.Info("Ok");
 		}
 
 		public virtual void FillWearRecivedInfo(IUnitOfWork uow)

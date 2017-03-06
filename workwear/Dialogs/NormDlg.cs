@@ -155,6 +155,7 @@ namespace workwear
 			{
 				foreach(var emp in worksEmployees)
 				{
+					emp.UoW = UoW;
 					emp.UpdateWorkwearItems();
 					UoW.Save(emp);
 				}
