@@ -25,6 +25,7 @@ public partial class MainWindow: Gtk.Window
 		this.Title = MainSupport.GetTitle();
 		QSMain.MakeNewStatusTargetForNlog();
 
+		QSMain.CheckServer (this); // Проверяем настройки сервера
 		MainSupport.LoadBaseParameters ();
 
 		MainUpdater.RunCheckVersion (true, true, true);
