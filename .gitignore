@@ -1,4 +1,16 @@
 .DS_Store
-*.bak
-workwear/bin/*
+
+#Mono Project Files
+bin/
+obj/
 packages/*
+#Workbench Backup Files
+Base/*.mwb.bak
+
+#User Specific
+*.userprefs
+*.usertasks
+*~
+
+#Project Specific
+WinInstall/
