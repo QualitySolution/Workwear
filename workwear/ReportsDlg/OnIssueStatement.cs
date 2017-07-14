@@ -7,7 +7,7 @@ using QSProjectsLib;
 
 namespace workwear
 {
-	public partial class OnIssueStatement : Gtk.Dialog
+    public partial class OnIssueStatement : FakeTDIDialogGtkDialogBase
 	{
 		public OnIssueStatement ()
 		{
@@ -36,11 +36,14 @@ namespace workwear
 				months.Add (i);
 			ylistcomboMonth.ItemsList = months;
 			ylistcomboMonth.SelectedItem = DateTime.Today.Month;
+
+            entryreferenceFacility.SubjectType = typeof(Facility);
 		}
 
 		protected void OnButtonOkClicked (object sender, EventArgs e)
 		{
-			string param = String.Format("month={0}&year={1}", ylistcomboMonth.SelectedItem, ylistcomboYear.SelectedItem) ;
+            string param = String.Format("month={0}&year={1}&facility={2}", ylistcomboMonth.SelectedItem, ylistcomboYear.SelectedItem,
+                                         entryreferenceFacility.GetSubject<Facility>()?.Id ?? -1) ;
 			ViewReportExt.Run("MonthIssueSheet", param);
 		}
 	}

@@ -944,19 +944,21 @@
         <Top>38.5pt</Top>
       </Table>
       <Textbox Name="Textbox49">
-        <Height>12.00pt</Height>
-        <Width>361.77pt</Width>
-        <Value> Структурное подразделение: %Название подразделения%</Value>
+        <Height>12.74pt</Height>
+        <Width>807.37pt</Width>
+        <Value>="Структурное подразделение: " + First({name}, 'Facility')</Value>
         <ZIndex>1</ZIndex>
-        <Left>0.0pt</Left>
-        <Top>24.9pt</Top>
+        <Left>0.00pt</Left>
+        <Top>23.40pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
           <BorderWidth />
+          <FontSize >11pt</FontSize>
+          <TextAlign >Center</TextAlign>
         </Style>
         <Visibility>
-          <Hidden>True</Hidden>
+          <Hidden>={?facility} = -1</Hidden>
         </Visibility>
       </Textbox>
       <Textbox Name="Textbox50">
@@ -1448,6 +1450,7 @@ FROM
     norms_item ON norms_item.id = wear_cards_item.norm_item_id
 WHERE 
 wear_cards.dismiss_date IS NULL AND 
+(@facility = -1 OR wear_cards.object_id = @facility) AND
 MONTH(wear_cards_item.next_issue) = @rmonth AND YEAR(wear_cards_item.next_issue) = @ryear
 ORDER BY employee;</CommandText>
         <QueryParameters>
@@ -1456,6 +1459,9 @@ ORDER BY employee;</CommandText>
           </QueryParameter>
           <QueryParameter Name="@ryear">
             <Value>={?year}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@facility">
+            <Value>={?facility}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -1506,6 +1512,24 @@ ORDER BY employee;</CommandText>
         </Field>
       </Fields>
     </DataSet>
+    <DataSet Name="Facility" >
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>
+SELECT objects.name FROM objects WHERE objects.id = @facility</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@facility">
+            <Value>={?facility}</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields>
+        <Field Name="name">
+          <DataField>name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
   </DataSets>
   <DataSources>
     <DataSource Name="DS1">
@@ -1550,6 +1574,18 @@ ORDER BY employee;</CommandText>
       <MultiValue>false</MultiValue>
       <Prompt>
       </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="facility">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>
