@@ -39,7 +39,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gtk.DataBindings", "Gtk.Dat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.Bindings", "..\Gtk.DataBindings\System.Data.Bindings\System.Data.Bindings.csproj", "{54F958F5-7E58-4C89-9A04-8835E63B97C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gtk.DataBindings", "..\Gtk.DataBindings\Gtk.DataBindings.csproj", "{8D85E430-325A-4532-A123-BF28F9644DB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSExtraGammaWidgets", "..\QSProjects\QSExtraGammaWidgets\QSExtraGammaWidgets.csproj", "{3DCDD84A-20D0-4939-BE25-58B19F3961F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,10 +87,6 @@ Global
 		{769710D2-BF98-4120-9E07-67BD740CFA1D}.Debug|x86.Build.0 = Debug|Any CPU
 		{769710D2-BF98-4120-9E07-67BD740CFA1D}.Release|x86.ActiveCfg = Release|Any CPU
 		{769710D2-BF98-4120-9E07-67BD740CFA1D}.Release|x86.Build.0 = Release|Any CPU
-		{8D85E430-325A-4532-A123-BF28F9644DB4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8D85E430-325A-4532-A123-BF28F9644DB4}.Debug|x86.Build.0 = Debug|Any CPU
-		{8D85E430-325A-4532-A123-BF28F9644DB4}.Release|x86.ActiveCfg = Release|Any CPU
-		{8D85E430-325A-4532-A123-BF28F9644DB4}.Release|x86.Build.0 = Release|Any CPU
 		{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}.Debug|x86.Build.0 = Debug|Any CPU
 		{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}.Release|x86.ActiveCfg = Release|Any CPU
@@ -111,6 +107,10 @@ Global
 		{F8E01CD3-8BDD-403B-8264-0ED24AC3FA21}.Debug|x86.Build.0 = Debug|x86
 		{F8E01CD3-8BDD-403B-8264-0ED24AC3FA21}.Release|x86.ActiveCfg = Release|x86
 		{F8E01CD3-8BDD-403B-8264-0ED24AC3FA21}.Release|x86.Build.0 = Release|x86
+		{3DCDD84A-20D0-4939-BE25-58B19F3961F2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3DCDD84A-20D0-4939-BE25-58B19F3961F2}.Debug|x86.Build.0 = Debug|Any CPU
+		{3DCDD84A-20D0-4939-BE25-58B19F3961F2}.Release|x86.ActiveCfg = Release|Any CPU
+		{3DCDD84A-20D0-4939-BE25-58B19F3961F2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F8E01CD3-8BDD-403B-8264-0ED24AC3FA21} = {792D3656-91FD-45AA-A40B-A0D63306A113}
@@ -129,13 +129,11 @@ Global
 		{1BF2A638-420D-456C-96A7-36873A0FB894} = {0033159F-9183-42E9-AF46-7DF28E41B797}
 		{190CEA0D-EA23-4C91-8030-203A5AFED7B7} = {0033159F-9183-42E9-AF46-7DF28E41B797}
 		{54F958F5-7E58-4C89-9A04-8835E63B97C3} = {42079D47-D372-4DEE-B9BE-FB5B56A70DC2}
-		{8D85E430-325A-4532-A123-BF28F9644DB4} = {42079D47-D372-4DEE-B9BE-FB5B56A70DC2}
+		{3DCDD84A-20D0-4939-BE25-58B19F3961F2} = {792D3656-91FD-45AA-A40B-A0D63306A113}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
-		$1.DirectoryNamespaceAssociation = None
-		$1.ResourceNamePolicy = FileFormatDefault
 		version = 1.0
 	EndGlobalSection
 EndGlobal

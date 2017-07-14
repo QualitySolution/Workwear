@@ -231,6 +231,10 @@
       <Project>{AD329D59-938D-42AC-ABE2-B0F14FDBB7C6}</Project>
       <Name>QSBusinessCommon</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QSExtraGammaWidgets\QSExtraGammaWidgets.csproj">
+      <Project>{3DCDD84A-20D0-4939-BE25-58B19F3961F2}</Project>
+      <Name>QSExtraGammaWidgets</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
