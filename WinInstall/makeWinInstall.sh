@@ -1,11 +1,12 @@
 #!/bin/bash
 
 ProjectName="workwear"
-BinDir=../$ProjectName/bin/Debug
+BinDir=../$ProjectName/bin/Release
 
 # Очистка бин от лишний файлов
 
 rm -v ${BinDir}/*.mdb
+rm -v ${BinDir}/*.pdb
 
 cp -r -v ${BinDir}/* ./Files
 
