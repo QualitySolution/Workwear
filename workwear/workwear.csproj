@@ -287,6 +287,7 @@
     <None Include="Reports\MonthRequestSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="app.config" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
