@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.Bindings", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSExtraGammaWidgets", "..\QSProjects\QSExtraGammaWidgets\QSExtraGammaWidgets.csproj", "{3DCDD84A-20D0-4939-BE25-58B19F3961F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSTelemetry", "..\QSProjects\QSTelemetry\QSTelemetry.csproj", "{EB4F19F8-2CC9-4712-9949-760A441A56FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -111,6 +113,10 @@ Global
 		{3DCDD84A-20D0-4939-BE25-58B19F3961F2}.Debug|x86.Build.0 = Debug|Any CPU
 		{3DCDD84A-20D0-4939-BE25-58B19F3961F2}.Release|x86.ActiveCfg = Release|Any CPU
 		{3DCDD84A-20D0-4939-BE25-58B19F3961F2}.Release|x86.Build.0 = Release|Any CPU
+		{EB4F19F8-2CC9-4712-9949-760A441A56FE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EB4F19F8-2CC9-4712-9949-760A441A56FE}.Debug|x86.Build.0 = Debug|Any CPU
+		{EB4F19F8-2CC9-4712-9949-760A441A56FE}.Release|x86.ActiveCfg = Release|Any CPU
+		{EB4F19F8-2CC9-4712-9949-760A441A56FE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F8E01CD3-8BDD-403B-8264-0ED24AC3FA21} = {792D3656-91FD-45AA-A40B-A0D63306A113}
@@ -130,21 +136,25 @@ Global
 		{190CEA0D-EA23-4C91-8030-203A5AFED7B7} = {0033159F-9183-42E9-AF46-7DF28E41B797}
 		{54F958F5-7E58-4C89-9A04-8835E63B97C3} = {42079D47-D372-4DEE-B9BE-FB5B56A70DC2}
 		{3DCDD84A-20D0-4939-BE25-58B19F3961F2} = {792D3656-91FD-45AA-A40B-A0D63306A113}
+		{EB4F19F8-2CC9-4712-9949-760A441A56FE} = {792D3656-91FD-45AA-A40B-A0D63306A113}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = PrefixedHierarchical
+		$1.ResourceNamePolicy = MSBuild
 		$0.TextStylePolicy = $2
 		$2.inheritsSet = null
 		$2.scope = text/x-csharp
 		$0.CSharpFormattingPolicy = $3
-		$3.NewLinesForBracesInProperties = False
-		$3.NewLinesForBracesInAccessors = False
-		$3.NewLinesForBracesInAnonymousMethods = False
-		$3.NewLinesForBracesInControlBlocks = False
-		$3.NewLinesForBracesInAnonymousTypes = False
-		$3.NewLinesForBracesInLambdaExpressionBody = False
 		$3.scope = text/x-csharp
+		$0.TextStylePolicy = $4
+		$4.FileWidth = 80
+		$4.NoTabsAfterNonTabs = True
+		$4.scope = text/plain
+		$0.TextStylePolicy = $5
+		$5.inheritsSet = null
+		$5.scope = text/x-sql
 		version = 1.0
 	EndGlobalSection
 EndGlobal
