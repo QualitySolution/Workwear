@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Gtk;
 using NLog;
+using QSMachineConfig;
 using QSProjectsLib;
 using QSSupportLib;
 using QSTelemetry;
@@ -61,6 +62,9 @@ namespace workwear
             MainTelemetry.Version = MainSupport.ProjectVerion.Version.ToString();
             MainTelemetry.IsDemo = Login.ApplicationDemoServer == QSMain.connectionDB.DataSource;
             MainTelemetry.StartUpdateByTimer(600);
+			var appConfig = MachineConfig.ConfigSource.Configs["Application"];
+			if (appConfig != null)
+				MainTelemetry.DoNotTrack = appConfig.GetBoolean("DoNotTrack", false);
 
 			//Запускаем программу
 			MainWin = new MainWindow ();
