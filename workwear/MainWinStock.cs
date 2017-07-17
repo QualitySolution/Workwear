@@ -2,6 +2,7 @@ using System;
 using Gtk;
 using MySql.Data.MySqlClient;
 using QSProjectsLib;
+using QSTelemetry;
 using workwear;
 using workwear.Domain.Stock;
 
@@ -76,12 +77,15 @@ public partial class MainWindow : Gtk.Window
 		switch (notebookStock.CurrentPage)
 		{
 			case 0:
+                MainTelemetry.AddCount("RefreshIncomeDoc");
 				UpdateStockIncome();
 				break;
 			case 1:
+                MainTelemetry.AddCount("RefreshExpenseDoc");
 				UpdateStockExpense();
 				break;
 			case 2:
+                MainTelemetry.AddCount("RefreshWriteOffDoc");
 				UpdateStockWriteOff();
 				break;
 		}

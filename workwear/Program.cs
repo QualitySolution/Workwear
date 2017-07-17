@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Gtk;
 using NLog;
 using QSProjectsLib;
+using QSSupportLib;
+using QSTelemetry;
 
 namespace workwear
 {
@@ -25,7 +27,7 @@ namespace workwear
 			LoginDialog.DefaultLogin = "demo";
 			LoginDialog.DefaultServer = "demo.qsolution.ru";
 			LoginDialog.DefaultConnection = "Демонстрационная база";
-			LoginDialog.DemoServer = "demo.qsolution.ru";
+            Login.ApplicationDemoServer = "demo.qsolution.ru";
 			LoginDialog.DemoMessage = "Для подключения к демострационному серверу используйте следующие настройки:\n" +
 			"\n" +
 			"<b>Сервер:</b> demo.qsolution.ru\n" +
@@ -53,6 +55,13 @@ namespace workwear
 			//Настрока удаления
 			ConfigureDeletion ();
 
+            //Иницициализируем телеметрию
+            MainTelemetry.Product = MainSupport.ProjectVerion.Product;
+            MainTelemetry.Edition = MainSupport.ProjectVerion.Edition;
+            MainTelemetry.Version = MainSupport.ProjectVerion.Version.ToString();
+            MainTelemetry.IsDemo = Login.ApplicationDemoServer == QSMain.connectionDB.DataSource;
+            MainTelemetry.StartUpdateByTimer(600);
+
 			//Запускаем программу
 			MainWin = new MainWindow ();
 			QSMain.ErrorDlgParrent = MainWin;
@@ -60,6 +69,7 @@ namespace workwear
 				return;
 			MainWin.Show ();
 			Application.Run ();
+            MainTelemetry.SendTelemetry();
 			QSSaaS.Session.StopSessionRefresh ();
 		}
 

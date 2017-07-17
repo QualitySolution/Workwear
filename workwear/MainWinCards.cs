@@ -1,5 +1,6 @@
 using System;
 using Gtk;
+using QSTelemetry;
 using workwear.ViewModel;
 
 public partial class MainWindow : Gtk.Window
@@ -20,7 +21,8 @@ public partial class MainWindow : Gtk.Window
 
 	void UpdateCards ()
 	{
-		logger.Info ("Обновляем таблицу Карточек...");
+		MainTelemetry.AddCount("RefreshEmployeeCard");
+        logger.Info ("Обновляем таблицу Карточек...");
 
 		treeviewEmployees.RepresentationModel.UpdateNodes();
 

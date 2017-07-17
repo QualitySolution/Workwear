@@ -6,6 +6,7 @@ using QSBusinessCommon.Domain;
 using QSOrmProject;
 using QSProjectsLib;
 using QSSupportLib;
+using QSTelemetry;
 using QSUpdater;
 using workwear;
 using workwear.Domain;
@@ -89,12 +90,14 @@ public partial class MainWindow: Gtk.Window
 	
 	protected void OnDialogAuthenticationActionActivated(object sender, EventArgs e)
 	{
-		QSMain.User.ChangeUserPassword (this);
+        MainTelemetry.AddCount("ChangeUserPassword");
+        QSMain.User.ChangeUserPassword (this);
 	}
 	
 	protected void OnUsersActionActivated(object sender, EventArgs e)
 	{
-		Users winUsers = new Users();
+		MainTelemetry.AddCount("OpenUsers");
+        Users winUsers = new Users();
 		winUsers.Show();
 		winUsers.Run();
 		winUsers.Destroy();
@@ -107,7 +110,8 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnAction7Activated(object sender, EventArgs e)
 	{
-		var refWin = new OrmReference (typeof(MeasurementUnits));
+		MainTelemetry.AddCount("MeasurementUnits");
+        var refWin = new OrmReference (typeof(MeasurementUnits));
 		var dialog = new OneWidgetDialog (refWin);
 		dialog.Show ();
 		dialog.Run ();
@@ -116,7 +120,8 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnAction8Activated(object sender, EventArgs e)
 	{
-		var refWin = new OrmReference (typeof(Post));
+		MainTelemetry.AddCount("Post");
+        var refWin = new OrmReference (typeof(Post));
 		var dialog = new OneWidgetDialog (refWin);
 		dialog.Show ();
 		dialog.Run ();
@@ -125,7 +130,8 @@ public partial class MainWindow: Gtk.Window
 	
 	protected void OnAction9Activated(object sender, EventArgs e)
 	{
-		var refWin = new OrmReference (typeof(Leader));
+		MainTelemetry.AddCount("Leader");
+        var refWin = new OrmReference (typeof(Leader));
 		var dialog = new OneWidgetDialog (refWin);
 		dialog.Show ();
 		dialog.Run ();
@@ -134,7 +140,8 @@ public partial class MainWindow: Gtk.Window
 	
 	protected void OnAction5Activated(object sender, EventArgs e)
 	{
-		var refWin = new OrmReference (typeof(ItemsType));
+		MainTelemetry.AddCount("ItemsType");
+        var refWin = new OrmReference (typeof(ItemsType));
 		var dialog = new OneWidgetDialog (refWin);
 		dialog.Show ();
 		dialog.Run ();
@@ -143,7 +150,8 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnAction6Activated(object sender, EventArgs e)
 	{
-		var refWin = new OrmReference (typeof(Nomenclature));
+		MainTelemetry.AddCount("Nomenclature");
+        var refWin = new OrmReference (typeof(Nomenclature));
 		var dialog = new OneWidgetDialog (refWin);
 		dialog.Show ();
 		dialog.Run ();
@@ -152,7 +160,8 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnAboutActionActivated(object sender, EventArgs e)
 	{
-		QSMain.RunAboutDialog();
+		MainTelemetry.AddCount("RunAboutDialog");
+        QSMain.RunAboutDialog();
 	}
 	
 	protected void OnButtonRefreshClicked(object sender, EventArgs e)
@@ -168,6 +177,7 @@ public partial class MainWindow: Gtk.Window
 				UpdateStock();
 				break;
 		case 3:
+                MainTelemetry.AddCount("RefreshStockBalance");
 			stockbalanceview1.RefreshView ();
 			break;
 		}
@@ -177,6 +187,7 @@ public partial class MainWindow: Gtk.Window
 	{
 		switch (notebookMain.CurrentPage) {
 			case 0:
+                MainTelemetry.AddCount("AddObject");
 				ObjectDlg winObject = new ObjectDlg();
 				winObject.Show();
 				winObject.Run();
@@ -184,6 +195,7 @@ public partial class MainWindow: Gtk.Window
 				UpdateObject();
 				break;
 			case 1:
+                MainTelemetry.AddCount("AddEmployeeCard");
 				EmployeeCardDlg winWearCard = new EmployeeCardDlg();
 				winWearCard.Show();
 				winWearCard.Run();
@@ -194,18 +206,21 @@ public partial class MainWindow: Gtk.Window
 				switch (notebookStock.CurrentPage)
 				{
 					case 0:
+                        MainTelemetry.AddCount("AddIncomeDoc");
 						IncomeDocDlg winIncome = new IncomeDocDlg();
 						winIncome.Show();
 						winIncome.Run();
 						winIncome.Destroy();
 						break;
 					case 1:
+                        MainTelemetry.AddCount("AddExpenseDoc");
 						ExpenseDocDlg winExpense = new ExpenseDocDlg();
 						winExpense.Show();
 						winExpense.Run();
 						winExpense.Destroy();
 						break;
 					case 2:
+                        MainTelemetry.AddCount("AddWriteOffDoc");
 						WriteOffDocDlg winWriteOff = new WriteOffDocDlg();
 						winWriteOff.Show();
 						winWriteOff.Run();
@@ -226,6 +241,7 @@ public partial class MainWindow: Gtk.Window
 
 		switch (notebookMain.CurrentPage) {
 			case 0:
+                MainTelemetry.AddCount("EditObject");
 				treeviewObjects.Selection.GetSelected(out iter);
 				itemid = (int) ObjectFilter.GetValue(iter,0);
 				ObjectDlg winObject = new ObjectDlg(itemid);
@@ -236,6 +252,7 @@ public partial class MainWindow: Gtk.Window
 					UpdateObject();
 				break;
 			case 1:
+                MainTelemetry.AddCount("EditEmployeeCard");
 				itemid = treeviewEmployees.GetSelectedObject<EmployeesVMNode>().Id;
 				EmployeeCardDlg winWearCadr = new EmployeeCardDlg(itemid);
 				winWearCadr.Show();
@@ -248,6 +265,7 @@ public partial class MainWindow: Gtk.Window
 				switch (notebookStock.CurrentPage)
 				{
 					case 0:
+                        MainTelemetry.AddCount("EditIncomeDoc");
 						treeviewIncome.Selection.GetSelected(out iter);
 						itemid = (int)IncomeFilter.GetValue(iter, 0);
 						IncomeDocDlg winIncome = new IncomeDocDlg(itemid);
@@ -256,6 +274,7 @@ public partial class MainWindow: Gtk.Window
 						winIncome.Destroy();
 						break;
 					case 1:
+                        MainTelemetry.AddCount("EditExpenseDoc");
 						treeviewExpense.Selection.GetSelected(out iter);
 						itemid = (int)ExpenseFilter.GetValue(iter, 0);
 						ExpenseDocDlg winExpense = new ExpenseDocDlg(itemid);
@@ -264,6 +283,7 @@ public partial class MainWindow: Gtk.Window
 						winExpense.Destroy();
 						break;
 					case 2:
+                        MainTelemetry.AddCount("EditWriteOffDoc");
 						treeviewWriteOff.Selection.GetSelected(out iter);
 						itemid = (int)WriteOffFilter.GetValue(iter, 0);
 						WriteOffDocDlg winWriteOff = new WriteOffDocDlg(itemid);
@@ -291,12 +311,14 @@ public partial class MainWindow: Gtk.Window
 		switch (notebookMain.CurrentPage) 
 		{
 			case 0:
+                MainTelemetry.AddCount("DeleteObject");
 				treeviewObjects.Selection.GetSelected(out iter);
 				itemid = (int) ObjectFilter.GetValue(iter,0);
 				if(OrmMain.DeleteObject<Facility> (itemid))
 					UpdateObject();
 				break;
 			case 1:
+                MainTelemetry.AddCount("DeleteEmployeeCard");
 				itemid = treeviewEmployees.GetSelectedObject<EmployeesVMNode>().Id;
 				if(OrmMain.DeleteObject<EmployeeCard> (itemid))
 					UpdateCards();
@@ -305,16 +327,19 @@ public partial class MainWindow: Gtk.Window
 				switch (notebookStock.CurrentPage)
 				{
 					case 0:
+                        MainTelemetry.AddCount("DeleteIncomeDoc");
 						treeviewIncome.Selection.GetSelected (out iter);
 						itemid = (int)IncomeFilter.GetValue (iter, 0);
 						OrmMain.DeleteObject<Income> (itemid);
 						break;
 					case 1:
+                        MainTelemetry.AddCount("DeleteExpenseDoc");
 						treeviewExpense.Selection.GetSelected(out iter);
 						itemid = (int)ExpenseFilter.GetValue(iter, 0);
 						OrmMain.DeleteObject<Expense> (itemid);
 						break;
 					case 2:
+                        MainTelemetry.AddCount("DeleteWriteOffDoc");
 						treeviewWriteOff.Selection.GetSelected(out iter);
 						itemid = (int)WriteOffFilter.GetValue(iter, 0);
 						OrmMain.DeleteObject<Writeoff> (itemid);
@@ -343,12 +368,14 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnAction11Activated(object sender, EventArgs e)
 	{
-		ViewReportExt.Run("StockAllWear", "");
+		MainTelemetry.AddCount("ReportStockAllWear");
+        ViewReportExt.Run("StockAllWear", "");
 	}
 	
 	protected void OnAction10Activated(object sender, EventArgs e)
 	{
-		WearStatement WinStat = new WearStatement();
+		MainTelemetry.AddCount("ReportWearStatement");
+        WearStatement WinStat = new WearStatement();
 		WinStat.Show();
 		WinStat.Run();
 		WinStat.Destroy();
@@ -356,32 +383,38 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnAction12Activated(object sender, EventArgs e)
 	{
-		ViewReportExt.Run("ListBySize", "");
+		MainTelemetry.AddCount("ReportListBySize");
+        ViewReportExt.Run("ListBySize", "");
 	}
 
 	protected void OnHelpActionActivated(object sender, EventArgs e)
 	{
-		System.Diagnostics.Process.Start("workwear_ru.pdf");
+		MainTelemetry.AddCount("OpenDocumentation");
+        System.Diagnostics.Process.Start("workwear_ru.pdf");
 	}
 
 	protected void OnActionHistoryActivated (object sender, EventArgs e)
 	{
-		QSMain.RunChangeLogDlg (this);
+		MainTelemetry.AddCount("RunChangeLogDlg");
+        QSMain.RunChangeLogDlg (this);
 	}
 
 	protected void OnActionUpdateActivated (object sender, EventArgs e)
 	{
-		CheckUpdate.StartCheckUpdateThread (UpdaterFlags.ShowAnyway);
+		MainTelemetry.AddCount("CheckUpdate");
+        CheckUpdate.StartCheckUpdateThread (UpdaterFlags.ShowAnyway);
 	}
 
 	protected void OnActionSNActivated(object sender, EventArgs e)
 	{
-		EditSerialNumber.RunDialog();
+		MainTelemetry.AddCount("EditSerialNumber");
+        EditSerialNumber.RunDialog();
 	}
 
 	protected void OnActionNormsActivated (object sender, EventArgs e)
 	{
-		var refWin = new ReferenceRepresentation (new workwear.ViewModel.NormVM ());
+		MainTelemetry.AddCount("OpenNorms");
+        var refWin = new ReferenceRepresentation (new workwear.ViewModel.NormVM ());
 		var dialog = new OneWidgetDialog (refWin);
 		dialog.Show ();
 		dialog.Run ();
@@ -390,7 +423,8 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnAction13Activated (object sender, EventArgs e)
 	{
-		var dlg = new OnIssueStatement ();
+		MainTelemetry.AddCount("ReportMonthIssueSheet");
+        var dlg = new OnIssueStatement ();
 		dlg.Show ();
 		dlg.Run ();
 		dlg.Destroy ();
@@ -398,7 +432,8 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnAction17Activated (object sender, EventArgs e)
 	{
-		var dlg = new NotIssuedSheetReportDlg ();
+		MainTelemetry.AddCount("ReportNotIssuedSheet");
+        var dlg = new NotIssuedSheetReportDlg ();
 		dlg.Show ();
 		dlg.Run ();
 		dlg.Destroy ();
@@ -406,12 +441,14 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnActionYearRequestSheetActivated (object sender, EventArgs e)
 	{
-		ViewReportExt.Run("YearRequestSheet", "");
+		MainTelemetry.AddCount("ReportYearRequestSheet");
+        ViewReportExt.Run("YearRequestSheet", "");
 	}
 
 	protected void OnAction21Activated (object sender, EventArgs e)
 	{
-		var dlg = new QuarterRequestSheetDlg ();
+		MainTelemetry.AddCount("ReportMonthQuarterRequestSheet");
+        var dlg = new QuarterRequestSheetDlg ();
 		dlg.Show ();
 		dlg.Run ();
 		dlg.Destroy ();

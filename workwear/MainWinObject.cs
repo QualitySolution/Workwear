@@ -2,7 +2,7 @@ using System;
 using Gtk;
 using MySql.Data.MySqlClient;
 using QSProjectsLib;
-using workwear;
+using QSTelemetry;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -25,7 +25,8 @@ public partial class MainWindow : Gtk.Window
 
 	void UpdateObject()
 	{
-		QSMain.CheckConnectionAlive ();
+		MainTelemetry.AddCount("RefreshObject");
+        QSMain.CheckConnectionAlive ();
 		logger.Info("Получаем таблицу объектов...");
 
 		string sql = "SELECT objects.* FROM objects";
