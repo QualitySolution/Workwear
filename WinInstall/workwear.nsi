@@ -318,6 +318,9 @@ Section "${PRODUCT_NAME}" SecProgram
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\${EXE_NAME}.exe" "" "$INSTDIR\${EXE_NAME}.exe" 0
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Документация.lnk" "$INSTDIR\workwear_ru.pdf"
   
+  ; Удяляем файлы ненужные после версии 1.2.4.2
+  Delete $INSTDIR\gtk-databind-lib.dll
+
 SectionEnd
 
 Section "MS .NET Framework ${MIN_NET_MAJOR}.${MIN_NET_MINOR}" SecFramework
