@@ -1,14 +1,14 @@
 ﻿using System;
-using workwear.DTO;
-using QSProjectsLib;
 using System.Collections.Generic;
-using MySql.Data.MySqlClient;
 using System.Data.Bindings.Collections.Generic;
+using MySql.Data.MySqlClient;
+using QSProjectsLib;
+using QSTDI;
+using workwear.DTO;
 
 namespace workwear
 {
-	[System.ComponentModel.ToolboxItem (true)]
-	public partial class StockBalanceView : Gtk.Bin
+	public partial class StockBalanceView : TdiTabBase
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
@@ -18,6 +18,7 @@ namespace workwear
 		public StockBalanceView ()
 		{
 			this.Build ();
+			TabName = "Складские остатки";
 
 			ytreeviewStockBalance.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<StockBalanceItems> ()
 				.AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName)
@@ -28,6 +29,7 @@ namespace workwear
 				.AddColumn ("Среднее состояние").AddTextRenderer (e => e.AvgLifeText)
 				.Finish ();
 			ytreeviewStockBalance.ShowAll ();
+			RefreshView();
 		}
 
 		protected void OnButtonSearchCleanClicked (object sender, EventArgs e)
@@ -35,7 +37,7 @@ namespace workwear
 			entryStockBalanceSearch.Text = String.Empty;
 		}
 
-		public void RefreshView()
+		void RefreshView()
 		{
 			QSMain.CheckConnectionAlive ();
 			logger.Info ("Запрос складских остатков...");
@@ -99,6 +101,11 @@ namespace workwear
 		protected void OnEntryStockBalanceSearchChanged (object sender, EventArgs e)
 		{
 			filter.Refilter ();
+		}
+
+		protected void OnButtonRefreshClicked(object sender, EventArgs e)
+		{
+			RefreshView();
 		}
 	}
 }

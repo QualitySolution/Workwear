@@ -6,6 +6,7 @@ using QSBusinessCommon.Domain;
 using QSOrmProject;
 using QSProjectsLib;
 using QSSupportLib;
+using QSTDI;
 using QSTelemetry;
 using QSUpdater;
 using workwear;
@@ -176,10 +177,6 @@ public partial class MainWindow: Gtk.Window
 				case 2:
 				UpdateStock();
 				break;
-		case 3:
-                MainTelemetry.AddCount("RefreshStockBalance");
-			stockbalanceview1.RefreshView ();
-			break;
 		}
 	}
 
@@ -454,5 +451,10 @@ public partial class MainWindow: Gtk.Window
 		dlg.Destroy ();
 	}
 
-
+	protected void OnActionStockBalanceActivated(object sender, EventArgs e)
+	{
+		tdiMain.OpenTab(TdiTabBase.GenerateHashName<StockBalanceView>(),
+		                () => new StockBalanceView()
+		               );
+	}
 }

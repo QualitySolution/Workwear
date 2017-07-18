@@ -4426,7 +4426,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.StockBalanceView" design-size="300 300">
+  <widget class="Gtk.Bin" id="workwear.StockBalanceView" design-size="345 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -4444,7 +4444,7 @@
               </widget>
               <packing>
                 <property name="Position">0</property>
-                <property name="AutoSize">True</property>
+                <property name="AutoSize">False</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
               </packing>
@@ -4474,6 +4474,23 @@
               </widget>
               <packing>
                 <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonRefresh">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-refresh Menu</property>
+                <property name="Label" translatable="yes">Обновить</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonRefreshClicked" />
+              </widget>
+              <packing>
+                <property name="Position">3</property>
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
@@ -4662,6 +4679,37 @@
         <property name="ShortLabel" translatable="yes">Справка по невыданному</property>
         <signal name="Activated" handler="OnAction17Activated" />
       </action>
+      <action id="Action20">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Вид</property>
+        <property name="ShortLabel" translatable="yes">Вид</property>
+      </action>
+      <action id="Action21">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Склад</property>
+        <property name="ShortLabel" translatable="yes">Склад</property>
+      </action>
+      <action id="ActionStockDocs">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Складские документы</property>
+        <property name="ShortLabel" translatable="yes">Складские документы</property>
+      </action>
+      <action id="ActionStockBalance">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Складские остатки</property>
+        <property name="ShortLabel" translatable="yes">Складские остатки</property>
+        <signal name="Activated" handler="OnActionStockBalanceActivated" />
+      </action>
+      <action id="ActionObjects">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Объекты</property>
+        <property name="ShortLabel" translatable="yes">Объекты</property>
+      </action>
+      <action id="Action2Employees">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Карточки сотрудников</property>
+        <property name="ShortLabel" translatable="yes">Карточки сотрудников</property>
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -4682,7 +4730,15 @@
                 <node type="Separator" />
                 <node type="Menuitem" action="quitAction" />
               </node>
+              <node type="Menu" action="Action20" />
+              <node type="Menu" action="Action21">
+                <node type="Menuitem" action="ActionStockDocs" />
+                <node type="Menuitem" action="ActionStockBalance" />
+              </node>
               <node type="Menu" action="Action1">
+                <node type="Menuitem" action="ActionObjects" />
+                <node type="Menuitem" action="Action2Employees" />
+                <node type="Separator" />
                 <node type="Menuitem" action="ActionNorms" />
                 <node type="Menuitem" action="Action5" />
                 <node type="Menuitem" action="Action6" />
@@ -4722,10 +4778,23 @@
           </packing>
         </child>
         <child>
+          <widget class="QSTDI.TdiNotebook" id="tdiMain">
+            <property name="MemberName" />
+            <property name="CurrentPage">0</property>
+            <property name="ShowTabs">False</property>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <widget class="Gtk.Notebook" id="notebookMain">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">1</property>
+            <property name="CurrentPage">2</property>
             <signal name="SwitchPage" handler="OnNotebookMainSwitchPage" />
             <child>
               <widget class="Gtk.VBox" id="vbox2">
@@ -5077,27 +5146,9 @@
                 <property name="type">tab</property>
               </packing>
             </child>
-            <child>
-              <widget class="workwear.StockBalanceView" id="stockbalanceview1">
-                <property name="MemberName" />
-                <property name="Events">ButtonPressMask</property>
-              </widget>
-              <packing>
-                <property name="Position">3</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.Label" id="label11">
-                <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Остатки</property>
-              </widget>
-              <packing>
-                <property name="type">tab</property>
-              </packing>
-            </child>
           </widget>
           <packing>
-            <property name="Position">1</property>
+            <property name="Position">2</property>
             <property name="AutoSize">True</property>
           </packing>
         </child>
@@ -5178,7 +5229,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">2</property>
+            <property name="Position">3</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -5214,7 +5265,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">3</property>
+            <property name="Position">4</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
