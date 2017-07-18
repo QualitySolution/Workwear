@@ -94,7 +94,6 @@
     <Compile Include="gtk-gui\workwear.SelectObjectProperty.cs" />
     <Compile Include="viewDTOs\EmployeeCardItems.cs" />
     <Compile Include="viewDTOs\EmployeeCardMovements.cs" />
-    <Compile Include="ViewWidgets\StockBalanceView.cs" />
     <Compile Include="gtk-gui\workwear.StockBalanceView.cs" />
     <Compile Include="viewDTOs\StockBalanceItems.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
@@ -183,6 +182,7 @@
     <Compile Include="Representations\EmployeesVM.cs" />
     <Compile Include="Measurements\WearGrowth.cs" />
     <Compile Include="Measurements\WearSize.cs" />
+    <Compile Include="JournalViewers\StockBalanceView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -263,6 +263,7 @@
     <Folder Include="HibernateMapping\Stock\" />
     <Folder Include="JournalFilters\" />
     <Folder Include="SQLScripts\" />
+    <Folder Include="JournalViewers\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
