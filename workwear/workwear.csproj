@@ -83,7 +83,6 @@
     <Compile Include="MainWinObject.cs" />
     <Compile Include="gtk-gui\workwear.ObjectDlg.cs" />
     <Compile Include="MainWinCards.cs" />
-    <Compile Include="MainWinStock.cs" />
     <Compile Include="SelectWearCardRow.cs" />
     <Compile Include="gtk-gui\workwear.SelectWearCardRow.cs" />
     <Compile Include="SelectStockItem.cs" />

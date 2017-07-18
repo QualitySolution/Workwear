@@ -79,7 +79,6 @@ public partial class MainWindow : Gtk.Window
 
 		PrepareObject();
 		PrepareCards();
-		PrepareStock();
 		UpdateObject();
 		notebookMain.CurrentPage = 0;
 	}
@@ -176,9 +175,6 @@ public partial class MainWindow : Gtk.Window
 			case 1:
 				UpdateCards();
 				break;
-			case 2:
-				UpdateStock();
-				break;
 		}
 	}
 
@@ -201,33 +197,6 @@ public partial class MainWindow : Gtk.Window
 				winWearCard.Run();
 				winWearCard.Destroy();
 				UpdateCards();
-				break;
-			case 2:
-				switch (notebookStock.CurrentPage)
-				{
-					case 0:
-						MainTelemetry.AddCount("AddIncomeDoc");
-						IncomeDocDlg winIncome = new IncomeDocDlg();
-						winIncome.Show();
-						winIncome.Run();
-						winIncome.Destroy();
-						break;
-					case 1:
-						MainTelemetry.AddCount("AddExpenseDoc");
-						ExpenseDocDlg winExpense = new ExpenseDocDlg();
-						winExpense.Show();
-						winExpense.Run();
-						winExpense.Destroy();
-						break;
-					case 2:
-						MainTelemetry.AddCount("AddWriteOffDoc");
-						WriteOffDocDlg winWriteOff = new WriteOffDocDlg();
-						winWriteOff.Show();
-						winWriteOff.Run();
-						winWriteOff.Destroy();
-						break;
-				}
-				UpdateStock();
 				break;
 		}
 
@@ -262,43 +231,6 @@ public partial class MainWindow : Gtk.Window
 				if (result == ResponseType.Ok)
 					UpdateCards();
 				break;
-			case 2:
-				switch (notebookStock.CurrentPage)
-				{
-					case 0:
-						MainTelemetry.AddCount("EditIncomeDoc");
-						treeviewIncome.Selection.GetSelected(out iter);
-						itemid = (int)IncomeFilter.GetValue(iter, 0);
-						IncomeDocDlg winIncome = new IncomeDocDlg(itemid);
-						winIncome.Show();
-						result = (ResponseType)winIncome.Run();
-						winIncome.Destroy();
-						break;
-					case 1:
-						MainTelemetry.AddCount("EditExpenseDoc");
-						treeviewExpense.Selection.GetSelected(out iter);
-						itemid = (int)ExpenseFilter.GetValue(iter, 0);
-						ExpenseDocDlg winExpense = new ExpenseDocDlg(itemid);
-						winExpense.Show();
-						result = (ResponseType)winExpense.Run();
-						winExpense.Destroy();
-						break;
-					case 2:
-						MainTelemetry.AddCount("EditWriteOffDoc");
-						treeviewWriteOff.Selection.GetSelected(out iter);
-						itemid = (int)WriteOffFilter.GetValue(iter, 0);
-						WriteOffDocDlg winWriteOff = new WriteOffDocDlg(itemid);
-						winWriteOff.Show();
-						result = (ResponseType)winWriteOff.Run();
-						winWriteOff.Destroy();
-						break;
-					default:
-						result = ResponseType.Reject;
-						break;
-				}
-				if (result == ResponseType.Ok)
-					UpdateStock();
-				break;
 		}
 
 	}
@@ -323,30 +255,6 @@ public partial class MainWindow : Gtk.Window
 				itemid = treeviewEmployees.GetSelectedObject<EmployeesVMNode>().Id;
 				if (OrmMain.DeleteObject<EmployeeCard>(itemid))
 					UpdateCards();
-				break;
-			case 2:
-				switch (notebookStock.CurrentPage)
-				{
-					case 0:
-						MainTelemetry.AddCount("DeleteIncomeDoc");
-						treeviewIncome.Selection.GetSelected(out iter);
-						itemid = (int)IncomeFilter.GetValue(iter, 0);
-						OrmMain.DeleteObject<Income>(itemid);
-						break;
-					case 1:
-						MainTelemetry.AddCount("DeleteExpenseDoc");
-						treeviewExpense.Selection.GetSelected(out iter);
-						itemid = (int)ExpenseFilter.GetValue(iter, 0);
-						OrmMain.DeleteObject<Expense>(itemid);
-						break;
-					case 2:
-						MainTelemetry.AddCount("DeleteWriteOffDoc");
-						treeviewWriteOff.Selection.GetSelected(out iter);
-						itemid = (int)WriteOffFilter.GetValue(iter, 0);
-						OrmMain.DeleteObject<Writeoff>(itemid);
-						break;
-				}
-				UpdateStock();
 				break;
 		}
 	}
