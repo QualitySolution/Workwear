@@ -11,13 +11,11 @@ namespace workwear.Domain.Stock
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Masculine,
 		NominativePlural = "приходные документы",
 		Nominative = "приходный документ")]
-	public class Income : PropertyChangedBase, IDomainObject, IValidatableObject
+	public class Income : StockDocument, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
 		#region Свойства
-
-		public virtual int Id { get; set; }
 
 		IncomeOperations operation;
 
@@ -49,22 +47,6 @@ namespace workwear.Domain.Stock
 		public virtual Facility Facility {
 			get { return facility; }
 			set { SetField (ref facility, value, () => Facility); }
-		}
-
-		DateTime date;
-
-		[Display (Name = "Дата")]
-		public virtual DateTime Date {
-			get { return date; }
-			set { SetField (ref date, value, () => Date); }
-		}
-
-		User createdbyUser;
-
-		[Display (Name = "Карточку создал")]
-		public virtual User CreatedbyUser {
-			get { return createdbyUser; }
-			set { SetField (ref createdbyUser, value, () => CreatedbyUser); }
 		}
 
 		private IList<IncomeItem> items = new List<IncomeItem>();

@@ -9,13 +9,11 @@ namespace workwear.Domain.Stock
 	[QSOrmProject.OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Masculine,
 		NominativePlural = "расходные документы",
 		Nominative = "расходный документ")]
-	public class Expense : QSOrmProject.PropertyChangedBase, QSOrmProject.IDomainObject, IValidatableObject
+	public class Expense : StockDocument, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
 		#region Свойства
-
-		public virtual int Id { get; set; }
 
 		ExpenseOperations operation;
 
@@ -39,22 +37,6 @@ namespace workwear.Domain.Stock
 		public virtual Facility Facility {
 			get { return facility; }
 			set { SetField (ref facility, value, () => Facility); }
-		}
-
-		DateTime date;
-
-		[Display (Name = "Дата")]
-		public virtual DateTime Date {
-			get { return date; }
-			set { SetField (ref date, value, () => Date); }
-		}
-
-		User createdbyUser;
-
-		[Display (Name = "Карточку создал")]
-		public virtual User CreatedbyUser {
-			get { return createdbyUser; }
-			set { SetField (ref createdbyUser, value, () => CreatedbyUser); }
 		}
 
 		private IList<ExpenseItem> items = new List<ExpenseItem>();
