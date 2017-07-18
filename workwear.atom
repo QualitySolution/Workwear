@@ -2,8 +2,16 @@
   <title type="text">QS: Спецодежда и имущество</title>
   <subtitle type="text">Новости программы QS: Спецодежда и имущество</subtitle>
   <id>workwearnews</id>
-  <rights type="text">Quality Solution 2016</rights>
-  <updated>2016-12-15T18:00:00+03:00</updated>
+  <rights type="text">Quality Solution 2017</rights>
+  <updated>2017-07-18T10:20:00+03:00</updated>
+  <entry>
+    <id>urn:uuid:752f80cd-513d-41da-8f99-1d3b40532aae</id>
+    <title type="text">QS: Спецодежда и имущество 1.2.5</title>
+    <updated>2017-07-18T10:20:00+03:00</updated>
+    <published>2017-07-18T10:20:00+03:00</published>
+    <link rel="alternate" href="http://workwear.qsolution.ru/?p=214" />
+    <summary>Сервисный релиз, небольшие улучшения и исправление ошибок.</summary>
+  </entry>
   <entry>
     <id>urn:uuid:9181d3d0-fb32-4333-81fd-3bb4433c0a08</id>
     <title type="text">QS: Спецодежда и имущество 1.2.4</title>
