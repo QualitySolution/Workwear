@@ -4693,6 +4693,7 @@
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Складские документы</property>
         <property name="ShortLabel" translatable="yes">Складские документы</property>
+        <signal name="Activated" handler="OnActionStockDocsActivated" />
       </action>
       <action id="ActionStockBalance">
         <property name="Type">Action</property>
@@ -4785,9 +4786,7 @@
           </widget>
           <packing>
             <property name="Position">1</property>
-            <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
+            <property name="AutoSize">False</property>
           </packing>
         </child>
         <child>
@@ -6436,6 +6435,257 @@
             <property name="Position">1</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="workwear.JournalViewers.StockDocumentsView" design-size="420 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox1">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.HBox" id="hbox1">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="QSOrmProject.EnumMenuButton" id="buttonAdd">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-add Menu</property>
+                <property name="Label" translatable="yes">Добавить</property>
+                <property name="UseUnderline">True</property>
+                <property name="UseMarkup">False</property>
+                <property name="ItemsEnumName" />
+                <signal name="EnumItemClicked" handler="OnButtonAddEnumItemClicked" />
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonEdit">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-edit Menu</property>
+                <property name="Label" translatable="yes">Изменить</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonEditClicked" />
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonDelete">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-delete Menu</property>
+                <property name="Label" translatable="yes">Удалить</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonDeleteClicked" />
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">False</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.CheckButton" id="buttonFilter">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes">Фильтр</property>
+                <property name="DrawIndicator">False</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Toggled" handler="OnButtonFilterToggled" />
+              </widget>
+              <packing>
+                <property name="PackType">End</property>
+                <property name="Position">3</property>
+                <property name="AutoSize">False</property>
+                <property name="Expand">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonRefresh">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-refresh Menu</property>
+                <property name="Label" translatable="yes">Обновить</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonRefreshClicked" />
+              </widget>
+              <packing>
+                <property name="PackType">End</property>
+                <property name="Position">4</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HBox" id="hboxFilter">
+            <property name="MemberName" />
+            <property name="Visible">False</property>
+            <property name="Spacing">6</property>
+            <child>
+              <placeholder />
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">False</property>
+            <property name="Expand">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="QSWidgetLib.SearchEntity" id="searchentity1">
+            <property name="MemberName" />
+            <property name="Events">ButtonPressMask</property>
+            <signal name="TextChanged" handler="OnSearchentity1TextChanged" />
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow1">
+            <property name="MemberName" />
+            <property name="ShadowType">In</property>
+            <child>
+              <widget class="QSOrmProject.RepresentationTreeView" id="tableDocuments">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="ShowScrollbars">True</property>
+                <signal name="RowActivated" handler="OnTableDocumentsRowActivated" />
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">3</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="workwear.JournalFilters.StockDocumentsFilter" design-size="428 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.Table" id="table1">
+        <property name="MemberName" />
+        <property name="NColumns">4</property>
+        <property name="RowSpacing">6</property>
+        <property name="ColumnSpacing">6</property>
+        <child>
+          <widget class="QSWidgetLib.DatePeriodPicker" id="dateperiodDocs">
+            <property name="MemberName" />
+            <property name="Events">ButtonPressMask</property>
+            <property name="StartDate">0</property>
+            <property name="EndDate">0</property>
+            <signal name="PeriodChanged" handler="OnDateperiodDocsPeriodChanged" />
+          </widget>
+          <packing>
+            <property name="LeftAttach">3</property>
+            <property name="RightAttach">4</property>
+            <property name="AutoSize">True</property>
+            <property name="YOptions">Fill</property>
+            <property name="XExpand">True</property>
+            <property name="XFill">True</property>
+            <property name="XShrink">False</property>
+            <property name="YExpand">False</property>
+            <property name="YFill">True</property>
+            <property name="YShrink">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gamma.Widgets.yEnumComboBox" id="enumcomboDocumentType">
+            <property name="MemberName" />
+            <property name="IsTextCombo">False</property>
+            <property name="Items" translatable="yes" />
+            <property name="ShowSpecialStateAll">True</property>
+            <property name="ShowSpecialStateNot">False</property>
+            <property name="UseShortTitle">False</property>
+            <property name="DefaultFirst">False</property>
+            <signal name="Changed" handler="OnEnumcomboDocumentTypeChanged" />
+          </widget>
+          <packing>
+            <property name="LeftAttach">1</property>
+            <property name="RightAttach">2</property>
+            <property name="AutoSize">True</property>
+            <property name="XOptions">Fill</property>
+            <property name="YOptions">Fill</property>
+            <property name="XExpand">False</property>
+            <property name="XFill">True</property>
+            <property name="XShrink">False</property>
+            <property name="YExpand">False</property>
+            <property name="YFill">True</property>
+            <property name="YShrink">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="label1">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Вид документа:</property>
+          </widget>
+          <packing>
+            <property name="AutoSize">True</property>
+            <property name="XOptions">Fill</property>
+            <property name="YOptions">Fill</property>
+            <property name="XExpand">False</property>
+            <property name="XFill">True</property>
+            <property name="XShrink">False</property>
+            <property name="YExpand">False</property>
+            <property name="YFill">True</property>
+            <property name="YShrink">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="label4">
+            <property name="MemberName" />
+            <property name="Xalign">1</property>
+            <property name="LabelProp" translatable="yes">За период:</property>
+          </widget>
+          <packing>
+            <property name="LeftAttach">2</property>
+            <property name="RightAttach">3</property>
+            <property name="AutoSize">True</property>
+            <property name="XOptions">Fill</property>
+            <property name="YOptions">Fill</property>
+            <property name="XExpand">False</property>
+            <property name="XFill">True</property>
+            <property name="XShrink">False</property>
+            <property name="YExpand">False</property>
+            <property name="YFill">True</property>
+            <property name="YShrink">False</property>
           </packing>
         </child>
       </widget>

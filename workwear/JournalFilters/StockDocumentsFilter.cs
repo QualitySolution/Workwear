@@ -1,0 +1,71 @@
+﻿using System;
+using QSOrmProject;
+using QSOrmProject.RepresentationModel;
+using workwear.Domain.Stock;
+
+namespace workwear.JournalFilters
+{
+	[System.ComponentModel.ToolboxItem(true)]
+	[OrmDefaultIsFiltered(true)]
+	public partial class StockDocumentsFilter : RepresentationFilterBase
+	{
+		public StockDocumentsFilter(IUnitOfWork uow) : this()
+		{
+			UoW = uow;
+		}
+
+		public StockDocumentsFilter()
+		{
+			this.Build();
+			enumcomboDocumentType.ItemsEnum = typeof(StokDocumentType);
+			dateperiodDocs.StartDate = DateTime.Today.AddDays(-7);
+			dateperiodDocs.EndDate = DateTime.Today.AddDays(1);
+		}
+
+
+		void UpdateCreteria()
+		{
+			OnRefiltered();
+		}
+
+		public StokDocumentType? RestrictDocumentType
+		{
+			get { return enumcomboDocumentType.SelectedItem as StokDocumentType?; }
+			set
+			{
+				enumcomboDocumentType.SelectedItem = value;
+				enumcomboDocumentType.Sensitive = false;
+			}
+		}
+
+		public DateTime? RestrictStartDate
+		{
+			get { return dateperiodDocs.StartDateOrNull; }
+			set
+			{
+				dateperiodDocs.StartDateOrNull = value;
+				dateperiodDocs.Sensitive = false;
+			}
+		}
+
+		public DateTime? RestrictEndDate
+		{
+			get { return dateperiodDocs.EndDateOrNull; }
+			set
+			{
+				dateperiodDocs.EndDateOrNull = value;
+				dateperiodDocs.Sensitive = false;
+			}
+		}
+
+		protected void OnEnumcomboDocumentTypeChanged(object sender, EventArgs e)
+		{
+			OnRefiltered();
+		}
+
+		protected void OnDateperiodDocsPeriodChanged(object sender, EventArgs e)
+		{
+			OnRefiltered();
+		}
+	}
+}

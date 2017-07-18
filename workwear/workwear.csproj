@@ -183,6 +183,12 @@
     <Compile Include="Measurements\WearGrowth.cs" />
     <Compile Include="Measurements\WearSize.cs" />
     <Compile Include="JournalViewers\StockBalanceView.cs" />
+    <Compile Include="JournalViewers\StockDocumentsView.cs" />
+    <Compile Include="gtk-gui\workwear.JournalViewers.StockDocumentsView.cs" />
+    <Compile Include="JournalFilters\StockDocumentsFilter.cs" />
+    <Compile Include="gtk-gui\workwear.JournalFilters.StockDocumentsFilter.cs" />
+    <Compile Include="Domain\Stock\StockDocument.cs" />
+    <Compile Include="Representations\StockDocumentsVM.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

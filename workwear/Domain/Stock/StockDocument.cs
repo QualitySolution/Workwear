@@ -26,9 +26,32 @@ namespace workwear.Domain.Stock
 			set { SetField(ref createdbyUser, value, () => CreatedbyUser); }
 		}
 
-
 		public StockDocument()
 		{
 		}
+
+		public static Type GetDocClass(StokDocumentType docType)
+		{
+			switch (docType)
+			{
+				case StokDocumentType.IncomeDoc:
+					return typeof(Income);
+				case StokDocumentType.ExpenseDoc:
+					return typeof(Expense);
+				case StokDocumentType.WriteoffDoc:
+					return typeof(Writeoff);
+			}
+			throw new NotSupportedException();
+		}
+	}
+
+	public enum StokDocumentType
+	{
+		[Display(Name = "Приход на склад")]
+		IncomeDoc,
+		[Display(Name = "Расход со склада")]
+		ExpenseDoc,
+		[Display(Name = "Списание")]
+		WriteoffDoc
 	}
 }

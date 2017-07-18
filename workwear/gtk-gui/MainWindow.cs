@@ -279,8 +279,6 @@ public partial class MainWindow
 		this.vbox1.Add(this.tdiMain);
 		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.tdiMain]));
 		w3.Position = 1;
-		w3.Expand = false;
-		w3.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.notebookMain = new global::Gtk.Notebook();
 		this.notebookMain.CanFocus = true;
@@ -661,6 +659,7 @@ public partial class MainWindow
 		this.Action19.Activated += new global::System.EventHandler(this.OnAction21Activated);
 		this.ActionYearRequestSheet.Activated += new global::System.EventHandler(this.OnActionYearRequestSheetActivated);
 		this.Action17.Activated += new global::System.EventHandler(this.OnAction17Activated);
+		this.ActionStockDocs.Activated += new global::System.EventHandler(this.OnActionStockDocsActivated);
 		this.ActionStockBalance.Activated += new global::System.EventHandler(this.OnActionStockBalanceActivated);
 		this.notebookMain.SwitchPage += new global::Gtk.SwitchPageHandler(this.OnNotebookMainSwitchPage);
 		this.entryObjectSearch.Changed += new global::System.EventHandler(this.OnEntryObjectSearchChanged);
