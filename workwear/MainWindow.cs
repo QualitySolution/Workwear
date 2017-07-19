@@ -76,10 +76,6 @@ public partial class MainWindow : Gtk.Window
 		var newsmenu = new NewsMenuItem();
 		menubar1.Add(newsmenu);
 		newsmenu.LoadFeed();
-
-		PrepareObject();
-		UpdateObject();
-		notebookMain.CurrentPage = 0;
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -162,89 +158,6 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount("RunAboutDialog");
 		QSMain.RunAboutDialog();
-	}
-
-	protected void OnButtonRefreshClicked(object sender, EventArgs e)
-	{
-		switch (notebookMain.CurrentPage)
-		{
-			case 0:
-				UpdateObject();
-				break;
-		}
-	}
-
-	protected void OnButtonAddClicked(object sender, EventArgs e)
-	{
-		switch (notebookMain.CurrentPage)
-		{
-			case 0:
-				MainTelemetry.AddCount("AddObject");
-				ObjectDlg winObject = new ObjectDlg();
-				winObject.Show();
-				winObject.Run();
-				winObject.Destroy();
-				UpdateObject();
-				break;
-		}
-
-	}
-
-	protected void OnButtonEditClicked(object sender, EventArgs e)
-	{
-		TreeIter iter;
-		int itemid;
-		ResponseType result;
-
-		switch (notebookMain.CurrentPage)
-		{
-			case 0:
-				MainTelemetry.AddCount("EditObject");
-				treeviewObjects.Selection.GetSelected(out iter);
-				itemid = (int)ObjectFilter.GetValue(iter, 0);
-				ObjectDlg winObject = new ObjectDlg(itemid);
-				winObject.Show();
-				result = (ResponseType)winObject.Run();
-				winObject.Destroy();
-				if (result == ResponseType.Ok)
-					UpdateObject();
-				break;
-		}
-
-	}
-
-	protected void OnButtonDeleteClicked(object sender, EventArgs e)
-	{
-		// Удаление
-		TreeIter iter;
-		int itemid;
-
-		switch (notebookMain.CurrentPage)
-		{
-			case 0:
-				MainTelemetry.AddCount("DeleteObject");
-				treeviewObjects.Selection.GetSelected(out iter);
-				itemid = (int)ObjectFilter.GetValue(iter, 0);
-				if (OrmMain.DeleteObject<Facility>(itemid))
-					UpdateObject();
-				break;
-		}
-	}
-
-	protected void OnNotebookMainSwitchPage(object o, SwitchPageArgs args)
-	{
-		buttonAdd.Visible = buttonDelete.Visible = buttonEdit.Visible = notebookMain.CurrentPage != 3;
-		buttonRefresh.Click();
-	}
-
-	protected void OnNotebookStockSwitchPage(object o, SwitchPageArgs args)
-	{
-		buttonRefresh.Click();
-	}
-
-	protected void OnSelectStockDatesDatesChanged(object sender, EventArgs e)
-	{
-		buttonRefresh.Click();
 	}
 
 	protected void OnAction11Activated(object sender, EventArgs e)
@@ -354,11 +267,14 @@ public partial class MainWindow : Gtk.Window
 		tdiMain.OpenTab(
 			ReferenceRepresentation.GenerateHashName<EmployeesVM>(),
 			() => new ReferenceRepresentation(new EmployeesVM())
-		//.Buttons(ReferenceButtonMode.CanEdit | ReferenceButtonMode.CanDelete)
 		);
 	}
 
 	protected void OnActionObjectsActivated(object sender, EventArgs e)
 	{
+		tdiMain.OpenTab(
+			OrmReference.GenerateHashName<Facility>(),
+			() => new OrmReference(typeof(Facility))
+		);
 	}
 }
