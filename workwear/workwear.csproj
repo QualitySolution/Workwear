@@ -82,7 +82,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MainWinObject.cs" />
     <Compile Include="gtk-gui\workwear.ObjectDlg.cs" />
-    <Compile Include="MainWinCards.cs" />
     <Compile Include="SelectWearCardRow.cs" />
     <Compile Include="gtk-gui\workwear.SelectWearCardRow.cs" />
     <Compile Include="SelectStockItem.cs" />
@@ -188,6 +187,8 @@
     <Compile Include="gtk-gui\workwear.JournalFilters.StockDocumentsFilter.cs" />
     <Compile Include="Domain\Stock\StockDocument.cs" />
     <Compile Include="Representations\StockDocumentsVM.cs" />
+    <Compile Include="JournalFilters\EmployeeFilter.cs" />
+    <Compile Include="gtk-gui\workwear.JournalFilters.EmployeeFilter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

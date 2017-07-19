@@ -22,12 +22,6 @@ namespace workwear.JournalFilters
 			dateperiodDocs.EndDate = DateTime.Today.AddDays(1);
 		}
 
-
-		void UpdateCreteria()
-		{
-			OnRefiltered();
-		}
-
 		public StokDocumentType? RestrictDocumentType
 		{
 			get { return enumcomboDocumentType.SelectedItem as StokDocumentType?; }

@@ -78,7 +78,6 @@ public partial class MainWindow : Gtk.Window
 		newsmenu.LoadFeed();
 
 		PrepareObject();
-		PrepareCards();
 		UpdateObject();
 		notebookMain.CurrentPage = 0;
 	}
@@ -172,9 +171,6 @@ public partial class MainWindow : Gtk.Window
 			case 0:
 				UpdateObject();
 				break;
-			case 1:
-				UpdateCards();
-				break;
 		}
 	}
 
@@ -189,14 +185,6 @@ public partial class MainWindow : Gtk.Window
 				winObject.Run();
 				winObject.Destroy();
 				UpdateObject();
-				break;
-			case 1:
-				MainTelemetry.AddCount("AddEmployeeCard");
-				EmployeeCardDlg winWearCard = new EmployeeCardDlg();
-				winWearCard.Show();
-				winWearCard.Run();
-				winWearCard.Destroy();
-				UpdateCards();
 				break;
 		}
 
@@ -221,16 +209,6 @@ public partial class MainWindow : Gtk.Window
 				if (result == ResponseType.Ok)
 					UpdateObject();
 				break;
-			case 1:
-				MainTelemetry.AddCount("EditEmployeeCard");
-				itemid = treeviewEmployees.GetSelectedObject<EmployeesVMNode>().Id;
-				EmployeeCardDlg winWearCadr = new EmployeeCardDlg(itemid);
-				winWearCadr.Show();
-				result = (ResponseType)winWearCadr.Run();
-				winWearCadr.Destroy();
-				if (result == ResponseType.Ok)
-					UpdateCards();
-				break;
 		}
 
 	}
@@ -249,12 +227,6 @@ public partial class MainWindow : Gtk.Window
 				itemid = (int)ObjectFilter.GetValue(iter, 0);
 				if (OrmMain.DeleteObject<Facility>(itemid))
 					UpdateObject();
-				break;
-			case 1:
-				MainTelemetry.AddCount("DeleteEmployeeCard");
-				itemid = treeviewEmployees.GetSelectedObject<EmployeesVMNode>().Id;
-				if (OrmMain.DeleteObject<EmployeeCard>(itemid))
-					UpdateCards();
 				break;
 		}
 	}
@@ -375,5 +347,18 @@ public partial class MainWindow : Gtk.Window
 		tdiMain.OpenTab(TdiTabBase.GenerateHashName<StockDocumentsView>(),
 				() => new StockDocumentsView()
 			   );
+	}
+
+	protected void OnActionEmployeesActivated(object sender, EventArgs e)
+	{
+		tdiMain.OpenTab(
+			ReferenceRepresentation.GenerateHashName<EmployeesVM>(),
+			() => new ReferenceRepresentation(new EmployeesVM())
+		//.Buttons(ReferenceButtonMode.CanEdit | ReferenceButtonMode.CanDelete)
+		);
+	}
+
+	protected void OnActionObjectsActivated(object sender, EventArgs e)
+	{
 	}
 }

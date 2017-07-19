@@ -1,30 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Gamma.ColumnConfig;
 using Gamma.GtkWidgets;
-using NHibernate;
 using NHibernate.Transform;
 using QSOrmProject;
 using QSOrmProject.RepresentationModel;
 using workwear.Domain;
+using workwear.JournalFilters;
 
 namespace workwear.ViewModel
 {
 	public class EmployeesVM : RepresentationModelEntityBase<EmployeeCard, EmployeesVMNode>
 	{
-		#region IRepresentationModel implementation
-
-		bool onlyWorking = true;
-
-		public bool OnlyWorking {
-			set{
-				if (onlyWorking == value)
-					return;
-				onlyWorking = value;
-				UpdateNodes();
+		public EmployeeFilter Filter
+		{
+			get
+			{
+				return RepresentationFilter as EmployeeFilter;
+			}
+			set
+			{
+				RepresentationFilter = (IRepresentationFilter)value;
 			}
 		}
+
+		#region IRepresentationModel implementation
 
 		public override void UpdateNodes ()
 		{
@@ -35,7 +35,7 @@ namespace workwear.ViewModel
 			EmployeeCard employeeAlias = null;
 
 			var employees = UoW.Session.QueryOver<EmployeeCard> (() => employeeAlias);
-			if(onlyWorking)
+			if (Filter.RestrictOnlyWork)
 				employees.Where(x => x.DismissDate == null);
 
 			var employeesList = employees
@@ -84,7 +84,7 @@ namespace workwear.ViewModel
 
 		public EmployeesVM () : this(UnitOfWorkFactory.CreateWithoutRoot ())
 		{
-			
+			CreateRepresentationFilter = () => new EmployeeFilter(UoW);
 		}
 
 		public EmployeesVM (IUnitOfWork uow) : base ()
