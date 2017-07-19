@@ -18,7 +18,7 @@ using workwear.Repository;
 
 namespace workwear
 {
-	public partial class EmployeeCardDlg : FakeTDIEntityGtkDialogBase<EmployeeCard>
+	public partial class EmployeeCardDlg : OrmGtkDialogBase<EmployeeCard>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
 		List<EmployeeCardItems> listedItems;
@@ -156,19 +156,12 @@ namespace workwear
 				buttonWriteOffWear.Sensitive = true;
 				buttonPrint.Sensitive = true;
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog (this, "Ошибка получения карточки!", logger, ex);
-				this.Respond (Gtk.ResponseType.Reject);
+				QSMain.ErrorMessageWithLog ("Ошибка получения карточки!", logger, ex);
+				FailInitialize = true;
+				return;
 			}
 
 			ConfigureDlg ();
-			TestCanSave ();
-		}
-
-		protected void TestCanSave ()
-		{
-			//bool Nameok = entryName.Text != "";
-			bool Numberok = checkAuto.Active || (!String.IsNullOrWhiteSpace(entryId.Text) && entryId.Text != "авто") ;
-			buttonOk.Sensitive = Numberok;
 		}
 
 		public override bool Save()
@@ -181,19 +174,13 @@ namespace workwear
 			try {
 				UoWGeneric.Save ();
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog (this, "Не удалось записать сотрудника.", logger, ex);
+				QSMain.ErrorMessageWithLog ("Не удалось записать сотрудника.", logger, ex);
 				return false;
 			}
 			notebook1.GetNthPage (2).Visible = true;
 			notebook1.GetNthPage (3).Visible = true;
 			logger.Info ("Ok");
 			return true;
-		}
-
-		protected void OnButtonOkClicked (object sender, EventArgs e)
-		{
-			if(Save ())
-				Respond (Gtk.ResponseType.Ok);
 		}
 
 		private void UpdateMovements ()
@@ -273,7 +260,7 @@ namespace workwear
 				treeviewMovements.ItemsDataSource = Movements;
 				logger.Info ("Ok");
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog(this, "Ошибка получения движений по работнику!", logger, ex);
+				QSMain.ErrorMessageWithLog("Ошибка получения движений по работнику!", logger, ex);
 			}
 		}
 
@@ -326,7 +313,7 @@ namespace workwear
 				ytreeListedItems.ItemsDataSource = listedItems;
 				logger.Info ("Ok");
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog(this, "Ошибка получения числящегося за сотрудником!", logger, ex);
+				QSMain.ErrorMessageWithLog("Ошибка получения числящегося за сотрудником!", logger, ex);
 			}
 		}
 
@@ -374,8 +361,20 @@ namespace workwear
 
 		protected void OnButtonPrintClicked (object sender, EventArgs e)
 		{
-			string param = String.Format ("id={0}", Entity.Id);
-			ViewReportExt.Run ("WearCard", param);
+			if (UoWGeneric.HasChanges && CommonDialogs.SaveBeforePrint(typeof(EmployeeCard), "бумажной версии"))
+				Save();
+
+			var reportInfo = new QSReport.ReportInfo
+			{
+				Title = String.Format("Карточка {0}", Entity.ShortName),
+				Identifier = "WearCard",
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id }
+				}
+			};
+
+			var report = new QSReport.ReportViewDlg(reportInfo);
+			TabParent.AddTab(report, this, false);
 		}
 
 		protected void OnCheckAutoToggled (object sender, EventArgs e)
@@ -383,13 +382,11 @@ namespace workwear
 			entryId.Sensitive = !checkAuto.Active;
 			if (checkAuto.Active)
 				entryId.Text = Entity.Id.ToString ();
-			TestCanSave();
 		}
 
 		protected void OnEntryIdChanged(object sender, EventArgs e)
 		{
 			Entity.CardNumber = checkAuto.Active ? entryId.Text : null;
-			TestCanSave();
 		}
 
 		protected void OnNotebook1SwitchPage (object o, SwitchPageArgs args)
@@ -424,7 +421,7 @@ namespace workwear
 		{
 			FileChooserDialog fc =
 				new FileChooserDialog ("Укажите файл для сохранения фотографии",
-					(Gtk.Window)this,
+				                       (Gtk.Window)this.Toplevel,
 					FileChooserAction.Save,
 					"Отмена", ResponseType.Cancel,
 					"Сохранить", ResponseType.Accept);
@@ -442,7 +439,7 @@ namespace workwear
 		protected void OnButtonLoadPhotoClicked (object sender, EventArgs e)
 		{
 			FileChooserDialog Chooser = new FileChooserDialog ("Выберите фото для загрузки...", 
-				(Gtk.Window)this,
+			                                                   (Gtk.Window)this.Toplevel,
 				FileChooserAction.Open,
 				"Отмена", ResponseType.Cancel,
 				"Загрузить", ResponseType.Accept);

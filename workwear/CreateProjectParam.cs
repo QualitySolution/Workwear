@@ -34,7 +34,7 @@ namespace workwear
 				OrmObjectMapping<Post>.Create ().DefaultTableView ().SearchColumn ("Название", e => e.Name).End (),
 				OrmObjectMapping<Leader>.Create ().DefaultTableView ().SearchColumn ("Имя", e => e.Name).End (),
 				OrmObjectMapping<User>.Create ().DefaultTableView ().Column ("Имя", e => e.Name).End (),
-				OrmObjectMapping<EmployeeCard>.Create ().Dialog<EmployeeCardDlg>().DefaultTableView ().SearchColumn ("Имя", e => e.FullName).End (),
+				OrmObjectMapping<EmployeeCard>.Create ().Dialog<EmployeeCardDlg>().UseSlider(false).DefaultTableView ().SearchColumn ("Имя", e => e.FullName).End (),
 				//Склад
 				OrmObjectMapping<Nomenclature>.Create ().Dialog<NomenclatureDlg> ().DefaultTableView ()
 					.SearchColumn ("Наименование", i => i.Name)

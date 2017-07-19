@@ -251,6 +251,10 @@
       <Project>{769710D2-BF98-4120-9E07-67BD740CFA1D}</Project>
       <Name>QSMachineConfig</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QSReport\QSReport.csproj">
+      <Project>{9C0363D4-EE69-45B8-BA45-BDA24CE35A06}</Project>
+      <Name>QSReport</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
@@ -305,6 +309,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="app.config" />
+    <None Include="RdlEngineConfig.Linux.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="RdlEngineConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

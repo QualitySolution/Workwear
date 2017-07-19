@@ -17,6 +17,7 @@
     <widget-library name="../../../QSProjects/Modules/QSBusinessCommon/bin/Debug/QSBusinessCommon.dll" />
     <widget-library name="../../../QSProjects/QSExtraGammaWidgets/bin/Debug/QSExtraGammaWidgets.dll" />
     <widget-library name="../bin/Debug/workwear.exe" internal="true" />
+    <widget-library name="../../../QSProjects/QSReport/bin/Debug/QSReport.dll" />
   </import>
   <widget class="Gtk.Dialog" id="workwear.ItemTypeDlg" design-size="454 287">
     <property name="MemberName" />
@@ -1082,16 +1083,73 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.EmployeeCardDlg" design-size="1148 569">
+  <widget class="Gtk.Bin" id="workwear.EmployeeCardDlg" design-size="1076 472">
     <property name="MemberName" />
-    <property name="Title" translatable="yes">Новая карточка сотрудника</property>
-    <property name="WindowPosition">CenterOnParent</property>
-    <property name="Buttons">3</property>
-    <property name="HelpButton">False</property>
-    <child internal-child="VBox">
+    <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
         <property name="MemberName" />
         <property name="BorderWidth">2</property>
+        <child>
+          <widget class="Gtk.HBox" id="hbox4">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gtk.Button" id="buttonSave">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-save Menu</property>
+                <property name="Label" translatable="yes">Сохранить</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonCancel">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-revert-to-saved Menu</property>
+                <property name="Label" translatable="yes">Отменить</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonPrint">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-print Menu</property>
+                <property name="Label" translatable="yes">Печать</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonPrintClicked" />
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
         <child>
           <widget class="Gtk.HBox" id="hbox1">
             <property name="MemberName" />
@@ -2167,7 +2225,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">0</property>
+            <property name="Position">1</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -2554,69 +2612,8 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">1</property>
-            <property name="AutoSize">True</property>
-          </packing>
-        </child>
-      </widget>
-    </child>
-    <child internal-child="ActionArea">
-      <widget class="Gtk.HButtonBox" id="dialog1_ActionArea">
-        <property name="MemberName" />
-        <property name="Spacing">10</property>
-        <property name="BorderWidth">5</property>
-        <property name="Size">3</property>
-        <property name="LayoutStyle">End</property>
-        <child>
-          <widget class="Gtk.Button" id="buttonPrint">
-            <property name="MemberName" />
-            <property name="Sensitive">False</property>
-            <property name="CanFocus">True</property>
-            <property name="Type">TextAndIcon</property>
-            <property name="Icon">stock:gtk-print Menu</property>
-            <property name="Label" translatable="yes">Печать</property>
-            <property name="UseUnderline">True</property>
-            <property name="ResponseId">0</property>
-            <signal name="Clicked" handler="OnButtonPrintClicked" />
-          </widget>
-          <packing>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Button" id="buttonCancel">
-            <property name="MemberName" />
-            <property name="CanDefault">True</property>
-            <property name="CanFocus">True</property>
-            <property name="Type">TextAndIcon</property>
-            <property name="Icon">stock:gtk-cancel Menu</property>
-            <property name="Label" translatable="yes">О_тменить</property>
-            <property name="UseUnderline">True</property>
-            <property name="ResponseId">-6</property>
-          </widget>
-          <packing>
-            <property name="Position">1</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Button" id="buttonOk">
-            <property name="MemberName" />
-            <property name="CanDefault">True</property>
-            <property name="CanFocus">True</property>
-            <property name="Type">TextAndIcon</property>
-            <property name="Icon">stock:gtk-ok Menu</property>
-            <property name="Label" translatable="yes">_OK</property>
-            <property name="UseUnderline">True</property>
-            <property name="ResponseId">-1</property>
-            <signal name="Clicked" handler="OnButtonOkClicked" />
-          </widget>
-          <packing>
             <property name="Position">2</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
+            <property name="AutoSize">True</property>
           </packing>
         </child>
       </widget>
