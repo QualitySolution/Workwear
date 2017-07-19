@@ -4,6 +4,7 @@
 bin/
 obj/
 packages/*
+
 #Workbench Backup Files
 Base/*.mwb.bak
 
@@ -13,6 +14,6 @@ Base/*.mwb.bak
 *~
 
 #Project Specific
-WinInstall/
+WinInstall/*
 !*.nsi
 !*.sh
