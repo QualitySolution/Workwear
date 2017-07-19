@@ -8,7 +8,7 @@ using workwear.Domain;
 
 namespace workwear
 {
-	public partial class ObjectDlg : FakeTDIEntityGtkDialogBase<Facility>
+	public partial class ObjectDlg : OrmGtkDialogBase<Facility>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public bool NewItem = true;
@@ -17,16 +17,6 @@ namespace workwear
 		private TreeModel PlacementList;
 		CellRendererCombo CellPlacement;
 
-		IUnitOfWork uow;
-
-		IUnitOfWork UoW{
-			get{
-				if (uow == null)
-					uow = UnitOfWorkFactory.CreateWithoutRoot();
-				return uow;
-			}
-		}
-
 		public ObjectDlg (Facility obj) : this(obj.Id) {}
 
 		public ObjectDlg (int id) : this()
@@ -34,9 +24,18 @@ namespace workwear
 			Fill(id);
 		}
 
-		public ObjectDlg()
+		public ObjectDlg() : base()
 		{
 			this.Build();
+			//FIXME Просто создаем UoW что бы не падало остальное.
+			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Facility>();
+			ConfigureDlg();
+		}
+
+		void ConfigureDlg()
+		{
+			//FIXME Временно чтобы не реализовывать более сложный механизм.
+			HasChanges = true;
 
 			//Создаем таблицу "материальных ценностей"
 			ItemsListStore = new Gtk.ListStore (typeof (long), //0 in row id
@@ -107,12 +106,12 @@ namespace workwear
 				buttonGive.Sensitive = true;
 				buttonReturn.Sensitive = true;
 				buttonWriteOff.Sensitive = true;
-				this.Title = entryName.Text;
+				TabName = entryName.Text;
 			}
 			catch (Exception ex)
 			{
-				QSMain.ErrorMessageWithLog(this, "Ошибка получения информации о объекте!", logger, ex);
-				this.Respond(Gtk.ResponseType.Reject);
+				QSMain.ErrorMessageWithLog("Ошибка получения информации о объекте!", logger, ex);
+				FailInitialize = true;
 			}
 			TestCanSave();
 		}
@@ -120,13 +119,7 @@ namespace workwear
 		protected void TestCanSave ()
 		{
 			bool Nameok = entryName.Text != "";
-			buttonOk.Sensitive = Nameok;
-		}
-
-		protected void OnButtonOkClicked (object sender, EventArgs e)
-		{
-			if(Save())
-				Respond (Gtk.ResponseType.Ok);
+			buttonSave.Sensitive = Nameok;
 		}
 
 		public override bool Save ()
@@ -165,7 +158,7 @@ namespace workwear
 			} 
 			catch (Exception ex) 
 			{
-				QSMain.ErrorMessageWithLog(this, "Ошибка записи объекта!", logger, ex);
+				QSMain.ErrorMessageWithLog("Ошибка записи объекта!", logger, ex);
 			}
 			return false;
 		}
@@ -396,7 +389,7 @@ namespace workwear
 
 			if(Changed)
 			{
-				MessageDialog md = new MessageDialog ( this, DialogFlags.DestroyWithParent,
+				MessageDialog md = new MessageDialog ( (Window)this.Toplevel, DialogFlags.DestroyWithParent,
 				                                      MessageType.Question, 
 				                                      ButtonsType.YesNo, 
 				                                      "В размещении имущества были сделаны изменения. При добавлении нового документа все незаписанные изменения пропадут. Записать сделанные изменения?");
@@ -409,6 +402,7 @@ namespace workwear
 				}
 			}
 		}
+
 	}
 }
 
