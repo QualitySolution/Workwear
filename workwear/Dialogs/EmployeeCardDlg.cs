@@ -542,10 +542,7 @@ namespace workwear
 			var refWin = new ReferenceRepresentation (new workwear.ViewModel.NormVM ());
 			refWin.Mode = OrmReferenceMode.Select;
 			refWin.ObjectSelected += RefWin_ObjectSelected;
-			var dialog = new OneWidgetDialog (refWin);
-			dialog.Show ();
-			dialog.Run ();
-			dialog.Destroy ();
+			OpenSlaveTab(refWin);
 		}
 
 		void RefWin_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)
