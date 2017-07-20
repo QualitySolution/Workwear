@@ -270,7 +270,6 @@ namespace workwear.Domain
 
 			if (Sex == Sex.None)
 				yield return new ValidationResult ("Пол должен быть указан.", new[] { this.GetPropertyName (o => o.Sex) });
-			
 		}
 
 		#endregion

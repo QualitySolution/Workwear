@@ -59,7 +59,7 @@ namespace workwear.ViewModel
 		}
 
 		IColumnsConfig treeViewConfig = ColumnsConfigFactory.Create<EmployeesVMNode>()
-			.AddColumn ("Номер").AddTextRenderer (node => node.CardNumber)
+			.AddColumn ("Номер").AddTextRenderer (node => node.CardNumberText)
 			.AddColumn ("Табельный №").AddTextRenderer (node => node.PersonnelNumber)
 			.AddColumn ("Ф.И.О.").AddTextRenderer (node => node.FIO)
 			.AddColumn ("Должность").AddTextRenderer (node => node.Post)
@@ -97,9 +97,13 @@ namespace workwear.ViewModel
 	{
 		public int Id { get; set; }
 
+		public string CardNumber { get; set; }
+
 		[UseForSearch]
 		[SearchHighlight]
-		public string CardNumber { get; set; }
+		public string CardNumberText { get{
+				return CardNumber ?? Id.ToString();
+			} }
 
 		[UseForSearch]
 		[SearchHighlight]

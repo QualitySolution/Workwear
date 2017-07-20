@@ -143,8 +143,8 @@ namespace workwear
 			{
 				UoWGeneric = UnitOfWorkFactory.CreateForRoot<EmployeeCard> (id);
 
+				checkAuto.Active = String.IsNullOrWhiteSpace(Entity.CardNumber);
 				entryId.Text = String.IsNullOrWhiteSpace (Entity.CardNumber) ? Entity.Id.ToString () : Entity.CardNumber;
-				checkAuto.Active = String.IsNullOrWhiteSpace (Entity.CardNumber);
 
 				labelUser.LabelProp = Entity.CreatedbyUser != null ? Entity.CreatedbyUser.Name : "не указан";
 
@@ -373,8 +373,9 @@ namespace workwear
 				}
 			};
 
-			var report = new QSReport.ReportViewDlg(reportInfo);
-			TabParent.AddTab(report, this, false);
+			TabParent.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
+			                  () => new QSReport.ReportViewDlg(reportInfo)
+			                 );
 		}
 
 		protected void OnCheckAutoToggled (object sender, EventArgs e)
@@ -386,7 +387,7 @@ namespace workwear
 
 		protected void OnEntryIdChanged(object sender, EventArgs e)
 		{
-			Entity.CardNumber = checkAuto.Active ? entryId.Text : null;
+			Entity.CardNumber = checkAuto.Active ? null: entryId.Text;
 		}
 
 		protected void OnNotebook1SwitchPage (object o, SwitchPageArgs args)
