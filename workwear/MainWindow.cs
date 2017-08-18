@@ -107,51 +107,41 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction7Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("MeasurementUnits");
-		var refWin = new OrmReference(typeof(MeasurementUnits));
-		var dialog = new OneWidgetDialog(refWin);
-		dialog.Show();
-		dialog.Run();
-		dialog.Destroy();
+		tdiMain.OpenTab(OrmReference.GenerateHashName<MeasurementUnits>(),
+		                () => new OrmReference(typeof(MeasurementUnits))
+		               );
 	}
 
 	protected void OnAction8Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("Post");
-		var refWin = new OrmReference(typeof(Post));
-		var dialog = new OneWidgetDialog(refWin);
-		dialog.Show();
-		dialog.Run();
-		dialog.Destroy();
+		tdiMain.OpenTab(OrmReference.GenerateHashName<Post>(),
+						() => new OrmReference(typeof(Post))
+					   );
 	}
 
 	protected void OnAction9Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("Leader");
-		var refWin = new OrmReference(typeof(Leader));
-		var dialog = new OneWidgetDialog(refWin);
-		dialog.Show();
-		dialog.Run();
-		dialog.Destroy();
+		tdiMain.OpenTab(OrmReference.GenerateHashName<Leader>(),
+				() => new OrmReference(typeof(Leader))
+			   );
 	}
 
 	protected void OnAction5Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ItemsType");
-		var refWin = new OrmReference(typeof(ItemsType));
-		var dialog = new OneWidgetDialog(refWin);
-		dialog.Show();
-		dialog.Run();
-		dialog.Destroy();
+		tdiMain.OpenTab(OrmReference.GenerateHashName<ItemsType>(),
+				() => new OrmReference(typeof(ItemsType))
+			   );
 	}
 
 	protected void OnAction6Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("Nomenclature");
-		var refWin = new OrmReference(typeof(Nomenclature));
-		var dialog = new OneWidgetDialog(refWin);
-		dialog.Show();
-		dialog.Run();
-		dialog.Destroy();
+		tdiMain.OpenTab(OrmReference.GenerateHashName<Nomenclature>(),
+				() => new OrmReference(typeof(Nomenclature))
+			   );
 	}
 
 	protected void OnAboutActionActivated(object sender, EventArgs e)
@@ -163,7 +153,16 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction11Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportStockAllWear");
-		ViewReportExt.Run("StockAllWear", "");
+		var reportInfo = new QSReport.ReportInfo
+		{
+			Title = "Складская ведомость",
+			Identifier = "StockAllWear",
+		};
+
+		tdiMain.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
+						  () => new QSReport.ReportViewDlg(reportInfo)
+						 );
+
 	}
 
 	protected void OnAction10Activated(object sender, EventArgs e)
@@ -178,7 +177,16 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction12Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportListBySize");
-		ViewReportExt.Run("ListBySize", "");
+		var reportInfo = new QSReport.ReportInfo
+		{
+			Title = "Список по размерам",
+			Identifier = "ListBySize",
+		};
+
+		tdiMain.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
+						  () => new QSReport.ReportViewDlg(reportInfo)
+						 );
+
 	}
 
 	protected void OnHelpActionActivated(object sender, EventArgs e)
@@ -208,11 +216,10 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionNormsActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenNorms");
-		var refWin = new ReferenceRepresentation(new workwear.ViewModel.NormVM());
-		var dialog = new OneWidgetDialog(refWin);
-		dialog.Show();
-		dialog.Run();
-		dialog.Destroy();
+		tdiMain.OpenTab(
+			ReferenceRepresentation.GenerateHashName<NormVM>(),
+			() => new ReferenceRepresentation(new NormVM())
+		);
 	}
 
 	protected void OnAction13Activated(object sender, EventArgs e)
@@ -236,7 +243,16 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionYearRequestSheetActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportYearRequestSheet");
-		ViewReportExt.Run("YearRequestSheet", "");
+		var reportInfo = new QSReport.ReportInfo
+		{
+			Title = "Годовая заявка",
+			Identifier = "YearRequestSheet",
+		};
+
+		tdiMain.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
+						  () => new QSReport.ReportViewDlg(reportInfo)
+						 );
+
 	}
 
 	protected void OnAction21Activated(object sender, EventArgs e)
