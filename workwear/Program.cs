@@ -61,10 +61,11 @@ namespace workwear
             MainTelemetry.Edition = MainSupport.ProjectVerion.Edition;
             MainTelemetry.Version = MainSupport.ProjectVerion.Version.ToString();
             MainTelemetry.IsDemo = Login.ApplicationDemoServer == QSMain.connectionDB.DataSource;
-            MainTelemetry.StartUpdateByTimer(600);
 			var appConfig = MachineConfig.ConfigSource.Configs["Application"];
 			if (appConfig != null)
 				MainTelemetry.DoNotTrack = appConfig.GetBoolean("DoNotTrack", false);
+
+			MainTelemetry.StartUpdateByTimer(600);
 
 			//Запускаем программу
 			MainWin = new MainWindow ();
@@ -73,7 +74,12 @@ namespace workwear
 				return;
 			MainWin.Show ();
 			Application.Run ();
-            MainTelemetry.SendTelemetry();
+
+			if (!MainTelemetry.SendingError)
+			{
+				MainTelemetry.SendTimeout = TimeSpan.FromSeconds(2);
+				MainTelemetry.SendTelemetry();
+			}
 			QSSaaS.Session.StopSessionRefresh ();
 		}
 
