@@ -81,14 +81,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="gtk-gui\workwear.ObjectDlg.cs" />
-    <Compile Include="SelectWearCardRow.cs" />
-    <Compile Include="gtk-gui\workwear.SelectWearCardRow.cs" />
-    <Compile Include="SelectStockItem.cs" />
-    <Compile Include="gtk-gui\workwear.SelectStockItem.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
-    <Compile Include="SelectObjectProperty.cs" />
-    <Compile Include="gtk-gui\workwear.SelectObjectProperty.cs" />
     <Compile Include="viewDTOs\EmployeeCardItems.cs" />
     <Compile Include="viewDTOs\EmployeeCardMovements.cs" />
     <Compile Include="gtk-gui\workwear.StockBalanceView.cs" />
