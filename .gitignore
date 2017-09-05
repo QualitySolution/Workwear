@@ -13,6 +13,6 @@ Base/*.mwb.bak
 *~
 
 #Project Specific
-WinInstall/
+WinInstall
 !*.nsi
 !*.sh
