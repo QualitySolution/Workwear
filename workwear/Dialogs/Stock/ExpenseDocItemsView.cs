@@ -96,14 +96,12 @@ namespace workwear
 		{
 			var selectDlg = new ReferenceRepresentation (new ViewModel.StockBalanceVM (MyOrmDialog.UoW,
 				ExpenceDoc.Operation == ExpenseOperations.Employee ? ViewModel.StockBalanceVMMode.DisplayAll : ViewModel.StockBalanceVMMode.OnlyProperties
-			));
+			),
+			     "Остатки на складе");
 			selectDlg.Mode = OrmReferenceMode.MultiSelect;
 			selectDlg.ObjectSelected += SelectDlg_ObjectSelected;
 
-			var dialog = new OneWidgetDialog (selectDlg);
-			dialog.Show ();
-			dialog.Run ();
-			dialog.Destroy ();
+			OpenSlaveTab(selectDlg);
 		}
 
 		void SelectDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)
