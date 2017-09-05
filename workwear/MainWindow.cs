@@ -168,10 +168,11 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction10Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportWearStatement");
-		WearStatement WinStat = new WearStatement();
-		WinStat.Show();
-		WinStat.Run();
-		WinStat.Destroy();
+		WearStatement widget = new WearStatement();
+		tdiMain.OpenTab(
+			QSReport.ReportViewDlg.GenerateHashName(widget),
+			() => new QSReport.ReportViewDlg(widget)
+		);
 	}
 
 	protected void OnAction12Activated(object sender, EventArgs e)
@@ -225,19 +226,21 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction13Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportMonthIssueSheet");
-		var dlg = new OnIssueStatement();
-		dlg.Show();
-		dlg.Run();
-		dlg.Destroy();
+		var widget = new OnIssueStatement();
+		tdiMain.OpenTab(
+			QSReport.ReportViewDlg.GenerateHashName(widget),
+			() => new QSReport.ReportViewDlg(widget)
+		);
 	}
 
 	protected void OnAction17Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportNotIssuedSheet");
-		var dlg = new NotIssuedSheetReportDlg();
-		dlg.Show();
-		dlg.Run();
-		dlg.Destroy();
+		var widget = new NotIssuedSheetReportDlg();
+		tdiMain.OpenTab(
+			QSReport.ReportViewDlg.GenerateHashName(widget),
+			() => new QSReport.ReportViewDlg(widget)
+		);
 	}
 
 	protected void OnActionYearRequestSheetActivated(object sender, EventArgs e)
@@ -258,10 +261,11 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction21Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportMonthQuarterRequestSheet");
-		var dlg = new QuarterRequestSheetDlg();
-		dlg.Show();
-		dlg.Run();
-		dlg.Destroy();
+		var widget = new QuarterRequestSheetDlg();
+		tdiMain.OpenTab(
+			QSReport.ReportViewDlg.GenerateHashName(widget),
+			() => new QSReport.ReportViewDlg(widget)
+		);
 	}
 
 	protected void OnActionStockBalanceActivated(object sender, EventArgs e)

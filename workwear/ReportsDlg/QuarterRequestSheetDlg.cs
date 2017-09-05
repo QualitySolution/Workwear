@@ -1,32 +1,57 @@
 ﻿using System;
 using QSProjectsLib;
 using System.Collections.Generic;
+using QSReport;
 
 namespace workwear
 {
-	public partial class QuarterRequestSheetDlg : Gtk.Dialog
+	public partial class QuarterRequestSheetDlg : Gtk.Bin, IParametersWidget
 	{
+		public string Title => "Квартальная/месячная заявка";
+
 		public QuarterRequestSheetDlg ()
 		{
 			this.Build ();
 			SwitchDialog(PeriodType.Month);
 		}
 
-		protected void OnButtonOkClicked (object sender, EventArgs e)
+		public event EventHandler<LoadReportEventArgs> LoadReport;
+
+		private ReportInfo GetReportInfo()
 		{
 			var quart = comboQuarter.SelectedItem as Quarter;
-			if(quart != null)
+			if (quart != null)
 			{
-				string param = String.Format("quarter={0}&year={1}", quart.Number, quart.Year) ;
-				ViewReportExt.Run("QuarterRequestSheet", param);
-				return;
+				return new ReportInfo
+				{
+					Identifier = "QuarterRequestSheet",
+					Parameters = new Dictionary<string, object>
+				{
+					{ "quarter", quart.Number },
+					{ "year", quart.Year },
+				}
+				};
 			}
 			var month = comboQuarter.SelectedItem as Month;
-			if(month != null)
+			if (month != null)
 			{
-				string param = String.Format("month={0}&year={1}", month.Number, month.Year) ;
-				ViewReportExt.Run("MonthRequestSheet", param);
-				return;
+				return new ReportInfo
+				{
+					Identifier = "MonthRequestSheet",
+					Parameters = new Dictionary<string, object>
+				{
+					{ "month", month.Number },
+					{ "year", month.Year },
+				}};
+			}
+			return null;
+		}
+
+		protected void OnButtonRunClicked(object sender, EventArgs e)
+		{
+			if (LoadReport != null)
+			{
+				LoadReport(this, new LoadReportEventArgs(GetReportInfo(), true));
 			}
 		}
 

@@ -49,11 +49,11 @@ public partial class MainWindow
 
 	private global::Gtk.Action Action13;
 
-	private global::Gtk.Action Action19;
+	private global::Gtk.Action Action23;
 
 	private global::Gtk.Action ActionYearRequestSheet;
 
-	private global::Gtk.Action Action17;
+	private global::Gtk.Action Action22;
 
 	private global::Gtk.Action Action20;
 
@@ -151,15 +151,15 @@ public partial class MainWindow
 		this.Action13 = new global::Gtk.Action("Action13", global::Mono.Unix.Catalog.GetString("Ведомость на выдачу"), null, null);
 		this.Action13.ShortLabel = global::Mono.Unix.Catalog.GetString("Ведомость на выдачу");
 		w1.Add(this.Action13, null);
-		this.Action19 = new global::Gtk.Action("Action19", global::Mono.Unix.Catalog.GetString("Квартальная/месячная заявка"), null, null);
-		this.Action19.ShortLabel = global::Mono.Unix.Catalog.GetString("Месячная заявка");
-		w1.Add(this.Action19, null);
+		this.Action23 = new global::Gtk.Action("Action23", global::Mono.Unix.Catalog.GetString("Квартальная/месячная заявка"), null, null);
+		this.Action23.ShortLabel = global::Mono.Unix.Catalog.GetString("Месячная заявка");
+		w1.Add(this.Action23, null);
 		this.ActionYearRequestSheet = new global::Gtk.Action("ActionYearRequestSheet", global::Mono.Unix.Catalog.GetString("Годовая заявка"), null, null);
 		this.ActionYearRequestSheet.ShortLabel = global::Mono.Unix.Catalog.GetString("Сводная заявка");
 		w1.Add(this.ActionYearRequestSheet, null);
-		this.Action17 = new global::Gtk.Action("Action17", global::Mono.Unix.Catalog.GetString("Справка по невыданному"), null, null);
-		this.Action17.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка по невыданному");
-		w1.Add(this.Action17, null);
+		this.Action22 = new global::Gtk.Action("Action22", global::Mono.Unix.Catalog.GetString("Справка по невыданному"), null, null);
+		this.Action22.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка по невыданному");
+		w1.Add(this.Action22, null);
 		this.Action20 = new global::Gtk.Action("Action20", global::Mono.Unix.Catalog.GetString("Вид"), null, null);
 		this.Action20.ShortLabel = global::Mono.Unix.Catalog.GetString("Вид");
 		w1.Add(this.Action20, null);
@@ -189,7 +189,7 @@ public partial class MainWindow
 		this.vbox1.Name = "vbox1";
 		this.vbox1.Spacing = 6;
 		// Container child vbox1.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString("<ui><menubar name='menubar1'><menu name='Action' action='Action'><menuitem name='dialogAuthenticationAction' action='dialogAuthenticationAction'/><menuitem name='UsersAction' action='UsersAction'/><separator/><menuitem name='quitAction' action='quitAction'/></menu><menu name='Action20' action='Action20'/><menu name='Action21' action='Action21'><menuitem name='ActionStockDocs' action='ActionStockDocs'/><menuitem name='ActionStockBalance' action='ActionStockBalance'/></menu><menu name='Action1' action='Action1'><menuitem name='ActionObjects' action='ActionObjects'/><menuitem name='ActionEmployees' action='ActionEmployees'/><separator/><menuitem name='ActionNorms' action='ActionNorms'/><menuitem name='Action5' action='Action5'/><menuitem name='Action6' action='Action6'/><separator/><menuitem name='Action7' action='Action7'/><separator/><menuitem name='Action8' action='Action8'/><menuitem name='Action9' action='Action9'/></menu><menu name='Action18' action='Action18'><menuitem name='Action10' action='Action10'/><menuitem name='Action11' action='Action11'/><separator/><menuitem name='Action12' action='Action12'/><separator/><menuitem name='Action13' action='Action13'/><menuitem name='Action19' action='Action19'/><menuitem name='ActionYearRequestSheet' action='ActionYearRequestSheet'/><menuitem name='Action17' action='Action17'/></menu><menu name='Action3' action='Action3'><menuitem name='helpAction' action='helpAction'/><menuitem name='ActionHistory' action='ActionHistory'/><menuitem name='ActionUpdate' action='ActionUpdate'/><separator/><menuitem name='ActionSN' action='ActionSN'/><separator/><menuitem name='aboutAction' action='aboutAction'/></menu></menubar></ui>");
+		this.UIManager.AddUiFromString("<ui><menubar name='menubar1'><menu name='Action' action='Action'><menuitem name='dialogAuthenticationAction' action='dialogAuthenticationAction'/><menuitem name='UsersAction' action='UsersAction'/><separator/><menuitem name='quitAction' action='quitAction'/></menu><menu name='Action20' action='Action20'/><menu name='Action21' action='Action21'><menuitem name='ActionStockDocs' action='ActionStockDocs'/><menuitem name='ActionStockBalance' action='ActionStockBalance'/></menu><menu name='Action1' action='Action1'><menuitem name='ActionObjects' action='ActionObjects'/><menuitem name='ActionEmployees' action='ActionEmployees'/><separator/><menuitem name='ActionNorms' action='ActionNorms'/><menuitem name='Action5' action='Action5'/><menuitem name='Action6' action='Action6'/><separator/><menuitem name='Action7' action='Action7'/><separator/><menuitem name='Action8' action='Action8'/><menuitem name='Action9' action='Action9'/></menu><menu name='Action18' action='Action18'><menuitem name='Action10' action='Action10'/><menuitem name='Action11' action='Action11'/><separator/><menuitem name='Action12' action='Action12'/><separator/><menuitem name='Action13' action='Action13'/><menuitem name='Action23' action='Action23'/><menuitem name='ActionYearRequestSheet' action='ActionYearRequestSheet'/><menuitem name='Action22' action='Action22'/></menu><menu name='Action3' action='Action3'><menuitem name='helpAction' action='helpAction'/><menuitem name='ActionHistory' action='ActionHistory'/><menuitem name='ActionUpdate' action='ActionUpdate'/><separator/><menuitem name='ActionSN' action='ActionSN'/><separator/><menuitem name='aboutAction' action='aboutAction'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -259,9 +259,9 @@ public partial class MainWindow
 		this.ActionSN.Activated += new global::System.EventHandler(this.OnActionSNActivated);
 		this.ActionNorms.Activated += new global::System.EventHandler(this.OnActionNormsActivated);
 		this.Action13.Activated += new global::System.EventHandler(this.OnAction13Activated);
-		this.Action19.Activated += new global::System.EventHandler(this.OnAction21Activated);
+		this.Action23.Activated += new global::System.EventHandler(this.OnAction21Activated);
 		this.ActionYearRequestSheet.Activated += new global::System.EventHandler(this.OnActionYearRequestSheetActivated);
-		this.Action17.Activated += new global::System.EventHandler(this.OnAction17Activated);
+		this.Action22.Activated += new global::System.EventHandler(this.OnAction17Activated);
 		this.ActionStockDocs.Activated += new global::System.EventHandler(this.OnActionStockDocsActivated);
 		this.ActionStockBalance.Activated += new global::System.EventHandler(this.OnActionStockBalanceActivated);
 		this.ActionObjects.Activated += new global::System.EventHandler(this.OnActionObjectsActivated);

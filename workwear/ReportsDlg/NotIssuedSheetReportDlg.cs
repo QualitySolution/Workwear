@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using QSProjectsLib;
+using QSReport;
 
 namespace workwear
 {
-	public partial class NotIssuedSheetReportDlg : Gtk.Dialog
+	public partial class NotIssuedSheetReportDlg : Gtk.Bin, IParametersWidget
 	{
 		public NotIssuedSheetReportDlg ()
 		{
@@ -11,11 +13,34 @@ namespace workwear
 			ydateReport.Date = DateTime.Today;
 		}
 
-		protected void OnButtonOkClicked (object sender, EventArgs e)
+		string IParametersWidget.Title => "Справка по невыданному";
+
+		public event EventHandler<LoadReportEventArgs> LoadReport;
+
+		protected void OnButtonRunClicked(object sender, EventArgs e)
 		{
-			string param = String.Format("report_date={0}&only_missing={1}", ydateReport.Date.ToString("s"), checkOnlyMissing.Active.ToString ()) ;
-			ViewReportExt.Run("NotIssuedSheet", param);
+			if (LoadReport != null)
+			{
+				LoadReport(this, new LoadReportEventArgs(GetReportInfo(), true));
+			}
+		}
+
+		private ReportInfo GetReportInfo()
+		{
+			return new ReportInfo
+			{
+				Identifier = "NotIssuedSheet",
+				Parameters = new Dictionary<string, object>
+				{
+					{ "report_date", ydateReport.Date },
+					{ "only_missing", checkOnlyMissing.Active },
+				}
+			};
+		}
+
+		protected void OnYdateReportDateChanged(object sender, EventArgs e)
+		{
+			buttonRun.Sensitive = !ydateReport.IsEmpty;
 		}
 	}
 }
-

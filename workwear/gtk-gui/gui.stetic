@@ -3916,45 +3916,26 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.WearStatement" design-size="264 173">
+  <widget class="Gtk.Bin" id="workwear.WearStatement" design-size="264 173">
     <property name="MemberName" />
-    <property name="Title" translatable="yes">Сводная ведомость</property>
-    <property name="WindowPosition">CenterOnParent</property>
-    <property name="Buttons">2</property>
-    <property name="HelpButton">False</property>
-    <child internal-child="VBox">
+    <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
         <property name="MemberName" />
         <property name="BorderWidth">2</property>
         <child>
           <widget class="Gtk.Table" id="table1">
             <property name="MemberName" />
-            <property name="NRows">3</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
-            <property name="BorderWidth">9</property>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
             <child>
               <widget class="Gtk.ComboBox" id="comboObject">
                 <property name="MemberName" />
                 <property name="IsTextCombo">False</property>
                 <property name="Items" translatable="yes" />
+                <signal name="Changed" handler="OnComboObjectChanged" />
               </widget>
               <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">2</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">False</property>
@@ -3974,8 +3955,6 @@
                 <property name="LabelProp" translatable="yes">По объекту:</property>
               </widget>
               <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">2</property>
                 <property name="AutoSize">False</property>
                 <property name="YOptions">Fill</property>
                 <property name="XExpand">True</property>
@@ -3990,48 +3969,23 @@
           <packing>
             <property name="Position">0</property>
             <property name="AutoSize">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-      </widget>
-    </child>
-    <child internal-child="ActionArea">
-      <widget class="Gtk.HButtonBox" id="dialog1_ActionArea">
-        <property name="MemberName" />
-        <property name="Spacing">10</property>
-        <property name="BorderWidth">5</property>
-        <property name="Size">2</property>
-        <property name="LayoutStyle">End</property>
-        <child>
-          <widget class="Gtk.Button" id="buttonCancel">
-            <property name="MemberName" />
-            <property name="CanDefault">True</property>
-            <property name="CanFocus">True</property>
-            <property name="UseStock">True</property>
-            <property name="Type">StockItem</property>
-            <property name="StockId">gtk-cancel</property>
-            <property name="ResponseId">-6</property>
-            <property name="label">gtk-cancel</property>
-          </widget>
-          <packing>
             <property name="Expand">False</property>
-            <property name="Fill">False</property>
           </packing>
         </child>
         <child>
-          <widget class="Gtk.Button" id="buttonOk">
+          <widget class="Gtk.Button" id="buttonRun">
             <property name="MemberName" />
-            <property name="CanDefault">True</property>
+            <property name="Sensitive">False</property>
             <property name="CanFocus">True</property>
-            <property name="UseStock">True</property>
-            <property name="Type">StockItem</property>
-            <property name="StockId">gtk-ok</property>
-            <property name="ResponseId">-5</property>
-            <signal name="Clicked" handler="OnButtonOkClicked" />
-            <property name="label">gtk-ok</property>
+            <property name="Type">TextOnly</property>
+            <property name="Label" translatable="yes">Сформировать отчет</property>
+            <property name="UseUnderline">True</property>
+            <signal name="Clicked" handler="OnButtonRunClicked" />
           </widget>
           <packing>
+            <property name="PackType">End</property>
             <property name="Position">1</property>
+            <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
           </packing>
@@ -4274,7 +4228,7 @@
         <property name="ShortLabel" translatable="yes">Ведомость на выдачу</property>
         <signal name="Activated" handler="OnAction13Activated" />
       </action>
-      <action id="Action19">
+      <action id="Action23">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Квартальная/месячная заявка</property>
         <property name="ShortLabel" translatable="yes">Месячная заявка</property>
@@ -4286,7 +4240,7 @@
         <property name="ShortLabel" translatable="yes">Сводная заявка</property>
         <signal name="Activated" handler="OnActionYearRequestSheetActivated" />
       </action>
-      <action id="Action17">
+      <action id="Action22">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Справка по невыданному</property>
         <property name="ShortLabel" translatable="yes">Справка по невыданному</property>
@@ -4371,9 +4325,9 @@
                 <node type="Menuitem" action="Action12" />
                 <node type="Separator" />
                 <node type="Menuitem" action="Action13" />
-                <node type="Menuitem" action="Action19" />
+                <node type="Menuitem" action="Action23" />
                 <node type="Menuitem" action="ActionYearRequestSheet" />
-                <node type="Menuitem" action="Action17" />
+                <node type="Menuitem" action="Action22" />
               </node>
               <node type="Menu" action="Action3">
                 <node type="Menuitem" action="helpAction" />
@@ -4953,14 +4907,9 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.OnIssueStatement" design-size="331 206">
+  <widget class="Gtk.Bin" id="workwear.OnIssueStatement" design-size="277 206">
     <property name="MemberName" />
-    <property name="Title" translatable="yes">Ведомость на выдачу</property>
-    <property name="WindowPosition">CenterOnParent</property>
-    <property name="Modal">True</property>
-    <property name="Buttons">2</property>
-    <property name="HelpButton">False</property>
-    <child internal-child="VBox">
+    <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
         <property name="MemberName" />
         <property name="BorderWidth">2</property>
@@ -4971,7 +4920,6 @@
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
-            <property name="BorderWidth">27</property>
             <child>
               <widget class="QSOrmProject.EntryReference" id="entryreferenceFacility">
                 <property name="MemberName" />
@@ -5166,7 +5114,6 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Label" translatable="yes">на месяц</property>
-                <property name="Active">True</property>
                 <property name="DrawIndicator">True</property>
                 <property name="HasLabel">True</property>
                 <property name="UseUnderline">True</property>
@@ -5220,45 +5167,20 @@
             <property name="Fill">False</property>
           </packing>
         </child>
-      </widget>
-    </child>
-    <child internal-child="ActionArea">
-      <widget class="Gtk.HButtonBox" id="dialog1_ActionArea">
-        <property name="MemberName" />
-        <property name="Spacing">10</property>
-        <property name="BorderWidth">5</property>
-        <property name="Size">2</property>
-        <property name="LayoutStyle">End</property>
         <child>
-          <widget class="Gtk.Button" id="buttonCancel">
+          <widget class="Gtk.Button" id="buttonRun">
             <property name="MemberName" />
-            <property name="CanDefault">True</property>
+            <property name="Sensitive">False</property>
             <property name="CanFocus">True</property>
-            <property name="UseStock">True</property>
-            <property name="Type">StockItem</property>
-            <property name="StockId">gtk-cancel</property>
-            <property name="ResponseId">-6</property>
-            <property name="label">gtk-cancel</property>
+            <property name="Type">TextOnly</property>
+            <property name="Label" translatable="yes">Сформировать отчет</property>
+            <property name="UseUnderline">True</property>
+            <signal name="Clicked" handler="OnButtonRunClicked" />
           </widget>
           <packing>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Button" id="buttonOk">
-            <property name="MemberName" />
-            <property name="CanDefault">True</property>
-            <property name="CanFocus">True</property>
-            <property name="UseStock">True</property>
-            <property name="Type">StockItem</property>
-            <property name="StockId">gtk-ok</property>
-            <property name="ResponseId">-5</property>
-            <signal name="Clicked" handler="OnButtonOkClicked" />
-            <property name="label">gtk-ok</property>
-          </widget>
-          <packing>
+            <property name="PackType">End</property>
             <property name="Position">1</property>
+            <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
           </packing>
@@ -5266,12 +5188,9 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.NotIssuedSheetReportDlg" design-size="453 230">
+  <widget class="Gtk.Bin" id="workwear.NotIssuedSheetReportDlg" design-size="254 289">
     <property name="MemberName" />
-    <property name="WindowPosition">CenterOnParent</property>
-    <property name="Buttons">2</property>
-    <property name="HelpButton">False</property>
-    <child internal-child="VBox">
+    <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
         <property name="MemberName" />
         <property name="BorderWidth">2</property>
@@ -5282,7 +5201,6 @@
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
-            <property name="BorderWidth">33</property>
             <child>
               <widget class="Gtk.CheckButton" id="checkOnlyMissing">
                 <property name="MemberName" />
@@ -5328,6 +5246,7 @@
             <child>
               <widget class="Gtk.Label" id="label2">
                 <property name="MemberName" />
+                <property name="WidthRequest">250</property>
                 <property name="LabelProp" translatable="yes">&lt;i&gt;Обратите внимание:&lt;/i&gt; Отчет показывает недополученное по текущим потребностям. То есть при значительном удалении даты отчет от сегодняшнего дня, данные будут некорретны.</property>
                 <property name="UseMarkup">True</property>
                 <property name="Wrap">True</property>
@@ -5337,7 +5256,7 @@
                 <property name="TopAttach">2</property>
                 <property name="BottomAttach">3</property>
                 <property name="RightAttach">2</property>
-                <property name="AutoSize">True</property>
+                <property name="AutoSize">False</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
                 <property name="XExpand">False</property>
@@ -5356,6 +5275,7 @@
                 <property name="Date">0</property>
                 <property name="IsEditable">True</property>
                 <property name="AutoSeparation">True</property>
+                <signal name="DateChanged" handler="OnYdateReportDateChanged" />
               </widget>
               <packing>
                 <property name="LeftAttach">1</property>
@@ -5378,45 +5298,20 @@
             <property name="Fill">False</property>
           </packing>
         </child>
-      </widget>
-    </child>
-    <child internal-child="ActionArea">
-      <widget class="Gtk.HButtonBox" id="dialog1_ActionArea">
-        <property name="MemberName" />
-        <property name="Spacing">10</property>
-        <property name="BorderWidth">5</property>
-        <property name="Size">2</property>
-        <property name="LayoutStyle">End</property>
         <child>
-          <widget class="Gtk.Button" id="buttonCancel">
+          <widget class="Gtk.Button" id="buttonRun">
             <property name="MemberName" />
-            <property name="CanDefault">True</property>
+            <property name="Sensitive">False</property>
             <property name="CanFocus">True</property>
-            <property name="UseStock">True</property>
-            <property name="Type">StockItem</property>
-            <property name="StockId">gtk-cancel</property>
-            <property name="ResponseId">-6</property>
-            <property name="label">gtk-cancel</property>
+            <property name="Type">TextOnly</property>
+            <property name="Label" translatable="yes">Сформировать отчет</property>
+            <property name="UseUnderline">True</property>
+            <signal name="Clicked" handler="OnButtonRunClicked" />
           </widget>
           <packing>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Button" id="buttonOk">
-            <property name="MemberName" />
-            <property name="CanDefault">True</property>
-            <property name="CanFocus">True</property>
-            <property name="UseStock">True</property>
-            <property name="Type">StockItem</property>
-            <property name="StockId">gtk-ok</property>
-            <property name="ResponseId">-5</property>
-            <signal name="Clicked" handler="OnButtonOkClicked" />
-            <property name="label">gtk-ok</property>
-          </widget>
-          <packing>
+            <property name="PackType">End</property>
             <property name="Position">1</property>
+            <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
           </packing>
@@ -5424,13 +5319,9 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="workwear.QuarterRequestSheetDlg" design-size="290 186">
+  <widget class="Gtk.Bin" id="workwear.QuarterRequestSheetDlg" design-size="206 186">
     <property name="MemberName" />
-    <property name="Title" translatable="yes">Формирование заявки</property>
-    <property name="WindowPosition">CenterOnParent</property>
-    <property name="Buttons">2</property>
-    <property name="HelpButton">False</property>
-    <child internal-child="VBox">
+    <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
         <property name="MemberName" />
         <property name="BorderWidth">2</property>
@@ -5441,7 +5332,6 @@
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
-            <property name="BorderWidth">39</property>
             <child>
               <widget class="Gamma.Widgets.ySpecComboBox" id="comboQuarter">
                 <property name="MemberName" />
@@ -5562,45 +5452,18 @@
             <property name="Fill">False</property>
           </packing>
         </child>
-      </widget>
-    </child>
-    <child internal-child="ActionArea">
-      <widget class="Gtk.HButtonBox" id="dialog1_ActionArea">
-        <property name="MemberName" />
-        <property name="Spacing">10</property>
-        <property name="BorderWidth">5</property>
-        <property name="Size">2</property>
-        <property name="LayoutStyle">End</property>
         <child>
-          <widget class="Gtk.Button" id="buttonCancel">
+          <widget class="Gtk.Button" id="buttonRun">
             <property name="MemberName" />
-            <property name="CanDefault">True</property>
             <property name="CanFocus">True</property>
-            <property name="UseStock">True</property>
-            <property name="Type">StockItem</property>
-            <property name="StockId">gtk-cancel</property>
-            <property name="ResponseId">-6</property>
-            <property name="label">gtk-cancel</property>
-          </widget>
-          <packing>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Button" id="buttonOk">
-            <property name="MemberName" />
-            <property name="CanDefault">True</property>
-            <property name="CanFocus">True</property>
-            <property name="UseStock">True</property>
-            <property name="Type">StockItem</property>
-            <property name="StockId">gtk-ok</property>
-            <property name="ResponseId">-5</property>
-            <signal name="Clicked" handler="OnButtonOkClicked" />
-            <property name="label">gtk-ok</property>
+            <property name="Type">TextOnly</property>
+            <property name="Label" translatable="yes">Сформировать отчет</property>
+            <property name="UseUnderline">True</property>
+            <signal name="Clicked" handler="OnButtonRunClicked" />
           </widget>
           <packing>
             <property name="Position">1</property>
+            <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
           </packing>

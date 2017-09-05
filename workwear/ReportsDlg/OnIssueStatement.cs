@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using NHibernate.Criterion;
 using QSOrmProject;
 using QSProjectsLib;
+using QSReport;
 using workwear.Domain;
 
 namespace workwear
 {
-    public partial class OnIssueStatement : FakeTDIDialogGtkDialogBase
+	public partial class OnIssueStatement : Gtk.Bin, IParametersWidget
 	{
+		public string Title => "Ведомость на выдачу";
+
 		public OnIssueStatement ()
 		{
 			this.Build ();
@@ -50,24 +53,33 @@ namespace workwear
             entryreferenceFacility.SubjectType = typeof(Facility);
 		}
 
-		protected void OnButtonOkClicked (object sender, EventArgs e)
-		{
-            DateTime startDate, endDate;
-            if(radioPeriodMonth.Active)
-            {
-                startDate = new DateTime(int.Parse(ylistcomboYear.ActiveText), ylistcomboMonth.Active + 1, 1);
-                endDate = new DateTime(int.Parse(ylistcomboYear.ActiveText), ylistcomboMonth.Active + 2, 1).AddDays(-1);
-            }
-            else{
-                startDate = new DateTime(int.Parse(ylistcomboYear1.ActiveText), ylistcomboMonth1.Active + 1, 1);
-                endDate = new DateTime(int.Parse(ylistcomboYear2.ActiveText), ylistcomboMonth2.Active + 2, 1).AddDays(-1);
-		    }
+		public event EventHandler<LoadReportEventArgs> LoadReport;
 
-            string param = String.Format("start_date={0}&end_date={1}&facility={2}", 
-                                         startDate.ToString("O").Substring(0, 10),
-                                         endDate.ToString("O").Substring(0, 10),
-                                         entryreferenceFacility.GetSubject<Facility>()?.Id ?? -1) ;
-			ViewReportExt.Run("MonthIssueSheet", param);
+		private ReportInfo GetReportInfo()
+		{
+			DateTime startDate, endDate;
+			if (radioPeriodMonth.Active)
+			{
+				startDate = new DateTime(int.Parse(ylistcomboYear.ActiveText), ylistcomboMonth.Active + 1, 1);
+				endDate = new DateTime(int.Parse(ylistcomboYear.ActiveText), ylistcomboMonth.Active + 2, 1).AddDays(-1);
+			}
+			else
+			{
+				startDate = new DateTime(int.Parse(ylistcomboYear1.ActiveText), ylistcomboMonth1.Active + 1, 1);
+				endDate = new DateTime(int.Parse(ylistcomboYear2.ActiveText), ylistcomboMonth2.Active + 2, 1).AddDays(-1);
+			}
+
+			return new ReportInfo
+			{
+				Identifier = "MonthIssueSheet",
+				Parameters = new Dictionary<string, object>
+				{
+					{ "start_date", startDate.ToString("O").Substring(0, 10) },
+					{ "end_date", endDate.ToString("O").Substring(0, 10) },
+					{ "facility", entryreferenceFacility.GetSubject<Facility>()?.Id ?? -1 },
+					{"ShowSignature", true}
+				}
+			};
 		}
 
         protected void OnRadioPeriodMonthToggled(object sender, EventArgs e)
@@ -91,7 +103,7 @@ namespace workwear
         private void CheckPeriod()
         {
             if(!radioPeriodMultiMonth.Active){
-                buttonOk.Sensitive = true;
+				buttonRun.Sensitive = true;
                 return;
             }
 
@@ -103,7 +115,7 @@ namespace workwear
             else{
                 invalid = ylistcomboYear1.Active > ylistcomboYear2.Active;
             }
-            buttonOk.Sensitive = !invalid;
+			buttonRun.Sensitive = !invalid;
         }
 
         protected void OnYlistcomboMonth1Changed(object sender, EventArgs e)
@@ -111,6 +123,13 @@ namespace workwear
             CheckPeriod();
         }
 
-    }
+		protected void OnButtonRunClicked(object sender, EventArgs e)
+		{
+			if (LoadReport != null)
+			{
+				LoadReport(this, new LoadReportEventArgs(GetReportInfo(), true));
+			}
+		}
+	}
 }
 
