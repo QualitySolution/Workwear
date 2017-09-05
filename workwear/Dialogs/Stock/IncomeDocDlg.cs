@@ -10,7 +10,7 @@ using workwear.Repository;
 
 namespace workwear
 {
-	public partial class IncomeDocDlg : FakeTDIEntityGtkDialogBase<Income>
+	public partial class IncomeDocDlg : OrmGtkDialogBase<Income>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -66,12 +66,6 @@ namespace workwear
 			ItemsTable.IncomeDoc = Entity;
 		}			
 
-		protected void OnButtonOkClicked (object sender, EventArgs e)
-		{
-			if(Save ())
-				Respond (Gtk.ResponseType.Ok);
-		}
-
 		public override bool Save()
 		{
 			logger.Info ("Запись документа...");
@@ -98,7 +92,7 @@ namespace workwear
 					UoWGeneric.Commit ();
 				}
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog (this, "Не удалось записать документ.", logger, ex);
+				QSMain.ErrorMessageWithLog ("Не удалось записать документ.", logger, ex);
 				return false;
 			}
 			logger.Info ("Ok");
@@ -117,13 +111,13 @@ namespace workwear
 			switch (Entity.Operation)
 			{
 			case IncomeOperations.Enter:
-				this.Title = "Новая приходная накладная";
+					TabName = "Новая приходная накладная";
 				break;
 			case IncomeOperations.Return:
-				this.Title = "Новый возврат от работника";
+					TabName = "Новый возврат от работника";
 				break;
 			case IncomeOperations.Object:
-				this.Title = "Новый возврат c объекта";
+					TabName = "Новый возврат c объекта";
 				break;
 			}
 

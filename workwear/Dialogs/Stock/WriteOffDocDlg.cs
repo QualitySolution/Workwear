@@ -9,7 +9,7 @@ using workwear.Repository;
 
 namespace workwear
 {
-	public partial class WriteOffDocDlg : FakeTDIEntityGtkDialogBase<Writeoff>
+	public partial class WriteOffDocDlg : OrmGtkDialogBase<Writeoff>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -82,17 +82,11 @@ namespace workwear
 					UoWGeneric.Commit ();
 				}
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog (this, "Не удалось записать документ.", logger, ex);
+				QSMain.ErrorMessageWithLog ("Не удалось записать документ.", logger, ex);
 				return false;
 			}
 			logger.Info ("Ok");
 			return true;
-		}
-
-		protected void OnButtonOkClicked (object sender, EventArgs e)
-		{
-			if(Save ())
-				Respond (Gtk.ResponseType.Ok);
 		}
 	}
 }

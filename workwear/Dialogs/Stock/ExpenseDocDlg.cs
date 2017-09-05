@@ -11,7 +11,7 @@ using workwear.Repository;
 
 namespace workwear
 {
-	public partial class ExpenseDocDlg : FakeTDIEntityGtkDialogBase<Expense>
+	public partial class ExpenseDocDlg : OrmGtkDialogBase<Expense>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -80,12 +80,6 @@ namespace workwear
 			ItemsTable.ExpenceDoc = Entity;
 		}			
 
-		protected void OnButtonOkClicked (object sender, EventArgs e)
-		{
-			if(Save ())
-				Respond (Gtk.ResponseType.Ok);
-		}
-
 		public override bool Save()
 		{
 			logger.Info ("Запись документа...");
@@ -113,7 +107,7 @@ namespace workwear
 					UoWGeneric.Commit ();
 				}
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog (this, "Не удалось записать документ.", logger, ex);
+				QSMain.ErrorMessageWithLog ("Не удалось записать документ.", logger, ex);
 				return false;
 			}
 			logger.Info ("Ok");

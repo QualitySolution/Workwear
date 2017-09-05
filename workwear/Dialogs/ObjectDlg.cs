@@ -344,11 +344,8 @@ namespace workwear
 			SaveIfPropertyChanged();
 			Facility obj = UoW.GetById<Facility>(Itemid);
 			ExpenseDocDlg winExpense = new ExpenseDocDlg(obj);
-			winExpense.Show();
-			int result = (int) winExpense.Run();
-			winExpense.Destroy();
-			if(result == (int) ResponseType.Ok)
-				UpdateProperty();
+			winExpense.EntitySaved += (s, ea) => UpdateProperty();
+			OpenTab(winExpense);
 		}
 
 		protected void OnButtonReturnClicked(object sender, EventArgs e)
@@ -356,11 +353,8 @@ namespace workwear
 			SaveIfPropertyChanged();
 			Facility obj = UoW.GetById<Facility>(Itemid);
 			IncomeDocDlg winIncome = new IncomeDocDlg(obj);
-			winIncome.Show();
-			int result = (int) winIncome.Run();
-			winIncome.Destroy();
-			if(result == (int) ResponseType.Ok)
-				UpdateProperty();
+			winIncome.EntitySaved += (s, ea) => UpdateProperty();
+			OpenTab(winIncome);
 		}
 
 		protected void OnButtonWriteOffClicked(object sender, EventArgs e)
@@ -368,11 +362,8 @@ namespace workwear
 			SaveIfPropertyChanged();
 			Facility obj = UoW.GetById<Facility>(Itemid);
 			WriteOffDocDlg winWriteOff = new WriteOffDocDlg(obj);
-			winWriteOff.Show();
-			int result = (int) winWriteOff.Run();
-			winWriteOff.Destroy();
-			if(result == (int) ResponseType.Ok)
-				UpdateProperty();
+			winWriteOff.EntitySaved += (s, ea) => UpdateProperty();
+			OpenTab(winWriteOff);
 		}
 
 		private void SaveIfPropertyChanged()

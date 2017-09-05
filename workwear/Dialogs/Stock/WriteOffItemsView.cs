@@ -48,6 +48,7 @@ namespace workwear
 				.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
 				.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
+				.AddColumn("")
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 		}

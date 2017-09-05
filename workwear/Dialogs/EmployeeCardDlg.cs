@@ -320,43 +320,34 @@ namespace workwear
 		protected void OnButtonGiveWearClicked (object sender, EventArgs e)
 		{
 			ExpenseDocDlg winExpense = new ExpenseDocDlg (Entity);
-			winExpense.Show ();
-			int result = winExpense.Run ();
-			winExpense.Destroy ();
-			if(result == (int)ResponseType.Ok)
-			{
-				RefreshWorkItems ();
-				UpdateMovements ();
-				UpdateListedItems ();
-			}
+			winExpense.EntitySaved += delegate {
+				RefreshWorkItems();
+				UpdateMovements();
+				UpdateListedItems();
+			};
+			OpenTab(winExpense);
 		}
 
 		protected void OnButtonReturnWearClicked (object sender, EventArgs e)
 		{
 			IncomeDocDlg winIncome = new IncomeDocDlg (Entity);
-			winIncome.Show ();
-			int result = winIncome.Run ();
-			winIncome.Destroy ();
-			if(result == (int)ResponseType.Ok)
-			{
-				RefreshWorkItems ();
-				UpdateMovements ();
-				UpdateListedItems ();
-			}
+			winIncome.EntitySaved += delegate {
+				RefreshWorkItems();
+				UpdateMovements();
+				UpdateListedItems();
+			};
+			OpenTab(winIncome);
 		}
 
 		protected void OnButtonWriteOffWearClicked (object sender, EventArgs e)
 		{
 			WriteOffDocDlg winWriteOff = new WriteOffDocDlg (Entity);
-			winWriteOff.Show ();
-			int result = winWriteOff.Run ();
-			winWriteOff.Destroy ();
-			if(result == (int)ResponseType.Ok)
-			{
-				RefreshWorkItems ();
-				UpdateMovements ();
-				UpdateListedItems ();
-			}
+			winWriteOff.EntitySaved += delegate {
+				RefreshWorkItems();
+				UpdateMovements();
+				UpdateListedItems();
+			};
+			OpenTab(winWriteOff);
 		}
 
 		protected void OnButtonPrintClicked (object sender, EventArgs e)
@@ -596,15 +587,12 @@ namespace workwear
 			}
 
 			ExpenseDocDlg winExpense = new ExpenseDocDlg (Entity, addItems);
-			winExpense.Show ();
-			int result = winExpense.Run ();
-			winExpense.Destroy ();
-			if(result == (int)ResponseType.Ok)
-			{
-				RefreshWorkItems ();
-				UpdateMovements ();
-				UpdateListedItems ();
-			}
+			winExpense.EntitySaved += delegate {
+				RefreshWorkItems();
+				UpdateMovements();
+				UpdateListedItems();
+			};
+			OpenTab(winExpense);
 		}
 
 		protected void OnButtonPickNomenclatureClicked (object sender, EventArgs e)

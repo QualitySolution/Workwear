@@ -40,6 +40,9 @@ namespace workwear
 					.SearchColumn ("Наименование", i => i.Name)
 					.SearchColumn ("Размер", i => i.Size)
 					.SearchColumn ("Рост", i => i.WearGrowth).OrderAsc (i => i.Name).End (),
+				OrmObjectMapping<Income>.Create().Dialog<IncomeDocDlg>(),
+				OrmObjectMapping<Expense>.Create().Dialog<ExpenseDocDlg>(),
+				OrmObjectMapping<Writeoff>.Create().Dialog<WriteOffDocDlg>(),
 			};
 		}
 	}

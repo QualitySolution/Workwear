@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NHibernate.Transform;
@@ -63,6 +64,7 @@ namespace workwear.Representations
 				.TransformUsing(Transformers.AliasToBean<StockDocumentsVMNode>())
 				.List<StockDocumentsVMNode>();
 
+				incomeList.ToList().ForEach(x => x.DocTypeEnum = StokDocumentType.IncomeDoc);
 				result.AddRange(incomeList);
 			}
 
@@ -91,6 +93,7 @@ namespace workwear.Representations
 				.TransformUsing(Transformers.AliasToBean<StockDocumentsVMNode>())
 				.List<StockDocumentsVMNode>();
 
+				expenseList.ToList().ForEach(x => x.DocTypeEnum = StokDocumentType.ExpenseDoc);
 				result.AddRange(expenseList);
 			}
 
@@ -112,6 +115,7 @@ namespace workwear.Representations
 				.TransformUsing(Transformers.AliasToBean<StockDocumentsVMNode>())
 				.List<StockDocumentsVMNode>();
 
+				writeoffList.ToList().ForEach(x => x.DocTypeEnum = StokDocumentType.WriteoffDoc);
 				result.AddRange(writeoffList);
 			}
 

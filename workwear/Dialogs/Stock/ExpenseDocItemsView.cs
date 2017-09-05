@@ -82,6 +82,7 @@ namespace workwear
 					.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				.AddColumn ("Расположение").AddComboRenderer (e => e.FacilityPlace).Editing()
 					.SetDisplayFunc(x => (x as FacilityPlace) != null ? (x as FacilityPlace).Name : String.Empty)
+				.AddColumn("")
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 		}
