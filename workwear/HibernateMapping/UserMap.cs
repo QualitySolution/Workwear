@@ -1,5 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
-using workwear.Domain;
+using QSOrmProject.Domain;
 
 namespace workwear.HMap
 {

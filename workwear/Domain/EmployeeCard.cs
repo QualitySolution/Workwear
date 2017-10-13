@@ -5,6 +5,7 @@ using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using QSOrmProject;
+using QSOrmProject.Domain;
 using QSProjectsLib;
 using workwear.Measurements;
 

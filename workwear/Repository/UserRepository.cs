@@ -1,6 +1,5 @@
-﻿using System;
-using workwear.Domain;
-using QSOrmProject;
+﻿using QSOrmProject;
+using QSOrmProject.Domain;
 
 namespace workwear.Repository
 {

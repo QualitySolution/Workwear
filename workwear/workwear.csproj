@@ -93,7 +93,6 @@
     <Compile Include="Domain\EmployeeCard.cs" />
     <Compile Include="Domain\Post.cs" />
     <Compile Include="Domain\Leader.cs" />
-    <Compile Include="Domain\User.cs" />
     <Compile Include="Dialogs\ObjectDlg.cs" />
     <Compile Include="Domain\Facility.cs" />
     <Compile Include="HibernateMapping\EmployeeCardMap.cs" />
@@ -255,7 +254,6 @@
     <Folder Include="Reports\" />
     <Folder Include="Updates\" />
     <Folder Include="viewDTOs\" />
-    <Folder Include="ViewWidgets\" />
     <Folder Include="Domain\" />
     <Folder Include="Dialogs\" />
     <Folder Include="HibernateMapping\" />

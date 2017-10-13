@@ -5,6 +5,7 @@ using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NHibernate.Transform;
 using QSOrmProject;
+using QSOrmProject.Domain;
 using QSOrmProject.RepresentationModel;
 using QSProjectsLib;
 using workwear.Domain;

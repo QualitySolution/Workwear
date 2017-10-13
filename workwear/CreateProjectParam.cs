@@ -1,7 +1,6 @@
-﻿using System;
-using QSBusinessCommon;
-using QSBusinessCommon.Domain;
+﻿using QSBusinessCommon.Domain;
 using QSOrmProject;
+using QSOrmProject.Domain;
 using QSOrmProject.DomainMapping;
 using QSProjectsLib;
 using workwear.Domain;
