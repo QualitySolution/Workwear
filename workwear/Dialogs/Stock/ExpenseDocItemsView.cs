@@ -51,7 +51,7 @@ namespace workwear
 			if(e.PropertyName == ExpenceDoc.GetPropertyName(x => x.Facility))
 			{
 				var placeColumn = ytreeItems.ColumnsConfig.ConfiguredColumns.FirstOrDefault(x => x.Title == "Расположение");
-				var placeRenderer = placeColumn.ConfiguredRenderers.First() as ComboRendererMapping<ExpenseItem>;
+				var placeRenderer = placeColumn.ConfiguredRenderers.First() as ComboRendererMapping<ExpenseItem, FacilityPlace>;
 				if(ExpenceDoc.Facility != null)
 				{
 					placeRenderer.FillItems(ExpenceDoc.Facility.Places);
