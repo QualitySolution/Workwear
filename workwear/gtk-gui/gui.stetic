@@ -19,6 +19,28 @@
     <widget-library name="../bin/Debug/workwear.exe" internal="true" />
     <widget-library name="../../../QSProjects/QSReport/bin/Debug/QSReport.dll" />
   </import>
+  <icon-factory>
+    <icon-set id="objects">
+      <source>
+        <property name="Image">resource:workwear.icon.toolbar.go-home.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="employees">
+      <source>
+        <property name="Image">resource:workwear.icon.toolbar.employees.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="store">
+      <source>
+        <property name="Image">resource:workwear.icon.toolbar.store.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="store-balance">
+      <source>
+        <property name="Image">resource:workwear.icon.toolbar.store-balance.png</property>
+      </source>
+    </icon-set>
+  </icon-factory>
   <widget class="Gtk.Bin" id="workwear.ItemTypeDlg" design-size="441 266">
     <property name="MemberName" />
     <child>
@@ -4280,6 +4302,30 @@
         <property name="ShortLabel" translatable="yes">Карточки сотрудников</property>
         <signal name="Activated" handler="OnActionEmployeesActivated" />
       </action>
+      <action id="ActionBarObjects">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Объекты</property>
+        <property name="ShortLabel" translatable="yes">Объекты</property>
+        <property name="StockId">objects</property>
+      </action>
+      <action id="ActionBarEmployees">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Сотрудники</property>
+        <property name="ShortLabel" translatable="yes">Сотрудники</property>
+        <property name="StockId">employees</property>
+      </action>
+      <action id="ActionBarStore">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Склад</property>
+        <property name="ShortLabel" translatable="yes">Склад</property>
+        <property name="StockId">store</property>
+      </action>
+      <action id="ActionBarStoreBalance">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Остатки</property>
+        <property name="ShortLabel" translatable="yes">Остатки</property>
+        <property name="StockId">store-balance</property>
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -4348,13 +4394,31 @@
           </packing>
         </child>
         <child>
+          <widget class="Gtk.Toolbar" id="toolbarMain">
+            <property name="MemberName" />
+            <property name="ShowArrow">False</property>
+            <node name="toolbarMain" type="Toolbar">
+              <node type="Toolitem" action="ActionBarObjects" />
+              <node type="Toolitem" action="ActionBarEmployees" />
+              <node type="Toolitem" action="ActionBarStore" />
+              <node type="Toolitem" action="ActionBarStoreBalance" />
+            </node>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <widget class="QSTDI.TdiNotebook" id="tdiMain">
             <property name="MemberName" />
             <property name="CurrentPage">0</property>
             <property name="ShowTabs">False</property>
           </widget>
           <packing>
-            <property name="Position">1</property>
+            <property name="Position">2</property>
             <property name="AutoSize">False</property>
           </packing>
         </child>
@@ -4388,7 +4452,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">2</property>
+            <property name="Position">3</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -5114,6 +5178,7 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Label" translatable="yes">на месяц</property>
+                <property name="Active">True</property>
                 <property name="DrawIndicator">True</property>
                 <property name="HasLabel">True</property>
                 <property name="UseUnderline">True</property>

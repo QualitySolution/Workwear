@@ -74,6 +74,10 @@
     <EmbeddedResource Include="Updates\1.2.2.sql" />
     <EmbeddedResource Include="SQLScripts\new-1.2.sql" />
     <EmbeddedResource Include="Updates\1.2.4.sql" />
+    <EmbeddedResource Include="icon\toolbar\store-balance.png" />
+    <EmbeddedResource Include="icon\toolbar\store.png" />
+    <EmbeddedResource Include="icon\toolbar\employees.png" />
+    <EmbeddedResource Include="icon\toolbar\go-home.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -312,10 +316,7 @@
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild">
-            <inheritsSet />
-            <inheritsScope />
-          </DotNetNamingPolicy>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild" />
         </Policies>
       </Properties>
     </MonoDevelop>
