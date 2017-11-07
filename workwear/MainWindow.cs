@@ -333,6 +333,7 @@ public partial class MainWindow : Gtk.Window
 				ActionIconsLarge.Activate();
 				break;
 		}
+		ActionShowBar.Active = CurrentUserSettings.Settings.ShowToolbar;
 	}
 
 	private void ToolBarMode(ToolbarStyle style)
@@ -345,6 +346,22 @@ public partial class MainWindow : Gtk.Window
 		toolbarMain.ToolbarStyle = style;
 		ActionIconsExtraSmall.Sensitive = ActionIconsSmall.Sensitive = ActionIconsMiddle.Sensitive = ActionIconsLarge.Sensitive =
 			style != ToolbarStyle.Text;
+	}
+
+	private void ToolBarShow(bool show)
+	{
+		if (toolbarMain.Visible == show)
+			return;
+		
+		if (CurrentUserSettings.Settings.ShowToolbar != show)
+		{
+			CurrentUserSettings.Settings.ShowToolbar = show;
+			CurrentUserSettings.SaveSettings();
+		}
+		toolbarMain.Visible = show;
+		ActionIconsExtraSmall.Sensitive = ActionIconsSmall.Sensitive = ActionIconsMiddle.Sensitive = ActionIconsLarge.Sensitive =
+			ActionToolBarIconOnly.Sensitive = ActionToolBarTextOnly.Sensitive = ActionToolBarTextAndIcon.Sensitive =
+			show;
 	}
 
 	private void ToolBarMode(IconsSize size)
@@ -411,6 +428,11 @@ public partial class MainWindow : Gtk.Window
 	{
 		if (ActionIconsLarge.Active)
 			ToolBarMode(IconsSize.Large);
+	}
+
+	protected void OnActionShowBarToggled(object sender, EventArgs e)
+	{
+		ToolBarShow(ActionShowBar.Active);
 	}
 
 	#endregion

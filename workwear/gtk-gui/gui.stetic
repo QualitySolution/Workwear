@@ -4337,6 +4337,7 @@
         <property name="ShortLabel" translatable="yes">Отображать</property>
         <property name="DrawAsRadio">False</property>
         <property name="Active">True</property>
+        <signal name="Toggled" handler="OnActionShowBarToggled" />
       </action>
       <action id="ActionToolBarTextOnly">
         <property name="Type">Radio</property>

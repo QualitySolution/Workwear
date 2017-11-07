@@ -250,7 +250,7 @@ public partial class MainWindow
 		this.ActionIconsMiddle.ShortLabel = global::Mono.Unix.Catalog.GetString("Средние иконки");
 		w1.Add(this.ActionIconsMiddle, null);
 		this.ActionIconsLarge = new global::Gtk.RadioAction("ActionIconsLarge", global::Mono.Unix.Catalog.GetString("Большие иконки"), null, null, 0);
-		this.ActionIconsLarge.Group = this.ActionIconsMiddle.Group;
+		this.ActionIconsLarge.Group = this.ActionIconsSmall.Group;
 		this.ActionIconsLarge.ShortLabel = global::Mono.Unix.Catalog.GetString("Большие иконки");
 		w1.Add(this.ActionIconsLarge, null);
 		this.UIManager.InsertActionGroup(w1, 0);
@@ -381,6 +381,7 @@ public partial class MainWindow
 		this.ActionStockBalance.Activated += new global::System.EventHandler(this.OnActionStockBalanceActivated);
 		this.ActionObjects.Activated += new global::System.EventHandler(this.OnActionObjectsActivated);
 		this.ActionEmployees.Activated += new global::System.EventHandler(this.OnActionEmployeesActivated);
+		this.ActionShowBar.Toggled += new global::System.EventHandler(this.OnActionShowBarToggled);
 		this.ActionToolBarTextOnly.Toggled += new global::System.EventHandler(this.OnActionToolBarTextOnlyToggled);
 		this.ActionToolBarIconOnly.Toggled += new global::System.EventHandler(this.OnActionToolBarIconOnlyToggled);
 		this.ActionToolBarTextAndIcon.Toggled += new global::System.EventHandler(this.OnActionToolBarTextAndIconToggled);
