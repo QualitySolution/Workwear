@@ -4268,7 +4268,7 @@
         <property name="ShortLabel" translatable="yes">Справка по невыданному</property>
         <signal name="Activated" handler="OnAction17Activated" />
       </action>
-      <action id="Action20">
+      <action id="Action33">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Вид</property>
         <property name="ShortLabel" translatable="yes">Вид</property>
@@ -4326,6 +4326,88 @@
         <property name="ShortLabel" translatable="yes">Остатки</property>
         <property name="StockId">store-balance</property>
       </action>
+      <action id="Action24">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Панель инструментов</property>
+        <property name="ShortLabel" translatable="yes">Панель инструментов</property>
+      </action>
+      <action id="ActionShowBar">
+        <property name="Type">Toggle</property>
+        <property name="Label" translatable="yes">Отображать</property>
+        <property name="ShortLabel" translatable="yes">Отображать</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">True</property>
+      </action>
+      <action id="ActionToolBarTextOnly">
+        <property name="Type">Radio</property>
+        <property name="Label" translatable="yes">Только текст</property>
+        <property name="ShortLabel" translatable="yes">Только текст</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">False</property>
+        <property name="Value">0</property>
+        <property name="Group">ToolBarMode</property>
+        <signal name="Toggled" handler="OnActionToolBarTextOnlyToggled" />
+      </action>
+      <action id="ActionToolBarIconOnly">
+        <property name="Type">Radio</property>
+        <property name="Label" translatable="yes">Только иконки</property>
+        <property name="ShortLabel" translatable="yes">Только иконки</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">False</property>
+        <property name="Value">0</property>
+        <property name="Group">ToolBarMode</property>
+        <signal name="Toggled" handler="OnActionToolBarIconOnlyToggled" />
+      </action>
+      <action id="ActionToolBarTextAndIcon">
+        <property name="Type">Radio</property>
+        <property name="Label" translatable="yes">Иконки и текст</property>
+        <property name="ShortLabel" translatable="yes">Иконки и текст</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">True</property>
+        <property name="Value">0</property>
+        <property name="Group">ToolBarMode</property>
+        <signal name="Toggled" handler="OnActionToolBarTextAndIconToggled" />
+      </action>
+      <action id="ActionIconsExtraSmall">
+        <property name="Type">Radio</property>
+        <property name="Label" translatable="yes">Очень маленькие иконки</property>
+        <property name="ShortLabel" translatable="yes">Очень маленькие иконки</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">False</property>
+        <property name="Value">0</property>
+        <property name="Group">ToolBarIcons</property>
+        <signal name="Toggled" handler="OnActionIconsExtraSmallToggled" />
+      </action>
+      <action id="ActionIconsSmall">
+        <property name="Type">Radio</property>
+        <property name="Label" translatable="yes">Маленькие иконки</property>
+        <property name="ShortLabel" translatable="yes">Маленькие иконки</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">False</property>
+        <property name="Value">0</property>
+        <property name="Group">ToolBarIcons</property>
+        <signal name="Toggled" handler="OnActionIconsSmallToggled" />
+      </action>
+      <action id="ActionIconsMiddle">
+        <property name="Type">Radio</property>
+        <property name="Label" translatable="yes">Средние иконки</property>
+        <property name="ShortLabel" translatable="yes">Средние иконки</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">True</property>
+        <property name="Value">0</property>
+        <property name="Group">ToolBarIcons</property>
+        <signal name="Toggled" handler="OnActionIconsMiddleToggled" />
+      </action>
+      <action id="ActionIconsLarge">
+        <property name="Type">Radio</property>
+        <property name="Label" translatable="yes">Большие иконки</property>
+        <property name="ShortLabel" translatable="yes">Большие иконки</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">False</property>
+        <property name="Value">0</property>
+        <property name="Group">ToolBarIcons</property>
+        <signal name="Toggled" handler="OnActionIconsLargeToggled" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -4346,7 +4428,20 @@
                 <node type="Separator" />
                 <node type="Menuitem" action="quitAction" />
               </node>
-              <node type="Menu" action="Action20" />
+              <node type="Menu" action="Action33">
+                <node type="Menu" action="Action24">
+                  <node type="Menuitem" action="ActionShowBar" />
+                  <node type="Separator" />
+                  <node type="Menuitem" action="ActionToolBarTextOnly" />
+                  <node type="Menuitem" action="ActionToolBarIconOnly" />
+                  <node type="Menuitem" action="ActionToolBarTextAndIcon" />
+                  <node type="Separator" />
+                  <node type="Menuitem" action="ActionIconsExtraSmall" />
+                  <node type="Menuitem" action="ActionIconsSmall" />
+                  <node type="Menuitem" action="ActionIconsMiddle" />
+                  <node type="Menuitem" action="ActionIconsLarge" />
+                </node>
+              </node>
               <node type="Menu" action="Action21">
                 <node type="Menuitem" action="ActionStockDocs" />
                 <node type="Menuitem" action="ActionStockBalance" />
@@ -4397,6 +4492,8 @@
           <widget class="Gtk.Toolbar" id="toolbarMain">
             <property name="MemberName" />
             <property name="ShowArrow">False</property>
+            <property name="ButtonStyle">Both</property>
+            <property name="IconSize">Dnd</property>
             <node name="toolbarMain" type="Toolbar">
               <node type="Toolitem" action="ActionBarObjects" />
               <node type="Toolitem" action="ActionBarEmployees" />
@@ -5556,7 +5653,6 @@
                 <property name="Label" translatable="yes">Добавить</property>
                 <property name="UseUnderline">True</property>
                 <property name="UseMarkup">False</property>
-                <property name="ItemsEnumName" />
                 <signal name="EnumItemClicked" handler="OnButtonAddEnumItemClicked" />
               </widget>
               <packing>

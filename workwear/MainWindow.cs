@@ -12,7 +12,9 @@ using QSUpdater;
 using workwear;
 using workwear.Domain;
 using workwear.Domain.Stock;
+using workwear.Domain.Users;
 using workwear.JournalViewers;
+using workwear.Tools;
 using workwear.ViewModel;
 
 public partial class MainWindow : Gtk.Window
@@ -76,6 +78,8 @@ public partial class MainWindow : Gtk.Window
 		var newsmenu = new NewsMenuItem();
 		menubar1.Add(newsmenu);
 		newsmenu.LoadFeed();
+
+		ReadUserSettings();
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -108,8 +112,8 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount("MeasurementUnits");
 		tdiMain.OpenTab(OrmReference.GenerateHashName<MeasurementUnits>(),
-		                () => new OrmReference(typeof(MeasurementUnits))
-		               );
+						() => new OrmReference(typeof(MeasurementUnits))
+					   );
 	}
 
 	protected void OnAction8Activated(object sender, EventArgs e)
@@ -297,4 +301,117 @@ public partial class MainWindow : Gtk.Window
 			() => new OrmReference(typeof(Facility))
 		);
 	}
+
+	#region Панель инструментов
+
+	void ReadUserSettings()
+	{
+		switch (CurrentUserSettings.Settings.ToolbarStyle)
+		{
+			case ToolbarStyle.Both:
+				ActionToolBarTextAndIcon.Activate();
+				break;
+			case ToolbarStyle.Icons:
+				ActionToolBarIconOnly.Activate();
+				break;
+			case ToolbarStyle.Text:
+				ActionToolBarTextOnly.Activate();
+				break;
+		}
+		switch (CurrentUserSettings.Settings.ToolBarIconsSize)
+		{
+			case IconsSize.ExtraSmall:
+				ActionIconsExtraSmall.Activate();
+				break;
+			case IconsSize.Small:
+				ActionIconsSmall.Activate();
+				break;
+			case IconsSize.Middle:
+				ActionIconsMiddle.Activate();
+				break;
+			case IconsSize.Large:
+				ActionIconsLarge.Activate();
+				break;
+		}
+	}
+
+	private void ToolBarMode(ToolbarStyle style)
+	{
+		if (CurrentUserSettings.Settings.ToolbarStyle != style)
+		{
+			CurrentUserSettings.Settings.ToolbarStyle = style;
+			CurrentUserSettings.SaveSettings();
+		}
+		toolbarMain.ToolbarStyle = style;
+		ActionIconsExtraSmall.Sensitive = ActionIconsSmall.Sensitive = ActionIconsMiddle.Sensitive = ActionIconsLarge.Sensitive =
+			style != ToolbarStyle.Text;
+	}
+
+	private void ToolBarMode(IconsSize size)
+	{
+		if (CurrentUserSettings.Settings.ToolBarIconsSize != size)
+		{
+			CurrentUserSettings.Settings.ToolBarIconsSize = size;
+			CurrentUserSettings.SaveSettings();
+		}
+		switch (size)
+		{
+			case IconsSize.ExtraSmall:
+				toolbarMain.IconSize = IconSize.SmallToolbar;
+				break;
+			case IconsSize.Small:
+				toolbarMain.IconSize = IconSize.LargeToolbar;
+				break;
+			case IconsSize.Middle:
+				toolbarMain.IconSize = IconSize.Dnd;
+				break;
+			case IconsSize.Large:
+				toolbarMain.IconSize = IconSize.Dialog;
+				break;
+		}
+	}
+
+	protected void OnActionToolBarTextOnlyToggled(object sender, EventArgs e)
+	{
+		if (ActionToolBarTextOnly.Active)
+			ToolBarMode(ToolbarStyle.Text);
+	}
+
+	protected void OnActionToolBarIconOnlyToggled(object sender, EventArgs e)
+	{
+		if (ActionToolBarIconOnly.Active)
+			ToolBarMode(ToolbarStyle.Icons);
+	}
+
+	protected void OnActionToolBarTextAndIconToggled(object sender, EventArgs e)
+	{
+		if (ActionToolBarTextAndIcon.Active)
+			ToolBarMode(ToolbarStyle.Both);
+	}
+
+	protected void OnActionIconsExtraSmallToggled(object sender, EventArgs e)
+	{
+		if (ActionIconsExtraSmall.Active)
+			ToolBarMode(IconsSize.ExtraSmall);
+	}
+
+	protected void OnActionIconsSmallToggled(object sender, EventArgs e)
+	{
+		if (ActionIconsSmall.Active)
+			ToolBarMode(IconsSize.Small);
+	}
+
+	protected void OnActionIconsMiddleToggled(object sender, EventArgs e)
+	{
+		if (ActionIconsMiddle.Active)
+			ToolBarMode(IconsSize.Middle);
+	}
+
+	protected void OnActionIconsLargeToggled(object sender, EventArgs e)
+	{
+		if (ActionIconsLarge.Active)
+			ToolBarMode(IconsSize.Large);
+	}
+
+	#endregion
 }
