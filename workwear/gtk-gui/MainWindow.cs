@@ -381,6 +381,10 @@ public partial class MainWindow
 		this.ActionStockBalance.Activated += new global::System.EventHandler(this.OnActionStockBalanceActivated);
 		this.ActionObjects.Activated += new global::System.EventHandler(this.OnActionObjectsActivated);
 		this.ActionEmployees.Activated += new global::System.EventHandler(this.OnActionEmployeesActivated);
+		this.ActionBarObjects.Activated += new global::System.EventHandler(this.OnActionBarObjectsActivated);
+		this.ActionBarEmployees.Activated += new global::System.EventHandler(this.OnActionBarEmployeesActivated);
+		this.ActionBarStore.Activated += new global::System.EventHandler(this.OnActionBarStoreActivated);
+		this.ActionBarStoreBalance.Activated += new global::System.EventHandler(this.OnActionBarStoreBalanceActivated);
 		this.ActionShowBar.Toggled += new global::System.EventHandler(this.OnActionShowBarToggled);
 		this.ActionToolBarTextOnly.Toggled += new global::System.EventHandler(this.OnActionToolBarTextOnlyToggled);
 		this.ActionToolBarIconOnly.Toggled += new global::System.EventHandler(this.OnActionToolBarIconOnlyToggled);

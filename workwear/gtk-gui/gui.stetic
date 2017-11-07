@@ -4307,24 +4307,28 @@
         <property name="Label" translatable="yes">Объекты</property>
         <property name="ShortLabel" translatable="yes">Объекты</property>
         <property name="StockId">objects</property>
+        <signal name="Activated" handler="OnActionBarObjectsActivated" />
       </action>
       <action id="ActionBarEmployees">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Сотрудники</property>
         <property name="ShortLabel" translatable="yes">Сотрудники</property>
         <property name="StockId">employees</property>
+        <signal name="Activated" handler="OnActionBarEmployeesActivated" />
       </action>
       <action id="ActionBarStore">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Склад</property>
         <property name="ShortLabel" translatable="yes">Склад</property>
         <property name="StockId">store</property>
+        <signal name="Activated" handler="OnActionBarStoreActivated" />
       </action>
       <action id="ActionBarStoreBalance">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Остатки</property>
         <property name="ShortLabel" translatable="yes">Остатки</property>
         <property name="StockId">store-balance</property>
+        <signal name="Activated" handler="OnActionBarStoreBalanceActivated" />
       </action>
       <action id="Action24">
         <property name="Type">Action</property>

@@ -352,7 +352,7 @@ public partial class MainWindow : Gtk.Window
 	{
 		if (toolbarMain.Visible == show)
 			return;
-		
+
 		if (CurrentUserSettings.Settings.ShowToolbar != show)
 		{
 			CurrentUserSettings.Settings.ShowToolbar = show;
@@ -433,6 +433,26 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionShowBarToggled(object sender, EventArgs e)
 	{
 		ToolBarShow(ActionShowBar.Active);
+	}
+
+	protected void OnActionBarObjectsActivated(object sender, EventArgs e)
+	{
+		ActionObjects.Activate();
+	}
+
+	protected void OnActionBarEmployeesActivated(object sender, EventArgs e)
+	{
+		ActionEmployees.Activate();
+	}
+
+	protected void OnActionBarStoreActivated(object sender, EventArgs e)
+	{
+		ActionStockDocs.Activate();
+	}
+
+	protected void OnActionBarStoreBalanceActivated(object sender, EventArgs e)
+	{
+		ActionStockBalance.Activate();
 	}
 
 	#endregion
