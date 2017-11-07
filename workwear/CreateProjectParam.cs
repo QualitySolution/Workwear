@@ -1,10 +1,10 @@
 ﻿using QSBusinessCommon.Domain;
 using QSOrmProject;
 using QSOrmProject.Domain;
-using QSOrmProject.DomainMapping;
 using QSProjectsLib;
 using workwear.Domain;
 using workwear.Domain.Stock;
+using workwear.Domain.Users;
 
 namespace workwear
 {
@@ -37,6 +37,7 @@ namespace workwear
 			OrmMain.AddObjectDescription<EmployeeCard>().Dialog<EmployeeCardDlg>().UseSlider(false).DefaultTableView ().SearchColumn ("Имя", e => e.FullName).End ();
 			//Общее
 			OrmMain.AddObjectDescription<User>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
+			OrmMain.AddObjectDescription<UserSettings>();
 			//Склад
 			OrmMain.AddObjectDescription<Nomenclature>().Dialog<NomenclatureDlg> ().DefaultTableView ()
 					.SearchColumn ("Наименование", i => i.Name)

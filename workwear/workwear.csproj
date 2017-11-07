@@ -103,7 +103,6 @@
     <Compile Include="HibernateMapping\FacilityMap.cs" />
     <Compile Include="HibernateMapping\LeaderMap.cs" />
     <Compile Include="HibernateMapping\PostMap.cs" />
-    <Compile Include="HibernateMapping\UserMap.cs" />
     <Compile Include="CreateProjectParam.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Measurements\SizeStandardConverter.cs" />
@@ -185,6 +184,10 @@
     <Compile Include="Representations\StockDocumentsVM.cs" />
     <Compile Include="JournalFilters\EmployeeFilter.cs" />
     <Compile Include="gtk-gui\workwear.JournalFilters.EmployeeFilter.cs" />
+    <Compile Include="Domain\User\UserSettings.cs" />
+    <Compile Include="HibernateMapping\User\UserMap.cs" />
+    <Compile Include="HibernateMapping\User\UserSettingsMap.cs" />
+    <Compile Include="Tools\CurrentUserSettings.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -269,6 +272,8 @@
     <Folder Include="JournalFilters\" />
     <Folder Include="SQLScripts\" />
     <Folder Include="JournalViewers\" />
+    <Folder Include="Domain\User\" />
+    <Folder Include="HibernateMapping\User\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
