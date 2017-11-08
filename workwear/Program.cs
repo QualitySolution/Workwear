@@ -16,10 +16,22 @@ namespace workwear
 
 		public static void Main (string[] args)
 		{
-			Application.Init ();
-			QSMain.SubscribeToUnhadledExceptions ();
-			QSMain.GuiThread = System.Threading.Thread.CurrentThread;
-			QSSupportLib.MainSupport.Init ();
+			try
+			{
+				WindowStartupFix.WindowsCheck();
+				Application.Init();
+				QSMain.SubscribeToUnhadledExceptions();
+				QSMain.GuiThread = System.Threading.Thread.CurrentThread;
+				QSSupportLib.MainSupport.Init();
+			}
+			catch (Exception falalEx)
+			{
+				if (WindowStartupFix.IsWindows)
+					WindowStartupFix.DisplayWindowsOkCancelMessage(falalEx.ToString(), "Критическая ошибка");
+				else
+					Console.WriteLine(falalEx);
+			}
+
 			CreateProjectParam ();
 			// Создаем окно входа
 			Login LoginDialog = new Login ();
