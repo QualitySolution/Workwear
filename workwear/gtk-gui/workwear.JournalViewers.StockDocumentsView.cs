@@ -46,7 +46,6 @@ namespace workwear.JournalViewers
 			this.buttonAdd.Name = "buttonAdd";
 			this.buttonAdd.UseUnderline = true;
 			this.buttonAdd.UseMarkup = false;
-			this.buttonAdd.ItemsEnumName = "";
 			this.buttonAdd.Label = global::Mono.Unix.Catalog.GetString("Добавить");
 			global::Gtk.Image w1 = new global::Gtk.Image();
 			w1.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
