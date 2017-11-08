@@ -51,6 +51,7 @@ namespace workwear
             ylistcomboMonth2.SelectedItem = DateTime.Today.Month;
 
             entryreferenceFacility.SubjectType = typeof(Facility);
+			entryEmploee.SubjectType = typeof(EmployeeCard);
 		}
 
 		public event EventHandler<LoadReportEventArgs> LoadReport;
@@ -77,6 +78,7 @@ namespace workwear
 					{ "start_date", startDate.ToString("O").Substring(0, 10) },
 					{ "end_date", endDate.ToString("O").Substring(0, 10) },
 					{ "facility", entryreferenceFacility.GetSubject<Facility>()?.Id ?? -1 },
+					{ "employee", entryEmploee.GetSubject<EmployeeCard>()?.Id ?? -1 },
 					{"ShowSignature", true}
 				}
 			};
@@ -129,6 +131,16 @@ namespace workwear
 			{
 				LoadReport(this, new LoadReportEventArgs(GetReportInfo(), true));
 			}
+		}
+
+		protected void OnEntryreferenceFacilityChangedByUser(object sender, EventArgs e)
+		{
+			entryEmploee.Sensitive = entryreferenceFacility.Subject == null;
+		}
+
+		protected void OnEntryEmploeeChangedByUser(object sender, EventArgs e)
+		{
+			entryreferenceFacility.Sensitive = entryEmploee.Subject == null;
 		}
 	}
 }
