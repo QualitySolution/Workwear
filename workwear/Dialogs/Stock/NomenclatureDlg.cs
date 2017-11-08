@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace workwear
 {
-	public partial class NomenclatureDlg : FakeTDIEntityGtkDialogBase<Nomenclature>
+	public partial class NomenclatureDlg : OrmGtkDialogBase<Nomenclature>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -49,27 +49,18 @@ namespace workwear
 			ycomboWearSize.Binding.AddBinding (Entity, e => e.Size, w => w.ActiveText).InitializeFromSource ();
 			ycomboWearGrowth.Binding.AddBinding (Entity, e => e.WearGrowth, w => w.ActiveText).InitializeFromSource ();
 		}
-			
-		protected void OnButtonOkClicked (object sender, EventArgs e)
-		{
-			if (Save ())
-			{
-				OnEntitySaved (true);
-				Respond (Gtk.ResponseType.Ok);
-			}
-		}
 
 		public override bool Save ()
 		{
 			logger.Info ("Запись номенклатуры...");
 			var valid = new QSValidation.QSValidator<Nomenclature> (UoWGeneric.Root);
-			if (valid.RunDlgIfNotValid (this))
+			if (valid.RunDlgIfNotValid ((Gtk.Window)this.Toplevel))
 				return false;
 
 			try {
 				UoWGeneric.Save ();
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog (this, "Не удалось записать номенклатуру.", logger, ex);
+				QSMain.ErrorMessageWithLog ("Не удалось записать номенклатуру.", logger, ex);
 				return false;
 			}
 			logger.Info ("Ok");

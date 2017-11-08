@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using QSProjectsLib;
+using QSReport;
 
 namespace workwear
 {
-	public partial class WearStatement : Gtk.Dialog
+	public partial class WearStatement : Gtk.Bin, IParametersWidget
 	{
 		public WearStatement()
 		{
@@ -12,10 +14,33 @@ namespace workwear
 			comboObject.Active = 0;
 		}
 
-		protected void OnButtonOkClicked(object sender, EventArgs e)
+		public string Title => "Сводная ведомость";
+
+		public event EventHandler<LoadReportEventArgs> LoadReport;
+
+		private ReportInfo GetReportInfo()
 		{
-			string param = String.Format("id={0}", ComboWorks.GetActiveId(comboObject)) ;
-			ViewReportExt.Run("WearStatement", param);
+			return new ReportInfo
+			{
+				Identifier = "WearStatement",
+				Parameters = new Dictionary<string, object>
+				{
+					{ "id", ComboWorks.GetActiveId(comboObject) },
+				}
+			};
+		}
+
+		protected void OnButtonRunClicked(object sender, EventArgs e)
+		{
+			if (LoadReport != null)
+			{
+				LoadReport(this, new LoadReportEventArgs(GetReportInfo(), true));
+			}
+		}
+
+		protected void OnComboObjectChanged(object sender, EventArgs e)
+		{
+			buttonRun.Sensitive = ComboWorks.GetActiveId(comboObject) > 0;
 		}
 	}
 }

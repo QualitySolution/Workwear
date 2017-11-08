@@ -4,6 +4,7 @@
 bin/
 obj/
 packages/*
+
 #Workbench Backup Files
 Base/*.mwb.bak
 

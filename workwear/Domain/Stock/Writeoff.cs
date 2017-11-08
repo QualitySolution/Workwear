@@ -11,29 +11,11 @@ namespace workwear.Domain.Stock
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Masculine,
 		NominativePlural = "акты списания",
 		Nominative = "акт списания")]
-	public class Writeoff : PropertyChangedBase, IDomainObject, IValidatableObject
+	public class Writeoff : StockDocument, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
 		#region Свойства
-
-		public virtual int Id { get; set; }
-
-		DateTime date;
-
-		[Display (Name = "Дата")]
-		public virtual DateTime Date {
-			get { return date; }
-			set { SetField (ref date, value, () => Date); }
-		}
-
-		User createdbyUser;
-
-		[Display (Name = "Карточку создал")]
-		public virtual User CreatedbyUser {
-			get { return createdbyUser; }
-			set { SetField (ref createdbyUser, value, () => CreatedbyUser); }
-		}
 
 		private IList<WriteoffItem> items = new List<WriteoffItem>();
 

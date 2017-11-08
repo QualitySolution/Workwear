@@ -48,6 +48,7 @@ namespace workwear
 				.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
 				.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
+				.AddColumn("")
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 		}
@@ -59,14 +60,12 @@ namespace workwear
 
 		protected void OnButtonAddStoreClicked (object sender, EventArgs e)
 		{
-			var selectFromStockDlg = new ReferenceRepresentation (new ViewModel.StockBalanceVM ());
+			var selectFromStockDlg = new ReferenceRepresentation (new ViewModel.StockBalanceVM (),
+			                                                     "Остатки на складе");
 			selectFromStockDlg.Mode = OrmReferenceMode.MultiSelect;
 			selectFromStockDlg.ObjectSelected += SelectFromStockDlg_ObjectSelected;;
 
-			var dialog = new OneWidgetDialog (selectFromStockDlg);
-			dialog.Show ();
-			dialog.Run ();
-			dialog.Destroy ();
+			OpenSlaveTab(selectFromStockDlg);
 		}
 
 		void SelectFromStockDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)
@@ -90,15 +89,13 @@ namespace workwear
 			if (CurWorker != null)
 				filter.RestrictEmployee = CurWorker;
 
-			var selectFromEmployeeDlg = new ReferenceRepresentation (new ViewModel.EmployeeBalanceVM (filter));
+			var selectFromEmployeeDlg = new ReferenceRepresentation (new ViewModel.EmployeeBalanceVM (filter),
+			                                                        "Выданное сотрудникам");
 			selectFromEmployeeDlg.ShowFilter = CurWorker == null;
 			selectFromEmployeeDlg.Mode = OrmReferenceMode.MultiSelect;
 			selectFromEmployeeDlg.ObjectSelected += SelectFromEmployeeDlg_ObjectSelected;
 
-			var dialog = new OneWidgetDialog (selectFromEmployeeDlg);
-			dialog.Show ();
-			dialog.Run ();
-			dialog.Destroy ();
+			OpenSlaveTab(selectFromEmployeeDlg);
 		}
 
 		protected void OnButtonAddObjectClicked(object sender, EventArgs e)
@@ -107,15 +104,13 @@ namespace workwear
 			if (CurObject != null)
 				filter.RestrictObject = CurObject;
 
-			var selectFromObjectDlg = new ReferenceRepresentation (new ViewModel.ObjectBalanceVM (filter));
+			var selectFromObjectDlg = new ReferenceRepresentation (new ViewModel.ObjectBalanceVM (filter),
+			                                                      "Выданное на объекты");
 			selectFromObjectDlg.ShowFilter = CurObject == null;
 			selectFromObjectDlg.Mode = OrmReferenceMode.MultiSelect;
 			selectFromObjectDlg.ObjectSelected += SelectFromObjectDlg_ObjectSelected;;
 
-			var dialog = new OneWidgetDialog (selectFromObjectDlg);
-			dialog.Show ();
-			dialog.Run ();
-			dialog.Destroy ();
+			OpenSlaveTab(selectFromObjectDlg);
 		}
 
 		void SelectFromObjectDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)

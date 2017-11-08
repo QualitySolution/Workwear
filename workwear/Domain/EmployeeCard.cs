@@ -5,6 +5,7 @@ using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using QSOrmProject;
+using QSOrmProject.Domain;
 using QSProjectsLib;
 using workwear.Measurements;
 
@@ -270,7 +271,6 @@ namespace workwear.Domain
 
 			if (Sex == Sex.None)
 				yield return new ValidationResult ("Пол должен быть указан.", new[] { this.GetPropertyName (o => o.Sex) });
-			
 		}
 
 		#endregion

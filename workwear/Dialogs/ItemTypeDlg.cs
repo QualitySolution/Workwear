@@ -8,7 +8,7 @@ using workwear.Measurements;
 
 namespace workwear
 {
-	public partial class ItemTypeDlg : FakeTDIEntityGtkDialogBase<ItemsType>
+	public partial class ItemTypeDlg : OrmGtkDialogBase<ItemsType>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		
@@ -57,20 +57,11 @@ namespace workwear
 			try {
 				UoWGeneric.Save ();
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog (this, "Не удалось записать тип номенклатуры.", logger, ex);
+				QSMain.ErrorMessageWithLog ("Не удалось записать тип номенклатуры.", logger, ex);
 				return false;
 			}
 			logger.Info ("Ok");
 			return true;
-		}
-
-		protected void OnButtonOkClicked (object sender, EventArgs e)
-		{
-			if (Save ())
-			{
-				OnEntitySaved (true);
-				Respond (Gtk.ResponseType.Ok);
-			}
 		}
 
 		protected void OnYcomboCategoryChanged (object sender, EventArgs e)

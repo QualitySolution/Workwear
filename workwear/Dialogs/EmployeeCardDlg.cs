@@ -18,7 +18,7 @@ using workwear.Repository;
 
 namespace workwear
 {
-	public partial class EmployeeCardDlg : FakeTDIEntityGtkDialogBase<EmployeeCard>
+	public partial class EmployeeCardDlg : OrmGtkDialogBase<EmployeeCard>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
 		List<EmployeeCardItems> listedItems;
@@ -143,8 +143,8 @@ namespace workwear
 			{
 				UoWGeneric = UnitOfWorkFactory.CreateForRoot<EmployeeCard> (id);
 
+				checkAuto.Active = String.IsNullOrWhiteSpace(Entity.CardNumber);
 				entryId.Text = String.IsNullOrWhiteSpace (Entity.CardNumber) ? Entity.Id.ToString () : Entity.CardNumber;
-				checkAuto.Active = String.IsNullOrWhiteSpace (Entity.CardNumber);
 
 				labelUser.LabelProp = Entity.CreatedbyUser != null ? Entity.CreatedbyUser.Name : "не указан";
 
@@ -156,19 +156,12 @@ namespace workwear
 				buttonWriteOffWear.Sensitive = true;
 				buttonPrint.Sensitive = true;
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog (this, "Ошибка получения карточки!", logger, ex);
-				this.Respond (Gtk.ResponseType.Reject);
+				QSMain.ErrorMessageWithLog ("Ошибка получения карточки!", logger, ex);
+				FailInitialize = true;
+				return;
 			}
 
 			ConfigureDlg ();
-			TestCanSave ();
-		}
-
-		protected void TestCanSave ()
-		{
-			//bool Nameok = entryName.Text != "";
-			bool Numberok = checkAuto.Active || (!String.IsNullOrWhiteSpace(entryId.Text) && entryId.Text != "авто") ;
-			buttonOk.Sensitive = Numberok;
 		}
 
 		public override bool Save()
@@ -181,19 +174,13 @@ namespace workwear
 			try {
 				UoWGeneric.Save ();
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog (this, "Не удалось записать сотрудника.", logger, ex);
+				QSMain.ErrorMessageWithLog ("Не удалось записать сотрудника.", logger, ex);
 				return false;
 			}
 			notebook1.GetNthPage (2).Visible = true;
 			notebook1.GetNthPage (3).Visible = true;
 			logger.Info ("Ok");
 			return true;
-		}
-
-		protected void OnButtonOkClicked (object sender, EventArgs e)
-		{
-			if(Save ())
-				Respond (Gtk.ResponseType.Ok);
 		}
 
 		private void UpdateMovements ()
@@ -273,7 +260,7 @@ namespace workwear
 				treeviewMovements.ItemsDataSource = Movements;
 				logger.Info ("Ok");
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog(this, "Ошибка получения движений по работнику!", logger, ex);
+				QSMain.ErrorMessageWithLog("Ошибка получения движений по работнику!", logger, ex);
 			}
 		}
 
@@ -326,56 +313,60 @@ namespace workwear
 				ytreeListedItems.ItemsDataSource = listedItems;
 				logger.Info ("Ok");
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog(this, "Ошибка получения числящегося за сотрудником!", logger, ex);
+				QSMain.ErrorMessageWithLog("Ошибка получения числящегося за сотрудником!", logger, ex);
 			}
 		}
 
 		protected void OnButtonGiveWearClicked (object sender, EventArgs e)
 		{
 			ExpenseDocDlg winExpense = new ExpenseDocDlg (Entity);
-			winExpense.Show ();
-			int result = winExpense.Run ();
-			winExpense.Destroy ();
-			if(result == (int)ResponseType.Ok)
-			{
-				RefreshWorkItems ();
-				UpdateMovements ();
-				UpdateListedItems ();
-			}
+			winExpense.EntitySaved += delegate {
+				RefreshWorkItems();
+				UpdateMovements();
+				UpdateListedItems();
+			};
+			OpenTab(winExpense);
 		}
 
 		protected void OnButtonReturnWearClicked (object sender, EventArgs e)
 		{
 			IncomeDocDlg winIncome = new IncomeDocDlg (Entity);
-			winIncome.Show ();
-			int result = winIncome.Run ();
-			winIncome.Destroy ();
-			if(result == (int)ResponseType.Ok)
-			{
-				RefreshWorkItems ();
-				UpdateMovements ();
-				UpdateListedItems ();
-			}
+			winIncome.EntitySaved += delegate {
+				RefreshWorkItems();
+				UpdateMovements();
+				UpdateListedItems();
+			};
+			OpenTab(winIncome);
 		}
 
 		protected void OnButtonWriteOffWearClicked (object sender, EventArgs e)
 		{
 			WriteOffDocDlg winWriteOff = new WriteOffDocDlg (Entity);
-			winWriteOff.Show ();
-			int result = winWriteOff.Run ();
-			winWriteOff.Destroy ();
-			if(result == (int)ResponseType.Ok)
-			{
-				RefreshWorkItems ();
-				UpdateMovements ();
-				UpdateListedItems ();
-			}
+			winWriteOff.EntitySaved += delegate {
+				RefreshWorkItems();
+				UpdateMovements();
+				UpdateListedItems();
+			};
+			OpenTab(winWriteOff);
 		}
 
 		protected void OnButtonPrintClicked (object sender, EventArgs e)
 		{
-			string param = String.Format ("id={0}", Entity.Id);
-			ViewReportExt.Run ("WearCard", param);
+			if (UoWGeneric.HasChanges && CommonDialogs.SaveBeforePrint(typeof(EmployeeCard), "бумажной версии"))
+				Save();
+
+			var reportInfo = new QSReport.ReportInfo
+			{
+				Title = String.Format("Карточка {0}", Entity.ShortName),
+				Identifier = "WearCard",
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id }
+				}
+			};
+
+			TabParent.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
+			                  () => new QSReport.ReportViewDlg(reportInfo)
+			                 );
 		}
 
 		protected void OnCheckAutoToggled (object sender, EventArgs e)
@@ -383,13 +374,11 @@ namespace workwear
 			entryId.Sensitive = !checkAuto.Active;
 			if (checkAuto.Active)
 				entryId.Text = Entity.Id.ToString ();
-			TestCanSave();
 		}
 
 		protected void OnEntryIdChanged(object sender, EventArgs e)
 		{
-			Entity.CardNumber = checkAuto.Active ? entryId.Text : null;
-			TestCanSave();
+			Entity.CardNumber = checkAuto.Active ? null: entryId.Text;
 		}
 
 		protected void OnNotebook1SwitchPage (object o, SwitchPageArgs args)
@@ -424,7 +413,7 @@ namespace workwear
 		{
 			FileChooserDialog fc =
 				new FileChooserDialog ("Укажите файл для сохранения фотографии",
-					(Gtk.Window)this,
+				                       (Gtk.Window)this.Toplevel,
 					FileChooserAction.Save,
 					"Отмена", ResponseType.Cancel,
 					"Сохранить", ResponseType.Accept);
@@ -442,7 +431,7 @@ namespace workwear
 		protected void OnButtonLoadPhotoClicked (object sender, EventArgs e)
 		{
 			FileChooserDialog Chooser = new FileChooserDialog ("Выберите фото для загрузки...", 
-				(Gtk.Window)this,
+			                                                   (Gtk.Window)this.Toplevel,
 				FileChooserAction.Open,
 				"Отмена", ResponseType.Cancel,
 				"Загрузить", ResponseType.Accept);
@@ -544,10 +533,7 @@ namespace workwear
 			var refWin = new ReferenceRepresentation (new workwear.ViewModel.NormVM ());
 			refWin.Mode = OrmReferenceMode.Select;
 			refWin.ObjectSelected += RefWin_ObjectSelected;
-			var dialog = new OneWidgetDialog (refWin);
-			dialog.Show ();
-			dialog.Run ();
-			dialog.Destroy ();
+			OpenSlaveTab(refWin);
 		}
 
 		void RefWin_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)
@@ -601,15 +587,12 @@ namespace workwear
 			}
 
 			ExpenseDocDlg winExpense = new ExpenseDocDlg (Entity, addItems);
-			winExpense.Show ();
-			int result = winExpense.Run ();
-			winExpense.Destroy ();
-			if(result == (int)ResponseType.Ok)
-			{
-				RefreshWorkItems ();
-				UpdateMovements ();
-				UpdateListedItems ();
-			}
+			winExpense.EntitySaved += delegate {
+				RefreshWorkItems();
+				UpdateMovements();
+				UpdateListedItems();
+			};
+			OpenTab(winExpense);
 		}
 
 		protected void OnButtonPickNomenclatureClicked (object sender, EventArgs e)

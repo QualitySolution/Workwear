@@ -1,30 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Gamma.ColumnConfig;
 using Gamma.GtkWidgets;
-using NHibernate;
 using NHibernate.Transform;
 using QSOrmProject;
 using QSOrmProject.RepresentationModel;
 using workwear.Domain;
+using workwear.JournalFilters;
 
 namespace workwear.ViewModel
 {
 	public class EmployeesVM : RepresentationModelEntityBase<EmployeeCard, EmployeesVMNode>
 	{
-		#region IRepresentationModel implementation
-
-		bool onlyWorking = true;
-
-		public bool OnlyWorking {
-			set{
-				if (onlyWorking == value)
-					return;
-				onlyWorking = value;
-				UpdateNodes();
+		public EmployeeFilter Filter
+		{
+			get
+			{
+				return RepresentationFilter as EmployeeFilter;
+			}
+			set
+			{
+				RepresentationFilter = (IRepresentationFilter)value;
 			}
 		}
+
+		#region IRepresentationModel implementation
 
 		public override void UpdateNodes ()
 		{
@@ -35,7 +35,7 @@ namespace workwear.ViewModel
 			EmployeeCard employeeAlias = null;
 
 			var employees = UoW.Session.QueryOver<EmployeeCard> (() => employeeAlias);
-			if(onlyWorking)
+			if (Filter.RestrictOnlyWork)
 				employees.Where(x => x.DismissDate == null);
 
 			var employeesList = employees
@@ -59,7 +59,7 @@ namespace workwear.ViewModel
 		}
 
 		IColumnsConfig treeViewConfig = ColumnsConfigFactory.Create<EmployeesVMNode>()
-			.AddColumn ("Номер").AddTextRenderer (node => node.CardNumber)
+			.AddColumn ("Номер").AddTextRenderer (node => node.CardNumberText)
 			.AddColumn ("Табельный №").AddTextRenderer (node => node.PersonnelNumber)
 			.AddColumn ("Ф.И.О.").AddTextRenderer (node => node.FIO)
 			.AddColumn ("Должность").AddTextRenderer (node => node.Post)
@@ -84,7 +84,7 @@ namespace workwear.ViewModel
 
 		public EmployeesVM () : this(UnitOfWorkFactory.CreateWithoutRoot ())
 		{
-			
+			CreateRepresentationFilter = () => new EmployeeFilter(UoW);
 		}
 
 		public EmployeesVM (IUnitOfWork uow) : base ()
@@ -97,9 +97,13 @@ namespace workwear.ViewModel
 	{
 		public int Id { get; set; }
 
+		public string CardNumber { get; set; }
+
 		[UseForSearch]
 		[SearchHighlight]
-		public string CardNumber { get; set; }
+		public string CardNumberText { get{
+				return CardNumber ?? Id.ToString();
+			} }
 
 		[UseForSearch]
 		[SearchHighlight]

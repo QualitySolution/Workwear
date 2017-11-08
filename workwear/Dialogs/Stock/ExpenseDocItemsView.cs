@@ -51,7 +51,7 @@ namespace workwear
 			if(e.PropertyName == ExpenceDoc.GetPropertyName(x => x.Facility))
 			{
 				var placeColumn = ytreeItems.ColumnsConfig.ConfiguredColumns.FirstOrDefault(x => x.Title == "Расположение");
-				var placeRenderer = placeColumn.ConfiguredRenderers.First() as ComboRendererMapping<ExpenseItem>;
+				var placeRenderer = placeColumn.ConfiguredRenderers.First() as ComboRendererMapping<ExpenseItem, FacilityPlace>;
 				if(ExpenceDoc.Facility != null)
 				{
 					placeRenderer.FillItems(ExpenceDoc.Facility.Places);
@@ -82,6 +82,7 @@ namespace workwear
 					.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				.AddColumn ("Расположение").AddComboRenderer (e => e.FacilityPlace).Editing()
 					.SetDisplayFunc(x => (x as FacilityPlace) != null ? (x as FacilityPlace).Name : String.Empty)
+				.AddColumn("")
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 		}
@@ -95,14 +96,12 @@ namespace workwear
 		{
 			var selectDlg = new ReferenceRepresentation (new ViewModel.StockBalanceVM (MyOrmDialog.UoW,
 				ExpenceDoc.Operation == ExpenseOperations.Employee ? ViewModel.StockBalanceVMMode.DisplayAll : ViewModel.StockBalanceVMMode.OnlyProperties
-			));
+			),
+			     "Остатки на складе");
 			selectDlg.Mode = OrmReferenceMode.MultiSelect;
 			selectDlg.ObjectSelected += SelectDlg_ObjectSelected;
 
-			var dialog = new OneWidgetDialog (selectDlg);
-			dialog.Show ();
-			dialog.Run ();
-			dialog.Destroy ();
+			OpenSlaveTab(selectDlg);
 		}
 
 		void SelectDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)

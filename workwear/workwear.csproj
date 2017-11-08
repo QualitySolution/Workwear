@@ -74,27 +74,21 @@
     <EmbeddedResource Include="Updates\1.2.2.sql" />
     <EmbeddedResource Include="SQLScripts\new-1.2.sql" />
     <EmbeddedResource Include="Updates\1.2.4.sql" />
+    <EmbeddedResource Include="icon\toolbar\store-balance.png" />
+    <EmbeddedResource Include="icon\toolbar\store.png" />
+    <EmbeddedResource Include="icon\toolbar\employees.png" />
+    <EmbeddedResource Include="icon\toolbar\go-home.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MainWinObject.cs" />
     <Compile Include="gtk-gui\workwear.ObjectDlg.cs" />
-    <Compile Include="MainWinCards.cs" />
-    <Compile Include="MainWinStock.cs" />
-    <Compile Include="SelectWearCardRow.cs" />
-    <Compile Include="gtk-gui\workwear.SelectWearCardRow.cs" />
-    <Compile Include="SelectStockItem.cs" />
-    <Compile Include="gtk-gui\workwear.SelectStockItem.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
-    <Compile Include="SelectObjectProperty.cs" />
-    <Compile Include="gtk-gui\workwear.SelectObjectProperty.cs" />
     <Compile Include="viewDTOs\EmployeeCardItems.cs" />
     <Compile Include="viewDTOs\EmployeeCardMovements.cs" />
-    <Compile Include="ViewWidgets\StockBalanceView.cs" />
     <Compile Include="gtk-gui\workwear.StockBalanceView.cs" />
     <Compile Include="viewDTOs\StockBalanceItems.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
@@ -103,14 +97,12 @@
     <Compile Include="Domain\EmployeeCard.cs" />
     <Compile Include="Domain\Post.cs" />
     <Compile Include="Domain\Leader.cs" />
-    <Compile Include="Domain\User.cs" />
     <Compile Include="Dialogs\ObjectDlg.cs" />
     <Compile Include="Domain\Facility.cs" />
     <Compile Include="HibernateMapping\EmployeeCardMap.cs" />
     <Compile Include="HibernateMapping\FacilityMap.cs" />
     <Compile Include="HibernateMapping\LeaderMap.cs" />
     <Compile Include="HibernateMapping\PostMap.cs" />
-    <Compile Include="HibernateMapping\UserMap.cs" />
     <Compile Include="CreateProjectParam.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Measurements\SizeStandardConverter.cs" />
@@ -183,6 +175,19 @@
     <Compile Include="Representations\EmployeesVM.cs" />
     <Compile Include="Measurements\WearGrowth.cs" />
     <Compile Include="Measurements\WearSize.cs" />
+    <Compile Include="JournalViewers\StockBalanceView.cs" />
+    <Compile Include="JournalViewers\StockDocumentsView.cs" />
+    <Compile Include="gtk-gui\workwear.JournalViewers.StockDocumentsView.cs" />
+    <Compile Include="JournalFilters\StockDocumentsFilter.cs" />
+    <Compile Include="gtk-gui\workwear.JournalFilters.StockDocumentsFilter.cs" />
+    <Compile Include="Domain\Stock\StockDocument.cs" />
+    <Compile Include="Representations\StockDocumentsVM.cs" />
+    <Compile Include="JournalFilters\EmployeeFilter.cs" />
+    <Compile Include="gtk-gui\workwear.JournalFilters.EmployeeFilter.cs" />
+    <Compile Include="Domain\User\UserSettings.cs" />
+    <Compile Include="HibernateMapping\User\UserMap.cs" />
+    <Compile Include="HibernateMapping\User\UserSettingsMap.cs" />
+    <Compile Include="Tools\CurrentUserSettings.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -246,13 +251,16 @@
       <Project>{769710D2-BF98-4120-9E07-67BD740CFA1D}</Project>
       <Name>QSMachineConfig</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QSReport\QSReport.csproj">
+      <Project>{9C0363D4-EE69-45B8-BA45-BDA24CE35A06}</Project>
+      <Name>QSReport</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
     <Folder Include="Reports\" />
     <Folder Include="Updates\" />
     <Folder Include="viewDTOs\" />
-    <Folder Include="ViewWidgets\" />
     <Folder Include="Domain\" />
     <Folder Include="Dialogs\" />
     <Folder Include="HibernateMapping\" />
@@ -263,6 +271,9 @@
     <Folder Include="HibernateMapping\Stock\" />
     <Folder Include="JournalFilters\" />
     <Folder Include="SQLScripts\" />
+    <Folder Include="JournalViewers\" />
+    <Folder Include="Domain\User\" />
+    <Folder Include="HibernateMapping\User\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
@@ -299,15 +310,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="app.config" />
+    <None Include="RdlEngineConfig.Linux.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="RdlEngineConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild">
-            <inheritsSet />
-            <inheritsScope />
-          </DotNetNamingPolicy>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild" />
         </Policies>
       </Properties>
     </MonoDevelop>

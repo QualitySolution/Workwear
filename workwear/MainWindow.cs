@@ -6,59 +6,63 @@ using QSBusinessCommon.Domain;
 using QSOrmProject;
 using QSProjectsLib;
 using QSSupportLib;
+using QSTDI;
 using QSTelemetry;
 using QSUpdater;
 using workwear;
 using workwear.Domain;
 using workwear.Domain.Stock;
+using workwear.Domain.Users;
+using workwear.JournalViewers;
+using workwear.Tools;
 using workwear.ViewModel;
 
-public partial class MainWindow: Gtk.Window
-{	
+public partial class MainWindow : Gtk.Window
+{
 	private static Logger logger = LogManager.GetCurrentClassLogger();
 
-	public MainWindow(): base (Gtk.WindowType.Toplevel)
+	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
 		Build();
-		
+
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
 		this.Title = MainSupport.GetTitle();
 		QSMain.MakeNewStatusTargetForNlog();
 
-		QSMain.CheckServer (this); // Проверяем настройки сервера
-		MainSupport.LoadBaseParameters ();
+		QSMain.CheckServer(this); // Проверяем настройки сервера
+		MainSupport.LoadBaseParameters();
 
-		MainUpdater.RunCheckVersion (true, true, true);
+		MainUpdater.RunCheckVersion(true, true, true);
 
-		if(QSMain.User.Login == "root")
+		if (QSMain.User.Login == "root")
 		{
 			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
-			MessageDialog md = new MessageDialog ( this, DialogFlags.DestroyWithParent,
-			                                      MessageType.Info, 
-			                                      ButtonsType.Ok,
-			                                      Message);
-			md.Run ();
+			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
+												  MessageType.Info,
+												  ButtonsType.Ok,
+												  Message);
+			md.Run();
 			md.Destroy();
 			Users WinUser = new Users();
 			WinUser.Show();
-			WinUser.Run ();
-			WinUser.Destroy ();
+			WinUser.Run();
+			WinUser.Destroy();
 			return;
 		}
 
-		if(QSMain.connectionDB.DataSource == "demo.qsolution.ru")
+		if (QSMain.connectionDB.DataSource == "demo.qsolution.ru")
 		{
 			string Message = "Вы подключились к демонстрационному серверу. Сервер предназначен для оценки " +
 				"возможностей программы, не используйте его для работы, так как ваши данные будут доступны " +
 				"любому пользователю через интернет.\n\nДля полноценного использования программы вам необходимо " +
 				"установить собственный сервер. Для его установки обратитесь к документации.\n\nЕсли у вас возникнут " +
 				"вопросы вы можете обратится в нашу тех. поддержку.";
-			MessageDialog md = new MessageDialog ( this, DialogFlags.DestroyWithParent,
-			                                      MessageType.Info, 
-			                                      ButtonsType.Ok,
-			                                      Message);
-			md.Run ();
+			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
+												  MessageType.Info,
+												  ButtonsType.Ok,
+												  Message);
+			md.Run();
 			md.Destroy();
 			dialogAuthenticationAction.Sensitive = false;
 		}
@@ -70,16 +74,12 @@ public partial class MainWindow: Gtk.Window
 		MainNewsFeed.NewsFeeds = new List<NewsFeed>(){
 			new NewsFeed("workwearnews", "Новости программы", "http://news.qsolution.ru/workwear.atom")
 			};
-		MainNewsFeed.LoadReadFeed ();
-		var newsmenu = new NewsMenuItem ();
-		menubar1.Add (newsmenu);
-		newsmenu.LoadFeed ();
+		MainNewsFeed.LoadReadFeed();
+		var newsmenu = new NewsMenuItem();
+		menubar1.Add(newsmenu);
+		newsmenu.LoadFeed();
 
-		PrepareObject();
-		PrepareCards();
-		PrepareStock();
-		UpdateObject();
-		notebookMain.CurrentPage = 0;
+		ReadUserSettings();
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -87,17 +87,17 @@ public partial class MainWindow: Gtk.Window
 		a.RetVal = true;
 		Application.Quit();
 	}
-	
+
 	protected void OnDialogAuthenticationActionActivated(object sender, EventArgs e)
 	{
-        MainTelemetry.AddCount("ChangeUserPassword");
-        QSMain.User.ChangeUserPassword (this);
+		MainTelemetry.AddCount("ChangeUserPassword");
+		QSMain.User.ChangeUserPassword(this);
 	}
-	
+
 	protected void OnUsersActionActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenUsers");
-        Users winUsers = new Users();
+		Users winUsers = new Users();
 		winUsers.Show();
 		winUsers.Run();
 		winUsers.Destroy();
@@ -111,348 +111,349 @@ public partial class MainWindow: Gtk.Window
 	protected void OnAction7Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("MeasurementUnits");
-        var refWin = new OrmReference (typeof(MeasurementUnits));
-		var dialog = new OneWidgetDialog (refWin);
-		dialog.Show ();
-		dialog.Run ();
-		dialog.Destroy ();
+		tdiMain.OpenTab(OrmReference.GenerateHashName<MeasurementUnits>(),
+						() => new OrmReference(typeof(MeasurementUnits))
+					   );
 	}
 
 	protected void OnAction8Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("Post");
-        var refWin = new OrmReference (typeof(Post));
-		var dialog = new OneWidgetDialog (refWin);
-		dialog.Show ();
-		dialog.Run ();
-		dialog.Destroy ();
+		tdiMain.OpenTab(OrmReference.GenerateHashName<Post>(),
+						() => new OrmReference(typeof(Post))
+					   );
 	}
-	
+
 	protected void OnAction9Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("Leader");
-        var refWin = new OrmReference (typeof(Leader));
-		var dialog = new OneWidgetDialog (refWin);
-		dialog.Show ();
-		dialog.Run ();
-		dialog.Destroy ();
+		tdiMain.OpenTab(OrmReference.GenerateHashName<Leader>(),
+				() => new OrmReference(typeof(Leader))
+			   );
 	}
-	
+
 	protected void OnAction5Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ItemsType");
-        var refWin = new OrmReference (typeof(ItemsType));
-		var dialog = new OneWidgetDialog (refWin);
-		dialog.Show ();
-		dialog.Run ();
-		dialog.Destroy ();
+		tdiMain.OpenTab(OrmReference.GenerateHashName<ItemsType>(),
+				() => new OrmReference(typeof(ItemsType))
+			   );
 	}
 
 	protected void OnAction6Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("Nomenclature");
-        var refWin = new OrmReference (typeof(Nomenclature));
-		var dialog = new OneWidgetDialog (refWin);
-		dialog.Show ();
-		dialog.Run ();
-		dialog.Destroy ();
+		tdiMain.OpenTab(OrmReference.GenerateHashName<Nomenclature>(),
+				() => new OrmReference(typeof(Nomenclature))
+			   );
 	}
 
 	protected void OnAboutActionActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("RunAboutDialog");
-        QSMain.RunAboutDialog();
-	}
-	
-	protected void OnButtonRefreshClicked(object sender, EventArgs e)
-	{
-		switch (notebookMain.CurrentPage) {
-			case 0:
-				UpdateObject();
-				break;
-				case 1:
-				UpdateCards();
-				break;
-				case 2:
-				UpdateStock();
-				break;
-		case 3:
-                MainTelemetry.AddCount("RefreshStockBalance");
-			stockbalanceview1.RefreshView ();
-			break;
-		}
-	}
-
-	protected void OnButtonAddClicked(object sender, EventArgs e)
-	{
-		switch (notebookMain.CurrentPage) {
-			case 0:
-                MainTelemetry.AddCount("AddObject");
-				ObjectDlg winObject = new ObjectDlg();
-				winObject.Show();
-				winObject.Run();
-				winObject.Destroy();
-				UpdateObject();
-				break;
-			case 1:
-                MainTelemetry.AddCount("AddEmployeeCard");
-				EmployeeCardDlg winWearCard = new EmployeeCardDlg();
-				winWearCard.Show();
-				winWearCard.Run();
-				winWearCard.Destroy();
-				UpdateCards();
-				break;
-				case 2:
-				switch (notebookStock.CurrentPage)
-				{
-					case 0:
-                        MainTelemetry.AddCount("AddIncomeDoc");
-						IncomeDocDlg winIncome = new IncomeDocDlg();
-						winIncome.Show();
-						winIncome.Run();
-						winIncome.Destroy();
-						break;
-					case 1:
-                        MainTelemetry.AddCount("AddExpenseDoc");
-						ExpenseDocDlg winExpense = new ExpenseDocDlg();
-						winExpense.Show();
-						winExpense.Run();
-						winExpense.Destroy();
-						break;
-					case 2:
-                        MainTelemetry.AddCount("AddWriteOffDoc");
-						WriteOffDocDlg winWriteOff = new WriteOffDocDlg();
-						winWriteOff.Show();
-						winWriteOff.Run();
-						winWriteOff.Destroy();
-						break;
-				}
-				UpdateStock();
-				break;
-		}
-
-	}
-
-	protected void OnButtonEditClicked(object sender, EventArgs e)
-	{
-		TreeIter iter;
-		int itemid;
-		ResponseType result;
-
-		switch (notebookMain.CurrentPage) {
-			case 0:
-                MainTelemetry.AddCount("EditObject");
-				treeviewObjects.Selection.GetSelected(out iter);
-				itemid = (int) ObjectFilter.GetValue(iter,0);
-				ObjectDlg winObject = new ObjectDlg(itemid);
-				winObject.Show();
-				result = (ResponseType)winObject.Run();
-				winObject.Destroy();
-				if(result == ResponseType.Ok)
-					UpdateObject();
-				break;
-			case 1:
-                MainTelemetry.AddCount("EditEmployeeCard");
-				itemid = treeviewEmployees.GetSelectedObject<EmployeesVMNode>().Id;
-				EmployeeCardDlg winWearCadr = new EmployeeCardDlg(itemid);
-				winWearCadr.Show();
-				result = (ResponseType)winWearCadr.Run();
-				winWearCadr.Destroy();
-				if(result == ResponseType.Ok)
-					UpdateCards();
-				break;
-				case 2:
-				switch (notebookStock.CurrentPage)
-				{
-					case 0:
-                        MainTelemetry.AddCount("EditIncomeDoc");
-						treeviewIncome.Selection.GetSelected(out iter);
-						itemid = (int)IncomeFilter.GetValue(iter, 0);
-						IncomeDocDlg winIncome = new IncomeDocDlg(itemid);
-						winIncome.Show();
-						result = (ResponseType) winIncome.Run();
-						winIncome.Destroy();
-						break;
-					case 1:
-                        MainTelemetry.AddCount("EditExpenseDoc");
-						treeviewExpense.Selection.GetSelected(out iter);
-						itemid = (int)ExpenseFilter.GetValue(iter, 0);
-						ExpenseDocDlg winExpense = new ExpenseDocDlg(itemid);
-						winExpense.Show();
-						result = (ResponseType) winExpense.Run();
-						winExpense.Destroy();
-						break;
-					case 2:
-                        MainTelemetry.AddCount("EditWriteOffDoc");
-						treeviewWriteOff.Selection.GetSelected(out iter);
-						itemid = (int)WriteOffFilter.GetValue(iter, 0);
-						WriteOffDocDlg winWriteOff = new WriteOffDocDlg(itemid);
-						winWriteOff.Show();
-						result = (ResponseType) winWriteOff.Run();
-						winWriteOff.Destroy();
-						break;
-					default:
-						result = ResponseType.Reject;
-						break;
-				}
-				if(result == ResponseType.Ok)
-					UpdateStock();
-				break;
-		}
-
-	}
-
-	protected void OnButtonDeleteClicked(object sender, EventArgs e)
-	{
-		// Удаление
-		TreeIter iter;
-		int itemid;
-
-		switch (notebookMain.CurrentPage) 
-		{
-			case 0:
-                MainTelemetry.AddCount("DeleteObject");
-				treeviewObjects.Selection.GetSelected(out iter);
-				itemid = (int) ObjectFilter.GetValue(iter,0);
-				if(OrmMain.DeleteObject<Facility> (itemid))
-					UpdateObject();
-				break;
-			case 1:
-                MainTelemetry.AddCount("DeleteEmployeeCard");
-				itemid = treeviewEmployees.GetSelectedObject<EmployeesVMNode>().Id;
-				if(OrmMain.DeleteObject<EmployeeCard> (itemid))
-					UpdateCards();
-				break;
-			case 2:
-				switch (notebookStock.CurrentPage)
-				{
-					case 0:
-                        MainTelemetry.AddCount("DeleteIncomeDoc");
-						treeviewIncome.Selection.GetSelected (out iter);
-						itemid = (int)IncomeFilter.GetValue (iter, 0);
-						OrmMain.DeleteObject<Income> (itemid);
-						break;
-					case 1:
-                        MainTelemetry.AddCount("DeleteExpenseDoc");
-						treeviewExpense.Selection.GetSelected(out iter);
-						itemid = (int)ExpenseFilter.GetValue(iter, 0);
-						OrmMain.DeleteObject<Expense> (itemid);
-						break;
-					case 2:
-                        MainTelemetry.AddCount("DeleteWriteOffDoc");
-						treeviewWriteOff.Selection.GetSelected(out iter);
-						itemid = (int)WriteOffFilter.GetValue(iter, 0);
-						OrmMain.DeleteObject<Writeoff> (itemid);
-						break;
-				}
-				UpdateStock();
-				break;
-		}
-	}
-
-	protected void OnNotebookMainSwitchPage(object o, SwitchPageArgs args)
-	{
-		buttonAdd.Visible = buttonDelete.Visible = buttonEdit.Visible = notebookMain.CurrentPage != 3;
-		buttonRefresh.Click();
-	}
-
-	protected void OnNotebookStockSwitchPage(object o, SwitchPageArgs args)
-	{
-		buttonRefresh.Click();
-	}
-
-	protected void OnSelectStockDatesDatesChanged(object sender, EventArgs e)
-	{
-		buttonRefresh.Click();
+		QSMain.RunAboutDialog();
 	}
 
 	protected void OnAction11Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportStockAllWear");
-        ViewReportExt.Run("StockAllWear", "");
+		var reportInfo = new QSReport.ReportInfo
+		{
+			Title = "Складская ведомость",
+			Identifier = "StockAllWear",
+		};
+
+		tdiMain.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
+						  () => new QSReport.ReportViewDlg(reportInfo)
+						 );
+
 	}
-	
+
 	protected void OnAction10Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportWearStatement");
-        WearStatement WinStat = new WearStatement();
-		WinStat.Show();
-		WinStat.Run();
-		WinStat.Destroy();
+		WearStatement widget = new WearStatement();
+		tdiMain.OpenTab(
+			QSReport.ReportViewDlg.GenerateHashName(widget),
+			() => new QSReport.ReportViewDlg(widget)
+		);
 	}
 
 	protected void OnAction12Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportListBySize");
-        ViewReportExt.Run("ListBySize", "");
+		var reportInfo = new QSReport.ReportInfo
+		{
+			Title = "Список по размерам",
+			Identifier = "ListBySize",
+		};
+
+		tdiMain.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
+						  () => new QSReport.ReportViewDlg(reportInfo)
+						 );
+
 	}
 
 	protected void OnHelpActionActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenDocumentation");
-        System.Diagnostics.Process.Start("workwear_ru.pdf");
+		System.Diagnostics.Process.Start("workwear_ru.pdf");
 	}
 
-	protected void OnActionHistoryActivated (object sender, EventArgs e)
+	protected void OnActionHistoryActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("RunChangeLogDlg");
-        QSMain.RunChangeLogDlg (this);
+		QSMain.RunChangeLogDlg(this);
 	}
 
-	protected void OnActionUpdateActivated (object sender, EventArgs e)
+	protected void OnActionUpdateActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("CheckUpdate");
-        CheckUpdate.StartCheckUpdateThread (UpdaterFlags.ShowAnyway);
+		CheckUpdate.StartCheckUpdateThread(UpdaterFlags.ShowAnyway);
 	}
 
 	protected void OnActionSNActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("EditSerialNumber");
-        EditSerialNumber.RunDialog();
+		EditSerialNumber.RunDialog();
 	}
 
-	protected void OnActionNormsActivated (object sender, EventArgs e)
+	protected void OnActionNormsActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenNorms");
-        var refWin = new ReferenceRepresentation (new workwear.ViewModel.NormVM ());
-		var dialog = new OneWidgetDialog (refWin);
-		dialog.Show ();
-		dialog.Run ();
-		dialog.Destroy ();
+		tdiMain.OpenTab(
+			ReferenceRepresentation.GenerateHashName<NormVM>(),
+			() => new ReferenceRepresentation(new NormVM())
+		);
 	}
 
-	protected void OnAction13Activated (object sender, EventArgs e)
+	protected void OnAction13Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportMonthIssueSheet");
-        var dlg = new OnIssueStatement ();
-		dlg.Show ();
-		dlg.Run ();
-		dlg.Destroy ();
+		var widget = new OnIssueStatement();
+		tdiMain.OpenTab(
+			QSReport.ReportViewDlg.GenerateHashName(widget),
+			() => new QSReport.ReportViewDlg(widget)
+		);
 	}
 
-	protected void OnAction17Activated (object sender, EventArgs e)
+	protected void OnAction17Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportNotIssuedSheet");
-        var dlg = new NotIssuedSheetReportDlg ();
-		dlg.Show ();
-		dlg.Run ();
-		dlg.Destroy ();
+		var widget = new NotIssuedSheetReportDlg();
+		tdiMain.OpenTab(
+			QSReport.ReportViewDlg.GenerateHashName(widget),
+			() => new QSReport.ReportViewDlg(widget)
+		);
 	}
 
-	protected void OnActionYearRequestSheetActivated (object sender, EventArgs e)
+	protected void OnActionYearRequestSheetActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportYearRequestSheet");
-        ViewReportExt.Run("YearRequestSheet", "");
+		var reportInfo = new QSReport.ReportInfo
+		{
+			Title = "Годовая заявка",
+			Identifier = "YearRequestSheet",
+		};
+
+		tdiMain.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
+						  () => new QSReport.ReportViewDlg(reportInfo)
+						 );
+
 	}
 
-	protected void OnAction21Activated (object sender, EventArgs e)
+	protected void OnAction21Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportMonthQuarterRequestSheet");
-        var dlg = new QuarterRequestSheetDlg ();
-		dlg.Show ();
-		dlg.Run ();
-		dlg.Destroy ();
+		var widget = new QuarterRequestSheetDlg();
+		tdiMain.OpenTab(
+			QSReport.ReportViewDlg.GenerateHashName(widget),
+			() => new QSReport.ReportViewDlg(widget)
+		);
 	}
 
+	protected void OnActionStockBalanceActivated(object sender, EventArgs e)
+	{
+		tdiMain.OpenTab(TdiTabBase.GenerateHashName<StockBalanceView>(),
+						() => new StockBalanceView()
+					   );
+	}
 
+	protected void OnActionStockDocsActivated(object sender, EventArgs e)
+	{
+		tdiMain.OpenTab(TdiTabBase.GenerateHashName<StockDocumentsView>(),
+				() => new StockDocumentsView()
+			   );
+	}
+
+	protected void OnActionEmployeesActivated(object sender, EventArgs e)
+	{
+		tdiMain.OpenTab(
+			ReferenceRepresentation.GenerateHashName<EmployeesVM>(),
+			() => new ReferenceRepresentation(new EmployeesVM())
+		);
+	}
+
+	protected void OnActionObjectsActivated(object sender, EventArgs e)
+	{
+		tdiMain.OpenTab(
+			OrmReference.GenerateHashName<Facility>(),
+			() => new OrmReference(typeof(Facility))
+		);
+	}
+
+	#region Панель инструментов
+
+	void ReadUserSettings()
+	{
+		switch (CurrentUserSettings.Settings.ToolbarStyle)
+		{
+			case ToolbarStyle.Both:
+				ActionToolBarTextAndIcon.Activate();
+				break;
+			case ToolbarStyle.Icons:
+				ActionToolBarIconOnly.Activate();
+				break;
+			case ToolbarStyle.Text:
+				ActionToolBarTextOnly.Activate();
+				break;
+		}
+		switch (CurrentUserSettings.Settings.ToolBarIconsSize)
+		{
+			case IconsSize.ExtraSmall:
+				ActionIconsExtraSmall.Activate();
+				break;
+			case IconsSize.Small:
+				ActionIconsSmall.Activate();
+				break;
+			case IconsSize.Middle:
+				ActionIconsMiddle.Activate();
+				break;
+			case IconsSize.Large:
+				ActionIconsLarge.Activate();
+				break;
+		}
+		ActionShowBar.Active = CurrentUserSettings.Settings.ShowToolbar;
+	}
+
+	private void ToolBarMode(ToolbarStyle style)
+	{
+		if (CurrentUserSettings.Settings.ToolbarStyle != style)
+		{
+			CurrentUserSettings.Settings.ToolbarStyle = style;
+			CurrentUserSettings.SaveSettings();
+		}
+		toolbarMain.ToolbarStyle = style;
+		ActionIconsExtraSmall.Sensitive = ActionIconsSmall.Sensitive = ActionIconsMiddle.Sensitive = ActionIconsLarge.Sensitive =
+			style != ToolbarStyle.Text;
+	}
+
+	private void ToolBarShow(bool show)
+	{
+		if (toolbarMain.Visible == show)
+			return;
+
+		if (CurrentUserSettings.Settings.ShowToolbar != show)
+		{
+			CurrentUserSettings.Settings.ShowToolbar = show;
+			CurrentUserSettings.SaveSettings();
+		}
+		toolbarMain.Visible = show;
+		ActionIconsExtraSmall.Sensitive = ActionIconsSmall.Sensitive = ActionIconsMiddle.Sensitive = ActionIconsLarge.Sensitive =
+			ActionToolBarIconOnly.Sensitive = ActionToolBarTextOnly.Sensitive = ActionToolBarTextAndIcon.Sensitive =
+			show;
+	}
+
+	private void ToolBarMode(IconsSize size)
+	{
+		if (CurrentUserSettings.Settings.ToolBarIconsSize != size)
+		{
+			CurrentUserSettings.Settings.ToolBarIconsSize = size;
+			CurrentUserSettings.SaveSettings();
+		}
+		switch (size)
+		{
+			case IconsSize.ExtraSmall:
+				toolbarMain.IconSize = IconSize.SmallToolbar;
+				break;
+			case IconsSize.Small:
+				toolbarMain.IconSize = IconSize.LargeToolbar;
+				break;
+			case IconsSize.Middle:
+				toolbarMain.IconSize = IconSize.Dnd;
+				break;
+			case IconsSize.Large:
+				toolbarMain.IconSize = IconSize.Dialog;
+				break;
+		}
+	}
+
+	protected void OnActionToolBarTextOnlyToggled(object sender, EventArgs e)
+	{
+		if (ActionToolBarTextOnly.Active)
+			ToolBarMode(ToolbarStyle.Text);
+	}
+
+	protected void OnActionToolBarIconOnlyToggled(object sender, EventArgs e)
+	{
+		if (ActionToolBarIconOnly.Active)
+			ToolBarMode(ToolbarStyle.Icons);
+	}
+
+	protected void OnActionToolBarTextAndIconToggled(object sender, EventArgs e)
+	{
+		if (ActionToolBarTextAndIcon.Active)
+			ToolBarMode(ToolbarStyle.Both);
+	}
+
+	protected void OnActionIconsExtraSmallToggled(object sender, EventArgs e)
+	{
+		if (ActionIconsExtraSmall.Active)
+			ToolBarMode(IconsSize.ExtraSmall);
+	}
+
+	protected void OnActionIconsSmallToggled(object sender, EventArgs e)
+	{
+		if (ActionIconsSmall.Active)
+			ToolBarMode(IconsSize.Small);
+	}
+
+	protected void OnActionIconsMiddleToggled(object sender, EventArgs e)
+	{
+		if (ActionIconsMiddle.Active)
+			ToolBarMode(IconsSize.Middle);
+	}
+
+	protected void OnActionIconsLargeToggled(object sender, EventArgs e)
+	{
+		if (ActionIconsLarge.Active)
+			ToolBarMode(IconsSize.Large);
+	}
+
+	protected void OnActionShowBarToggled(object sender, EventArgs e)
+	{
+		ToolBarShow(ActionShowBar.Active);
+	}
+
+	protected void OnActionBarObjectsActivated(object sender, EventArgs e)
+	{
+		ActionObjects.Activate();
+	}
+
+	protected void OnActionBarEmployeesActivated(object sender, EventArgs e)
+	{
+		ActionEmployees.Activate();
+	}
+
+	protected void OnActionBarStoreActivated(object sender, EventArgs e)
+	{
+		ActionStockDocs.Activate();
+	}
+
+	protected void OnActionBarStoreBalanceActivated(object sender, EventArgs e)
+	{
+		ActionStockBalance.Activate();
+	}
+
+	#endregion
 }

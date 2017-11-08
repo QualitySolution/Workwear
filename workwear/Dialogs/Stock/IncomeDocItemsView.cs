@@ -73,26 +73,22 @@ namespace workwear
 		{
 			if(IncomeDoc.Operation == IncomeOperations.Return)
 			{
-				var selectFromEmployeeDlg = new ReferenceRepresentation (new ViewModel.EmployeeBalanceVM (IncomeDoc.EmployeeCard));
+				var selectFromEmployeeDlg = new ReferenceRepresentation (new ViewModel.EmployeeBalanceVM (IncomeDoc.EmployeeCard), 
+				                                                         $"Выданное {IncomeDoc.EmployeeCard.ShortName}");
 				selectFromEmployeeDlg.Mode = OrmReferenceMode.MultiSelect;
 				selectFromEmployeeDlg.ObjectSelected += SelectFromEmployeeDlg_ObjectSelected;
 
-				var dialog = new OneWidgetDialog (selectFromEmployeeDlg);
-				dialog.Show ();
-				dialog.Run ();
-				dialog.Destroy ();
+				OpenSlaveTab(selectFromEmployeeDlg);
 			}
 
 			if(IncomeDoc.Operation == IncomeOperations.Object)
 			{
-				var selectFromObjectDlg = new ReferenceRepresentation (new ViewModel.ObjectBalanceVM (IncomeDoc.Facility));
+				var selectFromObjectDlg = new ReferenceRepresentation (new ViewModel.ObjectBalanceVM (IncomeDoc.Facility),
+				                                                       $"Выданное на {IncomeDoc.Facility.Name}");
 				selectFromObjectDlg.Mode = OrmReferenceMode.MultiSelect;
 				selectFromObjectDlg.ObjectSelected += SelectFromObjectDlg_ObjectSelected;;
 
-				var dialog = new OneWidgetDialog (selectFromObjectDlg);
-				dialog.Show ();
-				dialog.Run ();
-				dialog.Destroy ();
+				OpenSlaveTab(selectFromObjectDlg);
 			}
 
 			if(IncomeDoc.Operation == IncomeOperations.Enter)
@@ -101,10 +97,7 @@ namespace workwear
 				selectNomenclatureDlg.Mode = OrmReferenceMode.MultiSelect;
 				selectNomenclatureDlg.ObjectSelected += SelectNomenclatureDlg_ObjectSelected;
 
-				var dialog = new OneWidgetDialog (selectNomenclatureDlg);
-				dialog.Show ();
-				dialog.Run ();
-				dialog.Destroy ();
+				OpenSlaveTab(selectNomenclatureDlg);
 			}
 		}
 

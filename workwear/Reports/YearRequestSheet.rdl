@@ -860,21 +860,6 @@ ORDER BY type_name , size , growth</CommandText>
       </Fields>
     </DataSet>
   </DataSets>
-  <ReportParameters>
-    <ReportParameter Name="order_id">
-      <DataType>Integer</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>8</Value>
-        </Values>
-      </DefaultValue>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
-      <MultiValue>false</MultiValue>
-      <Prompt>
-      </Prompt>
-    </ReportParameter>
-  </ReportParameters>
   <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>

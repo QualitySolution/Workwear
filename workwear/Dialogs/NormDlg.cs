@@ -8,7 +8,7 @@ using workwear.Domain;
 
 namespace workwear
 {
-	public partial class NormDlg : FakeTDIEntityGtkDialogBase<Norm>
+	public partial class NormDlg : OrmGtkDialogBase<Norm>
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
@@ -43,11 +43,12 @@ namespace workwear
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<NormItem>.Create ()
 				.AddColumn ("Наименование").AddTextRenderer (p => p.Item.Name)
 				.AddColumn ("Количество")
-				.AddNumericRenderer (i => i.Amount).WidthChars (10).Editing ().Adjustment (new Gtk.Adjustment(1, 0, 1000000, 1, 10, 10))
+				.AddNumericRenderer (i => i.Amount).WidthChars (9).Editing ().Adjustment (new Gtk.Adjustment(1, 0, 1000000, 1, 10, 10))
 				.AddTextRenderer (i => i.Item != null && i.Item.Units != null ? i.Item.Units.Name : String.Empty)
 				.AddColumn ("Период")
-				.AddNumericRenderer (i => i.PeriodCount).Editing ().Adjustment (new Gtk.Adjustment(1, 0, 100, 1, 10, 10))
+				.AddNumericRenderer (i => i.PeriodCount).WidthChars(6).Editing ().Adjustment (new Gtk.Adjustment(1, 0, 100, 1, 10, 10))
 				.AddEnumRenderer (i => i.NormPeriod).Editing ()
+				.AddColumn(String.Empty)
 				.Finish ();
 			ytreeItems.ItemsDataSource = Entity.ObservableItems;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
@@ -73,19 +74,13 @@ namespace workwear
 			try {
 				UoWGeneric.Save ();
 			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog (this, "Не удалось сохранить норму.", logger, ex);
+				QSMain.ErrorMessageWithLog ("Не удалось сохранить норму.", logger, ex);
 				return false;
 			}
 			logger.Info ("Ok");
 			return true;
 		}
 			
-		protected void OnButtonOkClicked (object sender, EventArgs e)
-		{
-			if (Save ())
-				Respond (Gtk.ResponseType.Ok);
-		}
-
 		protected void OnButtonAddProfessionClicked (object sender, EventArgs e)
 		{
 			OrmReference SelectDialog = new OrmReference(typeof(Post));
@@ -164,7 +159,7 @@ namespace workwear
 
 		protected void OnButtonNewProfessionClicked (object sender, EventArgs e)
 		{
-			var prof = OrmSimpleDialog.RunSimpleDialog (this, typeof(Post), null) as Post;
+			var prof = OrmSimpleDialog.RunSimpleDialog ((Gtk.Window)this.Toplevel, typeof(Post), null) as Post;
 			if (prof != null)
 				Entity.AddProfession (prof);
 		}
