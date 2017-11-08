@@ -9,7 +9,7 @@ public partial class MainWindow
 
 	private global::Gtk.Action Action1;
 
-	private global::Gtk.Action Action18;
+	private global::Gtk.Action Action37;
 
 	private global::Gtk.Action Action3;
 
@@ -49,9 +49,9 @@ public partial class MainWindow
 
 	private global::Gtk.Action Action13;
 
-	private global::Gtk.Action Action23;
+	private global::Gtk.Action ActionRequestSheet;
 
-	private global::Gtk.Action ActionYearRequestSheet;
+	private global::Gtk.Action ActionAverageAnnualNeed;
 
 	private global::Gtk.Action Action22;
 
@@ -119,9 +119,9 @@ public partial class MainWindow
 		this.Action1 = new global::Gtk.Action("Action1", global::Mono.Unix.Catalog.GetString("Справочники"), null, null);
 		this.Action1.ShortLabel = global::Mono.Unix.Catalog.GetString("Справочники");
 		w1.Add(this.Action1, null);
-		this.Action18 = new global::Gtk.Action("Action18", global::Mono.Unix.Catalog.GetString("Ведомости"), null, null);
-		this.Action18.ShortLabel = global::Mono.Unix.Catalog.GetString("Ведомости");
-		w1.Add(this.Action18, null);
+		this.Action37 = new global::Gtk.Action("Action37", global::Mono.Unix.Catalog.GetString("Ведомости"), null, null);
+		this.Action37.ShortLabel = global::Mono.Unix.Catalog.GetString("Ведомости");
+		w1.Add(this.Action37, null);
 		this.Action3 = new global::Gtk.Action("Action3", global::Mono.Unix.Catalog.GetString("Справка"), null, null);
 		this.Action3.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка");
 		w1.Add(this.Action3, null);
@@ -179,12 +179,12 @@ public partial class MainWindow
 		this.Action13 = new global::Gtk.Action("Action13", global::Mono.Unix.Catalog.GetString("Ведомость на выдачу"), null, null);
 		this.Action13.ShortLabel = global::Mono.Unix.Catalog.GetString("Ведомость на выдачу");
 		w1.Add(this.Action13, null);
-		this.Action23 = new global::Gtk.Action("Action23", global::Mono.Unix.Catalog.GetString("Квартальная/месячная заявка"), null, null);
-		this.Action23.ShortLabel = global::Mono.Unix.Catalog.GetString("Месячная заявка");
-		w1.Add(this.Action23, null);
-		this.ActionYearRequestSheet = new global::Gtk.Action("ActionYearRequestSheet", global::Mono.Unix.Catalog.GetString("Годовая заявка"), null, null);
-		this.ActionYearRequestSheet.ShortLabel = global::Mono.Unix.Catalog.GetString("Сводная заявка");
-		w1.Add(this.ActionYearRequestSheet, null);
+		this.ActionRequestSheet = new global::Gtk.Action("ActionRequestSheet", global::Mono.Unix.Catalog.GetString("Заявка на спецодежду"), null, null);
+		this.ActionRequestSheet.ShortLabel = global::Mono.Unix.Catalog.GetString("Месячная заявка");
+		w1.Add(this.ActionRequestSheet, null);
+		this.ActionAverageAnnualNeed = new global::Gtk.Action("ActionAverageAnnualNeed", global::Mono.Unix.Catalog.GetString("Среднегодовая потребность"), null, null);
+		this.ActionAverageAnnualNeed.ShortLabel = global::Mono.Unix.Catalog.GetString("Сводная заявка");
+		w1.Add(this.ActionAverageAnnualNeed, null);
 		this.Action22 = new global::Gtk.Action("Action22", global::Mono.Unix.Catalog.GetString("Справка по невыданному"), null, null);
 		this.Action22.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка по невыданному");
 		w1.Add(this.Action22, null);
@@ -283,16 +283,16 @@ public partial class MainWindow
 				"on=\'ActionNorms\'/><menuitem name=\'Action5\' action=\'Action5\'/><menuitem name=\'Act" +
 				"ion6\' action=\'Action6\'/><separator/><menuitem name=\'Action7\' action=\'Action7\'/><" +
 				"separator/><menuitem name=\'Action8\' action=\'Action8\'/><menuitem name=\'Action9\' a" +
-				"ction=\'Action9\'/></menu><menu name=\'Action18\' action=\'Action18\'><menuitem name=\'" +
+				"ction=\'Action9\'/></menu><menu name=\'Action37\' action=\'Action37\'><menuitem name=\'" +
 				"Action10\' action=\'Action10\'/><menuitem name=\'Action11\' action=\'Action11\'/><separ" +
 				"ator/><menuitem name=\'Action12\' action=\'Action12\'/><separator/><menuitem name=\'A" +
-				"ction13\' action=\'Action13\'/><menuitem name=\'Action23\' action=\'Action23\'/><menuit" +
-				"em name=\'ActionYearRequestSheet\' action=\'ActionYearRequestSheet\'/><menuitem name" +
-				"=\'Action22\' action=\'Action22\'/></menu><menu name=\'Action3\' action=\'Action3\'><men" +
-				"uitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' acti" +
-				"on=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separa" +
-				"tor/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'ab" +
-				"outAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"ction13\' action=\'Action13\'/><menuitem name=\'ActionRequestSheet\' action=\'ActionRe" +
+				"questSheet\'/><menuitem name=\'ActionAverageAnnualNeed\' action=\'ActionAverageAnnua" +
+				"lNeed\'/><menuitem name=\'Action22\' action=\'Action22\'/></menu><menu name=\'Action3\'" +
+				" action=\'Action3\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem nam" +
+				"e=\'ActionHistory\' action=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'" +
+				"ActionUpdate\'/><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separat" +
+				"or/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -374,8 +374,8 @@ public partial class MainWindow
 		this.ActionSN.Activated += new global::System.EventHandler(this.OnActionSNActivated);
 		this.ActionNorms.Activated += new global::System.EventHandler(this.OnActionNormsActivated);
 		this.Action13.Activated += new global::System.EventHandler(this.OnAction13Activated);
-		this.Action23.Activated += new global::System.EventHandler(this.OnAction21Activated);
-		this.ActionYearRequestSheet.Activated += new global::System.EventHandler(this.OnActionYearRequestSheetActivated);
+		this.ActionRequestSheet.Activated += new global::System.EventHandler(this.OnAction21Activated);
+		this.ActionAverageAnnualNeed.Activated += new global::System.EventHandler(this.OnActionYearRequestSheetActivated);
 		this.Action22.Activated += new global::System.EventHandler(this.OnAction17Activated);
 		this.ActionStockDocs.Activated += new global::System.EventHandler(this.OnActionStockDocsActivated);
 		this.ActionStockBalance.Activated += new global::System.EventHandler(this.OnActionStockBalanceActivated);

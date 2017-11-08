@@ -303,7 +303,7 @@
     <None Include="Reports\QuarterRequestSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Reports\YearRequestSheet.rdl">
+    <None Include="Reports\AverageAnnualNeed.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\MonthRequestSheet.rdl">

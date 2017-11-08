@@ -624,7 +624,7 @@
       <Textbox Name="Textbox50">
         <Height>37.42pt</Height>
         <Width>560.59pt</Width>
-        <Value>Годовая заявка на поставку спецодежды, спецобуви, СИЗ</Value>
+        <Value>Среднегодовая потребность спецодежды, спецобуви, СИЗ</Value>
         <ZIndex>1</ZIndex>
         <Left>0.00pt</Left>
         <Top>0.90pt</Top>
@@ -653,7 +653,7 @@
       <Textbox Name="Textbox16">
         <Height>12.03pt</Height>
         <Width>90.36pt</Width>
-        <Value>Начальник СЛД</Value>
+        <Value>Начальник</Value>
         <ZIndex>1</ZIndex>
         <Left>0.0pt</Left>
         <Top>168.4pt</Top>
@@ -666,7 +666,7 @@
       <Textbox Name="Textbox17">
         <Height>12.03pt</Height>
         <Width>147.36pt</Width>
-        <Value>И.о. главного бухгалтера СЛД</Value>
+        <Value>И.о. главного бухгалтера</Value>
         <ZIndex>1</ZIndex>
         <Left>0.0pt</Left>
         <Top>198.4pt</Top>

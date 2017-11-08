@@ -4126,7 +4126,7 @@
         <property name="Label" translatable="yes">Справочники</property>
         <property name="ShortLabel" translatable="yes">Справочники</property>
       </action>
-      <action id="Action18">
+      <action id="Action37">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Ведомости</property>
         <property name="ShortLabel" translatable="yes">Ведомости</property>
@@ -4250,15 +4250,15 @@
         <property name="ShortLabel" translatable="yes">Ведомость на выдачу</property>
         <signal name="Activated" handler="OnAction13Activated" />
       </action>
-      <action id="Action23">
+      <action id="ActionRequestSheet">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Квартальная/месячная заявка</property>
+        <property name="Label" translatable="yes">Заявка на спецодежду</property>
         <property name="ShortLabel" translatable="yes">Месячная заявка</property>
         <signal name="Activated" handler="OnAction21Activated" />
       </action>
-      <action id="ActionYearRequestSheet">
+      <action id="ActionAverageAnnualNeed">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Годовая заявка</property>
+        <property name="Label" translatable="yes">Среднегодовая потребность</property>
         <property name="ShortLabel" translatable="yes">Сводная заявка</property>
         <signal name="Activated" handler="OnActionYearRequestSheetActivated" />
       </action>
@@ -4464,15 +4464,15 @@
                 <node type="Menuitem" action="Action8" />
                 <node type="Menuitem" action="Action9" />
               </node>
-              <node type="Menu" action="Action18">
+              <node type="Menu" action="Action37">
                 <node type="Menuitem" action="Action10" />
                 <node type="Menuitem" action="Action11" />
                 <node type="Separator" />
                 <node type="Menuitem" action="Action12" />
                 <node type="Separator" />
                 <node type="Menuitem" action="Action13" />
-                <node type="Menuitem" action="Action23" />
-                <node type="Menuitem" action="ActionYearRequestSheet" />
+                <node type="Menuitem" action="ActionRequestSheet" />
+                <node type="Menuitem" action="ActionAverageAnnualNeed" />
                 <node type="Menuitem" action="Action22" />
               </node>
               <node type="Menu" action="Action3">
@@ -5323,7 +5323,6 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Label" translatable="yes">на месяц</property>
-                <property name="Active">True</property>
                 <property name="DrawIndicator">True</property>
                 <property name="HasLabel">True</property>
                 <property name="UseUnderline">True</property>
@@ -5529,7 +5528,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.QuarterRequestSheetDlg" design-size="206 186">
+  <widget class="Gtk.Bin" id="workwear.QuarterRequestSheetDlg" design-size="267 186">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -5600,6 +5599,22 @@
                   </widget>
                   <packing>
                     <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.RadioButton" id="radioYear">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="Label" translatable="yes">Год</property>
+                    <property name="DrawIndicator">True</property>
+                    <property name="HasLabel">True</property>
+                    <property name="UseUnderline">True</property>
+                    <property name="Group">group1</property>
+                    <signal name="Toggled" handler="OnRadioYearToggled" />
+                  </widget>
+                  <packing>
+                    <property name="Position">2</property>
                     <property name="AutoSize">True</property>
                   </packing>
                 </child>

@@ -249,11 +249,11 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionYearRequestSheetActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("ReportYearRequestSheet");
+		MainTelemetry.AddCount("AverageAnnualNeedReport");
 		var reportInfo = new QSReport.ReportInfo
 		{
-			Title = "Годовая заявка",
-			Identifier = "YearRequestSheet",
+			Title = "Среднегодовая потребность",
+			Identifier = "AverageAnnualNeed",
 		};
 
 		tdiMain.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
