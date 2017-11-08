@@ -212,6 +212,7 @@ namespace workwear.Measurements
 			new WearSize(new []{ "11", null }),
 			new WearSize(new []{ "11,5", null }),
 			new WearSize(new []{ "12", null }),
+			new WearSize(new []{ "13", null }),
 		};
 
 	}
