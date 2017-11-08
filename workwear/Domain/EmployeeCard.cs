@@ -173,6 +173,24 @@ namespace workwear.Domain
 			set	{ SetField (ref shoesSize, value, () => ShoesSize); }
 		}
 
+		string winterShoesSizeStd;
+
+		[Display(Name = "Стандарт размера зимней обуви")]
+		public virtual string WinterShoesSizeStd
+		{
+			get { return winterShoesSizeStd; }
+			set { SetField(ref winterShoesSizeStd, value, () => WinterShoesSizeStd); }
+		}
+
+		string winterShoesSize;
+
+		[Display(Name = "Размер зимней обуви")]
+		public virtual string WinterShoesSize
+		{
+			get { return winterShoesSize; }
+			set { SetField(ref winterShoesSize, value, () => WinterShoesSize); }
+		}
+
 		string headdressSizeStd;
 
 		[Display (Name = "Стандарт размера головного убора")]
@@ -277,18 +295,20 @@ namespace workwear.Domain
 
 		public virtual SizePair GetSize(СlothesType wearCategory)
 		{
-			switch(wearCategory)
+			switch (wearCategory)
 			{
-			case СlothesType.Wear:
-				return new SizePair (WearSizeStd, WearSize);
-			case СlothesType.Shoes:
-				return new SizePair (ShoesSizeStd, ShoesSize);
-			case СlothesType.Gloves:
-				return new SizePair (GlovesSizeStd, GlovesSize);
-			case СlothesType.Headgear:
-				return new SizePair (HeaddressSizeStd, HeaddressSize);
-			default:
-				return null;
+				case СlothesType.Wear:
+					return new SizePair(WearSizeStd, WearSize);
+				case СlothesType.Shoes:
+					return new SizePair(ShoesSizeStd, ShoesSize);
+				case СlothesType.WinterShoes:
+					return new SizePair(WinterShoesSizeStd, WinterShoesSize);
+				case СlothesType.Gloves:
+					return new SizePair(GlovesSizeStd, GlovesSize);
+				case СlothesType.Headgear:
+					return new SizePair(HeaddressSizeStd, HeaddressSize);
+				default:
+					return null;
 			}
 		}
 

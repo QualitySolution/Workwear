@@ -26,6 +26,8 @@ namespace workwear.HMap
 			Map (x => x.WearSizeStd).Column ("size_wear_std");
 			Map (x => x.ShoesSize).Column ("size_shoes");
 			Map (x => x.ShoesSizeStd).Column ("size_shoes_std");
+			Map(x => x.WinterShoesSize).Column("size_winter_shoes");
+			Map(x => x.WinterShoesSizeStd).Column("size_winter_shoes_std");
 			Map (x => x.HeaddressSize).Column ("size_headdress");
 			Map (x => x.HeaddressSizeStd).Column ("size_headdress_std");
 			Map (x => x.GlovesSize).Column ("size_gloves");

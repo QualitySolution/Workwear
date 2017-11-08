@@ -22,6 +22,11 @@ namespace workwear.Measurements
 		[SizeStandarts(typeof(SizeStandartMenShoes), ClothesSex.Men)]
 		[SizeStandarts(typeof(SizeStandartUnisexShoes), ClothesSex.Universal, SizeUse.СlothesOnly)]
 		Shoes,
+		[Display(Name = "Зимняя обувь")]
+		[SizeStandarts(typeof(SizeStandartWomenShoes), ClothesSex.Women)]
+		[SizeStandarts(typeof(SizeStandartMenShoes), ClothesSex.Men)]
+		[SizeStandarts(typeof(SizeStandartUnisexShoes), ClothesSex.Universal, SizeUse.СlothesOnly)]
+		WinterShoes,
 /*		[Display(Name = "Женские колготки и чулки")]
 		[OnlyWoman]
 		WomanTights,
