@@ -1,5 +1,4 @@
 ﻿using System;
-using QSProjectsLib;
 using System.Collections.Generic;
 using QSReport;
 
@@ -7,7 +6,7 @@ namespace workwear
 {
 	public partial class QuarterRequestSheetDlg : Gtk.Bin, IParametersWidget
 	{
-		public string Title => "Квартальная/месячная заявка";
+		public string Title => "Заявка на спецодежду";
 
 		public QuarterRequestSheetDlg ()
 		{
@@ -44,6 +43,20 @@ namespace workwear
 					{ "year", month.Year },
 				}};
 			}
+
+			var year = comboQuarter.SelectedItem as Year;
+			if (year != null)
+			{
+				return new ReportInfo
+				{
+					Identifier = "YearRequestSheet",
+					Parameters = new Dictionary<string, object>
+					{
+						{ "year", year.Number },
+					}
+				};
+			}
+
 			return null;
 		}
 
@@ -59,6 +72,18 @@ namespace workwear
 		{
 			switch (type)
 			{
+				case PeriodType.Year:
+					var listy = new List<Year>();
+					var year = new Year(DateTime.Today);
+					for (int i = 0; i < 3; i++)
+					{
+						listy.Add(year);
+						year = year.GetNext();
+					}
+					comboQuarter.ItemsList = listy;
+					comboQuarter.SelectedItem = listy[1];
+					break;
+
 				case PeriodType.Quarter:
 					var list = new List<Quarter> ();
 					var quarter = new Quarter ((DateTime.Today.Month + 2) / 3, DateTime.Today.Year);
@@ -99,7 +124,14 @@ namespace workwear
 
 		enum PeriodType{
 			Month,
-			Quarter
+			Quarter,
+			Year
+		}
+
+		protected void OnRadioYearToggled(object sender, EventArgs e)
+		{
+			if (radioYear.Active)
+				SwitchDialog(PeriodType.Year);
 		}
 	}
 
@@ -150,6 +182,34 @@ namespace workwear
 		{
 			int newNum = Number + 1;
 			return newNum == 13 ? new Month (1, Year + 1) : new Month (newNum, Year);
+		}
+	}
+
+	public class Year
+	{
+		public int Number;
+
+		public string Title
+		{
+			get
+			{
+				return Number.ToString();
+			}
+		}
+
+		public Year(int year)
+		{
+			Number = year;
+		}
+
+		public Year(DateTime date)
+		{
+			Number = date.Year;
+		}
+
+		public Year GetNext()
+		{
+			return new Year(Number + 1);
 		}
 	}
 

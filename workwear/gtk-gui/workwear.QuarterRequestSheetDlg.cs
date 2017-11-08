@@ -16,6 +16,8 @@ namespace workwear
 
 		private global::Gtk.RadioButton radioQuarter;
 
+		private global::Gtk.RadioButton radioYear;
+
 		private global::Gtk.Label label2;
 
 		private global::Gtk.Label labelPeriodType;
@@ -75,35 +77,45 @@ namespace workwear
 			this.hbox1.Add(this.radioQuarter);
 			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.radioQuarter]));
 			w3.Position = 1;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.radioYear = new global::Gtk.RadioButton(global::Mono.Unix.Catalog.GetString("Год"));
+			this.radioYear.CanFocus = true;
+			this.radioYear.Name = "radioYear";
+			this.radioYear.DrawIndicator = true;
+			this.radioYear.UseUnderline = true;
+			this.radioYear.Group = this.radioMonth.Group;
+			this.hbox1.Add(this.radioYear);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.radioYear]));
+			w4.Position = 2;
 			this.table1.Add(this.hbox1);
-			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.table1[this.hbox1]));
-			w4.LeftAttach = ((uint)(1));
-			w4.RightAttach = ((uint)(2));
-			w4.XOptions = ((global::Gtk.AttachOptions)(4));
-			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.hbox1]));
+			w5.LeftAttach = ((uint)(1));
+			w5.RightAttach = ((uint)(2));
+			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
 			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Период:");
 			this.table1.Add(this.label2);
-			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
-			w5.XOptions = ((global::Gtk.AttachOptions)(4));
-			w5.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.labelPeriodType = new global::Gtk.Label();
 			this.labelPeriodType.Name = "labelPeriodType";
 			this.labelPeriodType.LabelProp = global::Mono.Unix.Catalog.GetString("Квартал:");
 			this.table1.Add(this.labelPeriodType);
-			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.labelPeriodType]));
-			w6.TopAttach = ((uint)(1));
-			w6.BottomAttach = ((uint)(2));
-			w6.XOptions = ((global::Gtk.AttachOptions)(4));
-			w6.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1[this.labelPeriodType]));
+			w7.TopAttach = ((uint)(1));
+			w7.BottomAttach = ((uint)(2));
+			w7.XOptions = ((global::Gtk.AttachOptions)(4));
+			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.dialog1_VBox.Add(this.table1);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
-			w7.Position = 0;
-			w7.Expand = false;
-			w7.Fill = false;
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
+			w8.Position = 0;
+			w8.Expand = false;
+			w8.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gtk.Button();
 			this.buttonRun.CanFocus = true;
@@ -111,10 +123,10 @@ namespace workwear
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.dialog1_VBox.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
-			w8.Position = 1;
-			w8.Expand = false;
-			w8.Fill = false;
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
+			w9.Position = 1;
+			w9.Expand = false;
+			w9.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
@@ -123,6 +135,7 @@ namespace workwear
 			this.Show();
 			this.radioMonth.Toggled += new global::System.EventHandler(this.OnRadioMonthToggled);
 			this.radioQuarter.Toggled += new global::System.EventHandler(this.OnRadioQuarterToggled);
+			this.radioYear.Toggled += new global::System.EventHandler(this.OnRadioYearToggled);
 			this.buttonRun.Clicked += new global::System.EventHandler(this.OnButtonRunClicked);
 		}
 	}
