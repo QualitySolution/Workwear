@@ -6,7 +6,7 @@ obj/
 packages/*
 
 #Workbench Backup Files
-Base/*.mwb.bak
+base/*.mwb.bak
 
 #User Specific
 *.userprefs
