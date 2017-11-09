@@ -97,6 +97,24 @@ namespace workwear.Domain
 			set { SetField (ref dismissDate, value, () => DismissDate); }
 		}
 
+		private DateTime? maternityLeaveBegin;
+
+		[Display(Name = "Начало декретного отпуска")]
+		public virtual DateTime? MaternityLeaveBegin
+		{
+			get { return maternityLeaveBegin; }
+			set { SetField(ref maternityLeaveBegin, value, () => MaternityLeaveBegin); }
+		}
+
+		private DateTime? maternityLeaveEnd;
+
+		[Display(Name = "Конец декретного отпуска")]
+		public virtual DateTime? MaternityLeaveEnd
+		{
+			get { return maternityLeaveEnd; }
+			set { SetField(ref maternityLeaveEnd, value, () => MaternityLeaveEnd); }
+		}
+
 		Sex sex;
 
 		[Display (Name = "Пол")]

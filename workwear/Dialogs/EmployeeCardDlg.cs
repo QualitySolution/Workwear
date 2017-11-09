@@ -67,6 +67,10 @@ namespace workwear
 			yentryPersonnelNumber.Binding.AddBinding (Entity, e => e.PersonnelNumber, w => w.Text).InitializeFromSource ();
 			dateHire.Binding.AddBinding (Entity, e => e.HireDate, w => w.DateOrNull).InitializeFromSource ();
 			dateDismiss.Binding.AddBinding (Entity, e => e.DismissDate, w => w.DateOrNull).InitializeFromSource ();
+			yperiodMaternityLeave.Binding.AddSource(Entity)
+								 .AddBinding(e => e.MaternityLeaveBegin, w => w.StartDateOrNull)
+								 .AddBinding(e => e.MaternityLeaveEnd, w => w.EndDateOrNull)
+								 .InitializeFromSource();
 
 			yentryPost.SubjectType = typeof(Post);
 			yentryPost.Binding.AddBinding (Entity, e => e.Post, w => w.Subject).InitializeFromSource ();
