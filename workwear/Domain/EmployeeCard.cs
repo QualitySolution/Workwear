@@ -395,9 +395,17 @@ namespace workwear.Domain
 			//Обновляем срок следующей выдачи
 			foreach(var item in processed)
 			{
-				item.UpdateNextIssue(UoW, new workwear.Domain.Stock.ExpenseItem[0]);
+				item.UpdateNextIssue(UoW, new Stock.ExpenseItem[0]);
 			}
 			logger.Info("Ok");
+		}
+
+		public virtual void UpdateAllNextIssue()
+		{
+			foreach (var item in WorkwearItems)
+			{
+				item.UpdateNextIssue(UoW, new Stock.ExpenseItem[0]);
+			}
 		}
 
 		public virtual void FillWearRecivedInfo(IUnitOfWork uow)

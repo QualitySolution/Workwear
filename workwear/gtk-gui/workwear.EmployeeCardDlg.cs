@@ -1237,6 +1237,7 @@ namespace workwear
 			}
 			this.Show();
 			this.buttonPrint.Clicked += new global::System.EventHandler(this.OnButtonPrintClicked);
+			this.yperiodMaternityLeave.PeriodChangedByUser += new global::System.EventHandler(this.OnYperiodMaternityLeavePeriodChangedByUser);
 			this.yentryPost.Changed += new global::System.EventHandler(this.OnYentryPostChanged);
 			this.ycomboWinterShoesStd.Changed += new global::System.EventHandler(this.OnYcomboWinterShoesStdChanged);
 			this.ycomboWearStd.Changed += new global::System.EventHandler(this.OnYcomboWearStdChanged);

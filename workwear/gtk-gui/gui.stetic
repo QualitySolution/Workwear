@@ -2238,6 +2238,7 @@
                     <property name="Events">ButtonPressMask</property>
                     <property name="StartDate">0</property>
                     <property name="EndDate">0</property>
+                    <signal name="PeriodChangedByUser" handler="OnYperiodMaternityLeavePeriodChangedByUser" />
                   </widget>
                   <packing>
                     <property name="TopAttach">3</property>

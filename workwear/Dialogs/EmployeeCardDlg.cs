@@ -636,5 +636,10 @@ namespace workwear
 		{
 			Entity.UpdateWorkwearItems();
 		}
+
+		protected void OnYperiodMaternityLeavePeriodChangedByUser(object sender, EventArgs e)
+		{
+			Entity.UpdateAllNextIssue();
+		}
 	}
 }

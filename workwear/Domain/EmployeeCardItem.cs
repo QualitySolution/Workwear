@@ -264,10 +264,20 @@ namespace workwear.Domain
 					uow.Save (expenseItem);
 				}
 			}
-			if(lastExpire != default(DateTime) && NextIssue != lastExpire)
+
+			if(lastExpire != default(DateTime))
 			{
-				NextIssue = lastExpire;
-				uow.Save (this);
+				//Сдвигаем дату следующего получения на конец дикретного отпуска
+				if (EmployeeCard.MaternityLeaveBegin.HasValue && EmployeeCard.MaternityLeaveEnd.HasValue
+				    && lastExpire >= EmployeeCard.MaternityLeaveBegin.Value
+				    && lastExpire <= EmployeeCard.MaternityLeaveEnd.Value)
+					lastExpire = EmployeeCard.MaternityLeaveEnd.Value.AddDays(1);
+
+				if(NextIssue != lastExpire)
+				{
+					NextIssue = lastExpire;
+					uow.Save (this);
+				}
 			}
 		}
 	}
