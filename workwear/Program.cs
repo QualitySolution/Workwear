@@ -22,14 +22,17 @@ namespace workwear
 				Application.Init();
 				QSMain.SubscribeToUnhadledExceptions();
 				QSMain.GuiThread = System.Threading.Thread.CurrentThread;
-				QSSupportLib.MainSupport.Init();
+				MainSupport.Init();
 			}
 			catch (Exception falalEx)
 			{
 				if (WindowStartupFix.IsWindows)
-					WindowStartupFix.DisplayWindowsOkCancelMessage(falalEx.ToString(), "Критическая ошибка");
+					WindowStartupFix.DisplayWindowsOkMessage(falalEx.ToString(), "Критическая ошибка");
 				else
 					Console.WriteLine(falalEx);
+
+				logger.Fatal(falalEx);
+				return;
 			}
 
 			CreateProjectParam ();
