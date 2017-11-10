@@ -557,7 +557,7 @@ CREATE TABLE IF NOT EXISTS `user_settings` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` INT UNSIGNED NOT NULL,
   `toolbar_style` ENUM('Text', 'Icons', 'Both') NOT NULL DEFAULT 'Both',
-  `toolbar_icons_size` ENUM('ExtraSmall', 'Small', 'Middle', 'Large') NOT NULL DEFAULT 'Large',
+  `toolbar_icons_size` ENUM('ExtraSmall', 'Small', 'Middle', 'Large') NOT NULL DEFAULT 'Middle',
   `toolbar_show` TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   INDEX `fk_user_settings_1_idx` (`user_id` ASC),

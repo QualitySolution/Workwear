@@ -30,7 +30,7 @@ namespace workwear.Domain.Users
 			set { SetField (ref toolbarStyle, value, () => ToolbarStyle); }
 		}
 
-		IconsSize toolBarIconsSize = IconsSize.Large;
+		IconsSize toolBarIconsSize = IconsSize.Middle;
 
 		[Display (Name = "Размер иконок панели")]
 		public virtual IconsSize ToolBarIconsSize {
@@ -38,7 +38,7 @@ namespace workwear.Domain.Users
 			set { SetField (ref toolBarIconsSize, value, () => ToolBarIconsSize); }
 		}
 
-		private bool showToolbar;
+		private bool showToolbar = true;
 
 		[Display(Name = "Показывать панель")]
 		public virtual bool ShowToolbar
