@@ -321,6 +321,18 @@ Section "${PRODUCT_NAME}" SecProgram
   ; Удяляем файлы ненужные после версии 1.2.4.2
   Delete $INSTDIR\gtk-databind-lib.dll
 
+  ; Удаляем файлы используемые до версии 2.0
+  Delete $INSTDIR\EncryptionProvider.dll
+  Delete $INSTDIR\ICSharpCode.SharpZipLib.dll
+  Delete $INSTDIR\Iesi.Collections.dll
+  Delete $INSTDIR\Newtonsoft.Json.dll
+  Delete $INSTDIR\RdlCri.dll
+  Delete $INSTDIR\RdlReader.exe
+  Delete $INSTDIR\RdlViewer.dll
+  Delete $INSTDIR\zxing.dll
+  Delete $INSTDIR\ru-RU\RdlReader.resources.dll
+  Delete $INSTDIR\ru-RU\RdlViewer.resources.dll
+
 SectionEnd
 
 Section "MS .NET Framework ${MIN_NET_MAJOR}.${MIN_NET_MINOR}" SecFramework
@@ -342,8 +354,13 @@ Section "MS .NET Framework ${MIN_NET_MAJOR}.${MIN_NET_MINOR}" SecFramework
  
 SectionEnd
 
-Section "GTK# 2.12.21" SecGTK
+Section "GTK# 2.12.45" SecGTK
   SectionIn RO
+
+  ; Test 2.12.45
+  System::Call "msi::MsiQueryProductStateA(t '{0D038544-52B1-4F30-BAE1-46509B4A91A7}') i.r0"
+  StrCmp $0 "5" GTKDone
+  DetailPrint "GTK# 2.12.45 не установлен"
 
   ; Test 2.12.38
   System::Call "msi::MsiQueryProductStateA(t '{C7A0CF1E-A936-426A-9694-035636DCD356}') i.r0"
@@ -371,9 +388,9 @@ Section "GTK# 2.12.21" SecGTK
   DetailPrint "GTK# 2.12.21 не установлен"
 
 ; Install 2.12.21
-  DetailPrint "Запуск установщика GTK# 2.12.21"
-  File "gtk-sharp-2.12.21.msi"
-  ExecWait '"msiexec" /i "$pluginsdir\Requires\gtk-sharp-2.12.21.msi"  /passive'
+  DetailPrint "Запуск установщика GTK# 2.12.45"
+  File "gtk-sharp-2.12.45.msi"
+  ExecWait '"msiexec" /i "$pluginsdir\Requires\gtk-sharp-2.12.45.msi"  /passive'
 
 ; Setup Gtk style
   ${ConfigWrite} "$PROGRAMFILES\GtkSharp\2.12\share\themes\MS-Windows\gtk-2.0\gtkrc" "gtk-button-images =" "1" $R0
@@ -439,6 +456,6 @@ Section "Uninstall"
 
   ; Remove GTK#
   MessageBox MB_YESNO "Удалить библиотеки GTK#? Они были установлены для ${PRODUCT_NAME}, но могут использоваться другими приложениями." /SD IDYES IDNO endGTK
-    ExecWait '"msiexec" /X{71109D19-D8C1-437D-A6DA-03B94F5187FB} /passive'
+    ExecWait '"msiexec" /X{0D038544-52B1-4F30-BAE1-46509B4A91A7} /passive'
   endGTK:
 SectionEnd
