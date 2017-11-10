@@ -15,4 +15,4 @@ rm -v -R ./Files/*
 
 cp -r -v ${BinDir}/* ./Files
 
-wine ~/.wine/drive_c/Program\ Files\ \(x86\)/NSIS/makensis.exe  ${ProjectName}.nsi
+wine ~/.wine/drive_c/Program\ Files\ \(x86\)/NSIS/makensis.exe /INPUTCHARSET UTF8 ${ProjectName}.nsi
