@@ -84,12 +84,13 @@
     <EmbeddedResource Include="Updates\Update to 1.2.sql" />
     <EmbeddedResource Include="Updates\1.2.1.sql" />
     <EmbeddedResource Include="Updates\1.2.2.sql" />
-    <EmbeddedResource Include="SQLScripts\new-1.2.sql" />
     <EmbeddedResource Include="Updates\1.2.4.sql" />
     <EmbeddedResource Include="icon\toolbar\store-balance.png" />
     <EmbeddedResource Include="icon\toolbar\store.png" />
     <EmbeddedResource Include="icon\toolbar\employees.png" />
     <EmbeddedResource Include="icon\toolbar\go-home.png" />
+    <EmbeddedResource Include="Updates\2.0.sql" />
+    <EmbeddedResource Include="Updates\new_2.0.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -282,7 +283,6 @@
     <Folder Include="Domain\Stock\" />
     <Folder Include="HibernateMapping\Stock\" />
     <Folder Include="JournalFilters\" />
-    <Folder Include="SQLScripts\" />
     <Folder Include="JournalViewers\" />
     <Folder Include="Domain\User\" />
     <Folder Include="HibernateMapping\User\" />

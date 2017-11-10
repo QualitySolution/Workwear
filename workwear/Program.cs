@@ -104,9 +104,9 @@ namespace workwear
 
 			//Скрипты создания базы
 			DBCreator.AddBaseScript (
-				new Version(1, 2),
+				new Version(2, 0),
 				"Чистая база",
-				"workwear.SQLScripts.new-1.2.sql"
+				"workwear.Updates.new_2.0.sql"
 			);
 
 			//Настраиваем обновления
@@ -138,7 +138,10 @@ namespace workwear
 				new Version (1, 2, 2),
 				new Version (1, 2, 4),
 				"workwear.Updates.1.2.4.sql");
-			
+			QSUpdater.DB.DBUpdater.AddUpdate (
+				new Version (1, 2),
+				new Version (2, 0),
+				"workwear.Updates.2.0.sql");			
 		}
 	}
 }
