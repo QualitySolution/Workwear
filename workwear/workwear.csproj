@@ -11,8 +11,9 @@
     <AssemblyName>workwear</AssemblyName>
     <ApplicationIcon>icon\logo.ico</ApplicationIcon>
     <StartupObject>workwear.MainClass</StartupObject>
-    <UseMSBuildEngine>False</UseMSBuildEngine>
-    <ReleaseVersion>1.0</ReleaseVersion>
+    <ReleaseVersion>2.0</ReleaseVersion>
+    <SynchReleaseVersion>false</SynchReleaseVersion>
+    <TargetOS>Linux</TargetOS>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,6 +33,17 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWin|x86' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\ReleaseWin</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.Contains('Win'))">
+    <TargetOS>Win</TargetOS>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -317,6 +329,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\YearRequestSheet.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Condition=" '$(TargetOS)' == 'Win' " Include="../lib/WinOnly/Mono.Posix.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="workwear_ru.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
