@@ -4384,24 +4384,28 @@
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Складские документы</property>
         <property name="ShortLabel" translatable="yes">Складские документы</property>
+        <property name="StockId">store</property>
         <signal name="Activated" handler="OnActionStockDocsActivated" />
       </action>
       <action id="ActionStockBalance">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Складские остатки</property>
         <property name="ShortLabel" translatable="yes">Складские остатки</property>
+        <property name="StockId">store-balance</property>
         <signal name="Activated" handler="OnActionStockBalanceActivated" />
       </action>
       <action id="ActionObjects">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Объекты</property>
         <property name="ShortLabel" translatable="yes">Объекты</property>
+        <property name="StockId">objects</property>
         <signal name="Activated" handler="OnActionObjectsActivated" />
       </action>
       <action id="ActionEmployees">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Карточки сотрудников</property>
         <property name="ShortLabel" translatable="yes">Карточки сотрудников</property>
+        <property name="StockId">employees</property>
         <signal name="Activated" handler="OnActionEmployeesActivated" />
       </action>
       <action id="ActionBarObjects">
@@ -5954,7 +5958,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.JournalFilters.StockDocumentsFilter" design-size="428 300">
+  <widget class="Gtk.Bin" id="workwear.JournalFilters.StockDocumentsFilter" design-size="428 32">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
