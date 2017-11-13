@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Gamma.Utilities;
 using QSOrmProject;
 using workwear.Domain.Stock;
-using Gamma.Utilities;
 
 namespace workwear.Domain
 {
@@ -229,13 +230,18 @@ namespace workwear.Domain
 			ExpenseItem expenseItemAlias = null;
 			Nomenclature nomenclatureAlias = null;
 
-			var expenseItems = uow.Session.QueryOver<ExpenseItem> (() => expenseItemAlias)
-				.JoinQueryOver (ei => ei.ExpenseDoc)
-				.Where (e => e.EmployeeCard == EmployeeCard)
-				.JoinAlias (() => expenseItemAlias.Nomenclature, () => nomenclatureAlias)
-				.Where (() => nomenclatureAlias.Type.Id == Item.Id)
-				.OrderBy (e => e.Date).Asc
-				.List ();
+			IList<ExpenseItem> expenseItems = new List<ExpenseItem>();
+
+			if(EmployeeCard.Id > 0) //Если карточка еще не разу не сохранялась. То и нечего запрашивать выдачи.
+			{
+				expenseItems = uow.Session.QueryOver<ExpenseItem> (() => expenseItemAlias)
+					.JoinQueryOver (ei => ei.ExpenseDoc)
+					.Where (e => e.EmployeeCard == EmployeeCard)
+					.JoinAlias (() => expenseItemAlias.Nomenclature, () => nomenclatureAlias)
+					.Where (() => nomenclatureAlias.Type.Id == Item.Id)
+					.OrderBy (e => e.Date).Asc
+					.List ();
+			}
 
 			var lastExpire = new DateTime();
 
