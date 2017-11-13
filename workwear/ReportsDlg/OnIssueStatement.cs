@@ -62,12 +62,12 @@ namespace workwear
 			if (radioPeriodMonth.Active)
 			{
 				startDate = new DateTime(int.Parse(ylistcomboYear.ActiveText), ylistcomboMonth.Active + 1, 1);
-				endDate = new DateTime(int.Parse(ylistcomboYear.ActiveText), ylistcomboMonth.Active + 2, 1).AddDays(-1);
+				endDate = new DateTime(int.Parse(ylistcomboYear.ActiveText), ylistcomboMonth.Active + 1, 1).AddMonths(1).AddDays(-1);
 			}
 			else
 			{
 				startDate = new DateTime(int.Parse(ylistcomboYear1.ActiveText), ylistcomboMonth1.Active + 1, 1);
-				endDate = new DateTime(int.Parse(ylistcomboYear2.ActiveText), ylistcomboMonth2.Active + 2, 1).AddDays(-1);
+				endDate = new DateTime(int.Parse(ylistcomboYear2.ActiveText), ylistcomboMonth2.Active + 1, 1).AddMonths(1).AddDays(-1);
 			}
 
 			return new ReportInfo
