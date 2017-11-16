@@ -355,7 +355,7 @@ Section "MS .NET Framework ${MIN_NET_MAJOR}.${MIN_NET_MINOR}" SecFramework
  
 SectionEnd
 
-Section "GTK# 2.12.45" SecGTK
+Section "GTK# 2.12.21" SecGTK
   SectionIn RO
 
   ; Test 2.12.45
