@@ -18,7 +18,7 @@ namespace workwear.JournalFilters
 		{
 			this.Build();
 			enumcomboDocumentType.ItemsEnum = typeof(StokDocumentType);
-			dateperiodDocs.StartDate = DateTime.Today.AddDays(-7);
+			dateperiodDocs.StartDate = DateTime.Today.AddMonths(-1);
 			dateperiodDocs.EndDate = DateTime.Today.AddDays(1);
 		}
 
