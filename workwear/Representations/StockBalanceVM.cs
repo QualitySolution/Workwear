@@ -143,9 +143,14 @@ namespace workwear.ViewModel
 		public int Id { get; set; }
 
 		[UseForSearch]
+		[SearchHighlight]
 		public string NomenclatureName { get; set;}
 		public string UnitsName { get; set;}
+		[UseForSearch]
+		[SearchHighlight]
 		public string Size { get; set;}
+		[UseForSearch]
+		[SearchHighlight]
 		public string Growth { get; set;}
 		public decimal AvgCost { get; set;}
 		public decimal AvgLife { get; set;}
