@@ -18,7 +18,7 @@ namespace workwear
 
 		private global::Gtk.ScrolledWindow GtkScrolledWindow5;
 
-		private global::Gamma.GtkWidgets.yTreeView ytreeviewStockBalance;
+		private global::QSOrmProject.RepresentationTreeView ytreeviewStockBalance;
 
 		protected virtual void Build()
 		{
@@ -89,7 +89,7 @@ namespace workwear
 			this.GtkScrolledWindow5.Name = "GtkScrolledWindow5";
 			this.GtkScrolledWindow5.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow5.Gtk.Container+ContainerChild
-			this.ytreeviewStockBalance = new global::Gamma.GtkWidgets.yTreeView();
+			this.ytreeviewStockBalance = new global::QSOrmProject.RepresentationTreeView();
 			this.ytreeviewStockBalance.CanFocus = true;
 			this.ytreeviewStockBalance.Name = "ytreeviewStockBalance";
 			this.ytreeviewStockBalance.EnableSearch = false;

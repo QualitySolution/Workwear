@@ -60,7 +60,7 @@ namespace workwear
 
 		protected void OnButtonAddStoreClicked (object sender, EventArgs e)
 		{
-			var selectFromStockDlg = new ReferenceRepresentation (new ViewModel.StockBalanceVM (),
+			var selectFromStockDlg = new ReferenceRepresentation (new ViewModel.StockBalanceVM (ViewModel.StockBalanceVMMode.DisplayAll, ViewModel.StockBalanceVMGroupBy.IncomeItem),
 			                                                     "Остатки на складе");
 			selectFromStockDlg.Mode = OrmReferenceMode.MultiSelect;
 			selectFromStockDlg.ObjectSelected += SelectFromStockDlg_ObjectSelected;;

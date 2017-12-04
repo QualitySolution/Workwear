@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Gamma.ColumnConfig;
 using Gamma.GtkWidgets;
 using NHibernate;
@@ -19,6 +20,8 @@ namespace workwear.ViewModel
 	public class StockBalanceVM : RepresentationModelWithoutEntityBase<StockBalanceVMNode>
 	{
 		StockBalanceVMMode mode;
+
+		StockBalanceVMGroupBy groupBy;
 
 		#region IRepresentationModel implementation
 
@@ -71,6 +74,7 @@ namespace workwear.ViewModel
 				)
 				.SelectList (list => list
 					.SelectGroup (() => incomeItemAlias.Id).WithAlias (() => resultAlias.Id)
+				    .Select(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomenclatureId)
 					.Select (() => nomenclatureAlias.Name).WithAlias (() => resultAlias.NomenclatureName)
 					.Select (() => unitsAlias.Name).WithAlias (() => resultAlias.UnitsName)
 					.Select (() => nomenclatureAlias.Size).WithAlias (() => resultAlias.Size)
@@ -82,10 +86,35 @@ namespace workwear.ViewModel
 					.SelectSubQuery (subqueryWriteOff).WithAlias (() => resultAlias.Writeoff)
 				)
 				.TransformUsing (Transformers.AliasToBean<StockBalanceVMNode> ())
-
 				.List<StockBalanceVMNode> ();
 
-			SetItemsSource (incomeList.ToList ());
+			if(groupBy == StockBalanceVMGroupBy.NomenclatureId)
+			{
+				var groupedList = new List<StockBalanceVMNode>();
+				foreach(var group in incomeList.GroupBy(x => x.NomenclatureId))
+				{
+					var item = group.First();
+					if (group.Count() > 1)
+					{
+						var totalCost = group.Sum(x => x.AvgCost * x.Balance);
+						var totalLife = group.Sum(x => x.AvgLife * x.Balance);
+						item.Income = group.Sum(x => x.Income);
+						item.Expense = group.Sum(x => x.Expense);
+						item.Writeoff = group.Sum(x => x.Writeoff);
+						var totalAmount = item.Balance;
+						item.AvgCost = totalCost / totalAmount;
+						item.AvgLife = totalLife / totalAmount;
+					}
+					groupedList.Add(item);
+				}
+
+				incomeList = groupedList;
+			}
+
+			SetItemsSource (incomeList.OrderBy(x => x.NomenclatureName)
+				                .ThenBy(x => x.Size)
+				                .ThenBy(x => x.Growth)
+				                .ToList ());
 		}
 
 		IColumnsConfig treeViewConfig;
@@ -103,8 +132,8 @@ namespace workwear.ViewModel
 					}
 					tempConfig
 						.AddColumn("Количество").AddTextRenderer(e => e.BalanceText)
-						.AddColumn("Cтоимость").AddTextRenderer(e => e.AvgCostText)
-						.AddColumn("Cостояние").AddTextRenderer(e => e.AvgLifeText);
+						.AddColumn("Средняя стоимость").AddTextRenderer(e => e.AvgCostText)
+						.AddColumn("Среднее состояние").AddTextRenderer(e => e.AvgLifeText);
 					treeViewConfig = tempConfig.Finish();
 				}
 
@@ -122,17 +151,17 @@ namespace workwear.ViewModel
 
 		#endregion
 
-		public StockBalanceVM () : this(UnitOfWorkFactory.CreateWithoutRoot ())
+		public StockBalanceVM (StockBalanceVMMode mode, StockBalanceVMGroupBy groupBy) : this(UnitOfWorkFactory.CreateWithoutRoot (), mode, groupBy)
 		{
-			
 		}
 
-		public StockBalanceVM(IUnitOfWork uow, StockBalanceVMMode mode) : this(uow)
+		public StockBalanceVM(IUnitOfWork uow, StockBalanceVMMode mode, StockBalanceVMGroupBy groupBy) : this(uow)
 		{
 			this.mode = mode;
+			this.groupBy = groupBy;
 		}
 
-		public StockBalanceVM (IUnitOfWork uow) : base (typeof(Expense), typeof(Income), typeof(Writeoff))
+		private StockBalanceVM (IUnitOfWork uow) : base (typeof(Expense), typeof(Income), typeof(Writeoff))
 		{
 			this.UoW = uow;
 		}
@@ -141,6 +170,8 @@ namespace workwear.ViewModel
 	public class StockBalanceVMNode
 	{
 		public int Id { get; set; }
+
+		public int NomenclatureId { get; set; }
 
 		[UseForSearch]
 		[SearchHighlight]
@@ -159,7 +190,9 @@ namespace workwear.ViewModel
 		public int Expense { get; set;}
 		public int Writeoff { get; set;}
 
-		public string BalanceText {get{ return String.Format ("{0} {1}", Income - Expense - Writeoff, UnitsName);
+		public int Balance { get { return Income - Expense - Writeoff; } }
+
+		public string BalanceText {get{ return String.Format ("{0} {1}", Balance, UnitsName);
 			}}
 
 		public string AvgCostText {get { 
@@ -175,6 +208,12 @@ namespace workwear.ViewModel
 	{
 		DisplayAll,
 		OnlyProperties
+	}
+
+	public enum StockBalanceVMGroupBy
+	{
+		IncomeItem,
+		NomenclatureId
 	}
 }
 

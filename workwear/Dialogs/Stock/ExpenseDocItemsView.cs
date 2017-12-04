@@ -95,7 +95,8 @@ namespace workwear
 		protected void OnButtonAddClicked (object sender, EventArgs e)
 		{
 			var selectDlg = new ReferenceRepresentation (new ViewModel.StockBalanceVM (MyOrmDialog.UoW,
-				ExpenceDoc.Operation == ExpenseOperations.Employee ? ViewModel.StockBalanceVMMode.DisplayAll : ViewModel.StockBalanceVMMode.OnlyProperties
+				ExpenceDoc.Operation == ExpenseOperations.Employee ? ViewModel.StockBalanceVMMode.DisplayAll : ViewModel.StockBalanceVMMode.OnlyProperties,
+			                                                                           ViewModel.StockBalanceVMGroupBy.IncomeItem
 			),
 			     "Остатки на складе");
 			selectDlg.Mode = OrmReferenceMode.MultiSelect;

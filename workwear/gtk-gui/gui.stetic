@@ -4117,7 +4117,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.StockBalanceView" design-size="345 300">
+  <widget class="Gtk.Bin" id="workwear.StockBalanceView" design-size="346 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -4200,7 +4200,7 @@
             <property name="MemberName" />
             <property name="ShadowType">In</property>
             <child>
-              <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeviewStockBalance">
+              <widget class="QSOrmProject.RepresentationTreeView" id="ytreeviewStockBalance">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>
