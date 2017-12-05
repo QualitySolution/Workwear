@@ -3,14 +3,22 @@
   <subtitle type="text">Новости программы QS: Спецодежда и имущество</subtitle>
   <id>workwearnews</id>
   <rights type="text">Quality Solution 2017</rights>
-  <updated>2017-11-22T15:00:00+03:00</updated>
+  <updated>2017-12-05T10:30:00+03:00</updated>
+  <entry>
+    <id>urn:uuid:06a782da-c0eb-42af-84c3-2f28db56e120</id>
+    <title type="text">Повышение стоимости программы</title>
+    <updated>2017-12-05T10:30:00+03:00</updated>
+    <published>2017-12-05T10:30:00+03:00</published>
+    <link rel="alternate" href="http://workwear.qsolution.ru/?p=270" />
+    <summary>В 2018 году будет действовать новые цены. Поторопитесь купить сейчас.</summary>
+  </entry>
   <entry>
     <id>urn:uuid:7ef1ab79-11c7-4efc-bb74-04ad52b92498</id>
     <title type="text">QS: Спецодежда и имущество 2.0</title>
     <updated>2017-11-22T15:00:00+03:00</updated>
     <published>2017-11-22T15:00:00+03:00</published>
     <link rel="alternate" href="http://workwear.qsolution.ru/?p=238" />
-    <summary>С кординально переработанным интерфейсом. Теперь все на вкладках.</summary>
+    <summary>С кардинально переработанным интерфейсом. Теперь все на вкладках.</summary>
   </entry>
   <entry>
     <id>urn:uuid:c9c211af-dada-469c-b99e-0bd67835a87a</id>
@@ -26,7 +34,7 @@
     <updated>2017-07-26T15:30:00+03:00</updated>
     <published>2017-07-26T15:30:00+03:00</published>
     <link rel="alternate" href="http://workwear.qsolution.ru/?p=224" />
-    <summary>Не поленитись направьте направление развития программы в удобную именно вам сторону.</summary>
+    <summary>Не поленитесь направьте направление развития программы в удобную именно вам сторону.</summary>
   </entry>
   <entry>
     <id>urn:uuid:752f80cd-513d-41da-8f99-1d3b40532aae</id>
