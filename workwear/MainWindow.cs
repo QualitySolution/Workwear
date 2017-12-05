@@ -455,5 +455,17 @@ public partial class MainWindow : Gtk.Window
 		ActionStockBalance.Activate();
 	}
 
+	protected void OnActionSiteActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount("OpenSite");
+		System.Diagnostics.Process.Start("http://workwear.qsolution.ru");
+	}
+
+	protected void OnActionOpenReformalActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount("OpenReformal.ru");
+		System.Diagnostics.Process.Start("http://qs-workwear.reformal.ru/");
+	}
+
 	#endregion
 }

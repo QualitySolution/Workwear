@@ -93,6 +93,10 @@ public partial class MainWindow
 
 	private global::Gtk.RadioAction ActionIconsLarge;
 
+	private global::Gtk.Action ActionSite;
+
+	private global::Gtk.Action ActionOpenReformal;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -253,6 +257,12 @@ public partial class MainWindow
 		this.ActionIconsLarge.Group = this.ActionIconsMiddle.Group;
 		this.ActionIconsLarge.ShortLabel = global::Mono.Unix.Catalog.GetString("Большие иконки");
 		w1.Add(this.ActionIconsLarge, null);
+		this.ActionSite = new global::Gtk.Action("ActionSite", global::Mono.Unix.Catalog.GetString("Сайт программы"), null, "www");
+		this.ActionSite.ShortLabel = global::Mono.Unix.Catalog.GetString("Сайт программы");
+		w1.Add(this.ActionSite, null);
+		this.ActionOpenReformal = new global::Gtk.Action("ActionOpenReformal", global::Mono.Unix.Catalog.GetString("Предложить идею"), null, "www");
+		this.ActionOpenReformal.ShortLabel = global::Mono.Unix.Catalog.GetString("Предложить идею");
+		w1.Add(this.ActionOpenReformal, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -291,8 +301,10 @@ public partial class MainWindow
 				"lNeed\'/><menuitem name=\'Action22\' action=\'Action22\'/></menu><menu name=\'Action3\'" +
 				" action=\'Action3\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem nam" +
 				"e=\'ActionHistory\' action=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'" +
-				"ActionUpdate\'/><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separat" +
-				"or/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><men" +
+				"uitem name=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><separator/><menuit" +
+				"em name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' a" +
+				"ction=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -393,5 +405,7 @@ public partial class MainWindow
 		this.ActionIconsSmall.Toggled += new global::System.EventHandler(this.OnActionIconsSmallToggled);
 		this.ActionIconsMiddle.Toggled += new global::System.EventHandler(this.OnActionIconsMiddleToggled);
 		this.ActionIconsLarge.Toggled += new global::System.EventHandler(this.OnActionIconsLargeToggled);
+		this.ActionSite.Activated += new global::System.EventHandler(this.OnActionSiteActivated);
+		this.ActionOpenReformal.Activated += new global::System.EventHandler(this.OnActionOpenReformalActivated);
 	}
 }

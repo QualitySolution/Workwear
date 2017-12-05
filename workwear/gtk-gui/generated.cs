@@ -20,6 +20,8 @@ namespace Stetic
 				w1.Add("store", w4);
 				global::Gtk.IconSet w5 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("workwear.icon.toolbar.store-balance.png"));
 				w1.Add("store-balance", w5);
+				global::Gtk.IconSet w6 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("workwear.icon.menu.www.png"));
+				w1.Add("www", w6);
 				w1.AddDefault();
 			}
 		}

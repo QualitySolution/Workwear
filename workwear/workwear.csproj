@@ -91,6 +91,7 @@
     <EmbeddedResource Include="icon\toolbar\go-home.png" />
     <EmbeddedResource Include="Updates\2.0.sql" />
     <EmbeddedResource Include="Updates\new_2.0.sql" />
+    <EmbeddedResource Include="icon\menu\www.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />

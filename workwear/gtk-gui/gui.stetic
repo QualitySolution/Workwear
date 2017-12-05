@@ -40,6 +40,11 @@
         <property name="Image">resource:workwear.icon.toolbar.store-balance.png</property>
       </source>
     </icon-set>
+    <icon-set id="www">
+      <source>
+        <property name="Image">resource:workwear.icon.menu.www.png</property>
+      </source>
+    </icon-set>
   </icon-factory>
   <widget class="Gtk.Bin" id="workwear.ItemTypeDlg" design-size="441 266">
     <property name="MemberName" />
@@ -4519,6 +4524,20 @@
         <property name="Group">ToolBarIcons</property>
         <signal name="Toggled" handler="OnActionIconsLargeToggled" />
       </action>
+      <action id="ActionSite">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Сайт программы</property>
+        <property name="ShortLabel" translatable="yes">Сайт программы</property>
+        <property name="StockId">www</property>
+        <signal name="Activated" handler="OnActionSiteActivated" />
+      </action>
+      <action id="ActionOpenReformal">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Предложить идею</property>
+        <property name="ShortLabel" translatable="yes">Предложить идею</property>
+        <property name="StockId">www</property>
+        <signal name="Activated" handler="OnActionOpenReformalActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -4585,6 +4604,9 @@
                 <node type="Menuitem" action="helpAction" />
                 <node type="Menuitem" action="ActionHistory" />
                 <node type="Menuitem" action="ActionUpdate" />
+                <node type="Separator" />
+                <node type="Menuitem" action="ActionSite" />
+                <node type="Menuitem" action="ActionOpenReformal" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionSN" />
                 <node type="Separator" />
