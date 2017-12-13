@@ -4,11 +4,11 @@ using QSReport;
 
 namespace workwear
 {
-	public partial class QuarterRequestSheetDlg : Gtk.Bin, IParametersWidget
+	public partial class RequestSheetDlg : Gtk.Bin, IParametersWidget
 	{
 		public string Title => "Заявка на спецодежду";
 
-		public QuarterRequestSheetDlg ()
+		public RequestSheetDlg ()
 		{
 			this.Build ();
 			SwitchDialog(PeriodType.Month);

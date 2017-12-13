@@ -178,8 +178,7 @@
     <Compile Include="ReportsDlg\NotIssuedSheetReportDlg.cs" />
     <Compile Include="gtk-gui\workwear.NotIssuedSheetReportDlg.cs" />
     <Compile Include="ConfigureDeletion.cs" />
-    <Compile Include="ReportsDlg\QuarterRequestSheetDlg.cs" />
-    <Compile Include="gtk-gui\workwear.QuarterRequestSheetDlg.cs" />
+    <Compile Include="ReportsDlg\RequestSheetDlg.cs" />
     <Compile Include="Domain\FacilityPlace.cs" />
     <Compile Include="HibernateMapping\FacilityPlaceMap.cs" />
     <Compile Include="Representations\ObjectBalanceVM.cs" />
@@ -202,6 +201,7 @@
     <Compile Include="HibernateMapping\User\UserMap.cs" />
     <Compile Include="HibernateMapping\User\UserSettingsMap.cs" />
     <Compile Include="Tools\CurrentUserSettings.cs" />
+    <Compile Include="gtk-gui\workwear.RequestSheetDlg.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

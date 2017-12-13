@@ -265,7 +265,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction21Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportMonthQuarterRequestSheet");
-		var widget = new QuarterRequestSheetDlg();
+		var widget = new RequestSheetDlg();
 		tdiMain.OpenTab(
 			QSReport.ReportViewDlg.GenerateHashName(widget),
 			() => new QSReport.ReportViewDlg(widget)
