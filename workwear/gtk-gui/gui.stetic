@@ -1670,7 +1670,7 @@
                   <widget class="Gtk.Label" id="label25">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Декретный отпуск:</property>
+                    <property name="LabelProp" translatable="yes">Текущий отпуск:</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">3</property>

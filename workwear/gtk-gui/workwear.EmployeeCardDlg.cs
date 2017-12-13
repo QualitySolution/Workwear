@@ -540,7 +540,7 @@ namespace workwear
 			this.label25 = new global::Gtk.Label();
 			this.label25.Name = "label25";
 			this.label25.Xalign = 1F;
-			this.label25.LabelProp = global::Mono.Unix.Catalog.GetString("Декретный отпуск:");
+			this.label25.LabelProp = global::Mono.Unix.Catalog.GetString("Текущий отпуск:");
 			this.table1.Add(this.label25);
 			global::Gtk.Table.TableChild w30 = ((global::Gtk.Table.TableChild)(this.table1[this.label25]));
 			w30.TopAttach = ((uint)(3));
