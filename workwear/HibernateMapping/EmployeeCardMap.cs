@@ -48,7 +48,7 @@ namespace workwear.HMap
 			HasManyToMany (x => x.UsedNorms).Table ("wear_cards_norms")
 				.ParentKeyColumn ("wear_card_id")
 				.ChildKeyColumn ("norm_id")
-				.Cascade.All ().LazyLoad ();
+				.LazyLoad ();
 		}
 	}
 }

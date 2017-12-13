@@ -83,7 +83,7 @@ namespace workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<WriteoffItem> ();
 			
-			//Для тетирования
+			//Для тестирования
 			#if DEBUG
 			DeleteConfig.DeletionCheck ();
 			#endif
