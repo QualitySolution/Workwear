@@ -133,6 +133,8 @@ namespace workwear
 				.AddColumn ("Сдано\\списано").AddTextRenderer (e => e.AmountReturnedText)
 				.Finish ();
 			treeviewMovements.ShowAll ();
+
+			Entity.PropertyChanged += CheckSizeChanged;
 		}
 
 		void YtreeNorms_Selection_Changed (object sender, EventArgs e)
@@ -187,6 +189,28 @@ namespace workwear
 			notebook1.GetNthPage (3).Visible = true;
 			logger.Info ("Ok");
 			return true;
+		}
+
+		void CheckSizeChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			СlothesType category;
+			if (e.PropertyName == nameof(Entity.GlovesSize))
+				category = СlothesType.Gloves;
+			else if (e.PropertyName == nameof(Entity.WearSize))
+				category = СlothesType.Wear;
+			else if (e.PropertyName == nameof(Entity.ShoesSize))
+				category = СlothesType.Shoes;
+			else if (e.PropertyName == nameof(Entity.HeaddressSize))
+				category = СlothesType.Headgear;
+			else if (e.PropertyName == nameof(Entity.WinterShoesSize))
+				category = СlothesType.WinterShoes;
+			else if (e.PropertyName == nameof(Entity.WearGrowth))
+				category = СlothesType.Wear;
+			else return;
+
+			//Обновляем подобранную номенклатуру
+			Entity.WorkwearItems.Where(x => x.Item.WearCategory == category)
+				  .ToList().ForEach(x => x.FindMatchedNomenclature(UoW));
 		}
 
 		private void UpdateMovements ()

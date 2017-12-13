@@ -147,16 +147,11 @@ namespace workwear.Domain
 		{
 			int neededCount = ActiveNormItem.Amount - Amount;
 
-			if (neededCount <= 0)
-			{
-				logger.Debug ("Нет необходимости в выдаче <{0}>, пропускаем подбор...", Item.Name);
-				return;
-			}
-
 			var nomenclatures = StockRepository.MatchNomenclaturesBySize (uow, Item, EmployeeCard);
 			if(nomenclatures == null || nomenclatures.Count == 0)
 			{
 				logger.Warn ("Подходящая по размерам номенклатура, для типа <{0}> не найдена.", Item.Name);
+				MatchedNomenclature = null;
 				InStockState = StockStateInfo.UnknownNomenclature;
 				return;
 			}
@@ -164,14 +159,9 @@ namespace workwear.Domain
 
 			if(stock.Count == 0)
 			{
-				if(MatchedNomenclature == null)
-				{
-					logger.Debug ("Подходящие номенклатуры на складе отсутствуют, выбираем любую...");
-					matchedNomenclature = nomenclatures.OrderBy (n => n.Id).Last ();
-					SetInStockAmount (0);
-				}
-				else
-					logger.Debug ("Подходящие номенклатуры на складе отсутствуют, отставляем старую...");
+				logger.Debug ("Подходящие номенклатуры на складе отсутствуют, выбираем любую...");
+				MatchedNomenclature = nomenclatures.OrderBy (n => n.Id).Last ();
+				SetInStockAmount (0);
 				return;
 			}
 
