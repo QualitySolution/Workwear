@@ -338,6 +338,10 @@
     <None Include="workwear_ru.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll">
+      <Link>ICSharpCode.SharpZipLib.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
