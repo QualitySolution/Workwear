@@ -73,6 +73,7 @@ namespace workwear
 			switch (type)
 			{
 				case PeriodType.Year:
+					labelPeriodType.LabelProp = "Год:";
 					var listy = new List<Year>();
 					var year = new Year(DateTime.Today);
 					for (int i = 0; i < 3; i++)
@@ -85,6 +86,7 @@ namespace workwear
 					break;
 
 				case PeriodType.Quarter:
+					labelPeriodType.LabelProp = "Квартал:";
 					var list = new List<Quarter> ();
 					var quarter = new Quarter ((DateTime.Today.Month + 2) / 3, DateTime.Today.Year);
 					for(int i = 0; i < 5; i++)
@@ -97,6 +99,7 @@ namespace workwear
 					break;
 
 				case PeriodType.Month:
+					labelPeriodType.LabelProp = "Месяц:";
 					var listM = new List<Month> ();
 					var month = new Month (DateTime.Today.AddMonths(-1));
 					for(int i = 0; i < 14; i++)
