@@ -467,5 +467,35 @@ public partial class MainWindow : Gtk.Window
 		System.Diagnostics.Process.Start("http://qs-workwear.reformal.ru/");
 	}
 
+	protected void OnActionVKActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount("vk.com");
+		System.Diagnostics.Process.Start("https://vk.com/qualitysolution");
+	}
+
+	protected void OnActionOdnoklasnikiActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount("ok.ru");
+		System.Diagnostics.Process.Start("https://ok.ru/qualitysolution");
+	}
+
+	protected void OnActionGoogleActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount("plus.google.com");
+		System.Diagnostics.Process.Start("https://plus.google.com/+QsolutionRu/posts");
+	}
+
+	protected void OnActionTwitterActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount("twitter.com");
+		System.Diagnostics.Process.Start("https://twitter.com/QSolutionRu");
+	}
+
+	protected void OnActionYouTubeActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount("youtube.com");
+		System.Diagnostics.Process.Start("https://www.youtube.com/channel/UC4U9Rzp-yfRgWd2R0f4iIGg");
+	}
+
 	#endregion
 }

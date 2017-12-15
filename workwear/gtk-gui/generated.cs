@@ -22,6 +22,16 @@ namespace Stetic
 				w1.Add("store-balance", w5);
 				global::Gtk.IconSet w6 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("workwear.icon.menu.www.png"));
 				w1.Add("www", w6);
+				global::Gtk.IconSet w7 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("workwear.icon.menu.youtube.png"));
+				w1.Add("youtube", w7);
+				global::Gtk.IconSet w8 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("workwear.icon.menu.vk.png"));
+				w1.Add("vk", w8);
+				global::Gtk.IconSet w9 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("workwear.icon.menu.twitter.png"));
+				w1.Add("twitter", w9);
+				global::Gtk.IconSet w10 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("workwear.icon.menu.google-plus.png"));
+				w1.Add("google-plus", w10);
+				global::Gtk.IconSet w11 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("workwear.icon.menu.odnoklasniki.png"));
+				w1.Add("odnoklasniki", w11);
 				w1.AddDefault();
 			}
 		}

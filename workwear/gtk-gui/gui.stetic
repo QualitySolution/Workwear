@@ -45,6 +45,31 @@
         <property name="Image">resource:workwear.icon.menu.www.png</property>
       </source>
     </icon-set>
+    <icon-set id="youtube">
+      <source>
+        <property name="Image">resource:workwear.icon.menu.youtube.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="vk">
+      <source>
+        <property name="Image">resource:workwear.icon.menu.vk.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="twitter">
+      <source>
+        <property name="Image">resource:workwear.icon.menu.twitter.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="google-plus">
+      <source>
+        <property name="Image">resource:workwear.icon.menu.google-plus.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="odnoklasniki">
+      <source>
+        <property name="Image">resource:workwear.icon.menu.odnoklasniki.png</property>
+      </source>
+    </icon-set>
   </icon-factory>
   <widget class="Gtk.Bin" id="workwear.ItemTypeDlg" design-size="441 266">
     <property name="MemberName" />
@@ -4538,6 +4563,46 @@
         <property name="StockId">www</property>
         <signal name="Activated" handler="OnActionOpenReformalActivated" />
       </action>
+      <action id="Action38">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Мы в социальных сетях</property>
+        <property name="ShortLabel" translatable="yes">Мы в социальных сетях</property>
+      </action>
+      <action id="ActionVK">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Вконтакте</property>
+        <property name="ShortLabel" translatable="yes">Вконтакте</property>
+        <property name="StockId">vk</property>
+        <signal name="Activated" handler="OnActionVKActivated" />
+      </action>
+      <action id="ActionOdnoklasniki">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Однокласники</property>
+        <property name="ShortLabel" translatable="yes">Однокласники</property>
+        <property name="StockId">odnoklasniki</property>
+        <signal name="Activated" handler="OnActionOdnoklasnikiActivated" />
+      </action>
+      <action id="ActionGoogle">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Google++</property>
+        <property name="ShortLabel" translatable="yes">Google++</property>
+        <property name="StockId">google-plus</property>
+        <signal name="Activated" handler="OnActionGoogleActivated" />
+      </action>
+      <action id="ActionTwitter">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Twitter</property>
+        <property name="ShortLabel" translatable="yes">Twitter</property>
+        <property name="StockId">twitter</property>
+        <signal name="Activated" handler="OnActionTwitterActivated" />
+      </action>
+      <action id="ActionYouTube">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">YouTube</property>
+        <property name="ShortLabel" translatable="yes">YouTube</property>
+        <property name="StockId">youtube</property>
+        <signal name="Activated" handler="OnActionYouTubeActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -4607,6 +4672,13 @@
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionSite" />
                 <node type="Menuitem" action="ActionOpenReformal" />
+                <node type="Menu" action="Action38">
+                  <node type="Menuitem" action="ActionVK" />
+                  <node type="Menuitem" action="ActionOdnoklasniki" />
+                  <node type="Menuitem" action="ActionGoogle" />
+                  <node type="Menuitem" action="ActionTwitter" />
+                  <node type="Menuitem" action="ActionYouTube" />
+                </node>
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionSN" />
                 <node type="Separator" />
@@ -5451,7 +5523,6 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Label" translatable="yes">на месяц</property>
-                <property name="Active">True</property>
                 <property name="DrawIndicator">True</property>
                 <property name="HasLabel">True</property>
                 <property name="UseUnderline">True</property>
@@ -5783,6 +5854,7 @@
             <child>
               <widget class="Gtk.Label" id="labelPeriodType">
                 <property name="MemberName" />
+                <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Квартал:</property>
               </widget>
               <packing>
