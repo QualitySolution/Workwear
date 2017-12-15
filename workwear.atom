@@ -3,7 +3,15 @@
   <subtitle type="text">Новости программы QS: Спецодежда и имущество</subtitle>
   <id>workwearnews</id>
   <rights type="text">Quality Solution 2017</rights>
-  <updated>2017-12-05T10:30:00+03:00</updated>
+  <updated>2017-12-15T14:00:00+03:00</updated>
+  <entry>
+    <id>urn:uuid:403355a8-edeb-485a-83c2-4ca4e290a851</id>
+    <title type="text">Выпуск корректирующего релиза 2.0.1</title>
+    <updated>2017-12-15T14:00:00+03:00</updated>
+    <published>2017-12-15T14:00:00+03:00</published>
+    <link rel="alternate" href="http://workwear.qsolution.ru/?p=314" />
+    <summary>Основное назначение релиза это исправить обнаруженные за последние 3 недели ошибки.</summary>
+  </entry>
   <entry>
     <id>urn:uuid:06a782da-c0eb-42af-84c3-2f28db56e120</id>
     <title type="text">Повышение стоимости программы</title>
