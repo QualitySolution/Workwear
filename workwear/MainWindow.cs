@@ -458,7 +458,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionSiteActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenSite");
-		System.Diagnostics.Process.Start("http://workwear.qsolution.ru");
+		System.Diagnostics.Process.Start("http://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
 	}
 
 	protected void OnActionOpenReformalActivated(object sender, EventArgs e)

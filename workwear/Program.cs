@@ -52,7 +52,7 @@ namespace workwear
 			"\n" +
 			"Для установки собственного сервера обратитесь к документации.";
 			Login.CreateDBHelpTooltip = "Инструкция по установке сервера MySQL";
-			Login.CreateDBHelpUrl = "http://workwear.qsolution.ru/?page_id=168&utm_source=qs&utm_medium=app&utm_campaign=workwear";
+			Login.CreateDBHelpUrl = "http://workwear.qsolution.ru/?page_id=168&utm_source=qs&utm_medium=app_workwear&utm_campaign=connection_editor";
 
 			LoginDialog.UpdateFromGConf ();
 
