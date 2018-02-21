@@ -82,9 +82,17 @@ namespace workwear
 
 			yimagePhoto.Binding.AddBinding (Entity, e => e.Photo, w => w.ImageFile).InitializeFromSource ();
 
-			//Устанавливаем последовательность заполнения
-			table1.FocusChain = new Widget[] {entryLastName, entryFirstName, entryPatronymic, dateHire, dateDismiss, 
-				comboSex, yentryPost, yentryLeader, yentryObject
+			//Устанавливаем последовательность фокуса по Tab
+			//!!!!!!!! НЕ ЗАБЫВАЕМ КОРРЕКТИРОВАТЬ ПОРЯДОК ПРИ ДОБАВЛЕНИИ ВИДЖЕТОВ В ТАБЛИЦУ !!!!!!!!
+			//Это порядок только внутри таблицы! А не всего диалога.
+			table1.FocusChain = new Widget[] {hbox7, entryLastName, entryFirstName, entryPatronymic, 
+				yentryPost, yentryLeader, yentryObject, dateHire, yentryPersonnelNumber, yperiodMaternityLeave, dateDismiss, 
+				comboSex, ycomboWearGrowth, 
+				ycomboWearStd, ycomboWearSize, 
+				ycomboShoesStd, ycomboShoesSize,
+				ycomboWinterShoesStd, ycomboWinterShoesSize,
+				ycomboHeaddressStd, ycomboHeaddressSize,
+				ycomboGlovesStd, ycomboGlovesSize,
 			};
 
 			ytreeNorms.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<Norm> ()
