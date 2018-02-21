@@ -14,6 +14,7 @@ namespace workwear
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
 		public static MainWindow MainWin;
 
+		[STAThread]
 		public static void Main (string[] args)
 		{
 			try
