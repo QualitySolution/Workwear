@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using QSReport;
+using workwear.Domain;
 
 namespace workwear
 {
@@ -8,9 +9,10 @@ namespace workwear
 	{
 		public string Title => "Заявка на спецодежду";
 
-		public RequestSheetDlg ()
+		public RequestSheetDlg()
 		{
-			this.Build ();
+			this.Build();
+			entryreferenceFacility.SubjectType = typeof(Facility);
 			SwitchDialog(PeriodType.Month);
 		}
 
@@ -25,10 +27,11 @@ namespace workwear
 				{
 					Identifier = "QuarterRequestSheet",
 					Parameters = new Dictionary<string, object>
-				{
-					{ "quarter", quart.Number },
-					{ "year", quart.Year },
-				}
+					{
+						{ "quarter", quart.Number },
+						{ "year", quart.Year },
+						{ "facility", entryreferenceFacility.GetSubject<Facility>()?.Id ?? -1 },
+					}
 				};
 			}
 			var month = comboQuarter.SelectedItem as Month;
@@ -38,10 +41,12 @@ namespace workwear
 				{
 					Identifier = "MonthRequestSheet",
 					Parameters = new Dictionary<string, object>
-				{
-					{ "month", month.Number },
-					{ "year", month.Year },
-				}};
+					{
+						{ "month", month.Number },
+						{ "year", month.Year },
+						{ "facility", entryreferenceFacility.GetSubject<Facility>()?.Id ?? -1 },
+					}
+				};
 			}
 
 			var year = comboQuarter.SelectedItem as Year;
@@ -53,6 +58,7 @@ namespace workwear
 					Parameters = new Dictionary<string, object>
 					{
 						{ "year", year.Number },
+						{ "facility", entryreferenceFacility.GetSubject<Facility>()?.Id ?? -1 },
 					}
 				};
 			}
@@ -87,28 +93,28 @@ namespace workwear
 
 				case PeriodType.Quarter:
 					labelPeriodType.LabelProp = "Квартал:";
-					var list = new List<Quarter> ();
-					var quarter = new Quarter ((DateTime.Today.Month + 2) / 3, DateTime.Today.Year);
-					for(int i = 0; i < 5; i++)
+					var list = new List<Quarter>();
+					var quarter = new Quarter((DateTime.Today.Month + 2) / 3, DateTime.Today.Year);
+					for (int i = 0; i < 5; i++)
 					{
-						list.Add (quarter);
-						quarter = quarter.GetNext ();
+						list.Add(quarter);
+						quarter = quarter.GetNext();
 					}
 					comboQuarter.ItemsList = list;
-					comboQuarter.SelectedItem = list [1];
+					comboQuarter.SelectedItem = list[1];
 					break;
 
 				case PeriodType.Month:
 					labelPeriodType.LabelProp = "Месяц:";
-					var listM = new List<Month> ();
-					var month = new Month (DateTime.Today.AddMonths(-1));
-					for(int i = 0; i < 14; i++)
+					var listM = new List<Month>();
+					var month = new Month(DateTime.Today.AddMonths(-1));
+					for (int i = 0; i < 14; i++)
 					{
-						listM.Add (month);
-						month = month.GetNext ();
+						listM.Add(month);
+						month = month.GetNext();
 					}
 					comboQuarter.ItemsList = listM;
-					comboQuarter.SelectedItem = listM [2];
+					comboQuarter.SelectedItem = listM[2];
 					break;
 			}
 		}
@@ -125,7 +131,8 @@ namespace workwear
 				SwitchDialog(PeriodType.Quarter);
 		}
 
-		enum PeriodType{
+		enum PeriodType
+		{
 			Month,
 			Quarter,
 			Year
@@ -138,12 +145,16 @@ namespace workwear
 		}
 	}
 
-	public class Quarter{
+	public class Quarter
+	{
 		public int Number;
 		public int Year;
 
-		public string Title{
-			get{ return String.Format ("{0} квартал {1}", Number, Year);
+		public string Title
+		{
+			get
+			{
+				return String.Format("{0} квартал {1}", Number, Year);
 			}
 		}
 
@@ -156,16 +167,20 @@ namespace workwear
 		public Quarter GetNext()
 		{
 			int newNum = Number + 1;
-			return newNum == 5 ? new Quarter (1, Year + 1) : new Quarter (newNum, Year);
+			return newNum == 5 ? new Quarter(1, Year + 1) : new Quarter(newNum, Year);
 		}
 	}
 
-	public class Month{
+	public class Month
+	{
 		public int Number;
 		public int Year;
 
-		public string Title{
-			get{ return String.Format ("{0:MMMM yyyy}", new DateTime(Year, Number, 1));
+		public string Title
+		{
+			get
+			{
+				return String.Format("{0:MMMM yyyy}", new DateTime(Year, Number, 1));
 			}
 		}
 
@@ -184,7 +199,7 @@ namespace workwear
 		public Month GetNext()
 		{
 			int newNum = Number + 1;
-			return newNum == 13 ? new Month (1, Year + 1) : new Month (newNum, Year);
+			return newNum == 13 ? new Month(1, Year + 1) : new Month(newNum, Year);
 		}
 	}
 

@@ -494,9 +494,9 @@
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
-                        <BorderColor  />
-                        <BorderWidth  />
-                        <TextAlign >Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -622,7 +622,7 @@
         </Footer>
       </Table>
       <Textbox Name="Textbox50">
-        <Height>37.42pt</Height>
+        <Height>21.67pt</Height>
         <Width>560.59pt</Width>
         <Value>="Заявка на " + MonthName({?month}) + " " +{?year}+"г. на поставку спецодежды, спецобуви, СИЗ"</Value>
         <ZIndex>1</ZIndex>
@@ -636,6 +636,7 @@
           <FontWeight>Bold</FontWeight>
           <FontSize>16pt</FontSize>
         </Style>
+        <CanGrow >true</CanGrow>
       </Textbox>
       <Textbox Name="Textbox15">
         <Height>12.03pt</Height>
@@ -780,6 +781,24 @@
           <BorderWidth />
         </Style>
       </Textbox>
+      <Textbox Name="Textbox38" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+        <Height>12.74pt</Height>
+        <Width>558.37pt</Width>
+        <Value>="Структурное подразделение: " + First({name}, 'Facility')</Value>
+        <ZIndex>1</ZIndex>
+        <Left>1.70pt</Left>
+        <Top>23.60pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <FontSize>11pt</FontSize>
+          <TextAlign>Center</TextAlign>
+        </Style>
+        <Visibility>
+          <Hidden>={?facility} = -1</Hidden>
+        </Visibility>
+      </Textbox>
     </ReportItems>
   </Body>
   <PageFooter>
@@ -791,7 +810,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     item_types.name AS type_name,
@@ -813,7 +832,7 @@
         WHEN
             norms_item.period_type = 'Year'
                 OR (norms_item.period_type = 'Month'
-                AND norms_item.period_count >= 3)
+                AND norms_item.period_count &gt;= 3)
         THEN
             norms_item.amount
         WHEN
@@ -841,6 +860,7 @@ FROM
         LEFT JOIN
     norms_item ON wear_cards_item.norm_item_id = norms_item.id
 WHERE
+(@facility = -1 OR wear_cards.object_id = @facility) AND
 	wear_cards.dismiss_date IS NULL AND
     wear_cards_item.next_issue &gt;= CONCAT(@year,
             '-',
@@ -861,9 +881,12 @@ ORDER BY type_name , size , growth</CommandText>
           <QueryParameter Name="month">
             <Value>={?month}</Value>
           </QueryParameter>
+          <QueryParameter Name="facility">
+            <Value>={?facility}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="type_name">
           <DataField>type_name</DataField>
           <TypeName>System.String</TypeName>
@@ -891,6 +914,23 @@ ORDER BY type_name , size , growth</CommandText>
         <Field Name="amount_sum">
           <DataField>amount_sum</DataField>
           <TypeName>System.Decimal</TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="Facility">
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT objects.name FROM objects WHERE objects.id = @facility</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@facility">
+            <Value>={?facility}</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields>
+        <Field Name="name">
+          <DataField>name</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -928,7 +968,21 @@ ORDER BY type_name , size , growth</CommandText>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="facility">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
     </ReportParameter>
   </ReportParameters>
 </Report>
