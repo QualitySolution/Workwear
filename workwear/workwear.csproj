@@ -347,6 +347,9 @@
       <Link>ICSharpCode.SharpZipLib.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Condition=" '$(TargetOS)' == 'Linux' " Include="run.sh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
