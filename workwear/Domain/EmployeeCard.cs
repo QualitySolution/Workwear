@@ -146,7 +146,16 @@ namespace workwear.Domain
 			get { return photo; }
 			set { SetField (ref photo, value, () => Photo); }
 		}
-			
+
+		private string comment;
+
+		[Display(Name = "Комментарий")]
+		public virtual string Comment
+		{
+			get { return comment; }
+			set { SetField(ref comment, value, () => Comment); }
+		}
+
 		#endregion
 
 		#region Размеры одежды

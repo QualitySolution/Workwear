@@ -100,6 +100,15 @@ namespace workwear.Domain
 			}
 		}
 
+		private string comment;
+
+		[Display(Name = "Комментарий")]
+		public virtual string Comment
+		{
+			get { return comment; }
+			set { SetField(ref comment, value, () => Comment); }
+		}
+
 		#endregion
 
 		public virtual string ProfessionsText {

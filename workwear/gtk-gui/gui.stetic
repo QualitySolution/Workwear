@@ -71,7 +71,7 @@
       </source>
     </icon-set>
   </icon-factory>
-  <widget class="Gtk.Bin" id="workwear.ItemTypeDlg" design-size="441 266">
+  <widget class="Gtk.Bin" id="workwear.ItemTypeDlg" design-size="441 362">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -124,11 +124,40 @@
         <child>
           <widget class="Gtk.Table" id="table1">
             <property name="MemberName" />
-            <property name="NRows">6</property>
+            <property name="NRows">7</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
             <property name="BorderWidth">9</property>
+            <child>
+              <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+                <property name="MemberName" />
+                <property name="ShadowType">In</property>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yTextView" id="ytextComment">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="ShowScrollbars">True</property>
+                    <property name="Text" translatable="yes" />
+                    <property name="WrapMode">WordChar</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">False</property>
+                <property name="XOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">True</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
             <child>
               <widget class="Gtk.HBox" id="hboxLife">
                 <property name="MemberName" />
@@ -298,6 +327,27 @@
               </packing>
             </child>
             <child>
+              <widget class="Gtk.Label" id="label4">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="Yalign">0</property>
+                <property name="LabelProp" translatable="yes">Комментарий:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
               <widget class="Gtk.Label" id="labelLife">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
@@ -441,15 +491,13 @@
           </widget>
           <packing>
             <property name="Position">1</property>
-            <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
+            <property name="AutoSize">False</property>
           </packing>
         </child>
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.NomenclatureDlg" design-size="425 240">
+  <widget class="Gtk.Bin" id="workwear.NomenclatureDlg" design-size="425 355">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -502,10 +550,39 @@
         <child>
           <widget class="Gtk.Table" id="table2">
             <property name="MemberName" />
-            <property name="NRows">6</property>
+            <property name="NRows">7</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
+            <child>
+              <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+                <property name="MemberName" />
+                <property name="ShadowType">In</property>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yTextView" id="ytextComment">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="ShowScrollbars">True</property>
+                    <property name="Text" translatable="yes" />
+                    <property name="WrapMode">WordChar</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">False</property>
+                <property name="XOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">True</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
             <child>
               <widget class="Gtk.HBox" id="hbox2">
                 <property name="MemberName" />
@@ -547,6 +624,27 @@
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">False</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label1">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="Yalign">0</property>
+                <property name="LabelProp" translatable="yes">Комментарий:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
+                <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
                 <property name="XExpand">False</property>
@@ -795,9 +893,7 @@
           </widget>
           <packing>
             <property name="Position">1</property>
-            <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
+            <property name="AutoSize">False</property>
           </packing>
         </child>
       </widget>
@@ -1129,7 +1225,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.EmployeeCardDlg" design-size="1110 482">
+  <widget class="Gtk.Bin" id="workwear.EmployeeCardDlg" design-size="1148 482">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -1208,12 +1304,6 @@
                 <property name="NColumns">7</property>
                 <property name="RowSpacing">6</property>
                 <property name="ColumnSpacing">6</property>
-                <child>
-                  <placeholder />
-                </child>
-                <child>
-                  <placeholder />
-                </child>
                 <child>
                   <placeholder />
                 </child>
@@ -1360,6 +1450,36 @@
                     <property name="BottomAttach">4</property>
                     <property name="LeftAttach">1</property>
                     <property name="RightAttach">2</property>
+                    <property name="AutoSize">False</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">True</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindowComments">
+                    <property name="MemberName" />
+                    <property name="ShadowType">In</property>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yTextView" id="ytextComment">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="ShowScrollbars">True</property>
+                        <property name="AcceptsTab">False</property>
+                        <property name="Text" translatable="yes" />
+                        <property name="WrapMode">WordChar</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">6</property>
+                    <property name="BottomAttach">8</property>
+                    <property name="LeftAttach">3</property>
+                    <property name="RightAttach">4</property>
                     <property name="AutoSize">False</property>
                     <property name="YOptions">Fill</property>
                     <property name="XExpand">True</property>
@@ -1714,6 +1834,29 @@
                   </packing>
                 </child>
                 <child>
+                  <widget class="Gtk.Label" id="label26">
+                    <property name="MemberName" />
+                    <property name="Xalign">1</property>
+                    <property name="Yalign">0</property>
+                    <property name="LabelProp" translatable="yes">Комментарий:</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">6</property>
+                    <property name="BottomAttach">8</property>
+                    <property name="LeftAttach">2</property>
+                    <property name="RightAttach">3</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="Gtk.Label" id="label3">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
@@ -1874,7 +2017,7 @@
                     <property name="TopAttach">7</property>
                     <property name="BottomAttach">8</property>
                     <property name="LeftAttach">1</property>
-                    <property name="RightAttach">4</property>
+                    <property name="RightAttach">2</property>
                     <property name="AutoSize">False</property>
                     <property name="YOptions">Fill</property>
                     <property name="XExpand">True</property>
@@ -3010,10 +3153,62 @@
             <child>
               <widget class="Gtk.Table" id="table3">
                 <property name="MemberName" />
-                <property name="NRows">3</property>
+                <property name="NRows">4</property>
                 <property name="NColumns">2</property>
                 <property name="RowSpacing">6</property>
                 <property name="ColumnSpacing">6</property>
+                <child>
+                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindowComments">
+                    <property name="MemberName" />
+                    <property name="ShadowType">In</property>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yTextView" id="ytextComment">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="ShowScrollbars">True</property>
+                        <property name="AcceptsTab">False</property>
+                        <property name="Text" translatable="yes" />
+                        <property name="WrapMode">WordChar</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">3</property>
+                    <property name="BottomAttach">4</property>
+                    <property name="LeftAttach">1</property>
+                    <property name="RightAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.Label" id="label26">
+                    <property name="MemberName" />
+                    <property name="Xalign">1</property>
+                    <property name="Yalign">0</property>
+                    <property name="LabelProp" translatable="yes">Комментарий:</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">3</property>
+                    <property name="BottomAttach">4</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
                 <child>
                   <widget class="Gtk.Label" id="label4">
                     <property name="MemberName" />
@@ -3459,10 +3654,62 @@
             <child>
               <widget class="Gtk.Table" id="table3">
                 <property name="MemberName" />
-                <property name="NRows">3</property>
+                <property name="NRows">4</property>
                 <property name="NColumns">2</property>
                 <property name="RowSpacing">6</property>
                 <property name="ColumnSpacing">6</property>
+                <child>
+                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindowComments">
+                    <property name="MemberName" />
+                    <property name="ShadowType">In</property>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yTextView" id="ytextComment">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="ShowScrollbars">True</property>
+                        <property name="AcceptsTab">False</property>
+                        <property name="Text" translatable="yes" />
+                        <property name="WrapMode">WordChar</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">3</property>
+                    <property name="BottomAttach">4</property>
+                    <property name="LeftAttach">1</property>
+                    <property name="RightAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.Label" id="label26">
+                    <property name="MemberName" />
+                    <property name="Xalign">1</property>
+                    <property name="Yalign">0</property>
+                    <property name="LabelProp" translatable="yes">Комментарий:</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">3</property>
+                    <property name="BottomAttach">4</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
                 <child>
                   <widget class="Gtk.Label" id="label4">
                     <property name="MemberName" />
@@ -3825,10 +4072,62 @@
             <child>
               <widget class="Gtk.Table" id="table3">
                 <property name="MemberName" />
-                <property name="NRows">2</property>
+                <property name="NRows">3</property>
                 <property name="NColumns">2</property>
                 <property name="RowSpacing">6</property>
                 <property name="ColumnSpacing">6</property>
+                <child>
+                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindowComments">
+                    <property name="MemberName" />
+                    <property name="ShadowType">In</property>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yTextView" id="ytextComment">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="ShowScrollbars">True</property>
+                        <property name="AcceptsTab">False</property>
+                        <property name="Text" translatable="yes" />
+                        <property name="WrapMode">WordChar</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">2</property>
+                    <property name="BottomAttach">3</property>
+                    <property name="LeftAttach">1</property>
+                    <property name="RightAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.Label" id="label26">
+                    <property name="MemberName" />
+                    <property name="Xalign">1</property>
+                    <property name="Yalign">0</property>
+                    <property name="LabelProp" translatable="yes">Комментарий:</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">2</property>
+                    <property name="BottomAttach">3</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
                 <child>
                   <widget class="Gtk.Label" id="label5">
                     <property name="MemberName" />
@@ -4821,10 +5120,41 @@
             <child>
               <widget class="Gtk.Table" id="table1">
                 <property name="MemberName" />
-                <property name="NRows">4</property>
+                <property name="NRows">5</property>
                 <property name="NColumns">2</property>
                 <property name="RowSpacing">6</property>
                 <property name="ColumnSpacing">6</property>
+                <child>
+                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindowComments">
+                    <property name="MemberName" />
+                    <property name="ShadowType">In</property>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yTextView" id="ytextComment">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="ShowScrollbars">True</property>
+                        <property name="AcceptsTab">False</property>
+                        <property name="Text" translatable="yes" />
+                        <property name="WrapMode">WordChar</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">4</property>
+                    <property name="BottomAttach">5</property>
+                    <property name="LeftAttach">1</property>
+                    <property name="RightAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
                 <child>
                   <widget class="Gtk.Label" id="label1">
                     <property name="MemberName" />
@@ -4852,6 +5182,27 @@
                   <packing>
                     <property name="TopAttach">1</property>
                     <property name="BottomAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.Label" id="label26">
+                    <property name="MemberName" />
+                    <property name="Xalign">1</property>
+                    <property name="Yalign">0</property>
+                    <property name="LabelProp" translatable="yes">Комментарий:</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">4</property>
+                    <property name="BottomAttach">5</property>
                     <property name="AutoSize">True</property>
                     <property name="XOptions">Fill</property>
                     <property name="YOptions">Fill</property>
@@ -5796,7 +6147,6 @@
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
                     <property name="Label" translatable="yes">Месяц</property>
-                    <property name="Active">True</property>
                     <property name="DrawIndicator">True</property>
                     <property name="HasLabel">True</property>
                     <property name="UseUnderline">True</property>

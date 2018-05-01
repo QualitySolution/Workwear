@@ -48,6 +48,8 @@ namespace workwear
 			ycomboWearStd.Binding.AddBinding (Entity, e => e.SizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
 			ycomboWearSize.Binding.AddBinding (Entity, e => e.Size, w => w.ActiveText).InitializeFromSource ();
 			ycomboWearGrowth.Binding.AddBinding (Entity, e => e.WearGrowth, w => w.ActiveText).InitializeFromSource ();
+
+			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 		}
 
 		public override bool Save ()

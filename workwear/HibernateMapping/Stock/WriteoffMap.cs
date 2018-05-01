@@ -11,6 +11,7 @@ namespace workwear.HMap
 
 			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
 			Map (x => x.Date).Column ("date");
+			Map(x => x.Comment).Column("comment");
 
 			References (x => x.CreatedbyUser).Column ("user_id");
 

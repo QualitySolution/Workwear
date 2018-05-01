@@ -33,6 +33,7 @@ namespace workwear
 			yentryTonNumber.Binding.AddBinding (Entity, e => e.TONNumber, w => w.Text).InitializeFromSource ();
 			yentryTonAttachment.Binding.AddBinding (Entity, e => e.TONAttachment, w => w.Text).InitializeFromSource ();
 			yentryTonParagraph.Binding.AddBinding (Entity, e => e.TONParagraph, w => w.Text).InitializeFromSource ();
+			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			ytreeProfessions.ColumnsConfig = FluentColumnsConfig<Post>.Create ()
 				.AddColumn ("Профессия").AddTextRenderer (p => p.Name)

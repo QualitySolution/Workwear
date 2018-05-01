@@ -63,6 +63,8 @@ namespace workwear
 			yentryObject.SubjectType = typeof(Facility);
 			yentryObject.Binding.AddBinding (Entity, e => e.Facility, w => w.Subject).InitializeFromSource ();
 
+			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+
 			ItemsTable.IncomeDoc = Entity;
 		}			
 

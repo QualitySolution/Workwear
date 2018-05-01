@@ -49,6 +49,8 @@ namespace workwear
 
 			ydateDoc.Binding.AddBinding (Entity, e => e.Date, w => w.Date).InitializeFromSource ();
 
+			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+
 			ItemsTable.WriteoffDoc = Entity;
 		}			
 

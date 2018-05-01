@@ -79,6 +79,7 @@ namespace workwear
 			yentryLeader.Binding.AddBinding (Entity, e => e.Leader, w => w.Subject).InitializeFromSource ();
 			yentryObject.SubjectType = typeof(Facility);
 			yentryObject.Binding.AddBinding (Entity, e => e.Facility, w => w.Subject).InitializeFromSource ();
+			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			yimagePhoto.Binding.AddBinding (Entity, e => e.Photo, w => w.ImageFile).InitializeFromSource ();
 
@@ -87,7 +88,7 @@ namespace workwear
 			//Это порядок только внутри таблицы! А не всего диалога.
 			table1.FocusChain = new Widget[] {hbox7, entryLastName, entryFirstName, entryPatronymic, 
 				yentryPost, yentryLeader, yentryObject, dateHire, yentryPersonnelNumber, yperiodMaternityLeave, dateDismiss, 
-				comboSex, ycomboWearGrowth, 
+				comboSex, GtkScrolledWindowComments, ycomboWearGrowth, 
 				ycomboWearStd, ycomboWearSize, 
 				ycomboShoesStd, ycomboShoesSize,
 				ycomboWinterShoesStd, ycomboWinterShoesSize,

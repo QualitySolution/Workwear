@@ -27,6 +27,15 @@ namespace workwear.Domain.Stock
 			set { SetField(ref createdbyUser, value, () => CreatedbyUser); }
 		}
 
+		private string comment;
+
+		[Display(Name = "Комментарий")]
+		public virtual string Comment
+		{
+			get { return comment; }
+			set { SetField(ref comment, value, () => Comment); }
+		}
+
 		public StockDocument()
 		{
 		}

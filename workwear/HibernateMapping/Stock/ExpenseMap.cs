@@ -12,6 +12,7 @@ namespace workwear.HMap
 			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
 			Map (x => x.Operation).Column ("operation").CustomType<ExpenseOperationsType> ();
 			Map (x => x.Date).Column ("date");
+			Map(x => x.Comment).Column("comment");
 
 			References (x => x.Facility).Column ("object_id");
 			References (x => x.EmployeeCard).Column ("wear_card_id");

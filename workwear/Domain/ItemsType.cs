@@ -66,6 +66,15 @@ namespace workwear.Domain
 			set { SetField (ref lifeMonths, value, () => LifeMonths); }
 		}
 
+		private string comment;
+
+		[Display(Name = "Комментарий")]
+		public virtual string Comment
+		{
+			get { return comment; }
+			set { SetField(ref comment, value, () => Comment); }
+		}
+
 		#endregion
 
 		public ItemsType ()

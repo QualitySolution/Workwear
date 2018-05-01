@@ -45,6 +45,8 @@ namespace workwear
 
 			yspinMonths.Binding.AddBinding(Entity, e => e.LifeMonths, w => w.ValueAsInt, new NullToZeroConverter()).InitializeFromSource();
 			ycheckLife.Active = Entity.LifeMonths.HasValue;
+
+			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 		}
 
 		public override bool Save ()
