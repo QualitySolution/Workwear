@@ -97,6 +97,7 @@
     <EmbeddedResource Include="icon\menu\twitter.png" />
     <EmbeddedResource Include="icon\menu\google-plus.png" />
     <EmbeddedResource Include="icon\menu\odnoklasniki.png" />
+    <EmbeddedResource Include="Updates\2.0.2.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
