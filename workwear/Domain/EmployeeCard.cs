@@ -89,6 +89,15 @@ namespace workwear.Domain
 			set { SetField (ref hireDate, value, () => HireDate); }
 		}
 
+		private DateTime? changeOfPositionDate;
+
+		[Display(Name = "Дата изменения должности или перевода")]
+		public virtual DateTime? ChangeOfPositionDate
+		{
+			get { return changeOfPositionDate; }
+			set { SetField(ref changeOfPositionDate, value, () => ChangeOfPositionDate); }
+		}
+
 		DateTime? dismissDate;
 
 		[Display (Name = "Дата увольнения")]

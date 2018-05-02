@@ -16,6 +16,7 @@ namespace workwear.HMap
 			Map (x => x.FirstName).Column ("first_name");
 			Map (x => x.Patronymic).Column ("patronymic_name");
 			Map (x => x.HireDate).Column ("hire_date");
+			Map(x => x.ChangeOfPositionDate).Column("change_of_position_date");
 			Map (x => x.DismissDate).Column ("dismiss_date");
 			Map(x => x.MaternityLeaveBegin).Column("maternity_leave_begin");
 			Map(x => x.MaternityLeaveEnd).Column("maternity_leave_end");

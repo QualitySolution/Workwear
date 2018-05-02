@@ -66,6 +66,7 @@ namespace workwear
 
 			yentryPersonnelNumber.Binding.AddBinding (Entity, e => e.PersonnelNumber, w => w.Text).InitializeFromSource ();
 			dateHire.Binding.AddBinding (Entity, e => e.HireDate, w => w.DateOrNull).InitializeFromSource ();
+			dateChangePosition.Binding.AddBinding(Entity, e => e.ChangeOfPositionDate, w => w.DateOrNull).InitializeFromSource();
 			dateDismiss.Binding.AddBinding (Entity, e => e.DismissDate, w => w.DateOrNull).InitializeFromSource ();
 			yperiodMaternityLeave.Binding.AddSource(Entity)
 								 .AddBinding(e => e.MaternityLeaveBegin, w => w.StartDateOrNull)
@@ -87,8 +88,8 @@ namespace workwear
 			//!!!!!!!! НЕ ЗАБЫВАЕМ КОРРЕКТИРОВАТЬ ПОРЯДОК ПРИ ДОБАВЛЕНИИ ВИДЖЕТОВ В ТАБЛИЦУ !!!!!!!!
 			//Это порядок только внутри таблицы! А не всего диалога.
 			table1.FocusChain = new Widget[] {hbox7, entryLastName, entryFirstName, entryPatronymic, 
-				yentryPost, yentryLeader, yentryObject, dateHire, yentryPersonnelNumber, yperiodMaternityLeave, dateDismiss, 
-				comboSex, GtkScrolledWindowComments, ycomboWearGrowth, 
+				yentryPost, yentryLeader, yentryObject, yentryPersonnelNumber, dateHire, dateChangePosition, yperiodMaternityLeave, dateDismiss, 
+				GtkScrolledWindowComments, comboSex, ycomboWearGrowth, 
 				ycomboWearStd, ycomboWearSize, 
 				ycomboShoesStd, ycomboShoesSize,
 				ycomboWinterShoesStd, ycomboWinterShoesSize,
