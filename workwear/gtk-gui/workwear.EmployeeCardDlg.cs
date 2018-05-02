@@ -464,7 +464,7 @@ namespace workwear
 			this.label12 = new global::Gtk.Label();
 			this.label12.Name = "label12";
 			this.label12.Xalign = 1F;
-			this.label12.LabelProp = global::Mono.Unix.Catalog.GetString("Объект:");
+			this.label12.LabelProp = global::Mono.Unix.Catalog.GetString("Подразделение:");
 			this.table1.Add(this.label12);
 			global::Gtk.Table.TableChild w23 = ((global::Gtk.Table.TableChild)(this.table1[this.label12]));
 			w23.TopAttach = ((uint)(6));
@@ -1310,7 +1310,9 @@ namespace workwear
 			this.buttonPrint.Clicked += new global::System.EventHandler(this.OnButtonPrintClicked);
 			this.yperiodMaternityLeave.PeriodChangedByUser += new global::System.EventHandler(this.OnYperiodMaternityLeavePeriodChangedByUser);
 			this.yentryPost.Changed += new global::System.EventHandler(this.OnYentryPostChanged);
+			this.yentryPost.ChangedByUser += new global::System.EventHandler(this.OnYentryPostChangedByUser);
 			this.yentryObject.Changed += new global::System.EventHandler(this.OnYentryObjectChanged);
+			this.yentryObject.ChangedByUser += new global::System.EventHandler(this.OnYentryObjectChangedByUser);
 			this.ycomboWinterShoesStd.Changed += new global::System.EventHandler(this.OnYcomboWinterShoesStdChanged);
 			this.ycomboWearStd.Changed += new global::System.EventHandler(this.OnYcomboWearStdChanged);
 			this.ycomboShoesStd.Changed += new global::System.EventHandler(this.OnYcomboShoesStdChanged);

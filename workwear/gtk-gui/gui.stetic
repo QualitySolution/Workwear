@@ -1621,7 +1621,7 @@
                   <widget class="Gtk.Label" id="label12">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Объект:</property>
+                    <property name="LabelProp" translatable="yes">Подразделение:</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">6</property>
@@ -2381,6 +2381,7 @@
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
                     <signal name="Changed" handler="OnYentryObjectChanged" />
+                    <signal name="ChangedByUser" handler="OnYentryObjectChangedByUser" />
                   </widget>
                   <packing>
                     <property name="TopAttach">6</property>
@@ -2427,6 +2428,7 @@
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
                     <signal name="Changed" handler="OnYentryPostChanged" />
+                    <signal name="ChangedByUser" handler="OnYentryPostChangedByUser" />
                   </widget>
                   <packing>
                     <property name="TopAttach">4</property>

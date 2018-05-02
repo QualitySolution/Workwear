@@ -27,6 +27,9 @@ namespace workwear
 		bool IsShowedItemsTable = false;
 		bool IsNomenclaturePickuped = false;
 
+		bool IsPostSetOnLoad;
+		bool IsSubdivisionSetOnLoad;
+
 		public EmployeeCardDlg ()
 		{
 			this.Build ();
@@ -39,6 +42,9 @@ namespace workwear
 		{
 			notebook1.GetNthPage (2).Visible = !UoWGeneric.IsNew;
 			notebook1.GetNthPage (3).Visible = !UoWGeneric.IsNew;
+
+			IsPostSetOnLoad = Entity.Post != null;
+			IsSubdivisionSetOnLoad = Entity.Facility != null;
 
 			comboSex.ItemsEnum = typeof(Sex);
 			comboSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItem).InitializeFromSource ();
@@ -75,7 +81,7 @@ namespace workwear
 
 			yentryPost.SubjectType = typeof(Post);
 			yentryPost.Binding.AddBinding (Entity, e => e.Post, w => w.Subject).InitializeFromSource ();
-			OnYentryPostChanged (null, null);
+			OnYentryPostChanged (null, null); //Так как событие не будет вызвано, если в объекте null, а кнопку "По должности" нужно заблокировать. 
 			yentryLeader.SubjectType = typeof(Leader);
 			yentryLeader.Binding.AddBinding (Entity, e => e.Leader, w => w.Subject).InitializeFromSource ();
 			yentryObject.SubjectType = typeof(Facility);
@@ -674,6 +680,22 @@ namespace workwear
 		protected void OnYperiodMaternityLeavePeriodChangedByUser(object sender, EventArgs e)
 		{
 			Entity.UpdateAllNextIssue();
+		}
+
+		protected void OnYentryPostChangedByUser(object sender, EventArgs e)
+		{
+			if(IsPostSetOnLoad && MessageDialogWorks.RunQuestionDialog("Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?"))
+			{
+				Entity.ChangeOfPositionDate = DateTime.Today;
+			}
+		}
+
+		protected void OnYentryObjectChangedByUser(object sender, EventArgs e)
+		{
+			if (IsSubdivisionSetOnLoad && MessageDialogWorks.RunQuestionDialog("Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?"))
+			{
+				Entity.ChangeOfPositionDate = DateTime.Today;
+			}
 		}
 	}
 }
