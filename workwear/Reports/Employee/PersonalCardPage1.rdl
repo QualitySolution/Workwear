@@ -1,0 +1,1291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Description>
+  </Description>
+  <Author>
+  </Author>
+  <PageHeight>297mm</PageHeight>
+  <PageWidth>210mm</PageWidth>
+  <Width>7.5in</Width>
+  <TopMargin>.25in</TopMargin>
+  <LeftMargin>.25in</LeftMargin>
+  <RightMargin>.25in</RightMargin>
+  <BottomMargin>.25in</BottomMargin>
+  <DataSets>
+    <DataSet Name="Data">
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT 
+    wear_cards_item.id,
+    wear_cards_item.next_issue,
+    IF(wear_cards_item.next_issue &lt;= CURDATE(),
+        DATEDIFF(CURDATE(), wear_cards_item.next_issue),
+        NULL) AS delay,
+    item_types.name AS type_name,
+    nomenclature.name AS nomenclature_name,
+    nomenclature.size,
+    nomenclature.growth,
+    measurement_units.name AS unit,
+    CASE norms_item.period_type
+        WHEN 'Year' THEN norms_item.period_count * 12
+        WHEN 'Month' THEN norms_item.period_count
+        WHEN 'Shift' THEN norms_item.period_count / 21
+    END AS life_in_months,
+    (SELECT 
+            MAX(stock_expense.date)
+        FROM
+            stock_expense_detail
+                LEFT JOIN
+            stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id
+                LEFT JOIN
+            nomenclature ON stock_expense_detail.nomenclature_id = nomenclature.id
+        WHERE
+            nomenclature.type_id = wear_cards_item.itemtype_id
+                AND stock_expense.wear_card_id = @id) AS last_issue,
+    (SELECT 
+            SUM(stock_expense_detail.quantity) - IFNULL(SUM(stock_write_off_detail.quantity), 0) - IFNULL(SUM(stock_income_detail.quantity), 0)
+        FROM
+            stock_expense_detail
+                LEFT JOIN
+            stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id
+                LEFT JOIN
+            nomenclature ON stock_expense_detail.nomenclature_id = nomenclature.id
+                LEFT JOIN
+            stock_write_off_detail ON stock_write_off_detail.stock_expense_detail_id = stock_expense_detail.id
+                LEFT JOIN
+            stock_income_detail ON stock_income_detail.stock_expense_detail_id = stock_expense_detail.id
+        WHERE
+            stock_expense.wear_card_id = @id
+                AND (stock_expense_detail.auto_writeoff_date IS NULL
+                OR stock_expense_detail.auto_writeoff_date &gt; CURDATE())
+                AND nomenclature.type_id = wear_cards_item.itemtype_id) AS received,
+    (SELECT 
+            SUM(stock_income_detail.quantity) - IFNULL(SUM(stock_write_off_detail.quantity), 0) - IFNULL(SUM(stock_expense_detail.quantity), 0)
+        FROM
+            stock_income_detail
+                LEFT JOIN
+            stock_write_off_detail ON stock_write_off_detail.stock_income_detail_id = stock_income_detail.id
+                LEFT JOIN
+            stock_expense_detail ON stock_expense_detail.stock_income_detail_id = stock_income_detail.id
+        WHERE
+            stock_income_detail.nomenclature_id = wear_cards_item.matched_nomenclature_id) AS in_stock
+FROM
+    wear_cards_item
+        LEFT JOIN
+    nomenclature ON nomenclature.id = wear_cards_item.matched_nomenclature_id
+        LEFT JOIN
+    item_types ON item_types.id = wear_cards_item.itemtype_id
+        LEFT JOIN
+    measurement_units ON item_types.units_id = measurement_units.id
+        LEFT JOIN
+    norms_item ON wear_cards_item.norm_item_id = norms_item.id
+WHERE
+    wear_cards_item.wear_card_id = @id;</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@id">
+            <Value>=Parameters!id</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields>
+        <Field Name="id">
+          <DataField>id</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
+        <Field Name="next_issue">
+          <DataField>next_issue</DataField>
+          <TypeName>System.DateTime</TypeName>
+        </Field>
+        <Field Name="delay">
+          <DataField>delay</DataField>
+          <TypeName>System.Int64</TypeName>
+        </Field>
+        <Field Name="type_name">
+          <DataField>type_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="nomenclature_name">
+          <DataField>nomenclature_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="size">
+          <DataField>size</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="growth">
+          <DataField>growth</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="unit">
+          <DataField>unit</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="life_in_months">
+          <DataField>life_in_months</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
+        <Field Name="last_issue">
+          <DataField>last_issue</DataField>
+          <TypeName>System.DateTime</TypeName>
+        </Field>
+        <Field Name="received">
+          <DataField>received</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
+        <Field Name="in_stock">
+          <DataField>in_stock</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="Card">
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT 
+    IFNULL(wear_cards.card_number, wear_cards.id) AS id,
+    wear_cards.personnel_number,
+    wear_cards.last_name,
+    wear_cards.first_name,
+    wear_cards.patronymic_name,
+    wear_cards.hire_date,
+    wear_cards.change_of_position_date,
+    wear_cards.sex,
+    wear_cards.wear_growth,
+    wear_cards.size_wear,
+    wear_cards.size_shoes,
+    wear_cards.size_headdress,
+    wear_cards.size_gloves,
+    posts.name AS post,
+    leaders.name AS leader,
+    objects.name AS subdivision
+FROM
+    wear_cards
+        LEFT JOIN
+    posts ON wear_cards.post_id = posts.id
+        LEFT JOIN
+    leaders ON leaders.id = wear_cards.leader_id
+        LEFT JOIN
+    objects ON objects.id = wear_cards.object_id
+WHERE
+    wear_cards.id = @id;</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="id">
+            <Value>=Parameters!id</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields>
+        <Field Name="id">
+          <DataField>id</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="personnel_number">
+          <DataField>personnel_number</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="last_name">
+          <DataField>last_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="first_name">
+          <DataField>first_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="patronymic_name">
+          <DataField>patronymic_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="hire_date">
+          <DataField>hire_date</DataField>
+          <TypeName>System.DateTime</TypeName>
+        </Field>
+        <Field Name="change_of_position_date">
+          <DataField>change_of_position_date</DataField>
+          <TypeName>System.DateTime</TypeName>
+        </Field>
+        <Field Name="sex">
+          <DataField>sex</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="wear_growth">
+          <DataField>wear_growth</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="size_wear">
+          <DataField>size_wear</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="size_shoes">
+          <DataField>size_shoes</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="size_headdress">
+          <DataField>size_headdress</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="size_gloves">
+          <DataField>size_gloves</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="post">
+          <DataField>post</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="leader">
+          <DataField>leader</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="subdivision">
+          <DataField>subdivision</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="Norms">
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT 
+    item_types.name AS type_name,
+    norms.ton_paragraph,
+    measurement_units.name AS unit,
+    CASE norms_item.period_type
+        WHEN 'Year' THEN CONCAT(norms_item.amount, IF(norms_item.period_count = 1, '', CONCAT('/', norms_item.period_count)))
+        WHEN 'Month' THEN TRIM(norms_item.amount * 12 / norms_item.period_count)+0
+        WHEN 'Shift' THEN CONCAT(norms_item.amount, IF(norms_item.period_count = 1, '', CONCAT('/', norms_item.period_count)), ' (на смену)')
+    END AS count_by_year
+FROM
+    wear_cards_item
+        LEFT JOIN
+    item_types ON item_types.id = wear_cards_item.itemtype_id
+        LEFT JOIN
+    measurement_units ON item_types.units_id = measurement_units.id
+        LEFT JOIN
+    norms_item ON wear_cards_item.norm_item_id = norms_item.id
+    LEFT JOIN norms ON norms.id = norms_item.norm_id
+WHERE
+    wear_cards_item.wear_card_id = @id;</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="id">
+            <Value>={?id}</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields>
+        <Field Name="type_name">
+          <DataField>type_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="ton_paragraph">
+          <DataField>ton_paragraph</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="unit">
+          <DataField>unit</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="count_by_year">
+          <DataField>count_by_year</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <PageHeader>
+    <Height>0.0pt</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageHeader>
+  <Body>
+    <ReportItems>
+      <Textbox Name="Textbox1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+        <Height>15.02pt</Height>
+        <Width>556.24pt</Width>
+        <Value>= "ЛИЧНАЯ КАРТОЧКА № " +  First({id}, 'Card')</Value>
+        <ZIndex>1</ZIndex>
+        <Left>2.50pt</Left>
+        <Top>149.80pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <FontSize>12pt</FontSize>
+          <TextAlign>Center</TextAlign>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox2">
+        <Height>106.81pt</Height>
+        <Width>251.41pt</Width>
+        <Value>Приложение
+к Межотраслевым правилам обеспечения
+работников специальной одеждой, специальной
+обувью и другими средствами индивидуальной
+защиты, утвержденным Приказом
+Минздравсоцразвития России
+от 01.06.2009 № 290н
+(в ред. Приказа Минздравсоцразвития РФ
+от 27.01.2010 № 28н)</Value>
+        <ZIndex>1</ZIndex>
+        <Left>307.68pt</Left>
+        <Top>2.40pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <TextAlign>Right</TextAlign>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox5">
+        <Height>12.75pt</Height>
+        <Width>193.40pt</Width>
+        <Value>Лицевая сторона личной карточки</Value>
+        <ZIndex>1</ZIndex>
+        <Left>366.0pt</Left>
+        <Top>114.1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <FontSize>9pt</FontSize>
+          <TextAlign>Right</TextAlign>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox6" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+        <Height>15.02pt</Height>
+        <Width>556.24pt</Width>
+        <Value>учета выдачи СИЗ</Value>
+        <ZIndex>1</ZIndex>
+        <Left>2.4pt</Left>
+        <Top>165.6pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <FontSize>12pt</FontSize>
+          <TextAlign>Center</TextAlign>
+        </Style>
+      </Textbox>
+      <List Name="List1">
+        <Height>205.13pt</Height>
+        <Width>560.03pt</Width>
+        <Left>0.00pt</Left>
+        <Top>189.00pt</Top>
+        <ReportItems>
+          <Textbox Name="Textbox3">
+            <Height>12.75pt</Height>
+            <Width>71.52pt</Width>
+            <Value>Фамилия</Value>
+            <ZIndex>1</ZIndex>
+            <Left>3.30pt</Left>
+            <Top>3.80pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox7">
+            <Height>12.00pt</Height>
+            <Width>323.52pt</Width>
+            <Value>={last_name}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>52.40pt</Left>
+            <Top>4.50pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox8">
+            <Height>12.75pt</Height>
+            <Width>71.52pt</Width>
+            <Value>Имя</Value>
+            <ZIndex>1</ZIndex>
+            <Left>3.9pt</Left>
+            <Top>18.4pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox9">
+            <Height>12.00pt</Height>
+            <Width>152.52pt</Width>
+            <Value>={first_name}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>28.20pt</Left>
+            <Top>19.10pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox10">
+            <Height>12.00pt</Height>
+            <Width>142.77pt</Width>
+            <Value>={patronymic_name}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>232.90pt</Left>
+            <Top>19.60pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox11">
+            <Height>12.75pt</Height>
+            <Width>71.52pt</Width>
+            <Value>Отчество</Value>
+            <ZIndex>1</ZIndex>
+            <Left>181.4pt</Left>
+            <Top>18.9pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox12">
+            <Height>12.00pt</Height>
+            <Width>277.77pt</Width>
+            <Value>={personnel_number}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>98.20pt</Left>
+            <Top>34.60pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox13">
+            <Height>12.75pt</Height>
+            <Width>106.77pt</Width>
+            <Value>Табельный номер</Value>
+            <ZIndex>1</ZIndex>
+            <Left>3.50pt</Left>
+            <Top>33.90pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox14">
+            <Height>12.00pt</Height>
+            <Width>220.77pt</Width>
+            <Value>={subdivision}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>155.40pt</Left>
+            <Top>49.80pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox15">
+            <Height>12.75pt</Height>
+            <Width>159.27pt</Width>
+            <Value>Структурное подразделение</Value>
+            <ZIndex>1</ZIndex>
+            <Left>3.20pt</Left>
+            <Top>49.10pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox16">
+            <Height>12.75pt</Height>
+            <Width>159.27pt</Width>
+            <Value>Профессия (должность)</Value>
+            <ZIndex>1</ZIndex>
+            <Left>3.60pt</Left>
+            <Top>64.40pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox17">
+            <Height>12.00pt</Height>
+            <Width>244.77pt</Width>
+            <Value>={post}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>131.00pt</Left>
+            <Top>65.10pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox18">
+            <Height>12.75pt</Height>
+            <Width>159.27pt</Width>
+            <Value>Дата поступления на работу</Value>
+            <ZIndex>1</ZIndex>
+            <Left>3.40pt</Left>
+            <Top>79.10pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox19">
+            <Height>12.00pt</Height>
+            <Width>220.02pt</Width>
+            <Value>={hire_date}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>155.60pt</Left>
+            <Top>79.80pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+              <Format>d</Format>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox20">
+            <Height>12.75pt</Height>
+            <Width>358.77pt</Width>
+            <Value>Дата изменения профессии (должности) или перевода в другое</Value>
+            <ZIndex>1</ZIndex>
+            <Left>2.40pt</Left>
+            <Top>95.40pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox21">
+            <Height>12.00pt</Height>
+            <Width>223.77pt</Width>
+            <Value>=Iif(Fields!change_of_position_date.IsMissing, '—', Format({change_of_position_date}, 'd'))</Value>
+            <ZIndex>1</ZIndex>
+            <Left>151.20pt</Left>
+            <Top>112.40pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox22">
+            <Height>12.75pt</Height>
+            <Width>159.27pt</Width>
+            <Value>структурное подразделение</Value>
+            <ZIndex>1</ZIndex>
+            <Left>2.2pt</Left>
+            <Top>111.7pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox23">
+            <Height>12.75pt</Height>
+            <Width>71.52pt</Width>
+            <Value>Пол</Value>
+            <ZIndex>1</ZIndex>
+            <Left>395.8pt</Left>
+            <Top>2.7pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox24">
+            <Height>12.00pt</Height>
+            <Width>137.52pt</Width>
+            <Value>=Switch({sex} = 'F', 'Ж', {sex} = 'M', 'М',Fields!sex.IsMissing, '—')</Value>
+            <ZIndex>1</ZIndex>
+            <Left>419.30pt</Left>
+            <Top>3.40pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox25">
+            <Height>12.75pt</Height>
+            <Width>71.52pt</Width>
+            <Value>Рост</Value>
+            <ZIndex>1</ZIndex>
+            <Left>395.9pt</Left>
+            <Top>18.5pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox26">
+            <Height>12.00pt</Height>
+            <Width>133.02pt</Width>
+            <Value>=Iif(Fields!wear_growth.IsMissing, '—', {wear_growth})</Value>
+            <ZIndex>1</ZIndex>
+            <Left>424.20pt</Left>
+            <Top>19.20pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox27">
+            <Height>12.75pt</Height>
+            <Width>71.52pt</Width>
+            <Value>Размер:</Value>
+            <ZIndex>1</ZIndex>
+            <Left>395.4pt</Left>
+            <Top>34.2pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox28">
+            <Height>12.00pt</Height>
+            <Width>118.02pt</Width>
+            <Value>=Iif(Fields!size_wear.IsMissing, '—',{size_wear})</Value>
+            <ZIndex>1</ZIndex>
+            <Left>440.00pt</Left>
+            <Top>49.50pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox29">
+            <Height>12.75pt</Height>
+            <Width>71.52pt</Width>
+            <Value>одежды</Value>
+            <ZIndex>1</ZIndex>
+            <Left>395.7pt</Left>
+            <Top>48.8pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox30">
+            <Height>12.75pt</Height>
+            <Width>71.52pt</Width>
+            <Value>обуви</Value>
+            <ZIndex>1</ZIndex>
+            <Left>395.6pt</Left>
+            <Top>64.6pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox31">
+            <Height>12.00pt</Height>
+            <Width>128.52pt</Width>
+            <Value>=Iif(Fields!size_shoes.IsMissing, '—', {size_shoes})</Value>
+            <ZIndex>1</ZIndex>
+            <Left>429.50pt</Left>
+            <Top>65.30pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox4">
+            <Height>12.75pt</Height>
+            <Width>95.52pt</Width>
+            <Value>головного убора</Value>
+            <ZIndex>1</ZIndex>
+            <Left>395.70pt</Left>
+            <Top>79.30pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox32">
+            <Height>12.00pt</Height>
+            <Width>73.77pt</Width>
+            <Value>=Iif(Fields!size_headdress.IsMissing, '—',  {size_headdress})</Value>
+            <ZIndex>1</ZIndex>
+            <Left>484.00pt</Left>
+            <Top>80.00pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox33" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+            <Height>12.75pt</Height>
+            <Width>95.52pt</Width>
+            <Value>противогаза</Value>
+            <ZIndex>1</ZIndex>
+            <Left>395.7pt</Left>
+            <Top>94.2pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox34" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+            <Height>12.00pt</Height>
+            <Width>93.27pt</Width>
+            <Value>—</Value>
+            <ZIndex>1</ZIndex>
+            <Left>464.80pt</Left>
+            <Top>94.90pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox35" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+            <Height>12.75pt</Height>
+            <Width>95.52pt</Width>
+            <Value>респиратора</Value>
+            <ZIndex>1</ZIndex>
+            <Left>395.8pt</Left>
+            <Top>110.5pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox36" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+            <Height>12.00pt</Height>
+            <Width>94.02pt</Width>
+            <Value>—</Value>
+            <ZIndex>1</ZIndex>
+            <Left>464.10pt</Left>
+            <Top>111.20pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox37" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+            <Height>12.75pt</Height>
+            <Width>71.52pt</Width>
+            <Value>рукавиц</Value>
+            <ZIndex>1</ZIndex>
+            <Left>395.7pt</Left>
+            <Top>126.0pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox38" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+            <Height>12.00pt</Height>
+            <Width>117.27pt</Width>
+            <Value>—</Value>
+            <ZIndex>1</ZIndex>
+            <Left>440.80pt</Left>
+            <Top>126.70pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox39" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+            <Height>12.75pt</Height>
+            <Width>95.52pt</Width>
+            <Value>перчаток</Value>
+            <ZIndex>1</ZIndex>
+            <Left>395.7pt</Left>
+            <Top>142.0pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox40" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+            <Height>12.00pt</Height>
+            <Width>109.77pt</Width>
+            <Value>=Iif(Fields!size_gloves.IsMissing, '—', {size_gloves})</Value>
+            <ZIndex>1</ZIndex>
+            <Left>447.20pt</Left>
+            <Top>142.70pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox41">
+            <Height>12.00pt</Height>
+            <Width>130.77pt</Width>
+            <Value>Предусмотрена выдача</Value>
+            <ZIndex>1</ZIndex>
+            <Left>4.30pt</Left>
+            <Top>171.70pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>11pt</FontSize>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox42" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+            <Height>12.00pt</Height>
+            <Width>427.02pt</Width>
+            <Value>
+            </Value>
+            <ZIndex>1</ZIndex>
+            <Left>131.10pt</Left>
+            <Top>173.00pt</Top>
+            <Style>
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontSize>11pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+            <CanGrow>true</CanGrow>
+          </Textbox>
+          <Textbox Name="Textbox43">
+            <Height>10.48pt</Height>
+            <Width>426.83pt</Width>
+            <Value>(наименование типовых (типовых отраслевых) норм)</Value>
+            <ZIndex>1</ZIndex>
+            <Left>130.9pt</Left>
+            <Top>186.5pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>9pt</FontSize>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+        </ReportItems>
+        <DataSetName>Card</DataSetName>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </List>
+      <Table Name="Table1">
+        <DataSetName>Norms</DataSetName>
+        <NoRows>Query returned no rows!</NoRows>
+        <Style>
+          <BorderStyle>
+            <Default>Solid</Default>
+          </BorderStyle>
+        </Style>
+        <TableColumns>
+          <TableColumn>
+            <Width>169.0pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>126.4pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>130.7pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>133.5pt</Width>
+          </TableColumn>
+        </TableColumns>
+        <Header>
+          <TableRows>
+            <TableRow>
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox44">
+                      <Value>Наименование СИЗ</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>11pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox45">
+                      <Value>Пункт типовых норм</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>11pt</FontSize>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox46">
+                      <Value>Единица измерения</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>11pt</FontSize>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox47">
+                      <Value>Количество на год</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>11pt</FontSize>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+          <RepeatOnNewPage>true</RepeatOnNewPage>
+        </Header>
+        <Details>
+          <TableRows>
+            <TableRow>
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox48">
+                      <Value>=Fields!type_name.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox49">
+                      <Value>=Fields!ton_paragraph.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox50">
+                      <Value>=Fields!unit.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox51">
+                      <Value>=Fields!count_by_year.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+        </Details>
+        <Left>0.0pt</Left>
+        <Top>403.6pt</Top>
+      </Table>
+      <Textbox Name="Textbox52" >
+        <Height>15.75pt</Height>
+        <Width>235.50pt</Width>
+        <Value>Руководитель структурного подразделения</Value>
+        <ZIndex>1</ZIndex>
+        <Left>0.0pt</Left>
+        <Top>463.0pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <FontSize>11pt</FontSize>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox53" >
+        <Height>10.50pt</Height>
+        <Width>112.89pt</Width>
+        <Value>(подпись)</Value>
+        <ZIndex>1</ZIndex>
+        <Left>231.90pt</Left>
+        <Top>474.00pt</Top>
+        <Style>
+          <BorderStyle>
+            <Top>Solid</Top>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+          <FontSize>9pt</FontSize>
+          <TextAlign>Center</TextAlign>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox54" >
+        <Height>10.50pt</Height>
+        <Width>207.39pt</Width>
+        <Value>(Ф.И.О.)</Value>
+        <ZIndex>1</ZIndex>
+        <Left>350.90pt</Left>
+        <Top>474.10pt</Top>
+        <Style>
+          <BorderStyle>
+            <Top>Solid</Top>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+          <FontSize>9pt</FontSize>
+          <TextAlign>Center</TextAlign>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox55" >
+        <Height>11.27pt</Height>
+        <Width>208.49pt</Width>
+        <Value>=First({leader}, 'Card')</Value>
+        <ZIndex>1</ZIndex>
+        <Left>351.10pt</Left>
+        <Top>459.90pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <FontStyle>Italic</FontStyle>
+          <FontSize>11pt</FontSize>
+          <TextAlign>Center</TextAlign>
+        </Style>
+      </Textbox>
+    </ReportItems>
+    <Height>683.7pt</Height>
+    <Columns>1</Columns>
+  </Body>
+  <PageFooter>
+    <Height>14pt</Height>
+    <ReportItems>
+      <Textbox Name="Textbox81">
+        <Top>1pt</Top>
+        <Left>10pt</Left>
+        <Height>12pt</Height>
+        <Width>3in</Width>
+        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
+        <Style>
+          <FontSize>10pt</FontSize>
+          <FontWeight>Normal</FontWeight>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Textbox>
+    </ReportItems>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageFooter>
+  <DataElementName>Report</DataElementName>
+  <DataElementStyle>AttributeNormal</DataElementStyle>
+  <ReportParameters>
+    <ReportParameter Name="id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySQL.NET</DataProvider>
+        <ConnectString>server=rs.qsolution.ru;user=andrey;database=workwear_dev;port=3306;password=123;</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+</Report>
