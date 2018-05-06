@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
+using workwear.Domain.Organization;
 
 namespace workwear.Domain.Stock
 {

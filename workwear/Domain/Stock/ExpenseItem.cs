@@ -1,6 +1,7 @@
 ﻿using System;
 using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
+using workwear.Domain.Organization;
 
 namespace workwear.Domain.Stock
 {

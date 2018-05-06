@@ -3,7 +3,7 @@ using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
 using QSProjectsLib;
 
-namespace workwear.Domain
+namespace workwear.Domain.Regulations
 {
 	[OrmSubject (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки нормы",

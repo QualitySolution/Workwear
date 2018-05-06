@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Gamma.ColumnConfig;
 using Gamma.GtkWidgets;
 using NHibernate;
@@ -9,7 +7,7 @@ using NHibernate.Dialect.Function;
 using NHibernate.Transform;
 using QSOrmProject;
 using QSOrmProject.RepresentationModel;
-using workwear.Domain;
+using workwear.Domain.Regulations;
 
 namespace workwear.ViewModel
 {

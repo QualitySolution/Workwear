@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using Gamma.ColumnConfig;
 using Gamma.GtkWidgets;
 using NHibernate;
@@ -12,7 +11,7 @@ using QSBusinessCommon.Domain;
 using QSOrmProject;
 using QSOrmProject.RepresentationModel;
 using QSProjectsLib;
-using workwear.Domain;
+using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
 namespace workwear.ViewModel

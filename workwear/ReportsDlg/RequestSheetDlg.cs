@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using QSReport;
-using workwear.Domain;
+using workwear.Domain.Organization;
 
 namespace workwear
 {

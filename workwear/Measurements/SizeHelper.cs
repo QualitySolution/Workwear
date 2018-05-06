@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using Gtk;
-using workwear.Domain;
+using workwear.Domain.Organization;
 
 namespace workwear.Measurements
 {

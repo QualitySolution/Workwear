@@ -8,7 +8,7 @@ using QSOrmProject;
 using QSOrmProject.Domain;
 using QSOrmProject.RepresentationModel;
 using QSProjectsLib;
-using workwear.Domain;
+using workwear.Domain.Organization;
 using workwear.Domain.Stock;
 using workwear.JournalFilters;
 

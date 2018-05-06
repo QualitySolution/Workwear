@@ -5,7 +5,8 @@ using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
 using NHibernate.Transform;
 using QSOrmProject;
-using workwear.Domain;
+using workwear.Domain.Organization;
+using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
 namespace workwear.Repository

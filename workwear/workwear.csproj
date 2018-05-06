@@ -114,15 +114,7 @@
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="Dialogs\EmployeeCardDlg.cs" />
     <Compile Include="gtk-gui\workwear.EmployeeCardDlg.cs" />
-    <Compile Include="Domain\EmployeeCard.cs" />
-    <Compile Include="Domain\Post.cs" />
-    <Compile Include="Domain\Leader.cs" />
     <Compile Include="Dialogs\ObjectDlg.cs" />
-    <Compile Include="Domain\Facility.cs" />
-    <Compile Include="HibernateMapping\EmployeeCardMap.cs" />
-    <Compile Include="HibernateMapping\FacilityMap.cs" />
-    <Compile Include="HibernateMapping\LeaderMap.cs" />
-    <Compile Include="HibernateMapping\PostMap.cs" />
     <Compile Include="CreateProjectParam.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Measurements\SizeStandardConverter.cs" />
@@ -133,18 +125,10 @@
     <Compile Include="Measurements\LookupSizes.cs" />
     <Compile Include="gtk-gui\workwear.ItemTypeDlg.cs" />
     <Compile Include="Dialogs\ItemTypeDlg.cs" />
-    <Compile Include="Domain\ItemsType.cs" />
-    <Compile Include="HibernateMapping\ItemsTypeMap.cs" />
-    <Compile Include="Domain\Norm.cs" />
-    <Compile Include="Domain\NormItem.cs" />
-    <Compile Include="HibernateMapping\NormMap.cs" />
-    <Compile Include="HibernateMapping\NormItemMap.cs" />
     <Compile Include="Dialogs\NormDlg.cs" />
     <Compile Include="gtk-gui\workwear.NormDlg.cs" />
     <Compile Include="Representations\NormVM.cs" />
     <Compile Include="Repository\NormRepository.cs" />
-    <Compile Include="Domain\EmployeeCardItem.cs" />
-    <Compile Include="HibernateMapping\EmployeeCardItemMap.cs" />
     <Compile Include="Domain\Stock\Expense.cs" />
     <Compile Include="Dialogs\Stock\ExpenseDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.ExpenseDocDlg.cs" />
@@ -185,8 +169,6 @@
     <Compile Include="gtk-gui\workwear.NotIssuedSheetReportDlg.cs" />
     <Compile Include="ConfigureDeletion.cs" />
     <Compile Include="ReportsDlg\RequestSheetDlg.cs" />
-    <Compile Include="Domain\FacilityPlace.cs" />
-    <Compile Include="HibernateMapping\FacilityPlaceMap.cs" />
     <Compile Include="Representations\ObjectBalanceVM.cs" />
     <Compile Include="JournalFilters\ObjectBalanceFilter.cs" />
     <Compile Include="gtk-gui\workwear.ObjectBalanceFilter.cs" />
@@ -212,6 +194,24 @@
     <Compile Include="Domain\Regulations\RegulationDocAnnex.cs" />
     <Compile Include="HibernateMapping\Regulations\RegulationDocAnnexMap.cs" />
     <Compile Include="HibernateMapping\Regulations\RegulationDocMap.cs" />
+    <Compile Include="Domain\Organization\EmployeeCard.cs" />
+    <Compile Include="Domain\Organization\EmployeeCardItem.cs" />
+    <Compile Include="Domain\Organization\Facility.cs" />
+    <Compile Include="Domain\Organization\FacilityPlace.cs" />
+    <Compile Include="Domain\Regulations\ItemsType.cs" />
+    <Compile Include="Domain\Organization\Leader.cs" />
+    <Compile Include="Domain\Regulations\Norm.cs" />
+    <Compile Include="Domain\Regulations\NormItem.cs" />
+    <Compile Include="Domain\Regulations\Post.cs" />
+    <Compile Include="HibernateMapping\Organization\EmployeeCardItemMap.cs" />
+    <Compile Include="HibernateMapping\Organization\EmployeeCardMap.cs" />
+    <Compile Include="HibernateMapping\Organization\FacilityMap.cs" />
+    <Compile Include="HibernateMapping\Organization\FacilityPlaceMap.cs" />
+    <Compile Include="HibernateMapping\Regulations\ItemsTypeMap.cs" />
+    <Compile Include="HibernateMapping\Organization\LeaderMap.cs" />
+    <Compile Include="HibernateMapping\Regulations\NormItemMap.cs" />
+    <Compile Include="HibernateMapping\Regulations\NormMap.cs" />
+    <Compile Include="HibernateMapping\Regulations\PostMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -299,6 +299,8 @@
     <Folder Include="HibernateMapping\User\" />
     <Folder Include="Domain\Regulations\" />
     <Folder Include="HibernateMapping\Regulations\" />
+    <Folder Include="Domain\Organization\" />
+    <Folder Include="HibernateMapping\Organization\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

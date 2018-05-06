@@ -7,7 +7,7 @@ using QSOrmProject;
 using Gamma.Utilities;
 using workwear.Domain.Regulations;
 
-namespace workwear.Domain
+namespace workwear.Domain.Regulations
 {
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
 		NominativePlural = "нормы выдачи",

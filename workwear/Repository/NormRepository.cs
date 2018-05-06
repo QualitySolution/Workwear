@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using QSOrmProject;
-using workwear.Domain;
-using NHibernate.Criterion;
+using workwear.Domain.Regulations;
 
 namespace workwear.Repository
 {

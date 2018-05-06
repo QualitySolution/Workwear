@@ -3,7 +3,7 @@ using NLog;
 using QSBusinessCommon.Repository;
 using QSOrmProject;
 using QSProjectsLib;
-using workwear.Domain;
+using workwear.Domain.Regulations;
 using workwear.Measurements;
 
 namespace workwear

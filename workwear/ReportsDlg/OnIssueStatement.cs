@@ -4,7 +4,7 @@ using NHibernate.Criterion;
 using QSOrmProject;
 using QSProjectsLib;
 using QSReport;
-using workwear.Domain;
+using workwear.Domain.Organization;
 
 namespace workwear
 {

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Gamma.Utilities;
 using QSOrmProject;
+using workwear.Domain.Regulations;
 using workwear.Measurements;
 
 namespace workwear.Domain.Stock

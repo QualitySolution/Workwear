@@ -7,9 +7,10 @@ using Gamma.Utilities;
 using QSOrmProject;
 using QSOrmProject.Domain;
 using QSProjectsLib;
+using workwear.Domain.Regulations;
 using workwear.Measurements;
 
-namespace workwear.Domain
+namespace workwear.Domain.Organization
 {
 
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,

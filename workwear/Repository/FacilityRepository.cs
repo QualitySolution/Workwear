@@ -1,6 +1,5 @@
-﻿using System;
-using NHibernate.Criterion;
-using workwear.Domain;
+﻿using NHibernate.Criterion;
+using workwear.Domain.Organization;
 
 namespace workwear.Repository
 {

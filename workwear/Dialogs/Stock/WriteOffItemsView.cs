@@ -1,10 +1,10 @@
 using System;
+using System.Linq;
 using Gtk;
 using NLog;
 using QSOrmProject;
-using workwear.Domain;
+using workwear.Domain.Organization;
 using workwear.Domain.Stock;
-using System.Linq;
 
 namespace workwear
 {

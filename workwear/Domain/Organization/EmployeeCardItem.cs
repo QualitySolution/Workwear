@@ -4,9 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
 using QSOrmProject;
+using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
-namespace workwear.Domain
+namespace workwear.Domain.Organization
 {
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
 		NominativePlural = "строки нормы карточки",

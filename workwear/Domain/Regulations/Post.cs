@@ -2,7 +2,7 @@
 using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
 
-namespace workwear.Domain
+namespace workwear.Domain.Regulations
 {
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
 		NominativePlural = "должности",

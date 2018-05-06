@@ -5,7 +5,7 @@ using NLog;
 using QSOrmProject;
 using QSProjectsLib;
 using QSValidation;
-using workwear.Domain;
+using workwear.Domain.Organization;
 using workwear.Domain.Stock;
 using workwear.Repository;
 

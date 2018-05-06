@@ -6,7 +6,7 @@ using QSBusinessCommon.Domain;
 using QSOrmProject;
 using workwear.Measurements;
 
-namespace workwear.Domain
+namespace workwear.Domain.Regulations
 {
 	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Masculine,
 		NominativePlural = "типы номерклатуры",

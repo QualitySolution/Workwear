@@ -5,6 +5,7 @@ using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using QSOrmProject;
+using workwear.Domain.Organization;
 
 namespace workwear.Domain.Stock
 {

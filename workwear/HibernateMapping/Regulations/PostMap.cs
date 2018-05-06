@@ -1,13 +1,13 @@
 ﻿using FluentNHibernate.Mapping;
-using workwear.Domain;
+using workwear.Domain.Regulations;
 
 namespace workwear.HMap
 {
-	public class LeaderMap : ClassMap<Leader>
+	public class PostMap : ClassMap<Post>
 	{
-		public LeaderMap ()
+		public PostMap ()
 		{
-			Table ("leaders");
+			Table ("posts");
 
 			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
 			Map (x => x.Name).Column ("name").Not.Nullable ();

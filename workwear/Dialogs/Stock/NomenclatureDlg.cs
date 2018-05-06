@@ -1,13 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using NLog;
 using QSOrmProject;
 using QSProjectsLib;
-using workwear.Domain;
+using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Measurements;
-using System.Collections.Generic;
 
 namespace workwear
 {

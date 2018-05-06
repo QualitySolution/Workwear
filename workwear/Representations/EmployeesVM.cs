@@ -5,7 +5,8 @@ using Gamma.GtkWidgets;
 using NHibernate.Transform;
 using QSOrmProject;
 using QSOrmProject.RepresentationModel;
-using workwear.Domain;
+using workwear.Domain.Organization;
+using workwear.Domain.Regulations;
 using workwear.JournalFilters;
 
 namespace workwear.ViewModel

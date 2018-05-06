@@ -4,7 +4,8 @@ using System.Linq;
 using Gamma.ColumnConfig;
 using QSOrmProject;
 using QSProjectsLib;
-using workwear.Domain;
+using workwear.Domain.Organization;
+using workwear.Domain.Regulations;
 
 namespace workwear
 {

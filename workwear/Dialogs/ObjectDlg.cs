@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 using NLog;
 using QSOrmProject;
 using QSProjectsLib;
-using workwear.Domain;
+using workwear.Domain.Organization;
 
 namespace workwear
 {
