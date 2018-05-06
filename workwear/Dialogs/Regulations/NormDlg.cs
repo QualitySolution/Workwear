@@ -31,9 +31,15 @@ namespace workwear.Dialogs.Regulations
 		{
 			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource ();
 
-			yentryTonNumber.Binding.AddBinding (Entity, e => e.TONNumber, w => w.Text).InitializeFromSource ();
-			yentryTonAttachment.Binding.AddBinding (Entity, e => e.TONAttachment, w => w.Text).InitializeFromSource ();
+			ycomboAnnex.SetRenderTextFunc<RegulationDocAnnex>(x => x.Title);
+			yentryRegulationDoc.SubjectType = typeof(RegulationDoc);
+			yentryRegulationDoc.Binding.AddBinding(Entity, e => e.Document, w => w.Subject).InitializeFromSource();
+			ycomboAnnex.Binding.AddBinding(Entity, e => e.Annex, w => w.SelectedItem).InitializeFromSource();
+
 			yentryTonParagraph.Binding.AddBinding (Entity, e => e.TONParagraph, w => w.Text).InitializeFromSource ();
+			labelOldTon.Visible = !String.IsNullOrWhiteSpace(Entity.TONAttachment) || !String.IsNullOrWhiteSpace(Entity.TONNumber);
+			labelOldTon.Text = String.Format("Старые значения ТОН № {0} и приложение № {1}", Entity.TONNumber, Entity.TONAttachment);
+
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			ytreeProfessions.ColumnsConfig = FluentColumnsConfig<Post>.Create ()
@@ -164,6 +170,11 @@ namespace workwear.Dialogs.Regulations
 			var prof = OrmSimpleDialog.RunSimpleDialog ((Gtk.Window)this.Toplevel, typeof(Post), null) as Post;
 			if (prof != null)
 				Entity.AddProfession (prof);
+		}
+
+		protected void OnYentryRegulationDocChanged(object sender, EventArgs e)
+		{
+			ycomboAnnex.ItemsList = Entity.Document?.Annexess;
 		}
 	}
 }

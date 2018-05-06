@@ -43,6 +43,8 @@ namespace workwear.Domain.Regulations
 
 		#endregion
 
+		public virtual string Title => $"Приложение №{Number}"; 
+
 		public RegulationDocAnnex()
 		{
 		}
