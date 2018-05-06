@@ -13,6 +13,8 @@ namespace workwear
 		{
 			logger.Info ("Настройка параметров удаления...");
 
+			#region Организация
+
 			DeleteConfig.AddHibernateDeleteInfo<Facility> ()
 				.AddDeleteDependence<FacilityPlace>(x => x.Facility)
 				.AddDeleteDependence<Expense> (x => x.Facility)
@@ -21,6 +23,19 @@ namespace workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<FacilityPlace>()
 				.AddClearDependence<ExpenseItem>(x => x.FacilityPlace);
+
+			DeleteConfig.AddHibernateDeleteInfo<Leader> ()
+				.AddClearDependence<EmployeeCard> (x => x.Leader);
+
+			DeleteConfig.AddHibernateDeleteInfo<EmployeeCard> ()
+				.AddDeleteDependence<EmployeeCardItem> (x => x.EmployeeCard)
+				.AddDeleteDependence<Expense> (x => x.EmployeeCard)
+				.AddDeleteDependence<Income> (x => x.EmployeeCard);
+
+			DeleteConfig.AddHibernateDeleteInfo<EmployeeCardItem> ();
+
+			#endregion
+   			#region Нормы выдачи
 
 			DeleteConfig.AddHibernateDeleteInfo<ItemsType> ()
 				.AddDeleteDependence<Nomenclature> (x => x.Type)
@@ -36,28 +51,15 @@ namespace workwear
 				//Ну нужна так как должна удалятся через пересчет. .AddClearDependence<EmployeeCardItem> (x => x.ActiveNormItem) //FIXME После этого нужно пересчитать требования к выдаче, то новому списку норм.
 				; 
 
+			DeleteConfig.AddHibernateDeleteInfo<Post>()
+				.AddRemoveFromDependence<Norm>(x => x.Professions)
+				.AddClearDependence<EmployeeCard>(x => x.Post);
+
+			#endregion
+			#region Склад
+
 			DeleteConfig.AddHibernateDeleteInfo<MeasurementUnits> ()
 				.AddDeleteDependence<ItemsType> (x => x.Units);
-
-			DeleteConfig.AddHibernateDeleteInfo<User> ()
-				.AddClearDependence<EmployeeCard> (x => x.CreatedbyUser)
-				.AddClearDependence<Writeoff> (x => x.CreatedbyUser)
-				.AddClearDependence<Expense> (x => x.CreatedbyUser)
-				.AddClearDependence<Income> (x => x.CreatedbyUser);
-
-			DeleteConfig.AddHibernateDeleteInfo<Leader> ()
-				.AddClearDependence<EmployeeCard> (x => x.Leader);
-
-			DeleteConfig.AddHibernateDeleteInfo<Post> ()
-				.AddRemoveFromDependence<Norm> (x => x.Professions)
-				.AddClearDependence<EmployeeCard> (x => x.Post);
-
-			DeleteConfig.AddHibernateDeleteInfo<EmployeeCard> ()
-				.AddDeleteDependence<EmployeeCardItem> (x => x.EmployeeCard)
-				.AddDeleteDependence<Expense> (x => x.EmployeeCard)
-				.AddDeleteDependence<Income> (x => x.EmployeeCard);
-
-			DeleteConfig.AddHibernateDeleteInfo<EmployeeCardItem> ();
 
 			DeleteConfig.AddHibernateDeleteInfo<Nomenclature> ()
 				.AddDeleteDependence<ExpenseItem> (x => x.Nomenclature)
@@ -83,7 +85,15 @@ namespace workwear
 				.AddDeleteDependence<WriteoffItem> (x => x.IssuedOn);
 
 			DeleteConfig.AddHibernateDeleteInfo<WriteoffItem> ();
-			
+
+			#endregion
+
+			DeleteConfig.AddHibernateDeleteInfo<User> ()
+				.AddClearDependence<EmployeeCard> (x => x.CreatedbyUser)
+				.AddClearDependence<Writeoff> (x => x.CreatedbyUser)
+				.AddClearDependence<Expense> (x => x.CreatedbyUser)
+				.AddClearDependence<Income> (x => x.CreatedbyUser);
+
 			//Для тестирования
 			#if DEBUG
 			DeleteConfig.DeletionCheck ();
