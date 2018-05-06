@@ -12,132 +12,6 @@
   <RightMargin>.25in</RightMargin>
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
-    <DataSet Name="Data">
-      <Query>
-        <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
-    wear_cards_item.id,
-    wear_cards_item.next_issue,
-    IF(wear_cards_item.next_issue &lt;= CURDATE(),
-        DATEDIFF(CURDATE(), wear_cards_item.next_issue),
-        NULL) AS delay,
-    item_types.name AS type_name,
-    nomenclature.name AS nomenclature_name,
-    nomenclature.size,
-    nomenclature.growth,
-    measurement_units.name AS unit,
-    CASE norms_item.period_type
-        WHEN 'Year' THEN norms_item.period_count * 12
-        WHEN 'Month' THEN norms_item.period_count
-        WHEN 'Shift' THEN norms_item.period_count / 21
-    END AS life_in_months,
-    (SELECT 
-            MAX(stock_expense.date)
-        FROM
-            stock_expense_detail
-                LEFT JOIN
-            stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id
-                LEFT JOIN
-            nomenclature ON stock_expense_detail.nomenclature_id = nomenclature.id
-        WHERE
-            nomenclature.type_id = wear_cards_item.itemtype_id
-                AND stock_expense.wear_card_id = @id) AS last_issue,
-    (SELECT 
-            SUM(stock_expense_detail.quantity) - IFNULL(SUM(stock_write_off_detail.quantity), 0) - IFNULL(SUM(stock_income_detail.quantity), 0)
-        FROM
-            stock_expense_detail
-                LEFT JOIN
-            stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id
-                LEFT JOIN
-            nomenclature ON stock_expense_detail.nomenclature_id = nomenclature.id
-                LEFT JOIN
-            stock_write_off_detail ON stock_write_off_detail.stock_expense_detail_id = stock_expense_detail.id
-                LEFT JOIN
-            stock_income_detail ON stock_income_detail.stock_expense_detail_id = stock_expense_detail.id
-        WHERE
-            stock_expense.wear_card_id = @id
-                AND (stock_expense_detail.auto_writeoff_date IS NULL
-                OR stock_expense_detail.auto_writeoff_date &gt; CURDATE())
-                AND nomenclature.type_id = wear_cards_item.itemtype_id) AS received,
-    (SELECT 
-            SUM(stock_income_detail.quantity) - IFNULL(SUM(stock_write_off_detail.quantity), 0) - IFNULL(SUM(stock_expense_detail.quantity), 0)
-        FROM
-            stock_income_detail
-                LEFT JOIN
-            stock_write_off_detail ON stock_write_off_detail.stock_income_detail_id = stock_income_detail.id
-                LEFT JOIN
-            stock_expense_detail ON stock_expense_detail.stock_income_detail_id = stock_income_detail.id
-        WHERE
-            stock_income_detail.nomenclature_id = wear_cards_item.matched_nomenclature_id) AS in_stock
-FROM
-    wear_cards_item
-        LEFT JOIN
-    nomenclature ON nomenclature.id = wear_cards_item.matched_nomenclature_id
-        LEFT JOIN
-    item_types ON item_types.id = wear_cards_item.itemtype_id
-        LEFT JOIN
-    measurement_units ON item_types.units_id = measurement_units.id
-        LEFT JOIN
-    norms_item ON wear_cards_item.norm_item_id = norms_item.id
-WHERE
-    wear_cards_item.wear_card_id = @id;</CommandText>
-        <QueryParameters>
-          <QueryParameter Name="@id">
-            <Value>=Parameters!id</Value>
-          </QueryParameter>
-        </QueryParameters>
-      </Query>
-      <Fields>
-        <Field Name="id">
-          <DataField>id</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
-        <Field Name="next_issue">
-          <DataField>next_issue</DataField>
-          <TypeName>System.DateTime</TypeName>
-        </Field>
-        <Field Name="delay">
-          <DataField>delay</DataField>
-          <TypeName>System.Int64</TypeName>
-        </Field>
-        <Field Name="type_name">
-          <DataField>type_name</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="nomenclature_name">
-          <DataField>nomenclature_name</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="size">
-          <DataField>size</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="growth">
-          <DataField>growth</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="unit">
-          <DataField>unit</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="life_in_months">
-          <DataField>life_in_months</DataField>
-          <TypeName>System.Decimal</TypeName>
-        </Field>
-        <Field Name="last_issue">
-          <DataField>last_issue</DataField>
-          <TypeName>System.DateTime</TypeName>
-        </Field>
-        <Field Name="received">
-          <DataField>received</DataField>
-          <TypeName>System.Decimal</TypeName>
-        </Field>
-        <Field Name="in_stock">
-          <DataField>in_stock</DataField>
-          <TypeName>System.Decimal</TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
     <DataSet Name="Card">
       <Query>
         <DataSourceName>DS1</DataSourceName>
@@ -157,7 +31,22 @@ WHERE
     wear_cards.size_gloves,
     posts.name AS post,
     leaders.name AS leader,
-    objects.name AS subdivision
+    objects.name AS subdivision,
+    (SELECT 
+            GROUP_CONCAT(DISTINCT CONCAT_WS(' ',
+                            regulations.name,
+                            CONCAT('от ',
+                                    DATE_FORMAT(regulations.doc_date, '%d.%m.%Y')),
+                            CONCAT('№ ', regulations.number))
+                    SEPARATOR ', ')
+        FROM
+            wear_cards_norms
+                LEFT JOIN
+            norms ON norms.id = wear_cards_norms.norm_id
+                LEFT JOIN
+            regulations ON regulations.id = norms.regulations_id
+        WHERE
+            wear_cards_norms.wear_card_id = wear_cards.id) AS regulations
 FROM
     wear_cards
         LEFT JOIN
@@ -237,6 +126,10 @@ WHERE
         </Field>
         <Field Name="subdivision">
           <DataField>subdivision</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="regulations">
+          <DataField>regulations</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -960,8 +853,7 @@ WHERE
           <Textbox Name="Textbox42" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
             <Height>12.00pt</Height>
             <Width>427.02pt</Width>
-            <Value>
-            </Value>
+            <Value>={regulations}</Value>
             <ZIndex>1</ZIndex>
             <Left>131.10pt</Left>
             <Top>173.00pt</Top>
@@ -1173,7 +1065,7 @@ WHERE
         <Left>0.0pt</Left>
         <Top>403.6pt</Top>
       </Table>
-      <Textbox Name="Textbox52" >
+      <Textbox Name="Textbox52">
         <Height>15.75pt</Height>
         <Width>235.50pt</Width>
         <Value>Руководитель структурного подразделения</Value>
@@ -1187,7 +1079,7 @@ WHERE
           <FontSize>11pt</FontSize>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox53" >
+      <Textbox Name="Textbox53">
         <Height>10.50pt</Height>
         <Width>112.89pt</Width>
         <Value>(подпись)</Value>
@@ -1204,7 +1096,7 @@ WHERE
           <TextAlign>Center</TextAlign>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox54" >
+      <Textbox Name="Textbox54">
         <Height>10.50pt</Height>
         <Width>207.39pt</Width>
         <Value>(Ф.И.О.)</Value>
@@ -1221,7 +1113,7 @@ WHERE
           <TextAlign>Center</TextAlign>
         </Style>
       </Textbox>
-      <Textbox Name="Textbox55" >
+      <Textbox Name="Textbox55">
         <Height>11.27pt</Height>
         <Width>208.49pt</Width>
         <Value>=First({leader}, 'Card')</Value>
@@ -1238,7 +1130,7 @@ WHERE
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>683.7pt</Height>
+    <Height>491.2pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
@@ -1264,21 +1156,6 @@ WHERE
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
-  <ReportParameters>
-    <ReportParameter Name="id">
-      <DataType>Integer</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>1</Value>
-        </Values>
-      </DefaultValue>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
-      <MultiValue>false</MultiValue>
-      <Prompt>
-      </Prompt>
-    </ReportParameter>
-  </ReportParameters>
   <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
@@ -1288,4 +1165,19 @@ WHERE
       </ConnectionProperties>
     </DataSource>
   </DataSources>
+  <ReportParameters>
+    <ReportParameter Name="id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+  </ReportParameters>
 </Report>
