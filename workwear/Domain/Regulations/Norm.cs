@@ -130,10 +130,18 @@ namespace workwear.Domain.Regulations
 
 		#endregion
 
+#region Генерируемые
+
 		public virtual string ProfessionsText {
 			get{ return String.Join ("; ", Professions.Select (p => p.Name));
 			}
 		}
+
+		public virtual string DocumentNumberText => document?.Number;
+
+		public virtual string AnnexNumberText => Annex?.Number.ToString();
+
+# endregion
 
 		public Norm ()
 		{

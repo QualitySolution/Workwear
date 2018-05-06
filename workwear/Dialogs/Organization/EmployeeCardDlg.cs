@@ -107,8 +107,8 @@ namespace workwear.Dialogs.Organization
 			};
 
 			ytreeNorms.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<Norm> ()
-				.AddColumn ("№ ТОН").SetDataProperty (node => node.TONNumber)
-				.AddColumn ("№ Приложения").SetDataProperty (node => node.TONAttachment)
+				.AddColumn ("№ ТОН").AddTextRenderer (node => node.DocumentNumberText)
+				.AddColumn ("№ Приложения").AddNumericRenderer (node => node.AnnexNumberText)
 				.AddColumn ("№ Пункта").SetDataProperty (node => node.TONParagraph)
 				.AddColumn ("Профессии").AddTextRenderer (node => node.ProfessionsText)
 				.Finish ();

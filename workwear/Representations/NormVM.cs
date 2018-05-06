@@ -21,15 +21,19 @@ namespace workwear.ViewModel
 
 			Post professionAlias = null;
 			Norm normAlias = null;
+			RegulationDoc regulationDocAlias = null;
+			RegulationDocAnnex docAnnexAlias = null;
 
 			var norms = UoW.Session.QueryOver<Norm> (() => normAlias);
 
 			var normsList = norms
+				.JoinAlias(n => n.Document, () => regulationDocAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(n => n.Annex, () => docAnnexAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinQueryOver (() => normAlias.Professions, () => professionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList (list => list
 					.SelectGroup (() => normAlias.Id).WithAlias (() => resultAlias.Id)
-					.Select (() => normAlias.TONNumber).WithAlias (() => resultAlias.TonNumber)
-					.Select (() => normAlias.TONAttachment).WithAlias (() => resultAlias.TonAttachment)
+	             	.Select (() => regulationDocAlias.Number).WithAlias (() => resultAlias.TonNumber)
+				    .Select (() => docAnnexAlias.Number).WithAlias (() => resultAlias.AnnexNumber)
 					.Select (() => normAlias.TONParagraph).WithAlias (() => resultAlias.TonParagraph)
 					.Select (Projections.SqlFunction (
 						new SQLFunctionTemplate (NHibernateUtil.String, "GROUP_CONCAT( ?1 SEPARATOR ?2)"),
@@ -47,7 +51,7 @@ namespace workwear.ViewModel
 		IColumnsConfig treeViewConfig = ColumnsConfigFactory.Create<NormVMNode>()
 			.AddColumn ("Код").SetDataProperty (node => node.Id.ToString())
 			.AddColumn ("№ ТОН").SetDataProperty (node => node.TonNumber)
-			.AddColumn ("№ Приложения").SetDataProperty (node => node.TonAttachment)
+		    .AddColumn ("№ Приложения").SetDataProperty (node => node.TonAttachment)
 			.AddColumn ("№ Пункта").SetDataProperty (node => node.TonParagraph)
 			.AddColumn ("Профессии").AddTextRenderer (node => node.Professions)
 			.Finish ();
@@ -83,15 +87,21 @@ namespace workwear.ViewModel
 		public int Id { get; set; }
 
 		[UseForSearch]
+		[SearchHighlight]
 		public string TonNumber { get; set; }
 
-		[UseForSearch]
-		public string TonAttachment { get; set; }
+		public int? AnnexNumber { get; set; }
 
 		[UseForSearch]
+		[SearchHighlight]
+		public string TonAttachment => AnnexNumber?.ToString();
+
+		[UseForSearch]
+		[SearchHighlight]
 		public string TonParagraph { get; set; }
 
 		[UseForSearch]
+		[SearchHighlight]
 		public string Professions { get; set; }
 	}
 }
