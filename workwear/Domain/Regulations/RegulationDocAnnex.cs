@@ -8,7 +8,7 @@ namespace workwear.Domain.Regulations
 	NominativePlural = "приложения к нормативному документу",
 	            Nominative = "приложение к нормативному документу"
 	)]
-	public class RegulationDocAnnex : PropertyChangedBase
+	public class RegulationDocAnnex : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства
 

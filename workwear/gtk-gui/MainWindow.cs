@@ -109,6 +109,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionYouTube;
 
+	private global::Gtk.Action ActionRegulationDoc;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -266,7 +268,7 @@ public partial class MainWindow
 		this.ActionIconsMiddle.ShortLabel = global::Mono.Unix.Catalog.GetString("Средние иконки");
 		w1.Add(this.ActionIconsMiddle, null);
 		this.ActionIconsLarge = new global::Gtk.RadioAction("ActionIconsLarge", global::Mono.Unix.Catalog.GetString("Большие иконки"), null, null, 0);
-		this.ActionIconsLarge.Group = this.ActionIconsMiddle.Group;
+		this.ActionIconsLarge.Group = this.ActionIconsSmall.Group;
 		this.ActionIconsLarge.ShortLabel = global::Mono.Unix.Catalog.GetString("Большие иконки");
 		w1.Add(this.ActionIconsLarge, null);
 		this.ActionSite = new global::Gtk.Action("ActionSite", global::Mono.Unix.Catalog.GetString("Сайт программы"), null, "www");
@@ -293,6 +295,9 @@ public partial class MainWindow
 		this.ActionYouTube = new global::Gtk.Action("ActionYouTube", global::Mono.Unix.Catalog.GetString("YouTube"), null, "youtube");
 		this.ActionYouTube.ShortLabel = global::Mono.Unix.Catalog.GetString("YouTube");
 		w1.Add(this.ActionYouTube, null);
+		this.ActionRegulationDoc = new global::Gtk.Action("ActionRegulationDoc", global::Mono.Unix.Catalog.GetString("Нормативные документы"), null, null);
+		this.ActionRegulationDoc.ShortLabel = global::Mono.Unix.Catalog.GetString("Нормативные документы");
+		w1.Add(this.ActionRegulationDoc, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -319,26 +324,27 @@ public partial class MainWindow
 				"m name=\'ActionStockDocs\' action=\'ActionStockDocs\'/><menuitem name=\'ActionStockBa" +
 				"lance\' action=\'ActionStockBalance\'/></menu><menu name=\'Action1\' action=\'Action1\'" +
 				"><menuitem name=\'ActionObjects\' action=\'ActionObjects\'/><menuitem name=\'ActionEm" +
-				"ployees\' action=\'ActionEmployees\'/><separator/><menuitem name=\'ActionNorms\' acti" +
-				"on=\'ActionNorms\'/><menuitem name=\'Action5\' action=\'Action5\'/><menuitem name=\'Act" +
-				"ion6\' action=\'Action6\'/><separator/><menuitem name=\'Action7\' action=\'Action7\'/><" +
-				"separator/><menuitem name=\'Action8\' action=\'Action8\'/><menuitem name=\'Action9\' a" +
-				"ction=\'Action9\'/></menu><menu name=\'Action37\' action=\'Action37\'><menuitem name=\'" +
-				"Action10\' action=\'Action10\'/><menuitem name=\'Action11\' action=\'Action11\'/><separ" +
-				"ator/><menuitem name=\'Action12\' action=\'Action12\'/><separator/><menuitem name=\'A" +
-				"ction13\' action=\'Action13\'/><menuitem name=\'ActionRequestSheet\' action=\'ActionRe" +
-				"questSheet\'/><menuitem name=\'ActionAverageAnnualNeed\' action=\'ActionAverageAnnua" +
-				"lNeed\'/><menuitem name=\'Action22\' action=\'Action22\'/></menu><menu name=\'Action3\'" +
-				" action=\'Action3\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem nam" +
-				"e=\'ActionHistory\' action=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'" +
-				"ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><men" +
-				"uitem name=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action3" +
-				"8\' action=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name" +
-				"=\'ActionOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionGoogle\'" +
-				" action=\'ActionGoogle\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><" +
-				"menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><menuit" +
-				"em name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' a" +
-				"ction=\'aboutAction\'/></menu></menubar></ui>");
+				"ployees\' action=\'ActionEmployees\'/><separator/><menuitem name=\'ActionRegulationD" +
+				"oc\' action=\'ActionRegulationDoc\'/><menuitem name=\'ActionNorms\' action=\'ActionNor" +
+				"ms\'/><menuitem name=\'Action5\' action=\'Action5\'/><menuitem name=\'Action6\' action=" +
+				"\'Action6\'/><separator/><menuitem name=\'Action7\' action=\'Action7\'/><separator/><m" +
+				"enuitem name=\'Action8\' action=\'Action8\'/><menuitem name=\'Action9\' action=\'Action" +
+				"9\'/></menu><menu name=\'Action37\' action=\'Action37\'><menuitem name=\'Action10\' act" +
+				"ion=\'Action10\'/><menuitem name=\'Action11\' action=\'Action11\'/><separator/><menuit" +
+				"em name=\'Action12\' action=\'Action12\'/><separator/><menuitem name=\'Action13\' acti" +
+				"on=\'Action13\'/><menuitem name=\'ActionRequestSheet\' action=\'ActionRequestSheet\'/>" +
+				"<menuitem name=\'ActionAverageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><menu" +
+				"item name=\'Action22\' action=\'Action22\'/></menu><menu name=\'Action3\' action=\'Acti" +
+				"on3\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionHist" +
+				"ory\' action=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'" +
+				"/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'A" +
+				"ctionOpenReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Ac" +
+				"tion38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnok" +
+				"lasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionGoogle\' action=\'Acti" +
+				"onGoogle\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><menuitem name" +
+				"=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><menuitem name=\'Acti" +
+				"onSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutA" +
+				"ction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -446,5 +452,6 @@ public partial class MainWindow
 		this.ActionGoogle.Activated += new global::System.EventHandler(this.OnActionGoogleActivated);
 		this.ActionTwitter.Activated += new global::System.EventHandler(this.OnActionTwitterActivated);
 		this.ActionYouTube.Activated += new global::System.EventHandler(this.OnActionYouTubeActivated);
+		this.ActionRegulationDoc.Activated += new global::System.EventHandler(this.OnActionRegulationDocActivated);
 	}
 }

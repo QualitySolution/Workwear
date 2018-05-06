@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
+using System.Linq;
+using Gamma.Utilities;
 using QSOrmProject;
 
 namespace workwear.Domain.Regulations
@@ -10,7 +12,7 @@ namespace workwear.Domain.Regulations
 		NominativePlural = "нормативные документы",
 		Nominative = "нормативный документ"
 	)]
-	public class RegulationDoc : PropertyChangedBase
+	public class RegulationDoc : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства
 
@@ -66,8 +68,47 @@ namespace workwear.Domain.Regulations
 
 		#endregion
 
+		#region Расчетные
+
+		public virtual string Title
+		{
+			get
+			{
+				return Name + (DocDate.HasValue ? String.Format(" от {0:d}", DocDate.Value) : "") + (String.IsNullOrWhiteSpace(Number) ? "" : String.Format(" №{0}", Number));
+			}
+		}
+		#endregion
+
 		public RegulationDoc()
 		{
 		}
+
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+		{
+			if (String.IsNullOrWhiteSpace(Name))
+				yield return new ValidationResult("Название документа должно быть заполнено.",
+												  new[] { this.GetPropertyName(o => o.Name) });
+		}
+
+		#region Методы
+
+		public virtual RegulationDocAnnex AddAnnex()
+		{
+			var annex = new RegulationDocAnnex();
+			annex.Document = this;
+			if (Annexess.Count == 0)
+				annex.Number = 1;
+			else
+				annex.Number = Annexess.Max(x => x.Number) + 1;
+
+			ObservableAnnexes.Add(annex);
+			return annex;
+		}
+
+		public virtual void RemoveAnnex(RegulationDocAnnex annex){
+			ObservableAnnexes.Remove(annex);
+		}
+
+  		#endregion
 	}
 }

@@ -212,6 +212,8 @@
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.NormDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.ItemTypeDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Organization.ObjectDlg.cs" />
+    <Compile Include="Dialogs\Regulations\RegulationDocDlg.cs" />
+    <Compile Include="gtk-gui\workwear.Dialogs.Regulations.RegulationDocDlg.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

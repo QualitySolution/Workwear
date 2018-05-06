@@ -498,5 +498,13 @@ public partial class MainWindow : Gtk.Window
 		System.Diagnostics.Process.Start("https://www.youtube.com/channel/UC4U9Rzp-yfRgWd2R0f4iIGg");
 	}
 
+	protected void OnActionRegulationDocActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount("RegulationDoc");
+		tdiMain.OpenTab(OrmReference.GenerateHashName<RegulationDoc>(),
+		                () => new OrmReference(typeof(RegulationDoc))
+			   );
+	}
+
 	#endregion
 }

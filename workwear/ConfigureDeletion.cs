@@ -35,7 +35,14 @@ namespace workwear
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCardItem> ();
 
 			#endregion
-   			#region Нормы выдачи
+			#region Нормы выдачи
+
+			DeleteConfig.AddHibernateDeleteInfo<RegulationDoc>()
+			            .AddDeleteDependence<Norm>(x => x.Document)
+						.AddDeleteDependenceFromBag(x => x.Annexess);
+
+			DeleteConfig.AddHibernateDeleteInfo<RegulationDocAnnex>()
+			            .AddDeleteDependence<Norm>(x => x.Annex);
 
 			DeleteConfig.AddHibernateDeleteInfo<ItemsType> ()
 				.AddDeleteDependence<Nomenclature> (x => x.Type)
@@ -45,7 +52,6 @@ namespace workwear
 			DeleteConfig.AddHibernateDeleteInfo<Norm> ()
 				.AddRemoveFromDependence<EmployeeCard> (x => x.UsedNorms, x => x.RemoveUsedNorm)
 				.AddDeleteDependence<NormItem> (x => x.Norm);
-
 
 			DeleteConfig.AddHibernateDeleteInfo<NormItem> ()
 				//Ну нужна так как должна удалятся через пересчет. .AddClearDependence<EmployeeCardItem> (x => x.ActiveNormItem) //FIXME После этого нужно пересчитать требования к выдаче, то новому списку норм.
