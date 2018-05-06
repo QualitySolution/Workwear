@@ -104,7 +104,6 @@
     <Compile Include="MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="gtk-gui\workwear.ObjectDlg.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
     <Compile Include="viewDTOs\EmployeeCardItems.cs" />
@@ -112,9 +111,6 @@
     <Compile Include="gtk-gui\workwear.StockBalanceView.cs" />
     <Compile Include="viewDTOs\StockBalanceItems.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
-    <Compile Include="Dialogs\EmployeeCardDlg.cs" />
-    <Compile Include="gtk-gui\workwear.EmployeeCardDlg.cs" />
-    <Compile Include="Dialogs\ObjectDlg.cs" />
     <Compile Include="CreateProjectParam.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Measurements\SizeStandardConverter.cs" />
@@ -123,10 +119,6 @@
     <Compile Include="Measurements\СlothesType.cs" />
     <Compile Include="Measurements\SizeHelper.cs" />
     <Compile Include="Measurements\LookupSizes.cs" />
-    <Compile Include="gtk-gui\workwear.ItemTypeDlg.cs" />
-    <Compile Include="Dialogs\ItemTypeDlg.cs" />
-    <Compile Include="Dialogs\NormDlg.cs" />
-    <Compile Include="gtk-gui\workwear.NormDlg.cs" />
     <Compile Include="Representations\NormVM.cs" />
     <Compile Include="Repository\NormRepository.cs" />
     <Compile Include="Domain\Stock\Expense.cs" />
@@ -212,6 +204,14 @@
     <Compile Include="HibernateMapping\Regulations\NormItemMap.cs" />
     <Compile Include="HibernateMapping\Regulations\NormMap.cs" />
     <Compile Include="HibernateMapping\Regulations\PostMap.cs" />
+    <Compile Include="Dialogs\Organization\EmployeeCardDlg.cs" />
+    <Compile Include="Dialogs\Regulations\ItemTypeDlg.cs" />
+    <Compile Include="Dialogs\Regulations\NormDlg.cs" />
+    <Compile Include="Dialogs\Organization\ObjectDlg.cs" />
+    <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeCardDlg.cs" />
+    <Compile Include="gtk-gui\workwear.Dialogs.Regulations.NormDlg.cs" />
+    <Compile Include="gtk-gui\workwear.Dialogs.Regulations.ItemTypeDlg.cs" />
+    <Compile Include="gtk-gui\workwear.Dialogs.Organization.ObjectDlg.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -301,6 +301,8 @@
     <Folder Include="HibernateMapping\Regulations\" />
     <Folder Include="Domain\Organization\" />
     <Folder Include="HibernateMapping\Organization\" />
+    <Folder Include="Dialogs\Organization\" />
+    <Folder Include="Dialogs\Regulations\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

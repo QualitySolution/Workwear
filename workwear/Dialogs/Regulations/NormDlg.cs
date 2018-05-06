@@ -7,7 +7,7 @@ using QSProjectsLib;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 
-namespace workwear
+namespace workwear.Dialogs.Regulations
 {
 	public partial class NormDlg : OrmGtkDialogBase<Norm>
 	{

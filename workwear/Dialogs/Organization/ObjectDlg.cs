@@ -6,7 +6,7 @@ using QSOrmProject;
 using QSProjectsLib;
 using workwear.Domain.Organization;
 
-namespace workwear
+namespace workwear.Dialogs.Organization
 {
 	public partial class ObjectDlg : OrmGtkDialogBase<Facility>
 	{

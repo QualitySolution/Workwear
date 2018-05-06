@@ -6,7 +6,7 @@ using QSProjectsLib;
 using workwear.Domain.Regulations;
 using workwear.Measurements;
 
-namespace workwear
+namespace workwear.Dialogs.Regulations
 {
 	public partial class ItemTypeDlg : OrmGtkDialogBase<ItemsType>
 	{

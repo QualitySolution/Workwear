@@ -19,7 +19,7 @@ using workwear.DTO;
 using workwear.Measurements;
 using workwear.Repository;
 
-namespace workwear
+namespace workwear.Dialogs.Organization
 {
 	public partial class EmployeeCardDlg : OrmGtkDialogBase<EmployeeCard>
 	{

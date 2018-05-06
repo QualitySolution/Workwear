@@ -2,6 +2,8 @@
 using QSOrmProject;
 using QSOrmProject.Domain;
 using QSProjectsLib;
+using workwear.Dialogs.Organization;
+using workwear.Dialogs.Regulations;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
