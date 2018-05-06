@@ -3070,7 +3070,7 @@
                   <widget class="Gtk.Label" id="labelTTN">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">ТН №&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
+                    <property name="LabelProp" translatable="yes">ТН №:</property>
                     <property name="UseMarkup">True</property>
                   </widget>
                   <packing>

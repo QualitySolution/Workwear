@@ -137,7 +137,7 @@ namespace workwear
 			this.labelTTN = new global::Gtk.Label();
 			this.labelTTN.Name = "labelTTN";
 			this.labelTTN.Xalign = 1F;
-			this.labelTTN.LabelProp = global::Mono.Unix.Catalog.GetString("ТН №<span foreground=\"red\">*</span>:");
+			this.labelTTN.LabelProp = global::Mono.Unix.Catalog.GetString("ТН №:");
 			this.labelTTN.UseMarkup = true;
 			this.table2.Add(this.labelTTN);
 			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table2[this.labelTTN]));

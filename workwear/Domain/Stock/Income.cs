@@ -108,6 +108,11 @@ namespace workwear.Domain.Stock
 			if(Items.Any (i => i.Amount <= 0))
 				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.", 
 					new[] { this.GetPropertyName (o => o.Items)});
+
+			if (Items.Any(i => i.Certificate != null && i.Certificate.Length > 40))
+				yield return new ValidationResult("Длина номера сертификата не может быть больше 40 символов.",
+					new[] { this.GetPropertyName(o => o.Items) });
+
 		}
 
 		#endregion
@@ -132,13 +137,15 @@ namespace workwear.Domain.Stock
 				life = (life * (decimal)multiplier);
 				cost = (cost * (decimal)multiplier);
 			}
-				
-			var newItem = new IncomeItem () {
+
+			var newItem = new IncomeItem()
+			{
 				Amount = count,
 				Nomenclature = expenseFromItem.Nomenclature,
 				IssuedOn = expenseFromItem,
 				Cost = cost,
-				LifePercent = life
+				LifePercent = life,
+				Certificate = expenseFromItem.IncomeOn?.Certificate
 			};
 
 			ObservableItems.Add (newItem);

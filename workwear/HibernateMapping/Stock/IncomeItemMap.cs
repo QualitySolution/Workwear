@@ -13,6 +13,7 @@ namespace workwear.HMap
 			Map (x => x.Amount).Column ("quantity");
 			Map (x => x.LifePercent).Column ("life_percent");
 			Map (x => x.Cost).Column ("cost");
+			Map(x => x.Certificate).Column("certificate");
 
 			References (x => x.Nomenclature).Column ("nomenclature_id");
 			References (x => x.IssuedOn).Column ("stock_expense_detail_id");

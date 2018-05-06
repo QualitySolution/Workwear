@@ -55,6 +55,15 @@ namespace workwear.Domain.Stock
 			set { SetField (ref cost, value, () => Cost); }
 		}
 
+		private string certificate;
+
+		[Display(Name = "№ сертификата")]
+		public virtual string Certificate
+		{
+			get { return certificate; }
+			set { SetField(ref certificate, value, () => Certificate); }
+		}
+
 		#endregion
 
 		#region Расчетные

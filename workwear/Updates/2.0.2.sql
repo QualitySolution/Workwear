@@ -63,3 +63,6 @@ ADD CONSTRAINT `fk_norms_2`
   REFERENCES `regulations_annex` (`id`)
   ON DELETE RESTRICT
   ON UPDATE CASCADE;
+
+ALTER TABLE `stock_income_detail` 
+ADD COLUMN `certificate` VARCHAR(40) NULL DEFAULT NULL AFTER `cost`;
