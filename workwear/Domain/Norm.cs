@@ -5,6 +5,7 @@ using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QSOrmProject;
 using Gamma.Utilities;
+using workwear.Domain.Regulations;
 
 namespace workwear.Domain
 {
@@ -20,6 +21,24 @@ namespace workwear.Domain
 		#region Свойства
 
 		public virtual int Id { get; set; }
+
+		private RegulationDoc document;
+
+		[Display(Name = "Нормативный документ")]
+		public virtual RegulationDoc Document
+		{
+			get { return document; }
+			set { SetField(ref document, value, () => Document); }
+		}
+
+		private RegulationDocAnnex annex;
+
+		[Display(Name = "Приложение нормативного документа")]
+		public virtual RegulationDocAnnex Annex
+		{
+			get { return annex; }
+			set { SetField(ref annex, value, () => Annex); }
+		}
 
 		string tonNumber;
 

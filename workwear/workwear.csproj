@@ -208,6 +208,10 @@
     <Compile Include="HibernateMapping\User\UserSettingsMap.cs" />
     <Compile Include="Tools\CurrentUserSettings.cs" />
     <Compile Include="gtk-gui\workwear.RequestSheetDlg.cs" />
+    <Compile Include="Domain\Regulations\RegulationDoc.cs" />
+    <Compile Include="Domain\Regulations\RegulationDocAnnex.cs" />
+    <Compile Include="HibernateMapping\Regulations\RegulationDocAnnexMap.cs" />
+    <Compile Include="HibernateMapping\Regulations\RegulationDocMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -293,6 +297,8 @@
     <Folder Include="JournalViewers\" />
     <Folder Include="Domain\User\" />
     <Folder Include="HibernateMapping\User\" />
+    <Folder Include="Domain\Regulations\" />
+    <Folder Include="HibernateMapping\Regulations\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

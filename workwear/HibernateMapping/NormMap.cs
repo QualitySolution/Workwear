@@ -15,6 +15,9 @@ namespace workwear.HMap
 			Map (x => x.TONParagraph).Column ("ton_paragraph");
 			Map(x => x.Comment).Column("comment");
 
+			References(x => x.Document).Column("regulations_id");
+			References(x => x.Annex).Column("regulations_annex_id");
+
 			HasManyToMany (x => x.Professions).Table ("norms_professions")
 				.ParentKeyColumn ("norm_id")
 				.ChildKeyColumn ("profession_id")
