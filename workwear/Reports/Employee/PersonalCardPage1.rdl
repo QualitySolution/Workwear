@@ -1134,23 +1134,7 @@ WHERE
     <Columns>1</Columns>
   </Body>
   <PageFooter>
-    <Height>14pt</Height>
-    <ReportItems>
-      <Textbox Name="Textbox81">
-        <Top>1pt</Top>
-        <Left>10pt</Left>
-        <Height>12pt</Height>
-        <Width>3in</Width>
-        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
-        <Style>
-          <FontSize>10pt</FontSize>
-          <FontWeight>Normal</FontWeight>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-    </ReportItems>
+    <Height>0.0pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageFooter>
