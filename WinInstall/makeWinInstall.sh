@@ -9,9 +9,9 @@ msbuild /p:Configuration=ReleaseWin /p:Platform=x86 ../workwear.sln
 
 # Очистка бин от лишний файлов
 
-rm -v ${BinDir}/*.mdb
-rm -v ${BinDir}/*.pdb
-rm -v -R ./Files/*
+rm -v -f ${BinDir}/*.mdb
+rm -v -f ${BinDir}/*.pdb
+rm -v -f -R ./Files/*
 
 cp -r -v ${BinDir}/* ./Files
 
