@@ -7,7 +7,7 @@ namespace workwear.JournalFilters
 {
 	[System.ComponentModel.ToolboxItem(true)]
 	[OrmDefaultIsFiltered(true)]
-	public partial class StockDocumentsFilter : RepresentationFilterBase
+	public partial class StockDocumentsFilter : RepresentationFilterBase<StockDocumentsFilter>
 	{
 		public StockDocumentsFilter(IUnitOfWork uow) : this()
 		{
