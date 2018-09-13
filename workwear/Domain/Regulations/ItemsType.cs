@@ -20,6 +20,7 @@ namespace workwear.Domain.Regulations
 		string name;
 
 		[Display (Name = "Название")]
+		[Required(ErrorMessage = "Имя типа номеклатуры не должно быть пустым.")]
 		[StringLength(240)]
 		public virtual string Name {
 			get { return name; }
