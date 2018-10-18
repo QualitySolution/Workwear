@@ -3,10 +3,16 @@ echo "Что делаем?"
 echo "1) git pull"
 echo "2) nuget restore"
 echo "3) cleanup packages directories"
+echo "4) cleanup bin directories"
 echo "Можно вызывать вместе, например git+nuget=12"
 read case;
 
 case $case in
+    *4*)
+rm -v -f -R ./workwear/bin/*
+rm -v -f -R ../QSProjects/*/bin/*
+rm -v -f -R ../My-FyiReporting/*/bin/*
+;;&
     *3*)
 rm -v -f -R ./packages/*
 rm -v -f -R ../QSProjects/packages/*
