@@ -1,10 +1,11 @@
 ﻿using System;
-using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
+using QS.DomainModel.Entity;
+using QSOrmProject;
 
 namespace workwear.Domain.Stock
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
+	[OrmSubject (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки списания",
 		Nominative = "строка списания")]
 	public class WriteoffItem : PropertyChangedBase, IDomainObject

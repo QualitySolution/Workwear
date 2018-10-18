@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using QS.DomainModel.Entity;
 using QSOrmProject;
 
 namespace workwear.Domain.Organization
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
+	[OrmSubject (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "объекты",
 		Nominative = "объект")]
 	

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
-using QSOrmProject;
 using Gamma.Utilities;
-using workwear.Domain.Regulations;
+using QS.DomainModel.Entity;
+using QSOrmProject;
 
 namespace workwear.Domain.Regulations
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
+	[OrmSubject (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "нормы выдачи",
 		Nominative = "норма выдачи",
 		PrepositionalPlural = "нормах выдачи"

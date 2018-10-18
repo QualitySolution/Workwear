@@ -1,10 +1,10 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
+using QS.DomainModel.Entity;
 using QSOrmProject;
-using System.ComponentModel.DataAnnotations;
 
 namespace workwear.Measurements
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Masculine,
+	[OrmSubject (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "стандарты размеров",
 		Nominative = "стандарт размеров")]
 	public class SizeStandart : PropertyChangedBase, IDomainObject

@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
+using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QSOrmProject;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
 namespace workwear.Domain.Organization
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
+	[OrmSubject (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки нормы карточки",
 		Nominative = "строка нормы карточки")]
 	public class EmployeeCardItem : PropertyChangedBase, IDomainObject

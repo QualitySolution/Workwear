@@ -1,13 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Gamma.Utilities;
+using QS.DomainModel.Entity;
 using QSOrmProject;
 using workwear.Domain.Regulations;
 using workwear.Measurements;
 
 namespace workwear.Domain.Stock
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
+	[OrmSubject (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "номенклатура",
 		Nominative = "номенклатура")]
 	public class Nomenclature: PropertyChangedBase, IDomainObject, IValidatableObject

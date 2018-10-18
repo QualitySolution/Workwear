@@ -7,6 +7,7 @@ using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
 using NHibernate.Transform;
+using QS.DomainModel.UoW;
 using QSBusinessCommon.Domain;
 using QSOrmProject;
 using QSOrmProject.RepresentationModel;

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
+using QS.DomainModel.Entity;
 using QSOrmProject;
-using System.ComponentModel.DataAnnotations;
 
 namespace workwear.Domain.Organization
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Neuter,
+	[OrmSubject (Gender = GrammaticalGender.Neuter,
 		NominativePlural = "размещения в объекте",
 		Nominative = "размещение в объекте")]
 	

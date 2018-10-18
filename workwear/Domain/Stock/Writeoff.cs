@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
+using QS.DomainModel.Entity;
 using QSOrmProject;
 
 namespace workwear.Domain.Stock
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Masculine,
+	[OrmSubject (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "акты списания",
 		Nominative = "акт списания")]
 	public class Writeoff : StockDocument, IValidatableObject

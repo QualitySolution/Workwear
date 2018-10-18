@@ -1,10 +1,10 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
+using QS.DomainModel.Entity;
 using QSOrmProject;
-using System.ComponentModel.DataAnnotations;
 
 namespace workwear.Domain.Regulations
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
+	[OrmSubject (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "должности",
 		Nominative = "должность")]
 	public class Post : PropertyChangedBase, IDomainObject

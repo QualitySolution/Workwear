@@ -2,10 +2,11 @@
 using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
 using workwear.Domain.Organization;
+using QS.DomainModel.Entity;
 
 namespace workwear.Domain.Stock
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
+	[OrmSubject (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки выдачи",
 		Nominative = "строка выдачи")]
 	public class ExpenseItem : PropertyChangedBase, IDomainObject

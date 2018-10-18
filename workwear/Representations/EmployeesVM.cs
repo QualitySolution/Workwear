@@ -3,6 +3,7 @@ using System.Linq;
 using Gamma.ColumnConfig;
 using Gamma.GtkWidgets;
 using NHibernate.Transform;
+using QS.DomainModel.UoW;
 using QSOrmProject;
 using QSOrmProject.RepresentationModel;
 using workwear.Domain.Organization;

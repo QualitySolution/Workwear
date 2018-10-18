@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Gtk;
 using NLog;
+using QS.Report;
 using QSBusinessCommon.Domain;
 using QSOrmProject;
 using QSProjectsLib;
@@ -158,7 +159,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction11Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportStockAllWear");
-		var reportInfo = new QSReport.ReportInfo
+		var reportInfo = new ReportInfo
 		{
 			Title = "Складская ведомость",
 			Identifier = "StockAllWear",
@@ -183,7 +184,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction12Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportListBySize");
-		var reportInfo = new QSReport.ReportInfo
+		var reportInfo = new ReportInfo
 		{
 			Title = "Список по размерам",
 			Identifier = "ListBySize",
@@ -251,7 +252,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionYearRequestSheetActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("AverageAnnualNeedReport");
-		var reportInfo = new QSReport.ReportInfo
+		var reportInfo = new ReportInfo
 		{
 			Title = "Среднегодовая потребность",
 			Identifier = "AverageAnnualNeed",

@@ -8,6 +8,7 @@ using Gtk;
 using MySql.Data.MySqlClient;
 using NHibernate;
 using NLog;
+using QS.Report;
 using QSOrmProject;
 using QSProjectsLib;
 using QSReport;
@@ -730,7 +731,7 @@ namespace workwear.Dialogs.Organization
 			if (UoWGeneric.HasChanges && CommonDialogs.SaveBeforePrint(typeof(EmployeeCard), "бумажной версии"))
 				Save();
 
-			var reportInfo = new QSReport.ReportInfo
+			var reportInfo = new ReportInfo
 			{
 				Title = String.Format("Карточка {0} - {1}", Entity.ShortName, doc.GetEnumTitle()),
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,

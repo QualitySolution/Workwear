@@ -1,4 +1,5 @@
-﻿using QSOrmProject;
+﻿using QS.DomainModel.UoW;
+using QS.Project.Domain;
 using QSOrmProject.Domain;
 using workwear.Domain.Users;
 
@@ -6,9 +7,9 @@ namespace workwear.Repository
 {
 	public static class UserRepository
 	{
-		public static User GetMyUser(IUnitOfWork uow)
+		public static UserBase GetMyUser(IUnitOfWork uow)
 		{
-			return uow.GetById<User> (QSProjectsLib.QSMain.User.Id);
+			return uow.GetById<UserBase> (QSProjectsLib.QSMain.User.Id);
 		}
 
 		/// <summary>

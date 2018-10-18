@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using QSOrmProject;
-using QSOrmProject.Domain;
+using QS.DomainModel.Entity;
+using QS.Project.Domain;
 
 namespace workwear.Domain.Stock
 {
@@ -18,10 +18,10 @@ namespace workwear.Domain.Stock
 			set { SetField(ref date, value, () => Date); }
 		}
 
-		User createdbyUser;
+		UserBase createdbyUser;
 
 		[Display(Name = "Документ создал")]
-		public virtual User CreatedbyUser
+		public virtual UserBase CreatedbyUser
 		{
 			get { return createdbyUser; }
 			set { SetField(ref createdbyUser, value, () => CreatedbyUser); }

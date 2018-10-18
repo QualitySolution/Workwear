@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
+using QS.DomainModel.Entity;
 using workwear.Domain.Organization;
 
 namespace workwear.Domain.Stock
 {
-	[QSOrmProject.OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Masculine,
+	[QSOrmProject.OrmSubject (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "расходные документы",
 		Nominative = "расходный документ")]
 	public class Expense : StockDocument, IValidatableObject

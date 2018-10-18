@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Gamma.Utilities;
+using QS.DomainModel.Entity;
 using QSBusinessCommon.Domain;
 using QSOrmProject;
 using workwear.Measurements;
 
 namespace workwear.Domain.Regulations
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Masculine,
+	[OrmSubject (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "типы номерклатуры",
 		Nominative = "тип номенклатуры")]
 	public class ItemsType : PropertyChangedBase, IDomainObject, IValidatableObject

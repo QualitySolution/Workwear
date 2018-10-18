@@ -4,8 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
+using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
+using QS.Project.Domain;
 using QSOrmProject;
-using QSOrmProject.Domain;
 using QSProjectsLib;
 using workwear.Domain.Regulations;
 using workwear.Measurements;
@@ -13,7 +15,7 @@ using workwear.Measurements;
 namespace workwear.Domain.Organization
 {
 
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Feminine,
+	[OrmSubject (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "карточки сотрудников",
 		Nominative = "карточка сотрудника",
 		PrepositionalPlural = "карточках сотрудников"
@@ -133,10 +135,10 @@ namespace workwear.Domain.Organization
 			set { SetField (ref sex, value, () => Sex); }
 		}
 
-		User createdbyUser;
+		UserBase createdbyUser;
 
 		[Display (Name = "Карточку создал")]
-		public virtual User CreatedbyUser {
+		public virtual UserBase CreatedbyUser {
 			get { return createdbyUser; }
 			set { SetField (ref createdbyUser, value, () => CreatedbyUser); }
 		}

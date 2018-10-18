@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Gtk;
+using QS.DomainModel.Entity;
+using QS.Project.Domain;
 using QSOrmProject;
 using QSOrmProject.Domain;
 
 namespace workwear.Domain.Users
 {
-	[OrmSubject (Gender = QSProjectsLib.GrammaticalGender.Masculine,
+	[OrmSubject (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "настройки пользователей",
 		Nominative = "настройки пользователя")]
 	public class UserSettings: PropertyChangedBase, IDomainObject
@@ -14,10 +16,10 @@ namespace workwear.Domain.Users
 
 		public virtual int Id { get; set; }
 
-		User user;
+		UserBase user;
 
 		[Display (Name = "Пользователь")]
-		public virtual User User {
+		public virtual UserBase User {
 			get { return user; }
 			set { SetField (ref user, value, () => User); }
 		}
@@ -54,7 +56,7 @@ namespace workwear.Domain.Users
 
 		}
 
-		public UserSettings (User user)
+		public UserSettings (UserBase user)
 		{
 			User = user;
 		}

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using QS.DomainModel.Entity;
 using QSOrmProject;
 
 namespace workwear.Domain.Regulations
 {
-	[OrmSubject(Gender = QSProjectsLib.GrammaticalGender.Neuter,
+	[OrmSubject(Gender = GrammaticalGender.Neuter,
 	NominativePlural = "приложения к нормативному документу",
 	            Nominative = "приложение к нормативному документу"
 	)]

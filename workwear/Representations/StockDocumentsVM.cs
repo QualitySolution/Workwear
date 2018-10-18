@@ -4,6 +4,7 @@ using System.Linq;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NHibernate.Transform;
+using QS.DomainModel.UoW;
 using QSOrmProject;
 using QSOrmProject.Domain;
 using QSOrmProject.RepresentationModel;

@@ -1,6 +1,7 @@
 ﻿using System;
-using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
+using QS.DomainModel.Entity;
+using QSOrmProject;
 using QSProjectsLib;
 
 namespace workwear.Domain.Regulations
