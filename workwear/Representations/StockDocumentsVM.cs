@@ -5,8 +5,8 @@ using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
+using QS.Project.Domain;
 using QSOrmProject;
-using QSOrmProject.Domain;
 using QSOrmProject.RepresentationModel;
 using QSProjectsLib;
 using workwear.Domain.Organization;
@@ -37,7 +37,7 @@ namespace workwear.Representations
 			StockDocumentsVMNode resultAlias = null;
 			EmployeeCard employeeAlias = null;
 			Facility facilityAlias = null;
-			User authorAlias = null;
+			UserBase authorAlias = null;
 
 			List<StockDocumentsVMNode> result = new List<StockDocumentsVMNode>();
 

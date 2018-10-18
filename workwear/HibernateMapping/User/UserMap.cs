@@ -1,9 +1,9 @@
 ﻿using FluentNHibernate.Mapping;
-using QSOrmProject.Domain;
+using QS.Project.Domain;
 
 namespace workwear.HMap
 {
-	public class UserMap : ClassMap<User>
+	public class UserMap : ClassMap<UserBase>
 	{
 		public UserMap ()
 		{

@@ -1,4 +1,5 @@
-﻿using QSBusinessCommon.Domain;
+﻿using QS.Project.Domain;
+using QSBusinessCommon.Domain;
 using QSOrmProject.Deletion;
 using QSOrmProject.Domain;
 using workwear.Domain.Organization;
@@ -94,7 +95,7 @@ namespace workwear
 
 			#endregion
 
-			DeleteConfig.AddHibernateDeleteInfo<User> ()
+			DeleteConfig.AddHibernateDeleteInfo<UserBase> ()
 				.AddClearDependence<EmployeeCard> (x => x.CreatedbyUser)
 				.AddClearDependence<Writeoff> (x => x.CreatedbyUser)
 				.AddClearDependence<Expense> (x => x.CreatedbyUser)

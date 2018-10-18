@@ -1,6 +1,6 @@
-﻿using QSBusinessCommon.Domain;
+﻿using QS.Project.Domain;
+using QSBusinessCommon.Domain;
 using QSOrmProject;
-using QSOrmProject.Domain;
 using QSProjectsLib;
 using workwear.Dialogs.Organization;
 using workwear.Dialogs.Regulations;
@@ -41,7 +41,7 @@ namespace workwear
 			OrmMain.AddObjectDescription<Facility>().Dialog<ObjectDlg> ().DefaultTableView ().SearchColumn ("Название", e => e.Name).SearchColumn ("Адрес", e => e.Address).End ();
 			OrmMain.AddObjectDescription<Leader>().DefaultTableView ().SearchColumn ("Имя", e => e.Name).End ();
 			//Общее
-			OrmMain.AddObjectDescription<User>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
+			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
 			OrmMain.AddObjectDescription<UserSettings>();
 			//Склад
 			OrmMain.AddObjectDescription<Nomenclature>().Dialog<NomenclatureDlg> ().DefaultTableView ()
