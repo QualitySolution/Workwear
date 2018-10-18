@@ -5,6 +5,9 @@ using QSProjectsLib;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 [assembly: AssemblyTitle("QS: Спецодежда и имущество")]
+#if DEBUG
+[assembly: AssemblyBetaBuild]
+#endif
 [assembly: AssemblyEdition("gpl")]
 [assembly: AssemblyDescription("Программа позволяет вести учет внутреннего склада спецодежды и имущества выдаваемого сотрудникам.")]
 [assembly: AssemblyConfiguration("")]
