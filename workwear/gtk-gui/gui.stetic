@@ -16,8 +16,8 @@
     <widget-library name="../../../QSProjects/QSValidation/bin/Debug/QSValidation.dll" />
     <widget-library name="../../../QSProjects/Modules/QSBusinessCommon/bin/Debug/QSBusinessCommon.dll" />
     <widget-library name="../../../QSProjects/QSExtraGammaWidgets/bin/Debug/QSExtraGammaWidgets.dll" />
-    <widget-library name="../bin/Debug/workwear.exe" internal="true" />
     <widget-library name="../../../QSProjects/QSReport/bin/Debug/QSReport.dll" />
+    <widget-library name="../bin/Debug/workwear.exe" internal="true" />
   </import>
   <icon-factory>
     <icon-set id="objects">
@@ -1225,7 +1225,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Dialogs.Organization.EmployeeCardDlg" design-size="1223 482">
+  <widget class="Gtk.Bin" id="workwear.Dialogs.Organization.EmployeeCardDlg" design-size="1231 482">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -2580,7 +2580,7 @@
           <widget class="Gtk.Notebook" id="notebook1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">0</property>
+            <property name="CurrentPage">1</property>
             <signal name="SwitchPage" handler="OnNotebook1SwitchPage" />
             <child>
               <widget class="Gtk.VBox" id="vbox6">
@@ -2803,7 +2803,7 @@
             <child>
               <widget class="Gtk.Label" id="label15">
                 <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Спецодежда</property>
+                <property name="LabelProp" translatable="yes">Спецодежда по нормам</property>
               </widget>
               <packing>
                 <property name="type">tab</property>
@@ -5953,7 +5953,6 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Label" translatable="yes">на месяц</property>
-                <property name="Active">True</property>
                 <property name="DrawIndicator">True</property>
                 <property name="HasLabel">True</property>
                 <property name="UseUnderline">True</property>
@@ -6225,6 +6224,7 @@
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
                     <property name="Label" translatable="yes">Месяц</property>
+                    <property name="Active">True</property>
                     <property name="DrawIndicator">True</property>
                     <property name="HasLabel">True</property>
                     <property name="UseUnderline">True</property>

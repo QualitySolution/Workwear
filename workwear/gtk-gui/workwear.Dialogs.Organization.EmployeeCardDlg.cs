@@ -1023,7 +1023,7 @@ namespace workwear.Dialogs.Organization
 			this.notebook1 = new global::Gtk.Notebook();
 			this.notebook1.CanFocus = true;
 			this.notebook1.Name = "notebook1";
-			this.notebook1.CurrentPage = 0;
+			this.notebook1.CurrentPage = 1;
 			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.vbox6 = new global::Gtk.VBox();
 			this.vbox6.Name = "vbox6";
@@ -1197,7 +1197,7 @@ namespace workwear.Dialogs.Organization
 			// Notebook tab
 			this.label15 = new global::Gtk.Label();
 			this.label15.Name = "label15";
-			this.label15.LabelProp = global::Mono.Unix.Catalog.GetString("Спецодежда");
+			this.label15.LabelProp = global::Mono.Unix.Catalog.GetString("Спецодежда по нормам");
 			this.notebook1.SetTabLabel(this.vbox7, this.label15);
 			this.label15.ShowAll();
 			// Container child notebook1.Gtk.Notebook+NotebookChild
