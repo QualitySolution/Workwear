@@ -3,6 +3,7 @@ using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
 using workwear.Domain.Organization;
 using QS.DomainModel.Entity;
+using workwear.Domain.Operations;
 
 namespace workwear.Domain.Stock
 {
@@ -61,6 +62,15 @@ namespace workwear.Domain.Stock
 		public virtual DateTime? AutoWriteoffDate {
 			get { return autoWriteoffDate; }
 			set { SetField (ref autoWriteoffDate, value, () => AutoWriteoffDate); }
+		}
+
+		private EmployeeIssueOperation employeeIssueOperation;
+
+		[Display(Name = "Операция выдачи сотруднику")]
+		public virtual EmployeeIssueOperation EmployeeIssueOperation
+		{
+			get { return employeeIssueOperation; }
+			set { SetField(ref employeeIssueOperation, value); }
 		}
 
 		#endregion

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QSOrmProject;
+using workwear.Domain.Operations;
 
 namespace workwear.Domain.Stock
 {
@@ -63,6 +64,15 @@ namespace workwear.Domain.Stock
 		{
 			get { return certificate; }
 			set { SetField(ref certificate, value, () => Certificate); }
+		}
+
+		private EmployeeIssueOperation employeeIssueOperation;
+
+		[Display(Name = "Операция возврата от сотрудника")]
+		public virtual EmployeeIssueOperation EmployeeIssueOperation
+		{
+			get { return employeeIssueOperation; }
+			set { SetField(ref employeeIssueOperation, value); }
 		}
 
 		#endregion

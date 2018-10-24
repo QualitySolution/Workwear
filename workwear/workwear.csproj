@@ -127,6 +127,7 @@
     <EmbeddedResource Include="icon\menu\google-plus.png" />
     <EmbeddedResource Include="icon\menu\odnoklasniki.png" />
     <EmbeddedResource Include="Updates\2.0.2.sql" />
+    <EmbeddedResource Include="Updates\2.1.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -243,6 +244,8 @@
     <Compile Include="gtk-gui\workwear.Dialogs.Organization.ObjectDlg.cs" />
     <Compile Include="Dialogs\Regulations\RegulationDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.RegulationDocDlg.cs" />
+    <Compile Include="Domain\Operations\EmployeeIssueOperation.cs" />
+    <Compile Include="HibernateMapping\Operations\EmployeeIssueOperationMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -342,6 +345,8 @@
     <Folder Include="HibernateMapping\Organization\" />
     <Folder Include="Dialogs\Organization\" />
     <Folder Include="Dialogs\Regulations\" />
+    <Folder Include="Domain\Operations\" />
+    <Folder Include="HibernateMapping\Operations\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
