@@ -6,7 +6,6 @@ using Gamma.Utilities;
 using Gtk;
 using NLog;
 using QSOrmProject;
-using QSProjectsLib;
 using workwear.Domain.Organization;
 using workwear.Domain.Stock;
 
@@ -23,7 +22,7 @@ namespace workwear
 			BuhDoc
 		}
 
-	private Expense expenceDoc;
+		private Expense expenceDoc;
 
 		public Expense ExpenceDoc {
 			get {return expenceDoc;}
@@ -149,9 +148,11 @@ namespace workwear
 				if (expenceDoc.Items.Count > 0)
 					docEntry.Text = expenceDoc.Items.First().BuhDocument;
 				docEntry.TooltipText = "Бухгалтерский документ по которому была произведена выдача. Отобразится вместо подписи сотрудника в карточке.";
+				docEntry.ActivatesDefault = true;
 				dlg.VBox.Add(docEntry);
 				dlg.AddButton("Заменить", ResponseType.Ok);
 				dlg.AddButton("Отмена", ResponseType.Cancel);
+				dlg.DefaultResponse = ResponseType.Ok;
 				dlg.ShowAll();
 				if(dlg.Run() == (int)ResponseType.Ok)
 				{

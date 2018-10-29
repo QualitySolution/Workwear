@@ -13,6 +13,11 @@ namespace workwear
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
+		private enum ColumnTags
+		{
+			BuhDoc
+		}
+
 		private Income incomeDoc;
 
 		public Income IncomeDoc {
@@ -44,6 +49,13 @@ namespace workwear
 					|| (IncomeDoc.Operation == IncomeOperations.Object && IncomeDoc.Facility != null) 
 					|| IncomeDoc.Operation == IncomeOperations.Enter;
 			}
+
+			if (e.PropertyName == IncomeDoc.GetPropertyName(x => x.Operation))
+			{
+				var buhDocColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.BuhDoc).First();
+				buhDocColumn.Visible = IncomeDoc.Operation == IncomeOperations.Return;
+				buttonFillBuhDoc.Visible = IncomeDoc.Operation == IncomeOperations.Return;
+			}
 		}
 
 		public IncomeDocItemsView()
@@ -61,6 +73,7 @@ namespace workwear
 				.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				.AddColumn ("Стоимость").AddNumericRenderer (e => e.Cost).Editing (new Adjustment(0,0,100000000,100,1000,0)).Digits (2).WidthChars(12)
 				.AddColumn("Сумма").AddNumericRenderer(x => x.Total).Digits(2)
+				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument).Editable()
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 		}
@@ -139,7 +152,29 @@ namespace workwear
 				IncomeDoc.Items.Sum(x => x.Amount),
 				IncomeDoc.Items.Sum(x => x.Total)
 			);
-		} 
+		}
+
+		protected void OnButtonFillBuhDocClicked(object sender, EventArgs e)
+		{
+			using (var dlg = new Dialog("Введите бухгалтерский документ", MainClass.MainWin, DialogFlags.Modal))
+			{
+				var docEntry = new Entry(80);
+				if (incomeDoc.Items.Count > 0)
+					docEntry.Text = incomeDoc.Items.First().BuhDocument;
+				docEntry.TooltipText = "Бухгалтерский документ по которому была произведена выдача. Отобразится вместо подписи сотрудника в карточке.";
+				docEntry.ActivatesDefault = true;
+				dlg.VBox.Add(docEntry);
+				dlg.AddButton("Заменить", ResponseType.Ok);
+				dlg.AddButton("Отмена", ResponseType.Cancel);
+				dlg.DefaultResponse = ResponseType.Ok;
+				dlg.ShowAll();
+				if (dlg.Run() == (int)ResponseType.Ok)
+				{
+					incomeDoc.ObservableItems.ToList().ForEach(x => x.BuhDocument = docEntry.Text);
+				}
+				dlg.Destroy();
+			}
+		}
 	}
 }
 
