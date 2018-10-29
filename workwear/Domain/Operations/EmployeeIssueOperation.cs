@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using workwear.Domain.Organization;
+using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
 namespace workwear.Domain.Operations
@@ -88,6 +89,15 @@ namespace workwear.Domain.Operations
 		{
 			get { return incomeOnStock; }
 			set { SetField(ref incomeOnStock, value); }
+		}
+
+		private NormItem normItem;
+
+		[Display(Name = "Строка нормы")]
+		public virtual NormItem NormItem
+		{
+			get { return normItem; }
+			set { SetField(ref normItem, value); }
 		}
 
 		private string buhDocument;
