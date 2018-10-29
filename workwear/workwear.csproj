@@ -246,6 +246,7 @@
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.RegulationDocDlg.cs" />
     <Compile Include="Domain\Operations\EmployeeIssueOperation.cs" />
     <Compile Include="HibernateMapping\Operations\EmployeeIssueOperationMap.cs" />
+    <Compile Include="Tools\BaseParameters.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

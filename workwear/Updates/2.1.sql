@@ -54,6 +54,8 @@ WHERE stock_write_off_detail.id = operation_issued_by_employee.temp_id;
 
 ALTER TABLE operation_issued_by_employee DROP COLUMN operation_issued_by_employee.temp_id;
 
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
+
 -- Обновляем версию базы.
 
 DELETE FROM base_parameters WHERE name = 'micro_updates';
