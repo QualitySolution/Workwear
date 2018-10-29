@@ -6,6 +6,7 @@ using Gamma.Utilities;
 using Gtk;
 using NLog;
 using QSOrmProject;
+using QSProjectsLib;
 using workwear.Domain.Organization;
 using workwear.Domain.Stock;
 
@@ -75,6 +76,8 @@ namespace workwear
 
 				var buhDocColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.BuhDoc).First();
 				buhDocColumn.Visible = ExpenceDoc.Operation == ExpenseOperations.Employee;
+
+				buttonFillBuhDoc.Visible = ExpenceDoc.Operation == ExpenseOperations.Employee;
 			}
 		}
 
@@ -136,7 +139,27 @@ namespace workwear
 				ExpenceDoc.Items.Count,
 				ExpenceDoc.Items.Sum(x => x.Amount)
 			);
-		} 
+		}
+
+		protected void OnButtonFillBuhDocClicked(object sender, EventArgs e)
+		{
+			using (var dlg = new Dialog("Введите бухгалтерский документ", MainClass.MainWin, DialogFlags.Modal))
+			{
+				var docEntry = new Entry(80);
+				if (expenceDoc.Items.Count > 0)
+					docEntry.Text = expenceDoc.Items.First().BuhDocument;
+				docEntry.TooltipText = "Бухгалтерский документ по которому была произведена выдача. Отобразится вместо подписи сотрудника в карточке.";
+				dlg.VBox.Add(docEntry);
+				dlg.AddButton("Заменить", ResponseType.Ok);
+				dlg.AddButton("Отмена", ResponseType.Cancel);
+				dlg.ShowAll();
+				if(dlg.Run() == (int)ResponseType.Ok)
+				{
+					ExpenceDoc.ObservableItems.ToList().ForEach(x => x.BuhDocument = docEntry.Text);
+				}
+				dlg.Destroy();
+			}
+		}
 	}
 }
 
