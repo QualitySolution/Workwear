@@ -16,7 +16,13 @@ namespace workwear
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
-		private Expense expenceDoc;
+		private enum ColumnTags
+		{
+			FacilityPlace,
+			BuhDoc
+		}
+
+	private Expense expenceDoc;
 
 		public Expense ExpenceDoc {
 			get {return expenceDoc;}
@@ -50,7 +56,7 @@ namespace workwear
 		{
 			if(e.PropertyName == ExpenceDoc.GetPropertyName(x => x.Facility))
 			{
-				var placeColumn = ytreeItems.ColumnsConfig.ConfiguredColumns.FirstOrDefault(x => x.Title == "Расположение");
+				var placeColumn = ytreeItems.ColumnsConfig.ConfiguredColumns.FirstOrDefault(x => ColumnTags.FacilityPlace.Equals(x.tag));
 				var placeRenderer = placeColumn.ConfiguredRenderers.First() as ComboRendererMapping<ExpenseItem, FacilityPlace>;
 				if(ExpenceDoc.Facility != null)
 				{
@@ -64,8 +70,11 @@ namespace workwear
 
 			if(e.PropertyName == ExpenceDoc.GetPropertyName(x => x.Operation))
 			{
-				var placeColumn = ytreeItems.Columns.FirstOrDefault(x => x.Title == "Расположение");
+				var placeColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.FacilityPlace).First();
 				placeColumn.Visible = ExpenceDoc.Operation == ExpenseOperations.Object;
+
+				var buhDocColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.BuhDoc).First();
+				buhDocColumn.Visible = ExpenceDoc.Operation == ExpenseOperations.Employee;
 			}
 		}
 
@@ -80,7 +89,8 @@ namespace workwear
 				.AddColumn ("Состояние").AddTextRenderer (e => (e.IncomeOn.LifePercent).ToString ("P0"))
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
-				.AddColumn ("Расположение").AddComboRenderer (e => e.FacilityPlace).Editing()
+				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument).Editable()
+				.AddColumn ("Расположение").Tag(ColumnTags.FacilityPlace).AddComboRenderer (e => e.FacilityPlace).Editing()
 					.SetDisplayFunc(x => (x as FacilityPlace) != null ? (x as FacilityPlace).Name : String.Empty)
 				.AddColumn("")
 				.Finish ();
