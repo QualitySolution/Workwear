@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Gamma.ColumnConfig;
+using QS.DomainModel.UoW;
 using QSOrmProject;
 using QSProjectsLib;
 using workwear.Domain.Organization;

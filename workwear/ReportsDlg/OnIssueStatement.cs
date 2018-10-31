@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using NHibernate.Criterion;
+using QS.DomainModel.UoW;
 using QS.Report;
-using QSOrmProject;
 using QSProjectsLib;
 using QSReport;
 using workwear.Domain.Organization;

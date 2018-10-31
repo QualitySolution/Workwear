@@ -1,5 +1,6 @@
 using System;
 using NLog;
+using QS.DomainModel.UoW;
 using QSBusinessCommon.Repository;
 using QSOrmProject;
 using QSProjectsLib;

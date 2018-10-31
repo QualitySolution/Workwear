@@ -8,6 +8,7 @@ using Gtk;
 using MySql.Data.MySqlClient;
 using NHibernate;
 using NLog;
+using QS.DomainModel.UoW;
 using QS.Report;
 using QSOrmProject;
 using QSProjectsLib;

@@ -2,6 +2,7 @@ using System;
 using Gtk;
 using MySql.Data.MySqlClient;
 using NLog;
+using QS.DomainModel.UoW;
 using QSOrmProject;
 using QSProjectsLib;
 using workwear.Domain.Organization;
