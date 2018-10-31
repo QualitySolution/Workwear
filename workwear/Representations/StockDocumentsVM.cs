@@ -6,9 +6,8 @@ using Gamma.Utilities;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
 using QS.Project.Domain;
-using QSOrmProject;
+using QS.Utilities.Text;
 using QSOrmProject.RepresentationModel;
-using QSProjectsLib;
 using workwear.Domain.Organization;
 using workwear.Domain.Stock;
 using workwear.JournalFilters;
@@ -234,6 +233,6 @@ namespace workwear.Representations
 		public string EmployeeName { get; set; }
 		public string EmployeePatronymic { get; set; }
 
-		public string Employee { get { return StringWorks.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic); }}
+		public string Employee { get { return PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic); }}
 	}
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.Utilities;
 using QSOrmProject;
-using QSProjectsLib;
 
 namespace workwear.Domain.Regulations
 {
@@ -98,11 +98,11 @@ namespace workwear.Domain.Regulations
 				switch(NormPeriod)
 				{
 				case NormPeriodType.Year:
-					return RusNumber.FormatCase (PeriodCount, "{0} год", "{0} года", "{0} лет");
+					return NumberToTextRus.FormatCase (PeriodCount, "{0} год", "{0} года", "{0} лет");
 				case NormPeriodType.Month:
-					return RusNumber.FormatCase (PeriodCount, "{0} месяц", "{0} месяца", "{0} месяцев");
+					return NumberToTextRus.FormatCase (PeriodCount, "{0} месяц", "{0} месяца", "{0} месяцев");
 				case NormPeriodType.Shift:
-					return RusNumber.FormatCase (PeriodCount, "{0} смена", "{0} смены", "{0} смен");
+					return NumberToTextRus.FormatCase (PeriodCount, "{0} смена", "{0} смены", "{0} смен");
 				}
 				return String.Empty;
 			}

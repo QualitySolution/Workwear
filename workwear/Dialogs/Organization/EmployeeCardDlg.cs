@@ -10,6 +10,7 @@ using NHibernate;
 using NLog;
 using QS.DomainModel.UoW;
 using QS.Report;
+using QS.Utilities;
 using QSOrmProject;
 using QSProjectsLib;
 using QSReport;
@@ -128,7 +129,7 @@ namespace workwear.Dialogs.Organization
 				.AddColumn("След. получение").AddTextRenderer(node => String.Format("{0:d}", node.NextIssue))
 				.AddColumn("Просрочка").AddTextRenderer(
 					node => node.NextIssue.HasValue && node.NextIssue.Value < DateTime.Today
-					? RusNumber.FormatCase((int)(DateTime.Today - node.NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней")
+					? NumberToTextRus.FormatCase((int)(DateTime.Today - node.NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней")
 					: String.Empty)
 				.AddColumn("На складе").AddTextRenderer(node => node.Item.Units.MakeAmountShortStr(node.InStock))
 				 .AddSetter((w, node) => w.Foreground = node.InStockState.GetEnumColor())

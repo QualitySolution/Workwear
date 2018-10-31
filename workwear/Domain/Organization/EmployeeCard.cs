@@ -7,8 +7,8 @@ using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Project.Domain;
+using QS.Utilities.Text;
 using QSOrmProject;
-using QSProjectsLib;
 using workwear.Domain.Regulations;
 using workwear.Measurements;
 
@@ -301,7 +301,7 @@ namespace workwear.Domain.Organization
 		#endregion
 
 		public virtual string Title {
-			get{ return StringWorks.PersonNameWithInitials (LastName, FirstName, Patronymic);
+			get{ return PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
 			}
 		}
 
@@ -310,7 +310,7 @@ namespace workwear.Domain.Organization
 		}
 
 		public virtual string ShortName {
-			get { return StringWorks.PersonNameWithInitials (LastName, FirstName, Patronymic); }
+			get { return PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic); }
 		}
 
 		public EmployeeCard ()
