@@ -152,6 +152,7 @@ namespace workwear
 				IncomeDoc.Items.Sum(x => x.Amount),
 				IncomeDoc.Items.Sum(x => x.Total)
 			);
+			buttonFillBuhDoc.Sensitive = IncomeDoc.Items.Count > 0;
 		}
 
 		protected void OnButtonFillBuhDocClicked(object sender, EventArgs e)

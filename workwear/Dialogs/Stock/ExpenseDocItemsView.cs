@@ -138,6 +138,7 @@ namespace workwear
 				ExpenceDoc.Items.Count,
 				ExpenceDoc.Items.Sum(x => x.Amount)
 			);
+			buttonFillBuhDoc.Sensitive = expenceDoc.Items.Count > 0;
 		}
 
 		protected void OnButtonFillBuhDocClicked(object sender, EventArgs e)

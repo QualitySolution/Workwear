@@ -13,6 +13,11 @@ namespace workwear
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
+		private enum ColumnTags
+		{
+			BuhDoc
+		}
+
 		private Writeoff writeoffDoc;
 
 		public Writeoff WriteoffDoc {
@@ -48,14 +53,15 @@ namespace workwear
 				.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
 				.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
-				.AddColumn("")
+				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument)
+				.AddSetter((c, e) => c.Editable = e.IssuedOn?.ExpenseDoc.Operation == ExpenseOperations.Employee)
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 		}
 
 		void YtreeItems_Selection_Changed (object sender, EventArgs e)
 		{
-			buttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
+			buttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
 		}
 
 		protected void OnButtonAddStoreClicked (object sender, EventArgs e)
@@ -137,8 +143,32 @@ namespace workwear
 				WriteoffDoc.Items.Count,
 				WriteoffDoc.Items.Sum(x => x.Amount)
 			);
-		} 
+			buttonFillBuhDoc.Sensitive = WriteoffDoc.Items.Count > 0;
+		}
 
+		protected void OnButtonFillBuhDocClicked(object sender, EventArgs e)
+		{
+			using (var dlg = new Dialog("Введите бухгалтерский документ", MainClass.MainWin, DialogFlags.Modal))
+			{
+				var docEntry = new Entry(80);
+				if (writeoffDoc.Items.Any(x => x.IssuedOn?.ExpenseDoc.Operation == ExpenseOperations.Employee))
+					docEntry.Text = writeoffDoc.Items.First(x => x.IssuedOn?.ExpenseDoc.Operation == ExpenseOperations.Employee).BuhDocument;
+				docEntry.TooltipText = "Бухгалтерский документ по которому было произведено списание. Отобразится вместо подписи сотрудника в карточке.";
+				docEntry.ActivatesDefault = true;
+				dlg.VBox.Add(docEntry);
+				dlg.AddButton("Заменить", ResponseType.Ok);
+				dlg.AddButton("Отмена", ResponseType.Cancel);
+				dlg.DefaultResponse = ResponseType.Ok;
+				dlg.ShowAll();
+				if (dlg.Run() == (int)ResponseType.Ok)
+				{
+					writeoffDoc.ObservableItems
+						.Where(x => x.IssuedOn?.ExpenseDoc.Operation == ExpenseOperations.Employee)
+						.ToList().ForEach(x => x.BuhDocument = docEntry.Text);
+				}
+				dlg.Destroy();
+			}
+		}
 	}
 }
 

@@ -4382,6 +4382,7 @@
                 <property name="Icon">stock:gtk-copy Menu</property>
                 <property name="Label" translatable="yes">Заменить бух. документ</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonFillBuhDocClicked" />
               </widget>
               <packing>
                 <property name="PackType">End</property>
