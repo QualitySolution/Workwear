@@ -247,6 +247,8 @@
     <Compile Include="Domain\Operations\EmployeeIssueOperation.cs" />
     <Compile Include="HibernateMapping\Operations\EmployeeIssueOperationMap.cs" />
     <Compile Include="Tools\BaseParameters.cs" />
+    <Compile Include="Dialogs\DataBase\DataBaseSettingsDlg.cs" />
+    <Compile Include="gtk-gui\workwear.Dialogs.DataBase.DataBaseSettingsDlg.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -348,6 +350,7 @@
     <Folder Include="Dialogs\Regulations\" />
     <Folder Include="Domain\Operations\" />
     <Folder Include="HibernateMapping\Operations\" />
+    <Folder Include="Dialogs\DataBase\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

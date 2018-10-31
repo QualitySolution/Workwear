@@ -11,6 +11,7 @@ using QSTDI;
 using QSTelemetry;
 using QSUpdater;
 using workwear;
+using workwear.Dialogs.DataBase;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -457,6 +458,8 @@ public partial class MainWindow : Gtk.Window
 		ActionStockBalance.Activate();
 	}
 
+	#endregion
+
 	protected void OnActionSiteActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenSite");
@@ -503,9 +506,15 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount("RegulationDoc");
 		tdiMain.OpenTab(OrmReference.GenerateHashName<RegulationDoc>(),
-		                () => new OrmReference(typeof(RegulationDoc))
+						() => new OrmReference(typeof(RegulationDoc))
 			   );
 	}
 
-	#endregion
+	protected void OnActionBaseSettingsActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount("DataBaseSettings");
+		tdiMain.OpenTab(TdiTabBase.GenerateHashName<DataBaseSettingsDlg>(),
+						() => new DataBaseSettingsDlg()
+			   );
+	}
 }
