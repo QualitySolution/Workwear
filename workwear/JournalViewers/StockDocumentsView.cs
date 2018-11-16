@@ -61,19 +61,19 @@ namespace workwear.JournalViewers
 				{
 					case StokDocumentType.IncomeDoc:
 						TabParent.OpenTab(
-							OrmMain.GenerateDialogHashName<Income>(node.Id),
+							DialogHelper.GenerateDialogHashName<Income>(node.Id),
 							() => new IncomeDocDlg(node.Id),
 							this);
 						break;
 					case StokDocumentType.ExpenseDoc:
 						TabParent.OpenTab(
-							OrmMain.GenerateDialogHashName<Expense>(node.Id),
+							DialogHelper.GenerateDialogHashName<Expense>(node.Id),
 							() => new ExpenseDocDlg(node.Id),
 							this);
 						break;
 					case StokDocumentType.WriteoffDoc:
 						TabParent.OpenTab(
-							OrmMain.GenerateDialogHashName<Writeoff>(node.Id),
+							DialogHelper.GenerateDialogHashName<Writeoff>(node.Id),
 							() => new WriteOffDocDlg(node.Id),
 							this);
 						break;

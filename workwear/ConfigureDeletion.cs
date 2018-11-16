@@ -39,7 +39,7 @@ namespace workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<RegulationDoc>()
 			            .AddDeleteDependence<Norm>(x => x.Document)
-						.AddDeleteDependenceFromBag(x => x.Annexess);
+						.AddDeleteDependenceFromCollection(x => x.Annexess);
 
 			DeleteConfig.AddHibernateDeleteInfo<RegulationDocAnnex>()
 			            .AddDeleteDependence<Norm>(x => x.Annex);
@@ -77,10 +77,10 @@ namespace workwear
 				.AddDeleteDependence<ExpenseItem> (x => x.ExpenseDoc);
 
 			DeleteConfig.AddHibernateDeleteInfo<Income> ()
-				.AddDeleteDependenceFromBag (x => x.Items);
+				.AddDeleteDependenceFromCollection (x => x.Items);
 
 			DeleteConfig.AddHibernateDeleteInfo<Writeoff> ()
-				.AddDeleteDependenceFromBag (x => x.Items);
+				.AddDeleteDependenceFromCollection (x => x.Items);
 
 			DeleteConfig.AddHibernateDeleteInfo<IncomeItem> ()
 				.AddDeleteDependence<ExpenseItem> (x => x.IncomeOn)
