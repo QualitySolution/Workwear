@@ -9,7 +9,7 @@ using QSOrmProject;
 
 namespace workwear.Domain.Stock
 {
-	[OrmSubject (Gender = GrammaticalGender.Masculine,
+	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "акты списания",
 		Nominative = "акт списания")]
 	public class Writeoff : StockDocument, IValidatableObject

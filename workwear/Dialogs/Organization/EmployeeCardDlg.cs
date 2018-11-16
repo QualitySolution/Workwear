@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -8,6 +8,7 @@ using Gtk;
 using MySql.Data.MySqlClient;
 using NHibernate;
 using NLog;
+using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QS.Utilities;
@@ -24,7 +25,7 @@ using workwear.Repository;
 
 namespace workwear.Dialogs.Organization
 {
-	public partial class EmployeeCardDlg : OrmGtkDialogBase<EmployeeCard>
+	public partial class EmployeeCardDlg : EntityDialogBase<EmployeeCard>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
 		List<EmployeeCardItems> listedItems;

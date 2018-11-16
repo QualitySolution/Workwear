@@ -11,7 +11,7 @@ using workwear.Domain.Stock;
 
 namespace workwear.Domain.Organization
 {
-	[OrmSubject (Gender = GrammaticalGender.Feminine,
+	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки нормы карточки",
 		Nominative = "строка нормы карточки")]
 	public class EmployeeCardItem : PropertyChangedBase, IDomainObject

@@ -4,7 +4,7 @@ using QSOrmProject;
 
 namespace workwear.Domain.Organization
 {
-	[OrmSubject (Gender = GrammaticalGender.Neuter,
+	[Appellative (Gender = GrammaticalGender.Neuter,
 		NominativePlural = "размещения в объекте",
 		Nominative = "размещение в объекте")]
 	

@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Linq;
 using NLog;
+using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using QSOrmProject;
 using QSProjectsLib;
@@ -10,7 +11,7 @@ using workwear.Repository;
 
 namespace workwear
 {
-	public partial class WriteOffDocDlg : OrmGtkDialogBase<Writeoff>
+	public partial class WriteOffDocDlg : EntityDialogBase<Writeoff>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 

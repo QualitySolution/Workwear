@@ -3,6 +3,7 @@ using System.Linq;
 using Gamma.Utilities;
 using Gtk;
 using NLog;
+using QS.Dialog.Gtk;
 using QSOrmProject;
 using workwear.Domain.Stock;
 

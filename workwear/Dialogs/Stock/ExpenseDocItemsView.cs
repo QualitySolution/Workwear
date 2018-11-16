@@ -5,6 +5,7 @@ using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using Gtk;
 using NLog;
+using QS.Dialog.Gtk;
 using QSOrmProject;
 using workwear.Domain.Organization;
 using workwear.Domain.Stock;

@@ -77,9 +77,6 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
-    <Reference Include="MySql.Data">
-      <HintPath>..\packages\MySql.Data.8.0.12\lib\net452\MySql.Data.dll</HintPath>
-    </Reference>
     <Reference Include="System.ComponentModel" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Drawing" />
@@ -97,8 +94,11 @@
     <Reference Include="NHibernate">
       <HintPath>..\packages\NHibernate.5.1.3\lib\net461\NHibernate.dll</HintPath>
     </Reference>
+    <Reference Include="MySql.Data">
+      <HintPath>..\packages\MySql.Data.8.0.13\lib\net452\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="NLog">
-      <HintPath>..\packages\NLog.4.5.10\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.5.11\lib\net45\NLog.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -249,6 +249,8 @@
     <Compile Include="Tools\BaseParameters.cs" />
     <Compile Include="Dialogs\DataBase\DataBaseSettingsDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.DataBase.DataBaseSettingsDlg.cs" />
+    <Compile Include="Domain\Operations\Graph\IssueGraph.cs" />
+    <Compile Include="Repository\Stock\NomenclatureRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -283,10 +285,6 @@
     <ProjectReference Include="..\..\QSProjects\QSOrmProject\QSOrmProject.csproj">
       <Project>{00D32969-612C-417E-9565-BEC6A7719F80}</Project>
       <Name>QSOrmProject</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSTDI\QSTDI.csproj">
-      <Project>{4B35C969-8C74-440F-8189-57047C9215FD}</Project>
-      <Name>QSTDI</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QSValidation\QSValidation.csproj">
       <Project>{CE5179E8-3172-4C08-9FE3-9C48C58A3831}</Project>
@@ -324,6 +322,18 @@
       <Project>{D30A23BF-C5DC-4A1B-95FC-9C2038D46E8E}</Project>
       <Name>QS.Report</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Utilities\QS.Utilities.csproj">
+      <Project>{E2228A2B-4883-4DD8-8A05-23501F7B8A33}</Project>
+      <Name>QS.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Project.Gtk\QS.Project.Gtk.csproj">
+      <Project>{3C0F3944-CBD5-4BD6-83D4-CF33AD6FC68C}</Project>
+      <Name>QS.Project.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\GammaBinding\Gamma.Utilities.Gtk\Gamma.Utilities.Gtk.csproj">
+      <Project>{5735D438-792E-40CE-BAFD-25814C8879BC}</Project>
+      <Name>Gamma.Utilities.Gtk</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
@@ -351,6 +361,8 @@
     <Folder Include="Domain\Operations\" />
     <Folder Include="HibernateMapping\Operations\" />
     <Folder Include="Dialogs\DataBase\" />
+    <Folder Include="Domain\Operations\Graph\" />
+    <Folder Include="Repository\Stock\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

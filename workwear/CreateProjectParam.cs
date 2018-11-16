@@ -1,4 +1,5 @@
-﻿using QS.Project.Domain;
+﻿using QS.Project.DB;
+using QS.Project.Domain;
 using QSBusinessCommon.Domain;
 using QSOrmProject;
 using QSProjectsLib;
@@ -23,7 +24,7 @@ namespace workwear
 				.ShowSql ()
 				.FormatSql ();
 
-			OrmMain.ConfigureOrm (db, new System.Reflection.Assembly[] {
+			OrmConfig.ConfigureOrm (db, new System.Reflection.Assembly[] {
 				System.Reflection.Assembly.GetAssembly (typeof(MainClass)),
 				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),
 			});

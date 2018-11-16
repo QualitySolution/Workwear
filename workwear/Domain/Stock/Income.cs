@@ -10,7 +10,7 @@ using workwear.Domain.Organization;
 
 namespace workwear.Domain.Stock
 {
-	[OrmSubject (Gender = GrammaticalGender.Masculine,
+	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "приходные документы",
 		Nominative = "приходный документ")]
 	public class Income : StockDocument, IValidatableObject

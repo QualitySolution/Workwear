@@ -9,7 +9,7 @@ using QSOrmProject;
 
 namespace workwear.Domain.Regulations
 {
-	[OrmSubject (Gender = GrammaticalGender.Feminine,
+	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "нормы выдачи",
 		Nominative = "норма выдачи",
 		PrepositionalPlural = "нормах выдачи"

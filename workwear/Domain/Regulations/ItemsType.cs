@@ -9,7 +9,7 @@ using workwear.Measurements;
 
 namespace workwear.Domain.Regulations
 {
-	[OrmSubject (Gender = GrammaticalGender.Masculine,
+	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "типы номерклатуры",
 		Nominative = "тип номенклатуры")]
 	public class ItemsType : PropertyChangedBase, IDomainObject, IValidatableObject

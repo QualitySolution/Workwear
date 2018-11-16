@@ -4,7 +4,7 @@ using QSOrmProject;
 
 namespace workwear.Domain.Regulations
 {
-	[OrmSubject (Gender = GrammaticalGender.Feminine,
+	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "должности",
 		Nominative = "должность")]
 	public class Post : PropertyChangedBase, IDomainObject

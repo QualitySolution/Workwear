@@ -15,7 +15,7 @@ using workwear.Measurements;
 namespace workwear.Domain.Organization
 {
 
-	[OrmSubject (Gender = GrammaticalGender.Feminine,
+	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "карточки сотрудников",
 		Nominative = "карточка сотрудника",
 		PrepositionalPlural = "карточках сотрудников"

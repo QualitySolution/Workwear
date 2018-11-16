@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Linq;
 using NLog;
+using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using QSOrmProject;
 using QSProjectsLib;
@@ -11,7 +12,7 @@ using workwear.Repository;
 
 namespace workwear
 {
-	public partial class IncomeDocDlg : OrmGtkDialogBase<Income>
+	public partial class IncomeDocDlg : EntityDialogBase<Income>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 

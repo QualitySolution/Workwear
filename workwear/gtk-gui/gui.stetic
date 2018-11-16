@@ -12,12 +12,12 @@
     <widget-library name="../../../QSProjects/QSUpdater/bin/Debug/QSUpdater.dll" />
     <widget-library name="../../../GammaBinding/GammaBinding/bin/Debug/GammaBinding.dll" />
     <widget-library name="../../../QSProjects/QSOrmProject/bin/Debug/QSOrmProject.dll" />
-    <widget-library name="../../../QSProjects/QSTDI/bin/Debug/QSTDI.dll" />
     <widget-library name="../../../QSProjects/QSValidation/bin/Debug/QSValidation.dll" />
     <widget-library name="../../../QSProjects/Modules/QSBusinessCommon/bin/Debug/QSBusinessCommon.dll" />
     <widget-library name="../../../QSProjects/QSExtraGammaWidgets/bin/Debug/QSExtraGammaWidgets.dll" />
     <widget-library name="../../../QSProjects/QSReport/bin/Debug/QSReport.dll" />
     <widget-library name="../bin/Debug/workwear.exe" internal="true" />
+    <widget-library name="../../../QSProjects/QS.Project.Gtk/bin/Debug/QS.Project.Gtk.dll" />
   </import>
   <icon-factory>
     <icon-set id="objects">
@@ -5171,7 +5171,7 @@
           </packing>
         </child>
         <child>
-          <widget class="QSTDI.TdiNotebook" id="tdiMain">
+          <widget class="QS.Tdi.Gtk.TdiNotebook" id="tdiMain">
             <property name="MemberName" />
             <property name="CurrentPage">0</property>
             <property name="ShowTabs">False</property>
@@ -6050,7 +6050,6 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Label" translatable="yes">на месяц</property>
-                <property name="Active">True</property>
                 <property name="DrawIndicator">True</property>
                 <property name="HasLabel">True</property>
                 <property name="UseUnderline">True</property>

@@ -5,7 +5,7 @@ using QSOrmProject;
 
 namespace workwear.Domain.Regulations
 {
-	[OrmSubject(Gender = GrammaticalGender.Neuter,
+	[Appellative(Gender = GrammaticalGender.Neuter,
 	NominativePlural = "приложения к нормативному документу",
 	            Nominative = "приложение к нормативному документу"
 	)]

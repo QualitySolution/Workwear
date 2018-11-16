@@ -7,7 +7,7 @@ using QSOrmProject.Domain;
 
 namespace workwear.Domain.Users
 {
-	[OrmSubject (Gender = GrammaticalGender.Masculine,
+	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "настройки пользователей",
 		Nominative = "настройки пользователя")]
 	public class UserSettings: PropertyChangedBase, IDomainObject

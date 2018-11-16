@@ -1,7 +1,7 @@
 ﻿using System;
+using QS.Dialog.Gtk;
 using QSProjectsLib;
 using QSSupportLib;
-using QSTDI;
 using workwear.Tools;
 
 namespace workwear.Dialogs.DataBase

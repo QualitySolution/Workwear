@@ -6,7 +6,7 @@ using workwear.Domain.Operations;
 
 namespace workwear.Domain.Stock
 {
-	[OrmSubject (Gender = GrammaticalGender.Feminine,
+	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки списания",
 		Nominative = "строка списания")]
 	public class WriteoffItem : PropertyChangedBase, IDomainObject

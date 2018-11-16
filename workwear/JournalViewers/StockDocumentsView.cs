@@ -1,9 +1,9 @@
 ﻿using System;
 using Gtk;
+using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using QSOrmProject;
 using QSOrmProject.UpdateNotification;
-using QSTDI;
 using workwear.Domain.Stock;
 using workwear.Representations;
 

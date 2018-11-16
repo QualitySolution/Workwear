@@ -6,7 +6,7 @@ using QSOrmProject;
 
 namespace workwear.Domain.Regulations
 {
-	[OrmSubject (Gender = GrammaticalGender.Feminine,
+	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки нормы",
 		Nominative = "строка нормы")]
 	public class NormItem : PropertyChangedBase, IDomainObject

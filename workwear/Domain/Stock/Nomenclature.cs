@@ -8,7 +8,7 @@ using workwear.Measurements;
 
 namespace workwear.Domain.Stock
 {
-	[OrmSubject (Gender = GrammaticalGender.Feminine,
+	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "номенклатура",
 		Nominative = "номенклатура")]
 	public class Nomenclature: PropertyChangedBase, IDomainObject, IValidatableObject

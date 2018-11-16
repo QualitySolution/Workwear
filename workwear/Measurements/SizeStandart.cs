@@ -4,7 +4,7 @@ using QSOrmProject;
 
 namespace workwear.Measurements
 {
-	[OrmSubject (Gender = GrammaticalGender.Masculine,
+	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "стандарты размеров",
 		Nominative = "стандарт размеров")]
 	public class SizeStandart : PropertyChangedBase, IDomainObject

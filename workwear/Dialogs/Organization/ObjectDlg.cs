@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using Gtk;
 using MySql.Data.MySqlClient;
 using NLog;
+using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using QSOrmProject;
 using QSProjectsLib;
@@ -9,7 +10,7 @@ using workwear.Domain.Organization;
 
 namespace workwear.Dialogs.Organization
 {
-	public partial class ObjectDlg : OrmGtkDialogBase<Facility>
+	public partial class ObjectDlg : EntityDialogBase<Facility>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public bool NewItem = true;

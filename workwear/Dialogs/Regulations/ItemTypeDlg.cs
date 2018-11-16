@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using NLog;
+using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using QSBusinessCommon.Repository;
 using QSOrmProject;
@@ -9,7 +10,7 @@ using workwear.Measurements;
 
 namespace workwear.Dialogs.Regulations
 {
-	public partial class ItemTypeDlg : OrmGtkDialogBase<ItemsType>
+	public partial class ItemTypeDlg : EntityDialogBase<ItemsType>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		

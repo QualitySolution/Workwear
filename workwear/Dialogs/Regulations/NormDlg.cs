@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Gamma.ColumnConfig;
+using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using QSOrmProject;
 using QSProjectsLib;
@@ -10,7 +11,7 @@ using workwear.Domain.Regulations;
 
 namespace workwear.Dialogs.Regulations
 {
-	public partial class NormDlg : OrmGtkDialogBase<Norm>
+	public partial class NormDlg : EntityDialogBase<Norm>
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 

@@ -5,7 +5,7 @@ using QS.DomainModel.Entity;
 
 namespace workwear.Domain.Organization
 {
-	[OrmSubject (Gender = GrammaticalGender.Feminine,
+	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "руководители",
 		Nominative = "руководитель")]
 	public class Leader : PropertyChangedBase, IDomainObject

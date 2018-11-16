@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using NLog;
+using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using QSOrmProject;
 using QSProjectsLib;
@@ -12,7 +13,7 @@ using workwear.Measurements;
 
 namespace workwear
 {
-	public partial class NomenclatureDlg : OrmGtkDialogBase<Nomenclature>
+	public partial class NomenclatureDlg : EntityDialogBase<Nomenclature>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 

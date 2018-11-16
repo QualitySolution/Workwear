@@ -6,7 +6,7 @@ using QSOrmProject;
 
 namespace workwear.Domain.Organization
 {
-	[OrmSubject (Gender = GrammaticalGender.Feminine,
+	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "объекты",
 		Nominative = "объект")]
 	
