@@ -1,7 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
+using QS.Dialog.Gtk;
+using QS.DomainModel.UoW;
 using QSOrmProject;
 using QSProjectsLib;
 using QSValidation;
@@ -11,7 +13,7 @@ using workwear.Repository;
 
 namespace workwear
 {
-	public partial class ExpenseDocDlg : OrmGtkDialogBase<Expense>
+	public partial class ExpenseDocDlg : EntityDialogBase<Expense>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -91,6 +93,7 @@ namespace workwear
 
 			try 
 			{
+				Entity.UpdateOperations(UoW);
 				UoWGeneric.Save ();
 				if(Entity.Operation == ExpenseOperations.Employee)
 				{

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Tools;
 
 namespace workwear.Domain.Operations
 {
@@ -11,7 +13,7 @@ namespace workwear.Domain.Operations
 	{
 		public virtual int Id { get; set; }
 
-		DateTime operationTime;
+		DateTime operationTime = DateTime.Now;
 
 		public virtual DateTime OperationTime
 		{
@@ -64,10 +66,28 @@ namespace workwear.Domain.Operations
 			set { SetField(ref returned, value); }
 		}
 
-		private DateTime autoWriteoffDate;
+		private bool useAutoWriteoff = true;
 
-		[Display(Name = "Дата износа")]
-		public virtual DateTime AutoWriteoffDate
+		[Display(Name = "Использовать автосписание")]
+		public virtual bool UseAutoWriteoff
+		{
+			get { return useAutoWriteoff; }
+			set { SetField(ref useAutoWriteoff, value); }
+		}
+
+		private DateTime expenseByNorm;
+
+		[Display(Name = "Износ по норме")]
+		public virtual DateTime ExpenseByNorm
+		{
+			get { return expenseByNorm; }
+			set { SetField(ref expenseByNorm, value); }
+		}
+
+		private DateTime? autoWriteoffDate;
+
+		[Display(Name = "Дата автосписания")]
+		public virtual DateTime? AutoWriteoffDate
 		{
 			get { return autoWriteoffDate; }
 			set { SetField(ref autoWriteoffDate, value); }
@@ -111,6 +131,37 @@ namespace workwear.Domain.Operations
 
 		public EmployeeIssueOperation()
 		{
+			useAutoWriteoff = BaseParameters.DefaultAutoWriteoff;
 		}
+
+		#region Методы обновленя операций
+
+		public virtual void Update(IUnitOfWork uow, ExpenseItem item, NormItem byNormItem = null)
+		{
+			//Внимание здесь сравниваются даты без времени.
+			if (item.ExpenseDoc.Date.Date != OperationTime.Date)
+				OperationTime = item.ExpenseDoc.Date;
+
+			Employee = item.ExpenseDoc.EmployeeCard;
+			Nomenclature = item.Nomenclature;
+			WearPercent = 1 - item.IncomeOn.LifePercent;
+			Issued = item.Amount;
+			Returned = 0;
+			//ExpenseByNorm = NormItem.
+			
+			IssuedOperation = null;
+			IncomeOnStock = item.IncomeOn;
+			if (normItem != null)
+				NormItem = normItem;
+
+			BuhDocument = item.BuhDocument;
+		}
+
+		#endregion
+
+		#region Методы гупповой обработки операций
+
+
+		#endregion
 	}
 }

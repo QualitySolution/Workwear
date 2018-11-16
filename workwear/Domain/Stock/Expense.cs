@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using workwear.Domain.Organization;
 
 namespace workwear.Domain.Stock
 {
-	[QSOrmProject.OrmSubject (Gender = GrammaticalGender.Masculine,
+	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "расходные документы",
 		Nominative = "расходный документ")]
 	public class Expense : StockDocument, IValidatableObject
@@ -95,6 +96,8 @@ namespace workwear.Domain.Stock
 		}
 		#endregion
 
+		#region Методы
+
 		public virtual void AddItem(IncomeItem fromIncomeItem)
 		{
 			AddItem (fromIncomeItem, 1);
@@ -102,7 +105,7 @@ namespace workwear.Domain.Stock
 
 		public virtual void AddItem(IncomeItem fromIncomeItem, int amount)
 		{
-			if(Items.Any (p => QSOrmProject.DomainHelper.EqualDomainObjects (p.IncomeOn, fromIncomeItem)))
+			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IncomeOn, fromIncomeItem)))
 			{
 				logger.Warn ("Номенклатура из этого поступления уже добавлена. Пропускаем...");
 				return;
@@ -122,6 +125,12 @@ namespace workwear.Domain.Stock
 			ObservableItems.Remove (item);
 		}
 
+		public virtual void UpdateOperations(IUnitOfWork uow)
+		{
+			Items.ToList().ForEach(x => x.UpdateOperations(uow));
+		}
+
+		#endregion
 	}
 
 	public enum ExpenseOperations {

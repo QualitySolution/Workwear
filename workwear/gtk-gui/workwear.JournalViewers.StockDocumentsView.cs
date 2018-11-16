@@ -151,7 +151,7 @@ namespace workwear.JournalViewers
 			}
 			this.hboxFilter.Hide();
 			this.Hide();
-			this.buttonAdd.EnumItemClicked += new global::System.EventHandler< QSOrmProject.EnumItemClickedEventArgs > (this.OnButtonAddEnumItemClicked);
+			this.buttonAdd.EnumItemClicked += new global::System.EventHandler<QSOrmProject.EnumItemClickedEventArgs>(this.OnButtonAddEnumItemClicked);
 			this.buttonEdit.Clicked += new global::System.EventHandler(this.OnButtonEditClicked);
 			this.buttonDelete.Clicked += new global::System.EventHandler(this.OnButtonDeleteClicked);
 			this.buttonRefresh.Clicked += new global::System.EventHandler(this.OnButtonRefreshClicked);

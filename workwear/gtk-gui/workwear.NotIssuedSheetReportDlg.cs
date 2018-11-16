@@ -60,7 +60,9 @@ namespace workwear
 			this.label2 = new global::Gtk.Label();
 			this.label2.WidthRequest = 250;
 			this.label2.Name = "label2";
-			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("<i>Обратите внимание:</i> Отчет показывает недополученное по текущим потребностям. То есть при значительном удалении даты отчет от сегодняшнего дня, данные будут некорретны.");
+			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("<i>Обратите внимание:</i> Отчет показывает недополученное по текущим потребностям" +
+					". То есть при значительном удалении даты отчет от сегодняшнего дня, данные будут" +
+					" некорретны.");
 			this.label2.UseMarkup = true;
 			this.label2.Wrap = true;
 			this.label2.Justify = ((global::Gtk.Justification)(3));

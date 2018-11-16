@@ -4,15 +4,17 @@ using System.ComponentModel.DataAnnotations;
 using workwear.Domain.Organization;
 using QS.DomainModel.Entity;
 using workwear.Domain.Operations;
+using QS.DomainModel.UoW;
+using workwear.Domain.Regulations;
 
 namespace workwear.Domain.Stock
 {
-	[OrmSubject (Gender = GrammaticalGender.Feminine,
+	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки выдачи",
 		Nominative = "строка выдачи")]
 	public class ExpenseItem : PropertyChangedBase, IDomainObject
 	{
-		#region Свойства
+		#region Сохраняемые свойства
 
 		public virtual int Id { get; set; }
 
@@ -75,6 +77,31 @@ namespace workwear.Domain.Stock
 
 		#endregion
 
+		#region Не сохраняемые в базу свойства
+
+		private string buhDocument;
+
+		[Display(Name = "Документ бухгалтерского учета")]
+		//В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
+		public virtual string BuhDocument
+		{
+			get { return buhDocument ?? EmployeeIssueOperation?.BuhDocument; }
+			set { SetField(ref buhDocument, value); }
+		}
+
+		private NormItem normItem;
+
+		[Display(Name = "Строка нормы")]
+		//В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
+		public virtual NormItem NormItem
+		{
+			get { return normItem; }
+			set { SetField(ref normItem, value); }
+		}
+
+		#endregion
+
+		#region Расчетные свойства
 		public virtual string Title {
 			get { return String.Format ("Выдача со склада {0} в количестве {1} {2}",
 				Nomenclature.Name,
@@ -82,10 +109,30 @@ namespace workwear.Domain.Stock
 				Nomenclature.Type.Units.Name
 			);}
 		}
+		#endregion
 
 		public ExpenseItem ()
 		{
 		}
+
+		#region Функции
+
+		public virtual void UpdateOperations(IUnitOfWork uow)
+		{
+			if(expenseDoc.Operation == ExpenseOperations.Employee)
+			{
+				if (EmployeeIssueOperation == null)
+					EmployeeIssueOperation = new EmployeeIssueOperation();
+				EmployeeIssueOperation.Update(uow, this, NormItem);
+			}
+			else if(EmployeeIssueOperation != null)
+			{
+				uow.Delete(EmployeeIssueOperation);
+				EmployeeIssueOperation = null;
+			}
+		}
+
+		#endregion
 
 	}
 }
