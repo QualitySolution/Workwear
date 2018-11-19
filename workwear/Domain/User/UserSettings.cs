@@ -2,8 +2,6 @@
 using Gtk;
 using QS.DomainModel.Entity;
 using QS.Project.Domain;
-using QSOrmProject;
-using QSOrmProject.Domain;
 
 namespace workwear.Domain.Users
 {

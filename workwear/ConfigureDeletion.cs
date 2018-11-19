@@ -7,8 +7,10 @@ using workwear.Domain.Stock;
 
 namespace workwear
 {
-	partial class MainClass
+	public class Configure
 	{
+		static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		public static void ConfigureDeletion ()
 		{
 			logger.Info ("Настройка параметров удаления...");

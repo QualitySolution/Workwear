@@ -73,7 +73,7 @@ namespace workwear
 			CreateBaseConfig ();
 
 			//Настрока удаления
-			ConfigureDeletion ();
+			Configure.ConfigureDeletion ();
 
             //Иницициализируем телеметрию
             MainTelemetry.Product = MainSupport.ProjectVerion.Product;
