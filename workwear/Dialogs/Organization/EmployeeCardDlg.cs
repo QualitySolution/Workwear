@@ -16,6 +16,7 @@ using QSOrmProject;
 using QSProjectsLib;
 using QSReport;
 using QSValidation;
+using workwear.Dialogs.Issuance;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -137,7 +138,7 @@ namespace workwear.Dialogs.Organization
 				.AddColumn("Подобранная номенклатура").AddTextRenderer(node => node.MatchedNomenclature != null ? node.MatchedNomenclature.NameAndSize : (node.InStockState == StockStateInfo.UnknownNomenclature ? "нет подходящей" : String.Empty))
 				.AddSetter((w, node) => w.Foreground = node.InStockState.GetEnumColor())
 				.Finish();
-			//ytreeWorkwear.Selection.Changed += YtreeNorms_Selection_Changed;
+			ytreeWorkwear.Selection.Changed += ytreeWorkwear_Selection_Changed;
 
 			ytreeListedItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItems>()
 				.AddColumn("Наименование").AddTextRenderer(e => e.ItemTypeName)
@@ -630,6 +631,8 @@ namespace workwear.Dialogs.Organization
 				Entity.AddUsedNorm(norm);
 		}
 
+		#region Вкладка спецодежды
+
 		protected void OnButtonGiveWearByNormClicked(object sender, EventArgs e)
 		{
 			if (IsNomenclaturePickuped == false &&
@@ -687,6 +690,13 @@ namespace workwear.Dialogs.Organization
 			Entity.FillWearInStockInfo(UoW);
 			Entity.FillWearRecivedInfo(UoW);
 		}
+
+		void ytreeWorkwear_Selection_Changed(object sender, EventArgs e)
+		{
+			buttonTimeLine.Sensitive = ytreeWorkwear.Selection.CountSelectedRows() > 0;
+		}
+
+		#endregion
 
 		protected void OnButtonRefreshWorkwearItemsClicked(object sender, EventArgs e)
 		{
@@ -746,6 +756,13 @@ namespace workwear.Dialogs.Organization
 			TabParent.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
 							  () => new QSReport.ReportViewDlg(reportInfo)
 							 );
+		}
+
+		protected void OnButtonTimeLineClicked(object sender, EventArgs e)
+		{
+			var row = ytreeWorkwear.GetSelectedObject<EmployeeCardItem>();
+			var dlg = new EmployeeIssueGraphDlg(Entity, row.Item);
+			OpenTab(dlg);
 		}
 	}
 }

@@ -128,6 +128,7 @@
     <EmbeddedResource Include="icon\menu\odnoklasniki.png" />
     <EmbeddedResource Include="Updates\2.0.2.sql" />
     <EmbeddedResource Include="Updates\2.1.sql" />
+    <EmbeddedResource Include="icon\buttons\timeline_marker.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -251,6 +252,10 @@
     <Compile Include="gtk-gui\workwear.Dialogs.DataBase.DataBaseSettingsDlg.cs" />
     <Compile Include="Domain\Operations\Graph\IssueGraph.cs" />
     <Compile Include="Repository\Stock\NomenclatureRepository.cs" />
+    <Compile Include="Dialogs\Issuance\EmployeeIssueGraphDlg.cs" />
+    <Compile Include="gtk-gui\workwear.Dialogs.Issuance.EmployeeIssueGraphDlg.cs" />
+    <Compile Include="Domain\Operations\Graph\GraphItem.cs" />
+    <Compile Include="Domain\Operations\Graph\GraphInterval.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -363,6 +368,7 @@
     <Folder Include="Dialogs\DataBase\" />
     <Folder Include="Domain\Operations\Graph\" />
     <Folder Include="Repository\Stock\" />
+    <Folder Include="Dialogs\Issuance\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

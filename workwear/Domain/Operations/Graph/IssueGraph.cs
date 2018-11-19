@@ -62,11 +62,10 @@ namespace workwear.Domain.Operations.Graph
 				interval.StartDate = date;
 				foreach(var item in graphItems.Where(x => x.IssueOperation.OperationTime <= date))
 				{
-					int count = item.AmountAtDate(date);
-					if (count <= 0)
+					if(item.AmountAtBeginOfDay(date) <= 0)
 						continue;
 					interval.ActiveItems.Add(item);
-					interval.CurrentCount += count;
+					interval.CurrentCount += item.AmountAtEndOfDay(date);
 				}
 				graph.Intervals.Add(interval);
 			}
@@ -74,36 +73,5 @@ namespace workwear.Domain.Operations.Graph
 			return graph;
 		}
 
-	}
-
-	public class GraphInterval
-	{
-		public DateTime StartDate;
-		public List<GraphItem> ActiveItems = new List<GraphItem>();
-		public int CurrentCount;
-	}
-
-	public class GraphItem
-	{
-		public EmployeeIssueOperation IssueOperation;
-		public List<EmployeeIssueOperation> WriteOffOperations = new List<EmployeeIssueOperation>();
-
-		public GraphItem(EmployeeIssueOperation issueOperation)
-		{
-			IssueOperation = issueOperation;
-		}
-
-		public void ReorderWriteoff()
-		{
-			WriteOffOperations = WriteOffOperations.OrderBy(x => x.OperationTime.Ticks).ToList();
-		}
-
-		public int AmountAtDate(DateTime date)
-		{
-			if (IssueOperation.AutoWriteoffDate.HasValue && IssueOperation.AutoWriteoffDate.Value <= date)
-				return 0;
-
-			return IssueOperation.Issued - WriteOffOperations.Where(x => x.OperationTime <= date).Sum(x => x.Returned);
-		}
 	}
 }
