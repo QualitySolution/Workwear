@@ -102,11 +102,6 @@ namespace workwear
 				.AddClearDependence<Expense> (x => x.CreatedbyUser)
 				.AddClearDependence<Income> (x => x.CreatedbyUser);
 
-			//Для тестирования
-			#if DEBUG
-			DeleteConfig.DeletionCheck ();
-			#endif
-
 			logger.Info ("Ок");
 		}
 	}
