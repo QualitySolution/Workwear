@@ -19,6 +19,11 @@ namespace workwear.Domain.Operations.Graph
 		{
 		}
 
+
+		public GraphInterval IntervalOfDate(DateTime date)
+		{
+			return Intervals.Where(x => x.StartDate <= date.Date).OrderByDescending(x => x.StartDate).Take(1).SingleOrDefault();
+		}
 		public static IssueGraph MakeIssueGraph(IUnitOfWork uow, EmployeeCard employee, ItemsType itemsType)
 		{
 			var graph = new IssueGraph();
