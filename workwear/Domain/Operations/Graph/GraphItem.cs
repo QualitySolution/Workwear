@@ -19,26 +19,32 @@ namespace workwear.Domain.Operations.Graph
 			WriteOffOperations = WriteOffOperations.OrderBy(x => x.OperationTime.Ticks).ToList();
 		}
 
-		public int AmountAtBeginOfDay(DateTime date)
+		public int AmountAtBeginOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
 		{
+			if (IssueOperation == excludeOperation)
+				return 0;
+
 			if (IssueOperation.OperationTime > date)
 				return 0;
 
 			if (IssueOperation.AutoWriteoffDate.HasValue && IssueOperation.AutoWriteoffDate.Value.Date < date.Date)
 				return 0;
 
-			return IssueOperation.Issued - WriteOffOperations.Where(x => x.OperationTime.Date < date.Date).Sum(x => x.Returned);
+			return IssueOperation.Issued - WriteOffOperations.Where(x => x != excludeOperation).Where(x => x.OperationTime.Date < date.Date).Sum(x => x.Returned);
 		}
 
-		public int AmountAtEndOfDay(DateTime date)
+		public int AmountAtEndOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
 		{
+			if (IssueOperation == excludeOperation)
+				return 0;
+
 			if (IssueOperation.OperationTime > date)
 				return 0;
 
 			if (IssueOperation.AutoWriteoffDate.HasValue && IssueOperation.AutoWriteoffDate.Value.Date <= date.Date)
 				return 0;
 
-			return IssueOperation.Issued - WriteOffOperations.Where(x => x.OperationTime.Date <= date.Date).Sum(x => x.Returned);
+			return IssueOperation.Issued - WriteOffOperations.Where(x => x != excludeOperation).Where(x => x.OperationTime.Date <= date.Date).Sum(x => x.Returned);
 		}
 
 		public int IssuedAtDate(DateTime date)

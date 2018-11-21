@@ -89,15 +89,15 @@ namespace workwear.Domain.Stock
 			set { SetField(ref buhDocument, value); }
 		}
 
-		private NormItem normItem;
+		//private NormItem normItem;
 
-		[Display(Name = "Строка нормы")]
-		//В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
-		public virtual NormItem NormItem
-		{
-			get { return normItem; }
-			set { SetField(ref normItem, value); }
-		}
+		//[Display(Name = "Строка нормы")]
+		////В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
+		//public virtual NormItem NormItem
+		//{
+		//	get { return normItem; }
+		//	set { SetField(ref normItem, value); }
+		//}
 
 		#endregion
 
@@ -123,7 +123,7 @@ namespace workwear.Domain.Stock
 			{
 				if (EmployeeIssueOperation == null)
 					EmployeeIssueOperation = new EmployeeIssueOperation();
-				EmployeeIssueOperation.Update(uow, this, NormItem);
+				EmployeeIssueOperation.Update(uow, this);
 			}
 			else if(EmployeeIssueOperation != null)
 			{

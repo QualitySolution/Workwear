@@ -19,15 +19,27 @@ namespace workwear.Domain.Operations.Graph
 		{
 		}
 
+		public int AmountAtBeginOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
+		{
+			var interval = IntervalOfDate(date);
+			return interval.ActiveItems.Sum(x => x.AmountAtBeginOfDay(date, excludeOperation));
+		}
+
+		public int AmountAtEndOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
+		{
+			var interval = IntervalOfDate(date);
+			return interval.ActiveItems.Sum(x => x.AmountAtEndOfDay(date, excludeOperation));
+		}
 
 		public GraphInterval IntervalOfDate(DateTime date)
 		{
 			return Intervals.Where(x => x.StartDate <= date.Date).OrderByDescending(x => x.StartDate).Take(1).SingleOrDefault();
 		}
+
+		#region Статические
+
 		public static IssueGraph MakeIssueGraph(IUnitOfWork uow, EmployeeCard employee, ItemsType itemsType)
 		{
-			var graph = new IssueGraph();
-
 			var nomenclatures = NomenclatureRepository.GetNomenclaturesOfType(uow, itemsType);
 
 			var issues = uow.Session.QueryOver<EmployeeIssueOperation>()
@@ -36,6 +48,12 @@ namespace workwear.Domain.Operations.Graph
 					.OrderBy(x => x.OperationTime).Asc
 					.List();
 
+			return MakeIssueGraph(issues);
+		}
+
+		internal static IssueGraph MakeIssueGraph(IList<EmployeeIssueOperation> issues)
+		{
+			var graph = new IssueGraph();
 			//создаем интервалы.
 			List<DateTime> starts = issues.Select(x => x.OperationTime).ToList();
 			starts.AddRange(issues.Where(x => x.AutoWriteoffDate.HasValue).Select(x => x.AutoWriteoffDate.Value));
@@ -59,8 +77,6 @@ namespace workwear.Domain.Operations.Graph
 				item.WriteOffOperations.Add(issue);
 			}
 
-			//graphItems.ForEach(x => x.ReorderWriteoff());
-
 			foreach (var date in starts)
 			{
 				var interval = new GraphInterval();
@@ -78,5 +94,6 @@ namespace workwear.Domain.Operations.Graph
 			return graph;
 		}
 
+		#endregion
 	}
 }

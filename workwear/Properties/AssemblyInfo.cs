@@ -20,6 +20,8 @@ using QSProjectsLib;
 [assembly: AssemblySupport("", true, "MySQL")]
 [assembly: AssemblyAppWebsite("http://www.qsolution.ru/")]
 
+[assembly: InternalsVisibleTo("WorkwearTest")]
+
 [assembly: AssemblyAuthor("Ганьков Андрей <gav@qsolution.ru>")]
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".

@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.Utilities;
-using QSOrmProject;
 
 namespace workwear.Domain.Regulations
 {
@@ -108,14 +107,26 @@ namespace workwear.Domain.Regulations
 			}
 		}
 
+		/// <summary>
+		/// Рассчитывает дату износа пропорционально количеству выданного.
+		/// </summary>
 		public virtual DateTime CalculateExpireDate(DateTime issueDate, int amount)
 		{
 			//TODO Некорретно считаем смены
 			double oneItemByMonths = (double)PeriodInMonths / Amount;
 			double months = amount * oneItemByMonths;
 			int wholeMonths = (int)months;
-			int addintionDays = (int)Math.Round ((months - wholeMonths) * 30);
-			return issueDate.AddMonths (wholeMonths).AddDays (addintionDays);
+			int addintionDays = (int)Math.Round((months - wholeMonths) * 30);
+			return issueDate.AddMonths(wholeMonths).AddDays(addintionDays);
+		}
+
+		/// <summary>
+		/// Рассчитывает дату износа по норме.
+		/// </summary>
+		public virtual DateTime CalculateExpireDate(DateTime issueDate)
+		{
+			//TODO Некорретно считаем смены
+			return issueDate.AddMonths(PeriodInMonths);
 		}
 
 		public virtual string Title{

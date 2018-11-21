@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using workwear.Domain.Operations.Graph;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -11,6 +13,8 @@ namespace workwear.Domain.Operations
 {
 	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		public virtual int Id { get; set; }
 
 		DateTime operationTime = DateTime.Now;
@@ -136,7 +140,7 @@ namespace workwear.Domain.Operations
 
 		#region Методы обновленя операций
 
-		public virtual void Update(IUnitOfWork uow, ExpenseItem item, NormItem byNormItem = null)
+		public virtual void Update(IUnitOfWork uow, ExpenseItem item)
 		{
 			//Внимание здесь сравниваются даты без времени.
 			if (item.ExpenseDoc.Date.Date != OperationTime.Date)
@@ -147,14 +151,65 @@ namespace workwear.Domain.Operations
 			WearPercent = 1 - item.IncomeOn.LifePercent;
 			Issued = item.Amount;
 			Returned = 0;
-			//ExpenseByNorm = NormItem.
-			
 			IssuedOperation = null;
 			IncomeOnStock = item.IncomeOn;
-			if (normItem != null)
-				NormItem = normItem;
-
 			BuhDocument = item.BuhDocument;
+
+			if (NormItem == null)
+				NormItem = Employee.WorkwearItems.FirstOrDefault(x => x.Item == Nomenclature.Type)?.ActiveNormItem;
+
+			var graph = IssueGraph.MakeIssueGraph(uow, Employee, Nomenclature.Type);
+			//RecalculateDatesOfIssueOperation(graph);
+		}
+
+		public void RecalculateDatesOfIssueOperation(IssueGraph graph, Func<string, bool> askUser)
+		{
+			if (NormItem == null)
+			{
+				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature.Name} от {OperationTime} не установлена норма поэтому прерасчет даты выдачи и использования не возможен.");
+				return;
+			}
+			DateTime startUsing = operationTime;
+
+			var amountAtBegin = graph.AmountAtBeginOfDay(OperationTime.Date, this);
+			var amountByNorm = NormItem.Amount;
+			if (amountAtBegin >= amountByNorm)
+			{
+				//Ищем первый интервал где числящееся меньше нормы.
+				DateTime moveTo;
+				var firstLessNorm = graph.Intervals
+					.Where(x => x.StartDate.Date >= OperationTime.Date)
+					.OrderBy(x => x.StartDate)
+					.FirstOrDefault(x => graph.AmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
+				if (firstLessNorm == null)
+				{
+					var lastInterval = graph.Intervals
+											.OrderBy(x => x.StartDate)
+											.LastOrDefault();
+					moveTo = lastInterval.ActiveItems.Max(x => x.IssueOperation.ExpenseByNorm);
+				}
+				else
+					moveTo = firstLessNorm.StartDate;
+
+				if (askUser($"На {operationTime:d} за сотрудником уже числится {amountAtBegin} x {Nomenclature.TypeName}, при этом по нормам положено {amountByNorm}. Передвинуть начало экспуатации вновь выданных {Issued} на {moveTo}?")){
+					startUsing = moveTo;
+				}
+			}
+
+			ExpenseByNorm = NormItem.CalculateExpireDate(startUsing);
+
+			if (Issued > amountByNorm)
+			{
+				if(askUser($"За раз выдается {Issued} x {Nomenclature.Type.Name} это больше чем положено по норме {amountByNorm}. Увеличить период эксплуатации выданного пропорционально количеству?"))
+				{
+					ExpenseByNorm = NormItem.CalculateExpireDate(startUsing, Issued);
+				}
+			}
+
+			if (UseAutoWriteoff)
+				AutoWriteoffDate = ExpenseByNorm;
+			else
+				AutoWriteoffDate = null;
 		}
 
 		#endregion

@@ -87,6 +87,8 @@ namespace workwear.Domain.Stock
 
 		#endregion
 
+		#region Рассчетные
+
 		public virtual string NameAndSize{
 			get{
 				if (String.IsNullOrWhiteSpace(WearGrowth) && String.IsNullOrWhiteSpace(Size))
@@ -97,6 +99,10 @@ namespace workwear.Domain.Stock
 				return String.Format("{0} (Размер:{1}; Рост:{2})", Name, Size, WearGrowth);
 			}
 		}
+
+		public string TypeName => Type.Name;
+
+		#endregion
 
 		public Nomenclature ()
 		{
