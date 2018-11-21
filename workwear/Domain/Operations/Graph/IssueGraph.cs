@@ -15,45 +15,17 @@ namespace workwear.Domain.Operations.Graph
 
 		public List<GraphInterval> Intervals = new List<GraphInterval>();
 
-		public IssueGraph()
+		internal IssueGraph()
 		{
+
 		}
 
-		public int AmountAtBeginOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
+		public IEnumerable<GraphInterval> OrderedIntervals => Intervals.OrderBy(x => x.StartDate);
+
+		public IEnumerable<GraphInterval> OrderedIntervalsReverse => Intervals.OrderByDescending(x => x.StartDate);
+
+		public IssueGraph(IList<EmployeeIssueOperation> issues)
 		{
-			var interval = IntervalOfDate(date);
-			return interval.ActiveItems.Sum(x => x.AmountAtBeginOfDay(date, excludeOperation));
-		}
-
-		public int AmountAtEndOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
-		{
-			var interval = IntervalOfDate(date);
-			return interval.ActiveItems.Sum(x => x.AmountAtEndOfDay(date, excludeOperation));
-		}
-
-		public GraphInterval IntervalOfDate(DateTime date)
-		{
-			return Intervals.Where(x => x.StartDate <= date.Date).OrderByDescending(x => x.StartDate).Take(1).SingleOrDefault();
-		}
-
-		#region Статические
-
-		public static IssueGraph MakeIssueGraph(IUnitOfWork uow, EmployeeCard employee, ItemsType itemsType)
-		{
-			var nomenclatures = NomenclatureRepository.GetNomenclaturesOfType(uow, itemsType);
-
-			var issues = uow.Session.QueryOver<EmployeeIssueOperation>()
-					.Where(x => x.Employee.Id == employee.Id)
-					.Where(x => x.Nomenclature.Id.IsIn(nomenclatures.Select(n => n.Id).ToArray()))
-					.OrderBy(x => x.OperationTime).Asc
-					.List();
-
-			return MakeIssueGraph(issues);
-		}
-
-		internal static IssueGraph MakeIssueGraph(IList<EmployeeIssueOperation> issues)
-		{
-			var graph = new IssueGraph();
 			//создаем интервалы.
 			List<DateTime> starts = issues.Select(x => x.OperationTime).ToList();
 			starts.AddRange(issues.Where(x => x.AutoWriteoffDate.HasValue).Select(x => x.AutoWriteoffDate.Value));
@@ -69,7 +41,7 @@ namespace workwear.Domain.Operations.Graph
 				}
 
 				var item = graphItems.FirstOrDefault(x => x.IssueOperation.Id == issue.IssuedOperation.Id);
-				if(item == null)
+				if (item == null)
 				{
 					logger.Error($"{typeof(EmployeeIssueOperation).Name}:{issue.Id} ссылается на некоректную операцию выдачи. Операция была пропущена в построение графа выдачи.");
 					continue;
@@ -81,17 +53,55 @@ namespace workwear.Domain.Operations.Graph
 			{
 				var interval = new GraphInterval();
 				interval.StartDate = date;
-				foreach(var item in graphItems.Where(x => x.IssueOperation.OperationTime <= date))
+				foreach (var item in graphItems.Where(x => x.IssueOperation.OperationTime <= date))
 				{
-					if(item.AmountAtBeginOfDay(date) <= 0)
+					if (item.AmountAtBeginOfDay(date) <= 0)
 						continue;
 					interval.ActiveItems.Add(item);
 					interval.CurrentCount += item.AmountAtEndOfDay(date);
 				}
-				graph.Intervals.Add(interval);
+				Intervals.Add(interval);
 			}
+		}
 
-			return graph;
+		#region Методы
+
+		public int AmountAtBeginOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
+		{
+			var interval = IntervalOfDate(date);
+			if (interval == null)
+				return 0;
+			return interval.ActiveItems.Sum(x => x.AmountAtBeginOfDay(date, excludeOperation));
+		}
+
+		public int AmountAtEndOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
+		{
+			var interval = IntervalOfDate(date);
+			if (interval == null)
+				return 0;
+			return interval.ActiveItems.Sum(x => x.AmountAtEndOfDay(date, excludeOperation));
+		}
+
+		public GraphInterval IntervalOfDate(DateTime date)
+		{
+			return Intervals.Where(x => x.StartDate <= date.Date).OrderByDescending(x => x.StartDate).Take(1).SingleOrDefault();
+		}
+
+		#endregion
+
+		#region Статические
+
+		public static IssueGraph MakeIssueGraph(IUnitOfWork uow, EmployeeCard employee, ItemsType itemsType)
+		{
+			var nomenclatures = NomenclatureRepository.GetNomenclaturesOfType(uow, itemsType);
+
+			var issues = uow.Session.QueryOver<EmployeeIssueOperation>()
+					.Where(x => x.Employee.Id == employee.Id)
+					.Where(x => x.Nomenclature.Id.IsIn(nomenclatures.Select(n => n.Id).ToArray()))
+					.OrderBy(x => x.OperationTime).Asc
+					.List();
+
+			return new IssueGraph(issues);
 		}
 
 		#endregion

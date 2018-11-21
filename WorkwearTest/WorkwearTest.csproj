@@ -78,6 +78,7 @@
     <Compile Include="Operations\Graph\GraphItemTest.cs" />
     <Compile Include="Regulations\NormItemTest.cs" />
     <Compile Include="Operations\EmployeeIssueOperationTest.cs" />
+    <Compile Include="Organization\EmployeeCardItemTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.Testing\QS.Testing.csproj">
@@ -101,6 +102,7 @@
     <Folder Include="Operations\" />
     <Folder Include="Operations\Graph\" />
     <Folder Include="Regulations\" />
+    <Folder Include="Organization\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

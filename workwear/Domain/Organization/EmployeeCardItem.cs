@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QSOrmProject;
+using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
@@ -218,67 +217,63 @@ namespace workwear.Domain.Organization
 				InStockState = StockStateInfo.NotEnough;
 		}
 
-		public virtual void UpdateNextIssue(IUnitOfWork uow, ExpenseItem[] resaveItems)
+		public virtual void UpdateNextIssue(IUnitOfWork uow)
 		{
-			ExpenseItem expenseItemAlias = null;
-			Nomenclature nomenclatureAlias = null;
-
-			IList<ExpenseItem> expenseItems = new List<ExpenseItem>();
+			IssueGraph graph = null;
 
 			if(EmployeeCard.Id > 0) //Если карточка еще не разу не сохранялась. То и нечего запрашивать выдачи.
 			{
-				expenseItems = uow.Session.QueryOver<ExpenseItem> (() => expenseItemAlias)
-					.JoinQueryOver (ei => ei.ExpenseDoc)
-					.Where (e => e.EmployeeCard == EmployeeCard)
-					.JoinAlias (() => expenseItemAlias.Nomenclature, () => nomenclatureAlias)
-					.Where (() => nomenclatureAlias.Type.Id == Item.Id)
-					.OrderBy (e => e.Date).Asc
-					.List ();
+				graph = GetIssueGraphForItem(uow);
 			}
 
-			var lastExpire = new DateTime();
-
-			foreach(var expenseItem in expenseItems)
+			DateTime wantIssue = new DateTime();
+			if(graph != null && graph.Intervals.Any())
 			{
-				bool noChange = expenseItem.AutoWriteoffDate.HasValue && expenseItem.AutoWriteoffDate.Value < DateTime.Today && !resaveItems.Contains (expenseItem);
-
-				var returned = uow.Session.QueryOver<IncomeItem> ()
-					.Where (i => i.IssuedOn == expenseItem).List ();
-				var writeoff = uow.Session.QueryOver<WriteoffItem> ()
-					.Where (w => w.IssuedOn == expenseItem).List ();
-
-				int realAmount = expenseItem.Amount - returned.Sum (r => r.Amount) - writeoff.Sum (w => w.Amount);
-
-				DateTime virtualIssue = lastExpire > expenseItem.ExpenseDoc.Date ? lastExpire : expenseItem.ExpenseDoc.Date;
-
-				DateTime newExpireDate = ActiveNormItem.CalculateExpireDate (virtualIssue, realAmount);
-
-				if (newExpireDate > DateTime.Today)
-					noChange = false;
-
-				lastExpire = newExpireDate;
-				if(!noChange && expenseItem.AutoWriteoffDate != (DateTime?)newExpireDate)
+				var listReverse = graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
+				var lastInterval = listReverse.First();
+				if(lastInterval.CurrentCount >= ActiveNormItem.Amount)
+				{//Нет автосписания, следующая выдача чисто информативно проставляется по сроку носки
+					wantIssue = lastInterval.ActiveItems.Max(x => x.IssueOperation.ExpenseByNorm);
+				}
+				else
 				{
-					expenseItem.AutoWriteoffDate = newExpireDate;
-					uow.Save (expenseItem);
+					//Ищем первый с конца интервал где не хватает выданного до нормы.
+					foreach(var interval in listReverse)
+					{
+						if (interval.CurrentCount < ActiveNormItem.Amount)
+							wantIssue = interval.StartDate;
+						else
+							break;
+					}
 				}
 			}
 
-			if(lastExpire != default(DateTime))
+			if(wantIssue < Created.Date)
 			{
-				//Сдвигаем дату следующего получения на конец дикретного отпуска
-				if (EmployeeCard.MaternityLeaveBegin.HasValue && EmployeeCard.MaternityLeaveEnd.HasValue
-				    && lastExpire >= EmployeeCard.MaternityLeaveBegin.Value
-				    && lastExpire <= EmployeeCard.MaternityLeaveEnd.Value)
-					lastExpire = EmployeeCard.MaternityLeaveEnd.Value.AddDays(1);
-
-				if(NextIssue != lastExpire)
-				{
-					NextIssue = lastExpire;
-					uow.Save (this);
-				}
+				wantIssue = Created.Date;
 			}
+
+			//Сдвигаем дату следующего получения на конец отпуска
+			if (EmployeeCard.MaternityLeaveBegin.HasValue && EmployeeCard.MaternityLeaveEnd.HasValue
+			    && wantIssue >= EmployeeCard.MaternityLeaveBegin.Value
+			    && wantIssue <= EmployeeCard.MaternityLeaveEnd.Value)
+				wantIssue = EmployeeCard.MaternityLeaveEnd.Value.AddDays(1);
+
+			if(NextIssue != wantIssue)
+			{
+				NextIssue = wantIssue;
+				uow.Save (this);
+			}		
 		}
+
+		#region Зазоры для тестирования
+
+		protected internal virtual IssueGraph GetIssueGraphForItem(IUnitOfWork uow)
+		{
+			return IssueGraph.MakeIssueGraph(uow, EmployeeCard, Item);
+		}
+
+		#endregion
 	}
 
 	public enum StockStateInfo{

@@ -125,9 +125,9 @@ namespace workwear.Domain.Stock
 			ObservableItems.Remove (item);
 		}
 
-		public virtual void UpdateOperations(IUnitOfWork uow)
+		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
 		{
-			Items.ToList().ForEach(x => x.UpdateOperations(uow));
+			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
 		}
 
 		#endregion

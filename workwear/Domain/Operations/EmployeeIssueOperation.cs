@@ -140,7 +140,7 @@ namespace workwear.Domain.Operations
 
 		#region Методы обновленя операций
 
-		public virtual void Update(IUnitOfWork uow, ExpenseItem item)
+		public virtual void Update(IUnitOfWork uow, Func<string, bool> askUser, ExpenseItem item)
 		{
 			//Внимание здесь сравниваются даты без времени.
 			if (item.ExpenseDoc.Date.Date != OperationTime.Date)
@@ -159,10 +159,10 @@ namespace workwear.Domain.Operations
 				NormItem = Employee.WorkwearItems.FirstOrDefault(x => x.Item == Nomenclature.Type)?.ActiveNormItem;
 
 			var graph = IssueGraph.MakeIssueGraph(uow, Employee, Nomenclature.Type);
-			//RecalculateDatesOfIssueOperation(graph);
+			RecalculateDatesOfIssueOperation(graph, askUser);
 		}
 
-		public void RecalculateDatesOfIssueOperation(IssueGraph graph, Func<string, bool> askUser)
+		public virtual void RecalculateDatesOfIssueOperation(IssueGraph graph, Func<string, bool> askUser)
 		{
 			if (NormItem == null)
 			{

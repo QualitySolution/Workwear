@@ -1,6 +1,9 @@
-﻿using NUnit.Framework;
+﻿using NSubstitute;
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using workwear.Domain.Operations;
 using workwear.Domain.Operations.Graph;
 
 namespace WorkwearTest.Operations.Graph
@@ -42,6 +45,21 @@ namespace WorkwearTest.Operations.Graph
 			graph.Intervals.Add( new GraphInterval { StartDate = new DateTime(2018, 4, 1) });
 
 			Assert.That(graph.IntervalOfDate(new DateTime(2018, 2, 2)), Is.Null);
+		}
+
+		[Test(Description = "Проверяем что механизм создания графа добавляет в конце пустой интервал с нулевым количеством числящегося.")]
+		public void IssueGraphConstructor_ExistEndingIntervalWithZeroAmountTest()
+		{
+			var operation1 = Substitute.For<EmployeeIssueOperation>();
+			operation1.OperationTime.Returns(new DateTime(2018, 1, 1));
+			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 2, 1));
+			operation1.Issued.Returns(10);
+
+			var list = new List<EmployeeIssueOperation>() { operation1 };
+			var graph = new IssueGraph(list);
+
+			Assert.That(graph.OrderedIntervals.Last().CurrentCount, Is.EqualTo(0), "Количество в последнем интервале должно быть 0, при наличии автосписания.");
+			Assert.That(graph.OrderedIntervals.First().CurrentCount, Is.EqualTo(10), "Количество в первом интервале должно быть 10.");
 		}
 	}
 }

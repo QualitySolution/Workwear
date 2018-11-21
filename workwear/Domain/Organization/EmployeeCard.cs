@@ -416,7 +416,7 @@ namespace workwear.Domain.Organization
 			//Обновляем срок следующей выдачи
 			foreach(var item in processed)
 			{
-				item.UpdateNextIssue(UoW, new Stock.ExpenseItem[0]);
+				item.UpdateNextIssue(UoW);
 			}
 			logger.Info("Ok");
 		}
@@ -425,7 +425,7 @@ namespace workwear.Domain.Organization
 		{
 			foreach (var item in WorkwearItems)
 			{
-				item.UpdateNextIssue(UoW, new Stock.ExpenseItem[0]);
+				item.UpdateNextIssue(UoW);
 			}
 		}
 

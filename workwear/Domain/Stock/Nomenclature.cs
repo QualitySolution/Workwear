@@ -100,7 +100,7 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public string TypeName => Type.Name;
+		public virtual string TypeName => Type.Name;
 
 		#endregion
 

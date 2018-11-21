@@ -1,11 +1,9 @@
 ﻿using System;
-using QSOrmProject;
 using System.ComponentModel.DataAnnotations;
-using workwear.Domain.Organization;
 using QS.DomainModel.Entity;
-using workwear.Domain.Operations;
 using QS.DomainModel.UoW;
-using workwear.Domain.Regulations;
+using workwear.Domain.Operations;
+using workwear.Domain.Organization;
 
 namespace workwear.Domain.Stock
 {
@@ -61,6 +59,7 @@ namespace workwear.Domain.Stock
 		DateTime? autoWriteoffDate;
 
 		[Display (Name = "День автосписания")]
+		[Obsolete("Переходите на использование операций EmployeeIssueOperation, это поле в будущих релизах будет удалено.")]
 		public virtual DateTime? AutoWriteoffDate {
 			get { return autoWriteoffDate; }
 			set { SetField (ref autoWriteoffDate, value, () => AutoWriteoffDate); }
@@ -89,16 +88,6 @@ namespace workwear.Domain.Stock
 			set { SetField(ref buhDocument, value); }
 		}
 
-		//private NormItem normItem;
-
-		//[Display(Name = "Строка нормы")]
-		////В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
-		//public virtual NormItem NormItem
-		//{
-		//	get { return normItem; }
-		//	set { SetField(ref normItem, value); }
-		//}
-
 		#endregion
 
 		#region Расчетные свойства
@@ -117,13 +106,14 @@ namespace workwear.Domain.Stock
 
 		#region Функции
 
-		public virtual void UpdateOperations(IUnitOfWork uow)
+		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
 		{
 			if(expenseDoc.Operation == ExpenseOperations.Employee)
 			{
 				if (EmployeeIssueOperation == null)
 					EmployeeIssueOperation = new EmployeeIssueOperation();
-				EmployeeIssueOperation.Update(uow, this);
+				EmployeeIssueOperation.Update(uow, askUser, this);
+				AutoWriteoffDate = EmployeeIssueOperation.AutoWriteoffDate;
 			}
 			else if(EmployeeIssueOperation != null)
 			{

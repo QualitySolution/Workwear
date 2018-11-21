@@ -93,7 +93,8 @@ namespace workwear
 
 			try 
 			{
-				Entity.UpdateOperations(UoW);
+				Func<string, bool> ask = MessageDialogHelper.RunQuestionDialog;
+				Entity.UpdateOperations(UoW, ask);
 				UoWGeneric.Save ();
 				if(Entity.Operation == ExpenseOperations.Employee)
 				{

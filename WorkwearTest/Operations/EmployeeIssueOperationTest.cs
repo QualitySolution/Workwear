@@ -33,7 +33,7 @@ namespace WorkwearTest.Operations
 
 			var operations = new List<EmployeeIssueOperation>() {operation1, operation2};
 
-			var graph = IssueGraph.MakeIssueGraph(operations);
+			var graph = new IssueGraph(operations);
 			var issue = new EmployeeIssueOperation();
 			issue.Nomenclature = nomenclature;
 			issue.NormItem = norm;
@@ -63,7 +63,7 @@ namespace WorkwearTest.Operations
 
 			var operations = new List<EmployeeIssueOperation>() { operation1 };
 
-			var graph = IssueGraph.MakeIssueGraph(operations);
+			var graph = new IssueGraph(operations);
 			var issue = new EmployeeIssueOperation();
 			issue.Nomenclature = nomenclature;
 			issue.NormItem = norm;
