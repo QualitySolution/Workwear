@@ -254,10 +254,10 @@ namespace workwear.Domain.Organization
 			}
 
 			//Сдвигаем дату следующего получения на конец отпуска
-			if (EmployeeCard.MaternityLeaveBegin.HasValue && EmployeeCard.MaternityLeaveEnd.HasValue
-			    && wantIssue >= EmployeeCard.MaternityLeaveBegin.Value
-			    && wantIssue <= EmployeeCard.MaternityLeaveEnd.Value)
-				wantIssue = EmployeeCard.MaternityLeaveEnd.Value.AddDays(1);
+			if (EmployeeCard.CurrentLeaveBegin.HasValue && EmployeeCard.CurrentLeaveEnd.HasValue
+			    && wantIssue >= EmployeeCard.CurrentLeaveBegin.Value
+			    && wantIssue <= EmployeeCard.CurrentLeaveEnd.Value)
+				wantIssue = EmployeeCard.CurrentLeaveEnd.Value.AddDays(1);
 
 			if(NextIssue != wantIssue)
 			{

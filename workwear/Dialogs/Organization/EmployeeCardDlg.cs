@@ -83,8 +83,8 @@ namespace workwear.Dialogs.Organization
 			dateChangePosition.Binding.AddBinding(Entity, e => e.ChangeOfPositionDate, w => w.DateOrNull).InitializeFromSource();
 			dateDismiss.Binding.AddBinding (Entity, e => e.DismissDate, w => w.DateOrNull).InitializeFromSource ();
 			yperiodMaternityLeave.Binding.AddSource(Entity)
-								 .AddBinding(e => e.MaternityLeaveBegin, w => w.StartDateOrNull)
-								 .AddBinding(e => e.MaternityLeaveEnd, w => w.EndDateOrNull)
+								 .AddBinding(e => e.CurrentLeaveBegin, w => w.StartDateOrNull)
+								 .AddBinding(e => e.CurrentLeaveEnd, w => w.EndDateOrNull)
 								 .InitializeFromSource();
 
 			yentryPost.SubjectType = typeof(Post);
