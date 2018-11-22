@@ -11,6 +11,10 @@ using workwear.Tools;
 
 namespace workwear.Domain.Operations
 {
+	[Appellative(Gender = GrammaticalGender.Feminine,
+		NominativePlural = "операции выдачи сотруднику",
+		Nominative = "операция выдачи сотруднику"
+	)]
 	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -137,6 +141,14 @@ namespace workwear.Domain.Operations
 		{
 			useAutoWriteoff = BaseParameters.DefaultAutoWriteoff;
 		}
+
+		#region Расчетные
+
+		public virtual string Title => Issued > Returned
+			? $"Выдача {Employee.ShortName} <= {Issued} х {Nomenclature.Name}"
+			: $"Списание {Employee.ShortName} => {Returned} х {Nomenclature.Name}";
+
+		#endregion
 
 		#region Методы обновленя операций
 
