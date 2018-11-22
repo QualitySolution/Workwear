@@ -4,7 +4,7 @@ using NUnit.Framework;
 using QS.Deletion;
 using QS.Deletion.Testing;
 
-namespace WorkwearTests.Deletion
+namespace WorkwearTest.Deletion
 {
 	[TestFixture]
 	[Category("Конфигурация удаления")]

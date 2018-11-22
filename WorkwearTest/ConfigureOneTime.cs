@@ -3,7 +3,7 @@ using QS.Project.DB;
 using QSBusinessCommon.Domain;
 using workwear;
 
-namespace WorkwearTests.Deletion
+namespace WorkwearTest.Deletion
 {
 	public static class ConfigureOneTime
 	{
