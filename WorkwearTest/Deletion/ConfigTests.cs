@@ -3,6 +3,8 @@ using NHibernate.Mapping;
 using NUnit.Framework;
 using QS.Deletion;
 using QS.Deletion.Testing;
+using workwear.Domain.Operations;
+using workwear.Domain.Organization;
 
 namespace WorkwearTest.Deletion
 {
@@ -17,6 +19,8 @@ namespace WorkwearTest.Deletion
 
 			//Так как этот класс в общей библиотеке и пока никак не используется для удаления.
 			//IgnoreMissingClass.Add(typeof(QS.Project.Domain.UserBase));
+			AddIgnoredProperty<EmployeeIssueOperation>(x => x.IssuedOperation, "Потому что если мы удаляем операцию списания, мы не должны при этом удалять операцию выдачи.");
+			AddIgnoredProperty<EmployeeCardItem>(x => x.ActiveNormItem, "Должно удалятся более сложным способом, а именно через обновление потребностей.");
 		}
 
 		public new static IEnumerable AllDeleteItems => DeleteConfigTestBase.AllDeleteItems;
