@@ -1,9 +1,11 @@
 ﻿using QS.Deletion;
 using QS.Project.Domain;
 using QSBusinessCommon.Domain;
+using workwear.Domain.Operations;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Domain.Users;
 
 namespace workwear
 {
@@ -32,7 +34,8 @@ namespace workwear
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCard> ()
 				.AddDeleteDependence<EmployeeCardItem> (x => x.EmployeeCard)
 				.AddDeleteDependence<Expense> (x => x.EmployeeCard)
-				.AddDeleteDependence<Income> (x => x.EmployeeCard);
+				.AddDeleteDependence<Income> (x => x.EmployeeCard)
+				.AddDeleteDependence<EmployeeIssueOperation>(x => x.Employee);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCardItem> ();
 
@@ -41,7 +44,7 @@ namespace workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<RegulationDoc>()
 			            .AddDeleteDependence<Norm>(x => x.Document)
-						.AddDeleteDependenceFromCollection(x => x.Annexess);
+						.AddDeleteDependence<RegulationDocAnnex>(x => x.Document);
 
 			DeleteConfig.AddHibernateDeleteInfo<RegulationDocAnnex>()
 			            .AddDeleteDependence<Norm>(x => x.Annex);
@@ -56,6 +59,7 @@ namespace workwear
 				.AddDeleteDependence<NormItem> (x => x.Norm);
 
 			DeleteConfig.AddHibernateDeleteInfo<NormItem> ()
+				.AddClearDependence<EmployeeIssueOperation>(x => x.NormItem)
 				//Ну нужна так как должна удалятся через пересчет. .AddClearDependence<EmployeeCardItem> (x => x.ActiveNormItem) //FIXME После этого нужно пересчитать требования к выдаче, то новому списку норм.
 				; 
 
@@ -73,6 +77,7 @@ namespace workwear
 				.AddDeleteDependence<ExpenseItem> (x => x.Nomenclature)
 				.AddDeleteDependence<IncomeItem> (x => x.Nomenclature)
 				.AddDeleteDependence<WriteoffItem> (x => x.Nomenclature)
+				.AddDeleteDependence<EmployeeIssueOperation>(x => x.Nomenclature)
 				.AddClearDependence<EmployeeCardItem> (x => x.MatchedNomenclature);
 
 			DeleteConfig.AddHibernateDeleteInfo<Expense> ()
@@ -86,21 +91,43 @@ namespace workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<IncomeItem> ()
 				.AddDeleteDependence<ExpenseItem> (x => x.IncomeOn)
-				.AddDeleteDependence<WriteoffItem> (x => x.IncomeOn);
+				.AddDeleteDependence<WriteoffItem> (x => x.IncomeOn)
+				.AddDeleteDependence<EmployeeIssueOperation>(x => x.IncomeOnStock)
+				.AddDeleteCascadeDependence(x => x.EmployeeIssueOperation);
 
 			DeleteConfig.AddHibernateDeleteInfo<ExpenseItem> ()
 				.AddDeleteDependence<IncomeItem> (x => x.IssuedOn)
-				.AddDeleteDependence<WriteoffItem> (x => x.IssuedOn);
+				.AddDeleteDependence<WriteoffItem> (x => x.IssuedOn)
+				.AddDeleteCascadeDependence(x => x.EmployeeIssueOperation);
 
-			DeleteConfig.AddHibernateDeleteInfo<WriteoffItem> ();
+			DeleteConfig.AddHibernateDeleteInfo<WriteoffItem> ()
+				.AddDeleteCascadeDependence(x => x.EmployeeIssueOperation);
 
 			#endregion
 
+			#region Операции
+
+			DeleteConfig.AddHibernateDeleteInfo<EmployeeIssueOperation>()
+				.RequiredCascadeDeletion()
+				.AddDeleteDependence<EmployeeIssueOperation>(x => x.IssuedOperation)
+				.AddDeleteDependence<ExpenseItem>(x => x.EmployeeIssueOperation)
+				.AddDeleteDependence<IncomeItem>(x => x.EmployeeIssueOperation)
+				.AddDeleteDependence<WriteoffItem>(x => x.EmployeeIssueOperation);
+
+			#endregion
+
+			#region Пользователь
+
 			DeleteConfig.AddHibernateDeleteInfo<UserBase> ()
+				.AddDeleteDependence<UserSettings>(x => x.User)
 				.AddClearDependence<EmployeeCard> (x => x.CreatedbyUser)
 				.AddClearDependence<Writeoff> (x => x.CreatedbyUser)
 				.AddClearDependence<Expense> (x => x.CreatedbyUser)
 				.AddClearDependence<Income> (x => x.CreatedbyUser);
+
+			DeleteConfig.AddHibernateDeleteInfo<UserSettings>();
+
+			#endregion
 
 			logger.Info ("Ок");
 		}
