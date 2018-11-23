@@ -5,6 +5,7 @@ using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QSOrmProject;
 
 namespace workwear.Domain.Stock
@@ -106,6 +107,10 @@ namespace workwear.Domain.Stock
 			ObservableItems.Remove (item);
 		}
 
+		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
+		{
+			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
+		}
 	}
 }
 

@@ -84,10 +84,10 @@ namespace workwear
 				.AddDeleteDependence<ExpenseItem> (x => x.ExpenseDoc);
 
 			DeleteConfig.AddHibernateDeleteInfo<Income> ()
-				.AddDeleteDependenceFromCollection (x => x.Items);
+				.AddDeleteDependence<IncomeItem>(x => x.Document);
 
 			DeleteConfig.AddHibernateDeleteInfo<Writeoff> ()
-				.AddDeleteDependenceFromCollection (x => x.Items);
+				.AddDeleteDependence<WriteoffItem>(x => x.Document);
 
 			DeleteConfig.AddHibernateDeleteInfo<IncomeItem> ()
 				.AddDeleteDependence<ExpenseItem> (x => x.IncomeOn)

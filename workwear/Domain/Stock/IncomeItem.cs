@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QSOrmProject;
 using workwear.Domain.Operations;
 
@@ -14,6 +15,15 @@ namespace workwear.Domain.Stock
 		#region Свойства
 
 		public virtual int Id { get; set; }
+
+		private Income document;
+
+		[Display(Name = "Документ")]
+		public virtual Income Document {
+			get { return document; }
+			set { SetField(ref document, value); }
+		}
+
 
 		Nomenclature nomenclature;
 
@@ -108,6 +118,23 @@ namespace workwear.Domain.Stock
 		public IncomeItem ()
 		{
 		}
+
+		#region Функции
+
+		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
+		{
+			if(Document.Operation == IncomeOperations.Return) {
+				if(EmployeeIssueOperation == null)
+					EmployeeIssueOperation = new EmployeeIssueOperation();
+				EmployeeIssueOperation.Update(uow, askUser, this);
+			}
+			else if(EmployeeIssueOperation != null) {
+				uow.Delete(EmployeeIssueOperation);
+				EmployeeIssueOperation = null;
+			}
+		}
+
+		#endregion
 
 	}
 }

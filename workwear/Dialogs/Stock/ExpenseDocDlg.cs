@@ -108,7 +108,7 @@ namespace workwear
 							continue;
 						}
 
-						wearItem.UpdateNextIssue (UoW, itemsGroup.ToArray ());
+						wearItem.UpdateNextIssue (UoW);
 					}
 					UoWGeneric.Commit ();
 				}

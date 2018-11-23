@@ -83,10 +83,10 @@ namespace workwear.Domain.Operations
 			set { SetField(ref useAutoWriteoff, value); }
 		}
 
-		private DateTime expenseByNorm;
+		private DateTime? expenseByNorm;
 
 		[Display(Name = "Износ по норме")]
-		public virtual DateTime ExpenseByNorm
+		public virtual DateTime? ExpenseByNorm
 		{
 			get { return expenseByNorm; }
 			set { SetField(ref expenseByNorm, value); }
@@ -198,7 +198,7 @@ namespace workwear.Domain.Operations
 					var lastInterval = graph.Intervals
 											.OrderBy(x => x.StartDate)
 											.LastOrDefault();
-					moveTo = lastInterval.ActiveItems.Max(x => x.IssueOperation.ExpenseByNorm);
+					moveTo = lastInterval.ActiveItems.Where(x => x.IssueOperation.ExpenseByNorm.HasValue).Max(x => x.IssueOperation.ExpenseByNorm.Value);
 				}
 				else
 					moveTo = firstLessNorm.StartDate;
@@ -224,10 +224,45 @@ namespace workwear.Domain.Operations
 				AutoWriteoffDate = null;
 		}
 
-		#endregion
+		public virtual void Update(IUnitOfWork uow, Func<string, bool> askUser, IncomeItem item)
+		{
+			//Внимание здесь сравниваются даты без времени.
+			if(item.Document.Date.Date != OperationTime.Date)
+				OperationTime = item.Document.Date;
 
-		#region Методы гупповой обработки операций
+			Employee = item.Document.EmployeeCard;
+			Nomenclature = item.Nomenclature;
+			//FIXME
+			//WearPercent = 1 - item.IncomeOn.LifePercent;
+			Issued = 0;
+			Returned = item.Amount;
+			IssuedOperation = item.IssuedOn.EmployeeIssueOperation;
+			IncomeOnStock = null;
+			BuhDocument = item.BuhDocument;
+			NormItem = null;
+			ExpenseByNorm = null;
+			AutoWriteoffDate = null;
+		}
 
+		public virtual void Update(IUnitOfWork uow, Func<string, bool> askUser, WriteoffItem item)
+		{
+			//Внимание здесь сравниваются даты без времени.
+			if(item.Document.Date.Date != OperationTime.Date)
+				OperationTime = item.Document.Date;
+
+			Employee = item.IssuedOn.ExpenseDoc.EmployeeCard;
+			Nomenclature = item.Nomenclature;
+			//FIXME
+			//WearPercent = 1 - item.IncomeOn.LifePercent;
+			Issued = 0;
+			Returned = item.Amount;
+			IssuedOperation = item.IssuedOn.EmployeeIssueOperation;
+			IncomeOnStock = null;
+			BuhDocument = item.BuhDocument;
+			NormItem = null;
+			ExpenseByNorm = null;
+			AutoWriteoffDate = null;
+		}
 
 		#endregion
 	}

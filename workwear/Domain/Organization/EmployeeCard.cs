@@ -8,7 +8,6 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Project.Domain;
 using QS.Utilities.Text;
-using QSOrmProject;
 using workwear.Domain.Regulations;
 using workwear.Measurements;
 

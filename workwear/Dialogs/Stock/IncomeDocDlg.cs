@@ -78,6 +78,8 @@ namespace workwear
 				return false;
 
 			try {
+				Func<string, bool> ask = MessageDialogHelper.RunQuestionDialog;
+				Entity.UpdateOperations(UoW, ask);
 				UoWGeneric.Save ();
 				if(Entity.Operation == IncomeOperations.Return)
 				{
@@ -91,7 +93,7 @@ namespace workwear
 							continue;
 						}
 
-						wearItem.UpdateNextIssue (UoW, itemsGroup.Select (i => i.IssuedOn).ToArray ());
+						wearItem.UpdateNextIssue (UoW);
 					}
 					UoWGeneric.Commit ();
 				}

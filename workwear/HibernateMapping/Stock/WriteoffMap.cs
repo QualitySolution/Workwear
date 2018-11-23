@@ -16,6 +16,7 @@ namespace workwear.HMap
 			References (x => x.CreatedbyUser).Column ("user_id");
 
 			HasMany (x => x.Items)
+				.Inverse()
 				.KeyColumn ("stock_write_off_id").Not.KeyNullable ()
 				.Cascade.AllDeleteOrphan ()
 				.LazyLoad ();

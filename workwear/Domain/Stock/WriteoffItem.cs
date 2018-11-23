@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QSOrmProject;
 using workwear.Domain.Operations;
 
@@ -15,6 +16,14 @@ namespace workwear.Domain.Stock
 
 		public virtual int Id { get; set; }
 
+		private Writeoff document;
+
+		[Display(Name = "Документ списания")]
+		public virtual Writeoff Document {
+			get { return document; }
+			set { SetField(ref document, value); }
+		}
+
 		Nomenclature nomenclature;
 
 		[Display (Name = "Номеклатура")]
@@ -25,7 +34,7 @@ namespace workwear.Domain.Stock
 
 		ExpenseItem issuedOn;
 
-		[Display (Name = "Операция выдачи")]
+		[Display (Name = "Выдано в строке")]
 		public virtual ExpenseItem IssuedOn {
 			get { return issuedOn; }
 			set { SetField (ref issuedOn, value, () => IssuedOn); }
@@ -104,6 +113,22 @@ namespace workwear.Domain.Stock
 		{
 		}
 
+		#region Методы
+
+		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
+		{
+			if(IssuedOn.ExpenseDoc.Operation == ExpenseOperations.Employee) {
+				if(EmployeeIssueOperation == null)
+					EmployeeIssueOperation = new EmployeeIssueOperation();
+				EmployeeIssueOperation.Update(uow, askUser, this);
+			}
+			else if(EmployeeIssueOperation != null) {
+				uow.Delete(EmployeeIssueOperation);
+				EmployeeIssueOperation = null;
+			}
+		}
+
+		#endregion
 	}
 }
 
