@@ -1,5 +1,6 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
+using QS.DomainModel.UoW;
 using System;
 using System.Collections.Generic;
 using workwear.Domain.Operations;
@@ -73,6 +74,31 @@ namespace WorkwearTest.Operations
 			issue.RecalculateDatesOfIssueOperation(graph, s => true);
 
 			Assert.That(issue.ExpenseByNorm, Is.EqualTo(new DateTime(2018, 4, 25)));
+		}
+
+		[Test(Description = "5 дней из 10-и это 50 процентов.")]
+		public void Update_Writeoff_WearPercentTest_50Percent()
+		{
+			var issue = new EmployeeIssueOperation();
+			issue.StartOfUse = new DateTime(2018, 1, 31);
+			issue.ExpenseByNorm = new DateTime(2018, 2, 10);
+
+			var atDate = new DateTime(2018, 2, 5);
+			var result = issue.CalculatePercentWear(atDate);
+			Assert.That(result, Is.EqualTo(0.5m));
+		}
+
+		[Test(Description = "начальные 45% + 10%, проверяем что к начальным добавляется расчетный.")]
+		public void Update_Writeoff_WearPercentTest_StartPercentPlus10()
+		{
+			var issue = new EmployeeIssueOperation();
+			issue.WearPercent = 0.45m;
+			issue.StartOfUse = new DateTime(2018, 1, 1);
+			issue.ExpenseByNorm = new DateTime(2018, 1, 11);
+
+			var atDate = new DateTime(2018, 1, 2);
+			var result = issue.CalculatePercentWear(atDate);
+			Assert.That(result, Is.EqualTo(0.55m));
 		}
 	}
 }

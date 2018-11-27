@@ -17,6 +17,8 @@ namespace workwear.HMap
 			Map(x => x.UseAutoWriteoff).Column("auto_writeoff").Not.Nullable();
 			Map(x => x.AutoWriteoffDate).Column("auto_writeoff_date");
 			Map(x => x.BuhDocument).Column("buh_document");
+			Map(x => x.StartOfUse).Column("StartOfUse");
+			Map(x => x.ExpenseByNorm).Column("ExpenseByNorm");
 
 			References(x => x.Employee).Column("employee_id").Not.Nullable();
 			References(x => x.Nomenclature).Column("nomenclature_id").Not.Nullable();

@@ -83,6 +83,14 @@ namespace workwear.Domain.Operations
 			set { SetField(ref useAutoWriteoff, value); }
 		}
 
+		private DateTime? startOfUse;
+
+		[Display(Name = "Начало использования")]
+		public virtual DateTime? StartOfUse {
+			get { return startOfUse; }
+			set { SetField(ref startOfUse, value); }
+		}
+
 		private DateTime? expenseByNorm;
 
 		[Display(Name = "Износ по норме")]
@@ -150,6 +158,18 @@ namespace workwear.Domain.Operations
 
 		#endregion
 
+		#region Методы
+
+		public decimal CalculatePercentWear(DateTime atDate)
+		{
+			if(StartOfUse == null || ExpenseByNorm == null)
+				return 0;
+
+			return WearPercent + (decimal)((atDate - StartOfUse.Value).TotalDays / (ExpenseByNorm.Value - StartOfUse.Value).TotalDays);
+		}
+
+		#endregion
+
 		#region Методы обновленя операций
 
 		public virtual void Update(IUnitOfWork uow, Func<string, bool> askUser, ExpenseItem item)
@@ -181,7 +201,7 @@ namespace workwear.Domain.Operations
 				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature.Name} от {OperationTime} не установлена норма поэтому прерасчет даты выдачи и использования не возможен.");
 				return;
 			}
-			DateTime startUsing = operationTime;
+			StartOfUse = operationTime;
 
 			var amountAtBegin = graph.AmountAtBeginOfDay(OperationTime.Date, this);
 			var amountByNorm = NormItem.Amount;
@@ -204,17 +224,17 @@ namespace workwear.Domain.Operations
 					moveTo = firstLessNorm.StartDate;
 
 				if (askUser($"На {operationTime:d} за сотрудником уже числится {amountAtBegin} x {Nomenclature.TypeName}, при этом по нормам положено {amountByNorm}. Передвинуть начало экспуатации вновь выданных {Issued} на {moveTo}?")){
-					startUsing = moveTo;
+					startOfUse = moveTo;
 				}
 			}
 
-			ExpenseByNorm = NormItem.CalculateExpireDate(startUsing);
+			ExpenseByNorm = NormItem.CalculateExpireDate(StartOfUse.Value);
 
 			if (Issued > amountByNorm)
 			{
 				if(askUser($"За раз выдается {Issued} x {Nomenclature.Type.Name} это больше чем положено по норме {amountByNorm}. Увеличить период эксплуатации выданного пропорционально количеству?"))
 				{
-					ExpenseByNorm = NormItem.CalculateExpireDate(startUsing, Issued);
+					ExpenseByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
 				}
 			}
 
@@ -232,8 +252,7 @@ namespace workwear.Domain.Operations
 
 			Employee = item.Document.EmployeeCard;
 			Nomenclature = item.Nomenclature;
-			//FIXME
-			//WearPercent = 1 - item.IncomeOn.LifePercent;
+			WearPercent = 1 - item.LifePercent;
 			Issued = 0;
 			Returned = item.Amount;
 			IssuedOperation = item.IssuedOn.EmployeeIssueOperation;
@@ -252,8 +271,7 @@ namespace workwear.Domain.Operations
 
 			Employee = item.IssuedOn.ExpenseDoc.EmployeeCard;
 			Nomenclature = item.Nomenclature;
-			//FIXME
-			//WearPercent = 1 - item.IncomeOn.LifePercent;
+			WearPercent = IssuedOperation.CalculatePercentWear(OperationTime);
 			Issued = 0;
 			Returned = item.Amount;
 			IssuedOperation = item.IssuedOn.EmployeeIssueOperation;
