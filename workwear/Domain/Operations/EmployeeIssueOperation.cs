@@ -160,7 +160,7 @@ namespace workwear.Domain.Operations
 
 		#region Методы
 
-		public decimal CalculatePercentWear(DateTime atDate)
+		public virtual decimal CalculatePercentWear(DateTime atDate)
 		{
 			if(StartOfUse == null || ExpenseByNorm == null)
 				return 0;
