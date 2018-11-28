@@ -61,5 +61,25 @@ namespace WorkwearTest.Operations.Graph
 			Assert.That(graph.OrderedIntervals.Last().CurrentCount, Is.EqualTo(0), "Количество в последнем интервале должно быть 0, при наличии автосписания.");
 			Assert.That(graph.OrderedIntervals.First().CurrentCount, Is.EqualTo(10), "Количество в первом интервале должно быть 10.");
 		}
+
+		[Test(Description = "Проверяем что механизм создания графа создаст 3 интервала на 2 операции, выдачу, списание части, автосписание остатка.")]
+		public void IssueGraphConstructor_Create3InntervalsTest()
+		{
+			var operation1 = Substitute.For<EmployeeIssueOperation>();
+			operation1.OperationTime.Returns(new DateTime(2018, 1, 1));
+			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 2, 1));
+			operation1.Issued.Returns(10);
+
+			var operation2 = Substitute.For<EmployeeIssueOperation>();
+			operation2.OperationTime.Returns(new DateTime(2018, 1, 15));
+			operation2.Returned.Returns(2);
+
+			var list = new List<EmployeeIssueOperation>() { operation1, operation2 };
+			var graph = new IssueGraph(list);
+
+			Assert.That(graph.Intervals.Count, Is.GreaterThanOrEqualTo(3));
+			Assert.That(graph.Intervals.Last().StartDate, Is.EqualTo(new DateTime(2018, 2, 1)));
+			Assert.That(graph.Intervals[1].StartDate, Is.EqualTo(new DateTime(2018, 1, 15)));
+		}
 	}
 }

@@ -67,7 +67,7 @@ namespace WorkwearTest.Organization
 			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2018, 3, 1)));
 		}
 
-		[Test]
+		[Test(Description = "Тест проверяет коректную установку следующей выдачи в случает когда по норме положено 10, выдали 10, потом списали 2. Следующая выдача должна быть первой датой когда стало меньше нормы, то есть в день списания.")]
 		public void UpdateNextIssue_FirstNotEnoughCase()
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
@@ -76,6 +76,7 @@ namespace WorkwearTest.Organization
 			operation1.Issued.Returns(10);
 
 			var operation2 = Substitute.For<EmployeeIssueOperation>();
+			operation2.IssuedOperation.Returns(operation1);
 			operation2.OperationTime.Returns(new DateTime(2018, 1, 15));
 			operation2.Returned.Returns(2);
 
