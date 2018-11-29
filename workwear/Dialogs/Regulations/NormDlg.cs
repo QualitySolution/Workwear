@@ -4,6 +4,7 @@ using System.Linq;
 using Gamma.ColumnConfig;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
+using QS.Project.Dialogs.GtkUI;
 using QSOrmProject;
 using QSProjectsLib;
 using workwear.Domain.Organization;
@@ -169,7 +170,7 @@ namespace workwear.Dialogs.Regulations
 
 		protected void OnButtonNewProfessionClicked (object sender, EventArgs e)
 		{
-			var prof = OrmSimpleDialog.RunSimpleDialog ((Gtk.Window)this.Toplevel, typeof(Post), null) as Post;
+			var prof = EntityEditSimpleDialog.RunSimpleDialog ((Gtk.Window)this.Toplevel, typeof(Post), null) as Post;
 			if (prof != null)
 				Entity.AddProfession (prof);
 		}
