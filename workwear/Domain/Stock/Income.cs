@@ -6,7 +6,6 @@ using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QSOrmProject;
 using workwear.Domain.Organization;
 
 namespace workwear.Domain.Stock
@@ -140,7 +139,7 @@ namespace workwear.Domain.Stock
 				cost = (cost * (decimal)multiplier);
 			}
 
-			var newItem = new IncomeItem()
+			var newItem = new IncomeItem(this)
 			{
 				Amount = count,
 				Nomenclature = expenseFromItem.Nomenclature,
@@ -164,7 +163,7 @@ namespace workwear.Domain.Stock
 				return;
 			}
 
-			var newItem = new IncomeItem () {
+			var newItem = new IncomeItem (this) {
 				Amount = 1,
 				Nomenclature = nomenclature,
 				Cost = 0,

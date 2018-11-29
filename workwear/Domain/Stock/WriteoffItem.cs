@@ -109,8 +109,11 @@ namespace workwear.Domain.Stock
 
 		#endregion
 
-		public WriteoffItem ()
+		protected WriteoffItem (){}
+
+		public WriteoffItem(Writeoff writeOff)
 		{
+			document = writeOff;
 		}
 
 		#region Методы

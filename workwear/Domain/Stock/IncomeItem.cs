@@ -115,8 +115,13 @@ namespace workwear.Domain.Stock
 
 		#endregion
 
-		public IncomeItem ()
+		protected IncomeItem ()
 		{
+		}
+
+		public IncomeItem(Income income)
+		{
+			document = income;
 		}
 
 		#region Функции

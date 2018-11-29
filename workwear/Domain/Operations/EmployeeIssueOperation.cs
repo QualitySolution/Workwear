@@ -269,12 +269,12 @@ namespace workwear.Domain.Operations
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
+			IssuedOperation = item.IssuedOn.EmployeeIssueOperation;
 			Employee = item.IssuedOn.ExpenseDoc.EmployeeCard;
 			Nomenclature = item.Nomenclature;
 			WearPercent = IssuedOperation.CalculatePercentWear(OperationTime);
 			Issued = 0;
 			Returned = item.Amount;
-			IssuedOperation = item.IssuedOn.EmployeeIssueOperation;
 			IncomeOnStock = null;
 			BuhDocument = item.BuhDocument;
 			NormItem = null;

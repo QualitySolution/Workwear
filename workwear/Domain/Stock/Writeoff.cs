@@ -6,7 +6,6 @@ using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QSOrmProject;
 
 namespace workwear.Domain.Stock
 {
@@ -76,7 +75,7 @@ namespace workwear.Domain.Stock
 				return;
 			}
 
-			var newItem = new WriteoffItem () {
+			var newItem = new WriteoffItem (this) {
 				Amount = count,
 				Nomenclature = expenseFromItem.Nomenclature,
 				IssuedOn = expenseFromItem,
@@ -93,7 +92,7 @@ namespace workwear.Domain.Stock
 				return;
 			}
 
-			var newItem = new WriteoffItem () {
+			var newItem = new WriteoffItem (this) {
 				Amount = count,
 				Nomenclature = incomeFromItem.Nomenclature,
 				IncomeOn = incomeFromItem,
