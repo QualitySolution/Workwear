@@ -198,9 +198,7 @@ namespace workwear.Dialogs.Organization
 
 		private global::Gtk.VBox vbox5;
 
-		private global::Gtk.ScrolledWindow GtkScrolledWindow;
-
-		private global::Gamma.GtkWidgets.yTreeView treeviewMovements;
+		private global::workwear.Dialogs.Organization.EmployeeMovementsView employeemovementsview1;
 
 		private global::Gtk.Label label22;
 
@@ -1025,7 +1023,7 @@ namespace workwear.Dialogs.Organization
 			this.notebook1 = new global::Gtk.Notebook();
 			this.notebook1.CanFocus = true;
 			this.notebook1.Name = "notebook1";
-			this.notebook1.CurrentPage = 1;
+			this.notebook1.CurrentPage = 3;
 			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.vbox6 = new global::Gtk.VBox();
 			this.vbox6.Name = "vbox6";
@@ -1305,23 +1303,18 @@ namespace workwear.Dialogs.Organization
 			this.vbox5.Name = "vbox5";
 			this.vbox5.Spacing = 6;
 			// Container child vbox5.Gtk.Box+BoxChild
-			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
-			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
-			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
-			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
-			this.treeviewMovements = new global::Gamma.GtkWidgets.yTreeView();
-			this.treeviewMovements.CanFocus = true;
-			this.treeviewMovements.Name = "treeviewMovements";
-			this.GtkScrolledWindow.Add(this.treeviewMovements);
-			this.vbox5.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w108 = ((global::Gtk.Box.BoxChild)(this.vbox5[this.GtkScrolledWindow]));
-			w108.Position = 0;
+			this.employeemovementsview1 = new global::workwear.Dialogs.Organization.EmployeeMovementsView();
+			this.employeemovementsview1.Events = ((global::Gdk.EventMask)(256));
+			this.employeemovementsview1.Name = "employeemovementsview1";
+			this.vbox5.Add(this.employeemovementsview1);
+			global::Gtk.Box.BoxChild w107 = ((global::Gtk.Box.BoxChild)(this.vbox5[this.employeemovementsview1]));
+			w107.Position = 0;
 			this.vbox3.Add(this.vbox5);
-			global::Gtk.Box.BoxChild w109 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.vbox5]));
-			w109.Position = 0;
+			global::Gtk.Box.BoxChild w108 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.vbox5]));
+			w108.Position = 0;
 			this.notebook1.Add(this.vbox3);
-			global::Gtk.Notebook.NotebookChild w110 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox3]));
-			w110.Position = 3;
+			global::Gtk.Notebook.NotebookChild w109 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox3]));
+			w109.Position = 3;
 			// Notebook tab
 			this.label22 = new global::Gtk.Label();
 			this.label22.Name = "label22";
@@ -1329,8 +1322,8 @@ namespace workwear.Dialogs.Organization
 			this.notebook1.SetTabLabel(this.vbox3, this.label22);
 			this.label22.ShowAll();
 			this.dialog1_VBox.Add(this.notebook1);
-			global::Gtk.Box.BoxChild w111 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.notebook1]));
-			w111.Position = 2;
+			global::Gtk.Box.BoxChild w110 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.notebook1]));
+			w110.Position = 2;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

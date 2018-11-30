@@ -31,7 +31,6 @@ namespace workwear.Dialogs.Organization
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
 		List<EmployeeCardItems> listedItems;
 		List<EmployeeCardMovements> Movements;
-		bool IsShowedMovementsTable = false;
 		bool IsShowedItemsTable = false;
 		bool IsNomenclaturePickuped = false;
 
@@ -147,17 +146,6 @@ namespace workwear.Dialogs.Organization
 				.Finish();
 			ytreeListedItems.ShowAll();
 
-			treeviewMovements.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardMovements>()
-				.AddColumn("Дата").AddTextRenderer(e => e.Date.ToShortDateString())
-				.AddColumn("Документ").AddTextRenderer(e => e.DocumentName)
-				.AddColumn("Номенклатура").AddTextRenderer(e => e.NomenclatureName)
-				.AddColumn("% годности").AddTextRenderer(e => e.LifeText)
-				.AddColumn("Стоимость").AddTextRenderer(e => e.CostText)
-				.AddColumn("Получено").AddTextRenderer(e => e.AmountReceivedText)
-				.AddColumn("Сдано\\списано").AddTextRenderer(e => e.AmountReturnedText)
-				.Finish();
-			treeviewMovements.ShowAll();
-
 			enumPrint.ItemsEnum = typeof(PersonalCardPrint);
 
 			Entity.PropertyChanged += CheckSizeChanged;
@@ -183,7 +171,6 @@ namespace workwear.Dialogs.Organization
 				labelUser.LabelProp = Entity.CreatedbyUser != null ? Entity.CreatedbyUser.Name : "не указан";
 
 				logger.Info("Ok");
-				UpdateMovements();
 				UpdateListedItems();
 				buttonGiveWear.Sensitive = true;
 				buttonReturnWear.Sensitive = true;
@@ -242,92 +229,6 @@ namespace workwear.Dialogs.Organization
 			//Обновляем подобранную номенклатуру
 			Entity.WorkwearItems.Where(x => x.Item.WearCategory == category)
 				  .ToList().ForEach(x => x.FindMatchedNomenclature(UoW));
-		}
-
-		private void UpdateMovements()
-		{
-			if (!IsShowedMovementsTable)
-				return;
-			QSMain.CheckConnectionAlive();
-			logger.Info("Запрос движений по работнику...");
-			try
-			{
-				string sql = "SELECT movements.*, nomenclature.name as nomenclature_name, measurement_units.name as unit " +
-					"FROM (" +
-					"SELECT stock_expense.date, stock_expense_detail.stock_expense_id, NULL as stock_income_id, NULL as stock_write_off_id, " +
-					"stock_expense_detail.nomenclature_id, stock_expense_detail.quantity, stock_income_detail.life_percent, stock_income_detail.cost " +
-					"FROM stock_expense_detail " +
-					"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id " +
-					"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
-					"WHERE stock_expense.wear_card_id = @id " +
-					"UNION ALL " +
-					"SELECT stock_income.date, NULL as stock_expense_id, stock_income_detail.stock_income_id, NULL as stock_write_off_id, " +
-					"stock_income_detail.nomenclature_id, stock_income_detail.quantity, stock_income_detail.life_percent, stock_income_detail.cost " +
-					"FROM stock_income_detail " +
-					"LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id " +
-					"WHERE stock_income.wear_card_id = @id " +
-					"UNION ALL " +
-					"SELECT stock_write_off.date, NULL as stock_expense_id, NULL as stock_income_id, stock_write_off_detail.stock_write_off_id, " +
-					"stock_write_off_detail.nomenclature_id, stock_write_off_detail.quantity, NULL as life_percent, NULL as cost " +
-					"FROM stock_write_off_detail " +
-					"LEFT JOIN stock_write_off ON stock_write_off.id = stock_write_off_detail.stock_write_off_id " +
-					"LEFT JOIN stock_expense_detail ON stock_write_off_detail.stock_expense_detail_id = stock_expense_detail.id " +
-					"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id " +
-					"WHERE stock_expense.wear_card_id = @id " +
-					") as movements " +
-					"LEFT JOIN nomenclature ON nomenclature.id = movements.nomenclature_id " +
-					"LEFT JOIN item_types ON item_types.id = nomenclature.type_id " +
-					"LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id " +
-					"ORDER BY movements.date, movements.stock_write_off_id, movements.stock_income_id, movements.stock_expense_id";
-				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
-				cmd.Parameters.AddWithValue("@id", Entity.Id);
-
-				Movements = new List<EmployeeCardMovements>();
-
-				using (MySqlDataReader rdr = cmd.ExecuteReader())
-				{
-					while (rdr.Read())
-					{
-						var move = new EmployeeCardMovements
-						{
-							Date = rdr.GetDateTime("date"),
-							NomenclatureName = rdr.GetString("nomenclature_name"),
-							Cost = DBWorks.GetDecimal(rdr, "cost"),
-							Life = DBWorks.GetDecimal(rdr, "life_percent"),
-							UnitsName = DBWorks.GetString(rdr, "unit", String.Empty)
-						};
-
-						if (rdr["stock_expense_id"] != DBNull.Value)
-						{
-							move.MovementType = MovementType.Received;
-							move.AmountReceived = rdr.GetInt32("quantity");
-							move.DocumentId = rdr.GetInt32("stock_expense_id");
-						}
-
-						if (rdr["stock_income_id"] != DBNull.Value)
-						{
-							move.MovementType = MovementType.Returned;
-							move.AmountReturned = rdr.GetInt32("quantity");
-							move.DocumentId = rdr.GetInt32("stock_income_id");
-						}
-
-						if (rdr["stock_write_off_id"] != DBNull.Value)
-						{
-							move.MovementType = MovementType.Writeoff;
-							move.AmountReturned = rdr.GetInt32("quantity");
-							move.DocumentId = rdr.GetInt32("stock_write_off_id");
-						}
-
-						Movements.Add(move);
-					}
-				}
-				treeviewMovements.ItemsDataSource = Movements;
-				logger.Info("Ok");
-			}
-			catch (Exception ex)
-			{
-				QSMain.ErrorMessageWithLog("Ошибка получения движений по работнику!", logger, ex);
-			}
 		}
 
 		private void UpdateListedItems()
@@ -394,7 +295,7 @@ namespace workwear.Dialogs.Organization
 			winExpense.EntitySaved += delegate
 			{
 				RefreshWorkItems();
-				UpdateMovements();
+				employeemovementsview1.UpdateMovements();
 				UpdateListedItems();
 			};
 			OpenTab(winExpense);
@@ -406,7 +307,7 @@ namespace workwear.Dialogs.Organization
 			winIncome.EntitySaved += delegate
 			{
 				RefreshWorkItems();
-				UpdateMovements();
+				employeemovementsview1.UpdateMovements();
 				UpdateListedItems();
 			};
 			OpenTab(winIncome);
@@ -418,7 +319,7 @@ namespace workwear.Dialogs.Organization
 			winWriteOff.EntitySaved += delegate
 			{
 				RefreshWorkItems();
-				UpdateMovements();
+				employeemovementsview1.UpdateMovements();
 				UpdateListedItems();
 			};
 			OpenTab(winWriteOff);
@@ -445,10 +346,9 @@ namespace workwear.Dialogs.Organization
 				ytreeWorkwear.ItemsDataSource = Entity.ObservableWorkwearItems;
 			}
 
-			if (notebook1.CurrentPage == 3 && !IsShowedMovementsTable)
+			if (notebook1.CurrentPage == 3 && !employeemovementsview1.MovementsLoaded)
 			{
-				IsShowedMovementsTable = true;
-				UpdateMovements();
+				employeemovementsview1.LoadMovements();
 			}
 
 			if (notebook1.CurrentPage == 2 && !IsShowedItemsTable)
@@ -665,7 +565,7 @@ namespace workwear.Dialogs.Organization
 			winExpense.EntitySaved += delegate
 			{
 				RefreshWorkItems();
-				UpdateMovements();
+				employeemovementsview1.UpdateMovements();
 				UpdateListedItems();
 			};
 			OpenTab(winExpense);

@@ -256,6 +256,9 @@
     <Compile Include="gtk-gui\workwear.Dialogs.Issuance.EmployeeIssueGraphDlg.cs" />
     <Compile Include="Domain\Operations\Graph\GraphItem.cs" />
     <Compile Include="Domain\Operations\Graph\GraphInterval.cs" />
+    <Compile Include="Dialogs\Organization\EmployeeMovementsView.cs" />
+    <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeMovementsView.cs" />
+    <Compile Include="Repository\Operations\EmployeeIssueRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -369,6 +372,7 @@
     <Folder Include="Domain\Operations\Graph\" />
     <Folder Include="Repository\Stock\" />
     <Folder Include="Dialogs\Issuance\" />
+    <Folder Include="Repository\Operations\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

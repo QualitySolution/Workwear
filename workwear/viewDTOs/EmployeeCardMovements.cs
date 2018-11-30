@@ -1,20 +1,24 @@
 ﻿using System;
 using QSProjectsLib;
+using workwear.Domain.Operations;
+using workwear.Repository.Operations;
 
 namespace workwear.DTO
 {
 	public class EmployeeCardMovements
 	{
-		public DateTime Date { get; set;}
-		public MovementType MovementType { get; set;}
-		public int DocumentId { get; set;}
-		public string NomenclatureName { get; set;}
-		public string UnitsName { get; set;}
-		public decimal? Life { get; set;}
-		public decimal? Cost { get; set;}
+		public EmployeeIssueOperation Operation { get; set; }
+		public ReferencedDocument ReferencedDocument { get; set; }
 
-		public int AmountReceived { get; set;}
-		public int AmountReturned { get; set;}
+		public DateTime Date => Operation.OperationTime;
+		public int DocumentId => ReferencedDocument.DocId;
+		public string NomenclatureName => Operation.Nomenclature.Name;
+		public string UnitsName => Operation.Nomenclature.Type.Units.Name;
+		public decimal? WearPercet => Operation.WearPercent;
+		public decimal? Cost => Operation.IncomeOnStock?.Cost;
+
+		public int AmountReceived => Operation.Issued;
+		public int AmountReturned => Operation.Returned;
 
 		public string AmountReceivedText {get{ 
 				return AmountReceived > 0 ? String.Format ("{0} {1}", AmountReceived, UnitsName) : String.Empty;
@@ -29,20 +33,20 @@ namespace workwear.DTO
 			}}
 
 		public string DocumentName {get{ 
-				switch (MovementType) {
-				case MovementType.Received:
+				switch (ReferencedDocument?.DocType) {
+				case EmployeeIssueOpReferenceDoc.ReceivedFromStock:
 					return String.Format ("Выдача №{0}", DocumentId);
-				case MovementType.Returned:
+				case EmployeeIssueOpReferenceDoc.RetutnedToStock:
 					return String.Format ("Возврат №{0}", DocumentId);
-				case MovementType.Writeoff:
+				case EmployeeIssueOpReferenceDoc.WriteOff:
 					return String.Format ("Списание №{0}", DocumentId);
 				default:
 					return String.Empty;
 				}
 			}}
 
-		public string LifeText {get { 
-				return Life.HasValue ? Life.Value.ToString ("P0") : String.Empty;
+		public string WearPercentText {get { 
+				return WearPercet.HasValue ? WearPercet.Value.ToString ("P0") : String.Empty;
 			}}
 
 		public EmployeeCardMovements ()
