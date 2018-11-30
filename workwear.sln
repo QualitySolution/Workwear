@@ -364,6 +364,7 @@ Global
 		$4.FileWidth = 80
 		$4.NoTabsAfterNonTabs = True
 		$4.scope = text/plain
+		$4.EolMarker = Unix
 		$0.TextStylePolicy = $5
 		$5.inheritsSet = null
 		$5.scope = text/x-sql
