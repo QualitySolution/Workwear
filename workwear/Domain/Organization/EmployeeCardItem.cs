@@ -233,7 +233,7 @@ namespace workwear.Domain.Organization
 				var lastInterval = listReverse.First();
 				if(lastInterval.CurrentCount >= ActiveNormItem.Amount)
 				{//Нет автосписания, следующая выдача чисто информативно проставляется по сроку носки
-					wantIssue = lastInterval.ActiveItems.Where(x => x.IssueOperation.ExpenseByNorm != null).Max(x => x.IssueOperation.ExpenseByNorm.Value);
+					wantIssue = lastInterval.ActiveItems.Where(x => x.IssueOperation.ExpiryByNorm != null).Max(x => x.IssueOperation.ExpiryByNorm.Value);
 				}
 				else
 				{

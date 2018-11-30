@@ -43,7 +43,7 @@ namespace WorkwearTest.Operations
 
 			issue.RecalculateDatesOfIssueOperation(graph, s => true);
 
-			Assert.That(issue.ExpenseByNorm, Is.EqualTo(new DateTime(2018, 3, 1)));
+			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2018, 3, 1)));
 		}
 
 		[Test(Description = "Проверяем пропорциональное увеличение периода использовния.")]
@@ -73,7 +73,7 @@ namespace WorkwearTest.Operations
 
 			issue.RecalculateDatesOfIssueOperation(graph, s => true);
 
-			Assert.That(issue.ExpenseByNorm, Is.EqualTo(new DateTime(2018, 4, 25)));
+			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2018, 4, 25)));
 		}
 
 		[Test(Description = "5 дней из 10-и это 50 процентов.")]
@@ -81,7 +81,7 @@ namespace WorkwearTest.Operations
 		{
 			var issue = new EmployeeIssueOperation();
 			issue.StartOfUse = new DateTime(2018, 1, 31);
-			issue.ExpenseByNorm = new DateTime(2018, 2, 10);
+			issue.ExpiryByNorm = new DateTime(2018, 2, 10);
 
 			var atDate = new DateTime(2018, 2, 5);
 			var result = issue.CalculatePercentWear(atDate);
@@ -94,7 +94,7 @@ namespace WorkwearTest.Operations
 			var issue = new EmployeeIssueOperation();
 			issue.WearPercent = 0.45m;
 			issue.StartOfUse = new DateTime(2018, 1, 1);
-			issue.ExpenseByNorm = new DateTime(2018, 1, 11);
+			issue.ExpiryByNorm = new DateTime(2018, 1, 11);
 
 			var atDate = new DateTime(2018, 1, 2);
 			var result = issue.CalculatePercentWear(atDate);

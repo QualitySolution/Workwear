@@ -6,10 +6,11 @@ using Gamma.GtkWidgets;
 using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
+using QS.Utilities.Numeric;
 using QSBusinessCommon.Domain;
-using QSOrmProject;
 using QSOrmProject.RepresentationModel;
 using QSProjectsLib;
+using workwear.Domain.Operations;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -52,39 +53,38 @@ namespace workwear.ViewModel
 
 			EmployeeBalanceVMNode resultAlias = null;
 
-			Expense expenseAlias = null;
-			ExpenseItem expenseItemAlias = null;
+			EmployeeIssueOperation expenseOperationAlias = null;
 			Nomenclature nomenclatureAlias = null;
 			ItemsType itemtypesAlias = null;
 			MeasurementUnits unitsAlias = null;
-			IncomeItem incomeItemOnRemoveAlias = null;
+			EmployeeIssueOperation removeOperationAlias = null;
 			IncomeItem incomeItemOnIncomeAlias = null;
 
-			var expense = UoW.Session.QueryOver<Expense> (() => expenseAlias)
-				.Where (e => e.EmployeeCard == Employee)
-				.JoinQueryOver (e => e.Items, () => expenseItemAlias);
+			var query = UoW.Session.QueryOver<EmployeeIssueOperation>(() => expenseOperationAlias)
+				.Where(e => e.Employee == Employee);
 
-			var subqueryRemove = QueryOver.Of<IncomeItem>(() => incomeItemOnRemoveAlias)
-				.Where(() => incomeItemOnRemoveAlias.IssuedOn.Id == expenseItemAlias.Id)
-				.Select (Projections.Sum<IncomeItem> (o => o.Amount));
+			var subqueryRemove = QueryOver.Of<EmployeeIssueOperation>(() => removeOperationAlias)
+				.Where(() => removeOperationAlias.IssuedOperation.Id == expenseOperationAlias.Id)
+				.Select (Projections.Sum<EmployeeIssueOperation> (o => o.Returned));
 
-			var expenseList = expense
-				.JoinAlias (() => expenseItemAlias.Nomenclature, () => nomenclatureAlias)
+			var expenseList = query
+				.JoinAlias (() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias)
 				.JoinAlias (() => nomenclatureAlias.Type, () => itemtypesAlias)
 				.JoinAlias (() => itemtypesAlias.Units, () => unitsAlias)
-				.JoinAlias (() => expenseItemAlias.IncomeOn, () => incomeItemOnIncomeAlias)
+				.JoinAlias (() => expenseOperationAlias.IncomeOnStock, () => incomeItemOnIncomeAlias)
 				.Where (e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > DateTime.Today)
 				.SelectList (list => list
-					.SelectGroup (() => expenseItemAlias.Id).WithAlias (() => resultAlias.Id)
+					.SelectGroup (() => expenseOperationAlias.Id).WithAlias (() => resultAlias.Id)
 					.Select (() => nomenclatureAlias.Name).WithAlias (() => resultAlias.NomenclatureName)
 					.Select (() => unitsAlias.Name).WithAlias (() => resultAlias.UnitsName)
 					.Select (() => nomenclatureAlias.Size).WithAlias (() => resultAlias.Size)
 					.Select (() => nomenclatureAlias.WearGrowth).WithAlias (() => resultAlias.Growth)
 					.Select (() => incomeItemOnIncomeAlias.Cost).WithAlias (() => resultAlias.AvgCost)
-					.Select (() => incomeItemOnIncomeAlias.LifePercent).WithAlias (() => resultAlias.AvgLife)
-					.Select (() => expenseItemAlias.Amount).WithAlias (() => resultAlias.Added)
-					.Select (() => expenseAlias.Date).WithAlias (() => resultAlias.IssuedDate)
-					.Select (() => expenseItemAlias.AutoWriteoffDate).WithAlias (() => resultAlias.ExpiryDate)
+					.Select (() => expenseOperationAlias.WearPercent).WithAlias (() => resultAlias.WearPercent)
+					.Select (() => expenseOperationAlias.Issued).WithAlias (() => resultAlias.Added)
+					.Select (() => expenseOperationAlias.OperationTime).WithAlias (() => resultAlias.IssuedDate)
+					.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
+					.Select (() => expenseOperationAlias.ExpiryByNorm).WithAlias (() => resultAlias.ExpiryDate)
 					.SelectSubQuery (subqueryRemove).WithAlias (() => resultAlias.Removed)
 				)
 				.TransformUsing (Transformers.AliasToBean<EmployeeBalanceVMNode> ())
@@ -99,7 +99,7 @@ namespace workwear.ViewModel
 			.AddColumn ("Рост").AddTextRenderer (e => e.Growth)
 			.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
 			.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
-			.AddColumn ("Срок службы").AddProgressRenderer (e => (int)(100 - (e.Percentage * 100)))
+			.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
 			.AddSetter ((w, e) => w.Text = e.ExpiryDate.HasValue ? String.Format("до {0:d}", e.ExpiryDate.Value) : string.Empty)
 			.Finish ();
 
@@ -144,32 +144,20 @@ namespace workwear.ViewModel
 		public string Size { get; set;}
 		public string Growth { get; set;}
 		public decimal AvgCost { get; set;}
-		public decimal AvgLife { get; set;}
+		public decimal WearPercent { get; set;}
 
 		public DateTime IssuedDate { get; set;}
+		public DateTime? StartUseDate { get; set; }
 		public DateTime? ExpiryDate { get; set;}
 
-		public double Percentage {
-			get{
-				if (ExpiryDate == null)
-					return 0;
-				return (ExpiryDate.Value - DateTime.Today).TotalDays / (ExpiryDate.Value - IssuedDate).TotalDays;
-			}
-		}
+		public decimal Percentage => EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent);
 
 		public int Added { get; set;}
 		public int Removed { get; set;}
 
-		public string BalanceText {get{ return String.Format ("{0} {1}", Added - Removed, UnitsName);
-			}}
+		public string BalanceText => String.Format ("{0} {1}", Added - Removed, UnitsName);
 
-		public string AvgCostText {get { 
-				return AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString (AvgCost) : String.Empty;
-			}}
-
-		public string AvgLifeText {get { 
-				return AvgLife.ToString ("P");
-			}}
+		public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString (AvgCost) : String.Empty;
 	}
 }
 

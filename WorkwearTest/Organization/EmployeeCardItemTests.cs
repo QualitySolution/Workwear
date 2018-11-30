@@ -45,7 +45,7 @@ namespace WorkwearTest.Organization
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
 			operation1.OperationTime.Returns(new DateTime(2018, 1, 1));
-			operation1.ExpenseByNorm.Returns(new DateTime(2018, 3, 1));
+			operation1.ExpiryByNorm.Returns(new DateTime(2018, 3, 1));
 			operation1.Issued.Returns(10);
 
 			var list = new List<EmployeeIssueOperation>() { operation1 };

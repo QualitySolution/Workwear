@@ -83,7 +83,7 @@ namespace workwear.Domain.Operations
 			set { 
 				if(SetField(ref useAutoWriteoff, value)) {
 					if(value)
-						AutoWriteoffDate = ExpenseByNorm;
+						AutoWriteoffDate = ExpiryByNorm;
 					else
 						AutoWriteoffDate = null;
 				}
@@ -98,13 +98,13 @@ namespace workwear.Domain.Operations
 			set { SetField(ref startOfUse, value); }
 		}
 
-		private DateTime? expenseByNorm;
+		private DateTime? expiryByNorm;
 
 		[Display(Name = "Износ по норме")]
-		public virtual DateTime? ExpenseByNorm
+		public virtual DateTime? ExpiryByNorm
 		{
-			get { return expenseByNorm; }
-			set { SetField(ref expenseByNorm, value); }
+			get { return expiryByNorm; }
+			set { SetField(ref expiryByNorm, value); }
 		}
 
 		private DateTime? autoWriteoffDate;
@@ -169,10 +169,15 @@ namespace workwear.Domain.Operations
 
 		public virtual decimal CalculatePercentWear(DateTime atDate)
 		{
-			if(StartOfUse == null || ExpenseByNorm == null)
+			return CalculatePercentWear(atDate, StartOfUse, ExpiryByNorm, WearPercent);
+		}
+
+		public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent)
+		{
+			if(startOfUse == null || expiryByNorm == null)
 				return 0;
 
-			return WearPercent + (decimal)((atDate - StartOfUse.Value).TotalDays / (ExpenseByNorm.Value - StartOfUse.Value).TotalDays);
+			return beginWearPercent + (decimal)((atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays);
 		}
 
 		#endregion
@@ -225,7 +230,7 @@ namespace workwear.Domain.Operations
 					var lastInterval = graph.Intervals
 											.OrderBy(x => x.StartDate)
 											.LastOrDefault();
-					moveTo = lastInterval.ActiveItems.Where(x => x.IssueOperation.ExpenseByNorm.HasValue).Max(x => x.IssueOperation.ExpenseByNorm.Value);
+					moveTo = lastInterval.ActiveItems.Where(x => x.IssueOperation.ExpiryByNorm.HasValue).Max(x => x.IssueOperation.ExpiryByNorm.Value);
 				}
 				else
 					moveTo = firstLessNorm.StartDate;
@@ -235,18 +240,18 @@ namespace workwear.Domain.Operations
 				}
 			}
 
-			ExpenseByNorm = NormItem.CalculateExpireDate(StartOfUse.Value);
+			ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value);
 
 			if (Issued > amountByNorm)
 			{
 				if(askUser($"За раз выдается {Issued} x {Nomenclature.Type.Name} это больше чем положено по норме {amountByNorm}. Увеличить период эксплуатации выданного пропорционально количеству?"))
 				{
-					ExpenseByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
+					ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
 				}
 			}
 
 			if (UseAutoWriteoff)
-				AutoWriteoffDate = ExpenseByNorm;
+				AutoWriteoffDate = ExpiryByNorm;
 			else
 				AutoWriteoffDate = null;
 		}
@@ -266,7 +271,7 @@ namespace workwear.Domain.Operations
 			IncomeOnStock = null;
 			BuhDocument = item.BuhDocument;
 			NormItem = null;
-			ExpenseByNorm = null;
+			ExpiryByNorm = null;
 			AutoWriteoffDate = null;
 		}
 
@@ -285,7 +290,7 @@ namespace workwear.Domain.Operations
 			IncomeOnStock = null;
 			BuhDocument = item.BuhDocument;
 			NormItem = null;
-			ExpenseByNorm = null;
+			ExpiryByNorm = null;
 			AutoWriteoffDate = null;
 		}
 
