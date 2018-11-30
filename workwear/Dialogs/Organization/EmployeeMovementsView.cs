@@ -22,10 +22,12 @@ namespace workwear.Dialogs.Organization
 				.AddColumn("Стоимость").AddTextRenderer(e => e.CostText)
 				.AddColumn("Получено").AddTextRenderer(e => e.AmountReceivedText)
 				.AddColumn("Сдано\\списано").AddTextRenderer(e => e.AmountReturnedText)
+				.AddColumn("Автосписание").AddToggleRenderer(e => e.UseAutoWriteOff, false).Editing()
+					.AddSetter( (c, e) => c.Visible = e.ReferencedDocument?.DocType == EmployeeIssueOpReferenceDoc.ReceivedFromStock)
+					.AddTextRenderer(e => e.AutoWriteOffDateTextColored, useMarkup: true)
+				.AddColumn("")
 				.Finish();
 		}
-
-		//public IUnitOfWork UoW { get; set; }
 
 		public bool MovementsLoaded { get; private set; }
 
@@ -42,9 +44,7 @@ namespace workwear.Dialogs.Organization
 
 			var displayList = new List<EmployeeCardMovements>();
 
-			var list = EmployeeIssueRepository.AllOperationsForEmployee(UoW, RootEntity, query => query.Fetch(x => x.Nomenclature)
-			//	.Fetch(x => x.Nomenclature.Type).Eager;
-			);
+			var list = EmployeeIssueRepository.AllOperationsForEmployee(UoW, RootEntity, query => query.Fetch(x => x.Nomenclature));
 			var docs = EmployeeIssueRepository.GetReferencedDocuments(UoW, list.Select(x => x.Id).ToArray());
 			foreach(var operation in list) {
 				var item = new EmployeeCardMovements();

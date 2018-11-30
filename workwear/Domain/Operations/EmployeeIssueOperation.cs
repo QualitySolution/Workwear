@@ -80,7 +80,14 @@ namespace workwear.Domain.Operations
 		public virtual bool UseAutoWriteoff
 		{
 			get { return useAutoWriteoff; }
-			set { SetField(ref useAutoWriteoff, value); }
+			set { 
+				if(SetField(ref useAutoWriteoff, value)) {
+					if(value)
+						AutoWriteoffDate = ExpenseByNorm;
+					else
+						AutoWriteoffDate = null;
+				}
+			}
 		}
 
 		private DateTime? startOfUse;

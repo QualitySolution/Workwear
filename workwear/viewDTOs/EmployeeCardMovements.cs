@@ -1,11 +1,12 @@
 ﻿using System;
+using QS.DomainModel.Entity;
 using QSProjectsLib;
 using workwear.Domain.Operations;
 using workwear.Repository.Operations;
 
 namespace workwear.DTO
 {
-	public class EmployeeCardMovements
+	public class EmployeeCardMovements : PropertyChangedBase
 	{
 		public EmployeeIssueOperation Operation { get; set; }
 		public ReferencedDocument ReferencedDocument { get; set; }
@@ -49,16 +50,35 @@ namespace workwear.DTO
 				return WearPercet.HasValue ? WearPercet.Value.ToString ("P0") : String.Empty;
 			}}
 
+		[PropertyChangedAlso(nameof(AutoWriteOffDateTextColored))]
+		public bool UseAutoWriteOff {
+			get {
+				return Operation.UseAutoWriteoff;
+			}
+			set {
+				Operation.UseAutoWriteoff = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public string AutoWriteOffDateTextColored {
+			get {
+				if(Operation.AutoWriteoffDate == null)
+					return null;
+				string color;
+				if(Operation.AutoWriteoffDate.Value.Date == DateTime.Today)
+					color = "blue";
+				else if(Operation.AutoWriteoffDate.Value.Date < DateTime.Today)
+					color = "green";
+				else
+					color = "purple";
+				return String.Format("<span foreground=\"{1}\">{0}</span>", Operation.AutoWriteoffDate?.ToShortDateString(), color);
+			}
+		}
+
 		public EmployeeCardMovements ()
 		{
 		}
 	}
-
-	public enum MovementType
-	{
-		Received,
-		Returned,
-		Writeoff
-	};
 }
 
