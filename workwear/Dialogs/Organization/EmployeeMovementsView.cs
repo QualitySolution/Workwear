@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data.Bindings.Utilities;
 using System.Linq;
 using QS.Dialog.Gtk;
 using workwear.Domain.Organization;
@@ -50,9 +51,18 @@ namespace workwear.Dialogs.Organization
 				var item = new EmployeeCardMovements();
 				item.Operation = operation;
 				item.ReferencedDocument = docs.FirstOrDefault(x => x.OpId == operation.Id);
+				item.PropertyChanged += Item_PropertyChanged;
 				displayList.Add(item);
 			}
 			ytreeviewMovements.ItemsDataSource = displayList;
+		}
+
+		void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == PropertyUtil.GetName<EmployeeCardMovements>(x => x.UseAutoWriteOff)) {
+				var item = sender as EmployeeCardMovements;
+				UoW.Save(item.Operation);
+			}
 		}
 	}
 }
