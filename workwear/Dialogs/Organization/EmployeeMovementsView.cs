@@ -17,6 +17,7 @@ namespace workwear.Dialogs.Organization
 
 			ytreeviewMovements.CreateFluentColumnsConfig<EmployeeCardMovements>()
 				.AddColumn("Дата").AddTextRenderer(e => e.Date.ToShortDateString())
+				//Заголовок колонки используется в методе YtreeviewMovements_RowActivated
 				.AddColumn("Документ").AddTextRenderer(e => e.DocumentName)
 				.AddColumn("Номенклатура").AddTextRenderer(e => e.NomenclatureName)
 				.AddColumn("% износа").AddTextRenderer(e => e.WearPercentText)
@@ -24,10 +25,11 @@ namespace workwear.Dialogs.Organization
 				.AddColumn("Получено").AddTextRenderer(e => e.AmountReceivedText)
 				.AddColumn("Сдано\\списано").AddTextRenderer(e => e.AmountReturnedText)
 				.AddColumn("Автосписание").AddToggleRenderer(e => e.UseAutoWriteOff, false).Editing()
-					.AddSetter( (c, e) => c.Visible = e.ReferencedDocument?.DocType == EmployeeIssueOpReferenceDoc.ReceivedFromStock)
+					.AddSetter((c, e) => c.Visible = e.ReferencedDocument?.DocType == EmployeeIssueOpReferenceDoc.ReceivedFromStock)
 					.AddTextRenderer(e => e.AutoWriteOffDateTextColored, useMarkup: true)
 				.AddColumn("")
 				.Finish();
+			ytreeviewMovements.RowActivated += YtreeviewMovements_RowActivated;
 		}
 
 		public bool MovementsLoaded { get; private set; }
@@ -62,6 +64,27 @@ namespace workwear.Dialogs.Organization
 			if(e.PropertyName == PropertyUtil.GetName<EmployeeCardMovements>(x => x.UseAutoWriteOff)) {
 				var item = sender as EmployeeCardMovements;
 				UoW.Save(item.Operation);
+			}
+		}
+
+		void YtreeviewMovements_RowActivated(object o, Gtk.RowActivatedArgs args)
+		{
+			if(args.Column.Title == "Документ") {
+				var item = ytreeviewMovements.GetSelectedObject<EmployeeCardMovements>();
+				if(item.ReferencedDocument == null)
+					return;
+
+				switch(item.ReferencedDocument.DocType) {
+					case EmployeeIssueOpReferenceDoc.ReceivedFromStock:
+						OpenTab<ExpenseDocDlg, int>(item.ReferencedDocument.DocId);
+						break;
+					case EmployeeIssueOpReferenceDoc.RetutnedToStock:
+						OpenTab<IncomeDocDlg, int>(item.ReferencedDocument.DocId);
+						break;
+					case EmployeeIssueOpReferenceDoc.WriteOff:
+						OpenTab<WriteOffDocDlg, int>(item.ReferencedDocument.DocId);
+						break;
+				}
 			}
 		}
 	}
