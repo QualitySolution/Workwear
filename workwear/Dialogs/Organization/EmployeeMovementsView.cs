@@ -24,8 +24,9 @@ namespace workwear.Dialogs.Organization
 				.AddColumn("Стоимость").AddTextRenderer(e => e.CostText)
 				.AddColumn("Получено").AddTextRenderer(e => e.AmountReceivedText)
 				.AddColumn("Сдано\\списано").AddTextRenderer(e => e.AmountReturnedText)
-				.AddColumn("Автосписание").AddToggleRenderer(e => e.UseAutoWriteOff, false).Editing()
+				.AddColumn("Автосписание").AddToggleRenderer(e => e.UseAutoWriteOff, false)
 					.AddSetter((c, e) => c.Visible = e.ReferencedDocument?.DocType == EmployeeIssueOpReferenceDoc.ReceivedFromStock)
+					.AddSetter((c, e) => c.Activatable = e.Operation.ExpiryByNorm.HasValue)
 					.AddTextRenderer(e => e.AutoWriteOffDateTextColored, useMarkup: true)
 				.AddColumn("")
 				.Finish();
