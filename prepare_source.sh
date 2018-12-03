@@ -26,7 +26,7 @@ cd ../Gtk.DataBindings
 git pull --autostash
 cd ../GammaBinding
 git pull --autostash
-cd ../GMap.NET
+cd ../My-FyiReporting
 git pull --autostash
 cd ../workwear
 ;;&
