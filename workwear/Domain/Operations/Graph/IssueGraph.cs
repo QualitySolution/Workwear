@@ -91,8 +91,13 @@ namespace workwear.Domain.Operations.Graph
 
 		#region Статические
 
+		internal static Func<EmployeeCard,ItemsType, IssueGraph> MakeIssueGraphTestGap;
+
 		public static IssueGraph MakeIssueGraph(IUnitOfWork uow, EmployeeCard employee, ItemsType itemsType)
 		{
+			if(MakeIssueGraphTestGap != null)
+				return MakeIssueGraphTestGap(employee, itemsType);
+
 			var nomenclatures = NomenclatureRepository.GetNomenclaturesOfType(uow, itemsType);
 
 			var issues = uow.Session.QueryOver<EmployeeIssueOperation>()

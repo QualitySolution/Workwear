@@ -21,7 +21,7 @@ namespace workwear.Domain.Operations.Graph
 
 		public int AmountAtBeginOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
 		{
-			if (IssueOperation == excludeOperation)
+			if (IssueOperation == excludeOperation || (IssueOperation.Id > 0 && IssueOperation.Id == excludeOperation?.Id ))
 				return 0;
 
 			if (IssueOperation.OperationTime > date)
@@ -30,12 +30,13 @@ namespace workwear.Domain.Operations.Graph
 			if (IssueOperation.AutoWriteoffDate.HasValue && IssueOperation.AutoWriteoffDate.Value.Date < date.Date)
 				return 0;
 
-			return IssueOperation.Issued - WriteOffOperations.Where(x => x != excludeOperation).Where(x => x.OperationTime.Date < date.Date).Sum(x => x.Returned);
+			return IssueOperation.Issued - WriteOffOperations.Where(x => !(x == excludeOperation || (x.Id > 0 && x.Id == excludeOperation?.Id)))
+				.Where(x => x.OperationTime.Date < date.Date).Sum(x => x.Returned);
 		}
 
 		public int AmountAtEndOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
 		{
-			if (IssueOperation == excludeOperation)
+			if (IssueOperation == excludeOperation || (IssueOperation.Id > 0 && IssueOperation.Id == excludeOperation?.Id))
 				return 0;
 
 			if (IssueOperation.OperationTime > date)
@@ -44,7 +45,8 @@ namespace workwear.Domain.Operations.Graph
 			if (IssueOperation.AutoWriteoffDate.HasValue && IssueOperation.AutoWriteoffDate.Value.Date <= date.Date)
 				return 0;
 
-			return IssueOperation.Issued - WriteOffOperations.Where(x => x != excludeOperation).Where(x => x.OperationTime.Date <= date.Date).Sum(x => x.Returned);
+			return IssueOperation.Issued - WriteOffOperations.Where(x => !(x == excludeOperation || (x.Id > 0 && x.Id == excludeOperation?.Id)))
+				.Where(x => x.OperationTime.Date <= date.Date).Sum(x => x.Returned);
 		}
 
 		public int IssuedAtDate(DateTime date)
