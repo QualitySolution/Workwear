@@ -5,6 +5,7 @@ using Gtk;
 using NLog;
 using QS.Dialog.Gtk;
 using QSOrmProject;
+using workwear.Domain.Operations;
 using workwear.Domain.Stock;
 
 namespace workwear
@@ -129,7 +130,7 @@ namespace workwear
 		{
 			foreach(var node in e.GetNodes<ViewModel.EmployeeBalanceVMNode> ())
 			{
-				IncomeDoc.AddItem (MyOrmDialog.UoW.GetById<ExpenseItem> (node.Id), node.Added - node.Removed);
+				IncomeDoc.AddItem (UoW, MyOrmDialog.UoW.GetById<EmployeeIssueOperation> (node.Id), node.Added - node.Removed);
 			}
 			CalculateTotal();
 		}

@@ -21,6 +21,13 @@ namespace workwear.Repository.Operations
 			return query.OrderBy(x => x.OperationTime).Asc.List();
 		}
 
+		public static ExpenseItem GetExpenseItemForOperation(IUnitOfWork uow, EmployeeIssueOperation operation)
+		{
+			return uow.Session.QueryOver<ExpenseItem>()
+				.Where(x => x.EmployeeIssueOperation.Id == operation.Id)
+				.SingleOrDefault();
+		}
+
 		public static IList<ReferencedDocument> GetReferencedDocuments(IUnitOfWork uow, int[] operationsIds)
 		{
 			ReferencedDocument docAlias = null;

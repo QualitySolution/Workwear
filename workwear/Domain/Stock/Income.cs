@@ -6,7 +6,9 @@ using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using workwear.Domain.Operations;
 using workwear.Domain.Organization;
+using workwear.Repository.Operations;
 
 namespace workwear.Domain.Stock
 {
@@ -125,6 +127,9 @@ namespace workwear.Domain.Stock
 
 		public virtual void AddItem(ExpenseItem expenseFromItem, int count)
 		{
+			if(expenseFromItem.ExpenseDoc.Operation == ExpenseOperations.Employee)
+				throw new InvalidOperationException("Этот метод нельзя использовать для выдачи сотрудникам. Используйте метод с операцией EmployeeIssueOperation.");
+
 			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IssuedOn, expenseFromItem)))
 			{
 				logger.Warn ("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
@@ -150,6 +155,37 @@ namespace workwear.Domain.Stock
 			};
 
 			ObservableItems.Add (newItem);
+		}
+
+		public virtual void AddItem(IUnitOfWork uow, EmployeeIssueOperation operation, int count)
+		{
+			if(operation.Issued == 0)
+				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
+
+			ExpenseItem expenseFromItem = EmployeeIssueRepository.GetExpenseItemForOperation(uow, operation);
+
+			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedOn, expenseFromItem))) {
+				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
+				return;
+			}
+			decimal life = 1 - operation.WearPercent;
+			decimal cost = operation.IncomeOnStock.Cost;
+			if(operation.ExpiryByNorm.HasValue) {
+				decimal wearPercent = operation.CalculatePercentWear(DateTime.Today);
+				life = 1 - wearPercent;
+				cost = Math.Max(cost - cost * wearPercent, 0);
+			}
+
+			var newItem = new IncomeItem(this) {
+				Amount = count,
+				Nomenclature = operation.Nomenclature,
+				IssuedOn = expenseFromItem,
+				Cost = cost,
+				LifePercent = life,
+				Certificate = expenseFromItem.IncomeOn?.Certificate
+			};
+
+			ObservableItems.Add(newItem);
 		}
 
 		public virtual void AddItem(Nomenclature nomenclature)
