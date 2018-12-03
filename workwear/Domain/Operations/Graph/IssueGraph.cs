@@ -15,7 +15,7 @@ namespace workwear.Domain.Operations.Graph
 
 		public List<GraphInterval> Intervals = new List<GraphInterval>();
 
-		internal IssueGraph()
+		public IssueGraph()
 		{
 
 		}

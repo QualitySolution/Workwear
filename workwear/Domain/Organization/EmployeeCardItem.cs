@@ -248,7 +248,7 @@ namespace workwear.Domain.Organization
 				}
 			}
 
-			if(wantIssue < Created.Date)
+			if(wantIssue == default(DateTime))
 			{
 				wantIssue = Created.Date;
 			}
