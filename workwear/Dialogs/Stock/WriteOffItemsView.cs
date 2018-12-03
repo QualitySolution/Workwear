@@ -50,7 +50,7 @@ namespace workwear
 				.AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
 				.AddColumn ("Размер").AddTextRenderer (e => e.Nomenclature.Size)
 				.AddColumn ("Рост").AddTextRenderer (e => e.Nomenclature.WearGrowth)
-				.AddColumn ("% годности").AddTextRenderer (e => e.IncomeOn != null ? e.IncomeOn.LifePercent.ToString ("P0") : String.Empty)
+				.AddColumn ("% износа").AddTextRenderer (e => e.WearPercent != null ? e.WearPercent.Value.ToString("P2") : null)
 				.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
 				.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)

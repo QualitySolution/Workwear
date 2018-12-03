@@ -93,6 +93,18 @@ namespace workwear.Domain.Stock
 			);}
 		}
 
+		public virtual decimal? WearPercent {
+			get {
+				if(IncomeOn != null)
+					return 1 - IncomeOn.LifePercent;
+				else if(IssuedOn?.EmployeeIssueOperation != null)
+					return IssuedOn.EmployeeIssueOperation.CalculatePercentWear(document.Date);
+				else
+					return null; //FIXME Наверно нужно реализовать отображение процента для объектов тоже.
+
+			}
+		}
+
 		#endregion
 
 		#region Не сохраняемые в базу свойства
