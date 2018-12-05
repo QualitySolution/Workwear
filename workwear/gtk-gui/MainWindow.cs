@@ -5,7 +5,7 @@ public partial class MainWindow
 {
 	private global::Gtk.UIManager UIManager;
 
-	private global::Gtk.Action Action;
+	private global::Gtk.Action ActionBase;
 
 	private global::Gtk.Action Action1;
 
@@ -133,9 +133,9 @@ public partial class MainWindow
 		// Widget MainWindow
 		this.UIManager = new global::Gtk.UIManager();
 		global::Gtk.ActionGroup w1 = new global::Gtk.ActionGroup("Default");
-		this.Action = new global::Gtk.Action("Action", global::Mono.Unix.Catalog.GetString("Файл"), null, null);
-		this.Action.ShortLabel = global::Mono.Unix.Catalog.GetString("Файл");
-		w1.Add(this.Action, null);
+		this.ActionBase = new global::Gtk.Action("ActionBase", global::Mono.Unix.Catalog.GetString("База"), null, null);
+		this.ActionBase.ShortLabel = global::Mono.Unix.Catalog.GetString("База");
+		w1.Add(this.ActionBase, null);
 		this.Action1 = new global::Gtk.Action("Action1", global::Mono.Unix.Catalog.GetString("Справочники"), null, null);
 		this.Action1.ShortLabel = global::Mono.Unix.Catalog.GetString("Справочники");
 		w1.Add(this.Action1, null);
@@ -254,7 +254,7 @@ public partial class MainWindow
 		this.ActionToolBarIconOnly.ShortLabel = global::Mono.Unix.Catalog.GetString("Только иконки");
 		w1.Add(this.ActionToolBarIconOnly, null);
 		this.ActionToolBarTextAndIcon = new global::Gtk.RadioAction("ActionToolBarTextAndIcon", global::Mono.Unix.Catalog.GetString("Иконки и текст"), null, null, 0);
-		this.ActionToolBarTextAndIcon.Group = this.ActionToolBarIconOnly.Group;
+		this.ActionToolBarTextAndIcon.Group = this.ActionToolBarTextOnly.Group;
 		this.ActionToolBarTextAndIcon.ShortLabel = global::Mono.Unix.Catalog.GetString("Иконки и текст");
 		w1.Add(this.ActionToolBarTextAndIcon, null);
 		this.ActionIconsExtraSmall = new global::Gtk.RadioAction("ActionIconsExtraSmall", global::Mono.Unix.Catalog.GetString("Очень маленькие иконки"), null, null, 0);
@@ -270,7 +270,7 @@ public partial class MainWindow
 		this.ActionIconsMiddle.ShortLabel = global::Mono.Unix.Catalog.GetString("Средние иконки");
 		w1.Add(this.ActionIconsMiddle, null);
 		this.ActionIconsLarge = new global::Gtk.RadioAction("ActionIconsLarge", global::Mono.Unix.Catalog.GetString("Большие иконки"), null, null, 0);
-		this.ActionIconsLarge.Group = this.ActionIconsExtraSmall.Group;
+		this.ActionIconsLarge.Group = this.ActionIconsMiddle.Group;
 		this.ActionIconsLarge.ShortLabel = global::Mono.Unix.Catalog.GetString("Большие иконки");
 		w1.Add(this.ActionIconsLarge, null);
 		this.ActionSite = new global::Gtk.Action("ActionSite", global::Mono.Unix.Catalog.GetString("Сайт программы"), null, "www");
@@ -314,43 +314,43 @@ public partial class MainWindow
 		this.vbox1.Name = "vbox1";
 		this.vbox1.Spacing = 6;
 		// Container child vbox1.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString("<ui><menubar name=\'menubar1\'><menu name=\'Action\' action=\'Action\'><menuitem name=\'" +
-				"dialogAuthenticationAction\' action=\'dialogAuthenticationAction\'/><menuitem name=" +
-				"\'UsersAction\' action=\'UsersAction\'/><menuitem name=\'ActionBaseSettings\' action=\'" +
-				"ActionBaseSettings\'/><separator/><menuitem name=\'quitAction\' action=\'quitAction\'" +
-				"/></menu><menu name=\'Action33\' action=\'Action33\'><menu name=\'Action24\' action=\'A" +
-				"ction24\'><menuitem name=\'ActionShowBar\' action=\'ActionShowBar\'/><separator/><men" +
-				"uitem name=\'ActionToolBarTextOnly\' action=\'ActionToolBarTextOnly\'/><menuitem nam" +
-				"e=\'ActionToolBarIconOnly\' action=\'ActionToolBarIconOnly\'/><menuitem name=\'Action" +
-				"ToolBarTextAndIcon\' action=\'ActionToolBarTextAndIcon\'/><separator/><menuitem nam" +
-				"e=\'ActionIconsExtraSmall\' action=\'ActionIconsExtraSmall\'/><menuitem name=\'Action" +
-				"IconsSmall\' action=\'ActionIconsSmall\'/><menuitem name=\'ActionIconsMiddle\' action" +
-				"=\'ActionIconsMiddle\'/><menuitem name=\'ActionIconsLarge\' action=\'ActionIconsLarge" +
-				"\'/></menu></menu><menu name=\'Action21\' action=\'Action21\'><menuitem name=\'ActionS" +
-				"tockDocs\' action=\'ActionStockDocs\'/><menuitem name=\'ActionStockBalance\' action=\'" +
-				"ActionStockBalance\'/></menu><menu name=\'Action1\' action=\'Action1\'><menuitem name" +
-				"=\'ActionObjects\' action=\'ActionObjects\'/><menuitem name=\'ActionEmployees\' action" +
-				"=\'ActionEmployees\'/><separator/><menuitem name=\'ActionRegulationDoc\' action=\'Act" +
-				"ionRegulationDoc\'/><menuitem name=\'ActionNorms\' action=\'ActionNorms\'/><menuitem " +
-				"name=\'Action5\' action=\'Action5\'/><menuitem name=\'Action6\' action=\'Action6\'/><sep" +
-				"arator/><menuitem name=\'Action7\' action=\'Action7\'/><separator/><menuitem name=\'A" +
-				"ction8\' action=\'Action8\'/><menuitem name=\'Action9\' action=\'Action9\'/></menu><men" +
-				"u name=\'Action37\' action=\'Action37\'><menuitem name=\'Action10\' action=\'Action10\'/" +
-				"><menuitem name=\'Action11\' action=\'Action11\'/><separator/><menuitem name=\'Action" +
-				"12\' action=\'Action12\'/><separator/><menuitem name=\'Action13\' action=\'Action13\'/>" +
-				"<menuitem name=\'ActionRequestSheet\' action=\'ActionRequestSheet\'/><menuitem name=" +
-				"\'ActionAverageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><menuitem name=\'Acti" +
-				"on22\' action=\'Action22\'/></menu><menu name=\'Action3\' action=\'Action3\'><menuitem " +
-				"name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' action=\'Ac" +
-				"tionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><" +
-				"menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReform" +
-				"al\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuit" +
-				"em name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action" +
-				"=\'ActionOdnoklasniki\'/><menuitem name=\'ActionGoogle\' action=\'ActionGoogle\'/><men" +
-				"uitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><menuitem name=\'ActionYouTube" +
-				"\' action=\'ActionYouTube\'/></menu><separator/><menuitem name=\'ActionSN\' action=\'A" +
-				"ctionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu>" +
-				"</menubar></ui>");
+		this.UIManager.AddUiFromString("<ui><menubar name=\'menubar1\'><menu name=\'ActionBase\' action=\'ActionBase\'><menuite" +
+				"m name=\'dialogAuthenticationAction\' action=\'dialogAuthenticationAction\'/><menuit" +
+				"em name=\'UsersAction\' action=\'UsersAction\'/><menuitem name=\'ActionBaseSettings\' " +
+				"action=\'ActionBaseSettings\'/><separator/><menuitem name=\'quitAction\' action=\'qui" +
+				"tAction\'/></menu><menu name=\'Action33\' action=\'Action33\'><menu name=\'Action24\' a" +
+				"ction=\'Action24\'><menuitem name=\'ActionShowBar\' action=\'ActionShowBar\'/><separat" +
+				"or/><menuitem name=\'ActionToolBarTextOnly\' action=\'ActionToolBarTextOnly\'/><menu" +
+				"item name=\'ActionToolBarIconOnly\' action=\'ActionToolBarIconOnly\'/><menuitem name" +
+				"=\'ActionToolBarTextAndIcon\' action=\'ActionToolBarTextAndIcon\'/><separator/><menu" +
+				"item name=\'ActionIconsExtraSmall\' action=\'ActionIconsExtraSmall\'/><menuitem name" +
+				"=\'ActionIconsSmall\' action=\'ActionIconsSmall\'/><menuitem name=\'ActionIconsMiddle" +
+				"\' action=\'ActionIconsMiddle\'/><menuitem name=\'ActionIconsLarge\' action=\'ActionIc" +
+				"onsLarge\'/></menu></menu><menu name=\'Action21\' action=\'Action21\'><menuitem name=" +
+				"\'ActionStockDocs\' action=\'ActionStockDocs\'/><menuitem name=\'ActionStockBalance\' " +
+				"action=\'ActionStockBalance\'/></menu><menu name=\'Action1\' action=\'Action1\'><menui" +
+				"tem name=\'ActionObjects\' action=\'ActionObjects\'/><menuitem name=\'ActionEmployees" +
+				"\' action=\'ActionEmployees\'/><separator/><menuitem name=\'ActionRegulationDoc\' act" +
+				"ion=\'ActionRegulationDoc\'/><menuitem name=\'ActionNorms\' action=\'ActionNorms\'/><m" +
+				"enuitem name=\'Action5\' action=\'Action5\'/><menuitem name=\'Action6\' action=\'Action" +
+				"6\'/><separator/><menuitem name=\'Action7\' action=\'Action7\'/><separator/><menuitem" +
+				" name=\'Action8\' action=\'Action8\'/><menuitem name=\'Action9\' action=\'Action9\'/></m" +
+				"enu><menu name=\'Action37\' action=\'Action37\'><menuitem name=\'Action10\' action=\'Ac" +
+				"tion10\'/><menuitem name=\'Action11\' action=\'Action11\'/><separator/><menuitem name" +
+				"=\'Action12\' action=\'Action12\'/><separator/><menuitem name=\'Action13\' action=\'Act" +
+				"ion13\'/><menuitem name=\'ActionRequestSheet\' action=\'ActionRequestSheet\'/><menuit" +
+				"em name=\'ActionAverageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><menuitem na" +
+				"me=\'Action22\' action=\'Action22\'/></menu><menu name=\'Action3\' action=\'Action3\'><m" +
+				"enuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' ac" +
+				"tion=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><sepa" +
+				"rator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOp" +
+				"enReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'" +
+				"><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki" +
+				"\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionGoogle\' action=\'ActionGoogl" +
+				"e\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><menuitem name=\'Actio" +
+				"nYouTube\' action=\'ActionYouTube\'/></menu><separator/><menuitem name=\'ActionSN\' a" +
+				"ction=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/" +
+				"></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);

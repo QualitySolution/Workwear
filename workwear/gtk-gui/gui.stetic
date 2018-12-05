@@ -4702,10 +4702,10 @@
   </widget>
   <widget class="Gtk.Window" id="MainWindow" design-size="709 458">
     <action-group name="Default">
-      <action id="Action">
+      <action id="ActionBase">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Файл</property>
-        <property name="ShortLabel" translatable="yes">Файл</property>
+        <property name="Label" translatable="yes">База</property>
+        <property name="ShortLabel" translatable="yes">База</property>
       </action>
       <action id="Action1">
         <property name="Type">Action</property>
@@ -5083,7 +5083,7 @@
           <widget class="Gtk.MenuBar" id="menubar1">
             <property name="MemberName" />
             <node name="menubar1" type="Menubar">
-              <node type="Menu" action="Action">
+              <node type="Menu" action="ActionBase">
                 <node type="Menuitem" action="dialogAuthenticationAction" />
                 <node type="Menuitem" action="UsersAction" />
                 <node type="Menuitem" action="ActionBaseSettings" />
