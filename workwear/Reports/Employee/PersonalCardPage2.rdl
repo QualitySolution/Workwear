@@ -652,8 +652,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox37">
-                      <Value>
-                      </Value>
+                      <Value>=Fields!issue_buh_document.Value</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -726,8 +725,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox45">
-                      <Value>
-                      </Value>
+                      <Value>=Fields!returned_buh_document.Value</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -780,66 +778,57 @@
         <CommandText>SELECT 
     item_types.name AS name_siz,
     income_detail.certificate,
-    stock_expense.date AS expense_date,
-    stock_expense_detail.quantity AS expense_quantity,
-    ROUND(100 - income_detail.life_percent * 100) AS wearout,
+    DATE_FORMAT(operation_issued_by_employee.operation_time, '%d.%m.%Y') AS expense_date,
+    operation_issued_by_employee.issued AS expense_quantity,
+    ROUND(operation_issued_by_employee.wear_percent * 100) AS wearout,
+    operation_issued_by_employee.buh_document as issue_buh_document,
     CONCAT_WS('\n',
             GROUP_CONCAT(DATE_FORMAT(returned.date, '%d.%m.%Y')
                 SEPARATOR '\n'),
-            IF(stock_expense_detail.auto_writeoff_date &lt;= CURDATE()
-                    AND stock_expense_detail.quantity - IFNULL(SUM(returned.quantity), 0) &gt; 0,
-                DATE_FORMAT(stock_expense_detail.auto_writeoff_date,
+            IF(operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE()
+                    AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0,
+                DATE_FORMAT(operation_issued_by_employee.auto_writeoff_date,
                         '%d.%m.%Y'),
                 NULL)) AS returned_date,
     CONCAT_WS('\n',
             GROUP_CONCAT(returned.quantity
                 SEPARATOR '\n'),
-            IF(stock_expense_detail.auto_writeoff_date &lt;= CURDATE()
-                    AND stock_expense_detail.quantity - IFNULL(SUM(returned.quantity), 0) &gt; 0,
-                stock_expense_detail.quantity - IFNULL(SUM(returned.quantity), 0),
+            IF(operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE()
+                    AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0,
+                operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0),
                 NULL)) AS returned_quantity,
     CONCAT_WS('\n',
-            GROUP_CONCAT(ROUND(IF(returned.life_percent = - 1, IF(returned.date &gt;= stock_expense_detail.auto_writeoff_date, 100,
-                            IFNULL(
-                    DATEDIFF(returned.date, stock_expense.date) /
-                            DATEDIFF(stock_expense_detail.auto_writeoff_date, stock_expense.date)
-                            * 100, 100)),
-                    100 - returned.life_percent * 100))
+            GROUP_CONCAT(ROUND(returned.wear_percent * 100)
                 SEPARATOR '\n'),
-            IF(stock_expense_detail.auto_writeoff_date &lt;= CURDATE()
-                    AND stock_expense_detail.quantity - IFNULL(SUM(returned.quantity), 0) &gt; 0,
+            IF(operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE()
+                    AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0,
                 100,
-                NULL)) AS returned_wearout
+                NULL)) AS returned_wearout,
+    GROUP_CONCAT(returned.buh_document SEPARATOR '\n') AS returned_buh_document
 FROM
-    stock_expense
+    operation_issued_by_employee
         LEFT JOIN
-    stock_expense_detail ON stock_expense_detail.stock_expense_id = stock_expense.id
-        LEFT JOIN
-    nomenclature ON stock_expense_detail.nomenclature_id = nomenclature.id
+    nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
         LEFT JOIN
     item_types ON item_types.id = nomenclature.type_id
         LEFT JOIN
-    stock_income_detail AS income_detail ON stock_expense_detail.stock_income_detail_id = income_detail.id
+    stock_income_detail AS income_detail ON operation_issued_by_employee.stock_income_detail_id = income_detail.id
         LEFT JOIN
     (SELECT 
-        return_detail.stock_expense_detail_id,
-            return_doc.date,
-            return_detail.quantity,
-            return_detail.life_percent
+        return_detail.issued_operation_id,
+            return_detail.operation_time as date,
+            return_detail.returned as quantity,
+            return_detail.wear_percent,
+     		return_detail.buh_document
     FROM
-        stock_income_detail AS return_detail
-    LEFT JOIN stock_income AS return_doc ON return_detail.stock_income_id = return_doc.id UNION SELECT 
-        stock_write_off_detail.stock_expense_detail_id,
-            stock_write_off.date,
-            stock_write_off_detail.quantity,
-            - 1 AS life_percent
-    FROM
-        stock_write_off_detail
-    LEFT JOIN stock_write_off ON stock_write_off.id = stock_write_off_detail.stock_write_off_id) AS returned ON returned.stock_expense_detail_id = stock_expense_detail.id
+        operation_issued_by_employee AS return_detail
+     WHERE
+     	return_detail.employee_id = @id AND return_detail.returned &gt; 0
+    ) AS returned ON returned.issued_operation_id = operation_issued_by_employee.id
 WHERE
-    stock_expense.wear_card_id = @id
-GROUP BY stock_expense_detail.id
-ORDER BY expense_date;</CommandText>
+    operation_issued_by_employee.employee_id = @id AND operation_issued_by_employee.issued &gt; 0
+GROUP BY operation_issued_by_employee.id
+ORDER BY operation_issued_by_employee.operation_time</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
@@ -857,15 +846,19 @@ ORDER BY expense_date;</CommandText>
         </Field>
         <Field Name="expense_date">
           <DataField>expense_date</DataField>
-          <TypeName>System.DateTime</TypeName>
+          <TypeName>System.String</TypeName>
         </Field>
         <Field Name="expense_quantity">
           <DataField>expense_quantity</DataField>
-          <TypeName>System.UInt32</TypeName>
+          <TypeName>System.Int32</TypeName>
         </Field>
         <Field Name="wearout">
           <DataField>wearout</DataField>
           <TypeName>System.Decimal</TypeName>
+        </Field>
+        <Field Name="issue_buh_document">
+          <DataField>issue_buh_document</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
         <Field Name="returned_date">
           <DataField>returned_date</DataField>
@@ -877,6 +870,10 @@ ORDER BY expense_date;</CommandText>
         </Field>
         <Field Name="returned_wearout">
           <DataField>returned_wearout</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="returned_buh_document">
+          <DataField>returned_buh_document</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -896,7 +893,7 @@ ORDER BY expense_date;</CommandText>
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>6</Value>
+          <Value>8</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
