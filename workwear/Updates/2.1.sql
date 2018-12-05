@@ -1,4 +1,137 @@
 ﻿
+ALTER TABLE `wear_cards` 
+ADD COLUMN `change_of_position_date` DATE NULL DEFAULT NULL AFTER `hire_date`;
+
+ALTER TABLE `stock_income_detail` 
+CHANGE COLUMN `life_percent` `life_percent` DECIMAL(3,2) UNSIGNED NOT NULL DEFAULT 1 ,
+ADD COLUMN `certificate` VARCHAR(40) NULL DEFAULT NULL AFTER `cost`,
+ADD COLUMN `employee_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `certificate`,
+ADD INDEX `fk_stock_income_detail_1_idx` (`employee_issue_operation_id` ASC);
+
+ALTER TABLE `stock_expense_detail` 
+ADD COLUMN `employee_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `auto_writeoff_date`,
+ADD INDEX `fk_stock_expense_detail_1_idx` (`employee_issue_operation_id` ASC);
+
+ALTER TABLE `stock_write_off_detail` 
+ADD COLUMN `employee_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `quantity`,
+ADD INDEX `fk_stock_write_off_detail_1_idx` (`employee_issue_operation_id` ASC);
+
+ALTER TABLE `norms` 
+ADD COLUMN `regulations_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `id`,
+ADD COLUMN `regulations_annex_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `regulations_id`,
+ADD INDEX `fk_norms_1_idx` (`regulations_id` ASC),
+ADD INDEX `fk_norms_2_idx` (`regulations_annex_id` ASC);
+
+CREATE TABLE IF NOT EXISTS `regulations` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` TINYTEXT NOT NULL,
+  `number` VARCHAR(10) NULL DEFAULT NULL,
+  `doc_date` DATE NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1000
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `regulations_annex` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `regulations_id` INT(10) UNSIGNED NOT NULL,
+  `number` TINYINT(4) NOT NULL,
+  `name` TINYTEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_regulations_appendix_1_idx` (`regulations_id` ASC),
+  CONSTRAINT `fk_regulations_appendix_1`
+    FOREIGN KEY (`regulations_id`)
+    REFERENCES `regulations` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 10000
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `employee_id` INT(10) UNSIGNED NOT NULL,
+  `operation_time` DATETIME NOT NULL,
+  `nomenclature_id` INT(10) UNSIGNED NOT NULL,
+  `wear_percent` DECIMAL(3,2) UNSIGNED NOT NULL DEFAULT 1.00,
+  `issued` INT(11) NOT NULL DEFAULT 0,
+  `returned` INT(11) NOT NULL DEFAULT 0,
+  `auto_writeoff` TINYINT(1) NOT NULL DEFAULT 1,
+  `auto_writeoff_date` DATE NULL DEFAULT NULL,
+  `norm_item_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+  `StartOfUse` DATE NULL DEFAULT NULL,
+  `ExpiryByNorm` DATE NULL DEFAULT NULL,
+  `issued_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+  `stock_income_detail_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+  `buh_document` VARCHAR(80) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_operation_issued_by_employee_1_idx` (`employee_id` ASC),
+  INDEX `fk_operation_issued_by_employee_2_idx` (`nomenclature_id` ASC),
+  INDEX `fk_operation_issued_by_employee_3_idx` (`issued_operation_id` ASC),
+  INDEX `operation_issued_by_employee_date` (`operation_time` ASC),
+  INDEX `fk_operation_issued_by_employee_4_idx` (`stock_income_detail_id` ASC),
+  INDEX `fk_operation_issued_by_employee_5_idx` (`norm_item_id` ASC),
+  CONSTRAINT `fk_operation_issued_by_employee_1`
+    FOREIGN KEY (`employee_id`)
+    REFERENCES `wear_cards` (`id`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_operation_issued_by_employee_2`
+    FOREIGN KEY (`nomenclature_id`)
+    REFERENCES `nomenclature` (`id`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_operation_issued_by_employee_3`
+    FOREIGN KEY (`issued_operation_id`)
+    REFERENCES `operation_issued_by_employee` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_operation_issued_by_employee_4`
+    FOREIGN KEY (`stock_income_detail_id`)
+    REFERENCES `stock_income_detail` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_operation_issued_by_employee_5`
+    FOREIGN KEY (`norm_item_id`)
+    REFERENCES `norms_item` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+ALTER TABLE `stock_income_detail` 
+ADD CONSTRAINT `fk_stock_income_detail_1`
+  FOREIGN KEY (`employee_issue_operation_id`)
+  REFERENCES `operation_issued_by_employee` (`id`)
+  ON DELETE RESTRICT
+  ON UPDATE CASCADE;
+
+ALTER TABLE `stock_expense_detail` 
+ADD CONSTRAINT `fk_stock_expense_detail_1`
+  FOREIGN KEY (`employee_issue_operation_id`)
+  REFERENCES `operation_issued_by_employee` (`id`)
+  ON DELETE RESTRICT
+  ON UPDATE CASCADE;
+
+ALTER TABLE `stock_write_off_detail` 
+ADD CONSTRAINT `fk_stock_write_off_detail_1`
+  FOREIGN KEY (`employee_issue_operation_id`)
+  REFERENCES `operation_issued_by_employee` (`id`)
+  ON DELETE RESTRICT
+  ON UPDATE CASCADE;
+
+ALTER TABLE `norms` 
+ADD CONSTRAINT `fk_norms_1`
+  FOREIGN KEY (`regulations_id`)
+  REFERENCES `regulations` (`id`)
+  ON DELETE RESTRICT
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_norms_2`
+  FOREIGN KEY (`regulations_annex_id`)
+  REFERENCES `regulations_annex` (`id`)
+  ON DELETE RESTRICT
+  ON UPDATE CASCADE;
+
 #Миграция данных
 
 ALTER TABLE operation_issued_by_employee ADD COLUMN temp_id INT(10) UNSIGNED;
