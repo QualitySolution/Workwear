@@ -14,7 +14,10 @@ base/*.mwb.bak
 *~
 .vs/
 
-#Project Specific
+#Installer
 WinInstall/*
+!WinInstall/ExtraFiles/
+!WinInstall/NsisDotNetChecker/
+!WinInstall/NsisDotNetChecker/bin
 !*.nsi
 !*.sh
