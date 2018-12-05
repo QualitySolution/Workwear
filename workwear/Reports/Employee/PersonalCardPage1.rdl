@@ -195,8 +195,8 @@ WHERE
         <Width>556.24pt</Width>
         <Value>= "ЛИЧНАЯ КАРТОЧКА № " +  First({id}, 'Card')</Value>
         <ZIndex>1</ZIndex>
-        <Left>2.50pt</Left>
-        <Top>149.80pt</Top>
+        <Left>2.5pt</Left>
+        <Top>117.8pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -206,8 +206,8 @@ WHERE
         </Style>
       </Textbox>
       <Textbox Name="Textbox2">
-        <Height>106.81pt</Height>
-        <Width>251.41pt</Width>
+        <Height>94.04pt</Height>
+        <Width>251.38pt</Width>
         <Value>Приложение
 к Межотраслевым правилам обеспечения
 работников специальной одеждой, специальной
@@ -225,6 +225,7 @@ WHERE
           <BorderColor />
           <BorderWidth />
           <TextAlign>Right</TextAlign>
+          <FontSize>8pt</FontSize>
         </Style>
       </Textbox>
       <Textbox Name="Textbox5">
@@ -233,7 +234,7 @@ WHERE
         <Value>Лицевая сторона личной карточки</Value>
         <ZIndex>1</ZIndex>
         <Left>366.0pt</Left>
-        <Top>114.1pt</Top>
+        <Top>90.1pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -248,7 +249,7 @@ WHERE
         <Value>учета выдачи СИЗ</Value>
         <ZIndex>1</ZIndex>
         <Left>2.4pt</Left>
-        <Top>165.6pt</Top>
+        <Top>133.6pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -260,8 +261,8 @@ WHERE
       <List Name="List1">
         <Height>205.13pt</Height>
         <Width>560.03pt</Width>
-        <Left>0.00pt</Left>
-        <Top>189.00pt</Top>
+        <Left>0.0pt</Left>
+        <Top>157.8pt</Top>
         <ReportItems>
           <Textbox Name="Textbox3">
             <Height>12.75pt</Height>
@@ -902,16 +903,16 @@ WHERE
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>169.0pt</Width>
+            <Width>201.1pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>126.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>130.7pt</Width>
+            <Width>118.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>133.5pt</Width>
+            <Width>113.7pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -1063,7 +1064,7 @@ WHERE
           </TableRows>
         </Details>
         <Left>0.0pt</Left>
-        <Top>403.6pt</Top>
+        <Top>369.2pt</Top>
       </Table>
       <Textbox Name="Textbox52">
         <Height>15.75pt</Height>
@@ -1071,7 +1072,7 @@ WHERE
         <Value>Руководитель структурного подразделения</Value>
         <ZIndex>1</ZIndex>
         <Left>0.0pt</Left>
-        <Top>463.0pt</Top>
+        <Top>407.8pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -1084,8 +1085,8 @@ WHERE
         <Width>112.89pt</Width>
         <Value>(подпись)</Value>
         <ZIndex>1</ZIndex>
-        <Left>231.90pt</Left>
-        <Top>474.00pt</Top>
+        <Left>231.9pt</Left>
+        <Top>418.8pt</Top>
         <Style>
           <BorderStyle>
             <Top>Solid</Top>
@@ -1101,8 +1102,8 @@ WHERE
         <Width>207.39pt</Width>
         <Value>(Ф.И.О.)</Value>
         <ZIndex>1</ZIndex>
-        <Left>350.90pt</Left>
-        <Top>474.10pt</Top>
+        <Left>350.9pt</Left>
+        <Top>418.9pt</Top>
         <Style>
           <BorderStyle>
             <Top>Solid</Top>
@@ -1118,8 +1119,8 @@ WHERE
         <Width>208.49pt</Width>
         <Value>=First({leader}, 'Card')</Value>
         <ZIndex>1</ZIndex>
-        <Left>351.10pt</Left>
-        <Top>459.90pt</Top>
+        <Left>351.1pt</Left>
+        <Top>404.7pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -1130,7 +1131,7 @@ WHERE
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>491.2pt</Height>
+    <Height>433.7pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
