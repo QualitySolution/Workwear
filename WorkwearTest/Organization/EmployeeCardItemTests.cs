@@ -13,7 +13,7 @@ namespace WorkwearTest.Organization
 	[TestFixture(TestOf = typeof(EmployeeCardItem))]
 	public class EmployeeCardItemTests
 	{
-		[Test]
+		[Test(Description = "Проверяем учитывает ли расчет даты следущей выдачи дату автосписания.")]
 		public void UpdateNextIssue_AutoWriteoffCase()
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
@@ -40,7 +40,7 @@ namespace WorkwearTest.Organization
 			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2018, 2, 1)));
 		}
 
-		[Test]
+		[Test(Description = "Проверяем пороставляет ли расчет следующей выдачи дату зноса по норме в том случае если авто списание последней выдачи отключено.")]
 		public void UpdateNextIssue_NotWriteoffCase()
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
@@ -99,7 +99,7 @@ namespace WorkwearTest.Organization
 			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2018, 1, 15)));
 		}
 
-		[Test(Description = "Если выдачи этого типа сиз еще не было дату следующей выдачи должны устанавливать датой создания потребности.")]
+		[Test(Description = "Если выдачи этого типа сиз еще не было, дату следующей выдачи должны устанавливать датой создания потребности.")]
 		public void UpdateNextIssue_WithoutIssuesNextDateEqualCreateItemDate()
 		{
 			var uow = Substitute.For<IUnitOfWork>();
@@ -140,6 +140,64 @@ namespace WorkwearTest.Organization
 
 			item.UpdateNextIssue(uow);
 			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2017, 10, 1)));
+		}
+
+		[Test(Description = "Проверяем сдвигается ли дата следущей выдачи на первый день после отпуска.")]
+		public void UpdateNextIssue_MoveDateToLeaveEndCase()
+		{
+			var operation1 = Substitute.For<EmployeeIssueOperation>();
+			operation1.OperationTime.Returns(new DateTime(2018, 1, 1));
+			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 2, 1));
+			operation1.Issued.Returns(10);
+
+			var list = new List<EmployeeIssueOperation>() { operation1 };
+			var graph = new IssueGraph(list);
+
+			var uow = Substitute.For<IUnitOfWork>();
+			var employee = Substitute.For<EmployeeCard>();
+			employee.CurrentLeaveBegin.Returns(new DateTime(2018, 1, 15));
+			employee.CurrentLeaveEnd.Returns(new DateTime(2018, 2, 15));
+			employee.Id.Returns(777); //Необходимо чтобы было более 0, для запроса имеющихся операций.
+
+			var norm = Substitute.For<NormItem>();
+			norm.Amount.Returns(10);
+
+			var item = new EmployeeCardItemTested();
+			item.EmployeeCard = employee;
+			item.GetIssueGraphForItemFunc = () => graph;
+			item.ActiveNormItem = norm;
+
+			item.UpdateNextIssue(uow);
+			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2018, 2, 16)));
+		}
+
+		[Test(Description = "Проверяем что при сдвиге на конец отпуска, обращаем внимание на случаи когда отпуск еще не начался.")]
+		public void UpdateNextIssue_NotMoveDateWhenLeaveNotBeginCase()
+		{
+			var operation1 = Substitute.For<EmployeeIssueOperation>();
+			operation1.OperationTime.Returns(new DateTime(2018, 1, 1));
+			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 2, 1));
+			operation1.Issued.Returns(10);
+
+			var list = new List<EmployeeIssueOperation>() { operation1 };
+			var graph = new IssueGraph(list);
+
+			var uow = Substitute.For<IUnitOfWork>();
+			var employee = Substitute.For<EmployeeCard>();
+			employee.CurrentLeaveBegin.Returns(new DateTime(2018, 2, 15));
+			employee.CurrentLeaveEnd.Returns(new DateTime(2018, 3, 15));
+			employee.Id.Returns(777); //Необходимо чтобы было более 0, для запроса имеющихся операций.
+
+			var norm = Substitute.For<NormItem>();
+			norm.Amount.Returns(10);
+
+			var item = new EmployeeCardItemTested();
+			item.EmployeeCard = employee;
+			item.GetIssueGraphForItemFunc = () => graph;
+			item.ActiveNormItem = norm;
+
+			item.UpdateNextIssue(uow);
+			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2018, 2, 1)));
 		}
 	}
 
