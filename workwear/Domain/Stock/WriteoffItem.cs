@@ -132,7 +132,7 @@ namespace workwear.Domain.Stock
 
 		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
 		{
-			if(IssuedOn.ExpenseDoc.Operation == ExpenseOperations.Employee) {
+			if(IssuedOn?.ExpenseDoc?.Operation == ExpenseOperations.Employee) {
 				if(EmployeeIssueOperation == null)
 					EmployeeIssueOperation = new EmployeeIssueOperation();
 				EmployeeIssueOperation.Update(uow, askUser, this);
