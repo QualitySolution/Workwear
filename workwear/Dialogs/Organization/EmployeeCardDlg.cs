@@ -30,7 +30,6 @@ namespace workwear.Dialogs.Organization
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
 		List<EmployeeCardItems> listedItems;
-		List<EmployeeCardMovements> Movements;
 		bool IsShowedItemsTable = false;
 		bool IsNomenclaturePickuped = false;
 
@@ -155,6 +154,8 @@ namespace workwear.Dialogs.Organization
 		{
 			buttonRemoveNorm.Sensitive = ytreeNorms.Selection.CountSelectedRows() > 0;
 		}
+
+		public EmployeeCardDlg(EmployeeCard card) : this(card.Id) { }
 
 		public EmployeeCardDlg(int id)
 		{
