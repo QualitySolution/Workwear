@@ -235,7 +235,7 @@ namespace workwear.Domain.Operations
 				else
 					moveTo = firstLessNorm.StartDate;
 
-				if (askUser($"На {operationTime:d} за сотрудником уже числится {amountAtBegin} x {Nomenclature.TypeName}, при этом по нормам положено {amountByNorm}. Передвинуть начало экспуатации вновь выданных {Issued} на {moveTo}?")){
+				if (askUser($"На {operationTime:d} за сотрудником уже числится {amountAtBegin} x {Nomenclature.TypeName}, при этом по нормам положено {amountByNorm}. Передвинуть начало экспуатации вновь выданных {Issued} на {moveTo:d}?")){
 					startOfUse = moveTo;
 				}
 			}
