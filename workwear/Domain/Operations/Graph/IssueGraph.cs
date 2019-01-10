@@ -27,8 +27,8 @@ namespace workwear.Domain.Operations.Graph
 		public IssueGraph(IList<EmployeeIssueOperation> issues)
 		{
 			//создаем интервалы.
-			List<DateTime> starts = issues.Select(x => x.OperationTime).ToList();
-			starts.AddRange(issues.Where(x => x.AutoWriteoffDate.HasValue).Select(x => x.AutoWriteoffDate.Value));
+			List<DateTime> starts = issues.Select(x => x.OperationTime.Date).ToList();
+			starts.AddRange(issues.Where(x => x.AutoWriteoffDate.HasValue).Select(x => x.AutoWriteoffDate.Value.Date));
 			starts = starts.Distinct().OrderBy(x => x.Ticks).ToList();
 
 			var graphItems = issues.Where(x => x.Issued > 0).Select(x => new GraphItem(x)).ToList();
@@ -53,7 +53,7 @@ namespace workwear.Domain.Operations.Graph
 			{
 				var interval = new GraphInterval();
 				interval.StartDate = date;
-				foreach (var item in graphItems.Where(x => x.IssueOperation.OperationTime <= date))
+				foreach (var item in graphItems.Where(x => x.IssueOperation.OperationTime.Date <= date))
 				{
 					if (item.AmountAtBeginOfDay(date) <= 0)
 						continue;

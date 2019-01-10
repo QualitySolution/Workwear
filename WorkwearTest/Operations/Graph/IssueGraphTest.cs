@@ -81,5 +81,25 @@ namespace WorkwearTest.Operations.Graph
 			Assert.That(graph.Intervals.Last().StartDate, Is.EqualTo(new DateTime(2018, 2, 1)));
 			Assert.That(graph.Intervals[1].StartDate, Is.EqualTo(new DateTime(2018, 1, 15)));
 		}
+
+		[Test(Description = "Проверяем что механизм создания интервалов не будет создавать несколько интервалов на один и тот же день, если в операции присутствует время.")]
+		public void IssueGraphConstructor_CraeteOnlyOneIntervalForOneDayTest()
+		{
+			var operation1 = Substitute.For<EmployeeIssueOperation>();
+			operation1.OperationTime.Returns(new DateTime(2018, 1, 1));
+			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 2, 1));
+
+			var operation2 = Substitute.For<EmployeeIssueOperation>();
+			operation2.OperationTime.Returns(new DateTime(2018, 1, 1, 17, 0, 0));
+			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 2, 1, 18, 1, 1));
+
+			var list = new List<EmployeeIssueOperation>() { operation1, operation2 };
+			var graph = new IssueGraph(list);
+
+			Assert.That(graph.Intervals.Count, Is.EqualTo(2));
+			Assert.That(graph.Intervals.First().StartDate, Is.EqualTo(new DateTime(2018, 1, 1)));
+			Assert.That(graph.Intervals.Last().StartDate, Is.EqualTo(new DateTime(2018, 2, 1)));
+		}
+
 	}
 }
