@@ -5,7 +5,7 @@ using QS.Project.Domain;
 
 namespace workwear.Domain.Stock
 {
-	public class StockDocument : PropertyChangedBase, IDomainObject
+	public class StockDocument : BusinessObjectBase<StockDocument>, IDomainObject
 	{
 		public virtual int Id { get; set; }
 

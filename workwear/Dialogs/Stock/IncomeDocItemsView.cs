@@ -33,6 +33,15 @@ namespace workwear
 				IncomeDoc.PropertyChanged += IncomeDoc_PropertyChanged;
 				IncomeDoc_PropertyChanged (null, new System.ComponentModel.PropertyChangedEventArgs(IncomeDoc.GetPropertyName (d => d.Operation)));
 				CalculateTotal();
+
+				IncomeDoc.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
+			}
+		}
+
+		void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(IncomeItem.BuhDocument)) {
+				(MyEntityDialog as EntityDialogBase<Income>).HasChanges = true;
 			}
 		}
 

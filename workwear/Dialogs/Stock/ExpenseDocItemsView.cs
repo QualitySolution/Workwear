@@ -45,6 +45,15 @@ namespace workwear
 				if(ExpenceDoc.Operation == ExpenseOperations.Object)
 					ExpenceDoc_PropertyChanged(expenceDoc, new System.ComponentModel.PropertyChangedEventArgs(expenceDoc.GetPropertyName(x => x.Facility)));
 				CalculateTotal();
+
+				ExpenceDoc.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
+			}
+		}
+
+		void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(ExpenseItem.BuhDocument)) {
+				(MyEntityDialog as EntityDialogBase<Expense>).HasChanges = true;
 			}
 		}
 

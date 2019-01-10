@@ -31,6 +31,15 @@ namespace workwear
 				ytreeItems.ItemsDataSource = writeoffDoc.ObservableItems;
 				writeoffDoc.ObservableItems.ListContentChanged += WriteoffDoc_ObservableItems_ListContentChanged;
 				CalculateTotal();
+
+				WriteoffDoc.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
+			}
+		}
+
+		void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(WriteoffItem.BuhDocument)) {
+				(MyEntityDialog as EntityDialogBase<Writeoff>).HasChanges = true;
 			}
 		}
 
