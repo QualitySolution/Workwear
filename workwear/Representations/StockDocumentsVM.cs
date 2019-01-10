@@ -188,7 +188,7 @@ namespace workwear.Representations
 
 		public DateTime Date { get; set; }
 
-		public string DateString { get { return Date.ToShortDateString() + " " + Date.ToShortTimeString(); } }
+		public string DateString { get { return Date.ToShortDateString(); } }
 
 		public IncomeOperations IncomeOperation { get; set; }
 
