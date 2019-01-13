@@ -101,5 +101,42 @@ namespace WorkwearTest.Operations.Graph
 			Assert.That(graph.Intervals.Last().StartDate, Is.EqualTo(new DateTime(2018, 2, 1)));
 		}
 
+		[Test(Description = "Проверяем что механизм при подсчете итого выданного за день и возвращенного, отображаются все операции. Создан про реальному кейсу, в котором проблема была в наличии времени в операции.")]
+		public void IssuedAndWriteofAtDay_ShowAllMovmentsInOneDayTest()
+		{
+			var operation1 = Substitute.For<EmployeeIssueOperation>();
+			operation1.Id.Returns(1);
+			operation1.OperationTime.Returns(new DateTime(2017, 11, 28));
+			operation1.Issued.Returns(1);
+
+			var operation2 = Substitute.For<EmployeeIssueOperation>();
+			operation2.Id.Returns(2);
+			operation2.OperationTime.Returns(new DateTime(2018, 12, 16));
+			operation2.IssuedOperation.Returns(operation1);
+			operation2.Returned.Returns(1);
+
+			var operation3 = Substitute.For<EmployeeIssueOperation>();
+			operation3.Id.Returns(3);
+			operation3.OperationTime.Returns(new DateTime(2018, 12, 16, 17, 51, 0));
+			operation3.Issued.Returns(1);
+
+			var operation4 = Substitute.For<EmployeeIssueOperation>();
+			operation4.Id.Returns(4);
+			operation4.OperationTime.Returns(new DateTime(2018, 12, 16, 17, 21, 0));
+			operation4.IssuedOperation.Returns(operation3);
+			operation4.Returned.Returns(1);
+
+			var operation5 = Substitute.For<EmployeeIssueOperation>();
+			operation5.Id.Returns(5);
+			operation5.OperationTime.Returns(new DateTime(2018, 12, 16));
+			operation5.Issued.Returns(2);
+
+			var list = new List<EmployeeIssueOperation>() { operation1, operation2, operation3, operation4, operation5 };
+			var graph = new IssueGraph(list);
+
+			//Assert.That(graph.Intervals.Count, Is.GreaterThanOrEqualTo(3));
+			Assert.That(graph.Intervals.Last().Issued, Is.EqualTo(3));
+			Assert.That(graph.Intervals.Last().WriteOff, Is.EqualTo(2));
+		}
 	}
 }

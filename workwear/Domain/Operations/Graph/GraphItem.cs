@@ -24,7 +24,7 @@ namespace workwear.Domain.Operations.Graph
 			if (IssueOperation == excludeOperation || (IssueOperation.Id > 0 && IssueOperation.Id == excludeOperation?.Id ))
 				return 0;
 
-			if (IssueOperation.OperationTime > date)
+			if (IssueOperation.OperationTime.Date > date)
 				return 0;
 
 			if (IssueOperation.AutoWriteoffDate.HasValue && IssueOperation.AutoWriteoffDate.Value.Date < date.Date)
@@ -39,7 +39,7 @@ namespace workwear.Domain.Operations.Graph
 			if (IssueOperation == excludeOperation || (IssueOperation.Id > 0 && IssueOperation.Id == excludeOperation?.Id))
 				return 0;
 
-			if (IssueOperation.OperationTime > date)
+			if (IssueOperation.OperationTime.Date > date)
 				return 0;
 
 			if (IssueOperation.AutoWriteoffDate.HasValue && IssueOperation.AutoWriteoffDate.Value.Date <= date.Date)
