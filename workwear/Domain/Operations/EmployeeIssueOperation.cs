@@ -215,9 +215,9 @@ namespace workwear.Domain.Operations
 			}
 			StartOfUse = operationTime;
 
-			var amountAtBegin = graph.AmountAtBeginOfDay(OperationTime.Date, this);
+			var amountAtEndDay = graph.AmountAtEndOfDay(OperationTime.Date, this);
 			var amountByNorm = NormItem.Amount;
-			if (amountAtBegin >= amountByNorm)
+			if (amountAtEndDay >= amountByNorm)
 			{
 				//Ищем первый интервал где числящееся меньше нормы.
 				DateTime moveTo;
@@ -228,7 +228,7 @@ namespace workwear.Domain.Operations
 				if (firstLessNorm != null)
 				{
 					moveTo = firstLessNorm.StartDate;
-					if(askUser($"На {operationTime:d} за сотрудником уже числится {amountAtBegin} x {Nomenclature.TypeName}, при этом по нормам положено {amountByNorm}. Передвинуть начало экспуатации вновь выданных {Issued} на {moveTo:d}?")) {
+					if(askUser($"На {operationTime:d} за сотрудником уже числится {amountAtEndDay} x {Nomenclature.TypeName}, при этом по нормам положено {amountByNorm}. Передвинуть начало экспуатации вновь выданных {Issued} на {moveTo:d}?")) {
 						startOfUse = moveTo;
 					}
 				}
