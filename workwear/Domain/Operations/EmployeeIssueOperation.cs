@@ -225,18 +225,12 @@ namespace workwear.Domain.Operations
 					.Where(x => x.StartDate.Date >= OperationTime.Date)
 					.OrderBy(x => x.StartDate)
 					.FirstOrDefault(x => graph.AmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
-				if (firstLessNorm == null)
+				if (firstLessNorm != null)
 				{
-					var lastInterval = graph.Intervals
-											.OrderBy(x => x.StartDate)
-											.LastOrDefault();
-					moveTo = lastInterval.ActiveItems.Where(x => x.IssueOperation.ExpiryByNorm.HasValue).Max(x => x.IssueOperation.ExpiryByNorm.Value);
-				}
-				else
 					moveTo = firstLessNorm.StartDate;
-
-				if (askUser($"На {operationTime:d} за сотрудником уже числится {amountAtBegin} x {Nomenclature.TypeName}, при этом по нормам положено {amountByNorm}. Передвинуть начало экспуатации вновь выданных {Issued} на {moveTo:d}?")){
-					startOfUse = moveTo;
+					if(askUser($"На {operationTime:d} за сотрудником уже числится {amountAtBegin} x {Nomenclature.TypeName}, при этом по нормам положено {amountByNorm}. Передвинуть начало экспуатации вновь выданных {Issued} на {moveTo:d}?")) {
+						startOfUse = moveTo;
+					}
 				}
 			}
 
