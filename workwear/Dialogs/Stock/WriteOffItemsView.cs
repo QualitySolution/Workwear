@@ -7,6 +7,7 @@ using QSOrmProject;
 using workwear.Domain.Operations;
 using workwear.Domain.Organization;
 using workwear.Domain.Stock;
+using workwear.Representations;
 
 namespace workwear
 {
@@ -106,7 +107,7 @@ namespace workwear
 			if (CurWorker != null)
 				filter.RestrictEmployee = CurWorker;
 
-			var selectFromEmployeeDlg = new ReferenceRepresentation (new ViewModel.EmployeeBalanceVM (filter),
+			var selectFromEmployeeDlg = new ReferenceRepresentation (new EmployeeBalanceVM (filter),
 			                                                        "Выданное сотрудникам");
 			selectFromEmployeeDlg.ShowFilter = CurWorker == null;
 			selectFromEmployeeDlg.Mode = OrmReferenceMode.MultiSelect;
@@ -141,7 +142,7 @@ namespace workwear
 
 		void SelectFromEmployeeDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)
 		{
-			foreach(var node in e.GetNodes<ViewModel.EmployeeBalanceVMNode> ())
+			foreach(var node in e.GetNodes<EmployeeBalanceVMNode> ())
 			{
 				WriteoffDoc.AddItem (UoW, MyOrmDialog.UoW.GetById<EmployeeIssueOperation> (node.Id), node.Added - node.Removed);
 			}

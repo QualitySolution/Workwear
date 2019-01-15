@@ -15,13 +15,13 @@ using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
-namespace workwear.ViewModel
+namespace workwear.Representations
 {
 	public class EmployeeBalanceVM : RepresentationModelWithoutEntityBase<EmployeeBalanceVMNode>
 	{
 		EmployeeCard employee;
 
-		EmployeeCard Employee {
+		public EmployeeCard Employee {
 			get {
 				if (Filter != null)
 					return Filter.RestrictEmployee;
@@ -123,6 +123,7 @@ namespace workwear.ViewModel
 			Filter = filter;
 		}
 
+		//FIXME Удалилть так как создает Uow но не удаляет его корректно.
 		public EmployeeBalanceVM (EmployeeCard employee) : this(UnitOfWorkFactory.CreateWithoutRoot ())
 		{
 			Employee = employee;

@@ -1288,6 +1288,7 @@
                 <property name="Label" translatable="yes">Печать</property>
                 <property name="UseUnderline">True</property>
                 <property name="UseMarkup">False</property>
+                <property name="LabelXAlign">0</property>
                 <signal name="EnumItemClicked" handler="OnEnumPrintEnumItemClicked" />
               </widget>
               <packing>
@@ -2580,7 +2581,7 @@
           <widget class="Gtk.Notebook" id="notebook1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">3</property>
+            <property name="CurrentPage">2</property>
             <signal name="SwitchPage" handler="OnNotebook1SwitchPage" />
             <child>
               <widget class="Gtk.VBox" id="vbox6">
@@ -2832,16 +2833,9 @@
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
                 <child>
-                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow1">
+                  <widget class="workwear.Dialogs.Organization.EmployeeCardListedItemsView" id="employeecardlisteditemsview">
                     <property name="MemberName" />
-                    <property name="ShadowType">In</property>
-                    <child>
-                      <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeListedItems">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="ShowScrollbars">True</property>
-                      </widget>
-                    </child>
+                    <property name="Events">ButtonPressMask</property>
                   </widget>
                   <packing>
                     <property name="Position">0</property>
@@ -6498,6 +6492,7 @@
                 <property name="Label" translatable="yes">Добавить</property>
                 <property name="UseUnderline">True</property>
                 <property name="UseMarkup">False</property>
+                <property name="LabelXAlign">0</property>
                 <signal name="EnumItemClicked" handler="OnButtonAddEnumItemClicked" />
               </widget>
               <packing>
@@ -7229,6 +7224,33 @@
             <property name="ShadowType">In</property>
             <child>
               <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeviewMovements">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="ShowScrollbars">True</property>
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="workwear.Dialogs.Organization.EmployeeCardListedItemsView" design-size="340 88">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox1">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+            <property name="MemberName" />
+            <property name="ShadowType">In</property>
+            <child>
+              <widget class="QSOrmProject.RepresentationTreeView" id="treeviewListedItems">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>

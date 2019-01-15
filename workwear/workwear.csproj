@@ -260,6 +260,8 @@
     <Compile Include="Dialogs\Organization\EmployeeMovementsView.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeMovementsView.cs" />
     <Compile Include="Repository\Operations\EmployeeIssueRepository.cs" />
+    <Compile Include="Dialogs\Organization\EmployeeCardListedItemsView.cs" />
+    <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeCardListedItemsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

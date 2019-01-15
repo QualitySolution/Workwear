@@ -138,13 +138,6 @@ namespace workwear.Dialogs.Organization
 				.Finish();
 			ytreeWorkwear.Selection.Changed += ytreeWorkwear_Selection_Changed;
 
-			ytreeListedItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItems>()
-				.AddColumn("Наименование").AddTextRenderer(e => e.ItemTypeName)
-				.AddColumn("Количество").AddTextRenderer(e => e.AmountText)
-				.AddColumn("Средняя стоимость").AddTextRenderer(e => e.AvgCostText)
-				.Finish();
-			ytreeListedItems.ShowAll();
-
 			enumPrint.ItemsEnum = typeof(PersonalCardPrint);
 
 			Entity.PropertyChanged += CheckSizeChanged;
@@ -172,7 +165,6 @@ namespace workwear.Dialogs.Organization
 				labelUser.LabelProp = Entity.CreatedbyUser != null ? Entity.CreatedbyUser.Name : "не указан";
 
 				logger.Info("Ok");
-				UpdateListedItems();
 				buttonGiveWear.Sensitive = true;
 				buttonReturnWear.Sensitive = true;
 				buttonWriteOffWear.Sensitive = true;
@@ -232,64 +224,6 @@ namespace workwear.Dialogs.Organization
 				  .ToList().ForEach(x => x.FindMatchedNomenclature(UoW));
 		}
 
-		private void UpdateListedItems()
-		{
-			QSMain.CheckConnectionAlive();
-			logger.Info("Запрос числящегося за сотрудником...");
-			try
-			{
-				string sql = "SELECT item_types.id as item_types_id, " +
-					"SUM(stock_expense_detail.quantity - ifnull(spent.count, 0)) as quantity, " +
-					"item_types.name, measurement_units.name as unit, " +
-					"SUM(stock_income_detail.cost * (stock_expense_detail.quantity - ifnull(spent.count, 0)))/SUM(stock_expense_detail.quantity - ifnull(spent.count, 0)) as avgcost " +
-					"FROM stock_expense_detail " +
-					"LEFT JOIN " +
-					"(SELECT stock_income_detail.stock_expense_detail_id as idin, stock_income_detail.id as income_id, NULL as write_off_id, stock_income_detail.quantity as count " +
-					"FROM stock_income_detail " +
-					"LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id " +
-					"WHERE stock_expense_detail_id IS NOT NULL " +
-					"UNION ALL " +
-					"SELECT stock_write_off_detail.stock_expense_detail_id as idin, NULL as income_id, stock_write_off_detail.id as write_off_id, stock_write_off_detail.quantity as count FROM stock_write_off_detail " +
-					"LEFT JOIN stock_write_off ON stock_write_off_detail.stock_write_off_id = stock_write_off.id " +
-					"WHERE stock_expense_detail_id IS NOT NULL" +
-					") as spent ON spent.idin = stock_expense_detail.id " +
-					"LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id " +
-					"LEFT JOIN item_types ON item_types.id = nomenclature.type_id " +
-					"LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id " +
-					"LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id " +
-					"LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id " +
-					"WHERE stock_expense.wear_card_id = @id AND " +
-					"(stock_expense_detail.auto_writeoff_date IS NULL OR stock_expense_detail.auto_writeoff_date > CURDATE() ) AND " +
-					"(spent.count IS NULL OR spent.count < stock_expense_detail.quantity ) " +
-					"GROUP BY nomenclature.type_id";
-				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
-				cmd.Parameters.AddWithValue("@id", Entity.Id);
-
-				listedItems = new List<EmployeeCardItems>();
-
-				using (MySqlDataReader rdr = cmd.ExecuteReader())
-				{
-					while (rdr.Read())
-					{
-						listedItems.Add(new EmployeeCardItems
-						{
-							ItemTypeId = rdr.GetInt32("item_types_id"),
-							ItemTypeName = rdr.GetString("name"),
-							UnitsName = DBWorks.GetString(rdr, "unit", String.Empty),
-							Amount = rdr.GetInt32("quantity"),
-							AvgCost = rdr.GetDecimal("avgcost")
-						});
-					}
-				}
-				ytreeListedItems.ItemsDataSource = listedItems;
-				logger.Info("Ok");
-			}
-			catch (Exception ex)
-			{
-				QSMain.ErrorMessageWithLog("Ошибка получения числящегося за сотрудником!", logger, ex);
-			}
-		}
-
 		protected void OnButtonGiveWearClicked(object sender, EventArgs e)
 		{
 			ExpenseDocDlg winExpense = new ExpenseDocDlg(Entity);
@@ -297,7 +231,6 @@ namespace workwear.Dialogs.Organization
 			{
 				RefreshWorkItems();
 				employeemovementsview1.UpdateMovements();
-				UpdateListedItems();
 			};
 			OpenTab(winExpense);
 		}
@@ -309,7 +242,6 @@ namespace workwear.Dialogs.Organization
 			{
 				RefreshWorkItems();
 				employeemovementsview1.UpdateMovements();
-				UpdateListedItems();
 			};
 			OpenTab(winIncome);
 		}
@@ -321,7 +253,6 @@ namespace workwear.Dialogs.Organization
 			{
 				RefreshWorkItems();
 				employeemovementsview1.UpdateMovements();
-				UpdateListedItems();
 			};
 			OpenTab(winWriteOff);
 		}
@@ -355,7 +286,7 @@ namespace workwear.Dialogs.Organization
 			if (notebook1.CurrentPage == 2 && !IsShowedItemsTable)
 			{
 				IsShowedItemsTable = true;
-				UpdateListedItems();
+				employeecardlisteditemsview.UpdateList();
 			}
 
 		}
@@ -567,7 +498,6 @@ namespace workwear.Dialogs.Organization
 			{
 				RefreshWorkItems();
 				employeemovementsview1.UpdateMovements();
-				UpdateListedItems();
 			};
 			OpenTab(winExpense);
 		}

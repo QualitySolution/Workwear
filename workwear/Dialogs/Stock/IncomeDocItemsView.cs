@@ -7,6 +7,7 @@ using QS.Dialog.Gtk;
 using QSOrmProject;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
+using workwear.Representations;
 
 namespace workwear
 {
@@ -98,7 +99,7 @@ namespace workwear
 		{
 			if(IncomeDoc.Operation == IncomeOperations.Return)
 			{
-				var selectFromEmployeeDlg = new ReferenceRepresentation (new ViewModel.EmployeeBalanceVM (IncomeDoc.EmployeeCard), 
+				var selectFromEmployeeDlg = new ReferenceRepresentation (new EmployeeBalanceVM (IncomeDoc.EmployeeCard), 
 				                                                         $"Выданное {IncomeDoc.EmployeeCard.ShortName}");
 				selectFromEmployeeDlg.Mode = OrmReferenceMode.MultiSelect;
 				selectFromEmployeeDlg.ObjectSelected += SelectFromEmployeeDlg_ObjectSelected;
@@ -137,7 +138,7 @@ namespace workwear
 
 		void SelectFromEmployeeDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)
 		{
-			foreach(var node in e.GetNodes<ViewModel.EmployeeBalanceVMNode> ())
+			foreach(var node in e.GetNodes<EmployeeBalanceVMNode> ())
 			{
 				IncomeDoc.AddItem (UoW, MyOrmDialog.UoW.GetById<EmployeeIssueOperation> (node.Id), node.Added - node.Removed);
 			}
