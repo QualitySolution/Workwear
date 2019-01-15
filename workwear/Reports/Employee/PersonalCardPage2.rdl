@@ -662,6 +662,7 @@
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
                       </Style>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -735,6 +736,7 @@
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
                       </Style>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
