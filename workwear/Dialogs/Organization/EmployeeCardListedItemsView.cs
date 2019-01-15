@@ -27,6 +27,7 @@ namespace workwear.Dialogs.Organization
 			var vm = new EmployeeBalanceVM(EntityDialog.UoW);
 			vm.Employee = RootEntity;
 			treeviewListedItems.RepresentationModel = vm;
+			configured = true;
 		}
 	}
 }

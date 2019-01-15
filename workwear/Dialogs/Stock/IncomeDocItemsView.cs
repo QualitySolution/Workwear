@@ -99,8 +99,9 @@ namespace workwear
 		{
 			if(IncomeDoc.Operation == IncomeOperations.Return)
 			{
-				var selectFromEmployeeDlg = new ReferenceRepresentation (new EmployeeBalanceVM (IncomeDoc.EmployeeCard), 
-				                                                         $"Выданное {IncomeDoc.EmployeeCard.ShortName}");
+				var vm = new EmployeeBalanceVM(UoW);
+				vm.Employee = IncomeDoc.EmployeeCard;
+				var selectFromEmployeeDlg = new ReferenceRepresentation (vm, $"Выданное {IncomeDoc.EmployeeCard.ShortName}");
 				selectFromEmployeeDlg.Mode = OrmReferenceMode.MultiSelect;
 				selectFromEmployeeDlg.ObjectSelected += SelectFromEmployeeDlg_ObjectSelected;
 

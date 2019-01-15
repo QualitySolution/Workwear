@@ -123,12 +123,6 @@ namespace workwear.Representations
 			Filter = filter;
 		}
 
-		//FIXME Удалилть так как создает Uow но не удаляет его корректно.
-		public EmployeeBalanceVM (EmployeeCard employee) : this(UnitOfWorkFactory.CreateWithoutRoot ())
-		{
-			Employee = employee;
-		}
-
 		public EmployeeBalanceVM (IUnitOfWork uow) : base (typeof(Expense), typeof(Income), typeof(Writeoff))
 		{
 			this.UoW = uow;
