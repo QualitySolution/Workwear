@@ -2,8 +2,16 @@
   <title type="text">QS: Спецодежда и имущество</title>
   <subtitle type="text">Новости программы QS: Спецодежда и имущество</subtitle>
   <id>workwearnews</id>
-  <rights type="text">Quality Solution 2017</rights>
-  <updated>2017-12-15T14:00:00+03:00</updated>
+  <rights type="text">Quality Solution 2019</rights>
+  <updated>2019-01-15T17:00:00+03:00</updated>
+  <entry>
+    <id>urn:uuid:5c608bbb-b683-473e-9182-14b778c88824</id>
+    <title type="text">Релиза 2.1</title>
+    <updated>2019-01-15T17:00:00+03:00</updated>
+    <published>2019-01-15T17:00:00+03:00</published>
+    <link rel="alternate" href="http://workwear.qsolution.ru/?p=396" />
+    <summary>Долгожданное обновление программы.</summary>
+  </entry>
   <entry>
     <id>urn:uuid:403355a8-edeb-485a-83c2-4ca4e290a851</id>
     <title type="text">Выпуск корректирующего релиза 2.0.1</title>
