@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Gamma.ColumnConfig;
 using QS.Dialog.Gtk;
+using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Project.Dialogs.GtkUI;
 using QSOrmProject;
@@ -151,7 +152,7 @@ namespace workwear.Dialogs.Regulations
 					if (operations.Count > 10)
 						mes += String.Format("\n... и еще {0}", operations.Count - 10);
 					mes += "\nВы уверены что хотите выполнить удаление?";
-					if (!MessageDialogWorks.RunQuestionDialog(mes))
+					if (!MessageDialogHelper.RunQuestionDialog(mes))
 						return;
 				}
 			}

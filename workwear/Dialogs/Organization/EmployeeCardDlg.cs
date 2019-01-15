@@ -5,10 +5,10 @@ using System.IO;
 using System.Linq;
 using Gamma.Utilities;
 using Gtk;
-using MySql.Data.MySqlClient;
 using NHibernate;
 using NLog;
 using QS.Dialog.Gtk;
+using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QS.Utilities;
@@ -29,7 +29,6 @@ namespace workwear.Dialogs.Organization
 	public partial class EmployeeCardDlg : EntityDialogBase<EmployeeCard>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
-		List<EmployeeCardItems> listedItems;
 		bool IsShowedItemsTable = false;
 		bool IsNomenclaturePickuped = false;
 
@@ -476,7 +475,7 @@ namespace workwear.Dialogs.Organization
 				   )
 				))
 			{
-				if (MessageDialogWorks.RunQuestionDialog("Некоторые позиции отсутствуют на складе в достаточном количестве. Попробовать подобрать подходящую номенклатуру?"))
+				if (MessageDialogHelper.RunQuestionDialog("Некоторые позиции отсутствуют на складе в достаточном количестве. Попробовать подобрать подходящую номенклатуру?"))
 					buttonPickNomenclature.Click();
 			}
 
@@ -541,7 +540,7 @@ namespace workwear.Dialogs.Organization
 
 		protected void OnYentryPostChangedByUser(object sender, EventArgs e)
 		{
-			if (IsPostSetOnLoad && MessageDialogWorks.RunQuestionDialog("Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?"))
+			if (IsPostSetOnLoad && MessageDialogHelper.RunQuestionDialog("Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?"))
 			{
 				Entity.ChangeOfPositionDate = DateTime.Today;
 			}
@@ -549,7 +548,7 @@ namespace workwear.Dialogs.Organization
 
 		protected void OnYentryObjectChangedByUser(object sender, EventArgs e)
 		{
-			if (IsSubdivisionSetOnLoad && MessageDialogWorks.RunQuestionDialog("Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?"))
+			if (IsSubdivisionSetOnLoad && MessageDialogHelper.RunQuestionDialog("Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?"))
 			{
 				Entity.ChangeOfPositionDate = DateTime.Today;
 			}
