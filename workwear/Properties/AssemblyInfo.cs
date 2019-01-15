@@ -13,7 +13,7 @@ using QSProjectsLib;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]
 [assembly: AssemblyProduct("QS: Спецодежда и имущество")]
-[assembly: AssemblyCopyright("Quality Solution 2018")]
+[assembly: AssemblyCopyright("Quality Solution 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyLogoIcon("workwear.icon.logo.png")]
@@ -27,7 +27,7 @@ using QSProjectsLib;
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
-[assembly: AssemblyVersion("2.1")]
+[assembly: AssemblyVersion("2.1.0.1")]
 // The following attributes are used to specify the signing key for the assembly, 
 // if desired. See the Mono documentation for more information about signing.
 //[assembly: AssemblyDelaySign(false)]
