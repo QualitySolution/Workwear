@@ -822,7 +822,7 @@
     CASE item_types.wear_category
         WHEN 'Wear' THEN wear_cards.size_wear
         WHEN 'Shoes' THEN wear_cards.size_shoes
-        WHEN 'Headgear' THEN wear_cards.size_headdress
+        WHEN 'WinterShoes' THEN wear_cards.size_winter_shoes
         WHEN 'Gloves' THEN wear_cards.size_gloves
         ELSE NULL
     END AS size,

@@ -636,7 +636,7 @@
           <FontWeight>Bold</FontWeight>
           <FontSize>16pt</FontSize>
         </Style>
-        <CanGrow >true</CanGrow>
+        <CanGrow>true</CanGrow>
       </Textbox>
       <Textbox Name="Textbox15">
         <Height>12.03pt</Height>
@@ -810,7 +810,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     item_types.name AS type_name,
@@ -822,6 +822,7 @@
     CASE item_types.wear_category
         WHEN 'Wear' THEN wear_cards.size_wear
         WHEN 'Shoes' THEN wear_cards.size_shoes
+        WHEN 'WinterShoes' THEN wear_cards.size_winter_shoes
         WHEN 'Headgear' THEN wear_cards.size_headdress
         WHEN 'Gloves' THEN wear_cards.size_gloves
         ELSE NULL
@@ -886,7 +887,7 @@ ORDER BY type_name , size , growth</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="type_name">
           <DataField>type_name</DataField>
           <TypeName>System.String</TypeName>

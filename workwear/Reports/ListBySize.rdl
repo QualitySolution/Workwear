@@ -5,8 +5,8 @@
   <Author>
   </Author>
   <PageHeight>11in</PageHeight>
-  <PageWidth>8.5in</PageWidth>
-  <Width>7.5in</Width>
+  <PageWidth>210mm</PageWidth>
+  <Width>210mm</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
   <RightMargin>.25in</RightMargin>
@@ -25,6 +25,7 @@
     wear_growth,
     size_wear,
     size_shoes,
+    size_winter_shoes,
     size_headdress,
     size_gloves
 FROM
@@ -56,6 +57,10 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
         </Field>
         <Field Name="size_shoes">
           <DataField>size_shoes</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="size_winter_shoes">
+          <DataField>size_winter_shoes</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="size_headdress">
@@ -102,28 +107,31 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
             <Width>34.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>201.3pt</Width>
+            <Width>193.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>63.0pt</Width>
+            <Width>56.7pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>39.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>47.7pt</Width>
+            <Width>34.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>50.8pt</Width>
+            <Width>43.7pt</Width>
           </TableColumn>
           <TableColumn>
+            <Width>38.1pt</Width>
+          </TableColumn>
+          <TableColumn >
             <Width>43.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>40.6pt</Width>
+            <Width>38.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>52.4pt</Width>
+            <Width>35.5pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -218,12 +226,12 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                       </Style>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan>5</ColSpan>
+                  <ColSpan>6</ColSpan>
                 </TableCell>
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>12pt</Height>
+              <Height>25.2pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -305,6 +313,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -321,6 +330,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -337,6 +347,24 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox14">
+                      <Value>Зимняя Обувь</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -353,6 +381,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -360,7 +389,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox16">
-                      <Value>Перчатки</Value>
+                      <Value>Пер- чатки</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -369,6 +398,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -500,6 +530,22 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox15">
+                      <Value>={size_winter_shoes}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox20">
@@ -540,7 +586,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
         <Top>0.8pt</Top>
       </Table>
     </ReportItems>
-    <Height>48.5pt</Height>
+    <Height>60.3pt</Height>
   </Body>
   <PageFooter>
     <Height>14pt</Height>
