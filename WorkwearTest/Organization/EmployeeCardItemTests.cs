@@ -40,7 +40,7 @@ namespace WorkwearTest.Organization
 			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2018, 2, 1)));
 		}
 
-		[Test(Description = "Проверяем пороставляет ли расчет следующей выдачи дату зноса по норме в том случае если авто списание последней выдачи отключено.")]
+		[Test(Description = "Проверяем пороставляет ли расчет следующей выдачи дату износа по норме в том случае если авто списание последней выдачи отключено.")]
 		public void UpdateNextIssue_NotWriteoffCase()
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
@@ -65,6 +65,33 @@ namespace WorkwearTest.Organization
 
 			item.UpdateNextIssue(uow);
 			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2018, 3, 1)));
+		}
+
+		[Test(Description = "Проверяем что алгоритм не падает в случае если нет автосписания и нет даты износа по норме.(bug)")]
+		public void UpdateNextIssue_WihtoutWriteoffAndWithoutExpiryByNormCase()
+		{
+			var operation1 = Substitute.For<EmployeeIssueOperation>();
+			operation1.OperationTime.Returns(new DateTime(2018, 1, 1));
+			operation1.ExpiryByNorm.Returns(x => null);
+			operation1.Issued.Returns(10);
+
+			var list = new List<EmployeeIssueOperation>() { operation1 };
+			var graph = new IssueGraph(list);
+
+			var uow = Substitute.For<IUnitOfWork>();
+			var employee = Substitute.For<EmployeeCard>();
+			employee.Id.Returns(777); //Необходимо чтобы было более 0, для запроса имеющихся операций.
+
+			var norm = Substitute.For<NormItem>();
+			norm.Amount.Returns(10);
+
+			var item = new EmployeeCardItemTested();
+			item.EmployeeCard = employee;
+			item.GetIssueGraphForItemFunc = () => graph;
+			item.ActiveNormItem = norm;
+
+			item.UpdateNextIssue(uow);
+			Assert.That(item.NextIssue, Is.Null);
 		}
 
 		[Test(Description = "Тест проверяет коректную установку следующей выдачи в случает когда по норме положено 10, выдали 10, потом списали 2. Следующая выдача должна быть первой датой когда стало меньше нормы, то есть в день списания.")]

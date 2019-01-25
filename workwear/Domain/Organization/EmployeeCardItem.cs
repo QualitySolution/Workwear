@@ -226,14 +226,18 @@ namespace workwear.Domain.Organization
 				graph = GetIssueGraphForItem(uow);
 			}
 
-			DateTime wantIssue = new DateTime();
+			DateTime? wantIssue = new DateTime();
 			if(graph != null && graph.Intervals.Any())
 			{
 				var listReverse = graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
 				var lastInterval = listReverse.First();
 				if(lastInterval.CurrentCount >= ActiveNormItem.Amount)
 				{//Нет автосписания, следующая выдача чисто информативно проставляется по сроку носки
-					wantIssue = lastInterval.ActiveItems.Where(x => x.IssueOperation.ExpiryByNorm != null).Max(x => x.IssueOperation.ExpiryByNorm.Value);
+					var expiredByNorm = lastInterval.ActiveItems.Where(x => x.IssueOperation.ExpiryByNorm != null);
+					if(expiredByNorm.Any())
+						wantIssue = expiredByNorm.Max(x => x.IssueOperation.ExpiryByNorm.Value);
+					else
+						wantIssue = null;
 				}
 				else
 				{
