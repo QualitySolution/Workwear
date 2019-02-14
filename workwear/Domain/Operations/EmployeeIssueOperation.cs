@@ -177,7 +177,11 @@ namespace workwear.Domain.Operations
 			if(startOfUse == null || expiryByNorm == null)
 				return 0;
 
-			return beginWearPercent + (decimal)((atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays);
+			var addPercent = (atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays;
+			if(double.IsNaN(addPercent))
+				return beginWearPercent;
+
+			return beginWearPercent + (decimal)addPercent;
 		}
 
 		#endregion

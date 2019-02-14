@@ -13,6 +13,8 @@ namespace WorkwearTest.Operations
 	[TestFixture(TestOf = typeof(EmployeeIssueOperation))]
 	public class EmployeeIssueOperationTest
 	{
+		#region RecalculateDatesOfIssueOperation
+
 		[Test(Description = "Дата начала использование сдвигается на первую дырку в интервалах, с меньшим чем в норме количетвом. Проверяем дату износа через месяц.")]
 		public void RecalculateDatesOfIssueOperation_MoveFirstLessNormTest()
 		{
@@ -76,8 +78,12 @@ namespace WorkwearTest.Operations
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2018, 4, 25)));
 		}
 
+		#endregion
+
+		#region CalculatePercentWear
+
 		[Test(Description = "5 дней из 10-и это 50 процентов.")]
-		public void Update_Writeoff_WearPercentTest_50Percent()
+		public void CalculatePercentWear_Writeoff_WearPercentTest_50Percent()
 		{
 			var issue = new EmployeeIssueOperation();
 			issue.StartOfUse = new DateTime(2018, 1, 31);
@@ -89,7 +95,7 @@ namespace WorkwearTest.Operations
 		}
 
 		[Test(Description = "начальные 45% + 10%, проверяем что к начальным добавляется расчетный.")]
-		public void Update_Writeoff_WearPercentTest_StartPercentPlus10()
+		public void CalculatePercentWear_Writeoff_WearPercentTest_StartPercentPlus10()
 		{
 			var issue = new EmployeeIssueOperation();
 			issue.WearPercent = 0.45m;
@@ -100,5 +106,13 @@ namespace WorkwearTest.Operations
 			var result = issue.CalculatePercentWear(atDate);
 			Assert.That(result, Is.EqualTo(0.55m));
 		}
+
+		[Test(Description = "Не падаем в OverflowException при конвертировании в Decemal(реальный кейс при некоторых значениях)")]
+		public void CalculatePercentWear_NotOverflowExceptionForDecimalConvert()
+		{
+			var result = EmployeeIssueOperation.CalculatePercentWear(new DateTime(2019, 1,1), new DateTime(2019, 1, 1), new DateTime(2019, 1, 1), 0);
+		}
+
+		#endregion
 	}
 }
