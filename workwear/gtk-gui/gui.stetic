@@ -9,15 +9,17 @@
     <widget-library name="../../../QSProjects/QSProjectsLib/bin/Debug/QSProjectsLib.dll" />
     <widget-library name="../../../QSProjects/QSSupportLib/bin/Debug/QSSupportLib.dll" />
     <widget-library name="../../../QSProjects/QSWidgetLib/bin/Debug/QSWidgetLib.dll" />
-    <widget-library name="../../../QSProjects/QSUpdater/bin/Debug/QSUpdater.dll" />
+    <widget-library name="../../../QSProjects/QS.Updater.Gtk/bin/Debug/QSUpdater.dll" />
     <widget-library name="../../../GammaBinding/GammaBinding/bin/Debug/GammaBinding.dll" />
     <widget-library name="../../../QSProjects/QSOrmProject/bin/Debug/QSOrmProject.dll" />
     <widget-library name="../../../QSProjects/QSValidation/bin/Debug/QSValidation.dll" />
     <widget-library name="../../../QSProjects/Modules/QSBusinessCommon/bin/Debug/QSBusinessCommon.dll" />
     <widget-library name="../../../QSProjects/QSExtraGammaWidgets/bin/Debug/QSExtraGammaWidgets.dll" />
     <widget-library name="../../../QSProjects/QSReport/bin/Debug/QSReport.dll" />
-    <widget-library name="../bin/Debug/workwear.exe" internal="true" />
     <widget-library name="../../../QSProjects/QS.Project.Gtk/bin/Debug/QS.Project.Gtk.dll" />
+    <widget-library name="../../../QSProjects/QS.Updater.Gtk/bin/Debug/QSUpdater.dll" />
+    <widget-library name="../../../QSProjects/QS.Updater/bin/Debug/QS.Updater.dll" />
+    <widget-library name="../bin/Debug/workwear.exe" internal="true" />
   </import>
   <icon-factory>
     <icon-set id="objects">

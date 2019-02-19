@@ -4,12 +4,12 @@ using Gtk;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Report;
+using QS.Updater;
 using QSBusinessCommon.Domain;
 using QSOrmProject;
 using QSProjectsLib;
 using QSSupportLib;
 using QSTelemetry;
-using QSUpdater;
 using workwear;
 using workwear.Dialogs.DataBase;
 using workwear.Domain.Organization;
@@ -212,7 +212,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionUpdateActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("CheckUpdate");
-		CheckUpdate.StartCheckUpdateThread(UpdaterFlags.ShowAnyway);
+		MainUpdater.CheckAppVersionShowAnyway();
 	}
 
 	protected void OnActionSNActivated(object sender, EventArgs e)

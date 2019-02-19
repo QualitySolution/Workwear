@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Gtk;
 using NLog;
+using QS.Updater.DB;
 using QSMachineConfig;
 using QSProjectsLib;
 using QSSupportLib;
@@ -117,43 +118,43 @@ namespace workwear
 			);
 
 			//Настраиваем обновления
-			QSUpdater.DB.DBUpdater.AddMicroUpdate (
+			DBUpdater.AddMicroUpdate (
 				new Version (1, 0),
 				new Version (1, 0, 4),
 				"workwear.Updates.1.0.4.sql");
-			QSUpdater.DB.DBUpdater.AddMicroUpdate (
+			DBUpdater.AddMicroUpdate (
 				new Version (1, 0, 4),
 				new Version (1, 0, 5),
 				"workwear.Updates.1.0.5.sql");
-			QSUpdater.DB.DBUpdater.AddUpdate (
+			DBUpdater.AddUpdate (
 				new Version (1, 0),
 				new Version (1, 1),
 				"workwear.Updates.Update to 1.1.sql");
-			QSUpdater.DB.DBUpdater.AddUpdate (
+			DBUpdater.AddUpdate (
 				new Version (1, 1),
 				new Version (1, 2),
 				"workwear.Updates.Update to 1.2.sql");			
-			QSUpdater.DB.DBUpdater.AddMicroUpdate (
+			DBUpdater.AddMicroUpdate (
 				new Version (1, 2),
 				new Version (1, 2, 1),
 				"workwear.Updates.1.2.1.sql");
-			QSUpdater.DB.DBUpdater.AddMicroUpdate (
+			DBUpdater.AddMicroUpdate (
 				new Version (1, 2, 1),
 				new Version (1, 2, 2),
 				"workwear.Updates.1.2.2.sql");
-			QSUpdater.DB.DBUpdater.AddMicroUpdate (
+			DBUpdater.AddMicroUpdate (
 				new Version (1, 2, 2),
 				new Version (1, 2, 4),
 				"workwear.Updates.1.2.4.sql");
-			QSUpdater.DB.DBUpdater.AddUpdate (
+			DBUpdater.AddUpdate (
 				new Version (1, 2),
 				new Version (2, 0),
 				"workwear.Updates.2.0.sql");
-			QSUpdater.DB.DBUpdater.AddMicroUpdate(
+			DBUpdater.AddMicroUpdate(
 				new Version(2, 0),
 				new Version(2, 0, 2),
 				"workwear.Updates.2.0.2.sql");
-			QSUpdater.DB.DBUpdater.AddUpdate(
+			DBUpdater.AddUpdate(
 				new Version(2, 0),
 				new Version(2, 1),
 				"workwear.Updates.2.1.sql");

@@ -283,7 +283,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QSUpdater\QSUpdater.csproj">
       <Project>{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}</Project>
-      <Name>QSUpdater</Name>
+      <Name>QS.Updater.Gtk</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\GammaBinding\GammaBinding\GammaBinding.csproj">
       <Project>{190CEA0D-EA23-4C91-8030-203A5AFED7B7}</Project>
@@ -344,6 +344,14 @@
     <ProjectReference Include="..\..\GammaBinding\Gamma.Utilities.Gtk\Gamma.Utilities.Gtk.csproj">
       <Project>{5735D438-792E-40CE-BAFD-25814C8879BC}</Project>
       <Name>Gamma.Utilities.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Updater.Gtk\QS.Updater.Gtk.csproj">
+      <Project>{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}</Project>
+      <Name>QS.Updater.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Updater\QS.Updater.csproj">
+      <Project>{0F2A9FD4-6FC1-4912-9C8A-72028305A37E}</Project>
+      <Name>QS.Updater</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
