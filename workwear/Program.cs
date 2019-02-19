@@ -105,11 +105,6 @@ namespace workwear
 
 		static void CreateProjectParam ()
 		{
-			// Создаем параметы пользователей
-			QSMain.ProjectPermission = new Dictionary<string, UserPermission> ();
-			//QSMain.ProjectPermission.Add ("edit_slips", new UserPermission("edit_slips", "Изменение кассы задним числом",
-			//                                                             "Пользователь может изменять или добавлять кассовые документы задним числом."));
-
 			//Скрипты создания базы
 			DBCreator.AddBaseScript (
 				new Version(2, 1),
