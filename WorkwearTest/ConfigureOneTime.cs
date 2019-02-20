@@ -18,7 +18,7 @@ namespace WorkwearTest.Deletion
 			Console.WriteLine("Инициализация");
 			var db_config = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
 								.Dialect<NHibernate.Dialect.MySQL57Dialect>()
-								.ConnectionString("server=vod.qsolution.ru;port=3306;database=Vodovoz_test;user id=test_only;password=7qqKWuNugQF2Y2W1;sslmode=None;");
+								.ConnectionString("server=vod.qsolution.ru;port=3306;database=test-test;user id=test_only;password=7qqKWuNugQF2Y2W1;sslmode=None;");
 
 			Console.WriteLine("ORM");
 			// Настройка ORM
