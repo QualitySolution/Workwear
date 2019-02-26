@@ -16,6 +16,7 @@ namespace workwear.Dialogs.DataBase
 			TabName = "Настройки учёта";
 
 			ycheckAutoWriteoff.Active = BaseParameters.DefaultAutoWriteoff;
+			checkEmployeeSizeRanges.Active = BaseParameters.EmployeeSizeRanges;
 		}
 
 		protected void OnButtonSaveClicked(object sender, EventArgs e)
@@ -23,6 +24,11 @@ namespace workwear.Dialogs.DataBase
 			MainSupport.BaseParameters.UpdateParameter(QSMain.ConnectionDB,
 				BaseParameterNames.DefaultAutoWriteoff.ToString(),
 				ycheckAutoWriteoff.Active.ToString());
+
+			MainSupport.BaseParameters.UpdateParameter(QSMain.ConnectionDB,
+				BaseParameterNames.EmployeeSizeRanges.ToString(),
+				checkEmployeeSizeRanges.Active.ToString());
+
 			OnCloseTab(false);
 		}
 

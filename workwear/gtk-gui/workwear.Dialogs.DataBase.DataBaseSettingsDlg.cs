@@ -12,11 +12,17 @@ namespace workwear.Dialogs.DataBase
 
 		private global::Gtk.Button buttonCancel;
 
+		private global::Gtk.ScrolledWindow GtkScrolledWindow;
+
 		private global::Gtk.Table table1;
+
+		private global::Gtk.CheckButton checkEmployeeSizeRanges;
 
 		private global::Gtk.Label label1;
 
 		private global::Gtk.Label label2;
+
+		private global::Gtk.Label label3;
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckAutoWriteoff;
 
@@ -68,18 +74,42 @@ namespace workwear.Dialogs.DataBase
 			w5.Expand = false;
 			w5.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.table1 = new global::Gtk.Table(((uint)(3)), ((uint)(2)), false);
-			this.table1.Name = "table1";
+			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
+			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
+			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
+			global::Gtk.Viewport w6 = new global::Gtk.Viewport();
+			w6.ShadowType = ((global::Gtk.ShadowType)(0));
+			// Container child GtkViewport.Gtk.Container+ContainerChild
+			this.table1 = new global::Gtk.Table(((uint)(4)), ((uint)(2)), false);
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild
+			this.checkEmployeeSizeRanges = new global::Gtk.CheckButton();
+			this.checkEmployeeSizeRanges.TooltipMarkup = "Политика позволяет указывать в сотруднике не конкретный размер, диапазон размеров" +
+				", для выдачи в подборе одежды только указанного дипазона.";
+			this.checkEmployeeSizeRanges.CanFocus = true;
+			this.checkEmployeeSizeRanges.Name = "checkEmployeeSizeRanges";
+			this.checkEmployeeSizeRanges.Label = global::Mono.Unix.Catalog.GetString("Включено");
+			this.checkEmployeeSizeRanges.DrawIndicator = true;
+			this.checkEmployeeSizeRanges.UseUnderline = true;
+			this.table1.Add(this.checkEmployeeSizeRanges);
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1[this.checkEmployeeSizeRanges]));
+			w7.TopAttach = ((uint)(2));
+			w7.BottomAttach = ((uint)(3));
+			w7.LeftAttach = ((uint)(1));
+			w7.RightAttach = ((uint)(2));
+			w7.XOptions = ((global::Gtk.AttachOptions)(4));
+			w7.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
+			this.label1.Xalign = 1F;
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Авто списание с сотрудника:");
 			this.table1.Add(this.label1);
-			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
-			w6.XOptions = ((global::Gtk.AttachOptions)(4));
-			w6.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
+			w8.XOptions = ((global::Gtk.AttachOptions)(4));
+			w8.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
@@ -87,13 +117,24 @@ namespace workwear.Dialogs.DataBase
 					"ияет. Для старых выдач автосписание можно отключить вручную для каждой позиции.");
 			this.label2.Wrap = true;
 			this.table1.Add(this.label2);
-			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
-			w7.TopAttach = ((uint)(1));
-			w7.BottomAttach = ((uint)(2));
-			w7.LeftAttach = ((uint)(1));
-			w7.RightAttach = ((uint)(2));
-			w7.XOptions = ((global::Gtk.AttachOptions)(4));
-			w7.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
+			w9.TopAttach = ((uint)(1));
+			w9.BottomAttach = ((uint)(2));
+			w9.LeftAttach = ((uint)(1));
+			w9.RightAttach = ((uint)(2));
+			w9.XOptions = ((global::Gtk.AttachOptions)(4));
+			w9.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.label3 = new global::Gtk.Label();
+			this.label3.Name = "label3";
+			this.label3.Xalign = 1F;
+			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Диапазоны размеров в сотруднике:");
+			this.table1.Add(this.label3);
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1[this.label3]));
+			w10.TopAttach = ((uint)(2));
+			w10.BottomAttach = ((uint)(3));
+			w10.XOptions = ((global::Gtk.AttachOptions)(4));
+			w10.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ycheckAutoWriteoff = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckAutoWriteoff.CanFocus = true;
@@ -102,14 +143,16 @@ namespace workwear.Dialogs.DataBase
 			this.ycheckAutoWriteoff.DrawIndicator = true;
 			this.ycheckAutoWriteoff.UseUnderline = true;
 			this.table1.Add(this.ycheckAutoWriteoff);
-			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckAutoWriteoff]));
-			w8.LeftAttach = ((uint)(1));
-			w8.RightAttach = ((uint)(2));
-			w8.XOptions = ((global::Gtk.AttachOptions)(4));
-			w8.YOptions = ((global::Gtk.AttachOptions)(4));
-			this.vbox1.Add(this.table1);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.table1]));
-			w9.Position = 1;
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckAutoWriteoff]));
+			w11.LeftAttach = ((uint)(1));
+			w11.RightAttach = ((uint)(2));
+			w11.XOptions = ((global::Gtk.AttachOptions)(4));
+			w11.YOptions = ((global::Gtk.AttachOptions)(4));
+			w6.Add(this.table1);
+			this.GtkScrolledWindow.Add(w6);
+			this.vbox1.Add(this.GtkScrolledWindow);
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
+			w14.Position = 1;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{
