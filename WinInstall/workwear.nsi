@@ -1,6 +1,6 @@
 Unicode true
 ;--------------------------------
-!define PRODUCT_VERSION "2.1"
+!define PRODUCT_VERSION "2.1.0.2"
 !define NET_VERSION "4.6.1"
 !define PRODUCT_NAME "QS: Спецодежда и имущество"
 !define SHORTCUT_NAME "QS Спецодежда и имущество"
@@ -208,14 +208,16 @@ Section "GTK# 2.12.45" SecGTK
   ;SectionIn RO
 
   ; Delete 2.12.21 if installed
-  System::Call "msi::MsiQueryProductStateA(t '{71109D19-D8C1-437D-A6DA-03B94F5187FB}') i.r0"
+  System::Call "msi::MsiQueryProductStateW(t '{71109D19-D8C1-437D-A6DA-03B94F5187FB}') i.r0"
+  DetailPrint "msi::MsiQueryProductStateW 21: $0"
   StrCmp $0 "5" 0 GTKInstall
   DetailPrint "GTK# 2.12.21 установлен, удаляем"
   ExecWait '"msiexec" /X{71109D19-D8C1-437D-A6DA-03B94F5187FB} /passive'
 
   GTKInstall:
   ; Test 2.12.45
-  System::Call "msi::MsiQueryProductStateA(t '{0D038544-52B1-4F30-BAE1-46509B4A91A7}') i.r0"
+  System::Call "msi::MsiQueryProductStateW(t '{0D038544-52B1-4F30-BAE1-46509B4A91A7}') i.r0"
+  DetailPrint "msi::MsiQueryProductStateW 45: $0"
   StrCmp $0 "5" GTKDone
   DetailPrint "GTK# 2.12.45 не установлен"
 
