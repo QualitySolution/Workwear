@@ -54,6 +54,9 @@ namespace workwear.ViewModel
 					.Select (() => postAlias.Name).WithAlias (() => resultAlias.Post)
 					.Select (() => facilityAlias.Name).WithAlias (() => resultAlias.Subdivision)
 				)
+				.OrderBy(() => employeeAlias.LastName).Asc
+				.ThenBy(() => employeeAlias.FirstName).Asc
+				.ThenBy(() => employeeAlias.Patronymic).Asc
 				.TransformUsing (Transformers.AliasToBean<EmployeesVMNode> ())
 				.List<EmployeesVMNode> ();
 
