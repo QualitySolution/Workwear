@@ -20,9 +20,9 @@ using workwear.Dialogs.Issuance;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.DTO;
 using workwear.Measurements;
 using workwear.Repository;
+using workwear.Tools;
 
 namespace workwear.Dialogs.Organization
 {
@@ -374,14 +374,14 @@ namespace workwear.Dialogs.Organization
 				ycomboWearStd.ItemsEnum = typeof(SizeStandartMenWear);
 				ycomboShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
 				ycomboWinterShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
-				SizeHelper.FillSizeCombo(ycomboWearGrowth, SizeHelper.GetSizesList(GrowthStandartWear.Men, SizeUse.СlothesOnly));
+				SizeHelper.FillSizeCombo(ycomboWearGrowth, SizeHelper.GetSizesList(GrowthStandartWear.Men, GetExcludedSizeUse()));
 			}
 			else if (Entity.Sex == Sex.F)
 			{
 				ycomboWearStd.ItemsEnum = typeof(SizeStandartWomenWear);
 				ycomboShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
 				ycomboWinterShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
-				SizeHelper.FillSizeCombo(ycomboWearGrowth, SizeHelper.GetSizesList(GrowthStandartWear.Women, SizeUse.СlothesOnly));
+				SizeHelper.FillSizeCombo(ycomboWearGrowth, SizeHelper.GetSizesList(GrowthStandartWear.Women, GetExcludedSizeUse()));
 			}
 			else
 			{
@@ -395,7 +395,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnYcomboHeaddressChanged(object sender, EventArgs e)
 		{
 			if (ycomboHeaddressStd.SelectedItemOrNull != null)
-				SizeHelper.FillSizeCombo(ycomboHeaddressSize, SizeHelper.GetSizesList(ycomboHeaddressStd.SelectedItem, SizeUse.СlothesOnly));
+				SizeHelper.FillSizeCombo(ycomboHeaddressSize, SizeHelper.GetSizesList(ycomboHeaddressStd.SelectedItem, GetExcludedSizeUse()));
 			else
 				ycomboHeaddressSize.Clear();
 		}
@@ -403,7 +403,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnYcomboWearStdChanged(object sender, EventArgs e)
 		{
 			if (ycomboWearStd.SelectedItemOrNull != null)
-				SizeHelper.FillSizeCombo(ycomboWearSize, SizeHelper.GetSizesList(ycomboWearStd.SelectedItem, SizeUse.СlothesOnly));
+				SizeHelper.FillSizeCombo(ycomboWearSize, SizeHelper.GetSizesList(ycomboWearStd.SelectedItem, GetExcludedSizeUse()));
 			else
 				ycomboWearSize.Clear();
 		}
@@ -411,7 +411,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnYcomboShoesStdChanged(object sender, EventArgs e)
 		{
 			if (ycomboShoesStd.SelectedItemOrNull != null)
-				SizeHelper.FillSizeCombo(ycomboShoesSize, SizeHelper.GetSizesList(ycomboShoesStd.SelectedItem, SizeUse.СlothesOnly));
+				SizeHelper.FillSizeCombo(ycomboShoesSize, SizeHelper.GetSizesList(ycomboShoesStd.SelectedItem, GetExcludedSizeUse()));
 			else
 				ycomboShoesSize.Clear();
 		}
@@ -419,7 +419,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnYcomboWinterShoesStdChanged(object sender, EventArgs e)
 		{
 			if (ycomboWinterShoesStd.SelectedItemOrNull != null)
-				SizeHelper.FillSizeCombo(ycomboWinterShoesSize, SizeHelper.GetSizesList(ycomboWinterShoesStd.SelectedItem, SizeUse.СlothesOnly));
+				SizeHelper.FillSizeCombo(ycomboWinterShoesSize, SizeHelper.GetSizesList(ycomboWinterShoesStd.SelectedItem, GetExcludedSizeUse()));
 			else
 				ycomboWinterShoesSize.Clear();
 		}
@@ -427,7 +427,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnYcomboGlovesStdChanged(object sender, EventArgs e)
 		{
 			if (ycomboGlovesStd.SelectedItemOrNull != null)
-				SizeHelper.FillSizeCombo(ycomboGlovesSize, SizeHelper.GetSizesList(ycomboGlovesStd.SelectedItem, SizeUse.СlothesOnly));
+				SizeHelper.FillSizeCombo(ycomboGlovesSize, SizeHelper.GetSizesList(ycomboGlovesStd.SelectedItem, GetExcludedSizeUse()));
 			else
 				ycomboGlovesSize.Clear();
 		}
@@ -593,6 +593,11 @@ namespace workwear.Dialogs.Organization
 			var row = ytreeWorkwear.GetSelectedObject<EmployeeCardItem>();
 			var dlg = new EmployeeIssueGraphDlg(Entity, row.Item);
 			OpenTab(dlg);
+		}
+
+		private SizeUse[] GetExcludedSizeUse()
+		{
+			return BaseParameters.EmployeeSizeRanges ? new SizeUse[] { } : new SizeUse[] { SizeUse.СlothesOnly };
 		}
 	}
 }
