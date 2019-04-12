@@ -33,11 +33,17 @@ namespace workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCard> ()
 				.AddDeleteDependence<EmployeeCardItem> (x => x.EmployeeCard)
+				.AddDeleteDependence<EmployeeVacation> (x => x.Employee)
 				.AddDeleteDependence<Expense> (x => x.EmployeeCard)
 				.AddDeleteDependence<Income> (x => x.EmployeeCard)
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.Employee);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCardItem> ();
+
+			DeleteConfig.AddHibernateDeleteInfo<EmployeeVacation>();
+
+			DeleteConfig.AddHibernateDeleteInfo<VacationType>()
+				.AddDeleteDependence<EmployeeVacation>(x => x.VacationType);
 
 			#endregion
 			#region Нормы выдачи
