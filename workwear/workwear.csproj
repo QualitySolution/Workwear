@@ -174,7 +174,6 @@
     <Compile Include="Dialogs\Stock\IncomeDocItemsView.cs" />
     <Compile Include="gtk-gui\workwear.IncomeDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.IncomeDocItemsView.cs" />
-    <Compile Include="Representations\EmployeeBalanceVM.cs" />
     <Compile Include="Dialogs\Stock\WriteOffItemsView.cs" />
     <Compile Include="gtk-gui\workwear.WriteOffItemsView.cs" />
     <Compile Include="Dialogs\Stock\WriteOffDocDlg.cs" />
@@ -197,7 +196,6 @@
     <Compile Include="JournalFilters\ObjectBalanceFilter.cs" />
     <Compile Include="gtk-gui\workwear.ObjectBalanceFilter.cs" />
     <Compile Include="Repository\FacilityRepository.cs" />
-    <Compile Include="Representations\EmployeesVM.cs" />
     <Compile Include="Measurements\WearGrowth.cs" />
     <Compile Include="Measurements\WearSize.cs" />
     <Compile Include="JournalViewers\StockBalanceView.cs" />
@@ -266,6 +264,8 @@
     <Compile Include="Domain\Organization\EmployeeVacation.cs" />
     <Compile Include="HibernateMapping\Organization\VacationTypeMap.cs" />
     <Compile Include="HibernateMapping\Organization\EmployeeVacationMap.cs" />
+    <Compile Include="Representations\Organization\EmployeeBalanceVM.cs" />
+    <Compile Include="Representations\Organization\EmployeesVM.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -388,6 +388,7 @@
     <Folder Include="Repository\Stock\" />
     <Folder Include="Dialogs\Issuance\" />
     <Folder Include="Repository\Operations\" />
+    <Folder Include="Representations\Organization\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

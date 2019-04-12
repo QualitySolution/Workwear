@@ -15,7 +15,7 @@ using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
-namespace workwear.Representations
+namespace workwear.Representations.Organization
 {
 	public class EmployeeBalanceVM : RepresentationModelWithoutEntityBase<EmployeeBalanceVMNode>
 	{

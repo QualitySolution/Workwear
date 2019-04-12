@@ -17,6 +17,7 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
 using workwear.JournalViewers;
+using workwear.Representations.Organization;
 using workwear.Tools;
 using workwear.ViewModel;
 

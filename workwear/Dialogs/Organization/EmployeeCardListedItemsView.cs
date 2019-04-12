@@ -1,6 +1,6 @@
 ﻿using QS.Dialog.Gtk;
 using workwear.Domain.Organization;
-using workwear.Representations;
+using workwear.Representations.Organization;
 
 namespace workwear.Dialogs.Organization
 {

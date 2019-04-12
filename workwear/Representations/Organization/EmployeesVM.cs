@@ -4,13 +4,12 @@ using Gamma.ColumnConfig;
 using Gamma.GtkWidgets;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
-using QSOrmProject;
 using QSOrmProject.RepresentationModel;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.JournalFilters;
 
-namespace workwear.ViewModel
+namespace workwear.Representations.Organization
 {
 	public class EmployeesVM : RepresentationModelEntityBase<EmployeeCard, EmployeesVMNode>
 	{
