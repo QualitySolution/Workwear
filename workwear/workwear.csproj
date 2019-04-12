@@ -262,6 +262,10 @@
     <Compile Include="Repository\Operations\EmployeeIssueRepository.cs" />
     <Compile Include="Dialogs\Organization\EmployeeCardListedItemsView.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeCardListedItemsView.cs" />
+    <Compile Include="Domain\Organization\VacationType.cs" />
+    <Compile Include="Domain\Organization\EmployeeVacation.cs" />
+    <Compile Include="HibernateMapping\Organization\VacationTypeMap.cs" />
+    <Compile Include="HibernateMapping\Organization\EmployeeVacationMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

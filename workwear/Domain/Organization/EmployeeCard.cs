@@ -297,7 +297,27 @@ namespace workwear.Domain.Organization
 			}
 		}
 
+		private IList<EmployeeVacation> vacations = new List<EmployeeVacation>();
+
+		[Display(Name = "Спецодежда")]
+		public virtual IList<EmployeeVacation> Vacations {
+			get { return vacations; }
+			set { SetField(ref vacations, value, () => Vacations); }
+		}
+
+		GenericObservableList<EmployeeVacation> observableVacations;
+		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		public virtual GenericObservableList<EmployeeVacation> ObservableVacations {
+			get {
+				if(observableVacations == null)
+					observableVacations = new GenericObservableList<EmployeeVacation>(Vacations);
+				return observableVacations;
+			}
+		}
+
 		#endregion
+
+		#region Расчетные
 
 		public virtual string Title {
 			get{ return PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
@@ -311,6 +331,8 @@ namespace workwear.Domain.Organization
 		public virtual string ShortName {
 			get { return PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic); }
 		}
+
+		#endregion
 
 		public EmployeeCard ()
 		{

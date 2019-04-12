@@ -51,6 +51,11 @@ namespace workwear.HMap
 				.ParentKeyColumn ("wear_card_id")
 				.ChildKeyColumn ("norm_id")
 				.LazyLoad ();
+
+			HasMany(x => x.Vacations).Table("wear_cards_vacations")
+				.KeyColumn("wear_card_id").Not.KeyNullable()
+				.Cascade.AllDeleteOrphan().Inverse()
+				.LazyLoad();
 		}
 	}
 }
