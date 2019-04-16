@@ -39,8 +39,7 @@ public partial class MainWindow : Gtk.Window
 
 		MainUpdater.RunCheckVersion(true, true, true);
 
-		if (QSMain.User.Login == "root")
-		{
+		if(QSMain.User.Login == "root") {
 			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
 			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
 												  MessageType.Info,
@@ -55,8 +54,7 @@ public partial class MainWindow : Gtk.Window
 			return;
 		}
 
-		if (QSMain.connectionDB.DataSource == "demo.qsolution.ru")
-		{
+		if(QSMain.connectionDB.DataSource == "demo.qsolution.ru") {
 			string Message = "Вы подключились к демонстрационному серверу. Сервер предназначен для оценки " +
 				"возможностей программы, не используйте его для работы, так как ваши данные будут доступны " +
 				"любому пользователю через интернет.\n\nДля полноценного использования программы вам необходимо " +
@@ -161,8 +159,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction11Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportStockAllWear");
-		var reportInfo = new ReportInfo
-		{
+		var reportInfo = new ReportInfo {
 			Title = "Складская ведомость",
 			Identifier = "StockAllWear",
 		};
@@ -186,8 +183,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction12Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportListBySize");
-		var reportInfo = new ReportInfo
-		{
+		var reportInfo = new ReportInfo {
 			Title = "Список по размерам",
 			Identifier = "ListBySize",
 		};
@@ -254,8 +250,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionYearRequestSheetActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("AverageAnnualNeedReport");
-		var reportInfo = new ReportInfo
-		{
+		var reportInfo = new ReportInfo {
 			Title = "Среднегодовая потребность",
 			Identifier = "AverageAnnualNeed",
 		};
@@ -310,8 +305,7 @@ public partial class MainWindow : Gtk.Window
 
 	void ReadUserSettings()
 	{
-		switch (CurrentUserSettings.Settings.ToolbarStyle)
-		{
+		switch(CurrentUserSettings.Settings.ToolbarStyle) {
 			case ToolbarStyle.Both:
 				ActionToolBarTextAndIcon.Activate();
 				break;
@@ -322,8 +316,7 @@ public partial class MainWindow : Gtk.Window
 				ActionToolBarTextOnly.Activate();
 				break;
 		}
-		switch (CurrentUserSettings.Settings.ToolBarIconsSize)
-		{
+		switch(CurrentUserSettings.Settings.ToolBarIconsSize) {
 			case IconsSize.ExtraSmall:
 				ActionIconsExtraSmall.Activate();
 				break;
@@ -342,8 +335,7 @@ public partial class MainWindow : Gtk.Window
 
 	private void ToolBarMode(ToolbarStyle style)
 	{
-		if (CurrentUserSettings.Settings.ToolbarStyle != style)
-		{
+		if(CurrentUserSettings.Settings.ToolbarStyle != style) {
 			CurrentUserSettings.Settings.ToolbarStyle = style;
 			CurrentUserSettings.SaveSettings();
 		}
@@ -354,11 +346,10 @@ public partial class MainWindow : Gtk.Window
 
 	private void ToolBarShow(bool show)
 	{
-		if (toolbarMain.Visible == show)
+		if(toolbarMain.Visible == show)
 			return;
 
-		if (CurrentUserSettings.Settings.ShowToolbar != show)
-		{
+		if(CurrentUserSettings.Settings.ShowToolbar != show) {
 			CurrentUserSettings.Settings.ShowToolbar = show;
 			CurrentUserSettings.SaveSettings();
 		}
@@ -370,13 +361,11 @@ public partial class MainWindow : Gtk.Window
 
 	private void ToolBarMode(IconsSize size)
 	{
-		if (CurrentUserSettings.Settings.ToolBarIconsSize != size)
-		{
+		if(CurrentUserSettings.Settings.ToolBarIconsSize != size) {
 			CurrentUserSettings.Settings.ToolBarIconsSize = size;
 			CurrentUserSettings.SaveSettings();
 		}
-		switch (size)
-		{
+		switch(size) {
 			case IconsSize.ExtraSmall:
 				toolbarMain.IconSize = IconSize.SmallToolbar;
 				break;
@@ -394,43 +383,43 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionToolBarTextOnlyToggled(object sender, EventArgs e)
 	{
-		if (ActionToolBarTextOnly.Active)
+		if(ActionToolBarTextOnly.Active)
 			ToolBarMode(ToolbarStyle.Text);
 	}
 
 	protected void OnActionToolBarIconOnlyToggled(object sender, EventArgs e)
 	{
-		if (ActionToolBarIconOnly.Active)
+		if(ActionToolBarIconOnly.Active)
 			ToolBarMode(ToolbarStyle.Icons);
 	}
 
 	protected void OnActionToolBarTextAndIconToggled(object sender, EventArgs e)
 	{
-		if (ActionToolBarTextAndIcon.Active)
+		if(ActionToolBarTextAndIcon.Active)
 			ToolBarMode(ToolbarStyle.Both);
 	}
 
 	protected void OnActionIconsExtraSmallToggled(object sender, EventArgs e)
 	{
-		if (ActionIconsExtraSmall.Active)
+		if(ActionIconsExtraSmall.Active)
 			ToolBarMode(IconsSize.ExtraSmall);
 	}
 
 	protected void OnActionIconsSmallToggled(object sender, EventArgs e)
 	{
-		if (ActionIconsSmall.Active)
+		if(ActionIconsSmall.Active)
 			ToolBarMode(IconsSize.Small);
 	}
 
 	protected void OnActionIconsMiddleToggled(object sender, EventArgs e)
 	{
-		if (ActionIconsMiddle.Active)
+		if(ActionIconsMiddle.Active)
 			ToolBarMode(IconsSize.Middle);
 	}
 
 	protected void OnActionIconsLargeToggled(object sender, EventArgs e)
 	{
-		if (ActionIconsLarge.Active)
+		if(ActionIconsLarge.Active)
 			ToolBarMode(IconsSize.Large);
 	}
 
@@ -517,5 +506,11 @@ public partial class MainWindow : Gtk.Window
 		tdiMain.OpenTab(TdiTabBase.GenerateHashName<DataBaseSettingsDlg>(),
 						() => new DataBaseSettingsDlg()
 			   );
+	}
+
+	protected void OnActionVacationTypesActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount("VacationType");
+		tdiMain.OpenTab<OrmReference, Type>(typeof(VacationType));
 	}
 }

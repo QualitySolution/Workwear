@@ -194,11 +194,13 @@ namespace workwear.Dialogs.Organization
 
 		private global::Gtk.VBox vbox3;
 
-		private global::Gtk.VBox vbox5;
-
 		private global::workwear.Dialogs.Organization.EmployeeMovementsView employeemovementsview1;
 
 		private global::Gtk.Label label22;
+
+		private global::workwear.Dialogs.Organization.EmployeeVacationsView employeevacationsview1;
+
+		private global::Gtk.Label label28;
 
 		protected virtual void Build()
 		{
@@ -1022,7 +1024,7 @@ namespace workwear.Dialogs.Organization
 			this.notebook1 = new global::Gtk.Notebook();
 			this.notebook1.CanFocus = true;
 			this.notebook1.Name = "notebook1";
-			this.notebook1.CurrentPage = 2;
+			this.notebook1.CurrentPage = 4;
 			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.vbox6 = new global::Gtk.VBox();
 			this.vbox6.Name = "vbox6";
@@ -1293,28 +1295,34 @@ namespace workwear.Dialogs.Organization
 			this.vbox3.Name = "vbox3";
 			this.vbox3.Spacing = 6;
 			// Container child vbox3.Gtk.Box+BoxChild
-			this.vbox5 = new global::Gtk.VBox();
-			this.vbox5.Name = "vbox5";
-			this.vbox5.Spacing = 6;
-			// Container child vbox5.Gtk.Box+BoxChild
 			this.employeemovementsview1 = new global::workwear.Dialogs.Organization.EmployeeMovementsView();
 			this.employeemovementsview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeemovementsview1.Name = "employeemovementsview1";
-			this.vbox5.Add(this.employeemovementsview1);
-			global::Gtk.Box.BoxChild w106 = ((global::Gtk.Box.BoxChild)(this.vbox5[this.employeemovementsview1]));
+			this.vbox3.Add(this.employeemovementsview1);
+			global::Gtk.Box.BoxChild w106 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.employeemovementsview1]));
 			w106.Position = 0;
-			this.vbox3.Add(this.vbox5);
-			global::Gtk.Box.BoxChild w107 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.vbox5]));
-			w107.Position = 0;
 			this.notebook1.Add(this.vbox3);
-			global::Gtk.Notebook.NotebookChild w108 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox3]));
-			w108.Position = 3;
+			global::Gtk.Notebook.NotebookChild w107 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox3]));
+			w107.Position = 3;
 			// Notebook tab
 			this.label22 = new global::Gtk.Label();
 			this.label22.Name = "label22";
 			this.label22.LabelProp = global::Mono.Unix.Catalog.GetString("История выдач");
 			this.notebook1.SetTabLabel(this.vbox3, this.label22);
 			this.label22.ShowAll();
+			// Container child notebook1.Gtk.Notebook+NotebookChild
+			this.employeevacationsview1 = new global::workwear.Dialogs.Organization.EmployeeVacationsView();
+			this.employeevacationsview1.Events = ((global::Gdk.EventMask)(256));
+			this.employeevacationsview1.Name = "employeevacationsview1";
+			this.notebook1.Add(this.employeevacationsview1);
+			global::Gtk.Notebook.NotebookChild w108 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeevacationsview1]));
+			w108.Position = 4;
+			// Notebook tab
+			this.label28 = new global::Gtk.Label();
+			this.label28.Name = "label28";
+			this.label28.LabelProp = global::Mono.Unix.Catalog.GetString("Отпуска");
+			this.notebook1.SetTabLabel(this.employeevacationsview1, this.label28);
+			this.label28.ShowAll();
 			this.dialog1_VBox.Add(this.notebook1);
 			global::Gtk.Box.BoxChild w109 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.notebook1]));
 			w109.Position = 2;

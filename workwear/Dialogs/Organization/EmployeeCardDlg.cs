@@ -288,6 +288,9 @@ namespace workwear.Dialogs.Organization
 				employeecardlisteditemsview.UpdateList();
 			}
 
+			if(notebook1.CurrentPage == 4 && !employeevacationsview1.VacationsLoaded) {
+				employeevacationsview1.UpdateList();
+			}
 		}
 
 		protected void OnYentryObjectChanged(object sender, EventArgs e)
