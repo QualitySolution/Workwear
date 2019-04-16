@@ -49,6 +49,12 @@ namespace workwear.Domain.Users
 
 		#endregion
 
+		#region Расчетные
+
+		public virtual string Title => $"Настройки {User.Name}";
+
+		#endregion
+
 		public UserSettings ()
 		{
 
