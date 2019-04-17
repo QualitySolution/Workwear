@@ -79,10 +79,6 @@ namespace workwear.Dialogs.Organization
 			dateHire.Binding.AddBinding (Entity, e => e.HireDate, w => w.DateOrNull).InitializeFromSource ();
 			dateChangePosition.Binding.AddBinding(Entity, e => e.ChangeOfPositionDate, w => w.DateOrNull).InitializeFromSource();
 			dateDismiss.Binding.AddBinding (Entity, e => e.DismissDate, w => w.DateOrNull).InitializeFromSource ();
-			yperiodMaternityLeave.Binding.AddSource(Entity)
-								 .AddBinding(e => e.CurrentLeaveBegin, w => w.StartDateOrNull)
-								 .AddBinding(e => e.CurrentLeaveEnd, w => w.EndDateOrNull)
-								 .InitializeFromSource();
 
 			yentryPost.SubjectType = typeof(Post);
 			yentryPost.Binding.AddBinding (Entity, e => e.Post, w => w.Subject).InitializeFromSource ();
@@ -99,7 +95,7 @@ namespace workwear.Dialogs.Organization
 			//!!!!!!!! НЕ ЗАБЫВАЕМ КОРРЕКТИРОВАТЬ ПОРЯДОК ПРИ ДОБАВЛЕНИИ ВИДЖЕТОВ В ТАБЛИЦУ !!!!!!!!
 			//Это порядок только внутри таблицы! А не всего диалога.
 			table1.FocusChain = new Widget[] {hbox7, entryLastName, entryFirstName, entryPatronymic, 
-				yentryPost, yentryLeader, yentryObject, yentryPersonnelNumber, dateHire, dateChangePosition, yperiodMaternityLeave, dateDismiss, 
+				yentryPost, yentryLeader, yentryObject, yentryPersonnelNumber, dateHire, dateChangePosition, dateDismiss, 
 				GtkScrolledWindowComments, comboSex, ycomboWearGrowth, 
 				ycomboWearStd, ycomboWearSize, 
 				ycomboShoesStd, ycomboShoesSize,
