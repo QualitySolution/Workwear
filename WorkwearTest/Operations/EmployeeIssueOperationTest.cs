@@ -1,10 +1,10 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
-using QS.DomainModel.UoW;
 using System;
 using System.Collections.Generic;
 using workwear.Domain.Operations;
 using workwear.Domain.Operations.Graph;
+using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
@@ -15,9 +15,11 @@ namespace WorkwearTest.Operations
 	{
 		#region RecalculateDatesOfIssueOperation
 
-		[Test(Description = "Дата начала использование сдвигается на первую дырку в интервалах, с меньшим чем в норме количетвом. Проверяем дату износа через месяц.")]
+		[Test(Description = "Дата начала использования сдвигается на первую дырку в интервалах, с меньшим чем в норме количетвом. Проверяем дату износа через месяц.")]
 		public void RecalculateDatesOfIssueOperation_MoveFirstLessNormTest()
 		{
+			var employee = Substitute.For<EmployeeCard>();
+
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
 			operation1.OperationTime.Returns(new DateTime(2018, 1, 1));
 			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 2, 1));
@@ -38,6 +40,7 @@ namespace WorkwearTest.Operations
 
 			var graph = new IssueGraph(operations);
 			var issue = new EmployeeIssueOperation();
+			issue.Employee = employee;
 			issue.Nomenclature = nomenclature;
 			issue.NormItem = norm;
 			issue.OperationTime = new DateTime(2018, 1, 15);
@@ -51,6 +54,8 @@ namespace WorkwearTest.Operations
 		[Test(Description = "Проверяем пропорциональное увеличение периода использовния.")]
 		public void RecalculateDatesOfIssueOperation_LifeTimeAppendProportionalTest()
 		{
+			var employee = Substitute.For<EmployeeCard>();
+
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
 			operation1.OperationTime.Returns(new DateTime(2018, 1, 1));
 			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 2, 1));
@@ -68,6 +73,7 @@ namespace WorkwearTest.Operations
 
 			var graph = new IssueGraph(operations);
 			var issue = new EmployeeIssueOperation();
+			issue.Employee = employee;
 			issue.Nomenclature = nomenclature;
 			issue.NormItem = norm;
 			issue.OperationTime = new DateTime(2018, 3, 10);
@@ -76,6 +82,43 @@ namespace WorkwearTest.Operations
 			issue.RecalculateDatesOfIssueOperation(graph, s => true);
 
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2018, 4, 25)));
+		}
+
+		[Test(Description = "Проверяем увеличение периода использовния на время отпуска.")]
+		public void RecalculateDatesOfIssueOperation_LifeTimeAppendOnVacationTest()
+		{
+			var vacationType = Substitute.For<VacationType>();
+			vacationType.ExcludeFromWearing.Returns(true);
+
+			var employee = Substitute.For<EmployeeCard>();
+			var vacation = Substitute.For<EmployeeVacation>();
+			vacation.VacationType.Returns(vacationType);
+			vacation.Employee.Returns(employee);
+			vacation.BeginDate.Returns(new DateTime(2019, 2, 1));
+			vacation.EndDate.Returns(new DateTime(2019, 2, 10));
+			employee.Vacations.Returns(new List<EmployeeVacation> { vacation });
+
+			var norm = new NormItem();
+			norm.Amount = 2;
+			norm.PeriodCount = 3;
+			norm.NormPeriod = NormPeriodType.Month;
+
+			var nomenclature = Substitute.For<Nomenclature>();
+			nomenclature.TypeName.Returns("fake");
+
+			var operations = new List<EmployeeIssueOperation>() { };
+
+			var graph = new IssueGraph(operations);
+			var issue = new EmployeeIssueOperation();
+			issue.Employee = employee;
+			issue.Nomenclature = nomenclature;
+			issue.NormItem = norm;
+			issue.OperationTime = new DateTime(2019, 1, 10);
+			issue.Issued = 2;
+
+			issue.RecalculateDatesOfIssueOperation(graph, s => true);
+
+			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 4, 20)));
 		}
 
 		#endregion

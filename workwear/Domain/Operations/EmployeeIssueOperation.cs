@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Utilities.Dates;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
@@ -240,7 +241,7 @@ namespace workwear.Domain.Operations
 
 			ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value);
 
-			if (Issued > amountByNorm)
+			if(Issued > amountByNorm)
 			{
 				if(askUser($"За раз выдается {Issued} x {Nomenclature.Type.Name} это больше чем положено по норме {amountByNorm}. Увеличить период эксплуатации выданного пропорционально количеству?"))
 				{
@@ -248,7 +249,16 @@ namespace workwear.Domain.Operations
 				}
 			}
 
-			if (UseAutoWriteoff)
+			//Обрабатываем отпуска
+			if(Employee.Vacations.Any(v => v.BeginDate <= ExpiryByNorm && v.EndDate >= StartOfUse && v.VacationType.ExcludeFromWearing)) {
+				var ranges = Employee.Vacations.Where(v => v.VacationType.ExcludeFromWearing).Select(v => new DateRange(v.BeginDate, v.EndDate));
+				var wearTime = new DateRange(StartOfUse.Value, DateTime.MaxValue);
+				wearTime.ExcludedRanges.AddRange(ranges);
+				var endWearDate = wearTime.FillIntervals((ExpiryByNorm - StartOfUse.Value).Value.Days);
+				ExpiryByNorm = endWearDate;
+			}
+
+			if(UseAutoWriteoff)
 				AutoWriteoffDate = ExpiryByNorm;
 			else
 				AutoWriteoffDate = null;
