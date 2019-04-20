@@ -182,9 +182,12 @@ namespace WorkwearTest.Organization
 
 			var uow = Substitute.For<IUnitOfWork>();
 			var employee = Substitute.For<EmployeeCard>();
-			employee.CurrentLeaveBegin.Returns(new DateTime(2018, 1, 15));
-			employee.CurrentLeaveEnd.Returns(new DateTime(2018, 2, 15));
 			employee.Id.Returns(777); //Необходимо чтобы было более 0, для запроса имеющихся операций.
+			var vacation = Substitute.For<EmployeeVacation>();
+			vacation.Employee.Returns(employee);
+			vacation.BeginDate.Returns(new DateTime(2018, 1, 15));
+			vacation.EndDate.Returns(new DateTime(2018, 2, 15));
+			employee.Vacations.Returns(new List<EmployeeVacation> { vacation });
 
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(10);
@@ -211,9 +214,12 @@ namespace WorkwearTest.Organization
 
 			var uow = Substitute.For<IUnitOfWork>();
 			var employee = Substitute.For<EmployeeCard>();
-			employee.CurrentLeaveBegin.Returns(new DateTime(2018, 2, 15));
-			employee.CurrentLeaveEnd.Returns(new DateTime(2018, 3, 15));
 			employee.Id.Returns(777); //Необходимо чтобы было более 0, для запроса имеющихся операций.
+			var vacation = Substitute.For<EmployeeVacation>();
+			vacation.Employee.Returns(employee);
+			vacation.BeginDate.Returns(new DateTime(2018, 2, 15));
+			vacation.EndDate.Returns(new DateTime(2018, 3, 15));
+			employee.Vacations.Returns(new List<EmployeeVacation> { vacation });
 
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(10);

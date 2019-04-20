@@ -108,24 +108,6 @@ namespace workwear.Domain.Organization
 			set { SetField (ref dismissDate, value, () => DismissDate); }
 		}
 
-		private DateTime? currentLeaveBegin;
-
-		[Display(Name = "Начало текущего отпуска")]
-		public virtual DateTime? CurrentLeaveBegin
-		{
-			get { return currentLeaveBegin; }
-			set { SetField(ref currentLeaveBegin, value, () => CurrentLeaveBegin); }
-		}
-
-		private DateTime? currentLeaveEnd;
-
-		[Display(Name = "Конец текущего отпуска")]
-		public virtual DateTime? CurrentLeaveEnd
-		{
-			get { return currentLeaveEnd; }
-			set { SetField(ref currentLeaveEnd, value, () => CurrentLeaveEnd); }
-		}
-
 		Sex sex;
 
 		[Display (Name = "Пол")]

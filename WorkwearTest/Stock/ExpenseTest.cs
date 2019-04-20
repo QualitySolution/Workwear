@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using workwear.Domain.Operations;
 using workwear.Domain.Operations.Graph;
+using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
@@ -17,6 +18,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 		public void UpdateOperations_IgnoreSelfOperationsWhenChangeDateOfDocument()
 		{
 			var uow = Substitute.For<IUnitOfWork>();
+			var employee = Substitute.For<EmployeeCard>();
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(1);
 			var incomeOn = Substitute.For<IncomeItem>();
@@ -34,6 +36,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expenseItem.Amount = 1;
 			expenseItem.IncomeOn = incomeOn;
 			var expense = new Expense();
+			expense.EmployeeCard = employee;
 			expense.Date = new DateTime(2019, 1, 15);
 			expense.Operation = ExpenseOperations.Employee;
 			expense.Items.Add(expenseItem);
@@ -53,6 +56,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 		public void UpdateOperations_DontMoveDateIfAtLastDateAmountEnough()
 		{
 			var uow = Substitute.For<IUnitOfWork>();
+			var employee = Substitute.For<EmployeeCard>();
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(1);
 			var incomeOn = Substitute.For<IncomeItem>();
@@ -73,6 +77,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expenseItem.Amount = 1;
 			expenseItem.IncomeOn = incomeOn;
 			var expense = new Expense();
+			expense.EmployeeCard = employee;
 			expense.Date = new DateTime(2019, 1, 15);
 			expense.Operation = ExpenseOperations.Employee;
 			expense.Items.Add(expenseItem);
@@ -92,6 +97,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 		public void UpdateOperations_DontMoveDateIfWriteofAtIssueDate()
 		{
 			var uow = Substitute.For<IUnitOfWork>();
+			var employee = Substitute.For<EmployeeCard>();
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(1);
 			var incomeOn = Substitute.For<IncomeItem>();
@@ -119,6 +125,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expenseItem.Amount = 1;
 			expenseItem.IncomeOn = incomeOn;
 			var expense = new Expense();
+			expense.EmployeeCard = employee;
 			expense.Date = new DateTime(2019, 1, 15);
 			expense.Operation = ExpenseOperations.Employee;
 			expense.Items.Add(expenseItem);

@@ -4,6 +4,7 @@ using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Utilities.Dates;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -258,10 +259,14 @@ namespace workwear.Domain.Organization
 			}
 
 			//Сдвигаем дату следующего получения на конец отпуска
-			if (EmployeeCard.CurrentLeaveBegin.HasValue && EmployeeCard.CurrentLeaveEnd.HasValue
-			    && wantIssue >= EmployeeCard.CurrentLeaveBegin.Value
-			    && wantIssue <= EmployeeCard.CurrentLeaveEnd.Value)
-				wantIssue = EmployeeCard.CurrentLeaveEnd.Value.AddDays(1);
+			if(EmployeeCard.Vacations.Any(v => v.BeginDate <= wantIssue && v.EndDate >= wantIssue)) {
+				var ranges = EmployeeCard.Vacations.Select(v => new DateRange(v.BeginDate, v.EndDate));
+				var wearTime = new DateRange(DateTime.MinValue, DateTime.MaxValue);
+				wearTime.ExcludedRanges.AddRange(ranges);
+				var moveTo = wearTime.FindEndOfExclusion(wantIssue.Value);
+				if(moveTo != null)
+					wantIssue = moveTo.Value.AddDays(1);
+			}
 
 			if(NextIssue != wantIssue)
 			{

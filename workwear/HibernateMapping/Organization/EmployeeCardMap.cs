@@ -18,8 +18,6 @@ namespace workwear.HMap
 			Map (x => x.HireDate).Column ("hire_date");
 			Map(x => x.ChangeOfPositionDate).Column("change_of_position_date");
 			Map (x => x.DismissDate).Column ("dismiss_date");
-			Map(x => x.CurrentLeaveBegin).Column("maternity_leave_begin");
-			Map(x => x.CurrentLeaveEnd).Column("maternity_leave_end");
 			Map(x => x.Comment).Column("comment");
 
 			Map (x => x.Photo).Column ("photo").CustomSqlType ("BinaryBlob");
