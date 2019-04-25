@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.Bindings.Utilities;
 using System.Linq;
+using NHibernate;
 using QS.Dialog.Gtk;
 using workwear.Domain.Organization;
 using workwear.DTO;
@@ -48,7 +49,7 @@ namespace workwear.Dialogs.Organization
 
 			var displayList = new List<EmployeeCardMovements>();
 
-			var list = EmployeeIssueRepository.AllOperationsForEmployee(UoW, RootEntity, query => query.Fetch(x => x.Nomenclature));
+			var list = EmployeeIssueRepository.AllOperationsForEmployee(UoW, RootEntity, query => query.Fetch(SelectMode.Fetch, x => x.Nomenclature));
 			var docs = EmployeeIssueRepository.GetReferencedDocuments(UoW, list.Select(x => x.Id).ToArray());
 			foreach(var operation in list) {
 				var item = new EmployeeCardMovements();
