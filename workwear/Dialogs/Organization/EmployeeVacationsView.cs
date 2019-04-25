@@ -34,6 +34,7 @@ namespace workwear.Dialogs.Organization
 			};
 			treeviewVacations.RepresentationModel = vm;
 			treeviewVacations.Selection.Changed += Vacation_Selection_Changed;
+			treeviewVacations.RowActivated += TreeviewVacations_RowActivated;
 			configured = true;
 		}
 
@@ -64,5 +65,11 @@ namespace workwear.Dialogs.Organization
 		{
 			QS.Deletion.DeleteHelper.DeleteEntity(typeof(EmployeeVacation), treeviewVacations.GetSelectedId());
 		}
+
+		void TreeviewVacations_RowActivated(object o, Gtk.RowActivatedArgs args)
+		{
+			buttonEdit.Click();
+		}
+
 	}
 }
