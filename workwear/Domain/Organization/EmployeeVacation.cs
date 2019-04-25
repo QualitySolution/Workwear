@@ -7,7 +7,7 @@ namespace workwear.Domain.Organization
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "отпуска сотрудника",
 		Nominative = "отпуск сотрудника")]
-	public class EmployeeVacation : PropertyChangedBase, IDomainObject
+	public class EmployeeVacation : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства
 
@@ -63,6 +63,11 @@ namespace workwear.Domain.Organization
 
 		#endregion
 
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+		{
+			if(BeginDate > EndDate)
+				yield return new ValidationResult("Дата окончания отпуска не может быть меньше даты начала отпуска.", new[] { nameof(BeginDate), nameof(EndDate) });
+		}
 		public EmployeeVacation()
 		{
 		}
