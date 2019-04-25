@@ -1,5 +1,6 @@
 ﻿using System;
 using QS.Dialog.Gtk;
+using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using workwear.Domain.Organization;
 
@@ -44,6 +45,9 @@ namespace workwear.Dialogs.Organization
 			var valid = new QSValidation.QSValidator<EmployeeVacation>(Entity);
 			if(valid.RunDlgIfNotValid((Gtk.Window)this.Toplevel))
 				return false;
+
+			Func<string, bool> ask = MessageDialogHelper.RunQuestionDialog;
+			Entity.UpdateRelatedOperations(UoW, ask);
 
 			UoWGeneric.Save();
 			logger.Info("Ok");

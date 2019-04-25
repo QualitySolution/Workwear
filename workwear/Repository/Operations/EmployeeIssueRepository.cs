@@ -21,6 +21,20 @@ namespace workwear.Repository.Operations
 			return query.OrderBy(x => x.OperationTime).Asc.List();
 		}
 
+		public static Func<IUnitOfWork, EmployeeCard, DateTime, DateTime, IList<EmployeeIssueOperation>> GetOperationsTouchDatesTestGap;
+		public static IList<EmployeeIssueOperation> GetOperationsTouchDates(IUnitOfWork uow, EmployeeCard employee, DateTime begin, DateTime end, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null) {
+			if(GetOperationsTouchDatesTestGap != null)
+				return GetOperationsTouchDatesTestGap(uow, employee, begin, end);
+
+			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
+				.Where(o => o.Employee == employee)
+				.Where(o => o.StartOfUse <= end && o.ExpiryByNorm >= begin);
+
+			makeEager?.Invoke(query);
+
+			return query.OrderBy(x => x.OperationTime).Asc.List();
+		}
+
 		public static ExpenseItem GetExpenseItemForOperation(IUnitOfWork uow, EmployeeIssueOperation operation)
 		{
 			return uow.Session.QueryOver<ExpenseItem>()

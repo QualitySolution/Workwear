@@ -1,6 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using NHibernate;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
+using workwear.Domain.Operations.Graph;
+using workwear.Repository.Operations;
 
 namespace workwear.Domain.Organization
 {
@@ -63,11 +69,30 @@ namespace workwear.Domain.Organization
 
 		#endregion
 
+		#region Публичные методы
+
+		public virtual void UpdateRelatedOperations(IUnitOfWork uow, Func<string, bool> askUser)
+		{
+			var operations = EmployeeIssueRepository.GetOperationsTouchDates(uow, Employee, BeginDate, EndDate,
+				q => q.Fetch(SelectMode.Fetch, o => o.Nomenclature.Type)
+			);
+			foreach(var typeGroup in operations.GroupBy(o => o.Nomenclature.Type)) {
+				var graph = IssueGraph.MakeIssueGraph(uow, Employee, typeGroup.Key);
+				foreach(var operation in typeGroup.OrderBy(o => o.OperationTime)) {
+					operation.RecalculateDatesOfIssueOperation(graph, askUser);
+					uow.Save(operation);
+				}
+			}
+		}
+
+		#endregion
+
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
 		{
 			if(BeginDate > EndDate)
 				yield return new ValidationResult("Дата окончания отпуска не может быть меньше даты начала отпуска.", new[] { nameof(BeginDate), nameof(EndDate) });
 		}
+
 		public EmployeeVacation()
 		{
 		}

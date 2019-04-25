@@ -80,6 +80,7 @@
     <Compile Include="Operations\EmployeeIssueOperationTest.cs" />
     <Compile Include="Organization\EmployeeCardItemTests.cs" />
     <Compile Include="Stock\ExpenseTest.cs" />
+    <Compile Include="Organization\EmployeeVacationTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.Testing\QS.Testing.csproj">
