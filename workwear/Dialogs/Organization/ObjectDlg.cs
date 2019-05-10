@@ -4,7 +4,6 @@ using MySql.Data.MySqlClient;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
-using QSOrmProject;
 using QSProjectsLib;
 using workwear.Domain.Organization;
 
@@ -13,23 +12,23 @@ namespace workwear.Dialogs.Organization
 	public partial class ObjectDlg : EntityDialogBase<Facility>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
-		public bool NewItem = true;
-		int Itemid;
 		private Gtk.ListStore ItemsListStore;
 		private TreeModel PlacementList;
 		CellRendererCombo CellPlacement;
 
 		public ObjectDlg (Facility obj) : this(obj.Id) {}
 
-		public ObjectDlg (int id) : this()
+		public ObjectDlg (int id)
 		{
+			this.Build();
+			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Facility>(id);
+			ConfigureDlg();
 			Fill(id);
 		}
 
-		public ObjectDlg() : base()
+		public ObjectDlg()
 		{
 			this.Build();
-			//FIXME Просто создаем UoW что бы не падало остальное.
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Facility>();
 			ConfigureDlg();
 		}
@@ -79,42 +78,18 @@ namespace workwear.Dialogs.Organization
 
 		private void Fill(int id)
 		{
-			Itemid = id;
-			NewItem = false;
+			labelID.Text = Entity.Id.ToString();
+			entryName.Text = Entity.Name;
+			textviewAddress.Buffer.Text = Entity.Address;
 
-			QSMain.CheckConnectionAlive ();
-			logger.Info("Запрос объекта №{0}...", id);
-			string sql = "SELECT * FROM objects WHERE id = @id";
-			try
-			{
-				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
+			UpdatePlacementCombo();
+			UpdateProperty();
+			buttonPlacement.Sensitive = true;
+			buttonGive.Sensitive = true;
+			buttonReturn.Sensitive = true;
+			buttonWriteOff.Sensitive = true;
+			TabName = entryName.Text;
 
-				cmd.Parameters.AddWithValue("@id", id);
-
-				using(MySqlDataReader rdr = cmd.ExecuteReader())
-				{		
-					rdr.Read();
-
-					labelID.Text = rdr["id"].ToString();
-					entryName.Text = rdr["name"].ToString();
-					textviewAddress.Buffer.Text = rdr.GetString("address");
-
-					logger.Info("Ok");
-				}
-
-				UpdatePlacementCombo();
-				UpdateProperty();
-				buttonPlacement.Sensitive = true;
-				buttonGive.Sensitive = true;
-				buttonReturn.Sensitive = true;
-				buttonWriteOff.Sensitive = true;
-				TabName = entryName.Text;
-			}
-			catch (Exception ex)
-			{
-				QSMain.ErrorMessageWithLog("Ошибка получения информации о объекте!", logger, ex);
-				FailInitialize = true;
-			}
 			TestCanSave();
 		}
 
@@ -126,43 +101,16 @@ namespace workwear.Dialogs.Organization
 
 		public override bool Save ()
 		{
-			string sql;
-			if(NewItem)
-			{
-				sql = "INSERT INTO objects (name, address) " +
-					"VALUES (@name, @address)";
-			}
-			else
-			{
-				sql = "UPDATE objects SET name = @name, address = @address WHERE id = @id";
-			}
-			QSMain.CheckConnectionAlive ();
 			logger.Info("Запись объекта...");
-			try 
-			{
-				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 
-				cmd.Parameters.AddWithValue("@id", Itemid);
-				cmd.Parameters.AddWithValue("@name", entryName.Text);
-				cmd.Parameters.AddWithValue("@address", textviewAddress.Buffer.Text);
+			Entity.Name = entryName.Text;
+			Entity.Address = textviewAddress.Buffer.Text;
+			UoW.Save();
 
-				cmd.ExecuteNonQuery();
-				if(NewItem)
-					Itemid = (int)cmd.LastInsertedId;
+			SaveProperty();
 
-				SaveProperty();
-
-				logger.Info("Ok");
-				//FIXME Временно пока не переведем диалог на ORM.
-				var facility = UoW.GetById<Facility>(Itemid);
-				OrmMain.NotifyObjectUpdated(facility);
-				return true;
-			} 
-			catch (Exception ex) 
-			{
-				QSMain.ErrorMessageWithLog("Ошибка записи объекта!", logger, ex);
-			}
-			return false;
+			logger.Info("Ok");
+			return true;
 		}
 
 		void SaveProperty()
@@ -190,8 +138,8 @@ namespace workwear.Dialogs.Organization
 		{
 			Reference WinPlacement = new Reference(false);
 			WinPlacement.ParentFieldName = "object_id";
-			WinPlacement.ParentId = Itemid;
-			WinPlacement.SqlSelect = "SELECT id, name FROM @tablename WHERE object_id = " + Itemid.ToString();
+			WinPlacement.ParentId = Entity.Id;
+			WinPlacement.SqlSelect = "SELECT id, name FROM @tablename WHERE object_id = " + Entity.Id.ToString();
 			WinPlacement.SetMode(true, false, true, true, true);
 			WinPlacement.FillList("object_places", "размещение", "Размещения объекта");
 			WinPlacement.Show();
@@ -288,7 +236,7 @@ namespace workwear.Dialogs.Organization
 						"LEFT JOIN object_places ON object_places.id = stock_expense_detail.object_place_id " +
 						"WHERE stock_expense.object_id = @id AND (spent.count IS NULL OR spent.count < stock_expense_detail.quantity )";
 				MySqlCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
-				cmd.Parameters.AddWithValue ("@id", Itemid);
+				cmd.Parameters.AddWithValue ("@id", Entity.Id);
 				MySqlDataReader rdr = cmd.ExecuteReader();
 
 				ItemsListStore.Clear();
@@ -334,7 +282,7 @@ namespace workwear.Dialogs.Organization
 		void UpdatePlacementCombo()
 		{
 			string sql = "SELECT name, id FROM object_places WHERE object_id = @id";
-			MySqlParameter[] param = new MySqlParameter[]{ new MySqlParameter("@id", Itemid)};
+			MySqlParameter[] param = new MySqlParameter[]{ new MySqlParameter("@id", Entity.Id) };
 			ComboBox PlacementCombo = new ComboBox();
 			ComboWorks.ComboFillUniversal(PlacementCombo, sql, "{0}", param, 1, ComboWorks.ListMode.WithNo);
 			CellPlacement.Model = PlacementList = PlacementCombo.Model;
@@ -344,7 +292,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnButtonGiveClicked(object sender, EventArgs e)
 		{
 			SaveIfPropertyChanged();
-			Facility obj = UoW.GetById<Facility>(Itemid);
+			Facility obj = UoW.GetById<Facility>(Entity.Id);
 			ExpenseDocDlg winExpense = new ExpenseDocDlg(obj);
 			winExpense.EntitySaved += (s, ea) => UpdateProperty();
 			OpenTab(winExpense);
@@ -353,7 +301,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnButtonReturnClicked(object sender, EventArgs e)
 		{
 			SaveIfPropertyChanged();
-			Facility obj = UoW.GetById<Facility>(Itemid);
+			Facility obj = UoW.GetById<Facility>(Entity.Id);
 			IncomeDocDlg winIncome = new IncomeDocDlg(obj);
 			winIncome.EntitySaved += (s, ea) => UpdateProperty();
 			OpenTab(winIncome);
@@ -362,7 +310,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnButtonWriteOffClicked(object sender, EventArgs e)
 		{
 			SaveIfPropertyChanged();
-			Facility obj = UoW.GetById<Facility>(Itemid);
+			Facility obj = UoW.GetById<Facility>(Entity.Id);
 			WriteOffDocDlg winWriteOff = new WriteOffDocDlg(obj);
 			winWriteOff.EntitySaved += (s, ea) => UpdateProperty();
 			OpenTab(winWriteOff);
@@ -398,4 +346,3 @@ namespace workwear.Dialogs.Organization
 
 	}
 }
-
