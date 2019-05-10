@@ -3,6 +3,9 @@ using System.Data.Bindings.Utilities;
 using System.Linq;
 using NHibernate;
 using QS.Dialog.Gtk;
+using QS.DomainModel.Entity;
+using QS.DomainModel.NotifyChange;
+using workwear.Domain.Operations;
 using workwear.Domain.Organization;
 using workwear.DTO;
 using workwear.Repository.Operations;
@@ -12,6 +15,10 @@ namespace workwear.Dialogs.Organization
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class EmployeeMovementsView : WidgetOnEntityDialogBase<EmployeeCard>
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+		List<EmployeeCardMovements> movements;
+
 		public EmployeeMovementsView()
 		{
 			this.Build();
@@ -32,6 +39,7 @@ namespace workwear.Dialogs.Organization
 				.AddColumn("")
 				.Finish();
 			ytreeviewMovements.RowActivated += YtreeviewMovements_RowActivated;
+			
 		}
 
 		public bool MovementsLoaded { get; private set; }
@@ -40,6 +48,7 @@ namespace workwear.Dialogs.Organization
 		{
 			MovementsLoaded = true;
 			UpdateMovements();
+			NotifyEntitiesChange.Instance.WatchMany<EmployeeIssueOperation>(HandleManyEntityChangeEventMethod);
 		}
 
 		public virtual void UpdateMovements()
@@ -47,7 +56,9 @@ namespace workwear.Dialogs.Organization
 			if(!MovementsLoaded)
 				return;
 
-			var displayList = new List<EmployeeCardMovements>();
+			logger.Info("Обновляем историю выдачи...");
+
+			movements = new List<EmployeeCardMovements>();
 
 			var list = EmployeeIssueRepository.AllOperationsForEmployee(UoW, RootEntity, query => query.Fetch(SelectMode.Fetch, x => x.Nomenclature));
 			var docs = EmployeeIssueRepository.GetReferencedDocuments(UoW, list.Select(x => x.Id).ToArray());
@@ -56,9 +67,11 @@ namespace workwear.Dialogs.Organization
 				item.Operation = operation;
 				item.ReferencedDocument = docs.FirstOrDefault(x => x.OpId == operation.Id);
 				item.PropertyChanged += Item_PropertyChanged;
-				displayList.Add(item);
+				movements.Add(item);
 			}
-			ytreeviewMovements.ItemsDataSource = displayList;
+			ytreeviewMovements.ItemsDataSource = movements;
+
+			logger.Info("Ок");
 		}
 
 		void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -89,5 +102,15 @@ namespace workwear.Dialogs.Organization
 				}
 			}
 		}
+
+		void HandleManyEntityChangeEventMethod(EntityChangeEvent[] changeEvents)
+		{
+			var updatedOperations = changeEvents.Where(x => x.GetEntity<EmployeeIssueOperation>().Employee.IsSame(RootEntity)).ToList();
+			if(updatedOperations.Count > 0) {
+				movements.ForEach(m => UoW.Session.Refresh(m.Operation));
+				UpdateMovements();
+			}
+		}
+
 	}
 }

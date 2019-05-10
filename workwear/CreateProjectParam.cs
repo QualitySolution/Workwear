@@ -1,4 +1,5 @@
-﻿using QS.Project.DB;
+﻿using QS.DomainModel.NotifyChange;
+using QS.Project.DB;
 using QS.Project.Domain;
 using QSBusinessCommon.Domain;
 using QSOrmProject;
@@ -54,6 +55,8 @@ namespace workwear
 			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
 			OrmMain.AddObjectDescription<Expense>().Dialog<ExpenseDocDlg>();
 			OrmMain.AddObjectDescription<Writeoff>().Dialog<WriteOffDocDlg>();
+
+			NotifyEntitiesChange.Enable();
 		}
 	}
 }
