@@ -3,6 +3,7 @@ using System.Data.Bindings.Utilities;
 using System.Linq;
 using NHibernate;
 using QS.Dialog.Gtk;
+using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using workwear.Domain.Operations;
@@ -13,7 +14,7 @@ using workwear.Repository.Operations;
 namespace workwear.Dialogs.Organization
 {
 	[System.ComponentModel.ToolboxItem(true)]
-	public partial class EmployeeMovementsView : WidgetOnEntityDialogBase<EmployeeCard>
+	public partial class EmployeeMovementsView : WidgetOnEntityDialogBase<EmployeeCard>, IMustBeDestroyed
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -112,5 +113,10 @@ namespace workwear.Dialogs.Organization
 			}
 		}
 
+		public override void Destroy()
+		{
+			NotifyEntitiesChange.Instance.UnsubscribeAll(this);
+			base.Destroy();
+		}
 	}
 }
