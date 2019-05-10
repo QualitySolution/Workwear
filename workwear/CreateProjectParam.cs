@@ -56,7 +56,7 @@ namespace workwear
 			OrmMain.AddObjectDescription<Expense>().Dialog<ExpenseDocDlg>();
 			OrmMain.AddObjectDescription<Writeoff>().Dialog<WriteOffDocDlg>();
 
-			NotifyEntitiesChange.Enable();
+			NotifyConfiguration.Enable();
 		}
 	}
 }

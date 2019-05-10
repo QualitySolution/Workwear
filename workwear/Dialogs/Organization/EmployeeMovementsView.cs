@@ -49,7 +49,7 @@ namespace workwear.Dialogs.Organization
 		{
 			MovementsLoaded = true;
 			UpdateMovements();
-			NotifyEntitiesChange.Instance.WatchMany<EmployeeIssueOperation>(HandleManyEntityChangeEventMethod);
+			NotifyConfiguration.Instance.WatchMany<EmployeeIssueOperation>(HandleManyEntityChangeEventMethod);
 		}
 
 		public virtual void UpdateMovements()
@@ -115,7 +115,7 @@ namespace workwear.Dialogs.Organization
 
 		public override void Destroy()
 		{
-			NotifyEntitiesChange.Instance.UnsubscribeAll(this);
+			NotifyConfiguration.Instance.UnsubscribeAll(this);
 			base.Destroy();
 		}
 	}
