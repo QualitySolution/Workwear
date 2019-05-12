@@ -276,6 +276,8 @@
     <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeVacationDlg.cs" />
     <Compile Include="Dialogs\Organization\VacationTypeDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Organization.VacationTypeDlg.cs" />
+    <Compile Include="Dialogs\Organization\EmployeeWearItemsView.cs" />
+    <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeWearItemsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

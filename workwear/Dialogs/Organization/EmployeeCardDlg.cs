@@ -5,13 +5,11 @@ using System.IO;
 using System.Linq;
 using Gamma.Utilities;
 using Gtk;
-using NHibernate;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Report;
-using QS.Utilities;
 using QSOrmProject;
 using QSProjectsLib;
 using QSReport;
@@ -19,7 +17,6 @@ using QSValidation;
 using workwear.Dialogs.Issuance;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
-using workwear.Domain.Stock;
 using workwear.Measurements;
 using workwear.Repository;
 using workwear.Tools;
@@ -30,7 +27,6 @@ namespace workwear.Dialogs.Organization
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
 		bool IsShowedItemsTable = false;
-		bool IsNomenclaturePickuped = false;
 
 		bool IsPostSetOnLoad;
 		bool IsSubdivisionSetOnLoad;
@@ -112,26 +108,6 @@ namespace workwear.Dialogs.Organization
 				.Finish ();
 			ytreeNorms.Selection.Changed += YtreeNorms_Selection_Changed;
 			ytreeNorms.ItemsDataSource = Entity.ObservableUsedNorms;
-
-			ytreeWorkwear.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItem> ()
-				.AddColumn("ТОН").AddTextRenderer(node => node.ActiveNormItem.Norm.Title)
-				.AddColumn("Наименование").AddTextRenderer(node => node.Item.Name)
-				.AddColumn("По норме").AddTextRenderer(node => node.Item.Units.MakeAmountShortStr(node.ActiveNormItem.Amount))
-				.AddColumn("Срок службы").AddTextRenderer(node => node.ActiveNormItem.LifeText)
-				.AddColumn("Дата получения").AddTextRenderer(node => String.Format("{0:d}", node.LastIssue))
-				.AddColumn("Получено").AddTextRenderer(node => node.Item.Units.MakeAmountShortStr(node.Amount))
-					.AddSetter((w, node) => w.Foreground = node.AmountColor)
-				.AddColumn("След. получение").AddTextRenderer(node => String.Format("{0:d}", node.NextIssue))
-				.AddColumn("Просрочка").AddTextRenderer(
-					node => node.NextIssue.HasValue && node.NextIssue.Value < DateTime.Today
-					? NumberToTextRus.FormatCase((int)(DateTime.Today - node.NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней")
-					: String.Empty)
-				.AddColumn("На складе").AddTextRenderer(node => node.Item.Units.MakeAmountShortStr(node.InStock))
-				 .AddSetter((w, node) => w.Foreground = node.InStockState.GetEnumColor())
-				.AddColumn("Подобранная номенклатура").AddTextRenderer(node => node.MatchedNomenclature != null ? node.MatchedNomenclature.NameAndSize : (node.InStockState == StockStateInfo.UnknownNomenclature ? "нет подходящей" : String.Empty))
-				.AddSetter((w, node) => w.Foreground = node.InStockState.GetEnumColor())
-				.Finish();
-			ytreeWorkwear.Selection.Changed += ytreeWorkwear_Selection_Changed;
 
 			enumPrint.ItemsEnum = typeof(PersonalCardPrint);
 
@@ -222,33 +198,18 @@ namespace workwear.Dialogs.Organization
 		protected void OnButtonGiveWearClicked(object sender, EventArgs e)
 		{
 			ExpenseDocDlg winExpense = new ExpenseDocDlg(Entity);
-			winExpense.EntitySaved += delegate
-			{
-				RefreshWorkItems();
-				employeemovementsview1.UpdateMovements();
-			};
 			OpenTab(winExpense);
 		}
 
 		protected void OnButtonReturnWearClicked(object sender, EventArgs e)
 		{
 			IncomeDocDlg winIncome = new IncomeDocDlg(Entity);
-			winIncome.EntitySaved += delegate
-			{
-				RefreshWorkItems();
-				employeemovementsview1.UpdateMovements();
-			};
 			OpenTab(winIncome);
 		}
 
 		protected void OnButtonWriteOffWearClicked(object sender, EventArgs e)
 		{
 			WriteOffDocDlg winWriteOff = new WriteOffDocDlg(Entity);
-			winWriteOff.EntitySaved += delegate
-			{
-				RefreshWorkItems();
-				employeemovementsview1.UpdateMovements();
-			};
 			OpenTab(winWriteOff);
 		}
 
@@ -266,11 +227,9 @@ namespace workwear.Dialogs.Organization
 
 		protected void OnNotebook1SwitchPage(object o, SwitchPageArgs args)
 		{
-			if (notebook1.CurrentPage == 1 && ytreeWorkwear.ItemsDataSource == null)
+			if (notebook1.CurrentPage == 1 && !employeewearitemsview1.ItemsLoaded)
 			{
-				Entity.FillWearInStockInfo(UoW);
-				Entity.FillWearRecivedInfo(UoW);
-				ytreeWorkwear.ItemsDataSource = Entity.ObservableWorkwearItems;
+				employeewearitemsview1.LoadItems();
 			}
 
 			if (notebook1.CurrentPage == 3 && !employeemovementsview1.MovementsLoaded)
@@ -461,72 +420,6 @@ namespace workwear.Dialogs.Organization
 				Entity.AddUsedNorm(norm);
 		}
 
-		#region Вкладка спецодежды
-
-		protected void OnButtonGiveWearByNormClicked(object sender, EventArgs e)
-		{
-			if (IsNomenclaturePickuped == false &&
-				Entity.WorkwearItems.Any(i => i.Amount < i.ActiveNormItem.Amount
-				   &&
-				   (i.InStockState == StockStateInfo.NotEnough
-				  || i.InStockState == StockStateInfo.OutOfStock
-				  || i.MatchedNomenclature == null
-				   )
-				))
-			{
-				if (MessageDialogHelper.RunQuestionDialog("Некоторые позиции отсутствуют на складе в достаточном количестве. Попробовать подобрать подходящую номенклатуру?"))
-					buttonPickNomenclature.Click();
-			}
-
-			if (!Save())
-				return;
-
-			var addItems = new Dictionary<Nomenclature, int>();
-			foreach (var item in Entity.WorkwearItems)
-			{
-				if (item.NeededAmount > 0 && (item.InStockState == StockStateInfo.Enough || item.InStockState == StockStateInfo.NotEnough))
-				{
-					int amount = item.InStockState == StockStateInfo.Enough ? item.NeededAmount : item.InStock;
-					addItems.Add(item.MatchedNomenclature, amount);
-				}
-			}
-
-			ExpenseDocDlg winExpense = new ExpenseDocDlg(Entity, addItems);
-			winExpense.EntitySaved += delegate
-			{
-				RefreshWorkItems();
-				employeemovementsview1.UpdateMovements();
-			};
-			OpenTab(winExpense);
-		}
-
-		protected void OnButtonPickNomenclatureClicked(object sender, EventArgs e)
-		{
-			foreach (var item in Entity.WorkwearItems)
-				item.FindMatchedNomenclature(UoW);
-			IsNomenclaturePickuped = true;
-		}
-
-		protected void RefreshWorkItems()
-		{
-			if (!NHibernateUtil.IsInitialized(Entity.WorkwearItems))
-				return;
-
-			foreach (var item in Entity.WorkwearItems)
-			{
-				UoW.Session.Refresh(item);
-			}
-			Entity.FillWearInStockInfo(UoW);
-			Entity.FillWearRecivedInfo(UoW);
-		}
-
-		void ytreeWorkwear_Selection_Changed(object sender, EventArgs e)
-		{
-			buttonTimeLine.Sensitive = ytreeWorkwear.Selection.CountSelectedRows() > 0;
-		}
-
-		#endregion
-
 		protected void OnButtonRefreshWorkwearItemsClicked(object sender, EventArgs e)
 		{
 			Entity.UpdateWorkwearItems();
@@ -585,13 +478,6 @@ namespace workwear.Dialogs.Organization
 			TabParent.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
 							  () => new QSReport.ReportViewDlg(reportInfo)
 							 );
-		}
-
-		protected void OnButtonTimeLineClicked(object sender, EventArgs e)
-		{
-			var row = ytreeWorkwear.GetSelectedObject<EmployeeCardItem>();
-			var dlg = new EmployeeIssueGraphDlg(Entity, row.Item);
-			OpenTab(dlg);
 		}
 
 		private SizeUse[] GetExcludedSizeUse()
