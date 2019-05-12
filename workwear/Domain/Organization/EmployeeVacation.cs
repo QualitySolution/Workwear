@@ -82,6 +82,11 @@ namespace workwear.Domain.Organization
 					operation.RecalculateDatesOfIssueOperation(graph, askUser);
 					uow.Save(operation);
 				}
+				var item = Employee.WorkwearItems.FirstOrDefault(x => x.Item.IsSame(typeGroup.Key));
+				if(item != null) {
+					item.UpdateNextIssue(uow);
+					uow.Save(item);
+				}
 			}
 		}
 
