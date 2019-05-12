@@ -5,6 +5,7 @@ using Gamma.ColumnConfig;
 using Gamma.GtkWidgets;
 using NHibernate.Criterion;
 using NHibernate.Transform;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Utilities.Numeric;
 using QSBusinessCommon.Domain;
@@ -113,7 +114,8 @@ namespace workwear.Representations.Organization
 
 		protected override bool NeedUpdateFunc (object updatedSubject)
 		{
-			return true;
+			var op = updatedSubject as EmployeeIssueOperation;
+			return op != null && op.Employee.IsSame(Employee);
 		}
 
 		#endregion
@@ -123,7 +125,7 @@ namespace workwear.Representations.Organization
 			Filter = filter;
 		}
 
-		public EmployeeBalanceVM (IUnitOfWork uow) : base (typeof(Expense), typeof(Income), typeof(Writeoff))
+		public EmployeeBalanceVM (IUnitOfWork uow) : base (typeof(EmployeeIssueOperation))
 		{
 			this.UoW = uow;
 		}
