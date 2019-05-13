@@ -1,4 +1,4 @@
-﻿CREATE TABLE IF NOT EXISTS `workwear`.`vacation_type` (
+﻿CREATE TABLE IF NOT EXISTS `vacation_type` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `exclude_from_wearing` TINYINT(1) NOT NULL DEFAULT 0,
@@ -9,7 +9,7 @@ DEFAULT CHARACTER SET = utf8;
 
 INSERT INTO `vacation_type` (`id`, `name`, `exclude_from_wearing`, `comment`) VALUES (1, 'Основной', 0, NULL);
 
-CREATE TABLE IF NOT EXISTS `workwear`.`wear_cards_vacations` (
+CREATE TABLE IF NOT EXISTS `wear_cards_vacations` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `wear_card_id` INT(10) UNSIGNED NOT NULL,
   `vacation_type_id` INT(10) UNSIGNED NOT NULL,
@@ -21,12 +21,12 @@ CREATE TABLE IF NOT EXISTS `workwear`.`wear_cards_vacations` (
   INDEX `fk_wear_cards_vacations_2_idx` (`vacation_type_id` ASC),
   CONSTRAINT `fk_wear_cards_vacations_1`
     FOREIGN KEY (`wear_card_id`)
-    REFERENCES `workwear`.`wear_cards` (`id`)
+    REFERENCES `wear_cards` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_wear_cards_vacations_2`
     FOREIGN KEY (`vacation_type_id`)
-    REFERENCES `workwear`.`vacation_type` (`id`)
+    REFERENCES `vacation_type` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -37,7 +37,7 @@ SELECT wear_cards.id, 1, wear_cards.maternity_leave_begin, wear_cards.maternity_
 FROM wear_cards 
 WHERE wear_cards.maternity_leave_begin IS NOT NULL AND wear_cards.maternity_leave_end IS NOT NULL;
 
-ALTER TABLE `workwear`.`wear_cards` 
+ALTER TABLE `wear_cards` 
 DROP COLUMN `maternity_leave_end`,
 DROP COLUMN `maternity_leave_begin`;
 
