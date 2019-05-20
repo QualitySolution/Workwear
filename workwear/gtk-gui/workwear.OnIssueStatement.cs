@@ -40,6 +40,8 @@ namespace workwear
 
 		private global::Gtk.Button buttonRun;
 
+		private global::Gtk.Label labelError;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -95,7 +97,7 @@ namespace workwear
 			this.ylistcomboYear = new global::Gamma.Widgets.yListComboBox();
 			this.ylistcomboYear.Name = "ylistcomboYear";
 			this.ylistcomboYear.AddIfNotExist = false;
-			this.ylistcomboYear.DefaultFirst = false;
+			this.ylistcomboYear.DefaultFirst = true;
 			this.hbox1.Add(this.ylistcomboYear);
 			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.ylistcomboYear]));
 			w4.Position = 1;
@@ -129,7 +131,7 @@ namespace workwear
 			this.ylistcomboYear1.Sensitive = false;
 			this.ylistcomboYear1.Name = "ylistcomboYear1";
 			this.ylistcomboYear1.AddIfNotExist = false;
-			this.ylistcomboYear1.DefaultFirst = false;
+			this.ylistcomboYear1.DefaultFirst = true;
 			this.hbox2.Add(this.ylistcomboYear1);
 			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.ylistcomboYear1]));
 			w7.Position = 1;
@@ -160,7 +162,7 @@ namespace workwear
 			this.ylistcomboYear2.Sensitive = false;
 			this.ylistcomboYear2.Name = "ylistcomboYear2";
 			this.ylistcomboYear2.AddIfNotExist = false;
-			this.ylistcomboYear2.DefaultFirst = false;
+			this.ylistcomboYear2.DefaultFirst = true;
 			this.hbox2.Add(this.ylistcomboYear2);
 			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.ylistcomboYear2]));
 			w10.Position = 4;
@@ -238,6 +240,18 @@ namespace workwear
 			w17.Position = 1;
 			w17.Expand = false;
 			w17.Fill = false;
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.labelError = new global::Gtk.Label();
+			this.labelError.Name = "labelError";
+			this.labelError.UseMarkup = true;
+			this.labelError.Wrap = true;
+			this.labelError.Justify = ((global::Gtk.Justification)(3));
+			this.dialog1_VBox.Add(this.labelError);
+			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.labelError]));
+			w18.PackType = ((global::Gtk.PackType)(1));
+			w18.Position = 2;
+			w18.Expand = false;
+			w18.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

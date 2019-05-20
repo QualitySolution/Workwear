@@ -5807,7 +5807,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.OnIssueStatement" design-size="277 206">
+  <widget class="Gtk.Bin" id="workwear.OnIssueStatement" design-size="295 206">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -5887,7 +5887,7 @@
                     <property name="IsTextCombo">False</property>
                     <property name="Items" translatable="yes" />
                     <property name="AddIfNotExist">False</property>
-                    <property name="DefaultFirst">False</property>
+                    <property name="DefaultFirst">True</property>
                   </widget>
                   <packing>
                     <property name="Position">1</property>
@@ -5941,7 +5941,7 @@
                     <property name="IsTextCombo">False</property>
                     <property name="Items" translatable="yes" />
                     <property name="AddIfNotExist">False</property>
-                    <property name="DefaultFirst">False</property>
+                    <property name="DefaultFirst">True</property>
                     <signal name="Changed" handler="OnYlistcomboMonth1Changed" />
                   </widget>
                   <packing>
@@ -5987,7 +5987,7 @@
                     <property name="IsTextCombo">False</property>
                     <property name="Items" translatable="yes" />
                     <property name="AddIfNotExist">False</property>
-                    <property name="DefaultFirst">False</property>
+                    <property name="DefaultFirst">True</property>
                     <signal name="Changed" handler="OnYlistcomboMonth1Changed" />
                   </widget>
                   <packing>
@@ -6124,6 +6124,21 @@
           <packing>
             <property name="PackType">End</property>
             <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="labelError">
+            <property name="MemberName" />
+            <property name="UseMarkup">True</property>
+            <property name="Wrap">True</property>
+            <property name="Justify">Fill</property>
+          </widget>
+          <packing>
+            <property name="PackType">End</property>
+            <property name="Position">2</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
