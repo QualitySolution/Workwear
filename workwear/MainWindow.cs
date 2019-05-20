@@ -27,7 +27,6 @@ public partial class MainWindow : Gtk.Window
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
 		Build();
-
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
 		this.Title = MainSupport.GetTitle();
@@ -69,6 +68,9 @@ public partial class MainWindow : Gtk.Window
 			md.Destroy();
 			dialogAuthenticationAction.Sensitive = false;
 		}
+
+		this.KeyReleaseEvent += ClipboardWorkaround.HandleKeyReleaseEvent;
+		this.KeyReleaseEvent += QS.Tdi.Gtk.TDIMain.TDIHandleKeyReleaseEvent;
 
 		UsersAction.Sensitive = QSMain.User.Admin;
 		labelUser.LabelProp = QSMain.User.Name;
