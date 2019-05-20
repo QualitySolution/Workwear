@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NHibernate.Criterion;
 using QS.DomainModel.UoW;
 using QS.Report;
-using QSProjectsLib;
+using QS.Utilities;
 using QSReport;
 using workwear.Domain.Organization;
 
@@ -38,9 +38,9 @@ namespace workwear
             ylistcomboYear2.SelectedItem = DateTime.Today.Year;
 
 			// Заполняем месяца
-			ylistcomboMonth.SetRenderTextFunc<int> (DateWorks.GetMonthName);
-            ylistcomboMonth1.SetRenderTextFunc<int>(DateWorks.GetMonthName);
-            ylistcomboMonth2.SetRenderTextFunc<int>(DateWorks.GetMonthName);
+			ylistcomboMonth.SetRenderTextFunc<int> (DateHelper.GetMonthName);
+            ylistcomboMonth1.SetRenderTextFunc<int>(DateHelper.GetMonthName);
+            ylistcomboMonth2.SetRenderTextFunc<int>(DateHelper.GetMonthName);
 			var months = new List<int> ();
 			for (int i = 1; i <= 12; i++)
 				months.Add (i);
