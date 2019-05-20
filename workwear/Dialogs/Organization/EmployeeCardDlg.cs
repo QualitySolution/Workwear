@@ -20,7 +20,6 @@ using workwear.Dialogs.Issuance;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.DTO;
 using workwear.Measurements;
 using workwear.Repository;
 

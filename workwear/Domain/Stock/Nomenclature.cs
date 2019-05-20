@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
-using QSOrmProject;
 using workwear.Domain.Regulations;
 using workwear.Measurements;
 
@@ -113,11 +112,14 @@ namespace workwear.Domain.Stock
 
 		public virtual System.Collections.Generic.IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
 		{
-
 			if (Type != null && Type.WearCategory != null && Sex.HasValue 
 				&& Sex == ClothesSex.Universal && SizeHelper.HasСlothesSizeStd(Type.WearCategory.Value) && !SizeHelper.IsUniversalСlothes (Type.WearCategory.Value))
 				yield return new ValidationResult ("Данный вид одежды не имеет универсальных размеров.", 
-					new[] { this.GetPropertyName (o => o.Sex) });			
+					new[] { this.GetPropertyName (o => o.Sex) });
+
+			if(Type != null && Type.WearCategory != null && String.IsNullOrWhiteSpace(Size))
+				yield return new ValidationResult("Необходимо указать размер спецодежды.",
+					new[] { this.GetPropertyName(o => o.Size) });
 		}
 
 		#endregion
