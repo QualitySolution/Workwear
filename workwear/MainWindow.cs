@@ -70,6 +70,7 @@ public partial class MainWindow : Gtk.Window
 		}
 
 		this.KeyReleaseEvent += ClipboardWorkaround.HandleKeyReleaseEvent;
+		QS.Tdi.Gtk.TDIMain.MainNotebook = tdiMain;
 		this.KeyReleaseEvent += QS.Tdi.Gtk.TDIMain.TDIHandleKeyReleaseEvent;
 
 		UsersAction.Sensitive = QSMain.User.Admin;
