@@ -852,12 +852,12 @@ WHERE
             </Style>
           </Textbox>
           <Textbox Name="Textbox42" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>21.00pt</Height>
-            <Width>427.02pt</Width>
+            <Height>23.25pt</Height>
+            <Width>428.52pt</Width>
             <Value>={regulations}</Value>
             <ZIndex>1</ZIndex>
             <Left>129.50pt</Left>
-            <Top>157.80pt</Top>
+            <Top>159.40pt</Top>
             <Style>
               <BorderStyle>
                 <Bottom>Solid</Bottom>
@@ -867,7 +867,7 @@ WHERE
               <FontStyle>Italic</FontStyle>
               <FontSize>11pt</FontSize>
               <TextAlign>Center</TextAlign>
-              <VerticalAlign >Bottom</VerticalAlign>
+              <VerticalAlign>Middle</VerticalAlign>
             </Style>
             <CanGrow>true</CanGrow>
           </Textbox>
@@ -877,7 +877,7 @@ WHERE
             <Value>(наименование типовых (типовых отраслевых) норм)</Value>
             <ZIndex>1</ZIndex>
             <Left>130.9pt</Left>
-            <Top>179.3pt</Top>
+            <Top>183.3pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -1146,7 +1146,7 @@ WHERE
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>server=rs.qsolution.ru;user=andrey;database=workwear_dev;port=3306;password=123;</ConnectString>
+        <ConnectString>server=rs.qsolution.ru;user=demo;database=workwear;port=3306;password=demo;</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
@@ -1156,7 +1156,7 @@ WHERE
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>2</Value>
+          <Value>39</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
