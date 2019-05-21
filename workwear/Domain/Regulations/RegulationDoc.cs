@@ -22,6 +22,7 @@ namespace workwear.Domain.Regulations
 		private string name;
 
 		[Display(Name = "Название документа")]
+		[StringLength(255)]
 		public virtual string Name
 		{
 			get { return name; }

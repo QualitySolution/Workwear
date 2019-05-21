@@ -133,6 +133,7 @@
     <EmbeddedResource Include="Updates\2.1.sql" />
     <EmbeddedResource Include="icon\buttons\timeline_marker.png" />
     <EmbeddedResource Include="Updates\new_2.1.sql" />
+    <EmbeddedResource Include="Updates\2.1.1.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
