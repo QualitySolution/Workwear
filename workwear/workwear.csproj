@@ -103,6 +103,9 @@
     <Reference Include="BouncyCastle.Crypto">
       <HintPath>..\packages\BouncyCastle.1.8.3.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\packages\SharpZipLib.1.1.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -133,6 +136,7 @@
     <EmbeddedResource Include="icon\buttons\timeline_marker.png" />
     <EmbeddedResource Include="Updates\new_2.1.sql" />
     <EmbeddedResource Include="Updates\2.2.sql" />
+    <EmbeddedResource Include="Updates\2.1.1.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />

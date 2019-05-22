@@ -228,6 +228,7 @@ namespace workwear.Measurements
 		{
 			combo.Clear ();
 			var list = new ListStore (typeof(string));
+			list.AppendValues(String.Empty);
 			foreach (var size in sizes)
 				list.AppendValues (size);
 			combo.Model = list;

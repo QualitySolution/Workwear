@@ -3,7 +3,15 @@
   <subtitle type="text">Новости программы QS: Спецодежда и имущество</subtitle>
   <id>workwearnews</id>
   <rights type="text">Quality Solution 2019</rights>
-  <updated>2019-02-12T09:00:00+03:00</updated>
+  <updated>2019-05-22T14:00:00+03:00</updated>
+  <entry>
+    <id>urn:uuid:1e1dc85e-d4db-4c0a-acfb-35c77bf3e305</id>
+    <title type="text">Оплата программы на сайте</title>
+    <updated>2019-05-22T14:00:00+03:00</updated>
+    <published>2019-05-22T14:00:00+03:00</published>
+    <link rel="alternate" href="http://workwear.qsolution.ru/?page_id=14" />
+    <summary>Выпустили очередной сервисный релиз с исправлением ошибок.</summary>
+  </entry>
   <entry>
     <id>urn:uuid:2eb61370-7c78-45fd-a674-708554ed66d5</id>
     <title type="text">Оплата программы на сайте</title>
