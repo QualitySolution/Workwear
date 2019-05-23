@@ -14,7 +14,7 @@ namespace workwear
 
 		private global::Gtk.Label label2;
 
-		private global::Gamma.Widgets.yDatePicker ydateReport;
+		private global::QS.Widgets.GtkUI.DatePicker ydateReport;
 
 		private global::Gtk.Button buttonRun;
 
@@ -74,7 +74,7 @@ namespace workwear
 			w3.XOptions = ((global::Gtk.AttachOptions)(4));
 			w3.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.ydateReport = new global::Gamma.Widgets.yDatePicker();
+			this.ydateReport = new global::QS.Widgets.GtkUI.DatePicker();
 			this.ydateReport.Events = ((global::Gdk.EventMask)(256));
 			this.ydateReport.Name = "ydateReport";
 			this.ydateReport.WithTime = false;

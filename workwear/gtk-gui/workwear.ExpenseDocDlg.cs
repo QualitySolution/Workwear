@@ -42,7 +42,7 @@ namespace workwear
 
 		private global::Gtk.Label label6;
 
-		private global::Gamma.Widgets.yDatePicker ydateDoc;
+		private global::QS.Widgets.GtkUI.DatePicker ydateDoc;
 
 		private global::Gamma.GtkWidgets.yLabel ylabelCreatedBy;
 
@@ -247,7 +247,7 @@ namespace workwear
 			w18.XOptions = ((global::Gtk.AttachOptions)(4));
 			w18.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table3.Gtk.Table+TableChild
-			this.ydateDoc = new global::Gamma.Widgets.yDatePicker();
+			this.ydateDoc = new global::QS.Widgets.GtkUI.DatePicker();
 			this.ydateDoc.Events = ((global::Gdk.EventMask)(256));
 			this.ydateDoc.Name = "ydateDoc";
 			this.ydateDoc.WithTime = false;

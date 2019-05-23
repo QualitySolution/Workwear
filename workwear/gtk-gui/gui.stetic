@@ -1349,7 +1349,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gamma.Widgets.yDatePicker" id="dateChangePosition">
+                  <widget class="QS.Widgets.GtkUI.DatePicker" id="dateChangePosition">
                     <property name="MemberName" />
                     <property name="Tooltip" translatable="yes">Дата изменения профессии (должности) или переводе в другое структурное подразделение</property>
                     <property name="Events">ButtonPressMask</property>
@@ -1375,7 +1375,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gamma.Widgets.yDatePicker" id="dateDismiss">
+                  <widget class="QS.Widgets.GtkUI.DatePicker" id="dateDismiss">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
                     <property name="WithTime">False</property>
@@ -1400,7 +1400,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gamma.Widgets.yDatePicker" id="dateHire">
+                  <widget class="QS.Widgets.GtkUI.DatePicker" id="dateHire">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
                     <property name="WithTime">False</property>
@@ -3177,7 +3177,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gamma.Widgets.yDatePicker" id="ydateDoc">
+                  <widget class="QS.Widgets.GtkUI.DatePicker" id="ydateDoc">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
                     <property name="WithTime">False</property>
@@ -3708,7 +3708,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gamma.Widgets.yDatePicker" id="ydateDoc">
+                  <widget class="QS.Widgets.GtkUI.DatePicker" id="ydateDoc">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
                     <property name="WithTime">False</property>
@@ -4136,7 +4136,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gamma.Widgets.yDatePicker" id="ydateDoc">
+                  <widget class="QS.Widgets.GtkUI.DatePicker" id="ydateDoc">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
                     <property name="WithTime">False</property>
@@ -6082,7 +6082,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.Widgets.yDatePicker" id="ydateReport">
+              <widget class="QS.Widgets.GtkUI.DatePicker" id="ydateReport">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
                 <property name="WithTime">False</property>
@@ -6756,7 +6756,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.Widgets.yDatePicker" id="ydateDocDate">
+              <widget class="QS.Widgets.GtkUI.DatePicker" id="ydateDocDate">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
                 <property name="WithTime">False</property>

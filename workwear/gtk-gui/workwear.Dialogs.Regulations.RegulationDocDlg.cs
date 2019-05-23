@@ -20,7 +20,7 @@ namespace workwear.Dialogs.Regulations
 
 		private global::Gtk.Label label3;
 
-		private global::Gamma.Widgets.yDatePicker ydateDocDate;
+		private global::QS.Widgets.GtkUI.DatePicker ydateDocDate;
 
 		private global::Gamma.GtkWidgets.yEntry yentryName;
 
@@ -125,7 +125,7 @@ namespace workwear.Dialogs.Regulations
 			w8.XOptions = ((global::Gtk.AttachOptions)(4));
 			w8.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.ydateDocDate = new global::Gamma.Widgets.yDatePicker();
+			this.ydateDocDate = new global::QS.Widgets.GtkUI.DatePicker();
 			this.ydateDocDate.Events = ((global::Gdk.EventMask)(256));
 			this.ydateDocDate.Name = "ydateDocDate";
 			this.ydateDocDate.WithTime = false;

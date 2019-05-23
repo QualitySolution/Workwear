@@ -22,11 +22,11 @@ namespace workwear.Dialogs.Organization
 
 		private global::Gamma.Widgets.yEnumComboBox comboSex;
 
-		private global::Gamma.Widgets.yDatePicker dateChangePosition;
+		private global::QS.Widgets.GtkUI.DatePicker dateChangePosition;
 
-		private global::Gamma.Widgets.yDatePicker dateDismiss;
+		private global::QS.Widgets.GtkUI.DatePicker dateDismiss;
 
-		private global::Gamma.Widgets.yDatePicker dateHire;
+		private global::QS.Widgets.GtkUI.DatePicker dateHire;
 
 		private global::Gamma.GtkWidgets.yEntry entryFirstName;
 
@@ -280,7 +280,7 @@ namespace workwear.Dialogs.Organization
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
 			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.dateChangePosition = new global::Gamma.Widgets.yDatePicker();
+			this.dateChangePosition = new global::QS.Widgets.GtkUI.DatePicker();
 			this.dateChangePosition.TooltipMarkup = "Дата изменения профессии (должности) или переводе в другое структурное подразделе" +
 				"ние";
 			this.dateChangePosition.Events = ((global::Gdk.EventMask)(256));
@@ -298,7 +298,7 @@ namespace workwear.Dialogs.Organization
 			w10.XOptions = ((global::Gtk.AttachOptions)(4));
 			w10.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.dateDismiss = new global::Gamma.Widgets.yDatePicker();
+			this.dateDismiss = new global::QS.Widgets.GtkUI.DatePicker();
 			this.dateDismiss.Events = ((global::Gdk.EventMask)(256));
 			this.dateDismiss.Name = "dateDismiss";
 			this.dateDismiss.WithTime = false;
@@ -314,7 +314,7 @@ namespace workwear.Dialogs.Organization
 			w11.XOptions = ((global::Gtk.AttachOptions)(4));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.dateHire = new global::Gamma.Widgets.yDatePicker();
+			this.dateHire = new global::QS.Widgets.GtkUI.DatePicker();
 			this.dateHire.Events = ((global::Gdk.EventMask)(256));
 			this.dateHire.Name = "dateHire";
 			this.dateHire.WithTime = false;
