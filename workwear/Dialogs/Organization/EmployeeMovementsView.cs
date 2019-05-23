@@ -49,7 +49,7 @@ namespace workwear.Dialogs.Organization
 		{
 			MovementsLoaded = true;
 			UpdateMovements();
-			NotifyConfiguration.Instance.WatchMany<EmployeeIssueOperation>(HandleManyEntityChangeEventMethod);
+			NotifyConfiguration.Instance.BatchSubscribeOnEntity<EmployeeIssueOperation>(HandleManyEntityChangeEventMethod);
 		}
 
 		public virtual void UpdateMovements()

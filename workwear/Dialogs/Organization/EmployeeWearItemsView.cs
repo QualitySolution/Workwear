@@ -43,7 +43,7 @@ namespace workwear.Dialogs.Organization
 				.Finish();
 			ytreeWorkwear.Selection.Changed += ytreeWorkwear_Selection_Changed;
 
-			NotifyConfiguration.Instance.WatchMany<EmployeeCardItem>(HandleEntityChangeEvent);
+			NotifyConfiguration.Instance.BatchSubscribeOnEntity<EmployeeCardItem>(HandleEntityChangeEvent);
 		}
 
 		public bool ItemsLoaded { get; private set; }
