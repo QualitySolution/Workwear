@@ -24,7 +24,7 @@ namespace workwear.Dialogs.Organization
 
 		private global::Gtk.Label label3;
 
-		private global::Gamma.Widgets.yDatePeriodPicker ydateperiodVacation;
+		private global::QS.Widgets.GtkUI.DateRangePicker ydateperiodVacation;
 
 		private global::Gamma.Widgets.yEntryReference yentryVacationType;
 
@@ -128,7 +128,7 @@ namespace workwear.Dialogs.Organization
 			w10.XOptions = ((global::Gtk.AttachOptions)(4));
 			w10.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.ydateperiodVacation = new global::Gamma.Widgets.yDatePeriodPicker();
+			this.ydateperiodVacation = new global::QS.Widgets.GtkUI.DateRangePicker();
 			this.ydateperiodVacation.Events = ((global::Gdk.EventMask)(256));
 			this.ydateperiodVacation.Name = "ydateperiodVacation";
 			this.ydateperiodVacation.StartDate = new global::System.DateTime(0);

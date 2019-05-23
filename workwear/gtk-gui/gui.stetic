@@ -6500,7 +6500,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.JournalFilters.StockDocumentsFilter" design-size="428 32">
+  <widget class="Gtk.Bin" id="workwear.JournalFilters.StockDocumentsFilter" design-size="428 33">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -6510,7 +6510,7 @@
         <property name="RowSpacing">6</property>
         <property name="ColumnSpacing">6</property>
         <child>
-          <widget class="QSWidgetLib.DatePeriodPicker" id="dateperiodDocs">
+          <widget class="QS.Widgets.GtkUI.DateRangePicker" id="dateperiodDocs">
             <property name="MemberName" />
             <property name="Events">ButtonPressMask</property>
             <property name="StartDate">0</property>
@@ -6558,6 +6558,7 @@
         <child>
           <widget class="Gtk.Label" id="label1">
             <property name="MemberName" />
+            <property name="Xalign">1</property>
             <property name="LabelProp" translatable="yes">Вид документа:</property>
           </widget>
           <packing>
@@ -6581,7 +6582,7 @@
           <packing>
             <property name="LeftAttach">2</property>
             <property name="RightAttach">3</property>
-            <property name="AutoSize">True</property>
+            <property name="AutoSize">False</property>
             <property name="XOptions">Fill</property>
             <property name="YOptions">Fill</property>
             <property name="XExpand">False</property>
@@ -7432,7 +7433,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.Widgets.yDatePeriodPicker" id="ydateperiodVacation">
+              <widget class="QS.Widgets.GtkUI.DateRangePicker" id="ydateperiodVacation">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
                 <property name="StartDate">0</property>
@@ -7443,7 +7444,7 @@
                 <property name="BottomAttach">2</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
-                <property name="AutoSize">True</property>
+                <property name="AutoSize">False</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
                 <property name="XExpand">False</property>

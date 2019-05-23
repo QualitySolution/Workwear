@@ -6,7 +6,7 @@ namespace workwear.JournalFilters
 	{
 		private global::Gtk.Table table1;
 
-		private global::QSWidgetLib.DatePeriodPicker dateperiodDocs;
+		private global::QS.Widgets.GtkUI.DateRangePicker dateperiodDocs;
 
 		private global::Gamma.Widgets.yEnumComboBox enumcomboDocumentType;
 
@@ -26,7 +26,7 @@ namespace workwear.JournalFilters
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild
-			this.dateperiodDocs = new global::QSWidgetLib.DatePeriodPicker();
+			this.dateperiodDocs = new global::QS.Widgets.GtkUI.DateRangePicker();
 			this.dateperiodDocs.Events = ((global::Gdk.EventMask)(256));
 			this.dateperiodDocs.Name = "dateperiodDocs";
 			this.dateperiodDocs.StartDate = new global::System.DateTime(0);
@@ -52,6 +52,7 @@ namespace workwear.JournalFilters
 			// Container child table1.Gtk.Table+TableChild
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
+			this.label1.Xalign = 1F;
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Вид документа:");
 			this.table1.Add(this.label1);
 			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
