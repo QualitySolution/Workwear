@@ -6,7 +6,7 @@
   <updated>2019-05-22T14:00:00+03:00</updated>
   <entry>
     <id>urn:uuid:1e1dc85e-d4db-4c0a-acfb-35c77bf3e305</id>
-    <title type="text">Оплата программы на сайте</title>
+    <title type="text">Сервис релиз 2.1.1</title>
     <updated>2019-05-22T14:00:00+03:00</updated>
     <published>2019-05-22T14:00:00+03:00</published>
     <link rel="alternate" href="http://workwear.qsolution.ru/?page_id=14" />
@@ -22,7 +22,7 @@
   </entry>
   <entry>
     <id>urn:uuid:5c608bbb-b683-473e-9182-14b778c88824</id>
-    <title type="text">Релиза 2.1</title>
+    <title type="text">Релиз 2.1</title>
     <updated>2019-01-15T17:00:00+03:00</updated>
     <published>2019-01-15T17:00:00+03:00</published>
     <link rel="alternate" href="http://workwear.qsolution.ru/?p=396" />
