@@ -28,7 +28,8 @@ namespace workwear.Repository.Operations
 
 			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.Employee == employee)
-				.Where(o => o.StartOfUse <= end && o.ExpiryByNorm >= begin);
+				//Проверяем попадает ли операция в диапазон, обратным стравлением условий. Проверяем 2 даты и начала и конца, так как по сути для наса важны StartOfUse и ExpiryByNorm но они могут быть null.
+				.Where(o => (o.OperationTime <= end || o.StartOfUse <= end) && (o.ExpiryByNorm >= begin || o.AutoWriteoffDate >= begin));
 
 			makeEager?.Invoke(query);
 

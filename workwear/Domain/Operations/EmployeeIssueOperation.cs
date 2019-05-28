@@ -213,8 +213,13 @@ namespace workwear.Domain.Operations
 
 		public virtual void RecalculateDatesOfIssueOperation(IssueGraph graph, Func<string, bool> askUser)
 		{
-			if (NormItem == null)
-			{
+			if(NormItem == null) {
+				//Пробуем найти норму сами.
+				var cardItem = Employee.WorkwearItems.FirstOrDefault(x => Nomenclature.Type.IsSame(x.Item));
+				NormItem = cardItem?.ActiveNormItem;
+			}
+
+			if (NormItem == null){
 				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature.Name} от {OperationTime} не установлена норма поэтому прерасчет даты выдачи и использования не возможен.");
 				return;
 			}
