@@ -46,8 +46,7 @@ namespace workwear.Dialogs.Organization
 			if(valid.RunDlgIfNotValid((Gtk.Window)this.Toplevel))
 				return false;
 
-			Func<string, bool> ask = MessageDialogHelper.RunQuestionDialog;
-			Entity.UpdateRelatedOperations(UoW, ask);
+			Entity.UpdateRelatedOperations(UoW, new GtkQuestionDialogsInteractive());
 
 			UoWGeneric.Save();
 			logger.Info("Ok");

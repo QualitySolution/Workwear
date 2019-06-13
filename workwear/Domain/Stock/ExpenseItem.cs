@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Operations;
@@ -112,7 +113,8 @@ namespace workwear.Domain.Stock
 			{
 				if (EmployeeIssueOperation == null)
 					EmployeeIssueOperation = new EmployeeIssueOperation();
-				EmployeeIssueOperation.Update(uow, askUser, this);
+
+				EmployeeIssueOperation.Update(uow, new GtkQuestionDialogsInteractive(), this);
 				AutoWriteoffDate = EmployeeIssueOperation.AutoWriteoffDate;
 			}
 			else if(EmployeeIssueOperation != null)

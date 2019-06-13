@@ -1,5 +1,6 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
+using QS.Dialog;
 using System;
 using System.Collections.Generic;
 using workwear.Domain.Operations;
@@ -46,7 +47,10 @@ namespace WorkwearTest.Operations
 			issue.OperationTime = new DateTime(2018, 1, 15);
 			issue.Issued = 2;
 
-			issue.RecalculateDatesOfIssueOperation(graph, s => true);
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+
+			issue.RecalculateDatesOfIssueOperation(graph, ask);
 
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2018, 3, 1)));
 		}
@@ -79,7 +83,10 @@ namespace WorkwearTest.Operations
 			issue.OperationTime = new DateTime(2018, 3, 10);
 			issue.Issued = 3;
 
-			issue.RecalculateDatesOfIssueOperation(graph, s => true);
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+
+			issue.RecalculateDatesOfIssueOperation(graph, ask);
 
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2018, 4, 25)));
 		}
@@ -116,7 +123,10 @@ namespace WorkwearTest.Operations
 			issue.OperationTime = new DateTime(2019, 1, 10);
 			issue.Issued = 2;
 
-			issue.RecalculateDatesOfIssueOperation(graph, s => true);
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+
+			issue.RecalculateDatesOfIssueOperation(graph, ask);
 
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 4, 20)));
 		}

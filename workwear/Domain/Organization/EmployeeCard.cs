@@ -4,12 +4,16 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
+using NHibernate;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Project.Domain;
 using QS.Utilities.Text;
+using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Measurements;
+using workwear.Repository.Operations;
 
 namespace workwear.Domain.Organization
 {
@@ -462,6 +466,25 @@ namespace workwear.Domain.Organization
 					continue;
 				var inStock = stock.FirstOrDefault (s => s.Nomenclature == item.MatchedNomenclature);
 				item.SetInStockAmount (inStock == null ? 0 : inStock.Amount);
+			}
+		}
+
+		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow, IInteractiveQuestion askUser, DateTime begin, DateTime end)
+		{
+			var operations = EmployeeIssueRepository.GetOperationsTouchDates(uow, this, begin, end,
+				q => q.Fetch(SelectMode.Fetch, o => o.Nomenclature.Type)
+			);
+			foreach(var typeGroup in operations.GroupBy(o => o.Nomenclature.Type)) {
+				var graph = IssueGraph.MakeIssueGraph(uow, this, typeGroup.Key);
+				foreach(var operation in typeGroup.OrderBy(o => o.OperationTime)) {
+					operation.RecalculateDatesOfIssueOperation(graph, askUser);
+					uow.Save(operation);
+				}
+				var item = WorkwearItems.FirstOrDefault(x => x.Item.IsSame(typeGroup.Key));
+				if(item != null) {
+					item.UpdateNextIssue(uow);
+					uow.Save(item);
+				}
 			}
 		}
 	}

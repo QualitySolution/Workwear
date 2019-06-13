@@ -1,5 +1,6 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
+using QS.Dialog;
 using QS.DomainModel.UoW;
 using System;
 using System.Collections.Generic;
@@ -61,7 +62,10 @@ namespace WorkwearTest.Organization
 
 			EmployeeIssueRepository.GetOperationsTouchDatesTestGap = (arg1, arg2, arg3, arg4) => operations;
 
-			vacation.UpdateRelatedOperations(uow, a => false);
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(false);
+				
+			vacation.UpdateRelatedOperations(uow, ask);
 
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 5, 20)));
 			Assert.That(issue.AutoWriteoffDate, Is.EqualTo(new DateTime(2019, 5, 20)));
