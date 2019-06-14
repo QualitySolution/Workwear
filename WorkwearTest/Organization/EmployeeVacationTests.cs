@@ -21,7 +21,7 @@ namespace WorkwearTest.Organization
 		{
 			var uow = Substitute.For<IUnitOfWork>();
 
-			var employee = Substitute.For<EmployeeCard>();
+			var employee = new EmployeeCard();
 
 			var vacationType = Substitute.For<VacationType>();
 			vacationType.ExcludeFromWearing.Returns(true);
@@ -32,7 +32,7 @@ namespace WorkwearTest.Organization
 			vacation.EndDate = new DateTime(2019, 3, 10);
 			vacation.VacationType = vacationType;
 
-			employee.Vacations.Returns(new List<EmployeeVacation> { vacation });
+			employee.Vacations.Add(vacation);
 
 			var norm = new NormItem();
 			norm.Amount = 1;
