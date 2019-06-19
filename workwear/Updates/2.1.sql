@@ -137,7 +137,7 @@ UPDATE stock_write_off_detail, operation_issued_by_employee
 SET stock_write_off_detail.employee_issue_operation_id = operation_issued_by_employee.id
 WHERE stock_write_off_detail.id = operation_issued_by_employee.temp_id;
 
-ALTER TABLE operation_issued_by_employee DROP COLUMN operation_issued_by_employee.temp_id;
+ALTER TABLE operation_issued_by_employee DROP COLUMN temp_id;
 
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
