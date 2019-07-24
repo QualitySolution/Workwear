@@ -1,9 +1,8 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
-using QS.DB;
+using QS.Testing.DB;
 using QS.Dialog;
 using QS.DomainModel.NotifyChange;
-using QS.DomainModel.UoW;
 using System;
 using workwear.Domain.Operations;
 using workwear.Domain.Organization;
