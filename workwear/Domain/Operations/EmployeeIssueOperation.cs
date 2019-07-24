@@ -239,7 +239,7 @@ namespace workwear.Domain.Operations
 				if (firstLessNorm != null)
 				{
 					moveTo = firstLessNorm.StartDate;
-					if(askUser.Question($"На {operationTime:d} за сотрудником уже числится {amountAtEndDay} x {Nomenclature.TypeName}, при этом по нормам положено {amountByNorm}. Передвинуть начало экспуатации вновь выданных {Issued} на {moveTo:d}?")) {
+					if(askUser.Question($"На {operationTime:d} за сотрудником уже числится {amountAtEndDay} x {Nomenclature.TypeName}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. Передвинуть начало экспуатации вновь выданных {Issued} на {moveTo:d}?")) {
 						startOfUse = moveTo;
 					}
 				}
