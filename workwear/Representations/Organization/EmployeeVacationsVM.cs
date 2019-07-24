@@ -110,7 +110,7 @@ namespace workwear.Representations.Organization
 		public string EndDateText => EndDate.ToShortDateString();
 
 		public string VacationTime => NumberToTextRus.FormatCase(
-			(EndDate - BeginDate).Days,
+			(EndDate - BeginDate).Days + 1,
 			"{0} день",
 			"{0} дня",
 			"{0} дней");

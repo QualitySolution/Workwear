@@ -60,7 +60,7 @@ namespace workwear.Domain.Organization
 
 		#region Расчетные
 
-		public virtual TimeSpan VacationTime => EndDate - BeginDate;
+		public virtual TimeSpan VacationTime => (EndDate.AddDays(1) - BeginDate);
 
 		public virtual string Title => $"Отпуск {Employee.ShortName} c {BeginDate:d} по {EndDate:d}";
 
