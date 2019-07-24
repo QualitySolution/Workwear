@@ -131,6 +131,53 @@ namespace WorkwearTest.Operations
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 4, 20)));
 		}
 
+		[Test(Description = "Проверяем что правильно исключаем отпуск в случае наличие времени в операции выдачи. Реальный случай некорректного рассчета.")]
+		[Category("real case")]
+		public void RecalculateDatesOfIssueOperation_LifeTimeAppendOnVacation_IgnoreTimeTest()
+		{
+			var vacationType = Substitute.For<VacationType>();
+			vacationType.ExcludeFromWearing.Returns(true);
+
+			var employee = Substitute.For<EmployeeCard>();
+			var vacation = Substitute.For<EmployeeVacation>();
+			vacation.VacationType.Returns(vacationType);
+			vacation.Employee.Returns(employee);
+			vacation.BeginDate.Returns(new DateTime(2019, 7, 19));
+			vacation.EndDate.Returns(new DateTime(2019, 7, 23));
+
+			var vacation2 = Substitute.For<EmployeeVacation>();
+			vacation2.VacationType.Returns(vacationType);
+			vacation2.Employee.Returns(employee);
+			vacation2.BeginDate.Returns(new DateTime(2018, 7, 3));
+			vacation2.EndDate.Returns(new DateTime(2018, 7, 5));
+			employee.Vacations.Returns(new List<EmployeeVacation> { vacation, vacation2 });
+
+			var norm = new NormItem();
+			norm.Amount = 1;
+			norm.PeriodCount = 1;
+			norm.NormPeriod = NormPeriodType.Year;
+
+			var nomenclature = Substitute.For<Nomenclature>();
+			nomenclature.TypeName.Returns("fake");
+
+			var operations = new List<EmployeeIssueOperation>() { };
+
+			var graph = new IssueGraph(operations);
+			var issue = new EmployeeIssueOperation();
+			issue.Employee = employee;
+			issue.Nomenclature = nomenclature;
+			issue.NormItem = norm;
+			issue.OperationTime = new DateTime(2018, 11, 22, 15, 09, 23);
+			issue.Issued = 1;
+
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+
+			issue.RecalculateDatesOfIssueOperation(graph, ask);
+
+			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 11, 27)));
+		}
+
 		#endregion
 
 		#region CalculatePercentWear
