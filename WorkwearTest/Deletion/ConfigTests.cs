@@ -15,7 +15,7 @@ namespace WorkwearTest.Deletion
 		static ConfigTests()
 		{
 			ConfigureOneTime.ConfigureNh();
-			ConfigureOneTime.ConfogureDeletion();
+			ConfigureOneTime.ConfigureDeletion();
 
 			//Так как этот класс в общей библиотеке и пока никак не используется для удаления.
 			//IgnoreMissingClass.Add(typeof(QS.Project.Domain.UserBase));

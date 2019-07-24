@@ -1,4 +1,5 @@
-﻿using QS.DomainModel.NotifyChange;
+﻿using QS.Dialog.GtkUI;
+using QS.DomainModel.NotifyChange;
 using QS.Project.DB;
 using QS.Project.Domain;
 using QSBusinessCommon.Domain;
@@ -10,6 +11,7 @@ using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
+using workwear.Tools;
 
 namespace workwear
 {
@@ -57,6 +59,7 @@ namespace workwear
 			OrmMain.AddObjectDescription<Writeoff>().Dialog<WriteOffDocDlg>();
 
 			NotifyConfiguration.Enable();
+			BuisnessLogicGlobalEventHandler.Init(new GtkQuestionDialogsInteractive());
 		}
 	}
 }

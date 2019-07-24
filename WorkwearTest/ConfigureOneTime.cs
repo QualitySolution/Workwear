@@ -3,7 +3,7 @@ using QS.Project.DB;
 using QSBusinessCommon.Domain;
 using workwear;
 
-namespace WorkwearTest.Deletion
+namespace WorkwearTest
 {
 	public static class ConfigureOneTime
 	{
@@ -16,9 +16,7 @@ namespace WorkwearTest.Deletion
 				return;
 
 			Console.WriteLine("Инициализация");
-			var db_config = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
-								.Dialect<NHibernate.Dialect.MySQL57Dialect>()
-								.ConnectionString("server=vod.qsolution.ru;port=3306;database=test-test;user id=test_only;password=7qqKWuNugQF2Y2W1;sslmode=None;");
+			var db_config = FluentNHibernate.Cfg.Db.MonoSqliteConfiguration.Standard.InMemory();
 
 			Console.WriteLine("ORM");
 			// Настройка ORM
@@ -30,7 +28,7 @@ namespace WorkwearTest.Deletion
 			NhConfigered = true;
 		}
 
-		public static void ConfogureDeletion()
+		public static void ConfigureDeletion()
 		{
 			if(DeletionConfigured)
 				return;

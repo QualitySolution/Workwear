@@ -70,6 +70,7 @@
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\packages\SharpZipLib.1.1.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -88,6 +89,7 @@
     <Compile Include="Stock\ExpenseTest.cs" />
     <Compile Include="Organization\EmployeeVacationTests.cs" />
     <Compile Include="Integration\ReportExportTest.cs" />
+    <Compile Include="Integration\Tools\BuisnessLogicGlobalEventHandlerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.Testing\QS.Testing.csproj">
@@ -126,6 +128,7 @@
     <Folder Include="Organization\" />
     <Folder Include="Stock\" />
     <Folder Include="Integration\" />
+    <Folder Include="Integration\Tools\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

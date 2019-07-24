@@ -178,12 +178,12 @@ namespace workwear.Domain.Regulations
 			ObservableProfessions.Remove (prof);
 		}
 
-		public virtual void AddItem(ItemsType itemtype)
+		public virtual NormItem AddItem(ItemsType itemtype)
 		{
 			if(Items.Any (i => DomainHelper.EqualDomainObjects (i.Item, itemtype)))
 			{
 				logger.Warn ("Такое наименование уже добавлено. Пропускаем...");
-				return;
+				return null;
 			}
 
 			var item = new NormItem () {
@@ -195,6 +195,7 @@ namespace workwear.Domain.Regulations
 			};
 
 			ObservableItems.Add (item);
+			return item;
 		}
 
 		public virtual void RemoveItem(NormItem item)
