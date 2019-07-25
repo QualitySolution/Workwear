@@ -32,7 +32,7 @@ namespace WorkwearTest.Integration.Organization
 			//NewSessionWithNewDB();
 		}
 
-		[Test(Description = "Пересчитываем сроки после создания отпуска. Реальный баг.")]
+		[Test(Description = "Пересчитываем правильно сроки после создания отпуска. Реальный баг.")]
 		[Category("real case")]
 		[Category("Integrated")]
 		public void UpdateOperations_RecalculeteDatesAfterCreateVacation()

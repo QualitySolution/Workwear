@@ -8,7 +8,7 @@ using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
-namespace WorkwearTest.Stock
+namespace WorkwearTest.Integration.Stock
 {
 	[TestFixture(TestOf = typeof(Expense))]
 	public class ExpenseIntegratedTest : InMemoryDBGlobalConfigTestFixtureBase
