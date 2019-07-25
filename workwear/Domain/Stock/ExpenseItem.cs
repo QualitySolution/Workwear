@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using QS.Dialog;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -107,14 +108,14 @@ namespace workwear.Domain.Stock
 
 		#region Функции
 
-		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
+		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
 		{
 			if(expenseDoc.Operation == ExpenseOperations.Employee)
 			{
 				if (EmployeeIssueOperation == null)
 					EmployeeIssueOperation = new EmployeeIssueOperation();
 
-				EmployeeIssueOperation.Update(uow, new GtkQuestionDialogsInteractive(), this);
+				EmployeeIssueOperation.Update(uow, askUser, this);
 				AutoWriteoffDate = EmployeeIssueOperation.AutoWriteoffDate;
 			}
 			else if(EmployeeIssueOperation != null)

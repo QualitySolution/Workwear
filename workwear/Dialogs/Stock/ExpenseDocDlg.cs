@@ -94,7 +94,7 @@ namespace workwear
 
 			try 
 			{
-				Func<string, bool> ask = MessageDialogHelper.RunQuestionDialog;
+				var ask = new GtkQuestionDialogsInteractive();
 				Entity.UpdateOperations(UoW, ask);
 				UoWGeneric.Save ();
 				if(Entity.Operation == ExpenseOperations.Employee)

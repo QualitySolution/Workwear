@@ -1,5 +1,6 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
+using QS.Dialog;
 using QS.DomainModel.UoW;
 using System;
 using System.Collections.Generic;
@@ -42,11 +43,14 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expense.Items.Add(expenseItem);
 			expenseItem.ExpenseDoc = expense;
 
+			var ask = Substitute.For<IInteractiveQuestion>();
+
 			//Выполняем
-			expense.UpdateOperations(uow, s => { 
-				Assert.Fail("В данном сценарии мы не должны ничего спрашивать у пользователя. Предпологается что мы могли попросить передвинуть дату начала, если бы не проигнорировали свою же операцию.");
-				return true;
-			});
+			expense.UpdateOperations(uow, ask);
+
+			//В данном сценарии мы не должны ничего спрашивать у пользователя. Предпологается что мы могли попросить передвинуть дату начала, если бы не проигнорировали свою же операцию.
+			ask.DidNotReceiveWithAnyArgs().Question(string.Empty);
+
 			Assert.That(expense.Items[0].EmployeeIssueOperation.OperationTime,
 				Is.EqualTo(new DateTime(2019, 1, 15))
 			);
@@ -83,11 +87,14 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expense.Items.Add(expenseItem);
 			expenseItem.ExpenseDoc = expense;
 
+			var ask = Substitute.For<IInteractiveQuestion>();
+
 			//Выполняем
-			expense.UpdateOperations(uow, s => {
-				Assert.Fail("В данном сценарии мы не должны ничего спрашивать у пользователя. Предпологается что мы могли попросить передвинуть дату начала, не учитывая что на конец интервала количество все равно достаточное.");
-				return true;
-			});
+			expense.UpdateOperations(uow, ask);
+
+			//В данном сценарии мы не должны ничего спрашивать у пользователя. Предпологается что мы могли попросить передвинуть дату начала, не учитывая что на конец интервала количество все равно достаточное.
+			ask.DidNotReceiveWithAnyArgs().Question(string.Empty);
+
 			Assert.That(expense.Items[0].EmployeeIssueOperation.OperationTime,
 				Is.EqualTo(new DateTime(2019, 1, 15))
 			);
@@ -131,11 +138,14 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expense.Items.Add(expenseItem);
 			expenseItem.ExpenseDoc = expense;
 
+			var ask = Substitute.For<IInteractiveQuestion>();
+
 			//Выполняем
-			expense.UpdateOperations(uow, s => {
-				Assert.Fail("В данном сценарии мы не должны ничего спрашивать у пользователя. Предпологается что мы могли попросить передвинуть дату начала, на тот же день, так как списание было в этот день. реальный случай.");
-				return true;
-			});
+			expense.UpdateOperations(uow, ask);
+
+			//В данном сценарии мы не должны ничего спрашивать у пользователя. Предпологается что мы могли попросить передвинуть дату начала, на тот же день, так как списание было в этот день. реальный случай.
+			ask.DidNotReceiveWithAnyArgs().Question(string.Empty);
+
 			Assert.That(expense.Items[0].EmployeeIssueOperation.OperationTime,
 				Is.EqualTo(new DateTime(2019, 1, 15))
 			);
