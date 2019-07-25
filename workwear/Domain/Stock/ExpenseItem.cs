@@ -117,6 +117,7 @@ namespace workwear.Domain.Stock
 
 				EmployeeIssueOperation.Update(uow, askUser, this);
 				AutoWriteoffDate = EmployeeIssueOperation.AutoWriteoffDate;
+				uow.Save(EmployeeIssueOperation);
 			}
 			else if(EmployeeIssueOperation != null)
 			{

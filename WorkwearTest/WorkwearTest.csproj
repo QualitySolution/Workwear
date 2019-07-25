@@ -90,6 +90,7 @@
     <Compile Include="Organization\EmployeeVacationTests.cs" />
     <Compile Include="Integration\ReportExportTest.cs" />
     <Compile Include="Integration\Tools\BuisnessLogicGlobalEventHandlerTest.cs" />
+    <Compile Include="Stock\ExpenseIntegratedTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.Testing\QS.Testing.csproj">

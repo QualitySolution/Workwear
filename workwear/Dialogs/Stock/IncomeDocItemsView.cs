@@ -148,7 +148,7 @@ namespace workwear
 
 		void SelectNomenclatureDlg_ObjectSelected (object sender, OrmReferenceObjectSectedEventArgs e)
 		{
-			e.GetEntities<Nomenclature>().ToList().ForEach(IncomeDoc.AddItem);
+			e.GetEntities<Nomenclature>().ToList().ForEach(n => IncomeDoc.AddItem(n));
 			CalculateTotal();
 		}
 

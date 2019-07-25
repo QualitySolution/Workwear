@@ -188,7 +188,7 @@ namespace workwear.Domain.Stock
 			ObservableItems.Add(newItem);
 		}
 
-		public virtual void AddItem(Nomenclature nomenclature)
+		public virtual IncomeItem AddItem(Nomenclature nomenclature)
 		{
 			if (Operation != IncomeOperations.Enter)
 				throw new InvalidOperationException ("Добавление номенклатуры возможно только во входящую накладную. Возвраты должны добавляться с указанием строки выдачи.");
@@ -196,7 +196,7 @@ namespace workwear.Domain.Stock
 			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.Nomenclature, nomenclature)))
 			{
 				logger.Warn ("Номенклатура из уже добавлена. Пропускаем...");
-				return;
+				return null;
 			}
 
 			var newItem = new IncomeItem (this) {
@@ -207,6 +207,7 @@ namespace workwear.Domain.Stock
 			};
 
 			ObservableItems.Add (newItem);
+			return newItem;
 		}
 
 		public virtual void RemoveItem(IncomeItem item)
