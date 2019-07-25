@@ -28,6 +28,7 @@ namespace workwear.Domain.Operations.Graph
 		{
 			//создаем интервалы.
 			List<DateTime> starts = issues.Select(x => x.OperationTime.Date).ToList();
+			starts.AddRange(issues.Where(x => x.StartOfUse.HasValue).Select(x => x.StartOfUse.Value.Date));
 			starts.AddRange(issues.Where(x => x.AutoWriteoffDate.HasValue).Select(x => x.AutoWriteoffDate.Value.Date));
 			starts = starts.Distinct().OrderBy(x => x.Ticks).ToList();
 
@@ -80,6 +81,16 @@ namespace workwear.Domain.Operations.Graph
 			if (interval == null)
 				return 0;
 			return interval.ActiveItems.Sum(x => x.AmountAtEndOfDay(date, excludeOperation));
+		}
+
+		public int UsedAmountAtEndOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
+		{
+			var interval = IntervalOfDate(date);
+			if(interval == null)
+				return 0;
+			return interval.ActiveItems
+				.Where(x => x.IssueOperation.StartOfUse == null || x.IssueOperation.StartOfUse <= date)
+				.Sum(x => x.AmountAtEndOfDay(date, excludeOperation));
 		}
 
 		public GraphInterval IntervalOfDate(DateTime date)

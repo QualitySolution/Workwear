@@ -226,7 +226,7 @@ namespace workwear.Domain.Operations
 			}
 			StartOfUse = operationTime;
 
-			var amountAtEndDay = graph.AmountAtEndOfDay(OperationTime.Date, this);
+			var amountAtEndDay = graph.UsedAmountAtEndOfDay(OperationTime.Date, this);
 			var amountByNorm = NormItem.Amount;
 			if (amountAtEndDay >= amountByNorm)
 			{
@@ -235,7 +235,7 @@ namespace workwear.Domain.Operations
 				var firstLessNorm = graph.Intervals
 					.Where(x => x.StartDate.Date >= OperationTime.Date)
 					.OrderBy(x => x.StartDate)
-					.FirstOrDefault(x => graph.AmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
+					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
 				if (firstLessNorm != null)
 				{
 					moveTo = firstLessNorm.StartDate;

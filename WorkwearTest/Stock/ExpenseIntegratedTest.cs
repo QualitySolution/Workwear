@@ -154,15 +154,15 @@ namespace WorkwearTest.Stock
 				expense.AddItem(incomeItem2, 1);
 
 				//Обновление операций
-				expense.UpdateOperations(uow, ask);
+				expense.UpdateOperations(uow, ask); //Здесь 2020 
 				uow.Save(expense);
 				uow.Commit();
 
-				expense.UpdateOperations(uow, ask);
+				expense.UpdateOperations(uow, ask); //Здесь 2022(неправильно)
 				uow.Save(expense);
 				uow.Commit();
 
-				expense.UpdateOperations(uow, ask);
+				expense.UpdateOperations(uow, ask); //Здесь 2024(неправильно)
 				uow.Save(expense);
 				uow.Commit();
 
