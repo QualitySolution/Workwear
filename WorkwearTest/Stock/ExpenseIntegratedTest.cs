@@ -89,7 +89,7 @@ namespace WorkwearTest.Stock
 				uow.Save(expense);
 				uow.Commit();
 
-				employee.UpdateNextIssue(expense.Items.Select(x => x.Nomenclature.Type).ToArray());
+				expense.UpdateEmployeeNextIssue();
 
 				//Тут ожидаем предложение перенести дату использование второй номенклатуры на год.
 				ask.ReceivedWithAnyArgs().Question(String.Empty);

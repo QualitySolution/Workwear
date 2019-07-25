@@ -131,6 +131,12 @@ namespace workwear.Domain.Stock
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
 		}
 
+		public virtual void UpdateEmployeeNextIssue()
+		{
+			Employee.UpdateNextIssue(Items.Select(x => x.Nomenclature.Type).ToArray());
+			UoW.Save(Employee);
+		}
+
 		#endregion
 	}
 
