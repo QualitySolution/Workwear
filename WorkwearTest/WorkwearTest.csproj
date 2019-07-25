@@ -91,6 +91,7 @@
     <Compile Include="Integration\ReportExportTest.cs" />
     <Compile Include="Integration\Tools\BuisnessLogicGlobalEventHandlerTest.cs" />
     <Compile Include="Stock\ExpenseIntegratedTest.cs" />
+    <Compile Include="Integration\Organization\EmployeeVacationIntegratedTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.Testing\QS.Testing.csproj">
@@ -130,6 +131,7 @@
     <Folder Include="Stock\" />
     <Folder Include="Integration\" />
     <Folder Include="Integration\Tools\" />
+    <Folder Include="Integration\Organization\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -67,10 +67,10 @@ namespace WorkwearTest.Integration.Tools
 				vacationType.ExcludeFromWearing = true;
 
 				var vacation = new EmployeeVacation();
-				vacation.Employee = employee;
 				vacation.BeginDate = new DateTime(2019, 2, 1);
 				vacation.EndDate = new DateTime(2019, 3, 1);
 				vacation.VacationType = vacationType;
+				employee.AddVacation(vacation);
 				uow.Save(vacationType);
 				uow.Save(vacation);
 				uow.Save(employee);
@@ -88,6 +88,7 @@ namespace WorkwearTest.Integration.Tools
 				uow.Commit();
 
 				//Выполняем удаление
+				employee.Vacations.Remove(vacation);
 				uow.Delete(vacation);
 				uow.Commit();
 

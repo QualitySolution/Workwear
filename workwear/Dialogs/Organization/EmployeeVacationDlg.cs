@@ -14,11 +14,12 @@ namespace workwear.Dialogs.Organization
 		{
 			this.Build();
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<EmployeeVacation>();
-			Entity.Employee = UoW.GetById<EmployeeCard>(employee.Id);
+			var loadedEmployee = UoW.GetById<EmployeeCard>(employee.Id);
+			loadedEmployee.AddVacation(Entity);
 			ConfigureDlg();
 		}
 
-		public EmployeeVacationDlg(EmployeeVacation card) : this(card.Id) { }
+		public EmployeeVacationDlg(EmployeeVacation vacation) : this(vacation.Id) { }
 
 		public EmployeeVacationDlg(int id)
 		{
@@ -47,6 +48,7 @@ namespace workwear.Dialogs.Organization
 				return false;
 
 			Entity.UpdateRelatedOperations(UoW, new GtkQuestionDialogsInteractive());
+			UoW.Save(Entity.Employee);
 
 			UoWGeneric.Save();
 			logger.Info("Ok");

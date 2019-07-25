@@ -489,14 +489,24 @@ namespace workwear.Domain.Organization
 
 		#endregion
 
+		#region Функции работы с вакансиями
+
+		public virtual void AddVacation(EmployeeVacation vacation)
+		{
+			vacation.Employee = this;
+			ObservableVacations.Add(vacation);
+		}
+
+		#endregion
+
 		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow, IInteractiveQuestion askUser, DateTime begin, DateTime end)
 		{
 			var operations = EmployeeIssueRepository.GetOperationsTouchDates(uow, this, begin, end,
 				q => q.Fetch(SelectMode.Fetch, o => o.Nomenclature.Type)
 			);
 			foreach(var typeGroup in operations.GroupBy(o => o.Nomenclature.Type)) {
-				var graph = IssueGraph.MakeIssueGraph(uow, this, typeGroup.Key);
 				foreach(var operation in typeGroup.OrderBy(o => o.OperationTime)) {
+					var graph = IssueGraph.MakeIssueGraph(uow, this, typeGroup.Key);
 					operation.RecalculateDatesOfIssueOperation(graph, askUser);
 					uow.Save(operation);
 				}
