@@ -366,6 +366,8 @@ namespace workwear.Domain.Organization
 			return new SizePair(SizeHelper.GetSizeStdCode(growStd[0]), WearGrowth);
 		}
 
+		#region Функции для работы с коллекцией норм
+
 		public virtual void AddUsedNorm(Norm norm)
 		{
 			if(UsedNorms.Any (p => DomainHelper.EqualDomainObjects (p, norm)))
@@ -382,6 +384,10 @@ namespace workwear.Domain.Organization
 			ObservableUsedNorms.Remove (norm);
 			UpdateWorkwearItems ();
 		}
+
+		#endregion
+
+		#region Функции для работы с коллекцией потребностей
 
 		/// <summary>
 		/// Для работы функции необходимо иметь заполненый UoW.
@@ -436,6 +442,18 @@ namespace workwear.Domain.Organization
 			}
 		}
 
+		public virtual void UpdateNextIssue(ItemsType[] itemsTypes)
+		{
+			foreach(var itemsGroup in itemsTypes.GroupBy(i => i.Id)) {
+				var wearItem = WorkwearItems.FirstOrDefault(i => i.Item.Id == itemsGroup.Key);
+				if(wearItem == null) {
+					logger.Debug("Позиции <{0}> не требуется к выдаче, пропускаем...", itemsGroup.First().Name);
+					continue;
+				}
+				wearItem.UpdateNextIssue(UoW);
+			}
+		}
+
 		public virtual void FillWearRecivedInfo(IUnitOfWork uow)
 		{
 			if (Id == 0) // Не надо проверять выдачи, так как сотрудник еще не сохранен.
@@ -468,6 +486,8 @@ namespace workwear.Domain.Organization
 				item.SetInStockAmount (inStock == null ? 0 : inStock.Amount);
 			}
 		}
+
+		#endregion
 
 		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow, IInteractiveQuestion askUser, DateTime begin, DateTime end)
 		{

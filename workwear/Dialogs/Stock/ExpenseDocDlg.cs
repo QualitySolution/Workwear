@@ -100,17 +100,7 @@ namespace workwear
 				if(Entity.Operation == ExpenseOperations.Employee)
 				{
 					logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
-					foreach(var itemsGroup in Entity.Items.GroupBy (i => i.Nomenclature.Type.Id))
-					{
-						var wearItem = Entity.EmployeeCard.WorkwearItems.FirstOrDefault (i => i.Item.Id == itemsGroup.Key);
-						if(wearItem == null)
-						{
-							logger.Debug ("Позиции <{0}> не требуется к выдаче, пропускаем...", itemsGroup.First ().Nomenclature.Type.Name);
-							continue;
-						}
-
-						wearItem.UpdateNextIssue (UoW);
-					}
+					Entity.EmployeeCard.UpdateNextIssue(Entity.Items.Select(x => x.Nomenclature.Type).ToArray());
 					UoWGeneric.Commit ();
 				}
 			} catch (Exception ex) {
