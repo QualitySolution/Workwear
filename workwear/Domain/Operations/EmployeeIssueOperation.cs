@@ -196,7 +196,7 @@ namespace workwear.Domain.Operations
 			if (item.ExpenseDoc.Date.Date != OperationTime.Date)
 				OperationTime = item.ExpenseDoc.Date;
 
-			Employee = item.ExpenseDoc.EmployeeCard;
+			Employee = item.ExpenseDoc.Employee;
 			Nomenclature = item.Nomenclature;
 			WearPercent = 1 - item.IncomeOn.LifePercent;
 			Issued = item.Amount;
@@ -296,7 +296,7 @@ namespace workwear.Domain.Operations
 				OperationTime = item.Document.Date;
 
 			IssuedOperation = item.IssuedOn.EmployeeIssueOperation;
-			Employee = item.IssuedOn.ExpenseDoc.EmployeeCard;
+			Employee = item.IssuedOn.ExpenseDoc.Employee;
 			Nomenclature = item.Nomenclature;
 			WearPercent = IssuedOperation.CalculatePercentWear(OperationTime);
 			Issued = 0;

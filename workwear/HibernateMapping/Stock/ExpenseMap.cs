@@ -15,7 +15,7 @@ namespace workwear.HMap
 			Map(x => x.Comment).Column("comment");
 
 			References (x => x.Facility).Column ("object_id");
-			References (x => x.EmployeeCard).Column ("wear_card_id");
+			References (x => x.Employee).Column ("wear_card_id");
 			References (x => x.CreatedbyUser).Column ("user_id");
 
 				HasMany (x => x.Items)

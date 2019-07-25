@@ -78,7 +78,7 @@ namespace WorkwearTest.Stock
 				uow.Save(income);
 
 				var expense = new Expense();
-				expense.EmployeeCard = employee;
+				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 10, 22);
 				expense.Operation = ExpenseOperations.Employee;
 				expense.AddItem(incomeItem1, 1);
@@ -147,7 +147,7 @@ namespace WorkwearTest.Stock
 				uow.Save(income2);
 
 				var expense = new Expense();
-				expense.EmployeeCard = employee;
+				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 10, 22);
 				expense.Operation = ExpenseOperations.Employee;
 				expense.AddItem(incomeItem1, 1);

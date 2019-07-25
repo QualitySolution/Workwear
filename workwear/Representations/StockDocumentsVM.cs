@@ -78,7 +78,7 @@ namespace workwear.Representations
 					expenseQuery.Where(o => o.Date < Filter.RestrictEndDate.Value.AddDays(1));
 
 				var expenseList = expenseQuery
-					.JoinQueryOver(() => expenseAlias.EmployeeCard, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					.JoinQueryOver(() => expenseAlias.Employee, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 					.JoinQueryOver(() => expenseAlias.Facility, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList(list => list

@@ -27,12 +27,12 @@ namespace workwear.Domain.Stock
 			set { SetField (ref operation, value, () => Operation); }
 		}
 
-		EmployeeCard employeeCard;
+		EmployeeCard employee;
 
 		[Display (Name = "Сотрудник")]
-		public virtual EmployeeCard EmployeeCard {
-			get { return employeeCard; }
-			set { SetField (ref employeeCard, value, () => EmployeeCard); }
+		public virtual EmployeeCard Employee {
+			get { return employee; }
+			set { SetField (ref employee, value, () => Employee); }
 		}
 
 		Facility facility;
@@ -83,7 +83,7 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult ("Объект должен быть указан", 
 					new[] { this.GetPropertyName (o => o.Date)});
 
-			if(Operation == ExpenseOperations.Employee && EmployeeCard == null)
+			if(Operation == ExpenseOperations.Employee && Employee == null)
 				yield return new ValidationResult ("Сотрудник должен быть указан", 
 					new[] { this.GetPropertyName (o => o.Date)});
 

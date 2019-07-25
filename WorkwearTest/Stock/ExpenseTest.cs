@@ -37,7 +37,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expenseItem.Amount = 1;
 			expenseItem.IncomeOn = incomeOn;
 			var expense = new Expense();
-			expense.EmployeeCard = employee;
+			expense.Employee = employee;
 			expense.Date = new DateTime(2019, 1, 15);
 			expense.Operation = ExpenseOperations.Employee;
 			expense.Items.Add(expenseItem);
@@ -81,7 +81,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expenseItem.Amount = 1;
 			expenseItem.IncomeOn = incomeOn;
 			var expense = new Expense();
-			expense.EmployeeCard = employee;
+			expense.Employee = employee;
 			expense.Date = new DateTime(2019, 1, 15);
 			expense.Operation = ExpenseOperations.Employee;
 			expense.Items.Add(expenseItem);
@@ -132,7 +132,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expenseItem.Amount = 1;
 			expenseItem.IncomeOn = incomeOn;
 			var expense = new Expense();
-			expense.EmployeeCard = employee;
+			expense.Employee = employee;
 			expense.Date = new DateTime(2019, 1, 15);
 			expense.Operation = ExpenseOperations.Employee;
 			expense.Items.Add(expenseItem);

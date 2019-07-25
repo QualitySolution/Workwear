@@ -71,9 +71,9 @@ namespace workwear
 				if(Entity.Items.Any (w => w.IssuedOn != null))
 				{
 					logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
-					foreach(var employeeGroup in Entity.Items.Where (w => w.IssuedOn != null && w.IssuedOn.ExpenseDoc.EmployeeCard != null).GroupBy (w => w.IssuedOn.ExpenseDoc.EmployeeCard.Id))
+					foreach(var employeeGroup in Entity.Items.Where (w => w.IssuedOn != null && w.IssuedOn.ExpenseDoc.Employee != null).GroupBy (w => w.IssuedOn.ExpenseDoc.Employee.Id))
 					{
-						var employee = employeeGroup.Select (eg => eg.IssuedOn.ExpenseDoc.EmployeeCard).First ();
+						var employee = employeeGroup.Select (eg => eg.IssuedOn.ExpenseDoc.Employee).First ();
 						foreach(var itemsGroup in employeeGroup.GroupBy (i => i.Nomenclature.Type.Id))
 						{
 							var wearItem = employee.WorkwearItems.FirstOrDefault (i => i.Item.Id == itemsGroup.Key);

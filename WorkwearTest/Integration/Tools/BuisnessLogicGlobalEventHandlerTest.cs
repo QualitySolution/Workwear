@@ -92,7 +92,6 @@ namespace WorkwearTest.Integration.Tools
 				uow.Commit();
 
 				//проверяем данные
-				//uow.Session.Refresh(expenseOp);
 				using(var uow2 = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления uow2")) {
 					var resultOp = uow2.GetById<EmployeeIssueOperation>(expenseOp.Id);
 					Assert.That(resultOp.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 3, 1)));

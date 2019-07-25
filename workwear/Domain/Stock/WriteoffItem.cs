@@ -75,7 +75,7 @@ namespace workwear.Domain.Stock
 				if(IssuedOn != null)
 				{
 					if (IssuedOn.ExpenseDoc.Operation == ExpenseOperations.Employee)
-						return IssuedOn.ExpenseDoc.EmployeeCard.ShortName;
+						return IssuedOn.ExpenseDoc.Employee.ShortName;
 
 					if (IssuedOn.ExpenseDoc.Operation == ExpenseOperations.Object)
 						return IssuedOn.ExpenseDoc.Facility.Name;

@@ -31,7 +31,7 @@ namespace workwear.Repository
 			WriteoffItem writeoffItemAlias = null;
 
 			var incomes = uow.Session.QueryOver<Expense> (() => reciveDocAlias)
-				.Where(d => d.EmployeeCard == employee)
+				.Where(d => d.Employee == employee)
 				.JoinQueryOver (d => d.Items, () => recivedItemAlias)
 				.Where (i => i.AutoWriteoffDate == null || i.AutoWriteoffDate > DateTime.Today);
 

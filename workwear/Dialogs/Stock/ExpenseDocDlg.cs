@@ -34,7 +34,7 @@ namespace workwear
 
 		public ExpenseDocDlg (EmployeeCard employee) : this () {
 			Entity.Operation = ExpenseOperations.Employee;
-			Entity.EmployeeCard = UoW.GetById<EmployeeCard> (employee.Id);
+			Entity.Employee = UoW.GetById<EmployeeCard> (employee.Id);
 		}
 
 		public ExpenseDocDlg (EmployeeCard employee, Dictionary<Nomenclature, int> addItems) : this (employee) {
@@ -75,7 +75,7 @@ namespace workwear
 			ycomboOperation.Binding.AddBinding (Entity, e => e.Operation, w => w.SelectedItemOrNull).InitializeFromSource ();
 
 			yentryEmployee.SubjectType = typeof(EmployeeCard);
-			yentryEmployee.Binding.AddBinding (Entity, e => e.EmployeeCard, w => w.Subject).InitializeFromSource ();
+			yentryEmployee.Binding.AddBinding (Entity, e => e.Employee, w => w.Subject).InitializeFromSource ();
 
 			yentryObject.SubjectType = typeof(Facility);
 			yentryObject.Binding.AddBinding (Entity, e => e.Facility, w => w.Subject).InitializeFromSource ();
