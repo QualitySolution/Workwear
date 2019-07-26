@@ -442,7 +442,7 @@ namespace workwear.Domain.Organization
 			}
 		}
 
-		public virtual void UpdateNextIssue(ItemsType[] itemsTypes)
+		public virtual void UpdateNextIssue(params ItemsType[] itemsTypes)
 		{
 			foreach(var itemsGroup in itemsTypes.GroupBy(i => i.Id)) {
 				var wearItem = WorkwearItems.FirstOrDefault(i => i.Item.Id == itemsGroup.Key);

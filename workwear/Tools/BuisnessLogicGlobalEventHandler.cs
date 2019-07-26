@@ -2,7 +2,10 @@
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
+using workwear.Domain.Operations;
 using workwear.Domain.Organization;
+using workwear.Domain.Stock;
+using workwear.Repository.Stock;
 
 namespace workwear.Tools
 {
@@ -24,6 +27,10 @@ namespace workwear.Tools
 			QS.DomainModel.NotifyChange.NotifyConfiguration.Instance.BatchSubscribe(HandleDeleteEmployeeVacation)
 				.IfEntity<EmployeeVacation>()
 				.AndChangeType(QS.DomainModel.NotifyChange.TypeOfChangeEvent.Delete);
+
+			QS.DomainModel.NotifyChange.NotifyConfiguration.Instance.BatchSubscribe(HandleDeleteEmployeeIssueOperation)
+				.IfEntity<EmployeeIssueOperation>()
+				.AndChangeType(QS.DomainModel.NotifyChange.TypeOfChangeEvent.Delete);
 		}
 
 		private static void HandleDeleteEmployeeVacation(QS.DomainModel.NotifyChange.EntityChangeEvent[] changeEvents)
@@ -40,5 +47,17 @@ namespace workwear.Tools
 			}
 		}
 
+		private static void HandleDeleteEmployeeIssueOperation(QS.DomainModel.NotifyChange.EntityChangeEvent[] changeEvents)
+		{
+			using(var uow = GetUnitOfWorkFactory.CreateWithoutRoot("Глобальный обработчик удаления операций выдачи")) {
+				foreach(var employeeGroup in changeEvents.GroupBy(x => (x.Entity as EmployeeIssueOperation).Employee.Id)) {
+					var employee = uow.GetById<EmployeeCard>(employeeGroup.Key);
+					var nomenclatures = employeeGroup.Select(x => x.GetOldValueCast<EmployeeIssueOperation, Nomenclature>(e => e.Nomenclature)).ToArray();
+					var types = NomenclatureRepository.GetTypesOfNomenclatures(uow, nomenclatures).ToArray();
+					employee.UpdateNextIssue(types);
+				}
+				uow.Commit();
+			}
+		}
 	}
 }

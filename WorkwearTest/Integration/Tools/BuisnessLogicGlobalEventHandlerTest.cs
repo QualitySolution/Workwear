@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.Testing.DB;
 using workwear.Domain.Operations;
@@ -182,6 +184,93 @@ namespace WorkwearTest.Integration.Tools
 					Assert.That(resultEmployee.WorkwearItems[0].NextIssue, Is.EqualTo(new DateTime(2021, 1, 1)));
 				}
 
+			}
+		}
+
+		[Test(Description = "Корректно удаляем строку из документа выдачи сотруднику. Реальный баг.")]
+		[Category("real case")]
+		[Category("Integrated")]
+		public void UpdateOperations_DeleteRowTest()
+		{
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				BuisnessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
+
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				uow.Save(nomenclature);
+
+				var nomenclatureType2 = new ItemsType();
+				nomenclatureType2.Name = "Тестовый тип номенклатуры2";
+				uow.Save(nomenclatureType2);
+
+				var nomenclature2 = new Nomenclature();
+				nomenclature2.Type = nomenclatureType2;
+				uow.Save(nomenclature2);
+
+				var norm = new Norm();
+				var normItem = norm.AddItem(nomenclatureType);
+				normItem.Amount = 1;
+				normItem.NormPeriod = NormPeriodType.Year;
+				normItem.PeriodCount = 1;
+				var normItem2 = norm.AddItem(nomenclatureType2);
+				normItem2.Amount = 1;
+				normItem2.NormPeriod = NormPeriodType.Month;
+				normItem2.PeriodCount = 4;
+				uow.Save(norm);
+
+				var employee = new EmployeeCard();
+				employee.HireDate = new DateTime(2018, 1, 15);
+				employee.AddUsedNorm(norm);
+				uow.Save(employee);
+				uow.Commit();
+
+				var income = new Income();
+				income.Date = new DateTime(2017, 1, 1);
+				income.Operation = IncomeOperations.Enter;
+				var incomeItem1 = income.AddItem(nomenclature);
+				incomeItem1.Amount = 10;
+				var incomeItem2 = income.AddItem(nomenclature2);
+				incomeItem2.Amount = 10;
+				income.UpdateOperations(uow, s => true);
+				uow.Save(income);
+
+				var expense = new Expense();
+				expense.Employee = employee;
+				expense.Date = new DateTime(2018, 4, 22);
+				expense.Operation = ExpenseOperations.Employee;
+				expense.AddItem(incomeItem1, 1);
+				expense.AddItem(incomeItem2, 1);
+
+				//Обновление операций
+				expense.UpdateOperations(uow, ask);
+				uow.Save(expense);
+				expense.UpdateEmployeeNextIssue();
+				employee.WorkwearItems.First(e => e.Item.IsSame(nomenclatureType2)).Created = new DateTime(2018, 4, 22);
+				uow.Save(expense.Employee);
+				uow.Commit();
+
+				Assert.That(employee.WorkwearItems.First(e => e.Item.IsSame(nomenclatureType2)).NextIssue,
+					Is.EqualTo(new DateTime(2018, 8, 22))
+				);
+
+				//Выполняем удаление
+				expense.RemoveItem(expense.Items.First(e => e.Nomenclature.Type.IsSame(nomenclatureType2)));
+				uow.Save(expense);
+				uow.Commit();
+
+				//проверяем данные
+				using(var uow2 = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления uow2")) {
+					var resultEmployee = uow2.GetById<EmployeeCard>(employee.Id);
+					Assert.That(resultEmployee.WorkwearItems.First(e => e.Item.IsSame(nomenclatureType2)).NextIssue, 
+					Is.EqualTo(new DateTime(2018, 4, 22)));
+				}
 			}
 		}
 	}
