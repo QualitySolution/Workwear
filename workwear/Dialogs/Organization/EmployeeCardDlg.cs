@@ -193,19 +193,19 @@ namespace workwear.Dialogs.Organization
 		protected void OnButtonGiveWearClicked(object sender, EventArgs e)
 		{
 			ExpenseDocDlg winExpense = new ExpenseDocDlg(Entity);
-			OpenTab(winExpense);
+			OpenNewTab(winExpense);
 		}
 
 		protected void OnButtonReturnWearClicked(object sender, EventArgs e)
 		{
 			IncomeDocDlg winIncome = new IncomeDocDlg(Entity);
-			OpenTab(winIncome);
+			OpenNewTab(winIncome);
 		}
 
 		protected void OnButtonWriteOffWearClicked(object sender, EventArgs e)
 		{
 			WriteOffDocDlg winWriteOff = new WriteOffDocDlg(Entity);
-			OpenTab(winWriteOff);
+			OpenNewTab(winWriteOff);
 		}
 
 		protected void OnCheckAutoToggled(object sender, EventArgs e)
