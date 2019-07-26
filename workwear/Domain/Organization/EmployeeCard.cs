@@ -505,7 +505,7 @@ namespace workwear.Domain.Organization
 				q => q.Fetch(SelectMode.Fetch, o => o.Nomenclature.Type)
 			);
 			foreach(var typeGroup in operations.GroupBy(o => o.Nomenclature.Type)) {
-				foreach(var operation in typeGroup.OrderBy(o => o.OperationTime)) {
+				foreach(var operation in typeGroup.OrderBy(o => o.OperationTime.Date).ThenBy(o => o.StartOfUse)) {
 					var graph = IssueGraph.MakeIssueGraph(uow, this, typeGroup.Key);
 					operation.RecalculateDatesOfIssueOperation(graph, askUser);
 					uow.Save(operation);
