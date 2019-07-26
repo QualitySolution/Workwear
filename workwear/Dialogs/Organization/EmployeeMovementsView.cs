@@ -108,7 +108,7 @@ namespace workwear.Dialogs.Organization
 		{
 			var updatedOperations = changeEvents.Where(x => x.GetEntity<EmployeeIssueOperation>().Employee.IsSame(RootEntity)).ToList();
 			if(updatedOperations.Count > 0) {
-				movements.ForEach(m => UoW.Session.Refresh(m.Operation));
+				movements.ForEach(m => UoW.Session.Evict(m.Operation));
 				UpdateMovements();
 			}
 		}
