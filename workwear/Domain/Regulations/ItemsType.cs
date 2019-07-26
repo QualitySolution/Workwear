@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QSBusinessCommon.Domain;
-using QSOrmProject;
 using workwear.Measurements;
 
 namespace workwear.Domain.Regulations
 {
 	[Appellative (Gender = GrammaticalGender.Masculine,
-		NominativePlural = "типы номерклатуры",
+		NominativePlural = "типы номенклатуры",
 		Nominative = "тип номенклатуры")]
 	public class ItemsType : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
@@ -21,7 +19,7 @@ namespace workwear.Domain.Regulations
 		string name;
 
 		[Display (Name = "Название")]
-		[Required(ErrorMessage = "Имя типа номеклатуры не должно быть пустым.")]
+		[Required(ErrorMessage = "Имя типа номенклатуры не должно быть пустым.")]
 		[StringLength(240)]
 		public virtual string Name {
 			get { return name; }
