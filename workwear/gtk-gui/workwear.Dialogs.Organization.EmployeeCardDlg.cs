@@ -148,6 +148,8 @@ namespace workwear.Dialogs.Organization
 
 		private global::Gtk.Button buttonNormFromPost;
 
+		private global::Gtk.Button buttonNormOpen;
+
 		private global::Gtk.Button buttonRemoveNorm;
 
 		private global::Gtk.Button buttonRefreshWorkwearItems;
@@ -286,6 +288,7 @@ namespace workwear.Dialogs.Organization
 			this.dateChangePosition.Events = ((global::Gdk.EventMask)(256));
 			this.dateChangePosition.Name = "dateChangePosition";
 			this.dateChangePosition.WithTime = false;
+			this.dateChangePosition.HideCalendarButton = false;
 			this.dateChangePosition.Date = new global::System.DateTime(0);
 			this.dateChangePosition.IsEditable = true;
 			this.dateChangePosition.AutoSeparation = true;
@@ -302,6 +305,7 @@ namespace workwear.Dialogs.Organization
 			this.dateDismiss.Events = ((global::Gdk.EventMask)(256));
 			this.dateDismiss.Name = "dateDismiss";
 			this.dateDismiss.WithTime = false;
+			this.dateDismiss.HideCalendarButton = false;
 			this.dateDismiss.Date = new global::System.DateTime(0);
 			this.dateDismiss.IsEditable = true;
 			this.dateDismiss.AutoSeparation = true;
@@ -318,6 +322,7 @@ namespace workwear.Dialogs.Organization
 			this.dateHire.Events = ((global::Gdk.EventMask)(256));
 			this.dateHire.Name = "dateHire";
 			this.dateHire.WithTime = false;
+			this.dateHire.HideCalendarButton = false;
 			this.dateHire.Date = new global::System.DateTime(0);
 			this.dateHire.IsEditable = true;
 			this.dateHire.AutoSeparation = true;
@@ -977,7 +982,7 @@ namespace workwear.Dialogs.Organization
 			this.notebook1 = new global::Gtk.Notebook();
 			this.notebook1.CanFocus = true;
 			this.notebook1.Name = "notebook1";
-			this.notebook1.CurrentPage = 2;
+			this.notebook1.CurrentPage = 0;
 			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.vbox6 = new global::Gtk.VBox();
 			this.vbox6.Name = "vbox6";
@@ -1028,19 +1033,33 @@ namespace workwear.Dialogs.Organization
 			w75.Expand = false;
 			w75.Fill = false;
 			// Container child hbox10.Gtk.Box+BoxChild
+			this.buttonNormOpen = new global::Gtk.Button();
+			this.buttonNormOpen.CanFocus = true;
+			this.buttonNormOpen.Name = "buttonNormOpen";
+			this.buttonNormOpen.UseUnderline = true;
+			this.buttonNormOpen.Label = global::Mono.Unix.Catalog.GetString("Открыть норму");
+			global::Gtk.Image w76 = new global::Gtk.Image();
+			w76.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-edit", global::Gtk.IconSize.Menu);
+			this.buttonNormOpen.Image = w76;
+			this.hbox10.Add(this.buttonNormOpen);
+			global::Gtk.Box.BoxChild w77 = ((global::Gtk.Box.BoxChild)(this.hbox10[this.buttonNormOpen]));
+			w77.Position = 2;
+			w77.Expand = false;
+			w77.Fill = false;
+			// Container child hbox10.Gtk.Box+BoxChild
 			this.buttonRemoveNorm = new global::Gtk.Button();
 			this.buttonRemoveNorm.CanFocus = true;
 			this.buttonRemoveNorm.Name = "buttonRemoveNorm";
 			this.buttonRemoveNorm.UseUnderline = true;
 			this.buttonRemoveNorm.Label = global::Mono.Unix.Catalog.GetString("Удалить норму");
-			global::Gtk.Image w76 = new global::Gtk.Image();
-			w76.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.buttonRemoveNorm.Image = w76;
+			global::Gtk.Image w78 = new global::Gtk.Image();
+			w78.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
+			this.buttonRemoveNorm.Image = w78;
 			this.hbox10.Add(this.buttonRemoveNorm);
-			global::Gtk.Box.BoxChild w77 = ((global::Gtk.Box.BoxChild)(this.hbox10[this.buttonRemoveNorm]));
-			w77.Position = 2;
-			w77.Expand = false;
-			w77.Fill = false;
+			global::Gtk.Box.BoxChild w79 = ((global::Gtk.Box.BoxChild)(this.hbox10[this.buttonRemoveNorm]));
+			w79.Position = 3;
+			w79.Expand = false;
+			w79.Fill = false;
 			// Container child hbox10.Gtk.Box+BoxChild
 			this.buttonRefreshWorkwearItems = new global::Gtk.Button();
 			this.buttonRefreshWorkwearItems.TooltipMarkup = "Обновить список требуемой спецодежды в соответсвтии с изменениями в нормах.";
@@ -1049,15 +1068,15 @@ namespace workwear.Dialogs.Organization
 			this.buttonRefreshWorkwearItems.UseUnderline = true;
 			this.buttonRefreshWorkwearItems.Label = global::Mono.Unix.Catalog.GetString("Обновить спецодежду");
 			this.hbox10.Add(this.buttonRefreshWorkwearItems);
-			global::Gtk.Box.BoxChild w78 = ((global::Gtk.Box.BoxChild)(this.hbox10[this.buttonRefreshWorkwearItems]));
-			w78.Position = 3;
-			w78.Expand = false;
-			w78.Fill = false;
+			global::Gtk.Box.BoxChild w80 = ((global::Gtk.Box.BoxChild)(this.hbox10[this.buttonRefreshWorkwearItems]));
+			w80.Position = 4;
+			w80.Expand = false;
+			w80.Fill = false;
 			this.vbox6.Add(this.hbox10);
-			global::Gtk.Box.BoxChild w79 = ((global::Gtk.Box.BoxChild)(this.vbox6[this.hbox10]));
-			w79.Position = 1;
-			w79.Expand = false;
-			w79.Fill = false;
+			global::Gtk.Box.BoxChild w81 = ((global::Gtk.Box.BoxChild)(this.vbox6[this.hbox10]));
+			w81.Position = 1;
+			w81.Expand = false;
+			w81.Fill = false;
 			this.notebook1.Add(this.vbox6);
 			// Notebook tab
 			this.label13 = new global::Gtk.Label();
@@ -1070,8 +1089,8 @@ namespace workwear.Dialogs.Organization
 			this.employeewearitemsview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeewearitemsview1.Name = "employeewearitemsview1";
 			this.notebook1.Add(this.employeewearitemsview1);
-			global::Gtk.Notebook.NotebookChild w81 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeewearitemsview1]));
-			w81.Position = 1;
+			global::Gtk.Notebook.NotebookChild w83 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeewearitemsview1]));
+			w83.Position = 1;
 			// Notebook tab
 			this.label15 = new global::Gtk.Label();
 			this.label15.Name = "label15";
@@ -1087,8 +1106,8 @@ namespace workwear.Dialogs.Organization
 			this.employeecardlisteditemsview.Events = ((global::Gdk.EventMask)(256));
 			this.employeecardlisteditemsview.Name = "employeecardlisteditemsview";
 			this.vbox4.Add(this.employeecardlisteditemsview);
-			global::Gtk.Box.BoxChild w82 = ((global::Gtk.Box.BoxChild)(this.vbox4[this.employeecardlisteditemsview]));
-			w82.Position = 0;
+			global::Gtk.Box.BoxChild w84 = ((global::Gtk.Box.BoxChild)(this.vbox4[this.employeecardlisteditemsview]));
+			w84.Position = 0;
 			// Container child vbox4.Gtk.Box+BoxChild
 			this.hbox9 = new global::Gtk.HBox();
 			this.hbox9.Name = "hbox9";
@@ -1100,14 +1119,14 @@ namespace workwear.Dialogs.Organization
 			this.buttonGiveWear.Name = "buttonGiveWear";
 			this.buttonGiveWear.UseUnderline = true;
 			this.buttonGiveWear.Label = global::Mono.Unix.Catalog.GetString("Выдача сотруднику");
-			global::Gtk.Image w83 = new global::Gtk.Image();
-			w83.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonGiveWear.Image = w83;
+			global::Gtk.Image w85 = new global::Gtk.Image();
+			w85.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.buttonGiveWear.Image = w85;
 			this.hbox9.Add(this.buttonGiveWear);
-			global::Gtk.Box.BoxChild w84 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonGiveWear]));
-			w84.Position = 0;
-			w84.Expand = false;
-			w84.Fill = false;
+			global::Gtk.Box.BoxChild w86 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonGiveWear]));
+			w86.Position = 0;
+			w86.Expand = false;
+			w86.Fill = false;
 			// Container child hbox9.Gtk.Box+BoxChild
 			this.buttonReturnWear = new global::Gtk.Button();
 			this.buttonReturnWear.Sensitive = false;
@@ -1115,14 +1134,14 @@ namespace workwear.Dialogs.Organization
 			this.buttonReturnWear.Name = "buttonReturnWear";
 			this.buttonReturnWear.UseUnderline = true;
 			this.buttonReturnWear.Label = global::Mono.Unix.Catalog.GetString("Возврат на склад");
-			global::Gtk.Image w85 = new global::Gtk.Image();
-			w85.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-redo", global::Gtk.IconSize.Menu);
-			this.buttonReturnWear.Image = w85;
+			global::Gtk.Image w87 = new global::Gtk.Image();
+			w87.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-redo", global::Gtk.IconSize.Menu);
+			this.buttonReturnWear.Image = w87;
 			this.hbox9.Add(this.buttonReturnWear);
-			global::Gtk.Box.BoxChild w86 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonReturnWear]));
-			w86.Position = 1;
-			w86.Expand = false;
-			w86.Fill = false;
+			global::Gtk.Box.BoxChild w88 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonReturnWear]));
+			w88.Position = 1;
+			w88.Expand = false;
+			w88.Fill = false;
 			// Container child hbox9.Gtk.Box+BoxChild
 			this.buttonWriteOffWear = new global::Gtk.Button();
 			this.buttonWriteOffWear.Sensitive = false;
@@ -1130,22 +1149,22 @@ namespace workwear.Dialogs.Organization
 			this.buttonWriteOffWear.Name = "buttonWriteOffWear";
 			this.buttonWriteOffWear.UseUnderline = true;
 			this.buttonWriteOffWear.Label = global::Mono.Unix.Catalog.GetString("Списание");
-			global::Gtk.Image w87 = new global::Gtk.Image();
-			w87.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-delete", global::Gtk.IconSize.Menu);
-			this.buttonWriteOffWear.Image = w87;
+			global::Gtk.Image w89 = new global::Gtk.Image();
+			w89.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-delete", global::Gtk.IconSize.Menu);
+			this.buttonWriteOffWear.Image = w89;
 			this.hbox9.Add(this.buttonWriteOffWear);
-			global::Gtk.Box.BoxChild w88 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonWriteOffWear]));
-			w88.Position = 2;
-			w88.Expand = false;
-			w88.Fill = false;
-			this.vbox4.Add(this.hbox9);
-			global::Gtk.Box.BoxChild w89 = ((global::Gtk.Box.BoxChild)(this.vbox4[this.hbox9]));
-			w89.Position = 1;
-			w89.Expand = false;
-			w89.Fill = false;
-			this.notebook1.Add(this.vbox4);
-			global::Gtk.Notebook.NotebookChild w90 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox4]));
+			global::Gtk.Box.BoxChild w90 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonWriteOffWear]));
 			w90.Position = 2;
+			w90.Expand = false;
+			w90.Fill = false;
+			this.vbox4.Add(this.hbox9);
+			global::Gtk.Box.BoxChild w91 = ((global::Gtk.Box.BoxChild)(this.vbox4[this.hbox9]));
+			w91.Position = 1;
+			w91.Expand = false;
+			w91.Fill = false;
+			this.notebook1.Add(this.vbox4);
+			global::Gtk.Notebook.NotebookChild w92 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox4]));
+			w92.Position = 2;
 			// Notebook tab
 			this.label21 = new global::Gtk.Label();
 			this.label21.Name = "label21";
@@ -1161,11 +1180,11 @@ namespace workwear.Dialogs.Organization
 			this.employeemovementsview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeemovementsview1.Name = "employeemovementsview1";
 			this.vbox3.Add(this.employeemovementsview1);
-			global::Gtk.Box.BoxChild w91 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.employeemovementsview1]));
-			w91.Position = 0;
+			global::Gtk.Box.BoxChild w93 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.employeemovementsview1]));
+			w93.Position = 0;
 			this.notebook1.Add(this.vbox3);
-			global::Gtk.Notebook.NotebookChild w92 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox3]));
-			w92.Position = 3;
+			global::Gtk.Notebook.NotebookChild w94 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox3]));
+			w94.Position = 3;
 			// Notebook tab
 			this.label22 = new global::Gtk.Label();
 			this.label22.Name = "label22";
@@ -1177,8 +1196,8 @@ namespace workwear.Dialogs.Organization
 			this.employeevacationsview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeevacationsview1.Name = "employeevacationsview1";
 			this.notebook1.Add(this.employeevacationsview1);
-			global::Gtk.Notebook.NotebookChild w93 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeevacationsview1]));
-			w93.Position = 4;
+			global::Gtk.Notebook.NotebookChild w95 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeevacationsview1]));
+			w95.Position = 4;
 			// Notebook tab
 			this.label28 = new global::Gtk.Label();
 			this.label28.Name = "label28";
@@ -1186,8 +1205,8 @@ namespace workwear.Dialogs.Organization
 			this.notebook1.SetTabLabel(this.employeevacationsview1, this.label28);
 			this.label28.ShowAll();
 			this.dialog1_VBox.Add(this.notebook1);
-			global::Gtk.Box.BoxChild w94 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.notebook1]));
-			w94.Position = 2;
+			global::Gtk.Box.BoxChild w96 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.notebook1]));
+			w96.Position = 2;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
@@ -1211,8 +1230,10 @@ namespace workwear.Dialogs.Organization
 			this.buttonLoadPhoto.Clicked += new global::System.EventHandler(this.OnButtonLoadPhotoClicked);
 			this.buttonSavePhoto.Clicked += new global::System.EventHandler(this.OnButtonSavePhotoClicked);
 			this.notebook1.SwitchPage += new global::Gtk.SwitchPageHandler(this.OnNotebook1SwitchPage);
+			this.ytreeNorms.RowActivated += new global::Gtk.RowActivatedHandler(this.OnYtreeNormsRowActivated);
 			this.buttonAddNorm.Clicked += new global::System.EventHandler(this.OnButtonAddNormClicked);
 			this.buttonNormFromPost.Clicked += new global::System.EventHandler(this.OnButtonNormFromPostClicked);
+			this.buttonNormOpen.Clicked += new global::System.EventHandler(this.OnButtonNormOpenClicked);
 			this.buttonRemoveNorm.Clicked += new global::System.EventHandler(this.OnButtonRemoveNormClicked);
 			this.buttonRefreshWorkwearItems.Clicked += new global::System.EventHandler(this.OnButtonRefreshWorkwearItemsClicked);
 			this.buttonGiveWear.Clicked += new global::System.EventHandler(this.OnButtonGiveWearClicked);

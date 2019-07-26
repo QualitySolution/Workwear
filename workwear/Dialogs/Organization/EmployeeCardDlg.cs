@@ -14,7 +14,7 @@ using QSOrmProject;
 using QSProjectsLib;
 using QSReport;
 using QSValidation;
-using workwear.Dialogs.Issuance;
+using workwear.Dialogs.Regulations;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 using workwear.Measurements;
@@ -112,11 +112,6 @@ namespace workwear.Dialogs.Organization
 			enumPrint.ItemsEnum = typeof(PersonalCardPrint);
 
 			Entity.PropertyChanged += CheckSizeChanged;
-		}
-
-		void YtreeNorms_Selection_Changed(object sender, EventArgs e)
-		{
-			buttonRemoveNorm.Sensitive = ytreeNorms.Selection.CountSelectedRows() > 0;
 		}
 
 		public EmployeeCardDlg(EmployeeCard card) : this(card.Id) { }
@@ -390,6 +385,13 @@ namespace workwear.Dialogs.Organization
 				ycomboGlovesSize.Clear();
 		}
 
+		#region Подвкладка Используемые нормы
+
+		void YtreeNorms_Selection_Changed(object sender, EventArgs e)
+		{
+			buttonRemoveNorm.Sensitive = buttonNormOpen.Sensitive = ytreeNorms.Selection.CountSelectedRows() > 0;
+		}
+
 		protected void OnButtonAddNormClicked(object sender, EventArgs e)
 		{
 			var refWin = new ReferenceRepresentation(new workwear.ViewModel.NormVM());
@@ -424,6 +426,19 @@ namespace workwear.Dialogs.Organization
 		{
 			Entity.UpdateWorkwearItems();
 		}
+
+		protected void OnButtonNormOpenClicked(object sender, EventArgs e)
+		{
+			var selectedNorm = ytreeNorms.GetSelectedObject<Norm>();
+			OpenTab<NormDlg, Norm>(selectedNorm);
+		}
+
+		protected void OnYtreeNormsRowActivated(object o, RowActivatedArgs args)
+		{
+			buttonNormOpen.Click();
+		}
+
+		#endregion
 
 		protected void OnYperiodMaternityLeavePeriodChangedByUser(object sender, EventArgs e)
 		{

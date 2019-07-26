@@ -24,6 +24,8 @@ namespace workwear.Dialogs.Regulations
 			ConfigureDlg ();
 		}
 
+		public NormDlg (Norm norm) : this(norm.Id) { }
+
 		public NormDlg (int id)
 		{
 			this.Build ();
