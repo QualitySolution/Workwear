@@ -117,7 +117,7 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult ("Данный вид одежды не имеет универсальных размеров.", 
 					new[] { this.GetPropertyName (o => o.Sex) });
 
-			if(Type != null && Type.WearCategory != null && String.IsNullOrWhiteSpace(Size))
+			if(Type != null && Type.WearCategory != null && Type.WearCategory != СlothesType.PPE && String.IsNullOrWhiteSpace(Size))
 				yield return new ValidationResult("Необходимо указать размер спецодежды.",
 					new[] { this.GetPropertyName(o => o.Size) });
 		}
