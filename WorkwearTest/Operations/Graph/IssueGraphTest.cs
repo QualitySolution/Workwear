@@ -138,5 +138,21 @@ namespace WorkwearTest.Operations.Graph
 			Assert.That(graph.Intervals.Last().Issued, Is.EqualTo(3));
 			Assert.That(graph.Intervals.Last().WriteOff, Is.EqualTo(2));
 		}
+
+		[Test(Description = "Проверяем что не реагируем на время внутри поля StartOfUse при подсчете количества. Реальный баг.")]
+		[Category("Real case")]
+		public void UsedAmountAtEndOfDay_IgnoreTimeTest()
+		{
+			var operation1 = Substitute.For<EmployeeIssueOperation>();
+			operation1.OperationTime.Returns(new DateTime(2018, 1, 1, 9, 0, 0));
+			operation1.StartOfUse.Returns(new DateTime(2018, 1, 1, 14, 0, 0));
+			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 2, 1));
+			operation1.Issued.Returns(2);
+
+			var list = new List<EmployeeIssueOperation>() { operation1 };
+			var graph = new IssueGraph(list);
+
+			Assert.That(graph.UsedAmountAtEndOfDay(new DateTime(2018, 1, 1)), Is.EqualTo(2));
+		}
 	}
 }

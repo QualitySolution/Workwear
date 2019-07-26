@@ -89,7 +89,7 @@ namespace workwear.Domain.Operations.Graph
 			if(interval == null)
 				return 0;
 			return interval.ActiveItems
-				.Where(x => x.IssueOperation.StartOfUse == null || x.IssueOperation.StartOfUse <= date)
+				.Where(x => x.IssueOperation.StartOfUse == null || x.IssueOperation.StartOfUse.Value.Date <= date.Date)
 				.Sum(x => x.AmountAtEndOfDay(date, excludeOperation));
 		}
 
