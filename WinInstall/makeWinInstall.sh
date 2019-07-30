@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+cd "$(dirname "$0")"
+
 ProjectName="workwear"
 BinDir=../$ProjectName/bin/ReleaseWin
 
