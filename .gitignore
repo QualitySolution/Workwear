@@ -16,6 +16,7 @@ base/*.mwb.bak
 
 #Installer
 WinInstall/*
+!WinInstall/LC_MESSAGES/
 !WinInstall/ExtraFiles/
 !WinInstall/NsisDotNetChecker/
 !WinInstall/NsisDotNetChecker/bin
