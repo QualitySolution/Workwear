@@ -1,6 +1,6 @@
 Unicode true
 ;--------------------------------
-!define PRODUCT_VERSION "2.1.1.1"
+!define PRODUCT_VERSION "2.1.1.2"
 !define NET_VERSION "4.6.1"
 !define PRODUCT_NAME "QS: Спецодежда и имущество"
 !define SHORTCUT_NAME "QS Спецодежда и имущество"
@@ -11,7 +11,7 @@ Unicode true
 Name "${PRODUCT_NAME}"
 
 ; The file to write
-OutFile "${EXE_NAME}-2.1.exe"
+OutFile "${EXE_NAME}-${PRODUCT_VERSION}.exe"
 
 !include "MUI.nsh"
 !include "x64.nsh"
