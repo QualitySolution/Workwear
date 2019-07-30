@@ -18,4 +18,8 @@ rm -v -f -R ./Files/*
 mkdir -p Files
 cp -r -v ${BinDir}/* ./Files
 
+if [ ! -f "gtk-sharp-2.12.45.msi" ]; then
+    wget https://xamarin.azureedge.net/GTKforWindows/Windows/gtk-sharp-2.12.45.msi
+fi
+
 wine ~/.wine/drive_c/Program\ Files\ \(x86\)/NSIS/makensis.exe /INPUTCHARSET UTF8 ${ProjectName}.nsi
