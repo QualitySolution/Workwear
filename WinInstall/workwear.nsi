@@ -277,6 +277,9 @@ Section "Uninstall"
   Delete $INSTDIR\*
   Delete $INSTDIR\uninstall.exe
 
+  Delete $INSTDIR\Reports\Employee\*
+  RMDir $INSTDIR\Reports\Employee
+
   Delete $INSTDIR\Reports\*
   RMDir $INSTDIR\Reports
 
