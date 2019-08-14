@@ -109,7 +109,7 @@ namespace workwear
 			DBCreator.AddBaseScript (
 				new Version(2, 1),
 				"Чистая база",
-				"workwear.Updates.new_2.1.sql"
+				"workwear.Updates.new_empty.sql"
 			);
 
 			//Настраиваем обновления
