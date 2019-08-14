@@ -107,7 +107,7 @@ namespace workwear
 		{
 			//Скрипты создания базы
 			DBCreator.AddBaseScript (
-				new Version(2, 1),
+				new Version(2, 2),
 				"Чистая база",
 				"workwear.Updates.new_empty.sql"
 			);
