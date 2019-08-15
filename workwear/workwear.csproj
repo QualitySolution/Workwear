@@ -137,7 +137,7 @@
     <EmbeddedResource Include="Updates\2.0.2.sql" />
     <EmbeddedResource Include="Updates\2.1.sql" />
     <EmbeddedResource Include="icon\buttons\timeline_marker.png" />
-    <EmbeddedResource Include="Updates\new_2.1.sql" />
+    <EmbeddedResource Include="Updates\new_empty.sql" />
     <EmbeddedResource Include="Updates\2.2.sql" />
     <EmbeddedResource Include="Updates\2.1.1.sql" />
   </ItemGroup>

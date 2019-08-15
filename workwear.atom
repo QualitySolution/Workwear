@@ -3,7 +3,15 @@
   <subtitle type="text">Новости программы QS: Спецодежда и имущество</subtitle>
   <id>workwearnews</id>
   <rights type="text">Quality Solution 2019</rights>
-  <updated>2019-05-22T14:00:00+03:00</updated>
+  <updated>2019-08-15T15:20:00+03:00</updated>
+  <entry>
+    <id>urn:uuid:e10a27a9-688a-4364-8206-8a58583e9986</id>
+    <title type="text">Релиз 2.2</title>
+    <updated>2019-08-15T15:20:00+03:00</updated>
+    <published>2019-08-15T15:20:00+03:00</published>
+    <link rel="alternate" href="http://workwear.qsolution.ru/?p=494" />
+    <summary>Полностью переписан учет отпусков в программе.</summary>
+  </entry>
   <entry>
     <id>urn:uuid:1e1dc85e-d4db-4c0a-acfb-35c77bf3e305</id>
     <title type="text">Сервис релиз 2.1.1</title>

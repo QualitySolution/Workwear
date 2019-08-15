@@ -11,7 +11,7 @@ Unicode true
 Name "${PRODUCT_NAME}"
 
 ; The file to write
-OutFile "${EXE_NAME}-2.2-beta.exe"
+OutFile "${EXE_NAME}-${PRODUCT_VERSION}.exe"
 
 !include "MUI.nsh"
 !include "x64.nsh"
