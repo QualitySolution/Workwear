@@ -107,10 +107,6 @@
       <Project>{28A78143-42E3-40E7-86F5-DD7E1679BE86}</Project>
       <Name>QS.Project</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\Modules\QSBusinessCommon\QSBusinessCommon.csproj">
-      <Project>{AD329D59-938D-42AC-ABE2-B0F14FDBB7C6}</Project>
-      <Name>QSBusinessCommon</Name>
-    </ProjectReference>
     <ProjectReference Include="..\workwear\workwear.csproj">
       <Project>{63B06122-016A-42D4-B621-8E0F9FA8E738}</Project>
       <Name>workwear</Name>
@@ -126,6 +122,10 @@
     <ProjectReference Include="..\..\QSProjects\QS.Utilities\QS.Utilities.csproj">
       <Project>{E2228A2B-4883-4DD8-8A05-23501F7B8A33}</Project>
       <Name>QS.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\Modules\QS.BusinessCommon\QS.BusinessCommon.csproj">
+      <Project>{F22749B2-E35B-455D-BD8D-081373B16FC7}</Project>
+      <Name>QS.BusinessCommon</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
