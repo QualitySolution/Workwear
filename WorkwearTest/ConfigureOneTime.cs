@@ -1,6 +1,6 @@
 ﻿using System;
+using QS.BusinessCommon.Domain;
 using QS.Project.DB;
-using QSBusinessCommon.Domain;
 using workwear;
 
 namespace WorkwearTest
