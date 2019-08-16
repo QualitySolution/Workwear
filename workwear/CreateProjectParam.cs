@@ -1,8 +1,9 @@
-﻿using QS.Dialog.GtkUI;
+﻿using QS.BusinessCommon;
+using QS.BusinessCommon.Domain;
+using QS.Dialog.GtkUI;
 using QS.DomainModel.NotifyChange;
 using QS.Project.DB;
 using QS.Project.Domain;
-using QSBusinessCommon.Domain;
 using QSOrmProject;
 using QSProjectsLib;
 using workwear.Dialogs.Organization;
@@ -34,7 +35,7 @@ namespace workwear
 
 			//Настраиваем классы сущьностей
 
-			OrmMain.AddObjectDescription(MeasurementUnits.GetOrmMapping());
+			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
 			//Спецодежда
 			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
 			OrmMain.AddObjectDescription<Norm>().Dialog<NormDlg>();

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Gamma.Utilities;
+using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
-using QSBusinessCommon.Domain;
 using workwear.Measurements;
 
 namespace workwear.Domain.Regulations
