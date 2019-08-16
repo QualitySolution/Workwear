@@ -1,8 +1,8 @@
 ﻿using System;
 using NLog;
+using QS.BusinessCommon.Repository;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
-using QSBusinessCommon.Repository;
 using QSOrmProject;
 using QSProjectsLib;
 using workwear.Domain.Regulations;

@@ -1,6 +1,6 @@
-﻿using QS.Deletion;
+﻿using QS.BusinessCommon.Domain;
+using QS.Deletion;
 using QS.Project.Domain;
-using QSBusinessCommon.Domain;
 using workwear.Domain.Operations;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
