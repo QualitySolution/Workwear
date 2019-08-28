@@ -1,7 +1,9 @@
 using System;
-using System.Collections.Generic;
 using Gtk;
 using NLog;
+using QS.ErrorReporting.GtkUI;
+using QS.Project.Repositories;
+using QS.Updater;
 using QS.Updater.DB;
 using QSMachineConfig;
 using QSProjectsLib;
@@ -22,8 +24,9 @@ namespace workwear
 			{
 				WindowStartupFix.WindowsCheck();
 				Application.Init();
-				QSMain.SubscribeToUnhadledExceptions();
-				QSMain.GuiThread = System.Threading.Thread.CurrentThread;
+				UnhandledExceptionHandler.SubscribeToUnhadledExceptions();
+				UnhandledExceptionHandler.GuiThread = System.Threading.Thread.CurrentThread;
+				UnhandledExceptionHandler.ApplicationInfo = new ApplicationVersionInfo();
 				MainSupport.Init();
 			}
 			catch (Exception falalEx)
@@ -72,9 +75,12 @@ namespace workwear
 
 			//Настройка базы
 			CreateBaseConfig ();
+			using(var uow = QS.DomainModel.UoW.UnitOfWorkFactory.CreateWithoutRoot()) {
+				UnhandledExceptionHandler.User = UserRepository.GetCurrentUser(uow);
+			}
 
 			//Настрока удаления
-			Configure.ConfigureDeletion ();
+			Configure.ConfigureDeletion();
 
             //Иницициализируем телеметрию
             MainTelemetry.Product = MainSupport.ProjectVerion.Product;
@@ -89,7 +95,6 @@ namespace workwear
 
 			//Запускаем программу
 			MainWin = new MainWindow ();
-			QSMain.ErrorDlgParrent = MainWin;
 			if (QSMain.User.Login == "root")
 				return;
 			MainWin.Show ();
