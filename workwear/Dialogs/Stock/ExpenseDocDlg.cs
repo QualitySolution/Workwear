@@ -92,21 +92,16 @@ namespace workwear
 			if (valid.RunDlgIfNotValid ((Gtk.Window)this.Toplevel))
 				return false;
 
-			try 
+			var ask = new GtkQuestionDialogsInteractive();
+			Entity.UpdateOperations(UoW, ask);
+			UoWGeneric.Save ();
+			if(Entity.Operation == ExpenseOperations.Employee)
 			{
-				var ask = new GtkQuestionDialogsInteractive();
-				Entity.UpdateOperations(UoW, ask);
-				UoWGeneric.Save ();
-				if(Entity.Operation == ExpenseOperations.Employee)
-				{
-					logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
-					Entity.UpdateEmployeeNextIssue();
-					UoWGeneric.Commit ();
-				}
-			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog ("Не удалось записать документ.", logger, ex);
-				return false;
+				logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
+				Entity.UpdateEmployeeNextIssue();
+				UoWGeneric.Commit ();
 			}
+			
 			logger.Info ("Ok");
 			return true;
 		}

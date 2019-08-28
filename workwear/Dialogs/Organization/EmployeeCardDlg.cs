@@ -153,15 +153,8 @@ namespace workwear.Dialogs.Organization
 			if (valid.RunDlgIfNotValid((Gtk.Window)this.Toplevel))
 				return false;
 
-			try
-			{
-				UoWGeneric.Save();
-			}
-			catch (Exception ex)
-			{
-				QSMain.ErrorMessageWithLog("Не удалось записать сотрудника.", logger, ex);
-				return false;
-			}
+			UoWGeneric.Save();
+
 			notebook1.GetNthPage(2).Visible = true;
 			notebook1.GetNthPage(3).Visible = true;
 			logger.Info("Ok");
