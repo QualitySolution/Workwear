@@ -61,12 +61,8 @@ namespace workwear
 			if (valid.RunDlgIfNotValid ((Gtk.Window)this.Toplevel))
 				return false;
 
-			try {
-				UoWGeneric.Save ();
-			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog ("Не удалось записать номенклатуру.", logger, ex);
-				return false;
-			}
+			UoWGeneric.Save ();
+
 			logger.Info ("Ok");
 			return true;
 		}

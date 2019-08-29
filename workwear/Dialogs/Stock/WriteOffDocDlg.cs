@@ -64,34 +64,30 @@ namespace workwear
 			if (valid.RunDlgIfNotValid ((Gtk.Window)this.Toplevel))
 				return false;
 
-			try {
-				Func<string, bool> ask = MessageDialogHelper.RunQuestionDialog;
-				Entity.UpdateOperations(UoW, ask);
-				UoWGeneric.Save ();
-				if(Entity.Items.Any (w => w.IssuedOn != null))
+			Func<string, bool> ask = MessageDialogHelper.RunQuestionDialog;
+			Entity.UpdateOperations(UoW, ask);
+			UoWGeneric.Save ();
+			if(Entity.Items.Any (w => w.IssuedOn != null))
+			{
+				logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
+				foreach(var employeeGroup in Entity.Items.Where (w => w.IssuedOn != null && w.IssuedOn.ExpenseDoc.Employee != null).GroupBy (w => w.IssuedOn.ExpenseDoc.Employee.Id))
 				{
-					logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
-					foreach(var employeeGroup in Entity.Items.Where (w => w.IssuedOn != null && w.IssuedOn.ExpenseDoc.Employee != null).GroupBy (w => w.IssuedOn.ExpenseDoc.Employee.Id))
+					var employee = employeeGroup.Select (eg => eg.IssuedOn.ExpenseDoc.Employee).First ();
+					foreach(var itemsGroup in employeeGroup.GroupBy (i => i.Nomenclature.Type.Id))
 					{
-						var employee = employeeGroup.Select (eg => eg.IssuedOn.ExpenseDoc.Employee).First ();
-						foreach(var itemsGroup in employeeGroup.GroupBy (i => i.Nomenclature.Type.Id))
+						var wearItem = employee.WorkwearItems.FirstOrDefault (i => i.Item.Id == itemsGroup.Key);
+						if(wearItem == null)
 						{
-							var wearItem = employee.WorkwearItems.FirstOrDefault (i => i.Item.Id == itemsGroup.Key);
-							if(wearItem == null)
-							{
-								logger.Debug ("Позиции <{0}> не требуется к выдаче, пропускаем...", itemsGroup.First ().Nomenclature.Type.Name);
-								continue;
-							}
-
-							wearItem.UpdateNextIssue (UoW);
+							logger.Debug ("Позиции <{0}> не требуется к выдаче, пропускаем...", itemsGroup.First ().Nomenclature.Type.Name);
+							continue;
 						}
+
+						wearItem.UpdateNextIssue (UoW);
 					}
-					UoWGeneric.Commit ();
 				}
-			} catch (Exception ex) {
-				QSMain.ErrorMessageWithLog ("Не удалось записать документ.", logger, ex);
-				return false;
+				UoWGeneric.Commit ();
 			}
+			
 			logger.Info ("Ok");
 			return true;
 		}
