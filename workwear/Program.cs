@@ -27,6 +27,9 @@ namespace workwear
 				UnhandledExceptionHandler.SubscribeToUnhadledExceptions();
 				UnhandledExceptionHandler.GuiThread = System.Threading.Thread.CurrentThread;
 				UnhandledExceptionHandler.ApplicationInfo = new ApplicationVersionInfo();
+				//Настройка обычных обработчиков ошибок.
+				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlExceptionIncorrectStringValue);
+
 				MainSupport.Init();
 			}
 			catch (Exception falalEx)
