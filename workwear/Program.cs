@@ -29,6 +29,7 @@ namespace workwear
 				UnhandledExceptionHandler.ApplicationInfo = new ApplicationVersionInfo();
 				//Настройка обычных обработчиков ошибок.
 				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlExceptionIncorrectStringValue);
+				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.NHibernateFlushAfterException);
 
 				MainSupport.Init();
 			}
