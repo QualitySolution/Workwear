@@ -52,7 +52,7 @@ namespace workwear.Dialogs.Regulations
 		public override bool Save()
 		{
 			logger.Info("Запись нормативного документа...");
-			var valid = new QSValidation.QSValidator<RegulationDoc>(UoWGeneric.Root);
+			var valid = new QS.Validation.GtkUI.QSValidator<RegulationDoc>(UoWGeneric.Root);
 			if (valid.RunDlgIfNotValid((Gtk.Window)this.Toplevel))
 				return false;
 

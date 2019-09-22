@@ -54,7 +54,7 @@ namespace workwear.Dialogs.Regulations
 		public override bool Save ()
 		{
 			logger.Info ("Запись типа номенклатуры...");
-			var valid = new QSValidation.QSValidator<ItemsType> (UoWGeneric.Root);
+			var valid = new QS.Validation.GtkUI.QSValidator<ItemsType> (UoWGeneric.Root);
 			if (valid.RunDlgIfNotValid ((Gtk.Window)this.Toplevel))
 				return false;
 

@@ -12,7 +12,6 @@
     <widget-library name="../../../QSProjects/QS.Updater.Gtk/bin/Debug/QSUpdater.dll" />
     <widget-library name="../../../GammaBinding/GammaBinding/bin/Debug/GammaBinding.dll" />
     <widget-library name="../../../QSProjects/QSOrmProject/bin/Debug/QSOrmProject.dll" />
-    <widget-library name="../../../QSProjects/QSValidation/bin/Debug/QSValidation.dll" />
     <widget-library name="../../../QSProjects/Modules/QSBusinessCommon/bin/Debug/QSBusinessCommon.dll" />
     <widget-library name="../../../QSProjects/QSExtraGammaWidgets/bin/Debug/QSExtraGammaWidgets.dll" />
     <widget-library name="../../../QSProjects/QSReport/bin/Debug/QSReport.dll" />

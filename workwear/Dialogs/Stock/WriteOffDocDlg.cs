@@ -60,7 +60,7 @@ namespace workwear
 		public override bool Save()
 		{
 			logger.Info ("Запись документа...");
-			var valid = new QSValidation.QSValidator<Writeoff> (UoWGeneric.Root);
+			var valid = new QS.Validation.GtkUI.QSValidator<Writeoff> (UoWGeneric.Root);
 			if (valid.RunDlgIfNotValid ((Gtk.Window)this.Toplevel))
 				return false;
 
