@@ -43,7 +43,7 @@ namespace workwear.Dialogs.Organization
 
 		public override bool Save()
 		{
-			var valid = new QSValidation.QSValidator<EmployeeVacation>(Entity);
+			var valid = new QS.Validation.GtkUI.QSValidator<EmployeeVacation>(Entity);
 			if(valid.RunDlgIfNotValid((Gtk.Window)this.Toplevel))
 				return false;
 
