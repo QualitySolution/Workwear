@@ -121,10 +121,10 @@ UPDATE operation_issued_by_employee SET operation_issued_by_employee.temp_id = N
 #Списание с сотрудника
 INSERT INTO `operation_issued_by_employee`(`employee_id`, `operation_time`, `nomenclature_id`, `wear_percent`, `issued`, `returned`, `auto_writeoff_date`, `issued_operation_id`, `stock_income_detail_id`, `buh_document`, `temp_id`) 
 SELECT stock_expense.wear_card_id, stock_write_off.date, stock_write_off_detail.nomenclature_id, 
-IF(stock_write_off.date >= stock_expense_detail.auto_writeoff_date, 1,
+GREATEST(0, IF(stock_write_off.date >= stock_expense_detail.auto_writeoff_date, 1,
                 IFNULL(
                     DATEDIFF(stock_write_off.date, stock_expense.date) /
-                    DATEDIFF(stock_expense_detail.auto_writeoff_date, stock_expense.date), 1))
+                    DATEDIFF(stock_expense_detail.auto_writeoff_date, stock_expense.date), 1)))
      , 0, stock_write_off_detail.quantity, NULL, stock_expense_detail.employee_issue_operation_id, stock_expense_detail.stock_income_detail_id, stock_write_off.comment, stock_write_off_detail.id
 FROM stock_write_off_detail
 JOIN stock_write_off ON stock_write_off.id = stock_write_off_detail.stock_write_off_id
