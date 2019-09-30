@@ -15,72 +15,48 @@
     <DataSet Name="Data">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
+        <CommandText>SELECT
     wear_cards_item.id,
     wear_cards_item.next_issue,
-    IF(wear_cards_item.next_issue &lt;= CURDATE(),
-        DATEDIFF(CURDATE(), wear_cards_item.next_issue),
-        NULL) AS delay,
-    item_types.name AS type_name,
-    nomenclature.name AS nomenclature_name,
-    nomenclature.size,
-    nomenclature.growth,
-    measurement_units.name AS unit,
-    CASE norms_item.period_type
-        WHEN 'Year' THEN norms_item.period_count * 12
-        WHEN 'Month' THEN norms_item.period_count
-        WHEN 'Shift' THEN norms_item.period_count / 21
-    END AS life_in_months,
-    (SELECT 
-            MAX(stock_expense.date)
+    IF(
+        wear_cards_item.next_issue &lt;= CURDATE(), DATEDIFF(
+            CURDATE(), wear_cards_item.next_issue),
+            NULL
+        ) AS delay,
+        item_types.name AS type_name,
+        nomenclature.name AS nomenclature_name,
+        nomenclature.size,
+        nomenclature.growth,
+        measurement_units.name AS unit,
+        CASE norms_item.period_type WHEN 'Year' THEN norms_item.period_count * 12 WHEN 'Month' THEN norms_item.period_count WHEN 'Shift' THEN norms_item.period_count / 21
+        END AS life_in_months,
+        wear_cards_item.last_issue,
+        wear_cards_item.amount AS received
+    FROM
+        wear_cards_item
+    LEFT JOIN item_types ON item_types.id = wear_cards_item.itemtype_id
+    LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+    LEFT JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
+    LEFT JOIN(
+        SELECT
+            nomenclature.type_id,
+            operation_issued_by_employee.nomenclature_id,
+            DATE(
+                operation_issued_by_employee.operation_time
+            ) AS DATE
         FROM
-            stock_expense_detail
-                LEFT JOIN
-            stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id
-                LEFT JOIN
-            nomenclature ON stock_expense_detail.nomenclature_id = nomenclature.id
+            operation_issued_by_employee
+        JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
         WHERE
-            nomenclature.type_id = wear_cards_item.itemtype_id
-                AND stock_expense.wear_card_id = @id) AS last_issue,
-    (SELECT 
-            SUM(stock_expense_detail.quantity) - IFNULL(SUM(stock_write_off_detail.quantity), 0) - IFNULL(SUM(stock_income_detail.quantity), 0)
-        FROM
-            stock_expense_detail
-                LEFT JOIN
-            stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id
-                LEFT JOIN
-            nomenclature ON stock_expense_detail.nomenclature_id = nomenclature.id
-                LEFT JOIN
-            stock_write_off_detail ON stock_write_off_detail.stock_expense_detail_id = stock_expense_detail.id
-                LEFT JOIN
-            stock_income_detail ON stock_income_detail.stock_expense_detail_id = stock_expense_detail.id
-        WHERE
-            stock_expense.wear_card_id = @id
-                AND (stock_expense_detail.auto_writeoff_date IS NULL
-                OR stock_expense_detail.auto_writeoff_date &gt; CURDATE())
-                AND nomenclature.type_id = wear_cards_item.itemtype_id) AS received,
-    (SELECT 
-            SUM(stock_income_detail.quantity) - IFNULL(SUM(stock_write_off_detail.quantity), 0) - IFNULL(SUM(stock_expense_detail.quantity), 0)
-        FROM
-            stock_income_detail
-                LEFT JOIN
-            stock_write_off_detail ON stock_write_off_detail.stock_income_detail_id = stock_income_detail.id
-                LEFT JOIN
-            stock_expense_detail ON stock_expense_detail.stock_income_detail_id = stock_income_detail.id
-        WHERE
-            stock_income_detail.nomenclature_id = wear_cards_item.matched_nomenclature_id) AS in_stock
-FROM
-    wear_cards_item
-        LEFT JOIN
-    nomenclature ON nomenclature.id = wear_cards_item.matched_nomenclature_id
-        LEFT JOIN
-    item_types ON item_types.id = wear_cards_item.itemtype_id
-        LEFT JOIN
-    measurement_units ON item_types.units_id = measurement_units.id
-        LEFT JOIN
-    norms_item ON wear_cards_item.norm_item_id = norms_item.id
+            operation_issued_by_employee.employee_id = @id
+    ) AS nomenclature_link
+ON
+    nomenclature_link.date = wear_cards_item.last_issue AND nomenclature_link.type_id = wear_cards_item.itemtype_id
+LEFT JOIN nomenclature ON nomenclature.id = nomenclature_link.nomenclature_id
 WHERE
-    wear_cards_item.wear_card_id = @id;</CommandText>
+    wear_cards_item.wear_card_id = @id
+GROUP BY
+    wear_cards_item.id;</CommandText>
         <QueryParameters>
           <QueryParameter Name="@id">
             <Value>=Parameters!id</Value>
@@ -130,10 +106,6 @@ WHERE
         </Field>
         <Field Name="received">
           <DataField>received</DataField>
-          <TypeName>System.Decimal</TypeName>
-        </Field>
-        <Field Name="in_stock">
-          <DataField>in_stock</DataField>
           <TypeName>System.Decimal</TypeName>
         </Field>
       </Fields>
