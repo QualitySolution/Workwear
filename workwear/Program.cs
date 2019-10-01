@@ -24,6 +24,7 @@ namespace workwear
 			{
 				WindowStartupFix.WindowsCheck();
 				Application.Init();
+				QSMain.GuiThread = System.Threading.Thread.CurrentThread;
 				UnhandledExceptionHandler.SubscribeToUnhadledExceptions();
 				UnhandledExceptionHandler.GuiThread = System.Threading.Thread.CurrentThread;
 				UnhandledExceptionHandler.ApplicationInfo = new ApplicationVersionInfo();
