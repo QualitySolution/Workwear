@@ -30,7 +30,8 @@ namespace workwear
 				UnhandledExceptionHandler.GuiThread = System.Threading.Thread.CurrentThread;
 				UnhandledExceptionHandler.ApplicationInfo = new ApplicationVersionInfo();
 				//Настройка обычных обработчиков ошибок.
-				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlExceptionIncorrectStringValue);
+				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlException1055OnlyFullGroupBy);
+				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlException1366IncorrectStringValue);
 				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.NHibernateFlushAfterException);
 
 				MainSupport.Init();
