@@ -1,6 +1,7 @@
 using System;
 using Gtk;
 using NLog;
+using QS.ErrorReporting;
 using QS.ErrorReporting.GtkUI;
 using QS.Project.Repositories;
 using QS.Updater;
