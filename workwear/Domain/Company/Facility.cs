@@ -1,20 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
-using QSOrmProject;
 
-namespace workwear.Domain.Organization
+namespace workwear.Domain.Company
 {
 	[Appellative (Gender = GrammaticalGender.Feminine,
-		NominativePlural = "объекты",
-		Nominative = "объект")]
+		NominativePlural = "подразделения",
+		Nominative = "подразделение")]
 	
 	public class Facility : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства
 
 		public virtual int Id { get; set; }
+
+		private string code;
+
+		[Display(Name = "Код подразделения")]
+		[StringLength(20)]
+		public virtual string Code {
+			get { return code; }
+			set { SetField(ref code, value); }
+		}
 
 		string name;
 

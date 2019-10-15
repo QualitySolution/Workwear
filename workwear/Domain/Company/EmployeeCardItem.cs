@@ -9,7 +9,7 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
-namespace workwear.Domain.Organization
+namespace workwear.Domain.Company
 {
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки нормы карточки",

@@ -1,7 +1,7 @@
 ﻿using FluentNHibernate.Mapping;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 
-namespace workwear.HMap
+namespace workwear.HibernateMapping.Company
 {
 	public class FacilityPlaceMap : ClassMap<FacilityPlace>
 	{

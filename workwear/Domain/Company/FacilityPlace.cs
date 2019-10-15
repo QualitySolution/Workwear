@@ -2,7 +2,7 @@
 using QS.DomainModel.Entity;
 using QSOrmProject;
 
-namespace workwear.Domain.Organization
+namespace workwear.Domain.Company
 {
 	[Appellative (Gender = GrammaticalGender.Neuter,
 		NominativePlural = "размещения в объекте",

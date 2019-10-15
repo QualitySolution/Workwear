@@ -1,8 +1,8 @@
 ﻿using System;
 using FluentNHibernate.Mapping;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 
-namespace workwear.HibernateMapping.Organization
+namespace workwear.HibernateMapping.Company
 {
 	public class EmployeeVacationMap : ClassMap<EmployeeVacation>
 	{

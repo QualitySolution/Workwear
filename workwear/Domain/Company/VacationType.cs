@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 
-namespace workwear.Domain.Organization
+namespace workwear.Domain.Company
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "виды отпусков",

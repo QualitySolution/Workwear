@@ -226,21 +226,21 @@
     <Compile Include="Domain\Regulations\RegulationDocAnnex.cs" />
     <Compile Include="HibernateMapping\Regulations\RegulationDocAnnexMap.cs" />
     <Compile Include="HibernateMapping\Regulations\RegulationDocMap.cs" />
-    <Compile Include="Domain\Organization\EmployeeCard.cs" />
-    <Compile Include="Domain\Organization\EmployeeCardItem.cs" />
-    <Compile Include="Domain\Organization\Facility.cs" />
-    <Compile Include="Domain\Organization\FacilityPlace.cs" />
+    <Compile Include="Domain\Company\EmployeeCard.cs" />
+    <Compile Include="Domain\Company\EmployeeCardItem.cs" />
+    <Compile Include="Domain\Company\Facility.cs" />
+    <Compile Include="Domain\Company\FacilityPlace.cs" />
     <Compile Include="Domain\Regulations\ItemsType.cs" />
-    <Compile Include="Domain\Organization\Leader.cs" />
+    <Compile Include="Domain\Company\Leader.cs" />
     <Compile Include="Domain\Regulations\Norm.cs" />
     <Compile Include="Domain\Regulations\NormItem.cs" />
     <Compile Include="Domain\Regulations\Post.cs" />
-    <Compile Include="HibernateMapping\Organization\EmployeeCardItemMap.cs" />
-    <Compile Include="HibernateMapping\Organization\EmployeeCardMap.cs" />
-    <Compile Include="HibernateMapping\Organization\FacilityMap.cs" />
-    <Compile Include="HibernateMapping\Organization\FacilityPlaceMap.cs" />
+    <Compile Include="HibernateMapping\Company\EmployeeCardItemMap.cs" />
+    <Compile Include="HibernateMapping\Company\EmployeeCardMap.cs" />
+    <Compile Include="HibernateMapping\Company\FacilityMap.cs" />
+    <Compile Include="HibernateMapping\Company\FacilityPlaceMap.cs" />
     <Compile Include="HibernateMapping\Regulations\ItemsTypeMap.cs" />
-    <Compile Include="HibernateMapping\Organization\LeaderMap.cs" />
+    <Compile Include="HibernateMapping\Company\LeaderMap.cs" />
     <Compile Include="HibernateMapping\Regulations\NormItemMap.cs" />
     <Compile Include="HibernateMapping\Regulations\NormMap.cs" />
     <Compile Include="HibernateMapping\Regulations\PostMap.cs" />
@@ -270,10 +270,10 @@
     <Compile Include="Repository\Operations\EmployeeIssueRepository.cs" />
     <Compile Include="Dialogs\Organization\EmployeeCardListedItemsView.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeCardListedItemsView.cs" />
-    <Compile Include="Domain\Organization\VacationType.cs" />
-    <Compile Include="Domain\Organization\EmployeeVacation.cs" />
-    <Compile Include="HibernateMapping\Organization\VacationTypeMap.cs" />
-    <Compile Include="HibernateMapping\Organization\EmployeeVacationMap.cs" />
+    <Compile Include="Domain\Company\VacationType.cs" />
+    <Compile Include="Domain\Company\EmployeeVacation.cs" />
+    <Compile Include="HibernateMapping\Company\VacationTypeMap.cs" />
+    <Compile Include="HibernateMapping\Company\EmployeeVacationMap.cs" />
     <Compile Include="Dialogs\Organization\EmployeeVacationsView.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeVacationsView.cs" />
     <Compile Include="Representations\Organization\EmployeeVacationsVM.cs" />
@@ -286,6 +286,9 @@
     <Compile Include="Dialogs\Organization\EmployeeWearItemsView.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeWearItemsView.cs" />
     <Compile Include="Tools\BuisnessLogicGlobalEventHandler.cs" />
+    <Compile Include="Domain\Company\Organization.cs" />
+    <Compile Include="HibernateMapping\Company\OrganizatonMap.cs" />
+    <Compile Include="Domain\Stock\IssuanceSheet.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -401,8 +404,8 @@
     <Folder Include="HibernateMapping\User\" />
     <Folder Include="Domain\Regulations\" />
     <Folder Include="HibernateMapping\Regulations\" />
-    <Folder Include="Domain\Organization\" />
-    <Folder Include="HibernateMapping\Organization\" />
+    <Folder Include="Domain\Company\" />
+    <Folder Include="HibernateMapping\Company\" />
     <Folder Include="Dialogs\Organization\" />
     <Folder Include="Dialogs\Regulations\" />
     <Folder Include="Domain\Operations\" />

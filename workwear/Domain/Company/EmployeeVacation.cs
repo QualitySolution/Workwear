@@ -5,7 +5,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 
-namespace workwear.Domain.Organization
+namespace workwear.Domain.Company
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "отпуска сотрудника",

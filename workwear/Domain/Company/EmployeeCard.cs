@@ -15,7 +15,7 @@ using workwear.Domain.Regulations;
 using workwear.Measurements;
 using workwear.Repository.Operations;
 
-namespace workwear.Domain.Organization
+namespace workwear.Domain.Company
 {
 
 	[Appellative (Gender = GrammaticalGender.Feminine,
