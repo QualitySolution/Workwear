@@ -9,7 +9,7 @@ using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
 using QSOrmProject.RepresentationModel;
 using QSProjectsLib;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 

@@ -6,7 +6,7 @@ using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QSOrmProject;
 using QSProjectsLib;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using QS.DomainModel.UoW;
 using QSOrmProject.RepresentationModel;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 
 namespace workwear
 {

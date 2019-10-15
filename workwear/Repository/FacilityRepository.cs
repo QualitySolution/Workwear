@@ -1,5 +1,5 @@
 ﻿using NHibernate.Criterion;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 
 namespace workwear.Repository
 {

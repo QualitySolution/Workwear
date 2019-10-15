@@ -7,7 +7,7 @@ using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using workwear.Domain.Operations;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.DTO;
 using workwear.Repository.Operations;
 

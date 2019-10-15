@@ -4,7 +4,7 @@ using QS.Dialog;
 using QS.Testing.DB;
 using System;
 using System.Linq;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 

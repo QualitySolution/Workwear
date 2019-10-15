@@ -9,7 +9,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.Utilities;
 using workwear.Dialogs.Issuance;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Domain.Stock;
 
 namespace workwear.Dialogs.Organization

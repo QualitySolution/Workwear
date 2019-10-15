@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NHibernate.Criterion;
 using QS.DomainModel.UoW;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Repository.Stock;
 

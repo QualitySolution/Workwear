@@ -12,7 +12,7 @@ using QSSupportLib;
 using QSTelemetry;
 using workwear;
 using workwear.Dialogs.DataBase;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;

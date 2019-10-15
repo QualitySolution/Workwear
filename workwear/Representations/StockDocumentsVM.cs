@@ -8,7 +8,7 @@ using QS.DomainModel.UoW;
 using QS.Project.Domain;
 using QS.Utilities.Text;
 using QSOrmProject.RepresentationModel;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.JournalFilters;
 

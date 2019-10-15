@@ -1,7 +1,7 @@
 ﻿using System;
 using QS.Dialog.Gtk;
 using QSOrmProject;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Representations.Organization;
 
 namespace workwear.Dialogs.Organization

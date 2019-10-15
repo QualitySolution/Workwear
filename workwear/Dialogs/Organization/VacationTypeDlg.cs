@@ -1,7 +1,7 @@
 ﻿using System;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 
 namespace workwear.Dialogs.Organization
 {

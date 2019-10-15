@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using workwear.Domain.Operations;
 using workwear.Domain.Operations.Graph;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 

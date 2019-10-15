@@ -4,7 +4,7 @@ using NUnit.Framework;
 using QS.Deletion;
 using QS.Deletion.Testing;
 using workwear.Domain.Operations;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 
 namespace WorkwearTest.Deletion
 {

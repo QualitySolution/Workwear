@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamma.ColumnConfig;
@@ -7,7 +7,7 @@ using Gtk;
 using NLog;
 using QS.Dialog.Gtk;
 using QSOrmProject;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Domain.Stock;
 
 namespace workwear

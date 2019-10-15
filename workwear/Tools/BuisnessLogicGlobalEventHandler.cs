@@ -3,7 +3,7 @@ using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using workwear.Domain.Operations;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository.Stock;
 

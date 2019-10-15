@@ -6,7 +6,7 @@ using Gamma.Utilities;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 
 namespace workwear.Domain.Stock
 {

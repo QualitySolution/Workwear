@@ -5,7 +5,7 @@ using NLog;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using QSProjectsLib;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 
 namespace workwear.Dialogs.Organization
 {

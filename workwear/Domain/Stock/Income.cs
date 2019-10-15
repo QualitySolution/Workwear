@@ -7,7 +7,7 @@ using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Operations;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Repository.Operations;
 
 namespace workwear.Domain.Stock

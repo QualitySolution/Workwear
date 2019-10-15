@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Linq;
 using Gtk;
 using NLog;
 using QS.Dialog.Gtk;
 using QSOrmProject;
 using workwear.Domain.Operations;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Representations.Organization;
 

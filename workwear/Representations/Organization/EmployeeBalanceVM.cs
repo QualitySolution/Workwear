@@ -12,7 +12,7 @@ using QS.Utilities.Numeric;
 using QSOrmProject.RepresentationModel;
 using QSProjectsLib;
 using workwear.Domain.Operations;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 

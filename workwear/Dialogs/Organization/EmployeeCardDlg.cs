@@ -15,7 +15,7 @@ using QSOrmProject;
 using QSProjectsLib;
 using QSReport;
 using workwear.Dialogs.Regulations;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Measurements;
 using workwear.Repository;

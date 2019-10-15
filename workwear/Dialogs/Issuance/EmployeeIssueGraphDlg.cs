@@ -2,7 +2,7 @@
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using workwear.Domain.Operations.Graph;
-using workwear.Domain.Organization;
+using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 
 namespace workwear.Dialogs.Issuance
