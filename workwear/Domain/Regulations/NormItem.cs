@@ -112,7 +112,7 @@ namespace workwear.Domain.Regulations
 		/// </summary>
 		public virtual DateTime CalculateExpireDate(DateTime issueDate, int amount)
 		{
-			//TODO Некорретно считаем смены
+			//TODO Некорректно считаем смены
 			double oneItemByMonths = (double)PeriodInMonths / Amount;
 			double months = amount * oneItemByMonths;
 			int wholeMonths = (int)months;
@@ -125,7 +125,7 @@ namespace workwear.Domain.Regulations
 		/// </summary>
 		public virtual DateTime CalculateExpireDate(DateTime issueDate)
 		{
-			//TODO Некорретно считаем смены
+			//TODO Некорректно считаем смены
 			return issueDate.AddMonths(PeriodInMonths);
 		}
 

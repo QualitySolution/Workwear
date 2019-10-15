@@ -289,6 +289,9 @@
     <Compile Include="Domain\Company\Organization.cs" />
     <Compile Include="HibernateMapping\Company\OrganizatonMap.cs" />
     <Compile Include="Domain\Stock\IssuanceSheet.cs" />
+    <Compile Include="Domain\Stock\IssuanceSheetItem.cs" />
+    <Compile Include="HibernateMapping\Stock\IssuanceSheetMap.cs" />
+    <Compile Include="HibernateMapping\Stock\IssuanceSheetItemMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
