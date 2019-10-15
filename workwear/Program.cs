@@ -1,6 +1,7 @@
 using System;
 using Gtk;
 using NLog;
+using QS.ErrorReporting;
 using QS.ErrorReporting.GtkUI;
 using QS.Project.Repositories;
 using QS.Updater;
@@ -24,11 +25,13 @@ namespace workwear
 			{
 				WindowStartupFix.WindowsCheck();
 				Application.Init();
+				QSMain.GuiThread = System.Threading.Thread.CurrentThread;
 				UnhandledExceptionHandler.SubscribeToUnhadledExceptions();
 				UnhandledExceptionHandler.GuiThread = System.Threading.Thread.CurrentThread;
 				UnhandledExceptionHandler.ApplicationInfo = new ApplicationVersionInfo();
 				//Настройка обычных обработчиков ошибок.
-				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlExceptionIncorrectStringValue);
+				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlException1055OnlyFullGroupBy);
+				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlException1366IncorrectStringValue);
 				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.NHibernateFlushAfterException);
 
 				MainSupport.Init();

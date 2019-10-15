@@ -1,6 +1,6 @@
 Unicode true
 ;--------------------------------
-!define PRODUCT_VERSION "2.2.0.2"
+!define PRODUCT_VERSION "2.2.0.3"
 !define NET_VERSION "4.6.1"
 !define PRODUCT_NAME "QS: Спецодежда и имущество"
 !define SHORTCUT_NAME "QS Спецодежда и имущество"
