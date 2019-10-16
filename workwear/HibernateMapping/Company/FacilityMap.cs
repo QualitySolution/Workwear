@@ -10,6 +10,8 @@ namespace workwear.HibernateMapping.Company
 			Table ("objects");
 
 			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
+
+			Map(x => x.Code).Column("code");
 			Map (x => x.Name).Column ("name").Not.Nullable ();
 			Map (x => x.Address).Column ("address");
 

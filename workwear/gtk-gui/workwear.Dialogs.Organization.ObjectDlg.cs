@@ -14,15 +14,15 @@ namespace workwear.Dialogs.Organization
 
 		private global::Gtk.Table table1;
 
-		private global::Gtk.Entry entryName;
+		private global::Gamma.GtkWidgets.yEntry entryName;
 
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 
-		private global::Gtk.TextView textviewAddress;
+		private global::Gamma.GtkWidgets.yTextView textviewAddress;
 
 		private global::Gtk.HBox hbox1;
 
-		private global::Gtk.Label labelID;
+		private global::Gamma.GtkWidgets.yEntry entryCode;
 
 		private global::Gtk.Button buttonPlacement;
 
@@ -100,7 +100,7 @@ namespace workwear.Dialogs.Organization
 			this.table1.ColumnSpacing = ((uint)(6));
 			this.table1.BorderWidth = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild
-			this.entryName = new global::Gtk.Entry();
+			this.entryName = new global::Gamma.GtkWidgets.yEntry();
 			this.entryName.CanFocus = true;
 			this.entryName.Name = "entryName";
 			this.entryName.IsEditable = true;
@@ -119,7 +119,7 @@ namespace workwear.Dialogs.Organization
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
-			this.textviewAddress = new global::Gtk.TextView();
+			this.textviewAddress = new global::Gamma.GtkWidgets.yTextView();
 			this.textviewAddress.CanFocus = true;
 			this.textviewAddress.Name = "textviewAddress";
 			this.GtkScrolledWindow.Add(this.textviewAddress);
@@ -135,11 +135,15 @@ namespace workwear.Dialogs.Organization
 			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.labelID = new global::Gtk.Label();
-			this.labelID.Name = "labelID";
-			this.labelID.LabelProp = global::Mono.Unix.Catalog.GetString("не определен");
-			this.hbox1.Add(this.labelID);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelID]));
+			this.entryCode = new global::Gamma.GtkWidgets.yEntry();
+			this.entryCode.TooltipMarkup = "Сокращенное название подразделения для быстрого поиска или ориентации.";
+			this.entryCode.CanFocus = true;
+			this.entryCode.Name = "entryCode";
+			this.entryCode.IsEditable = true;
+			this.entryCode.MaxLength = 20;
+			this.entryCode.InvisibleChar = '●';
+			this.hbox1.Add(this.entryCode);
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.entryCode]));
 			w9.Position = 0;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.buttonPlacement = new global::Gtk.Button();
@@ -166,7 +170,7 @@ namespace workwear.Dialogs.Organization
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
 			this.label2.Xalign = 1F;
-			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Код:");
+			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Код подразделения:");
 			this.table1.Add(this.label2);
 			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
 			w13.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -203,7 +207,7 @@ namespace workwear.Dialogs.Organization
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
 			this.label1.Xalign = 0F;
-			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Имущество на объекте:</b>");
+			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Имущество подразделения:</b>");
 			this.label1.UseMarkup = true;
 			this.dialog1_VBox.Add(this.label1);
 			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.label1]));
@@ -284,7 +288,6 @@ namespace workwear.Dialogs.Organization
 			}
 			this.Show();
 			this.buttonPlacement.Clicked += new global::System.EventHandler(this.OnButtonPlacementClicked);
-			this.entryName.Changed += new global::System.EventHandler(this.OnEntryNameChanged);
 			this.buttonGive.Clicked += new global::System.EventHandler(this.OnButtonGiveClicked);
 			this.buttonReturn.Clicked += new global::System.EventHandler(this.OnButtonReturnClicked);
 			this.buttonWriteOff.Clicked += new global::System.EventHandler(this.OnButtonWriteOffClicked);

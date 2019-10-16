@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
+using QS.Validation.GtkUI;
 using QSProjectsLib;
 using workwear.Domain.Company;
 
@@ -74,14 +75,14 @@ namespace workwear.Dialogs.Organization
 
 			treeviewProperty.Model = ItemsListStore;
 			treeviewProperty.ShowAll();
+
+			entryCode.Binding.AddBinding(Entity, e => e.Code, w => w.Text).InitializeFromSource();
+			entryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
+			textviewAddress.Binding.AddBinding(Entity, e => e.Address, w => w.Buffer.Text).InitializeFromSource();
 		}
 
 		private void Fill(int id)
 		{
-			labelID.Text = Entity.Id.ToString();
-			entryName.Text = Entity.Name;
-			textviewAddress.Buffer.Text = Entity.Address;
-
 			UpdatePlacementCombo();
 			UpdateProperty();
 			buttonPlacement.Sensitive = true;
@@ -89,22 +90,15 @@ namespace workwear.Dialogs.Organization
 			buttonReturn.Sensitive = true;
 			buttonWriteOff.Sensitive = true;
 			TabName = entryName.Text;
-
-			TestCanSave();
-		}
-
-		protected void TestCanSave ()
-		{
-			bool Nameok = entryName.Text != "";
-			buttonSave.Sensitive = Nameok;
 		}
 
 		public override bool Save ()
 		{
-			logger.Info("Запись объекта...");
+			logger.Info("Запись подразделения...");
+			var valid = new QSValidator<Facility>(UoWGeneric.Root);
+			if(valid.RunDlgIfNotValid((Gtk.Window)this.Toplevel))
+				return false;
 
-			Entity.Name = entryName.Text;
-			Entity.Address = textviewAddress.Buffer.Text;
 			UoW.Save();
 
 			SaveProperty();
@@ -127,11 +121,6 @@ namespace workwear.Dialogs.Organization
 					cmd.ExecuteNonQuery();
 				}
 			}
-		}
-
-		protected void OnEntryNameChanged(object sender, EventArgs e)
-		{
-			TestCanSave();
 		}
 
 		protected void OnButtonPlacementClicked(object sender, EventArgs e)

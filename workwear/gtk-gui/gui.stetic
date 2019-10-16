@@ -959,13 +959,12 @@
             <property name="ColumnSpacing">6</property>
             <property name="BorderWidth">6</property>
             <child>
-              <widget class="Gtk.Entry" id="entryName">
+              <widget class="Gamma.GtkWidgets.yEntry" id="entryName">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="IsEditable">True</property>
                 <property name="MaxLength">240</property>
                 <property name="InvisibleChar">●</property>
-                <signal name="Changed" handler="OnEntryNameChanged" />
               </widget>
               <packing>
                 <property name="TopAttach">1</property>
@@ -988,7 +987,7 @@
                 <property name="MemberName" />
                 <property name="ShadowType">In</property>
                 <child>
-                  <widget class="Gtk.TextView" id="textviewAddress">
+                  <widget class="Gamma.GtkWidgets.yTextView" id="textviewAddress">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
                     <property name="ShowScrollbars">True</property>
@@ -1016,9 +1015,13 @@
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
                 <child>
-                  <widget class="Gtk.Label" id="labelID">
+                  <widget class="Gamma.GtkWidgets.yEntry" id="entryCode">
                     <property name="MemberName" />
-                    <property name="LabelProp" translatable="yes">не определен</property>
+                    <property name="Tooltip" translatable="yes">Сокращенное название подразделения для быстрого поиска или ориентации.</property>
+                    <property name="CanFocus">True</property>
+                    <property name="IsEditable">True</property>
+                    <property name="MaxLength">20</property>
+                    <property name="InvisibleChar">●</property>
                   </widget>
                   <packing>
                     <property name="Position">0</property>
@@ -1062,7 +1065,7 @@
               <widget class="Gtk.Label" id="label2">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Код:</property>
+                <property name="LabelProp" translatable="yes">Код подразделения:</property>
               </widget>
               <packing>
                 <property name="AutoSize">True</property>
@@ -1129,7 +1132,7 @@
           <widget class="Gtk.Label" id="label1">
             <property name="MemberName" />
             <property name="Xalign">0</property>
-            <property name="LabelProp" translatable="yes">&lt;b&gt;Имущество на объекте:&lt;/b&gt;</property>
+            <property name="LabelProp" translatable="yes">&lt;b&gt;Имущество подразделения:&lt;/b&gt;</property>
             <property name="UseMarkup">True</property>
           </widget>
           <packing>
