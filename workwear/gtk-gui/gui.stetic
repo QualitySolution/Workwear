@@ -1229,7 +1229,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Dialogs.Organization.EmployeeCardDlg" design-size="1239 537">
+  <widget class="Gtk.Bin" id="workwear.Dialogs.Organization.EmployeeCardDlg" design-size="1278 537">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -1662,7 +1662,7 @@
                   <widget class="Gtk.Label" id="label14">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Адрес объекта:</property>
+                    <property name="LabelProp" translatable="yes">Адрес подразделения:</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">7</property>
@@ -2927,7 +2927,7 @@
                   <widget class="Gtk.Label" id="labelObject">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Объект&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
+                    <property name="LabelProp" translatable="yes">Подразделение&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
                     <property name="UseMarkup">True</property>
                   </widget>
                   <packing>
@@ -2968,6 +2968,7 @@
                 <child>
                   <widget class="Gtk.Label" id="labelWorker">
                     <property name="MemberName" />
+                    <property name="Xalign">1</property>
                     <property name="LabelProp" translatable="yes">Работник&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
                     <property name="UseMarkup">True</property>
                   </widget>
@@ -3485,6 +3486,7 @@
                 <child>
                   <widget class="Gtk.Label" id="label2">
                     <property name="MemberName" />
+                    <property name="Xalign">1</property>
                     <property name="LabelProp" translatable="yes">Операция&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
                     <property name="UseMarkup">True</property>
                   </widget>
@@ -3504,7 +3506,7 @@
                   <widget class="Gtk.Label" id="labelObject">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Объект&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
+                    <property name="LabelProp" translatable="yes">Подразделение&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
                     <property name="UseMarkup">True</property>
                   </widget>
                   <packing>
@@ -3524,6 +3526,7 @@
                 <child>
                   <widget class="Gtk.Label" id="labelWorker">
                     <property name="MemberName" />
+                    <property name="Xalign">1</property>
                     <property name="LabelProp" translatable="yes">Работник&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
                     <property name="UseMarkup">True</property>
                   </widget>
@@ -4344,13 +4347,13 @@
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-add Menu</property>
-                <property name="Label" translatable="yes">С объекта</property>
+                <property name="Label" translatable="yes">С подразделения</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonAddObjectClicked" />
               </widget>
               <packing>
                 <property name="Position">2</property>
-                <property name="AutoSize">True</property>
+                <property name="AutoSize">False</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
               </packing>
@@ -4430,7 +4433,7 @@
               <widget class="Gtk.Label" id="label1">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">По объекту:</property>
+                <property name="LabelProp" translatable="yes">По подразделению:</property>
               </widget>
               <packing>
                 <property name="AutoSize">False</property>
@@ -4750,8 +4753,8 @@
       </action>
       <action id="ActionObjects">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Объекты</property>
-        <property name="ShortLabel" translatable="yes">Объекты</property>
+        <property name="Label" translatable="yes">Подразделения</property>
+        <property name="ShortLabel" translatable="yes">Подразделения</property>
         <property name="StockId">objects</property>
         <signal name="Activated" handler="OnActionObjectsActivated" />
       </action>
@@ -4764,8 +4767,8 @@
       </action>
       <action id="ActionBarObjects">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Объекты</property>
-        <property name="ShortLabel" translatable="yes">Объекты</property>
+        <property name="Label" translatable="yes">Подразделения</property>
+        <property name="ShortLabel" translatable="yes">Подразделения</property>
         <property name="StockId">objects</property>
         <signal name="Activated" handler="OnActionBarObjectsActivated" />
       </action>
@@ -5651,7 +5654,7 @@
         <child>
           <widget class="Gtk.Label" id="label1">
             <property name="MemberName" />
-            <property name="LabelProp" translatable="yes">Объект:</property>
+            <property name="LabelProp" translatable="yes">Подразделение:</property>
           </widget>
           <packing>
             <property name="AutoSize">True</property>
@@ -6160,7 +6163,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.RequestSheetDlg" design-size="315 186">
+  <widget class="Gtk.Bin" id="workwear.RequestSheetDlg" design-size="339 186">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">

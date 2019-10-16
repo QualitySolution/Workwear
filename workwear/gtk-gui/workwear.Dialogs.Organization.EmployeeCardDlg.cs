@@ -474,7 +474,7 @@ namespace workwear.Dialogs.Organization
 			this.label14 = new global::Gtk.Label();
 			this.label14.Name = "label14";
 			this.label14.Xalign = 1F;
-			this.label14.LabelProp = global::Mono.Unix.Catalog.GetString("Адрес объекта:");
+			this.label14.LabelProp = global::Mono.Unix.Catalog.GetString("Адрес подразделения:");
 			this.table1.Add(this.label14);
 			global::Gtk.Table.TableChild w25 = ((global::Gtk.Table.TableChild)(this.table1[this.label14]));
 			w25.TopAttach = ((uint)(7));

@@ -110,6 +110,7 @@ namespace workwear
 			// Container child table2.Gtk.Table+TableChild
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
+			this.label2.Xalign = 1F;
 			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Операция<span foreground=\"red\">*</span>:");
 			this.label2.UseMarkup = true;
 			this.table2.Add(this.label2);
@@ -120,7 +121,7 @@ namespace workwear
 			this.labelObject = new global::Gtk.Label();
 			this.labelObject.Name = "labelObject";
 			this.labelObject.Xalign = 1F;
-			this.labelObject.LabelProp = global::Mono.Unix.Catalog.GetString("Объект<span foreground=\"red\">*</span>:");
+			this.labelObject.LabelProp = global::Mono.Unix.Catalog.GetString("Подразделение<span foreground=\"red\">*</span>:");
 			this.labelObject.UseMarkup = true;
 			this.table2.Add(this.labelObject);
 			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table2[this.labelObject]));
@@ -131,6 +132,7 @@ namespace workwear
 			// Container child table2.Gtk.Table+TableChild
 			this.labelWorker = new global::Gtk.Label();
 			this.labelWorker.Name = "labelWorker";
+			this.labelWorker.Xalign = 1F;
 			this.labelWorker.LabelProp = global::Mono.Unix.Catalog.GetString("Работник<span foreground=\"red\">*</span>:");
 			this.labelWorker.UseMarkup = true;
 			this.table2.Add(this.labelWorker);
@@ -251,6 +253,7 @@ namespace workwear
 			this.ydateDoc.Events = ((global::Gdk.EventMask)(256));
 			this.ydateDoc.Name = "ydateDoc";
 			this.ydateDoc.WithTime = false;
+			this.ydateDoc.HideCalendarButton = false;
 			this.ydateDoc.Date = new global::System.DateTime(0);
 			this.ydateDoc.IsEditable = true;
 			this.ydateDoc.AutoSeparation = true;

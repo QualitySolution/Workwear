@@ -123,7 +123,7 @@ namespace workwear
 			this.buttonAddObject.CanFocus = true;
 			this.buttonAddObject.Name = "buttonAddObject";
 			this.buttonAddObject.UseUnderline = true;
-			this.buttonAddObject.Label = global::Mono.Unix.Catalog.GetString("С объекта");
+			this.buttonAddObject.Label = global::Mono.Unix.Catalog.GetString("С подразделения");
 			global::Gtk.Image w11 = new global::Gtk.Image();
 			w11.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
 			this.buttonAddObject.Image = w11;
