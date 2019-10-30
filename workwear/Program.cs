@@ -102,6 +102,7 @@ namespace workwear
 
 			//Запускаем программу
 			MainWin = new MainWindow ();
+			MainWin.Title += string.Format(" (БД: {0})", LoginDialog.SelectedConnection);
 			if (QSMain.User.Login == "root")
 				return;
 			MainWin.Show ();
