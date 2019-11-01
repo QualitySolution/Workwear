@@ -213,6 +213,13 @@ namespace WorkwearTest.Operations
 			var result = EmployeeIssueOperation.CalculatePercentWear(new DateTime(2019, 1,1), new DateTime(2019, 1, 1), new DateTime(2019, 1, 1), 0);
 		}
 
+		[Test(Description = "Не падаем при конвертировании в Decemal, полученой бесконечности(реальный кейс при некоторых значениях)")]
+		public void CalculatePercentWear_InfinityWhenDecimalConvert()
+		{
+			var result = EmployeeIssueOperation.CalculatePercentWear(new DateTime(2019, 8, 2), new DateTime(2019, 7, 17), new DateTime(2019, 7, 17), 0);
+			Assert.That(result, Is.EqualTo(0));
+		}
+
 		#endregion
 	}
 }

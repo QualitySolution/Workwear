@@ -180,7 +180,7 @@ namespace workwear.Domain.Operations
 				return 0;
 
 			var addPercent = (atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays;
-			if(double.IsNaN(addPercent))
+			if(double.IsNaN(addPercent) || double.IsInfinity(addPercent))
 				return beginWearPercent;
 
 			return beginWearPercent + (decimal)addPercent;
