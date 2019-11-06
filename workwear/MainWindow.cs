@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using Autofac;
 using Gtk;
 using NLog;
 using QS.BusinessCommon.Domain;
 using QS.Dialog.Gtk;
+using QS.Navigation.GtkUI;
 using QS.Report;
+using QS.Tdi.Gtk;
 using QS.Updater;
 using QSOrmProject;
 using QSProjectsLib;
@@ -17,13 +21,18 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
 using workwear.JournalViewers;
+using workwear.JournalViewModels.Company;
 using workwear.Representations.Organization;
 using workwear.Tools;
 using workwear.ViewModel;
+using workwear.ViewModels.Company;
 
 public partial class MainWindow : Gtk.Window
 {
 	private static Logger logger = LogManager.GetCurrentClassLogger();
+
+	private ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+	private TdiNavigationManager NavigationManager;
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
@@ -85,12 +94,21 @@ public partial class MainWindow : Gtk.Window
 		newsmenu.LoadFeed();
 
 		ReadUserSettings();
+
+		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
+		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
 		a.RetVal = true;
 		Application.Quit();
+	}
+
+	public override void Destroy()
+	{
+		AutofacScope.Dispose();
+		base.Destroy();
 	}
 
 	protected void OnDialogAuthenticationActionActivated(object sender, EventArgs e)
@@ -515,5 +533,10 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount("VacationType");
 		tdiMain.OpenTab<OrmReference, Type>(typeof(VacationType));
+	}
+
+	protected void OnActionOrganizationsActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<OrganizationJournalViewModel>(null);
 	}
 }

@@ -109,6 +109,9 @@
     <Reference Include="Renci.SshNet">
       <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>
+    <Reference Include="Autofac">
+      <HintPath>..\packages\Autofac.4.9.4\lib\net45\Autofac.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -292,6 +295,11 @@
     <Compile Include="Domain\Stock\IssuanceSheetItem.cs" />
     <Compile Include="HibernateMapping\Stock\IssuanceSheetMap.cs" />
     <Compile Include="HibernateMapping\Stock\IssuanceSheetItemMap.cs" />
+    <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
+    <Compile Include="Views\Company\OrganizationView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Company.OrganizationView.cs" />
+    <Compile Include="JournalViewModels\Company\OrganizationJournalViewModel.cs" />
+    <Compile Include="JournalViewModels\JournalsColumnsConfigs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -419,6 +427,12 @@
     <Folder Include="Dialogs\Issuance\" />
     <Folder Include="Repository\Operations\" />
     <Folder Include="Representations\Organization\" />
+    <Folder Include="Views\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="ViewModels\Company\" />
+    <Folder Include="Views\Company\" />
+    <Folder Include="JournalViewModels\" />
+    <Folder Include="JournalViewModels\Company\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

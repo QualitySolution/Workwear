@@ -48,6 +48,8 @@ namespace workwear
 			}
 
 			CreateProjectParam ();
+			AutofacClassConfig();
+
 			// Создаем окно входа
 			Login LoginDialog = new Login ();
 			LoginDialog.Logo = Gdk.Pixbuf.LoadFromResource ("workwear.icon.logo.png");

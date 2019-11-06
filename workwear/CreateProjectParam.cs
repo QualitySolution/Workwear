@@ -1,9 +1,23 @@
-﻿using QS.BusinessCommon;
+﻿using Autofac;
+using Gtk;
+using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
+using QS.Dialog;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.NotifyChange;
+using QS.DomainModel.UoW;
+using QS.Navigation;
+using QS.Navigation.GtkUI;
+using QS.Permissions;
 using QS.Project.DB;
 using QS.Project.Domain;
+using QS.Project.Search.GtkUI;
+using QS.Project.Services;
+using QS.Project.Services.GtkUI;
+using QS.Services;
+using QS.Tdi.Gtk;
+using QS.Validation;
+using QS.Validation.GtkUI;
 using QSOrmProject;
 using QSProjectsLib;
 using workwear.Dialogs.Organization;
@@ -12,7 +26,10 @@ using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
+using workwear.JournalViewModels;
+using workwear.JournalViewModels.Company;
 using workwear.Tools;
+using workwear.ViewModels.Company;
 
 namespace workwear
 {
@@ -61,6 +78,56 @@ namespace workwear
 
 			NotifyConfiguration.Enable();
 			BuisnessLogicGlobalEventHandler.Init(new GtkQuestionDialogsInteractive());
+			GtkAppServicesConfig.CreateDefaultGtkServices();
+			JournalsColumnsConfigs.RegisterColumns();
+		}
+
+		public static Autofac.IContainer AppDIContainer;
+
+		static void AutofacClassConfig()
+		{
+			var builder = new ContainerBuilder();
+
+			#region База
+			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
+			builder.RegisterType<DefaultSessionProvider>().As<ISessionProvider>();
+			#endregion
+
+			#region Сервисы
+			#region GtkUI
+			builder.RegisterType<GtkMessageDialogsInteractive>().As<IInteractiveMessage>();
+			builder.RegisterType<GtkQuestionDialogsInteractive>().As<IInteractiveQuestion>();
+			builder.RegisterType<GtkInteractiveService>().As<IInteractiveService>();
+			builder.RegisterType<GtkValidationViewFactory>().As<IValidationViewFactory>();
+			builder.RegisterType<GtkDeleteEntityService>().As<IDeleteEntityService>();
+			#endregion GtkUI
+			//FIXME Нужно в конечнои итоге попытаться избавится от CommonServce вообще.
+			builder.RegisterType<CommonServices>().As<ICommonServices>();
+			builder.RegisterType<UserService>().As<IUserService>();
+			builder.RegisterType<ValidationService>().As<IValidationService>();
+			//FIXME Реализовать везде возможность отсутствия сервиса прав, чтобы не приходилось создавать то что не используется
+			builder.RegisterType<DefaultAllowedPermissionService>().As<IPermissionService>();
+			#endregion
+
+			#region Навигация
+			builder.RegisterType<ClassNamesHashGenerator>().As<IPageHashGenerator>();
+			builder.Register((ctx) => new AutofacViewModelsPageFactory(AppDIContainer)).As<IViewModelsPageFactory>();
+			builder.RegisterType<TdiNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
+			builder.RegisterType<BasedOnNameTDIResolver>().As<ITDIWidgetResolver>();
+			#endregion
+			#region ViewModels
+			//Company
+			builder.RegisterType<OrganizationViewModel>().AsSelf();
+
+			#endregion
+
+			//builder.RegisterType<OneEntrySearchView>().Named<Widget>("GtkJournalSearchView");
+			#region JournalViewModels
+			//Company
+			builder.RegisterType<OrganizationJournalViewModel>().AsSelf();
+			#endregion
+
+			AppDIContainer = builder.Build();
 		}
 	}
 }
