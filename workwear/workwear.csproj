@@ -291,15 +291,15 @@
     <Compile Include="Tools\BuisnessLogicGlobalEventHandler.cs" />
     <Compile Include="Domain\Company\Organization.cs" />
     <Compile Include="HibernateMapping\Company\OrganizatonMap.cs" />
-    <Compile Include="Domain\Stock\IssuanceSheet.cs" />
-    <Compile Include="Domain\Stock\IssuanceSheetItem.cs" />
-    <Compile Include="HibernateMapping\Stock\IssuanceSheetMap.cs" />
-    <Compile Include="HibernateMapping\Stock\IssuanceSheetItemMap.cs" />
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
     <Compile Include="Views\Company\OrganizationView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.OrganizationView.cs" />
     <Compile Include="JournalViewModels\Company\OrganizationJournalViewModel.cs" />
     <Compile Include="JournalViewModels\JournalsColumnsConfigs.cs" />
+    <Compile Include="Domain\Statements\IssuanceSheet.cs" />
+    <Compile Include="Domain\Statements\IssuanceSheetItem.cs" />
+    <Compile Include="HibernateMapping\Statements\IssuanceSheetItemMap.cs" />
+    <Compile Include="HibernateMapping\Statements\IssuanceSheetMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -433,6 +433,8 @@
     <Folder Include="Views\Company\" />
     <Folder Include="JournalViewModels\" />
     <Folder Include="JournalViewModels\Company\" />
+    <Folder Include="Domain\Statements\" />
+    <Folder Include="HibernateMapping\Statements\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

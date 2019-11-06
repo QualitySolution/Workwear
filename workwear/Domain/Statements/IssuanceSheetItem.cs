@@ -4,8 +4,9 @@ using QS.DomainModel.Entity;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
+using workwear.Domain.Stock;
 
-namespace workwear.Domain.Stock
+namespace workwear.Domain.Statements
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 	NominativePlural = "строки ведомости",

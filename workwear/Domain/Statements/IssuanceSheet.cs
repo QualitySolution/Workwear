@@ -5,7 +5,7 @@ using System.Data.Bindings.Collections.Generic;
 using QS.DomainModel.Entity;
 using workwear.Domain.Company;
 
-namespace workwear.Domain.Stock
+namespace workwear.Domain.Statements
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "ведомости на выдачу",

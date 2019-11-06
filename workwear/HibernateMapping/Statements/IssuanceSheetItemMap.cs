@@ -1,9 +1,8 @@
-﻿using System;
-using FluentNHibernate.Mapping;
+﻿using FluentNHibernate.Mapping;
 using workwear.Domain.Regulations;
-using workwear.Domain.Stock;
+using workwear.Domain.Statements;
 
-namespace workwear.HibernateMapping.Stock
+namespace workwear.HibernateMapping.Statements
 {
 	public class IssuanceSheetItemMap : ClassMap<IssuanceSheetItem>
 	{
