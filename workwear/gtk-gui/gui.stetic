@@ -4573,7 +4573,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Window" id="MainWindow" design-size="709 458">
+  <widget class="Gtk.Window" id="MainWindow" design-size="733 458">
     <action-group name="Default">
       <action id="ActionBase">
         <property name="Type">Action</property>
@@ -4585,10 +4585,10 @@
         <property name="Label" translatable="yes">Справочники</property>
         <property name="ShortLabel" translatable="yes">Справочники</property>
       </action>
-      <action id="Action37">
+      <action id="ActionReports">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Ведомости</property>
-        <property name="ShortLabel" translatable="yes">Ведомости</property>
+        <property name="Label" translatable="yes">Отчеты</property>
+        <property name="ShortLabel" translatable="yes">Отчеты</property>
       </action>
       <action id="Action3">
         <property name="Type">Action</property>
@@ -5009,7 +5009,7 @@
                 <node type="Menuitem" action="ActionVacationTypes" />
                 <node type="Menuitem" action="Action9" />
               </node>
-              <node type="Menu" action="Action37">
+              <node type="Menu" action="ActionReports">
                 <node type="Menuitem" action="Action10" />
                 <node type="Menuitem" action="Action11" />
                 <node type="Separator" />
