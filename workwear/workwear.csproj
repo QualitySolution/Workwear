@@ -300,6 +300,10 @@
     <Compile Include="Domain\Statements\IssuanceSheetItem.cs" />
     <Compile Include="HibernateMapping\Statements\IssuanceSheetItemMap.cs" />
     <Compile Include="HibernateMapping\Statements\IssuanceSheetMap.cs" />
+    <Compile Include="JournalViewModels\Statements\IssuanceSheetJournalViewModel.cs" />
+    <Compile Include="ViewModels\Statements\IssuanceSheetViewModel.cs" />
+    <Compile Include="Views\Statements\IssuanceSheetView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Statements.IssuanceSheetView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -435,6 +439,9 @@
     <Folder Include="JournalViewModels\Company\" />
     <Folder Include="Domain\Statements\" />
     <Folder Include="HibernateMapping\Statements\" />
+    <Folder Include="JournalViewModels\Statements\" />
+    <Folder Include="ViewModels\Statements\" />
+    <Folder Include="Views\Statements\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

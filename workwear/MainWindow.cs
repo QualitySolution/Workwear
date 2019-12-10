@@ -22,6 +22,7 @@ using workwear.Domain.Stock;
 using workwear.Domain.Users;
 using workwear.JournalViewers;
 using workwear.JournalViewModels.Company;
+using workwear.JournalViewModels.Statements;
 using workwear.Representations.Organization;
 using workwear.Tools;
 using workwear.ViewModel;
@@ -537,6 +538,13 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionOrganizationsActivated(object sender, EventArgs e)
 	{
+		MainTelemetry.AddCount(nameof(OrganizationJournalViewModel));
 		NavigationManager.OpenViewModel<OrganizationJournalViewModel>(null);
+	}
+
+	protected void OnActionIssuanceSheetsActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount(nameof(IssuanceSheetJournalViewModel));
+		NavigationManager.OpenViewModel<IssuanceSheetJournalViewModel>(null);
 	}
 }

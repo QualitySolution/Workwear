@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Gtk;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
@@ -11,7 +10,6 @@ using QS.Navigation.GtkUI;
 using QS.Permissions;
 using QS.Project.DB;
 using QS.Project.Domain;
-using QS.Project.Search.GtkUI;
 using QS.Project.Services;
 using QS.Project.Services.GtkUI;
 using QS.Services;
@@ -28,8 +26,10 @@ using workwear.Domain.Stock;
 using workwear.Domain.Users;
 using workwear.JournalViewModels;
 using workwear.JournalViewModels.Company;
+using workwear.JournalViewModels.Statements;
 using workwear.Tools;
 using workwear.ViewModels.Company;
+using workwear.ViewModels.Statements;
 
 namespace workwear
 {
@@ -118,13 +118,16 @@ namespace workwear
 			#region ViewModels
 			//Company
 			builder.RegisterType<OrganizationViewModel>().AsSelf();
-
+			//Statements
+			builder.RegisterType<IssuanceSheetViewModel>().AsSelf();
 			#endregion
 
 			//builder.RegisterType<OneEntrySearchView>().Named<Widget>("GtkJournalSearchView");
 			#region JournalViewModels
 			//Company
 			builder.RegisterType<OrganizationJournalViewModel>().AsSelf();
+			//Statements
+			builder.RegisterType<IssuanceSheetJournalViewModel>().AsSelf();
 			#endregion
 
 			AppDIContainer = builder.Build();
