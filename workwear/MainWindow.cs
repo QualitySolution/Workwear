@@ -6,7 +6,7 @@ using Gtk;
 using NLog;
 using QS.BusinessCommon.Domain;
 using QS.Dialog.Gtk;
-using QS.Navigation.GtkUI;
+using QS.Navigation;
 using QS.Report;
 using QS.Tdi.Gtk;
 using QS.Updater;

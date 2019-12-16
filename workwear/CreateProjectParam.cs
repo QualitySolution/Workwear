@@ -6,7 +6,6 @@ using QS.Dialog.GtkUI;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
-using QS.Navigation.GtkUI;
 using QS.Permissions;
 using QS.Project.DB;
 using QS.Project.Domain;
@@ -112,9 +111,15 @@ namespace workwear
 			#region Навигация
 			builder.RegisterType<ClassNamesHashGenerator>().As<IPageHashGenerator>();
 			builder.Register((ctx) => new AutofacViewModelsPageFactory(AppDIContainer)).As<IViewModelsPageFactory>();
-			builder.RegisterType<TdiNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
+			builder.Register((ctx) => new AutofacTdiPageFactory(AppDIContainer)).As<ITdiPageFactory>();
+			builder.RegisterType<TdiNavigationManager>().AsSelf().As<INavigationManager>().As<ITdiCompatibilityNavigation>().SingleInstance();
 			builder.RegisterType<BasedOnNameTDIResolver>().As<ITDIWidgetResolver>();
 			#endregion
+
+			#region Старые диалоги
+			builder.RegisterType<OrmReference>().AsSelf();
+			#endregion
+
 			#region ViewModels
 			//Company
 			builder.RegisterType<OrganizationViewModel>().AsSelf();

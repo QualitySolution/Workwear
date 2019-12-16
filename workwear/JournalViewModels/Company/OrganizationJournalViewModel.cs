@@ -35,8 +35,9 @@ namespace workwear.JournalViewModels.Company
 		}
 	}
 
-	public class ClientJournalNode : JournalEntityNodeBase<Organization>
+	public class ClientJournalNode
 	{
+		public int Id { get; set; }
 		public string Name { get; set; }
 		public string Address { get; set; }
 	}
