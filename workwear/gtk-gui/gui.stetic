@@ -8104,7 +8104,7 @@
               </packing>
             </child>
             <child>
-              <widget class="QS.GtkUI.Views.Control.EntityEntry" id="entityentryHeadOfDivisionPerson">
+              <widget class="QS.Views.Control.EntityEntry" id="entityentryHeadOfDivisionPerson">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
               </widget>
@@ -8124,7 +8124,7 @@
               </packing>
             </child>
             <child>
-              <widget class="QS.GtkUI.Views.Control.EntityEntry" id="entityentryOrganization">
+              <widget class="QS.Views.Control.EntityEntry" id="entityentryOrganization">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
               </widget>
@@ -8145,7 +8145,7 @@
               </packing>
             </child>
             <child>
-              <widget class="QS.GtkUI.Views.Control.EntityEntry" id="entityentryResponsiblePerson">
+              <widget class="QS.Views.Control.EntityEntry" id="entityentryResponsiblePerson">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
               </widget>
@@ -8165,7 +8165,7 @@
               </packing>
             </child>
             <child>
-              <widget class="QS.GtkUI.Views.Control.EntityEntry" id="entityentrySubdivision">
+              <widget class="QS.Views.Control.EntityEntry" id="entityentrySubdivision">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
               </widget>
