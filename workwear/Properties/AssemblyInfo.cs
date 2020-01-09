@@ -13,7 +13,7 @@ using QSProjectsLib;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]
 [assembly: AssemblyProduct("QS: Спецодежда и имущество")]
-[assembly: AssemblyCopyright("Quality Solution 2019")]
+[assembly: AssemblyCopyright("Quality Solution 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyLogoIcon("workwear.icon.logo.png")]
