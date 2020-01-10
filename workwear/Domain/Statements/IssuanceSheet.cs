@@ -16,7 +16,7 @@ namespace workwear.Domain.Statements
 
 		public virtual int Id { get; set; }
 
-		private DateTime date;
+		private DateTime date = DateTime.Today;
 
 		[Display(Name = "Дата составления")]
 		public virtual DateTime Date {

@@ -118,6 +118,7 @@ namespace workwear
 
 			#region Старые диалоги
 			builder.RegisterType<OrmReference>().AsSelf();
+			builder.RegisterType<ReferenceRepresentation>().AsSelf();
 			#endregion
 
 			#region ViewModels

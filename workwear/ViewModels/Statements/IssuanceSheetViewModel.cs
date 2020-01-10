@@ -7,10 +7,12 @@ using QS.Services;
 using QS.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using QSOrmProject;
+using QSOrmProject.RepresentationModel;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.JournalViewModels.Company;
+using workwear.Representations.Organization;
 using workwear.ViewModels.Company;
 
 namespace workwear.ViewModels.Statements
@@ -57,7 +59,7 @@ namespace workwear.ViewModels.Statements
 			Entity.PropertyChanged += Entity_PropertyChanged;
 		}
 
-		#region Кнопки на форме
+		#region Таблица 
 
 		public void AddItems()
 		{
@@ -83,9 +85,52 @@ namespace workwear.ViewModels.Statements
 			}
 		}
 
-		public void RemoveItems(IssuanceSheetItem[] item)
+		public void RemoveItems(IssuanceSheetItem[] items)
 		{
+			foreach(var item in items) {
+				Entity.ObservableItems.Remove(item);
+			}
+		}
 
+		public void SetEmployee(IssuanceSheetItem[] items)
+		{
+			var selectPage = navigationManager.OpenTdiTab<ReferenceRepresentation>(
+				this, 
+				OpenPageOptions.AsSlave, 
+				c => c.RegisterType<EmployeesVM>().As<IRepresentationModel>()
+			);
+
+			var selectDialog = selectPage.TdiTab as ReferenceRepresentation;
+			selectDialog.Mode = OrmReferenceMode.Select;
+			selectDialog.Tag = items;
+			selectDialog.ObjectSelected += SelectEmployee_ObjectSelected;
+		}
+
+		void SelectEmployee_ObjectSelected(object sender, ReferenceRepresentationSelectedEventArgs e)
+		{
+			var items = (sender as ReferenceRepresentation).Tag as IssuanceSheetItem[];
+			var employee = UoW.GetById<EmployeeCard>(e.ObjectId);
+			foreach(var item in items) {
+				item.Employee = employee;
+			}
+		}
+
+		public void SetNomenclature(IssuanceSheetItem[] items)
+		{
+			var selectPage = navigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(Nomenclature), OpenPageOptions.AsSlave);
+
+			var selectDialog = selectPage.TdiTab as OrmReference;
+			selectDialog.Tag = items;
+			selectDialog.Mode = OrmReferenceMode.Select;
+			selectDialog.ObjectSelected += SetNomenclature_ObjectSelected;
+		}
+
+		void SetNomenclature_ObjectSelected(object sender, OrmReferenceObjectSectedEventArgs e)
+		{
+			var items = (sender as OrmReference).Tag as IssuanceSheetItem[];
+			foreach(var item in items) {
+				item.Nomenclature = e.Subject as Nomenclature;
+			}
 		}
 
 		#endregion
