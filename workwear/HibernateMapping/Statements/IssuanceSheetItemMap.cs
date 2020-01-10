@@ -16,7 +16,7 @@ namespace workwear.HibernateMapping.Statements
 			Map(x => x.PeriodCount).Column("period_count");
 			Map(x => x.PeriodType).Column("period_type").CustomType<NormPeriodTypeType>();
 
-			References(x => x.IssuanceSheet).Column("organization_id");
+			References(x => x.IssuanceSheet).Column("issuance_sheet_id");
 			References(x => x.Employee).Column("employee_id");
 			References(x => x.Nomenclature).Column("nomenclature_id");
 			References(x => x.IssueOperation).Column("issued_operation_id");

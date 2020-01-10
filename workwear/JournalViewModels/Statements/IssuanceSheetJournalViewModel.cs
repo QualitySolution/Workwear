@@ -33,8 +33,8 @@ namespace workwear.JournalViewModels.Statements
 					() => subdivisionAlias.Name,
 					() => subdivisionAlias.Code
 					))
-				.JoinAlias(s => s.Organization, () => organizationAlias)
-				.JoinAlias(s => s.Subdivision, () => subdivisionAlias)
+				.Left.JoinAlias(s => s.Organization, () => organizationAlias)
+				.Left.JoinAlias(s => s.Subdivision, () => subdivisionAlias)
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Date).WithAlias(() => resultAlias.Date)
