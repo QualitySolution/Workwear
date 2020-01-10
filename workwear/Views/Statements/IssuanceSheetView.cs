@@ -34,8 +34,7 @@ namespace workwear.Views.Statements
 					.AddTextRenderer(x => x.Nomenclature != null && x.Nomenclature.Type.Units != null ? x.Nomenclature.Type.Units.Name : String.Empty)
 				.AddColumn("Начало эксплуатации").AddTextRenderer(x => x.StartOfUse != default(DateTime) ? x.StartOfUse.ToShortDateString() : String.Empty)
 				.AddColumn("Срок службы")
-					.AddNumericRenderer(x => x.PeriodCount).Editing(new Adjustment(1, 0, 1000, 1, 12, 10))
-					.AddEnumRenderer(x => x.PeriodType).Editing()
+					.AddNumericRenderer(x => x.Lifetime).Editing(new Adjustment(1, 0, 1000, 1, 12, 10))
 				.Finish();
 
 			ytreeviewItems.Selection.Changed += Selection_Changed;

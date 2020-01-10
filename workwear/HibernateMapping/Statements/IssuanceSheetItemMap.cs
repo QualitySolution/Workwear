@@ -13,8 +13,7 @@ namespace workwear.HibernateMapping.Statements
 			Id(x => x.Id).Column("id").GeneratedBy.Native();
 			Map(x => x.Amount).Column("amount");
 			Map(x => x.StartOfUse).Column("start_of_use");
-			Map(x => x.PeriodCount).Column("period_count");
-			Map(x => x.PeriodType).Column("period_type").CustomType<NormPeriodTypeType>();
+			Map(x => x.Lifetime).Column("lifetime");
 
 			References(x => x.IssuanceSheet).Column("issuance_sheet_id");
 			References(x => x.Employee).Column("employee_id");

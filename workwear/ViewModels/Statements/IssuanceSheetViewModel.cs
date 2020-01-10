@@ -78,8 +78,7 @@ namespace workwear.ViewModels.Statements
 					Nomenclature = nomenclature,
 					StartOfUse = Entity.Date,
 					Amount = 1,
-					PeriodCount = 12,
-					PeriodType = Domain.Regulations.NormPeriodType.Month
+					Lifetime = 12,
 				};
 				Entity.ObservableItems.Add(item);
 			}

@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
-using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
 namespace workwear.Domain.Statements
@@ -65,20 +64,12 @@ namespace workwear.Domain.Statements
 			set { SetField(ref startOfUse, value); }
 		}
 
-		private decimal periodCount;
+		private decimal lifetime;
 
-		[Display(Name = "Срок службы в периодах")]
-		public virtual decimal PeriodCount {
-			get { return periodCount; }
-			set { SetField(ref periodCount, value); }
-		}
-
-		private NormPeriodType periodType;
-
-		[Display(Name = "Тип периода")]
-		public virtual NormPeriodType PeriodType {
-			get { return periodType; }
-			set { SetField(ref periodType, value); }
+		[Display(Name = "Срок службы")]
+		public virtual decimal Lifetime {
+			get { return lifetime; }
+			set { SetField(ref lifetime, value); }
 		}
 
 		#endregion
