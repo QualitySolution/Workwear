@@ -11,10 +11,13 @@ using QS.Project.DB;
 using QS.Project.Domain;
 using QS.Project.Services;
 using QS.Project.Services.GtkUI;
+using QS.Report.ViewModels;
+using QS.Report.Views;
 using QS.Services;
-using QS.Tdi.Gtk;
+using QS.Tdi;
 using QS.Validation;
 using QS.Validation.GtkUI;
+using QS.Views.Resolve;
 using QSOrmProject;
 using QSProjectsLib;
 using workwear.Dialogs.Organization;
@@ -29,6 +32,7 @@ using workwear.JournalViewModels.Statements;
 using workwear.Tools;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Statements;
+using workwear.Views.Company;
 
 namespace workwear
 {
@@ -110,15 +114,20 @@ namespace workwear
 
 			#region Навигация
 			builder.RegisterType<ClassNamesHashGenerator>().As<IPageHashGenerator>();
-			builder.Register((ctx) => new AutofacViewModelsPageFactory(AppDIContainer)).As<IViewModelsPageFactory>();
+			builder.Register((ctx) => new AutofacViewModelsTdiPageFactory(AppDIContainer)).As<IViewModelsPageFactory>();
 			builder.Register((ctx) => new AutofacTdiPageFactory(AppDIContainer)).As<ITdiPageFactory>();
 			builder.RegisterType<TdiNavigationManager>().AsSelf().As<INavigationManager>().As<ITdiCompatibilityNavigation>().SingleInstance();
 			builder.RegisterType<BasedOnNameTDIResolver>().As<ITDIWidgetResolver>();
+			builder.Register(cc => new ClassNamesBaseGtkViewResolver(typeof(RdlViewerView), typeof(OrganizationView))).As<IGtkViewResolver>();
 			#endregion
 
 			#region Старые диалоги
 			builder.RegisterType<OrmReference>().AsSelf();
 			builder.RegisterType<ReferenceRepresentation>().AsSelf();
+			#endregion
+
+			#region Rdl
+			builder.RegisterType<RdlViewerViewModel>().AsSelf();
 			#endregion
 
 			#region ViewModels

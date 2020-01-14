@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Gtk;
 using QS.Views.GtkUI;
@@ -73,6 +73,11 @@ namespace workwear.Views.Statements
 			if(ytreeviewItems.ColumnsConfig.GetColumnsByTag("IsNomenclatureColumn").First() == args.Column) {
 				ViewModel.SetNomenclature(ytreeviewItems.GetSelectedObjects<IssuanceSheetItem>());
 			}
+		}
+
+		protected void OnButtonPrintClicked(object sender, EventArgs e)
+		{
+			ViewModel.Print();
 		}
 	}
 }

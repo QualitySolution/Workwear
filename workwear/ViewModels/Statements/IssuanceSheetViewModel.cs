@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Autofac;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -130,6 +130,22 @@ namespace workwear.ViewModels.Statements
 			foreach(var item in items) {
 				item.Nomenclature = e.Subject as Nomenclature;
 			}
+		}
+
+		#endregion
+
+		#region Кнопки
+
+		public void Print()
+		{
+			var reportInfo = new ReportInfo {
+				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
+				Identifier = "Statements.IssuanceSheet",
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id }
+				}
+			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 
 		#endregion
