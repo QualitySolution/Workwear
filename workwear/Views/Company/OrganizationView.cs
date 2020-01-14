@@ -1,12 +1,11 @@
-﻿using System;
-using QS.Views.GtkUI;
+﻿using QS.Views.Dialog;
 using workwear.Domain.Company;
 using workwear.ViewModels.Company;
 
 namespace workwear.Views.Company
 {
 
-	public partial class OrganizationView : EntityTabViewBase<OrganizationViewModel, Organization>
+	public partial class OrganizationView : EntityDialogViewBase<OrganizationViewModel, Organization>
 	{
 		public OrganizationView(OrganizationViewModel viewModel) : base(viewModel)
 		{

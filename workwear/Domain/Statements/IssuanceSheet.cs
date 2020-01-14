@@ -79,6 +79,12 @@ namespace workwear.Domain.Statements
 
 		#endregion
 
+		#region Вычисляемые свойства
+
+		public virtual string Title => $"Ведомость №{Id}";
+
+		#endregion
+
 		public IssuanceSheet()
 		{
 		}

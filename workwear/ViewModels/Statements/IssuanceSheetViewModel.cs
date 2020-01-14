@@ -1,11 +1,14 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using Autofac;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
-using QS.Services;
-using QS.ViewModels;
+using QS.Report;
+using QS.Report.ViewModels;
+using QS.Tdi;
 using QS.ViewModels.Control.EEVM;
+using QS.ViewModels.Dialog;
 using QSOrmProject;
 using QSOrmProject.RepresentationModel;
 using workwear.Domain.Company;
@@ -17,7 +20,7 @@ using workwear.ViewModels.Company;
 
 namespace workwear.ViewModels.Statements
 {
-	public class IssuanceSheetViewModel : EntityTabViewModelBase<IssuanceSheet>
+	public class IssuanceSheetViewModel : LegacyEntityDialogViewModelBase<IssuanceSheet>
 	{
 		public EntityEntryViewModel<Organization> OrganizationEntryViewModel;
 		public EntityEntryViewModel<Facility> SubdivisionEntryViewModel;
@@ -27,12 +30,12 @@ namespace workwear.ViewModels.Statements
 
 		public ITdiCompatibilityNavigation navigationManager;
 
-		public IssuanceSheetViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiCompatibilityNavigation navigationManager, ILifetimeScope autofacScope, ICommonServices commonServices) : base(uowBuilder, unitOfWorkFactory, commonServices)
+		public IssuanceSheetViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiTab myTab, ITdiCompatibilityNavigation navigationManager, ILifetimeScope autofacScope) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager)
 		{
 			this.navigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 
-			var entryBuilder = new LegacyEEVMBuilderFactory<IssuanceSheet>(this, this, Entity, UoW, navigationManager) {
+			var entryBuilder = new LegacyEEVMBuilderFactory<IssuanceSheet>(this, TdiTab, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
 
@@ -63,7 +66,7 @@ namespace workwear.ViewModels.Statements
 
 		public void AddItems()
 		{
-			var selectPage = navigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(Nomenclature), OpenPageOptions.AsSlave);
+			var selectPage = navigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(Nomenclature), OpenPageOptions.AsSlave);
 
 			var selectDialog = selectPage.TdiTab as OrmReference;
 			selectDialog.Mode = OrmReferenceMode.MultiSelect;
@@ -94,7 +97,7 @@ namespace workwear.ViewModels.Statements
 		public void SetEmployee(IssuanceSheetItem[] items)
 		{
 			var selectPage = navigationManager.OpenTdiTab<ReferenceRepresentation>(
-				this, 
+				TdiTab, 
 				OpenPageOptions.AsSlave, 
 				c => c.RegisterType<EmployeesVM>().As<IRepresentationModel>()
 			);
@@ -116,7 +119,7 @@ namespace workwear.ViewModels.Statements
 
 		public void SetNomenclature(IssuanceSheetItem[] items)
 		{
-			var selectPage = navigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(Nomenclature), OpenPageOptions.AsSlave);
+			var selectPage = navigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(Nomenclature), OpenPageOptions.AsSlave);
 
 			var selectDialog = selectPage.TdiTab as OrmReference;
 			selectDialog.Tag = items;

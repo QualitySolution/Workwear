@@ -1,13 +1,13 @@
-using System;
+﻿using System;
 using System.Linq;
 using Gtk;
-using QS.Views.GtkUI;
+using QS.Views.Dialog;
 using workwear.Domain.Statements;
 using workwear.ViewModels.Statements;
 
 namespace workwear.Views.Statements
 {
-	public partial class IssuanceSheetView : EntityTabViewBase<IssuanceSheetViewModel, IssuanceSheet>
+	public partial class IssuanceSheetView : EntityDialogViewBase<IssuanceSheetViewModel, IssuanceSheet>
 	{
 		public IssuanceSheetView(IssuanceSheetViewModel viewModel) : base(viewModel)
 		{

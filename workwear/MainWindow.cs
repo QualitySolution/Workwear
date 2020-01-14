@@ -8,6 +8,7 @@ using QS.BusinessCommon.Domain;
 using QS.Dialog.Gtk;
 using QS.Navigation;
 using QS.Report;
+using QS.Tdi;
 using QS.Tdi.Gtk;
 using QS.Updater;
 using QSOrmProject;
@@ -79,8 +80,8 @@ public partial class MainWindow : Gtk.Window
 		}
 
 		this.KeyReleaseEvent += ClipboardWorkaround.HandleKeyReleaseEvent;
-		QS.Tdi.Gtk.TDIMain.MainNotebook = tdiMain;
-		this.KeyReleaseEvent += QS.Tdi.Gtk.TDIMain.TDIHandleKeyReleaseEvent;
+		TDIMain.MainNotebook = tdiMain;
+		this.KeyReleaseEvent += TDIMain.TDIHandleKeyReleaseEvent;
 
 		UsersAction.Sensitive = QSMain.User.Admin;
 		labelUser.LabelProp = QSMain.User.Name;
