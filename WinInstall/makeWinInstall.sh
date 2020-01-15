@@ -7,7 +7,7 @@ ProjectName="Workwear"
 BinDir=../$ProjectName/bin/ReleaseWin
 
 # Сборка релиза
-msbuild /p:Configuration=ReleaseWin /p:Platform=x86 ../workwear.sln
+msbuild /p:Configuration=ReleaseWin /p:Platform=x86 ../Workwear.sln
 
 # Очистка бин от лишний файлов
 
