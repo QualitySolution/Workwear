@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using QS.DomainModel.Entity;
 using workwear.Domain.Company;
+using workwear.Domain.Stock;
 
 namespace workwear.Domain.Statements
 {
@@ -39,6 +40,14 @@ namespace workwear.Domain.Statements
 			get { return subdivision; }
 			set { SetField(ref subdivision, value); }
 		}
+
+		private Expense expense;
+		[Display(Name = "Документ выдачи")]
+		public virtual Expense Expense {
+			get => expense;
+			set => SetField(ref expense, value);
+		}
+
 
 		#region Подписи
 
