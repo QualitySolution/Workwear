@@ -14,7 +14,7 @@ namespace WorkwearTest.Integration
 		public void Reports_ExportExcel2007_SharpZipLibExistInOutputDirTest()
 		{
 			var path = Directory.GetCurrentDirectory();
-			var filePath = Path.Combine(path.ReplaceLastOccurrence("WorkwearTest", "workwear"), "ICSharpCode.SharpZipLib.dll");
+			var filePath = Path.Combine(path.ReplaceLastOccurrence("WorkwearTest", "Workwear"), "ICSharpCode.SharpZipLib.dll");
 			FileAssert.Exists(filePath);
 		}
 
