@@ -107,9 +107,9 @@
       <Project>{28A78143-42E3-40E7-86F5-DD7E1679BE86}</Project>
       <Name>QS.Project</Name>
     </ProjectReference>
-    <ProjectReference Include="..\workwear\workwear.csproj">
+    <ProjectReference Include="..\Workwear\Workwear.csproj">
       <Project>{63B06122-016A-42D4-B621-8E0F9FA8E738}</Project>
-      <Name>workwear</Name>
+      <Name>Workwear</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\My-FyiReporting\RdlGtkViewer\RdlGtkViewer\RdlGtkViewer.csproj">
       <Project>{921488F1-F4FC-4438-920E-86E57442B253}</Project>
