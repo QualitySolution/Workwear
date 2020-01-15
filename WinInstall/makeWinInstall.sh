@@ -3,7 +3,7 @@ set -e
 
 cd "$(dirname "$0")"
 
-ProjectName="workwear"
+ProjectName="Workwear"
 BinDir=../$ProjectName/bin/ReleaseWin
 
 # Сборка релиза
