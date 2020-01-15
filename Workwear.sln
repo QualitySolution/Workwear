@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "workwear", "workwear\workwear.csproj", "{63B06122-016A-42D4-B621-8E0F9FA8E738}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workwear", "Workwear\Workwear.csproj", "{63B06122-016A-42D4-B621-8E0F9FA8E738}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QSLibs", "QSLibs", "{792D3656-91FD-45AA-A40B-A0D63306A113}"
 EndProject

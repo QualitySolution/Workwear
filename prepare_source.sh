@@ -9,7 +9,7 @@ read case;
 
 case $case in
     *4*)
-rm -v -f -R ./workwear/bin/*
+rm -v -f -R ./Workwear/bin/*
 rm -v -f -R ../QSProjects/*/bin/*
 rm -v -f -R ../My-FyiReporting/*/bin/*
 ;;&
@@ -28,10 +28,10 @@ cd ../GammaBinding
 git pull --autostash
 cd ../My-FyiReporting
 git pull --autostash
-cd ../workwear
+cd ../Workwear
 ;;&
     *2*)
-nuget restore workwear.sln;
+nuget restore Workwear.sln;
 nuget restore ../QSProjects/QSProjectsLib.sln;
 nuget restore ../My-FyiReporting/MajorsilenceReporting-Linux-GtkViewer.sln
 ;;&

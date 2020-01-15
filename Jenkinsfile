@@ -7,7 +7,7 @@ node {
          extensions: scm.extensions + [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'Workwear']],
          userRemoteConfigs: scm.userRemoteConfigs
       ])
-      sh 'nuget restore Workwear/workwear.sln'
+      sh 'nuget restore Workwear/Workwear.sln'
    }
    stage('QSProjects') {
       checkout([$class: 'GitSCM', branches: [[name: '*/feature/RefactoryTdiNavigation']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'QSProjects']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/QSProjects.git']]])
