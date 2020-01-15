@@ -122,6 +122,10 @@ namespace workwear
 			#endregion
 
 			#region Старые диалоги
+			builder.RegisterType<ExpenseDocDlg>().AsSelf();
+			#endregion
+
+			#region Старые общие диалоги
 			builder.RegisterType<OrmReference>().AsSelf();
 			builder.RegisterType<ReferenceRepresentation>().AsSelf();
 			#endregion

@@ -106,6 +106,12 @@ namespace workwear.Domain.Statements
 			return item;
 		}
 
+		public virtual void CleanObservableItems()
+		{
+			observableItems = null;
+			OnPropertyChanged(nameof(ObservableItems));
+		}
+
 		#endregion
 
 		public IssuanceSheet()

@@ -25,21 +25,28 @@ namespace workwear.Views.Statements
 			entityentryResponsiblePerson.ViewModel = ViewModel.ResponsiblePersonEntryViewModel;
 			entityentryHeadOfDivisionPerson.ViewModel = ViewModel.HeadOfDivisionPersonEntryViewModel;
 
+			hboxExpense.Visible = ViewModel.VisibleExpense;
+			labelExpense.LabelProp = Entity.Expense?.Title;
+			ytreeviewItems.Sensitive = ViewModel.CanEditItems;
+			buttonAdd.Sensitive = ViewModel.CanEditItems;
+
 			ytreeviewItems.CreateFluentColumnsConfig<IssuanceSheetItem>()
 				.AddColumn("Ф.И.О.").Tag("IsFIOColumn").AddTextRenderer(x => x.Employee != null ? x.Employee.ShortName : String.Empty)
 				.AddColumn("Спецодежда").Tag("IsNomenclatureColumn").AddTextRenderer(x => x.Nomenclature != null ? x.Nomenclature.Name : String.Empty)
 				.AddColumn("Размер").AddTextRenderer(x => x.Nomenclature != null ? x.Nomenclature.Size : String.Empty)
 				.AddColumn("Количество")
-					.AddNumericRenderer(x => x.Amount).Editing(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
+					.AddNumericRenderer(x => x.Amount).Editing(ViewModel.CanEditItems).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
 					.AddTextRenderer(x => x.Nomenclature != null && x.Nomenclature.Type.Units != null ? x.Nomenclature.Type.Units.Name : String.Empty)
 				.AddColumn("Начало эксплуатации").AddTextRenderer(x => x.StartOfUse != default(DateTime) ? x.StartOfUse.ToShortDateString() : String.Empty)
 				.AddColumn("Срок службы")
-					.AddNumericRenderer(x => x.Lifetime).Editing(new Adjustment(1, 0, 1000, 1, 12, 10))
+					.AddNumericRenderer(x => x.Lifetime).Editing(ViewModel.CanEditItems).Adjustment(new Adjustment(1, 0, 1000, 1, 12, 10))
 				.Finish();
 
 			ytreeviewItems.Selection.Changed += Selection_Changed;
 			ytreeviewItems.Selection.Mode = SelectionMode.Multiple;
 			ytreeviewItems.ItemsDataSource = ViewModel.Entity.ObservableItems;
+
+			Entity.PropertyChanged += Entity_PropertyChanged;
 		}
 
 		protected void OnButtonAddClicked(object sender, EventArgs e)
@@ -49,7 +56,7 @@ namespace workwear.Views.Statements
 
 		void Selection_Changed(object sender, EventArgs e)
 		{
-			buttonDel.Sensitive = buttonSetEmployee.Sensitive = ytreeviewItems.Selection.CountSelectedRows() > 0;
+			buttonDel.Sensitive = buttonSetEmployee.Sensitive = ytreeviewItems.Selection.CountSelectedRows() > 0 && ViewModel.CanEditItems;
 		}
 
 		protected void OnButtonDelClicked(object sender, EventArgs e)
@@ -66,6 +73,9 @@ namespace workwear.Views.Statements
 
 		protected void OnYtreeviewItemsRowActivated(object o, RowActivatedArgs args)
 		{
+			if(!ViewModel.CanEditItems)
+				return;
+
 			if(ytreeviewItems.ColumnsConfig.GetColumnsByTag("IsFIOColumn").First() == args.Column) {
 				buttonSetEmployee.Click();
 			}
@@ -79,5 +89,17 @@ namespace workwear.Views.Statements
 		{
 			ViewModel.Print();
 		}
+
+		protected void OnButtonExpenseOpenClicked(object sender, EventArgs e)
+		{
+			ViewModel.OpenExpense();
+		}
+
+		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(Entity.ObservableItems))
+				ytreeviewItems.ItemsDataSource = Entity.ObservableItems;
+		}
+
 	}
 }

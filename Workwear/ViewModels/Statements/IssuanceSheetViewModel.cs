@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Autofac;
+using QS.DomainModel.Entity;
+using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -28,11 +31,11 @@ namespace workwear.ViewModels.Statements
 		public EntityEntryViewModel<Leader> HeadOfDivisionPersonEntryViewModel;
 		public ILifetimeScope AutofacScope;
 
-		public ITdiCompatibilityNavigation navigationManager;
+		public ITdiCompatibilityNavigation tdiNavigationManager;
 
 		public IssuanceSheetViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiTab myTab, ITdiCompatibilityNavigation navigationManager, ILifetimeScope autofacScope) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager)
 		{
-			this.navigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
+			this.tdiNavigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 
 			var entryBuilder = new LegacyEEVMBuilderFactory<IssuanceSheet>(this, TdiTab, Entity, UoW, navigationManager) {
@@ -60,13 +63,15 @@ namespace workwear.ViewModels.Statements
 													 .Finish();
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
+
+			NotifyConfiguration.Instance.BatchSubscribeOnEntity<ExpenseItem>(Expense_Changed);
 		}
 
 		#region Таблица 
 
 		public void AddItems()
 		{
-			var selectPage = navigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(Nomenclature), OpenPageOptions.AsSlave);
+			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(Nomenclature), OpenPageOptions.AsSlave);
 
 			var selectDialog = selectPage.TdiTab as OrmReference;
 			selectDialog.Mode = OrmReferenceMode.MultiSelect;
@@ -96,7 +101,7 @@ namespace workwear.ViewModels.Statements
 
 		public void SetEmployee(IssuanceSheetItem[] items)
 		{
-			var selectPage = navigationManager.OpenTdiTab<ReferenceRepresentation>(
+			var selectPage = tdiNavigationManager.OpenTdiTab<ReferenceRepresentation>(
 				TdiTab, 
 				OpenPageOptions.AsSlave, 
 				c => c.RegisterType<EmployeesVM>().As<IRepresentationModel>()
@@ -119,7 +124,7 @@ namespace workwear.ViewModels.Statements
 
 		public void SetNomenclature(IssuanceSheetItem[] items)
 		{
-			var selectPage = navigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(Nomenclature), OpenPageOptions.AsSlave);
+			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(Nomenclature), OpenPageOptions.AsSlave);
 
 			var selectDialog = selectPage.TdiTab as OrmReference;
 			selectDialog.Tag = items;
@@ -134,6 +139,19 @@ namespace workwear.ViewModels.Statements
 				item.Nomenclature = e.Subject as Nomenclature;
 			}
 		}
+
+
+		#endregion
+
+		#region Sensetive
+
+		public bool CanEditItems => Entity.Expense == null;
+
+		#endregion
+
+		#region Visible
+
+		public bool VisibleExpense => Entity.Expense != null;
 
 		#endregion
 
@@ -153,6 +171,23 @@ namespace workwear.ViewModels.Statements
 
 		#endregion
 
+		#region Выдача сотруднику
+
+		public void OpenExpense()
+		{
+			tdiNavigationManager.OpenTdiTab<ExpenseDocDlg, Expense>(TdiTab, Entity.Expense);
+		}
+
+		void Expense_Changed(EntityChangeEvent[] changeEvents)
+		{
+			if(changeEvents.Any(x => (x.Entity as ExpenseItem).ExpenseDoc.Id == Entity.Expense?.Id)){
+				Entity.ReloadChildCollection(x => x.Items, x => x.IssuanceSheet, UoW.Session);
+				Entity.CleanObservableItems();
+			}
+		}
+
+		#endregion
+
 		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			switch(e.PropertyName) {
@@ -164,5 +199,10 @@ namespace workwear.ViewModels.Statements
 			}
 		}
 
+		public override void Dispose()
+		{
+			base.Dispose();
+			NotifyConfiguration.Instance.UnsubscribeAll(this);
+		}
 	}
 }

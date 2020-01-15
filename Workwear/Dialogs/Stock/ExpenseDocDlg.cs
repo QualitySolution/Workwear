@@ -101,6 +101,7 @@ namespace workwear
 
 			var ask = new GtkQuestionDialogsInteractive();
 			Entity.UpdateOperations(UoW, ask);
+			Entity.UpdateIssuanceSheet();
 			UoWGeneric.Save ();
 			if(Entity.Operation == ExpenseOperations.Employee)
 			{
