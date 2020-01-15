@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -49,12 +49,12 @@ namespace workwear.Domain.Stock
 			set { SetField (ref amount, value, () => Amount); }
 		}
 
-		FacilityPlace facilityPlace;
+		SubdivisionPlace subdivisionPlace;
 
-		[Display (Name = "Размещение на объекте")]
-		public virtual FacilityPlace FacilityPlace {
-			get { return facilityPlace; }
-			set { SetField (ref facilityPlace, value, () => FacilityPlace); }
+		[Display (Name = "Размещение в подразделении")]
+		public virtual SubdivisionPlace SubdivisionPlace {
+			get { return subdivisionPlace; }
+			set { SetField (ref subdivisionPlace, value, () => SubdivisionPlace); }
 		}
 
 		DateTime? autoWriteoffDate;

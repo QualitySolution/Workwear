@@ -23,7 +23,7 @@ namespace workwear.ViewModels.Statements
 	public class IssuanceSheetViewModel : LegacyEntityDialogViewModelBase<IssuanceSheet>
 	{
 		public EntityEntryViewModel<Organization> OrganizationEntryViewModel;
-		public EntityEntryViewModel<Facility> SubdivisionEntryViewModel;
+		public EntityEntryViewModel<Subdivision> SubdivisionEntryViewModel;
 		public EntityEntryViewModel<Leader> ResponsiblePersonEntryViewModel;
 		public EntityEntryViewModel<Leader> HeadOfDivisionPersonEntryViewModel;
 		public ILifetimeScope AutofacScope;

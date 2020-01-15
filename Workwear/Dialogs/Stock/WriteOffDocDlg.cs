@@ -30,7 +30,7 @@ namespace workwear
 			ItemsTable.CurWorker = employee;
 		}
 
-		public WriteOffDocDlg (Facility facility) : this () 
+		public WriteOffDocDlg (Subdivision facility) : this () 
 		{
 			ItemsTable.CurObject = facility;
 		}

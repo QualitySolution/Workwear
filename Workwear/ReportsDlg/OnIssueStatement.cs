@@ -36,7 +36,7 @@ namespace workwear
             ylistcomboMonth2.ItemsList = months;
             ylistcomboMonth2.SelectedItem = DateTime.Today.Month;
 
-            entryreferenceFacility.SubjectType = typeof(Facility);
+            entryreferenceFacility.SubjectType = typeof(Subdivision);
 			entryEmploee.SubjectType = typeof(EmployeeCard);
 
 			//Заполняем года
@@ -96,7 +96,7 @@ namespace workwear
 				{
 					{ "start_date", startDate.ToString("O").Substring(0, 10) },
 					{ "end_date", endDate.ToString("O").Substring(0, 10) },
-					{ "facility", entryreferenceFacility.GetSubject<Facility>()?.Id ?? -1 },
+					{ "facility", entryreferenceFacility.GetSubject<Subdivision>()?.Id ?? -1 },
 					{ "employee", entryEmploee.GetSubject<EmployeeCard>()?.Id ?? -1 },
 					{"ShowSignature", true}
 				}

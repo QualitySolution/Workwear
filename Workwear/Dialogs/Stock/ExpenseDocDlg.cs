@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
@@ -26,9 +26,9 @@ namespace workwear
 			ConfigureDlg ();
 		}
 
-		public ExpenseDocDlg (Facility facility) : this () {
+		public ExpenseDocDlg (Subdivision facility) : this () {
 			Entity.Operation = ExpenseOperations.Object;
-			Entity.Facility = facility;
+			Entity.Subdivision = facility;
 		}
 
 		public ExpenseDocDlg (EmployeeCard employee) : this () {
@@ -76,8 +76,8 @@ namespace workwear
 			yentryEmployee.SubjectType = typeof(EmployeeCard);
 			yentryEmployee.Binding.AddBinding (Entity, e => e.Employee, w => w.Subject).InitializeFromSource ();
 
-			yentryObject.SubjectType = typeof(Facility);
-			yentryObject.Binding.AddBinding (Entity, e => e.Facility, w => w.Subject).InitializeFromSource ();
+			yentryObject.SubjectType = typeof(Subdivision);
+			yentryObject.Binding.AddBinding (Entity, e => e.Subdivision, w => w.Subject).InitializeFromSource ();
 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 

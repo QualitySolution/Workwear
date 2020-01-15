@@ -43,7 +43,7 @@ namespace workwear
 				expenceDoc.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 				ExpenceDoc_PropertyChanged(expenceDoc, new System.ComponentModel.PropertyChangedEventArgs(expenceDoc.GetPropertyName(x => x.Operation)));
 				if(ExpenceDoc.Operation == ExpenseOperations.Object)
-					ExpenceDoc_PropertyChanged(expenceDoc, new System.ComponentModel.PropertyChangedEventArgs(expenceDoc.GetPropertyName(x => x.Facility)));
+					ExpenceDoc_PropertyChanged(expenceDoc, new System.ComponentModel.PropertyChangedEventArgs(expenceDoc.GetPropertyName(x => x.Subdivision)));
 				CalculateTotal();
 
 				ExpenceDoc.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
@@ -64,17 +64,17 @@ namespace workwear
 
 		void ExpenceDoc_PropertyChanged (object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if(e.PropertyName == ExpenceDoc.GetPropertyName(x => x.Facility))
+			if(e.PropertyName == ExpenceDoc.GetPropertyName(x => x.Subdivision))
 			{
 				var placeColumn = ytreeItems.ColumnsConfig.ConfiguredColumns.FirstOrDefault(x => ColumnTags.FacilityPlace.Equals(x.tag));
-				var placeRenderer = placeColumn.ConfiguredRenderers.First() as ComboRendererMapping<ExpenseItem, FacilityPlace>;
-				if(ExpenceDoc.Facility != null)
+				var placeRenderer = placeColumn.ConfiguredRenderers.First() as ComboRendererMapping<ExpenseItem, SubdivisionPlace>;
+				if(ExpenceDoc.Subdivision != null)
 				{
-					placeRenderer.FillItems(ExpenceDoc.Facility.Places);
+					placeRenderer.FillItems(ExpenceDoc.Subdivision.Places);
 				}
 				else
 				{
-					placeRenderer.FillItems(new List<FacilityPlace> ());
+					placeRenderer.FillItems(new List<SubdivisionPlace> ());
 				}
 			}
 
@@ -102,8 +102,8 @@ namespace workwear
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument).Editable()
-				.AddColumn ("Расположение").Tag(ColumnTags.FacilityPlace).AddComboRenderer (e => e.FacilityPlace).Editing()
-					.SetDisplayFunc(x => (x as FacilityPlace) != null ? (x as FacilityPlace).Name : String.Empty)
+				.AddColumn ("Расположение").Tag(ColumnTags.FacilityPlace).AddComboRenderer (e => e.SubdivisionPlace).Editing()
+					.SetDisplayFunc(x => (x as SubdivisionPlace) != null ? (x as SubdivisionPlace).Name : String.Empty)
 				.AddColumn("")
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;

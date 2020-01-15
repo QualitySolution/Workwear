@@ -3,9 +3,9 @@ using workwear.Domain.Company;
 
 namespace workwear.HibernateMapping.Company
 {
-	public class FacilityMap : ClassMap<Facility>
+	public class SubdivisionMap : ClassMap<Subdivision>
 	{
-		public FacilityMap ()
+		public SubdivisionMap ()
 		{
 			Table ("objects");
 

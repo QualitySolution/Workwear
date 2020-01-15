@@ -45,12 +45,12 @@ namespace workwear.Domain.Stock
 			set { SetField (ref employeeCard, value, () => EmployeeCard); }
 		}
 
-		Facility facility;
+		Subdivision subdivision;
 
-		[Display (Name = "Объект")]
-		public virtual Facility Facility {
-			get { return facility; }
-			set { SetField (ref facility, value, () => Facility); }
+		[Display (Name = "Подразделение")]
+		public virtual Subdivision Subdivision {
+			get { return subdivision; }
+			set { SetField (ref subdivision, value, () => Subdivision); }
 		}
 
 		private IList<IncomeItem> items = new List<IncomeItem>();
@@ -96,7 +96,7 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
 					new[] { this.GetPropertyName (o => o.Date)});
 
-			if(Operation == IncomeOperations.Object && Facility == null)
+			if(Operation == IncomeOperations.Object && Subdivision == null)
 				yield return new ValidationResult ("Объект должен быть указан", 
 					new[] { this.GetPropertyName (o => o.Date)});
 

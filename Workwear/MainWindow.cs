@@ -319,8 +319,8 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionObjectsActivated(object sender, EventArgs e)
 	{
 		tdiMain.OpenTab(
-			OrmReference.GenerateHashName<Facility>(),
-			() => new OrmReference(typeof(Facility))
+			OrmReference.GenerateHashName<Subdivision>(),
+			() => new OrmReference(typeof(Subdivision))
 		);
 	}
 

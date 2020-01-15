@@ -19,14 +19,14 @@ namespace workwear
 
 			#region Организация
 
-			DeleteConfig.AddHibernateDeleteInfo<Facility> ()
-				.AddDeleteDependence<FacilityPlace>(x => x.Facility)
-				.AddDeleteDependence<Expense> (x => x.Facility)
-				.AddDeleteDependence<Income> (x => x.Facility)
-				.AddClearDependence<EmployeeCard> (x => x.Facility);
+			DeleteConfig.AddHibernateDeleteInfo<Subdivision> ()
+				.AddDeleteDependence<SubdivisionPlace>(x => x.Subdivision)
+				.AddDeleteDependence<Expense> (x => x.Subdivision)
+				.AddDeleteDependence<Income> (x => x.Subdivision)
+				.AddClearDependence<EmployeeCard> (x => x.Subdivision);
 
-			DeleteConfig.AddHibernateDeleteInfo<FacilityPlace>()
-				.AddClearDependence<ExpenseItem>(x => x.FacilityPlace);
+			DeleteConfig.AddHibernateDeleteInfo<SubdivisionPlace>()
+				.AddClearDependence<ExpenseItem>(x => x.SubdivisionPlace);
 
 			DeleteConfig.AddHibernateDeleteInfo<Leader> ()
 				.AddClearDependence<EmployeeCard> (x => x.Leader);

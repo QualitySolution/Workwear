@@ -45,7 +45,7 @@ namespace workwear.Dialogs.Organization
 			notebook1.GetNthPage (3).Visible = !UoWGeneric.IsNew;
 
 			IsPostSetOnLoad = Entity.Post != null;
-			IsSubdivisionSetOnLoad = Entity.Facility != null;
+			IsSubdivisionSetOnLoad = Entity.Subdivision != null;
 
 			comboSex.ItemsEnum = typeof(Sex);
 			comboSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItem).InitializeFromSource ();
@@ -81,8 +81,8 @@ namespace workwear.Dialogs.Organization
 			OnYentryPostChanged (null, null); //Так как событие не будет вызвано, если в объекте null, а кнопку "По должности" нужно заблокировать. 
 			yentryLeader.SubjectType = typeof(Leader);
 			yentryLeader.Binding.AddBinding (Entity, e => e.Leader, w => w.Subject).InitializeFromSource ();
-			yentryObject.SubjectType = typeof(Facility);
-			yentryObject.Binding.AddBinding (Entity, e => e.Facility, w => w.Subject).InitializeFromSource ();
+			yentryObject.SubjectType = typeof(Subdivision);
+			yentryObject.Binding.AddBinding (Entity, e => e.Subdivision, w => w.Subject).InitializeFromSource ();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			yimagePhoto.Binding.AddBinding (Entity, e => e.Photo, w => w.ImageFile).InitializeFromSource ();
@@ -238,7 +238,7 @@ namespace workwear.Dialogs.Organization
 
 		protected void OnYentryObjectChanged(object sender, EventArgs e)
 		{
-			labelObjectAddress.LabelProp = Entity.Facility != null ? Entity.Facility.Address : "--//--";
+			labelObjectAddress.LabelProp = Entity.Subdivision != null ? Entity.Subdivision.Address : "--//--";
 		}
 
 		protected void OnButtonSavePhotoClicked(object sender, EventArgs e)

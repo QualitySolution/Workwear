@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -35,12 +35,12 @@ namespace workwear.Domain.Stock
 			set { SetField (ref employee, value, () => Employee); }
 		}
 
-		Facility facility;
+		Subdivision subdivision;
 
-		[Display (Name = "Объект")]
-		public virtual Facility Facility {
-			get { return facility; }
-			set { SetField (ref facility, value, () => Facility); }
+		[Display (Name = "Подразделение")]
+		public virtual Subdivision Subdivision {
+			get { return subdivision; }
+			set { SetField (ref subdivision, value, () => Subdivision); }
 		}
 
 		private IList<ExpenseItem> items = new List<ExpenseItem>();
@@ -79,7 +79,7 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
 					new[] { this.GetPropertyName (o => o.Date)});
 
-			if(Operation == ExpenseOperations.Object && Facility == null)
+			if(Operation == ExpenseOperations.Object && Subdivision == null)
 				yield return new ValidationResult ("Объект должен быть указан", 
 					new[] { this.GetPropertyName (o => o.Date)});
 

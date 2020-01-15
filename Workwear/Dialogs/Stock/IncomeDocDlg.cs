@@ -31,10 +31,10 @@ namespace workwear
 			Entity.EmployeeCard = employee;
 		}
 
-		public IncomeDocDlg (Facility facility) : this () 
+		public IncomeDocDlg (Subdivision facility) : this () 
 		{
 			Entity.Operation = IncomeOperations.Object;
-			Entity.Facility = facility;
+			Entity.Subdivision = facility;
 		}
 
 		public IncomeDocDlg (Income item) : this (item.Id) {}
@@ -62,8 +62,8 @@ namespace workwear
 			yentryEmployee.SubjectType = typeof(EmployeeCard);
 			yentryEmployee.Binding.AddBinding (Entity, e => e.EmployeeCard, w => w.Subject).InitializeFromSource ();
 
-			yentryObject.SubjectType = typeof(Facility);
-			yentryObject.Binding.AddBinding (Entity, e => e.Facility, w => w.Subject).InitializeFromSource ();
+			yentryObject.SubjectType = typeof(Subdivision);
+			yentryObject.Binding.AddBinding (Entity, e => e.Subdivision, w => w.Subject).InitializeFromSource ();
 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 

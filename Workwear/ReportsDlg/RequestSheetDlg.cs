@@ -13,7 +13,7 @@ namespace workwear
 		public RequestSheetDlg()
 		{
 			this.Build();
-			entryreferenceFacility.SubjectType = typeof(Facility);
+			entryreferenceFacility.SubjectType = typeof(Subdivision);
 			SwitchDialog(PeriodType.Month);
 		}
 
@@ -31,7 +31,7 @@ namespace workwear
 					{
 						{ "quarter", quart.Number },
 						{ "year", quart.Year },
-						{ "facility", entryreferenceFacility.GetSubject<Facility>()?.Id ?? -1 },
+						{ "facility", entryreferenceFacility.GetSubject<Subdivision>()?.Id ?? -1 },
 					}
 				};
 			}
@@ -45,7 +45,7 @@ namespace workwear
 					{
 						{ "month", month.Number },
 						{ "year", month.Year },
-						{ "facility", entryreferenceFacility.GetSubject<Facility>()?.Id ?? -1 },
+						{ "facility", entryreferenceFacility.GetSubject<Subdivision>()?.Id ?? -1 },
 					}
 				};
 			}
@@ -59,7 +59,7 @@ namespace workwear
 					Parameters = new Dictionary<string, object>
 					{
 						{ "year", year.Number },
-						{ "facility", entryreferenceFacility.GetSubject<Facility>()?.Id ?? -1 },
+						{ "facility", entryreferenceFacility.GetSubject<Subdivision>()?.Id ?? -1 },
 					}
 				};
 			}

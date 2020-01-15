@@ -35,7 +35,7 @@ namespace workwear.Representations
 			Writeoff writeoffAlias = null;
 			StockDocumentsVMNode resultAlias = null;
 			EmployeeCard employeeAlias = null;
-			Facility facilityAlias = null;
+			Subdivision facilityAlias = null;
 			UserBase authorAlias = null;
 
 			List<StockDocumentsVMNode> result = new List<StockDocumentsVMNode>();
@@ -50,7 +50,7 @@ namespace workwear.Representations
 
 				var incomeList = incomeQuery
 					.JoinQueryOver(() => incomeAlias.EmployeeCard, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-					.JoinQueryOver(() => incomeAlias.Facility, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					.JoinQueryOver(() => incomeAlias.Subdivision, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 					.JoinAlias(() => incomeAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList(list => list
 				   			.Select(() => incomeAlias.Id).WithAlias(() => resultAlias.Id)
@@ -79,7 +79,7 @@ namespace workwear.Representations
 
 				var expenseList = expenseQuery
 					.JoinQueryOver(() => expenseAlias.Employee, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-					.JoinQueryOver(() => expenseAlias.Facility, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					.JoinQueryOver(() => expenseAlias.Subdivision, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList(list => list
 							.Select(() => expenseAlias.Id).WithAlias(() => resultAlias.Id)

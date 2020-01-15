@@ -33,10 +33,10 @@ namespace workwear.Domain.Statements
 			set { SetField(ref organization, value); }
 		}
 
-		private Facility subdivision;
+		private Subdivision subdivision;
 
 		[Display(Name = "Подразделение")]
-		public virtual Facility Subdivision {
+		public virtual Subdivision Subdivision {
 			get { return subdivision; }
 			set { SetField(ref subdivision, value); }
 		}

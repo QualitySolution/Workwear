@@ -55,10 +55,10 @@ namespace workwear
 		{
 			if(e.PropertyName == IncomeDoc.GetPropertyName (d => d.Operation) 
 				|| e.PropertyName == IncomeDoc.GetPropertyName (d => d.EmployeeCard)
-				|| e.PropertyName == IncomeDoc.GetPropertyName (d => d.Facility))
+				|| e.PropertyName == IncomeDoc.GetPropertyName (d => d.Subdivision))
 			{
 				buttonAdd.Sensitive = (IncomeDoc.Operation == IncomeOperations.Return && IncomeDoc.EmployeeCard != null) 
-					|| (IncomeDoc.Operation == IncomeOperations.Object && IncomeDoc.Facility != null) 
+					|| (IncomeDoc.Operation == IncomeOperations.Object && IncomeDoc.Subdivision != null) 
 					|| IncomeDoc.Operation == IncomeOperations.Enter;
 			}
 
@@ -110,8 +110,8 @@ namespace workwear
 
 			if(IncomeDoc.Operation == IncomeOperations.Object)
 			{
-				var selectFromObjectDlg = new ReferenceRepresentation (new ViewModel.ObjectBalanceVM (IncomeDoc.Facility),
-				                                                       $"Выданное на {IncomeDoc.Facility.Name}");
+				var selectFromObjectDlg = new ReferenceRepresentation (new ViewModel.ObjectBalanceVM (IncomeDoc.Subdivision),
+				                                                       $"Выданное на {IncomeDoc.Subdivision.Name}");
 				selectFromObjectDlg.Mode = OrmReferenceMode.MultiSelect;
 				selectFromObjectDlg.ObjectSelected += SelectFromObjectDlg_ObjectSelected;;
 

@@ -1,4 +1,4 @@
-﻿using FluentNHibernate.Mapping;
+using FluentNHibernate.Mapping;
 using workwear.Domain.Stock;
 
 namespace workwear.HMap
@@ -14,7 +14,7 @@ namespace workwear.HMap
 			Map (x => x.Date).Column ("date");
 			Map(x => x.Comment).Column("comment");
 
-			References (x => x.Facility).Column ("object_id");
+			References (x => x.Subdivision).Column ("object_id");
 			References (x => x.Employee).Column ("wear_card_id");
 			References (x => x.CreatedbyUser).Column ("user_id");
 

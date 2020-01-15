@@ -10,19 +10,19 @@ using workwear.Domain.Company;
 
 namespace workwear.Dialogs.Organization
 {
-	public partial class ObjectDlg : EntityDialogBase<Facility>
+	public partial class ObjectDlg : EntityDialogBase<Subdivision>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private Gtk.ListStore ItemsListStore;
 		private TreeModel PlacementList;
 		CellRendererCombo CellPlacement;
 
-		public ObjectDlg (Facility obj) : this(obj.Id) {}
+		public ObjectDlg (Subdivision obj) : this(obj.Id) {}
 
 		public ObjectDlg (int id)
 		{
 			this.Build();
-			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Facility>(id);
+			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Subdivision>(id);
 			ConfigureDlg();
 			Fill(id);
 		}
@@ -30,7 +30,7 @@ namespace workwear.Dialogs.Organization
 		public ObjectDlg()
 		{
 			this.Build();
-			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Facility>();
+			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Subdivision>();
 			ConfigureDlg();
 		}
 
@@ -95,7 +95,7 @@ namespace workwear.Dialogs.Organization
 		public override bool Save ()
 		{
 			logger.Info("Запись подразделения...");
-			var valid = new QSValidator<Facility>(UoWGeneric.Root);
+			var valid = new QSValidator<Subdivision>(UoWGeneric.Root);
 			if(valid.RunDlgIfNotValid((Gtk.Window)this.Toplevel))
 				return false;
 
@@ -281,7 +281,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnButtonGiveClicked(object sender, EventArgs e)
 		{
 			SaveIfPropertyChanged();
-			Facility obj = UoW.GetById<Facility>(Entity.Id);
+			Subdivision obj = UoW.GetById<Subdivision>(Entity.Id);
 			ExpenseDocDlg winExpense = new ExpenseDocDlg(obj);
 			winExpense.EntitySaved += (s, ea) => UpdateProperty();
 			OpenTab(winExpense);
@@ -290,7 +290,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnButtonReturnClicked(object sender, EventArgs e)
 		{
 			SaveIfPropertyChanged();
-			Facility obj = UoW.GetById<Facility>(Entity.Id);
+			Subdivision obj = UoW.GetById<Subdivision>(Entity.Id);
 			IncomeDocDlg winIncome = new IncomeDocDlg(obj);
 			winIncome.EntitySaved += (s, ea) => UpdateProperty();
 			OpenTab(winIncome);
@@ -299,7 +299,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnButtonWriteOffClicked(object sender, EventArgs e)
 		{
 			SaveIfPropertyChanged();
-			Facility obj = UoW.GetById<Facility>(Entity.Id);
+			Subdivision obj = UoW.GetById<Subdivision>(Entity.Id);
 			WriteOffDocDlg winWriteOff = new WriteOffDocDlg(obj);
 			winWriteOff.EntitySaved += (s, ea) => UpdateProperty();
 			OpenTab(winWriteOff);

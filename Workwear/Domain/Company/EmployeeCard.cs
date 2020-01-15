@@ -128,12 +128,12 @@ namespace workwear.Domain.Company
 			set { SetField (ref createdbyUser, value, () => CreatedbyUser); }
 		}
 			
-		Facility facility;
+		Subdivision subdivision;
 
-		[Display (Name = "Объект")]
-		public virtual Facility Facility {
-			get { return facility; }
-			set { SetField (ref facility, value, () => Facility); }
+		[Display (Name = "Подразделение")]
+		public virtual Subdivision Subdivision {
+			get { return subdivision; }
+			set { SetField (ref subdivision, value, () => Subdivision); }
 		}
 
 		byte[] photo;

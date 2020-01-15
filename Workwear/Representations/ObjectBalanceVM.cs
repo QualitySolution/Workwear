@@ -17,9 +17,9 @@ namespace workwear.ViewModel
 {
 	public class ObjectBalanceVM : RepresentationModelWithoutEntityBase<ObjectBalanceVMNode>
 	{
-		Facility facility;
+		Subdivision facility;
 
-		Facility Facility {
+		Subdivision Facility {
 			get {
 				if (Filter != null)
 					return Filter.RestrictObject;
@@ -60,7 +60,7 @@ namespace workwear.ViewModel
 			IncomeItem incomeItemOnIncomeAlias = null;
 
 			var expense = UoW.Session.QueryOver<Expense> (() => expenseAlias)
-				.Where (e => e.Facility == Facility)
+				.Where (e => e.Subdivision == Facility)
 				.JoinQueryOver (e => e.Items, () => expenseItemAlias);
 
 			var subqueryRemove = QueryOver.Of<IncomeItem>(() => incomeItemOnRemoveAlias)
@@ -120,7 +120,7 @@ namespace workwear.ViewModel
 			Filter = filter;
 		}
 
-		public ObjectBalanceVM (Facility facility) : this(UnitOfWorkFactory.CreateWithoutRoot ())
+		public ObjectBalanceVM (Subdivision facility) : this(UnitOfWorkFactory.CreateWithoutRoot ())
 		{
 			Facility = facility;
 		}

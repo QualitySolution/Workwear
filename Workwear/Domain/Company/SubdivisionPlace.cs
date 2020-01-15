@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
-using QSOrmProject;
 
 namespace workwear.Domain.Company
 {
 	[Appellative (Gender = GrammaticalGender.Neuter,
-		NominativePlural = "размещения в объекте",
-		Nominative = "размещение в объекте")]
+		NominativePlural = "размещения в подразделении",
+		Nominative = "размещение в подразделении")]
 	
-	public class FacilityPlace : PropertyChangedBase, IDomainObject
+	public class SubdivisionPlace : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства
 
@@ -24,18 +23,18 @@ namespace workwear.Domain.Company
 			set { SetField (ref name, value, () => Name); }
 		}
 
-		Facility facility;
+		Subdivision subdivision;
 
-		[Display (Name = "Объект")]
-		public virtual Facility Facility {
-			get { return facility; }
-			set { SetField (ref facility, value, () => Facility); }
+		[Display (Name = "Подразделение")]
+		public virtual Subdivision Subdivision {
+			get { return subdivision; }
+			set { SetField (ref subdivision, value, () => Subdivision); }
 		}
 
 
 		#endregion
 
-		public FacilityPlace ()
+		public SubdivisionPlace ()
 		{
 		}
 	}

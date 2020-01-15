@@ -16,12 +16,12 @@ namespace workwear
 			}
 			set {
 				uow = value;
-				yentryObject.ItemsQuery = Repository.FacilityRepository.ActiveObjectsQuery ();
+				yentryObject.ItemsQuery = Repository.SubdivisionRepository.ActiveObjectsQuery ();
 			}
 		}
 			
-		public Facility RestrictObject {
-			get { return yentryObject.Subject as Facility; }
+		public Subdivision RestrictObject {
+			get { return yentryObject.Subject as Subdivision; }
 			set {
 				yentryObject.Subject = value;
 				yentryObject.Sensitive = false;

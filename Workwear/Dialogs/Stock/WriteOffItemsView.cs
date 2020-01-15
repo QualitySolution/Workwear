@@ -51,7 +51,7 @@ namespace workwear
 
 		public EmployeeCard CurWorker { get; set;}
 
-		public Facility CurObject { get; set;}
+		public Subdivision CurObject { get; set;}
 
 		public WriteOffItemsView()
 		{

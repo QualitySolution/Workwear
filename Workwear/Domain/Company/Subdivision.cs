@@ -8,7 +8,7 @@ namespace workwear.Domain.Company
 		NominativePlural = "подразделения",
 		Nominative = "подразделение")]
 	
-	public class Facility : PropertyChangedBase, IDomainObject
+	public class Subdivision : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства
 
@@ -42,17 +42,17 @@ namespace workwear.Domain.Company
 			set { SetField (ref address, value, () => Address); }
 		}
 
-		private IList<FacilityPlace> places = new List<FacilityPlace>();
+		private IList<SubdivisionPlace> places = new List<SubdivisionPlace>();
 
 		[Display (Name = "Места размещения")]
-		public virtual IList<FacilityPlace> Places {
+		public virtual IList<SubdivisionPlace> Places {
 			get { return places; }
 			set { SetField (ref places, value, () => Places); }
 		}
 
 		#endregion
 
-		public Facility ()
+		public Subdivision ()
 		{
 		}
 	}

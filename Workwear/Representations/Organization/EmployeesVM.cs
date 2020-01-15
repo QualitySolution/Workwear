@@ -32,7 +32,7 @@ namespace workwear.Representations.Organization
 			EmployeesVMNode resultAlias = null;
 
 			Post postAlias = null;
-			Facility facilityAlias = null;
+			Subdivision facilityAlias = null;
 			EmployeeCard employeeAlias = null;
 
 			var employees = UoW.Session.QueryOver<EmployeeCard> (() => employeeAlias);
@@ -41,7 +41,7 @@ namespace workwear.Representations.Organization
 
 			var employeesList = employees
 				.JoinAlias (() => employeeAlias.Post, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias (() => employeeAlias.Facility, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias (() => employeeAlias.Subdivision, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList (list => list
 					.Select (() => employeeAlias.Id).WithAlias (() => resultAlias.Id)
 					.Select (() => employeeAlias.CardNumber).WithAlias (() => resultAlias.CardNumber)

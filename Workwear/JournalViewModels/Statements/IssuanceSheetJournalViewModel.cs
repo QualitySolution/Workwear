@@ -24,7 +24,7 @@ namespace workwear.JournalViewModels.Statements
 
 			IssuanceSheet issuanceSheetAlias = null;
 			Organization organizationAlias = null;
-			Facility subdivisionAlias = null;
+			Subdivision subdivisionAlias = null;
 
 			return uow.Session.QueryOver<IssuanceSheet>(() => issuanceSheetAlias)
 				.Where(GetSearchCriterion(
