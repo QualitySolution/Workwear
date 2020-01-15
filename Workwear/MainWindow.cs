@@ -34,7 +34,7 @@ public partial class MainWindow : Gtk.Window
 	private static Logger logger = LogManager.GetCurrentClassLogger();
 
 	private ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
-	private TdiNavigationManager NavigationManager;
+	public TdiNavigationManager NavigationManager;
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{

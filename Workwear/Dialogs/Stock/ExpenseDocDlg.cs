@@ -1,15 +1,19 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
+using QS.Project.Domain;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Validation.GtkUI;
 using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository;
+using workwear.ViewModels.Statements;
 
 namespace workwear
 {
@@ -82,6 +86,10 @@ namespace workwear
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			ItemsTable.ExpenceDoc = Entity;
+
+			Entity.PropertyChanged += Entity_PropertyChanged;
+
+			IssuanceSheetSensetive();
 		}			
 
 		public override bool Save()
@@ -108,10 +116,65 @@ namespace workwear
 		protected void OnYcomboOperationChanged (object sender, EventArgs e)
 		{
 			labelWorker.Visible = yentryEmployee.Visible =
+				labelIssuanceSheet.Visible = hboxIssuanceSheet.Visible =
 				Entity.Operation == ExpenseOperations.Employee;
 			labelObject.Visible = yentryObject.Visible = 
 				Entity.Operation == ExpenseOperations.Object;
 		}
+
+		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(Entity.Employee))
+				IssuanceSheetSensetive();
+		}
+
+		#region Ведомости
+
+		private void IssuanceSheetSensetive()
+		{
+			buttonIssuanceSheetCreate.Sensitive = Entity.Employee != null;
+			buttonIssuanceSheetCreate.Visible = Entity.IssuanceSheet == null;
+			buttonIssuanceSheetOpen.Visible = buttonIssuanceSheetPrint.Visible = Entity.IssuanceSheet != null;
+		}
+
+		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e)
+		{
+			Entity.CreateIssuanceSheet();
+			IssuanceSheetSensetive();
+		}
+
+		protected void OnButtonIssuanceSheetOpenClicked(object sender, EventArgs e)
+		{
+			if(UoW.HasChanges) {
+				if(MessageDialogHelper.RunQuestionDialog("Сохранить документ выдачи перед открытием ведомости?"))
+					Save();
+				else
+					return;
+			}
+
+			MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
+		}
+
+		protected void OnButtonIssuanceSheetPrintClicked(object sender, EventArgs e)
+		{
+			if(UoW.HasChanges) {
+				if(CommonDialogs.SaveBeforePrint(Entity.GetType(), "ведомости"))
+					Save();
+				else
+					return;
+			}
+
+			var reportInfo = new ReportInfo {
+				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
+				Identifier = "Statements.IssuanceSheet",
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.IssuanceSheet.Id }
+				}
+			};
+			MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
+
+		#endregion
 	}
 }
 

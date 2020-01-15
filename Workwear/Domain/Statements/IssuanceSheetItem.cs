@@ -40,6 +40,13 @@ namespace workwear.Domain.Statements
 			set { SetField(ref nomenclature, value); }
 		}
 
+		private ExpenseItem expenseItem;
+		[Display(Name = "Строка выдачи")]
+		public virtual ExpenseItem ExpenseItem {
+			get => expenseItem;
+			set => SetField(ref expenseItem, value);
+		}
+
 		private EmployeeIssueOperation issueOperation;
 
 		[Display(Name = "Операция выдачи")]
@@ -77,5 +84,22 @@ namespace workwear.Domain.Statements
 		public IssuanceSheetItem()
 		{
 		}
+
+		#region Методы
+
+		public virtual void UpdateFromExpense()
+		{
+			if(ExpenseItem == null)
+				return;
+
+			Employee = ExpenseItem.ExpenseDoc.Employee;
+			Nomenclature = ExpenseItem.Nomenclature;
+			Amount = (uint)ExpenseItem.Amount;
+			StartOfUse = ExpenseItem.EmployeeIssueOperation?.StartOfUse ?? IssuanceSheet.Date;
+			Lifetime = ExpenseItem.EmployeeIssueOperation?.LifetimeMonth ?? 0;
+		}
+
+		#endregion
+
 	}
 }

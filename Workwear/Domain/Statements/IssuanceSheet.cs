@@ -94,6 +94,20 @@ namespace workwear.Domain.Statements
 
 		#endregion
 
+		#region Методы
+
+		public virtual IssuanceSheetItem AddItem(ExpenseItem expenseItem)
+		{
+			var item = new IssuanceSheetItem {
+				IssuanceSheet = this,
+				ExpenseItem = expenseItem
+			};
+			ObservableItems.Add(item);
+			return item;
+		}
+
+		#endregion
+
 		public IssuanceSheet()
 		{
 		}

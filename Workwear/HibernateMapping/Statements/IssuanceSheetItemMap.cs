@@ -1,5 +1,4 @@
 ﻿using FluentNHibernate.Mapping;
-using workwear.Domain.Regulations;
 using workwear.Domain.Statements;
 
 namespace workwear.HibernateMapping.Statements
@@ -19,6 +18,7 @@ namespace workwear.HibernateMapping.Statements
 			References(x => x.Employee).Column("employee_id");
 			References(x => x.Nomenclature).Column("nomenclature_id");
 			References(x => x.IssueOperation).Column("issued_operation_id");
+			References(x => x.ExpenseItem).Column("stock_expense_detail_id");
 		}
 	}
 }

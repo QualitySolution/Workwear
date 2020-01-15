@@ -165,6 +165,16 @@ namespace workwear.Domain.Operations
 			? $"Выдача {Employee.ShortName} <= {Issued} х {Nomenclature.Name}"
 			: $"Списание {Employee.ShortName} => {Returned} х {Nomenclature.Name}";
 
+		public virtual decimal? LifetimeMonth {
+			get {
+				if(StartOfUse == null || ExpiryByNorm == null)
+					return null;
+
+				var range = new DateRange(StartOfUse.Value, ExpiryByNorm.Value);
+				return range.Months;
+			}
+		}
+
 		#endregion
 
 		#region Методы

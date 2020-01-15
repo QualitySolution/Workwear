@@ -1,4 +1,4 @@
-using FluentNHibernate.Mapping;
+﻿using FluentNHibernate.Mapping;
 using workwear.Domain.Stock;
 
 namespace workwear.HMap
@@ -18,7 +18,11 @@ namespace workwear.HMap
 			References (x => x.Employee).Column ("wear_card_id");
 			References (x => x.CreatedbyUser).Column ("user_id");
 
-				HasMany (x => x.Items)
+			HasOne(x => x.IssuanceSheet)
+				.Cascade.All()
+				.PropertyRef(x => x.Expense);
+
+			HasMany (x => x.Items)
 				.Inverse()
 				.KeyColumn ("stock_expense_id").Not.KeyNullable ()
 				.Cascade.AllDeleteOrphan ().Inverse ()

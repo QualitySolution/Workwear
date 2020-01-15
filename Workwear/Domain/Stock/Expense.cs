@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,6 +7,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
+using workwear.Domain.Statements;
 
 namespace workwear.Domain.Stock
 {
@@ -60,7 +61,14 @@ namespace workwear.Domain.Stock
 				return observableItems;
 			}
 		}
-			
+
+		private IssuanceSheet issuanceSheet;
+		[Display(Name = "Связанная ведомость")]
+		public virtual IssuanceSheet IssuanceSheet {
+			get => issuanceSheet;
+			set => SetField(ref issuanceSheet, value);
+		}
+
 		#endregion
 
 		public virtual string Title{
@@ -135,6 +143,35 @@ namespace workwear.Domain.Stock
 		{
 			Employee.UpdateNextIssue(Items.Select(x => x.Nomenclature.Type).ToArray());
 			UoW.Save(Employee);
+		}
+
+		public virtual void CreateIssuanceSheet()
+		{
+			if(IssuanceSheet != null)
+				return;
+
+			IssuanceSheet = new IssuanceSheet {
+				Expense = this
+			 };
+			UpdateIssuanceSheet();
+		}
+
+		public virtual void UpdateIssuanceSheet()
+		{
+			if(IssuanceSheet == null)
+				return;
+
+			if(Employee == null)
+				throw new NullReferenceException("Для обновления ведомости сотрудник должен быть указан.");
+
+			IssuanceSheet.Date = Date;
+			IssuanceSheet.Subdivision = Employee.Subdivision;
+
+			foreach(var item in Items) {
+				if(item.IssuanceSheetItem == null) 
+					item.IssuanceSheetItem = IssuanceSheet.AddItem(item);
+				item.IssuanceSheetItem.UpdateFromExpense();
+			}
 		}
 
 		#endregion
