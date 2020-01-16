@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
@@ -30,14 +31,14 @@ namespace workwear.ViewModels.Statements
 		public EntityEntryViewModel<Leader> ResponsiblePersonEntryViewModel;
 		public EntityEntryViewModel<Leader> HeadOfDivisionPersonEntryViewModel;
 		public ILifetimeScope AutofacScope;
-
 		public ITdiCompatibilityNavigation tdiNavigationManager;
+		private readonly CommonMessages commonMessages;
 
-		public IssuanceSheetViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiTab myTab, ITdiCompatibilityNavigation navigationManager, ILifetimeScope autofacScope) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager)
+		public IssuanceSheetViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiTab myTab, ITdiCompatibilityNavigation navigationManager, ILifetimeScope autofacScope, CommonMessages commonMessages) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager)
 		{
 			this.tdiNavigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
-
+			this.commonMessages = commonMessages;
 			var entryBuilder = new LegacyEEVMBuilderFactory<IssuanceSheet>(this, TdiTab, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
@@ -159,6 +160,13 @@ namespace workwear.ViewModels.Statements
 
 		public void Print()
 		{
+			if(UoW.HasChanges) {
+				if(commonMessages.SaveBeforePrint(Entity.GetType(), "ведомости"))
+					Save();
+				else
+					return;
+			}
+
 			var reportInfo = new ReportInfo {
 				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
 				Identifier = "Statements.IssuanceSheet",

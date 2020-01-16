@@ -110,6 +110,7 @@ namespace workwear
 			builder.RegisterType<ValidationService>().As<IValidationService>();
 			//FIXME Реализовать везде возможность отсутствия сервиса прав, чтобы не приходилось создавать то что не используется
 			builder.RegisterType<DefaultAllowedPermissionService>().As<IPermissionService>();
+			builder.RegisterType<CommonMessages>().AsSelf();
 			#endregion
 
 			#region Навигация
