@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Utilities.Numeric;
 using workwear.Domain.Operations;
 
 namespace workwear.Domain.Stock
@@ -43,9 +44,10 @@ namespace workwear.Domain.Stock
 		decimal lifePercent;
 
 		[Display (Name = "% состояния")]
+		[Range(0.0, 1.0)]
 		public virtual decimal LifePercent {
 			get { return lifePercent; }
-			set { SetField (ref lifePercent, value, () => LifePercent); }
+			set { SetField (ref lifePercent, value.Clamp(0, 1), () => LifePercent); }
 		}
 
 		int amount;
