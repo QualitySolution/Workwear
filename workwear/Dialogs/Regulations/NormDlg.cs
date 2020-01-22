@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Gamma.ColumnConfig;
+using QS.Dialog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Project.Dialogs.GtkUI;
 using QSOrmProject;
-using QSProjectsLib;
 using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 
@@ -16,6 +16,8 @@ namespace workwear.Dialogs.Regulations
 	public partial class NormDlg : EntityDialogBase<Norm>
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+
+		IProgressBarDisplayable progressBar;
 
 		public NormDlg ()
 		{
@@ -35,6 +37,9 @@ namespace workwear.Dialogs.Regulations
 
 		private void ConfigureDlg()
 		{
+			//FIXME Добавить в будущем получение экземпляра через конструктор
+			progressBar = MainClass.MainWin.ProgressBar;
+
 			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource ();
 
 			ycomboAnnex.SetRenderTextFunc<RegulationDocAnnex>(x => x.Title);
@@ -131,6 +136,7 @@ namespace workwear.Dialogs.Regulations
 
 			if (toRemove.Id > 0)
 			{
+				logger.Info("Поиск ссылок на удаляемую строку нормы...");
 				worksEmployees = Repository.EmployeeRepository.GetEmployeesDependenceOnNormItem(UoW, toRemove);
 				if (worksEmployees.Count > 0)
 				{
@@ -150,6 +156,7 @@ namespace workwear.Dialogs.Regulations
 					if (operations.Count > 10)
 						mes += String.Format("\n... и еще {0}", operations.Count - 10);
 					mes += "\nВы уверены что хотите выполнить удаление?";
+					logger.Info("Ок");
 					if (!MessageDialogHelper.RunQuestionDialog(mes))
 						return;
 				}
@@ -158,12 +165,19 @@ namespace workwear.Dialogs.Regulations
 
 			if(worksEmployees != null)
 			{
+				buttonSave.Sensitive = buttonCancel.Sensitive = false;
+				progressBar.Start(worksEmployees.Count);
+
 				foreach(var emp in worksEmployees)
 				{
 					emp.UoW = UoW;
 					emp.UpdateWorkwearItems();
 					UoW.Save(emp);
+					progressBar.Add();
 				}
+
+				buttonSave.Sensitive = buttonCancel.Sensitive = true;
+				progressBar.Close();
 			}
 		}
 

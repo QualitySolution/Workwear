@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Gtk;
 using NLog;
 using QS.BusinessCommon.Domain;
+using QS.Dialog;
 using QS.Dialog.Gtk;
 using QS.Report;
 using QS.Updater;
@@ -25,11 +26,14 @@ public partial class MainWindow : Gtk.Window
 {
 	private static Logger logger = LogManager.GetCurrentClassLogger();
 
+	public IProgressBarDisplayable ProgressBar;
+
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
 		Build();
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
+		ProgressBar = progresswidget1;
 		this.Title = MainSupport.GetTitle();
 		QSMain.MakeNewStatusTargetForNlog();
 
