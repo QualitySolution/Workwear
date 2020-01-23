@@ -20,7 +20,7 @@ namespace workwear.HibernateMapping.Company
 			Map (x => x.DismissDate).Column ("dismiss_date");
 			Map(x => x.Comment).Column("comment");
 
-			Map (x => x.Photo).Column ("photo").CustomSqlType ("BinaryBlob");
+			Map(x => x.Photo).Column("photo").LazyLoad().CustomSqlType ("BinaryBlob");
 			Map (x => x.Sex).Column ("sex").CustomType<SexStringType> ();
 
 			Map (x => x.WearGrowth).Column ("wear_growth");

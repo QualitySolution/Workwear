@@ -6,6 +6,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Utilities.Dates;
 using workwear.Domain.Company;
+using QS.Utilities.Numeric;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -51,11 +52,18 @@ namespace workwear.Domain.Operations
 
 		private decimal wearPercent;
 
+		/// <summary>
+		/// Процент износа не может быть меньше нуля.
+		/// Новый СИЗ имеет 0%, далее нарастает при использовании.
+		/// Процент хранится в виде коэфициента, то есть значение 1 = 100%
+		/// И в базе ограничение на 3 хранимых символа поэтому максимальное значение 9.99
+		/// </summary>
+		/// <value>The wear percent.</value>
 		[Display(Name = "Процент износа")]
 		public virtual decimal WearPercent
 		{
 			get { return wearPercent; }
-			set { SetField(ref wearPercent, value); }
+			set { SetField(ref wearPercent, value.Clamp(0m, 9.99m)); }
 		}
 
 		private int issued;

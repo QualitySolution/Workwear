@@ -5,6 +5,7 @@ using Autofac;
 using Gtk;
 using NLog;
 using QS.BusinessCommon.Domain;
+using QS.Dialog;
 using QS.Dialog.Gtk;
 using QS.Navigation;
 using QS.Report;
@@ -35,12 +36,14 @@ public partial class MainWindow : Gtk.Window
 
 	private ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 	public TdiNavigationManager NavigationManager;
+	public IProgressBarDisplayable ProgressBar;
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
 		Build();
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
+		ProgressBar = progresswidget1;
 		this.Title = MainSupport.GetTitle();
 		QSMain.MakeNewStatusTargetForNlog();
 

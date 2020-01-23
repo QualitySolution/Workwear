@@ -5181,6 +5181,18 @@
           </packing>
         </child>
         <child>
+          <widget class="QS.Widgets.ProgressWidget" id="progresswidget1">
+            <property name="MemberName" />
+            <property name="Visible">False</property>
+          </widget>
+          <packing>
+            <property name="Position">3</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <widget class="Gtk.Statusbar" id="MainStatusBar">
             <property name="MemberName" />
             <property name="Spacing">6</property>
@@ -5199,18 +5211,17 @@
             <child>
               <widget class="Gtk.Label" id="labelStatus">
                 <property name="MemberName" />
+                <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Ok</property>
               </widget>
               <packing>
                 <property name="Position">2</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
+                <property name="AutoSize">False</property>
               </packing>
             </child>
           </widget>
           <packing>
-            <property name="Position">3</property>
+            <property name="Position">4</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -5219,7 +5230,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Dialogs.Regulations.NormDlg" design-size="699 368">
+  <widget class="Gtk.Bin" id="workwear.Dialogs.Regulations.NormDlg" design-size="699 376">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">

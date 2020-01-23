@@ -127,6 +127,8 @@ public partial class MainWindow
 
 	private global::QS.Tdi.Gtk.TdiNotebook tdiMain;
 
+	private global::QS.Widgets.ProgressWidget progresswidget1;
+
 	private global::Gtk.Statusbar MainStatusBar;
 
 	private global::Gtk.Label labelUser;
@@ -397,6 +399,14 @@ public partial class MainWindow
 		global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.tdiMain]));
 		w4.Position = 2;
 		// Container child vbox1.Gtk.Box+BoxChild
+		this.progresswidget1 = new global::QS.Widgets.ProgressWidget();
+		this.progresswidget1.Name = "progresswidget1";
+		this.vbox1.Add(this.progresswidget1);
+		global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.progresswidget1]));
+		w5.Position = 3;
+		w5.Expand = false;
+		w5.Fill = false;
+		// Container child vbox1.Gtk.Box+BoxChild
 		this.MainStatusBar = new global::Gtk.Statusbar();
 		this.MainStatusBar.Name = "MainStatusBar";
 		this.MainStatusBar.Spacing = 6;
@@ -405,24 +415,23 @@ public partial class MainWindow
 		this.labelUser.Name = "labelUser";
 		this.labelUser.LabelProp = global::Mono.Unix.Catalog.GetString("Пользователь");
 		this.MainStatusBar.Add(this.labelUser);
-		global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar[this.labelUser]));
-		w5.Position = 0;
-		w5.Expand = false;
-		w5.Fill = false;
+		global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar[this.labelUser]));
+		w6.Position = 0;
+		w6.Expand = false;
+		w6.Fill = false;
 		// Container child MainStatusBar.Gtk.Box+BoxChild
 		this.labelStatus = new global::Gtk.Label();
 		this.labelStatus.Name = "labelStatus";
+		this.labelStatus.Xalign = 1F;
 		this.labelStatus.LabelProp = global::Mono.Unix.Catalog.GetString("Ok");
 		this.MainStatusBar.Add(this.labelStatus);
-		global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar[this.labelStatus]));
-		w6.Position = 2;
-		w6.Expand = false;
-		w6.Fill = false;
+		global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar[this.labelStatus]));
+		w7.Position = 2;
 		this.vbox1.Add(this.MainStatusBar);
-		global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.MainStatusBar]));
-		w7.Position = 3;
-		w7.Expand = false;
-		w7.Fill = false;
+		global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.MainStatusBar]));
+		w8.Position = 4;
+		w8.Expand = false;
+		w8.Fill = false;
 		this.Add(this.vbox1);
 		if ((this.Child != null))
 		{
@@ -430,6 +439,7 @@ public partial class MainWindow
 		}
 		this.DefaultWidth = 733;
 		this.DefaultHeight = 458;
+		this.progresswidget1.Hide();
 		this.Show();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler(this.OnDeleteEvent);
 		this.dialogAuthenticationAction.Activated += new global::System.EventHandler(this.OnDialogAuthenticationActionActivated);
