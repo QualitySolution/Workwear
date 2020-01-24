@@ -9,7 +9,6 @@ using QS.DomainModel.UoW;
 using QS.Project.Dialogs.GtkUI;
 using QSOrmProject;
 using workwear.Domain.Company;
-using workwear.Domain.Organization;
 using workwear.Domain.Regulations;
 
 namespace workwear.Dialogs.Regulations
