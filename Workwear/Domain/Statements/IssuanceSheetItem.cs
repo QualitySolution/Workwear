@@ -97,6 +97,7 @@ namespace workwear.Domain.Statements
 			Amount = (uint)ExpenseItem.Amount;
 			StartOfUse = ExpenseItem.EmployeeIssueOperation?.StartOfUse ?? IssuanceSheet.Date;
 			Lifetime = ExpenseItem.EmployeeIssueOperation?.LifetimeMonth ?? 0;
+			IssueOperation = ExpenseItem.EmployeeIssueOperation;
 		}
 
 		#endregion
