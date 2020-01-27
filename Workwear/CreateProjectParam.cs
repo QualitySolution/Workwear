@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
@@ -136,18 +136,10 @@ namespace workwear
 			#endregion
 
 			#region ViewModels
-			//Company
-			builder.RegisterType<OrganizationViewModel>().AsSelf();
-			//Statements
-			builder.RegisterType<IssuanceSheetViewModel>().AsSelf();
-			#endregion
 
-			//builder.RegisterType<OneEntrySearchView>().Named<Widget>("GtkJournalSearchView");
-			#region JournalViewModels
-			//Company
-			builder.RegisterType<OrganizationJournalViewModel>().AsSelf();
-			//Statements
-			builder.RegisterType<IssuanceSheetJournalViewModel>().AsSelf();
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(OrganizationViewModel)))
+				.Where(t => t.Name.EndsWith("ViewModel"))
+				.AsSelf();
 			#endregion
 
 			AppDIContainer = builder.Build();
