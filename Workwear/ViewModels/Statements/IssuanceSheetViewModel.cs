@@ -11,6 +11,7 @@ using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Tdi;
+using QS.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QSOrmProject;
@@ -141,7 +142,6 @@ namespace workwear.ViewModels.Statements
 			}
 		}
 
-
 		#endregion
 
 		#region Sensetive
@@ -153,6 +153,8 @@ namespace workwear.ViewModels.Statements
 		#region Visible
 
 		public bool VisibleExpense => Entity.Expense != null;
+		public bool VisibleFillBy => Entity.Expense == null;
+		public bool VisibleCloseFillBy => FillByViewModel != null;
 
 		#endregion
 
@@ -192,6 +194,34 @@ namespace workwear.ViewModels.Statements
 				Entity.ReloadChildCollection(x => x.Items, x => x.IssuanceSheet, UoW.Session);
 				Entity.CleanObservableItems();
 			}
+		}
+
+		#endregion
+
+		#region Заполнение таблицы
+
+		private ViewModelBase fillByViewModel;
+		[PropertyChangedAlso(nameof(VisibleCloseFillBy))]
+		public virtual ViewModelBase FillByViewModel {
+			get => fillByViewModel;
+			set => SetField(ref fillByViewModel, value);
+		}
+
+		public void FillByExpense()
+		{
+			FillByViewModel = AutofacScope.Resolve<IssuanceSheetFillByExpenseViewModel>(
+				new TypedParameter(typeof(IssuanceSheetViewModel), this)
+			);
+		}
+
+		public void FillByNeed()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void CloseFillBy()
+		{
+			FillByViewModel = null;
 		}
 
 		#endregion

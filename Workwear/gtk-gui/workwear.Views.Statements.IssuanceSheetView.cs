@@ -48,6 +48,14 @@ namespace workwear.Views.Statements
 
 		private global::Gtk.Button buttonExpenseOpen;
 
+		private global::Gamma.GtkWidgets.yButton buttonCloseFillBy;
+
+		private global::Gtk.Button buttonFillByNeed;
+
+		private global::Gtk.Button buttonFillByExpense;
+
+		private global::Gtk.HBox hboxTable;
+
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 
 		private global::Gamma.GtkWidgets.yTreeView ytreeviewItems;
@@ -301,12 +309,61 @@ namespace workwear.Views.Statements
 			this.hbox7.Add(this.hboxExpense);
 			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.hboxExpense]));
 			w24.Position = 1;
-			this.vbox2.Add(this.hbox7);
-			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox7]));
+			w24.Expand = false;
+			w24.Fill = false;
+			// Container child hbox7.Gtk.Box+BoxChild
+			this.buttonCloseFillBy = new global::Gamma.GtkWidgets.yButton();
+			this.buttonCloseFillBy.CanFocus = true;
+			this.buttonCloseFillBy.Name = "buttonCloseFillBy";
+			this.buttonCloseFillBy.UseStock = true;
+			this.buttonCloseFillBy.UseUnderline = true;
+			this.buttonCloseFillBy.Label = "gtk-close";
+			this.hbox7.Add(this.buttonCloseFillBy);
+			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.buttonCloseFillBy]));
+			w25.PackType = ((global::Gtk.PackType)(1));
 			w25.Position = 2;
 			w25.Expand = false;
 			w25.Fill = false;
+			// Container child hbox7.Gtk.Box+BoxChild
+			this.buttonFillByNeed = new global::Gtk.Button();
+			this.buttonFillByNeed.CanFocus = true;
+			this.buttonFillByNeed.Name = "buttonFillByNeed";
+			this.buttonFillByNeed.UseUnderline = true;
+			this.buttonFillByNeed.Label = global::Mono.Unix.Catalog.GetString("Заполнить по потребности");
+			global::Gtk.Image w26 = new global::Gtk.Image();
+			w26.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-go-down", global::Gtk.IconSize.Menu);
+			this.buttonFillByNeed.Image = w26;
+			this.hbox7.Add(this.buttonFillByNeed);
+			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.buttonFillByNeed]));
+			w27.PackType = ((global::Gtk.PackType)(1));
+			w27.Position = 3;
+			w27.Expand = false;
+			w27.Fill = false;
+			// Container child hbox7.Gtk.Box+BoxChild
+			this.buttonFillByExpense = new global::Gtk.Button();
+			this.buttonFillByExpense.CanFocus = true;
+			this.buttonFillByExpense.Name = "buttonFillByExpense";
+			this.buttonFillByExpense.UseUnderline = true;
+			this.buttonFillByExpense.Label = global::Mono.Unix.Catalog.GetString("Заполнить по выданному");
+			global::Gtk.Image w28 = new global::Gtk.Image();
+			w28.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-go-down", global::Gtk.IconSize.Menu);
+			this.buttonFillByExpense.Image = w28;
+			this.hbox7.Add(this.buttonFillByExpense);
+			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.buttonFillByExpense]));
+			w29.PackType = ((global::Gtk.PackType)(1));
+			w29.Position = 4;
+			w29.Expand = false;
+			w29.Fill = false;
+			this.vbox2.Add(this.hbox7);
+			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox7]));
+			w30.Position = 2;
+			w30.Expand = false;
+			w30.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
+			this.hboxTable = new global::Gtk.HBox();
+			this.hboxTable.Name = "hboxTable";
+			this.hboxTable.Spacing = 6;
+			// Container child hboxTable.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
@@ -315,9 +372,12 @@ namespace workwear.Views.Statements
 			this.ytreeviewItems.CanFocus = true;
 			this.ytreeviewItems.Name = "ytreeviewItems";
 			this.GtkScrolledWindow.Add(this.ytreeviewItems);
-			this.vbox2.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.GtkScrolledWindow]));
-			w27.Position = 3;
+			this.hboxTable.Add(this.GtkScrolledWindow);
+			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.hboxTable[this.GtkScrolledWindow]));
+			w32.Position = 0;
+			this.vbox2.Add(this.hboxTable);
+			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hboxTable]));
+			w33.Position = 3;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.hbox8 = new global::Gtk.HBox();
 			this.hbox8.Name = "hbox8";
@@ -329,14 +389,14 @@ namespace workwear.Views.Statements
 			this.buttonAdd.Name = "buttonAdd";
 			this.buttonAdd.UseUnderline = true;
 			this.buttonAdd.Label = global::Mono.Unix.Catalog.GetString("Добавить");
-			global::Gtk.Image w28 = new global::Gtk.Image();
-			w28.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonAdd.Image = w28;
+			global::Gtk.Image w34 = new global::Gtk.Image();
+			w34.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.buttonAdd.Image = w34;
 			this.hbox8.Add(this.buttonAdd);
-			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonAdd]));
-			w29.Position = 0;
-			w29.Expand = false;
-			w29.Fill = false;
+			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonAdd]));
+			w35.Position = 0;
+			w35.Expand = false;
+			w35.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
 			this.buttonDel = new global::Gtk.Button();
 			this.buttonDel.Sensitive = false;
@@ -344,22 +404,22 @@ namespace workwear.Views.Statements
 			this.buttonDel.Name = "buttonDel";
 			this.buttonDel.UseUnderline = true;
 			this.buttonDel.Label = global::Mono.Unix.Catalog.GetString("Удалить");
-			global::Gtk.Image w30 = new global::Gtk.Image();
-			w30.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.buttonDel.Image = w30;
+			global::Gtk.Image w36 = new global::Gtk.Image();
+			w36.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
+			this.buttonDel.Image = w36;
 			this.hbox8.Add(this.buttonDel);
-			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonDel]));
-			w31.Position = 1;
-			w31.Expand = false;
-			w31.Fill = false;
+			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonDel]));
+			w37.Position = 1;
+			w37.Expand = false;
+			w37.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
 			this.vseparator1 = new global::Gtk.VSeparator();
 			this.vseparator1.Name = "vseparator1";
 			this.hbox8.Add(this.vseparator1);
-			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.vseparator1]));
-			w32.Position = 2;
-			w32.Expand = false;
-			w32.Fill = false;
+			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.vseparator1]));
+			w38.Position = 2;
+			w38.Expand = false;
+			w38.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
 			this.buttonSetEmployee = new global::Gtk.Button();
 			this.buttonSetEmployee.CanFocus = true;
@@ -367,15 +427,15 @@ namespace workwear.Views.Statements
 			this.buttonSetEmployee.UseUnderline = true;
 			this.buttonSetEmployee.Label = global::Mono.Unix.Catalog.GetString("Изменить сотрудника");
 			this.hbox8.Add(this.buttonSetEmployee);
-			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonSetEmployee]));
-			w33.Position = 3;
-			w33.Expand = false;
-			w33.Fill = false;
+			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonSetEmployee]));
+			w39.Position = 3;
+			w39.Expand = false;
+			w39.Fill = false;
 			this.vbox2.Add(this.hbox8);
-			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox8]));
-			w34.Position = 4;
-			w34.Expand = false;
-			w34.Fill = false;
+			global::Gtk.Box.BoxChild w40 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox8]));
+			w40.Position = 4;
+			w40.Expand = false;
+			w40.Fill = false;
 			this.Add(this.vbox2);
 			if ((this.Child != null))
 			{
@@ -384,6 +444,9 @@ namespace workwear.Views.Statements
 			this.Hide();
 			this.buttonPrint.Clicked += new global::System.EventHandler(this.OnButtonPrintClicked);
 			this.buttonExpenseOpen.Clicked += new global::System.EventHandler(this.OnButtonExpenseOpenClicked);
+			this.buttonFillByExpense.Clicked += new global::System.EventHandler(this.OnButtonFillByExpenseClicked);
+			this.buttonFillByNeed.Clicked += new global::System.EventHandler(this.OnButtonFillByNeedClicked);
+			this.buttonCloseFillBy.Clicked += new global::System.EventHandler(this.OnButtonCloseFillByClicked);
 			this.ytreeviewItems.RowActivated += new global::Gtk.RowActivatedHandler(this.OnYtreeviewItemsRowActivated);
 			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonAddClicked);
 			this.buttonDel.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using Autofac;
 using Gtk;
 using QS.Views.Dialog;
+using QS.Views.Resolve;
 using workwear.Domain.Statements;
 using workwear.ViewModels.Statements;
 
@@ -9,6 +11,8 @@ namespace workwear.Views.Statements
 {
 	public partial class IssuanceSheetView : EntityDialogViewBase<IssuanceSheetViewModel, IssuanceSheet>
 	{
+		Widget fillWidget;
+
 		public IssuanceSheetView(IssuanceSheetViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
@@ -26,9 +30,11 @@ namespace workwear.Views.Statements
 			entityentryHeadOfDivisionPerson.ViewModel = ViewModel.HeadOfDivisionPersonEntryViewModel;
 
 			hboxExpense.Visible = ViewModel.VisibleExpense;
+			buttonFillByNeed.Visible = buttonFillByExpense.Visible = ViewModel.VisibleFillBy;
 			labelExpense.LabelProp = Entity.Expense?.Title;
 			ytreeviewItems.Sensitive = ViewModel.CanEditItems;
 			buttonAdd.Sensitive = ViewModel.CanEditItems;
+			buttonCloseFillBy.Binding.AddBinding(ViewModel, v => v.VisibleCloseFillBy, w => w.Visible).InitializeFromSource();
 
 			ytreeviewItems.CreateFluentColumnsConfig<IssuanceSheetItem>()
 				.AddColumn("Ф.И.О.").Tag("IsFIOColumn").AddTextRenderer(x => x.Employee != null ? x.Employee.ShortName : String.Empty)
@@ -47,6 +53,7 @@ namespace workwear.Views.Statements
 			ytreeviewItems.ItemsDataSource = ViewModel.Entity.ObservableItems;
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
+			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 		}
 
 		protected void OnButtonAddClicked(object sender, EventArgs e)
@@ -101,5 +108,38 @@ namespace workwear.Views.Statements
 				ytreeviewItems.ItemsDataSource = Entity.ObservableItems;
 		}
 
+		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			switch(e.PropertyName) {
+				case nameof(ViewModel.FillByViewModel):
+					if(fillWidget != null) {
+						hboxTable.Remove(fillWidget);
+						fillWidget.Destroy();
+						fillWidget = null;
+					}
+					if(ViewModel.FillByViewModel != null) {
+						var resolver = ViewModel.AutofacScope.Resolve<IGtkViewResolver>();
+						fillWidget = resolver.Resolve(ViewModel.FillByViewModel);
+						hboxTable.PackEnd(fillWidget, false, true, 1);
+						fillWidget.Show();
+					}
+					break;
+			}
+		}
+
+		protected void OnButtonFillByExpenseClicked(object sender, EventArgs e)
+		{
+			ViewModel.FillByExpense();
+		}
+
+		protected void OnButtonFillByNeedClicked(object sender, EventArgs e)
+		{
+			ViewModel.FillByNeed();
+		}
+
+		protected void OnButtonCloseFillByClicked(object sender, EventArgs e)
+		{
+			ViewModel.CloseFillBy();
+		}
 	}
 }

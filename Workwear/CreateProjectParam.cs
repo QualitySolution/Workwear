@@ -1,4 +1,4 @@
-using Autofac;
+﻿using Autofac;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
@@ -17,6 +17,7 @@ using QS.Services;
 using QS.Tdi;
 using QS.Validation;
 using QS.Validation.GtkUI;
+using QS.ViewModels;
 using QS.Views.Resolve;
 using QSOrmProject;
 using QSProjectsLib;
@@ -117,6 +118,7 @@ namespace workwear
 			builder.RegisterType<ClassNamesHashGenerator>().As<IPageHashGenerator>();
 			builder.Register((ctx) => new AutofacViewModelsTdiPageFactory(AppDIContainer)).As<IViewModelsPageFactory>();
 			builder.Register((ctx) => new AutofacTdiPageFactory(AppDIContainer)).As<ITdiPageFactory>();
+			builder.Register((ctx) => new AutofacViewModelsGtkPageFactory(AppDIContainer)).AsSelf();
 			builder.RegisterType<TdiNavigationManager>().AsSelf().As<INavigationManager>().As<ITdiCompatibilityNavigation>().SingleInstance();
 			builder.RegisterType<BasedOnNameTDIResolver>().As<ITDIWidgetResolver>();
 			builder.Register(cc => new ClassNamesBaseGtkViewResolver(typeof(RdlViewerView), typeof(OrganizationView))).As<IGtkViewResolver>();
@@ -136,9 +138,8 @@ namespace workwear
 			#endregion
 
 			#region ViewModels
-
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(OrganizationViewModel)))
-				.Where(t => t.Name.EndsWith("ViewModel"))
+				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
 				.AsSelf();
 			#endregion
 
