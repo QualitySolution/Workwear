@@ -129,6 +129,7 @@ namespace workwear.Dialogs.Regulations
 			this.ydateDocDate.Events = ((global::Gdk.EventMask)(256));
 			this.ydateDocDate.Name = "ydateDocDate";
 			this.ydateDocDate.WithTime = false;
+			this.ydateDocDate.HideCalendarButton = false;
 			this.ydateDocDate.Date = new global::System.DateTime(0);
 			this.ydateDocDate.IsEditable = true;
 			this.ydateDocDate.AutoSeparation = true;

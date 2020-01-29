@@ -6785,7 +6785,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Dialogs.Regulations.RegulationDocDlg" design-size="331 324">
+  <widget class="Gtk.Bin" id="workwear.Dialogs.Regulations.RegulationDocDlg" design-size="863 518">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -8503,7 +8503,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Button" id="buttonFillByNeed">
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonFillByNeed">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
@@ -8727,6 +8727,7 @@
                 <property name="Icon">stock:gtk-add Menu</property>
                 <property name="Label" translatable="yes">По подразделению</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonAddBySubdivisionClicked" />
               </widget>
               <packing>
                 <property name="Position">0</property>
@@ -8743,6 +8744,7 @@
                 <property name="Icon">stock:gtk-add Menu</property>
                 <property name="Label" translatable="yes">Добавить</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonAddClicked" />
               </widget>
               <packing>
                 <property name="Position">1</property>
@@ -8759,6 +8761,7 @@
                 <property name="Icon">stock:gtk-remove Menu</property>
                 <property name="Label" translatable="yes">Убрать</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonRemoveClicked" />
               </widget>
               <packing>
                 <property name="Position">2</property>
@@ -8789,17 +8792,18 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gtk.Button" id="buttonFill">
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonFill">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-go-back Menu</property>
                 <property name="Label" translatable="yes">Заполнить строки ведомости</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonFillClicked" />
               </widget>
               <packing>
                 <property name="Position">0</property>
-                <property name="AutoSize">True</property>
+                <property name="AutoSize">False</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
               </packing>

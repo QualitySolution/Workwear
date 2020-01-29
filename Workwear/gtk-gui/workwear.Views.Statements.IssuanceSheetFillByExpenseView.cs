@@ -22,7 +22,7 @@ namespace workwear.Views.Statements
 
 		private global::Gtk.HBox hbox3;
 
-		private global::Gtk.Button buttonFill;
+		private global::Gamma.GtkWidgets.yButton buttonFill;
 
 		private global::Gtk.HSeparator hseparator1;
 
@@ -127,7 +127,7 @@ namespace workwear.Views.Statements
 			this.hbox3.Name = "hbox3";
 			this.hbox3.Spacing = 6;
 			// Container child hbox3.Gtk.Box+BoxChild
-			this.buttonFill = new global::Gtk.Button();
+			this.buttonFill = new global::Gamma.GtkWidgets.yButton();
 			this.buttonFill.CanFocus = true;
 			this.buttonFill.Name = "buttonFill";
 			this.buttonFill.UseUnderline = true;
@@ -184,6 +184,10 @@ namespace workwear.Views.Statements
 				this.Child.ShowAll();
 			}
 			this.Hide();
+			this.buttonFill.Clicked += new global::System.EventHandler(this.OnButtonFillClicked);
+			this.buttonAddBySubdivision.Clicked += new global::System.EventHandler(this.OnButtonAddBySubdivisionClicked);
+			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonAddClicked);
+			this.buttonRemove.Clicked += new global::System.EventHandler(this.OnButtonRemoveClicked);
 		}
 	}
 }

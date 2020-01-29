@@ -30,6 +30,7 @@ using workwear.Domain.Users;
 using workwear.JournalViewModels;
 using workwear.JournalViewModels.Company;
 using workwear.JournalViewModels.Statements;
+using workwear.Repository.Operations;
 using workwear.Tools;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Statements;
@@ -140,6 +141,12 @@ namespace workwear
 			#region ViewModels
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(OrganizationViewModel)))
 				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
+				.AsSelf();
+			#endregion
+
+			#region Repository
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(EmployeeIssueRepository)))
+				.Where(t => t.Name.EndsWith("Repository"))
 				.AsSelf();
 			#endregion
 

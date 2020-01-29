@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using QS.DomainModel.Entity;
+using QS.Utilities.Dates;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
 using workwear.Domain.Stock;
 
 namespace workwear.Domain.Statements
@@ -110,6 +112,22 @@ namespace workwear.Domain.Statements
 		{
 			observableItems = null;
 			OnPropertyChanged(nameof(ObservableItems));
+		}
+
+		public virtual IssuanceSheetItem AddItem(EmployeeIssueOperation operation)
+		{
+			var item = new IssuanceSheetItem {
+				IssuanceSheet = this,
+				IssueOperation = operation,
+				Amount = (uint)operation.Issued,
+				Employee = operation.Employee,
+				Lifetime = operation.StartOfUse == null || operation.ExpiryByNorm == null ? 0 
+					: new DateRange(operation.StartOfUse.Value, operation.ExpiryByNorm.Value).Months,
+				Nomenclature = operation.Nomenclature,
+				StartOfUse = operation.StartOfUse ?? operation.OperationTime
+			};
+			ObservableItems.Add(item);
+			return item;
 		}
 
 		#endregion

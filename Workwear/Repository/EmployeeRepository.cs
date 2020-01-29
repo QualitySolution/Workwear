@@ -19,6 +19,13 @@ namespace workwear.Repository
 			return QueryOver.Of<EmployeeCard> ().Where (e => e.DismissDate == null);
 		}
 
+		public static IList<EmployeeCard> GetActiveEmployeesFromSubdivision(IUnitOfWork uow, Subdivision subdivision)
+		{
+			return ActiveEmployeesQuery().GetExecutableQueryOver(uow.Session)
+				.Where(x => x.Subdivision == subdivision)
+				.List();
+		}
+
 		public static IList<EmployeeItemsBalanceDTO> ItemsBalance(IUnitOfWork uow, EmployeeCard employee)
 		{
 			EmployeeItemsBalanceDTO resultAlias = null;

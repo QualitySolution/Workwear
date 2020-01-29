@@ -6,10 +6,11 @@ using QS.DomainModel.UoW;
 using workwear.Domain.Operations;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
+using System.Linq;
 
 namespace workwear.Repository.Operations
 {
-	public static class EmployeeIssueRepository
+	public class EmployeeIssueRepository
 	{
 		public static IList<EmployeeIssueOperation> AllOperationsForEmployee(IUnitOfWork uow, EmployeeCard employee, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager)
 		{
@@ -21,13 +22,25 @@ namespace workwear.Repository.Operations
 			return query.OrderBy(x => x.OperationTime).Asc.List();
 		}
 
+		[Obsolete("Используйте нестатический класс для этого запроса.")]
 		public static Func<IUnitOfWork, EmployeeCard, DateTime, DateTime, IList<EmployeeIssueOperation>> GetOperationsTouchDatesTestGap;
-		public static IList<EmployeeIssueOperation> GetOperationsTouchDates(IUnitOfWork uow, EmployeeCard employee, DateTime begin, DateTime end, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null) {
+		[Obsolete("Используйте нестатический класс для этого запроса.")]
+		public static IList<EmployeeIssueOperation> GetOperationsTouchDates(IUnitOfWork uow, EmployeeCard employee, DateTime begin, DateTime end, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null)
+		{
 			if(GetOperationsTouchDatesTestGap != null)
 				return GetOperationsTouchDatesTestGap(uow, employee, begin, end);
 
+			var instance = new EmployeeIssueRepository();
+
+			return instance.GetOperationsTouchDates(uow, new[] { employee }, begin, end, makeEager);
+		}
+
+		public IList<EmployeeIssueOperation> GetOperationsTouchDates(IUnitOfWork uow, EmployeeCard[] employees, DateTime begin, DateTime end, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null) { 
+
+			var employeeIds = employees.Select(x => x.Id).Distinct().ToArray();
+
 			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
-				.Where(o => o.Employee == employee)
+				.Where(o => o.Employee.Id.IsIn(employeeIds))
 				//Проверяем попадает ли операция в диапазон, обратным стравлением условий. Проверяем 2 даты и начала и конца, так как по сути для наса важны StartOfUse и ExpiryByNorm но они могут быть null.
 				.Where(o => (o.OperationTime <= end || o.StartOfUse <= end) && (o.ExpiryByNorm >= begin || o.AutoWriteoffDate >= begin));
 
