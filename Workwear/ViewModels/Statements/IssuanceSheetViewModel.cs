@@ -207,16 +207,11 @@ namespace workwear.ViewModels.Statements
 			set => SetField(ref fillByViewModel, value);
 		}
 
-		public void FillByExpense()
+		public void OpenFillBy()
 		{
-			FillByViewModel = AutofacScope.Resolve<IssuanceSheetFillByExpenseViewModel>(
+			FillByViewModel = AutofacScope.Resolve<IssuanceSheetFillByViewModel>(
 				new TypedParameter(typeof(IssuanceSheetViewModel), this)
 			);
-		}
-
-		public void FillByNeed()
-		{
-			throw new NotImplementedException();
 		}
 
 		public void CloseFillBy()

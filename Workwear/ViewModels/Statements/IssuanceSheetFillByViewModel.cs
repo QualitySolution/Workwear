@@ -17,7 +17,7 @@ using workwear.Representations.Organization;
 
 namespace workwear.ViewModels.Statements
 {
-	public class IssuanceSheetFillByExpenseViewModel : ViewModelBase
+	public class IssuanceSheetFillByViewModel : ViewModelBase
 	{
 		readonly IssuanceSheetViewModel issuanceSheetViewModel;
 		readonly EmployeeIssueRepository employeeIssueRepository;
@@ -59,7 +59,7 @@ namespace workwear.ViewModels.Statements
 			}
 		}
 
-		public IssuanceSheetFillByExpenseViewModel(IssuanceSheetViewModel issuanceSheetViewModel, EmployeeIssueRepository employeeIssueRepository, IInteractiveQuestion question)
+		public IssuanceSheetFillByViewModel(IssuanceSheetViewModel issuanceSheetViewModel, EmployeeIssueRepository employeeIssueRepository, IInteractiveQuestion question)
 		{
 			this.issuanceSheetViewModel = issuanceSheetViewModel ?? throw new ArgumentNullException(nameof(issuanceSheetViewModel));
 			this.employeeIssueRepository = employeeIssueRepository;

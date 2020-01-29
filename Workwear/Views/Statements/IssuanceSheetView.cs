@@ -30,7 +30,7 @@ namespace workwear.Views.Statements
 			entityentryHeadOfDivisionPerson.ViewModel = ViewModel.HeadOfDivisionPersonEntryViewModel;
 
 			hboxExpense.Visible = ViewModel.VisibleExpense;
-			buttonFillByNeed.Visible = buttonFillByExpense.Visible = ViewModel.VisibleFillBy;
+			buttonFillBy.Visible = ViewModel.VisibleFillBy;
 			labelExpense.LabelProp = Entity.Expense?.Title;
 			ytreeviewItems.Sensitive = ViewModel.CanEditItems;
 			buttonAdd.Sensitive = ViewModel.CanEditItems;
@@ -129,12 +129,7 @@ namespace workwear.Views.Statements
 
 		protected void OnButtonFillByExpenseClicked(object sender, EventArgs e)
 		{
-			ViewModel.FillByExpense();
-		}
-
-		protected void OnButtonFillByNeedClicked(object sender, EventArgs e)
-		{
-			ViewModel.FillByNeed();
+			ViewModel.OpenFillBy();
 		}
 
 		protected void OnButtonCloseFillByClicked(object sender, EventArgs e)

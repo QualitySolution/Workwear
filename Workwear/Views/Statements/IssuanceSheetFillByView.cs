@@ -6,9 +6,9 @@ using workwear.ViewModels.Statements;
 namespace workwear.Views.Statements
 {
 
-	public partial class IssuanceSheetFillByExpenseView : ViewBase<IssuanceSheetFillByExpenseViewModel>
+	public partial class IssuanceSheetFillByView : ViewBase<IssuanceSheetFillByViewModel>
 	{
-		public IssuanceSheetFillByExpenseView(IssuanceSheetFillByExpenseViewModel viewModel) : base(viewModel)
+		public IssuanceSheetFillByView(IssuanceSheetFillByViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
 
