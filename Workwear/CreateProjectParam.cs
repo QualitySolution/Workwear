@@ -9,6 +9,7 @@ using QS.Navigation;
 using QS.Permissions;
 using QS.Project.DB;
 using QS.Project.Domain;
+using QS.Project.Search.GtkUI;
 using QS.Project.Services;
 using QS.Project.Services.GtkUI;
 using QS.Report.ViewModels;
@@ -136,6 +137,10 @@ namespace workwear
 
 			#region Rdl
 			builder.RegisterType<RdlViewerViewModel>().AsSelf();
+			#endregion
+
+			#region Журналы
+			builder.RegisterType<OneEntrySearchView>().Named<Gtk.Widget>("GtkJournalSearchView");
 			#endregion
 
 			#region ViewModels
