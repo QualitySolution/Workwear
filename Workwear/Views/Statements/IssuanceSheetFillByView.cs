@@ -52,5 +52,17 @@ namespace workwear.Views.Statements
 		{
 			ViewModel.RemoveEmployees(ytreeviewEmployees.GetSelectedObjects<EmployeeCard>());
 		}
+
+		protected void OnRadioByExpenseToggled(object sender, EventArgs e)
+		{
+			if(radioByExpense.Active)
+				ViewModel.Mode = IssuanceSheetFillByMode.ByExpense;
+		}
+
+		protected void OnRadioByNeedToggled(object sender, EventArgs e)
+		{
+			if(radioByNeed.Active)
+				ViewModel.Mode = IssuanceSheetFillByMode.ByNeed;
+		}
 	}
 }

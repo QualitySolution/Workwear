@@ -38,7 +38,7 @@ namespace workwear.Views.Statements
 
 			ytreeviewItems.CreateFluentColumnsConfig<IssuanceSheetItem>()
 				.AddColumn("Ф.И.О.").Tag("IsFIOColumn").AddTextRenderer(x => x.Employee != null ? x.Employee.ShortName : String.Empty)
-				.AddColumn("Спецодежда").Tag("IsNomenclatureColumn").AddTextRenderer(x => x.Nomenclature != null ? x.Nomenclature.Name : String.Empty)
+				.AddColumn("Спецодежда").Tag("IsNomenclatureColumn").AddTextRenderer(x => x.ItemName)
 				.AddColumn("Размер").AddTextRenderer(x => x.Nomenclature != null ? x.Nomenclature.Size : String.Empty)
 				.AddColumn("Количество")
 					.AddNumericRenderer(x => x.Amount).Editing(ViewModel.CanEditItems).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)

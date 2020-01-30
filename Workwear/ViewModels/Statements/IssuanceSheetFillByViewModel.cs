@@ -41,6 +41,8 @@ namespace workwear.ViewModels.Statements
 
 		#endregion
 
+		public IssuanceSheetFillByMode Mode;
+
 		#region Sensetive
 
 		public bool SensetiveFillButton => BeginDate.HasValue && EndDate.HasValue && employees.Count > 0;
@@ -131,6 +133,21 @@ namespace workwear.ViewModels.Statements
 				else
 					return;
 			}
+
+			switch(Mode) {
+				case IssuanceSheetFillByMode.ByExpense:
+					FillByExpense();
+					break;
+				case IssuanceSheetFillByMode.ByNeed:
+					FillByNeed();
+					break;
+			}
+
+			issuanceSheetViewModel.CloseFillBy();
+		}
+
+		private void FillByExpense()
+		{
 			var issueOperations = employeeIssueRepository.GetOperationsTouchDates(issuanceSheetViewModel.UoW, 
 				employees.ToArray(), 
 				BeginDate.Value, 
@@ -140,9 +157,25 @@ namespace workwear.ViewModels.Statements
 			foreach(var operation in issueOperations.OrderBy(x => x.Employee.FullName).ThenBy(x => x.OperationTime)) {
 				issuanceSheetViewModel.Entity.AddItem(operation);
 			}
-			issuanceSheetViewModel.CloseFillBy();
+		}
+
+		private void FillByNeed()
+		{
+			var items = EmployeeRepository.GetItems(issuanceSheetViewModel.UoW,
+				employees.ToArray(),
+				BeginDate.Value,
+				EndDate.Value);
+			foreach(var item in items.OrderBy(x => x.EmployeeCard.FullName).ThenBy(x => x.NextIssue)) {
+				issuanceSheetViewModel.Entity.AddItem(item);
+			}
 		}
 
 		#endregion
+	}
+
+	public enum IssuanceSheetFillByMode
+	{
+		ByExpense,
+		ByNeed
 	}
 }

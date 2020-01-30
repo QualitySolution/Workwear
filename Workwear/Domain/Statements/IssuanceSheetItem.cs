@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
+using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
 namespace workwear.Domain.Statements
@@ -39,6 +40,14 @@ namespace workwear.Domain.Statements
 			get { return nomenclature; }
 			set { SetField(ref nomenclature, value); }
 		}
+
+		private ItemsType itemsType;
+		[Display(Name = "Тип номеклатуры")]
+		public virtual ItemsType ItemsType {
+			get => itemsType;
+			set => SetField(ref itemsType, value);
+		}
+
 
 		private ExpenseItem expenseItem;
 		[Display(Name = "Строка выдачи")]
@@ -78,6 +87,12 @@ namespace workwear.Domain.Statements
 			get { return lifetime; }
 			set { SetField(ref lifetime, value); }
 		}
+
+		#endregion
+
+		#region Расчетные
+
+		public virtual string ItemName => nomenclature?.Name ?? ItemsType?.Name;
 
 		#endregion
 

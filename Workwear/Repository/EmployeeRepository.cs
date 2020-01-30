@@ -93,6 +93,14 @@ namespace workwear.Repository
 				.Where(() => employeeItemAlias.ActiveNormItem == item)
 				.List();
 		}
+
+		public static IList<EmployeeCardItem> GetItems(IUnitOfWork uow, EmployeeCard[] employees, DateTime begin, DateTime end)
+		{
+			return uow.Session.QueryOver<EmployeeCardItem>()
+				.Where(x => x.EmployeeCard.IsIn(employees))
+				.Where(x => x.NextIssue >= begin && x.NextIssue <= end)
+				.List();
+		}
 	}
 
 	public class EmployeeItemsBalanceDTO

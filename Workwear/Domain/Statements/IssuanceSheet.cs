@@ -130,6 +130,20 @@ namespace workwear.Domain.Statements
 			return item;
 		}
 
+		public virtual IssuanceSheetItem AddItem(EmployeeCardItem employeeItem)
+		{
+			var item = new IssuanceSheetItem {
+				IssuanceSheet = this,
+				ItemsType = employeeItem.Item,
+				Amount = (uint)employeeItem.ActiveNormItem.Amount,
+				Employee = employeeItem.EmployeeCard,
+				Lifetime = employeeItem.ActiveNormItem.PeriodInMonths,
+				StartOfUse = employeeItem.NextIssue ?? Date,
+			};
+			ObservableItems.Add(item);
+			return item;
+		}
+
 		#endregion
 
 		public IssuanceSheet()
