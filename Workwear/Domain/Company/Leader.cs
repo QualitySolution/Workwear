@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.Utilities.Text;
 
 namespace workwear.Domain.Company
 {
@@ -50,7 +51,7 @@ namespace workwear.Domain.Company
 
 		#endregion
 
-
+		public virtual string Title => PersonHelper.PersonNameWithInitials(Surname, Name, Patronymic);
 		public Leader ()
 		{
 		}

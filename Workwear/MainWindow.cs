@@ -154,11 +154,6 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnAction9Activated(object sender, EventArgs e)
 	{
-		//MainTelemetry.AddCount("Leader");
-		//tdiMain.OpenTab(OrmReference.GenerateHashName<Leader>(),
-				//() => new OrmReference(typeof(Leader))
-			   //);
-
 		MainTelemetry.AddCount(nameof(LeadersJournalViewModel));
 		NavigationManager.OpenViewModel<LeadersJournalViewModel>(null);
 	}

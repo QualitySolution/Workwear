@@ -55,14 +55,16 @@ namespace workwear.ViewModels.Statements
 													 .Finish();
 
 			ResponsiblePersonEntryViewModel = entryBuilder.ForProperty(x => x.ResponsiblePerson)
-													 .UseOrmReferenceJournalAndAutocompleter()
-													 .UseTdiEntityDialog()
-													 .Finish();
+													.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
+													.UseViewModelDialog<LeadersViewModel>()
+													.Finish();
+
 
 			HeadOfDivisionPersonEntryViewModel = entryBuilder.ForProperty(x => x.HeadOfDivisionPerson)
-													 .UseOrmReferenceJournalAndAutocompleter()
-													 .UseTdiEntityDialog()
-													 .Finish();
+													.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
+													.UseViewModelDialog<LeadersViewModel>()
+													.Finish();
+
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
