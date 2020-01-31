@@ -307,6 +307,10 @@
     <Compile Include="Views\Statements\IssuanceSheetFillByView.cs" />
     <Compile Include="ViewModels\Statements\IssuanceSheetFillByViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Statements.IssuanceSheetFillByView.cs" />
+    <Compile Include="Views\Company\LeadersView.cs" />
+    <Compile Include="ViewModels\Company\LeadersViewModel.cs" />
+    <Compile Include="JournalViewModels\Company\LeadersJournalViewModel.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Company.LeadersView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
