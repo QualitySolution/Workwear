@@ -449,6 +449,7 @@
     <Folder Include="JournalViewModels\Statements\" />
     <Folder Include="ViewModels\Statements\" />
     <Folder Include="Views\Statements\" />
+    <Folder Include="Reports\Stock\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
@@ -513,6 +514,10 @@
     <None Include="Reports\Statements\IssuanceSheet.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Reports\Stock\ActWriteOff.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\Stock\ActWriteOff_Common.rdl" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
