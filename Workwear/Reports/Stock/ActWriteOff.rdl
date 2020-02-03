@@ -32,19 +32,16 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>74.5pt</Width>
+            <Width>71.7pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>53.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>517.3pt</Width>
+            <Width>528.2pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>151.6pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>2.5pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -55,7 +52,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox37">
-                      <Value>Номенклатурный</Value>
+                      <Value>Номенклатур ный</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -123,7 +120,7 @@
                       </Style>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan>2</ColSpan>
+                  <ColSpan>1</ColSpan>
                 </TableCell>
               </TableCells>
             </TableRow>
@@ -138,7 +135,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox2">
-                      <Value>={nomeclature_number}</Value>
+                      <Value>={nomenclature_number}</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -178,7 +175,7 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
-                        <TextAlign>Center</TextAlign>
+                        <TextAlign>Left</TextAlign>
                       </Style>
                       <HideDuplicates>Data</HideDuplicates>
                     </Textbox>
@@ -187,7 +184,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox14">
-                      <Value>={amount}</Value>
+                      <Value>={quantity}</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -196,21 +193,6 @@
                         <BorderWidth />
                       </Style>
                       <CanGrow>true</CanGrow>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox12">
-                      <Value>={nomenclature_number}</Value>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                      </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -276,7 +258,6 @@ _____________________ С.А.Ключников</Value>
         </Style>
       </Textbox>
       <Table Name="Table5">
-        <DataSetName>Sheet</DataSetName>
         <NoRows>Query returned no rows!</NoRows>
         <Style>
           <BorderStyle>
@@ -761,14 +742,15 @@ _____________________ С.А.Ключников</Value>
         </Details>
         <Left>4.6pt</Left>
         <Top>205.6pt</Top>
+        <DataSetName>Empty</DataSetName>
       </Table>
       <Textbox Name="Textbox1">
         <Height>17.99pt</Height>
         <Width>351.48pt</Width>
-        <Value>по комбинату за период с {?start_date} по {?end_date}</Value>
+        <Value>="по комбинату за дату " + First(Format({date}, "d") , "Data") </Value>
         <ZIndex>1</ZIndex>
-        <Left>274.06pt</Left>
-        <Top>79.60pt</Top>
+        <Left>331.7pt</Left>
+        <Top>77.9pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -785,10 +767,12 @@ _____________________ С.А.Ключников</Value>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
-    <DataSet Name="Data" >
+    <DataSet Name="Data">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT nomenclature.id as  nomenclature_number,
+        <CommandText>SELECT
+StWrOff.date,
+nomenclature.id as  nomenclature_number,
 nomenclature.name as  nomenclature_name, 
 StWrOffDet.quantity,
 nomenclature.size,
@@ -805,17 +789,21 @@ ORDER BY nomenclature.id,  nomenclature_name</CommandText>
         </QueryParameters>
       </Query>
       <Fields>
+        <Field Name="date">
+          <DataField>date</DataField>
+          <TypeName>System.DateTime</TypeName>
+        </Field>
         <Field Name="nomenclature_number">
           <DataField>nomenclature_number</DataField>
-          <TypeName>System.Int32</TypeName>
+          <TypeName>System.UInt32</TypeName>
         </Field>
         <Field Name="nomenclature_name">
           <DataField>nomenclature_name</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="quantity ">
-          <DataField>quantity </DataField>
-          <TypeName>System.String</TypeName>
+        <Field Name="quantity">
+          <DataField>quantity</DataField>
+          <TypeName>System.UInt32</TypeName>
         </Field>
         <Field Name="size">
           <DataField>size</DataField>
@@ -827,12 +815,19 @@ ORDER BY nomenclature.id,  nomenclature_name</CommandText>
         </Field>
       </Fields>
     </DataSet>
+    <DataSet Name="Empty">
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>Select 1</CommandText>
+      </Query>
+      <Fields />
+    </DataSet>
   </DataSets>
   <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>database=workwear_dev;user=andrey;password=123;port=3306;server=office.qsolution.ru</ConnectString>
+        <ConnectString>database=workwear_dev;user=andrey;password=123;port=3306;server=office.qsolution.ru;sslMode=None</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
@@ -842,7 +837,7 @@ ORDER BY nomenclature.id,  nomenclature_name</CommandText>
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>4</Value>
+          <Value>11</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
