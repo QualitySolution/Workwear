@@ -327,10 +327,8 @@
     <Compile Include="Views\Stock\WarehouseView.cs" />
     <Compile Include="JournalViewModels\Stock\WarehouseJournalViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseView.cs" />
-    <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseOperationView.cs" />
     <Compile Include="HibernateMapping\Stock\WarehouseOperationMap.cs" />
     <Compile Include="Domain\Operations\Stock\WarehouseOperation.cs" />
-    <Compile Include="Views\Stock\WarehouseOperationView.cs" />
     <Compile Include="ViewModels\Stock\WarehouseOperationViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
