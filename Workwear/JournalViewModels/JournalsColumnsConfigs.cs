@@ -3,6 +3,7 @@ using Gamma.ColumnConfig;
 using QS.Journal.GtkUI;
 using workwear.JournalViewModels.Company;
 using workwear.JournalViewModels.Statements;
+using workwear.JournalViewModels.Stock;
 
 namespace workwear.JournalViewModels
 {
@@ -37,6 +38,14 @@ namespace workwear.JournalViewModels
 					.AddColumn("Должность").AddTextRenderer(node => node.Position).SearchHighlight()
 					.Finish()
 			);
+
+			TreeViewColumnsConfigFactory.Register<WarehouseJournalViewModel>(
+			() => FluentColumnsConfig<WarehouseJournalNode>.Create()
+				.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+				.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+				.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
+				.Finish()
+		);
 		}
 	}
 }
