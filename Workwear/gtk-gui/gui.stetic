@@ -9384,11 +9384,4 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Stock.WarehouseOperationView" design-size="714 300">
-    <property name="MemberName" />
-    <property name="Visible">False</property>
-    <child>
-      <placeholder />
-    </child>
-  </widget>
 </stetic-interface>

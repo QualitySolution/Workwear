@@ -9,12 +9,12 @@ namespace workwear.Domain.Stock
 
 		public virtual int Id { get; set; }
 
-		DateTime? wareOperationTime;
+		DateTime operationTime;
 
-	
-		public virtual DateTime? WareOperationTime {
-			get { return wareOperationTime; }
-			set { SetField(ref wareOperationTime, value); }
+
+		public virtual DateTime OperationTime {
+			get { return operationTime; }
+			set { SetField(ref operationTime, value); }
 		}
 
 		Warehouse receiptWarehouse;

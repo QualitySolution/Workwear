@@ -12,7 +12,7 @@ namespace workwear.HibernateMapping.Stock
 			Table("operation_warehouse");
 
 			Id(x => x.Id).Column("id").GeneratedBy.Native();
-			Map(x => x.WareOperationTime).Column("operation_time");
+			Map(x => x.OperationTime).Column("operation_time");
 			Map(x => x.Size).Column("size");
 			Map(x => x.Growth).Column("growth");
 			Map(x => x.Amount).Column("amount");
