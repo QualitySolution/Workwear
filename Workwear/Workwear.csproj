@@ -49,11 +49,21 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Mono.Posix" />
-    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>glib-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
     <Reference Include="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="System.Data" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -311,6 +321,17 @@
     <Compile Include="ViewModels\Company\LeadersViewModel.cs" />
     <Compile Include="JournalViewModels\Company\LeadersJournalViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.LeadersView.cs" />
+    <Compile Include="Domain\Stock\Warehouse.cs" />
+    <Compile Include="HibernateMapping\Stock\WarehouseMap.cs" />
+    <Compile Include="ViewModels\Stock\WarehouseViewModel.cs" />
+    <Compile Include="Views\Stock\WarehouseView.cs" />
+    <Compile Include="JournalViewModels\Stock\WarehouseJournalViewModel.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseOperationView.cs" />
+    <Compile Include="HibernateMapping\Stock\WarehouseOperationMap.cs" />
+    <Compile Include="Domain\Operations\Stock\WarehouseOperation.cs" />
+    <Compile Include="Views\Stock\WarehouseOperationView.cs" />
+    <Compile Include="ViewModels\Stock\WarehouseOperationViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -449,6 +470,10 @@
     <Folder Include="JournalViewModels\Statements\" />
     <Folder Include="ViewModels\Statements\" />
     <Folder Include="Views\Statements\" />
+    <Folder Include="Views\Stock\" />
+    <Folder Include="ViewModels\Stock\" />
+    <Folder Include="JournalViewModels\Stock\" />
+    <Folder Include="Domain\Operations\Stock\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
