@@ -4,7 +4,7 @@ using workwear.Domain.Stock;
 
 namespace workwear.HibernateMapping.Stock
 {
-	public class WareHouseMap: ClassMap<WareHouse>
+	public class WareHouseMap: ClassMap<Warehouse>
 	{
 		public WareHouseMap()
 		{

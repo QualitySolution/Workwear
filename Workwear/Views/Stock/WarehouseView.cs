@@ -6,7 +6,7 @@ using workwear.ViewModels.Stock;
 namespace workwear.Views.Stock
 {
 
-	public partial class WarehouseView : EntityDialogViewBase<WarehouseViewModel, WareHouse>
+	public partial class WarehouseView : EntityDialogViewBase<WarehouseViewModel, Warehouse>
 	{
 		public WarehouseView(WarehouseViewModel viewModel) : base(viewModel)
 		{

@@ -13,20 +13,20 @@ using workwear.ViewModels.Stock;
 
 namespace workwear.JournalViewModels.Stock
 {
-	public class WarehouseJournalViewModel: EntityJournalViewModelBase<WareHouse, WarehouseViewModel, WarehouseJournalNode>
+	public class WarehouseJournalViewModel: EntityJournalViewModelBase<Warehouse, WarehouseViewModel, WarehouseJournalNode>
 	{
 		public WarehouseJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
 		}
 
-		protected override IQueryOver<WareHouse> ItemsQuery(IUnitOfWork uow)
+		protected override IQueryOver<Warehouse> ItemsQuery(IUnitOfWork uow)
 		{
 			WarehouseJournalNode resultAlias = null;
 			Subdivision subdivisionAlias = null;
-			WareHouse WareHouseAlias = null;
+			Warehouse WareHouseAlias = null;
 
-			return uow.Session.QueryOver<WareHouse>(() => WareHouseAlias)
+			return uow.Session.QueryOver<Warehouse>(() => WareHouseAlias)
 				.Where(GetSearchCriterion(
 					() => WareHouseAlias.Id,
 					() => WareHouseAlias.Name,

@@ -8,7 +8,7 @@ namespace workwear.Domain.Stock
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "склады",
 		Nominative = "склад")]
-	public class WareHouse: PropertyChangedBase, IDomainObject
+	public class Warehouse: PropertyChangedBase, IDomainObject
 	{
 		public virtual int Id { get; set; }
 
@@ -22,6 +22,7 @@ namespace workwear.Domain.Stock
 		}
 
 		Subdivision subdivision;
+		[Display(Name = "Подразделение")]
 		public virtual Subdivision Subdivision {
 			get { return subdivision; }
 			set { SetField(ref subdivision, value); }

@@ -12,7 +12,7 @@ using workwear.Domain.Stock;
 
 namespace workwear.ViewModels.Stock
 {
-	public class WarehouseViewModel : LegacyEntityDialogViewModelBase<WareHouse>
+	public class WarehouseViewModel : LegacyEntityDialogViewModelBase<Warehouse>
 	{
 		public EntityEntryViewModel<Subdivision> SubdivisionEntryViewModel;
 		public ILifetimeScope AutofacScope;
@@ -25,7 +25,7 @@ namespace workwear.ViewModels.Stock
 			this.tdiNavigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.commonMessages = commonMessages;
-			var entryBuilder = new LegacyEEVMBuilderFactory<WareHouse>(this, TdiTab, Entity, UoW, navigationManager) {
+			var entryBuilder = new LegacyEEVMBuilderFactory<Warehouse>(this, TdiTab, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
 
