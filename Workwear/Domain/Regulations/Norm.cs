@@ -128,17 +128,17 @@ namespace workwear.Domain.Regulations
 			set { SetField(ref comment, value, () => Comment); }
 		}
 
-		DateTime? datefrom;
-		public virtual DateTime? Datefrom 
+		DateTime? dateFrom;
+		public virtual DateTime? DateFrom 
 		{
-			get { return datefrom; }
-			set { SetField(ref datefrom, value); }
+			get { return dateFrom; }
+			set { SetField(ref dateFrom, value); }
 		}
 
-		DateTime? dateto;
-		public virtual DateTime? Dateto {
-			get { return dateto; }
-			set { SetField(ref dateto, value); }
+		DateTime? dateTo;
+		public virtual DateTime? DateTo {
+			get { return dateTo; }
+			set { SetField(ref dateTo, value); }
 		}
 
 		#endregion
