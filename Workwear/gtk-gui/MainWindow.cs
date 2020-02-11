@@ -11,7 +11,7 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionReports;
 
-	private global::Gtk.Action Action;
+	private global::Gtk.Action ActionHelp;
 
 	private global::Gtk.Action dialogAuthenticationAction;
 
@@ -166,9 +166,9 @@ public partial class MainWindow
 		this.ActionReports = new global::Gtk.Action("ActionReports", global::Mono.Unix.Catalog.GetString("Отчеты"), null, null);
 		this.ActionReports.ShortLabel = global::Mono.Unix.Catalog.GetString("Отчеты");
 		w1.Add(this.ActionReports, null);
-		this.Action = new global::Gtk.Action("Action", global::Mono.Unix.Catalog.GetString("Справка"), null, null);
-		this.Action.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка");
-		w1.Add(this.Action, null);
+		this.ActionHelp = new global::Gtk.Action("ActionHelp", global::Mono.Unix.Catalog.GetString("Справка"), null, null);
+		this.ActionHelp.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка");
+		w1.Add(this.ActionHelp, null);
 		this.dialogAuthenticationAction = new global::Gtk.Action("dialogAuthenticationAction", global::Mono.Unix.Catalog.GetString("Изменить пароль"), null, "gtk-dialog-authentication");
 		this.dialogAuthenticationAction.ShortLabel = global::Mono.Unix.Catalog.GetString("Изменить пароль");
 		w1.Add(this.dialogAuthenticationAction, null);
@@ -290,11 +290,11 @@ public partial class MainWindow
 		this.ActionIconsSmall.ShortLabel = global::Mono.Unix.Catalog.GetString("Маленькие иконки");
 		w1.Add(this.ActionIconsSmall, null);
 		this.ActionIconsMiddle = new global::Gtk.RadioAction("ActionIconsMiddle", global::Mono.Unix.Catalog.GetString("Средние иконки"), null, null, 0);
-		this.ActionIconsMiddle.Group = this.ActionIconsExtraSmall.Group;
+		this.ActionIconsMiddle.Group = this.ActionIconsSmall.Group;
 		this.ActionIconsMiddle.ShortLabel = global::Mono.Unix.Catalog.GetString("Средние иконки");
 		w1.Add(this.ActionIconsMiddle, null);
 		this.ActionIconsLarge = new global::Gtk.RadioAction("ActionIconsLarge", global::Mono.Unix.Catalog.GetString("Большие иконки"), null, null, 0);
-		this.ActionIconsLarge.Group = this.ActionIconsMiddle.Group;
+		this.ActionIconsLarge.Group = this.ActionIconsSmall.Group;
 		this.ActionIconsLarge.ShortLabel = global::Mono.Unix.Catalog.GetString("Большие иконки");
 		w1.Add(this.ActionIconsLarge, null);
 		this.ActionSite = new global::Gtk.Action("ActionSite", global::Mono.Unix.Catalog.GetString("Сайт программы"), null, "www");
@@ -378,17 +378,17 @@ public partial class MainWindow
 				"ion=\'Action12\'/><separator/><menuitem name=\'Action13\' action=\'Action13\'/><menuit" +
 				"em name=\'ActionRequestSheet\' action=\'ActionRequestSheet\'/><menuitem name=\'Action" +
 				"AverageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><menuitem name=\'Action22\' a" +
-				"ction=\'Action22\'/></menu><menu name=\'Action\' action=\'Action\'><menuitem name=\'hel" +
-				"pAction\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' action=\'ActionHisto" +
-				"ry\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuitem " +
-				"name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReformal\' actio" +
-				"n=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuitem name=\'" +
-				"ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=\'ActionO" +
-				"dnoklasniki\'/><menuitem name=\'ActionGoogle\' action=\'ActionGoogle\'/><menuitem nam" +
-				"e=\'ActionTwitter\' action=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=" +
-				"\'ActionYouTube\'/></menu><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/" +
-				"><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar" +
-				"></ui>");
+				"ction=\'Action22\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuitem n" +
+				"ame=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' action=\'Act" +
+				"ionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><m" +
+				"enuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReforma" +
+				"l\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuite" +
+				"m name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=" +
+				"\'ActionOdnoklasniki\'/><menuitem name=\'ActionGoogle\' action=\'ActionGoogle\'/><menu" +
+				"item name=\'ActionTwitter\' action=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\'" +
+				" action=\'ActionYouTube\'/></menu><separator/><menuitem name=\'ActionSN\' action=\'Ac" +
+				"tionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu><" +
+				"/menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);

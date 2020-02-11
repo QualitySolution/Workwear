@@ -4688,7 +4688,7 @@
         <property name="Label" translatable="yes">Отчеты</property>
         <property name="ShortLabel" translatable="yes">Отчеты</property>
       </action>
-      <action id="Action">
+      <action id="ActionHelp">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Справка</property>
         <property name="ShortLabel" translatable="yes">Справка</property>
@@ -5130,7 +5130,7 @@
                 <node type="Menuitem" action="ActionAverageAnnualNeed" />
                 <node type="Menuitem" action="Action22" />
               </node>
-              <node type="Menu" action="Action">
+              <node type="Menu" action="ActionHelp">
                 <node type="Menuitem" action="helpAction" />
                 <node type="Menuitem" action="ActionHistory" />
                 <node type="Menuitem" action="ActionUpdate" />
