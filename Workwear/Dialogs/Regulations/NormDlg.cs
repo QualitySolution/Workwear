@@ -46,6 +46,8 @@ namespace workwear.Dialogs.Regulations
 			yentryRegulationDoc.SubjectType = typeof(RegulationDoc);
 			yentryRegulationDoc.Binding.AddBinding(Entity, e => e.Document, w => w.Subject).InitializeFromSource();
 			ycomboAnnex.Binding.AddBinding(Entity, e => e.Annex, w => w.SelectedItem).InitializeFromSource();
+			datefrom.Binding.AddBinding(Entity, e => e.Datefrom, w => w.Date).InitializeFromSource();
+			dateto.Binding.AddBinding(Entity, e => e.Dateto, w => w.Date).InitializeFromSource();
 
 			yentryTonParagraph.Binding.AddBinding (Entity, e => e.TONParagraph, w => w.Text).InitializeFromSource ();
 			labelOldTon.Visible = !String.IsNullOrWhiteSpace(Entity.TONAttachment) || !String.IsNullOrWhiteSpace(Entity.TONNumber);
