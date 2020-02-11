@@ -11,7 +11,7 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionReports;
 
-	private global::Gtk.Action Action3;
+	private global::Gtk.Action Action;
 
 	private global::Gtk.Action dialogAuthenticationAction;
 
@@ -119,11 +119,27 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionIssuanceSheets;
 
+	private global::Gtk.Action Action39;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
 
+	private global::Gtk.HButtonBox hbuttonbox1;
+
+	private global::Gtk.HBox hbox1;
+
 	private global::Gtk.Toolbar toolbarMain;
+
+	private global::Gtk.HBox hbox3;
+
+	private global::Gtk.Table table1;
+
+	private global::Gtk.CheckButton cnbOpenInWindow;
+
+	private global::QS.Views.Control.EntitySearch entitySearchEmployee;
+
+	private global::Gtk.Label label3;
 
 	private global::QS.Tdi.Gtk.TdiNotebook tdiMain;
 
@@ -150,9 +166,9 @@ public partial class MainWindow
 		this.ActionReports = new global::Gtk.Action("ActionReports", global::Mono.Unix.Catalog.GetString("Отчеты"), null, null);
 		this.ActionReports.ShortLabel = global::Mono.Unix.Catalog.GetString("Отчеты");
 		w1.Add(this.ActionReports, null);
-		this.Action3 = new global::Gtk.Action("Action3", global::Mono.Unix.Catalog.GetString("Справка"), null, null);
-		this.Action3.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка");
-		w1.Add(this.Action3, null);
+		this.Action = new global::Gtk.Action("Action", global::Mono.Unix.Catalog.GetString("Справка"), null, null);
+		this.Action.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка");
+		w1.Add(this.Action, null);
 		this.dialogAuthenticationAction = new global::Gtk.Action("dialogAuthenticationAction", global::Mono.Unix.Catalog.GetString("Изменить пароль"), null, "gtk-dialog-authentication");
 		this.dialogAuthenticationAction.ShortLabel = global::Mono.Unix.Catalog.GetString("Изменить пароль");
 		w1.Add(this.dialogAuthenticationAction, null);
@@ -262,7 +278,7 @@ public partial class MainWindow
 		this.ActionToolBarIconOnly.ShortLabel = global::Mono.Unix.Catalog.GetString("Только иконки");
 		w1.Add(this.ActionToolBarIconOnly, null);
 		this.ActionToolBarTextAndIcon = new global::Gtk.RadioAction("ActionToolBarTextAndIcon", global::Mono.Unix.Catalog.GetString("Иконки и текст"), null, null, 0);
-		this.ActionToolBarTextAndIcon.Group = this.ActionToolBarTextOnly.Group;
+		this.ActionToolBarTextAndIcon.Group = this.ActionToolBarIconOnly.Group;
 		this.ActionToolBarTextAndIcon.ShortLabel = global::Mono.Unix.Catalog.GetString("Иконки и текст");
 		w1.Add(this.ActionToolBarTextAndIcon, null);
 		this.ActionIconsExtraSmall = new global::Gtk.RadioAction("ActionIconsExtraSmall", global::Mono.Unix.Catalog.GetString("Очень маленькие иконки"), null, null, 0);
@@ -278,7 +294,7 @@ public partial class MainWindow
 		this.ActionIconsMiddle.ShortLabel = global::Mono.Unix.Catalog.GetString("Средние иконки");
 		w1.Add(this.ActionIconsMiddle, null);
 		this.ActionIconsLarge = new global::Gtk.RadioAction("ActionIconsLarge", global::Mono.Unix.Catalog.GetString("Большие иконки"), null, null, 0);
-		this.ActionIconsLarge.Group = this.ActionIconsExtraSmall.Group;
+		this.ActionIconsLarge.Group = this.ActionIconsMiddle.Group;
 		this.ActionIconsLarge.ShortLabel = global::Mono.Unix.Catalog.GetString("Большие иконки");
 		w1.Add(this.ActionIconsLarge, null);
 		this.ActionSite = new global::Gtk.Action("ActionSite", global::Mono.Unix.Catalog.GetString("Сайт программы"), null, "www");
@@ -320,12 +336,14 @@ public partial class MainWindow
 		this.ActionIssuanceSheets = new global::Gtk.Action("ActionIssuanceSheets", global::Mono.Unix.Catalog.GetString("Ведомости на выдачу"), null, null);
 		this.ActionIssuanceSheets.ShortLabel = global::Mono.Unix.Catalog.GetString("Ведомости на выдачу");
 		w1.Add(this.ActionIssuanceSheets, null);
+		this.Action39 = new global::Gtk.Action("Action39", null, null, null);
+		w1.Add(this.Action39, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
 		this.Title = global::Mono.Unix.Catalog.GetString("QS: Спецодежда и имущество");
 		this.Icon = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.logo.ico");
-		this.WindowPosition = ((global::Gtk.WindowPosition)(1));
+		this.WindowPosition = ((global::Gtk.WindowPosition)(3));
 		// Container child MainWindow.Gtk.Container+ContainerChild
 		this.vbox1 = new global::Gtk.VBox();
 		this.vbox1.Name = "vbox1";
@@ -360,17 +378,17 @@ public partial class MainWindow
 				"ion=\'Action12\'/><separator/><menuitem name=\'Action13\' action=\'Action13\'/><menuit" +
 				"em name=\'ActionRequestSheet\' action=\'ActionRequestSheet\'/><menuitem name=\'Action" +
 				"AverageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><menuitem name=\'Action22\' a" +
-				"ction=\'Action22\'/></menu><menu name=\'Action3\' action=\'Action3\'><menuitem name=\'h" +
-				"elpAction\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' action=\'ActionHis" +
-				"tory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuite" +
-				"m name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReformal\' act" +
-				"ion=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuitem name" +
-				"=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=\'Actio" +
-				"nOdnoklasniki\'/><menuitem name=\'ActionGoogle\' action=\'ActionGoogle\'/><menuitem n" +
-				"ame=\'ActionTwitter\' action=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' actio" +
-				"n=\'ActionYouTube\'/></menu><separator/><menuitem name=\'ActionSN\' action=\'ActionSN" +
-				"\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menub" +
-				"ar></ui>");
+				"ction=\'Action22\'/></menu><menu name=\'Action\' action=\'Action\'><menuitem name=\'hel" +
+				"pAction\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' action=\'ActionHisto" +
+				"ry\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuitem " +
+				"name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReformal\' actio" +
+				"n=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuitem name=\'" +
+				"ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=\'ActionO" +
+				"dnoklasniki\'/><menuitem name=\'ActionGoogle\' action=\'ActionGoogle\'/><menuitem nam" +
+				"e=\'ActionTwitter\' action=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=" +
+				"\'ActionYouTube\'/></menu><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/" +
+				"><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar" +
+				"></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -379,33 +397,101 @@ public partial class MainWindow
 		w2.Expand = false;
 		w2.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString(@"<ui><toolbar name='toolbarMain'><toolitem name='ActionBarObjects' action='ActionBarObjects'/><toolitem name='ActionBarEmployees' action='ActionBarEmployees'/><toolitem name='ActionBarStore' action='ActionBarStore'/><toolitem name='ActionBarStoreBalance' action='ActionBarStoreBalance'/></toolbar></ui>");
+		this.hbuttonbox1 = new global::Gtk.HButtonBox();
+		this.hbuttonbox1.Name = "hbuttonbox1";
+		this.vbox1.Add(this.hbuttonbox1);
+		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbuttonbox1]));
+		w3.Position = 1;
+		w3.Expand = false;
+		w3.Fill = false;
+		// Container child vbox1.Gtk.Box+BoxChild
+		this.hbox1 = new global::Gtk.HBox();
+		this.hbox1.Name = "hbox1";
+		this.hbox1.Spacing = 6;
+		// Container child hbox1.Gtk.Box+BoxChild
+		this.UIManager.AddUiFromString(@"<ui><toolbar name='toolbarMain'><toolitem name='ActionBarObjects' action='ActionBarObjects'/><toolitem name='ActionBarEmployees' action='ActionBarEmployees'/><toolitem name='ActionBarStore' action='ActionBarStore'/><toolitem name='ActionBarStoreBalance' action='ActionBarStoreBalance'/><toolitem/></toolbar></ui>");
 		this.toolbarMain = ((global::Gtk.Toolbar)(this.UIManager.GetWidget("/toolbarMain")));
 		this.toolbarMain.Name = "toolbarMain";
 		this.toolbarMain.ShowArrow = false;
 		this.toolbarMain.ToolbarStyle = ((global::Gtk.ToolbarStyle)(2));
 		this.toolbarMain.IconSize = ((global::Gtk.IconSize)(5));
-		this.vbox1.Add(this.toolbarMain);
-		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.toolbarMain]));
-		w3.Position = 1;
-		w3.Expand = false;
-		w3.Fill = false;
+		this.hbox1.Add(this.toolbarMain);
+		global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.toolbarMain]));
+		w4.Position = 0;
+		// Container child hbox1.Gtk.Box+BoxChild
+		this.hbox3 = new global::Gtk.HBox();
+		this.hbox3.Name = "hbox3";
+		this.hbox3.Spacing = 6;
+		// Container child hbox3.Gtk.Box+BoxChild
+		this.table1 = new global::Gtk.Table(((uint)(2)), ((uint)(2)), false);
+		this.table1.Name = "table1";
+		this.table1.RowSpacing = ((uint)(6));
+		this.table1.ColumnSpacing = ((uint)(6));
+		// Container child table1.Gtk.Table+TableChild
+		this.cnbOpenInWindow = new global::Gtk.CheckButton();
+		this.cnbOpenInWindow.CanFocus = true;
+		this.cnbOpenInWindow.Name = "cnbOpenInWindow";
+		this.cnbOpenInWindow.Label = global::Mono.Unix.Catalog.GetString("открыть в текущей вкладке");
+		this.cnbOpenInWindow.Active = true;
+		this.cnbOpenInWindow.DrawIndicator = true;
+		this.cnbOpenInWindow.UseUnderline = true;
+		this.table1.Add(this.cnbOpenInWindow);
+		global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.cnbOpenInWindow]));
+		w5.TopAttach = ((uint)(1));
+		w5.BottomAttach = ((uint)(2));
+		w5.LeftAttach = ((uint)(1));
+		w5.RightAttach = ((uint)(2));
+		w5.XOptions = ((global::Gtk.AttachOptions)(4));
+		w5.YOptions = ((global::Gtk.AttachOptions)(4));
+		// Container child table1.Gtk.Table+TableChild
+		this.entitySearchEmployee = new global::QS.Views.Control.EntitySearch();
+		this.entitySearchEmployee.Events = ((global::Gdk.EventMask)(256));
+		this.entitySearchEmployee.Name = "entitySearchEmployee";
+		this.table1.Add(this.entitySearchEmployee);
+		global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.entitySearchEmployee]));
+		w6.LeftAttach = ((uint)(1));
+		w6.RightAttach = ((uint)(2));
+		w6.XOptions = ((global::Gtk.AttachOptions)(4));
+		w6.YOptions = ((global::Gtk.AttachOptions)(4));
+		// Container child table1.Gtk.Table+TableChild
+		this.label3 = new global::Gtk.Label();
+		this.label3.Name = "label3";
+		this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Поиск сотрудника:");
+		this.table1.Add(this.label3);
+		global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1[this.label3]));
+		w7.XOptions = ((global::Gtk.AttachOptions)(4));
+		w7.YOptions = ((global::Gtk.AttachOptions)(4));
+		this.hbox3.Add(this.table1);
+		global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.table1]));
+		w8.Position = 0;
+		w8.Expand = false;
+		w8.Fill = false;
+		this.hbox1.Add(this.hbox3);
+		global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.hbox3]));
+		w9.Position = 1;
+		w9.Expand = false;
+		w9.Fill = false;
+		this.vbox1.Add(this.hbox1);
+		global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
+		w10.Position = 2;
+		w10.Expand = false;
+		w10.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.tdiMain = new global::QS.Tdi.Gtk.TdiNotebook();
 		this.tdiMain.Name = "tdiMain";
 		this.tdiMain.CurrentPage = 0;
 		this.tdiMain.ShowTabs = false;
 		this.vbox1.Add(this.tdiMain);
-		global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.tdiMain]));
-		w4.Position = 2;
+		global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.tdiMain]));
+		w11.Position = 3;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.progresswidget1 = new global::QS.Widgets.ProgressWidget();
 		this.progresswidget1.Name = "progresswidget1";
 		this.vbox1.Add(this.progresswidget1);
-		global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.progresswidget1]));
-		w5.Position = 3;
-		w5.Expand = false;
-		w5.Fill = false;
+		global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.progresswidget1]));
+		w12.Position = 4;
+		w12.Expand = false;
+		w12.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.MainStatusBar = new global::Gtk.Statusbar();
 		this.MainStatusBar.Name = "MainStatusBar";
@@ -415,29 +501,29 @@ public partial class MainWindow
 		this.labelUser.Name = "labelUser";
 		this.labelUser.LabelProp = global::Mono.Unix.Catalog.GetString("Пользователь");
 		this.MainStatusBar.Add(this.labelUser);
-		global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar[this.labelUser]));
-		w6.Position = 0;
-		w6.Expand = false;
-		w6.Fill = false;
+		global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar[this.labelUser]));
+		w13.Position = 0;
+		w13.Expand = false;
+		w13.Fill = false;
 		// Container child MainStatusBar.Gtk.Box+BoxChild
 		this.labelStatus = new global::Gtk.Label();
 		this.labelStatus.Name = "labelStatus";
 		this.labelStatus.Xalign = 1F;
 		this.labelStatus.LabelProp = global::Mono.Unix.Catalog.GetString("Ok");
 		this.MainStatusBar.Add(this.labelStatus);
-		global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar[this.labelStatus]));
-		w7.Position = 2;
+		global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar[this.labelStatus]));
+		w14.Position = 2;
 		this.vbox1.Add(this.MainStatusBar);
-		global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.MainStatusBar]));
-		w8.Position = 4;
-		w8.Expand = false;
-		w8.Fill = false;
+		global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.MainStatusBar]));
+		w15.Position = 5;
+		w15.Expand = false;
+		w15.Fill = false;
 		this.Add(this.vbox1);
 		if ((this.Child != null))
 		{
 			this.Child.ShowAll();
 		}
-		this.DefaultWidth = 733;
+		this.DefaultWidth = 902;
 		this.DefaultHeight = 458;
 		this.progresswidget1.Hide();
 		this.Show();

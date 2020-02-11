@@ -311,6 +311,8 @@
     <Compile Include="ViewModels\Company\LeadersViewModel.cs" />
     <Compile Include="JournalViewModels\Company\LeadersJournalViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.LeadersView.cs" />
+    <Compile Include="JournalViewModels\Company\EmployeeJournalViewModel.cs" />
+    <Compile Include="ViewModels\Company\EmployeeViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

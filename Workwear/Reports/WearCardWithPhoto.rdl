@@ -208,10 +208,10 @@ WHERE wear_cards.id = @id;</CommandText>
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>161.4pt</Width>
+            <Width>154.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>410.9pt</Width>
+            <Width>267.6pt</Width>
           </TableColumn>
         </TableColumns>
         <Details>
@@ -1101,6 +1101,27 @@ WHERE wear_cards.id = @id;</CommandText>
           <TextAlign>Right</TextAlign>
         </Style>
       </Textbox>
+      <Image Name="Image1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+        <Height>188.89pt</Height>
+        <Width>141.50pt</Width>
+        <Left>427.4pt</Left>
+        <Top>4.1pt</Top>
+        <Style>
+          <BorderStyle>
+            <Default>Double</Default>
+            <Left>Double</Left>
+            <Right>Double</Right>
+            <Top>Double</Top>
+            <Bottom>Double</Bottom>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <MIMEType>image/jpeg</MIMEType>
+        <Source>Database</Source>
+        <Value>=First(Fields!photo.Value, 'Card')</Value>
+        <Sizing>FitProportional</Sizing>
+      </Image>
       <Textbox Name="Textbox1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <Height>18.04pt</Height>
         <Width>418.48pt</Width>
