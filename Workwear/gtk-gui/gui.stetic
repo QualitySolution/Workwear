@@ -5159,8 +5159,6 @@
                 <node type="Menuitem" action="Action6" />
                 <node type="Menuitem" action="ActionWarehouse" />
                 <node type="Separator" />
-                <node type="Menuitem" action="Action" />
-                <node type="Separator" />
                 <node type="Menuitem" action="Action7" />
                 <node type="Separator" />
                 <node type="Menuitem" action="Action8" />

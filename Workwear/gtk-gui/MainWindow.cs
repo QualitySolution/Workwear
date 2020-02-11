@@ -325,6 +325,9 @@ public partial class MainWindow
 		this.ActionWarehouse = new global::Gtk.Action("ActionWarehouse", global::Mono.Unix.Catalog.GetString("Склады"), null, null);
 		this.ActionWarehouse.ShortLabel = global::Mono.Unix.Catalog.GetString("Склады");
 		w1.Add(this.ActionWarehouse, null);
+		this.Action = new global::Gtk.Action("Action", global::Mono.Unix.Catalog.GetString("Документы"), null, null);
+		this.Action.ShortLabel = global::Mono.Unix.Catalog.GetString("Документы");
+		w1.Add(this.Action, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
