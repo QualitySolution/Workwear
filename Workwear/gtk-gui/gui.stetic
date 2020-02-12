@@ -1622,7 +1622,6 @@
                 <child>
                   <widget class="Gtk.Label" id="label11">
                     <property name="MemberName" />
-                    <property name="Visible">False</property>
                     <property name="Xalign">1</property>
                     <property name="LabelProp" translatable="yes">Руководитель:</property>
                   </widget>
@@ -1643,7 +1642,6 @@
                 <child>
                   <widget class="Gtk.Label" id="label12">
                     <property name="MemberName" />
-                    <property name="Visible">False</property>
                     <property name="Xalign">1</property>
                     <property name="LabelProp" translatable="yes">Подразделение:</property>
                   </widget>
@@ -2360,7 +2358,6 @@
                 <child>
                   <widget class="Gamma.Widgets.yEntryReference" id="yentryLeader">
                     <property name="MemberName" />
-                    <property name="Visible">False</property>
                     <property name="Events">ButtonPressMask</property>
                   </widget>
                   <packing>
@@ -2822,7 +2819,6 @@
             <child>
               <widget class="workwear.Dialogs.Organization.EmployeeVacationsView" id="employeevacationsview1">
                 <property name="MemberName" />
-                <property name="Visible">False</property>
                 <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
@@ -2832,7 +2828,6 @@
             <child>
               <widget class="Gtk.Label" id="label28">
                 <property name="MemberName" />
-                <property name="Visible">False</property>
                 <property name="LabelProp" translatable="yes">Отпуска</property>
               </widget>
               <packing>
