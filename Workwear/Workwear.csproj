@@ -321,6 +321,8 @@
     <Compile Include="ViewModels\Company\LeadersViewModel.cs" />
     <Compile Include="JournalViewModels\Company\LeadersJournalViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.LeadersView.cs" />
+    <Compile Include="JournalViewModels\Company\EmployeeJournalViewModel.cs" />
+    <Compile Include="ViewModels\Company\EmployeeViewModel.cs" />
     <Compile Include="Domain\Stock\Warehouse.cs" />
     <Compile Include="HibernateMapping\Stock\WarehouseMap.cs" />
     <Compile Include="ViewModels\Stock\WarehouseViewModel.cs" />
