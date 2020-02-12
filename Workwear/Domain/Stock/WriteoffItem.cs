@@ -64,6 +64,13 @@ namespace workwear.Domain.Stock
 			set { SetField(ref employeeIssueOperation, value); }
 		}
 
+		private WarehouseOperation warehouseOperation;
+
+		public virtual WarehouseOperation WarehouseOperation {
+			get { return warehouseOperationExpense; }
+			set { SetField(ref warehouseOperation, value); }
+		}
+
 		#endregion
 
 		#region Вычисляемые
