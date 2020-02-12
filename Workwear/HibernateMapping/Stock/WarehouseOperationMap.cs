@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentNHibernate.Mapping;
 using workwear.Domain.Operations;
+using workwear.Domain.Stock;
 
 namespace workwear.HibernateMapping.Stock
 {
