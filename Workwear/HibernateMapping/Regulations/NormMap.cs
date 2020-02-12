@@ -14,6 +14,8 @@ namespace workwear.HMap
 			Map (x => x.TONAttachment).Column ("ton_attachment");
 			Map (x => x.TONParagraph).Column ("ton_paragraph");
 			Map(x => x.Comment).Column("comment");
+			Map(x => x.DateFrom).Column("datefrom");
+			Map(x => x.DateTo).Column("dateto");
 
 			References(x => x.Document).Column("regulations_id");
 			References(x => x.Annex).Column("regulations_annex_id");
