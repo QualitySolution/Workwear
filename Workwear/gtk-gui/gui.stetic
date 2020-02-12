@@ -1622,6 +1622,7 @@
                 <child>
                   <widget class="Gtk.Label" id="label11">
                     <property name="MemberName" />
+                    <property name="Visible">False</property>
                     <property name="Xalign">1</property>
                     <property name="LabelProp" translatable="yes">Руководитель:</property>
                   </widget>
@@ -1642,6 +1643,7 @@
                 <child>
                   <widget class="Gtk.Label" id="label12">
                     <property name="MemberName" />
+                    <property name="Visible">False</property>
                     <property name="Xalign">1</property>
                     <property name="LabelProp" translatable="yes">Подразделение:</property>
                   </widget>
@@ -1662,6 +1664,7 @@
                 <child>
                   <widget class="Gtk.Label" id="label14">
                     <property name="MemberName" />
+                    <property name="Visible">False</property>
                     <property name="Xalign">1</property>
                     <property name="LabelProp" translatable="yes">Адрес подразделения:</property>
                   </widget>
@@ -2047,6 +2050,7 @@
                 <child>
                   <widget class="Gtk.Label" id="labelObjectAddress">
                     <property name="MemberName" />
+                    <property name="Visible">False</property>
                     <property name="LabelProp" translatable="yes">---</property>
                     <property name="Wrap">True</property>
                     <property name="Selectable">True</property>
@@ -2358,6 +2362,7 @@
                 <child>
                   <widget class="Gamma.Widgets.yEntryReference" id="yentryLeader">
                     <property name="MemberName" />
+                    <property name="Visible">False</property>
                     <property name="Events">ButtonPressMask</property>
                   </widget>
                   <packing>
@@ -2379,6 +2384,7 @@
                 <child>
                   <widget class="Gamma.Widgets.yEntryReference" id="yentryObject">
                     <property name="MemberName" />
+                    <property name="Visible">False</property>
                     <property name="Events">ButtonPressMask</property>
                     <signal name="Changed" handler="OnYentryObjectChanged" />
                     <signal name="ChangedByUser" handler="OnYentryObjectChangedByUser" />
@@ -2463,6 +2469,7 @@
                     <child>
                       <widget class="Gamma.Widgets.yImageViewer" id="yimagePhoto">
                         <property name="MemberName" />
+                        <property name="Visible">False</property>
                         <property name="VerticalFit">True</property>
                         <property name="HorizontalFit">True</property>
                         <signal name="ButtonPressEvent" handler="OnYimagePhotoButtonPressEvent" />
@@ -2481,6 +2488,7 @@
                     <child>
                       <widget class="Gtk.Button" id="buttonLoadPhoto">
                         <property name="MemberName" />
+                        <property name="Visible">False</property>
                         <property name="Tooltip" translatable="yes">Загрузить фотографию с диска на компьютере.</property>
                         <property name="CanFocus">True</property>
                         <property name="Type">TextAndIcon</property>
@@ -2499,6 +2507,7 @@
                     <child>
                       <widget class="Gtk.Button" id="buttonSavePhoto">
                         <property name="MemberName" />
+                        <property name="Visible">False</property>
                         <property name="Sensitive">False</property>
                         <property name="Tooltip" translatable="yes">Сохранить фотографию на диск.</property>
                         <property name="CanFocus">True</property>
@@ -2819,6 +2828,7 @@
             <child>
               <widget class="workwear.Dialogs.Organization.EmployeeVacationsView" id="employeevacationsview1">
                 <property name="MemberName" />
+                <property name="Visible">False</property>
                 <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
