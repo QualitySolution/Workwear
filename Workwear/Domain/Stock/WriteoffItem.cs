@@ -65,9 +65,9 @@ namespace workwear.Domain.Stock
 		}
 
 		private WarehouseOperation warehouseOperation;
-
+		[Display(Name = "Операция на складе")]
 		public virtual WarehouseOperation WarehouseOperation {
-			get { return warehouseOperationExpense; }
+			get { return warehouseOperation; }
 			set { SetField(ref warehouseOperation, value); }
 		}
 
@@ -147,6 +147,9 @@ namespace workwear.Domain.Stock
 				uow.Delete(EmployeeIssueOperation);
 				EmployeeIssueOperation = null;
 			}
+
+			WarehouseOperation.Update(uow, this);
+			uow.Save(WarehouseOperation);
 		}
 
 		#endregion
