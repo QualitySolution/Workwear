@@ -18,10 +18,6 @@ namespace workwear.Views.Stock
 		private void ConfigureDlg()
 		{
 			entityname.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
-			entitysubdivision.ViewModel = ViewModel.SubdivisionEntryViewModel;
-	
 		}
-
-
 	}
 }

@@ -14,7 +14,6 @@ namespace workwear.ViewModels.Stock
 {
 	public class WarehouseViewModel : LegacyEntityDialogViewModelBase<Warehouse>
 	{
-		public EntityEntryViewModel<Subdivision> SubdivisionEntryViewModel;
 		public ILifetimeScope AutofacScope;
 		public ITdiCompatibilityNavigation navigationManager;
 		public ITdiCompatibilityNavigation tdiNavigationManager;
@@ -28,11 +27,6 @@ namespace workwear.ViewModels.Stock
 			var entryBuilder = new LegacyEEVMBuilderFactory<Warehouse>(this, TdiTab, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
-
-			SubdivisionEntryViewModel = entryBuilder.ForProperty(x => x.Subdivision)
-													 .UseOrmReferenceJournalAndAutocompleter()
-													 .UseTdiEntityDialog()
-													 .Finish();
 		}
 	}
 }
