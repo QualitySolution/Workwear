@@ -102,8 +102,7 @@ namespace workwear.Domain.Stock
 			if(item.ExpenseDoc.Date.Date != OperationTime.Date)
 				OperationTime = item.ExpenseDoc.Date;
 
-			expenseWarehouse = item.ExpenseDoc.WarehouseFrom;
-			receiptWarehouse = item.ExpenseDoc.WarehouseTo;
+			expenseWarehouse = item.ExpenseDoc.Warehouse;
 			nomenclature = item.Nomenclature;
 			size = int.Parse(item.Nomenclature.Size);
 			growth = int.Parse(item.Nomenclature.WearGrowth);
@@ -116,8 +115,7 @@ namespace workwear.Domain.Stock
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
-			expenseWarehouse = item.Document.WarehouseFrom;
-			receiptWarehouse = item.Document.WarehouseTo;
+			receiptWarehouse = item.Document.Warehouse;
 			nomenclature = item.Nomenclature;
 			size = int.Parse(item.Nomenclature.Size);
 			growth = int.Parse(item.Nomenclature.WearGrowth);
@@ -130,8 +128,7 @@ namespace workwear.Domain.Stock
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
-			expenseWarehouse = item.Document.WarehouseFrom;
-			receiptWarehouse = item.Document.WarehouseTo;
+			receiptWarehouse = item.Document.Warehouse;
 			nomenclature = item.Nomenclature;
 			size = int.Parse(item.Nomenclature.Size);
 			growth = int.Parse(item.Nomenclature.WearGrowth);
@@ -139,7 +136,5 @@ namespace workwear.Domain.Stock
 		}
 
 		#endregion
-
-
 	}
 }

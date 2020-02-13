@@ -52,20 +52,12 @@ namespace workwear.Domain.Stock
 			set { SetField (ref items, value, () => Items); }
 		}
 
-		private Warehouse warehouseFrom ;
+		private Warehouse warehouse;
 
-		[Display(Name = "Склад списания")]
-		public virtual Warehouse WarehouseFrom {
-			get { return warehouseFrom; }
-			set { SetField(ref warehouseFrom, value, () => WarehouseFrom); }
-		}
-
-		private Warehouse warehouseTo;
-
-		[Display(Name = "Склад поступления")]
-		public virtual Warehouse WarehouseTo {
-			get { return warehouseTo; }
-			set { SetField(ref warehouseTo, value, () => WarehouseTo); }
+		[Display(Name = "Склад")]
+		public virtual Warehouse Warehouse {
+			get { return warehouse; }
+			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
 
 		System.Data.Bindings.Collections.Generic.GenericObservableList<ExpenseItem> observableItems;

@@ -61,21 +61,14 @@ namespace workwear.Domain.Stock
 			set { SetField (ref items, value, () => Items); }
 		}
 
-		private Warehouse warehouseFrom;
+		private Warehouse warehouse;
 
-		[Display(Name = "Склад списания")]
-		public virtual Warehouse WarehouseFrom {
-			get { return warehouseFrom; }
-			set { SetField(ref warehouseFrom, value, () => WarehouseFrom); }
+		[Display(Name = "Склад")]
+		public virtual Warehouse Warehouse {
+			get { return warehouse; }
+			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
 
-		private Warehouse warehouseTo;
-
-		[Display(Name = "Склад поступления")]
-		public virtual Warehouse WarehouseTo {
-			get { return warehouseTo; }
-			set { SetField(ref warehouseTo, value, () => WarehouseTo); }
-		}
 
 		GenericObservableList<IncomeItem> observableItems;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
