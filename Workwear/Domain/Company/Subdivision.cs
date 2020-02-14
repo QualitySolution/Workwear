@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using workwear.Domain.Stock;
 
 namespace workwear.Domain.Company
 {
@@ -49,6 +50,14 @@ namespace workwear.Domain.Company
 			get { return places; }
 			set { SetField (ref places, value, () => Places); }
 		}
+
+		Warehouse warehouse;
+
+		public virtual Warehouse Warehouse {
+			get { return warehouse; }
+			set { SetField(ref warehouse, value); }
+		}
+
 
 		#endregion
 
