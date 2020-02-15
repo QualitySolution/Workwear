@@ -5,6 +5,7 @@ using QS.Deletion;
 using QS.Deletion.Testing;
 using workwear.Domain.Operations;
 using workwear.Domain.Company;
+using workwear.Domain.Statements;
 
 namespace WorkwearTest.Deletion
 {
@@ -21,6 +22,7 @@ namespace WorkwearTest.Deletion
 			//IgnoreMissingClass.Add(typeof(QS.Project.Domain.UserBase));
 			AddIgnoredProperty<EmployeeIssueOperation>(x => x.IssuedOperation, "Потому что если мы удаляем операцию списания, мы не должны при этом удалять операцию выдачи.");
 			AddIgnoredProperty<EmployeeCardItem>(x => x.ActiveNormItem, "Должно удалятся более сложным способом, а именно через обновление потребностей.");
+			AddIgnoredProperty<IssuanceSheetItem>(x => x.IssueOperation, "Является дополнительной ссылкой на операцию, а не основной, поэтому не должно удалять операцию.");
 		}
 
 		public new static IEnumerable AllDeleteItems => DeleteConfigTestBase.AllDeleteItems;
