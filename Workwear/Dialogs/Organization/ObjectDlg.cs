@@ -5,8 +5,14 @@ using NLog;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using QS.Validation.GtkUI;
+using QS.ViewModels.Control.EEVM;
 using QSProjectsLib;
 using workwear.Domain.Company;
+using workwear.Domain.Stock;
+using Autofac;
+using workwear.ViewModels.Stock;
+using workwear.JournalViewModels.Stock;
+using QS.Tdi;
 
 namespace workwear.Dialogs.Organization
 {
@@ -16,6 +22,8 @@ namespace workwear.Dialogs.Organization
 		private Gtk.ListStore ItemsListStore;
 		private TreeModel PlacementList;
 		CellRendererCombo CellPlacement;
+		ILifetimeScope AutofacScope;
+
 
 		public ObjectDlg (Subdivision obj) : this(obj.Id) {}
 
@@ -79,6 +87,15 @@ namespace workwear.Dialogs.Organization
 			entryCode.Binding.AddBinding(Entity, e => e.Code, w => w.Text).InitializeFromSource();
 			entryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 			textviewAddress.Binding.AddBinding(Entity, e => e.Address, w => w.Buffer.Text).InitializeFromSource();
+		
+
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+			var builder = new LegacyEEVMBuilderFactory<Subdivision>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
+
+			entitywarehouse.ViewModel = builder.ForProperty(x => x.Warehouse)		
+									.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
+									.UseViewModelDialog<WarehouseViewModel>()
+									.Finish();
 		}
 
 		private void Fill(int id)
@@ -333,5 +350,12 @@ namespace workwear.Dialogs.Organization
 			}
 		}
 
+		public override void Destroy()
+		{
+			base.Destroy();
+			AutofacScope.Dispose();
+		}
+
 	}
 }
+ 

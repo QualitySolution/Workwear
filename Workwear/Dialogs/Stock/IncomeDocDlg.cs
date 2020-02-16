@@ -1,20 +1,25 @@
 ﻿using System;
 using System.Linq;
+using Autofac;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Validation.GtkUI;
+using QS.ViewModels.Control.EEVM;
 using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
+using workwear.JournalViewModels.Stock;
 using workwear.Repository;
+using workwear.ViewModels.Stock;
 
 namespace workwear
 {
 	public partial class IncomeDocDlg : EntityDialogBase<Income>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
+		ILifetimeScope AutofacScope;
 
 		public IncomeDocDlg()
 		{
@@ -68,7 +73,18 @@ namespace workwear
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			ItemsTable.IncomeDoc = Entity;
-		}			
+
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+
+			var builder = new LegacyEEVMBuilderFactory<Income>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
+
+
+			entityWarehouseIncome.ViewModel = builder.ForProperty(x => x.Warehouse)
+									.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
+									.UseViewModelDialog<WarehouseViewModel>()
+									.Finish();
+
+		}
 
 		public override bool Save()
 		{
