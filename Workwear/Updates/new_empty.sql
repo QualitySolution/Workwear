@@ -764,13 +764,14 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
   INDEX `fk_issuance_sheet_3_idx` (`responsible_person_id` ASC),
   INDEX `fk_issuance_sheet_4_idx` (`head_of_division_person_id` ASC),
   INDEX `fk_issuance_sheet_5_idx` (`stock_expense_id` ASC),
+  INDEX `fk_issuance_sheet_2_idx` (`subdivision_id` ASC),
   CONSTRAINT `fk_issuance_sheet_1`
     FOREIGN KEY (`organization_id`)
     REFERENCES `organizations` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE,
   CONSTRAINT `fk_issuance_sheet_2`
-    FOREIGN KEY (`organization_id`)
+    FOREIGN KEY (`subdivision_id`)
     REFERENCES `objects` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE,
@@ -844,6 +845,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
     ON DELETE SET NULL
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
