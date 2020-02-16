@@ -29,12 +29,9 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
 using workwear.JournalViewModels;
-using workwear.JournalViewModels.Company;
-using workwear.JournalViewModels.Statements;
 using workwear.Repository.Operations;
 using workwear.Tools;
 using workwear.ViewModels.Company;
-using workwear.ViewModels.Statements;
 using workwear.Views.Company;
 
 namespace workwear
