@@ -200,7 +200,8 @@ namespace workwear
 			// Container child table2.Gtk.Table+TableChild
 			this.label3 = new global::Gtk.Label();
 			this.label3.Name = "label3";
-			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Склад");
+			this.label3.Xalign = 1F;
+			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Склад:");
 			this.table2.Add(this.label3);
 			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table2[this.label3]));
 			w15.TopAttach = ((uint)(1));

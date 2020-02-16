@@ -5124,13 +5124,6 @@
         <property name="StockId">odnoklasniki</property>
         <signal name="Activated" handler="OnActionOdnoklasnikiActivated" />
       </action>
-      <action id="ActionGoogle">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Google++</property>
-        <property name="ShortLabel" translatable="yes">Google++</property>
-        <property name="StockId">google-plus</property>
-        <signal name="Activated" handler="OnActionGoogleActivated" />
-      </action>
       <action id="ActionTwitter">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Twitter</property>
@@ -5261,7 +5254,6 @@
                 <node type="Menu" action="Action38">
                   <node type="Menuitem" action="ActionVK" />
                   <node type="Menuitem" action="ActionOdnoklasniki" />
-                  <node type="Menuitem" action="ActionGoogle" />
                   <node type="Menuitem" action="ActionTwitter" />
                   <node type="Menuitem" action="ActionYouTube" />
                 </node>

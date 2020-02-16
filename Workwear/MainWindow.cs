@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Autofac;
-using FluentNHibernate.Data;
 using Gtk;
 using NLog;
 using QS.BusinessCommon.Domain;
@@ -12,15 +11,12 @@ using QS.Dialog.Gtk;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
-using QS.Project.Journal.EntitySelector;
 using QS.Report;
 using QS.Tdi;
 using QS.Tdi.Gtk;
 using QS.Updater;
-using QS.ViewModels.Control;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
-using QS.ViewModels.Dialog;
 using QSOrmProject;
 using QSProjectsLib;
 using QSSupportLib;
@@ -543,12 +539,6 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount("ok.ru");
 		System.Diagnostics.Process.Start("https://ok.ru/qualitysolution");
-	}
-
-	protected void OnActionGoogleActivated(object sender, EventArgs e)
-	{
-		MainTelemetry.AddCount("plus.google.com");
-		System.Diagnostics.Process.Start("https://plus.google.com/+QsolutionRu/posts");
 	}
 
 	protected void OnActionTwitterActivated(object sender, EventArgs e)
