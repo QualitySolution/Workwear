@@ -32,8 +32,8 @@ namespace workwear.JournalViewModels
 			TreeViewColumnsConfigFactory.Register<LeadersJournalViewModel>(
 				() => FluentColumnsConfig<LeaderJournalNode>.Create()
 					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
-					.AddColumn("Имя").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Фамилия").AddTextRenderer(node => node.SurName).SearchHighlight()
+					.AddColumn("Имя").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Отчество").AddTextRenderer(node => node.Patronymic).SearchHighlight()
 					.AddColumn("Должность").AddTextRenderer(node => node.Position).SearchHighlight()
 					.Finish()

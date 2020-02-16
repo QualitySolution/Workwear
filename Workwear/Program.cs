@@ -47,7 +47,7 @@ namespace workwear
 				return;
 			}
 
-			CreateProjectParam ();
+			RegisterSQLScripts ();
 			AutofacClassConfig();
 
 			// Создаем окно входа
@@ -118,11 +118,11 @@ namespace workwear
 			QSSaaS.Session.StopSessionRefresh ();
 		}
 
-		static void CreateProjectParam ()
+		static void RegisterSQLScripts ()
 		{
 			//Скрипты создания базы
 			DBCreator.AddBaseScript (
-				new Version(2, 2),
+				new Version(2, 3),
 				"Чистая база",
 				"workwear.Updates.new_empty.sql"
 			);
@@ -176,6 +176,10 @@ namespace workwear
 				new Version(2, 1),
 				new Version(2, 2),
 				"workwear.Updates.2.2.sql");
+			DBUpdater.AddUpdate(
+				new Version(2, 2),
+				new Version(2, 3),
+				"workwear.Updates.2.3.sql");
 		}
 	}
 }

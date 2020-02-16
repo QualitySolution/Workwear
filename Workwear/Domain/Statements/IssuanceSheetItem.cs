@@ -94,6 +94,19 @@ namespace workwear.Domain.Statements
 
 		public virtual string ItemName => nomenclature?.Name ?? ItemsType?.Name;
 
+		public virtual ItemsType ItemsTypeCalculated => Nomenclature?.Type ?? ItemsType;
+
+		public virtual string Title {
+			get {
+				return String.Format("Строка ведомости {0} - {1} в количестве {2} {3}",
+					Employee.ShortName,
+			  		ItemName,
+			  		Amount,
+			  		ItemsTypeCalculated?.Units?.Name
+		 		);
+			}
+		}
+
 		#endregion
 
 		public IssuanceSheetItem()
