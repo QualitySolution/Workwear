@@ -1145,7 +1145,8 @@
             <child>
               <widget class="Gtk.Label" id="lb5">
                 <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Название склада:</property>
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Склад выдачи:</property>
               </widget>
               <packing>
                 <property name="TopAttach">3</property>

@@ -217,7 +217,8 @@ namespace workwear.Dialogs.Organization
 			// Container child table1.Gtk.Table+TableChild
 			this.lb5 = new global::Gtk.Label();
 			this.lb5.Name = "lb5";
-			this.lb5.LabelProp = global::Mono.Unix.Catalog.GetString("Название склада:");
+			this.lb5.Xalign = 1F;
+			this.lb5.LabelProp = global::Mono.Unix.Catalog.GetString("Склад выдачи:");
 			this.table1.Add(this.lb5);
 			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table1[this.lb5]));
 			w17.TopAttach = ((uint)(3));
