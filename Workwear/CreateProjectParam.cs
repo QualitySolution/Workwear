@@ -1,4 +1,4 @@
-using Autofac;
+﻿using Autofac;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
@@ -79,7 +79,6 @@ namespace workwear
 
 			NotifyConfiguration.Enable();
 			BuisnessLogicGlobalEventHandler.Init(new GtkQuestionDialogsInteractive());
-			GtkAppServicesConfig.CreateDefaultGtkServices();
 			JournalsColumnsConfigs.RegisterColumns();
 		}
 
