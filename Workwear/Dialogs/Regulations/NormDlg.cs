@@ -88,7 +88,7 @@ namespace workwear.Dialogs.Regulations
 		public override bool Save ()
 		{
 			logger.Info ("Запись нормы...");
-			var valid = new QS.Validation.GtkUI.QSValidator<Norm> (UoWGeneric.Root);
+			var valid = new QS.Validation.QSValidator<Norm> (UoWGeneric.Root);
 			if (valid.RunDlgIfNotValid ((Gtk.Window)this.Toplevel))
 				return false;
 

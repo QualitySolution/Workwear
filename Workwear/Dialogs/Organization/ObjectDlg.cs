@@ -1,18 +1,16 @@
 ﻿using System;
+using Autofac;
 using Gtk;
 using MySql.Data.MySqlClient;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
-using QS.Validation.GtkUI;
+using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QSProjectsLib;
 using workwear.Domain.Company;
-using workwear.Domain.Stock;
-using Autofac;
-using workwear.ViewModels.Stock;
 using workwear.JournalViewModels.Stock;
-using QS.Tdi;
+using workwear.ViewModels.Stock;
 
 namespace workwear.Dialogs.Organization
 {

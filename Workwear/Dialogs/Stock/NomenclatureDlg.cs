@@ -57,7 +57,7 @@ namespace workwear
 		public override bool Save ()
 		{
 			logger.Info ("Запись номенклатуры...");
-			var valid = new QS.Validation.GtkUI.QSValidator<Nomenclature> (UoWGeneric.Root);
+			var valid = new QS.Validation.QSValidator<Nomenclature> (UoWGeneric.Root);
 			if (valid.RunDlgIfNotValid ((Gtk.Window)this.Toplevel))
 				return false;
 

@@ -11,7 +11,7 @@ using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Report;
-using QS.Validation.GtkUI;
+using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QSOrmProject;
 using QSProjectsLib;

@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
@@ -17,7 +17,6 @@ using QS.Report.Views;
 using QS.Services;
 using QS.Tdi;
 using QS.Validation;
-using QS.Validation.GtkUI;
 using QS.ViewModels;
 using QS.Views.Resolve;
 using QSOrmProject;
@@ -106,7 +105,7 @@ namespace workwear
 			//FIXME Нужно в конечнои итоге попытаться избавится от CommonServce вообще.
 			builder.RegisterType<CommonServices>().As<ICommonServices>();
 			builder.RegisterType<UserService>().As<IUserService>();
-			builder.RegisterType<ValidationService>().As<IValidationService>();
+			builder.RegisterType<ObjectValidator>().As<IValidator>();
 			//FIXME Реализовать везде возможность отсутствия сервиса прав, чтобы не приходилось создавать то что не используется
 			builder.RegisterType<DefaultAllowedPermissionService>().As<IPermissionService>();
 			builder.RegisterType<CommonMessages>().AsSelf();

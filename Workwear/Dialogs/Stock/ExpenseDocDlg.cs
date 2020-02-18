@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
@@ -8,7 +9,7 @@ using QS.DomainModel.UoW;
 using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
-using QS.Validation.GtkUI;
+using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QSOrmProject;
 using workwear.Domain.Company;
@@ -17,8 +18,6 @@ using workwear.JournalViewModels.Stock;
 using workwear.Repository;
 using workwear.ViewModels.Statements;
 using workwear.ViewModels.Stock;
-using QS.Tdi;
-using Autofac;
 
 namespace workwear
 {
