@@ -23,20 +23,16 @@ namespace workwear.JournalViewModels.Stock
 		protected override IQueryOver<Warehouse> ItemsQuery(IUnitOfWork uow)
 		{
 			WarehouseJournalNode resultAlias = null;
-			Subdivision subdivisionAlias = null;
 			Warehouse WareHouseAlias = null;
 
 			return uow.Session.QueryOver<Warehouse>(() => WareHouseAlias)
 				.Where(GetSearchCriterion(
 					() => WareHouseAlias.Id,
-					() => WareHouseAlias.Name,
-					() => subdivisionAlias.Name
+					() => WareHouseAlias.Name
 					))
-					.JoinAlias(x => x.Subdivision, () => subdivisionAlias)
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
-					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 				).TransformUsing(Transformers.AliasToBean<WarehouseJournalNode>());
 		}
 	}
@@ -45,7 +41,6 @@ namespace workwear.JournalViewModels.Stock
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
-		public string Subdivision { get; set; }
 
 	}
 }

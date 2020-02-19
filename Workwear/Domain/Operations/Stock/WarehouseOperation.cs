@@ -45,19 +45,19 @@ namespace workwear.Domain.Stock
 		}
 
 
-		int size;
+		string size;
 
 		[Display(Name ="Размер")]
-		public virtual int Size {
+		public virtual string Size {
 			get { return size; }
 			set { SetField(ref size, value); }
 		}
 
 
-		int growth;
+		string growth;
 
 		[Display(Name = "Рост")]
-		public virtual int Growth {
+		public virtual string Growth {
 			get { return growth; }
 			set { SetField(ref growth, value); }
 		}
@@ -79,22 +79,8 @@ namespace workwear.Domain.Stock
 			set { SetField(ref wearPercent, value.Clamp(0m, 9.99m)); }
 		}
 
-		private Expense employeeExpense;
 
-		public virtual Expense EmployeeExpense {
-			get { return employeeExpense; }
-			set { SetField(ref employeeExpense, value); }
-		}
-
-		private WarehouseOperation incomeWarehouseOperation;
-
-		public virtual WarehouseOperation IncomeWarehouseOperation {
-
-			get { return incomeWarehouseOperation; }
-			set { SetField(ref incomeWarehouseOperation, value); }
-		}
-
-		#region Методы обновленя операций
+		#region Методы обновления операций
 
 		public virtual void Update(IUnitOfWork uow, ExpenseItem item)
 		{
@@ -104,8 +90,8 @@ namespace workwear.Domain.Stock
 
 			expenseWarehouse = item.ExpenseDoc.Warehouse;
 			nomenclature = item.Nomenclature;
-			size = int.Parse(item.Nomenclature.Size);
-			growth = int.Parse(item.Nomenclature.WearGrowth);
+			size = item.Nomenclature.Size;
+			growth = item.Nomenclature.WearGrowth;
 			amount = item.Amount;
 		}
 
@@ -117,8 +103,8 @@ namespace workwear.Domain.Stock
 
 			receiptWarehouse = item.Document.Warehouse;
 			nomenclature = item.Nomenclature;
-			size = int.Parse(item.Nomenclature.Size);
-			growth = int.Parse(item.Nomenclature.WearGrowth);
+			size = item.Nomenclature.Size;
+			growth =item.Nomenclature.WearGrowth;
 			amount = item.Amount;
 		}
 
@@ -130,8 +116,22 @@ namespace workwear.Domain.Stock
 
 			receiptWarehouse = item.Document.Warehouse;
 			nomenclature = item.Nomenclature;
-			size = int.Parse(item.Nomenclature.Size);
-			growth = int.Parse(item.Nomenclature.WearGrowth);
+			size = item.Nomenclature.Size;
+			growth = item.Nomenclature.WearGrowth;
+			amount = item.Amount;
+		}
+
+		public virtual void Update(IUnitOfWork uow, TransferItem item)
+		{
+			//Внимание здесь сравниваются даты без времени.
+			if(item.Document.Date.Date != OperationTime.Date)
+				OperationTime = item.Document.Date;
+
+			receiptWarehouse = item.Document.WarehouseFrom;
+			expenseWarehouse = item.Document.WarehouseTo;
+			nomenclature = item.Nomenclature;
+			size = item.Nomenclature.Size;
+			growth = item.Nomenclature.WearGrowth;
 			amount = item.Amount;
 		}
 
