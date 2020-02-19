@@ -57,10 +57,5 @@ namespace workwear.Views.Stock
 			ViewModel.RemoveItems(items);
 		}
 
-		protected void OnTableRowActivated(object o, RowActivatedArgs args)
-		{
-			if(!ViewModel.CanEditItems)
-				return;
-		}
 	}
 }

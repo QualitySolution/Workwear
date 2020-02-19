@@ -48,11 +48,6 @@ namespace workwear.Domain.Stock
 			set { SetField(ref items, value, () => Items); }
 		}
 
-		//string comment;
-		//public virtual new string Comment {
-		//	get { return Comment; }
-		//	set { SetField(ref comment, value, () => Comment); }
-		//}
 
 		GenericObservableList<TransferItem> observableItems;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.

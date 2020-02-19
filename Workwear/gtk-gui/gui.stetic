@@ -5174,18 +5174,6 @@
         <property name="ShortLabel" translatable="yes">Склады</property>
         <signal name="Activated" handler="OnActionWarehouseActivated" />
       </action>
-      <action id="Action">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Передача со склада на склад</property>
-        <property name="ShortLabel" translatable="yes">Передача со склада на склад</property>
-        <signal name="Activated" handler="OnActionActivated" />
-      </action>
-      <action id="qwAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">qw</property>
-        <property name="ShortLabel" translatable="yes">qw</property>
-        <signal name="Activated" handler="On12ActionActivated" />
-      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -9950,7 +9938,7 @@
               <widget class="Gtk.Label" id="label1">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Склад списания:</property>
+                <property name="LabelProp" translatable="yes">Склад отправитель:</property>
               </widget>
               <packing>
                 <property name="AutoSize">True</property>
@@ -9968,7 +9956,7 @@
               <widget class="Gtk.Label" id="label2">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Склад добавления:</property>
+                <property name="LabelProp" translatable="yes">Склад получатель:</property>
               </widget>
               <packing>
                 <property name="TopAttach">1</property>
@@ -10109,7 +10097,6 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>
-                <signal name="RowActivated" handler="OnTableRowActivated" />
               </widget>
             </child>
           </widget>

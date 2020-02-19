@@ -72,11 +72,6 @@ namespace workwear.ViewModels.Stock
 		{
 			foreach(var nomenclature in e.GetEntities<Nomenclature>()) {
 				Entity.AddItem(nomenclature);
-				//var item = new TransferItem {
-				//	Nomenclature = nomenclature,
-				//	Amount = 1
-				//};
-				//Entity.ObservableItems.Add(item);
 			}
 		}
 

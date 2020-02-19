@@ -130,10 +130,8 @@ namespace workwear.Domain.Stock
 			receiptWarehouse = item.Document.WarehouseFrom;
 			expenseWarehouse = item.Document.WarehouseTo;
 			nomenclature = item.Nomenclature;
-			//if (item.Nomenclature.Size != null)
-				size = item.Nomenclature.Size;
-			//if (Nomenclature.WearGrowth != null)
-				growth = item.Nomenclature.WearGrowth;
+			size = item.Nomenclature.Size;
+			growth = item.Nomenclature.WearGrowth;
 			amount = item.Amount;
 		}
 

@@ -65,7 +65,7 @@ namespace workwear.Domain.Stock
 		ExpenseDoc,
 		[Display(Name = "Списание")]
 		WriteoffDoc,
-		[Display(Name = "Перемещение со склада на склад")]
+		[Display(Name = "Перемещение")]
 		TransferDoc
 	}
 }

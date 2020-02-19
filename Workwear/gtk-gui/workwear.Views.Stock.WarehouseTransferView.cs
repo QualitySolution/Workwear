@@ -207,7 +207,7 @@ namespace workwear.Views.Stock
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
 			this.label1.Xalign = 1F;
-			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Склад списания:");
+			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Склад отправитель:");
 			this.table2.Add(this.label1);
 			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table2[this.label1]));
 			w14.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -216,7 +216,7 @@ namespace workwear.Views.Stock
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
 			this.label2.Xalign = 1F;
-			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Склад добавления:");
+			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Склад получатель:");
 			this.table2.Add(this.label2);
 			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table2[this.label2]));
 			w15.TopAttach = ((uint)(1));
@@ -359,7 +359,6 @@ namespace workwear.Views.Stock
 				this.Child.ShowAll();
 			}
 			this.Hide();
-			this.table.RowActivated += new global::Gtk.RowActivatedHandler(this.OnTableRowActivated);
 			this.buttonAddItem.Clicked += new global::System.EventHandler(this.OnButtonAddClicked);
 			this.buttonRemoveItem.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
 		}
