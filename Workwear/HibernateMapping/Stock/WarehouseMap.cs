@@ -13,8 +13,7 @@ namespace workwear.HibernateMapping.Stock
 
 			Id(x => x.Id).Column("id").GeneratedBy.Native();
 			Map(x => x.Name).Column("name");
-		
-			References(x => x.Subdivision).Column("subdivision_id");
+
 
 		}
 	}

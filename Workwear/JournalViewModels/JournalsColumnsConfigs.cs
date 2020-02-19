@@ -43,7 +43,6 @@ namespace workwear.JournalViewModels
 			() => FluentColumnsConfig<WarehouseJournalNode>.Create()
 				.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 				.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
-				.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
 				.Finish()
 		);
 		}

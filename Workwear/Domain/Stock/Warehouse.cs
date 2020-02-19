@@ -21,12 +21,5 @@ namespace workwear.Domain.Stock
 
 		}
 
-		Subdivision subdivision;
-		[Display(Name = "Подразделение")]
-		public virtual Subdivision Subdivision {
-			get { return subdivision; }
-			set { SetField(ref subdivision, value); }
-		}
-
 	}
 }
