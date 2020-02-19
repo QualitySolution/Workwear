@@ -83,7 +83,7 @@ namespace workwear.Domain.Stock
 			set { SetField(ref employeeIssueOperation, value); }
 		}
 
-		private WarehouseOperation warehouseOperation;
+		private WarehouseOperation warehouseOperation = new WarehouseOperation();
 		[Display(Name = "Операция на складе")]
 		public virtual WarehouseOperation WarehouseOperation {
 			get { return warehouseOperation; }

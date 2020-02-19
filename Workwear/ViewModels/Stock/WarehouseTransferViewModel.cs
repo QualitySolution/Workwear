@@ -100,10 +100,10 @@ namespace workwear.ViewModels.Stock
 			}
 		}
 
-		public override void Save()
+		public override bool Save()
 		{
 			Entity.UpdateOperations(UoW, null); 
-			base.Save();
+			return base.Save();
 		}
 
 		public override void Dispose()
