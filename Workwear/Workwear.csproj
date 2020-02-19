@@ -351,13 +351,19 @@
     <Compile Include="ViewModels\Company\EmployeeViewModel.cs" />
     <Compile Include="Domain\Stock\Warehouse.cs" />
     <Compile Include="HibernateMapping\Stock\WarehouseMap.cs" />
-    <Compile Include="ViewModels\Stock\WarehouseViewModel.cs" />
+    <Compile Include="ViewModels\Stock\WarehouseTransferViewModel.cs" />
     <Compile Include="Views\Stock\WarehouseView.cs" />
     <Compile Include="JournalViewModels\Stock\WarehouseJournalViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseView.cs" />
     <Compile Include="HibernateMapping\Stock\WarehouseOperationMap.cs" />
     <Compile Include="Domain\Operations\Stock\WarehouseOperation.cs" />
-    <Compile Include="ViewModels\Stock\WarehouseOperationViewModel.cs" />
+    <Compile Include="ViewModels\Stock\WarehouseViewModel.cs" />
+    <Compile Include="Views\Stock\WarehouseTransferView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseTransferView.cs" />
+    <Compile Include="Domain\Stock\Transfer.cs" />
+    <Compile Include="Domain\Stock\TransferItem.cs" />
+    <Compile Include="HibernateMapping\Stock\TransferMap.cs" />
+    <Compile Include="HibernateMapping\Stock\TransferItemMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
