@@ -181,7 +181,7 @@ namespace workwear.Domain.Stock
 				EmployeeIssueOperation = null;
 			}
 
-		//	WarehouseOperation.Update(uow, this);
+			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
 		}
 
