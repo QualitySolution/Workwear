@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QS.Utilities.Numeric;
+using workwear.Domain.Operations;
 
 namespace workwear.Domain.Stock
 {

@@ -3,8 +3,9 @@ using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Utilities.Numeric;
+using workwear.Domain.Stock;
 
-namespace workwear.Domain.Stock
+namespace workwear.Domain.Operations
 {
 	public class WarehouseOperation : PropertyChangedBase, IDomainObject
 	{

@@ -356,7 +356,6 @@
     <Compile Include="JournalViewModels\Stock\WarehouseJournalViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseView.cs" />
     <Compile Include="HibernateMapping\Stock\WarehouseOperationMap.cs" />
-    <Compile Include="Domain\Operations\Stock\WarehouseOperation.cs" />
     <Compile Include="ViewModels\Stock\WarehouseViewModel.cs" />
     <Compile Include="Views\Stock\WarehouseTransferView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseTransferView.cs" />
@@ -364,6 +363,7 @@
     <Compile Include="Domain\Stock\TransferItem.cs" />
     <Compile Include="HibernateMapping\Stock\TransferMap.cs" />
     <Compile Include="HibernateMapping\Stock\TransferItemMap.cs" />
+    <Compile Include="Domain\Operations\WarehouseOperation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -505,7 +505,6 @@
     <Folder Include="Views\Stock\" />
     <Folder Include="ViewModels\Stock\" />
     <Folder Include="JournalViewModels\Stock\" />
-    <Folder Include="Domain\Operations\Stock\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
