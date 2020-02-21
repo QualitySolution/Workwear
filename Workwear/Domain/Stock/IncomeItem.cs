@@ -93,6 +93,39 @@ namespace workwear.Domain.Stock
 			set { SetField(ref warehouseOperation, value); }
 		}
 
+		string sizeStd;
+
+		[Display(Name = "Стандарт размера")]
+		public virtual string SizeStd {
+			get { return sizeStd; }
+			set { SetField(ref sizeStd, value, () => SizeStd); }
+		}
+
+		string size;
+
+		[Display(Name = "Размер")]
+		public virtual string Size {
+			get { return size; }
+			set { SetField(ref size, value, () => Size); }
+		}
+
+		string wearGrowth;
+
+		[Display(Name = "Рост одежды")]
+		public virtual string WearGrowth {
+			get { return wearGrowth; }
+			set { SetField(ref wearGrowth, value, () => WearGrowth); }
+		}
+
+		string wearGrowthStd;
+
+		[Display(Name = "Стандарт роста")]
+		public virtual string WearGrowthStd {
+			get { return wearGrowthStd; }
+			set { SetField(ref wearGrowthStd, value, () => WearGrowthStd); }
+		}
+
+
 		#endregion
 
 		#region Расчетные
@@ -146,7 +179,7 @@ namespace workwear.Domain.Stock
 				EmployeeIssueOperation = null;
 			}
 
-			WarehouseOperation.Update(uow, this);
+		//	WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
 		}
 
