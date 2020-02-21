@@ -1,14 +1,11 @@
-﻿using System;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
-using workwear.Domain.Company;
 using workwear.Domain.Stock;
-using workwear.JournalViewModels.Company;
 using workwear.ViewModels.Stock;
 
 namespace workwear.JournalViewModels.Stock
