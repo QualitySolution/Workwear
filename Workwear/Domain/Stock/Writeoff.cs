@@ -8,6 +8,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Operations;
 using workwear.Repository.Operations;
+using workwear.ViewModel;
 
 namespace workwear.Domain.Stock
 {
@@ -77,23 +78,29 @@ namespace workwear.Domain.Stock
 		{
 		}
 
-		public virtual void AddItem(ExpenseItem expenseFromItem, int count)
+		public virtual void AddItem(IUnitOfWork uow, Nomenclature nomenclature, string size, string growth, decimal wearPercent, int count)
 		{
-			if(expenseFromItem.ExpenseDoc.Operation == ExpenseOperations.Employee)
-				throw new InvalidOperationException("Этот метод нельзя использовать для выдачи сотрудникам. Используйте метод с операцией EmployeeIssueOperation.");
+			//if(expenseFromItem.ExpenseDoc.Operation == ExpenseOperations.Employee)
+			//	throw new InvalidOperationException("Этот метод нельзя использовать для выдачи сотрудникам. Используйте метод с операцией EmployeeIssueOperation.");
 
-			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IssuedOn, expenseFromItem)))
+
+
+			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IssuedOn, nomenclature)))
 			{
 				logger.Warn ("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return;
 			}
 
-			var newItem = new WriteoffItem (this) {
+			var newItem = new WriteoffItem(this) {
+
 				Amount = count,
-				Nomenclature = expenseFromItem.Nomenclature,
-				IssuedOn = expenseFromItem,
-			};
+				Nomenclature = nomenclature,
+				Size = size,
+				WearGrowth = growth
+
 				
+			};
+
 			ObservableItems.Add (newItem);
 		}
 

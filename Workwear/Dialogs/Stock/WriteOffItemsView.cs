@@ -8,6 +8,8 @@ using workwear.Domain.Operations;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Representations.Organization;
+using workwear.JournalFilters;
+using workwear.ViewModel;
 
 namespace workwear
 {
@@ -53,6 +55,8 @@ namespace workwear
 
 		public Subdivision CurObject { get; set;}
 
+		public Warehouse CurWarehouse { get; set; }
+
 		public WriteOffItemsView()
 		{
 			this.Build();
@@ -68,6 +72,7 @@ namespace workwear
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument)
 				.AddSetter((c, e) => c.Editable = e.IssuedOn?.ExpenseDoc.Operation == ExpenseOperations.Employee)
 				.Finish ();
+
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 		}
 
@@ -78,8 +83,14 @@ namespace workwear
 
 		protected void OnButtonAddStoreClicked (object sender, EventArgs e)
 		{
-			var selectFromStockDlg = new ReferenceRepresentation (new ViewModel.StockBalanceVM (ViewModel.StockBalanceVMMode.DisplayAll, ViewModel.StockBalanceVMGroupBy.IncomeItem),
-			                                                     "Остатки на складе");
+			var filter = new WarehouseFilter(MyOrmDialog.UoW);
+
+			if(CurWarehouse != null)
+				filter.RestrictWarehouse = CurWarehouse;
+	
+			var selectFromStockDlg = new ReferenceRepresentation(new StockBalanceVM(filter),
+																	"Остатки на складе");
+			selectFromStockDlg.ShowFilter = CurWarehouse == null;
 			selectFromStockDlg.Mode = OrmReferenceMode.MultiSelect;
 			selectFromStockDlg.ObjectSelected += SelectFromStockDlg_ObjectSelected;;
 
@@ -90,7 +101,7 @@ namespace workwear
 		{
 			foreach(var node in e.GetNodes<ViewModel.StockBalanceVMNode> ())
 			{
-				WriteoffDoc.AddItem (MyOrmDialog.UoW.GetById<IncomeItem> (node.Id), node.Income - node.Expense);
+				WriteoffDoc.AddItem (UoW, MyOrmDialog.UoW.GetById<Nomenclature> (node.Id), node.Size, node.Growth, node.WearPercent, node.Amount);
 			}
 			CalculateTotal();
 		}
@@ -135,7 +146,7 @@ namespace workwear
 		{
 			foreach(var node in e.GetNodes<ViewModel.ObjectBalanceVMNode> ())
 			{
-				WriteoffDoc.AddItem (MyOrmDialog.UoW.GetById<ExpenseItem> (node.Id), node.Added - node.Removed);
+				//WriteoffDoc.AddItem (MyOrmDialog.UoW.GetById<ExpenseItem> (node.Id), node.Added - node.Removed);
 			}
 			CalculateTotal();
 		}

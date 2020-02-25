@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamma.ColumnConfig;
@@ -117,8 +117,7 @@ namespace workwear
 		protected void OnButtonAddClicked (object sender, EventArgs e)
 		{
 			var selectDlg = new ReferenceRepresentation (new ViewModel.StockBalanceVM (MyOrmDialog.UoW,
-				ExpenceDoc.Operation == ExpenseOperations.Employee ? ViewModel.StockBalanceVMMode.DisplayAll : ViewModel.StockBalanceVMMode.OnlyProperties,
-			                                                                           ViewModel.StockBalanceVMGroupBy.IncomeItem
+				ExpenceDoc.Operation == ExpenseOperations.Employee ? ViewModel.StockBalanceVMMode.DisplayAll : ViewModel.StockBalanceVMMode.OnlyProperties                                                                           
 			),
 			     "Остатки на складе");
 			selectDlg.Mode = OrmReferenceMode.MultiSelect;
