@@ -33,7 +33,6 @@ namespace workwear.Domain.Stock
 			set { SetField(ref nomenclature, value, () => Nomenclature); }
 		}
 
-
 		int amount;
 
 		[Display(Name = "Количество")]
@@ -49,6 +48,23 @@ namespace workwear.Domain.Stock
 			get { return warehouseOperation; }
 			set { SetField(ref warehouseOperation, value); }
 		}
+
+		string size;
+
+		[Display(Name = "Размер")]
+		public virtual string Size {
+			get { return size; }
+			set { SetField(ref size, value, () => Size); }
+		}
+
+		string wearGrowth;
+
+		[Display(Name = "Рост одежды")]
+		public virtual string WearGrowth {
+			get { return wearGrowth; }
+			set { SetField(ref wearGrowth, value, () => WearGrowth); }
+		}
+
 
 		#region Расчетные
 

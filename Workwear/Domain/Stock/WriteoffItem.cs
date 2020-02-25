@@ -71,14 +71,6 @@ namespace workwear.Domain.Stock
 			set { SetField(ref warehouseOperation, value); }
 		}
 
-		string sizeStd;
-
-		[Display(Name = "Стандарт размера")]
-		public virtual string SizeStd {
-			get { return sizeStd; }
-			set { SetField(ref sizeStd, value, () => SizeStd); }
-		}
-
 		string size;
 
 		[Display(Name = "Размер")]
@@ -94,15 +86,6 @@ namespace workwear.Domain.Stock
 			get { return wearGrowth; }
 			set { SetField(ref wearGrowth, value, () => WearGrowth); }
 		}
-
-		string wearGrowthStd;
-
-		[Display(Name = "Стандарт роста")]
-		public virtual string WearGrowthStd {
-			get { return wearGrowthStd; }
-			set { SetField(ref wearGrowthStd, value, () => WearGrowthStd); }
-		}
-
 
 		#endregion
 

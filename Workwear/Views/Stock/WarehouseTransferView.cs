@@ -4,6 +4,7 @@ using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using QSOrmProject;
 using workwear.Domain.Stock;
+using workwear.Measurements;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock
@@ -29,7 +30,14 @@ namespace workwear.Views.Stock
 
 			table.CreateFluentColumnsConfig<TransferItem>()
 			.AddColumn("Наименование").Tag("Name").AddTextRenderer(x => x.Nomenclature!= null ? x.Nomenclature.Name : String.Empty)
-			.AddColumn("Размер").Tag("Size").AddTextRenderer(x => x.Nomenclature.Size)
+			.AddColumn("Размер")
+				.AddComboRenderer(x => x.Size)
+				.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.SizeStd, SizeUse.HumanOnly))
+				.AddSetter((c, n) => c.Editable = n.Nomenclature.SizeStd != null)
+			.AddColumn("Рост")
+				.AddComboRenderer(x => x.Size)
+				.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
+				.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
 			.AddColumn("Рост").AddTextRenderer(x => x.Nomenclature != null ? x.Nomenclature.WearGrowth : String.Empty)
 			.AddColumn("Количество").Tag("Count")
 				.AddNumericRenderer(x => x.Amount, false).Editing(true).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)

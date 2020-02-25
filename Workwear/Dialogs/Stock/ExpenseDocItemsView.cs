@@ -9,6 +9,7 @@ using QS.Dialog.Gtk;
 using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
+using workwear.Measurements;
 
 namespace workwear
 {
@@ -96,8 +97,14 @@ namespace workwear
 
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseItem> ()
 				.AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
-				.AddColumn ("Размер").AddTextRenderer (e => e.Nomenclature.Size)
-				.AddColumn ("Рост").AddTextRenderer (e => e.Nomenclature.WearGrowth)
+				.AddColumn ("Размер")
+					.AddComboRenderer(x => x.Size)
+					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.SizeStd, SizeUse.HumanOnly))
+					.AddSetter((c, n) => c.Editable = n.Nomenclature.SizeStd != null)
+				.AddColumn ("Рост")
+					.AddComboRenderer(x => x.WearGrowth)
+					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
+					.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
 				.AddColumn ("Состояние").AddTextRenderer (e => (e.IncomeOn.LifePercent).ToString ("P0"))
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)

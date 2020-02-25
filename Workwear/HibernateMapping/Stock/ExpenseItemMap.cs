@@ -13,9 +13,7 @@ namespace workwear.HMap
 			Map (x => x.Amount).Column ("quantity");
 			Map (x => x.AutoWriteoffDate).Column ("auto_writeoff_date");
 			Map(x => x.Size).Column("size");
-			Map(x => x.SizeStd).Column("size_std");
 			Map(x => x.WearGrowth).Column("growth");
-			Map(x => x.WearGrowthStd).Column("growth_std");
 
 			References (x => x.ExpenseDoc).Column ("stock_expense_id").Not.Nullable ();
 			References (x => x.Nomenclature).Column ("nomenclature_id").Not.Nullable ();

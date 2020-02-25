@@ -24,6 +24,8 @@ namespace workwear.Measurements
 			typeof(SizeStandartGloves),
 		};
 
+		#region Работа с кодами стандартов
+
 		public static string GetSizeStdCode(object standartEnum)
 		{
 			Enum value = standartEnum as Enum;
@@ -38,8 +40,10 @@ namespace workwear.Measurements
 		{
 			if (String.IsNullOrWhiteSpace (code))
 				return null;
-			
-			foreach(var type in AllSizeStdEnums)
+
+			var sizeAndGrow = AllSizeStdEnums.Concat(new[] { typeof(GrowthStandartWear) });
+
+			foreach(var type in sizeAndGrow)
 			{
 				foreach(var field in type.GetFields ())
 				{
@@ -54,6 +58,18 @@ namespace workwear.Measurements
 			logger.Warn ("Код размера {0} не найден.", code);
 			return null;
 		}
+
+		#endregion
+
+		#region Получение отображаемого названия стандарта
+
+		public static string GetSizeStdShortTitle(string code)
+		{
+			var std = (Enum)GetSizeStdEnum(code);
+			return std.GetEnumShortTitle();
+		}
+
+		#endregion
 
 		public static Type GetSizeStandartsEnum(СlothesType wearCategory, Sex sex)
 		{
@@ -147,6 +163,11 @@ namespace workwear.Measurements
 		#endregion
 
 		#region Размеры
+
+		public static string[] GetSizesListByStdCode(string stdCode, params SizeUse[] excludeUse)
+		{
+			return GetSizesList(GetSizeStdEnum(stdCode), excludeUse);
+		}
 
 		public static string[] GetSizesList (object stdEnum, params SizeUse[] excludeUse)
 		{

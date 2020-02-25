@@ -7,6 +7,7 @@ using QS.Dialog.Gtk;
 using QSOrmProject;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
+using workwear.Measurements;
 using workwear.Representations.Organization;
 
 namespace workwear
@@ -77,8 +78,14 @@ namespace workwear
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<IncomeItem> ()
 				.AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
 				.AddColumn("Сертификат").AddTextRenderer(e => e.Certificate).Editable()
-				.AddColumn ("Размер").AddTextRenderer (e => e.Nomenclature.Size)
-				.AddColumn ("Рост").AddTextRenderer (e => e.Nomenclature.WearGrowth)
+				.AddColumn("Размер")
+					.AddComboRenderer(x => x.Size)
+					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.SizeStd, SizeUse.HumanOnly))
+					.AddSetter((c, n) => c.Editable = n.Nomenclature.SizeStd != null)
+				.AddColumn("Рост")
+					.AddComboRenderer(x => x.WearGrowth)
+					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
+					.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
 				.AddColumn ("Состояние").AddNumericRenderer (e => e.LifePercent, new MultiplierToPercentConverter()).Editing (new Adjustment(0,0,100,1,10,0)).WidthChars(6)
 				.AddTextRenderer (e => "%")
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(8)
