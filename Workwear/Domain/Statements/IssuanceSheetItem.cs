@@ -88,6 +88,24 @@ namespace workwear.Domain.Statements
 			set { SetField(ref lifetime, value); }
 		}
 
+		string size;
+
+		[Display(Name = "Размер")]
+		public virtual string Size {
+			get { return size; }
+			set { SetField(ref size, value, () => Size); }
+		}
+
+		string wearGrowth;
+
+		[Display(Name = "Рост одежды")]
+		public virtual string WearGrowth {
+			get { return wearGrowth; }
+			set { SetField(ref wearGrowth, value, () => WearGrowth); }
+		}
+
+
+
 		#endregion
 
 		#region Расчетные
