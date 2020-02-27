@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Autofac;
 using Gtk;
@@ -7,17 +8,22 @@ using NLog;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
 using QS.Dialog.Gtk;
+using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Report;
 using QS.Tdi;
 using QS.Tdi.Gtk;
 using QS.Updater;
+using QS.ViewModels.Control.EEVM;
+using QS.ViewModels.Control.ESVM;
 using QSOrmProject;
 using QSProjectsLib;
 using QSSupportLib;
 using QSTelemetry;
 using workwear;
 using workwear.Dialogs.DataBase;
+using workwear.Dialogs.Organization;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -25,6 +31,7 @@ using workwear.Domain.Users;
 using workwear.JournalViewers;
 using workwear.JournalViewModels.Company;
 using workwear.JournalViewModels.Statements;
+using workwear.JournalViewModels.Stock;
 using workwear.Representations.Organization;
 using workwear.Tools;
 using workwear.ViewModel;
@@ -37,6 +44,7 @@ public partial class MainWindow : Gtk.Window
 	private ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 	public TdiNavigationManager NavigationManager;
 	public IProgressBarDisplayable ProgressBar;
+	public IUnitOfWork UoW = UnitOfWorkFactory.CreateWithoutRoot();
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
@@ -51,6 +59,7 @@ public partial class MainWindow : Gtk.Window
 		MainSupport.LoadBaseParameters();
 
 		MainUpdater.RunCheckVersion(true, true, true);
+
 
 		if(QSMain.User.Login == "root") {
 			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
@@ -100,8 +109,41 @@ public partial class MainWindow : Gtk.Window
 
 		ReadUserSettings();
 
+		var EntityAutocompleteSelector = new JournalViewModelAutocompleteSelector<EmployeeCard, EmployeeJournalViewModel>(UoW, AutofacScope);
+		entitySearchEmployee.ViewModel = new EntitySearchViewModel<EmployeeCard>(EntityAutocompleteSelector);
+		entitySearchEmployee.ViewModel.EntitySelected += SearchEmployee_EntitySelected;
+
 		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
+	}
+
+	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e)
+	{
+		var id = DomainHelper.GetId(e.Entity);
+		var dialog = new EmployeeCardDlg(id);
+		ITdiTab after = null;
+		if(cnbOpenInWindow.Active) {
+			ITdiTab replaced;
+			if(tdiMain.CurrentTab is EmployeeCardDlg employeeCardDlg)
+				replaced = employeeCardDlg;
+			else {
+				replaced = tdiMain.Tabs.Reverse().FirstOrDefault(x => x.TdiTab is EmployeeCardDlg)?.TdiTab;
+			}
+
+			if(replaced != null) {
+				ITdiTab last = null;
+				foreach(var tab in tdiMain.Tabs.Select(x => x.TdiTab)) {
+					if(tab == replaced) {
+						after = last;
+						break;
+					}
+					last = tab;
+				}
+				tdiMain.AskToCloseTab(replaced);
+			}
+		}
+
+		tdiMain.AddTab(dialog, after);
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -113,6 +155,7 @@ public partial class MainWindow : Gtk.Window
 	public override void Destroy()
 	{
 		AutofacScope.Dispose();
+		UoW.Dispose();
 		base.Destroy();
 	}
 
@@ -498,12 +541,6 @@ public partial class MainWindow : Gtk.Window
 		System.Diagnostics.Process.Start("https://ok.ru/qualitysolution");
 	}
 
-	protected void OnActionGoogleActivated(object sender, EventArgs e)
-	{
-		MainTelemetry.AddCount("plus.google.com");
-		System.Diagnostics.Process.Start("https://plus.google.com/+QsolutionRu/posts");
-	}
-
 	protected void OnActionTwitterActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("twitter.com");
@@ -548,5 +585,11 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount(nameof(IssuanceSheetJournalViewModel));
 		NavigationManager.OpenViewModel<IssuanceSheetJournalViewModel>(null);
+	}
+
+	protected void OnActionWarehouseActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount(nameof(WarehouseJournalViewModel));
+		NavigationManager.OpenViewModel<WarehouseJournalViewModel>(null);
 	}
 }

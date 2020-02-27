@@ -249,18 +249,17 @@ namespace workwear.Domain.Operations
 			if (amountAtEndDay >= amountByNorm)
 			{
 				//Ищем первый интервал где числящееся меньше нормы.
-				DateTime moveTo;
 				var firstLessNorm = graph.Intervals
 					.Where(x => x.StartDate.Date >= OperationTime.Date)
 					.OrderBy(x => x.StartDate)
 					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
-				if (firstLessNorm != null)
+				if (firstLessNorm != null && firstLessNorm.StartDate.AddDays(-BaseParameters.ColDayAheadOfShedule) > OperationTime.Date)
 				{
-					moveTo = firstLessNorm.StartDate;
-					if(askUser.Question($"На {operationTime:d} за сотрудником уже числится {amountAtEndDay} x {Nomenclature.TypeName}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. Передвинуть начало экспуатации вновь выданных {Issued} на {moveTo:d}?")) {
-						startOfUse = moveTo;
-					}
+					if(askUser.Question($"На {operationTime:d} за сотрудником уже числится {amountAtEndDay} x {Nomenclature.TypeName}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. Передвинуть начало экспуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?")) 
+						startOfUse = firstLessNorm.StartDate;
 				}
+				else if (firstLessNorm != null)
+					startOfUse = firstLessNorm.StartDate;
 			}
 
 			ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value);

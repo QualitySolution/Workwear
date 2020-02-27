@@ -17,7 +17,6 @@ using QS.Report.Views;
 using QS.Services;
 using QS.Tdi;
 using QS.Validation;
-using QS.Validation.GtkUI;
 using QS.ViewModels;
 using QS.Views.Resolve;
 using QSOrmProject;
@@ -29,12 +28,9 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
 using workwear.JournalViewModels;
-using workwear.JournalViewModels.Company;
-using workwear.JournalViewModels.Statements;
 using workwear.Repository.Operations;
 using workwear.Tools;
 using workwear.ViewModels.Company;
-using workwear.ViewModels.Statements;
 using workwear.Views.Company;
 
 namespace workwear
@@ -68,7 +64,6 @@ namespace workwear
 			OrmMain.AddObjectDescription<EmployeeCard>().Dialog<EmployeeCardDlg>().UseSlider(false).DefaultTableView ().SearchColumn ("Имя", e => e.FullName).End ();
 			OrmMain.AddObjectDescription<EmployeeVacation>().Dialog<EmployeeVacationDlg>();
 			OrmMain.AddObjectDescription<Subdivision>().Dialog<ObjectDlg> ().DefaultTableView ().SearchColumn("Код", e => e.Code).SearchColumn ("Название", e => e.Name).SearchColumn ("Адрес", e => e.Address).End ();
-			OrmMain.AddObjectDescription<Leader>().DefaultTableView ().SearchColumn ("Имя", e => e.Name).End ();
 			OrmMain.AddObjectDescription<VacationType>().Dialog<VacationTypeDlg>().DefaultTableView().SearchColumn("Название", e => e.Name).Column("Исключать из носки", e => e.ExcludeFromWearing ? "Да" : "Нет").SearchColumn("Комментарий", e => e.Comments).End();
 			//Общее
 			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
@@ -84,7 +79,6 @@ namespace workwear
 
 			NotifyConfiguration.Enable();
 			BuisnessLogicGlobalEventHandler.Init(new GtkQuestionDialogsInteractive());
-			GtkAppServicesConfig.CreateDefaultGtkServices();
 			JournalsColumnsConfigs.RegisterColumns();
 		}
 
@@ -110,7 +104,7 @@ namespace workwear
 			//FIXME Нужно в конечнои итоге попытаться избавится от CommonServce вообще.
 			builder.RegisterType<CommonServices>().As<ICommonServices>();
 			builder.RegisterType<UserService>().As<IUserService>();
-			builder.RegisterType<ValidationService>().As<IValidationService>();
+			builder.RegisterType<ObjectValidator>().As<IValidator>();
 			//FIXME Реализовать везде возможность отсутствия сервиса прав, чтобы не приходилось создавать то что не используется
 			builder.RegisterType<DefaultAllowedPermissionService>().As<IPermissionService>();
 			builder.RegisterType<CommonMessages>().AsSelf();

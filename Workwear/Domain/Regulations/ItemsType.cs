@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Bindings.Collections.Generic;
 using Gamma.Utilities;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
@@ -76,6 +77,24 @@ namespace workwear.Domain.Regulations
 		}
 
 		#endregion
+
+		private IList<ItemsType> itemsTypesAnalogs = new List<ItemsType>();
+
+		[Display(Name = "Аналоги")]
+		public virtual IList<ItemsType> ItemsTypesAnalogs {
+			get { return itemsTypesAnalogs; }
+			set { SetField(ref itemsTypesAnalogs, value, () => ItemsTypesAnalogs); }
+		}
+
+		GenericObservableList<ItemsType> observableItemsTypesAnalogs;
+		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		public virtual GenericObservableList<ItemsType> ObservableProfessions {
+			get {
+				if(observableItemsTypesAnalogs == null)
+					observableItemsTypesAnalogs = new GenericObservableList<ItemsType>(ItemsTypesAnalogs);
+				return observableItemsTypesAnalogs;
+			}
+		}
 
 		public ItemsType ()
 		{

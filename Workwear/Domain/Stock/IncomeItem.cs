@@ -86,6 +86,29 @@ namespace workwear.Domain.Stock
 			set { SetField(ref employeeIssueOperation, value); }
 		}
 
+		private WarehouseOperation warehouseOperation = new WarehouseOperation();
+		[Display(Name = "Операция на складе")]
+		public virtual WarehouseOperation WarehouseOperation {
+			get { return warehouseOperation; }
+			set { SetField(ref warehouseOperation, value); }
+		}
+
+		string size;
+
+		[Display(Name = "Размер")]
+		public virtual string Size {
+			get { return size; }
+			set { SetField(ref size, value, () => Size); }
+		}
+
+		string wearGrowth;
+
+		[Display(Name = "Рост одежды")]
+		public virtual string WearGrowth {
+			get { return wearGrowth; }
+			set { SetField(ref wearGrowth, value, () => WearGrowth); }
+		}
+
 		#endregion
 
 		#region Расчетные
@@ -138,6 +161,9 @@ namespace workwear.Domain.Stock
 				uow.Delete(EmployeeIssueOperation);
 				EmployeeIssueOperation = null;
 			}
+
+			WarehouseOperation.Update(uow, this);
+			uow.Save(WarehouseOperation);
 		}
 
 		#endregion

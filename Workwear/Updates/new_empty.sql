@@ -2,7 +2,7 @@
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
 -- Schema workwear
@@ -32,8 +32,7 @@ CREATE TABLE IF NOT EXISTS `base_parameters` (
   `name` VARCHAR(20) NOT NULL,
   `str_value` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`name`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -41,6 +40,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `objects` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `code` VARCHAR(20) NULL DEFAULT NULL,
   `name` VARCHAR(240) NOT NULL,
   `address` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
@@ -65,11 +65,13 @@ AUTO_INCREMENT = 1;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `leaders` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NOT NULL,
+  `surname` VARCHAR(50) NULL DEFAULT NULL,
+  `name` VARCHAR(50) NULL DEFAULT NULL,
+  `patronymic` VARCHAR(50) NULL DEFAULT NULL,
+  `position` VARCHAR(150) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8;
+AUTO_INCREMENT = 1;
 
 
 -- -----------------------------------------------------
@@ -735,6 +737,116 @@ CREATE TABLE IF NOT EXISTS `wear_cards_vacations` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `organizations`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `organizations` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(300) NULL,
+  `address` VARCHAR(300) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `issuance_sheet`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `issuance_sheet` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `date` DATE NOT NULL,
+  `organization_id` INT UNSIGNED NULL DEFAULT NULL,
+  `subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
+  `responsible_person_id` INT UNSIGNED NULL DEFAULT NULL,
+  `head_of_division_person_id` INT UNSIGNED NULL DEFAULT NULL,
+  `stock_expense_id` INT UNSIGNED NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_issuance_sheet_1_idx` (`organization_id` ASC),
+  INDEX `fk_issuance_sheet_3_idx` (`responsible_person_id` ASC),
+  INDEX `fk_issuance_sheet_4_idx` (`head_of_division_person_id` ASC),
+  INDEX `fk_issuance_sheet_5_idx` (`stock_expense_id` ASC),
+  INDEX `fk_issuance_sheet_2_idx` (`subdivision_id` ASC),
+  CONSTRAINT `fk_issuance_sheet_1`
+    FOREIGN KEY (`organization_id`)
+    REFERENCES `organizations` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_2`
+    FOREIGN KEY (`subdivision_id`)
+    REFERENCES `objects` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_3`
+    FOREIGN KEY (`responsible_person_id`)
+    REFERENCES `leaders` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_4`
+    FOREIGN KEY (`head_of_division_person_id`)
+    REFERENCES `leaders` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_5`
+    FOREIGN KEY (`stock_expense_id`)
+    REFERENCES `stock_expense` (`id`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `issuance_sheet_items`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `issuance_sheet_id` INT UNSIGNED NOT NULL,
+  `employee_id` INT UNSIGNED NOT NULL,
+  `nomenclature_id` INT UNSIGNED NULL DEFAULT NULL,
+  `itemtype_id` INT UNSIGNED NULL DEFAULT NULL,
+  `stock_expense_detail_id` INT UNSIGNED NULL DEFAULT NULL,
+  `issued_operation_id` INT UNSIGNED NULL,
+  `amount` SMALLINT UNSIGNED NOT NULL,
+  `start_of_use` DATE NULL DEFAULT NULL,
+  `lifetime` DECIMAL(4,2) UNSIGNED NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_issuance_sheet_items_1_idx` (`issuance_sheet_id` ASC),
+  INDEX `fk_issuance_sheet_items_2_idx` (`employee_id` ASC),
+  INDEX `fk_issuance_sheet_items_3_idx` (`nomenclature_id` ASC),
+  INDEX `fk_issuance_sheet_items_4_idx` (`issued_operation_id` ASC),
+  INDEX `fk_issuance_sheet_items_5_idx` (`stock_expense_detail_id` ASC),
+  INDEX `fk_issuance_sheet_items_6_idx` (`itemtype_id` ASC),
+  CONSTRAINT `fk_issuance_sheet_items_1`
+    FOREIGN KEY (`issuance_sheet_id`)
+    REFERENCES `issuance_sheet` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_items_2`
+    FOREIGN KEY (`employee_id`)
+    REFERENCES `wear_cards` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_items_3`
+    FOREIGN KEY (`nomenclature_id`)
+    REFERENCES `nomenclature` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_items_4`
+    FOREIGN KEY (`issued_operation_id`)
+    REFERENCES `operation_issued_by_employee` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_items_5`
+    FOREIGN KEY (`stock_expense_detail_id`)
+    REFERENCES `stock_expense_detail` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_items_6`
+    FOREIGN KEY (`itemtype_id`)
+    REFERENCES `item_types` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
@@ -744,7 +856,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.2');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.3');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('edition', 'gpl');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
@@ -768,6 +880,15 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `vacation_type` (`id`, `name`, `exclude_from_wearing`, `comment`) VALUES (1, 'Основной', 0, NULL);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `organizations`
+-- -----------------------------------------------------
+START TRANSACTION;
+INSERT INTO `organizations` (`id`, `name`, `address`) VALUES (DEFAULT, 'Моя организация', NULL);
 
 COMMIT;
 

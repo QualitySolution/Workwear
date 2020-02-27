@@ -128,9 +128,22 @@ namespace workwear.Domain.Regulations
 			set { SetField(ref comment, value, () => Comment); }
 		}
 
+		DateTime? dateFrom;
+		public virtual DateTime? DateFrom 
+		{
+			get { return dateFrom; }
+			set { SetField(ref dateFrom, value); }
+		}
+
+		DateTime? dateTo;
+		public virtual DateTime? DateTo {
+			get { return dateTo; }
+			set { SetField(ref dateTo, value); }
+		}
+
 		#endregion
 
-#region Генерируемые
+		#region Генерируемые
 
 		public virtual string ProfessionsText {
 			get{ return String.Join ("; ", Professions.Select (p => p.Name));

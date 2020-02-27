@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using Autofac;
 using Gamma.Utilities;
 using Gtk;
 using NLog;
@@ -10,22 +11,27 @@ using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Report;
-using QS.Validation.GtkUI;
+using QS.Validation;
+using QS.ViewModels.Control.EEVM;
 using QSOrmProject;
 using QSProjectsLib;
 using QSReport;
 using workwear.Dialogs.Regulations;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using workwear.JournalViewModels.Company;
 using workwear.Measurements;
 using workwear.Repository;
 using workwear.Tools;
+using workwear.ViewModels.Company;
 
 namespace workwear.Dialogs.Organization
 {
 	public partial class EmployeeCardDlg : EntityDialogBase<EmployeeCard>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
+
+		ILifetimeScope AutofacScope;
 		bool IsShowedItemsTable = false;
 
 		bool IsPostSetOnLoad;
@@ -79,8 +85,6 @@ namespace workwear.Dialogs.Organization
 			yentryPost.SubjectType = typeof(Post);
 			yentryPost.Binding.AddBinding (Entity, e => e.Post, w => w.Subject).InitializeFromSource ();
 			OnYentryPostChanged (null, null); //Так как событие не будет вызвано, если в объекте null, а кнопку "По должности" нужно заблокировать. 
-			yentryLeader.SubjectType = typeof(Leader);
-			yentryLeader.Binding.AddBinding (Entity, e => e.Leader, w => w.Subject).InitializeFromSource ();
 			yentryObject.SubjectType = typeof(Subdivision);
 			yentryObject.Binding.AddBinding (Entity, e => e.Subdivision, w => w.Subject).InitializeFromSource ();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
@@ -91,7 +95,7 @@ namespace workwear.Dialogs.Organization
 			//!!!!!!!! НЕ ЗАБЫВАЕМ КОРРЕКТИРОВАТЬ ПОРЯДОК ПРИ ДОБАВЛЕНИИ ВИДЖЕТОВ В ТАБЛИЦУ !!!!!!!!
 			//Это порядок только внутри таблицы! А не всего диалога.
 			table1.FocusChain = new Widget[] {hbox7, entryLastName, entryFirstName, entryPatronymic, 
-				yentryPost, yentryLeader, yentryObject, yentryPersonnelNumber, dateHire, dateChangePosition, dateDismiss, 
+				yentryPost, entityLeader, yentryObject, yentryPersonnelNumber, dateHire, dateChangePosition, dateDismiss, 
 				GtkScrolledWindowComments, comboSex, ycomboWearGrowth, 
 				ycomboWearStd, ycomboWearSize, 
 				ycomboShoesStd, ycomboShoesSize,
@@ -112,6 +116,14 @@ namespace workwear.Dialogs.Organization
 			enumPrint.ItemsEnum = typeof(PersonalCardPrint);
 
 			Entity.PropertyChanged += CheckSizeChanged;
+
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+			var builder = new LegacyEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
+
+			entityLeader.ViewModel = builder.ForProperty(x => x.Leader)
+				.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
+				.UseViewModelDialog<LeadersViewModel>()
+				.Finish();
 		}
 
 		public EmployeeCardDlg(EmployeeCard card) : this(card.Id) { }
@@ -491,6 +503,12 @@ namespace workwear.Dialogs.Organization
 		private SizeUse[] GetExcludedSizeUse()
 		{
 			return BaseParameters.EmployeeSizeRanges ? new SizeUse[] { } : new SizeUse[] { SizeUse.СlothesOnly };
+		}
+
+		public override void Destroy()
+		{
+			base.Destroy();
+			AutofacScope.Dispose();
 		}
 	}
 }

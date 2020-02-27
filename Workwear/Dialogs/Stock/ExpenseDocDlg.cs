@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
@@ -8,18 +9,22 @@ using QS.DomainModel.UoW;
 using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
-using QS.Validation.GtkUI;
+using QS.Validation;
+using QS.ViewModels.Control.EEVM;
 using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
+using workwear.JournalViewModels.Stock;
 using workwear.Repository;
 using workwear.ViewModels.Statements;
+using workwear.ViewModels.Stock;
 
 namespace workwear
 {
 	public partial class ExpenseDocDlg : EntityDialogBase<Expense>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
+		ILifetimeScope AutofacScope;
 
 		public ExpenseDocDlg()
 		{
@@ -87,6 +92,16 @@ namespace workwear
 
 			ItemsTable.ExpenceDoc = Entity;
 
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+
+			var builder = new LegacyEEVMBuilderFactory<Expense>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
+
+
+			entityWarehouseExpense.ViewModel = builder.ForProperty(x => x.Warehouse)
+									.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
+									.UseViewModelDialog<WarehouseViewModel>()
+									.Finish();
+
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
 			IssuanceSheetSensetive();
@@ -127,6 +142,12 @@ namespace workwear
 		{
 			if(e.PropertyName == nameof(Entity.Employee))
 				IssuanceSheetSensetive();
+		}
+
+		public override void Destroy()
+		{
+			base.Destroy();
+			AutofacScope.Dispose();
 		}
 
 		#region Ведомости

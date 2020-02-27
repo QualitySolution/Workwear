@@ -14,6 +14,7 @@ namespace workwear.JournalViewModels.Company
 	{
 		public LeadersJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
+			UseSlider = true;
 		}
 
 		protected override IQueryOver<Leader> ItemsQuery(IUnitOfWork uow)
