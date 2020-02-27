@@ -36,14 +36,31 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `warehouse`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `warehouse` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `objects`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `objects` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `code` VARCHAR(20) NULL DEFAULT NULL,
-  `name` VARCHAR(240) NOT NULL,
   `address` TEXT NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
+  `name` VARCHAR(240) NOT NULL,
+  `warehouse_id` INT UNSIGNED NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_objects_1_idx` (`warehouse_id` ASC),
+  CONSTRAINT `fk_objects_1`
+    FOREIGN KEY (`warehouse_id`)
+    REFERENCES `warehouse` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8;
@@ -327,6 +344,8 @@ CREATE TABLE IF NOT EXISTS `norms` (
   `ton_attachment` VARCHAR(15) NULL DEFAULT NULL,
   `ton_paragraph` VARCHAR(15) NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
+  `datefrom` DATETIME NULL DEFAULT NULL,
+  `dateto` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_norms_1_idx` (`regulations_id` ASC),
   INDEX `fk_norms_2_idx` (`regulations_annex_id` ASC),
@@ -424,6 +443,40 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `operation_warehouse`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `operation_warehouse` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `operation_time` DATETIME NOT NULL,
+  `warehouse_receipt_id` INT UNSIGNED NULL,
+  `warehouse_expense_id` INT UNSIGNED NULL,
+  `nomenclature_id` INT UNSIGNED NOT NULL,
+  `size` VARCHAR(10) NULL,
+  `growth` VARCHAR(10) NULL,
+  `amount` INT UNSIGNED NOT NULL,
+  `wear_percent` FLOAT UNSIGNED NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_operation_warehouse_2_idx` (`warehouse_receipt_id` ASC),
+  INDEX `fk_operation_warehouse_3_idx` (`warehouse_expense_id` ASC),
+  CONSTRAINT `fk_operation_warehouse_1`
+    FOREIGN KEY (`nomenclature_id`)
+    REFERENCES `nomenclature` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_operation_warehouse_2`
+    FOREIGN KEY (`warehouse_receipt_id`)
+    REFERENCES `warehouse` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_operation_warehouse_3`
+    FOREIGN KEY (`warehouse_expense_id`)
+    REFERENCES `warehouse` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `stock_expense_detail`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_expense_detail` (
@@ -435,12 +488,16 @@ CREATE TABLE IF NOT EXISTS `stock_expense_detail` (
   `object_place_id` INT UNSIGNED NULL DEFAULT NULL,
   `auto_writeoff_date` DATE NULL DEFAULT NULL,
   `employee_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
+  `warehouse_operation_id` INT UNSIGNED NOT NULL,
+  `size` VARCHAR(10) NULL DEFAULT NULL,
+  `growth` VARCHAR(10) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_expense_detail_stock_expense_idx` (`stock_expense_id` ASC),
   INDEX `fk_stock_expense_detail_nomenclature_idx` (`nomenclature_id` ASC),
   INDEX `fk_stock_expense_detail_enter_row_idx` (`stock_income_detail_id` ASC),
   INDEX `fk_stock_expense_detail_placement_idx` (`object_place_id` ASC),
   INDEX `fk_stock_expense_detail_1_idx` (`employee_issue_operation_id` ASC),
+  INDEX `fk_stock_expense_detail_2_idx` (`warehouse_operation_id` ASC),
   CONSTRAINT `fk_stock_expense_detail_stock_expense`
     FOREIGN KEY (`stock_expense_id`)
     REFERENCES `stock_expense` (`id`)
@@ -465,7 +522,12 @@ CREATE TABLE IF NOT EXISTS `stock_expense_detail` (
     FOREIGN KEY (`employee_issue_operation_id`)
     REFERENCES `operation_issued_by_employee` (`id`)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_stock_expense_detail_2`
+    FOREIGN KEY (`warehouse_operation_id`)
+    REFERENCES `operation_warehouse` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8;
@@ -484,11 +546,15 @@ CREATE TABLE IF NOT EXISTS `stock_income_detail` (
   `cost` DECIMAL(10,2) UNSIGNED NOT NULL DEFAULT 0,
   `certificate` VARCHAR(40) NULL DEFAULT NULL,
   `employee_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
+  `warehouse_operation_id` INT UNSIGNED NOT NULL,
+  `size` VARCHAR(10) NULL DEFAULT NULL,
+  `growth` VARCHAR(10) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_income_detail_stock_income_idx` (`stock_income_id` ASC),
   INDEX `fk_stock_income_detail_nomenclature_idx` (`nomenclature_id` ASC),
   INDEX `fk_stock_income_detail_stock_expense_idx` (`stock_expense_detail_id` ASC),
   INDEX `fk_stock_income_detail_1_idx` (`employee_issue_operation_id` ASC),
+  INDEX `fk_stock_income_detail_2_idx` (`warehouse_operation_id` ASC),
   CONSTRAINT `fk_stock_income_detail_stock_income`
     FOREIGN KEY (`stock_income_id`)
     REFERENCES `stock_income` (`id`)
@@ -508,7 +574,12 @@ CREATE TABLE IF NOT EXISTS `stock_income_detail` (
     FOREIGN KEY (`employee_issue_operation_id`)
     REFERENCES `operation_issued_by_employee` (`id`)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_stock_income_detail_2`
+    FOREIGN KEY (`warehouse_operation_id`)
+    REFERENCES `operation_warehouse` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8;
@@ -545,12 +616,18 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   `nomenclature_id` INT UNSIGNED NOT NULL,
   `quantity` INT UNSIGNED NOT NULL,
   `employee_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
+  `warehouse_id` INT UNSIGNED NULL DEFAULT NULL,
+  `warehouse_operation_id` INT UNSIGNED NOT NULL,
+  `size` VARCHAR(10) NULL DEFAULT NULL,
+  `growth` VARCHAR(10) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_write_off_detail_write_off_idx` (`stock_write_off_id` ASC),
   INDEX `fk_stock_write_off_detail_expense_idx` (`stock_expense_detail_id` ASC),
   INDEX `fk_stock_write_off_detail_income_idx` (`stock_income_detail_id` ASC),
   INDEX `fk_stock_write_off_detail_nomenclature_idx` (`nomenclature_id` ASC),
   INDEX `fk_stock_write_off_detail_1_idx` (`employee_issue_operation_id` ASC),
+  INDEX `fk_stock_write_off_detail_2_idx` (`warehouse_operation_id` ASC),
+  INDEX `fk_stock_write_off_detail_3_idx` (`warehouse_id` ASC),
   CONSTRAINT `fk_stock_write_off_detail_write_off`
     FOREIGN KEY (`stock_write_off_id`)
     REFERENCES `stock_write_off` (`id`)
@@ -575,7 +652,17 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
     FOREIGN KEY (`employee_issue_operation_id`)
     REFERENCES `operation_issued_by_employee` (`id`)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_stock_write_off_detail_2`
+    FOREIGN KEY (`warehouse_operation_id`)
+    REFERENCES `operation_warehouse` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stock_write_off_detail_3`
+    FOREIGN KEY (`warehouse_id`)
+    REFERENCES `warehouse` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8;
@@ -847,6 +934,69 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
 ENGINE = InnoDB;
 
 
+
+-- -----------------------------------------------------
+-- Table `stock_transfer`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `stock_transfer` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `warehouse_from_id` INT UNSIGNED NOT NULL,
+  `warehouse_to_id` INT UNSIGNED NOT NULL,
+  `date` DATETIME NOT NULL,
+  `user_id` INT(10) UNSIGNED NULL,
+  `comment` TEXT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_stock_transfer_1_idx` (`warehouse_from_id` ASC),
+  INDEX `fk_stock_transfer_2_idx` (`warehouse_to_id` ASC),
+  INDEX `fk_stock_transfer_3_idx` (`user_id` ASC),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  CONSTRAINT `fk_stock_transfer_1`
+    FOREIGN KEY (`warehouse_from_id`)
+    REFERENCES `warehouse` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stock_transfer_2`
+    FOREIGN KEY (`warehouse_to_id`)
+    REFERENCES `warehouse` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stock_transfer_3`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `wear_cards` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `stock_transfer_detail`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `stock_transfer_detail` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `stock_transfer_id` INT UNSIGNED NOT NULL,
+  `nomenclature_id` INT UNSIGNED NOT NULL,
+  `quantity` INT UNSIGNED NULL,
+  `warehouse_operation_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  CONSTRAINT `fk_stock_transfer_detail_1`
+    FOREIGN KEY (`id`)
+    REFERENCES `stock_transfer` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stock_transfer_detail_2`
+    FOREIGN KEY (`id`)
+    REFERENCES `nomenclature` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stock_transfer_detail_3`
+    FOREIGN KEY (`id`)
+    REFERENCES `operation_warehouse` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
@@ -856,7 +1006,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.3');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.4');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('edition', 'gpl');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
