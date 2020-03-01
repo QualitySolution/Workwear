@@ -218,7 +218,6 @@
     <Compile Include="HibernateMapping\Stock\IncomeItemMap.cs" />
     <Compile Include="Dialogs\Stock\ExpenseDocItemsView.cs" />
     <Compile Include="gtk-gui\workwear.ExpenseDocItemsView.cs" />
-    <Compile Include="Representations\StockBalanceVM.cs" />
     <Compile Include="Dialogs\Stock\IncomeDocDlg.cs" />
     <Compile Include="Dialogs\Stock\IncomeDocItemsView.cs" />
     <Compile Include="gtk-gui\workwear.IncomeDocDlg.cs" />
@@ -365,6 +364,10 @@
     <Compile Include="HibernateMapping\Stock\TransferItemMap.cs" />
     <Compile Include="Domain\Operations\WarehouseOperation.cs" />
     <Compile Include="ViewModels\Stock\NomenclatureViewModel.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Stock\StockBalanceFilterViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Stock\StockBalanceJournalViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Stock\StockBalanceFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.StockBalanceFilterView.cs" />
     <Compile Include="Domain\Stock\StockPosition.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -507,6 +510,13 @@
     <Folder Include="Views\Stock\" />
     <Folder Include="ViewModels\Stock\" />
     <Folder Include="JournalViewModels\Stock\" />
+    <Folder Include="Journal\" />
+    <Folder Include="Journal\ViewModels\" />
+    <Folder Include="Journal\Filter.ViewModels\" />
+    <Folder Include="Journal\Filter.Views\" />
+    <Folder Include="Journal\Filter.ViewModels\Stock\" />
+    <Folder Include="Journal\ViewModels\Stock\" />
+    <Folder Include="Journal\Filter.Views\Stock\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
