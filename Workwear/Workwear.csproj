@@ -364,6 +364,7 @@
     <Compile Include="HibernateMapping\Stock\TransferMap.cs" />
     <Compile Include="HibernateMapping\Stock\TransferItemMap.cs" />
     <Compile Include="Domain\Operations\WarehouseOperation.cs" />
+    <Compile Include="ViewModels\Stock\NomenclatureViewModel.cs" />
     <Compile Include="Domain\Stock\StockPosition.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
