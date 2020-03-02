@@ -93,7 +93,7 @@ namespace workwear.Domain.Regulations
 
 		GenericObservableList<ItemsType> observableItemsTypesAnalogs;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<ItemsType> ObservableitemsType{
+		public virtual GenericObservableList<ItemsType> ObservableItemsTypeAnalog{
 			get {
 				if(observableItemsTypesAnalogs == null)
 					observableItemsTypesAnalogs = new GenericObservableList<ItemsType>(ItemsTypesAnalogs);
@@ -107,12 +107,12 @@ namespace workwear.Domain.Regulations
 				logger.Warn("Такой аналог уже добавлен. Пропускаем...");
 				return;
 			}
-			ObservableitemsType.Add(Analog);
+			ObservableItemsTypeAnalog.Add(Analog);
 		}
 
 		public virtual void RemoveAnalog(ItemsType Analog)
 		{
-			ObservableitemsType.Remove(Analog);
+			ObservableItemsTypeAnalog.Remove(Analog);
 		}
 
 		public ItemsType ()
