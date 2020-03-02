@@ -1,4 +1,5 @@
 ﻿using System;
+using Gamma.ColumnConfig;
 using NLog;
 using QS.BusinessCommon.Repository;
 using QS.Dialog.Gtk;
@@ -49,6 +50,12 @@ namespace workwear.Dialogs.Regulations
 			ycheckLife.Active = Entity.LifeMonths.HasValue;
 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+
+			ytreeNormAnalog.ColumnsConfig = FluentColumnsConfig<ItemsType>.Create()
+			.AddColumn("Аналог нормы").AddTextRenderer(p => p.Name)
+			.Finish();
+			ytreeNormAnalog.ItemsDataSource = Entity.ObservableItemsTypeAnalog;
+			ytreeNormAnalog.Selection.Changed += YtreeItemsType_Selection_Changed;
 		}
 
 		public override bool Save ()
@@ -64,6 +71,11 @@ namespace workwear.Dialogs.Regulations
 			return true;
 		}
 
+		void YtreeItemsType_Selection_Changed(object sender, EventArgs e)
+		{
+			buttonRemoveNormAnalog.Sensitive = ytreeNormAnalog.Selection.CountSelectedRows() > 0;
+		}
+
 		protected void OnYcomboCategoryChanged (object sender, EventArgs e)
 		{
 			ycomboWearCategory.Sensitive = Entity.Category == ItemTypeCategory.wear;
@@ -77,6 +89,27 @@ namespace workwear.Dialogs.Regulations
 			{
 				Entity.LifeMonths = null;
 			}
+		}
+
+		protected void OnButtonAddNormAnalogClicked(object sender, EventArgs e)
+		{
+			OrmReference SelectDialog = new OrmReference(typeof(ItemsType));
+			SelectDialog.Mode = OrmReferenceMode.Select;
+			SelectDialog.ObjectSelected += SelectDialog_ItemsTypeSelected;
+
+			TabParent.AddSlaveTab(this, SelectDialog);
+		}
+
+		void SelectDialog_ItemsTypeSelected(object sender, OrmReferenceObjectSectedEventArgs e)
+		{
+			var type = e.Subject as ItemsType;
+			if (type.Id != Entity.Id)
+				Entity.AddAnalog(UoW.GetById< ItemsType >(type.Id));
+		}
+
+		protected void OnButtonRemoveNormAnalogClicked(object sender, EventArgs e)
+		{
+			Entity.RemoveAnalog(ytreeNormAnalog.GetSelectedObject<ItemsType>());
 		}
 	}
 }
