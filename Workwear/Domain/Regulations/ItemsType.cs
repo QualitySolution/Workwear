@@ -6,6 +6,7 @@ using Gamma.Utilities;
 using NLog;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
+using workwear.Domain.Stock;
 using workwear.Measurements;
 
 
@@ -79,6 +80,24 @@ namespace workwear.Domain.Regulations
 		{
 			get { return comment; }
 			set { SetField(ref comment, value, () => Comment); }
+		}
+
+		private IList<Nomenclature> norms = new List<Nomenclature>();
+
+		[Display(Name = "Строки норм")]
+		public virtual IList<Nomenclature> Norms {
+			get { return norms; }
+			set { SetField(ref norms, value, () => Norms); }
+		}
+
+		GenericObservableList<Nomenclature> observableNorms;
+		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		public virtual GenericObservableList<Nomenclature> ObservableItems {
+			get {
+				if(observableNorms == null)
+					observableNorms = new GenericObservableList<Nomenclature>(Norms);
+				return observableNorms;
+			}
 		}
 
 		#endregion

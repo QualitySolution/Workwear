@@ -1,5 +1,6 @@
 ﻿using FluentNHibernate.Mapping;
 using workwear.Domain.Regulations;
+using workwear.Domain.Stock;
 using workwear.Measurements;
 
 namespace workwear.HMap
@@ -23,6 +24,9 @@ namespace workwear.HMap
 			.Table("item_types_replacement")
 			.ParentKeyColumn("item_types_id")
 			.ChildKeyColumn("item_types_id_analog").Cascade.All();
+
+			HasMany(x => x.Norms).KeyColumn("type_id").Not.KeyNullable().Inverse().Cascade.AllDeleteOrphan()
+			.LazyLoad();
 
 		}
 	}
