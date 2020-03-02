@@ -19,7 +19,7 @@ namespace workwear.Journal.Filter.Views.Stock
 			global::Stetic.BinContainer.Attach(this);
 			this.Name = "workwear.Journal.Filter.Views.Stock.StockBalanceFilterView";
 			// Container child workwear.Journal.Filter.Views.Stock.StockBalanceFilterView.Gtk.Container+ContainerChild
-			this.table1 = new global::Gtk.Table(((uint)(2)), ((uint)(2)), false);
+			this.table1 = new global::Gtk.Table(((uint)(1)), ((uint)(3)), false);
 			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
@@ -33,10 +33,8 @@ namespace workwear.Journal.Filter.Views.Stock
 			this.chShowNegative.Xalign = 1F;
 			this.table1.Add(this.chShowNegative);
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.chShowNegative]));
-			w1.TopAttach = ((uint)(1));
-			w1.BottomAttach = ((uint)(2));
-			w1.LeftAttach = ((uint)(1));
-			w1.RightAttach = ((uint)(2));
+			w1.LeftAttach = ((uint)(2));
+			w1.RightAttach = ((uint)(3));
 			w1.XOptions = ((global::Gtk.AttachOptions)(4));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
@@ -47,7 +45,6 @@ namespace workwear.Journal.Filter.Views.Stock
 			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.entityWarehouse]));
 			w2.LeftAttach = ((uint)(1));
 			w2.RightAttach = ((uint)(2));
-			w2.XOptions = ((global::Gtk.AttachOptions)(4));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.label1 = new global::Gtk.Label();

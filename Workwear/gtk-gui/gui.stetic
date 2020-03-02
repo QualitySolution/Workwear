@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -10069,19 +10069,15 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Journal.Filter.Views.Stock.StockBalanceFilterView" design-size="445 300">
+  <widget class="Gtk.Bin" id="workwear.Journal.Filter.Views.Stock.StockBalanceFilterView" design-size="611 161">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
       <widget class="Gtk.Table" id="table1">
         <property name="MemberName" />
-        <property name="NRows">2</property>
-        <property name="NColumns">2</property>
+        <property name="NColumns">3</property>
         <property name="RowSpacing">6</property>
         <property name="ColumnSpacing">6</property>
-        <child>
-          <placeholder />
-        </child>
         <child>
           <widget class="Gamma.GtkWidgets.yCheckButton" id="chShowNegative">
             <property name="MemberName" />
@@ -10093,11 +10089,9 @@
             <property name="Xalign">1</property>
           </widget>
           <packing>
-            <property name="TopAttach">1</property>
-            <property name="BottomAttach">2</property>
-            <property name="LeftAttach">1</property>
-            <property name="RightAttach">2</property>
-            <property name="AutoSize">False</property>
+            <property name="LeftAttach">2</property>
+            <property name="RightAttach">3</property>
+            <property name="AutoSize">True</property>
             <property name="XOptions">Fill</property>
             <property name="YOptions">Fill</property>
             <property name="XExpand">False</property>
@@ -10117,9 +10111,8 @@
             <property name="LeftAttach">1</property>
             <property name="RightAttach">2</property>
             <property name="AutoSize">True</property>
-            <property name="XOptions">Fill</property>
             <property name="YOptions">Fill</property>
-            <property name="XExpand">False</property>
+            <property name="XExpand">True</property>
             <property name="XFill">True</property>
             <property name="XShrink">False</property>
             <property name="YExpand">False</property>
