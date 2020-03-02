@@ -28,6 +28,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
+using workwear.Journal.ViewModels.Stock;
 using workwear.JournalViewers;
 using workwear.JournalViewModels.Company;
 using workwear.JournalViewModels.Statements;
@@ -340,9 +341,10 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionStockBalanceActivated(object sender, EventArgs e)
 	{
-		tdiMain.OpenTab(TdiTabBase.GenerateHashName<StockBalanceView>(),
-						() => new StockBalanceView()
-					   );
+		MainTelemetry.AddCount(nameof(StockBalanceJournalViewModel));
+		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
+		page.ViewModel.ShowSummary = true;
+		page.ViewModel.Filter.ShowNegativeBalance = true;
 	}
 
 	protected void OnActionStockDocsActivated(object sender, EventArgs e)
