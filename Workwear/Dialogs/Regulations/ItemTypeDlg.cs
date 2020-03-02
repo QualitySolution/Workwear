@@ -54,7 +54,7 @@ namespace workwear.Dialogs.Regulations
 			ytreeNormAnalog.ColumnsConfig = FluentColumnsConfig<ItemsType>.Create()
 			.AddColumn("Аналог нормы").AddTextRenderer(p => p.Name)
 			.Finish();
-			ytreeNormAnalog.ItemsDataSource = Entity.ObservableitemsType;
+			ytreeNormAnalog.ItemsDataSource = Entity.ObservableItemsTypeAnalog;
 			ytreeNormAnalog.Selection.Changed += YtreeItemsType_Selection_Changed;
 		}
 
