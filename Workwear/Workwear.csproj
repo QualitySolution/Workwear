@@ -189,7 +189,6 @@
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
     <Compile Include="viewDTOs\EmployeeCardItems.cs" />
     <Compile Include="viewDTOs\EmployeeCardMovements.cs" />
-    <Compile Include="gtk-gui\workwear.StockBalanceView.cs" />
     <Compile Include="viewDTOs\StockBalanceItems.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="CreateProjectParam.cs" />
@@ -246,7 +245,6 @@
     <Compile Include="Repository\SubdivisionRepository.cs" />
     <Compile Include="Measurements\WearGrowth.cs" />
     <Compile Include="Measurements\WearSize.cs" />
-    <Compile Include="JournalViewers\StockBalanceView.cs" />
     <Compile Include="JournalViewers\StockDocumentsView.cs" />
     <Compile Include="gtk-gui\workwear.JournalViewers.StockDocumentsView.cs" />
     <Compile Include="JournalFilters\StockDocumentsFilter.cs" />
