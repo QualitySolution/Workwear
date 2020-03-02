@@ -90,6 +90,7 @@ namespace workwear.Domain.Operations
 				OperationTime = item.ExpenseDoc.Date;
 
 			expenseWarehouse = item.ExpenseDoc.Warehouse;
+			ReceiptWarehouse = null;
 			nomenclature = item.Nomenclature;
 			size = item.Nomenclature.Size;
 			growth = item.Nomenclature.WearGrowth;
@@ -115,7 +116,8 @@ namespace workwear.Domain.Operations
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
-			receiptWarehouse = item.Document.Warehouse;
+			ExpenseWarehouse = item.Warehouse;
+			ReceiptWarehouse = null;
 			nomenclature = item.Nomenclature;
 			size = item.Nomenclature.Size;
 			growth = item.Nomenclature.WearGrowth;

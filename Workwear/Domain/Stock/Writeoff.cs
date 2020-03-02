@@ -28,14 +28,6 @@ namespace workwear.Domain.Stock
 			set { SetField (ref items, value, () => Items); }
 		}
 
-		private Warehouse warehouse;
-
-		[Display(Name = "Склад")]
-		public virtual Warehouse Warehouse{
-			get { return warehouse; }
-			set { SetField(ref warehouse, value, () => Warehouse); }
-		}
-
 		GenericObservableList<WriteoffItem> observableItems;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<WriteoffItem> ObservableItems {
@@ -118,18 +110,34 @@ namespace workwear.Domain.Stock
 			ObservableItems.Add(newItem);
 		}
 
-		public virtual void AddItem(IncomeItem incomeFromItem, int count)
+		public virtual void AddItem(StockPosition position, Warehouse warehouse, int count)
 		{
-			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IncomeOn, incomeFromItem)))
-			{
-				logger.Warn ("Номенклатура из этого прихода уже добавлена. Пропускаем...");
+			if(position == null)
+				throw new ArgumentNullException(nameof(position));
+
+			if(warehouse == null)
+				throw new ArgumentNullException(nameof(warehouse));
+
+			if(Items.Any(p => p.WarehouseOperation?.ExpenseWarehouse == warehouse && position.Equals(p.StockPosition))) {
+				logger.Warn($"Позиция [{position}] для склада {warehouse.Name} уже добавлена. Пропускаем...");
 				return;
 			}
 
 			var newItem = new WriteoffItem (this) {
 				Amount = count,
-				Nomenclature = incomeFromItem.Nomenclature,
-				IncomeOn = incomeFromItem,
+				Nomenclature = position.Nomenclature,
+				Size = position.Size,
+				WearGrowth = position.Growth,
+				Warehouse = warehouse,
+				WarehouseOperation = new WarehouseOperation() {
+					Amount = count,
+					Size = position.Size,
+					Growth = position.Growth,
+					Nomenclature = position.Nomenclature,
+					OperationTime = Date,
+					WearPercent = position.WearPercent,
+					ExpenseWarehouse = warehouse
+				}
 			};
 
 			ObservableItems.Add (newItem);

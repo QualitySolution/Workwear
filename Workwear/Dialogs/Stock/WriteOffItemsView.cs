@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Gtk;
 using NLog;
@@ -9,6 +9,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Representations.Organization;
 using workwear.Measurements;
+using workwear.Journal.ViewModels.Stock;
 
 namespace workwear
 {
@@ -54,6 +55,8 @@ namespace workwear
 
 		public Subdivision CurObject { get; set;}
 
+		public Warehouse CurWarehouse { get; set; }
+
 		public WriteOffItemsView()
 		{
 			this.Build();
@@ -85,19 +88,22 @@ namespace workwear
 
 		protected void OnButtonAddStoreClicked (object sender, EventArgs e)
 		{
-			var selectFromStockDlg = new ReferenceRepresentation (new ViewModel.StockBalanceVM (ViewModel.StockBalanceVMMode.DisplayAll, ViewModel.StockBalanceVMGroupBy.IncomeItem),
-			                                                     "Остатки на складе");
-			selectFromStockDlg.Mode = OrmReferenceMode.MultiSelect;
-			selectFromStockDlg.ObjectSelected += SelectFromStockDlg_ObjectSelected;;
+			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<StockBalanceJournalViewModel>(MyTdiDialog, QS.Navigation.OpenPageOptions.AsSlave);
 
-			OpenSlaveTab(selectFromStockDlg);
+			if(CurWarehouse != null) {
+				selectJournal.ViewModel.Filter.Warehouse = CurWarehouse;
+			}
+
+			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;
 		}
 
-		void SelectFromStockDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)
+		void SelectFromStock_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			foreach(var node in e.GetNodes<ViewModel.StockBalanceVMNode> ())
-			{
-				WriteoffDoc.AddItem (MyOrmDialog.UoW.GetById<IncomeItem> (node.Id), node.Income - node.Expense);
+			var selectVM = sender as StockBalanceJournalViewModel;
+
+			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
+				WriteoffDoc.AddItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.Amount);
 			}
 			CalculateTotal();
 		}

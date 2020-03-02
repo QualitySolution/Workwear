@@ -64,12 +64,24 @@ namespace workwear.Domain.Stock
 			set { SetField(ref employeeIssueOperation, value); }
 		}
 
-		private WarehouseOperation warehouseOperation = new WarehouseOperation();
+		#region Списание со склада
+
+		private Warehouse warehouse;
+
+		[Display(Name = "Склад")]
+		public virtual Warehouse Warehouse {
+			get { return warehouse; }
+			set { SetField(ref warehouse, value, () => Warehouse); }
+		}
+
+		private WarehouseOperation warehouseOperation;
 		[Display(Name = "Операция на складе")]
 		public virtual WarehouseOperation WarehouseOperation {
 			get { return warehouseOperation; }
 			set { SetField(ref warehouseOperation, value); }
 		}
+
+		#endregion
 
 		string size;
 
@@ -93,8 +105,8 @@ namespace workwear.Domain.Stock
 
 		public virtual string LastOwnText{
 			get{
-				if (IncomeOn != null)
-					return "склад";
+				if (Warehouse != null)
+					return Warehouse.Name;
 				if(IssuedOn != null)
 				{
 					if (IssuedOn.ExpenseDoc.Operation == ExpenseOperations.Employee)
@@ -115,10 +127,11 @@ namespace workwear.Domain.Stock
 			);}
 		}
 
+		[Display(Name = "Процент износа")]
 		public virtual decimal? WearPercent {
 			get {
-				if(IncomeOn != null)
-					return 1 - IncomeOn.LifePercent;
+				if(WarehouseOperation != null)
+					return WarehouseOperation.WearPercent;
 				else if(IssuedOn?.EmployeeIssueOperation != null)
 					return IssuedOn.EmployeeIssueOperation.CalculatePercentWear(document.Date);
 				else
@@ -126,6 +139,8 @@ namespace workwear.Domain.Stock
 
 			}
 		}
+
+		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, Size, WearGrowth, WearPercent.Value);
 
 		#endregion
 
@@ -164,8 +179,10 @@ namespace workwear.Domain.Stock
 				EmployeeIssueOperation = null;
 			}
 
-			WarehouseOperation.Update(uow, this);
-			uow.Save(WarehouseOperation);
+			if(WarehouseOperation != null) {
+				WarehouseOperation.Update(uow, this);
+				uow.Save(WarehouseOperation);
+			}
 		}
 
 		#endregion
