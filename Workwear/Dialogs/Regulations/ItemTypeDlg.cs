@@ -64,7 +64,7 @@ namespace workwear.Dialogs.Regulations
 			.AddColumn("Наименование").AddTextRenderer(p => p.Name)
 			.AddColumn("Пол").AddTextRenderer(p => p.Sex != null ? p.Sex.GetEnumTitle() : String.Empty)
 			.Finish();
-			ytreeItems.ItemsDataSource = Entity.ObservableItems;
+			ytreeItems.ItemsDataSource = Entity.ObservableNomenclatures;
 		}
 
 		public override bool Save ()

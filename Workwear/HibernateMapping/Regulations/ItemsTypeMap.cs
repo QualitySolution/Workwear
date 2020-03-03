@@ -25,8 +25,7 @@ namespace workwear.HMap
 			.ParentKeyColumn("item_types_id")
 			.ChildKeyColumn("item_types_id_analog").Cascade.All();
 
-			HasMany(x => x.Norms).KeyColumn("type_id").Not.KeyNullable().Inverse().Cascade.AllDeleteOrphan()
-			.LazyLoad();
+			HasMany(x => x.Nomenclatures).KeyColumn("type_id").Inverse().LazyLoad();
 
 		}
 	}

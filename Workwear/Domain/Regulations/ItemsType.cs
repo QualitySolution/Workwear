@@ -82,21 +82,21 @@ namespace workwear.Domain.Regulations
 			set { SetField(ref comment, value, () => Comment); }
 		}
 
-		private IList<Nomenclature> norms = new List<Nomenclature>();
+		private IList<Nomenclature> nomenclatures = new List<Nomenclature>();
 
 		[Display(Name = "Строки норм")]
-		public virtual IList<Nomenclature> Norms {
-			get { return norms; }
-			set { SetField(ref norms, value, () => Norms); }
+		public virtual IList<Nomenclature> Nomenclatures {
+			get { return nomenclatures; }
+			set { SetField(ref nomenclatures, value, () => Nomenclatures); }
 		}
 
-		GenericObservableList<Nomenclature> observableNorms;
+		GenericObservableList<Nomenclature> observableNomenclatures;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<Nomenclature> ObservableItems {
+		public virtual GenericObservableList<Nomenclature> ObservableNomenclatures {
 			get {
-				if(observableNorms == null)
-					observableNorms = new GenericObservableList<Nomenclature>(Norms);
-				return observableNorms;
+				if(observableNomenclatures == null)
+					observableNomenclatures = new GenericObservableList<Nomenclature>(Nomenclatures);
+				return observableNomenclatures;
 			}
 		}
 
