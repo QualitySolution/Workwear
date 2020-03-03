@@ -1,5 +1,6 @@
 ﻿using System;
 using Gamma.ColumnConfig;
+using Gamma.Utilities;
 using NLog;
 using QS.BusinessCommon.Repository;
 using QS.Dialog.Gtk;
@@ -7,6 +8,7 @@ using QS.DomainModel.UoW;
 using QSOrmProject;
 using QSProjectsLib;
 using workwear.Domain.Regulations;
+using workwear.Domain.Stock;
 using workwear.Measurements;
 
 namespace workwear.Dialogs.Regulations
@@ -56,6 +58,13 @@ namespace workwear.Dialogs.Regulations
 			.Finish();
 			ytreeNormAnalog.ItemsDataSource = Entity.ObservableItemsTypeAnalog;
 			ytreeNormAnalog.Selection.Changed += YtreeItemsType_Selection_Changed;
+
+			ytreeItems.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
+			.AddColumn("Тип").AddTextRenderer(p => p.TypeName)
+			.AddColumn("Наименование").AddTextRenderer(p => p.Name)
+			.AddColumn("Пол").AddTextRenderer(p => p.Sex != null ? p.Sex.GetEnumTitle() : String.Empty)
+			.Finish();
+			ytreeItems.ItemsDataSource = Entity.ObservableNomenclatures;
 		}
 
 		public override bool Save ()
