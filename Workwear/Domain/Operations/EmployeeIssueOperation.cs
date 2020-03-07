@@ -135,6 +135,13 @@ namespace workwear.Domain.Operations
 			set { SetField(ref issuedOperation, value); }
 		}
 
+		private WarehouseOperation warehouseOperation;
+		[Display(Name = "Сопутствующая складская операция")]
+		public virtual WarehouseOperation WarehouseOperation {
+			get => warehouseOperation;
+			set => SetField(ref warehouseOperation, value);
+		}
+
 		private NormItem normItem;
 
 		[Display(Name = "Строка нормы")]
