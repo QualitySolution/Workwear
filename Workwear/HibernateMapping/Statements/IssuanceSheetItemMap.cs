@@ -13,6 +13,8 @@ namespace workwear.HibernateMapping.Statements
 			Map(x => x.Amount).Column("amount");
 			Map(x => x.StartOfUse).Column("start_of_use");
 			Map(x => x.Lifetime).Column("lifetime");
+			Map(x => x.Size).Column("size");
+			Map(x => x.WearGrowth).Column("growth");
 
 			References(x => x.IssuanceSheet).Column("issuance_sheet_id");
 			References(x => x.Employee).Column("employee_id");
