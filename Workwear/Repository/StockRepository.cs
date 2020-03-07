@@ -7,13 +7,14 @@ using NHibernate.Dialect.Function;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Measurements;
 
 namespace workwear
 {
-	public static class StockRepository
+	public class StockRepository
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
@@ -68,110 +69,75 @@ namespace workwear
 			return query.List ();
 		}
 
-		public static IList<StockBalanceDTO> BalanceInStockDetail(IUnitOfWork uow, IList<Nomenclature> nomenclatures)
+		public virtual IList<StockBalanceDTO> StockBalances(IUnitOfWork uow, Warehouse warehouse, IList<Nomenclature> nomenclatures)
 		{
 			StockBalanceDTO resultAlias = null;
 
-			IncomeItem incomeItemAlias = null;
-			ExpenseItem expenseItemAlias = null;
-			WriteoffItem writeoffItemAlias = null;
+			WarehouseOperation warehouseExpenseOperationAlias = null;
+			WarehouseOperation warehouseIncomeOperationAlias = null;
+			WarehouseOperation warehouseOperationAlias = null;
 
-			var incomes = uow.Session.QueryOver<IncomeItem> (() => incomeItemAlias)
-				.WhereRestrictionOn (i => i.Nomenclature).IsInG (nomenclatures);
+			Nomenclature nomenclatureAlias = null;
 
-			var subqueryRemove = QueryOver.Of<ExpenseItem>(() => expenseItemAlias)
-				.Where(() => expenseItemAlias.IncomeOn.Id == incomeItemAlias.Id)
-				.Select (Projections.Sum<ExpenseItem> (o => o.Amount));
+			var expensequery = QueryOver.Of<WarehouseOperation>(() => warehouseExpenseOperationAlias)
+				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id)
+				.Where(e => e.OperationTime < DateTime.Now);
+			if(warehouse == null)
+				expensequery.Where(x => x.ExpenseWarehouse != null);
+			else
+				expensequery.Where(x => x.ExpenseWarehouse == warehouse);
 
-			var subqueryWriteOff = QueryOver.Of<WriteoffItem>(() => writeoffItemAlias)
-				.Where(() => writeoffItemAlias.IncomeOn.Id == incomeItemAlias.Id)
-				.Select (Projections.Sum<WriteoffItem> (o => o.Amount));
+			expensequery.Select(Projections.Sum(Projections.Property(() => warehouseExpenseOperationAlias.Amount)));
 
-			var incomeList = incomes
-				.Where (Restrictions.Gt (
-					Projections.SqlFunction(
-						new VarArgsSQLFunction("(", "-", ")"),
-						NHibernateUtil.Int32,
-						Projections.Property (() => incomeItemAlias.Amount),
-						Projections.SqlFunction("COALESCE", 
-							NHibernateUtil.Int32,
-							Projections.SubQuery (subqueryRemove),
-							Projections.Constant (0)
-						),
-						Projections.SqlFunction("COALESCE", 
-							NHibernateUtil.Int32,
-							Projections.SubQuery (subqueryWriteOff),
-							Projections.Constant (0)
-						)
-					), 0)
+			var incomeSubQuery = QueryOver.Of<WarehouseOperation>(() => warehouseIncomeOperationAlias)
+				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id)
+				.Where(e => e.OperationTime < DateTime.Now);
+			if(warehouse == null)
+				incomeSubQuery.Where(x => x.ReceiptWarehouse != null);
+			else
+				incomeSubQuery.Where(x => x.ReceiptWarehouse == warehouse);
+
+			incomeSubQuery.Select(Projections.Sum(Projections.Property(() => warehouseIncomeOperationAlias.Amount)));
+
+			IProjection projection = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.Int32, "( IFNULL(?1, 0) - IFNULL(?2, 0) )"),
+				NHibernateUtil.Int32,
+				Projections.SubQuery(incomeSubQuery),
+				Projections.SubQuery(expensequery)
+			);
+
+			var queryStock = uow.Session.QueryOver<WarehouseOperation>(() => warehouseOperationAlias);
+			queryStock.Where(Restrictions.Not(Restrictions.Eq(projection, 0)));
+			queryStock.Where(() => warehouseOperationAlias.Nomenclature.IsIn(nomenclatures.ToArray()));
+
+			var result = queryStock
+				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
+				.SelectList(list => list
+			   .SelectGroup(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomenclatureId)
+			   .SelectGroup(() => warehouseOperationAlias.Size).WithAlias(() => resultAlias.Size)
+			   .SelectGroup(() => warehouseOperationAlias.Growth).WithAlias(() => resultAlias.Growth)
+			   .SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
+			   .Select(projection).WithAlias(() => resultAlias.Amount)
 				)
-				.SelectList (list => list
-					.SelectGroup (() => incomeItemAlias.Id).WithAlias (() => resultAlias.IncomeItemId)
-					.Select (() => incomeItemAlias.Nomenclature.Id).WithAlias (() => resultAlias.NomenclatureId)
-					.Select (() => incomeItemAlias.LifePercent).WithAlias (() => resultAlias.Life)
-					.Select (() => incomeItemAlias.Amount).WithAlias (() => resultAlias.Income)
-					.SelectSubQuery (subqueryRemove).WithAlias (() => resultAlias.Expense)
-					.SelectSubQuery (subqueryWriteOff).WithAlias (() => resultAlias.Writeoff)
-				)
-				.TransformUsing (Transformers.AliasToBean<StockBalanceDTO> ())
-				.List<StockBalanceDTO> ();
+				.TransformUsing(Transformers.AliasToBean<StockBalanceDTO>())
+				.List<StockBalanceDTO>();
 
 			//Проставляем номенклатуру.
-			incomeList.ToList ().ForEach (item => item.Nomenclature = nomenclatures.First (n => n.Id == item.NomenclatureId));
-
-			return incomeList;
-		}
-
-		public static IList<StockBalanceDTO> BalanceInStockSummary(IUnitOfWork uow, IList<Nomenclature> nomenclatures)
-		{
-			StockBalanceDTO resultAlias = null;
-
-			IncomeItem incomeItemAlias = null;
-			ExpenseItem expenseItemAlias = null;
-			WriteoffItem writeoffItemAlias = null;
-
-			var incomes = uow.Session.QueryOver<IncomeItem> (() => incomeItemAlias)
-				.WhereRestrictionOn (i => i.Nomenclature).IsInG (nomenclatures);
-
-			var subqueryRemove = QueryOver.Of<ExpenseItem>(() => expenseItemAlias)
-				.Where(() => expenseItemAlias.IncomeOn.Id == incomeItemAlias.Id)
-				.Select (Projections.Sum<ExpenseItem> (o => o.Amount));
-
-			var subqueryWriteOff = QueryOver.Of<WriteoffItem>(() => writeoffItemAlias)
-				.Where(() => writeoffItemAlias.IncomeOn.Id == incomeItemAlias.Id)
-				.Select (Projections.Sum<WriteoffItem> (o => o.Amount));
-
-			var incomeList = incomes
-				.SelectList (list => list
-					.SelectGroup (() => incomeItemAlias.Nomenclature.Id).WithAlias (() => resultAlias.NomenclatureId)
-					//.SelectAvg (() => incomeItemAlias.LifePercent).WithAlias (() => resultAlias.Life)
-					.SelectSum (() => incomeItemAlias.Amount).WithAlias (() => resultAlias.Income)
-					.SelectSubQuery (subqueryRemove).WithAlias (() => resultAlias.Expense)
-					.SelectSubQuery (subqueryWriteOff).WithAlias (() => resultAlias.Writeoff)
-				)
-				.TransformUsing (Transformers.AliasToBean<StockBalanceDTO> ())
-				.List<StockBalanceDTO> ();
-
-			//Проставляем номенклатуру.
-			incomeList.ToList ().ForEach (item => item.Nomenclature = nomenclatures.First (n => n.Id == item.NomenclatureId));
-
-			return incomeList;
+			result.ToList().ForEach(item => item.Nomenclature = nomenclatures.First(n => n.Id == item.NomenclatureId));
+			return result;
 		}
 	}
 
 	public class StockBalanceDTO
 	{
 		public Nomenclature Nomenclature { get; set;}
-		public int IncomeItemId { get; set;}
 		public int NomenclatureId { get; set;}
 
-		public int Income { get; set;}
-		public int Expense { get; set;}
-		public int Writeoff { get; set;}
+		public string Size { get; set; }
+		public string Growth { get; set; }
+		public decimal WearPercent { get; set; }
+		public int Amount { get; set; }
 
-		public int Amount { get{ return Income - Expense - Writeoff;
-			}}
-		public decimal Life { get; set;}
+		public StockPosition StockPosition => new StockPosition(Nomenclature, Size, Growth, WearPercent);
 	}
 }
-
