@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.Dialog;
@@ -135,15 +135,6 @@ namespace workwear.Domain.Operations
 			set { SetField(ref issuedOperation, value); }
 		}
 
-		private IncomeItem incomeOnStock;
-
-		[Display(Name = "Строка поступление на склад")]
-		public virtual IncomeItem IncomeOnStock
-		{
-			get { return incomeOnStock; }
-			set { SetField(ref incomeOnStock, value); }
-		}
-
 		private NormItem normItem;
 
 		[Display(Name = "Строка нормы")]
@@ -220,7 +211,6 @@ namespace workwear.Domain.Operations
 			Issued = item.Amount;
 			Returned = 0;
 			IssuedOperation = null;
-			IncomeOnStock = item.IncomeOn;
 			BuhDocument = item.BuhDocument;
 
 			if (NormItem == null)

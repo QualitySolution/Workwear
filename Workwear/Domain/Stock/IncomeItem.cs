@@ -24,21 +24,12 @@ namespace workwear.Domain.Stock
 			set { SetField(ref document, value); }
 		}
 
-
 		Nomenclature nomenclature;
 
 		[Display (Name = "Номеклатура")]
 		public virtual Nomenclature Nomenclature {
 			get { return nomenclature; }
 			set { SetField (ref nomenclature, value, () => Nomenclature); }
-		}
-
-		ExpenseItem issuedOn;
-
-		[Display (Name = "Операция выдачи")]
-		public virtual ExpenseItem IssuedOn {
-			get { return issuedOn; }
-			set { SetField (ref issuedOn, value, () => IssuedOn); }
 		}
 
 		decimal lifePercent;
@@ -121,7 +112,7 @@ namespace workwear.Domain.Stock
 			);}
 		}
 
-		public virtual decimal Total{ get{	return Cost * Amount; }}
+		public virtual decimal Total => Cost * Amount;
 
 		#endregion
 

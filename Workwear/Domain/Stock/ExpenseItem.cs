@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -32,14 +32,6 @@ namespace workwear.Domain.Stock
 		public virtual Nomenclature Nomenclature {
 			get { return nomenclature; }
 			set { SetField (ref nomenclature, value, () => Nomenclature); }
-		}
-
-		IncomeItem incomeOn;
-
-		[Display (Name = "Операция прихода")]
-		public virtual IncomeItem IncomeOn {
-			get { return incomeOn; }
-			set { SetField (ref incomeOn, value, () => IncomeOn); }
 		}
 
 		private IssuanceSheetItem issuanceSheetItem;
