@@ -1,7 +1,5 @@
-﻿using System;
-using FluentNHibernate.Mapping;
+﻿using FluentNHibernate.Mapping;
 using workwear.Domain.Operations;
-using workwear.Domain.Stock;
 
 namespace workwear.HibernateMapping.Stock
 {
@@ -22,8 +20,6 @@ namespace workwear.HibernateMapping.Stock
 			References(x => x.ReceiptWarehouse).Column("warehouse_receipt_id");
 			References(x => x.ExpenseWarehouse).Column("warehouse_expense_id");
 			References(x => x.Nomenclature).Column("nomenclature_id").Not.Nullable();
-
-
 		}
 	}
 }

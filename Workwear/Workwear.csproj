@@ -352,7 +352,6 @@
     <Compile Include="Views\Stock\WarehouseView.cs" />
     <Compile Include="JournalViewModels\Stock\WarehouseJournalViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseView.cs" />
-    <Compile Include="HibernateMapping\Stock\WarehouseOperationMap.cs" />
     <Compile Include="ViewModels\Stock\WarehouseViewModel.cs" />
     <Compile Include="Views\Stock\WarehouseTransferView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseTransferView.cs" />
@@ -367,6 +366,7 @@
     <Compile Include="Journal\Filter.Views\Stock\StockBalanceFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.StockBalanceFilterView.cs" />
     <Compile Include="Domain\Stock\StockPosition.cs" />
+    <Compile Include="HibernateMapping\Operations\WarehouseOperationMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
