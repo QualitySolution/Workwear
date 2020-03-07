@@ -67,6 +67,7 @@ namespace workwear.Domain.Operations
 		int amount;
 
 		[Display(Name = "Количество")]
+		[PropertyChangedAlso("Total")]
 		public virtual int Amount {
 			get { return amount; }
 			set { SetField(ref amount, value); }
@@ -80,6 +81,20 @@ namespace workwear.Domain.Operations
 			set { SetField(ref wearPercent, value.Clamp(0m, 9.99m)); }
 		}
 
+		decimal cost;
+
+		[Display(Name = "Цена")]
+		[PropertyChangedAlso("Total")]
+		public virtual decimal Cost {
+			get { return cost; }
+			set { SetField(ref cost, value, () => Cost); }
+		}
+
+		#region Расчетные
+
+		public virtual decimal Total => Cost * Amount;
+
+		#endregion
 
 		#region Методы обновления операций
 

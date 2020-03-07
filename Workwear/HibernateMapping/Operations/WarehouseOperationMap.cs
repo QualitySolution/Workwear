@@ -7,7 +7,6 @@ namespace workwear.HibernateMapping.Stock
 	{
 		public WarehouseOperationMap()
 		{
-
 			Table("operation_warehouse");
 
 			Id(x => x.Id).Column("id").GeneratedBy.Native();
@@ -16,6 +15,7 @@ namespace workwear.HibernateMapping.Stock
 			Map(x => x.Growth).Column("growth");
 			Map(x => x.Amount).Column("amount");
 			Map(x => x.WearPercent).Column("wear_percent");
+			Map(x => x.Cost).Column("cost");
 
 			References(x => x.ReceiptWarehouse).Column("warehouse_receipt_id");
 			References(x => x.ExpenseWarehouse).Column("warehouse_expense_id");
