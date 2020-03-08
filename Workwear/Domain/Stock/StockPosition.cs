@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace workwear.Domain.Stock
 {
 	/// <summary>
@@ -33,6 +36,25 @@ namespace workwear.Domain.Stock
 			;
 		}
 
-		public string Title => String.Join(" ", Nomenclature.Name, Size, Growth, WearPercent.ToString("P"));
+		public string Title {
+			get {
+				var parameters = new List<string>();
+				if(!String.IsNullOrWhiteSpace(Size))
+					parameters.Add("Размер:" + Size);
+
+				if(!String.IsNullOrWhiteSpace(Growth))
+					parameters.Add("Рост:" + Growth);
+
+				if(WearPercent > 0)
+					parameters.Add("Износ:" + WearPercent.ToString("P"));
+
+				var text = Nomenclature.Name;
+
+				if(parameters.Any())
+					text += String.Format(" ({0})", String.Join("; ", parameters));
+
+				return text;
+			}
+		}
 	}
 }

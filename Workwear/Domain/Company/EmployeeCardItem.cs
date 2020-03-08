@@ -5,6 +5,7 @@ using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Utilities;
 using QS.Utilities.Dates;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
@@ -144,9 +145,25 @@ namespace workwear.Domain.Company
 			}
 		}
 
-		public IEnumerable<StockBalanceDTO> BestChoiceInStock => InStock
+		public virtual IEnumerable<StockBalanceDTO> BestChoiceInStock => InStock
 			.OrderBy(x => x.WearPercent)
 			.ThenByDescending(x => x.Amount);
+
+		public virtual string MatchedNomenclatureShortText {
+			get {
+				if(InStockState == StockStateInfo.UnknownNomenclature)
+					return "нет подходящей";
+
+				if(InStock == null || InStock.Count == 0)
+					return String.Empty;
+
+				var first = BestChoiceInStock.First();
+				var text = first.StockPosition.Title + " - " + Item.Units.MakeAmountShortStr(first.Amount);
+				if(InStock.Count > 1)
+					text += NumberToTextRus.FormatCase(InStock.Count - 1, " (еще {0} вариант)", " (еще {0} варианта)", " (еще {0} вариантов)");
+				return text;
+			}
+		}
 
 		#endregion
 
