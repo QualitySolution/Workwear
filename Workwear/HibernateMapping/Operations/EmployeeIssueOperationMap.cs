@@ -11,6 +11,8 @@ namespace workwear.HMap
 
 			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
 			Map (x => x.OperationTime).Column ("operation_time").Not.Nullable ();
+			Map(x => x.Size).Column("size");
+			Map(x => x.WearGrowth).Column("growth");
 			Map(x => x.WearPercent).Column("wear_percent").Not.Nullable();
 			Map(x => x.Issued).Column("issued").Not.Nullable();
 			Map(x => x.Returned).Column("returned").Not.Nullable();

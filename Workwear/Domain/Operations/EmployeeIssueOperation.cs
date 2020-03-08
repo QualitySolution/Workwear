@@ -50,6 +50,22 @@ namespace workwear.Domain.Operations
 			set { SetField(ref nomenclature, value); }
 		}
 
+		string size;
+
+		[Display(Name = "Размер")]
+		public virtual string Size {
+			get { return size; }
+			set { SetField(ref size, value, () => Size); }
+		}
+
+		string wearGrowth;
+
+		[Display(Name = "Рост одежды")]
+		public virtual string WearGrowth {
+			get { return wearGrowth; }
+			set { SetField(ref wearGrowth, value, () => WearGrowth); }
+		}
+
 		private decimal wearPercent;
 
 		/// <summary>
