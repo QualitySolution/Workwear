@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.Dialog;
@@ -230,7 +230,7 @@ namespace workwear.Domain.Operations
 
 			Employee = item.ExpenseDoc.Employee;
 			Nomenclature = item.Nomenclature;
-			WearPercent = 1 - item.IncomeOn.LifePercent;
+			WearPercent = item.WarehouseOperation.WearPercent;
 			Issued = item.Amount;
 			Returned = 0;
 			IssuedOperation = null;
@@ -312,7 +312,7 @@ namespace workwear.Domain.Operations
 			Issued = 0;
 			Returned = item.Amount;
 			IssuedOperation = item.IssuedOn.EmployeeIssueOperation;
-			IncomeOnStock = null;
+			WarehouseOperation = item.WarehouseOperation;
 			BuhDocument = item.BuhDocument;
 			NormItem = null;
 			ExpiryByNorm = null;
@@ -331,7 +331,7 @@ namespace workwear.Domain.Operations
 			WearPercent = IssuedOperation.CalculatePercentWear(OperationTime);
 			Issued = 0;
 			Returned = item.Amount;
-			IncomeOnStock = null;
+			WarehouseOperation = item.WarehouseOperation;
 			BuhDocument = item.BuhDocument;
 			NormItem = null;
 			ExpiryByNorm = null;
