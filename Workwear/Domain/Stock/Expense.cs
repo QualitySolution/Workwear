@@ -115,26 +115,22 @@ namespace workwear.Domain.Stock
 
 		#region Методы
 
-		public virtual void AddItem(IncomeItem fromIncomeItem)
+		public virtual void AddItem(StockPosition position, int amount = 1)
 		{
-			AddItem (fromIncomeItem, 1);
-		}
-
-		public virtual void AddItem(IncomeItem fromIncomeItem, int amount)
-		{
-			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IncomeOn, fromIncomeItem)))
-			{
-				logger.Warn ("Номенклатура из этого поступления уже добавлена. Пропускаем...");
+			if(Items.Any(p => position.Equals(p.StockPosition))) {
+				logger.Warn($"Позиция [{position}] уже добавлена. Пропускаем...");
 				return;
 			}
-			var newItem = new ExpenseItem () {
+			var newItem = new ExpenseItem() {
 				ExpenseDoc = this,
 				Amount = amount,
-				Nomenclature = fromIncomeItem.Nomenclature,
-				IncomeOn = fromIncomeItem
+				Nomenclature = position.Nomenclature,
+				Size = position.Size,
+				WearGrowth = position.Growth,
+				WearPercent = position.WearPercent
 			};
 
-			ObservableItems.Add (newItem);
+			ObservableItems.Add(newItem);
 		}
 
 		public virtual void RemoveItem(ExpenseItem item)

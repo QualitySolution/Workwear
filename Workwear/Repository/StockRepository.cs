@@ -6,11 +6,8 @@ using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
-using workwear.Domain.Company;
 using workwear.Domain.Operations;
-using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.Measurements;
 
 namespace workwear
 {
@@ -18,58 +15,7 @@ namespace workwear
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
-		public static IList<Nomenclature> MatchNomenclaturesBySize(IUnitOfWork uow, ItemsType itemType, EmployeeCard employee)
-		{
-			if(itemType.WearCategory == null)
-			{
-				logger.Warn ("Вызван подбор номерклатур по размеру, для типа <{0}>, но в нем не указан вид спецодежды.", itemType.Name);
-				return null;
-			}
-
-			var query = uow.Session.QueryOver<Nomenclature> ()
-				.Where (n => n.Type == itemType);
-
-			if (SizeHelper.HasСlothesSizeStd(itemType.WearCategory.Value))
-			{
-				var disjunction = new Disjunction();
-				var employeeSize = employee.GetSize(itemType.WearCategory.Value);
-
-				if (employeeSize == null || String.IsNullOrEmpty(employeeSize.Size) || String.IsNullOrEmpty(employeeSize.StandardCode))
-				{
-					logger.Warn("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", itemType.Name);
-					return null;
-				}
-
-				foreach (var pair in SizeHelper.MatchSize (employeeSize, SizeUsePlace.Сlothes))
-				{
-					disjunction.Add(
-						Restrictions.And(
-							Restrictions.Eq(Projections.Property<Nomenclature>(n => n.SizeStd), pair.StandardCode),
-							Restrictions.Eq(Projections.Property<Nomenclature>(n => n.Size), pair.Size)
-						));
-				}
-				query.Where(disjunction);
-				if (SizeHelper.HasGrowthStandart(itemType.WearCategory.Value))
-				{
-					var growDisjunction = new Disjunction();
-					var growStds = SizeHelper.GetGrowthStandart(itemType.WearCategory.Value, employee.Sex, SizeUsePlace.Сlothes);
-					foreach (var pair in SizeHelper.MatchGrow (growStds, employee.WearGrowth, SizeUsePlace.Сlothes))
-					{
-						growDisjunction.Add(
-							Restrictions.And(
-								Restrictions.Eq(Projections.Property<Nomenclature>(n => n.WearGrowthStd), pair.StandardCode),
-								Restrictions.Eq(Projections.Property<Nomenclature>(n => n.WearGrowth), pair.Size)
-							));
-					}
-
-					query.Where(growDisjunction);
-				}
-			}
-
-			return query.List ();
-		}
-
-		public virtual IList<StockBalanceDTO> StockBalances(IUnitOfWork uow, Warehouse warehouse, IList<Nomenclature> nomenclatures)
+		public virtual IList<StockBalanceDTO> StockBalances(IUnitOfWork uow, Warehouse warehouse, IList<Nomenclature> nomenclatures, DateTime onTime)
 		{
 			StockBalanceDTO resultAlias = null;
 
@@ -81,7 +27,7 @@ namespace workwear
 
 			var expensequery = QueryOver.Of<WarehouseOperation>(() => warehouseExpenseOperationAlias)
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id)
-				.Where(e => e.OperationTime < DateTime.Now);
+				.Where(e => e.OperationTime <= onTime);
 			if(warehouse == null)
 				expensequery.Where(x => x.ExpenseWarehouse != null);
 			else

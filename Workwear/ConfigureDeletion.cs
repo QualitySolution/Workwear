@@ -1,4 +1,4 @@
-﻿using QS.BusinessCommon.Domain;
+using QS.BusinessCommon.Domain;
 using QS.Deletion;
 using QS.Project.Domain;
 using workwear.Domain.Company;
@@ -93,8 +93,7 @@ namespace workwear
 				.AddDeleteDependence<IncomeItem> (x => x.Nomenclature)
 				.AddDeleteDependence<WriteoffItem> (x => x.Nomenclature)
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.Nomenclature)
-				.AddDeleteDependence<IssuanceSheetItem>(x => x.Nomenclature)
-				.AddClearDependence<EmployeeCardItem> (x => x.MatchedNomenclature);
+				.AddDeleteDependence<IssuanceSheetItem>(x => x.Nomenclature);
 
 			DeleteConfig.AddHibernateDeleteInfo<Expense> ()
 				.AddDeleteDependence<ExpenseItem> (x => x.ExpenseDoc)

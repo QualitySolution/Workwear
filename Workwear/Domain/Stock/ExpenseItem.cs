@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -112,6 +112,12 @@ namespace workwear.Domain.Stock
 			set { SetField(ref buhDocument, value); }
 		}
 
+		[Display(Name = "Процент износа")]
+		public virtual decimal WearPercent {
+			get => WarehouseOperation.WearPercent;
+			set => WarehouseOperation.WearPercent = value;
+		}
+
 		#endregion
 
 		#region Расчетные свойства
@@ -122,6 +128,9 @@ namespace workwear.Domain.Stock
 				Nomenclature.Type.Units.Name
 			);}
 		}
+
+		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, Size, WearGrowth, WearPercent);
+
 		#endregion
 
 		public ExpenseItem ()
