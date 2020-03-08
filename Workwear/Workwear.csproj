@@ -367,6 +367,8 @@
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.StockBalanceFilterView.cs" />
     <Compile Include="Domain\Stock\StockPosition.cs" />
     <Compile Include="HibernateMapping\Operations\WarehouseOperationMap.cs" />
+    <Compile Include="Domain\Operations\SubdivisionIssueOperation.cs" />
+    <Compile Include="HibernateMapping\Operations\SubdivisionIssueOperationMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
