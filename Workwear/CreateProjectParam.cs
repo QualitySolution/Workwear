@@ -71,8 +71,7 @@ namespace workwear
 			//Склад
 			OrmMain.AddObjectDescription<Nomenclature>().Dialog<NomenclatureDlg> ().DefaultTableView ()
 					.SearchColumn ("Наименование", i => i.Name)
-					.SearchColumn ("Размер", i => i.Size)
-					.SearchColumn ("Рост", i => i.WearGrowth).OrderAsc (i => i.Name).End ();
+					.OrderAsc (i => i.Name).End ();
 			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
 			OrmMain.AddObjectDescription<Expense>().Dialog<ExpenseDocDlg>();
 			OrmMain.AddObjectDescription<Writeoff>().Dialog<WriteOffDocDlg>();

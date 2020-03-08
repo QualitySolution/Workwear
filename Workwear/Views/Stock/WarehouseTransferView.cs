@@ -38,7 +38,6 @@ namespace workwear.Views.Stock
 				.AddComboRenderer(x => x.Size)
 				.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
 				.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
-			.AddColumn("Рост").AddTextRenderer(x => x.Nomenclature != null ? x.Nomenclature.WearGrowth : String.Empty)
 			.AddColumn("Количество").Tag("Count")
 				.AddNumericRenderer(x => x.Amount, false).Editing(true).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
 				.AddTextRenderer(x => x.Nomenclature != null && x.Nomenclature.Type.Units != null ? x.Nomenclature.Type.Units.Name : String.Empty,  false)

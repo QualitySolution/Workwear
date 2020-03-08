@@ -104,12 +104,12 @@ namespace workwear.Domain.Operations
 			if(item.ExpenseDoc.Date.Date != OperationTime.Date)
 				OperationTime = item.ExpenseDoc.Date;
 
-			expenseWarehouse = item.ExpenseDoc.Warehouse;
+			ExpenseWarehouse = item.ExpenseDoc.Warehouse;
 			ReceiptWarehouse = null;
-			nomenclature = item.Nomenclature;
-			size = item.Nomenclature.Size;
-			growth = item.Nomenclature.WearGrowth;
-			amount = item.Amount;
+			Nomenclature = item.Nomenclature;
+			Size = item.Size;
+			Growth = item.WearGrowth;
+			Amount = item.Amount;
 		}
 
 		public virtual void Update(IUnitOfWork uow, IncomeItem item)
@@ -118,11 +118,11 @@ namespace workwear.Domain.Operations
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
-			receiptWarehouse = item.Document.Warehouse;
-			nomenclature = item.Nomenclature;
-			size = item.Nomenclature.Size;
-			growth =item.Nomenclature.WearGrowth;
-			amount = item.Amount;
+			ReceiptWarehouse = item.Document.Warehouse;
+			Nomenclature = item.Nomenclature;
+			Size = item.Size;
+			Growth =item.WearGrowth;
+			Amount = item.Amount;
 		}
 
 		public virtual void Update(IUnitOfWork uow, WriteoffItem item)
@@ -133,10 +133,10 @@ namespace workwear.Domain.Operations
 
 			ExpenseWarehouse = item.Warehouse;
 			ReceiptWarehouse = null;
-			nomenclature = item.Nomenclature;
-			size = item.Nomenclature.Size;
-			growth = item.Nomenclature.WearGrowth;
-			amount = item.Amount;
+			Nomenclature = item.Nomenclature;
+			Size = item.Size;
+			Growth = item.WearGrowth;
+			Amount = item.Amount;
 		}
 
 		public virtual void Update(IUnitOfWork uow, TransferItem item)
@@ -145,11 +145,11 @@ namespace workwear.Domain.Operations
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
-			receiptWarehouse = item.Document.WarehouseFrom;
-			expenseWarehouse = item.Document.WarehouseTo;
-			nomenclature = item.Nomenclature;
-			size = item.Nomenclature.Size;
-			growth = item.Nomenclature.WearGrowth;
+			ReceiptWarehouse = item.Document.WarehouseTo;
+			ExpenseWarehouse = item.Document.WarehouseFrom;
+			Nomenclature = item.Nomenclature;
+			Size = item.Size;
+			Growth = item.WearGrowth;
 			amount = item.Amount;
 		}
 

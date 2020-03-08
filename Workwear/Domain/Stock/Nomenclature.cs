@@ -51,22 +51,6 @@ namespace workwear.Domain.Stock
 			set { SetField (ref sizeStd, value, () => SizeStd); }
 		}
 
-		string size;
-
-		[Display (Name = "Размер")]
-		public virtual string Size { 
-			get { return size; } 
-			set	{ SetField (ref size, value, () => Size); }
-		}
-
-		string wearGrowth;
-
-		[Display (Name = "Рост одежды")]
-		public virtual string WearGrowth { 
-			get { return wearGrowth; } 
-			set	{ SetField (ref wearGrowth, value, () => WearGrowth); }
-		}
-
 		string wearGrowthStd;
 
 		[Display (Name = "Стандарт роста")]
@@ -88,17 +72,6 @@ namespace workwear.Domain.Stock
 
 		#region Рассчетные
 
-		public virtual string NameAndSize{
-			get{
-				if (String.IsNullOrWhiteSpace(WearGrowth) && String.IsNullOrWhiteSpace(Size))
-					return Name;
-				if (String.IsNullOrWhiteSpace(WearGrowth))
-					return String.Format("{0} (Размер:{1})", Name, Size);
-
-				return String.Format("{0} (Размер:{1}; Рост:{2})", Name, Size, WearGrowth);
-			}
-		}
-
 		public virtual string TypeName => Type.Name;
 
 		#endregion
@@ -117,9 +90,9 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult ("Данный вид одежды не имеет универсальных размеров.", 
 					new[] { this.GetPropertyName (o => o.Sex) });
 
-			if(Type != null && Type.WearCategory != null && Type.WearCategory != СlothesType.PPE && String.IsNullOrWhiteSpace(Size))
-				yield return new ValidationResult("Необходимо указать размер спецодежды.",
-					new[] { this.GetPropertyName(o => o.Size) });
+			if(Type != null && Type.WearCategory != null && Type.WearCategory != СlothesType.PPE && String.IsNullOrWhiteSpace(SizeStd))
+				yield return new ValidationResult("Необходимо указать стандарт размера спецодежды.",
+					new[] { this.GetPropertyName(o => o.SizeStd) });
 		}
 
 		#endregion
