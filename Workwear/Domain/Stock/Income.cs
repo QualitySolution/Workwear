@@ -166,19 +166,17 @@ namespace workwear.Domain.Stock
 			ObservableItems.Add (newItem);
 		}
 
-		public virtual void AddItem(IUnitOfWork uow, EmployeeIssueOperation operation, int count)
+		public virtual void AddItem(EmployeeIssueOperation operation, int count)
 		{
 			if(operation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
-			ExpenseItem expenseFromItem = EmployeeIssueRepository.GetExpenseItemForOperation(uow, operation);
-
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedOn, expenseFromItem))) {
+			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssueOperation, operation))) {
 				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return;
 			}
 			decimal life = 1 - operation.WearPercent;
-			decimal cost = operation.IncomeOnStock.Cost;
+			decimal cost = operation.WarehouseOperation.Cost;
 			if(operation.ExpiryByNorm.HasValue) {
 				decimal wearPercent = operation.CalculatePercentWear(DateTime.Today);
 				life = 1 - wearPercent;
@@ -188,10 +186,9 @@ namespace workwear.Domain.Stock
 			var newItem = new IncomeItem(this) {
 				Amount = count,
 				Nomenclature = operation.Nomenclature,
-				IssuedOn = expenseFromItem,
+				IssueOperation = operation,
 				Cost = cost,
 				LifePercent = life,
-				Certificate = expenseFromItem.IncomeOn?.Certificate
 			};
 
 			ObservableItems.Add(newItem);

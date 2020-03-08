@@ -128,6 +128,18 @@ namespace workwear.Domain.Stock
 			set { SetField(ref buhDocument, value); }
 		}
 
+		private EmployeeIssueOperation issueOperation;
+
+		/// <summary>
+		/// Это ссылка на операцию выдачи по которой был выдан сотруднику поступивший от него СИЗ
+		/// В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
+		/// </summary>
+		[Display(Name = "Операция выдачи")]
+		public virtual EmployeeIssueOperation IssueOperation {
+			get => issueOperation ?? EmployeeIssueOperation?.IssuedOperation;
+			set => SetField(ref issueOperation, value);
+		}
+
 		#endregion
 
 		protected IncomeItem ()
