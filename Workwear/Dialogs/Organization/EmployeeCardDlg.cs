@@ -116,6 +116,7 @@ namespace workwear.Dialogs.Organization
 			enumPrint.ItemsEnum = typeof(PersonalCardPrint);
 
 			Entity.PropertyChanged += CheckSizeChanged;
+			Entity.PropertyChanged += Entity_PropertyChanged;
 
 			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			var builder = new LegacyEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
@@ -173,6 +174,13 @@ namespace workwear.Dialogs.Organization
 			return true;
 		}
 
+		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			//Так как склад подбора мог поменятся при смене подразделения.
+			if(e.PropertyName == nameof(Entity.Subdivision))
+				Entity.FillWearInStockInfo(UoW, Entity.Subdivision?.Warehouse, DateTime.Now);
+		}
+
 		void CheckSizeChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			СlothesType category;
@@ -191,8 +199,7 @@ namespace workwear.Dialogs.Organization
 			else return;
 
 			//Обновляем подобранную номенклатуру
-			Entity.WorkwearItems.Where(x => x.Item.WearCategory == category)
-				  .ToList().ForEach(x => x.FindMatchedNomenclature(UoW));
+			Entity.FillWearInStockInfo(UoW, Entity?.Subdivision?.Warehouse, DateTime.Now);
 		}
 
 		protected void OnButtonGiveWearClicked(object sender, EventArgs e)
