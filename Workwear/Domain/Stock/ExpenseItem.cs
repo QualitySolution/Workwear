@@ -140,21 +140,33 @@ namespace workwear.Domain.Stock
 
 		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
 		{
+			//Выдача сотруднику
 			if(expenseDoc.Operation == ExpenseOperations.Employee)
 			{
 				if (EmployeeIssueOperation == null)
 					EmployeeIssueOperation = new EmployeeIssueOperation();
 
 				EmployeeIssueOperation.Update(uow, askUser, this);
-				uow.Save(EmployeeIssueOperation);
 			}
 			else if(EmployeeIssueOperation != null)
 			{
 				uow.Delete(EmployeeIssueOperation);
 				EmployeeIssueOperation = null;
 			}
+
+			//Выдача на подразделение
+			if(expenseDoc.Operation == ExpenseOperations.Object) {
+				if(SubdivisionIssueOperation == null)
+					SubdivisionIssueOperation = new SubdivisionIssueOperation();
+
+				SubdivisionIssueOperation.Update(uow, askUser, this);
+			}
+			else if(SubdivisionIssueOperation != null) {
+				uow.Delete(SubdivisionIssueOperation);
+				SubdivisionIssueOperation = null;
+			}
+
 			WarehouseOperation.Update(uow, this);
-			uow.Save(WarehouseOperation);
 		}
 
 		#endregion
