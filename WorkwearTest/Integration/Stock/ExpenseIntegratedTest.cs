@@ -1,4 +1,4 @@
-﻿using NSubstitute;
+using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
 using QS.Testing.DB;
@@ -135,7 +135,7 @@ namespace WorkwearTest.Integration.Stock
 				income.Operation = IncomeOperations.Enter;
 				var incomeItem1 = income.AddItem(nomenclature);
 				incomeItem1.Amount = 10;
-				income.UpdateOperations(uow, s => true);
+				income.UpdateOperations(uow, ask);
 				uow.Save(income);
 
 				var income2 = new Income();
@@ -143,15 +143,15 @@ namespace WorkwearTest.Integration.Stock
 				income2.Operation = IncomeOperations.Enter;
 				var incomeItem2 = income2.AddItem(nomenclature);
 				incomeItem2.Amount = 5;
-				income2.UpdateOperations(uow, s => true);
+				income2.UpdateOperations(uow, ask);
 				uow.Save(income2);
 
 				var expense = new Expense();
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 10, 22);
 				expense.Operation = ExpenseOperations.Employee;
-				expense.AddItem(incomeItem1, 1);
-				expense.AddItem(incomeItem2, 1);
+				expense.AddItem(position1, 1);
+				expense.AddItem(position1, 1);
 
 				//Обновление операций
 				expense.UpdateOperations(uow, ask); //Здесь 2020 

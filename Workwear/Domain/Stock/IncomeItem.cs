@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -173,7 +173,7 @@ namespace workwear.Domain.Stock
 
 		#region Функции
 
-		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
+		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
 		{
 			if(Document.Operation == IncomeOperations.Return) {
 				if(ReturnFromEmployeeOperation == null)

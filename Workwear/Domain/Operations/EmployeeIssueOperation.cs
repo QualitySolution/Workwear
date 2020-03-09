@@ -303,7 +303,7 @@ namespace workwear.Domain.Operations
 				AutoWriteoffDate = null;
 		}
 
-		public virtual void Update(IUnitOfWork uow, Func<string, bool> askUser, IncomeItem item)
+		public virtual void Update(IUnitOfWork uow, IInteractiveQuestion askUser, IncomeItem item)
 		{
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)

@@ -258,7 +258,7 @@ namespace WorkwearTest.Integration.Tools
 				incomeItem1.Amount = 10;
 				var incomeItem2 = income.AddItem(nomenclature2);
 				incomeItem2.Amount = 10;
-				income.UpdateOperations(uow, s => true);
+				income.UpdateOperations(uow, ask);
 				uow.Save(income);
 
 				var expense = new Expense();
