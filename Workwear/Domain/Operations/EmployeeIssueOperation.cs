@@ -237,6 +237,7 @@ namespace workwear.Domain.Operations
 			Returned = 0;
 			IssuedOperation = null;
 			BuhDocument = item.BuhDocument;
+			WarehouseOperation = item.WarehouseOperation;
 
 			if (NormItem == null)
 				NormItem = Employee.WorkwearItems.FirstOrDefault(x => x.Item == Nomenclature.Type)?.ActiveNormItem;

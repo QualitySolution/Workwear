@@ -140,6 +140,9 @@ namespace workwear.Domain.Stock
 
 		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
 		{
+			WarehouseOperation.Update(uow, this);
+			uow.Save(WarehouseOperation);
+
 			//Выдача сотруднику
 			if(expenseDoc.Operation == ExpenseOperations.Employee)
 			{
@@ -165,8 +168,6 @@ namespace workwear.Domain.Stock
 				uow.Delete(SubdivisionIssueOperation);
 				SubdivisionIssueOperation = null;
 			}
-
-			WarehouseOperation.Update(uow, this);
 		}
 
 		#endregion
