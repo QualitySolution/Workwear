@@ -316,7 +316,7 @@ namespace workwear.Domain.Operations
 			Issued = 0;
 			Returned = item.Amount;
 			WarehouseOperation = item.WarehouseOperation;
-			IssuedOperation = item.IssueOperation;
+			IssuedOperation = item.IssuedEmployeeOnOperation;
 			BuhDocument = item.BuhDocument;
 			NormItem = null;
 			ExpiryByNorm = null;
@@ -328,9 +328,7 @@ namespace workwear.Domain.Operations
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
-
-			IssuedOperation = item.IssuedOn.EmployeeIssueOperation;
-			Employee = item.IssuedOn.ExpenseDoc.Employee;
+				
 			Nomenclature = item.Nomenclature;
 			WearPercent = IssuedOperation.CalculatePercentWear(OperationTime);
 			Issued = 0;
