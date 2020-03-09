@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -55,15 +55,6 @@ namespace workwear.Domain.Stock
 		public virtual SubdivisionPlace SubdivisionPlace {
 			get { return subdivisionPlace; }
 			set { SetField (ref subdivisionPlace, value, () => SubdivisionPlace); }
-		}
-
-		DateTime? autoWriteoffDate;
-
-		[Display (Name = "День автосписания")]
-		[Obsolete("Переходите на использование операций EmployeeIssueOperation, это поле в будущих релизах будет удалено.")]
-		public virtual DateTime? AutoWriteoffDate {
-			get { return autoWriteoffDate; }
-			set { SetField (ref autoWriteoffDate, value, () => AutoWriteoffDate); }
 		}
 
 		private EmployeeIssueOperation employeeIssueOperation;
@@ -155,7 +146,6 @@ namespace workwear.Domain.Stock
 					EmployeeIssueOperation = new EmployeeIssueOperation();
 
 				EmployeeIssueOperation.Update(uow, askUser, this);
-				AutoWriteoffDate = EmployeeIssueOperation.AutoWriteoffDate;
 				uow.Save(EmployeeIssueOperation);
 			}
 			else if(EmployeeIssueOperation != null)

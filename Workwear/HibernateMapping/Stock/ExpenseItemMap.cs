@@ -1,4 +1,4 @@
-using FluentNHibernate.Mapping;
+﻿using FluentNHibernate.Mapping;
 using workwear.Domain.Stock;
 
 namespace workwear.HMap
@@ -11,7 +11,6 @@ namespace workwear.HMap
 
 			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
 			Map (x => x.Amount).Column ("quantity");
-			Map (x => x.AutoWriteoffDate).Column ("auto_writeoff_date");
 			Map(x => x.Size).Column("size");
 			Map(x => x.WearGrowth).Column("growth");
 
