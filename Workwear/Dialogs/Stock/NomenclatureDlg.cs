@@ -103,7 +103,9 @@ namespace workwear
 				ylabelClothesSex.Visible = ycomboClothesSex.Visible = false;
 				ycomboWearStd.Sensitive = false;
 			}
-				
+
+			labelSize.Visible = ycomboWearStd.Visible =
+				Entity.Type?.WearCategory != null && SizeHelper.HasСlothesSizeStd(Entity.Type.WearCategory.Value);
 		}
 
 		protected void OnYcomboClothesSexChanged (object sender, EventArgs e)
