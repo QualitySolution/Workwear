@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Utilities.Numeric;
@@ -175,10 +176,14 @@ namespace workwear.Domain.Stock
 
 		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
 		{
+			WarehouseOperation.Update(uow, this);
+			uow.Save(WarehouseOperation);
+
 			if(Document.Operation == IncomeOperations.Return) {
 				if(ReturnFromEmployeeOperation == null)
 					ReturnFromEmployeeOperation = new EmployeeIssueOperation();
 				ReturnFromEmployeeOperation.Update(uow, askUser, this);
+				uow.Save(ReturnFromEmployeeOperation);
 			}
 			else if(ReturnFromEmployeeOperation != null) {
 				uow.Delete(ReturnFromEmployeeOperation);
@@ -189,14 +194,12 @@ namespace workwear.Domain.Stock
 				if(ReturnFromSubdivisionOperation == null)
 					ReturnFromSubdivisionOperation = new SubdivisionIssueOperation();
 				ReturnFromSubdivisionOperation.Update(uow, askUser, this);
+				uow.Save(ReturnFromSubdivisionOperation);
 			}
 			else if(ReturnFromSubdivisionOperation != null) {
 				uow.Delete(ReturnFromSubdivisionOperation);
 				ReturnFromSubdivisionOperation = null;
 			}
-
-			WarehouseOperation.Update(uow, this);
-			uow.Save(WarehouseOperation);
 		}
 
 		#endregion

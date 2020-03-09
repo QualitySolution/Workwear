@@ -150,6 +150,7 @@ namespace workwear.Domain.Stock
 					EmployeeIssueOperation = new EmployeeIssueOperation();
 
 				EmployeeIssueOperation.Update(uow, askUser, this);
+				uow.Save(EmployeeIssueOperation);
 			}
 			else if(EmployeeIssueOperation != null)
 			{
@@ -163,6 +164,7 @@ namespace workwear.Domain.Stock
 					SubdivisionIssueOperation = new SubdivisionIssueOperation();
 
 				SubdivisionIssueOperation.Update(uow, askUser, this);
+				uow.Save(SubdivisionIssueOperation);
 			}
 			else if(SubdivisionIssueOperation != null) {
 				uow.Delete(SubdivisionIssueOperation);
