@@ -1,18 +1,15 @@
 ﻿using System;
 using Autofac;
-using QS.Dialog;
-using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Services;
 using QS.Tdi;
-using QS.ViewModels;
+using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QSOrmProject;
-using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.JournalViewModels.Stock;
 
@@ -23,15 +20,12 @@ namespace workwear.ViewModels.Stock
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
 		public EntityEntryViewModel<Warehouse> WarehouseToEntryViewModel;
 		public ILifetimeScope AutofacScope;
-		public ITdiCompatibilityNavigation navigationManager;
 		public ITdiCompatibilityNavigation tdiNavigationManager;
-		private readonly CommonMessages commonMessages;
 
-		public WarehouseTransferViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiTab myTab, ITdiCompatibilityNavigation navigationManager, ILifetimeScope autofacScope, CommonMessages commonMessages, IUserService userService) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager)
+		public WarehouseTransferViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiTab myTab, ITdiCompatibilityNavigation navigationManager, ILifetimeScope autofacScope, IValidator validator, IUserService userService) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager, validator)
 		{
 			this.tdiNavigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
-			this.commonMessages = commonMessages;
 
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
@@ -48,8 +42,6 @@ namespace workwear.ViewModels.Stock
 										 .UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 										 .UseViewModelDialog<WarehouseViewModel>()
 										 .Finish();
-
-
 		}
 
 
