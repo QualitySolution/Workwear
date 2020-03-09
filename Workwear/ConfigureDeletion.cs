@@ -101,20 +101,20 @@ namespace workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<ExpenseItem> ()
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.ExpenseItem)
-				.AddDeleteDependence<WriteoffItem> (x => x.IssuedOn)
-				.AddDeleteCascadeDependence(x => x.EmployeeIssueOperation);
+				.AddDeleteCascadeDependence(x => x.EmployeeIssueOperation)
+				.AddDeleteCascadeDependence(x => x.SubdivisionIssueOperation);
 
 			DeleteConfig.AddHibernateDeleteInfo<Income> ()
 				.AddDeleteDependence<IncomeItem>(x => x.Document);
 
 			DeleteConfig.AddHibernateDeleteInfo<IncomeItem> ()
-				.AddDeleteCascadeDependence(x => x.EmployeeIssueOperation);
+				.AddDeleteCascadeDependence(x => x.ReturnFromEmployeeOperation);
 
 			DeleteConfig.AddHibernateDeleteInfo<Writeoff> ()
 				.AddDeleteDependence<WriteoffItem>(x => x.Document);
 
 			DeleteConfig.AddHibernateDeleteInfo<WriteoffItem> ()
-				.AddDeleteCascadeDependence(x => x.EmployeeIssueOperation);
+				.AddDeleteCascadeDependence(x => x.EmployeeWriteoffOperation);
 
 			#endregion
 
@@ -133,8 +133,8 @@ namespace workwear
 				.RequiredCascadeDeletion()
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.IssuedOperation)
 				.AddDeleteDependence<ExpenseItem>(x => x.EmployeeIssueOperation)
-				.AddDeleteDependence<IncomeItem>(x => x.EmployeeIssueOperation)
-				.AddDeleteDependence<WriteoffItem>(x => x.EmployeeIssueOperation)
+				.AddDeleteDependence<IncomeItem>(x => x.ReturnFromEmployeeOperation)
+				.AddDeleteDependence<WriteoffItem>(x => x.EmployeeWriteoffOperation)
 				.AddClearDependence<IssuanceSheetItem>(x => x.IssueOperation);
 
 			#endregion

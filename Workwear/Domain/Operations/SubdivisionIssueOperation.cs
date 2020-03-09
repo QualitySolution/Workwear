@@ -1,14 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Utilities.Dates;
-using workwear.Domain.Company;
 using QS.Utilities.Numeric;
-using workwear.Domain.Operations.Graph;
-using workwear.Domain.Regulations;
+using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Tools;
 
@@ -142,10 +139,10 @@ namespace workwear.Domain.Operations
 			set { SetField(ref autoWriteoffDate, value); }
 		}
 
-		private EmployeeIssueOperation issuedOperation;
+		private SubdivisionIssueOperation issuedOperation;
 
 		[Display(Name = "Операция выдачи")]
-		public virtual EmployeeIssueOperation IssuedOperation
+		public virtual SubdivisionIssueOperation IssuedOperation
 		{
 			get { return issuedOperation; }
 			set { SetField(ref issuedOperation, value); }
@@ -234,7 +231,7 @@ namespace workwear.Domain.Operations
 			Issued = 0;
 			Returned = item.Amount;
 			WarehouseOperation = item.WarehouseOperation;
-			IssuedOperation = item.IssueOperation;
+			IssuedOperation = item.IssuedSubdivisionOnOperation;
 			ExpiryOn = null;
 			AutoWriteoffDate = null;
 		}
@@ -244,9 +241,7 @@ namespace workwear.Domain.Operations
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
-
-			IssuedOperation = item.IssuedOn.EmployeeIssueOperation;
-			Subdivision = item.IssuedOn.ExpenseDoc.Subdivision;
+			
 			Nomenclature = item.Nomenclature;
 			WearPercent = IssuedOperation.CalculatePercentWear(OperationTime);
 			Issued = 0;

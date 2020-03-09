@@ -1,4 +1,4 @@
-﻿using FluentNHibernate.Mapping;
+using FluentNHibernate.Mapping;
 using workwear.Domain.Stock;
 
 namespace workwear.HMap
@@ -19,6 +19,7 @@ namespace workwear.HMap
 			References (x => x.Nomenclature).Column ("nomenclature_id").Not.Nullable ();
 			References (x => x.SubdivisionPlace).Column ("object_place_id");
 			References(x => x.EmployeeIssueOperation).Column("employee_issue_operation_id").Cascade.All();
+			References(x => x.SubdivisionIssueOperation).Column("subdivision_issue_operation_id").Cascade.All();
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Not.Nullable();
 
 			HasOne(x => x.IssuanceSheetItem)

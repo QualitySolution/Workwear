@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -73,6 +73,14 @@ namespace workwear.Domain.Stock
 		{
 			get { return employeeIssueOperation; }
 			set { SetField(ref employeeIssueOperation, value); }
+		}
+
+		private SubdivisionIssueOperation subdivisionIssueOperation;
+
+		[Display(Name = "Операция выдачи на подразделение")]
+		public virtual SubdivisionIssueOperation SubdivisionIssueOperation {
+			get { return subdivisionIssueOperation; }
+			set { SetField(ref subdivisionIssueOperation, value); }
 		}
 
 		private WarehouseOperation warehouseOperation = new WarehouseOperation();
