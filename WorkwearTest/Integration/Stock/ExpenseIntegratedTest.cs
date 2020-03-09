@@ -40,6 +40,8 @@ namespace WorkwearTest.Integration.Stock
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
 
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
@@ -70,6 +72,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Commit();
 
 				var income = new Income();
+				income.Warehouse = warehouse;
 				income.Date = new DateTime(2017, 1, 1);
 				income.Operation = IncomeOperations.Enter;
 				var incomeItem1 = income.AddItem(nomenclature);
@@ -80,6 +83,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(income);
 
 				var expense = new Expense();
+				expense.Warehouse = warehouse;
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 10, 22);
 				expense.Operation = ExpenseOperations.Employee;
@@ -111,6 +115,8 @@ namespace WorkwearTest.Integration.Stock
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
 
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
@@ -136,6 +142,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Commit();
 
 				var income = new Income();
+				income.Warehouse = warehouse;
 				income.Date = new DateTime(2017, 1, 1);
 				income.Operation = IncomeOperations.Enter;
 				var incomeItem1 = income.AddItem(nomenclature);
@@ -144,6 +151,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(income);
 
 				var income2 = new Income();
+				income2.Warehouse = warehouse;
 				income2.Date = new DateTime(2018, 1, 1);
 				income2.Operation = IncomeOperations.Enter;
 				var incomeItem2 = income2.AddItem(nomenclature);
@@ -153,6 +161,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(income2);
 
 				var expense = new Expense();
+				expense.Warehouse = warehouse;
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 10, 22);
 				expense.Operation = ExpenseOperations.Employee;

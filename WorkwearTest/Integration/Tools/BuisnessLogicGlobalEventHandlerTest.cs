@@ -252,6 +252,7 @@ namespace WorkwearTest.Integration.Tools
 				uow.Commit();
 
 				var income = new Income();
+				income.Warehouse = warehouse;
 				income.Date = new DateTime(2017, 1, 1);
 				income.Operation = IncomeOperations.Enter;
 				var incomeItem1 = income.AddItem(nomenclature);
@@ -262,6 +263,7 @@ namespace WorkwearTest.Integration.Tools
 				uow.Save(income);
 
 				var expense = new Expense();
+				expense.Warehouse = warehouse;
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 4, 22);
 				expense.Operation = ExpenseOperations.Employee;
