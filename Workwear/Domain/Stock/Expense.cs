@@ -55,6 +55,7 @@ namespace workwear.Domain.Stock
 		private Warehouse warehouse;
 
 		[Display(Name = "Склад")]
+		[Required(ErrorMessage = "Склад должен быть указан.")]
 		public virtual Warehouse Warehouse {
 			get { return warehouse; }
 			set { SetField(ref warehouse, value, () => Warehouse); }

@@ -21,7 +21,8 @@ namespace workwear.Domain.Stock
 
 		private Warehouse warehouseFrom;
 
-		[Display(Name = "Склад списания")]
+		[Display(Name = "Склад отправитель")]
+		[Required(ErrorMessage = "Склад отправитель должен быть указан.")]
 		public virtual Warehouse WarehouseFrom {
 			get { return warehouseFrom; }
 			set { SetField(ref warehouseFrom, value, () => WarehouseFrom); }
@@ -29,7 +30,8 @@ namespace workwear.Domain.Stock
 
 		private Warehouse warehouseTo;
 
-		[Display(Name = "Склад добавления")]
+		[Display(Name = "Склад получатель")]
+		[Required(ErrorMessage = "Склад получатель должен быть указан.")]
 		public virtual Warehouse WarehouseTo {
 			get { return warehouseTo; }
 			set { SetField(ref warehouseTo, value, () => WarehouseTo); }
@@ -43,7 +45,6 @@ namespace workwear.Domain.Stock
 			get { return items; }
 			set { SetField(ref items, value, () => Items); }
 		}
-
 
 		GenericObservableList<TransferItem> observableItems;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
