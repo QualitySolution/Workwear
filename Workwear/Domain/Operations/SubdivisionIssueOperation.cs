@@ -31,11 +31,19 @@ namespace workwear.Domain.Operations
 
 		private Subdivision subdivision;
 
-		[Display(Name = "Сотрудник")]
+		[Display(Name = "Подразделение")]
 		public virtual Subdivision Subdivision
 		{
 			get { return subdivision; }
 			set { SetField(ref subdivision, value); }
+		}
+
+		SubdivisionPlace subdivisionPlace;
+
+		[Display(Name = "Размещение в подразделении")]
+		public virtual SubdivisionPlace SubdivisionPlace {
+			get { return subdivisionPlace; }
+			set { SetField(ref subdivisionPlace, value, () => SubdivisionPlace); }
 		}
 
 		private Nomenclature nomenclature;
@@ -208,6 +216,7 @@ namespace workwear.Domain.Operations
 				OperationTime = item.ExpenseDoc.Date;
 
 			Subdivision = item.ExpenseDoc.Subdivision;
+			SubdivisionPlace = item.SubdivisionPlace;
 			Nomenclature = item.Nomenclature;
 			Size = item.Size;
 			WearGrowth = item.WearGrowth;
