@@ -94,6 +94,12 @@ namespace workwear.Domain.Operations
 
 		public virtual decimal Total => Cost * Amount;
 
+		public virtual string Title => ReceiptWarehouse != null && ExpenseWarehouse != null
+			? $"Перемещение {Amount} х {Nomenclature.Name} из {ExpenseWarehouse.Name} в {ReceiptWarehouse.Name}"
+			: ReceiptWarehouse != null 
+				? $"Поступление {Amount} х {Nomenclature.Name} в {ReceiptWarehouse.Name}"
+				: $"Списание {Amount} х {Nomenclature.Name} из {ExpenseWarehouse.Name}";
+
 		#endregion
 
 		#region Методы обновления операций

@@ -4,18 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
-using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QS.Project.Domain;
-using workwear.Domain.Company;
-using workwear.Domain.Statements;
 
 namespace workwear.Domain.Stock
 {
 	[Appellative(Gender = GrammaticalGender.Masculine,
-	NominativePlural = "расходные и приходные документы",
-	Nominative = "расходный и приходной документ")]
+		NominativePlural = "документы перемещения",
+		Nominative = "документ перемещения")]
 	public class Transfer : StockDocument, IValidatableObject
 	{
 		public Transfer()
@@ -58,6 +54,12 @@ namespace workwear.Domain.Stock
 				return observableItems;
 			}
 		}
+
+		#endregion
+
+		#region Расчетные
+
+		public virtual string Title => $"Пермещение №{Id} от {Date:d}";
 
 		#endregion
 
