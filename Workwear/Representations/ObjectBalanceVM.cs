@@ -8,8 +8,8 @@ using NHibernate.Transform;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
 using QSOrmProject.RepresentationModel;
-using QSProjectsLib;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
@@ -17,17 +17,17 @@ namespace workwear.ViewModel
 {
 	public class ObjectBalanceVM : RepresentationModelWithoutEntityBase<ObjectBalanceVMNode>
 	{
-		Subdivision facility;
+		Subdivision subdivision;
 
-		Subdivision Facility {
+		Subdivision Subdivision {
 			get {
 				if (Filter != null)
 					return Filter.RestrictObject;
 				else
-					return facility;
+					return subdivision;
 			}
 			set {
-				facility = value;
+				subdivision = value;
 			}
 		}
 
@@ -43,7 +43,7 @@ namespace workwear.ViewModel
 
 		public override void UpdateNodes ()
 		{
-			if(Facility == null)
+			if(Subdivision == null)
 			{
 				SetItemsSource (new List<ObjectBalanceVMNode> ());
 				return;
@@ -51,39 +51,36 @@ namespace workwear.ViewModel
 
 			ObjectBalanceVMNode resultAlias = null;
 
-			Expense expenseAlias = null;
-			ExpenseItem expenseItemAlias = null;
+			SubdivisionIssueOperation issueOperationAlias = null;
 			Nomenclature nomenclatureAlias = null;
 			ItemsType itemtypesAlias = null;
 			MeasurementUnits unitsAlias = null;
-			IncomeItem incomeItemOnRemoveAlias = null;
-			IncomeItem incomeItemOnIncomeAlias = null;
+			SubdivisionIssueOperation removeIssueOperationAlias = null;
+			WarehouseOperation warehouseOperationAlias = null;
 
-			var expense = UoW.Session.QueryOver<Expense> (() => expenseAlias)
-				.Where (e => e.Subdivision == Facility)
-				.JoinQueryOver (e => e.Items, () => expenseItemAlias);
+			var expense = UoW.Session.QueryOver<SubdivisionIssueOperation>(() => issueOperationAlias)
+				.Where(e => e.Subdivision == Subdivision);
 
-			var subqueryRemove = QueryOver.Of<IncomeItem>(() => incomeItemOnRemoveAlias)
-				.Where(() => incomeItemOnRemoveAlias.IssuedOn.Id == expenseItemAlias.Id)
-				.Select (Projections.Sum<IncomeItem> (o => o.Amount));
+			var subqueryRemove = QueryOver.Of<SubdivisionIssueOperation>(() => removeIssueOperationAlias)
+				.Where(() => removeIssueOperationAlias.IssuedOperation == issueOperationAlias)
+				.Select (Projections.Sum<SubdivisionIssueOperation> (o => o.Returned));
 
 			var expenseList = expense
-				.JoinAlias (() => expenseItemAlias.Nomenclature, () => nomenclatureAlias)
+				.JoinAlias (() => issueOperationAlias.Nomenclature, () => nomenclatureAlias)
 				.JoinAlias (() => nomenclatureAlias.Type, () => itemtypesAlias)
 				.JoinAlias (() => itemtypesAlias.Units, () => unitsAlias)
-				.JoinAlias (() => expenseItemAlias.IncomeOn, () => incomeItemOnIncomeAlias)
+				.JoinAlias (() => issueOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
 				.Where (e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > DateTime.Today)
 				.SelectList (list => list
-					.SelectGroup (() => expenseItemAlias.Id).WithAlias (() => resultAlias.Id)
+					.SelectGroup (() => issueOperationAlias.Id).WithAlias (() => resultAlias.Id)
 					.Select (() => nomenclatureAlias.Name).WithAlias (() => resultAlias.NomenclatureName)
 					.Select (() => unitsAlias.Name).WithAlias (() => resultAlias.UnitsName)
-					.Select (() => nomenclatureAlias.Size).WithAlias (() => resultAlias.Size)
-					.Select (() => nomenclatureAlias.WearGrowth).WithAlias (() => resultAlias.Growth)
-					.Select (() => incomeItemOnIncomeAlias.Cost).WithAlias (() => resultAlias.AvgCost)
-					.Select (() => incomeItemOnIncomeAlias.LifePercent).WithAlias (() => resultAlias.AvgLife)
-					.Select (() => expenseItemAlias.Amount).WithAlias (() => resultAlias.Added)
-					.Select (() => expenseAlias.Date).WithAlias (() => resultAlias.IssuedDate)
-					.Select (() => expenseItemAlias.AutoWriteoffDate).WithAlias (() => resultAlias.ExpiryDate)
+					.Select (() => issueOperationAlias.Size).WithAlias (() => resultAlias.Size)
+					.Select (() => issueOperationAlias.WearGrowth).WithAlias (() => resultAlias.Growth)
+					.Select (() => issueOperationAlias.WearPercent).WithAlias (() => resultAlias.WearPercent)
+					.Select (() => issueOperationAlias.Issued).WithAlias (() => resultAlias.Added)
+					.Select (() => issueOperationAlias.OperationTime).WithAlias (() => resultAlias.IssuedDate)
+					.Select (() => issueOperationAlias.ExpiryOn).WithAlias (() => resultAlias.ExpiryDate)
 					.SelectSubQuery (subqueryRemove).WithAlias (() => resultAlias.Removed)
 				)
 				.TransformUsing (Transformers.AliasToBean<ObjectBalanceVMNode> ())
@@ -95,7 +92,6 @@ namespace workwear.ViewModel
 		IColumnsConfig treeViewConfig = ColumnsConfigFactory.Create<ObjectBalanceVMNode> ()
 			.AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName)
 			.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
-			.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
 			.AddColumn ("Срок службы").AddProgressRenderer (e => (int)(100 - (e.Percentage * 100)))
 			.AddSetter ((w, e) => w.Text = e.ExpiryDate.HasValue ? String.Format("до {0:d}", e.ExpiryDate.Value) : string.Empty)
 			.Finish ();
@@ -122,7 +118,7 @@ namespace workwear.ViewModel
 
 		public ObjectBalanceVM (Subdivision facility) : this(UnitOfWorkFactory.CreateWithoutRoot ())
 		{
-			Facility = facility;
+			Subdivision = facility;
 		}
 
 		public ObjectBalanceVM (IUnitOfWork uow) : base (typeof(Expense), typeof(Income), typeof(Writeoff))
@@ -140,8 +136,7 @@ namespace workwear.ViewModel
 		public string UnitsName { get; set;}
 		public string Size { get; set;}
 		public string Growth { get; set;}
-		public decimal AvgCost { get; set;}
-		public decimal AvgLife { get; set;}
+		public decimal WearPercent { get; set;}
 
 		public DateTime IssuedDate { get; set;}
 		public DateTime? ExpiryDate { get; set;}
@@ -160,12 +155,8 @@ namespace workwear.ViewModel
 		public string BalanceText {get{ return String.Format ("{0} {1}", Added - Removed, UnitsName);
 			}}
 
-		public string AvgCostText {get { 
-				return AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString (AvgCost) : String.Empty;
-			}}
-
 		public string AvgLifeText {get { 
-				return AvgLife.ToString ("P");
+				return WearPercent.ToString ("P");
 			}}
 	}
 }

@@ -19,8 +19,8 @@ namespace workwear.HMap
 
 			References(x => x.Document).Column("stock_income_id");
 			References (x => x.Nomenclature).Column ("nomenclature_id");
-			References (x => x.IssuedOn).Column ("stock_expense_detail_id");
-			References(x => x.EmployeeIssueOperation).Column("employee_issue_operation_id").Cascade.All();
+			References(x => x.ReturnFromEmployeeOperation).Column("employee_issue_operation_id").Cascade.All();
+			References(x => x.ReturnFromSubdivisionOperation).Column("subdivision_issue_operation_id").Cascade.All();
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Not.Nullable();
 		}
 	}

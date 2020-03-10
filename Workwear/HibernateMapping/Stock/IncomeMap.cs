@@ -18,8 +18,9 @@ namespace workwear.HMap
 			References (x => x.Subdivision).Column ("object_id");
 			References (x => x.EmployeeCard).Column ("wear_card_id");
 			References (x => x.CreatedbyUser).Column ("user_id");
+			References(x => x.Warehouse).Column("warehouse_id").Not.Nullable();
 
-				HasMany (x => x.Items)
+			HasMany (x => x.Items)
 				.Inverse()
 				.KeyColumn ("stock_income_id").Not.KeyNullable ()
 				.Cascade.AllDeleteOrphan ()

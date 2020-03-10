@@ -28,11 +28,6 @@ namespace workwear.ViewModels.Stock
 			var entryBuilder = new LegacyEEVMBuilderFactory<Warehouse>(this, TdiTab, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
-
-			//SubdivisionEntryViewModel = entryBuilder.ForProperty(x => x.Subdivision)
-													 //.UseOrmReferenceJournalAndAutocompleter()
-													 //.UseTdiEntityDialog()
-													 //.Finish();
 		}
 	}
 }

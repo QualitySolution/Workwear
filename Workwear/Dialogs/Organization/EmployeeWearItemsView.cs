@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using NHibernate;
@@ -10,15 +9,12 @@ using QS.DomainModel.NotifyChange;
 using QS.Utilities;
 using workwear.Dialogs.Issuance;
 using workwear.Domain.Company;
-using workwear.Domain.Stock;
 
 namespace workwear.Dialogs.Organization
 {
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class EmployeeWearItemsView : WidgetOnEntityDialogBase<EmployeeCard>, IMustBeDestroyed
 	{
-		bool IsNomenclaturePickuped = false;
-
 		public EmployeeWearItemsView()
 		{
 			this.Build();
@@ -36,9 +32,9 @@ namespace workwear.Dialogs.Organization
 					node => node.NextIssue.HasValue && node.NextIssue.Value < DateTime.Today
 					? NumberToTextRus.FormatCase((int)(DateTime.Today - node.NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней")
 					: String.Empty)
-				.AddColumn("На складе").AddTextRenderer(node => node.Item.Units.MakeAmountShortStr(node.InStock))
+				.AddColumn("На складе").AddTextRenderer(node => node.InStock != null ? node.Item.Units.MakeAmountShortStr(node.InStock.Sum(x => x.Amount)) : null)
 				 .AddSetter((w, node) => w.Foreground = node.InStockState.GetEnumColor())
-				.AddColumn("Подобранная номенклатура").AddTextRenderer(node => node.MatchedNomenclature != null ? node.MatchedNomenclature.NameAndSize : (node.InStockState == StockStateInfo.UnknownNomenclature ? "нет подходящей" : String.Empty))
+				.AddColumn("Подходящая номенклатура").AddTextRenderer(node => node.MatchedNomenclatureShortText)
 				.AddSetter((w, node) => w.Foreground = node.InStockState.GetEnumColor())
 				.Finish();
 			ytreeWorkwear.Selection.Changed += ytreeWorkwear_Selection_Changed;
@@ -50,7 +46,7 @@ namespace workwear.Dialogs.Organization
 
 		public virtual void LoadItems()
 		{
-			RootEntity.FillWearInStockInfo(UoW);
+			RootEntity.FillWearInStockInfo(UoW, RootEntity.Subdivision?.Warehouse, DateTime.Now);
 			RootEntity.FillWearRecivedInfo(UoW);
 			ytreeWorkwear.ItemsDataSource = RootEntity.ObservableWorkwearItems;
 			ItemsLoaded = true;
@@ -64,38 +60,11 @@ namespace workwear.Dialogs.Organization
 
 		protected void OnButtonGiveWearByNormClicked(object sender, EventArgs e)
 		{
-			if(IsNomenclaturePickuped == false &&
-				RootEntity.WorkwearItems.Any(i => i.Amount < i.ActiveNormItem.Amount
-				   &&
-				   (i.InStockState == StockStateInfo.NotEnough
-				  || i.InStockState == StockStateInfo.OutOfStock
-				  || i.MatchedNomenclature == null
-				   )
-				)) {
-				if(MessageDialogHelper.RunQuestionDialog("Некоторые позиции отсутствуют на складе в достаточном количестве. Попробовать подобрать подходящую номенклатуру?"))
-					buttonPickNomenclature.Click();
-			}
-
 			if(!MyTdiDialog.Save())
 				return;
 
-			var addItems = new Dictionary<Nomenclature, int>();
-			foreach(var item in RootEntity.WorkwearItems) {
-				if(item.NeededAmount > 0 && (item.InStockState == StockStateInfo.Enough || item.InStockState == StockStateInfo.NotEnough)) {
-					int amount = item.InStockState == StockStateInfo.Enough ? item.NeededAmount : item.InStock;
-					addItems.Add(item.MatchedNomenclature, amount);
-				}
-			}
-
-			ExpenseDocDlg winExpense = new ExpenseDocDlg(RootEntity, addItems);
+			ExpenseDocDlg winExpense = new ExpenseDocDlg(RootEntity, true);
 			OpenNewTab(winExpense);
-		}
-
-		protected void OnButtonPickNomenclatureClicked(object sender, EventArgs e)
-		{
-			foreach(var item in RootEntity.WorkwearItems)
-				item.FindMatchedNomenclature(UoW);
-			IsNomenclaturePickuped = true;
 		}
 
 		protected void RefreshWorkItems()
@@ -106,7 +75,7 @@ namespace workwear.Dialogs.Organization
 			foreach(var item in RootEntity.WorkwearItems) {
 				UoW.Session.Refresh(item);
 			}
-			RootEntity.FillWearInStockInfo(UoW);
+			RootEntity.FillWearInStockInfo(UoW, RootEntity.Subdivision?.Warehouse, DateTime.Now);
 			RootEntity.FillWearRecivedInfo(UoW);
 		}
 

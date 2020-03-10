@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Gtk;
 using NLog;
@@ -9,6 +9,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Representations.Organization;
 using workwear.Measurements;
+using workwear.Journal.ViewModels.Stock;
 
 namespace workwear
 {
@@ -54,6 +55,8 @@ namespace workwear
 
 		public Subdivision CurObject { get; set;}
 
+		public Warehouse CurWarehouse { get; set; }
+
 		public WriteOffItemsView()
 		{
 			this.Build();
@@ -68,12 +71,12 @@ namespace workwear
 					.AddComboRenderer(x => x.WearGrowth)
 					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
-				.AddColumn ("% износа").AddTextRenderer (e => e.WearPercent != null ? e.WearPercent.Value.ToString("P2") : null)
+				.AddColumn ("% износа").AddTextRenderer (e => e.WearPercent.ToString("P2"))
 				.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
 				.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument)
-				.AddSetter((c, e) => c.Editable = e.IssuedOn?.ExpenseDoc.Operation == ExpenseOperations.Employee)
+				.AddSetter((c, e) => c.Editable = e.WriteoffFrom == WriteoffFrom.Employye)
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 		}
@@ -85,19 +88,22 @@ namespace workwear
 
 		protected void OnButtonAddStoreClicked (object sender, EventArgs e)
 		{
-			var selectFromStockDlg = new ReferenceRepresentation (new ViewModel.StockBalanceVM (ViewModel.StockBalanceVMMode.DisplayAll, ViewModel.StockBalanceVMGroupBy.IncomeItem),
-			                                                     "Остатки на складе");
-			selectFromStockDlg.Mode = OrmReferenceMode.MultiSelect;
-			selectFromStockDlg.ObjectSelected += SelectFromStockDlg_ObjectSelected;;
+			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<StockBalanceJournalViewModel>(MyTdiDialog, QS.Navigation.OpenPageOptions.AsSlave);
 
-			OpenSlaveTab(selectFromStockDlg);
+			if(CurWarehouse != null) {
+				selectJournal.ViewModel.Filter.Warehouse = CurWarehouse;
+			}
+
+			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;
 		}
 
-		void SelectFromStockDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)
+		void SelectFromStock_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			foreach(var node in e.GetNodes<ViewModel.StockBalanceVMNode> ())
-			{
-				WriteoffDoc.AddItem (MyOrmDialog.UoW.GetById<IncomeItem> (node.Id), node.Income - node.Expense);
+			var selectVM = sender as StockBalanceJournalViewModel;
+
+			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
+				WriteoffDoc.AddItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.Amount);
 			}
 			CalculateTotal();
 		}
@@ -142,7 +148,7 @@ namespace workwear
 		{
 			foreach(var node in e.GetNodes<ViewModel.ObjectBalanceVMNode> ())
 			{
-				WriteoffDoc.AddItem (MyOrmDialog.UoW.GetById<ExpenseItem> (node.Id), node.Added - node.Removed);
+				WriteoffDoc.AddItem (MyOrmDialog.UoW.GetById<SubdivisionIssueOperation> (node.Id), node.Added - node.Removed);
 			}
 			CalculateTotal();
 		}
@@ -151,7 +157,7 @@ namespace workwear
 		{
 			foreach(var node in e.GetNodes<EmployeeBalanceVMNode> ())
 			{
-				WriteoffDoc.AddItem (UoW, MyOrmDialog.UoW.GetById<EmployeeIssueOperation> (node.Id), node.Added - node.Removed);
+				WriteoffDoc.AddItem (MyOrmDialog.UoW.GetById<EmployeeIssueOperation> (node.Id), node.Added - node.Removed);
 			}
 			CalculateTotal();
 		}
@@ -170,8 +176,8 @@ namespace workwear
 			using (var dlg = new Dialog("Введите бухгалтерский документ", MainClass.MainWin, DialogFlags.Modal))
 			{
 				var docEntry = new Entry(80);
-				if (writeoffDoc.Items.Any(x => x.IssuedOn?.ExpenseDoc.Operation == ExpenseOperations.Employee))
-					docEntry.Text = writeoffDoc.Items.First(x => x.IssuedOn?.ExpenseDoc.Operation == ExpenseOperations.Employee).BuhDocument;
+				if (writeoffDoc.Items.Any(x => x.WriteoffFrom == WriteoffFrom.Employye))
+					docEntry.Text = writeoffDoc.Items.First(x => x.WriteoffFrom == WriteoffFrom.Employye).BuhDocument;
 				docEntry.TooltipText = "Бухгалтерский документ по которому было произведено списание. Отобразится вместо подписи сотрудника в карточке.";
 				docEntry.ActivatesDefault = true;
 				dlg.VBox.Add(docEntry);
@@ -182,7 +188,7 @@ namespace workwear
 				if (dlg.Run() == (int)ResponseType.Ok)
 				{
 					writeoffDoc.ObservableItems
-						.Where(x => x.IssuedOn?.ExpenseDoc.Operation == ExpenseOperations.Employee)
+						.Where(x => x.WriteoffFrom == WriteoffFrom.Employye)
 						.ToList().ForEach(x => x.BuhDocument = docEntry.Text);
 				}
 				dlg.Destroy();
@@ -190,4 +196,3 @@ namespace workwear
 		}
 	}
 }
-

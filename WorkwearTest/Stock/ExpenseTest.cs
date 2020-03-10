@@ -22,12 +22,13 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			var employee = Substitute.For<EmployeeCard>();
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(1);
-			var incomeOn = Substitute.For<IncomeItem>();
+			var incomeOperation = Substitute.For<EmployeeIssueOperation>();
 			var nomeclature = Substitute.For<Nomenclature>();
 
 			var operation = new EmployeeIssueOperation();
 			operation.OperationTime = new DateTime(2019, 1, 15);
 			operation.NormItem = norm;
+			operation.IssuedOperation = incomeOperation;
 
 			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<EmployeeIssueOperation>() { operation });
 
@@ -35,7 +36,6 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expenseItem.Nomenclature = nomeclature;
 			expenseItem.EmployeeIssueOperation = operation;
 			expenseItem.Amount = 1;
-			expenseItem.IncomeOn = incomeOn;
 			var expense = new Expense();
 			expense.Employee = employee;
 			expense.Date = new DateTime(2019, 1, 15);
@@ -63,7 +63,6 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			var employee = Substitute.For<EmployeeCard>();
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(1);
-			var incomeOn = Substitute.For<IncomeItem>();
 			var nomeclature = Substitute.For<Nomenclature>();
 			var operationBeforeAndEnough = Substitute.For<EmployeeIssueOperation>();
 			operationBeforeAndEnough.OperationTime.Returns(new DateTime(2018, 10, 15));
@@ -79,7 +78,6 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expenseItem.Nomenclature = nomeclature;
 			expenseItem.EmployeeIssueOperation = operation;
 			expenseItem.Amount = 1;
-			expenseItem.IncomeOn = incomeOn;
 			var expense = new Expense();
 			expense.Employee = employee;
 			expense.Date = new DateTime(2019, 1, 15);
@@ -107,7 +105,6 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			var employee = Substitute.For<EmployeeCard>();
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(1);
-			var incomeOn = Substitute.For<IncomeItem>();
 			var nomeclature = Substitute.For<Nomenclature>();
 
 			var operationIssue = Substitute.For<EmployeeIssueOperation>();
@@ -130,7 +127,6 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expenseItem.Nomenclature = nomeclature;
 			expenseItem.EmployeeIssueOperation = operation;
 			expenseItem.Amount = 1;
-			expenseItem.IncomeOn = incomeOn;
 			var expense = new Expense();
 			expense.Employee = employee;
 			expense.Date = new DateTime(2019, 1, 15);

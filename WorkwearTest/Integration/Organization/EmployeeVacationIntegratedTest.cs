@@ -1,9 +1,8 @@
-﻿using NSubstitute;
+﻿using System;
+using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
 using QS.Testing.DB;
-using System;
-using System.Linq;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -42,6 +41,9 @@ namespace WorkwearTest.Integration.Organization
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
+
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				uow.Save(nomenclatureType);
@@ -50,9 +52,13 @@ namespace WorkwearTest.Integration.Organization
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
+				var position1 = new StockPosition(nomenclature, null, null, 0);
+
 				var nomenclature2 = new Nomenclature();
 				nomenclature2.Type = nomenclatureType;
 				uow.Save(nomenclature2);
+
+				var position2 = new StockPosition(nomenclature2, null, null, 0);
 
 				var norm = new Norm();
 				var normItem = norm.AddItem(nomenclatureType);
@@ -67,20 +73,23 @@ namespace WorkwearTest.Integration.Organization
 				uow.Commit();
 
 				var income = new Income();
+				income.Warehouse = warehouse;
 				income.Date = new DateTime(2017, 1, 1);
 				income.Operation = IncomeOperations.Enter;
 				var incomeItem1 = income.AddItem(nomenclature);
 				incomeItem1.Amount = 10;
 				var incomeItem2 = income.AddItem(nomenclature2);
 				incomeItem2.Amount = 5;
+				income.UpdateOperations(uow, ask);
 				uow.Save(income);
 
 				var expense = new Expense();
+				expense.Warehouse = warehouse;
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 5, 10);
 				expense.Operation = ExpenseOperations.Employee;
-				expense.AddItem(incomeItem1, 1);
-				expense.AddItem(incomeItem2, 1);
+				expense.AddItem(position1, 1);
+				expense.AddItem(position2, 1);
 
 				//Обновление операций
 				expense.UpdateOperations(uow, ask);

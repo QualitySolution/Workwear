@@ -4,18 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
-using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QS.Project.Domain;
-using workwear.Domain.Company;
-using workwear.Domain.Statements;
 
 namespace workwear.Domain.Stock
 {
 	[Appellative(Gender = GrammaticalGender.Masculine,
-	NominativePlural = "расходные и приходные документы",
-	Nominative = "расходный и приходной документ")]
+		NominativePlural = "документы перемещения",
+		Nominative = "документ перемещения")]
 	public class Transfer : StockDocument, IValidatableObject
 	{
 		public Transfer()
@@ -25,7 +21,8 @@ namespace workwear.Domain.Stock
 
 		private Warehouse warehouseFrom;
 
-		[Display(Name = "Склад списания")]
+		[Display(Name = "Склад отправитель")]
+		[Required(ErrorMessage = "Склад отправитель должен быть указан.")]
 		public virtual Warehouse WarehouseFrom {
 			get { return warehouseFrom; }
 			set { SetField(ref warehouseFrom, value, () => WarehouseFrom); }
@@ -33,7 +30,8 @@ namespace workwear.Domain.Stock
 
 		private Warehouse warehouseTo;
 
-		[Display(Name = "Склад добавления")]
+		[Display(Name = "Склад получатель")]
+		[Required(ErrorMessage = "Склад получатель должен быть указан.")]
 		public virtual Warehouse WarehouseTo {
 			get { return warehouseTo; }
 			set { SetField(ref warehouseTo, value, () => WarehouseTo); }
@@ -48,7 +46,6 @@ namespace workwear.Domain.Stock
 			set { SetField(ref items, value, () => Items); }
 		}
 
-
 		GenericObservableList<TransferItem> observableItems;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<TransferItem> ObservableItems {
@@ -58,6 +55,12 @@ namespace workwear.Domain.Stock
 				return observableItems;
 			}
 		}
+
+		#endregion
+
+		#region Расчетные
+
+		public virtual string Title => $"Пермещение №{Id} от {Date:d}";
 
 		#endregion
 

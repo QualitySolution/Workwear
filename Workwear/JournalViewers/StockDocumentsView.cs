@@ -2,10 +2,12 @@
 using Gtk;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
+using QS.Project.Domain;
 using QSOrmProject;
 using QSOrmProject.UpdateNotification;
 using workwear.Domain.Stock;
 using workwear.Representations;
+using workwear.ViewModels.Stock;
 
 namespace workwear.JournalViewers
 {
@@ -42,8 +44,13 @@ namespace workwear.JournalViewers
 		protected void OnButtonAddEnumItemClicked(object sender, EnumItemClickedEventArgs e)
 		{
 			StokDocumentType type = (StokDocumentType)e.ItemEnum;
-			var dlg = OrmMain.CreateObjectDialog(StockDocument.GetDocClass(type));
-			TabParent.AddTab(dlg, this);
+			if(type == StokDocumentType.TransferDoc) {
+				MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<WarehouseTransferViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
+			}
+			else {
+				var dlg = OrmMain.CreateObjectDialog(StockDocument.GetDocClass(type));
+				TabParent.AddTab(dlg, this);
+			}
 		}
 
 		protected void OnTableDocumentsRowActivated(object o, RowActivatedArgs args)
@@ -76,6 +83,9 @@ namespace workwear.JournalViewers
 							DialogHelper.GenerateDialogHashName<Writeoff>(node.Id),
 							() => new WriteOffDocDlg(node.Id),
 							this);
+						break;
+					case StokDocumentType.TransferDoc:
+						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<WarehouseTransferViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
 						break;
 					default:
 						throw new NotSupportedException("Тип документа не поддерживается.");

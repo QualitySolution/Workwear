@@ -61,9 +61,9 @@ namespace workwear.Repository.Operations
 			ReferencedDocument docAlias = null;
 
 			var listIncoms = uow.Session.QueryOver<IncomeItem>()
-				.Where(x => x.EmployeeIssueOperation.Id.IsIn(operationsIds))
+				.Where(x => x.ReturnFromEmployeeOperation.Id.IsIn(operationsIds))
 				.SelectList(list => list
-					.Select(i => i.EmployeeIssueOperation.Id).WithAlias(() => docAlias.OpId)
+					.Select(i => i.ReturnFromEmployeeOperation.Id).WithAlias(() => docAlias.OpId)
 					.Select(i => i.Document.Id).WithAlias(() => docAlias.DocId)
 					.Select(() => EmployeeIssueOpReferenceDoc.RetutnedToStock).WithAlias(() => docAlias.DocType)
 				)
@@ -81,9 +81,9 @@ namespace workwear.Repository.Operations
 				.List<ReferencedDocument>();
 
 			var listwriteoff = uow.Session.QueryOver<WriteoffItem>()
-				.Where(x => x.EmployeeIssueOperation.Id.IsIn(operationsIds))
+				.Where(x => x.EmployeeWriteoffOperation.Id.IsIn(operationsIds))
 				.SelectList(list => list
-					.Select(i => i.EmployeeIssueOperation.Id).WithAlias(() => docAlias.OpId)
+					.Select(i => i.EmployeeWriteoffOperation.Id).WithAlias(() => docAlias.OpId)
 					.Select(i => i.Document.Id).WithAlias(() => docAlias.DocId)
 					.Select(() => EmployeeIssueOpReferenceDoc.WriteOff).WithAlias(() => docAlias.DocType)
 				)

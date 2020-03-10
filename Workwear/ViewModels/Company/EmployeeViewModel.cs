@@ -12,6 +12,7 @@ namespace workwear.ViewModels.Company
 	{
 		public EmployeeViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IValidator validator) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
+			//FIXME Заглушка пока не используется.
 		}
 	}
 }

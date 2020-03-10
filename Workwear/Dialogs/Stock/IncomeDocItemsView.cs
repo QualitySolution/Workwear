@@ -139,7 +139,7 @@ namespace workwear
 		{
 			foreach(var node in e.GetNodes<ViewModel.ObjectBalanceVMNode> ())
 			{
-				IncomeDoc.AddItem (MyOrmDialog.UoW.GetById<ExpenseItem> (node.Id), node.Added - node.Removed);
+				IncomeDoc.AddItem (MyOrmDialog.UoW.GetById<SubdivisionIssueOperation> (node.Id), node.Added - node.Removed);
 			}
 			CalculateTotal();
 		}
@@ -148,7 +148,7 @@ namespace workwear
 		{
 			foreach(var node in e.GetNodes<EmployeeBalanceVMNode> ())
 			{
-				IncomeDoc.AddItem (UoW, MyOrmDialog.UoW.GetById<EmployeeIssueOperation> (node.Id), node.Added - node.Removed);
+				IncomeDoc.AddItem (MyOrmDialog.UoW.GetById<EmployeeIssueOperation> (node.Id), node.Added - node.Removed);
 			}
 			CalculateTotal();
 		}

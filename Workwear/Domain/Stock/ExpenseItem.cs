@@ -34,14 +34,6 @@ namespace workwear.Domain.Stock
 			set { SetField (ref nomenclature, value, () => Nomenclature); }
 		}
 
-		IncomeItem incomeOn;
-
-		[Display (Name = "Операция прихода")]
-		public virtual IncomeItem IncomeOn {
-			get { return incomeOn; }
-			set { SetField (ref incomeOn, value, () => IncomeOn); }
-		}
-
 		private IssuanceSheetItem issuanceSheetItem;
 		[Display(Name = "Строка ведомости")]
 		public virtual IssuanceSheetItem IssuanceSheetItem {
@@ -65,15 +57,6 @@ namespace workwear.Domain.Stock
 			set { SetField (ref subdivisionPlace, value, () => SubdivisionPlace); }
 		}
 
-		DateTime? autoWriteoffDate;
-
-		[Display (Name = "День автосписания")]
-		[Obsolete("Переходите на использование операций EmployeeIssueOperation, это поле в будущих релизах будет удалено.")]
-		public virtual DateTime? AutoWriteoffDate {
-			get { return autoWriteoffDate; }
-			set { SetField (ref autoWriteoffDate, value, () => AutoWriteoffDate); }
-		}
-
 		private EmployeeIssueOperation employeeIssueOperation;
 
 		[Display(Name = "Операция выдачи сотруднику")]
@@ -81,6 +64,14 @@ namespace workwear.Domain.Stock
 		{
 			get { return employeeIssueOperation; }
 			set { SetField(ref employeeIssueOperation, value); }
+		}
+
+		private SubdivisionIssueOperation subdivisionIssueOperation;
+
+		[Display(Name = "Операция выдачи на подразделение")]
+		public virtual SubdivisionIssueOperation SubdivisionIssueOperation {
+			get { return subdivisionIssueOperation; }
+			set { SetField(ref subdivisionIssueOperation, value); }
 		}
 
 		private WarehouseOperation warehouseOperation = new WarehouseOperation();
@@ -120,6 +111,12 @@ namespace workwear.Domain.Stock
 			set { SetField(ref buhDocument, value); }
 		}
 
+		[Display(Name = "Процент износа")]
+		public virtual decimal WearPercent {
+			get => WarehouseOperation.WearPercent;
+			set => WarehouseOperation.WearPercent = value;
+		}
+
 		#endregion
 
 		#region Расчетные свойства
@@ -130,6 +127,9 @@ namespace workwear.Domain.Stock
 				Nomenclature.Type.Units.Name
 			);}
 		}
+
+		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, Size, WearGrowth, WearPercent);
+
 		#endregion
 
 		public ExpenseItem ()
@@ -140,13 +140,16 @@ namespace workwear.Domain.Stock
 
 		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
 		{
+			WarehouseOperation.Update(uow, this);
+			uow.Save(WarehouseOperation);
+
+			//Выдача сотруднику
 			if(expenseDoc.Operation == ExpenseOperations.Employee)
 			{
 				if (EmployeeIssueOperation == null)
 					EmployeeIssueOperation = new EmployeeIssueOperation();
 
 				EmployeeIssueOperation.Update(uow, askUser, this);
-				AutoWriteoffDate = EmployeeIssueOperation.AutoWriteoffDate;
 				uow.Save(EmployeeIssueOperation);
 			}
 			else if(EmployeeIssueOperation != null)
@@ -154,8 +157,19 @@ namespace workwear.Domain.Stock
 				uow.Delete(EmployeeIssueOperation);
 				EmployeeIssueOperation = null;
 			}
-			WarehouseOperation.Update(uow, this);
-			uow.Save(WarehouseOperation);
+
+			//Выдача на подразделение
+			if(expenseDoc.Operation == ExpenseOperations.Object) {
+				if(SubdivisionIssueOperation == null)
+					SubdivisionIssueOperation = new SubdivisionIssueOperation();
+
+				SubdivisionIssueOperation.Update(uow, askUser, this);
+				uow.Save(SubdivisionIssueOperation);
+			}
+			else if(SubdivisionIssueOperation != null) {
+				uow.Delete(SubdivisionIssueOperation);
+				SubdivisionIssueOperation = null;
+			}
 		}
 
 		#endregion

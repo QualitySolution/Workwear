@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Utilities.Numeric;
@@ -24,21 +25,12 @@ namespace workwear.Domain.Stock
 			set { SetField(ref document, value); }
 		}
 
-
 		Nomenclature nomenclature;
 
 		[Display (Name = "Номеклатура")]
 		public virtual Nomenclature Nomenclature {
 			get { return nomenclature; }
 			set { SetField (ref nomenclature, value, () => Nomenclature); }
-		}
-
-		ExpenseItem issuedOn;
-
-		[Display (Name = "Операция выдачи")]
-		public virtual ExpenseItem IssuedOn {
-			get { return issuedOn; }
-			set { SetField (ref issuedOn, value, () => IssuedOn); }
 		}
 
 		decimal lifePercent;
@@ -77,13 +69,21 @@ namespace workwear.Domain.Stock
 			set { SetField(ref certificate, value, () => Certificate); }
 		}
 
-		private EmployeeIssueOperation employeeIssueOperation;
+		private EmployeeIssueOperation returnFromEmployeeOperation;
 
 		[Display(Name = "Операция возврата от сотрудника")]
-		public virtual EmployeeIssueOperation EmployeeIssueOperation
+		public virtual EmployeeIssueOperation ReturnFromEmployeeOperation
 		{
-			get { return employeeIssueOperation; }
-			set { SetField(ref employeeIssueOperation, value); }
+			get { return returnFromEmployeeOperation; }
+			set { SetField(ref returnFromEmployeeOperation, value); }
+		}
+
+		private SubdivisionIssueOperation returnFromSubdivisionOperation;
+
+		[Display(Name = "Операция возврата из подразделения")]
+		public virtual SubdivisionIssueOperation ReturnFromSubdivisionOperation {
+			get { return returnFromSubdivisionOperation; }
+			set { SetField(ref returnFromSubdivisionOperation, value); }
 		}
 
 		private WarehouseOperation warehouseOperation = new WarehouseOperation();
@@ -121,7 +121,7 @@ namespace workwear.Domain.Stock
 			);}
 		}
 
-		public virtual decimal Total{ get{	return Cost * Amount; }}
+		public virtual decimal Total => Cost * Amount;
 
 		#endregion
 
@@ -133,8 +133,32 @@ namespace workwear.Domain.Stock
 		//В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
 		public virtual string BuhDocument
 		{
-			get { return buhDocument ?? EmployeeIssueOperation?.BuhDocument; }
+			get { return buhDocument ?? ReturnFromEmployeeOperation?.BuhDocument; }
 			set { SetField(ref buhDocument, value); }
+		}
+
+		private EmployeeIssueOperation issuedEmployeeOnOperation;
+
+		/// <summary>
+		/// Это ссылка на операцию выдачи по которой был выдан сотруднику поступивший от него СИЗ
+		/// В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
+		/// </summary>
+		[Display(Name = "Операция выдачи сотруднику")]
+		public virtual EmployeeIssueOperation IssuedEmployeeOnOperation {
+			get => issuedEmployeeOnOperation ?? ReturnFromEmployeeOperation?.IssuedOperation;
+			set => SetField(ref issuedEmployeeOnOperation, value);
+		}
+
+		private SubdivisionIssueOperation issuedSubdivisionOnOperation;
+
+		/// <summary>
+		/// Это ссылка на операцию выдачи по которой был выдан на подразделение поступивший от него СИЗ
+		/// В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
+		/// </summary>
+		[Display(Name = "Операция выдачи на подразделение")]
+		public virtual SubdivisionIssueOperation IssuedSubdivisionOnOperation {
+			get => issuedSubdivisionOnOperation ?? returnFromSubdivisionOperation?.IssuedOperation;
+			set => SetField(ref issuedSubdivisionOnOperation, value);
 		}
 
 		#endregion
@@ -150,20 +174,32 @@ namespace workwear.Domain.Stock
 
 		#region Функции
 
-		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
+		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
 		{
-			if(Document.Operation == IncomeOperations.Return) {
-				if(EmployeeIssueOperation == null)
-					EmployeeIssueOperation = new EmployeeIssueOperation();
-				EmployeeIssueOperation.Update(uow, askUser, this);
-			}
-			else if(EmployeeIssueOperation != null) {
-				uow.Delete(EmployeeIssueOperation);
-				EmployeeIssueOperation = null;
-			}
-
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
+
+			if(Document.Operation == IncomeOperations.Return) {
+				if(ReturnFromEmployeeOperation == null)
+					ReturnFromEmployeeOperation = new EmployeeIssueOperation();
+				ReturnFromEmployeeOperation.Update(uow, askUser, this);
+				uow.Save(ReturnFromEmployeeOperation);
+			}
+			else if(ReturnFromEmployeeOperation != null) {
+				uow.Delete(ReturnFromEmployeeOperation);
+				ReturnFromEmployeeOperation = null;
+			}
+
+			if(Document.Operation == IncomeOperations.Object) {
+				if(ReturnFromSubdivisionOperation == null)
+					ReturnFromSubdivisionOperation = new SubdivisionIssueOperation();
+				ReturnFromSubdivisionOperation.Update(uow, askUser, this);
+				uow.Save(ReturnFromSubdivisionOperation);
+			}
+			else if(ReturnFromSubdivisionOperation != null) {
+				uow.Delete(ReturnFromSubdivisionOperation);
+				ReturnFromSubdivisionOperation = null;
+			}
 		}
 
 		#endregion

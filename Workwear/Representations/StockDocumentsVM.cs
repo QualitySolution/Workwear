@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
+using NHibernate;
+using NHibernate.Criterion;
+using NHibernate.Dialect.Function;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
 using QS.Project.Domain;
@@ -30,13 +33,17 @@ namespace workwear.Representations
 
 		public override void UpdateNodes()
 		{
+			StockDocumentsVMNode resultAlias = null;
 			Income incomeAlias = null;
 			Expense expenseAlias = null;
 			Writeoff writeoffAlias = null;
-			StockDocumentsVMNode resultAlias = null;
+			Transfer transferAlias = null;
+			WriteoffItem writeoffItemAlias = null;
 			EmployeeCard employeeAlias = null;
 			Subdivision facilityAlias = null;
 			UserBase authorAlias = null;
+			Warehouse warehouseReceiptAlias = null;
+			Warehouse warehouseExpenseAlias = null;
 
 			List<StockDocumentsVMNode> result = new List<StockDocumentsVMNode>();
 
@@ -52,6 +59,7 @@ namespace workwear.Representations
 					.JoinQueryOver(() => incomeAlias.EmployeeCard, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 					.JoinQueryOver(() => incomeAlias.Subdivision, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 					.JoinAlias(() => incomeAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					.JoinAlias(() => incomeAlias.Warehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList(list => list
 				   			.Select(() => incomeAlias.Id).WithAlias(() => resultAlias.Id)
 				            .Select(() => incomeAlias.Date).WithAlias(() => resultAlias.Date)
@@ -61,6 +69,7 @@ namespace workwear.Representations
 					        .Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 					        .Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
 					        .Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
+							.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
 						)
 				.TransformUsing(Transformers.AliasToBean<StockDocumentsVMNode>())
 				.List<StockDocumentsVMNode>();
@@ -81,6 +90,7 @@ namespace workwear.Representations
 					.JoinQueryOver(() => expenseAlias.Employee, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 					.JoinQueryOver(() => expenseAlias.Subdivision, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					.JoinAlias(() => expenseAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList(list => list
 							.Select(() => expenseAlias.Id).WithAlias(() => resultAlias.Id)
 							.Select(() => expenseAlias.Date).WithAlias(() => resultAlias.Date)
@@ -90,7 +100,8 @@ namespace workwear.Representations
 							.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 							.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
 							.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
-					       )
+							.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+						   )
 				.TransformUsing(Transformers.AliasToBean<StockDocumentsVMNode>())
 				.List<StockDocumentsVMNode>();
 
@@ -106,18 +117,52 @@ namespace workwear.Representations
 				if (Filter.RestrictEndDate.HasValue)
 					writeoffQuery.Where(o => o.Date < Filter.RestrictEndDate.Value.AddDays(1));
 
+				var concatPrpjection = Projections.SqlFunction(
+						new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT(DISTINCT ?1 SEPARATOR ?2)"),
+						NHibernateUtil.String,
+						Projections.Property(() => warehouseExpenseAlias.Name),
+						Projections.Constant(", "));
+
 				var writeoffList = writeoffQuery
 					.JoinAlias(() => writeoffAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					.JoinAlias(() => writeoffAlias.Items, () => writeoffItemAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					.JoinAlias(() => writeoffItemAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList(list => list
-				   			.Select(() => writeoffAlias.Id).WithAlias(() => resultAlias.Id)
+				   			.SelectGroup(() => writeoffAlias.Id).WithAlias(() => resultAlias.Id)
 							.Select(() => writeoffAlias.Date).WithAlias(() => resultAlias.Date)
 							.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
-					       )
+							.Select(concatPrpjection).WithAlias(() => resultAlias.ExpenseWarehouse)
+						   )
 				.TransformUsing(Transformers.AliasToBean<StockDocumentsVMNode>())
 				.List<StockDocumentsVMNode>();
 
 				writeoffList.ToList().ForEach(x => x.DocTypeEnum = StokDocumentType.WriteoffDoc);
 				result.AddRange(writeoffList);
+			}
+
+			if(Filter.RestrictDocumentType == null || Filter.RestrictDocumentType == StokDocumentType.TransferDoc) {
+				var transferQuery = UoW.Session.QueryOver<Transfer>(() => transferAlias);
+				if(Filter.RestrictStartDate.HasValue)
+					transferQuery.Where(o => o.Date >= Filter.RestrictStartDate.Value);
+				if(Filter.RestrictEndDate.HasValue)
+					transferQuery.Where(o => o.Date < Filter.RestrictEndDate.Value.AddDays(1));
+
+				var transferList = transferQuery
+					.JoinAlias(() => transferAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					.JoinAlias(() => transferAlias.WarehouseFrom, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					.JoinAlias(() => transferAlias.WarehouseTo, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.SelectList(list => list
+				   			.Select(() => transferAlias.Id).WithAlias(() => resultAlias.Id)
+							.Select(() => transferAlias.Date).WithAlias(() => resultAlias.Date)
+							.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
+							.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
+							.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+						   )
+				.TransformUsing(Transformers.AliasToBean<StockDocumentsVMNode>())
+				.List<StockDocumentsVMNode>();
+
+				transferList.ToList().ForEach(x => x.DocTypeEnum = StokDocumentType.TransferDoc);
+				result.AddRange(transferList);
 			}
 
 			result.Sort((x, y) =>
@@ -137,6 +182,7 @@ namespace workwear.Representations
 			.AddColumn("Тип документа").SetDataProperty(node => node.DocTypeString)
 		    .AddColumn("Операция").SetDataProperty(node => node.Operation)
 			.AddColumn("Дата").SetDataProperty(node => node.DateString)
+			.AddColumn("Склад").AddTextRenderer(x => x.Warehouse)
 			.AddColumn("Автор").SetDataProperty(node => node.Author)
 			.AddColumn("Детали").AddTextRenderer(node => node.Description)
 			.Finish();
@@ -169,7 +215,8 @@ namespace workwear.Representations
 		public StockDocumentsVM(IUnitOfWork uow) : base (
 			typeof(Income),
 			typeof(Expense),
-			typeof(Writeoff)
+			typeof(Writeoff),
+			typeof(Transfer)
 		)
 		{
 			this.UoW = uow;
@@ -222,6 +269,14 @@ namespace workwear.Representations
 				return text;
 			}
 		}
+
+		public string ReceiptWarehouse { get; set; }
+		public string ExpenseWarehouse { get; set; }
+
+		[UseForSearch]
+		[SearchHighlight]
+		public string Warehouse => ReceiptWarehouse == null && ExpenseWarehouse == null ? String.Empty :
+			ReceiptWarehouse == null ? $" <= {ExpenseWarehouse}" : $"{ExpenseWarehouse} => {ReceiptWarehouse}";
 
 		public string Facility { get; set; }
 

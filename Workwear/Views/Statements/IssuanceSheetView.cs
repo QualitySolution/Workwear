@@ -5,6 +5,7 @@ using Gtk;
 using QS.Views.Dialog;
 using QS.Views.Resolve;
 using workwear.Domain.Statements;
+using workwear.Measurements;
 using workwear.ViewModels.Statements;
 
 namespace workwear.Views.Statements
@@ -39,7 +40,14 @@ namespace workwear.Views.Statements
 			ytreeviewItems.CreateFluentColumnsConfig<IssuanceSheetItem>()
 				.AddColumn("Ф.И.О.").Tag("IsFIOColumn").AddTextRenderer(x => x.Employee != null ? x.Employee.ShortName : String.Empty)
 				.AddColumn("Спецодежда").Tag("IsNomenclatureColumn").AddTextRenderer(x => x.ItemName)
-				.AddColumn("Размер").AddTextRenderer(x => x.Nomenclature != null ? x.Nomenclature.Size : String.Empty)
+				.AddColumn("Размер")
+					.AddComboRenderer(x => x.Size)
+					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.SizeStd, SizeUse.HumanOnly))
+					.AddSetter((c, n) => c.Editable = n.Nomenclature.SizeStd != null)
+				.AddColumn("Рост")
+					.AddComboRenderer(x => x.WearGrowth)
+					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
+					.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
 				.AddColumn("Количество")
 					.AddNumericRenderer(x => x.Amount).Editing(ViewModel.CanEditItems).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
 					.AddTextRenderer(x => x.Nomenclature != null && x.Nomenclature.Type.Units != null ? x.Nomenclature.Type.Units.Name : String.Empty)
