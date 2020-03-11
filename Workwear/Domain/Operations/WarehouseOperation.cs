@@ -154,8 +154,6 @@ namespace workwear.Domain.Operations
 			ReceiptWarehouse = item.Document.WarehouseTo;
 			ExpenseWarehouse = item.Document.WarehouseFrom;
 			Nomenclature = item.Nomenclature;
-			Size = item.Size;
-			Growth = item.WearGrowth;
 			amount = item.Amount;
 		}
 
