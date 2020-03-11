@@ -98,6 +98,7 @@
     <Compile Include="Integration\Organization\EmployeeVacationIntegratedTest.cs" />
     <Compile Include="Integration\Stock\ExpenseIntegratedTest.cs" />
     <Compile Include="ViewModels\EntityViewModelsTests.cs" />
+    <Compile Include="Integration\Stock\IncomeIntegratedTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.Testing\QS.Testing.csproj">

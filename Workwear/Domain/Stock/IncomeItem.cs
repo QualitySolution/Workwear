@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -122,6 +122,8 @@ namespace workwear.Domain.Stock
 		}
 
 		public virtual decimal Total => Cost * Amount;
+
+		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, Size, WearGrowth, WarehouseOperation.WearPercent);
 
 		#endregion
 
