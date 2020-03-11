@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -115,9 +115,9 @@ namespace workwear.Domain.Stock
 
 		public virtual string Title {
 			get { return String.Format ("Поступление на склад {0} в количестве {1} {2}",
-				Nomenclature.Name,
+				Nomenclature?.Name,
 				Amount,
-				Nomenclature.Type.Units.Name
+				Nomenclature?.Type?.Units?.Name
 			);}
 		}
 
