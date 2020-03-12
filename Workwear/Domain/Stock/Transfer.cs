@@ -60,7 +60,7 @@ namespace workwear.Domain.Stock
 
 		#region Расчетные
 
-		public virtual string Title => $"Пермещение №{Id} от {Date:d}";
+		public virtual string Title => $"Перемещение №{Id} от {Date:d}";
 
 		#endregion
 
@@ -88,7 +88,7 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult("Склад списания должен быть указан",
 				new[] { this.GetPropertyName(o => o.Items) });
 
-			if (warehouseTo == WarehouseFrom)
+			if (WarehouseTo == WarehouseFrom)
 				yield return new ValidationResult("Склад добавления должен отличаться от склада списания",
 				new[] { this.GetPropertyName(o => o.Items) });
 		}

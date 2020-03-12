@@ -55,10 +55,9 @@ namespace workwear.Domain.Stock
 
 		public virtual string Title {
 			get {
-				return String.Format("Перевод со склада {0} на склад {1} {2} в количестве ",
-			  Nomenclature.Name,
-			  Amount,
-			  Nomenclature.Type.Units.Name
+				return String.Format("Перевод со склада {0} на склад {1}",
+			  document.WarehouseTo,
+			  document.WarehouseFrom
 		  );
 			}
 		}
