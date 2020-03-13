@@ -24,18 +24,6 @@ namespace workwear.Domain.Stock
 			WearPercent = wearPercent;
 		}
 
-		public override bool Equals(object obj)
-		{
-			var anotherPos = obj as StockPosition;
-
-			return 
-				anotherPos.Nomenclature.Id == Nomenclature.Id && 
-				anotherPos.Size == Size &&
-				anotherPos.Growth == Growth &&
-				anotherPos.WearPercent == WearPercent
-			;
-		}
-
 		public string Title {
 			get {
 				var parameters = new List<string>();
@@ -56,5 +44,26 @@ namespace workwear.Domain.Stock
 				return text;
 			}
 		}
+
+		#region Сравнение
+
+		public override bool Equals(object obj)
+		{
+			var anotherPos = obj as StockPosition;
+
+			return
+				anotherPos.Nomenclature.Id == Nomenclature.Id &&
+				anotherPos.Size == Size &&
+				anotherPos.Growth == Growth &&
+				anotherPos.WearPercent == WearPercent
+			;
+		}
+
+		public override int GetHashCode()
+		{
+			return (Nomenclature.Id, Size, Growth, WearPercent).GetHashCode();
+		}
+
+		#endregion
 	}
 }

@@ -95,31 +95,15 @@ namespace workwear.Domain.Stock
 
 		#endregion
 
-		public virtual void AddItem(TransferItem transferFromItem, int count)
+		public virtual TransferItem AddItem(StockPosition position, int amount)
 		{
 
-			var newItem = new TransferItem(this) {
-				Amount = count,
-				Nomenclature = transferFromItem.Nomenclature
-			
-			};
-
-			ObservableItems.Add(newItem);
-		}
-
-		public virtual TransferItem AddItem(Nomenclature nomenclature)
-		{
-
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.Nomenclature, nomenclature))) {
-				logger.Warn("Номенклатура из уже добавлена. Пропускаем...");
+			if(Items.Any(p => position.Equals(p.StockPosition))) {
+				logger.Warn($"Складская позици {position.Title} из уже добавлена. Пропускаем...");
 				return null;
 			}
 
-			var newItem = new TransferItem(this) {
-				Amount = 1,
-				Nomenclature = nomenclature
-			};
-
+			var newItem = new TransferItem(this, position, amount);
 			ObservableItems.Add(newItem);
 			return newItem;
 		}

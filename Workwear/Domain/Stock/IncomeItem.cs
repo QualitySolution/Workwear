@@ -115,13 +115,15 @@ namespace workwear.Domain.Stock
 
 		public virtual string Title {
 			get { return String.Format ("Поступление на склад {0} в количестве {1} {2}",
-				Nomenclature.Name,
+				Nomenclature?.Name,
 				Amount,
-				Nomenclature.Type.Units.Name
+				Nomenclature?.Type?.Units?.Name
 			);}
 		}
 
 		public virtual decimal Total => Cost * Amount;
+
+		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, Size, WearGrowth, WarehouseOperation.WearPercent);
 
 		#endregion
 

@@ -4,7 +4,6 @@ using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using QSOrmProject;
 using workwear.Domain.Stock;
-using workwear.Measurements;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock
@@ -27,17 +26,11 @@ namespace workwear.Views.Stock
 			entityentryWarehouseFrom.ViewModel = ViewModel.WarehouseFromEntryViewModel;
 			entityentryWarehouseTo.ViewModel = ViewModel.WarehouseToEntryViewModel;
 
-
 			table.CreateFluentColumnsConfig<TransferItem>()
 			.AddColumn("Наименование").Tag("Name").AddTextRenderer(x => x.Nomenclature!= null ? x.Nomenclature.Name : String.Empty)
-			.AddColumn("Размер")
-				.AddComboRenderer(x => x.Size)
-				.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.SizeStd, SizeUse.HumanOnly))
-				.AddSetter((c, n) => c.Editable = n.Nomenclature.SizeStd != null)
-			.AddColumn("Рост")
-				.AddComboRenderer(x => x.Size)
-				.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
-				.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
+			.AddColumn("Размер").AddTextRenderer(x => x.WarehouseOperation.Size)
+			.AddColumn("Рост").AddTextRenderer(x => x.WarehouseOperation.Growth)
+			.AddColumn("Процент износа").AddTextRenderer(x => x.WarehouseOperation.WearPercent.ToString("P"))
 			.AddColumn("Количество").Tag("Count")
 				.AddNumericRenderer(x => x.Amount, false).Editing(true).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
 				.AddTextRenderer(x => x.Nomenclature != null && x.Nomenclature.Type.Units != null ? x.Nomenclature.Type.Units.Name : String.Empty,  false)
@@ -46,6 +39,14 @@ namespace workwear.Views.Stock
 			table.Selection.Changed += Selection_Changed;
 			table.Selection.Mode = SelectionMode.Multiple;
 			table.ItemsDataSource = ViewModel.Entity.ObservableItems;
+
+			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+			buttonAddItem.Sensitive = ViewModel.CanAddItem;
+		}
+
+		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			buttonAddItem.Sensitive = ViewModel.CanAddItem;
 		}
 
 		void Selection_Changed(object sender, EventArgs e)

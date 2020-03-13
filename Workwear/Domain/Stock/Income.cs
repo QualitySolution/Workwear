@@ -7,6 +7,7 @@ using Gamma.Utilities;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Utilities;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 
@@ -125,6 +126,11 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult("Длина номера сертификата не может быть больше 40 символов.",
 					new[] { this.GetPropertyName(o => o.Items) });
 
+			foreach(var duplicate in Items.GroupBy(x => x.StockPosition).Where(x => x.Count() > 1)) {
+				var caseCountText = NumberToTextRus.FormatCase(duplicate.Count(), "{0} раз", "{0} раза", "{0} раз");
+				yield return new ValidationResult($"Складская позиция {duplicate.First().Title} указана в документе {caseCountText}.",
+					new[] { this.GetPropertyName(o => o.Items) });
+			}
 		}
 
 		#endregion
@@ -197,13 +203,7 @@ namespace workwear.Domain.Stock
 		{
 			if (Operation != IncomeOperations.Enter)
 				throw new InvalidOperationException ("Добавление номенклатуры возможно только во входящую накладную. Возвраты должны добавляться с указанием строки выдачи.");
-
-			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.Nomenclature, nomenclature)))
-			{
-				logger.Warn ("Номенклатура из уже добавлена. Пропускаем...");
-				return null;
-			}
-
+				
 			var newItem = new IncomeItem (this) {
 				Amount = 1,
 				Nomenclature = nomenclature,
