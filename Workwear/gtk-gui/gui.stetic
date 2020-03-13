@@ -9463,10 +9463,9 @@
                 <property name="BottomAttach">2</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
-                <property name="AutoSize">True</property>
-                <property name="XOptions">Fill</property>
+                <property name="AutoSize">False</property>
                 <property name="YOptions">Fill</property>
-                <property name="XExpand">False</property>
+                <property name="XExpand">True</property>
                 <property name="XFill">True</property>
                 <property name="XShrink">False</property>
                 <property name="YExpand">False</property>
@@ -9477,6 +9476,7 @@
             <child>
               <widget class="Gtk.Label" id="label10">
                 <property name="MemberName" />
+                <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Название:</property>
               </widget>
               <packing>
@@ -9496,7 +9496,8 @@
             <child>
               <widget class="Gtk.Label" id="label9">
                 <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">ID</property>
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Код:</property>
               </widget>
               <packing>
                 <property name="AutoSize">True</property>
@@ -9511,16 +9512,14 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yEntry" id="yentry2">
+              <widget class="Gamma.GtkWidgets.yLabel" id="labelId">
                 <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="IsEditable">True</property>
-                <property name="InvisibleChar">•</property>
+                <property name="LabelProp" translatable="yes">ylabel1</property>
               </widget>
               <packing>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
-                <property name="AutoSize">False</property>
+                <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
                 <property name="XExpand">False</property>
