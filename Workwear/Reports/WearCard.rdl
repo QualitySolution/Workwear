@@ -111,14 +111,15 @@ GROUP BY
       </Fields>
     </DataSet>
     <DataSet Name="Card">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
 IF (wear_cards.card_number IS NULL, wear_cards.id, wear_cards.card_number) as id, 
 wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, 
 wear_cards.hire_date, wear_cards.sex, wear_cards.photo,
 wear_cards.wear_growth, wear_cards.size_wear, wear_cards.size_shoes,
-wear_cards.size_headdress, wear_cards.size_gloves, posts.name AS post, leaders.name as leader
+wear_cards.size_headdress, wear_cards.size_gloves, posts.name AS post, 
+CONCAT_WS(" ", leaders.surname, leaders.name, leaders.patronymic) as leader
 FROM wear_cards
 LEFT JOIN posts ON wear_cards.post_id = posts.id
 LEFT JOIN leaders ON leaders.id = wear_cards.leader_id
@@ -129,7 +130,7 @@ WHERE wear_cards.id = @id;</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="id">
           <DataField>id</DataField>
           <TypeName>System.String</TypeName>
