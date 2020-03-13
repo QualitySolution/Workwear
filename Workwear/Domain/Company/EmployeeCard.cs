@@ -235,7 +235,7 @@ namespace workwear.Domain.Company
 
 		string glovesSizeStd;
 
-		[Display (Name = "Стандарт размера одежды")]
+		[Display (Name = "Стандарт размера перчаток")]
 		public virtual string GlovesSizeStd {
 			get { return glovesSizeStd; }
 			set { SetField (ref glovesSizeStd, value, () => GlovesSizeStd); }
@@ -243,7 +243,7 @@ namespace workwear.Domain.Company
 
 		string glovesSize;
 
-		[Display (Name = "Размер одежды")]
+		[Display (Name = "Размер перчаток")]
 		public virtual string GlovesSize { 
 			get { return glovesSize; } 
 			set	{ SetField (ref glovesSize, value, () => GlovesSize); }
