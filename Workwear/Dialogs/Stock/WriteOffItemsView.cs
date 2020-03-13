@@ -71,7 +71,7 @@ namespace workwear
 					.AddComboRenderer(x => x.WearGrowth)
 					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
-				.AddColumn ("% износа").AddTextRenderer (e => e.WearPercent.ToString("P2"))
+				.AddColumn ("Процент износа").AddTextRenderer (e => e.WearPercent.ToString("P0"))
 				.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
 				.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)

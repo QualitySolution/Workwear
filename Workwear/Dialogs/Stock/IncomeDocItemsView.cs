@@ -87,7 +87,7 @@ namespace workwear
 					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
 				.AddColumn ("Процент износа").AddNumericRenderer (e => e.WearPercent, new MultiplierToPercentConverter()).Editing (new Adjustment(0,0,100,1,10,0)).WidthChars(6).Digits(0)
-				.AddTextRenderer (e => "%")
+				.AddTextRenderer (e => "%", expand: false)
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(8)
 				.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				.AddColumn ("Стоимость").AddNumericRenderer (e => e.Cost).Editing (new Adjustment(0,0,100000000,100,1000,0)).Digits (2).WidthChars(12)

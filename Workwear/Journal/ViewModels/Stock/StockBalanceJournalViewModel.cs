@@ -129,7 +129,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 		public string WearPercentText {
 			get {
-				return WearPercent.ToString("P");
+				return WearPercent.ToString("P0");
 			}
 		}
 
