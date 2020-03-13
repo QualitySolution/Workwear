@@ -150,22 +150,14 @@ namespace workwear.Domain.Stock
 				logger.Warn ("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return;
 			}
-			decimal life = issuedOperation.WearPercent;
-			decimal cost = issuedOperation.WarehouseOperation.Cost;
-			if(issuedOperation.AutoWriteoffDate.HasValue)
-			{
-				double multiplier = (issuedOperation.AutoWriteoffDate.Value - DateTime.Today).TotalDays / (issuedOperation.AutoWriteoffDate.Value - issuedOperation.OperationTime).TotalDays;
-				life = (life * (decimal)multiplier);
-				cost = (cost * (decimal)multiplier);
-			}
 
 			var newItem = new IncomeItem(this)
 			{
 				Amount = count,
 				Nomenclature = issuedOperation.Nomenclature,
 				IssuedSubdivisionOnOperation= issuedOperation,
-				Cost = cost,
-				LifePercent = life,
+				Cost = issuedOperation.CalculatePercentWear(Date),
+				WearPercent = issuedOperation.CalculateDepreciationCost(Date)
 			};
 
 			ObservableItems.Add (newItem);
@@ -180,20 +172,13 @@ namespace workwear.Domain.Stock
 				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return;
 			}
-			decimal life = 1 - issuedOperation.WearPercent;
-			decimal cost = issuedOperation.WarehouseOperation.Cost;
-			if(issuedOperation.ExpiryByNorm.HasValue) {
-				decimal wearPercent = issuedOperation.CalculatePercentWear(DateTime.Today);
-				life = 1 - wearPercent;
-				cost = Math.Max(cost - cost * wearPercent, 0);
-			}
 
 			var newItem = new IncomeItem(this) {
 				Amount = count,
 				Nomenclature = issuedOperation.Nomenclature,
 				IssuedEmployeeOnOperation = issuedOperation,
-				Cost = cost,
-				LifePercent = life,
+				Cost = issuedOperation.CalculateDepreciationCost(Date),
+				WearPercent = issuedOperation.CalculatePercentWear(Date),
 			};
 
 			ObservableItems.Add(newItem);
@@ -208,7 +193,6 @@ namespace workwear.Domain.Stock
 				Amount = 1,
 				Nomenclature = nomenclature,
 				Cost = 0,
-				LifePercent = 1,
 			};
 
 			ObservableItems.Add (newItem);
