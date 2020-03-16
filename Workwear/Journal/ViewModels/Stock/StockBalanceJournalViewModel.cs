@@ -55,7 +55,7 @@ namespace workwear.Journal.ViewModels.Stock
 			var expensequery = QueryOver.Of<WarehouseOperation>(() => warehouseExpenseOperationAlias)
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id)
 				.Where(e => e.OperationTime < DateTime.Now);
-			if(ShowSummary)
+			if(Filter.Warehouse == null)
 				expensequery.Where(x => x.ExpenseWarehouse != null);
 			else
 				expensequery.Where(x => x.ExpenseWarehouse == Filter.Warehouse);
@@ -65,7 +65,7 @@ namespace workwear.Journal.ViewModels.Stock
 			var incomeSubQuery = QueryOver.Of<WarehouseOperation>(() => warehouseIncomeOperationAlias)
 				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id)
 				.Where(e => e.OperationTime < DateTime.Now);
-			if(ShowSummary)
+			if(Filter.Warehouse == null)
 				incomeSubQuery.Where(x => x.ReceiptWarehouse != null);
 			else
 				incomeSubQuery.Where(x => x.ReceiptWarehouse == Filter.Warehouse);
@@ -90,6 +90,10 @@ namespace workwear.Journal.ViewModels.Stock
 
 			if(Filter.ItemTypeCategory != null)
 				queryStock.Where(() => itemtypesAlias.Category == Filter.ItemTypeCategory);
+
+			//Если у нас выключена способность показывать общие по всем складам остатки. Но не указан склад мы должны показывать пустую таблицу. Это заведомо ложное условие.
+			if(ShowSummary == false && Filter.Warehouse == null)
+				queryStock.Where(x => x.Id == -1);
 
 			return queryStock
 				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
