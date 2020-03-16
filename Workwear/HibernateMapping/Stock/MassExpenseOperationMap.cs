@@ -12,9 +12,9 @@ namespace workwear.HibernateMapping.Stock
 
 			Id(x => x.Id).Column("id").GeneratedBy.Native();
 
-			References(x => x.WarehouseOperationExpense).Column("warehouse_expense_id").Not.Nullable();
-			References(x => x.EmployeeIssueOperation).Column("stock_expense_id").Not.Nullable();
-			References(x => x.MassExpense).Column("doc_id").Not.Nullable();
+			References(x => x.WarehouseOperationExpense).Column("operation_warehouse_id").Not.Nullable();
+			References(x => x.EmployeeIssueOperation).Column("operation_issued_by_employee").Cascade.All().Not.Nullable();
+			References(x => x.MassExpenseDoc).Column("stock_mass_expense_id").Not.Nullable();
 
 		}
 	}

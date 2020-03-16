@@ -4,6 +4,7 @@ using System.Linq;
 using Gamma.Utilities;
 using Gtk;
 using workwear.Domain.Company;
+using workwear.Tools;
 
 namespace workwear.Measurements
 {
@@ -124,6 +125,12 @@ namespace workwear.Measurements
 			return (СlothesType)typeof(СlothesType).GetFields()
 				.Where(x => x.GetCustomAttributes(false).OfType<SizeStandartsAttribute>().Any(att => att.StandartsEnumType == std.GetType()))
 				.First().GetValue(null);
+		}
+
+		public static object GetDefaultSizeStd(СlothesType wearCategory, Sex sex)
+		{
+			var type = SizeHelper.GetSizeStandartsEnum(wearCategory, sex);
+			return Enum.GetValues(type).GetValue(0);
 		}
 
 		public static GrowthStandartWear? GetGrowthStandart(СlothesType wearCategory, ClothesSex sex)
@@ -334,6 +341,11 @@ namespace workwear.Measurements
 		}
 
 		#endregion
+
+		public static SizeUse[] GetExcludedSizeUseForEmployee()
+		{
+			return BaseParameters.EmployeeSizeRanges ? new SizeUse[] { } : new SizeUse[] { SizeUse.СlothesOnly };
+		}
 	}
 
 	public class SizePair{

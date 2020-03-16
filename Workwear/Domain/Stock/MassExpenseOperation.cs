@@ -19,17 +19,18 @@ namespace workwear.Domain.Stock
 
 		EmployeeIssueOperation employeeIssueOperation;
 
-		[Display(Name = "Операция выдачи")]
+		[Display(Name = "Операция выдачи сотруднику")]
 		public virtual EmployeeIssueOperation EmployeeIssueOperation {
 			get { return employeeIssueOperation; }
 			set { SetField(ref employeeIssueOperation, value); }
 		}
 
-		MassExpense massExpense;
+		MassExpense massExpenseDoc;
 
-		public virtual MassExpense MassExpense {
-			get { return massExpense; }
-			set { SetField(ref massExpense, value); }
+		[Display(Name = "Документ массовой выдачи")]
+		public virtual MassExpense MassExpenseDoc {
+			get { return massExpenseDoc; }
+			set { SetField(ref massExpenseDoc, value); }
 		}
 
 
