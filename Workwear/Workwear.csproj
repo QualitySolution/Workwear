@@ -369,7 +369,6 @@
     <Compile Include="HibernateMapping\Operations\WarehouseOperationMap.cs" />
     <Compile Include="Domain\Operations\SubdivisionIssueOperation.cs" />
     <Compile Include="HibernateMapping\Operations\SubdivisionIssueOperationMap.cs" />
-    <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseMassExpense.cs" />
     <Compile Include="ViewModels\Stock\WarehouseMassExpenseViewModel.cs" />
     <Compile Include="Views\Stock\WarehouseMassExpenseView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseMassExpenseView.cs" />

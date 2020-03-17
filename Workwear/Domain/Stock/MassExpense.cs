@@ -95,20 +95,24 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult("Дата должна быть указана",
 					new[] { this.GetPropertyName(o => o.Date) });
 
+			if(Employees.Count == 0)
+				yield return new ValidationResult("Документ должен содержать хотя бы одного сотрудника.",
+					new[] { this.GetPropertyName(o => o.ItemsNomenclature) });
+
 			if(ItemsNomenclature.Count == 0)
-				yield return new ValidationResult("Документ должен содержать хотя бы одну строку.",
+				yield return new ValidationResult("Документ должен содержать хотя бы одну номенклатуру.",
 					new[] { this.GetPropertyName(o => o.ItemsNomenclature) });
 
 			if(ItemsNomenclature.Any(i => i.Amount <= 0))
-				yield return new ValidationResult("Документ не должен содержать строк с нулевым количеством.",
+				yield return new ValidationResult("Документ не должен содержать номенклатур с нулевым количеством.",
 					new[] { this.GetPropertyName(o => o.ItemsNomenclature) });
 
 			if(warehouseFrom == null)
 				yield return new ValidationResult("Склад выдачи должен быть указан",
-				new[] { this.GetPropertyName(o => o.ItemsNomenclature) });
+				new[] { this.GetPropertyName(o => o.WarehouseFrom) });
 
 			if (Employees.Any(x => x.EmployeeCard.FirstName.Length < 2 || x.EmployeeCard.LastName.Length < 2))
-				yield return new ValidationResult("Поля с именем сотрудников должны быть заполнены.",
+				yield return new ValidationResult("Поля с именем и фамилией сотрудников должны быть заполнены.",
 				new[] { this.GetPropertyName(o => o.ItemsNomenclature) });
 
 
@@ -117,7 +121,7 @@ namespace workwear.Domain.Stock
 
 		#endregion
 
-		public virtual string Title => $"Массовое списание №{Id} от {Date:d}";
+		public virtual string Title => $"Массовая выдача №{Id} от {Date:d}";
 
 		#region Nomenclature
 
@@ -140,15 +144,14 @@ namespace workwear.Domain.Stock
 			var listNom = ItemsNomenclature.Select(x => x.Nomenclature).Where(x => x == nomenclature).Distinct().ToList();
 
 
-			//var stockRepo = new StockRepository();
-			//var stock = stockRepo.StockBalances(uow, warehouseFrom, listNom, DateTime.Now);
+			var stockRepo = new StockRepository();
+			var stock = stockRepo.StockBalances(uow, warehouseFrom, listNom, DateTime.Now);
 
-			//if (stock.Count == 0) {
-			//	message.ShowMessage(ImportanceLevel.Warning, $"Номенклатуры \"{nomenclature.Name}\" нет на складе \"{warehouseFrom.Name}\"", "Предупреждение");
-			//	logger.Warn($"Номенклатуры {nomenclature} нет на складе {warehouseFrom.Name}");
-			//	//DisplayMessage = $"Номенклатуры {nomenclature} нет на складе {warehouseFrom.Name}";
-			//	return null;
-			//}
+			if (stock.Count == 0) {
+				message.ShowMessage(ImportanceLevel.Warning, $"Номенклатуры \"{nomenclature.Name}\" нет на складе \"{warehouseFrom.Name}\"", "Предупреждение");
+				logger.Warn($"Номенклатуры {nomenclature} нет на складе {warehouseFrom.Name}");
+				return null;
+			}
 
 
 			var newItemNomenclature = new MassExpenseNomenclature(this) {

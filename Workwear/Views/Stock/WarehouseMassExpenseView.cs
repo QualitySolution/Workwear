@@ -24,8 +24,7 @@ namespace workwear.Views.Stock
 			datepicker.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 			entityentryWarehouseExpense.ViewModel = ViewModel.WarehouseFromEntryViewModel;
-			//textMessage.UseMarkup = true;
-			//textMessage.Binding.AddBinding(ViewModel, e => e.DisplayMessage, w => w.Text).InitializeFromSource();
+
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
 			tableNomenclature.CreateFluentColumnsConfig<MassExpenseNomenclature>()
@@ -79,7 +78,7 @@ namespace workwear.Views.Stock
 
 		void ObservableItemsNomenclature_ListContentChanged(object sender, EventArgs e)
 		{
-			refrashSizeColumns();
+			refreshSizeColumns();
 		}
 
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -89,7 +88,7 @@ namespace workwear.Views.Stock
 		}
 
 
-		private void refrashSizeColumns()
+		private void refreshSizeColumns()
 		{
 			foreach(var column in tableEmployee.ColumnsConfig.ConfiguredColumns) {
 				if( column.tag == "Growth") {

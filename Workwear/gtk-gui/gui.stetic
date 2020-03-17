@@ -10195,13 +10195,6 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Stock.WarehouseMassExpense" design-size="300 300">
-    <property name="MemberName" />
-    <property name="Visible">False</property>
-    <child>
-      <placeholder />
-    </child>
-  </widget>
   <widget class="Gtk.Bin" id="workwear.Views.Stock.WarehouseMassExpenseView" design-size="519 513">
     <property name="MemberName" />
     <property name="Visible">False</property>
@@ -10434,7 +10427,7 @@
           <widget class="Gtk.Label" id="label4">
             <property name="MemberName" />
             <property name="Xalign">0</property>
-            <property name="LabelProp" translatable="yes">Практиканты</property>
+            <property name="LabelProp" translatable="yes">Сотрудники</property>
           </widget>
           <packing>
             <property name="Position">3</property>
@@ -10528,9 +10521,6 @@
                 <property name="Fill">False</property>
               </packing>
             </child>
-            <child>
-              <placeholder />
-            </child>
           </widget>
           <packing>
             <property name="Position">5</property>
@@ -10612,13 +10602,12 @@
                     <property name="Fill">False</property>
                   </packing>
                 </child>
-                <child>
-                  <placeholder />
-                </child>
               </widget>
               <packing>
                 <property name="Position">0</property>
                 <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
               </packing>
             </child>
             <child>
