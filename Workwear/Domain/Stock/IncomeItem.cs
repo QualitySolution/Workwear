@@ -33,15 +33,6 @@ namespace workwear.Domain.Stock
 			set { SetField (ref nomenclature, value, () => Nomenclature); }
 		}
 
-		decimal lifePercent;
-
-		[Display (Name = "% состояния")]
-		[Range(0.0, 1.0)]
-		public virtual decimal LifePercent {
-			get { return lifePercent; }
-			set { SetField (ref lifePercent, value.Clamp(0, 1), () => LifePercent); }
-		}
-
 		int amount;
 
 		[Display (Name = "Количество")]
@@ -137,6 +128,12 @@ namespace workwear.Domain.Stock
 		{
 			get { return buhDocument ?? ReturnFromEmployeeOperation?.BuhDocument; }
 			set { SetField(ref buhDocument, value); }
+		}
+
+		[Display(Name = "Процент износа")]
+		public virtual decimal WearPercent {
+			get => WarehouseOperation.WearPercent;
+			set => WarehouseOperation.WearPercent = value;
 		}
 
 		private EmployeeIssueOperation issuedEmployeeOnOperation;

@@ -11,7 +11,6 @@ namespace workwear.HMap
 
 			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
 			Map (x => x.Amount).Column ("quantity");
-			Map (x => x.LifePercent).Column ("life_percent");
 			Map (x => x.Cost).Column ("cost");
 			Map(x => x.Certificate).Column("certificate");
 			Map(x => x.Size).Column("size");

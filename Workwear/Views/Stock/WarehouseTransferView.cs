@@ -1,8 +1,8 @@
 ﻿using System;
+using Gamma.Binding.Converters;
 using Gtk;
 using QS.DomainModel.Entity;
 using QS.Views.Dialog;
-using QSOrmProject;
 using workwear.Domain.Stock;
 using workwear.ViewModels.Stock;
 
@@ -30,7 +30,7 @@ namespace workwear.Views.Stock
 			.AddColumn("Наименование").Tag("Name").AddTextRenderer(x => x.Nomenclature!= null ? x.Nomenclature.Name : String.Empty)
 			.AddColumn("Размер").AddTextRenderer(x => x.WarehouseOperation.Size)
 			.AddColumn("Рост").AddTextRenderer(x => x.WarehouseOperation.Growth)
-			.AddColumn("Процент износа").AddTextRenderer(x => x.WarehouseOperation.WearPercent.ToString("P"))
+			.AddColumn("Процент износа").AddTextRenderer(x => x.WarehouseOperation.WearPercent.ToString("P0"))
 			.AddColumn("Количество").Tag("Count")
 				.AddNumericRenderer(x => x.Amount, false).Editing(true).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
 				.AddTextRenderer(x => x.Nomenclature != null && x.Nomenclature.Type.Units != null ? x.Nomenclature.Type.Units.Name : String.Empty,  false)
