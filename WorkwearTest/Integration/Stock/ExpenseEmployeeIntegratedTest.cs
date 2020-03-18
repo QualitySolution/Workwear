@@ -10,8 +10,8 @@ using workwear.Domain.Stock;
 
 namespace WorkwearTest.Integration.Stock
 {
-	[TestFixture(TestOf = typeof(Expense))]
-	public class ExpenseIntegratedTest : InMemoryDBGlobalConfigTestFixtureBase
+	[TestFixture(TestOf = typeof(Expense), Description = "Выдача сотруднику")]
+	public class ExpenseEmployeeIntegratedTest : InMemoryDBGlobalConfigTestFixtureBase
 	{
 		[OneTimeSetUp]
 		public void Init()
@@ -29,7 +29,6 @@ namespace WorkwearTest.Integration.Stock
 		public void TestTearDown()
 		{
 		}
-
 
 		[Test(Description = "Корректно обрабатываем выдачу одной номенклатуры несколько раз за день. Реальный баг.")]
 		[Category("real case")]
@@ -83,10 +82,10 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(income);
 
 				var expense = new Expense();
+				expense.Operation = ExpenseOperations.Employee;
 				expense.Warehouse = warehouse;
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 10, 22);
-				expense.Operation = ExpenseOperations.Employee;
 				expense.AddItem(position1, 1);
 				expense.AddItem(position2, 1);
 
@@ -161,10 +160,10 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(income2);
 
 				var expense = new Expense();
+				expense.Operation = ExpenseOperations.Employee;
 				expense.Warehouse = warehouse;
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 10, 22);
-				expense.Operation = ExpenseOperations.Employee;
 				expense.AddItem(position1, 1);
 				expense.AddItem(position2, 1);
 
