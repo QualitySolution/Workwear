@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
@@ -318,20 +318,31 @@ namespace workwear.Measurements
 					
 					if(lookup.Appropriated.Any(x => x[original] == size))
 					{
-						foreach (var std in Enum.GetValues(sizeType))
-						{
-							var newPiar = new SizePair (GetSizeStdCode (std), lookup.Names[(int)std]);
+						AddSizePair(result, sizeType, lookup);
+					}
 
-							if (newPiar.Size == null)
-								continue;
-
-							if (!result.Any (pair => pair.StandardCode == newPiar.StandardCode && pair.Size == newPiar.Size))
-								result.Add (newPiar);
+					if(lookup.Names[original] == size) {
+						foreach(var toAdd in lookup.Appropriated) {
+							var wearsize = lookupArray.First(x => x.Names[original] == toAdd[original]);
+							AddSizePair(result, sizeType, wearsize);
 						}
 					}
 				}
 			}
 			return result;
+		}
+
+		private static void AddSizePair(List<SizePair> sizePairs, Type sizeType, WearSize size)
+		{
+			foreach(var std in Enum.GetValues(sizeType)) {
+				var newPiar = new SizePair(GetSizeStdCode(std), size.Names[(int)std]);
+
+				if(newPiar.Size == null)
+					continue;
+
+				if(!sizePairs.Any(pair => pair.StandardCode == newPiar.StandardCode && pair.Size == newPiar.Size))
+					sizePairs.Add(newPiar);
+			}
 		}
 
 		public static List<SizePair> MatchGrow(GrowthStandartWear[] stds, string grow, SizeUsePlace place)
