@@ -10,6 +10,8 @@ using Gamma.Utilities;
 using workwear.Domain.Operations;
 using QS.Dialog;
 using System.Reflection;
+using workwear.Measurements;
+using workwear.Domain.Regulations;
 
 namespace workwear.Domain.Stock
 {
@@ -33,6 +35,7 @@ namespace workwear.Domain.Stock
 			set { SetField(ref warehouseFrom, value, () => WarehouseFrom); }
 		}
 
+		string DisplayMessage;
 		private IList<MassExpenseEmployee> employees = new List<MassExpenseEmployee>();
 
 		[Display(Name = "Сотрудники")]
@@ -125,8 +128,6 @@ namespace workwear.Domain.Stock
 
 		#region Nomenclature
 
-		IList<StockBalanceDTO> StockBalances;
-
 		public virtual MassExpenseNomenclature AddItemNomenclature(Nomenclature nomenclature, IInteractiveMessage message, IUnitOfWork uow)
 		{
 			if (warehouseFrom == null) {
@@ -141,18 +142,17 @@ namespace workwear.Domain.Stock
 				return null;
 			}
 
-			var listNom = ItemsNomenclature.Select(x => x.Nomenclature).Where(x => x == nomenclature).Distinct().ToList();
-
+			List<Nomenclature> listNom = new List<Nomenclature>();
+			listNom.Add(nomenclature);
 
 			var stockRepo = new StockRepository();
-			var stock = stockRepo.StockBalances(uow, warehouseFrom, listNom, DateTime.Now);
+			var stock = stockRepo.StockBalances(uow, warehouseFrom, listNom, this.Date);
 
 			if (stock.Count == 0) {
-				message.ShowMessage(ImportanceLevel.Warning, $"Номенклатуры \"{nomenclature.Name}\" нет на складе \"{warehouseFrom.Name}\"", "Предупреждение");
+				message.ShowMessage(ImportanceLevel.Warning, $"Номенклатуры «{nomenclature.Name}» нет на складе \"{warehouseFrom.Name}\"", "Предупреждение");
 				logger.Warn($"Номенклатуры {nomenclature} нет на складе {warehouseFrom.Name}");
 				return null;
 			}
-
 
 			var newItemNomenclature = new MassExpenseNomenclature(this) {
 				Amount = 1,
@@ -165,18 +165,51 @@ namespace workwear.Domain.Stock
 
 		public virtual string ValidateNomenclature(IUnitOfWork uow)
 		{
-			var listNom = ItemsNomenclature.Select(x => x.Nomenclature).Distinct().ToList();
+
 			var stockRepo = new StockRepository();
-			var stock = stockRepo.StockBalances(uow, warehouseFrom, listNom, DateTime.Now);
-			string DisplayMessage = "";
-			foreach(var item in stock) {
-				if(item.Amount < Employees.Count) {
-					DisplayMessage += $"Не хватает номеклатуры: {item.Nomenclature.Name} ";
-					logger.Warn($"Не хватает номеклатуры: {item.Nomenclature.Name}");
+			List<Nomenclature> nomenclatures = new List<Nomenclature>();
+			foreach(var nom in ItemsNomenclature)
+				nomenclatures.Add(nom.Nomenclature);
+			var stock = stockRepo.StockBalances(uow, warehouseFrom, nomenclatures, this.Date);
+
+			DisplayMessage = "";
+			foreach (var nom in ItemsNomenclature) {
+				if (nom.Nomenclature.Type.Category == ItemTypeCategory.property || nom.Nomenclature.Type.WearCategory == СlothesType.PPE) {
+					List<Nomenclature> newListNomenPPE = new List<Nomenclature>();
+					newListNomenPPE.Add(nom.Nomenclature);
+					var stock2 = stockRepo.StockBalances(uow, warehouseFrom, newListNomenPPE, this.Date);
+					if((stock2.Count < 1 ? 0 : stock2[0].Amount) < employees.Count * nom.Amount)
+						DisplayMessage += $"Номенклатуры «{nom.Nomenclature.Name}» на складе недостаточно({stock2[0].Amount}). \n";
+					continue;
+				}
+
+				foreach(var emp in employees) {
+					var sizeAndStd = emp.GetSize(nom.Nomenclature.Type.WearCategory);
+					if (string.IsNullOrEmpty(sizeAndStd.Size) && !DisplayMessage.Contains("Не для всех сотрудников")) {
+						DisplayMessage += $"Не для всех сотрудников указан размер одежды! \n";
+						continue;
+					}
+					var EnableSize = SizeHelper.MatchSize(sizeAndStd.StandardCode, sizeAndStd.Size, SizeUsePlace.Сlothes);
+					var stockBalanse = stock.Where(x => EnableSize.Any(y => x.Size == y.Size && 
+					(y.StandardCode == x.Nomenclature.SizeStd || x.Nomenclature.SizeStd.ToString() == "UnisexWearRus"))).ToList();
+					int allCount = 0;
+					foreach(var item in stockBalanse)
+						allCount += item.Amount;
+					if(allCount < nom.Amount)
+						DisplayMessage += $"Номенклатуры «{nom.Nomenclature.Name}» размера {sizeAndStd.Size} на складе " + (stockBalanse.Count > 0 ? stockBalanse[0].Amount.ToString() : "недостаточно \n");
+					else {
+						foreach(var item in stockBalanse) {
+							if(item.Amount == 0 || allCount == 0) continue;
+							item.Amount--;
+							allCount--;
+
+						}
+					}
 				}
 			}
-			return "text";
-			//return DisplayMessage;
+
+			return DisplayMessage;
+
 		}
 
 		public virtual void RemoveItemNomenclature(MassExpenseNomenclature nom)
@@ -222,6 +255,7 @@ namespace workwear.Domain.Stock
 
 		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
 		{
+			if(DisplayMessage.Length > 0) return;
 			uow.Save(this);
 			var ListMassExOperationInProgress = MassExpenseOperation.ToList();
 
@@ -245,17 +279,17 @@ namespace workwear.Domain.Stock
 					employeeIssueOperation.Size = employee.WearSize;
 					employeeIssueOperation.WearGrowth = employee.WearGrowth;
 					employeeIssueOperation.Issued = nom.Amount;
-					employeeIssueOperation.StartOfUse = DateTime.Now;
+					employeeIssueOperation.StartOfUse = this.Date;
 
 					WarehouseOperation warehouseOperation = op.WarehouseOperationExpense;
 					warehouseOperation.Nomenclature = nom.Nomenclature;
-					warehouseOperation.OperationTime = DateTime.Now;
+					warehouseOperation.OperationTime = this.Date;
 					warehouseOperation.ExpenseWarehouse = this.WarehouseFrom;
 					warehouseOperation.ReceiptWarehouse = null;
-					warehouseOperation.Size = nom.Nomenclature.SizeStd;
+					warehouseOperation.Size = employee.WearSize;
 					warehouseOperation.Growth = employee.WearGrowth;
 					warehouseOperation.Amount = nom.Amount;
-					warehouseOperation.OperationTime = DateTime.Now;
+					warehouseOperation.OperationTime = this.Date;
 
 					employeeIssueOperation.WarehouseOperation = warehouseOperation;
 					

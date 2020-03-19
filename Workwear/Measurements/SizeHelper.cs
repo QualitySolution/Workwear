@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
@@ -66,11 +66,19 @@ namespace workwear.Measurements
 
 		public static string GetSizeStdShortTitle(string code)
 		{
+			if(GetSizeStdEnum(code) == null)
+				return "";
 			var std = (Enum)GetSizeStdEnum(code);
 			return std.GetEnumShortTitle();
 		}
 
 		#endregion
+
+		public static IList<string> GetSizeStandartsListOfCodes(СlothesType wearCategory, Sex sex)
+		{
+			var stdType = GetSizeStandartsEnum(wearCategory, sex);
+			return Enum.GetValues(stdType).Cast<object>().Select(GetSizeStdCode).ToList();
+		}
 
 		public static Type GetSizeStandartsEnum(СlothesType wearCategory, Sex sex)
 		{
@@ -83,7 +91,7 @@ namespace workwear.Measurements
 			if (att.Length == 0)
 				return null;
 
-			var found = att.FirstOrDefault (a => a.Sex == sex);
+			var found = att.FirstOrDefault (a => a.Sex == sex || a.Sex == ClothesSex.Universal);
 
 			return found != null ? found.StandartsEnumType : null;
 		}
@@ -178,6 +186,7 @@ namespace workwear.Measurements
 
 		public static string[] GetSizesList (object stdEnum, params SizeUse[] excludeUse)
 		{
+			if(stdEnum == null) return null;
 			var array = GetSizeLookup (stdEnum.GetType());
 
 			if (array != null)

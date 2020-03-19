@@ -10350,6 +10350,7 @@
             <child>
               <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow3">
                 <property name="MemberName" />
+                <property name="HscrollbarPolicy">Never</property>
                 <property name="ShadowType">In</property>
                 <child>
                   <widget class="Gtk.Viewport" id="GtkViewport">

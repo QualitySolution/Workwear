@@ -199,6 +199,7 @@ namespace workwear.Views.Stock
 			// Container child hbox12.Gtk.Box+BoxChild
 			this.GtkScrolledWindow3 = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow3.Name = "GtkScrolledWindow3";
+			this.GtkScrolledWindow3.HscrollbarPolicy = ((global::Gtk.PolicyType)(2));
 			this.GtkScrolledWindow3.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow3.Gtk.Container+ContainerChild
 			global::Gtk.Viewport w14 = new global::Gtk.Viewport();
@@ -254,7 +255,7 @@ namespace workwear.Views.Stock
 			this.label4 = new global::Gtk.Label();
 			this.label4.Name = "label4";
 			this.label4.Xalign = 0F;
-			this.label4.LabelProp = global::Mono.Unix.Catalog.GetString("Практиканты");
+			this.label4.LabelProp = global::Mono.Unix.Catalog.GetString("Сотрудники");
 			this.vbox1.Add(this.label4);
 			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.label4]));
 			w23.Position = 3;
@@ -395,6 +396,8 @@ namespace workwear.Views.Stock
 			this.hbox5.Add(this.hbox9);
 			global::Gtk.Box.BoxChild w41 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.hbox9]));
 			w41.Position = 0;
+			w41.Expand = false;
+			w41.Fill = false;
 			this.vbox1.Add(this.hbox5);
 			global::Gtk.Box.BoxChild w42 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox5]));
 			w42.Position = 8;

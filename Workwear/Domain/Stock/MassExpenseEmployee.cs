@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.DomainModel.Entity;
 using workwear.Domain.Company;
 using workwear.Measurements;
@@ -7,8 +8,8 @@ using workwear.Measurements;
 namespace workwear.Domain.Stock
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
-	NominativePlural = "строки перевода массовой выдачи",
-	Nominative = "строка перевода массовой выдачи")]
+	NominativePlural = "строки массовой выдачи",
+	Nominative = "строка массовой выдачи")]
 	public class MassExpenseEmployee : PropertyChangedBase, IDomainObject
 	{
 		public MassExpenseEmployee()
@@ -48,7 +49,10 @@ namespace workwear.Domain.Stock
 				SetField(ref sex, value, () => Sex);
 				if(Sex != Sex.None) {
 					WearSizeStd = SizeHelper.GetSizeStdCode(SizeHelper.GetDefaultSizeStd(СlothesType.Wear, sex));
-					shoesSizeStd = SizeHelper.GetSizeStdCode(SizeHelper.GetDefaultSizeStd(СlothesType.Shoes, sex));
+					ShoesSizeStd = SizeHelper.GetSizeStdCode(SizeHelper.GetDefaultSizeStd(СlothesType.Shoes, sex));
+					GlovesSizeStd = SizeHelper.GetSizeStdCode(SizeHelper.GetDefaultSizeStd(СlothesType.Gloves, sex));
+					WinterShoesSizeStd = SizeHelper.GetSizeStdCode(SizeHelper.GetDefaultSizeStd(СlothesType.WinterShoes, sex));
+					HeaddressSizeStd = SizeHelper.GetSizeStdCode(SizeHelper.GetDefaultSizeStd(СlothesType.Headgear, sex));
 				}
 				}
 			}
@@ -69,7 +73,11 @@ namespace workwear.Domain.Stock
 		[Display(Name = "Стандарт размера одежды")]
 		public virtual string WearSizeStd {
 			get { return wearSizeStd; }
-			set { SetField(ref wearSizeStd, value, () => WearSizeStd); }
+			set { 
+				SetField(ref wearSizeStd, value, () => WearSizeStd);
+				if(wearSizeStd == null || !SizeHelper.GetSizesListByStdCode(wearSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()).Contains(WearSize))
+					wearSize = null;
+			}
 		}
 
 		string wearSize;
@@ -85,7 +93,10 @@ namespace workwear.Domain.Stock
 		[Display(Name = "Стандарт размера обуви")]
 		public virtual string ShoesSizeStd {
 			get { return shoesSizeStd; }
-			set { SetField(ref shoesSizeStd, value, () => ShoesSizeStd); }
+			set { SetField(ref shoesSizeStd, value, () => ShoesSizeStd);
+				if(shoesSizeStd == null || !SizeHelper.GetSizesListByStdCode(shoesSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()).Contains(ShoesSize))
+					ShoesSize = null;
+			}
 		}
 
 		string shoesSize;
@@ -101,7 +112,10 @@ namespace workwear.Domain.Stock
 		[Display(Name = "Стандарт размера зимней обуви")]
 		public virtual string WinterShoesSizeStd {
 			get { return winterShoesSizeStd; }
-			set { SetField(ref winterShoesSizeStd, value, () => WinterShoesSizeStd); }
+			set { SetField(ref winterShoesSizeStd, value, () => WinterShoesSizeStd);
+				if(winterShoesSizeStd == null || !SizeHelper.GetSizesListByStdCode(winterShoesSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()).Contains(winterShoesSize))
+					WinterShoesSize = null;
+			}
 		}
 
 		string winterShoesSize;
@@ -117,7 +131,10 @@ namespace workwear.Domain.Stock
 		[Display(Name = "Стандарт размера головного убора")]
 		public virtual string HeaddressSizeStd {
 			get { return headdressSizeStd; }
-			set { SetField(ref headdressSizeStd, value, () => HeaddressSizeStd); }
+			set { SetField(ref headdressSizeStd, value, () => HeaddressSizeStd);
+				if(headdressSizeStd == null || !SizeHelper.GetSizesListByStdCode(headdressSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()).Contains(HeaddressSize))
+					HeaddressSize = null;
+			}
 		}
 
 		string headdressSize;
@@ -133,7 +150,10 @@ namespace workwear.Domain.Stock
 		[Display(Name = "Стандарт размера перчаток")]
 		public virtual string GlovesSizeStd {
 			get { return glovesSizeStd; }
-			set { SetField(ref glovesSizeStd, value, () => GlovesSizeStd); }
+			set { SetField(ref glovesSizeStd, value, () => GlovesSizeStd);
+				if(glovesSizeStd == null || !SizeHelper.GetSizesListByStdCode(glovesSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()).Contains(GlovesSize))
+					GlovesSize = null;
+			}
 		}
 
 		string glovesSize;
@@ -167,5 +187,30 @@ namespace workwear.Domain.Stock
 			set { EmployeeCard.Patronymic = value; }
 		}
 
+		public virtual SizePair GetSize(СlothesType? wearCategory)
+		{
+			switch(wearCategory) {
+				case СlothesType.Wear:
+					return new SizePair(WearSizeStd, WearSize);
+				case СlothesType.Shoes:
+					return new SizePair(ShoesSizeStd, ShoesSize);
+				case СlothesType.WinterShoes:
+					return new SizePair(WinterShoesSizeStd, WinterShoesSize);
+				case СlothesType.Gloves:
+					return new SizePair(GlovesSizeStd, GlovesSize);
+				case СlothesType.Headgear:
+					return new SizePair(HeaddressSizeStd, HeaddressSize);
+				default:
+					return null;
+			}
+		}
+
+		public virtual SizePair GetGrow()
+		{
+			var growStd = SizeHelper.GetGrowthStandart(СlothesType.Wear, Sex, SizeUsePlace.Human);
+			if(growStd == null || growStd.Length == 0)
+				return null;
+			return new SizePair(SizeHelper.GetSizeStdCode(growStd[0]), WearGrowth);
+		}
 	}
 }

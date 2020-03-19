@@ -173,18 +173,20 @@ namespace workwear.Representations
 				if(Filter.RestrictEndDate.HasValue)
 					transferQuery.Where(o => o.Date < Filter.RestrictEndDate.Value.AddDays(1));
 
+
+
 				var massExpenseList = transferQuery
 					.JoinAlias(() => massExpenseAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					.JoinAlias(() => massExpenseAlias.WarehouseFrom, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList(list => list
 				   			.Select(() => massExpenseAlias.Id).WithAlias(() => resultAlias.Id)
 							.Select(() => massExpenseAlias.Date).WithAlias(() => resultAlias.Date)
+							.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
 							.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
-						   )
+							)
 
 				.TransformUsing(Transformers.AliasToBean<StockDocumentsVMNode>())
 				.List<StockDocumentsVMNode>();
-
-
 
 				massExpenseList.ToList().ForEach(x => x.DocTypeEnum = StokDocumentType.MassExpense);
 				result.AddRange(massExpenseList);
@@ -302,7 +304,7 @@ namespace workwear.Representations
 		[UseForSearch]
 		[SearchHighlight]
 		public string Warehouse => ReceiptWarehouse == null && ExpenseWarehouse == null ? String.Empty :
-			ReceiptWarehouse == null ? $" <= {ExpenseWarehouse}" : $"{ExpenseWarehouse} => {ReceiptWarehouse}";
+			ReceiptWarehouse == null ? $" {ExpenseWarehouse} =>" : $"{ExpenseWarehouse} => {ReceiptWarehouse}";
 
 		public string Facility { get; set; }
 
