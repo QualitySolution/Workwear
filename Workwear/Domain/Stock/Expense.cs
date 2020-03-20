@@ -116,11 +116,11 @@ namespace workwear.Domain.Stock
 
 		#region Методы
 
-		public virtual void AddItem(StockPosition position, int amount = 1)
+		public virtual ExpenseItem AddItem(StockPosition position, int amount = 1)
 		{
 			if(Items.Any(p => position.Equals(p.StockPosition))) {
 				logger.Warn($"Позиция [{position}] уже добавлена. Пропускаем...");
-				return;
+				return null;
 			}
 			var newItem = new ExpenseItem() {
 				ExpenseDoc = this,
@@ -132,6 +132,7 @@ namespace workwear.Domain.Stock
 			};
 
 			ObservableItems.Add(newItem);
+			return newItem;
 		}
 
 		public virtual void RemoveItem(ExpenseItem item)

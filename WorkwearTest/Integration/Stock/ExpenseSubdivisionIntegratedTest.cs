@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
@@ -6,6 +7,7 @@ using QS.Testing.DB;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Repository;
 
 namespace WorkwearTest.Integration.Stock
 {
@@ -35,17 +37,18 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
+				nomenclature.Name = "Тестовая номеклатура";
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
 				var position1 = new StockPosition(nomenclature, null, null, 0);
 
 				var subdivision = new Subdivision();
-				subdivision.Name = "Тествотове подразделение";
+				subdivision.Name = "Тестовое подразделение";
 				uow.Save(subdivision);
 
 				var place = new SubdivisionPlace();
-				place.Name = "Тествое место";
+				place.Name = "Тестовое место";
 				place.Subdivision = subdivision;
 				uow.Save(place);
 
@@ -63,14 +66,20 @@ namespace WorkwearTest.Integration.Stock
 				expense.Warehouse = warehouse;
 				expense.Subdivision = subdivision;
 				expense.Date = new DateTime(2018, 10, 22);
-				expense.AddItem(position1, 1);
+				var item1 = expense.AddItem(position1, 1);
+				item1.SubdivisionPlace = place;
 
 				//Обновление операций
 				expense.UpdateOperations(uow, ask);
 				uow.Save(expense);
 				uow.Commit();
 
-				//FixMe Желательно здесь проверить баланс но сейчас такого кода просто нет для подразделений.
+				var listed = SubdivisionRepository.ItemsBalance(uow, subdivision);
+				var balance = listed.First();
+				Assert.That(balance.Amount, Is.EqualTo(1));
+				Assert.That(balance.NomeclatureName, Is.EqualTo("Тестовая номеклатура"));
+				Assert.That(balance.Place, Is.EqualTo("Тестовое место"));
+				Assert.That(balance.WearPercent, Is.EqualTo(0m));
 			}
 		}
 	}
