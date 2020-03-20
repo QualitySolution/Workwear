@@ -32,7 +32,8 @@ namespace workwear
 				.AddClearDependence<IssuanceSheet>(x => x.Subdivision);
 
 			DeleteConfig.AddHibernateDeleteInfo<SubdivisionPlace>()
-				.AddClearDependence<ExpenseItem>(x => x.SubdivisionPlace);
+				.AddClearDependence<ExpenseItem>(x => x.SubdivisionPlace)
+				.AddClearDependence<SubdivisionIssueOperation>(x => x.SubdivisionPlace);
 
 			DeleteConfig.AddHibernateDeleteInfo<Leader> ()
 				.AddClearDependence<EmployeeCard> (x => x.Leader)
