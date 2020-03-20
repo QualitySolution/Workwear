@@ -1133,7 +1133,7 @@
             <property name="ShadowType">In</property>
             <property name="BorderWidth">3</property>
             <child>
-              <widget class="Gtk.TreeView" id="treeviewProperty">
+              <widget class="Gamma.GtkWidgets.yTreeView" id="treeviewProperty">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>
