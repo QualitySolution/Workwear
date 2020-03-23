@@ -10360,7 +10360,6 @@
                       <widget class="Gamma.GtkWidgets.yLabel" id="textMessage">
                         <property name="MemberName" />
                         <property name="ShowScrollbars">True</property>
-                        <property name="LabelProp" translatable="yes">ylabel1</property>
                       </widget>
                     </child>
                   </widget>

@@ -33,7 +33,5 @@ namespace workwear.Domain.Stock
 			set { SetField(ref massExpenseDoc, value); }
 		}
 
-
-
 	}
 }

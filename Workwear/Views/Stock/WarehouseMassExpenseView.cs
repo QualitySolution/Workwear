@@ -83,6 +83,7 @@ namespace workwear.Views.Stock
 				.AddComboRenderer(x => x.GlovesSize)
 				.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.GlovesSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()))
 				.AddSetter((c, n) => c.Editable = !String.IsNullOrWhiteSpace(n.GlovesSizeStd))
+			.AddColumn(String.Empty)
 			.Finish();
 
 			tableEmployee.Selection.Changed += Selection_Changed_Employee;
@@ -92,8 +93,9 @@ namespace workwear.Views.Stock
 			Entity.ObservableItemsNomenclature.ListContentChanged += ObservableItemsNomenclature_ListContentChanged;
 
 			foreach(var column in tableEmployee.ColumnsConfig.ConfiguredColumns)
-				if (!(column.tag == "LastName" || column.tag == "Name" || column.tag == "Patronomic" || column.tag == "Sex"))
+				if (!(column.tag == "LastName" || column.tag == "Name" || column.tag == "Patronomic" || column.tag == "Sex" || column.Title == string.Empty))
 					column.TreeViewColumn.Visible = false;
+			refreshSizeColumns();
 		}
 
 		void ObservableItemsNomenclature_ListContentChanged(object sender, EventArgs e)

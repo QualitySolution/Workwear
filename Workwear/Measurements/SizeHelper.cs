@@ -181,12 +181,12 @@ namespace workwear.Measurements
 
 		public static string[] GetSizesListByStdCode(string stdCode, params SizeUse[] excludeUse)
 		{
+			if(stdCode == null) return new string[] { " "};
 			return GetSizesList(GetSizeStdEnum(stdCode), excludeUse);
 		}
 
 		public static string[] GetSizesList (object stdEnum, params SizeUse[] excludeUse)
 		{
-			if(stdEnum == null) return null;
 			var array = GetSizeLookup (stdEnum.GetType());
 
 			if (array != null)

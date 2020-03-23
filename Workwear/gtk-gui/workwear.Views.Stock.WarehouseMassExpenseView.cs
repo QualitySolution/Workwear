@@ -207,7 +207,6 @@ namespace workwear.Views.Stock
 			// Container child GtkViewport.Gtk.Container+ContainerChild
 			this.textMessage = new global::Gamma.GtkWidgets.yLabel();
 			this.textMessage.Name = "textMessage";
-			this.textMessage.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel1");
 			w14.Add(this.textMessage);
 			this.GtkScrolledWindow3.Add(w14);
 			this.hbox12.Add(this.GtkScrolledWindow3);

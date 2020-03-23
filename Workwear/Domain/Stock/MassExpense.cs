@@ -35,7 +35,7 @@ namespace workwear.Domain.Stock
 			set { SetField(ref warehouseFrom, value, () => WarehouseFrom); }
 		}
 
-		string DisplayMessage;
+		string DisplayMessage = "";
 		private IList<MassExpenseEmployee> employees = new List<MassExpenseEmployee>();
 
 		[Display(Name = "Сотрудники")]
@@ -100,7 +100,7 @@ namespace workwear.Domain.Stock
 
 			if(Employees.Count == 0)
 				yield return new ValidationResult("Документ должен содержать хотя бы одного сотрудника.",
-					new[] { this.GetPropertyName(o => o.ItemsNomenclature) });
+					new[] { this.GetPropertyName(o => o.Employees) });
 
 			if(ItemsNomenclature.Count == 0)
 				yield return new ValidationResult("Документ должен содержать хотя бы одну номенклатуру.",
@@ -114,11 +114,14 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult("Склад выдачи должен быть указан",
 				new[] { this.GetPropertyName(o => o.WarehouseFrom) });
 
-			if (Employees.Any(x => x.EmployeeCard.FirstName.Length < 2 || x.EmployeeCard.LastName.Length < 2))
-				yield return new ValidationResult("Поля с именем и фамилией сотрудников должны быть заполнены.",
+			if (Employees.Any(x => x.EmployeeCard.FirstName.Length < 2 || x.EmployeeCard.LastName.Length < 2 
+				|| x.Sex == Sex.None))
+				yield return new ValidationResult("Поля с именем, фамилией и полом сотрудников должны быть заполнены.",
 				new[] { this.GetPropertyName(o => o.ItemsNomenclature) });
 
-
+			if (DisplayMessage.Length > 0)
+				yield return new ValidationResult("Не для всех сотрудников возможно подобрать номенклатуру",
+				new[] { this.GetPropertyName(o => o.DisplayMessage) });
 
 		}
 
@@ -193,15 +196,16 @@ namespace workwear.Domain.Stock
 					var stockBalanse = stock.Where(x => EnableSize.Any(y => x.Size == y.Size && 
 					(y.StandardCode == x.Nomenclature.SizeStd || x.Nomenclature.SizeStd.ToString() == "UnisexWearRus"))).ToList();
 					int allCount = 0;
+					int needCount = nom.Amount;
 					foreach(var item in stockBalanse)
 						allCount += item.Amount;
 					if(allCount < nom.Amount)
-						DisplayMessage += $"Номенклатуры «{nom.Nomenclature.Name}» размера {sizeAndStd.Size} на складе " + (stockBalanse.Count > 0 ? stockBalanse[0].Amount.ToString() : "недостаточно \n");
+						DisplayMessage += $"Номенклатуры «{nom.Nomenclature.Name}» размера {sizeAndStd.Size} на складе недостаточно \n";
 					else {
 						foreach(var item in stockBalanse) {
-							if(item.Amount == 0 || allCount == 0) continue;
+							if(item.Amount == 0 || needCount == 0) continue;
 							item.Amount--;
-							allCount--;
+							needCount--;
 
 						}
 					}
@@ -255,13 +259,30 @@ namespace workwear.Domain.Stock
 
 		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
 		{
-			if(DisplayMessage.Length > 0) return;
-			uow.Save(this);
+
 			var ListMassExOperationInProgress = MassExpenseOperation.ToList();
 
 			foreach(var employee in Employees) {
+
+
+				var properties = typeof(MassExpenseEmployee).GetProperties().Where(x => x.Name.EndsWith("Size") || x.Name.EndsWith("SizeStd"));
+				foreach(var propInfoMass in properties) {
+					var propInfoEmp = typeof(EmployeeCard).GetProperty(propInfoMass.Name);
+					var exist = propInfoEmp.GetValue(employee.EmployeeCard);
+					var setValue = propInfoMass.GetValue(employee);
+					if(String.IsNullOrWhiteSpace((string)exist) || !String.IsNullOrWhiteSpace((string)setValue)) {
+						propInfoEmp.SetValue(employee.EmployeeCard, setValue);
+					}
+				}
+
+				if(employee.EmployeeCard.Sex == Sex.None)
+					employee.EmployeeCard.Sex = employee.Sex;
+
+				uow.Save(employee.EmployeeCard);
+
 				foreach(var nom in ItemsNomenclature) {
-					var op = ListMassExOperationInProgress.FirstOrDefault(x =>x.EmployeeIssueOperation.Employee.Id == employee.Id && x.WarehouseOperationExpense.Nomenclature.Id == nom.Id);
+
+					var op = ListMassExOperationInProgress.FirstOrDefault(x =>x.EmployeeIssueOperation.Employee.Id == employee.EmployeeCard.Id && x.WarehouseOperationExpense.Nomenclature.Id == nom.Nomenclature.Id);
 					if(op == null) {
 
 						op = new MassExpenseOperation();
