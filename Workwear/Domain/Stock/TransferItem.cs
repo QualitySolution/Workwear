@@ -53,14 +53,7 @@ namespace workwear.Domain.Stock
 
 		#region Расчетные
 
-		public virtual string Title {
-			get {
-				return String.Format("Перевод со склада {0} на склад {1}",
-			  document.WarehouseTo,
-			  document.WarehouseFrom
-		  );
-			}
-		}
+		public virtual string Title => $"Перемещение {StockPosition.Title} x {Amount} со склада {document.WarehouseFrom.Name} на склад {document.WarehouseTo.Name}";
 
 		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WarehouseOperation.Size, WarehouseOperation.Growth, WarehouseOperation.WearPercent);
 

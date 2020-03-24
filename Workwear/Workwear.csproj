@@ -328,7 +328,6 @@
     <Compile Include="Views\Company\OrganizationView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.OrganizationView.cs" />
     <Compile Include="JournalViewModels\Company\OrganizationJournalViewModel.cs" />
-    <Compile Include="JournalViewModels\JournalsColumnsConfigs.cs" />
     <Compile Include="Domain\Statements\IssuanceSheet.cs" />
     <Compile Include="Domain\Statements\IssuanceSheetItem.cs" />
     <Compile Include="HibernateMapping\Statements\IssuanceSheetItemMap.cs" />
@@ -369,6 +368,7 @@
     <Compile Include="HibernateMapping\Operations\WarehouseOperationMap.cs" />
     <Compile Include="Domain\Operations\SubdivisionIssueOperation.cs" />
     <Compile Include="HibernateMapping\Operations\SubdivisionIssueOperationMap.cs" />
+    <Compile Include="Journal\JournalsColumnsConfigs.cs" />
     <Compile Include="ViewModels\Stock\WarehouseMassExpenseViewModel.cs" />
     <Compile Include="Views\Stock\WarehouseMassExpenseView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseMassExpenseView.cs" />

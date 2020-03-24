@@ -6,7 +6,7 @@ using workwear.JournalViewModels.Company;
 using workwear.JournalViewModels.Statements;
 using workwear.JournalViewModels.Stock;
 
-namespace workwear.JournalViewModels
+namespace workwear.Journal
 {
 	public static class JournalsColumnsConfigs
 	{

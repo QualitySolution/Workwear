@@ -5,8 +5,8 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Utilities.Dates;
-using workwear.Domain.Company;
 using QS.Utilities.Numeric;
+using workwear.Domain.Company;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -218,6 +218,23 @@ namespace workwear.Domain.Operations
 			return beginWearPercent + (decimal)addPercent;
 		}
 
+		public virtual decimal CalculateDepreciationCost(DateTime atDate)
+		{
+			return CalculateDepreciationCost(atDate, StartOfUse, ExpiryByNorm, WarehouseOperation.Cost);
+		}
+
+		public static decimal CalculateDepreciationCost(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginCost)
+		{
+			if(startOfUse == null || expiryByNorm == null)
+				return 0;
+
+			var removePercent = (atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays;
+			if(double.IsNaN(removePercent) || double.IsInfinity(removePercent))
+				return beginCost;
+
+			return (beginCost - beginCost * (decimal)removePercent).Clamp(0, decimal.MaxValue);
+		}
+
 		#endregion
 
 		#region Методы обновленя операций
@@ -313,7 +330,7 @@ namespace workwear.Domain.Operations
 			Nomenclature = item.Nomenclature;
 			Size = item.Size;
 			WearGrowth = item.WearGrowth;
-			WearPercent = 1 - item.LifePercent;
+			WearPercent = item.WearPercent;
 			Issued = 0;
 			Returned = item.Amount;
 			WarehouseOperation = item.WarehouseOperation;

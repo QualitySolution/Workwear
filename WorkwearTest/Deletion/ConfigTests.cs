@@ -84,6 +84,8 @@ namespace WorkwearTest.Deletion
 			base.NHMappedCollectionsAllInOneTest(mapping, property);
 		}
 
+		#region Оформление заголовков
+
 		public new static IEnumerable AllDeleteRules => DeleteConfigTestBase.AllDeleteRules;
 
 		[Test, TestCaseSource(nameof(AllDeleteRules))]
@@ -91,5 +93,13 @@ namespace WorkwearTest.Deletion
 		{
 			base.DeleteRules_ExistTitle_Test(info);
 		}
+
+		[Test, TestCaseSource(nameof(AllDeleteRules))]
+		public override void DeleteRules_ExistAppellativeAttribute_Test(IDeleteRule info)
+		{
+			base.DeleteRules_ExistAppellativeAttribute_Test(info);
+		}
+
+		#endregion
 	}
 }
