@@ -188,28 +188,29 @@ namespace workwear.Domain.Stock
 
 				foreach(var emp in employees) {
 					var sizeAndStd = emp.GetSize(nom.Nomenclature.Type.WearCategory);
-					if (string.IsNullOrEmpty(sizeAndStd.Size) && !DisplayMessage.Contains("Не для всех сотрудников")) {
-						DisplayMessage += $"Не для всех сотрудников указан размер одежды! \n";
+					if (string.IsNullOrEmpty(sizeAndStd.Size)) {
+						if (!DisplayMessage.Contains("Не для всех сотрудников"))
+							DisplayMessage += $"Не для всех сотрудников указан размер одежды! \n";
 						continue;
 					}
 					var EnableSize = SizeHelper.MatchSize(sizeAndStd.StandardCode, sizeAndStd.Size, SizeUsePlace.Сlothes);
 					var stockBalanse = stock.Where(x => EnableSize.Any(y => x.Size == y.Size && 
 					(y.StandardCode == x.Nomenclature.SizeStd || x.Nomenclature.SizeStd.ToString() == "UnisexWearRus"))).ToList();
-					int allCount = 0;
+					int allCountInStock = 0;
 					int needCount = nom.Amount;
 					foreach(var item in stockBalanse)
-						allCount += item.Amount;
-					if(allCount < nom.Amount)
+						allCountInStock += item.Amount;
+					if(allCountInStock < nom.Amount)
 						DisplayMessage += $"Номенклатуры «{nom.Nomenclature.Name}» размера {sizeAndStd.Size} на складе недостаточно \n";
-					else {
+					else 
 						foreach(var item in stockBalanse) {
-							if(item.Amount == 0 || needCount == 0) continue;
-							item.Amount--;
-							needCount--;
+							if(needCount < 1 || item.Amount < 1) continue;
+							var can = Math.Min(nom.Amount, item.Amount);
+							item.Amount -= can;
+							needCount -= can;
 
 						}
 					}
-				}
 			}
 
 			return DisplayMessage;
@@ -313,7 +314,8 @@ namespace workwear.Domain.Stock
 					warehouseOperation.OperationTime = this.Date;
 
 					employeeIssueOperation.WarehouseOperation = warehouseOperation;
-					
+
+					uow.Save(this);
 					uow.Save(warehouseOperation);
 					uow.Save(op);
 				}

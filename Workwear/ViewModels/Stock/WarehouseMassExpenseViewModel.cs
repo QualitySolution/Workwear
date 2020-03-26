@@ -13,6 +13,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QSOrmProject;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
 using workwear.Domain.Stock;
 using workwear.JournalViewModels.Stock;
 
@@ -50,6 +51,22 @@ namespace workwear.ViewModels.Stock
 
 			Entity.ObservableItemsNomenclature.ListContentChanged += ObservableItemsNomenclature_ListContentChanged;
 			Entity.ObservableEmployeeCard.ListContentChanged += ObservableItemsNomenclature_ListContentChanged;
+			Entity.PropertyChanged += Entity_PropertyChanged;
+
+			NotifyConfiguration.Instance.BatchSubscribeOnEntity<WarehouseOperation>(HandleBatchEntityChangeHandler);
+		}
+
+
+		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(Entity.WarehouseFrom))
+				ValidateNomenclature();
+		}
+
+
+		void HandleBatchEntityChangeHandler(EntityChangeEvent[] changeEvents)
+		{
+			ValidateNomenclature();
 		}
 
 		void ObservableItemsNomenclature_ListContentChanged(object sender, EventArgs e)

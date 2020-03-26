@@ -339,14 +339,14 @@ namespace workwear.Dialogs.Organization
 				ycomboWearStd.ItemsEnum = typeof(SizeStandartMenWear);
 				ycomboShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
 				ycomboWinterShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
-				SizeHelper.FillSizeCombo(ycomboWearGrowth, SizeHelper.GetSizesList(GrowthStandartWear.Men, GetExcludedSizeUse()));
+				SizeHelper.FillSizeCombo(ycomboWearGrowth, SizeHelper.GetSizesList(GrowthStandartWear.Men, SizeHelper.GetExcludedSizeUseForEmployee()));
 			}
 			else if (Entity.Sex == Sex.F)
 			{
 				ycomboWearStd.ItemsEnum = typeof(SizeStandartWomenWear);
 				ycomboShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
 				ycomboWinterShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
-				SizeHelper.FillSizeCombo(ycomboWearGrowth, SizeHelper.GetSizesList(GrowthStandartWear.Women, GetExcludedSizeUse()));
+				SizeHelper.FillSizeCombo(ycomboWearGrowth, SizeHelper.GetSizesList(GrowthStandartWear.Women, SizeHelper.GetExcludedSizeUseForEmployee()));
 			}
 			else
 			{
@@ -360,7 +360,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnYcomboHeaddressChanged(object sender, EventArgs e)
 		{
 			if (ycomboHeaddressStd.SelectedItemOrNull != null)
-				SizeHelper.FillSizeCombo(ycomboHeaddressSize, SizeHelper.GetSizesList(ycomboHeaddressStd.SelectedItem, GetExcludedSizeUse()));
+				SizeHelper.FillSizeCombo(ycomboHeaddressSize, SizeHelper.GetSizesList(ycomboHeaddressStd.SelectedItem, SizeHelper.GetExcludedSizeUseForEmployee()));
 			else
 				ycomboHeaddressSize.Clear();
 		}
@@ -368,7 +368,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnYcomboWearStdChanged(object sender, EventArgs e)
 		{
 			if (ycomboWearStd.SelectedItemOrNull != null)
-				SizeHelper.FillSizeCombo(ycomboWearSize, SizeHelper.GetSizesList(ycomboWearStd.SelectedItem, GetExcludedSizeUse()));
+				SizeHelper.FillSizeCombo(ycomboWearSize, SizeHelper.GetSizesList(ycomboWearStd.SelectedItem, SizeHelper.GetExcludedSizeUseForEmployee()));
 			else
 				ycomboWearSize.Clear();
 		}
@@ -376,7 +376,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnYcomboShoesStdChanged(object sender, EventArgs e)
 		{
 			if (ycomboShoesStd.SelectedItemOrNull != null)
-				SizeHelper.FillSizeCombo(ycomboShoesSize, SizeHelper.GetSizesList(ycomboShoesStd.SelectedItem, GetExcludedSizeUse()));
+				SizeHelper.FillSizeCombo(ycomboShoesSize, SizeHelper.GetSizesList(ycomboShoesStd.SelectedItem, SizeHelper.GetExcludedSizeUseForEmployee()));
 			else
 				ycomboShoesSize.Clear();
 		}
@@ -384,7 +384,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnYcomboWinterShoesStdChanged(object sender, EventArgs e)
 		{
 			if (ycomboWinterShoesStd.SelectedItemOrNull != null)
-				SizeHelper.FillSizeCombo(ycomboWinterShoesSize, SizeHelper.GetSizesList(ycomboWinterShoesStd.SelectedItem, GetExcludedSizeUse()));
+				SizeHelper.FillSizeCombo(ycomboWinterShoesSize, SizeHelper.GetSizesList(ycomboWinterShoesStd.SelectedItem, SizeHelper.GetExcludedSizeUseForEmployee()));
 			else
 				ycomboWinterShoesSize.Clear();
 		}
@@ -392,7 +392,7 @@ namespace workwear.Dialogs.Organization
 		protected void OnYcomboGlovesStdChanged(object sender, EventArgs e)
 		{
 			if (ycomboGlovesStd.SelectedItemOrNull != null)
-				SizeHelper.FillSizeCombo(ycomboGlovesSize, SizeHelper.GetSizesList(ycomboGlovesStd.SelectedItem, GetExcludedSizeUse()));
+				SizeHelper.FillSizeCombo(ycomboGlovesSize, SizeHelper.GetSizesList(ycomboGlovesStd.SelectedItem, SizeHelper.GetExcludedSizeUseForEmployee()));
 			else
 				ycomboGlovesSize.Clear();
 		}
@@ -505,11 +505,6 @@ namespace workwear.Dialogs.Organization
 			TabParent.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
 							  () => new QSReport.ReportViewDlg(reportInfo)
 							 );
-		}
-
-		private SizeUse[] GetExcludedSizeUse()
-		{
-			return BaseParameters.EmployeeSizeRanges ? new SizeUse[] { } : new SizeUse[] { SizeUse.СlothesOnly };
 		}
 
 		public override void Destroy()
