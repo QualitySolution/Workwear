@@ -1261,7 +1261,7 @@
             <property name="ShadowType">In</property>
             <property name="BorderWidth">3</property>
             <child>
-              <widget class="Gtk.TreeView" id="treeviewProperty">
+              <widget class="Gamma.GtkWidgets.yTreeView" id="treeviewProperty">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>
@@ -3575,7 +3575,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ExpenseDocDlg" design-size="668 418">
+  <widget class="Gtk.Bin" id="workwear.ExpenseDocDlg" design-size="744 415">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -3753,7 +3753,8 @@
                   <widget class="Gtk.Label" id="label3">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Склад:</property>
+                    <property name="LabelProp" translatable="yes">Склад&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
+                    <property name="UseMarkup">True</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">1</property>
