@@ -99,6 +99,8 @@
     <Compile Include="Integration\Stock\ExpenseIntegratedTest.cs" />
     <Compile Include="ViewModels\EntityViewModelsTests.cs" />
     <Compile Include="Integration\Stock\IncomeIntegratedTest.cs" />
+    <Compile Include="Measurements\SizeMatchTest.cs" />
+    <Compile Include="Stock\MassExpenseTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.Testing\QS.Testing.csproj">
@@ -141,6 +143,7 @@
     <Folder Include="Integration\Organization\" />
     <Folder Include="Integration\Stock\" />
     <Folder Include="ViewModels\" />
+    <Folder Include="Measurements\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
