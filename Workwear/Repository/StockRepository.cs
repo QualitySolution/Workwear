@@ -25,6 +25,7 @@ namespace workwear
 
 			Nomenclature nomenclatureAlias = null;
 
+			// null == null => null              null <=> null => true
 			var expensequery = QueryOver.Of<WarehouseOperation>(() => warehouseExpenseOperationAlias)
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
 				&& (warehouseExpenseOperationAlias.Size == warehouseOperationAlias.Size ||

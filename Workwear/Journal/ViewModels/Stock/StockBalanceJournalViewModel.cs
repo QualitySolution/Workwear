@@ -35,6 +35,7 @@ namespace workwear.Journal.ViewModels.Stock
 			CreateNodeActions();
 
 			UpdateOnChanges(typeof(WarehouseOperation), typeof(Nomenclature));
+			TabName = TabName = "Остатки по складу" + Filter.Warehouse?.Name;
 
 			Filter.PropertyChanged += (sender, e) => TabName = "Остатки по складу " + Filter.Warehouse?.Name;
 		}
@@ -51,6 +52,7 @@ namespace workwear.Journal.ViewModels.Stock
 			ItemsType itemtypesAlias = null;
 			MeasurementUnits unitsAlias = null;
 
+			// null == null => null              null <=> null => true
 			var expensequery = QueryOver.Of<WarehouseOperation>(() => warehouseExpenseOperationAlias)
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
 				&& (warehouseExpenseOperationAlias.Size == warehouseOperationAlias.Size ||
