@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using NHibernate.Mapping;
 using NUnit.Framework;
-using QS.Deletion;
+using QS.Deletion.Configuration;
 using QS.Deletion.Testing;
-using workwear.Domain.Operations;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
 using workwear.Domain.Statements;
 
 namespace WorkwearTest.Deletion
