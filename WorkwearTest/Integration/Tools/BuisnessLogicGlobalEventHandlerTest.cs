@@ -12,6 +12,10 @@ using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Tools;
+using workwear;
+using Autofac;
+using QS.Deletion;
+using System.Threading;
 
 namespace WorkwearTest.Integration.Tools
 {
@@ -271,6 +275,54 @@ namespace WorkwearTest.Integration.Tools
 					Assert.That(resultEmployee.WorkwearItems.First(e => e.Item.IsSame(nomenclatureType2)).NextIssue, 
 					Is.EqualTo(new DateTime(2018, 4, 22)));
 				}
+			}
+		}
+
+		[Test(Description = "Проверяем что не падаем при удаления сотрудника")]
+		[Category("real case")]
+		public void HandleDelete_CanDeleteEmployeeTest()
+		{
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку удаления сотрудника")) {
+				BuisnessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
+
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				uow.Save(nomenclature);
+
+				var norm = new Norm();
+				var normItem = norm.AddItem(nomenclatureType);
+				normItem.Amount = 1;
+				normItem.NormPeriod = NormPeriodType.Month;
+				normItem.PeriodCount = 2;
+				uow.Save(norm);
+
+				var employee = new EmployeeCard();
+				uow.Save(employee);
+
+				var expenseOp = new EmployeeIssueOperation();
+				expenseOp.OperationTime = new DateTime(2019, 1, 1);
+				expenseOp.ExpiryByNorm = new DateTime(2019, 4, 1);
+				expenseOp.Employee = employee;
+				expenseOp.Nomenclature = nomenclature;
+				expenseOp.NormItem = normItem;
+				expenseOp.Issued = 1;
+				uow.Save(nomenclature);
+				uow.Save(normItem);
+				uow.Save(expenseOp);
+				uow.Commit();
+
+				//FIXME Временно чтобы переделака не вызвала конфликт мержа в 2.4
+				Configure.ConfigureDeletion();
+				var deletion = new DeleteCore(DeleteConfig.Main, uow);
+				deletion.PrepareDeletion(typeof(EmployeeCard), employee.Id, CancellationToken.None);
+				deletion.RunDeletion(CancellationToken.None);
 			}
 		}
 	}
