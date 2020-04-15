@@ -33,7 +33,7 @@ node {
        try {
             sh '''
                 cd Workwear/WorkwearTest/bin/ReleaseWin
-                cp ../../../packages/NUnit.ConsoleRunner.3.10.0/tools/* .
+                cp ../../../packages/NUnit.ConsoleRunner.3.11.1/tools/* .
                 mono nunit3-console.exe WorkwearTest.dll
             '''
        } catch (e) {}
