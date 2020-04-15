@@ -21,7 +21,7 @@ namespace workwear.Views.Stock
 		{
 			datepicker.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
 			entryNumber.Binding.AddBinding(Entity, e => e.Id, w => w.Text, new IdToStringConverter()).InitializeFromSource();
-			entryUser.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? DomainHelper.GetObjectTilte(e.CreatedbyUser) : String.Empty, w => w.Text).InitializeFromSource();
+			entryUser.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? DomainHelper.GetTitle(e.CreatedbyUser) : String.Empty, w => w.Text).InitializeFromSource();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer).InitializeFromSource();
 			entityentryWarehouseFrom.ViewModel = ViewModel.WarehouseFromEntryViewModel;
 			entityentryWarehouseTo.ViewModel = ViewModel.WarehouseToEntryViewModel;

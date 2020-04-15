@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
+using QS.Deletion;
+using QS.Deletion.Views;
 using QS.Dialog;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.NotifyChange;
@@ -98,8 +100,12 @@ namespace workwear
 			builder.RegisterType<GtkQuestionDialogsInteractive>().As<IInteractiveQuestion>();
 			builder.RegisterType<GtkInteractiveService>().As<IInteractiveService>();
 			builder.RegisterType<GtkValidationViewFactory>().As<IValidationViewFactory>();
-			builder.RegisterType<GtkDeleteEntityService>().As<IDeleteEntityService>();
 			#endregion GtkUI
+			#region Удаление
+			builder.RegisterModule(new DeletionAutofacModule());
+			builder.RegisterType<DeleteEntityGUIService>().As<IDeleteEntityService>();
+			builder.Register(x => DeleteConfig.Main).AsSelf();
+			#endregion
 			//FIXME Нужно в конечнои итоге попытаться избавится от CommonServce вообще.
 			builder.RegisterType<CommonServices>().As<ICommonServices>();
 			builder.RegisterType<UserService>().As<IUserService>();
@@ -116,7 +122,7 @@ namespace workwear
 			builder.Register((ctx) => new AutofacViewModelsGtkPageFactory(AppDIContainer)).AsSelf();
 			builder.RegisterType<TdiNavigationManager>().AsSelf().As<INavigationManager>().As<ITdiCompatibilityNavigation>().SingleInstance();
 			builder.RegisterType<BasedOnNameTDIResolver>().As<ITDIWidgetResolver>();
-			builder.Register(cc => new ClassNamesBaseGtkViewResolver(typeof(RdlViewerView), typeof(OrganizationView))).As<IGtkViewResolver>();
+			builder.Register(cc => new ClassNamesBaseGtkViewResolver(typeof(RdlViewerView), typeof(OrganizationView), typeof(DeletionView))).As<IGtkViewResolver>();
 			#endregion
 
 			#region Старые диалоги

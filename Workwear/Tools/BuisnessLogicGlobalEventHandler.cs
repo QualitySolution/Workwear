@@ -52,6 +52,8 @@ namespace workwear.Tools
 			using(var uow = GetUnitOfWorkFactory.CreateWithoutRoot("Глобальный обработчик удаления операций выдачи")) {
 				foreach(var employeeGroup in changeEvents.GroupBy(x => (x.Entity as EmployeeIssueOperation).Employee.Id)) {
 					var employee = uow.GetById<EmployeeCard>(employeeGroup.Key);
+					if(employee == null)
+						continue; //Видимо сотрудник был удален, поэтому пересчитывать глупо.
 					var nomenclatures = employeeGroup.Select(x => x.GetOldValueCast<EmployeeIssueOperation, Nomenclature>(e => e.Nomenclature)).ToArray();
 					var types = NomenclatureRepository.GetTypesOfNomenclatures(uow, nomenclatures).ToArray();
 					employee.UpdateNextIssue(types);
