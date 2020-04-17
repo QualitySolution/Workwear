@@ -8,7 +8,7 @@ using QS.DomainModel.UoW;
 using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
-using QS.Validation.GtkUI;
+using QS.Validation;
 using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;

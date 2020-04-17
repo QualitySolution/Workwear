@@ -4,7 +4,7 @@ using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
-using QS.Validation.GtkUI;
+using QS.Validation;
 using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;

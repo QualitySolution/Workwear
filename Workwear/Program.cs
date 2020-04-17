@@ -2,7 +2,6 @@ using System;
 using Gtk;
 using NLog;
 using QS.ErrorReporting;
-using QS.ErrorReporting.GtkUI;
 using QS.Project.Repositories;
 using QS.Updater;
 using QS.Updater.DB;
@@ -26,7 +25,12 @@ namespace workwear
 				WindowStartupFix.WindowsCheck();
 				Application.Init();
 				QSMain.GuiThread = System.Threading.Thread.CurrentThread;
-				UnhandledExceptionHandler.SubscribeToUnhadledExceptions();
+#if DEBUG
+				var errorSettings = new ErrorReportingSettings(false, true, false, null);
+#else
+				var errorSettings = new ErrorReportingSettings(true, false, true, 300);
+#endif
+				UnhandledExceptionHandler.SubscribeToUnhadledExceptions(errorSettings);
 				UnhandledExceptionHandler.GuiThread = System.Threading.Thread.CurrentThread;
 				UnhandledExceptionHandler.ApplicationInfo = new ApplicationVersionInfo();
 				//Настройка обычных обработчиков ошибок.

@@ -19,7 +19,6 @@ using QS.Report.Views;
 using QS.Services;
 using QS.Tdi;
 using QS.Validation;
-using QS.Validation.GtkUI;
 using QS.ViewModels;
 using QS.Views.Resolve;
 using QSOrmProject;
@@ -82,7 +81,6 @@ namespace workwear
 
 			NotifyConfiguration.Enable();
 			BuisnessLogicGlobalEventHandler.Init(new GtkQuestionDialogsInteractive());
-			GtkAppServicesConfig.CreateDefaultGtkServices();
 			JournalsColumnsConfigs.RegisterColumns();
 		}
 
@@ -112,7 +110,7 @@ namespace workwear
 			//FIXME Нужно в конечнои итоге попытаться избавится от CommonServce вообще.
 			builder.RegisterType<CommonServices>().As<ICommonServices>();
 			builder.RegisterType<UserService>().As<IUserService>();
-			builder.RegisterType<ValidationService>().As<IValidationService>();
+			builder.RegisterType<ObjectValidator>().As<IValidator>();
 			//FIXME Реализовать везде возможность отсутствия сервиса прав, чтобы не приходилось создавать то что не используется
 			builder.RegisterType<DefaultAllowedPermissionService>().As<IPermissionService>();
 			builder.RegisterType<CommonMessages>().AsSelf();
