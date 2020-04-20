@@ -16,8 +16,8 @@ namespace workwear.HibernateMapping.Statements
 			Map(x => x.Size).Column("size");
 			Map(x => x.WearGrowth).Column("growth");
 
-			References(x => x.IssuanceSheet).Column("issuance_sheet_id");
-			References(x => x.Employee).Column("employee_id");
+			References(x => x.IssuanceSheet).Column("issuance_sheet_id").Not.Nullable();
+			References(x => x.Employee).Column("employee_id").Not.Nullable();
 			References(x => x.Nomenclature).Column("nomenclature_id");
 			References(x => x.ItemsType).Column("itemtype_id");
 			References(x => x.IssueOperation).Column("issued_operation_id");

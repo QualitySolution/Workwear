@@ -23,6 +23,7 @@ using QSProjectsLib;
 [assembly: InternalsVisibleTo("WorkwearTest")]
 
 [assembly: AssemblyAuthor("Ганьков Андрей <gav@qsolution.ru>")]
+[assembly: AssemblyAuthor("Солдаткина Алина <alina@qsolution.ru>")]
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
