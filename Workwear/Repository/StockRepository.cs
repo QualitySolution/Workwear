@@ -13,7 +13,7 @@ namespace workwear
 {
 	public class StockRepository
 	{
-		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		public virtual IList<StockBalanceDTO> StockBalances(IUnitOfWork uow, Warehouse warehouse, IList<Nomenclature> nomenclatures, DateTime onTime)
 		{
@@ -25,7 +25,7 @@ namespace workwear
 
 			Nomenclature nomenclatureAlias = null;
 
-			// null== null => null              null <=> null => true
+			// null == null => null              null <=> null => true
 			var expensequery = QueryOver.Of<WarehouseOperation>(() => warehouseExpenseOperationAlias)
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
 				&& (warehouseExpenseOperationAlias.Size == warehouseOperationAlias.Size ||
@@ -91,8 +91,8 @@ namespace workwear
 
 	public class StockBalanceDTO
 	{
-		public Nomenclature Nomenclature { get; set;}
-		public int NomenclatureId { get; set;}
+		public Nomenclature Nomenclature { get; set; }
+		public int NomenclatureId { get; set; }
 
 		public string Size { get; set; }
 		public string Growth { get; set; }

@@ -241,6 +241,7 @@ namespace workwear.Domain.Operations
 			Issued = item.Amount;
 			Returned = 0;
 			IssuedOperation = null;
+			WarehouseOperation = item.WarehouseOperation;
 		}
 
 		public virtual void Update(IUnitOfWork uow, IInteractiveQuestion askUser, IncomeItem item)

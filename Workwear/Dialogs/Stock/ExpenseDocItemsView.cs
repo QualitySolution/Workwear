@@ -48,6 +48,7 @@ namespace workwear
 				CalculateTotal();
 
 				ExpenceDoc.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
+				buttonAdd.Sensitive = ExpenceDoc.Warehouse != null;
 			}
 		}
 
@@ -89,6 +90,8 @@ namespace workwear
 
 				buttonFillBuhDoc.Visible = ExpenceDoc.Operation == ExpenseOperations.Employee;
 			}
+			if(e.PropertyName == nameof(ExpenceDoc.Warehouse))
+				buttonAdd.Sensitive = expenceDoc.Warehouse != null;
 		}
 
 		public ExpenseDocItemsView()
@@ -127,10 +130,8 @@ namespace workwear
 			if(ExpenceDoc.Operation == ExpenseOperations.Object)
 				selectJournal.ViewModel.Filter.ItemTypeCategory = Domain.Regulations.ItemTypeCategory.property;
 
-			if(ExpenceDoc.Employee?.Subdivision?.Warehouse != null) {
-				selectJournal.ViewModel.Filter.Warehouse = ExpenceDoc.Employee?.Subdivision?.Warehouse;
-			}
-
+			selectJournal.ViewModel.Filter.Warehouse = ExpenceDoc.Warehouse;
+			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += AddNomenclature_OnSelectResult;
 		}
