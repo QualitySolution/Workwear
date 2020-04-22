@@ -915,8 +915,6 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
   `responsible_person_id` INT UNSIGNED NULL DEFAULT NULL,
   `head_of_division_person_id` INT UNSIGNED NULL DEFAULT NULL,
   `stock_expense_id` INT UNSIGNED NULL DEFAULT NULL,
-  `size` VARCHAR(10) NULL DEFAULT NULL,
-  `growth` VARCHAR(10) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_issuance_sheet_1_idx` (`organization_id` ASC),
   INDEX `fk_issuance_sheet_3_idx` (`responsible_person_id` ASC),
