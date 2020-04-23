@@ -2,16 +2,29 @@ Unicode true
 ;--------------------------------
 !define PRODUCT_VERSION "2.4"
 !define NET_VERSION "4.6.1"
-!define PRODUCT_NAME "QS: Спецодежда и имущество"
-!define SHORTCUT_NAME "QS Спецодежда и имущество"
-!define MENU_DIR_NAME "Спецодежда и имущество"
 !define EXE_NAME "workwear"
+
+!ifdef BETA
+	!define PRODUCT_NAME "QS: Спецодежда и имущество БЕТА"
+	!define SHORTCUT_NAME "QS Спецодежда и имущество БЕТА"
+	!define MENU_DIR_NAME "Спецодежда и имущество БЕТА"
+	!define APP_DIR_NAME "Спецодежда и имущество beta"
+	!define UNINSTAL_KEY "workwear-beta"
+	!define SETUP_POSTFIX "-beta"
+!else
+	!define PRODUCT_NAME "QS: Спецодежда и имущество"
+	!define SHORTCUT_NAME "QS Спецодежда и имущество"
+	!define MENU_DIR_NAME "Спецодежда и имущество"
+	!define APP_DIR_NAME "Спецодежда и имущество"
+	!define UNINSTAL_KEY "workwear"
+	!define SETUP_POSTFIX ""
+!endif
 
 ; The name of the installer
 Name "${PRODUCT_NAME}"
 
 ; The file to write
-OutFile "${EXE_NAME}-${PRODUCT_VERSION}.exe"
+OutFile "${EXE_NAME}-${PRODUCT_VERSION}${SETUP_POSTFIX}.exe"
 
 !include "MUI.nsh"
 !include "x64.nsh"
@@ -20,7 +33,7 @@ OutFile "${EXE_NAME}-${PRODUCT_VERSION}.exe"
 !include "NsisDotNetChecker\nsis\DotNetChecker_ru.nsh"
 
 ; The default installation directory
-InstallDir "$PROGRAMFILES\${MENU_DIR_NAME}"
+InstallDir $PROGRAMFILES\${APP_DIR_NAME}
 
 ; Request application privileges for Windows Vista
 RequestExecutionLevel admin
@@ -166,13 +179,13 @@ Section "${PRODUCT_NAME}" SecProgram
   File /r "Files\*.*"
   
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${EXE_NAME}" "DisplayName" "${PRODUCT_NAME}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${EXE_NAME}" "UninstallString" '"$INSTDIR\uninstall.exe"'
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${EXE_NAME}" "DisplayIcon" '"$INSTDIR\${EXE_NAME}.exe"'
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${EXE_NAME}" "Publisher" "Quality Solution"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${EXE_NAME}" "DisplayVersion" "${PRODUCT_VERSION}"
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${EXE_NAME}" "NoModify" 1
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${EXE_NAME}" "NoRepair" 1
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${UNINSTAL_KEY}" "DisplayName" "${PRODUCT_NAME}"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${UNINSTAL_KEY}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${UNINSTAL_KEY}" "DisplayIcon" '"$INSTDIR\${EXE_NAME}.exe"'
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${UNINSTAL_KEY}" "Publisher" "Quality Solution"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${UNINSTAL_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${UNINSTAL_KEY}" "NoModify" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${UNINSTAL_KEY}" "NoRepair" 1
   WriteUninstaller "uninstall.exe"
 
   ; Start Menu Shortcuts
@@ -295,7 +308,7 @@ Section "Uninstall"
   
   SetShellVarContext all
   ; Remove registry keys
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${EXE_NAME}"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${UNINSTAL_KEY}"
 
   ; Remove files and uninstaller
   Delete $INSTDIR\*
