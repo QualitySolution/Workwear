@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Utilities;
 using QS.Utilities.Dates;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Measurements;
 
 namespace workwear.Domain.Company
 {
@@ -46,14 +49,6 @@ namespace workwear.Domain.Company
 			set { SetField (ref activeNormItem, value, () => ActiveNormItem); }
 		}
 
-		Nomenclature matchedNomenclature;
-
-		[Display (Name = "Подобранная номенклатура")]
-		public virtual Nomenclature MatchedNomenclature {
-			get { return matchedNomenclature; }
-			set { SetField (ref matchedNomenclature, value, () => MatchedNomenclature); }
-		}
-
 		DateTime created;
 
 		[Display (Name = "Создана")]
@@ -90,20 +85,20 @@ namespace workwear.Domain.Company
 
 		#region Не хранимое в базе значение
 
-		int inStock;
+		IList<Nomenclature> matchedNomenclature;
 
-		[Display (Name = "На складе")]
-		public virtual int InStock {
-			get { return inStock; }
-			set { SetField (ref inStock, value, () => InStock); }
+		[Display(Name = "Подходящие номенклатуры")]
+		public virtual IList<Nomenclature> MatchedNomenclature {
+			get { return matchedNomenclature; }
+			set { SetField(ref matchedNomenclature, value, () => MatchedNomenclature); }
 		}
 
-		StockStateInfo inStockState;
+		IList<StockBalanceDTO> inStock;
 
-		[Display (Name = "Статус")]
-		public virtual StockStateInfo InStockState {
-			get { return inStockState; }
-			set { SetField (ref inStockState, value, () => InStockState); }
+		[Display (Name = "На складе")]
+		public virtual IList<StockBalanceDTO> InStock {
+			get { return inStock; }
+			set { SetField (ref inStock, value, () => InStock); }
 		}
 
 		#endregion
@@ -132,6 +127,44 @@ namespace workwear.Domain.Company
 			}
 		}
 
+		public virtual StockStateInfo InStockState {
+			get {
+				if(InStock == null || MatchedNomenclature == null)
+					return StockStateInfo.NotLoaded;
+
+				if(!matchedNomenclature.Any())
+					return StockStateInfo.UnknownNomenclature;
+
+				if(InStock.Any(x => x.Amount >= NeededAmount))
+					return StockStateInfo.Enough;
+
+				if(InStock.Sum(x => x.Amount) <= 0)
+					return StockStateInfo.OutOfStock;
+
+				return StockStateInfo.NotEnough;
+			}
+		}
+
+		public virtual IEnumerable<StockBalanceDTO> BestChoiceInStock => InStock
+			.OrderBy(x => x.WearPercent)
+			.ThenByDescending(x => x.Amount);
+
+		public virtual string MatchedNomenclatureShortText {
+			get {
+				if(InStockState == StockStateInfo.UnknownNomenclature)
+					return "нет подходящей";
+
+				if(InStock == null || InStock.Count == 0)
+					return String.Empty;
+
+				var first = BestChoiceInStock.First();
+				var text = first.StockPosition.Title + " - " + Item.Units.MakeAmountShortStr(first.Amount);
+				if(InStock.Count > 1)
+					text += NumberToTextRus.FormatCase(InStock.Count - 1, " (еще {0} вариант)", " (еще {0} варианта)", " (еще {0} вариантов)");
+				return text;
+			}
+		}
+
 		#endregion
 
 		public EmployeeCardItem ()
@@ -146,76 +179,31 @@ namespace workwear.Domain.Company
 			NextIssue = Created = DateTime.Today;
 		}
 
-		public virtual void FindMatchedNomenclature(IUnitOfWork uow)
+		public virtual bool MatcheStockPosition(StockPosition stockPosition)
 		{
-			int neededCount = ActiveNormItem.Amount - Amount;
+			if(!MatchedNomenclature.Any(n => n.Id == stockPosition.Nomenclature.Id))
+				return false;
 
-			var nomenclatures = StockRepository.MatchNomenclaturesBySize (uow, Item, EmployeeCard);
-			if(nomenclatures == null || nomenclatures.Count == 0)
-			{
-				logger.Warn ("Подходящая по размерам номенклатура, для типа <{0}> не найдена.", Item.Name);
-				MatchedNomenclature = null;
-				InStockState = StockStateInfo.UnknownNomenclature;
-				return;
-			}
-			var stock = StockRepository.BalanceInStockDetail (uow, nomenclatures);
+			if(Item.WearCategory == null || !SizeHelper.HasСlothesSizeStd(Item.WearCategory.Value))
+				return true;
 
-			if(stock.Count == 0)
-			{
-				logger.Debug ("Подходящие номенклатуры на складе отсутствуют, выбираем любую...");
-				MatchedNomenclature = nomenclatures.OrderBy (n => n.Id).Last ();
-				SetInStockAmount (0);
-				return;
+			var employeeSize = EmployeeCard.GetSize(Item.WearCategory.Value);
+			if(employeeSize == null || String.IsNullOrEmpty(employeeSize.Size) || String.IsNullOrEmpty(employeeSize.StandardCode)) {
+				logger.Warn("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", Item.Name);
+				return false;
 			}
 
-			var grouped = stock.GroupBy (s => s.NomenclatureId);
+			var validSizes = SizeHelper.MatchSize(employeeSize, SizeUsePlace.Сlothes);
+			if(!validSizes.Any(s => s.StandardCode == stockPosition.Nomenclature.SizeStd && s.Size == stockPosition.Size))
+				return false;
 
-			var fullLife = grouped.FirstOrDefault (gp => gp.Where (s => s.Life == 1).Sum (s => s.Amount) >= neededCount);
-
-			Nomenclature suggested = fullLife != null ? fullLife.First ().Nomenclature : null;
-
-			if (suggested == null) {
-				logger.Debug ("Достаточного количества новых <{0}> на складе не найдено.", Item.Name);
-
-				int lastSum = -1;
-				foreach(var gr in grouped)
-				{
-					int newSum = gr.Sum (s => s.Amount);
-					if(newSum > lastSum)
-					{
-						suggested = gr.First ().Nomenclature;
-						lastSum = newSum;
-					}
-				}
-			}	
-				
-			int suggestedAmount = grouped.First (gp => gp.Key == suggested.Id).Sum (s => s.Amount);
-
-			if(DomainHelper.EqualDomainObjects (MatchedNomenclature, suggested))
-			{
-				logger.Debug ("Только обновляем количество на складе <{0}> -> <{1}>", InStock, suggestedAmount);
+			if(SizeHelper.HasGrowthStandart(Item.WearCategory.Value)) {
+				var growStds = SizeHelper.GetGrowthStandart(Item.WearCategory.Value, EmployeeCard.Sex, SizeUsePlace.Сlothes);
+				var validGrowths = SizeHelper.MatchGrow(growStds, EmployeeCard.WearGrowth, SizeUsePlace.Сlothes);
+				if(!validGrowths.Any(s => s.StandardCode == stockPosition.Nomenclature.WearGrowthStd && s.Size == stockPosition.Growth))
+					return false;
 			}
-			else
-			{
-				logger.Debug ("Изменяем подобранную номенклатуру <{0}> -> <{1}>", 
-					MatchedNomenclature != null ? MatchedNomenclature.Name : String.Empty,
-					suggested);
-				MatchedNomenclature = suggested;
-			}
-
-			SetInStockAmount (suggestedAmount);
-		}
-
-		public virtual void SetInStockAmount(int inStock)
-		{
-			int neededCount = ActiveNormItem.Amount - Amount;
-			InStock = inStock;
-			if (InStock >= neededCount)
-				InStockState = StockStateInfo.Enough;
-			else if(InStock == 0)
-				InStockState = StockStateInfo.OutOfStock;
-			else
-				InStockState = StockStateInfo.NotEnough;
+			return true;
 		}
 
 		public virtual void UpdateNextIssue(IUnitOfWork uow)

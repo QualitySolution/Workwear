@@ -93,7 +93,7 @@ namespace workwear
 			if (valid.RunDlgIfNotValid ((Gtk.Window)this.Toplevel))
 				return false;
 
-			Func<string, bool> ask = MessageDialogHelper.RunQuestionDialog;
+			var ask = new GtkQuestionDialogsInteractive();
 			Entity.UpdateOperations(UoW, ask);
 			UoWGeneric.Save ();
 			if(Entity.Operation == IncomeOperations.Return)

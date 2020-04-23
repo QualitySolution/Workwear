@@ -49,36 +49,13 @@ namespace workwear.Domain.Stock
 			set { SetField(ref warehouseOperation, value); }
 		}
 
-		string size;
-
-		[Display(Name = "Размер")]
-		public virtual string Size {
-			get { return size; }
-			set { SetField(ref size, value, () => Size); }
-		}
-
-		string wearGrowth;
-
-		[Display(Name = "Рост одежды")]
-		public virtual string WearGrowth {
-			get { return wearGrowth; }
-			set { SetField(ref wearGrowth, value, () => WearGrowth); }
-		}
-
+		#endregion
 
 		#region Расчетные
 
-		public virtual string Title {
-			get {
-				return String.Format("Перевод со склада {0} на склад {1} {2} в количестве ",
-			  Nomenclature.Name,
-			  Amount,
-			  Nomenclature.Type.Units.Name
-		  );
-			}
-		}
+		public virtual string Title => $"Перемещение {StockPosition.Title} x {Amount} со склада {document.WarehouseFrom.Name} на склад {document.WarehouseTo.Name}";
 
-		#endregion
+		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WarehouseOperation.Size, WarehouseOperation.Growth, WarehouseOperation.WearPercent);
 
 		#endregion
 
@@ -87,9 +64,16 @@ namespace workwear.Domain.Stock
 
 		}
 
-		public TransferItem(Transfer transfer)
+		public TransferItem(Transfer transfer, StockPosition position, int amount)
 		{
 			this.document = transfer;
+			this.warehouseOperation.Nomenclature = this.nomenclature = position.Nomenclature;
+			this.warehouseOperation.Size = position.Size;
+			this.warehouseOperation.Growth = position.Growth;
+			this.warehouseOperation.WearPercent = position.WearPercent;
+			this.warehouseOperation.Amount = this.amount = amount;
+			this.warehouseOperation.ExpenseWarehouse = transfer.WarehouseFrom;
+			this.warehouseOperation.OperationTime = transfer.Date;
 		}
 
 		#region Функции

@@ -6,9 +6,9 @@ using Gamma.Utilities;
 using Gtk;
 using NLog;
 using QS.Dialog.Gtk;
-using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Stock;
 using workwear.Measurements;
 
 namespace workwear
@@ -48,6 +48,7 @@ namespace workwear
 				CalculateTotal();
 
 				ExpenceDoc.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
+				buttonAdd.Sensitive = ExpenceDoc.Warehouse != null;
 			}
 		}
 
@@ -89,6 +90,8 @@ namespace workwear
 
 				buttonFillBuhDoc.Visible = ExpenceDoc.Operation == ExpenseOperations.Employee;
 			}
+			if(e.PropertyName == nameof(ExpenceDoc.Warehouse))
+				buttonAdd.Sensitive = expenceDoc.Warehouse != null;
 		}
 
 		public ExpenseDocItemsView()
@@ -105,7 +108,7 @@ namespace workwear
 					.AddComboRenderer(x => x.WearGrowth)
 					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
-				.AddColumn ("Состояние").AddTextRenderer (e => (e.IncomeOn.LifePercent).ToString ("P0"))
+				.AddColumn ("Процент износа").AddTextRenderer (e => (e.WearPercent).ToString ("P0"))
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument).Editable()
@@ -123,22 +126,20 @@ namespace workwear
 
 		protected void OnButtonAddClicked (object sender, EventArgs e)
 		{
-			var selectDlg = new ReferenceRepresentation (new ViewModel.StockBalanceVM (MyOrmDialog.UoW,
-				ExpenceDoc.Operation == ExpenseOperations.Employee ? ViewModel.StockBalanceVMMode.DisplayAll : ViewModel.StockBalanceVMMode.OnlyProperties,
-			                                                                           ViewModel.StockBalanceVMGroupBy.IncomeItem
-			),
-			     "Остатки на складе");
-			selectDlg.Mode = OrmReferenceMode.MultiSelect;
-			selectDlg.ObjectSelected += SelectDlg_ObjectSelected;
+			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<StockBalanceJournalViewModel>(MyTdiDialog, QS.Navigation.OpenPageOptions.AsSlave);
+			if(ExpenceDoc.Operation == ExpenseOperations.Object)
+				selectJournal.ViewModel.Filter.ItemTypeCategory = Domain.Regulations.ItemTypeCategory.property;
 
-			OpenSlaveTab(selectDlg);
+			selectJournal.ViewModel.Filter.Warehouse = ExpenceDoc.Warehouse;
+			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
+			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += AddNomenclature_OnSelectResult;
 		}
 
-		void SelectDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)
+		void AddNomenclature_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			foreach(var node in e.GetNodes<ViewModel.StockBalanceVMNode> ())
-			{
-				ExpenceDoc.AddItem (MyOrmDialog.UoW.GetById<IncomeItem> (node.Id));
+			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
+				ExpenceDoc.AddItem(node.GetStockPosition(UoW));
 			}
 			CalculateTotal();
 		}

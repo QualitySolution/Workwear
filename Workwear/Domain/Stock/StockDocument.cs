@@ -9,7 +9,7 @@ namespace workwear.Domain.Stock
 	{
 		public virtual int Id { get; set; }
 
-		DateTime date;
+		DateTime date = DateTime.Now;
 
 		[Display(Name = "Дата")]
 		public virtual DateTime Date

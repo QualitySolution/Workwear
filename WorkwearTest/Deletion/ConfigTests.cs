@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using NHibernate.Mapping;
 using NUnit.Framework;
-using QS.Deletion;
+using QS.Deletion.Configuration;
 using QS.Deletion.Testing;
-using workwear.Domain.Operations;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
 using workwear.Domain.Statements;
 
 namespace WorkwearTest.Deletion
@@ -21,6 +21,9 @@ namespace WorkwearTest.Deletion
 			//Так как этот класс в общей библиотеке и пока никак не используется для удаления.
 			//IgnoreMissingClass.Add(typeof(QS.Project.Domain.UserBase));
 			AddIgnoredProperty<EmployeeIssueOperation>(x => x.IssuedOperation, "Потому что если мы удаляем операцию списания, мы не должны при этом удалять операцию выдачи.");
+			AddIgnoredProperty<EmployeeIssueOperation>(x => x.WarehouseOperation, "Является лиш дополнительной сылкой на операцию. И скорей всего и так вместе будет удалятся за счет других ссылок.");
+			AddIgnoredProperty<SubdivisionIssueOperation>(x => x.IssuedOperation, "Потому что если мы удаляем операцию списания, мы не должны при этом удалять операцию выдачи.");
+			AddIgnoredProperty<SubdivisionIssueOperation>(x => x.WarehouseOperation, "Является лиш дополнительной сылкой на операцию. И скорей всего и так вместе будет удалятся за счет других ссылок.");
 			AddIgnoredProperty<EmployeeCardItem>(x => x.ActiveNormItem, "Должно удалятся более сложным способом, а именно через обновление потребностей.");
 			AddIgnoredProperty<IssuanceSheetItem>(x => x.IssueOperation, "Является дополнительной ссылкой на операцию, а не основной, поэтому не должно удалять операцию.");
 		}
@@ -81,6 +84,8 @@ namespace WorkwearTest.Deletion
 			base.NHMappedCollectionsAllInOneTest(mapping, property);
 		}
 
+		#region Оформление заголовков
+
 		public new static IEnumerable AllDeleteRules => DeleteConfigTestBase.AllDeleteRules;
 
 		[Test, TestCaseSource(nameof(AllDeleteRules))]
@@ -88,5 +93,13 @@ namespace WorkwearTest.Deletion
 		{
 			base.DeleteRules_ExistTitle_Test(info);
 		}
+
+		[Test, TestCaseSource(nameof(AllDeleteRules))]
+		public override void DeleteRules_ExistAppellativeAttribute_Test(IDeleteRule info)
+		{
+			base.DeleteRules_ExistAppellativeAttribute_Test(info);
+		}
+
+		#endregion
 	}
 }

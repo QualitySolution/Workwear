@@ -12,8 +12,10 @@ using QS.Project.Domain;
 using QS.Utilities.Text;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
+using workwear.Domain.Stock;
 using workwear.Measurements;
 using workwear.Repository.Operations;
+using workwear.Repository.Stock;
 
 namespace workwear.Domain.Company
 {
@@ -233,7 +235,7 @@ namespace workwear.Domain.Company
 
 		string glovesSizeStd;
 
-		[Display (Name = "Стандарт размера одежды")]
+		[Display (Name = "Стандарт размера перчаток")]
 		public virtual string GlovesSizeStd {
 			get { return glovesSizeStd; }
 			set { SetField (ref glovesSizeStd, value, () => GlovesSizeStd); }
@@ -241,7 +243,7 @@ namespace workwear.Domain.Company
 
 		string glovesSize;
 
-		[Display (Name = "Размер одежды")]
+		[Display (Name = "Размер перчаток")]
 		public virtual string GlovesSize { 
 			get { return glovesSize; } 
 			set	{ SetField (ref glovesSize, value, () => GlovesSize); }
@@ -317,6 +319,12 @@ namespace workwear.Domain.Company
 		public virtual string ShortName {
 			get { return PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic); }
 		}
+
+		#endregion
+
+		#region Фильтрованные коллекции
+
+		public virtual IEnumerable<EmployeeCardItem> UnderreceivedItems => WorkwearItems.Where(x => x.NeededAmount > 0);
 
 		#endregion
 
@@ -472,24 +480,36 @@ namespace workwear.Domain.Company
 			}
 		}
 
-		public virtual void FillWearInStockInfo(IUnitOfWork uow)
+		public virtual void FillWearInStockInfo(IUnitOfWork uow, Warehouse warehouse, DateTime onTime, bool onlyUnderreceived = false)
 		{
-			var nomenclatures = WorkwearItems.Where (i => i.MatchedNomenclature != null).Select (i => i.MatchedNomenclature).ToList ();
-			if (nomenclatures.Count == 0)
+			var actualItems = onlyUnderreceived ? UnderreceivedItems : WorkwearItems;
+
+			var itemsTypes = actualItems.Select(x => x.Item).ToArray();
+			if(itemsTypes.Length == 0)
 				return;
-			var stock = StockRepository.BalanceInStockSummary (uow, nomenclatures);
-			foreach(var item in WorkwearItems)
+
+			var nomenclaturesByType = NomenclatureRepository.GetSuitableNomenclatures(uow, itemsTypes);
+			if (nomenclaturesByType.Count == 0)
+				return;
+
+			foreach(var item in actualItems) {
+				if(nomenclaturesByType.ContainsKey(item.Item)) {
+					item.MatchedNomenclature = nomenclaturesByType[item.Item];
+				}
+			}
+
+			var allNomenclatures = nomenclaturesByType.SelectMany(pair => pair.Value).ToList();
+			var stockRepo = new StockRepository();
+			var stock = stockRepo.StockBalances (uow, warehouse, allNomenclatures, onTime);
+			foreach(var item in actualItems)
 			{
-				if (item.MatchedNomenclature == null)
-					continue;
-				var inStock = stock.FirstOrDefault (s => s.Nomenclature == item.MatchedNomenclature);
-				item.SetInStockAmount (inStock == null ? 0 : inStock.Amount);
+				item.InStock = stock.Where(x => item.MatcheStockPosition(x.StockPosition)).ToList();
 			}
 		}
 
 		#endregion
 
-		#region Функции работы с вакансиями
+		#region Функции работы с отпусками
 
 		public virtual void AddVacation(EmployeeVacation vacation)
 		{

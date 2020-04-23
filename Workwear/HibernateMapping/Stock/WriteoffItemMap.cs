@@ -15,11 +15,11 @@ namespace workwear.HMap
 			Map(x => x.WearGrowth).Column("growth");
 
 			References(x => x.Document).Column("stock_write_off_id");
-			References (x => x.Nomenclature).Column ("nomenclature_id");
-			References (x => x.IssuedOn).Column ("stock_expense_detail_id");
-			References (x => x.IncomeOn).Column ("stock_income_detail_id");
-			References(x => x.EmployeeIssueOperation).Column("employee_issue_operation_id").Cascade.All();
-			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Not.Nullable();
+			References(x => x.Nomenclature).Column ("nomenclature_id");
+			References(x => x.EmployeeWriteoffOperation).Column("employee_issue_operation_id").Cascade.All();
+			References(x => x.SubdivisionWriteoffOperation).Column ("subdivision_issue_operation_id").Cascade.All();
+			References(x => x.Warehouse).Column("warehouse_id");
+			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Cascade.All();
 		}
 	}
 }

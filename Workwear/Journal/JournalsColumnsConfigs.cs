@@ -1,11 +1,12 @@
 ﻿using System;
 using Gamma.ColumnConfig;
 using QS.Journal.GtkUI;
+using workwear.Journal.ViewModels.Stock;
 using workwear.JournalViewModels.Company;
 using workwear.JournalViewModels.Statements;
 using workwear.JournalViewModels.Stock;
 
-namespace workwear.JournalViewModels
+namespace workwear.Journal
 {
 	public static class JournalsColumnsConfigs
 	{
@@ -44,6 +45,16 @@ namespace workwear.JournalViewModels
 				.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 				.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 				.Finish()
+		);
+
+			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
+			() => FluentColumnsConfig<StockBalanceJournalNode>.Create()
+			.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
+			.AddColumn("Размер").AddTextRenderer(e => e.Size).SearchHighlight()
+			.AddColumn("Рост").AddTextRenderer(e => e.Growth).SearchHighlight()
+			.AddColumn("Количество").AddTextRenderer(e => e.BalanceText, useMarkup: true)
+			.AddColumn("Процент износа").AddTextRenderer(e => e.WearPercentText)
+			.Finish()
 		);
 		}
 	}

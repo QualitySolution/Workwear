@@ -6,7 +6,6 @@ using NLog;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using QSOrmProject;
-using QSProjectsLib;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Measurements;
@@ -48,8 +47,6 @@ namespace workwear
 			var stdConverter = new SizeStandardCodeConverter ();
 
 			ycomboWearStd.Binding.AddBinding (Entity, e => e.SizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
-			ycomboWearSize.Binding.AddBinding (Entity, e => e.Size, w => w.ActiveText).InitializeFromSource ();
-			ycomboWearGrowth.Binding.AddBinding (Entity, e => e.WearGrowth, w => w.ActiveText).InitializeFromSource ();
 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 		}
@@ -96,7 +93,7 @@ namespace workwear
 
 				if(!SizeHelper.HasСlothesSizeStd(Entity.Type.WearCategory.Value))
 				{
-					Entity.Size = Entity.SizeStd = Entity.WearGrowth = Entity.WearGrowthStd = null;
+					Entity.SizeStd = Entity.WearGrowthStd = null;
 				}
 
 				OnYcomboClothesSexChanged (null, null);
@@ -104,23 +101,11 @@ namespace workwear
 			else
 			{
 				ylabelClothesSex.Visible = ycomboClothesSex.Visible = false;
-				ycomboWearStd.Sensitive = ycomboWearSize.Sensitive = ycomboWearGrowth.Sensitive = false;
+				ycomboWearStd.Sensitive = false;
 			}
-				
-		}
 
-		protected void OnYcomboWearStdChanged (object sender, EventArgs e)
-		{
-			if (ycomboWearStd.SelectedItemOrNull != null)
-			{
-				SizeHelper.FillSizeCombo (ycomboWearSize, SizeHelper.GetSizesList (ycomboWearStd.SelectedItem, SizeUse.HumanOnly));
-				ycomboWearSize.Sensitive = true;
-			}
-			else
-			{
-				ycomboWearSize.Clear ();
-				ycomboWearSize.Sensitive = false;
-			}
+			labelSize.Visible = ycomboWearStd.Visible =
+				Entity.Type?.WearCategory != null && SizeHelper.HasСlothesSizeStd(Entity.Type.WearCategory.Value);
 		}
 
 		protected void OnYcomboClothesSexChanged (object sender, EventArgs e)
@@ -133,15 +118,12 @@ namespace workwear
 				ycomboWearStd.Sensitive = true;
 
 			var growthStd = SizeHelper.GetGrowthStandart (Entity.Type.WearCategory.Value, Entity.Sex.Value);
-			ycomboWearGrowth.Sensitive = growthStd != null;
 			if (growthStd != null) {
-				SizeHelper.FillSizeCombo (ycomboWearGrowth, SizeHelper.GetSizesList (growthStd.Value, SizeUse.HumanOnly));
 				Entity.WearGrowthStd = SizeHelper.GetSizeStdCode (growthStd);
 			} 
 			else
 			{
 				Entity.WearGrowthStd = null;
-				ycomboWearGrowth.Clear ();
 			}
 		}
 	}

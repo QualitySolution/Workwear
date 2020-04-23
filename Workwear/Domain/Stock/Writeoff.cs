@@ -7,7 +7,6 @@ using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Operations;
-using workwear.Repository.Operations;
 
 namespace workwear.Domain.Stock
 {
@@ -26,14 +25,6 @@ namespace workwear.Domain.Stock
 		public virtual IList<WriteoffItem> Items {
 			get { return items; }
 			set { SetField (ref items, value, () => Items); }
-		}
-
-		private Warehouse warehouse;
-
-		[Display(Name = "Склад")]
-		public virtual Warehouse Warehouse{
-			get { return warehouse; }
-			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
 
 		GenericObservableList<WriteoffItem> observableItems;
@@ -77,62 +68,48 @@ namespace workwear.Domain.Stock
 		{
 		}
 
-		public virtual void AddItem(ExpenseItem expenseFromItem, int count)
-		{
-			if(expenseFromItem.ExpenseDoc.Operation == ExpenseOperations.Employee)
-				throw new InvalidOperationException("Этот метод нельзя использовать для выдачи сотрудникам. Используйте метод с операцией EmployeeIssueOperation.");
+		#region Обработка строк
 
-			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IssuedOn, expenseFromItem)))
-			{
-				logger.Warn ("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
-				return;
-			}
-
-			var newItem = new WriteoffItem (this) {
-				Amount = count,
-				Nomenclature = expenseFromItem.Nomenclature,
-				IssuedOn = expenseFromItem,
-			};
-				
-			ObservableItems.Add (newItem);
-		}
-
-		public virtual void AddItem(IUnitOfWork uow, EmployeeIssueOperation operation, int count)
+		public virtual void AddItem(SubdivisionIssueOperation operation, int count)
 		{
 			if(operation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
-			ExpenseItem expenseFromItem = EmployeeIssueRepository.GetExpenseItemForOperation(uow, operation);
-
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedOn, expenseFromItem))) {
+			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.SubdivisionWriteoffOperation?.IssuedOperation, operation))) {
 				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return;
 			}
 
-			var newItem = new WriteoffItem(this) {
-				Amount = count,
-				Nomenclature = operation.Nomenclature,
-				IssuedOn = expenseFromItem,
-			};
-
-			ObservableItems.Add(newItem);
+			ObservableItems.Add(new WriteoffItem(this, operation, count));
 		}
 
-		public virtual void AddItem(IncomeItem incomeFromItem, int count)
+		public virtual void AddItem(EmployeeIssueOperation operation, int count)
 		{
-			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IncomeOn, incomeFromItem)))
-			{
-				logger.Warn ("Номенклатура из этого прихода уже добавлена. Пропускаем...");
+			if(operation.Issued == 0)
+				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
+
+			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.EmployeeWriteoffOperation?.IssuedOperation, operation))) {
+				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return;
 			}
 
-			var newItem = new WriteoffItem (this) {
-				Amount = count,
-				Nomenclature = incomeFromItem.Nomenclature,
-				IncomeOn = incomeFromItem,
-			};
+			ObservableItems.Add(new WriteoffItem(this, operation, count));
+		}
 
-			ObservableItems.Add (newItem);
+		public virtual void AddItem(StockPosition position, Warehouse warehouse, int count)
+		{
+			if(position == null)
+				throw new ArgumentNullException(nameof(position));
+
+			if(warehouse == null)
+				throw new ArgumentNullException(nameof(warehouse));
+
+			if(Items.Any(p => p.WarehouseOperation?.ExpenseWarehouse == warehouse && position.Equals(p.StockPosition))) {
+				logger.Warn($"Позиция [{position}] для склада {warehouse.Name} уже добавлена. Пропускаем...");
+				return;
+			}
+
+			ObservableItems.Add (new WriteoffItem(this, position, warehouse, count));
 		}
 
 		public virtual void RemoveItem(WriteoffItem item)
@@ -144,6 +121,8 @@ namespace workwear.Domain.Stock
 		{
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
 		}
+
+		#endregion
 	}
 }
 

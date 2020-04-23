@@ -86,8 +86,8 @@ namespace workwear
 					.AddComboRenderer(x => x.WearGrowth)
 					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
-				.AddColumn ("Состояние").AddNumericRenderer (e => e.LifePercent, new MultiplierToPercentConverter()).Editing (new Adjustment(0,0,100,1,10,0)).WidthChars(6)
-				.AddTextRenderer (e => "%")
+				.AddColumn ("Процент износа").AddNumericRenderer (e => e.WearPercent, new MultiplierToPercentConverter()).Editing (new Adjustment(0,0,100,1,10,0)).WidthChars(6).Digits(0)
+				.AddTextRenderer (e => "%", expand: false)
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(8)
 				.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				.AddColumn ("Стоимость").AddNumericRenderer (e => e.Cost).Editing (new Adjustment(0,0,100000000,100,1000,0)).Digits (2).WidthChars(12)
@@ -139,7 +139,7 @@ namespace workwear
 		{
 			foreach(var node in e.GetNodes<ViewModel.ObjectBalanceVMNode> ())
 			{
-				IncomeDoc.AddItem (MyOrmDialog.UoW.GetById<ExpenseItem> (node.Id), node.Added - node.Removed);
+				IncomeDoc.AddItem (MyOrmDialog.UoW.GetById<SubdivisionIssueOperation> (node.Id), node.Added - node.Removed);
 			}
 			CalculateTotal();
 		}
@@ -148,7 +148,7 @@ namespace workwear
 		{
 			foreach(var node in e.GetNodes<EmployeeBalanceVMNode> ())
 			{
-				IncomeDoc.AddItem (UoW, MyOrmDialog.UoW.GetById<EmployeeIssueOperation> (node.Id), node.Added - node.Removed);
+				IncomeDoc.AddItem (MyOrmDialog.UoW.GetById<EmployeeIssueOperation> (node.Id), node.Added - node.Removed);
 			}
 			CalculateTotal();
 		}

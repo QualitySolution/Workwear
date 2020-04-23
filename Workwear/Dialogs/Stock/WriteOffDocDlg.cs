@@ -7,7 +7,6 @@ using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QSOrmProject;
-using QSProjectsLib;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository;
@@ -69,12 +68,12 @@ namespace workwear
 			Func<string, bool> ask = MessageDialogHelper.RunQuestionDialog;
 			Entity.UpdateOperations(UoW, ask);
 			UoWGeneric.Save ();
-			if(Entity.Items.Any (w => w.IssuedOn != null))
+			if(Entity.Items.Any (w => w.WriteoffFrom == WriteoffFrom.Employye))
 			{
 				logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
-				foreach(var employeeGroup in Entity.Items.Where (w => w.IssuedOn != null && w.IssuedOn.ExpenseDoc.Employee != null).GroupBy (w => w.IssuedOn.ExpenseDoc.Employee.Id))
+				foreach(var employeeGroup in Entity.Items.Where (w => w.WriteoffFrom == WriteoffFrom.Employye).GroupBy (w => w.EmployeeWriteoffOperation.Employee))
 				{
-					var employee = employeeGroup.Select (eg => eg.IssuedOn.ExpenseDoc.Employee).First ();
+					var employee = employeeGroup.Key;
 					foreach(var itemsGroup in employeeGroup.GroupBy (i => i.Nomenclature.Type.Id))
 					{
 						var wearItem = employee.WorkwearItems.FirstOrDefault (i => i.Item.Id == itemsGroup.Key);
@@ -113,4 +112,3 @@ namespace workwear
 		}
 	}
 }
-

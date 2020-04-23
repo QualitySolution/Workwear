@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using workwear.Domain.Operations;
+using QS.Utilities;
 using workwear.Domain.Company;
-using workwear.Repository.Operations;
+using workwear.Domain.Operations;
 
 namespace workwear.Domain.Stock
 {
@@ -27,6 +28,15 @@ namespace workwear.Domain.Stock
 		public virtual IncomeOperations Operation {
 			get { return operation; }
 			set { SetField (ref operation, value, () => Operation); }
+		}
+
+		private Warehouse warehouse;
+
+		[Display(Name = "Склад")]
+		[Required(ErrorMessage = "Склад должен быть указан.")]
+		public virtual Warehouse Warehouse {
+			get { return warehouse; }
+			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
 
 		string number;
@@ -60,15 +70,6 @@ namespace workwear.Domain.Stock
 			get { return items; }
 			set { SetField (ref items, value, () => Items); }
 		}
-
-		private Warehouse warehouse;
-
-		[Display(Name = "Склад")]
-		public virtual Warehouse Warehouse {
-			get { return warehouse; }
-			set { SetField(ref warehouse, value, () => Warehouse); }
-		}
-
 
 		GenericObservableList<IncomeItem> observableItems;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
@@ -125,6 +126,11 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult("Длина номера сертификата не может быть больше 40 символов.",
 					new[] { this.GetPropertyName(o => o.Items) });
 
+			foreach(var duplicate in Items.GroupBy(x => x.StockPosition).Where(x => x.Count() > 1)) {
+				var caseCountText = NumberToTextRus.FormatCase(duplicate.Count(), "{0} раз", "{0} раза", "{0} раз");
+				yield return new ValidationResult($"Складская позиция {duplicate.First().Title} указана в документе {caseCountText}.",
+					new[] { this.GetPropertyName(o => o.Items) });
+			}
 		}
 
 		#endregion
@@ -134,64 +140,45 @@ namespace workwear.Domain.Stock
 		{
 		}
 
-		public virtual void AddItem(ExpenseItem expenseFromItem, int count)
+		public virtual void AddItem(SubdivisionIssueOperation issuedOperation, int count)
 		{
-			if(expenseFromItem.ExpenseDoc.Operation == ExpenseOperations.Employee)
-				throw new InvalidOperationException("Этот метод нельзя использовать для выдачи сотрудникам. Используйте метод с операцией EmployeeIssueOperation.");
+			if(issuedOperation.Issued == 0)
+				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
-			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IssuedOn, expenseFromItem)))
+			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IssuedSubdivisionOnOperation, issuedOperation)))
 			{
 				logger.Warn ("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return;
-			}
-			decimal life = expenseFromItem.IncomeOn.LifePercent;
-			decimal cost = expenseFromItem.IncomeOn.Cost;
-			if(expenseFromItem.AutoWriteoffDate.HasValue)
-			{
-				double multiplier = (expenseFromItem.AutoWriteoffDate.Value - DateTime.Today).TotalDays / (expenseFromItem.AutoWriteoffDate.Value - expenseFromItem.ExpenseDoc.Date).TotalDays;
-				life = (life * (decimal)multiplier);
-				cost = (cost * (decimal)multiplier);
 			}
 
 			var newItem = new IncomeItem(this)
 			{
 				Amount = count,
-				Nomenclature = expenseFromItem.Nomenclature,
-				IssuedOn = expenseFromItem,
-				Cost = cost,
-				LifePercent = life,
-				Certificate = expenseFromItem.IncomeOn?.Certificate
+				Nomenclature = issuedOperation.Nomenclature,
+				IssuedSubdivisionOnOperation= issuedOperation,
+				Cost = issuedOperation.CalculatePercentWear(Date),
+				WearPercent = issuedOperation.CalculateDepreciationCost(Date)
 			};
 
 			ObservableItems.Add (newItem);
 		}
 
-		public virtual void AddItem(IUnitOfWork uow, EmployeeIssueOperation operation, int count)
+		public virtual void AddItem(EmployeeIssueOperation issuedOperation, int count)
 		{
-			if(operation.Issued == 0)
+			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
-			ExpenseItem expenseFromItem = EmployeeIssueRepository.GetExpenseItemForOperation(uow, operation);
-
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedOn, expenseFromItem))) {
+			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedEmployeeOnOperation, issuedOperation))) {
 				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return;
-			}
-			decimal life = 1 - operation.WearPercent;
-			decimal cost = operation.IncomeOnStock.Cost;
-			if(operation.ExpiryByNorm.HasValue) {
-				decimal wearPercent = operation.CalculatePercentWear(DateTime.Today);
-				life = 1 - wearPercent;
-				cost = Math.Max(cost - cost * wearPercent, 0);
 			}
 
 			var newItem = new IncomeItem(this) {
 				Amount = count,
-				Nomenclature = operation.Nomenclature,
-				IssuedOn = expenseFromItem,
-				Cost = cost,
-				LifePercent = life,
-				Certificate = expenseFromItem.IncomeOn?.Certificate
+				Nomenclature = issuedOperation.Nomenclature,
+				IssuedEmployeeOnOperation = issuedOperation,
+				Cost = issuedOperation.CalculateDepreciationCost(Date),
+				WearPercent = issuedOperation.CalculatePercentWear(Date),
 			};
 
 			ObservableItems.Add(newItem);
@@ -201,18 +188,11 @@ namespace workwear.Domain.Stock
 		{
 			if (Operation != IncomeOperations.Enter)
 				throw new InvalidOperationException ("Добавление номенклатуры возможно только во входящую накладную. Возвраты должны добавляться с указанием строки выдачи.");
-
-			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.Nomenclature, nomenclature)))
-			{
-				logger.Warn ("Номенклатура из уже добавлена. Пропускаем...");
-				return null;
-			}
-
+				
 			var newItem = new IncomeItem (this) {
 				Amount = 1,
 				Nomenclature = nomenclature,
 				Cost = 0,
-				LifePercent = 1,
 			};
 
 			ObservableItems.Add (newItem);
@@ -224,7 +204,7 @@ namespace workwear.Domain.Stock
 			ObservableItems.Remove (item);
 		}
 
-		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
+		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
 		{
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
 		}

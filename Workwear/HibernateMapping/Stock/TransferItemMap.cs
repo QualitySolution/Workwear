@@ -14,7 +14,7 @@ namespace workwear.HibernateMapping.Stock
 			Map(x => x.Amount).Column("quantity");
 
 			References(x => x.Document).Column("stock_transfer_id").Not.Nullable();
-			References(x => x.Nomenclature).Column("nomenclature_id").Not.Nullable().Cascade.All();
+			References(x => x.Nomenclature).Column("nomenclature_id").Not.Nullable();
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Not.Nullable().Cascade.All();
 		}
 	}

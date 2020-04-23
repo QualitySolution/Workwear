@@ -40,7 +40,7 @@ namespace workwear.Dialogs.Organization
 
 		private global::Gtk.ScrolledWindow GtkScrolledWindow1;
 
-		private global::Gtk.TreeView treeviewProperty;
+		private global::Gamma.GtkWidgets.yTreeView treeviewProperty;
 
 		private global::Gtk.HBox hbox6;
 
@@ -247,7 +247,7 @@ namespace workwear.Dialogs.Organization
 			this.GtkScrolledWindow1.ShadowType = ((global::Gtk.ShadowType)(1));
 			this.GtkScrolledWindow1.BorderWidth = ((uint)(3));
 			// Container child GtkScrolledWindow1.Gtk.Container+ContainerChild
-			this.treeviewProperty = new global::Gtk.TreeView();
+			this.treeviewProperty = new global::Gamma.GtkWidgets.yTreeView();
 			this.treeviewProperty.CanFocus = true;
 			this.treeviewProperty.Name = "treeviewProperty";
 			this.GtkScrolledWindow1.Add(this.treeviewProperty);

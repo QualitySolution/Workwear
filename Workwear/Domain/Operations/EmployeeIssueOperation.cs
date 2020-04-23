@@ -5,8 +5,8 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Utilities.Dates;
-using workwear.Domain.Company;
 using QS.Utilities.Numeric;
+using workwear.Domain.Company;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -48,6 +48,22 @@ namespace workwear.Domain.Operations
 		{
 			get { return nomenclature; }
 			set { SetField(ref nomenclature, value); }
+		}
+
+		string size;
+
+		[Display(Name = "Размер")]
+		public virtual string Size {
+			get { return size; }
+			set { SetField(ref size, value, () => Size); }
+		}
+
+		string wearGrowth;
+
+		[Display(Name = "Рост одежды")]
+		public virtual string WearGrowth {
+			get { return wearGrowth; }
+			set { SetField(ref wearGrowth, value, () => WearGrowth); }
 		}
 
 		private decimal wearPercent;
@@ -135,13 +151,11 @@ namespace workwear.Domain.Operations
 			set { SetField(ref issuedOperation, value); }
 		}
 
-		private IncomeItem incomeOnStock;
-
-		[Display(Name = "Строка поступление на склад")]
-		public virtual IncomeItem IncomeOnStock
-		{
-			get { return incomeOnStock; }
-			set { SetField(ref incomeOnStock, value); }
+		private WarehouseOperation warehouseOperation;
+		[Display(Name = "Сопутствующая складская операция")]
+		public virtual WarehouseOperation WarehouseOperation {
+			get => warehouseOperation;
+			set => SetField(ref warehouseOperation, value);
 		}
 
 		private NormItem normItem;
@@ -204,6 +218,23 @@ namespace workwear.Domain.Operations
 			return beginWearPercent + (decimal)addPercent;
 		}
 
+		public virtual decimal CalculateDepreciationCost(DateTime atDate)
+		{
+			return CalculateDepreciationCost(atDate, StartOfUse, ExpiryByNorm, WarehouseOperation.Cost);
+		}
+
+		public static decimal CalculateDepreciationCost(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginCost)
+		{
+			if(startOfUse == null || expiryByNorm == null)
+				return 0;
+
+			var removePercent = (atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays;
+			if(double.IsNaN(removePercent) || double.IsInfinity(removePercent))
+				return beginCost;
+
+			return (beginCost - beginCost * (decimal)removePercent).Clamp(0, decimal.MaxValue);
+		}
+
 		#endregion
 
 		#region Методы обновленя операций
@@ -216,12 +247,14 @@ namespace workwear.Domain.Operations
 
 			Employee = item.ExpenseDoc.Employee;
 			Nomenclature = item.Nomenclature;
-			WearPercent = 1 - item.IncomeOn.LifePercent;
+			Size = item.Size;
+			WearGrowth = item.WearGrowth;
+			WearPercent = item.WarehouseOperation.WearPercent;
 			Issued = item.Amount;
 			Returned = 0;
 			IssuedOperation = null;
-			IncomeOnStock = item.IncomeOn;
 			BuhDocument = item.BuhDocument;
+			WarehouseOperation = item.WarehouseOperation;
 
 			if (NormItem == null)
 				NormItem = Employee.WorkwearItems.FirstOrDefault(x => x.Item == Nomenclature.Type)?.ActiveNormItem;
@@ -287,7 +320,7 @@ namespace workwear.Domain.Operations
 				AutoWriteoffDate = null;
 		}
 
-		public virtual void Update(IUnitOfWork uow, Func<string, bool> askUser, IncomeItem item)
+		public virtual void Update(IUnitOfWork uow, IInteractiveQuestion askUser, IncomeItem item)
 		{
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)
@@ -295,11 +328,13 @@ namespace workwear.Domain.Operations
 
 			Employee = item.Document.EmployeeCard;
 			Nomenclature = item.Nomenclature;
-			WearPercent = 1 - item.LifePercent;
+			Size = item.Size;
+			WearGrowth = item.WearGrowth;
+			WearPercent = item.WearPercent;
 			Issued = 0;
 			Returned = item.Amount;
-			IssuedOperation = item.IssuedOn.EmployeeIssueOperation;
-			IncomeOnStock = null;
+			WarehouseOperation = item.WarehouseOperation;
+			IssuedOperation = item.IssuedEmployeeOnOperation;
 			BuhDocument = item.BuhDocument;
 			NormItem = null;
 			ExpiryByNorm = null;
@@ -311,14 +346,12 @@ namespace workwear.Domain.Operations
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
-
-			IssuedOperation = item.IssuedOn.EmployeeIssueOperation;
-			Employee = item.IssuedOn.ExpenseDoc.Employee;
+				
 			Nomenclature = item.Nomenclature;
 			WearPercent = IssuedOperation.CalculatePercentWear(OperationTime);
 			Issued = 0;
 			Returned = item.Amount;
-			IncomeOnStock = null;
+			WarehouseOperation = item.WarehouseOperation;
 			BuhDocument = item.BuhDocument;
 			NormItem = null;
 			ExpiryByNorm = null;

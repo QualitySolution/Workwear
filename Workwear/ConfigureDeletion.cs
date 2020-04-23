@@ -1,4 +1,4 @@
-﻿using QS.BusinessCommon.Domain;
+using QS.BusinessCommon.Domain;
 using QS.Deletion;
 using QS.Project.Domain;
 using workwear.Domain.Company;
@@ -27,11 +27,13 @@ namespace workwear
 				.AddDeleteDependence<SubdivisionPlace>(x => x.Subdivision)
 				.AddDeleteDependence<Expense> (x => x.Subdivision)
 				.AddDeleteDependence<Income> (x => x.Subdivision)
+				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.Subdivision)
 				.AddClearDependence<EmployeeCard> (x => x.Subdivision)
 				.AddClearDependence<IssuanceSheet>(x => x.Subdivision);
 
 			DeleteConfig.AddHibernateDeleteInfo<SubdivisionPlace>()
-				.AddClearDependence<ExpenseItem>(x => x.SubdivisionPlace);
+				.AddClearDependence<ExpenseItem>(x => x.SubdivisionPlace)
+				.AddClearDependence<SubdivisionIssueOperation>(x => x.SubdivisionPlace);
 
 			DeleteConfig.AddHibernateDeleteInfo<Leader> ()
 				.AddClearDependence<EmployeeCard> (x => x.Leader)
@@ -85,6 +87,16 @@ namespace workwear
 			#endregion
 			#region Склад
 
+			DeleteConfig.AddHibernateDeleteInfo<Warehouse>()
+				.AddDeleteDependence<Income>(x => x.Warehouse)
+				.AddDeleteDependence<Expense>(x => x.Warehouse)
+				.AddDeleteDependence<WriteoffItem>(x => x.Warehouse)
+				.AddDeleteDependence<Transfer>(x => x.WarehouseFrom)
+				.AddDeleteDependence<Transfer>(x => x.WarehouseTo)
+				.AddDeleteDependence<WarehouseOperation>(x => x.ReceiptWarehouse)
+				.AddDeleteDependence<WarehouseOperation>(x => x.ExpenseWarehouse)
+				.AddClearDependence<Subdivision>(x => x.Warehouse);
+
 			DeleteConfig.AddHibernateDeleteInfo<MeasurementUnits> ()
 				.AddDeleteDependence<ItemsType> (x => x.Units);
 
@@ -92,9 +104,11 @@ namespace workwear
 				.AddDeleteDependence<ExpenseItem> (x => x.Nomenclature)
 				.AddDeleteDependence<IncomeItem> (x => x.Nomenclature)
 				.AddDeleteDependence<WriteoffItem> (x => x.Nomenclature)
+				.AddDeleteDependence<TransferItem>(x => x.Nomenclature)
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.Nomenclature)
-				.AddDeleteDependence<IssuanceSheetItem>(x => x.Nomenclature)
-				.AddClearDependence<EmployeeCardItem> (x => x.MatchedNomenclature);
+				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.Nomenclature)
+				.AddDeleteDependence<WarehouseOperation>(x => x.Nomenclature)
+				.AddDeleteDependence<IssuanceSheetItem>(x => x.Nomenclature);
 
 			DeleteConfig.AddHibernateDeleteInfo<Expense> ()
 				.AddDeleteDependence<ExpenseItem> (x => x.ExpenseDoc)
@@ -102,24 +116,31 @@ namespace workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<ExpenseItem> ()
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.ExpenseItem)
-				.AddDeleteDependence<IncomeItem> (x => x.IssuedOn)
-				.AddDeleteDependence<WriteoffItem> (x => x.IssuedOn)
-				.AddDeleteCascadeDependence(x => x.EmployeeIssueOperation);
+				.AddDeleteCascadeDependence(x => x.EmployeeIssueOperation)
+				.AddDeleteCascadeDependence(x => x.SubdivisionIssueOperation)
+				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 
 			DeleteConfig.AddHibernateDeleteInfo<Income> ()
 				.AddDeleteDependence<IncomeItem>(x => x.Document);
 
 			DeleteConfig.AddHibernateDeleteInfo<IncomeItem> ()
-				.AddDeleteDependence<ExpenseItem> (x => x.IncomeOn)
-				.AddDeleteDependence<WriteoffItem> (x => x.IncomeOn)
-				.AddDeleteDependence<EmployeeIssueOperation>(x => x.IncomeOnStock)
-				.AddDeleteCascadeDependence(x => x.EmployeeIssueOperation);
+				.AddDeleteCascadeDependence(x => x.ReturnFromEmployeeOperation)
+				.AddDeleteCascadeDependence(x => x.ReturnFromSubdivisionOperation)
+				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 
 			DeleteConfig.AddHibernateDeleteInfo<Writeoff> ()
 				.AddDeleteDependence<WriteoffItem>(x => x.Document);
 
 			DeleteConfig.AddHibernateDeleteInfo<WriteoffItem> ()
-				.AddDeleteCascadeDependence(x => x.EmployeeIssueOperation);
+				.AddDeleteCascadeDependence(x => x.EmployeeWriteoffOperation)
+				.AddDeleteCascadeDependence(x => x.SubdivisionWriteoffOperation)
+				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
+
+			DeleteConfig.AddHibernateDeleteInfo<Transfer>()
+				.AddDeleteDependence<TransferItem>(x => x.Document);
+
+			DeleteConfig.AddHibernateDeleteInfo<TransferItem>()
+				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 
 			#endregion
 
@@ -138,9 +159,25 @@ namespace workwear
 				.RequiredCascadeDeletion()
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.IssuedOperation)
 				.AddDeleteDependence<ExpenseItem>(x => x.EmployeeIssueOperation)
-				.AddDeleteDependence<IncomeItem>(x => x.EmployeeIssueOperation)
-				.AddDeleteDependence<WriteoffItem>(x => x.EmployeeIssueOperation)
+				.AddDeleteDependence<IncomeItem>(x => x.ReturnFromEmployeeOperation)
+				.AddDeleteDependence<WriteoffItem>(x => x.EmployeeWriteoffOperation)
 				.AddClearDependence<IssuanceSheetItem>(x => x.IssueOperation);
+
+			DeleteConfig.AddHibernateDeleteInfo<SubdivisionIssueOperation>()
+				.RequiredCascadeDeletion()
+				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.IssuedOperation)
+				.AddDeleteDependence<ExpenseItem>(x => x.SubdivisionIssueOperation)
+				.AddDeleteDependence<IncomeItem>(x => x.ReturnFromSubdivisionOperation)
+				.AddDeleteDependence<WriteoffItem>(x => x.SubdivisionWriteoffOperation);
+
+			DeleteConfig.AddHibernateDeleteInfo<WarehouseOperation>()
+				.RequiredCascadeDeletion()
+				.AddDeleteDependence<ExpenseItem>(x => x.WarehouseOperation)
+				.AddDeleteDependence<IncomeItem>(x => x.WarehouseOperation)
+				.AddDeleteDependence<WriteoffItem>(x => x.WarehouseOperation)
+				.AddDeleteDependence<TransferItem>(x => x.WarehouseOperation)
+				.AddDeleteDependence<EmployeeIssueOperation>(x => x.WarehouseOperation)
+				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.WarehouseOperation);
 
 			#endregion
 
@@ -151,7 +188,8 @@ namespace workwear
 				.AddClearDependence<EmployeeCard> (x => x.CreatedbyUser)
 				.AddClearDependence<Writeoff> (x => x.CreatedbyUser)
 				.AddClearDependence<Expense> (x => x.CreatedbyUser)
-				.AddClearDependence<Income> (x => x.CreatedbyUser);
+				.AddClearDependence<Income> (x => x.CreatedbyUser)
+				.AddClearDependence<Transfer>(x => x.CreatedbyUser);
 
 			DeleteConfig.AddHibernateDeleteInfo<UserSettings>();
 

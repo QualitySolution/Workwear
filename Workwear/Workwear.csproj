@@ -94,7 +94,7 @@
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Management" />
     <Reference Include="Google.Protobuf">
-      <HintPath>..\packages\Google.Protobuf.3.11.3\lib\net45\Google.Protobuf.dll</HintPath>
+      <HintPath>..\packages\Google.Protobuf.3.11.4\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
     <Reference Include="Remotion.Linq">
       <HintPath>..\packages\Remotion.Linq.2.2.0\lib\net45\Remotion.Linq.dll</HintPath>
@@ -106,13 +106,13 @@
       <HintPath>..\packages\MySql.Data.8.0.19\lib\net452\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="NLog">
-      <HintPath>..\packages\NLog.4.6.8\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate">
       <HintPath>..\packages\NHibernate.5.2.7\lib\net461\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\packages\BouncyCastle.1.8.5\lib\BouncyCastle.Crypto.dll</HintPath>
+      <HintPath>..\packages\BouncyCastle.1.8.6.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -121,10 +121,10 @@
       <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>
     <Reference Include="Autofac">
-      <HintPath>..\packages\Autofac.5.1.1\lib\net461\Autofac.dll</HintPath>
+      <HintPath>..\packages\Autofac.5.1.2\lib\net461\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="System.Buffers">
-      <HintPath>..\packages\System.Buffers.4.5.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics.Vectors">
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
@@ -132,21 +132,24 @@
     <Reference Include="mscorlib" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.1\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Memory">
-      <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
     </Reference>
     <Reference Include="Ubiety.Dns.Core">
       <HintPath>..\packages\MySql.Data.8.0.19\lib\net452\Ubiety.Dns.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Tasks.Extensions">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.3\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -179,6 +182,7 @@
     <EmbeddedResource Include="Updates\2.2.sql" />
     <EmbeddedResource Include="Updates\2.1.1.sql" />
     <EmbeddedResource Include="Updates\2.3.sql" />
+    <EmbeddedResource Include="Updates\2.4.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -189,7 +193,6 @@
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
     <Compile Include="viewDTOs\EmployeeCardItems.cs" />
     <Compile Include="viewDTOs\EmployeeCardMovements.cs" />
-    <Compile Include="gtk-gui\workwear.StockBalanceView.cs" />
     <Compile Include="viewDTOs\StockBalanceItems.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="CreateProjectParam.cs" />
@@ -218,7 +221,6 @@
     <Compile Include="HibernateMapping\Stock\IncomeItemMap.cs" />
     <Compile Include="Dialogs\Stock\ExpenseDocItemsView.cs" />
     <Compile Include="gtk-gui\workwear.ExpenseDocItemsView.cs" />
-    <Compile Include="Representations\StockBalanceVM.cs" />
     <Compile Include="Dialogs\Stock\IncomeDocDlg.cs" />
     <Compile Include="Dialogs\Stock\IncomeDocItemsView.cs" />
     <Compile Include="gtk-gui\workwear.IncomeDocDlg.cs" />
@@ -247,7 +249,6 @@
     <Compile Include="Repository\SubdivisionRepository.cs" />
     <Compile Include="Measurements\WearGrowth.cs" />
     <Compile Include="Measurements\WearSize.cs" />
-    <Compile Include="JournalViewers\StockBalanceView.cs" />
     <Compile Include="JournalViewers\StockDocumentsView.cs" />
     <Compile Include="gtk-gui\workwear.JournalViewers.StockDocumentsView.cs" />
     <Compile Include="JournalFilters\StockDocumentsFilter.cs" />
@@ -331,7 +332,6 @@
     <Compile Include="Views\Company\OrganizationView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.OrganizationView.cs" />
     <Compile Include="JournalViewModels\Company\OrganizationJournalViewModel.cs" />
-    <Compile Include="JournalViewModels\JournalsColumnsConfigs.cs" />
     <Compile Include="Domain\Statements\IssuanceSheet.cs" />
     <Compile Include="Domain\Statements\IssuanceSheetItem.cs" />
     <Compile Include="HibernateMapping\Statements\IssuanceSheetItemMap.cs" />
@@ -355,7 +355,6 @@
     <Compile Include="Views\Stock\WarehouseView.cs" />
     <Compile Include="JournalViewModels\Stock\WarehouseJournalViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseView.cs" />
-    <Compile Include="HibernateMapping\Stock\WarehouseOperationMap.cs" />
     <Compile Include="ViewModels\Stock\WarehouseViewModel.cs" />
     <Compile Include="Views\Stock\WarehouseTransferView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseTransferView.cs" />
@@ -364,6 +363,16 @@
     <Compile Include="HibernateMapping\Stock\TransferMap.cs" />
     <Compile Include="HibernateMapping\Stock\TransferItemMap.cs" />
     <Compile Include="Domain\Operations\WarehouseOperation.cs" />
+    <Compile Include="ViewModels\Stock\NomenclatureViewModel.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Stock\StockBalanceFilterViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Stock\StockBalanceJournalViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Stock\StockBalanceFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.StockBalanceFilterView.cs" />
+    <Compile Include="Domain\Stock\StockPosition.cs" />
+    <Compile Include="HibernateMapping\Operations\WarehouseOperationMap.cs" />
+    <Compile Include="Domain\Operations\SubdivisionIssueOperation.cs" />
+    <Compile Include="HibernateMapping\Operations\SubdivisionIssueOperationMap.cs" />
+    <Compile Include="Journal\JournalsColumnsConfigs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -506,6 +515,13 @@
     <Folder Include="Views\Stock\" />
     <Folder Include="ViewModels\Stock\" />
     <Folder Include="JournalViewModels\Stock\" />
+    <Folder Include="Journal\" />
+    <Folder Include="Journal\ViewModels\" />
+    <Folder Include="Journal\Filter.ViewModels\" />
+    <Folder Include="Journal\Filter.Views\" />
+    <Folder Include="Journal\Filter.ViewModels\Stock\" />
+    <Folder Include="Journal\ViewModels\Stock\" />
+    <Folder Include="Journal\Filter.Views\Stock\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

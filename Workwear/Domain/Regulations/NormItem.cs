@@ -130,7 +130,7 @@ namespace workwear.Domain.Regulations
 		}
 
 		public virtual string Title{
-			get{ return String.Format ("{0} в количестве {1} на {2}", Item.Name, Item.Units.MakeAmountShortStr (Amount), LifeText);
+			get{ return String.Format ("{0} в количестве {1} на {2}", Item?.Name, Item?.Units?.MakeAmountShortStr (Amount), LifeText);
 			}
 		}
 

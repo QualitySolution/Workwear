@@ -12,6 +12,10 @@ using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Tools;
+using workwear;
+using Autofac;
+using QS.Deletion;
+using System.Threading;
 
 namespace WorkwearTest.Integration.Tools
 {
@@ -78,6 +82,10 @@ namespace WorkwearTest.Integration.Tools
 				uow.Save(vacation);
 				uow.Save(employee);
 
+				var warehouseOperation = new WarehouseOperation();
+				warehouseOperation.Nomenclature = nomenclature;
+				uow.Save(warehouseOperation);
+
 				var expenseOp = new EmployeeIssueOperation();
 				expenseOp.OperationTime = new DateTime(2019, 1, 1);
 				expenseOp.ExpiryByNorm = new DateTime(2019, 4, 1);
@@ -85,8 +93,7 @@ namespace WorkwearTest.Integration.Tools
 				expenseOp.Nomenclature = nomenclature;
 				expenseOp.NormItem = normItem;
 				expenseOp.Issued = 1;
-				uow.Save(nomenclature);
-				uow.Save(normItem);
+				expenseOp.WarehouseOperation = warehouseOperation;
 				uow.Save(expenseOp);
 				uow.Commit();
 
@@ -146,6 +153,10 @@ namespace WorkwearTest.Integration.Tools
 				uow.Save(employee);
 				uow.Commit();
 
+				var warehouseOperation = new WarehouseOperation();
+				warehouseOperation.Nomenclature = nomenclature;
+				uow.Save(warehouseOperation);
+
 				var expenseOp = new EmployeeIssueOperation();
 				expenseOp.OperationTime = new DateTime(2019, 1, 1, 14, 0, 0);
 				expenseOp.AutoWriteoffDate = new DateTime(2020, 1, 1);
@@ -153,9 +164,14 @@ namespace WorkwearTest.Integration.Tools
 				expenseOp.Nomenclature = nomenclature;
 				expenseOp.NormItem = normItem;
 				expenseOp.Issued = 1;
+				expenseOp.WarehouseOperation = warehouseOperation;
 				var graph = IssueGraph.MakeIssueGraph(uow, employee, nomenclatureType);
 				expenseOp.RecalculateDatesOfIssueOperation(graph, ask);
 				uow.Save(expenseOp);
+
+				var warehouseOperation2 = new WarehouseOperation();
+				warehouseOperation2.Nomenclature = nomenclature;
+				uow.Save(warehouseOperation2);
 
 				var expenseOp2 = new EmployeeIssueOperation();
 				expenseOp2.OperationTime = new DateTime(2019, 1, 1, 13, 0, 0);
@@ -164,6 +180,7 @@ namespace WorkwearTest.Integration.Tools
 				expenseOp2.Nomenclature = nomenclature;
 				expenseOp2.NormItem = normItem;
 				expenseOp2.Issued = 1;
+				expenseOp2.WarehouseOperation = warehouseOperation2;
 				graph = IssueGraph.MakeIssueGraph(uow, employee, nomenclatureType);
 				expenseOp2.RecalculateDatesOfIssueOperation(graph, ask);
 				uow.Save(expenseOp2);
@@ -198,6 +215,9 @@ namespace WorkwearTest.Integration.Tools
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				BuisnessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
 
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
+
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				uow.Save(nomenclatureType);
@@ -206,6 +226,8 @@ namespace WorkwearTest.Integration.Tools
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
+				var position1 = new StockPosition(nomenclature, null, null, 0);
+
 				var nomenclatureType2 = new ItemsType();
 				nomenclatureType2.Name = "Тестовый тип номенклатуры2";
 				uow.Save(nomenclatureType2);
@@ -213,6 +235,8 @@ namespace WorkwearTest.Integration.Tools
 				var nomenclature2 = new Nomenclature();
 				nomenclature2.Type = nomenclatureType2;
 				uow.Save(nomenclature2);
+
+				var position2 = new StockPosition(nomenclature2, null, null, 0);
 
 				var norm = new Norm();
 				var normItem = norm.AddItem(nomenclatureType);
@@ -232,21 +256,23 @@ namespace WorkwearTest.Integration.Tools
 				uow.Commit();
 
 				var income = new Income();
+				income.Warehouse = warehouse;
 				income.Date = new DateTime(2017, 1, 1);
 				income.Operation = IncomeOperations.Enter;
 				var incomeItem1 = income.AddItem(nomenclature);
 				incomeItem1.Amount = 10;
 				var incomeItem2 = income.AddItem(nomenclature2);
 				incomeItem2.Amount = 10;
-				income.UpdateOperations(uow, s => true);
+				income.UpdateOperations(uow, ask);
 				uow.Save(income);
 
 				var expense = new Expense();
+				expense.Warehouse = warehouse;
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 4, 22);
 				expense.Operation = ExpenseOperations.Employee;
-				expense.AddItem(incomeItem1, 1);
-				expense.AddItem(incomeItem2, 1);
+				expense.AddItem(position1, 1);
+				expense.AddItem(position2, 1);
 
 				//Обновление операций
 				expense.UpdateOperations(uow, ask);
@@ -271,6 +297,54 @@ namespace WorkwearTest.Integration.Tools
 					Assert.That(resultEmployee.WorkwearItems.First(e => e.Item.IsSame(nomenclatureType2)).NextIssue, 
 					Is.EqualTo(new DateTime(2018, 4, 22)));
 				}
+			}
+		}
+
+		[Test(Description = "Проверяем что не падаем при удаления сотрудника")]
+		[Category("real case")]
+		public void HandleDelete_CanDeleteEmployeeTest()
+		{
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку удаления сотрудника")) {
+				BuisnessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
+
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				uow.Save(nomenclature);
+
+				var norm = new Norm();
+				var normItem = norm.AddItem(nomenclatureType);
+				normItem.Amount = 1;
+				normItem.NormPeriod = NormPeriodType.Month;
+				normItem.PeriodCount = 2;
+				uow.Save(norm);
+
+				var employee = new EmployeeCard();
+				uow.Save(employee);
+
+				var expenseOp = new EmployeeIssueOperation();
+				expenseOp.OperationTime = new DateTime(2019, 1, 1);
+				expenseOp.ExpiryByNorm = new DateTime(2019, 4, 1);
+				expenseOp.Employee = employee;
+				expenseOp.Nomenclature = nomenclature;
+				expenseOp.NormItem = normItem;
+				expenseOp.Issued = 1;
+				uow.Save(nomenclature);
+				uow.Save(normItem);
+				uow.Save(expenseOp);
+				uow.Commit();
+
+				//FIXME Временно чтобы переделака не вызвала конфликт мержа в 2.4
+				Configure.ConfigureDeletion();
+				var deletion = new DeleteCore(DeleteConfig.Main, uow);
+				deletion.PrepareDeletion(typeof(EmployeeCard), employee.Id, CancellationToken.None);
+				deletion.RunDeletion(CancellationToken.None);
 			}
 		}
 	}

@@ -59,7 +59,7 @@ namespace workwear.Representations.Organization
 			ItemsType itemtypesAlias = null;
 			MeasurementUnits unitsAlias = null;
 			EmployeeIssueOperation removeOperationAlias = null;
-			IncomeItem incomeItemOnIncomeAlias = null;
+			WarehouseOperation warehouseOperationAlias = null;
 
 			var query = UoW.Session.QueryOver<EmployeeIssueOperation>(() => expenseOperationAlias)
 				.Where(e => e.Employee == Employee);
@@ -72,15 +72,15 @@ namespace workwear.Representations.Organization
 				.JoinAlias (() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias)
 				.JoinAlias (() => nomenclatureAlias.Type, () => itemtypesAlias)
 				.JoinAlias (() => itemtypesAlias.Units, () => unitsAlias)
-				.JoinAlias (() => expenseOperationAlias.IncomeOnStock, () => incomeItemOnIncomeAlias)
+				.JoinAlias (() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
 				.Where (e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > DateTime.Today)
 				.SelectList (list => list
 					.SelectGroup (() => expenseOperationAlias.Id).WithAlias (() => resultAlias.Id)
 					.Select (() => nomenclatureAlias.Name).WithAlias (() => resultAlias.NomenclatureName)
 					.Select (() => unitsAlias.Name).WithAlias (() => resultAlias.UnitsName)
-					.Select (() => nomenclatureAlias.Size).WithAlias (() => resultAlias.Size)
-					.Select (() => nomenclatureAlias.WearGrowth).WithAlias (() => resultAlias.Growth)
-					.Select (() => incomeItemOnIncomeAlias.Cost).WithAlias (() => resultAlias.AvgCost)
+					.Select (() => expenseOperationAlias.Size).WithAlias (() => resultAlias.Size)
+					.Select (() => expenseOperationAlias.WearGrowth).WithAlias (() => resultAlias.Growth)
+					.Select (() => warehouseOperationAlias.Cost).WithAlias (() => resultAlias.AvgCost)
 					.Select (() => expenseOperationAlias.WearPercent).WithAlias (() => resultAlias.WearPercent)
 					.Select (() => expenseOperationAlias.Issued).WithAlias (() => resultAlias.Added)
 					.Select (() => expenseOperationAlias.OperationTime).WithAlias (() => resultAlias.IssuedDate)

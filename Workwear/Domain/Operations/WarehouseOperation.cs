@@ -7,6 +7,10 @@ using workwear.Domain.Stock;
 
 namespace workwear.Domain.Operations
 {
+	[Appellative(Gender = GrammaticalGender.Feminine,
+		NominativePlural = "складские операции",
+		Nominative = "складская операция"
+	)]
 	public class WarehouseOperation : PropertyChangedBase, IDomainObject
 	{
 
@@ -67,6 +71,7 @@ namespace workwear.Domain.Operations
 		int amount;
 
 		[Display(Name = "Количество")]
+		[PropertyChangedAlso("Total")]
 		public virtual int Amount {
 			get { return amount; }
 			set { SetField(ref amount, value); }
@@ -80,6 +85,26 @@ namespace workwear.Domain.Operations
 			set { SetField(ref wearPercent, value.Clamp(0m, 9.99m)); }
 		}
 
+		decimal cost;
+
+		[Display(Name = "Цена")]
+		[PropertyChangedAlso("Total")]
+		public virtual decimal Cost {
+			get { return cost; }
+			set { SetField(ref cost, value, () => Cost); }
+		}
+
+		#region Расчетные
+
+		public virtual decimal Total => Cost * Amount;
+
+		public virtual string Title => ReceiptWarehouse != null && ExpenseWarehouse != null
+			? $"Перемещение {Amount} х {Nomenclature.Name} из {ExpenseWarehouse.Name} в {ReceiptWarehouse.Name}"
+			: ReceiptWarehouse != null 
+				? $"Поступление {Amount} х {Nomenclature.Name} в {ReceiptWarehouse.Name}"
+				: $"Списание {Amount} х {Nomenclature.Name} из {ExpenseWarehouse.Name}";
+
+		#endregion
 
 		#region Методы обновления операций
 
@@ -89,11 +114,12 @@ namespace workwear.Domain.Operations
 			if(item.ExpenseDoc.Date.Date != OperationTime.Date)
 				OperationTime = item.ExpenseDoc.Date;
 
-			expenseWarehouse = item.ExpenseDoc.Warehouse;
-			nomenclature = item.Nomenclature;
-			size = item.Nomenclature.Size;
-			growth = item.Nomenclature.WearGrowth;
-			amount = item.Amount;
+			ExpenseWarehouse = item.ExpenseDoc.Warehouse;
+			ReceiptWarehouse = null;
+			Nomenclature = item.Nomenclature;
+			Size = item.Size;
+			Growth = item.WearGrowth;
+			Amount = item.Amount;
 		}
 
 		public virtual void Update(IUnitOfWork uow, IncomeItem item)
@@ -102,11 +128,11 @@ namespace workwear.Domain.Operations
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
-			receiptWarehouse = item.Document.Warehouse;
-			nomenclature = item.Nomenclature;
-			size = item.Nomenclature.Size;
-			growth =item.Nomenclature.WearGrowth;
-			amount = item.Amount;
+			ReceiptWarehouse = item.Document.Warehouse;
+			Nomenclature = item.Nomenclature;
+			Size = item.Size;
+			Growth =item.WearGrowth;
+			Amount = item.Amount;
 		}
 
 		public virtual void Update(IUnitOfWork uow, WriteoffItem item)
@@ -115,11 +141,12 @@ namespace workwear.Domain.Operations
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
-			receiptWarehouse = item.Document.Warehouse;
-			nomenclature = item.Nomenclature;
-			size = item.Nomenclature.Size;
-			growth = item.Nomenclature.WearGrowth;
-			amount = item.Amount;
+			ExpenseWarehouse = item.Warehouse;
+			ReceiptWarehouse = null;
+			Nomenclature = item.Nomenclature;
+			Size = item.Size;
+			Growth = item.WearGrowth;
+			Amount = item.Amount;
 		}
 
 		public virtual void Update(IUnitOfWork uow, TransferItem item)
@@ -128,11 +155,9 @@ namespace workwear.Domain.Operations
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
-			receiptWarehouse = item.Document.WarehouseFrom;
-			expenseWarehouse = item.Document.WarehouseTo;
-			nomenclature = item.Nomenclature;
-			size = item.Nomenclature.Size;
-			growth = item.Nomenclature.WearGrowth;
+			ReceiptWarehouse = item.Document.WarehouseTo;
+			ExpenseWarehouse = item.Document.WarehouseFrom;
+			Nomenclature = item.Nomenclature;
 			amount = item.Amount;
 		}
 

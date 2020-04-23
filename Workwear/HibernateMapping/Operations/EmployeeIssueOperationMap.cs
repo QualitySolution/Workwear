@@ -11,6 +11,8 @@ namespace workwear.HMap
 
 			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
 			Map (x => x.OperationTime).Column ("operation_time").Not.Nullable ();
+			Map(x => x.Size).Column("size");
+			Map(x => x.WearGrowth).Column("growth");
 			Map(x => x.WearPercent).Column("wear_percent").Not.Nullable();
 			Map(x => x.Issued).Column("issued").Not.Nullable();
 			Map(x => x.Returned).Column("returned").Not.Nullable();
@@ -24,7 +26,7 @@ namespace workwear.HMap
 			References(x => x.Nomenclature).Column("nomenclature_id").Not.Nullable();
 			References(x => x.NormItem).Column("norm_item_id");
 			References(x => x.IssuedOperation).Column("issued_operation_id");
-			References(x => x.IncomeOnStock).Column("stock_income_detail_id");
+			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Not.Nullable();
 		}
 	}
 }

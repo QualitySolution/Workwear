@@ -1,10 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
+using System.Linq;
 using Gamma.Utilities;
+using NLog;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
+using workwear.Domain.Stock;
 using workwear.Measurements;
+
+
 
 namespace workwear.Domain.Regulations
 {
@@ -14,6 +19,7 @@ namespace workwear.Domain.Regulations
 	public class ItemsType : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		public virtual int Id { get; set; }
 
@@ -76,6 +82,24 @@ namespace workwear.Domain.Regulations
 			set { SetField(ref comment, value, () => Comment); }
 		}
 
+		private IList<Nomenclature> nomenclatures = new List<Nomenclature>();
+
+		[Display(Name = "Строки норм")]
+		public virtual IList<Nomenclature> Nomenclatures {
+			get { return nomenclatures; }
+			set { SetField(ref nomenclatures, value, () => Nomenclatures); }
+		}
+
+		GenericObservableList<Nomenclature> observableNomenclatures;
+		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		public virtual GenericObservableList<Nomenclature> ObservableNomenclatures {
+			get {
+				if(observableNomenclatures == null)
+					observableNomenclatures = new GenericObservableList<Nomenclature>(Nomenclatures);
+				return observableNomenclatures;
+			}
+		}
+
 		#endregion
 
 		private IList<ItemsType> itemsTypesAnalogs = new List<ItemsType>();
@@ -88,12 +112,26 @@ namespace workwear.Domain.Regulations
 
 		GenericObservableList<ItemsType> observableItemsTypesAnalogs;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<ItemsType> ObservableProfessions {
+		public virtual GenericObservableList<ItemsType> ObservableItemsTypeAnalog{
 			get {
 				if(observableItemsTypesAnalogs == null)
 					observableItemsTypesAnalogs = new GenericObservableList<ItemsType>(ItemsTypesAnalogs);
 				return observableItemsTypesAnalogs;
 			}
+		}
+
+		public virtual void AddAnalog(ItemsType Analog)
+		{
+			if(ItemsTypesAnalogs.Any(p => DomainHelper.EqualDomainObjects(p, Analog))) {
+				logger.Warn("Такой аналог уже добавлен. Пропускаем...");
+				return;
+			}
+			ObservableItemsTypeAnalog.Add(Analog);
+		}
+
+		public virtual void RemoveAnalog(ItemsType Analog)
+		{
+			ObservableItemsTypeAnalog.Remove(Analog);
 		}
 
 		public ItemsType ()

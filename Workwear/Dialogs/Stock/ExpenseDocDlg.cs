@@ -13,6 +13,7 @@ using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QSOrmProject;
 using workwear.Domain.Company;
+using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.JournalViewModels.Stock;
 using workwear.Repository;
@@ -35,30 +36,34 @@ namespace workwear
 			ConfigureDlg ();
 		}
 
-		public ExpenseDocDlg (Subdivision facility) : this () {
+		public ExpenseDocDlg (Subdivision subdivision) : this () {
 			Entity.Operation = ExpenseOperations.Object;
-			Entity.Subdivision = facility;
+			Entity.Subdivision = subdivision;
+			Entity.Warehouse = subdivision.Warehouse;
 		}
 
-		public ExpenseDocDlg (EmployeeCard employee) : this () {
+		public ExpenseDocDlg (EmployeeCard employee, bool fillUnderreceived = false) : this () {
 			Entity.Operation = ExpenseOperations.Employee;
 			Entity.Employee = UoW.GetById<EmployeeCard> (employee.Id);
+			Entity.Warehouse = Entity.Employee.Subdivision?.Warehouse;
+			if(fillUnderreceived)
+				FillUnderreceived();
 		}
 
-		public ExpenseDocDlg (EmployeeCard employee, Dictionary<Nomenclature, int> addItems) : this (employee) {
-			
-			var stock = StockRepository.BalanceInStockDetail (UoW, addItems.Keys.ToList ());
+		private void FillUnderreceived()
+		{
+			Entity.Employee.FillWearInStockInfo(UoW, Entity.Warehouse, Entity.Date, onlyUnderreceived: true);
 
-			foreach(var pair in addItems)
+			foreach(var item in Entity.Employee.UnderreceivedItems)
 			{
-				var inStock = stock.FirstOrDefault (s => s.Nomenclature == pair.Key);
-				if(inStock == null)
+				if(item.InStockState != StockStateInfo.Enough && item.InStockState != StockStateInfo.NotEnough)
 				{
-					logger.Warn("Количество по складу для номенклатуры {0}, не получено. Пропускаем.");
+					logger.Warn($"На складе отсутствуют позиции для {item.Item.Name}. Пропускаем.");
 					continue;
 				}
-				var incomeItem = UoW.GetById<IncomeItem> (inStock.IncomeItemId);
-				Entity.AddItem (incomeItem, pair.Value);
+				var stockBalance = item.BestChoiceInStock.First();
+				var amount = item.InStockState == StockStateInfo.Enough ? item.NeededAmount : stockBalance.Amount;
+				Entity.AddItem (stockBalance.StockPosition, amount);
 			}
 		}
 
@@ -117,6 +122,8 @@ namespace workwear
 			var ask = new GtkQuestionDialogsInteractive();
 			Entity.UpdateOperations(UoW, ask);
 			Entity.UpdateIssuanceSheet();
+			if(Entity.IssuanceSheet != null)
+				UoW.Save(Entity.IssuanceSheet);
 			UoWGeneric.Save ();
 			if(Entity.Operation == ExpenseOperations.Employee)
 			{

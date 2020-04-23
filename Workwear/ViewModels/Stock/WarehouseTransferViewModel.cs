@@ -1,42 +1,47 @@
 ﻿using System;
+using System.Linq;
 using Autofac;
 using QS.Dialog;
-using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Services;
-using QS.Tdi;
-using QS.ViewModels;
+using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QSOrmProject;
-using workwear.Domain.Company;
 using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Stock;
 using workwear.JournalViewModels.Stock;
 
 namespace workwear.ViewModels.Stock
 {
-	public class WarehouseTransferViewModel : LegacyEntityDialogViewModelBase<Transfer>
+	public class WarehouseTransferViewModel : EntityDialogViewModelBase<Transfer>
 	{
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
 		public EntityEntryViewModel<Warehouse> WarehouseToEntryViewModel;
 		public ILifetimeScope AutofacScope;
-		public ITdiCompatibilityNavigation navigationManager;
-		public ITdiCompatibilityNavigation tdiNavigationManager;
-		private readonly CommonMessages commonMessages;
+		private readonly IInteractiveQuestion interactive;
 
-		public WarehouseTransferViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiTab myTab, ITdiCompatibilityNavigation navigationManager, ILifetimeScope autofacScope, CommonMessages commonMessages, IUserService userService) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager)
+		Warehouse lastWarehouse;
+
+		public WarehouseTransferViewModel(
+			IEntityUoWBuilder uowBuilder,
+			IUnitOfWorkFactory unitOfWorkFactory, 
+			INavigationManager navigationManager, 
+			ILifetimeScope autofacScope, 
+			IValidator validator, 
+			IUserService userService, 
+			IInteractiveQuestion interactive) 
+			: base(uowBuilder, unitOfWorkFactory, navigationManager, validator)
 		{
-			this.tdiNavigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
-			this.commonMessages = commonMessages;
-
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 
-			var entryBuilder = new LegacyEEVMBuilderFactory<Transfer>(this, TdiTab, Entity, UoW, navigationManager) {
+			var entryBuilder = new CommonEEVMBuilderFactory<Transfer>(this, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
 
@@ -49,29 +54,48 @@ namespace workwear.ViewModels.Stock
 										 .UseViewModelDialog<WarehouseViewModel>()
 										 .Finish();
 
-
+			Entity.PropertyChanged += Entity_PropertyChanged;
+			lastWarehouse = Entity.WarehouseFrom;
 		}
 
+		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(Entity.WarehouseFrom) && Entity.WarehouseFrom != lastWarehouse) {
+				if(Entity.Items.Any()) {
+					if(interactive.Question("При изменении склада отправителя строки документа будут очищены. Продолжить?")) {
+						Entity.ObservableItems.Clear();
+					}
+					else { //Возвращаем назад старый склад
+						Entity.WarehouseFrom = lastWarehouse;
+						return;
+					}
+				}
+				lastWarehouse = Entity.WarehouseFrom;
+				OnPropertyChanged(nameof(CanAddItem));
+			}
+		}
 
 		#region Sensetive
 
 		public bool CanEditItems => Entity.CreatedbyUser == null;
 
+		public bool CanAddItem => Entity.WarehouseFrom != null;
+
 		#endregion
 
 		public void AddItems()
 		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(Nomenclature), OpenPageOptions.AsSlave);
-
-			var selectDialog = selectPage.TdiTab as OrmReference;
-			selectDialog.Mode = OrmReferenceMode.MultiSelect;
-			selectDialog.ObjectSelected += NomenclatureJournal_ObjectSelected;
+			var selectPage = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectPage.ViewModel.Filter.Warehouse = Entity.WarehouseFrom;
+			selectPage.ViewModel.Filter.WarehouseEntry.IsEditable = false;
+			selectPage.ViewModel.OnSelectResult += ViewModel_OnSelectResult;
 		}
 
-		void NomenclatureJournal_ObjectSelected(object sender, OrmReferenceObjectSectedEventArgs e)
+		void ViewModel_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			foreach(var nomenclature in e.GetEntities<Nomenclature>()) {
-				Entity.AddItem(nomenclature);
+			foreach(var stockBalance in e.GetSelectedObjects<StockBalanceJournalNode>()) {
+				Entity.AddItem(stockBalance.GetStockPosition(UoW), stockBalance.Amount);
 			}
 		}
 
@@ -79,24 +103,6 @@ namespace workwear.ViewModels.Stock
 		{
 			foreach(var item in items) {
 				Entity.ObservableItems.Remove(item);
-			}
-		}
-
-		public void SetNomenclature(TransferItem[] items)
-		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(Nomenclature), OpenPageOptions.AsSlave);
-
-			var selectDialog = selectPage.TdiTab as OrmReference;
-			selectDialog.Tag = items;
-			selectDialog.Mode = OrmReferenceMode.Select;
-			selectDialog.ObjectSelected += SetNomenclature_ObjectSelected;
-		}
-
-		void SetNomenclature_ObjectSelected(object sender, OrmReferenceObjectSectedEventArgs e)
-		{
-			var items = (sender as OrmReference).Tag as TransferItem[];
-			foreach(var item in items) {
-				item.Nomenclature = e.Subject as Nomenclature;
 			}
 		}
 

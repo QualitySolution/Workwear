@@ -12,8 +12,6 @@ namespace workwear.Dialogs.Organization
 
 		private global::Gtk.HBox hbox11;
 
-		private global::Gtk.Button buttonPickNomenclature;
-
 		private global::Gtk.Button buttonGiveWearByNorm;
 
 		private global::Gtk.Button buttonReturnWear1;
@@ -49,87 +47,73 @@ namespace workwear.Dialogs.Organization
 			this.hbox11.Name = "hbox11";
 			this.hbox11.Spacing = 6;
 			// Container child hbox11.Gtk.Box+BoxChild
-			this.buttonPickNomenclature = new global::Gtk.Button();
-			this.buttonPickNomenclature.CanFocus = true;
-			this.buttonPickNomenclature.Name = "buttonPickNomenclature";
-			this.buttonPickNomenclature.UseUnderline = true;
-			this.buttonPickNomenclature.Label = global::Mono.Unix.Catalog.GetString("Подобрать по складу");
-			global::Gtk.Image w3 = new global::Gtk.Image();
-			this.buttonPickNomenclature.Image = w3;
-			this.hbox11.Add(this.buttonPickNomenclature);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonPickNomenclature]));
-			w4.Position = 0;
-			w4.Expand = false;
-			w4.Fill = false;
-			// Container child hbox11.Gtk.Box+BoxChild
 			this.buttonGiveWearByNorm = new global::Gtk.Button();
 			this.buttonGiveWearByNorm.CanFocus = true;
 			this.buttonGiveWearByNorm.Name = "buttonGiveWearByNorm";
 			this.buttonGiveWearByNorm.UseUnderline = true;
 			this.buttonGiveWearByNorm.Label = global::Mono.Unix.Catalog.GetString("Выдать неполученное");
-			global::Gtk.Image w5 = new global::Gtk.Image();
-			w5.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonGiveWearByNorm.Image = w5;
+			global::Gtk.Image w3 = new global::Gtk.Image();
+			w3.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.buttonGiveWearByNorm.Image = w3;
 			this.hbox11.Add(this.buttonGiveWearByNorm);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonGiveWearByNorm]));
-			w6.Position = 1;
-			w6.Expand = false;
-			w6.Fill = false;
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonGiveWearByNorm]));
+			w4.Position = 0;
+			w4.Expand = false;
+			w4.Fill = false;
 			// Container child hbox11.Gtk.Box+BoxChild
 			this.buttonReturnWear1 = new global::Gtk.Button();
 			this.buttonReturnWear1.CanFocus = true;
 			this.buttonReturnWear1.Name = "buttonReturnWear1";
 			this.buttonReturnWear1.UseUnderline = true;
 			this.buttonReturnWear1.Label = global::Mono.Unix.Catalog.GetString("Возврат на склад");
-			global::Gtk.Image w7 = new global::Gtk.Image();
-			w7.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-redo", global::Gtk.IconSize.Menu);
-			this.buttonReturnWear1.Image = w7;
+			global::Gtk.Image w5 = new global::Gtk.Image();
+			w5.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-redo", global::Gtk.IconSize.Menu);
+			this.buttonReturnWear1.Image = w5;
 			this.hbox11.Add(this.buttonReturnWear1);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonReturnWear1]));
-			w8.Position = 2;
-			w8.Expand = false;
-			w8.Fill = false;
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonReturnWear1]));
+			w6.Position = 1;
+			w6.Expand = false;
+			w6.Fill = false;
 			// Container child hbox11.Gtk.Box+BoxChild
 			this.buttonWriteOffWear1 = new global::Gtk.Button();
 			this.buttonWriteOffWear1.CanFocus = true;
 			this.buttonWriteOffWear1.Name = "buttonWriteOffWear1";
 			this.buttonWriteOffWear1.UseUnderline = true;
 			this.buttonWriteOffWear1.Label = global::Mono.Unix.Catalog.GetString("Списание");
-			global::Gtk.Image w9 = new global::Gtk.Image();
-			w9.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-delete", global::Gtk.IconSize.Menu);
-			this.buttonWriteOffWear1.Image = w9;
+			global::Gtk.Image w7 = new global::Gtk.Image();
+			w7.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-delete", global::Gtk.IconSize.Menu);
+			this.buttonWriteOffWear1.Image = w7;
 			this.hbox11.Add(this.buttonWriteOffWear1);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonWriteOffWear1]));
-			w10.Position = 3;
-			w10.Expand = false;
-			w10.Fill = false;
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonWriteOffWear1]));
+			w8.Position = 2;
+			w8.Expand = false;
+			w8.Fill = false;
 			// Container child hbox11.Gtk.Box+BoxChild
 			this.buttonTimeLine = new global::Gtk.Button();
 			this.buttonTimeLine.CanFocus = true;
 			this.buttonTimeLine.Name = "buttonTimeLine";
 			this.buttonTimeLine.UseUnderline = true;
 			this.buttonTimeLine.Label = global::Mono.Unix.Catalog.GetString("Хронология");
-			global::Gtk.Image w11 = new global::Gtk.Image();
-			w11.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.timeline_marker.png");
-			this.buttonTimeLine.Image = w11;
+			global::Gtk.Image w9 = new global::Gtk.Image();
+			w9.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.timeline_marker.png");
+			this.buttonTimeLine.Image = w9;
 			this.hbox11.Add(this.buttonTimeLine);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonTimeLine]));
-			w12.PackType = ((global::Gtk.PackType)(1));
-			w12.Position = 4;
-			w12.Expand = false;
-			w12.Fill = false;
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonTimeLine]));
+			w10.PackType = ((global::Gtk.PackType)(1));
+			w10.Position = 3;
+			w10.Expand = false;
+			w10.Fill = false;
 			this.vbox7.Add(this.hbox11);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox7[this.hbox11]));
-			w13.Position = 1;
-			w13.Expand = false;
-			w13.Fill = false;
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox7[this.hbox11]));
+			w11.Position = 1;
+			w11.Expand = false;
+			w11.Fill = false;
 			this.Add(this.vbox7);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
 			}
 			this.Hide();
-			this.buttonPickNomenclature.Clicked += new global::System.EventHandler(this.OnButtonPickNomenclatureClicked);
 			this.buttonGiveWearByNorm.Clicked += new global::System.EventHandler(this.OnButtonGiveWearByNormClicked);
 			this.buttonReturnWear1.Clicked += new global::System.EventHandler(this.OnButtonReturnWearClicked);
 			this.buttonWriteOffWear1.Clicked += new global::System.EventHandler(this.OnButtonWriteOffWearClicked);

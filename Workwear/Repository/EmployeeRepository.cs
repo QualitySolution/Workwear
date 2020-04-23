@@ -6,6 +6,7 @@ using NHibernate.Dialect.Function;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
@@ -26,61 +27,30 @@ namespace workwear.Repository
 				.List();
 		}
 
-		public static IList<EmployeeItemsBalanceDTO> ItemsBalance(IUnitOfWork uow, EmployeeCard employee)
+		public static IList<EmployeeRecivedInfo> ItemsBalance(IUnitOfWork uow, EmployeeCard employee)
 		{
-			EmployeeItemsBalanceDTO resultAlias = null;
+			EmployeeRecivedInfo resultAlias = null;
 
-			Expense reciveDocAlias = null;
-			ExpenseItem recivedItemAlias = null;
+			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			Nomenclature nomenclatureAlias = null;
-			ItemsType itemtypesAlias = null;
-			IncomeItem returnedItemAlias = null;
-			WriteoffItem writeoffItemAlias = null;
 
-			var incomes = uow.Session.QueryOver<Expense> (() => reciveDocAlias)
-				.Where(d => d.Employee == employee)
-				.JoinQueryOver (d => d.Items, () => recivedItemAlias)
-				.Where (i => i.AutoWriteoffDate == null || i.AutoWriteoffDate > DateTime.Today);
+			IProjection projection = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.Int32, "SUM(IFNULL(?1, 0) - IFNULL(?2, 0))"),
+				NHibernateUtil.Int32,
+				Projections.Property<EmployeeIssueOperation>(x => x.Issued),
+				Projections.Property<EmployeeIssueOperation>(x => x.Returned)
+			);
 
-			var subqueryRemove = QueryOver.Of<IncomeItem>(() => returnedItemAlias)
-				.Where(() => returnedItemAlias.IssuedOn.Id == recivedItemAlias.Id)
-				.Select (Projections.Sum<IncomeItem> (o => o.Amount));
-
-			var subqueryWriteOff = QueryOver.Of<WriteoffItem>(() => writeoffItemAlias)
-				.Where(() => writeoffItemAlias.IssuedOn.Id == recivedItemAlias.Id)
-				.Select (Projections.Sum<WriteoffItem> (o => o.Amount));
-
-			var incomeList = incomes
-				.JoinAlias (() => recivedItemAlias.Nomenclature, () => nomenclatureAlias)
-				.JoinAlias (() => nomenclatureAlias.Type, () => itemtypesAlias)
-				.Where (Restrictions.Gt (
-					Projections.SqlFunction(
-						new VarArgsSQLFunction("(", "-", ")"),
-						NHibernateUtil.Int32,
-						Projections.Property (() => recivedItemAlias.Amount),
-						Projections.SqlFunction("COALESCE", 
-							NHibernateUtil.Int32,
-							Projections.SubQuery (subqueryRemove),
-							Projections.Constant (0)
-						),
-						Projections.SqlFunction("COALESCE", 
-							NHibernateUtil.Int32,
-							Projections.SubQuery (subqueryWriteOff),
-							Projections.Constant (0)
-						)
-					), 0)
-				)
+			var incomeList = uow.Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
+				.Where(x => x.Employee == employee)
+				.JoinAlias (() => employeeIssueOperationAlias.Nomenclature, () => nomenclatureAlias)
 				.SelectList (list => list
-					.SelectGroup (() => recivedItemAlias.Id).WithAlias (() => resultAlias.ExpenseItemId)
-					.Select (() => reciveDocAlias.Date).WithAlias (() => resultAlias.LastReceive)
-					.Select (() => nomenclatureAlias.Id).WithAlias (() => resultAlias.NomenclatureId)
-					.Select (() => nomenclatureAlias.Type.Id).WithAlias (() => resultAlias.ItemsTypeId)
-					.Select (() => recivedItemAlias.Amount).WithAlias (() => resultAlias.Received)
-					.SelectSubQuery (subqueryRemove).WithAlias (() => resultAlias.Returned)
-					.SelectSubQuery (subqueryWriteOff).WithAlias (() => resultAlias.Writeoff)
+					.SelectGroup (() => nomenclatureAlias.Type.Id).WithAlias (() => resultAlias.ItemsTypeId)
+					.SelectMax (() => employeeIssueOperationAlias.OperationTime).WithAlias (() => resultAlias.LastReceive)
+					.Select(projection).WithAlias (() => resultAlias.Amount)
 				)
-				.TransformUsing (Transformers.AliasToBean<EmployeeItemsBalanceDTO> ())
-				.List<EmployeeItemsBalanceDTO> ();
+				.TransformUsing (Transformers.AliasToBean<EmployeeRecivedInfo> ())
+				.List<EmployeeRecivedInfo> ();
 
 			return incomeList;
 		}
@@ -103,20 +73,13 @@ namespace workwear.Repository
 		}
 	}
 
-	public class EmployeeItemsBalanceDTO
+	public class EmployeeRecivedInfo
 	{
-		public int ExpenseItemId { get; set;}
 		public int ItemsTypeId { get; set;}
-		public int NomenclatureId { get; set;}
 
 		public DateTime LastReceive { get; set;}
 
-		public int Received { get; set;}
-		public int Returned { get; set;}
-		public int Writeoff { get; set;}
-
-		public int Amount { get{ return Received - Returned - Writeoff;
-			}}
+		public int Amount { get; set;}
 	}
 }
 
