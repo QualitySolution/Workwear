@@ -3,21 +3,20 @@ Unicode true
 !define PRODUCT_VERSION "2.4"
 !define NET_VERSION "4.6.1"
 !define EXE_NAME "workwear"
+!define PRODUCT_NAME "QS: Спецодежда и имущество"
+!define SHORTCUT_NAME "QS Спецодежда и имущество"
+!define MENU_DIR_NAME "Спецодежда и имущество"
+!define APP_DIR_NAME "Спецодежда и имущество"
+!define UNINSTAL_KEY "workwear"
+!define SETUP_POSTFIX ""
 
 !ifdef BETA
-	!define PRODUCT_NAME "QS: Спецодежда и имущество БЕТА"
-	!define SHORTCUT_NAME "QS Спецодежда и имущество БЕТА"
-	!define MENU_DIR_NAME "Спецодежда и имущество БЕТА"
-	!define APP_DIR_NAME "Спецодежда и имущество beta"
-	!define UNINSTAL_KEY "workwear-beta"
-	!define SETUP_POSTFIX "-beta"
-!else
-	!define PRODUCT_NAME "QS: Спецодежда и имущество"
-	!define SHORTCUT_NAME "QS Спецодежда и имущество"
-	!define MENU_DIR_NAME "Спецодежда и имущество"
-	!define APP_DIR_NAME "Спецодежда и имущество"
-	!define UNINSTAL_KEY "workwear"
-	!define SETUP_POSTFIX ""
+	!define /redef PRODUCT_NAME "QS: Спецодежда и имущество БЕТА"
+	!define /redef SHORTCUT_NAME "QS Спецодежда и имущество БЕТА"
+	!define /redef MENU_DIR_NAME "Спецодежда и имущество БЕТА"
+	!define /redef APP_DIR_NAME "Спецодежда и имущество beta"
+	!define /redef UNINSTAL_KEY "workwear-beta"
+	!define /redef SETUP_POSTFIX "-beta"
 !endif
 
 ; The name of the installer
@@ -33,7 +32,7 @@ OutFile "${EXE_NAME}-${PRODUCT_VERSION}${SETUP_POSTFIX}.exe"
 !include "NsisDotNetChecker\nsis\DotNetChecker_ru.nsh"
 
 ; The default installation directory
-InstallDir $PROGRAMFILES\${APP_DIR_NAME}
+InstallDir "$PROGRAMFILES\${APP_DIR_NAME}"
 
 ; Request application privileges for Windows Vista
 RequestExecutionLevel admin
