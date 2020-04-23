@@ -19,6 +19,12 @@ Unicode true
 	!define /redef SETUP_POSTFIX "-beta"
 !endif
 
+!ifdef NLMK
+	!define /redef PRODUCT_NAME "QS: Спецодежда НЛМК"
+	!define /redef UNINSTAL_KEY "workwear"
+	!define /redef SETUP_POSTFIX "-nlmk"
+!endif
+
 ; The name of the installer
 Name "${PRODUCT_NAME}"
 

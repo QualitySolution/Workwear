@@ -25,7 +25,7 @@ node {
    }
    stage('Build') {
         sh 'rm -f Workwear/WinInstall/workwear-*.exe'
-        sh 'Workwear/WinInstall/makeWinInstall.sh'
+        sh 'Workwear/WinInstall/makeWinInstall.sh --nlmk'
         recordIssues enabledForFailure: true, tool: msBuild()
         archiveArtifacts artifacts: 'Workwear/WinInstall/workwear-*.exe', onlyIfSuccessful: true
    }
