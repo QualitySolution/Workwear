@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using NHibernate.Mapping;
 using NUnit.Framework;
-using QS.Deletion;
+using QS.Deletion.Configuration;
 using QS.Deletion.Testing;
-using workwear.Domain.Operations;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
 using workwear.Domain.Statements;
 
 namespace WorkwearTest.Deletion
@@ -84,6 +84,8 @@ namespace WorkwearTest.Deletion
 			base.NHMappedCollectionsAllInOneTest(mapping, property);
 		}
 
+		#region Оформление заголовков
+
 		public new static IEnumerable AllDeleteRules => DeleteConfigTestBase.AllDeleteRules;
 
 		[Test, TestCaseSource(nameof(AllDeleteRules))]
@@ -91,5 +93,13 @@ namespace WorkwearTest.Deletion
 		{
 			base.DeleteRules_ExistTitle_Test(info);
 		}
+
+		[Test, TestCaseSource(nameof(AllDeleteRules))]
+		public override void DeleteRules_ExistAppellativeAttribute_Test(IDeleteRule info)
+		{
+			base.DeleteRules_ExistAppellativeAttribute_Test(info);
+		}
+
+		#endregion
 	}
 }

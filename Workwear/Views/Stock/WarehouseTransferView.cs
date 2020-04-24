@@ -1,8 +1,8 @@
 ﻿using System;
+using Gamma.Binding.Converters;
 using Gtk;
 using QS.DomainModel.Entity;
 using QS.Views.Dialog;
-using QSOrmProject;
 using workwear.Domain.Stock;
 using workwear.ViewModels.Stock;
 
@@ -21,7 +21,7 @@ namespace workwear.Views.Stock
 		{
 			datepicker.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
 			entryNumber.Binding.AddBinding(Entity, e => e.Id, w => w.Text, new IdToStringConverter()).InitializeFromSource();
-			entryUser.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? DomainHelper.GetObjectTilte(e.CreatedbyUser) : String.Empty, w => w.Text).InitializeFromSource();
+			entryUser.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? DomainHelper.GetTitle(e.CreatedbyUser) : String.Empty, w => w.Text).InitializeFromSource();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer).InitializeFromSource();
 			entityentryWarehouseFrom.ViewModel = ViewModel.WarehouseFromEntryViewModel;
 			entityentryWarehouseTo.ViewModel = ViewModel.WarehouseToEntryViewModel;
@@ -30,7 +30,7 @@ namespace workwear.Views.Stock
 			.AddColumn("Наименование").Tag("Name").AddTextRenderer(x => x.Nomenclature!= null ? x.Nomenclature.Name : String.Empty)
 			.AddColumn("Размер").AddTextRenderer(x => x.WarehouseOperation.Size)
 			.AddColumn("Рост").AddTextRenderer(x => x.WarehouseOperation.Growth)
-			.AddColumn("Процент износа").AddTextRenderer(x => x.WarehouseOperation.WearPercent.ToString("P"))
+			.AddColumn("Процент износа").AddTextRenderer(x => x.WarehouseOperation.WearPercent.ToString("P0"))
 			.AddColumn("Количество").Tag("Count")
 				.AddNumericRenderer(x => x.Amount, false).Editing(true).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
 				.AddTextRenderer(x => x.Nomenclature != null && x.Nomenclature.Type.Units != null ? x.Nomenclature.Type.Units.Name : String.Empty,  false)

@@ -13,7 +13,7 @@ namespace workwear
 {
 	public class StockRepository
 	{
-		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		public virtual IList<StockBalanceDTO> StockBalances(IUnitOfWork uow, Warehouse warehouse, IList<Nomenclature> nomenclatures, DateTime onTime)
 		{
@@ -25,9 +25,16 @@ namespace workwear
 
 			Nomenclature nomenclatureAlias = null;
 
+			// null == null => null              null <=> null => true
 			var expensequery = QueryOver.Of<WarehouseOperation>(() => warehouseExpenseOperationAlias)
-				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id)
+				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
+				&& (warehouseExpenseOperationAlias.Size == warehouseOperationAlias.Size ||
+				(warehouseOperationAlias.Size == null && warehouseExpenseOperationAlias.Size == null))
+				&& (warehouseExpenseOperationAlias.Growth == warehouseOperationAlias.Growth ||
+				(warehouseExpenseOperationAlias.Growth == null && warehouseOperationAlias.Growth == null))
+				&& warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
 				.Where(e => e.OperationTime <= onTime);
+
 			if(warehouse == null)
 				expensequery.Where(x => x.ExpenseWarehouse != null);
 			else
@@ -36,8 +43,16 @@ namespace workwear
 			expensequery.Select(Projections.Sum(Projections.Property(() => warehouseExpenseOperationAlias.Amount)));
 
 			var incomeSubQuery = QueryOver.Of<WarehouseOperation>(() => warehouseIncomeOperationAlias)
-				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id)
+				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
+				&& (warehouseIncomeOperationAlias.Size == warehouseOperationAlias.Size
+				|| (warehouseOperationAlias.Size == null && warehouseIncomeOperationAlias.Size == null))
+				&& (warehouseIncomeOperationAlias.Growth == warehouseOperationAlias.Growth ||
+				(warehouseIncomeOperationAlias.Growth == null && warehouseOperationAlias.Growth == null))
+				&& (warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent))
+
 				.Where(e => e.OperationTime < DateTime.Now);
+
+
 			if(warehouse == null)
 				incomeSubQuery.Where(x => x.ReceiptWarehouse != null);
 			else
@@ -76,8 +91,8 @@ namespace workwear
 
 	public class StockBalanceDTO
 	{
-		public Nomenclature Nomenclature { get; set;}
-		public int NomenclatureId { get; set;}
+		public Nomenclature Nomenclature { get; set; }
+		public int NomenclatureId { get; set; }
 
 		public string Size { get; set; }
 		public string Growth { get; set; }

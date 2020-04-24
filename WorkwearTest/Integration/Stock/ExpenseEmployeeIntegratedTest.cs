@@ -10,8 +10,8 @@ using workwear.Domain.Stock;
 
 namespace WorkwearTest.Integration.Stock
 {
-	[TestFixture(TestOf = typeof(Expense))]
-	public class ExpenseIntegratedTest : InMemoryDBGlobalConfigTestFixtureBase
+	[TestFixture(TestOf = typeof(Expense), Description = "Выдача сотруднику")]
+	public class ExpenseEmployeeIntegratedTest : InMemoryDBGlobalConfigTestFixtureBase
 	{
 		[OneTimeSetUp]
 		public void Init()
@@ -29,7 +29,6 @@ namespace WorkwearTest.Integration.Stock
 		public void TestTearDown()
 		{
 		}
-
 
 		[Test(Description = "Корректно обрабатываем выдачу одной номенклатуры несколько раз за день. Реальный баг.")]
 		[Category("real case")]
@@ -83,10 +82,10 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(income);
 
 				var expense = new Expense();
+				expense.Operation = ExpenseOperations.Employee;
 				expense.Warehouse = warehouse;
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 10, 22);
-				expense.Operation = ExpenseOperations.Employee;
 				expense.AddItem(position1, 1);
 				expense.AddItem(position2, 1);
 
@@ -161,10 +160,10 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(income2);
 
 				var expense = new Expense();
+				expense.Operation = ExpenseOperations.Employee;
 				expense.Warehouse = warehouse;
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 10, 22);
-				expense.Operation = ExpenseOperations.Employee;
 				expense.AddItem(position1, 1);
 				expense.AddItem(position2, 1);
 
@@ -191,5 +190,71 @@ namespace WorkwearTest.Integration.Stock
 				);
 			}
 		}
+
+		[Test(Description = "Убеждаемся что на созданную выдачу можем добавить ведомость.")]
+		[Category("Integrated")]
+		public void IssueAndCreateIssuanceSheetTest()
+		{
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
+
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				uow.Save(nomenclature);
+
+				var position1 = new StockPosition(nomenclature, null, null, 0);
+
+				var norm = new Norm();
+				var normItem = norm.AddItem(nomenclatureType);
+				normItem.Amount = 1;
+				normItem.NormPeriod = NormPeriodType.Year;
+				normItem.PeriodCount = 1;
+				uow.Save(norm);
+
+				var employee = new EmployeeCard();
+				employee.AddUsedNorm(norm);
+				uow.Save(employee);
+				uow.Commit();
+
+				var income = new Income();
+				income.Warehouse = warehouse;
+				income.Date = new DateTime(2017, 1, 1);
+				income.Operation = IncomeOperations.Enter;
+				var incomeItem1 = income.AddItem(nomenclature);
+				incomeItem1.Amount = 10;
+				income.UpdateOperations(uow, ask);
+				uow.Save(income);
+
+				var expense = new Expense();
+				expense.Operation = ExpenseOperations.Employee;
+				expense.Warehouse = warehouse;
+				expense.Employee = employee;
+				expense.Date = new DateTime(2018, 10, 22);
+				var expenseItem = expense.AddItem(position1, 1);
+
+				expense.CreateIssuanceSheet();
+
+				//Обновление операций
+				expense.UpdateOperations(uow, ask);
+				expense.UpdateIssuanceSheet();
+				uow.Save(expense);
+				uow.Commit();
+				expense.UpdateEmployeeNextIssue();
+				uow.Commit();
+
+				Assert.That(expense.IssuanceSheet, Is.Not.Null);
+				var issuanceItem = expense.IssuanceSheet.Items.First();
+				Assert.That(issuanceItem.ExpenseItem, Is.EqualTo(expenseItem));
+			}
+		}
+
 	}
 }

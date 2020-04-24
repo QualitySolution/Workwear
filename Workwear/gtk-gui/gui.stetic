@@ -1261,7 +1261,7 @@
             <property name="ShadowType">In</property>
             <property name="BorderWidth">3</property>
             <child>
-              <widget class="Gtk.TreeView" id="treeviewProperty">
+              <widget class="Gamma.GtkWidgets.yTreeView" id="treeviewProperty">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>
@@ -3575,7 +3575,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ExpenseDocDlg" design-size="668 418">
+  <widget class="Gtk.Bin" id="workwear.ExpenseDocDlg" design-size="744 415">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -3753,7 +3753,8 @@
                   <widget class="Gtk.Label" id="label3">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Склад:</property>
+                    <property name="LabelProp" translatable="yes">Склад&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
+                    <property name="UseMarkup">True</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">1</property>
@@ -9591,10 +9592,9 @@
                 <property name="BottomAttach">2</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
-                <property name="AutoSize">True</property>
-                <property name="XOptions">Fill</property>
+                <property name="AutoSize">False</property>
                 <property name="YOptions">Fill</property>
-                <property name="XExpand">False</property>
+                <property name="XExpand">True</property>
                 <property name="XFill">True</property>
                 <property name="XShrink">False</property>
                 <property name="YExpand">False</property>
@@ -9605,6 +9605,7 @@
             <child>
               <widget class="Gtk.Label" id="label10">
                 <property name="MemberName" />
+                <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Название:</property>
               </widget>
               <packing>
@@ -9624,7 +9625,8 @@
             <child>
               <widget class="Gtk.Label" id="label9">
                 <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">ID</property>
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Код:</property>
               </widget>
               <packing>
                 <property name="AutoSize">True</property>
@@ -9639,16 +9641,14 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yEntry" id="yentry2">
+              <widget class="Gamma.GtkWidgets.yLabel" id="labelId">
                 <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="IsEditable">True</property>
-                <property name="InvisibleChar">•</property>
+                <property name="LabelProp" translatable="yes">ylabel1</property>
               </widget>
               <packing>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
-                <property name="AutoSize">False</property>
+                <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
                 <property name="XExpand">False</property>
