@@ -19,7 +19,7 @@ using QSOrmProject.RepresentationModel;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
-using workwear.JournalViewModels.Company;
+using workwear.Journal.ViewModels.Company;
 using workwear.Representations.Organization;
 using workwear.ViewModels.Company;
 

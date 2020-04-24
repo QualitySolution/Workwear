@@ -8,7 +8,7 @@ using NHibernate.Transform;
 using QS.Navigation;
 using QS.Project.Services;
 
-namespace workwear.JournalViewModels.Company
+namespace workwear.Journal.ViewModels.Company
 {
 	public class LeadersJournalViewModel : EntityJournalViewModelBase<Leader, LeadersViewModel, LeaderJournalNode>
 	{

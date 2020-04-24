@@ -10,7 +10,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.ViewModels.Statements;
 
-namespace workwear.JournalViewModels.Statements
+namespace workwear.Journal.ViewModels.Statements
 {
 	public class IssuanceSheetJournalViewModel : EntityJournalViewModelBase<IssuanceSheet, IssuanceSheetViewModel, IssuanceSheetJournalNode>
 	{

@@ -10,7 +10,7 @@ using QS.ViewModels.Control.EEVM;
 using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
-using workwear.JournalViewModels.Stock;
+using workwear.Journal.ViewModels.Stock;
 using workwear.Repository;
 using workwear.ViewModels.Stock;
 

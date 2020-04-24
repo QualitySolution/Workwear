@@ -1,10 +1,8 @@
-﻿using System;
-using Gamma.ColumnConfig;
+﻿using Gamma.ColumnConfig;
 using QS.Journal.GtkUI;
+using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
-using workwear.JournalViewModels.Company;
-using workwear.JournalViewModels.Statements;
-using workwear.JournalViewModels.Stock;
 
 namespace workwear.Journal
 {

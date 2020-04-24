@@ -10,7 +10,7 @@ using QS.Utilities.Text;
 using workwear.Domain.Company;
 using workwear.ViewModels.Company;
 
-namespace workwear.JournalViewModels.Company
+namespace workwear.Journal.ViewModels.Company
 {
 	public class EmployeeJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeJournalNode>
 	{

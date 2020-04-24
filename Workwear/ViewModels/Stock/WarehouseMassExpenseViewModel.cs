@@ -14,7 +14,7 @@ using QS.ViewModels.Dialog;
 using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
-using workwear.JournalViewModels.Stock;
+using workwear.Journal.ViewModels.Stock;
 
 namespace workwear.ViewModels.Stock
 {
