@@ -8,7 +8,7 @@ namespace workwear.Journal.Filter.ViewModels.Company
 	{
 		#region Ограничения
 
-		private bool showOnlyWork;
+		private bool showOnlyWork = true;
 		public virtual bool ShowOnlyWork {
 			get => showOnlyWork;
 			set => SetField(ref showOnlyWork, value);
