@@ -10,6 +10,17 @@ namespace workwear.Journal
 	{
 		public static void RegisterColumns()
 		{
+			#region Company
+			TreeViewColumnsConfigFactory.Register<LeadersJournalViewModel>(
+				() => FluentColumnsConfig<LeaderJournalNode>.Create()
+					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Фамилия").AddTextRenderer(node => node.SurName).SearchHighlight()
+					.AddColumn("Имя").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Отчество").AddTextRenderer(node => node.Patronymic).SearchHighlight()
+					.AddColumn("Должность").AddTextRenderer(node => node.Position).SearchHighlight()
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<OrganizationJournalViewModel>(
 				() => FluentColumnsConfig<ClientJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
@@ -17,6 +28,10 @@ namespace workwear.Journal
 					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
 					.Finish()
 			);
+
+			#endregion
+
+			#region Statements
 
 			TreeViewColumnsConfigFactory.Register<IssuanceSheetJournalViewModel>(
 				() => FluentColumnsConfig<IssuanceSheetJournalNode>.Create()
@@ -28,32 +43,28 @@ namespace workwear.Journal
 					.Finish()
 			);
 
-			TreeViewColumnsConfigFactory.Register<LeadersJournalViewModel>(
-				() => FluentColumnsConfig<LeaderJournalNode>.Create()
-					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
-					.AddColumn("Фамилия").AddTextRenderer(node => node.SurName).SearchHighlight()
-					.AddColumn("Имя").AddTextRenderer(node => node.Name).SearchHighlight()
-					.AddColumn("Отчество").AddTextRenderer(node => node.Patronymic).SearchHighlight()
-					.AddColumn("Должность").AddTextRenderer(node => node.Position).SearchHighlight()
+			#endregion
+
+			#region Stock
+
+			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
+				() => FluentColumnsConfig<StockBalanceJournalNode>.Create()
+					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
+					.AddColumn("Размер").AddTextRenderer(e => e.Size).SearchHighlight()
+					.AddColumn("Рост").AddTextRenderer(e => e.Growth).SearchHighlight()
+					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText, useMarkup: true)
+					.AddColumn("Процент износа").AddTextRenderer(e => e.WearPercentText)
 					.Finish()
 			);
 
 			TreeViewColumnsConfigFactory.Register<WarehouseJournalViewModel>(
-			() => FluentColumnsConfig<WarehouseJournalNode>.Create()
-				.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
-				.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
-				.Finish()
-		);
+				() => FluentColumnsConfig<WarehouseJournalNode>.Create()
+					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.Finish()
+			);
 
-			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
-			() => FluentColumnsConfig<StockBalanceJournalNode>.Create()
-			.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
-			.AddColumn("Размер").AddTextRenderer(e => e.Size).SearchHighlight()
-			.AddColumn("Рост").AddTextRenderer(e => e.Growth).SearchHighlight()
-			.AddColumn("Количество").AddTextRenderer(e => e.BalanceText, useMarkup: true)
-			.AddColumn("Процент износа").AddTextRenderer(e => e.WearPercentText)
-			.Finish()
-		);
+			#endregion
 		}
 	}
 }
