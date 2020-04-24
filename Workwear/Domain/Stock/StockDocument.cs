@@ -52,6 +52,8 @@ namespace workwear.Domain.Stock
 					return typeof(Writeoff);
 				case StokDocumentType.TransferDoc:
 					return typeof(Transfer);
+				case StokDocumentType.MassExpense:
+					return typeof(MassExpense);
 			}
 			throw new NotSupportedException();
 		}
@@ -66,6 +68,8 @@ namespace workwear.Domain.Stock
 		[Display(Name = "Списание")]
 		WriteoffDoc,
 		[Display(Name = "Перемещение")]
-		TransferDoc
+		TransferDoc,
+		[Display(Name = "Массовая выдача")]
+		MassExpense
 	}
 }

@@ -47,6 +47,8 @@ namespace workwear.JournalViewers
 			if(type == StokDocumentType.TransferDoc) {
 				MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<WarehouseTransferViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
 			}
+			else if (type == StokDocumentType.MassExpense)
+				MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<WarehouseMassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
 			else {
 				var dlg = OrmMain.CreateObjectDialog(StockDocument.GetDocClass(type));
 				TabParent.AddTab(dlg, this);
@@ -86,6 +88,9 @@ namespace workwear.JournalViewers
 						break;
 					case StokDocumentType.TransferDoc:
 						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<WarehouseTransferViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
+						break;
+					case StokDocumentType.MassExpense:
+						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<WarehouseMassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
 						break;
 					default:
 						throw new NotSupportedException("Тип документа не поддерживается.");

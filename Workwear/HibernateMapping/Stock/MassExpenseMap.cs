@@ -14,20 +14,26 @@ namespace workwear.HibernateMapping.Stock
 			Map(x => x.Date).Column("date");
 			Map(x => x.Comment).Column("comment");
 
-			References(x => x.User).Column("user_id").Not.Nullable();
-			References(x => x.Warehouseoperation).Column("warehouse_expense_id").Not.Nullable();
+			References(x => x.CreatedbyUser).Column("user_id").Not.Nullable();
+			References(x => x.WarehouseFrom).Column("warehouse_id").Not.Nullable();
 
-			 HasManyToMany(x => x.Employees).Table("stock_mass_expense_employee")
-			.ParentKeyColumn("doc_id")
-			.ChildKeyColumn("employee_id")
-			.LazyLoad();
+			HasMany(x => x.ItemsNomenclature)
+				.Inverse()
+				.KeyColumn("stock_mass_expense_id").Not.KeyNullable()
+				.Cascade.AllDeleteOrphan()
+				.LazyLoad();
 
+			HasMany(x => x.Employees)
+				.Inverse()
+				.KeyColumn("stock_mass_expense_id").Not.KeyNullable()
+				.Cascade.AllDeleteOrphan()
+				.LazyLoad();
 
-			HasMany(x => x.MassExpenseIssuing).KeyColumn("doc_id").Not.KeyNullable().Inverse().Cascade.AllDeleteOrphan()
-			.LazyLoad();
-
-			HasMany(x => x.MassExpenseOperation).KeyColumn("doc_id").Not.KeyNullable().Inverse().Cascade.AllDeleteOrphan()
-			.LazyLoad();
+			HasMany(x => x.MassExpenseOperation)
+				.Inverse()
+				.KeyColumn("stock_mass_expense_id").Not.KeyNullable()
+				.Cascade.AllDeleteOrphan()
+				.LazyLoad();
 
 		}
 	}
