@@ -372,6 +372,17 @@
     <Compile Include="HibernateMapping\Operations\WarehouseOperationMap.cs" />
     <Compile Include="Domain\Operations\SubdivisionIssueOperation.cs" />
     <Compile Include="HibernateMapping\Operations\SubdivisionIssueOperationMap.cs" />
+    <Compile Include="ViewModels\Stock\WarehouseMassExpenseViewModel.cs" />
+    <Compile Include="Views\Stock\WarehouseMassExpenseView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseMassExpenseView.cs" />
+    <Compile Include="Domain\Stock\MassExpense.cs" />
+    <Compile Include="HibernateMapping\Stock\MassExpenseMap.cs" />
+    <Compile Include="Domain\Stock\MassExpenseNomenclature.cs" />
+    <Compile Include="Domain\Stock\MassExpenseOperation.cs" />
+    <Compile Include="Domain\Stock\MassExpenseEmployee.cs" />
+    <Compile Include="HibernateMapping\Stock\MassExpenseNomenclaturesMap.cs" />
+    <Compile Include="HibernateMapping\Stock\MassExpenseOperationMap.cs" />
+    <Compile Include="HibernateMapping\Stock\MassExpenseEmployeeMap.cs" />
     <Compile Include="Journal\JournalsColumnsConfigs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
