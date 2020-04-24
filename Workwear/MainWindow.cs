@@ -355,10 +355,8 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionEmployeesActivated(object sender, EventArgs e)
 	{
-		tdiMain.OpenTab(
-			ReferenceRepresentation.GenerateHashName<EmployeesVM>(),
-			() => new ReferenceRepresentation(new EmployeesVM())
-		);
+		MainTelemetry.AddCount(nameof(EmployeeJournalViewModel));
+		NavigationManager.OpenViewModel<EmployeeJournalViewModel>(null);
 	}
 
 	protected void OnActionObjectsActivated(object sender, EventArgs e)

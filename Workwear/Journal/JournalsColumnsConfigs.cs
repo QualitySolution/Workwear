@@ -11,6 +11,17 @@ namespace workwear.Journal
 		public static void RegisterColumns()
 		{
 			#region Company
+			TreeViewColumnsConfigFactory.Register<EmployeeJournalViewModel>(
+			() => FluentColumnsConfig<EmployeeJournalNode>.Create()
+				.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
+				.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
+				.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
+				.AddColumn("Должность").AddTextRenderer(node => node.Post)
+				.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
+				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Dismiss ? "gray" : "black")
+				.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<LeadersJournalViewModel>(
 				() => FluentColumnsConfig<LeaderJournalNode>.Create()
 					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()

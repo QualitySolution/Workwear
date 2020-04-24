@@ -384,6 +384,9 @@
     <Compile Include="Journal\ViewModels\Company\OrganizationJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Statements\IssuanceSheetJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\WarehouseJournalViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Company\EmployeeFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.EmployeeFilterView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Company\EmployeeFilterViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -530,6 +533,8 @@
     <Folder Include="Journal\Filter.Views\Stock\" />
     <Folder Include="Journal\ViewModels\Company\" />
     <Folder Include="Journal\ViewModels\Statements\" />
+    <Folder Include="Journal\Filter.Views\Company\" />
+    <Folder Include="Journal\Filter.ViewModels\Company\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
