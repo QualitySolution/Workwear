@@ -9,6 +9,7 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using QS.Utilities.Text;
+using workwear.Dialogs.Organization;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
@@ -18,9 +19,11 @@ namespace workwear.Journal.ViewModels.Company
 {
 	public class EmployeeJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeJournalNode>
 	{
+		private readonly ITdiCompatibilityNavigation tdiNavigationManager;
+
 		public EmployeeFilterViewModel Filter { get; private set; }
 
-		public EmployeeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
+		public EmployeeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, ITdiCompatibilityNavigation navigationManager, 
 										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, ICurrentPermissionService currentPermissionService = null) 
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
@@ -28,6 +31,7 @@ namespace workwear.Journal.ViewModels.Company
 
 			AutofacScope = autofacScope;
 			JournalFilter = Filter = AutofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			this.tdiNavigationManager = navigationManager;
 		}
 
 		protected override IQueryOver<EmployeeCard> ItemsQuery(IUnitOfWork uow)
@@ -68,6 +72,16 @@ namespace workwear.Journal.ViewModels.Company
 				.ThenBy(() => employeeAlias.FirstName).Asc
 				.ThenBy(() => employeeAlias.Patronymic).Asc
 				.TransformUsing(Transformers.AliasToBean<EmployeeJournalNode>());
+		}
+
+		protected override void CreateEntityDialog()
+		{
+			tdiNavigationManager.OpenTdiTab<EmployeeCardDlg>(this);
+		}
+
+		protected override void EditEntityDialog(EmployeeJournalNode node)
+		{
+			tdiNavigationManager.OpenTdiTab<EmployeeCardDlg, int>(this, node.Id);
 		}
 	}
 
