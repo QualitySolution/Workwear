@@ -9,7 +9,7 @@ using QS.Services;
 using workwear.Domain.Company;
 using workwear.ViewModels.Company;
 
-namespace workwear.JournalViewModels.Company
+namespace workwear.Journal.ViewModels.Company
 {
 	public class OrganizationJournalViewModel : EntityJournalViewModelBase<Organization, OrganizationViewModel, ClientJournalNode>
 	{

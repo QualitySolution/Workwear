@@ -5,7 +5,7 @@ using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.JournalViewModels.Stock;
+using workwear.Journal.ViewModels.Stock;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Journal.Filter.ViewModels.Stock

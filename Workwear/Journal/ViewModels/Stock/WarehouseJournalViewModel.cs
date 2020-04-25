@@ -8,7 +8,7 @@ using QS.Services;
 using workwear.Domain.Stock;
 using workwear.ViewModels.Stock;
 
-namespace workwear.JournalViewModels.Stock
+namespace workwear.Journal.ViewModels.Stock
 {
 	public class WarehouseJournalViewModel: EntityJournalViewModelBase<Warehouse, WarehouseViewModel, WarehouseJournalNode>
 	{

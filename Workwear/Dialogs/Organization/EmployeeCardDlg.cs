@@ -19,7 +19,7 @@ using QSReport;
 using workwear.Dialogs.Regulations;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
-using workwear.JournalViewModels.Company;
+using workwear.Journal.ViewModels.Company;
 using workwear.Measurements;
 using workwear.Repository;
 using workwear.Tools;

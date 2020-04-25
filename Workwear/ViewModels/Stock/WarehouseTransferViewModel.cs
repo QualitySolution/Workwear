@@ -10,10 +10,8 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using QSOrmProject;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
-using workwear.JournalViewModels.Stock;
 
 namespace workwear.ViewModels.Stock
 {

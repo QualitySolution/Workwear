@@ -28,11 +28,10 @@ using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
+using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.JournalViewers;
-using workwear.JournalViewModels.Company;
-using workwear.JournalViewModels.Statements;
-using workwear.JournalViewModels.Stock;
 using workwear.Representations.Organization;
 using workwear.Tools;
 using workwear.ViewModel;
@@ -356,10 +355,8 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionEmployeesActivated(object sender, EventArgs e)
 	{
-		tdiMain.OpenTab(
-			ReferenceRepresentation.GenerateHashName<EmployeesVM>(),
-			() => new ReferenceRepresentation(new EmployeesVM())
-		);
+		MainTelemetry.AddCount(nameof(EmployeeJournalViewModel));
+		NavigationManager.OpenViewModel<EmployeeJournalViewModel>(null);
 	}
 
 	protected void OnActionObjectsActivated(object sender, EventArgs e)

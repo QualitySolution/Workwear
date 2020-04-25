@@ -11,6 +11,7 @@ using QS.ViewModels;
 using QSOrmProject;
 using QSOrmProject.RepresentationModel;
 using workwear.Domain.Company;
+using workwear.Journal.ViewModels.Company;
 using workwear.Repository;
 using workwear.Repository.Operations;
 using workwear.Representations.Organization;
@@ -79,20 +80,18 @@ namespace workwear.ViewModels.Statements
 		}
 		public void AddEmployees()
 		{
-			var selectPage = issuanceSheetViewModel.tdiNavigationManager.OpenTdiTab<ReferenceRepresentation>(
-				issuanceSheetViewModel.TdiTab,
-				OpenPageOptions.AsSlave,
-				c => c.RegisterType<EmployeesVM>().As<IRepresentationModel>()
-			);
+			var selectPage = issuanceSheetViewModel.NavigationManager.OpenViewModel<EmployeeJournalViewModel>(
+				issuanceSheetViewModel,
+				OpenPageOptions.AsSlave);
 
-			var selectDialog = selectPage.TdiTab as ReferenceRepresentation;
-			selectDialog.Mode = OrmReferenceMode.MultiSelect;
-			selectDialog.ObjectSelected += SelectDialog_ObjectSelected;
+			var selectDialog = selectPage.ViewModel;
+			selectDialog.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectDialog.OnSelectResult += SelectDialog_OnSelectResult;
 		}
 
-		void SelectDialog_ObjectSelected(object sender, ReferenceRepresentationSelectedEventArgs e)
+		void SelectDialog_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			var emploeesToAdd = issuanceSheetViewModel.UoW.GetById<EmployeeCard>(e.GetSelectedIds());
+			var emploeesToAdd = issuanceSheetViewModel.UoW.GetById<EmployeeCard>(e.SelectedObjects.Select(DomainHelper.GetId));
 
 			foreach(var employee in emploeesToAdd) {
 				ObservableEmployees.Add(employee);

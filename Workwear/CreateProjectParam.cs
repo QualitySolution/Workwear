@@ -126,7 +126,9 @@ namespace workwear
 			#endregion
 
 			#region Старые диалоги
-			builder.RegisterType<ExpenseDocDlg>().AsSelf();
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(ExpenseDocDlg)))
+				.Where(t => t.IsAssignableTo<ITdiTab>() && t.Name.EndsWith("Dlg"))
+				.AsSelf();
 			#endregion
 
 			#region Старые общие диалоги
