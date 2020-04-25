@@ -20,7 +20,6 @@ using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
-using workwear.Representations.Organization;
 using workwear.ViewModels.Company;
 
 namespace workwear.ViewModels.Statements
@@ -105,22 +104,20 @@ namespace workwear.ViewModels.Statements
 
 		public void SetEmployee(IssuanceSheetItem[] items)
 		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<ReferenceRepresentation>(
-				TdiTab, 
-				OpenPageOptions.AsSlave, 
-				c => c.RegisterType<EmployeesVM>().As<IRepresentationModel>()
-			);
+			var selectPage = NavigationManager.OpenViewModel<EmployeeJournalViewModel>(
+				this,
+				OpenPageOptions.AsSlave);
 
-			var selectDialog = selectPage.TdiTab as ReferenceRepresentation;
-			selectDialog.Mode = OrmReferenceMode.Select;
+			var selectDialog = selectPage.ViewModel;
+			selectDialog.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			selectDialog.Tag = items;
-			selectDialog.ObjectSelected += SelectEmployee_ObjectSelected;
+			selectDialog.OnSelectResult += SelectDialog_OnSelectResult;
 		}
 
-		void SelectEmployee_ObjectSelected(object sender, ReferenceRepresentationSelectedEventArgs e)
+		void SelectDialog_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			var items = (sender as ReferenceRepresentation).Tag as IssuanceSheetItem[];
-			var employee = UoW.GetById<EmployeeCard>(e.ObjectId);
+			var items = (sender as EmployeeJournalViewModel).Tag as IssuanceSheetItem[];
+			var employee = UoW.GetById<EmployeeCard>(DomainHelper.GetId(e.SelectedObjects.First()));
 			foreach(var item in items) {
 				item.Employee = employee;
 			}

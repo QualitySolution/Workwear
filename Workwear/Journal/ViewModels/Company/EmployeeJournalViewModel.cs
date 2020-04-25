@@ -21,6 +21,11 @@ namespace workwear.Journal.ViewModels.Company
 	{
 		private readonly ITdiCompatibilityNavigation tdiNavigationManager;
 
+		/// <summary>
+		/// Для хранения пользовательской информации как в WinForms
+		/// </summary>
+		public object Tag;
+
 		public EmployeeFilterViewModel Filter { get; private set; }
 
 		public EmployeeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, ITdiCompatibilityNavigation navigationManager, 
