@@ -278,7 +278,8 @@ namespace workwear.Domain.Stock
 				if(employee.EmployeeCard.Sex == Sex.None)
 					employee.EmployeeCard.Sex = employee.Sex;
 
-				uow.Save(employee.EmployeeCard);
+				if(employee.EmployeeCard.Id == 0)
+					uow.Save(employee.EmployeeCard);
 
 				foreach(var nom in ItemsNomenclature) {
 
@@ -313,7 +314,9 @@ namespace workwear.Domain.Stock
 					warehouseOperation.OperationTime = this.Date;
 
 					employeeIssueOperation.WarehouseOperation = warehouseOperation;
-					
+
+					uow.Save(this);
+					uow.Save(employee);
 					uow.Save(warehouseOperation);
 					uow.Save(op);
 				}
