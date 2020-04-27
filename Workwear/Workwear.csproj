@@ -150,6 +150,9 @@
     <Reference Include="System.ValueTuple">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="Oracle.ManagedDataAccess">
+      <HintPath>..\packages\Oracle.ManagedDataAccess.19.7.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -376,6 +379,7 @@
     <Compile Include="HibernateMapping\Stock\MassExpenseOperationMap.cs" />
     <Compile Include="HibernateMapping\Stock\MassExpenseEmployeeMap.cs" />
     <Compile Include="Journal\JournalsColumnsConfigs.cs" />
+    <Compile Include="Tools\Oracle\NLMKOracle.cs" />
     <Compile Include="Journal\ViewModels\Company\EmployeeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\LeadersJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\OrganizationJournalViewModel.cs" />
@@ -533,6 +537,7 @@
     <Folder Include="Journal\ViewModels\Statements\" />
     <Folder Include="Journal\Filter.Views\Company\" />
     <Folder Include="Journal\Filter.ViewModels\Company\" />
+    <Folder Include="Tools\Oracle\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
@@ -601,6 +606,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\Stock\ActWriteOff_Common.rdl" />
+    <None Include="App.config" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

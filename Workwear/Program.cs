@@ -1,6 +1,7 @@
 using System;
 using Gtk;
 using NLog;
+using QS.Dialog.GtkUI;
 using QS.ErrorReporting;
 using QS.Project.DB;
 using QS.Project.Repositories;
@@ -10,6 +11,7 @@ using QSMachineConfig;
 using QSProjectsLib;
 using QSSupportLib;
 using QSTelemetry;
+using workwear.Tools.Oracle;
 
 namespace workwear
 {
@@ -17,6 +19,7 @@ namespace workwear
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
 		public static MainWindow MainWin;
+		public static NLMKOracle NLMKOracle;
 
 		[STAThread]
 		public static void Main (string[] args)
@@ -97,8 +100,11 @@ namespace workwear
 			//Настрока удаления
 			Configure.ConfigureDeletion();
 
-            //Иницициализируем телеметрию
-            MainTelemetry.Product = MainSupport.ProjectVerion.Product;
+			NLMKOracle = new NLMKOracle();
+			NLMKOracle.Connect(new GtkMessageDialogsInteractive());
+
+			//Иницициализируем телеметрию
+			MainTelemetry.Product = MainSupport.ProjectVerion.Product;
             MainTelemetry.Edition = MainSupport.ProjectVerion.Edition;
             MainTelemetry.Version = MainSupport.ProjectVerion.Version.ToString();
             MainTelemetry.IsDemo = Login.ApplicationDemoServer == QSMain.connectionDB.DataSource;
