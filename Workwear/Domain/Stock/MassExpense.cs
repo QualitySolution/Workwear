@@ -12,6 +12,7 @@ using QS.Dialog;
 using System.Reflection;
 using workwear.Measurements;
 using workwear.Domain.Regulations;
+using workwear.Domain.Statements;
 
 namespace workwear.Domain.Stock
 {
@@ -78,7 +79,6 @@ namespace workwear.Domain.Stock
 			set { SetField(ref massExpenseOperation, value, () => MassExpenseOperation); }
 		}
 
-
 		GenericObservableList<MassExpenseOperation> observableOperations;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<MassExpenseOperation> ObservableOperations {
@@ -88,7 +88,42 @@ namespace workwear.Domain.Stock
 				return observableOperations;
 			}
 		}
+		private IssuanceSheet issuanceSheet;
+		[Display(Name = "Связанная ведомость")]
+		public virtual IssuanceSheet IssuanceSheet {
+			get => issuanceSheet;
+			set => SetField(ref issuanceSheet, value);
+		}
 
+		public virtual void CreateIssuanceSheet()
+		{
+			if(IssuanceSheet != null)
+				return;
+
+			IssuanceSheet = new IssuanceSheet {
+				MassExpense = this
+			};
+			UpdateIssuanceSheet();
+		}
+
+		public virtual void UpdateIssuanceSheet()
+		{
+			if(IssuanceSheet == null)
+				return;
+
+			if(Employees == null)
+				throw new NullReferenceException("Для обновления ведомости сотрудники должны быть указаны.");
+			if(itemsNomenclature.Count < 0 )
+				throw new NullReferenceException("Для обновления ведомости номенклатура должна быть указана.");
+
+			IssuanceSheet.Date = Date;
+
+			foreach(var emp in Employees) {
+				foreach(var nomen in ItemsNomenclature) {
+				nomen.IssuanceSheetItem = IssuanceSheet.AddItem(emp, nomen);
+				}
+			}
+		}
 
 		#region IValidatableObject implementation
 
@@ -193,8 +228,9 @@ namespace workwear.Domain.Stock
 						continue;
 					}
 					var EnableSize = SizeHelper.MatchSize(sizeAndStd.StandardCode, sizeAndStd.Size, SizeUsePlace.Сlothes);
+					//var stockBalanse = stock.Where(x => EnableSize.Any(y => y.StandardCode == x.Nomenclature.SizeStd ||(x.Nomenclature.SizeStd != null && x.Nomenclature.SizeStd.ToString() == "UnisexWearRus"))).ToList();
 					var stockBalanse = stock.Where(x => EnableSize.Any(y => x.Size == y.Size && 
-					(y.StandardCode == x.Nomenclature.SizeStd || x.Nomenclature.SizeStd.ToString() == "UnisexWearRus"))).ToList();
+					(y.StandardCode == x.Nomenclature.SizeStd || (x.Nomenclature.SizeStd != null && x.Nomenclature.SizeStd.ToString() == "UnisexWearRus")))).ToList();
 					int allCount = 0;
 					int needCount = nom.Amount;
 					foreach(var item in stockBalanse)

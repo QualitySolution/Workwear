@@ -50,6 +50,12 @@ namespace workwear.Domain.Statements
 			set => SetField(ref expense, value);
 		}
 
+		private MassExpense massExpense;
+		[Display (Name = "Документ массовой выдачи")]
+		public virtual MassExpense MassExpense {
+			get => massExpense;
+			set => SetField(ref massExpense, value);
+		}
 
 		#region Подписи
 
@@ -103,6 +109,18 @@ namespace workwear.Domain.Statements
 			var item = new IssuanceSheetItem {
 				IssuanceSheet = this,
 				ExpenseItem = expenseItem
+			};
+			ObservableItems.Add(item);
+			return item;
+		}
+
+		public virtual IssuanceSheetItem AddItem(MassExpenseEmployee massExpenseEmployee, MassExpenseNomenclature massExpenseNomenclature)
+		{
+			var item = new IssuanceSheetItem {
+				IssuanceSheet = this,
+				Employee = massExpenseEmployee.EmployeeCard,
+				Nomenclature = massExpenseNomenclature.Nomenclature,
+				Amount = (uint)massExpenseNomenclature.Amount,
 			};
 			ObservableItems.Add(item);
 			return item;
