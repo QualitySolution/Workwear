@@ -388,6 +388,7 @@
     <Compile Include="Journal\Filter.Views\Company\EmployeeFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.EmployeeFilterView.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\EmployeeFilterViewModel.cs" />
+    <Compile Include="Tools\Oracle\OracleSQLDataLoader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
