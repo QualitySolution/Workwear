@@ -70,7 +70,10 @@ namespace workwear.Journal.ViewModels.Company
 					sql += " WHERE" + conditions.ReplaceFirstOccurrence(" AND", "");
 			}
 			else //Дурацкий оракл, сервер используется версии 11. Там нет аналога Limit, поэтому такой сложный запрос.S
-				sql = $"SELECT t.* FROM (select rownum rnum, v.* from v_sklad_spec_human_l_full v where rownum <= {skip + pageSize} {conditions}) t WHERE rnum > {skip ?? 0}";
+				sql = $"SELECT t.*, dept.NGRPOL dept_name " +
+					$"FROM (select rownum rnum, v.* from v_sklad_spec_human_l_full v where rownum <= {skip + pageSize} {conditions}) t " +
+					"LEFT JOIN SGRPOL dept ON dept.KGRPOL = t.DEPT_CODE " +
+					$"WHERE rnum > {skip ?? 0}";
 	
 			cmd.CommandText = sql;
 
@@ -85,6 +88,7 @@ namespace workwear.Journal.ViewModels.Company
 				Patronymic = reader["SECNAME"]?.ToString(),
 				PersonnelNumber = reader["TN"]?.ToString(),
 				DismissDate = reader["DUVOL"] as DateTime?,
+				Subdivision = reader["dept_name"]?.ToString()
 			};
 		}
 
