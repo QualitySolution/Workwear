@@ -2,19 +2,16 @@
 using System.Collections.Generic;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
-using Autofac;
 using NHibernate;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.Navigation;
 using QS.ViewModels;
 using QSOrmProject;
-using QSOrmProject.RepresentationModel;
 using workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
-using workwear.Repository;
+using workwear.Repository.Company;
 using workwear.Repository.Operations;
-using workwear.Representations.Organization;
 
 namespace workwear.ViewModels.Statements
 {

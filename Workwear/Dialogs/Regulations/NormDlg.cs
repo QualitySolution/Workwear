@@ -10,6 +10,7 @@ using QS.Project.Dialogs.GtkUI;
 using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using workwear.Repository.Company;
 
 namespace workwear.Dialogs.Regulations
 {
@@ -139,7 +140,7 @@ namespace workwear.Dialogs.Regulations
 			if (toRemove.Id > 0)
 			{
 				logger.Info("Поиск ссылок на удаляемую строку нормы...");
-				worksEmployees = Repository.EmployeeRepository.GetEmployeesDependenceOnNormItem(UoW, toRemove);
+				worksEmployees = EmployeeRepository.GetEmployeesDependenceOnNormItem(UoW, toRemove);
 				if (worksEmployees.Count > 0)
 				{
 					List<string> operations = new List<string>();

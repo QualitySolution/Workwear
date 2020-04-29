@@ -1,11 +1,15 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
+using QS.Dialog.GtkUI;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Services;
 using QS.Tdi;
 using QS.Validation;
@@ -15,6 +19,7 @@ using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
+using workwear.ViewModels.Statements;
 
 namespace workwear.ViewModels.Stock
 {
@@ -144,5 +149,44 @@ namespace workwear.ViewModels.Stock
 			base.Dispose();
 			NotifyConfiguration.Instance.UnsubscribeAll(this);
 		}
+
+		public void IssuanceSheetCreate()
+		{
+			Entity.CreateIssuanceSheet();
+
+		}
+
+		public void IssuanceSheetOpen()
+		{
+			if(UoW.HasChanges) {
+				if(MessageDialogHelper.RunQuestionDialog("Сохранить документ выдачи перед открытием ведомости?"))
+					Save();
+				else
+					return;
+			}
+
+			NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
+		}
+		public void IssuanceSheetPrint()
+		{
+			if(UoW.HasChanges) {
+				if(CommonDialogs.SaveBeforePrint(Entity.GetType(), "ведомости"))
+					Save();
+				else
+					return;
+			}
+
+			var reportInfo = new ReportInfo {
+				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
+				Identifier = "Statements.IssuanceSheet",
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.IssuanceSheet.Id }
+				}
+			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
+
+
+
 	}
 }

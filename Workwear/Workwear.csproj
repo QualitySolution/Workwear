@@ -238,7 +238,6 @@
     <Compile Include="HibernateMapping\Stock\WriteoffItemMap.cs" />
     <Compile Include="JournalFilters\EmployeeBalanceFilter.cs" />
     <Compile Include="gtk-gui\workwear.EmployeeBalanceFilter.cs" />
-    <Compile Include="Repository\EmployeeRepository.cs" />
     <Compile Include="ReportsDlg\OnIssueStatement.cs" />
     <Compile Include="gtk-gui\workwear.OnIssueStatement.cs" />
     <Compile Include="Repository\StockRepository.cs" />
@@ -249,7 +248,6 @@
     <Compile Include="Representations\ObjectBalanceVM.cs" />
     <Compile Include="JournalFilters\ObjectBalanceFilter.cs" />
     <Compile Include="gtk-gui\workwear.ObjectBalanceFilter.cs" />
-    <Compile Include="Repository\SubdivisionRepository.cs" />
     <Compile Include="Measurements\WearGrowth.cs" />
     <Compile Include="Measurements\WearSize.cs" />
     <Compile Include="JournalViewers\StockDocumentsView.cs" />
@@ -389,6 +387,8 @@
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.EmployeeFilterView.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\EmployeeFilterViewModel.cs" />
     <Compile Include="Tools\Oracle\OracleSQLDataLoader.cs" />
+    <Compile Include="Repository\Company\EmployeeRepository.cs" />
+    <Compile Include="Repository\Company\SubdivisionRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -539,6 +539,7 @@
     <Folder Include="Journal\Filter.Views\Company\" />
     <Folder Include="Journal\Filter.ViewModels\Company\" />
     <Folder Include="Tools\Oracle\" />
+    <Folder Include="Repository\Company\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

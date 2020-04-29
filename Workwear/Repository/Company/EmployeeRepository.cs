@@ -10,7 +10,7 @@ using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
-namespace workwear.Repository
+namespace workwear.Repository.Company
 {
 	public static class EmployeeRepository
 	{
@@ -70,6 +70,13 @@ namespace workwear.Repository
 				.Where(x => x.EmployeeCard.IsIn(employees))
 				.Where(x => x.NextIssue >= begin && x.NextIssue <= end)
 				.List();
+		}
+
+		public static EmployeeCard GetEmployeeByPersonalNumber(IUnitOfWork uow, string personalNumber)
+		{
+			return uow.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.PersonnelNumber == personalNumber)
+				.SingleOrDefault();
 		}
 	}
 
