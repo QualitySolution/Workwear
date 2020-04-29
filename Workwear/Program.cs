@@ -5,6 +5,7 @@ using QS.Dialog.GtkUI;
 using QS.ErrorReporting;
 using QS.Project.DB;
 using QS.Project.Repositories;
+using QS.Project.Services.GtkUI;
 using QS.Updater;
 using QS.Updater.DB;
 using QSMachineConfig;
@@ -101,7 +102,7 @@ namespace workwear
 			Configure.ConfigureDeletion();
 
 			NLMKOracle = new NLMKOracle();
-			NLMKOracle.Connect(new GtkMessageDialogsInteractive());
+			NLMKOracle.Connect(new GtkInteractiveService());
 
 			//Иницициализируем телеметрию
 			MainTelemetry.Product = MainSupport.ProjectVerion.Product;

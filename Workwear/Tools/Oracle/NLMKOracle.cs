@@ -1,6 +1,7 @@
 ﻿using System;
 using Oracle.ManagedDataAccess.Client;
 using QS.Dialog;
+using QS.Services;
 using QSMachineConfig;
 
 namespace workwear.Tools.Oracle
@@ -18,7 +19,7 @@ namespace workwear.Tools.Oracle
 		{
 		}
 
-		public void Connect(IInteractiveMessage interactive)
+		public void Connect(IInteractiveService interactive)
 		{
 			var config = MachineConfig.ConfigSource.Configs[SectionName];
 			if(config == null) {
@@ -57,7 +58,8 @@ namespace workwear.Tools.Oracle
 				Connection.Open();
 			}
 			catch(OracleException ex) when (ex.Number == 12545) {
-				interactive.ShowMessage(ImportanceLevel.Error, "Не удалось подключится к базе НЛМК. Часть функциональности будет недоступна.");
+				if(interactive.Question("Не удалось подключится к базе НЛМК. Часть функциональности будет недоступна. Попробовать снова?"))
+					Connect(interactive);
 			}
 		}
 	}
