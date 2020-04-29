@@ -10,7 +10,7 @@ using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
-namespace workwear.Repository
+namespace workwear.Repository.Company
 {
 	public static class EmployeeRepository
 	{

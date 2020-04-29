@@ -10,7 +10,7 @@ using QSProjectsLib;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Journal.ViewModels.Stock;
-using workwear.Repository;
+using workwear.Repository.Company;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Dialogs.Organization

@@ -14,6 +14,7 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Measurements;
+using workwear.Repository.Company;
 using workwear.Repository.Operations;
 using workwear.Repository.Stock;
 
@@ -466,7 +467,7 @@ namespace workwear.Domain.Company
 		{
 			if (Id == 0) // Не надо проверять выдачи, так как сотрудник еще не сохранен.
 				return; 
-			var receiveds = Repository.EmployeeRepository.ItemsBalance (uow, this);
+			var receiveds = EmployeeRepository.ItemsBalance (uow, this);
 			var summary = receiveds.GroupBy (r => r.ItemsTypeId).Select (gr => new {
 				ItemsTypeId = gr.Key,
 				Amount = gr.Sum (r => r.Amount),

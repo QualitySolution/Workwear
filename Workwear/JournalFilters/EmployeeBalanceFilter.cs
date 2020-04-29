@@ -2,6 +2,7 @@
 using QS.DomainModel.UoW;
 using QSOrmProject.RepresentationModel;
 using workwear.Domain.Company;
+using workwear.Repository.Company;
 
 namespace workwear
 {
@@ -16,7 +17,7 @@ namespace workwear
 			}
 			set {
 				uow = value;
-				yentryEmployee.ItemsQuery = Repository.EmployeeRepository.ActiveEmployeesQuery ();
+				yentryEmployee.ItemsQuery = EmployeeRepository.ActiveEmployeesQuery ();
 			}
 		}
 
