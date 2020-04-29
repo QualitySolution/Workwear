@@ -21,6 +21,8 @@ using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.ViewModels.Company;
+using workwear.ViewModels.Stock;
+using workwear.Views.Stock;
 
 namespace workwear.ViewModels.Statements
 {
@@ -184,7 +186,11 @@ namespace workwear.ViewModels.Statements
 
 		public void OpenExpense()
 		{
-			tdiNavigationManager.OpenTdiTab<ExpenseDocDlg, Expense>(TdiTab, Entity.Expense);
+			if (Entity.Expense != null)
+				tdiNavigationManager.OpenTdiTab<ExpenseDocDlg, Expense>(TdiTab, Entity.Expense);
+			else
+				tdiNavigationManager.OpenViewModelOnTdi<WarehouseMassExpenseViewModel, IEntityUoWBuilder>(TdiTab, EntityUoWBuilder.ForOpen(Entity.MassExpense.Id));
+
 		}
 
 		void Expense_Changed(EntityChangeEvent[] changeEvents)

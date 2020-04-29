@@ -35,6 +35,10 @@ namespace workwear.HibernateMapping.Stock
 				.Cascade.AllDeleteOrphan()
 				.LazyLoad();
 
+			HasOne(x => x.IssuanceSheet)
+				.Cascade.All()
+				.PropertyRef(x => x.MassExpense);
+
 		}
 	}
 }

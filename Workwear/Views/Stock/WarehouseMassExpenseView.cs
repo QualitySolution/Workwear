@@ -96,6 +96,7 @@ namespace workwear.Views.Stock
 				if (!(column.tag == "LastName" || column.tag == "Name" || column.tag == "Patronomic" || column.tag == "Sex" || column.Title == string.Empty))
 					column.TreeViewColumn.Visible = false;
 			refreshSizeColumns();
+			IssuanceSheetSensetive();
 		}
 
 		void ObservableItemsNomenclature_ListContentChanged(object sender, EventArgs e)
@@ -157,6 +158,31 @@ namespace workwear.Views.Stock
 		protected void OnButtonCreateEmployeeClicked(object sender, EventArgs e)
 		{
 			ViewModel.AddNewEmployee();
+		}
+
+		private void IssuanceSheetSensetive()
+		{
+			buttonIssuanceSheetCreate.Sensitive = Entity.Employees.Count > 0 && Entity.ItemsNomenclature.Count > 0;
+			buttonIssuanceSheetCreate.Visible = Entity.IssuanceSheet == null;
+			buttonIssuanceSheetOpen.Visible = buttonIssuanceSheetPrint.Visible = Entity.IssuanceSheet != null;
+		}
+
+		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e)
+		{
+			ViewModel.IssuanceSheetCreate();
+			IssuanceSheetSensetive();
+		}
+
+		protected void OnButtonIssuanceSheetPrintClicked(object sender, EventArgs e)
+		{
+			ViewModel.IssuanceSheetPrint();
+			IssuanceSheetSensetive();
+		}
+
+		protected void OnButtonIssuanceSheetOpenClicked(object sender, EventArgs e)
+		{
+			ViewModel.IssuanceSheetOpen();
+			IssuanceSheetSensetive();
 		}
 	}
 }

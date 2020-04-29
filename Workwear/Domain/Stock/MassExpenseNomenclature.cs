@@ -4,6 +4,8 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
+using workwear.Domain.Statements;
+
 namespace workwear.Domain.Stock
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
@@ -55,6 +57,12 @@ namespace workwear.Domain.Stock
 			set { SetField(ref employeecard, value, () => EmployeeCard); }
 		}
 
+		private IssuanceSheetItem issuanceSheetItem;
+		[Display(Name = "Строка ведомости")]
+		public virtual IssuanceSheetItem IssuanceSheetItem {
+			get => issuanceSheetItem;
+			set => SetField(ref issuanceSheetItem, value);
+		}
 
 		public virtual string Title {
 			get {
