@@ -71,6 +71,13 @@ namespace workwear.Repository.Company
 				.Where(x => x.NextIssue >= begin && x.NextIssue <= end)
 				.List();
 		}
+
+		public static EmployeeCard GetEmployeeByPersonalNumber(IUnitOfWork uow, string personalNumber)
+		{
+			return uow.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.PersonnelNumber == personalNumber)
+				.SingleOrDefault();
+		}
 	}
 
 	public class EmployeeRecivedInfo
