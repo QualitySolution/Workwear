@@ -28,6 +28,7 @@ namespace workwear.ViewModels.Stock
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
 		public ILifetimeScope AutofacScope;
 		private readonly IInteractiveMessage interactive;
+		private readonly IInteractiveQuestion interactiveQuestion;
 		public ITdiCompatibilityNavigation tdiNavigationManager;
 
 		private string displayMessage;
@@ -159,7 +160,7 @@ namespace workwear.ViewModels.Stock
 		public void IssuanceSheetOpen()
 		{
 			if(UoW.HasChanges) {
-				if(MessageDialogHelper.RunQuestionDialog("Сохранить документ выдачи перед открытием ведомости?"))
+				if(interactiveQuestion.Question("Сохранить документ выдачи перед открытием ведомости?"))
 					Save();
 				else
 					return;
@@ -177,7 +178,7 @@ namespace workwear.ViewModels.Stock
 			}
 
 			var reportInfo = new ReportInfo {
-				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
+				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.IssuanceSheet.Id),
 				Identifier = "Statements.IssuanceSheet",
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.IssuanceSheet.Id }

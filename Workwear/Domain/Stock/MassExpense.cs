@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
@@ -111,16 +111,17 @@ namespace workwear.Domain.Stock
 			if(IssuanceSheet == null)
 				return;
 
-			if(Employees == null)
+			if(Employees.Count < 1)
 				throw new NullReferenceException("Для обновления ведомости сотрудники должны быть указаны.");
-			if(itemsNomenclature.Count < 0 )
+			if(itemsNomenclature.Count < 1 )
 				throw new NullReferenceException("Для обновления ведомости номенклатура должна быть указана.");
 
 			IssuanceSheet.Date = Date;
 
 			foreach(var emp in Employees) {
 				foreach(var nomen in ItemsNomenclature) {
-				nomen.IssuanceSheetItem = IssuanceSheet.AddItem(emp, nomen);
+					var warehouseOperation = massExpenseOperation.FirstOrDefault(x => x.EmployeeIssueOperation.Employee == emp.EmployeeCard && x.EmployeeIssueOperation.Nomenclature == nomen.Nomenclature);
+				nomen.IssuanceSheetItem = IssuanceSheet.AddItem(emp, nomen, warehouseOperation.EmployeeIssueOperation);
 				}
 			}
 		}
