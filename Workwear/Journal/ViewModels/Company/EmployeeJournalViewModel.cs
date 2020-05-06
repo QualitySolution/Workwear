@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Autofac;
 using Gamma.ColumnConfig;
 using Oracle.ManagedDataAccess.Client;
@@ -70,9 +70,10 @@ namespace workwear.Journal.ViewModels.Company
 					sql += " WHERE" + conditions.ReplaceFirstOccurrence(" AND", "");
 			}
 			else //Дурацкий оракл, сервер используется версии 11. Там нет аналога Limit, поэтому такой сложный запрос.S
-				sql = $"SELECT t.*, dept.NGRPOL dept_name " +
+				sql = $"SELECT t.*, dept.NGRPOL dept_name, prof.ABBR prof_name " +
 					$"FROM (select rownum rnum, v.* from v_sklad_spec_human_l_full v where rownum <= {skip + pageSize} {conditions}) t " +
 					"LEFT JOIN SGRPOL dept ON dept.KGRPOL = t.DEPT_CODE " +
+					"LEFT JOIN KIT.EXP_PROF prof ON prof.ID_REF = t.E_PROF " +
 					$"WHERE rnum > {skip ?? 0}";
 	
 			cmd.CommandText = sql;
@@ -88,7 +89,8 @@ namespace workwear.Journal.ViewModels.Company
 				Patronymic = reader["SECNAME"]?.ToString(),
 				PersonnelNumber = reader["TN"]?.ToString(),
 				DismissDate = reader["DUVOL"] as DateTime?,
-				Subdivision = reader["dept_name"]?.ToString()
+				Subdivision = reader["dept_name"]?.ToString(),
+				Post = reader["prof_name"]?.ToString()
 			};
 		}
 
