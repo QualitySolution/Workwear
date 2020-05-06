@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.DomainModel.Entity;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
 using workwear.Measurements;
 
 namespace workwear.Domain.Stock
@@ -162,6 +164,12 @@ namespace workwear.Domain.Stock
 		public virtual string GlovesSize {
 			get { return glovesSize; }
 			set { SetField(ref glovesSize, value, () => GlovesSize); }
+		}
+
+		IList<WarehouseOperation> listWarehouseOperation = new List<WarehouseOperation>();
+		public virtual IList<WarehouseOperation> ListWarehouseOperation {
+			get { return listWarehouseOperation; }
+			set { SetField(ref listWarehouseOperation, value, () => ListWarehouseOperation); }
 		}
 
 		#endregion

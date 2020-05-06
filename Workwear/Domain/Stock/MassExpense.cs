@@ -111,16 +111,17 @@ namespace workwear.Domain.Stock
 			if(IssuanceSheet == null)
 				return;
 
-			if(Employees == null)
+			if(Employees.Count < 1)
 				throw new NullReferenceException("Для обновления ведомости сотрудники должны быть указаны.");
-			if(itemsNomenclature.Count < 0 )
+			if(itemsNomenclature.Count < 1 )
 				throw new NullReferenceException("Для обновления ведомости номенклатура должна быть указана.");
 
 			IssuanceSheet.Date = Date;
 
 			foreach(var emp in Employees) {
 				foreach(var nomen in ItemsNomenclature) {
-				nomen.IssuanceSheetItem = IssuanceSheet.AddItem(emp, nomen);
+					var warehouseOperation = massExpenseOperation.FirstOrDefault(x => x.EmployeeIssueOperation.Employee == emp.EmployeeCard && x.EmployeeIssueOperation.Nomenclature == nomen.Nomenclature);
+				nomen.IssuanceSheetItem = IssuanceSheet.AddItem(emp, nomen, warehouseOperation.EmployeeIssueOperation);
 				}
 			}
 		}
@@ -203,12 +204,15 @@ namespace workwear.Domain.Stock
 
 		public virtual string ValidateNomenclature(IUnitOfWork uow)
 		{
-
 			var stockRepo = new StockRepository();
 			List<Nomenclature> nomenclatures = new List<Nomenclature>();
 			foreach(var nom in ItemsNomenclature)
 				nomenclatures.Add(nom.Nomenclature);
 			var stock = stockRepo.StockBalances(uow, warehouseFrom, nomenclatures, this.Date);
+			if(massExpenseOperation!= null)
+				stock = addOldNomenklInStockBalance(stock);
+			foreach(var emp in employees)
+				emp.ListWarehouseOperation.Clear();
 
 			DisplayMessage = "";
 			foreach (var nom in ItemsNomenclature) {
@@ -228,7 +232,6 @@ namespace workwear.Domain.Stock
 						continue;
 					}
 					var EnableSize = SizeHelper.MatchSize(sizeAndStd.StandardCode, sizeAndStd.Size, SizeUsePlace.Сlothes);
-					//var stockBalanse = stock.Where(x => EnableSize.Any(y => y.StandardCode == x.Nomenclature.SizeStd ||(x.Nomenclature.SizeStd != null && x.Nomenclature.SizeStd.ToString() == "UnisexWearRus"))).ToList();
 					var stockBalanse = stock.Where(x => EnableSize.Any(y => x.Size == y.Size && 
 					(y.StandardCode == x.Nomenclature.SizeStd || (x.Nomenclature.SizeStd != null && x.Nomenclature.SizeStd.ToString() == "UnisexWearRus")))).ToList();
 					int allCount = 0;
@@ -238,18 +241,45 @@ namespace workwear.Domain.Stock
 					if(allCount < nom.Amount)
 						DisplayMessage += $"Номенклатуры «{nom.Nomenclature.Name}» размера {sizeAndStd.Size} на складе недостаточно \n";
 					else {
+						var warOper = new WarehouseOperation();
 						foreach(var item in stockBalanse) {
-							if(item.Amount == 0 || needCount == 0) continue;
+							if(item.Amount < 1 || needCount == 0) continue;
 							item.Amount--;
 							needCount--;
+							warOper.Amount++;
+							warOper.Nomenclature = item.Nomenclature;
+							warOper.Size = item.Size;
+							warOper.Growth = item.Growth;
 
 						}
+						emp.ListWarehouseOperation.Add(warOper);
 					}
 				}
 			}
 
 			return DisplayMessage;
 
+		}
+
+		private IList<StockBalanceDTO> addOldNomenklInStockBalance(IList<StockBalanceDTO> stockBalances)
+		{
+			foreach(var stBalance in stockBalances) {
+				var sumOldAmount = massExpenseOperation.Where(x => x.WarehouseOperationExpense.Nomenclature == stBalance.Nomenclature).Select(x => x.WarehouseOperationExpense.Amount).Sum();
+				stBalance.Amount += sumOldAmount;
+			}
+			foreach(var oldNomen in massExpenseOperation) {
+				var stBalance = stockBalances.FirstOrDefault(x=> x.Nomenclature == oldNomen.WarehouseOperationExpense.Nomenclature);
+				if(stBalance == null) {
+					var sum = massExpenseOperation.Where(x => x.WarehouseOperationExpense.Nomenclature == oldNomen.WarehouseOperationExpense.Nomenclature).Select(x => x.WarehouseOperationExpense.Amount).Sum();
+					StockBalanceDTO stockBalanceDTO = new StockBalanceDTO();
+					stockBalanceDTO.Nomenclature = oldNomen.WarehouseOperationExpense.Nomenclature;
+					stockBalanceDTO.Amount = sum;
+					stockBalanceDTO.Size = oldNomen.WarehouseOperationExpense.Size;
+					stockBalanceDTO.Growth = oldNomen.WarehouseOperationExpense.Growth;
+					stockBalances.Add(stockBalanceDTO);
+				 }
+			}
+			return stockBalances;
 		}
 
 		public virtual void RemoveItemNomenclature(MassExpenseNomenclature nom)
@@ -295,11 +325,9 @@ namespace workwear.Domain.Stock
 
 		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
 		{
-
 			var ListMassExOperationInProgress = MassExpenseOperation.ToList();
 
 			foreach(var employee in Employees) {
-
 
 				var properties = typeof(MassExpenseEmployee).GetProperties().Where(x => x.Name.EndsWith("Size") || x.Name.EndsWith("SizeStd"));
 				foreach(var propInfoMass in properties) {
@@ -344,8 +372,9 @@ namespace workwear.Domain.Stock
 					warehouseOperation.OperationTime = this.Date;
 					warehouseOperation.ExpenseWarehouse = this.WarehouseFrom;
 					warehouseOperation.ReceiptWarehouse = null;
-					warehouseOperation.Size = employee.WearSize;
-					warehouseOperation.Growth = employee.WearGrowth;
+					var warOper = employee.ListWarehouseOperation.FirstOrDefault(x => x.Nomenclature.Id == nom.Nomenclature.Id);
+					warehouseOperation.Size = warOper.Size;
+					warehouseOperation.Growth = warOper.Growth;
 					warehouseOperation.Amount = nom.Amount;
 					warehouseOperation.OperationTime = this.Date;
 
