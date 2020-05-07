@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
-using QS.Dialog.GtkUI;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -37,11 +36,12 @@ namespace workwear.ViewModels.Stock
 			set { SetField(ref displayMessage, value); }
 		}
 
-		public WarehouseMassExpenseViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiTab myTab, ITdiCompatibilityNavigation navigationManager, ILifetimeScope autofacScope, IInteractiveMessage interactive, IUserService userService, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager, validator)
+		public WarehouseMassExpenseViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiTab myTab, ITdiCompatibilityNavigation navigationManager, ILifetimeScope autofacScope, IInteractiveMessage interactive, IInteractiveQuestion interactiveQuestion, IUserService userService, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager, validator)
 		{
 			this.tdiNavigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.interactiveQuestion = interactiveQuestion ?? throw new ArgumentNullException(nameof(interactiveQuestion));
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 
@@ -56,6 +56,7 @@ namespace workwear.ViewModels.Stock
 
 			Entity.ObservableItemsNomenclature.ListContentChanged += ObservableItemsNomenclature_ListContentChanged;
 			Entity.ObservableEmployeeCard.ListContentChanged += ObservableItemsNomenclature_ListContentChanged;
+			ValidateNomenclature();
 		}
 
 		void ObservableItemsNomenclature_ListContentChanged(object sender, EventArgs e)
@@ -165,6 +166,7 @@ namespace workwear.ViewModels.Stock
 				else
 					return;
 			}
+			var t = Entity.IssuanceSheet.Id;
 
 			NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
 		}

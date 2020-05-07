@@ -347,19 +347,19 @@ namespace workwear.Domain.Stock
 
 				foreach(var nom in ItemsNomenclature) {
 
-					var op = ListMassExOperationInProgress.FirstOrDefault(x =>x.EmployeeIssueOperation.Employee.Id == employee.EmployeeCard.Id && x.WarehouseOperationExpense.Nomenclature.Id == nom.Nomenclature.Id);
-					if(op == null) {
+					var opMassExpense = ListMassExOperationInProgress.FirstOrDefault(x =>x.EmployeeIssueOperation.Employee.Id == employee.EmployeeCard.Id && x.WarehouseOperationExpense.Nomenclature.Id == nom.Nomenclature.Id);
+					if(opMassExpense == null) {
 
-						op = new MassExpenseOperation();
-						op.MassExpenseDoc = this;
-						op.EmployeeIssueOperation = new EmployeeIssueOperation();
-						op.WarehouseOperationExpense = new WarehouseOperation();
+						opMassExpense = new MassExpenseOperation();
+						opMassExpense.MassExpenseDoc = this;
+						opMassExpense.EmployeeIssueOperation = new EmployeeIssueOperation();
+						opMassExpense.WarehouseOperationExpense = new WarehouseOperation();
 
 					}
 					else
-						ListMassExOperationInProgress.Remove(op);
+						ListMassExOperationInProgress.Remove(opMassExpense);
 
-					EmployeeIssueOperation employeeIssueOperation = op.EmployeeIssueOperation;
+					EmployeeIssueOperation employeeIssueOperation = opMassExpense.EmployeeIssueOperation;
 					employeeIssueOperation.Employee = employee.EmployeeCard;
 					employeeIssueOperation.Nomenclature = nom.Nomenclature;
 					employeeIssueOperation.Size = employee.WearSize;
@@ -367,7 +367,7 @@ namespace workwear.Domain.Stock
 					employeeIssueOperation.Issued = nom.Amount;
 					employeeIssueOperation.StartOfUse = this.Date;
 
-					WarehouseOperation warehouseOperation = op.WarehouseOperationExpense;
+					WarehouseOperation warehouseOperation = opMassExpense.WarehouseOperationExpense;
 					warehouseOperation.Nomenclature = nom.Nomenclature;
 					warehouseOperation.OperationTime = this.Date;
 					warehouseOperation.ExpenseWarehouse = this.WarehouseFrom;
@@ -381,11 +381,18 @@ namespace workwear.Domain.Stock
 					employeeIssueOperation.WarehouseOperation = warehouseOperation;
 
 					uow.Save(this);
-					uow.Save(employee);
 					uow.Save(warehouseOperation);
-					uow.Save(op);
+					uow.Save(opMassExpense);
 				}
 			}
+			foreach(var operationMassEx in ListMassExOperationInProgress) {
+				var empIssueOperation = uow.GetById<EmployeeIssueOperation>(operationMassEx.EmployeeIssueOperation.Id);
+				var oper = uow.GetById<WarehouseOperation>(operationMassEx.WarehouseOperationExpense.Id);
+				uow.Delete(operationMassEx);
+				uow.Delete(empIssueOperation);
+				uow.Delete(oper);
+			}
+					
 		}
 	}
 }
