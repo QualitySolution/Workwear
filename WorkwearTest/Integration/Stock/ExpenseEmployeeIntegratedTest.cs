@@ -245,6 +245,7 @@ namespace WorkwearTest.Integration.Stock
 				//Обновление операций
 				expense.UpdateOperations(uow, ask);
 				expense.UpdateIssuanceSheet();
+				uow.Save(expense.IssuanceSheet);
 				uow.Save(expense);
 				uow.Commit();
 				expense.UpdateEmployeeNextIssue();

@@ -328,15 +328,22 @@ namespace WorkwearTest.Integration.Tools
 				var employee = new EmployeeCard();
 				uow.Save(employee);
 
-				var expenseOp = new EmployeeIssueOperation();
-				expenseOp.OperationTime = new DateTime(2019, 1, 1);
-				expenseOp.ExpiryByNorm = new DateTime(2019, 4, 1);
-				expenseOp.Employee = employee;
-				expenseOp.Nomenclature = nomenclature;
-				expenseOp.NormItem = normItem;
-				expenseOp.Issued = 1;
+				var warehouseOp = new WarehouseOperation {
+					Nomenclature = nomenclature
+				};
+
+				var expenseOp = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2019, 1, 1),
+					ExpiryByNorm = new DateTime(2019, 4, 1),
+					Employee = employee,
+					Nomenclature = nomenclature,
+					NormItem = normItem,
+					Issued = 1,
+					WarehouseOperation = warehouseOp
+				};
 				uow.Save(nomenclature);
 				uow.Save(normItem);
+				uow.Save(warehouseOp);
 				uow.Save(expenseOp);
 				uow.Commit();
 
