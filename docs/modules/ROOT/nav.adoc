@@ -1,1 +1,3 @@
-* xref:index.adoc[Welcome]
+* xref:introduction.adoc[Введение]
+* xref:install.adoc[Установка]
+* xref:index.adoc[Старая документация]
