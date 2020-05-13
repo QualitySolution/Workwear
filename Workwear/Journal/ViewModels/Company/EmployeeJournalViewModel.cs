@@ -143,15 +143,13 @@ namespace workwear.Journal.ViewModels.Company
 
 			string sql;
 			if(isCounting) {
-				sql = $"select COUNT(*) from v_sklad_spec_human_l_full";
+				sql = $"select COUNT(*) from KIT.EXP_HUM_SKLAD";
 				if(conditions != null)
 					sql += " WHERE" + conditions.ReplaceFirstOccurrence(" AND", "");
 			}
 			else //Дурацкий оракл, сервер используется версии 11. Там нет аналога Limit, поэтому такой сложный запрос.S
-				sql = $"SELECT t.*, dept.NGRPOL dept_name, prof.ABBR prof_name " +
-					$"FROM (select rownum rnum, v.* from v_sklad_spec_human_l_full v where rownum <= {skip + pageSize} {conditions}) t " +
-					"LEFT JOIN SGRPOL dept ON dept.KGRPOL = t.DEPT_CODE " +
-					"LEFT JOIN KIT.EXP_PROF prof ON prof.ID_REF = t.E_PROF " +
+				sql = $"SELECT t.* " +
+					$"FROM (select rownum rnum, v.* from KIT.EXP_HUM_SKLAD v where rownum <= {skip + pageSize} {conditions}) t " +
 					$"WHERE rnum > {skip ?? 0}";
 	
 			cmd.CommandText = sql;
@@ -167,8 +165,8 @@ namespace workwear.Journal.ViewModels.Company
 				Patronymic = reader["SECNAME"]?.ToString(),
 				PersonnelNumber = reader["TN"]?.ToString(),
 				DismissDate = reader["DUVOL"] as DateTime?,
-				Subdivision = reader["dept_name"]?.ToString(),
-				Post = reader["prof_name"]?.ToString(),
+				Subdivision = reader["PARENT_DEPT_NAME"]?.ToString(),
+				Post = reader["WP_NAME"]?.ToString(),
 				NSex = reader["E_SEX"] as decimal?
 			};
 		}
