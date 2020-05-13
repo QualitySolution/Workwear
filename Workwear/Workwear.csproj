@@ -389,6 +389,7 @@
     <Compile Include="Tools\Oracle\OracleSQLDataLoader.cs" />
     <Compile Include="Repository\Company\EmployeeRepository.cs" />
     <Compile Include="Repository\Company\SubdivisionRepository.cs" />
+    <Compile Include="Tools\Oracle\HRSystem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

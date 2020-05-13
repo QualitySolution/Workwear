@@ -94,8 +94,12 @@ namespace workwear
 			#region База
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
 			builder.RegisterType<DefaultSessionProvider>().As<ISessionProvider>();
+			#endregion
+
+			#region NLMK
 			builder.Register(x => NLMKOracle.Connection).As<OracleConnection>();
 			builder.RegisterGeneric(typeof(OracleSQLDataLoader<>)).AsSelf();
+			builder.RegisterType<HRSystem>().AsSelf();
 			#endregion
 
 			#region Сервисы

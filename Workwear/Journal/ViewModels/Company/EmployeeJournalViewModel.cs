@@ -1,20 +1,29 @@
-using System;
+﻿using System;
+using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
 using Oracle.ManagedDataAccess.Client;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
+using QS.Project.Services;
 using QS.Services;
 using QS.Utilities.Text;
+using workwear.Dialogs.Organization;
+using workwear.Domain.Company;
 using workwear.Journal.Filter.ViewModels.Company;
+using workwear.Repository.Company;
 using workwear.Tools.Oracle;
 
 namespace workwear.Journal.ViewModels.Company
 {
 	public class EmployeeJournalViewModel : JournalViewModelBase
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		private readonly ITdiCompatibilityNavigation tdiNavigationManager;
+		private readonly HRSystem hrSystem;
+		private readonly IDeleteEntityService deleteEntityService;
 
 		/// <summary>
 		/// Для хранения пользовательской информации как в WinForms
@@ -24,7 +33,7 @@ namespace workwear.Journal.ViewModels.Company
 		public EmployeeFilterViewModel Filter { get; private set; }
 
 		public EmployeeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, ITdiCompatibilityNavigation navigationManager, 
-										ILifetimeScope autofacScope, ICurrentPermissionService currentPermissionService = null) 
+										ILifetimeScope autofacScope, HRSystem hrSystem, IDeleteEntityService deleteEntityService, ICurrentPermissionService currentPermissionService = null) 
 										: base(unitOfWorkFactory, interactiveService, navigationManager)
 		{
 			UseSlider = false;
@@ -36,12 +45,81 @@ namespace workwear.Journal.ViewModels.Company
 
 			JournalFilter = Filter = AutofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			this.tdiNavigationManager = navigationManager;
+			this.hrSystem = hrSystem ?? throw new ArgumentNullException(nameof(hrSystem));
+			this.deleteEntityService = deleteEntityService ?? throw new ArgumentNullException(nameof(deleteEntityService));
+			CreateNodeActions();
 		}
 
-		//protected override void EditEntityDialog(EmployeeJournalNode node)
-		//{
-		//	tdiNavigationManager.OpenTdiTab<EmployeeCardDlg, int>(this, node.Id);
-		//}
+		#region Действия
+
+		protected override void CreateNodeActions()
+		{
+			base.CreateNodeActions();
+
+			var addAction = new JournalAction("Добавить",
+					(selected) => true,
+					(selected) => true,
+					(selected) => CreateEntityDialog()
+					);
+			NodeActionsList.Add(addAction);
+
+			var editAction = new JournalAction("Изменить",
+					(selected) => selected.Any(),
+					(selected) => true,
+					(selected) => selected.Cast<EmployeeJournalNode>().ToList().ForEach(EditEntityDialog)
+					);
+			NodeActionsList.Add(editAction);
+
+			if(SelectionMode == JournalSelectionMode.None)
+				RowActivatedAction = editAction;
+
+			var deleteAction = new JournalAction("Удалить",
+					(selected) => selected.Cast<EmployeeJournalNode>().Any(x => x.Id.HasValue && String.IsNullOrEmpty(x.PersonnelNumber)),
+					(selected) => true,
+					(selected) => DeleteEntities(selected.Cast<EmployeeJournalNode>().Where(x => x.Id.HasValue && String.IsNullOrEmpty(x.PersonnelNumber)).ToArray())
+					);
+			NodeActionsList.Add(deleteAction);
+		}
+
+		protected void EditEntityDialog(EmployeeJournalNode node)
+		{
+			int cardId;
+			if(node.Id.HasValue)
+				cardId = node.Id.Value;
+			else {
+				var card = EmployeeRepository.GetEmployeeByPersonalNumber(UoW, node.PersonnelNumber);
+				if(card == null) {
+					logger.Info("Карточка сотрудника не найдена. Создаем новую.");
+					card = new Domain.Company.EmployeeCard() {
+						PersonnelNumber = node.PersonnelNumber,
+						LastName = node.LastName,
+						FirstName = node.FirstName,
+						Patronymic = node.Patronymic,
+						DismissDate = node.DismissDate,
+						Sex = node.Sex
+
+						//FIXME добавить заполнение подразделение и должности.
+					};
+					UoW.Save(card);
+					UoW.Commit();
+				}
+				cardId = card.Id;
+			}
+			tdiNavigationManager.OpenTdiTab<EmployeeCardDlg, int>(this, cardId);
+		}
+
+		protected virtual void CreateEntityDialog()
+		{
+			tdiNavigationManager.OpenTdiTab<EmployeeCardDlg>(this);
+		}
+
+		protected virtual void DeleteEntities(EmployeeJournalNode[] nodes)
+		{
+			foreach(var node in nodes)
+				deleteEntityService.DeleteEntity<EmployeeCard>(node.Id.Value);
+		}
+
+		#endregion
 
 		#region Запрос
 
@@ -90,7 +168,8 @@ namespace workwear.Journal.ViewModels.Company
 				PersonnelNumber = reader["TN"]?.ToString(),
 				DismissDate = reader["DUVOL"] as DateTime?,
 				Subdivision = reader["dept_name"]?.ToString(),
-				Post = reader["prof_name"]?.ToString()
+				Post = reader["prof_name"]?.ToString(),
+				NSex = reader["E_SEX"] as decimal?
 			};
 		}
 
@@ -99,7 +178,7 @@ namespace workwear.Journal.ViewModels.Company
 
 	public class EmployeeJournalNode
 	{
-		public int Id { get; set; }
+		public int? Id { get; set; }
 		[SearchHighlight]
 		public string CardNumber { get; set; }
 
@@ -123,6 +202,10 @@ namespace workwear.Journal.ViewModels.Company
 				return String.Join(" ", LastName, FirstName, Patronymic);
 			}
 		}
+
+		public decimal? NSex { get; set; }
+
+		public Sex Sex => NSex == 2 ? Sex.F : (NSex == 1 ? Sex.M : Sex.None);
 
 		public string Post { get; set; }
 

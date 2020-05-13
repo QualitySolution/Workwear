@@ -2,13 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using Oracle.ManagedDataAccess;
 using Oracle.ManagedDataAccess.Client;
-
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
 using QS.Project.DB;
-using QS.Utilities.Debug;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 
