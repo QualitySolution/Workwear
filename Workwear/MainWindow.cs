@@ -221,7 +221,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnHelpActionActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenDocumentation");
-		System.Diagnostics.Process.Start("workwear_ru.pdf");
+		System.Diagnostics.Process.Start("user-guide.pdf");
 	}
 
 	protected void OnActionHistoryActivated(object sender, EventArgs e)
