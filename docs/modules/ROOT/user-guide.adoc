@@ -1,5 +1,5 @@
 :title-separator: {sp}|
-= Документация | QS: Спецодежда и имущество
+= QS: Спецодежда и имущество | Руководство пользователя
 Quality Solution 2020
 версия 2.3
 :organization: Quality Solution
