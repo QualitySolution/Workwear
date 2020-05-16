@@ -7,7 +7,6 @@ Quality Solution 2020
 :sectnums:
 :toc: left
 :icons: font
-:experimental:
 :chapter-label:
 :toc-title: Содержание
 :toclevels: 3
