@@ -34,7 +34,7 @@ else
 	exit 1
 fi
 
-${BuildDoc} ../docs/modules/ROOT/user-guide.adoc
-cp -v ../docs/modules/ROOT/user-guide.pdf ./Files
+${BuildDoc} ../docs/modules/ROOT/pages/user-guide.adoc
+cp -v ../docs/modules/ROOT/pages/user-guide.pdf ./Files
 
 wine ~/.wine/drive_c/Program\ Files\ \(x86\)/NSIS/makensis.exe /INPUTCHARSET UTF8 ${ProjectName}.nsi

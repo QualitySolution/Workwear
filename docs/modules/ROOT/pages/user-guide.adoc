@@ -10,16 +10,16 @@ Quality Solution 2020
 :chapter-label:
 :toc-title: Содержание
 :toclevels: 3
-:imagesdir: images
+:imagesdir: ../images
 
 :sectnums:
 
 :leveloffset: 1
 
-include::pages/introduction.adoc[]
+include::introduction.adoc[]
 
-include::pages/install.adoc[]
+include::install.adoc[]
 
-include::pages/users.adoc[]
+include::users.adoc[]
 
 :leveloffset: 0
