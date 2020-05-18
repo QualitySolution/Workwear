@@ -10,11 +10,6 @@
 
 :sectnums!:
 
-[preface]
-== Введение
-
-Программа &product_name;, позволяет вести базу карточек учета спецодежды и СИЗ для сотрудников предприятия, вести учет описей имущества на объектах предприятия, а также вести учет склада спецодежды и имущества, предназначенного для выдачи сотрудникам и на объекты.
-
 :leveloffset: 1
 include::common_first_connection.adoc[]
 :leveloffset: 0
@@ -250,10 +245,6 @@ image::Workwear_PrintListBySize.png[]
 
 :leveloffset: 2
 include::common_reports.adoc[]
-:leveloffset: 0
-
-:leveloffset: 1
-include::common_users.adoc[]
 :leveloffset: 0
 
 :leveloffset: 1

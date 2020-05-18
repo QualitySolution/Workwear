@@ -20,4 +20,6 @@ include::pages/introduction.adoc[]
 
 include::pages/install.adoc[]
 
+include::pages/users.adoc[]
+
 :leveloffset: 0

@@ -1,3 +1,4 @@
 * xref:introduction.adoc[Введение]
 * xref:install.adoc[Установка]
+* xref:users.adoc[Работа с пользователями]
 * xref:index.adoc[Старая документация]
