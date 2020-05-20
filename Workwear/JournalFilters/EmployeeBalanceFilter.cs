@@ -23,27 +23,29 @@ namespace workwear
 			}
 		}
 
-		public EmployeeBalanceFilter (IUnitOfWork uow, ITdiTab tab) : this()
+		public EmployeeBalanceFilter (IUnitOfWork uow) : this()
 		{
 			UoW = uow;
-
-			var AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
-
-			var builder = new LegacyEEVMBuilderFactory(tab, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
-			yentryEmployee.ViewModel = builder.ForEntity<EmployeeCard>()
-					.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
-					.UseViewModelDialog<EmployeeViewModel>()
-					.Finish();
-			yentryEmployee.ViewModel.ChangedByUser += Employee_Changed;
 		}
 
 		public EmployeeCard RestrictEmployee {
-			get { return yentryEmployee.ViewModel.Entity as EmployeeCard; }
+			get { return yentryEmployee.ViewModel?.Entity as EmployeeCard; }
 			set {
 				yentryEmployee.ViewModel.Entity = value;
 				yentryEmployee.Sensitive = false;
 			}
 		}
+
+		public ITdiTab parrentTab { set {
+				var AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+
+				var builder = new LegacyEEVMBuilderFactory(value, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
+				yentryEmployee.ViewModel = builder.ForEntity<EmployeeCard>()
+						.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
+						.UseViewModelDialog<EmployeeViewModel>()
+						.Finish();
+				yentryEmployee.ViewModel.ChangedByUser += Employee_Changed;
+			} }
 
 		public event EventHandler Refiltered;
 

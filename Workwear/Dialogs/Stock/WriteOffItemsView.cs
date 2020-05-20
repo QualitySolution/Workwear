@@ -116,12 +116,14 @@ namespace workwear
 
 		protected void OnButtonAddWorkerClicked(object sender, EventArgs e)
 		{
-			var filter = new EmployeeBalanceFilter (MyOrmDialog.UoW, MyTab);
-			if (CurWorker != null)
-				filter.RestrictEmployee = CurWorker;
-
+			var filter = new EmployeeBalanceFilter (MyOrmDialog.UoW);
 			var selectFromEmployeeDlg = new ReferenceRepresentation (new EmployeeBalanceVM (filter),
 			                                                        "Выданное сотрудникам");
+			filter.parrentTab = selectFromEmployeeDlg;
+
+			if(CurWorker != null)
+				filter.RestrictEmployee = CurWorker;
+
 			selectFromEmployeeDlg.ShowFilter = CurWorker == null;
 			selectFromEmployeeDlg.Mode = OrmReferenceMode.MultiSelect;
 			selectFromEmployeeDlg.ObjectSelected += SelectFromEmployeeDlg_ObjectSelected;
