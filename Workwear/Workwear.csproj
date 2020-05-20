@@ -280,11 +280,9 @@
     <Compile Include="HibernateMapping\Regulations\NormItemMap.cs" />
     <Compile Include="HibernateMapping\Regulations\NormMap.cs" />
     <Compile Include="HibernateMapping\Regulations\PostMap.cs" />
-    <Compile Include="Dialogs\Organization\EmployeeCardDlg.cs" />
     <Compile Include="Dialogs\Regulations\ItemTypeDlg.cs" />
     <Compile Include="Dialogs\Regulations\NormDlg.cs" />
     <Compile Include="Dialogs\Organization\ObjectDlg.cs" />
-    <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeCardDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.NormDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.ItemTypeDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Organization.ObjectDlg.cs" />
@@ -301,25 +299,17 @@
     <Compile Include="gtk-gui\workwear.Dialogs.Issuance.EmployeeIssueGraphDlg.cs" />
     <Compile Include="Domain\Operations\Graph\GraphItem.cs" />
     <Compile Include="Domain\Operations\Graph\GraphInterval.cs" />
-    <Compile Include="Dialogs\Organization\EmployeeMovementsView.cs" />
-    <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeMovementsView.cs" />
     <Compile Include="Repository\Operations\EmployeeIssueRepository.cs" />
-    <Compile Include="Dialogs\Organization\EmployeeCardListedItemsView.cs" />
-    <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeCardListedItemsView.cs" />
     <Compile Include="Domain\Company\VacationType.cs" />
     <Compile Include="Domain\Company\EmployeeVacation.cs" />
     <Compile Include="HibernateMapping\Company\VacationTypeMap.cs" />
     <Compile Include="HibernateMapping\Company\EmployeeVacationMap.cs" />
-    <Compile Include="Dialogs\Organization\EmployeeVacationsView.cs" />
-    <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeVacationsView.cs" />
     <Compile Include="Representations\Organization\EmployeeVacationsVM.cs" />
     <Compile Include="Representations\Organization\EmployeeBalanceVM.cs" />
     <Compile Include="Dialogs\Organization\EmployeeVacationDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeVacationDlg.cs" />
     <Compile Include="Dialogs\Organization\VacationTypeDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Organization.VacationTypeDlg.cs" />
-    <Compile Include="Dialogs\Organization\EmployeeWearItemsView.cs" />
-    <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeWearItemsView.cs" />
     <Compile Include="Tools\BuisnessLogicGlobalEventHandler.cs" />
     <Compile Include="Domain\Company\Organization.cs" />
     <Compile Include="HibernateMapping\Company\OrganizatonMap.cs" />
@@ -384,6 +374,23 @@
     <Compile Include="Journal\Filter.ViewModels\Company\EmployeeFilterViewModel.cs" />
     <Compile Include="Repository\Company\EmployeeRepository.cs" />
     <Compile Include="Repository\Company\SubdivisionRepository.cs" />
+    <Compile Include="Views\Company\EmployeeView.cs" />
+    <Compile Include="Views\Company\EmployeeChilds\EmployeeListedItemsView.cs" />
+    <Compile Include="Views\Company\EmployeeChilds\EmployeeMovementsView.cs" />
+    <Compile Include="Views\Company\EmployeeChilds\EmployeeVacationsView.cs" />
+    <Compile Include="Views\Company\EmployeeChilds\EmployeeWearItemsView.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChilds\EmployeeMovementsViewModel.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Company.EmployeeView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeeMovementsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeeListedItemsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeeVacationsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeeWearItemsView.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChilds\EmployeeListedItemsViewModel.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChilds\EmployeeVacationsViewModel.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChilds\EmployeeWearItemsViewModel.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChilds\EmployeeNormsViewModel.cs" />
+    <Compile Include="Views\Company\EmployeeChilds\EmployeeNormsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeeNormsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -533,6 +540,8 @@
     <Folder Include="Journal\Filter.Views\Company\" />
     <Folder Include="Journal\Filter.ViewModels\Company\" />
     <Folder Include="Repository\Company\" />
+    <Folder Include="Views\Company\EmployeeChilds\" />
+    <Folder Include="ViewModels\Company\EmployeeChilds\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Linq;
 using Gamma.Utilities;
-using NHibernate;
-using QS.Dialog.Gtk;
-using QS.Dialog.GtkUI;
-using QS.DomainModel.Entity;
-using QS.DomainModel.NotifyChange;
 using QS.Utilities;
-using workwear.Dialogs.Issuance;
 using workwear.Domain.Company;
+using workwear.ViewModels.Company.EmployeeChilds;
 
-namespace workwear.Dialogs.Organization
+namespace workwear.Views.Company.EmployeeChilds
 {
 	[System.ComponentModel.ToolboxItem(true)]
-	public partial class EmployeeWearItemsView : WidgetOnEntityDialogBase<EmployeeCard>, IMustBeDestroyed
+	public partial class EmployeeWearItemsView : Gtk.Bin
 	{
 		public EmployeeWearItemsView()
 		{
@@ -38,45 +33,28 @@ namespace workwear.Dialogs.Organization
 				.AddSetter((w, node) => w.Foreground = node.InStockState.GetEnumColor())
 				.Finish();
 			ytreeWorkwear.Selection.Changed += ytreeWorkwear_Selection_Changed;
-
-			NotifyConfiguration.Instance.BatchSubscribeOnEntity<EmployeeCardItem>(HandleEntityChangeEvent);
 		}
 
-		public bool ItemsLoaded { get; private set; }
+		private EmployeeWearItemsViewModel viewModel;
 
-		public virtual void LoadItems()
-		{
-			RootEntity.FillWearInStockInfo(UoW, RootEntity.Subdivision?.Warehouse, DateTime.Now);
-			RootEntity.FillWearRecivedInfo(UoW);
-			ytreeWorkwear.ItemsDataSource = RootEntity.ObservableWorkwearItems;
-			ItemsLoaded = true;
+		public EmployeeWearItemsViewModel ViewModel {
+			get => viewModel;
+			set {
+				viewModel = value;
+				viewModel.PropertyChanged += ViewModel_PropertyChanged;
+			}
 		}
 
-		void HandleEntityChangeEvent(EntityChangeEvent[] changeEvents)
+		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if(changeEvents.Select(e => e.Entity).OfType<EmployeeCardItem>().Any(x => x.EmployeeCard.IsSame(RootEntity)))
-				RefreshWorkItems();
+			if(e.PropertyName == nameof(ViewModel.ObservableWorkwearItems)) {
+				ytreeWorkwear.ItemsDataSource = ViewModel.ObservableWorkwearItems;
+			}
 		}
 
 		protected void OnButtonGiveWearByNormClicked(object sender, EventArgs e)
 		{
-			if(!MyTdiDialog.Save())
-				return;
-
-			ExpenseDocDlg winExpense = new ExpenseDocDlg(RootEntity, true);
-			OpenNewTab(winExpense);
-		}
-
-		protected void RefreshWorkItems()
-		{
-			if(!NHibernateUtil.IsInitialized(RootEntity.WorkwearItems))
-				return;
-
-			foreach(var item in RootEntity.WorkwearItems) {
-				UoW.Session.Refresh(item);
-			}
-			RootEntity.FillWearInStockInfo(UoW, RootEntity.Subdivision?.Warehouse, DateTime.Now);
-			RootEntity.FillWearRecivedInfo(UoW);
+			ViewModel.GiveWearByNorm();
 		}
 
 		void ytreeWorkwear_Selection_Changed(object sender, EventArgs e)
@@ -84,29 +62,19 @@ namespace workwear.Dialogs.Organization
 			buttonTimeLine.Sensitive = ytreeWorkwear.Selection.CountSelectedRows() > 0;
 		}
 
-		public override void Destroy()
-		{
-			NotifyConfiguration.Instance.UnsubscribeAll(this);
-			base.Destroy();
-		}
-
 		protected void OnButtonReturnWearClicked(object sender, EventArgs e)
 		{
-			IncomeDocDlg winIncome = new IncomeDocDlg(RootEntity);
-			OpenNewTab(winIncome);
+			viewModel.ReturnWear();
 		}
 
 		protected void OnButtonTimeLineClicked(object sender, EventArgs e)
 		{
-			var row = ytreeWorkwear.GetSelectedObject<EmployeeCardItem>();
-			var dlg = new EmployeeIssueGraphDlg(RootEntity, row.Item);
-			OpenNewTab(dlg);
+			ViewModel.OpenTimeLine(ytreeWorkwear.GetSelectedObject<EmployeeCardItem>());
 		}
 
 		protected void OnButtonWriteOffWearClicked(object sender, EventArgs e)
 		{
-			WriteOffDocDlg winWriteOff = new WriteOffDocDlg(RootEntity);
-			OpenNewTab(winWriteOff);
+			ViewModel.WriteOffWear();
 		}
 	}
 }

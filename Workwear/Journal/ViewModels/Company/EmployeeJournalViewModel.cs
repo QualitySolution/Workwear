@@ -9,7 +9,6 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using QS.Utilities.Text;
-using workwear.Dialogs.Organization;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
@@ -77,16 +76,6 @@ namespace workwear.Journal.ViewModels.Company
 				.ThenBy(() => employeeAlias.FirstName).Asc
 				.ThenBy(() => employeeAlias.Patronymic).Asc
 				.TransformUsing(Transformers.AliasToBean<EmployeeJournalNode>());
-		}
-
-		protected override void CreateEntityDialog()
-		{
-			tdiNavigationManager.OpenTdiTab<EmployeeCardDlg>(this);
-		}
-
-		protected override void EditEntityDialog(EmployeeJournalNode node)
-		{
-			tdiNavigationManager.OpenTdiTab<EmployeeCardDlg, int>(this, node.Id);
 		}
 	}
 

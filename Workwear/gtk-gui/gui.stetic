@@ -1342,7 +1342,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Dialogs.Organization.EmployeeCardDlg" design-size="1334 538">
+  <widget class="Gtk.Bin" id="workwear.Views.Company.EmployeeView" design-size="1334 538">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -1667,7 +1667,7 @@
                     <property name="MemberName" />
                     <property name="Spacing">6</property>
                     <child>
-                      <widget class="Gtk.Entry" id="entryId">
+                      <widget class="Gamma.GtkWidgets.yEntry" id="entryId">
                         <property name="MemberName" />
                         <property name="Sensitive">False</property>
                         <property name="CanFocus">True</property>
@@ -1676,15 +1676,16 @@
                         <property name="WidthChars">10</property>
                         <property name="MaxLength">15</property>
                         <property name="InvisibleChar">●</property>
-                        <signal name="Changed" handler="OnEntryIdChanged" />
                       </widget>
                       <packing>
                         <property name="Position">0</property>
                         <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
                       </packing>
                     </child>
                     <child>
-                      <widget class="Gtk.CheckButton" id="checkAuto">
+                      <widget class="Gamma.GtkWidgets.yCheckButton" id="checkAuto">
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
                         <property name="Label" translatable="yes">Автоматически</property>
@@ -1692,11 +1693,12 @@
                         <property name="DrawIndicator">True</property>
                         <property name="HasLabel">True</property>
                         <property name="UseUnderline">True</property>
-                        <signal name="Toggled" handler="OnCheckAutoToggled" />
                       </widget>
                       <packing>
                         <property name="Position">1</property>
                         <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
                       </packing>
                     </child>
                   </widget>
@@ -2178,7 +2180,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Label" id="labelObjectAddress">
+                  <widget class="Gamma.GtkWidgets.yLabel" id="labelObjectAddress">
                     <property name="MemberName" />
                     <property name="LabelProp" translatable="yes">---</property>
                     <property name="Wrap">True</property>
@@ -2200,7 +2202,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Label" id="labelUser">
+                  <widget class="Gamma.GtkWidgets.yLabel" id="labelUser">
                     <property name="MemberName" />
                     <property name="LabelProp" translatable="yes">не указан</property>
                   </widget>
@@ -2492,7 +2494,6 @@
                   <widget class="Gamma.Widgets.yEntryReference" id="yentryObject">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
-                    <signal name="Changed" handler="OnYentryObjectChanged" />
                     <signal name="ChangedByUser" handler="OnYentryObjectChangedByUser" />
                   </widget>
                   <packing>
@@ -2539,7 +2540,6 @@
                   <widget class="Gamma.Widgets.yEntryReference" id="yentryPost">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
-                    <signal name="Changed" handler="OnYentryPostChanged" />
                     <signal name="ChangedByUser" handler="OnYentryPostChangedByUser" />
                   </widget>
                   <packing>
@@ -2655,128 +2655,12 @@
           <widget class="Gtk.Notebook" id="notebook1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">4</property>
+            <property name="CurrentPage">0</property>
             <signal name="SwitchPage" handler="OnNotebook1SwitchPage" />
             <child>
-              <widget class="Gtk.VBox" id="vbox6">
+              <widget class="workwear.Views.Company.EmployeeChilds.EmployeeNormsView" id="employeenormsview1">
                 <property name="MemberName" />
-                <property name="Spacing">6</property>
-                <child>
-                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow2">
-                    <property name="MemberName" />
-                    <property name="ShadowType">In</property>
-                    <child>
-                      <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeNorms">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="ShowScrollbars">True</property>
-                        <property name="EnableSearch">False</property>
-                        <signal name="RowActivated" handler="OnYtreeNormsRowActivated" />
-                      </widget>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">0</property>
-                    <property name="AutoSize">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gtk.HBox" id="hbox10">
-                    <property name="MemberName" />
-                    <property name="Spacing">6</property>
-                    <child>
-                      <widget class="Gtk.Button" id="buttonAddNorm">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-add Menu</property>
-                        <property name="Label" translatable="yes">Добавить норму</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonAddNormClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">0</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Button" id="buttonNormFromPost">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-add Menu</property>
-                        <property name="Label" translatable="yes">По должности</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonNormFromPostClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Button" id="buttonNormOpen">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-edit Menu</property>
-                        <property name="Label" translatable="yes">Открыть норму</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonNormOpenClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">2</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Button" id="buttonRemoveNorm">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-remove Menu</property>
-                        <property name="Label" translatable="yes">Удалить норму</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonRemoveNormClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">3</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Button" id="buttonRefreshWorkwearItems">
-                        <property name="MemberName" />
-                        <property name="Tooltip" translatable="yes">Обновить список требуемой спецодежды в соответсвтии с изменениями в нормах.</property>
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextOnly</property>
-                        <property name="Label" translatable="yes">Обновить спецодежду</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonRefreshWorkwearItemsClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">4</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">1</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
-                </child>
+                <property name="Events">ButtonPressMask</property>
               </widget>
             </child>
             <child>
@@ -2789,7 +2673,7 @@
               </packing>
             </child>
             <child>
-              <widget class="workwear.Dialogs.Organization.EmployeeWearItemsView" id="employeewearitemsview1">
+              <widget class="workwear.Views.Company.EmployeeChilds.EmployeeWearItemsView" id="employeewearitemsview1">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
               </widget>
@@ -2811,79 +2695,13 @@
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
                 <child>
-                  <widget class="workwear.Dialogs.Organization.EmployeeCardListedItemsView" id="employeecardlisteditemsview">
+                  <widget class="workwear.Views.Company.EmployeeChilds.EmployeeListedItemsView" id="employeecardlisteditemsview">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
                   </widget>
                   <packing>
                     <property name="Position">0</property>
                     <property name="AutoSize">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gtk.HBox" id="hbox9">
-                    <property name="MemberName" />
-                    <property name="Spacing">6</property>
-                    <child>
-                      <widget class="Gtk.Button" id="buttonGiveWear">
-                        <property name="MemberName" />
-                        <property name="Sensitive">False</property>
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-add Menu</property>
-                        <property name="Label" translatable="yes">Выдача сотруднику</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonGiveWearClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">0</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Button" id="buttonReturnWear">
-                        <property name="MemberName" />
-                        <property name="Sensitive">False</property>
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-redo Menu</property>
-                        <property name="Label" translatable="yes">Возврат на склад</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonReturnWearClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Button" id="buttonWriteOffWear">
-                        <property name="MemberName" />
-                        <property name="Sensitive">False</property>
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-delete Menu</property>
-                        <property name="Label" translatable="yes">Списание</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonWriteOffWearClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">2</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">1</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
                   </packing>
                 </child>
               </widget>
@@ -2905,7 +2723,7 @@
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
                 <child>
-                  <widget class="workwear.Dialogs.Organization.EmployeeMovementsView" id="employeemovementsview1">
+                  <widget class="workwear.Views.Company.EmployeeChilds.EmployeeMovementsView" id="employeemovementsview1">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
                   </widget>
@@ -2929,7 +2747,7 @@
               </packing>
             </child>
             <child>
-              <widget class="workwear.Dialogs.Organization.EmployeeVacationsView" id="employeevacationsview1">
+              <widget class="workwear.Views.Company.EmployeeChilds.EmployeeVacationsView" id="employeevacationsview1">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
               </widget>
@@ -7602,7 +7420,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Dialogs.Organization.EmployeeMovementsView" design-size="373 218">
+  <widget class="Gtk.Bin" id="workwear.Views.Company.EmployeeChilds.EmployeeMovementsView" design-size="373 218">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -7629,7 +7447,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Dialogs.Organization.EmployeeCardListedItemsView" design-size="340 88">
+  <widget class="Gtk.Bin" id="workwear.Views.Company.EmployeeChilds.EmployeeListedItemsView" design-size="422 104">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -7653,10 +7471,76 @@
             <property name="AutoSize">True</property>
           </packing>
         </child>
+        <child>
+          <widget class="Gtk.HBox" id="hbox9">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gtk.Button" id="buttonGiveWear">
+                <property name="MemberName" />
+                <property name="Sensitive">False</property>
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-add Menu</property>
+                <property name="Label" translatable="yes">Выдача сотруднику</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonGiveWearClicked" />
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonReturnWear">
+                <property name="MemberName" />
+                <property name="Sensitive">False</property>
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-redo Menu</property>
+                <property name="Label" translatable="yes">Возврат на склад</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonReturnWearClicked" />
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonWriteOffWear">
+                <property name="MemberName" />
+                <property name="Sensitive">False</property>
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-delete Menu</property>
+                <property name="Label" translatable="yes">Списание</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonWriteOffWearClicked" />
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Dialogs.Organization.EmployeeVacationsView" design-size="303 300">
+  <widget class="Gtk.Bin" id="workwear.Views.Company.EmployeeChilds.EmployeeVacationsView" design-size="303 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -8140,7 +8024,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Dialogs.Organization.EmployeeWearItemsView" design-size="757 305">
+  <widget class="Gtk.Bin" id="workwear.Views.Company.EmployeeChilds.EmployeeWearItemsView" design-size="757 305">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -10709,6 +10593,132 @@
             <property name="YExpand">False</property>
             <property name="YFill">True</property>
             <property name="YShrink">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="workwear.Views.Company.EmployeeChilds.EmployeeNormsView" design-size="728 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox6">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow2">
+            <property name="MemberName" />
+            <property name="ShadowType">In</property>
+            <child>
+              <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeNorms">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="ShowScrollbars">True</property>
+                <property name="EnableSearch">False</property>
+                <signal name="RowActivated" handler="OnYtreeNormsRowActivated" />
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HBox" id="hbox10">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gtk.Button" id="buttonAddNorm">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-add Menu</property>
+                <property name="Label" translatable="yes">Добавить норму</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonAddNormClicked" />
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonNormFromPost">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-add Menu</property>
+                <property name="Label" translatable="yes">По должности</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonNormFromPostClicked" />
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonNormOpen">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-edit Menu</property>
+                <property name="Label" translatable="yes">Открыть норму</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonNormOpenClicked" />
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonRemoveNorm">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-remove Menu</property>
+                <property name="Label" translatable="yes">Удалить норму</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonRemoveNormClicked" />
+              </widget>
+              <packing>
+                <property name="Position">3</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonRefreshWorkwearItems">
+                <property name="MemberName" />
+                <property name="Tooltip" translatable="yes">Обновить список требуемой спецодежды в соответсвтии с изменениями в нормах.</property>
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">Обновить спецодежду</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonRefreshWorkwearItemsClicked" />
+              </widget>
+              <packing>
+                <property name="Position">4</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
           </packing>
         </child>
       </widget>
