@@ -72,7 +72,7 @@ namespace workwear.ViewModels.Stock
 		#region Nomenclature
 		public void AddNomenclature()
 		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(Nomenclature), OpenPageOptions.AsSlave);
+			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(Nomenclature), OpenPageOptions.AsSlave);
 
 			var selectDialog = selectPage.TdiTab as OrmReference;
 			selectDialog.Mode = OrmReferenceMode.MultiSelect;
@@ -97,7 +97,7 @@ namespace workwear.ViewModels.Stock
 		#region Employee
 		public void AddEmployee()
 		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(EmployeeCard), OpenPageOptions.AsSlave);
+			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(EmployeeCard), OpenPageOptions.AsSlave);
 
 			var selectDialog = selectPage.TdiTab as OrmReference;
 			selectDialog.Mode = OrmReferenceMode.MultiSelect;

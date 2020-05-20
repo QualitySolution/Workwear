@@ -99,7 +99,7 @@ namespace workwear.ViewModels.Statements
 		public void AddEmployeesFromDivision()
 		{
 			var selectPage = issuanceSheetViewModel.tdiNavigationManager.OpenTdiTab<OrmReference, Type>(
-				issuanceSheetViewModel.TdiTab,
+				issuanceSheetViewModel,
 				typeof(Subdivision),
 				OpenPageOptions.AsSlave
 			);
