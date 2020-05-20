@@ -1050,8 +1050,6 @@ namespace workwear.Views.Company
 			}
 			this.Show();
 			this.enumPrint.EnumItemClicked += new global::System.EventHandler<QSOrmProject.EnumItemClickedEventArgs>(this.OnEnumPrintEnumItemClicked);
-			this.yentryPost.ChangedByUser += new global::System.EventHandler(this.OnYentryPostChangedByUser);
-			this.yentryObject.ChangedByUser += new global::System.EventHandler(this.OnYentryObjectChangedByUser);
 			this.ycomboWinterShoesStd.Changed += new global::System.EventHandler(this.OnYcomboWinterShoesStdChanged);
 			this.ycomboWearStd.Changed += new global::System.EventHandler(this.OnYcomboWearStdChanged);
 			this.ycomboShoesStd.Changed += new global::System.EventHandler(this.OnYcomboShoesStdChanged);

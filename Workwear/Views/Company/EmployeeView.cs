@@ -228,22 +228,6 @@ namespace workwear.Views.Company
 			Entity.UpdateAllNextIssue();
 		}
 
-		protected void OnYentryPostChangedByUser(object sender, EventArgs e)
-		{
-			if (IsPostSetOnLoad && MessageDialogHelper.RunQuestionDialog("Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?"))
-			{
-				Entity.ChangeOfPositionDate = DateTime.Today;
-			}
-		}
-
-		protected void OnYentryObjectChangedByUser(object sender, EventArgs e)
-		{
-			if (IsSubdivisionSetOnLoad && MessageDialogHelper.RunQuestionDialog("Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?"))
-			{
-				Entity.ChangeOfPositionDate = DateTime.Today;
-			}
-		}
-
 		#region Обработка кнопок
 
 		protected void OnEnumPrintEnumItemClicked(object sender, EnumItemClickedEventArgs e)

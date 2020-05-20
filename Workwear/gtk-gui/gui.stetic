@@ -2494,7 +2494,6 @@
                   <widget class="Gamma.Widgets.yEntryReference" id="yentryObject">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
-                    <signal name="ChangedByUser" handler="OnYentryObjectChangedByUser" />
                   </widget>
                   <packing>
                     <property name="TopAttach">6</property>
@@ -2540,7 +2539,6 @@
                   <widget class="Gamma.Widgets.yEntryReference" id="yentryPost">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
-                    <signal name="ChangedByUser" handler="OnYentryPostChangedByUser" />
                   </widget>
                   <packing>
                     <property name="TopAttach">4</property>

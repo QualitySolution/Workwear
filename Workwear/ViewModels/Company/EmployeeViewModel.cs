@@ -17,6 +17,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QSReport;
 using workwear.Domain.Company;
+using workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using workwear.Measurements;
 using workwear.ViewModels.Company.EmployeeChilds;
@@ -30,6 +31,7 @@ namespace workwear.ViewModels.Company
 		private readonly IUserService userService;
 
 		ILifetimeScope AutofacScope;
+		private readonly IInteractiveQuestion interactive;
 		private readonly CommonMessages messages;
 
 		public EmployeeViewModel(
@@ -39,10 +41,12 @@ namespace workwear.ViewModels.Company
 			IValidator validator,
 			IUserService userService,
 			ILifetimeScope autofacScope,
+			IInteractiveQuestion interactive,
 			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
 
@@ -53,6 +57,7 @@ namespace workwear.ViewModels.Company
 
 			Entity.PropertyChanged += CheckSizeChanged;
 			Entity.PropertyChanged += Entity_PropertyChanged;
+			Entity.PropertyChanged += PostChangedCheck;
 
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
@@ -60,6 +65,9 @@ namespace workwear.ViewModels.Company
 			else {
 				AutoCardNumber = String.IsNullOrWhiteSpace(Entity.CardNumber);
 			}
+
+			lastSubdivision = Entity.Subdivision;
+			lastPost = Entity.Post;
 
 			//Создаем вкладки
 			var parameter = new TypedParameter(typeof(EmployeeViewModel), this);
@@ -252,5 +260,22 @@ namespace workwear.ViewModels.Company
 		}
 
 		#endregion
+
+		#region Дата изменения должности
+
+		Subdivision lastSubdivision;
+		Post lastPost;
+
+		void PostChangedCheck(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(Entity.Post) && lastPost != null && interactive.Question("Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?")) {
+				Entity.ChangeOfPositionDate = DateTime.Today;
+			}
+			if(e.PropertyName == nameof(Entity.Subdivision) && lastSubdivision != null && interactive.Question("Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?")) {
+				Entity.ChangeOfPositionDate = DateTime.Today;
+			}
+		}
+		#endregion
+
 	}
 }
