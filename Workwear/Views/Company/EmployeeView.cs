@@ -16,10 +16,6 @@ namespace workwear.Views.Company
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
 
-		bool IsPostSetOnLoad;
-		bool IsSubdivisionSetOnLoad;
-
-
 		public EmployeeView(EmployeeViewModel viewModel) : base(viewModel)
 		{
 			this.Build ();
@@ -37,9 +33,6 @@ namespace workwear.Views.Company
 
 			notebook1.GetNthPage(2).Visible = ViewModel.VisibleListedItem;
 			notebook1.GetNthPage (3).Visible = ViewModel.VisibleHistory;
-
-			IsPostSetOnLoad = Entity.Post != null;
-			IsSubdivisionSetOnLoad = Entity.Subdivision != null;
 
 			comboSex.ItemsEnum = typeof(Sex);
 			comboSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItem).InitializeFromSource ();
