@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Xml;
 using Gamma.Utilities;
+using Gtk;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -199,6 +202,20 @@ namespace workwear.Domain.Stock
 			return newItem;
 		}
 
+		public virtual IncomeItem AddItem(Nomenclature nomenclature, int count)
+		{
+			if(nomenclature == null)
+				throw new InvalidOperationException("Номенклатура не найдена");
+			var newItem = new IncomeItem(this) {
+				Amount = count,
+				Nomenclature = nomenclature,
+				Cost = 0,
+			};
+
+			ObservableItems.Add(newItem);
+			return newItem;
+		}
+
 		public virtual void RemoveItem(IncomeItem item)
 		{
 			ObservableItems.Remove (item);
@@ -208,6 +225,114 @@ namespace workwear.Domain.Stock
 		{
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
 		}
+
+		#region Загрузка из 1С
+
+		public virtual void StartReadDoc1C()
+		{
+			XmlElement xRoot = Open1CFile();
+			if(xRoot == null) return;
+			this.Date = GetDateFrom1CDoc(xRoot);
+			GetNomenclature(xRoot);
+		}
+		public virtual XmlElement Open1CFile()
+		{
+			XmlDocument xDoc = new XmlDocument();
+			XmlElement xRoot = null;
+			object[] param = new object[4];
+			param[0] = "Cancel";
+			param[1] = Gtk.ResponseType.Cancel;
+			param[2] = "Open";
+			param[3] = Gtk.ResponseType.Accept;
+
+			Gtk.FileChooserDialog fc =
+				new Gtk.FileChooserDialog("Open File",
+					null,
+					Gtk.FileChooserAction.Open,
+					param);
+
+			Gtk.FileFilter xmlFilter = new Gtk.FileFilter();
+			xmlFilter.Name = "XML";
+
+			if(fc.Run() == (int)Gtk.ResponseType.Accept) {
+				if(!fc.Filename.ToLower().EndsWith(".xml")) { fc.Destroy(); return null; }
+				xDoc.Load($"{fc.Filename}");
+				xRoot = xDoc.DocumentElement;
+			}
+			fc.Destroy();
+			return xRoot;
+		}
+
+		public virtual DateTime GetDateFrom1CDoc(XmlElement xRoot)
+		{
+			DateTime dateTime;
+			XmlNodeList childnodes2 = xRoot.SelectNodes("*");
+			XmlNodeList childnodes = xRoot.SelectNodes("//Body/Документ.ПеремещениеТоваров/КлючевыеСвойства/Дата");
+			foreach(XmlNode ch in childnodes) {
+				ch.SelectNodes("//КлючевыеСвойства/Дата");
+
+				foreach(XmlNode c in ch) {
+					dateTime = DateTime.Parse(ch.InnerText);
+					return dateTime.Date;
+				}
+			}
+
+			return new DateTime();
+		}
+
+		public virtual void GetNomenclature(XmlElement xRoot)
+		{
+			// проход по всем номенклатурам из файла
+			XmlNodeList childnodes = xRoot.SelectNodes("//Body/Документ.ПеремещениеТоваров/Товары/Строка");
+			foreach(XmlNode child in childnodes) {
+				string ozm = "", count = "";
+				var nomenclaturesReference = child.SelectNodes("//ДанныеНоменклатуры/Номенклатура/Ссылка");
+				foreach(XmlNode nomReference in nomenclaturesReference)
+					ozm = FindNomenclatureOZM(xRoot, nomReference.InnerText);
+
+				var counts= child.SelectNodes("//Количество");
+				foreach(XmlNode c in counts) 
+					count = c.InnerText;
+
+				if (ozm != "" && count != "")
+				AddItem(FindNomenclature(ozm), int.Parse(count));
+			}
+
+		}
+
+		public virtual string FindNomenclatureOZM(XmlElement xRoot, string codeNomen)
+		{
+			XmlNodeList childnodes = xRoot.SelectNodes("//Body/Справочник.Номенклатура");
+			bool isFindNomen = false;
+			string ozm;
+
+			foreach(XmlNode ch in childnodes) {
+				if(ch.SelectSingleNode($"//КлючевыеСвойства[Ссылка = '{codeNomen}']") != null)
+					isFindNomen = true;
+
+				if(isFindNomen) {
+					foreach(XmlNode c in ch.SelectNodes("//ДополнительныеРеквизиты/Строка/Свойство")) {
+						if(c.InnerText.Contains("ОЗМ НЛМК")) {
+							ozm = c.InnerText.Replace("ОЗМ НЛМК", "");
+							ozm = ozm.Replace("true", "");
+							ozm = ozm.Replace("false", "");
+							isFindNomen = false;
+							return ozm;
+						}
+
+					}
+				}
+			}
+			return "";
+		}
+
+		public virtual Nomenclature FindNomenclature(string ozm)
+		{
+			Nomenclature nom = UoW.Session.QueryOver<Nomenclature>().List().FirstOrDefault(x => x.Ozm == ozm);
+			return nom;
+		}
+		#endregion
+
 	}
 
 	public enum IncomeOperations {
@@ -217,6 +342,7 @@ namespace workwear.Domain.Stock
 		Return,
 		[Display(Name = "Возврат с объекта")]
 		Object
+
 	}
 
 	public class IncomeOperationsType : NHibernate.Type.EnumStringType
@@ -225,5 +351,6 @@ namespace workwear.Domain.Stock
 		{
 		}
 	}
+
 }
 
