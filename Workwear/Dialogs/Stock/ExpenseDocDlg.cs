@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using Gamma.Binding.Converters;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
@@ -11,11 +12,12 @@ using QS.Report;
 using QS.Report.ViewModels;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
-using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository;
+using workwear.ViewModels.Company;
 using workwear.ViewModels.Statements;
 using workwear.ViewModels.Stock;
 
@@ -86,9 +88,6 @@ namespace workwear
 			ycomboOperation.ItemsEnum = typeof(ExpenseOperations);
 			ycomboOperation.Binding.AddBinding (Entity, e => e.Operation, w => w.SelectedItemOrNull).InitializeFromSource ();
 
-			yentryEmployee.SubjectType = typeof(EmployeeCard);
-			yentryEmployee.Binding.AddBinding (Entity, e => e.Employee, w => w.Subject).InitializeFromSource ();
-
 			yentryObject.SubjectType = typeof(Subdivision);
 			yentryObject.Binding.AddBinding (Entity, e => e.Subdivision, w => w.Subject).InitializeFromSource ();
 
@@ -100,10 +99,14 @@ namespace workwear
 
 			var builder = new LegacyEEVMBuilderFactory<Expense>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
 
-
 			entityWarehouseExpense.ViewModel = builder.ForProperty(x => x.Warehouse)
 									.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 									.UseViewModelDialog<WarehouseViewModel>()
+									.Finish();
+
+			yentryEmployee.ViewModel = builder.ForProperty(x => x.Employee)
+									.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
+									.UseViewModelDialog<EmployeeViewModel>()
 									.Finish();
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
@@ -186,7 +189,7 @@ namespace workwear
 		protected void OnButtonIssuanceSheetPrintClicked(object sender, EventArgs e)
 		{
 			if(UoW.HasChanges) {
-				if(CommonDialogs.SaveBeforePrint(Entity.GetType(), "ведомости"))
+				if(QSOrmProject.CommonDialogs.SaveBeforePrint(Entity.GetType(), "ведомости"))
 					Save();
 				else
 					return;

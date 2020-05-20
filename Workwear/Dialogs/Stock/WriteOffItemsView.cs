@@ -116,7 +116,7 @@ namespace workwear
 
 		protected void OnButtonAddWorkerClicked(object sender, EventArgs e)
 		{
-			var filter = new EmployeeBalanceFilter (MyOrmDialog.UoW);
+			var filter = new EmployeeBalanceFilter (MyOrmDialog.UoW, MyTab);
 			if (CurWorker != null)
 				filter.RestrictEmployee = CurWorker;
 

@@ -38,7 +38,7 @@ namespace workwear
 
 		private global::Gamma.Widgets.yEnumComboBox ycomboOperation;
 
-		private global::Gamma.Widgets.yEntryReference yentryEmployee;
+		private global::QS.Views.Control.EntityEntry yentryEmployee;
 
 		private global::Gamma.Widgets.yEntryReference yentryObject;
 
@@ -257,7 +257,7 @@ namespace workwear
 			w19.RightAttach = ((uint)(2));
 			w19.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
-			this.yentryEmployee = new global::Gamma.Widgets.yEntryReference();
+			this.yentryEmployee = new global::QS.Views.Control.EntityEntry();
 			this.yentryEmployee.Events = ((global::Gdk.EventMask)(256));
 			this.yentryEmployee.Name = "yentryEmployee";
 			this.table2.Add(this.yentryEmployee);

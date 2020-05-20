@@ -1,8 +1,11 @@
 ﻿using System;
 using QS.DomainModel.UoW;
+using QS.Tdi;
+using QS.ViewModels.Control.EEVM;
 using QSOrmProject.RepresentationModel;
 using workwear.Domain.Company;
-using workwear.Repository.Company;
+using workwear.Journal.ViewModels.Company;
+using workwear.ViewModels.Company;
 
 namespace workwear
 {
@@ -17,19 +20,27 @@ namespace workwear
 			}
 			set {
 				uow = value;
-				yentryEmployee.ItemsQuery = EmployeeRepository.ActiveEmployeesQuery ();
 			}
 		}
 
-		public EmployeeBalanceFilter (IUnitOfWork uow) : this()
+		public EmployeeBalanceFilter (IUnitOfWork uow, ITdiTab tab) : this()
 		{
 			UoW = uow;
+
+			var AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+
+			var builder = new LegacyEEVMBuilderFactory(tab, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
+			yentryEmployee.ViewModel = builder.ForEntity<EmployeeCard>()
+					.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
+					.UseViewModelDialog<EmployeeViewModel>()
+					.Finish();
+			yentryEmployee.ViewModel.ChangedByUser += Employee_Changed;
 		}
 
 		public EmployeeCard RestrictEmployee {
-			get { return yentryEmployee.Subject as EmployeeCard; }
+			get { return yentryEmployee.ViewModel.Entity as EmployeeCard; }
 			set {
-				yentryEmployee.Subject = value;
+				yentryEmployee.ViewModel.Entity = value;
 				yentryEmployee.Sensitive = false;
 			}
 		}
@@ -47,10 +58,9 @@ namespace workwear
 			this.Build ();
 		}
 
-		protected void OnYentryEmployeeChanged (object sender, EventArgs e)
+		void Employee_Changed(object sender, EventArgs e)
 		{
-			OnRefiltered ();
+			OnRefiltered();
 		}
 	}
 }
-
