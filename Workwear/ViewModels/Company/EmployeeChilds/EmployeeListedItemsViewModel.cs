@@ -49,6 +49,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		private EmployeeBalanceVM employeeBalanceVM;
 		public EmployeeBalanceVM EmployeeBalanceVM { get => employeeBalanceVM; private set => SetField(ref employeeBalanceVM, value); }
 
+		public bool SensetiveButtonGiveWear => !employeeViewModel.UoW.IsNew;
 		public bool SensetiveButtonReturn => !employeeViewModel.UoW.IsNew;
 		public bool SensetiveButtonWriteoff => !employeeViewModel.UoW.IsNew;
 

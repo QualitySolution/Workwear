@@ -20,6 +20,7 @@ namespace workwear.Views.Company.EmployeeChilds
 				viewModel.PropertyChanged += ViewModel_PropertyChanged;
 				buttonReturnWear.Sensitive = ViewModel.SensetiveButtonReturn;
 				buttonWriteOffWear.Sensitive = ViewModel.SensetiveButtonWriteoff;
+				buttonGiveWear.Sensitive = ViewModel.SensetiveButtonGiveWear;
 			}
 		}
 
