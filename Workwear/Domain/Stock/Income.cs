@@ -213,7 +213,6 @@ namespace workwear.Domain.Stock
 				Nomenclature = nomenclature,
 				Cost = 0,
 			};
-			if(ObservableItems.Where(x=> x.Nomenclature.Id == nomenclature.Id).ToList().Count > 0) return null;
 
 			ObservableItems.Add(newItem);
 			return newItem;
@@ -296,11 +295,11 @@ namespace workwear.Domain.Stock
 			XNamespace ns = "http://v8.1c.ru/edi/edi_stnd/EnterpriseData/1.3";
 			int i = 0;
 			foreach(var nomenReference in listNomenReference) {
-				var ozm= (from feed in doc.Descendants(ns + "Справочник.Номенклатура")
+				var ozm = (from feed in doc.Descendants(ns + "Справочник.Номенклатура")
 						  from et in feed.Elements(ns + "КлючевыеСвойства")
 						  where (string)et.Element(ns + "Ссылка") == nomenReference
 						  select feed.Element(ns + "ДополнительныеРеквизиты")
-						  .Element(ns + "Строка").Element(ns + "Свойство").Element(ns + "Ссылка")).ToList().First().Value;
+						  .Element(ns + "Строка").Element(ns + "ЗначениеСвойства").Element(ns + "Число")).ToList().First().Value;
 
 				AddItem(FindNomenclature(ozm),listNomenCount[i]);
 				i++;
@@ -310,7 +309,7 @@ namespace workwear.Domain.Stock
 
 		public virtual Nomenclature FindNomenclature(string ozm)
 		{
-			Nomenclature nom = UoW.Session.QueryOver<Nomenclature>().List().FirstOrDefault(x => x.Ozm == ozm);
+			Nomenclature nom = UoW.Session.QueryOver<Nomenclature>().List().FirstOrDefault(x => x.Ozm.ToString() == ozm);
 			return nom;
 		}
 		#endregion

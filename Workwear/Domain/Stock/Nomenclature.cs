@@ -68,10 +68,10 @@ namespace workwear.Domain.Stock
 			set { SetField(ref comment, value, () => Comment); }
 		}
 
-		private string ozm;
+		private int ozm;
 
 		[Display(Name = "ОЗМ")]
-		public virtual string Ozm {
+		public virtual int Ozm {
 			get { return ozm; }
 			set { SetField(ref ozm, value, () => Ozm); }
 		}
