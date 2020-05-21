@@ -5,6 +5,7 @@ using System.Data.Bindings.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using Gamma.Utilities;
 using Gtk;
 using QS.Dialog;
@@ -206,11 +207,13 @@ namespace workwear.Domain.Stock
 		{
 			if(nomenclature == null)
 				throw new InvalidOperationException("Номенклатура не найдена");
+
 			var newItem = new IncomeItem(this) {
 				Amount = count,
 				Nomenclature = nomenclature,
 				Cost = 0,
 			};
+			if(ObservableItems.Where(x=> x.Nomenclature.Id == nomenclature.Id).ToList().Count > 0) return null;
 
 			ObservableItems.Add(newItem);
 			return newItem;
@@ -230,15 +233,17 @@ namespace workwear.Domain.Stock
 
 		public virtual void StartReadDoc1C()
 		{
-			XmlElement xRoot = Open1CFile();
-			if(xRoot == null) return;
+			string file = Open1CFile();
+			if(file.Length < 1) return;
+
+			XmlDocument xDoc = new XmlDocument(); ;
+			xDoc.Load($"{file}");
+			XmlElement xRoot = xDoc.DocumentElement;
 			this.Date = GetDateFrom1CDoc(xRoot);
-			GetNomenclature(xRoot);
+			GetNomenclature(xRoot, file);
 		}
-		public virtual XmlElement Open1CFile()
+		public virtual string Open1CFile()
 		{
-			XmlDocument xDoc = new XmlDocument();
-			XmlElement xRoot = null;
 			object[] param = new object[4];
 			param[0] = "Cancel";
 			param[1] = Gtk.ResponseType.Cancel;
@@ -253,77 +258,54 @@ namespace workwear.Domain.Stock
 
 			Gtk.FileFilter xmlFilter = new Gtk.FileFilter();
 			xmlFilter.Name = "XML";
-
-			if(fc.Run() == (int)Gtk.ResponseType.Accept) {
-				if(!fc.Filename.ToLower().EndsWith(".xml")) { fc.Destroy(); return null; }
-				xDoc.Load($"{fc.Filename}");
-				xRoot = xDoc.DocumentElement;
-			}
+			string nameFile = "";
+			if(fc.Run() == (int)Gtk.ResponseType.Accept) 
+				if(fc.Filename.ToLower().EndsWith(".xml")) 
+					nameFile = fc.Filename;
 			fc.Destroy();
-			return xRoot;
+			return nameFile;
 		}
 
 		public virtual DateTime GetDateFrom1CDoc(XmlElement xRoot)
 		{
-			DateTime dateTime;
-			XmlNodeList childnodes2 = xRoot.SelectNodes("*");
-			XmlNodeList childnodes = xRoot.SelectNodes("//Body/Документ.ПеремещениеТоваров/КлючевыеСвойства/Дата");
-			foreach(XmlNode ch in childnodes) {
-				ch.SelectNodes("//КлючевыеСвойства/Дата");
-
-				foreach(XmlNode c in ch) {
-					dateTime = DateTime.Parse(ch.InnerText);
-					return dateTime.Date;
-				}
-			}
-
-			return new DateTime();
+			DateTime dateTime = new DateTime();
+			XmlNodeList childnodes = 
+			xRoot.SelectNodes("//*[name()='Body']/*[name()='Документ.ПеремещениеТоваров']/*[name()='КлючевыеСвойства']//*[name()='Дата']");
+			foreach(XmlNode ch in childnodes) 
+				dateTime = DateTime.Parse(ch.InnerText);
+			return dateTime.Date;
 		}
 
-		public virtual void GetNomenclature(XmlElement xRoot)
+		public virtual void GetNomenclature(XmlElement xRoot, string file)
 		{
-			// проход по всем номенклатурам из файла
-			XmlNodeList childnodes = xRoot.SelectNodes("//Body/Документ.ПеремещениеТоваров/Товары/Строка");
-			foreach(XmlNode child in childnodes) {
-				string ozm = "", count = "";
-				var nomenclaturesReference = child.SelectNodes("//ДанныеНоменклатуры/Номенклатура/Ссылка");
-				foreach(XmlNode nomReference in nomenclaturesReference)
-					ozm = FindNomenclatureOZM(xRoot, nomReference.InnerText);
+			XmlNamespaceManager nsMgr = new XmlNamespaceManager(new NameTable());
+			nsMgr.AddNamespace("df", "http://v8.1c.ru/edi/edi_stnd/EnterpriseData/1.3");
 
-				var counts= child.SelectNodes("//Количество");
-				foreach(XmlNode c in counts) 
-					count = c.InnerText;
+			List<string> listNomenReference = new List<string>();
+			List<int> listNomenCount = new List<int>();
 
-				if (ozm != "" && count != "")
-				AddItem(FindNomenclature(ozm), int.Parse(count));
+			XmlNodeList childnodesNomen = xRoot.SelectNodes("//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:ДанныеНоменклатуры/df:Номенклатура/df:Ссылка", nsMgr);
+			foreach(XmlNode child in childnodesNomen)
+				listNomenReference.Add(child.InnerText);
+
+			XmlNodeList childnodesNomenCount = xRoot.SelectNodes("//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:Количество", nsMgr);
+			foreach(XmlNode child in childnodesNomenCount)
+				listNomenCount.Add(int.Parse(child.InnerText));
+
+			XDocument doc = XDocument.Load(file);
+			XNamespace ns = "http://v8.1c.ru/edi/edi_stnd/EnterpriseData/1.3";
+			int i = 0;
+			foreach(var nomenReference in listNomenReference) {
+				var ozm= (from feed in doc.Descendants(ns + "Справочник.Номенклатура")
+						  from et in feed.Elements(ns + "КлючевыеСвойства")
+						  where (string)et.Element(ns + "Ссылка") == nomenReference
+						  select feed.Element(ns + "ДополнительныеРеквизиты")
+						  .Element(ns + "Строка").Element(ns + "Свойство").Element(ns + "Ссылка")).ToList().First().Value;
+
+				AddItem(FindNomenclature(ozm),listNomenCount[i]);
+				i++;
 			}
 
-		}
-
-		public virtual string FindNomenclatureOZM(XmlElement xRoot, string codeNomen)
-		{
-			XmlNodeList childnodes = xRoot.SelectNodes("//Body/Справочник.Номенклатура");
-			bool isFindNomen = false;
-			string ozm;
-
-			foreach(XmlNode ch in childnodes) {
-				if(ch.SelectSingleNode($"//КлючевыеСвойства[Ссылка = '{codeNomen}']") != null)
-					isFindNomen = true;
-
-				if(isFindNomen) {
-					foreach(XmlNode c in ch.SelectNodes("//ДополнительныеРеквизиты/Строка/Свойство")) {
-						if(c.InnerText.Contains("ОЗМ НЛМК")) {
-							ozm = c.InnerText.Replace("ОЗМ НЛМК", "");
-							ozm = ozm.Replace("true", "");
-							ozm = ozm.Replace("false", "");
-							isFindNomen = false;
-							return ozm;
-						}
-
-					}
-				}
-			}
-			return "";
 		}
 
 		public virtual Nomenclature FindNomenclature(string ozm)
