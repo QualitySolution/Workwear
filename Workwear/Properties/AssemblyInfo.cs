@@ -8,7 +8,7 @@ using QSProjectsLib;
 #if DEBUG
 [assembly: AssemblyBetaBuild]
 #endif
-[assembly: AssemblyEdition("gpl")]
+[assembly: AssemblyEdition("nlmk", Title = "НЛМК", AllowEdition = new[] {"gpl"})]
 [assembly: AssemblyDescription("Программа позволяет вести учет внутреннего склада спецодежды и имущества выдаваемого сотрудникам.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]

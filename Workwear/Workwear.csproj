@@ -151,6 +151,9 @@
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Oracle.ManagedDataAccess">
+      <HintPath>..\packages\Oracle.ManagedDataAccess.19.7.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -375,6 +378,7 @@
     <Compile Include="HibernateMapping\Stock\MassExpenseOperationMap.cs" />
     <Compile Include="HibernateMapping\Stock\MassExpenseEmployeeMap.cs" />
     <Compile Include="Journal\JournalsColumnsConfigs.cs" />
+    <Compile Include="Tools\Oracle\NLMKOracle.cs" />
     <Compile Include="Journal\ViewModels\Company\EmployeeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\LeadersJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\OrganizationJournalViewModel.cs" />
@@ -383,8 +387,10 @@
     <Compile Include="Journal\Filter.Views\Company\EmployeeFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.EmployeeFilterView.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\EmployeeFilterViewModel.cs" />
+    <Compile Include="Tools\Oracle\OracleSQLDataLoader.cs" />
     <Compile Include="Repository\Company\EmployeeRepository.cs" />
     <Compile Include="Repository\Company\SubdivisionRepository.cs" />
+    <Compile Include="Tools\Oracle\HRSystem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -520,6 +526,7 @@
     <Folder Include="HibernateMapping\Statements\" />
     <Folder Include="ViewModels\Statements\" />
     <Folder Include="Views\Statements\" />
+    <Folder Include="Reports\Stock\" />
     <Folder Include="Views\Stock\" />
     <Folder Include="ViewModels\Stock\" />
     <Folder Include="Journal\" />
@@ -533,6 +540,7 @@
     <Folder Include="Journal\ViewModels\Statements\" />
     <Folder Include="Journal\Filter.Views\Company\" />
     <Folder Include="Journal\Filter.ViewModels\Company\" />
+    <Folder Include="Tools\Oracle\" />
     <Folder Include="Repository\Company\" />
   </ItemGroup>
   <ItemGroup>
@@ -598,6 +606,11 @@
     <None Include="Reports\Statements\IssuanceSheet.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Reports\Stock\ActWriteOff.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\Stock\ActWriteOff_Common.rdl" />
+    <None Include="App.config" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

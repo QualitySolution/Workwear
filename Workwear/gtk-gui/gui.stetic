@@ -1755,6 +1755,7 @@
                 <child>
                   <widget class="Gtk.Label" id="label11">
                     <property name="MemberName" />
+                    <property name="Visible">False</property>
                     <property name="Xalign">1</property>
                     <property name="LabelProp" translatable="yes">Руководитель:</property>
                   </widget>
@@ -1775,6 +1776,7 @@
                 <child>
                   <widget class="Gtk.Label" id="label12">
                     <property name="MemberName" />
+                    <property name="Visible">False</property>
                     <property name="Xalign">1</property>
                     <property name="LabelProp" translatable="yes">Подразделение:</property>
                   </widget>
@@ -1795,6 +1797,7 @@
                 <child>
                   <widget class="Gtk.Label" id="label14">
                     <property name="MemberName" />
+                    <property name="Visible">False</property>
                     <property name="Xalign">1</property>
                     <property name="LabelProp" translatable="yes">Адрес подразделения:</property>
                   </widget>
@@ -2180,6 +2183,7 @@
                 <child>
                   <widget class="Gtk.Label" id="labelObjectAddress">
                     <property name="MemberName" />
+                    <property name="Visible">False</property>
                     <property name="LabelProp" translatable="yes">---</property>
                     <property name="Wrap">True</property>
                     <property name="Selectable">True</property>
@@ -2489,8 +2493,31 @@
                   </packing>
                 </child>
                 <child>
+                  <widget class="Gamma.Widgets.yEntryReference" id="yentryLeader">
+                    <property name="MemberName" />
+                    <property name="Visible">False</property>
+                    <property name="Events">ButtonPressMask</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">5</property>
+                    <property name="BottomAttach">6</property>
+                    <property name="LeftAttach">1</property>
+                    <property name="RightAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="Gamma.Widgets.yEntryReference" id="yentryObject">
                     <property name="MemberName" />
+                    <property name="Visible">False</property>
                     <property name="Events">ButtonPressMask</property>
                     <signal name="Changed" handler="OnYentryObjectChanged" />
                     <signal name="ChangedByUser" handler="OnYentryObjectChangedByUser" />
@@ -2575,6 +2602,7 @@
                     <child>
                       <widget class="Gamma.Widgets.yImageViewer" id="yimagePhoto">
                         <property name="MemberName" />
+                        <property name="Visible">False</property>
                         <property name="VerticalFit">True</property>
                         <property name="HorizontalFit">True</property>
                         <signal name="ButtonPressEvent" handler="OnYimagePhotoButtonPressEvent" />
@@ -2593,6 +2621,7 @@
                     <child>
                       <widget class="Gtk.Button" id="buttonLoadPhoto">
                         <property name="MemberName" />
+                        <property name="Visible">False</property>
                         <property name="Tooltip" translatable="yes">Загрузить фотографию с диска на компьютере.</property>
                         <property name="CanFocus">True</property>
                         <property name="Type">TextAndIcon</property>
@@ -2611,6 +2640,7 @@
                     <child>
                       <widget class="Gtk.Button" id="buttonSavePhoto">
                         <property name="MemberName" />
+                        <property name="Visible">False</property>
                         <property name="Sensitive">False</property>
                         <property name="Tooltip" translatable="yes">Сохранить фотографию на диск.</property>
                         <property name="CanFocus">True</property>
@@ -2931,6 +2961,7 @@
             <child>
               <widget class="workwear.Dialogs.Organization.EmployeeVacationsView" id="employeevacationsview1">
                 <property name="MemberName" />
+                <property name="Visible">False</property>
                 <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
@@ -4311,6 +4342,23 @@
               </widget>
               <packing>
                 <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="btnPrint">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-print Menu</property>
+                <property name="Label" translatable="yes">Печать</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnBtnPrintClicked" />
+              </widget>
+              <packing>
+                <property name="Position">2</property>
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>

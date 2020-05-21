@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Oracle.ManagedDataAccess.Client;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
 using QS.Deletion;
@@ -32,6 +33,7 @@ using workwear.Domain.Users;
 using workwear.Journal;
 using workwear.Repository.Operations;
 using workwear.Tools;
+using workwear.Tools.Oracle;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
 
@@ -92,6 +94,12 @@ namespace workwear
 			#region База
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
 			builder.RegisterType<DefaultSessionProvider>().As<ISessionProvider>();
+			#endregion
+
+			#region NLMK
+			builder.Register(x => NLMKOracle.Connection).As<OracleConnection>();
+			builder.RegisterGeneric(typeof(OracleSQLDataLoader<>)).AsSelf();
+			builder.RegisterType<HRSystem>().AsSelf();
 			#endregion
 
 			#region Сервисы

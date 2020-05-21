@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
+using QS.Report;
 using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
@@ -89,6 +91,24 @@ namespace workwear
 			
 			logger.Info ("Ok");
 			return true;
+		}
+
+		protected void OnBtnPrintClicked(object sender, EventArgs e)
+		{
+			if(UoWGeneric.HasChanges && CommonDialogs.SaveBeforePrint(typeof(Writeoff), "бумажной версии"))
+				Save();
+
+			var reportInfo = new ReportInfo {
+				Title = $"Акт списания {Entity.Id}",
+				Identifier = "Stock.ActWriteOff",
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id }
+				}
+			};
+
+			TabParent.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
+							  () => new QSReport.ReportViewDlg(reportInfo)
+							 );
 		}
 	}
 }
