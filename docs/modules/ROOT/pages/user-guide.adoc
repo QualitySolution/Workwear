@@ -22,4 +22,6 @@ include::install.adoc[]
 
 include::users.adoc[]
 
+include::technical.adoc[]
+
 :leveloffset: 0
