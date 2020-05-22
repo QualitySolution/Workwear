@@ -15,14 +15,12 @@ using QS.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QSOrmProject;
-using QSOrmProject.RepresentationModel;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Stock;
-using workwear.Views.Stock;
 
 namespace workwear.ViewModels.Statements
 {
@@ -76,7 +74,7 @@ namespace workwear.ViewModels.Statements
 
 		public void AddItems()
 		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(Nomenclature), OpenPageOptions.AsSlave);
+			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(Nomenclature), OpenPageOptions.AsSlave);
 
 			var selectDialog = selectPage.TdiTab as OrmReference;
 			selectDialog.Mode = OrmReferenceMode.MultiSelect;
@@ -127,7 +125,7 @@ namespace workwear.ViewModels.Statements
 
 		public void SetNomenclature(IssuanceSheetItem[] items)
 		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(Nomenclature), OpenPageOptions.AsSlave);
+			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(Nomenclature), OpenPageOptions.AsSlave);
 
 			var selectDialog = selectPage.TdiTab as OrmReference;
 			selectDialog.Tag = items;
@@ -187,9 +185,9 @@ namespace workwear.ViewModels.Statements
 		public void OpenExpense()
 		{
 			if (Entity.Expense != null)
-				tdiNavigationManager.OpenTdiTab<ExpenseDocDlg, Expense>(TdiTab, Entity.Expense);
+				tdiNavigationManager.OpenTdiTab<ExpenseDocDlg, Expense>(this, Entity.Expense);
 			else
-				tdiNavigationManager.OpenViewModelOnTdi<WarehouseMassExpenseViewModel, IEntityUoWBuilder>(TdiTab, EntityUoWBuilder.ForOpen(Entity.MassExpense.Id));
+				tdiNavigationManager.OpenViewModel<WarehouseMassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.MassExpense.Id));
 
 		}
 

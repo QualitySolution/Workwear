@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Linq;
 using Autofac;
+using Gamma.Binding.Converters;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
-using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository;
+using workwear.ViewModels.Company;
 using workwear.ViewModels.Stock;
 
 namespace workwear
@@ -64,9 +66,6 @@ namespace workwear
 			ycomboOperation.ItemsEnum = typeof(IncomeOperations);
 			ycomboOperation.Binding.AddBinding (Entity, e => e.Operation, w => w.SelectedItemOrNull).InitializeFromSource ();
 
-			yentryEmployee.SubjectType = typeof(EmployeeCard);
-			yentryEmployee.Binding.AddBinding (Entity, e => e.EmployeeCard, w => w.Subject).InitializeFromSource ();
-
 			yentryObject.SubjectType = typeof(Subdivision);
 			yentryObject.Binding.AddBinding (Entity, e => e.Subdivision, w => w.Subject).InitializeFromSource ();
 
@@ -84,6 +83,10 @@ namespace workwear
 									.UseViewModelDialog<WarehouseViewModel>()
 									.Finish();
 
+			yentryEmployee.ViewModel = builder.ForProperty(x => x.EmployeeCard)
+						.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
+						.UseViewModelDialog<EmployeeViewModel>()
+						.Finish();
 		}
 
 		public override bool Save()

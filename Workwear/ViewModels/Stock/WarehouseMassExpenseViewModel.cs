@@ -28,6 +28,7 @@ namespace workwear.ViewModels.Stock
 		public ILifetimeScope AutofacScope;
 		private readonly IInteractiveMessage interactive;
 		private readonly IInteractiveQuestion interactiveQuestion;
+		private readonly CommonMessages messages;
 		public ITdiCompatibilityNavigation tdiNavigationManager;
 
 		private string displayMessage;
@@ -36,12 +37,23 @@ namespace workwear.ViewModels.Stock
 			set { SetField(ref displayMessage, value); }
 		}
 
-		public WarehouseMassExpenseViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiTab myTab, ITdiCompatibilityNavigation navigationManager, ILifetimeScope autofacScope, IInteractiveMessage interactive, IInteractiveQuestion interactiveQuestion, IUserService userService, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager, validator)
+		public WarehouseMassExpenseViewModel(
+			IEntityUoWBuilder uowBuilder, 
+			IUnitOfWorkFactory unitOfWorkFactory, 
+			ITdiTab myTab, 
+			ITdiCompatibilityNavigation navigationManager, 
+			ILifetimeScope autofacScope, 
+			IInteractiveMessage interactive, 
+			IInteractiveQuestion interactiveQuestion, 
+			IUserService userService,
+			CommonMessages messages,
+			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager, validator)
 		{
 			this.tdiNavigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.interactiveQuestion = interactiveQuestion ?? throw new ArgumentNullException(nameof(interactiveQuestion));
+			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 
@@ -72,7 +84,7 @@ namespace workwear.ViewModels.Stock
 		#region Nomenclature
 		public void AddNomenclature()
 		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(Nomenclature), OpenPageOptions.AsSlave);
+			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(Nomenclature), OpenPageOptions.AsSlave);
 
 			var selectDialog = selectPage.TdiTab as OrmReference;
 			selectDialog.Mode = OrmReferenceMode.MultiSelect;
@@ -97,7 +109,7 @@ namespace workwear.ViewModels.Stock
 		#region Employee
 		public void AddEmployee()
 		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(EmployeeCard), OpenPageOptions.AsSlave);
+			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(EmployeeCard), OpenPageOptions.AsSlave);
 
 			var selectDialog = selectPage.TdiTab as OrmReference;
 			selectDialog.Mode = OrmReferenceMode.MultiSelect;
@@ -173,7 +185,7 @@ namespace workwear.ViewModels.Stock
 		public void IssuanceSheetPrint()
 		{
 			if(UoW.HasChanges) {
-				if(CommonDialogs.SaveBeforePrint(Entity.GetType(), "ведомости"))
+				if(messages.SaveBeforePrint(Entity.GetType(), "ведомости"))
 					Save();
 				else
 					return;
@@ -188,8 +200,5 @@ namespace workwear.ViewModels.Stock
 			};
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
-
-
-
 	}
 }

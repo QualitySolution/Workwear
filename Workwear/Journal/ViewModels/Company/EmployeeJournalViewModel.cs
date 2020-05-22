@@ -9,7 +9,6 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using QS.Utilities.Text;
-using workwear.Dialogs.Organization;
 using workwear.Domain.Company;
 using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Repository.Company;

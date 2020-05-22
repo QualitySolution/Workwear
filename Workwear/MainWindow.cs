@@ -11,12 +11,14 @@ using QS.Dialog.Gtk;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.Report;
 using QS.Tdi;
 using QS.Tdi.Gtk;
 using QS.Updater;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
+using QS.ViewModels.Dialog;
 using QSOrmProject;
 using QSProjectsLib;
 using QSSupportLib;
@@ -120,30 +122,28 @@ public partial class MainWindow : Gtk.Window
 	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e)
 	{
 		var id = DomainHelper.GetId(e.Entity);
-		var dialog = new EmployeeCardDlg(id);
-		ITdiTab after = null;
+		DialogViewModelBase after = null;
 		if(cnbOpenInWindow.Active) {
-			ITdiTab replaced;
-			if(tdiMain.CurrentTab is EmployeeCardDlg employeeCardDlg)
-				replaced = employeeCardDlg;
+			IPage replaced;
+			if(NavigationManager.CurrentPage.ViewModel is EmployeeViewModel)
+				replaced = NavigationManager.CurrentPage;
 			else {
-				replaced = tdiMain.Tabs.Reverse().FirstOrDefault(x => x.TdiTab is EmployeeCardDlg)?.TdiTab;
+				replaced = NavigationManager.IndependentPages.Reverse().FirstOrDefault(x => x.ViewModel is EmployeeViewModel);
 			}
 
 			if(replaced != null) {
-				ITdiTab last = null;
-				foreach(var tab in tdiMain.Tabs.Select(x => x.TdiTab)) {
-					if(tab == replaced) {
-						after = last;
+				IPage last = null;
+				foreach(var page in NavigationManager.TopLevelPages) {
+					if(page == replaced) {
+						after = last?.ViewModel;
 						break;
 					}
-					last = tab;
+					last = page;
 				}
-				tdiMain.AskToCloseTab(replaced);
+				NavigationManager.AskClosePage(replaced);
 			}
 		}
-
-		tdiMain.AddTab(dialog, after);
+		NavigationManager.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(after, EntityUoWBuilder.ForOpen(id));
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)

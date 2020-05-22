@@ -1,8 +1,11 @@
 ﻿using System;
 using QS.DomainModel.UoW;
+using QS.Tdi;
+using QS.ViewModels.Control.EEVM;
 using QSOrmProject.RepresentationModel;
 using workwear.Domain.Company;
-using workwear.Repository.Company;
+using workwear.Journal.ViewModels.Company;
+using workwear.ViewModels.Company;
 
 namespace workwear
 {
@@ -17,7 +20,6 @@ namespace workwear
 			}
 			set {
 				uow = value;
-				yentryEmployee.ItemsQuery = EmployeeRepository.ActiveEmployeesQuery ();
 			}
 		}
 
@@ -27,12 +29,23 @@ namespace workwear
 		}
 
 		public EmployeeCard RestrictEmployee {
-			get { return yentryEmployee.Subject as EmployeeCard; }
+			get { return yentryEmployee.ViewModel?.Entity as EmployeeCard; }
 			set {
-				yentryEmployee.Subject = value;
+				yentryEmployee.ViewModel.Entity = value;
 				yentryEmployee.Sensitive = false;
 			}
 		}
+
+		public ITdiTab parrentTab { set {
+				var AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+
+				var builder = new LegacyEEVMBuilderFactory(value, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
+				yentryEmployee.ViewModel = builder.ForEntity<EmployeeCard>()
+						.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
+						.UseViewModelDialog<EmployeeViewModel>()
+						.Finish();
+				yentryEmployee.ViewModel.ChangedByUser += Employee_Changed;
+			} }
 
 		public event EventHandler Refiltered;
 
@@ -47,10 +60,9 @@ namespace workwear
 			this.Build ();
 		}
 
-		protected void OnYentryEmployeeChanged (object sender, EventArgs e)
+		void Employee_Changed(object sender, EventArgs e)
 		{
-			OnRefiltered ();
+			OnRefiltered();
 		}
 	}
 }
-
