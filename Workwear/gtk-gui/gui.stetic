@@ -972,7 +972,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Dialogs.Organization.ObjectDlg" design-size="774 463">
+  <widget class="Gtk.Bin" id="workwear.Views.Company.SubdivisionView" design-size="774 463">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
