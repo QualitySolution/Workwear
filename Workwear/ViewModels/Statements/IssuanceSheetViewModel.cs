@@ -75,7 +75,7 @@ namespace workwear.ViewModels.Statements
 
 		public void AddItems()
 		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(Nomenclature), OpenPageOptions.AsSlave);
+			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(Nomenclature), OpenPageOptions.AsSlave);
 
 			var selectDialog = selectPage.TdiTab as OrmReference;
 			selectDialog.Mode = OrmReferenceMode.MultiSelect;
@@ -106,7 +106,7 @@ namespace workwear.ViewModels.Statements
 		public void SetEmployee(IssuanceSheetItem[] items)
 		{
 			var selectPage = tdiNavigationManager.OpenTdiTab<ReferenceRepresentation>(
-				TdiTab, 
+				this, 
 				OpenPageOptions.AsSlave, 
 				c => c.RegisterType<EmployeesVM>().As<IRepresentationModel>()
 			);
@@ -128,7 +128,7 @@ namespace workwear.ViewModels.Statements
 
 		public void SetNomenclature(IssuanceSheetItem[] items)
 		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(TdiTab, typeof(Nomenclature), OpenPageOptions.AsSlave);
+			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(Nomenclature), OpenPageOptions.AsSlave);
 
 			var selectDialog = selectPage.TdiTab as OrmReference;
 			selectDialog.Tag = items;
@@ -187,7 +187,7 @@ namespace workwear.ViewModels.Statements
 
 		public void OpenExpense()
 		{
-			tdiNavigationManager.OpenTdiTab<ExpenseDocDlg, Expense>(TdiTab, Entity.Expense);
+			tdiNavigationManager.OpenTdiTab<ExpenseDocDlg, Expense>(this, Entity.Expense);
 		}
 
 		void Expense_Changed(EntityChangeEvent[] changeEvents)

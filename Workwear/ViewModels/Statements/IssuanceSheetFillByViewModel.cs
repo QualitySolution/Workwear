@@ -80,7 +80,7 @@ namespace workwear.ViewModels.Statements
 		public void AddEmployees()
 		{
 			var selectPage = issuanceSheetViewModel.tdiNavigationManager.OpenTdiTab<ReferenceRepresentation>(
-				issuanceSheetViewModel.TdiTab,
+				issuanceSheetViewModel,
 				OpenPageOptions.AsSlave,
 				c => c.RegisterType<EmployeesVM>().As<IRepresentationModel>()
 			);
@@ -103,7 +103,7 @@ namespace workwear.ViewModels.Statements
 		public void AddEmployeesFromDivision()
 		{
 			var selectPage = issuanceSheetViewModel.tdiNavigationManager.OpenTdiTab<OrmReference, Type>(
-				issuanceSheetViewModel.TdiTab,
+				issuanceSheetViewModel,
 				typeof(Subdivision),
 				OpenPageOptions.AsSlave
 			);
