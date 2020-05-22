@@ -31,7 +31,7 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(x => x.Code).WithAlias(() => resultAlias.Code)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(x => x.Address).WithAlias(() => resultAlias.Address)
-				).TransformUsing(Transformers.AliasToBean<ClientJournalNode>());
+				).TransformUsing(Transformers.AliasToBean<SubdivisionJournalNode>());
 		}
 	}
 
