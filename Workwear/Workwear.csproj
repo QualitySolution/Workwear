@@ -392,6 +392,7 @@
     <Compile Include="Views\Company\SubdivisionView.cs" />
     <Compile Include="ViewModels\Company\SubdivisionViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.SubdivisionView.cs" />
+    <Compile Include="Journal\ViewModels\Company\SubdivisionJournalViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
