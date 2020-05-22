@@ -5,6 +5,7 @@ using Gamma.ColumnConfig;
 using Oracle.ManagedDataAccess.Client;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
@@ -13,6 +14,7 @@ using workwear.Domain.Company;
 using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Repository.Company;
 using workwear.Tools.Oracle;
+using workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {
@@ -104,12 +106,12 @@ namespace workwear.Journal.ViewModels.Company
 				}
 				cardId = card.Id;
 			}
-			tdiNavigationManager.OpenTdiTab<EmployeeCardDlg, int>(this, cardId);
+			NavigationManager.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(cardId));
 		}
 
 		protected virtual void CreateEntityDialog()
 		{
-			tdiNavigationManager.OpenTdiTab<EmployeeCardDlg>(this);
+			NavigationManager.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
 		}
 
 		protected virtual void DeleteEntities(EmployeeJournalNode[] nodes)
