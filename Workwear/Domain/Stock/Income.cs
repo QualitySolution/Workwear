@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 using Gamma.Utilities;
+using Gtk;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -199,6 +203,21 @@ namespace workwear.Domain.Stock
 			return newItem;
 		}
 
+		public virtual IncomeItem AddItem(Nomenclature nomenclature, int count)
+		{
+			if(nomenclature == null)
+				throw new InvalidOperationException("Номенклатура не найдена");
+
+			var newItem = new IncomeItem(this) {
+				Amount = count,
+				Nomenclature = nomenclature,
+				Cost = 0,
+			};
+
+			ObservableItems.Add(newItem);
+			return newItem;
+		}
+
 		public virtual void RemoveItem(IncomeItem item)
 		{
 			ObservableItems.Remove (item);
@@ -208,6 +227,93 @@ namespace workwear.Domain.Stock
 		{
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
 		}
+
+		#region Загрузка из 1С
+
+		public virtual void StartReadDoc1C()
+		{
+			string file = Open1CFile();
+			if(file.Length < 1) return;
+
+			XmlDocument xDoc = new XmlDocument(); ;
+			xDoc.Load($"{file}");
+			XmlElement xRoot = xDoc.DocumentElement;
+			this.Date = GetDateFrom1CDoc(xRoot);
+			GetNomenclature(xRoot, file);
+		}
+		public virtual string Open1CFile()
+		{
+			object[] param = new object[4];
+			param[0] = "Cancel";
+			param[1] = Gtk.ResponseType.Cancel;
+			param[2] = "Open";
+			param[3] = Gtk.ResponseType.Accept;
+
+			Gtk.FileChooserDialog fc =
+				new Gtk.FileChooserDialog("Open File",
+					null,
+					Gtk.FileChooserAction.Open,
+					param);
+
+			Gtk.FileFilter xmlFilter = new Gtk.FileFilter();
+			xmlFilter.Name = "XML";
+			string nameFile = "";
+			if(fc.Run() == (int)Gtk.ResponseType.Accept) 
+				if(fc.Filename.ToLower().EndsWith(".xml")) 
+					nameFile = fc.Filename;
+			fc.Destroy();
+			return nameFile;
+		}
+
+		public virtual DateTime GetDateFrom1CDoc(XmlElement xRoot)
+		{
+			DateTime dateTime = new DateTime();
+			XmlNodeList childnodes = 
+			xRoot.SelectNodes("//*[name()='Body']/*[name()='Документ.ПеремещениеТоваров']/*[name()='КлючевыеСвойства']//*[name()='Дата']");
+			foreach(XmlNode ch in childnodes) 
+				dateTime = DateTime.Parse(ch.InnerText);
+			return dateTime.Date;
+		}
+
+		public virtual void GetNomenclature(XmlElement xRoot, string file)
+		{
+			XmlNamespaceManager nsMgr = new XmlNamespaceManager(new NameTable());
+			nsMgr.AddNamespace("df", "http://v8.1c.ru/edi/edi_stnd/EnterpriseData/1.3");
+
+			List<string> listNomenReference = new List<string>();
+			List<int> listNomenCount = new List<int>();
+
+			XmlNodeList childnodesNomen = xRoot.SelectNodes("//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:ДанныеНоменклатуры/df:Номенклатура/df:Ссылка", nsMgr);
+			foreach(XmlNode child in childnodesNomen)
+				listNomenReference.Add(child.InnerText);
+
+			XmlNodeList childnodesNomenCount = xRoot.SelectNodes("//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:Количество", nsMgr);
+			foreach(XmlNode child in childnodesNomenCount)
+				listNomenCount.Add(int.Parse(child.InnerText));
+
+			XDocument doc = XDocument.Load(file);
+			XNamespace ns = "http://v8.1c.ru/edi/edi_stnd/EnterpriseData/1.3";
+			int i = 0;
+			foreach(var nomenReference in listNomenReference) {
+				var ozm = (from feed in doc.Descendants(ns + "Справочник.Номенклатура")
+						  from et in feed.Elements(ns + "КлючевыеСвойства")
+						  where (string)et.Element(ns + "Ссылка") == nomenReference
+						  select feed.Element(ns + "ДополнительныеРеквизиты")
+						  .Element(ns + "Строка").Element(ns + "ЗначениеСвойства").Element(ns + "Число")).ToList().First().Value;
+
+				AddItem(FindNomenclature(ozm),listNomenCount[i]);
+				i++;
+			}
+
+		}
+
+		public virtual Nomenclature FindNomenclature(string ozm)
+		{
+			Nomenclature nom = UoW.Session.QueryOver<Nomenclature>().List().FirstOrDefault(x => x.Ozm.ToString() == ozm);
+			return nom;
+		}
+		#endregion
+
 	}
 
 	public enum IncomeOperations {
@@ -217,6 +323,7 @@ namespace workwear.Domain.Stock
 		Return,
 		[Display(Name = "Возврат с объекта")]
 		Object
+
 	}
 
 	public class IncomeOperationsType : NHibernate.Type.EnumStringType
@@ -225,5 +332,6 @@ namespace workwear.Domain.Stock
 		{
 		}
 	}
+
 }
 

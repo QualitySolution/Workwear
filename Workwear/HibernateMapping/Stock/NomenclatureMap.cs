@@ -16,7 +16,7 @@ namespace workwear.HMap
 			Map (x => x.SizeStd).Column ("size_std");
 			Map (x => x.WearGrowthStd).Column ("growth_std");
 			Map(x => x.Comment).Column("comment");
-
+			Map(x => x.Ozm).Column("ozm");
 			References (x => x.Type).Column ("type_id");
 		}
 	}

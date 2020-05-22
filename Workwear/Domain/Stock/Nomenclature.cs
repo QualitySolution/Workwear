@@ -68,6 +68,14 @@ namespace workwear.Domain.Stock
 			set { SetField(ref comment, value, () => Comment); }
 		}
 
+		private int ozm;
+
+		[Display(Name = "ОЗМ")]
+		public virtual int Ozm {
+			get { return ozm; }
+			set { SetField(ref ozm, value, () => Ozm); }
+		}
+
 		#endregion
 
 		#region Рассчетные

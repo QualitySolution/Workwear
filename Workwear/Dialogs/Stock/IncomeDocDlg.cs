@@ -122,6 +122,7 @@ namespace workwear
 			labelTTN.Visible = yentryNumber.Visible = Entity.Operation == IncomeOperations.Enter;
 			labelWorker.Visible = yentryEmployee.Visible = Entity.Operation == IncomeOperations.Return;
 			labelObject.Visible = yentryObject.Visible = Entity.Operation == IncomeOperations.Object;
+			btnOpenDoc1C.Visible = Entity.Operation == IncomeOperations.Enter;
 
 			if (!UoWGeneric.IsNew)
 				return;
@@ -139,6 +140,11 @@ namespace workwear
 				break;
 			}
 
+		}
+
+		protected void OnBtnOpenDoc1CClicked(object sender, EventArgs e)
+		{
+			Entity.StartReadDoc1C();
 		}
 	}
 }
