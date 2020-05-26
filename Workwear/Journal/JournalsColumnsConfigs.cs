@@ -44,7 +44,7 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<SubdivisionJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Code).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
-					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
+					//.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
 					.Finish()
 			);
 
