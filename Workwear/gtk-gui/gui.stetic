@@ -1564,6 +1564,27 @@
                   </packing>
                 </child>
                 <child>
+                  <widget class="QS.Views.Control.EntityEntry" id="entitySubdivision">
+                    <property name="MemberName" />
+                    <property name="Events">ButtonPressMask</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">6</property>
+                    <property name="BottomAttach">7</property>
+                    <property name="LeftAttach">1</property>
+                    <property name="RightAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="Gamma.GtkWidgets.yEntry" id="entryFirstName">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
@@ -2491,27 +2512,6 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gamma.Widgets.yEntryReference" id="yentryObject">
-                    <property name="MemberName" />
-                    <property name="Events">ButtonPressMask</property>
-                  </widget>
-                  <packing>
-                    <property name="TopAttach">6</property>
-                    <property name="BottomAttach">7</property>
-                    <property name="LeftAttach">1</property>
-                    <property name="RightAttach">2</property>
-                    <property name="AutoSize">True</property>
-                    <property name="XOptions">Fill</property>
-                    <property name="YOptions">Fill</property>
-                    <property name="XExpand">False</property>
-                    <property name="XFill">True</property>
-                    <property name="XShrink">False</property>
-                    <property name="YExpand">False</property>
-                    <property name="YFill">True</property>
-                    <property name="YShrink">False</property>
-                  </packing>
-                </child>
-                <child>
                   <widget class="Gamma.GtkWidgets.yEntry" id="yentryPersonnelNumber">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
@@ -2653,7 +2653,7 @@
           <widget class="Gtk.Notebook" id="notebook1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">0</property>
+            <property name="CurrentPage">1</property>
             <signal name="SwitchPage" handler="OnNotebook1SwitchPage" />
             <child>
               <widget class="workwear.Views.Company.EmployeeChilds.EmployeeNormsView" id="employeenormsview1">
@@ -2855,6 +2855,27 @@
                   </packing>
                 </child>
                 <child>
+                  <widget class="QS.Views.Control.EntityEntry" id="entrySubdivision">
+                    <property name="MemberName" />
+                    <property name="Events">ButtonPressMask</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">4</property>
+                    <property name="BottomAttach">5</property>
+                    <property name="LeftAttach">1</property>
+                    <property name="RightAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="Gtk.Label" id="label1">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
@@ -3012,27 +3033,6 @@
                   <packing>
                     <property name="TopAttach">2</property>
                     <property name="BottomAttach">3</property>
-                    <property name="LeftAttach">1</property>
-                    <property name="RightAttach">2</property>
-                    <property name="AutoSize">True</property>
-                    <property name="XOptions">Fill</property>
-                    <property name="YOptions">Fill</property>
-                    <property name="XExpand">False</property>
-                    <property name="XFill">True</property>
-                    <property name="XShrink">False</property>
-                    <property name="YExpand">False</property>
-                    <property name="YFill">True</property>
-                    <property name="YShrink">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gamma.Widgets.yEntryReference" id="yentryObject">
-                    <property name="MemberName" />
-                    <property name="Events">ButtonPressMask</property>
-                  </widget>
-                  <packing>
-                    <property name="TopAttach">4</property>
-                    <property name="BottomAttach">5</property>
                     <property name="LeftAttach">1</property>
                     <property name="RightAttach">2</property>
                     <property name="AutoSize">True</property>
@@ -3454,6 +3454,27 @@
                 <property name="RowSpacing">6</property>
                 <property name="ColumnSpacing">6</property>
                 <child>
+                  <widget class="QS.Views.Control.EntityEntry" id="entitySubdivision">
+                    <property name="MemberName" />
+                    <property name="Events">ButtonPressMask</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">3</property>
+                    <property name="BottomAttach">4</property>
+                    <property name="LeftAttach">1</property>
+                    <property name="RightAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="QS.Views.Control.EntityEntry" id="entityWarehouseExpense">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
@@ -3680,27 +3701,6 @@
                   <packing>
                     <property name="TopAttach">2</property>
                     <property name="BottomAttach">3</property>
-                    <property name="LeftAttach">1</property>
-                    <property name="RightAttach">2</property>
-                    <property name="AutoSize">True</property>
-                    <property name="XOptions">Fill</property>
-                    <property name="YOptions">Fill</property>
-                    <property name="XExpand">False</property>
-                    <property name="XFill">True</property>
-                    <property name="XShrink">False</property>
-                    <property name="YExpand">False</property>
-                    <property name="YFill">True</property>
-                    <property name="YShrink">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gamma.Widgets.yEntryReference" id="yentryObject">
-                    <property name="MemberName" />
-                    <property name="Events">ButtonPressMask</property>
-                  </widget>
-                  <packing>
-                    <property name="TopAttach">3</property>
-                    <property name="BottomAttach">4</property>
                     <property name="LeftAttach">1</property>
                     <property name="RightAttach">2</property>
                     <property name="AutoSize">True</property>
@@ -5926,7 +5926,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.OnIssueStatement" design-size="295 206">
+  <widget class="Gtk.Bin" id="workwear.OnIssueStatement" design-size="411 213">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -5940,10 +5940,9 @@
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
             <child>
-              <widget class="QSOrmProject.EntryReference" id="entryEmploee">
+              <widget class="QS.Views.Control.EntityEntry" id="entityEmployee">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
-                <signal name="ChangedByUser" handler="OnEntryEmploeeChangedByUser" />
               </widget>
               <packing>
                 <property name="TopAttach">1</property>
@@ -5962,10 +5961,9 @@
               </packing>
             </child>
             <child>
-              <widget class="QSOrmProject.EntryReference" id="entryreferenceFacility">
+              <widget class="QS.Views.Control.EntityEntry" id="entitySubdivision">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
-                <signal name="ChangedByUser" handler="OnEntryreferenceFacilityChangedByUser" />
               </widget>
               <packing>
                 <property name="LeftAttach">1</property>
@@ -6176,7 +6174,6 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Label" translatable="yes">на месяц</property>
-                <property name="Active">True</property>
                 <property name="DrawIndicator">True</property>
                 <property name="HasLabel">True</property>
                 <property name="UseUnderline">True</property>

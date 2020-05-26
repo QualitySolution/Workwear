@@ -8,9 +8,9 @@ namespace workwear
 
 		private global::Gtk.Table table1;
 
-		private global::QSOrmProject.EntryReference entryEmploee;
+		private global::QS.Views.Control.EntityEntry entityEmployee;
 
-		private global::QSOrmProject.EntryReference entryreferenceFacility;
+		private global::QS.Views.Control.EntityEntry entitySubdivision;
 
 		private global::Gtk.HBox hbox1;
 
@@ -58,11 +58,11 @@ namespace workwear
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild
-			this.entryEmploee = new global::QSOrmProject.EntryReference();
-			this.entryEmploee.Events = ((global::Gdk.EventMask)(256));
-			this.entryEmploee.Name = "entryEmploee";
-			this.table1.Add(this.entryEmploee);
-			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.entryEmploee]));
+			this.entityEmployee = new global::QS.Views.Control.EntityEntry();
+			this.entityEmployee.Events = ((global::Gdk.EventMask)(256));
+			this.entityEmployee.Name = "entityEmployee";
+			this.table1.Add(this.entityEmployee);
+			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.entityEmployee]));
 			w1.TopAttach = ((uint)(1));
 			w1.BottomAttach = ((uint)(2));
 			w1.LeftAttach = ((uint)(1));
@@ -70,11 +70,11 @@ namespace workwear
 			w1.XOptions = ((global::Gtk.AttachOptions)(4));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.entryreferenceFacility = new global::QSOrmProject.EntryReference();
-			this.entryreferenceFacility.Events = ((global::Gdk.EventMask)(256));
-			this.entryreferenceFacility.Name = "entryreferenceFacility";
-			this.table1.Add(this.entryreferenceFacility);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.entryreferenceFacility]));
+			this.entitySubdivision = new global::QS.Views.Control.EntityEntry();
+			this.entitySubdivision.Events = ((global::Gdk.EventMask)(256));
+			this.entitySubdivision.Name = "entitySubdivision";
+			this.table1.Add(this.entitySubdivision);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.entitySubdivision]));
 			w2.LeftAttach = ((uint)(1));
 			w2.RightAttach = ((uint)(2));
 			w2.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -264,8 +264,6 @@ namespace workwear
 			this.ylistcomboYear1.Changed += new global::System.EventHandler(this.OnYlistcomboMonth1Changed);
 			this.ylistcomboMonth2.Changed += new global::System.EventHandler(this.OnYlistcomboMonth1Changed);
 			this.ylistcomboYear2.Changed += new global::System.EventHandler(this.OnYlistcomboMonth1Changed);
-			this.entryreferenceFacility.ChangedByUser += new global::System.EventHandler(this.OnEntryreferenceFacilityChangedByUser);
-			this.entryEmploee.ChangedByUser += new global::System.EventHandler(this.OnEntryEmploeeChangedByUser);
 			this.buttonRun.Clicked += new global::System.EventHandler(this.OnButtonRunClicked);
 		}
 	}

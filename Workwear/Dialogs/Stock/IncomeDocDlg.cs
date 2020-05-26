@@ -66,9 +66,6 @@ namespace workwear
 			ycomboOperation.ItemsEnum = typeof(IncomeOperations);
 			ycomboOperation.Binding.AddBinding (Entity, e => e.Operation, w => w.SelectedItemOrNull).InitializeFromSource ();
 
-			yentryObject.SubjectType = typeof(Subdivision);
-			yentryObject.Binding.AddBinding (Entity, e => e.Subdivision, w => w.Subject).InitializeFromSource ();
-
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			ItemsTable.IncomeDoc = Entity;
@@ -87,6 +84,11 @@ namespace workwear
 						.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 						.UseViewModelDialog<EmployeeViewModel>()
 						.Finish();
+
+			entrySubdivision.ViewModel = builder.ForProperty(x => x.Subdivision)
+				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
+				.UseViewModelDialog<SubdivisionViewModel>()
+				.Finish();
 		}
 
 		public override bool Save()
@@ -124,7 +126,7 @@ namespace workwear
 		{
 			labelTTN.Visible = yentryNumber.Visible = Entity.Operation == IncomeOperations.Enter;
 			labelWorker.Visible = yentryEmployee.Visible = Entity.Operation == IncomeOperations.Return;
-			labelObject.Visible = yentryObject.Visible = Entity.Operation == IncomeOperations.Object;
+			labelObject.Visible = entrySubdivision.Visible = Entity.Operation == IncomeOperations.Object;
 
 			if (!UoWGeneric.IsNew)
 				return;
