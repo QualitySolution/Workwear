@@ -95,7 +95,7 @@ namespace workwear
 			#endregion
 
 			#region NLMK
-			builder.Register(x => NLMKOracle.Connection).As<OracleConnection>();
+			builder.Register(x => NLMKOracle.Connection).As<OracleConnection>().ExternallyOwned();
 			builder.RegisterGeneric(typeof(OracleSQLDataLoader<>)).AsSelf();
 			builder.RegisterType<HRSystem>().AsSelf();
 			#endregion
