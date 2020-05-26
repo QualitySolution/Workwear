@@ -1,50 +1,78 @@
 ﻿using System;
-using NHibernate;
-using NHibernate.Transform;
+using Autofac;
+using Oracle.ManagedDataAccess.Client;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
-using workwear.Domain.Company;
-using workwear.ViewModels.Company;
+using QS.Utilities.Text;
+using workwear.Tools.Oracle;
 
 namespace workwear.Journal.ViewModels.Company
 {
 
-	public class DepartmentJournalViewModel : EntityJournalViewModelBase<Department, DepartmentViewModel, DepartmentJournalNode>
+	public class DepartmentJournalViewModel : JournalViewModelBase
 	{
-		public DepartmentJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		public DepartmentJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager)
 		{
-			UseSlider = true;
+			Title = "Отделы";
+			AutofacScope = autofacScope;
+			var dataLoader = AutofacScope.Resolve<OracleSQLDataLoader<DepartmentJournalNode>>();
+			DataLoader = dataLoader;
+			dataLoader.AddQuery(MakeQuery, MapNode);
+			CreateNodeActions();
 		}
 
-		protected override IQueryOver<Department> ItemsQuery(IUnitOfWork uow)
+		#region Запрос
+
+		void MakeQuery(OracleCommand cmd, bool isCounting, int? pageSize, int? skip)
 		{
-			DepartmentJournalNode resultAlias = null;
+			string conditions = null; //" AND id_parent <> 0";
 
-			Department departmentAlias = null;
-			Subdivision subdivisionAlias = null;
+			conditions += OracleSQLDataLoader<DepartmentJournalNode>.MakeSearchConditions(Search.SearchValues,
+				new[] {
+					"DEPT",
+				},
+				new[] {
+					"DEPT_CODE"
+				}
+			);
 
-			return uow.Session.QueryOver<Department>(() => departmentAlias)
-				.Left.JoinAlias(x => x.Subdivision, () => subdivisionAlias)
-				.Where(GetSearchCriterion(
-					() => departmentAlias.Name,
-					() => subdivisionAlias.Name
-					))
-				.SelectList((list) => list
-					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
-					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
-					.Select(x => x.Comments).WithAlias(() => resultAlias.Comments)
-					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
-				).TransformUsing(Transformers.AliasToBean<DepartmentJournalNode>());
+			string sql;
+			if(isCounting) {
+				sql = $"select COUNT(*) from KIT.DEPTS";
+				if(!String.IsNullOrEmpty(conditions))
+					sql += " WHERE" + conditions.ReplaceFirstOccurrence(" AND", "");
+			}
+			else
+				sql = $"SELECT t.*, sub.NGRPOL as subdivision " +
+					$"FROM (select rownum rnum, v.* from KIT.DEPTS v where rownum <= {skip + pageSize} {conditions}) t " +
+					"LEFT JOIN SKLAD.SGRPOL sub ON sub.KGRPOL = t.DEPT_CODE " +
+					//						"LEFT JOIN KIT.DEPTS sub ON sub.DEPT_CODE = t.DEPT_CODE AND sub.ID_PARENT = 0 " +
+					$"WHERE rnum > {skip ?? 0}";
+
+			cmd.CommandText = sql;
 		}
+
+		DepartmentJournalNode MapNode(OracleDataReader reader)
+		{
+			return new DepartmentJournalNode() {
+				Id = Convert.ToInt32(reader["ID_DEPT"]),
+				Subdivision = reader["subdivision"]?.ToString(),
+				Name = reader["DEPT"]?.ToString(),
+				SubdivisionCode = reader["DEPT_CODE"]?.ToString(),
+			};
+		}
+
+		#endregion
 	}
 
 	public class DepartmentJournalNode
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
+		public string SubdivisionCode { get; set; }
 		public string Subdivision { get; set; }
 		public string Comments { get; set; }
 	}

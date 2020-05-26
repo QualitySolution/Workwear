@@ -52,6 +52,7 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<DepartmentJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Код").AddTextRenderer(node => node.SubdivisionCode).SearchHighlight()
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(x => x.Comments)
 					.Finish()
