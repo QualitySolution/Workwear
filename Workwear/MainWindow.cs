@@ -589,4 +589,10 @@ public partial class MainWindow : Gtk.Window
 		MainTelemetry.AddCount(nameof(WarehouseJournalViewModel));
 		NavigationManager.OpenViewModel<WarehouseJournalViewModel>(null);
 	}
+
+	protected void OnActionDepartmentActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount(nameof(DepartmentJournalViewModel));
+		NavigationManager.OpenViewModel<DepartmentJournalViewModel>(null);
+	}
 }

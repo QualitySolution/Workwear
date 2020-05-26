@@ -393,6 +393,12 @@
     <Compile Include="ViewModels\Company\SubdivisionViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.SubdivisionView.cs" />
     <Compile Include="Journal\ViewModels\Company\SubdivisionJournalViewModel.cs" />
+    <Compile Include="Domain\Company\Department.cs" />
+    <Compile Include="HibernateMapping\Company\DepartmentMap.cs" />
+    <Compile Include="Journal\ViewModels\Company\DepartmentJournalViewModel.cs" />
+    <Compile Include="ViewModels\Company\DepartmentViewModel.cs" />
+    <Compile Include="Views\Company\DepartmentView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Company.DepartmentView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

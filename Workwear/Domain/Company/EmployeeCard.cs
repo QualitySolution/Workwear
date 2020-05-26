@@ -139,6 +139,13 @@ namespace workwear.Domain.Company
 			set { SetField (ref subdivision, value, () => Subdivision); }
 		}
 
+		private Department department;
+		[Display(Name = "Отдел")]
+		public virtual Department Department {
+			get => department;
+			set => SetField(ref department, value);
+		}
+
 		byte[] photo;
 
 		[Display (Name = "Фотография")]
