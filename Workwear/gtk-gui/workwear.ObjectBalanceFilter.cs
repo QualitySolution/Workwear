@@ -6,9 +6,9 @@ namespace workwear
 	{
 		private global::Gtk.Table table1;
 
-		private global::Gtk.Label label1;
+		private global::QS.Views.Control.EntityEntry entitySubdivision;
 
-		private global::Gamma.Widgets.yEntryReference yentryObject;
+		private global::Gtk.Label label1;
 
 		protected virtual void Build()
 		{
@@ -22,21 +22,20 @@ namespace workwear
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild
+			this.entitySubdivision = new global::QS.Views.Control.EntityEntry();
+			this.entitySubdivision.Events = ((global::Gdk.EventMask)(256));
+			this.entitySubdivision.Name = "entitySubdivision";
+			this.table1.Add(this.entitySubdivision);
+			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.entitySubdivision]));
+			w1.LeftAttach = ((uint)(1));
+			w1.RightAttach = ((uint)(2));
+			w1.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Подразделение:");
 			this.table1.Add(this.label1);
-			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
-			w1.XOptions = ((global::Gtk.AttachOptions)(4));
-			w1.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table1.Gtk.Table+TableChild
-			this.yentryObject = new global::Gamma.Widgets.yEntryReference();
-			this.yentryObject.Events = ((global::Gdk.EventMask)(256));
-			this.yentryObject.Name = "yentryObject";
-			this.table1.Add(this.yentryObject);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.yentryObject]));
-			w2.LeftAttach = ((uint)(1));
-			w2.RightAttach = ((uint)(2));
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
 			w2.XOptions = ((global::Gtk.AttachOptions)(4));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.table1);
@@ -45,7 +44,6 @@ namespace workwear
 				this.Child.ShowAll();
 			}
 			this.Hide();
-			this.yentryObject.Changed += new global::System.EventHandler(this.OnYentryObjectChanged);
 		}
 	}
 }

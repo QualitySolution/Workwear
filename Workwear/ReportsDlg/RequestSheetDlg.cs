@@ -1,8 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Autofac;
+using QS.Dialog.Gtk;
+using QS.DomainModel.UoW;
 using QS.Report;
+using QS.Tdi;
+using QS.ViewModels.Control.EEVM;
 using QSReport;
 using workwear.Domain.Company;
+using workwear.Journal.ViewModels.Company;
+using workwear.ViewModels.Company;
 
 namespace workwear
 {
@@ -10,11 +17,24 @@ namespace workwear
 	{
 		public string Title => "Заявка на спецодежду";
 
+		ILifetimeScope AutofacScope;
+		IUnitOfWork uow;
+
 		public RequestSheetDlg()
 		{
 			this.Build();
-			entryreferenceFacility.SubjectType = typeof(Subdivision);
 			SwitchDialog(PeriodType.Month);
+
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+			Func<ITdiTab> getTab = () => DialogHelper.FindParentTab(this);
+			uow = UnitOfWorkFactory.CreateWithoutRoot();
+
+			var builder = new LegacyEEVMBuilderFactory(getTab, uow, MainClass.MainWin.NavigationManager, AutofacScope);
+
+			entitySubdivision.ViewModel = builder.ForEntity<Subdivision>()
+				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
+				.UseViewModelDialog<SubdivisionViewModel>()
+				.Finish();
 		}
 
 		public event EventHandler<LoadReportEventArgs> LoadReport;
@@ -31,7 +51,7 @@ namespace workwear
 					{
 						{ "quarter", quart.Number },
 						{ "year", quart.Year },
-						{ "facility", entryreferenceFacility.GetSubject<Subdivision>()?.Id ?? -1 },
+						{ "facility", entitySubdivision.ViewModel.GetEntity<Subdivision>()?.Id ?? -1 },
 					}
 				};
 			}
@@ -45,7 +65,7 @@ namespace workwear
 					{
 						{ "month", month.Number },
 						{ "year", month.Year },
-						{ "facility", entryreferenceFacility.GetSubject<Subdivision>()?.Id ?? -1 },
+						{ "facility", entitySubdivision.ViewModel.GetEntity<Subdivision>()?.Id ?? -1 },
 					}
 				};
 			}
@@ -59,7 +79,7 @@ namespace workwear
 					Parameters = new Dictionary<string, object>
 					{
 						{ "year", year.Number },
-						{ "facility", entryreferenceFacility.GetSubject<Subdivision>()?.Id ?? -1 },
+						{ "facility", entitySubdivision.ViewModel.GetEntity<Subdivision>()?.Id ?? -1 },
 					}
 				};
 			}
@@ -143,6 +163,13 @@ namespace workwear
 		{
 			if (radioYear.Active)
 				SwitchDialog(PeriodType.Year);
+		}
+
+		public override void Destroy()
+		{
+			AutofacScope.Dispose();
+			uow.Dispose();
+			base.Destroy();
 		}
 	}
 
