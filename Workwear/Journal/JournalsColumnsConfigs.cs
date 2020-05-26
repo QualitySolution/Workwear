@@ -1,4 +1,4 @@
-﻿using Gamma.ColumnConfig;
+using Gamma.ColumnConfig;
 using QS.Journal.GtkUI;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Statements;
@@ -33,7 +33,7 @@ namespace workwear.Journal
 			);
 
 			TreeViewColumnsConfigFactory.Register<OrganizationJournalViewModel>(
-				() => FluentColumnsConfig<ClientJournalNode>.Create()
+				() => FluentColumnsConfig<OrganizationJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
