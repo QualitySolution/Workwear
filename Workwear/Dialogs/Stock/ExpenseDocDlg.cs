@@ -88,9 +88,6 @@ namespace workwear
 			ycomboOperation.ItemsEnum = typeof(ExpenseOperations);
 			ycomboOperation.Binding.AddBinding (Entity, e => e.Operation, w => w.SelectedItemOrNull).InitializeFromSource ();
 
-			yentryObject.SubjectType = typeof(Subdivision);
-			yentryObject.Binding.AddBinding (Entity, e => e.Subdivision, w => w.Subject).InitializeFromSource ();
-
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			ItemsTable.ExpenceDoc = Entity;
@@ -108,6 +105,11 @@ namespace workwear
 									.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 									.UseViewModelDialog<EmployeeViewModel>()
 									.Finish();
+
+			entitySubdivision.ViewModel = builder.ForProperty(x => x.Subdivision)
+				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
+				.UseViewModelDialog<SubdivisionViewModel>()
+				.Finish();
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
@@ -143,7 +145,7 @@ namespace workwear
 			labelWorker.Visible = yentryEmployee.Visible =
 				labelIssuanceSheet.Visible = hboxIssuanceSheet.Visible =
 				Entity.Operation == ExpenseOperations.Employee;
-			labelObject.Visible = yentryObject.Visible = 
+			labelObject.Visible = entitySubdivision.Visible = 
 				Entity.Operation == ExpenseOperations.Object;
 		}
 

@@ -66,7 +66,6 @@ namespace workwear
 			OrmMain.AddObjectDescription<Post>().DefaultTableView ().SearchColumn ("Название", e => e.Name).End ();
 			//Организация
 			OrmMain.AddObjectDescription<EmployeeVacation>().Dialog<EmployeeVacationDlg>();
-			OrmMain.AddObjectDescription<Subdivision>().Dialog<ObjectDlg> ().DefaultTableView ().SearchColumn("Код", e => e.Code).SearchColumn ("Название", e => e.Name).SearchColumn ("Адрес", e => e.Address).End ();
 			OrmMain.AddObjectDescription<VacationType>().Dialog<VacationTypeDlg>().DefaultTableView().SearchColumn("Название", e => e.Name).Column("Исключать из носки", e => e.ExcludeFromWearing ? "Да" : "Нет").SearchColumn("Комментарий", e => e.Comments).End();
 			//Общее
 			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();

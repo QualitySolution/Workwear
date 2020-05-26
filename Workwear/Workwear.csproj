@@ -286,10 +286,8 @@
     <Compile Include="HibernateMapping\Regulations\PostMap.cs" />
     <Compile Include="Dialogs\Regulations\ItemTypeDlg.cs" />
     <Compile Include="Dialogs\Regulations\NormDlg.cs" />
-    <Compile Include="Dialogs\Organization\ObjectDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.NormDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.ItemTypeDlg.cs" />
-    <Compile Include="gtk-gui\workwear.Dialogs.Organization.ObjectDlg.cs" />
     <Compile Include="Dialogs\Regulations\RegulationDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.RegulationDocDlg.cs" />
     <Compile Include="Domain\Operations\EmployeeIssueOperation.cs" />
@@ -398,6 +396,10 @@
     <Compile Include="ViewModels\Company\EmployeeChilds\EmployeeNormsViewModel.cs" />
     <Compile Include="Views\Company\EmployeeChilds\EmployeeNormsView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeeNormsView.cs" />
+    <Compile Include="Views\Company\SubdivisionView.cs" />
+    <Compile Include="ViewModels\Company\SubdivisionViewModel.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Company.SubdivisionView.cs" />
+    <Compile Include="Journal\ViewModels\Company\SubdivisionJournalViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

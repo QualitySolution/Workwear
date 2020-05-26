@@ -40,6 +40,14 @@ namespace workwear.Journal
 					.Finish()
 			);
 
+			TreeViewColumnsConfigFactory.Register<SubdivisionJournalViewModel>(
+				() => FluentColumnsConfig<SubdivisionJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => node.Code).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
+					.Finish()
+			);
+
 			#endregion
 
 			#region Statements

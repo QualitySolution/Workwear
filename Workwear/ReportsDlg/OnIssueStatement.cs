@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using NHibernate.Criterion;
+using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using QS.Report;
+using QS.Tdi;
 using QS.Utilities;
+using QS.ViewModels.Control.EEVM;
 using QSReport;
 using workwear.Domain.Company;
+using workwear.Journal.ViewModels.Company;
+using workwear.ViewModels.Company;
 
 namespace workwear
 {
@@ -15,6 +21,7 @@ namespace workwear
 		public string Title => "Ведомость на выдачу";
 
 		private bool errorStartDate = false;
+		ILifetimeScope AutofacScope;
 
 		public OnIssueStatement ()
 		{
@@ -36,8 +43,25 @@ namespace workwear
             ylistcomboMonth2.ItemsList = months;
             ylistcomboMonth2.SelectedItem = DateTime.Today.Month;
 
-            entryreferenceFacility.SubjectType = typeof(Subdivision);
-			entryEmploee.SubjectType = typeof(EmployeeCard);
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+
+			Func<ITdiTab> getTab = () => DialogHelper.FindParentTab(this);
+
+			var builder = new LegacyEEVMBuilderFactory(getTab, uow, MainClass.MainWin.NavigationManager, AutofacScope);
+
+			entityEmployee.ViewModel = builder.ForEntity<EmployeeCard>()
+							.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
+							.UseViewModelDialog<EmployeeViewModel>()
+							.Finish();
+
+			entityEmployee.ViewModel.ChangedByUser += OnEntryEmploeeChangedByUser;
+
+			entitySubdivision.ViewModel = builder.ForEntity<Subdivision>()
+				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
+				.UseViewModelDialog<SubdivisionViewModel>()
+				.Finish();
+
+			entitySubdivision.ViewModel.ChangedByUser += OnEntryreferenceFacilityChangedByUser;
 
 			//Заполняем года
 			DateTime startDate = uow.Session.QueryOver<EmployeeCardItem>()
@@ -96,8 +120,8 @@ namespace workwear
 				{
 					{ "start_date", startDate.ToString("O").Substring(0, 10) },
 					{ "end_date", endDate.ToString("O").Substring(0, 10) },
-					{ "facility", entryreferenceFacility.GetSubject<Subdivision>()?.Id ?? -1 },
-					{ "employee", entryEmploee.GetSubject<EmployeeCard>()?.Id ?? -1 },
+					{ "facility", entitySubdivision.ViewModel.GetEntity<Subdivision>()?.Id ?? -1 },
+					{ "employee", entityEmployee.ViewModel.GetEntity<EmployeeCard>()?.Id ?? -1 },
 					{"ShowSignature", true}
 				}
 			};
@@ -157,12 +181,18 @@ namespace workwear
 
 		protected void OnEntryreferenceFacilityChangedByUser(object sender, EventArgs e)
 		{
-			entryEmploee.Sensitive = entryreferenceFacility.Subject == null;
+			entityEmployee.ViewModel.IsEditable = entitySubdivision.ViewModel.Entity == null;
 		}
 
 		protected void OnEntryEmploeeChangedByUser(object sender, EventArgs e)
 		{
-			entryreferenceFacility.Sensitive = entryEmploee.Subject == null;
+			entitySubdivision.ViewModel.IsEditable = entityEmployee.ViewModel.Entity == null;
+		}
+
+		public override void Destroy()
+		{
+			AutofacScope.Dispose();
+			base.Destroy();
 		}
 	}
 }

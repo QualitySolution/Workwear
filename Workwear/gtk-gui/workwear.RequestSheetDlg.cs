@@ -10,7 +10,7 @@ namespace workwear
 
 		private global::Gamma.Widgets.ySpecComboBox comboQuarter;
 
-		private global::QSOrmProject.EntryReference entryreferenceFacility;
+		private global::QS.Views.Control.EntityEntry entitySubdivision;
 
 		private global::Gtk.HBox hbox1;
 
@@ -58,11 +58,11 @@ namespace workwear
 			w1.RightAttach = ((uint)(2));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.entryreferenceFacility = new global::QSOrmProject.EntryReference();
-			this.entryreferenceFacility.Events = ((global::Gdk.EventMask)(256));
-			this.entryreferenceFacility.Name = "entryreferenceFacility";
-			this.table1.Add(this.entryreferenceFacility);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.entryreferenceFacility]));
+			this.entitySubdivision = new global::QS.Views.Control.EntityEntry();
+			this.entitySubdivision.Events = ((global::Gdk.EventMask)(256));
+			this.entitySubdivision.Name = "entitySubdivision";
+			this.table1.Add(this.entitySubdivision);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.entitySubdivision]));
 			w2.LeftAttach = ((uint)(1));
 			w2.RightAttach = ((uint)(2));
 			w2.XOptions = ((global::Gtk.AttachOptions)(4));

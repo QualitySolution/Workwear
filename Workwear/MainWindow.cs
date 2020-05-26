@@ -361,10 +361,8 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionObjectsActivated(object sender, EventArgs e)
 	{
-		tdiMain.OpenTab(
-			OrmReference.GenerateHashName<Subdivision>(),
-			() => new OrmReference(typeof(Subdivision))
-		);
+		MainTelemetry.AddCount(nameof(SubdivisionJournalViewModel));
+		NavigationManager.OpenViewModel<SubdivisionJournalViewModel>(null);
 	}
 
 	#region Панель инструментов

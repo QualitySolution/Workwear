@@ -22,6 +22,8 @@ namespace workwear
 
 		private global::QS.Views.Control.EntityEntry entityWarehouseIncome;
 
+		private global::QS.Views.Control.EntityEntry entrySubdivision;
+
 		private global::Gtk.Label label1;
 
 		private global::Gtk.Label label3;
@@ -37,8 +39,6 @@ namespace workwear
 		private global::QS.Views.Control.EntityEntry yentryEmployee;
 
 		private global::Gamma.GtkWidgets.yEntry yentryNumber;
-
-		private global::Gamma.Widgets.yEntryReference yentryObject;
 
 		private global::Gtk.Table table3;
 
@@ -150,6 +150,18 @@ namespace workwear
 			w8.RightAttach = ((uint)(2));
 			w8.XOptions = ((global::Gtk.AttachOptions)(4));
 			w8.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table2.Gtk.Table+TableChild
+			this.entrySubdivision = new global::QS.Views.Control.EntityEntry();
+			this.entrySubdivision.Events = ((global::Gdk.EventMask)(256));
+			this.entrySubdivision.Name = "entrySubdivision";
+			this.table2.Add(this.entrySubdivision);
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table2[this.entrySubdivision]));
+			w7.TopAttach = ((uint)(4));
+			w7.BottomAttach = ((uint)(5));
+			w7.LeftAttach = ((uint)(1));
+			w7.RightAttach = ((uint)(2));
+			w7.XOptions = ((global::Gtk.AttachOptions)(4));
+			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
