@@ -60,6 +60,11 @@ namespace workwear.ViewModels.Company
 				.UseViewModelDialog<SubdivisionViewModel>()
 				.Finish();
 
+			EntryDepartmentViewModel = builder.ForProperty(x => x.Department)
+				.UseViewModelJournalAndAutocompleter<DepartmentJournalViewModel>()
+				.UseViewModelDialog<DepartmentViewModel>()
+				.Finish();
+
 			Entity.PropertyChanged += CheckSizeChanged;
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.PropertyChanged += PostChangedCheck;
@@ -87,6 +92,7 @@ namespace workwear.ViewModels.Company
 
 		public readonly EntityEntryViewModel<Leader> EntryLeaderViewModel;
 		public readonly EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
+		public readonly EntityEntryViewModel<Department> EntryDepartmentViewModel;
 
 		#endregion
 

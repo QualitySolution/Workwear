@@ -21,9 +21,6 @@ namespace workwear.Journal.ViewModels.Company
 	public class EmployeeJournalViewModel : JournalViewModelBase
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
-		private readonly ITdiCompatibilityNavigation tdiNavigationManager;
-		private readonly HRSystem hrSystem;
 		private readonly IDeleteEntityService deleteEntityService;
 
 		/// <summary>
@@ -45,8 +42,6 @@ namespace workwear.Journal.ViewModels.Company
 			dataLoader.AddQuery(MakeQuery, MapNode);
 
 			JournalFilter = Filter = AutofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
-			this.tdiNavigationManager = navigationManager;
-			this.hrSystem = hrSystem ?? throw new ArgumentNullException(nameof(hrSystem));
 			this.deleteEntityService = deleteEntityService ?? throw new ArgumentNullException(nameof(deleteEntityService));
 			CreateNodeActions();
 		}

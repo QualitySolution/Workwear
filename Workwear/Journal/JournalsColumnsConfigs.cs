@@ -33,7 +33,7 @@ namespace workwear.Journal
 			);
 
 			TreeViewColumnsConfigFactory.Register<OrganizationJournalViewModel>(
-				() => FluentColumnsConfig<ClientJournalNode>.Create()
+				() => FluentColumnsConfig<OrganizationJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
@@ -45,6 +45,15 @@ namespace workwear.Journal
 					.AddColumn("Код").AddTextRenderer(node => node.Code).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					//.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
+					.Finish()
+			);
+
+			TreeViewColumnsConfigFactory.Register<DepartmentJournalViewModel>(
+				() => FluentColumnsConfig<DepartmentJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
+					.AddColumn("Комментарий").AddTextRenderer(x => x.Comments)
 					.Finish()
 			);
 
