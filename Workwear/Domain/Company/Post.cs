@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using workwear.Domain.Regulations;
 
@@ -41,7 +42,11 @@ namespace workwear.Domain.Company
 		[Display(Name = "Профессия")]
 		public virtual Profession Profession {
 			get => profession;
-			set => SetField(ref profession, value);
+			set {
+				SetField(ref profession, value);
+				if(Profession != null && String.IsNullOrWhiteSpace(Name))
+					Name = Profession.Name;
+			}
 		}
 
 		private string comments;
