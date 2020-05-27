@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using QS.DomainModel.UoW;
+using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 
 namespace workwear.Repository

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
-using workwear.Domain.Company;
+using workwear.Domain.Regulations;
 
-namespace workwear.Domain.Regulations
+namespace workwear.Domain.Company
 {
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "должности",
