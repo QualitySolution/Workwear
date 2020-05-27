@@ -12,6 +12,16 @@ namespace workwear.Journal
 		public static void RegisterColumns()
 		{
 			#region Company
+
+			TreeViewColumnsConfigFactory.Register<DepartmentJournalViewModel>(
+				() => FluentColumnsConfig<DepartmentJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
+					.AddColumn("Комментарий").AddTextRenderer(x => x.Comments)
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<EmployeeJournalViewModel>(
 			() => FluentColumnsConfig<EmployeeJournalNode>.Create()
 				.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
@@ -41,20 +51,21 @@ namespace workwear.Journal
 					.Finish()
 			);
 
+			TreeViewColumnsConfigFactory.Register<PostJournalViewModel>(
+				() => FluentColumnsConfig<PostJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Профессия").AddTextRenderer(node => node.Profession).SearchHighlight()
+					.AddColumn("Отдел").AddTextRenderer(node => node.Department).SearchHighlight()
+					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<SubdivisionJournalViewModel>(
 				() => FluentColumnsConfig<SubdivisionJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Code).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
-					.Finish()
-			);
-
-			TreeViewColumnsConfigFactory.Register<DepartmentJournalViewModel>(
-				() => FluentColumnsConfig<DepartmentJournalNode>.Create()
-					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
-					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
-					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
-					.AddColumn("Комментарий").AddTextRenderer(x => x.Comments)
 					.Finish()
 			);
 

@@ -190,10 +190,8 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnAction8Activated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("Post");
-		tdiMain.OpenTab(OrmReference.GenerateHashName<Post>(),
-						() => new OrmReference(typeof(Post))
-					   );
+		MainTelemetry.AddCount(nameof(PostJournalViewModel));
+		NavigationManager.OpenViewModel<PostJournalViewModel>(null);
 	}
 
 	protected void OnAction9Activated(object sender, EventArgs e)

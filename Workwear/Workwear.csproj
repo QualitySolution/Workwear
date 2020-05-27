@@ -405,6 +405,10 @@
     <Compile Include="ViewModels\Regulations\ProfessionViewModel.cs" />
     <Compile Include="Views\Regulations\ProfessionView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Regulations.ProfessionView.cs" />
+    <Compile Include="Journal\ViewModels\Company\PostJournalViewModel.cs" />
+    <Compile Include="ViewModels\Company\PostViewModel.cs" />
+    <Compile Include="Views\Company\PostView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Company.PostView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
