@@ -399,6 +399,8 @@
     <Compile Include="ViewModels\Company\DepartmentViewModel.cs" />
     <Compile Include="Views\Company\DepartmentView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.DepartmentView.cs" />
+    <Compile Include="Domain\Regulations\Profession.cs" />
+    <Compile Include="HibernateMapping\Regulations\ProfessionMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
