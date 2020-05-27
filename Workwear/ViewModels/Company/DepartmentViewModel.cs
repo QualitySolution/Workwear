@@ -24,7 +24,6 @@ namespace workwear.ViewModels.Company
 									.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
 									.UseViewModelDialog<SubdivisionViewModel>()
 									.Finish();
-			this.autofacScope = autofacScope;
 		}
 
 		#region Controls
