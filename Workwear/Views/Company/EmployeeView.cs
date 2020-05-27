@@ -63,8 +63,6 @@ namespace workwear.Views.Company
 			dateChangePosition.Binding.AddBinding(Entity, e => e.ChangeOfPositionDate, w => w.DateOrNull).InitializeFromSource();
 			dateDismiss.Binding.AddBinding (Entity, e => e.DismissDate, w => w.DateOrNull).InitializeFromSource ();
 
-			yentryPost.SubjectType = typeof(Post);
-			yentryPost.Binding.AddBinding (Entity, e => e.Post, w => w.Subject).InitializeFromSource ();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			entryId.Binding.AddSource(ViewModel)
@@ -79,12 +77,13 @@ namespace workwear.Views.Company
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
 			entityDepartment.ViewModel = ViewModel.EntryDepartmentViewModel;
 			entityLeader.ViewModel = ViewModel.EntryLeaderViewModel;
+			entityPost.ViewModel = ViewModel.EntryPostViewModel;
 
 			//Устанавливаем последовательность фокуса по Tab
 			//!!!!!!!! НЕ ЗАБЫВАЕМ КОРРЕКТИРОВАТЬ ПОРЯДОК ПРИ ДОБАВЛЕНИИ ВИДЖЕТОВ В ТАБЛИЦУ !!!!!!!!
 			//Это порядок только внутри таблицы! А не всего диалога.
 			table1.FocusChain = new Widget[] {hbox7, entryLastName, entryFirstName, entryPatronymic,
-				entitySubdivision, entityDepartment, yentryPost, entityLeader, yentryPersonnelNumber, dateHire, dateChangePosition, dateDismiss, 
+				entitySubdivision, entityDepartment, entityPost, entityLeader, yentryPersonnelNumber, dateHire, dateChangePosition, dateDismiss, 
 				GtkScrolledWindowComments, comboSex, ycomboWearGrowth, 
 				ycomboWearStd, ycomboWearSize, 
 				ycomboShoesStd, ycomboShoesSize,

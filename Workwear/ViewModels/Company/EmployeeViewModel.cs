@@ -17,7 +17,6 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QSReport;
 using workwear.Domain.Company;
-using workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using workwear.Measurements;
 using workwear.ViewModels.Company.EmployeeChilds;
@@ -65,6 +64,11 @@ namespace workwear.ViewModels.Company
 				.UseViewModelDialog<DepartmentViewModel>()
 				.Finish();
 
+			EntryPostViewModel = builder.ForProperty(x => x.Post)
+				.UseViewModelJournalAndAutocompleter<PostJournalViewModel>()
+				.UseViewModelDialog<PostViewModel>()
+				.Finish();
+
 			Entity.PropertyChanged += CheckSizeChanged;
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.PropertyChanged += PostChangedCheck;
@@ -93,6 +97,7 @@ namespace workwear.ViewModels.Company
 		public readonly EntityEntryViewModel<Leader> EntryLeaderViewModel;
 		public readonly EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
 		public readonly EntityEntryViewModel<Department> EntryDepartmentViewModel;
+		public readonly EntityEntryViewModel<Post> EntryPostViewModel;
 
 		#endregion
 
