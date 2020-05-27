@@ -1,6 +1,7 @@
 ﻿using Gamma.ColumnConfig;
 using QS.Journal.GtkUI;
 using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 
@@ -54,6 +55,17 @@ namespace workwear.Journal
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(x => x.Comments)
+					.Finish()
+			);
+
+			#endregion
+
+			#region Regulations
+
+			TreeViewColumnsConfigFactory.Register<ProfessionJournalViewModel>(
+				() => FluentColumnsConfig<ProfessionJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => $"{node.Code}").SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.Finish()
 			);
 

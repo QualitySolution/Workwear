@@ -401,6 +401,10 @@
     <Compile Include="HibernateMapping\Regulations\ProfessionMap.cs" />
     <Compile Include="Domain\Company\Post.cs" />
     <Compile Include="HibernateMapping\Company\PostMap.cs" />
+    <Compile Include="Journal\ViewModels\Regulations\ProfessionJournalViewModel.cs" />
+    <Compile Include="ViewModels\Regulations\ProfessionViewModel.cs" />
+    <Compile Include="Views\Regulations\ProfessionView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Regulations.ProfessionView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -552,6 +556,9 @@
     <Folder Include="Repository\Company\" />
     <Folder Include="Views\Company\EmployeeChilds\" />
     <Folder Include="ViewModels\Company\EmployeeChilds\" />
+    <Folder Include="Journal\ViewModels\Regulations\" />
+    <Folder Include="ViewModels\Regulations\" />
+    <Folder Include="Views\Regulations\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

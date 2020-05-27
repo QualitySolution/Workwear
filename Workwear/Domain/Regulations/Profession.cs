@@ -27,9 +27,9 @@ namespace workwear.Domain.Regulations
 			set { SetField(ref name, value, () => Name); }
 		}
 
-		private uint code;
+		private uint? code;
 		[Display(Name = "Код")]
-		public virtual uint Code {
+		public virtual uint? Code {
 			get => code;
 			set => SetField(ref code, value);
 		}
