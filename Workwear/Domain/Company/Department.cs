@@ -15,14 +15,14 @@ namespace workwear.Domain.Company
 
 		#region Свойства
 
+		public virtual int Id { get; set; }
+
 		private string name;
 		[Display(Name = "Название")]
 		public virtual string Name {
 			get => name;
 			set => SetField(ref name, value);
 		}
-
-		public virtual int Id { get; set; }
 
 		private Subdivision subdivision;
 		[Display(Name = "Подразделение")]
@@ -37,7 +37,6 @@ namespace workwear.Domain.Company
 			get => comments;
 			set => SetField(ref comments, value);
 		}
-
 
 		#endregion
 	}
