@@ -31,6 +31,7 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.JournalViewers;
@@ -189,10 +190,8 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnAction8Activated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("Post");
-		tdiMain.OpenTab(OrmReference.GenerateHashName<Post>(),
-						() => new OrmReference(typeof(Post))
-					   );
+		MainTelemetry.AddCount(nameof(PostJournalViewModel));
+		NavigationManager.OpenViewModel<PostJournalViewModel>(null);
 	}
 
 	protected void OnAction9Activated(object sender, EventArgs e)
@@ -594,5 +593,11 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount(nameof(DepartmentJournalViewModel));
 		NavigationManager.OpenViewModel<DepartmentJournalViewModel>(null);
+	}
+
+	protected void OnActionProfessionActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount(nameof(ProfessionJournalViewModel));
+		NavigationManager.OpenViewModel<ProfessionJournalViewModel>(null);
 	}
 }

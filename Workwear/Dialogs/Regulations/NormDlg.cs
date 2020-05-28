@@ -5,18 +5,25 @@ using Gamma.ColumnConfig;
 using QS.Dialog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Navigation;
 using QS.Project.Dialogs.GtkUI;
+using QS.Project.Domain;
 using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using workwear.Journal.ViewModels.Company;
 using workwear.Repository.Company;
+using workwear.ViewModels.Company;
 
 namespace workwear.Dialogs.Regulations
 {
 	public partial class NormDlg : EntityDialogBase<Norm>
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+
+		ITdiCompatibilityNavigation tdiNavigation = MainClass.MainWin.NavigationManager;
 
 		IProgressBarDisplayable progressBar;
 
@@ -41,7 +48,7 @@ namespace workwear.Dialogs.Regulations
 			//FIXME Добавить в будущем получение экземпляра через конструктор
 			progressBar = MainClass.MainWin.ProgressBar;
 
-			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource ();
+			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new Gamma.Binding.Converters.IdToStringConverter()).InitializeFromSource ();
 
 			ycomboAnnex.SetRenderTextFunc<RegulationDocAnnex>(x => x.Title);
 			yentryRegulationDoc.SubjectType = typeof(RegulationDoc);
@@ -57,7 +64,7 @@ namespace workwear.Dialogs.Regulations
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			ytreeProfessions.ColumnsConfig = FluentColumnsConfig<Post>.Create ()
-				.AddColumn ("Профессия").AddTextRenderer (p => p.Name)
+				.AddColumn ("Должность").AddTextRenderer (p => p.Name)
 				.Finish (); 
 			ytreeProfessions.ItemsDataSource = Entity.ObservableProfessions;
 			ytreeProfessions.Selection.Changed += YtreeProfessions_Selection_Changed;
@@ -101,16 +108,17 @@ namespace workwear.Dialogs.Regulations
 			
 		protected void OnButtonAddProfessionClicked (object sender, EventArgs e)
 		{
-			OrmReference SelectDialog = new OrmReference(typeof(Post));
-			SelectDialog.Mode = OrmReferenceMode.Select;
-			SelectDialog.ObjectSelected += SelectDialog_ObjectSelected;
-
-			TabParent.AddSlaveTab (this, SelectDialog);
+			var page = tdiNavigation.OpenViewModelOnTdi<PostJournalViewModel>(this, OpenPageOptions.AsSlave);
+			page.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			page.ViewModel.OnSelectResult += Post_OnSelectResult;
 		}
 
-		void SelectDialog_ObjectSelected (object sender, OrmReferenceObjectSectedEventArgs e)
+		void Post_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			Entity.AddProfession (e.Subject as Post);
+			foreach(var postNode in e.SelectedObjects) {
+				var post = UoW.GetById<Post>(postNode.GetId());
+				Entity.AddProfession(post);
+			}
 		}
 
 		protected void OnButtonRemoveProfessionClicked (object sender, EventArgs e)
@@ -186,10 +194,19 @@ namespace workwear.Dialogs.Regulations
 
 		protected void OnButtonNewProfessionClicked (object sender, EventArgs e)
 		{
-			var prof = EntityEditSimpleDialog.RunSimpleDialog ((Gtk.Window)this.Toplevel, typeof(Post), null) as Post;
-			if (prof != null)
-				Entity.AddProfession (prof);
+			var page = tdiNavigation.OpenViewModelOnTdi<PostViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate(), OpenPageOptions.AsSlave);
+			page.PageClosed += NewPost_PageClosed;
 		}
+
+		void NewPost_PageClosed(object sender, PageClosedEventArgs e)
+		{
+			if(e.CloseSource == CloseSource.Save) {
+				var page = sender as IPage<PostViewModel>;
+				var post = UoW.GetById<Post>(page.ViewModel.Entity.Id);
+				Entity.AddProfession(post);
+			}
+		}
+
 
 		protected void OnYentryRegulationDocChanged(object sender, EventArgs e)
 		{

@@ -17,6 +17,7 @@ namespace workwear.Views.Company
 		{
 			this.Build();
 			ConfigureDlg();
+			CommonButtonSubscription();
 		}
 
 		void ConfigureDlg()

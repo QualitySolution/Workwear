@@ -1,6 +1,7 @@
 ﻿using Gamma.ColumnConfig;
 using QS.Journal.GtkUI;
 using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 
@@ -11,6 +12,16 @@ namespace workwear.Journal
 		public static void RegisterColumns()
 		{
 			#region Company
+
+			TreeViewColumnsConfigFactory.Register<DepartmentJournalViewModel>(
+				() => FluentColumnsConfig<DepartmentJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
+					.AddColumn("Комментарий").AddTextRenderer(x => x.Comments)
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<EmployeeJournalViewModel>(
 			() => FluentColumnsConfig<EmployeeJournalNode>.Create()
 				.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
@@ -40,6 +51,16 @@ namespace workwear.Journal
 					.Finish()
 			);
 
+			TreeViewColumnsConfigFactory.Register<PostJournalViewModel>(
+				() => FluentColumnsConfig<PostJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Профессия").AddTextRenderer(node => node.Profession).SearchHighlight()
+					.AddColumn("Отдел").AddTextRenderer(node => node.Department).SearchHighlight()
+					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<SubdivisionJournalViewModel>(
 				() => FluentColumnsConfig<SubdivisionJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Code).SearchHighlight()
@@ -48,13 +69,14 @@ namespace workwear.Journal
 					.Finish()
 			);
 
-			TreeViewColumnsConfigFactory.Register<DepartmentJournalViewModel>(
-				() => FluentColumnsConfig<DepartmentJournalNode>.Create()
-					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+			#endregion
+
+			#region Regulations
+
+			TreeViewColumnsConfigFactory.Register<ProfessionJournalViewModel>(
+				() => FluentColumnsConfig<ProfessionJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => $"{node.Code}").SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
-					.AddColumn("Код").AddTextRenderer(node => node.SubdivisionCode).SearchHighlight()
-					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
-					.AddColumn("Комментарий").AddTextRenderer(x => x.Comments)
 					.Finish()
 			);
 
