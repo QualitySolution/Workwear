@@ -19,6 +19,7 @@ using QSReport;
 using workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
 using workwear.Measurements;
+using workwear.Tools.Oracle;
 using workwear.ViewModels.Company.EmployeeChilds;
 
 namespace workwear.ViewModels.Company
@@ -32,6 +33,7 @@ namespace workwear.ViewModels.Company
 		ILifetimeScope AutofacScope;
 		private readonly IInteractiveQuestion interactive;
 		private readonly CommonMessages messages;
+		private readonly HRSystem hRSystem;
 
 		public EmployeeViewModel(
 			IEntityUoWBuilder uowBuilder,
@@ -41,12 +43,14 @@ namespace workwear.ViewModels.Company
 			IUserService userService,
 			ILifetimeScope autofacScope,
 			IInteractiveQuestion interactive,
-			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+			CommonMessages messages,
+			HRSystem hRSystem) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
+			this.hRSystem = hRSystem ?? throw new ArgumentNullException(nameof(hRSystem));
 			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
 
 			EntryLeaderViewModel = builder.ForProperty(x => x.Leader)
@@ -90,6 +94,8 @@ namespace workwear.ViewModels.Company
 			ListedItemsViewModel = AutofacScope.Resolve<EmployeeListedItemsViewModel>(parameter);
 			MovementsViewModel = AutofacScope.Resolve<EmployeeMovementsViewModel>(parameter);
 			VacationsViewModel = AutofacScope.Resolve<EmployeeVacationsViewModel>(parameter);
+
+			UpdateKitData();
 		}
 
 		#region Контролы
@@ -294,5 +300,44 @@ namespace workwear.ViewModels.Company
 		}
 		#endregion
 
+		#region НЛМК
+
+		void UpdateKitData()
+		{
+			if(String.IsNullOrWhiteSpace(Entity.PersonnelNumber)) {
+				logger.Info($"Табельный номер пустой. Кадровую информацию не запрашиваем.");
+				return;
+			}
+			logger.Info("Запрос кадровой базы...");
+			var info = hRSystem.GetEmployeeInfo(Entity.PersonnelNumber);
+			if(info == null) {
+				logger.Info($"Для табельного номера {Entity.PersonnelNumber} кадровая информация не найдена.");
+				return;
+			}
+			Entity.LastName = info.SURNAME;
+			Entity.FirstName = info.NAME;
+			Entity.Patronymic = info.SECNAME;
+			Entity.Sex = info.Sex;
+			Entity.DismissDate = info.DUVOL;
+			Entity.HireDate = info.DHIRING;
+
+			Entity.ProfessionId = info.E_PROF;
+
+			Entity.SubdivisionId = info.PARENT_DEPT_CODE;
+			if(Entity.SubdivisionId.HasValue)
+				Entity.Subdivision = hRSystem.GetSubdivision((int)Entity.SubdivisionId.Value);
+
+			Entity.DepartmentId = info.ID_DEPT;
+			if(Entity.DepartmentId.HasValue)
+				Entity.Department = hRSystem.GetDepartment((int)Entity.DepartmentId.Value);
+
+			Entity.PostId = info.ID_WP;
+			if(Entity.PostId.HasValue)
+				Entity.Post = hRSystem.GetPost((int)Entity.PostId.Value);
+
+			logger.Info("ок");
+		}
+
+		#endregion
 	}
 }

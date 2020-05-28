@@ -165,6 +165,38 @@ namespace workwear.Domain.Company
 
 		#endregion
 
+		#region НЛМК
+
+		private uint? professionId;
+		[Display(Name = "Код профессии")]
+		public virtual uint? ProfessionId {
+			get => professionId;
+			set => SetField(ref professionId, value);
+		}
+
+		private uint? subdivisionId;
+		[Display(Name = "Код родительского подразделения")]
+		public virtual uint? SubdivisionId {
+			get => subdivisionId;
+			set => SetField(ref subdivisionId, value);
+		}
+
+		private uint? departmentId;
+		[Display(Name = "Код отдела")]
+		public virtual uint? DepartmentId {
+			get => departmentId;
+			set => SetField(ref departmentId, value);
+		}
+
+		private uint? postId;
+		[Display(Name = "Код клетки штатного расписания")]
+		public virtual uint? PostId {
+			get => postId;
+			set => SetField(ref postId, value);
+		}
+
+		#endregion
+
 		#region Размеры одежды
 
 		string wearGrowth;

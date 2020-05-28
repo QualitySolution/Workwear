@@ -154,6 +154,9 @@
     <Reference Include="Oracle.ManagedDataAccess">
       <HintPath>..\packages\Oracle.ManagedDataAccess.19.7.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
+    <Reference Include="Dapper">
+      <HintPath>..\packages\Dapper.2.0.35\lib\net461\Dapper.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -416,6 +419,7 @@
     <Compile Include="ViewModels\Company\PostViewModel.cs" />
     <Compile Include="Views\Company\PostView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.PostView.cs" />
+    <Compile Include="Tools\Oracle\HRDTO\EmployeeHRInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
