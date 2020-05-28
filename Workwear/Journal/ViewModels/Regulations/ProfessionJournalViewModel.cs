@@ -1,43 +1,72 @@
 ﻿using System;
-using NHibernate;
-using NHibernate.Transform;
+using Autofac;
+using Oracle.ManagedDataAccess.Client;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
-using workwear.Domain.Regulations;
-using workwear.ViewModels.Regulations;
+using QS.Utilities.Text;
+using workwear.Tools.Oracle;
 
 namespace workwear.Journal.ViewModels.Regulations
 {
-	public class ProfessionJournalViewModel : EntityJournalViewModelBase<Profession, ProfessionViewModel, ProfessionJournalNode>
+	public class ProfessionJournalViewModel : JournalViewModelBase
 	{
-		public ProfessionJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		public ProfessionJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager)
 		{
-			UseSlider = true;
+			Title = "Профессии";
+			AutofacScope = autofacScope;
+			var dataLoader = AutofacScope.Resolve<OracleSQLDataLoader<ProfessionJournalNode>>();
+			DataLoader = dataLoader;
+			dataLoader.AddQuery(MakeQuery, MapNode);
+			CreateNodeActions();
 		}
 
-		protected override IQueryOver<Profession> ItemsQuery(IUnitOfWork uow)
+		#region Запрос
+
+		void MakeQuery(OracleCommand cmd, bool isCounting, int? pageSize, int? skip)
 		{
-			ProfessionJournalNode resultAlias = null;
-			return uow.Session.QueryOver<Profession>()
-				.Where(GetSearchCriterion<Profession>(
-					x => x.Code,
-					x => x.Name
-					))
-				.SelectList((list) => list
-					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
-					.Select(x => x.Code).WithAlias(() => resultAlias.Code)
-					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
-				).TransformUsing(Transformers.AliasToBean<ProfessionJournalNode>());
+			string conditions = null; //" AND id_parent <> 0";
+
+			conditions += OracleSQLDataLoader<ProfessionJournalNode>.MakeSearchConditions(Search.SearchValues,
+				new[] {
+					"ABBR",
+				},
+				new[] {
+					"ID_REF"
+				}
+			);
+
+			string sql;
+			if(isCounting) {
+				sql = $"select COUNT(*) from KIT.EXP_PROF";
+				if(!String.IsNullOrEmpty(conditions))
+					sql += " WHERE" + conditions.ReplaceFirstOccurrence(" AND", "");
+			}
+			else
+				sql = $"SELECT t.* " +
+					$"FROM (select rownum rnum, v.* from KIT.EXP_PROF v where rownum <= {skip + pageSize} {conditions}) t " +
+					$"WHERE rnum > {skip ?? 0}";
+
+			cmd.CommandText = sql;
 		}
+
+		ProfessionJournalNode MapNode(OracleDataReader reader)
+		{
+			return new ProfessionJournalNode() {
+				Id = Convert.ToInt32(reader["ID_REF"]),
+				Name = reader["ABBR"]?.ToString(),
+			};
+		}
+
+		#endregion
 	}
 
 	public class ProfessionJournalNode
 	{
 		public int Id { get; set; }
-		public uint? Code { get; set; }
+		public uint? Code => (uint?)Id;
 		public string Name { get; set; }
 	}
 }
