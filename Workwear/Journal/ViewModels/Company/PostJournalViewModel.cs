@@ -1,51 +1,73 @@
 ﻿using System;
-using NHibernate;
-using NHibernate.Transform;
+using Autofac;
+using Oracle.ManagedDataAccess.Client;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
-using workwear.Domain.Company;
-using workwear.Domain.Regulations;
-using workwear.ViewModels.Company;
+using QS.Utilities.Text;
+using workwear.Tools.Oracle;
 
 namespace workwear.Journal.ViewModels.Company
 {
-	public class PostJournalViewModel : EntityJournalViewModelBase<Post, PostViewModel, PostJournalNode>
+	public class PostJournalViewModel : JournalViewModelBase
 	{
-		public PostJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		public PostJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager)
 		{
-			UseSlider = true;
+			Title = "Штатное расписание";
+			AutofacScope = autofacScope;
+			var dataLoader = AutofacScope.Resolve<OracleSQLDataLoader<PostJournalNode>>();
+			DataLoader = dataLoader;
+			dataLoader.AddQuery(MakeQuery, MapNode);
+			CreateNodeActions();
 		}
 
-		protected override IQueryOver<Post> ItemsQuery(IUnitOfWork uow)
-		{
-			PostJournalNode resultAlias = null;
+		#region Запрос
 
-			Post postAlias = null;
-			Department departmentAlias = null;
-			Subdivision subdivisionAlias = null;
-			Profession professionAlias = null;
-			 
-			return uow.Session.QueryOver<Post>(() => postAlias)
-				.Left.JoinAlias(x => x.Subdivision, () => subdivisionAlias)
-				.Left.JoinAlias(x => x.Profession, () => professionAlias)
-				.Left.JoinAlias(x => x.Department, () => departmentAlias)
-				.Where(GetSearchCriterion(
-					() => postAlias.Name,
-					() => departmentAlias.Name,
-					() => subdivisionAlias.Name,
-					() => professionAlias.Name
-					))
-				.SelectList((list) => list
-					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
-					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
-					.Select(() => professionAlias.Name).WithAlias(() => resultAlias.Profession)
-					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
-					.Select(() => departmentAlias.Name).WithAlias(() => resultAlias.Department)
-				).TransformUsing(Transformers.AliasToBean<PostJournalNode>());
+		void MakeQuery(OracleCommand cmd, bool isCounting, int? pageSize, int? skip)
+		{
+			string conditions = null; 
+
+			conditions += OracleSQLDataLoader<PostJournalNode>.MakeSearchConditions(Search.SearchValues,
+				new[] {
+					"WP_NAME",
+				},
+				new[] {
+					"ID_WP",
+					"DEPT_CODE",
+				}
+			);
+
+			string sql;
+			if(isCounting) {
+				sql = $"select COUNT(*) from KIT.WP";
+				if(!String.IsNullOrEmpty(conditions))
+					sql += " WHERE" + conditions.ReplaceFirstOccurrence(" AND", "");
+			}
+			else
+				sql = $"SELECT t.*, dep.DEPT as department, prof.ABBR as profession, sub.NGRPOL as subdivision " +
+					$"FROM (select rownum rnum, v.* from KIT.WP v where rownum <= {skip + pageSize} {conditions}) t " +
+					"LEFT JOIN KIT.EXP_PROF prof ON prof.ID_REF = t.E_PROF " +
+					"LEFT JOIN KIT.DEPTS dep ON dep.ID_DEPT = t.ID_DEPT " +
+					"LEFT JOIN SKLAD.SGRPOL sub ON sub.KGRPOL = dep.DEPT_CODE " +
+					$"WHERE rnum > {skip ?? 0}";
+
+			cmd.CommandText = sql;
 		}
+
+		PostJournalNode MapNode(OracleDataReader reader)
+		{
+			return new PostJournalNode() {
+				Id = Convert.ToInt32(reader["ID_WP"]),
+				Name = reader["WP_NAME"]?.ToString(),
+				Department = reader["department"]?.ToString(),
+				Profession = reader["profession"]?.ToString(),
+				Subdivision = reader["subdivision"]?.ToString(),
+			};
+		}
+
+		#endregion
 	}
 
 	public class PostJournalNode

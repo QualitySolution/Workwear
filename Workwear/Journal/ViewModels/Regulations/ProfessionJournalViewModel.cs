@@ -27,7 +27,7 @@ namespace workwear.Journal.ViewModels.Regulations
 
 		void MakeQuery(OracleCommand cmd, bool isCounting, int? pageSize, int? skip)
 		{
-			string conditions = null; //" AND id_parent <> 0";
+			string conditions = null;
 
 			conditions += OracleSQLDataLoader<ProfessionJournalNode>.MakeSearchConditions(Search.SearchValues,
 				new[] {
