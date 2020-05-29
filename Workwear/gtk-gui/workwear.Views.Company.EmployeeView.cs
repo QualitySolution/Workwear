@@ -236,7 +236,7 @@ namespace workwear.Views.Company
 			this.hbox1.Spacing = 6;
 			this.hbox1.BorderWidth = ((uint)(3));
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.table1 = new global::Gtk.Table(((uint)(8)), ((uint)(7)), false);
+			this.table1 = new global::Gtk.Table(((uint)(9)), ((uint)(7)), false);
 			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
@@ -400,7 +400,7 @@ namespace workwear.Views.Company
 			this.table1.Add(this.GtkScrolledWindowComments);
 			global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.table1[this.GtkScrolledWindowComments]));
 			w20.TopAttach = ((uint)(5));
-			w20.BottomAttach = ((uint)(8));
+			w20.BottomAttach = ((uint)(9));
 			w20.LeftAttach = ((uint)(3));
 			w20.RightAttach = ((uint)(4));
 			w20.YOptions = ((global::Gtk.AttachOptions)(4));
@@ -705,7 +705,7 @@ namespace workwear.Views.Company
 			this.table1.Add(this.labelHRInfo);
 			global::Gtk.Table.TableChild w45 = ((global::Gtk.Table.TableChild)(this.table1[this.labelHRInfo]));
 			w45.TopAttach = ((uint)(7));
-			w45.BottomAttach = ((uint)(8));
+			w45.BottomAttach = ((uint)(9));
 			w45.LeftAttach = ((uint)(1));
 			w45.RightAttach = ((uint)(2));
 			w45.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -1036,8 +1036,6 @@ namespace workwear.Views.Company
 			{
 				this.Child.ShowAll();
 			}
-			this.label12.Hide();
-			this.label14.Hide();
 			this.yimagePhoto.Hide();
 			this.buttonLoadPhoto.Hide();
 			this.buttonSavePhoto.Hide();

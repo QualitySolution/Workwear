@@ -60,17 +60,17 @@ namespace workwear.ViewModels.Company
 
 			EntrySubdivisionViewModel = builder.ForProperty(x => x.Subdivision)
 				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
-				.UseViewModelDialog<SubdivisionViewModel>()
+				//.UseViewModelDialog<SubdivisionViewModel>()
 				.Finish();
 
 			EntryDepartmentViewModel = builder.ForProperty(x => x.Department)
 				.UseViewModelJournalAndAutocompleter<DepartmentJournalViewModel>()
-				.UseViewModelDialog<DepartmentViewModel>()
+				//.UseViewModelDialog<DepartmentViewModel>()
 				.Finish();
 
 			EntryPostViewModel = builder.ForProperty(x => x.Post)
 				.UseViewModelJournalAndAutocompleter<PostJournalViewModel>()
-				.UseViewModelDialog<PostViewModel>()
+				//.UseViewModelDialog<PostViewModel>()
 				.Finish();
 
 			Entity.PropertyChanged += CheckSizeChanged;

@@ -1431,10 +1431,25 @@
             <child>
               <widget class="Gtk.Table" id="table1">
                 <property name="MemberName" />
-                <property name="NRows">8</property>
+                <property name="NRows">9</property>
                 <property name="NColumns">7</property>
                 <property name="RowSpacing">6</property>
                 <property name="ColumnSpacing">6</property>
+                <child>
+                  <placeholder />
+                </child>
+                <child>
+                  <placeholder />
+                </child>
+                <child>
+                  <placeholder />
+                </child>
+                <child>
+                  <placeholder />
+                </child>
+                <child>
+                  <placeholder />
+                </child>
                 <child>
                   <placeholder />
                 </child>
@@ -1694,7 +1709,7 @@
                   </widget>
                   <packing>
                     <property name="TopAttach">5</property>
-                    <property name="BottomAttach">8</property>
+                    <property name="BottomAttach">9</property>
                     <property name="LeftAttach">3</property>
                     <property name="RightAttach">4</property>
                     <property name="AutoSize">False</property>
@@ -1802,7 +1817,6 @@
                 <child>
                   <widget class="Gtk.Label" id="label12">
                     <property name="MemberName" />
-                    <property name="Visible">False</property>
                     <property name="Xalign">1</property>
                     <property name="LabelProp" translatable="yes">Подразделение:</property>
                   </widget>
@@ -1823,7 +1837,6 @@
                 <child>
                   <widget class="Gtk.Label" id="label14">
                     <property name="MemberName" />
-                    <property name="Visible">False</property>
                     <property name="Xalign">1</property>
                     <property name="LabelProp" translatable="yes">Отдел:</property>
                   </widget>
@@ -2215,7 +2228,7 @@
                   </widget>
                   <packing>
                     <property name="TopAttach">7</property>
-                    <property name="BottomAttach">8</property>
+                    <property name="BottomAttach">9</property>
                     <property name="LeftAttach">1</property>
                     <property name="RightAttach">2</property>
                     <property name="AutoSize">True</property>
