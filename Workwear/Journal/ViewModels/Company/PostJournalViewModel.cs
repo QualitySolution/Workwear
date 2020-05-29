@@ -35,7 +35,6 @@ namespace workwear.Journal.ViewModels.Company
 				},
 				new[] {
 					"ID_WP",
-					"DEPT_CODE",
 				}
 			);
 
