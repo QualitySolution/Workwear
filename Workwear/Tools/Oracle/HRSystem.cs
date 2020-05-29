@@ -2,6 +2,7 @@
 using Dapper;
 using Oracle.ManagedDataAccess.Client;
 using workwear.Domain.Company;
+using workwear.Domain.Regulations;
 using workwear.Tools.Oracle.HRDTO;
 
 namespace workwear.Tools.Oracle
@@ -38,9 +39,16 @@ namespace workwear.Tools.Oracle
 
 		public Post GetPost(int id)
 		{
-			var sql = "select t.ID_WP as Id, t.WP_NAME as Name FROM KIT.WP t WHERE t.ID_WP = :wp_id";
+			var sql = "select t.ID_WP as Id, t.WP_NAME as Name, E_PROF as ProfessionId FROM KIT.WP t WHERE t.ID_WP = :wp_id";
 
 			return connection.QuerySingleOrDefault<Post>(sql, new { wp_id = id });
+		}
+
+		public Profession GetProfession(int id)
+		{
+			var sql = "select t.ID_REF as Id, t.ID_REF as Code, t.ABBR as Name FROM KIT.EXP_PROF t WHERE t.ID_REF = :prof_id";
+
+			return connection.QuerySingleOrDefault<Profession>(sql, new { prof_id = id });
 		}
 	}
 }

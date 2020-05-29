@@ -76,14 +76,17 @@ namespace workwear.Views.Company
 
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
 			entityDepartment.ViewModel = ViewModel.EntryDepartmentViewModel;
-			entityLeader.ViewModel = ViewModel.EntryLeaderViewModel;
+			//entityLeader.ViewModel = ViewModel.EntryLeaderViewModel;
 			entityPost.ViewModel = ViewModel.EntryPostViewModel;
+
+			labelHRInfo.Binding.AddBinding(ViewModel, vm => vm.ProfessionText, w => w.LabelProp).InitializeFromSource();
 
 			//Устанавливаем последовательность фокуса по Tab
 			//!!!!!!!! НЕ ЗАБЫВАЕМ КОРРЕКТИРОВАТЬ ПОРЯДОК ПРИ ДОБАВЛЕНИИ ВИДЖЕТОВ В ТАБЛИЦУ !!!!!!!!
 			//Это порядок только внутри таблицы! А не всего диалога.
 			table1.FocusChain = new Widget[] {hbox7, entryLastName, entryFirstName, entryPatronymic,
-				entitySubdivision, entityDepartment, entityPost, entityLeader, yentryPersonnelNumber, dateHire, dateChangePosition, dateDismiss, 
+				entitySubdivision, entityDepartment, entityPost, //entityLeader, 
+				yentryPersonnelNumber, dateHire, dateChangePosition, dateDismiss, 
 				GtkScrolledWindowComments, comboSex, ycomboWearGrowth, 
 				ycomboWearStd, ycomboWearSize, 
 				ycomboShoesStd, ycomboShoesSize,

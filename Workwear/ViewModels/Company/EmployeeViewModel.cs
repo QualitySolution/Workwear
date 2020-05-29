@@ -302,6 +302,10 @@ namespace workwear.ViewModels.Company
 
 		#region НЛМК
 
+		public string ProfessionText => $"Код клетки штатного расписания: {Entity.PostId}\n" +
+			$"Код профессии: {Entity.ProfessionId}\n" +
+			$"Профессия: {Entity.Profession?.Name}";
+
 		void UpdateKitData()
 		{
 			if(String.IsNullOrWhiteSpace(Entity.PersonnelNumber)) {
@@ -322,6 +326,8 @@ namespace workwear.ViewModels.Company
 			Entity.HireDate = info.DHIRING;
 
 			Entity.ProfessionId = info.E_PROF;
+			if(Entity.ProfessionId != null)
+				Entity.Profession = hRSystem.GetProfession((int)Entity.ProfessionId);
 
 			Entity.SubdivisionId = info.PARENT_DEPT_CODE;
 			if(Entity.SubdivisionId.HasValue)

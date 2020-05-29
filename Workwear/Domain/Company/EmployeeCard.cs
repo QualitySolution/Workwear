@@ -174,6 +174,15 @@ namespace workwear.Domain.Company
 			set => SetField(ref professionId, value);
 		}
 
+		private Profession profession;
+		[Display(Name = "Профессия")]
+		public virtual Profession Profession {
+			get => profession;
+			set {
+				SetField(ref profession, value);
+			}
+		}
+
 		private uint? subdivisionId;
 		[Display(Name = "Код родительского подразделения")]
 		public virtual uint? SubdivisionId {
