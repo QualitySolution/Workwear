@@ -1,4 +1,4 @@
-﻿using FluentNHibernate.Mapping;
+using FluentNHibernate.Mapping;
 using workwear.Domain.Company;
 
 namespace workwear.HibernateMapping.Company
@@ -36,8 +36,8 @@ namespace workwear.HibernateMapping.Company
 			Map (x => x.GlovesSizeStd).Column ("size_gloves_std");
 
 			References (x => x.Subdivision).Column ("object_id");
-			References(x => x.Department).Column("department_id");
-			References (x => x.Post).Column ("post_id");
+			//References(x => x.Department).Column("department_id");
+			//References (x => x.Post).Column ("post_id");
 			References (x => x.Leader).Column ("leader_id");
 			References (x => x.CreatedbyUser).Column ("user_id");
 

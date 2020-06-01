@@ -28,7 +28,7 @@ namespace workwear
 				.AddDeleteDependence<Expense> (x => x.Subdivision)
 				.AddDeleteDependence<Income> (x => x.Subdivision)
 				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.Subdivision)
-				.AddClearDependence<EmployeeCard> (x => x.Subdivision)
+				//.AddClearDependence<EmployeeCard> (x => x.Subdivision)
 				.AddClearDependence<IssuanceSheet>(x => x.Subdivision);
 
 			DeleteConfig.AddHibernateDeleteInfo<SubdivisionPlace>()
@@ -78,11 +78,11 @@ namespace workwear
 			DeleteConfig.AddHibernateDeleteInfo<NormItem> ()
 				.AddClearDependence<EmployeeIssueOperation>(x => x.NormItem)
 				//Ну нужна так как должна удалятся через пересчет. .AddClearDependence<EmployeeCardItem> (x => x.ActiveNormItem) //FIXME После этого нужно пересчитать требования к выдаче, то новому списку норм.
-				; 
+				;
 
 			DeleteConfig.AddHibernateDeleteInfo<Post>()
-				.AddRemoveFromDependence<Norm>(x => x.Professions)
-				.AddClearDependence<EmployeeCard>(x => x.Post);
+				.AddRemoveFromDependence<Norm>(x => x.Professions);
+				//.AddClearDependence<EmployeeCard>(x => x.Post);
 
 			#endregion
 			#region Склад
