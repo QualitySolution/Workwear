@@ -259,6 +259,7 @@ namespace workwear.Views.Company
 			this.dateChangePosition = new global::QS.Widgets.GtkUI.DatePicker();
 			this.dateChangePosition.TooltipMarkup = "Дата изменения профессии (должности) или переводе в другое структурное подразделе" +
 				"ние";
+			this.dateChangePosition.Sensitive = false;
 			this.dateChangePosition.Events = ((global::Gdk.EventMask)(256));
 			this.dateChangePosition.Name = "dateChangePosition";
 			this.dateChangePosition.WithTime = false;
@@ -276,6 +277,7 @@ namespace workwear.Views.Company
 			w10.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.dateDismiss = new global::QS.Widgets.GtkUI.DatePicker();
+			this.dateDismiss.Sensitive = false;
 			this.dateDismiss.Events = ((global::Gdk.EventMask)(256));
 			this.dateDismiss.Name = "dateDismiss";
 			this.dateDismiss.WithTime = false;
@@ -293,6 +295,7 @@ namespace workwear.Views.Company
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.dateHire = new global::QS.Widgets.GtkUI.DatePicker();
+			this.dateHire.Sensitive = false;
 			this.dateHire.Events = ((global::Gdk.EventMask)(256));
 			this.dateHire.Name = "dateHire";
 			this.dateHire.WithTime = false;
@@ -425,6 +428,7 @@ namespace workwear.Views.Company
 			w21.Fill = false;
 			// Container child hbox7.Gtk.Box+BoxChild
 			this.checkAuto = new global::Gamma.GtkWidgets.yCheckButton();
+			this.checkAuto.Sensitive = false;
 			this.checkAuto.CanFocus = true;
 			this.checkAuto.Name = "checkAuto";
 			this.checkAuto.Label = global::Mono.Unix.Catalog.GetString("Автоматически");
@@ -863,9 +867,10 @@ namespace workwear.Views.Company
 			w57.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.yentryPersonnelNumber = new global::Gamma.GtkWidgets.yEntry();
+			this.yentryPersonnelNumber.Sensitive = false;
 			this.yentryPersonnelNumber.CanFocus = true;
 			this.yentryPersonnelNumber.Name = "yentryPersonnelNumber";
-			this.yentryPersonnelNumber.IsEditable = true;
+			this.yentryPersonnelNumber.IsEditable = false;
 			this.yentryPersonnelNumber.MaxLength = 15;
 			this.yentryPersonnelNumber.InvisibleChar = '●';
 			this.table1.Add(this.yentryPersonnelNumber);
