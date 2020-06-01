@@ -600,4 +600,10 @@ public partial class MainWindow : Gtk.Window
 		MainTelemetry.AddCount(nameof(ProfessionJournalViewModel));
 		NavigationManager.OpenViewModel<ProfessionJournalViewModel>(null);
 	}
+
+	protected void OnActionCardsActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount(nameof(EmployeeCardJournalViewModel));
+		NavigationManager.OpenViewModel<EmployeeCardJournalViewModel>(null);
+	}
 }

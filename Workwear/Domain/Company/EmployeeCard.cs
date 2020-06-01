@@ -167,10 +167,10 @@ namespace workwear.Domain.Company
 
 		#region НЛМК
 
-		private uint? professionId;
+		private int? professionId;
 		[Display(Name = "Код профессии")]
-		public virtual uint? ProfessionId {
-			get => professionId;
+		public virtual int? ProfessionId {
+			get => Profession?.Id ?? professionId;
 			set => SetField(ref professionId, value);
 		}
 
@@ -183,24 +183,24 @@ namespace workwear.Domain.Company
 			}
 		}
 
-		private uint? subdivisionId;
+		private int? subdivisionId;
 		[Display(Name = "Код родительского подразделения")]
-		public virtual uint? SubdivisionId {
-			get => subdivisionId;
+		public virtual int? SubdivisionId {
+			get => Subdivision?.Id ?? subdivisionId;
 			set => SetField(ref subdivisionId, value);
 		}
 
-		private uint? departmentId;
+		private int? departmentId;
 		[Display(Name = "Код отдела")]
-		public virtual uint? DepartmentId {
-			get => departmentId;
+		public virtual int? DepartmentId {
+			get => Department?.Id ?? departmentId;
 			set => SetField(ref departmentId, value);
 		}
 
-		private uint? postId;
+		private int? postId;
 		[Display(Name = "Код клетки штатного расписания")]
-		public virtual uint? PostId {
-			get => postId;
+		public virtual int? PostId {
+			get => Post?.Id ?? postId;
 			set => SetField(ref postId, value);
 		}
 

@@ -420,6 +420,7 @@
     <Compile Include="Views\Company\PostView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.PostView.cs" />
     <Compile Include="Tools\Oracle\HRDTO\EmployeeHRInfo.cs" />
+    <Compile Include="Journal\ViewModels\Company\EmployeeCardJournalViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

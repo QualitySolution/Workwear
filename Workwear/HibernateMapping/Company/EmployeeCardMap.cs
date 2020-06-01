@@ -1,4 +1,4 @@
-using FluentNHibernate.Mapping;
+﻿using FluentNHibernate.Mapping;
 using workwear.Domain.Company;
 
 namespace workwear.HibernateMapping.Company
@@ -20,6 +20,13 @@ namespace workwear.HibernateMapping.Company
 			Map (x => x.DismissDate).Column ("dismiss_date");
 			Map(x => x.Comment).Column("comment");
 
+			#region NLMK
+			Map(x => x.ProfessionId).Column("nlmk_prof_id");
+			Map(x => x.SubdivisionId).Column("nlmk_subdivision_id");
+			Map(x => x.DepartmentId).Column("nlmk_dept_id");
+			Map(x => x.PostId).Column("nlmk_post_id");
+			#endregion
+
 			Map(x => x.Photo).Column("photo").LazyLoad().CustomSqlType ("BinaryBlob");
 			Map (x => x.Sex).Column ("sex").CustomType<SexStringType> ();
 
@@ -35,7 +42,7 @@ namespace workwear.HibernateMapping.Company
 			Map (x => x.GlovesSize).Column ("size_gloves");
 			Map (x => x.GlovesSizeStd).Column ("size_gloves_std");
 
-			References (x => x.Subdivision).Column ("object_id");
+			//References (x => x.Subdivision).Column ("object_id");
 			//References(x => x.Department).Column("department_id");
 			//References (x => x.Post).Column ("post_id");
 			References (x => x.Leader).Column ("leader_id");

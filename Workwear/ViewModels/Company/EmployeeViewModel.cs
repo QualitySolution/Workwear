@@ -60,16 +60,19 @@ namespace workwear.ViewModels.Company
 
 			EntrySubdivisionViewModel = builder.ForProperty(x => x.Subdivision)
 				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
+				.UseFuncAdapter(o => hRSystem.GetSubdivision(o.GetId()))
 				//.UseViewModelDialog<SubdivisionViewModel>()
 				.Finish();
 
 			EntryDepartmentViewModel = builder.ForProperty(x => x.Department)
 				.UseViewModelJournalAndAutocompleter<DepartmentJournalViewModel>()
+				.UseFuncAdapter(o => hRSystem.GetDepartment(o.GetId()))
 				//.UseViewModelDialog<DepartmentViewModel>()
 				.Finish();
 
 			EntryPostViewModel = builder.ForProperty(x => x.Post)
 				.UseViewModelJournalAndAutocompleter<PostJournalViewModel>()
+				.UseFuncAdapter(o => hRSystem.GetPost(o.GetId()))
 				//.UseViewModelDialog<PostViewModel>()
 				.Finish();
 
@@ -96,6 +99,7 @@ namespace workwear.ViewModels.Company
 			VacationsViewModel = AutofacScope.Resolve<EmployeeVacationsViewModel>(parameter);
 
 			UpdateKitData();
+			CheckAndDisableControls();
 		}
 
 		#region Контролы
@@ -310,38 +314,47 @@ namespace workwear.ViewModels.Company
 		{
 			if(String.IsNullOrWhiteSpace(Entity.PersonnelNumber)) {
 				logger.Info($"Табельный номер пустой. Кадровую информацию не запрашиваем.");
-				return;
 			}
-			logger.Info("Запрос кадровой базы...");
-			var info = hRSystem.GetEmployeeInfo(Entity.PersonnelNumber);
-			if(info == null) {
-				logger.Info($"Для табельного номера {Entity.PersonnelNumber} кадровая информация не найдена.");
-				return;
-			}
-			Entity.LastName = info.SURNAME;
-			Entity.FirstName = info.NAME;
-			Entity.Patronymic = info.SECNAME;
-			Entity.Sex = info.Sex;
-			Entity.DismissDate = info.DUVOL;
-			Entity.HireDate = info.DHIRING;
+			else {
+				logger.Info("Запрос кадровой базы...");
+				var info = hRSystem.GetEmployeeInfo(Entity.PersonnelNumber);
+				if(info == null) {
+					logger.Info($"Для табельного номера {Entity.PersonnelNumber} кадровая информация не найдена.");
+				}
+				else {
+					Entity.LastName = info.SURNAME;
+					Entity.FirstName = info.NAME;
+					Entity.Patronymic = info.SECNAME;
+					Entity.Sex = info.Sex;
+					Entity.DismissDate = info.DUVOL;
+					Entity.HireDate = info.DHIRING;
 
-			Entity.ProfessionId = info.E_PROF;
+					Entity.ProfessionId = (int?)info.E_PROF;
+					Entity.SubdivisionId = (int?)info.PARENT_DEPT_CODE;
+					Entity.DepartmentId = (int?)info.ID_DEPT;
+					Entity.PostId = (int?)info.ID_WP;
+				}
+			}
+
 			if(Entity.ProfessionId != null)
 				Entity.Profession = hRSystem.GetProfession((int)Entity.ProfessionId);
 
-			Entity.SubdivisionId = info.PARENT_DEPT_CODE;
 			if(Entity.SubdivisionId.HasValue)
 				Entity.Subdivision = hRSystem.GetSubdivision((int)Entity.SubdivisionId.Value);
 
-			Entity.DepartmentId = info.ID_DEPT;
 			if(Entity.DepartmentId.HasValue)
 				Entity.Department = hRSystem.GetDepartment((int)Entity.DepartmentId.Value);
 
-			Entity.PostId = info.ID_WP;
 			if(Entity.PostId.HasValue)
 				Entity.Post = hRSystem.GetPost((int)Entity.PostId.Value);
 
 			logger.Info("ок");
+		}
+
+		private void CheckAndDisableControls()
+		{
+			EntryPostViewModel.IsEditable = EntryDepartmentViewModel.IsEditable = EntrySubdivisionViewModel.IsEditable
+				= String.IsNullOrEmpty(Entity.PersonnelNumber);
 		}
 
 		#endregion

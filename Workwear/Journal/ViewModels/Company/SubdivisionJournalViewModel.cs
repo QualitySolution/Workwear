@@ -57,6 +57,7 @@ namespace workwear.Journal.ViewModels.Company
 		SubdivisionJournalNode MapNode(OracleDataReader reader)
 		{
 			return new SubdivisionJournalNode() {
+				Id = Convert.ToInt32(reader["KGRPOL"]),
 				Code = reader["KGRPOL"]?.ToString(),
 				Name = reader["NGRPOL"]?.ToString(),
 			};
