@@ -57,7 +57,7 @@ namespace workwear.Tools.Oracle
 			try {
 				Connection.Open();
 			}
-			catch(OracleException ex) when (ex.Number == 12545) {
+			catch(OracleException ex) when (ex.Number == 12545 || ex.Number == -1000) {
 				if(interactive.Question("Не удалось подключится к базе НЛМК. Часть функциональности будет недоступна. Попробовать снова?"))
 					Connect(interactive);
 			}
