@@ -58,9 +58,7 @@ namespace workwear.Dialogs.Regulations
 			dateto.Binding.AddBinding(Entity, e => e.DateTo, w => w.DateOrNull).InitializeFromSource();
 
 			yentryTonParagraph.Binding.AddBinding (Entity, e => e.TONParagraph, w => w.Text).InitializeFromSource ();
-			labelOldTon.Visible = !String.IsNullOrWhiteSpace(Entity.TONAttachment) || !String.IsNullOrWhiteSpace(Entity.TONNumber);
-			labelOldTon.Text = String.Format("Старые значения ТОН № {0} и приложение № {1}", Entity.TONNumber, Entity.TONAttachment);
-
+			yentryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			ytreeProfessions.ColumnsConfig = FluentColumnsConfig<Post>.Create ()
