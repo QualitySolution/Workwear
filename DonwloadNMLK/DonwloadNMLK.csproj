@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>DonwloadNMLK</RootNamespace>
     <AssemblyName>DonwloadNMLK</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <ReleaseVersion>1.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -61,10 +61,24 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data.OracleClient" />
+    <Reference Include="Dapper">
+      <HintPath>..\packages\Dapper.2.0.35\lib\net461\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Nini">
+      <HintPath>..\..\QSProjects\lib\Nini.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ConnectConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -90,6 +104,10 @@
     <ProjectReference Include="..\..\QSProjects\QS.Utilities\QS.Utilities.csproj">
       <Project>{E2228A2B-4883-4DD8-8A05-23501F7B8A33}</Project>
       <Name>QS.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QSMachineConfig\QSMachineConfig.csproj">
+      <Project>{769710D2-BF98-4120-9E07-67BD740CFA1D}</Project>
+      <Name>QSMachineConfig</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

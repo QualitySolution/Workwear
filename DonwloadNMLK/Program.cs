@@ -2,125 +2,145 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using Dapper;
+using NLog;
 using Oracle.ManagedDataAccess.Client;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
 using QS.Project.DB;
+using QS.Project.Services.Interactive;
+using QS.Services;
+using QSMachineConfig;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using workwear.Tools.Oracle;
 
 namespace DonwloadNMLK
 {
 	class MainClass
 	{
+		private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
+		static IInteractiveService interactive = new ConsoleInteractiveService();
+		static NLMKOracle NLMKOracle;
+
 		public static void Main(string[] args)
 		{
-				#region Connecnt to our DB
-			var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
-				.ConnectionString("server=office.qsolution.ru;port=3306;database=workwear_dev;user id=andrey;sslmode=None; password=123")
-				.ShowSql()
-				.FormatSql();
+			#region config
+			MachineConfig.ConfigFileName = "workwear.ini";
+			MachineConfig.ReloadConfigFile();
 
-				Console.WriteLine("ORM");
+			NLMKOracle = new NLMKOracle();
+			NLMKOracle.Connect(interactive);
+			if(NLMKOracle.Connection == null)
+				return;
 
-				OrmConfig.ConfigureOrm(db, new System.Reflection.Assembly[] {
-				System.Reflection.Assembly.GetAssembly (typeof(workwear.Domain.Users.UserSettings)),
-				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),
-			});
+			ConnectConfig.InitConnection(interactive);
+			if(OrmConfig.NhConfig == null)
+				return;
 
 			#endregion
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
-				Console.WriteLine("start");
-				DataTable dtPROTECTION_TOOLS = getTableFromDataBase("SELECT * FROM PROTECTION_TOOL");
-				DataTable dtPROTECTION_REPLACEMENT = getTableFromDataBase("SELECT * FROM PROTECTION_REPLACEMENT");
+				logger.Info("start");
+				logger.Info("Загружаем PROTECTION_TOOL");
+				var dtPROTECTION_TOOLS = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.PROTECTION_TOOL");
+				logger.Info("Загружаем PROTECTION_REPLACEMENT");
+				var dtPROTECTION_REPLACEMENT = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.PROTECTION_REPLACEMENT");
 
-				var dicItemsTypes = new Dictionary<int, ItemsType>();
-
-				foreach(DataRow row in dtPROTECTION_TOOLS.Rows) {
-					var item = new ItemsType();
-					item.Name = row["NAME"].ToString();
-					item.Category = ItemTypeCategory.wear;
-					dicItemsTypes[int.Parse(row["PROTECTION_ID"].ToString())] = item;
-				}
-
-				foreach(DataRow row in dtPROTECTION_REPLACEMENT.Rows) {
-					dicItemsTypes[int.Parse(row["PROTECTION_ID"].ToString())].ItemsTypesAnalogs.Add(dicItemsTypes[int.Parse(row["PROTECTION_ID_ANALOG"].ToString())]);
+				var dicItemsTypes = new Dictionary<string, ItemsType>();
+				logger.Info("Обработка СИЗ...");
+				foreach(var row in dtPROTECTION_TOOLS) {
+					if(String.IsNullOrWhiteSpace(row.NAME)) {
+						logger.Warn($"СИЗ с кодом {row.PROTECTION_ID} не имеет названия. Пропускаем...");
+						continue;
 					}
-
+					var item = new ItemsType();
+					item.Name = row.NAME;
+					item.Category = ItemTypeCategory.wear;
+					dicItemsTypes[row.PROTECTION_ID] = item;
+				}
+				logger.Info($"Загружено {dicItemsTypes.Count} СИЗ-ов.");
+				logger.Info("Обработка Аналогов СИЗ...");
+				int analogCount = 0;
+				int analogNotFound = 0;
+				foreach(var row in dtPROTECTION_REPLACEMENT) {
+					if(!dicItemsTypes.ContainsKey(row.PROTECTION_ID)) {
+						logger.Warn($"Аналог PROTECTION_REPLACEMENT.PROTECTION_ID={row.PROTECTION_ID} не найден в загруженных СИЗ-ах.");
+						analogNotFound++;
+						continue;
+					}
+					if(!dicItemsTypes.ContainsKey(row.PROTECTION_ID_ANALOG)) {
+						logger.Warn($"Аналог PROTECTION_REPLACEMENT.PROTECTION_ID_ANALOG={row.PROTECTION_ID_ANALOG} не найден в загруженных СИЗ-ах.");
+						analogNotFound++;
+						continue;
+					}
+					dicItemsTypes[row.PROTECTION_ID].ItemsTypesAnalogs.Add(dicItemsTypes[row.PROTECTION_ID_ANALOG]);
+					analogCount++;
+				}
+				logger.Info($"Загружено {analogCount} аналогов СИЗ-ов.");
+				logger.Info($"Не найдено {analogNotFound} аналогов СИЗ-ов.");
+				logger.Info($"Сохраняем...");
+				int i = 0;
 				foreach(var item in dicItemsTypes.Values) {
 					uow.Save(item);
+					i++;
+					if(i % 100 == 0) {
+						uow.Commit();
+						logger.Info($"Сохранили {(float)i/dicItemsTypes.Count:P}");
 					}
-
-				DataTable dtNORMA = getTableFromDataBase("SELECT * FROM SKLAD.NORMA");
-				DataTable dtNORMA_ROW = getTableFromDataBase("SELECT * FROM SKLAD.NORMA_ROW");
-
-				var dicNorms = new Dictionary<int, Norm>();
-				var dicNorms_row = new Dictionary<int, NormItem>();
-
-				foreach(DataRow rowNorma in dtNORMA.Rows) {
-					Norm norm = new Norm();
-					norm.DateFrom = DateTime.Parse(rowNorma["DATE_BEGIN"].ToString());
-					norm.DateTo = DateTime.Parse(rowNorma["DATE_END"].ToString());
-
-					dicNorms[int.Parse(rowNorma["NORMA_ID"].ToString())] = norm;
-
 				}
+				uow.Commit();
+				logger.Info("Готово");
 
-				foreach(DataRow rowNorma_row in dtNORMA_ROW.Rows) {
-					NormItem normItem = new NormItem();
-					normItem.Amount = int.Parse(rowNorma_row["COUNT"].ToString());
-					normItem.NormPeriod = NormPeriodType.Month;
-					normItem.Item = dicItemsTypes[int.Parse(rowNorma_row["PROTECTION_ID"].ToString())];
-					normItem.PeriodCount = int.Parse(rowNorma_row["WEARING_PERIOD"].ToString());
-					normItem.Norm = dicNorms[int.Parse(rowNorma_row["NORMA_ID"].ToString())];
+				return;
 
-					dicNorms_row[int.Parse(rowNorma_row["NORMA_ROW_ID"].ToString())] = normItem;
-					dicNorms[int.Parse(rowNorma_row["NORMA_ID"].ToString())].Items.Add(normItem);
-				}
+				//DataTable dtNORMA = getTableFromDataBase("SELECT * FROM SKLAD.NORMA");
+				//DataTable dtNORMA_ROW = getTableFromDataBase("SELECT * FROM SKLAD.NORMA_ROW");
 
-				foreach(var Norma in dicNorms.Values)
-					uow.Save(Norma);
+				//var dicNorms = new Dictionary<int, Norm>();
+				//var dicNorms_row = new Dictionary<int, NormItem>();
 
-				DataTable dtPERSONAL_CARDS = getTableFromDataBase("SELECT * FROM SKLAD.PERSONAL_CARD");
-				foreach (DataRow rowPers_cards in dtPERSONAL_CARDS.Rows) {
-					EmployeeCard card = new EmployeeCard();
-					card.PersonnelNumber = rowPers_cards["TN"].ToString();
-					card.LastName = rowPers_cards["SURNAME"].ToString();
-					card.FirstName = rowPers_cards["NAME"].ToString();
-					card.Patronymic = rowPers_cards["SECNAME"].ToString();
-					card.CardNumber = rowPers_cards["NUM_CARD"].ToString();
-					card.Comment = rowPers_cards["COMM"].ToString();
-					card.Sex = rowPers_cards["E_SEX"].ToString() == "0" ? Sex.M : Sex.F;
-					uow.Save(card);
-				}
+				//foreach(DataRow rowNorma in dtNORMA.Rows) {
+				//	Norm norm = new Norm();
+				//	norm.DateFrom = DateTime.Parse(rowNorma["DATE_BEGIN"].ToString());
+				//	norm.DateTo = DateTime.Parse(rowNorma["DATE_END"].ToString());
+
+				//	dicNorms[int.Parse(rowNorma["NORMA_ID"].ToString())] = norm;
+
+				//}
+
+				//foreach(DataRow rowNorma_row in dtNORMA_ROW.Rows) {
+				//	NormItem normItem = new NormItem();
+				//	normItem.Amount = int.Parse(rowNorma_row["COUNT"].ToString());
+				//	normItem.NormPeriod = NormPeriodType.Month;
+				//	normItem.Item = dicItemsTypes[int.Parse(rowNorma_row["PROTECTION_ID"].ToString())];
+				//	normItem.PeriodCount = int.Parse(rowNorma_row["WEARING_PERIOD"].ToString());
+				//	normItem.Norm = dicNorms[int.Parse(rowNorma_row["NORMA_ID"].ToString())];
+
+				//	dicNorms_row[int.Parse(rowNorma_row["NORMA_ROW_ID"].ToString())] = normItem;
+				//	dicNorms[int.Parse(rowNorma_row["NORMA_ID"].ToString())].Items.Add(normItem);
+				//}
+
+				//foreach(var Norma in dicNorms.Values)
+				//	uow.Save(Norma);
+
+				//DataTable dtPERSONAL_CARDS = getTableFromDataBase("SELECT * FROM SKLAD.PERSONAL_CARD");
+				//foreach (DataRow rowPers_cards in dtPERSONAL_CARDS.Rows) {
+				//	EmployeeCard card = new EmployeeCard();
+				//	card.PersonnelNumber = rowPers_cards["TN"].ToString();
+				//	card.LastName = rowPers_cards["SURNAME"].ToString();
+				//	card.FirstName = rowPers_cards["NAME"].ToString();
+				//	card.Patronymic = rowPers_cards["SECNAME"].ToString();
+				//	card.CardNumber = rowPers_cards["NUM_CARD"].ToString();
+				//	card.Comment = rowPers_cards["COMM"].ToString();
+				//	card.Sex = rowPers_cards["E_SEX"].ToString() == "0" ? Sex.M : Sex.F;
+				//	uow.Save(card);
+				//}
 
 				uow.Commit();
 			}
 
 			Console.ReadLine();
 		}
-		#region Connect to them DB
-		public static DataTable getTableFromDataBase( string sql)
-		{
-			DataTable dt = new DataTable();
-
-			using(OracleConnection oc = new OracleConnection()) {
-				oc.ConnectionString = "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.10.30)(PORT=1521)) (CONNECT_DATA=(SERVICE_NAME=XE))); User Id=sklad;Password=Good#Admins;";
-				oc.Open();
-
-				OracleDataAdapter oda = new OracleDataAdapter(sql, oc);
-
-				oda.Fill(dt);
-				oc.Dispose();
-
-				Console.WriteLine(dt.Rows.Count.ToString());
-				Console.WriteLine($"{sql} end");
-
-			}
-			return dt;
-		}
-
-		#endregion
 	}
 }
