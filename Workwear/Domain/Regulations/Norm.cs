@@ -40,47 +40,21 @@ namespace workwear.Domain.Regulations
 			set { SetField(ref annex, value, () => Annex); }
 		}
 
-		string tonNumber;
-
-		[Display (Name = "№ ТОН")]
-		[StringLength (10)]
-		public virtual string TONNumber {
-			get { return tonNumber; }
-			set { SetField (ref tonNumber, value, () => TONNumber); }
-		}
-
-		string tonAttachment;
-
-		[Display (Name = "№ приложения ТОН")]
-		[StringLength (10)]
-		public virtual string TONAttachment {
-			get { return tonAttachment; }
-			set { SetField (ref tonAttachment, value, () => TONAttachment); }
-		}
-
 		string tonParagraph;
 
-		[Display (Name = "№ пункта приложения ТОН")]
-		[StringLength (10)]
+		[Display(Name = "№ пункта приложения ТОН")]
+		[StringLength(15)]
 		public virtual string TONParagraph {
 			get { return tonParagraph; }
-			set { SetField (ref tonParagraph, value, () => TONParagraph); }
+			set { SetField(ref tonParagraph, value, () => TONParagraph); }
 		}
 
-		public virtual string Title{
-			get{
-				string str = string.Empty;
-				if(!String.IsNullOrWhiteSpace (TONNumber) || !String.IsNullOrWhiteSpace (TONAttachment))
-					str += "ТОН ";
-				if (!String.IsNullOrWhiteSpace (TONNumber))
-					str += TONNumber;
-				if(!String.IsNullOrWhiteSpace (TONAttachment))
-					str += "-" + TONAttachment;
-
-				if (!String.IsNullOrWhiteSpace (TONParagraph))
-					str += String.Format (" п. {0}", TONParagraph);
-				return str.Trim ();
-			}
+		private string name;
+		[Display(Name = "Название")]
+		[StringLength(200)]
+		public virtual string Name {
+			get => name;
+			set => SetField(ref name, value);
 		}
 
 		private IList<Post> professions = new List<Post>();

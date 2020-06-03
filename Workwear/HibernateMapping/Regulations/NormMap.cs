@@ -10,9 +10,8 @@ namespace workwear.HMap
 			Table ("norms");
 
 			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
-			Map (x => x.TONNumber).Column ("ton_number");
-			Map (x => x.TONAttachment).Column ("ton_attachment");
-			Map (x => x.TONParagraph).Column ("ton_paragraph");
+			Map(x => x.Name).Column("name");
+			Map(x => x.TONParagraph).Column("ton_paragraph");
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.DateFrom).Column("datefrom");
 			Map(x => x.DateTo).Column("dateto");
