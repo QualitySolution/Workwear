@@ -128,7 +128,7 @@ namespace workwear
 		{
 			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<StockBalanceJournalViewModel>(MyTdiDialog, QS.Navigation.OpenPageOptions.AsSlave);
 			if(ExpenceDoc.Operation == ExpenseOperations.Object)
-				selectJournal.ViewModel.Filter.ItemTypeCategory = Domain.Regulations.ItemTypeCategory.property;
+				selectJournal.ViewModel.Filter.ItemTypeCategory = ItemTypeCategory.property;
 
 			selectJournal.ViewModel.Filter.Warehouse = ExpenceDoc.Warehouse;
 			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
