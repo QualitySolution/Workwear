@@ -10,6 +10,7 @@ using QS.Dialog;
 using QS.Dialog.Gtk;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Dialog.GtkUI;
 using QS.Navigation;
 using QS.Report;
 using QS.Tdi;
@@ -298,6 +299,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction13Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportMonthIssueSheet");
+		MessageDialogHelper.RunInfoDialog("Это устаревший способ сформировать ведомость на выдачу. Используйте ведомости в меню Склад -> Ведомости на выдачу.", "Новые ведомости");
 		var widget = new OnIssueStatement();
 		tdiMain.OpenTab(
 			QSReport.ReportViewDlg.GenerateHashName(widget),
