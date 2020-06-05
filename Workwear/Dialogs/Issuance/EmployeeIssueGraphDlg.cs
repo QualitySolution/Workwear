@@ -10,19 +10,19 @@ namespace workwear.Dialogs.Issuance
 	public partial class EmployeeIssueGraphDlg : SingleUowTabBase
 	{
 		EmployeeCard Employee;
-		ItemsType ItemsType;
+		ProtectionTools ProtectionTools;
 
-		public EmployeeIssueGraphDlg(EmployeeCard employee, ItemsType itemsType)
+		public EmployeeIssueGraphDlg(EmployeeCard employee, ProtectionTools protectionTools)
 		{
 			this.Build();
 			UoW = UnitOfWorkFactory.CreateWithoutRoot();
 			Employee = employee;
-			ItemsType = itemsType;
+			ProtectionTools = protectionTools;
 			ConfigureDlg();
-			Fill(employee, itemsType);
+			Fill(employee, protectionTools);
 		}
 
-		public override string TabName { get => $"Хронология {Employee.ShortName} - {ItemsType.Name}"; }
+		public override string TabName { get => $"Хронология {Employee.ShortName} - {ProtectionTools.Name}"; }
 
 		private void ConfigureDlg()
 		{
@@ -35,7 +35,7 @@ namespace workwear.Dialogs.Issuance
 			ShowAll();
 		}
 
-		public void Fill(EmployeeCard employee, ItemsType itemsType)
+		public void Fill(EmployeeCard employee, ProtectionTools itemsType)
 		{
 			var graph = IssueGraph.MakeIssueGraph(UoW, employee, itemsType);
 
