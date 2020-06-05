@@ -1,5 +1,4 @@
 ﻿using FluentNHibernate.Mapping;
-using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Measurements;
 

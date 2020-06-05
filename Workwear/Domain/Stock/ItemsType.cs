@@ -1,17 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
-using System.Linq;
 using Gamma.Utilities;
-using NLog;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
-using workwear.Domain.Stock;
 using workwear.Measurements;
 
 
 
-namespace workwear.Domain.Regulations
+namespace workwear.Domain.Stock
 {
 	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "типы номенклатуры",
@@ -84,7 +81,7 @@ namespace workwear.Domain.Regulations
 
 		private IList<Nomenclature> nomenclatures = new List<Nomenclature>();
 
-		[Display(Name = "Строки норм")]
+		[Display(Name = "Номенклатура")]
 		public virtual IList<Nomenclature> Nomenclatures {
 			get { return nomenclatures; }
 			set { SetField(ref nomenclatures, value, () => Nomenclatures); }

@@ -267,7 +267,6 @@
     <Compile Include="Domain\Company\EmployeeCardItem.cs" />
     <Compile Include="Domain\Company\Subdivision.cs" />
     <Compile Include="Domain\Company\SubdivisionPlace.cs" />
-    <Compile Include="Domain\Regulations\ItemsType.cs" />
     <Compile Include="Domain\Company\Leader.cs" />
     <Compile Include="Domain\Regulations\Norm.cs" />
     <Compile Include="Domain\Regulations\NormItem.cs" />
@@ -275,7 +274,6 @@
     <Compile Include="HibernateMapping\Company\EmployeeCardMap.cs" />
     <Compile Include="HibernateMapping\Company\SubdivisionMap.cs" />
     <Compile Include="HibernateMapping\Company\SubdivisionPlaceMap.cs" />
-    <Compile Include="HibernateMapping\Regulations\ItemsTypeMap.cs" />
     <Compile Include="HibernateMapping\Company\LeaderMap.cs" />
     <Compile Include="HibernateMapping\Regulations\NormItemMap.cs" />
     <Compile Include="HibernateMapping\Regulations\NormMap.cs" />
@@ -412,6 +410,8 @@
     <Compile Include="gtk-gui\workwear.Views.Company.PostView.cs" />
     <Compile Include="Domain\Regulations\ProtectionTools.cs" />
     <Compile Include="HibernateMapping\Regulations\ProtectionToolsMap.cs" />
+    <Compile Include="Domain\Stock\ItemsType.cs" />
+    <Compile Include="HibernateMapping\Stock\ItemsTypeMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
