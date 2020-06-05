@@ -20,11 +20,6 @@ namespace workwear.HMap
 
 			References (x => x.Units).Column ("units_id");
 
-			HasManyToMany<ItemsType>(x => x.ItemsTypesAnalogs)
-			.Table("item_types_replacement")
-			.ParentKeyColumn("item_types_id")
-			.ChildKeyColumn("item_types_id_analog").Cascade.All();
-
 			HasMany(x => x.Nomenclatures).KeyColumn("type_id").Inverse().LazyLoad();
 
 		}

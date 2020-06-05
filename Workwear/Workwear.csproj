@@ -410,6 +410,8 @@
     <Compile Include="ViewModels\Company\PostViewModel.cs" />
     <Compile Include="Views\Company\PostView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.PostView.cs" />
+    <Compile Include="Domain\Regulations\ProtectionTools.cs" />
+    <Compile Include="HibernateMapping\Regulations\ProtectionToolsMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

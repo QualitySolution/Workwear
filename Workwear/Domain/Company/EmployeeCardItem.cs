@@ -33,10 +33,10 @@ namespace workwear.Domain.Company
 			set { SetField (ref employeeCard, value, () => EmployeeCard); }
 		}
 
-		ItemsType item;
+		ProtectionTools item;
 
 		[Display (Name = "Позиция")]
-		public virtual ItemsType Item {
+		public virtual ProtectionTools Item {
 			get { return item; }
 			set { SetField (ref item, value, () => Item); }
 		}

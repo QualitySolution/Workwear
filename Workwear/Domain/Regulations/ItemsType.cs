@@ -102,37 +102,7 @@ namespace workwear.Domain.Regulations
 
 		#endregion
 
-		private IList<ItemsType> itemsTypesAnalogs = new List<ItemsType>();
 
-		[Display(Name = "Аналоги")]
-		public virtual IList<ItemsType> ItemsTypesAnalogs {
-			get { return itemsTypesAnalogs; }
-			set { SetField(ref itemsTypesAnalogs, value, () => ItemsTypesAnalogs); }
-		}
-
-		GenericObservableList<ItemsType> observableItemsTypesAnalogs;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<ItemsType> ObservableItemsTypeAnalog{
-			get {
-				if(observableItemsTypesAnalogs == null)
-					observableItemsTypesAnalogs = new GenericObservableList<ItemsType>(ItemsTypesAnalogs);
-				return observableItemsTypesAnalogs;
-			}
-		}
-
-		public virtual void AddAnalog(ItemsType Analog)
-		{
-			if(ItemsTypesAnalogs.Any(p => DomainHelper.EqualDomainObjects(p, Analog))) {
-				logger.Warn("Такой аналог уже добавлен. Пропускаем...");
-				return;
-			}
-			ObservableItemsTypeAnalog.Add(Analog);
-		}
-
-		public virtual void RemoveAnalog(ItemsType Analog)
-		{
-			ObservableItemsTypeAnalog.Remove(Analog);
-		}
 
 		public ItemsType ()
 		{
