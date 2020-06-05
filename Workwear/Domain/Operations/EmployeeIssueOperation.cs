@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.Dialog;
@@ -39,6 +39,13 @@ namespace workwear.Domain.Operations
 		{
 			get { return employee; }
 			set { SetField(ref employee, value); }
+		}
+
+		private ProtectionTools protectionTools;
+		[Display(Name = "Номеклатура ТОН")]
+		public virtual ProtectionTools ProtectionTools {
+			get => protectionTools;
+			set => SetField(ref protectionTools, value);
 		}
 
 		private Nomenclature nomenclature;

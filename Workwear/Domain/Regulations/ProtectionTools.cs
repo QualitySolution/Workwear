@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
+using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
+using workwear.Domain.Stock;
 
 namespace workwear.Domain.Regulations
 {
@@ -24,6 +26,15 @@ namespace workwear.Domain.Regulations
 		public virtual string Name {
 			get { return name; }
 			set { SetField(ref name, value); }
+		}
+
+		MeasurementUnits units;
+
+		[Display(Name = "Единица измерения")]
+		[Required(ErrorMessage = "Единица измерения должна быть указана.")]
+		public virtual MeasurementUnits Units {
+			get { return units; }
+			set { SetField(ref units, value, () => Units); }
 		}
 
 		#endregion
@@ -61,6 +72,30 @@ namespace workwear.Domain.Regulations
 		{
 			ObservableAnalog.Remove(Analog);
 		}
+
+		#endregion
+
+		#region Номенклатура
+
+		private IList<Nomenclature> nomenclatures = new List<Nomenclature>();
+
+		[Display(Name = "Номенклатура")]
+		public virtual IList<Nomenclature> Nomenclatures {
+			get { return nomenclatures; }
+			set { SetField(ref nomenclatures, value, () => Nomenclatures); }
+		}
+
+		GenericObservableList<Nomenclature> observableNomenclatures;
+		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		public virtual GenericObservableList<Nomenclature> ObservableNomenclatures {
+			get {
+				if(observableNomenclatures == null)
+					observableNomenclatures = new GenericObservableList<Nomenclature>(Nomenclatures);
+				return observableNomenclatures;
+			}
+		}
+
+		public virtual IEnumerable<Nomenclature> MatchedNomenclatures => Nomenclatures.Union(Analogs.SelectMany(x => x.Nomenclatures));
 
 		#endregion
 	}

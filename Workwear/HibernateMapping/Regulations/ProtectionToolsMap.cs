@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentNHibernate.Mapping;
 using workwear.Domain.Regulations;
+using workwear.Domain.Stock;
 
 namespace workwear.HibernateMapping.Regulations
 {
@@ -17,6 +18,11 @@ namespace workwear.HibernateMapping.Regulations
 			.Table("protection_tools_replacement")
 			.ParentKeyColumn("protection_tools_id")
 			.ChildKeyColumn("protection_tools_analog_id").Cascade.All();
+
+			HasManyToMany<Nomenclature>(x => x.Nomenclatures)
+			.Table("protection_tools_nomenclature")
+			.ParentKeyColumn("protection_tools_id")
+			.ChildKeyColumn("nomenclature_id").Cascade.All();
 		}
 	}
 }
