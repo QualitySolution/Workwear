@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.Dialog;
@@ -264,9 +264,17 @@ namespace workwear.Domain.Operations
 			WarehouseOperation = item.WarehouseOperation;
 
 			if (NormItem == null)
-				NormItem = Employee.WorkwearItems.FirstOrDefault(x => x.Item == Nomenclature.Type)?.ActiveNormItem;
+				NormItem = Employee.WorkwearItems.FirstOrDefault(x => x.Item.MatchedNomenclatures.Contains(Nomenclature))?.ActiveNormItem;
 
-			var graph = IssueGraph.MakeIssueGraph(uow, Employee, Nomenclature.Type);
+			if(NormItem == null) {
+				logger.Warn($"В операции выдачи {Nomenclature.Name} не указана ссылка на норму, перерасчет сроков выдачи невозможен.");
+				return;
+			}
+
+			if(ProtectionTools == null)
+				ProtectionTools = NormItem.Item;
+
+			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.Item);
 			RecalculateDatesOfIssueOperation(graph, askUser);
 		}
 

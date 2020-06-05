@@ -85,13 +85,6 @@ namespace workwear.Domain.Company
 
 		#region Не хранимое в базе значение
 
-		IList<Nomenclature> matchedNomenclature;
-
-		[Display(Name = "Подходящие номенклатуры")]
-		public virtual IList<Nomenclature> MatchedNomenclature {
-			get { return matchedNomenclature; }
-			set { SetField(ref matchedNomenclature, value, () => MatchedNomenclature); }
-		}
 
 		IList<StockBalanceDTO> inStock;
 
@@ -129,10 +122,10 @@ namespace workwear.Domain.Company
 
 		public virtual StockStateInfo InStockState {
 			get {
-				if(InStock == null || MatchedNomenclature == null)
+				if(InStock == null)
 					return StockStateInfo.NotLoaded;
 
-				if(!matchedNomenclature.Any())
+				if(!Item.MatchedNomenclatures.Any())
 					return StockStateInfo.UnknownNomenclature;
 
 				if(InStock.Any(x => x.Amount >= NeededAmount))
@@ -181,13 +174,15 @@ namespace workwear.Domain.Company
 
 		public virtual bool MatcheStockPosition(StockPosition stockPosition)
 		{
-			if(!MatchedNomenclature.Any(n => n.Id == stockPosition.Nomenclature.Id))
+			if(!Item.MatchedNomenclatures.Any(n => n.Id == stockPosition.Nomenclature.Id))
 				return false;
 
-			if(Item.WearCategory == null || !SizeHelper.HasСlothesSizeStd(Item.WearCategory.Value))
+			var wearCategory = stockPosition.Nomenclature.Type.WearCategory;
+
+			if(wearCategory == null || !SizeHelper.HasСlothesSizeStd(wearCategory.Value))
 				return true;
 
-			var employeeSize = EmployeeCard.GetSize(Item.WearCategory.Value);
+			var employeeSize = EmployeeCard.GetSize(wearCategory.Value);
 			if(employeeSize == null || String.IsNullOrEmpty(employeeSize.Size) || String.IsNullOrEmpty(employeeSize.StandardCode)) {
 				logger.Warn("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", Item.Name);
 				return false;
@@ -197,8 +192,8 @@ namespace workwear.Domain.Company
 			if(!validSizes.Any(s => s.StandardCode == stockPosition.Nomenclature.SizeStd && s.Size == stockPosition.Size))
 				return false;
 
-			if(SizeHelper.HasGrowthStandart(Item.WearCategory.Value)) {
-				var growStds = SizeHelper.GetGrowthStandart(Item.WearCategory.Value, EmployeeCard.Sex, SizeUsePlace.Сlothes);
+			if(SizeHelper.HasGrowthStandart(wearCategory.Value)) {
+				var growStds = SizeHelper.GetGrowthStandart(wearCategory.Value, EmployeeCard.Sex, SizeUsePlace.Сlothes);
 				var validGrowths = SizeHelper.MatchGrow(growStds, EmployeeCard.WearGrowth, SizeUsePlace.Сlothes);
 				if(!validGrowths.Any(s => s.StandardCode == stockPosition.Nomenclature.WearGrowthStd && s.Size == stockPosition.Growth))
 					return false;
