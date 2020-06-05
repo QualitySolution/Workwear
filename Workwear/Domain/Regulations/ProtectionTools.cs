@@ -37,6 +37,13 @@ namespace workwear.Domain.Regulations
 			set { SetField(ref units, value, () => Units); }
 		}
 
+		private string comment;
+		[Display(Name = "Комментарий")]
+		public virtual string Comment {
+			get { return comment; }
+			set { SetField(ref comment, value); }
+		}
+
 		#endregion
 
 		#region Аналоги

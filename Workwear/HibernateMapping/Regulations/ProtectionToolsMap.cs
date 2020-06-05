@@ -13,6 +13,7 @@ namespace workwear.HibernateMapping.Regulations
 
 			Id(x => x.Id).Column("id").GeneratedBy.Native();
 			Map(x => x.Name).Column("name").Not.Nullable();
+			Map(x => x.Comment).Column("comments");
 
 			HasManyToMany<ProtectionTools>(x => x.Analogs)
 			.Table("protection_tools_replacement")
