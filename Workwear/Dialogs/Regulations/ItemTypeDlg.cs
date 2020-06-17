@@ -1,13 +1,11 @@
 ﻿using System;
+using Gamma.Binding.Converters;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NLog;
 using QS.BusinessCommon.Repository;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
-using QSOrmProject;
-using QSProjectsLib;
-using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Measurements;
 
@@ -48,16 +46,10 @@ namespace workwear.Dialogs.Regulations
 			ycomboUnits.ItemsList = MeasurementUnitsRepository.GetActiveUnits (UoWGeneric);
 			ycomboUnits.Binding.AddBinding (Entity, e => e.Units, w => w.SelectedItem).InitializeFromSource ();
 
-			yspinMonths.Binding.AddBinding(Entity, e => e.LifeMonths, w => w.ValueAsInt, new NullToZeroConverter()).InitializeFromSource();
+			yspinMonths.Binding.AddBinding(Entity, e => e.LifeMonths, w => w.ValueAsInt, new QSOrmProject.NullToZeroConverter()).InitializeFromSource();
 			ycheckLife.Active = Entity.LifeMonths.HasValue;
 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
-
-			ytreeNormAnalog.ColumnsConfig = FluentColumnsConfig<ItemsType>.Create()
-			.AddColumn("Аналог нормы").AddTextRenderer(p => p.Name)
-			.Finish();
-			ytreeNormAnalog.ItemsDataSource = Entity.ObservableItemsTypeAnalog;
-			ytreeNormAnalog.Selection.Changed += YtreeItemsType_Selection_Changed;
 
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
 			.AddColumn("Тип").AddTextRenderer(p => p.TypeName)
@@ -80,11 +72,6 @@ namespace workwear.Dialogs.Regulations
 			return true;
 		}
 
-		void YtreeItemsType_Selection_Changed(object sender, EventArgs e)
-		{
-			buttonRemoveNormAnalog.Sensitive = ytreeNormAnalog.Selection.CountSelectedRows() > 0;
-		}
-
 		protected void OnYcomboCategoryChanged (object sender, EventArgs e)
 		{
 			ycomboWearCategory.Sensitive = Entity.Category == ItemTypeCategory.wear;
@@ -100,26 +87,7 @@ namespace workwear.Dialogs.Regulations
 			}
 		}
 
-		protected void OnButtonAddNormAnalogClicked(object sender, EventArgs e)
-		{
-			OrmReference SelectDialog = new OrmReference(typeof(ItemsType));
-			SelectDialog.Mode = OrmReferenceMode.Select;
-			SelectDialog.ObjectSelected += SelectDialog_ItemsTypeSelected;
 
-			TabParent.AddSlaveTab(this, SelectDialog);
-		}
-
-		void SelectDialog_ItemsTypeSelected(object sender, OrmReferenceObjectSectedEventArgs e)
-		{
-			var type = e.Subject as ItemsType;
-			if (type.Id != Entity.Id)
-				Entity.AddAnalog(UoW.GetById< ItemsType >(type.Id));
-		}
-
-		protected void OnButtonRemoveNormAnalogClicked(object sender, EventArgs e)
-		{
-			Entity.RemoveAnalog(ytreeNormAnalog.GetSelectedObject<ItemsType>());
-		}
 	}
 }
 
