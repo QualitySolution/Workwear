@@ -80,6 +80,13 @@ namespace workwear.Journal
 					.Finish()
 			);
 
+			TreeViewColumnsConfigFactory.Register<ProtectionToolsJournalViewModel>(
+				() => FluentColumnsConfig<ProtectionToolsJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.Finish()
+			);
+
 			#endregion
 
 			#region Statements

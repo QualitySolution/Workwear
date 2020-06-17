@@ -412,6 +412,10 @@
     <Compile Include="HibernateMapping\Regulations\ProtectionToolsMap.cs" />
     <Compile Include="Domain\Stock\ItemsType.cs" />
     <Compile Include="HibernateMapping\Stock\ItemsTypeMap.cs" />
+    <Compile Include="ViewModels\Regulations\ProtectionToolsViewModel.cs" />
+    <Compile Include="Views\Regulations\ProtectionToolsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Regulations.ProtectionToolsView.cs" />
+    <Compile Include="Journal\ViewModels\Regulations\ProtectionToolsJournalViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
