@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Data.Bindings.Collections.Generic;
-using Autofac;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.ViewModels;
-using QSOrmProject;
-using QSOrmProject.RepresentationModel;
-using workwear.Dialogs.Regulations;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
-using workwear.ViewModel;
+using workwear.Journal.ViewModels.Regulations;
+using workwear.ViewModels.Regulations;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
 {
 	public class EmployeeNormsViewModel : ViewModelBase
 	{
 		private readonly EmployeeViewModel employeeViewModel;
-		private readonly ITdiCompatibilityNavigation navigation;
+		private readonly INavigationManager navigation;
 
-		public EmployeeNormsViewModel(EmployeeViewModel employeeViewModel, ITdiCompatibilityNavigation navigation)
+		public EmployeeNormsViewModel(EmployeeViewModel employeeViewModel, INavigationManager navigation)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
@@ -58,19 +57,19 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void AddNorm()
 		{
-			var selectPage = navigation.OpenTdiTab<ReferenceRepresentation>(
+			var selectPage = navigation.OpenViewModel<NormJournalViewModel>(
 				employeeViewModel,
-				OpenPageOptions.AsSlave,
-				c => c.RegisterType<NormVM>().As<IRepresentationModel>()
+				OpenPageOptions.AsSlave
 			);
-			var refWin = selectPage.TdiTab as ReferenceRepresentation;
-			refWin.Mode = OrmReferenceMode.Select;
-			refWin.ObjectSelected += RefWin_ObjectSelected;
+			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectPage.ViewModel.OnSelectResult += NormJournal_OnSelectResult;
 		}
 
-		void RefWin_ObjectSelected(object sender, ReferenceRepresentationSelectedEventArgs e)
+		void NormJournal_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			Entity.AddUsedNorm(UoW.GetById<Norm>(e.ObjectId));
+			foreach(var norm in e.SelectedObjects) {
+				Entity.AddUsedNorm(UoW.GetById<Norm>(e.GetId()));
+			}
 		}
 
 		public void RemoveNorm(Norm norm)
@@ -92,7 +91,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void OpenNorm(Norm norm)
 		{
-			navigation.OpenTdiTab<NormDlg, Norm>(employeeViewModel, norm);
+			navigation.OpenViewModel<NormViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(norm.Id));
 		}
 
 		#endregion

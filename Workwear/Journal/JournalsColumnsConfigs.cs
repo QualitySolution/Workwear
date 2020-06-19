@@ -73,6 +73,17 @@ namespace workwear.Journal
 
 			#region Regulations
 
+			TreeViewColumnsConfigFactory.Register<NormJournalViewModel>(
+				() => FluentColumnsConfig<NormJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString())
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("№ ТОН").AddTextRenderer(node => node.TonNumber)
+					.AddColumn("№ Приложения").AddTextRenderer(node => node.TonAttachment)
+					.AddColumn("№ Пункта").AddTextRenderer(node => node.TonParagraph).SearchHighlight()
+					.AddColumn("Профессии").AddTextRenderer(node => node.Professions)
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<ProfessionJournalViewModel>(
 				() => FluentColumnsConfig<ProfessionJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Code}").SearchHighlight()

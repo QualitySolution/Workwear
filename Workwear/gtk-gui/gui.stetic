@@ -5203,7 +5203,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Dialogs.Regulations.NormDlg" design-size="699 474">
+  <widget class="Gtk.Bin" id="workwear.Views.Regulations.NormView" design-size="699 474">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">

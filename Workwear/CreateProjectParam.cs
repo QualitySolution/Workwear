@@ -59,7 +59,6 @@ namespace workwear
 			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
 			//Спецодежда
 			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
-			OrmMain.AddObjectDescription<Norm>().Dialog<NormDlg>();
 			OrmMain.AddObjectDescription<ItemsType>().Dialog<ItemTypeDlg> ().DefaultTableView ().SearchColumn ("Наименование", i => i.Name).OrderAsc (i => i.Name).End ();
 			//Организация
 			OrmMain.AddObjectDescription<EmployeeVacation>().Dialog<EmployeeVacationDlg>();
@@ -120,6 +119,10 @@ namespace workwear
 			builder.RegisterType<TdiNavigationManager>().AsSelf().As<INavigationManager>().As<ITdiCompatibilityNavigation>().SingleInstance();
 			builder.RegisterType<BasedOnNameTDIResolver>().As<ITDIWidgetResolver>();
 			builder.Register(cc => new ClassNamesBaseGtkViewResolver(typeof(RdlViewerView), typeof(OrganizationView), typeof(DeletionView))).As<IGtkViewResolver>();
+			#endregion
+
+			#region Главное окно
+			builder.Register((ctx) => MainWin.ProgressBar).As<IProgressBarDisplayable>();
 			#endregion
 
 			#region Старые диалоги

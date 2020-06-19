@@ -278,8 +278,6 @@
     <Compile Include="HibernateMapping\Regulations\NormItemMap.cs" />
     <Compile Include="HibernateMapping\Regulations\NormMap.cs" />
     <Compile Include="Dialogs\Regulations\ItemTypeDlg.cs" />
-    <Compile Include="Dialogs\Regulations\NormDlg.cs" />
-    <Compile Include="gtk-gui\workwear.Dialogs.Regulations.NormDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.ItemTypeDlg.cs" />
     <Compile Include="Dialogs\Regulations\RegulationDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.RegulationDocDlg.cs" />
@@ -412,10 +410,14 @@
     <Compile Include="HibernateMapping\Regulations\ProtectionToolsMap.cs" />
     <Compile Include="Domain\Stock\ItemsType.cs" />
     <Compile Include="HibernateMapping\Stock\ItemsTypeMap.cs" />
+    <Compile Include="Views\Regulations\NormView.cs" />
+    <Compile Include="ViewModels\Regulations\NormViewModel.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Regulations.NormView.cs" />
     <Compile Include="ViewModels\Regulations\ProtectionToolsViewModel.cs" />
     <Compile Include="Views\Regulations\ProtectionToolsView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Regulations.ProtectionToolsView.cs" />
     <Compile Include="Journal\ViewModels\Regulations\ProtectionToolsJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Regulations\NormJournalViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
