@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -122,7 +122,7 @@ namespace workwear
 
 		protected void OnYcomboClothesSexChanged (object sender, EventArgs e)
 		{
-			if (!Entity.Sex.HasValue)
+			if (Entity.Sex == null || Entity.Type?.WearCategory == null)
 				return;
 
 			ycomboWearStd.ItemsEnum = SizeHelper.GetSizeStandartsEnum (Entity.Type.WearCategory.Value, Entity.Sex.Value);
