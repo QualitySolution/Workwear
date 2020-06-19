@@ -204,10 +204,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnAction5Activated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("ItemsType");
-		tdiMain.OpenTab(OrmReference.GenerateHashName<ItemsType>(),
-				() => new OrmReference(typeof(ItemsType))
-			   );
+		NavigationManager.OpenViewModel<ItemsTypeJournalViewModel>(null);
 	}
 
 	protected void OnAction6Activated(object sender, EventArgs e)

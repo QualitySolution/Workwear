@@ -116,6 +116,14 @@ namespace workwear.Journal
 
 			#region Stock
 
+			TreeViewColumnsConfigFactory.Register<ItemsTypeJournalViewModel>(
+				() => FluentColumnsConfig<ItemsTypeJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Вид одежды").AddTextRenderer(node => node.WearCategoryText)
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
 				() => FluentColumnsConfig<StockBalanceJournalNode>.Create()
 					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()

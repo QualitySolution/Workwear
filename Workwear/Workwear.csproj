@@ -276,8 +276,6 @@
     <Compile Include="HibernateMapping\Company\LeaderMap.cs" />
     <Compile Include="HibernateMapping\Regulations\NormItemMap.cs" />
     <Compile Include="HibernateMapping\Regulations\NormMap.cs" />
-    <Compile Include="Dialogs\Regulations\ItemTypeDlg.cs" />
-    <Compile Include="gtk-gui\workwear.Dialogs.Regulations.ItemTypeDlg.cs" />
     <Compile Include="Dialogs\Regulations\RegulationDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.RegulationDocDlg.cs" />
     <Compile Include="Domain\Operations\EmployeeIssueOperation.cs" />
@@ -417,6 +415,10 @@
     <Compile Include="gtk-gui\workwear.Views.Regulations.ProtectionToolsView.cs" />
     <Compile Include="Journal\ViewModels\Regulations\ProtectionToolsJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Regulations\NormJournalViewModel.cs" />
+    <Compile Include="ViewModels\Stock\ItemTypeViewModel.cs" />
+    <Compile Include="Views\Stock\ItemTypeView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.ItemTypeView.cs" />
+    <Compile Include="Journal\ViewModels\Stock\ItemsTypeJournalViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
