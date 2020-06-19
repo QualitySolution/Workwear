@@ -69,7 +69,7 @@ namespace workwear
 				.AddDeleteDependence<Nomenclature> (x => x.Type)
 				.AddDeleteDependence<EmployeeCardItem> (x => x.Item)
 				.AddDeleteDependence<NormItem> (x => x.Item)
-				.AddDeleteDependence<IssuanceSheetItem>(x => x.ItemsType);
+				.AddDeleteDependence<IssuanceSheetItem>(x => x.ProtectionTools);
 
 			DeleteConfig.AddHibernateDeleteInfo<Norm> ()
 				.AddRemoveFromDependence<EmployeeCard> (x => x.UsedNorms, x => x.RemoveUsedNorm)
