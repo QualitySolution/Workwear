@@ -25,7 +25,6 @@ using QSSupportLib;
 using QSTelemetry;
 using workwear;
 using workwear.Dialogs.DataBase;
-using workwear.Dialogs.Organization;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -35,9 +34,7 @@ using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.JournalViewers;
-using workwear.Representations.Organization;
 using workwear.Tools;
-using workwear.ViewModel;
 using workwear.ViewModels.Company;
 
 public partial class MainWindow : Gtk.Window
@@ -286,11 +283,8 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionNormsActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("OpenNorms");
-		tdiMain.OpenTab(
-			ReferenceRepresentation.GenerateHashName<NormVM>(),
-			() => new ReferenceRepresentation(new NormVM())
-		);
+		MainTelemetry.AddCount(nameof(NormJournalViewModel));
+		NavigationManager.OpenViewModel<NormJournalViewModel>(null);
 	}
 
 	protected void OnAction13Activated(object sender, EventArgs e)
