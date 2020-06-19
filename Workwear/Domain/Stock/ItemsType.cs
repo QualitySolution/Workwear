@@ -6,8 +6,6 @@ using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
 using workwear.Measurements;
 
-
-
 namespace workwear.Domain.Stock
 {
 	[Appellative (Gender = GrammaticalGender.Masculine,

@@ -552,7 +552,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.NomenclatureDlg" design-size="425 355">
+  <widget class="Gtk.Bin" id="workwear.NomenclatureDlg" design-size="475 355">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -804,10 +804,9 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.Widgets.yEntryReference" id="yentryItemsType">
+              <widget class="QS.Views.Control.EntityEntry" id="yentryItemsType">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
-                <signal name="Changed" handler="OnYentryItemsTypeChanged" />
               </widget>
               <packing>
                 <property name="TopAttach">2</property>

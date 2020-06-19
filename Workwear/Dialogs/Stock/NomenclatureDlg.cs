@@ -1,20 +1,24 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
+using Gamma.Binding.Converters;
 using Gamma.Utilities;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
-using QSOrmProject;
-using workwear.Domain.Regulations;
+using QS.ViewModels.Control.EEVM;
 using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Stock;
 using workwear.Measurements;
+using workwear.ViewModels.Stock;
 
 namespace workwear
 {
 	public partial class NomenclatureDlg : EntityDialogBase<Nomenclature>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
+		ILifetimeScope AutofacScope;
 
 		public NomenclatureDlg()
 		{
@@ -38,9 +42,6 @@ namespace workwear
 
 			yentryName.Binding.AddBinding (Entity, e => e.Name, w => w.Text).InitializeFromSource ();
 
-			yentryItemsType.SubjectType = typeof(ItemsType);
-			yentryItemsType.Binding.AddBinding (Entity, e => e.Type, w => w.Subject).InitializeFromSource ();
-
 			ycomboClothesSex.ItemsEnum = typeof(ClothesSex);
 			ycomboClothesSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItemOrNull).InitializeFromSource ();
 
@@ -49,6 +50,17 @@ namespace workwear
 			ycomboWearStd.Binding.AddBinding (Entity, e => e.SizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+
+			var builder = new LegacyEEVMBuilderFactory<Nomenclature>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
+
+			yentryItemsType.ViewModel = builder.ForProperty(x => x.Type)
+									.UseViewModelJournalAndAutocompleter<ItemsTypeJournalViewModel>()
+									.UseViewModelDialog<ItemTypeViewModel>()
+									.Finish();
+			yentryItemsType.ViewModel.Changed += OnYentryItemsTypeChanged;
+			OnYentryItemsTypeChanged(null, EventArgs.Empty);
 		}
 
 		public override bool Save ()
