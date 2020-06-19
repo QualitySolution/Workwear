@@ -30,7 +30,8 @@ namespace workwear.Journal.ViewModels.Regulations
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Code).WithAlias(() => resultAlias.Code)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
-				).TransformUsing(Transformers.AliasToBean<ProfessionJournalNode>());
+				).OrderBy(x => x.Name).Asc
+				.TransformUsing(Transformers.AliasToBean<ProfessionJournalNode>());
 		}
 	}
 

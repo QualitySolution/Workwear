@@ -44,7 +44,9 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(() => professionAlias.Name).WithAlias(() => resultAlias.Profession)
 					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 					.Select(() => departmentAlias.Name).WithAlias(() => resultAlias.Department)
-				).TransformUsing(Transformers.AliasToBean<PostJournalNode>());
+				)
+				.OrderBy(x => x.Name).Asc
+				.TransformUsing(Transformers.AliasToBean<PostJournalNode>());
 		}
 	}
 

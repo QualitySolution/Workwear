@@ -53,6 +53,7 @@ namespace workwear.Journal.ViewModels.Regulations
 					   Projections.Constant("; "))
 				   ).WithAlias(() => resultAlias.Professions)
 				)
+				.OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<NormJournalNode>());
 		}
 	}

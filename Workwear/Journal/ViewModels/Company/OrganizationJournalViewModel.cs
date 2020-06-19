@@ -31,7 +31,8 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(x => x.Address).WithAlias(() => resultAlias.Address)
-				).TransformUsing(Transformers.AliasToBean<OrganizationJournalNode>());
+				).OrderBy(x => x.Name).Asc
+				.TransformUsing(Transformers.AliasToBean<OrganizationJournalNode>());
 		}
 	}
 

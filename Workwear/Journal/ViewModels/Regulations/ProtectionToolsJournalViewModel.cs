@@ -29,7 +29,8 @@ namespace workwear.Journal.ViewModels.Regulations
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
-				).TransformUsing(Transformers.AliasToBean<ProtectionToolsJournalNode>());
+				).OrderBy(x => x.Name).Asc
+				.TransformUsing(Transformers.AliasToBean<ProtectionToolsJournalNode>());
 		}
 	}
 
