@@ -593,6 +593,6 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionProtectionToolsActivated(object sender, EventArgs e)
 	{
-		NavigationManager.OpenViewModel<ProfessionJournalViewModel>(null);
+		NavigationManager.OpenViewModel<ProtectionToolsJournalViewModel>(null);
 	}
 }
