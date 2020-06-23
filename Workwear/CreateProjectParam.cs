@@ -20,6 +20,7 @@ using QS.Services;
 using QS.Tdi;
 using QS.Validation;
 using QS.ViewModels;
+using QS.ViewModels.Resolve;
 using QS.Views.Resolve;
 using QSOrmProject;
 using QSProjectsLib;
@@ -144,6 +145,7 @@ namespace workwear
 			#endregion
 
 			#region ViewModels
+			builder.Register(x => new AutofacViewModelResolver(AppDIContainer)).As<IViewModelResolver>();
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(OrganizationViewModel)))
 				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
 				.AsSelf();
