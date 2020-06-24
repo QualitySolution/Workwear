@@ -60,8 +60,12 @@ namespace WorkwearTest.Integration.Tools
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
+				var protectionTools = new ProtectionTools();
+				protectionTools.AddNomeclature(nomenclature);
+				uow.Save(protectionTools);
+
 				var norm = new Norm();
-				var normItem = norm.AddItem(nomenclatureType);
+				var normItem = norm.AddItem(protectionTools);
 				normItem.Amount = 1;
 				normItem.NormPeriod = NormPeriodType.Month;
 				normItem.PeriodCount = 2;
@@ -129,8 +133,12 @@ namespace WorkwearTest.Integration.Tools
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
+				var protectionTools = new ProtectionTools();
+				protectionTools.AddNomeclature(nomenclature);
+				uow.Save(protectionTools);
+
 				var norm = new Norm();
-				var normItem = norm.AddItem(nomenclatureType);
+				var normItem = norm.AddItem(protectionTools);
 				normItem.Amount = 1;
 				normItem.NormPeriod = NormPeriodType.Year;
 				normItem.PeriodCount = 1;
@@ -165,7 +173,7 @@ namespace WorkwearTest.Integration.Tools
 				expenseOp.NormItem = normItem;
 				expenseOp.Issued = 1;
 				expenseOp.WarehouseOperation = warehouseOperation;
-				var graph = IssueGraph.MakeIssueGraph(uow, employee, nomenclatureType);
+				var graph = IssueGraph.MakeIssueGraph(uow, employee, protectionTools);
 				expenseOp.RecalculateDatesOfIssueOperation(graph, ask);
 				uow.Save(expenseOp);
 
@@ -181,7 +189,7 @@ namespace WorkwearTest.Integration.Tools
 				expenseOp2.NormItem = normItem;
 				expenseOp2.Issued = 1;
 				expenseOp2.WarehouseOperation = warehouseOperation2;
-				graph = IssueGraph.MakeIssueGraph(uow, employee, nomenclatureType);
+				graph = IssueGraph.MakeIssueGraph(uow, employee, protectionTools);
 				expenseOp2.RecalculateDatesOfIssueOperation(graph, ask);
 				uow.Save(expenseOp2);
 
@@ -236,14 +244,18 @@ namespace WorkwearTest.Integration.Tools
 				nomenclature2.Type = nomenclatureType2;
 				uow.Save(nomenclature2);
 
+				var protectionTools = new ProtectionTools();
+				protectionTools.AddNomeclature(nomenclature);
+				uow.Save(protectionTools);
+
 				var position2 = new StockPosition(nomenclature2, null, null, 0);
 
 				var norm = new Norm();
-				var normItem = norm.AddItem(nomenclatureType);
+				var normItem = norm.AddItem(protectionTools);
 				normItem.Amount = 1;
 				normItem.NormPeriod = NormPeriodType.Year;
 				normItem.PeriodCount = 1;
-				var normItem2 = norm.AddItem(nomenclatureType2);
+				var normItem2 = norm.AddItem(protectionTools);
 				normItem2.Amount = 1;
 				normItem2.NormPeriod = NormPeriodType.Month;
 				normItem2.PeriodCount = 4;
@@ -318,8 +330,12 @@ namespace WorkwearTest.Integration.Tools
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
+				var protectionTools = new ProtectionTools();
+				protectionTools.AddNomeclature(nomenclature);
+				uow.Save(protectionTools);
+
 				var norm = new Norm();
-				var normItem = norm.AddItem(nomenclatureType);
+				var normItem = norm.AddItem(protectionTools);
 				normItem.Amount = 1;
 				normItem.NormPeriod = NormPeriodType.Month;
 				normItem.PeriodCount = 2;

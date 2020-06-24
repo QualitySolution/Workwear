@@ -104,6 +104,20 @@ namespace workwear.Domain.Regulations
 
 		public virtual IEnumerable<Nomenclature> MatchedNomenclatures => Nomenclatures.Union(Analogs.SelectMany(x => x.Nomenclatures));
 
+		public virtual void AddNomeclature(Nomenclature nomenclature)
+		{
+			if(Analogs.Any(p => DomainHelper.EqualDomainObjects(p, nomenclature))) {
+				logger.Warn("Такой аналог уже добавлен. Пропускаем...");
+				return;
+			}
+			ObservableNomenclatures.Add(nomenclature);
+		}
+
+		public virtual void RemoveNomeclature(Nomenclature nomenclature)
+		{
+			ObservableNomenclatures.Remove(nomenclature);
+		}
+
 		#endregion
 	}
 }
