@@ -61,6 +61,7 @@ namespace WorkwearTest.Integration.Tools
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
+				protectionTools.Name = "СИЗ для тестирования";
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
@@ -134,6 +135,7 @@ namespace WorkwearTest.Integration.Tools
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
+				protectionTools.Name = "СИЗ для тестирования";
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
@@ -245,6 +247,7 @@ namespace WorkwearTest.Integration.Tools
 				uow.Save(nomenclature2);
 
 				var protectionTools = new ProtectionTools();
+				protectionTools.Name = "СИЗ для тестирования";
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
@@ -331,6 +334,7 @@ namespace WorkwearTest.Integration.Tools
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
+				protectionTools.Name = "СИЗ для тестирования";
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
