@@ -246,19 +246,24 @@ namespace WorkwearTest.Integration.Tools
 				nomenclature2.Type = nomenclatureType2;
 				uow.Save(nomenclature2);
 
-				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "СИЗ для тестирования";
-				protectionTools.AddNomeclature(nomenclature);
-				uow.Save(protectionTools);
+				var protectionTools1 = new ProtectionTools();
+				protectionTools1.Name = "СИЗ для тестирования";
+				protectionTools1.AddNomeclature(nomenclature);
+				uow.Save(protectionTools1);
+
+				var protectionTools2 = new ProtectionTools();
+				protectionTools2.Name = "СИЗ для тестирования2";
+				protectionTools2.AddNomeclature(nomenclature2);
+				uow.Save(protectionTools2);
 
 				var position2 = new StockPosition(nomenclature2, null, null, 0);
 
 				var norm = new Norm();
-				var normItem = norm.AddItem(protectionTools);
+				var normItem = norm.AddItem(protectionTools1);
 				normItem.Amount = 1;
 				normItem.NormPeriod = NormPeriodType.Year;
 				normItem.PeriodCount = 1;
-				var normItem2 = norm.AddItem(protectionTools);
+				var normItem2 = norm.AddItem(protectionTools2);
 				normItem2.Amount = 1;
 				normItem2.NormPeriod = NormPeriodType.Month;
 				normItem2.PeriodCount = 4;
