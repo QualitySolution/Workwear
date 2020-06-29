@@ -280,9 +280,14 @@ namespace workwear.Domain.Operations
 
 		public virtual void RecalculateDatesOfIssueOperation(IssueGraph graph, IInteractiveQuestion askUser)
 		{
+			if(ProtectionTools == null) {
+				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature.Name} от {OperationTime} не указана 'Номеклатура ТОН' поэтому прерасчет даты выдачи и использования не возможен.");
+				return;
+			}
+
 			if(NormItem == null) {
 				//Пробуем найти норму сами.
-				var cardItem = Employee.WorkwearItems.FirstOrDefault(x => Nomenclature.Type.IsSame(x.Item));
+				var cardItem = Employee.WorkwearItems.FirstOrDefault(x => ProtectionTools.IsSame(x.Item));
 				NormItem = cardItem?.ActiveNormItem;
 			}
 
@@ -303,7 +308,7 @@ namespace workwear.Domain.Operations
 					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
 				if (firstLessNorm != null && firstLessNorm.StartDate.AddDays(-BaseParameters.ColDayAheadOfShedule) > OperationTime.Date)
 				{
-					if(askUser.Question($"На {operationTime:d} за сотрудником уже числится {amountAtEndDay} x {Nomenclature.TypeName}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. Передвинуть начало экспуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?")) 
+					if(askUser.Question($"На {operationTime:d} за сотрудником уже числится {amountAtEndDay} x {ProtectionTools.Name}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. Передвинуть начало экспуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?")) 
 						startOfUse = firstLessNorm.StartDate;
 				}
 				else if (firstLessNorm != null)
@@ -314,7 +319,7 @@ namespace workwear.Domain.Operations
 
 			if(Issued > amountByNorm)
 			{
-				if(askUser.Question($"За раз выдается {Issued} x {Nomenclature.Type.Name} это больше чем положено по норме {amountByNorm}. Увеличить период эксплуатации выданного пропорционально количеству?"))
+				if(askUser.Question($"За раз выдается {Issued} x {ProtectionTools.Name} это больше чем положено по норме {amountByNorm}. Увеличить период эксплуатации выданного пропорционально количеству?"))
 				{
 					ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
 				}

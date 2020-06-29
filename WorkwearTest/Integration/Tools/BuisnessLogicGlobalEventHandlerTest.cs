@@ -172,6 +172,7 @@ namespace WorkwearTest.Integration.Tools
 				expenseOp.AutoWriteoffDate = new DateTime(2020, 1, 1);
 				expenseOp.Employee = employee;
 				expenseOp.Nomenclature = nomenclature;
+				expenseOp.ProtectionTools = protectionTools;
 				expenseOp.NormItem = normItem;
 				expenseOp.Issued = 1;
 				expenseOp.WarehouseOperation = warehouseOperation;
@@ -188,6 +189,7 @@ namespace WorkwearTest.Integration.Tools
 				expenseOp2.AutoWriteoffDate = new DateTime(2020, 1, 1);
 				expenseOp2.Employee = employee;
 				expenseOp2.Nomenclature = nomenclature;
+				expenseOp2.ProtectionTools = protectionTools;
 				expenseOp2.NormItem = normItem;
 				expenseOp2.Issued = 1;
 				expenseOp2.WarehouseOperation = warehouseOperation2;

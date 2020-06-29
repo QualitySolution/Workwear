@@ -33,7 +33,7 @@ namespace WorkwearTest.Integration.Stock
 		[Test(Description = "Корректно обрабатываем выдачу одной номенклатуры несколько раз за день. Реальный баг.")]
 		[Category("real case")]
 		[Category("Integrated")]
-		public void UpdateOperations_IssuingMultipleRows_TwoNomeclatureSameTypeTest()
+		public void UpdateOperations_IssuingMultipleRows_TwoNomeclatureSameNeedsTest()
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
@@ -50,11 +50,6 @@ namespace WorkwearTest.Integration.Stock
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
-				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "СИЗ для тестирования";
-				protectionTools.AddNomeclature(nomenclature);
-				uow.Save(protectionTools);
-
 				var position1 = new StockPosition(nomenclature, null, null, 0);
 
 				var nomenclature2 = new Nomenclature();
@@ -62,6 +57,12 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(nomenclature2);
 
 				var position2 = new StockPosition(nomenclature2, null, null, 0);
+
+				var protectionTools = new ProtectionTools();
+				protectionTools.Name = "СИЗ для тестирования";
+				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomeclature(nomenclature2);
+				uow.Save(protectionTools);
 
 				var norm = new Norm();
 				var normItem = norm.AddItem(protectionTools);
