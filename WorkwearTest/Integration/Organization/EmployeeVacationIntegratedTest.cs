@@ -60,6 +60,7 @@ namespace WorkwearTest.Integration.Organization
 
 				var protectionTools = new ProtectionTools();
 				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomeclature(nomenclature2);
 				protectionTools.Name = "СИЗ для тестирования";
 				uow.Save(protectionTools);
 

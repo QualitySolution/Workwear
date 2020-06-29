@@ -96,6 +96,7 @@ namespace WorkwearTest.Integration.Tools
 				expenseOp.ExpiryByNorm = new DateTime(2019, 4, 1);
 				expenseOp.Employee = employee;
 				expenseOp.Nomenclature = nomenclature;
+				expenseOp.ProtectionTools = protectionTools;
 				expenseOp.NormItem = normItem;
 				expenseOp.Issued = 1;
 				expenseOp.WarehouseOperation = warehouseOperation;
@@ -300,11 +301,11 @@ namespace WorkwearTest.Integration.Tools
 				expense.UpdateOperations(uow, ask);
 				uow.Save(expense);
 				expense.UpdateEmployeeNextIssue();
-				employee.WorkwearItems.First(e => e.Item.IsSame(nomenclatureType2)).Created = new DateTime(2018, 4, 22);
+				employee.WorkwearItems.First(e => e.Item.IsSame(protectionTools2)).Created = new DateTime(2018, 4, 22);
 				uow.Save(expense.Employee);
 				uow.Commit();
 
-				Assert.That(employee.WorkwearItems.First(e => e.Item.IsSame(nomenclatureType2)).NextIssue,
+				Assert.That(employee.WorkwearItems.First(e => e.Item.IsSame(protectionTools2)).NextIssue,
 					Is.EqualTo(new DateTime(2018, 8, 22))
 				);
 
@@ -316,7 +317,7 @@ namespace WorkwearTest.Integration.Tools
 				//проверяем данные
 				using(var uow2 = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления uow2")) {
 					var resultEmployee = uow2.GetById<EmployeeCard>(employee.Id);
-					Assert.That(resultEmployee.WorkwearItems.First(e => e.Item.IsSame(nomenclatureType2)).NextIssue, 
+					Assert.That(resultEmployee.WorkwearItems.First(e => e.Item.IsSame(protectionTools2)).NextIssue, 
 					Is.EqualTo(new DateTime(2018, 4, 22)));
 				}
 			}
@@ -355,15 +356,19 @@ namespace WorkwearTest.Integration.Tools
 				var employee = new EmployeeCard();
 				uow.Save(employee);
 
+				var warehouseOperation = new WarehouseOperation();
 				var expenseOp = new EmployeeIssueOperation();
-				expenseOp.OperationTime = new DateTime(2019, 1, 1);
+				expenseOp.OperationTime = warehouseOperation.OperationTime = new DateTime(2019, 1, 1);
 				expenseOp.ExpiryByNorm = new DateTime(2019, 4, 1);
+				expenseOp.ProtectionTools = protectionTools;
 				expenseOp.Employee = employee;
-				expenseOp.Nomenclature = nomenclature;
+				expenseOp.Nomenclature = warehouseOperation.Nomenclature = nomenclature;
 				expenseOp.NormItem = normItem;
-				expenseOp.Issued = 1;
+				warehouseOperation.Amount = expenseOp.Issued = 1;
+				expenseOp.WarehouseOperation = warehouseOperation;
 				uow.Save(nomenclature);
 				uow.Save(normItem);
+				uow.Save(warehouseOperation);
 				uow.Save(expenseOp);
 				uow.Commit();
 
