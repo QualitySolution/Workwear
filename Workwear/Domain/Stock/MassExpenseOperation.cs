@@ -5,8 +5,13 @@ using workwear.Domain.Operations;
 
 namespace workwear.Domain.Stock
 {
+	[Appellative( Gender = GrammaticalGender.Feminine,
+		Nominative = "проводка операций",
+		NominativePlural = "проводки операций"
+		)]
 	public class MassExpenseOperation : PropertyChangedBase, IDomainObject
 	{
+		#region Свойства
 		public virtual int Id { get; set; }
 
 		WarehouseOperation warehouseOperationExpense;
@@ -32,6 +37,10 @@ namespace workwear.Domain.Stock
 			get { return massExpenseDoc; }
 			set { SetField(ref massExpenseDoc, value); }
 		}
+		#endregion
 
+		#region Рассчетные
+		public virtual string Title => $"Проводка {EmployeeIssueOperation.Employee.ShortName} <- {EmployeeIssueOperation.Nomenclature.Name} x {employeeIssueOperation.Issued}";
+		#endregion
 	}
 }

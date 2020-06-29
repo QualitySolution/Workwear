@@ -174,6 +174,8 @@ namespace workwear.Domain.Stock
 
 		#endregion
 
+		#region Пробросы
+
 		public virtual string FirstName {
 			get {
 				return EmployeeCard.FirstName;
@@ -194,7 +196,15 @@ namespace workwear.Domain.Stock
 			}
 			set { EmployeeCard.Patronymic = value; }
 		}
+		#endregion
 
+		#region Расчетные
+
+		public virtual string Title => $"Сотрудник {EmployeeCard?.ShortName} в массовой выдаче";
+
+		#endregion
+
+		#region Методы
 		public virtual SizePair GetSize(СlothesType? wearCategory)
 		{
 			switch(wearCategory) {
@@ -220,5 +230,6 @@ namespace workwear.Domain.Stock
 				return null;
 			return new SizePair(SizeHelper.GetSizeStdCode(growStd[0]), WearGrowth);
 		}
+		#endregion
 	}
 }

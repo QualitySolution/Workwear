@@ -30,7 +30,8 @@ namespace workwear.Journal.ViewModels.Stock
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
-				).TransformUsing(Transformers.AliasToBean<WarehouseJournalNode>());
+				).OrderBy(x => x.Name).Asc
+				.TransformUsing(Transformers.AliasToBean<WarehouseJournalNode>());
 		}
 	}
 

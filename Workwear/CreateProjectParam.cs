@@ -21,6 +21,7 @@ using QS.Services;
 using QS.Tdi;
 using QS.Validation;
 using QS.ViewModels;
+using QS.ViewModels.Resolve;
 using QS.Views.Resolve;
 using QSOrmProject;
 using QSProjectsLib;
@@ -61,8 +62,6 @@ namespace workwear
 			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
 			//Спецодежда
 			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
-			OrmMain.AddObjectDescription<Norm>().Dialog<NormDlg>();
-			OrmMain.AddObjectDescription<ItemsType>().Dialog<ItemTypeDlg> ().DefaultTableView ().SearchColumn ("Наименование", i => i.Name).OrderAsc (i => i.Name).End ();
 			//Организация
 			OrmMain.AddObjectDescription<EmployeeVacation>().Dialog<EmployeeVacationDlg>();
 			OrmMain.AddObjectDescription<VacationType>().Dialog<VacationTypeDlg>().DefaultTableView().SearchColumn("Название", e => e.Name).Column("Исключать из носки", e => e.ExcludeFromWearing ? "Да" : "Нет").SearchColumn("Комментарий", e => e.Comments).End();
@@ -130,6 +129,10 @@ namespace workwear
 			builder.Register(cc => new ClassNamesBaseGtkViewResolver(typeof(RdlViewerView), typeof(OrganizationView), typeof(DeletionView))).As<IGtkViewResolver>();
 			#endregion
 
+			#region Главное окно
+			builder.Register((ctx) => MainWin.ProgressBar).As<IProgressBarDisplayable>();
+			#endregion
+
 			#region Старые диалоги
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(ExpenseDocDlg)))
 				.Where(t => t.IsAssignableTo<ITdiTab>() && t.Name.EndsWith("Dlg"))
@@ -150,6 +153,7 @@ namespace workwear
 			#endregion
 
 			#region ViewModels
+			builder.Register(x => new AutofacViewModelResolver(AppDIContainer)).As<IViewModelResolver>();
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(OrganizationViewModel)))
 				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
 				.AsSelf();

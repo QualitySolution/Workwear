@@ -80,7 +80,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void OpenTimeLine(EmployeeCardItem item)
 		{
-			navigation.OpenTdiTab<EmployeeIssueGraphDlg, EmployeeCard, ItemsType>(employeeViewModel, Entity, item.Item);
+			navigation.OpenTdiTab<EmployeeIssueGraphDlg, EmployeeCard, ProtectionTools>(employeeViewModel, Entity, item.Item);
 		}
 
 		public void WriteOffWear()

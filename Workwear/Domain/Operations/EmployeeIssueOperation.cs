@@ -41,6 +41,13 @@ namespace workwear.Domain.Operations
 			set { SetField(ref employee, value); }
 		}
 
+		private ProtectionTools protectionTools;
+		[Display(Name = "Номеклатура ТОН")]
+		public virtual ProtectionTools ProtectionTools {
+			get => protectionTools;
+			set => SetField(ref protectionTools, value);
+		}
+
 		private Nomenclature nomenclature;
 
 		[Display(Name = "Номенклатура")]
@@ -257,9 +264,17 @@ namespace workwear.Domain.Operations
 			WarehouseOperation = item.WarehouseOperation;
 
 			if (NormItem == null)
-				NormItem = Employee.WorkwearItems.FirstOrDefault(x => x.Item == Nomenclature.Type)?.ActiveNormItem;
+				NormItem = Employee.WorkwearItems.FirstOrDefault(x => x.Item.MatchedNomenclatures.Contains(Nomenclature))?.ActiveNormItem;
 
-			var graph = IssueGraph.MakeIssueGraph(uow, Employee, Nomenclature.Type);
+			if(NormItem == null) {
+				logger.Warn($"В операции выдачи {Nomenclature.Name} не указана ссылка на норму, перерасчет сроков выдачи невозможен.");
+				return;
+			}
+
+			if(ProtectionTools == null)
+				ProtectionTools = NormItem.Item;
+
+			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.Item);
 			RecalculateDatesOfIssueOperation(graph, askUser);
 		}
 

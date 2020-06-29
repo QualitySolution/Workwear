@@ -123,6 +123,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionProfession;
 
+	private global::Gtk.Action ActionProtectionTools;
+
 	private global::Gtk.Action ActionCards;
 
 	private global::Gtk.VBox vbox1;
@@ -349,6 +351,9 @@ public partial class MainWindow
 		this.ActionCards = new global::Gtk.Action("ActionCards", global::Mono.Unix.Catalog.GetString("Личные карточки"), null, null);
 		this.ActionCards.ShortLabel = global::Mono.Unix.Catalog.GetString("Личные карточки");
 		w1.Add(this.ActionCards, null);
+		this.ActionProtectionTools = new global::Gtk.Action("ActionProtectionTools", global::Mono.Unix.Catalog.GetString("Номенклатура ТОН"), null, null);
+		this.ActionProtectionTools.ShortLabel = global::Mono.Unix.Catalog.GetString("Номенклатура ТОН");
+		w1.Add(this.ActionProtectionTools, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -378,30 +383,30 @@ public partial class MainWindow
 				"ction=\'ActionIssuanceSheets\'/></menu><menu name=\'Action1\' action=\'Action1\'><menu" +
 				"item name=\'ActionOrganizations\' action=\'ActionOrganizations\'/><menuitem name=\'Ac" +
 				"tionObjects\' action=\'ActionObjects\'/><menuitem name=\'ActionDepartment\' action=\'A" +
-				"ctionDepartment\'/><menuitem name=\'ActionEmployees\' action=\'ActionEmployees\'/><me" +
-				"nuitem name=\'ActionCards\' action=\'ActionCards\'/><separator/><menuitem name=\'Acti" +
-				"onRegulationDoc\' action=\'ActionRegulationDoc\'/><menuitem name=\'ActionNorms\' acti" +
-				"on=\'ActionNorms\'/><separator/><menuitem name=\'Action5\' action=\'Action5\'/><menuit" +
-				"em name=\'Action6\' action=\'Action6\'/><menuitem name=\'ActionWarehouse\' action=\'Act" +
-				"ionWarehouse\'/><separator/><menuitem name=\'Action7\' action=\'Action7\'/><separator" +
-				"/><menuitem name=\'ActionProfession\' action=\'ActionProfession\'/><menuitem name=\'A" +
-				"ction8\' action=\'Action8\'/><menuitem name=\'ActionVacationTypes\' action=\'ActionVac" +
-				"ationTypes\'/><menuitem name=\'Action9\' action=\'Action9\'/></menu><menu name=\'Actio" +
-				"nReports\' action=\'ActionReports\'><menuitem name=\'Action10\' action=\'Action10\'/><m" +
-				"enuitem name=\'Action11\' action=\'Action11\'/><separator/><menuitem name=\'Action12\'" +
-				" action=\'Action12\'/><separator/><menuitem name=\'Action13\' action=\'Action13\'/><me" +
-				"nuitem name=\'ActionRequestSheet\' action=\'ActionRequestSheet\'/><menuitem name=\'Ac" +
-				"tionAverageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><menuitem name=\'Action2" +
-				"2\' action=\'Action22\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuit" +
-				"em name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' action=" +
-				"\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator" +
-				"/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenRef" +
-				"ormal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><men" +
-				"uitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' act" +
-				"ion=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/" +
-				"><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><menu" +
-				"item name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\'" +
-				" action=\'aboutAction\'/></menu></menubar></ui>");
+				"ctionDepartment\'/><menuitem name=\'ActionEmployees\' action=\'ActionEmployees\'/><se" +
+				"parator/><menuitem name=\'ActionRegulationDoc\' action=\'ActionRegulationDoc\'/><men" +
+				"uitem name=\'ActionProtectionTools\' action=\'ActionProtectionTools\'/><menuitem nam" +
+				"e=\'ActionNorms\' action=\'ActionNorms\'/><separator/><menuitem name=\'Action5\' actio" +
+				"n=\'Action5\'/><menuitem name=\'Action6\' action=\'Action6\'/><menuitem name=\'ActionWa" +
+				"rehouse\' action=\'ActionWarehouse\'/><separator/><menuitem name=\'Action7\' action=\'" +
+				"Action7\'/><separator/><menuitem name=\'ActionProfession\' action=\'ActionProfession" +
+				"\'/><menuitem name=\'Action8\' action=\'Action8\'/><menuitem name=\'ActionVacationType" +
+				"s\' action=\'ActionVacationTypes\'/><menuitem name=\'Action9\' action=\'Action9\'/></me" +
+				"nu><menu name=\'ActionReports\' action=\'ActionReports\'><menuitem name=\'Action10\' a" +
+				"ction=\'Action10\'/><menuitem name=\'Action11\' action=\'Action11\'/><separator/><menu" +
+				"item name=\'Action12\' action=\'Action12\'/><separator/><menuitem name=\'Action13\' ac" +
+				"tion=\'Action13\'/><menuitem name=\'ActionRequestSheet\' action=\'ActionRequestSheet\'" +
+				"/><menuitem name=\'ActionAverageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><me" +
+				"nuitem name=\'Action22\' action=\'Action22\'/></menu><menu name=\'ActionHelp\' action=" +
+				"\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'Ac" +
+				"tionHistory\' action=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'Actio" +
+				"nUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem" +
+				" name=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' ac" +
+				"tion=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'Act" +
+				"ionOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' act" +
+				"ion=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></me" +
+				"nu><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuite" +
+				"m name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -592,6 +597,7 @@ public partial class MainWindow
 		this.ActionWarehouse.Activated += new global::System.EventHandler(this.OnActionWarehouseActivated);
 		this.ActionDepartment.Activated += new global::System.EventHandler(this.OnActionDepartmentActivated);
 		this.ActionProfession.Activated += new global::System.EventHandler(this.OnActionProfessionActivated);
+		this.ActionProtectionTools.Activated += new global::System.EventHandler(this.OnActionProtectionToolsActivated);
 		this.ActionCards.Activated += new global::System.EventHandler(this.OnActionCardsActivated);
 	}
 }

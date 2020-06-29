@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Bindings.Collections.Generic;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using workwear.Domain.Regulations;
@@ -81,6 +83,28 @@ namespace workwear.Domain.Stock
 		#region Рассчетные
 
 		public virtual string TypeName => Type.Name;
+
+		#endregion
+
+		#region Средства защиты
+
+		private IList<ProtectionTools> protectionTools = new List<ProtectionTools>();
+
+		[Display(Name = "Номенклатры ТОН")]
+		public virtual IList<ProtectionTools> ProtectionTools {
+			get { return protectionTools; }
+			set { SetField(ref protectionTools, value, () => ProtectionTools); }
+		}
+
+		GenericObservableList<ProtectionTools> observableProtectionTools;
+		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		public virtual GenericObservableList<ProtectionTools> ObservableProtectionTools {
+			get {
+				if(observableProtectionTools == null)
+					observableProtectionTools = new GenericObservableList<ProtectionTools>(ProtectionTools);
+				return observableProtectionTools;
+			}
+		}
 
 		#endregion
 

@@ -84,9 +84,27 @@ namespace workwear.Journal
 
 			#region Regulations
 
+			TreeViewColumnsConfigFactory.Register<NormJournalViewModel>(
+				() => FluentColumnsConfig<NormJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString())
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("№ ТОН").AddTextRenderer(node => node.TonNumber)
+					.AddColumn("№ Приложения").AddTextRenderer(node => node.TonAttachment)
+					.AddColumn("№ Пункта").AddTextRenderer(node => node.TonParagraph).SearchHighlight()
+					.AddColumn("Профессии").AddTextRenderer(node => node.Professions)
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<ProfessionJournalViewModel>(
 				() => FluentColumnsConfig<ProfessionJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Code}").SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.Finish()
+			);
+
+			TreeViewColumnsConfigFactory.Register<ProtectionToolsJournalViewModel>(
+				() => FluentColumnsConfig<ProtectionToolsJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.Finish()
 			);
@@ -108,6 +126,14 @@ namespace workwear.Journal
 			#endregion
 
 			#region Stock
+
+			TreeViewColumnsConfigFactory.Register<ItemsTypeJournalViewModel>(
+				() => FluentColumnsConfig<ItemsTypeJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Вид одежды").AddTextRenderer(node => node.WearCategoryText)
+					.Finish()
+			);
 
 			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
 				() => FluentColumnsConfig<StockBalanceJournalNode>.Create()

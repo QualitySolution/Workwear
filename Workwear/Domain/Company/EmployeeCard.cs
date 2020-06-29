@@ -532,22 +532,8 @@ namespace workwear.Domain.Company
 		public virtual void FillWearInStockInfo(IUnitOfWork uow, Warehouse warehouse, DateTime onTime, bool onlyUnderreceived = false)
 		{
 			var actualItems = onlyUnderreceived ? UnderreceivedItems : WorkwearItems;
-
-			var itemsTypes = actualItems.Select(x => x.Item).ToArray();
-			if(itemsTypes.Length == 0)
-				return;
-
-			var nomenclaturesByType = NomenclatureRepository.GetSuitableNomenclatures(uow, itemsTypes);
-			if (nomenclaturesByType.Count == 0)
-				return;
-
-			foreach(var item in actualItems) {
-				if(nomenclaturesByType.ContainsKey(item.Item)) {
-					item.MatchedNomenclature = nomenclaturesByType[item.Item];
-				}
-			}
-
-			var allNomenclatures = nomenclaturesByType.SelectMany(pair => pair.Value).ToList();
+			
+			var allNomenclatures = actualItems.SelectMany(x => x.Item.MatchedNomenclatures).Distinct().ToList();
 			var stockRepo = new StockRepository();
 			var stock = stockRepo.StockBalances (uow, warehouse, allNomenclatures, onTime);
 			foreach(var item in actualItems)
@@ -571,9 +557,9 @@ namespace workwear.Domain.Company
 		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow, IInteractiveQuestion askUser, DateTime begin, DateTime end)
 		{
 			var operations = EmployeeIssueRepository.GetOperationsTouchDates(uow, this, begin, end,
-				q => q.Fetch(SelectMode.Fetch, o => o.Nomenclature.Type)
+				q => q.Fetch(SelectMode.Fetch, o => o.ProtectionTools)
 			);
-			foreach(var typeGroup in operations.GroupBy(o => o.Nomenclature.Type)) {
+			foreach(var typeGroup in operations.GroupBy(o => o.ProtectionTools)) {
 				foreach(var operation in typeGroup.OrderBy(o => o.OperationTime.Date).ThenBy(o => o.StartOfUse)) {
 					var graph = IssueGraph.MakeIssueGraph(uow, this, typeGroup.Key);
 					operation.RecalculateDatesOfIssueOperation(graph, askUser);

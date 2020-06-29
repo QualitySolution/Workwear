@@ -103,7 +103,7 @@ namespace workwear
 
 			NLMKOracle = new NLMKOracle();
 			NLMKOracle.Connect(new GtkInteractiveService());
-
+#if !DEBUG
 			//Иницициализируем телеметрию
 			MainTelemetry.Product = MainSupport.ProjectVerion.Product;
             MainTelemetry.Edition = MainSupport.ProjectVerion.Edition;
@@ -114,7 +114,9 @@ namespace workwear
 				MainTelemetry.DoNotTrack = appConfig.GetBoolean("DoNotTrack", false);
 
 			MainTelemetry.StartUpdateByTimer(600);
-
+#else
+			MainTelemetry.DoNotTrack = true;
+#endif
 			//Запускаем программу
 			MainWin = new MainWindow ();
 			MainWin.Title += string.Format(" (БД: {0})", LoginDialog.SelectedConnection);

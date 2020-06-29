@@ -1,17 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
-using System.Linq;
 using Gamma.Utilities;
-using NLog;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
-using workwear.Domain.Stock;
 using workwear.Measurements;
 
-
-
-namespace workwear.Domain.Regulations
+namespace workwear.Domain.Stock
 {
 	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "типы номенклатуры",
@@ -84,7 +79,7 @@ namespace workwear.Domain.Regulations
 
 		private IList<Nomenclature> nomenclatures = new List<Nomenclature>();
 
-		[Display(Name = "Строки норм")]
+		[Display(Name = "Номенклатура")]
 		public virtual IList<Nomenclature> Nomenclatures {
 			get { return nomenclatures; }
 			set { SetField(ref nomenclatures, value, () => Nomenclatures); }
@@ -102,37 +97,7 @@ namespace workwear.Domain.Regulations
 
 		#endregion
 
-		private IList<ItemsType> itemsTypesAnalogs = new List<ItemsType>();
 
-		[Display(Name = "Аналоги")]
-		public virtual IList<ItemsType> ItemsTypesAnalogs {
-			get { return itemsTypesAnalogs; }
-			set { SetField(ref itemsTypesAnalogs, value, () => ItemsTypesAnalogs); }
-		}
-
-		GenericObservableList<ItemsType> observableItemsTypesAnalogs;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<ItemsType> ObservableItemsTypeAnalog{
-			get {
-				if(observableItemsTypesAnalogs == null)
-					observableItemsTypesAnalogs = new GenericObservableList<ItemsType>(ItemsTypesAnalogs);
-				return observableItemsTypesAnalogs;
-			}
-		}
-
-		public virtual void AddAnalog(ItemsType Analog)
-		{
-			if(ItemsTypesAnalogs.Any(p => DomainHelper.EqualDomainObjects(p, Analog))) {
-				logger.Warn("Такой аналог уже добавлен. Пропускаем...");
-				return;
-			}
-			ObservableItemsTypeAnalog.Add(Analog);
-		}
-
-		public virtual void RemoveAnalog(ItemsType Analog)
-		{
-			ObservableItemsTypeAnalog.Remove(Analog);
-		}
 
 		public ItemsType ()
 		{

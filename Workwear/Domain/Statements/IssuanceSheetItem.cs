@@ -41,13 +41,12 @@ namespace workwear.Domain.Statements
 			set { SetField(ref nomenclature, value); }
 		}
 
-		private ItemsType itemsType;
-		[Display(Name = "Тип номеклатуры")]
-		public virtual ItemsType ItemsType {
-			get => itemsType;
-			set => SetField(ref itemsType, value);
+		private ProtectionTools protectionTools;
+		[Display(Name = "Номеклатура ТОН")]
+		public virtual ProtectionTools ProtectionTools {
+			get => protectionTools;
+			set => SetField(ref protectionTools, value);
 		}
-
 
 		private ExpenseItem expenseItem;
 		[Display(Name = "Строка выдачи")]
@@ -108,9 +107,7 @@ namespace workwear.Domain.Statements
 
 		#region Расчетные
 
-		public virtual string ItemName => nomenclature?.Name ?? ItemsType?.Name;
-
-		public virtual ItemsType ItemsTypeCalculated => Nomenclature?.Type ?? ItemsType;
+		public virtual string ItemName => nomenclature?.Name ?? ProtectionTools?.Name;
 
 		public virtual string Title {
 			get {
@@ -118,7 +115,7 @@ namespace workwear.Domain.Statements
 					Employee.ShortName,
 			  		ItemName,
 			  		Amount,
-			  		ItemsTypeCalculated?.Units?.Name
+			  		Nomenclature?.Type?.Units?.Name
 		 		);
 			}
 		}

@@ -17,25 +17,6 @@ namespace workwear.Repository.Stock
 				.List();
 		}
 
-		/// <summary>
-		/// Получаем список подходящих номеклатур в том счисле и с учетом аналогов.
-		/// </summary>
-		public static Dictionary<ItemsType, List<Nomenclature>> GetSuitableNomenclatures(IUnitOfWork uow, ItemsType[] itemsTypes)
-		{
-			var results = new Dictionary<ItemsType, List<Nomenclature>>();
-			var nomenclatures = uow.Session.QueryOver<Nomenclature>()
-				.Where(n => n.Type.IsIn(itemsTypes))
-				.List();
-
-			foreach(var nomenclature in nomenclatures) {
-				if(!results.ContainsKey(nomenclature.Type))
-					results[nomenclature.Type] = new List<Nomenclature>();
-
-				results[nomenclature.Type].Add(nomenclature);
-			}
-			return results;
-		}
-
 		public static IList<ItemsType> GetTypesOfNomenclatures(IUnitOfWork uow, Nomenclature[] nomenclatures)
 		{
 			var ids = nomenclatures.Select(n => n.Id).ToArray();

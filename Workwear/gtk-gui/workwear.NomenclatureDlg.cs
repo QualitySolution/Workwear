@@ -34,7 +34,7 @@ namespace workwear
 
 		private global::Gamma.Widgets.yEnumComboBox ycomboClothesSex;
 
-		private global::Gamma.Widgets.yEntryReference yentryItemsType;
+		private global::QS.Views.Control.EntityEntry yentryItemsType;
 
 		private global::Gamma.GtkWidgets.yEntry yentryName;
 
@@ -205,7 +205,7 @@ namespace workwear
 			w15.XOptions = ((global::Gtk.AttachOptions)(4));
 			w15.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
-			this.yentryItemsType = new global::Gamma.Widgets.yEntryReference();
+			this.yentryItemsType = new global::QS.Views.Control.EntityEntry();
 			this.yentryItemsType.Events = ((global::Gdk.EventMask)(256));
 			this.yentryItemsType.Name = "yentryItemsType";
 			this.table2.Add(this.yentryItemsType);
@@ -262,7 +262,6 @@ namespace workwear
 			this.ycomboClothesSex.Hide();
 			this.ylabelClothesSex.Hide();
 			this.Show();
-			this.yentryItemsType.Changed += new global::System.EventHandler(this.OnYentryItemsTypeChanged);
 			this.ycomboClothesSex.Changed += new global::System.EventHandler(this.OnYcomboClothesSexChanged);
 		}
 	}

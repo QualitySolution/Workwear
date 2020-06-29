@@ -50,6 +50,10 @@ namespace WorkwearTest.Integration.Stock
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
+				var protectionTools = new ProtectionTools();
+				protectionTools.AddNomeclature(nomenclature);
+				uow.Save(protectionTools);
+
 				var position1 = new StockPosition(nomenclature, null, null, 0);
 
 				var nomenclature2 = new Nomenclature();
@@ -59,7 +63,7 @@ namespace WorkwearTest.Integration.Stock
 				var position2 = new StockPosition(nomenclature2, null, null, 0);
 
 				var norm = new Norm();
-				var normItem = norm.AddItem(nomenclatureType);
+				var normItem = norm.AddItem(protectionTools);
 				normItem.Amount = 1;
 				normItem.NormPeriod = NormPeriodType.Year;
 				normItem.PeriodCount = 1;
@@ -125,11 +129,15 @@ namespace WorkwearTest.Integration.Stock
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
+				var protectionTools = new ProtectionTools();
+				protectionTools.AddNomeclature(nomenclature);
+				uow.Save(protectionTools);
+
 				var position1 = new StockPosition(nomenclature, null, null, 0);
 				var position2 = new StockPosition(nomenclature, "XL", null, 0);
 
 				var norm = new Norm();
-				var normItem = norm.AddItem(nomenclatureType);
+				var normItem = norm.AddItem(protectionTools);
 				normItem.Amount = 1;
 				normItem.NormPeriod = NormPeriodType.Year;
 				normItem.PeriodCount = 1;
@@ -210,10 +218,14 @@ namespace WorkwearTest.Integration.Stock
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
+				var protectionTools = new ProtectionTools();
+				protectionTools.AddNomeclature(nomenclature);
+				uow.Save(protectionTools);
+
 				var position1 = new StockPosition(nomenclature, null, null, 0);
 
 				var norm = new Norm();
-				var normItem = norm.AddItem(nomenclatureType);
+				var normItem = norm.AddItem(protectionTools);
 				normItem.Amount = 1;
 				normItem.NormPeriod = NormPeriodType.Year;
 				normItem.PeriodCount = 1;

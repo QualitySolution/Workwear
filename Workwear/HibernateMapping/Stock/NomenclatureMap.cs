@@ -1,4 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
+using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Measurements;
 
@@ -18,6 +19,11 @@ namespace workwear.HMap
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.Ozm).Column("ozm");
 			References (x => x.Type).Column ("type_id");
+
+			HasManyToMany<ProtectionTools>(x => x.ProtectionTools)
+				.Table("protection_tools_nomenclature")
+				.ParentKeyColumn("nomenclature_id")
+				.ChildKeyColumn("protection_tools_id").Cascade.All();
 		}
 	}
 }

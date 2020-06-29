@@ -25,7 +25,6 @@ using QSSupportLib;
 using QSTelemetry;
 using workwear;
 using workwear.Dialogs.DataBase;
-using workwear.Dialogs.Organization;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -35,9 +34,7 @@ using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.JournalViewers;
-using workwear.Representations.Organization;
 using workwear.Tools;
-using workwear.ViewModel;
 using workwear.ViewModels.Company;
 
 public partial class MainWindow : Gtk.Window
@@ -118,6 +115,13 @@ public partial class MainWindow : Gtk.Window
 
 		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
+		NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
+	}
+
+	void NavigationManager_ViewModelOpened(object sender, ViewModelOpenedEventArgs e)
+	{
+		if(e.ViewModel != null)
+			MainTelemetry.AddCount(e.ViewModel.GetType().Name);
 	}
 
 	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e)
@@ -190,22 +194,17 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnAction8Activated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount(nameof(PostJournalViewModel));
 		NavigationManager.OpenViewModel<PostJournalViewModel>(null);
 	}
 
 	protected void OnAction9Activated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount(nameof(LeadersJournalViewModel));
 		NavigationManager.OpenViewModel<LeadersJournalViewModel>(null);
 	}
 
 	protected void OnAction5Activated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("ItemsType");
-		tdiMain.OpenTab(OrmReference.GenerateHashName<ItemsType>(),
-				() => new OrmReference(typeof(ItemsType))
-			   );
+		NavigationManager.OpenViewModel<ItemsTypeJournalViewModel>(null);
 	}
 
 	protected void OnAction6Activated(object sender, EventArgs e)
@@ -286,11 +285,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionNormsActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("OpenNorms");
-		tdiMain.OpenTab(
-			ReferenceRepresentation.GenerateHashName<NormVM>(),
-			() => new ReferenceRepresentation(new NormVM())
-		);
+		NavigationManager.OpenViewModel<NormJournalViewModel>(null);
 	}
 
 	protected void OnAction13Activated(object sender, EventArgs e)
@@ -339,7 +334,6 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionStockBalanceActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount(nameof(StockBalanceJournalViewModel));
 		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
 		page.ViewModel.ShowSummary = true;
 		page.ViewModel.Filter.ShowNegativeBalance = true;
@@ -354,13 +348,11 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionEmployeesActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount(nameof(EmployeeJournalViewModel));
 		NavigationManager.OpenViewModel<EmployeeJournalViewModel>(null);
 	}
 
 	protected void OnActionObjectsActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount(nameof(SubdivisionJournalViewModel));
 		NavigationManager.OpenViewModel<SubdivisionJournalViewModel>(null);
 	}
 
@@ -573,31 +565,26 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionOrganizationsActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount(nameof(OrganizationJournalViewModel));
 		NavigationManager.OpenViewModel<OrganizationJournalViewModel>(null);
 	}
 
 	protected void OnActionIssuanceSheetsActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount(nameof(IssuanceSheetJournalViewModel));
 		NavigationManager.OpenViewModel<IssuanceSheetJournalViewModel>(null);
 	}
 
 	protected void OnActionWarehouseActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount(nameof(WarehouseJournalViewModel));
 		NavigationManager.OpenViewModel<WarehouseJournalViewModel>(null);
 	}
 
 	protected void OnActionDepartmentActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount(nameof(DepartmentJournalViewModel));
 		NavigationManager.OpenViewModel<DepartmentJournalViewModel>(null);
 	}
 
 	protected void OnActionProfessionActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount(nameof(ProfessionJournalViewModel));
 		NavigationManager.OpenViewModel<ProfessionJournalViewModel>(null);
 	}
 
@@ -605,5 +592,10 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount(nameof(EmployeeCardJournalViewModel));
 		NavigationManager.OpenViewModel<EmployeeCardJournalViewModel>(null);
+	}
+
+	protected void OnActionProtectionToolsActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<ProtectionToolsJournalViewModel>(null);
 	}
 }

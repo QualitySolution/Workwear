@@ -58,10 +58,14 @@ namespace WorkwearTest.Integration.Organization
 				nomenclature2.Type = nomenclatureType;
 				uow.Save(nomenclature2);
 
+				var protectionTools = new ProtectionTools();
+				protectionTools.AddNomeclature(nomenclature);
+				uow.Save(protectionTools);
+
 				var position2 = new StockPosition(nomenclature2, null, null, 0);
 
 				var norm = new Norm();
-				var normItem = norm.AddItem(nomenclatureType);
+				var normItem = norm.AddItem(protectionTools);
 				normItem.Amount = 1;
 				normItem.NormPeriod = NormPeriodType.Year;
 				normItem.PeriodCount = 1;
