@@ -1,23 +1,29 @@
 ﻿using System;
+using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QSOrmProject;
 using workwear.Domain.Regulations;
+using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Regulations;
 
 namespace workwear.ViewModels.Regulations
 {
 	public class ProtectionToolsViewModel : EntityDialogViewModelBase<ProtectionTools>
 	{
-		public ProtectionToolsViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+		ITdiCompatibilityNavigation tdiNavigationManager;
+
+		public ProtectionToolsViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiCompatibilityNavigation navigation, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
+			tdiNavigationManager = navigation;
 		}
 
 		#region Действия View
-
+		#region Аналоги
 		public void AddAnalog()
 		{
 			var page = NavigationManager.OpenViewModel<ProtectionToolsJournalViewModel>(this, OpenPageOptions.AsSlave);
@@ -39,7 +45,31 @@ namespace workwear.ViewModels.Regulations
 				Entity.RemoveAnalog(item);
 			}
 		}
+		#endregion
+		#region Номеклатуры
+		public void AddNomeclature()
+		{
+			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(Nomenclature), OpenPageOptions.AsSlave);
+			var tab = selectPage.TdiTab as OrmReference;
+			tab.Mode = OrmReferenceMode.MultiSelect;
+			tab.ObjectSelected += Nomenclature_ObjectSelected;
+		}
 
+		void Nomenclature_ObjectSelected(object sender, OrmReferenceObjectSectedEventArgs e)
+		{
+			var nomenclatures = UoW.GetById<Nomenclature>(e.Subjects.Select(x => x.GetId()));
+			foreach(var nomenclature in nomenclatures) {
+				Entity.AddNomeclature(nomenclature);
+			}
+		}
+
+		public void RemoveNomeclature(Nomenclature[] tools)
+		{
+			foreach(var item in tools) {
+				Entity.RemoveNomeclature(item);
+			}
+		}
+		#endregion
 		#endregion
 	}
 }
