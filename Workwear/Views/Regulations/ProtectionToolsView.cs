@@ -43,6 +43,7 @@ namespace workwear.Views.Regulations
 			.AddColumn("Пол").AddTextRenderer(p => p.Sex != null ? p.Sex.GetEnumTitle() : String.Empty)
 			.Finish();
 			ytreeItems.ItemsDataSource = Entity.ObservableNomenclatures;
+			ytreeItems.Selection.Changed += Nomenclature_Selection_Changed;
 		}
 
 		#region Аналоги
@@ -61,7 +62,23 @@ namespace workwear.Views.Regulations
 		{
 			ViewModel.RemoveAnalog(ytreeNormAnalog.GetSelectedObjects<ProtectionTools>());
 		}
-
 		#endregion
+		#region Номенклатуры
+		protected void OnButtonAddNomenclatureClicked(object sender, EventArgs e)
+		{
+			ViewModel.AddNomeclature();
+		}
+
+		protected void OnButtonRemoveNomeclatureClicked(object sender, EventArgs e)
+		{
+			ViewModel.RemoveNomeclature(ytreeItems.GetSelectedObjects<Nomenclature>());
+		}
+
+		void Nomenclature_Selection_Changed(object sender, EventArgs e)
+		{
+			buttonRemoveNomeclature.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
+		}
+		#endregion
+
 	}
 }

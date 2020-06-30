@@ -21,7 +21,10 @@ namespace WorkwearTest.Operations
 		{
 			var employee = Substitute.For<EmployeeCard>();
 
+			var protectionTools = Substitute.For<ProtectionTools>();
+
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
+			operation1.ProtectionTools.Returns(protectionTools);
 			operation1.OperationTime.Returns(new DateTime(2018, 1, 1));
 			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 2, 1));
 			operation1.Issued.Returns(2);
@@ -35,12 +38,14 @@ namespace WorkwearTest.Operations
 			nomenclature.TypeName.Returns("fake");
 
 			var operation2 = Substitute.For<EmployeeIssueOperation>();
+			operation2.ProtectionTools.Returns(protectionTools);
 			operation2.OperationTime.Returns(new DateTime(2018, 2, 1));
 
 			var operations = new List<EmployeeIssueOperation>() {operation1, operation2};
 
 			var graph = new IssueGraph(operations);
 			var issue = new EmployeeIssueOperation();
+			issue.ProtectionTools = protectionTools;
 			issue.Employee = employee;
 			issue.Nomenclature = nomenclature;
 			issue.NormItem = norm;
@@ -59,6 +64,8 @@ namespace WorkwearTest.Operations
 		public void RecalculateDatesOfIssueOperation_LifeTimeAppendProportionalTest()
 		{
 			var employee = Substitute.For<EmployeeCard>();
+
+			var protectionTools = Substitute.For<ProtectionTools>();
 
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
 			operation1.OperationTime.Returns(new DateTime(2018, 1, 1));
@@ -79,6 +86,7 @@ namespace WorkwearTest.Operations
 			var issue = new EmployeeIssueOperation();
 			issue.Employee = employee;
 			issue.Nomenclature = nomenclature;
+			issue.ProtectionTools = protectionTools;
 			issue.NormItem = norm;
 			issue.OperationTime = new DateTime(2018, 3, 10);
 			issue.Issued = 3;
@@ -105,6 +113,8 @@ namespace WorkwearTest.Operations
 			vacation.EndDate.Returns(new DateTime(2019, 2, 10));
 			employee.Vacations.Returns(new List<EmployeeVacation> { vacation });
 
+			var protectionTools = Substitute.For<ProtectionTools>();
+
 			var norm = new NormItem();
 			norm.Amount = 2;
 			norm.PeriodCount = 3;
@@ -119,6 +129,7 @@ namespace WorkwearTest.Operations
 			var issue = new EmployeeIssueOperation();
 			issue.Employee = employee;
 			issue.Nomenclature = nomenclature;
+			issue.ProtectionTools = protectionTools;
 			issue.NormItem = norm;
 			issue.OperationTime = new DateTime(2019, 1, 10);
 			issue.Issued = 2;
@@ -152,6 +163,8 @@ namespace WorkwearTest.Operations
 			vacation2.EndDate.Returns(new DateTime(2018, 7, 5));
 			employee.Vacations.Returns(new List<EmployeeVacation> { vacation, vacation2 });
 
+			var protectionTools = Substitute.For<ProtectionTools>();
+
 			var norm = new NormItem();
 			norm.Amount = 1;
 			norm.PeriodCount = 1;
@@ -166,6 +179,7 @@ namespace WorkwearTest.Operations
 			var issue = new EmployeeIssueOperation();
 			issue.Employee = employee;
 			issue.Nomenclature = nomenclature;
+			issue.ProtectionTools = protectionTools;
 			issue.NormItem = norm;
 			issue.OperationTime = new DateTime(2018, 11, 22, 15, 09, 23);
 			issue.Issued = 1;

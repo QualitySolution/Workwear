@@ -109,7 +109,7 @@ namespace workwear.Domain.Operations.Graph
 			if(MakeIssueGraphTestGap != null)
 				return MakeIssueGraphTestGap(employee, protectionTools);
 
-			var nomenclatures = protectionTools.Nomenclatures;
+			var nomenclatures = protectionTools.MatchedNomenclatures;
 
 			var issues = uow.Session.QueryOver<EmployeeIssueOperation>()
 					.Where(x => x.Employee.Id == employee.Id)

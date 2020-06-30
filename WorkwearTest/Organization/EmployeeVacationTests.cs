@@ -40,6 +40,7 @@ namespace WorkwearTest.Organization
 			norm.NormPeriod = NormPeriodType.Month;
 
 			var nomenclatureType = Substitute.For<ItemsType>();
+			var protectionTools = Substitute.For<ProtectionTools>();
 
 			var nomenclature = Substitute.For<Nomenclature>();
 			nomenclature.TypeName.Returns("fake");
@@ -49,6 +50,7 @@ namespace WorkwearTest.Organization
 			issue.UseAutoWriteoff = true;
 			issue.Employee = employee;
 			issue.Nomenclature = nomenclature;
+			issue.ProtectionTools = protectionTools;
 			issue.NormItem = norm;
 			issue.OperationTime = new DateTime(2019, 2, 10);
 			issue.StartOfUse = new DateTime(2019, 2, 10);

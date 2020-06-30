@@ -61,6 +61,7 @@ namespace WorkwearTest.Integration.Tools
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
+				protectionTools.Name = "СИЗ для тестирования";
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
@@ -95,6 +96,7 @@ namespace WorkwearTest.Integration.Tools
 				expenseOp.ExpiryByNorm = new DateTime(2019, 4, 1);
 				expenseOp.Employee = employee;
 				expenseOp.Nomenclature = nomenclature;
+				expenseOp.ProtectionTools = protectionTools;
 				expenseOp.NormItem = normItem;
 				expenseOp.Issued = 1;
 				expenseOp.WarehouseOperation = warehouseOperation;
@@ -134,6 +136,7 @@ namespace WorkwearTest.Integration.Tools
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
+				protectionTools.Name = "СИЗ для тестирования";
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
@@ -170,6 +173,7 @@ namespace WorkwearTest.Integration.Tools
 				expenseOp.AutoWriteoffDate = new DateTime(2020, 1, 1);
 				expenseOp.Employee = employee;
 				expenseOp.Nomenclature = nomenclature;
+				expenseOp.ProtectionTools = protectionTools;
 				expenseOp.NormItem = normItem;
 				expenseOp.Issued = 1;
 				expenseOp.WarehouseOperation = warehouseOperation;
@@ -186,6 +190,7 @@ namespace WorkwearTest.Integration.Tools
 				expenseOp2.AutoWriteoffDate = new DateTime(2020, 1, 1);
 				expenseOp2.Employee = employee;
 				expenseOp2.Nomenclature = nomenclature;
+				expenseOp2.ProtectionTools = protectionTools;
 				expenseOp2.NormItem = normItem;
 				expenseOp2.Issued = 1;
 				expenseOp2.WarehouseOperation = warehouseOperation2;
@@ -244,18 +249,24 @@ namespace WorkwearTest.Integration.Tools
 				nomenclature2.Type = nomenclatureType2;
 				uow.Save(nomenclature2);
 
-				var protectionTools = new ProtectionTools();
-				protectionTools.AddNomeclature(nomenclature);
-				uow.Save(protectionTools);
+				var protectionTools1 = new ProtectionTools();
+				protectionTools1.Name = "СИЗ для тестирования";
+				protectionTools1.AddNomeclature(nomenclature);
+				uow.Save(protectionTools1);
+
+				var protectionTools2 = new ProtectionTools();
+				protectionTools2.Name = "СИЗ для тестирования2";
+				protectionTools2.AddNomeclature(nomenclature2);
+				uow.Save(protectionTools2);
 
 				var position2 = new StockPosition(nomenclature2, null, null, 0);
 
 				var norm = new Norm();
-				var normItem = norm.AddItem(protectionTools);
+				var normItem = norm.AddItem(protectionTools1);
 				normItem.Amount = 1;
 				normItem.NormPeriod = NormPeriodType.Year;
 				normItem.PeriodCount = 1;
-				var normItem2 = norm.AddItem(protectionTools);
+				var normItem2 = norm.AddItem(protectionTools2);
 				normItem2.Amount = 1;
 				normItem2.NormPeriod = NormPeriodType.Month;
 				normItem2.PeriodCount = 4;
@@ -290,11 +301,11 @@ namespace WorkwearTest.Integration.Tools
 				expense.UpdateOperations(uow, ask);
 				uow.Save(expense);
 				expense.UpdateEmployeeNextIssue();
-				employee.WorkwearItems.First(e => e.Item.IsSame(nomenclatureType2)).Created = new DateTime(2018, 4, 22);
+				employee.WorkwearItems.First(e => e.Item.IsSame(protectionTools2)).Created = new DateTime(2018, 4, 22);
 				uow.Save(expense.Employee);
 				uow.Commit();
 
-				Assert.That(employee.WorkwearItems.First(e => e.Item.IsSame(nomenclatureType2)).NextIssue,
+				Assert.That(employee.WorkwearItems.First(e => e.Item.IsSame(protectionTools2)).NextIssue,
 					Is.EqualTo(new DateTime(2018, 8, 22))
 				);
 
@@ -306,7 +317,7 @@ namespace WorkwearTest.Integration.Tools
 				//проверяем данные
 				using(var uow2 = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления uow2")) {
 					var resultEmployee = uow2.GetById<EmployeeCard>(employee.Id);
-					Assert.That(resultEmployee.WorkwearItems.First(e => e.Item.IsSame(nomenclatureType2)).NextIssue, 
+					Assert.That(resultEmployee.WorkwearItems.First(e => e.Item.IsSame(protectionTools2)).NextIssue, 
 					Is.EqualTo(new DateTime(2018, 4, 22)));
 				}
 			}
@@ -331,6 +342,7 @@ namespace WorkwearTest.Integration.Tools
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
+				protectionTools.Name = "СИЗ для тестирования";
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
@@ -344,15 +356,19 @@ namespace WorkwearTest.Integration.Tools
 				var employee = new EmployeeCard();
 				uow.Save(employee);
 
+				var warehouseOperation = new WarehouseOperation();
 				var expenseOp = new EmployeeIssueOperation();
-				expenseOp.OperationTime = new DateTime(2019, 1, 1);
+				expenseOp.OperationTime = warehouseOperation.OperationTime = new DateTime(2019, 1, 1);
 				expenseOp.ExpiryByNorm = new DateTime(2019, 4, 1);
+				expenseOp.ProtectionTools = protectionTools;
 				expenseOp.Employee = employee;
-				expenseOp.Nomenclature = nomenclature;
+				expenseOp.Nomenclature = warehouseOperation.Nomenclature = nomenclature;
 				expenseOp.NormItem = normItem;
-				expenseOp.Issued = 1;
+				warehouseOperation.Amount = expenseOp.Issued = 1;
+				expenseOp.WarehouseOperation = warehouseOperation;
 				uow.Save(nomenclature);
 				uow.Save(normItem);
+				uow.Save(warehouseOperation);
 				uow.Save(expenseOp);
 				uow.Commit();
 
