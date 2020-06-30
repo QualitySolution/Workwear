@@ -1,5 +1,6 @@
 * xref:introduction.adoc[Введение]
 * xref:install.adoc[Установка]
 * xref:users.adoc[Работа с пользователями]
+* xref:employees.adoc[Данные о сотрудниках]
 * xref:technical.adoc[Технические подробности]
 * xref:index.adoc[Старая документация]
