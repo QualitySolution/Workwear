@@ -19,6 +19,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Stock;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Stock;
 
@@ -74,16 +75,15 @@ namespace workwear.ViewModels.Statements
 
 		public void AddItems()
 		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(Nomenclature), OpenPageOptions.AsSlave);
-
-			var selectDialog = selectPage.TdiTab as OrmReference;
-			selectDialog.Mode = OrmReferenceMode.MultiSelect;
-			selectDialog.ObjectSelected += NomenclatureJournal_ObjectSelected;
+			var selectPage = NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectPage.ViewModel.OnSelectResult += NomenclatureJournal_OnSelectResult;
 		}
 
-		void NomenclatureJournal_ObjectSelected(object sender, OrmReferenceObjectSectedEventArgs e)
+		void NomenclatureJournal_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			foreach(var nomenclature in e.GetEntities<Nomenclature>()) {
+			var nomeclatures = UoW.GetById<Nomenclature>(e.SelectedObjects.Select(x => x.GetId()));
+			foreach(var nomenclature in nomeclatures) {
 				var item = new IssuanceSheetItem {
 					IssuanceSheet = Entity,
 					Nomenclature = nomenclature,
@@ -125,19 +125,19 @@ namespace workwear.ViewModels.Statements
 
 		public void SetNomenclature(IssuanceSheetItem[] items)
 		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(Nomenclature), OpenPageOptions.AsSlave);
-
-			var selectDialog = selectPage.TdiTab as OrmReference;
-			selectDialog.Tag = items;
-			selectDialog.Mode = OrmReferenceMode.Select;
-			selectDialog.ObjectSelected += SetNomenclature_ObjectSelected;
+			var selectPage = NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
+			selectPage.Tag = items;
+			selectPage.ViewModel.OnSelectResult += SetNomenclature_OnSelectResult;
 		}
 
-		void SetNomenclature_ObjectSelected(object sender, OrmReferenceObjectSectedEventArgs e)
+		void SetNomenclature_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			var items = (sender as OrmReference).Tag as IssuanceSheetItem[];
+			var page = NavigationManager.FindPage((DialogViewModelBase)sender);
+			var items = page.Tag as IssuanceSheetItem[];
+			var nomenclature = UoW.GetById<Nomenclature>(e.SelectedObjects[0].GetId());
 			foreach(var item in items) {
-				item.Nomenclature = e.Subject as Nomenclature;
+				item.Nomenclature = nomenclature;
 			}
 		}
 

@@ -10,7 +10,6 @@ using QS.Project.Services;
 using QS.Services;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
-using workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
 using workwear.ViewModels.Company;
 

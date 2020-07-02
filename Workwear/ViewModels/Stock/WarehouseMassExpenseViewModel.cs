@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Project.Journal;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
@@ -14,9 +16,9 @@ using QS.Tdi;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.ViewModels.Statements;
 
@@ -28,7 +30,6 @@ namespace workwear.ViewModels.Stock
 		public ILifetimeScope AutofacScope;
 		private readonly IInteractiveService interactive;
 		private readonly CommonMessages messages;
-		public ITdiCompatibilityNavigation tdiNavigationManager;
 
 		private string displayMessage;
 		public virtual string DisplayMessage {
@@ -47,7 +48,6 @@ namespace workwear.ViewModels.Stock
 			CommonMessages messages,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager, validator)
 		{
-			this.tdiNavigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
@@ -81,15 +81,15 @@ namespace workwear.ViewModels.Stock
 		#region Nomenclature
 		public void AddNomenclature()
 		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(Nomenclature), OpenPageOptions.AsSlave);
-
-			var selectDialog = selectPage.TdiTab as OrmReference;
-			selectDialog.Mode = OrmReferenceMode.MultiSelect;
-			selectDialog.ObjectSelected += Nomenclature_ObjectSelected;
+			var selectPage = NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectPage.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+			selectPage.ViewModel.OnSelectResult += Nomeclature_OnSelectResult;
 		}
-		void Nomenclature_ObjectSelected(object sender, OrmReferenceObjectSectedEventArgs e)
+
+		private void Nomeclature_OnSelectResult(object sender, JournalSelectedEventArgs e)
 		{
-			foreach(var nomenclature in e.GetEntities<Nomenclature>()) {
+			var nomenclatures = UoW.GetById<Nomenclature>(e.SelectedObjects.Select(x => x.GetId()));
+			foreach(var nomenclature in nomenclatures) {
 				Entity.AddItemNomenclature(nomenclature, interactive, UoW);
 			}
 		}
@@ -106,15 +106,15 @@ namespace workwear.ViewModels.Stock
 		#region Employee
 		public void AddEmployee()
 		{
-			var selectPage = tdiNavigationManager.OpenTdiTab<OrmReference, Type>(this, typeof(EmployeeCard), OpenPageOptions.AsSlave);
-
-			var selectDialog = selectPage.TdiTab as OrmReference;
-			selectDialog.Mode = OrmReferenceMode.MultiSelect;
-			selectDialog.ObjectSelected += Employee_ObjectSelected;
+			var selectPage = NavigationManager.OpenViewModel<EmployeeJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectPage.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+			selectPage.ViewModel.OnSelectResult += Employee_OnSelectResult;
 		}
-		void Employee_ObjectSelected(object sender, OrmReferenceObjectSectedEventArgs e)
+
+		private void Employee_OnSelectResult(object sender, JournalSelectedEventArgs e)
 		{
-			foreach(var emp in e.GetEntities<EmployeeCard>()) {
+			var employees = UoW.GetById<EmployeeCard>(e.SelectedObjects.Select(x => x.GetId()));
+			foreach(var emp in employees) {
 				Entity.AddEmployee(emp, interactive);
 			}
 		}
