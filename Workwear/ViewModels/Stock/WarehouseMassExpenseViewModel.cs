@@ -26,8 +26,7 @@ namespace workwear.ViewModels.Stock
 	{
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
 		public ILifetimeScope AutofacScope;
-		private readonly IInteractiveMessage interactive;
-		private readonly IInteractiveQuestion interactiveQuestion;
+		private readonly IInteractiveService interactive;
 		private readonly CommonMessages messages;
 		public ITdiCompatibilityNavigation tdiNavigationManager;
 
@@ -43,8 +42,7 @@ namespace workwear.ViewModels.Stock
 			ITdiTab myTab, 
 			ITdiCompatibilityNavigation navigationManager, 
 			ILifetimeScope autofacScope, 
-			IInteractiveMessage interactive, 
-			IInteractiveQuestion interactiveQuestion, 
+			IInteractiveService interactive, 
 			IUserService userService,
 			CommonMessages messages,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager, validator)
@@ -52,7 +50,6 @@ namespace workwear.ViewModels.Stock
 			this.tdiNavigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-			this.interactiveQuestion = interactiveQuestion ?? throw new ArgumentNullException(nameof(interactiveQuestion));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
@@ -173,7 +170,7 @@ namespace workwear.ViewModels.Stock
 		public void IssuanceSheetOpen()
 		{
 			if(UoW.HasChanges) {
-				if(interactiveQuestion.Question("Сохранить документ выдачи перед открытием ведомости?"))
+				if(interactive.Question("Сохранить документ выдачи перед открытием ведомости?"))
 					Save();
 				else
 					return;
