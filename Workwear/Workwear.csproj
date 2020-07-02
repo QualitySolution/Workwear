@@ -224,8 +224,6 @@
     <Compile Include="Domain\Stock\ExpenseItem.cs" />
     <Compile Include="Domain\Stock\Nomenclature.cs" />
     <Compile Include="HibernateMapping\Stock\NomenclatureMap.cs" />
-    <Compile Include="gtk-gui\workwear.NomenclatureDlg.cs" />
-    <Compile Include="Dialogs\Stock\NomenclatureDlg.cs" />
     <Compile Include="Domain\Stock\IncomeItem.cs" />
     <Compile Include="Domain\Stock\Income.cs" />
     <Compile Include="HibernateMapping\Stock\IncomeMap.cs" />
@@ -431,6 +429,9 @@
     <Compile Include="Views\Stock\ItemTypeView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.ItemTypeView.cs" />
     <Compile Include="Journal\ViewModels\Stock\ItemsTypeJournalViewModel.cs" />
+    <Compile Include="Views\Stock\NomenclatureView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.NomenclatureView.cs" />
+    <Compile Include="Journal\ViewModels\Stock\NomenclatureJournalViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

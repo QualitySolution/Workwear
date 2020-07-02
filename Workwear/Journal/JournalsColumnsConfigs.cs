@@ -124,6 +124,14 @@ namespace workwear.Journal
 					.Finish()
 			);
 
+			TreeViewColumnsConfigFactory.Register<NomenclatureJournalViewModel>(
+				() => FluentColumnsConfig<NomenclatureJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Тип").AddTextRenderer(node => node.ItemType)
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
 				() => FluentColumnsConfig<StockBalanceJournalNode>.Create()
 					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()

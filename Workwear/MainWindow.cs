@@ -209,10 +209,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnAction6Activated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("Nomenclature");
-		tdiMain.OpenTab(OrmReference.GenerateHashName<Nomenclature>(),
-				() => new OrmReference(typeof(Nomenclature))
-			   );
+		NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(null);
 	}
 
 	protected void OnAboutActionActivated(object sender, EventArgs e)

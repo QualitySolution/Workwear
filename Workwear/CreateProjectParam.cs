@@ -67,9 +67,6 @@ namespace workwear
 			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
 			OrmMain.AddObjectDescription<UserSettings>();
 			//Склад
-			OrmMain.AddObjectDescription<Nomenclature>().Dialog<NomenclatureDlg> ().DefaultTableView ()
-					.SearchColumn ("Наименование", i => i.Name)
-					.OrderAsc (i => i.Name).End ();
 			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
 			OrmMain.AddObjectDescription<Expense>().Dialog<ExpenseDocDlg>();
 			OrmMain.AddObjectDescription<Writeoff>().Dialog<WriteOffDocDlg>();
