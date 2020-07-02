@@ -24,6 +24,9 @@ namespace workwear.Views.Stock
 
 			yentryName.Binding.AddBinding (Entity, e => e.Name, w => w.Text).InitializeFromSource ();
 
+			entryOZM.ValidationMode = QS.Widgets.ValidationType.Numeric;
+			entryOZM.Binding.AddBinding(Entity, e => e.Ozm, w => w.Text, new UintToStringConverter()).InitializeFromSource();
+
 			ycomboClothesSex.ItemsEnum = typeof(ClothesSex);
 			ycomboClothesSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItemOrNull).InitializeFromSource ();
 			ycomboClothesSex.Binding.AddBinding(ViewModel, vm => vm.VisibleClothesSex, w => w.Visible).InitializeFromSource();

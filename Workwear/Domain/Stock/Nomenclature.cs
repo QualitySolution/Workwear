@@ -70,12 +70,12 @@ namespace workwear.Domain.Stock
 			set { SetField(ref comment, value, () => Comment); }
 		}
 
-		private int ozm;
+		private uint? ozm;
 
 		[Display(Name = "ОЗМ")]
-		public virtual int Ozm {
+		public virtual uint? Ozm {
 			get { return ozm; }
-			set { SetField(ref ozm, value, () => Ozm); }
+			set { SetField(ref ozm, value); }
 		}
 
 		#endregion
