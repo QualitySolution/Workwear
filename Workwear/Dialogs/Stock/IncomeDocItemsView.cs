@@ -4,9 +4,11 @@ using Gamma.Utilities;
 using Gtk;
 using NLog;
 using QS.Dialog.Gtk;
+using QS.DomainModel.Entity;
 using QSOrmProject;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Stock;
 using workwear.Measurements;
 using workwear.Representations.Organization;
 
@@ -127,12 +129,17 @@ namespace workwear
 
 			if(IncomeDoc.Operation == IncomeOperations.Enter)
 			{
-				var selectNomenclatureDlg = new OrmReference (typeof(Nomenclature));
-				selectNomenclatureDlg.Mode = OrmReferenceMode.MultiSelect;
-				selectNomenclatureDlg.ObjectSelected += SelectNomenclatureDlg_ObjectSelected;
-
-				OpenSlaveTab(selectNomenclatureDlg);
+				var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<NomenclatureJournalViewModel>(MyTdiDialog, QS.Navigation.OpenPageOptions.AsSlave);
+				selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+				selectJournal.ViewModel.OnSelectResult += AddNomenclature_OnSelectResult;
 			}
+		}
+
+		void AddNomenclature_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		{
+			UoW.GetById<Nomenclature>(e.SelectedObjects.Select(x => x.GetId()))
+				.ToList().ForEach(n => IncomeDoc.AddItem(n));
+			CalculateTotal();
 		}
 
 		void SelectFromObjectDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)
@@ -150,12 +157,6 @@ namespace workwear
 			{
 				IncomeDoc.AddItem (MyOrmDialog.UoW.GetById<EmployeeIssueOperation> (node.Id), node.Added - node.Removed);
 			}
-			CalculateTotal();
-		}
-
-		void SelectNomenclatureDlg_ObjectSelected (object sender, OrmReferenceObjectSectedEventArgs e)
-		{
-			e.GetEntities<Nomenclature>().ToList().ForEach(n => IncomeDoc.AddItem(n));
 			CalculateTotal();
 		}
 

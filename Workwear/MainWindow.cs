@@ -121,7 +121,7 @@ public partial class MainWindow : Gtk.Window
 	void NavigationManager_ViewModelOpened(object sender, ViewModelOpenedEventArgs e)
 	{
 		if(e.ViewModel != null)
-			MainTelemetry.AddCount(e.ViewModel.GetType().Name);
+			MainTelemetry.AddCount(e.ViewModel.GetType().Name.Replace("ViewModel", ""));
 	}
 
 	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e)
@@ -209,10 +209,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnAction6Activated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("Nomenclature");
-		tdiMain.OpenTab(OrmReference.GenerateHashName<Nomenclature>(),
-				() => new OrmReference(typeof(Nomenclature))
-			   );
+		NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(null);
 	}
 
 	protected void OnAboutActionActivated(object sender, EventArgs e)
