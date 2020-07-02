@@ -47,7 +47,7 @@ namespace workwear.ViewModels.Stock
 		#endregion
 
 		#region Data
-		public string ClothesSexLabel => Entity.Type.WearCategory.Value.GetEnumTitle() + ":";
+		public string ClothesSexLabel => Entity.Type?.WearCategory?.GetEnumTitle() + ":";
 
 		public object[] DisableClothesSex {
 			get {
@@ -65,7 +65,9 @@ namespace workwear.ViewModels.Stock
 			}
 		}
 
-		public Type SizeStdEnum => SizeHelper.GetSizeStandartsEnum(Entity.Type.WearCategory.Value, Entity.Sex.Value);
+		public Type SizeStdEnum => Entity.Type?.WearCategory != null && Entity.Sex != null 
+			? SizeHelper.GetSizeStandartsEnum(Entity.Type.WearCategory.Value, Entity.Sex.Value)
+			: null;
 
 		#endregion
 
@@ -76,6 +78,7 @@ namespace workwear.ViewModels.Stock
 					Entity.Name = Entity.Type.Name;
 
 				OnPropertyChanged(nameof(VisibleClothesSex));
+				OnPropertyChanged(nameof(ClothesSexLabel));
 				OnPropertyChanged(nameof(VisibleSizeStd));
 				OnPropertyChanged(nameof(SensitiveSizeStd));
 				OnPropertyChanged(nameof(DisableClothesSex));
