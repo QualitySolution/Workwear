@@ -21,7 +21,7 @@ namespace workwear
 			#region Организация
 
 			DeleteConfig.AddHibernateDeleteInfo<Department>()
-				.AddClearDependence<EmployeeCard>(x => x.Department)
+			//	.AddClearDependence<EmployeeCard>(x => x.Department)
 				.AddClearDependence<Post>(x => x.Department);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCard>()
@@ -46,8 +46,8 @@ namespace workwear
 				.AddClearDependence<IssuanceSheet>(x => x.Organization);
 
 			DeleteConfig.AddHibernateDeleteInfo<Post>()
-				.AddRemoveFromDependence<Norm>(x => x.Professions)
-				.AddClearDependence<EmployeeCard>(x => x.Post);
+				.AddRemoveFromDependence<Norm>(x => x.Professions);
+				//.AddClearDependence<EmployeeCard>(x => x.Post);
 
 			DeleteConfig.AddHibernateDeleteInfo<Subdivision> ()
 				.AddDeleteDependence<Department>(x => x.Subdivision) 
@@ -55,7 +55,7 @@ namespace workwear
 				.AddDeleteDependence<Expense> (x => x.Subdivision)
 				.AddDeleteDependence<Income> (x => x.Subdivision)
 				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.Subdivision)
-				.AddClearDependence<EmployeeCard> (x => x.Subdivision)
+				//.AddClearDependence<EmployeeCard> (x => x.Subdivision)
 				.AddClearDependence<Post>(x => x.Subdivision)
 				.AddClearDependence<IssuanceSheet>(x => x.Subdivision);
 
