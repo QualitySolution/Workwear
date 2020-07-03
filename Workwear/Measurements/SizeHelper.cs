@@ -159,6 +159,8 @@ namespace workwear.Measurements
 			return null;
 		}
 
+		#region Sex
+
 		public static bool IsUniversalСlothes(СlothesType wearCategory)
 		{
 			var att = wearCategory.GetAttributes<SizeStandartsAttribute> ();
@@ -169,6 +171,14 @@ namespace workwear.Measurements
 
 			return found != null;
 		}
+
+		public static bool HasClothesSex(СlothesType wearCategory)
+		{
+			var att = wearCategory.GetAttributes<SizeStandartsAttribute>();
+			return att.Any(a => a.Sex == ClothesSex.Men || a.Sex == ClothesSex.Women);
+		}
+
+		#endregion
 
 		public static SizeStandartsAttribute[] GetStandartsForСlothes(СlothesType wearCategory)
 		{
