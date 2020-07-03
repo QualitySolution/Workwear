@@ -130,6 +130,38 @@ namespace DonwloadNMLK
 				logger.Info($"Загружено {analogCount} аналогов СИЗ-ов.");
 				logger.Info($"Не найдено {analogNotFound} аналогов СИЗ-ов.");
 				logger.Info($"Сохраняем...");
+#if !NOSAVE
+				logger.Info($"Сохраняем типы...");
+				foreach(var item in nomeclatureTypes.ItemsTypes) {
+					uow.Save(item);
+				}
+				uow.Commit();
+
+				logger.Info($"Сохраняем номенклатуру...");
+				int i = 0;
+				foreach(var item in dicSAP_ZMAT.Values) {
+					uow.Save(item);
+					i++;
+					if(i % 100 == 0) {
+						uow.Commit();
+						logger.Info($"Сохранили {(float)i/ dicSAP_ZMAT.Count:P}");
+					}
+				}
+				uow.Commit();
+
+				logger.Info($"Сохраняем СИЗ...");
+				int i = 0;
+				foreach(var item in dicProtectionTools.Values) {
+					//uow.Save(item);
+					i++;
+					if(i % 100 == 0) {
+						uow.Commit();
+						logger.Info($"Сохранили {(float)i/dicProtectionTools.Count:P}");
+					}
+				}
+				uow.Commit();
+				logger.Info("Готово");
+#endif
 				int i = 0;
 				foreach(var item in dicItemsTypes.Values) {
 					uow.Save(item);
