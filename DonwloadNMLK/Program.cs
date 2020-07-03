@@ -92,46 +92,64 @@ namespace DonwloadNMLK
 						logger.Error($"Единица измерения не соответсвует {zmat.EDIZ} != {nomenclature.Type.Units.OKEI} для [{nomenclature.Name}]");
 				}
 				logger.Warn($"Для {categoryFail} номеклатур, не найдено категорий.");
-				return;
-						if(nomenclature.Sex == null)
+
 				logger.Info("Загружаем PROTECTION_TOOL");
 				var dtPROTECTION_TOOLS = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.PROTECTION_TOOL");
 				logger.Info("Загружаем PROTECTION_REPLACEMENT");
 				var dtPROTECTION_REPLACEMENT = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.PROTECTION_REPLACEMENT");
 
-				var dicItemsTypes = new Dictionary<string, ItemsType>();
+				var dicProtectionTools = new Dictionary<string, ProtectionTools>();
 				logger.Info("Обработка СИЗ...");
 				foreach(var row in dtPROTECTION_TOOLS) {
 					if(String.IsNullOrWhiteSpace(row.NAME)) {
 						logger.Warn($"СИЗ с кодом {row.PROTECTION_ID} не имеет названия. Пропускаем...");
 						continue;
 					}
-					var item = new ItemsType();
+					var item = new ProtectionTools();
 					item.Name = row.NAME;
-					item.Category = ItemTypeCategory.wear;
-					dicItemsTypes[row.PROTECTION_ID] = item;
+					dicProtectionTools[row.PROTECTION_ID] = item;
 				}
-				logger.Info($"Загружено {dicItemsTypes.Count} СИЗ-ов.");
+				logger.Info($"Загружено {dicProtectionTools.Count} СИЗ-ов.");
 				logger.Info("Обработка Аналогов СИЗ...");
 				int analogCount = 0;
 				int analogNotFound = 0;
 				foreach(var row in dtPROTECTION_REPLACEMENT) {
-					if(!dicItemsTypes.ContainsKey(row.PROTECTION_ID)) {
+					if(!dicProtectionTools.ContainsKey(row.PROTECTION_ID)) {
 						logger.Warn($"Аналог PROTECTION_REPLACEMENT.PROTECTION_ID={row.PROTECTION_ID} не найден в загруженных СИЗ-ах.");
 						analogNotFound++;
 						continue;
 					}
-					if(!dicItemsTypes.ContainsKey(row.PROTECTION_ID_ANALOG)) {
+					if(!dicProtectionTools.ContainsKey(row.PROTECTION_ID_ANALOG)) {
 						logger.Warn($"Аналог PROTECTION_REPLACEMENT.PROTECTION_ID_ANALOG={row.PROTECTION_ID_ANALOG} не найден в загруженных СИЗ-ах.");
 						analogNotFound++;
 						continue;
 					}
-					dicItemsTypes[row.PROTECTION_ID].ItemsTypesAnalogs.Add(dicItemsTypes[row.PROTECTION_ID_ANALOG]);
+					dicProtectionTools[row.PROTECTION_ID].Analogs.Add(dicProtectionTools[row.PROTECTION_ID_ANALOG]);
 					analogCount++;
 				}
 				logger.Info($"Загружено {analogCount} аналогов СИЗ-ов.");
 				logger.Info($"Не найдено {analogNotFound} аналогов СИЗ-ов.");
-				logger.Info($"Сохраняем...");
+
+				logger.Info("Загружаем ANALOQUE_PROTECTION");
+				var dtANALOQUE_PROTECTION = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.ANALOQUE_PROTECTION");
+				logger.Info("Связываем СИЗ с номеклатурой.");
+				var noUsedNomenclature = dicSAP_ZMAT.Values.ToList();
+				foreach(var link in dtANALOQUE_PROTECTION) {
+					ProtectionTools protection = dicProtectionTools[link.PROTECTION_ID];
+					if(!dicSAP_ZMAT.ContainsKey(link.MAT)) {
+						logger.Error($"Номеклатура {link.MAT} не найдена");
+						continue;
+					}
+					var nomenclature = dicSAP_ZMAT[link.MAT];
+					protection.AddNomeclature(nomenclature);
+					noUsedNomenclature.Remove(nomenclature);
+				}
+				logger.Info($"Добавлено {dtANALOQUE_PROTECTION.Count()} связей.");
+				if(noUsedNomenclature.Count > 0) {
+					logger.Warn($"Не использовано {noUsedNomenclature.Count} из {dicSAP_ZMAT.Count} номеклатур:\n"
+						+ String.Join("\n", noUsedNomenclature.Select(x => x.Name)));
+				}
+				return;
 #if !NOSAVE
 				logger.Info($"Сохраняем типы...");
 				foreach(var item in nomeclatureTypes.ItemsTypes) {
