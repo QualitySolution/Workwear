@@ -444,6 +444,7 @@
     <Compile Include="Views\Stock\NomenclatureView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.NomenclatureView.cs" />
     <Compile Include="Journal\ViewModels\Stock\NomenclatureJournalViewModel.cs" />
+    <Compile Include="Tools\ReaderIncomeFromXML1C.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

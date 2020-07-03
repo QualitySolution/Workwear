@@ -11,6 +11,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Stock;
 using workwear.Measurements;
+using workwear.Tools;
 
 namespace workwear.ViewModels.Stock
 {
@@ -28,6 +29,23 @@ namespace workwear.ViewModels.Stock
 				.Finish();
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
+		}
+
+		public NomenclatureViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, ILifetimeScope autofacScope, IValidator validator = null, LineIncome lineIncome = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+		{
+			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			var entryBuilder = new CommonEEVMBuilderFactory<Nomenclature>(this, Entity, UoW, navigation, autofacScope);
+
+			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
+				.MakeByType()
+				.Finish();
+
+			Entity.PropertyChanged += Entity_PropertyChanged;
+
+			if(lineIncome != null) {
+				Entity.Name = lineIncome.Name;
+				Entity.Ozm = lineIncome.Ozm;
+			}
 		}
 
 		#region EntityViewModels
