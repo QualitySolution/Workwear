@@ -1,7 +1,8 @@
-﻿
+
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Dapper;
 using NLog;
 using Oracle.ManagedDataAccess.Client;
@@ -13,6 +14,8 @@ using QS.Services;
 using QSMachineConfig;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using workwear.Domain.Stock;
+using workwear.Measurements;
 using workwear.Tools.Oracle;
 
 namespace DonwloadNMLK
@@ -42,6 +45,53 @@ namespace DonwloadNMLK
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				logger.Info("start");
+				logger.Info("Создаем типы номеклатур");
+				var nomeclatureTypes = new NomenclatureTypes(uow);
+
+				logger.Info("Загружаем SKLAD.SAP_ZMAT");
+				var dtSAP_ZMAT = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.SAP_ZMAT");
+				logger.Info("Обработка SKLAD.SAP_ZMAT");
+				var dicSAP_ZMAT = new Dictionary<string, Nomenclature>();
+				int categoryFail = 0;
+				foreach(var zmat in dtSAP_ZMAT) {
+					var nomenclature = new Nomenclature {
+						Name = zmat.NMAT ?? zmat.NMAT_,
+						Ozm = uint.Parse(zmat.ZMAT), 
+						Comment = "Выгружен из ОМТР",
+					};
+					if(dicSAP_ZMAT.ContainsKey(zmat.ZMAT)) {
+						logger.Error($"Дубль строки для ОЗМ {zmat.ZMAT}\n >>{dicSAP_ZMAT[zmat.ZMAT].Name}\n >>{nomenclature.Name}");
+						continue;
+					}
+					dicSAP_ZMAT.Add(zmat.ZMAT, nomenclature);
+					if(nomenclature.Name == null) {
+						logger.Error($"Для ОЗМ {nomenclature.Ozm} нет названия.");
+						categoryFail++;
+						continue;
+					}
+
+					nomenclature.Type = nomeclatureTypes.ParseNomenclatureName(nomenclature.Name, zmat.EDIZ == 839);
+
+					if(nomenclature.Type == null) {
+						categoryFail++;
+						continue;
+					}
+					nomenclature.Sex = nomeclatureTypes.ParseSex(nomenclature.Name);
+					if(SizeHelper.HasClothesSex(nomenclature.Type.WearCategory.Value)) {
+						if(nomenclature.Sex == null)
+							logger.Warn($"Не найден пол для [{nomenclature.Name}]");
+					}
+					else {
+						if(nomenclature.Sex != null)
+							logger.Warn($"Пол найден в [{nomenclature.Name}], но тип {nomenclature.Type.Name} без пола.");
+					}
+
+					if(zmat.EDIZ != null && zmat.EDIZ.ToString() != nomenclature.Type.Units.OKEI)
+						logger.Error($"Единица измерения не соответсвует {zmat.EDIZ} != {nomenclature.Type.Units.OKEI} для [{nomenclature.Name}]");
+				}
+				logger.Warn($"Для {categoryFail} номеклатур, не найдено категорий.");
+				return;
+						if(nomenclature.Sex == null)
 				logger.Info("Загружаем PROTECTION_TOOL");
 				var dtPROTECTION_TOOLS = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.PROTECTION_TOOL");
 				logger.Info("Загружаем PROTECTION_REPLACEMENT");
