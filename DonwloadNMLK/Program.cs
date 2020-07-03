@@ -76,14 +76,16 @@ namespace DonwloadNMLK
 						categoryFail++;
 						continue;
 					}
-					nomenclature.Sex = nomeclatureTypes.ParseSex(nomenclature.Name);
-					if(SizeHelper.HasClothesSex(nomenclature.Type.WearCategory.Value)) {
-						if(nomenclature.Sex == null)
-							logger.Warn($"Не найден пол для [{nomenclature.Name}]");
-					}
-					else {
-						if(nomenclature.Sex != null)
-							logger.Warn($"Пол найден в [{nomenclature.Name}], но тип {nomenclature.Type.Name} без пола.");
+					if(nomenclature.Type.WearCategory.HasValue) {
+						nomenclature.Sex = nomeclatureTypes.ParseSex(nomenclature.Name);
+						if(SizeHelper.HasClothesSex(nomenclature.Type.WearCategory.Value)) {
+							if(nomenclature.Sex == null)
+								logger.Warn($"Не найден пол для [{nomenclature.Name}]");
+						}
+						else {
+							if(nomenclature.Sex != null)
+								logger.Warn($"Пол найден в [{nomenclature.Name}], но тип {nomenclature.Type.Name} без пола.");
+						}
 					}
 
 					if(zmat.EDIZ != null && zmat.EDIZ.ToString() != nomenclature.Type.Units.OKEI)
