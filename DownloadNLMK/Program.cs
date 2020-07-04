@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 using NLog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Project.DB;
 using QS.Project.Services.Interactive;
@@ -25,6 +26,8 @@ namespace DownloadNLMK
 
 		public static void Main(string[] args)
 		{
+			int processed;
+			double totalRows;
 			#region config
 			MachineConfig.ConfigFileName = "workwear.ini";
 			MachineConfig.ReloadConfigFile();
@@ -99,11 +102,11 @@ namespace DownloadNLMK
 				var dicSkipedProtectionTools = new Dictionary<string, dynamic>();
 				logger.Info("Обработка СИЗ...");
 				foreach(var row in dtPROTECTION_TOOLS) {
-					if(String.IsNullOrWhiteSpace(row.NAME)) {
-						logger.Warn($"СИЗ с кодом {row.PROTECTION_ID} не имеет названия. Пропускаем...");
-						dicSkipedProtectionTools[row.PROTECTION_ID] = row;
-						continue;
-					}
+					//if(String.IsNullOrWhiteSpace(row.NAME)) {
+					//	logger.Warn($"СИЗ с кодом {row.PROTECTION_ID} не имеет названия. Пропускаем...");
+					//	dicSkipedProtectionTools[row.PROTECTION_ID] = row;
+					//	continue;
+					//}
 					var item = new ProtectionTools();
 					item.Name = row.NAME;
 					dicProtectionTools[row.PROTECTION_ID] = item;
@@ -191,7 +194,7 @@ namespace DownloadNLMK
 
 				logger.Info("Обработка норм...");
 				var dicNorms = new Dictionary<string, Norm>();
-				var dicNorms_row = new Dictionary<string, NormItem>();
+				var dicNormsRows = new Dictionary<string, NormItem>();
 				var dicNormsByProff = new Dictionary<string, Norm>();
 
 				foreach(var rowNorma in dtNORMA) {
@@ -199,11 +202,6 @@ namespace DownloadNLMK
 						logger.Warn($"Профессия NORMA.PROFF_ID={rowNorma.PROFF_ID} не найдена в PROFF_STAFF.");
 						continue;
 					}
-
-					//if(!RELAT_STAFF_PROFF.ContainsKey(rowNorma.PROFF_ID)) {
-					//	logger.Warn($"Профессия NORMA.PROFF_ID={rowNorma.PROFF_ID} не найдена в RELAT_STAFF_PROFF.");
-					//	continue;
-					//}
 
 					Norm norm = new Norm();
 					norm.DateFrom = rowNorma.DATE_BEGIN;
@@ -217,7 +215,12 @@ namespace DownloadNLMK
 
 				logger.Info("Обработка строк норм...");
 				int normRows = 0;
+				processed = 0;
+				totalRows = dtNORMA_ROW.Count();
 				foreach(var rowNorma in dtNORMA_ROW) {
+					processed++;
+					if(processed % 100 == 0)
+						Console.Write($"\r\tОбработано строк {processed} [{processed / totalRows:P}]... ");
 					if(!dicProtectionTools.ContainsKey(rowNorma.PROTECTION_ID)) {
 						if(dicSkipedProtectionTools.ContainsKey(rowNorma.PROTECTION_ID))
 							logger.Warn($"PROTECTION_ID={rowNorma.PROTECTION_ID} в норме NORMA_ID={rowNorma.NORMA_ID} [{dicNorms[rowNorma.NORMA_ID].Name}] была пропущена.");
@@ -232,9 +235,10 @@ namespace DownloadNLMK
 					normItem.PeriodCount = Convert.ToInt32(rowNorma.WEARING_PERIOD);
 					normItem.Norm = dicNorms[rowNorma.NORMA_ID];
 					dicNorms[rowNorma.NORMA_ID].Items.Add(normItem);
+					dicNormsRows.Add(rowNorma.NORMA_ROW_ID, normItem);
 					normRows++;
 				}
-
+				Console.Write("Готово\n");
 				logger.Info($"Загружено {normRows} из {dtNORMA_ROW.Count()} строк норм.");
 
 #if !NOSAVE
@@ -253,11 +257,11 @@ namespace DownloadNLMK
 #endif
 
 				logger.Info("Загружаем PERSONAL_CARD");
-				var PERSONAL_CARDS = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.PERSONAL_CARD");
-				logger.Info($"Загружено {PERSONAL_CARDS.Count()} PERSONAL_CARD");
+				var PERSONAL_CARD = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.PERSONAL_CARD c WHERE c.TN IN(SELECT TN FROM KIT.EXP_HUM_SKLAD)"); //FIXME Ускоряем не грузим карточки без сотрудника.
+				logger.Info($"Загружено {PERSONAL_CARD.Count()} PERSONAL_CARD");
 
 				logger.Info("Загружаем EXP_HUM_SKLAD");
-				var EXP_HUM_SKLAD = NLMKOracle.Connection.Query("SELECT * FROM KIT.EXP_HUM_SKLAD")
+				var EXP_HUM_SKLAD = NLMKOracle.Connection.Query("SELECT * FROM KIT.EXP_HUM_SKLAD t WHERE t.TN IN (SELECT TN FROM SKLAD.PERSONAL_CARD)")//FIXME Ускоряем не грузим сотрудников без карточек.
 					.ToDictionary<dynamic, decimal>(x => x.TN);
 				logger.Info($"Загружено {EXP_HUM_SKLAD.Count()} EXP_HUM_SKLAD");
 
@@ -267,10 +271,15 @@ namespace DownloadNLMK
 				logger.Info($"Загружено {RELAT_PERS_PROFF.Count()} RELAT_PERS_PROFF");
 
 				logger.Info("Обработка PERSONAL_CARD");
-				var dicPERSONAL_CARDS = new Dictionary<string, EmployeeCard>();
+				var dicPERSONAL_CARD = new Dictionary<string, EmployeeCard>();
 				int skipCards = 0;
 				int withNorm = 0;
-				foreach (var row in PERSONAL_CARDS) {
+				processed = 0;
+				totalRows = PERSONAL_CARD.Count();
+				foreach (var row in PERSONAL_CARD) {
+					processed++;
+					if(processed % 100 == 0)
+						Console.Write($"\r\tОбработано карточек {processed} [{processed / totalRows:P}]... ");
 					if(row.TN == null) {
 						//FIXME Пока не загружаем карточки без TN, возможно в будущем надо реализовать.
 						skipCards++;
@@ -294,11 +303,11 @@ namespace DownloadNLMK
 					card.SubdivisionId = (int?)info.PARENT_DEPT_CODE;
 					card.DepartmentId = (int?)info.ID_DEPT;
 					card.PostId = (int?)info.ID_WP;
-					dicPERSONAL_CARDS.Add(row.PERSONAL_CARD_ID, card);
+					dicPERSONAL_CARD.Add(row.PERSONAL_CARD_ID, card);
 
 					//Связываем с нормой
 					if(!RELAT_PERS_PROFF.ContainsKey(row.PERSONAL_CARD_ID)) {
-						logger.Warn($"Для {card.ShortName} TN={row.TN} связь с профессией ОМТР не найдена.");
+						//logger.Warn($"Для {card.ShortName} TN={row.TN} связь с профессией ОМТР не найдена.");
 						continue;
 					}
 					var proff = RELAT_PERS_PROFF[row.PERSONAL_CARD_ID];
@@ -307,12 +316,57 @@ namespace DownloadNLMK
 						continue;
 					}
 					var norm = dicNormsByProff[proff.PROFF_ID];
-					card.AddUsedNorm(norm);
+					card.UsedNorms.Add(norm);
 					withNorm++;
 				}
+				Console.Write("Готово\n");
 				logger.Info($"Пропущено {skipCards} карточек без ТН.");
-				logger.Info($"Обработано {dicPERSONAL_CARDS.Count()} личных карточек.");
-				logger.Info($"Из них без нормы {dicPERSONAL_CARDS.Count() - withNorm}.");
+				logger.Info($"Обработано {dicPERSONAL_CARD.Count()} личных карточек.");
+				logger.Info($"C профессией {withNorm}.");
+
+				logger.Info("Загружаем PERSONAL_CARDS");
+				var PERSONAL_CARDS = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.PERSONAL_CARDS r " +
+					"WHERE r.PROTECTION_ID IS NOT NULL AND r.PERSONAL_CARD_ID IN (SELECT c.PERSONAL_CARD_ID FROM SKLAD.PERSONAL_CARD c WHERE c.TN IN(SELECT TN FROM KIT.EXP_HUM_SKLAD))"); //FIXME Ускоряем не загружаем строки для сотрудников которых не грузили...
+				logger.Info($"Загружено {PERSONAL_CARDS.Count()} PERSONAL_CARDS");
+
+				logger.Info("Обработка строк карточек...");
+				totalRows = PERSONAL_CARDS.Count();
+				int cardSkippedRows = 0;
+				processed = 0;
+				foreach(var item in PERSONAL_CARDS) {
+					processed++;
+					if(processed % 100 == 0)
+						Console.Write($"\r\tОбработано строк {processed} [{processed / totalRows:P}]... ");
+					if(!dicPERSONAL_CARD.ContainsKey(item.PERSONAL_CARD_ID)) {
+						logger.Warn($"Строка для карточки PERSONAL_CARD_ID={item.PERSONAL_CARD_ID} пропущена");
+						cardSkippedRows++;
+						continue;
+					}
+					EmployeeCard card = dicPERSONAL_CARD[item.PERSONAL_CARD_ID];
+					EmployeeCardItem cardItem;
+					if(item.NORMA_ROW_ID != null) {
+						NormItem normRow = dicNormsRows[item.NORMA_ROW_ID];
+						cardItem = new EmployeeCardItem(card, normRow);
+						if(!card.UsedNorms.Contains(normRow.Norm)) {
+							card.UsedNorms.Add(normRow.Norm);
+							withNorm++;
+						}
+						if(!DomainHelper.EqualDomainObjects(cardItem.Item, dicProtectionTools[item.PROTECTION_ID])) {
+							logger.Warn($"По в норме {cardItem.Item.Name}!={dicProtectionTools[item.PROTECTION_ID].Name}");
+						}
+					}
+					else {
+						cardItem = new EmployeeCardItem {
+							EmployeeCard = card,
+							Item = dicProtectionTools[item.PROTECTION_ID]
+						};
+					}
+					card.WorkwearItems.Add(cardItem);
+				}
+				Console.Write("Готово\n");
+				logger.Info($"Пропущено {skipCards} строк карточек");
+				logger.Info($"В итоге {withNorm} карточек с нормами.");
+				logger.Info($"Карточек без строк: {dicPERSONAL_CARD.Values.Count(x => !x.WorkwearItems.Any())}");
 			}
 
 			Console.ReadLine();
