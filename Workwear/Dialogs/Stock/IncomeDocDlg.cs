@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Autofac;
 using Gamma.Binding.Converters;
@@ -6,6 +6,8 @@ using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
+using QS.Navigation;
+using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using workwear.Domain.Company;
@@ -13,6 +15,7 @@ using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository;
+using workwear.Tools;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Stock;
 
@@ -149,7 +152,57 @@ namespace workwear
 
 		protected void OnBtnOpenDoc1CClicked(object sender, EventArgs e)
 		{
-			Entity.StartReadDoc1C();
+			string file = Open1CFile();
+			if(file.Length < 1) return;
+
+			ReaderIncomeFromXML1C readerIncomeFromXML1C = new ReaderIncomeFromXML1C(file);
+			readerIncomeFromXML1C.StartReadDoc1C();
+
+			Entity.Date = readerIncomeFromXML1C.Date;
+
+			if(readerIncomeFromXML1C.listDontFindNomenclature.Count > 0) {
+				string str = "";
+				foreach(var nom in readerIncomeFromXML1C.listDontFindNomenclature)
+					str += nom.Name + "\n";
+
+				if(MessageDialogHelper.RunQuestionDialog($"Таких номенклатур:\n{str}нет в справочнике. Создать?")) {
+					foreach(var nom in readerIncomeFromXML1C.listDontFindNomenclature)
+						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<NomenclatureViewModel, IEntityUoWBuilder, LineIncome>(this, EntityUoWBuilder.ForCreate(), nom, OpenPageOptions.AsSlave);
+				}
+				else {
+					MessageDialogHelper.RunWarningDialog("Создание документа прихода невозможно.");
+					return;
+				}
+
+			}
+			else {
+				foreach(var r in readerIncomeFromXML1C.ListLineIncomes)
+					Entity.AddItem(r.Nomenclature, int.Parse(r.Count), r.Size, r.Growth);
+			}
+		}
+
+		protected string Open1CFile()
+		{
+			object[] param = new object[4];
+			param[0] = "Cancel";
+			param[1] = Gtk.ResponseType.Cancel;
+			param[2] = "Open";
+			param[3] = Gtk.ResponseType.Accept;
+
+			Gtk.FileChooserDialog fc =
+				new Gtk.FileChooserDialog("Open File",
+					null,
+					Gtk.FileChooserAction.Open,
+					param);
+
+			Gtk.FileFilter xmlFilter = new Gtk.FileFilter();
+			xmlFilter.Name = "XML";
+			string nameFile = "";
+			if(fc.Run() == (int)Gtk.ResponseType.Accept)
+				if(fc.Filename.ToLower().EndsWith(".xml"))
+					nameFile = fc.Filename;
+			fc.Destroy();
+			return nameFile;
 		}
 	}
 }
