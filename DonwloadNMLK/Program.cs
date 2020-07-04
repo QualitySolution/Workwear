@@ -1,12 +1,9 @@
-
+﻿
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using Dapper;
 using NLog;
-using Oracle.ManagedDataAccess.Client;
-using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
 using QS.Project.DB;
 using QS.Project.Services.Interactive;
@@ -171,7 +168,7 @@ namespace DonwloadNMLK
 				uow.Commit();
 
 				logger.Info($"Сохраняем СИЗ...");
-				int i = 0;
+				i = 0;
 				foreach(var item in dicProtectionTools.Values) {
 					//uow.Save(item);
 					i++;
@@ -192,13 +189,10 @@ namespace DonwloadNMLK
 				var PROFF_STAFF = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.PROFF_STAFF")
 					.ToDictionary<dynamic, string>(x => x.PROFF_ID);
 
-				//logger.Info("Загружаем RELAT_STAFF_PROFF");
-				//var RELAT_STAFF_PROFF = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.RELAT_STAFF_PROFF")
-					//.ToDictionary<dynamic, string>(x => x.PROFF_ID);
-
 				logger.Info("Обработка норм...");
 				var dicNorms = new Dictionary<string, Norm>();
 				var dicNorms_row = new Dictionary<string, NormItem>();
+				var dicNormsByProff = new Dictionary<string, Norm>();
 
 				foreach(var rowNorma in dtNORMA) {
 					if(!PROFF_STAFF.ContainsKey(rowNorma.PROFF_ID)) {
@@ -216,6 +210,7 @@ namespace DonwloadNMLK
 					norm.DateTo = rowNorma.DATE_END;
 					norm.Name = PROFF_STAFF[rowNorma.PROFF_ID].NAME_PROFF;
 					dicNorms[rowNorma.NORMA_ID] = norm;
+					dicNormsByProff[rowNorma.PROFF_ID] = norm;
 				}
 
 				logger.Info($"Загружено {dicNorms.Count()} норм.");
@@ -242,23 +237,82 @@ namespace DonwloadNMLK
 
 				logger.Info($"Загружено {normRows} из {dtNORMA_ROW.Count()} строк норм.");
 
-				//foreach(var Norma in dicNorms.Values)
-				//	uow.Save(Norma);
-
-				//DataTable dtPERSONAL_CARDS = getTableFromDataBase("SELECT * FROM SKLAD.PERSONAL_CARD");
-				//foreach (DataRow rowPers_cards in dtPERSONAL_CARDS.Rows) {
-				//	EmployeeCard card = new EmployeeCard();
-				//	card.PersonnelNumber = rowPers_cards["TN"].ToString();
-				//	card.LastName = rowPers_cards["SURNAME"].ToString();
-				//	card.FirstName = rowPers_cards["NAME"].ToString();
-				//	card.Patronymic = rowPers_cards["SECNAME"].ToString();
-				//	card.CardNumber = rowPers_cards["NUM_CARD"].ToString();
-				//	card.Comment = rowPers_cards["COMM"].ToString();
-				//	card.Sex = rowPers_cards["E_SEX"].ToString() == "0" ? Sex.M : Sex.F;
-				//	uow.Save(card);
-				//}
-
+#if !NOSAVE
+				logger.Info($"Сохраняем нормы...");
+				i = 0;
+				foreach(var norm in dicNorms.Values) {
+					uow.Save(norm);
+					i++;
+					if(i % 100 == 0) {
+						uow.Commit();
+						logger.Info($"Сохранили {(float)i/ dicSAP_ZMAT.Count:P}");
+					}
+				}
 				uow.Commit();
+				logger.Info("Готово");
+#endif
+
+				logger.Info("Загружаем PERSONAL_CARD");
+				var PERSONAL_CARDS = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.PERSONAL_CARD");
+				logger.Info($"Загружено {PERSONAL_CARDS.Count()} PERSONAL_CARD");
+
+				logger.Info("Загружаем EXP_HUM_SKLAD");
+				var EXP_HUM_SKLAD = NLMKOracle.Connection.Query("SELECT * FROM KIT.EXP_HUM_SKLAD")
+					.ToDictionary<dynamic, decimal>(x => x.TN);
+				logger.Info($"Загружено {EXP_HUM_SKLAD.Count()} EXP_HUM_SKLAD");
+
+				logger.Info("Загружаем RELAT_PERS_PROFF");
+				var RELAT_PERS_PROFF = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.RELAT_PERS_PROFF")
+					.ToDictionary<dynamic, string>(x => x.PERSONAL_CARD_ID);
+				logger.Info($"Загружено {RELAT_PERS_PROFF.Count()} RELAT_PERS_PROFF");
+
+				logger.Info("Обработка PERSONAL_CARD");
+				var dicPERSONAL_CARDS = new Dictionary<string, EmployeeCard>();
+				int skipCards = 0;
+				int withNorm = 0;
+				foreach (var row in PERSONAL_CARDS) {
+					if(row.TN == null) {
+						//FIXME Пока не загружаем карточки без TN, возможно в будущем надо реализовать.
+						skipCards++;
+						continue;
+					}
+					if(!EXP_HUM_SKLAD.ContainsKey(row.TN)) {
+						logger.Error($"Сотрудник с TN={row.TN} не найден.");
+						continue;
+					}
+					var info = EXP_HUM_SKLAD[row.TN];
+					EmployeeCard card = new EmployeeCard();
+					card.PersonnelNumber = row.TN.ToString();
+					card.LastName = info.SURNAME;
+					card.FirstName = info.NAME;
+					card.Patronymic = info.SECNAME;
+					card.Sex = info.E_SEX == 2 ? Sex.F : (info.E_SEX == 1 ? Sex.M : Sex.None); ;
+					card.DismissDate = info.DUVOL;
+					card.HireDate = info.DHIRING;
+
+					card.ProfessionId = (int?)info.E_PROF;
+					card.SubdivisionId = (int?)info.PARENT_DEPT_CODE;
+					card.DepartmentId = (int?)info.ID_DEPT;
+					card.PostId = (int?)info.ID_WP;
+					dicPERSONAL_CARDS.Add(row.PERSONAL_CARD_ID, card);
+
+					//Связываем с нормой
+					if(!RELAT_PERS_PROFF.ContainsKey(row.PERSONAL_CARD_ID)) {
+						logger.Warn($"Для {card.ShortName} TN={row.TN} связь с профессией ОМТР не найдена.");
+						continue;
+					}
+					var proff = RELAT_PERS_PROFF[row.PERSONAL_CARD_ID];
+					if(!dicNormsByProff.ContainsKey(proff.PROFF_ID)) {
+						logger.Warn($"Для {card.ShortName} TN={row.TN} PROFF_ID={proff.PROFF_ID} норма не найдена.");
+						continue;
+					}
+					var norm = dicNormsByProff[proff.PROFF_ID];
+					card.AddUsedNorm(norm);
+					withNorm++;
+				}
+				logger.Info($"Пропущено {skipCards} карточек без ТН.");
+				logger.Info($"Обработано {dicPERSONAL_CARDS.Count()} личных карточек.");
+				logger.Info($"Из них без нормы {dicPERSONAL_CARDS.Count() - withNorm}.");
 			}
 
 			Console.ReadLine();
