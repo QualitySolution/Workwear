@@ -669,7 +669,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\Stock\ActWriteOff_Common.rdl" />
-    <None Include="App.config" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
