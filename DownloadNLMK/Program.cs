@@ -165,23 +165,24 @@ namespace DownloadNLMK
 					i++;
 					if(i % 100 == 0) {
 						uow.Commit();
-						logger.Info($"Сохранили {(float)i/ dicSAP_ZMAT.Count:P}");
+						Console.Write($"\r\tСохранили {i} [{(float)i / dicSAP_ZMAT.Count:P}]... ");
 					}
 				}
 				uow.Commit();
+				Console.Write("Завершено\n");
 
 				logger.Info($"Сохраняем СИЗ...");
 				i = 0;
 				foreach(var item in dicProtectionTools.Values) {
-					//uow.Save(item);
+					uow.Save(item);
 					i++;
 					if(i % 100 == 0) {
 						uow.Commit();
-						logger.Info($"Сохранили {(float)i/dicProtectionTools.Count:P}");
+						Console.Write($"\r\tСохранили {i} [{(float)i / dicProtectionTools.Count:P}]... ");
 					}
 				}
 				uow.Commit();
-				logger.Info("Готово");
+				Console.Write("Завершено\n");
 #endif
 				logger.Info("Загружаем NORMA");
 				var dtNORMA = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.NORMA");
@@ -249,11 +250,11 @@ namespace DownloadNLMK
 					i++;
 					if(i % 100 == 0) {
 						uow.Commit();
-						logger.Info($"Сохранили {(float)i/ dicSAP_ZMAT.Count:P}");
+						Console.Write($"\r\tСохранили {i} [{(float)i / dicNorms.Count:P}]... ");
 					}
 				}
 				uow.Commit();
-				logger.Info("Готово");
+				Console.Write("Завершено\n");
 #endif
 
 				logger.Info("Загружаем PERSONAL_CARD");
@@ -367,8 +368,23 @@ namespace DownloadNLMK
 				logger.Info($"Пропущено {skipCards} строк карточек");
 				logger.Info($"В итоге {withNorm} карточек с нормами.");
 				logger.Info($"Карточек без строк: {dicPERSONAL_CARD.Values.Count(x => !x.WorkwearItems.Any())}");
-			}
 
+#if !NOSAVE
+				logger.Info($"Сохраняем личные карточки...");
+				i = 0;
+				foreach(var card in dicPERSONAL_CARD.Values) {
+					uow.Save(card);
+					i++;
+					if(i % 100 == 0) {
+						uow.Commit();
+						Console.Write($"\r\tСохранили {i} [{(float)i / dicPERSONAL_CARD.Count:P}]... ");
+					}
+				}
+				uow.Commit();
+				Console.Write("Завершено\n");
+#endif
+			}
+			logger.Info("Работа завершена. Нажмите любую кнопку для закрытия консоли...");
 			Console.ReadLine();
 		}
 	}
