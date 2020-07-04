@@ -154,40 +154,12 @@ namespace workwear.Tools
 
 	public class LineIncome : PropertyChangedBase
 	{
-		Nomenclature nomenclature;
-		public Nomenclature Nomenclature {
-			get { return nomenclature; }
-			set { SetField(ref nomenclature, value, () => Nomenclature); }
-		}
-
-		string name;
-		public string Name {
-			get { return name; }
-			set { SetField(ref name, value, () => Name); }
-		}
-
-		private uint? ozm;
-		public virtual uint? Ozm {
-			get { return ozm; }
-			set { SetField(ref ozm, value); }
-		}
-
-		string count;
-		public string Count {
-			get { return count; }
-			set { SetField(ref count, value, () => Count); }
-		}
-
-		string size;
-		public string Size {
-			get { return size; }
-			set { SetField(ref size, value, () => Size); }
-		}
-		string growth;
-		public string Growth {
-			get { return growth; }
-			set { SetField(ref growth, value, () => Growth); }
-		}
+		public Nomenclature Nomenclature;
+		public string Name;
+		public uint? Ozm;
+		public string Count;
+		public string Size;
+		public string Growth;
 
 		public LineIncome(Nomenclature nom, string count, string size, string growth)
 		{
