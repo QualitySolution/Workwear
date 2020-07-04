@@ -360,9 +360,9 @@ namespace DownloadNLMK
 							card.UsedNorms.Add(normRow.Norm);
 							withNorm++;
 						}
-						if(!DomainHelper.EqualDomainObjects(cardItem.Item, dicProtectionTools[item.PROTECTION_ID])) {
-							logger.Warn($"По в норме {cardItem.Item.Name}!={dicProtectionTools[item.PROTECTION_ID].Name}");
-						}
+						//if(!DomainHelper.EqualDomainObjects(cardItem.Item, dicProtectionTools[item.PROTECTION_ID])) {
+						//	logger.Warn($"По в норме {cardItem.Item.Name}!={dicProtectionTools[item.PROTECTION_ID].Name}");
+						//}
 					}
 					else {
 						cardItem = new EmployeeCardItem {
