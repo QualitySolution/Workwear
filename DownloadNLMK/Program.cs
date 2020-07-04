@@ -65,6 +65,7 @@ namespace DownloadNLMK
 					}
 					dicSAP_ZMAT.Add(zmat.ZMAT, nomenclature);
 					if(nomenclature.Name == null) {
+						nomenclature.Name = $"Без названия ОЗМ={nomenclature.Ozm}"; 
 						logger.Error($"Для ОЗМ {nomenclature.Ozm} нет названия.");
 						categoryFail++;
 						continue;
@@ -102,13 +103,15 @@ namespace DownloadNLMK
 				var dicSkipedProtectionTools = new Dictionary<string, dynamic>();
 				logger.Info("Обработка СИЗ...");
 				foreach(var row in dtPROTECTION_TOOLS) {
-					//if(String.IsNullOrWhiteSpace(row.NAME)) {
-					//	logger.Warn($"СИЗ с кодом {row.PROTECTION_ID} не имеет названия. Пропускаем...");
-					//	dicSkipedProtectionTools[row.PROTECTION_ID] = row;
-					//	continue;
-					//}
 					var item = new ProtectionTools();
 					item.Name = row.NAME;
+					item.Comment = "Загружена из ОМТР";
+					if(String.IsNullOrWhiteSpace(item.Name)) {
+						logger.Warn($"СИЗ с кодом {row.PROTECTION_ID} не имеет названия.");
+						item.Name = $"Без названия PROTECTION_ID={row.PROTECTION_ID}";
+						//dicSkipedProtectionTools[row.PROTECTION_ID] = row;
+						//continue;
+					}
 					dicProtectionTools[row.PROTECTION_ID] = item;
 				}
 				logger.Info($"Загружено {dicProtectionTools.Count} СИЗ-ов.");
@@ -238,6 +241,11 @@ namespace DownloadNLMK
 					dicNorms[rowNorma.NORMA_ID].Items.Add(normItem);
 					dicNormsRows.Add(rowNorma.NORMA_ROW_ID, normItem);
 					normRows++;
+
+					if(normItem.PeriodCount > 127) {
+						logger.Warn($"В норме {normItem.Norm.Name} - {normItem.Item.Name} указано {normItem.PeriodCount} что больше максимального значения поля. Период сокращне до 120.");
+						normItem.PeriodCount = 120;
+					}
 				}
 				Console.Write("Готово\n");
 				logger.Info($"Загружено {normRows} из {dtNORMA_ROW.Count()} строк норм.");

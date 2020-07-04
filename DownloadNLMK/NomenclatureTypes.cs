@@ -134,11 +134,25 @@ namespace DownloadNLMK
 								return desc.ItemsType2;
 						}
 					}
-					return kit ? desc.GetKit(KitUnits) : desc.ItemsType;
+					return kit ? GetKit(desc) : desc.ItemsType;
 				}
 			}
 			logger.Warn($"Не найдена категория для [{name}]");
 			return null;
+		}
+
+		public ItemsType GetKit(TypeDescription desc)
+		{
+			if(desc.ItemsTypeKit == null) {
+				desc.ItemsTypeKit = new ItemsType {
+					Name = desc.ItemsType.Name + " КОМПЛЕКТ",
+					Category = ItemTypeCategory.wear,
+					WearCategory = desc.ItemsType.WearCategory,
+					Units = KitUnits
+				};
+				ItemsTypes.Add(desc.ItemsTypeKit);
+			}
+			return desc.ItemsTypeKit;
 		}
 
 		private Dictionary<string, ClothesSex> SexKeywords = new Dictionary<string, ClothesSex> {
@@ -186,17 +200,5 @@ namespace DownloadNLMK
 			this.keyWords2 = keyWords2;
 		}
 
-		public ItemsType GetKit(MeasurementUnits komplect)
-		{
-			if(ItemsTypeKit == null) {
-				ItemsTypeKit = new ItemsType {
-					Name = ItemsType.Name + " КОМПЛЕКТ",
-					Category = ItemTypeCategory.wear,
-					WearCategory = ItemsType.WearCategory,
-					Units = komplect
-				};
-			}
-			return ItemsTypeKit;
-		}
 	}
 }
