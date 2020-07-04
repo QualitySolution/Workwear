@@ -99,10 +99,12 @@ namespace DonwloadNMLK
 				var dtPROTECTION_REPLACEMENT = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.PROTECTION_REPLACEMENT");
 
 				var dicProtectionTools = new Dictionary<string, ProtectionTools>();
+				var dicSkipedProtectionTools = new Dictionary<string, dynamic>();
 				logger.Info("Обработка СИЗ...");
 				foreach(var row in dtPROTECTION_TOOLS) {
 					if(String.IsNullOrWhiteSpace(row.NAME)) {
 						logger.Warn($"СИЗ с кодом {row.PROTECTION_ID} не имеет названия. Пропускаем...");
+						dicSkipedProtectionTools[row.PROTECTION_ID] = row;
 						continue;
 					}
 					var item = new ProtectionTools();
@@ -149,7 +151,6 @@ namespace DonwloadNMLK
 					logger.Warn($"Не использовано {noUsedNomenclature.Count} из {dicSAP_ZMAT.Count} номеклатур:\n"
 						+ String.Join("\n", noUsedNomenclature.Select(x => x.Name)));
 				}
-				return;
 #if !NOSAVE
 				logger.Info($"Сохраняем типы...");
 				foreach(var item in nomeclatureTypes.ItemsTypes) {
@@ -182,46 +183,64 @@ namespace DonwloadNMLK
 				uow.Commit();
 				logger.Info("Готово");
 #endif
-				int i = 0;
-				foreach(var item in dicItemsTypes.Values) {
-					uow.Save(item);
-					i++;
-					if(i % 100 == 0) {
-						uow.Commit();
-						logger.Info($"Сохранили {(float)i/dicItemsTypes.Count:P}");
+				logger.Info("Загружаем NORMA");
+				var dtNORMA = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.NORMA");
+				logger.Info("Загружаем NORMA_ROW");
+				var dtNORMA_ROW = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.NORMA_ROW");
+
+				logger.Info("Загружаем PROFF_STAFF");
+				var PROFF_STAFF = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.PROFF_STAFF")
+					.ToDictionary<dynamic, string>(x => x.PROFF_ID);
+
+				//logger.Info("Загружаем RELAT_STAFF_PROFF");
+				//var RELAT_STAFF_PROFF = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.RELAT_STAFF_PROFF")
+					//.ToDictionary<dynamic, string>(x => x.PROFF_ID);
+
+				logger.Info("Обработка норм...");
+				var dicNorms = new Dictionary<string, Norm>();
+				var dicNorms_row = new Dictionary<string, NormItem>();
+
+				foreach(var rowNorma in dtNORMA) {
+					if(!PROFF_STAFF.ContainsKey(rowNorma.PROFF_ID)) {
+						logger.Warn($"Профессия NORMA.PROFF_ID={rowNorma.PROFF_ID} не найдена в PROFF_STAFF.");
+						continue;
 					}
+
+					//if(!RELAT_STAFF_PROFF.ContainsKey(rowNorma.PROFF_ID)) {
+					//	logger.Warn($"Профессия NORMA.PROFF_ID={rowNorma.PROFF_ID} не найдена в RELAT_STAFF_PROFF.");
+					//	continue;
+					//}
+
+					Norm norm = new Norm();
+					norm.DateFrom = rowNorma.DATE_BEGIN;
+					norm.DateTo = rowNorma.DATE_END;
+					norm.Name = PROFF_STAFF[rowNorma.PROFF_ID].NAME_PROFF;
+					dicNorms[rowNorma.NORMA_ID] = norm;
 				}
-				uow.Commit();
-				logger.Info("Готово");
 
-				return;
+				logger.Info($"Загружено {dicNorms.Count()} норм.");
 
-				//DataTable dtNORMA = getTableFromDataBase("SELECT * FROM SKLAD.NORMA");
-				//DataTable dtNORMA_ROW = getTableFromDataBase("SELECT * FROM SKLAD.NORMA_ROW");
+				logger.Info("Обработка строк норм...");
+				int normRows = 0;
+				foreach(var rowNorma in dtNORMA_ROW) {
+					if(!dicProtectionTools.ContainsKey(rowNorma.PROTECTION_ID)) {
+						if(dicSkipedProtectionTools.ContainsKey(rowNorma.PROTECTION_ID))
+							logger.Warn($"PROTECTION_ID={rowNorma.PROTECTION_ID} в норме NORMA_ID={rowNorma.NORMA_ID} [{dicNorms[rowNorma.NORMA_ID].Name}] была пропущена.");
+						else
+							logger.Warn($"В норме NORMA_ID={rowNorma.NORMA_ID} {dicNorms[rowNorma.NORMA_ID].Name} есть ссылка на PROTECTION_ID={rowNorma.PROTECTION_ID} которой нет.");
+						continue;
+					}
+					NormItem normItem = new NormItem();
+					normItem.Amount = Convert.ToInt32(rowNorma.COUNT);
+					normItem.NormPeriod = NormPeriodType.Month;
+					normItem.Item = dicProtectionTools[rowNorma.PROTECTION_ID];
+					normItem.PeriodCount = Convert.ToInt32(rowNorma.WEARING_PERIOD);
+					normItem.Norm = dicNorms[rowNorma.NORMA_ID];
+					dicNorms[rowNorma.NORMA_ID].Items.Add(normItem);
+					normRows++;
+				}
 
-				//var dicNorms = new Dictionary<int, Norm>();
-				//var dicNorms_row = new Dictionary<int, NormItem>();
-
-				//foreach(DataRow rowNorma in dtNORMA.Rows) {
-				//	Norm norm = new Norm();
-				//	norm.DateFrom = DateTime.Parse(rowNorma["DATE_BEGIN"].ToString());
-				//	norm.DateTo = DateTime.Parse(rowNorma["DATE_END"].ToString());
-
-				//	dicNorms[int.Parse(rowNorma["NORMA_ID"].ToString())] = norm;
-
-				//}
-
-				//foreach(DataRow rowNorma_row in dtNORMA_ROW.Rows) {
-				//	NormItem normItem = new NormItem();
-				//	normItem.Amount = int.Parse(rowNorma_row["COUNT"].ToString());
-				//	normItem.NormPeriod = NormPeriodType.Month;
-				//	normItem.Item = dicItemsTypes[int.Parse(rowNorma_row["PROTECTION_ID"].ToString())];
-				//	normItem.PeriodCount = int.Parse(rowNorma_row["WEARING_PERIOD"].ToString());
-				//	normItem.Norm = dicNorms[int.Parse(rowNorma_row["NORMA_ID"].ToString())];
-
-				//	dicNorms_row[int.Parse(rowNorma_row["NORMA_ROW_ID"].ToString())] = normItem;
-				//	dicNorms[int.Parse(rowNorma_row["NORMA_ID"].ToString())].Items.Add(normItem);
-				//}
+				logger.Info($"Загружено {normRows} из {dtNORMA_ROW.Count()} строк норм.");
 
 				//foreach(var Norma in dicNorms.Values)
 				//	uow.Save(Norma);
