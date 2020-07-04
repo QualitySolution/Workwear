@@ -6,7 +6,7 @@ using QS.DomainModel.UoW;
 using workwear.Domain.Stock;
 using workwear.Measurements;
 
-namespace DonwloadNMLK
+namespace DownloadNLMK
 {
 	public class NomenclatureTypes
 	{

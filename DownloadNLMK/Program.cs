@@ -15,7 +15,7 @@ using workwear.Domain.Stock;
 using workwear.Measurements;
 using workwear.Tools.Oracle;
 
-namespace DonwloadNMLK
+namespace DownloadNLMK
 {
 	class MainClass
 	{

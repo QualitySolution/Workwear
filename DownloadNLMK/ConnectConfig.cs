@@ -4,7 +4,7 @@ using QS.Project.DB;
 using QS.Services;
 using QSMachineConfig;
 
-namespace DonwloadNMLK
+namespace DownloadNLMK
 {
 	public static class ConnectConfig
 	{

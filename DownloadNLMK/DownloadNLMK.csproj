@@ -7,8 +7,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{58CAF3A2-12DC-4489-B28E-3C431FBCCCDC}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>DonwloadNMLK</RootNamespace>
-    <AssemblyName>DonwloadNMLK</AssemblyName>
+    <RootNamespace>DownloadNLMK</RootNamespace>
+    <AssemblyName>DownloadNLMK</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <ReleaseVersion>1.0</ReleaseVersion>
   </PropertyGroup>
