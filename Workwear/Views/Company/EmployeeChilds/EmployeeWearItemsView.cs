@@ -15,19 +15,19 @@ namespace workwear.Views.Company.EmployeeChilds
 			this.Build();
 
 			ytreeWorkwear.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItem>()
-				.AddColumn("ТОН").AddTextRenderer(node => node.ActiveNormItem.Norm.TONParagraph)
+				.AddColumn("ТОН").AddTextRenderer(node => node.TonText)
 				.AddColumn("Наименование").AddTextRenderer(node => node.Item.Name)
-				.AddColumn("По норме").AddTextRenderer(node => node.Item.Units.MakeAmountShortStr(node.ActiveNormItem.Amount))
-				.AddColumn("Срок службы").AddTextRenderer(node => node.ActiveNormItem.LifeText)
+				.AddColumn("По норме").AddTextRenderer(node => node.AmountByNormText)
+				.AddColumn("Срок службы").AddTextRenderer(node => node.NormLifeText)
 				.AddColumn("Дата получения").AddTextRenderer(node => String.Format("{0:d}", node.LastIssue))
-				.AddColumn("Получено").AddTextRenderer(node => node.Item.Units.MakeAmountShortStr(node.Amount))
+				.AddColumn("Получено").AddTextRenderer(node => node.AmountText)
 					.AddSetter((w, node) => w.Foreground = node.AmountColor)
 				.AddColumn("След. получение").AddTextRenderer(node => String.Format("{0:d}", node.NextIssue))
 				.AddColumn("Просрочка").AddTextRenderer(
 					node => node.NextIssue.HasValue && node.NextIssue.Value < DateTime.Today
 					? NumberToTextRus.FormatCase((int)(DateTime.Today - node.NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней")
 					: String.Empty)
-				.AddColumn("На складе").AddTextRenderer(node => node.InStock != null ? node.Item.Units.MakeAmountShortStr(node.InStock.Sum(x => x.Amount)) : null)
+				.AddColumn("На складе").AddTextRenderer(node => node.InStockText)
 				 .AddSetter((w, node) => w.Foreground = node.InStockState.GetEnumColor())
 				.AddColumn("Подходящая номенклатура").AddTextRenderer(node => node.MatchedNomenclatureShortText)
 				.AddSetter((w, node) => w.Foreground = node.InStockState.GetEnumColor())
