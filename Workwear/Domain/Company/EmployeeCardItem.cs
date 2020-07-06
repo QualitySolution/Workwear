@@ -100,7 +100,9 @@ namespace workwear.Domain.Company
 
 		public virtual string AmountColor {
 			get{
-				if (ActiveNormItem.Amount == Amount)
+				if(ActiveNormItem == null)
+					return "Indigo";
+				else if (ActiveNormItem.Amount == Amount)
 					return "darkgreen";
 				else if (ActiveNormItem.Amount < Amount)
 					return "blue";
@@ -142,6 +144,8 @@ namespace workwear.Domain.Company
 			.OrderBy(x => x.WearPercent)
 			.ThenByDescending(x => x.Amount);
 
+		#endregion
+
 		public virtual string MatchedNomenclatureShortText {
 			get {
 				if(InStockState == StockStateInfo.UnknownNomenclature)
@@ -157,6 +161,15 @@ namespace workwear.Domain.Company
 				return text;
 			}
 		}
+
+
+		#region Расчетное для View
+
+		public virtual string AmountByNormText => Item?.Units?.MakeAmountShortStr(ActiveNormItem?.Amount ?? 0) ?? ActiveNormItem?.Amount.ToString();
+		public virtual string InStockText => Item?.Units?.MakeAmountShortStr(InStock?.Sum(x => x.Amount) ?? 0) ?? InStock?.Sum(x => x.Amount).ToString();
+		public virtual string AmountText => Item?.Units?.MakeAmountShortStr(Amount) ?? Amount.ToString();
+		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
+		public virtual string NormLifeText => ActiveNormItem?.LifeText;
 
 		#endregion
 
