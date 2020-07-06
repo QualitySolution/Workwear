@@ -155,7 +155,7 @@ namespace workwear.Domain.Company
 					return String.Empty;
 
 				var first = BestChoiceInStock.First();
-				var text = first.StockPosition.Title + " - " + Item.Units.MakeAmountShortStr(first.Amount);
+				var text = first.StockPosition.Title + " - " + Item?.Units?.MakeAmountShortStr(first.Amount) ?? first.Amount.ToString();
 				if(InStock.Count > 1)
 					text += NumberToTextRus.FormatCase(InStock.Count - 1, " (еще {0} вариант)", " (еще {0} варианта)", " (еще {0} вариантов)");
 				return text;
