@@ -68,7 +68,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		void NormJournal_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			foreach(var norm in e.SelectedObjects) {
-				Entity.AddUsedNorm(UoW.GetById<Norm>(e.GetId()));
+				Entity.AddUsedNorm(UoW.GetById<Norm>(norm.GetId()));
 			}
 		}
 
