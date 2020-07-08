@@ -138,10 +138,6 @@ namespace workwear.Domain.Regulations
 
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
 		{
-			if (Professions.Count == 0)
-				yield return new ValidationResult ("Норма должна содержать хотя бы одну профессию.", 
-					new[] { this.GetPropertyName (o => o.Professions) });
-
 			if (Items.Count == 0)
 				yield return new ValidationResult ("Норма должна содержать хотя бы одну номенклатуру.", 
 					new[] { this.GetPropertyName (o => o.Items) });
