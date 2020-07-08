@@ -93,6 +93,7 @@ namespace DownloadNLMK
 						logger.Error($"Единица измерения не соответсвует {zmat.EDIZ} != {nomenclature.Type.Units.OKEI} для [{nomenclature.Name}]");
 				}
 				logger.Warn($"Для {categoryFail} номеклатур, не найдено категорий.");
+				dtSAP_ZMAT = null;
 
 				logger.Info("Загружаем PROTECTION_TOOL");
 				var dtPROTECTION_TOOLS = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.PROTECTION_TOOL");
@@ -115,6 +116,8 @@ namespace DownloadNLMK
 					dicProtectionTools[row.PROTECTION_ID] = item;
 				}
 				logger.Info($"Загружено {dicProtectionTools.Count} СИЗ-ов.");
+				dtPROTECTION_TOOLS = null;
+
 				logger.Info("Обработка Аналогов СИЗ...");
 				int analogCount = 0;
 				int analogNotFound = 0;
@@ -134,6 +137,7 @@ namespace DownloadNLMK
 				}
 				logger.Info($"Загружено {analogCount} аналогов СИЗ-ов.");
 				logger.Info($"Не найдено {analogNotFound} аналогов СИЗ-ов.");
+				dtPROTECTION_REPLACEMENT = null;
 
 				logger.Info("Загружаем ANALOQUE_PROTECTION");
 				var dtANALOQUE_PROTECTION = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.ANALOQUE_PROTECTION");
@@ -154,6 +158,7 @@ namespace DownloadNLMK
 					logger.Warn($"Не использовано {noUsedNomenclature.Count} из {dicSAP_ZMAT.Count} номеклатур:\n"
 						+ String.Join("\n", noUsedNomenclature.Select(x => x.Name)));
 				}
+				dtANALOQUE_PROTECTION = null;
 #if !NOSAVE
 				logger.Info($"Сохраняем типы...");
 				foreach(var item in nomeclatureTypes.ItemsTypes) {
@@ -214,8 +219,9 @@ namespace DownloadNLMK
 					dicNorms[rowNorma.NORMA_ID] = norm;
 					dicNormsByProff[rowNorma.PROFF_ID] = norm;
 				}
-
 				logger.Info($"Загружено {dicNorms.Count()} норм.");
+				dtNORMA = null;
+				PROFF_STAFF = null;
 
 				logger.Info("Обработка строк норм...");
 				int normRows = 0;
@@ -249,6 +255,7 @@ namespace DownloadNLMK
 				}
 				Console.Write("Готово\n");
 				logger.Info($"Загружено {normRows} из {dtNORMA_ROW.Count()} строк норм.");
+				dtNORMA_ROW = null;
 
 #if !NOSAVE
 				logger.Info($"Сохраняем нормы...");
@@ -332,6 +339,9 @@ namespace DownloadNLMK
 				logger.Info($"Пропущено {skipCards} карточек без ТН.");
 				logger.Info($"Обработано {dicPERSONAL_CARD.Count()} личных карточек.");
 				logger.Info($"C профессией {withNorm}.");
+				PERSONAL_CARD = null;
+				EXP_HUM_SKLAD = null;
+				RELAT_PERS_PROFF = null;
 
 				logger.Info("Загружаем PERSONAL_CARDS");
 				var PERSONAL_CARDS = NLMKOracle.Connection.Query("SELECT * FROM SKLAD.PERSONAL_CARDS r " +
@@ -376,7 +386,7 @@ namespace DownloadNLMK
 				logger.Info($"Пропущено {skipCards} строк карточек");
 				logger.Info($"В итоге {withNorm} карточек с нормами.");
 				logger.Info($"Карточек без строк: {dicPERSONAL_CARD.Values.Count(x => !x.WorkwearItems.Any())}");
-
+				PERSONAL_CARDS = null;
 #if !NOSAVE
 				logger.Info($"Сохраняем личные карточки...");
 				i = 0;
