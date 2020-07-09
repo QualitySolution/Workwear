@@ -105,7 +105,7 @@ namespace DownloadNLMK.Loaders
 			var PERSONAL_CARDS = connection.Query("SELECT r.PERSONAL_CARD_ID, r.NORMA_ROW_ID, sms.DOTP, sms.KOLMOTP " +
 				"FROM SKLAD.PERSONAL_CARDS r " +
 				"INNER JOIN SKLAD.NORMA_ROW ON SKLAD.NORMA_ROW.NORMA_ROW_ID = r.NORMA_ROW_ID " +
-				"INNER JOIN SKLAD.NORMA norma ON SKLAD.NORMA.NORMA_ID = SKLAD.NORMA_ROW.NORMA_ID " +
+				"INNER JOIN SKLAD.NORMA norma ON norma.NORMA_ID = SKLAD.NORMA_ROW.NORMA_ID " +
 				"INNER JOIN SKLAD.SMSFORMA sms ON sms.IDFORMS = r.IDFORMS " +
 				"WHERE sysdate BETWEEN norma.DATE_BEGIN AND norma.DATE_END " +
 				"AND r.PERSONAL_CARD_ID IN (SELECT c.PERSONAL_CARD_ID FROM SKLAD.PERSONAL_CARD c WHERE c.TN IN(SELECT TN FROM KIT.EXP_HUM_SKLAD))");
@@ -145,7 +145,6 @@ namespace DownloadNLMK.Loaders
 			logger.Info($"Пропущено {skipCards} строк карточек");
 			logger.Info($"В итоге {withNorm} карточек с нормами.");
 			logger.Info($"Карточек без строк: {ByID.Values.Count(x => !x.WorkwearItems.Any())}");
-			PERSONAL_CARDS = null;
 		}
 
 		public void MarkAsUsed(EmployeeCard employee)
