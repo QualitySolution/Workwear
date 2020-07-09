@@ -34,7 +34,7 @@ namespace DownloadNLMK.Loaders
 
 			logger.Info("Загружаем EXP_HUM_SKLAD");
 			var EXP_HUM_SKLAD = connection.Query(
-				"SELECT t.SURNAME, t.NAME, t.SECNAME, t.E_SEX, t.DUVOL, t.DHIRING, t.E_PROF, t.PARENT_DEPT_CODE, t.ID_DEPT, t.ID_WP " +
+				"SELECT t.TN, t.SURNAME, t.NAME, t.SECNAME, t.E_SEX, t.DUVOL, t.DHIRING, t.E_PROF, t.PARENT_DEPT_CODE, t.ID_DEPT, t.ID_WP " +
 				"FROM KIT.EXP_HUM_SKLAD t " +
 				"WHERE t.TN IN (SELECT TN FROM SKLAD.PERSONAL_CARD)")//FIXME Ускоряем не грузим сотрудников без карточек.
 				.ToDictionary<dynamic, decimal>(x => x.TN);
@@ -106,7 +106,7 @@ namespace DownloadNLMK.Loaders
 				"FROM SKLAD.PERSONAL_CARDS r " +
 				"INNER JOIN SKLAD.NORMA_ROW ON SKLAD.NORMA_ROW.NORMA_ROW_ID = r.NORMA_ROW_ID " +
 				"INNER JOIN SKLAD.NORMA norma ON SKLAD.NORMA.NORMA_ID = SKLAD.NORMA_ROW.NORMA_ID " +
-				"INNER JOIN SKLAD.SMSFORMA sms ON SKLAD.SMSFORMA.IDFORMS = r.IDFORMS " +
+				"INNER JOIN SKLAD.SMSFORMA sms ON sms.IDFORMS = r.IDFORMS " +
 				"WHERE sysdate BETWEEN norma.DATE_BEGIN AND norma.DATE_END " +
 				"AND r.PERSONAL_CARD_ID IN (SELECT c.PERSONAL_CARD_ID FROM SKLAD.PERSONAL_CARD c WHERE c.TN IN(SELECT TN FROM KIT.EXP_HUM_SKLAD))");
 
@@ -118,7 +118,7 @@ namespace DownloadNLMK.Loaders
 				processed++;
 				if(processed % 100 == 0)
 					Console.Write($"\r\tОбработано строк {processed} [{processed / totalRows:P}]... ");
-				if(!ByID.ContainsKey(item.PERSONAL_CARD_ID) || item.NORMA_ROW_ID != null) {
+				if(!ByID.ContainsKey(item.PERSONAL_CARD_ID) || item.NORMA_ROW_ID == null) {
 					logger.Warn($"Строка для карточки PERSONAL_CARD_ID={item.PERSONAL_CARD_ID} пропущена");
 					cardSkippedRows++;
 					continue;
@@ -131,13 +131,13 @@ namespace DownloadNLMK.Loaders
 					withNorm++;
 				}
 				EmployeeCardItem cardItem = card.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normRow);
-				if(cardItem != null) {
+				if(cardItem == null) {
 					cardItem = new EmployeeCardItem(card, normRow);
 					card.WorkwearItems.Add(cardItem);
 				}
-			 	if(cardItem.LastIssue < item.DOTP) {
+			 	if((cardItem.LastIssue ?? default(DateTime)) < item.DOTP) {
 					cardItem.LastIssue = item.DOTP;
-					cardItem.Amount = (int)item.KOLMOTP;
+					cardItem.Amount = Convert.ToInt32(item.KOLMOTP);
 					cardItem.NextIssue = normRow.CalculateExpireDate(cardItem.LastIssue.Value, cardItem.Amount);
 				}
 			}
