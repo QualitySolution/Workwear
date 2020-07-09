@@ -80,6 +80,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConnectConfig.cs" />
     <Compile Include="NomenclatureTypes.cs" />
+    <Compile Include="Loaders\NomenclatureLoader.cs" />
+    <Compile Include="Loaders\ProtectionToolsLoader.cs" />
+    <Compile Include="Loaders\NormLoader.cs" />
+    <Compile Include="Loaders\EmployeeLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -110,6 +114,9 @@
       <Project>{769710D2-BF98-4120-9E07-67BD740CFA1D}</Project>
       <Name>QSMachineConfig</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Loaders\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
