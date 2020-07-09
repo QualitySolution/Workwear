@@ -49,7 +49,9 @@ namespace DownloadNLMK.Loaders
 				norm.DateTo = rowNorma.DATE_END;
 				norm.Name = PROFF_STAFF[rowNorma.PROFF_ID].NAME_PROFF;
 				ByID[rowNorma.NORMA_ID] = norm;
-				ByProf[rowNorma.PROFF_ID] = norm;
+				if(!ByProf.ContainsKey(rowNorma.PROFF_ID) || ByProf[(string)rowNorma.PROFF_ID].DateTo < norm.DateTo) {
+					ByProf[rowNorma.PROFF_ID] = norm;
+				}
 			}
 			logger.Info($"Загружено {ByID.Count()} норм.");
 
