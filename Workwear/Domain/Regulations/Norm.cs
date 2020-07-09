@@ -128,7 +128,10 @@ namespace workwear.Domain.Regulations
 
 		public virtual string AnnexNumberText => Annex?.Number.ToString();
 
-# endregion
+		public virtual bool IsActive => (DateFrom == null || DateFrom.Value <= DateTime.Today)
+			&& (DateTo == null || DateTo >= DateTime.Today);
+
+		# endregion
 
 		public Norm ()
 		{
