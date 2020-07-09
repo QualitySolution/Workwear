@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Linq;
 using DownloadNLMK.Loaders;
 using NLog;
 using QS.DomainModel.UoW;
@@ -57,6 +58,9 @@ namespace DownloadNLMK
 				logger.Info($"Использовано {protectionTools.UsedProtectionTools.Count} из {protectionTools.ByID.Count} СИЗ-ов.");
 				logger.Info($"Использовано {norms.UsedNorms.Count} из {norms.ByID.Count} норм.");
 				logger.Info($"Использовано {employees.UsedEmployees.Count} из {employees.ByID.Count} сотрудников.");
+
+				logger.Info($"Сотрудников без норм {employees.UsedEmployees.Count(x => x.UsedNorms.Count == 0)}");
+				logger.Info($"Сотрудников без выдач {employees.UsedEmployees.Count(x => x.WorkwearItems.Count == 0)}");
 #if !NOSAVE
 				nomenclatures.Save();
 				protectionTools.Save();

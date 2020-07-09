@@ -42,7 +42,6 @@ namespace DownloadNLMK.Loaders
 				ByID[row.PROTECTION_ID] = item;
 			}
 			logger.Info($"Загружено {ByID.Count} СИЗ-ов.");
-			dtPROTECTION_TOOLS = null;
 
 			logger.Info("Обработка Аналогов СИЗ...");
 			int analogCount = 0;
@@ -63,7 +62,6 @@ namespace DownloadNLMK.Loaders
 			}
 			logger.Info($"Загружено {analogCount} аналогов СИЗ-ов.");
 			logger.Info($"Не найдено {analogNotFound} аналогов СИЗ-ов.");
-			dtPROTECTION_REPLACEMENT = null;
 
 			logger.Info("Загружаем ANALOQUE_PROTECTION");
 			var dtANALOQUE_PROTECTION = connection.Query("SELECT * FROM SKLAD.ANALOQUE_PROTECTION");
@@ -85,6 +83,8 @@ namespace DownloadNLMK.Loaders
 			if(UsedProtectionTools.Add(tools)) {
 				foreach(var item in tools.Nomenclatures)
 					nomenclatures.MarkAsUsed(item);
+				foreach(var tool in tools.Analogs)
+					MarkAsUsed(tool);
 			}
 		}
 

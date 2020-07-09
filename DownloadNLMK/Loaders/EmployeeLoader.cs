@@ -43,7 +43,6 @@ namespace DownloadNLMK.Loaders
 			logger.Info($"Загружено {RELAT_PERS_PROFF.Count()} RELAT_PERS_PROFF");
 
 			logger.Info("Обработка PERSONAL_CARD");
-			var dicPERSONAL_CARD = new Dictionary<string, EmployeeCard>();
 			int skipCards = 0;
 			int withNorm = 0;
 			int processed = 0;
@@ -75,7 +74,7 @@ namespace DownloadNLMK.Loaders
 				card.SubdivisionId = (int?)info.PARENT_DEPT_CODE;
 				card.DepartmentId = (int?)info.ID_DEPT;
 				card.PostId = (int?)info.ID_WP;
-				dicPERSONAL_CARD.Add(row.PERSONAL_CARD_ID, card);
+				ByID.Add(row.PERSONAL_CARD_ID, card);
 
 				//Связываем с нормой
 				if(!RELAT_PERS_PROFF.ContainsKey(row.PERSONAL_CARD_ID)) {
@@ -93,16 +92,20 @@ namespace DownloadNLMK.Loaders
 			}
 			Console.Write("Готово\n");
 			logger.Info($"Пропущено {skipCards} карточек без ТН.");
-			logger.Info($"Обработано {dicPERSONAL_CARD.Count()} личных карточек.");
+			logger.Info($"Обработано {ByID.Count()} личных карточек.");
 			logger.Info($"C профессией {withNorm}.");
 			PERSONAL_CARD = null;
 			EXP_HUM_SKLAD = null;
 			RELAT_PERS_PROFF = null;
 
 			logger.Info("Загружаем PERSONAL_CARDS");
-			var PERSONAL_CARDS = connection.Query("SELECT * FROM SKLAD.PERSONAL_CARDS r " +
-				"WHERE r.PROTECTION_ID IS NOT NULL AND r.PERSONAL_CARD_ID IN (SELECT c.PERSONAL_CARD_ID FROM SKLAD.PERSONAL_CARD c WHERE c.TN IN(SELECT TN FROM KIT.EXP_HUM_SKLAD))"); //FIXME Ускоряем не загружаем строки для сотрудников которых не грузили...
-			logger.Info($"Загружено {PERSONAL_CARDS.Count()} PERSONAL_CARDS");
+			var PERSONAL_CARDS = connection.Query("SELECT r.PERSONAL_CARD_ID, r.NORMA_ROW_ID, sms.DOTP, sms.KOLMOTP " +
+				"FROM SKLAD.PERSONAL_CARDS r " +
+				"INNER JOIN SKLAD.NORMA_ROW ON SKLAD.NORMA_ROW.NORMA_ROW_ID = r.NORMA_ROW_ID " +
+				"INNER JOIN SKLAD.NORMA norma ON SKLAD.NORMA.NORMA_ID = SKLAD.NORMA_ROW.NORMA_ID " +
+				"INNER JOIN SKLAD.SMSFORMA sms ON SKLAD.SMSFORMA.IDFORMS = r.IDFORMS " +
+				"WHERE sysdate BETWEEN norma.DATE_BEGIN AND norma.DATE_END " +
+				"AND r.PERSONAL_CARD_ID IN (SELECT c.PERSONAL_CARD_ID FROM SKLAD.PERSONAL_CARD c WHERE c.TN IN(SELECT TN FROM KIT.EXP_HUM_SKLAD))");
 
 			logger.Info("Обработка строк карточек...");
 			totalRows = PERSONAL_CARDS.Count();
@@ -112,36 +115,33 @@ namespace DownloadNLMK.Loaders
 				processed++;
 				if(processed % 100 == 0)
 					Console.Write($"\r\tОбработано строк {processed} [{processed / totalRows:P}]... ");
-				if(!dicPERSONAL_CARD.ContainsKey(item.PERSONAL_CARD_ID)) {
+				if(!ByID.ContainsKey(item.PERSONAL_CARD_ID) || item.NORMA_ROW_ID != null) {
 					logger.Warn($"Строка для карточки PERSONAL_CARD_ID={item.PERSONAL_CARD_ID} пропущена");
 					cardSkippedRows++;
 					continue;
 				}
-				EmployeeCard card = dicPERSONAL_CARD[item.PERSONAL_CARD_ID];
-				EmployeeCardItem cardItem;
-				if(item.NORMA_ROW_ID != null) {
-					NormItem normRow = norms.RowsByID[item.NORMA_ROW_ID];
+
+				EmployeeCard card = ByID[item.PERSONAL_CARD_ID];
+				NormItem normRow = norms.RowsByID[item.NORMA_ROW_ID];
+				if(normRow.Norm.IsActive && !card.UsedNorms.Contains(normRow.Norm)) {
+					card.UsedNorms.Add(normRow.Norm);
+					withNorm++;
+				}
+				EmployeeCardItem cardItem = card.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normRow);
+				if(cardItem != null) {
 					cardItem = new EmployeeCardItem(card, normRow);
-					if(!card.UsedNorms.Contains(normRow.Norm)) {
-						card.UsedNorms.Add(normRow.Norm);
-						withNorm++;
-					}
-					//if(!DomainHelper.EqualDomainObjects(cardItem.Item, dicProtectionTools[item.PROTECTION_ID])) {
-					//	logger.Warn($"По в норме {cardItem.Item.Name}!={dicProtectionTools[item.PROTECTION_ID].Name}");
-					//}
+					card.WorkwearItems.Add(cardItem);
 				}
-				else {
-					cardItem = new EmployeeCardItem {
-						EmployeeCard = card,
-						Item = protectionTools.ByID[item.PROTECTION_ID]
-					};
+			 	if(cardItem.LastIssue < item.DOTP) {
+					cardItem.LastIssue = item.DOTP;
+					cardItem.Amount = (int)item.KOLMOTP;
+					cardItem.NextIssue = normRow.CalculateExpireDate(cardItem.LastIssue.Value, cardItem.Amount);
 				}
-				card.WorkwearItems.Add(cardItem);
 			}
 			Console.Write("Готово\n");
 			logger.Info($"Пропущено {skipCards} строк карточек");
 			logger.Info($"В итоге {withNorm} карточек с нормами.");
-			logger.Info($"Карточек без строк: {dicPERSONAL_CARD.Values.Count(x => !x.WorkwearItems.Any())}");
+			logger.Info($"Карточек без строк: {ByID.Values.Count(x => !x.WorkwearItems.Any())}");
 			PERSONAL_CARDS = null;
 		}
 
