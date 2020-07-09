@@ -29,11 +29,14 @@ namespace DownloadNLMK.Loaders
 		public void Load(OracleConnection connection)
 		{
 			logger.Info("Загружаем PERSONAL_CARD");
-			var PERSONAL_CARD = connection.Query("SELECT * FROM SKLAD.PERSONAL_CARD c WHERE c.TN IN(SELECT TN FROM KIT.EXP_HUM_SKLAD)"); //FIXME Ускоряем не грузим карточки без сотрудника.
+			var PERSONAL_CARD = connection.Query("SELECT c.TN, c.PERSONAL_CARD_ID FROM SKLAD.PERSONAL_CARD c WHERE c.TN IN(SELECT TN FROM KIT.EXP_HUM_SKLAD)"); //FIXME Ускоряем не грузим карточки без сотрудника.
 			logger.Info($"Загружено {PERSONAL_CARD.Count()} PERSONAL_CARD");
 
 			logger.Info("Загружаем EXP_HUM_SKLAD");
-			var EXP_HUM_SKLAD = connection.Query("SELECT * FROM KIT.EXP_HUM_SKLAD t WHERE t.TN IN (SELECT TN FROM SKLAD.PERSONAL_CARD)")//FIXME Ускоряем не грузим сотрудников без карточек.
+			var EXP_HUM_SKLAD = connection.Query(
+				"SELECT t.SURNAME, t.NAME, t.SECNAME, t.E_SEX, t.DUVOL, t.DHIRING, t.E_PROF, t.PARENT_DEPT_CODE, t.ID_DEPT, t.ID_WP " +
+				"FROM KIT.EXP_HUM_SKLAD t " +
+				"WHERE t.TN IN (SELECT TN FROM SKLAD.PERSONAL_CARD)")//FIXME Ускоряем не грузим сотрудников без карточек.
 				.ToDictionary<dynamic, decimal>(x => x.TN);
 			logger.Info($"Загружено {EXP_HUM_SKLAD.Count()} EXP_HUM_SKLAD");
 
