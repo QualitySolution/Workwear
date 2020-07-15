@@ -41,11 +41,10 @@ namespace workwear.ViewModels.Stock
 		{
 			Entity.Date = DateTime.Today;
 
-			if(subdivision != null) {
 				Entity.Operation = ExpenseOperations.Object;
 				Entity.Subdivision = subdivision;
 				Entity.Warehouse = subdivision.Warehouse;
-			}
+
 
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
@@ -93,11 +92,6 @@ namespace workwear.ViewModels.Stock
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
 			UoWGeneric.Save();
-			if(Entity.Operation == ExpenseOperations.Employee) {
-				logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
-				Entity.UpdateEmployeeNextIssue();
-				UoWGeneric.Commit();
-			}
 
 			logger.Info("Ok");
 			return true;

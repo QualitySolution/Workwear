@@ -87,8 +87,6 @@ namespace workwear.ViewModels.Stock
 		public void AddItem()
 		{
 			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave);
-			if(expenseEmployeeViewModel.Entity.Operation == ExpenseOperations.Object)
-				selectJournal.ViewModel.Filter.ItemTypeCategory = ItemTypeCategory.property;
 
 			selectJournal.ViewModel.Filter.Warehouse = expenseEmployeeViewModel.Entity.Warehouse;
 			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;

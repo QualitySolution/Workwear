@@ -38,14 +38,9 @@ namespace workwear.Views.Stock
 			ytreeItems.ItemsDataSource = ViewModel.ObservableItems;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 
-			//ViewModel.expenseObjectViewModel.Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
-
 			ExpenseDoc_PropertyChanged(ViewModel.expenseObjectViewModel.Entity, new System.ComponentModel.PropertyChangedEventArgs(ViewModel.expenseObjectViewModel.Entity.GetPropertyName(x => x.Operation)));
 			if(ViewModel.expenseObjectViewModel.Entity.Operation == ExpenseOperations.Object)
 				ExpenseDoc_PropertyChanged(ViewModel.expenseObjectViewModel.Entity, new System.ComponentModel.PropertyChangedEventArgs(ViewModel.expenseObjectViewModel.Entity.GetPropertyName(x => x.Subdivision)));
-
-			//ViewModel.expenseObjectViewModel.Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
-			//buttonAdd.Sensitive = ViewModel.expenseObjectViewModel.Entity.Warehouse != null;
 
 			ViewModel.expenseObjectViewModel.Entity.PropertyChanged += ExpenseDoc_PropertyChanged;
 			ViewModel.PropertyChanged += PropertyChanged;
