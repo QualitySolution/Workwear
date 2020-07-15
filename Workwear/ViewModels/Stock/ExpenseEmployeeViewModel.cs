@@ -28,6 +28,7 @@ namespace workwear.ViewModels.Stock
 		ILifetimeScope autofacScope;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public ExpenseDocItemsEmployeeViewModel DocItemsEmployeeViewModel;
+		IInteractiveQuestion interactive;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
@@ -41,17 +42,18 @@ namespace workwear.ViewModels.Stock
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
-
+			this.interactive = interactive;
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 
-			if (employee!= null) {
+			if(employee != null) {
 				Entity.Operation = ExpenseOperations.Employee;
 				Entity.Employee = UoW.GetById<EmployeeCard>(employee.Id);
 				Entity.Warehouse = Entity.Employee.Subdivision?.Warehouse;
 				if(fillUnderreceived)
 					FillUnderreceived();
 			}
+
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
 									.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 									.UseViewModelDialog<WarehouseViewModel>()
@@ -69,7 +71,6 @@ namespace workwear.ViewModels.Stock
 		public EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		public EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
 		#endregion
-
 
 		private void FillUnderreceived()
 		{
@@ -91,8 +92,7 @@ namespace workwear.ViewModels.Stock
 			logger.Info("Запись документа...");
 			var valid = new QSValidator<Expense>(UoWGeneric.Root);
 
-			var ask = new GtkQuestionDialogsInteractive();
-			Entity.UpdateOperations(UoW, ask);
+			Entity.UpdateOperations(UoW, interactive);
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);

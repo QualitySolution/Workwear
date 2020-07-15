@@ -27,6 +27,7 @@ namespace workwear.ViewModels.Stock
 		private readonly ILifetimeScope autofacScope;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public ExpenseDocItemsObjectViewModel DocItemsObjectViewModel;
+		IInteractiveQuestion interactive;
 
 		public ExpenseObjectViewModel(IEntityUoWBuilder uowBuilder,
 									  IUnitOfWorkFactory unitOfWorkFactory,
@@ -40,11 +41,13 @@ namespace workwear.ViewModels.Stock
 		: base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			Entity.Date = DateTime.Today;
+			this.interactive = interactive;
 
+			if(subdivision != null) {
 				Entity.Operation = ExpenseOperations.Object;
 				Entity.Subdivision = subdivision;
 				Entity.Warehouse = subdivision.Warehouse;
-
+			}
 
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
@@ -86,8 +89,7 @@ namespace workwear.ViewModels.Stock
 			logger.Info("Запись документа...");
 			var valid = new QSValidator<Expense>(UoWGeneric.Root);
 
-			var ask = new GtkQuestionDialogsInteractive();
-			Entity.UpdateOperations(UoW, ask);
+			Entity.UpdateOperations(UoW, interactive);
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
