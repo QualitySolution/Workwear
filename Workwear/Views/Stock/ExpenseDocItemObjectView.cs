@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Bindings.Utilities;
 using System.Linq;
-using Gamma.ColumnConfig;
 using Gtk;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
@@ -12,7 +10,7 @@ using workwear.ViewModels.Stock;
 namespace workwear.Views.Stock
 {
 	[System.ComponentModel.ToolboxItem(true)]
-	public partial class ExpenseDocItemEmployeeView : Gtk.Bin
+	public partial class ExpenseDocItemObjectView : Gtk.Bin
 	{
 		private enum ColumnTags
 		{
@@ -20,14 +18,13 @@ namespace workwear.Views.Stock
 			BuhDoc
 		}
 
-		public ExpenseDocItemEmployeeView()
+		public ExpenseDocItemObjectView()
 		{
 			this.Build();
 		}
+		private ExpenseDocItemsObjectViewModel viewModel;
 
-		private ExpenseDocItemsEmployeeViewModel viewModel;
-
-		public ExpenseDocItemsEmployeeViewModel ViewModel {
+		public ExpenseDocItemsObjectViewModel ViewModel {
 			get => viewModel;
 			set {
 				viewModel = value;
@@ -41,14 +38,19 @@ namespace workwear.Views.Stock
 			ytreeItems.ItemsDataSource = ViewModel.ObservableItems;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 
-			ExpenseDoc_PropertyChanged(ViewModel.expenseEmployeeViewModel.Entity, new System.ComponentModel.PropertyChangedEventArgs(ViewModel.expenseEmployeeViewModel.Entity.GetPropertyName(x => x.Operation)));
+			//ViewModel.expenseObjectViewModel.Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 
-			buttonAdd.Sensitive = ViewModel.Warehouse != null;
+			ExpenseDoc_PropertyChanged(ViewModel.expenseObjectViewModel.Entity, new System.ComponentModel.PropertyChangedEventArgs(ViewModel.expenseObjectViewModel.Entity.GetPropertyName(x => x.Operation)));
+			if(ViewModel.expenseObjectViewModel.Entity.Operation == ExpenseOperations.Object)
+				ExpenseDoc_PropertyChanged(ViewModel.expenseObjectViewModel.Entity, new System.ComponentModel.PropertyChangedEventArgs(ViewModel.expenseObjectViewModel.Entity.GetPropertyName(x => x.Subdivision)));
 
-			ViewModel.expenseEmployeeViewModel.Entity.PropertyChanged += ExpenseDoc_PropertyChanged;
+			//ViewModel.expenseObjectViewModel.Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
+			//buttonAdd.Sensitive = ViewModel.expenseObjectViewModel.Entity.Warehouse != null;
 
+			ViewModel.expenseObjectViewModel.Entity.PropertyChanged += ExpenseDoc_PropertyChanged;
 			ViewModel.PropertyChanged += PropertyChanged;
 			ViewModel.CalculateTotal();
+
 		}
 
 		void CreateTable()
@@ -60,7 +62,7 @@ namespace workwear.Views.Stock
 					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.SizeStd, SizeUse.HumanOnly))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.SizeStd != null)
 				.AddColumn("Рост")
-				.AddComboRenderer(x => x.WearGrowth)
+					.AddComboRenderer(x => x.WearGrowth)
 					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
 				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
@@ -73,26 +75,20 @@ namespace workwear.Views.Stock
 				.Finish();
 
 		}
+
 		void ExpenseDoc_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			var placeColumn = ytreeItems.ColumnsConfig.ConfiguredColumns.FirstOrDefault(x => ColumnTags.FacilityPlace.Equals(x.tag));
-			var placeRenderer = placeColumn.ConfiguredRenderers.First() as ComboRendererMapping<ExpenseItem, SubdivisionPlace>;
-			if(ViewModel.Subdivision != null) {
-				placeRenderer.FillItems(ViewModel.Subdivision.Places);
-			}
-			else {
-				placeRenderer.FillItems(new List<SubdivisionPlace>());
-			}
-		
-			if(e.PropertyName == ViewModel.GetPropertyName(x => x.Operation)) {
+			if(e.PropertyName == ViewModel.expenseObjectViewModel.Entity.GetPropertyName(x => x.Operation)) {
+				var placeColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.FacilityPlace).First();
+				placeColumn.Visible = ViewModel.expenseObjectViewModel.Entity.Operation == ExpenseOperations.Object;
 
 				var buhDocColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.BuhDoc).First();
-				buhDocColumn.Visible = ViewModel.Operation == ExpenseOperations.Employee;
+				buhDocColumn.Visible = ViewModel.expenseObjectViewModel.Entity.Operation == ExpenseOperations.Employee;
 
-				buttonFillBuhDoc.Visible = ViewModel.Operation == ExpenseOperations.Employee;
+				buttonFillBuhDoc.Visible = ViewModel.expenseObjectViewModel.Entity.Operation == ExpenseOperations.Employee;
 			}
-			if(e.PropertyName == nameof(ViewModel.Warehouse))
-				buttonAdd.Sensitive = ViewModel.Warehouse != null;
+			if(e.PropertyName == nameof(ViewModel.expenseObjectViewModel.Entity.Warehouse))
+				buttonAdd.Sensitive = ViewModel.expenseObjectViewModel.Entity.Warehouse != null;
 		}
 
 		void SetSum()
@@ -121,10 +117,13 @@ namespace workwear.Views.Stock
 			ViewModel.AddItem();
 		}
 
+		void AddNomenclature_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		{
+			ViewModel.AddNomenclature(sender, e);
+		}
 		void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			SetSum();
 		}
 	}
-
 }

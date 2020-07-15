@@ -3,23 +3,29 @@ using System.Linq;
 using Autofac;
 using Gtk;
 using NLog;
+using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
+using QS.Services;
+using QS.Validation;
 using QS.ViewModels;
+using QS.ViewModels.Control.EEVM;
+using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 
 namespace workwear.ViewModels.Stock
 {
-	public class ExpenseDocItemsEmployeeViewModel : ViewModelBase
+	public class ExpenseDocItemsObjectViewModel : ViewModelBase
 	{
-		public readonly ExpenseEmployeeViewModel expenseEmployeeViewModel;
+		public readonly ExpenseObjectViewModel expenseObjectViewModel;
 		private readonly ITdiCompatibilityNavigation navigation;
 
-		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, ITdiCompatibilityNavigation navigation)
+		public ExpenseDocItemsObjectViewModel(ExpenseObjectViewModel expenseObjectViewModel, ITdiCompatibilityNavigation navigation)
 		{
-			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
+			this.expenseObjectViewModel = expenseObjectViewModel ?? throw new ArgumentNullException(nameof(expenseObjectViewModel));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
@@ -27,8 +33,8 @@ namespace workwear.ViewModels.Stock
 		}
 
 		#region Хелперы
-		private IUnitOfWork UoW => expenseEmployeeViewModel.UoW;
-		private Expense Entity => expenseEmployeeViewModel.Entity;
+		private IUnitOfWork UoW => expenseObjectViewModel.UoW;
+		private Expense Entity => expenseObjectViewModel.Entity;
 		#endregion
 
 		#region Поля
@@ -68,8 +74,8 @@ namespace workwear.ViewModels.Stock
 		{
 			using(var dlg = new Dialog("Введите бухгалтерский документ", MainClass.MainWin, DialogFlags.Modal)) {
 				var docEntry = new Entry(80);
-				if(expenseEmployeeViewModel.Entity.Items.Count > 0)
-					docEntry.Text = expenseEmployeeViewModel.Entity.Items.First().BuhDocument;
+				if(expenseObjectViewModel.Entity.Items.Count > 0)
+					docEntry.Text = expenseObjectViewModel.Entity.Items.First().BuhDocument;
 				docEntry.TooltipText = "Бухгалтерский документ по которому была произведена выдача. Отобразится вместо подписи сотрудника в карточке.";
 				docEntry.ActivatesDefault = true;
 				dlg.VBox.Add(docEntry);
@@ -78,7 +84,7 @@ namespace workwear.ViewModels.Stock
 				dlg.DefaultResponse = ResponseType.Ok;
 				dlg.ShowAll();
 				if(dlg.Run() == (int)ResponseType.Ok) {
-					expenseEmployeeViewModel.Entity.ObservableItems.ToList().ForEach(x => x.BuhDocument = docEntry.Text);
+					expenseObjectViewModel.Entity.ObservableItems.ToList().ForEach(x => x.BuhDocument = docEntry.Text);
 				}
 				dlg.Destroy();
 			}
@@ -86,11 +92,11 @@ namespace workwear.ViewModels.Stock
 
 		public void AddItem()
 		{
-			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave);
-			if(expenseEmployeeViewModel.Entity.Operation == ExpenseOperations.Object)
+			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseObjectViewModel, QS.Navigation.OpenPageOptions.AsSlave);
+			if(expenseObjectViewModel.Entity.Operation == ExpenseOperations.Object)
 				selectJournal.ViewModel.Filter.ItemTypeCategory = ItemTypeCategory.property;
 
-			selectJournal.ViewModel.Filter.Warehouse = expenseEmployeeViewModel.Entity.Warehouse;
+			selectJournal.ViewModel.Filter.Warehouse = expenseObjectViewModel.Entity.Warehouse;
 			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += AddNomenclature;
@@ -99,7 +105,7 @@ namespace workwear.ViewModels.Stock
 		public void AddNomenclature(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
-				expenseEmployeeViewModel.Entity.AddItem(node.GetStockPosition(expenseEmployeeViewModel.UoW));
+				expenseObjectViewModel.Entity.AddItem(node.GetStockPosition(expenseObjectViewModel.UoW));
 			}
 			CalculateTotal();
 		}
@@ -124,9 +130,9 @@ namespace workwear.ViewModels.Stock
 		}
 
 		void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{ 
+		{
 			if(e.PropertyName == nameof(ExpenseItem.BuhDocument)) {
-				expenseEmployeeViewModel.HasChanges = true;
+				expenseObjectViewModel.HasChanges = true;
 			}
 
 		}
