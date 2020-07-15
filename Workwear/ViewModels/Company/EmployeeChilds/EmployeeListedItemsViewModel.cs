@@ -1,9 +1,11 @@
 ﻿using System;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.ViewModels;
 using workwear.Domain.Company;
 using workwear.Representations.Organization;
+using workwear.ViewModels.Stock;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
 {
@@ -61,8 +63,8 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		{
 			if(!employeeViewModel.Save())
 				return;
-
-			navigation.OpenTdiTab<ExpenseDocDlg, EmployeeCard>(employeeViewModel, Entity);
+				
+			navigation.OpenViewModel<ExpenseEmployeeViewModel>(employeeViewModel,OpenPageOptions.AsSlave);
 		}
 
 		public void ReturnWear()
