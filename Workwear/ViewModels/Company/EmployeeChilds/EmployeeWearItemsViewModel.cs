@@ -10,6 +10,7 @@ using QS.ViewModels;
 using workwear.Dialogs.Issuance;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using workwear.ViewModels.Stock;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
 {
@@ -70,7 +71,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 			if(!employeeViewModel.Save())
 				return;
 
-			navigation.OpenTdiTab<ExpenseDocDlg, EmployeeCard, bool>(employeeViewModel, Entity, true);
+			navigation.OpenViewModel<ExpenseEmployeeViewModel, EmployeeCard>(employeeViewModel, Entity);
 		}
 
 		public void ReturnWear()
