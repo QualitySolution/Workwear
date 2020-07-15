@@ -219,7 +219,6 @@
     <Compile Include="Repository\NormRepository.cs" />
     <Compile Include="Domain\Stock\Expense.cs" />
     <Compile Include="Dialogs\Stock\ExpenseDocDlg.cs" />
-    <Compile Include="gtk-gui\workwear.ExpenseDocDlg.cs" />
     <Compile Include="HibernateMapping\Stock\ExpenseMap.cs" />
     <Compile Include="Domain\Stock\ExpenseItem.cs" />
     <Compile Include="Domain\Stock\Nomenclature.cs" />
@@ -432,6 +431,19 @@
     <Compile Include="Views\Stock\NomenclatureView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.NomenclatureView.cs" />
     <Compile Include="Journal\ViewModels\Stock\NomenclatureJournalViewModel.cs" />
+    <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModel.cs" />
+    <Compile Include="ViewModels\Stock\ExpenseObjectViewModel.cs" />
+    <Compile Include="Views\Stock\ExpenseEmployeeView.cs" />
+    <Compile Include="Views\Stock\ExpenseObjectView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.ExpenseObjectView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.ExpenseEmployeeView.cs" />
+    <Compile Include="gtk-gui\workwear.ExpenseDocDlg.cs" />
+    <Compile Include="Views\Stock\ExpenseDocItemEmployeeView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.ExpenseDocItemEmployeeView.cs" />
+    <Compile Include="Views\Stock\ExpenseDocItemObjectView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.ExpenseDocItemObjectView.cs" />
+    <Compile Include="ViewModels\Stock\ExpenseDocItemsEmployeeViewModel.cs" />
+    <Compile Include="ViewModels\Stock\ExpenseDocItemsObjectViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

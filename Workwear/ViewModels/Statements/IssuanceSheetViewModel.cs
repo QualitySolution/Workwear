@@ -185,7 +185,7 @@ namespace workwear.ViewModels.Statements
 		public void OpenExpense()
 		{
 			if (Entity.Expense != null)
-				tdiNavigationManager.OpenTdiTab<ExpenseDocDlg, Expense>(this, Entity.Expense);
+				tdiNavigationManager.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.Expense.Id));
 			else
 				tdiNavigationManager.OpenViewModel<WarehouseMassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.MassExpense.Id));
 
