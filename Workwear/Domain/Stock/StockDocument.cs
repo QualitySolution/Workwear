@@ -65,6 +65,10 @@ namespace workwear.Domain.Stock
 		IncomeDoc,
 		[Display(Name = "Расход со склада")]
 		ExpenseDoc,
+		[Display(Name = "Расход со склада. Сотрудник")]
+		ExpenseEmployeeDoc,
+		[Display(Name = "Расход со склада. Объект")]
+		ExpenseObjectDoc,
 		[Display(Name = "Списание")]
 		WriteoffDoc,
 		[Display(Name = "Перемещение")]

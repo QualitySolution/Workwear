@@ -65,8 +65,7 @@ namespace workwear.ViewModels.Company
 		{
 			if(UoW.IsNew && !Save())
 				return;
-
-			navigation.OpenTdiTab<ExpenseDocDlg, Subdivision>(this, Entity);
+			navigation.OpenViewModel<ExpenseObjectViewModel, Subdivision>(this, Entity);
 		}
 
 		public void ReturnItem()

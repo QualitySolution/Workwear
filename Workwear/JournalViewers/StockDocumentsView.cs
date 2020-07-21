@@ -47,8 +47,12 @@ namespace workwear.JournalViewers
 			if(type == StokDocumentType.TransferDoc) {
 				MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<WarehouseTransferViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
 			}
-			else if (type == StokDocumentType.MassExpense)
+			else if(type == StokDocumentType.MassExpense)
 				MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<WarehouseMassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
+			else if(type == StokDocumentType.ExpenseEmployeeDoc)
+				MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
+			else if(type == StokDocumentType.ExpenseObjectDoc)
+				MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<ExpenseObjectViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
 			else {
 				var dlg = OrmMain.CreateObjectDialog(StockDocument.GetDocClass(type));
 				TabParent.AddTab(dlg, this);
@@ -75,10 +79,7 @@ namespace workwear.JournalViewers
 							this);
 						break;
 					case StokDocumentType.ExpenseDoc:
-						TabParent.OpenTab(
-							DialogHelper.GenerateDialogHashName<Expense>(node.Id),
-							() => new ExpenseDocDlg(node.Id),
-							this);
+						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
 						break;
 					case StokDocumentType.WriteoffDoc:
 						TabParent.OpenTab(
