@@ -5,6 +5,14 @@
   <rights type="text">Quality Solution 2020</rights>
   <updated>2020-04-14T20:00:00+03:00</updated>
   <entry>
+    <id>urn:uuid:6f853bd2-dfd8-4296-8146-0e22cb03c401</id>
+    <title type="text">Релиз 2.3.2</title>
+    <updated>2020-07-22T10:00:00+03:00</updated>
+    <published>2020-07-22T10:00:00+03:00</published>
+    <link rel="alternate" href="http://workwear.qsolution.ru/?p=663" />
+    <summary>Сервис релиз исправляющий некоторые ошибки в программе.</summary>
+  </entry>
+  <entry>
     <id>urn:uuid:e5163103-f474-4604-bf01-6df42017dd2b</id>
     <title type="text">Релиз 2.3.1</title>
     <updated>2020-04-14T20:00:00+03:00</updated>
