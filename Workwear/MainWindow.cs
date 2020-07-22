@@ -102,7 +102,7 @@ public partial class MainWindow : Gtk.Window
 
 		//Настраиваем новости
 		MainNewsFeed.NewsFeeds = new List<NewsFeed>(){
-			new NewsFeed("workwearnews", "Новости программы", "http://news.qsolution.ru/workwear.atom")
+			new NewsFeed("workwearnews", "Новости программы", "http://workwear.qsolution.ru/?feed=atom")
 			};
 		MainNewsFeed.LoadReadFeed();
 		var newsmenu = new NewsMenuItem();
