@@ -14,6 +14,9 @@ base/*.mwb.bak
 *~
 .vs/
 
+#Doc
+docs/modules/ROOT/pages/*.pdf
+
 #Installer
 WinInstall/*
 !WinInstall/LC_MESSAGES/

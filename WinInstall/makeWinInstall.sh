@@ -37,4 +37,19 @@ if [ ! -f "gtk-sharp-2.12.21.msi" ]; then
     wget https://xamarin.azureedge.net/GTKforWindows/Windows/gtk-sharp-2.12.21.msi
 fi
 
+# Сборка документации
+if command -v asciidoctor-pdf.ruby2.7 2>/dev/null; then
+        BuildDoc=asciidoctor-pdf.ruby2.7 
+elif command -v asciidoctor-pdf.ruby2.6 2>/dev/null; then
+        BuildDoc=asciidoctor-pdf.ruby2.6
+elif command -v asciidoctor-pdf.ruby2.5 2>/dev/null; then
+	BuildDoc=asciidoctor-pdf.ruby2.5
+else
+	echo "asciidoctor-pdf не установлен."
+	exit 1
+fi
+
+${BuildDoc} ../docs/modules/ROOT/pages/user-guide.adoc
+cp -v ../docs/modules/ROOT/pages/user-guide.pdf ./Files
+
 wine ~/.wine/drive_c/Program\ Files\ \(x86\)/NSIS/makensis.exe /INPUTCHARSET UTF8 ${NsisOptions} ${ProjectName}.nsi

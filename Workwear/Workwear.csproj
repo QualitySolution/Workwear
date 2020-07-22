@@ -646,9 +646,6 @@
     <None Condition=" '$(TargetOS)' == 'Win' " Include="../lib/WinOnly/Mono.Posix.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="workwear_ru.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Condition=" '$(TargetOS)' == 'Linux' " Include="run.sh">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
