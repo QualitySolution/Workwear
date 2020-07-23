@@ -104,7 +104,7 @@ public partial class MainWindow : Gtk.Window
 
 		//Настраиваем новости
 		var feeds = new List<NewsFeed>(){
-			new NewsFeed("workwearnews", "Новости программы", "http://workwear.qsolution.ru/?feed=atom")
+			new NewsFeed("workwearsite", "Новости программы", "http://workwear.qsolution.ru/?feed=atom")
 			};
 		var reader = AutofacScope.Resolve<FeedReader>(new TypedParameter(typeof(List<NewsFeed>), feeds));
 		reader.LoadReadFeed();

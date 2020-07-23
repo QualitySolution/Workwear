@@ -352,3 +352,5 @@ DROP INDEX `fk_operation_issued_by_employee_4_idx`;
 ALTER TABLE `issuance_sheet` 
 DROP INDEX `fk_issuance_sheet_2_idx` ;
   
+-- Очистка истории прочитанных новостей
+DELETE FROM `read_news` WHERE `feed_id` = "workwearnews"
