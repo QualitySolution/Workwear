@@ -19,6 +19,7 @@
     <widget-library name="../../../QSProjects/QS.Updater.Gtk/bin/Debug/QSUpdater.dll" />
     <widget-library name="../../../QSProjects/QS.Updater/bin/Debug/QS.Updater.dll" />
     <widget-library name="../../../QSProjects/QS.Report.Gtk/bin/Debug/QS.Report.Gtk.dll" />
+    <widget-library name="../../../QSProjects/QS.NewsFeed.Gtk/bin/Debug/QS.NewsFeed.Gtk.dll" />
     <widget-library name="../bin/Debug/workwear.exe" internal="true" />
   </import>
   <icon-factory>

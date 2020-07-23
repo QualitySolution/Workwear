@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System.Data.Common;
+using Autofac;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
 using QS.Deletion;
@@ -8,8 +9,10 @@ using QS.Dialog.GtkUI;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.NewsFeed;
 using QS.Permissions;
 using QS.Project.DB;
+using QS.Project.Dialogs.GtkUI.ServiceDlg;
 using QS.Project.Domain;
 using QS.Project.Search.GtkUI;
 using QS.Project.Services;
@@ -22,7 +25,6 @@ using QS.Validation;
 using QS.ViewModels;
 using QS.Views.Resolve;
 using QSOrmProject;
-using QSProjectsLib;
 using workwear.Dialogs.Organization;
 using workwear.Dialogs.Regulations;
 using workwear.Domain.Company;
@@ -45,7 +47,7 @@ namespace workwear
 
 			// Настройка ORM
 			var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
-				.ConnectionString (QSMain.ConnectionString)
+				.ConnectionString (QSProjectsLib.QSMain.ConnectionString)
 				.ShowSql ()
 				.FormatSql ();
 
@@ -92,6 +94,7 @@ namespace workwear
 			#region База
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
 			builder.RegisterType<DefaultSessionProvider>().As<ISessionProvider>();
+			builder.Register<DbConnection>(c => Connection.ConnectionDB).AsSelf();
 			#endregion
 
 			#region Сервисы
@@ -152,6 +155,10 @@ namespace workwear
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(EmployeeIssueRepository)))
 				.Where(t => t.Name.EndsWith("Repository"))
 				.AsSelf();
+			#endregion
+
+			#region News
+			builder.RegisterType<FeedReader>().AsSelf();
 			#endregion
 
 			AppDIContainer = builder.Build();
