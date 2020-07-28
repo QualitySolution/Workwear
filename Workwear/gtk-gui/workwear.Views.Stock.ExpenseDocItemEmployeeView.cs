@@ -22,6 +22,8 @@ namespace workwear.Views.Stock
 
 		private global::Gtk.Button buttonDel;
 
+		private global::Gtk.Button buttonShowAllSize;
+
 		private global::Gtk.Label labelSum;
 
 		protected virtual void Build()
@@ -115,18 +117,29 @@ namespace workwear.Views.Stock
 			w10.Expand = false;
 			w10.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
+			this.buttonShowAllSize = new global::Gtk.Button();
+			this.buttonShowAllSize.CanFocus = true;
+			this.buttonShowAllSize.Name = "buttonShowAllSize";
+			this.buttonShowAllSize.UseUnderline = true;
+			this.buttonShowAllSize.Label = global::Mono.Unix.Catalog.GetString("Показать все размеры");
+			this.hbox1.Add(this.buttonShowAllSize);
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonShowAllSize]));
+			w11.Position = 2;
+			w11.Expand = false;
+			w11.Fill = false;
+			// Container child hbox1.Gtk.Box+BoxChild
 			this.labelSum = new global::Gtk.Label();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.hbox1.Add(this.labelSum);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelSum]));
-			w11.Position = 2;
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelSum]));
+			w12.Position = 3;
 			this.vbox2.Add(this.hbox1);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox1]));
-			w12.Position = 2;
-			w12.Expand = false;
-			w12.Fill = false;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox1]));
+			w13.Position = 2;
+			w13.Expand = false;
+			w13.Fill = false;
 			this.Add(this.vbox2);
 			if ((this.Child != null))
 			{

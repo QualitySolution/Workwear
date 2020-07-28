@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using workwear.Domain.Operations;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
+using workwear.Domain.Regulations;
 using workwear.Domain.Statements;
 
 namespace workwear.Domain.Stock
@@ -24,6 +27,14 @@ namespace workwear.Domain.Stock
 		public virtual Expense ExpenseDoc {
 			get { return expenseDoc; }
 			set { SetField (ref expenseDoc, value, () => ExpenseDoc); }
+		}
+
+		ProtectionTools protectionTools;
+
+		[Display(Name = "Номенклатура ТОН")]
+		public virtual ProtectionTools ProtectionTools {
+			get { return protectionTools; }
+			set { SetField(ref protectionTools, value, () => ProtectionTools); }
 		}
 
 		Nomenclature nomenclature;
@@ -97,6 +108,14 @@ namespace workwear.Domain.Stock
 			set { SetField(ref wearGrowth, value, () => WearGrowth); }
 		}
 
+		EmployeeCard employee;
+
+		[Display(Name = "Сотрудник")]
+		public virtual EmployeeCard Employee {
+			get { return employee; }
+			set { SetField(ref employee, value, () => Employee); }
+		}
+
 		#endregion
 
 		#region Не сохраняемые в базу свойства
@@ -117,6 +136,14 @@ namespace workwear.Domain.Stock
 			set => WarehouseOperation.WearPercent = value;
 		}
 
+		private EmployeeCardItem employeeCardItem;
+
+		[Display(Name = "Процент износа")]
+		public virtual EmployeeCardItem EmployeeCardItem {
+			get => employeeCardItem;
+			set => employeeCardItem = value;
+		}
+
 		#endregion
 
 		#region Расчетные свойства
@@ -128,7 +155,17 @@ namespace workwear.Domain.Stock
 			);}
 		}
 
-		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, Size, WearGrowth, WearPercent);
+		public virtual StockPosition StockPosition {
+			get {
+				return new StockPosition(Nomenclature, Size, WearGrowth, WearPercent);
+			}
+			set { Nomenclature = value.Nomenclature;
+				Size = value.Size;
+				WearGrowth = value.Growth;
+				WearPercent = value.WearPercent;
+			}
+		}
+
 
 		#endregion
 

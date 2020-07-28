@@ -20,7 +20,7 @@ namespace workwear.HMap
 			References(x => x.EmployeeIssueOperation).Column("employee_issue_operation_id").Cascade.All();
 			References(x => x.SubdivisionIssueOperation).Column("subdivision_issue_operation_id").Cascade.All();
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Not.Nullable().Cascade.All();
-
+			References(x => x.ProtectionTools).Column("protection_tools_id").Cascade.All();
 			HasOne(x => x.IssuanceSheetItem)
 				.Cascade.All()
 				.PropertyRef(x => x.ExpenseItem);
