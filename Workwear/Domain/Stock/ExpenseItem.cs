@@ -144,6 +144,33 @@ namespace workwear.Domain.Stock
 			set => employeeCardItem = value;
 		}
 
+		public virtual StockPosition StockPosition {
+			get {
+				return new StockPosition(Nomenclature, Size, WearGrowth, WearPercent);
+			}
+			set {
+				Nomenclature = value.Nomenclature;
+				Size = value.Size;
+				WearGrowth = value.Growth;
+				WearPercent = value.WearPercent;
+			}
+		}
+
+
+		StockBalanceDTO stockBalanceSetter;
+		public virtual StockBalanceDTO StockBalanceSetter {
+			get {
+				return stockBalanceSetter ?? new StockBalanceDTO {Nomenclature = Nomenclature, Growth = WearGrowth, Size = Size, WearPercent = WearPercent } ;
+			}
+			set {
+				stockBalanceSetter = value;
+				Nomenclature = value.Nomenclature;
+				Size = value.Size;
+				WearGrowth = value.Growth;
+				WearPercent = value.WearPercent;
+			}
+		}
+
 		#endregion
 
 		#region Расчетные свойства
@@ -154,18 +181,6 @@ namespace workwear.Domain.Stock
 				Nomenclature.Type.Units.Name
 			);}
 		}
-
-		public virtual StockPosition StockPosition {
-			get {
-				return new StockPosition(Nomenclature, Size, WearGrowth, WearPercent);
-			}
-			set { Nomenclature = value.Nomenclature;
-				Size = value.Size;
-				WearGrowth = value.Growth;
-				WearPercent = value.WearPercent;
-			}
-		}
-
 
 		#endregion
 

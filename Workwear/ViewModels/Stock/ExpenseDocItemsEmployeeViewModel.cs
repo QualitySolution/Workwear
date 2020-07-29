@@ -6,6 +6,7 @@ using NLog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels;
+using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
@@ -57,6 +58,7 @@ namespace workwear.ViewModels.Stock
 			get { return Entity.Warehouse; }
 			set { Entity.Warehouse = value; }
 		}
+
 		#endregion
 		#region Sensetive
 
@@ -94,10 +96,32 @@ namespace workwear.ViewModels.Stock
 			selectJournal.ViewModel.OnSelectResult += AddNomenclature;
 		}
 
+		public void ShowAllSize(ExpenseItem item)
+		{
+			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave);
+
+			selectJournal.ViewModel.Filter.Warehouse = expenseEmployeeViewModel.Entity.Warehouse;
+			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
+			selectJournal.ViewModel.Filter.ProtectionTools = item.ProtectionTools;
+			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
+			selectJournal.Tag = item;
+			selectJournal.ViewModel.OnSelectResult += AddNomenclatureProtectionTools;
+		}
+
 		public void AddNomenclature(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
 				expenseEmployeeViewModel.Entity.AddItem(node.GetStockPosition(expenseEmployeeViewModel.UoW));
+			}
+			CalculateTotal();
+		}
+
+		public void AddNomenclatureProtectionTools(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		{
+			var page = navigation.FindPage((DialogViewModelBase)sender);
+			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
+				var item = page.Tag as ExpenseItem;
+				item.StockPosition = node.GetStockPosition(UoW);
 			}
 			CalculateTotal();
 		}
@@ -128,5 +152,6 @@ namespace workwear.ViewModels.Stock
 			}
 
 		}
+
 	}
 }

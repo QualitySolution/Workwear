@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Bindings.Utilities;
 using System.Linq;
@@ -123,6 +123,11 @@ namespace workwear.Views.Stock
 		void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			SetSum();
+		}
+
+		protected void OnButtonShowAllSizeClicked(object sender, EventArgs e)
+		{
+			viewModel.ShowAllSize(ytreeItems.GetSelectedObject<ExpenseItem>());
 		}
 	}
 

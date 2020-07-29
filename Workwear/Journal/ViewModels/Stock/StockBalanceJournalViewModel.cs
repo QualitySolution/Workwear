@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
@@ -107,6 +108,10 @@ namespace workwear.Journal.ViewModels.Stock
 			if(ShowSummary == false && Filter.Warehouse == null)
 				queryStock.Where(x => x.Id == -1);
 
+			if (Filter.ProtectionTools != null) {
+				queryStock.Where(x => x.Nomenclature.IsIn(Filter.ProtectionTools.MatchedNomenclatures.ToArray()));
+			}
+
 			return queryStock
 				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
 				.JoinAlias(() => nomenclatureAlias.Type, () => itemtypesAlias)
@@ -154,5 +159,6 @@ namespace workwear.Journal.ViewModels.Stock
 			var nomenclature = uow.GetById<Nomenclature>(Id);
 			return new StockPosition(nomenclature, Size, Growth, WearPercent);
 		}
+
 	}
 }
