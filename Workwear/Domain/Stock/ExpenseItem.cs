@@ -108,14 +108,6 @@ namespace workwear.Domain.Stock
 			set { SetField(ref wearGrowth, value, () => WearGrowth); }
 		}
 
-		EmployeeCard employee;
-
-		[Display(Name = "Сотрудник")]
-		public virtual EmployeeCard Employee {
-			get { return employee; }
-			set { SetField(ref employee, value, () => Employee); }
-		}
-
 		#endregion
 
 		#region Не сохраняемые в базу свойства
