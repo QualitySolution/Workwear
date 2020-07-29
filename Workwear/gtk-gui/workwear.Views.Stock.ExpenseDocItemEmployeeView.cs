@@ -118,10 +118,11 @@ namespace workwear.Views.Stock
 			w10.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.buttonShowAllSize = new global::Gtk.Button();
+			this.buttonShowAllSize.Sensitive = false;
 			this.buttonShowAllSize.CanFocus = true;
 			this.buttonShowAllSize.Name = "buttonShowAllSize";
 			this.buttonShowAllSize.UseUnderline = true;
-			this.buttonShowAllSize.Label = global::Mono.Unix.Catalog.GetString("Показать все размеры");
+			this.buttonShowAllSize.Label = global::Mono.Unix.Catalog.GetString("Выбрать другой размер");
 			this.hbox1.Add(this.buttonShowAllSize);
 			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonShowAllSize]));
 			w11.Position = 2;
@@ -149,6 +150,7 @@ namespace workwear.Views.Stock
 			this.buttonFillBuhDoc.Clicked += new global::System.EventHandler(this.OnButtonFillBuhDocClicked);
 			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonAddClicked);
 			this.buttonDel.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
+			this.buttonShowAllSize.Clicked += new global::System.EventHandler(this.OnButtonShowAllSizeClicked);
 		}
 	}
 }

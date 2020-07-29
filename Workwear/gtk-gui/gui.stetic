@@ -12823,10 +12823,12 @@
             <child>
               <widget class="Gtk.Button" id="buttonShowAllSize">
                 <property name="MemberName" />
+                <property name="Sensitive">False</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
-                <property name="Label" translatable="yes">Показать все размеры</property>
+                <property name="Label" translatable="yes">Выбрать другой размер</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonShowAllSizeClicked" />
               </widget>
               <packing>
                 <property name="Position">2</property>

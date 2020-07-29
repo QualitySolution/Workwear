@@ -76,6 +76,16 @@ namespace workwear.Domain.Stock
 
 		public virtual string TypeName => Type.Name;
 
+		public virtual string Amount(int amount)
+		{
+			if(this.Type != null) {
+				if(this.Type.Units != null)
+					return this.Type.Units.MakeAmountShortStr(amount);
+				else return "";
+			}
+			else return "";
+		}
+
 		#endregion
 
 		#region Средства защиты
