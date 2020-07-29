@@ -59,7 +59,7 @@ namespace workwear.Views.Stock
 				.AddColumn("Наименование номенаклатуры ТОН").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
 				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
 				.SetDisplayFunc(x => x.Nomenclature.Name)
-					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.Amount(x.Amount))
+					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))
 					.DynamicFillListFunc(x => x.EmployeeCardItem.BestChoiceInStock.ToList())
 					.AddSetter((c, n) => c.Editable = n.EmployeeCardItem != null)
 				.AddColumn("Размер")
