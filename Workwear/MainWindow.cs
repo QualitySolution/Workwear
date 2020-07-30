@@ -37,6 +37,8 @@ using workwear.Journal.ViewModels.Stock;
 using workwear.JournalViewers;
 using workwear.Tools;
 using workwear.ViewModels.Company;
+using QS.NewsFeed;
+using QS.NewsFeed.Views;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -100,13 +102,15 @@ public partial class MainWindow : Gtk.Window
 		labelUser.LabelProp = QSMain.User.Name;
 
 		//Настраиваем новости
-		MainNewsFeed.NewsFeeds = new List<NewsFeed>(){
-			new NewsFeed("workwearnews", "Новости программы", "http://news.qsolution.ru/workwear.atom")
+		var feeds = new List<NewsFeed>(){
+			new NewsFeed("workwearsite", "Новости программы", "http://workwear.qsolution.ru/?feed=atom")
 			};
-		MainNewsFeed.LoadReadFeed();
-		var newsmenu = new NewsMenuItem();
+		var reader = AutofacScope.Resolve<FeedReader>(new TypedParameter(typeof(List<NewsFeed>), feeds));
+		reader.LoadReadFeed();
+		var newsmenuModel = new QS.NewsFeed.ViewModels.NewsMenuViewModel(reader);
+		var newsmenu = new NewsMenuView(newsmenuModel);
 		menubar1.Add(newsmenu);
-		newsmenu.LoadFeed();
+		newsmenuModel.LoadFeed();
 
 		ReadUserSettings();
 

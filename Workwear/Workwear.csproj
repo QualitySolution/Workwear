@@ -539,6 +539,14 @@
       <Project>{42708CEE-08D8-43D5-AFE0-9992EB46E9F9}</Project>
       <Name>QS.Report.Gtk</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.NewsFeed.Gtk\QS.NewsFeed.Gtk.csproj">
+      <Project>{76858A6F-44D1-44E0-B9F3-B80B1B96AD25}</Project>
+      <Name>QS.NewsFeed.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.NewsFeed\QS.NewsFeed.csproj">
+      <Project>{9EBC7EFD-CD37-45D3-97AB-24CB38D986B6}</Project>
+      <Name>QS.NewsFeed</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
