@@ -10,6 +10,7 @@ using QS.Dialog;
 using QS.Dialog.Gtk;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Dialog.GtkUI;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Report;
@@ -36,6 +37,8 @@ using workwear.Journal.ViewModels.Stock;
 using workwear.JournalViewers;
 using workwear.Tools;
 using workwear.ViewModels.Company;
+using QS.NewsFeed;
+using QS.NewsFeed.Views;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -99,13 +102,15 @@ public partial class MainWindow : Gtk.Window
 		labelUser.LabelProp = QSMain.User.Name;
 
 		//Настраиваем новости
-		MainNewsFeed.NewsFeeds = new List<NewsFeed>(){
-			new NewsFeed("workwearnews", "Новости программы", "http://news.qsolution.ru/workwear.atom")
+		var feeds = new List<NewsFeed>(){
+			new NewsFeed("workwearsite", "Новости программы", "http://workwear.qsolution.ru/?feed=atom")
 			};
-		MainNewsFeed.LoadReadFeed();
-		var newsmenu = new NewsMenuItem();
+		var reader = AutofacScope.Resolve<FeedReader>(new TypedParameter(typeof(List<NewsFeed>), feeds));
+		reader.LoadReadFeed();
+		var newsmenuModel = new QS.NewsFeed.ViewModels.NewsMenuViewModel(reader);
+		var newsmenu = new NewsMenuView(newsmenuModel);
 		menubar1.Add(newsmenu);
-		newsmenu.LoadFeed();
+		newsmenuModel.LoadFeed();
 
 		ReadUserSettings();
 
@@ -259,7 +264,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnHelpActionActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenDocumentation");
-		System.Diagnostics.Process.Start("workwear_ru.pdf");
+		System.Diagnostics.Process.Start("user-guide.pdf");
 	}
 
 	protected void OnActionHistoryActivated(object sender, EventArgs e)
@@ -288,6 +293,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction13Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportMonthIssueSheet");
+		MessageDialogHelper.RunInfoDialog("Это устаревший способ сформировать ведомость на выдачу. Используйте ведомости в меню Склад -> Ведомости на выдачу.", "Новые ведомости");
 		var widget = new OnIssueStatement();
 		tdiMain.OpenTab(
 			QSReport.ReportViewDlg.GenerateHashName(widget),

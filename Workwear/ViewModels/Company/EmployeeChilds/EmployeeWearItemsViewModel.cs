@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -6,10 +7,12 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.ViewModels;
 using workwear.Dialogs.Issuance;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using workwear.ViewModels.Stock;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
 {
@@ -69,8 +72,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		{
 			if(!employeeViewModel.Save())
 				return;
-
-			navigation.OpenTdiTab<ExpenseDocDlg, EmployeeCard, bool>(employeeViewModel, Entity, true);
+			navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
 		public void ReturnWear()

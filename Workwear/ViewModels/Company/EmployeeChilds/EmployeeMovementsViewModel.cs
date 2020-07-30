@@ -7,11 +7,13 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.ViewModels;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.DTO;
 using workwear.Repository.Operations;
+using workwear.ViewModels.Stock;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
 {
@@ -59,7 +61,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 			switch(item.ReferencedDocument.DocType) {
 				case EmployeeIssueOpReferenceDoc.ReceivedFromStock:
-					navigation.OpenTdiTab<ExpenseDocDlg, int>(employeeViewModel, item.ReferencedDocument.DocId);
+					navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForOpen(Entity.Id), Entity);
 					break;
 				case EmployeeIssueOpReferenceDoc.RetutnedToStock:
 					navigation.OpenTdiTab<IncomeDocDlg, int>(employeeViewModel, item.ReferencedDocument.DocId);

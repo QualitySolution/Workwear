@@ -33,6 +33,12 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			set => SetField(ref itemTypeCategory, value);
 		}
 
+		private ProtectionTools protectionTools;
+		public virtual ProtectionTools ProtectionTools {
+			get => protectionTools;
+			set => SetField(ref protectionTools, value);
+		}
+
 		#endregion
 
 		public EntityEntryViewModel<Warehouse> WarehouseEntry;
@@ -45,6 +51,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
 		}
+
 
 	}
 }

@@ -1,0 +1,31 @@
+:title-separator: {sp}|
+= QS: Спецодежда и имущество | Руководство пользователя
+Quality Solution 2020
+версия 2.3
+:organization: Quality Solution
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:chapter-label:
+:toc-title: Содержание
+:toclevels: 3
+:imagesdir: ../images
+
+:sectnums:
+
+:leveloffset: 1
+
+include::introduction.adoc[]
+
+include::install.adoc[]
+
+include::users.adoc[]
+
+include::interface.adoc[]
+
+include::employees.adoc[]
+
+include::technical.adoc[]
+
+:leveloffset: 0

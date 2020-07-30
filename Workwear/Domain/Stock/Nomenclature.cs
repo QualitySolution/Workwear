@@ -84,6 +84,11 @@ namespace workwear.Domain.Stock
 
 		public virtual string TypeName => Type.Name;
 
+		public virtual string GetAmountAndUnitsText(int amount)
+		{
+			return this.Type?.Units?.MakeAmountShortStr(amount) ?? amount.ToString();
+		}
+
 		#endregion
 
 		#region Средства защиты

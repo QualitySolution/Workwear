@@ -212,6 +212,9 @@ Section "${PRODUCT_NAME}" SecProgram
   Delete $INSTDIR\zxing.dll
   Delete $INSTDIR\ru-RU\RdlReader.resources.dll
   Delete $INSTDIR\ru-RU\RdlViewer.resources.dll
+  
+  ; Удаляем файлы используемые до версии 2.3.2
+  Delete $INSTDIR\workwear_ru.pdf
 
 SectionEnd
 
