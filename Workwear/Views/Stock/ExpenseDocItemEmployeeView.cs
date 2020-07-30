@@ -81,8 +81,6 @@ namespace workwear.Views.Stock
 		}
 		void ExpenseDoc_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			var placeColumn = ytreeItems.ColumnsConfig.ConfiguredColumns.FirstOrDefault(x => ColumnTags.FacilityPlace.Equals(x.tag));
-		
 			if(e.PropertyName == ViewModel.GetPropertyName(x => x.Operation)) {
 
 				var buhDocColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.BuhDoc).First();
