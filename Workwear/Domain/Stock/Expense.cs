@@ -7,6 +7,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
+using workwear.Domain.Regulations;
 using workwear.Domain.Statements;
 
 namespace workwear.Domain.Stock
@@ -129,9 +130,26 @@ namespace workwear.Domain.Stock
 				Size = position.Size,
 				WearGrowth = position.Growth,
 				WearPercent = position.WearPercent
-			};
+		};
 
 			ObservableItems.Add(newItem);
+			return newItem;
+		}
+		public virtual ExpenseItem AddItem(EmployeeCardItem employeeCardItem)
+		{
+			ExpenseItem newItem;
+			if(employeeCardItem.BestChoiceInStock.Any())
+				newItem = AddItem(employeeCardItem.BestChoiceInStock.First().StockPosition);
+			else { 
+				newItem = new ExpenseItem() {
+					ExpenseDoc = this,
+				};
+				ObservableItems.Add(newItem);
+			}
+
+			newItem.ProtectionTools = employeeCardItem.Item;
+			newItem.EmployeeCardItem = employeeCardItem;
+			newItem.Amount = 0;
 			return newItem;
 		}
 
@@ -179,6 +197,8 @@ namespace workwear.Domain.Stock
 				item.IssuanceSheetItem.UpdateFromExpense();
 			}
 		}
+
+
 
 		#endregion
 	}

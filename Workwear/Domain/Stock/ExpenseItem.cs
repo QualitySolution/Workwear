@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using workwear.Domain.Operations;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
+using workwear.Domain.Regulations;
 using workwear.Domain.Statements;
 
 namespace workwear.Domain.Stock
@@ -24,6 +27,14 @@ namespace workwear.Domain.Stock
 		public virtual Expense ExpenseDoc {
 			get { return expenseDoc; }
 			set { SetField (ref expenseDoc, value, () => ExpenseDoc); }
+		}
+
+		ProtectionTools protectionTools;
+
+		[Display(Name = "Номенклатура ТОН")]
+		public virtual ProtectionTools ProtectionTools {
+			get { return protectionTools; }
+			set { SetField(ref protectionTools, value, () => ProtectionTools); }
 		}
 
 		Nomenclature nomenclature;
@@ -117,6 +128,41 @@ namespace workwear.Domain.Stock
 			set => WarehouseOperation.WearPercent = value;
 		}
 
+		private EmployeeCardItem employeeCardItem;
+
+		[Display(Name = "Процент износа")]
+		public virtual EmployeeCardItem EmployeeCardItem {
+			get => employeeCardItem;
+			set => employeeCardItem = value;
+		}
+
+		public virtual StockPosition StockPosition {
+			get {
+				return new StockPosition(Nomenclature, Size, WearGrowth, WearPercent);
+			}
+			set {
+				Nomenclature = value.Nomenclature;
+				Size = value.Size;
+				WearGrowth = value.Growth;
+				WearPercent = value.WearPercent;
+			}
+		}
+
+
+		StockBalanceDTO stockBalanceSetter;
+		public virtual StockBalanceDTO StockBalanceSetter {
+			get {
+				return stockBalanceSetter ?? new StockBalanceDTO {Nomenclature = Nomenclature, Growth = WearGrowth, Size = Size, WearPercent = WearPercent } ;
+			}
+			set {
+				stockBalanceSetter = value;
+				Nomenclature = value.Nomenclature;
+				Size = value.Size;
+				WearGrowth = value.Growth;
+				WearPercent = value.WearPercent;
+			}
+		}
+
 		#endregion
 
 		#region Расчетные свойства
@@ -127,8 +173,6 @@ namespace workwear.Domain.Stock
 				Nomenclature.Type.Units.Name
 			);}
 		}
-
-		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, Size, WearGrowth, WearPercent);
 
 		#endregion
 

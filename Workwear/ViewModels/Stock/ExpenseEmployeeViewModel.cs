@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Autofac;
 using NLog;
 using QS.Dialog;
@@ -50,7 +49,6 @@ namespace workwear.ViewModels.Stock
 				Entity.Operation = ExpenseOperations.Employee;
 				Entity.Employee = UoW.GetById<EmployeeCard>(employee.Id);
 				Entity.Warehouse = Entity.Employee.Subdivision?.Warehouse;
-				if(fillUnderreceived)
 					FillUnderreceived();
 			}
 
@@ -65,6 +63,7 @@ namespace workwear.ViewModels.Stock
 
 			var parameter = new TypedParameter(typeof(ExpenseEmployeeViewModel), this);
 			DocItemsEmployeeViewModel = this.autofacScope.Resolve<ExpenseDocItemsEmployeeViewModel>(parameter);
+			Entity.PropertyChanged += EntityChange;
 		}
 
 		#region EntityViewModels
@@ -74,16 +73,14 @@ namespace workwear.ViewModels.Stock
 
 		private void FillUnderreceived()
 		{
-			Entity.Employee.FillWearInStockInfo(UoW, Entity.Warehouse, Entity.Date, onlyUnderreceived: true);
+			Entity.ObservableItems.Clear();
 
-			foreach(var item in Entity.Employee.UnderreceivedItems) {
-				if(item.InStockState != StockStateInfo.Enough && item.InStockState != StockStateInfo.NotEnough) {
-					logger.Warn($"На складе отсутствуют позиции для {item.Item.Name}. Пропускаем.");
-					continue;
-				}
-				var stockBalance = item.BestChoiceInStock.First();
-				var amount = item.InStockState == StockStateInfo.Enough ? item.NeededAmount : stockBalance.Amount;
-				Entity.AddItem(stockBalance.StockPosition, amount);
+			Entity.Employee.FillWearInStockInfo(UoW, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
+
+			var r = Entity.Employee;
+			if (Entity.Employee.WorkwearItems.Count > 0)
+			foreach(var item in Entity.Employee.WorkwearItems) {
+				Entity.AddItem(item);
 			}
 		}
 
@@ -160,5 +157,13 @@ namespace workwear.ViewModels.Stock
 			};
 			MainClass.MainWin.NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
+
+		public void EntityChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(Entity.Employee)) {
+				FillUnderreceived();
+			}
+		}
+
 	}
 }

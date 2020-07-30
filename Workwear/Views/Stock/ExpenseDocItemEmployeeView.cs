@@ -54,35 +54,34 @@ namespace workwear.Views.Stock
 		void CreateTable()
 		{
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseItem>()
-				.AddColumn("Наименование").AddTextRenderer(e => e.Nomenclature.Name)
+				.AddColumn("ТОН").AddTextRenderer(node => node.ProtectionTools != null? node.ProtectionTools.Id.ToString() : "")
+				
+				.AddColumn("Наименование номенаклатуры ТОН").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
+				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
+				.SetDisplayFunc(x => x.Nomenclature.Name)
+					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))
+					.DynamicFillListFunc(x => x.EmployeeCardItem.BestChoiceInStock.ToList())
+					.AddSetter((c, n) => c.Editable = n.EmployeeCardItem != null)
 				.AddColumn("Размер")
 					.AddComboRenderer(x => x.Size)
 					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.SizeStd, SizeUse.HumanOnly))
-					.AddSetter((c, n) => c.Editable = n.Nomenclature.SizeStd != null)
+					.AddSetter((c, n) => c.Editable = n.Nomenclature.SizeStd != null && n.EmployeeCardItem == null)
 				.AddColumn("Рост")
-				.AddComboRenderer(x => x.WearGrowth)
+					.AddComboRenderer(x => x.WearGrowth)
 					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
-					.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
+					.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null && n.EmployeeCardItem == null)
 				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer(e => e.Nomenclature.Type.Units.Name)
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument).Editable()
-				.AddColumn("Расположение").Tag(ColumnTags.FacilityPlace).AddComboRenderer(e => e.SubdivisionPlace).Editing()
-					.SetDisplayFunc(x => (x as SubdivisionPlace) != null ? (x as SubdivisionPlace).Name : String.Empty)
 				.AddColumn("")
+				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = n.Amount == 0 ? "gray" : null)
 				.Finish();
 
 		}
 		void ExpenseDoc_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			var placeColumn = ytreeItems.ColumnsConfig.ConfiguredColumns.FirstOrDefault(x => ColumnTags.FacilityPlace.Equals(x.tag));
-			var placeRenderer = placeColumn.ConfiguredRenderers.First() as ComboRendererMapping<ExpenseItem, SubdivisionPlace>;
-			if(ViewModel.Subdivision != null) {
-				placeRenderer.FillItems(ViewModel.Subdivision.Places);
-			}
-			else {
-				placeRenderer.FillItems(new List<SubdivisionPlace>());
-			}
 		
 			if(e.PropertyName == ViewModel.GetPropertyName(x => x.Operation)) {
 
@@ -113,7 +112,7 @@ namespace workwear.Views.Stock
 
 		void YtreeItems_Selection_Changed(object sender, EventArgs e)
 		{
-			buttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
+			buttonDel.Sensitive = buttonShowAllSize.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
 		}
 
 		protected void OnButtonAddClicked(object sender, EventArgs e)
@@ -124,6 +123,11 @@ namespace workwear.Views.Stock
 		void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			SetSum();
+		}
+
+		protected void OnButtonShowAllSizeClicked(object sender, EventArgs e)
+		{
+			viewModel.ShowAllSize(ytreeItems.GetSelectedObject<ExpenseItem>());
 		}
 	}
 
