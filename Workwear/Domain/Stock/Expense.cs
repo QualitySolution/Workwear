@@ -149,7 +149,11 @@ namespace workwear.Domain.Stock
 
 			newItem.ProtectionTools = employeeCardItem.Item;
 			newItem.EmployeeCardItem = employeeCardItem;
-			newItem.Amount = 0;
+
+			if (Employee.UnderreceivedItems.Contains(employeeCardItem))
+			newItem.Amount = 1;
+			else newItem.Amount = 0;
+
 			return newItem;
 		}
 

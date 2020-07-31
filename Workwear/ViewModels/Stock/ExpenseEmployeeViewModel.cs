@@ -76,6 +76,7 @@ namespace workwear.ViewModels.Stock
 			Entity.ObservableItems.Clear();
 
 			Entity.Employee.FillWearInStockInfo(UoW, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
+			Entity.Employee.FillWearInStockInfo(UoW, Entity.Warehouse, Entity.Date, onlyUnderreceived: true);
 
 			var r = Entity.Employee;
 			if (Entity.Employee.WorkwearItems.Count > 0)
