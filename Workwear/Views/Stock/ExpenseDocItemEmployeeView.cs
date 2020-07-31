@@ -54,9 +54,7 @@ namespace workwear.Views.Stock
 		void CreateTable()
 		{
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseItem>()
-				.AddColumn("ТОН").AddTextRenderer(node => node.ProtectionTools != null? node.ProtectionTools.Id.ToString() : "")
-				
-				.AddColumn("Наименование номенаклатуры ТОН").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
+				.AddColumn("Номенаклатуры ТОН").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
 				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
 				.SetDisplayFunc(x => x.Nomenclature.Name)
 					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))

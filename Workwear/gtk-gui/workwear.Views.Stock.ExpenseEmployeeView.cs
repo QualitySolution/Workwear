@@ -382,6 +382,9 @@ namespace workwear.Views.Stock
 				this.Child.ShowAll();
 			}
 			this.Show();
+			this.buttonIssuanceSheetCreate.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetCreateClicked);
+			this.buttonIssuanceSheetOpen.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetOpenClicked);
+			this.buttonIssuanceSheetPrint.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetPrintClicked);
 		}
 	}
 }
