@@ -151,7 +151,7 @@ namespace workwear.Domain.Stock
 			newItem.EmployeeCardItem = employeeCardItem;
 
 			if(Employee.UnderreceivedItems.Contains(employeeCardItem)) 
-				newItem.Amount = employeeCardItem.ActiveNormItem?.Amount ?? 0;
+				newItem.Amount = employeeCardItem.NeededAmount;
 			else newItem.Amount = 0;
 
 			return newItem;
