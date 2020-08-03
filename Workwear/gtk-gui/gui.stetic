@@ -3948,6 +3948,7 @@
                         <property name="Icon">stock:gtk-new Menu</property>
                         <property name="Label" translatable="yes">Создать</property>
                         <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonIssuanceSheetCreateClicked" />
                       </widget>
                       <packing>
                         <property name="Position">0</property>
@@ -3964,6 +3965,7 @@
                         <property name="Icon">stock:gtk-edit Menu</property>
                         <property name="Label" translatable="yes">Открыть</property>
                         <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonIssuanceSheetOpenClicked" />
                       </widget>
                       <packing>
                         <property name="Position">1</property>
@@ -3980,6 +3982,7 @@
                         <property name="Icon">stock:gtk-print Menu</property>
                         <property name="Label" translatable="yes">Печать</property>
                         <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonIssuanceSheetPrintClicked" />
                       </widget>
                       <packing>
                         <property name="Position">2</property>
