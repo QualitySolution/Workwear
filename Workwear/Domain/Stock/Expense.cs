@@ -150,8 +150,8 @@ namespace workwear.Domain.Stock
 			newItem.ProtectionTools = employeeCardItem.Item;
 			newItem.EmployeeCardItem = employeeCardItem;
 
-			if (Employee.UnderreceivedItems.Contains(employeeCardItem))
-			newItem.Amount = 1;
+			if(Employee.UnderreceivedItems.Contains(employeeCardItem)) 
+				newItem.Amount = employeeCardItem.ActiveNormItem?.Amount ?? 0;
 			else newItem.Amount = 0;
 
 			return newItem;
