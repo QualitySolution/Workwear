@@ -28,6 +28,7 @@ namespace workwear.Tools
 
 		public IList<LineIncome> ListLineIncomes = new List<LineIncome>();
 		public IList<LineIncome> listDontFindNomenclature = new List<LineIncome>();
+		public IList<string> listDontFindOZMInDoc = new List<string>();
 
 		public ReaderIncomeFromXML1C(string nameFile)
 		{
@@ -56,7 +57,7 @@ namespace workwear.Tools
 		public virtual void GetNomenclature(XmlElement xRoot, string file)
 		{
 			XmlNamespaceManager nsMgr = new XmlNamespaceManager(new NameTable());
-			nsMgr.AddNamespace("df", "http://v8.1c.ru/edi/edi_stnd/EnterpriseData/1.3");
+			nsMgr.AddNamespace("df", "http://v8.1c.ru/edi/edi_stnd/EnterpriseData/1.8");
 
 			List<string> listNomenReference = new List<string>();
 			List<string> listNomenCount = new List<string>();
@@ -64,17 +65,25 @@ namespace workwear.Tools
 
 			listNomenReference = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:ДанныеНоменклатуры/df:Номенклатура/df:Ссылка");
 			listNomenCount = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:Количество");
-			listNomenName = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:ДанныеНоменклатуры/df:Характеристика/df:НаименованиеПолное");
-
+			listNomenName = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:ДанныеНоменклатуры/df:Номенклатура/df:НаименованиеПолное");
 			XDocument doc = XDocument.Load(file);
-			XNamespace ns = "http://v8.1c.ru/edi/edi_stnd/EnterpriseData/1.3";
+			XNamespace ns = "http://v8.1c.ru/edi/edi_stnd/EnterpriseData/1.8";
 			int i = 0;
+			var r = listNomenReference;
 			foreach(var nomenReference in listNomenReference) {
-				var ozm = (from feed in doc.Descendants(ns + "Справочник.Номенклатура")
-						   from et in feed.Elements(ns + "КлючевыеСвойства")
-						   where (string)et.Element(ns + "Ссылка") == nomenReference
-						   select feed.Element(ns + "ДополнительныеРеквизиты")
-						   .Element(ns + "Строка").Element(ns + "ЗначениеСвойства").Element(ns + "Число")).ToList().First().Value;
+				var ozm = "";
+				try {
+					ozm = (from feed in doc.Descendants(ns + "Справочник.Номенклатура")
+							   from et in feed.Elements(ns + "КлючевыеСвойства")
+							   where (string)et.Element(ns + "Ссылка") == nomenReference
+							   select feed.Element(ns + "ДополнительныеРеквизиты")
+							   .Element(ns + "Строка").Element(ns + "ЗначениеСвойства").Element(ns + "Число")).ToList().First().Value;
+				}
+				catch {
+					listDontFindOZMInDoc.Add(nomenReference);
+				  }
+
+				if(ozm.Length == 0) continue;
 
 				var sizeGrowth = getSizeAndGrowth(listNomenName[i]);
 				Nomenclature nom = FindNomenclature(ozm);

@@ -160,6 +160,17 @@ namespace workwear
 
 			Entity.Date = readerIncomeFromXML1C.Date;
 
+			if (readerIncomeFromXML1C.listDontFindOZMInDoc.Count > 0) {
+				string str = "";
+				foreach(var nom in readerIncomeFromXML1C.listDontFindOZMInDoc)
+					str += nom + "\n";
+				if(!MessageDialogHelper.RunQuestionDialog($"У номенлкатур с ссылками:\n{str}не найден озм. Продолжить создание документа прихода?")) {
+					MessageDialogHelper.RunWarningDialog("Создание документа прихода невозможно.");
+					return;
+				}
+
+			}
+
 			if(readerIncomeFromXML1C.listDontFindNomenclature.Count > 0) {
 				string str = "";
 				foreach(var nom in readerIncomeFromXML1C.listDontFindNomenclature)
@@ -168,6 +179,7 @@ namespace workwear
 				if(MessageDialogHelper.RunQuestionDialog($"Таких номенклатур:\n{str}нет в справочнике. Создать?")) {
 					foreach(var nom in readerIncomeFromXML1C.listDontFindNomenclature)
 						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<NomenclatureViewModel, IEntityUoWBuilder, LineIncome>(this, EntityUoWBuilder.ForCreate(), nom, OpenPageOptions.AsSlave);
+					MessageDialogHelper.RunWarningDialog("Сохраните номенклатуру(ы) и повторите загрузку документа.");
 				}
 				else {
 					MessageDialogHelper.RunWarningDialog("Создание документа прихода невозможно.");
