@@ -361,7 +361,7 @@ namespace workwear.Domain.Operations
 			AutoWriteoffDate = null;
 		}
 
-		public virtual void Update(IUnitOfWork uow, Func<string, bool> askUser, WriteoffItem item)
+		public virtual void Update(IUnitOfWork uow, WriteoffItem item)
 		{
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)

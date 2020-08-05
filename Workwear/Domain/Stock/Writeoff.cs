@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
@@ -117,9 +117,9 @@ namespace workwear.Domain.Stock
 			ObservableItems.Remove (item);
 		}
 
-		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
+		public virtual void UpdateOperations(IUnitOfWork uow)
 		{
-			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
+			Items.ToList().ForEach(x => x.UpdateOperations(uow));
 		}
 
 		#endregion
