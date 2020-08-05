@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
@@ -70,6 +70,10 @@ namespace workwear.Domain.Regulations
 		{
 			if(Analogs.Any(p => DomainHelper.EqualDomainObjects(p, Analog))) {
 				logger.Warn("Такой аналог уже добавлен. Пропускаем...");
+				return;
+			}
+			if(DomainHelper.EqualDomainObjects(this, Analog)) {
+				logger.Warn("Нельзя добавлять в качестве аналога себя. Пропускаем...");
 				return;
 			}
 			ObservableAnalog.Add(Analog);
