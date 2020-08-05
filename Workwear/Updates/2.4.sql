@@ -63,7 +63,7 @@ ADD COLUMN `dateto` DATETIME NULL DEFAULT NULL AFTER `datefrom`;
 ALTER TABLE `operation_issued_by_employee` 
 ADD COLUMN `size` VARCHAR(10) NULL DEFAULT NULL AFTER `nomenclature_id`,
 ADD COLUMN `growth` VARCHAR(10) NULL DEFAULT NULL AFTER `size`,
-ADD COLUMN `warehouse_operation_id` INT(10) UNSIGNED NOT NULL AFTER `issued_operation_id`,
+ADD COLUMN `warehouse_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `issued_operation_id`,
 ADD INDEX `fk_operation_issued_by_employee_4_idx` (`warehouse_operation_id` ASC),
 ADD INDEX `index8` (`size` ASC),
 ADD INDEX `index9` (`growth` ASC),

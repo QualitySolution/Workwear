@@ -26,7 +26,7 @@ namespace workwear.HMap
 			References(x => x.Nomenclature).Column("nomenclature_id").Not.Nullable();
 			References(x => x.NormItem).Column("norm_item_id");
 			References(x => x.IssuedOperation).Column("issued_operation_id");
-			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Not.Nullable();
+			References(x => x.WarehouseOperation).Column("warehouse_operation_id");
 		}
 	}
 }
