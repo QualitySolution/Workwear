@@ -470,11 +470,11 @@ namespace workwear.Domain.Company
 			}
 		}
 
-		public virtual void FillWearRecivedInfo(IUnitOfWork uow)
+		public virtual void FillWearRecivedInfo(IUnitOfWork uow, DateTime? ondate = null)
 		{
 			if (Id == 0) // Не надо проверять выдачи, так как сотрудник еще не сохранен.
 				return; 
-			var receiveds = EmployeeRepository.ItemsBalance (uow, this);
+			var receiveds = EmployeeRepository.ItemsBalance (uow, this, ondate ?? DateTime.Now);
 			foreach(var item in WorkwearItems)
 			{
 				var summary = receiveds.Where(x => item.Item.MatchedProtectionTools.Any(p => p.Id == x.ProtectionToolsId)).ToList();

@@ -27,12 +27,12 @@ namespace workwear.Repository.Company
 				.List();
 		}
 
-		public static IList<EmployeeRecivedInfo> ItemsBalance(IUnitOfWork uow, EmployeeCard employee)
+		public static IList<EmployeeRecivedInfo> ItemsBalance(IUnitOfWork uow, EmployeeCard employee, DateTime onDate)
 		{
 			EmployeeRecivedInfo resultAlias = null;
 
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
-			Nomenclature nomenclatureAlias = null;
+			EmployeeIssueOperation employeeIssueOperationReceivedAlias = null;
 
 			IProjection projection = Projections.SqlFunction(
 				new SQLFunctionTemplate(NHibernateUtil.Int32, "SUM(IFNULL(?1, 0) - IFNULL(?2, 0))"),
@@ -41,18 +41,19 @@ namespace workwear.Repository.Company
 				Projections.Property<EmployeeIssueOperation>(x => x.Returned)
 			);
 
-			var incomeList = uow.Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
+			return uow.Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
+				.Left.JoinAlias(x => x.IssuedOperation, () => employeeIssueOperationReceivedAlias)
 				.Where(x => x.Employee == employee)
-				.JoinAlias (() => employeeIssueOperationAlias.Nomenclature, () => nomenclatureAlias)
+				.Where(() => employeeIssueOperationAlias.AutoWriteoffDate == null || employeeIssueOperationAlias.AutoWriteoffDate > onDate)
+				.Where(() => employeeIssueOperationReceivedAlias.AutoWriteoffDate == null || employeeIssueOperationReceivedAlias.AutoWriteoffDate > onDate)
 				.SelectList (list => list
-					.SelectGroup (() => nomenclatureAlias.Type.Id).WithAlias (() => resultAlias.ProtectionToolsId)
+					.SelectGroup (() => employeeIssueOperationAlias.ProtectionTools.Id).WithAlias(() => resultAlias.ProtectionToolsId)
+					.SelectGroup (() => employeeIssueOperationAlias.Nomenclature.Id).WithAlias (() => resultAlias.NomenclatureId)
 					.SelectMax (() => employeeIssueOperationAlias.OperationTime).WithAlias (() => resultAlias.LastReceive)
 					.Select(projection).WithAlias (() => resultAlias.Amount)
 				)
 				.TransformUsing (Transformers.AliasToBean<EmployeeRecivedInfo> ())
 				.List<EmployeeRecivedInfo> ();
-
-			return incomeList;
 		}
 
 		public static IList<EmployeeCard> GetEmployeesDependenceOnNormItem(IUnitOfWork uow, NormItem item)
@@ -82,7 +83,9 @@ namespace workwear.Repository.Company
 
 	public class EmployeeRecivedInfo
 	{
-		public int ProtectionToolsId { get; set;}
+		public int NomenclatureId { get; set; }
+
+		public int? ProtectionToolsId { get; set;}
 
 		public DateTime LastReceive { get; set;}
 
