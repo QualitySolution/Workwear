@@ -379,6 +379,7 @@ namespace WorkwearTest.Integration.Organization
 				employee.FillWearRecivedInfo(uow, new DateTime(2019, 1, 10));
 				var item = employee.WorkwearItems.First();
 				Assert.That(item.Amount, Is.EqualTo(1));
+				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2018, 1, 20)));
 			}
 		}
 
@@ -468,11 +469,11 @@ namespace WorkwearTest.Integration.Organization
 				employee.FillWearRecivedInfo(uow, new DateTime(2019, 3, 10));
 				var item = employee.WorkwearItems.First();
 				Assert.That(item.Amount, Is.EqualTo(1));
+				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2019, 1, 20)));
 			}
 		}
 
 		[Test(Description = "Проверяем что при заполнении выданной спецодежды количество считаем с учетом автосписания.")]
-		[Category("real case")]
 		[Category("Integrated")]
 		public void FillWearRecivedInfo_AutoWriteOffItemsManualWriteoffWTest()
 		{
@@ -575,8 +576,96 @@ namespace WorkwearTest.Integration.Organization
 				employee.FillWearRecivedInfo(uow, new DateTime(2019, 3, 10));
 				var item = employee.WorkwearItems.First();
 				Assert.That(item.Amount, Is.EqualTo(5));
+				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2019, 1, 20)));
 			}
 		}
+
+		[Test(Description = "Проверяем что при заполнении выданной спецодежды дата последней выдачи не выскакивает на дату списание.")]
+		[Category("Integrated")]
+		public void FillWearRecivedInfo_LastIssueDateNotReturnDateTest()
+		{
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				nomenclatureType.Category = ItemTypeCategory.wear;
+				nomenclatureType.WearCategory = workwear.Measurements.СlothesType.Wear;
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
+				nomenclature.SizeStd = "UnisexWearRus";
+				nomenclature.WearGrowthStd = "UnisexGrowth";
+				uow.Save(nomenclature);
+
+				var protectionTools = new ProtectionTools();
+				protectionTools.Name = "Номенклатура ТОН";
+				protectionTools.AddNomeclature(nomenclature);
+				uow.Save(protectionTools);
+
+				var norm = new Norm();
+				var normItem = norm.AddItem(protectionTools);
+				normItem.Amount = 1;
+				normItem.NormPeriod = NormPeriodType.Year;
+				normItem.PeriodCount = 1;
+				uow.Save(norm);
+
+				var employee = new EmployeeCard();
+				employee.AddUsedNorm(norm);
+				employee.Sex = Sex.M;
+				employee.WearSizeStd = "MenWearRus";
+				employee.WearSize = "50";
+				employee.WearGrowth = "176";
+				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
+				uow.Save(employee);
+				uow.Commit();
+
+				var warehouseOperation = new WarehouseOperation {
+					Nomenclature = nomenclature,
+					Amount = 1,
+					OperationTime = new DateTime(2018, 1, 20),
+				};
+				uow.Save(warehouseOperation);
+
+				var operationIssue = new EmployeeIssueOperation {
+					Employee = employee,
+					ExpiryByNorm = new DateTime(2019, 1, 20),
+					Issued = 1,
+					Nomenclature = nomenclature,
+					NormItem = normItem,
+					ProtectionTools = protectionTools,
+					OperationTime = new DateTime(2018, 1, 20),
+					WarehouseOperation = warehouseOperation,
+				};
+				uow.Save(operationIssue);
+
+				var warehouseOperationManualWriteoff = new WarehouseOperation {
+					Nomenclature = nomenclature,
+					Amount = 1,
+					OperationTime = new DateTime(2019, 1, 20),
+				};
+				uow.Save(warehouseOperationManualWriteoff);
+
+				var operationManualWriteoff = new EmployeeIssueOperation {
+					Employee = employee,
+					Returned = 1,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools,
+					OperationTime = new DateTime(2019, 1, 20),
+					WarehouseOperation = warehouseOperationManualWriteoff,
+					IssuedOperation = operationIssue
+				};
+				uow.Save(operationManualWriteoff);
+
+				uow.Commit();
+
+				employee.FillWearRecivedInfo(uow, new DateTime(2019, 3, 10));
+				var item = employee.WorkwearItems.First();
+				Assert.That(item.Amount, Is.EqualTo(0));
+				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2018, 1, 20)));
+			}
+		}
+
 		#endregion
 	}
 }

@@ -41,6 +41,13 @@ namespace workwear.Repository.Company
 				Projections.Property<EmployeeIssueOperation>(x => x.Returned)
 			);
 
+			IProjection projectionIssueDate = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.Date, "MAX(CASE WHEN ?1 > 0 THEN ?2 END)"),
+				NHibernateUtil.Date,
+				Projections.Property<EmployeeIssueOperation>(x => x.Issued),
+				Projections.Property<EmployeeIssueOperation>(x => x.OperationTime)
+			);
+
 			return uow.Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
 				.Left.JoinAlias(x => x.IssuedOperation, () => employeeIssueOperationReceivedAlias)
 				.Where(x => x.Employee == employee)
@@ -49,7 +56,7 @@ namespace workwear.Repository.Company
 				.SelectList (list => list
 					.SelectGroup (() => employeeIssueOperationAlias.ProtectionTools.Id).WithAlias(() => resultAlias.ProtectionToolsId)
 					.SelectGroup (() => employeeIssueOperationAlias.Nomenclature.Id).WithAlias (() => resultAlias.NomenclatureId)
-					.SelectMax (() => employeeIssueOperationAlias.OperationTime).WithAlias (() => resultAlias.LastReceive)
+					.Select(projectionIssueDate).WithAlias (() => resultAlias.LastReceive)
 					.Select(projection).WithAlias (() => resultAlias.Amount)
 				)
 				.TransformUsing (Transformers.AliasToBean<EmployeeRecivedInfo> ())
