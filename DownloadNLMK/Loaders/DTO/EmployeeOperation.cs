@@ -33,6 +33,8 @@ namespace DownloadNLMK.Loaders.DTO
 
 		public DateTime? auto_writeoff_date { get; set; }
 
+		public decimal wear_percent { get; set; }
+
 		//public int? issued_operation_id { get; set; }
 
 		public int norm_item_id => normItem.Id;

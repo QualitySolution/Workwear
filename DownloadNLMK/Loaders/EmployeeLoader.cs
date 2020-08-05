@@ -197,8 +197,8 @@ namespace DownloadNLMK.Loaders
 			uow.Commit();
 			Console.Write("Завершено\n");
 			var sql = "INSERT INTO operation_issued_by_employee " +
-				"(`employee_id`, `operation_time`, `nomenclature_id`, `issued`, `returned`, `auto_writeoff`, `auto_writeoff_date`, `protection_tools_id`, `norm_item_id`, `StartOfUse`, `ExpiryByNorm`) " +
-				"Values (@employee_id, @operation_time, @nomenclature_id, @issued, @returned, @auto_writeoff, @auto_writeoff_date, @protection_tools_id, @norm_item_id, @StartOfUse, @ExpiryByNorm);";
+				"(`employee_id`, `operation_time`, `nomenclature_id`, `issued`, `returned`, `auto_writeoff`, `auto_writeoff_date`, `protection_tools_id`, `norm_item_id`, `StartOfUse`, `ExpiryByNorm`, wear_percent) " +
+				"Values (@employee_id, @operation_time, @nomenclature_id, @issued, @returned, @auto_writeoff, @auto_writeoff_date, @protection_tools_id, @norm_item_id, @StartOfUse, @ExpiryByNorm, @wear_percent);";
 
 			logger.Info($"Сохраняем операции выдачи...");
 			var listToInsert = new List<EmployeeOperation>();
