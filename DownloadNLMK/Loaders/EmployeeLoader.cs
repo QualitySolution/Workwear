@@ -199,6 +199,7 @@ namespace DownloadNLMK.Loaders
 			logger.Info($"Сохраняем операции выдачи...");
 			var listToInsert = new List<EmployeeOperation>();
 			i = 0;
+			int amountSkip = 0;
 			int processed = 0;
 			foreach(var pair in Operations) {
 				if(!UsedEmployees.Contains(pair.Key))
@@ -211,6 +212,11 @@ namespace DownloadNLMK.Loaders
 						logger.Warn($"Выдачу {item.Title} пропускаем так как не нашли номеклатуру.");
 						continue;
 					}
+					if(item.issued == 0) {
+						amountSkip++;
+						continue;
+					}
+
 					listToInsert.Add(item);
 					i++;
 				}
@@ -225,6 +231,9 @@ namespace DownloadNLMK.Loaders
 				uow.Session.Connection.Execute(sql, listToInsert);
 
 			Console.Write("Завершено\n");
+
+			logger.Info($"Сохранено {i} операций выдачи");
+			logger.Info($"Пропущено {amountSkip} операций с нулевый количеством.");
 		}
 	}
 }
