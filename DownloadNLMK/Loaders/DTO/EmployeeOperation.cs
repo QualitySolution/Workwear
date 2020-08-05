@@ -19,7 +19,7 @@ namespace DownloadNLMK.Loaders.DTO
 
 		public int protection_tools_id => protectionTools.Id;
 
-		public int nomenclature_id => nomenclature.Id;
+		public int nomenclature_id => Nomenclature.Id;
 
 		public int issued { get; set; }
 
@@ -38,9 +38,8 @@ namespace DownloadNLMK.Loaders.DTO
 		public int norm_item_id => normItem.Id;
 
 		#region Установка ссылок
-
-		private Nomenclature nomenclature;
-		public Nomenclature Nomenclature { set => nomenclature = value; }
+		
+		public Nomenclature Nomenclature { get; set; }
 
 		private EmployeeCard employee;
 		public EmployeeCard Employee { set => employee = value; }
@@ -53,6 +52,6 @@ namespace DownloadNLMK.Loaders.DTO
 
 		#endregion
 
-		public string Title => $"{protectionTools?.Name}({nomenclature?.Name}) - {issued}";
+		public string Title => $"{protectionTools?.Name}({Nomenclature?.Name}) - {issued}";
 	}
 }

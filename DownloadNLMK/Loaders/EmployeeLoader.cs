@@ -121,7 +121,7 @@ namespace DownloadNLMK.Loaders
 			processed = 0;
 			foreach(var item in PERSONAL_CARDS) {
 				processed++;
-				if(processed % 100 == 0)
+				if(processed % 500 == 0)
 					Console.Write($"\r\tОбработано строк {processed} [{processed / totalRows:P}]... ");
 				if(!ByID.ContainsKey(item.PERSONAL_CARD_ID) || item.NORMA_ROW_ID == null) {
 					logger.Warn($"Строка для карточки PERSONAL_CARD_ID={item.PERSONAL_CARD_ID} пропущена");
@@ -175,6 +175,10 @@ namespace DownloadNLMK.Loaders
 			if(UsedEmployees.Add(employee)) {
 				foreach(var norm in employee.UsedNorms)
 					norms.MarkAsUsed(norm);
+				foreach(var operation in Operations[employee]) {
+					if(operation.issued > 0)
+						nomenclature.MarkAsUsed(operation.Nomenclature);
+				}
 			}
 		}
 
