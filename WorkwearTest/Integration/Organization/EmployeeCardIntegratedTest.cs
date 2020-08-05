@@ -22,19 +22,10 @@ namespace WorkwearTest.Integration.Organization
 			InitialiseUowFactory();
 		}
 
-		[SetUp]
-		public void TestSetup()
-		{
-		}
+		#region BestChoise
 
-		[TearDown]
-		public void TestTearDown()
-		{
-		}
 		[Test(Description = "Корректно и правильно выводить всю доступную подходящую номенклатуру.")]
-		[Category("real case")]
 		[Category("Integrated")]
-
 		public void BestChoise_IssuingMultipleRows_TwoNomeclatureSameNeedsTest()
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
@@ -93,9 +84,9 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(income);
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
 
-				var operationTime = uow.GetAll<WarehouseOperation>().Select(x=> x.OperationTime).ToList();
+				var operationTime = uow.GetAll<WarehouseOperation>().Select(x => x.OperationTime).ToList();
 
-				StockBalanceDTO stockBalance = null; 
+				StockBalanceDTO stockBalance = null;
 				employee.FillWearInStockInfo(uow, warehouse, new DateTime(2020, 07, 22), false);
 				Assert.That(employee.UnderreceivedItems.Count(), Is.GreaterThan(0));
 				var employeeCardItem = employee.UnderreceivedItems.First();
@@ -105,11 +96,11 @@ namespace WorkwearTest.Integration.Organization
 
 				Assert.That(bestChoice.Nomenclature, Is.EqualTo(nomenclature));
 			}
+		}
 
-
-			}
-
-			public void BestChoise_IssuingMultipleRows_TwoNomeclatureWearTypeSameNeedsTest()
+		[Test(Description = "Корректно и правильно выводить всю доступную подходящую номенклатуру.")]
+		[Category("Integrated")]
+		public void BestChoise_IssuingMultipleRows_TwoNomeclatureWearTypeSameNeedsTest()
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
@@ -164,11 +155,11 @@ namespace WorkwearTest.Integration.Organization
 				var income = new Income();
 				income.Warehouse = warehouse;
 				income.Date = new DateTime(2020, 07, 20);
-				
+
 				income.Operation = IncomeOperations.Enter;
-				
+
 				var incomeItem1 = income.AddItem(nomenclature);
-				
+
 				incomeItem1.Amount = 10;
 				incomeItem1.Size = "50";
 				incomeItem1.WearGrowth = "176";
@@ -185,7 +176,7 @@ namespace WorkwearTest.Integration.Organization
 				Assert.That(employee.UnderreceivedItems.Count(), Is.GreaterThan(0));
 				var employeeCardItem = employee.UnderreceivedItems.First();
 				var employeeCardItemCount = employee.UnderreceivedItems.Count();
-				 
+
 				var inStock = employeeCardItem.InStock;
 
 				Assert.That(employeeCardItem.InStock.Count(), Is.GreaterThan(0));
@@ -198,6 +189,8 @@ namespace WorkwearTest.Integration.Organization
 			}
 		}
 
+		[Test(Description = "Корректно и правильно выводить всю доступную подходящую номенклатуру.")]
+		[Category("Integrated")]
 		public void BestChoise_IssuingMultipleRows_TwoNomeclatureShoesTypeSameNeedsTest()
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
@@ -283,7 +276,7 @@ namespace WorkwearTest.Integration.Organization
 
 				incomeItem1.Amount = 1;
 				incomeItem1.Size = "42";
-				
+
 				var incomeItem2 = income.AddItem(nomenclature2);
 				incomeItem2.Amount = 2;
 				incomeItem2.Size = "43";
@@ -312,6 +305,9 @@ namespace WorkwearTest.Integration.Organization
 				Assert.That(employeeCardItem.BestChoiceInStock.Count(), Is.EqualTo(2));
 			}
 		}
+
+		#endregion
+
 		#region FillWearRecivedInfo
 
 		[Test(Description = "Проверяем что при заполнении выданной спецодежды проверяем аналоги тоже.")]
