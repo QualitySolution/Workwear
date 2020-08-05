@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dapper;
+using DownloadNLMK.Loaders.DTO;
 using Oracle.ManagedDataAccess.Client;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
@@ -15,15 +16,18 @@ namespace DownloadNLMK.Loaders
 		private readonly IUnitOfWork uow;
 		private readonly NormLoader norms;
 		private readonly ProtectionToolsLoader protectionTools;
+		private readonly NomenclatureLoader nomenclature;
+		private readonly Dictionary<EmployeeCard, List<EmployeeOperation>> Operations = new Dictionary<EmployeeCard, List<EmployeeOperation>>();
 		public Dictionary<string, EmployeeCard> ByID = new Dictionary<string, EmployeeCard>();
 
 		public HashSet<EmployeeCard> UsedEmployees = new HashSet<EmployeeCard>();
 
-		public EmployeeLoader(IUnitOfWork uow, NormLoader norms, ProtectionToolsLoader protectionTools)
+		public EmployeeLoader(IUnitOfWork uow, NormLoader norms, ProtectionToolsLoader protectionTools, NomenclatureLoader nomenclature)
 		{
 			this.uow = uow ?? throw new ArgumentNullException(nameof(uow));
 			this.norms = norms ?? throw new ArgumentNullException(nameof(norms));
 			this.protectionTools = protectionTools ?? throw new ArgumentNullException(nameof(protectionTools));
+			this.nomenclature = nomenclature ?? throw new ArgumentNullException(nameof(nomenclature));
 		}
 
 		public void Load(OracleConnection connection)
@@ -78,6 +82,7 @@ namespace DownloadNLMK.Loaders
 				card.DepartmentId = (int?)info.ID_DEPT;
 				card.PostId = (int?)info.ID_WP;
 				ByID.Add(row.PERSONAL_CARD_ID, card);
+				Operations[card] = new List<EmployeeOperation>();
 
 				//Связываем с нормой
 				if(!RELAT_PERS_PROFF.ContainsKey(row.PERSONAL_CARD_ID)) {
@@ -102,7 +107,7 @@ namespace DownloadNLMK.Loaders
 			RELAT_PERS_PROFF = null;
 
 			logger.Info("Загружаем PERSONAL_CARDS");
-			var PERSONAL_CARDS = connection.Query("SELECT r.PERSONAL_CARD_ID, r.NORMA_ROW_ID, sms.DOTP, sms.KOLMOTP " +
+			var PERSONAL_CARDS = connection.Query("SELECT r.PERSONAL_CARD_ID, r.NORMA_ROW_ID, sms.MAT, sms.DOTP, sms.KOLMOTP " +
 				"FROM SKLAD.PERSONAL_CARDS r " +
 				"INNER JOIN SKLAD.NORMA_ROW ON SKLAD.NORMA_ROW.NORMA_ROW_ID = r.NORMA_ROW_ID " +
 				"INNER JOIN SKLAD.NORMA norma ON norma.NORMA_ID = SKLAD.NORMA_ROW.NORMA_ID " +
@@ -140,6 +145,24 @@ namespace DownloadNLMK.Loaders
 					cardItem.Amount = Convert.ToInt32(item.KOLMOTP);
 					cardItem.NextIssue = normRow.CalculateExpireDate(cardItem.LastIssue.Value, cardItem.Amount);
 				}
+
+				var issueNomenclature = nomenclature.ByID.ContainsKey(item.MAT)
+					? nomenclature.ByID[item.MAT]
+					: cardItem.Item.MatchedNomenclatures.FirstOrDefault();
+
+				var operation = new EmployeeOperation {
+					Employee = card,
+					NormItem = normRow,
+					returned =0,
+					issued = cardItem.Amount,
+					auto_writeoff_date = cardItem.NextIssue,
+					ProtectionTools = cardItem.Item,
+					ExpiryByNorm = cardItem.NextIssue,
+					Nomenclature = issueNomenclature,
+					operation_time = item.DOTP,
+					StartOfUse = cardItem.LastIssue,
+				};
+				Operations[card].Add(operation);
 			}
 			Console.Write("Готово\n");
 			logger.Info($"Пропущено {skipCards} строк карточек");
@@ -168,6 +191,39 @@ namespace DownloadNLMK.Loaders
 				}
 			}
 			uow.Commit();
+			Console.Write("Завершено\n");
+			var sql = "INSERT INTO operation_issued_by_employee " +
+				"(`employee_id`, `operation_time`, `nomenclature_id`, `issued`, `returned`, `auto_writeoff`, `auto_writeoff_date`, `protection_tools_id`, `norm_item_id`, `StartOfUse`, `ExpiryByNorm`) " +
+				"Values (@employee_id, @operation_time, @nomenclature_id, @issued, @returned, @auto_writeoff, @auto_writeoff_date, @protection_tools_id, @norm_item_id, @StartOfUse, @ExpiryByNorm);";
+
+			logger.Info($"Сохраняем операции выдачи...");
+			var listToInsert = new List<EmployeeOperation>();
+			i = 0;
+			int processed = 0;
+			foreach(var pair in Operations) {
+				if(!UsedEmployees.Contains(pair.Key))
+					continue;
+
+				processed++;
+
+				foreach(var item in pair.Value) {
+					if(item.nomenclature_id == 0) {
+						logger.Warn($"Выдачу {item.Title} пропускаем так как не нашли номеклатуру.");
+						continue;
+					}
+					listToInsert.Add(item);
+					i++;
+				}
+
+				if(listToInsert.Count > 1000) {
+					uow.Session.Connection.Execute(sql, listToInsert);	
+					Console.Write($"\r\tСохранили {i} [{(float)processed / Operations.Count:P}]... ");
+					listToInsert.Clear();
+				}
+			}
+			if(listToInsert.Count > 0)
+				uow.Session.Connection.Execute(sql, listToInsert);
+
 			Console.Write("Завершено\n");
 		}
 	}

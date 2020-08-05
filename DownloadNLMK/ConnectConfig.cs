@@ -56,9 +56,9 @@ namespace DownloadNLMK
 
 			var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
 				.ConnectionString($"server={server};port=3306;database={database};user id={user};sslmode=None; password={password}")
-				.AdoNetBatchSize(100)
+				.AdoNetBatchSize(100);
 				//.ShowSql()
-				.FormatSql();
+				//.FormatSql();
 
 			OrmConfig.ConfigureOrm(db, new System.Reflection.Assembly[] {
 				System.Reflection.Assembly.GetAssembly (typeof(workwear.Domain.Users.UserSettings)),

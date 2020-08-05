@@ -46,7 +46,7 @@ namespace DownloadNLMK
 				var norms = new NormLoader(uow, protectionTools);
 				norms.Load(NLMKOracle.Connection);
 
-				var employees = new EmployeeLoader(uow, norms, protectionTools);
+				var employees = new EmployeeLoader(uow, norms, protectionTools, nomenclatures);
 				employees.Load(NLMKOracle.Connection);
 
 				//Помечаем какие сохранять.
