@@ -101,7 +101,7 @@ namespace DownloadNLMK.Loaders
 			logger.Info($"Сохраняем нормы...");
 			int i = 0;
 			foreach(var norm in UsedNorms) {
-				uow.Save(norm);
+				uow.Save(norm, orUpdate: false);
 				i++;
 				if(i % 100 == 0) {
 					uow.Commit();

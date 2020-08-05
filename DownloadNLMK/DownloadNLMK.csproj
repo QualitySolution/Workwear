@@ -84,6 +84,7 @@
     <Compile Include="Loaders\ProtectionToolsLoader.cs" />
     <Compile Include="Loaders\NormLoader.cs" />
     <Compile Include="Loaders\EmployeeLoader.cs" />
+    <Compile Include="Loaders\DTO\EmployeeOperation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -117,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Loaders\" />
+    <Folder Include="Loaders\DTO\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

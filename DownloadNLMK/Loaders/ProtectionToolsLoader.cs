@@ -93,7 +93,7 @@ namespace DownloadNLMK.Loaders
 			logger.Info($"Сохраняем СИЗ...");
 			int i = 0;
 			foreach(var item in UsedProtectionTools) {
-				uow.Save(item);
+				uow.Save(item, orUpdate: false);
 				i++;
 				if(i % 100 == 0) {
 					uow.Commit();

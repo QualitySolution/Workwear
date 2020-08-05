@@ -81,14 +81,14 @@ namespace DownloadNLMK.Loaders
 		{
 			logger.Info($"Сохраняем типы...");
 			foreach(var item in NomenclatureTypes.ItemsTypes) {
-				uow.Save(item);
+				uow.Save(item, orUpdate: false);
 			}
 			uow.Commit();
 
 			logger.Info($"Сохраняем номенклатуру...");
 			int i = 0;
 			foreach(var item in UsedNomenclatures) {
-				uow.Save(item);
+				uow.Save(item, orUpdate: false);
 				i++;
 				if(i % 100 == 0) {
 					uow.Commit();

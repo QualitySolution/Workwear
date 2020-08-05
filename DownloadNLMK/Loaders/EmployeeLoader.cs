@@ -183,7 +183,7 @@ namespace DownloadNLMK.Loaders
 			logger.Info($"Сохраняем личные карточки...");
 			int i = 0;
 			foreach(var card in UsedEmployees) {
-				uow.Save(card);
+				uow.Save(card, orUpdate: false);
 				i++;
 				if(i % 100 == 0) {
 					uow.Commit();
