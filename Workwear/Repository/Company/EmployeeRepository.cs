@@ -45,7 +45,7 @@ namespace workwear.Repository.Company
 				.Where(x => x.Employee == employee)
 				.JoinAlias (() => employeeIssueOperationAlias.Nomenclature, () => nomenclatureAlias)
 				.SelectList (list => list
-					.SelectGroup (() => nomenclatureAlias.Type.Id).WithAlias (() => resultAlias.ItemsTypeId)
+					.SelectGroup (() => nomenclatureAlias.Type.Id).WithAlias (() => resultAlias.ProtectionToolsId)
 					.SelectMax (() => employeeIssueOperationAlias.OperationTime).WithAlias (() => resultAlias.LastReceive)
 					.Select(projection).WithAlias (() => resultAlias.Amount)
 				)
@@ -82,7 +82,7 @@ namespace workwear.Repository.Company
 
 	public class EmployeeRecivedInfo
 	{
-		public int ItemsTypeId { get; set;}
+		public int ProtectionToolsId { get; set;}
 
 		public DateTime LastReceive { get; set;}
 

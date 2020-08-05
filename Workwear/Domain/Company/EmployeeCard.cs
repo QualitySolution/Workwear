@@ -475,16 +475,13 @@ namespace workwear.Domain.Company
 			if (Id == 0) // Не надо проверять выдачи, так как сотрудник еще не сохранен.
 				return; 
 			var receiveds = EmployeeRepository.ItemsBalance (uow, this);
-			var summary = receiveds.GroupBy (r => r.ItemsTypeId).Select (gr => new {
-				ItemsTypeId = gr.Key,
-				Amount = gr.Sum (r => r.Amount),
-				LastReceive = gr.Max (r => r.LastReceive)
-			}).ToArray ();
 			foreach(var item in WorkwearItems)
 			{
-				var receive = summary.FirstOrDefault (dto => dto.ItemsTypeId == item.Item.Id);
-				item.Amount = receive != null ? receive.Amount : 0;
-				item.LastIssue = receive != null ? receive.LastReceive : (DateTime?)null;
+				var summary = receiveds.Where(x => item.Item.MatchedProtectionTools.Any(p => p.Id == x.ProtectionToolsId)).ToList();
+				item.Amount = summary.Sum(x => x.Amount);
+				item.LastIssue = summary.Max(x => x.LastReceive);
+				if(item.LastIssue == default(DateTime))
+					item.LastIssue = null;
 			}
 		}
 

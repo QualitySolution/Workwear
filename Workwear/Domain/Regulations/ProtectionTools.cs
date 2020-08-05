@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
@@ -83,6 +83,8 @@ namespace workwear.Domain.Regulations
 		{
 			ObservableAnalog.Remove(Analog);
 		}
+
+		public virtual IEnumerable<ProtectionTools> MatchedProtectionTools => (new[] { this }).Concat(Analogs);
 
 		#endregion
 

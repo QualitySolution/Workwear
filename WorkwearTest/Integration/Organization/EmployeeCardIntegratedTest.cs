@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
@@ -312,5 +312,79 @@ namespace WorkwearTest.Integration.Organization
 				Assert.That(employeeCardItem.BestChoiceInStock.Count(), Is.EqualTo(2));
 			}
 		}
+		#region FillWearRecivedInfo
+
+		[Test(Description = "Проверяем что при заполнении выданной спецодежды проверяем аналоги тоже.")]
+		[Category("real case")]
+		[Category("Integrated")]
+		public void FillWearRecivedInfo_AnalogItemsTest()
+		{
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				nomenclatureType.Category = ItemTypeCategory.wear;
+				nomenclatureType.WearCategory = workwear.Measurements.СlothesType.Wear;
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
+				nomenclature.SizeStd = "UnisexWearRus";
+				nomenclature.WearGrowthStd = "UnisexGrowth";
+				uow.Save(nomenclature);
+
+				var protectionToolsAnalog = new ProtectionTools();
+				protectionToolsAnalog.Name = "Номенклатура ТОН Аналог";
+				protectionToolsAnalog.AddNomeclature(nomenclature);
+				uow.Save(protectionToolsAnalog);
+
+				var protectionTools = new ProtectionTools();
+				protectionTools.Name = "Номенклатура ТОН";
+				protectionTools.AddAnalog(protectionToolsAnalog);
+				uow.Save(protectionTools);
+
+				var norm = new Norm();
+				var normItem = norm.AddItem(protectionTools);
+				normItem.Amount = 1;
+				normItem.NormPeriod = NormPeriodType.Year;
+				normItem.PeriodCount = 1;
+				uow.Save(norm);
+
+				var employee = new EmployeeCard();
+				employee.AddUsedNorm(norm);
+				employee.Sex = Sex.M;
+				employee.WearSizeStd = "MenWearRus";
+				employee.WearSize = "50";
+				employee.WearGrowth = "176";
+				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
+				uow.Save(employee);
+				uow.Commit();
+
+				var warehouseOperation = new WarehouseOperation {
+					Nomenclature = nomenclature,
+					Amount = 1,
+					OperationTime = new DateTime(2018, 1, 20),
+				};
+				uow.Save(warehouseOperation);
+
+				var operation = new EmployeeIssueOperation {
+					Employee = employee,
+					ExpiryByNorm = new DateTime(2019, 1, 20),
+					Issued = 1,
+					Nomenclature = nomenclature,
+					NormItem = normItem,
+					ProtectionTools = protectionToolsAnalog,
+					OperationTime = new DateTime(2018, 1, 20),
+					WarehouseOperation = warehouseOperation,
+				};
+				uow.Save(operation);
+				uow.Commit();
+
+				employee.FillWearRecivedInfo(uow);
+				var item = employee.WorkwearItems.First();
+				Assert.That(item.Amount, Is.EqualTo(1));
+			}
+		}
+		#endregion
 	}
 }
