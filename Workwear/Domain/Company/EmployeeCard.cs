@@ -520,9 +520,7 @@ namespace workwear.Domain.Company
 			{
 				var summary = receiveds.Where(x => item.Item.MatchedProtectionTools.Any(p => p.Id == x.ProtectionToolsId)).ToList();
 				item.Amount = summary.Sum(x => x.Amount);
-				item.LastIssue = summary.Max(x => x.LastReceive);
-				if(item.LastIssue == default(DateTime))
-					item.LastIssue = null;
+				item.LastIssue = summary.Any() ? summary.Max(x => x.LastReceive) : (DateTime?)null;
 			}
 		}
 
