@@ -13,10 +13,10 @@ using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QSOrmProject;
 using workwear.Domain.Company;
-using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.JournalViewModels.Stock;
 using workwear.Repository;
+using workwear.Repository.Stock;
 using workwear.ViewModels.Statements;
 using workwear.ViewModels.Stock;
 
@@ -33,6 +33,8 @@ namespace workwear
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Expense> ();
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
+			if(Entity.Warehouse == null)
+				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW);
 			ConfigureDlg ();
 		}
 
