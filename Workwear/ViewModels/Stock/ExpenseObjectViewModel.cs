@@ -19,6 +19,7 @@ using QS.Dialog.GtkUI;
 using QS.Report;
 using System.Collections.Generic;
 using QS.Report.ViewModels;
+using workwear.Repository.Stock;
 
 namespace workwear.ViewModels.Stock
 {
@@ -28,6 +29,7 @@ namespace workwear.ViewModels.Stock
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public ExpenseDocItemsObjectViewModel DocItemsObjectViewModel;
 		IInteractiveQuestion interactive;
+		private readonly StockRepository stockRepository;
 
 		public ExpenseObjectViewModel(IEntityUoWBuilder uowBuilder,
 									  IUnitOfWorkFactory unitOfWorkFactory,
@@ -36,18 +38,22 @@ namespace workwear.ViewModels.Stock
 									  IValidator validator,
 									  IUserService userService,
 									  IInteractiveQuestion interactive,
+									  StockRepository stockRepository,
 									  Subdivision subdivision = null
 									  )
 		: base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			Entity.Date = DateTime.Today;
 			this.interactive = interactive;
-
+			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
 			if(subdivision != null) {
 				Entity.Operation = ExpenseOperations.Object;
 				Entity.Subdivision = subdivision;
 				Entity.Warehouse = subdivision.Warehouse;
 			}
+
+			if(Entity.Warehouse == null)
+				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW);
 
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);

@@ -10,6 +10,7 @@ using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository;
+using workwear.Repository.Stock;
 
 namespace workwear
 {
@@ -23,6 +24,7 @@ namespace workwear
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Writeoff> ();
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
+			ItemsTable.CurWarehouse = new StockRepository().GetDefaultWarehouse(UoW);
 			ConfigureDlg ();
 		}
 

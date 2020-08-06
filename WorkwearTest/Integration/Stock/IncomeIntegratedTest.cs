@@ -5,10 +5,9 @@ using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
 using QS.Testing.DB;
-using workwear;
-using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Repository.Stock;
 
 namespace WorkwearTest.Integration.Stock
 {

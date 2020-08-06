@@ -9,11 +9,22 @@ using QS.DomainModel.UoW;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
 
-namespace workwear
+namespace workwear.Repository.Stock
 {
 	public class StockRepository
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+		/// <summary>
+		/// Возвращает склад по умолчанию при создании различных документов и прочее. Сейчас возвращается склад если он единственный,
+		/// чтобы его не запнять, в будущем скдал по умолчанию можно будет настроит у пользователя. А так же этот метод дожне будет создавать
+		/// новый склад в версиях программы без поддежки складов, чтобы не оказалось что склада нет вообще.
+		/// </summary>
+		public virtual Warehouse GetDefaultWarehouse(IUnitOfWork uow)
+		{
+			var warehouses = uow.GetAll<Warehouse>().Take(2).ToList();
+			return warehouses.Count == 1 ? warehouses.First() : null; 
+		}
 
 		public virtual IList<StockBalanceDTO> StockBalances(IUnitOfWork uow, Warehouse warehouse, IList<Nomenclature> nomenclatures, DateTime onTime)
 		{

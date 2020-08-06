@@ -17,6 +17,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Repository.Stock;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Statements;
 
@@ -36,21 +37,27 @@ namespace workwear.ViewModels.Stock
 			IValidator validator,
 			IUserService userService,
 			IInteractiveQuestion interactive,
-			EmployeeCard employee = null, 
-			bool fillUnderreceived = false) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+			StockRepository stockRepository,
+			EmployeeCard employee = null
+			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			this.interactive = interactive;
-			if(UoW.IsNew)
+			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
+				Entity.Operation = ExpenseOperations.Employee;
+			}
 
 			if(employee != null) {
-				Entity.Operation = ExpenseOperations.Employee;
 				Entity.Employee = UoW.GetById<EmployeeCard>(employee.Id);
 				Entity.Warehouse = Entity.Employee.Subdivision?.Warehouse;
-					FillUnderreceived();
 			}
+
+			if(Entity.Warehouse == null)
+				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW);
+			if(employee != null)
+				FillUnderreceived();
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
 									.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
