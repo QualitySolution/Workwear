@@ -138,7 +138,7 @@ WHERE
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
-    item_types.name AS type_name,
+    protection_tools.name AS type_name,
     norms.ton_paragraph,
     measurement_units.name AS unit,
     CASE norms_item.period_type
@@ -149,9 +149,9 @@ WHERE
 FROM
     wear_cards_item
         LEFT JOIN
-    item_types ON item_types.id = wear_cards_item.itemtype_id
+    protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
         LEFT JOIN
-    measurement_units ON item_types.units_id = measurement_units.id
+    measurement_units ON protection_tools.units_id = measurement_units.id
         LEFT JOIN
     norms_item ON wear_cards_item.norm_item_id = norms_item.id
     LEFT JOIN norms ON norms.id = norms_item.norm_id
