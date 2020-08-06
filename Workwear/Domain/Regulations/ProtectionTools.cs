@@ -72,6 +72,10 @@ namespace workwear.Domain.Regulations
 				logger.Warn("Такой аналог уже добавлен. Пропускаем...");
 				return;
 			}
+			if(DomainHelper.EqualDomainObjects(this, Analog)) {
+				logger.Warn("Нельзя добавлять в качестве аналога себя. Пропускаем...");
+				return;
+			}
 			ObservableAnalog.Add(Analog);
 		}
 
@@ -79,6 +83,8 @@ namespace workwear.Domain.Regulations
 		{
 			ObservableAnalog.Remove(Analog);
 		}
+
+		public virtual IEnumerable<ProtectionTools> MatchedProtectionTools => (new[] { this }).Concat(Analogs);
 
 		#endregion
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -226,14 +226,14 @@ namespace workwear.Domain.Stock
 
 		#region Методы
 
-		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
+		public virtual void UpdateOperations(IUnitOfWork uow)
 		{
 			switch(WriteoffFrom) {
 				case WriteoffFrom.Employye:
-					EmployeeWriteoffOperation.Update(uow, askUser, this);
+					EmployeeWriteoffOperation.Update(uow, this);
 					break;
 				case WriteoffFrom.Subdivision:
-					SubdivisionWriteoffOperation.Update(uow, askUser, this);
+					SubdivisionWriteoffOperation.Update(uow, this);
 					break;
 				case WriteoffFrom.Warehouse:
 					WarehouseOperation.Update(uow, this);

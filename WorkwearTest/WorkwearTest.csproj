@@ -109,6 +109,7 @@
     <Compile Include="Integration\Stock\IncomeIntegratedTest.cs" />
     <Compile Include="Integration\Stock\ExpenseSubdivisionIntegratedTest.cs" />
     <Compile Include="Integration\Organization\EmployeeCardIntegratedTest.cs" />
+    <Compile Include="Integration\Stock\WriteoffEmployeeIntegratedTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.Testing\QS.Testing.csproj">

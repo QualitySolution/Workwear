@@ -64,9 +64,8 @@ namespace workwear
 			var valid = new QS.Validation.QSValidator<Writeoff> (UoWGeneric.Root);
 			if (valid.RunDlgIfNotValid ((Gtk.Window)this.Toplevel))
 				return false;
-
-			Func<string, bool> ask = MessageDialogHelper.RunQuestionDialog;
-			Entity.UpdateOperations(UoW, ask);
+			
+			Entity.UpdateOperations(UoW);
 			UoWGeneric.Save ();
 			if(Entity.Items.Any (w => w.WriteoffFrom == WriteoffFrom.Employye))
 			{

@@ -397,7 +397,7 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
   `StartOfUse` DATE NULL DEFAULT NULL,
   `ExpiryByNorm` DATE NULL DEFAULT NULL,
   `issued_operation_id` INT UNSIGNED NULL DEFAULT NULL,
-  `warehouse_operation_id` INT UNSIGNED NOT NULL,
+  `warehouse_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `buh_document` VARCHAR(80) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_operation_issued_by_employee_1_idx` (`employee_id` ASC),
