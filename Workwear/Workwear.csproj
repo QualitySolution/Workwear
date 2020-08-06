@@ -250,7 +250,6 @@
     <Compile Include="Repository\EmployeeRepository.cs" />
     <Compile Include="ReportsDlg\OnIssueStatement.cs" />
     <Compile Include="gtk-gui\workwear.OnIssueStatement.cs" />
-    <Compile Include="Repository\StockRepository.cs" />
     <Compile Include="ReportsDlg\NotIssuedSheetReportDlg.cs" />
     <Compile Include="gtk-gui\workwear.NotIssuedSheetReportDlg.cs" />
     <Compile Include="ConfigureDeletion.cs" />
@@ -385,6 +384,7 @@
     <Compile Include="Domain\Operations\SubdivisionIssueOperation.cs" />
     <Compile Include="HibernateMapping\Operations\SubdivisionIssueOperationMap.cs" />
     <Compile Include="Journal\JournalsColumnsConfigs.cs" />
+    <Compile Include="Repository\Stock\StockRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

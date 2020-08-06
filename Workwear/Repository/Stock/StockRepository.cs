@@ -9,7 +9,7 @@ using QS.DomainModel.UoW;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
 
-namespace workwear
+namespace workwear.Repository.Stock
 {
 	public class StockRepository
 	{

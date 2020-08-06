@@ -11,6 +11,7 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Measurements;
+using workwear.Repository.Stock;
 
 namespace workwear.Domain.Company
 {
