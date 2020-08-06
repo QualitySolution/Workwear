@@ -80,20 +80,25 @@ namespace workwear.Tools
 							   .Element(ns + "Строка").Element(ns + "ЗначениеСвойства").Element(ns + "Число")).ToList().First().Value;
 				}
 				catch {
-					listDontFindOZMInDoc.Add(nomenReference);
+					if (!listDontFindOZMInDoc.Contains(listNomenName[i]))
+						listDontFindOZMInDoc.Add(listNomenName[i]);
+					continue;
 				  }
-
-				if(ozm.Length == 0) continue;
 
 				var sizeGrowth = getSizeAndGrowth(listNomenName[i]);
 				Nomenclature nom = FindNomenclature(ozm);
 
 				if(nom == null) {
-					if(listDontFindNomenclature.FirstOrDefault(x => x.Ozm.ToString() == ozm) == null)
-						listDontFindNomenclature.Add(new LineIncome(listNomenName[i], uint.Parse(ozm), listNomenCount[i], sizeGrowth[0], sizeGrowth[1]));
+					if(listDontFindNomenclature.Where(x => x.Ozm.ToString() == ozm).Count() == 0)
+						listDontFindNomenclature.Add(new LineIncome(listNomenName[i], uint.Parse(ozm), int.Parse(listNomenCount[i]), sizeGrowth[0], sizeGrowth[1]));
 				}
 				else {
-					ListLineIncomes.Add(new LineIncome(nom, listNomenCount[i], sizeGrowth[0], sizeGrowth[1]));
+					if (ListLineIncomes.Where(x => x.Nomenclature.Ozm.ToString() == ozm).Count() != 0) {
+						LineIncome find = ListLineIncomes.First(x => x.Nomenclature.Ozm.ToString() == ozm);
+						var index = ListLineIncomes.IndexOf(find);
+						ListLineIncomes[index].Count += int.Parse(listNomenCount[i]);
+					}
+					else ListLineIncomes.Add(new LineIncome(nom, int.Parse(listNomenCount[i]), sizeGrowth[0], sizeGrowth[1]));
 				}
 
 				i++;
@@ -166,11 +171,11 @@ namespace workwear.Tools
 		public Nomenclature Nomenclature;
 		public string Name;
 		public uint? Ozm;
-		public string Count;
+		public int Count;
 		public string Size;
 		public string Growth;
 
-		public LineIncome(Nomenclature nom, string count, string size, string growth)
+		public LineIncome(Nomenclature nom, int count, string size, string growth)
 		{
 			this.Nomenclature = nom;
 			this.Count = count;
@@ -178,7 +183,7 @@ namespace workwear.Tools
 			this.Growth = growth;
 		}
 
-		public LineIncome(string name, uint ozm, string count, string size, string growth)
+		public LineIncome(string name, uint ozm, int count, string size, string growth)
 		{
 			this.Name = name;
 			this.Count = count;

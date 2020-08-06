@@ -164,7 +164,7 @@ namespace workwear
 				string str = "";
 				foreach(var nom in readerIncomeFromXML1C.listDontFindOZMInDoc)
 					str += nom + "\n";
-				if(!MessageDialogHelper.RunQuestionDialog($"У номенлкатур с ссылками:\n{str}не найден озм. Продолжить создание документа прихода?")) {
+				if(!MessageDialogHelper.RunQuestionDialog($"У номенклатур:\n{str}не найден озм. Продолжить создание документа прихода?")) {
 					MessageDialogHelper.RunWarningDialog("Создание документа прихода невозможно.");
 					return;
 				}
@@ -189,7 +189,7 @@ namespace workwear
 			}
 			else {
 				foreach(var r in readerIncomeFromXML1C.ListLineIncomes)
-					Entity.AddItem(r.Nomenclature, int.Parse(r.Count), r.Size, r.Growth);
+					Entity.AddItem(r.Nomenclature, r.Count, r.Size, r.Growth);
 			}
 		}
 
