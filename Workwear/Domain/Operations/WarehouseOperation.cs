@@ -99,10 +99,12 @@ namespace workwear.Domain.Operations
 		public virtual decimal Total => Cost * Amount;
 
 		public virtual string Title => ReceiptWarehouse != null && ExpenseWarehouse != null
-			? $"Перемещение {Amount} х {Nomenclature.Name} из {ExpenseWarehouse.Name} в {ReceiptWarehouse.Name}"
+			? $"Перемещение {Amount} х {Nomenclature?.Name} из {ExpenseWarehouse.Name} в {ReceiptWarehouse.Name}"
 			: ReceiptWarehouse != null 
-				? $"Поступление {Amount} х {Nomenclature.Name} в {ReceiptWarehouse.Name}"
-				: $"Списание {Amount} х {Nomenclature.Name} из {ExpenseWarehouse.Name}";
+				? $"Поступление {Amount} х {Nomenclature?.Name} в {ReceiptWarehouse.Name}"
+				: ExpenseWarehouse != null 
+					? $"Списание {Amount} х {Nomenclature?.Name} из {ExpenseWarehouse.Name}"
+					: $"Перемещение {Amount} х {Nomenclature?.Name} из пустого в порожнее(оба склада не указаны)";
 
 		#endregion
 
