@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
+using Gamma.Utilities;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
-using Gamma.Utilities;
 using workwear.Domain.Operations;
-using QS.Dialog;
-using System.Reflection;
-using workwear.Measurements;
-using workwear.Domain.Regulations;
 using workwear.Domain.Statements;
+using workwear.Measurements;
+using workwear.Repository.Stock;
 
 namespace workwear.Domain.Stock
 {
