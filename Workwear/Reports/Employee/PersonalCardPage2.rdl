@@ -814,7 +814,7 @@ FROM
         LEFT JOIN
     item_types ON item_types.id = nomenclature.type_id
         LEFT JOIN
-    stock_income_detail AS income_detail ON operation_issued_by_employee.stock_income_detail_id = income_detail.id
+    stock_income_detail AS income_detail ON operation_issued_by_employee.warehouse_operation_id = income_detail.warehouse_operation_id
         LEFT JOIN
     (SELECT 
         return_detail.issued_operation_id,

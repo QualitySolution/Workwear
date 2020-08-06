@@ -179,10 +179,10 @@ namespace workwear
 				if(MessageDialogHelper.RunQuestionDialog($"Таких номенклатур:\n{str}нет в справочнике. Создать?")) {
 					foreach(var nom in readerIncomeFromXML1C.listDontFindNomenclature)
 						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<NomenclatureViewModel, IEntityUoWBuilder, LineIncome>(this, EntityUoWBuilder.ForCreate(), nom, OpenPageOptions.AsSlave);
-					MessageDialogHelper.RunWarningDialog("Сохраните номенклатуру(ы) и повторите загрузку документа.");
+					MessageDialogHelper.RunInfoDialog("Сохраните номенклатуру(ы) и повторите загрузку документа.","Загрузка документа");
 				}
 				else {
-					MessageDialogHelper.RunWarningDialog("Создание документа прихода невозможно.");
+					MessageDialogHelper.RunErrorDialog("Создание документа прихода невозможно.");
 					return;
 				}
 
