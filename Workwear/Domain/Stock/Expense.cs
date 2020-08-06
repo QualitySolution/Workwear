@@ -104,12 +104,12 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult ("Сотрудник должен быть указан", 
 					new[] { this.GetPropertyName (o => o.Date)});
 
-			if(Items.Count == 0)
-				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку.", 
+			if(Items.All(i => i.Amount <= 0))
+				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку с количеством больше 0.", 
 					new[] { this.GetPropertyName (o => o.Items)});
 
-			if(Items.Any (i => i.Amount <= 0))
-				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.", 
+			if(Items.Any (i => i.Amount > 0 && i.Nomenclature == null))
+				yield return new ValidationResult ("Документ не должен содержать строки без выбранной номенклатуры и с указанным количеством.", 
 					new[] { this.GetPropertyName (o => o.Items)});
 		}
 		#endregion
@@ -129,7 +129,7 @@ namespace workwear.Domain.Stock
 				Size = position.Size,
 				WearGrowth = position.Growth,
 				WearPercent = position.WearPercent
-		};
+			};
 
 			ObservableItems.Add(newItem);
 			return newItem;
@@ -159,6 +159,13 @@ namespace workwear.Domain.Stock
 		public virtual void RemoveItem(ExpenseItem item)
 		{
 			ObservableItems.Remove (item);
+		}
+
+		public virtual void CleanupItems()
+		{
+			foreach(var item in Items.Where(x => x.Amount <= 0).ToList()) {
+				RemoveItem(item);
+			}
 		}
 
 		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
