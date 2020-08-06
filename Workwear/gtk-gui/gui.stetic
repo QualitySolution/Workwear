@@ -5469,6 +5469,7 @@
             <property name="MemberName" />
             <property name="CurrentPage">0</property>
             <property name="ShowTabs">False</property>
+            <property name="Scrollable">True</property>
           </widget>
           <packing>
             <property name="Position">3</property>

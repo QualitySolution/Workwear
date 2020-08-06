@@ -494,6 +494,7 @@ public partial class MainWindow
 		this.tdiMain.Name = "tdiMain";
 		this.tdiMain.CurrentPage = 0;
 		this.tdiMain.ShowTabs = false;
+		this.tdiMain.Scrollable = true;
 		this.vbox1.Add(this.tdiMain);
 		global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.tdiMain]));
 		w11.Position = 3;

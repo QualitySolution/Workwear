@@ -14,6 +14,7 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository;
 using workwear.ViewModels.Company;
+using workwear.Repository.Stock;
 using workwear.ViewModels.Stock;
 
 namespace workwear
@@ -29,6 +30,8 @@ namespace workwear
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Income> ();
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
+			if(Entity.Warehouse == null)
+				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW);
 			ConfigureDlg ();
 		}
 

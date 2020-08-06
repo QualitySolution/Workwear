@@ -243,7 +243,6 @@
     <Compile Include="gtk-gui\workwear.EmployeeBalanceFilter.cs" />
     <Compile Include="ReportsDlg\OnIssueStatement.cs" />
     <Compile Include="gtk-gui\workwear.OnIssueStatement.cs" />
-    <Compile Include="Repository\StockRepository.cs" />
     <Compile Include="ReportsDlg\NotIssuedSheetReportDlg.cs" />
     <Compile Include="gtk-gui\workwear.NotIssuedSheetReportDlg.cs" />
     <Compile Include="ConfigureDeletion.cs" />
@@ -360,6 +359,7 @@
     <Compile Include="HibernateMapping\Stock\MassExpenseOperationMap.cs" />
     <Compile Include="HibernateMapping\Stock\MassExpenseEmployeeMap.cs" />
     <Compile Include="Journal\JournalsColumnsConfigs.cs" />
+    <Compile Include="Repository\Stock\StockRepository.cs" />
     <Compile Include="Journal\ViewModels\Company\EmployeeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\LeadersJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\OrganizationJournalViewModel.cs" />
