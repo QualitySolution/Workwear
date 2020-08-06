@@ -86,9 +86,10 @@ namespace workwear.ViewModels.Stock
 
 		public override bool Save()
 		{
-			logger.Info("Запись документа...");
-			var valid = new QSValidator<Expense>(UoWGeneric.Root);
+			if(!Validate())
+				return false;
 
+			logger.Info("Запись документа...");
 			Entity.UpdateOperations(UoW, interactive);
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
