@@ -66,6 +66,7 @@ namespace workwear.Tools
 			listNomenReference = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:ДанныеНоменклатуры/df:Номенклатура/df:Ссылка");
 			listNomenCount = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:Количество");
 			listNomenName = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:ДанныеНоменклатуры/df:Номенклатура/df:НаименованиеПолное");
+			var listNomenNameFull = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:ДанныеНоменклатуры/df:Характеристика/df:НаименованиеПолное");
 			XDocument doc = XDocument.Load(file);
 			XNamespace ns = "http://v8.1c.ru/edi/edi_stnd/EnterpriseData/1.8";
 			int i = 0;
@@ -85,7 +86,7 @@ namespace workwear.Tools
 					continue;
 				  }
 
-				var sizeGrowth = getSizeAndGrowth(listNomenName[i]);
+				var sizeGrowth = getSizeAndGrowth(listNomenNameFull[i]);
 				Nomenclature nom = FindNomenclature(ozm);
 
 				if(nom == null) {
