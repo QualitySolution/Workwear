@@ -13,7 +13,6 @@ using QS.Navigation;
 using QS.NewsFeed;
 using QS.Permissions;
 using QS.Project.DB;
-using QS.Project.Dialogs.GtkUI.ServiceDlg;
 using QS.Project.Domain;
 using QS.Project.Search.GtkUI;
 using QS.Project.Services;
@@ -72,7 +71,6 @@ namespace workwear
 			OrmMain.AddObjectDescription<UserSettings>();
 			//Склад
 			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
-			OrmMain.AddObjectDescription<Expense>().Dialog<ExpenseDocDlg>();
 			OrmMain.AddObjectDescription<Writeoff>().Dialog<WriteOffDocDlg>();
 
 			NotifyConfiguration.Enable();
@@ -134,7 +132,7 @@ namespace workwear
 			#endregion
 
 			#region Старые диалоги
-			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(ExpenseDocDlg)))
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(IncomeDocDlg)))
 				.Where(t => t.IsAssignableTo<ITdiTab>() && t.Name.EndsWith("Dlg"))
 				.AsSelf();
 			#endregion

@@ -225,7 +225,6 @@
     <Compile Include="Measurements\LookupSizes.cs" />
     <Compile Include="Repository\NormRepository.cs" />
     <Compile Include="Domain\Stock\Expense.cs" />
-    <Compile Include="Dialogs\Stock\ExpenseDocDlg.cs" />
     <Compile Include="HibernateMapping\Stock\ExpenseMap.cs" />
     <Compile Include="Domain\Stock\ExpenseItem.cs" />
     <Compile Include="Domain\Stock\Nomenclature.cs" />
@@ -235,8 +234,6 @@
     <Compile Include="HibernateMapping\Stock\IncomeMap.cs" />
     <Compile Include="HibernateMapping\Stock\ExpenseItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\IncomeItemMap.cs" />
-    <Compile Include="Dialogs\Stock\ExpenseDocItemsView.cs" />
-    <Compile Include="gtk-gui\workwear.ExpenseDocItemsView.cs" />
     <Compile Include="Dialogs\Stock\IncomeDocDlg.cs" />
     <Compile Include="Dialogs\Stock\IncomeDocItemsView.cs" />
     <Compile Include="gtk-gui\workwear.IncomeDocDlg.cs" />
@@ -450,7 +447,6 @@
     <Compile Include="Views\Stock\ExpenseObjectView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.ExpenseObjectView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.ExpenseEmployeeView.cs" />
-    <Compile Include="gtk-gui\workwear.ExpenseDocDlg.cs" />
     <Compile Include="Views\Stock\ExpenseDocItemEmployeeView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.ExpenseDocItemEmployeeView.cs" />
     <Compile Include="Views\Stock\ExpenseDocItemObjectView.cs" />
