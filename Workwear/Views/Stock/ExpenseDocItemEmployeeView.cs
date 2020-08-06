@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Bindings.Utilities;
 using System.Linq;
-using Gamma.ColumnConfig;
 using Gtk;
-using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Measurements;
 using workwear.ViewModels.Stock;

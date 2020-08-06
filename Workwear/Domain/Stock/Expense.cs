@@ -7,7 +7,6 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
-using workwear.Domain.Regulations;
 using workwear.Domain.Statements;
 
 namespace workwear.Domain.Stock
