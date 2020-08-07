@@ -164,22 +164,17 @@ namespace workwear
 			Entity.Date = readerIncomeFromXML1C.Date;
 
 			if (readerIncomeFromXML1C.listDontFindOZMInDoc.Count > 0) {
-				string str = "";
-				foreach(var nom in readerIncomeFromXML1C.listDontFindOZMInDoc)
-					str += nom + "\n";
-				if(!MessageDialogHelper.RunQuestionDialog($"У номенклатур:\n{str}не найден озм. Продолжить создание документа прихода?")) {
+				string str = String.Join("\n", readerIncomeFromXML1C.listDontFindOZMInDoc.Select(x => " * " + x));
+				if(!MessageDialogHelper.RunQuestionDialog($"Не найден ОЗМ у номенклатур:\n{str}\n Продолжить создание документа прихода?")) {
 					MessageDialogHelper.RunWarningDialog("Создание документа прихода невозможно.");
 					return;
 				}
-
 			}
 
 			if(readerIncomeFromXML1C.listDontFindNomenclature.Count > 0) {
-				string str = "";
-				foreach(var nom in readerIncomeFromXML1C.listDontFindNomenclature)
-					str += nom.Name + "\n";
+				string str = String.Join("\n", readerIncomeFromXML1C.listDontFindNomenclature.Select(x => $" * [ОЗМ:{x.Ozm}] {x.Nomenclature}"));
 
-				if(MessageDialogHelper.RunQuestionDialog($"Таких номенклатур:\n{str}нет в справочнике. Создать?")) {
+				if(MessageDialogHelper.RunQuestionDialog($"Следующих номенклатур нет в справочнике:\n{str}\n Создать?")) {
 					foreach(var nom in readerIncomeFromXML1C.listDontFindNomenclature)
 						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<NomenclatureViewModel, IEntityUoWBuilder, LineIncome>(this, EntityUoWBuilder.ForCreate(), nom, OpenPageOptions.AsSlave);
 					MessageDialogHelper.RunInfoDialog("Сохраните номенклатуру(ы) и повторите загрузку документа.","Загрузка документа");
@@ -188,7 +183,6 @@ namespace workwear
 					MessageDialogHelper.RunErrorDialog("Создание документа прихода невозможно.");
 					return;
 				}
-
 			}
 			else {
 				foreach(var r in readerIncomeFromXML1C.ListLineIncomes)
