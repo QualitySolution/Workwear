@@ -79,7 +79,16 @@ namespace workwear.JournalViewers
 							this);
 						break;
 					case StokDocumentType.ExpenseDoc:
-						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
+						switch(node.ExpenseOperation) {
+							case ExpenseOperations.Employee:
+								MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
+								break;
+							case ExpenseOperations.Object:
+								MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<ExpenseObjectViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
+								break;
+							default:
+								throw new NotImplementedException();
+						}
 						break;
 					case StokDocumentType.WriteoffDoc:
 						TabParent.OpenTab(

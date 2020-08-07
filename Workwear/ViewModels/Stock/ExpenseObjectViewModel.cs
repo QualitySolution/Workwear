@@ -46,10 +46,16 @@ namespace workwear.ViewModels.Stock
 			Entity.Date = DateTime.Today;
 			this.interactive = interactive;
 			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
+
+
 			if(subdivision != null) {
-				Entity.Operation = ExpenseOperations.Object;
 				Entity.Subdivision = subdivision;
 				Entity.Warehouse = subdivision.Warehouse;
+			}
+
+			if(UoW.IsNew) {
+				Entity.Operation = ExpenseOperations.Object;
+				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 			}
 
 			if(Entity.Warehouse == null)
@@ -57,9 +63,6 @@ namespace workwear.ViewModels.Stock
 
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
-
-			if(UoW.IsNew)
-				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 
 			WarehouseExpenceViewModel = entryBuilder.ForProperty(x => x.Warehouse)
 									.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
