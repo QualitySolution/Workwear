@@ -854,9 +854,19 @@ FROM
         LEFT JOIN
     wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
         LEFT JOIN
-    item_types ON item_types.id = wear_cards_item.itemtype_id
+    protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+    	LEFT JOIN 
+    	(select protection_tools.id as protection_tools_id, 
+    			item_types.wear_category as wear_category, 
+    			item_types.id as id,
+    			item_types.name as name
+    	 	FROM protection_tools
+			LEFT JOIN protection_tools_nomenclature on protection_tools.id = protection_tools_nomenclature.protection_tools_id
+			LEFT JOIN nomenclature on nomenclature.id = protection_tools_nomenclature.nomenclature_id
+			LEFT JOIN item_types on item_types.id = nomenclature.type_id
+		limit 1) as  item_types on item_types.protection_tools_id = protection_tools.id
         LEFT JOIN
-    measurement_units ON item_types.units_id = measurement_units.id
+    measurement_units ON protection_tools.units_id = measurement_units.id 
         LEFT JOIN
     norms_item ON wear_cards_item.norm_item_id = norms_item.id
 WHERE
