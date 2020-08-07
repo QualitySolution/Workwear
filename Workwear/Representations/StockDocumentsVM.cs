@@ -65,7 +65,7 @@ namespace workwear.Representations
 				   			.Select(() => incomeAlias.Id).WithAlias(() => resultAlias.Id)
 				            .Select(() => incomeAlias.Date).WithAlias(() => resultAlias.Date)
 					        .Select(() => incomeAlias.Operation).WithAlias(() => resultAlias.IncomeOperation)
-					        .Select(() => facilityAlias.Name).WithAlias(() => resultAlias.Facility)
+					        .Select(() => facilityAlias.Name).WithAlias(() => resultAlias.Subdivision)
 					        .Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 					        .Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 					        .Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
@@ -79,13 +79,17 @@ namespace workwear.Representations
 				result.AddRange(incomeList);
 			}
 
-			if (Filter.RestrictDocumentType == null || Filter.RestrictDocumentType == StokDocumentType.ExpenseDoc)
+			if (Filter.RestrictDocumentType == null || Filter.RestrictDocumentType == StokDocumentType.ExpenseEmployeeDoc || Filter.RestrictDocumentType == StokDocumentType.ExpenseObjectDoc)
 			{
 				var expenseQuery = UoW.Session.QueryOver<Expense>(() => expenseAlias);
 				if (Filter.RestrictStartDate.HasValue)
 					expenseQuery.Where(o => o.Date >= Filter.RestrictStartDate.Value);
 				if (Filter.RestrictEndDate.HasValue)
 					expenseQuery.Where(o => o.Date < Filter.RestrictEndDate.Value.AddDays(1));
+				if(Filter.RestrictDocumentType == StokDocumentType.ExpenseEmployeeDoc)
+					expenseQuery.Where(x => x.Operation == ExpenseOperations.Employee);
+				if(Filter.RestrictDocumentType == StokDocumentType.ExpenseObjectDoc)
+					expenseQuery.Where(x => x.Operation == ExpenseOperations.Object);
 
 				var expenseList = expenseQuery
 					.JoinQueryOver(() => expenseAlias.Employee, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
@@ -96,7 +100,7 @@ namespace workwear.Representations
 							.Select(() => expenseAlias.Id).WithAlias(() => resultAlias.Id)
 							.Select(() => expenseAlias.Date).WithAlias(() => resultAlias.Date)
 					        .Select(() => expenseAlias.Operation).WithAlias(() => resultAlias.ExpenseOperation)
-							.Select(() => facilityAlias.Name).WithAlias(() => resultAlias.Facility)
+							.Select(() => facilityAlias.Name).WithAlias(() => resultAlias.Subdivision)
 							.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 							.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 							.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
@@ -106,7 +110,7 @@ namespace workwear.Representations
 				.TransformUsing(Transformers.AliasToBean<StockDocumentsVMNode>())
 				.List<StockDocumentsVMNode>();
 
-				expenseList.ToList().ForEach(x => x.DocTypeEnum = StokDocumentType.ExpenseDoc);
+				expenseList.ToList().ForEach(x => x.DocTypeEnum = x.ExpenseOperation == ExpenseOperations.Employee ? StokDocumentType.ExpenseEmployeeDoc : StokDocumentType.ExpenseObjectDoc);
 				result.AddRange(expenseList);
 			}
 
@@ -210,8 +214,8 @@ namespace workwear.Representations
 			.AddColumn("Тип документа").SetDataProperty(node => node.DocTypeString)
 		    .AddColumn("Операция").SetDataProperty(node => node.Operation)
 			.AddColumn("Дата").SetDataProperty(node => node.DateString)
-			.AddColumn("Склад").AddTextRenderer(x => x.Warehouse)
 			.AddColumn("Автор").SetDataProperty(node => node.Author)
+			.AddColumn("Склад").AddTextRenderer(x => x.Warehouse)
 			.AddColumn("Детали").AddTextRenderer(node => node.Description)
 			.Finish();
 
@@ -275,8 +279,6 @@ namespace workwear.Representations
 				{
 					case StokDocumentType.IncomeDoc:
 						return IncomeOperation.GetEnumTitle();
-					case StokDocumentType.ExpenseDoc:
-						return ExpenseOperation.GetEnumTitle();
 					default:
 						return null;
 				}
@@ -292,8 +294,8 @@ namespace workwear.Representations
 				string text = String.Empty;
 				if (!String.IsNullOrWhiteSpace(Employee))
 					text += $"Сотрудник: {Employee} ";
-				if (!String.IsNullOrWhiteSpace(Facility))
-					text += $"Объект: {Facility} ";
+				if (!String.IsNullOrWhiteSpace(Subdivision))
+					text += $"Объект: {Subdivision} ";
 				return text;
 			}
 		}
@@ -306,7 +308,7 @@ namespace workwear.Representations
 		public string Warehouse => ReceiptWarehouse == null && ExpenseWarehouse == null ? String.Empty :
 			ReceiptWarehouse == null ? $" {ExpenseWarehouse} =>" : $"{ExpenseWarehouse} => {ReceiptWarehouse}";
 
-		public string Facility { get; set; }
+		public string Subdivision { get; set; }
 
 		[UseForSearch]
 		[SearchHighlight]

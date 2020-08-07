@@ -7,7 +7,6 @@ using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock
 {
-	[System.ComponentModel.ToolboxItem(true)]
 	public partial class ExpenseEmployeeView : EntityDialogViewBase<ExpenseEmployeeViewModel, Expense>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();

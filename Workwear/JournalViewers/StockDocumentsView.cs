@@ -78,8 +78,11 @@ namespace workwear.JournalViewers
 							() => new IncomeDocDlg(node.Id),
 							this);
 						break;
-					case StokDocumentType.ExpenseDoc:
+					case StokDocumentType.ExpenseEmployeeDoc:
 						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
+						break;
+					case StokDocumentType.ExpenseObjectDoc:
+						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<ExpenseObjectViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
 						break;
 					case StokDocumentType.WriteoffDoc:
 						TabParent.OpenTab(

@@ -1,21 +1,18 @@
 ﻿using System;
 using Gamma.Binding.Converters;
-using QS.Dialog.GtkUI;
-using QS.Project.Domain;
 using QS.Views.Dialog;
 using workwear.Domain.Stock;
-using workwear.ViewModels.Statements;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock
 {
-	[System.ComponentModel.ToolboxItem(true)]
 	public partial class ExpenseObjectView : EntityDialogViewBase<ExpenseObjectViewModel, Expense>
 	{
 		public ExpenseObjectView(ExpenseObjectViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
 			ConfigureDlg();
+			CommonButtonSubscription();
 			IssuanceSheetSensetive();
 		}
 

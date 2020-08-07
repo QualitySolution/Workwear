@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Autofac;
 using Gtk;
-using NLog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.ViewModels;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
@@ -16,9 +15,9 @@ namespace workwear.ViewModels.Stock
 	public class ExpenseDocItemsEmployeeViewModel : ViewModelBase
 	{
 		public readonly ExpenseEmployeeViewModel expenseEmployeeViewModel;
-		private readonly ITdiCompatibilityNavigation navigation;
+		private readonly INavigationManager navigation;
 
-		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, ITdiCompatibilityNavigation navigation)
+		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, INavigationManager navigation)
 		{
 			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
@@ -66,6 +65,7 @@ namespace workwear.ViewModels.Stock
 
 		#endregion
 
+		#region Действия View
 		public void FillBuhDoc()
 		{
 			using(var dlg = new Dialog("Введите бухгалтерский документ", MainClass.MainWin, DialogFlags.Modal)) {
@@ -131,6 +131,12 @@ namespace workwear.ViewModels.Stock
 			Entity.RemoveItem(item);
 			CalculateTotal();
 		}
+
+		public void OpenNomenclature(Nomenclature nomenclature)
+		{
+			navigation.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(expenseEmployeeViewModel, EntityUoWBuilder.ForOpen(nomenclature.Id));
+		}
+		#endregion
 
 		public void CalculateTotal()
 		{

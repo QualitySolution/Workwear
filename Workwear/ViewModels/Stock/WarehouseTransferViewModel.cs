@@ -104,6 +104,11 @@ namespace workwear.ViewModels.Stock
 			}
 		}
 
+		public void OpenNomenclature(Nomenclature nomenclature)
+		{
+			NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(nomenclature.Id));
+		}
+
 		public override bool Save()
 		{
 			Entity.UpdateOperations(UoW, null); 

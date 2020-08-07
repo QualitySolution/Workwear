@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Autofac;
 using Gtk;
-using NLog;
-using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
-using QS.Services;
-using QS.Validation;
 using QS.ViewModels;
-using QS.ViewModels.Control.EEVM;
-using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
@@ -21,9 +14,9 @@ namespace workwear.ViewModels.Stock
 	public class ExpenseDocItemsObjectViewModel : ViewModelBase
 	{
 		public readonly ExpenseObjectViewModel expenseObjectViewModel;
-		private readonly ITdiCompatibilityNavigation navigation;
+		private readonly INavigationManager navigation;
 
-		public ExpenseDocItemsObjectViewModel(ExpenseObjectViewModel expenseObjectViewModel, ITdiCompatibilityNavigation navigation)
+		public ExpenseDocItemsObjectViewModel(ExpenseObjectViewModel expenseObjectViewModel, INavigationManager navigation)
 		{
 			this.expenseObjectViewModel = expenseObjectViewModel ?? throw new ArgumentNullException(nameof(expenseObjectViewModel));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
@@ -114,6 +107,11 @@ namespace workwear.ViewModels.Stock
 		{
 			Entity.RemoveItem(item);
 			CalculateTotal();
+		}
+
+		public void OpenNomenclature(Nomenclature nomenclature)
+		{
+			navigation.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(expenseObjectViewModel, EntityUoWBuilder.ForOpen(nomenclature.Id));
 		}
 
 		public void CalculateTotal()

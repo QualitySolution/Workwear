@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using Gamma.Binding.Converters;
 using Gtk;
 using QS.DomainModel.Entity;
 using QS.Views.Dialog;
+using QSWidgetLib;
 using workwear.Domain.Stock;
 using workwear.ViewModels.Stock;
 
@@ -39,10 +41,33 @@ namespace workwear.Views.Stock
 			table.Selection.Changed += Selection_Changed;
 			table.Selection.Mode = SelectionMode.Multiple;
 			table.ItemsDataSource = ViewModel.Entity.ObservableItems;
+			table.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 			buttonAddItem.Sensitive = ViewModel.CanAddItem;
 		}
+
+		#region PopupMenu
+		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
+		{
+			if(args.Event.Button == 3) {
+				var menu = new Menu();
+				var selected = table.GetSelectedObjects<TransferItem>().First();
+				var item = new MenuItemId<TransferItem>("Открыть номеклатуру");
+				item.ID = selected;
+				item.Activated += Item_Activated;
+				menu.Add(item);
+				menu.ShowAll();
+				menu.Popup();
+			}
+		}
+
+		void Item_Activated(object sender, EventArgs e)
+		{
+			var item = (sender as MenuItemId<TransferItem>).ID;
+			ViewModel.OpenNomenclature(item.Nomenclature);
+		}
+		#endregion
 
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
