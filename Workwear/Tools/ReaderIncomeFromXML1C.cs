@@ -97,14 +97,15 @@ namespace workwear.Tools
 						listDontFindNomenclature.Add(new LineIncome(listNomenName[i], uint.Parse(ozm), int.Parse(listNomenCount[i]), sizeGrowth[0], sizeGrowth[1]));
 				}
 				else {
-					if (ListLineIncomes.Any(x => x.Nomenclature.Ozm.ToString() == ozm)) {
-						LineIncome find = ListLineIncomes.First(x => x.Nomenclature.Ozm.ToString() == ozm);
-						var index = ListLineIncomes.IndexOf(find);
-						ListLineIncomes[index].Count += int.Parse(listNomenCount[i]);
-					}
-					else ListLineIncomes.Add(new LineIncome(nom, int.Parse(listNomenCount[i]), sizeGrowth[0], sizeGrowth[1]));
+					LineIncome find = ListLineIncomes.FirstOrDefault(x => x.Nomenclature == nom 
+						&& x.Size == sizeGrowth[0]
+						&& x.Growth == sizeGrowth[1]
+					 );
+					if (find != null) 
+						find.Count += int.Parse(listNomenCount[i]);
+					else 
+						ListLineIncomes.Add(new LineIncome(nom, int.Parse(listNomenCount[i]), sizeGrowth[0], sizeGrowth[1]));
 				}
-
 				i++;
 			}
 
