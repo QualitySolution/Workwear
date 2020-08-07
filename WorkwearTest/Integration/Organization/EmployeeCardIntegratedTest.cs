@@ -4,7 +4,6 @@ using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
 using QS.Testing.DB;
-using workwear;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
@@ -85,8 +84,7 @@ namespace WorkwearTest.Integration.Organization
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
 
 				var operationTime = uow.GetAll<WarehouseOperation>().Select(x => x.OperationTime).ToList();
-
-				StockBalanceDTO stockBalance = null;
+				
 				employee.FillWearInStockInfo(uow, warehouse, new DateTime(2020, 07, 22), false);
 				Assert.That(employee.UnderreceivedItems.Count(), Is.GreaterThan(0));
 				var employeeCardItem = employee.UnderreceivedItems.First();
