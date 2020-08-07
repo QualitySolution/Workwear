@@ -3,14 +3,16 @@ using System.Linq;
 using Gtk;
 using NLog;
 using QS.Dialog.Gtk;
+using QS.Project.Domain;
 using QSOrmProject;
-using workwear.Domain.Operations;
-using workwear.Domain.Company;
-using workwear.Domain.Stock;
-using workwear.Representations.Organization;
-using workwear.Measurements;
-using workwear.Journal.ViewModels.Stock;
 using QSWidgetLib;
+using workwear.Domain.Company;
+using workwear.Domain.Operations;
+using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Stock;
+using workwear.Measurements;
+using workwear.Representations.Organization;
+using workwear.ViewModels.Stock;
 
 namespace workwear
 {
@@ -101,7 +103,7 @@ namespace workwear
 		void Item_Activated(object sender, EventArgs e)
 		{
 			var item = (sender as MenuItemId<WriteoffItem>).ID;
-			OpenTab<NomenclatureDlg, int>(item.Nomenclature.Id);
+			MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<NomenclatureViewModel, IEntityUoWBuilder>(MyTdiDialog, EntityUoWBuilder.ForOpen(item.Nomenclature.Id));
 		}
 
 		#endregion

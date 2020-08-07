@@ -2,6 +2,7 @@
 using System.Data.Bindings.Utilities;
 using System.Linq;
 using Gtk;
+using QSWidgetLib;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Measurements;
@@ -37,6 +38,7 @@ namespace workwear.Views.Stock
 			CreateTable();
 			ytreeItems.ItemsDataSource = ViewModel.ObservableItems;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
+			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 
 			ExpenseDoc_PropertyChanged(ViewModel.expenseObjectViewModel.Entity, new System.ComponentModel.PropertyChangedEventArgs(ViewModel.expenseObjectViewModel.Entity.GetPropertyName(x => x.Operation)));
 			if(ViewModel.expenseObjectViewModel.Entity.Operation == ExpenseOperations.Object)
@@ -68,8 +70,29 @@ namespace workwear.Views.Stock
 					.SetDisplayFunc(x => (x as SubdivisionPlace) != null ? (x as SubdivisionPlace).Name : String.Empty)
 				.AddColumn("")
 				.Finish();
-
 		}
+
+		#region PopupMenu
+		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
+		{
+			if(args.Event.Button == 3) {
+				var menu = new Menu();
+				var selected = ytreeItems.GetSelectedObject<ExpenseItem>();
+				var item = new MenuItemId<ExpenseItem>("Открыть номеклатуру");
+				item.ID = selected;
+				item.Activated += Item_Activated;
+				menu.Add(item);
+				menu.ShowAll();
+				menu.Popup();
+			}
+		}
+
+		void Item_Activated(object sender, EventArgs e)
+		{
+			var item = (sender as MenuItemId<ExpenseItem>).ID;
+			viewModel.OpenNomenclature(item.Nomenclature);
+		}
+		#endregion
 
 		void ExpenseDoc_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
