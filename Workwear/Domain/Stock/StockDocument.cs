@@ -46,7 +46,8 @@ namespace workwear.Domain.Stock
 			{
 				case StokDocumentType.IncomeDoc:
 					return typeof(Income);
-				case StokDocumentType.ExpenseDoc:
+				case StokDocumentType.ExpenseEmployeeDoc:
+				case StokDocumentType.ExpenseObjectDoc:
 					return typeof(Expense);
 				case StokDocumentType.WriteoffDoc:
 					return typeof(Writeoff);
@@ -61,13 +62,11 @@ namespace workwear.Domain.Stock
 
 	public enum StokDocumentType
 	{
-		[Display(Name = "Приход на склад")]
+		[Display(Name = "Поступление на склад")]
 		IncomeDoc,
-		[Display(Name = "Расход со склада")]
-		ExpenseDoc,
-		[Display(Name = "Расход со склада. Сотрудник")]
+		[Display(Name = "Выдача сотруднику")]
 		ExpenseEmployeeDoc,
-		[Display(Name = "Расход со склада. Объект")]
+		[Display(Name = "Выдача на подразделение")]
 		ExpenseObjectDoc,
 		[Display(Name = "Списание")]
 		WriteoffDoc,

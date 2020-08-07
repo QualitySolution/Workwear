@@ -78,17 +78,11 @@ namespace workwear.JournalViewers
 							() => new IncomeDocDlg(node.Id),
 							this);
 						break;
-					case StokDocumentType.ExpenseDoc:
-						switch(node.ExpenseOperation) {
-							case ExpenseOperations.Employee:
-								MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
-								break;
-							case ExpenseOperations.Object:
-								MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<ExpenseObjectViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
-								break;
-							default:
-								throw new NotImplementedException();
-						}
+					case StokDocumentType.ExpenseEmployeeDoc:
+						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
+						break;
+					case StokDocumentType.ExpenseObjectDoc:
+						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<ExpenseObjectViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
 						break;
 					case StokDocumentType.WriteoffDoc:
 						TabParent.OpenTab(
