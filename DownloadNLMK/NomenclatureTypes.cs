@@ -43,6 +43,7 @@ namespace DownloadNLMK
 			AddType("Фуфайка", СlothesType.Wear, sht, new string[] { "Фуфайка" });
 			AddType("СВИТЕР", СlothesType.Wear, sht, new string[] { "СВИТЕР" });
 			AddType("КОМБИНЕЗОН", СlothesType.Wear, sht, new string[] { "КОМБИНЕЗОН", "ПОЛУКОМБИНЕЗОН", "ГИДРОКОМБИНЕЗОН" });
+			AddType("КОМПЛЕКТ", СlothesType.Wear, sht, new string[] { "КОМПЛЕКТ" });
 			AddType("ПОДШЛЕМНИК", СlothesType.Headgear, sht, new string[] { "ПОДШЛЕМНИК" });
 			AddType("ШАПКА", СlothesType.Headgear, sht, new string[] { "ШАПКА", "Кепка", "ФЕСКА", "ШЛЯПА", "ФУРАЖКА", "БЕЙСБОЛКА", "БЕРЕТ", "КОЛПАК", "КЕПИ" });
 			AddType("ПИЛОТКА", СlothesType.Headgear, sht, new string[] { "ПИЛОТКА" });
@@ -66,7 +67,6 @@ namespace DownloadNLMK
 			AddType("КОСЫНКА", СlothesType.PPE, sht, new string[] { "КОСЫНКА" });
 			AddType("ПОВЯЗКА", СlothesType.PPE, sht, new string[] { "ПОВЯЗКА" });
 			AddType("ЩИТОК", СlothesType.PPE, sht, new string[] { "ЩИТОК" });
-			AddType("КОМПЛЕКТ", СlothesType.PPE, sht, new string[] { "КОМПЛЕКТ" });
 			AddType("Респиратор", СlothesType.PPE, sht, new string[] { "Респиратор", "РЕСПИРАТОРЫ", "РЕСПИРАТОРА", "ПАТРОН", "ПРЕДФИЛЬТР", "КОРОБКА" });
 			AddType("Беруши", СlothesType.PPE, pair, new string[] { "Беруши" });
 			AddType("ОЧКИ", СlothesType.PPE, sht, new string[] { "ОЧКИ" });
