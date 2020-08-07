@@ -141,6 +141,11 @@ namespace workwear.ViewModels.Statements
 			}
 		}
 
+		public void OpenNomenclature(Nomenclature nomenclature)
+		{
+			NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(nomenclature.Id));
+		}
+
 		#endregion
 
 		#region Sensetive

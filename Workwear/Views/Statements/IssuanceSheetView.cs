@@ -4,6 +4,7 @@ using Autofac;
 using Gtk;
 using QS.Views.Dialog;
 using QS.Views.Resolve;
+using QSWidgetLib;
 using workwear.Domain.Statements;
 using workwear.Measurements;
 using workwear.ViewModels.Statements;
@@ -57,12 +58,36 @@ namespace workwear.Views.Statements
 				.Finish();
 
 			ytreeviewItems.Selection.Changed += Selection_Changed;
+			ytreeviewItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 			ytreeviewItems.Selection.Mode = SelectionMode.Multiple;
 			ytreeviewItems.ItemsDataSource = ViewModel.Entity.ObservableItems;
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 		}
+
+		#region PopupMenu
+		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
+		{
+			if(args.Event.Button == 3) {
+				var menu = new Menu();
+				var selected = ytreeviewItems.GetSelectedObjects<IssuanceSheetItem>();
+				var item = new MenuItemId<IssuanceSheetItem[]>("Открыть номеклатуру");
+				item.ID = selected;
+				item.Activated += Item_Activated;
+				menu.Add(item);
+				menu.ShowAll();
+				menu.Popup();
+			}
+		}
+
+		void Item_Activated(object sender, EventArgs e)
+		{
+			var items = (sender as MenuItemId<IssuanceSheetItem[]>).ID;
+			foreach(var item in items) 
+				ViewModel.OpenNomenclature(item.Nomenclature);
+		}
+		#endregion
 
 		protected void OnButtonAddClicked(object sender, EventArgs e)
 		{
