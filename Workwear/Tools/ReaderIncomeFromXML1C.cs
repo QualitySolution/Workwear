@@ -153,7 +153,7 @@ namespace workwear.Tools
 					size1 = number;
 			}
 
-			mass[0] = size2.Length > 0 ? size1 + "-'" + size2 : size1;
+			mass[0] = size2.Length > 0 ? size1 + "-" + size2 : size1;
 			mass[1] = growth2.Length > 0 ? growth1 + "-" + growth2 : growth1;
 
 			return mass;
