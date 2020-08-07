@@ -57,8 +57,10 @@ namespace DownloadNLMK.Loaders
 				if(nomenclature.Type.WearCategory.HasValue) {
 					nomenclature.Sex = NomenclatureTypes.ParseSex(nomenclature.Name);
 					if(SizeHelper.HasClothesSex(nomenclature.Type.WearCategory.Value)) {
-						if(nomenclature.Sex == null)
+						if(nomenclature.Sex == null) {
 							logger.Warn($"Не найден пол для [{nomenclature.Name}]");
+							nomenclature.Sex = ClothesSex.Universal;
+						}
 					}
 					else {
 						if(nomenclature.Sex != null)
