@@ -25,8 +25,8 @@
         ) AS delay,
         item_types.name AS type_name,
         nomenclature.name AS nomenclature_name,
-        nomenclature.size,
-        nomenclature.growth,
+        nomenclature_link.size,
+        nomenclature_link.growth,
         measurement_units.name AS unit,
         CASE norms_item.period_type WHEN 'Year' THEN norms_item.period_count * 12 WHEN 'Month' THEN norms_item.period_count WHEN 'Shift' THEN norms_item.period_count / 21
         END AS life_in_months,
@@ -43,7 +43,9 @@
             operation_issued_by_employee.nomenclature_id,
             DATE(
                 operation_issued_by_employee.operation_time
-            ) AS DATE
+            ) AS DATE,
+            operation_issued_by_employee.size,
+            operation_issued_by_employee.growth
         FROM
             operation_issued_by_employee
         JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
