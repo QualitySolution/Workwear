@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -86,15 +86,18 @@ namespace workwear.Tools
 					continue;
 				  }
 
+				Nomenclature nom = null;
+				if(int.TryParse(ozm, out int ozmNum))
+					nom = FindNomenclature(ozmNum);
+
 				var sizeGrowth = getSizeAndGrowth(listNomenNameFull[i]);
-				Nomenclature nom = FindNomenclature(ozm);
 
 				if(nom == null) {
-					if(listDontFindNomenclature.Where(x => x.Ozm.ToString() == ozm).Count() == 0)
+					if(!listDontFindNomenclature.Any(x => x.Ozm.ToString() == ozm))
 						listDontFindNomenclature.Add(new LineIncome(listNomenName[i], uint.Parse(ozm), int.Parse(listNomenCount[i]), sizeGrowth[0], sizeGrowth[1]));
 				}
 				else {
-					if (ListLineIncomes.Where(x => x.Nomenclature.Ozm.ToString() == ozm).Count() != 0) {
+					if (ListLineIncomes.Any(x => x.Nomenclature.Ozm.ToString() == ozm)) {
 						LineIncome find = ListLineIncomes.First(x => x.Nomenclature.Ozm.ToString() == ozm);
 						var index = ListLineIncomes.IndexOf(find);
 						ListLineIncomes[index].Count += int.Parse(listNomenCount[i]);
@@ -159,9 +162,9 @@ namespace workwear.Tools
 			return mass;
 		}
 
-		public virtual Nomenclature FindNomenclature(string ozm)
+		public virtual Nomenclature FindNomenclature(int ozm)
 		{
-			Nomenclature nom = UoW.Session.QueryOver<Nomenclature>().List().FirstOrDefault(x => x.Ozm.ToString() == ozm);
+			Nomenclature nom = UoW.Session.QueryOver<Nomenclature>().Where(x => x.Ozm == ozm).Take(1).SingleOrDefault();
 			return nom;
 		}
 
