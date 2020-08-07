@@ -85,7 +85,7 @@ namespace workwear.ViewModels.Stock
 
 				if(Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear && Entity.Type.WearCategory.HasValue) {
 					if(!SizeHelper.HasСlothesSizeStd(Entity.Type.WearCategory.Value)) {
-						Entity.SizeStd = Entity.WearGrowthStd = null;
+						Entity.SizeStd = null;
 					}
 				}
 			}
@@ -93,13 +93,7 @@ namespace workwear.ViewModels.Stock
 				OnPropertyChanged(nameof(SensitiveSizeStd));
 				OnPropertyChanged(nameof(SizeStdEnum));
 
-				var growthStd = SizeHelper.GetGrowthStandart(Entity.Type.WearCategory.Value, Entity.Sex.Value);
-				if(growthStd != null) {
-					Entity.WearGrowthStd = SizeHelper.GetSizeStdCode(growthStd);
-				}
-				else {
-					Entity.WearGrowthStd = null;
-				}
+
 			}
 		}
 	}
