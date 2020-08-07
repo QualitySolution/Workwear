@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -179,6 +179,7 @@ namespace workwear.Tools
 		public LineIncome(Nomenclature nom, int count, string size, string growth)
 		{
 			this.Nomenclature = nom;
+			this.Name = nom.Name;
 			this.Count = count;
 			this.Size = size;
 			this.Growth = growth;
