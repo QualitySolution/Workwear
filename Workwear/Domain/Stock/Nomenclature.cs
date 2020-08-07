@@ -53,12 +53,15 @@ namespace workwear.Domain.Stock
 			set { SetField (ref sizeStd, value, () => SizeStd); }
 		}
 
-		string wearGrowthStd;
-
 		[Display (Name = "Стандарт роста")]
 		public virtual string WearGrowthStd {
-			get { return wearGrowthStd; }
-			set { SetField (ref wearGrowthStd, value, () => WearGrowthStd); }
+			get {
+				if(Type?.WearCategory == null || Sex == null)
+					return null;
+				var growthStd = SizeHelper.GetGrowthStandart(Type.WearCategory.Value, Sex.Value);
+				return growthStd != null ? SizeHelper.GetSizeStdCode(growthStd) : null;
+			}
+			set { }
 		}
 
 		private string comment;
