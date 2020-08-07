@@ -8,6 +8,7 @@ using workwear.Domain.Operations;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Representations.Organization;
+using QSWidgetLib;
 
 namespace workwear
 {
@@ -69,7 +70,31 @@ namespace workwear
 				.AddSetter((c, e) => c.Editable = e.IssuedOn?.ExpenseDoc.Operation == ExpenseOperations.Employee)
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
+			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 		}
+
+		#region PopupMenu
+		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
+		{
+			if(args.Event.Button == 3) {
+				var menu = new Menu();
+				var selected = ytreeItems.GetSelectedObject<WriteoffItem>();
+				var item = new MenuItemId<WriteoffItem>("Открыть номеклатуру");
+				item.ID = selected;
+				item.Activated += Item_Activated;
+				menu.Add(item);
+				menu.ShowAll();
+				menu.Popup();
+			}
+		}
+
+		void Item_Activated(object sender, EventArgs e)
+		{
+			var item = (sender as MenuItemId<WriteoffItem>).ID;
+			OpenTab<NomenclatureDlg, int>(item.Nomenclature.Id);
+		}
+
+		#endregion
 
 		void YtreeItems_Selection_Changed (object sender, EventArgs e)
 		{
