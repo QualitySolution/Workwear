@@ -79,12 +79,12 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConnectConfig.cs" />
-    <Compile Include="NomenclatureTypes.cs" />
     <Compile Include="Loaders\NomenclatureLoader.cs" />
     <Compile Include="Loaders\ProtectionToolsLoader.cs" />
     <Compile Include="Loaders\NormLoader.cs" />
     <Compile Include="Loaders\EmployeeLoader.cs" />
     <Compile Include="Loaders\DTO\EmployeeOperation.cs" />
+    <Compile Include="Loaders\NomenclatureTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
