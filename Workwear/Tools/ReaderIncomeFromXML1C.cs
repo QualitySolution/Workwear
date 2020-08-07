@@ -67,11 +67,21 @@ namespace workwear.Tools
 			listNomenCount = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:Количество");
 			listNomenName = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:ДанныеНоменклатуры/df:Номенклатура/df:НаименованиеПолное");
 			var listNomenNameFull = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:ДанныеНоменклатуры/df:Характеристика/df:НаименованиеПолное");
+
+			if(listNomenReference.Count != listNomenCount.Count)
+				throw new InvalidOperationException("Количество элементов в списках listNomenReference и listNomenCount не равно.");
+
+			if(listNomenReference.Count != listNomenName.Count)
+				throw new InvalidOperationException("Количество элементов в списках listNomenReference и listNomenName не равно.");
+
+			if(listNomenReference.Count != listNomenNameFull.Count)
+				throw new InvalidOperationException("Количество элементов в списках listNomenReference и listNomenNameFull не равно.");
+
 			XDocument doc = XDocument.Load(file);
 			XNamespace ns = "http://v8.1c.ru/edi/edi_stnd/EnterpriseData/1.8";
-			int i = 0;
-			var r = listNomenReference;
+			int i = -1;
 			foreach(var nomenReference in listNomenReference) {
+				i++;
 				var ozm = "";
 				try {
 					ozm = (from feed in doc.Descendants(ns + "Справочник.Номенклатура")
@@ -106,7 +116,6 @@ namespace workwear.Tools
 					else 
 						ListLineIncomes.Add(new LineIncome(nom, int.Parse(listNomenCount[i]), sizeGrowth[0], sizeGrowth[1]));
 				}
-				i++;
 			}
 
 		}
