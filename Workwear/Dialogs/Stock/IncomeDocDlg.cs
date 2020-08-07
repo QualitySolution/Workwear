@@ -172,8 +172,7 @@ namespace workwear
 			}
 
 			if(readerIncomeFromXML1C.listDontFindNomenclature.Count > 0) {
-				string str = String.Join("\n", readerIncomeFromXML1C.listDontFindNomenclature.Select(x => $" * [ОЗМ:{x.Ozm}] {x.Nomenclature}"));
-
+				string str = String.Join("\n", readerIncomeFromXML1C.listDontFindNomenclature.Select(x => $" * [ОЗМ:{x.Ozm}]\t{x.Name}"));
 				if(MessageDialogHelper.RunQuestionDialog($"Следующих номенклатур нет в справочнике:\n{str}\n Создать?")) {
 					foreach(var nom in readerIncomeFromXML1C.listDontFindNomenclature)
 						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<NomenclatureViewModel, IEntityUoWBuilder, LineIncome>(this, EntityUoWBuilder.ForCreate(), nom, OpenPageOptions.AsSlave);
