@@ -141,6 +141,12 @@ namespace workwear.Measurements
 			return Enum.GetValues(type).GetValue(0);
 		}
 
+		public static object GetDefaultSizeStd(СlothesType wearCategory, ClothesSex sex)
+		{
+			var type = SizeHelper.GetSizeStandartsEnum(wearCategory, sex);
+			return type != null ? Enum.GetValues(type).GetValue(0) : null;
+		}
+
 		public static GrowthStandartWear? GetGrowthStandart(СlothesType wearCategory, ClothesSex sex)
 		{
 			var att = wearCategory.GetAttribute<NeedGrowthAttribute> ();

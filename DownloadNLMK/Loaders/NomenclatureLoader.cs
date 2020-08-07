@@ -66,6 +66,12 @@ namespace DownloadNLMK.Loaders
 						if(nomenclature.Sex != null)
 							logger.Warn($"Пол найден в [{nomenclature.Name}], но тип {nomenclature.Type.Name} без пола.");
 					}
+
+					var sizeStd = SizeHelper.GetDefaultSizeStd(nomenclature.Type.WearCategory.Value, nomenclature.Sex ?? ClothesSex.Universal);
+					if(sizeStd != null)
+						nomenclature.SizeStd = SizeHelper.GetSizeStdCode(sizeStd);
+					else
+						logger.Warn($"Для {nomenclature.Name} стандарт размера не установлен.");
 				}
 
 				if(zmat.EDIZ != null && zmat.EDIZ.ToString() != nomenclature.Type.Units.OKEI)
