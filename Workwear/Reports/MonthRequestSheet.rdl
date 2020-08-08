@@ -813,13 +813,23 @@
       <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
-    item_types.name AS type_name,
-    item_types.id AS type_id,
-    CASE item_types.wear_category
+    protection_tools.name AS type_name,
+    protection_tools.id AS type_id,
+    CASE (select item_types.wear_category
+    	 	FROM protection_tools_nomenclature
+			LEFT JOIN nomenclature on nomenclature.id = protection_tools_nomenclature.nomenclature_id
+			LEFT JOIN item_types on item_types.id = nomenclature.type_id
+			WHERE protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
+		limit 1)
         WHEN 'Wear' THEN wear_cards.wear_growth
         ELSE NULL
     END AS growth,
-    CASE item_types.wear_category
+    CASE (select item_types.wear_category
+    	 	FROM protection_tools_nomenclature
+			LEFT JOIN nomenclature on nomenclature.id = protection_tools_nomenclature.nomenclature_id
+			LEFT JOIN item_types on item_types.id = nomenclature.type_id
+			WHERE protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
+		limit 1)
         WHEN 'Wear' THEN wear_cards.size_wear
         WHEN 'Shoes' THEN wear_cards.size_shoes
         WHEN 'WinterShoes' THEN wear_cards.size_winter_shoes
@@ -852,12 +862,12 @@
     END) AS amount_sum
 FROM
     wear_cards_item
-        LEFT JOIN
+       LEFT JOIN
     wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
         LEFT JOIN
-    item_types ON item_types.id = wear_cards_item.itemtype_id
+    protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
         LEFT JOIN
-    measurement_units ON item_types.units_id = measurement_units.id
+    measurement_units ON protection_tools.units_id = measurement_units.id 
         LEFT JOIN
     norms_item ON wear_cards_item.norm_item_id = norms_item.id
 WHERE
@@ -873,8 +883,8 @@ WHERE
                     '-01'),
             INTERVAL 1 MONTH),
         INTERVAL 1 DAY)
-GROUP BY item_types.id , size , growth
-ORDER BY type_name , size , growth</CommandText>
+GROUP BY protection_tools.id, size , growth
+ORDER BY type_name, size , growth</CommandText>
         <QueryParameters>
           <QueryParameter Name="year">
             <Value>={?year}</Value>
