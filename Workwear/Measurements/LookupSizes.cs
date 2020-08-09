@@ -71,6 +71,7 @@ namespace workwear.Measurements
 			new WearSize(new []{ "48", "S" }),
 			new WearSize(new []{ "48-50", null }, SizeUse.СlothesOnly, new []{ "48", "S" }, new []{ "50", "M" }),
 			new WearSize(new []{ "50", "M" }),
+			new WearSize(new []{ "50-52", null }, SizeUse.СlothesOnly, new []{ "50", "M" }, new []{ "52", "L" }),
 			new WearSize(new []{ "52", "L" }),
 			new WearSize(new []{ "52-54", null }, SizeUse.СlothesOnly, new []{ "52", "L" }, new []{ "54", "XL" }),
 			new WearSize(new []{ "54", "XL" }),
@@ -86,6 +87,12 @@ namespace workwear.Measurements
 			new WearSize(new []{ "68", "5XL" }),
 			new WearSize(new []{ "68-70", null }, SizeUse.СlothesOnly, new []{ "68", "5XL" }, new []{ "70", "5XL" }),
 			new WearSize(new []{ "70", "5XL" }),
+			new WearSize(new []{ "72", null }),
+			new WearSize(new []{ "72-74", null }, SizeUse.СlothesOnly, new []{ "72", null }, new []{ "74", null }),
+			new WearSize(new []{ "74", null }),
+			new WearSize(new []{ "80", null }),
+			new WearSize(new []{ "80-82", null }, SizeUse.СlothesOnly, new []{ "80", null }, new []{ "82", null }),
+			new WearSize(new []{ "82", null }),
 		};
 
 		public static readonly WearSize[] WomenWear = {
@@ -99,6 +106,7 @@ namespace workwear.Measurements
 			new WearSize(new []{ "48", "L" }),
 			new WearSize(new []{ "48-50", null }, SizeUse.СlothesOnly, new []{ "48", "L" }, new []{ "50", "L" }),
 			new WearSize(new []{ "50", "L" }),
+			new WearSize(new []{ "50-52", null }, SizeUse.СlothesOnly, new []{ "50", "L" }, new []{ "52", "XL" }),
 			new WearSize(new []{ "52", "XL" }),
 			new WearSize(new []{ "52-54", null }, SizeUse.СlothesOnly, new []{ "52", "XL" }, new []{ "54", "XXL" }),
 			new WearSize(new []{ "54", "XXL" }),
@@ -127,6 +135,7 @@ namespace workwear.Measurements
 			new WearSize(new []{ "48", "L" }),
 			new WearSize(new []{ "48-50", null }, SizeUse.СlothesOnly, new []{ "48", "L" }, new []{ "50", "L" }),
 			new WearSize(new []{ "50", "L" }),
+			new WearSize(new []{ "50-52", null }, SizeUse.СlothesOnly, new []{ "50", "L" }, new []{ "52", "XL" }),
 			new WearSize(new []{ "52", "XL" }),
 			new WearSize(new []{ "52-54", null }, SizeUse.СlothesOnly, new []{ "52", "XL" }, new []{ "54", "XXL" }),
 			new WearSize(new []{ "54", "XXL" }),
@@ -142,6 +151,12 @@ namespace workwear.Measurements
 			new WearSize(new []{ "68", "5XL" }),
 			new WearSize(new []{ "68-70", null }, SizeUse.СlothesOnly, new []{ "68", "5XL" }, new []{ "70", "5XL" }),
 			new WearSize(new []{ "70", "5XL" }),
+			new WearSize(new []{ "72", null }),
+			new WearSize(new []{ "72-74", null }, SizeUse.СlothesOnly, new []{ "72", null }, new []{ "74", null }),
+			new WearSize(new []{ "74", null }),
+			new WearSize(new []{ "80", null }),
+			new WearSize(new []{ "80-82", null }, SizeUse.СlothesOnly, new []{ "80", null }, new []{ "82", null }),
+			new WearSize(new []{ "82", null }),
 		};
 
 		public static readonly WearSize[] MenShoes = {
