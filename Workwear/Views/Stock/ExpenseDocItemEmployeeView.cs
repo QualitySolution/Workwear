@@ -106,7 +106,7 @@ namespace workwear.Views.Stock
 				return item.Amount == 0 ? "red" : "Dark red";
 			if(item.EmployeeCardItem?.NeededAmount > 0 && item.Amount == 0)
 				return "blue";
-			if(item.EmployeeCardItem?.NeededAmount == 0 && item.Amount == 0)
+			if(item.EmployeeCardItem?.NeededAmount <= 0 && item.Amount == 0)
 				return "gray";
 			return null;
 		}
