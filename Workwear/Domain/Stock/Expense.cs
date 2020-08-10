@@ -118,10 +118,6 @@ namespace workwear.Domain.Stock
 
 		public virtual ExpenseItem AddItem(StockPosition position, int amount = 1)
 		{
-			if(Items.Any(p => p.Nomenclature != null && position.Equals(p.StockPosition))) {
-				logger.Warn($"Позиция [{position}] уже добавлена. Пропускаем...");
-				return null;
-			}
 			var newItem = new ExpenseItem() {
 				ExpenseDoc = this,
 				Amount = amount,
@@ -136,6 +132,9 @@ namespace workwear.Domain.Stock
 		}
 		public virtual ExpenseItem AddItem(EmployeeCardItem employeeCardItem)
 		{
+			if(employeeCardItem == null)
+				throw new ArgumentNullException(nameof(employeeCardItem));
+
 			ExpenseItem newItem;
 			if(employeeCardItem.BestChoiceInStock.Any())
 				newItem = AddItem(employeeCardItem.BestChoiceInStock.First().StockPosition);
@@ -146,10 +145,10 @@ namespace workwear.Domain.Stock
 				ObservableItems.Add(newItem);
 			}
 
-			newItem.ProtectionTools = employeeCardItem.Item;
 			newItem.EmployeeCardItem = employeeCardItem;
+			newItem.ProtectionTools = employeeCardItem.Item;
 
-			if(Employee.UnderreceivedItems.Contains(employeeCardItem)) 
+			if(Employee.UnderreceivedItems.Contains(employeeCardItem) && newItem.Nomenclature != null) 
 				newItem.Amount = employeeCardItem.NeededAmount;
 			else newItem.Amount = 0;
 

@@ -37,7 +37,6 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		#region Показ
 		private bool isConfigured = false;
-		private object ytreeWorkwear;
 
 		public void OnShow()
 		{
