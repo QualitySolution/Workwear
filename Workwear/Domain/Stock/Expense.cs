@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -145,10 +145,10 @@ namespace workwear.Domain.Stock
 				ObservableItems.Add(newItem);
 			}
 
-			newItem.ProtectionTools = employeeCardItem.Item;
 			newItem.EmployeeCardItem = employeeCardItem;
+			newItem.ProtectionTools = employeeCardItem.Item;
 
-			if(Employee.UnderreceivedItems.Contains(employeeCardItem)) 
+			if(Employee.UnderreceivedItems.Contains(employeeCardItem) && newItem.Nomenclature != null) 
 				newItem.Amount = employeeCardItem.NeededAmount;
 			else newItem.Amount = 0;
 
