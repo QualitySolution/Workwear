@@ -72,7 +72,7 @@ namespace workwear.Views.Stock
 					.AddTextRenderer(e => e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument).Editable()
 				.AddColumn("")
-				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = n.Amount == 0 ? "gray" : null)
+				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 				.Finish();
 		}
 
@@ -98,6 +98,28 @@ namespace workwear.Views.Stock
 		}
 		#endregion
 
+		#region private
+
+		private string GetRowColor(ExpenseItem item)
+		{
+			if(item.EmployeeCardItem?.NeededAmount > 0 && item.Nomenclature == null)
+				return item.Amount == 0 ? "red" : "Dark red";
+			if(item.EmployeeCardItem?.NeededAmount > 0 && item.Amount == 0)
+				return "blue";
+			if(item.EmployeeCardItem?.NeededAmount == 0 && item.Amount == 0)
+				return "gray";
+			return null;
+		}
+
+		void SetSum()
+		{
+			labelSum.Markup = viewModel.Sum;
+			buttonFillBuhDoc.Sensitive = ViewModel.SensetiveFillBuhDoc;
+		}
+
+		#endregion
+
+		#region События
 		void ExpenseDoc_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == ViewModel.GetPropertyName(x => x.Operation)) {
@@ -111,12 +133,13 @@ namespace workwear.Views.Stock
 				buttonAdd.Sensitive = ViewModel.Warehouse != null;
 		}
 
-		void SetSum()
+		void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			labelSum.Markup = viewModel.Sum;
-			buttonFillBuhDoc.Sensitive = ViewModel.SensetiveFillBuhDoc;
+			SetSum();
 		}
+		#endregion
 
+		#region Кнопки
 		protected void OnButtonFillBuhDocClicked(object sender, EventArgs e)
 		{
 			ViewModel.FillBuhDoc();
@@ -137,15 +160,11 @@ namespace workwear.Views.Stock
 			ViewModel.AddItem();
 		}
 
-		void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			SetSum();
-		}
-
 		protected void OnButtonShowAllSizeClicked(object sender, EventArgs e)
 		{
 			viewModel.ShowAllSize(ytreeItems.GetSelectedObject<ExpenseItem>());
 		}
+		#endregion
 	}
 
 }
