@@ -118,7 +118,7 @@ namespace workwear.Domain.Stock
 
 		public virtual ExpenseItem AddItem(StockPosition position, int amount = 1)
 		{
-			if(Items.Any(p => position.Equals(p.StockPosition))) {
+			if(Items.Any(p => p.Nomenclature != null && position.Equals(p.StockPosition))) {
 				logger.Warn($"Позиция [{position}] уже добавлена. Пропускаем...");
 				return null;
 			}
