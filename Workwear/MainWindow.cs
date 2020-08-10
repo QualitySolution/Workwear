@@ -114,7 +114,7 @@ public partial class MainWindow : Gtk.Window
 
 		ReadUserSettings();
 
-		var EntityAutocompleteSelector = new JournalViewModelAutocompleteSelector<EmployeeCard, EmployeeJournalViewModel>(UoW, AutofacScope);
+		var EntityAutocompleteSelector = new JournalViewModelAutocompleteSelector<EmployeeCard, EmployeeCardJournalViewModel>(UoW, AutofacScope);
 		entitySearchEmployee.ViewModel = new EntitySearchViewModel<EmployeeCard>(EntityAutocompleteSelector);
 		entitySearchEmployee.ViewModel.EntitySelected += SearchEmployee_EntitySelected;
 
@@ -135,7 +135,7 @@ public partial class MainWindow : Gtk.Window
 		DialogViewModelBase after = null;
 		if(cnbOpenInWindow.Active) {
 			IPage replaced;
-			if(NavigationManager.CurrentPage.ViewModel is EmployeeViewModel)
+			if(NavigationManager.CurrentPage?.ViewModel is EmployeeViewModel)
 				replaced = NavigationManager.CurrentPage;
 			else {
 				replaced = NavigationManager.IndependentPages.Reverse().FirstOrDefault(x => x.ViewModel is EmployeeViewModel);
