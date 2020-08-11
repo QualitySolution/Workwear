@@ -136,34 +136,50 @@ namespace workwear.Tools
 			string[] parts = element.Split(' ');
 			string onlySize = parts[0];
 			string size1 = "", size2 = "", growth1 = "", growth2 = "", number = "";
-			bool isSize = true;
+			bool isHyphen1 = false, isHyphen2 = false, isSeparator = false;
+
+			List<string> sizeWear = new List<string>() {"M", "L", "XL", "XXL", "XXXL", "4XL", "5XL" };
+
+			if(onlySize.Where(x => x == 'L').Count() == 1) {
+				onlySize = onlySize.Replace('2', 'X');
+				onlySize = onlySize.Replace("3", "XX");
+			}
+
+			if(sizeWear.Contains(onlySize))
+				size1 = onlySize;
+
 			foreach(var vorld in onlySize) {
-				if(vorld == '/' && size1.Length > 0) {
-					isSize = false;
-					size2 = int.Parse(number) > 70 ? (int.Parse(number) / 2).ToString() : number;
+				if(char.IsDigit(vorld))
+					number += vorld;
+				else if(vorld == '-' && !isSeparator) {
+					isHyphen1 = true;
 					number = "";
+					continue;
+				}
+				else if(vorld == '-' && isSeparator) {
+					isHyphen2 = true;
+					number = "";
+					continue;
 				}
 				else if(vorld == '/') {
-					isSize = false;
-					size1 = int.Parse(number) > 70 ? (int.Parse(number) / 2).ToString() : number;
+					isSeparator = true;
 					number = "";
+					continue;
 				}
-				else if(vorld == '-' && isSize) {
+				else { number = ""; break; }
+
+				if(number.Count() > 0 && !isHyphen1 && !isHyphen2 && !isSeparator)
 					size1 = int.Parse(number) > 70 ? (int.Parse(number) / 2).ToString() : number;
-					number = "";
-				}
-				else if(vorld == '-' && !isSize) {
+				else if(number.Count() > 0 && isHyphen1 && !isHyphen2 && !isSeparator)
+					size2 = int.Parse(number) > 70 ? (int.Parse(number) / 2).ToString() : number;
+				else if(number.Count() > 0 && !isHyphen1 && !isHyphen2 && isSeparator)
 					growth1 = number;
-					number = "";
-				}
-				else if(char.IsDigit(vorld))
-					number += vorld;
-				else if(!char.IsDigit(vorld))
-					break;
-				if(growth1.Length > 0 && number.Length > 0)
+				else if(number.Count() > 0 && isHyphen1 && !isHyphen2 && isSeparator)
+					growth1 = number;
+				else if(number.Count() > 0 && isHyphen1 && isHyphen2 && isSeparator)
 					growth2 = number;
-				if(size1.Length < 1 && number.Length > 0)
-					size1 = number;
+				else if(number.Count() > 0 && !isHyphen1 && isHyphen2 && isSeparator)
+					growth2 = number;
 			}
 
 			mass[0] = size2.Length > 0 ? size1 + "-" + size2 : size1;
