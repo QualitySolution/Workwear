@@ -474,12 +474,28 @@ namespace workwear.Domain.Company
 		{
 			if (Id == 0) // Не надо проверять выдачи, так как сотрудник еще не сохранен.
 				return; 
+			foreach(var item in WorkwearItems) {
+				item.Amount = 0;
+				item.LastIssue = null;
+			}
+
 			var receiveds = EmployeeRepository.ItemsBalance (uow, this, ondate ?? DateTime.Now);
-			foreach(var item in WorkwearItems)
+			//OrderBy - чтобы сдвинуть все значения без нормы в конец обработки
+			foreach(var recive in receiveds.OrderBy(x => x.NormRowId == null))
 			{
-				var summary = receiveds.Where(x => item.Item.MatchedProtectionTools.Any(p => p.Id == x.ProtectionToolsId)).ToList();
-				item.Amount = summary.Sum(x => x.Amount);
-				item.LastIssue = summary.Any() ? summary.Max(x => x.LastReceive) : (DateTime?)null;
+
+				var matched = WorkwearItems.Where(x => x.Item.MatchedProtectionTools.Any(p => p.Id == recive.ProtectionToolsId)).ToList();
+				EmployeeCardItem item = WorkwearItems.FirstOrDefault(x => x.ActiveNormItem.Id == recive.NormRowId);
+				if(item == null)
+					item = WorkwearItems.FirstOrDefault(x => x.Item != null && x.Item.Id == recive.ProtectionToolsId && x.Amount < x.NeededAmount);
+				if(item == null)
+					item = WorkwearItems.FirstOrDefault(x => x.Item != null && x.Item.Id == recive.ProtectionToolsId);
+				if(item == null)
+					continue;
+
+				item.Amount += recive.Amount;
+				if(item.LastIssue == null || item.LastIssue < recive.LastReceive)
+					item.LastIssue = recive.LastReceive;
 			}
 		}
 
