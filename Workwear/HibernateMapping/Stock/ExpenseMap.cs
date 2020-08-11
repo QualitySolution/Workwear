@@ -26,7 +26,7 @@ namespace workwear.HMap
 			HasMany (x => x.Items)
 				.Inverse()
 				.KeyColumn ("stock_expense_id").Not.KeyNullable ()
-				.Cascade.AllDeleteOrphan ().Inverse ()
+				.Cascade.AllDeleteOrphan ()
 				.LazyLoad ();
 		}
 	}
