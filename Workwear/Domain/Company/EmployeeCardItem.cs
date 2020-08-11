@@ -142,7 +142,8 @@ namespace workwear.Domain.Company
 		}
 
 		public virtual IEnumerable<StockBalanceDTO> BestChoiceInStock => InStock
-			.OrderBy(x => x.WearPercent)
+			.OrderBy(x => Item.MatchedNomenclatures.TakeWhile(n => !n.IsSame(x.Nomenclature)).Count())
+			.ThenBy(x => x.WearPercent)
 			.ThenByDescending(x => x.Amount);
 
 		#endregion
