@@ -135,7 +135,7 @@ public partial class MainWindow : Gtk.Window
 		DialogViewModelBase after = null;
 		if(cnbOpenInWindow.Active) {
 			IPage replaced;
-			if(NavigationManager.CurrentPage.ViewModel is EmployeeViewModel)
+			if(NavigationManager.CurrentPage?.ViewModel is EmployeeViewModel)
 				replaced = NavigationManager.CurrentPage;
 			else {
 				replaced = NavigationManager.IndependentPages.Reverse().FirstOrDefault(x => x.ViewModel is EmployeeViewModel);
