@@ -61,7 +61,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 			switch(item.ReferencedDocument.DocType) {
 				case EmployeeIssueOpReferenceDoc.ReceivedFromStock:
-					navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForOpen(Entity.Id), Entity);
+					navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForOpen(item.ReferencedDocument.DocId), Entity);
 					break;
 				case EmployeeIssueOpReferenceDoc.RetutnedToStock:
 					navigation.OpenTdiTab<IncomeDocDlg, int>(employeeViewModel, item.ReferencedDocument.DocId);

@@ -55,7 +55,7 @@ namespace workwear.Repository.Company
 				.Where(() => employeeIssueOperationReceivedAlias.AutoWriteoffDate == null || employeeIssueOperationReceivedAlias.AutoWriteoffDate > onDate)
 				.SelectList (list => list
 					.SelectGroup (() => employeeIssueOperationAlias.ProtectionTools.Id).WithAlias(() => resultAlias.ProtectionToolsId)
-					.SelectGroup (() => employeeIssueOperationAlias.Nomenclature.Id).WithAlias (() => resultAlias.NomenclatureId)
+					.SelectGroup (() => employeeIssueOperationAlias.NormItem.Id).WithAlias (() => resultAlias.NormRowId)
 					.Select(projectionIssueDate).WithAlias (() => resultAlias.LastReceive)
 					.Select(projection).WithAlias (() => resultAlias.Amount)
 				)
@@ -90,7 +90,7 @@ namespace workwear.Repository.Company
 
 	public class EmployeeRecivedInfo
 	{
-		public int NomenclatureId { get; set; }
+		public int? NormRowId { get; set; }
 
 		public int? ProtectionToolsId { get; set;}
 
