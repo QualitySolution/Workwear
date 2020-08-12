@@ -104,7 +104,8 @@ namespace DownloadNLMK.Loaders
 				"INNER JOIN SKLAD.SMSFORMA sms ON sms.IDFORMS = r.IDFORMS " +
 				"INNER JOIN SKLAD.smforma sm ON sms.idform = sm.idform " +
 				"WHERE sms.KOLMOTP IS NOT NULL AND sysdate <= ADD_MONTHS(sms.DOTP, WEARING_PERIOD) " +
-				"AND r.PERSONAL_CARD_ID IN (SELECT c.PERSONAL_CARD_ID FROM SKLAD.PERSONAL_CARD c WHERE c.TN IN(SELECT TN FROM KIT.EXP_HUM_SKLAD))",
+				"AND r.PERSONAL_CARD_ID IN (SELECT c.PERSONAL_CARD_ID FROM SKLAD.PERSONAL_CARD c WHERE c.TN IN(SELECT TN FROM KIT.EXP_HUM_SKLAD)) " +
+				"ORDER BY sms.DOTP",
 				buffered: false);
 
 			logger.Info("Обработка строк карточек...");
@@ -214,7 +215,7 @@ namespace DownloadNLMK.Loaders
 						logger.Warn($"Выдачу {item.Title} пропускаем так как не нашли номеклатуру.");
 						continue;
 					}
-					if(item.issued == 0) {
+					if(item.issued == 0 && item.returned == 0) {
 						amountSkip++;
 						continue;
 					}
