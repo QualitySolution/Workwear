@@ -37,6 +37,7 @@ namespace DownloadNLMK
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				logger.Info("start");
+				var start = DateTime.Now;
 				var nomenclatures = new NomenclatureLoader(uow);
 				nomenclatures.Load(NLMKOracle.Connection);
 
@@ -74,6 +75,7 @@ namespace DownloadNLMK
 				norms.Save();
 				employees.Save();
 #endif
+				logger.Info($"Задача выполнена за {DateTime.Now - start}");
 			}
 			logger.Info("Работа завершена. Нажмите любую кнопку для закрытия консоли...");
 			Console.ReadLine();
