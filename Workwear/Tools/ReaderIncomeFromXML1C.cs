@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using workwear.Domain.Stock;
-using QS.DomainModel.UoW;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
+using workwear.Domain.Stock;
 
 namespace workwear.Tools
 {
@@ -93,18 +93,20 @@ namespace workwear.Tools
 				catch {
 					if (!listDontFindOZMInDoc.Contains(listNomenName[i]))
 						listDontFindOZMInDoc.Add(listNomenName[i]);
-					continue;
 				  }
 
 				Nomenclature nom = null;
-				if(int.TryParse(ozm, out int ozmNum))
-					nom = FindNomenclature(ozmNum);
+				if(ozm != "") {
+					if(int.TryParse(ozm, out int ozmNum))
+						nom = FindNomenclature(ozmNum);
+				}
+				else nom = FindNomenclature(listNomenName[i]);
 
 				var sizeGrowth = getSizeAndGrowth(listNomenNameFull[i]);
 
 				if(nom == null) {
-					if(!listDontFindNomenclature.Any(x => x.Ozm.ToString() == ozm))
-						listDontFindNomenclature.Add(new LineIncome(listNomenName[i], uint.Parse(ozm), int.Parse(listNomenCount[i]), sizeGrowth[0], sizeGrowth[1]));
+					if((ozm != "" && !listDontFindNomenclature.Any(x => x.Ozm.ToString() == ozm)) || (ozm == "" && !listDontFindNomenclature.Any(x => x.Name == listNomenName[i])))
+						listDontFindNomenclature.Add(new LineIncome(listNomenName[i], ozm, int.Parse(listNomenCount[i]), sizeGrowth[0], sizeGrowth[1]));
 				}
 				else {
 					LineIncome find = ListLineIncomes.FirstOrDefault(x => x.Nomenclature == nom 
@@ -148,20 +150,20 @@ namespace workwear.Tools
 			if(sizeWear.Contains(onlySize))
 				size1 = onlySize;
 
-			foreach(var vorld in onlySize) {
-				if(char.IsDigit(vorld))
-					number += vorld;
-				else if(vorld == '-' && !isSeparator) {
+			foreach(var character in onlySize) {
+				if(char.IsDigit(character))
+					number += character;
+				else if(character == '-' && !isSeparator) {
 					isHyphen1 = true;
 					number = "";
 					continue;
 				}
-				else if(vorld == '-' && isSeparator) {
+				else if(character == '-' && isSeparator) {
 					isHyphen2 = true;
 					number = "";
 					continue;
 				}
-				else if(vorld == '/') {
+				else if(character == '/') {
 					isSeparator = true;
 					number = "";
 					continue;
@@ -194,6 +196,12 @@ namespace workwear.Tools
 			return nom;
 		}
 
+		public virtual Nomenclature FindNomenclature(string name)
+		{
+			Nomenclature nom = UoW.Session.QueryOver<Nomenclature>().Where(x => x.Name == name).Take(1).SingleOrDefault();
+			return nom;
+		}
+
 	}
 
 	public class LineIncome : PropertyChangedBase
@@ -214,13 +222,15 @@ namespace workwear.Tools
 			this.Growth = growth;
 		}
 
-		public LineIncome(string name, uint ozm, int count, string size, string growth)
+		public LineIncome(string name, string ozm, int count, string size, string growth)
 		{
 			this.Name = name;
 			this.Count = count;
 			this.Size = size;
 			this.Growth = growth;
-			this.Ozm = ozm;
+			if(ozm == "")
+				this.Ozm = null;
+			else this.Ozm = uint.Parse(ozm); 
 		}
 	}
 }
