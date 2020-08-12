@@ -33,16 +33,11 @@ namespace DownloadNLMK.Loaders
 		public void Load(OracleConnection connection)
 		{
 			logger.Info("Загружаем PERSONAL_CARD");
-			var PERSONAL_CARD = connection.Query("SELECT c.TN, c.PERSONAL_CARD_ID FROM SKLAD.PERSONAL_CARD c WHERE c.TN IN(SELECT TN FROM KIT.EXP_HUM_SKLAD)"); //FIXME Ускоряем не грузим карточки без сотрудника.
-			logger.Info($"Загружено {PERSONAL_CARD.Count()} PERSONAL_CARD");
-
-			logger.Info("Загружаем EXP_HUM_SKLAD");
-			var EXP_HUM_SKLAD = connection.Query(
-				"SELECT t.TN, t.SURNAME, t.NAME, t.SECNAME, t.E_SEX, t.DUVOL, t.DHIRING, t.E_PROF, t.PARENT_DEPT_CODE, t.ID_DEPT, t.ID_WP " +
-				"FROM KIT.EXP_HUM_SKLAD t " +
-				"WHERE t.TN IN (SELECT TN FROM SKLAD.PERSONAL_CARD)")//FIXME Ускоряем не грузим сотрудников без карточек.
-				.ToDictionary<dynamic, decimal>(x => x.TN);
-			logger.Info($"Загружено {EXP_HUM_SKLAD.Count()} EXP_HUM_SKLAD");
+			var PERSONAL_CARD = connection.Query("SELECT c.TN, c.PERSONAL_CARD_ID, " +
+				"t.SURNAME, t.NAME, t.SECNAME, t.E_SEX, t.DUVOL, t.DHIRING, t.E_PROF, t.PARENT_DEPT_CODE, t.ID_DEPT, t.ID_WP " +
+				"FROM SKLAD.PERSONAL_CARD c " +
+				"INNER JOIN KIT.EXP_HUM_SKLAD t ON t.TN = c.TN " +
+				"WHERE c.TN IS NOT NULL ", buffered: false);
 
 			logger.Info("Загружаем RELAT_PERS_PROFF");
 			var RELAT_PERS_PROFF = connection.Query("SELECT * FROM SKLAD.RELAT_PERS_PROFF")
@@ -63,24 +58,20 @@ namespace DownloadNLMK.Loaders
 					skipCards++;
 					continue;
 				}
-				if(!EXP_HUM_SKLAD.ContainsKey(row.TN)) {
-					logger.Error($"Сотрудник с TN={row.TN} не найден.");
-					continue;
-				}
-				var info = EXP_HUM_SKLAD[row.TN];
+				
 				EmployeeCard card = new EmployeeCard();
 				card.PersonnelNumber = row.TN.ToString();
-				card.LastName = info.SURNAME;
-				card.FirstName = info.NAME;
-				card.Patronymic = info.SECNAME;
-				card.Sex = info.E_SEX == 2 ? Sex.F : (info.E_SEX == 1 ? Sex.M : Sex.None); ;
-				card.DismissDate = info.DUVOL;
-				card.HireDate = info.DHIRING;
+				card.LastName = row.SURNAME;
+				card.FirstName = row.NAME;
+				card.Patronymic = row.SECNAME;
+				card.Sex = row.E_SEX == 2 ? Sex.F : (row.E_SEX == 1 ? Sex.M : Sex.None); ;
+				card.DismissDate = row.DUVOL;
+				card.HireDate = row.DHIRING;
 
-				card.ProfessionId = (int?)info.E_PROF;
-				card.SubdivisionId = (int?)info.PARENT_DEPT_CODE;
-				card.DepartmentId = (int?)info.ID_DEPT;
-				card.PostId = (int?)info.ID_WP;
+				card.ProfessionId = (int?)row.E_PROF;
+				card.SubdivisionId = (int?)row.PARENT_DEPT_CODE;
+				card.DepartmentId = (int?)row.ID_DEPT;
+				card.PostId = (int?)row.ID_WP;
 				ByID.Add(row.PERSONAL_CARD_ID, card);
 				Operations[card] = new List<EmployeeOperation>();
 
@@ -103,17 +94,18 @@ namespace DownloadNLMK.Loaders
 			logger.Info($"Обработано {ByID.Count()} личных карточек.");
 			logger.Info($"C профессией {withNorm}.");
 			PERSONAL_CARD = null;
-			EXP_HUM_SKLAD = null;
 			RELAT_PERS_PROFF = null;
 
 			logger.Info("Загружаем PERSONAL_CARDS");
-			var PERSONAL_CARDS = connection.Query("SELECT r.PERSONAL_CARD_ID, r.NORMA_ROW_ID, sms.MAT, sms.DOTP, sms.KOLMOTP " +
+			var PERSONAL_CARDS = connection.Query("SELECT r.PERSONAL_CARD_ID, r.NORMA_ROW_ID, sms.MAT, sms.DOTP, sms.KOLMOTP, sm.TYPE, ADD_MONTHS(sms.DOTP, WEARING_PERIOD) expiry " +
 				"FROM SKLAD.PERSONAL_CARDS r " +
 				"INNER JOIN SKLAD.NORMA_ROW ON SKLAD.NORMA_ROW.NORMA_ROW_ID = r.NORMA_ROW_ID " +
 				"INNER JOIN SKLAD.NORMA norma ON norma.NORMA_ID = SKLAD.NORMA_ROW.NORMA_ID " +
 				"INNER JOIN SKLAD.SMSFORMA sms ON sms.IDFORMS = r.IDFORMS " +
-				"WHERE sysdate BETWEEN norma.DATE_BEGIN AND norma.DATE_END " +
-				"AND r.PERSONAL_CARD_ID IN (SELECT c.PERSONAL_CARD_ID FROM SKLAD.PERSONAL_CARD c WHERE c.TN IN(SELECT TN FROM KIT.EXP_HUM_SKLAD))");
+				"INNER JOIN SKLAD.smforma sm ON sms.idform = sm.idform " +
+				"WHERE sms.KOLMOTP IS NOT NULL AND sysdate <= ADD_MONTHS(sms.DOTP, WEARING_PERIOD) " +
+				"AND r.PERSONAL_CARD_ID IN (SELECT c.PERSONAL_CARD_ID FROM SKLAD.PERSONAL_CARD c WHERE c.TN IN(SELECT TN FROM KIT.EXP_HUM_SKLAD))",
+				buffered: false);
 
 			logger.Info("Обработка строк карточек...");
 			totalRows = PERSONAL_CARDS.Count();
@@ -133,18 +125,22 @@ namespace DownloadNLMK.Loaders
 				NormItem normRow = norms.RowsByID[item.NORMA_ROW_ID];
 				if(normRow.Norm.IsActive && !card.UsedNorms.Contains(normRow.Norm)) {
 					card.UsedNorms.Add(normRow.Norm);
-					withNorm++;
 				}
 				EmployeeCardItem cardItem = card.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normRow);
 				if(cardItem == null) {
 					cardItem = new EmployeeCardItem(card, normRow);
 					card.WorkwearItems.Add(cardItem);
 				}
-			 	if((cardItem.LastIssue ?? default(DateTime)) < item.DOTP) {
+				if(item.TYPE == "2")
+					cardItem.Amount += Convert.ToInt32(item.KOLMOTP);
+				else
+					cardItem.Amount -= Convert.ToInt32(item.KOLMOTP);
+
+				if((cardItem.LastIssue ?? default(DateTime)) < item.DOTP ?? item.TYPE == "2") {
 					cardItem.LastIssue = item.DOTP;
-					cardItem.Amount = Convert.ToInt32(item.KOLMOTP);
-					cardItem.NextIssue = normRow.CalculateExpireDate(cardItem.LastIssue.Value, cardItem.Amount);
 				}
+
+				cardItem.NextIssue = normRow.CalculateExpireDate(cardItem.LastIssue.Value, cardItem.Amount);
 
 				var issueNomenclature = nomenclature.ByID.ContainsKey(item.MAT)
 					? nomenclature.ByID[item.MAT]
@@ -153,20 +149,20 @@ namespace DownloadNLMK.Loaders
 				var operation = new EmployeeOperation {
 					Employee = card,
 					NormItem = normRow,
-					returned =0,
-					issued = cardItem.Amount,
-					auto_writeoff_date = cardItem.NextIssue,
+					returned = item.TYPE == "1" ? Convert.ToInt32(item.KOLMOTP) : 0,
+					issued = item.TYPE == "2" ? Convert.ToInt32(item.KOLMOTP) : 0,
+					auto_writeoff_date = item.TYPE == "2" ? item.expiry : null,
 					ProtectionTools = cardItem.Item,
-					ExpiryByNorm = cardItem.NextIssue,
+					ExpiryByNorm = item.TYPE == "2" ? item.expiry : null,
 					Nomenclature = issueNomenclature,
 					operation_time = item.DOTP,
-					StartOfUse = cardItem.LastIssue,
+					StartOfUse = item.TYPE == "2" ? item.DOTP : null,
 				};
 				Operations[card].Add(operation);
 			}
 			Console.Write("Готово\n");
 			logger.Info($"Пропущено {skipCards} строк карточек");
-			logger.Info($"В итоге {withNorm} карточек с нормами.");
+			logger.Info($"В итоге {ByID.Count(x => x.Value.UsedNorms.Any())} карточек с нормами.");
 			logger.Info($"Карточек без строк: {ByID.Values.Count(x => !x.WorkwearItems.Any())}");
 		}
 

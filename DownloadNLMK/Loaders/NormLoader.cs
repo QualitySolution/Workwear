@@ -28,11 +28,9 @@ namespace DownloadNLMK.Loaders
 		public void Load(OracleConnection connection)
 		{
 			logger.Info("Загружаем NORMA");
-			var dtNORMA = connection.Query("SELECT * FROM SKLAD.NORMA norma WHERE sysdate BETWEEN norma.DATE_BEGIN AND norma.DATE_END");
+			var dtNORMA = connection.Query("SELECT * FROM SKLAD.NORMA norma");
 			logger.Info("Загружаем NORMA_ROW");
-			var dtNORMA_ROW = connection.Query("SELECT * FROM SKLAD.NORMA_ROW " +
-				"INNER JOIN SKLAD.NORMA norma ON norma.NORMA_ID = SKLAD.NORMA_ROW.NORMA_ID " +
-				"WHERE sysdate BETWEEN norma.DATE_BEGIN AND norma.DATE_END");
+			var dtNORMA_ROW = connection.Query("SELECT * FROM SKLAD.NORMA_ROW ", buffered: false);
 
 			logger.Info("Загружаем PROFF_STAFF");
 			var PROFF_STAFF = connection.Query("SELECT * FROM SKLAD.PROFF_STAFF")
