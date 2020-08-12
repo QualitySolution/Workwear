@@ -84,7 +84,16 @@ namespace workwear.Domain.Regulations
 			ObservableAnalog.Remove(Analog);
 		}
 
+		#region Расчетные
+
 		public virtual IEnumerable<ProtectionTools> MatchedProtectionTools => (new[] { this }).Concat(Analogs);
+
+		public virtual string GetAmountAndUnitsText(int amount)
+		{
+			return this.Units?.MakeAmountShortStr(amount) ?? amount.ToString();
+		}
+
+		#endregion
 
 		#endregion
 
