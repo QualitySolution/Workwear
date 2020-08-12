@@ -171,6 +171,8 @@ namespace DownloadNLMK.Loaders
 			if(UsedEmployees.Add(employee)) {
 				foreach(var norm in employee.UsedNorms)
 					norms.MarkAsUsed(norm);
+				foreach(var item in employee.WorkwearItems)
+					norms.MarkAsUsed(item.ActiveNormItem.Norm);
 				foreach(var operation in Operations[employee]) {
 					if(operation.issued > 0)
 						nomenclature.MarkAsUsed(operation.Nomenclature);

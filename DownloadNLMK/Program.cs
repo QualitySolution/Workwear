@@ -54,12 +54,19 @@ namespace DownloadNLMK
 					employees.MarkAsUsed(employee);
 				}
 
+				//Добавляем неактивные нормы тем у кого совсем нет норм.
+				foreach(var employee in employees.ByID.Values.Where(x => !x.UsedNorms.Any() && x.WorkwearItems.Any())) {
+					var norm = employee.WorkwearItems.Select(x => x.ActiveNormItem.Norm).Distinct().OrderByDescending(x => x.DateTo).First();
+					employee.UsedNorms.Add(norm);
+				}
+
 				logger.Info($"Использовано {nomenclatures.UsedNomenclatures.Count} из {nomenclatures.ByID.Count} номенклатур.");
 				logger.Info($"Использовано {protectionTools.UsedProtectionTools.Count} из {protectionTools.ByID.Count} СИЗ-ов.");
 				logger.Info($"Использовано {norms.UsedNorms.Count} из {norms.ByID.Count} норм.");
 				logger.Info($"Использовано {employees.UsedEmployees.Count} из {employees.ByID.Count} сотрудников.");
 
 				logger.Info($"Сотрудников без норм {employees.UsedEmployees.Count(x => x.UsedNorms.Count == 0)}");
+				logger.Info($"Сотрудников с истекшими норами {employees.UsedEmployees.Count(x => x.UsedNorms.Any(n => !n.IsActive))}");
 				logger.Info($"Сотрудников без выдач {employees.UsedEmployees.Count(x => x.WorkwearItems.Count == 0)}");
 #if !NOSAVE
 				nomenclatures.Save();
