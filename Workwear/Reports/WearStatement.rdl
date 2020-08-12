@@ -35,23 +35,17 @@
     <DataSet Name="Data">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT stock_expense_detail.id, stock_expense_detail.nomenclature_id, (stock_expense_detail.quantity - IFNULL(count, 0)) as quantity, 
-nomenclature.name as nomenclature, stock_expense.date, stock_income_detail.life_percent, stock_income.number, item_types.name as type, stock_income_detail.cost, measurement_units.name as unit, 
-nomenclature.growth, nomenclature.size 
+        <CommandText>SELECT stock_expense_detail.id, stock_expense_detail.nomenclature_id, (stock_expense_detail.quantity) as quantity, 
+nomenclature.name as nomenclature, stock_expense.date, operation_warehouse.wear_percent as life_percent, "" as number, item_types.name as type, operation_warehouse.cost, measurement_units.name as unit, 
+operation_warehouse.growth as growth, operation_warehouse.size as size 
 FROM stock_expense_detail 
-LEFT JOIN (SELECT id, SUM(count) as count FROM 
-(SELECT stock_income_detail.stock_expense_detail_id as id, stock_income_detail.quantity as count FROM stock_income_detail WHERE stock_expense_detail_id IS NOT NULL 
-UNION ALL
-SELECT stock_write_off_detail.stock_expense_detail_id as id, stock_write_off_detail.quantity as count FROM stock_write_off_detail WHERE stock_expense_detail_id IS NOT NULL) as table1 
-GROUP BY id) as spent ON spent.id = stock_expense_detail.id 
+LEFT JOIN operation_warehouse ON stock_expense_detail.warehouse_operation_id = operation_warehouse.id
 LEFT JOIN nomenclature ON nomenclature.id = stock_expense_detail.nomenclature_id 
 LEFT JOIN item_types ON nomenclature.type_id = item_types.id 
 LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id 
-LEFT JOIN stock_income_detail ON stock_income_detail.id = stock_expense_detail.stock_income_detail_id 
-LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id 
 LEFT JOIN wear_cards ON stock_expense.wear_card_id = wear_cards.id 
 LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id 
-WHERE wear_cards.object_id = @id AND (spent.count IS NULL OR spent.count &lt; stock_expense_detail.quantity)</CommandText>
+WHERE wear_cards.object_id = @id</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>=Parameters!id</Value>
