@@ -76,18 +76,28 @@ namespace DownloadNLMK.Loaders
 				Operations[card] = new List<EmployeeOperation>();
 
 				//Связываем с нормой
-				if(!RELAT_PERS_PROFF.ContainsKey(row.PERSONAL_CARD_ID)) {
-					//logger.Warn($"Для {card.ShortName} TN={row.TN} связь с профессией ОМТР не найдена.");
-					continue;
+				if(RELAT_PERS_PROFF.ContainsKey(row.PERSONAL_CARD_ID)) {
+					var proff = RELAT_PERS_PROFF[row.PERSONAL_CARD_ID];
+					if(norms.ByProf.ContainsKey(proff.PROFF_ID)) {
+						var norm = norms.ByProf[proff.PROFF_ID];
+						card.UsedNorms.Add(norm);
+						}
 				}
-				var proff = RELAT_PERS_PROFF[row.PERSONAL_CARD_ID];
-				if(!norms.ByProf.ContainsKey(proff.PROFF_ID)) {
-					logger.Warn($"Для {card.ShortName} TN={row.TN} PROFF_ID={proff.PROFF_ID} норма не найдена.");
-					continue;
+				if(card.PostId.HasValue && norms.ByCodeStaff.ContainsKey(card.PostId.Value) 
+					&& !card.UsedNorms.Contains(norms.ByCodeStaff[card.PostId.Value])) {
+					card.UsedNorms.Add(norms.ByCodeStaff[card.PostId.Value]);
 				}
-				var norm = norms.ByProf[proff.PROFF_ID];
-				card.UsedNorms.Add(norm);
-				withNorm++;
+				if(card.UsedNorms.Any()) {
+					if(card.UsedNorms.Count > 1) {
+						logger.Warn($"У TN={card.PersonnelNumber} более одной нормы.");
+						card.UpdateWorkwearItems();
+					}
+					else {
+						foreach(var normItem in card.UsedNorms.First().Items) {
+							card.WorkwearItems.Add(new EmployeeCardItem(card, normItem));
+						}
+					}
+				}
 			}
 			Console.Write("Готово\n");
 			logger.Info($"Пропущено {skipCards} карточек без ТН.");
@@ -111,6 +121,7 @@ namespace DownloadNLMK.Loaders
 			logger.Info("Обработка строк карточек...");
 			totalRows = PERSONAL_CARDS.Count();
 			int cardSkippedRows = 0;
+			int InactiveNormRows = 0;
 			processed = 0;
 			foreach(var item in PERSONAL_CARDS) {
 				processed++;
@@ -124,13 +135,22 @@ namespace DownloadNLMK.Loaders
 
 				EmployeeCard card = ByID[item.PERSONAL_CARD_ID];
 				NormItem normRow = norms.RowsByID[item.NORMA_ROW_ID];
-				if(normRow.Norm.IsActive && !card.UsedNorms.Contains(normRow.Norm)) {
-					card.UsedNorms.Add(normRow.Norm);
-				}
+
 				EmployeeCardItem cardItem = card.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normRow);
+				if(cardItem == null) {
+					cardItem = card.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem.Item == normRow.Item);
+				}
 				if(cardItem == null) {
 					cardItem = new EmployeeCardItem(card, normRow);
 					card.WorkwearItems.Add(cardItem);
+					if(!card.UsedNorms.Contains(normRow.Norm) ) {
+						if(card.UsedNorms.Count == 0) {
+							logger.Debug($"TN={card.PersonnelNumber} норма добавлена по последней выдачи..");
+							card.UsedNorms.Add(normRow.Norm);
+						}
+						else
+							InactiveNormRows++;
+					}
 				}
 				if(item.TYPE == "2")
 					cardItem.Amount += Convert.ToInt32(item.KOLMOTP);
@@ -164,6 +184,8 @@ namespace DownloadNLMK.Loaders
 			Console.Write("Готово\n");
 			logger.Info($"Пропущено {skipCards} строк карточек");
 			logger.Info($"В итоге {ByID.Count(x => x.Value.UsedNorms.Any())} карточек с нормами.");
+			logger.Info($"{InactiveNormRows} строк осталось без активной нормы.");
+			logger.Info($"{ByID.Count(x => (x.Value.UsedNorms.FirstOrDefault()?.Items.Count ?? 0) != x.Value.WorkwearItems.Count )} карточек c отличным от нормы количеством строк.");
 			logger.Info($"Карточек без строк: {ByID.Values.Count(x => !x.WorkwearItems.Any())}");
 		}
 

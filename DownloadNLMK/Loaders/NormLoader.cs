@@ -15,6 +15,7 @@ namespace DownloadNLMK.Loaders
 		private readonly ProtectionToolsLoader protectionTools;
 		public Dictionary<string, Norm> ByID = new Dictionary<string, Norm>();
 		public Dictionary<string, Norm> ByProf = new Dictionary<string, Norm>();
+		public Dictionary<int, Norm> ByCodeStaff = new Dictionary<int, Norm>();
 		public Dictionary<string, NormItem> RowsByID = new Dictionary<string, NormItem>();
 
 		public HashSet<Norm> UsedNorms = new HashSet<Norm>();
@@ -84,6 +85,19 @@ namespace DownloadNLMK.Loaders
 			}
 			Console.Write("Готово\n");
 			logger.Info($"Загружено {normRows} из {dtNORMA_ROW.Count()} строк норм.");
+
+			logger.Info("Загружаем RELAT_STAFF_PROFF");
+			var RELAT_STAFF_PROFF = connection.Query("SELECT * FROM SKLAD.RELAT_STAFF_PROFF ", buffered: true);
+
+			logger.Info("Обработка связей с профессией...");
+			foreach(var item in RELAT_STAFF_PROFF) {
+				if(!ByProf.ContainsKey(item.PROFF_ID)) {
+					logger.Warn($"Для PROFF_ID={item.PROFF_ID} не найдено нормы.");
+					continue;
+				}
+				ByCodeStaff.Add((int)item.CODE_STAFF, ByProf[item.PROFF_ID]);
+				//FIXME Здесь неплохо было бы организовывать связь с профессией в кадровой базе.
+			}
 		}
 
 		public void MarkAsUsed(Norm norm)
