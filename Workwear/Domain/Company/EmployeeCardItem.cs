@@ -119,7 +119,7 @@ namespace workwear.Domain.Company
 		}
 
 		public virtual string Title{
-			get{ return String.Format ("Потребность сотрудника {3} в {0} - {1} на {2}", Item.Name, Item.Units.MakeAmountShortStr (ActiveNormItem.Amount), ActiveNormItem.LifeText, EmployeeCard.ShortName);
+			get{ return String.Format ("Потребность сотрудника {3} в {0} - {1} на {2}", Item.Name, Item.GetAmountAndUnitsText(ActiveNormItem.Amount), ActiveNormItem.LifeText, EmployeeCard.ShortName);
 			}
 		}
 
