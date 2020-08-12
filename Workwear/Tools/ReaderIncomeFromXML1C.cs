@@ -96,17 +96,19 @@ namespace workwear.Tools
 				  }
 
 				Nomenclature nom = null;
-				if(ozm != "") {
-					if(int.TryParse(ozm, out int ozmNum))
-						nom = FindNomenclature(ozmNum);
+				uint? ozmNum = null;
+				if(uint.TryParse(ozm, out uint parsed)) {
+					nom = FindNomenclature(parsed);
+					ozmNum = parsed;
 				}
-				else nom = FindNomenclature(listNomenName[i]);
+				else 
+					nom = FindNomenclature(listNomenName[i]);
 
 				var sizeGrowth = getSizeAndGrowth(listNomenNameFull[i]);
 
 				if(nom == null) {
-					if((ozm != "" && !listDontFindNomenclature.Any(x => x.Ozm.ToString() == ozm)) || (ozm == "" && !listDontFindNomenclature.Any(x => x.Name == listNomenName[i])))
-						listDontFindNomenclature.Add(new LineIncome(listNomenName[i], ozm, int.Parse(listNomenCount[i]), sizeGrowth[0], sizeGrowth[1]));
+					if((ozmNum != null && !listDontFindNomenclature.Any(x => x.Ozm == ozmNum)) || (ozmNum == null && !listDontFindNomenclature.Any(x => x.Name == listNomenName[i])))
+						listDontFindNomenclature.Add(new LineIncome(listNomenName[i], ozmNum, int.Parse(listNomenCount[i]), sizeGrowth[0], sizeGrowth[1]));
 				}
 				else {
 					LineIncome find = ListLineIncomes.FirstOrDefault(x => x.Nomenclature == nom 
@@ -190,7 +192,7 @@ namespace workwear.Tools
 			return mass;
 		}
 
-		public virtual Nomenclature FindNomenclature(int ozm)
+		public virtual Nomenclature FindNomenclature(uint ozm)
 		{
 			Nomenclature nom = UoW.Session.QueryOver<Nomenclature>().Where(x => x.Ozm == ozm).Take(1).SingleOrDefault();
 			return nom;
@@ -222,15 +224,13 @@ namespace workwear.Tools
 			this.Growth = growth;
 		}
 
-		public LineIncome(string name, string ozm, int count, string size, string growth)
+		public LineIncome(string name, uint? ozm, int count, string size, string growth)
 		{
 			this.Name = name;
 			this.Count = count;
 			this.Size = size;
 			this.Growth = growth;
-			if(ozm == "")
-				this.Ozm = null;
-			else this.Ozm = uint.Parse(ozm); 
+			this.Ozm = ozm; 
 		}
 	}
 }
