@@ -46,7 +46,6 @@ namespace DownloadNLMK.Loaders
 
 			logger.Info("Обработка PERSONAL_CARD");
 			int skipCards = 0;
-			int withNorm = 0;
 			int processed = 0;
 			double totalRows = PERSONAL_CARD.Count();
 			foreach(var row in PERSONAL_CARD) {
@@ -102,7 +101,7 @@ namespace DownloadNLMK.Loaders
 			Console.Write("Готово\n");
 			logger.Info($"Пропущено {skipCards} карточек без ТН.");
 			logger.Info($"Обработано {ByID.Count()} личных карточек.");
-			logger.Info($"C профессией {withNorm}.");
+			logger.Info($"C профессией {ByID.Values.Count(x => x.UsedNorms.Any())}.");
 			PERSONAL_CARD = null;
 			RELAT_PERS_PROFF = null;
 
@@ -121,7 +120,6 @@ namespace DownloadNLMK.Loaders
 			logger.Info("Обработка строк карточек...");
 			totalRows = PERSONAL_CARDS.Count();
 			int cardSkippedRows = 0;
-			int InactiveNormRows = 0;
 			processed = 0;
 			foreach(var item in PERSONAL_CARDS) {
 				processed++;
@@ -143,14 +141,6 @@ namespace DownloadNLMK.Loaders
 				if(cardItem == null) {
 					cardItem = new EmployeeCardItem(card, normRow);
 					card.WorkwearItems.Add(cardItem);
-					if(!card.UsedNorms.Contains(normRow.Norm) ) {
-						if(card.UsedNorms.Count == 0) {
-							logger.Debug($"TN={card.PersonnelNumber} норма добавлена по последней выдачи..");
-							card.UsedNorms.Add(normRow.Norm);
-						}
-						else
-							InactiveNormRows++;
-					}
 				}
 				if(item.TYPE == "2")
 					cardItem.Amount += Convert.ToInt32(item.KOLMOTP);
@@ -182,9 +172,49 @@ namespace DownloadNLMK.Loaders
 				Operations[card].Add(operation);
 			}
 			Console.Write("Готово\n");
-			logger.Info($"Пропущено {skipCards} строк карточек");
+
+			logger.Info("Проставляем пропущенные нормы...");
+			int setNormByExpense = 0;
+			int moreOneNorms = 0;
+			int OneActiveNorms = 0;
+			foreach(var employee in ByID.Values.Where(x => !x.UsedNorms.Any() && x.WorkwearItems.Any())) {
+				setNormByExpense++;
+				Norm selectNorm;
+				var employeeNorms = employee.WorkwearItems.Select(x => x.ActiveNormItem.Norm).Distinct().ToList();
+				var employeeActiveNorms = employeeNorms.Where(x => x.IsActive).ToList();
+				if(employeeNorms.Count == 1)
+					selectNorm = employeeNorms.First();
+				else if(employeeActiveNorms.Count == 1) {
+					OneActiveNorms++;
+					selectNorm = employeeActiveNorms.First();
+				}
+				else {
+					moreOneNorms++;
+					selectNorm = employeeNorms.OrderByDescending(x => employee.WorkwearItems.Count(i => i.ActiveNormItem.Norm == x)).First();
+				}
+
+				employee.UsedNorms.Add(selectNorm);
+				foreach(var item in selectNorm.Items) {
+					var found = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == item);
+					if(found == null)
+						found = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem.Item == item.Item);
+					else
+						continue;
+					if(found == null)
+						found = employee.WorkwearItems.FirstOrDefault(x => item.Item.Analogs.Contains(x.ActiveNormItem.Item));
+					if(found == null) {
+						employee.WorkwearItems.Add(new EmployeeCardItem(employee, item));
+					}
+					else
+						found.ActiveNormItem = item;
+				}
+			}
+
+			logger.Info($"В {setNormByExpense} карточках норма установлена по последним выдачам.");
+			logger.Info($"В {OneActiveNorms} карточках в одна активная нормы.");
+			logger.Info($"В {moreOneNorms} карточках в выдачах больше одной нормы.");
 			logger.Info($"В итоге {ByID.Count(x => x.Value.UsedNorms.Any())} карточек с нормами.");
-			logger.Info($"{InactiveNormRows} строк осталось без активной нормы.");
+			logger.Info($"{ByID.Values.Sum(e => e.WorkwearItems.Count(x => !e.UsedNorms.Contains(x.ActiveNormItem.Norm)))} строк осталось без активной нормы.");
 			logger.Info($"{ByID.Count(x => (x.Value.UsedNorms.FirstOrDefault()?.Items.Count ?? 0) != x.Value.WorkwearItems.Count )} карточек c отличным от нормы количеством строк.");
 			logger.Info($"Карточек без строк: {ByID.Values.Count(x => !x.WorkwearItems.Any())}");
 		}
@@ -197,8 +227,8 @@ namespace DownloadNLMK.Loaders
 				foreach(var item in employee.WorkwearItems)
 					norms.MarkAsUsed(item.ActiveNormItem.Norm);
 				foreach(var operation in Operations[employee]) {
-					if(operation.issued > 0)
-						nomenclature.MarkAsUsed(operation.Nomenclature);
+					nomenclature.MarkAsUsed(operation.Nomenclature);
+					norms.MarkAsUsed(operation.NormItem.Norm);
 				}
 			}
 		}

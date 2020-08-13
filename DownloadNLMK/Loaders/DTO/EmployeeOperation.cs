@@ -37,7 +37,7 @@ namespace DownloadNLMK.Loaders.DTO
 
 		//public int? issued_operation_id { get; set; }
 
-		public int norm_item_id => normItem.Id;
+		public int norm_item_id => NormItem.Id;
 
 		#region Установка ссылок
 		
@@ -49,8 +49,7 @@ namespace DownloadNLMK.Loaders.DTO
 		private ProtectionTools protectionTools;
 		public ProtectionTools ProtectionTools { set => protectionTools = value; }
 
-		private NormItem normItem;
-		public NormItem NormItem { set => normItem = value; }
+		public NormItem NormItem { get; set; }
 
 		#endregion
 
