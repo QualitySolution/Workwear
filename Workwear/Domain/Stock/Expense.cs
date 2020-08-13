@@ -146,7 +146,7 @@ namespace workwear.Domain.Stock
 			}
 
 			newItem.EmployeeCardItem = employeeCardItem;
-			newItem.ProtectionTools = employeeCardItem.Item;
+			newItem.ProtectionTools = employeeCardItem.ProtectionTools;
 
 			if(Employee.UnderreceivedItems.Contains(employeeCardItem) && newItem.Nomenclature != null) 
 				newItem.Amount = employeeCardItem.NeededAmount;

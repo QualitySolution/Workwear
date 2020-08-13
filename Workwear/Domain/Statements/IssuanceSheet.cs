@@ -155,7 +155,7 @@ namespace workwear.Domain.Statements
 		{
 			var item = new IssuanceSheetItem {
 				IssuanceSheet = this,
-				ProtectionTools = employeeItem.Item,
+				ProtectionTools = employeeItem.ProtectionTools,
 				Amount = (uint)employeeItem.ActiveNormItem.Amount,
 				Employee = employeeItem.EmployeeCard,
 				Lifetime = employeeItem.ActiveNormItem.PeriodInMonths,

@@ -109,7 +109,7 @@ namespace workwear
 				logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
 				foreach(var itemsGroup in Entity.Items.GroupBy (i => i.Nomenclature.Type.Id))
 				{
-					var wearItem = Entity.EmployeeCard.WorkwearItems.FirstOrDefault (i => i.Item.Id == itemsGroup.Key);
+					var wearItem = Entity.EmployeeCard.WorkwearItems.FirstOrDefault (i => i.ProtectionTools.Id == itemsGroup.Key);
 					if(wearItem == null)
 					{
 						logger.Debug ("Позиции <{0}> не требуется к выдаче, пропускаем...", itemsGroup.First ().Nomenclature.Type.Name);

@@ -15,7 +15,7 @@ namespace workwear.HMap
 			Map (x => x.PeriodCount).Column ("period_count");
 
 			References (x => x.Norm).Column ("norm_id").Not.Nullable ();
-			References (x => x.Item).Column ("protection_tools_id").Not.Nullable ();
+			References (x => x.ProtectionTools).Column ("protection_tools_id").Not.Nullable ();
 		}
 	}
 }

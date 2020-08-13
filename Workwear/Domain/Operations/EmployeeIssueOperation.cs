@@ -264,7 +264,7 @@ namespace workwear.Domain.Operations
 			WarehouseOperation = item.WarehouseOperation;
 
 			if (NormItem == null)
-				NormItem = Employee.WorkwearItems.FirstOrDefault(x => x.Item.MatchedNomenclatures.Contains(Nomenclature))?.ActiveNormItem;
+				NormItem = Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.MatchedNomenclatures.Contains(Nomenclature))?.ActiveNormItem;
 
 			if(NormItem == null) {
 				logger.Warn($"В операции выдачи {Nomenclature.Name} не указана ссылка на норму, перерасчет сроков выдачи невозможен.");
@@ -272,9 +272,9 @@ namespace workwear.Domain.Operations
 			}
 
 			if(ProtectionTools == null)
-				ProtectionTools = NormItem.Item;
+				ProtectionTools = NormItem.ProtectionTools;
 
-			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.Item);
+			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools);
 			RecalculateDatesOfIssueOperation(graph, askUser);
 		}
 
@@ -287,7 +287,7 @@ namespace workwear.Domain.Operations
 
 			if(NormItem == null) {
 				//Пробуем найти норму сами.
-				var cardItem = Employee.WorkwearItems.FirstOrDefault(x => ProtectionTools.IsSame(x.Item));
+				var cardItem = Employee.WorkwearItems.FirstOrDefault(x => ProtectionTools.IsSame(x.ProtectionTools));
 				NormItem = cardItem?.ActiveNormItem;
 			}
 
