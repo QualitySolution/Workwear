@@ -62,11 +62,15 @@ namespace workwear.Tools
 			List<string> listNomenReference = new List<string>();
 			List<string> listNomenCount = new List<string>();
 			List<string> listNomenName = new List<string>();
+			List<string> listNomenNameFull = new List<string>();
 
-			listNomenReference = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:ДанныеНоменклатуры/df:Номенклатура/df:Ссылка");
-			listNomenCount = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:Количество");
-			listNomenName = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:ДанныеНоменклатуры/df:Номенклатура/df:НаименованиеПолное");
-			var listNomenNameFull = getXmlNodeChild(xRoot, nsMgr, "//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка/df:ДанныеНоменклатуры/df:Характеристика/df:НаименованиеПолное");
+			var rows = xRoot.SelectNodes("//df:Body/df:Документ.ПеремещениеТоваров/df:Товары/df:Строка", nsMgr);
+			foreach(XmlElement node in rows) {
+				listNomenReference.Add(node.SelectSingleNode("df:ДанныеНоменклатуры/df:Номенклатура/df:Ссылка", nsMgr)?.InnerXml);
+				listNomenCount.Add(node.SelectSingleNode("df:Количество", nsMgr)?.InnerXml);
+				listNomenName.Add(node.SelectSingleNode("df:ДанныеНоменклатуры/df:Номенклатура/df:НаименованиеПолное", nsMgr)?.InnerXml);
+				listNomenNameFull.Add(node.SelectSingleNode("df:ДанныеНоменклатуры/df:Характеристика/df:НаименованиеПолное", nsMgr)?.InnerXml);
+			}
 
 			if(listNomenReference.Count != listNomenCount.Count)
 				throw new InvalidOperationException("Количество элементов в списках listNomenReference и listNomenCount не равно.");
@@ -103,8 +107,12 @@ namespace workwear.Tools
 				}
 				else 
 					nom = FindNomenclature(listNomenName[i]);
-
-				var sizeGrowth = getSizeAndGrowth(listNomenNameFull[i]);
+					
+				string[] sizeGrowth = new string[2];
+				if(listNomenNameFull[i] == null)
+					sizeGrowth[0] = sizeGrowth[1] = "";
+				else
+					sizeGrowth = getSizeAndGrowth(listNomenNameFull[i]);
 
 				if(nom == null) {
 					if((ozmNum != null && !listDontFindNomenclature.Any(x => x.Ozm == ozmNum)) || (ozmNum == null && !listDontFindNomenclature.Any(x => x.Name == listNomenName[i])))
