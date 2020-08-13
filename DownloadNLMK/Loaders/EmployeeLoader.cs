@@ -136,7 +136,7 @@ namespace DownloadNLMK.Loaders
 
 				EmployeeCardItem cardItem = card.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normRow);
 				if(cardItem == null) {
-					cardItem = card.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem.Item == normRow.Item);
+					cardItem = card.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem.ProtectionTools == normRow.ProtectionTools);
 				}
 				if(cardItem == null) {
 					cardItem = new EmployeeCardItem(card, normRow);
@@ -155,7 +155,7 @@ namespace DownloadNLMK.Loaders
 
 				var issueNomenclature = nomenclature.ByID.ContainsKey(item.MAT)
 					? nomenclature.ByID[item.MAT]
-					: cardItem.Item.MatchedNomenclatures.FirstOrDefault();
+					: cardItem.ProtectionTools.MatchedNomenclatures.FirstOrDefault();
 
 				var operation = new EmployeeOperation {
 					Employee = card,
@@ -163,7 +163,7 @@ namespace DownloadNLMK.Loaders
 					returned = item.TYPE == "1" ? Convert.ToInt32(item.KOLMOTP) : 0,
 					issued = item.TYPE == "2" ? Convert.ToInt32(item.KOLMOTP) : 0,
 					auto_writeoff_date = item.TYPE == "2" ? item.expiry : null,
-					ProtectionTools = cardItem.Item,
+					ProtectionTools = cardItem.ProtectionTools,
 					ExpiryByNorm = item.TYPE == "2" ? item.expiry : null,
 					Nomenclature = issueNomenclature,
 					operation_time = item.DOTP,
@@ -197,11 +197,11 @@ namespace DownloadNLMK.Loaders
 				foreach(var item in selectNorm.Items) {
 					var found = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == item);
 					if(found == null)
-						found = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem.Item == item.Item);
+						found = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem.ProtectionTools == item.ProtectionTools);
 					else
 						continue;
 					if(found == null)
-						found = employee.WorkwearItems.FirstOrDefault(x => item.Item.Analogs.Contains(x.ActiveNormItem.Item));
+						found = employee.WorkwearItems.FirstOrDefault(x => item.ProtectionTools.Analogs.Contains(x.ActiveNormItem.ProtectionTools));
 					if(found == null) {
 						employee.WorkwearItems.Add(new EmployeeCardItem(employee, item));
 					}

@@ -71,7 +71,7 @@ namespace DownloadNLMK.Loaders
 				NormItem normItem = new NormItem();
 				normItem.Amount = Convert.ToInt32(rowNorma.COUNT);
 				normItem.NormPeriod = NormPeriodType.Month;
-				normItem.Item = protectionTools.ByID[rowNorma.PROTECTION_ID];
+				normItem.ProtectionTools = protectionTools.ByID[rowNorma.PROTECTION_ID];
 				normItem.PeriodCount = Convert.ToInt32(rowNorma.WEARING_PERIOD);
 				normItem.Norm = ByID[rowNorma.NORMA_ID];
 				ByID[rowNorma.NORMA_ID].Items.Add(normItem);
@@ -79,7 +79,7 @@ namespace DownloadNLMK.Loaders
 				normRows++;
 
 				if(normItem.PeriodCount > 127) {
-					logger.Warn($"В норме {normItem.Norm.Name} - {normItem.Item.Name} указано {normItem.PeriodCount} что больше максимального значения поля. Период сокращне до 120.");
+					logger.Warn($"В норме {normItem.Norm.Name} - {normItem.ProtectionTools.Name} указано {normItem.PeriodCount} что больше максимального значения поля. Период сокращне до 120.");
 					normItem.PeriodCount = 120;
 				}
 			}
@@ -104,7 +104,7 @@ namespace DownloadNLMK.Loaders
 		{
 			if(UsedNorms.Add(norm)) {
 				foreach(var item in norm.Items)
-					protectionTools.MarkAsUsed(item.Item);
+					protectionTools.MarkAsUsed(item.ProtectionTools);
 			}
 		}
 
