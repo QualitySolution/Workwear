@@ -24,6 +24,9 @@ namespace workwear.Measurements
 		};
 
 		public static readonly WearGrowth[] MenGrowth = new WearGrowth[] {
+			new WearGrowth("146", 143, 149),
+			new WearGrowth("146-152", 155, 167, SizeUse.СlothesOnly, "146", "152"),
+			new WearGrowth("152", 149, 155),
 			new WearGrowth("155-166", 155, 166, SizeUse.СlothesOnly, "158"),
 			new WearGrowth("158", 155, 161),
 			new WearGrowth("158-164", 155, 167, SizeUse.СlothesOnly, "158", "164"),
@@ -44,6 +47,8 @@ namespace workwear.Measurements
 		};
 
 		public static readonly WearGrowth[] UniversalGrowth = new WearGrowth[] {
+			new WearGrowth("146", 143, 149),
+			new WearGrowth("146-152", 155, 167, SizeUse.СlothesOnly, "146", "152"),
 			new WearGrowth("152", 149, 155),
 			new WearGrowth("155-166", 155, 166, SizeUse.СlothesOnly, "158"),
 			new WearGrowth("158", 155, 161),
@@ -65,6 +70,9 @@ namespace workwear.Measurements
 		};
 
 		public static readonly WearSize[] MenWear = {
+			new WearSize(new []{ "40", null }),
+			new WearSize(new []{ "40-42", null }, SizeUse.СlothesOnly, new []{ "40", null }, new []{ "42", null }),
+			new WearSize(new []{ "42", null }),
 			new WearSize(new []{ "44", "XXS" }),
 			new WearSize(new []{ "44-46", null }, SizeUse.СlothesOnly, new []{ "44", "XXS" }, new []{ "46", "XS" }),
 			new WearSize(new []{ "46", "XS" }),
@@ -78,9 +86,11 @@ namespace workwear.Measurements
 			new WearSize(new []{ "56", "XXL" }),
 			new WearSize(new []{ "56-58", null }, SizeUse.СlothesOnly, new []{ "56", "XXL" }, new []{ "58", "XXXL" }),
 			new WearSize(new []{ "58", "XXXL" }),
+			new WearSize(new []{ "58-60", null }, SizeUse.СlothesOnly, new []{ "58", "XXXL" }, new []{ "60", "XXXL" }),
 			new WearSize(new []{ "60", "XXXL" }),
 			new WearSize(new []{ "60-62", null }, SizeUse.СlothesOnly, new []{ "60", "XXXL" }, new []{ "62", "XXXL" }),
 			new WearSize(new []{ "62", "XXXL" }),
+			new WearSize(new []{ "62-64", null }, SizeUse.СlothesOnly, new []{ "62", "XXXL" }, new []{ "64", "4XL" }),
 			new WearSize(new []{ "64", "4XL" }),
 			new WearSize(new []{ "64-66", null }, SizeUse.СlothesOnly, new []{ "64", "4XL" }, new []{ "66", "4XL" }),
 			new WearSize(new []{ "66", "4XL" }),
@@ -90,6 +100,10 @@ namespace workwear.Measurements
 			new WearSize(new []{ "72", null }),
 			new WearSize(new []{ "72-74", null }, SizeUse.СlothesOnly, new []{ "72", null }, new []{ "74", null }),
 			new WearSize(new []{ "74", null }),
+			new WearSize(new []{ "74-76", null }, SizeUse.СlothesOnly, new []{ "74", null }, new []{ "76", null }),
+			new WearSize(new []{ "76", null }),
+			new WearSize(new []{ "76-78", null }, SizeUse.СlothesOnly, new []{ "76", null }, new []{ "78", null }),
+			new WearSize(new []{ "78", null }),
 			new WearSize(new []{ "80", null }),
 			new WearSize(new []{ "80-82", null }, SizeUse.СlothesOnly, new []{ "80", null }, new []{ "82", null }),
 			new WearSize(new []{ "82", null }),
@@ -113,9 +127,11 @@ namespace workwear.Measurements
 			new WearSize(new []{ "56", "XXL" }),
 			new WearSize(new []{ "56-58", null }, SizeUse.СlothesOnly, new []{ "56", "XXL" }, new []{ "58", "XXXL" }),
 			new WearSize(new []{ "58", "XXXL" }),
+			new WearSize(new []{ "58-60", null }, SizeUse.СlothesOnly, new []{ "58", "XXXL" }, new []{ "60", "4XL" }),
 			new WearSize(new []{ "60", "4XL" }),
 			new WearSize(new []{ "60-62", null }, SizeUse.СlothesOnly, new []{ "60", "4XL" }, new []{ "62", "4XL" }),
 			new WearSize(new []{ "62", "4XL" }),
+			new WearSize(new []{ "62-64", null }, SizeUse.СlothesOnly, new []{ "62", "4XL" }, new []{ "64", "4XL" }),
 			new WearSize(new []{ "64", "4XL" }),
 			new WearSize(new []{ "64-66", null }, SizeUse.СlothesOnly, new []{ "64", "4XL" }, new []{ "66", "5XL" }),
 			new WearSize(new []{ "66", "5XL" }),
@@ -142,9 +158,11 @@ namespace workwear.Measurements
 			new WearSize(new []{ "56", "XXL" }),
 			new WearSize(new []{ "56-58", null }, SizeUse.СlothesOnly, new []{ "56", "XXL" }, new []{ "58", "XXXL" }),
 			new WearSize(new []{ "58", "XXXL" }),
+			new WearSize(new []{ "58-60", null }, SizeUse.СlothesOnly, new []{ "58", "XXXL" }, new []{ "60", "4XL" }),
 			new WearSize(new []{ "60", "4XL" }),
 			new WearSize(new []{ "60-62", null }, SizeUse.СlothesOnly, new []{ "60", "4XL" }, new []{ "62", "4XL" }),
 			new WearSize(new []{ "62", "4XL" }),
+			new WearSize(new []{ "62-64", null }, SizeUse.СlothesOnly, new []{ "62", "4XL" }, new []{ "64", "4XL" }),
 			new WearSize(new []{ "64", "4XL" }),
 			new WearSize(new []{ "64-66", null }, SizeUse.СlothesOnly, new []{ "64", "4XL" }, new []{ "66", "5XL" }),
 			new WearSize(new []{ "66", "5XL" }),
@@ -154,6 +172,10 @@ namespace workwear.Measurements
 			new WearSize(new []{ "72", null }),
 			new WearSize(new []{ "72-74", null }, SizeUse.СlothesOnly, new []{ "72", null }, new []{ "74", null }),
 			new WearSize(new []{ "74", null }),
+			new WearSize(new []{ "74-76", null }, SizeUse.СlothesOnly, new []{ "74", null }, new []{ "76", null }),
+			new WearSize(new []{ "76", null }),
+			new WearSize(new []{ "76-78", null }, SizeUse.СlothesOnly, new []{ "76", null }, new []{ "78", null }),
+			new WearSize(new []{ "78", null }),
 			new WearSize(new []{ "80", null }),
 			new WearSize(new []{ "80-82", null }, SizeUse.СlothesOnly, new []{ "80", null }, new []{ "82", null }),
 			new WearSize(new []{ "82", null }),
@@ -182,6 +204,8 @@ namespace workwear.Measurements
 			new WearSize(new []{ "46-47", null }, SizeUse.СlothesOnly, new []{ "46", "46" }, new []{ "46,5", "47" }, new []{ "47", "47,5" }),
 			new WearSize(new []{ "47", "47,5" }),
 			new WearSize(new []{ "48", "48" }),
+			new WearSize(new []{ "49", null }),
+			new WearSize(new []{ "50", null }),
 		};
 
 		public static readonly WearSize[] WomenShoes = {
@@ -230,6 +254,8 @@ namespace workwear.Measurements
 			new WearSize(new []{ "46-47", null }, SizeUse.СlothesOnly, new []{ "46", "46" }, new []{ "47", "47,5" }),
 			new WearSize(new []{ "47", "47,5" }),
 			new WearSize(new []{ "48", "48" }),
+			new WearSize(new []{ "49", null }),
+			new WearSize(new []{ "50", null }),
 		};
 
 		public static readonly WearSize[] Headdress = {
