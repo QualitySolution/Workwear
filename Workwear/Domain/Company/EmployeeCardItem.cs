@@ -34,12 +34,12 @@ namespace workwear.Domain.Company
 			set { SetField (ref employeeCard, value, () => EmployeeCard); }
 		}
 
-		ProtectionTools item;
+		ProtectionTools protectionTools;
 
 		[Display (Name = "Позиция")]
-		public virtual ProtectionTools Item {
-			get { return item; }
-			set { SetField (ref item, value, () => Item); }
+		public virtual ProtectionTools ProtectionTools {
+			get { return protectionTools; }
+			set { SetField (ref protectionTools, value, () => ProtectionTools); }
 		}
 
 		NormItem activeNormItem;
@@ -119,7 +119,7 @@ namespace workwear.Domain.Company
 		}
 
 		public virtual string Title{
-			get{ return String.Format ("Потребность сотрудника {3} в {0} - {1} на {2}", Item.Name, Item.GetAmountAndUnitsText(ActiveNormItem.Amount), ActiveNormItem.LifeText, EmployeeCard.ShortName);
+			get{ return String.Format ("Потребность сотрудника {3} в {0} - {1} на {2}", ProtectionTools.Name, ProtectionTools.GetAmountAndUnitsText(ActiveNormItem.Amount), ActiveNormItem.LifeText, EmployeeCard.ShortName);
 			}
 		}
 
@@ -128,7 +128,7 @@ namespace workwear.Domain.Company
 				if(InStock == null)
 					return StockStateInfo.NotLoaded;
 
-				if(!Item.MatchedNomenclatures.Any())
+				if(!ProtectionTools.MatchedNomenclatures.Any())
 					return StockStateInfo.UnknownNomenclature;
 
 				if(InStock.Any(x => x.Amount >= NeededAmount))
@@ -142,7 +142,7 @@ namespace workwear.Domain.Company
 		}
 
 		public virtual IEnumerable<StockBalanceDTO> BestChoiceInStock => InStock
-			.OrderBy(x => Item.MatchedNomenclatures.TakeWhile(n => !n.IsSame(x.Nomenclature)).Count())
+			.OrderBy(x => ProtectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(x.Nomenclature)).Count())
 			.ThenBy(x => x.WearPercent)
 			.ThenByDescending(x => x.Amount);
 
@@ -157,7 +157,7 @@ namespace workwear.Domain.Company
 					return String.Empty;
 
 				var first = BestChoiceInStock.First();
-				var text = first.StockPosition.Title + " - " + Item?.Units?.MakeAmountShortStr(first.Amount) ?? first.Amount.ToString();
+				var text = first.StockPosition.Title + " - " + ProtectionTools?.Units?.MakeAmountShortStr(first.Amount) ?? first.Amount.ToString();
 				if(InStock.Count > 1)
 					text += NumberToTextRus.FormatCase(InStock.Count - 1, " (еще {0} вариант)", " (еще {0} варианта)", " (еще {0} вариантов)");
 				return text;
@@ -167,9 +167,9 @@ namespace workwear.Domain.Company
 
 		#region Расчетное для View
 
-		public virtual string AmountByNormText => Item?.Units?.MakeAmountShortStr(ActiveNormItem?.Amount ?? 0) ?? ActiveNormItem?.Amount.ToString();
-		public virtual string InStockText => Item?.Units?.MakeAmountShortStr(InStock?.Sum(x => x.Amount) ?? 0) ?? InStock?.Sum(x => x.Amount).ToString();
-		public virtual string AmountText => Item?.Units?.MakeAmountShortStr(Amount) ?? Amount.ToString();
+		public virtual string AmountByNormText => ProtectionTools?.Units?.MakeAmountShortStr(ActiveNormItem?.Amount ?? 0) ?? ActiveNormItem?.Amount.ToString();
+		public virtual string InStockText => ProtectionTools?.Units?.MakeAmountShortStr(InStock?.Sum(x => x.Amount) ?? 0) ?? InStock?.Sum(x => x.Amount).ToString();
+		public virtual string AmountText => ProtectionTools?.Units?.MakeAmountShortStr(Amount) ?? Amount.ToString();
 		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;
 
@@ -183,13 +183,13 @@ namespace workwear.Domain.Company
 		{
 			EmployeeCard = employee;
 			ActiveNormItem = normItem;
-			Item = normItem.Item;
+			ProtectionTools = normItem.ProtectionTools;
 			NextIssue = Created = DateTime.Today;
 		}
 
 		public virtual bool MatcheStockPosition(StockPosition stockPosition)
 		{
-			if(!Item.MatchedNomenclatures.Any(n => n.Id == stockPosition.Nomenclature.Id))
+			if(!ProtectionTools.MatchedNomenclatures.Any(n => n.Id == stockPosition.Nomenclature.Id))
 				return false;
 
 			var wearCategory = stockPosition.Nomenclature.Type.WearCategory;
@@ -199,7 +199,7 @@ namespace workwear.Domain.Company
 
 			var employeeSize = EmployeeCard.GetSize(wearCategory.Value);
 			if(employeeSize == null || String.IsNullOrEmpty(employeeSize.Size) || String.IsNullOrEmpty(employeeSize.StandardCode)) {
-				logger.Warn("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", Item.Name);
+				logger.Warn("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", ProtectionTools.Name);
 				return false;
 			}
 
@@ -277,7 +277,7 @@ namespace workwear.Domain.Company
 
 		protected internal virtual IssueGraph GetIssueGraphForItem(IUnitOfWork uow)
 		{
-			return IssueGraph.MakeIssueGraph(uow, EmployeeCard, Item);
+			return IssueGraph.MakeIssueGraph(uow, EmployeeCard, ProtectionTools);
 		}
 
 		#endregion

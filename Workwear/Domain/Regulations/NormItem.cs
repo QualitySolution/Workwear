@@ -22,12 +22,12 @@ namespace workwear.Domain.Regulations
 			set { SetField (ref norm, value, () => Norm); }
 		}
 
-		ProtectionTools item;
+		ProtectionTools protectionTools;
 
 		[Display (Name = "Позиция")]
-		public virtual ProtectionTools Item {
-			get { return item; }
-			set { SetField (ref item, value, () => Item); }
+		public virtual ProtectionTools ProtectionTools {
+			get { return protectionTools; }
+			set { SetField (ref protectionTools, value); }
 		}
 
 		int amount;
@@ -130,7 +130,7 @@ namespace workwear.Domain.Regulations
 		}
 
 		public virtual string Title{
-			get{ return String.Format ("{0} в количестве {1} на {2}", Item?.Name, Item?.Units?.MakeAmountShortStr (Amount), LifeText);
+			get{ return String.Format ("{0} в количестве {1} на {2}", ProtectionTools?.Name, ProtectionTools?.Units?.MakeAmountShortStr (Amount), LifeText);
 			}
 		}
 

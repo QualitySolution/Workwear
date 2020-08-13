@@ -458,7 +458,7 @@ namespace workwear.Domain.Company
 			{
 				foreach (var normItem in norm.Items)
 				{
-					var currentItem = WorkwearItems.FirstOrDefault (i => i.Item == normItem.Item);
+					var currentItem = WorkwearItems.FirstOrDefault (i => i.ProtectionTools == normItem.ProtectionTools);
 					if (currentItem == null)
 					{
 						//FIXME Возможно нужно проверять если что-то подходящее уже выдавалось то пересчитывать.
@@ -502,7 +502,7 @@ namespace workwear.Domain.Company
 		public virtual void UpdateNextIssue(params ItemsType[] itemsTypes)
 		{
 			foreach(var itemsGroup in itemsTypes.GroupBy(i => i.Id)) {
-				var wearItem = WorkwearItems.FirstOrDefault(i => i.Item.Id == itemsGroup.Key);
+				var wearItem = WorkwearItems.FirstOrDefault(i => i.ProtectionTools.Id == itemsGroup.Key);
 				if(wearItem == null) {
 					logger.Debug("Позиции <{0}> не требуется к выдаче, пропускаем...", itemsGroup.First().Name);
 					continue;
@@ -525,12 +525,12 @@ namespace workwear.Domain.Company
 			foreach(var recive in receiveds.OrderBy(x => x.NormRowId == null))
 			{
 
-				var matched = WorkwearItems.Where(x => x.Item.MatchedProtectionTools.Any(p => p.Id == recive.ProtectionToolsId)).ToList();
+				var matched = WorkwearItems.Where(x => x.ProtectionTools.MatchedProtectionTools.Any(p => p.Id == recive.ProtectionToolsId)).ToList();
 				EmployeeCardItem item = WorkwearItems.FirstOrDefault(x => x.ActiveNormItem.Id == recive.NormRowId);
 				if(item == null)
-					item = WorkwearItems.FirstOrDefault(x => x.Item != null && x.Item.Id == recive.ProtectionToolsId && x.Amount < x.NeededAmount);
+					item = WorkwearItems.FirstOrDefault(x => x.ProtectionTools != null && x.ProtectionTools.Id == recive.ProtectionToolsId && x.Amount < x.NeededAmount);
 				if(item == null)
-					item = WorkwearItems.FirstOrDefault(x => x.Item != null && x.Item.Id == recive.ProtectionToolsId);
+					item = WorkwearItems.FirstOrDefault(x => x.ProtectionTools != null && x.ProtectionTools.Id == recive.ProtectionToolsId);
 				if(item == null)
 					continue;
 
@@ -544,7 +544,7 @@ namespace workwear.Domain.Company
 		{
 			var actualItems = onlyUnderreceived ? UnderreceivedItems : WorkwearItems;
 			
-			var allNomenclatures = actualItems.SelectMany(x => x.Item.MatchedNomenclatures).Distinct().ToList();
+			var allNomenclatures = actualItems.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
 			var stockRepo = new StockRepository();
 			var stock = stockRepo.StockBalances (uow, warehouse, allNomenclatures, onTime);
 			foreach(var item in actualItems)
@@ -576,7 +576,7 @@ namespace workwear.Domain.Company
 					operation.RecalculateDatesOfIssueOperation(graph, askUser);
 					uow.Save(operation);
 				}
-				var item = WorkwearItems.FirstOrDefault(x => x.Item.IsSame(typeGroup.Key));
+				var item = WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(typeGroup.Key));
 				if(item != null) {
 					item.UpdateNextIssue(uow);
 					uow.Save(item);

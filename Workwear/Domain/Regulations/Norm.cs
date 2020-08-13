@@ -166,7 +166,7 @@ namespace workwear.Domain.Regulations
 
 		public virtual NormItem AddItem(ProtectionTools tools)
 		{
-			if(Items.Any (i => DomainHelper.EqualDomainObjects (i.Item, tools)))
+			if(Items.Any (i => DomainHelper.EqualDomainObjects (i.ProtectionTools, tools)))
 			{
 				logger.Warn ("Такое наименование уже добавлено. Пропускаем...");
 				return null;
@@ -174,7 +174,7 @@ namespace workwear.Domain.Regulations
 
 			var item = new NormItem () {
 				Norm = this,
-				Item = tools,
+				ProtectionTools = tools,
 				Amount = 1,
 				NormPeriod = NormPeriodType.Year,
 				PeriodCount = 1

@@ -112,7 +112,7 @@ namespace workwear.ViewModels.Regulations
 					List<string> operations = new List<string>();
 					foreach(var emp in worksEmployees) {
 						bool canSwitch = emp.UsedNorms.SelectMany(x => x.Items)
-							.Any(i => i.Id != toRemove.Id && i.Item.Id == toRemove.Item.Id);
+							.Any(i => i.Id != toRemove.Id && i.ProtectionTools.Id == toRemove.ProtectionTools.Id);
 						if(canSwitch)
 							operations.Add(String.Format("* У сотрудника {0} требование спецодежды будет пререключено на другую норму.", emp.ShortName));
 						else

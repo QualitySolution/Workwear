@@ -77,7 +77,7 @@ namespace workwear
 					var employee = employeeGroup.Key;
 					foreach(var itemsGroup in employeeGroup.GroupBy (i => i.Nomenclature.Type.Id))
 					{
-						var wearItem = employee.WorkwearItems.FirstOrDefault (i => i.Item.Id == itemsGroup.Key);
+						var wearItem = employee.WorkwearItems.FirstOrDefault (i => i.ProtectionTools.Id == itemsGroup.Key);
 						if(wearItem == null)
 						{
 							logger.Debug ("Позиции <{0}> не требуется к выдаче, пропускаем...", itemsGroup.First ().Nomenclature.Type.Name);
