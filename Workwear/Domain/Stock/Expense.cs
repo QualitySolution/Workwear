@@ -200,14 +200,17 @@ namespace workwear.Domain.Stock
 			IssuanceSheet.Date = Date;
 			IssuanceSheet.Subdivision = Employee.Subdivision;
 
-			foreach(var item in Items) {
-				if(item.IssuanceSheetItem == null) 
+			foreach(var item in Items.ToList()) {
+				if(item.IssuanceSheetItem == null && item.Amount > 0) 
 					item.IssuanceSheetItem = IssuanceSheet.AddItem(item);
-				item.IssuanceSheetItem.UpdateFromExpense();
+
+				if(item.IssuanceSheetItem != null)
+					item.IssuanceSheetItem.UpdateFromExpense();
+
+				if(item.IssuanceSheetItem != null && item.Amount == 0)
+					IssuanceSheet.Items.Remove(item.IssuanceSheetItem);
 			}
 		}
-
-
 
 		#endregion
 	}
