@@ -57,7 +57,7 @@ namespace DownloadNLMK.Loaders
 			AddType("ВАЛЕНКИ", СlothesType.WinterShoes, pair, new string[] { "ВАЛЕНКИ" });
 			AddType("ГАЛОШИ", СlothesType.WinterShoes, pair, new string[] { "ГАЛОШИ" });
 			AddType("ПЕРЧАТКИ", СlothesType.Gloves, pair, new string[] { "ПЕРЧАТКИ", "КРАГИ" });
-			AddType("РУКАВИЦЫ", СlothesType.Mittens, pair, new string[] { "РУКАВИЦЫ" });
+			AddType("РУКАВИЦЫ", СlothesType.Mittens, pair, new string[] { "РУКАВИЦЫ", "Вачеги" });
 			AddType("АКСЕСУАРЫ", СlothesType.PPE, sht, new string[] { "ШАРФ", "ГАЛСТУК", "ШЕВРОН", "РЕМЕНЬ", "ЗНАЧОК", "Кокарда", "БЕЙДЖ", "ПОЯС", "Наколка" });
 			AddType("ВОДОЛАЗНЫЙ ИНВЕНТАРЬ", СlothesType.PPE, sht, new string[] { "ВОДОЛАЗНАЯ", "ПОДВОДНАЯ", "ГРУЗ", "ВОДОЛАЗНЫЙ", "ШЛАНГ", "СПИНКА", "БАЛЛОН" });
 			AddType("НОСКИ", СlothesType.PPE, pair, new string[] { "НОСКИ" });
