@@ -647,7 +647,7 @@
               <widget class="Gtk.Label" id="label7">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Код:</property>
+                <property name="LabelProp" translatable="yes">Номенклатурный номер:</property>
               </widget>
               <packing>
                 <property name="AutoSize">True</property>
@@ -797,15 +797,16 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelClothesSex">
+              <widget class="Gamma.GtkWidgets.yEntry" id="yentryNumber">
                 <property name="MemberName" />
-                <property name="Visible">False</property>
-                <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">ylabel1</property>
+                <property name="CanFocus">True</property>
+                <property name="IsEditable">True</property>
+                <property name="MaxLength">240</property>
+                <property name="InvisibleChar">●</property>
               </widget>
               <packing>
-                <property name="TopAttach">3</property>
-                <property name="BottomAttach">4</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -818,13 +819,15 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelId">
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelClothesSex">
                 <property name="MemberName" />
+                <property name="Visible">False</property>
+                <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">ylabel1</property>
               </widget>
               <packing>
-                <property name="LeftAttach">1</property>
-                <property name="RightAttach">2</property>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -5317,7 +5320,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Dialogs.Regulations.NormDlg" design-size="699 435">
+  <widget class="Gtk.Bin" id="workwear.Dialogs.Regulations.NormDlg" design-size="699 471">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
