@@ -602,6 +602,7 @@
     <None Include="Reports\Statements\IssuanceSheet.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Reports\Statements\IssuanceSheetVertical.rdl" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

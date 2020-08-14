@@ -24,7 +24,7 @@ namespace workwear
 
 		private global::Gtk.Button buttonIssuanceSheetOpen;
 
-		private global::Gtk.Button buttonIssuanceSheetPrint;
+		private global::QSOrmProject.EnumMenuButton enumPrint;
 
 		private global::Gtk.Label label2;
 
@@ -166,16 +166,18 @@ namespace workwear
 			w10.Expand = false;
 			w10.Fill = false;
 			// Container child hboxIssuanceSheet.Gtk.Box+BoxChild
-			this.buttonIssuanceSheetPrint = new global::Gtk.Button();
-			this.buttonIssuanceSheetPrint.CanFocus = true;
-			this.buttonIssuanceSheetPrint.Name = "buttonIssuanceSheetPrint";
-			this.buttonIssuanceSheetPrint.UseUnderline = true;
-			this.buttonIssuanceSheetPrint.Label = global::Mono.Unix.Catalog.GetString("Печать");
+			this.enumPrint = new global::QSOrmProject.EnumMenuButton();
+			this.enumPrint.CanFocus = true;
+			this.enumPrint.Name = "enumPrint";
+			this.enumPrint.UseUnderline = true;
+			this.enumPrint.UseMarkup = false;
+			this.enumPrint.LabelXAlign = 0F;
+			this.enumPrint.Label = global::Mono.Unix.Catalog.GetString("Печать");
 			global::Gtk.Image w11 = new global::Gtk.Image();
 			w11.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-print", global::Gtk.IconSize.Menu);
-			this.buttonIssuanceSheetPrint.Image = w11;
-			this.hboxIssuanceSheet.Add(this.buttonIssuanceSheetPrint);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hboxIssuanceSheet[this.buttonIssuanceSheetPrint]));
+			this.enumPrint.Image = w11;
+			this.hboxIssuanceSheet.Add(this.enumPrint);
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hboxIssuanceSheet[this.enumPrint]));
 			w12.Position = 2;
 			w12.Expand = false;
 			w12.Fill = false;
@@ -413,7 +415,7 @@ namespace workwear
 			this.ycomboOperation.Changed += new global::System.EventHandler(this.OnYcomboOperationChanged);
 			this.buttonIssuanceSheetCreate.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetCreateClicked);
 			this.buttonIssuanceSheetOpen.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetOpenClicked);
-			this.buttonIssuanceSheetPrint.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetPrintClicked);
+			this.enumPrint.EnumItemClicked += new global::System.EventHandler<QSOrmProject.EnumItemClickedEventArgs>(this.OnEnumPrintEnumItemClicked);
 		}
 	}
 }
