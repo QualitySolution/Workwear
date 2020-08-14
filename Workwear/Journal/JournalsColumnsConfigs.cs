@@ -139,6 +139,7 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<NomenclatureJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("ОЗМ").AddTextRenderer(node => $"{node.Ozm}").SearchHighlight()
 					.AddColumn("Тип").AddTextRenderer(node => node.ItemType)
 					.Finish()
 			);
