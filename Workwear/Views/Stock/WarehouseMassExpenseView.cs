@@ -83,6 +83,10 @@ namespace workwear.Views.Stock
 				.AddComboRenderer(x => x.GlovesSize)
 				.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.GlovesSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()))
 				.AddSetter((c, n) => c.Editable = !String.IsNullOrWhiteSpace(n.GlovesSizeStd))
+			.AddColumn("Размер рукавиц").Tag(СlothesType.Mittens)
+				.AddComboRenderer(x => x.MittensSize)
+				.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.MittensSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()))
+				.AddSetter((c, n) => c.Editable = !String.IsNullOrWhiteSpace(n.MittensSizeStd))
 			.AddColumn(String.Empty)
 			.Finish();
 

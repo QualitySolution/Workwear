@@ -74,6 +74,8 @@ namespace workwear.Views.Company
 
 		private global::Gtk.Label label24;
 
+		private global::Gtk.Label label25;
+
 		private global::Gtk.Label label26;
 
 		private global::Gtk.Label label27;
@@ -103,6 +105,8 @@ namespace workwear.Views.Company
 		private global::Gamma.GtkWidgets.yComboBox ycomboHeaddressSize;
 
 		private global::Gamma.Widgets.yEnumComboBox ycomboHeaddressStd;
+
+		private global::Gamma.GtkWidgets.yComboBox ycomboMittensSize;
 
 		private global::Gamma.GtkWidgets.yComboBox ycomboShoesSize;
 
@@ -588,6 +592,19 @@ namespace workwear.Views.Company
 			w35.XOptions = ((global::Gtk.AttachOptions)(4));
 			w35.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
+			this.label25 = new global::Gtk.Label();
+			this.label25.Name = "label25";
+			this.label25.Xalign = 1F;
+			this.label25.LabelProp = global::Mono.Unix.Catalog.GetString("Размер рукавиц:");
+			this.table1.Add(this.label25);
+			global::Gtk.Table.TableChild w38 = ((global::Gtk.Table.TableChild)(this.table1[this.label25]));
+			w38.TopAttach = ((uint)(8));
+			w38.BottomAttach = ((uint)(9));
+			w38.LeftAttach = ((uint)(4));
+			w38.RightAttach = ((uint)(5));
+			w38.XOptions = ((global::Gtk.AttachOptions)(4));
+			w38.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.label26 = new global::Gtk.Label();
 			this.label26.Name = "label26";
 			this.label26.Xalign = 1F;
@@ -776,6 +793,17 @@ namespace workwear.Views.Company
 			w50.RightAttach = ((uint)(6));
 			w50.XOptions = ((global::Gtk.AttachOptions)(4));
 			w50.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.ycomboMittensSize = new global::Gamma.GtkWidgets.yComboBox();
+			this.ycomboMittensSize.Name = "ycomboMittensSize";
+			this.table1.Add(this.ycomboMittensSize);
+			global::Gtk.Table.TableChild w53 = ((global::Gtk.Table.TableChild)(this.table1[this.ycomboMittensSize]));
+			w53.TopAttach = ((uint)(8));
+			w53.BottomAttach = ((uint)(9));
+			w53.LeftAttach = ((uint)(6));
+			w53.RightAttach = ((uint)(7));
+			w53.XOptions = ((global::Gtk.AttachOptions)(4));
+			w53.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ycomboShoesSize = new global::Gamma.GtkWidgets.yComboBox();
 			this.ycomboShoesSize.Name = "ycomboShoesSize";

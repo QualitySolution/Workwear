@@ -41,6 +41,7 @@ namespace workwear.HibernateMapping.Company
 			Map (x => x.HeaddressSizeStd).Column ("size_headdress_std");
 			Map (x => x.GlovesSize).Column ("size_gloves");
 			Map (x => x.GlovesSizeStd).Column ("size_gloves_std");
+			Map(x => x.MittensSize).Column("size_mittens");
 
 			//References (x => x.Subdivision).Column ("object_id");
 			//References(x => x.Department).Column("department_id");

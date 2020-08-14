@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
@@ -298,6 +298,16 @@ namespace workwear.Domain.Company
 			set	{ SetField (ref glovesSize, value, () => GlovesSize); }
 		}
 
+		public virtual string MittensSizeStd => SizeHelper.GetSizeStdCode(SizeStandartMittens.Rus);
+
+		string mittensSize;
+
+		[Display(Name = "Размер рукавиц")]
+		public virtual string MittensSize {
+			get { return mittensSize; }
+			set { SetField(ref mittensSize, value); }
+		}
+
 		private IList<Norm> usedNorms = new List<Norm>();
 
 		[Display (Name = "Примененные нормы")]
@@ -408,6 +418,8 @@ namespace workwear.Domain.Company
 					return new SizePair(WinterShoesSizeStd, WinterShoesSize);
 				case СlothesType.Gloves:
 					return new SizePair(GlovesSizeStd, GlovesSize);
+				case СlothesType.Mittens:
+					return new SizePair(SizeHelper.GetSizeStdCode(SizeStandartMittens.Rus), MittensSize);
 				case СlothesType.Headgear:
 					return new SizePair(HeaddressSizeStd, HeaddressSize);
 				default:

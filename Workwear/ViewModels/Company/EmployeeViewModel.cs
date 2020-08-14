@@ -158,6 +158,8 @@ namespace workwear.ViewModels.Company
 			СlothesType category;
 			if(e.PropertyName == nameof(Entity.GlovesSize))
 				category = СlothesType.Gloves;
+			else if(e.PropertyName == nameof(Entity.MittensSize))
+				category = СlothesType.Mittens;
 			else if(e.PropertyName == nameof(Entity.WearSize))
 				category = СlothesType.Wear;
 			else if(e.PropertyName == nameof(Entity.ShoesSize))

@@ -166,6 +166,16 @@ namespace workwear.Domain.Stock
 			set { SetField(ref glovesSize, value, () => GlovesSize); }
 		}
 
+		public virtual string MittensSizeStd => SizeHelper.GetSizeStdCode(SizeStandartMittens.Rus);
+
+		string mittensSize;
+
+		[Display(Name = "Размер рукавиц")]
+		public virtual string MittensSize {
+			get { return mittensSize; }
+			set { SetField(ref mittensSize, value); }
+		}
+
 		IList<WarehouseOperation> listWarehouseOperation = new List<WarehouseOperation>();
 		public virtual IList<WarehouseOperation> ListWarehouseOperation {
 			get { return listWarehouseOperation; }
@@ -216,6 +226,8 @@ namespace workwear.Domain.Stock
 					return new SizePair(WinterShoesSizeStd, WinterShoesSize);
 				case СlothesType.Gloves:
 					return new SizePair(GlovesSizeStd, GlovesSize);
+				case СlothesType.Mittens:
+					return new SizePair(SizeHelper.GetSizeStdCode(SizeStandartMittens.Rus), MittensSize);
 				case СlothesType.Headgear:
 					return new SizePair(HeaddressSizeStd, HeaddressSize);
 				default:

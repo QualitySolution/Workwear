@@ -53,6 +53,8 @@ namespace workwear.Views.Company
 			ycomboWinterShoesSize.Binding.AddBinding(Entity, e => e.WinterShoesSize, w => w.ActiveText).InitializeFromSource();
 			ycomboHeaddressSize.Binding.AddBinding (Entity, e => e.HeaddressSize, w => w.ActiveText).InitializeFromSource ();
 			ycomboGlovesSize.Binding.AddBinding (Entity, e => e.GlovesSize, w => w.ActiveText).InitializeFromSource ();
+			SizeHelper.FillSizeCombo(ycomboMittensSize, SizeHelper.GetSizesList(SizeStandartMittens.Rus, GetExcludedSizeUse()));
+			ycomboMittensSize.Binding.AddBinding(Entity, e => e.MittensSize, w => w.ActiveText).InitializeFromSource();
 
 			entryFirstName.Binding.AddBinding (Entity, e => e.FirstName, w => w.Text).InitializeFromSource ();
 			entryLastName.Binding.AddBinding (Entity, e => e.LastName, w => w.Text).InitializeFromSource ();
@@ -92,7 +94,7 @@ namespace workwear.Views.Company
 				ycomboShoesStd, ycomboShoesSize,
 				ycomboWinterShoesStd, ycomboWinterShoesSize,
 				ycomboHeaddressStd, ycomboHeaddressSize,
-				ycomboGlovesStd, ycomboGlovesSize,
+				ycomboGlovesStd, ycomboGlovesSize, ycomboMittensSize
 			};
 
 			enumPrint.ItemsEnum = typeof(EmployeeViewModel.PersonalCardPrint);

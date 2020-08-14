@@ -26,6 +26,7 @@ namespace workwear.HibernateMapping.Stock
 			Map(x => x.HeaddressSizeStd).Column("size_headdress_std");
 			Map(x => x.GlovesSize).Column("size_gloves");
 			Map(x => x.GlovesSizeStd).Column("size_gloves_std");
+			Map(x => x.MittensSize).Column("size_mittens");
 
 			References(x => x.EmployeeCard).Column("employee_id").Not.Nullable();
 			References(x => x.DocumentMassExpense).Column("stock_mass_expense_id").Not.Nullable();
