@@ -34,7 +34,7 @@ namespace workwear
 
 		private void ConfigureDlg()
 		{
-			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource ();
+			yentryNumber.Binding.AddBinding(Entity, e => e.Number, w => w.Text, new Gamma.Binding.Converters.UintToStringConverter()).InitializeFromSource();
 
 			yentryName.Binding.AddBinding (Entity, e => e.Name, w => w.Text).InitializeFromSource ();
 

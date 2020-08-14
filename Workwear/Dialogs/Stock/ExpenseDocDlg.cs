@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
+using Gamma.Utilities;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
@@ -12,6 +14,7 @@ using QS.Report.ViewModels;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QSOrmProject;
+using QSReport;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.JournalViewModels.Stock;
@@ -99,6 +102,8 @@ namespace workwear
 
 			ItemsTable.ExpenceDoc = Entity;
 
+			enumPrint.ItemsEnum = typeof(IssuedSheetPrint);
+
 			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 
 			var builder = new LegacyEEVMBuilderFactory<Expense>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
@@ -165,7 +170,7 @@ namespace workwear
 		{
 			buttonIssuanceSheetCreate.Sensitive = Entity.Employee != null;
 			buttonIssuanceSheetCreate.Visible = Entity.IssuanceSheet == null;
-			buttonIssuanceSheetOpen.Visible = buttonIssuanceSheetPrint.Visible = Entity.IssuanceSheet != null;
+			buttonIssuanceSheetOpen.Visible = enumPrint.Visible = Entity.IssuanceSheet != null;
 		}
 
 		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e)
@@ -186,8 +191,11 @@ namespace workwear
 			MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
 		}
 
-		protected void OnButtonIssuanceSheetPrintClicked(object sender, EventArgs e)
+
+		protected void OnEnumPrintEnumItemClicked(object sender, EnumItemClickedEventArgs e)
 		{
+			var doc = (IssuedSheetPrint)e.ItemEnum;
+
 			if(UoW.HasChanges) {
 				if(CommonDialogs.SaveBeforePrint(Entity.GetType(), "ведомости"))
 					Save();
@@ -197,15 +205,28 @@ namespace workwear
 
 			var reportInfo = new ReportInfo {
 				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
-				Identifier = "Statements.IssuanceSheet",
+				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.IssuanceSheet.Id }
 				}
 			};
+
 			MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+
 		}
 
 		#endregion
 	}
+
+	public enum IssuedSheetPrint
+	{
+		[Display(Name = "Альбомная")]
+		[ReportIdentifier("Statements.IssuanceSheet")]
+		IssuanceSheet,
+		[Display(Name = "Книжная")]
+		[ReportIdentifier("Statements.IssuanceSheetVertical")]
+		IssuanceSheetVertical,
+	}
+
 }
 
