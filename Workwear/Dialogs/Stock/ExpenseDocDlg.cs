@@ -211,9 +211,7 @@ namespace workwear
 				}
 			};
 
-			TabParent.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
-							  () => new QSReport.ReportViewDlg(reportInfo)
-							 );
+			MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 
 		}
 
@@ -222,10 +220,10 @@ namespace workwear
 
 	public enum IssuedSheetPrint
 	{
-		[Display(Name = "Горизонтальная печать")]
+		[Display(Name = "Альбомная")]
 		[ReportIdentifier("Statements.IssuanceSheet")]
 		IssuanceSheet,
-		[Display(Name = "Вертикальная печать")]
+		[Display(Name = "Книжная")]
 		[ReportIdentifier("Statements.IssuanceSheetVertical")]
 		IssuanceSheetVertical,
 	}
