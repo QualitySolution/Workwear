@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -207,7 +207,7 @@ namespace workwear.Domain.Company
 			if(!validSizes.Any(s => s.StandardCode == stockPosition.Nomenclature.SizeStd && s.Size == stockPosition.Size))
 				return false;
 
-			if(SizeHelper.HasGrowthStandart(wearCategory.Value)) {
+			if(!String.IsNullOrEmpty(stockPosition.Growth) && SizeHelper.HasGrowthStandart(wearCategory.Value)) {
 				var growStds = SizeHelper.GetGrowthStandart(wearCategory.Value, EmployeeCard.Sex, SizeUsePlace.Сlothes);
 				var validGrowths = SizeHelper.MatchGrow(growStds, EmployeeCard.WearGrowth, SizeUsePlace.Сlothes);
 				if(!validGrowths.Any(s => s.StandardCode == stockPosition.Nomenclature.WearGrowthStd && s.Size == stockPosition.Growth))

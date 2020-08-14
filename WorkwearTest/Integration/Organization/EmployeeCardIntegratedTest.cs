@@ -3,7 +3,6 @@ using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
-using QS.DomainModel.Entity;
 using QS.Testing.DB;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
