@@ -7,12 +7,16 @@ using workwear.Domain.Operations;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using workwear.Domain.Stock;
+using workwear.Measurements;
 
 namespace WorkwearTest.Organization
 {
 	[TestFixture(TestOf = typeof(EmployeeCardItem))]
 	public class EmployeeCardItemTests
 	{
+		#region UpdateNextIssue
+
 		[Test(Description = "Проверяем учитывает ли расчет даты следущей выдачи дату автосписания.")]
 		public void UpdateNextIssue_AutoWriteoffCase()
 		{
@@ -232,6 +236,41 @@ namespace WorkwearTest.Organization
 			item.UpdateNextIssue(uow);
 			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2018, 2, 1)));
 		}
+		#endregion
+
+		#region MatcheStockPosition
+
+		[Test(Description = "Проверяем случай при котором у складской позиции отсутсвует рост, значит эта номеклатура без роста и не надо сравнивать ее по росту с сотрудником.")]
+		[TestCase("")]
+		[TestCase(null)]
+		[TestCase("182")]
+		[TestCase("182-188")]
+		public void MatcheStockPosition_WithoutGrowthCase(string growth)
+		{
+			var itemType = Substitute.For<ItemsType>();
+			itemType.WearCategory.Returns(СlothesType.Wear);
+			var sizeStd = SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus);
+			var growthStd = SizeHelper.GetSizeStdCode(GrowthStandartWear.Men);
+			var nomenclature = Substitute.For<Nomenclature>();
+			nomenclature.Type.Returns(itemType);
+			nomenclature.SizeStd.Returns(sizeStd);
+			nomenclature.WearGrowthStd.Returns(growthStd);
+			var protectionTools = Substitute.For<ProtectionTools>();
+			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
+			var employee = Substitute.For<EmployeeCard>();
+			employee.Sex.Returns(Sex.M);
+			employee.GetSize(СlothesType.Wear).Returns(new SizePair(sizeStd, "52"));
+			employee.WearGrowth.Returns("182");
+			var normItem = Substitute.For<NormItem>();
+			normItem.ProtectionTools.Returns(protectionTools);
+
+			EmployeeCardItem employeeCardItem = new EmployeeCardItem(employee, normItem);
+
+			StockPosition stockPosition = new StockPosition(nomenclature, "52", growth, 0);
+			Assert.That(employeeCardItem.MatcheStockPosition(stockPosition)); 
+		}
+
+		#endregion
 	}
 
 	public class EmployeeCardItemTested : EmployeeCardItem
