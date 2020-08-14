@@ -1415,12 +1415,6 @@
                   <placeholder />
                 </child>
                 <child>
-                  <placeholder />
-                </child>
-                <child>
-                  <placeholder />
-                </child>
-                <child>
                   <widget class="Gamma.Widgets.yEnumComboBox" id="comboSex">
                     <property name="MemberName" />
                     <property name="IsTextCombo">False</property>
