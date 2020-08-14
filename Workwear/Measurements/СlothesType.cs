@@ -64,6 +64,9 @@ namespace workwear.Measurements
 */		[Display(Name = "Перчатки")]
 		[SizeStandarts(typeof(SizeStandartGloves))]
 		Gloves,
+		[Display(Name = "Рукавицы")]
+		[SizeStandarts(typeof(SizeStandartMittens))]
+		Mittens,
 		[Display(Name = "СИЗ")]
 		PPE,
 	}

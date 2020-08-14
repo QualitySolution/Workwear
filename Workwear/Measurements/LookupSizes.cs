@@ -290,6 +290,11 @@ namespace workwear.Measurements
 			new WearSize(new []{ "13", null }),
 		};
 
+		public static readonly WearSize[] Mittens = {
+			new WearSize(new []{ "1"}),
+			new WearSize(new []{ "2"}),
+			new WearSize(new []{ "3"}),
+		};
 	}
 }
 

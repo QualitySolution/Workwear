@@ -35,7 +35,7 @@ namespace workwear.Domain.Stock
 			set { SetField(ref warehouseFrom, value, () => WarehouseFrom); }
 		}
 
-		string DisplayMessage = "";
+		string DisplayMessage { get; set; } = "";
 		private IList<MassExpenseEmployee> employees = new List<MassExpenseEmployee>();
 
 		[Display(Name = "Сотрудники")]
@@ -304,6 +304,7 @@ namespace workwear.Domain.Stock
 			masEmp.EmployeeCard = emp;
 			masEmp.GlovesSize = emp.GlovesSize;
 			masEmp.GlovesSizeStd = emp.GlovesSizeStd;
+			masEmp.MittensSize = emp.MittensSize;
 			masEmp.WearSize = emp.WearSize;
 			masEmp.WearSizeStd = emp.WearSizeStd;
 			masEmp.WearGrowth = emp.WearGrowth;

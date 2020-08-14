@@ -23,6 +23,7 @@ namespace workwear.Measurements
 			typeof(SizeStandartUnisexShoes),
 			typeof(SizeStandartHeaddress),
 			typeof(SizeStandartGloves),
+			typeof(SizeStandartMittens)
 		};
 
 		#region Работа с кодами стандартов
@@ -267,6 +268,9 @@ namespace workwear.Measurements
 
 			if (stdEnum == typeof(SizeStandartGloves))
 				return LookupSizes.Gloves;
+
+			if(stdEnum == typeof(SizeStandartMittens))
+				return LookupSizes.Mittens;
 
 			return null;
 		}

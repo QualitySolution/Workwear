@@ -96,6 +96,13 @@ namespace workwear.Measurements
 		Intl,
 	}
 
+	public enum SizeStandartMittens
+	{
+		[StdCode("MittensRus")]
+		[Display(Name = "Российский", ShortName = "РФ")]
+		Rus,
+	}
+
 	[AttributeUsage(AttributeTargets.Field)]
 	public class StdCodeAttribute : Attribute 
 	{
