@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
+using Gamma.Binding.Converters;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Validation;
-using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository;
@@ -28,13 +28,13 @@ namespace workwear
 		public IncomeDocDlg (EmployeeCard employee) : this () 
 		{
 			Entity.Operation = IncomeOperations.Return;
-			Entity.EmployeeCard = employee;
+			Entity.EmployeeCard = UoW.GetById<EmployeeCard>(employee.Id);
 		}
 
-		public IncomeDocDlg (Subdivision facility) : this () 
+		public IncomeDocDlg (Subdivision subdivision) : this () 
 		{
 			Entity.Operation = IncomeOperations.Object;
-			Entity.Subdivision = facility;
+			Entity.Subdivision = UoW.GetById<Subdivision>(subdivision.Id);
 		}
 
 		public IncomeDocDlg (Income item) : this (item.Id) {}
