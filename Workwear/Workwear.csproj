@@ -169,6 +169,7 @@
     <EmbeddedResource Include="Updates\2.2.sql" />
     <EmbeddedResource Include="Updates\2.1.1.sql" />
     <EmbeddedResource Include="Updates\2.3.sql" />
+    <EmbeddedResource Include="Updates\2.3.3.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
