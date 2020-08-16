@@ -99,7 +99,7 @@ namespace workwear.Domain.Statements
 		public virtual string Title {
 			get {
 				return String.Format("Строка ведомости {0} - {1} в количестве {2} {3}",
-					Employee.ShortName,
+					Employee?.ShortName,
 			  		ItemName,
 			  		Amount,
 			  		ItemsTypeCalculated?.Units?.Name
