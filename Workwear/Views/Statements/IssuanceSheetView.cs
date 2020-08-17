@@ -101,11 +101,6 @@ namespace workwear.Views.Statements
 			}
 		}
 
-		protected void OnButtonPrintClicked(object sender, EventArgs e)
-		{
-			ViewModel.Print();
-		}
-
 		protected void OnButtonExpenseOpenClicked(object sender, EventArgs e)
 		{
 			ViewModel.OpenExpense();
