@@ -151,10 +151,10 @@ namespace workwear.ViewModels.Stock
 			}
 
 			var reportInfo = new ReportInfo {
-				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
+				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.IssuanceSheet.Id),
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id }
+					{ "id",  Entity.IssuanceSheet.Id }
 				}
 			};
 
