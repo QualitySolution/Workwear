@@ -2,6 +2,7 @@
 using Gamma.Binding.Converters;
 using NLog;
 using QS.Views.Dialog;
+using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.ViewModels.Stock;
 
@@ -50,7 +51,7 @@ namespace workwear.Views.Stock
 		{
 			buttonIssuanceSheetCreate.Sensitive = Entity.Employee != null;
 			buttonIssuanceSheetCreate.Visible = Entity.IssuanceSheet == null;
-			buttonIssuanceSheetOpen.Visible = buttonIssuanceSheetPrint.Visible = Entity.IssuanceSheet != null;
+			buttonIssuanceSheetOpen.Visible = enumPrint.Visible = Entity.IssuanceSheet != null;
 		}
 		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e)
 		{
@@ -61,9 +62,10 @@ namespace workwear.Views.Stock
 		{
 			ViewModel.OpenIssuenceSheet();
 		}
-		protected void OnButtonIssuanceSheetPrintClicked(object sender, EventArgs e)
+
+		protected void OnEnumPrintEnumItemClicked(object sender, QSOrmProject.EnumItemClickedEventArgs e)
 		{
-			ViewModel.PrintIssuenceSheet();
+			ViewModel.PrintIssuenceSheet((IssuedSheetPrint)e.ItemEnum);
 		}
 	}
 }

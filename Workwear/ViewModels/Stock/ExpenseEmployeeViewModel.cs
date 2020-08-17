@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac;
+using Gamma.Utilities;
 using NLog;
 using QS.Dialog;
 using QS.Dialog.GtkUI;
@@ -13,7 +14,9 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QSReport;
 using workwear.Domain.Company;
+using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
@@ -29,6 +32,7 @@ namespace workwear.ViewModels.Stock
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public ExpenseDocItemsEmployeeViewModel DocItemsEmployeeViewModel;
 		IInteractiveQuestion interactive;
+		private readonly CommonMessages commonMessages;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
@@ -38,12 +42,14 @@ namespace workwear.ViewModels.Stock
 			IUserService userService,
 			IInteractiveQuestion interactive,
 			StockRepository stockRepository,
+			CommonMessages commonMessages,
 			EmployeeCard employee = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
-			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			this.interactive = interactive;
+			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
+			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 				Entity.Operation = ExpenseOperations.Employee;
@@ -119,19 +125,6 @@ namespace workwear.ViewModels.Stock
 			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
 		}
 
-		private void Print()
-		{
-			Save();
-			var reportInfo = new ReportInfo {
-				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
-				Identifier = "Statements.IssuanceSheet",
-				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.IssuanceSheet.Id }
-				}
-			};
-			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
-		}
-
 		public void OpenIssuenceSheet()
 		{
 			if(UoW.HasChanges) {
@@ -148,10 +141,10 @@ namespace workwear.ViewModels.Stock
 			Entity.CreateIssuanceSheet();
 		}
 
-		public void PrintIssuenceSheet()
+		public void PrintIssuenceSheet(IssuedSheetPrint doc)
 		{
 			if(UoW.HasChanges) {
-				if(QSOrmProject.CommonDialogs.SaveBeforePrint(Entity.GetType(), "ведомости"))
+				if(commonMessages.SaveBeforePrint(Entity.GetType(), "ведомости"))
 					Save();
 				else
 					return;
@@ -159,12 +152,13 @@ namespace workwear.ViewModels.Stock
 
 			var reportInfo = new ReportInfo {
 				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
-				Identifier = "Statements.IssuanceSheet",
+				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.IssuanceSheet.Id }
+					{ "id",  Entity.Id }
 				}
 			};
-			MainClass.MainWin.NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 
 		public void EntityChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
