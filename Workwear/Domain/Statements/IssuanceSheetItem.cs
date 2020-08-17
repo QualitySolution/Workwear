@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.Utilities.Numeric;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
@@ -85,7 +86,7 @@ namespace workwear.Domain.Statements
 		[Display(Name = "Срок службы")]
 		public virtual decimal Lifetime {
 			get { return lifetime; }
-			set { SetField(ref lifetime, value); }
+			set { SetField(ref lifetime, value.Clamp(0m, 999.99m)); }
 		}
 
 		string size;
@@ -115,7 +116,7 @@ namespace workwear.Domain.Statements
 		public virtual string Title {
 			get {
 				return String.Format("Строка ведомости {0} - {1} в количестве {2} {3}",
-					Employee.ShortName,
+					Employee?.ShortName,
 			  		ItemName,
 			  		Amount,
 			  		ItemsTypeCalculated?.Units?.Name

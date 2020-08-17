@@ -318,6 +318,10 @@ Section "Uninstall"
 
   Delete $INSTDIR\Reports\Employee\*
   RMDir $INSTDIR\Reports\Employee
+  Delete $INSTDIR\Reports\Statements\*
+  RMDir $INSTDIR\Reports\Statements
+  Delete $INSTDIR\Reports\Stock\*
+  RMDir $INSTDIR\Reports\Stock
 
   Delete $INSTDIR\Reports\*
   RMDir $INSTDIR\Reports
