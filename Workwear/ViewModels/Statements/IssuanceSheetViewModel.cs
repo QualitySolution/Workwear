@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
@@ -17,7 +16,6 @@ using QS.Validation;
 using QS.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using QSOrmProject;
 using QSReport;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;

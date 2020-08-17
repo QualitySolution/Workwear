@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using QS.DomainModel.Entity;
 using QS.Utilities.Dates;
+using QSReport;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
@@ -178,5 +179,15 @@ namespace workwear.Domain.Statements
 		public IssuanceSheet()
 		{
 		}
+	}
+
+	public enum IssuedSheetPrint
+	{
+		[Display(Name = "Альбомная")]
+		[ReportIdentifier("Statements.IssuanceSheet")]
+		IssuanceSheet,
+		[Display(Name = "Книжная")]
+		[ReportIdentifier("Statements.IssuanceSheetVertical")]
+		IssuanceSheetVertical,
 	}
 }
