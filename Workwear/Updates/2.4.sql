@@ -71,7 +71,11 @@ ADD INDEX `index10` (`wear_percent` ASC);
 
 ALTER TABLE `issuance_sheet_items` 
 ADD COLUMN `size` VARCHAR(10) NULL DEFAULT NULL AFTER `lifetime`,
-ADD COLUMN `growth` VARCHAR(10) NULL DEFAULT NULL AFTER `size`;
+ADD COLUMN `growth` VARCHAR(10) NULL DEFAULT NULL AFTER `size`
+CHANGE COLUMN `lifetime` `lifetime` DECIMAL(5,2) UNSIGNED NULL DEFAULT NULL ;
+
+ALTER TABLE `nomenclature` 
+ADD COLUMN `number` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `comment`;
 
 -- Создание новых таблиц
 
