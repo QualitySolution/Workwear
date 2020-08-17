@@ -1,11 +1,9 @@
 ﻿using System;
 using Gtk;
 using NLog;
-using QS.Dialog.GtkUI;
 using QS.Views.Dialog;
 using QSOrmProject;
 using workwear.Domain.Company;
-using workwear.Domain.Regulations;
 using workwear.Measurements;
 using workwear.Tools;
 using workwear.ViewModels.Company;
