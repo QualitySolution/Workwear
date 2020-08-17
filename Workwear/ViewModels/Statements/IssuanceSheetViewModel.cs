@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
+using Gamma.Utilities;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
@@ -16,6 +18,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QSOrmProject;
 using QSOrmProject.RepresentationModel;
+using QSReport;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
@@ -238,6 +241,27 @@ namespace workwear.ViewModels.Statements
 		{
 			base.Dispose();
 			NotifyConfiguration.Instance.UnsubscribeAll(this);
+		}
+
+
+		public void Print(IssuedSheetPrint doc)
+		{
+			if(UoW.HasChanges) {
+				if(commonMessages.SaveBeforePrint(Entity.GetType(), "ведомости"))
+					Save();
+				else
+					return;
+			}
+
+			var reportInfo = new ReportInfo {
+				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
+				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id }
+				}
+			};
+
+			MainClass.MainWin.NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 	}
 }
