@@ -14,7 +14,7 @@ namespace workwear.Views.Statements
 
 		private global::Gtk.VSeparator vseparator2;
 
-		private global::Gtk.Button buttonPrint;
+		private global::QSOrmProject.EnumMenuButton enumPrint;
 
 		private global::Gtk.Table table1;
 
@@ -119,16 +119,18 @@ namespace workwear.Views.Statements
 			w5.Expand = false;
 			w5.Fill = false;
 			// Container child hbox4.Gtk.Box+BoxChild
-			this.buttonPrint = new global::Gtk.Button();
-			this.buttonPrint.CanFocus = true;
-			this.buttonPrint.Name = "buttonPrint";
-			this.buttonPrint.UseUnderline = true;
-			this.buttonPrint.Label = global::Mono.Unix.Catalog.GetString("Печать");
+			this.enumPrint = new global::QSOrmProject.EnumMenuButton();
+			this.enumPrint.CanFocus = true;
+			this.enumPrint.Name = "enumPrint";
+			this.enumPrint.UseUnderline = true;
+			this.enumPrint.UseMarkup = false;
+			this.enumPrint.LabelXAlign = 0F;
+			this.enumPrint.Label = global::Mono.Unix.Catalog.GetString("Печать");
 			global::Gtk.Image w6 = new global::Gtk.Image();
 			w6.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-print", global::Gtk.IconSize.Menu);
-			this.buttonPrint.Image = w6;
-			this.hbox4.Add(this.buttonPrint);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.buttonPrint]));
+			this.enumPrint.Image = w6;
+			this.hbox4.Add(this.enumPrint);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.enumPrint]));
 			w7.Position = 3;
 			w7.Expand = false;
 			w7.Fill = false;
@@ -425,7 +427,7 @@ namespace workwear.Views.Statements
 				this.Child.ShowAll();
 			}
 			this.Hide();
-			this.buttonPrint.Clicked += new global::System.EventHandler(this.OnButtonPrintClicked);
+			this.enumPrint.EnumItemClicked += new global::System.EventHandler<QSOrmProject.EnumItemClickedEventArgs>(this.OnEnumPrintEnumItemClicked);
 			this.buttonExpenseOpen.Clicked += new global::System.EventHandler(this.OnButtonExpenseOpenClicked);
 			this.buttonFillBy.Clicked += new global::System.EventHandler(this.OnButtonFillByExpenseClicked);
 			this.buttonCloseFillBy.Clicked += new global::System.EventHandler(this.OnButtonCloseFillByClicked);

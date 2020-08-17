@@ -60,6 +60,7 @@ namespace workwear.Views.Statements
 			ytreeviewItems.Selection.Mode = SelectionMode.Multiple;
 			ytreeviewItems.ItemsDataSource = ViewModel.Entity.ObservableItems;
 
+			enumPrint.ItemsEnum = typeof(IssuedSheetPrint);
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 		}
@@ -143,6 +144,11 @@ namespace workwear.Views.Statements
 		protected void OnButtonCloseFillByClicked(object sender, EventArgs e)
 		{
 			ViewModel.CloseFillBy();
+		}
+
+		protected void OnEnumPrintEnumItemClicked(object sender, QSOrmProject.EnumItemClickedEventArgs e)
+		{
+			ViewModel.Print((IssuedSheetPrint)e.ItemEnum);
 		}
 	}
 }
