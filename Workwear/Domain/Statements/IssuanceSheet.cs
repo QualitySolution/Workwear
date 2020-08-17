@@ -112,6 +112,7 @@ namespace workwear.Domain.Statements
 				ExpenseItem = expenseItem
 			};
 			ObservableItems.Add(item);
+			item.UpdateFromExpense();
 			return item;
 		}
 
