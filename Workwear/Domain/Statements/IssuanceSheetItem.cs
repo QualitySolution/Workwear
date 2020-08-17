@@ -140,6 +140,8 @@ namespace workwear.Domain.Statements
 			Employee = ExpenseItem.ExpenseDoc.Employee;
 			Nomenclature = ExpenseItem.Nomenclature;
 			Amount = (uint)ExpenseItem.Amount;
+			Size = ExpenseItem.Size;
+			WearGrowth = ExpenseItem.WearGrowth;
 			StartOfUse = ExpenseItem.EmployeeIssueOperation?.StartOfUse ?? IssuanceSheet.Date;
 			Lifetime = ExpenseItem.EmployeeIssueOperation?.LifetimeMonth ?? 0;
 			IssueOperation = ExpenseItem.EmployeeIssueOperation;
