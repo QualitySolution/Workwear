@@ -138,6 +138,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `size_std` VARCHAR(20) NULL DEFAULT NULL,
   `growth_std` VARCHAR(20) NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
+  `number` INT(10) UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_nomenclature_type_idx` (`type_id` ASC),
   CONSTRAINT `fk_nomenclature_type`
@@ -961,7 +962,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
   `issued_operation_id` INT UNSIGNED NULL,
   `amount` SMALLINT UNSIGNED NOT NULL,
   `start_of_use` DATE NULL DEFAULT NULL,
-  `lifetime` DECIMAL(4,2) UNSIGNED NULL DEFAULT NULL,
+  `lifetime` DECIMAL(5,2) UNSIGNED NULL DEFAULT NULL,
   `size` VARCHAR(10) NULL DEFAULT NULL,
   `growth` VARCHAR(10) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
