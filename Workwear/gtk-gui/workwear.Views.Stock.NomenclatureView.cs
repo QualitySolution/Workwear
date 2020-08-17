@@ -38,9 +38,9 @@ namespace workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yEntry yentryName;
 
-		private global::Gamma.GtkWidgets.yLabel ylabelClothesSex;
+		private global::Gamma.GtkWidgets.yEntry yentryNumber;
 
-		private global::Gamma.GtkWidgets.yLabel ylabelId;
+		private global::Gamma.GtkWidgets.yLabel ylabelClothesSex;
 
 		protected virtual void Build()
 		{
@@ -149,7 +149,7 @@ namespace workwear.Views.Stock
 			this.label7 = new global::Gtk.Label();
 			this.label7.Name = "label7";
 			this.label7.Xalign = 1F;
-			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString("Код:");
+			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатурный номер:");
 			this.table2.Add(this.label7);
 			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table2[this.label7]));
 			w11.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -231,24 +231,27 @@ namespace workwear.Views.Stock
 			w17.RightAttach = ((uint)(2));
 			w17.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
+			this.yentryNumber = new global::Gamma.GtkWidgets.yEntry();
+			this.yentryNumber.CanFocus = true;
+			this.yentryNumber.Name = "yentryNumber";
+			this.yentryNumber.IsEditable = true;
+			this.yentryNumber.MaxLength = 240;
+			this.yentryNumber.InvisibleChar = '●';
+			this.table2.Add(this.yentryNumber);
+			global::Gtk.Table.TableChild w18 = ((global::Gtk.Table.TableChild)(this.table2[this.yentryNumber]));
+			w18.LeftAttach = ((uint)(1));
+			w18.RightAttach = ((uint)(2));
+			w18.XOptions = ((global::Gtk.AttachOptions)(4));
+			w18.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table2.Gtk.Table+TableChild
 			this.ylabelClothesSex = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelClothesSex.Name = "ylabelClothesSex";
 			this.ylabelClothesSex.Xalign = 1F;
 			this.ylabelClothesSex.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel1");
 			this.table2.Add(this.ylabelClothesSex);
-			global::Gtk.Table.TableChild w18 = ((global::Gtk.Table.TableChild)(this.table2[this.ylabelClothesSex]));
-			w18.TopAttach = ((uint)(3));
-			w18.BottomAttach = ((uint)(4));
-			w18.XOptions = ((global::Gtk.AttachOptions)(4));
-			w18.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.ylabelId = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabelId.Name = "ylabelId";
-			this.ylabelId.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel1");
-			this.table2.Add(this.ylabelId);
-			global::Gtk.Table.TableChild w19 = ((global::Gtk.Table.TableChild)(this.table2[this.ylabelId]));
-			w19.LeftAttach = ((uint)(1));
-			w19.RightAttach = ((uint)(2));
+			global::Gtk.Table.TableChild w19 = ((global::Gtk.Table.TableChild)(this.table2[this.ylabelClothesSex]));
+			w19.TopAttach = ((uint)(3));
+			w19.BottomAttach = ((uint)(4));
 			w19.XOptions = ((global::Gtk.AttachOptions)(4));
 			w19.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.dialog1_VBox.Add(this.table2);

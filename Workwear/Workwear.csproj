@@ -194,6 +194,7 @@
     <EmbeddedResource Include="Updates\2.2.sql" />
     <EmbeddedResource Include="Updates\2.1.1.sql" />
     <EmbeddedResource Include="Updates\2.3.sql" />
+    <EmbeddedResource Include="Updates\2.3.3.sql" />
     <EmbeddedResource Include="Updates\2.4.sql" />
     <EmbeddedResource Include="Updates\2.5.sql" />
   </ItemGroup>
@@ -662,6 +663,9 @@
     <None Include="packages.config" />
     <None Include="Reports\Statements\IssuanceSheet.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\Statements\IssuanceSheetVertical.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ProjectExtensions>

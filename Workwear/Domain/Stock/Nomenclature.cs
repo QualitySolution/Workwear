@@ -73,6 +73,14 @@ namespace workwear.Domain.Stock
 			set { SetField(ref comment, value, () => Comment); }
 		}
 
+		private uint? number;
+
+		[Display(Name = "Номенклатурный номер")]
+		public virtual uint? Number {
+			get { return number; }
+			set { SetField(ref number, value, () => Number); }
+		}
+
 		#endregion
 
 		#region Рассчетные

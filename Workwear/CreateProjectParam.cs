@@ -16,6 +16,7 @@ using QS.Project.Domain;
 using QS.Project.Search.GtkUI;
 using QS.Project.Services;
 using QS.Project.Services.GtkUI;
+using QS.Report;
 using QS.Report.ViewModels;
 using QS.Report.Views;
 using QS.Services;
@@ -110,7 +111,7 @@ namespace workwear
 			#endregion
 
 			#region Навигация
-			builder.RegisterType<ClassNamesHashGenerator>().As<IPageHashGenerator>();
+			builder.Register(ctx => new ClassNamesHashGenerator(new[] {new RDLReportsHashGenerator() })).As<IPageHashGenerator>();
 			builder.Register((ctx) => new AutofacViewModelsTdiPageFactory(AppDIContainer)).As<IViewModelsPageFactory>();
 			builder.Register((ctx) => new AutofacTdiPageFactory(AppDIContainer)).As<ITdiPageFactory>();
 			builder.Register((ctx) => new AutofacViewModelsGtkPageFactory(AppDIContainer)).AsSelf();

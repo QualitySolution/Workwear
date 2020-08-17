@@ -13,7 +13,7 @@ namespace workwear.Domain.Statements
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "ведомости на выдачу",
 		Nominative = "ведомость на выдачу")]
-	public class IssuanceSheet : PropertyChangedBase, IDomainObject
+	public class IssuanceSheet : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства
 
@@ -164,8 +164,16 @@ namespace workwear.Domain.Statements
 			ObservableItems.Add(item);
 			return item;
 		}
-
 		#endregion
+
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+		{
+			foreach(var item in Items) {
+				if(item.Employee == null)
+					yield return new ValidationResult($"Отсутствует сотрудник в строке [{item.Title}].",
+					new[] { nameof(Items) });
+			}
+		}
 
 		public IssuanceSheet()
 		{
