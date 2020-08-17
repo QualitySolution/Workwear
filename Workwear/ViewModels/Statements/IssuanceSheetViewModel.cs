@@ -165,7 +165,7 @@ namespace workwear.ViewModels.Statements
 
 		#region Кнопки
 
-		public void Print()
+		public void Print(IssuedSheetPrint doc)
 		{
 			if(UoW.HasChanges) {
 				if(commonMessages.SaveBeforePrint(Entity.GetType(), "ведомости"))
@@ -176,11 +176,12 @@ namespace workwear.ViewModels.Statements
 
 			var reportInfo = new ReportInfo {
 				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
-				Identifier = "Statements.IssuanceSheet",
+				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.Id }
 				}
 			};
+
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 
@@ -243,25 +244,5 @@ namespace workwear.ViewModels.Statements
 			NotifyConfiguration.Instance.UnsubscribeAll(this);
 		}
 
-
-		public void Print(IssuedSheetPrint doc)
-		{
-			if(UoW.HasChanges) {
-				if(commonMessages.SaveBeforePrint(Entity.GetType(), "ведомости"))
-					Save();
-				else
-					return;
-			}
-
-			var reportInfo = new ReportInfo {
-				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
-				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
-				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id }
-				}
-			};
-
-			MainClass.MainWin.NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
-		}
 	}
 }
