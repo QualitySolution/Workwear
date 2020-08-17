@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using QS.DomainModel.Entity;
 using QS.Utilities.Dates;
+using QSReport;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
@@ -13,7 +14,7 @@ namespace workwear.Domain.Statements
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "ведомости на выдачу",
 		Nominative = "ведомость на выдачу")]
-	public class IssuanceSheet : PropertyChangedBase, IDomainObject
+	public class IssuanceSheet : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства
 
@@ -164,11 +165,29 @@ namespace workwear.Domain.Statements
 			ObservableItems.Add(item);
 			return item;
 		}
-
 		#endregion
+
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+		{
+			foreach(var item in Items) {
+				if(item.Employee == null)
+					yield return new ValidationResult($"Отсутствует сотрудник в строке [{item.Title}].",
+					new[] { nameof(Items) });
+			}
+		}
 
 		public IssuanceSheet()
 		{
 		}
+	}
+
+	public enum IssuedSheetPrint
+	{
+		[Display(Name = "Альбомная")]
+		[ReportIdentifier("Statements.IssuanceSheet")]
+		IssuanceSheet,
+		[Display(Name = "Книжная")]
+		[ReportIdentifier("Statements.IssuanceSheetVertical")]
+		IssuanceSheetVertical,
 	}
 }

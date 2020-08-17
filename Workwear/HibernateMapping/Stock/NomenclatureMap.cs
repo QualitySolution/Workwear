@@ -18,6 +18,8 @@ namespace workwear.HMap
 			Map (x => x.WearGrowthStd).Column ("growth_std");
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.Ozm).Column("ozm");
+			Map(x => x.Number).Column("number");
+
 			References (x => x.Type).Column ("type_id");
 
 			HasManyToMany<ProtectionTools>(x => x.ProtectionTools)

@@ -44,8 +44,6 @@ namespace workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yLabel ylabelClothesSex;
 
-		private global::Gamma.GtkWidgets.yLabel ylabelId;
-
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -167,7 +165,7 @@ namespace workwear.Views.Stock
 			this.label7 = new global::Gtk.Label();
 			this.label7.Name = "label7";
 			this.label7.Xalign = 1F;
-			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString("Код:");
+			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатурный номер:");
 			this.table2.Add(this.label7);
 			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table2[this.label7]));
 			w12.XOptions = ((global::Gtk.AttachOptions)(4));

@@ -43,18 +43,18 @@ namespace workwear.Views.Statements
 				.AddColumn("Спецодежда").Tag("IsNomenclatureColumn").AddTextRenderer(x => x.ItemName)
 				.AddColumn("Размер")
 					.AddComboRenderer(x => x.Size)
-					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.SizeStd, SizeUse.HumanOnly))
-					.AddSetter((c, n) => c.Editable = n.Nomenclature.SizeStd != null)
+					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature?.SizeStd, SizeUse.HumanOnly))
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.SizeStd != null)
 				.AddColumn("Рост")
 					.AddComboRenderer(x => x.WearGrowth)
-					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
-					.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
+					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature?.WearGrowthStd, SizeUse.HumanOnly))
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.WearGrowthStd != null)
 				.AddColumn("Количество")
 					.AddNumericRenderer(x => x.Amount).Editing(ViewModel.CanEditItems).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
 					.AddTextRenderer(x => x.Nomenclature != null && x.Nomenclature.Type.Units != null ? x.Nomenclature.Type.Units.Name : String.Empty)
 				.AddColumn("Начало эксплуатации").AddTextRenderer(x => x.StartOfUse != default(DateTime) ? x.StartOfUse.ToShortDateString() : String.Empty)
 				.AddColumn("Срок службы")
-					.AddNumericRenderer(x => x.Lifetime).Editing(ViewModel.CanEditItems).Adjustment(new Adjustment(1, 0, 1000, 1, 12, 10))
+					.AddNumericRenderer(x => x.Lifetime).Editing(ViewModel.CanEditItems).Adjustment(new Adjustment(1, 0, 999, 1, 12, 10))
 				.Finish();
 
 			ytreeviewItems.Selection.Changed += Selection_Changed;
@@ -62,6 +62,7 @@ namespace workwear.Views.Statements
 			ytreeviewItems.Selection.Mode = SelectionMode.Multiple;
 			ytreeviewItems.ItemsDataSource = ViewModel.Entity.ObservableItems;
 
+			enumPrint.ItemsEnum = typeof(IssuedSheetPrint);
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 		}
@@ -168,6 +169,11 @@ namespace workwear.Views.Statements
 		protected void OnButtonCloseFillByClicked(object sender, EventArgs e)
 		{
 			ViewModel.CloseFillBy();
+		}
+
+		protected void OnEnumPrintEnumItemClicked(object sender, QSOrmProject.EnumItemClickedEventArgs e)
+		{
+			ViewModel.Print((IssuedSheetPrint)e.ItemEnum);
 		}
 	}
 }

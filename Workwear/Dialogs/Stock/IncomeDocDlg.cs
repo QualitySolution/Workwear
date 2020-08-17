@@ -41,13 +41,13 @@ namespace workwear
 		public IncomeDocDlg (EmployeeCard employee) : this () 
 		{
 			Entity.Operation = IncomeOperations.Return;
-			Entity.EmployeeCard = employee;
+			Entity.EmployeeCard = UoW.GetById<EmployeeCard>(employee.Id);
 		}
 
-		public IncomeDocDlg (Subdivision facility) : this () 
+		public IncomeDocDlg (Subdivision subdivision) : this () 
 		{
 			Entity.Operation = IncomeOperations.Object;
-			Entity.Subdivision = facility;
+			Entity.Subdivision = UoW.GetById<Subdivision>(subdivision.Id);
 		}
 
 		public IncomeDocDlg (Income item) : this (item.Id) {}
