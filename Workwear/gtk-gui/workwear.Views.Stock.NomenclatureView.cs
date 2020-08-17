@@ -186,7 +186,7 @@ namespace workwear.Views.Stock
 			this.label9 = new global::Gtk.Label();
 			this.label9.Name = "label9";
 			this.label9.Xalign = 1F;
-			this.label9.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатурная группа<span foreground=\"red\">*</span>:");
+			this.label9.LabelProp = global::Mono.Unix.Catalog.GetString("Тип номеклатуры<span foreground=\"red\">*</span>:");
 			this.label9.UseMarkup = true;
 			this.table2.Add(this.label9);
 			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table2[this.label9]));
