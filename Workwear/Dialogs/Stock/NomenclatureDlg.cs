@@ -5,7 +5,6 @@ using Gamma.Utilities;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
-using QSOrmProject;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Measurements;

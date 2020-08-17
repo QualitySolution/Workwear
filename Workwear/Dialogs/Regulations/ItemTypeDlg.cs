@@ -1,10 +1,9 @@
 ﻿using System;
+using Gamma.Binding.Converters;
 using NLog;
 using QS.BusinessCommon.Repository;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
-using QSOrmProject;
-using QSProjectsLib;
 using workwear.Domain.Regulations;
 using workwear.Measurements;
 

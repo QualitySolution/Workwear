@@ -152,6 +152,8 @@ namespace workwear
 			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатурный номер:");
 			this.table2.Add(this.label7);
 			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table2[this.label7]));
+			w11.TopAttach = ((uint)(2));
+			w11.BottomAttach = ((uint)(3));
 			w11.XOptions = ((global::Gtk.AttachOptions)(4));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
@@ -170,12 +172,10 @@ namespace workwear
 			this.label9 = new global::Gtk.Label();
 			this.label9.Name = "label9";
 			this.label9.Xalign = 1F;
-			this.label9.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатурная группа<span foreground=\"red\">*</span>:");
+			this.label9.LabelProp = global::Mono.Unix.Catalog.GetString("Тип номеклатуры<span foreground=\"red\">*</span>:");
 			this.label9.UseMarkup = true;
 			this.table2.Add(this.label9);
 			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table2[this.label9]));
-			w13.TopAttach = ((uint)(2));
-			w13.BottomAttach = ((uint)(3));
 			w13.XOptions = ((global::Gtk.AttachOptions)(4));
 			w13.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
@@ -210,8 +210,6 @@ namespace workwear
 			this.yentryItemsType.Name = "yentryItemsType";
 			this.table2.Add(this.yentryItemsType);
 			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.table2[this.yentryItemsType]));
-			w16.TopAttach = ((uint)(2));
-			w16.BottomAttach = ((uint)(3));
 			w16.LeftAttach = ((uint)(1));
 			w16.RightAttach = ((uint)(2));
 			w16.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -239,6 +237,8 @@ namespace workwear
 			this.yentryNumber.InvisibleChar = '●';
 			this.table2.Add(this.yentryNumber);
 			global::Gtk.Table.TableChild w18 = ((global::Gtk.Table.TableChild)(this.table2[this.yentryNumber]));
+			w18.TopAttach = ((uint)(2));
+			w18.BottomAttach = ((uint)(3));
 			w18.LeftAttach = ((uint)(1));
 			w18.RightAttach = ((uint)(2));
 			w18.XOptions = ((global::Gtk.AttachOptions)(4));
