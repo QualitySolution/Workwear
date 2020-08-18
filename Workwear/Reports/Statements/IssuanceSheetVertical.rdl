@@ -1885,7 +1885,7 @@
     IFNULL(nomenclature.name, protection_tools.name) as nomenclature,
     issuance_sheet_items.size,
     issuance_sheet_items.growth,
-    nomenclature.number as nomenclature_number,
+    nomenclature.ozm as nomenclature_number,
     measurement_units.name as units,
     measurement_units.okei,
     issuance_sheet_items.amount,
