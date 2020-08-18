@@ -161,7 +161,8 @@ namespace workwear.ViewModels.Stock
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.IssuanceSheet.Id },
-					{"organization", subdivision.Name}
+					{"organization", subdivision.Name },
+					{"code", subdivision.Code}
 				}
 			};
 
