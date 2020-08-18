@@ -21,6 +21,7 @@ using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository.Stock;
+using workwear.Tools.Oracle;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Statements;
 
@@ -33,6 +34,7 @@ namespace workwear.ViewModels.Stock
 		public ExpenseDocItemsEmployeeViewModel DocItemsEmployeeViewModel;
 		IInteractiveQuestion interactive;
 		private readonly CommonMessages commonMessages;
+		private readonly HRSystem hRSystem;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
@@ -43,12 +45,14 @@ namespace workwear.ViewModels.Stock
 			IInteractiveQuestion interactive,
 			StockRepository stockRepository,
 			CommonMessages commonMessages,
+			HRSystem hRSystem,
 			EmployeeCard employee = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.interactive = interactive;
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
+			this.hRSystem = hRSystem ?? throw new ArgumentNullException(nameof(hRSystem));
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
@@ -150,11 +154,14 @@ namespace workwear.ViewModels.Stock
 					return;
 			}
 
+			var subdivision = hRSystem.GetSubdivision(Entity.Employee.SubdivisionId.Value);
+
 			var reportInfo = new ReportInfo {
 				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.IssuanceSheet.Id),
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.IssuanceSheet.Id }
+					{ "id",  Entity.IssuanceSheet.Id },
+					{"organazation", subdivision.Name}
 				}
 			};
 

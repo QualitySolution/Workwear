@@ -22,6 +22,7 @@ using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Tools.Oracle;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Stock;
 
@@ -36,12 +37,14 @@ namespace workwear.ViewModels.Statements
 		public ILifetimeScope AutofacScope;
 		public ITdiCompatibilityNavigation tdiNavigationManager;
 		private readonly CommonMessages commonMessages;
+		private readonly HRSystem hRSystem;
 
-		public IssuanceSheetViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiTab myTab, ITdiCompatibilityNavigation navigationManager, IValidator validator, ILifetimeScope autofacScope, CommonMessages commonMessages) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager, validator)
+		public IssuanceSheetViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiTab myTab, ITdiCompatibilityNavigation navigationManager, IValidator validator, ILifetimeScope autofacScope, CommonMessages commonMessages, HRSystem hRSystem) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager, validator)
 		{
 			this.tdiNavigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.commonMessages = commonMessages;
+			this.hRSystem = hRSystem ?? throw new ArgumentNullException(nameof(hRSystem));
 			var entryBuilder = new LegacyEEVMBuilderFactory<IssuanceSheet>(this, TdiTab, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
@@ -174,12 +177,14 @@ namespace workwear.ViewModels.Statements
 				else
 					return;
 			}
+			var subdivision = hRSystem.GetSubdivision(Entity.Items.First().Employee.SubdivisionId.Value);
 
 			var reportInfo = new ReportInfo {
 				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id }
+					{ "id",  Entity.Id },
+					{"organazation", subdivision.Name}
 				}
 			};
 
