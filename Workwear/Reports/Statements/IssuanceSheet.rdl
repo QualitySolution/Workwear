@@ -817,8 +817,8 @@
         <Width>808.39pt</Width>
         <Value>= "Ведомость № " + {?id}</Value>
         <ZIndex>1</ZIndex>
-        <Left>0.0pt</Left>
-        <Top>42.8pt</Top>
+        <Left>0.00pt</Left>
+        <Top>42.80pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -849,8 +849,8 @@
         <Width>807.01pt</Width>
         <Value>Учета выдачи спецодежды, спецобуви и предохранительных приспособлений</Value>
         <ZIndex>1</ZIndex>
-        <Left>0.0pt</Left>
-        <Top>61.0pt</Top>
+        <Left>0.00pt</Left>
+        <Top>61.00pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -1041,7 +1041,10 @@
             <Width>142.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>515.3pt</Width>
+            <Width>27.7pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>485.3pt</Width>
           </TableColumn>
         </TableColumns>
         <Details>
@@ -1056,6 +1059,21 @@
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox42">
+                      <Value>=Parameters!code.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Bottom>Solid</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -1100,6 +1118,22 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox43">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Bottom>Solid</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox65">
                       <Value>Склад спецодежды</Value>
                       <CanGrow>true</CanGrow>
@@ -1118,8 +1152,8 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>0.0pt</Left>
-        <Top>95.3pt</Top>
+        <Left>0.8pt</Left>
+        <Top>96.0pt</Top>
       </Table>
       <Table Name="Table4">
         <DataSetName>Sheet</DataSetName>
@@ -1245,8 +1279,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox76">
-                      <Value>
-                      </Value>
+                      <Value>-----</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -1254,6 +1287,7 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1261,7 +1295,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox77">
-                      <Value>=Fields!subdivision_code.Value</Value>
+                      <Value>8111</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -1277,8 +1311,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox78">
-                      <Value>
-                      </Value>
+                      <Value>----</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -1286,6 +1319,7 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1825,7 +1859,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     wear_cards.last_name,
@@ -1857,7 +1891,7 @@ WHERE
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="last_name">
           <DataField>last_name</DataField>
           <TypeName>System.String</TypeName>
