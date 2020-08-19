@@ -21,7 +21,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     nomenclature_id,
@@ -34,16 +34,16 @@
     growth,
     measurement_units.name as unit
 	FROM 
-	workwear_dev24.operation_warehouse
+	operation_warehouse
 	JOIN
-	workwear_dev24.nomenclature on nomenclature.id = operation_warehouse.nomenclature_id
+	nomenclature on nomenclature.id = operation_warehouse.nomenclature_id
 	LEFT JOIN
-    workwear_dev24.item_types ON nomenclature.type_id = item_types.id
+    item_types ON nomenclature.type_id = item_types.id
     LEFT JOIN
-    workwear_dev24.measurement_units ON measurement_units.id = item_types.units_id
+    measurement_units ON measurement_units.id = item_types.units_id
 	GROUP BY nomenclature_id, size, growth, wear_percent</CommandText>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="nomenclature_id">
           <DataField>nomenclature_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
@@ -201,7 +201,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox7">
-                      <Value>% годности</Value>
+                      <Value>% износа</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
