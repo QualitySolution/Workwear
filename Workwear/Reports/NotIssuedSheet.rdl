@@ -45,19 +45,19 @@
             <Width>59.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>43.8pt</Width>
+            <Width>53.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>30.3pt</Width>
+            <Width>50.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>35.9pt</Width>
+            <Width>34.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>80.7pt</Width>
+            <Width>49.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>64.4pt</Width>
+            <Width>65.1pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>69.4pt</Width>
@@ -420,7 +420,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox3">
-                      <Value>Наименование</Value>
+                      <Value>Наиме- нование</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
