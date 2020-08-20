@@ -434,11 +434,6 @@ namespace workwear.Dialogs.Organization
 				Entity.AddUsedNorm(norm);
 		}
 
-		protected void OnButtonRefreshWorkwearItemsClicked(object sender, EventArgs e)
-		{
-			Entity.UpdateWorkwearItems();
-		}
-
 		protected void OnButtonNormOpenClicked(object sender, EventArgs e)
 		{
 			var selectedNorm = ytreeNorms.GetSelectedObject<Norm>();
