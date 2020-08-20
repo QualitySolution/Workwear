@@ -967,7 +967,7 @@
     <DataSet Name="Data">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
+        <CommandText>SELECT
     wear_cards_item.id,
     CONCAT_WS(' ',
             wear_cards.last_name,
@@ -981,8 +981,16 @@
     item_types.name AS type_name,
     item_types.id AS type_id,
     nomenclature.name AS nomenclature_name,
-    nomenclature.size,
-    nomenclature.growth,
+    (case when item_types.wear_category = 'Wear' then wear_cards.size_wear else 
+    	(case when item_types.wear_category = 'Shoes' then wear_cards.size_shoes else 
+    		(case when item_types.wear_category = 'Gloves' then wear_cards.size_gloves else 
+    			(case when item_types.wear_category = 'Headgear' then wear_cards.size_headdress else 
+    				(case when item_types.wear_category = 'WinterShoes' then wear_cards.size_winter_shoes else '' end) 
+    			end) 
+    		end) 
+    	end) 
+    end) as size,
+    (case when item_types.wear_category = 'Wear' then wear_cards.wear_growth else '' end) as growth,
     measurement_units.name AS unit,
     measurement_units.okei AS okei,
     norms_item.amount AS amount_by_norm,
@@ -997,48 +1005,36 @@
         WHERE
             nomenclature.type_id = wear_cards_item.itemtype_id
                 AND stock_expense.wear_card_id = wear_cards_item.wear_card_id) AS last_issue,
-    (SELECT 
-            SUM(stock_expense_detail.quantity) - IFNULL(SUM(stock_write_off_detail.quantity), 0) - IFNULL(SUM(stock_income_detail.quantity), 0)
-        FROM
-            stock_expense_detail
-                LEFT JOIN
-            stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id
-                LEFT JOIN
-            nomenclature ON stock_expense_detail.nomenclature_id = nomenclature.id
-                LEFT JOIN
-            stock_write_off_detail ON stock_write_off_detail.stock_expense_detail_id = stock_expense_detail.id
-                LEFT JOIN
-            stock_income_detail ON stock_income_detail.stock_expense_detail_id = stock_expense_detail.id
-        WHERE
-            stock_expense.wear_card_id = wear_cards_item.wear_card_id
-                AND (stock_expense_detail.auto_writeoff_date IS NULL
-                OR stock_expense_detail.auto_writeoff_date &gt; @report_date)
-                AND nomenclature.type_id = wear_cards_item.itemtype_id) AS received,
-    (SELECT 
-            SUM(stock_income_detail.quantity) - IFNULL(SUM(stock_write_off_detail.quantity), 0) - IFNULL(SUM(stock_expense_detail.quantity), 0)
-        FROM
-            stock_income_detail
-                LEFT JOIN
-            stock_write_off_detail ON stock_write_off_detail.stock_income_detail_id = stock_income_detail.id
-                LEFT JOIN
-            stock_expense_detail ON stock_expense_detail.stock_income_detail_id = stock_income_detail.id
-        WHERE
-            stock_income_detail.nomenclature_id = wear_cards_item.matched_nomenclature_id) AS in_stock
+    wear_cards_item.amount AS received,
+    (SELECT
+          (sum(case when stock.warehouse_receipt_id is not null then stock.amount else 0 end) -
+           sum(case when stock.warehouse_expense_id is not null then stock.amount else 0 end)) as sum
+      FROM (
+        SELECT operation_warehouse.nomenclature_id, operation_warehouse.amount, 
+    			operation_warehouse.warehouse_receipt_id, operation_warehouse.warehouse_expense_id, 
+    			wear_cards_item.id as wear_cards_item_id, nomenclature.type_id
+        FROM operation_warehouse
+        JOIN nomenclature on operation_warehouse.nomenclature_id = nomenclature.id
+        JOIN wear_cards_item on wear_cards_item.itemtype_id = nomenclature.type_id
+        GROUP by operation_warehouse.nomenclature_id, operation_warehouse.id) as stock
+     WHERE  type_id = nomenclature.type_id
+     GROUP BY stock.nomenclature_id) AS in_stock
 FROM
     wear_cards_item
-        LEFT JOIN
+        JOIN
     wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
-        LEFT JOIN
-    nomenclature ON nomenclature.id = wear_cards_item.matched_nomenclature_id
-        LEFT JOIN
+        JOIN
+    nomenclature ON nomenclature.type_id = wear_cards_item.itemtype_id
+        JOIN
     item_types ON item_types.id = wear_cards_item.itemtype_id
-        LEFT JOIN
+        JOIN
     measurement_units ON item_types.units_id = measurement_units.id
-        LEFT JOIN
+        JOIN
     norms_item ON wear_cards_item.norm_item_id = norms_item.id
 WHERE wear_cards.dismiss_date IS NULL AND (
     NOT @onlyMissing
         OR wear_cards_item.next_issue &lt; @report_date)
+        group by wear_cards_item.wear_card_id, wear_cards_item.itemtype_id, wear_cards_item.norm_item_id
 HAVING @onlyMissing
     OR (received IS NULL
     OR received &lt; amount_by_norm)
