@@ -209,7 +209,7 @@ namespace workwear.Domain.Stock
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
 		}
 
-		public virtual void UpdateEmployeeNextIssue()
+		public virtual void UpdateEmployeeWearItems()
 		{
 			EmployeeCard.UpdateNextIssue(Items.Select(x => x.Nomenclature.Type).ToArray());
 			EmployeeCard.FillWearRecivedInfo(UoW);
