@@ -232,15 +232,11 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction11Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportStockAllWear");
-		var reportInfo = new ReportInfo {
-			Title = "Складская ведомость",
-			Identifier = "StockAllWear",
-		};
-
-		tdiMain.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
-						  () => new QSReport.ReportViewDlg(reportInfo)
-						 );
-
+		workwear.ReportsDlg.StockAllWearDlg stockAllWearDlg = new workwear.ReportsDlg.StockAllWearDlg();
+		tdiMain.OpenTab(
+			QSReport.ReportViewDlg.GenerateHashName(stockAllWearDlg),
+			() => new QSReport.ReportViewDlg(stockAllWearDlg)
+		);
 	}
 
 	protected void OnAction10Activated(object sender, EventArgs e)
