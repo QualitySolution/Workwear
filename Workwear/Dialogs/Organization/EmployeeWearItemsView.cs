@@ -108,5 +108,10 @@ namespace workwear.Dialogs.Organization
 			WriteOffDocDlg winWriteOff = new WriteOffDocDlg(RootEntity);
 			OpenNewTab(winWriteOff);
 		}
+
+		protected void OnButtonRefreshWorkwearItemsClicked(object sender, EventArgs e)
+		{
+			RootEntity.UpdateWorkwearItems();
+		}
 	}
 }
