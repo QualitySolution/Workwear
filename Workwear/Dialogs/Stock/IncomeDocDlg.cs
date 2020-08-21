@@ -110,7 +110,7 @@ namespace workwear
 						logger.Debug ("Позиции <{0}> не требуется к выдаче, пропускаем...", itemsGroup.First ().Nomenclature.Type.Name);
 						continue;
 					}
-
+					Entity.UpdateEmployeeNextIssue();
 					wearItem.UpdateNextIssue (UoW);
 				}
 				UoWGeneric.Commit ();

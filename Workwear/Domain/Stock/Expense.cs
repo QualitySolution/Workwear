@@ -148,6 +148,7 @@ namespace workwear.Domain.Stock
 		public virtual void UpdateEmployeeNextIssue()
 		{
 			Employee.UpdateNextIssue(Items.Select(x => x.Nomenclature.Type).ToArray());
+			Employee.FillWearRecivedInfo(UoW);
 			UoW.Save(Employee);
 		}
 
