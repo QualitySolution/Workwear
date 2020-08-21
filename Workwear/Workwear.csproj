@@ -386,6 +386,8 @@
     <Compile Include="HibernateMapping\Operations\SubdivisionIssueOperationMap.cs" />
     <Compile Include="Journal\JournalsColumnsConfigs.cs" />
     <Compile Include="Repository\Stock\StockRepository.cs" />
+    <Compile Include="ReportsDlg\StockAllWearDlg.cs" />
+    <Compile Include="gtk-gui\workwear.ReportsDlg.StockAllWearDlg.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

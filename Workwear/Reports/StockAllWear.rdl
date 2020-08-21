@@ -19,9 +19,21 @@
   <LeftMargin>.25in</LeftMargin>
   <RightMargin>.25in</RightMargin>
   <BottomMargin>.25in</BottomMargin>
+    <ReportParameters>
+    <ReportParameter Name="id">
+      <DataType>Integer</DataType>
+      <Nullable>False</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>False</AllowBlank>
+    </ReportParameter>
+  </ReportParameters>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     nomenclature_id,
@@ -41,9 +53,15 @@
     item_types ON nomenclature.type_id = item_types.id
     LEFT JOIN
     measurement_units ON measurement_units.id = item_types.units_id
+    WHERE operation_warehouse.warehouse_receipt_id = @id or operation_warehouse.warehouse_expense_id = @id
 	GROUP BY nomenclature_id, size, growth, wear_percent</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="id">
+            <Value>=Parameters!id</Value>
+          </QueryParameter>
+        </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="nomenclature_id">
           <DataField>nomenclature_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
