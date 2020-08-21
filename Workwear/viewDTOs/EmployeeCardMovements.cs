@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QS.DomainModel.Entity;
 using QSProjectsLib;
 using workwear.Domain.Operations;
@@ -16,7 +16,7 @@ namespace workwear.DTO
 		public string NomenclatureName => Operation.Nomenclature.Name;
 		public string UnitsName => Operation.Nomenclature.Type.Units.Name;
 		public decimal? WearPercet => Operation.WearPercent;
-		public decimal? Cost => Operation.WarehouseOperation.Cost;
+		public decimal? Cost => Operation.WarehouseOperation?.Cost;
 
 		public int AmountReceived => Operation.Issued;
 		public int AmountReturned => Operation.Returned;
