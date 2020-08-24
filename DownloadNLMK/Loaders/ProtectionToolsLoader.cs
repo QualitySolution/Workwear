@@ -14,6 +14,7 @@ namespace DownloadNLMK.Loaders
 		private readonly IUnitOfWork uow;
 		private readonly NomenclatureLoader nomenclatures;
 		public Dictionary<string, ProtectionTools> ByID = new Dictionary<string, ProtectionTools>();
+		public Dictionary<string, string> dicUniqNameProtectionTools = new Dictionary<string, string>();
 
 		public HashSet<ProtectionTools> UsedProtectionTools = new HashSet<ProtectionTools>();
 
@@ -39,9 +40,21 @@ namespace DownloadNLMK.Loaders
 					logger.Warn($"СИЗ с кодом {row.PROTECTION_ID} не имеет названия.");
 					item.Name = $"Без названия PROTECTION_ID={row.PROTECTION_ID}";
 				}
-				ByID[row.PROTECTION_ID] = item;
+
+				string value = item.Name;
+				//Если уникальное имя уже занято, то присваиваем уже созданную по этому имени номенклатуру ТОН
+				if(dicUniqNameProtectionTools.FirstOrDefault(x => x.Key == row.NAME).Key != null && row.NAME != null) 
+					ByID[row.PROTECTION_ID] = ByID[dicUniqNameProtectionTools[row.NAME]];
+				else if (row.NAME != null) {
+					dicUniqNameProtectionTools[row.NAME] = row.PROTECTION_ID;
+					ByID[row.PROTECTION_ID] = item;
+				}
+				else ByID[row.PROTECTION_ID] = item;
+
 			}
 			logger.Info($"Загружено {ByID.Count} СИЗ-ов.");
+
+			logger.Info($"Загружено уникальных {dicUniqNameProtectionTools.Count} СИЗ-ов.");
 
 			logger.Info("Обработка Аналогов СИЗ...");
 			int analogCount = 0;
@@ -57,9 +70,13 @@ namespace DownloadNLMK.Loaders
 					analogNotFound++;
 					continue;
 				}
-				ByID[row.PROTECTION_ID].Analogs.Add(ByID[row.PROTECTION_ID_ANALOG]);
+
+				if (!ByID[row.PROTECTION_ID].Analogs.Contains(ByID[row.PROTECTION_ID_ANALOG]))
+			    	ByID[row.PROTECTION_ID].Analogs.Add(ByID[row.PROTECTION_ID_ANALOG]);
+
 				analogCount++;
 			}
+
 			logger.Info($"Загружено {analogCount} аналогов СИЗ-ов.");
 			logger.Info($"Не найдено {analogNotFound} аналогов СИЗ-ов.");
 
