@@ -14,7 +14,7 @@ namespace DownloadNLMK.Loaders
 		private readonly IUnitOfWork uow;
 		private readonly NomenclatureLoader nomenclatures;
 		public Dictionary<string, ProtectionTools> ByID = new Dictionary<string, ProtectionTools>();
-		public Dictionary<string, string> dicUniqNameProtectionTools = new Dictionary<string, string>();
+		public Dictionary<string, ProtectionTools> DicUniqNameProtectionTools = new Dictionary<string, ProtectionTools>();
 
 		public HashSet<ProtectionTools> UsedProtectionTools = new HashSet<ProtectionTools>();
 
@@ -41,20 +41,17 @@ namespace DownloadNLMK.Loaders
 					item.Name = $"Без названия PROTECTION_ID={row.PROTECTION_ID}";
 				}
 
-				string value = item.Name;
-				//Если уникальное имя уже занято, то присваиваем уже созданную по этому имени номенклатуру ТОН
-				if(dicUniqNameProtectionTools.FirstOrDefault(x => x.Key == row.NAME).Key != null && row.NAME != null) 
-					ByID[row.PROTECTION_ID] = ByID[dicUniqNameProtectionTools[row.NAME]];
-				else if (row.NAME != null) {
-					dicUniqNameProtectionTools[row.NAME] = row.PROTECTION_ID;
-					ByID[row.PROTECTION_ID] = item;
-				}
+				//Если уникальное имя занято, то присваиваем уже созданную по этому имени номенклатуру ТОН
+				if(row.NAME != null && DicUniqNameProtectionTools.ContainsKey(row.NAME)) 
+					ByID[row.PROTECTION_ID] = DicUniqNameProtectionTools[row.NAME];
+				else if (row.NAME != null) 
+					DicUniqNameProtectionTools[row.NAME] = ByID[row.PROTECTION_ID] = item;
 				else ByID[row.PROTECTION_ID] = item;
 
 			}
 			logger.Info($"Загружено {ByID.Count} СИЗ-ов.");
 
-			logger.Info($"Загружено уникальных {dicUniqNameProtectionTools.Count} СИЗ-ов.");
+			logger.Info($"Загружено уникальных {DicUniqNameProtectionTools.Count} СИЗ-ов.");
 
 			logger.Info("Обработка Аналогов СИЗ...");
 			int analogCount = 0;
