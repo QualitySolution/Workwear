@@ -184,7 +184,8 @@ namespace workwear.ViewModels.Statements
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.Id },
-					{"organization", subdivisionHR.Name}
+					{"organization", subdivisionHR.Name },
+					{"code", subdivisionHR.Code}
 				}
 			};
 
