@@ -100,7 +100,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(expense);
 				uow.Commit();
 
-				expense.UpdateEmployeeNextIssue();
+				expense.UpdateEmployeeWearItems();
 
 				//Тут ожидаем предложение перенести дату использование второй номенклатуры на год.
 				ask.ReceivedWithAnyArgs().Question(String.Empty);
@@ -264,7 +264,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(expense.IssuanceSheet);
 				uow.Save(expense);
 				uow.Commit();
-				expense.UpdateEmployeeNextIssue();
+				expense.UpdateEmployeeWearItems();
 				uow.Commit();
 
 				Assert.That(expense.IssuanceSheet, Is.Not.Null);

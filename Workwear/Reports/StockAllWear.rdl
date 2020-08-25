@@ -19,56 +19,49 @@
   <LeftMargin>.25in</LeftMargin>
   <RightMargin>.25in</RightMargin>
   <BottomMargin>.25in</BottomMargin>
+    <ReportParameters>
+    <ReportParameter Name="id">
+      <DataType>Integer</DataType>
+      <Nullable>False</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>False</AllowBlank>
+    </ReportParameter>
+  </ReportParameters>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
-    stock_income.number,
-    stock_income_detail.nomenclature_id,
-    (stock_income_detail.quantity - IFNULL(count, 0)) as quantity,
+    nomenclature_id,
+    (SUM(case when operation_warehouse.warehouse_receipt_id is not null then operation_warehouse.amount else 0 end) -
+		SUM(case when operation_warehouse.warehouse_expense_id is not null then operation_warehouse.amount else 0 end)) as quantity,
     nomenclature.name as nomenclature,
-    stock_income_detail.life_percent,
-    spent.count,
-    item_types.name as type,
-    nomenclature.size,
-    nomenclature.growth,
+    wear_percent as life_percent,
+    item_types.name  as type,
+    size,
+    growth,
     measurement_units.name as unit
-FROM
-    stock_income_detail
-        LEFT JOIN
-    (SELECT 
-        id, SUM(count) as count
-    FROM
-        (SELECT 
-        stock_expense_detail.stock_income_detail_id as id,
-            stock_expense_detail.quantity as count
-    FROM
-        stock_expense_detail UNION ALL SELECT 
-        stock_write_off_detail.stock_income_detail_id as id,
-            stock_write_off_detail.quantity as count
-    FROM
-        stock_write_off_detail
-    WHERE
-        stock_income_detail_id IS NOT NULL) as table1
-    GROUP BY id) as spent ON spent.id = stock_income_detail.id
-        LEFT JOIN
-    nomenclature ON nomenclature.id = stock_income_detail.nomenclature_id
-        LEFT JOIN
+	FROM 
+	operation_warehouse
+	JOIN
+	nomenclature on nomenclature.id = operation_warehouse.nomenclature_id
+	LEFT JOIN
     item_types ON nomenclature.type_id = item_types.id
-        LEFT JOIN
+    LEFT JOIN
     measurement_units ON measurement_units.id = item_types.units_id
-        LEFT JOIN
-    stock_income ON stock_income.id = stock_income_detail.stock_income_id
-WHERE
-    spent.count IS NULL
-        OR spent.count &lt; stock_income_detail.quantity</CommandText>
+    WHERE operation_warehouse.warehouse_receipt_id = @id or operation_warehouse.warehouse_expense_id = @id
+	GROUP BY nomenclature_id, size, growth, wear_percent</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="id">
+            <Value>=Parameters!id</Value>
+          </QueryParameter>
+        </QueryParameters>
       </Query>
-      <Fields>
-        <Field Name="number">
-          <DataField>number</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
+      <Fields >
         <Field Name="nomenclature_id">
           <DataField>nomenclature_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
@@ -83,10 +76,6 @@ WHERE
         </Field>
         <Field Name="life_percent">
           <DataField>life_percent</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="count">
-          <DataField>count</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="type">
@@ -139,13 +128,10 @@ WHERE
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>69.9pt</Width>
+            <Width>100.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>335.3pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>96.5pt</Width>
+            <Width>403.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>49.6pt</Width>
@@ -168,7 +154,7 @@ WHERE
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox3">
-                      <Value>№ ТН</Value>
+                      <Value>№ Номенклатуры</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -186,22 +172,6 @@ WHERE
                   <ReportItems>
                     <Textbox Name="Textbox19" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                       <Value>Наименование</Value>
-                      <Style>
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox4">
-                      <Value>№ номенклатуры</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -249,7 +219,7 @@ WHERE
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox7">
-                      <Value>% годности</Value>
+                      <Value>% износа</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -291,7 +261,7 @@ WHERE
                   <Height>21.6pt</Height>
                   <TableCells>
                     <TableCell>
-                      <ColSpan>7</ColSpan>
+                      <ColSpan>6</ColSpan>
                       <ReportItems>
                         <Textbox Name="Textbox13">
                           <Value>=Fields.type.Value</Value>
@@ -354,23 +324,6 @@ WHERE
                     </TableCell>
                     <TableCell>
                       <ReportItems>
-                        <Textbox Name="Textbox16">
-                          <Value>
-                          </Value>
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Right>None</Right>
-                              <Left>None</Left>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                          </Style>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
                         <Textbox Name="Textbox10">
                           <Value>
                           </Value>
@@ -400,11 +353,11 @@ WHERE
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
-                            <TextAlign >Right</TextAlign>
+                            <TextAlign>Right</TextAlign>
                           </Style>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan >2</ColSpan>
+                      <ColSpan>2</ColSpan>
                     </TableCell>
                     <TableCell>
                       <ReportItems>
@@ -439,24 +392,9 @@ WHERE
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="number">
-                      <Value>=Fields!number.Value</Value>
+                    <Textbox Name="nomenclature_id">
+                      <Value>=Fields!nomenclature_id.Value</Value>
                       <CanGrow>true</CanGrow>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <TextAlign>Center</TextAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox20" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                      <Value>=Fields!nomenclature.Value</Value>
-                      <CanGrow>false</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -471,8 +409,8 @@ WHERE
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="nomenclature_id">
-                      <Value>=Fields!nomenclature_id.Value</Value>
+                    <Textbox Name="Textbox20" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                      <Value>=Fields!nomenclature.Value</Value>
                       <CanGrow>false</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -595,23 +533,6 @@ WHERE
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox27">
-                      <Value>
-                      </Value>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Right>None</Right>
-                          <Left>None</Left>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
                     <Textbox Name="Textbox18">
                       <Value>
                       </Value>
@@ -641,12 +562,12 @@ WHERE
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
-                        <FontWeight >Bold</FontWeight>
-                        <TextAlign >Right</TextAlign>
+                        <FontWeight>Bold</FontWeight>
+                        <TextAlign>Right</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan >2</ColSpan>
+                  <ColSpan>2</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>

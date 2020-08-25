@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QS.DomainModel.Entity;
 using QSProjectsLib;
 using workwear.Domain.Operations;
