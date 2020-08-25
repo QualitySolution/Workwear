@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dapper;
@@ -33,6 +33,11 @@ namespace DownloadNLMK.Loaders
 
 			logger.Info("Обработка СИЗ...");
 			foreach(var row in dtPROTECTION_TOOLS) {
+				if(row.NAME != null && DicUniqNameProtectionTools.ContainsKey(row.NAME)) {
+					ByID[row.PROTECTION_ID] = DicUniqNameProtectionTools[row.NAME];
+					continue;
+				}
+
 				var item = new ProtectionTools();
 				item.Name = row.NAME;
 				item.Comment = "Загружена из ОМТР";
@@ -42,11 +47,9 @@ namespace DownloadNLMK.Loaders
 				}
 
 				//Если уникальное имя занято, то присваиваем уже созданную по этому имени номенклатуру ТОН
-				if(row.NAME != null && DicUniqNameProtectionTools.ContainsKey(row.NAME)) 
-					ByID[row.PROTECTION_ID] = DicUniqNameProtectionTools[row.NAME];
-				else if (row.NAME != null) 
-					DicUniqNameProtectionTools[row.NAME] = ByID[row.PROTECTION_ID] = item;
-				else ByID[row.PROTECTION_ID] = item;
+				if (row.NAME != null) 
+					DicUniqNameProtectionTools[row.NAME] = item;
+				ByID[row.PROTECTION_ID] = item;
 
 			}
 			logger.Info($"Загружено {ByID.Count} СИЗ-ов.");
@@ -68,10 +71,10 @@ namespace DownloadNLMK.Loaders
 					continue;
 				}
 
-				if (!ByID[row.PROTECTION_ID].Analogs.Contains(ByID[row.PROTECTION_ID_ANALOG]))
-			    	ByID[row.PROTECTION_ID].Analogs.Add(ByID[row.PROTECTION_ID_ANALOG]);
-
-				analogCount++;
+				if(!ByID[row.PROTECTION_ID].Analogs.Contains(ByID[row.PROTECTION_ID_ANALOG])) {
+					ByID[row.PROTECTION_ID].Analogs.Add(ByID[row.PROTECTION_ID_ANALOG]);
+					analogCount++;
+				}
 			}
 
 			logger.Info($"Загружено {analogCount} аналогов СИЗ-ов.");
