@@ -121,8 +121,8 @@ namespace workwear.Domain.Regulations
 
 		public virtual void AddNomeclature(Nomenclature nomenclature)
 		{
-			if(Analogs.Any(p => DomainHelper.EqualDomainObjects(p, nomenclature))) {
-				logger.Warn("Такой аналог уже добавлен. Пропускаем...");
+			if(Nomenclatures.Any(p => DomainHelper.EqualDomainObjects(p, nomenclature))) {
+				logger.Warn("Номеклатура уже добавлена. Пропускаем...");
 				return;
 			}
 			ObservableNomenclatures.Add(nomenclature);
