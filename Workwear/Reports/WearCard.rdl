@@ -23,7 +23,7 @@
             CURDATE(), wear_cards_item.next_issue),
             NULL
         ) AS delay,
-        item_types.name AS type_name,
+        protection_tools.name AS type_name,
         nomenclature.name AS nomenclature_name,
         nomenclature_link.size,
         nomenclature_link.growth,
@@ -34,12 +34,12 @@
         wear_cards_item.amount AS received
     FROM
         wear_cards_item
-    LEFT JOIN item_types ON item_types.id = wear_cards_item.itemtype_id
-    LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+    LEFT JOIN protection_tools on protection_tools.id = wear_cards_item.protection_tools_id
+    LEFT JOIN measurement_units ON protection_tools.units_id = measurement_units.id
     LEFT JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
     LEFT JOIN(
         SELECT
-            nomenclature.type_id,
+            protection_tools_nomenclature.protection_tools_id,
             operation_issued_by_employee.nomenclature_id,
             DATE(
                 operation_issued_by_employee.operation_time
@@ -49,11 +49,12 @@
         FROM
             operation_issued_by_employee
         JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
+        LEFT JOIN protection_tools_nomenclature on protection_tools_nomenclature.nomenclature_id = nomenclature.id
         WHERE
             operation_issued_by_employee.employee_id = @id
     ) AS nomenclature_link
 ON
-    nomenclature_link.date = wear_cards_item.last_issue AND nomenclature_link.type_id = wear_cards_item.itemtype_id
+    nomenclature_link.date = wear_cards_item.last_issue AND nomenclature_link.protection_tools_id = wear_cards_item.protection_tools_id
 LEFT JOIN nomenclature ON nomenclature.id = nomenclature_link.nomenclature_id
 WHERE
     wear_cards_item.wear_card_id = @id
