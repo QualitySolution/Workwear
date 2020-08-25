@@ -214,7 +214,6 @@ namespace workwear.Views.Company
 			w5.Fill = false;
 			// Container child hbox4.Gtk.Box+BoxChild
 			this.enumPrint = new global::QSOrmProject.EnumMenuButton();
-			this.enumPrint.Sensitive = false;
 			this.enumPrint.CanFocus = true;
 			this.enumPrint.Name = "enumPrint";
 			this.enumPrint.UseUnderline = true;
