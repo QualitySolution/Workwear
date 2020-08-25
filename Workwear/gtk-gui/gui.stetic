@@ -1266,7 +1266,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Company.EmployeeView" design-size="1334 544">
+  <widget class="Gtk.Bin" id="workwear.Views.Company.EmployeeView" design-size="1334 564">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -1322,7 +1322,6 @@
             <child>
               <widget class="QSOrmProject.EnumMenuButton" id="enumPrint">
                 <property name="MemberName" />
-                <property name="Sensitive">False</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-print Menu</property>
