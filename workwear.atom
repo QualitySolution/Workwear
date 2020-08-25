@@ -3,7 +3,15 @@
   <subtitle type="text">Новости программы QS: Спецодежда и имущество</subtitle>
   <id>workwearnews</id>
   <rights type="text">Quality Solution 2020</rights>
-  <updated>2020-04-14T20:00:00+03:00</updated>
+  <updated>2020-08-25T10:00:00+03:00</updated>
+    <entry>
+    <id>urn:uuid:54571330-230d-4c1e-86d2-84ca344a34ea</id>
+    <title type="text">Релиз 2.3.3</title>
+    <updated>2020-08-25T10:00:00+03:00</updated>
+    <published>2020-08-25T10:00:00+03:00</published>
+    <link rel="alternate" href="http://workwear.qsolution.ru/?p=663" />
+    <summary>Исправление ошибок обнаруженных в ветке 2.3.</summary>
+  </entry>
   <entry>
     <id>urn:uuid:6f853bd2-dfd8-4296-8146-0e22cb03c401</id>
     <title type="text">Релиз 2.3.2</title>
