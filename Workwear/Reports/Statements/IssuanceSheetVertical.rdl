@@ -1082,7 +1082,7 @@
           <TableColumn>
             <Width>142.1pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>51.0pt</Width>
           </TableColumn>
           <TableColumn>
@@ -1108,7 +1108,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox42">
                       <Value>=Parameters!code.Value</Value>
@@ -1158,7 +1158,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox43">
                       <Value>
@@ -2255,7 +2255,7 @@ WHERE
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>
@@ -2276,6 +2276,13 @@ WHERE
       <MultiValue>false</MultiValue>
       <Prompt>
       </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="code">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>
