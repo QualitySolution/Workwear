@@ -84,11 +84,11 @@ namespace DownloadNLMK.Loaders
 		{
 			var types = uow.GetAll<ItemsType>().ToList();
 			foreach(var type in types) {
-				var matched1 = KeyWords.Values.FirstOrDefault(x => x.ItemsType.Name == type.Name);
+				var matched1 = KeyWords.Values.FirstOrDefault(x => x.ItemsType?.Name == type.Name);
 				if(matched1 != null)
 					matched1.ItemsType = type;
 
-				var matchedKit = KeyWords.Values.FirstOrDefault(x => x.ItemsTypeKit.Name == type.Name);
+				var matchedKit = KeyWords.Values.FirstOrDefault(x => x.ItemsTypeKit?.Name == type.Name);
 				if(matchedKit != null)
 					matchedKit.ItemsTypeKit = type;
 			}
