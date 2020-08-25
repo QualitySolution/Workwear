@@ -79,7 +79,7 @@ namespace workwear.Views.Company.EmployeeChilds
 
 		protected void OnButtonRefreshWorkwearItemsClicked(object sender, EventArgs e)
 		{
-			RootEntity.UpdateWorkwearItems();
+			ViewModel.UpdateWorkwearItems();
 		}
 	}
 }

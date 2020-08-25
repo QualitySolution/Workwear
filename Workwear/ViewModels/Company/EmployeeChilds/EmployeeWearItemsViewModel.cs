@@ -89,6 +89,12 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 			navigation.OpenTdiTab<WriteOffDocDlg, EmployeeCard>(employeeViewModel, Entity);
 		}
 
+		public void UpdateWorkwearItems()
+		{
+			Entity.UpdateWorkwearItems();
+		}
+
+		#endregion
 		protected void RefreshWorkItems()
 		{
 			if(!NHibernateUtil.IsInitialized(Entity.WorkwearItems))
@@ -100,8 +106,6 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 			Entity.FillWearInStockInfo(UoW, Entity.Subdivision?.Warehouse, DateTime.Now);
 			Entity.FillWearRecivedInfo(UoW);
 		}
-
-		#endregion
 
 		public void Dispose()
 		{

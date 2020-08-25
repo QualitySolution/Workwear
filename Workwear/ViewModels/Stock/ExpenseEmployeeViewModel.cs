@@ -111,7 +111,7 @@ namespace workwear.ViewModels.Stock
 			UoWGeneric.Save();
 			if(Entity.Operation == ExpenseOperations.Employee) {
 				logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
-				Entity.UpdateEmployeeNextIssue();
+				Entity.UpdateEmployeeWearItems();
 				UoWGeneric.Commit();
 			}
 
