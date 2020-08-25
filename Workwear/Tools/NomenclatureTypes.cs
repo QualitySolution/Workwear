@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
@@ -17,9 +16,11 @@ namespace DownloadNLMK.Loaders
 
 		public MeasurementUnits KitUnits;
 
-		public NomenclatureTypes(IUnitOfWork uow)
+		public NomenclatureTypes(IUnitOfWork uow, bool tryLoad = false)
 		{
 			makeTypes(uow);
+			if(tryLoad)
+				TryLoadFromDB(uow);
 		}
 
 		#region Создание типов
@@ -77,6 +78,20 @@ namespace DownloadNLMK.Loaders
 			AddType("ИМУЩЕСТВО", sht, new string[] { "ФИЛЬТР", "ЗНАК", "ФИЛЬТРДЛЯ", "ЭТИКЕТКА", "РЕДУКТОР", "УТЕПЛИТЕЛЬ", "ЛЕНТА", "ШТОРЫ", 
 				"ФЛАГ", "ЧЕХОЛ", "РУКАВ", "ПЛОМБА", "КОЖА", "ПОЛОГ", "СУКНО" });
 			AddType("ИНСТРУМЕНТ", sht, new string[] { "МАЗЬ", "НОЖ", "НОЖНИЦЫ", "СИГНАЛЬНЫЙ", "МАНОМЕТР" });
+		}
+
+		private void TryLoadFromDB(IUnitOfWork uow)
+		{
+			var types = uow.GetAll<ItemsType>().ToList();
+			foreach(var type in types) {
+				var matched1 = KeyWords.Values.FirstOrDefault(x => x.ItemsType.Name == type.Name);
+				if(matched1 != null)
+					matched1.ItemsType = type;
+
+				var matchedKit = KeyWords.Values.FirstOrDefault(x => x.ItemsTypeKit.Name == type.Name);
+				if(matchedKit != null)
+					matchedKit.ItemsTypeKit = type;
+			}
 		}
 
 		private void AddType(string name, СlothesType category, MeasurementUnits units, string[] keyWords, СlothesType? category2 = null, string[] keywords2 = null)

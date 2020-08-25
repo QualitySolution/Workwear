@@ -454,6 +454,7 @@
     <Compile Include="gtk-gui\workwear.Views.Stock.ExpenseDocItemObjectView.cs" />
     <Compile Include="ViewModels\Stock\ExpenseDocItemsEmployeeViewModel.cs" />
     <Compile Include="ViewModels\Stock\ExpenseDocItemsObjectViewModel.cs" />
+    <Compile Include="Tools\NomenclatureTypes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

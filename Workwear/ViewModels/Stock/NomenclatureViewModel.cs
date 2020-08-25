@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using DownloadNLMK.Loaders;
 using Gamma.Utilities;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -33,6 +34,9 @@ namespace workwear.ViewModels.Stock
 			if(lineIncome != null) {
 				Entity.Name = lineIncome.Name;
 				Entity.Ozm = lineIncome.Ozm;
+				var nomeclatureTypes = new NomenclatureTypes(UoW, true);
+				Entity.Type = nomeclatureTypes.ParseNomenclatureName(Entity.Name, false);
+				Entity.Sex = nomeclatureTypes.ParseSex(Entity.Name) ?? ClothesSex.Universal;
 			}
 		}
 
