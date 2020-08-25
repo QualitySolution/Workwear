@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Gtk;
 using QS.Views.Dialog;
@@ -41,9 +41,9 @@ namespace workwear.Views.Stock
 
 
 			tableEmployee.CreateFluentColumnsConfig<MassExpenseEmployee>()
-			.AddColumn("Фамилия").Tag("LastName").AddTextRenderer(x => x.LastName).Editable()
-			.AddColumn("Имя").Tag("Name").AddTextRenderer(x => x.FirstName).Editable()
-			.AddColumn("Отчество").Tag("Patronomic").AddTextRenderer(x => x.Patronymic).Editable()
+			.AddColumn("Фамилия").MinWidth(120).Tag("LastName").AddTextRenderer(x => x.LastName).Editable()
+			.AddColumn("Имя").MinWidth(120).Tag("Name").AddTextRenderer(x => x.FirstName).Editable()
+			.AddColumn("Отчество").MinWidth(120).Tag("Patronomic").AddTextRenderer(x => x.Patronymic).Editable()
 			.AddColumn("Пол").Tag("Sex").AddEnumRenderer(x => x.Sex).Editing()
 			.AddColumn("Размер").Tag(СlothesType.Wear)
 				.AddComboRenderer(x => x.WearSizeStd).Editing()
