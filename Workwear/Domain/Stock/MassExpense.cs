@@ -226,8 +226,9 @@ namespace workwear.Domain.Stock
 
 				foreach(var emp in employees) {
 					var sizeAndStd = emp.GetSize(nom.Nomenclature.Type.WearCategory);
-					if (string.IsNullOrEmpty(sizeAndStd.Size) && !DisplayMessage.Contains("Не для всех сотрудников")) {
-						DisplayMessage += $"Не для всех сотрудников указан размер одежды! \n";
+					if (string.IsNullOrEmpty(sizeAndStd.Size)) {
+						if (!DisplayMessage.Contains("Не для всех сотрудников"))
+							DisplayMessage += $"Не для всех сотрудников указан размер одежды! \n";
 						continue;
 					}
 					var EnableSize = SizeHelper.MatchSize(sizeAndStd.StandardCode, sizeAndStd.Size, SizeUsePlace.Сlothes);
