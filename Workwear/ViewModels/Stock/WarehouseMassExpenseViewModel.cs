@@ -81,9 +81,10 @@ namespace workwear.ViewModels.Stock
 		#region Nomenclature
 		public void AddNomenclature()
 		{
-			var selectPage = NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(this, OpenPageOptions.AsSlave);
-			selectPage.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
-			selectPage.ViewModel.OnSelectResult += Nomeclature_OnSelectResult;
+			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceShortSummaryJournalViewModel>(this, QS.Navigation.OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.Filter.Warehouse = Entity.WarehouseFrom;
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += Nomeclature_OnSelectResult;
 		}
 
 		private void Nomeclature_OnSelectResult(object sender, JournalSelectedEventArgs e)

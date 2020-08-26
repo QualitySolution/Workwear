@@ -446,6 +446,7 @@ namespace workwear.Views.Stock
 			this.hbox9.Spacing = 6;
 			// Container child hbox9.Gtk.Box+BoxChild
 			this.buttonAddNomenclature = new global::Gtk.Button();
+			this.buttonAddNomenclature.Sensitive = false;
 			this.buttonAddNomenclature.CanFocus = true;
 			this.buttonAddNomenclature.Name = "buttonAddNomenclature";
 			this.buttonAddNomenclature.UseUnderline = true;
