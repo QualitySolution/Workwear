@@ -18,6 +18,9 @@ using workwear.Journal.Filter.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock
 {
+	/// <summary>
+	/// Stock balance journal view model. Для подробного отображения баланса склада
+	/// </summary>
 	public class StockBalanceJournalViewModel : JournalViewModelBase
 	{
 		public bool ShowSummary;
