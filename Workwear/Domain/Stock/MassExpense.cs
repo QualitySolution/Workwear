@@ -239,7 +239,7 @@ namespace workwear.Domain.Stock
 					foreach(var item in stockBalanse)
 						allCount += item.Amount;
 					if(allCount < nom.Amount)
-						DisplayMessage += $"Номенклатуры «{nom.Nomenclature.Name}» размера {sizeAndStd.Size} на складе недостаточно \n";
+						DisplayMessage += $"Номенклатуры «{nom.Nomenclature.Name}» размера {sizeAndStd.Size} для {(emp.EmployeeCard.Sex == Sex.F ? "женского" : "мужского")} пола на складе недостаточно \n";
 					else {
 						var warOper = new WarehouseOperation();
 						foreach(var item in stockBalanse) {
