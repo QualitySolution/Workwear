@@ -64,11 +64,6 @@ namespace workwear.Views.Company.EmployeeChilds
 			ViewModel.NormFromPost();
 		}
 
-		protected void OnButtonRefreshWorkwearItemsClicked(object sender, EventArgs e)
-		{
-			viewModel.RefreshWorkwearItems();
-		}
-
 		protected void OnButtonNormOpenClicked(object sender, EventArgs e)
 		{
 			viewModel.OpenNorm(ytreeNorms.GetSelectedObject<Norm>());
