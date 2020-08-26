@@ -84,11 +84,6 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 				Entity.AddUsedNorm(norm);
 		}
 
-		public void RefreshWorkwearItems()
-		{
-			Entity.UpdateWorkwearItems();
-		}
-
 		public void OpenNorm(Norm norm)
 		{
 			navigation.OpenViewModel<NormViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(norm.Id));

@@ -20,8 +20,6 @@ namespace workwear.Views.Company.EmployeeChilds
 
 		private global::Gtk.Button buttonRemoveNorm;
 
-		private global::Gtk.Button buttonRefreshWorkwearItems;
-
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -105,23 +103,11 @@ namespace workwear.Views.Company.EmployeeChilds
 			w10.Position = 3;
 			w10.Expand = false;
 			w10.Fill = false;
-			// Container child hbox10.Gtk.Box+BoxChild
-			this.buttonRefreshWorkwearItems = new global::Gtk.Button();
-			this.buttonRefreshWorkwearItems.TooltipMarkup = "Обновить список требуемой спецодежды в соответсвтии с изменениями в нормах.";
-			this.buttonRefreshWorkwearItems.CanFocus = true;
-			this.buttonRefreshWorkwearItems.Name = "buttonRefreshWorkwearItems";
-			this.buttonRefreshWorkwearItems.UseUnderline = true;
-			this.buttonRefreshWorkwearItems.Label = global::Mono.Unix.Catalog.GetString("Обновить спецодежду");
-			this.hbox10.Add(this.buttonRefreshWorkwearItems);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox10[this.buttonRefreshWorkwearItems]));
-			w11.Position = 4;
+			this.vbox6.Add(this.hbox10);
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox6[this.hbox10]));
+			w11.Position = 1;
 			w11.Expand = false;
 			w11.Fill = false;
-			this.vbox6.Add(this.hbox10);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox6[this.hbox10]));
-			w12.Position = 1;
-			w12.Expand = false;
-			w12.Fill = false;
 			this.Add(this.vbox6);
 			if ((this.Child != null))
 			{
@@ -133,7 +119,6 @@ namespace workwear.Views.Company.EmployeeChilds
 			this.buttonNormFromPost.Clicked += new global::System.EventHandler(this.OnButtonNormFromPostClicked);
 			this.buttonNormOpen.Clicked += new global::System.EventHandler(this.OnButtonNormOpenClicked);
 			this.buttonRemoveNorm.Clicked += new global::System.EventHandler(this.OnButtonRemoveNormClicked);
-			this.buttonRefreshWorkwearItems.Clicked += new global::System.EventHandler(this.OnButtonRefreshWorkwearItemsClicked);
 		}
 	}
 }
