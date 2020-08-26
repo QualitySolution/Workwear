@@ -1,4 +1,5 @@
 ﻿using System;
+using QS.Project.Journal;
 using System.Linq;
 using Autofac;
 using NHibernate;
@@ -8,7 +9,6 @@ using NHibernate.Transform;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
 using QS.Navigation;
-using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Services;
 using workwear.Domain.Operations;
@@ -19,20 +19,20 @@ using workwear.Journal.Filter.ViewModels.Stock;
 namespace workwear.Journal.ViewModels.Stock
 {
 	/// <summary>
-	/// Stock balance journal view model. Для подробного отображения баланса склада
+	/// Stock balance short summary journal view model. Для отображения количества номенклатуры, без учета размеров. 
 	/// </summary>
-	public class StockBalanceJournalViewModel : JournalViewModelBase
+	public class StockBalanceShortSummaryJournalViewModel : JournalViewModelBase
 	{
 		public bool ShowSummary;
 
 		public StockBalanceFilterViewModel Filter { get; private set; }
 
-		public StockBalanceJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigation, ILifetimeScope autofacScope) : base(unitOfWorkFactory, interactiveService, navigation)
+		public StockBalanceShortSummaryJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope) : base(unitOfWorkFactory, interactiveService, navigationManager)
 		{
 			AutofacScope = autofacScope;
 			JournalFilter = Filter = AutofacScope.Resolve<StockBalanceFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
-			var dataLoader = new ThreadDataLoader<StockBalanceJournalNode>(unitOfWorkFactory);
+			var dataLoader = new ThreadDataLoader<StockBalanceShortSummaryJournalNode>(unitOfWorkFactory);
 			dataLoader.AddQuery(ItemsQuery);
 			DataLoader = dataLoader;
 
@@ -46,7 +46,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 		protected IQueryOver<WarehouseOperation> ItemsQuery(IUnitOfWork uow)
 		{
-			StockBalanceJournalNode resultAlias = null;
+			StockBalanceShortSummaryJournalNode resultAlias = null;
 
 			WarehouseOperation warehouseExpenseOperationAlias = null;
 			WarehouseOperation warehouseIncomeOperationAlias = null;
@@ -111,7 +111,7 @@ namespace workwear.Journal.ViewModels.Stock
 			if(ShowSummary == false && Filter.Warehouse == null)
 				queryStock.Where(x => x.Id == -1);
 
-			if (Filter.ProtectionTools != null) {
+			if(Filter.ProtectionTools != null) {
 				queryStock.Where(x => x.Nomenclature.IsIn(Filter.ProtectionTools.MatchedNomenclatures.ToArray()));
 			}
 
@@ -121,47 +121,38 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => itemtypesAlias.Units, () => unitsAlias)
 				.Where(GetSearchCriterion(
 					() => nomenclatureAlias.Name,
-					() => warehouseOperationAlias.Size,
-					() => warehouseOperationAlias.Growth))
+					() => warehouseOperationAlias.Size))
 
 				.SelectList(list => list
 			   .SelectGroup(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.Id)
 			   .Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
 			   .Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
-			   .SelectGroup(() => warehouseOperationAlias.Size).WithAlias(() => resultAlias.Size)
-			   .SelectGroup(() => warehouseOperationAlias.Growth).WithAlias(() => resultAlias.Growth)
-			   .SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
+
 			   .Select(projection).WithAlias(() => resultAlias.Amount)
+							  .Select(Projections.SqlFunction(
+					   new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT(distinct ?1 SEPARATOR ?2)"),
+					   NHibernateUtil.String,
+					   Projections.Property(() => warehouseOperationAlias.Size),
+					   Projections.Constant(", "))
+				   ).WithAlias(() => resultAlias.Size)
 				)
+
 				.OrderBy(() => nomenclatureAlias.Name).Asc
-				.TransformUsing(Transformers.AliasToBean<StockBalanceJournalNode>());
+				.TransformUsing(Transformers.AliasToBean<StockBalanceShortSummaryJournalNode>());
 		}
 	}
-
-	public class StockBalanceJournalNode
+	public class StockBalanceShortSummaryJournalNode
 	{
 		public int Id { get; set; }
 
 		public string NomenclatureName { get; set; }
 		public string UnitsName { get; set; }
-		public string Size { get; set; }
-		public string Growth { get; set; }
-		public decimal WearPercent { get; set; }
 		public int Amount { get; set; }
+		public string Size { get; set; }
 
 		public string BalanceText => Amount > 0 ? String.Format("{0} {1}", Amount, UnitsName) : String.Format("<span foreground=\"red\">{0}</span> {1}", Amount, UnitsName);
 
-		public string WearPercentText {
-			get {
-				return WearPercent.ToString("P0");
-			}
-		}
-
-		public StockPosition GetStockPosition(IUnitOfWork uow)
-		{
-			var nomenclature = uow.GetById<Nomenclature>(Id);
-			return new StockPosition(nomenclature, Size, Growth, WearPercent);
-		}
 
 	}
 }
+

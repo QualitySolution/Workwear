@@ -95,12 +95,18 @@ namespace workwear.Views.Stock
 			tableEmployee.ItemsDataSource = ViewModel.Entity.ObservableEmployeeCard;
 
 			Entity.ObservableItemsNomenclature.ListContentChanged += ObservableItemsNomenclature_ListContentChanged;
+			Entity.PropertyChanged += EntityChange;
 
 			foreach(var column in tableEmployee.ColumnsConfig.ConfiguredColumns)
 				if (!(column.tag == "LastName" || column.tag == "Name" || column.tag == "Patronomic" || column.tag == "Sex" || column.Title == string.Empty))
 					column.TreeViewColumn.Visible = false;
 			refreshSizeColumns();
 			IssuanceSheetSensetive();
+		}
+
+		void EntityChange(object sender, EventArgs e)
+		{
+			buttonAddNomenclature.Sensitive = Entity.WarehouseFrom != null;
 		}
 
 		void ObservableItemsNomenclature_ListContentChanged(object sender, EventArgs e)
