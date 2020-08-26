@@ -106,7 +106,7 @@ namespace DownloadNLMK.Loaders
 			RELAT_PERS_PROFF = null;
 
 			logger.Info("Загружаем PERSONAL_CARDS");
-			var PERSONAL_CARDS = connection.Query("SELECT r.PERSONAL_CARD_ID, r.NORMA_ROW_ID, sms.MAT, sms.DOTP, sms.KOLMOTP, sm.TYPE, ADD_MONTHS(sms.DOTP, WEARING_PERIOD) expiry " +
+			var PERSONAL_CARDS = connection.Query("SELECT r.PERSONAL_CARD_ID, r.NORMA_ROW_ID, sms.MAT, sms.DOTP, sms.KOLMOTP, sm.TYPE, ADD_MONTHS(sms.DOTP, WEARING_PERIOD) as EXPIRY " +
 				"FROM SKLAD.PERSONAL_CARDS r " +
 				"INNER JOIN SKLAD.NORMA_ROW ON SKLAD.NORMA_ROW.NORMA_ROW_ID = r.NORMA_ROW_ID " +
 				"INNER JOIN SKLAD.NORMA norma ON norma.NORMA_ID = SKLAD.NORMA_ROW.NORMA_ID " +
@@ -162,9 +162,9 @@ namespace DownloadNLMK.Loaders
 					NormItem = normRow,
 					returned = item.TYPE == "1" ? Convert.ToInt32(item.KOLMOTP) : 0,
 					issued = item.TYPE == "2" ? Convert.ToInt32(item.KOLMOTP) : 0,
-					auto_writeoff_date = item.TYPE == "2" ? item.expiry : null,
+					auto_writeoff_date = item.TYPE == "2" ? item.EXPIRY : null,
 					ProtectionTools = cardItem.ProtectionTools,
-					ExpiryByNorm = item.TYPE == "2" ? item.expiry : null,
+					ExpiryByNorm = item.TYPE == "2" ? item.EXPIRY : null,
 					Nomenclature = issueNomenclature,
 					operation_time = item.DOTP,
 					StartOfUse = item.TYPE == "2" ? item.DOTP : null,
