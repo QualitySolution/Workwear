@@ -72,7 +72,7 @@ namespace workwear.Representations.Organization
 				.JoinAlias (() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias)
 				.JoinAlias (() => nomenclatureAlias.Type, () => itemtypesAlias)
 				.JoinAlias (() => itemtypesAlias.Units, () => unitsAlias)
-				.JoinAlias (() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
+				.JoinAlias (() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.Where (e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > DateTime.Today)
 				.SelectList (list => list
 					.SelectGroup (() => expenseOperationAlias.Id).WithAlias (() => resultAlias.Id)
