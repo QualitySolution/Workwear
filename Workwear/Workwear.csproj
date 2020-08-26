@@ -369,6 +369,8 @@
     <Compile Include="Journal\JournalsColumnsConfigs.cs" />
     <Compile Include="Tools\Oracle\NLMKOracle.cs" />
     <Compile Include="Repository\Stock\StockRepository.cs" />
+    <Compile Include="ReportsDlg\StockAllWearDlg.cs" />
+    <Compile Include="gtk-gui\workwear.ReportsDlg.StockAllWearDlg.cs" />
     <Compile Include="Journal\ViewModels\Company\EmployeeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\LeadersJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\OrganizationJournalViewModel.cs" />

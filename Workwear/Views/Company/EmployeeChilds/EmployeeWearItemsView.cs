@@ -76,5 +76,10 @@ namespace workwear.Views.Company.EmployeeChilds
 		{
 			ViewModel.WriteOffWear();
 		}
+
+		protected void OnButtonRefreshWorkwearItemsClicked(object sender, EventArgs e)
+		{
+			ViewModel.UpdateWorkwearItems();
+		}
 	}
 }

@@ -300,7 +300,7 @@ namespace WorkwearTest.Integration.Tools
 				//Обновление операций
 				expense.UpdateOperations(uow, ask);
 				uow.Save(expense);
-				expense.UpdateEmployeeNextIssue();
+				expense.UpdateEmployeeWearItems();
 				employee.WorkwearItems.First(e => e.ProtectionTools.IsSame(protectionTools2)).Created = new DateTime(2018, 4, 22);
 				uow.Save(expense.Employee);
 				uow.Commit();
