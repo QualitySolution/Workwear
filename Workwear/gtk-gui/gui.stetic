@@ -8452,10 +8452,11 @@
             <child>
               <widget class="Gtk.Button" id="buttonRefreshWorkwearItems">
                 <property name="MemberName" />
-                <property name="Tooltip" translatable="yes">Обновить список требуемой спецодежды в соответсвтии с изменениями в нормах.</property>
+                <property name="Tooltip" translatable="yes">Обновить список потребностей по указанным нормам</property>
                 <property name="CanFocus">True</property>
-                <property name="Type">TextOnly</property>
-                <property name="Label" translatable="yes">Обновить спецодежду</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:stock_refresh Menu</property>
+                <property name="Label" translatable="yes">Обновить потребноси</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonRefreshWorkwearItemsClicked" />
               </widget>
