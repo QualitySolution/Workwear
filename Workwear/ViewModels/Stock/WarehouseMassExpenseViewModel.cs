@@ -126,14 +126,14 @@ namespace workwear.ViewModels.Stock
 			newEmployee.FirstName = "-";
 			newEmployee.LastName = "-";
 			newEmployee.Patronymic = "-";
-			if (!Entity.Employees.Any(x=> x.EmployeeCard.FirstName == "-" && x.EmployeeCard.LastName == "-"))
+			if (!Entity.ListEmployees.Any(x=> x.EmployeeCard.FirstName == "-" && x.EmployeeCard.LastName == "-"))
 				Entity.AddEmployee(newEmployee, interactive);
 		}
 
 		public void RemoveEmployee(MassExpenseEmployee[] employees)
 		{
 			foreach(var emp in employees) {
-				Entity.ObservableEmployeeCard.Remove(Entity.Employees.First(x => x == emp));
+				Entity.ObservableEmployeeCard.Remove(Entity.ListEmployees.First(x => x == emp));
 			}
 		}
 
@@ -141,7 +141,7 @@ namespace workwear.ViewModels.Stock
 
 		protected override bool Validate()
 		{
-			foreach(var emp in Entity.Employees) {
+			foreach(var emp in Entity.ListEmployees) {
 				emp.EmployeeCard.FirstName.Replace("-", "");
 				emp.EmployeeCard.LastName.Replace("-", "");
 				emp.EmployeeCard.Patronymic.Replace("-", "");

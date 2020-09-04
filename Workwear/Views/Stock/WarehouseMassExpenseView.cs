@@ -102,6 +102,8 @@ namespace workwear.Views.Stock
 					column.TreeViewColumn.Visible = false;
 			refreshSizeColumns();
 			IssuanceSheetSensetive();
+
+			buttonAddNomenclature.Sensitive = Entity.WarehouseFrom != null;
 		}
 
 		void EntityChange(object sender, EventArgs e)
@@ -172,7 +174,7 @@ namespace workwear.Views.Stock
 
 		private void IssuanceSheetSensetive()
 		{
-			buttonIssuanceSheetCreate.Sensitive = Entity.Employees.Count > 0 && Entity.ItemsNomenclature.Count > 0;
+			buttonIssuanceSheetCreate.Sensitive = Entity.ListEmployees.Count > 0 && Entity.ItemsNomenclature.Count > 0;
 			buttonIssuanceSheetCreate.Visible = Entity.IssuanceSheet == null;
 			buttonIssuanceSheetOpen.Visible = buttonIssuanceSheetPrint.Visible = Entity.IssuanceSheet != null;
 		}
