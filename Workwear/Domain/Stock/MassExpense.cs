@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
@@ -56,7 +56,7 @@ namespace workwear.Domain.Stock
 
 		private IList<MassExpenseNomenclature> itemsNomenclature = new List<MassExpenseNomenclature>();
 
-		[Display(Name = "Номенлатура документа")]
+		[Display(Name = "Номенклатура документа")]
 		public virtual IList<MassExpenseNomenclature> ItemsNomenclature {
 			get { return itemsNomenclature; }
 			set { SetField(ref itemsNomenclature, value, () => ItemsNomenclature); }
@@ -214,13 +214,20 @@ namespace workwear.Domain.Stock
 				emp.ListWarehouseOperation.Clear();
 
 			DisplayMessage = "";
-			foreach (var nom in ItemsNomenclature) {
-				if (nom.Nomenclature.Type.Category == ItemTypeCategory.property || nom.Nomenclature.Type.WearCategory == СlothesType.PPE) {
-					List<Nomenclature> newListNomenPPE = new List<Nomenclature>();
-					newListNomenPPE.Add(nom.Nomenclature);
-					var stock2 = stockRepo.StockBalances(uow, warehouseFrom, newListNomenPPE, this.Date);
-					if((stock2.Count < 1 ? 0 : stock2[0].Amount) < employees.Count * nom.Amount)
-						DisplayMessage += $"Номенклатуры «{nom.Nomenclature.Name}» на складе недостаточно({stock2[0].Amount}). \n";
+			foreach (var nom in ItemsNomenclature) 
+			{
+				if (nom.Nomenclature.Type.Category == ItemTypeCategory.property || nom.Nomenclature.Type.WearCategory == СlothesType.PPE) 
+				{
+					var stockBalanceNoWear = stockRepo.StockBalances(uow, warehouseFrom, new List<Nomenclature>() { nom.Nomenclature }, this.Date);
+					if((stockBalanceNoWear?[0].Amount ?? 0) < employees.Count * nom.Amount) 
+						DisplayMessage += $"Номенклатуры «{nom.Nomenclature.Name}» на складе недостаточно({stockBalanceNoWear[0].Amount}). \n";
+					else {
+						var warOper = new WarehouseOperation();
+						warOper.Amount = employees.Count * nom.Amount;
+						warOper.Nomenclature = nom.Nomenclature;
+						foreach(var emp in employees)
+							emp.ListWarehouseOperation.Add(warOper);
+					}
 					continue;
 				}
 
