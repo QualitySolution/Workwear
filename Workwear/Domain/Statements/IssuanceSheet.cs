@@ -116,16 +116,14 @@ namespace workwear.Domain.Statements
 			return item;
 		}
 
-		public virtual IssuanceSheetItem AddItem(MassExpenseEmployee massExpenseEmployee, 
-			MassExpenseNomenclature massExpenseNomenclature,
-			EmployeeIssueOperation employeeIssueOperation)
-		{ 
+		public virtual IssuanceSheetItem AddItem(MassExpenseEmployee massExpenseEmployee,
+					   MassExpenseNomenclature massExpenseNomenclature)
+		{
 			var item = new IssuanceSheetItem {
 				IssuanceSheet = this,
 				Employee = massExpenseEmployee.EmployeeCard,
 				Nomenclature = massExpenseNomenclature.Nomenclature,
-				Amount = (uint)massExpenseNomenclature.Amount,
-				IssueOperation = employeeIssueOperation
+				Amount = (uint)massExpenseNomenclature.Amount
 			};
 			ObservableItems.Add(item);
 			return item;

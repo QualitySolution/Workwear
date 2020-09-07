@@ -120,7 +120,7 @@ namespace workwear.Domain.Stock
 			foreach(var emp in ListEmployees) {
 				foreach(var nomen in ItemsNomenclature) {
 					var warehouseOperation = massExpenseOperation.FirstOrDefault(x => x.EmployeeIssueOperation.Employee == emp.EmployeeCard && x.EmployeeIssueOperation.Nomenclature == nomen.Nomenclature);
-				nomen.IssuanceSheetItem = IssuanceSheet.AddItem(emp, nomen, warehouseOperation.EmployeeIssueOperation);
+					nomen.IssuanceSheetItem = IssuanceSheet.AddItem(emp, nomen);
 				}
 			}
 		}

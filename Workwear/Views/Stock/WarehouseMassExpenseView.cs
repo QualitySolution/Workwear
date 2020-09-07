@@ -3,6 +3,7 @@ using System.Linq;
 using Gtk;
 using QS.Views.Dialog;
 using workwear.Domain.Company;
+using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Measurements;
 using workwear.ViewModels.Stock;
@@ -90,11 +91,14 @@ namespace workwear.Views.Stock
 			.AddColumn(String.Empty)
 			.Finish();
 
+			enumPrint.ItemsEnum = typeof(IssuedSheetPrint);
+
 			tableEmployee.Selection.Changed += Selection_Changed_Employee;
 			tableEmployee.Selection.Mode = SelectionMode.Multiple;
 			tableEmployee.ItemsDataSource = ViewModel.Entity.ObservableEmployeeCard;
 
 			Entity.ObservableItemsNomenclature.ListContentChanged += ObservableItemsNomenclature_ListContentChanged;
+			Entity.ObservableEmployeeCard.ListContentChanged += ObservableEmployeeCard_ListContentChanged;
 			Entity.PropertyChanged += EntityChange;
 
 			foreach(var column in tableEmployee.ColumnsConfig.ConfiguredColumns)
@@ -106,6 +110,11 @@ namespace workwear.Views.Stock
 			buttonAddNomenclature.Sensitive = Entity.WarehouseFrom != null;
 		}
 
+		void ObservableEmployeeCard_ListContentChanged(object sender, EventArgs e)
+		{
+			IssuanceSheetSensetive();
+		}
+
 		void EntityChange(object sender, EventArgs e)
 		{
 			buttonAddNomenclature.Sensitive = Entity.WarehouseFrom != null;
@@ -114,6 +123,7 @@ namespace workwear.Views.Stock
 		void ObservableItemsNomenclature_ListContentChanged(object sender, EventArgs e)
 		{
 			refreshSizeColumns();
+			IssuanceSheetSensetive();
 		}
 
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -176,25 +186,23 @@ namespace workwear.Views.Stock
 		{
 			buttonIssuanceSheetCreate.Sensitive = Entity.ListEmployees.Count > 0 && Entity.ItemsNomenclature.Count > 0;
 			buttonIssuanceSheetCreate.Visible = Entity.IssuanceSheet == null;
-			buttonIssuanceSheetOpen.Visible = buttonIssuanceSheetPrint.Visible = Entity.IssuanceSheet != null;
+			buttonIssuanceSheetOpen.Visible = enumPrint.Visible = Entity.IssuanceSheet != null;
+
 		}
 
 		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e)
 		{
 			ViewModel.IssuanceSheetCreate();
-			IssuanceSheetSensetive();
-		}
-
-		protected void OnButtonIssuanceSheetPrintClicked(object sender, EventArgs e)
-		{
-			ViewModel.IssuanceSheetPrint();
-			IssuanceSheetSensetive();
 		}
 
 		protected void OnButtonIssuanceSheetOpenClicked(object sender, EventArgs e)
 		{
 			ViewModel.IssuanceSheetOpen();
-			IssuanceSheetSensetive();
+		}
+
+		protected void OnEnumPrintEnumItemClicked(object sender, QSOrmProject.EnumItemClickedEventArgs e)
+		{
+			ViewModel.PrintIssuenceSheet((IssuedSheetPrint)e.ItemEnum);
 		}
 	}
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using Gamma.Utilities;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
@@ -16,7 +17,9 @@ using QS.Tdi;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QSReport;
 using workwear.Domain.Company;
+using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
@@ -165,7 +168,6 @@ namespace workwear.ViewModels.Stock
 		public void IssuanceSheetCreate()
 		{
 			Entity.CreateIssuanceSheet();
-
 		}
 
 		public void IssuanceSheetOpen()
@@ -196,6 +198,26 @@ namespace workwear.ViewModels.Stock
 					{ "id",  Entity.IssuanceSheet.Id }
 				}
 			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
+
+		public void PrintIssuenceSheet(IssuedSheetPrint doc)
+		{
+			if(UoW.HasChanges) {
+				if(messages.SaveBeforePrint(Entity.GetType(), "ведомости"))
+					Save();
+				else
+					return;
+			}
+
+			var reportInfo = new ReportInfo {
+				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.IssuanceSheet.Id),
+				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.IssuanceSheet.Id }
+				}
+			};
+
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 	}
