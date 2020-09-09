@@ -100,9 +100,8 @@ namespace workwear.ViewModels.Stock
 
 		public void RemoveNomenclature(MassExpenseNomenclature[] noms)
 		{
-			foreach(var nom in noms) {
+			foreach(var nom in noms) 
 				Entity.ObservableItemsNomenclature.Remove(nom);
-			}
 		}
 
 		#endregion
@@ -156,6 +155,7 @@ namespace workwear.ViewModels.Stock
 
 
 			Entity.UpdateOperations(UoW, null);
+			Entity.UpdateIssuanceSheet();
 			return true;
 		}
 
@@ -173,32 +173,14 @@ namespace workwear.ViewModels.Stock
 		public void IssuanceSheetOpen()
 		{
 			if(UoW.HasChanges) {
-				if(interactive.Question("Сохранить документ выдачи перед открытием ведомости?"))
+				if(interactive.Question("Сохранить документ выдачи перед открытием ведомости?")) {
 					Save();
-				else
-					return;
-			}
-			var t = Entity.IssuanceSheet.Id;
-
-			NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
-		}
-		public void IssuanceSheetPrint()
-		{
-			if(UoW.HasChanges) {
-				if(messages.SaveBeforePrint(Entity.GetType(), "ведомости"))
-					Save();
-				else
-					return;
-			}
-
-			var reportInfo = new ReportInfo {
-				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.IssuanceSheet.Id),
-				Identifier = "Statements.IssuanceSheet",
-				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.IssuanceSheet.Id }
 				}
-			};
-			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+				else
+					return;
+			}
+			Entity.UpdateIssuanceSheet();
+			NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
 		}
 
 		public void PrintIssuenceSheet(IssuedSheetPrint doc)

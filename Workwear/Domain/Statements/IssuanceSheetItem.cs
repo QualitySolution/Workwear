@@ -144,6 +144,16 @@ namespace workwear.Domain.Statements
 			IssueOperation = ExpenseItem.EmployeeIssueOperation;
 		}
 
+		public virtual void UpdateFromMassExpense()
+		{
+			Employee = this.Employee;
+			Nomenclature = this.Nomenclature;
+			Amount = (uint)this.IssueOperation.Issued;
+			Size = this.Size;
+			WearGrowth = this.WearGrowth;
+			StartOfUse = this.IssueOperation?.StartOfUse ?? IssuanceSheet.Date;
+			Lifetime = this.IssueOperation?.LifetimeMonth ?? 0;
+		}
 		#endregion
 
 	}

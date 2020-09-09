@@ -78,15 +78,6 @@ namespace workwear.Domain.Stock
 			set { SetField(ref massExpenseOperation, value, () => MassExpenseOperation); }
 		}
 
-		GenericObservableList<MassExpenseOperation> observableOperations;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<MassExpenseOperation> ObservableOperations {
-			get {
-				if(observableOperations == null)
-					observableOperations = new GenericObservableList<MassExpenseOperation>(MassExpenseOperation);
-				return observableOperations;
-			}
-		}
 		private IssuanceSheet issuanceSheet;
 		[Display(Name = "Связанная ведомость")]
 		public virtual IssuanceSheet IssuanceSheet {
@@ -102,7 +93,6 @@ namespace workwear.Domain.Stock
 			IssuanceSheet = new IssuanceSheet {
 				MassExpense = this
 			};
-			UpdateIssuanceSheet();
 		}
 
 		public virtual void UpdateIssuanceSheet()
@@ -117,10 +107,20 @@ namespace workwear.Domain.Stock
 
 			IssuanceSheet.Date = Date;
 
+			for(int i = IssuanceSheet.Items.Count - 1; i > -1; i--)
+				if(ItemsNomenclature.FirstOrDefault(x => x.Nomenclature == IssuanceSheet.Items[i].Nomenclature) == null || ListEmployees.FirstOrDefault(x => x.EmployeeCard == IssuanceSheet.Items[i].Employee) == null)
+					IssuanceSheet.Items.Remove(IssuanceSheet.Items[i]);
+
 			foreach(var emp in ListEmployees) {
 				foreach(var nomen in ItemsNomenclature) {
 					var warehouseOperation = massExpenseOperation.FirstOrDefault(x => x.EmployeeIssueOperation.Employee == emp.EmployeeCard && x.EmployeeIssueOperation.Nomenclature == nomen.Nomenclature);
-					nomen.IssuanceSheetItem = IssuanceSheet.AddItem(emp, nomen);
+					var issuanceSheetItem = IssuanceSheet.Items.FirstOrDefault(x => x.Employee == emp.EmployeeCard && x.Nomenclature == nomen.Nomenclature);
+					if (issuanceSheetItem == null) 
+						IssuanceSheet.AddItem(emp, nomen, warehouseOperation.EmployeeIssueOperation);
+					if(issuanceSheetItem != null)
+						issuanceSheetItem.UpdateFromMassExpense();
+					if(issuanceSheetItem != null && issuanceSheetItem.Amount == 0)
+						IssuanceSheet.Items.Remove(issuanceSheetItem);
 				}
 			}
 		}
@@ -387,11 +387,10 @@ namespace workwear.Domain.Stock
 				}
 			}
 			foreach(var operationMassEx in ListMassExOperationInProgress) {
-				var empIssueOperation = uow.GetById<EmployeeIssueOperation>(operationMassEx.EmployeeIssueOperation.Id);
-				var oper = uow.GetById<WarehouseOperation>(operationMassEx.WarehouseOperationExpense.Id);
+				MassExpenseOperation.Remove(operationMassEx);
 				uow.Delete(operationMassEx);
-				uow.Delete(empIssueOperation);
-				uow.Delete(oper);
+				uow.Delete(operationMassEx.EmployeeIssueOperation);
+				uow.Delete(operationMassEx.WarehouseOperationExpense);
 			}
 					
 		}

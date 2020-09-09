@@ -193,6 +193,7 @@ namespace workwear.Views.Stock
 		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e)
 		{
 			ViewModel.IssuanceSheetCreate();
+			IssuanceSheetSensetive();
 		}
 
 		protected void OnButtonIssuanceSheetOpenClicked(object sender, EventArgs e)
