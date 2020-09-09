@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
@@ -239,7 +239,7 @@ namespace workwear.Domain.Stock
 						continue;
 					}
 					var EnableSize = SizeHelper.MatchSize(sizeAndStd.StandardCode, sizeAndStd.Size, SizeUsePlace.Сlothes);
-					var stockBalanse = stock.Where(x => EnableSize.Any(y => x.Size == y.Size && 
+					var stockBalanse = stock.Where(x => x.Nomenclature == nom.Nomenclature && EnableSize.Any(y => x.Size == y.Size && 
 					(y.StandardCode == x.Nomenclature.SizeStd || (x.Nomenclature.SizeStd != null && x.Nomenclature.SizeStd.ToString() == "UnisexWearRus")))).ToList();
 					int allCount = 0;
 					int needCount = nom.Amount;
