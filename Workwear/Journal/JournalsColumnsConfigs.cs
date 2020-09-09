@@ -1,4 +1,6 @@
-﻿using Gamma.ColumnConfig;
+﻿using System.ComponentModel.DataAnnotations;
+using Gamma.ColumnConfig;
+using Gamma.Utilities;
 using QS.Journal.GtkUI;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
@@ -146,6 +148,7 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<StockBalanceShortSummaryJournalNode>.Create()
 						.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
 						.AddColumn("Размер").AddTextRenderer(e => e.Size).SearchHighlight()
+						.AddColumn("Пол одежды").AddTextRenderer(e => e.Sex != null ? e.Sex.GetAttribute<DisplayAttribute>().Name : "").SearchHighlight()
 						.AddColumn("Количество").AddTextRenderer(e => e.BalanceText, useMarkup: true)
 						.Finish()
 			);
