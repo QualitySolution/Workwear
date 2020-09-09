@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
@@ -115,10 +115,13 @@ namespace workwear.Domain.Stock
 				foreach(var nomen in ItemsNomenclature) {
 					var warehouseOperation = massExpenseOperation.FirstOrDefault(x => x.EmployeeIssueOperation.Employee == emp.EmployeeCard && x.EmployeeIssueOperation.Nomenclature == nomen.Nomenclature);
 					var issuanceSheetItem = IssuanceSheet.Items.FirstOrDefault(x => x.Employee == emp.EmployeeCard && x.Nomenclature == nomen.Nomenclature);
+
 					if (issuanceSheetItem == null) 
 						IssuanceSheet.AddItem(emp, nomen, warehouseOperation.EmployeeIssueOperation);
-					if(issuanceSheetItem != null)
-						issuanceSheetItem.UpdateFromMassExpense();
+
+					if(issuanceSheetItem != null) 
+						issuanceSheetItem.UpdateFromMassExpense(warehouseOperation.WarehouseOperationExpense);
+
 					if(issuanceSheetItem != null && issuanceSheetItem.Amount == 0)
 						IssuanceSheet.Items.Remove(issuanceSheetItem);
 				}
