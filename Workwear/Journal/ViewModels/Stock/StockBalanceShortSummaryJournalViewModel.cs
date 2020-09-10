@@ -15,6 +15,7 @@ using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
+using workwear.Measurements;
 
 namespace workwear.Journal.ViewModels.Stock
 {
@@ -126,6 +127,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.SelectList(list => list
 			   .SelectGroup(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.Id)
 			   .Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
+			   .Select(() => nomenclatureAlias.Sex).WithAlias(() => resultAlias.Sex)
 			   .Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
 
 			   .Select(projection).WithAlias(() => resultAlias.Amount)
@@ -149,6 +151,7 @@ namespace workwear.Journal.ViewModels.Stock
 		public string UnitsName { get; set; }
 		public int Amount { get; set; }
 		public string Size { get; set; }
+		public ClothesSex? Sex { get; set; }
 
 		public string BalanceText => Amount > 0 ? String.Format("{0} {1}", Amount, UnitsName) : String.Format("<span foreground=\"red\">{0}</span> {1}", Amount, UnitsName);
 

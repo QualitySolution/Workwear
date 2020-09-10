@@ -52,9 +52,9 @@ namespace workwear.ViewModels.Statements
 													 .Finish();
 
 			SubdivisionEntryViewModel = entryBuilder.ForProperty(x => x.Subdivision)
-													 .UseOrmReferenceJournalAndAutocompleter()
-													 .UseTdiEntityDialog()
-													 .Finish();
+													 .UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
+													 .UseViewModelDialog<SubdivisionViewModel>()
+										 			 .Finish();
 
 			ResponsiblePersonEntryViewModel = entryBuilder.ForProperty(x => x.ResponsiblePerson)
 													.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()

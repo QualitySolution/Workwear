@@ -72,21 +72,12 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		IList<MassExpenseOperation> massExpenseOperation = new List<MassExpenseOperation>();
-		public virtual IList< MassExpenseOperation> MassExpenseOperation {
-			get { return massExpenseOperation; }
-			set { SetField(ref massExpenseOperation, value, () => MassExpenseOperation); }
+		IList<MassExpenseOperation> massExpenseOperations = new List<MassExpenseOperation>();
+		public virtual IList< MassExpenseOperation> MassExpenseOperations {
+			get { return massExpenseOperations; }
+			set { SetField(ref massExpenseOperations, value, () => MassExpenseOperations); }
 		}
 
-		GenericObservableList<MassExpenseOperation> observableOperations;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<MassExpenseOperation> ObservableOperations {
-			get {
-				if(observableOperations == null)
-					observableOperations = new GenericObservableList<MassExpenseOperation>(MassExpenseOperation);
-				return observableOperations;
-			}
-		}
 		private IssuanceSheet issuanceSheet;
 		[Display(Name = "Связанная ведомость")]
 		public virtual IssuanceSheet IssuanceSheet {
@@ -102,7 +93,6 @@ namespace workwear.Domain.Stock
 			IssuanceSheet = new IssuanceSheet {
 				MassExpense = this
 			};
-			UpdateIssuanceSheet();
 		}
 
 		public virtual void UpdateIssuanceSheet()
@@ -117,10 +107,24 @@ namespace workwear.Domain.Stock
 
 			IssuanceSheet.Date = Date;
 
+			for(int i = IssuanceSheet.Items.Count - 1; i > -1; i--)
+				if(ItemsNomenclature.FirstOrDefault(x => x.Nomenclature == IssuanceSheet.Items[i].Nomenclature) == null || ListEmployees.FirstOrDefault(x => x.EmployeeCard == IssuanceSheet.Items[i].Employee) == null)
+					IssuanceSheet.Items.Remove(IssuanceSheet.Items[i]);
+					
 			foreach(var emp in ListEmployees) {
-				foreach(var nomen in ItemsNomenclature) {
-					var warehouseOperation = massExpenseOperation.FirstOrDefault(x => x.EmployeeIssueOperation.Employee == emp.EmployeeCard && x.EmployeeIssueOperation.Nomenclature == nomen.Nomenclature);
-				nomen.IssuanceSheetItem = IssuanceSheet.AddItem(emp, nomen, warehouseOperation.EmployeeIssueOperation);
+				foreach(var nomen in ItemsNomenclature)
+				 {
+					var massExpenseOperation = MassExpenseOperations.FirstOrDefault(x => x.EmployeeIssueOperation.Employee == emp.EmployeeCard && x.EmployeeIssueOperation.Nomenclature == nomen.Nomenclature);
+					var issuanceSheetItem = IssuanceSheet.Items.FirstOrDefault(x => x.Employee == emp.EmployeeCard && x.Nomenclature == nomen.Nomenclature);
+
+					if (issuanceSheetItem == null) 
+						IssuanceSheet.AddItem(emp, nomen, massExpenseOperation.EmployeeIssueOperation);
+
+					if(issuanceSheetItem != null) 
+						issuanceSheetItem.UpdateFromMassExpense(massExpenseOperation.EmployeeIssueOperation);
+
+					if(issuanceSheetItem != null && issuanceSheetItem.Amount == 0)
+						IssuanceSheet.Items.Remove(issuanceSheetItem);
 				}
 			}
 		}
@@ -236,7 +240,7 @@ namespace workwear.Domain.Stock
 						continue;
 					}
 					var EnableSize = SizeHelper.MatchSize(sizeAndStd.StandardCode, sizeAndStd.Size, SizeUsePlace.Сlothes);
-					var stockBalanse = stock.Where(x => EnableSize.Any(y => x.Size == y.Size && 
+					var stockBalanse = stock.Where(x => x.Nomenclature == nom.Nomenclature && EnableSize.Any(y => x.Size == y.Size && 
 					(y.StandardCode == x.Nomenclature.SizeStd || (x.Nomenclature.SizeStd != null && x.Nomenclature.SizeStd.ToString() == "UnisexWearRus")))).ToList();
 					int allCount = 0;
 					int needCount = nom.Amount;
@@ -265,15 +269,15 @@ namespace workwear.Domain.Stock
 
 		private IList<StockBalanceDTO> addCurrentNomenklInStockBalance(IList<StockBalanceDTO> stockBalances)
 		{
-			if(MassExpenseOperation == null) return stockBalances;
+			if(MassExpenseOperations == null) return stockBalances;
 			foreach(var stBalance in stockBalances) {
-				var sumOldAmount = MassExpenseOperation.Where(x => x.WarehouseOperationExpense.Nomenclature == stBalance.Nomenclature).Select(x => x.WarehouseOperationExpense.Amount).Sum();
+				var sumOldAmount = MassExpenseOperations.Where(x => x.WarehouseOperationExpense.Nomenclature == stBalance.Nomenclature).Select(x => x.WarehouseOperationExpense.Amount).Sum();
 				stBalance.Amount += sumOldAmount;
 			}
-			foreach(var oldNomen in MassExpenseOperation) {
+			foreach(var oldNomen in MassExpenseOperations) {
 				var stBalance = stockBalances.FirstOrDefault(x=> x.Nomenclature == oldNomen.WarehouseOperationExpense.Nomenclature);
 				if(stBalance == null) {
-					var sum = MassExpenseOperation.Where(x => x.WarehouseOperationExpense.Nomenclature == oldNomen.WarehouseOperationExpense.Nomenclature).Select(x => x.WarehouseOperationExpense.Amount).Sum();
+					var sum = MassExpenseOperations.Where(x => x.WarehouseOperationExpense.Nomenclature == oldNomen.WarehouseOperationExpense.Nomenclature).Select(x => x.WarehouseOperationExpense.Amount).Sum();
 					StockBalanceDTO stockBalanceDTO = new StockBalanceDTO();
 					stockBalanceDTO.Nomenclature = oldNomen.WarehouseOperationExpense.Nomenclature;
 					stockBalanceDTO.Amount = sum;
@@ -328,7 +332,7 @@ namespace workwear.Domain.Stock
 
 		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
 		{
-			var ListMassExOperationInProgress = MassExpenseOperation.ToList();
+			var ListMassExOperationInProgress = MassExpenseOperations.ToList();
 
 			foreach(var employee in ListEmployees) {
 
@@ -356,7 +360,7 @@ namespace workwear.Domain.Stock
 						opMassExpense.MassExpenseDoc = this;
 						opMassExpense.EmployeeIssueOperation = new EmployeeIssueOperation();
 						opMassExpense.WarehouseOperationExpense = new WarehouseOperation();
-						MassExpenseOperation.Add(opMassExpense);
+						MassExpenseOperations.Add(opMassExpense);
 					}
 					else
 						ListMassExOperationInProgress.Remove(opMassExpense);
@@ -387,11 +391,10 @@ namespace workwear.Domain.Stock
 				}
 			}
 			foreach(var operationMassEx in ListMassExOperationInProgress) {
-				var empIssueOperation = uow.GetById<EmployeeIssueOperation>(operationMassEx.EmployeeIssueOperation.Id);
-				var oper = uow.GetById<WarehouseOperation>(operationMassEx.WarehouseOperationExpense.Id);
+				MassExpenseOperations.Remove(operationMassEx);
 				uow.Delete(operationMassEx);
-				uow.Delete(empIssueOperation);
-				uow.Delete(oper);
+				uow.Delete(operationMassEx.EmployeeIssueOperation);
+				uow.Delete(operationMassEx.WarehouseOperationExpense);
 			}
 					
 		}
