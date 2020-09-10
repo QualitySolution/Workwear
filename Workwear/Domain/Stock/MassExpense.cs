@@ -72,10 +72,10 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		IList<MassExpenseOperation> massExpenseOperation = new List<MassExpenseOperation>();
-		public virtual IList< MassExpenseOperation> MassExpenseOperation {
-			get { return massExpenseOperation; }
-			set { SetField(ref massExpenseOperation, value, () => MassExpenseOperation); }
+		IList<MassExpenseOperation> massExpenseOperations = new List<MassExpenseOperation>();
+		public virtual IList< MassExpenseOperation> MassExpenseOperations {
+			get { return massExpenseOperations; }
+			set { SetField(ref massExpenseOperations, value, () => MassExpenseOperations); }
 		}
 
 		private IssuanceSheet issuanceSheet;
@@ -110,17 +110,18 @@ namespace workwear.Domain.Stock
 			for(int i = IssuanceSheet.Items.Count - 1; i > -1; i--)
 				if(ItemsNomenclature.FirstOrDefault(x => x.Nomenclature == IssuanceSheet.Items[i].Nomenclature) == null || ListEmployees.FirstOrDefault(x => x.EmployeeCard == IssuanceSheet.Items[i].Employee) == null)
 					IssuanceSheet.Items.Remove(IssuanceSheet.Items[i]);
-
+					
 			foreach(var emp in ListEmployees) {
-				foreach(var nomen in ItemsNomenclature) {
-					var warehouseOperation = massExpenseOperation.FirstOrDefault(x => x.EmployeeIssueOperation.Employee == emp.EmployeeCard && x.EmployeeIssueOperation.Nomenclature == nomen.Nomenclature);
+				foreach(var nomen in ItemsNomenclature)
+				 {
+					var massExpenseOperation = MassExpenseOperations.FirstOrDefault(x => x.EmployeeIssueOperation.Employee == emp.EmployeeCard && x.EmployeeIssueOperation.Nomenclature == nomen.Nomenclature);
 					var issuanceSheetItem = IssuanceSheet.Items.FirstOrDefault(x => x.Employee == emp.EmployeeCard && x.Nomenclature == nomen.Nomenclature);
 
 					if (issuanceSheetItem == null) 
-						IssuanceSheet.AddItem(emp, nomen, warehouseOperation.EmployeeIssueOperation);
+						IssuanceSheet.AddItem(emp, nomen, massExpenseOperation.EmployeeIssueOperation);
 
 					if(issuanceSheetItem != null) 
-						issuanceSheetItem.UpdateFromMassExpense(warehouseOperation.WarehouseOperationExpense);
+						issuanceSheetItem.UpdateFromMassExpense(massExpenseOperation.EmployeeIssueOperation);
 
 					if(issuanceSheetItem != null && issuanceSheetItem.Amount == 0)
 						IssuanceSheet.Items.Remove(issuanceSheetItem);
@@ -268,15 +269,15 @@ namespace workwear.Domain.Stock
 
 		private IList<StockBalanceDTO> addCurrentNomenklInStockBalance(IList<StockBalanceDTO> stockBalances)
 		{
-			if(MassExpenseOperation == null) return stockBalances;
+			if(MassExpenseOperations == null) return stockBalances;
 			foreach(var stBalance in stockBalances) {
-				var sumOldAmount = MassExpenseOperation.Where(x => x.WarehouseOperationExpense.Nomenclature == stBalance.Nomenclature).Select(x => x.WarehouseOperationExpense.Amount).Sum();
+				var sumOldAmount = MassExpenseOperations.Where(x => x.WarehouseOperationExpense.Nomenclature == stBalance.Nomenclature).Select(x => x.WarehouseOperationExpense.Amount).Sum();
 				stBalance.Amount += sumOldAmount;
 			}
-			foreach(var oldNomen in MassExpenseOperation) {
+			foreach(var oldNomen in MassExpenseOperations) {
 				var stBalance = stockBalances.FirstOrDefault(x=> x.Nomenclature == oldNomen.WarehouseOperationExpense.Nomenclature);
 				if(stBalance == null) {
-					var sum = MassExpenseOperation.Where(x => x.WarehouseOperationExpense.Nomenclature == oldNomen.WarehouseOperationExpense.Nomenclature).Select(x => x.WarehouseOperationExpense.Amount).Sum();
+					var sum = MassExpenseOperations.Where(x => x.WarehouseOperationExpense.Nomenclature == oldNomen.WarehouseOperationExpense.Nomenclature).Select(x => x.WarehouseOperationExpense.Amount).Sum();
 					StockBalanceDTO stockBalanceDTO = new StockBalanceDTO();
 					stockBalanceDTO.Nomenclature = oldNomen.WarehouseOperationExpense.Nomenclature;
 					stockBalanceDTO.Amount = sum;
@@ -331,7 +332,7 @@ namespace workwear.Domain.Stock
 
 		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
 		{
-			var ListMassExOperationInProgress = MassExpenseOperation.ToList();
+			var ListMassExOperationInProgress = MassExpenseOperations.ToList();
 
 			foreach(var employee in ListEmployees) {
 
@@ -359,7 +360,7 @@ namespace workwear.Domain.Stock
 						opMassExpense.MassExpenseDoc = this;
 						opMassExpense.EmployeeIssueOperation = new EmployeeIssueOperation();
 						opMassExpense.WarehouseOperationExpense = new WarehouseOperation();
-						MassExpenseOperation.Add(opMassExpense);
+						MassExpenseOperations.Add(opMassExpense);
 					}
 					else
 						ListMassExOperationInProgress.Remove(opMassExpense);
@@ -390,7 +391,7 @@ namespace workwear.Domain.Stock
 				}
 			}
 			foreach(var operationMassEx in ListMassExOperationInProgress) {
-				MassExpenseOperation.Remove(operationMassEx);
+				MassExpenseOperations.Remove(operationMassEx);
 				uow.Delete(operationMassEx);
 				uow.Delete(operationMassEx.EmployeeIssueOperation);
 				uow.Delete(operationMassEx.WarehouseOperationExpense);

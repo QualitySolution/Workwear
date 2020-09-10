@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
+using System.Linq;
 using QS.DomainModel.Entity;
 using QS.Utilities.Dates;
 using QSReport;
@@ -129,6 +130,7 @@ namespace workwear.Domain.Statements
 			};
 
 			ObservableItems.Add(item);
+			item.UpdateFromMassExpense(employeeIssueOperation);
 			return item;
 		}
 
@@ -176,6 +178,10 @@ namespace workwear.Domain.Statements
 					yield return new ValidationResult($"Отсутствует сотрудник в строке [{item.Title}].",
 					new[] { nameof(Items) });
 			}
+
+			if(Items.Any(i => i.Amount <= 0))
+				yield return new ValidationResult("Документ не должен содержать номенклатур с нулевым количеством.",
+					new[] { nameof(Items) });
 		}
 
 		public IssuanceSheet()

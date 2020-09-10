@@ -144,9 +144,9 @@ namespace workwear.Domain.Statements
 			IssueOperation = ExpenseItem.EmployeeIssueOperation;
 		}
 
-		public virtual void UpdateFromMassExpense(WarehouseOperation warehouseOperation)
+		public virtual void UpdateFromMassExpense(EmployeeIssueOperation employeeIssueOperation)
 		{
-			IssueOperation.WarehouseOperation = warehouseOperation;
+			IssueOperation = employeeIssueOperation;
 			Amount = (uint)IssueOperation.Issued;
 			Size = IssueOperation.WarehouseOperation.Size;
 			WearGrowth = IssueOperation.WarehouseOperation.Growth;

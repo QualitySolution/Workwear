@@ -174,7 +174,8 @@ namespace workwear.ViewModels.Stock
 		{
 			if(UoW.HasChanges) {
 				if(interactive.Question("Сохранить документ выдачи перед открытием ведомости?")) {
-					Save();
+					if(!Save())
+						return;
 				}
 				else
 					return;
