@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -119,6 +120,41 @@ namespace workwear.Domain.Stock
 		{
 			get { return buhDocument ?? EmployeeIssueOperation?.BuhDocument; }
 			set { SetField(ref buhDocument, value); }
+		}
+
+		private bool isWriteOff;
+		[Display(Name = "Выдача по списанию")]
+		public virtual bool IsWriteOff {
+			get {
+				if(!isWriteOff && EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff == null) return false;
+				else if(EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff != null) return true;
+				return isWriteOff;
+			}
+			set {
+				if(value == false) {
+					var oper = ExpenseDoc.WriteOffDoc.Items.FirstOrDefault(x => x.EmployeeWriteoffOperation == this.EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff);
+					if(oper != null)
+						ExpenseDoc.WriteOffDoc.Items.Remove(oper);
+					this.EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = null;
+				}
+				else if(value) {
+					var oper = EmployeeIssueOperation.Employee.GetActualEmployeeOperation(this.ExpenseDoc.Date);
+					EmployeeIssueOperation firstActualOperIssue = new EmployeeIssueOperation();
+					if (oper != null) {
+						firstActualOperIssue = oper.FirstOrDefault(x => x.Nomenclature == this.Nomenclature); //Операция выдачи, с которой можно списать
+                    }
+					if(firstActualOperIssue != null) {
+						var CurrentWriteOff = new EmployeeIssueOperation(); // Текущая операция списания
+						CurrentWriteOff.IssuedOperation = firstActualOperIssue; //В операцию списания заносится ссылка на операцию выдачи
+						ExpenseDoc.WriteOffDoc.AddItem(CurrentWriteOff, this.Amount); //В строки документа кладется операция списания
+						this.EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = CurrentWriteOff;
+					}
+				}
+				if(EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff == null)
+					isWriteOff = false;
+				else
+					isWriteOff = value;
+			}
 		}
 
 		[Display(Name = "Процент износа")]

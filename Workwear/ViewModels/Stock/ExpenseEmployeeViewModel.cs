@@ -108,6 +108,10 @@ namespace workwear.ViewModels.Stock
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
+			if(Entity.WriteOffDoc != null && Entity.WriteOffDoc.Items.Count > 0) {
+				Entity.WriteOffDoc.UpdateOperations(UoW);
+				UoW.Save(Entity.WriteOffDoc);
+			}
 			UoWGeneric.Save();
 			if(Entity.Operation == ExpenseOperations.Employee) {
 				logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");

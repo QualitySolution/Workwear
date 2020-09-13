@@ -78,6 +78,18 @@ namespace workwear.Domain.Stock
 			set => SetField(ref issuanceSheet, value);
 		}
 
+		private Writeoff writeOffDoc;
+
+		[Display(Name = "Связанный документ списания")]
+		public virtual Writeoff WriteOffDoc {
+			get {
+				if (writeOffDoc == null) {
+					writeOffDoc = new Writeoff();
+                }
+				return writeOffDoc; }
+			set { SetField(ref writeOffDoc, value); }
+		}
+
 		#endregion
 
 		public virtual string Title{
