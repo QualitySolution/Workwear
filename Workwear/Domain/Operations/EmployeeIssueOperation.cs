@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.Dialog;
@@ -183,6 +184,14 @@ namespace workwear.Domain.Operations
 			set { SetField(ref buhDocument, value); }
 		}
 
+		private EmployeeIssueOperation employeeOperationIssueOnWriteOff;
+
+		[Display(Name = "Операция списания при выдачи по списанию")]
+		public virtual EmployeeIssueOperation EmployeeOperationIssueOnWriteOff {
+			get { return employeeOperationIssueOnWriteOff; }
+			set { SetField(ref employeeOperationIssueOnWriteOff, value); }
+		}
+
 		public EmployeeIssueOperation()
 		{
 			useAutoWriteoff = BaseParameters.DefaultAutoWriteoff;
@@ -274,6 +283,21 @@ namespace workwear.Domain.Operations
 			if(ProtectionTools == null)
 				ProtectionTools = NormItem.ProtectionTools;
 
+			if(EmployeeOperationIssueOnWriteOff != null) {
+				if(item.ExpenseDoc.Date.Date != OperationTime.Date)
+					this.EmployeeOperationIssueOnWriteOff.OperationTime = item.ExpenseDoc.Date;
+
+				EmployeeOperationIssueOnWriteOff.Nomenclature = item.Nomenclature;
+				EmployeeOperationIssueOnWriteOff.WearPercent = IssuedOperation.CalculatePercentWear(OperationTime);
+				EmployeeOperationIssueOnWriteOff.Issued = 0;
+				EmployeeOperationIssueOnWriteOff.Returned = item.Amount;
+				EmployeeOperationIssueOnWriteOff.WarehouseOperation = item.WarehouseOperation;
+				EmployeeOperationIssueOnWriteOff.BuhDocument = item.BuhDocument;
+				EmployeeOperationIssueOnWriteOff.NormItem = null;
+				EmployeeOperationIssueOnWriteOff.ExpiryByNorm = null;
+				EmployeeOperationIssueOnWriteOff.AutoWriteoffDate = null;
+			}
+
 			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools);
 			RecalculateDatesOfIssueOperation(graph, askUser);
 		}
@@ -339,6 +363,7 @@ namespace workwear.Domain.Operations
 			else
 				AutoWriteoffDate = null;
 		}
+
 
 		public virtual void Update(IUnitOfWork uow, IInteractiveQuestion askUser, IncomeItem item)
 		{
