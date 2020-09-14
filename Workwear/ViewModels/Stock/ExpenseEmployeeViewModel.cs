@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Autofac;
 using Gamma.Utilities;
 using NLog;
@@ -108,10 +109,16 @@ namespace workwear.ViewModels.Stock
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
-			if(Entity.WriteOffDoc != null && Entity.WriteOffDoc.Items.Count > 0) {
-				Entity.WriteOffDoc.UpdateOperations(UoW);
-				UoW.Save(Entity.WriteOffDoc);
+
+			if (Entity.Items.FirstOrDefault(x=> x.IsWriteOff) != null && Entity.WriteOffDoc == null) {
+				Entity.WriteOffDoc = new Writeoff();
+				Entity.WriteOffDoc.Date = Entity.Date;
+				Entity.CreatedbyUser = Entity.CreatedbyUser;
 			}
+			Entity.UpdateIssuedWriteOffOperation();
+			if(Entity.WriteOffDoc != null)
+				UoW.Save(Entity.WriteOffDoc);
+
 			UoWGeneric.Save();
 			if(Entity.Operation == ExpenseOperations.Employee) {
 				logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");

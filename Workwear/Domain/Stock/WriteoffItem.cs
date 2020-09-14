@@ -91,6 +91,13 @@ namespace workwear.Domain.Stock
 			set { SetField(ref wearGrowth, value, () => WearGrowth); }
 		}
 
+		string aktNumber;
+		[Display(Name = "Номер акта")]
+		public virtual string AktNumber {
+			get { return aktNumber; }
+			set { SetField(ref aktNumber, value); }
+		}
+
 		#endregion
 
 		#region Вычисляемые

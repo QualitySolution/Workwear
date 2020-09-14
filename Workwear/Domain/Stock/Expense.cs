@@ -7,6 +7,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
 using workwear.Domain.Statements;
 
 namespace workwear.Domain.Stock
@@ -223,6 +224,23 @@ namespace workwear.Domain.Stock
 				if(item.IssuanceSheetItem != null && item.Amount == 0)
 					IssuanceSheet.Items.Remove(item.IssuanceSheetItem);
 			}
+		}
+
+		public virtual void UpdateIssuedWriteOffOperation()
+		{
+			if(WriteOffDoc == null)
+				return;
+
+			foreach(var item in this.WriteOffDoc.Items)
+				item.UpdateOperations(UoW);
+
+			if(this.Items.FirstOrDefault(x => x.IsWriteOff == true) == null && WriteOffDoc != null) {
+				WriteOffDoc.Items.Clear();
+				UoW.Delete(WriteOffDoc);
+				this.WriteOffDoc = null;
+
+			}
+
 		}
 
 		#endregion

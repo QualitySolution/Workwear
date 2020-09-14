@@ -28,6 +28,7 @@ namespace workwear.HMap
 			References(x => x.ProtectionTools).Column("protection_tools_id");
 			References(x => x.IssuedOperation).Column("issued_operation_id");
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id");
+			References(x => x.EmployeeOperationIssueOnWriteOff).Column("operation_write_off_id");
 		}
 	}
 }
