@@ -109,7 +109,7 @@ namespace workwear.ViewModels.Stock
 		#region Employee
 		public void AddEmployee()
 		{
-			var selectPage = NavigationManager.OpenViewModel<EmployeeJournalViewModel>(this, OpenPageOptions.AsSlave);
+			var selectPage = NavigationManager.OpenViewModel<EmployeeCardJournalViewModel>(this, OpenPageOptions.AsSlave);
 			selectPage.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 			selectPage.ViewModel.OnSelectResult += Employee_OnSelectResult;
 		}
