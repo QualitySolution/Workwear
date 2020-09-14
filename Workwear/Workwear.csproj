@@ -457,6 +457,7 @@
     <Compile Include="ViewModels\Stock\ExpenseDocItemsEmployeeViewModel.cs" />
     <Compile Include="ViewModels\Stock\ExpenseDocItemsObjectViewModel.cs" />
     <Compile Include="Tools\NomenclatureTypes.cs" />
+    <Compile Include="Journal\ViewModels\Stock\StockBalanceShortSummaryJournalViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

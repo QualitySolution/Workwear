@@ -39,7 +39,7 @@ namespace workwear.Domain.Stock
 		private IList<MassExpenseEmployee> employees = new List<MassExpenseEmployee>();
 
 		[Display(Name = "Сотрудники")]
-		public virtual IList<MassExpenseEmployee> Employees {
+		public virtual IList<MassExpenseEmployee> ListEmployees {
 			get { return employees; }
 			set { SetField(ref employees, value); }
 		}
@@ -49,14 +49,14 @@ namespace workwear.Domain.Stock
 		public virtual GenericObservableList<MassExpenseEmployee> ObservableEmployeeCard {
 			get {
 				if(observableEmployeeCard == null)
-					observableEmployeeCard = new GenericObservableList<MassExpenseEmployee>(Employees);
+					observableEmployeeCard = new GenericObservableList<MassExpenseEmployee>(ListEmployees);
 				return observableEmployeeCard;
 			}
 		}
 
 		private IList<MassExpenseNomenclature> itemsNomenclature = new List<MassExpenseNomenclature>();
 
-		[Display(Name = "Номенлатура документа")]
+		[Display(Name = "Номенклатура документа")]
 		public virtual IList<MassExpenseNomenclature> ItemsNomenclature {
 			get { return itemsNomenclature; }
 			set { SetField(ref itemsNomenclature, value, () => ItemsNomenclature); }
@@ -72,21 +72,12 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		IList<MassExpenseOperation> massExpenseOperation = new List<MassExpenseOperation>();
-		public virtual IList< MassExpenseOperation> MassExpenseOperation {
-			get { return massExpenseOperation; }
-			set { SetField(ref massExpenseOperation, value, () => MassExpenseOperation); }
+		IList<MassExpenseOperation> massExpenseOperations = new List<MassExpenseOperation>();
+		public virtual IList< MassExpenseOperation> MassExpenseOperations {
+			get { return massExpenseOperations; }
+			set { SetField(ref massExpenseOperations, value, () => MassExpenseOperations); }
 		}
 
-		GenericObservableList<MassExpenseOperation> observableOperations;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<MassExpenseOperation> ObservableOperations {
-			get {
-				if(observableOperations == null)
-					observableOperations = new GenericObservableList<MassExpenseOperation>(MassExpenseOperation);
-				return observableOperations;
-			}
-		}
 		private IssuanceSheet issuanceSheet;
 		[Display(Name = "Связанная ведомость")]
 		public virtual IssuanceSheet IssuanceSheet {
@@ -102,7 +93,6 @@ namespace workwear.Domain.Stock
 			IssuanceSheet = new IssuanceSheet {
 				MassExpense = this
 			};
-			UpdateIssuanceSheet();
 		}
 
 		public virtual void UpdateIssuanceSheet()
@@ -110,17 +100,31 @@ namespace workwear.Domain.Stock
 			if(IssuanceSheet == null)
 				return;
 
-			if(Employees.Count < 1)
+			if(ListEmployees.Count < 1)
 				throw new NullReferenceException("Для обновления ведомости сотрудники должны быть указаны.");
 			if(itemsNomenclature.Count < 1 )
 				throw new NullReferenceException("Для обновления ведомости номенклатура должна быть указана.");
 
 			IssuanceSheet.Date = Date;
 
-			foreach(var emp in Employees) {
-				foreach(var nomen in ItemsNomenclature) {
-					var warehouseOperation = massExpenseOperation.FirstOrDefault(x => x.EmployeeIssueOperation.Employee == emp.EmployeeCard && x.EmployeeIssueOperation.Nomenclature == nomen.Nomenclature);
-				nomen.IssuanceSheetItem = IssuanceSheet.AddItem(emp, nomen, warehouseOperation.EmployeeIssueOperation);
+			for(int i = IssuanceSheet.Items.Count - 1; i > -1; i--)
+				if(ItemsNomenclature.FirstOrDefault(x => x.Nomenclature == IssuanceSheet.Items[i].Nomenclature) == null || ListEmployees.FirstOrDefault(x => x.EmployeeCard == IssuanceSheet.Items[i].Employee) == null)
+					IssuanceSheet.Items.Remove(IssuanceSheet.Items[i]);
+					
+			foreach(var emp in ListEmployees) {
+				foreach(var nomen in ItemsNomenclature)
+				 {
+					var massExpenseOperation = MassExpenseOperations.FirstOrDefault(x => x.EmployeeIssueOperation.Employee == emp.EmployeeCard && x.EmployeeIssueOperation.Nomenclature == nomen.Nomenclature);
+					var issuanceSheetItem = IssuanceSheet.Items.FirstOrDefault(x => x.Employee == emp.EmployeeCard && x.Nomenclature == nomen.Nomenclature);
+
+					if (issuanceSheetItem == null) 
+						IssuanceSheet.AddItem(emp, nomen, massExpenseOperation.EmployeeIssueOperation);
+
+					if(issuanceSheetItem != null) 
+						issuanceSheetItem.UpdateFromMassExpense(massExpenseOperation.EmployeeIssueOperation);
+
+					if(issuanceSheetItem != null && issuanceSheetItem.Amount == 0)
+						IssuanceSheet.Items.Remove(issuanceSheetItem);
 				}
 			}
 		}
@@ -133,9 +137,9 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult("Дата должна быть указана",
 					new[] { this.GetPropertyName(o => o.Date) });
 
-			if(Employees.Count == 0)
+			if(ListEmployees.Count == 0)
 				yield return new ValidationResult("Документ должен содержать хотя бы одного сотрудника.",
-					new[] { this.GetPropertyName(o => o.Employees) });
+					new[] { this.GetPropertyName(o => o.ListEmployees) });
 
 			if(ItemsNomenclature.Count == 0)
 				yield return new ValidationResult("Документ должен содержать хотя бы одну номенклатуру.",
@@ -149,7 +153,7 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult("Склад выдачи должен быть указан",
 				new[] { this.GetPropertyName(o => o.WarehouseFrom) });
 
-			if (Employees.Any(x => x.EmployeeCard.FirstName.Length < 2 || x.EmployeeCard.LastName.Length < 2 
+			if (ListEmployees.Any(x => x.EmployeeCard.FirstName.Length < 2 || x.EmployeeCard.LastName.Length < 2 
 				|| x.Sex == Sex.None))
 				yield return new ValidationResult("Поля с именем, фамилией и полом сотрудников должны быть заполнены.",
 				new[] { this.GetPropertyName(o => o.ItemsNomenclature) });
@@ -203,24 +207,28 @@ namespace workwear.Domain.Stock
 
 		public virtual string ValidateNomenclature(IUnitOfWork uow)
 		{
-			var stockRepo = new StockRepository();
-			List<Nomenclature> nomenclatures = new List<Nomenclature>();
-			foreach(var nom in ItemsNomenclature)
-				nomenclatures.Add(nom.Nomenclature);
-			var stock = stockRepo.StockBalances(uow, warehouseFrom, nomenclatures, this.Date);
-			if(massExpenseOperation!= null)
-				stock = addOldNomenklInStockBalance(stock);
+			List<Nomenclature> nomenclatures = ItemsNomenclature.Select(x => x.Nomenclature).ToList();
+
+			var stock = new StockRepository().StockBalances(uow, warehouseFrom, nomenclatures, this.Date);
+				stock = addCurrentNomenklInStockBalance(stock);
 			foreach(var emp in employees)
 				emp.ListWarehouseOperation.Clear();
 
 			DisplayMessage = "";
-			foreach (var nom in ItemsNomenclature) {
-				if (nom.Nomenclature.Type.Category == ItemTypeCategory.property || nom.Nomenclature.Type.WearCategory == СlothesType.PPE) {
-					List<Nomenclature> newListNomenPPE = new List<Nomenclature>();
-					newListNomenPPE.Add(nom.Nomenclature);
-					var stock2 = stockRepo.StockBalances(uow, warehouseFrom, newListNomenPPE, this.Date);
-					if((stock2.Count < 1 ? 0 : stock2[0].Amount) < employees.Count * nom.Amount)
-						DisplayMessage += $"Номенклатуры «{nom.Nomenclature.Name}» на складе недостаточно({stock2[0].Amount}). \n";
+			foreach (var nom in ItemsNomenclature) 
+			{
+				if (nom.Nomenclature.Type.Category == ItemTypeCategory.property || nom.Nomenclature.Type.WearCategory == СlothesType.PPE) 
+				{
+					var stockBalanceNoWear = stock.Where(x => x.Nomenclature == nom.Nomenclature).ToList();
+					if((stockBalanceNoWear?[0].Amount ?? 0) < employees.Count * nom.Amount) 
+						DisplayMessage += $"Номенклатуры «{nom.Nomenclature.Name}» на складе недостаточно({stockBalanceNoWear[0].Amount}). \n";
+					else {
+						var warOper = new WarehouseOperation();
+						warOper.Amount = nom.Amount;
+						warOper.Nomenclature = nom.Nomenclature;
+						foreach(var emp in employees)
+							emp.ListWarehouseOperation.Add(warOper);
+					}
 					continue;
 				}
 
@@ -232,14 +240,14 @@ namespace workwear.Domain.Stock
 						continue;
 					}
 					var EnableSize = SizeHelper.MatchSize(sizeAndStd.StandardCode, sizeAndStd.Size, SizeUsePlace.Сlothes);
-					var stockBalanse = stock.Where(x => EnableSize.Any(y => x.Size == y.Size && 
+					var stockBalanse = stock.Where(x => x.Nomenclature == nom.Nomenclature && EnableSize.Any(y => x.Size == y.Size && 
 					(y.StandardCode == x.Nomenclature.SizeStd || (x.Nomenclature.SizeStd != null && x.Nomenclature.SizeStd.ToString() == "UnisexWearRus")))).ToList();
 					int allCount = 0;
 					int needCount = nom.Amount;
 					foreach(var item in stockBalanse)
 						allCount += item.Amount;
 					if(allCount < nom.Amount)
-						DisplayMessage += $"Номенклатуры «{nom.Nomenclature.Name}» размера {sizeAndStd.Size} на складе недостаточно \n";
+						DisplayMessage += $"Номенклатуры «{nom.Nomenclature.Name}» размера {sizeAndStd.Size} для {(emp.EmployeeCard.Sex == Sex.F ? "женского" : "мужского")} пола на складе недостаточно \n";
 					else {
 						var warOper = new WarehouseOperation();
 						foreach(var item in stockBalanse) {
@@ -256,21 +264,20 @@ namespace workwear.Domain.Stock
 					}
 				}
 			}
-
 			return DisplayMessage;
-
 		}
 
-		private IList<StockBalanceDTO> addOldNomenklInStockBalance(IList<StockBalanceDTO> stockBalances)
+		private IList<StockBalanceDTO> addCurrentNomenklInStockBalance(IList<StockBalanceDTO> stockBalances)
 		{
+			if(MassExpenseOperations == null) return stockBalances;
 			foreach(var stBalance in stockBalances) {
-				var sumOldAmount = massExpenseOperation.Where(x => x.WarehouseOperationExpense.Nomenclature == stBalance.Nomenclature).Select(x => x.WarehouseOperationExpense.Amount).Sum();
+				var sumOldAmount = MassExpenseOperations.Where(x => x.WarehouseOperationExpense.Nomenclature == stBalance.Nomenclature).Select(x => x.WarehouseOperationExpense.Amount).Sum();
 				stBalance.Amount += sumOldAmount;
 			}
-			foreach(var oldNomen in massExpenseOperation) {
+			foreach(var oldNomen in MassExpenseOperations) {
 				var stBalance = stockBalances.FirstOrDefault(x=> x.Nomenclature == oldNomen.WarehouseOperationExpense.Nomenclature);
 				if(stBalance == null) {
-					var sum = massExpenseOperation.Where(x => x.WarehouseOperationExpense.Nomenclature == oldNomen.WarehouseOperationExpense.Nomenclature).Select(x => x.WarehouseOperationExpense.Amount).Sum();
+					var sum = MassExpenseOperations.Where(x => x.WarehouseOperationExpense.Nomenclature == oldNomen.WarehouseOperationExpense.Nomenclature).Select(x => x.WarehouseOperationExpense.Amount).Sum();
 					StockBalanceDTO stockBalanceDTO = new StockBalanceDTO();
 					stockBalanceDTO.Nomenclature = oldNomen.WarehouseOperationExpense.Nomenclature;
 					stockBalanceDTO.Amount = sum;
@@ -292,8 +299,7 @@ namespace workwear.Domain.Stock
 
 		public virtual void AddEmployee(EmployeeCard emp, IInteractiveMessage message)
 		{
-
-			if(emp.Id != 0 ? employees.Any(p => DomainHelper.EqualDomainObjects(p, emp)) : false) {
+			if(ListEmployees.Any(x => x.EmployeeCard == emp)) {
 				message.ShowMessage(ImportanceLevel.Warning, "Такой сотрудник уже добавлен", "Предупреждение");
 				logger.Warn("Сотрудник уже добавлен. Пропускаем...");
 				return;
@@ -326,18 +332,17 @@ namespace workwear.Domain.Stock
 
 		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
 		{
-			var ListMassExOperationInProgress = MassExpenseOperation.ToList();
+			var ListMassExOperationInProgress = MassExpenseOperations.ToList();
 
-			foreach(var employee in Employees) {
+			foreach(var employee in ListEmployees) {
 
 				var properties = typeof(MassExpenseEmployee).GetProperties().Where(x => x.Name.EndsWith("Size") || x.Name.EndsWith("SizeStd"));
 				foreach(var propInfoMass in properties) {
 					var propInfoEmp = typeof(EmployeeCard).GetProperty(propInfoMass.Name);
 					var exist = propInfoEmp.GetValue(employee.EmployeeCard);
 					var setValue = propInfoMass.GetValue(employee);
-					if(String.IsNullOrWhiteSpace((string)exist) || !String.IsNullOrWhiteSpace((string)setValue)) {
+					if(String.IsNullOrWhiteSpace((string)exist) || !String.IsNullOrWhiteSpace((string)setValue)) 
 						propInfoEmp.SetValue(employee.EmployeeCard, setValue);
-					}
 				}
 
 				if(employee.EmployeeCard.Sex == Sex.None)
@@ -355,7 +360,7 @@ namespace workwear.Domain.Stock
 						opMassExpense.MassExpenseDoc = this;
 						opMassExpense.EmployeeIssueOperation = new EmployeeIssueOperation();
 						opMassExpense.WarehouseOperationExpense = new WarehouseOperation();
-
+						MassExpenseOperations.Add(opMassExpense);
 					}
 					else
 						ListMassExOperationInProgress.Remove(opMassExpense);
@@ -381,17 +386,15 @@ namespace workwear.Domain.Stock
 
 					employeeIssueOperation.WarehouseOperation = warehouseOperation;
 
-					uow.Save(this);
+					uow.Save(employeeIssueOperation);
 					uow.Save(warehouseOperation);
-					uow.Save(opMassExpense);
 				}
 			}
 			foreach(var operationMassEx in ListMassExOperationInProgress) {
-				var empIssueOperation = uow.GetById<EmployeeIssueOperation>(operationMassEx.EmployeeIssueOperation.Id);
-				var oper = uow.GetById<WarehouseOperation>(operationMassEx.WarehouseOperationExpense.Id);
+				MassExpenseOperations.Remove(operationMassEx);
 				uow.Delete(operationMassEx);
-				uow.Delete(empIssueOperation);
-				uow.Delete(oper);
+				uow.Delete(operationMassEx.EmployeeIssueOperation);
+				uow.Delete(operationMassEx.WarehouseOperationExpense);
 			}
 					
 		}

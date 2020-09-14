@@ -1,4 +1,6 @@
-﻿using Gamma.ColumnConfig;
+﻿using System.ComponentModel.DataAnnotations;
+using Gamma.ColumnConfig;
+using Gamma.Utilities;
 using QS.Journal.GtkUI;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
@@ -152,6 +154,15 @@ namespace workwear.Journal
 					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText, useMarkup: true)
 					.AddColumn("Процент износа").AddTextRenderer(e => e.WearPercentText)
 					.Finish()
+			);
+
+			TreeViewColumnsConfigFactory.Register<StockBalanceShortSummaryJournalViewModel>(
+				() => FluentColumnsConfig<StockBalanceShortSummaryJournalNode>.Create()
+						.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
+						.AddColumn("Размер").AddTextRenderer(e => e.Size).SearchHighlight()
+						.AddColumn("Пол одежды").AddTextRenderer(e => e.Sex != null ? e.Sex.GetAttribute<DisplayAttribute>().Name : "").SearchHighlight()
+						.AddColumn("Количество").AddTextRenderer(e => e.BalanceText, useMarkup: true)
+						.Finish()
 			);
 
 			TreeViewColumnsConfigFactory.Register<WarehouseJournalViewModel>(

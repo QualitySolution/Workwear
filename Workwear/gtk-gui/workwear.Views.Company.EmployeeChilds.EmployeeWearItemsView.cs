@@ -92,36 +92,39 @@ namespace workwear.Views.Company.EmployeeChilds
 			w8.Fill = false;
 			// Container child hbox11.Gtk.Box+BoxChild
 			this.buttonRefreshWorkwearItems = new global::Gtk.Button();
-			this.buttonRefreshWorkwearItems.TooltipMarkup = "Обновить список требуемой спецодежды в соответсвтии с изменениями в нормах.";
+			this.buttonRefreshWorkwearItems.TooltipMarkup = "Обновить список потребностей по указанным нормам";
 			this.buttonRefreshWorkwearItems.CanFocus = true;
 			this.buttonRefreshWorkwearItems.Name = "buttonRefreshWorkwearItems";
 			this.buttonRefreshWorkwearItems.UseUnderline = true;
-			this.buttonRefreshWorkwearItems.Label = global::Mono.Unix.Catalog.GetString("Обновить спецодежду");
+			this.buttonRefreshWorkwearItems.Label = global::Mono.Unix.Catalog.GetString("Обновить потребноси");
+			global::Gtk.Image w9 = new global::Gtk.Image();
+			w9.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "stock_refresh", global::Gtk.IconSize.Menu);
+			this.buttonRefreshWorkwearItems.Image = w9;
 			this.hbox11.Add(this.buttonRefreshWorkwearItems);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonRefreshWorkwearItems]));
-			w9.Position = 3;
-			w9.Expand = false;
-			w9.Fill = false;
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonRefreshWorkwearItems]));
+			w10.Position = 3;
+			w10.Expand = false;
+			w10.Fill = false;
 			// Container child hbox11.Gtk.Box+BoxChild
 			this.buttonTimeLine = new global::Gtk.Button();
 			this.buttonTimeLine.CanFocus = true;
 			this.buttonTimeLine.Name = "buttonTimeLine";
 			this.buttonTimeLine.UseUnderline = true;
 			this.buttonTimeLine.Label = global::Mono.Unix.Catalog.GetString("Хронология");
-			global::Gtk.Image w10 = new global::Gtk.Image();
-			w10.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.timeline_marker.png");
-			this.buttonTimeLine.Image = w10;
+			global::Gtk.Image w11 = new global::Gtk.Image();
+			w11.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.timeline_marker.png");
+			this.buttonTimeLine.Image = w11;
 			this.hbox11.Add(this.buttonTimeLine);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonTimeLine]));
-			w11.PackType = ((global::Gtk.PackType)(1));
-			w11.Position = 4;
-			w11.Expand = false;
-			w11.Fill = false;
-			this.vbox7.Add(this.hbox11);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox7[this.hbox11]));
-			w12.Position = 1;
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonTimeLine]));
+			w12.PackType = ((global::Gtk.PackType)(1));
+			w12.Position = 4;
 			w12.Expand = false;
 			w12.Fill = false;
+			this.vbox7.Add(this.hbox11);
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox7[this.hbox11]));
+			w13.Position = 1;
+			w13.Expand = false;
+			w13.Fill = false;
 			this.Add(this.vbox7);
 			if ((this.Child != null))
 			{

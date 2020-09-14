@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -8512,10 +8512,11 @@
             <child>
               <widget class="Gtk.Button" id="buttonRefreshWorkwearItems">
                 <property name="MemberName" />
-                <property name="Tooltip" translatable="yes">Обновить список требуемой спецодежды в соответсвтии с изменениями в нормах.</property>
+                <property name="Tooltip" translatable="yes">Обновить список потребностей по указанным нормам</property>
                 <property name="CanFocus">True</property>
-                <property name="Type">TextOnly</property>
-                <property name="Label" translatable="yes">Обновить спецодежду</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:stock_refresh Menu</property>
+                <property name="Label" translatable="yes">Обновить потребноси</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonRefreshWorkwearItemsClicked" />
               </widget>
@@ -10828,14 +10829,16 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Button" id="buttonIssuanceSheetPrint">
+                  <widget class="QSOrmProject.EnumMenuButton" id="enumPrint">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
                     <property name="Type">TextAndIcon</property>
                     <property name="Icon">stock:gtk-print Menu</property>
                     <property name="Label" translatable="yes">Печать</property>
                     <property name="UseUnderline">True</property>
-                    <signal name="Clicked" handler="OnButtonIssuanceSheetPrintClicked" />
+                    <property name="UseMarkup">False</property>
+                    <property name="LabelXAlign">0</property>
+                    <signal name="EnumItemClicked" handler="OnEnumPrintEnumItemClicked" />
                   </widget>
                   <packing>
                     <property name="Position">2</property>
@@ -11010,6 +11013,7 @@
                 <child>
                   <widget class="Gtk.Button" id="buttonAddNomenclature">
                     <property name="MemberName" />
+                    <property name="Sensitive">False</property>
                     <property name="CanFocus">True</property>
                     <property name="Type">TextAndIcon</property>
                     <property name="Icon">stock:gtk-add Menu</property>

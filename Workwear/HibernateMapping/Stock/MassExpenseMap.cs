@@ -23,15 +23,16 @@ namespace workwear.HibernateMapping.Stock
 				.Cascade.AllDeleteOrphan()
 				.LazyLoad();
 
-			HasMany(x => x.Employees)
+			HasMany(x => x.ListEmployees)
 				.Inverse()
 				.KeyColumn("stock_mass_expense_id").Not.KeyNullable()
 				.Cascade.AllDeleteOrphan()
 				.LazyLoad();
 
-			HasMany(x => x.MassExpenseOperation)
+			HasMany(x => x.MassExpenseOperations)
 				.Inverse()
 				.KeyColumn("stock_mass_expense_id").Not.KeyNullable()
+				.Cascade.AllDeleteOrphan()
 				.LazyLoad();
 
 			HasOne(x => x.IssuanceSheet)

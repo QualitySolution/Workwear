@@ -166,7 +166,18 @@ namespace workwear.Domain.Stock
 			set { SetField(ref glovesSize, value, () => GlovesSize); }
 		}
 
-		public virtual string MittensSizeStd => SizeHelper.GetSizeStdCode(SizeStandartMittens.Rus);
+		string mittensSizeStd;
+
+		[Display(Name = "Стандарт размера рукавиц")]
+		public virtual string MittensSizeStd {
+			get { return mittensSizeStd; }
+			set {
+				SetField(ref mittensSizeStd, value, () => MittensSizeStd);
+				if(mittensSizeStd == null || !SizeHelper.GetSizesListByStdCode(mittensSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()).Contains(MittensSize))
+					MittensSize = null;
+			}
+		}
+
 
 		string mittensSize;
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using Gamma.Utilities;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
@@ -16,7 +17,9 @@ using QS.Tdi;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QSReport;
 using workwear.Domain.Company;
+using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
@@ -81,9 +84,10 @@ namespace workwear.ViewModels.Stock
 		#region Nomenclature
 		public void AddNomenclature()
 		{
-			var selectPage = NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(this, OpenPageOptions.AsSlave);
-			selectPage.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
-			selectPage.ViewModel.OnSelectResult += Nomeclature_OnSelectResult;
+			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceShortSummaryJournalViewModel>(this, QS.Navigation.OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.Filter.Warehouse = Entity.WarehouseFrom;
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += Nomeclature_OnSelectResult;
 		}
 
 		private void Nomeclature_OnSelectResult(object sender, JournalSelectedEventArgs e)
@@ -96,9 +100,8 @@ namespace workwear.ViewModels.Stock
 
 		public void RemoveNomenclature(MassExpenseNomenclature[] noms)
 		{
-			foreach(var nom in noms) {
+			foreach(var nom in noms) 
 				Entity.ObservableItemsNomenclature.Remove(nom);
-			}
 		}
 
 		#endregion
@@ -125,14 +128,14 @@ namespace workwear.ViewModels.Stock
 			newEmployee.FirstName = "-";
 			newEmployee.LastName = "-";
 			newEmployee.Patronymic = "-";
-			if (!Entity.Employees.Any(x=> x.EmployeeCard.FirstName == "-" && x.EmployeeCard.LastName == "-"))
+			if (!Entity.ListEmployees.Any(x=> x.EmployeeCard.FirstName == "-" && x.EmployeeCard.LastName == "-"))
 				Entity.AddEmployee(newEmployee, interactive);
 		}
 
 		public void RemoveEmployee(MassExpenseEmployee[] employees)
 		{
 			foreach(var emp in employees) {
-				Entity.ObservableEmployeeCard.Remove(Entity.Employees.First(x => x == emp));
+				Entity.ObservableEmployeeCard.Remove(Entity.ListEmployees.First(x => x == emp));
 			}
 		}
 
@@ -140,7 +143,7 @@ namespace workwear.ViewModels.Stock
 
 		protected override bool Validate()
 		{
-			foreach(var emp in Entity.Employees) {
+			foreach(var emp in Entity.ListEmployees) {
 				emp.EmployeeCard.FirstName.Replace("-", "");
 				emp.EmployeeCard.LastName.Replace("-", "");
 				emp.EmployeeCard.Patronymic.Replace("-", "");
@@ -152,6 +155,7 @@ namespace workwear.ViewModels.Stock
 
 
 			Entity.UpdateOperations(UoW, null);
+			Entity.UpdateIssuanceSheet();
 			return true;
 		}
 
@@ -164,22 +168,23 @@ namespace workwear.ViewModels.Stock
 		public void IssuanceSheetCreate()
 		{
 			Entity.CreateIssuanceSheet();
-
 		}
 
 		public void IssuanceSheetOpen()
 		{
 			if(UoW.HasChanges) {
-				if(interactive.Question("Сохранить документ выдачи перед открытием ведомости?"))
-					Save();
+				if(interactive.Question("Сохранить документ выдачи перед открытием ведомости?")) {
+					if(!Save())
+						return;
+				}
 				else
 					return;
 			}
-			var t = Entity.IssuanceSheet.Id;
-
+			Entity.UpdateIssuanceSheet();
 			NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
 		}
-		public void IssuanceSheetPrint()
+
+		public void PrintIssuenceSheet(IssuedSheetPrint doc)
 		{
 			if(UoW.HasChanges) {
 				if(messages.SaveBeforePrint(Entity.GetType(), "ведомости"))
@@ -190,11 +195,12 @@ namespace workwear.ViewModels.Stock
 
 			var reportInfo = new ReportInfo {
 				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.IssuanceSheet.Id),
-				Identifier = "Statements.IssuanceSheet",
+				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.IssuanceSheet.Id }
 				}
 			};
+
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 	}

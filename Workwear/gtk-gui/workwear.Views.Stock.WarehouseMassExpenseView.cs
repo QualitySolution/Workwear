@@ -52,7 +52,7 @@ namespace workwear.Views.Stock
 
 		private global::Gtk.Button buttonIssuanceSheetOpen;
 
-		private global::Gtk.Button buttonIssuanceSheetPrint;
+		private global::QSOrmProject.EnumMenuButton enumPrint;
 
 		private global::Gtk.Label label4;
 
@@ -308,16 +308,18 @@ namespace workwear.Views.Stock
 			w27.Expand = false;
 			w27.Fill = false;
 			// Container child hbox7.Gtk.Box+BoxChild
-			this.buttonIssuanceSheetPrint = new global::Gtk.Button();
-			this.buttonIssuanceSheetPrint.CanFocus = true;
-			this.buttonIssuanceSheetPrint.Name = "buttonIssuanceSheetPrint";
-			this.buttonIssuanceSheetPrint.UseUnderline = true;
-			this.buttonIssuanceSheetPrint.Label = global::Mono.Unix.Catalog.GetString("Печать");
+			this.enumPrint = new global::QSOrmProject.EnumMenuButton();
+			this.enumPrint.CanFocus = true;
+			this.enumPrint.Name = "enumPrint";
+			this.enumPrint.UseUnderline = true;
+			this.enumPrint.UseMarkup = false;
+			this.enumPrint.LabelXAlign = 0F;
+			this.enumPrint.Label = global::Mono.Unix.Catalog.GetString("Печать");
 			global::Gtk.Image w28 = new global::Gtk.Image();
 			w28.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-print", global::Gtk.IconSize.Menu);
-			this.buttonIssuanceSheetPrint.Image = w28;
-			this.hbox7.Add(this.buttonIssuanceSheetPrint);
-			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.buttonIssuanceSheetPrint]));
+			this.enumPrint.Image = w28;
+			this.hbox7.Add(this.enumPrint);
+			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.enumPrint]));
 			w29.Position = 2;
 			w29.Expand = false;
 			w29.Fill = false;
@@ -446,6 +448,7 @@ namespace workwear.Views.Stock
 			this.hbox9.Spacing = 6;
 			// Container child hbox9.Gtk.Box+BoxChild
 			this.buttonAddNomenclature = new global::Gtk.Button();
+			this.buttonAddNomenclature.Sensitive = false;
 			this.buttonAddNomenclature.CanFocus = true;
 			this.buttonAddNomenclature.Name = "buttonAddNomenclature";
 			this.buttonAddNomenclature.UseUnderline = true;
@@ -491,7 +494,7 @@ namespace workwear.Views.Stock
 			this.Hide();
 			this.buttonIssuanceSheetCreate.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetCreateClicked);
 			this.buttonIssuanceSheetOpen.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetOpenClicked);
-			this.buttonIssuanceSheetPrint.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetPrintClicked);
+			this.enumPrint.EnumItemClicked += new global::System.EventHandler<QSOrmProject.EnumItemClickedEventArgs>(this.OnEnumPrintEnumItemClicked);
 			this.buttonAddEmployee.Clicked += new global::System.EventHandler(this.OnButtonAddEmployeeClicked);
 			this.buttonRemoveEmployee.Clicked += new global::System.EventHandler(this.OnButtonRemoveEmployeeClicked);
 			this.buttonCreateEmployee.Clicked += new global::System.EventHandler(this.OnButtonCreateEmployeeClicked);
