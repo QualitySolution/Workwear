@@ -8,6 +8,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
 using workwear.Domain.Statements;
+using workwear.Repository.Operations;
 using workwear.Repository.Stock;
 
 namespace workwear.Domain.Stock
@@ -150,7 +151,7 @@ namespace workwear.Domain.Stock
 			}
 			set {
 				if(value && EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff == null) {
-					var oper = ExpenseDoc.Employee.GetActualEmployeeOperation(this.ExpenseDoc.Date);
+					var oper = EmployeeIssueRepository.GetActualEmployeeOperation(ExpenseDoc.Employee.UoW, ExpenseDoc.Employee, this.ExpenseDoc.Date);
 					EmployeeIssueOperation firstActualOperIssue = new EmployeeIssueOperation();
 					if(oper != null) {
 						firstActualOperIssue = oper.FirstOrDefault(x => x.Nomenclature == this.Nomenclature); //Операция выдачи, с которой можно списать
@@ -244,16 +245,12 @@ namespace workwear.Domain.Stock
 
 				EmployeeIssueOperation.Update(uow, askUser, this);
 
-				if(this.isWriteOff)
-					UpdateIssuedWriteOffOperation(uow);
+				UpdateIssuedWriteOffOperation(uow);
 									
 				uow.Save(EmployeeIssueOperation);
 			}
 			else if(EmployeeIssueOperation != null)
 			{
-				if(EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff != null) {
-					uow.Delete(EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff);
-				}
 				uow.Delete(EmployeeIssueOperation);
 				EmployeeIssueOperation = null;
 			}
@@ -277,21 +274,28 @@ namespace workwear.Domain.Stock
 			if(this.ExpenseDoc.WriteOffDoc == null)
 				return;
 
-			if(isWriteOff) {
+			if(IsWriteOff) {
 				var currentWriteoffItem = this.ExpenseDoc.WriteOffDoc.Items.FirstOrDefault(x => x.EmployeeWriteoffOperation.Nomenclature == Nomenclature);
 
 				if(currentWriteoffItem == null) {
 					this.ExpenseDoc.WriteOffDoc.AddItem(OldEmployeeOperationIssue, Amount);
-					var CurrenOperationtWriteOff = this.ExpenseDoc.WriteOffDoc.Items.First(x => x.EmployeeWriteoffOperation.Nomenclature == Nomenclature).EmployeeWriteoffOperation;
-					EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = CurrenOperationtWriteOff;
-				}
 
-				else {
-					var CurrenOperationtWriteOff = this.ExpenseDoc.WriteOffDoc.Items.First(x => x.EmployeeWriteoffOperation.Nomenclature == Nomenclature).EmployeeWriteoffOperation;
-					EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = CurrenOperationtWriteOff;
+				}
+					var currenOperationtWriteOff = this.ExpenseDoc.WriteOffDoc.Items.First(x => x.EmployeeWriteoffOperation.Nomenclature == Nomenclature).EmployeeWriteoffOperation;
+					EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = currenOperationtWriteOff;
+					currentWriteoffItem = this.ExpenseDoc.WriteOffDoc.Items.FirstOrDefault(x => x.EmployeeWriteoffOperation.Nomenclature == Nomenclature);
 					currentWriteoffItem.UpdateOperations(uow);
 					currentWriteoffItem.Amount = this.Amount;
 					currentWriteoffItem.AktNumber = this.AktNumber ?? "";
+
+			}
+			else {
+				var currentWriteoffItem = this.ExpenseDoc.WriteOffDoc.Items.FirstOrDefault(x => x.EmployeeWriteoffOperation.Nomenclature == Nomenclature);
+				if(currentWriteoffItem != null) {
+					var currenOperationtWriteOff = currentWriteoffItem.EmployeeWriteoffOperation;
+					currentWriteoffItem.EmployeeWriteoffOperation = null;
+					ExpenseDoc.WriteOffDoc.Items.Remove(currentWriteoffItem);
+					uow.Delete(currenOperationtWriteOff);
 				}
 			}
 		}
