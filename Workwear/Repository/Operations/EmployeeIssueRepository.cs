@@ -61,7 +61,7 @@ namespace workwear.Repository.Operations
 			return uow.Session.QueryOver<EmployeeIssueOperation>()
 					.Where(x => x.Employee == employee)
 					.Where(x => x.AutoWriteoffDate == null)
-					.Where(x => x.StartOfUse == null || x.StartOfUse < dateDoc)
+					.Where(x => x.StartOfUse == null || x.StartOfUse <= dateDoc)
 					.Where(x => x.ExpiryByNorm == null || x.ExpiryByNorm < dateDoc)
 					.Where(x => x.Issued > 0 && x.Returned < 1)
 					.OrderBy(x => x.OperationTime).Asc

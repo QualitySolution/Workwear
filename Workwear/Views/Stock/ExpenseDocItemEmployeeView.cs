@@ -72,7 +72,8 @@ namespace workwear.Views.Stock
 					.AddTextRenderer(e => e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument).Editable()
 				.AddColumn("Списание").AddToggleRenderer(e => e.IsWriteOff).Editing()
-				.AddColumn("Номер акта").AddTextRenderer(e => e.AktNumber).Editable()
+				.AddSetter((c, e) => c.Visible = e.IsEnableWriteOff)
+				.AddColumn("Номер акта").AddTextRenderer(e => e.AktNumber).Editable().AddSetter((c, e) => c.Visible = e.IsWriteOff)
 				.AddColumn("")
 				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 				.Finish();
