@@ -240,8 +240,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox6">
-                      <Value>
-                      </Value>
+                      <Value>={code}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -349,8 +348,8 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>select obj, count_period , count_year from (
-(select object_id, obj, count(*) as count_year from (select wear_cards.id as id1, wear_cards.first_name, objects.id as object_id, objects.name as obj, operation_issued_by_employee.nomenclature_id, operation_issued_by_employee.issued, operation_issued_by_employee.returned
+        <CommandText>select obj, count_period , count_year, code from (
+(select object_id, obj, code, count(*) as count_year from (select wear_cards.id as id1, wear_cards.first_name, objects.id as object_id, objects.name as obj, objects.code
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
@@ -392,6 +391,10 @@ GROUP BY object_id
         <Field Name="count_year">
           <DataField>count_year</DataField>
           <TypeName>System.Int32</TypeName>
+        </Field>
+        <Field Name="code">
+          <DataField>code</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
       </Fields>
     </DataSet>
