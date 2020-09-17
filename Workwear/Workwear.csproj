@@ -444,6 +444,8 @@
     <Compile Include="ViewModels\Stock\ExpenseDocItemsEmployeeViewModel.cs" />
     <Compile Include="ViewModels\Stock\ExpenseDocItemsObjectViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\StockBalanceShortSummaryJournalViewModel.cs" />
+    <Compile Include="ReportsDlg\AmountEmployeeGetWearDlg.cs" />
+    <Compile Include="gtk-gui\workwear.ReportsDlg.AmountEmployeeGetWearDlg.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -668,6 +670,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\Statements\IssuanceSheetVertical.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\AmountEmployeeGetWear.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
