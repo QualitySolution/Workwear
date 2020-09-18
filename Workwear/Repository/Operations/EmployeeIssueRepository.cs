@@ -56,6 +56,18 @@ namespace workwear.Repository.Operations
 				.SingleOrDefault();
 		}
 
+		public static IList<EmployeeIssueOperation> GetActualEmployeeOperation(IUnitOfWork uow, EmployeeCard employee, DateTime dateDoc)
+		{
+			return uow.Session.QueryOver<EmployeeIssueOperation>()
+					.Where(x => x.Employee == employee)
+					//.Where(x => x.AutoWriteoffDate == null)
+					.Where(x => x.StartOfUse == null || x.StartOfUse <= dateDoc)
+					.Where(x => x.ExpiryByNorm == null || x.ExpiryByNorm > dateDoc)
+					.Where(x => x.Issued > 0 && x.Returned < 1)
+					.OrderBy(x => x.OperationTime).Asc
+					.List();
+		}
+
 		public static IList<ReferencedDocument> GetReferencedDocuments(IUnitOfWork uow, int[] operationsIds)
 		{
 			ReferencedDocument docAlias = null;

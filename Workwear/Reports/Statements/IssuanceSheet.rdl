@@ -1835,7 +1835,7 @@
     IFNULL(nomenclature.name, protection_tools.name) as nomenclature,
     issuance_sheet_items.size,
     issuance_sheet_items.growth,
-    nomenclature.number as nomenclature_number,
+    case when operation_issued_by_employee.operation_write_off_id is null then nomenclature.number else concat(nomenclature.number, 'a')  end as nomenclature_number,
     measurement_units.name as units,
     measurement_units.okei,
     issuance_sheet_items.amount,
@@ -1843,6 +1843,7 @@
     issuance_sheet_items.lifetime
 FROM
     issuance_sheet_items
+    LEFT JOIN operation_issued_by_employee on operation_issued_by_employee.id = issuance_sheet_items.issued_operation_id
     LEFT JOIN wear_cards ON wear_cards.id = issuance_sheet_items.employee_id
     LEFT JOIN nomenclature ON issuance_sheet_items.nomenclature_id = nomenclature.id
     LEFT JOIN item_types ON nomenclature.type_id = item_types.id
