@@ -7,12 +7,12 @@ using QSReport;
 namespace workwear.ReportsDlg
 {
 	[System.ComponentModel.ToolboxItem(true)]
-	public partial class AmountEmployeeGetWearDlg : Gtk.Bin, IParametersWidget
+	public partial class AmountIssuedWearDlg : Gtk.Bin, IParametersWidget
 	{
 		public string Identifier;
 		public string Title { get; }
 
-		public AmountEmployeeGetWearDlg(string Identifier, string Title)
+		public AmountIssuedWearDlg(string Identifier, string Title)
 		{
 			this.Identifier = Identifier;
 			this.Title = Title;
