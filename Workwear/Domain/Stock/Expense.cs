@@ -178,6 +178,7 @@ namespace workwear.Domain.Stock
 
 		public virtual void CleanupItemsWriteOff()
 		{
+			if(this.WriteOffDoc?.Items == null) return;
 			foreach(var item in this.WriteOffDoc.Items.Where(y => Items.FirstOrDefault(x => x.EmployeeIssueOperation == y.EmployeeWriteoffOperation) == null).ToList()) {
 				this.WriteOffDoc.RemoveItem(item);
 			}

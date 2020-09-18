@@ -124,7 +124,7 @@ namespace workwear.Domain.Stock
 
 		private EmployeeIssueOperation oldEmployeeOperationIssue;
 
-		[Display(Name = "Старая операция выдачи")]
+		[Display(Name = "Старая операция выдачи, с которой можно списать")]
 		public virtual EmployeeIssueOperation OldEmployeeOperationIssue {
 			get { return oldEmployeeOperationIssue; }
 			set { SetField(ref oldEmployeeOperationIssue, value); }
@@ -226,7 +226,7 @@ namespace workwear.Domain.Stock
 			get {
 				if(EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff != null) return true;
 				firstActualOperIssue = GetActualEmployeeOperationBalance();
-				if(firstActualOperIssue != null)
+				if(firstActualOperIssue != null && firstActualOperIssue != this.EmployeeIssueOperation)
 					return true;
 				else return false;
 			}
@@ -245,7 +245,7 @@ namespace workwear.Domain.Stock
 			if(this.OldEmployeeOperationIssue != null)
 				return this.OldEmployeeOperationIssue;
 			else if(oper != null) 
-				return oper.FirstOrDefault(x => x.Nomenclature == this.Nomenclature); //Операция выдачи, с которой можно списать
+				return oper.FirstOrDefault(x => x.Nomenclature == this.Nomenclature || x.ProtectionTools == this.ProtectionTools); //Операция выдачи, с которой можно списать
 			return null;
 		}
 
