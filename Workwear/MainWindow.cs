@@ -39,6 +39,7 @@ using workwear.Tools;
 using workwear.ViewModels.Company;
 using QS.NewsFeed;
 using QS.NewsFeed.Views;
+using workwear.ReportsDlg;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -596,5 +597,15 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionProtectionToolsActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<ProtectionToolsJournalViewModel>(null);
+	}
+
+	protected void OnActionAmountEmployeeGetWearActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount("ReportAmountEmployeeGetWear");
+		AmountEmployeeGetWearDlg widget = new AmountEmployeeGetWearDlg();
+		tdiMain.OpenTab(
+			QSReport.ReportViewDlg.GenerateHashName(widget),
+			() => new QSReport.ReportViewDlg(widget)
+		);
 	}
 }
