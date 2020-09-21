@@ -18,8 +18,7 @@
       <Textbox Name="Textbox2" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <Height>35.06pt</Height>
         <Width>748.98pt</Width>
-        <Value>= "Отчет о спецодежде выданной за период c " + Format({?dateStart}, "dd/MM/yyyy")  + " г. по " +  Format({?dateEnd}, "dd/MM/yyyy") + " г. 
-по комбинату "</Value>
+        <Value>= "Отчет о спецодежде выданной за период c " + Format({?dateStart}, "dd/MM/yyyy")  + " г. по " +  Format({?dateEnd}, "dd/MM/yyyy") + " г."</Value>
         <ZIndex>1</ZIndex>
         <Left>1.63pt</Left>
         <Top>7.30pt</Top>

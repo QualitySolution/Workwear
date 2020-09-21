@@ -5350,8 +5350,8 @@
       </action>
       <action id="ActionAmountEmployeeGetWear">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Отчет о выданном</property>
-        <property name="ShortLabel" translatable="yes">Отчет о выданном</property>
+        <property name="Label" translatable="yes">Количество сотрудников получивших СИЗ</property>
+        <property name="ShortLabel" translatable="yes">Количество сотрудников получивших СИЗ</property>
         <signal name="Activated" handler="OnActionAmountEmployeeGetWearActivated" />
       </action>
       <action id="ActionAmountIssuedWear">
@@ -5432,6 +5432,7 @@
                 <node type="Menuitem" action="Action13" />
                 <node type="Menuitem" action="ActionRequestSheet" />
                 <node type="Menuitem" action="ActionAverageAnnualNeed" />
+                <node type="Separator" />
                 <node type="Menuitem" action="Action22" />
                 <node type="Menuitem" action="ActionAmountEmployeeGetWear" />
                 <node type="Menuitem" action="ActionAmountIssuedWear" />
@@ -6599,6 +6600,7 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Label" translatable="yes">на месяц</property>
+                <property name="Active">True</property>
                 <property name="DrawIndicator">True</property>
                 <property name="HasLabel">True</property>
                 <property name="UseUnderline">True</property>
@@ -12598,7 +12600,7 @@
             <property name="Sensitive">False</property>
             <property name="CanFocus">True</property>
             <property name="Type">TextOnly</property>
-            <property name="Label" translatable="yes">Печать</property>
+            <property name="Label" translatable="yes">Сформировать отчет</property>
             <property name="UseUnderline">True</property>
             <signal name="Clicked" handler="OnButtonPrintReportClicked" />
           </widget>
@@ -12665,7 +12667,7 @@
             <property name="Sensitive">False</property>
             <property name="CanFocus">True</property>
             <property name="Type">TextOnly</property>
-            <property name="Label" translatable="yes">Печать</property>
+            <property name="Label" translatable="yes">Сформировать отчет</property>
             <property name="UseUnderline">True</property>
             <signal name="Clicked" handler="OnButtonPrintReportClicked" />
           </widget>

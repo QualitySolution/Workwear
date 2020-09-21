@@ -602,7 +602,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionAmountEmployeeGetWearActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportAmountEmployeeGetWear");
-		AmountEmployeeGetWearDlg widget = new AmountEmployeeGetWearDlg("AmountEmployeeGetWear", "Отчет о количестве выданного" );
+		AmountEmployeeGetWearDlg widget = new AmountEmployeeGetWearDlg("AmountEmployeeGetWear", "Количество сотрудников получивших СИЗ");
 		tdiMain.OpenTab(
 			QSReport.ReportViewDlg.GenerateHashName(widget),
 			() => new QSReport.ReportViewDlg(widget)

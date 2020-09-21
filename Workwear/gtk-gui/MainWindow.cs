@@ -288,7 +288,7 @@ public partial class MainWindow
 		this.ActionToolBarIconOnly.ShortLabel = global::Mono.Unix.Catalog.GetString("Только иконки");
 		w1.Add(this.ActionToolBarIconOnly, null);
 		this.ActionToolBarTextAndIcon = new global::Gtk.RadioAction("ActionToolBarTextAndIcon", global::Mono.Unix.Catalog.GetString("Иконки и текст"), null, null, 0);
-		this.ActionToolBarTextAndIcon.Group = this.ActionToolBarTextOnly.Group;
+		this.ActionToolBarTextAndIcon.Group = this.ActionToolBarIconOnly.Group;
 		this.ActionToolBarTextAndIcon.ShortLabel = global::Mono.Unix.Catalog.GetString("Иконки и текст");
 		w1.Add(this.ActionToolBarTextAndIcon, null);
 		this.ActionIconsExtraSmall = new global::Gtk.RadioAction("ActionIconsExtraSmall", global::Mono.Unix.Catalog.GetString("Очень маленькие иконки"), null, null, 0);
@@ -358,8 +358,8 @@ public partial class MainWindow
 		this.ActionProtectionTools = new global::Gtk.Action("ActionProtectionTools", global::Mono.Unix.Catalog.GetString("Номенклатура ТОН"), null, null);
 		this.ActionProtectionTools.ShortLabel = global::Mono.Unix.Catalog.GetString("Номенклатура ТОН");
 		w1.Add(this.ActionProtectionTools, null);
-		this.ActionAmountEmployeeGetWear = new global::Gtk.Action("ActionAmountEmployeeGetWear", global::Mono.Unix.Catalog.GetString("Отчет о выданном"), null, null);
-		this.ActionAmountEmployeeGetWear.ShortLabel = global::Mono.Unix.Catalog.GetString("Отчет о выданном");
+		this.ActionAmountEmployeeGetWear = new global::Gtk.Action("ActionAmountEmployeeGetWear", global::Mono.Unix.Catalog.GetString("Количество сотрудников получивших СИЗ"), null, null);
+		this.ActionAmountEmployeeGetWear.ShortLabel = global::Mono.Unix.Catalog.GetString("Количество сотрудников получивших СИЗ");
 		w1.Add(this.ActionAmountEmployeeGetWear, null);
 		this.ActionAmountIssuedWear = new global::Gtk.Action("ActionAmountIssuedWear", global::Mono.Unix.Catalog.GetString("Справка по выданному"), null, null);
 		this.ActionAmountIssuedWear.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка по выданному");

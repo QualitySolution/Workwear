@@ -19,7 +19,7 @@
       <Textbox Name="Textbox2">
         <Height>38.11pt</Height>
         <Width>427.56pt</Width>
-        <Value>= "Отчет о количестве работников комбината получивших спецодежду 
+        <Value>= "Отчет о количестве работников получивших спецодежду 
 за период c " + Format({?dateStart}, "dd/MM/yyyy")  + " г. по " +  Format({?dateEnd}, "dd/MM/yyyy") + " г. "</Value>
         <ZIndex>1</ZIndex>
         <Left>181.80pt</Left>
