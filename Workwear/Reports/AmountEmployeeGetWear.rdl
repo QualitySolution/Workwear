@@ -353,9 +353,7 @@
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
-JOIN stock_expense_detail on stock_expense_detail.employee_issue_operation_id = operation_issued_by_employee.id
-lEFT JOIN stock_expense on stock_expense.id = stock_expense_detail.stock_expense_id
-where YEAR(stock_expense.date) = YEAR(NOW())
+where YEAR(operation_issued_by_employee.operation_time) = YEAR(NOW())
 ) as table1
 GROUP BY object_id) as table_1
 LEFT JOIN (
@@ -363,14 +361,12 @@ select obj as obj_2, object_id, count(*) as count_period from (select wear_cards
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
-JOIN stock_expense_detail on stock_expense_detail.employee_issue_operation_id = operation_issued_by_employee.id
-lEFT JOIN stock_expense on stock_expense.id = stock_expense_detail.stock_expense_id
-where stock_expense.date &gt;  @dateStart and stock_expense.date &lt; @dateEnd
+where operation_issued_by_employee.operation_time &gt;  @dateStart and operation_issued_by_employee.operation_time &lt; @dateEnd
 ) as table2
 GROUP BY object_id
 ) as table_2 on table_1.object_id = table_2.object_id
 )
-ORDER BY code asc;</CommandText>
+ORDER BY CAST(code AS UNSIGNED) asc;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
             <Value>=Format({?dateStart}, "yyyy-MM-dd")</Value>
