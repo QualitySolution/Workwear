@@ -17,17 +17,19 @@ namespace DownloadNLMK.Loaders
 		private readonly NormLoader norms;
 		private readonly ProtectionToolsLoader protectionTools;
 		private readonly NomenclatureLoader nomenclature;
+		private readonly SubdivisionLoader subdivisions;
 		private readonly Dictionary<EmployeeCard, List<EmployeeOperation>> Operations = new Dictionary<EmployeeCard, List<EmployeeOperation>>();
 		public Dictionary<string, EmployeeCard> ByID = new Dictionary<string, EmployeeCard>();
 
 		public HashSet<EmployeeCard> UsedEmployees = new HashSet<EmployeeCard>();
 
-		public EmployeeLoader(IUnitOfWork uow, NormLoader norms, ProtectionToolsLoader protectionTools, NomenclatureLoader nomenclature)
+		public EmployeeLoader(IUnitOfWork uow, NormLoader norms, ProtectionToolsLoader protectionTools, NomenclatureLoader nomenclature, SubdivisionLoader subdivisions)
 		{
 			this.uow = uow ?? throw new ArgumentNullException(nameof(uow));
 			this.norms = norms ?? throw new ArgumentNullException(nameof(norms));
 			this.protectionTools = protectionTools ?? throw new ArgumentNullException(nameof(protectionTools));
 			this.nomenclature = nomenclature ?? throw new ArgumentNullException(nameof(nomenclature));
+			this.subdivisions = subdivisions ?? throw new ArgumentNullException(nameof(subdivisions));
 		}
 
 		public void Load(OracleConnection connection)
@@ -57,7 +59,7 @@ namespace DownloadNLMK.Loaders
 					skipCards++;
 					continue;
 				}
-				
+
 				EmployeeCard card = new EmployeeCard();
 				card.PersonnelNumber = row.TN.ToString();
 				card.LastName = row.SURNAME;
@@ -67,8 +69,10 @@ namespace DownloadNLMK.Loaders
 				card.DismissDate = row.DUVOL;
 				card.HireDate = row.DHIRING;
 
+				if(row.PARENT_DEPT_CODE != null && subdivisions.ByID.ContainsKey(row.PARENT_DEPT_CODE.ToString()))
+					card.Subdivision = subdivisions.ByID[row.PARENT_DEPT_CODE?.ToString()];
+
 				card.ProfessionId = (int?)row.E_PROF;
-				card.SubdivisionId = (int?)row.PARENT_DEPT_CODE;
 				card.DepartmentId = (int?)row.ID_DEPT;
 				card.PostId = (int?)row.ID_WP;
 				ByID.Add(row.PERSONAL_CARD_ID, card);
@@ -230,6 +234,8 @@ namespace DownloadNLMK.Loaders
 					nomenclature.MarkAsUsed(operation.Nomenclature);
 					norms.MarkAsUsed(operation.NormItem.Norm);
 				}
+				if(employee.Subdivision != null)
+					subdivisions.MarkAsUsed(employee.Subdivision);
 			}
 		}
 

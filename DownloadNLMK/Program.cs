@@ -38,6 +38,10 @@ namespace DownloadNLMK
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				logger.Info("start");
 				var start = DateTime.Now;
+
+				var subdivisions = new SubdivisionLoader(uow);
+				subdivisions.Load(NLMKOracle.Connection);
+
 				var nomenclatures = new NomenclatureLoader(uow);
 				nomenclatures.Load(NLMKOracle.Connection);
 
@@ -47,7 +51,7 @@ namespace DownloadNLMK
 				var norms = new NormLoader(uow, protectionTools);
 				norms.Load(NLMKOracle.Connection);
 
-				var employees = new EmployeeLoader(uow, norms, protectionTools, nomenclatures);
+				var employees = new EmployeeLoader(uow, norms, protectionTools, nomenclatures, subdivisions);
 				employees.Load(NLMKOracle.Connection);
 
 				//Помечаем какие сохранять.
@@ -61,6 +65,7 @@ namespace DownloadNLMK
 					employee.UsedNorms.Add(norm);
 				}
 
+				logger.Info($"Использовано {subdivisions.UsedSubdivision.Count} из {subdivisions.ByID.Count} подразделений.");
 				logger.Info($"Использовано {nomenclatures.UsedNomenclatures.Count} из {nomenclatures.ByID.Count} номенклатур.");
 				logger.Info($"Использовано {protectionTools.UsedProtectionTools.Count} из {protectionTools.ByID.Count} СИЗ-ов.");
 				logger.Info($"Использовано {norms.UsedNorms.Count} из {norms.ByID.Count} норм.");
@@ -69,7 +74,9 @@ namespace DownloadNLMK
 				logger.Info($"Сотрудников без норм {employees.UsedEmployees.Count(x => x.UsedNorms.Count == 0)}");
 				logger.Info($"Сотрудников с истекшими норами {employees.UsedEmployees.Count(x => x.UsedNorms.Any(n => !n.IsActive))}");
 				logger.Info($"Сотрудников без выдач {employees.UsedEmployees.Count(x => x.WorkwearItems.Count == 0)}");
+				logger.Info($"Сотрудников без подразделения {employees.UsedEmployees.Count(x => x.Subdivision == null)}");
 #if !NOSAVE
+				subdivisions.Save();
 				nomenclatures.Save();
 				protectionTools.Save();
 				norms.Save();
