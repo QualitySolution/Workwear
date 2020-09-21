@@ -57,7 +57,7 @@ namespace workwear.ReportsDlg
 			this.buttonPrintReport.CanFocus = true;
 			this.buttonPrintReport.Name = "buttonPrintReport";
 			this.buttonPrintReport.UseUnderline = true;
-			this.buttonPrintReport.Label = global::Mono.Unix.Catalog.GetString("Печать");
+			this.buttonPrintReport.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.vbox2.Add(this.buttonPrintReport);
 			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.buttonPrintReport]));
 			w4.Position = 1;
