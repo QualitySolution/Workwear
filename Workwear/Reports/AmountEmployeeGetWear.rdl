@@ -30,15 +30,15 @@
           <BorderWidth />
           <FontWeight>Bold</FontWeight>
           <FontSize>11pt</FontSize>
-          <TextAlign >Center</TextAlign>
-          <VerticalAlign >Middle</VerticalAlign>
+          <TextAlign>Center</TextAlign>
+          <VerticalAlign>Middle</VerticalAlign>
         </Style>
         <CanGrow>true</CanGrow>
       </Textbox>
     </ReportItems>
   </PageHeader>
   <Body>
-    <Height>123.9pt</Height>
+    <Height>99.2pt</Height>
     <ReportItems>
       <Table Name="Table1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <DataSetName>Data</DataSetName>
@@ -248,6 +248,7 @@
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign >Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -320,7 +321,7 @@
         <Left>10pt</Left>
         <Height>12pt</Height>
         <Width>3in</Width>
-        <Value>=Globals!PageNumber + ' of ' + Globals!TotalPages</Value>
+        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
         <Style>
           <FontSize>10pt</FontSize>
           <FontWeight>Normal</FontWeight>
@@ -346,7 +347,7 @@
   </DataSources>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>select obj, count_period , count_year, code from (
 (select object_id, obj, code, count(*) as count_year from (select wear_cards.id as id1, wear_cards.first_name, objects.id as object_id, objects.name as obj, objects.code
@@ -376,7 +377,7 @@ ORDER BY CAST(code AS UNSIGNED) asc;</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="obj">
           <DataField>obj</DataField>
           <TypeName>System.String</TypeName>
