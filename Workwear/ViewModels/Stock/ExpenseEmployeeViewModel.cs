@@ -165,7 +165,7 @@ namespace workwear.ViewModels.Stock
 					return;
 			}
 
-			var subdivision = hRSystem.GetSubdivision(Entity.Employee.SubdivisionId.Value);
+			var subdivision = Entity.Employee.Subdivision;
 
 			var reportInfo = new ReportInfo {
 				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.IssuanceSheet.Id),

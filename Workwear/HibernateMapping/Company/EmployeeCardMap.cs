@@ -22,7 +22,6 @@ namespace workwear.HibernateMapping.Company
 
 			#region NLMK
 			Map(x => x.ProfessionId).Column("nlmk_prof_id");
-			Map(x => x.SubdivisionId).Column("nlmk_subdivision_id");
 			Map(x => x.DepartmentId).Column("nlmk_dept_id");
 			Map(x => x.PostId).Column("nlmk_post_id");
 			#endregion
@@ -43,7 +42,7 @@ namespace workwear.HibernateMapping.Company
 			Map (x => x.GlovesSizeStd).Column ("size_gloves_std");
 			Map(x => x.MittensSize).Column("size_mittens");
 
-			//References (x => x.Subdivision).Column ("object_id");
+			References (x => x.Subdivision).Column ("object_id");
 			//References(x => x.Department).Column("department_id");
 			//References (x => x.Post).Column ("post_id");
 			References (x => x.Leader).Column ("leader_id");

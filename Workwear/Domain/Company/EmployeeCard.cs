@@ -184,13 +184,6 @@ namespace workwear.Domain.Company
 			}
 		}
 
-		private int? subdivisionId;
-		[Display(Name = "Код родительского подразделения")]
-		public virtual int? SubdivisionId {
-			get => Subdivision?.Id ?? subdivisionId;
-			set => SetField(ref subdivisionId, value);
-		}
-
 		private int? departmentId;
 		[Display(Name = "Код отдела")]
 		public virtual int? DepartmentId {

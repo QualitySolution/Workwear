@@ -8,18 +8,23 @@ using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
-using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
 namespace workwear.Repository.Company
 {
-	public static class SubdivisionRepository
+	public class SubdivisionRepository
 	{
 
 		public static QueryOver<Subdivision> ActiveObjectsQuery ()
 		{
 			return QueryOver.Of<Subdivision> ();
 		}
+
+		public Subdivision GetSubdivisionByCode(IUnitOfWork uow, string code)
+		{
+			return uow.Session.QueryOver<Subdivision>().Where(x => x.Code == code).SingleOrDefault();
+		}
+
 
 		public static IList<SubdivisionRecivedInfo> ItemsBalance(IUnitOfWork uow, Subdivision subdivision)
 		{

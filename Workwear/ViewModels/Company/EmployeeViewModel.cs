@@ -19,6 +19,7 @@ using QSReport;
 using workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
 using workwear.Measurements;
+using workwear.Repository.Company;
 using workwear.Tools.Oracle;
 using workwear.ViewModels.Company.EmployeeChilds;
 
@@ -33,6 +34,7 @@ namespace workwear.ViewModels.Company
 		ILifetimeScope AutofacScope;
 		private readonly IInteractiveQuestion interactive;
 		private readonly CommonMessages messages;
+		private readonly SubdivisionRepository subdivisionRepository;
 		private readonly HRSystem hRSystem;
 
 		public EmployeeViewModel(
@@ -44,12 +46,14 @@ namespace workwear.ViewModels.Company
 			ILifetimeScope autofacScope,
 			IInteractiveQuestion interactive,
 			CommonMessages messages,
+			SubdivisionRepository subdivisionRepository,
 			HRSystem hRSystem) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
+			this.subdivisionRepository = subdivisionRepository ?? throw new ArgumentNullException(nameof(subdivisionRepository));
 			this.hRSystem = hRSystem ?? throw new ArgumentNullException(nameof(hRSystem));
 			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
 
@@ -60,8 +64,7 @@ namespace workwear.ViewModels.Company
 
 			EntrySubdivisionViewModel = builder.ForProperty(x => x.Subdivision)
 				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
-				.UseFuncAdapter(o => hRSystem.GetSubdivision(o.GetId()))
-				//.UseViewModelDialog<SubdivisionViewModel>()
+				.UseViewModelDialog<SubdivisionViewModel>()
 				.Finish();
 
 			EntryDepartmentViewModel = builder.ForProperty(x => x.Department)
@@ -332,7 +335,7 @@ namespace workwear.ViewModels.Company
 					Entity.HireDate = info.DHIRING;
 
 					Entity.ProfessionId = (int?)info.E_PROF;
-					Entity.SubdivisionId = (int?)info.PARENT_DEPT_CODE;
+					Entity.Subdivision =  subdivisionRepository.GetSubdivisionByCode(UoW, info.PARENT_DEPT_CODE?.ToString());
 					Entity.DepartmentId = (int?)info.ID_DEPT;
 					Entity.PostId = (int?)info.ID_WP;
 				}
@@ -341,8 +344,6 @@ namespace workwear.ViewModels.Company
 			if(Entity.ProfessionId != null)
 				Entity.Profession = hRSystem.GetProfession((int)Entity.ProfessionId);
 
-			if(Entity.SubdivisionId.HasValue)
-				Entity.Subdivision = hRSystem.GetSubdivision((int)Entity.SubdivisionId.Value);
 
 			if(Entity.DepartmentId.HasValue)
 				Entity.Department = hRSystem.GetDepartment((int)Entity.DepartmentId.Value);

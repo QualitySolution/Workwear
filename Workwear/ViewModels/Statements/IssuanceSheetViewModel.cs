@@ -177,14 +177,14 @@ namespace workwear.ViewModels.Statements
 				else
 					return;
 			}
-			var subdivisionHR = hRSystem.GetSubdivision(Entity.Items.First().Employee.SubdivisionId.Value);
+			var subdivisionHR = Entity.Items.First().Employee.Subdivision;
 
 			var reportInfo = new ReportInfo {
 				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.Id },
-					{"organization", subdivisionHR.Name },
+					{"organization", subdivisionHR.Name},
 					{"code", subdivisionHR.Code}
 				}
 			};

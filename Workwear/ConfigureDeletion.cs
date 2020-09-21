@@ -55,7 +55,7 @@ namespace workwear
 				.AddDeleteDependence<Expense> (x => x.Subdivision)
 				.AddDeleteDependence<Income> (x => x.Subdivision)
 				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.Subdivision)
-				//.AddClearDependence<EmployeeCard> (x => x.Subdivision)
+				.AddClearDependence<EmployeeCard> (x => x.Subdivision)
 				.AddClearDependence<Post>(x => x.Subdivision)
 				.AddClearDependence<IssuanceSheet>(x => x.Subdivision);
 

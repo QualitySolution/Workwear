@@ -57,7 +57,7 @@ namespace workwear.Journal.ViewModels.Company
 					x => x.Patronymic
 					))
 				//.JoinAlias(() => employeeAlias.Post, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				//.JoinAlias(() => employeeAlias.Subdivision, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => employeeAlias.Subdivision, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.CardNumber).WithAlias(() => resultAlias.CardNumber)
@@ -67,7 +67,7 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(x => x.Patronymic).WithAlias(() => resultAlias.Patronymic)
 					.Select(() => employeeAlias.DismissDate).WithAlias(() => resultAlias.DismissDate)
 					//.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
-	   				//.Select(() => facilityAlias.Name).WithAlias(() => resultAlias.Subdivision)
+	   				.Select(() => facilityAlias.Name).WithAlias(() => resultAlias.Subdivision)
  					)
 				.OrderBy(() => employeeAlias.LastName).Asc
 				.ThenBy(() => employeeAlias.FirstName).Asc

@@ -23,13 +23,6 @@ namespace workwear.Tools.Oracle
 			return connection.QuerySingleOrDefault<EmployeeHRInfo>(sql, new { tnumber = tn });
 		}
 
-		public Subdivision GetSubdivision(int id)
-		{
-			var sql = "select t.KGRPOL as Id, t.NGRPOL as Name FROM SKLAD.SGRPOL t WHERE t.KGRPOL = :dept_code";
-
-			return connection.QuerySingleOrDefault<Subdivision>(sql, new { dept_code = id });
-		}
-
 		public Department GetDepartment(int id)
 		{
 			var sql = "select t.ID_DEPT as Id, t.DEPT as Name FROM KIT.DEPTS t WHERE t.ID_DEPT = :dept_id";

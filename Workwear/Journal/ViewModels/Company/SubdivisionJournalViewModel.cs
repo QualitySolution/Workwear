@@ -1,69 +1,40 @@
 ﻿using System;
-using Autofac;
 using NHibernate;
 using NHibernate.Transform;
-using Oracle.ManagedDataAccess.Client;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
-using QS.Utilities.Text;
 using workwear.Domain.Company;
-using workwear.Tools.Oracle;
 using workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {
-	public class SubdivisionJournalViewModel : JournalViewModelBase
+	public class SubdivisionJournalViewModel : EntityJournalViewModelBase<Subdivision, SubdivisionViewModel, SubdivisionJournalNode>
 	{
-		public SubdivisionJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope) : base(unitOfWorkFactory, interactiveService, navigationManager)
+		public SubdivisionJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
-			Title = "Подразделения(Цеха)";
-			AutofacScope = autofacScope;
-			var dataLoader = AutofacScope.Resolve<OracleSQLDataLoader<SubdivisionJournalNode>>();
-			DataLoader = dataLoader;
-			dataLoader.AddQuery(MakeQuery, MapNode);
-			CreateNodeActions();
 		}
 
-		#region Запрос
-
-		void MakeQuery(OracleCommand cmd, bool isCounting, int? pageSize, int? skip)
+		protected override IQueryOver<Subdivision> ItemsQuery(IUnitOfWork uow)
 		{
-			string conditions = null;
-
-			conditions += OracleSQLDataLoader<EmployeeJournalNode>.MakeSearchConditions(Search.SearchValues,
-				new[] {
-					"KGRPOL",
-					"NGRPOL",
-				},
-				null
-			);
-
-			string sql;
-			if(isCounting)
-				sql = $"select COUNT(*) from SKLAD.SGRPOL";
-			else
-				sql = $"SELECT * from SKLAD.SGRPOL";
-
-
-			if(!String.IsNullOrEmpty(conditions))
-				sql += " WHERE" + conditions.ReplaceFirstOccurrence(" AND", "");
-
-			cmd.CommandText = sql;
+			SubdivisionJournalNode resultAlias = null;
+			return uow.Session.QueryOver<Subdivision>()
+				.Where(GetSearchCriterion<Subdivision>(
+					x => x.Code,
+					x => x.Name,
+					x => x.Address
+					))
+				.SelectList((list) => list
+					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
+					.Select(x => x.Code).WithAlias(() => resultAlias.Code)
+					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
+					.Select(x => x.Address).WithAlias(() => resultAlias.Address)
+				)
+				.OrderBy(x => x.Name).Asc
+				.TransformUsing(Transformers.AliasToBean<SubdivisionJournalNode>());
 		}
-
-		SubdivisionJournalNode MapNode(OracleDataReader reader)
-		{
-			return new SubdivisionJournalNode() {
-				Id = Convert.ToInt32(reader["KGRPOL"]),
-				Code = reader["KGRPOL"]?.ToString(),
-				Name = reader["NGRPOL"]?.ToString(),
-			};
-		}
-
-		#endregion
 	}
 
 	public class SubdivisionJournalNode
