@@ -373,7 +373,7 @@
     <DataSet Name="Data">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>select objects.name as object, nomenclature.name as nomen, sum(issued) as sum, nomenclature.number, operation_issued_by_employee.nomenclature_id, objects.code 
+        <CommandText>select objects.name as object, nomenclature.name as nomen, sum(issued) as sum, nomenclature.ozm as number, operation_issued_by_employee.nomenclature_id, objects.code 
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
