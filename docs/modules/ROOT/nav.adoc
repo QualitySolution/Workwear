@@ -1,7 +1,18 @@
+.Руководство пользователя
 * xref:introduction.adoc[Введение]
-* xref:install.adoc[Установка]
-* xref:users.adoc[Работа с пользователями]
 * xref:interface.adoc[Интерфейс программы]
+* xref:organization.adoc[Структура организации]
+* xref:nomenclature.adoc[Склады и номенклатура]
+* xref:norms.adoc[Нормы выдачи]
 * xref:employees.adoc[Данные о сотрудниках]
-* xref:technical.adoc[Технические подробности]
+* xref:stock-documents.adoc[Складские документы]
+* xref:reports.adoc[Отчеты]
+* xref:settings.adoc[Настройки программы]
 * xref:index.adoc[Старая документация]
+
+.Руководство администратора
+* xref:install.adoc[Установка]
+* xref:install.adoc[Обновление]
+* xref:users.adoc[Работа с пользователями]
+* xref:install.adoc[Лицензирование]
+* xref:technical.adoc[Технические подробности]
