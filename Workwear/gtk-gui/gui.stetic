@@ -5291,8 +5291,8 @@
       </action>
       <action id="ActionAmountEmployeeGetWear">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Отчет о выданном</property>
-        <property name="ShortLabel" translatable="yes">Отчет о выданном</property>
+        <property name="Label" translatable="yes">Количество сотрудников получивших СИЗ</property>
+        <property name="ShortLabel" translatable="yes">Количество сотрудников получивших СИЗ</property>
         <signal name="Activated" handler="OnActionAmountEmployeeGetWearActivated" />
       </action>
       <action id="ActionAmountIssuedWear">
@@ -5372,6 +5372,7 @@
                 <node type="Menuitem" action="Action13" />
                 <node type="Menuitem" action="ActionRequestSheet" />
                 <node type="Menuitem" action="ActionAverageAnnualNeed" />
+                <node type="Separator" />
                 <node type="Menuitem" action="Action22" />
                 <node type="Menuitem" action="ActionAmountEmployeeGetWear" />
                 <node type="Menuitem" action="ActionAmountIssuedWear" />
