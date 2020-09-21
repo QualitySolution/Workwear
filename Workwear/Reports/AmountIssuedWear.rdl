@@ -76,8 +76,8 @@
                             <BorderStyle>
                               <Default>Solid</Default>
                               <Right>None</Right>
-                              <Left >None</Left>
-                              <Bottom >None</Bottom>
+                              <Left>None</Left>
+                              <Bottom>None</Bottom>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -93,8 +93,8 @@
                             <BorderStyle>
                               <Default>Solid</Default>
                               <Right>None</Right>
-                              <Left >None</Left>
-                              <Bottom >None</Bottom>
+                              <Left>None</Left>
+                              <Bottom>None</Bottom>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -112,10 +112,10 @@
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
-                              <Left >None</Left>
-                              <Right >None</Right>
-                              <Top >Solid</Top>
-                              <Bottom >None</Bottom>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>Solid</Top>
+                              <Bottom>None</Bottom>
                             </BorderStyle>
                             <PaddingRight>2pt</PaddingRight>
                             <TextAlign>Right</TextAlign>
@@ -133,7 +133,7 @@
             </Footer>
             <Grouping Name="objectGroup">
               <GroupExpressions>
-                <GroupExpression>=Fields!object.Value</GroupExpression>
+                <GroupExpression >=Fields!code.Value</GroupExpression>
               </GroupExpressions>
               <PageBreakAtStart>false</PageBreakAtStart>
               <PageBreakAtEnd>false</PageBreakAtEnd>
@@ -152,13 +152,13 @@
                             <BorderStyle>
                               <Default>Solid</Default>
                               <Right>None</Right>
-                              <Top >None</Top>
-                              <Left >None</Left>
+                              <Top>None</Top>
+                              <Left>None</Left>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
-                            <FontWeight >Bold</FontWeight>
-                            <FontSize >10pt</FontSize>
+                            <FontWeight>Bold</FontWeight>
+                            <FontSize>10pt</FontSize>
                           </Style>
                         </Textbox>
                       </ReportItems>
@@ -172,12 +172,12 @@
                             <BorderStyle>
                               <Default>Solid</Default>
                               <Left>None</Left>
-                              <Right >None</Right>
-                              <Top >None</Top>
+                              <Right>None</Right>
+                              <Top>None</Top>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
-                            <FontWeight >Bold</FontWeight>
+                            <FontWeight>Bold</FontWeight>
                           </Style>
                         </Textbox>
                       </ReportItems>
@@ -190,9 +190,9 @@
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
-                              <Left >None</Left>
-                              <Right >None</Right>
-                              <Top >None</Top>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -258,6 +258,12 @@
                 </TableRow>
               </TableRows>
             </Header>
+            <Sorting >
+              <SortBy>
+                <SortExpression>=Convert.ToUInt32({code})</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
           </TableGroup>
         </TableGroups>
         <Details>
@@ -276,7 +282,7 @@
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
-                        <TextAlign >Center</TextAlign>
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -332,10 +338,13 @@
         <Left>10pt</Left>
         <Height>12pt</Height>
         <Width>3in</Width>
-        <Value>=Globals!PageNumber + ' of ' + Globals!TotalPages</Value>
+        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
         <Style>
           <FontSize>10pt</FontSize>
           <FontWeight>Normal</FontWeight>
+          <BorderStyle  />
+          <BorderColor  />
+          <BorderWidth  />
         </Style>
       </Textbox>
     </ReportItems>
@@ -362,19 +371,17 @@
   </ReportParameters>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>select object, nomen, sum(issued) as sum, number, nomenclature_id, code 
-FROM (select  objects.id as object_id, objects.name as object, objects.code as code,
- operation_issued_by_employee.nomenclature_id, nomenclature.name as nomen, nomenclature.number, operation_issued_by_employee.issued
+        <CommandText>select objects.name as object, nomenclature.name as nomen, sum(issued) as sum, nomenclature.number, operation_issued_by_employee.nomenclature_id, objects.code 
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
 lEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
 WHERE operation_issued_by_employee.operation_time &gt;= @dateStart and operation_issued_by_employee.operation_time &lt;= @dateEnd
 and operation_issued_by_employee.returned = 0
-) as table1
-GROUP BY nomenclature_id;</CommandText>
+GROUP BY objects.code, nomenclature_id
+ORDER BY CAST(objects.code AS UNSIGNED), nomen;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
             <Value>=Format({?dateStart}, "yyyy-MM-dd")</Value>
@@ -384,7 +391,7 @@ GROUP BY nomenclature_id;</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="object">
           <DataField>object</DataField>
           <TypeName>System.String</TypeName>
