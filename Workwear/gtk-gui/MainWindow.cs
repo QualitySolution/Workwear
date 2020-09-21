@@ -129,6 +129,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionAmountEmployeeGetWear;
 
+	private global::Gtk.Action ActionAmountIssuedWear;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -359,6 +361,9 @@ public partial class MainWindow
 		this.ActionAmountEmployeeGetWear = new global::Gtk.Action("ActionAmountEmployeeGetWear", global::Mono.Unix.Catalog.GetString("Отчет о выданном"), null, null);
 		this.ActionAmountEmployeeGetWear.ShortLabel = global::Mono.Unix.Catalog.GetString("Отчет о выданном");
 		w1.Add(this.ActionAmountEmployeeGetWear, null);
+		this.ActionAmountIssuedWear = new global::Gtk.Action("ActionAmountIssuedWear", global::Mono.Unix.Catalog.GetString("Справка по выданному"), null, null);
+		this.ActionAmountIssuedWear.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка по выданному");
+		w1.Add(this.ActionAmountIssuedWear, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -607,5 +612,6 @@ public partial class MainWindow
 		this.ActionCards.Activated += new global::System.EventHandler(this.OnActionCardsActivated);
 		this.ActionProtectionTools.Activated += new global::System.EventHandler(this.OnActionProtectionToolsActivated);
 		this.ActionAmountEmployeeGetWear.Activated += new global::System.EventHandler(this.OnActionAmountEmployeeGetWearActivated);
+		this.ActionAmountIssuedWear.Activated += new global::System.EventHandler(this.OnActionAmountIssuedWearActivated);
 	}
 }

@@ -369,7 +369,8 @@ where stock_expense.date &gt;  @dateStart and stock_expense.date &lt; @dateEnd
 ) as table2
 GROUP BY object_id
 ) as table_2 on table_1.object_id = table_2.object_id
-);</CommandText>
+)
+ORDER BY code asc;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
             <Value>=Format({?dateStart}, "yyyy-MM-dd")</Value>

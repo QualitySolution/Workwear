@@ -70,6 +70,9 @@ namespace workwear.ViewModels.Stock
 			if(employee != null)
 				FillUnderreceived();
 
+			if(Entity.WriteOffDoc != null)
+				FillAktNumber();
+
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
 									.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 									.UseViewModelDialog<WarehouseViewModel>()
@@ -102,24 +105,38 @@ namespace workwear.ViewModels.Stock
 			}
 		}
 
+		public void FillAktNumber()
+		{
+			foreach(var item in Entity.WriteOffDoc.Items)
+				foreach(var i in Entity.Items)
+					if(item.Nomenclature == i.Nomenclature)
+						i.AktNumber = item.AktNumber;
+		}
+
 		public override bool Save()
 		{
 			if(!Validate())
 				return false;
 
 			logger.Info("Запись документа...");
+
+			if(Entity.Items.FirstOrDefault(x => x.IsWriteOff) != null && Entity.WriteOffDoc == null) {
+				Entity.WriteOffDoc = new Writeoff();
+				Entity.WriteOffDoc.Date = Entity.Date;
+				Entity.WriteOffDoc.CreatedbyUser = Entity.CreatedbyUser;
+			}
+
 			Entity.CleanupItems();
+			Entity.CleanupItemsWriteOff();
 			Entity.UpdateOperations(UoW, interactive);
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
 
-			if (Entity.Items.FirstOrDefault(x=> x.IsWriteOff) != null && Entity.WriteOffDoc == null) {
-				Entity.WriteOffDoc = new Writeoff();
-				Entity.WriteOffDoc.Date = Entity.Date;
-				Entity.CreatedbyUser = Entity.CreatedbyUser;
-			}
+
+
 			Entity.UpdateIssuedWriteOffOperation();
+
 			if(Entity.WriteOffDoc != null)
 				UoW.Save(Entity.WriteOffDoc);
 

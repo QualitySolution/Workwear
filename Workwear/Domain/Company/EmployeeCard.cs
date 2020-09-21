@@ -497,20 +497,6 @@ namespace workwear.Domain.Company
 			logger.Info("Ok");
 		}
 
-		public virtual IList<EmployeeIssueOperation> GetActualEmployeeOperation(DateTime date)
-		{
-			var operation = UoW.Session.QueryOver<EmployeeIssueOperation>()
-					.Where(x => x.Employee.Id == this.Id)
-					.Where(x => x.AutoWriteoffDate == null)
-					.Where(x => x.StartOfUse == null || x.StartOfUse < date)
-					.Where(x => x.ExpiryByNorm == null || x.ExpiryByNorm < date)
-					.Where(x => x.Issued > 0 && x.Returned < 1)
-					//.Where(x => x.Nomenclature.Id.IsIn(nomenclatures.Select(n => n.Id).ToArray()))
-					.OrderBy(x => x.OperationTime).Asc
-					.List();
-			return operation;
-		}
-
 		public virtual void UpdateAllNextIssue()
 		{
 			foreach (var item in WorkwearItems)

@@ -83,11 +83,7 @@ namespace workwear.Domain.Stock
 
 		[Display(Name = "Связанный документ списания")]
 		public virtual Writeoff WriteOffDoc {
-			get {
-				if (writeOffDoc == null) {
-					writeOffDoc = new Writeoff();
-                }
-				return writeOffDoc; }
+			get { return writeOffDoc; }
 			set { SetField(ref writeOffDoc, value); }
 		}
 
@@ -180,6 +176,14 @@ namespace workwear.Domain.Stock
 			}
 		}
 
+		public virtual void CleanupItemsWriteOff()
+		{
+			if(this.WriteOffDoc?.Items == null) return;
+			foreach(var item in this.WriteOffDoc.Items.Where(y => Items.FirstOrDefault(x => x.EmployeeIssueOperation == y.EmployeeWriteoffOperation) == null).ToList()) {
+				this.WriteOffDoc.RemoveItem(item);
+			}
+		}
+
 		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
 		{
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
@@ -231,13 +235,11 @@ namespace workwear.Domain.Stock
 			if(WriteOffDoc == null)
 				return;
 
-			foreach(var item in this.WriteOffDoc.Items)
-				item.UpdateOperations(UoW);
+			WriteOffDoc.Items.ToList().ForEach(x => x.UpdateOperations(UoW));
 
-			if(this.Items.FirstOrDefault(x => x.IsWriteOff == true) == null && WriteOffDoc != null) {
-				WriteOffDoc.Items.Clear();
+			if(WriteOffDoc.Items.Count < 1) {
 				UoW.Delete(WriteOffDoc);
-				this.WriteOffDoc = null;
+				WriteOffDoc = null;
 
 			}
 

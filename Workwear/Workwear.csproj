@@ -460,6 +460,8 @@
     <Compile Include="Journal\ViewModels\Stock\StockBalanceShortSummaryJournalViewModel.cs" />
     <Compile Include="ReportsDlg\AmountEmployeeGetWearDlg.cs" />
     <Compile Include="gtk-gui\workwear.ReportsDlg.AmountEmployeeGetWearDlg.cs" />
+    <Compile Include="ReportsDlg\AmountIssuedWearDlg.cs" />
+    <Compile Include="gtk-gui\workwear.ReportsDlg.AmountIssuedWearDlg.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -693,6 +695,9 @@
     </None>
     <None Include="Reports\Stock\ActWriteOff_Common.rdl" />
     <None Include="Reports\AmountEmployeeGetWear.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\AmountIssuedWear.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
