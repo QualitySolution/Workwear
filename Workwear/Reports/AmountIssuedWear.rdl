@@ -370,10 +370,8 @@ FROM (select  objects.id as object_id, objects.name as object, objects.code as c
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
-LEFT JOIN stock_expense_detail on stock_expense_detail.employee_issue_operation_id = operation_issued_by_employee.id
-lEFT JOIN stock_expense on stock_expense.id = stock_expense_detail.stock_expense_id
 lEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
-WHERE stock_expense.date &gt;= @dateStart and stock_expense.date &lt;= @dateEnd
+WHERE operation_issued_by_employee.operation_time &gt;= @dateStart and operation_issued_by_employee.operation_time &lt;= @dateEnd
 and operation_issued_by_employee.returned = 0
 ) as table1
 GROUP BY nomenclature_id;</CommandText>
