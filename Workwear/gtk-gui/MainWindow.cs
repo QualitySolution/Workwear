@@ -407,17 +407,19 @@ public partial class MainWindow
 				"ame=\'Action11\' action=\'Action11\'/><separator/><menuitem name=\'Action12\' action=\'" +
 				"Action12\'/><separator/><menuitem name=\'Action13\' action=\'Action13\'/><menuitem na" +
 				"me=\'ActionRequestSheet\' action=\'ActionRequestSheet\'/><menuitem name=\'ActionAvera" +
-				"geAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><menuitem name=\'Action22\' action" +
-				"=\'Action22\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuitem name=\'" +
-				"helpAction\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' action=\'ActionHi" +
-				"story\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuit" +
-				"em name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReformal\' ac" +
-				"tion=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuitem nam" +
-				"e=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=\'Acti" +
-				"onOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><menuite" +
-				"m name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><menuitem name" +
-				"=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'" +
-				"aboutAction\'/></menu></menubar></ui>");
+				"geAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><separator/><menuitem name=\'Acti" +
+				"on22\' action=\'Action22\'/><menuitem name=\'ActionAmountEmployeeGetWear\' action=\'Ac" +
+				"tionAmountEmployeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear\' action=\'Acti" +
+				"onAmountIssuedWear\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuite" +
+				"m name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' action=\'" +
+				"ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/" +
+				"><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenRefo" +
+				"rmal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menu" +
+				"item name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' acti" +
+				"on=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/>" +
+				"<menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><menui" +
+				"tem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' " +
+				"action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
