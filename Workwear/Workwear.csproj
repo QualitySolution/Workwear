@@ -388,6 +388,9 @@
     <Compile Include="Repository\Stock\StockRepository.cs" />
     <Compile Include="ReportsDlg\StockAllWearDlg.cs" />
     <Compile Include="gtk-gui\workwear.ReportsDlg.StockAllWearDlg.cs" />
+    <Compile Include="ViewModels\Stock\Widgets\SizeWidgetViewModel.cs" />
+    <Compile Include="Views\Stock\Widgets\SizeWidgetView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.Widgets.SizeWidgetView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -544,6 +547,8 @@
     <Folder Include="Journal\Filter.ViewModels\Stock\" />
     <Folder Include="Journal\ViewModels\Stock\" />
     <Folder Include="Journal\Filter.Views\Stock\" />
+    <Folder Include="ViewModels\Stock\Widgets\" />
+    <Folder Include="Views\Stock\Widgets\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

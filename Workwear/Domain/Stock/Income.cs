@@ -218,10 +218,19 @@ namespace workwear.Domain.Stock
 	}
 
 	public enum IncomeOperations {
+		/// <summary>
+		/// Приходная накладная
+		/// </summary>
 		[Display(Name = "Приходная накладная")]
 		Enter,
+		/// <summary>
+		/// Возврат от работника
+		/// </summary>
 		[Display(Name = "Возврат от работника")]
 		Return,
+		/// <summary>
+		/// Возврат с объекта
+		/// </summary>
 		[Display(Name = "Возврат с объекта")]
 		Object
 	}

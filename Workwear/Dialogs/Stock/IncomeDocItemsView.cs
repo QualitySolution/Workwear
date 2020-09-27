@@ -10,6 +10,7 @@ using workwear.Domain.Operations;
 using workwear.Domain.Stock;
 using workwear.Measurements;
 using workwear.Representations.Organization;
+using workwear.ViewModels.Stock.Widgets;
 
 namespace workwear
 {
@@ -124,6 +125,7 @@ namespace workwear
 		void YtreeItems_Selection_Changed (object sender, EventArgs e)
 		{
 			buttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
+			buttonAddSizes.Sensitive = ytreeItems.Selection.CountSelectedRows() == 1;
 		}
 
 		protected void OnButtonAddClicked (object sender, EventArgs e)
@@ -219,6 +221,20 @@ namespace workwear
 				}
 				dlg.Destroy();
 			}
+		}
+
+		protected void OnButtonAddSizesCliked(object sender, EventArgs e)
+		{
+			var item = ytreeItems.GetSelectedObject<IncomeItem>();
+			QS.Navigation.IPage<SizeWidgetViewModel> page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, ClothesSex?, СlothesType?>
+				(null, item.Nomenclature.Sex, item.Nomenclature.Type.WearCategory);
+			page.ViewModel.AddedSizes += SelectWearSize_SizeSelected;
+
+		}
+		void SelectWearSize_SizeSelected(object sender , AddedSizesEventArgs e)
+		{
+			e.nomenclatures.ToList().ForEach(n => IncomeDoc.AddItem(n));
+			CalculateTotal();
 		}
 	}
 }
