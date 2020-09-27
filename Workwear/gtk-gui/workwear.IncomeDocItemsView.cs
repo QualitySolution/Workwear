@@ -22,6 +22,8 @@ namespace workwear
 
 		private global::Gtk.Button buttonDel;
 
+		private global::Gtk.Button buttonAddSizes;
+
 		private global::Gtk.Label labelSum;
 
 		protected virtual void Build()
@@ -115,18 +117,32 @@ namespace workwear
 			w10.Expand = false;
 			w10.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
+			this.buttonAddSizes = new global::Gtk.Button();
+			this.buttonAddSizes.CanFocus = true;
+			this.buttonAddSizes.Name = "buttonAddSizes";
+			this.buttonAddSizes.UseUnderline = true;
+			this.buttonAddSizes.Label = global::Mono.Unix.Catalog.GetString("Добавить размеры");
+			global::Gtk.Image w11 = new global::Gtk.Image();
+			w11.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-execute", global::Gtk.IconSize.Menu);
+			this.buttonAddSizes.Image = w11;
+			this.hbox1.Add(this.buttonAddSizes);
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonAddSizes]));
+			w12.Position = 2;
+			w12.Expand = false;
+			w12.Fill = false;
+			// Container child hbox1.Gtk.Box+BoxChild
 			this.labelSum = new global::Gtk.Label();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.hbox1.Add(this.labelSum);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelSum]));
-			w11.Position = 2;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelSum]));
+			w13.Position = 3;
 			this.vbox2.Add(this.hbox1);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox1]));
-			w12.Position = 2;
-			w12.Expand = false;
-			w12.Fill = false;
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox1]));
+			w14.Position = 2;
+			w14.Expand = false;
+			w14.Fill = false;
 			this.Add(this.vbox2);
 			if ((this.Child != null))
 			{
@@ -136,6 +152,7 @@ namespace workwear
 			this.buttonFillBuhDoc.Clicked += new global::System.EventHandler(this.OnButtonFillBuhDocClicked);
 			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonAddClicked);
 			this.buttonDel.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
+			this.buttonAddSizes.Clicked += new global::System.EventHandler(this.OnButtonAddSizesCliked);
 		}
 	}
 }
