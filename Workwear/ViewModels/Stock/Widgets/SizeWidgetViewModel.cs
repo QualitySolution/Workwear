@@ -113,15 +113,7 @@ namespace workwear.ViewModels.Stock.Widgets
 		/// <param name="sizes">Список размеро.</param>
 		public void AddSizes(WearGrowth currentGrowth, IEnumerable<WearSize> sizes)
 		{
-			List<Nomenclature> noms = new List<Nomenclature>();
-			foreach(var size in sizes) {
-				Nomenclature n = this.nomenclature.Clone();
-				n.WearGrowthStd = currentGrowth.Name;
-				n.SizeStd = size.Names.First();
-				noms.Add(n);
-			}
-
-			AddedSizesEventArgs args = new AddedSizesEventArgs(noms);
+			AddedSizesEventArgs args = new AddedSizesEventArgs(nomenclature,currentGrowth,sizes);
 			AddedSizes(this, args);
 			Close(false, CloseSource.Self);
 		}
@@ -131,11 +123,14 @@ namespace workwear.ViewModels.Stock.Widgets
 	/// </summary>
 	public class AddedSizesEventArgs : EventArgs
 	{
-		public readonly IEnumerable<Nomenclature> nomenclatures;
-
-		public AddedSizesEventArgs(IEnumerable<Nomenclature> nomenclatures)
+		public readonly Nomenclature Source;
+		public readonly WearGrowth Growth;
+		public readonly IEnumerable<WearSize> Sizes;
+		public AddedSizesEventArgs(Nomenclature nomenclature,WearGrowth growth , IEnumerable<WearSize> sizes)
 		{
-			this.nomenclatures = nomenclatures;
+			this.Source = nomenclature;
+			Growth = growth;
+			Sizes = sizes;
 		}
 	}
 }

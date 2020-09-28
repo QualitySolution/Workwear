@@ -12,8 +12,6 @@ namespace workwear.Views.Stock.Widgets
 {
 	public partial class SizeWidgetView : DialogViewBase<SizeWidgetViewModel>
 	{
-		private yListComboBox GrowthBox;
-
 		private WearGrowth currentGrowth;
 		private IList<CheckBoxItem> checkBoxItemList { get; set; }
 		public SizeWidgetView(SizeWidgetViewModel model) : base(model)
@@ -25,7 +23,6 @@ namespace workwear.Views.Stock.Widgets
 		private void ConfigureDlg()
 		{
 			if(ViewModel.IsUseGrowth) {
-				GrowthBox = new yListComboBox();
 				GrowthBox.SetRenderTextFunc<WearGrowth>((growth) => growth.Name);
 				GrowthBox.ItemsList = ViewModel.WearGrowths;
 				GrowthBox.Changed += GrowthInfoComboBox_Changed;
@@ -34,20 +31,20 @@ namespace workwear.Views.Stock.Widgets
 				GrowthBox.ShowAll();
 
 				WearViewTypePlace.Visible = true;
-				currentGrowth = ViewModel.WearGrowths.First();
+
 			}
 			else {
 				GrowthInfoBox.Visible = false;
 				WearViewTypePlace.Visible = false;
 				ConfigureCheckBoxPlace();
 			}
+			AddButton.Sensitive = false;
 			checkBoxItemList = new List<CheckBoxItem>();
-		}
 
-		private void GrowthInfoComboBox_Changed(object sender, EventArgs e)
-		{
-			currentGrowth = (WearGrowth)GrowthBox.SelectedItem;
-			ConfigureCheckBoxPlace();
+			//Выбираем первый элемент из ViewModel.WearGrowths, если рост используется
+			if(ViewModel.IsUseGrowth)
+				GrowthBox.SelectedItem = ViewModel.WearGrowths.First();
+
 		}
 
 		private void ConfigureCheckBoxPlace()
@@ -62,6 +59,7 @@ namespace workwear.Views.Stock.Widgets
 				CheckBoxPlace.Attach(label, 1, 2, i, i + 1, AttachOptions.Expand, AttachOptions.Expand, 0, 0);
 
 				CheckButton check = new CheckButton();
+				check.Clicked += CheckButton_Clicked; 
 				CheckBoxPlace.Attach(check, 2, 3, i, i + 1, AttachOptions.Expand, AttachOptions.Expand, 0, 0);
 
 				CheckBoxItem checkBoxItem = new CheckBoxItem(label, sizes[(int)i], check);
@@ -75,7 +73,32 @@ namespace workwear.Views.Stock.Widgets
 
 		private System.Action<WearSizeDesignationType> DesignationTypeChangeEvent;
 
+		private void GrowthInfoComboBox_Changed(object sender, EventArgs e)
+		{
+			currentGrowth = (WearGrowth)GrowthBox.SelectedItem;
+			ConfigureCheckBoxPlace();
+		}
+
 		private WearSizeDesignationType currentType = WearSizeDesignationType.Number;
+
+		private void CheckButton_Clicked(object sender , EventArgs e)
+		{
+			CheckButton check = (CheckButton)sender;
+			if(check.Active) {
+				AddButton.Sensitive = true;
+			}
+			else {
+				foreach(var item in checkBoxItemList) {
+					if(item.Check.Active == true) {
+						AddButton.Sensitive = true;
+						return;
+					}
+				}
+				AddButton.Sensitive = false;
+				return;
+			}
+		}
+
 		private void RadiButton_group1_Toggled(object sender, EventArgs e)
 		{
 			string prop = ((sender as RadioButton).Child as Label).LabelProp;
@@ -87,6 +110,11 @@ namespace workwear.Views.Stock.Widgets
 				DesignationTypeChangeEvent(WearSizeDesignationType.Symbols);
 				currentType = WearSizeDesignationType.Symbols;
 			}
+		}
+
+		private void selectAllButton_Clicked (object sender,EventArgs e)
+		{
+			checkBoxItemList.ToList().ForEach(i => i.Check.Active = true);
 		}
 
 		protected void OnAddButtonClicked(object sender, EventArgs e)

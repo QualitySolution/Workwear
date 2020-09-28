@@ -125,7 +125,7 @@ namespace workwear
 		void YtreeItems_Selection_Changed (object sender, EventArgs e)
 		{
 			buttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
-			buttonAddSizes.Sensitive = ytreeItems.Selection.CountSelectedRows() == 1;
+			buttonAddSizes.Sensitive = ytreeItems.Selection.CountSelectedRows() == 1 && ytreeItems.GetSelectedObject<IncomeItem>().Nomenclature.Type.Category == Domain.Regulations.ItemTypeCategory.wear;
 		}
 
 		protected void OnButtonAddClicked (object sender, EventArgs e)
@@ -226,14 +226,18 @@ namespace workwear
 		protected void OnButtonAddSizesCliked(object sender, EventArgs e)
 		{
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
-			QS.Navigation.IPage<SizeWidgetViewModel> page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, ClothesSex?, СlothesType?>
-				(null, item.Nomenclature.Sex, item.Nomenclature.Type.WearCategory);
+			if(item.Nomenclature == null)
+				return;
+			QS.Navigation.IPage<SizeWidgetViewModel> page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel,Nomenclature>
+				(null,item.Nomenclature);
 			page.ViewModel.AddedSizes += SelectWearSize_SizeSelected;
 
 		}
 		void SelectWearSize_SizeSelected(object sender , AddedSizesEventArgs e)
 		{
-			e.nomenclatures.ToList().ForEach(n => IncomeDoc.AddItem(n));
+			var item = ytreeItems.GetSelectedObject<IncomeItem>();
+			IncomeDoc.RemoveItem(item);
+			IncomeDoc.AddItem(e.Source, e.Growth, e.Sizes);
 			CalculateTotal();
 		}
 	}

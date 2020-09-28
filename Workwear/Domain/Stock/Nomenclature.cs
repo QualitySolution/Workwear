@@ -110,7 +110,7 @@ namespace workwear.Domain.Stock
 		/// Копирует текущий объект Nomenclature и возвращает ссылку на копию.
 		/// </summary>
 		/// <returns>The Nomenclature clone.</returns>
-		public Nomenclature Clone()
+		public virtual Nomenclature Clone()
 		{
 			Nomenclature nomenclature = new Nomenclature();
 			nomenclature.name = this.Name;

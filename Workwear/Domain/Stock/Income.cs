@@ -10,6 +10,7 @@ using QS.DomainModel.UoW;
 using QS.Utilities;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
+using workwear.Measurements;
 
 namespace workwear.Domain.Stock
 {
@@ -198,6 +199,27 @@ namespace workwear.Domain.Stock
 			ObservableItems.Add (newItem);
 			return newItem;
 		}
+
+		public virtual IEnumerable<IncomeItem> AddItem(Nomenclature nomenclature, WearGrowth growth , IEnumerable<WearSize> sizes)
+		{
+			if(Operation != IncomeOperations.Enter)
+				throw new InvalidOperationException("Добавление номенклатуры возможно только во входящую накладную. Возвраты должны добавляться с указанием строки выдачи.");
+
+			List<IncomeItem> incomeItems = new List<IncomeItem>();
+			foreach(var size in sizes) {
+				var newItem = new IncomeItem(this) {
+					Amount = 1,
+					Nomenclature = nomenclature,
+					WearGrowth = growth.Name,
+					Size = size.Names.First(),
+					Cost = 0,
+				};
+
+				ObservableItems.Add(newItem);
+			}
+			return incomeItems;
+		}
+
 
 		public virtual void RemoveItem(IncomeItem item)
 		{

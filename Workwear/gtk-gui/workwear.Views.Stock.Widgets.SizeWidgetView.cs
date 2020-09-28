@@ -14,6 +14,14 @@ namespace workwear.Views.Stock.Widgets
 
 		private global::Gtk.Label GrowthInfoLabel;
 
+		private global::Gamma.Widgets.yListComboBox GrowthBox;
+
+		private global::Gtk.HBox hbox2;
+
+		private global::Gtk.Label label3;
+
+		private global::Gtk.Button selectAllButton;
+
 		private global::Gtk.Label label2;
 
 		private global::Gtk.HBox WearViewTypePlace;
@@ -31,7 +39,8 @@ namespace workwear.Views.Stock.Widgets
 			global::Stetic.BinContainer.Attach(this);
 			this.Name = "workwear.Views.Stock.Widgets.SizeWidgetView";
 			// Container child workwear.Views.Stock.Widgets.SizeWidgetView.Gtk.Container+ContainerChild
-			this.table1 = new global::Gtk.Table(((uint)(4)), ((uint)(3)), false);
+			this.table1 = new global::Gtk.Table(((uint)(5)), ((uint)(3)), false);
+			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild
@@ -47,7 +56,7 @@ namespace workwear.Views.Stock.Widgets
 			w2.TopAttach = ((uint)(1));
 			w2.BottomAttach = ((uint)(2));
 			w2.XOptions = ((global::Gtk.AttachOptions)(0));
-			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			w2.YOptions = ((global::Gtk.AttachOptions)(0));
 			// Container child table1.Gtk.Table+TableChild
 			this.CheckBoxPlace = new global::Gtk.Table(((uint)(1)), ((uint)(4)), false);
 			this.CheckBoxPlace.Name = "CheckBoxPlace";
@@ -55,8 +64,8 @@ namespace workwear.Views.Stock.Widgets
 			this.CheckBoxPlace.ColumnSpacing = ((uint)(6));
 			this.table1.Add(this.CheckBoxPlace);
 			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.CheckBoxPlace]));
-			w3.TopAttach = ((uint)(3));
-			w3.BottomAttach = ((uint)(4));
+			w3.TopAttach = ((uint)(4));
+			w3.BottomAttach = ((uint)(5));
 			w3.RightAttach = ((uint)(3));
 			// Container child table1.Gtk.Table+TableChild
 			this.GrowthInfoBox = new global::Gtk.HBox();
@@ -71,21 +80,61 @@ namespace workwear.Views.Stock.Widgets
 			w4.Position = 0;
 			w4.Expand = false;
 			w4.Fill = false;
+			// Container child GrowthInfoBox.Gtk.Box+BoxChild
+			this.GrowthBox = new global::Gamma.Widgets.yListComboBox();
+			this.GrowthBox.Name = "GrowthBox";
+			this.GrowthBox.AddIfNotExist = false;
+			this.GrowthBox.DefaultFirst = false;
+			this.GrowthInfoBox.Add(this.GrowthBox);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.GrowthInfoBox[this.GrowthBox]));
+			w5.Position = 1;
+			w5.Expand = false;
+			w5.Fill = false;
 			this.table1.Add(this.GrowthInfoBox);
-			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.GrowthInfoBox]));
-			w5.TopAttach = ((uint)(1));
-			w5.BottomAttach = ((uint)(2));
-			w5.LeftAttach = ((uint)(1));
-			w5.RightAttach = ((uint)(3));
-			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.GrowthInfoBox]));
+			w6.TopAttach = ((uint)(1));
+			w6.BottomAttach = ((uint)(2));
+			w6.LeftAttach = ((uint)(1));
+			w6.RightAttach = ((uint)(3));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.hbox2 = new global::Gtk.HBox();
+			this.hbox2.Name = "hbox2";
+			this.hbox2.Spacing = 6;
+			// Container child hbox2.Gtk.Box+BoxChild
+			this.label3 = new global::Gtk.Label();
+			this.label3.Name = "label3";
+			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Выбрать всё:");
+			this.hbox2.Add(this.label3);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.label3]));
+			w7.Position = 1;
+			w7.Expand = false;
+			w7.Fill = false;
+			// Container child hbox2.Gtk.Box+BoxChild
+			this.selectAllButton = new global::Gtk.Button();
+			this.selectAllButton.CanFocus = true;
+			this.selectAllButton.Name = "selectAllButton";
+			this.selectAllButton.UseUnderline = true;
+			this.selectAllButton.Label = global::Mono.Unix.Catalog.GetString("Выбрать все");
+			this.hbox2.Add(this.selectAllButton);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.selectAllButton]));
+			w8.Position = 2;
+			w8.Expand = false;
+			w8.Fill = false;
+			this.table1.Add(this.hbox2);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1[this.hbox2]));
+			w9.TopAttach = ((uint)(3));
+			w9.BottomAttach = ((uint)(4));
+			w9.RightAttach = ((uint)(3));
+			w9.XOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
 			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Выберите размеры:");
 			this.table1.Add(this.label2);
-			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
-			w6.RightAttach = ((uint)(3));
-			w6.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
+			w10.RightAttach = ((uint)(3));
+			w10.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.WearViewTypePlace = new global::Gtk.HBox();
 			this.WearViewTypePlace.Name = "WearViewTypePlace";
@@ -95,10 +144,10 @@ namespace workwear.Views.Stock.Widgets
 			this.label1.Name = "label1";
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Вид:");
 			this.WearViewTypePlace.Add(this.label1);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.WearViewTypePlace[this.label1]));
-			w7.Position = 0;
-			w7.Expand = false;
-			w7.Fill = false;
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.WearViewTypePlace[this.label1]));
+			w11.Position = 0;
+			w11.Expand = false;
+			w11.Fill = false;
 			// Container child WearViewTypePlace.Gtk.Box+BoxChild
 			this.radiobutton1 = new global::Gtk.RadioButton(global::Mono.Unix.Catalog.GetString("\"44\""));
 			this.radiobutton1.CanFocus = true;
@@ -107,10 +156,10 @@ namespace workwear.Views.Stock.Widgets
 			this.radiobutton1.UseUnderline = true;
 			this.radiobutton1.Group = new global::GLib.SList(global::System.IntPtr.Zero);
 			this.WearViewTypePlace.Add(this.radiobutton1);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.WearViewTypePlace[this.radiobutton1]));
-			w8.Position = 1;
-			w8.Expand = false;
-			w8.Fill = false;
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.WearViewTypePlace[this.radiobutton1]));
+			w12.Position = 1;
+			w12.Expand = false;
+			w12.Fill = false;
 			// Container child WearViewTypePlace.Gtk.Box+BoxChild
 			this.radiobutton2 = new global::Gtk.RadioButton(global::Mono.Unix.Catalog.GetString("\"XXS\""));
 			this.radiobutton2.CanFocus = true;
@@ -119,17 +168,17 @@ namespace workwear.Views.Stock.Widgets
 			this.radiobutton2.UseUnderline = true;
 			this.radiobutton2.Group = this.radiobutton1.Group;
 			this.WearViewTypePlace.Add(this.radiobutton2);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.WearViewTypePlace[this.radiobutton2]));
-			w9.Position = 2;
-			w9.Expand = false;
-			w9.Fill = false;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.WearViewTypePlace[this.radiobutton2]));
+			w13.Position = 2;
+			w13.Expand = false;
+			w13.Fill = false;
 			this.table1.Add(this.WearViewTypePlace);
-			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1[this.WearViewTypePlace]));
-			w10.TopAttach = ((uint)(2));
-			w10.BottomAttach = ((uint)(3));
-			w10.RightAttach = ((uint)(3));
-			w10.XOptions = ((global::Gtk.AttachOptions)(0));
-			w10.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table1[this.WearViewTypePlace]));
+			w14.TopAttach = ((uint)(2));
+			w14.BottomAttach = ((uint)(3));
+			w14.RightAttach = ((uint)(3));
+			w14.XOptions = ((global::Gtk.AttachOptions)(0));
+			w14.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.table1);
 			if ((this.Child != null))
 			{
@@ -138,6 +187,7 @@ namespace workwear.Views.Stock.Widgets
 			this.Hide();
 			this.radiobutton1.Toggled += new global::System.EventHandler(this.RadiButton_group1_Toggled);
 			this.radiobutton2.Toggled += new global::System.EventHandler(this.RadiButton_group1_Toggled);
+			this.selectAllButton.Clicked += new global::System.EventHandler(this.selectAllButton_Clicked);
 			this.AddButton.Clicked += new global::System.EventHandler(this.OnAddButtonClicked);
 		}
 	}
