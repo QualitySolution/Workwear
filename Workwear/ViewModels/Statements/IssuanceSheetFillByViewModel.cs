@@ -98,21 +98,20 @@ namespace workwear.ViewModels.Statements
 
 		public void AddEmployeesFromDivision()
 		{
-			var selectPage = issuanceSheetViewModel.tdiNavigationManager.OpenTdiTab<OrmReference, Type>(
+			var selectPage = issuanceSheetViewModel.NavigationManager.OpenViewModel<SubdivisionJournalViewModel>(
 				issuanceSheetViewModel,
-				typeof(Subdivision),
 				OpenPageOptions.AsSlave
 			);
 
-			var selectSubdivisionDialog = selectPage.TdiTab as OrmReference;
-			selectSubdivisionDialog.Mode = OrmReferenceMode.MultiSelect;
-			selectSubdivisionDialog.ObjectSelected += SelectSubdivisionDialog_ObjectSelected;;
+			var selectSubdivisionDialog = selectPage.ViewModel;
+			selectSubdivisionDialog.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectSubdivisionDialog.OnSelectResult += SelectSubdivisionDialog_OnSelectResult;;
 		}
 
-		void SelectSubdivisionDialog_ObjectSelected(object sender, OrmReferenceObjectSectedEventArgs e)
+		void SelectSubdivisionDialog_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			foreach(var subdivision in e.GetEntities<Subdivision>()) {
-				var inSubdivision = EmployeeRepository.GetActiveEmployeesFromSubdivision(issuanceSheetViewModel.UoW, subdivision);
+			foreach(var subdivisionNode in e.GetSelectedObjects<SubdivisionJournalNode>()) {
+				var inSubdivision = EmployeeRepository.GetActiveEmployeesFromSubdivision(issuanceSheetViewModel.UoW, subdivisionNode.Id);
 				foreach(var employee in inSubdivision) {
 					if(employees.All(x => x.Id != employee.Id))
 						observableEmployees.Add(employee);
