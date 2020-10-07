@@ -27,6 +27,13 @@ namespace workwear.Repository.Company
 				.List();
 		}
 
+		public static IList<EmployeeCard> GetActiveEmployeesFromSubdivision(IUnitOfWork uow, int subdivisionId)
+		{
+			return ActiveEmployeesQuery().GetExecutableQueryOver(uow.Session)
+				.Where(x => x.Subdivision.Id == subdivisionId)
+				.List();
+		}
+
 		public static IList<EmployeeRecivedInfo> ItemsBalance(IUnitOfWork uow, EmployeeCard employee, DateTime onDate)
 		{
 			EmployeeRecivedInfo resultAlias = null;
