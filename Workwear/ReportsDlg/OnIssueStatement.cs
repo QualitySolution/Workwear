@@ -22,12 +22,13 @@ namespace workwear
 
 		private bool errorStartDate = false;
 		ILifetimeScope AutofacScope;
+		IUnitOfWork uow;
 
 		public OnIssueStatement ()
 		{
 			this.Build ();
 
-			var uow = UnitOfWorkFactory.CreateWithoutRoot ();
+			uow = UnitOfWorkFactory.CreateWithoutRoot ();
 
 			// Заполняем месяца
 			ylistcomboMonth.SetRenderTextFunc<int> (DateHelper.GetMonthName);
@@ -191,6 +192,7 @@ namespace workwear
 
 		public override void Destroy()
 		{
+			uow.Dispose();
 			AutofacScope.Dispose();
 			base.Destroy();
 		}
