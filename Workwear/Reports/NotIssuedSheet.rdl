@@ -778,7 +778,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox14">
-                      <Value>={type_name}</Value>
+                      <Value>=Fields!protection_tools_name.Value</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -793,7 +793,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox12">
-                      <Value>=Fields!type_id.Value</Value>
+                      <Value>=Fields!protection_tools_id.Value</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -969,82 +969,110 @@
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     wear_cards_item.id,
-    CONCAT_WS(' ',
-            wear_cards.last_name,
-            wear_cards.first_name,
-            wear_cards.patronymic_name) AS employee,
+    CONCAT_WS(
+        ' ',
+        wear_cards.last_name,
+        wear_cards.first_name,
+        wear_cards.patronymic_name
+    ) AS employee,
     wear_cards.personnel_number,
     wear_cards_item.next_issue,
-    IF(wear_cards_item.next_issue &lt;= @report_date,
-        DATEDIFF(@report_date, wear_cards_item.next_issue),
-        NULL) AS delay,
-    item_types.name AS type_name,
-    item_types.id AS type_id,
-    nomenclature.name AS nomenclature_name,
-    (case when item_types.wear_category = 'Wear' then wear_cards.size_wear else 
-    	(case when item_types.wear_category = 'Shoes' then wear_cards.size_shoes else 
-    		(case when item_types.wear_category = 'Gloves' then wear_cards.size_gloves else 
-    			(case when item_types.wear_category = 'Headgear' then wear_cards.size_headdress else 
-    				(case when item_types.wear_category = 'WinterShoes' then wear_cards.size_winter_shoes else '' end) 
-    			end) 
-    		end) 
-    	end) 
-    end) as size,
-    (case when item_types.wear_category = 'Wear' then wear_cards.wear_growth else '' end) as growth,
-    measurement_units.name AS unit,
-    measurement_units.okei AS okei,
-    norms_item.amount AS amount_by_norm,
-    (SELECT 
-            MAX(stock_expense.date)
+    IF(
+        wear_cards_item.next_issue &lt;= @report_date,
+        DATEDIFF(
+            @report_date,
+            wear_cards_item.next_issue
+        ),
+        NULL
+    ) AS delay,
+    protection_tools.name AS protection_tools_name,
+    wear_cards_item.protection_tools_id,
+    (
+        CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.size_wear WHEN item_types.wear_category = 'Shoes' THEN wear_cards.size_shoes WHEN item_types.wear_category = 'Gloves' THEN wear_cards.size_gloves WHEN item_types.wear_category = 'Headgear' THEN wear_cards.size_headdress WHEN item_types.wear_category = 'WinterShoes' THEN wear_cards.size_winter_shoes WHEN item_types.wear_category = 'Mittens' THEN wear_cards.size_mittens ELSE NULL
+    END
+) AS size,
+(
+    CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.wear_growth ELSE NULL
+END
+) AS growth,
+measurement_units.name AS unit,
+measurement_units.okei AS okei,
+norms_item.amount AS amount_by_norm,
+wear_cards_item.last_issue,
+wear_cards_item.amount AS received,
+(
+    SELECT
+        (
+            SUM(
+                CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+            END
+        ) - SUM(
+            CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+        END
+)
+) AS SUM
+FROM
+    operation_warehouse
+WHERE
+    operation_warehouse.operation_time &lt;= @report_date AND operation_warehouse.nomenclature_id IN(
+    SELECT
+        protection_tools_nomenclature.nomenclature_id
+    FROM
+        protection_tools_nomenclature
+    WHERE
+        protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id OR protection_tools_nomenclature.protection_tools_id IN(
+        SELECT
+            protection_tools_replacement.protection_tools_analog_id
         FROM
-            stock_expense_detail
-                LEFT JOIN
-            stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id
-                LEFT JOIN
-            nomenclature ON stock_expense_detail.nomenclature_id = nomenclature.id
+            protection_tools_replacement
         WHERE
-            nomenclature.type_id = wear_cards_item.itemtype_id
-                AND stock_expense.wear_card_id = wear_cards_item.wear_card_id) AS last_issue,
-    wear_cards_item.amount AS received,
-    (SELECT
-          (sum(case when stock.warehouse_receipt_id is not null then stock.amount else 0 end) -
-           sum(case when stock.warehouse_expense_id is not null then stock.amount else 0 end)) as sum
-      FROM (
-        SELECT operation_warehouse.nomenclature_id, operation_warehouse.amount, 
-    			operation_warehouse.warehouse_receipt_id, operation_warehouse.warehouse_expense_id, 
-    			wear_cards_item.id as wear_cards_item_id, nomenclature.type_id
-        FROM operation_warehouse
-        JOIN nomenclature on operation_warehouse.nomenclature_id = nomenclature.id
-        JOIN wear_cards_item on wear_cards_item.itemtype_id = nomenclature.type_id
-        GROUP by operation_warehouse.nomenclature_id, operation_warehouse.id) as stock
-     WHERE  type_id = nomenclature.type_id
-     GROUP BY stock.nomenclature_id) AS in_stock
+            protection_tools_replacement.protection_tools_id = wear_cards_item.protection_tools_id
+    )
+)
+) AS in_stock
 FROM
     wear_cards_item
-        JOIN
-    wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
-        JOIN
-    nomenclature ON nomenclature.type_id = wear_cards_item.itemtype_id
-        JOIN
-    item_types ON item_types.id = wear_cards_item.itemtype_id
-        JOIN
-    measurement_units ON item_types.units_id = measurement_units.id
-        JOIN
-    norms_item ON wear_cards_item.norm_item_id = norms_item.id
-WHERE wear_cards.dismiss_date IS NULL AND (
-    NOT @onlyMissing
-        OR wear_cards_item.next_issue &lt; @report_date)
-        group by wear_cards_item.wear_card_id, wear_cards_item.itemtype_id, wear_cards_item.norm_item_id
-HAVING @onlyMissing
-    OR (received IS NULL
-    OR received &lt; amount_by_norm)
-ORDER BY employee, type_name;</CommandText>
+JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
+JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+LEFT JOIN measurement_units ON protection_tools.units_id = measurement_units.id
+JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
+LEFT JOIN(
+    SELECT
+        *
+    FROM
+        protection_tools_nomenclature
+    GROUP BY
+        protection_tools_nomenclature.protection_tools_id
+) firs_nomeclature
+ON
+    protection_tools.id = firs_nomeclature.protection_tools_id
+LEFT JOIN nomenclature ON nomenclature.id = firs_nomeclature.Nomenclature_id
+LEFT JOIN item_types ON item_types.id = nomenclature.type_id
+WHERE
+    wear_cards.dismiss_date IS NULL AND(
+        @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id
+    ) AND(
+        NOT @onlyMissing OR wear_cards_item.next_issue &lt; @report_date
+    )
+GROUP BY
+    wear_cards_item.wear_card_id,
+    wear_cards_item.protection_tools_id
+HAVING
+    @onlyMissing OR(
+        received IS NULL OR received &lt; amount_by_norm
+    )
+ORDER BY
+    employee,
+    protection_tools_name;</CommandText>
         <QueryParameters>
           <QueryParameter Name="@onlyMissing">
             <Value>={?only_missing}</Value>
           </QueryParameter>
           <QueryParameter Name="@report_date">
             <Value>={?report_date}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@subdivision_id">
+            <Value>={?subdivision_id}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -1069,16 +1097,8 @@ ORDER BY employee, type_name;</CommandText>
           <DataField>delay</DataField>
           <TypeName>System.Int64</TypeName>
         </Field>
-        <Field Name="type_name">
-          <DataField>type_name</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="type_id">
-          <DataField>type_id</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
-        <Field Name="nomenclature_name">
-          <DataField>nomenclature_name</DataField>
+        <Field Name="protection_tools_name">
+          <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="size">
@@ -1112,6 +1132,10 @@ ORDER BY employee, type_name;</CommandText>
         <Field Name="in_stock">
           <DataField>in_stock</DataField>
           <TypeName>System.Decimal</TypeName>
+        </Field>
+        <Field Name="protection_tools_id">
+          <DataField>protection_tools_id</DataField>
+          <TypeName>System.UInt32</TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -1151,6 +1175,13 @@ ORDER BY employee, type_name;</CommandText>
       <MultiValue>false</MultiValue>
       <Prompt>
       </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="subdivision_id">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>

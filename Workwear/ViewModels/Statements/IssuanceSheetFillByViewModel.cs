@@ -7,7 +7,6 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.Navigation;
 using QS.ViewModels;
-using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
 using workwear.Repository.Company;

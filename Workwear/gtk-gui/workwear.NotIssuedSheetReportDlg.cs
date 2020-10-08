@@ -10,9 +10,13 @@ namespace workwear
 
 		private global::Gtk.CheckButton checkOnlyMissing;
 
+		private global::QS.Views.Control.EntityEntry entitySubdivision;
+
 		private global::Gtk.Label label1;
 
 		private global::Gtk.Label label2;
+
+		private global::Gtk.Label label3;
 
 		private global::QS.Widgets.GtkUI.DatePicker ydateReport;
 
@@ -29,7 +33,7 @@ namespace workwear
 			this.dialog1_VBox.Name = "dialog1_VBox";
 			this.dialog1_VBox.BorderWidth = ((uint)(2));
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.table1 = new global::Gtk.Table(((uint)(3)), ((uint)(2)), false);
+			this.table1 = new global::Gtk.Table(((uint)(4)), ((uint)(2)), false);
 			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
@@ -42,20 +46,32 @@ namespace workwear
 			this.checkOnlyMissing.UseUnderline = true;
 			this.table1.Add(this.checkOnlyMissing);
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.checkOnlyMissing]));
-			w1.TopAttach = ((uint)(1));
-			w1.BottomAttach = ((uint)(2));
+			w1.TopAttach = ((uint)(2));
+			w1.BottomAttach = ((uint)(3));
 			w1.RightAttach = ((uint)(2));
 			w1.XOptions = ((global::Gtk.AttachOptions)(4));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.entitySubdivision = new global::QS.Views.Control.EntityEntry();
+			this.entitySubdivision.Events = ((global::Gdk.EventMask)(256));
+			this.entitySubdivision.Name = "entitySubdivision";
+			this.table1.Add(this.entitySubdivision);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.entitySubdivision]));
+			w2.LeftAttach = ((uint)(1));
+			w2.RightAttach = ((uint)(2));
+			w2.XOptions = ((global::Gtk.AttachOptions)(4));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
 			this.label1.Xalign = 1F;
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Дата отчета:");
 			this.table1.Add(this.label1);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
-			w2.XOptions = ((global::Gtk.AttachOptions)(4));
-			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
+			w3.TopAttach = ((uint)(1));
+			w3.BottomAttach = ((uint)(2));
+			w3.XOptions = ((global::Gtk.AttachOptions)(4));
+			w3.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.label2 = new global::Gtk.Label();
 			this.label2.WidthRequest = 250;
@@ -67,30 +83,41 @@ namespace workwear
 			this.label2.Wrap = true;
 			this.label2.Justify = ((global::Gtk.Justification)(3));
 			this.table1.Add(this.label2);
-			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
-			w3.TopAttach = ((uint)(2));
-			w3.BottomAttach = ((uint)(3));
-			w3.RightAttach = ((uint)(2));
-			w3.XOptions = ((global::Gtk.AttachOptions)(4));
-			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
+			w4.TopAttach = ((uint)(3));
+			w4.BottomAttach = ((uint)(4));
+			w4.RightAttach = ((uint)(2));
+			w4.XOptions = ((global::Gtk.AttachOptions)(4));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.label3 = new global::Gtk.Label();
+			this.label3.Name = "label3";
+			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Подразделение:");
+			this.table1.Add(this.label3);
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.label3]));
+			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ydateReport = new global::QS.Widgets.GtkUI.DatePicker();
 			this.ydateReport.Events = ((global::Gdk.EventMask)(256));
 			this.ydateReport.Name = "ydateReport";
 			this.ydateReport.WithTime = false;
+			this.ydateReport.HideCalendarButton = false;
 			this.ydateReport.Date = new global::System.DateTime(0);
 			this.ydateReport.IsEditable = true;
 			this.ydateReport.AutoSeparation = true;
 			this.table1.Add(this.ydateReport);
-			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.table1[this.ydateReport]));
-			w4.LeftAttach = ((uint)(1));
-			w4.RightAttach = ((uint)(2));
-			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.ydateReport]));
+			w6.TopAttach = ((uint)(1));
+			w6.BottomAttach = ((uint)(2));
+			w6.LeftAttach = ((uint)(1));
+			w6.RightAttach = ((uint)(2));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.dialog1_VBox.Add(this.table1);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
-			w5.Position = 0;
-			w5.Expand = false;
-			w5.Fill = false;
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
+			w7.Position = 0;
+			w7.Expand = false;
+			w7.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gtk.Button();
 			this.buttonRun.Sensitive = false;
@@ -99,11 +126,11 @@ namespace workwear
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.dialog1_VBox.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
-			w6.PackType = ((global::Gtk.PackType)(1));
-			w6.Position = 1;
-			w6.Expand = false;
-			w6.Fill = false;
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
+			w8.PackType = ((global::Gtk.PackType)(1));
+			w8.Position = 1;
+			w8.Expand = false;
+			w8.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
