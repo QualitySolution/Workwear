@@ -12,7 +12,7 @@ namespace workwear.Views.Stock.Widgets
 {
 	public partial class SizeWidgetView : DialogViewBase<SizeWidgetViewModel>
 	{
-		private WearGrowth currentGrowth;
+		private string currentGrowth;
 		private IList<CheckBoxItem> checkBoxItemList { get; set; }
 		public SizeWidgetView(SizeWidgetViewModel model) : base(model)
 		{
@@ -23,22 +23,20 @@ namespace workwear.Views.Stock.Widgets
 		private void ConfigureDlg()
 		{
 			if(ViewModel.IsUseGrowth) {
-				GrowthBox.SetRenderTextFunc<WearGrowth>((growth) => growth.Name);
+				GrowthBox.SetRenderTextFunc<string>(s => s);
 				GrowthBox.ItemsList = ViewModel.WearGrowths;
 				GrowthBox.Changed += GrowthInfoComboBox_Changed;
 				GrowthInfoBox.PackEnd(GrowthBox);
 
 				GrowthBox.ShowAll();
 
-				WearViewTypePlace.Visible = true;
-
 			}
 			else {
 				GrowthInfoBox.Visible = false;
-				WearViewTypePlace.Visible = false;
 				ConfigureCheckBoxPlace();
 			}
 			AddButton.Sensitive = false;
+
 			checkBoxItemList = new List<CheckBoxItem>();
 
 			//Выбираем первый элемент из ViewModel.WearGrowths, если рост используется
@@ -46,7 +44,9 @@ namespace workwear.Views.Stock.Widgets
 				GrowthBox.SelectedItem = ViewModel.WearGrowths.First();
 
 		}
-
+		/// <summary>
+		/// Заполняет CheckBoxPlace таблицу на основе модели
+		/// </summary>
 		private void ConfigureCheckBoxPlace()
 		{
 			uint rows = (uint)ViewModel.WearSizes.Count;
@@ -55,7 +55,7 @@ namespace workwear.Views.Stock.Widgets
 			var sizes = ViewModel.WearSizes;
 			for(uint i = 0; i < rows; i++) {
 
-				Label label = new Label() { LabelProp = sizes[(int)i].Names.First() };
+				Label label = new Label() { LabelProp = sizes[(int)i] };
 				CheckBoxPlace.Attach(label, 1, 2, i, i + 1, AttachOptions.Expand, AttachOptions.Expand, 0, 0);
 
 				CheckButton check = new CheckButton();
@@ -64,22 +64,20 @@ namespace workwear.Views.Stock.Widgets
 
 				CheckBoxItem checkBoxItem = new CheckBoxItem(label, sizes[(int)i], check);
 				checkBoxItemList.Add(checkBoxItem);
-
-				DesignationTypeChangeEvent += checkBoxItem.RefreshSizeLabel;
 			}
+
+			if(this.HeightRequest > Screen.Height)
+				table1.SetScrollAdjustments(new Adjustment(new IntPtr(checkBoxItemList.Count)),null);
+
 
 			CheckBoxPlace.ShowAll();
 		}
 
-		private System.Action<WearSizeDesignationType> DesignationTypeChangeEvent;
-
 		private void GrowthInfoComboBox_Changed(object sender, EventArgs e)
 		{
-			currentGrowth = (WearGrowth)GrowthBox.SelectedItem;
+			currentGrowth = (string)GrowthBox.SelectedItem;
 			ConfigureCheckBoxPlace();
 		}
-
-		private WearSizeDesignationType currentType = WearSizeDesignationType.Number;
 
 		private void CheckButton_Clicked(object sender , EventArgs e)
 		{
@@ -99,22 +97,18 @@ namespace workwear.Views.Stock.Widgets
 			}
 		}
 
-		private void RadiButton_group1_Toggled(object sender, EventArgs e)
-		{
-			string prop = ((sender as RadioButton).Child as Label).LabelProp;
-			if(prop == "\"44\"" && currentType != WearSizeDesignationType.Number) {
-				DesignationTypeChangeEvent(WearSizeDesignationType.Number);
-				currentType = WearSizeDesignationType.Number;
-			}
-			else if(prop == "\"XXS\"" && currentType != WearSizeDesignationType.Symbols) {
-				DesignationTypeChangeEvent(WearSizeDesignationType.Symbols);
-				currentType = WearSizeDesignationType.Symbols;
-			}
-		}
-
+		/// <summary>
+		/// Если true - кнопка выделяет всё , если false кнопка снимает все выделения
+		/// </summary>
+		private bool checkAll = true;
 		private void selectAllButton_Clicked (object sender,EventArgs e)
 		{
-			checkBoxItemList.ToList().ForEach(i => i.Check.Active = true);
+			checkBoxItemList.ToList().ForEach(i => i.Check.Active = checkAll);
+			if(checkAll)
+				selectAllButton.Label = "  Снять все ";
+			else
+				selectAllButton.Label = "Выделить всё";
+			checkAll = !checkAll;
 		}
 
 		protected void OnAddButtonClicked(object sender, EventArgs e)
@@ -130,46 +124,16 @@ namespace workwear.Views.Stock.Widgets
 	public class CheckBoxItem
 	{
 		public Label Label { get; set; }
-		public WearSize Size { get;private set; }
+		public string Size { get;private set; }
 		public CheckButton Check { get; set; }
 
 
-		public CheckBoxItem(Label label,WearSize size,CheckButton check )
+		public CheckBoxItem(Label label,string size,CheckButton check )
 		{
 			Label = label;
 			Size = size;
 			Check = check;
 		}
 
-		public void RefreshSizeLabel(WearSizeDesignationType designationType)
-		{
-			if(designationType == WearSizeDesignationType.Number)
-				Label.LabelProp = Size.Names.First();
-			if(designationType == WearSizeDesignationType.Symbols) {
-				if(Size.Names.Last() == null) {
-					string prop = "";
-					foreach(var s in Size.Appropriated) {
-						prop += "/" + s;
-					}
-				}
-				else
-					Label.LabelProp = Size.Names.Last();
-			}
-		}
-	}
-
-	/// <summary>
-	/// Отображение размеров одежды
-	/// </summary>
-	public enum WearSizeDesignationType
-	{
-		/// <summary>
-		/// Возвращать размеры в виде числе (пример: 44)
-		/// </summary>
-		Number ,
-		/// <summary>
-		/// Отображать размеры в виде символов (пример: XXS)
-		/// </summary>
-		Symbols
 	}
 }

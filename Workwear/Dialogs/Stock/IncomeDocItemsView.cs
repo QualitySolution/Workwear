@@ -236,7 +236,8 @@ namespace workwear
 		void SelectWearSize_SizeSelected(object sender , AddedSizesEventArgs e)
 		{
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
-			IncomeDoc.RemoveItem(item);
+			if(item.Amount <= 0)
+				IncomeDoc.RemoveItem(item);
 			IncomeDoc.AddItem(e.Source, e.Growth, e.Sizes);
 			CalculateTotal();
 		}

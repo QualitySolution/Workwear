@@ -10,8 +10,8 @@ namespace workwear.ViewModels.Stock.Widgets
 {
 	public class SizeWidgetViewModel : WindowDialogViewModelBase
 	{
-		public IList<WearGrowth> WearGrowths { get;private set; }
-		public IList<WearSize> WearSizes { get;private set; }
+		public IList<string> WearGrowths { get;private set; }
+		public IList<string> WearSizes { get;private set; }
 		public bool IsUseGrowth { get; set; } = false;
 
 		private Nomenclature nomenclature;
@@ -21,11 +21,12 @@ namespace workwear.ViewModels.Stock.Widgets
 			INavigationManager navigationManager
 			) : base(navigationManager)
 		{
-			IsModal = true;
+			IsModal = false;
 
 			this.nomenclature = nomenclature;
-			ConfigureSizes(nomenclature.Sex,nomenclature.Type.WearCategory);
-			SetWindowPosition(QS.Dialog.WindowGravity.None);
+			ClothesSex sex = nomenclature.Sex ?? throw new ArgumentNullException("At SizeWidgetViewModel.SizeWidgetViewModel() constructor, " + typeof(ClothesSex).Name + " variable was null!");
+			СlothesType clothesType = nomenclature.Type.WearCategory ?? throw new NullReferenceException("At SizeWidgetViewModel.SizeWidgetViewModel() constructor" + typeof(СlothesType).Name + " variable was null!");
+			ConfigureSizes(sex,clothesType);
 		}
 
 		/// <summary>
@@ -33,76 +34,17 @@ namespace workwear.ViewModels.Stock.Widgets
 		/// </summary>
 		/// <param name="sex">Тип одедлы по полу.</param>
 		/// <param name="clothesType">Тип одежды.</param>
-		private void ConfigureSizes(ClothesSex? sex, СlothesType? clothesType)
+		private void ConfigureSizes(ClothesSex sex, СlothesType clothesType)
 		{
-			if(sex != null || clothesType != null) {
-
-				if(sex == ClothesSex.Men) {
-					WearGrowths = LookupSizes.MenGrowth;
-					switch(clothesType) {
-						case СlothesType.Wear:
-							WearSizes = LookupSizes.MenWear;
-							IsUseGrowth = true;
-							break;
-						case СlothesType.Shoes:
-							WearSizes = LookupSizes.MenShoes;
-							break;
-						case СlothesType.WinterShoes:
-							WearSizes = LookupSizes.MenShoes;
-							break;
-						case СlothesType.Headgear:
-							WearSizes = LookupSizes.Headdress;
-							break;
-						case СlothesType.Gloves:
-							WearSizes = LookupSizes.Gloves;
-							IsUseGrowth = true;
-							break;
-					}
+			GrowthStandartWear? standartWear = SizeHelper.GetGrowthStandart(clothesType, sex);
+			if(standartWear == null)
+				throw new NullReferenceException("At SizeWidgetViewModel.ConfigureSizes() method "+typeof(GrowthStandartWear).Name+" was null!");
+			else {
+				if(SizeHelper.HasGrowthStandart(clothesType)) {
+					WearGrowths = SizeHelper.GetGrowthsArray(standartWear).ToList();
+					IsUseGrowth = true;
 				}
-				else if(sex == ClothesSex.Women) {
-					WearGrowths = LookupSizes.WomenGrowth;
-					switch(clothesType) {
-						case СlothesType.Wear:
-							WearSizes = LookupSizes.WomenWear;
-							IsUseGrowth = true;
-							break;
-						case СlothesType.Shoes:
-							WearSizes = LookupSizes.WomenShoes;
-							break;
-						case СlothesType.WinterShoes:
-							WearSizes = LookupSizes.WomenShoes;
-							break;
-						case СlothesType.Headgear:
-							WearSizes = LookupSizes.Headdress;
-							break;
-						case СlothesType.Gloves:
-							WearSizes = LookupSizes.Gloves;
-							IsUseGrowth = true;
-							break;
-					}
-				}
-				else if(sex == ClothesSex.Universal) {
-					WearGrowths = LookupSizes.UniversalGrowth;
-					switch(clothesType) {
-						case СlothesType.Wear:
-							WearSizes = LookupSizes.WomenWear;
-							IsUseGrowth = true;
-							break;
-						case СlothesType.Shoes:
-							WearSizes = LookupSizes.WomenShoes;
-							break;
-						case СlothesType.WinterShoes:
-							WearSizes = LookupSizes.WomenShoes;
-							break;
-						case СlothesType.Headgear:
-							WearSizes = LookupSizes.Headdress;
-							break;
-						case СlothesType.Gloves:
-							WearSizes = LookupSizes.Gloves;
-							IsUseGrowth = true;
-							break;
-					}
-				}
+				this.WearSizes = SizeHelper.GetSizesList(standartWear).ToList();
 			}
 		}
 
@@ -111,7 +53,7 @@ namespace workwear.ViewModels.Stock.Widgets
 		/// </summary>
 		/// <param name="currentGrowth">Выбранный рост.</param>
 		/// <param name="sizes">Список размеро.</param>
-		public void AddSizes(WearGrowth currentGrowth, IEnumerable<WearSize> sizes)
+		public void AddSizes(string currentGrowth, IEnumerable<string> sizes)
 		{
 			AddedSizesEventArgs args = new AddedSizesEventArgs(nomenclature,currentGrowth,sizes);
 			AddedSizes(this, args);
@@ -124,9 +66,9 @@ namespace workwear.ViewModels.Stock.Widgets
 	public class AddedSizesEventArgs : EventArgs
 	{
 		public readonly Nomenclature Source;
-		public readonly WearGrowth Growth;
-		public readonly IEnumerable<WearSize> Sizes;
-		public AddedSizesEventArgs(Nomenclature nomenclature,WearGrowth growth , IEnumerable<WearSize> sizes)
+		public readonly string Growth;
+		public readonly IEnumerable<string> Sizes;
+		public AddedSizesEventArgs(Nomenclature nomenclature,string growth , IEnumerable<string> sizes)
 		{
 			this.Source = nomenclature;
 			Growth = growth;
