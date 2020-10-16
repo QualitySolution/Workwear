@@ -15,9 +15,11 @@ namespace workwear.ViewModels.Stock.Widgets
 		public bool IsUseGrowth { get; set; } = false;
 
 		private Nomenclature nomenclature;
+		public readonly Dictionary<string, List<string>> ExcludedSizesDictionary;
 		public Action<object, AddedSizesEventArgs> AddedSizes { get; set; } = (s,e) => { };
 
-		public SizeWidgetViewModel(Nomenclature nomenclature,
+		public SizeWidgetViewModel(
+			Nomenclature nomenclature,
 			INavigationManager navigationManager
 			) : base(navigationManager)
 		{
@@ -30,30 +32,42 @@ namespace workwear.ViewModels.Stock.Widgets
 		}
 
 		/// <summary>
+		/// Используйте этот конструктор, если необходимо исключить какие-то размеры из списка виджета
+		/// </summary>
+		/// <param name="ExcludedSizesDictionary">Словарь исключаемых размеров(IDictionary <!--growth,sizes--> ), смотри класс workwear.Measurements.LookupSizes.</param>
+		public SizeWidgetViewModel(
+			Dictionary<string, List<string>> ExcludedSizesDictionary,
+			Nomenclature nomenclature,
+			INavigationManager navigationManager
+			) : this(nomenclature,navigationManager)
+		{
+			this.ExcludedSizesDictionary = ExcludedSizesDictionary;
+		}
+
+		/// <summary>
 		/// Конфигурирует списки ростов и размеров по полу и по типу одежды
 		/// </summary>
-		/// <param name="sex">Тип одедлы по полу.</param>
+		/// <param name="sex">Тип одежды по полу.</param>
 		/// <param name="clothesType">Тип одежды.</param>
 		private void ConfigureSizes(ClothesSex sex, СlothesType clothesType)
 		{
 			GrowthStandartWear? standartWear = SizeHelper.GetGrowthStandart(clothesType, sex);
-			if(standartWear == null)
-				throw new NullReferenceException("At SizeWidgetViewModel.ConfigureSizes() method "+typeof(GrowthStandartWear).Name+" was null!");
-			else {
+			if(standartWear != null)
+			{
 				if(SizeHelper.HasGrowthStandart(clothesType)) {
 					WearGrowths = SizeHelper.GetGrowthsArray(standartWear).ToList();
 					IsUseGrowth = true;
 				}
-				this.WearSizes = SizeHelper.GetSizesList(standartWear).ToList();
 			}
+			this.WearSizes = SizeHelper.GetSizesListByStdCode(nomenclature.SizeStd).ToList();
 		}
 
 		/// <summary>
 		/// Добавляет размеры,превращая их в объекты номенклатуры, и вызывает закрытие диалога
 		/// </summary>
 		/// <param name="currentGrowth">Выбранный рост.</param>
-		/// <param name="sizes">Список размеро.</param>
-		public void AddSizes(string currentGrowth, IEnumerable<string> sizes)
+		/// <param name="sizes"> Словарь размеров, где ключ - размер , значение - количество .</param>
+		public void AddSizes(string currentGrowth,Dictionary<string, int> sizes)
 		{
 			AddedSizesEventArgs args = new AddedSizesEventArgs(nomenclature,currentGrowth,sizes);
 			AddedSizes(this, args);
@@ -67,12 +81,15 @@ namespace workwear.ViewModels.Stock.Widgets
 	{
 		public readonly Nomenclature Source;
 		public readonly string Growth;
-		public readonly IEnumerable<string> Sizes;
-		public AddedSizesEventArgs(Nomenclature nomenclature,string growth , IEnumerable<string> sizes)
+		/// <summary>
+		/// Key - size, value - amount
+		/// </summary>
+		public readonly Dictionary<string, int> SizesWithAmount;
+		public AddedSizesEventArgs(Nomenclature nomenclature,string growth , Dictionary<string, int> SizesWithAmount)
 		{
 			this.Source = nomenclature;
 			Growth = growth;
-			Sizes = sizes;
+			this.SizesWithAmount = SizesWithAmount;
 		}
 	}
 }

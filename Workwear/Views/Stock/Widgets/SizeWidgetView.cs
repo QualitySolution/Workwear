@@ -12,8 +12,8 @@ namespace workwear.Views.Stock.Widgets
 {
 	public partial class SizeWidgetView : DialogViewBase<SizeWidgetViewModel>
 	{
-		private string currentGrowth;
-		private IList<CheckBoxItem> checkBoxItemList { get; set; }
+		private string currentGrowth = "";
+		private IList<CheckBoxItem> checkBoxItemList = new List<CheckBoxItem>();
 		public SizeWidgetView(SizeWidgetViewModel model) : base(model)
 		{
 			this.Build();
@@ -37,18 +37,24 @@ namespace workwear.Views.Stock.Widgets
 			}
 			AddButton.Sensitive = false;
 
-			checkBoxItemList = new List<CheckBoxItem>();
+
 
 			//Выбираем первый элемент из ViewModel.WearGrowths, если рост используется
 			if(ViewModel.IsUseGrowth)
 				GrowthBox.SelectedItem = ViewModel.WearGrowths.First();
 
+			#region OtherSettings
+			#endregion
+
 		}
+
 		/// <summary>
 		/// Заполняет CheckBoxPlace таблицу на основе модели
 		/// </summary>
 		private void ConfigureCheckBoxPlace()
 		{
+			checkBoxItemList.Clear();
+			CheckBoxPlace.Children.ToList().ForEach(e => CheckBoxPlace.Remove(e));
 			uint rows = (uint)ViewModel.WearSizes.Count;
 			CheckBoxPlace.Resize(rows, 4);
 
@@ -56,21 +62,47 @@ namespace workwear.Views.Stock.Widgets
 			for(uint i = 0; i < rows; i++) {
 
 				Label label = new Label() { LabelProp = sizes[(int)i] };
-				CheckBoxPlace.Attach(label, 1, 2, i, i + 1, AttachOptions.Expand, AttachOptions.Expand, 0, 0);
+				CheckBoxPlace.Attach(label, 1, 2, i, i + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 
 				CheckButton check = new CheckButton();
 				check.Clicked += CheckButton_Clicked; 
-				CheckBoxPlace.Attach(check, 2, 3, i, i + 1, AttachOptions.Expand, AttachOptions.Expand, 0, 0);
+				CheckBoxPlace.Attach(check, 2, 3, i, i + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 
-				CheckBoxItem checkBoxItem = new CheckBoxItem(label, sizes[(int)i], check);
+				SpinButton spin = new SpinButton(0,int.MaxValue,1);
+				spin.Sensitive = false;
+				CheckBoxPlace.Attach(spin, 3, 4, i, i + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
+
+				CheckBoxItem checkBoxItem = new CheckBoxItem(label, sizes[(int)i], check,spin);
 				checkBoxItemList.Add(checkBoxItem);
 			}
 
 			if(this.HeightRequest > Screen.Height)
 				table1.SetScrollAdjustments(new Adjustment(new IntPtr(checkBoxItemList.Count)),null);
-
-
 			CheckBoxPlace.ShowAll();
+
+			ExcludeExistingSizes();
+		}
+
+		/// <summary>
+		/// Исключает существующие размеры ,
+		/// </summary>
+		private void ExcludeExistingSizes()
+		{
+			if(ViewModel.ExcludedSizesDictionary != null && ViewModel.ExcludedSizesDictionary.Keys!= null && ViewModel.ExcludedSizesDictionary.Keys.Any(growth => growth == currentGrowth)) {
+				foreach(var vs in checkBoxItemList) {
+					foreach(var s in ViewModel.ExcludedSizesDictionary[currentGrowth]) {
+						if(vs.Size == s) {
+							vs.Label.TooltipText = "Данный размер с данным ростом уже добавлен в список накладной";
+							vs.Check.TooltipText = "Данный размер с данным ростом уже добавлен в список накладной";
+							vs.Check.Active = true;
+							vs.Spin.TooltipText = "Данный размер с данным ростом уже добавлен в список накладной";
+							vs.Spin.Visibility = false;
+							vs.isUsed = true;
+							vs.SetSensitive(false);
+						}
+					}
+				}
+			}
 		}
 
 		private void GrowthInfoComboBox_Changed(object sender, EventArgs e)
@@ -82,19 +114,10 @@ namespace workwear.Views.Stock.Widgets
 		private void CheckButton_Clicked(object sender , EventArgs e)
 		{
 			CheckButton check = (CheckButton)sender;
-			if(check.Active) {
-				AddButton.Sensitive = true;
-			}
-			else {
-				foreach(var item in checkBoxItemList) {
-					if(item.Check.Active == true) {
-						AddButton.Sensitive = true;
-						return;
-					}
-				}
-				AddButton.Sensitive = false;
-				return;
-			}
+			var item = checkBoxItemList.Where(i => i.Check == check).FirstOrDefault().Spin;
+			if(item != null)
+				item.Sensitive = check.Active;
+			AddButton.Sensitive = checkBoxItemList.Any(i => i.Check.Active == true && i.isUsed == false);
 		}
 
 		/// <summary>
@@ -103,7 +126,7 @@ namespace workwear.Views.Stock.Widgets
 		private bool checkAll = true;
 		private void selectAllButton_Clicked (object sender,EventArgs e)
 		{
-			checkBoxItemList.ToList().ForEach(i => i.Check.Active = checkAll);
+			checkBoxItemList.Where(i=> i.Label.Sensitive != false).ToList().ForEach(i => i.Check.Active = checkAll);
 			if(checkAll)
 				selectAllButton.Label = "  Снять все ";
 			else
@@ -113,8 +136,12 @@ namespace workwear.Views.Stock.Widgets
 
 		protected void OnAddButtonClicked(object sender, EventArgs e)
 		{
-			var items = checkBoxItemList.Where(i => i.Check.Active == true).Select(i => i.Size);
-			ViewModel.AddSizes(currentGrowth,items);
+			Dictionary<string, int> sizes = new Dictionary<string, int>();
+			checkBoxItemList.Where(i => i.Check.Active == true && i.isUsed == false).ToList().ForEach(i => 
+			{
+				sizes.Add(i.Size, i.Spin.ValueAsInt);
+			});
+			ViewModel.AddSizes(currentGrowth,sizes);
 		}
 	}
 
@@ -125,15 +152,26 @@ namespace workwear.Views.Stock.Widgets
 	{
 		public Label Label { get; set; }
 		public string Size { get;private set; }
-		public CheckButton Check { get; set; }
+		public CheckButton Check { get;private set; }
+		public SpinButton Spin { get; private set; }
+		public bool isUsed { get; set; } = false;
 
-
-		public CheckBoxItem(Label label,string size,CheckButton check )
+		public CheckBoxItem(Label label,string size,CheckButton check,SpinButton spin)
 		{
 			Label = label;
 			Size = size;
 			Check = check;
+			Spin = spin;
 		}
 
+		/// <summary>
+		/// Устанавливает sensetive для всех входящих в класс элементов
+		/// </summary>
+		public void SetSensitive(bool sensitive)
+		{
+			Label.Sensitive = sensitive;
+			Check.Sensitive = sensitive;
+			Spin.Sensitive = sensitive;
+		}
 	}
 }

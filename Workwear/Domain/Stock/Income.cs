@@ -200,32 +200,25 @@ namespace workwear.Domain.Stock
 			return newItem;
 		}
 
-		public virtual IEnumerable<IncomeItem> AddItem(Nomenclature nomenclature, string growth , IEnumerable<string> sizes)
+		public virtual IncomeItem AddItem(Nomenclature nomenclature, string growth, string size, int amount = 0)
 		{
 			if(Operation != IncomeOperations.Enter)
 				throw new InvalidOperationException("Добавление номенклатуры возможно только во входящую накладную. Возвраты должны добавляться с указанием строки выдачи.");
-
-			List<IncomeItem> incomeItems = new List<IncomeItem>();
-			foreach(var size in sizes) {
-				var foundItem = ObservableItems.FirstOrDefault(i => i.WearGrowth == growth && i.Size == size);
-
-				if(foundItem == null) {
-					var newItem = new IncomeItem(this) {
-						Amount = 1,
-						Nomenclature = nomenclature,
-						WearGrowth = growth,
-						Size = size,
-						Cost = 0,
-					};
-
-					ObservableItems.Add(newItem);
-				}
-				else {
-					foundItem.Amount++;
-					incomeItems.Add(foundItem);
-				}
+			var item = ObservableItems.FirstOrDefault(i => i.Nomenclature.Id == nomenclature.Id && i.WearGrowth == growth && i.Size == size);
+			if(item == null) {
+				item = new IncomeItem(this) {
+					Amount = amount,
+					Nomenclature = nomenclature,
+					WearGrowth = growth,
+					Size = size,
+					Cost = 0,
+				};
+				ObservableItems.Add(item);
 			}
-			return incomeItems;
+			else {
+				item.Amount++;
+			}
+			return item;
 		}
 
 

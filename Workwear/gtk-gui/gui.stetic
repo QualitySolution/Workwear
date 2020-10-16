@@ -10174,7 +10174,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Stock.Widgets.SizeWidgetView" design-size="247 140">
+  <widget class="Gtk.Bin" id="workwear.Views.Stock.Widgets.SizeWidgetView" design-size="261 701">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -10205,38 +10205,6 @@
             <property name="XShrink">False</property>
             <property name="YExpand">False</property>
             <property name="YFill">False</property>
-            <property name="YShrink">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Table" id="CheckBoxPlace">
-            <property name="MemberName" />
-            <property name="NColumns">4</property>
-            <property name="RowSpacing">6</property>
-            <property name="ColumnSpacing">6</property>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-          </widget>
-          <packing>
-            <property name="TopAttach">3</property>
-            <property name="BottomAttach">4</property>
-            <property name="RightAttach">3</property>
-            <property name="AutoSize">False</property>
-            <property name="XExpand">True</property>
-            <property name="XFill">True</property>
-            <property name="XShrink">False</property>
-            <property name="YExpand">True</property>
-            <property name="YFill">True</property>
             <property name="YShrink">False</property>
           </packing>
         </child>
@@ -10278,6 +10246,55 @@
             <property name="LeftAttach">1</property>
             <property name="RightAttach">3</property>
             <property name="AutoSize">False</property>
+            <property name="XOptions">Shrink, Fill</property>
+            <property name="YOptions">Shrink</property>
+            <property name="XExpand">False</property>
+            <property name="XFill">True</property>
+            <property name="XShrink">True</property>
+            <property name="YExpand">False</property>
+            <property name="YFill">False</property>
+            <property name="YShrink">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+            <property name="MemberName" />
+            <property name="HeightRequest">600</property>
+            <property name="HscrollbarPolicy">Never</property>
+            <property name="ShadowType">In</property>
+            <child>
+              <widget class="Gtk.Viewport" id="GtkViewport">
+                <property name="MemberName" />
+                <property name="ShadowType">None</property>
+                <child>
+                  <widget class="Gtk.Table" id="CheckBoxPlace">
+                    <property name="MemberName" />
+                    <property name="ShowScrollbars">True</property>
+                    <property name="NColumns">4</property>
+                    <property name="RowSpacing">6</property>
+                    <property name="ColumnSpacing">6</property>
+                    <child>
+                      <placeholder />
+                    </child>
+                    <child>
+                      <placeholder />
+                    </child>
+                    <child>
+                      <placeholder />
+                    </child>
+                    <child>
+                      <placeholder />
+                    </child>
+                  </widget>
+                </child>
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="TopAttach">3</property>
+            <property name="BottomAttach">4</property>
+            <property name="RightAttach">3</property>
+            <property name="AutoSize">True</property>
             <property name="XOptions">Fill</property>
             <property name="XExpand">False</property>
             <property name="XFill">True</property>
@@ -10317,7 +10334,7 @@
               </widget>
               <packing>
                 <property name="Position">2</property>
-                <property name="AutoSize">True</property>
+                <property name="AutoSize">False</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
               </packing>
@@ -10332,12 +10349,13 @@
             <property name="RightAttach">3</property>
             <property name="AutoSize">False</property>
             <property name="XOptions">Fill</property>
+            <property name="YOptions">Shrink, Fill</property>
             <property name="XExpand">False</property>
             <property name="XFill">True</property>
             <property name="XShrink">False</property>
-            <property name="YExpand">True</property>
+            <property name="YExpand">False</property>
             <property name="YFill">True</property>
-            <property name="YShrink">False</property>
+            <property name="YShrink">True</property>
           </packing>
         </child>
         <child>
