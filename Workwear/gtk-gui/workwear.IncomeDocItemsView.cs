@@ -118,6 +118,7 @@ namespace workwear
 			w10.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.buttonAddSizes = new global::Gtk.Button();
+			this.buttonAddSizes.Sensitive = false;
 			this.buttonAddSizes.CanFocus = true;
 			this.buttonAddSizes.Name = "buttonAddSizes";
 			this.buttonAddSizes.UseUnderline = true;

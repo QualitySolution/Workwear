@@ -3415,6 +3415,7 @@
             <child>
               <widget class="Gtk.Button" id="buttonAddSizes">
                 <property name="MemberName" />
+                <property name="Sensitive">False</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-execute Menu</property>

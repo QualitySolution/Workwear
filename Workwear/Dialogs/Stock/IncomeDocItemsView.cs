@@ -198,6 +198,7 @@ namespace workwear
 		protected void OnButtonDelClicked (object sender, EventArgs e)
 		{
 			IncomeDoc.RemoveItem (ytreeItems.GetSelectedObject<IncomeItem> ());
+			buttonAddSizes.Sensitive = false;
 			CalculateTotal();
 		}
 

@@ -56,10 +56,21 @@ namespace workwear.Views.Stock.Widgets
 			checkBoxItemList.Clear();
 			CheckBoxPlace.Children.ToList().ForEach(e => CheckBoxPlace.Remove(e));
 			uint rows = (uint)ViewModel.WearSizes.Count;
-			CheckBoxPlace.Resize(rows, 4);
+			CheckBoxPlace.Resize(rows+1, 4);
+
+			#region пояснения к таблице
+			Label label_1 = new Label() { LabelProp = "Размер"};
+			CheckBoxPlace.Attach(label_1, 1, 2, 0, 0 + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
+
+			Label label_2 = new Label() { LabelProp = "Добавить?" };
+			CheckBoxPlace.Attach(label_2, 2, 3, 0, 0 + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
+
+			Label label_3 = new Label() { LabelProp = "Количество" };
+			CheckBoxPlace.Attach(label_3, 3, 4, 0, 0 + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
+			#endregion
 
 			var sizes = ViewModel.WearSizes;
-			for(uint i = 0; i < rows; i++) {
+			for(uint i = 1; i < rows; i++) {
 
 				Label label = new Label() { LabelProp = sizes[(int)i] };
 				CheckBoxPlace.Attach(label, 1, 2, i, i + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
