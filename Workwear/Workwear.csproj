@@ -47,6 +47,15 @@
   <PropertyGroup Condition="$(Configuration.Contains('Win'))">
     <TargetOS>Win</TargetOS>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWinEnterprise|x86' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\ReleaseWinEnterprise</OutputPath>
+    <DefineConstants>ENTERPRISE;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Mono.Posix" />
@@ -388,6 +397,7 @@
     <Compile Include="Repository\Stock\StockRepository.cs" />
     <Compile Include="ReportsDlg\StockAllWearDlg.cs" />
     <Compile Include="gtk-gui\workwear.ReportsDlg.StockAllWearDlg.cs" />
+    <Compile Include="Tools\Features\FeaturesService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -544,6 +554,7 @@
     <Folder Include="Journal\Filter.ViewModels\Stock\" />
     <Folder Include="Journal\ViewModels\Stock\" />
     <Folder Include="Journal\Filter.Views\Stock\" />
+    <Folder Include="Tools\Features\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
