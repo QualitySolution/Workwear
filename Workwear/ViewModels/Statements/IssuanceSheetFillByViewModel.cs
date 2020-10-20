@@ -116,6 +116,8 @@ namespace workwear.ViewModels.Statements
 		void SelectSubdivisionDialog_ObjectSelected(object sender, OrmReferenceObjectSectedEventArgs e)
 		{
 			foreach(var subdivision in e.GetEntities<Subdivision>()) {
+				if(issuanceSheetViewModel.Entity.Subdivision == null)
+					issuanceSheetViewModel.Entity.Subdivision = subdivision;
 				var inSubdivision = EmployeeRepository.GetActiveEmployeesFromSubdivision(issuanceSheetViewModel.UoW, subdivision);
 				foreach(var employee in inSubdivision) {
 					if(employees.All(x => x.Id != employee.Id))
