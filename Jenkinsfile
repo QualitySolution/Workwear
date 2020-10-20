@@ -41,4 +41,11 @@ node {
            nunit testResultsPattern: 'Workwear/WorkwearTest/bin/ReleaseWin/TestResult.xml'
        }
    }
+   stage('Build Enterprise') {
+        sh 'rm -f Workwear/WinInstall/workwear-*.exe'
+        sh 'Workwear/WinInstall/makeWinInstall.sh -e'
+        // recordIssues enabledForFailure: true, tool: msBuild()
+        archiveArtifacts artifacts: 'Workwear/WinInstall/workwear-*.exe', onlyIfSuccessful: true
+   }
+
 }
