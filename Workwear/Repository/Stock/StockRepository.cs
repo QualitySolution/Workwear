@@ -8,6 +8,7 @@ using NHibernate.Transform;
 using QS.DomainModel.UoW;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
+using workwear.Tools.Features;
 
 namespace workwear.Repository.Stock
 {
@@ -17,11 +18,15 @@ namespace workwear.Repository.Stock
 
 		/// <summary>
 		/// Возвращает склад по умолчанию при создании различных документов и прочее. Сейчас возвращается склад если он единственный,
-		/// чтобы его не запнять, в будущем скдал по умолчанию можно будет настроит у пользователя. А так же этот метод дожне будет создавать
+		/// чтобы его не заполнять, в будущем склад по умолчанию можно будет настроит у пользователя. А так же этот метод дожне будет создавать
 		/// новый склад в версиях программы без поддежки складов, чтобы не оказалось что склада нет вообще.
 		/// </summary>
-		public virtual Warehouse GetDefaultWarehouse(IUnitOfWork uow)
+		public virtual Warehouse GetDefaultWarehouse(IUnitOfWork uow, FeaturesService featureService)
 		{
+			if(!featureService.Available(WorkwearFeature.Warehouses)) {
+				var warehous = uow.GetById<Warehouse>(1);
+				return warehous;
+			}	
 			var warehouses = uow.GetAll<Warehouse>().Take(2).ToList();
 			return warehouses.Count == 1 ? warehouses.First() : null; 
 		}
@@ -106,7 +111,7 @@ namespace workwear.Repository.Stock
 		public int NomenclatureId { get; set; }
 
 		public string Size { get; set; }
-		public string Growth { get; set; }
+		public string Growth { get; set; }	
 		public decimal WearPercent { get; set; }
 		public int Amount { get; set; }
 

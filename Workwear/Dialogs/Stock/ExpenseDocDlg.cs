@@ -20,6 +20,7 @@ using workwear.Domain.Stock;
 using workwear.JournalViewModels.Stock;
 using workwear.Repository;
 using workwear.Repository.Stock;
+using workwear.Tools.Features;
 using workwear.ViewModels.Statements;
 using workwear.ViewModels.Stock;
 
@@ -30,14 +31,19 @@ namespace workwear
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		ILifetimeScope AutofacScope;
 
+		private FeaturesService featuresService;
+		public FeaturesService FeaturesService { get => FeaturesService; private set => featuresService = value; }
+
 		public ExpenseDocDlg()
 		{
 			this.Build();
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Expense> ();
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
+
+			featuresService = new FeaturesService();
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW);
+				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW,featuresService);
 			ConfigureDlg ();
 		}
 
@@ -117,6 +123,7 @@ namespace workwear
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
 			IssuanceSheetSensetive();
+			DisableFeatures();
 		}			
 
 		public override bool Save()
@@ -215,6 +222,16 @@ namespace workwear
 
 		}
 
+		#endregion
+
+		#region Workwear featrures
+		private void DisableFeatures()
+		{
+			if(!featuresService.Available(WorkwearFeature.Warehouses)) {
+				label3.Visible = false;
+				entityWarehouseExpense.Visible = false;
+			}
+		}
 		#endregion
 	}
 

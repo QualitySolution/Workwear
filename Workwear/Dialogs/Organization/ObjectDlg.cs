@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Autofac;
 using NLog;
 using QS.Dialog.Gtk;
@@ -11,6 +12,8 @@ using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.JournalViewModels.Stock;
 using workwear.Repository;
+using workwear.Repository.Stock;
+using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Dialogs.Organization
@@ -19,6 +22,8 @@ namespace workwear.Dialogs.Organization
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		ILifetimeScope AutofacScope;
+		private FeaturesService featuresService;
+		public FeaturesService FeaturesService { get => FeaturesService; private set => featuresService = value; }
 
 		public ObjectDlg (Subdivision obj) : this(obj.Id) {}
 
@@ -26,6 +31,9 @@ namespace workwear.Dialogs.Organization
 		{
 			this.Build();
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Subdivision>(id);
+			var e = Entity;
+			this.featuresService = new FeaturesService();
+
 			ConfigureDlg();
 			Fill(id);
 		}
@@ -33,7 +41,9 @@ namespace workwear.Dialogs.Organization
 		public ObjectDlg()
 		{
 			this.Build();
+
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Subdivision>();
+			featuresService = new FeaturesService();
 			ConfigureDlg();
 		}
 
@@ -68,6 +78,17 @@ namespace workwear.Dialogs.Organization
 			NotifyConfiguration.Instance.BatchSubscribe(SubdivisionOperationChanged)
 				.IfEntity<SubdivisionIssueOperation>()
 				.AndWhere(x => x.Subdivision.Id == Entity.Id);
+
+			DisableFeatures();
+		}
+
+		private void DisableFeatures()
+		{
+			if(!featuresService.Available(WorkwearFeature.Warehouses)) {
+				lb5.Visible = false;
+				entitywarehouse.Visible = false;
+				entitywarehouse.ViewModel.Entity = new StockRepository().GetDefaultWarehouse(UoW,featuresService);
+			}
 		}
 
 		void SubdivisionOperationChanged(EntityChangeEvent[] changeEvents)
@@ -137,7 +158,6 @@ namespace workwear.Dialogs.Organization
 			base.Destroy();
 			AutofacScope.Dispose();
 		}
-
 	}
 }
  
