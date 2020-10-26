@@ -626,3 +626,7 @@ DROP INDEX `fk_issuance_sheet_2_idx` ;
   
 -- Очистка истории прочитанных новостей
 DELETE FROM `read_news` WHERE `feed_id` = "workwearnews"
+
+-- Обновляем версию базы.
+DELETE FROM base_parameters WHERE name = 'micro_updates';
+UPDATE base_parameters SET str_value = '2.4' WHERE name = 'version';
