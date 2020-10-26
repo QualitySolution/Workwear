@@ -127,19 +127,15 @@ public partial class MainWindow : Gtk.Window
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
 
 		//Настраиваем склады (проверяем, если есть уже склады , то "Default Warehouse" не создавать)
-		var defaultWarehouse = UoW.GetById<Warehouse>(1);
-		if(defaultWarehouse == null)
+		if(!(UoW.GetAll<Warehouse>().Count() > 0))
 			CreateDefaultWarehouse();
-		//if(!(UoW.GetAll<Warehouse>().Count() > 0))
-			//CreateDefaultWarehouse();
 		featuresService = new FeaturesService();
 		DisableFeatures();
 	}
 	private void CreateDefaultWarehouse()
 	{
 		Warehouse warehouse = new Warehouse();
-		warehouse.Id = 1;
-		warehouse.Name = "Default Warehouse";
+		warehouse.Name = "Базовый склад";
 		UoW.Session.Save(warehouse);
 	}
 
@@ -376,9 +372,10 @@ public partial class MainWindow : Gtk.Window
 		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
 		page.ViewModel.ShowSummary = true;
 		page.ViewModel.Filter.ShowNegativeBalance = true;
-
-		//FIXME
-		page.ViewModel.Filter.Warehouse = new workwear.Repository.Stock.StockRepository().GetDefaultWarehouse(UoW,featuresService);
+		if(!featuresService.Available(WorkwearFeature.Warehouses)) {
+			//Здесь устанавливается склад,т.к. по другому как его поставить я не нашёл
+			page.ViewModel.Filter.Warehouse = new workwear.Repository.Stock.StockRepository().GetDefaultWarehouse(UoW, featuresService);
+		}
 	}
 
 	protected void OnActionStockDocsActivated(object sender, EventArgs e)

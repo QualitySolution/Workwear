@@ -22,8 +22,7 @@ namespace workwear.Dialogs.Organization
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		ILifetimeScope AutofacScope;
-		private FeaturesService featuresService;
-		public FeaturesService FeaturesService { get => FeaturesService; private set => featuresService = value; }
+		private FeaturesService featuresService { get; set; }
 
 		public ObjectDlg (Subdivision obj) : this(obj.Id) {}
 
@@ -31,7 +30,6 @@ namespace workwear.Dialogs.Organization
 		{
 			this.Build();
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Subdivision>(id);
-			var e = Entity;
 			this.featuresService = new FeaturesService();
 
 			ConfigureDlg();

@@ -24,7 +24,7 @@ namespace workwear.Repository.Stock
 		public virtual Warehouse GetDefaultWarehouse(IUnitOfWork uow, FeaturesService featureService)
 		{
 			if(!featureService.Available(WorkwearFeature.Warehouses)) {
-				var warehous = uow.GetById<Warehouse>(1);
+				var warehous = uow.Session.Query<Warehouse>().FirstOrDefault();
 				return warehous;
 			}	
 			var warehouses = uow.GetAll<Warehouse>().Take(2).ToList();
