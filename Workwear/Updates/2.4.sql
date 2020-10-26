@@ -167,13 +167,6 @@ CHANGE COLUMN `address` `address` TEXT NULL DEFAULT NULL AFTER `code`,
 ADD COLUMN `warehouse_id` INT(10) UNSIGNED NOT NULL DEFAULT 1 AFTER `name`,
 ADD INDEX `fk_objects_1_idx` (`warehouse_id` ASC);
 
-ALTER TABLE `objects` 
-ADD CONSTRAINT `fk_objects_1`
-  FOREIGN KEY (`warehouse_id`)
-  REFERENCES `warehouse` (`id`)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION;
-
 # Добавление склада в таблицу прихода (stock_income)
 
 ALTER TABLE `stock_income` 
@@ -526,7 +519,7 @@ ADD CONSTRAINT `fk_objects_1`
   REFERENCES `warehouse` (`id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
-
+  
 ALTER TABLE `stock_income` 
 ADD CONSTRAINT `fk_stock_income_1`
   FOREIGN KEY (`warehouse_id`)
