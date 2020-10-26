@@ -511,6 +511,10 @@ WHERE nomenclature.id not in (
    SELECT uniq_id_nomen FROM t_temp
 );
 
+### Удаление рабочего id 
+ALTER TABLE `operation_warehouse` 
+DROP COLUMN `work_id`;
+
 -- Создание связей
 
 ALTER TABLE `objects` 
