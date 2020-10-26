@@ -176,13 +176,13 @@ ADD CONSTRAINT `fk_objects_1`
 
 # Добавление склада в таблицу прихода (stock_income)
 
-ALTER TABLE `workwear_dev_smk`.`stock_income` 
+ALTER TABLE `stock_income` 
 ADD COLUMN `warehouse_id` INT(10) UNSIGNED NULL DEFAULT 1 AFTER `date`,
 ADD INDEX `fk_stock_income_warehouse_idx` (`warehouse_id` ASC);
-ALTER TABLE `workwear_dev_smk`.`stock_income` 
+ALTER TABLE `stock_income` 
 ADD CONSTRAINT `fk_stock_income_warehouse`
   FOREIGN KEY (`warehouse_id`)
-  REFERENCES `workwear_dev_smk`.`warehouse` (`id`)
+  REFERENCES `warehouse` (`id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
   
@@ -275,7 +275,7 @@ JOIN nomenclature on stock_income_detail.nomenclature_id = nomenclature.id
 SET stock_income_detail.size = nomenclature.size, stock_income_detail.growth = nomenclature.growth;
 
 # Добавление временного столбца для сохранения id stock_income_detail
-ALTER TABLE `workwear_dev_smk`.`operation_warehouse` 
+ALTER TABLE `operation_warehouse` 
 ADD COLUMN `work_id` INT NULL AFTER `cost`;
 
 #Создание складских операций по строкам документа прихода
