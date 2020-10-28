@@ -399,7 +399,7 @@
     <Compile Include="gtk-gui\workwear.ReportsDlg.StockAllWearDlg.cs" />
     <Compile Include="ViewModels\Stock\Widgets\SizeWidgetViewModel.cs" />
     <Compile Include="Views\Stock\Widgets\SizeWidgetView.cs" />
-    <Compile Include="gtk-gui\workwear.Views.Stock.Widgets.SizeWidgetView.cs" /
+    <Compile Include="gtk-gui\workwear.Views.Stock.Widgets.SizeWidgetView.cs" />
     <Compile Include="Tools\Features\FeaturesService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
