@@ -32,7 +32,6 @@ namespace workwear
 		ILifetimeScope AutofacScope;
 
 		private FeaturesService featuresService;
-		public FeaturesService FeaturesService { get => FeaturesService; private set => featuresService = value; }
 
 		public ExpenseDocDlg()
 		{
@@ -49,6 +48,7 @@ namespace workwear
 
 		public ExpenseDocDlg (Subdivision subdivision) : this () {
 			Entity.Operation = ExpenseOperations.Object;
+
 			Entity.Subdivision = subdivision;
 			Entity.Warehouse = subdivision.Warehouse;
 		}
@@ -83,6 +83,7 @@ namespace workwear
 		public ExpenseDocDlg (int id)
 		{
 			this.Build ();
+			featuresService = new FeaturesService();
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Expense> (id);
 			ConfigureDlg ();
 		}
