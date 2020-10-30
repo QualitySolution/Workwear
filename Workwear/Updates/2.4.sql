@@ -290,8 +290,6 @@ JOIN (
 			group by BINARY name, type_id, sex ) 
 			as uniq on BINARY uniq.name = BINARY n.name and uniq.type_id = n.type_id and uniq.sex = n.sex) as uniq_nomenclature on uniq_nomenclature.id_nomen = nomenclature.id;
    
- # Запоминаем последний id операции (Нужно для того чтобы операции прихода, выдачи и списания случайно не перемешались)
-select @last_id := max(id) from operation_warehouse;
   
 #  В operation_issued_by_employee добавляется size growth wear_percent, проставляется верный nomenclature_id
 # ТОЛЬКО ОПЕРАЦИИ ВОЗВРАТА ОТ СОТРУДНИКОВ
@@ -413,10 +411,6 @@ SET
     SET operation_issued_by_employee.warehouse_operation_id = stock_income_detail.warehouse_operation_id;
     
     
-    ### Добавление в base_parameters параметров
-
-INSERT INTO base_parameters (name, str_value) VALUES ('ColDayAheadOfShedule', '30');
-INSERT INTO base_parameters (name, str_value) VALUES ('EmployeeSizeRanges', '30');
 
 ### Обновление ведомости на выдачу issuance_sheet_items. Обновление id номенклатуры и вставка размеров.
 
