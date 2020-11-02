@@ -270,7 +270,7 @@ namespace workwear
 		void SelectWearSize_SizeSelected(object sender , AddedSizesEventArgs e)
 		{
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
-			if(item.Amount <= 0)
+			if(String.IsNullOrWhiteSpace(item.Size))
 				IncomeDoc.RemoveItem(item);
 			e.SizesWithAmount.ToList().ForEach(i => IncomeDoc.AddItem(e.Source, e.Growth, i.Key, i.Value));
 			CalculateTotal();
