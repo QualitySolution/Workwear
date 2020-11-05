@@ -1,6 +1,6 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using QSProjectsLib;
+using QS.Project.Versioning;
 
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
@@ -9,9 +9,10 @@ using QSProjectsLib;
 [assembly: AssemblyBetaBuild]
 #endif
 #if ENTERPRISE
-[assembly: AssemblyEdition("QSE", AllowEdition = new[] {"gpl"})]
+[assembly: AssemblyModification(Name = "QSE", Title = "Предприятие")]
+[assembly: AssemblyСompatibleModification("gpl")]
 #else
-[assembly: AssemblyEdition("gpl")]
+[assembly: AssemblyModification("gpl")]
 #endif
 [assembly: AssemblyDescription("Программа позволяет вести учет внутреннего склада спецодежды и имущества выдаваемого сотрудникам.")]
 [assembly: AssemblyConfiguration("")]
@@ -21,8 +22,8 @@ using QSProjectsLib;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyLogoIcon("workwear.icon.logo.png")]
-[assembly: AssemblySupport("", true, "MariaDB\\MySQL")]
-[assembly: AssemblyAppWebsite("http://www.qsolution.ru/")]
+[assembly: AssemblySupport("Телефон тех. поддержки +7(812)309-71-77")]
+[assembly: AssemblyAppWebsite("http://workwear.qsolution.ru/")]
 
 [assembly: InternalsVisibleTo("WorkwearTest")]
 
