@@ -10,6 +10,7 @@ using QS.DomainModel.UoW;
 using QS.Utilities;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
+using workwear.Measurements;
 
 namespace workwear.Domain.Stock
 {
@@ -199,6 +200,28 @@ namespace workwear.Domain.Stock
 			return newItem;
 		}
 
+		public virtual IncomeItem AddItem(Nomenclature nomenclature, string growth, string size, int amount = 0)
+		{
+			if(Operation != IncomeOperations.Enter)
+				throw new InvalidOperationException("Добавление номенклатуры возможно только во входящую накладную. Возвраты должны добавляться с указанием строки выдачи.");
+			var item = ObservableItems.FirstOrDefault(i => i.Nomenclature.Id == nomenclature.Id && i.WearGrowth == growth && i.Size == size);
+			if(item == null) {
+				item = new IncomeItem(this) {
+					Amount = amount,
+					Nomenclature = nomenclature,
+					WearGrowth = growth,
+					Size = size,
+					Cost = 0,
+				};
+				ObservableItems.Add(item);
+			}
+			else {
+				item.Amount++;
+			}
+			return item;
+		}
+
+
 		public virtual void RemoveItem(IncomeItem item)
 		{
 			ObservableItems.Remove (item);
@@ -218,10 +241,19 @@ namespace workwear.Domain.Stock
 	}
 
 	public enum IncomeOperations {
+		/// <summary>
+		/// Приходная накладная
+		/// </summary>
 		[Display(Name = "Приходная накладная")]
 		Enter,
+		/// <summary>
+		/// Возврат от работника
+		/// </summary>
 		[Display(Name = "Возврат от работника")]
 		Return,
+		/// <summary>
+		/// Возврат с объекта
+		/// </summary>
 		[Display(Name = "Возврат с объекта")]
 		Object
 	}

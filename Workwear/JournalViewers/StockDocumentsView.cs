@@ -7,6 +7,7 @@ using QSOrmProject;
 using QSOrmProject.UpdateNotification;
 using workwear.Domain.Stock;
 using workwear.Representations;
+using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
 
 namespace workwear.JournalViewers
@@ -17,6 +18,7 @@ namespace workwear.JournalViewers
 
 		IUnitOfWork uow;
 
+		private FeaturesService featuresService;
 		public StockDocumentsView()
 		{
 			this.Build();
@@ -27,8 +29,12 @@ namespace workwear.JournalViewers
 			(tableDocuments.RepresentationModel.RepresentationFilter as Widget).Show();
 			tableDocuments.RepresentationModel.UpdateNodes();
 			uow = tableDocuments.RepresentationModel.UoW;
-
 			buttonAdd.ItemsEnum = typeof(StokDocumentType);
+
+			featuresService = new FeaturesService();
+			if(!featuresService.Available(WorkwearFeature.Warehouses)) {
+				buttonAdd.SetVisibility(StokDocumentType.TransferDoc, false);
+			}
 		}
 
 		void OnRefObjectUpdated(object sender, OrmObjectUpdatedEventArgs e)
