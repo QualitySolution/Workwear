@@ -50,8 +50,7 @@ public partial class MainWindow : Gtk.Window
 	public IProgressBarDisplayable ProgressBar;
 	public IUnitOfWork UoW = UnitOfWorkFactory.CreateWithoutRoot();
 
-	private FeaturesService featuresService;
-	public FeaturesService FeaturesService { get => FeaturesService; private set => featuresService = value; }
+	public FeaturesService FeaturesService { get; private set; }
 
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
@@ -128,7 +127,7 @@ public partial class MainWindow : Gtk.Window
 		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользовтель его создать не сможет.
 		if(UoW.GetAll<Warehouse>().Count() == 0)
 			CreateDefaultWarehouse();
-		featuresService = new FeaturesService();
+		FeaturesService = new FeaturesService();
 		DisableFeatures();
 	}
 
@@ -142,7 +141,7 @@ public partial class MainWindow : Gtk.Window
 	#region Workwear featrures
 	private void DisableFeatures()
 	{
-		if(!featuresService.Available(WorkwearFeature.Warehouses)) {
+		if(!FeaturesService.Available(WorkwearFeature.Warehouses)) {
 			ActionWarehouse.Visible = false;
 		}
 	}
