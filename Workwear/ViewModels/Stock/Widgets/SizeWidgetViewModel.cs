@@ -23,7 +23,7 @@ namespace workwear.ViewModels.Stock.Widgets
 			INavigationManager navigationManager
 			) : base(navigationManager)
 		{
-			IsModal = false;
+			IsModal = true;
 
 			this.nomenclature = nomenclature;
 			ClothesSex sex = nomenclature.Sex ?? throw new ArgumentNullException("At SizeWidgetViewModel.SizeWidgetViewModel() constructor, " + typeof(ClothesSex).Name + " variable was null!");
