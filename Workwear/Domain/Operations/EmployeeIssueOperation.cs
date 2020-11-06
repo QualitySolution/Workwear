@@ -176,9 +176,16 @@ namespace workwear.Domain.Operations
 			set { SetField(ref buhDocument, value); }
 		}
 
+		/// <summary>
+		/// Для создания операций выдачи надо использвать конструктор с BaseParameters
+		/// </summary>
 		public EmployeeIssueOperation()
 		{
-			useAutoWriteoff = BaseParameters.DefaultAutoWriteoff;
+		}
+
+		public EmployeeIssueOperation(BaseParameters baseParameters)
+		{
+			useAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 		}
 
 		#region Расчетные
@@ -239,7 +246,7 @@ namespace workwear.Domain.Operations
 
 		#region Методы обновленя операций
 
-		public virtual void Update(IUnitOfWork uow, IInteractiveQuestion askUser, ExpenseItem item)
+		public virtual void Update(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, ExpenseItem item)
 		{
 			//Внимание здесь сравниваются даты без времени.
 			if (item.ExpenseDoc.Date.Date != OperationTime.Date)
@@ -260,10 +267,10 @@ namespace workwear.Domain.Operations
 				NormItem = Employee.WorkwearItems.FirstOrDefault(x => x.Item == Nomenclature.Type)?.ActiveNormItem;
 
 			var graph = IssueGraph.MakeIssueGraph(uow, Employee, Nomenclature.Type);
-			RecalculateDatesOfIssueOperation(graph, askUser);
+			RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 		}
 
-		public virtual void RecalculateDatesOfIssueOperation(IssueGraph graph, IInteractiveQuestion askUser)
+		public virtual void RecalculateDatesOfIssueOperation(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser)
 		{
 			if(NormItem == null) {
 				//Пробуем найти норму сами.
@@ -286,7 +293,7 @@ namespace workwear.Domain.Operations
 					.Where(x => x.StartDate.Date >= OperationTime.Date)
 					.OrderBy(x => x.StartDate)
 					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
-				if (firstLessNorm != null && firstLessNorm.StartDate.AddDays(-BaseParameters.ColDayAheadOfShedule) > OperationTime.Date)
+				if (firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.ColDayAheadOfShedule) > OperationTime.Date)
 				{
 					if(askUser.Question($"На {operationTime:d} за сотрудником уже числится {amountAtEndDay} x {Nomenclature.TypeName}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. Передвинуть начало экспуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?")) 
 						startOfUse = firstLessNorm.StartDate;

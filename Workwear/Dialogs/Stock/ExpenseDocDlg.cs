@@ -14,12 +14,14 @@ using QS.Report.ViewModels;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QSOrmProject;
+using QSProjectsLib;
 using QSReport;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.JournalViewModels.Stock;
 using workwear.Repository;
 using workwear.Repository.Stock;
+using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Statements;
 using workwear.ViewModels.Stock;
@@ -135,7 +137,8 @@ namespace workwear
 				return false;
 
 			var ask = new GtkQuestionDialogsInteractive();
-			Entity.UpdateOperations(UoW, ask);
+			var baseParameters = new BaseParameters(QSMain.ConnectionDB);
+			Entity.UpdateOperations(UoW, baseParameters, ask);
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);

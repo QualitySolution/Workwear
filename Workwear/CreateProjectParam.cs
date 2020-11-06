@@ -12,7 +12,6 @@ using QS.Navigation;
 using QS.NewsFeed;
 using QS.Permissions;
 using QS.Project.DB;
-using QS.Project.Dialogs.GtkUI.ServiceDlg;
 using QS.Project.Domain;
 using QS.Project.Search.GtkUI;
 using QS.Project.Services;

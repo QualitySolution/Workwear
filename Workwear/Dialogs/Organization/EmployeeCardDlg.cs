@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Linq;
 using Autofac;
 using Gamma.Utilities;
 using Gtk;
@@ -36,6 +35,7 @@ namespace workwear.Dialogs.Organization
 
 		bool IsPostSetOnLoad;
 		bool IsSubdivisionSetOnLoad;
+		BaseParameters baseParameters = new BaseParameters(QSMain.ConnectionDB);
 
 		public EmployeeCardDlg ()
 		{
@@ -504,7 +504,7 @@ namespace workwear.Dialogs.Organization
 
 		private SizeUse[] GetExcludedSizeUse()
 		{
-			return BaseParameters.EmployeeSizeRanges ? new SizeUse[] { } : new SizeUse[] { SizeUse.СlothesOnly };
+			return baseParameters.EmployeeSizeRanges ? new SizeUse[] { } : new SizeUse[] { SizeUse.СlothesOnly };
 		}
 
 		public override void Destroy()

@@ -2,7 +2,6 @@
 using QS.Dialog.Gtk;
 using QS.Tdi;
 using QSProjectsLib;
-using QSSupportLib;
 using workwear.Tools;
 
 namespace workwear.Dialogs.DataBase
@@ -14,16 +13,18 @@ namespace workwear.Dialogs.DataBase
 
 		bool oldYcheckAutoWriteoff, oldCheckEmployeeSizeRanges;
 		int oldSpbutAheadOfShedule;
+		private readonly BaseParameters baseParameters;
 
-		public DataBaseSettingsDlg()
+		public DataBaseSettingsDlg(BaseParameters baseParameters)
 		{
 			this.Build();
 
 			TabName = "Настройки учёта";
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
-			ycheckAutoWriteoff.Active = oldYcheckAutoWriteoff = BaseParameters.DefaultAutoWriteoff;
-			checkEmployeeSizeRanges.Active = oldCheckEmployeeSizeRanges = BaseParameters.EmployeeSizeRanges;
-			spbutAheadOfShedule.Value = oldSpbutAheadOfShedule = BaseParameters.ColDayAheadOfShedule;
+			ycheckAutoWriteoff.Active = oldYcheckAutoWriteoff = baseParameters.DefaultAutoWriteoff;
+			checkEmployeeSizeRanges.Active = oldCheckEmployeeSizeRanges = baseParameters.EmployeeSizeRanges;
+			spbutAheadOfShedule.Value = oldSpbutAheadOfShedule = baseParameters.ColDayAheadOfShedule;
 		}
 
 		public event EventHandler<EntitySavedEventArgs> EntitySaved;
@@ -40,19 +41,12 @@ namespace workwear.Dialogs.DataBase
 
 		public bool Save()
 		{
-			MainSupport.BaseParameters.UpdateParameter(QSMain.ConnectionDB,
-				BaseParameterNames.DefaultAutoWriteoff.ToString(),
-				ycheckAutoWriteoff.Active.ToString());
+			baseParameters.DefaultAutoWriteoff = ycheckAutoWriteoff.Active;
 
-			MainSupport.BaseParameters.UpdateParameter(QSMain.ConnectionDB,
-				BaseParameterNames.EmployeeSizeRanges.ToString(),
-				checkEmployeeSizeRanges.Active.ToString());
+			baseParameters.EmployeeSizeRanges = checkEmployeeSizeRanges.Active;
 
-			MainSupport.BaseParameters.UpdateParameter(QSMain.ConnectionDB,
-				BaseParameterNames.ColDayAheadOfShedule.ToString(), spbutAheadOfShedule.Text);
-
+			baseParameters.ColDayAheadOfShedule = spbutAheadOfShedule.ValueAsInt;
 			return true;
-
 		}
 
 		public void SaveAndClose()

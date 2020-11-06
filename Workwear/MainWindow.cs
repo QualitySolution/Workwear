@@ -371,9 +371,9 @@ public partial class MainWindow : Gtk.Window
 		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
 		page.ViewModel.ShowSummary = true;
 		page.ViewModel.Filter.ShowNegativeBalance = true;
-		if(!featuresService.Available(WorkwearFeature.Warehouses)) {
+		if(!FeaturesService.Available(WorkwearFeature.Warehouses)) {
 			//Здесь устанавливается склад,т.к. по другому как его поставить я не нашёл
-			page.ViewModel.Filter.Warehouse = new workwear.Repository.Stock.StockRepository().GetDefaultWarehouse(UoW, featuresService);
+			page.ViewModel.Filter.Warehouse = new workwear.Repository.Stock.StockRepository().GetDefaultWarehouse(UoW, FeaturesService);
 		}
 	}
 
@@ -596,9 +596,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionBaseSettingsActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("DataBaseSettings");
-		tdiMain.OpenTab(TdiTabBase.GenerateHashName<DataBaseSettingsDlg>(),
-						() => new DataBaseSettingsDlg()
-			   );
+		tdiMain.OpenTab<DataBaseSettingsDlg>();
 	}
 
 	protected void OnActionVacationTypesActivated(object sender, EventArgs e)
