@@ -8,10 +8,13 @@ using NLog;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
 using QS.Dialog.Gtk;
+using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QS.Dialog.GtkUI;
 using QS.Navigation;
+using QS.NewsFeed;
+using QS.NewsFeed.Views;
+using QS.Project.Versioning;
 using QS.Report;
 using QS.Tdi;
 using QS.Tdi.Gtk;
@@ -35,11 +38,9 @@ using workwear.JournalViewModels.Statements;
 using workwear.JournalViewModels.Stock;
 using workwear.Representations.Organization;
 using workwear.Tools;
+using workwear.Tools.Features;
 using workwear.ViewModel;
 using workwear.ViewModels.Company;
-using QS.NewsFeed;
-using QS.NewsFeed.Views;
-using workwear.Tools.Features;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -59,11 +60,10 @@ public partial class MainWindow : Gtk.Window
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
 		ProgressBar = progresswidget1;
-		this.Title = MainSupport.GetTitle();
+		this.Title = AutofacScope.Resolve<IApplicationInfo>().ProductTitle;
 		QSMain.MakeNewStatusTargetForNlog();
 
 		QSMain.CheckServer(this); // Проверяем настройки сервера
-		MainSupport.LoadBaseParameters();
 
 		MainUpdater.RunCheckVersion(true, true, true);
 
