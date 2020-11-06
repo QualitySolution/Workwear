@@ -1,3 +1,4 @@
+properties([parameters([booleanParam(defaultValue: false, description: 'Выкладывать сборку на сервер files.qsolution.ru', name: 'Publish')])])
 node {
    stage('Workwear') {
       checkout([
@@ -47,5 +48,9 @@ node {
         // recordIssues enabledForFailure: true, tool: msBuild()
         archiveArtifacts artifacts: 'Workwear/WinInstall/workwear-*.exe', onlyIfSuccessful: true
    }
-
+    if (params.Publish) {
+	stage('Publish'){
+	    sh 'scp Workwear/WinInstall/workwear-*.exe a218160_qso@a218160.ftp.mchost.ru:subdomains/files/httpdocs/Workwear/'
+	}
+    }
 }
