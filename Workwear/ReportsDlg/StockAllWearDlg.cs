@@ -3,17 +3,30 @@ using System.Collections.Generic;
 using QS.Report;
 using QSProjectsLib;
 using QSReport;
+using workwear.Tools.Features;
 
 namespace workwear.ReportsDlg
 {
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class StockAllWearDlg : Gtk.Bin, IParametersWidget
 	{
+		private FeaturesService featureService;
+
 		public StockAllWearDlg()
 		{
 			this.Build();
 			ComboWorks.ComboFillReference(comboObject, "warehouse", ComboWorks.ListMode.OnlyItems, true, "name");
+			featureService = new FeaturesService();
+			DisableFeatures();
 			comboObject.Active = 0;
+		}
+
+		private void DisableFeatures()
+		{
+			if(!featureService.Available(WorkwearFeature.Warehouses)) {
+				table1.Visible = false;
+				
+			}
 		}
 
 		public string Title => "Складская ведомость";
@@ -45,5 +58,6 @@ namespace workwear.ReportsDlg
 		{
 			buttonRun.Sensitive = ComboWorks.GetActiveId(comboObject) > 0;
 		}
+
 	}
 }

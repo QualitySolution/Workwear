@@ -104,6 +104,26 @@ namespace workwear.Domain.Stock
 		}
 
 		#endregion
+
+		#region Функции
+		/// <summary>
+		/// Копирует текущий объект Nomenclature и возвращает ссылку на копию.
+		/// </summary>
+		/// <returns>The Nomenclature clone.</returns>
+		public virtual Nomenclature Clone()
+		{
+			Nomenclature nomenclature = new Nomenclature();
+			nomenclature.name = this.Name;
+			nomenclature.type = this.type;
+			nomenclature.sex = this.sex;
+			nomenclature.sizeStd = this.sizeStd;
+			nomenclature.wearGrowthStd = this.wearGrowthStd;
+			nomenclature.comment = this.comment;
+			nomenclature.number = this.number;
+			return nomenclature;
+		}
+
+		#endregion
 	}
 }
 
