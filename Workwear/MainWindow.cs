@@ -20,7 +20,6 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
 using QSOrmProject;
 using QSProjectsLib;
-using QSSupportLib;
 using QSTelemetry;
 using workwear;
 using workwear.Dialogs.DataBase;
@@ -126,12 +125,13 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
 
-		//Настраиваем склады (проверяем, если есть уже склады , то "Default Warehouse" не создавать)
-		if(!(UoW.GetAll<Warehouse>().Count() > 0))
+		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользовтель его создать не сможет.
+		if(UoW.GetAll<Warehouse>().Count() == 0)
 			CreateDefaultWarehouse();
 		featuresService = new FeaturesService();
 		DisableFeatures();
 	}
+
 	private void CreateDefaultWarehouse()
 	{
 		Warehouse warehouse = new Warehouse();
