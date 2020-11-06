@@ -135,7 +135,7 @@ public partial class MainWindow : Gtk.Window
 	private void CreateDefaultWarehouse()
 	{
 		Warehouse warehouse = new Warehouse();
-		warehouse.Name = "Базовый склад";
+		warehouse.Name = "Основной склад";
 		UoW.Session.Save(warehouse);
 	}
 
