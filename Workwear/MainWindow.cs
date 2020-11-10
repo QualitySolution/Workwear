@@ -15,6 +15,7 @@ using QS.Navigation;
 using QS.NewsFeed;
 using QS.NewsFeed.Views;
 using QS.Project.Versioning;
+using QS.Project.Views;
 using QS.Report;
 using QS.Tdi;
 using QS.Tdi.Gtk;
@@ -250,7 +251,11 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAboutActionActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("RunAboutDialog");
-		QSMain.RunAboutDialog();
+		using(var local = AutofacScope.BeginLifetimeScope()) {
+			var about = local.Resolve<AboutView>();
+			about.Run();
+			about.Destroy();
+		}
 	}
 
 	protected void OnAction11Activated(object sender, EventArgs e)
