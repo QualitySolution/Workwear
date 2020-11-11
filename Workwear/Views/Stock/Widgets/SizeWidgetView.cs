@@ -37,8 +37,6 @@ namespace workwear.Views.Stock.Widgets
 			}
 			AddButton.Sensitive = false;
 
-
-
 			//Выбираем первый элемент из ViewModel.WearGrowths, если рост используется
 			if(ViewModel.IsUseGrowth)
 				GrowthBox.SelectedItem = ViewModel.WearGrowths.First();
