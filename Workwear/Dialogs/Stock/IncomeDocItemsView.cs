@@ -249,7 +249,9 @@ namespace workwear
 					  item.Nomenclature.Type.WearCategory == СlothesType.WinterShoes) {
 
 				excludedSizeDictionary = new Dictionary<string, List<string>>();
-				excludedSizeDictionary.Add("", new List<string>(IncomeDoc.Items.Where(i => item != null && i.Nomenclature.Id == item.Nomenclature.Id).Select(i => i.Size)));
+				var excludedSize = new List<string>(IncomeDoc.Items.Where(i => item != null && i.Nomenclature.Id == item.Nomenclature.Id && !String.IsNullOrEmpty(i.Size)).Select(i => i.Size));
+				if(excludedSize.Count > 0)
+					excludedSizeDictionary.Add("", excludedSize);
 			}
 			else if(item.Nomenclature.Type.WearCategory == СlothesType.Wear)
 				excludedSizeDictionary = IncomeDoc.Items
@@ -262,7 +264,7 @@ namespace workwear
 				if(item.Nomenclature == null)
 					return;
 				QS.Navigation.IPage<SizeWidgetViewModel> page = null;
-				if(excludedSizeDictionary.Count > 0)
+				if(excludedSizeDictionary != null && excludedSizeDictionary.Count > 0)
 					page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, Nomenclature, Dictionary<string, List<string>>>
 					(null, item.Nomenclature, excludedSizeDictionary);
 				else
