@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -10175,13 +10175,13 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Stock.Widgets.SizeWidgetView" design-size="261 701">
+  <widget class="Gtk.Bin" id="workwear.Views.Stock.Widgets.SizeWidgetView" design-size="304 701">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
       <widget class="Gtk.Table" id="table1">
         <property name="MemberName" />
-        <property name="NRows">4</property>
+        <property name="NRows">3</property>
         <property name="NColumns">3</property>
         <property name="RowSpacing">6</property>
         <property name="ColumnSpacing">6</property>
@@ -10191,17 +10191,15 @@
             <property name="CanFocus">True</property>
             <property name="Type">TextAndIcon</property>
             <property name="Icon">stock:gtk-add Menu</property>
-            <property name="Label" translatable="yes" />
+            <property name="Label" translatable="yes">Добавить в документ</property>
             <property name="UseUnderline">True</property>
             <signal name="Clicked" handler="OnAddButtonClicked" />
           </widget>
           <packing>
-            <property name="TopAttach">1</property>
-            <property name="BottomAttach">2</property>
             <property name="AutoSize">False</property>
-            <property name="XOptions">0</property>
+            <property name="XOptions">Expand</property>
             <property name="YOptions">0</property>
-            <property name="XExpand">False</property>
+            <property name="XExpand">True</property>
             <property name="XFill">False</property>
             <property name="XShrink">False</property>
             <property name="YExpand">False</property>
@@ -10242,8 +10240,6 @@
             </child>
           </widget>
           <packing>
-            <property name="TopAttach">1</property>
-            <property name="BottomAttach">2</property>
             <property name="LeftAttach">1</property>
             <property name="RightAttach">3</property>
             <property name="AutoSize">False</property>
@@ -10292,8 +10288,8 @@
             </child>
           </widget>
           <packing>
-            <property name="TopAttach">3</property>
-            <property name="BottomAttach">4</property>
+            <property name="TopAttach">2</property>
+            <property name="BottomAttach">3</property>
             <property name="RightAttach">3</property>
             <property name="AutoSize">True</property>
             <property name="XOptions">Fill</property>
@@ -10345,8 +10341,8 @@
             </child>
           </widget>
           <packing>
-            <property name="TopAttach">2</property>
-            <property name="BottomAttach">3</property>
+            <property name="TopAttach">1</property>
+            <property name="BottomAttach">2</property>
             <property name="RightAttach">3</property>
             <property name="AutoSize">False</property>
             <property name="XOptions">Fill</property>
@@ -10357,23 +10353,6 @@
             <property name="YExpand">False</property>
             <property name="YFill">True</property>
             <property name="YShrink">True</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Label" id="label2">
-            <property name="MemberName" />
-            <property name="LabelProp" translatable="yes">Выберите размеры:</property>
-          </widget>
-          <packing>
-            <property name="RightAttach">3</property>
-            <property name="AutoSize">False</property>
-            <property name="YOptions">Fill</property>
-            <property name="XExpand">True</property>
-            <property name="XFill">True</property>
-            <property name="XShrink">False</property>
-            <property name="YExpand">False</property>
-            <property name="YFill">True</property>
-            <property name="YShrink">False</property>
           </packing>
         </child>
       </widget>

@@ -137,11 +137,12 @@ namespace workwear
 				if(clothesType != null)
 					buttonAddSizes.Sensitive = obj.Nomenclature.Type.Category == Domain.Regulations.ItemTypeCategory.wear
 						&& ytreeItems.Selection.CountSelectedRows() == 1
-						&& (clothesType != СlothesType.PPE)
 						&& SizeHelper.HasСlothesSizeStd(clothesType.Value);
 				else
 					buttonAddSizes.Sensitive = false;
 			}
+			else
+				buttonAddSizes.Sensitive = false;
 		}
 		protected void OnButtonAddClicked (object sender, EventArgs e)
 		{
