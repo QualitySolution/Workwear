@@ -7,7 +7,7 @@ namespace workwear.Tools.Features
 		{
 		}
 
-		public bool Available(WorkwearFeature feature)
+		virtual public bool Available(WorkwearFeature feature)
 		{
 			if(feature == WorkwearFeature.Warehouses)
 				#if ENTERPRISE
