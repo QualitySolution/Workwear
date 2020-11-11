@@ -40,6 +40,9 @@ namespace workwear
 				CalculateTotal();
 
 				IncomeDoc.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
+
+				if(incomeDoc.Operation != IncomeOperations.Enter)
+					buttonAddSizes.Visible = false;
 			}
 		}
 
@@ -99,6 +102,8 @@ namespace workwear
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
+
+		
 		}
 
 		#region PopupMenu
