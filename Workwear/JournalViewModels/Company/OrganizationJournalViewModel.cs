@@ -11,7 +11,7 @@ using workwear.ViewModels.Company;
 
 namespace workwear.JournalViewModels.Company
 {
-	public class OrganizationJournalViewModel : EntityJournalViewModelBase<Organization, OrganizationViewModel, ClientJournalNode>
+	public class OrganizationJournalViewModel : EntityJournalViewModelBase<Organization, OrganizationViewModel, OrganizationJournalNode>
 	{
 		public OrganizationJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
@@ -20,7 +20,7 @@ namespace workwear.JournalViewModels.Company
 
 		protected override IQueryOver<Organization> ItemsQuery(IUnitOfWork uow)
 		{
-			ClientJournalNode resultAlias = null;
+			OrganizationJournalNode resultAlias = null;
 			return uow.Session.QueryOver<Organization>()
 				.Where(GetSearchCriterion<Organization>(
 					x => x.Id, 
@@ -31,11 +31,11 @@ namespace workwear.JournalViewModels.Company
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(x => x.Address).WithAlias(() => resultAlias.Address)
-				).TransformUsing(Transformers.AliasToBean<ClientJournalNode>());
+				).TransformUsing(Transformers.AliasToBean<OrganizationJournalNode>());
 		}
 	}
 
-	public class ClientJournalNode
+	public class OrganizationJournalNode
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
