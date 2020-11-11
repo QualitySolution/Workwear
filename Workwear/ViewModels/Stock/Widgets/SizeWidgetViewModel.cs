@@ -24,7 +24,7 @@ namespace workwear.ViewModels.Stock.Widgets
 			) : base(navigationManager)
 		{
 			IsModal = true;
-
+			Title = "Добавить размеры:";
 			this.nomenclature = nomenclature;
 			ClothesSex sex = nomenclature.Sex ?? throw new ArgumentNullException("At SizeWidgetViewModel.SizeWidgetViewModel() constructor, " + typeof(ClothesSex).Name + " variable was null!");
 			СlothesType clothesType = nomenclature.Type.WearCategory ?? throw new NullReferenceException("At SizeWidgetViewModel.SizeWidgetViewModel() constructor" + typeof(СlothesType).Name + " variable was null!");
