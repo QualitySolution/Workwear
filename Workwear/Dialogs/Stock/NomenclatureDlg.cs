@@ -70,25 +70,21 @@ namespace workwear
 
 			if(Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear && Entity.Type.WearCategory.HasValue)
 			{
-				ylabelClothesSex.Visible = ycomboClothesSex.Visible = true;
-
 				ylabelClothesSex.Text = Entity.Type.WearCategory.Value.GetEnumTitle() + ":";
 
 				//Скрываем лишние варианты пола.
 				ycomboClothesSex.ClearEnumHideList();
 				var standarts = SizeHelper.GetStandartsForСlothes(Entity.Type.WearCategory.Value);
 				var toHide = new List<object>();
-				foreach(var sexInfo in typeof(ClothesSex).GetFields())
+				foreach(ClothesSex sex in Enum.GetValues(typeof(ClothesSex)))
 				{
-					if (sexInfo.Name.Equals ("value__"))
-						continue;
-					
-					var sexEnum = (ClothesSex)sexInfo.GetValue(null);
-					if (!standarts.Any(x => x.Sex == sexEnum && x.Use != SizeUse.HumanOnly))
-						toHide.Add(sexEnum);
+					if (!standarts.Any(x => x.Sex == sex && x.Use != SizeUse.HumanOnly))
+						toHide.Add(sex);
 				}
 				if(toHide.Count > 0)
 					ycomboClothesSex.AddEnumToHideList(toHide.ToArray());
+
+				ylabelClothesSex.Visible = ycomboClothesSex.Visible = toHide.Count < Enum.GetValues(typeof(ClothesSex)).Length;
 
 				if(!SizeHelper.HasСlothesSizeStd(Entity.Type.WearCategory.Value))
 				{
