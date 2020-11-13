@@ -61,21 +61,6 @@ namespace workwear.Domain.Company
 		public Post ()
 		{
 		}
-
-		/// <summary>
-		/// Возвращает копию текущего объекта
-		/// </summary>
-		/// <returns>Копия текущего объекта Post.</returns>
-		public virtual Post CopyPost()
-		{
-			Post newPost = new Post();
-			newPost.Name = this.Name;
-			newPost.Subdivision = this.subdivision;
-			newPost.department = this.department;
-			newPost.profession = this.profession;
-			newPost.comments = this.comments;
-			return newPost;
-		}
 	}
 }
 

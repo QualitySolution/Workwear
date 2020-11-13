@@ -190,16 +190,6 @@ namespace workwear.Domain.Regulations
 		}
 
 		/// <summary>
-		/// Возвращает копию текущего объекта
-		/// </summary>
-		/// <returns>Копия текущего объекта Norm.</returns>
-		public virtual Norm CopyNorm()
-		{
-			Norm newNorm = new Norm();
-			CopyNorm(newNorm);
-			return newNorm;
-		}
-		/// <summary>
 		/// Присваивает newNorm копию текущего объекта Norm 
 		/// </summary>
 		/// <param name="newNorm">Ссылка на норму, в которую необходимо скопировать текущую норму</param>
