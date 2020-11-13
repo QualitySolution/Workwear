@@ -29,6 +29,15 @@ namespace workwear.ViewModels.Regulations
 			this.progressBar = progressBar;
 		}
 
+		/// <summary>
+		/// Копирует существующую в базе норму по id
+		/// </summary>
+		public void CopyNormFrom(int normId)
+		{
+			var norm = UoW.GetById<Norm>(normId);
+			norm.CopyNorm(Entity);
+		}
+
 		#region Sensetive
 
 		private bool saveSensitive;

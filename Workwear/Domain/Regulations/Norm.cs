@@ -189,6 +189,38 @@ namespace workwear.Domain.Regulations
 			ObservableItems.Remove (item);
 		}
 
+		/// <summary>
+		/// Возвращает копию текущего объекта
+		/// </summary>
+		/// <returns>Копия текущего объекта Norm.</returns>
+		public virtual Norm CopyNorm()
+		{
+			Norm newNorm = new Norm();
+			CopyNorm(newNorm);
+			return newNorm;
+		}
+		/// <summary>
+		/// Присваивает newNorm копию текущего объекта Norm 
+		/// </summary>
+		/// <param name="newNorm">Ссылка на норму, в которую необходимо скопировать текущую норму</param>
+		public virtual void CopyNorm(Norm newNorm)
+		{
+			newNorm.Document = this.document;
+			newNorm.Annex = this.annex;
+			newNorm.TONParagraph= this.tonParagraph;
+			newNorm.Name = this.name;
+			//тут передобавлять
+			foreach(var item in this.professions) {
+				newNorm.ObservableProfessions.Add(item);
+			}
+			//тут передобавлять
+			foreach(var item in this.items.Select(i => i.CopyNormItem(newNorm))) {
+				newNorm.ObservableItems.Add(item);
+			}
+			newNorm.Comment = this.comment;
+			newNorm.DateFrom = this.dateFrom;
+			newNorm.DateTo = this.dateTo;
+		}
 	}
 }
 

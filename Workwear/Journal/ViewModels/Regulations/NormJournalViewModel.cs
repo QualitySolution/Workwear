@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
@@ -19,6 +21,7 @@ namespace workwear.Journal.ViewModels.Regulations
 		public NormJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
+			CreatePopupActions();
 		}
 
 		protected override IQueryOver<Norm> ItemsQuery(IUnitOfWork uow)
@@ -56,6 +59,30 @@ namespace workwear.Journal.ViewModels.Regulations
 				.OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<NormJournalNode>());
 		}
+
+		#region Popupmenu action implementation
+
+		protected override List<IJournalAction> PopupActionsList { get; set; } = new List<IJournalAction>();
+		/// <summary>
+		/// Действия, выполняемые в popup меню.
+		/// </summary>
+		public override IEnumerable<IJournalAction> PopupActions => base.PopupActions; 
+		protected override void CreatePopupActions()
+		{
+			IEnumerable<IJournalAction> popupmenuActions = new List<IJournalAction> {
+				new JournalAction("Копировать норму",(arg) => true,(arg) => arg.Length == 1,CopyNorm)
+			};
+			PopupActionsList.AddRange(popupmenuActions);
+		}
+		private void CopyNorm(object[] nodes)
+		{
+			if(nodes.Length != 1)
+				return;
+			int normId = (nodes[0] as NormJournalNode).Id;
+			var page = NavigationManager.OpenViewModel<NormViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForCreate());
+			page.ViewModel.CopyNormFrom(normId);
+		}
+		#endregion
 	}
 
 	public class NormJournalNode
