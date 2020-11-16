@@ -58,7 +58,6 @@ namespace workwear.Domain.Company
 
 		#endregion
 
-
 		public Post ()
 		{
 		}
