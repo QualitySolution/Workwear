@@ -8,23 +8,19 @@ namespace workwear.Views.Stock.Widgets
 
 		private global::Gamma.GtkWidgets.yButton AddButton;
 
-		private global::Gtk.HBox GrowthInfoBox;
-
-		private global::Gtk.Label GrowthInfoLabel;
-
-		private global::Gamma.Widgets.yListComboBox GrowthBox;
-
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 
 		private global::Gtk.Table CheckBoxPlace;
 
 		private global::Gtk.HBox hbox2;
 
-		private global::Gtk.Label label3;
-
 		private global::Gtk.Button selectAllButton;
 
-		private global::Gtk.Label label2;
+		private global::Gtk.HBox GrowthInfoBox;
+
+		private global::Gtk.Label GrowthInfoLabel;
+
+		private global::Gamma.Widgets.yListComboBox GrowthBox;
 
 		protected virtual void Build()
 		{
@@ -33,7 +29,7 @@ namespace workwear.Views.Stock.Widgets
 			global::Stetic.BinContainer.Attach(this);
 			this.Name = "workwear.Views.Stock.Widgets.SizeWidgetView";
 			// Container child workwear.Views.Stock.Widgets.SizeWidgetView.Gtk.Container+ContainerChild
-			this.table1 = new global::Gtk.Table(((uint)(4)), ((uint)(3)), false);
+			this.table1 = new global::Gtk.Table(((uint)(3)), ((uint)(3)), false);
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild
@@ -41,46 +37,14 @@ namespace workwear.Views.Stock.Widgets
 			this.AddButton.CanFocus = true;
 			this.AddButton.Name = "AddButton";
 			this.AddButton.UseUnderline = true;
+			this.AddButton.Label = global::Mono.Unix.Catalog.GetString("Добавить в документ");
 			global::Gtk.Image w1 = new global::Gtk.Image();
 			w1.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
 			this.AddButton.Image = w1;
 			this.table1.Add(this.AddButton);
 			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.AddButton]));
-			w2.TopAttach = ((uint)(1));
-			w2.BottomAttach = ((uint)(2));
-			w2.XOptions = ((global::Gtk.AttachOptions)(0));
+			w2.XOptions = ((global::Gtk.AttachOptions)(4));
 			w2.YOptions = ((global::Gtk.AttachOptions)(0));
-			// Container child table1.Gtk.Table+TableChild
-			this.GrowthInfoBox = new global::Gtk.HBox();
-			this.GrowthInfoBox.Name = "GrowthInfoBox";
-			this.GrowthInfoBox.Spacing = 6;
-			// Container child GrowthInfoBox.Gtk.Box+BoxChild
-			this.GrowthInfoLabel = new global::Gtk.Label();
-			this.GrowthInfoLabel.Name = "GrowthInfoLabel";
-			this.GrowthInfoLabel.LabelProp = global::Mono.Unix.Catalog.GetString("Рост:");
-			this.GrowthInfoBox.Add(this.GrowthInfoLabel);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.GrowthInfoBox[this.GrowthInfoLabel]));
-			w3.Position = 0;
-			w3.Expand = false;
-			w3.Fill = false;
-			// Container child GrowthInfoBox.Gtk.Box+BoxChild
-			this.GrowthBox = new global::Gamma.Widgets.yListComboBox();
-			this.GrowthBox.Name = "GrowthBox";
-			this.GrowthBox.AddIfNotExist = false;
-			this.GrowthBox.DefaultFirst = false;
-			this.GrowthInfoBox.Add(this.GrowthBox);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.GrowthInfoBox[this.GrowthBox]));
-			w4.Position = 1;
-			w4.Expand = false;
-			w4.Fill = false;
-			this.table1.Add(this.GrowthInfoBox);
-			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.GrowthInfoBox]));
-			w5.TopAttach = ((uint)(1));
-			w5.BottomAttach = ((uint)(2));
-			w5.LeftAttach = ((uint)(1));
-			w5.RightAttach = ((uint)(3));
-			w5.XOptions = ((global::Gtk.AttachOptions)(6));
-			w5.YOptions = ((global::Gtk.AttachOptions)(2));
 			// Container child table1.Gtk.Table+TableChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.HeightRequest = 600;
@@ -88,34 +52,24 @@ namespace workwear.Views.Stock.Widgets
 			this.GtkScrolledWindow.HscrollbarPolicy = ((global::Gtk.PolicyType)(2));
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
-			global::Gtk.Viewport w6 = new global::Gtk.Viewport();
-			w6.ShadowType = ((global::Gtk.ShadowType)(0));
+			global::Gtk.Viewport w3 = new global::Gtk.Viewport();
+			w3.ShadowType = ((global::Gtk.ShadowType)(0));
 			// Container child GtkViewport.Gtk.Container+ContainerChild
 			this.CheckBoxPlace = new global::Gtk.Table(((uint)(1)), ((uint)(4)), false);
 			this.CheckBoxPlace.Name = "CheckBoxPlace";
 			this.CheckBoxPlace.RowSpacing = ((uint)(6));
 			this.CheckBoxPlace.ColumnSpacing = ((uint)(6));
-			w6.Add(this.CheckBoxPlace);
-			this.GtkScrolledWindow.Add(w6);
+			w3.Add(this.CheckBoxPlace);
+			this.GtkScrolledWindow.Add(w3);
 			this.table1.Add(this.GtkScrolledWindow);
-			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1[this.GtkScrolledWindow]));
-			w9.TopAttach = ((uint)(3));
-			w9.BottomAttach = ((uint)(4));
-			w9.RightAttach = ((uint)(3));
-			w9.XOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.GtkScrolledWindow]));
+			w6.TopAttach = ((uint)(2));
+			w6.BottomAttach = ((uint)(3));
+			w6.RightAttach = ((uint)(3));
 			// Container child table1.Gtk.Table+TableChild
 			this.hbox2 = new global::Gtk.HBox();
 			this.hbox2.Name = "hbox2";
 			this.hbox2.Spacing = 6;
-			// Container child hbox2.Gtk.Box+BoxChild
-			this.label3 = new global::Gtk.Label();
-			this.label3.Name = "label3";
-			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Выбрать всё:");
-			this.hbox2.Add(this.label3);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.label3]));
-			w10.Position = 1;
-			w10.Expand = false;
-			w10.Fill = false;
 			// Container child hbox2.Gtk.Box+BoxChild
 			this.selectAllButton = new global::Gtk.Button();
 			this.selectAllButton.CanFocus = true;
@@ -123,25 +77,41 @@ namespace workwear.Views.Stock.Widgets
 			this.selectAllButton.UseUnderline = true;
 			this.selectAllButton.Label = global::Mono.Unix.Catalog.GetString("Выбрать все");
 			this.hbox2.Add(this.selectAllButton);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.selectAllButton]));
-			w11.Position = 2;
-			w11.Expand = false;
-			w11.Fill = false;
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.selectAllButton]));
+			w7.Position = 0;
+			w7.Expand = false;
+			w7.Fill = false;
+			// Container child hbox2.Gtk.Box+BoxChild
+			this.GrowthInfoBox = new global::Gtk.HBox();
+			this.GrowthInfoBox.Name = "GrowthInfoBox";
+			this.GrowthInfoBox.Spacing = 6;
+			// Container child GrowthInfoBox.Gtk.Box+BoxChild
+			this.GrowthInfoLabel = new global::Gtk.Label();
+			this.GrowthInfoLabel.Name = "GrowthInfoLabel";
+			this.GrowthInfoLabel.Xalign = 1F;
+			this.GrowthInfoLabel.LabelProp = global::Mono.Unix.Catalog.GetString("Рост:");
+			this.GrowthInfoBox.Add(this.GrowthInfoLabel);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.GrowthInfoBox[this.GrowthInfoLabel]));
+			w8.Position = 0;
+			// Container child GrowthInfoBox.Gtk.Box+BoxChild
+			this.GrowthBox = new global::Gamma.Widgets.yListComboBox();
+			this.GrowthBox.Name = "GrowthBox";
+			this.GrowthBox.AddIfNotExist = false;
+			this.GrowthBox.DefaultFirst = false;
+			this.GrowthInfoBox.Add(this.GrowthBox);
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.GrowthInfoBox[this.GrowthBox]));
+			w9.Position = 1;
+			w9.Expand = false;
+			w9.Fill = false;
+			this.hbox2.Add(this.GrowthInfoBox);
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.GrowthInfoBox]));
+			w10.Position = 1;
 			this.table1.Add(this.hbox2);
-			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1[this.hbox2]));
-			w12.TopAttach = ((uint)(2));
-			w12.BottomAttach = ((uint)(3));
-			w12.RightAttach = ((uint)(3));
-			w12.XOptions = ((global::Gtk.AttachOptions)(4));
-			w12.YOptions = ((global::Gtk.AttachOptions)(6));
-			// Container child table1.Gtk.Table+TableChild
-			this.label2 = new global::Gtk.Label();
-			this.label2.Name = "label2";
-			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Выберите размеры:");
-			this.table1.Add(this.label2);
-			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
-			w13.RightAttach = ((uint)(3));
-			w13.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1[this.hbox2]));
+			w11.TopAttach = ((uint)(1));
+			w11.BottomAttach = ((uint)(2));
+			w11.RightAttach = ((uint)(3));
+			w11.YOptions = ((global::Gtk.AttachOptions)(6));
 			this.Add(this.table1);
 			if ((this.Child != null))
 			{

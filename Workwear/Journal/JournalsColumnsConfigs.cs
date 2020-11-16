@@ -13,7 +13,7 @@ namespace workwear.Journal
 		public static void RegisterColumns()
 		{
 			TreeViewColumnsConfigFactory.Register<OrganizationJournalViewModel>(
-				() => FluentColumnsConfig<ClientJournalNode>.Create()
+				() => FluentColumnsConfig<OrganizationJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()

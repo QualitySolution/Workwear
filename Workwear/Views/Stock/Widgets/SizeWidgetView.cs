@@ -37,8 +37,6 @@ namespace workwear.Views.Stock.Widgets
 			}
 			AddButton.Sensitive = false;
 
-
-
 			//Выбираем первый элемент из ViewModel.WearGrowths, если рост используется
 			if(ViewModel.IsUseGrowth)
 				GrowthBox.SelectedItem = ViewModel.WearGrowths.First();
@@ -70,9 +68,9 @@ namespace workwear.Views.Stock.Widgets
 			#endregion
 
 			var sizes = ViewModel.WearSizes;
-			for(uint i = 1; i < rows; i++) {
+			for(uint i = 1; i <= rows; i++) {
 
-				Label label = new Label() { LabelProp = sizes[(int)i] };
+				Label label = new Label() { LabelProp = sizes[(int)i-1] };
 				CheckBoxPlace.Attach(label, 1, 2, i, i + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 
 				CheckButton check = new CheckButton();
@@ -83,7 +81,7 @@ namespace workwear.Views.Stock.Widgets
 				spin.Sensitive = false;
 				CheckBoxPlace.Attach(spin, 3, 4, i, i + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 
-				CheckBoxItem checkBoxItem = new CheckBoxItem(label, sizes[(int)i], check,spin);
+				CheckBoxItem checkBoxItem = new CheckBoxItem(label, sizes[(int)i-1], check,spin);
 				checkBoxItemList.Add(checkBoxItem);
 			}
 

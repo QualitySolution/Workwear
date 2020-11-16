@@ -489,20 +489,27 @@ SET
     ###### Удаление лишнего #########
 
 ##### Удаление дублей в таблице номенклатур ########
-CREATE TEMPORARY TABLE t_temp
+CREATE TEMPORARY TABLE nomenclature_temp
 as  (
-			SELECT uniq.id as uniq_id_nomen
-			FROM nomenclature as n
-		JOIN (
-			SELECT id, name, type_id, sex 
-            FROM nomenclature 
-			GROUP BY BINARY name, type_id, sex ) 
-			as uniq on BINARY uniq.name = BINARY n.name and uniq.type_id = n.type_id and uniq.sex = n.sex
+	SELECT n.id, ( 
+		SELECT id FROM nomenclature 
+		WHERE nomenclature.name <=> n.name AND nomenclature.type_id <=> n.type_id AND nomenclature.sex <=> n.sex 
+		LIMIT 1 ) AS replace_to_id 
+	FROM nomenclature n	
 );
+
+UPDATE stock_expense_detail SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
+UPDATE stock_income_detail  SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
+UPDATE stock_write_off_detail SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
+UPDATE stock_transfer_detail SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
+UPDATE operation_issued_by_employee SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
+UPDATE operation_issued_in_subdivision SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
+UPDATE operation_warehouse  SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
+UPDATE issuance_sheet_items SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id) WHERE nomenclature_id IS NOT NULL;
 
 DELETE from nomenclature
 WHERE nomenclature.id not in (
-   SELECT uniq_id_nomen FROM t_temp
+   SELECT DISTINCT replace_to_id FROM nomenclature_temp
 );
 
 ### Удаление рабочего id 
