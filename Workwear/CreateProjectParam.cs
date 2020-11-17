@@ -21,6 +21,7 @@ using QS.Report.ViewModels;
 using QS.Report.Views;
 using QS.Services;
 using QS.Tdi;
+using QS.Updater;
 using QS.Validation;
 using QS.ViewModels;
 using QS.Views.Resolve;
@@ -160,6 +161,10 @@ namespace workwear
 
 			#region News
 			builder.RegisterType<FeedReader>().AsSelf();
+			#endregion
+
+			#region Обновления
+			builder.RegisterModule(new UpdaterAutofacModule());
 			#endregion
 
 			#region Разделение версий

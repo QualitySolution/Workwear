@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -8,15 +8,12 @@
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../../../QSProjects/QSProjectsLib/bin/Debug/QSProjectsLib.dll" />
     <widget-library name="../../../QSProjects/QSWidgetLib/bin/Debug/QSWidgetLib.dll" />
-    <widget-library name="../../../QSProjects/QS.Updater.Gtk/bin/Debug/QSUpdater.dll" />
     <widget-library name="../../../GammaBinding/GammaBinding/bin/Debug/GammaBinding.dll" />
     <widget-library name="../../../QSProjects/QSOrmProject/bin/Debug/QSOrmProject.dll" />
     <widget-library name="../../../QSProjects/Modules/QSBusinessCommon/bin/Debug/QSBusinessCommon.dll" />
     <widget-library name="../../../QSProjects/QSExtraGammaWidgets/bin/Debug/QSExtraGammaWidgets.dll" />
     <widget-library name="../../../QSProjects/QSReport/bin/Debug/QSReport.dll" />
     <widget-library name="../../../QSProjects/QS.Project.Gtk/bin/Debug/QS.Project.Gtk.dll" />
-    <widget-library name="../../../QSProjects/QS.Updater.Gtk/bin/Debug/QSUpdater.dll" />
-    <widget-library name="../../../QSProjects/QS.Updater/bin/Debug/QS.Updater.dll" />
     <widget-library name="../../../QSProjects/QS.Report.Gtk/bin/Debug/QS.Report.Gtk.dll" />
     <widget-library name="../../../QSProjects/QS.NewsFeed.Gtk/bin/Debug/QS.NewsFeed.Gtk.dll" />
     <widget-library name="../bin/Debug/workwear.exe" internal="true" />

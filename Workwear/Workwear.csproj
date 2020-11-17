@@ -419,10 +419,6 @@
       <Project>{4B502FE5-D419-4B5C-9276-0A25EF2F508A}</Project>
       <Name>QSSaaS</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSUpdater\QSUpdater.csproj">
-      <Project>{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}</Project>
-      <Name>QS.Updater.Gtk</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\GammaBinding\GammaBinding\GammaBinding.csproj">
       <Project>{190CEA0D-EA23-4C91-8030-203A5AFED7B7}</Project>
       <Name>GammaBinding</Name>
@@ -479,14 +475,6 @@
       <Project>{5735D438-792E-40CE-BAFD-25814C8879BC}</Project>
       <Name>Gamma.Utilities.Gtk</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Updater.Gtk\QS.Updater.Gtk.csproj">
-      <Project>{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}</Project>
-      <Name>QS.Updater.Gtk</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Updater\QS.Updater.csproj">
-      <Project>{0F2A9FD4-6FC1-4912-9C8A-72028305A37E}</Project>
-      <Name>QS.Updater</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\Modules\QS.BusinessCommon\QS.BusinessCommon.csproj">
       <Project>{F22749B2-E35B-455D-BD8D-081373B16FC7}</Project>
       <Name>QS.BusinessCommon</Name>
@@ -502,6 +490,14 @@
     <ProjectReference Include="..\..\QSProjects\QS.NewsFeed\QS.NewsFeed.csproj">
       <Project>{9EBC7EFD-CD37-45D3-97AB-24CB38D986B6}</Project>
       <Name>QS.NewsFeed</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Updater\QS.Updater.csproj">
+      <Project>{0F2A9FD4-6FC1-4912-9C8A-72028305A37E}</Project>
+      <Name>QS.Updater</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Updater.Gtk\QS.Updater.Gtk.csproj">
+      <Project>{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}</Project>
+      <Name>QS.Updater.Gtk</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

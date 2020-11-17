@@ -66,7 +66,10 @@ public partial class MainWindow : Gtk.Window
 
 		QSMain.CheckServer(this); // Проверяем настройки сервера
 
-		MainUpdater.RunCheckVersion(true, true, true);
+		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
+			var checker = scope.Resolve<VersionCheckerService>();
+			checker.RunUpdate();
+		}
 
 		if(QSMain.User.Login == "root") {
 			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
@@ -307,7 +310,10 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionUpdateActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("CheckUpdate");
-		MainUpdater.CheckAppVersionShowAnyway();
+		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
+			var updater = scope.Resolve<ApplicationUpdater>();
+			updater.StartCheckUpdateThread(UpdaterFlags.ShowAnyway);
+		}
 	}
 
 	protected void OnActionSNActivated(object sender, EventArgs e)
