@@ -257,9 +257,21 @@ ADD COLUMN `number` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `comment`;
 
 ################################### Перенос данных##############################
 
+### Создание временной таблицы уникальных номенклатур ###
+
+CREATE TEMPORARY TABLE nomenclature_temp
+as  (
+	SELECT n.id, n.size, n.growth, ( 
+		SELECT id FROM nomenclature 
+		WHERE nomenclature.name <=> n.name AND nomenclature.type_id <=> n.type_id AND nomenclature.sex <=> n.sex 
+		LIMIT 1 ) AS replace_to_id 
+	FROM nomenclature n	
+);
+
 ###########################      Для stock_income  и  stock_income_detail    ###################
 
 #Добавление склада в таблицу прихода
+
 update stock_income set warehouse_id = (select id from warehouse limit 1);
 
 #Добавление размеров в строки документа прихода из справочника номенклатур
@@ -274,21 +286,14 @@ ADD COLUMN `work_id` INT NULL AFTER `cost`;
 #Создание складских операций по строкам документа прихода
 INSERT INTO operation_warehouse (operation_time, warehouse_receipt_id, warehouse_expense_id, nomenclature_id, size, growth, amount, wear_percent, cost, work_id)
 SELECT  stock_income.date, (select id from warehouse limit 1) as warehouse, null, 
-		uniq_nomenclature.uniq_id_nomen, stock_income_detail.size, stock_income_detail.growth, stock_income_detail.quantity,
+		nomenclature_temp.replace_to_id, stock_income_detail.size, stock_income_detail.growth, stock_income_detail.quantity,
 		case when stock_income_detail.life_percent <= 0 then 0 else 1 - stock_income_detail.life_percent end, 
 		stock_income_detail.cost,
         stock_income_detail.id
 FROM stock_income_detail
 JOIN stock_income on stock_income_detail.stock_income_id = stock_income.id
 JOIN nomenclature on nomenclature.id = stock_income_detail.nomenclature_id
-JOIN (
-		SELECT n.id as id_nomen, n.name, n.type_id, n.sex, n.size, n.growth, uniq.id as uniq_id_nomen 
-        FROM nomenclature as n
-		JOIN (
-			select id, name, type_id, sex 
-            from nomenclature 
-			group by BINARY name, type_id, sex ) 
-			as uniq on BINARY uniq.name = BINARY n.name and uniq.type_id = n.type_id and uniq.sex = n.sex) as uniq_nomenclature on uniq_nomenclature.id_nomen = nomenclature.id;
+LEFT JOIN nomenclature_temp on nomenclature_temp.id = nomenclature.id;
    
   
 #  В operation_issued_by_employee добавляется size growth wear_percent, проставляется верный nomenclature_id
@@ -296,32 +301,21 @@ JOIN (
 
 UPDATE operation_issued_by_employee 
 JOIN stock_income_detail on  stock_income_detail.employee_issue_operation_id = operation_issued_by_employee.id
-JOIN (
-		SELECT n.id as id_nomen, n.name, n.type_id, n.sex, n.size, n.growth, uniq.id as uniq_id_nomen 
-        FROM nomenclature as n
-		JOIN (
-			SELECT id, name, type_id, sex 
-            FROM nomenclature 
-			GROUP BY BINARY name, type_id, sex ) 
-			as uniq on BINARY uniq.name = BINARY n.name and uniq.type_id = n.type_id and uniq.sex = n.sex) as uniq_nomenclature on uniq_nomenclature.id_nomen = operation_issued_by_employee.nomenclature_id
-SET operation_issued_by_employee.nomenclature_id =  uniq_nomenclature.uniq_id_nomen , operation_issued_by_employee.size = uniq_nomenclature.size, 
-operation_issued_by_employee.growth = uniq_nomenclature.growth, 
+LEFT JOIN nomenclature_temp on nomenclature_temp.id = operation_issued_by_employee.nomenclature_id
+SET operation_issued_by_employee.nomenclature_id =  nomenclature_temp.replace_to_id, operation_issued_by_employee.size = nomenclature_temp.size, 
+operation_issued_by_employee.growth = nomenclature_temp.growth, 
 operation_issued_by_employee.wear_percent = CASE WHEN stock_income_detail.life_percent <= 0 THEN 0 ELSE 1 - stock_income_detail.life_percent END;
  
  
 # В самом stock_income_detail заменяется id номенклатуры на уникальный
 UPDATE stock_income_detail
 JOIN (
-	SELECT n.id as id_nomen, n.name, n.type_id, n.sex, n.size, n.growth, uniq.id as uniq_id_nomen 
+	SELECT n.id as id_nomen, n.name, n.type_id, n.sex, n.size, n.growth, nomenclature_temp.replace_to_id as uniq_id_nomen 
         FROM nomenclature as n
-		JOIN (
-			select id, name, type_id, sex 
-            from nomenclature 
-			group by BINARY name, type_id, sex ) 
-			as uniq on BINARY uniq.name = BINARY n.name and uniq.type_id = n.type_id and uniq.sex = n.sex) as uniq_nomenclature on uniq_nomenclature.id_nomen = stock_income_detail.nomenclature_id
-SET stock_income_detail.nomenclature_id = uniq_nomenclature.uniq_id_nomen; 
- 
-#   Проставление ссылок на складские операции. Версия запроса №2    
+		LEFT JOIN nomenclature_temp on nomenclature_temp.id = = stock_income_detail.nomenclature_id
+ SET stock_income_detail.nomenclature_id = nomenclature_temp.replace_to_id;
+
+#   Проставление ссылок на складские операции   
     UPDATE stock_income_detail
         JOIN
     operation_warehouse ON operation_warehouse.work_id = stock_income_detail.id
@@ -341,7 +335,7 @@ SET stock_expense_detail.size = nomenclature.size, stock_expense_detail.growth =
 #Создание складских операций по строкам документа выдачи
 INSERT INTO operation_warehouse (operation_time, warehouse_receipt_id, warehouse_expense_id, nomenclature_id, size, growth, amount, wear_percent, cost, work_id)
 SELECT  stock_expense.date, null, (select id from warehouse limit 1) as warehouse,  
-		uniq_nomenclature.uniq_id_nomen, stock_expense_detail.size, stock_expense_detail.growth, stock_expense_detail.quantity,
+		nomenclature_temp.replace_to_id, stock_expense_detail.size, stock_expense_detail.growth, stock_expense_detail.quantity,
 		case when stock_income_detail.life_percent <= 0 then 0 else 1 - stock_income_detail.life_percent end, 
 		stock_income_detail.cost,
         stock_expense_detail.id
@@ -349,14 +343,7 @@ FROM stock_expense_detail
 JOIN stock_expense on stock_expense_detail.stock_expense_id = stock_expense.id
 LEFT JOIN stock_income_detail on stock_expense_detail.stock_income_detail_id = stock_income_detail.id 
 JOIN nomenclature on nomenclature.id = stock_expense_detail.nomenclature_id
-JOIN (
-		SELECT n.id as id_nomen, n.name, n.type_id, n.sex, n.size, n.growth, uniq.id as uniq_id_nomen 
-        FROM nomenclature as n
-		JOIN (
-			select id, name, type_id, sex 
-            from nomenclature 
-			group by BINARY name, type_id, sex ) 
-			as uniq on BINARY uniq.name = BINARY n.name and uniq.type_id = n.type_id and uniq.sex = n.sex) as uniq_nomenclature on uniq_nomenclature.id_nomen = nomenclature.id;
+LEFT JOIN nomenclature_temp on nomenclature_temp.id = nomenclature.id;
             
 #  В operation_issued_by_employee добавляется size growth wear_percent, проставляется верный nomenclature_id
 # ТОЛЬКО ОПЕРАЦИИ ВЫДАЧИ СОТРУДНИКАМ
@@ -364,29 +351,15 @@ JOIN (
 UPDATE operation_issued_by_employee 
 JOIN stock_expense_detail on  stock_expense_detail.employee_issue_operation_id = operation_issued_by_employee.id
 LEFT JOIN stock_income_detail on stock_expense_detail.stock_income_detail_id = stock_income_detail.id 
-JOIN (
-		SELECT n.id as id_nomen, n.name, n.type_id, n.sex, n.size, n.growth, uniq.id as uniq_id_nomen 
-        FROM nomenclature as n
-		JOIN (
-			SELECT id, name, type_id, sex 
-            FROM nomenclature 
-			GROUP BY BINARY name, type_id, sex ) 
-			as uniq on BINARY uniq.name = BINARY n.name and uniq.type_id = n.type_id and uniq.sex = n.sex) as uniq_nomenclature on uniq_nomenclature.id_nomen = operation_issued_by_employee.nomenclature_id
-SET operation_issued_by_employee.nomenclature_id =  uniq_nomenclature.uniq_id_nomen , operation_issued_by_employee.size = uniq_nomenclature.size, 
-operation_issued_by_employee.growth = uniq_nomenclature.growth, 
+LEFT JOIN nomenclature_temp on nomenclature_temp.id = operation_issued_by_employee.nomenclature_id
+SET operation_issued_by_employee.nomenclature_id =  nomenclature_temp.replace_to_id, operation_issued_by_employee.size = nomenclature_temp.size, 
+operation_issued_by_employee.growth = nomenclature_temp.growth, 
 operation_issued_by_employee.wear_percent = CASE WHEN stock_income_detail.life_percent <= 0 THEN 0 ELSE 1 - stock_income_detail.life_percent END;
 
 # В самом stock_expense_detail заменяется id номенклатуры на уникальный
 UPDATE stock_expense_detail
-JOIN (
-	SELECT n.id as id_nomen, n.name, n.type_id, n.sex, n.size, n.growth, uniq.id as uniq_id_nomen 
-        FROM nomenclature as n
-		JOIN (
-			select id, name, type_id, sex 
-            from nomenclature 
-			group by BINARY name, type_id, sex ) 
-			as uniq on BINARY uniq.name = BINARY n.name and uniq.type_id = n.type_id and uniq.sex = n.sex) as uniq_nomenclature on uniq_nomenclature.id_nomen = stock_expense_detail.nomenclature_id
-SET stock_expense_detail.nomenclature_id = uniq_nomenclature.uniq_id_nomen; 
+LEFT JOIN nomenclature_temp on nomenclature_temp.id = stock_expense_detail.nomenclature_id
+SET stock_expense_detail.nomenclature_id = nomenclature_temp.replace_to_id; 
  
 #   Проставление ссылок на складские операции. Версия запроса №2    
     UPDATE stock_expense_detail
@@ -415,17 +388,10 @@ SET
 ### Обновление ведомости на выдачу issuance_sheet_items. Обновление id номенклатуры и вставка размеров.
 
 UPDATE issuance_sheet_items
-JOIN (
-		SELECT n.id as id_nomen, n.name, n.type_id, n.sex, n.size, n.growth, uniq.id as uniq_id_nomen
-        FROM nomenclature as n
-		JOIN (
-			select id, name, type_id, sex
-            from nomenclature
-			group by name, type_id, sex )
-			as uniq on uniq.name = n.name and uniq.type_id = n.type_id and uniq.sex = n.sex) as uniq_nomenclature on uniq_nomenclature.id_nomen = issuance_sheet_items.nomenclature_id
-SET issuance_sheet_items.nomenclature_id = uniq_nomenclature.uniq_id_nomen,
- issuance_sheet_items.size = uniq_nomenclature.size,
-  issuance_sheet_items.growth = uniq_nomenclature.growth;
+LEFT JOIN nomenclature_temp on nomenclature_temp.id = issuance_sheet_items.nomenclature_id
+SET issuance_sheet_items.nomenclature_id = nomenclature_temp.replace_to_id,
+ issuance_sheet_items.size = nomenclature_temp.size,
+  issuance_sheet_items.growth = nomenclature_temp.growth;
   
   ###########################     Для stock_write_off  и  stock_write_off_detail    ###################
   
@@ -444,7 +410,7 @@ SELECT
 stock_write_off.date,
 null,
 (select id from warehouse limit 1) as warehouse,
-uniq_nomenclature.uniq_id_nomen,
+nomenclature_temp.replace_to_id,
 stock_write_off_detail.size,
 stock_write_off_detail.growth,
 stock_write_off_detail.quantity,
@@ -456,27 +422,13 @@ FROM stock_write_off_detail
 JOIN stock_write_off on stock_write_off_detail.stock_write_off_id = stock_write_off.id
 JOIN stock_income_detail on stock_income_detail.id = stock_write_off_detail.stock_income_detail_id
 JOIN nomenclature on nomenclature.id = stock_write_off_detail.nomenclature_id
-JOIN (
-		SELECT n.id as id_nomen, n.name, n.type_id, n.sex, n.size, n.growth, uniq.id as uniq_id_nomen
-        FROM nomenclature as n
-		JOIN (
-			select id, name, type_id, sex
-            from nomenclature
-			group by name, type_id, sex )
-			as uniq on uniq.name = n.name and uniq.type_id = n.type_id and uniq.sex = n.sex) as uniq_nomenclature on uniq_nomenclature.id_nomen = nomenclature.id
+LEFT JOIN nomenclature_temp on nomenclature_temp.id  = nomenclature.id
 WHERE stock_write_off_detail.stock_income_detail_id is not null AND  stock_write_off_detail.stock_expense_detail_id is null ;
 
 # В самом stock_expense_detail заменяется id номенклатуры на уникальный
 UPDATE stock_write_off_detail
-JOIN (
-	SELECT n.id as id_nomen, n.name, n.type_id, n.sex, n.size, n.growth, uniq.id as uniq_id_nomen 
-        FROM nomenclature as n
-		JOIN (
-			select id, name, type_id, sex 
-            from nomenclature 
-			group by BINARY name, type_id, sex ) 
-			as uniq on BINARY uniq.name = BINARY n.name and uniq.type_id = n.type_id and uniq.sex = n.sex) as uniq_nomenclature on uniq_nomenclature.id_nomen = stock_write_off_detail.nomenclature_id
-SET stock_write_off_detail.nomenclature_id = uniq_nomenclature.uniq_id_nomen; 
+LEFT JOIN nomenclature_temp on nomenclature_temp.id  = stock_write_off_detail.nomenclature_id
+SET stock_write_off_detail.nomenclature_id = nomenclature_temp.replace_to_id; 
  
 #   Проставление ссылок на складские операции. Версия запроса №2    
     UPDATE stock_write_off_detail
@@ -485,32 +437,24 @@ SET stock_write_off_detail.nomenclature_id = uniq_nomenclature.uniq_id_nomen;
 SET 
     warehouse_operation_id = operation_warehouse.id
     WHERE operation_warehouse.id > (SELECT max(warehouse_operation_id) FROM stock_expense_detail);
-    
-    ###### Удаление лишнего #########
+
+
+## Обновление id номенклатуры
+
+UPDATE stock_transfer_detail SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
+UPDATE operation_issued_in_subdivision SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
+
+###### Удаление лишнего #########
 
 ##### Удаление дублей в таблице номенклатур ########
-CREATE TEMPORARY TABLE nomenclature_temp
-as  (
-	SELECT n.id, ( 
-		SELECT id FROM nomenclature 
-		WHERE nomenclature.name <=> n.name AND nomenclature.type_id <=> n.type_id AND nomenclature.sex <=> n.sex 
-		LIMIT 1 ) AS replace_to_id 
-	FROM nomenclature n	
-);
-
-UPDATE stock_expense_detail SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
-UPDATE stock_income_detail  SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
-UPDATE stock_write_off_detail SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
-UPDATE stock_transfer_detail SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
-UPDATE operation_issued_by_employee SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
-UPDATE operation_issued_in_subdivision SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
-UPDATE operation_warehouse  SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id);
-UPDATE issuance_sheet_items SET nomenclature_id = (SELECT nomenclature_temp.replace_to_id FROM nomenclature_temp WHERE nomenclature_temp.id = nomenclature_id) WHERE nomenclature_id IS NOT NULL;
 
 DELETE from nomenclature
 WHERE nomenclature.id not in (
    SELECT DISTINCT replace_to_id FROM nomenclature_temp
 );
+
+### Удаление временной таблицы ###
+DROP TABLE nomenclature_temp;
 
 ### Удаление рабочего id 
 ALTER TABLE `operation_warehouse` 
