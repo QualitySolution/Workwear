@@ -346,7 +346,7 @@ LEFT JOIN nomenclature_temp on nomenclature_temp.id = nomenclature.id;
 # ТОЛЬКО ОПЕРАЦИИ ВЫДАЧИ СОТРУДНИКАМ
 
 UPDATE operation_issued_by_employee 
-JOIN stock_expense_detail on  stock_expense_detail.employee_issue_operation_id = operation_issued_by_employee.id
+LEFT JOIN stock_expense_detail on  stock_expense_detail.employee_issue_operation_id = operation_issued_by_employee.id
 LEFT JOIN stock_income_detail on stock_expense_detail.stock_income_detail_id = stock_income_detail.id 
 LEFT JOIN nomenclature_temp on nomenclature_temp.id = operation_issued_by_employee.nomenclature_id
 SET operation_issued_by_employee.nomenclature_id =  nomenclature_temp.replace_to_id, operation_issued_by_employee.size = nomenclature_temp.size, 
