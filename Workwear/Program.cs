@@ -126,7 +126,7 @@ namespace workwear
 		static void RegisterSQLScripts()
 		{
 			//Скрипты создания базы
-			DBCreator.AddBaseScript (
+			DBCreator.AddBaseScript(
 				new Version(2, 4),
 				"Чистая база",
 				"workwear.Updates.new_empty.sql"

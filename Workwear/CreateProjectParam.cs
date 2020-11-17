@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using Autofac;
+using QS.BaseParameters;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
 using QS.Deletion;
@@ -16,6 +17,9 @@ using QS.Project.Domain;
 using QS.Project.Search.GtkUI;
 using QS.Project.Services;
 using QS.Project.Services.GtkUI;
+using QS.Project.Versioning;
+using QS.Project.ViewModels;
+using QS.Project.Views;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Report.Views;
@@ -97,6 +101,7 @@ namespace workwear
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
 			builder.RegisterType<DefaultSessionProvider>().As<ISessionProvider>();
 			builder.Register<DbConnection>(c => Connection.ConnectionDB).AsSelf();
+			builder.RegisterType<BaseParameters>().As<ParametersService>();
 			#endregion
 
 			#region Сервисы
@@ -139,6 +144,11 @@ namespace workwear
 			builder.RegisterType<ReferenceRepresentation>().AsSelf();
 			#endregion
 
+			#region Отдельные диалоги
+			builder.RegisterType<AboutView>().AsSelf();
+			builder.RegisterType<AboutViewModel>().AsSelf();
+			#endregion
+
 			#region Rdl
 			builder.RegisterType<RdlViewerViewModel>().AsSelf();
 			#endregion
@@ -163,7 +173,8 @@ namespace workwear
 			builder.RegisterType<FeedReader>().AsSelf();
 			#endregion
 
-			#region Обновления
+			#region Обновления и версии
+			builder.RegisterType<ApplicationVersionInfo>().As<IApplicationInfo>();
 			builder.RegisterModule(new UpdaterAutofacModule());
 			#endregion
 

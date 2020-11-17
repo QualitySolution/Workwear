@@ -10,10 +10,8 @@ using QS.Project.Versioning;
 #endif
 #if ENTERPRISE
 [assembly: AssemblyModification(Name = "QSE", Title = "Предприятие")]
-[assembly: AssemblyСompatibleModification("gpl")]
-#else
-[assembly: AssemblyModification("gpl")]
 #endif
+[assembly: AssemblyСompatibleModification("gpl")]
 [assembly: AssemblyDescription("Программа позволяет вести учет внутреннего склада спецодежды и имущества выдаваемого сотрудникам.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]
