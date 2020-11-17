@@ -312,7 +312,7 @@ UPDATE stock_income_detail
 JOIN (
 	SELECT n.id as id_nomen, n.name, n.type_id, n.sex, n.size, n.growth, nomenclature_temp.replace_to_id as uniq_id_nomen 
         FROM nomenclature as n
-		LEFT JOIN nomenclature_temp on nomenclature_temp.id = = stock_income_detail.nomenclature_id
+		LEFT JOIN nomenclature_temp on nomenclature_temp.id = stock_income_detail.nomenclature_id
  SET stock_income_detail.nomenclature_id = nomenclature_temp.replace_to_id;
 
 #   Проставление ссылок на складские операции   
