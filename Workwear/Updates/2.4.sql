@@ -300,11 +300,12 @@ LEFT JOIN nomenclature_temp on nomenclature_temp.id = nomenclature.id;
 # ТОЛЬКО ОПЕРАЦИИ ВОЗВРАТА ОТ СОТРУДНИКОВ
 
 UPDATE operation_issued_by_employee 
-JOIN stock_income_detail on  stock_income_detail.employee_issue_operation_id = operation_issued_by_employee.id
+LEFT JOIN stock_income_detail on  stock_income_detail.employee_issue_operation_id = operation_issued_by_employee.id
 LEFT JOIN nomenclature_temp on nomenclature_temp.id = operation_issued_by_employee.nomenclature_id
 SET operation_issued_by_employee.nomenclature_id =  nomenclature_temp.replace_to_id, operation_issued_by_employee.size = nomenclature_temp.size, 
 operation_issued_by_employee.growth = nomenclature_temp.growth, 
-operation_issued_by_employee.wear_percent = CASE WHEN stock_income_detail.life_percent <= 0 THEN 0 ELSE 1 - stock_income_detail.life_percent END;
+operation_issued_by_employee.wear_percent = CASE WHEN stock_income_detail.life_percent <= 0 THEN 0 ELSE 1 - stock_income_detail.life_percent END
+WHERE returned > 0;
  
  
 # В самом stock_income_detail заменяется id номенклатуры на уникальный
@@ -351,7 +352,8 @@ LEFT JOIN stock_income_detail on stock_expense_detail.stock_income_detail_id = s
 LEFT JOIN nomenclature_temp on nomenclature_temp.id = operation_issued_by_employee.nomenclature_id
 SET operation_issued_by_employee.nomenclature_id =  nomenclature_temp.replace_to_id, operation_issued_by_employee.size = nomenclature_temp.size, 
 operation_issued_by_employee.growth = nomenclature_temp.growth, 
-operation_issued_by_employee.wear_percent = CASE WHEN stock_income_detail.life_percent <= 0 THEN 0 ELSE 1 - stock_income_detail.life_percent END;
+operation_issued_by_employee.wear_percent = CASE WHEN stock_income_detail.life_percent <= 0 THEN 0 ELSE 1 - stock_income_detail.life_percent END
+WHERE issued > 0;
 
 # В самом stock_expense_detail заменяется id номенклатуры на уникальный
 UPDATE stock_expense_detail
@@ -396,7 +398,7 @@ SET issuance_sheet_items.nomenclature_id = nomenclature_temp.replace_to_id,
 update stock_write_off_detail set warehouse_id = (select id from warehouse limit 1)
 where stock_write_off_detail.employee_issue_operation_id is null;
 
-#Добавление размеров в строки документа выдачи из справочника номенклатур
+#Добавление размеров в строки документа списания из справочника номенклатур
 update stock_write_off_detail
 JOIN nomenclature on stock_write_off_detail.nomenclature_id = nomenclature.id 
 SET stock_write_off_detail.size = nomenclature.size, stock_write_off_detail.growth = nomenclature.growth;
