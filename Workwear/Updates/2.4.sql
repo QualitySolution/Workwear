@@ -300,13 +300,12 @@ LEFT JOIN nomenclature_temp on nomenclature_temp.id = nomenclature.id;
 # ТОЛЬКО ОПЕРАЦИИ ВОЗВРАТА ОТ СОТРУДНИКОВ
 
 UPDATE operation_issued_by_employee 
-LEFT JOIN stock_income_detail on  stock_income_detail.employee_issue_operation_id = operation_issued_by_employee.id
+JOIN stock_income_detail on  stock_income_detail.employee_issue_operation_id = operation_issued_by_employee.id
 LEFT JOIN nomenclature_temp on nomenclature_temp.id = operation_issued_by_employee.nomenclature_id
 SET operation_issued_by_employee.nomenclature_id =  nomenclature_temp.replace_to_id, operation_issued_by_employee.size = nomenclature_temp.size, 
 operation_issued_by_employee.growth = nomenclature_temp.growth, 
 operation_issued_by_employee.wear_percent = CASE WHEN stock_income_detail.life_percent <= 0 THEN 0 ELSE 1 - stock_income_detail.life_percent END
 WHERE returned > 0;
- 
  
 # В самом stock_income_detail заменяется id номенклатуры на уникальный
 UPDATE stock_income_detail
@@ -436,6 +435,17 @@ SET stock_write_off_detail.nomenclature_id = nomenclature_temp.replace_to_id;
 SET 
     warehouse_operation_id = operation_warehouse.id
     WHERE operation_warehouse.id > (SELECT max(warehouse_operation_id) FROM stock_expense_detail);
+    
+    #  В operation_issued_by_employee добавляется size growth wear_percent, проставляется верный nomenclature_id
+# ТОЛЬКО ОПЕРАЦИИ СПИСАНИЯ ОТ СОТРУДНИКОВ
+
+UPDATE operation_issued_by_employee 
+JOIN stock_income_detail on  stock_income_detail.employee_issue_operation_id = operation_issued_by_employee.id
+LEFT JOIN nomenclature_temp on nomenclature_temp.id = operation_issued_by_employee.nomenclature_id
+SET operation_issued_by_employee.nomenclature_id =  nomenclature_temp.replace_to_id, operation_issued_by_employee.size = nomenclature_temp.size, 
+operation_issued_by_employee.growth = nomenclature_temp.growth, 
+operation_issued_by_employee.wear_percent = 
+WHERE returned > 0;
 
 
 ## Обновление id номенклатуры
