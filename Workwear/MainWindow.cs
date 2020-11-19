@@ -17,6 +17,7 @@ using QS.NewsFeed.Views;
 using QS.Project.Versioning;
 using QS.Project.Views;
 using QS.Report;
+using QS.Serial.ViewModels;
 using QS.Tdi;
 using QS.Tdi.Gtk;
 using QS.Updater;
@@ -319,7 +320,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionSNActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("EditSerialNumber");
-		EditSerialNumber.RunDialog();
+		NavigationManager.OpenViewModel<SerialNumberViewModel>(null);
 	}
 
 	protected void OnActionNormsActivated(object sender, EventArgs e)

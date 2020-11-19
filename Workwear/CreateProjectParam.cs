@@ -9,6 +9,7 @@ using QS.Dialog;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
+using QS.Features;
 using QS.Navigation;
 using QS.NewsFeed;
 using QS.Permissions;
@@ -24,6 +25,7 @@ using QS.Project.Views;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Report.Views;
+using QS.Serial.Views;
 using QS.Services;
 using QS.Tdi;
 using QS.Updater;
@@ -138,7 +140,13 @@ namespace workwear
 			builder.Register((ctx) => new AutofacViewModelsGtkPageFactory(AppDIContainer)).AsSelf();
 			builder.RegisterType<TdiNavigationManager>().AsSelf().As<INavigationManager>().As<ITdiCompatibilityNavigation>().SingleInstance();
 			builder.RegisterType<BasedOnNameTDIResolver>().As<ITDIWidgetResolver>();
-			builder.Register(cc => new ClassNamesBaseGtkViewResolver(typeof(RdlViewerView), typeof(OrganizationView), typeof(DeletionView), typeof(UpdateProcessView))).As<IGtkViewResolver>();
+			builder.Register(cc => new ClassNamesBaseGtkViewResolver(
+				typeof(RdlViewerView), 
+				typeof(OrganizationView), 
+				typeof(DeletionView), 
+				typeof(UpdateProcessView),
+				typeof(SerialNumberView)
+			)).As<IGtkViewResolver>();
 			#endregion
 
 			#region Старые диалоги
@@ -187,6 +195,7 @@ namespace workwear
 
 			#region Разделение версий
 			builder.RegisterType<FeaturesService>().AsSelf();
+			builder.RegisterModule<FeaturesAutofacModule>();
 			#endregion
 			AppDIContainer = builder.Build();
 		}

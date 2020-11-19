@@ -499,6 +499,14 @@
       <Project>{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}</Project>
       <Name>QS.Updater.Gtk</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Features.Gtk\QS.Features.Gtk.csproj">
+      <Project>{13970AEE-1019-4962-A8C7-899D350E0F10}</Project>
+      <Name>QS.Features.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Features\QS.Features.csproj">
+      <Project>{8984DB2F-4849-4F5B-915C-CE69537E93A8}</Project>
+      <Name>QS.Features</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
