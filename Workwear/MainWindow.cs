@@ -66,6 +66,9 @@ public partial class MainWindow : Gtk.Window
 
 		QSMain.CheckServer(this); // Проверяем настройки сервера
 
+		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
+		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
+
 		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
 			var checker = scope.Resolve<VersionCheckerService>();
 			checker.RunUpdate();
@@ -124,9 +127,6 @@ public partial class MainWindow : Gtk.Window
 		var EntityAutocompleteSelector = new JournalViewModelAutocompleteSelector<EmployeeCard, EmployeeJournalViewModel>(UoW, AutofacScope);
 		entitySearchEmployee.ViewModel = new EntitySearchViewModel<EmployeeCard>(EntityAutocompleteSelector);
 		entitySearchEmployee.ViewModel.EntitySelected += SearchEmployee_EntitySelected;
-
-		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
-		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
 
 		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользовтель его создать не сможет.
 		if(UoW.GetAll<Warehouse>().Count() == 0)
