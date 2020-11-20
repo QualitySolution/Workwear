@@ -346,7 +346,7 @@ LEFT JOIN nomenclature_temp on nomenclature_temp.id = nomenclature.id;
 # ТОЛЬКО ОПЕРАЦИИ ВЫДАЧИ СОТРУДНИКАМ
 
 UPDATE operation_issued_by_employee 
-LEFT JOIN stock_expense_detail on  stock_expense_detail.employee_issue_operation_id = operation_issued_by_employee.id
+JOIN stock_expense_detail on  stock_expense_detail.employee_issue_operation_id = operation_issued_by_employee.id
 LEFT JOIN stock_income_detail on stock_expense_detail.stock_income_detail_id = stock_income_detail.id 
 LEFT JOIN nomenclature_temp on nomenclature_temp.id = operation_issued_by_employee.nomenclature_id
 SET operation_issued_by_employee.nomenclature_id =  nomenclature_temp.replace_to_id, operation_issued_by_employee.size = nomenclature_temp.size, 
@@ -440,13 +440,28 @@ SET
 # ТОЛЬКО ОПЕРАЦИИ СПИСАНИЯ ОТ СОТРУДНИКОВ
 
 UPDATE operation_issued_by_employee 
-JOIN stock_income_detail on  stock_income_detail.employee_issue_operation_id = operation_issued_by_employee.id
+JOIN (select tt.*,
+	TO_DAYS( tt.ExpiryByNorm) - TO_DAYS( tt.StartOfUse)as ExpiryByNorm__StartOfUse,
+	TO_DAYS( Date(tt.time_return)) - TO_DAYS( tt.StartOfUse)as time_return__StartOfUse,
+	case when (tt.ExpiryByNorm - tt.StartOfUse) < 1 or (tt.ExpiryByNorm - tt.StartOfUse) is null then 1 else ( (TO_DAYS( Date(tt.time_return)) - TO_DAYS( tt.StartOfUse)) / (TO_DAYS( tt.ExpiryByNorm) - TO_DAYS( tt.StartOfUse)) ) end as percent
+ 	FROM (
+		select t.*,
+		(select ExpiryByNorm from operation_issued_by_employee  where id = t.issued_operation_id) as ExpiryByNorm ,
+		(select operation_time from operation_issued_by_employee  where id = t.issued_operation_id) as time_get,
+		(select StartOfUse from operation_issued_by_employee  where id = t.issued_operation_id) as StartOfUse
+ 		FROM
+			(SELECT operation_issued_by_employee.id as operation_issued_by_employee_id, issued_operation_id, operation_time as time_return 
+			FROM operation_issued_by_employee 
+			JOIN stock_write_off_detail on stock_write_off_detail.employee_issue_operation_id = operation_issued_by_employee.id
+			WHERE returned > 0) 
+		as t) 
+	as tt) as result_table on result_table.operation_issued_by_employee_id = operation_issued_by_employee.id
+
 LEFT JOIN nomenclature_temp on nomenclature_temp.id = operation_issued_by_employee.nomenclature_id
 SET operation_issued_by_employee.nomenclature_id =  nomenclature_temp.replace_to_id, operation_issued_by_employee.size = nomenclature_temp.size, 
 operation_issued_by_employee.growth = nomenclature_temp.growth, 
-operation_issued_by_employee.wear_percent = 
+operation_issued_by_employee.wear_percent = result_table.percent
 WHERE returned > 0;
-
 
 ## Обновление id номенклатуры
 
