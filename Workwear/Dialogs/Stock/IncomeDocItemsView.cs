@@ -139,7 +139,7 @@ namespace workwear
 				var obj = ytreeItems.GetSelectedObject<IncomeItem>();
 				var clothesType = obj.Nomenclature.Type.WearCategory;
 				if(clothesType != null)
-					buttonAddSizes.Sensitive = obj.Nomenclature.Type.Category == Domain.Regulations.ItemTypeCategory.wear
+					buttonAddSizes.Sensitive = obj.Nomenclature.Type.Category == ItemTypeCategory.wear
 						&& ytreeItems.Selection.CountSelectedRows() == 1
 						&& SizeHelper.HasСlothesSizeStd(clothesType.Value);
 				else

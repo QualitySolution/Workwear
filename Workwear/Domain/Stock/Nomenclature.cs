@@ -149,7 +149,6 @@ namespace workwear.Domain.Stock
 			nomenclature.type = this.type;
 			nomenclature.sex = this.sex;
 			nomenclature.sizeStd = this.sizeStd;
-			nomenclature.wearGrowthStd = this.wearGrowthStd;
 			nomenclature.comment = this.comment;
 			nomenclature.number = this.number;
 			return nomenclature;

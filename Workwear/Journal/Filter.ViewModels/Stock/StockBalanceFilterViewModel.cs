@@ -5,7 +5,7 @@ using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.JournalViewModels.Stock;
+using workwear.Journal.ViewModels.Stock;
 using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
 
@@ -32,6 +32,12 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		public virtual ItemTypeCategory? ItemTypeCategory {
 			get => itemTypeCategory;
 			set => SetField(ref itemTypeCategory, value);
+		}
+
+		private ProtectionTools protectionTools;
+		public virtual ProtectionTools ProtectionTools {
+			get => protectionTools;
+			set => SetField(ref protectionTools, value);
 		}
 
 		public readonly FeaturesService FeaturesService;
