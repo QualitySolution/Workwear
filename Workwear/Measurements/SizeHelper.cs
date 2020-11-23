@@ -103,6 +103,11 @@ namespace workwear.Measurements
 			return att.Length > 0;
 		}
 
+		/// <summary>
+		/// Проверяет нужно ли использовать рост(Growth) для текущего типа одежды
+		/// </summary>
+		/// <returns><c>true</c>, если нужно, <c>false</c>, если не нужно.</returns>
+		/// <param name="wearCategory">Тип одежды (enum).</param>
 		public static bool HasGrowthStandart(СlothesType wearCategory)
 		{
 			var att = wearCategory.GetAttribute<NeedGrowthAttribute>();
@@ -194,6 +199,20 @@ namespace workwear.Measurements
 		{
 			if(stdCode == null) return new string[] { " "};
 			return GetSizesList(GetSizeStdEnum(stdCode), excludeUse);
+		}
+		public static string[] GetGrowthsArray(object stdEnum)
+		{
+			if(stdEnum is GrowthStandartWear) {
+				switch((GrowthStandartWear)stdEnum) {
+					case GrowthStandartWear.Men:
+						return LookupSizes.MenGrowth.Select(g => g.Name).ToArray();
+					case GrowthStandartWear.Women:
+						return LookupSizes.WomenGrowth.Select(g => g.Name).ToArray();
+					case GrowthStandartWear.Universal:
+						return LookupSizes.UniversalGrowth.Select(g => g.Name).ToArray();
+				}
+			}
+			return null;
 		}
 
 		public static string[] GetSizesList (object stdEnum, params SizeUse[] excludeUse)

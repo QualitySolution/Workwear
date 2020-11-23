@@ -35,6 +35,7 @@ using workwear.Domain.Users;
 using workwear.Journal;
 using workwear.Repository.Operations;
 using workwear.Tools;
+using workwear.Tools.Features;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
 
@@ -100,7 +101,7 @@ namespace workwear
 			builder.RegisterModule(new DeletionAutofacModule());
 			builder.RegisterType<DeleteEntityGUIService>().As<IDeleteEntityService>();
 			builder.Register(x => DeleteConfig.Main).AsSelf();
-			#endregion
+ 			#endregion
 			//FIXME Нужно в конечнои итоге попытаться избавится от CommonServce вообще.
 			builder.RegisterType<CommonServices>().As<ICommonServices>();
 			builder.RegisterType<UserService>().As<IUserService>();
@@ -160,6 +161,9 @@ namespace workwear
 			builder.RegisterType<FeedReader>().AsSelf();
 			#endregion
 
+			#region Разделение версий
+			builder.RegisterType<FeaturesService>().AsSelf();
+			#endregion
 			AppDIContainer = builder.Build();
 		}
 	}

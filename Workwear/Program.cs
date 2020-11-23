@@ -12,7 +12,7 @@ using QSSupportLib;
 using QSTelemetry;
 
 namespace workwear
-{
+{	
 	partial class MainClass
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
@@ -130,7 +130,7 @@ namespace workwear
 		{
 			//Скрипты создания базы
 			DBCreator.AddBaseScript (
-				new Version(2, 3),
+				new Version(2, 4),
 				"Чистая база",
 				"workwear.Updates.new_empty.sql"
 			);
@@ -192,6 +192,11 @@ namespace workwear
 				new Version(2, 3),
 				new Version(2, 3, 3),
 				"workwear.Updates.2.3.3.sql");
+			DBUpdater.AddUpdate(
+				new Version(2, 3),
+				new Version(2, 4),
+				"workwear.Updates.2.4.sql");
+
 
 		}
 	}
