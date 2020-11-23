@@ -110,6 +110,8 @@ namespace workwear.ViewModels.Statements
 		void SelectSubdivisionDialog_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			foreach(var subdivisionNode in e.GetSelectedObjects<SubdivisionJournalNode>()) {
+				if(issuanceSheetViewModel.Entity.Subdivision == null)
+					issuanceSheetViewModel.Entity.Subdivision = issuanceSheetViewModel.UoW.GetById<Subdivision>(subdivisionNode.Id);
 				var inSubdivision = EmployeeRepository.GetActiveEmployeesFromSubdivision(issuanceSheetViewModel.UoW, subdivisionNode.Id);
 				foreach(var employee in inSubdivision) {
 					if(employees.All(x => x.Id != employee.Id))

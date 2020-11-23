@@ -1,25 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
 using Autofac;
 using NLog;
+using QS.Dialog;
+using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Report;
+using QS.Report.ViewModels;
+using QS.Services;
 using QS.Validation;
+using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
-using QS.ViewModels.Control.EEVM;
-using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Stock;
+using workwear.Repository.Stock;
+using workwear.Tools.Features;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Statements;
-using QS.Services;
-using QS.Dialog;
-using QS.Dialog.GtkUI;
-using QS.Report;
-using System.Collections.Generic;
-using QS.Report.ViewModels;
-using workwear.Repository.Stock;
 
 namespace workwear.ViewModels.Stock
 {
@@ -30,6 +31,7 @@ namespace workwear.ViewModels.Stock
 		public ExpenseDocItemsObjectViewModel DocItemsObjectViewModel;
 		IInteractiveQuestion interactive;
 		private readonly StockRepository stockRepository;
+		private readonly CommonMessages commonMessages;
 
 		public ExpenseObjectViewModel(IEntityUoWBuilder uowBuilder,
 									  IUnitOfWorkFactory unitOfWorkFactory,
@@ -39,6 +41,8 @@ namespace workwear.ViewModels.Stock
 									  IUserService userService,
 									  IInteractiveQuestion interactive,
 									  StockRepository stockRepository,
+									  FeaturesService featutesService,
+									  CommonMessages commonMessages,
 									  Subdivision subdivision = null
 									  )
 		: base(uowBuilder, unitOfWorkFactory, navigation, validator)
@@ -46,8 +50,7 @@ namespace workwear.ViewModels.Stock
 			Entity.Date = DateTime.Today;
 			this.interactive = interactive;
 			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
-
-
+			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			if(subdivision != null) {
 				Entity.Subdivision = subdivision;
 				Entity.Warehouse = subdivision.Warehouse;
@@ -59,7 +62,7 @@ namespace workwear.ViewModels.Stock
 			}
 
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW);
+				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featutesService);
 
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
@@ -147,7 +150,7 @@ namespace workwear.ViewModels.Stock
 		public void PrintIssuenceSheet()
 		{
 			if(UoW.HasChanges) {
-				if(QSOrmProject.CommonDialogs.SaveBeforePrint(Entity.GetType(), "ведомости"))
+				if(commonMessages.SaveBeforePrint(Entity.GetType(), "ведомости"))
 					Save();
 				else
 					return;

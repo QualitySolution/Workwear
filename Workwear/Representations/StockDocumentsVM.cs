@@ -14,11 +14,13 @@ using QSOrmProject.RepresentationModel;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.JournalFilters;
+using workwear.Tools.Features;
 
 namespace workwear.Representations
 {
 	public class StockDocumentsVM : RepresentationModelWithoutEntityBase<StockDocumentsVMNode>
 	{
+		private FeaturesService featuresService;
 		public StockDocumentsFilter Filter
 		{
 			get
@@ -214,8 +216,8 @@ namespace workwear.Representations
 			.AddColumn("Тип документа").SetDataProperty(node => node.DocTypeString)
 		    .AddColumn("Операция").SetDataProperty(node => node.Operation)
 			.AddColumn("Дата").SetDataProperty(node => node.DateString)
+			.AddColumn("Склад").Tag("warehouse").AddTextRenderer(x => x.Warehouse)
 			.AddColumn("Автор").SetDataProperty(node => node.Author)
-			.AddColumn("Склад").AddTextRenderer(x => x.Warehouse)
 			.AddColumn("Детали").AddTextRenderer(node => node.Description)
 			.Finish();
 
@@ -252,6 +254,11 @@ namespace workwear.Representations
 		)
 		{
 			this.UoW = uow;
+			featuresService = new FeaturesService();
+			if(!featuresService.Available(WorkwearFeature.Warehouses)) {
+				var column = columnsConfig.GetColumnsByTag("warehouse");
+				column.First().Visible = false;
+			}
 		}
 	}
 

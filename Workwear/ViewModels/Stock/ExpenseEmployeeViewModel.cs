@@ -22,6 +22,7 @@ using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository.Stock;
+using workwear.Tools.Features;
 using workwear.Tools.Oracle;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Statements;
@@ -35,6 +36,7 @@ namespace workwear.ViewModels.Stock
 		public ExpenseDocItemsEmployeeViewModel DocItemsEmployeeViewModel;
 		IInteractiveQuestion interactive;
 		private readonly CommonMessages commonMessages;
+		private readonly FeaturesService featuresService;
 		private readonly HRSystem hRSystem;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
@@ -46,6 +48,7 @@ namespace workwear.ViewModels.Stock
 			IInteractiveQuestion interactive,
 			StockRepository stockRepository,
 			CommonMessages commonMessages,
+			FeaturesService featuresService,
 			HRSystem hRSystem,
 			EmployeeCard employee = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
@@ -53,6 +56,7 @@ namespace workwear.ViewModels.Stock
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.interactive = interactive;
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.hRSystem = hRSystem ?? throw new ArgumentNullException(nameof(hRSystem));
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
@@ -66,7 +70,7 @@ namespace workwear.ViewModels.Stock
 			}
 
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW);
+				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService);
 			if(employee != null)
 				FillUnderreceived();
 

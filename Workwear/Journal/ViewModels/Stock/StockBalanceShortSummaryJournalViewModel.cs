@@ -1,5 +1,4 @@
 ﻿using System;
-using QS.Project.Journal;
 using System.Linq;
 using Autofac;
 using NHibernate;
@@ -9,10 +8,10 @@ using NHibernate.Transform;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Services;
 using workwear.Domain.Operations;
-using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Measurements;

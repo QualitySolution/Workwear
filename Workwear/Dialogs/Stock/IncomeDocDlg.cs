@@ -18,6 +18,7 @@ using workwear.Repository;
 using workwear.Tools;
 using workwear.ViewModels.Company;
 using workwear.Repository.Stock;
+using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
 
 namespace workwear
@@ -27,14 +28,19 @@ namespace workwear
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		ILifetimeScope AutofacScope;
 
+		private FeaturesService featuresService;
+		public FeaturesService FeaturesService { get => FeaturesService; private set => featuresService = value; }
+
 		public IncomeDocDlg()
 		{
 			this.Build();
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Income> ();
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
+			featuresService = new FeaturesService();
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW);
+				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW,featuresService);
+
 			ConfigureDlg ();
 		}
 
@@ -56,6 +62,7 @@ namespace workwear
 		{
 			this.Build ();
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Income> (id);
+			featuresService = new FeaturesService();
 			ConfigureDlg ();
 		}
 
@@ -95,6 +102,8 @@ namespace workwear
 				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
 				.UseViewModelDialog<SubdivisionViewModel>()
 				.Finish();
+			//Метод отключает модули спецодежды, которые недоступны для пользователя
+			DisableFeatures();
 		}
 
 		public override bool Save()
@@ -206,6 +215,18 @@ namespace workwear
 			fc.Destroy();
 			return nameFile;
 		}
+
+		#region Workwear featrures
+		private void DisableFeatures()
+		{
+			if(!featuresService.Available(WorkwearFeature.Warehouses)) {
+				label3.Visible = false;
+				entityWarehouseIncome.Visible = false;
+				if(Entity.Warehouse == null)
+					entityWarehouseIncome.ViewModel.Entity = Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, featuresService);
+			}
+		}
+		#endregion
 	}
 }
 

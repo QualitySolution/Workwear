@@ -40,6 +40,7 @@ using workwear.ViewModels.Company;
 using QS.NewsFeed;
 using QS.NewsFeed.Views;
 using workwear.ReportsDlg;
+using workwear.Tools.Features;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -49,6 +50,10 @@ public partial class MainWindow : Gtk.Window
 	public TdiNavigationManager NavigationManager;
 	public IProgressBarDisplayable ProgressBar;
 	public IUnitOfWork UoW = UnitOfWorkFactory.CreateWithoutRoot();
+
+	private FeaturesService featuresService;
+	public FeaturesService FeaturesService { get => FeaturesService; private set => featuresService = value; }
+
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
@@ -63,7 +68,6 @@ public partial class MainWindow : Gtk.Window
 		MainSupport.LoadBaseParameters();
 
 		MainUpdater.RunCheckVersion(true, true, true);
-
 
 		if(QSMain.User.Login == "root") {
 			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
@@ -122,6 +126,18 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
 		NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
+
+		//Настраиваем склады (проверяем, если есть уже склады , то "Default Warehouse" не создавать)
+		if(!(UoW.GetAll<Warehouse>().Count() > 0))
+			CreateDefaultWarehouse();
+		featuresService = new FeaturesService();
+		DisableFeatures();
+	}
+	private void CreateDefaultWarehouse()
+	{
+		Warehouse warehouse = new Warehouse();
+		warehouse.Name = "Основной склад";
+		UoW.Session.Save(warehouse);
 	}
 
 	void NavigationManager_ViewModelOpened(object sender, ViewModelOpenedEventArgs e)
@@ -129,6 +145,15 @@ public partial class MainWindow : Gtk.Window
 		if(e.ViewModel != null)
 			MainTelemetry.AddCount(e.ViewModel.GetType().Name.Replace("ViewModel", ""));
 	}
+
+	#region Workwear featrures
+	private void DisableFeatures()
+	{
+		if(!featuresService.Available(WorkwearFeature.Warehouses)) {
+			ActionWarehouse.Visible = false;
+		}
+	}
+	#endregion
 
 	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e)
 	{
@@ -337,6 +362,10 @@ public partial class MainWindow : Gtk.Window
 		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
 		page.ViewModel.ShowSummary = true;
 		page.ViewModel.Filter.ShowNegativeBalance = true;
+		if(!featuresService.Available(WorkwearFeature.Warehouses)) {
+			//Здесь устанавливается склад,т.к. по другому как его поставить я не нашёл
+			page.ViewModel.Filter.Warehouse = new workwear.Repository.Stock.StockRepository().GetDefaultWarehouse(UoW, featuresService);
+		}
 	}
 
 	protected void OnActionStockDocsActivated(object sender, EventArgs e)

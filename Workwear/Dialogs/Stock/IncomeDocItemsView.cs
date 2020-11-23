@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using Gtk;
@@ -14,6 +15,7 @@ using workwear.Journal.ViewModels.Stock;
 using workwear.Measurements;
 using workwear.Representations.Organization;
 using workwear.ViewModels.Stock;
+using workwear.ViewModels.Stock.Widgets;
 
 namespace workwear
 {
@@ -42,6 +44,9 @@ namespace workwear
 				CalculateTotal();
 
 				IncomeDoc.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
+
+				if(incomeDoc.Operation != IncomeOperations.Enter)
+					buttonAddSizes.Visible = false;
 			}
 		}
 
@@ -83,12 +88,12 @@ namespace workwear
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<IncomeItem> ()
 				.AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
 				.AddColumn("Сертификат").AddTextRenderer(e => e.Certificate).Editable()
-				.AddColumn("Размер")
+				.AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.Size)
 					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.SizeStd, SizeUse.HumanOnly))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.SizeStd != null)
 					.AddSetter((c, n) => c.Foreground = SizeHelper.GetSizesListByStdCode(n.Nomenclature.SizeStd).Contains(n.Size) ? null : "red")
-				.AddColumn("Рост")
+				.AddColumn("Рост").MinWidth(70)
 					.AddComboRenderer(x => x.WearGrowth)
 					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.WearGrowthStd, SizeUse.HumanOnly))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.WearGrowthStd != null)
@@ -103,6 +108,8 @@ namespace workwear
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
+
+		
 		}
 
 		#region PopupMenu
@@ -130,8 +137,19 @@ namespace workwear
 		void YtreeItems_Selection_Changed (object sender, EventArgs e)
 		{
 			buttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
+			if(ytreeItems.GetSelectedObject<IncomeItem>() != null) {
+				var obj = ytreeItems.GetSelectedObject<IncomeItem>();
+				var clothesType = obj.Nomenclature.Type.WearCategory;
+				if(clothesType != null)
+					buttonAddSizes.Sensitive = obj.Nomenclature.Type.Category == ItemTypeCategory.wear
+						&& ytreeItems.Selection.CountSelectedRows() == 1
+						&& SizeHelper.HasСlothesSizeStd(clothesType.Value);
+				else
+					buttonAddSizes.Sensitive = false;
+			}
+			else
+				buttonAddSizes.Sensitive = false;
 		}
-
 		protected void OnButtonAddClicked (object sender, EventArgs e)
 		{
 			if(IncomeDoc.Operation == IncomeOperations.Return)
@@ -191,6 +209,7 @@ namespace workwear
 		protected void OnButtonDelClicked (object sender, EventArgs e)
 		{
 			IncomeDoc.RemoveItem (ytreeItems.GetSelectedObject<IncomeItem> ());
+			buttonAddSizes.Sensitive = false;
 			CalculateTotal();
 		}
 
@@ -224,6 +243,50 @@ namespace workwear
 				}
 				dlg.Destroy();
 			}
+		}
+
+		protected void OnButtonAddSizesCliked(object sender, EventArgs e)
+		{
+			var item = ytreeItems.GetSelectedObject<IncomeItem>();
+			Dictionary<string, List<string>> excludedSizeDictionary = null;
+			if(item.Nomenclature.Type.WearCategory == СlothesType.Gloves ||
+					 item.Nomenclature.Type.WearCategory == СlothesType.Headgear ||
+					item.Nomenclature.Type.WearCategory == СlothesType.Shoes ||
+					  item.Nomenclature.Type.WearCategory == СlothesType.WinterShoes) {
+
+				excludedSizeDictionary = new Dictionary<string, List<string>>();
+				var excludedSize = new List<string>(IncomeDoc.Items.Where(i => item != null && i.Nomenclature.Id == item.Nomenclature.Id && !String.IsNullOrEmpty(i.Size)).Select(i => i.Size));
+				if(excludedSize.Count > 0)
+					excludedSizeDictionary.Add("", excludedSize);
+			}
+			else if(item.Nomenclature.Type.WearCategory == СlothesType.Wear)
+				excludedSizeDictionary = IncomeDoc.Items
+							.Where(i => item != null && i.Nomenclature.Id == item.Nomenclature.Id)
+							.GroupBy(x => x.WearGrowth)
+							.Where(g => g.Key != null)
+							.ToDictionary(g => g.Key, g => new List<string>(g.Select(x => x.Size)));
+				if(item == null)
+					return;
+				if(item.Nomenclature == null)
+					return;
+				QS.Navigation.IPage<SizeWidgetViewModel> page = null;
+				if(excludedSizeDictionary != null && excludedSizeDictionary.Count > 0)
+					page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, Nomenclature, Dictionary<string, List<string>>>
+					(null, item.Nomenclature, excludedSizeDictionary);
+				else
+					page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, Nomenclature>
+					(null, item.Nomenclature);
+				page.ViewModel.AddedSizes += SelectWearSize_SizeSelected;
+
+		}
+
+		void SelectWearSize_SizeSelected(object sender , AddedSizesEventArgs e)
+		{
+			var item = ytreeItems.GetSelectedObject<IncomeItem>();
+			if(String.IsNullOrWhiteSpace(item.Size))
+				IncomeDoc.RemoveItem(item);
+			e.SizesWithAmount.ToList().ForEach(i => IncomeDoc.AddItem(e.Source, e.Growth, i.Key, i.Value));
+			CalculateTotal();
 		}
 	}
 }
