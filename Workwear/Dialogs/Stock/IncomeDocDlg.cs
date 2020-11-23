@@ -188,7 +188,7 @@ namespace workwear
 			}
 			else {
 				foreach(var r in readerIncomeFromXML1C.ListLineIncomes)
-					Entity.AddItem(r.Nomenclature, r.Count, r.Size, r.Growth);
+					Entity.AddItem(r.Nomenclature, r.Size, r.Growth, r.Count);
 			}
 		}
 
