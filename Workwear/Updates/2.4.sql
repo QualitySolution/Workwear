@@ -334,7 +334,7 @@ SET stock_expense_detail.size = nomenclature.size, stock_expense_detail.growth =
 INSERT INTO operation_warehouse (operation_time, warehouse_receipt_id, warehouse_expense_id, nomenclature_id, size, growth, amount, wear_percent, cost, work_id)
 SELECT  stock_expense.date, null, (select id from warehouse limit 1) as warehouse,  
 		nomenclature_temp.replace_to_id, nomenclature.size, nomenclature.growth, stock_expense_detail.quantity,
-		case when stock_income_detail.life_percent <= 0 then 0 else 1 - stock_income_detail.life_percent end, 
+		case when stock_income_detail.life_percent <= 0 then 0 else stock_income_detail.life_percent end, 
 		stock_income_detail.cost,
         stock_expense_detail.id
 FROM stock_expense_detail
