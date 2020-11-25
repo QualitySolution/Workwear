@@ -286,7 +286,7 @@ ADD COLUMN `work_id` INT NULL AFTER `cost`;
 #Создание складских операций по строкам документа прихода
 INSERT INTO operation_warehouse (operation_time, warehouse_receipt_id, warehouse_expense_id, nomenclature_id, size, growth, amount, wear_percent, cost, work_id)
 SELECT  stock_income.date, (select id from warehouse limit 1) as warehouse, null, 
-		nomenclature_temp.replace_to_id, stock_income_detail.size, stock_income_detail.growth, stock_income_detail.quantity,
+		nomenclature_temp.replace_to_id, nomenclature.size, nomenclature.growth, stock_income_detail.quantity,
 		case when stock_income_detail.life_percent <= 0 then 0 else 1 - stock_income_detail.life_percent end, 
 		stock_income_detail.cost,
         stock_income_detail.id
@@ -317,7 +317,7 @@ SET stock_income_detail.nomenclature_id = nomenclature_temp.replace_to_id;
         JOIN
     operation_warehouse ON operation_warehouse.work_id = stock_income_detail.id
 SET 
-    warehouse_operation_id = operation_warehouse.id;   
+    warehouse_operation_id = operation_warehouse.id;
     
     ###########################      Для stock_expense  и  stock_expense_detail    ###################
     
@@ -332,7 +332,7 @@ SET stock_expense_detail.size = nomenclature.size, stock_expense_detail.growth =
 #Создание складских операций по строкам документа выдачи
 INSERT INTO operation_warehouse (operation_time, warehouse_receipt_id, warehouse_expense_id, nomenclature_id, size, growth, amount, wear_percent, cost, work_id)
 SELECT  stock_expense.date, null, (select id from warehouse limit 1) as warehouse,  
-		nomenclature_temp.replace_to_id, stock_expense_detail.size, stock_expense_detail.growth, stock_expense_detail.quantity,
+		nomenclature_temp.replace_to_id, nomenclature.size, nomenclature.growth, stock_expense_detail.quantity,
 		case when stock_income_detail.life_percent <= 0 then 0 else 1 - stock_income_detail.life_percent end, 
 		stock_income_detail.cost,
         stock_expense_detail.id
@@ -412,7 +412,7 @@ nomenclature_temp.replace_to_id,
 stock_write_off_detail.size,
 stock_write_off_detail.growth,
 stock_write_off_detail.quantity,
-stock_income_detail.life_percent,
+case when stock_income_detail.life_percent <= 0 then 0 else 1 - stock_income_detail.life_percent end,
 stock_income_detail.cost,
 stock_write_off_detail.id
 
@@ -443,7 +443,7 @@ UPDATE operation_issued_by_employee
 JOIN (select tt.*,
 	TO_DAYS( tt.ExpiryByNorm) - TO_DAYS( tt.StartOfUse)as ExpiryByNorm__StartOfUse,
 	TO_DAYS( Date(tt.time_return)) - TO_DAYS( tt.StartOfUse)as time_return__StartOfUse,
-	case when (tt.ExpiryByNorm - tt.StartOfUse) < 1 or (tt.ExpiryByNorm - tt.StartOfUse) is null then 1 else ( (TO_DAYS( Date(tt.time_return)) - TO_DAYS( tt.StartOfUse)) / (TO_DAYS( tt.ExpiryByNorm) - TO_DAYS( tt.StartOfUse)) ) end as percent
+	case when (tt.ExpiryByNorm - tt.StartOfUse) < 1 or (tt.ExpiryByNorm - tt.StartOfUse) is null then 0 else ( (TO_DAYS( Date(tt.time_return)) - TO_DAYS( tt.StartOfUse)) / (TO_DAYS( tt.ExpiryByNorm) - TO_DAYS( tt.StartOfUse)) ) end as percent
  	FROM (
 		select t.*,
 		(select ExpiryByNorm from operation_issued_by_employee  where id = t.issued_operation_id) as ExpiryByNorm ,
