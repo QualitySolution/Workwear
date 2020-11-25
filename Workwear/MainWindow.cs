@@ -41,6 +41,8 @@ using QS.NewsFeed;
 using QS.NewsFeed.Views;
 using workwear.ReportsDlg;
 using workwear.Tools.Features;
+using workwear.ViewModels.User;
+using QS.Services;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -640,5 +642,18 @@ public partial class MainWindow : Gtk.Window
 			QSReport.ReportViewDlg.GenerateHashName(widget),
 			() => new QSReport.ReportViewDlg(widget)
 		);
+	}
+
+	protected void OnActionUserSettingsActivated(object sender, EventArgs e)
+	{
+		int idSetting;
+		using(IUnitOfWork uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+			var user = AutofacScope.Resolve<IUserService>();
+			idSetting = uow.Session.QueryOver<UserSettings>()
+			.Where(x => x.User.Id == user.CurrentUserId)
+			.Select(x => x.Id)	
+			.SingleOrDefault<int>();
+		}
+		MainClass.MainWin.NavigationManager.OpenViewModel<UserSettingsViewModel, IEntityUoWBuilder > (null, EntityUoWBuilder.ForOpen(idSetting));
 	}
 }

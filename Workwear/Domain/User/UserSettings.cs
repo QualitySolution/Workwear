@@ -2,6 +2,8 @@
 using Gtk;
 using QS.DomainModel.Entity;
 using QS.Project.Domain;
+using workwear.Domain.Company;
+using workwear.Domain.Stock;
 
 namespace workwear.Domain.Users
 {
@@ -47,6 +49,37 @@ namespace workwear.Domain.Users
 			set { SetField(ref showToolbar, value, () => ShowToolbar); }
 		}
 
+		private Warehouse defaultWarehouseId;
+
+		[Display(Name = "Склад по умолчанию")]
+		public virtual Warehouse DefaultWarehouseId {
+			get { return defaultWarehouseId; }
+			set { SetField(ref defaultWarehouseId, value, () => DefaultWarehouseId); }
+		}
+
+		private Organization defaultOrganizationId;
+
+		[Display(Name = "Организация по умолчанию")]
+		public virtual Organization DefaultOrganizationId {
+			get { return defaultOrganizationId; }
+			set { SetField(ref defaultOrganizationId, value, () => DefaultOrganizationId); }
+		}
+
+		private EmployeeCard defaultResponsiblePersonId;
+
+		[Display(Name = "Ответственное лицо по умолчанию")]
+		public virtual EmployeeCard DefaultResponsiblePersonId {
+			get { return defaultResponsiblePersonId; }
+			set { SetField(ref defaultResponsiblePersonId, value, () => DefaultResponsiblePersonId); }
+		}
+
+		private Leader defaultLeaderId;
+
+		[Display(Name = "Руководитель по умолчанию")]
+		public virtual Leader DefaultLeaderId {
+			get { return defaultLeaderId; }
+			set { SetField(ref defaultLeaderId, value, () => DefaultLeaderId); }
+		}
 		#endregion
 
 		#region Расчетные
