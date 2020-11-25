@@ -1,11 +1,6 @@
-﻿using Gamma.Binding.Converters;
-using NLog;
-using QS.Views.Dialog;
-using workwear.Domain.Stock;
+﻿using QS.Views.Dialog;
 using workwear.Domain.Users;
-using workwear.Measurements;
 using workwear.ViewModels.User;
-using workwear.ViewModels.Stock;
 
 namespace workwear.Views.User
 {
@@ -15,6 +10,16 @@ namespace workwear.Views.User
 		public UserSettingsView(UserSettingsViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
+			ConfigureDlg();
+			CommonButtonSubscription();
+		}
+
+		private void ConfigureDlg()
+		{
+			entityentryWarehouse.ViewModel = ViewModel.WarehouseFromEntryViewModel;
+			entityentryLeader.ViewModel = ViewModel.LeaderFromEntryViewModel;
+			entityentryOrganization.ViewModel = ViewModel.OrganizationFromEntryViewModel;
+			entityentryResponsiblePerson.ViewModel = ViewModel.ResponsiblePersonFromEntryViewModel;
 		}
 
 	}
