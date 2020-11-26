@@ -158,7 +158,8 @@ namespace workwear.Views.User
 			// Container child table1.Gtk.Table+TableChild
 			this.label16 = new global::Gtk.Label();
 			this.label16.Name = "label16";
-			this.label16.LabelProp = global::Mono.Unix.Catalog.GetString("Ответственное лицо по умолчанию:");
+			this.label16.Xalign = 1F;
+			this.label16.LabelProp = global::Mono.Unix.Catalog.GetString("Материально ответственное \nлицо по умолчанию:");
 			this.table1.Add(this.label16);
 			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.label16]));
 			w13.TopAttach = ((uint)(3));

@@ -65,10 +65,10 @@ namespace workwear.Domain.Users
 			set { SetField(ref defaultOrganization, value, () => DefaultOrganization); }
 		}
 
-		private EmployeeCard defaultResponsiblePerson;
+		private Leader defaultResponsiblePerson;
 
 		[Display(Name = "Ответственное лицо по умолчанию")]
-		public virtual EmployeeCard DefaultResponsiblePerson {
+		public virtual Leader DefaultResponsiblePerson {
 			get { return defaultResponsiblePerson; }
 			set { SetField(ref defaultResponsiblePerson, value, () => DefaultResponsiblePerson); }
 		}

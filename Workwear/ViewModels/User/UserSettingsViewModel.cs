@@ -26,7 +26,7 @@ namespace workwear.ViewModels.User
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
 		public EntityEntryViewModel<Leader> LeaderFromEntryViewModel;
 		public EntityEntryViewModel<Organization> OrganizationFromEntryViewModel;
-		public EntityEntryViewModel<EmployeeCard> ResponsiblePersonFromEntryViewModel;
+		public EntityEntryViewModel<Leader> ResponsiblePersonFromEntryViewModel;
 
 		public ILifetimeScope AutofacScope;
 
@@ -50,8 +50,8 @@ namespace workwear.ViewModels.User
 				 .Finish();
 
 			ResponsiblePersonFromEntryViewModel = entryBuilder.ForProperty(x => x.DefaultResponsiblePerson)
-				 .UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
-				 .UseViewModelDialog<EmployeeViewModel>()
+				 .UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
+				 .UseViewModelDialog<LeadersViewModel>()
 				 .Finish();
 
 			OrganizationFromEntryViewModel = entryBuilder.ForProperty(x => x.DefaultOrganization)
