@@ -73,7 +73,8 @@ namespace workwear.ViewModels.Statements
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
 			NotifyConfiguration.Instance.BatchSubscribeOnEntity<ExpenseItem>(Expense_Changed);
-			GetDefualtSetting();
+			if (Entity.Id == 0 )
+				GetDefualtSetting();
 		}
 
 		#region Таблица 
