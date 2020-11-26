@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Autofac;
 using NLog;
@@ -86,16 +86,6 @@ namespace workwear.ViewModels.Stock
 		public EntityEntryViewModel<Subdivision> SubdivisionViewModel;
 		#endregion
 
-		public void CreateIssuanceSheet()
-		{
-			Entity.CreateIssuanceSheet();
-		}
-
-		public void OpenIssuanceSheetViewModel()
-		{
-			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
-		}
-
 		public override bool Save()
 		{
 			if(!Validate())
@@ -110,60 +100,6 @@ namespace workwear.ViewModels.Stock
 
 			logger.Info("Ok");
 			return true;
-		}
-
-		private void IssuanceSheetOpen()
-		{
-			Save();
-			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
-		}
-
-		private void Print()
-		{
-			Save();
-			var reportInfo = new ReportInfo {
-				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
-				Identifier = "Statements.IssuanceSheet",
-				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.IssuanceSheet.Id }
-				}
-			};
-			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
-		}
-
-		public void OpenIssuenceSheet()
-		{
-			if(UoW.HasChanges) {
-				if(MessageDialogHelper.RunQuestionDialog("Сохранить документ выдачи перед открытием ведомости?"))
-					Save();
-				else
-					return;
-			}
-			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
-		}
-
-		public void CreateIssuenceSheet()
-		{
-			Entity.CreateIssuanceSheet();
-		}
-
-		public void PrintIssuenceSheet()
-		{
-			if(UoW.HasChanges) {
-				if(commonMessages.SaveBeforePrint(Entity.GetType(), "ведомости"))
-					Save();
-				else
-					return;
-			}
-
-			var reportInfo = new ReportInfo {
-				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
-				Identifier = "Statements.IssuanceSheet",
-				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.IssuanceSheet.Id }
-				}
-			};
-			MainClass.MainWin.NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 	}
 }
