@@ -21,6 +21,7 @@ using QSReport;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
+using workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.ViewModels.Statements;
@@ -69,6 +70,15 @@ namespace workwear.ViewModels.Stock
 			Entity.ObservableItemsNomenclature.ListContentChanged += ObservableItemsNomenclature_ListContentChanged;
 			Entity.ObservableEmployeeCard.ListContentChanged += ObservableItemsNomenclature_ListContentChanged;
 			ValidateNomenclature();
+			GetDefualtSetting();
+		}
+		void GetDefualtSetting()
+		{
+			var user = AutofacScope.Resolve<IUserService>();
+			UserSettings settings = UoW.Session.QueryOver<UserSettings>()
+			.Where(x => x.User.Id == user.CurrentUserId).SingleOrDefault<UserSettings>(); 
+			if(settings?.DefaultWarehouse != null)
+				Entity.WarehouseFrom = settings.DefaultWarehouse;
 		}
 
 		void ObservableItemsNomenclature_ListContentChanged(object sender, EventArgs e)
