@@ -76,7 +76,7 @@ namespace workwear.ViewModels.Stock
 			ValidateNomenclature();
 
 			if(Entity.WarehouseFrom == null)
-				Entity.WarehouseFrom = stockRepository.GetDefaultWarehouse(UoW, featutesService, autofacScope.Resolve<IUserService>().CurrentUserId);
+				Entity.WarehouseFrom = stockRepository.GetDefaultWarehouse(UoW, featutesService, userService.CurrentUserId);
 		}
 
 		void ObservableItemsNomenclature_ListContentChanged(object sender, EventArgs e)
