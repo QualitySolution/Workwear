@@ -17,6 +17,7 @@ using workwear.ViewModels.Company;
 using workwear.Repository.Stock;
 using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
+using QS.Services;
 
 namespace workwear
 {
@@ -36,7 +37,7 @@ namespace workwear
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
 			featuresService = new FeaturesService();
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW,featuresService);
+				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW,featuresService, UserRepository.GetMyUser(UoW).Id);
 
 			ConfigureDlg ();
 		}
@@ -155,7 +156,7 @@ namespace workwear
 				label3.Visible = false;
 				entityWarehouseIncome.Visible = false;
 				if(Entity.Warehouse == null)
-					entityWarehouseIncome.ViewModel.Entity = Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, featuresService);
+					entityWarehouseIncome.ViewModel.Entity = Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
 			}
 		}
 		#endregion

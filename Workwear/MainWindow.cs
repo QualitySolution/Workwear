@@ -366,7 +366,7 @@ public partial class MainWindow : Gtk.Window
 		page.ViewModel.Filter.ShowNegativeBalance = true;
 		if(!featuresService.Available(WorkwearFeature.Warehouses)) {
 			//Здесь устанавливается склад,т.к. по другому как его поставить я не нашёл
-			page.ViewModel.Filter.Warehouse = new workwear.Repository.Stock.StockRepository().GetDefaultWarehouse(UoW, featuresService);
+			page.ViewModel.Filter.Warehouse = new workwear.Repository.Stock.StockRepository().GetDefaultWarehouse(UoW, featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
 		}
 	}
 

@@ -11,6 +11,7 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.Services;
 using QS.Tdi;
 using QS.Validation;
 using QS.ViewModels;
@@ -20,6 +21,7 @@ using QSReport;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
+using workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.ViewModels.Company;
@@ -71,10 +73,23 @@ namespace workwear.ViewModels.Statements
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
 			NotifyConfiguration.Instance.BatchSubscribeOnEntity<ExpenseItem>(Expense_Changed);
+			GetDefualtSetting();
 		}
 
 		#region Таблица 
 
+		void GetDefualtSetting()
+		{
+			var user = AutofacScope.Resolve<IUserService>();
+			UserSettings settings = UoW.Session.QueryOver<UserSettings>()
+			.Where(x => x.User.Id == user.CurrentUserId).SingleOrDefault<UserSettings>();
+			if(settings?.DefaultResponsiblePerson != null)
+				Entity.ResponsiblePerson = settings.DefaultResponsiblePerson;
+			if(settings?.DefaultLeader != null)
+				Entity.HeadOfDivisionPerson = settings.DefaultLeader;
+			if(settings?.DefaultOrganization!= null)
+				Entity.Organization = settings.DefaultOrganization;
+		}
 		public void AddItems()
 		{
 			var selectPage = NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(this, OpenPageOptions.AsSlave);

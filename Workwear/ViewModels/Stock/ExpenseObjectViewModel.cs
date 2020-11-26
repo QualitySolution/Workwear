@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Autofac;
 using NLog;
@@ -15,6 +15,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
+using workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository.Stock;
@@ -62,7 +63,7 @@ namespace workwear.ViewModels.Stock
 			}
 
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featutesService);
+				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featutesService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
@@ -76,7 +77,7 @@ namespace workwear.ViewModels.Stock
 								.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
 								.UseViewModelDialog<SubdivisionViewModel>()
 								.Finish();
-
+								
 			var parameter = new TypedParameter(typeof(ExpenseObjectViewModel), this);
 			DocItemsObjectViewModel = this.autofacScope.Resolve<ExpenseDocItemsObjectViewModel>(parameter);
 		}
