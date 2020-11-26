@@ -41,6 +41,8 @@ using QS.NewsFeed;
 using QS.NewsFeed.Views;
 using workwear.ReportsDlg;
 using workwear.Tools.Features;
+using workwear.ViewModels.User;
+using QS.Services;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -362,10 +364,7 @@ public partial class MainWindow : Gtk.Window
 		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
 		page.ViewModel.ShowSummary = true;
 		page.ViewModel.Filter.ShowNegativeBalance = true;
-		if(!featuresService.Available(WorkwearFeature.Warehouses)) {
-			//Здесь устанавливается склад,т.к. по другому как его поставить я не нашёл
-			page.ViewModel.Filter.Warehouse = new workwear.Repository.Stock.StockRepository().GetDefaultWarehouse(UoW, featuresService);
-		}
+		page.ViewModel.Filter.Warehouse = new workwear.Repository.Stock.StockRepository().GetDefaultWarehouse(UoW, featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
 	}
 
 	protected void OnActionStockDocsActivated(object sender, EventArgs e)
@@ -640,5 +639,18 @@ public partial class MainWindow : Gtk.Window
 			QSReport.ReportViewDlg.GenerateHashName(widget),
 			() => new QSReport.ReportViewDlg(widget)
 		);
+	}
+
+	protected void OnActionUserSettingsActivated(object sender, EventArgs e)
+	{
+		int idSetting;
+		using(IUnitOfWork uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+			var user = AutofacScope.Resolve<IUserService>();
+			idSetting = uow.Session.QueryOver<UserSettings>()
+			.Where(x => x.User.Id == user.CurrentUserId)
+			.Select(x => x.Id)	
+			.SingleOrDefault<int>();
+		}
+		MainClass.MainWin.NavigationManager.OpenViewModel<UserSettingsViewModel, IEntityUoWBuilder > (null, EntityUoWBuilder.ForOpen(idSetting));
 	}
 }

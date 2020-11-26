@@ -13,7 +13,6 @@ namespace workwear.Views.Stock
 			this.Build();
 			ConfigureDlg();
 			CommonButtonSubscription();
-			IssuanceSheetSensetive();
 		}
 
 		private void ConfigureDlg()
@@ -35,26 +34,6 @@ namespace workwear.Views.Stock
 			entityWarehouseExpense.ViewModel = ViewModel.WarehouseExpenceViewModel;
 			entitySubdivision.ViewModel = ViewModel.SubdivisionViewModel;
 
-			IssuanceSheetSensetive();
-		}
-
-		private void IssuanceSheetSensetive()
-		{
-			buttonIssuanceSheetCreate.Visible = Entity.IssuanceSheet == null;
-			buttonIssuanceSheetOpen.Visible = buttonIssuanceSheetPrint.Visible = Entity.IssuanceSheet != null;
-		}
-		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e)
-		{
-			ViewModel.CreateIssuenceSheet();
-			IssuanceSheetSensetive();
-		}
-		protected void OnButtonIssuanceSheetOpenClicked(object sender, EventArgs e)
-		{
-			ViewModel.OpenIssuenceSheet();
-		}
-		protected void OnButtonIssuanceSheetPrintClicked(object sender, EventArgs e)
-		{
-			ViewModel.PrintIssuenceSheet();
 		}
 	}
 }

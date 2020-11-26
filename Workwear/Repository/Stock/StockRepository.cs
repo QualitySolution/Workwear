@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
+using QS.Services;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
+using workwear.Domain.Users;
 using workwear.Tools.Features;
 
 namespace workwear.Repository.Stock
@@ -17,16 +20,21 @@ namespace workwear.Repository.Stock
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		/// <summary>
-		/// Возвращает склад по умолчанию при создании различных документов и прочее. Сейчас возвращается склад если он единственный,
-		/// чтобы его не заполнять, в будущем склад по умолчанию можно будет настроит у пользователя. А так же этот метод дожне будет создавать
-		/// новый склад в версиях программы без поддежки складов, чтобы не оказалось что склада нет вообще.
+		/// Возвращается первый склад из БД, если версия программы с единственным складом.
+		/// Возвращает склад по умолчанию, определенный в настройках пользователя, при создании различных документов и прочее.
 		/// </summary>
-		public virtual Warehouse GetDefaultWarehouse(IUnitOfWork uow, FeaturesService featureService)
+		public virtual Warehouse GetDefaultWarehouse(IUnitOfWork uow, FeaturesService featureService, int idUser)
 		{
 			if(!featureService.Available(WorkwearFeature.Warehouses)) {
 				var warehous = uow.Session.Query<Warehouse>().FirstOrDefault();
 				return warehous;
-			}	
+			}
+
+			UserSettings settings = uow.Session.QueryOver<UserSettings>()
+			.Where(x => x.User.Id == idUser).SingleOrDefault<UserSettings>();
+			if(settings?.DefaultWarehouse != null) 
+				return settings.DefaultWarehouse;
+
 			var warehouses = uow.GetAll<Warehouse>().Take(2).ToList();
 			return warehouses.Count == 1 ? warehouses.First() : null; 
 		}
