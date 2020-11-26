@@ -148,7 +148,7 @@ namespace workwear.Views.User
 			this.label15 = new global::Gtk.Label();
 			this.label15.Name = "label15";
 			this.label15.Xalign = 1F;
-			this.label15.LabelProp = global::Mono.Unix.Catalog.GetString("Подразделение по умолчанию:");
+			this.label15.LabelProp = global::Mono.Unix.Catalog.GetString("Организация по умолчанию:");
 			this.table1.Add(this.label15);
 			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1[this.label15]));
 			w12.TopAttach = ((uint)(2));
