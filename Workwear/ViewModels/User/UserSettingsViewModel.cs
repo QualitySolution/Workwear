@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Autofac;
 using Gtk;
@@ -39,22 +39,22 @@ namespace workwear.ViewModels.User
 
 			var entryBuilder = new CommonEEVMBuilderFactory<UserSettings>(this, Entity, UoW, navigation, autofacScope);
 
-			WarehouseFromEntryViewModel = entryBuilder.ForProperty(x => x.DefaultWarehouseId)
+			WarehouseFromEntryViewModel = entryBuilder.ForProperty(x => x.DefaultWarehouse)
 							 .UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 							 .UseViewModelDialog<WarehouseViewModel>()
 							 .Finish();
 
-			LeaderFromEntryViewModel = entryBuilder.ForProperty(x => x.DefaultLeaderId)
+			LeaderFromEntryViewModel = entryBuilder.ForProperty(x => x.DefaultLeader)
 				 .UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
 				 .UseViewModelDialog<LeadersViewModel>()
 				 .Finish();
 
-			ResponsiblePersonFromEntryViewModel = entryBuilder.ForProperty(x => x.DefaultResponsiblePersonId)
+			ResponsiblePersonFromEntryViewModel = entryBuilder.ForProperty(x => x.DefaultResponsiblePerson)
 				 .UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 				 .UseViewModelDialog<EmployeeViewModel>()
 				 .Finish();
 
-			OrganizationFromEntryViewModel = entryBuilder.ForProperty(x => x.DefaultOrganizationId)
+			OrganizationFromEntryViewModel = entryBuilder.ForProperty(x => x.DefaultOrganization)
 				 .UseViewModelJournalAndAutocompleter<OrganizationJournalViewModel>()
 				 .UseViewModelDialog<OrganizationViewModel>()
 				 .Finish();

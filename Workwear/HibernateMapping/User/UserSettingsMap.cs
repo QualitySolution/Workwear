@@ -14,10 +14,10 @@ namespace Vodovoz.HibernateMapping
 			Map (x => x.ToolBarIconsSize).Column ("toolbar_icons_size").CustomType<ToolBarIconsSizeStringType>();
 			Map(x => x.ShowToolbar).Column("toolbar_show");
 
-			References(x => x.DefaultWarehouseId).Column("default_warehouse_id").Cascade.All();
-			References(x => x.DefaultLeaderId).Column("default_leader_id").Cascade.All();
-			References(x => x.DefaultOrganizationId).Column("default_organization_id").Cascade.All();
-			References(x => x.DefaultResponsiblePersonId).Column("default_responsible_person_id").Cascade.All(); 
+			References(x => x.DefaultWarehouse).Column("default_warehouse_id").Cascade.All();
+			References(x => x.DefaultLeader).Column("default_leader_id").Cascade.All();
+			References(x => x.DefaultOrganization).Column("default_organization_id").Cascade.All();
+			References(x => x.DefaultResponsiblePerson).Column("default_responsible_person_id").Cascade.All(); 
 
 			References (x => x.User).Column ("user_id");
 		}
