@@ -3951,6 +3951,9 @@
                 <property name="RowSpacing">6</property>
                 <property name="ColumnSpacing">6</property>
                 <child>
+                  <placeholder />
+                </child>
+                <child>
                   <widget class="QS.Views.Control.EntityEntry" id="entitySubdivision">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
@@ -3997,55 +4000,13 @@
                     <property name="MemberName" />
                     <property name="Spacing">6</property>
                     <child>
-                      <widget class="Gtk.Button" id="buttonIssuanceSheetCreate">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-new Menu</property>
-                        <property name="Label" translatable="yes">Создать</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonIssuanceSheetCreateClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">0</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
+                      <placeholder />
                     </child>
                     <child>
-                      <widget class="Gtk.Button" id="buttonIssuanceSheetOpen">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-edit Menu</property>
-                        <property name="Label" translatable="yes">Открыть</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonIssuanceSheetOpenClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
+                      <placeholder />
                     </child>
                     <child>
-                      <widget class="Gtk.Button" id="buttonIssuanceSheetPrint">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-print Menu</property>
-                        <property name="Label" translatable="yes">Печать</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonIssuanceSheetPrintClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">2</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
+                      <placeholder />
                     </child>
                   </widget>
                   <packing>
@@ -4055,11 +4016,10 @@
                     <property name="RightAttach">2</property>
                     <property name="AutoSize">True</property>
                     <property name="XOptions">Fill</property>
-                    <property name="YOptions">Fill</property>
                     <property name="XExpand">False</property>
                     <property name="XFill">True</property>
                     <property name="XShrink">False</property>
-                    <property name="YExpand">False</property>
+                    <property name="YExpand">True</property>
                     <property name="YFill">True</property>
                     <property name="YShrink">False</property>
                   </packing>
@@ -4093,26 +4053,6 @@
                   <packing>
                     <property name="TopAttach">1</property>
                     <property name="BottomAttach">2</property>
-                    <property name="AutoSize">True</property>
-                    <property name="XOptions">Fill</property>
-                    <property name="YOptions">Fill</property>
-                    <property name="XExpand">False</property>
-                    <property name="XFill">True</property>
-                    <property name="XShrink">False</property>
-                    <property name="YExpand">False</property>
-                    <property name="YFill">True</property>
-                    <property name="YShrink">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gtk.Label" id="labelIssuanceSheet">
-                    <property name="MemberName" />
-                    <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Ведомость:</property>
-                  </widget>
-                  <packing>
-                    <property name="TopAttach">3</property>
-                    <property name="BottomAttach">4</property>
                     <property name="AutoSize">True</property>
                     <property name="XOptions">Fill</property>
                     <property name="YOptions">Fill</property>
@@ -12854,7 +12794,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.User.UserSettingsView" design-size="538 415">
+  <widget class="Gtk.Bin" id="workwear.Views.User.UserSettingsView" design-size="627 415">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -13038,7 +12978,7 @@
               <widget class="Gtk.Label" id="label15">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Подразделение по умолчанию:</property>
+                <property name="LabelProp" translatable="yes">Организация по умолчанию:</property>
               </widget>
               <packing>
                 <property name="TopAttach">2</property>
@@ -13057,7 +12997,9 @@
             <child>
               <widget class="Gtk.Label" id="label16">
                 <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Ответственное лицо по умолчанию:</property>
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Материально ответственное 
+лицо по умолчанию:</property>
               </widget>
               <packing>
                 <property name="TopAttach">3</property>
