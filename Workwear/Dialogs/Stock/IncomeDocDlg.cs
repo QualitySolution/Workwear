@@ -37,7 +37,7 @@ namespace workwear
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
 			featuresService = new FeaturesService();
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW,featuresService, UserRepository.GetMyUser(UoW).Id);
+				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW,featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
 
 			ConfigureDlg ();
 		}
