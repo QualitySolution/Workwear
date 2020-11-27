@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
@@ -119,6 +119,11 @@ namespace workwear.ViewModels.Stock
 		{
 			base.Dispose();
 			NotifyConfiguration.Instance.UnsubscribeAll(this);
+		}
+
+		public bool ValidateNomenclature(TransferItem transferItem)
+		{
+			return transferItem.Amount <= transferItem.AmountInStock;
 		}
 	}
 }

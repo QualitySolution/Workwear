@@ -91,6 +91,16 @@ namespace workwear.Domain.Stock
 			if (WarehouseTo == WarehouseFrom)
 				yield return new ValidationResult("Склад добавления должен отличаться от склада списания",
 				new[] { this.GetPropertyName(o => o.Items) });
+
+
+			string strNom = "";
+			foreach(var transferItem in items) 
+				if(transferItem.Amount > transferItem.AmountInStock)
+					strNom += $"\"{transferItem.Nomenclature.Name}\"\n";
+			if(strNom.Length > 0)
+			yield return new ValidationResult($"Количетсво у номенклатур:\n{strNom}больше, чем доступно на складе",
+			new[] { this.GetPropertyName(o => o.Items) });
+
 		}
 
 		#endregion
@@ -103,7 +113,7 @@ namespace workwear.Domain.Stock
 				return null;
 			}
 
-			var newItem = new TransferItem(this, position, amount);
+			var newItem = new TransferItem(UoW, this, position, amount);
 			ObservableItems.Add(newItem);
 			return newItem;
 		}

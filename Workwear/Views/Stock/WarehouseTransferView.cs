@@ -36,6 +36,8 @@ namespace workwear.Views.Stock
 			.AddColumn("Количество").Tag("Count")
 				.AddNumericRenderer(x => x.Amount, false).Editing(true).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
 				.AddTextRenderer(x => x.Nomenclature != null && x.Nomenclature.Type.Units != null ? x.Nomenclature.Type.Units.Name : String.Empty,  false)
+			.AddColumn("")
+			.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 			.Finish();
 
 			table.Selection.Changed += Selection_Changed;
@@ -90,5 +92,11 @@ namespace workwear.Views.Stock
 			ViewModel.RemoveItems(items);
 		}
 
+		private string GetRowColor(TransferItem item)
+		{
+			if(!ViewModel.ValidateNomenclature(item))
+				return "red";
+			return null;
+		}
 	}
 }
