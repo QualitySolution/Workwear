@@ -40,10 +40,13 @@ namespace workwear
 			DeleteConfig.AddHibernateDeleteInfo<Leader>()
 				.AddClearDependence<EmployeeCard>(x => x.Leader)
 				.AddClearDependence<IssuanceSheet>(x => x.HeadOfDivisionPerson)
-				.AddClearDependence<IssuanceSheet>(x => x.ResponsiblePerson);
+				.AddClearDependence<IssuanceSheet>(x => x.ResponsiblePerson)
+				.AddClearDependence<UserSettings>(x => x.DefaultResponsiblePerson)
+				.AddClearDependence<UserSettings>(x => x.DefaultLeader);
 
 			DeleteConfig.AddHibernateDeleteInfo<Organization>()
-				.AddClearDependence<IssuanceSheet>(x => x.Organization);
+				.AddClearDependence<IssuanceSheet>(x => x.Organization)
+				.AddClearDependence<UserSettings>(x => x.DefaultOrganization);
 
 			DeleteConfig.AddHibernateDeleteInfo<Post>()
 				.AddRemoveFromDependence<Norm>(x => x.Professions)
@@ -109,7 +112,8 @@ namespace workwear
 				.AddDeleteDependence<MassExpense>(x => x.WarehouseFrom)
 				.AddDeleteDependence<WarehouseOperation>(x => x.ReceiptWarehouse)
 				.AddDeleteDependence<WarehouseOperation>(x => x.ExpenseWarehouse)
-				.AddClearDependence<Subdivision>(x => x.Warehouse);
+				.AddClearDependence<Subdivision>(x => x.Warehouse)
+				.AddClearDependence<UserSettings>(x => x.DefaultWarehouse);
 
 			DeleteConfig.AddHibernateDeleteInfo<MeasurementUnits> ()
 				.AddClearDependence<ItemsType> (x => x.Units)
