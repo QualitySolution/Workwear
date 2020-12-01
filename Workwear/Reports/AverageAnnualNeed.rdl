@@ -818,8 +818,10 @@ FROM
     wear_cards_item
         LEFT JOIN
     wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
+    	LEFT JOIN
+    protection_tools ON protection_tools.id =  wear_cards_item.protection_tools_id
         LEFT JOIN
-    item_types ON item_types.id = wear_cards_item.itemtype_id
+    item_types ON item_types.id = protection_tools.item_types_id
         LEFT JOIN
     measurement_units ON item_types.units_id = measurement_units.id
         LEFT JOIN
