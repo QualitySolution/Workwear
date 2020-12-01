@@ -157,7 +157,7 @@ namespace workwear.Domain.Company
 					return String.Empty;
 
 				var first = BestChoiceInStock.First();
-				var text = first.StockPosition.Title + " - " + ProtectionTools?.Units?.MakeAmountShortStr(first.Amount) ?? first.Amount.ToString();
+				var text = first.StockPosition.Title + " - " + ProtectionTools?.Type?.Units?.MakeAmountShortStr(first.Amount) ?? first.Amount.ToString();
 				if(InStock.Count > 1)
 					text += NumberToTextRus.FormatCase(InStock.Count - 1, " (еще {0} вариант)", " (еще {0} варианта)", " (еще {0} вариантов)");
 				return text;
@@ -167,9 +167,9 @@ namespace workwear.Domain.Company
 
 		#region Расчетное для View
 
-		public virtual string AmountByNormText => ProtectionTools?.Units?.MakeAmountShortStr(ActiveNormItem?.Amount ?? 0) ?? ActiveNormItem?.Amount.ToString();
-		public virtual string InStockText => ProtectionTools?.Units?.MakeAmountShortStr(InStock?.Sum(x => x.Amount) ?? 0) ?? InStock?.Sum(x => x.Amount).ToString();
-		public virtual string AmountText => ProtectionTools?.Units?.MakeAmountShortStr(Amount) ?? Amount.ToString();
+		public virtual string AmountByNormText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(ActiveNormItem?.Amount ?? 0) ?? ActiveNormItem?.Amount.ToString();
+		public virtual string InStockText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(InStock?.Sum(x => x.Amount) ?? 0) ?? InStock?.Sum(x => x.Amount).ToString();
+		public virtual string AmountText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(Amount) ?? Amount.ToString();
 		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;
 

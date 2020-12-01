@@ -115,9 +115,8 @@ namespace workwear
 				.AddClearDependence<Subdivision>(x => x.Warehouse)
 				.AddClearDependence<UserSettings>(x => x.DefaultWarehouse);
 
-			DeleteConfig.AddHibernateDeleteInfo<MeasurementUnits> ()
-				.AddClearDependence<ItemsType> (x => x.Units)
-				.AddClearDependence<ProtectionTools>(x => x.Units);
+			DeleteConfig.AddHibernateDeleteInfo<MeasurementUnits>()
+				.AddClearDependence<ItemsType>(x => x.Units);
 
 			DeleteConfig.AddHibernateDeleteInfo<Nomenclature> ()
 				.AddRemoveFromDependence<ProtectionTools>(x => x.Nomenclatures)
