@@ -2,22 +2,35 @@
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using Autofac;
 using QS.Project.Domain;
 using QS.Validation;
+using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
+using System;
 
 namespace workwear.ViewModels.Regulations
 {
 	public class ProtectionToolsViewModel : EntityDialogViewModelBase<ProtectionTools>
 	{
-
-		public ProtectionToolsViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+		private readonly ILifetimeScope autofacScope;
+		public ProtectionToolsViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, ILifetimeScope autofacScope, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
+			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			var entryBuilder = new CommonEEVMBuilderFactory<ProtectionTools>(this, Entity, UoW, navigation, autofacScope);
+			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
+			.MakeByType()
+			.Finish();
+
 		}
+
+		#region EntityViewModels
+		public EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
+		#endregion
 
 		#region Действия View
 		#region Аналоги

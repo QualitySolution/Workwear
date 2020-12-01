@@ -25,8 +25,7 @@ namespace workwear.Views.Regulations
 
 			yentryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 
-			ycomboUnits.ItemsList = MeasurementUnitsRepository.GetActiveUnits(ViewModel.UoW);
-			ycomboUnits.Binding.AddBinding(Entity, e => e.Units, w => w.SelectedItem).InitializeFromSource();
+			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 

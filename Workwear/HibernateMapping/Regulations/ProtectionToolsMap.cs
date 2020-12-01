@@ -15,7 +15,7 @@ namespace workwear.HibernateMapping.Regulations
 			Map(x => x.Name).Column("name").Not.Nullable();
 			Map(x => x.Comment).Column("comments");
 
-			References(x => x.Units).Column("units_id");
+			References(x => x.Type).Column("item_types_id");
 
 			HasManyToMany<ProtectionTools>(x => x.Analogs)
 			.Table("protection_tools_replacement")
