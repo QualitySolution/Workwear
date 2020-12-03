@@ -117,14 +117,14 @@ namespace workwear.ViewModels.Company
 
 		#region Свойства ViewModel
 
-		private bool autoCardNumber;
+		private bool autoCardNumber = true;
 		[PropertyChangedAlso(nameof(CardNumber))]
 		[PropertyChangedAlso(nameof(SensetiveCardNumber))]
 		public bool AutoCardNumber { get => autoCardNumber; set => SetField(ref autoCardNumber, value); }
 
 		public string CardNumber {
-			get => AutoCardNumber ? Entity.Id.ToString() : Entity.CardNumber;
-			set => Entity.CardNumber = AutoCardNumber ? null : value;
+			get => AutoCardNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.CardNumber;
+			set => Entity.CardNumber = (AutoCardNumber || value == "авто") ? null : value;
 		}
 
 		public string CreatedByUser => Entity.CreatedbyUser?.Name;
