@@ -22,13 +22,14 @@ namespace workwear.Journal.ViewModels.Stock
 		{
 			NomenclatureJournalNode resultAlias = null;
 			ItemsType itemsTypeAlias = null;
+			Nomenclature nomenclatureAlias = null;
 
-			return uow.Session.QueryOver<Nomenclature>()
+			return uow.Session.QueryOver<Nomenclature>(() => nomenclatureAlias)
 				.Left.JoinAlias(n => n.Type, () => itemsTypeAlias)
-				.JoinQueryOver(u => u.Type)
-				.Where(GetSearchCriterion<Nomenclature>(
-					x => x.Id,
-					x => x.Name
+				.Where(GetSearchCriterion(
+					() => nomenclatureAlias.Id,
+					() => nomenclatureAlias.Name,
+					() => itemsTypeAlias.Name
 					))
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)

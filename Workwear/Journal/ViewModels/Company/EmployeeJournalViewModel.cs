@@ -45,17 +45,20 @@ namespace workwear.Journal.ViewModels.Company
 
 			var employees = uow.Session.QueryOver<EmployeeCard>(() => employeeAlias);
 			if(Filter.ShowOnlyWork)
-				employees.Where(x => x.DismissDate == null);
+			employees.Where(x => x.DismissDate == null);
 
 			return employees
-				.Where(GetSearchCriterion<EmployeeCard>(
-					x => x.Id,
-					x => x.CardNumber,
-					x => x.PersonnelNumber,
-					x => x.LastName,
-					x => x.FirstName,
-					x => x.Patronymic
-					))
+				.Where(GetSearchCriterion(
+					() => employeeAlias.Id,
+					() => employeeAlias.CardNumber,
+					() => employeeAlias.PersonnelNumber,
+					() => employeeAlias.LastName,
+					() => employeeAlias.FirstName,
+					() => employeeAlias.Patronymic,
+					() => postAlias.Name,
+					() => facilityAlias.Name
+ 					))
+
 				.JoinAlias(() => employeeAlias.Post, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => employeeAlias.Subdivision, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList((list) => list
@@ -102,9 +105,9 @@ namespace workwear.Journal.ViewModels.Company
 				return String.Join(" ", LastName, FirstName, Patronymic);
 			}
 		}
-
+		[SearchHighlight]
 		public string Post { get; set; }
-
+		[SearchHighlight]
 		public string Subdivision { get; set; }
 
 		public bool Dismiss { get { return DismissDate.HasValue; } }
