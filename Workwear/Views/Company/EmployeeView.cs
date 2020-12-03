@@ -30,7 +30,7 @@ namespace workwear.Views.Company
 			employeevacationsview1.ViewModel = ViewModel.VacationsViewModel;
 
 			notebook1.GetNthPage(2).Visible = ViewModel.VisibleListedItem;
-			notebook1.GetNthPage (3).Visible = ViewModel.VisibleHistory;
+			notebook1.GetNthPage(3).Visible = ViewModel.VisibleHistory;
 
 			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage);
 
@@ -217,11 +217,6 @@ namespace workwear.Views.Company
 		}
 
 		#endregion
-
-		protected void OnYperiodMaternityLeavePeriodChangedByUser(object sender, EventArgs e)
-		{
-			Entity.UpdateAllNextIssue();
-		}
 
 		#region Обработка кнопок
 
