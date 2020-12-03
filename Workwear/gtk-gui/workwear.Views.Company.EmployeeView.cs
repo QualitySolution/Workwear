@@ -138,7 +138,7 @@ namespace workwear.Views.Company
 
 		private global::Gtk.Button buttonSavePhoto;
 
-		private global::Gtk.Notebook notebook1;
+		private global::Gamma.GtkWidgets.yNotebook notebook1;
 
 		private global::workwear.Views.Company.EmployeeChilds.EmployeeNormsView employeenormsview1;
 
@@ -985,7 +985,7 @@ namespace workwear.Views.Company
 			w71.Expand = false;
 			w71.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.notebook1 = new global::Gtk.Notebook();
+			this.notebook1 = new global::Gamma.GtkWidgets.yNotebook();
 			this.notebook1.CanFocus = true;
 			this.notebook1.Name = "notebook1";
 			this.notebook1.CurrentPage = 1;

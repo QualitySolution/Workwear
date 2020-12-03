@@ -32,6 +32,8 @@ namespace workwear.Views.Company
 			notebook1.GetNthPage(2).Visible = ViewModel.VisibleListedItem;
 			notebook1.GetNthPage (3).Visible = ViewModel.VisibleHistory;
 
+			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage);
+
 			comboSex.ItemsEnum = typeof(Sex);
 			comboSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItem).InitializeFromSource ();
 

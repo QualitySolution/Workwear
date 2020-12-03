@@ -2631,7 +2631,7 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.Notebook" id="notebook1">
+          <widget class="Gamma.GtkWidgets.yNotebook" id="notebook1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
             <property name="CurrentPage">1</property>

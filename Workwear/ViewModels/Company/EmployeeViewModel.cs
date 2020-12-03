@@ -174,7 +174,14 @@ namespace workwear.ViewModels.Company
 		public EmployeeWearItemsViewModel WearItemsViewModel; 		//1
 		public EmployeeListedItemsViewModel ListedItemsViewModel;  //2
 		public EmployeeMovementsViewModel MovementsViewModel;      //3
-		public EmployeeVacationsViewModel VacationsViewModel;		//4
+		public EmployeeVacationsViewModel VacationsViewModel;       //4
+
+		private int lastTab;
+		private int currentTab;
+		public virtual int CurrentTab {
+			get => currentTab;
+			set => SetField(ref currentTab, value);
+		}
 
 		public void SwitchOn(int tab)
 		{
@@ -187,9 +194,18 @@ namespace workwear.ViewModels.Company
 					break;
 				case 3: MovementsViewModel.OnShow();
 					break;
-				case 4: VacationsViewModel.OnShow();
+				case 4:
+					if(UoW.IsNew)
+						if(interactive.Question("Перед открытием отпусков необходимо сохранить сотрудника. Сохранить?", "Сохранить сотрудника?")
+							&& Save()) {
+							VacationsViewModel.OnShow();
+						}
+						else {
+							CurrentTab = lastTab;
+						}
 					break;
 			}
+			lastTab = CurrentTab;
 		}
 
 		#endregion
