@@ -965,9 +965,22 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT
+        <CommandText>select result.id, result.employee, result.personnel_number,
+     result.next_issue, result.delay, result.type_name, 
+     result.type_id,
+     result.nomenclature_name,
+     result.size,
+     result.growth,
+     result.unit,
+     result.okei,
+     result.amount_by_norm,
+     result.last_issue,
+     result.received,
+    ifnull( in_stock.sum, 0)  as in_stock
+     FROM (
+     SELECT
     wear_cards_item.id,
     CONCAT_WS(' ',
             wear_cards.last_name,
@@ -985,12 +998,12 @@
     	(case when item_types.wear_category = 'Shoes' then wear_cards.size_shoes else 
     		(case when item_types.wear_category = 'Gloves' then wear_cards.size_gloves else 
     			(case when item_types.wear_category = 'Headgear' then wear_cards.size_headdress else 
-    				(case when item_types.wear_category = 'WinterShoes' then wear_cards.size_winter_shoes else '' end) 
+    				(case when item_types.wear_category = 'WinterShoes' then wear_cards.size_winter_shoes else null end) 
     			end) 
     		end) 
     	end) 
     end) as size,
-    (case when item_types.wear_category = 'Wear' then wear_cards.wear_growth else '' end) as growth,
+    (case when item_types.wear_category = 'Wear' then wear_cards.wear_growth else null end) as growth,
     measurement_units.name AS unit,
     measurement_units.okei AS okei,
     norms_item.amount AS amount_by_norm,
@@ -1005,20 +1018,7 @@
         WHERE
             nomenclature.type_id = wear_cards_item.itemtype_id
                 AND stock_expense.wear_card_id = wear_cards_item.wear_card_id) AS last_issue,
-    wear_cards_item.amount AS received,
-    (SELECT
-          (sum(case when stock.warehouse_receipt_id is not null then stock.amount else 0 end) -
-           sum(case when stock.warehouse_expense_id is not null then stock.amount else 0 end)) as sum
-      FROM (
-        SELECT operation_warehouse.nomenclature_id, operation_warehouse.amount, 
-    			operation_warehouse.warehouse_receipt_id, operation_warehouse.warehouse_expense_id, 
-    			wear_cards_item.id as wear_cards_item_id, nomenclature.type_id
-        FROM operation_warehouse
-        JOIN nomenclature on operation_warehouse.nomenclature_id = nomenclature.id
-        JOIN wear_cards_item on wear_cards_item.itemtype_id = nomenclature.type_id
-        GROUP by operation_warehouse.nomenclature_id, operation_warehouse.id) as stock
-     WHERE  type_id = nomenclature.type_id
-     GROUP BY stock.nomenclature_id) AS in_stock
+    wear_cards_item.amount AS received
 FROM
     wear_cards_item
         JOIN
@@ -1031,14 +1031,30 @@ FROM
     measurement_units ON item_types.units_id = measurement_units.id
         JOIN
     norms_item ON wear_cards_item.norm_item_id = norms_item.id
-WHERE wear_cards.dismiss_date IS NULL AND (
+    WHERE wear_cards.dismiss_date IS NULL AND (
     NOT @onlyMissing
         OR wear_cards_item.next_issue &lt; @report_date)
         group by wear_cards_item.wear_card_id, wear_cards_item.itemtype_id, wear_cards_item.norm_item_id
 HAVING @onlyMissing
     OR (received IS NULL
     OR received &lt; amount_by_norm)
-ORDER BY employee, type_name;</CommandText>
+ORDER BY employee, type_name) as result
+
+    LEFT JOIN
+    (SELECT
+    stock.type_id, stock.size, stock.growth,
+          (sum(case when stock.warehouse_receipt_id is not null then stock.amount else 0 end) -
+           sum(case when stock.warehouse_expense_id is not null then stock.amount else 0 end)) as sum
+      FROM (
+        SELECT operation_warehouse.nomenclature_id, operation_warehouse.amount, 
+    			operation_warehouse.warehouse_receipt_id, operation_warehouse.warehouse_expense_id, 
+    			nomenclature.type_id, operation_warehouse.size, operation_warehouse.growth
+        FROM operation_warehouse
+        JOIN nomenclature on operation_warehouse.nomenclature_id = nomenclature.id
+        GROUP by nomenclature.type_id, operation_warehouse.size, operation_warehouse.growth) as stock
+     GROUP BY stock.type_id
+     ) 
+     AS in_stock on in_stock.type_id = result.type_id and in_stock.size &lt;=&gt; result.size and in_stock.growth &lt;=&gt; result.growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="@onlyMissing">
             <Value>={?only_missing}</Value>
@@ -1048,7 +1064,7 @@ ORDER BY employee, type_name;</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="id">
           <DataField>id</DataField>
           <TypeName>System.UInt32</TypeName>
