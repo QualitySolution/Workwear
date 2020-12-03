@@ -95,6 +95,7 @@ namespace workwear.Views.Company
 			};
 
 			enumPrint.ItemsEnum = typeof(EmployeeViewModel.PersonalCardPrint);
+			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 		}
 
 		#region События контролов
@@ -232,5 +233,15 @@ namespace workwear.Views.Company
 		{
 			return BaseParameters.EmployeeSizeRanges ? new SizeUse[] { } : new SizeUse[] { SizeUse.СlothesOnly };
 		}
+
+		#region События View
+		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(ViewModel.VisibleListedItem))
+				notebook1.GetNthPage(2).Visible = ViewModel.VisibleListedItem;
+			if(e.PropertyName == nameof(ViewModel.VisibleHistory))
+				notebook1.GetNthPage(3).Visible = ViewModel.VisibleHistory;
+		}
+		#endregion
 	}
 }
