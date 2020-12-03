@@ -232,6 +232,8 @@ namespace workwear.Dialogs.Organization
 			Entity.CardNumber = checkAuto.Active ? null : entryId.Text;
 		}
 
+		int lastPage = 0;
+
 		protected void OnNotebook1SwitchPage(object o, SwitchPageArgs args)
 		{
 			if (notebook1.CurrentPage == 1 && !employeewearitemsview1.ItemsLoaded)
@@ -251,8 +253,16 @@ namespace workwear.Dialogs.Organization
 			}
 
 			if(notebook1.CurrentPage == 4 && !employeevacationsview1.VacationsLoaded) {
-				employeevacationsview1.UpdateList();
+				if(UoW.IsNew)
+					if(new GtkQuestionDialogsInteractive().Question("Перед открытием отпусков необходимо сохранить сотрудника. Сохранить?", "Сохранить сотрудника?")
+						&& Save()) {
+						employeevacationsview1.UpdateList();
+					}
+					else {
+						notebook1.CurrentPage = lastPage;
+					}
 			}
+			lastPage = notebook1.CurrentPage;
 		}
 
 		protected void OnYentryObjectChanged(object sender, EventArgs e)
