@@ -6,6 +6,7 @@ using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using workwear.Repository.Stock;
 
 namespace workwear.Domain.Stock
 {
@@ -91,6 +92,16 @@ namespace workwear.Domain.Stock
 			if (WarehouseTo == WarehouseFrom)
 				yield return new ValidationResult("Склад добавления должен отличаться от склада списания",
 				new[] { this.GetPropertyName(o => o.Items) });
+
+
+			string strNom = "";
+			foreach(var transferItem in items) 
+				if(transferItem.Amount > transferItem.AmountInStock)
+					strNom += $"\"{transferItem.Nomenclature.Name}\"\n";
+			if(strNom.Length > 0)
+			yield return new ValidationResult($"Количество у номенклатур:\n{strNom}больше, чем доступно на складе",
+			new[] { this.GetPropertyName(o => o.Items) });
+
 		}
 
 		#endregion
@@ -103,8 +114,9 @@ namespace workwear.Domain.Stock
 				return null;
 			}
 
-			var newItem = new TransferItem(this, position, amount);
+			var newItem = new TransferItem(UoW, this, position, amount);
 			ObservableItems.Add(newItem);
+			SetAmountInStock(newItem);
 			return newItem;
 		}
 
@@ -116,6 +128,34 @@ namespace workwear.Domain.Stock
 		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser)
 		{
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
+		}
+
+		public virtual void SetAmountInStock(TransferItem item = null)
+		{
+			IList<Nomenclature> nomenclatures;
+			IList<TransferItem> currentItems;
+
+			if(item != null) {
+				nomenclatures = new List<Nomenclature> { item.Nomenclature };
+				currentItems = items.Where(x => x == item).ToList();
+			}
+			else {
+				nomenclatures = items.Select(x => x.Nomenclature).ToList();
+				currentItems = items;
+			}
+
+			var stock = new StockRepository().StockBalances(UoW, WarehouseFrom, nomenclatures, Date);
+			foreach(var currentItem in currentItems) {
+				var currentNomeclature = currentItem.Nomenclature;
+
+				StockBalanceDTO stockBalanceDTO;
+				stockBalanceDTO = stock.Where(x => x.Nomenclature == currentNomeclature && x.Size == currentItem.WarehouseOperation.Size && x.Growth == currentItem.WarehouseOperation?.Growth).FirstOrDefault();
+
+				if(currentItem.WarehouseOperation.Id > 0)
+					stockBalanceDTO.Amount += currentItem.WarehouseOperation.Amount;
+
+				currentItem.AmountInStock = stockBalanceDTO.Amount;
+			}
 		}
 	}
 

@@ -49,6 +49,14 @@ namespace workwear.Domain.Stock
 			set { SetField(ref warehouseOperation, value); }
 		}
 
+		private int amountInStock;
+		[Display(Name = "Количество на складе")]
+		public virtual int AmountInStock {
+			get { return amountInStock; }
+			set { SetField(ref amountInStock, value); }
+		}
+
+
 		#endregion
 
 		#region Расчетные
@@ -64,7 +72,7 @@ namespace workwear.Domain.Stock
 
 		}
 
-		public TransferItem(Transfer transfer, StockPosition position, int amount)
+		public TransferItem(IUnitOfWork uow, Transfer transfer, StockPosition position, int amount)
 		{
 			this.document = transfer;
 			this.warehouseOperation.Nomenclature = this.nomenclature = position.Nomenclature;
