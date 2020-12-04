@@ -86,7 +86,7 @@ namespace workwear.Domain.Company
 
 		#region Не хранимое в базе значение
 
-		IList<Nomenclature> matchedNomenclature;
+		IList<Nomenclature> matchedNomenclature = new List<Nomenclature>();
 
 		[Display(Name = "Подходящие номенклатуры")]
 		public virtual IList<Nomenclature> MatchedNomenclature {
