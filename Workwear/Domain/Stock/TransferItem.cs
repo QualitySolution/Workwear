@@ -24,7 +24,6 @@ namespace workwear.Domain.Stock
 			set { SetField(ref document, value); }
 		}
 
-
 		Nomenclature nomenclature;
 
 		[Display(Name = "Номеклатура")]
