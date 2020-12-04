@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Operations;
-using workwear.Measurements;
-using workwear.Repository.Stock;
 
 namespace workwear.Domain.Stock
 {
@@ -86,7 +82,6 @@ namespace workwear.Domain.Stock
 			this.warehouseOperation.Amount = this.amount = amount;
 			this.warehouseOperation.ExpenseWarehouse = transfer.WarehouseFrom;
 			this.warehouseOperation.OperationTime = transfer.Date;
-			this.AmountInStock = SetAmountInStock(uow);
 		}
 
 		#region Функции
@@ -95,20 +90,6 @@ namespace workwear.Domain.Stock
 		{
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
-		}
-
-		int SetAmountInStock(IUnitOfWork uow)
-		{
-			var currentNomeclature = this.Nomenclature;
-			var stock = new StockRepository().StockBalances(uow, Document.WarehouseFrom, new List<Nomenclature> { currentNomeclature }, Document.Date);
-			StockBalanceDTO stockBalanceDTO;
-			if(currentNomeclature.Type.Category == ItemTypeCategory.property || currentNomeclature.Type.WearCategory == СlothesType.PPE)
-				stockBalanceDTO = stock.FirstOrDefault();
-			else stockBalanceDTO = stock.Where(x => x.Size == this.WarehouseOperation.Size && x.Growth == this.WarehouseOperation?.Growth).FirstOrDefault();
-
-			if(this.WarehouseOperation.Id > 0)
-				stockBalanceDTO.Amount += this.WarehouseOperation.Amount;
-			return stockBalanceDTO.Amount;
 		}
 
 		#endregion

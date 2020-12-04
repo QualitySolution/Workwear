@@ -51,7 +51,7 @@ namespace workwear.ViewModels.Stock
 										 .UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 										 .UseViewModelDialog<WarehouseViewModel>()
 										 .Finish();
-
+			LoadActualAmountFromStock();
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			lastWarehouse = Entity.WarehouseFrom;
 		}
@@ -124,6 +124,11 @@ namespace workwear.ViewModels.Stock
 		public bool ValidateNomenclature(TransferItem transferItem)
 		{
 			return transferItem.Amount <= transferItem.AmountInStock;
+		}
+
+		public void LoadActualAmountFromStock()
+		{
+			Entity.SetAmountInStock();
 		}
 	}
 }
