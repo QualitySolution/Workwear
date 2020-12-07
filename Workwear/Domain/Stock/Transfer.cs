@@ -38,7 +38,6 @@ namespace workwear.Domain.Stock
 			set { SetField(ref warehouseTo, value, () => WarehouseTo); }
 		}
 
-
 		private IList<TransferItem> items = new List<TransferItem>();
 
 		[Display(Name = "Строки документа")]
@@ -151,10 +150,13 @@ namespace workwear.Domain.Stock
 				StockBalanceDTO stockBalanceDTO;
 				stockBalanceDTO = stock.Where(x => x.Nomenclature == currentNomeclature && x.Size == currentItem.WarehouseOperation.Size && x.Growth == currentItem.WarehouseOperation?.Growth).FirstOrDefault();
 
-				if(currentItem.WarehouseOperation.Id > 0)
+				if(currentItem.WarehouseOperation.Id > 0 && stockBalanceDTO != null)
 					stockBalanceDTO.Amount += currentItem.WarehouseOperation.Amount;
 
-				currentItem.AmountInStock = stockBalanceDTO.Amount;
+				if (currentItem.WarehouseOperation.Id > 0 && stockBalanceDTO == null) 
+					currentItem.AmountInStock = currentItem.Amount;
+				else 
+					currentItem.AmountInStock = stockBalanceDTO.Amount;
 			}
 		}
 	}
