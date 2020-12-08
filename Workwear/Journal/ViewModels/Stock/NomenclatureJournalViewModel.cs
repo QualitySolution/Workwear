@@ -29,7 +29,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.Where(GetSearchCriterion(
 					() => nomenclatureAlias.Id,
 					() => nomenclatureAlias.Name,
-					() => nomenclatureAlias.Number,
+					() => nomenclatureAlias.Ozm,
 					() => itemsTypeAlias.Name
 					))
 				.SelectList((list) => list
