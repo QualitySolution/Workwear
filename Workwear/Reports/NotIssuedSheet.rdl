@@ -965,9 +965,22 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT
+        <CommandText>select result.id, result.employee, result.personnel_number,
+     result.next_issue, result.delay, result.type_name, 
+     result.type_id,
+     result.nomenclature_name,
+     result.size,
+     result.growth,
+     result.unit,
+     result.okei,
+     result.amount_by_norm,
+     result.last_issue,
+     result.received,
+    ifnull( in_stock.sum, 0)  as in_stock
+     FROM (
+     SELECT
     wear_cards_item.id,
     CONCAT_WS(
         ' ',
@@ -1076,7 +1089,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="id">
           <DataField>id</DataField>
           <TypeName>System.UInt32</TypeName>

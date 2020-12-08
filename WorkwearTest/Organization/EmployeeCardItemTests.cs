@@ -271,6 +271,93 @@ namespace WorkwearTest.Organization
 		}
 
 		#endregion
+		#endregion
+		#region MatcheStockPosition
+
+		[Test(Description = "Проверяем что находим соответсвиt размеров.")]
+		public void MatcheStockPosition_SizeTest()
+		{
+			var employee = new EmployeeCard();
+			employee.Sex = Sex.M;
+			employee.WearSizeStd = SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus);
+			employee.WearSize = "52";
+			employee.WearGrowth = "170";
+
+			var itemType = Substitute.For<ItemsType>();
+			itemType.Category.Returns(ItemTypeCategory.wear);
+			itemType.WearCategory.Returns(СlothesType.Wear);
+			var nomeclature = Substitute.For<Nomenclature>();
+			nomeclature.Id.Returns(25);
+			nomeclature.Type.Returns(itemType);
+			nomeclature.WearGrowthStd.Returns(SizeHelper.GetSizeStdCode(GrowthStandartWear.Universal));
+			nomeclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
+
+			var employeeItem = new EmployeeCardItem();
+			employeeItem.EmployeeCard = employee;
+			employeeItem.Item = itemType;
+			employeeItem.MatchedNomenclature.Add(nomeclature);
+
+			var stockPosition = new StockPosition(nomeclature, "52", "170", 0);
+			var result = employeeItem.MatcheStockPosition(stockPosition);
+			Assert.That(result, Is.True);
+		}
+
+		[Test(Description = "Проверяем что находим соответсвия размеров когда в сотруднике установлен диапазон размера.")]
+		public void MatcheStockPosition_RangeSizeInEmployeeSize()
+		{
+			var employee = new EmployeeCard();
+			employee.Sex = Sex.M;
+			employee.WearSizeStd = SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus);
+			employee.WearSize = "52-54";
+			employee.WearGrowth = "170";
+
+			var itemType = Substitute.For<ItemsType>();
+			itemType.Category.Returns(ItemTypeCategory.wear);
+			itemType.WearCategory.Returns(СlothesType.Wear);
+			var nomeclature = Substitute.For<Nomenclature>();
+			nomeclature.Id.Returns(25);
+			nomeclature.Type.Returns(itemType);
+			nomeclature.WearGrowthStd.Returns(SizeHelper.GetSizeStdCode(GrowthStandartWear.Universal));
+			nomeclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
+
+			var employeeItem = new EmployeeCardItem();
+			employeeItem.EmployeeCard = employee;
+			employeeItem.Item = itemType;
+			employeeItem.MatchedNomenclature.Add(nomeclature);
+
+			var stockPosition = new StockPosition(nomeclature, "52", "170", 0);
+			var result = employeeItem.MatcheStockPosition(stockPosition);
+			Assert.That(result, Is.True);
+		}
+
+		[Test(Description = "Проверяем что находим соответсвия размеров когда в сотруднике установлен диапазон роста.")]
+		public void MatcheStockPosition_RangeGrowthInEmployeeSize()
+		{
+			var employee = new EmployeeCard();
+			employee.Sex = Sex.M;
+			employee.WearSizeStd = SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus);
+			employee.WearSize = "52";
+			employee.WearGrowth = "170-176";
+
+			var itemType = Substitute.For<ItemsType>();
+			itemType.Category.Returns(ItemTypeCategory.wear);
+			itemType.WearCategory.Returns(СlothesType.Wear);
+			var nomeclature = Substitute.For<Nomenclature>();
+			nomeclature.Id.Returns(25);
+			nomeclature.Type.Returns(itemType);
+			nomeclature.WearGrowthStd.Returns(SizeHelper.GetSizeStdCode(GrowthStandartWear.Universal));
+			nomeclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
+
+			var employeeItem = new EmployeeCardItem();
+			employeeItem.EmployeeCard = employee;
+			employeeItem.Item = itemType;
+			employeeItem.MatchedNomenclature.Add(nomeclature);
+
+			var stockPosition = new StockPosition(nomeclature, "52", "170", 0);
+			var result = employeeItem.MatcheStockPosition(stockPosition);
+			Assert.That(result, Is.True);
+		}
+		#endregion
 	}
 
 	public class EmployeeCardItemTested : EmployeeCardItem

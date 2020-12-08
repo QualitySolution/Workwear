@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
@@ -388,6 +388,12 @@ namespace workwear.Measurements
 						continue;
 					if (lookupGrow.Appropriated.Contains(grow))
 						result.Add(new SizePair(SizeHelper.GetSizeStdCode(std), lookupGrow.Name));
+
+					if(lookupGrow.Name == grow) {
+						foreach(var toAdd in lookupGrow.Appropriated) {
+							result.Add(new SizePair(SizeHelper.GetSizeStdCode(std), toAdd));
+						}
+					}
 				}
 			}
 			return result;
