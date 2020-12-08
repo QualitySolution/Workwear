@@ -26,21 +26,10 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<EmployeeJournalViewModel>(
 			() => FluentColumnsConfig<EmployeeJournalNode>.Create()
-				//.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
-				.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
-				.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
-				.AddColumn("Должность").AddTextRenderer(node => node.Post)
-				.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
-				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Dismiss ? "gray" : "black")
-				.Finish()
-			);
-
-			TreeViewColumnsConfigFactory.Register<EmployeeCardJournalViewModel>(
-			() => FluentColumnsConfig<EmployeeCardJournalNode>.Create()
 				.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
 				.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
 				.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
-				//.AddColumn("Должность").AddTextRenderer(node => node.Post)
+				.AddColumn("Должность").AddTextRenderer(node => node.Post)
 				.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
 				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Dismiss ? "gray" : "black")
 				.Finish()
@@ -78,7 +67,7 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<SubdivisionJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Code).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
-					//.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
+					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
 					.Finish()
 			);
 
@@ -141,7 +130,7 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<NomenclatureJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
-					.AddColumn("ОЗМ").AddTextRenderer(node => $"{node.Ozm}").SearchHighlight()
+					.AddColumn("Номер").AddTextRenderer(node => $"{node.Number}").SearchHighlight()
 					.AddColumn("Тип").AddTextRenderer(node => node.ItemType)
 					.Finish()
 			);

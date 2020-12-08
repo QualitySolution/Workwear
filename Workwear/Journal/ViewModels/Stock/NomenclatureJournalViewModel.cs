@@ -29,11 +29,13 @@ namespace workwear.Journal.ViewModels.Stock
 				.Where(GetSearchCriterion(
 					() => nomenclatureAlias.Id,
 					() => nomenclatureAlias.Name,
+					() => nomenclatureAlias.Number,
 					() => itemsTypeAlias.Name
 					))
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
+					.Select(x => x.Number).WithAlias(() => resultAlias.Number)
 					.Select(() => itemsTypeAlias.Name).WithAlias(() => resultAlias.ItemType)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<NomenclatureJournalNode>());
@@ -45,6 +47,8 @@ namespace workwear.Journal.ViewModels.Stock
 		public int Id { get; set; }
 		[SearchHighlight]
 		public string Name { get; set; }
+		[SearchHighlight]
+		public uint? Number { get; set; }
 		[SearchHighlight]
 		public string ItemType { get; set; }
 	}
