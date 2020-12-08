@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Dapper;
 using Oracle.ManagedDataAccess.Client;
 using QS.DomainModel.UoW;
@@ -11,8 +12,9 @@ namespace DownloadNLMK.Loaders
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly IUnitOfWork uow;
-		public Dictionary<string, Subdivision> ByID = new Dictionary<string, Subdivision>();
+		public Dictionary<string, Subdivision> ByID;
 		public HashSet<Subdivision> UsedSubdivision = new HashSet<Subdivision>();
+		public HashSet<Subdivision> ChangedSubdivision = new HashSet<Subdivision>();
 
 		public SubdivisionLoader(IUnitOfWork uow)
 		{
@@ -21,19 +23,30 @@ namespace DownloadNLMK.Loaders
 
 		public void Load(OracleConnection connection)
 		{
+			logger.Info("Загружаем имеющиеся подразделения");
+			ByID = uow.GetAll<Subdivision>().ToDictionary(x => x.Code, x => x);
+
 			logger.Info("Загружаем SKLAD.SGRPOL");
 			var sgrpol = connection.Query("SELECT * FROM SKLAD.SGRPOL");
 			logger.Info("Обработка SKLAD.SGRPOL");
 			foreach(var row in sgrpol) {
-				var subdivision = new Subdivision {
-					Name = row.NGRPOL,
-					Code = row.KGRPOL,
-				};
-				if(ByID.ContainsKey(row.KGRPOL)) {
-					logger.Error($"Дубль строки для SGRPOL {row.KGRPOL}\n >>{ByID[row.KGRPOL].Name}\n >>{subdivision.Name}");
-					continue;
+				Subdivision subdivision;
+				if(ByID.TryGetValue(row.KGRPOL, out subdivision)) {
+					if(subdivision.Name != row.NGRPOL) {
+						subdivision.Name = row.NGRPOL;
+						ChangedSubdivision.Add(subdivision);
+					}
 				}
-				ByID.Add(row.KGRPOL, subdivision);
+				else
+				{
+					subdivision = new Subdivision {
+						Name = row.NGRPOL,
+						Code = row.KGRPOL,
+					};
+					ByID.Add(row.KGRPOL, subdivision);
+					ChangedSubdivision.Add(subdivision);
+				}
+
 				if(subdivision.Name == null) {
 					subdivision.Name = $"Без названия";
 					logger.Error($"Для подразделение {subdivision.Code} нет названия.");
@@ -51,16 +64,17 @@ namespace DownloadNLMK.Loaders
 		{
 			logger.Info($"Сохраняем подразделения...");
 			int i = 0;
-			foreach(var item in UsedSubdivision) {
-				uow.Save(item, orUpdate: false);
+			var toSave = ChangedSubdivision.Where(x => UsedSubdivision.Contains(x)).ToList();
+			foreach(var item in toSave) {
+				uow.Save(item);
 				i++;
 				if(i % 100 == 0) {
 					uow.Commit();
-					Console.Write($"\r\tСохранили {i} [{(float)i / UsedSubdivision.Count:P}]... ");
+					Console.Write($"\r\tСохранили {i} [{(float)i / toSave.Count:P}]... ");
 				}
 			}
 			uow.Commit();
-			Console.Write("Завершено\n");
+			Console.WriteLine($"Изменилось {toSave.Count} подразделений.");
 		}
 	}
 }
