@@ -1,4 +1,5 @@
-﻿using NHibernate;
+﻿using Gamma.ColumnConfig;
+using NHibernate;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -21,18 +22,18 @@ namespace workwear.Journal.ViewModels.Stock
 		{
 			NomenclatureJournalNode resultAlias = null;
 			ItemsType itemsTypeAlias = null;
+			Nomenclature nomenclatureAlias = null;
 
-			return uow.Session.QueryOver<Nomenclature>()
+			return uow.Session.QueryOver<Nomenclature>(() => nomenclatureAlias)
 				.Left.JoinAlias(n => n.Type, () => itemsTypeAlias)
-				.Where(GetSearchCriterion<Nomenclature>(
-					x => x.Id,
-					x => x.Ozm,
-					x => x.Name
+				.Where(GetSearchCriterion(
+					() => nomenclatureAlias.Id,
+					() => nomenclatureAlias.Name,
+					() => itemsTypeAlias.Name
 					))
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
-					.Select(x => x.Ozm).WithAlias(() => resultAlias.Ozm)
 					.Select(() => itemsTypeAlias.Name).WithAlias(() => resultAlias.ItemType)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<NomenclatureJournalNode>());
@@ -42,8 +43,9 @@ namespace workwear.Journal.ViewModels.Stock
 	public class NomenclatureJournalNode
 	{
 		public int Id { get; set; }
+		[SearchHighlight]
 		public string Name { get; set; }
-		public uint? Ozm { get; set; }
+		[SearchHighlight]
 		public string ItemType { get; set; }
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
@@ -24,7 +25,7 @@ namespace workwear
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Writeoff> ();
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
-			ItemsTable.CurWarehouse = new StockRepository().GetDefaultWarehouse(UoW,new Tools.Features.FeaturesService());
+			ItemsTable.CurWarehouse = new StockRepository().GetDefaultWarehouse(UoW,new Tools.Features.FeaturesService(), Entity.CreatedbyUser.Id);
 			ConfigureDlg ();
 		}
 

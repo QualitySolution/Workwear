@@ -215,6 +215,7 @@
     <EmbeddedResource Include="Updates\2.3.sql" />
     <EmbeddedResource Include="Updates\2.3.3.sql" />
     <EmbeddedResource Include="Updates\2.4.sql" />
+    <EmbeddedResource Include="Updates\2.4.1.sql" />
     <EmbeddedResource Include="Updates\2.5.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -478,6 +479,9 @@
     <Compile Include="gtk-gui\workwear.ReportsDlg.AmountEmployeeGetWearDlg.cs" />
     <Compile Include="ReportsDlg\AmountIssuedWearDlg.cs" />
     <Compile Include="gtk-gui\workwear.ReportsDlg.AmountIssuedWearDlg.cs" />
+    <Compile Include="Views\User\UserSettingsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.User.UserSettingsView.cs" />
+    <Compile Include="ViewModels\User\UserSettingsViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -645,6 +649,8 @@
     <Folder Include="Journal\ViewModels\Regulations\" />
     <Folder Include="ViewModels\Regulations\" />
     <Folder Include="Views\Regulations\" />
+    <Folder Include="Views\User\" />
+    <Folder Include="ViewModels\User\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

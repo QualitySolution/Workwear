@@ -121,7 +121,7 @@ IF (wear_cards.card_number IS NULL, wear_cards.id, wear_cards.card_number) as id
 wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name, 
 wear_cards.hire_date, wear_cards.sex, wear_cards.photo,
 wear_cards.wear_growth, wear_cards.size_wear, wear_cards.size_shoes,
-wear_cards.size_headdress, wear_cards.size_gloves, posts.name AS post, 
+wear_cards.size_headdress, wear_cards.size_gloves, wear_cards.size_mittens, posts.name AS post, 
 CONCAT_WS(" ", leaders.surname, leaders.name, leaders.patronymic) as leader
 FROM wear_cards
 LEFT JOIN posts ON wear_cards.post_id = posts.id
@@ -188,6 +188,10 @@ WHERE wear_cards.id = @id;</CommandText>
         </Field>
         <Field Name="leader">
           <DataField>leader</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="size_mittens">
+          <DataField>size_mittens</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -609,7 +613,7 @@ WHERE wear_cards.id = @id;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox40">
-                      <Value>Размер рукавиц</Value>
+                      <Value>Размер перчаток</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -630,6 +634,48 @@ WHERE wear_cards.id = @id;</CommandText>
                     <Textbox Name="Textbox41">
                       <Value>={size_gloves}</Value>
                       <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Left>Solid</Left>
+                          <Right>Solid</Right>
+                          <Top>Solid</Top>
+                          <Bottom>Solid</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+            <TableRow>
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox2">
+                      <Value>Размер рукавиц</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Left>Solid</Left>
+                          <Right>Solid</Right>
+                          <Top>Solid</Top>
+                          <Bottom>Solid</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox5">
+                      <Value>={size_mittens}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
                           <Left>Solid</Left>

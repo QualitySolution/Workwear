@@ -21,8 +21,11 @@ using QSReport;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
+using workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Repository.Stock;
+using workwear.Tools.Features;
 using workwear.ViewModels.Statements;
 
 namespace workwear.ViewModels.Stock
@@ -48,6 +51,8 @@ namespace workwear.ViewModels.Stock
 			ILifetimeScope autofacScope, 
 			IInteractiveService interactive, 
 			IUserService userService,
+			StockRepository stockRepository,
+			FeaturesService featutesService,
 			CommonMessages messages,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager, validator)
 		{
@@ -69,6 +74,9 @@ namespace workwear.ViewModels.Stock
 			Entity.ObservableItemsNomenclature.ListContentChanged += ObservableItemsNomenclature_ListContentChanged;
 			Entity.ObservableEmployeeCard.ListContentChanged += ObservableItemsNomenclature_ListContentChanged;
 			ValidateNomenclature();
+
+			if(Entity.WarehouseFrom == null)
+				Entity.WarehouseFrom = stockRepository.GetDefaultWarehouse(UoW, featutesService, userService.CurrentUserId);
 		}
 
 		void ObservableItemsNomenclature_ListContentChanged(object sender, EventArgs e)

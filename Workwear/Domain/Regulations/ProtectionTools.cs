@@ -28,13 +28,13 @@ namespace workwear.Domain.Regulations
 			set { SetField(ref name, value); }
 		}
 
-		MeasurementUnits units;
+		ItemsType type;
 
-		[Display(Name = "Единица измерения")]
-		[Required(ErrorMessage = "Единица измерения должна быть указана.")]
-		public virtual MeasurementUnits Units {
-			get { return units; }
-			set { SetField(ref units, value, () => Units); }
+		[Display(Name = "Группа номенклатур")]
+		[Required(ErrorMessage = "Номенклатурная группа должна быть указана.")]
+		public virtual ItemsType Type {
+			get { return type; }
+			set { SetField(ref type, value, () => Type); }
 		}
 
 		private string comment;
@@ -90,7 +90,7 @@ namespace workwear.Domain.Regulations
 
 		public virtual string GetAmountAndUnitsText(int amount)
 		{
-			return this.Units?.MakeAmountShortStr(amount) ?? amount.ToString();
+			return this?.Type.Units?.MakeAmountShortStr(amount) ?? amount.ToString();
 		}
 
 		#endregion

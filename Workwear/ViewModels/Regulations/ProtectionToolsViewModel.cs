@@ -2,27 +2,49 @@
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using Autofac;
 using QS.Project.Domain;
 using QS.Validation;
+using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
+using System;
+using QS.Dialog;
+using QS.Services;
 
 namespace workwear.ViewModels.Regulations
 {
 	public class ProtectionToolsViewModel : EntityDialogViewModelBase<ProtectionTools>
 	{
+		private readonly ILifetimeScope autofacScope;
+		private readonly IInteractiveService interactiveService;
 
-		public ProtectionToolsViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+		public ProtectionToolsViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigation, ILifetimeScope autofacScope, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
+			this.interactiveService = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
+			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			var entryBuilder = new CommonEEVMBuilderFactory<ProtectionTools>(this, Entity, UoW, navigation, autofacScope);
+			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
+			.MakeByType()
+			.Finish();
+
 		}
+
+		#region EntityViewModels
+		public EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
+		#endregion
 
 		#region Действия View
 		#region Аналоги
 		public void AddAnalog()
 		{
+			if(Entity.Type == null) {
+				interactiveService.ShowMessage(ImportanceLevel.Error, "Не указан тип номенклатуры!");
+				return;
+			}
 			var page = NavigationManager.OpenViewModel<ProtectionToolsJournalViewModel>(this, OpenPageOptions.AsSlave);
 			page.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			page.ViewModel.OnSelectResult += Analog_OnSelectResult;
@@ -32,7 +54,8 @@ namespace workwear.ViewModels.Regulations
 		{
 			foreach(var toolsNode in e.SelectedObjects) {
 				var tools = UoW.GetById<ProtectionTools>(toolsNode.GetId());
-				Entity.AddAnalog(tools);
+				if (tools.Type == Entity?.Type)
+					Entity.AddAnalog(tools);
 			}
 		}
 
@@ -46,6 +69,10 @@ namespace workwear.ViewModels.Regulations
 		#region Номеклатуры
 		public void AddNomeclature()
 		{
+			if(Entity.Type == null) {
+				interactiveService.ShowMessage(ImportanceLevel.Error, "Не указан тип номенклатуры!");
+				return;
+			}
 			var selectPage = NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(this, OpenPageOptions.AsSlave);
 			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectPage.ViewModel.OnSelectResult += Nomeclature_OnSelectResult;
@@ -55,7 +82,8 @@ namespace workwear.ViewModels.Regulations
 		{
 			var nomenclatures = UoW.GetById<Nomenclature>(e.SelectedObjects.Select(x => x.GetId()));
 			foreach(var nomenclature in nomenclatures) {
-				Entity.AddNomeclature(nomenclature);
+				if (nomenclature.Type == Entity?.Type)
+					Entity.AddNomeclature(nomenclature);
 			}
 		}
 

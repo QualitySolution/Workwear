@@ -3,7 +3,15 @@
   <subtitle type="text">Новости программы QS: Спецодежда и имущество</subtitle>
   <id>workwearnews</id>
   <rights type="text">Quality Solution 2020</rights>
-  <updated>2020-09-15T14:00:00+03:00</updated>
+  <updated>2020-11-25T14:00:00+03:00</updated>
+  <entry>
+    <id>urn:uuid:678dbb01-fa1d-4337-9c4f-6e58c88a9460</id>
+    <title type="text">Релиз 2.4</title>
+    <updated>2020-11-25T14:00:00+03:00</updated>
+    <published>2020-11-25T14:00:00+03:00</published>
+    <link rel="alternate" href="http://workwear.qsolution.ru/?p=820" />
+    <summary>Добавлена возможность вести учет по нескольким складам, переработан учет размеров в номенклатуре.</summary>
+  </entry>
   <entry>
     <id>urn:uuid:c5455b60-0d46-4364-b9c7-1e923df9635b</id>
     <title type="text">Свидетельство о регистрации</title>

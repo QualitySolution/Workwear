@@ -30,7 +30,9 @@ namespace workwear.Views.Company
 			employeevacationsview1.ViewModel = ViewModel.VacationsViewModel;
 
 			notebook1.GetNthPage(2).Visible = ViewModel.VisibleListedItem;
-			notebook1.GetNthPage (3).Visible = ViewModel.VisibleHistory;
+			notebook1.GetNthPage(3).Visible = ViewModel.VisibleHistory;
+
+			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage);
 
 			comboSex.ItemsEnum = typeof(Sex);
 			comboSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItem).InitializeFromSource ();
@@ -96,6 +98,7 @@ namespace workwear.Views.Company
 			};
 
 			enumPrint.ItemsEnum = typeof(EmployeeViewModel.PersonalCardPrint);
+			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 		}
 
 		#region События контролов
@@ -219,11 +222,6 @@ namespace workwear.Views.Company
 
 		#endregion
 
-		protected void OnYperiodMaternityLeavePeriodChangedByUser(object sender, EventArgs e)
-		{
-			Entity.UpdateAllNextIssue();
-		}
-
 		#region Обработка кнопок
 
 		protected void OnEnumPrintEnumItemClicked(object sender, EnumItemClickedEventArgs e)
@@ -238,5 +236,15 @@ namespace workwear.Views.Company
 		{
 			return BaseParameters.EmployeeSizeRanges ? new SizeUse[] { } : new SizeUse[] { SizeUse.СlothesOnly };
 		}
+
+		#region События View
+		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(ViewModel.VisibleListedItem))
+				notebook1.GetNthPage(2).Visible = ViewModel.VisibleListedItem;
+			if(e.PropertyName == nameof(ViewModel.VisibleHistory))
+				notebook1.GetNthPage(3).Visible = ViewModel.VisibleHistory;
+		}
+		#endregion
 	}
 }

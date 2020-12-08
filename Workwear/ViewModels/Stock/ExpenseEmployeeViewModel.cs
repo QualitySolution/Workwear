@@ -19,6 +19,7 @@ using QSReport;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
+using workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository.Stock;
@@ -70,7 +71,7 @@ namespace workwear.ViewModels.Stock
 			}
 
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService);
+				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			if(employee != null)
 				FillUnderreceived();
 
@@ -85,7 +86,7 @@ namespace workwear.ViewModels.Stock
 									.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 									.UseViewModelDialog<EmployeeViewModel>()
 									.Finish();
-
+									
 			var parameter = new TypedParameter(typeof(ExpenseEmployeeViewModel), this);
 			DocItemsEmployeeViewModel = this.autofacScope.Resolve<ExpenseDocItemsEmployeeViewModel>(parameter);
 			Entity.PropertyChanged += EntityChange;

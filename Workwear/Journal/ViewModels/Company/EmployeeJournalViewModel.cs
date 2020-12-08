@@ -202,7 +202,7 @@ namespace workwear.Journal.ViewModels.Company
 		public Sex Sex => NSex == 2 ? Sex.F : (NSex == 1 ? Sex.M : Sex.None);
 
 		public string Post { get; set; }
-
+		[SearchHighlight]
 		public string Subdivision { get; set; }
 
 		public bool Dismiss { get { return DismissDate.HasValue; } }

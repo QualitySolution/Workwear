@@ -32,7 +32,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(warehouse2);
 				uow.Commit();
 
-				var defaultWarehouse = new StockRepository().GetDefaultWarehouse(uow, featuresService);
+				var defaultWarehouse = new StockRepository().GetDefaultWarehouse(uow, featuresService, 0);
 				Assert.That(defaultWarehouse, Is.Null);
 			}
 		}
@@ -51,7 +51,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(warehouse2);
 				uow.Commit();
 
-				var defaultWarehouse = new StockRepository().GetDefaultWarehouse(uow, featuresService);
+				var defaultWarehouse = new StockRepository().GetDefaultWarehouse(uow, featuresService, 0);
 				Assert.That(defaultWarehouse, Is.Not.Null);
 			}
 		}
@@ -66,7 +66,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(warehouse1);
 				uow.Commit();
 
-				var defaultWarehouse = new StockRepository().GetDefaultWarehouse(uow,new workwear.Tools.Features.FeaturesService());
+				var defaultWarehouse = new StockRepository().GetDefaultWarehouse(uow, new FeaturesService(), 0);
 				Assert.That(defaultWarehouse.Name, Is.EqualTo("Единственный"));
 			}
 		}
