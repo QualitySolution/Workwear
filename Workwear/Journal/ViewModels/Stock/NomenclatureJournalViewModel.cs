@@ -35,7 +35,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
-					.Select(x => x.Number).WithAlias(() => resultAlias.Number)
+					.Select(x => x.Ozm).WithAlias(() => resultAlias.Number)
 					.Select(() => itemsTypeAlias.Name).WithAlias(() => resultAlias.ItemType)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<NomenclatureJournalNode>());
