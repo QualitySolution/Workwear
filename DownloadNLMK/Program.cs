@@ -75,13 +75,12 @@ namespace DownloadNLMK
 				logger.Info($"Сотрудников с истекшими норами {employees.UsedEmployees.Count(x => x.UsedNorms.Any(n => !n.IsActive))}");
 				logger.Info($"Сотрудников без выдач {employees.UsedEmployees.Count(x => x.WorkwearItems.Count == 0)}");
 				logger.Info($"Сотрудников без подразделения {employees.UsedEmployees.Count(x => x.Subdivision == null)}");
-#if !NOSAVE
+
 				subdivisions.Save();
 				nomenclatures.Save();
 				protectionTools.Save();
 				norms.Save();
 				employees.Save();
-#endif
 				logger.Info($"Задача выполнена за {DateTime.Now - start}");
 			}
 			logger.Info("Работа завершена. Нажмите любую кнопку для закрытия консоли...");
