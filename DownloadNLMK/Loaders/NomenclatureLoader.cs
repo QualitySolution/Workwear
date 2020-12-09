@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Dapper;
 using Oracle.ManagedDataAccess.Client;
 using QS.DomainModel.UoW;
@@ -15,6 +16,7 @@ namespace DownloadNLMK.Loaders
 		public Dictionary<string, Nomenclature> ByID = new Dictionary<string, Nomenclature>();
 		public NomenclatureTypes NomenclatureTypes;
 		public HashSet<Nomenclature> UsedNomenclatures = new HashSet<Nomenclature>();
+		public HashSet<Nomenclature> ChangedNomenclature = new HashSet<Nomenclature>();
 
 		public NomenclatureLoader(IUnitOfWork uow )
 		{
@@ -24,29 +26,42 @@ namespace DownloadNLMK.Loaders
 		public void Load(OracleConnection connection)
 		{
 			logger.Info("Создаем типы номеклатур");
-			NomenclatureTypes = new NomenclatureTypes(uow);
+			NomenclatureTypes = new NomenclatureTypes(uow, true);
+
+			logger.Info("Загружаем имеющиеся номеклатуры");
+			ByID = uow.GetAll<Nomenclature>().ToDictionary(x => x.Ozm.ToString(), x => x);
 
 			logger.Info("Загружаем SKLAD.SAP_ZMAT");
 			var dtSAP_ZMAT = connection.Query("SELECT * FROM SKLAD.SAP_ZMAT");
 			logger.Info("Обработка SKLAD.SAP_ZMAT");
 			int categoryFail = 0;
 			foreach(var zmat in dtSAP_ZMAT) {
-				var nomenclature = new Nomenclature {
-					Name = zmat.NMAT ?? zmat.NMAT_,
-					Ozm = uint.Parse(zmat.ZMAT),
-					Comment = "Выгружен из ОМТР",
-				};
-				if(ByID.ContainsKey(zmat.ZMAT)) {
-					logger.Error($"Дубль строки для ОЗМ {zmat.ZMAT}\n >>{ByID[zmat.ZMAT].Name}\n >>{nomenclature.Name}");
-					continue;
+				Nomenclature nomenclature;
+				if(ByID.TryGetValue(zmat.ZMAT, out nomenclature)) {
+					if(nomenclature.Name != (zmat.NMAT ?? zmat.NMAT_)) {
+						nomenclature.Name = zmat.NMAT ?? zmat.NMAT_;
+						ChangedNomenclature.Add(nomenclature);
+					}
 				}
-				ByID.Add(zmat.ZMAT, nomenclature);
+				else {
+					nomenclature = new Nomenclature {
+						Name = zmat.NMAT ?? zmat.NMAT_,
+						Ozm = uint.Parse(zmat.ZMAT),
+						Comment = "Выгружен из ОМТР",
+					};
+					ByID.Add(zmat.ZMAT, nomenclature);
+					ChangedNomenclature.Add(nomenclature);
+				}
+
 				if(nomenclature.Name == null) {
 					nomenclature.Name = $"Без названия ОЗМ={nomenclature.Ozm}";
 					logger.Error($"Для ОЗМ {nomenclature.Ozm} нет названия.");
 					categoryFail++;
 					continue;
 				}
+
+				if(nomenclature.Type != null)
+					continue;
 
 				nomenclature.Type = NomenclatureTypes.ParseNomenclatureName(nomenclature.Name, zmat.EDIZ == 839);
 
@@ -88,23 +103,25 @@ namespace DownloadNLMK.Loaders
 		public void Save()
 		{
 			logger.Info($"Сохраняем типы...");
-			foreach(var item in NomenclatureTypes.ItemsTypes) {
+			var toSave = ChangedNomenclature.Where(x => UsedNomenclatures.Contains(x)).ToList();
+
+			foreach(var item in NomenclatureTypes.ItemsTypes.Where(x => x.Id == 0)) {
 				uow.Save(item, orUpdate: false);
 			}
 			uow.Commit();
 
 			logger.Info($"Сохраняем номенклатуру...");
 			int i = 0;
-			foreach(var item in UsedNomenclatures) {
-				uow.Save(item, orUpdate: false);
+			foreach(var item in toSave) {
+				uow.Save(item);
 				i++;
 				if(i % 100 == 0) {
 					uow.Commit();
-					Console.Write($"\r\tСохранили {i} [{(float)i / UsedNomenclatures.Count:P}]... ");
+					Console.Write($"\r\tСохранили {i} [{(float)i / toSave.Count:P}]... ");
 				}
 			}
 			uow.Commit();
-			Console.Write("Завершено\n");
+			Console.WriteLine($"Обновили {toSave.Count} номенклатур.");
 		}
 	}
 }

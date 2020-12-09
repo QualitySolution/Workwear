@@ -74,7 +74,7 @@ namespace DownloadNLMK.Loaders
 				}
 			}
 			uow.Commit();
-			Console.WriteLine($"Изменилось {toSave.Count} подразделений.");
+			Console.WriteLine($"Обновили {toSave.Count} подразделений.");
 		}
 	}
 }
