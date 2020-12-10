@@ -967,20 +967,7 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>select result.id, result.employee, result.personnel_number,
-     result.next_issue, result.delay, result.type_name, 
-     result.type_id,
-     result.nomenclature_name,
-     result.size,
-     result.growth,
-     result.unit,
-     result.okei,
-     result.amount_by_norm,
-     result.last_issue,
-     result.received,
-    ifnull( in_stock.sum, 0)  as in_stock
-     FROM (
-     SELECT
+        <CommandText>SELECT
     wear_cards_item.id,
     CONCAT_WS(
         ' ',
