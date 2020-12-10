@@ -1034,20 +1034,9 @@ FROM
     wear_cards_item
 JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
 JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
-LEFT JOIN measurement_units ON protection_tools.units_id = measurement_units.id
+LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
+LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
 JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
-LEFT JOIN(
-    SELECT
-        *
-    FROM
-        protection_tools_nomenclature
-    GROUP BY
-        protection_tools_nomenclature.protection_tools_id
-) firs_nomeclature
-ON
-    protection_tools.id = firs_nomeclature.protection_tools_id
-LEFT JOIN nomenclature ON nomenclature.id = firs_nomeclature.Nomenclature_id
-LEFT JOIN item_types ON item_types.id = nomenclature.type_id
 WHERE
     wear_cards.dismiss_date IS NULL AND(
         @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id
