@@ -13,7 +13,7 @@ namespace DownloadNLMK.Loaders
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly IUnitOfWork uow;
-		public Dictionary<string, Nomenclature> ByID = new Dictionary<string, Nomenclature>();
+		public Dictionary<string, Nomenclature> ByID;
 		public NomenclatureTypes NomenclatureTypes;
 		public HashSet<Nomenclature> UsedNomenclatures = new HashSet<Nomenclature>();
 		public HashSet<Nomenclature> ChangedNomenclature = new HashSet<Nomenclature>();

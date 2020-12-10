@@ -78,6 +78,7 @@ namespace DownloadNLMK.Loaders
 			AddType("ИМУЩЕСТВО", sht, new string[] { "ФИЛЬТР", "ЗНАК", "ФИЛЬТРДЛЯ", "ЭТИКЕТКА", "РЕДУКТОР", "УТЕПЛИТЕЛЬ", "ЛЕНТА", "ШТОРЫ", 
 				"ФЛАГ", "ЧЕХОЛ", "РУКАВ", "ПЛОМБА", "КОЖА", "ПОЛОГ", "СУКНО" });
 			AddType("ИНСТРУМЕНТ", sht, new string[] { "МАЗЬ", "НОЖ", "НОЖНИЦЫ", "СИГНАЛЬНЫЙ", "МАНОМЕТР" });
+			AddType("Неизвестный тип", sht, new string[] { });
 		}
 
 		private void TryLoadFromDB(IUnitOfWork uow)
@@ -194,6 +195,15 @@ namespace DownloadNLMK.Loaders
 			}
 			return null;
 		}
+
+		#region Получение специфичных типов.
+
+		public ItemsType GetUnknownType()
+		{
+			return ItemsTypes.First(x => x.Name == "Неизвестный тип");
+		}
+
+		#endregion
 	}
 
 	public class TypeDescription

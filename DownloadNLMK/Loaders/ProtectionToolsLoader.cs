@@ -51,6 +51,10 @@ namespace DownloadNLMK.Loaders
 					DicUniqNameProtectionTools[row.NAME] = item;
 				ByID[row.PROTECTION_ID] = item;
 
+				if(item.Type != null)
+					continue;
+
+				item.Type = nomenclatures.NomenclatureTypes.ParseNomenclatureName(item.Name, false);
 			}
 			logger.Info($"Загружено {ByID.Count} СИЗ-ов.");
 
@@ -91,6 +95,9 @@ namespace DownloadNLMK.Loaders
 				}
 				var nomenclature = nomenclatures.ByID[link.MAT];
 				protection.AddNomeclature(nomenclature);
+				if(protection.Type == null) {
+					protection.Type = nomenclature.Type;
+				}
 			}
 			logger.Info($"Добавлено {dtANALOQUE_PROTECTION.Count()} связей.");
 		}
@@ -98,6 +105,11 @@ namespace DownloadNLMK.Loaders
 		public void MarkAsUsed(ProtectionTools tools)
 		{
 			if(UsedProtectionTools.Add(tools)) {
+				if(tools.Type == null) { //Чтобы иметь возможность сохранить
+					tools.Type = nomenclatures.NomenclatureTypes.GetUnknownType();
+					ChangedProtectionTools.Add(tools);
+				}
+
 				foreach(var item in tools.Nomenclatures)
 					nomenclatures.MarkAsUsed(item);
 				foreach(var tool in tools.Analogs)
