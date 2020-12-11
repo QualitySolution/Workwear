@@ -13,8 +13,11 @@ namespace workwear.HMap
 			Map (x => x.Amount).Column ("amount");
 			Map (x => x.NormPeriod).Column ("period_type").CustomType<NormPeriodTypeType> ();
 			Map (x => x.PeriodCount).Column ("period_count");
+			#region NLMK
+			Map(x => x.NlmkId).Column("nlmk_id");
+			#endregion
 
-			References (x => x.Norm).Column ("norm_id").Not.Nullable ();
+			References(x => x.Norm).Column ("norm_id").Not.Nullable ();
 			References (x => x.ProtectionTools).Column ("protection_tools_id").Not.Nullable ();
 		}
 	}

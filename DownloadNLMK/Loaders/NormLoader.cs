@@ -13,12 +13,13 @@ namespace DownloadNLMK.Loaders
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly IUnitOfWork uow;
 		private readonly ProtectionToolsLoader protectionTools;
-		public Dictionary<string, Norm> ByID = new Dictionary<string, Norm>();
-		public Dictionary<string, Norm> ByProf = new Dictionary<string, Norm>();
+		public Dictionary<string, Norm> ByID;
+		public Dictionary<string, Norm> ByProf;
 		public Dictionary<int, Norm> ByCodeStaff = new Dictionary<int, Norm>();
 		public Dictionary<string, NormItem> RowsByID = new Dictionary<string, NormItem>();
 
 		public HashSet<Norm> UsedNorms = new HashSet<Norm>();
+		public HashSet<Norm> ChangedNorms = new HashSet<Norm>();
 
 		public NormLoader(IUnitOfWork uow, ProtectionToolsLoader protectionTools)
 		{
@@ -28,6 +29,10 @@ namespace DownloadNLMK.Loaders
 
 		public void Load(OracleConnection connection)
 		{
+			logger.Info("Загружаем имеющиеся номеклатуры");
+			ByID = uow.GetAll<Norm>().Where(x => x.NlmkNormId != null).ToDictionary(x => x.NlmkNormId, x => x);
+			ByProf = ByID.Values.ToDictionary(x => x.NlmkProffId, x => x);
+
 			logger.Info("Загружаем NORMA");
 			var dtNORMA = connection.Query("SELECT * FROM SKLAD.NORMA norma");
 			logger.Info("Загружаем NORMA_ROW");
@@ -44,12 +49,15 @@ namespace DownloadNLMK.Loaders
 					logger.Warn($"Профессия NORMA.PROFF_ID={rowNorma.PROFF_ID} не найдена в PROFF_STAFF.");
 					continue;
 				}
-
-				Norm norm = new Norm();
+				Norm norm;
+				if(!ByID.TryGetValue(rowNorma.NORMA_ID, out norm)) {
+					norm = new Norm();
+					ByID[rowNorma.NORMA_ID] = norm;
+				}
+				norm.PropertyChanged += (sender, e) => ChangedNorms.Add(norm);
 				norm.DateFrom = rowNorma.DATE_BEGIN;
 				norm.DateTo = rowNorma.DATE_END;
 				norm.Name = PROFF_STAFF[rowNorma.PROFF_ID].NAME_PROFF;
-				ByID[rowNorma.NORMA_ID] = norm;
 				if(!ByProf.ContainsKey(rowNorma.PROFF_ID) || ByProf[(string)rowNorma.PROFF_ID].DateTo < norm.DateTo) {
 					ByProf[rowNorma.PROFF_ID] = norm;
 				}
@@ -68,13 +76,18 @@ namespace DownloadNLMK.Loaders
 					logger.Warn($"В норме NORMA_ID={rowNorma.NORMA_ID} {ByID[rowNorma.NORMA_ID].Name} есть ссылка на PROTECTION_ID={rowNorma.PROTECTION_ID} которой нет.");
 					continue;
 				}
-				NormItem normItem = new NormItem();
+				Norm norm = ByID[rowNorma.NORMA_ID];
+				NormItem normItem = norm.Items.FirstOrDefault(x => x.NlmkId == rowNorma.NORMA_ROW_ID);
+				if(normItem == null) {
+					normItem = new NormItem();
+					normItem.Norm = norm;
+					norm.Items.Add(normItem);
+				}
+				normItem.PropertyChanged += (sender, e) => ChangedNorms.Add(norm);
 				normItem.Amount = Convert.ToInt32(rowNorma.COUNT);
 				normItem.NormPeriod = NormPeriodType.Month;
 				normItem.ProtectionTools = protectionTools.ByID[rowNorma.PROTECTION_ID];
 				normItem.PeriodCount = Convert.ToInt32(rowNorma.WEARING_PERIOD);
-				normItem.Norm = ByID[rowNorma.NORMA_ID];
-				ByID[rowNorma.NORMA_ID].Items.Add(normItem);
 				RowsByID.Add(rowNorma.NORMA_ROW_ID, normItem);
 				normRows++;
 
@@ -112,16 +125,17 @@ namespace DownloadNLMK.Loaders
 		{
 			logger.Info($"Сохраняем нормы...");
 			int i = 0;
+			var toSave = ChangedNorms.Where(x => UsedNorms.Contains(x)).ToList();
 			foreach(var norm in UsedNorms) {
-				uow.Save(norm, orUpdate: false);
+				uow.Save(norm);
 				i++;
 				if(i % 100 == 0) {
 					uow.Commit();
-					Console.Write($"\r\tСохранили {i} [{(float)i / UsedNorms.Count:P}]... ");
+					Console.Write($"\r\tСохранили {i} [{(float)i / toSave.Count:P}]... ");
 				}
 			}
 			uow.Commit();
-			Console.Write("Завершено\n");
+			Console.WriteLine($"Обновили {toSave.Count} норм.");
 		}
 	}
 }

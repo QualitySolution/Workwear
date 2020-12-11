@@ -14,9 +14,10 @@ namespace DownloadNLMK.Loaders
 		private readonly IUnitOfWork uow;
 		private readonly NomenclatureLoader nomenclatures;
 		public Dictionary<string, ProtectionTools> ByID = new Dictionary<string, ProtectionTools>();
-		public Dictionary<string, ProtectionTools> DicUniqNameProtectionTools = new Dictionary<string, ProtectionTools>();
+		public Dictionary<string, ProtectionTools> DicUniqNameProtectionTools;
 
 		public HashSet<ProtectionTools> UsedProtectionTools = new HashSet<ProtectionTools>();
+		public HashSet<ProtectionTools> ChangedProtectionTools = new HashSet<ProtectionTools>();
 
 		public ProtectionToolsLoader(IUnitOfWork uow, NomenclatureLoader nomenclatures)
 		{
@@ -26,6 +27,17 @@ namespace DownloadNLMK.Loaders
 
 		public void Load(OracleConnection connection)
 		{
+			logger.Info("Загружаем имеющиеся СИЗ");
+			DicUniqNameProtectionTools = uow.GetAll<ProtectionTools>().ToDictionary(x => x.Name, x => x);
+			foreach(var tools in DicUniqNameProtectionTools.Values) {
+				if(!String.IsNullOrWhiteSpace(tools.NlmkIds)) {
+					var ids = tools.NlmkIds.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+					foreach(var id in ids) {
+						ByID.Add(id, tools);
+					}
+				}
+			}
+
 			logger.Info("Загружаем PROTECTION_TOOL");
 			var dtPROTECTION_TOOLS = connection.Query("SELECT * FROM SKLAD.PROTECTION_TOOL");
 			logger.Info("Загружаем PROTECTION_REPLACEMENT");
@@ -33,28 +45,30 @@ namespace DownloadNLMK.Loaders
 
 			logger.Info("Обработка СИЗ...");
 			foreach(var row in dtPROTECTION_TOOLS) {
+				if(ByID.ContainsKey(row.PROTECTION_ID))
+					continue;
+
 				if(row.NAME != null && DicUniqNameProtectionTools.ContainsKey(row.NAME)) {
 					ByID[row.PROTECTION_ID] = DicUniqNameProtectionTools[row.NAME];
+					DicUniqNameProtectionTools[row.NAME].NlmkIds += row.PROTECTION_ID + ";";
+					ChangedProtectionTools.Add(ByID[row.PROTECTION_ID]);
 					continue;
 				}
 
 				var item = new ProtectionTools();
 				item.Name = row.NAME;
+				item.NlmkIds = row.PROTECTION_ID + ";";
 				item.Comment = "Загружена из ОМТР";
 				if(String.IsNullOrWhiteSpace(item.Name)) {
 					logger.Warn($"СИЗ с кодом {row.PROTECTION_ID} не имеет названия.");
 					item.Name = $"Без названия PROTECTION_ID={row.PROTECTION_ID}";
 				}
+				item.Type = nomenclatures.NomenclatureTypes.ParseNomenclatureName(item.Name, false);
 
-				//Если уникальное имя занято, то присваиваем уже созданную по этому имени номенклатуру ТОН
-				if (row.NAME != null) 
+				if (row.NAME != null)
 					DicUniqNameProtectionTools[row.NAME] = item;
 				ByID[row.PROTECTION_ID] = item;
-
-				if(item.Type != null)
-					continue;
-
-				item.Type = nomenclatures.NomenclatureTypes.ParseNomenclatureName(item.Name, false);
+				ChangedProtectionTools.Add(item);
 			}
 			logger.Info($"Загружено {ByID.Count} СИЗ-ов.");
 
@@ -121,16 +135,17 @@ namespace DownloadNLMK.Loaders
 		{
 			logger.Info($"Сохраняем СИЗ...");
 			int i = 0;
-			foreach(var item in UsedProtectionTools) {
-				uow.Save(item, orUpdate: false);
+			var toSave = ChangedProtectionTools.Where(x => UsedProtectionTools.Contains(x)).ToList();
+			foreach(var item in toSave) {
+				uow.Save(item);
 				i++;
 				if(i % 100 == 0) {
 					uow.Commit();
-					Console.Write($"\r\tСохранили {i} [{(float)i / UsedProtectionTools.Count:P}]... ");
+					Console.Write($"\r\tСохранили {i} [{(float)i / toSave.Count:P}]... ");
 				}
 			}
 			uow.Commit();
-			Console.Write("Завершено\n");
+			Console.WriteLine($"Обновили {toSave.Count} СИЗ.");
 		}
 	}
 }

@@ -44,6 +44,14 @@ namespace workwear.Domain.Regulations
 			set { SetField(ref comment, value); }
 		}
 
+		#region NLMK
+		private string nlmkIds = String.Empty;
+		public virtual string NlmkIds {
+			get => nlmkIds;
+			set => SetField(ref nlmkIds, value);
+		}
+		#endregion
+
 		#endregion
 
 		#region Аналоги

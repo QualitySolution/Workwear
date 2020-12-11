@@ -15,6 +15,10 @@ namespace workwear.HMap
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.DateFrom).Column("datefrom");
 			Map(x => x.DateTo).Column("dateto");
+			#region NLMK
+			Map(x => x.NlmkNormId).Column("nlmk_norm_id");
+			Map(x => x.NlmkProffId).Column("nlmk_proff_id");
+			#endregion
 
 			References(x => x.Document).Column("regulations_id");
 			References(x => x.Annex).Column("regulations_annex_id");

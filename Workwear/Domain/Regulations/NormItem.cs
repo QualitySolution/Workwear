@@ -56,6 +56,16 @@ namespace workwear.Domain.Regulations
 
 		#endregion
 
+		#region NLMK
+
+		private string nlmkId;
+		public virtual string NlmkId {
+			get => nlmkId;
+			set => SetField(ref nlmkId, value);
+		}
+
+		#endregion
+
 		public virtual double AmountPerYear
 		{
 			get{

@@ -14,6 +14,9 @@ namespace workwear.HibernateMapping.Regulations
 			Id(x => x.Id).Column("id").GeneratedBy.Native();
 			Map(x => x.Name).Column("name").Not.Nullable();
 			Map(x => x.Comment).Column("comments");
+			#region NLMK
+			Map(x => x.NlmkIds).Column("nlmk_ids");
+			#endregion
 
 			References(x => x.Type).Column("item_types_id");
 

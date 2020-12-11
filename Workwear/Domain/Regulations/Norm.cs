@@ -117,6 +117,22 @@ namespace workwear.Domain.Regulations
 
 		#endregion
 
+		#region NLMK
+
+		private string nlmkNormId;
+		public virtual string NlmkNormId {
+			get => nlmkNormId;
+			set => SetField(ref nlmkNormId, value);
+		}
+
+		private string nlmkProffId;
+		public virtual string NlmkProffId {
+			get => nlmkProffId;
+			set => SetField(ref nlmkProffId, value);
+		}
+
+		#endregion
+
 		#region Генерируемые
 
 		public virtual string ProfessionsText {
