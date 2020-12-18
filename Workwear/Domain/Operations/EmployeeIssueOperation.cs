@@ -197,6 +197,14 @@ namespace workwear.Domain.Operations
 			useAutoWriteoff = BaseParameters.DefaultAutoWriteoff;
 		}
 
+		#region NLMK
+		private string nlmkCardRowId;
+		public virtual string NlmkCardRowId {
+			get => nlmkCardRowId;
+			set => SetField(ref nlmkCardRowId, value);
+		}
+		#endregion
+
 		#region Расчетные
 
 		public virtual string Title => Issued > Returned

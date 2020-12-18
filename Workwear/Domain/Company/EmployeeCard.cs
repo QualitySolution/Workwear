@@ -168,6 +168,12 @@ namespace workwear.Domain.Company
 
 		#region НЛМК
 
+		private string nlmkId;
+		public virtual string NlmkId {
+			get => nlmkId;
+			set => SetField(ref nlmkId, value);
+		}
+
 		private int? professionId;
 		[Display(Name = "Код профессии")]
 		public virtual int? ProfessionId {

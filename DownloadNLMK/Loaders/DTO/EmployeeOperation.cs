@@ -39,8 +39,10 @@ namespace DownloadNLMK.Loaders.DTO
 
 		public int norm_item_id => NormItem.Id;
 
+		public string nlmk_card_row_id { get; set; }
+
 		#region Установка ссылок
-		
+
 		public Nomenclature Nomenclature { get; set; }
 
 		private EmployeeCard employee;

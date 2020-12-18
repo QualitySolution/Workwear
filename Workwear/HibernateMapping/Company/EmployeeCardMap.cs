@@ -21,6 +21,7 @@ namespace workwear.HibernateMapping.Company
 			Map(x => x.Comment).Column("comment");
 
 			#region NLMK
+			Map(x => x.NlmkId).Column("nlmk_id");
 			Map(x => x.ProfessionId).Column("nlmk_prof_id");
 			Map(x => x.DepartmentId).Column("nlmk_dept_id");
 			Map(x => x.PostId).Column("nlmk_post_id");

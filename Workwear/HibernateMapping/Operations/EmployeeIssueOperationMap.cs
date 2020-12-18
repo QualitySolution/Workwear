@@ -21,6 +21,9 @@ namespace workwear.HMap
 			Map(x => x.BuhDocument).Column("buh_document");
 			Map(x => x.StartOfUse).Column("StartOfUse");
 			Map(x => x.ExpiryByNorm).Column("ExpiryByNorm");
+			#region NLMK
+			Map(x => x.NlmkCardRowId).Column("nlmk_card_row_id");
+			#endregion
 
 			References(x => x.Employee).Column("employee_id").Not.Nullable();
 			References(x => x.Nomenclature).Column("nomenclature_id").Not.Nullable();

@@ -6,7 +6,9 @@ using DownloadNLMK.Loaders.DTO;
 using Oracle.ManagedDataAccess.Client;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
+using workwear.Domain.Stock;
 
 namespace DownloadNLMK.Loaders
 {
@@ -18,10 +20,14 @@ namespace DownloadNLMK.Loaders
 		private readonly ProtectionToolsLoader protectionTools;
 		private readonly NomenclatureLoader nomenclature;
 		private readonly SubdivisionLoader subdivisions;
-		private readonly Dictionary<EmployeeCard, List<EmployeeOperation>> Operations = new Dictionary<EmployeeCard, List<EmployeeOperation>>();
-		public Dictionary<string, EmployeeCard> ByID = new Dictionary<string, EmployeeCard>();
+		public Dictionary<string, EmployeeCard> ByID;
+		public Dictionary<string, EmployeeIssueOperation> ExistOpByCardRowID;
+		private readonly Dictionary<EmployeeCard, List<EmployeeOperation>> OperationsForNewCards = new Dictionary<EmployeeCard, List<EmployeeOperation>>();
 
 		public HashSet<EmployeeCard> UsedEmployees = new HashSet<EmployeeCard>();
+		public HashSet<EmployeeCard> ChangedEmployees = new HashSet<EmployeeCard>();
+		public HashSet<EmployeeCard> NeedRecalcutateItems = new HashSet<EmployeeCard>();
+		public HashSet<EmployeeIssueOperation> ChangedOperations = new HashSet<EmployeeIssueOperation>();
 
 		public EmployeeLoader(IUnitOfWork uow, NormLoader norms, ProtectionToolsLoader protectionTools, NomenclatureLoader nomenclature, SubdivisionLoader subdivisions)
 		{
@@ -34,6 +40,9 @@ namespace DownloadNLMK.Loaders
 
 		public void Load(OracleConnection connection)
 		{
+			logger.Info("Загружаем имеющиеся личные карточки");
+			ByID = uow.GetAll<EmployeeCard>().Where(x => x.NlmkId != null).ToDictionary(x => x.NlmkId, x => x);
+
 			logger.Info("Загружаем PERSONAL_CARD");
 			var PERSONAL_CARD = connection.Query("SELECT c.TN, c.PERSONAL_CARD_ID, " +
 				"t.SURNAME, t.NAME, t.SECNAME, t.E_SEX, t.DUVOL, t.DHIRING, t.E_PROF, t.PARENT_DEPT_CODE, t.ID_DEPT, t.ID_WP " +
@@ -59,8 +68,15 @@ namespace DownloadNLMK.Loaders
 					skipCards++;
 					continue;
 				}
+				EmployeeCard card;
+				if(!ByID.TryGetValue(row.PERSONAL_CARD_ID, out card)) {
+					card = new EmployeeCard();
+					ByID[row.PERSONAL_CARD_ID] = card;
+					card.NlmkId = row.PERSONAL_CARD_ID;
+					OperationsForNewCards[card] = new List<EmployeeOperation>();
+				}
+				card.PropertyChanged += (sender, e) => ChangedEmployees.Add(card);
 
-				EmployeeCard card = new EmployeeCard();
 				card.PersonnelNumber = row.TN.ToString();
 				card.LastName = row.SURNAME;
 				card.FirstName = row.NAME;
@@ -75,25 +91,29 @@ namespace DownloadNLMK.Loaders
 				card.ProfessionId = (int?)row.E_PROF;
 				card.DepartmentId = (int?)row.ID_DEPT;
 				card.PostId = (int?)row.ID_WP;
-				ByID.Add(row.PERSONAL_CARD_ID, card);
-				Operations[card] = new List<EmployeeOperation>();
 
+				bool normsChanged = false;
 				//Связываем с нормой
 				if(RELAT_PERS_PROFF.ContainsKey(row.PERSONAL_CARD_ID)) {
 					var proff = RELAT_PERS_PROFF[row.PERSONAL_CARD_ID];
-					if(norms.ByProf.ContainsKey(proff.PROFF_ID)) {
-						var norm = norms.ByProf[proff.PROFF_ID];
-						card.UsedNorms.Add(norm);
+					if(norms.ByProf.TryGetValue(proff.PROFF_ID, out Norm norm)) {
+						if(!card.UsedNorms.Contains(norm)) {
+							card.UsedNorms.Add(norm);
+							normsChanged = true;
 						}
+					}
 				}
 				if(card.PostId.HasValue && norms.ByCodeStaff.ContainsKey(card.PostId.Value) 
 					&& !card.UsedNorms.Contains(norms.ByCodeStaff[card.PostId.Value])) {
 					card.UsedNorms.Add(norms.ByCodeStaff[card.PostId.Value]);
+					normsChanged = true;
 				}
-				if(card.UsedNorms.Any()) {
+				//FIXME Возможно где-то здесь надо удалять старые добавленые нормы, но что удалять что нет, видимо надо отдельно договариваться.
+				if(card.UsedNorms.Any() && normsChanged) {
+					ChangedEmployees.Add(card);
 					if(card.UsedNorms.Count > 1) {
 						logger.Warn($"У TN={card.PersonnelNumber} более одной нормы.");
-						card.UpdateWorkwearItems();
+						NeedRecalcutateItems.Add(card);
 					}
 					else {
 						foreach(var normItem in card.UsedNorms.First().Items) {
@@ -105,12 +125,16 @@ namespace DownloadNLMK.Loaders
 			Console.Write("Готово\n");
 			logger.Info($"Пропущено {skipCards} карточек без ТН.");
 			logger.Info($"Обработано {ByID.Count()} личных карточек.");
+			logger.Info($"Измененых карточек {ChangedEmployees.Count}");
 			logger.Info($"C профессией {ByID.Values.Count(x => x.UsedNorms.Any())}.");
 			PERSONAL_CARD = null;
 			RELAT_PERS_PROFF = null;
 
+			logger.Info("Загружаем имеющиеся операции");
+			ExistOpByCardRowID = uow.GetAll<EmployeeIssueOperation>().Where(x => x.NlmkCardRowId != null).ToDictionary(x => x.NlmkCardRowId, x => x);
+
 			logger.Info("Загружаем PERSONAL_CARDS");
-			var PERSONAL_CARDS = connection.Query("SELECT r.PERSONAL_CARD_ID, r.NORMA_ROW_ID, sms.MAT, sms.DOTP, sms.KOLMOTP, sm.TYPE, ADD_MONTHS(sms.DOTP, WEARING_PERIOD) as EXPIRY " +
+			var PERSONAL_CARDS = connection.Query("SELECT r.PERSONAL_CARD_ID, r.PERSONAL_CARDS_ID, r.NORMA_ROW_ID, sms.MAT, sms.DOTP, sms.KOLMOTP, sm.TYPE, ADD_MONTHS(sms.DOTP, WEARING_PERIOD) as EXPIRY " +
 				"FROM SKLAD.PERSONAL_CARDS r " +
 				"INNER JOIN SKLAD.NORMA_ROW ON SKLAD.NORMA_ROW.NORMA_ROW_ID = r.NORMA_ROW_ID " +
 				"INNER JOIN SKLAD.NORMA norma ON norma.NORMA_ID = SKLAD.NORMA_ROW.NORMA_ID " +
@@ -136,44 +160,10 @@ namespace DownloadNLMK.Loaders
 				}
 
 				EmployeeCard card = ByID[item.PERSONAL_CARD_ID];
-				NormItem normRow = norms.RowsByID[item.NORMA_ROW_ID];
-
-				EmployeeCardItem cardItem = card.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normRow);
-				if(cardItem == null) {
-					cardItem = card.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem.ProtectionTools == normRow.ProtectionTools);
-				}
-				if(cardItem == null) {
-					cardItem = new EmployeeCardItem(card, normRow);
-					card.WorkwearItems.Add(cardItem);
-				}
-				if(item.TYPE == "2")
-					cardItem.Amount += Convert.ToInt32(item.KOLMOTP);
+				if(card.Id == 0)
+					AddOperationForNewCard(card, item);
 				else
-					cardItem.Amount -= Convert.ToInt32(item.KOLMOTP);
-
-				if((cardItem.LastIssue ?? default(DateTime)) < item.DOTP ?? item.TYPE == "2") {
-					cardItem.LastIssue = item.DOTP;
-				}
-
-				cardItem.NextIssue = normRow.CalculateExpireDate(cardItem.LastIssue.Value, cardItem.Amount);
-
-				var issueNomenclature = nomenclature.ByID.ContainsKey(item.MAT)
-					? nomenclature.ByID[item.MAT]
-					: cardItem.ProtectionTools.MatchedNomenclatures.FirstOrDefault();
-
-				var operation = new EmployeeOperation {
-					Employee = card,
-					NormItem = normRow,
-					returned = item.TYPE == "1" ? Convert.ToInt32(item.KOLMOTP) : 0,
-					issued = item.TYPE == "2" ? Convert.ToInt32(item.KOLMOTP) : 0,
-					auto_writeoff_date = item.TYPE == "2" ? item.EXPIRY : null,
-					ProtectionTools = cardItem.ProtectionTools,
-					ExpiryByNorm = item.TYPE == "2" ? item.EXPIRY : null,
-					Nomenclature = issueNomenclature,
-					operation_time = item.DOTP,
-					StartOfUse = item.TYPE == "2" ? item.DOTP : null,
-				};
-				Operations[card].Add(operation);
+					UpdateOperationForExistCard(card, item);
 			}
 			Console.Write("Готово\n");
 
@@ -198,6 +188,7 @@ namespace DownloadNLMK.Loaders
 				}
 
 				employee.UsedNorms.Add(selectNorm);
+				ChangedEmployees.Add(employee);
 				foreach(var item in selectNorm.Items) {
 					var found = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == item);
 					if(found == null)
@@ -223,6 +214,77 @@ namespace DownloadNLMK.Loaders
 			logger.Info($"Карточек без строк: {ByID.Values.Count(x => !x.WorkwearItems.Any())}");
 		}
 
+		private void AddOperationForNewCard(EmployeeCard card, dynamic item)
+		{
+			NormItem normRow = norms.RowsByID[item.NORMA_ROW_ID];
+
+			EmployeeCardItem cardItem = card.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normRow);
+			if(cardItem == null) {
+				cardItem = card.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem.ProtectionTools == normRow.ProtectionTools);
+			}
+			if(cardItem == null) {
+				cardItem = new EmployeeCardItem(card, normRow);
+				card.WorkwearItems.Add(cardItem);
+			}
+			if(item.TYPE == "2")
+				cardItem.Amount += Convert.ToInt32(item.KOLMOTP);
+			else
+				cardItem.Amount -= Convert.ToInt32(item.KOLMOTP);
+
+			if((cardItem.LastIssue ?? default(DateTime)) < item.DOTP ?? item.TYPE == "2") {
+				cardItem.LastIssue = item.DOTP;
+			}
+
+			cardItem.NextIssue = normRow.CalculateExpireDate(cardItem.LastIssue.Value, cardItem.Amount);
+
+			var issueNomenclature = nomenclature.ByID.ContainsKey(item.MAT)
+				? nomenclature.ByID[item.MAT]
+				: cardItem.ProtectionTools.MatchedNomenclatures.FirstOrDefault();
+
+			var operation = new EmployeeOperation {
+				nlmk_card_row_id = item.PERSONAL_CARDS_ID,
+				Employee = card,
+				NormItem = normRow,
+				returned = item.TYPE == "1" ? Convert.ToInt32(item.KOLMOTP) : 0,
+				issued = item.TYPE == "2" ? Convert.ToInt32(item.KOLMOTP) : 0,
+				auto_writeoff_date = item.TYPE == "2" ? item.EXPIRY : null,
+				ProtectionTools = cardItem.ProtectionTools,
+				ExpiryByNorm = item.TYPE == "2" ? item.EXPIRY : null,
+				Nomenclature = issueNomenclature,
+				operation_time = item.DOTP,
+				StartOfUse = item.TYPE == "2" ? item.DOTP : null,
+			};
+			OperationsForNewCards[card].Add(operation);
+		}
+
+		private void UpdateOperationForExistCard(EmployeeCard card, dynamic item)
+		{
+			NormItem normRow = norms.RowsByID[item.NORMA_ROW_ID];
+			if(!nomenclature.ByID.ContainsKey(item.MAT)) {
+				//FIXME Возможно здесь надо выдавать имеющееся на складе при дальнешей работе.
+				logger.Error($"Номенклатура MAT={item.MAT} не найдена. Пропускаем операцию выдачи.");
+				return;
+			}
+			Nomenclature issueNomenclature = nomenclature.ByID[item.MAT];
+			EmployeeIssueOperation operation;
+			if(!ExistOpByCardRowID.TryGetValue(item.PERSONAL_CARDS_ID, out operation)) {
+				operation = new EmployeeIssueOperation();
+				operation.NlmkCardRowId = item.PERSONAL_CARDS_ID;
+				operation.Employee = card;
+			}
+			operation.PropertyChanged += (sender, e) => ChangedOperations.Add(operation);
+
+			operation.NormItem = normRow;
+			operation.ProtectionTools = normRow.ProtectionTools;
+			operation.Returned = item.TYPE == "1" ? Convert.ToInt32(item.KOLMOTP) : 0;
+			operation.Issued = item.TYPE == "2" ? Convert.ToInt32(item.KOLMOTP) : 0;
+			operation.AutoWriteoffDate = item.TYPE == "2" ? DateTime.Parse(item.EXPIRY) : null;
+			operation.ExpiryByNorm = item.TYPE == "2" ? DateTime.Parse(item.EXPIRY) : null;
+			operation.Nomenclature = issueNomenclature;
+			operation.OperationTime = DateTime.Parse(item.DOTP);
+			operation.StartOfUse = item.TYPE == "2" ? DateTime.Parse(item.DOTP) : null;
+		}
+
 		public void MarkAsUsed(EmployeeCard employee)
 		{
 			if(UsedEmployees.Add(employee)) {
@@ -230,7 +292,7 @@ namespace DownloadNLMK.Loaders
 					norms.MarkAsUsed(norm);
 				foreach(var item in employee.WorkwearItems)
 					norms.MarkAsUsed(item.ActiveNormItem.Norm);
-				foreach(var operation in Operations[employee]) {
+				foreach(var operation in OperationsForNewCards[employee]) {
 					nomenclature.MarkAsUsed(operation.Nomenclature);
 					norms.MarkAsUsed(operation.NormItem.Norm);
 				}
@@ -243,26 +305,27 @@ namespace DownloadNLMK.Loaders
 		{
 			logger.Info($"Сохраняем личные карточки...");
 			int i = 0;
-			foreach(var card in UsedEmployees) {
-				uow.Save(card, orUpdate: false);
+			var toSave = ChangedEmployees.Where(x => UsedEmployees.Contains(x)).ToList();
+			foreach(var card in toSave) {
+				uow.Save(card);
 				i++;
 				if(i % 100 == 0) {
 					uow.Commit();
-					Console.Write($"\r\tСохранили {i} [{(float)i / UsedEmployees.Count:P}]... ");
+					Console.Write($"\r\tСохранили {i} [{(float)i / toSave.Count:P}]... ");
 				}
 			}
 			uow.Commit();
 			Console.Write("Завершено\n");
 			var sql = "INSERT INTO operation_issued_by_employee " +
-				"(`employee_id`, `operation_time`, `nomenclature_id`, `issued`, `returned`, `auto_writeoff`, `auto_writeoff_date`, `protection_tools_id`, `norm_item_id`, `StartOfUse`, `ExpiryByNorm`, wear_percent) " +
-				"Values (@employee_id, @operation_time, @nomenclature_id, @issued, @returned, @auto_writeoff, @auto_writeoff_date, @protection_tools_id, @norm_item_id, @StartOfUse, @ExpiryByNorm, @wear_percent);";
+				"(`employee_id`, `operation_time`, `nomenclature_id`, `issued`, `returned`, `auto_writeoff`, `auto_writeoff_date`, `protection_tools_id`, `norm_item_id`, `StartOfUse`, `ExpiryByNorm`, wear_percent, nlmk_card_row_id) " +
+				"Values (@employee_id, @operation_time, @nomenclature_id, @issued, @returned, @auto_writeoff, @auto_writeoff_date, @protection_tools_id, @norm_item_id, @StartOfUse, @ExpiryByNorm, @wear_percent, @nlmk_card_row_id);";
 
-			logger.Info($"Сохраняем операции выдачи...");
+			logger.Info($"Сохраняем операции выдачи для новых карточек...");
 			var listToInsert = new List<EmployeeOperation>();
 			i = 0;
 			int amountSkip = 0;
 			int processed = 0;
-			foreach(var pair in Operations) {
+			foreach(var pair in OperationsForNewCards) {
 				if(!UsedEmployees.Contains(pair.Key))
 					continue;
 
@@ -284,7 +347,7 @@ namespace DownloadNLMK.Loaders
 
 				if(listToInsert.Count > 1000) {
 					uow.Session.Connection.Execute(sql, listToInsert);	
-					Console.Write($"\r\tСохранили {i} [{(float)processed / Operations.Count:P}]... ");
+					Console.Write($"\r\tСохранили {i} [{(float)processed / OperationsForNewCards.Count:P}]... ");
 					listToInsert.Clear();
 				}
 			}
@@ -292,9 +355,39 @@ namespace DownloadNLMK.Loaders
 				uow.Session.Connection.Execute(sql, listToInsert);
 
 			Console.Write("Завершено\n");
-
 			logger.Info($"Сохранено {i} операций выдачи");
 			logger.Info($"Пропущено {amountSkip} операций с нулевый количеством.");
+
+			logger.Info($"Сохраняем операции выдачи для существующих карточек...");
+			logger.Info($"Новых: {ChangedOperations.Count(x => x.Id == 0)} Измененых: {ChangedOperations.Count(x => x.Id > 0)} Всего: {ChangedOperations.Count}");
+			i = 0;
+			var toSaveOp = ChangedOperations.Where(x => UsedEmployees.Contains(x.Employee)).ToList();
+			foreach(var op in toSaveOp) {
+				uow.Save(op);
+				i++;
+				if(i % 100 == 0) {
+					uow.Commit();
+					Console.Write($"\r\tСохранили {i} [{(float)i / toSaveOp.Count:P}]... ");
+				}
+			}
+			uow.Commit();
+			Console.Write("Завершено\n");
+
+			logger.Info($"Пересчитываем потребности у {NeedRecalcutateItems} сотрудников.");
+			i = 0;
+			var toRecalculate = NeedRecalcutateItems.Where(x => UsedEmployees.Contains(x)).ToList();
+			foreach(var card in toRecalculate) {
+				card.UoW = uow;
+				card.UpdateWorkwearItems();
+				uow.Save(card);
+				i++;
+				if(i % 10 == 0) {
+					uow.Commit();
+					Console.Write($"\r\tСохранили {i} [{(float)i / toRecalculate.Count:P}]... ");
+				}
+			}
+			uow.Commit();
+			Console.Write("Завершено\n");
 		}
 	}
 }

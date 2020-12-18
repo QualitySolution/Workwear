@@ -52,12 +52,14 @@ namespace DownloadNLMK.Loaders
 				Norm norm;
 				if(!ByID.TryGetValue(rowNorma.NORMA_ID, out norm)) {
 					norm = new Norm();
+					norm.NlmkNormId = rowNorma.NORMA_ID;
 					ByID[rowNorma.NORMA_ID] = norm;
 				}
 				norm.PropertyChanged += (sender, e) => ChangedNorms.Add(norm);
 				norm.DateFrom = rowNorma.DATE_BEGIN;
 				norm.DateTo = rowNorma.DATE_END;
 				norm.Name = PROFF_STAFF[rowNorma.PROFF_ID].NAME_PROFF;
+				norm.NlmkProffId = rowNorma.PROFF_ID;
 				if(!ByProf.ContainsKey(rowNorma.PROFF_ID) || ByProf[(string)rowNorma.PROFF_ID].DateTo < norm.DateTo) {
 					ByProf[rowNorma.PROFF_ID] = norm;
 				}
