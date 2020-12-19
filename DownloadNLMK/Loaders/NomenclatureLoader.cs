@@ -108,7 +108,6 @@ namespace DownloadNLMK.Loaders
 			foreach(var item in NomenclatureTypes.ItemsTypes.Where(x => x.Id == 0)) {
 				uow.Save(item, orUpdate: false);
 			}
-			uow.Commit();
 
 			logger.Info($"Сохраняем номенклатуру...");
 			int i = 0;

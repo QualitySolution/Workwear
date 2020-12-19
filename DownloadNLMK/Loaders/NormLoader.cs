@@ -14,7 +14,7 @@ namespace DownloadNLMK.Loaders
 		private readonly IUnitOfWork uow;
 		private readonly ProtectionToolsLoader protectionTools;
 		public Dictionary<string, Norm> ByID;
-		public Dictionary<string, Norm> ByProf;
+		public Dictionary<string, Norm> ByProf = new Dictionary<string, Norm>();
 		public Dictionary<int, Norm> ByCodeStaff = new Dictionary<int, Norm>();
 		public Dictionary<string, NormItem> RowsByID = new Dictionary<string, NormItem>();
 
@@ -29,9 +29,10 @@ namespace DownloadNLMK.Loaders
 
 		public void Load(OracleConnection connection)
 		{
-			logger.Info("Загружаем имеющиеся номеклатуры");
+			logger.Info("Загружаем имеющиеся нормы");
 			ByID = uow.GetAll<Norm>().Where(x => x.NlmkNormId != null).ToDictionary(x => x.NlmkNormId, x => x);
-			ByProf = ByID.Values.ToDictionary(x => x.NlmkProffId, x => x);
+			foreach(var norm in ByID.Values)
+				AddNormToProfDic(norm.NlmkProffId, norm);
 
 			logger.Info("Загружаем NORMA");
 			var dtNORMA = connection.Query("SELECT * FROM SKLAD.NORMA norma");
@@ -60,9 +61,7 @@ namespace DownloadNLMK.Loaders
 				norm.DateTo = rowNorma.DATE_END;
 				norm.Name = PROFF_STAFF[rowNorma.PROFF_ID].NAME_PROFF;
 				norm.NlmkProffId = rowNorma.PROFF_ID;
-				if(!ByProf.ContainsKey(rowNorma.PROFF_ID) || ByProf[(string)rowNorma.PROFF_ID].DateTo < norm.DateTo) {
-					ByProf[rowNorma.PROFF_ID] = norm;
-				}
+				AddNormToProfDic(rowNorma.PROFF_ID, norm);
 			}
 			logger.Info($"Загружено {ByID.Count()} норм.");
 
@@ -83,6 +82,7 @@ namespace DownloadNLMK.Loaders
 				if(normItem == null) {
 					normItem = new NormItem();
 					normItem.Norm = norm;
+					normItem.NlmkId = rowNorma.NORMA_ROW_ID;
 					norm.Items.Add(normItem);
 				}
 				normItem.PropertyChanged += (sender, e) => ChangedNorms.Add(norm);
@@ -138,6 +138,13 @@ namespace DownloadNLMK.Loaders
 			}
 			uow.Commit();
 			Console.WriteLine($"Обновили {toSave.Count} норм.");
+		}
+
+		private void AddNormToProfDic(string proffId, Norm norm)
+		{
+			if(!ByProf.ContainsKey(proffId) || ByProf[proffId].DateTo < norm.DateTo) {
+				ByProf[proffId] = norm;
+			}
 		}
 	}
 }

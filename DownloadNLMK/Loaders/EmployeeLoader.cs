@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dapper;
@@ -278,11 +278,11 @@ namespace DownloadNLMK.Loaders
 			operation.ProtectionTools = normRow.ProtectionTools;
 			operation.Returned = item.TYPE == "1" ? Convert.ToInt32(item.KOLMOTP) : 0;
 			operation.Issued = item.TYPE == "2" ? Convert.ToInt32(item.KOLMOTP) : 0;
-			operation.AutoWriteoffDate = item.TYPE == "2" ? DateTime.Parse(item.EXPIRY) : null;
-			operation.ExpiryByNorm = item.TYPE == "2" ? DateTime.Parse(item.EXPIRY) : null;
+			operation.AutoWriteoffDate = (DateTime?)(item.TYPE == "2" ? item.EXPIRY : null);
+			operation.ExpiryByNorm = (DateTime?)(item.TYPE == "2" ? item.EXPIRY : null);
 			operation.Nomenclature = issueNomenclature;
-			operation.OperationTime = DateTime.Parse(item.DOTP);
-			operation.StartOfUse = item.TYPE == "2" ? DateTime.Parse(item.DOTP) : null;
+			operation.OperationTime = (DateTime)(item.DOTP);
+			operation.StartOfUse = (DateTime?)(item.TYPE == "2" ? item.DOTP : null);
 		}
 
 		public void MarkAsUsed(EmployeeCard employee)
@@ -306,6 +306,7 @@ namespace DownloadNLMK.Loaders
 			logger.Info($"Сохраняем личные карточки...");
 			int i = 0;
 			var toSave = ChangedEmployees.Where(x => UsedEmployees.Contains(x)).ToList();
+			logger.Info($"Новых: {toSave.Count(x => x.Id == 0)} Измененых: {toSave.Count(x => x.Id > 0)} Всего: {toSave.Count}");
 			foreach(var card in toSave) {
 				uow.Save(card);
 				i++;
