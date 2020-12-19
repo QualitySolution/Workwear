@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 using DownloadNLMK.Loaders.DTO;
+using NHibernate;
+using NHibernate.Transform;
 using Oracle.ManagedDataAccess.Client;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
@@ -41,7 +43,26 @@ namespace DownloadNLMK.Loaders
 		public void Load(OracleConnection connection)
 		{
 			logger.Info("Загружаем имеющиеся личные карточки");
-			ByID = uow.GetAll<EmployeeCard>().Where(x => x.NlmkId != null).ToDictionary(x => x.NlmkId, x => x);
+			var employeesQuery = uow.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.NlmkId != null)
+				.TransformUsing(Transformers.DistinctRootEntity)
+				.Future();
+
+			uow.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.NlmkId != null)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.JoinQueryOver(e => e.WorkwearItems, NHibernate.SqlCommand.JoinType.InnerJoin)
+				.Fetch(SelectMode.Fetch, item => item)
+				.Future();
+
+			uow.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.NlmkId != null)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.JoinQueryOver(e => e.UsedNorms, NHibernate.SqlCommand.JoinType.InnerJoin)
+				.Fetch(SelectMode.Fetch, x => x)
+				.Future();
+
+			ByID = employeesQuery.ToDictionary(x => x.NlmkId, x => x);
 
 			logger.Info("Загружаем PERSONAL_CARD");
 			var PERSONAL_CARD = connection.Query("SELECT c.TN, c.PERSONAL_CARD_ID, " +
@@ -292,9 +313,11 @@ namespace DownloadNLMK.Loaders
 					norms.MarkAsUsed(norm);
 				foreach(var item in employee.WorkwearItems)
 					norms.MarkAsUsed(item.ActiveNormItem.Norm);
-				foreach(var operation in OperationsForNewCards[employee]) {
-					nomenclature.MarkAsUsed(operation.Nomenclature);
-					norms.MarkAsUsed(operation.NormItem.Norm);
+				if(OperationsForNewCards.ContainsKey(employee)) {
+					foreach(var operation in OperationsForNewCards[employee]) {
+						nomenclature.MarkAsUsed(operation.Nomenclature);
+						norms.MarkAsUsed(operation.NormItem.Norm);
+					}
 				}
 				if(employee.Subdivision != null)
 					subdivisions.MarkAsUsed(employee.Subdivision);

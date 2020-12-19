@@ -18,9 +18,9 @@ namespace DownloadNLMK.Loaders
 
 		public NomenclatureTypes(IUnitOfWork uow, bool tryLoad = false)
 		{
-			makeTypes(uow);
 			if(tryLoad)
-				TryLoadFromDB(uow);
+				ItemsTypes = uow.GetAll<ItemsType>().ToList();
+			makeTypes(uow);
 		}
 
 		#region Создание типов
@@ -81,29 +81,18 @@ namespace DownloadNLMK.Loaders
 			AddType("Неизвестный тип", sht, new string[] { });
 		}
 
-		private void TryLoadFromDB(IUnitOfWork uow)
-		{
-			var types = uow.GetAll<ItemsType>().ToList();
-			foreach(var type in types) {
-				var matched1 = KeyWords.Values.FirstOrDefault(x => x.ItemsType?.Name == type.Name);
-				if(matched1 != null)
-					matched1.ItemsType = type;
-
-				var matchedKit = KeyWords.Values.FirstOrDefault(x => x.ItemsTypeKit?.Name == type.Name);
-				if(matchedKit != null)
-					matchedKit.ItemsTypeKit = type;
-			}
-		}
-
 		private void AddType(string name, СlothesType category, MeasurementUnits units, string[] keyWords, СlothesType? category2 = null, string[] keywords2 = null)
 		{
-			var type = new ItemsType {
-				Name = name,
-				Category = ItemTypeCategory.wear,
-				WearCategory = category,
-				Units = units
-			};
-			ItemsTypes.Add(type);
+			var type = ItemsTypes.FirstOrDefault(x => x.Name == name);
+			if(type == null) {
+				type = new ItemsType {
+					Name = name,
+					Category = ItemTypeCategory.wear,
+					WearCategory = category,
+					Units = units
+				};
+				ItemsTypes.Add(type);
+			}
 			TypeDescription desc;
 			if(category2 != null) {
 				var type2 = new ItemsType {
@@ -124,12 +113,15 @@ namespace DownloadNLMK.Loaders
 
 		private void AddType(string name, MeasurementUnits units, string[] keyWords)
 		{
-			var type = new ItemsType {
-				Name = name,
-				Category = ItemTypeCategory.property,
-				Units = units
-			};
-			ItemsTypes.Add(type);
+			var type = ItemsTypes.FirstOrDefault(x => x.Name == name);
+			if(type == null) {
+				type = new ItemsType {
+					Name = name,
+					Category = ItemTypeCategory.property,
+					Units = units
+				};
+				ItemsTypes.Add(type);
+			}
 			TypeDescription desc = new TypeDescription(type);
 
 			foreach(var word in keyWords) {
@@ -160,13 +152,17 @@ namespace DownloadNLMK.Loaders
 		public ItemsType GetKit(TypeDescription desc)
 		{
 			if(desc.ItemsTypeKit == null) {
-				desc.ItemsTypeKit = new ItemsType {
-					Name = desc.ItemsType.Name + " КОМПЛЕКТ",
-					Category = ItemTypeCategory.wear,
-					WearCategory = desc.ItemsType.WearCategory,
-					Units = KitUnits
-				};
-				ItemsTypes.Add(desc.ItemsTypeKit);
+				var kitName = desc.ItemsType.Name + " КОМПЛЕКТ";
+				desc.ItemsTypeKit = ItemsTypes.FirstOrDefault(x => x.Name == kitName);
+				if(desc.ItemsTypeKit == null) {
+					desc.ItemsTypeKit = new ItemsType {
+						Name = kitName,
+						Category = ItemTypeCategory.wear,
+						WearCategory = desc.ItemsType.WearCategory,
+						Units = KitUnits
+					};
+					ItemsTypes.Add(desc.ItemsTypeKit);
+				}
 			}
 			return desc.ItemsTypeKit;
 		}

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dapper;
+using NHibernate;
+using NHibernate.Transform;
 using Oracle.ManagedDataAccess.Client;
 using QS.DomainModel.UoW;
 using workwear.Domain.Regulations;
@@ -30,7 +32,18 @@ namespace DownloadNLMK.Loaders
 		public void Load(OracleConnection connection)
 		{
 			logger.Info("Загружаем имеющиеся нормы");
-			ByID = uow.GetAll<Norm>().Where(x => x.NlmkNormId != null).ToDictionary(x => x.NlmkNormId, x => x);
+			var query = uow.Session.QueryOver<Norm>()
+				.Where(x => x.NlmkNormId != null)
+				.TransformUsing(Transformers.DistinctRootEntity)
+				.Future();
+
+			uow.Session.QueryOver<Norm>()
+				.Where(x => x.NlmkNormId != null)
+				.Fetch(SelectMode.ChildFetch, n => n)
+				.Fetch(SelectMode.Fetch, n => n.Items)
+				.Future();
+
+			ByID = query.ToDictionary(x => x.NlmkNormId, x => x);
 			foreach(var norm in ByID.Values)
 				AddNormToProfDic(norm.NlmkProffId, norm);
 
@@ -128,7 +141,7 @@ namespace DownloadNLMK.Loaders
 			logger.Info($"Сохраняем нормы...");
 			int i = 0;
 			var toSave = ChangedNorms.Where(x => UsedNorms.Contains(x)).ToList();
-			foreach(var norm in UsedNorms) {
+			foreach(var norm in toSave) {
 				uow.Save(norm);
 				i++;
 				if(i % 100 == 0) {
