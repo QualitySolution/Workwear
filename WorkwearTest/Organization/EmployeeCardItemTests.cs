@@ -271,10 +271,9 @@ namespace WorkwearTest.Organization
 		}
 
 		#endregion
-		#endregion
 		#region MatcheStockPosition
 
-		[Test(Description = "Проверяем что находим соответсвиt размеров.")]
+		[Test(Description = "Проверяем что находим соответсвие размеров.")]
 		public void MatcheStockPosition_SizeTest()
 		{
 			var employee = new EmployeeCard();
@@ -286,18 +285,19 @@ namespace WorkwearTest.Organization
 			var itemType = Substitute.For<ItemsType>();
 			itemType.Category.Returns(ItemTypeCategory.wear);
 			itemType.WearCategory.Returns(СlothesType.Wear);
-			var nomeclature = Substitute.For<Nomenclature>();
-			nomeclature.Id.Returns(25);
-			nomeclature.Type.Returns(itemType);
-			nomeclature.WearGrowthStd.Returns(SizeHelper.GetSizeStdCode(GrowthStandartWear.Universal));
-			nomeclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
+			var nomenclature = Substitute.For<Nomenclature>();
+			nomenclature.Id.Returns(25);
+			nomenclature.Type.Returns(itemType);
+			nomenclature.WearGrowthStd.Returns(SizeHelper.GetSizeStdCode(GrowthStandartWear.Universal));
+			nomenclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
+			var protectionTools = Substitute.For<ProtectionTools>();
+			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
+			var normItem = Substitute.For<NormItem>();
+			normItem.ProtectionTools.Returns(protectionTools);
 
-			var employeeItem = new EmployeeCardItem();
-			employeeItem.EmployeeCard = employee;
-			employeeItem.Item = itemType;
-			employeeItem.MatchedNomenclature.Add(nomeclature);
+			var employeeItem = new EmployeeCardItem(employee, normItem);
 
-			var stockPosition = new StockPosition(nomeclature, "52", "170", 0);
+			var stockPosition = new StockPosition(nomenclature, "52", "170", 0);
 			var result = employeeItem.MatcheStockPosition(stockPosition);
 			Assert.That(result, Is.True);
 		}
@@ -314,18 +314,19 @@ namespace WorkwearTest.Organization
 			var itemType = Substitute.For<ItemsType>();
 			itemType.Category.Returns(ItemTypeCategory.wear);
 			itemType.WearCategory.Returns(СlothesType.Wear);
-			var nomeclature = Substitute.For<Nomenclature>();
-			nomeclature.Id.Returns(25);
-			nomeclature.Type.Returns(itemType);
-			nomeclature.WearGrowthStd.Returns(SizeHelper.GetSizeStdCode(GrowthStandartWear.Universal));
-			nomeclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
+			var nomenclature = Substitute.For<Nomenclature>();
+			nomenclature.Id.Returns(25);
+			nomenclature.Type.Returns(itemType);
+			nomenclature.WearGrowthStd.Returns(SizeHelper.GetSizeStdCode(GrowthStandartWear.Universal));
+			nomenclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
 
-			var employeeItem = new EmployeeCardItem();
-			employeeItem.EmployeeCard = employee;
-			employeeItem.Item = itemType;
-			employeeItem.MatchedNomenclature.Add(nomeclature);
+			var protectionTools = Substitute.For<ProtectionTools>();
+			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
+			var normItem = Substitute.For<NormItem>();
+			normItem.ProtectionTools.Returns(protectionTools);
 
-			var stockPosition = new StockPosition(nomeclature, "52", "170", 0);
+			var employeeItem = new EmployeeCardItem(employee, normItem);
+			var stockPosition = new StockPosition(nomenclature, "52", "170", 0);
 			var result = employeeItem.MatcheStockPosition(stockPosition);
 			Assert.That(result, Is.True);
 		}
@@ -342,18 +343,19 @@ namespace WorkwearTest.Organization
 			var itemType = Substitute.For<ItemsType>();
 			itemType.Category.Returns(ItemTypeCategory.wear);
 			itemType.WearCategory.Returns(СlothesType.Wear);
-			var nomeclature = Substitute.For<Nomenclature>();
-			nomeclature.Id.Returns(25);
-			nomeclature.Type.Returns(itemType);
-			nomeclature.WearGrowthStd.Returns(SizeHelper.GetSizeStdCode(GrowthStandartWear.Universal));
-			nomeclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
+			var nomenclature = Substitute.For<Nomenclature>();
+			nomenclature.Id.Returns(25);
+			nomenclature.Type.Returns(itemType);
+			nomenclature.WearGrowthStd.Returns(SizeHelper.GetSizeStdCode(GrowthStandartWear.Universal));
+			nomenclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
+			var protectionTools = Substitute.For<ProtectionTools>();
+			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
+			var normItem = Substitute.For<NormItem>();
+			normItem.ProtectionTools.Returns(protectionTools);
 
-			var employeeItem = new EmployeeCardItem();
-			employeeItem.EmployeeCard = employee;
-			employeeItem.Item = itemType;
-			employeeItem.MatchedNomenclature.Add(nomeclature);
+			var employeeItem = new EmployeeCardItem(employee, normItem);
 
-			var stockPosition = new StockPosition(nomeclature, "52", "170", 0);
+			var stockPosition = new StockPosition(nomenclature, "52", "170", 0);
 			var result = employeeItem.MatcheStockPosition(stockPosition);
 			Assert.That(result, Is.True);
 		}
