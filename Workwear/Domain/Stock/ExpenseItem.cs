@@ -6,9 +6,9 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
+using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Statements;
-using workwear.Repository.Operations;
 using workwear.Repository.Stock;
 
 namespace workwear.Domain.Stock
@@ -109,54 +109,25 @@ namespace workwear.Domain.Stock
 			set { SetField(ref wearGrowth, value, () => WearGrowth); }
 		}
 
-		string aktNumber;
-		[Display(Name = "Номер акта")]
-		public virtual string AktNumber {
-			get {
-				return aktNumber;
-			}
-			set {
-				if(IsWriteOff)
-					SetField(ref aktNumber, value);
-				else SetField(ref aktNumber, "");
-			}
-		}
+		#endregion
 
-		private EmployeeIssueOperation oldEmployeeOperationIssue;
-
-		[Display(Name = "Старая операция выдачи, с которой можно списать")]
-		public virtual EmployeeIssueOperation OldEmployeeOperationIssue {
-			get { return oldEmployeeOperationIssue; }
-			set { SetField(ref oldEmployeeOperationIssue, value); }
-		}
+		#region Не сохраняемые в базу свойства
 
 		private bool isWriteOff;
 		[Display(Name = "Выдача по списанию")]
 		public virtual bool IsWriteOff {
-			get {
-				if(EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff != null) return true;
-				return isWriteOff;
-			}
-			set {
-				if(value && EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff == null) {
-					if(firstActualOperIssue != null) {
-						this.OldEmployeeOperationIssue = firstActualOperIssue;
-					}
-				}
-				else if(EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff != null) {
-					EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = null;
-					AktNumber = "";
-				}
-
-				if(this.OldEmployeeOperationIssue == null)
-					isWriteOff = false;
-				else
-					isWriteOff = value;
-			}
+			get => isWriteOff;
+			set => isWriteOff = value;
 		}
-		#endregion
 
-		#region Не сохраняемые в базу свойства
+		string aktNumber;
+		[Display(Name = "Номер акта")]
+		public virtual string AktNumber {
+			get => IsWriteOff ? aktNumber : null;
+			set => SetField(ref aktNumber, value);
+		}
+
+		public virtual bool IsEnableWriteOff { get; set; }
 
 		private string buhDocument;
 
@@ -207,9 +178,6 @@ namespace workwear.Domain.Stock
 				WearPercent = value.WearPercent;
 			}
 		}
-
-		[Display(Name = "Опреация выдачи с которой можно списать")]
-		private EmployeeIssueOperation firstActualOperIssue;
 		#endregion
 
 		#region Расчетные свойства
@@ -221,16 +189,6 @@ namespace workwear.Domain.Stock
 			);}
 		}
 
-		[Display(Name = "Наличие действующей операции выдачи по данной номенклатуре")]
-		public virtual bool IsEnableWriteOff {
-			get {
-				if(EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff != null) return true;
-				firstActualOperIssue = GetActualEmployeeOperationBalance();
-				if(firstActualOperIssue != null && firstActualOperIssue != this.EmployeeIssueOperation)
-					return true;
-				else return false;
-			}
-		}
 		#endregion
 
 		public ExpenseItem ()
@@ -238,16 +196,6 @@ namespace workwear.Domain.Stock
 		}
 
 		#region Функции
-
-		private EmployeeIssueOperation GetActualEmployeeOperationBalance()
-		{
-			var oper = EmployeeIssueRepository.GetActualEmployeeOperation(ExpenseDoc.Employee.UoW, ExpenseDoc.Employee, this.ExpenseDoc.Date);
-			if(this.OldEmployeeOperationIssue != null)
-				return this.OldEmployeeOperationIssue;
-			else if(oper != null) 
-				return oper.FirstOrDefault(x => x.Nomenclature == this.Nomenclature || x.ProtectionTools == this.ProtectionTools); //Операция выдачи, с которой можно списать
-			return null;
-		}
 
 		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
 		{
@@ -291,29 +239,26 @@ namespace workwear.Domain.Stock
 			if(this.ExpenseDoc.WriteOffDoc == null)
 				return;
 
+			WriteoffItem relatedWriteoffItem = null;
+			if(EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff != null) 
+				relatedWriteoffItem = this.ExpenseDoc.WriteOffDoc.Items
+					.FirstOrDefault(x => EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff.IsSame(x.EmployeeWriteoffOperation));
+
 			if(IsWriteOff) {
-				var currentWriteoffItem = this.ExpenseDoc.WriteOffDoc.Items.FirstOrDefault(x => x.EmployeeWriteoffOperation.Nomenclature == Nomenclature);
-
-				if(currentWriteoffItem == null) {
-					this.ExpenseDoc.WriteOffDoc.AddItem(OldEmployeeOperationIssue, Amount);
-
+				if(relatedWriteoffItem == null) {
+					var graph = IssueGraph.MakeIssueGraph(uow, expenseDoc.Employee, ProtectionTools);
+					var interval = graph.IntervalOfDate(ExpenseDoc.Date);
+					var toWriteoff = interval.ActiveItems.First(x => x.IssueOperation != EmployeeIssueOperation);
+					relatedWriteoffItem = ExpenseDoc.WriteOffDoc.AddItem(toWriteoff.IssueOperation, toWriteoff.AmountAtEndOfDay(ExpenseDoc.Date));
 				}
-					var currenOperationtWriteOff = this.ExpenseDoc.WriteOffDoc.Items.First(x => x.EmployeeWriteoffOperation.Nomenclature == Nomenclature).EmployeeWriteoffOperation;
-					EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = currenOperationtWriteOff;
-					currentWriteoffItem = this.ExpenseDoc.WriteOffDoc.Items.FirstOrDefault(x => x.EmployeeWriteoffOperation.Nomenclature == Nomenclature);
-					currentWriteoffItem.UpdateOperations(uow);
-					currentWriteoffItem.Amount = this.Amount;
-					currentWriteoffItem.AktNumber = this.AktNumber ?? "";
+				relatedWriteoffItem.AktNumber = this.AktNumber;
+				relatedWriteoffItem.UpdateOperations(uow);
 
 			}
-			else {
-				var currentWriteoffItem = this.ExpenseDoc.WriteOffDoc.Items.FirstOrDefault(x => x.EmployeeWriteoffOperation.Nomenclature == Nomenclature);
-				if(currentWriteoffItem != null) {
-					var currenOperationtWriteOff = currentWriteoffItem.EmployeeWriteoffOperation;
-					currentWriteoffItem.EmployeeWriteoffOperation = null;
-					ExpenseDoc.WriteOffDoc.Items.Remove(currentWriteoffItem);
-					uow.Delete(currenOperationtWriteOff);
-				}
+			else if(EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff != null && relatedWriteoffItem != null) {
+					uow.Delete(EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff);
+					ExpenseDoc.WriteOffDoc.Items.Remove(relatedWriteoffItem);
+					EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = null;
 			}
 		}
 

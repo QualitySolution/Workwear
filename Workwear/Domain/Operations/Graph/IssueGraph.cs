@@ -5,7 +5,6 @@ using NHibernate.Criterion;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
-using workwear.Repository.Stock;
 
 namespace workwear.Domain.Operations.Graph
 {

@@ -24,6 +24,7 @@ namespace workwear.ViewModels.Stock
 
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
+			Entity.FillCanWriteoffInfo(UoW);
 		}
 
 		#region Хелперы
@@ -156,7 +157,6 @@ namespace workwear.ViewModels.Stock
 			if(e.PropertyName == nameof(ExpenseItem.BuhDocument)) {
 				expenseEmployeeViewModel.HasChanges = true;
 			}
-
 		}
 
 	}

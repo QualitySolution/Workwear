@@ -294,16 +294,6 @@ namespace workwear.Domain.Operations
 			if(EmployeeOperationIssueOnWriteOff != null) {
 				if(item.ExpenseDoc.Date.Date != OperationTime.Date)
 					this.EmployeeOperationIssueOnWriteOff.OperationTime = item.ExpenseDoc.Date;
-
-				EmployeeOperationIssueOnWriteOff.Nomenclature = item.Nomenclature;
-				EmployeeOperationIssueOnWriteOff.WearPercent = IssuedOperation.CalculatePercentWear(OperationTime);
-				EmployeeOperationIssueOnWriteOff.Issued = 0;
-				EmployeeOperationIssueOnWriteOff.Returned = item.Amount;
-				EmployeeOperationIssueOnWriteOff.WarehouseOperation = item.WarehouseOperation;
-				EmployeeOperationIssueOnWriteOff.BuhDocument = item.BuhDocument;
-				EmployeeOperationIssueOnWriteOff.NormItem = null;
-				EmployeeOperationIssueOnWriteOff.ExpiryByNorm = null;
-				EmployeeOperationIssueOnWriteOff.AutoWriteoffDate = null;
 			}
 
 			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools);

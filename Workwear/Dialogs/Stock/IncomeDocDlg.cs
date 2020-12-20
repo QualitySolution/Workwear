@@ -27,7 +27,7 @@ namespace workwear
 	public partial class IncomeDocDlg : EntityDialogBase<Income>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
-		ILifetimeScope AutofacScope;
+		ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 
 		private FeaturesService featuresService;
 		public FeaturesService FeaturesService { get => FeaturesService; private set => featuresService = value; }
@@ -83,8 +83,6 @@ namespace workwear
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			ItemsTable.IncomeDoc = Entity;
-
-			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 
 			var builder = new LegacyEEVMBuilderFactory<Income>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
 

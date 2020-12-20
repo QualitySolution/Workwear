@@ -83,17 +83,18 @@ namespace workwear.Domain.Stock
 			ObservableItems.Add(new WriteoffItem(this, operation, count));
 		}
 
-		public virtual void AddItem(EmployeeIssueOperation operation, int count)
+		public virtual WriteoffItem AddItem(EmployeeIssueOperation operation, int count)
 		{
 			if(operation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
 			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.EmployeeWriteoffOperation?.IssuedOperation, operation))) {
 				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
-				return;
+				return null;
 			}
-
-			ObservableItems.Add(new WriteoffItem(this, operation, count));
+			var item = new WriteoffItem(this, operation, count);
+			ObservableItems.Add(item);
+			return item;
 		}
 
 		public virtual void AddItem(StockPosition position, Warehouse warehouse, int count)
