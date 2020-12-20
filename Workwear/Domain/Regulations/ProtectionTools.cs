@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
-using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
 using workwear.Domain.Stock;
 

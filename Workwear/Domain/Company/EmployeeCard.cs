@@ -5,12 +5,12 @@ using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using NHibernate;
+using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Project.Domain;
 using QS.Utilities.Text;
-using workwear.Domain.Operations;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -555,7 +555,7 @@ namespace workwear.Domain.Company
 		public virtual void FillWearInStockInfo(IUnitOfWork uow, Warehouse warehouse, DateTime onTime, bool onlyUnderreceived = false)
 		{
 			var actualItems = onlyUnderreceived ? UnderreceivedItems : WorkwearItems;
-			
+			FetchEntitiesInWearItems(uow, actualItems);
 			var allNomenclatures = actualItems.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
 			var stockRepo = new StockRepository();
 			var stock = stockRepo.StockBalances (uow, warehouse, allNomenclatures, onTime);
@@ -563,6 +563,45 @@ namespace workwear.Domain.Company
 			{
 				item.InStock = stock.Where(x => item.MatcheStockPosition(x.StockPosition)).ToList();
 			}
+		}
+
+		public virtual void FetchEntitiesInWearItems(IUnitOfWork uow, IEnumerable<EmployeeCardItem> cardItems)
+		{
+			var protectionToolsIds = cardItems.Select(x => x.ProtectionTools.Id).ToArray();
+
+			var query = uow.Session.QueryOver<ProtectionTools>()
+				.Where(p => p.Id.IsIn(protectionToolsIds))
+				.Fetch(SelectMode.Fetch, p => p.Type)
+				.Fetch(SelectMode.Fetch, p => p.Type.Units)
+				.Future();
+
+			uow.Session.QueryOver<ProtectionTools>()
+				.Where(p => p.Id.IsIn(protectionToolsIds))
+				.Fetch(SelectMode.ChildFetch, p => p)
+				.Fetch(SelectMode.Fetch, p => p.Analogs)
+				.Future();
+
+			uow.Session.QueryOver<ProtectionTools>()
+				.Where(p => p.Id.IsIn(protectionToolsIds))
+				.Fetch(SelectMode.ChildFetch, p => p)
+				.Fetch(SelectMode.Fetch, p => p.Nomenclatures)
+				.Future();
+
+			ProtectionTools protectionToolsAnalogAlias = null;
+
+			uow.Session.QueryOver<ProtectionTools>()
+				.Where(p => p.Id.IsIn(protectionToolsIds))
+				.Fetch(SelectMode.ChildFetch, p => p)
+				.JoinAlias(p => p.Analogs, () => protectionToolsAnalogAlias, NHibernate.SqlCommand.JoinType.InnerJoin)
+				.Fetch(SelectMode.ChildFetch, analogs => analogs)
+				.Fetch(SelectMode.Fetch, () => protectionToolsAnalogAlias.Nomenclatures)
+				.Future();
+
+			uow.Session.QueryOver<NormItem>()
+				.Where(n => n.Id.IsIn(cardItems.Select(x => x.ActiveNormItem.Id).ToArray()))
+				.Future();
+
+			query.ToList();
 		}
 
 		#endregion
