@@ -185,6 +185,7 @@ namespace workwear.Domain.Stock
 				Nomenclature = issueOperation.Nomenclature,
 				Size = issueOperation.Size,
 				WearGrowth = issueOperation.WearGrowth,
+				WearPercent = issueOperation.CalculatePercentWear(document.Date)
 			};
 			this.nomenclature = issueOperation.Nomenclature;
 			this.size = issueOperation.Size;

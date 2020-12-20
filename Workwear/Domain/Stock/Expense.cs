@@ -9,6 +9,8 @@ using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Statements;
+using workwear.Repository.Company;
+using workwear.Repository.Operations;
 
 namespace workwear.Domain.Stock
 {
@@ -123,7 +125,7 @@ namespace workwear.Domain.Stock
 		}
 		#endregion
 
-		#region Методы
+		#region Добавление удаление строк
 
 		public virtual ExpenseItem AddItem(StockPosition position, int amount = 1)
 		{
@@ -139,6 +141,7 @@ namespace workwear.Domain.Stock
 			ObservableItems.Add(newItem);
 			return newItem;
 		}
+
 		public virtual ExpenseItem AddItem(EmployeeCardItem employeeCardItem)
 		{
 			if(employeeCardItem == null)
@@ -176,11 +179,22 @@ namespace workwear.Domain.Stock
 			}
 		}
 
+		#endregion
+
+		#region Методы
 		public virtual void CleanupItemsWriteOff()
 		{
-			if(this.WriteOffDoc?.Items == null) return;
+			if(this.WriteOffDoc == null) return;
 			foreach(var item in this.WriteOffDoc.Items.Where(y => Items.FirstOrDefault(x => x.EmployeeIssueOperation == y.EmployeeWriteoffOperation) == null).ToList()) {
 				this.WriteOffDoc.RemoveItem(item);
+			}
+		}
+
+		public virtual void FillCanWriteoffInfo(IUnitOfWork uow)
+		{
+			var itemsBalance = EmployeeRepository.ItemsBalance(uow, Employee, Date);
+			foreach(var item in Items) {
+				item.IsEnableWriteOff = item.EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff != null || itemsBalance.Where(x => x.ProtectionToolsId == item.ProtectionTools.Id).Sum(x => x.Amount) > 0;
 			}
 		}
 

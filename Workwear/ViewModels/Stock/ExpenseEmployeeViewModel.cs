@@ -121,7 +121,7 @@ namespace workwear.ViewModels.Stock
 
 			logger.Info("Запись документа...");
 
-			if(Entity.Items.FirstOrDefault(x => x.IsWriteOff) != null && Entity.WriteOffDoc == null) {
+			if(Entity.Items.Any(x => x.IsWriteOff) && Entity.WriteOffDoc == null) {
 				Entity.WriteOffDoc = new Writeoff();
 				Entity.WriteOffDoc.Date = Entity.Date;
 				Entity.WriteOffDoc.CreatedbyUser = Entity.CreatedbyUser;
