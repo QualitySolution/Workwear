@@ -40,7 +40,7 @@ namespace workwear
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
 			featuresService = new FeaturesService();
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW,featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
 
 			ConfigureDlg ();
 		}
@@ -189,7 +189,7 @@ namespace workwear
 			}
 			else {
 				foreach(var r in readerIncomeFromXML1C.ListLineIncomes)
-					Entity.AddItem(r.Nomenclature, r.Size, r.Growth, r.Count);
+					Entity.AddItem(r.Nomenclature, r.Growth, r.Size, r.Count);
 			}
 		}
 
