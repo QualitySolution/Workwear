@@ -13,7 +13,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Card">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     IFNULL(wear_cards.card_number, wear_cards.id) AS id,
@@ -64,7 +64,7 @@ WHERE
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="id">
           <DataField>id</DataField>
           <TypeName>System.String</TypeName>
@@ -140,7 +140,7 @@ WHERE
       </Fields>
     </DataSet>
     <DataSet Name="Norms">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     protection_tools.name AS type_name,
@@ -155,8 +155,8 @@ FROM
     wear_cards_item
         LEFT JOIN
     protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
-        LEFT JOIN
-    measurement_units ON protection_tools.units_id = measurement_units.id
+LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
+LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id
         LEFT JOIN
     norms_item ON wear_cards_item.norm_item_id = norms_item.id
     LEFT JOIN norms ON norms.id = norms_item.norm_id
@@ -168,7 +168,7 @@ WHERE
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="type_name">
           <DataField>type_name</DataField>
           <TypeName>System.String</TypeName>
