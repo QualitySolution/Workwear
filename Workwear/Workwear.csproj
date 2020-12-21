@@ -440,7 +440,7 @@
     <Compile Include="Views\Company\PostView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.PostView.cs" />
     <Compile Include="Tools\Oracle\HRDTO\EmployeeHRInfo.cs" />
-    <Compile Include="Journal\ViewModels\Company\EmployeeCardJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Company\EmployeeJournalViewModel.cs" />
     <Compile Include="Domain\Regulations\ProtectionTools.cs" />
     <Compile Include="HibernateMapping\Regulations\ProtectionToolsMap.cs" />
     <Compile Include="Domain\Stock\ItemsType.cs" />

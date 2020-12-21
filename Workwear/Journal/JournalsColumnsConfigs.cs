@@ -35,8 +35,8 @@ namespace workwear.Journal
 				.Finish()
 			);
 
-			TreeViewColumnsConfigFactory.Register<EmployeeCardJournalViewModel>(
-				() => FluentColumnsConfig<EmployeeCardJournalNode>.Create()
+			TreeViewColumnsConfigFactory.Register<EmployeeJournalViewModel>(
+				() => FluentColumnsConfig<EmployeeJournalNode>.Create()
 					.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
 					.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
 					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)

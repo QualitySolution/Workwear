@@ -15,7 +15,7 @@ using workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {
-	public class EmployeeCardJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeCardJournalNode>
+	public class EmployeeJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeJournalNode>
 	{
 
 		/// <summary>
@@ -25,7 +25,7 @@ namespace workwear.Journal.ViewModels.Company
 
 		public EmployeeFilterViewModel Filter { get; private set; }
 
-		public EmployeeCardJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager,
+		public EmployeeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager,
 										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, ICurrentPermissionService currentPermissionService = null)
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
@@ -37,7 +37,7 @@ namespace workwear.Journal.ViewModels.Company
 
 		protected override IQueryOver<EmployeeCard> ItemsQuery(IUnitOfWork uow)
 		{
-			EmployeeCardJournalNode resultAlias = null;
+			EmployeeJournalNode resultAlias = null;
 
 			Post postAlias = null;
 			Subdivision facilityAlias = null;
@@ -72,11 +72,11 @@ namespace workwear.Journal.ViewModels.Company
 				.OrderBy(() => employeeAlias.LastName).Asc
 				.ThenBy(() => employeeAlias.FirstName).Asc
 				.ThenBy(() => employeeAlias.Patronymic).Asc
-				.TransformUsing(Transformers.AliasToBean<EmployeeCardJournalNode>());
+				.TransformUsing(Transformers.AliasToBean<EmployeeJournalNode>());
 		}
 	}
 
-	public class EmployeeCardJournalNode
+	public class EmployeeJournalNode
 	{
 		public int Id { get; set; }
 		[SearchHighlight]

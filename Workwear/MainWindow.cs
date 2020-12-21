@@ -121,7 +121,7 @@ public partial class MainWindow : Gtk.Window
 
 		ReadUserSettings();
 
-		var EntityAutocompleteSelector = new JournalViewModelAutocompleteSelector<EmployeeCard, EmployeeCardJournalViewModel>(UoW, AutofacScope);
+		var EntityAutocompleteSelector = new JournalViewModelAutocompleteSelector<EmployeeCard, EmployeeJournalViewModel>(UoW, AutofacScope);
 		entitySearchEmployee.ViewModel = new EntitySearchViewModel<EmployeeCard>(EntityAutocompleteSelector);
 		entitySearchEmployee.ViewModel.EntitySelected += SearchEmployee_EntitySelected;
 
@@ -618,8 +618,8 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionCardsActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount(nameof(EmployeeCardJournalViewModel));
-		NavigationManager.OpenViewModel<EmployeeCardJournalViewModel>(null);
+		MainTelemetry.AddCount(nameof(EmployeeJournalViewModel));
+		NavigationManager.OpenViewModel<EmployeeJournalViewModel>(null);
 	}
 
 	protected void OnActionProtectionToolsActivated(object sender, EventArgs e)
