@@ -388,7 +388,7 @@
     <Compile Include="Views\Stock\Widgets\SizeWidgetView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.Widgets.SizeWidgetView.cs" />
     <Compile Include="Tools\Features\FeaturesService.cs" />
-    <Compile Include="Journal\ViewModels\Company\EmployeeJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Company\EmployeeOracleJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\LeadersJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\OrganizationJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Statements\IssuanceSheetJournalViewModel.cs" />

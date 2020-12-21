@@ -18,7 +18,7 @@ using workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {
-	public class EmployeeJournalViewModel : JournalViewModelBase
+	public class EmployeeOracleJournalViewModel : JournalViewModelBase
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly IDeleteEntityService deleteEntityService;
@@ -30,14 +30,14 @@ namespace workwear.Journal.ViewModels.Company
 
 		public EmployeeFilterViewModel Filter { get; private set; }
 
-		public EmployeeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, ITdiCompatibilityNavigation navigationManager, 
+		public EmployeeOracleJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, ITdiCompatibilityNavigation navigationManager, 
 										ILifetimeScope autofacScope, HRSystem hrSystem, IDeleteEntityService deleteEntityService, ICurrentPermissionService currentPermissionService = null) 
 										: base(unitOfWorkFactory, interactiveService, navigationManager)
 		{
 			UseSlider = false;
 			Title = "Сотрудники";
 			AutofacScope = autofacScope;
-			var dataLoader = AutofacScope.Resolve<OracleSQLDataLoader<EmployeeJournalNode>>();
+			var dataLoader = AutofacScope.Resolve<OracleSQLDataLoader<EmployeeOracleJournalNode>>();
 			DataLoader = dataLoader;
 			dataLoader.AddQuery(MakeQuery, MapNode);
 
@@ -62,7 +62,7 @@ namespace workwear.Journal.ViewModels.Company
 			var editAction = new JournalAction("Изменить",
 					(selected) => selected.Any(),
 					(selected) => true,
-					(selected) => selected.Cast<EmployeeJournalNode>().ToList().ForEach(EditEntityDialog)
+					(selected) => selected.Cast<EmployeeOracleJournalNode>().ToList().ForEach(EditEntityDialog)
 					);
 			NodeActionsList.Add(editAction);
 
@@ -70,14 +70,14 @@ namespace workwear.Journal.ViewModels.Company
 				RowActivatedAction = editAction;
 
 			var deleteAction = new JournalAction("Удалить",
-					(selected) => selected.Cast<EmployeeJournalNode>().Any(x => x.Id.HasValue && String.IsNullOrEmpty(x.PersonnelNumber)),
+					(selected) => selected.Cast<EmployeeOracleJournalNode>().Any(x => x.Id.HasValue && String.IsNullOrEmpty(x.PersonnelNumber)),
 					(selected) => true,
-					(selected) => DeleteEntities(selected.Cast<EmployeeJournalNode>().Where(x => x.Id.HasValue && String.IsNullOrEmpty(x.PersonnelNumber)).ToArray())
+					(selected) => DeleteEntities(selected.Cast<EmployeeOracleJournalNode>().Where(x => x.Id.HasValue && String.IsNullOrEmpty(x.PersonnelNumber)).ToArray())
 					);
 			NodeActionsList.Add(deleteAction);
 		}
 
-		protected void EditEntityDialog(EmployeeJournalNode node)
+		protected void EditEntityDialog(EmployeeOracleJournalNode node)
 		{
 			int cardId;
 			if(node.Id.HasValue)
@@ -109,7 +109,7 @@ namespace workwear.Journal.ViewModels.Company
 			NavigationManager.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
 		}
 
-		protected virtual void DeleteEntities(EmployeeJournalNode[] nodes)
+		protected virtual void DeleteEntities(EmployeeOracleJournalNode[] nodes)
 		{
 			foreach(var node in nodes)
 				deleteEntityService.DeleteEntity<EmployeeCard>(node.Id.Value);
@@ -125,7 +125,7 @@ namespace workwear.Journal.ViewModels.Company
 			if(Filter.ShowOnlyWork)
 				conditions += " AND DUVOL IS NULL";
 
-			conditions += OracleSQLDataLoader<EmployeeJournalNode>.MakeSearchConditions(Search.SearchValues,
+			conditions += OracleSQLDataLoader<EmployeeOracleJournalNode>.MakeSearchConditions(Search.SearchValues,
 				new[] {
 					"SURNAME",
 					"NAME",
@@ -152,9 +152,9 @@ namespace workwear.Journal.ViewModels.Company
 
 		}
 
-		EmployeeJournalNode MapNode(OracleDataReader reader)
+		EmployeeOracleJournalNode MapNode(OracleDataReader reader)
 		{
-			return new EmployeeJournalNode() {
+			return new EmployeeOracleJournalNode() {
 				CardNumber = String.Empty,
 				FirstName = reader["NAME"]?.ToString(),
 				LastName = reader["SURNAME"]?.ToString(),
@@ -170,7 +170,7 @@ namespace workwear.Journal.ViewModels.Company
 		#endregion
 	}
 
-	public class EmployeeJournalNode
+	public class EmployeeOracleJournalNode
 	{
 		public int? Id { get; set; }
 		[SearchHighlight]

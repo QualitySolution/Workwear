@@ -376,7 +376,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionEmployeesActivated(object sender, EventArgs e)
 	{
-		NavigationManager.OpenViewModel<EmployeeJournalViewModel>(null);
+		NavigationManager.OpenViewModel<EmployeeOracleJournalViewModel>(null);
 	}
 
 	protected void OnActionObjectsActivated(object sender, EventArgs e)
