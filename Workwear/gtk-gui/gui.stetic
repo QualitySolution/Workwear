@@ -5203,6 +5203,7 @@
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Настройки учета</property>
         <property name="ShortLabel" translatable="yes">Настройки учета</property>
+        <property name="StockId">gtk-properties</property>
         <signal name="Activated" handler="OnActionBaseSettingsActivated" />
       </action>
       <action id="ActionVacationTypes">
@@ -5263,6 +5264,7 @@
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Настройки пользователя</property>
         <property name="ShortLabel" translatable="yes">Настройки пользователя</property>
+        <property name="StockId">gtk-preferences</property>
         <signal name="Activated" handler="OnActionUserSettingsActivated" />
       </action>
     </action-group>

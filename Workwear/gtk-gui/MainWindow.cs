@@ -331,7 +331,7 @@ public partial class MainWindow
 		this.ActionRegulationDoc = new global::Gtk.Action("ActionRegulationDoc", global::Mono.Unix.Catalog.GetString("Нормативные документы"), null, null);
 		this.ActionRegulationDoc.ShortLabel = global::Mono.Unix.Catalog.GetString("Нормативные документы");
 		w1.Add(this.ActionRegulationDoc, null);
-		this.ActionBaseSettings = new global::Gtk.Action("ActionBaseSettings", global::Mono.Unix.Catalog.GetString("Настройки учета"), null, null);
+		this.ActionBaseSettings = new global::Gtk.Action("ActionBaseSettings", global::Mono.Unix.Catalog.GetString("Настройки учета"), null, "gtk-properties");
 		this.ActionBaseSettings.ShortLabel = global::Mono.Unix.Catalog.GetString("Настройки учета");
 		w1.Add(this.ActionBaseSettings, null);
 		this.ActionVacationTypes = new global::Gtk.Action("ActionVacationTypes", global::Mono.Unix.Catalog.GetString("Виды отпусков"), null, null);
@@ -361,7 +361,7 @@ public partial class MainWindow
 		this.ActionAmountIssuedWear = new global::Gtk.Action("ActionAmountIssuedWear", global::Mono.Unix.Catalog.GetString("Справка по выданному"), null, null);
 		this.ActionAmountIssuedWear.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка по выданному");
 		w1.Add(this.ActionAmountIssuedWear, null);
-		this.ActionUserSettings = new global::Gtk.Action("ActionUserSettings", global::Mono.Unix.Catalog.GetString("Настройки пользователя"), null, null);
+		this.ActionUserSettings = new global::Gtk.Action("ActionUserSettings", global::Mono.Unix.Catalog.GetString("Настройки пользователя"), null, "gtk-preferences");
 		this.ActionUserSettings.ShortLabel = global::Mono.Unix.Catalog.GetString("Настройки пользователя");
 		w1.Add(this.ActionUserSettings, null);
 		this.UIManager.InsertActionGroup(w1, 0);
