@@ -250,6 +250,7 @@ namespace workwear.Domain.Stock
 					var interval = graph.IntervalOfDate(ExpenseDoc.Date);
 					var toWriteoff = interval.ActiveItems.First(x => x.IssueOperation != EmployeeIssueOperation);
 					relatedWriteoffItem = ExpenseDoc.WriteOffDoc.AddItem(toWriteoff.IssueOperation, toWriteoff.AmountAtEndOfDay(ExpenseDoc.Date));
+					EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = relatedWriteoffItem.EmployeeWriteoffOperation;
 				}
 				relatedWriteoffItem.AktNumber = this.AktNumber;
 				relatedWriteoffItem.UpdateOperations(uow);
