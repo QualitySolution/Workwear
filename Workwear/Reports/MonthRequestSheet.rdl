@@ -812,79 +812,50 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
+        <CommandText>SELECT
     protection_tools.name AS type_name,
     protection_tools.id AS type_id,
-    CASE (select item_types.wear_category
-    	 	FROM protection_tools_nomenclature
-			LEFT JOIN nomenclature on nomenclature.id = protection_tools_nomenclature.nomenclature_id
-			LEFT JOIN item_types on item_types.id = nomenclature.type_id
-			WHERE protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
-		limit 1)
-        WHEN 'Wear' THEN wear_cards.wear_growth
-        ELSE NULL
-    END AS growth,
-    CASE (select item_types.wear_category
-    	 	FROM protection_tools_nomenclature
-			LEFT JOIN nomenclature on nomenclature.id = protection_tools_nomenclature.nomenclature_id
-			LEFT JOIN item_types on item_types.id = nomenclature.type_id
-			WHERE protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
-		limit 1)
-        WHEN 'Wear' THEN wear_cards.size_wear
-        WHEN 'Shoes' THEN wear_cards.size_shoes
-        WHEN 'WinterShoes' THEN wear_cards.size_winter_shoes
-        WHEN 'Headgear' THEN wear_cards.size_headdress
-        WHEN 'Gloves' THEN wear_cards.size_gloves
-        ELSE NULL
-    END AS size,
-    measurement_units.name AS unit,
-    measurement_units.okei AS okei,
-        SUM(CASE
-        WHEN
-            norms_item.period_type = 'Year'
-                OR (norms_item.period_type = 'Month'
-                AND norms_item.period_count &gt;= 3)
-        THEN
-            norms_item.amount
-        WHEN
-            norms_item.period_type = 'Month'
-                AND norms_item.period_count = 1
-        THEN
-            norms_item.amount * 3
-        WHEN
-            norms_item.period_type = 'Month'
-                AND norms_item.period_count = 2
-        THEN
-            norms_item.amount * IF(MONTH(wear_cards_item.next_issue) % 3 = 2,
-                1,
-                2)
-        ELSE NULL
-    END) AS amount_sum
+    CASE item_types.wear_category WHEN 'Wear' THEN wear_cards.wear_growth ELSE NULL
+END AS growth,
+CASE item_types.wear_category WHEN 'Wear' THEN wear_cards.size_wear WHEN 'Shoes' THEN wear_cards.size_shoes WHEN 'WinterShoes' THEN wear_cards.size_winter_shoes WHEN 'Headgear' THEN wear_cards.size_headdress WHEN 'Gloves' THEN wear_cards.size_gloves ELSE NULL
+END AS size,
+measurement_units.name AS unit,
+measurement_units.okei AS okei,
+SUM(
+    CASE WHEN norms_item.period_type = 'Year' OR(
+        norms_item.period_type = 'Month' AND norms_item.period_count &gt;= 3
+    ) THEN norms_item.amount WHEN norms_item.period_type = 'Month' AND norms_item.period_count = 1 THEN norms_item.amount * 3 WHEN norms_item.period_type = 'Month' AND norms_item.period_count = 2 THEN norms_item.amount * IF(
+        MONTH(wear_cards_item.next_issue) % 3 = 2,
+        1,
+        2
+    ) ELSE NULL
+END
+) AS amount_sum
 FROM
     wear_cards_item
-       LEFT JOIN
-    wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
-        LEFT JOIN
-    protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
-        LEFT JOIN
-    measurement_units ON protection_tools.units_id = measurement_units.id 
-        LEFT JOIN
-    norms_item ON wear_cards_item.norm_item_id = norms_item.id
+LEFT JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
+LEFT JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
+LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+LEFT JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
 WHERE
-(@facility = -1 OR wear_cards.object_id = @facility) AND
-	wear_cards.dismiss_date IS NULL AND
-    wear_cards_item.next_issue &gt;= CONCAT(@year,
-            '-',
-            @month,
-            '-01')
-        AND wear_cards_item.next_issue &lt;= DATE_SUB(DATE_ADD(CONCAT(@year,
-                    '-',
-                    @month,
-                    '-01'),
-            INTERVAL 1 MONTH),
-        INTERVAL 1 DAY)
-GROUP BY protection_tools.id, size , growth
-ORDER BY type_name, size , growth</CommandText>
+    (
+        @facility = -1 OR wear_cards.object_id = @facility
+    ) AND wear_cards.dismiss_date IS NULL AND wear_cards_item.next_issue &gt;= CONCAT(@year, '-', @month, '-01') AND wear_cards_item.next_issue &lt;= DATE_SUB(
+        DATE_ADD(
+            CONCAT(@year, '-', @month, '-01'),
+            INTERVAL 1 MONTH
+        ),
+        INTERVAL 1 DAY
+    )
+GROUP BY
+    protection_tools.id,
+    size,
+    growth
+ORDER BY
+    type_name,
+    size,
+    growth</CommandText>
         <QueryParameters>
           <QueryParameter Name="year">
             <Value>={?year}</Value>
