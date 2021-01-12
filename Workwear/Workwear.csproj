@@ -519,10 +519,6 @@
       <Project>{EB4F19F8-2CC9-4712-9949-760A441A56FE}</Project>
       <Name>QSTelemetry</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSMachineConfig\QSMachineConfig.csproj">
-      <Project>{769710D2-BF98-4120-9E07-67BD740CFA1D}</Project>
-      <Name>QSMachineConfig</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QSReport\QSReport.csproj">
       <Project>{9C0363D4-EE69-45B8-BA45-BDA24CE35A06}</Project>
       <Name>QSReport</Name>
@@ -570,6 +566,10 @@
     <ProjectReference Include="..\..\QSProjects\QS.NewsFeed\QS.NewsFeed.csproj">
       <Project>{9EBC7EFD-CD37-45D3-97AB-24CB38D986B6}</Project>
       <Name>QS.NewsFeed</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.MachineConfig\QS.MachineConfig.csproj">
+      <Project>{769710D2-BF98-4120-9E07-67BD740CFA1D}</Project>
+      <Name>QS.MachineConfig</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
