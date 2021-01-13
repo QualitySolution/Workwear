@@ -463,11 +463,12 @@
     <Compile Include="Journal\ViewModels\Stock\StockBalanceShortSummaryJournalViewModel.cs" />
     <Compile Include="ReportsDlg\AmountEmployeeGetWearDlg.cs" />
     <Compile Include="gtk-gui\workwear.ReportsDlg.AmountEmployeeGetWearDlg.cs" />
-    <Compile Include="ReportsDlg\AmountIssuedWearDlg.cs" />
-    <Compile Include="gtk-gui\workwear.ReportsDlg.AmountIssuedWearDlg.cs" />
     <Compile Include="Views\User\UserSettingsView.cs" />
     <Compile Include="gtk-gui\workwear.Views.User.UserSettingsView.cs" />
     <Compile Include="ViewModels\User\UserSettingsViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\AmountIssuedWearViewModel.cs" />
+    <Compile Include="ReportParameters\Views\AmountIssuedWearView.cs" />
+    <Compile Include="gtk-gui\workwear.ReportParameters.Views.AmountIssuedWearView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -635,6 +636,9 @@
     <Folder Include="Views\Regulations\" />
     <Folder Include="Views\User\" />
     <Folder Include="ViewModels\User\" />
+    <Folder Include="ReportParameters\" />
+    <Folder Include="ReportParameters\ViewModels\" />
+    <Folder Include="ReportParameters\Views\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

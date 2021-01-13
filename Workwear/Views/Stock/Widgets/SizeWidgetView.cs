@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
-using Gamma.Widgets;
+using System.Linq;
 using Gtk;
-using QS.Project;
 using QS.Views.Dialog;
-using workwear.Measurements;
 using workwear.ViewModels.Stock.Widgets;
 
 namespace workwear.Views.Stock.Widgets

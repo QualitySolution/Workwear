@@ -8,12 +8,16 @@ using NLog;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
 using QS.Dialog.Gtk;
+using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QS.Dialog.GtkUI;
 using QS.Navigation;
+using QS.NewsFeed;
+using QS.NewsFeed.Views;
 using QS.Project.Domain;
 using QS.Report;
+using QS.Report.ViewModels;
+using QS.Services;
 using QS.Tdi;
 using QS.Tdi.Gtk;
 using QS.Updater;
@@ -35,14 +39,12 @@ using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.JournalViewers;
-using workwear.Tools;
-using workwear.ViewModels.Company;
-using QS.NewsFeed;
-using QS.NewsFeed.Views;
+using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
+using workwear.Tools;
 using workwear.Tools.Features;
+using workwear.ViewModels.Company;
 using workwear.ViewModels.User;
-using QS.Services;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -633,12 +635,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionAmountIssuedWearActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("ReportAmountIssuedWear");
-		AmountIssuedWearDlg widget = new AmountIssuedWearDlg("AmountIssuedWear", "Справка о выданной спецодежде");
-		tdiMain.OpenTab(
-			QSReport.ReportViewDlg.GenerateHashName(widget),
-			() => new QSReport.ReportViewDlg(widget)
-		);
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(AmountIssuedWearViewModel));
 	}
 
 	protected void OnActionUserSettingsActivated(object sender, EventArgs e)

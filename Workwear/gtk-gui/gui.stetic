@@ -12566,7 +12566,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportsDlg.AmountIssuedWearDlg" design-size="300 300">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="300 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -12595,7 +12595,6 @@
                 <property name="Events">ButtonPressMask</property>
                 <property name="StartDate">0</property>
                 <property name="EndDate">0</property>
-                <signal name="PeriodChanged" handler="OnYdateperiodpickerPeriodChanged" />
               </widget>
               <packing>
                 <property name="Position">1</property>
@@ -12611,14 +12610,13 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.Button" id="buttonPrintReport">
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckSummry">
             <property name="MemberName" />
-            <property name="Sensitive">False</property>
             <property name="CanFocus">True</property>
-            <property name="Type">TextOnly</property>
-            <property name="Label" translatable="yes">Сформировать отчет</property>
+            <property name="Label" translatable="yes">Суммарно по организаци</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
-            <signal name="Clicked" handler="OnButtonPrintReportClicked" />
           </widget>
           <packing>
             <property name="Position">1</property>
@@ -12628,7 +12626,54 @@
           </packing>
         </child>
         <child>
-          <placeholder />
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckAll">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">Все подразделения</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+            <property name="UseUnderline">True</property>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+            <property name="MemberName" />
+            <property name="ShadowType">In</property>
+            <child>
+              <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeSubdivisions">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="ShowScrollbars">True</property>
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">3</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gamma.GtkWidgets.yButton" id="buttonPrintReport">
+            <property name="MemberName" />
+            <property name="Sensitive">False</property>
+            <property name="CanFocus">True</property>
+            <property name="Type">TextOnly</property>
+            <property name="Label" translatable="yes">Сформировать отчет</property>
+            <property name="UseUnderline">True</property>
+            <signal name="Clicked" handler="OnButtonPrintReportClicked" />
+          </widget>
+          <packing>
+            <property name="Position">4</property>
+            <property name="AutoSize">False</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
         </child>
       </widget>
     </child>

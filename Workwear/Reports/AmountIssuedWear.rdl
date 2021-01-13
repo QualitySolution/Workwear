@@ -36,7 +36,7 @@
     </ReportItems>
   </PageHeader>
   <Body>
-    <Height>102.6pt</Height>
+    <Height>79.8pt</Height>
     <ReportItems>
       <Table Name="Table1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <DataSetName>Data</DataSetName>
@@ -133,7 +133,7 @@
             </Footer>
             <Grouping Name="objectGroup">
               <GroupExpressions>
-                <GroupExpression >=Fields!code.Value</GroupExpression>
+                <GroupExpression>=Fields!subdivision_id.Value</GroupExpression>
               </GroupExpressions>
               <PageBreakAtStart>false</PageBreakAtStart>
               <PageBreakAtEnd>false</PageBreakAtEnd>
@@ -142,7 +142,7 @@
               <RepeatOnNewPage>true</RepeatOnNewPage>
               <TableRows>
                 <TableRow>
-                  <Height>15.2pt</Height>
+                  <Height>22.4pt</Height>
                   <TableCells>
                     <TableCell>
                       <ReportItems>
@@ -159,7 +159,11 @@
                             <BorderWidth />
                             <FontWeight>Bold</FontWeight>
                             <FontSize>10pt</FontSize>
+                            <VerticalAlign>Bottom</VerticalAlign>
                           </Style>
+                          <Visibility>
+                            <Hidden>={?summary}</Hidden>
+                          </Visibility>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>1</ColSpan>
@@ -178,7 +182,11 @@
                             <BorderColor />
                             <BorderWidth />
                             <FontWeight>Bold</FontWeight>
+                            <VerticalAlign>Bottom</VerticalAlign>
                           </Style>
+                          <Visibility>
+                            <Hidden>={?summary}</Hidden>
+                          </Visibility>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
@@ -258,12 +266,6 @@
                 </TableRow>
               </TableRows>
             </Header>
-            <Sorting >
-              <SortBy>
-                <SortExpression>=Convert.ToUInt32({code})</SortExpression>
-                <Direction>Ascending</Direction>
-              </SortBy>
-            </Sorting>
           </TableGroup>
         </TableGroups>
         <Details>
@@ -325,7 +327,7 @@
           </TableRows>
         </Details>
         <Left>5.8pt</Left>
-        <Top>19.9pt</Top>
+        <Top>3.1pt</Top>
       </Table>
     </ReportItems>
     <Columns>1</Columns>
@@ -342,9 +344,9 @@
         <Style>
           <FontSize>10pt</FontSize>
           <FontWeight>Normal</FontWeight>
-          <BorderStyle  />
-          <BorderColor  />
-          <BorderWidth  />
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
         </Style>
       </Textbox>
     </ReportItems>
@@ -353,34 +355,18 @@
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
-  <ReportParameters>
-    <ReportParameter Name="dateStart">
-      <DataType>DateTime</DataType>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
-      <MultiValue>false</MultiValue>
-      <Prompt />
-    </ReportParameter>
-    <ReportParameter Name="dateEnd">
-      <DataType>DateTime</DataType>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
-      <MultiValue>false</MultiValue>
-      <Prompt />
-    </ReportParameter>
-  </ReportParameters>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>select objects.name as object, nomenclature.name as nomen, sum(issued) as sum, nomenclature.number, operation_issued_by_employee.nomenclature_id, objects.code 
+        <CommandText>select if(@summary, NULL, objects.id) as subdivision_id, objects.name as object, nomenclature.name as nomen, sum(issued) as sum, nomenclature.number, operation_issued_by_employee.nomenclature_id, objects.code 
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
-lEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
+LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
 WHERE operation_issued_by_employee.operation_time &gt;= @dateStart and operation_issued_by_employee.operation_time &lt;= @dateEnd
-and operation_issued_by_employee.returned = 0
-GROUP BY objects.code, nomenclature_id
+and operation_issued_by_employee.returned = 0 AND (@summary OR (@withoutsub AND objects.id IS NULL) OR objects.id IN (@subdivisions))
+GROUP BY IF(@summary, NULL, objects.id), nomenclature_id
 ORDER BY CAST(objects.code AS UNSIGNED), nomen;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
@@ -389,9 +375,18 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen;</CommandText>
           <QueryParameter Name="dateEnd">
             <Value>=Format({?dateEnd}, "yyyy-MM-dd")</Value>
           </QueryParameter>
+          <QueryParameter Name="withoutsub">
+            <Value>={?withoutsub}</Value>
+          </QueryParameter>
+          <QueryParameter Name="subdivisions">
+            <Value>={?subdivisions}</Value>
+          </QueryParameter>
+          <QueryParameter Name="summary">
+            <Value>={?summary}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="object">
           <DataField>object</DataField>
           <TypeName>System.String</TypeName>
@@ -412,6 +407,10 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen;</CommandText>
           <DataField>number</DataField>
           <TypeName>System.Int32</TypeName>
         </Field>
+        <Field Name="subdivision_id">
+          <DataField>subdivision_id</DataField>
+          <TypeName>System.Int32</TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -424,4 +423,46 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen;</CommandText>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
+  <ReportParameters >
+    <ReportParameter Name="dateStart">
+      <DataType>DateTime</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="dateEnd">
+      <DataType>DateTime</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="withoutsub">
+      <DataType>Boolean</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="subdivisions">
+      <DataType>Integer</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="summary">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+  </ReportParameters>
 </Report>
