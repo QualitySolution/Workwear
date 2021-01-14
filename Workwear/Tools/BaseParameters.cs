@@ -8,9 +8,7 @@ namespace workwear.Tools
 	{
 		public BaseParameters(DbConnection connection) : base(connection)
 		{
-		}
-
-		public dynamic Dynamic => this; 
+		} 
 
 		#region Типизированный доступ и дефолтные значения
 		public bool DefaultAutoWriteoff {
