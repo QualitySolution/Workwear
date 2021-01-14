@@ -197,7 +197,7 @@ namespace workwear
 				new Version(2, 3),
 				new Version(2, 4),
 				"workwear.Updates.2.4.sql");
-			DBUpdater.AddMicroUpdate(
+			configuration.AddMicroUpdate(
 				new Version(2, 4),
 				new Version(2, 4, 1),
 				"workwear.Updates.2.4.1.sql");
