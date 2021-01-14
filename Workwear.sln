@@ -547,6 +547,5 @@ Global
 		$0.TextStylePolicy = $5
 		$5.inheritsSet = null
 		$5.scope = text/x-sql
-		version = 1.0
 	EndGlobalSection
 EndGlobal
