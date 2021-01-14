@@ -9,6 +9,7 @@ using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Statements;
+using workwear.Tools;
 using workwear.Repository.Company;
 using workwear.Repository.Operations;
 
@@ -206,9 +207,9 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
+		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser)
 		{
-			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
+			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser));
 		}
 
 		public virtual void UpdateEmployeeWearItems()

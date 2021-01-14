@@ -1,18 +1,18 @@
 using System;
 using Gtk;
 using NLog;
+using QS.Dialog;
 using QS.ErrorReporting;
 using QS.Project.DB;
 using QS.Project.Repositories;
-using QS.Updater;
+using QS.Project.Versioning;
 using QS.Updater.DB;
 using QSMachineConfig;
 using QSProjectsLib;
-using QSSupportLib;
 using QSTelemetry;
 
 namespace workwear
-{	
+{
 	partial class MainClass
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
@@ -32,14 +32,12 @@ namespace workwear
 				var errorSettings = new ErrorReportingSettings(true, false, true, 300);
 				#endif
 				UnhandledExceptionHandler.SubscribeToUnhadledExceptions(errorSettings);
-				UnhandledExceptionHandler.GuiThread = System.Threading.Thread.CurrentThread;
+				GtkGuiDispatcher.GuiThread = System.Threading.Thread.CurrentThread;
 				UnhandledExceptionHandler.ApplicationInfo = new ApplicationVersionInfo();
 				//Настройка обычных обработчиков ошибок.
 				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlException1055OnlyFullGroupBy);
 				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlException1366IncorrectStringValue);
 				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.NHibernateFlushAfterException);
-
-				MainSupport.Init();
 			}
 			catch (Exception falalEx)
 			{
@@ -98,9 +96,10 @@ namespace workwear
 			Configure.ConfigureDeletion();
 #if !DEBUG
 			//Иницициализируем телеметрию
-			MainTelemetry.Product = MainSupport.ProjectVerion.Product;
-            MainTelemetry.Edition = MainSupport.ProjectVerion.Edition;
-            MainTelemetry.Version = MainSupport.ProjectVerion.Version.ToString();
+			var applicationInfo = new ApplicationVersionInfo();
+			MainTelemetry.Product = applicationInfo.ProductName;
+            MainTelemetry.Edition = applicationInfo.Modification;
+            MainTelemetry.Version = applicationInfo.Version.ToString();
             MainTelemetry.IsDemo = Login.ApplicationDemoServer == QSMain.connectionDB.DataSource;
 			var appConfig = MachineConfig.ConfigSource.Configs["Application"];
 			if (appConfig != null)
@@ -126,81 +125,86 @@ namespace workwear
 			QSSaaS.Session.StopSessionRefresh ();
 		}
 
-		static void RegisterSQLScripts ()
+		static void RegisterSQLScripts()
 		{
 			//Скрипты создания базы
-			DBCreator.AddBaseScript (
+			DBCreator.AddBaseScript(
 				new Version(2, 4),
 				"Чистая база",
 				"workwear.Updates.new_empty.sql"
 			);
+		}
 
-			//Настраиваем обновления
-			DBUpdater.AddMicroUpdate (
+		public static UpdateConfiguration MakeUpdateConfiguration()
+		{
+			var configuration = new UpdateConfiguration();
+
+			configuration.AddMicroUpdate (
 				new Version (1, 0),
 				new Version (1, 0, 4),
 				"workwear.Updates.1.0.4.sql");
-			DBUpdater.AddMicroUpdate (
+			configuration.AddMicroUpdate (
 				new Version (1, 0, 4),
 				new Version (1, 0, 5),
 				"workwear.Updates.1.0.5.sql");
-			DBUpdater.AddUpdate (
+			configuration.AddUpdate (
 				new Version (1, 0),
 				new Version (1, 1),
 				"workwear.Updates.Update to 1.1.sql");
-			DBUpdater.AddUpdate (
+			configuration.AddUpdate (
 				new Version (1, 1),
 				new Version (1, 2),
-				"workwear.Updates.Update to 1.2.sql");			
-			DBUpdater.AddMicroUpdate (
+				"workwear.Updates.Update to 1.2.sql");
+			configuration.AddMicroUpdate (
 				new Version (1, 2),
 				new Version (1, 2, 1),
 				"workwear.Updates.1.2.1.sql");
-			DBUpdater.AddMicroUpdate (
+			configuration.AddMicroUpdate (
 				new Version (1, 2, 1),
 				new Version (1, 2, 2),
 				"workwear.Updates.1.2.2.sql");
-			DBUpdater.AddMicroUpdate (
+			configuration.AddMicroUpdate (
 				new Version (1, 2, 2),
 				new Version (1, 2, 4),
 				"workwear.Updates.1.2.4.sql");
-			DBUpdater.AddUpdate (
+			configuration.AddUpdate (
 				new Version (1, 2),
 				new Version (2, 0),
 				"workwear.Updates.2.0.sql");
-			DBUpdater.AddMicroUpdate(
+			configuration.AddMicroUpdate(
 				new Version(2, 0),
 				new Version(2, 0, 2),
 				"workwear.Updates.2.0.2.sql");
-			DBUpdater.AddUpdate(
+			configuration.AddUpdate(
 				new Version(2, 0),
 				new Version(2, 1),
 				"workwear.Updates.2.1.sql");
-			DBUpdater.AddMicroUpdate(
+			configuration.AddMicroUpdate(
 				new Version(2, 1),
 				new Version(2, 1, 1),
 				"workwear.Updates.2.1.1.sql");
-			DBUpdater.AddUpdate(
+			configuration.AddUpdate(
 				new Version(2, 1),
 				new Version(2, 2),
 				"workwear.Updates.2.2.sql");
-			DBUpdater.AddUpdate(
+			configuration.AddUpdate(
 				new Version(2, 2),
 				new Version(2, 3),
 				"workwear.Updates.2.3.sql");
-			DBUpdater.AddMicroUpdate(
+			configuration.AddMicroUpdate(
 				new Version(2, 3),
 				new Version(2, 3, 3),
 				"workwear.Updates.2.3.3.sql");
-			DBUpdater.AddUpdate(
+			configuration.AddUpdate(
 				new Version(2, 3),
 				new Version(2, 4),
 				"workwear.Updates.2.4.sql");
-			DBUpdater.AddMicroUpdate(
+			configuration.AddMicroUpdate(
 				new Version(2, 4),
 				new Version(2, 4, 1),
 				"workwear.Updates.2.4.1.sql");
 
+			return configuration;
 		}
 	}
 }

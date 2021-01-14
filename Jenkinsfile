@@ -42,14 +42,9 @@ node {
            nunit testResultsPattern: 'Workwear/WorkwearTest/bin/ReleaseWin/TestResult.xml'
        }
    }
-   stage('Build Enterprise') {
-        sh 'Workwear/WinInstall/makeWinInstall.sh -e'
-        // recordIssues enabledForFailure: true, tool: msBuild()
-        archiveArtifacts artifacts: 'Workwear/WinInstall/workwear-*.exe', onlyIfSuccessful: true
+   if (params.Publish) {
+      stage('Publish'){
+         sh 'scp Workwear/WinInstall/workwear-*.exe a218160_qso@a218160.ftp.mchost.ru:subdomains/files/httpdocs/Workwear/'
+      }
    }
-    if (params.Publish) {
-	stage('Publish'){
-	    sh 'scp Workwear/WinInstall/workwear-*.exe a218160_qso@a218160.ftp.mchost.ru:subdomains/files/httpdocs/Workwear/'
-	}
-    }
 }

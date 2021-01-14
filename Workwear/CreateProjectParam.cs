@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using Autofac;
+using QS.BaseParameters;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
 using QS.Deletion;
@@ -8,6 +9,7 @@ using QS.Dialog;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
+using QS.Features;
 using QS.Navigation;
 using QS.NewsFeed;
 using QS.Permissions;
@@ -16,11 +18,18 @@ using QS.Project.Domain;
 using QS.Project.Search.GtkUI;
 using QS.Project.Services;
 using QS.Project.Services.GtkUI;
+using QS.Project.Versioning;
+using QS.Project.Versioning.Product;
+using QS.Project.ViewModels;
+using QS.Project.Views;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Report.Views;
+using QS.Serial.Views;
 using QS.Services;
 using QS.Tdi;
+using QS.Updater;
+using QS.Updater.DB.Views;
 using QS.Validation;
 using QS.ViewModels;
 using QS.ViewModels.Resolve;
@@ -88,6 +97,9 @@ namespace workwear
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
 			builder.RegisterType<DefaultSessionProvider>().As<ISessionProvider>();
 			builder.Register<DbConnection>(c => Connection.ConnectionDB).AsSelf();
+			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf();
+			builder.Register(c => QSProjectsLib.QSMain.ConnectionStringBuilder).AsSelf();
+			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
 			#endregion
 
 			#region Сервисы
@@ -96,6 +108,8 @@ namespace workwear
 			builder.RegisterType<GtkQuestionDialogsInteractive>().As<IInteractiveQuestion>();
 			builder.RegisterType<GtkInteractiveService>().As<IInteractiveService>();
 			builder.RegisterType<GtkValidationViewFactory>().As<IValidationViewFactory>();
+			builder.RegisterType<GtkGuiDispatcher>().As<IGuiDispatcher>();
+			builder.RegisterType<GtkRunOperationService>().As<IRunOperationService>();
 			#endregion GtkUI
 			#region Удаление
 			builder.RegisterModule(new DeletionAutofacModule());
@@ -118,7 +132,13 @@ namespace workwear
 			builder.Register((ctx) => new AutofacViewModelsGtkPageFactory(AppDIContainer)).AsSelf();
 			builder.RegisterType<TdiNavigationManager>().AsSelf().As<INavigationManager>().As<ITdiCompatibilityNavigation>().SingleInstance();
 			builder.RegisterType<BasedOnNameTDIResolver>().As<ITDIWidgetResolver>();
-			builder.Register(cc => new ClassNamesBaseGtkViewResolver(typeof(RdlViewerView), typeof(OrganizationView), typeof(DeletionView))).As<IGtkViewResolver>();
+			builder.Register(cc => new ClassNamesBaseGtkViewResolver(
+				typeof(RdlViewerView), 
+				typeof(OrganizationView), 
+				typeof(DeletionView), 
+				typeof(UpdateProcessView),
+				typeof(SerialNumberView)
+			)).As<IGtkViewResolver>();
 			#endregion
 
 			#region Главное окно
@@ -134,6 +154,11 @@ namespace workwear
 			#region Старые общие диалоги
 			builder.RegisterType<OrmReference>().AsSelf();
 			builder.RegisterType<ReferenceRepresentation>().AsSelf();
+			#endregion
+
+			#region Отдельные диалоги
+			builder.RegisterType<AboutView>().AsSelf();
+			builder.RegisterType<AboutViewModel>().AsSelf();
 			#endregion
 
 			#region Rdl
@@ -161,8 +186,15 @@ namespace workwear
 			builder.RegisterType<FeedReader>().AsSelf();
 			#endregion
 
+			#region Обновления и версии
+			builder.RegisterType<ApplicationVersionInfo>().As<IApplicationInfo>();
+			builder.RegisterModule(new UpdaterAutofacModule());
+			builder.Register(c => MainClass.MakeUpdateConfiguration()).AsSelf();
+			#endregion
+
 			#region Разделение версий
-			builder.RegisterType<FeaturesService>().AsSelf();
+			builder.RegisterType<FeaturesService>().As<IProductService>().AsSelf();
+			builder.RegisterModule<FeaturesAutofacModule>();
 			#endregion
 			AppDIContainer = builder.Build();
 		}

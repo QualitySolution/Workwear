@@ -9,6 +9,7 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Tools;
 
 namespace WorkwearTest.Integration.EmployeeIssue
 {
@@ -44,9 +45,11 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expenseItem.ExpenseDoc = expense;
 
 			var ask = Substitute.For<IInteractiveQuestion>();
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			//Выполняем
-			expense.UpdateOperations(uow, ask);
+			expense.UpdateOperations(uow, baseParameters, ask);
 
 			//В данном сценарии мы не должны ничего спрашивать у пользователя. Предпологается что мы могли попросить передвинуть дату начала, если бы не проигнорировали свою же операцию.
 			ask.DidNotReceiveWithAnyArgs().Question(string.Empty);
@@ -86,9 +89,11 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expenseItem.ExpenseDoc = expense;
 
 			var ask = Substitute.For<IInteractiveQuestion>();
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			//Выполняем
-			expense.UpdateOperations(uow, ask);
+			expense.UpdateOperations(uow, baseParameters, ask);
 
 			//В данном сценарии мы не должны ничего спрашивать у пользователя. Предпологается что мы могли попросить передвинуть дату начала, не учитывая что на конец интервала количество все равно достаточное.
 			ask.DidNotReceiveWithAnyArgs().Question(string.Empty);
@@ -135,9 +140,11 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			expenseItem.ExpenseDoc = expense;
 
 			var ask = Substitute.For<IInteractiveQuestion>();
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			//Выполняем
-			expense.UpdateOperations(uow, ask);
+			expense.UpdateOperations(uow, baseParameters, ask);
 
 			//В данном сценарии мы не должны ничего спрашивать у пользователя. Предпологается что мы могли попросить передвинуть дату начала, на тот же день, так как списание было в этот день. реальный случай.
 			ask.DidNotReceiveWithAnyArgs().Question(string.Empty);

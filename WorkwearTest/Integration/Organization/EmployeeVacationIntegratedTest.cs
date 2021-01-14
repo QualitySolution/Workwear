@@ -6,6 +6,7 @@ using QS.Testing.DB;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Tools;
 
 namespace WorkwearTest.Integration.Organization
 {
@@ -38,6 +39,8 @@ namespace WorkwearTest.Integration.Organization
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 
@@ -98,7 +101,7 @@ namespace WorkwearTest.Integration.Organization
 				expense.AddItem(position2, 1);
 
 				//Обновление операций
-				expense.UpdateOperations(uow, ask);
+				expense.UpdateOperations(uow, baseParameters, ask);
 				uow.Save(expense);
 				uow.Commit();
 
@@ -119,7 +122,7 @@ namespace WorkwearTest.Integration.Organization
 				vacation.EndDate = new DateTime(2019, 2, 10);
 				vacation.VacationType = vacationType;
 				employee.AddVacation(vacation);
-				vacation.UpdateRelatedOperations(uow, ask);
+				vacation.UpdateRelatedOperations(uow, baseParameters, ask);
 				uow.Save(vacationType);
 				uow.Save(vacation);
 				uow.Save(employee);

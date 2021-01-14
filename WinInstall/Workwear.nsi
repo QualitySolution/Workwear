@@ -19,11 +19,6 @@ Unicode true
 	!define /redef SETUP_POSTFIX "-beta"
 !endif
 
-!ifdef ENTERPRISE
-	!define /redef PRODUCT_NAME "QS: Спецодежда и имущество ПРЕДПРИЯТИЕ"
-	!define /redef SETUP_POSTFIX "-enterprise"
-!endif
-
 ; The name of the installer
 Name "${PRODUCT_NAME}"
 

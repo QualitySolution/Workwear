@@ -15,9 +15,12 @@ using QS.Navigation;
 using QS.NewsFeed;
 using QS.NewsFeed.Views;
 using QS.Project.Domain;
+using QS.Project.Versioning;
+using QS.Project.Views;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
+using QS.Serial.ViewModels;
 using QS.Tdi;
 using QS.Tdi.Gtk;
 using QS.Updater;
@@ -26,7 +29,6 @@ using QS.ViewModels.Control.ESVM;
 using QS.ViewModels.Dialog;
 using QSOrmProject;
 using QSProjectsLib;
-using QSSupportLib;
 using QSTelemetry;
 using workwear;
 using workwear.Dialogs.DataBase;
@@ -55,8 +57,7 @@ public partial class MainWindow : Gtk.Window
 	public IProgressBarDisplayable ProgressBar;
 	public IUnitOfWork UoW = UnitOfWorkFactory.CreateWithoutRoot();
 
-	private FeaturesService featuresService;
-	public FeaturesService FeaturesService { get => FeaturesService; private set => featuresService = value; }
+	public FeaturesService FeaturesService { get; private set; }
 
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
@@ -65,13 +66,18 @@ public partial class MainWindow : Gtk.Window
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
 		ProgressBar = progresswidget1;
-		this.Title = MainSupport.GetTitle();
+		this.Title = AutofacScope.Resolve<IApplicationInfo>().ProductTitle;
 		QSMain.MakeNewStatusTargetForNlog();
 
 		QSMain.CheckServer(this); // Проверяем настройки сервера
-		MainSupport.LoadBaseParameters();
 
-		MainUpdater.RunCheckVersion(true, true, true);
+		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
+		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
+
+		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
+			var checker = scope.Resolve<VersionCheckerService>();
+			checker.RunUpdate();
+		}
 
 		if(QSMain.User.Login == "root") {
 			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
@@ -131,12 +137,13 @@ public partial class MainWindow : Gtk.Window
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
 		NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
 
-		//Настраиваем склады (проверяем, если есть уже склады , то "Default Warehouse" не создавать)
-		if(!(UoW.GetAll<Warehouse>().Count() > 0))
+		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользовтель его создать не сможет.
+		if(UoW.GetAll<Warehouse>().Count() == 0)
 			CreateDefaultWarehouse();
-		featuresService = new FeaturesService();
+		FeaturesService = AutofacScope.Resolve<FeaturesService>();
 		DisableFeatures();
 	}
+
 	private void CreateDefaultWarehouse()
 	{
 		Warehouse warehouse = new Warehouse();
@@ -153,7 +160,7 @@ public partial class MainWindow : Gtk.Window
 	#region Workwear featrures
 	private void DisableFeatures()
 	{
-		if(!featuresService.Available(WorkwearFeature.Warehouses)) {
+		if(!FeaturesService.Available(WorkwearFeature.Warehouses)) {
 			ActionWarehouse.Visible = false;
 		}
 	}
@@ -250,7 +257,11 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAboutActionActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("RunAboutDialog");
-		QSMain.RunAboutDialog();
+		using(var local = AutofacScope.BeginLifetimeScope()) {
+			var about = local.Resolve<AboutView>();
+			about.Run();
+			about.Destroy();
+		}
 	}
 
 	protected void OnAction11Activated(object sender, EventArgs e)
@@ -302,13 +313,16 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionUpdateActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("CheckUpdate");
-		MainUpdater.CheckAppVersionShowAnyway();
+		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
+			var updater = scope.Resolve<ApplicationUpdater>();
+			updater.StartCheckUpdateThread(UpdaterFlags.ShowAnyway);
+		}
 	}
 
 	protected void OnActionSNActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("EditSerialNumber");
-		EditSerialNumber.RunDialog();
+		NavigationManager.OpenViewModel<SerialNumberViewModel>(null);
 	}
 
 	protected void OnActionNormsActivated(object sender, EventArgs e)
@@ -366,7 +380,10 @@ public partial class MainWindow : Gtk.Window
 		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
 		page.ViewModel.ShowSummary = true;
 		page.ViewModel.Filter.ShowNegativeBalance = true;
-		page.ViewModel.Filter.Warehouse = new workwear.Repository.Stock.StockRepository().GetDefaultWarehouse(UoW, featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+		if(!FeaturesService.Available(WorkwearFeature.Warehouses)) {
+			//Здесь устанавливается склад,т.к. по другому как его поставить я не нашёл
+			page.ViewModel.Filter.Warehouse = new workwear.Repository.Stock.StockRepository().GetDefaultWarehouse(UoW, FeaturesService);
+		}
 	}
 
 	protected void OnActionStockDocsActivated(object sender, EventArgs e)
@@ -582,9 +599,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionBaseSettingsActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("DataBaseSettings");
-		tdiMain.OpenTab(TdiTabBase.GenerateHashName<DataBaseSettingsDlg>(),
-						() => new DataBaseSettingsDlg()
-			   );
+		tdiMain.OpenTab<DataBaseSettingsDlg>();
 	}
 
 	protected void OnActionVacationTypesActivated(object sender, EventArgs e)

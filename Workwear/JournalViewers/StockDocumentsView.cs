@@ -1,4 +1,5 @@
 ﻿using System;
+using Autofac;
 using Gtk;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
@@ -31,7 +32,7 @@ namespace workwear.JournalViewers
 			uow = tableDocuments.RepresentationModel.UoW;
 			buttonAdd.ItemsEnum = typeof(StokDocumentType);
 
-			featuresService = new FeaturesService();
+			featuresService = MainClass.AppDIContainer.Resolve<FeaturesService>();
 			if(!featuresService.Available(WorkwearFeature.Warehouses)) {
 				buttonAdd.SetVisibility(StokDocumentType.TransferDoc, false);
 			}

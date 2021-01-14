@@ -8,6 +8,7 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Tools;
 
 namespace WorkwearTest.Operations
 {
@@ -55,7 +56,10 @@ namespace WorkwearTest.Operations
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
-			issue.RecalculateDatesOfIssueOperation(graph, ask);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+
+			issue.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
 
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2018, 3, 1)));
 		}
@@ -94,7 +98,10 @@ namespace WorkwearTest.Operations
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
-			issue.RecalculateDatesOfIssueOperation(graph, ask);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+
+			issue.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
 
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2018, 4, 25)));
 		}
@@ -137,7 +144,10 @@ namespace WorkwearTest.Operations
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
-			issue.RecalculateDatesOfIssueOperation(graph, ask);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+
+			issue.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
 
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 4, 20)));
 		}
@@ -187,7 +197,10 @@ namespace WorkwearTest.Operations
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
-			issue.RecalculateDatesOfIssueOperation(graph, ask);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+
+			issue.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
 
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 11, 27)));
 		}

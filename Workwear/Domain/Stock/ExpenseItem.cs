@@ -10,6 +10,7 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Statements;
 using workwear.Repository.Stock;
+using workwear.Tools;
 
 namespace workwear.Domain.Stock
 {
@@ -197,7 +198,7 @@ namespace workwear.Domain.Stock
 
 		#region Функции
 
-		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
+		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser)
 		{
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
@@ -205,10 +206,11 @@ namespace workwear.Domain.Stock
 			//Выдача сотруднику
 			if(expenseDoc.Operation == ExpenseOperations.Employee)
 			{
-				if (EmployeeIssueOperation == null)
+				if (EmployeeIssueOperation == null) {
 					EmployeeIssueOperation = new EmployeeIssueOperation();
+				}
 
-				EmployeeIssueOperation.Update(uow, askUser, this);
+				EmployeeIssueOperation.Update(uow, baseParameters, askUser, this);
 
 				UpdateIssuedWriteOffOperation(uow);
 									
@@ -223,7 +225,7 @@ namespace workwear.Domain.Stock
 			//Выдача на подразделение
 			if(expenseDoc.Operation == ExpenseOperations.Object) {
 				if(SubdivisionIssueOperation == null)
-					SubdivisionIssueOperation = new SubdivisionIssueOperation();
+					SubdivisionIssueOperation = new SubdivisionIssueOperation(baseParameters);
 
 				SubdivisionIssueOperation.Update(uow, askUser, this);
 				uow.Save(SubdivisionIssueOperation);

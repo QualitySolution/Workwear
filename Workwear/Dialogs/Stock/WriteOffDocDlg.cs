@@ -10,6 +10,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository;
 using workwear.Repository.Stock;
+using workwear.Tools.Features;
 
 namespace workwear
 {

@@ -60,6 +60,8 @@ namespace WorkwearTest.Integration.Stock
 		[Category("Integrated")]
 		public void GetDefaultWarehouse_OneWarehouseTest()
 		{
+			var featuresService = Substitute.For<FeaturesService>();
+			featuresService.Available(WorkwearFeature.Warehouses).Returns(true);
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse1 = new Warehouse();
 				warehouse1.Name = "Единственный";
