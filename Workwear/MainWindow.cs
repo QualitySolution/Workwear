@@ -132,7 +132,7 @@ public partial class MainWindow : Gtk.Window
 		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользовтель его создать не сможет.
 		if(UoW.GetAll<Warehouse>().Count() == 0)
 			CreateDefaultWarehouse();
-		FeaturesService = new FeaturesService();
+		FeaturesService = AutofacScope.Resolve<FeaturesService>();
 		DisableFeatures();
 	}
 

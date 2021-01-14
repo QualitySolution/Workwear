@@ -20,6 +20,7 @@ using QS.Project.Search.GtkUI;
 using QS.Project.Services;
 using QS.Project.Services.GtkUI;
 using QS.Project.Versioning;
+using QS.Project.Versioning.Product;
 using QS.Project.ViewModels;
 using QS.Project.Views;
 using QS.Report;
@@ -105,7 +106,7 @@ namespace workwear
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
 			builder.RegisterType<DefaultSessionProvider>().As<ISessionProvider>();
 			builder.Register<DbConnection>(c => Connection.ConnectionDB).AsSelf();
-			builder.RegisterType<BaseParameters>().As<ParametersService>();
+			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf();
 			builder.Register(c => QSProjectsLib.QSMain.ConnectionStringBuilder).AsSelf();
 			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
 			#endregion
@@ -194,7 +195,7 @@ namespace workwear
 			#endregion
 
 			#region Разделение версий
-			builder.RegisterType<FeaturesService>().AsSelf();
+			builder.RegisterType<FeaturesService>().As<IProductService>().AsSelf();
 			builder.RegisterModule<FeaturesAutofacModule>();
 			#endregion
 			AppDIContainer = builder.Build();

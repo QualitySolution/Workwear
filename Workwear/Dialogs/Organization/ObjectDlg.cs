@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Autofac;
 using NLog;
 using QS.Dialog.Gtk;
@@ -29,8 +28,9 @@ namespace workwear.Dialogs.Organization
 		public ObjectDlg (int id)
 		{
 			this.Build();
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Subdivision>(id);
-			this.featuresService = new FeaturesService();
+			this.featuresService = AutofacScope.Resolve<FeaturesService>();
 
 			ConfigureDlg();
 			Fill(id);
@@ -39,9 +39,9 @@ namespace workwear.Dialogs.Organization
 		public ObjectDlg()
 		{
 			this.Build();
-
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Subdivision>();
-			featuresService = new FeaturesService();
+			featuresService = AutofacScope.Resolve<FeaturesService>();
 			ConfigureDlg();
 		}
 
@@ -65,7 +65,6 @@ namespace workwear.Dialogs.Organization
 			entryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 			textviewAddress.Binding.AddBinding(Entity, e => e.Address, w => w.Buffer.Text).InitializeFromSource();
 
-			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			var builder = new LegacyEEVMBuilderFactory<Subdivision>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
 
 			entitywarehouse.ViewModel = builder.ForProperty(x => x.Warehouse)		

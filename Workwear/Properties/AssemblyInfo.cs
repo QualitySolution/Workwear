@@ -15,6 +15,7 @@ using QS.Project.Versioning;
 [assembly: AssemblyDescription("Программа позволяет вести учет внутреннего склада спецодежды и имущества выдаваемого сотрудникам.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]
+[assembly: AssemblyProductCode(2)]
 [assembly: AssemblyProduct("QS: Спецодежда и имущество")]
 [assembly: AssemblyCopyright("Quality Solution 2020")]
 [assembly: AssemblyTrademark("")]

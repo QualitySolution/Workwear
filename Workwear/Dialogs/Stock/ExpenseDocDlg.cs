@@ -42,7 +42,7 @@ namespace workwear
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
 
-			featuresService = new FeaturesService();
+			featuresService = MainClass.AppDIContainer.Resolve<FeaturesService>();
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW,featuresService);
 			ConfigureDlg ();
@@ -85,7 +85,7 @@ namespace workwear
 		public ExpenseDocDlg (int id)
 		{
 			this.Build ();
-			featuresService = new FeaturesService();
+			featuresService = MainClass.AppDIContainer.Resolve<FeaturesService>(); 
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Expense> (id);
 			ConfigureDlg ();
 		}
