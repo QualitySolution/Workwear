@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using QS.Project.Versioning.Product;
+using QS.Serial;
 using QS.Serial.Encoding;
 
 namespace workwear.Tools.Features
@@ -12,24 +13,22 @@ namespace workwear.Tools.Features
 			new ProductEdition(2, "Профессиональная"),
 			new ProductEdition(3, "Предприятие")
 		};
-		private readonly BaseParameters baseParameters;
 		private readonly SerialNumberEncoder serialNumberEncoder;
 
 		public byte ProductEdition { get; }
 
 		public string EditionName => SupportEditions.First(x => x.Number == ProductEdition).Name;
 
-		public FeaturesService(BaseParameters baseParameters, SerialNumberEncoder serialNumberEncoder)
+		public FeaturesService(ISerialNumberService serialNumberService, SerialNumberEncoder serialNumberEncoder)
 		{
-			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.serialNumberEncoder = serialNumberEncoder ?? throw new ArgumentNullException(nameof(serialNumberEncoder));
 
 			ProductEdition = 1;
 
-			if(String.IsNullOrWhiteSpace(baseParameters.Dynamic.serial_number))
+			if(String.IsNullOrWhiteSpace(serialNumberService.SerialNumber))
 				return;
 
-			serialNumberEncoder.Number = baseParameters.Dynamic.serial_number;
+			serialNumberEncoder.Number = serialNumberService.SerialNumber;
 			if(serialNumberEncoder.IsValid) {
 				if(serialNumberEncoder.CodeVersion == 1)
 					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к професиональной редации.
