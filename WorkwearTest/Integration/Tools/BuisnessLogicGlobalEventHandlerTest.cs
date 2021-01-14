@@ -117,6 +117,8 @@ namespace WorkwearTest.Integration.Tools
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления")) {
 				BuisnessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
@@ -166,7 +168,7 @@ namespace WorkwearTest.Integration.Tools
 				expenseOp.Issued = 1;
 				expenseOp.WarehouseOperation = warehouseOperation;
 				var graph = IssueGraph.MakeIssueGraph(uow, employee, nomenclatureType);
-				expenseOp.RecalculateDatesOfIssueOperation(graph, ask);
+				expenseOp.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
 				uow.Save(expenseOp);
 
 				var warehouseOperation2 = new WarehouseOperation();
@@ -182,10 +184,10 @@ namespace WorkwearTest.Integration.Tools
 				expenseOp2.Issued = 1;
 				expenseOp2.WarehouseOperation = warehouseOperation2;
 				graph = IssueGraph.MakeIssueGraph(uow, employee, nomenclatureType);
-				expenseOp2.RecalculateDatesOfIssueOperation(graph, ask);
+				expenseOp2.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
 				uow.Save(expenseOp2);
 
-				vacation.UpdateRelatedOperations(uow, ask);
+				vacation.UpdateRelatedOperations(uow, baseParameters, ask);
 				uow.Commit();
 
 				Assert.That(employee.WorkwearItems[0].NextIssue, Is.EqualTo(new DateTime(2021, 1, 11)));
@@ -211,6 +213,8 @@ namespace WorkwearTest.Integration.Tools
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				BuisnessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
@@ -275,7 +279,7 @@ namespace WorkwearTest.Integration.Tools
 				expense.AddItem(position2, 1);
 
 				//Обновление операций
-				expense.UpdateOperations(uow, ask);
+				expense.UpdateOperations(uow, baseParameters, ask);
 				uow.Save(expense);
 				expense.UpdateEmployeeWearItems();
 				employee.WorkwearItems.First(e => e.Item.IsSame(nomenclatureType2)).Created = new DateTime(2018, 4, 22);

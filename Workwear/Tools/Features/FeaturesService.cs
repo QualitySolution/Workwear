@@ -39,6 +39,13 @@ namespace workwear.Tools.Features
 			}
 		}
 
+		/// <summary>
+		/// Используется только для тестов!!!
+		/// </summary>
+		public FeaturesService()
+		{
+		}
+
 		virtual public bool Available(WorkwearFeature feature)
 		{
 			switch(feature) {

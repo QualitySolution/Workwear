@@ -60,13 +60,15 @@ namespace WorkwearTest.Integration.Stock
 		[Category("Integrated")]
 		public void GetDefaultWarehouse_OneWarehouseTest()
 		{
+			var featuresService = Substitute.For<FeaturesService>();
+			featuresService.Available(WorkwearFeature.Warehouses).Returns(true);
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse1 = new Warehouse();
 				warehouse1.Name = "Единственный";
 				uow.Save(warehouse1);
 				uow.Commit();
 
-				var defaultWarehouse = new StockRepository().GetDefaultWarehouse(uow,new workwear.Tools.Features.FeaturesService());
+				var defaultWarehouse = new StockRepository().GetDefaultWarehouse(uow, featuresService);
 				Assert.That(defaultWarehouse.Name, Is.EqualTo("Единственный"));
 			}
 		}

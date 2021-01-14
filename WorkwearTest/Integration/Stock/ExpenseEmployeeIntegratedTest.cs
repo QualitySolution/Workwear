@@ -7,6 +7,7 @@ using QS.Testing.DB;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Tools;
 
 namespace WorkwearTest.Integration.Stock
 {
@@ -89,8 +90,11 @@ namespace WorkwearTest.Integration.Stock
 				expense.AddItem(position1, 1);
 				expense.AddItem(position2, 1);
 
+				var baseParameters = Substitute.For<BaseParameters>();
+				baseParameters.ColDayAheadOfShedule.Returns(0);
+
 				//Обновление операций
-				expense.UpdateOperations(uow, ask);
+				expense.UpdateOperations(uow, baseParameters, ask);
 				uow.Save(expense);
 				uow.Commit();
 
@@ -112,6 +116,8 @@ namespace WorkwearTest.Integration.Stock
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -168,15 +174,15 @@ namespace WorkwearTest.Integration.Stock
 				expense.AddItem(position2, 1);
 
 				//Обновление операций
-				expense.UpdateOperations(uow, ask); //Здесь 2020 
+				expense.UpdateOperations(uow, baseParameters, ask); //Здесь 2020 
 				uow.Save(expense);
 				uow.Commit();
 
-				expense.UpdateOperations(uow, ask); //Здесь 2022(неправильно)
+				expense.UpdateOperations(uow, baseParameters, ask); //Здесь 2022(неправильно)
 				uow.Save(expense);
 				uow.Commit();
 
-				expense.UpdateOperations(uow, ask); //Здесь 2024(неправильно)
+				expense.UpdateOperations(uow, baseParameters, ask); //Здесь 2024(неправильно)
 				uow.Save(expense);
 				uow.Commit();
 
@@ -197,6 +203,8 @@ namespace WorkwearTest.Integration.Stock
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -243,7 +251,7 @@ namespace WorkwearTest.Integration.Stock
 				expense.CreateIssuanceSheet();
 
 				//Обновление операций
-				expense.UpdateOperations(uow, ask);
+				expense.UpdateOperations(uow, baseParameters, ask);
 				expense.UpdateIssuanceSheet();
 				uow.Save(expense.IssuanceSheet);
 				uow.Save(expense);

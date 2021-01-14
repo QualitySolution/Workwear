@@ -10,6 +10,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Repository.Operations;
+using workwear.Tools;
 
 namespace WorkwearTest.Organization
 {
@@ -64,8 +65,11 @@ namespace WorkwearTest.Organization
 
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(false);
-				
-			vacation.UpdateRelatedOperations(uow, ask);
+
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+
+			vacation.UpdateRelatedOperations(uow, baseParameters, ask);
 
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 5, 20)));
 			Assert.That(issue.AutoWriteoffDate, Is.EqualTo(new DateTime(2019, 5, 20)));

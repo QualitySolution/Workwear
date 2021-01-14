@@ -8,18 +8,25 @@ namespace workwear.Tools
 	{
 		public BaseParameters(DbConnection connection) : base(connection)
 		{
-		} 
+		}
+
+		/// <summary>
+		/// Используется только для тестов!!!
+		/// </summary>
+		public BaseParameters()
+		{
+		}
 
 		#region Типизированный доступ и дефолтные значения
-		public bool DefaultAutoWriteoff {
+		public virtual bool DefaultAutoWriteoff {
 			get => Dynamic.DefaultAutoWriteoff(typeof(bool)) ?? true;
 			set => Dynamic.DefaultAutoWriteoff = value;
 		}
-		public bool EmployeeSizeRanges {
+		public virtual bool EmployeeSizeRanges {
 			get => Dynamic.EmployeeSizeRanges(typeof(bool)) ?? false;
 			set => Dynamic.EmployeeSizeRanges = value;
 		}
-		public int ColDayAheadOfShedule {
+		public virtual int ColDayAheadOfShedule {
 			get => Dynamic.ColDayAheadOfShedule(typeof(int)) ?? 0;
 			set => Dynamic.ColDayAheadOfShedule = value;
 		}
