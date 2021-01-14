@@ -8,9 +8,6 @@ using QS.Project.Versioning;
 #if DEBUG
 [assembly: AssemblyBetaBuild]
 #endif
-#if ENTERPRISE
-[assembly: AssemblyModification(Name = "QSE", Title = "Предприятие")]
-#endif
 [assembly: AssemblyСompatibleModification("gpl")]
 [assembly: AssemblyDescription("Программа позволяет вести учет внутреннего склада спецодежды и имущества выдаваемого сотрудникам.")]
 [assembly: AssemblyConfiguration("")]

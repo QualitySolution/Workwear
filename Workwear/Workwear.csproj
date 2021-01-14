@@ -47,15 +47,6 @@
   <PropertyGroup Condition="$(Configuration.Contains('Win'))">
     <TargetOS>Win</TargetOS>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWinEnterprise|x86' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\ReleaseWinEnterprise</OutputPath>
-    <DefineConstants>ENTERPRISE;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Mono.Posix" />

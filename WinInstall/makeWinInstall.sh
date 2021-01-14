@@ -18,13 +18,6 @@ while [ "$1" != "" ]; do
 		Configuration="Debug"
                 ;;
     esac
-    case $1 in
-        -e | --enterprise ) 
-		NsisOptions+=" /DENTERPRISE"
-		BinDir=../$ProjectName/bin/ReleaseWinEnterprise
-		Configuration="ReleaseWinEnterprise"
-                ;;
-    esac
     shift
 done
 
