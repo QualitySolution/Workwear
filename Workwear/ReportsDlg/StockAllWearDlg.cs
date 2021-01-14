@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Autofac;
 using QS.Report;
 using QSProjectsLib;
 using QSReport;
@@ -16,7 +17,7 @@ namespace workwear.ReportsDlg
 		{
 			this.Build();
 			ComboWorks.ComboFillReference(comboObject, "warehouse", ComboWorks.ListMode.OnlyItems, true, "name");
-			featureService = new FeaturesService();
+			featureService = MainClass.AppDIContainer.Resolve<FeaturesService>();
 			DisableFeatures();
 			comboObject.Active = 0;
 		}

@@ -3,6 +3,7 @@ using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
+using workwear.Tools;
 
 namespace workwear.Dialogs.Organization
 {
@@ -46,8 +47,8 @@ namespace workwear.Dialogs.Organization
 			var valid = new QS.Validation.QSValidator<EmployeeVacation>(Entity);
 			if(valid.RunDlgIfNotValid((Gtk.Window)this.Toplevel))
 				return false;
-
-			Entity.UpdateRelatedOperations(UoW, new GtkQuestionDialogsInteractive());
+			var baseParameters = new BaseParameters(UoW.Session.Connection);
+			Entity.UpdateRelatedOperations(UoW, baseParameters, new GtkQuestionDialogsInteractive());
 			UoW.Save(Entity.Employee);
 
 			UoWGeneric.Save();

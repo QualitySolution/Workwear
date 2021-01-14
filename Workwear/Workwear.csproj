@@ -412,10 +412,6 @@
       <Project>{A6C1914F-7732-49F5-BABA-8BBBA521FAAB}</Project>
       <Name>QSProjectsLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSSupportLib\QSSupportLib.csproj">
-      <Project>{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}</Project>
-      <Name>QSSupportLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QSWidgetLib\QSWidgetLib.csproj">
       <Project>{5A2BB01E-E124-432E-8099-D1343D3897B9}</Project>
       <Name>QSWidgetLib</Name>
@@ -423,10 +419,6 @@
     <ProjectReference Include="..\..\QSProjects\QSSaaS\QSSaaS.csproj">
       <Project>{4B502FE5-D419-4B5C-9276-0A25EF2F508A}</Project>
       <Name>QSSaaS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSUpdater\QSUpdater.csproj">
-      <Project>{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}</Project>
-      <Name>QS.Updater.Gtk</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\GammaBinding\GammaBinding\GammaBinding.csproj">
       <Project>{190CEA0D-EA23-4C91-8030-203A5AFED7B7}</Project>
@@ -480,14 +472,6 @@
       <Project>{5735D438-792E-40CE-BAFD-25814C8879BC}</Project>
       <Name>Gamma.Utilities.Gtk</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Updater.Gtk\QS.Updater.Gtk.csproj">
-      <Project>{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}</Project>
-      <Name>QS.Updater.Gtk</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Updater\QS.Updater.csproj">
-      <Project>{0F2A9FD4-6FC1-4912-9C8A-72028305A37E}</Project>
-      <Name>QS.Updater</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\Modules\QS.BusinessCommon\QS.BusinessCommon.csproj">
       <Project>{F22749B2-E35B-455D-BD8D-081373B16FC7}</Project>
       <Name>QS.BusinessCommon</Name>
@@ -507,6 +491,22 @@
     <ProjectReference Include="..\..\QSProjects\QS.MachineConfig\QS.MachineConfig.csproj">
       <Project>{769710D2-BF98-4120-9E07-67BD740CFA1D}</Project>
       <Name>QS.MachineConfig</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Updater\QS.Updater.csproj">
+      <Project>{0F2A9FD4-6FC1-4912-9C8A-72028305A37E}</Project>
+      <Name>QS.Updater</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Updater.Gtk\QS.Updater.Gtk.csproj">
+      <Project>{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}</Project>
+      <Name>QS.Updater.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Features.Gtk\QS.Features.Gtk.csproj">
+      <Project>{13970AEE-1019-4962-A8C7-899D350E0F10}</Project>
+      <Name>QS.Features.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Features\QS.Features.csproj">
+      <Project>{8984DB2F-4849-4F5B-915C-CE69537E93A8}</Project>
+      <Name>QS.Features</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

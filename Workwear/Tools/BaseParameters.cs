@@ -1,24 +1,28 @@
 ﻿using System;
-using QSSupportLib;
+using System.Data.Common;
+using QS.BaseParameters;
 
 namespace workwear.Tools
 {
-	public static class  BaseParameters
+	public class  BaseParameters : ParametersService
 	{
-		public static bool DefaultAutoWriteoff => MainSupport.BaseParameters?.All == null 
-			|| Boolean.Parse(MainSupport.BaseParameters.All[BaseParameterNames.DefaultAutoWriteoff.ToString()]);
-		public static bool EmployeeSizeRanges => MainSupport.BaseParameters?.All != null 
-			&& MainSupport.BaseParameters.All.ContainsKey(BaseParameterNames.EmployeeSizeRanges.ToString()) 
-			&& Boolean.Parse(MainSupport.BaseParameters.All[BaseParameterNames.EmployeeSizeRanges.ToString()]);
-		public static int ColDayAheadOfShedule => MainSupport.BaseParameters?.All == null 
-		|| !MainSupport.BaseParameters.All.ContainsKey(BaseParameterNames.ColDayAheadOfShedule.ToString()) ? 0 :
-			 int.Parse(MainSupport.BaseParameters.All[BaseParameterNames.ColDayAheadOfShedule.ToString()]);
-	}
+		public BaseParameters(DbConnection connection) : base(connection)
+		{
+		} 
 
-	public enum BaseParameterNames
-	{
-		DefaultAutoWriteoff,
-		EmployeeSizeRanges,
-		ColDayAheadOfShedule
+		#region Типизированный доступ и дефолтные значения
+		public bool DefaultAutoWriteoff {
+			get => Dynamic.DefaultAutoWriteoff(typeof(bool)) ?? true;
+			set => Dynamic.DefaultAutoWriteoff = value;
+		}
+		public bool EmployeeSizeRanges {
+			get => Dynamic.EmployeeSizeRanges(typeof(bool)) ?? false;
+			set => Dynamic.EmployeeSizeRanges = value;
+		}
+		public int ColDayAheadOfShedule {
+			get => Dynamic.ColDayAheadOfShedule(typeof(int)) ?? 0;
+			set => Dynamic.ColDayAheadOfShedule = value;
+		}
+		#endregion
 	}
 }

@@ -8,6 +8,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
+using workwear.Tools;
 
 namespace workwear.Domain.Stock
 {
@@ -140,9 +141,9 @@ namespace workwear.Domain.Stock
 			ObservableItems.Remove (item);
 		}
 
-		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
+		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser)
 		{
-			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
+			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser));
 		}
 
 		public virtual void UpdateEmployeeWearItems()

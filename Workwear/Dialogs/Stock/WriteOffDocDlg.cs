@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Autofac;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
@@ -9,6 +10,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository;
 using workwear.Repository.Stock;
+using workwear.Tools.Features;
 
 namespace workwear
 {
@@ -22,7 +24,7 @@ namespace workwear
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Writeoff> ();
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
-			ItemsTable.CurWarehouse = new StockRepository().GetDefaultWarehouse(UoW,new Tools.Features.FeaturesService());
+			ItemsTable.CurWarehouse = new StockRepository().GetDefaultWarehouse(UoW, MainClass.AppDIContainer.Resolve<FeaturesService>());
 			ConfigureDlg ();
 		}
 
