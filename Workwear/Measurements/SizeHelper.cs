@@ -401,9 +401,9 @@ namespace workwear.Measurements
 
 		#endregion
 
-		public static SizeUse[] GetExcludedSizeUseForEmployee()
+		public static SizeUse[] GetExcludedSizeUseForEmployee(BaseParameters baseParameters)
 		{
-			return BaseParameters.EmployeeSizeRanges ? new SizeUse[] { } : new SizeUse[] { SizeUse.СlothesOnly };
+			return baseParameters.EmployeeSizeRanges ? new SizeUse[] { } : new SizeUse[] { SizeUse.СlothesOnly };
 		}
 	}
 

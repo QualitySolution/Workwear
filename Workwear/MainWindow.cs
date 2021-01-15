@@ -366,7 +366,14 @@ public partial class MainWindow : Gtk.Window
 		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
 		page.ViewModel.ShowSummary = true;
 		page.ViewModel.Filter.ShowNegativeBalance = true;
+<<<<<<< Updated upstream
 		page.ViewModel.Filter.Warehouse = new workwear.Repository.Stock.StockRepository().GetDefaultWarehouse(UoW, featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+=======
+		if(!FeaturesService.Available(WorkwearFeature.Warehouses)) {
+			//Здесь устанавливается склад,т.к. по другому как его поставить я не нашёл
+			page.ViewModel.Filter.Warehouse = new workwear.Repository.Stock.StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+		}
+>>>>>>> Stashed changes
 	}
 
 	protected void OnActionStockDocsActivated(object sender, EventArgs e)
