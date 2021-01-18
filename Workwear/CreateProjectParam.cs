@@ -14,6 +14,7 @@ using QS.Navigation;
 using QS.NewsFeed;
 using QS.Permissions;
 using QS.Project.DB;
+using QS.Project.Dialogs.GtkUI.ServiceDlg;
 using QS.Project.Domain;
 using QS.Project.Search.GtkUI;
 using QS.Project.Services;
@@ -42,6 +43,7 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
 using workwear.Journal;
+using workwear.Measurements;
 using workwear.Repository.Operations;
 using workwear.Tools;
 using workwear.Tools.Features;
@@ -143,6 +145,10 @@ namespace workwear
 
 			#region Главное окно
 			builder.Register((ctx) => MainWin.ProgressBar).As<IProgressBarDisplayable>();
+			#endregion
+
+			#region Размеры
+			builder.RegisterType<SizeService>().AsSelf();
 			#endregion
 
 			#region Старые диалоги

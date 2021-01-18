@@ -23,6 +23,7 @@ using workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository.Stock;
+using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Statements;
@@ -37,6 +38,7 @@ namespace workwear.ViewModels.Stock
 		IInteractiveQuestion interactive;
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
+		private readonly BaseParameters baseParameters;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
@@ -48,6 +50,7 @@ namespace workwear.ViewModels.Stock
 			StockRepository stockRepository,
 			CommonMessages commonMessages,
 			FeaturesService featuresService,
+			BaseParameters baseParameters,
 			EmployeeCard employee = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
@@ -55,6 +58,7 @@ namespace workwear.ViewModels.Stock
 			this.interactive = interactive;
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
@@ -129,7 +133,7 @@ namespace workwear.ViewModels.Stock
 
 			Entity.CleanupItems();
 			Entity.CleanupItemsWriteOff();
-			Entity.UpdateOperations(UoW, interactive);
+			Entity.UpdateOperations(UoW, baseParameters, interactive);
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);

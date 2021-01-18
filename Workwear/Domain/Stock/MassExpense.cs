@@ -168,6 +168,14 @@ namespace workwear.Domain.Stock
 
 		public virtual string Title => $"Массовая выдача №{Id} от {Date:d}";
 
+		#region Внешние зависимости
+
+		/// <summary>
+		/// Должно быть заполнено для работы некоторых свойств в строках документа.
+		/// </summary>
+		public virtual SizeService SizeService { get; set; }
+		#endregion
+
 		#region Nomenclature
 
 		public virtual MassExpenseNomenclature AddItemNomenclature(Nomenclature nomenclature, IInteractiveMessage message, IUnitOfWork uow)

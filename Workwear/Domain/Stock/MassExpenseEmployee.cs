@@ -77,7 +77,7 @@ namespace workwear.Domain.Stock
 			get { return wearSizeStd; }
 			set { 
 				SetField(ref wearSizeStd, value, () => WearSizeStd);
-				if(wearSizeStd == null || !SizeHelper.GetSizesListByStdCode(wearSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()).Contains(WearSize))
+				if(wearSizeStd == null || !DocumentMassExpense.SizeService.GetSizesForEmployee(wearSizeStd).Contains(WearSize))
 					wearSize = null;
 			}
 		}
@@ -96,7 +96,7 @@ namespace workwear.Domain.Stock
 		public virtual string ShoesSizeStd {
 			get { return shoesSizeStd; }
 			set { SetField(ref shoesSizeStd, value, () => ShoesSizeStd);
-				if(shoesSizeStd == null || !SizeHelper.GetSizesListByStdCode(shoesSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()).Contains(ShoesSize))
+				if(shoesSizeStd == null || !DocumentMassExpense.SizeService.GetSizesForEmployee(shoesSizeStd).Contains(ShoesSize))
 					ShoesSize = null;
 			}
 		}
@@ -115,7 +115,7 @@ namespace workwear.Domain.Stock
 		public virtual string WinterShoesSizeStd {
 			get { return winterShoesSizeStd; }
 			set { SetField(ref winterShoesSizeStd, value, () => WinterShoesSizeStd);
-				if(winterShoesSizeStd == null || !SizeHelper.GetSizesListByStdCode(winterShoesSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()).Contains(winterShoesSize))
+				if(winterShoesSizeStd == null || !DocumentMassExpense.SizeService.GetSizesForEmployee(winterShoesSizeStd).Contains(winterShoesSize))
 					WinterShoesSize = null;
 			}
 		}
@@ -134,7 +134,7 @@ namespace workwear.Domain.Stock
 		public virtual string HeaddressSizeStd {
 			get { return headdressSizeStd; }
 			set { SetField(ref headdressSizeStd, value, () => HeaddressSizeStd);
-				if(headdressSizeStd == null || !SizeHelper.GetSizesListByStdCode(headdressSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()).Contains(HeaddressSize))
+				if(headdressSizeStd == null || !DocumentMassExpense.SizeService.GetSizesForEmployee(headdressSizeStd).Contains(HeaddressSize))
 					HeaddressSize = null;
 			}
 		}
@@ -153,7 +153,7 @@ namespace workwear.Domain.Stock
 		public virtual string GlovesSizeStd {
 			get { return glovesSizeStd; }
 			set { SetField(ref glovesSizeStd, value, () => GlovesSizeStd);
-				if(glovesSizeStd == null || !SizeHelper.GetSizesListByStdCode(glovesSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()).Contains(GlovesSize))
+				if(glovesSizeStd == null || !DocumentMassExpense.SizeService.GetSizesForEmployee(glovesSizeStd).Contains(GlovesSize))
 					GlovesSize = null;
 			}
 		}
@@ -173,7 +173,7 @@ namespace workwear.Domain.Stock
 			get { return mittensSizeStd; }
 			set {
 				SetField(ref mittensSizeStd, value, () => MittensSizeStd);
-				if(mittensSizeStd == null || !SizeHelper.GetSizesListByStdCode(mittensSizeStd, SizeHelper.GetExcludedSizeUseForEmployee()).Contains(MittensSize))
+				if(mittensSizeStd == null || !DocumentMassExpense.SizeService.GetSizesForEmployee(mittensSizeStd).Contains(MittensSize))
 					MittensSize = null;
 			}
 		}

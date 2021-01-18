@@ -1,27 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using Autofac;
 using NLog;
 using QS.Dialog;
-using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
-using QS.Report;
-using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
-using workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository.Stock;
+using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company;
-using workwear.ViewModels.Statements;
 
 namespace workwear.ViewModels.Stock
 {
@@ -32,6 +27,7 @@ namespace workwear.ViewModels.Stock
 		public ExpenseDocItemsObjectViewModel DocItemsObjectViewModel;
 		IInteractiveQuestion interactive;
 		private readonly StockRepository stockRepository;
+		private readonly BaseParameters baseParameters;
 		private readonly CommonMessages commonMessages;
 
 		public ExpenseObjectViewModel(IEntityUoWBuilder uowBuilder,
@@ -43,6 +39,7 @@ namespace workwear.ViewModels.Stock
 									  IInteractiveQuestion interactive,
 									  StockRepository stockRepository,
 									  FeaturesService featutesService,
+									  BaseParameters baseParameters,
 									  CommonMessages commonMessages,
 									  Subdivision subdivision = null
 									  )
@@ -51,6 +48,7 @@ namespace workwear.ViewModels.Stock
 			Entity.Date = DateTime.Today;
 			this.interactive = interactive;
 			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			if(subdivision != null) {
 				Entity.Subdivision = subdivision;
@@ -93,7 +91,7 @@ namespace workwear.ViewModels.Stock
 				return false;
 
 			logger.Info("Запись документа...");
-			Entity.UpdateOperations(UoW, interactive);
+			Entity.UpdateOperations(UoW, baseParameters, interactive);
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);

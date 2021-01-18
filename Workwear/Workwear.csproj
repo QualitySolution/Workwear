@@ -460,6 +460,7 @@
     <Compile Include="ReportParameters\ViewModels\AmountIssuedWearViewModel.cs" />
     <Compile Include="ReportParameters\Views\AmountIssuedWearView.cs" />
     <Compile Include="gtk-gui\workwear.ReportParameters.Views.AmountIssuedWearView.cs" />
+    <Compile Include="Measurements\SizeService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

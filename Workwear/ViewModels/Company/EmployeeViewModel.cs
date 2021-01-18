@@ -30,6 +30,7 @@ namespace workwear.ViewModels.Company
 		private readonly IUserService userService;
 
 		ILifetimeScope AutofacScope;
+		private readonly SizeService sizeService;
 		private readonly IInteractiveQuestion interactive;
 		private readonly CommonMessages messages;
 
@@ -40,11 +41,13 @@ namespace workwear.ViewModels.Company
 			IValidator validator,
 			IUserService userService,
 			ILifetimeScope autofacScope,
+			SizeService sizeService,
 			IInteractiveQuestion interactive,
 			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
@@ -130,6 +133,16 @@ namespace workwear.ViewModels.Company
 		public string CreatedByUser => Entity.CreatedbyUser?.Name;
 
 		public string SubdivisionAddress => Entity.Subdivision?.Address ?? "--//--";
+
+		#endregion
+
+
+		#region Size
+
+		public string[] GetSizes(string code) => sizeService.GetSizesForEmployee(code);
+		public string[] GetSizes(Enum std) => sizeService.GetSizesForEmployee(std);
+
+		public string[] GetGrowths(Sex sex) => sizeService.GetSizesForEmployee(sex == Sex.F ? GrowthStandartWear.Women : GrowthStandartWear.Men);
 
 		#endregion
 
