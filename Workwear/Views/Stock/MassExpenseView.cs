@@ -10,10 +10,9 @@ using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock
 {
-	[System.ComponentModel.ToolboxItem(true)]
-	public partial class WarehouseMassExpenseView : EntityDialogViewBase<WarehouseMassExpenseViewModel, MassExpense>
+	public partial class MassExpenseView : EntityDialogViewBase<MassExpenseViewModel, MassExpense>
 	{
-		public WarehouseMassExpenseView(WarehouseMassExpenseViewModel viewModel) : base(viewModel)
+		public MassExpenseView(MassExpenseViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
 			ConfigureDlg();

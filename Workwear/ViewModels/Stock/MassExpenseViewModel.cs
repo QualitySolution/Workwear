@@ -13,7 +13,6 @@ using QS.Project.Journal;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
-using QS.Tdi;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
@@ -30,7 +29,7 @@ using workwear.ViewModels.Statements;
 
 namespace workwear.ViewModels.Stock
 {
-	public class WarehouseMassExpenseViewModel : LegacyEntityDialogViewModelBase<MassExpense>
+	public class MassExpenseViewModel : EntityDialogViewModelBase<MassExpense>
 	{
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
 		public ILifetimeScope AutofacScope;
@@ -44,10 +43,9 @@ namespace workwear.ViewModels.Stock
 			set { SetField(ref displayMessage, value); }
 		}
 
-		public WarehouseMassExpenseViewModel(
+		public MassExpenseViewModel(
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
-			ITdiTab myTab, 
 			ITdiCompatibilityNavigation navigationManager, 
 			ILifetimeScope autofacScope, 
 			IInteractiveService interactive, 
@@ -56,7 +54,7 @@ namespace workwear.ViewModels.Stock
 			FeaturesService featutesService,
 			SizeService sizeService,
 			CommonMessages messages,
-			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager, validator)
+			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator)
 		{
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
@@ -66,7 +64,7 @@ namespace workwear.ViewModels.Stock
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 
 			Entity.SizeService = sizeService;
-			var entryBuilder = new LegacyEEVMBuilderFactory<MassExpense>(this, TdiTab, Entity, UoW, navigationManager) {
+			var entryBuilder = new CommonEEVMBuilderFactory<MassExpense>(this, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
 

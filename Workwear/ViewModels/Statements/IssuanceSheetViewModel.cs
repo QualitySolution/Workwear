@@ -211,7 +211,7 @@ namespace workwear.ViewModels.Statements
 			if (Entity.Expense != null)
 				tdiNavigationManager.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.Expense.Id));
 			else
-				tdiNavigationManager.OpenViewModel<WarehouseMassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.MassExpense.Id));
+				tdiNavigationManager.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.MassExpense.Id));
 
 		}
 
