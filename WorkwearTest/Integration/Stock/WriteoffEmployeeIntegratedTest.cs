@@ -8,6 +8,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Repository.Company;
+using workwear.Tools;
 
 namespace WorkwearTest.Integration.Stock
 {
@@ -27,6 +28,7 @@ namespace WorkwearTest.Integration.Stock
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -68,7 +70,7 @@ namespace WorkwearTest.Integration.Stock
 				var item = expense.AddItem(position1, 3);
 
 				//Обновление операций
-				expense.UpdateOperations(uow, ask);
+				expense.UpdateOperations(uow, baseParameters, ask);
 				uow.Save(expense);
 				uow.Commit();
 

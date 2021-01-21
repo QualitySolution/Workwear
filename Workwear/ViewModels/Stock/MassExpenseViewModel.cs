@@ -13,7 +13,6 @@ using QS.Project.Journal;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
-using QS.Tdi;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
@@ -21,20 +20,21 @@ using QSReport;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
-using workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Measurements;
 using workwear.Repository.Stock;
 using workwear.Tools.Features;
 using workwear.ViewModels.Statements;
 
 namespace workwear.ViewModels.Stock
 {
-	public class WarehouseMassExpenseViewModel : LegacyEntityDialogViewModelBase<MassExpense>
+	public class MassExpenseViewModel : EntityDialogViewModelBase<MassExpense>
 	{
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
 		public ILifetimeScope AutofacScope;
 		private readonly IInteractiveService interactive;
+		private readonly SizeService sizeService;
 		private readonly CommonMessages messages;
 
 		private string displayMessage;
@@ -43,26 +43,28 @@ namespace workwear.ViewModels.Stock
 			set { SetField(ref displayMessage, value); }
 		}
 
-		public WarehouseMassExpenseViewModel(
+		public MassExpenseViewModel(
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
-			ITdiTab myTab, 
 			ITdiCompatibilityNavigation navigationManager, 
 			ILifetimeScope autofacScope, 
 			IInteractiveService interactive, 
 			IUserService userService,
 			StockRepository stockRepository,
 			FeaturesService featutesService,
+			SizeService sizeService,
 			CommonMessages messages,
-			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager, validator)
+			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator)
 		{
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 
-			var entryBuilder = new LegacyEEVMBuilderFactory<MassExpense>(this, TdiTab, Entity, UoW, navigationManager) {
+			Entity.SizeService = sizeService;
+			var entryBuilder = new CommonEEVMBuilderFactory<MassExpense>(this, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
 
@@ -88,6 +90,14 @@ namespace workwear.ViewModels.Stock
 		{
 			DisplayMessage = $"<span foreground=\"red\">{Entity.ValidateNomenclature(UoW)}</span>";
 		}
+
+		#region Size
+
+		public string[] GetSizes(string code) => sizeService.GetSizesForEmployee(code);
+
+		public string[] GetGrowths(Sex sex) => sizeService.GetSizesForEmployee(sex == Sex.F ? GrowthStandartWear.Women : GrowthStandartWear.Men);
+
+		#endregion
 
 		#region Nomenclature
 		public void AddNomenclature()

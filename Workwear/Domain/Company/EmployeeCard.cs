@@ -18,6 +18,7 @@ using workwear.Measurements;
 using workwear.Repository.Company;
 using workwear.Repository.Operations;
 using workwear.Repository.Stock;
+using workwear.Tools;
 
 namespace workwear.Domain.Company
 {
@@ -616,7 +617,7 @@ namespace workwear.Domain.Company
 
 		#endregion
 
-		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow, IInteractiveQuestion askUser, DateTime begin, DateTime end)
+		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, DateTime begin, DateTime end)
 		{
 			var operations = EmployeeIssueRepository.GetOperationsTouchDates(uow, this, begin, end,
 				q => q.Fetch(SelectMode.Fetch, o => o.ProtectionTools)
@@ -624,7 +625,7 @@ namespace workwear.Domain.Company
 			foreach(var typeGroup in operations.GroupBy(o => o.ProtectionTools)) {
 				foreach(var operation in typeGroup.OrderBy(o => o.OperationTime.Date).ThenBy(o => o.StartOfUse)) {
 					var graph = IssueGraph.MakeIssueGraph(uow, this, typeGroup.Key);
-					operation.RecalculateDatesOfIssueOperation(graph, askUser);
+					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 					uow.Save(operation);
 				}
 				var item = WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(typeGroup.Key));

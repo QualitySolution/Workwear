@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NHibernate;
@@ -254,7 +255,7 @@ namespace workwear.Representations
 		)
 		{
 			this.UoW = uow;
-			featuresService = new FeaturesService();
+			featuresService = MainClass.AppDIContainer.Resolve<FeaturesService>();
 			if(!featuresService.Available(WorkwearFeature.Warehouses)) {
 				var column = columnsConfig.GetColumnsByTag("warehouse");
 				column.First().Visible = false;

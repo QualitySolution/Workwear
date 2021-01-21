@@ -163,9 +163,17 @@ namespace workwear.Domain.Operations
 			set => SetField(ref warehouseOperation, value);
 		}
 
+		/// <summary>
+		/// Для создания операций выдачи надо использвать конструктор с BaseParameters
+		/// </summary>
 		public SubdivisionIssueOperation()
 		{
-			useAutoWriteoff = BaseParameters.DefaultAutoWriteoff;
+
+		}
+
+		public SubdivisionIssueOperation(BaseParameters baseParameters)
+		{
+			useAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 		}
 
 		#region Расчетные

@@ -32,6 +32,7 @@ namespace workwear.ViewModels.Company
 		private readonly IUserService userService;
 
 		ILifetimeScope AutofacScope;
+		private readonly SizeService sizeService;
 		private readonly IInteractiveQuestion interactive;
 		private readonly CommonMessages messages;
 		private readonly SubdivisionRepository subdivisionRepository;
@@ -44,6 +45,7 @@ namespace workwear.ViewModels.Company
 			IValidator validator,
 			IUserService userService,
 			ILifetimeScope autofacScope,
+			SizeService sizeService,
 			IInteractiveQuestion interactive,
 			CommonMessages messages,
 			SubdivisionRepository subdivisionRepository,
@@ -51,6 +53,7 @@ namespace workwear.ViewModels.Company
 		{
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			this.subdivisionRepository = subdivisionRepository ?? throw new ArgumentNullException(nameof(subdivisionRepository));
@@ -143,6 +146,16 @@ namespace workwear.ViewModels.Company
 		public string CreatedByUser => Entity.CreatedbyUser?.Name;
 
 		public string SubdivisionAddress => Entity.Subdivision?.Address ?? "--//--";
+
+		#endregion
+
+
+		#region Size
+
+		public string[] GetSizes(string code) => sizeService.GetSizesForEmployee(code);
+		public string[] GetSizes(Enum std) => sizeService.GetSizesForEmployee(std);
+
+		public string[] GetGrowths(Sex sex) => sizeService.GetSizesForEmployee(sex == Sex.F ? GrowthStandartWear.Women : GrowthStandartWear.Men);
 
 		#endregion
 

@@ -47,15 +47,6 @@
   <PropertyGroup Condition="$(Configuration.Contains('Win'))">
     <TargetOS>Win</TargetOS>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWinEnterprise|x86' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\ReleaseWinEnterprise</OutputPath>
-    <DefineConstants>ENTERPRISE;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Mono.Posix" />
@@ -368,9 +359,8 @@
     <Compile Include="HibernateMapping\Operations\WarehouseOperationMap.cs" />
     <Compile Include="Domain\Operations\SubdivisionIssueOperation.cs" />
     <Compile Include="HibernateMapping\Operations\SubdivisionIssueOperationMap.cs" />
-    <Compile Include="ViewModels\Stock\WarehouseMassExpenseViewModel.cs" />
-    <Compile Include="Views\Stock\WarehouseMassExpenseView.cs" />
-    <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseMassExpenseView.cs" />
+    <Compile Include="ViewModels\Stock\MassExpenseViewModel.cs" />
+    <Compile Include="Views\Stock\MassExpenseView.cs" />
     <Compile Include="Domain\Stock\MassExpense.cs" />
     <Compile Include="HibernateMapping\Stock\MassExpenseMap.cs" />
     <Compile Include="Domain\Stock\MassExpenseNomenclature.cs" />
@@ -477,21 +467,20 @@
     <Compile Include="Journal\ViewModels\Stock\StockBalanceShortSummaryJournalViewModel.cs" />
     <Compile Include="ReportsDlg\AmountEmployeeGetWearDlg.cs" />
     <Compile Include="gtk-gui\workwear.ReportsDlg.AmountEmployeeGetWearDlg.cs" />
-    <Compile Include="ReportsDlg\AmountIssuedWearDlg.cs" />
-    <Compile Include="gtk-gui\workwear.ReportsDlg.AmountIssuedWearDlg.cs" />
     <Compile Include="Views\User\UserSettingsView.cs" />
     <Compile Include="gtk-gui\workwear.Views.User.UserSettingsView.cs" />
     <Compile Include="ViewModels\User\UserSettingsViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\AmountIssuedWearViewModel.cs" />
+    <Compile Include="ReportParameters\Views\AmountIssuedWearView.cs" />
+    <Compile Include="gtk-gui\workwear.ReportParameters.Views.AmountIssuedWearView.cs" />
+    <Compile Include="Measurements\SizeService.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.MassExpenseView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QSProjectsLib\QSProjectsLib.csproj">
       <Project>{A6C1914F-7732-49F5-BABA-8BBBA521FAAB}</Project>
       <Name>QSProjectsLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSSupportLib\QSSupportLib.csproj">
-      <Project>{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}</Project>
-      <Name>QSSupportLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QSWidgetLib\QSWidgetLib.csproj">
       <Project>{5A2BB01E-E124-432E-8099-D1343D3897B9}</Project>
@@ -500,10 +489,6 @@
     <ProjectReference Include="..\..\QSProjects\QSSaaS\QSSaaS.csproj">
       <Project>{4B502FE5-D419-4B5C-9276-0A25EF2F508A}</Project>
       <Name>QSSaaS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSUpdater\QSUpdater.csproj">
-      <Project>{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}</Project>
-      <Name>QS.Updater.Gtk</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\GammaBinding\GammaBinding\GammaBinding.csproj">
       <Project>{190CEA0D-EA23-4C91-8030-203A5AFED7B7}</Project>
@@ -533,10 +518,6 @@
       <Project>{EB4F19F8-2CC9-4712-9949-760A441A56FE}</Project>
       <Name>QSTelemetry</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSMachineConfig\QSMachineConfig.csproj">
-      <Project>{769710D2-BF98-4120-9E07-67BD740CFA1D}</Project>
-      <Name>QSMachineConfig</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QSReport\QSReport.csproj">
       <Project>{9C0363D4-EE69-45B8-BA45-BDA24CE35A06}</Project>
       <Name>QSReport</Name>
@@ -561,14 +542,6 @@
       <Project>{5735D438-792E-40CE-BAFD-25814C8879BC}</Project>
       <Name>Gamma.Utilities.Gtk</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Updater.Gtk\QS.Updater.Gtk.csproj">
-      <Project>{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}</Project>
-      <Name>QS.Updater.Gtk</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Updater\QS.Updater.csproj">
-      <Project>{0F2A9FD4-6FC1-4912-9C8A-72028305A37E}</Project>
-      <Name>QS.Updater</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\Modules\QS.BusinessCommon\QS.BusinessCommon.csproj">
       <Project>{F22749B2-E35B-455D-BD8D-081373B16FC7}</Project>
       <Name>QS.BusinessCommon</Name>
@@ -584,6 +557,26 @@
     <ProjectReference Include="..\..\QSProjects\QS.NewsFeed\QS.NewsFeed.csproj">
       <Project>{9EBC7EFD-CD37-45D3-97AB-24CB38D986B6}</Project>
       <Name>QS.NewsFeed</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.MachineConfig\QS.MachineConfig.csproj">
+      <Project>{769710D2-BF98-4120-9E07-67BD740CFA1D}</Project>
+      <Name>QS.MachineConfig</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Updater\QS.Updater.csproj">
+      <Project>{0F2A9FD4-6FC1-4912-9C8A-72028305A37E}</Project>
+      <Name>QS.Updater</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Updater.Gtk\QS.Updater.Gtk.csproj">
+      <Project>{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}</Project>
+      <Name>QS.Updater.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Features.Gtk\QS.Features.Gtk.csproj">
+      <Project>{13970AEE-1019-4962-A8C7-899D350E0F10}</Project>
+      <Name>QS.Features.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Features\QS.Features.csproj">
+      <Project>{8984DB2F-4849-4F5B-915C-CE69537E93A8}</Project>
+      <Name>QS.Features</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -651,6 +644,9 @@
     <Folder Include="Views\Regulations\" />
     <Folder Include="Views\User\" />
     <Folder Include="ViewModels\User\" />
+    <Folder Include="ReportParameters\" />
+    <Folder Include="ReportParameters\ViewModels\" />
+    <Folder Include="ReportParameters\Views\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

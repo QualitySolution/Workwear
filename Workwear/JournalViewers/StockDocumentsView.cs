@@ -1,4 +1,5 @@
 ﻿using System;
+using Autofac;
 using Gtk;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
@@ -31,7 +32,7 @@ namespace workwear.JournalViewers
 			uow = tableDocuments.RepresentationModel.UoW;
 			buttonAdd.ItemsEnum = typeof(StokDocumentType);
 
-			featuresService = new FeaturesService();
+			featuresService = MainClass.AppDIContainer.Resolve<FeaturesService>();
 			if(!featuresService.Available(WorkwearFeature.Warehouses)) {
 				buttonAdd.SetVisibility(StokDocumentType.TransferDoc, false);
 			}
@@ -54,7 +55,7 @@ namespace workwear.JournalViewers
 				MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<WarehouseTransferViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
 			}
 			else if(type == StokDocumentType.MassExpense)
-				MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<WarehouseMassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
+				MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<MassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
 			else if(type == StokDocumentType.ExpenseEmployeeDoc)
 				MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
 			else if(type == StokDocumentType.ExpenseObjectDoc)
@@ -100,7 +101,7 @@ namespace workwear.JournalViewers
 						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<WarehouseTransferViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
 						break;
 					case StokDocumentType.MassExpense:
-						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<WarehouseMassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
+						MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<MassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
 						break;
 					default:
 						throw new NotSupportedException("Тип документа не поддерживается.");

@@ -7,6 +7,8 @@ using QS.Testing.DB;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Repository;
+using workwear.Tools;
 using workwear.Repository.Company;
 
 namespace WorkwearTest.Integration.Stock
@@ -27,6 +29,8 @@ namespace WorkwearTest.Integration.Stock
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -70,7 +74,7 @@ namespace WorkwearTest.Integration.Stock
 				item1.SubdivisionPlace = place;
 
 				//Обновление операций
-				expense.UpdateOperations(uow, ask);
+				expense.UpdateOperations(uow, baseParameters, ask);
 				uow.Save(expense);
 				uow.Commit();
 

@@ -15,9 +15,9 @@ namespace workwear.Repository.Company
 	public class SubdivisionRepository
 	{
 
-		public static QueryOver<Subdivision> ActiveObjectsQuery ()
+		public IQueryOver<Subdivision,Subdivision> ActiveQuery (IUnitOfWork uow)
 		{
-			return QueryOver.Of<Subdivision> ();
+			return uow.Session.QueryOver<Subdivision> ();
 		}
 
 		public Subdivision GetSubdivisionByCode(IUnitOfWork uow, string code)
