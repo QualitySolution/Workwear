@@ -8,7 +8,7 @@ using QS.Project.Versioning;
 #if DEBUG
 [assembly: AssemblyBetaBuild]
 #endif
-[assembly: AssemblyEdition("nlmk", Title = "НЛМК", AllowEdition = new[] {"gpl"})]
+[assembly: AssemblyModification("nlmk", Title = "НЛМК")]
 [assembly: AssemblyСompatibleModification("gpl")]
 [assembly: AssemblyDescription("Программа позволяет вести учет внутреннего склада спецодежды и имущества выдаваемого сотрудникам.")]
 [assembly: AssemblyConfiguration("")]

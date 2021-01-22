@@ -10,7 +10,6 @@
     <RootNamespace>DownloadNLMK</RootNamespace>
     <AssemblyName>DownloadNLMK</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <ReleaseVersion>1.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -113,9 +112,9 @@
       <Project>{E2228A2B-4883-4DD8-8A05-23501F7B8A33}</Project>
       <Name>QS.Utilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSMachineConfig\QSMachineConfig.csproj">
+    <ProjectReference Include="..\..\QSProjects\QS.MachineConfig\QS.MachineConfig.csproj">
       <Project>{769710D2-BF98-4120-9E07-67BD740CFA1D}</Project>
-      <Name>QSMachineConfig</Name>
+      <Name>QS.MachineConfig</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
