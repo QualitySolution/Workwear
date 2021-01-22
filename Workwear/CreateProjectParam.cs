@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using Autofac;
+using Oracle.ManagedDataAccess.Client;
 using QS.BaseParameters;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
@@ -47,6 +48,7 @@ using workwear.Measurements;
 using workwear.Repository.Operations;
 using workwear.Tools;
 using workwear.Tools.Features;
+using workwear.Tools.Oracle;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
 
@@ -102,6 +104,12 @@ namespace workwear
 			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf();
 			builder.Register(c => QSProjectsLib.QSMain.ConnectionStringBuilder).AsSelf();
 			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
+			#endregion
+
+			#region NLMK
+			builder.Register(x => NLMKOracle.Connection).As<OracleConnection>().ExternallyOwned();
+			builder.RegisterGeneric(typeof(OracleSQLDataLoader<>)).AsSelf();
+			builder.RegisterType<HRSystem>().AsSelf();
 			#endregion
 
 			#region Сервисы
