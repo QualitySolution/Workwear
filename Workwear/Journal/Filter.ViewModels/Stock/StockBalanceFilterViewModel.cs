@@ -38,6 +38,12 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 
 		#endregion
 
+		#region Visible
+
+		public bool VisibleWarehouse => FeaturesService.Available(Tools.Features.WorkwearFeature.Warehouses);
+
+		#endregion
+
 		public EntityEntryViewModel<Warehouse> WarehouseEntry;
 
 		public StockBalanceFilterViewModel(IUnitOfWorkFactory unitOfWorkFactory, JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, FeaturesService featuresService): base(journal, unitOfWorkFactory)
