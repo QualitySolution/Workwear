@@ -14,18 +14,21 @@ using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
+using workwear.Tools.Features;
 
 namespace workwear.Journal.ViewModels.Stock
 {
 	public class StockBalanceJournalViewModel : JournalViewModelBase
 	{
 		public bool ShowSummary;
+		private readonly FeaturesService featuresService;
 
 		public StockBalanceFilterViewModel Filter { get; private set; }
 
-		public StockBalanceJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigation, ILifetimeScope autofacScope) : base(unitOfWorkFactory, interactiveService, navigation)
+		public StockBalanceJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigation, ILifetimeScope autofacScope, FeaturesService featuresService) : base(unitOfWorkFactory, interactiveService, navigation)
 		{
 			AutofacScope = autofacScope;
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			JournalFilter = Filter = AutofacScope.Resolve<StockBalanceFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
 			var dataLoader = new ThreadDataLoader<StockBalanceJournalNode>(unitOfWorkFactory);
@@ -35,9 +38,9 @@ namespace workwear.Journal.ViewModels.Stock
 			CreateNodeActions();
 
 			UpdateOnChanges(typeof(WarehouseOperation), typeof(Nomenclature));
-			TabName = TabName = "Остатки по складу" + Filter.Warehouse?.Name;
+			TabName = TabName = "Остатки по складу " + (featuresService.Available(WorkwearFeature.Warehouses) ? Filter.Warehouse?.Name : "");
 
-			Filter.PropertyChanged += (sender, e) => TabName = "Остатки по складу " + Filter.Warehouse?.Name;
+			Filter.PropertyChanged += (sender, e) => TabName = "Остатки по складу " + (featuresService.Available(WorkwearFeature.Warehouses) ? Filter.Warehouse?.Name : "");
 		}
 
 		protected IQueryOver<WarehouseOperation> ItemsQuery(IUnitOfWork uow)
