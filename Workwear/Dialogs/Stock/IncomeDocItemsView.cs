@@ -280,7 +280,7 @@ namespace workwear
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
 			if(String.IsNullOrWhiteSpace(item.Size))
 				IncomeDoc.RemoveItem(item);
-			e.SizesWithAmount.ToList().ForEach(i => IncomeDoc.AddItem(e.Source, e.Growth, i.Key, i.Value));
+			e.SizesWithAmount.ToList().ForEach(i => IncomeDoc.AddItem(e.Source, e.Growth, i.Key, i.Value, item.Certificate, item.Cost));
 			CalculateTotal();
 		}
 	}
