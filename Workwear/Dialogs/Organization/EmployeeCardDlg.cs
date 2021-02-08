@@ -253,14 +253,18 @@ namespace workwear.Dialogs.Organization
 			}
 
 			if(notebook1.CurrentPage == 4 && !employeevacationsview1.VacationsLoaded) {
-				if(UoW.IsNew)
+				if(UoW.IsNew) {
 					if(new GtkQuestionDialogsInteractive().Question("Перед открытием отпусков необходимо сохранить сотрудника. Сохранить?", "Сохранить сотрудника?")
-						&& Save()) {
+							&& Save()) {
 						employeevacationsview1.UpdateList();
 					}
 					else {
 						notebook1.CurrentPage = lastPage;
 					}
+				}
+				else
+					employeevacationsview1.UpdateList();
+
 			}
 			lastPage = notebook1.CurrentPage;
 		}
