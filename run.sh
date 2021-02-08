@@ -1,3 +1,3 @@
 #!/bin/bash
-cd workwear/bin/Debug
+cd Workwear/bin/Debug
 mono workwear.exe
