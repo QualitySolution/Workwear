@@ -1,4 +1,5 @@
-﻿using Gamma.ColumnConfig;
+﻿using Autofac;
+using Gamma.ColumnConfig;
 using NHibernate;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
@@ -7,15 +8,20 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using workwear.Domain.Stock;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock
 {
 	public class NomenclatureJournalViewModel : EntityJournalViewModelBase<Nomenclature, NomenclatureViewModel, NomenclatureJournalNode>
 	{
-		public NomenclatureJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		public NomenclatureFilterViewModel Filter { get; private set; }
+
+		public NomenclatureJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
+
+			JournalFilter = Filter = autofacScope.Resolve<NomenclatureFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 		}
 
 		protected override IQueryOver<Nomenclature> ItemsQuery(IUnitOfWork uow)
@@ -24,7 +30,11 @@ namespace workwear.Journal.ViewModels.Stock
 			ItemsType itemsTypeAlias = null;
 			Nomenclature nomenclatureAlias = null;
 
-			return uow.Session.QueryOver<Nomenclature>(() => nomenclatureAlias)
+			var query = uow.Session.QueryOver<Nomenclature>(() => nomenclatureAlias);
+			if(Filter.ItemType != null)
+				query.Where(x => x.Type.Id == Filter.ItemType.Id);
+
+			return query
 				.Left.JoinAlias(n => n.Type, () => itemsTypeAlias)
 				.Where(GetSearchCriterion(
 					() => nomenclatureAlias.Id,

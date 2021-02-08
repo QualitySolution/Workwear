@@ -39,10 +39,9 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			get => protectionTools;
 			set => SetField(ref protectionTools, value);
 		}
+		#endregion
 
 		public readonly FeaturesService FeaturesService;
-
-		#endregion
 
 		#region Visible
 

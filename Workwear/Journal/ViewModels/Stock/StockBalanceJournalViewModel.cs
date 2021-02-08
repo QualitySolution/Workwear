@@ -12,7 +12,6 @@ using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Services;
 using workwear.Domain.Operations;
-using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Tools.Features;
