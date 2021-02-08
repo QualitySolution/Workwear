@@ -662,7 +662,7 @@
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
                       </Style>
-                      <CanGrow >true</CanGrow>
+                      <CanGrow>true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -736,7 +736,7 @@
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
                       </Style>
-                      <CanGrow >true</CanGrow>
+                      <CanGrow>true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -775,69 +775,87 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
+        <CommandText>SELECT
     item_types.name AS name_siz,
-    income_detail.certificate,
-    DATE_FORMAT(operation_issued_by_employee.operation_time, '%d.%m.%Y') AS expense_date,
-    operation_issued_by_employee.issued AS expense_quantity,
-    ROUND(operation_issued_by_employee.wear_percent * 100) AS wearout,
-    operation_issued_by_employee.buh_document as issue_buh_document,
-    CONCAT_WS('\n',
-            GROUP_CONCAT(DATE_FORMAT(returned.date, '%d.%m.%Y')
-                SEPARATOR '\n'),
-            IF(operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE()
-                    AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0,
-                DATE_FORMAT(operation_issued_by_employee.auto_writeoff_date,
-                        '%d.%m.%Y'),
-                NULL)) AS returned_date,
-    CONCAT_WS('\n',
-            GROUP_CONCAT(returned.quantity
-                SEPARATOR '\n'),
-            IF(operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE()
-                    AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0,
-                operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0),
-                NULL)) AS returned_quantity,
-    CONCAT_WS('\n',
-            GROUP_CONCAT(ROUND(returned.wear_percent * 100)
-                SEPARATOR '\n'),
-            IF(operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE()
-                    AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0,
-                100,
-                NULL)) AS returned_wearout,
-    GROUP_CONCAT(returned.buh_document SEPARATOR '\n') AS returned_buh_document
-FROM
-    operation_issued_by_employee
-        LEFT JOIN
-    nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
-        LEFT JOIN
-    item_types ON item_types.id = nomenclature.type_id
-        LEFT JOIN
-    stock_income_detail AS income_detail ON operation_issued_by_employee.warehouse_operation_id = income_detail.warehouse_operation_id
-        LEFT JOIN
-    (SELECT 
-        return_detail.issued_operation_id,
-            return_detail.operation_time as date,
-            return_detail.returned as quantity,
-            return_detail.wear_percent,
-     		return_detail.buh_document
+    (
+    SELECT
+        stock_income_detail.certificate
     FROM
-        operation_issued_by_employee AS return_detail
-     WHERE
-     	return_detail.employee_id = @id AND return_detail.returned &gt; 0
-    ) AS returned ON returned.issued_operation_id = operation_issued_by_employee.id
-WHERE
-    operation_issued_by_employee.employee_id = @id AND operation_issued_by_employee.issued &gt; 0
-GROUP BY operation_issued_by_employee.id
-ORDER BY operation_issued_by_employee.operation_time</CommandText>
+        stock_income_detail
+    LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id
+    WHERE
+        stock_income.date &lt;= operation_issued_by_employee.operation_time AND operation_issued_by_employee.nomenclature_id = stock_income_detail.nomenclature_id AND operation_issued_by_employee.size = stock_income_detail.size AND operation_issued_by_employee.growth = stock_income_detail.growth AND stock_income_detail.certificate IS NOT NULL AND operation_warehouse.warehouse_expense_id = stock_income.warehouse_id
+    ORDER BY
+        stock_income.date
+    DESC
+LIMIT 1
+) AS certificate, DATE_FORMAT(
+    operation_issued_by_employee.operation_time,
+    '%d.%m.%Y'
+) AS expense_date, operation_issued_by_employee.issued AS expense_quantity, ROUND(
+    operation_issued_by_employee.wear_percent * 100
+) AS wearout, operation_issued_by_employee.buh_document AS issue_buh_document, CONCAT_WS(
+    '\n',
+    GROUP_CONCAT(
+        DATE_FORMAT(returned.date, '%d.%m.%Y') SEPARATOR '\n'
+    ),
+    IF(
+        operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE() AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0, DATE_FORMAT(
+            operation_issued_by_employee.auto_writeoff_date,
+            '%d.%m.%Y'
+        ), NULL)
+    ) AS returned_date,
+    CONCAT_WS(
+        '\n',
+        GROUP_CONCAT(returned.quantity SEPARATOR '\n'),
+        IF(
+            operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE() AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0, operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0), NULL)
+        ) AS returned_quantity,
+        CONCAT_WS(
+            '\n',
+            GROUP_CONCAT(
+                ROUND(returned.wear_percent * 100) SEPARATOR '\n'
+            ),
+            IF(
+                operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE() AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0, 100, NULL)
+            ) AS returned_wearout,
+            GROUP_CONCAT(
+                returned.buh_document SEPARATOR '\n'
+            ) AS returned_buh_document
+        FROM
+            operation_issued_by_employee
+        LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
+        LEFT JOIN item_types ON item_types.id = nomenclature.type_id
+        LEFT JOIN operation_warehouse ON operation_issued_by_employee.warehouse_operation_id = operation_warehouse.id
+        LEFT JOIN(
+            SELECT
+                return_detail.issued_operation_id,
+                return_detail.operation_time AS DATE,
+                return_detail.returned AS quantity,
+                return_detail.wear_percent,
+                return_detail.buh_document
+            FROM
+                operation_issued_by_employee AS return_detail
+            WHERE
+                return_detail.employee_id = @id AND return_detail.returned &gt; 0
+        ) AS returned
+    ON
+        returned.issued_operation_id = operation_issued_by_employee.id
+    WHERE
+        operation_issued_by_employee.employee_id = @id AND operation_issued_by_employee.issued &gt; 0
+    GROUP BY
+        operation_issued_by_employee.id
+    ORDER BY
+        operation_issued_by_employee.operation_time</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="name_siz">
           <DataField>name_siz</DataField>
           <TypeName>System.String</TypeName>

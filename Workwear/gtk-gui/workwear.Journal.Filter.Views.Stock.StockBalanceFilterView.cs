@@ -10,7 +10,7 @@ namespace workwear.Journal.Filter.Views.Stock
 
 		private global::QS.Views.Control.EntityEntry entityWarehouse;
 
-		private global::Gtk.Label label1;
+		private global::Gamma.GtkWidgets.yLabel labelWarehouse;
 
 		protected virtual void Build()
 		{
@@ -47,11 +47,11 @@ namespace workwear.Journal.Filter.Views.Stock
 			w2.RightAttach = ((uint)(2));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.label1 = new global::Gtk.Label();
-			this.label1.Name = "label1";
-			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Склад:");
-			this.table1.Add(this.label1);
-			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
+			this.labelWarehouse = new global::Gamma.GtkWidgets.yLabel();
+			this.labelWarehouse.Name = "labelWarehouse";
+			this.labelWarehouse.LabelProp = global::Mono.Unix.Catalog.GetString("Склад:");
+			this.table1.Add(this.labelWarehouse);
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.labelWarehouse]));
 			w3.XOptions = ((global::Gtk.AttachOptions)(4));
 			w3.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.table1);

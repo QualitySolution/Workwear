@@ -10412,7 +10412,7 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.Label" id="label1">
+          <widget class="Gamma.GtkWidgets.yLabel" id="labelWarehouse">
             <property name="MemberName" />
             <property name="LabelProp" translatable="yes">Склад:</property>
           </widget>
