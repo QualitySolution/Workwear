@@ -313,8 +313,6 @@
     <Compile Include="Domain\Operations\EmployeeIssueOperation.cs" />
     <Compile Include="HibernateMapping\Operations\EmployeeIssueOperationMap.cs" />
     <Compile Include="Tools\BaseParameters.cs" />
-    <Compile Include="Dialogs\DataBase\DataBaseSettingsDlg.cs" />
-    <Compile Include="gtk-gui\workwear.Dialogs.DataBase.DataBaseSettingsDlg.cs" />
     <Compile Include="Domain\Operations\Graph\IssueGraph.cs" />
     <Compile Include="Repository\Stock\NomenclatureRepository.cs" />
     <Compile Include="Dialogs\Issuance\EmployeeIssueGraphDlg.cs" />
@@ -396,6 +394,9 @@
     <Compile Include="Views\Stock\Widgets\SizeWidgetView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.Widgets.SizeWidgetView.cs" />
     <Compile Include="Tools\Features\FeaturesService.cs" />
+    <Compile Include="Views\Tools\DataBaseSettingsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Tools.DataBaseSettingsView.cs" />
+    <Compile Include="ViewModels\Tools\DataBaseSettingsViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -555,6 +556,8 @@
     <Folder Include="ViewModels\Stock\Widgets\" />
     <Folder Include="Views\Stock\Widgets\" />
     <Folder Include="Tools\Features\" />
+    <Folder Include="ViewModels\Tools\" />
+    <Folder Include="Views\Tools\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
