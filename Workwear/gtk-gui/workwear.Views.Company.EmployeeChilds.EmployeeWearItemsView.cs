@@ -96,9 +96,9 @@ namespace workwear.Views.Company.EmployeeChilds
 			this.buttonRefreshWorkwearItems.CanFocus = true;
 			this.buttonRefreshWorkwearItems.Name = "buttonRefreshWorkwearItems";
 			this.buttonRefreshWorkwearItems.UseUnderline = true;
-			this.buttonRefreshWorkwearItems.Label = global::Mono.Unix.Catalog.GetString("Обновить потребноси");
+			this.buttonRefreshWorkwearItems.Label = global::Mono.Unix.Catalog.GetString("Обновить потребности");
 			global::Gtk.Image w9 = new global::Gtk.Image();
-			w9.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "stock_refresh", global::Gtk.IconSize.Menu);
+			w9.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-refresh", global::Gtk.IconSize.Menu);
 			this.buttonRefreshWorkwearItems.Image = w9;
 			this.hbox11.Add(this.buttonRefreshWorkwearItems);
 			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonRefreshWorkwearItems]));

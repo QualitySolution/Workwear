@@ -8481,8 +8481,8 @@
                 <property name="Tooltip" translatable="yes">Обновить список потребностей по указанным нормам</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
-                <property name="Icon">stock:stock_refresh Menu</property>
-                <property name="Label" translatable="yes">Обновить потребноси</property>
+                <property name="Icon">stock:gtk-refresh Menu</property>
+                <property name="Label" translatable="yes">Обновить потребности</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonRefreshWorkwearItemsClicked" />
               </widget>
