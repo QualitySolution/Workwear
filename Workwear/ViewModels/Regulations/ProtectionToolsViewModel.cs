@@ -74,6 +74,8 @@ namespace workwear.ViewModels.Regulations
 				return;
 			}
 			var selectPage = NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectPage.ViewModel.Filter.ItemType = Entity.Type; 
+			selectPage.ViewModel.Filter.EntryItemsType.IsEditable = false;
 			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectPage.ViewModel.OnSelectResult += Nomeclature_OnSelectResult;
 		}
