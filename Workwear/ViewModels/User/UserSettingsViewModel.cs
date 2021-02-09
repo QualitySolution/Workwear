@@ -1,23 +1,19 @@
 using System;
-using System.Linq;
 using Autofac;
-using Gtk;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
-using QS.ViewModels;
+using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
-using workwear.Journal.ViewModels.Stock;
-using QS.ViewModels.Control.EEVM;
-using QS.Dialog;
-using QS.Services;
-using workwear.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Stock;
+using workwear.Tools.Features;
 using workwear.ViewModels.Company;
+using workwear.ViewModels.Stock;
 
 namespace workwear.ViewModels.User
 {
@@ -29,14 +25,15 @@ namespace workwear.ViewModels.User
 		public EntityEntryViewModel<Leader> ResponsiblePersonFromEntryViewModel;
 
 		public ILifetimeScope AutofacScope;
+		private readonly FeaturesService featuresService;
 
 		public UserSettingsViewModel
 		(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory,
-			 INavigationManager navigation, ILifetimeScope autofacScope, IValidator validator = null) 
+			 INavigationManager navigation, ILifetimeScope autofacScope, FeaturesService featuresService, IValidator validator = null) 
 		: base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
-
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			var entryBuilder = new CommonEEVMBuilderFactory<UserSettings>(this, Entity, UoW, navigation, autofacScope);
 
 			WarehouseFromEntryViewModel = entryBuilder.ForProperty(x => x.DefaultWarehouse)
@@ -58,8 +55,12 @@ namespace workwear.ViewModels.User
 				 .UseViewModelJournalAndAutocompleter<OrganizationJournalViewModel>()
 				 .UseViewModelDialog<OrganizationViewModel>()
 				 .Finish();
-
-
 		}
+
+		#region Свойства для View
+
+		public bool VisibleWarehouse => featuresService.Available(WorkwearFeature.Warehouses);
+
+		#endregion
 	}
 }
