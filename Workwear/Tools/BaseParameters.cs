@@ -18,21 +18,21 @@ namespace workwear.Tools
 		}
 
 		#region Типизированный доступ и дефолтные значения
-		public virtual bool DefaultAutoWriteoff {
+		public bool DefaultAutoWriteoff {
 			get => Dynamic.DefaultAutoWriteoff(typeof(bool)) ?? true;
-			set => Dynamic.DefaultAutoWriteoff = value;
+			set => Dynamic[nameof(DefaultAutoWriteoff)] = value;
 		}
 
 		/// <summary>
 		/// Используются ли диапазоны размеров в карточке сотрудника.
 		/// </summary>
-		public virtual bool EmployeeSizeRanges {
+		public bool EmployeeSizeRanges {
 			get => Dynamic.EmployeeSizeRanges(typeof(bool)) ?? false;
-			set => Dynamic.EmployeeSizeRanges = value;
+			set => Dynamic[nameof(EmployeeSizeRanges)] = value;
 		}
-		public virtual int ColDayAheadOfShedule {
+		public int ColDayAheadOfShedule {
 			get => Dynamic.ColDayAheadOfShedule(typeof(int)) ?? 0;
-			set => Dynamic.ColDayAheadOfShedule = value;
+			set => Dynamic[nameof(ColDayAheadOfShedule)] = value;
 		}
 		#endregion
 	}

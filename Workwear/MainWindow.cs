@@ -31,7 +31,7 @@ using QSOrmProject;
 using QSProjectsLib;
 using QSTelemetry;
 using workwear;
-using workwear.Dialogs.DataBase;
+using workwear.Dialogs.Organization;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -47,6 +47,7 @@ using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.User;
+using workwear.ViewModels.Tools;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -599,7 +600,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionBaseSettingsActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("DataBaseSettings");
-		tdiMain.OpenTab<DataBaseSettingsDlg>();
+		NavigationManager.OpenViewModel<DataBaseSettingsViewModel>(null);
 	}
 
 	protected void OnActionVacationTypesActivated(object sender, EventArgs e)
