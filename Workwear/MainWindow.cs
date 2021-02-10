@@ -299,7 +299,13 @@ public partial class MainWindow : Gtk.Window
 	protected void OnHelpActionActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenDocumentation");
-		System.Diagnostics.Process.Start("user-guide.pdf");
+		try {
+			System.Diagnostics.Process.Start("user-guide.pdf");
+		} catch (System.ComponentModel.Win32Exception ex) {
+			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
+			$"При открытии PDF файла с документацией произошла ошибка:\n{ex.Message}\n" +
+				"Возможно на компьютере не установлена или неисправна программа для открыти PDF");
+		}
 	}
 
 	protected void OnActionHistoryActivated(object sender, EventArgs e)
