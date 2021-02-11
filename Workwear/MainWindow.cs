@@ -70,10 +70,8 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
 
-		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
-			var checker = scope.Resolve<VersionCheckerService>();
-			checker.RunUpdate();
-		}
+		var checker = new VersionCheckerService(MainClass.AppDIContainer);
+		checker.RunUpdate();
 
 		if(QSMain.User.Login == "root") {
 			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
@@ -319,7 +317,7 @@ public partial class MainWindow : Gtk.Window
 		MainTelemetry.AddCount("CheckUpdate");
 		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
 			var updater = scope.Resolve<ApplicationUpdater>();
-			updater.StartCheckUpdateThread(UpdaterFlags.ShowAnyway);
+			updater.StartCheckUpdate(UpdaterFlags.ShowAnyway, scope);
 		}
 	}
 
