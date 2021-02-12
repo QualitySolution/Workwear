@@ -40,24 +40,31 @@ namespace workwear.Journal.ViewModels.Company
 			EmployeeJournalNode resultAlias = null;
 
 			Post postAlias = null;
-			Subdivision facilityAlias = null;
+			Subdivision subdivisionAlias = null;
 			EmployeeCard employeeAlias = null;
 
 			var employees = uow.Session.QueryOver<EmployeeCard>(() => employeeAlias);
 			if(Filter.ShowOnlyWork)
 				employees.Where(x => x.DismissDate == null);
+			if(Filter.Subdivision != null)
+				employees.Where(x => x.Subdivision.Id == Filter.Subdivision.Id);
+			if(Filter.Department != null)
+				employees.Where(x => x.Department.Id == Filter.Department.Id);
 
 			return employees
-				.Where(GetSearchCriterion<EmployeeCard>(
-					x => x.Id,
-					x => x.CardNumber,
-					x => x.PersonnelNumber,
-					x => x.LastName,
-					x => x.FirstName,
-					x => x.Patronymic
-					))
-				//.JoinAlias(() => employeeAlias.Post, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(() => employeeAlias.Subdivision, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.Where(GetSearchCriterion(
+					() => employeeAlias.Id,
+					() => employeeAlias.CardNumber,
+					() => employeeAlias.PersonnelNumber,
+					() => employeeAlias.LastName,
+					() => employeeAlias.FirstName,
+					() => employeeAlias.Patronymic,
+					() => postAlias.Name,
+					() => subdivisionAlias.Name
+ 					))
+
+				.JoinAlias(() => employeeAlias.Post, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => employeeAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.CardNumber).WithAlias(() => resultAlias.CardNumber)
@@ -66,8 +73,8 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(x => x.LastName).WithAlias(() => resultAlias.LastName)
 					.Select(x => x.Patronymic).WithAlias(() => resultAlias.Patronymic)
 					.Select(() => employeeAlias.DismissDate).WithAlias(() => resultAlias.DismissDate)
-					//.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
-	   				.Select(() => facilityAlias.Name).WithAlias(() => resultAlias.Subdivision)
+					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
+	   				.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
  					)
 				.OrderBy(() => employeeAlias.LastName).Asc
 				.ThenBy(() => employeeAlias.FirstName).Asc

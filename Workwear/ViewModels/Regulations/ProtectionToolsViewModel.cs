@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using Autofac;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
-using Autofac;
 using QS.Project.Domain;
+using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
@@ -11,9 +14,6 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
-using System;
-using QS.Dialog;
-using QS.Services;
 
 namespace workwear.ViewModels.Regulations
 {
@@ -74,6 +74,9 @@ namespace workwear.ViewModels.Regulations
 				return;
 			}
 			var selectPage = NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectPage.ViewModel.Filter.ItemType = Entity.Type; 
+			selectPage.ViewModel.Filter.EntryItemsType.IsEditable = false;
+			selectPage.ViewModel.JournalFilter.IsShow = false;
 			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectPage.ViewModel.OnSelectResult += Nomeclature_OnSelectResult;
 		}

@@ -298,8 +298,6 @@
     <Compile Include="Domain\Operations\EmployeeIssueOperation.cs" />
     <Compile Include="HibernateMapping\Operations\EmployeeIssueOperationMap.cs" />
     <Compile Include="Tools\BaseParameters.cs" />
-    <Compile Include="Dialogs\DataBase\DataBaseSettingsDlg.cs" />
-    <Compile Include="gtk-gui\workwear.Dialogs.DataBase.DataBaseSettingsDlg.cs" />
     <Compile Include="Domain\Operations\Graph\IssueGraph.cs" />
     <Compile Include="Repository\Stock\NomenclatureRepository.cs" />
     <Compile Include="Dialogs\Issuance\EmployeeIssueGraphDlg.cs" />
@@ -379,6 +377,10 @@
     <Compile Include="gtk-gui\workwear.Views.Stock.Widgets.SizeWidgetView.cs" />
     <Compile Include="Tools\Features\FeaturesService.cs" />
     <Compile Include="Journal\ViewModels\Company\EmployeeOracleJournalViewModel.cs" />
+    <Compile Include="Views\Tools\DataBaseSettingsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Tools.DataBaseSettingsView.cs" />
+    <Compile Include="ViewModels\Tools\DataBaseSettingsViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Company\EmployeeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\LeadersJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\OrganizationJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Statements\IssuanceSheetJournalViewModel.cs" />
@@ -475,6 +477,9 @@
     <Compile Include="gtk-gui\workwear.ReportParameters.Views.AmountIssuedWearView.cs" />
     <Compile Include="Measurements\SizeService.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.MassExpenseView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Stock\NomenclatureFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Stock\NomenclatureFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.NomenclatureFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -631,6 +636,8 @@
     <Folder Include="ViewModels\Stock\Widgets\" />
     <Folder Include="Views\Stock\Widgets\" />
     <Folder Include="Tools\Features\" />
+    <Folder Include="ViewModels\Tools\" />
+    <Folder Include="Views\Tools\" />
     <Folder Include="Journal\ViewModels\Company\" />
     <Folder Include="Journal\ViewModels\Statements\" />
     <Folder Include="Journal\Filter.Views\Company\" />

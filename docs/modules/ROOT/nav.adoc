@@ -3,7 +3,7 @@
 * xref:interface.adoc[Интерфейс программы]
 * xref:organization.adoc[Структура организации]
 * xref:nomenclature.adoc[Склады и номенклатура]
-* xref:norms.adoc[Нормы выдачи]
+* xref:regulations.adoc[Нормы выдачи]
 * xref:employees.adoc[Данные о сотрудниках]
 * xref:stock-documents.adoc[Складские документы]
 * xref:reports.adoc[Отчеты]

@@ -1,6 +1,5 @@
 ﻿using QS.Views.Dialog;
 using workwear.Domain.Users;
-using workwear.Tools.Features;
 using workwear.ViewModels.User;
 
 namespace workwear.Views.User
@@ -22,7 +21,7 @@ namespace workwear.Views.User
 			entityentryOrganization.ViewModel = ViewModel.OrganizationFromEntryViewModel;
 			entityentryResponsiblePerson.ViewModel = ViewModel.ResponsiblePersonFromEntryViewModel;
 
-			label13.Visible = entityentryWarehouse.Visible = new Tools.Features.FeaturesService().Available(WorkwearFeature.Warehouses);
+			label13.Visible = entityentryWarehouse.Visible = ViewModel.VisibleWarehouse;
 		}
 
 	}

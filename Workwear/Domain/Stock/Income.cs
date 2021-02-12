@@ -200,7 +200,7 @@ namespace workwear.Domain.Stock
 			return newItem;
 		}
 
-		public virtual IncomeItem AddItem(Nomenclature nomenclature, string growth, string size, int amount = 0)
+		public virtual IncomeItem AddItem(Nomenclature nomenclature, string growth, string size, int amount = 0, string certificate = null, decimal price = 0m)
 		{
 			if(Operation != IncomeOperations.Enter)
 				throw new InvalidOperationException("Добавление номенклатуры возможно только во входящую накладную. Возвраты должны добавляться с указанием строки выдачи.");
@@ -211,12 +211,13 @@ namespace workwear.Domain.Stock
 					Nomenclature = nomenclature,
 					WearGrowth = growth,
 					Size = size,
-					Cost = 0,
+					Cost = price,
+					Certificate = certificate,
 				};
 				ObservableItems.Add(item);
 			}
 			else {
-				item.Amount++;
+				item.Amount+= amount;
 			}
 			return item;
 		}

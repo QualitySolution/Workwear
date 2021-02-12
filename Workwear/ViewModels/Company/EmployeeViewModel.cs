@@ -221,14 +221,17 @@ namespace workwear.ViewModels.Company
 				case 3: MovementsViewModel.OnShow();
 					break;
 				case 4:
-					if(UoW.IsNew)
+					if(UoW.IsNew) {
 						if(interactive.Question("Перед открытием отпусков необходимо сохранить сотрудника. Сохранить?", "Сохранить сотрудника?")
-							&& Save()) {
+								&& Save()) {
 							VacationsViewModel.OnShow();
 						}
 						else {
 							CurrentTab = lastTab;
 						}
+					}
+					else
+						VacationsViewModel.OnShow();
 					break;
 			}
 			lastTab = CurrentTab;

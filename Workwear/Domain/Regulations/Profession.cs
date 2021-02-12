@@ -5,8 +5,8 @@ using QS.DomainModel.Entity;
 namespace workwear.Domain.Regulations
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
-		NominativePlural = "должности",
-		Nominative = "должность")]
+		NominativePlural = "профессии",
+		Nominative = "профессия")]
 	public class Profession : PropertyChangedBase, IDomainObject
 	{
 		public Profession()
