@@ -75,10 +75,8 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
 
-		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
-			var checker = scope.Resolve<VersionCheckerService>();
-			checker.RunUpdate();
-		}
+		var checker = new VersionCheckerService(MainClass.AppDIContainer);
+		checker.RunUpdate();
 
 		if(QSMain.User.Login == "root") {
 			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
@@ -302,7 +300,13 @@ public partial class MainWindow : Gtk.Window
 	protected void OnHelpActionActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenDocumentation");
-		System.Diagnostics.Process.Start("user-guide.pdf");
+		try {
+			System.Diagnostics.Process.Start("user-guide.pdf");
+		} catch (System.ComponentModel.Win32Exception ex) {
+			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
+			$"При открытии PDF файла с документацией произошла ошибка:\n{ex.Message}\n" +
+				"Возможно на компьютере не установлена или неисправна программа для открыти PDF");
+		}
 	}
 
 	protected void OnActionHistoryActivated(object sender, EventArgs e)
@@ -316,7 +320,7 @@ public partial class MainWindow : Gtk.Window
 		MainTelemetry.AddCount("CheckUpdate");
 		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
 			var updater = scope.Resolve<ApplicationUpdater>();
-			updater.StartCheckUpdateThread(UpdaterFlags.ShowAnyway);
+			updater.StartCheckUpdate(UpdaterFlags.ShowAnyway, scope);
 		}
 	}
 

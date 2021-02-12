@@ -891,8 +891,8 @@
         <Width>548.71pt</Width>
         <Value>Учета выдачи спецодежды, спецобуви и предохранительных приспособлений</Value>
         <ZIndex>1</ZIndex>
-        <Left>12.7pt</Left>
-        <Top>63.2pt</Top>
+        <Left>14.3pt</Left>
+        <Top>60.8pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -1067,8 +1067,8 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>649.7pt</Left>
-        <Top>69.1pt</Top>
+        <Left>422.9pt</Left>
+        <Top>78.2pt</Top>
       </Table>
       <Table Name="Table3">
         <DataSetName>Sheet</DataSetName>
@@ -1080,10 +1080,10 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>142.1pt</Width>
+            <Width>83.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>432.8pt</Width>
+            <Width>345.1pt</Width>
           </TableColumn>
         </TableColumns>
         <Details>
@@ -1124,12 +1124,13 @@
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>12 pt</Height>
+              <Height>24.9pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox70">
-                      <Value>Структурное подразделение</Value>
+                      <Value>Структурное
+подразделение</Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -1152,6 +1153,7 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Bottom</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1161,7 +1163,7 @@
           </TableRows>
         </Details>
         <Left>0.0pt</Left>
-        <Top>95.3pt</Top>
+        <Top>90.5pt</Top>
       </Table>
       <Table Name="Table4">
         <DataSetName>Sheet</DataSetName>
