@@ -131,6 +131,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionUserSettings;
 
+	private global::Gtk.Action ActionCardIssuee;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -364,6 +366,9 @@ public partial class MainWindow
 		this.ActionUserSettings = new global::Gtk.Action("ActionUserSettings", global::Mono.Unix.Catalog.GetString("Настройки пользователя"), null, "gtk-preferences");
 		this.ActionUserSettings.ShortLabel = global::Mono.Unix.Catalog.GetString("Настройки пользователя");
 		w1.Add(this.ActionUserSettings, null);
+		this.ActionCardIssuee = new global::Gtk.Action("ActionCardIssuee", global::Mono.Unix.Catalog.GetString("Выдача"), null, "smart-card");
+		this.ActionCardIssuee.ShortLabel = global::Mono.Unix.Catalog.GetString("Выдача");
+		w1.Add(this.ActionCardIssuee, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -440,7 +445,7 @@ public partial class MainWindow
 		this.hbox1.Name = "hbox1";
 		this.hbox1.Spacing = 6;
 		// Container child hbox1.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString(@"<ui><toolbar name='toolbarMain'><toolitem name='ActionBarObjects' action='ActionBarObjects'/><toolitem name='ActionBarEmployees' action='ActionBarEmployees'/><toolitem name='ActionBarStore' action='ActionBarStore'/><toolitem name='ActionBarStoreBalance' action='ActionBarStoreBalance'/><toolitem/></toolbar></ui>");
+		this.UIManager.AddUiFromString(@"<ui><toolbar name='toolbarMain'><toolitem name='ActionBarObjects' action='ActionBarObjects'/><toolitem name='ActionBarEmployees' action='ActionBarEmployees'/><toolitem name='ActionCardIssuee' action='ActionCardIssuee'/><toolitem name='ActionBarStore' action='ActionBarStore'/><toolitem name='ActionBarStoreBalance' action='ActionBarStoreBalance'/><toolitem/></toolbar></ui>");
 		this.toolbarMain = ((global::Gtk.Toolbar)(this.UIManager.GetWidget("/toolbarMain")));
 		this.toolbarMain.Name = "toolbarMain";
 		this.toolbarMain.ShowArrow = false;
@@ -555,7 +560,7 @@ public partial class MainWindow
 		{
 			this.Child.ShowAll();
 		}
-		this.DefaultWidth = 902;
+		this.DefaultWidth = 943;
 		this.DefaultHeight = 458;
 		this.progresswidget1.Hide();
 		this.Show();
@@ -615,5 +620,6 @@ public partial class MainWindow
 		this.ActionAmountEmployeeGetWear.Activated += new global::System.EventHandler(this.OnActionAmountEmployeeGetWearActivated);
 		this.ActionAmountIssuedWear.Activated += new global::System.EventHandler(this.OnActionAmountIssuedWearActivated);
 		this.ActionUserSettings.Activated += new global::System.EventHandler(this.OnActionUserSettingsActivated);
+		this.ActionCardIssuee.Activated += new global::System.EventHandler(this.OnActionCardIssueeActivated);
 	}
 }

@@ -51,6 +51,8 @@ namespace workwear.Tools.Features
 			switch(feature) {
 				case WorkwearFeature.Warehouses:
 					return ProductEdition == 3;
+				case WorkwearFeature.IdentityCards:
+					return ProductEdition == 3;
 				default:
 					return false;
 			}
@@ -60,5 +62,6 @@ namespace workwear.Tools.Features
 	public enum WorkwearFeature
 	{
 		Warehouses,
+		IdentityCards,
 	}
 }

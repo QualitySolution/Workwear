@@ -48,6 +48,7 @@ using workwear.Tools.Features;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.User;
 using workwear.ViewModels.Tools;
+using workwear.ViewModels.Stock;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -159,9 +160,8 @@ public partial class MainWindow : Gtk.Window
 	#region Workwear featrures
 	private void DisableFeatures()
 	{
-		if(!FeaturesService.Available(WorkwearFeature.Warehouses)) {
-			ActionWarehouse.Visible = false;
-		}
+		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
+		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 	}
 	#endregion
 
@@ -665,9 +665,14 @@ public partial class MainWindow : Gtk.Window
 			var user = AutofacScope.Resolve<IUserService>();
 			idSetting = uow.Session.QueryOver<UserSettings>()
 			.Where(x => x.User.Id == user.CurrentUserId)
-			.Select(x => x.Id)	
+			.Select(x => x.Id)
 			.SingleOrDefault<int>();
 		}
-		MainClass.MainWin.NavigationManager.OpenViewModel<UserSettingsViewModel, IEntityUoWBuilder > (null, EntityUoWBuilder.ForOpen(idSetting));
+		MainClass.MainWin.NavigationManager.OpenViewModel<UserSettingsViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForOpen(idSetting));
+	}
+
+	protected void OnActionCardIssueeActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<IssueByIdentifierViewModel>(null);
 	}
 }

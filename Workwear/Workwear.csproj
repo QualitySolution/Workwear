@@ -201,6 +201,7 @@
     <EmbeddedResource Include="Updates\2.4.sql" />
     <EmbeddedResource Include="Updates\2.4.1.sql" />
     <EmbeddedResource Include="Updates\2.5.sql" />
+    <EmbeddedResource Include="icon\toolbar\smart-card.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -465,6 +466,9 @@
     <Compile Include="Journal\Filter.ViewModels\Stock\NomenclatureFilterViewModel.cs" />
     <Compile Include="Journal\Filter.Views\Stock\NomenclatureFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.NomenclatureFilterView.cs" />
+    <Compile Include="ViewModels\Stock\IssueByIdentifierViewModel.cs" />
+    <Compile Include="Views\Stock\IssueByIdentifierView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.IssueByIdentifierView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
