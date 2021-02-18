@@ -6,6 +6,12 @@ namespace workwear.Views.Stock
 	{
 		private global::Gtk.VBox vbox1;
 
+		private global::Gtk.Table table1;
+
+		private global::Gamma.Widgets.yListComboBox comboDevice;
+
+		private global::Gamma.GtkWidgets.yLabel ylabel1;
+
 		private global::Gamma.GtkWidgets.yLabel ylabelCardID;
 
 		protected virtual void Build()
@@ -19,14 +25,41 @@ namespace workwear.Views.Stock
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
+			this.table1 = new global::Gtk.Table(((uint)(3)), ((uint)(3)), false);
+			this.table1.Name = "table1";
+			this.table1.RowSpacing = ((uint)(6));
+			this.table1.ColumnSpacing = ((uint)(6));
+			// Container child table1.Gtk.Table+TableChild
+			this.comboDevice = new global::Gamma.Widgets.yListComboBox();
+			this.comboDevice.Name = "comboDevice";
+			this.comboDevice.AddIfNotExist = false;
+			this.comboDevice.DefaultFirst = true;
+			this.table1.Add(this.comboDevice);
+			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.comboDevice]));
+			w1.LeftAttach = ((uint)(1));
+			w1.RightAttach = ((uint)(2));
+			w1.XOptions = ((global::Gtk.AttachOptions)(4));
+			w1.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel1.Name = "ylabel1";
+			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Считыватель:");
+			this.table1.Add(this.ylabel1);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel1]));
+			w2.XOptions = ((global::Gtk.AttachOptions)(4));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			this.vbox1.Add(this.table1);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.table1]));
+			w3.Position = 0;
+			// Container child vbox1.Gtk.Box+BoxChild
 			this.ylabelCardID = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelCardID.Name = "ylabelCardID";
 			this.ylabelCardID.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel1");
 			this.vbox1.Add(this.ylabelCardID);
-			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.ylabelCardID]));
-			w1.Position = 0;
-			w1.Expand = false;
-			w1.Fill = false;
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.ylabelCardID]));
+			w4.Position = 1;
+			w4.Expand = false;
+			w4.Fill = false;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{

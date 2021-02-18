@@ -469,6 +469,9 @@
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModel.cs" />
     <Compile Include="Views\Stock\IssueByIdentifierView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.IssueByIdentifierView.cs" />
+    <Compile Include="Tools\IdentityCards\RusGuardService.cs" />
+    <Compile Include="Tools\IdentityCards\CardReader.cs" />
+    <Compile Include="Tools\IdentityCards\DeviceInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -572,6 +575,10 @@
       <Project>{8984DB2F-4849-4F5B-915C-CE69537E93A8}</Project>
       <Name>QS.Features</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\RusGuardSharp\rglib.interop\rglib.interop.csproj">
+      <Project>{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}</Project>
+      <Name>rglib.interop</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
@@ -641,6 +648,7 @@
     <Folder Include="ReportParameters\" />
     <Folder Include="ReportParameters\ViewModels\" />
     <Folder Include="ReportParameters\Views\" />
+    <Folder Include="Tools\IdentityCards\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

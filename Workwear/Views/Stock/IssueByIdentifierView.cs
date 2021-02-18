@@ -10,6 +10,10 @@ namespace workwear.Views.Stock
 		{
 			this.Build();
 			ylabelCardID.Binding.AddBinding(ViewModel, v => v.CardID, w => w.LabelProp).InitializeFromSource();
+			comboDevice.Binding.AddSource(viewModel)
+				.AddBinding(v => v.Devices, w => w.ItemsList)
+				.AddBinding(v => v.SelectedDevice, w => w.SelectedItem)
+				.InitializeFromSource();
 		}
 	}
 }

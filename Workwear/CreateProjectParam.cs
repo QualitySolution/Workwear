@@ -47,6 +47,7 @@ using workwear.Measurements;
 using workwear.Repository.Operations;
 using workwear.Tools;
 using workwear.Tools.Features;
+using workwear.Tools.IdentityCards;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
 
@@ -201,6 +202,10 @@ namespace workwear
 			#region Разделение версий
 			builder.RegisterType<FeaturesService>().As<IProductService>().AsSelf();
 			builder.RegisterModule<FeaturesAutofacModule>();
+			#endregion
+
+			#region Работа со считывателями
+			builder.RegisterType<RusGuardService>().AsSelf();
 			#endregion
 			AppDIContainer = builder.Build();
 		}
