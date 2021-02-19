@@ -1,5 +1,6 @@
 using System.Data.Common;
 using Autofac;
+using MySql.Data.MySqlClient;
 using QS.BaseParameters;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
@@ -99,7 +100,8 @@ namespace workwear
 			#region База
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
 			builder.RegisterType<DefaultSessionProvider>().As<ISessionProvider>();
-			builder.Register<DbConnection>(c => Connection.ConnectionDB).AsSelf();
+			builder.Register(c => new MySqlConnectionFactory(Connection.ConnectionString)).As<IConnectionFactory>();
+			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf();
 			builder.Register(c => QSProjectsLib.QSMain.ConnectionStringBuilder).AsSelf();
 			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
