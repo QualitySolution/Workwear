@@ -19,8 +19,8 @@ using QS.Project.Versioning;
 using QS.Project.Views;
 using QS.Report;
 using QS.Report.ViewModels;
-using QS.Services;
 using QS.Serial.ViewModels;
+using QS.Services;
 using QS.Tdi;
 using QS.Tdi.Gtk;
 using QS.Updater;
@@ -31,7 +31,6 @@ using QSOrmProject;
 using QSProjectsLib;
 using QSTelemetry;
 using workwear;
-using workwear.Dialogs.Organization;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -46,9 +45,9 @@ using workwear.ReportsDlg;
 using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company;
-using workwear.ViewModels.User;
-using workwear.ViewModels.Tools;
 using workwear.ViewModels.Stock;
+using workwear.ViewModels.Tools;
+using workwear.ViewModels.User;
 
 public partial class MainWindow : Gtk.Window
 {

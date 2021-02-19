@@ -11,26 +11,47 @@ namespace workwear.ViewModels.Stock
 	{
 		private readonly RusGuardService rusGuardService;
 
-		public IssueByIdentifierViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, RusGuardService rusGuardService) : base(navigation)
+		public IssueByIdentifierViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, RusGuardService rusGuardService = null) : base(navigation)
 		{
-			this.rusGuardService = rusGuardService ?? throw new ArgumentNullException(nameof(rusGuardService));
+			this.rusGuardService = rusGuardService;
 			IsModal = false;
-			rusGuardService.RefreshDevices();
+			if(rusGuardService != null) {
+				rusGuardService.RefreshDevices();
+			}
+			else {
+				CurrentState = "Библиотека RusGuard не загружена";
+				CurrentStateColor = "Orange Red";
+			}
 		}
 
-		private string cardId;
-		public virtual string CardID {
-			get => cardId;
-			set => SetField(ref cardId, value);
+		#region Свойства View
+		private string CurrentState;
+		public virtual string CurentState {
+			get => CurrentState;
+			set => SetField(ref CurrentState, value);
 		}
 
-		public List<DeviceInfo> Devices => rusGuardService.Devices;
+		private string currentStateColor;
+		public virtual string CurrentStateColor {
+			get => currentStateColor;
+			set => SetField(ref currentStateColor, value);
+		}
+
+		private bool showSettings;
+		public virtual bool ShowSettings {
+			get => showSettings;
+			set => SetField(ref showSettings, value);
+		}
+
+		#region Настройки
+		public List<DeviceInfo> Devices => rusGuardService?.Devices;
 
 		private DeviceInfo selectedDevice;
 		public virtual DeviceInfo SelectedDevice {
 			get => selectedDevice;
 			set => SetField(ref selectedDevice, value);
 		}
-
+		#endregion
+		#endregion
 	}
 }

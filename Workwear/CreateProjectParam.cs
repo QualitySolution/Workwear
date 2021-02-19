@@ -1,4 +1,4 @@
-﻿using System.Data.Common;
+using System.Data.Common;
 using Autofac;
 using QS.BaseParameters;
 using QS.BusinessCommon;
@@ -205,7 +205,8 @@ namespace workwear
 			#endregion
 
 			#region Работа со считывателями
-			builder.RegisterType<RusGuardService>().AsSelf();
+			if(QSProjectsLib.WindowStartupFix.IsWindows)//FIXME Было лень реализовывать загрузку библиотеки под линукс.
+				builder.RegisterType<RusGuardService>().AsSelf();
 			#endregion
 			AppDIContainer = builder.Build();
 		}

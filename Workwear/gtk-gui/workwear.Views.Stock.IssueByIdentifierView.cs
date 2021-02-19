@@ -6,13 +6,27 @@ namespace workwear.Views.Stock
 	{
 		private global::Gtk.VBox vbox1;
 
-		private global::Gtk.Table table1;
+		private global::Gtk.HBox hbox2;
+
+		private global::Gtk.EventBox eventboxStatus;
+
+		private global::Gamma.GtkWidgets.yLabel ylabelStatus;
+
+		private global::Gamma.GtkWidgets.yCheckButton checkSettings;
+
+		private global::Gtk.HBox hbox1;
+
+		private global::Gtk.VSeparator vseparator1;
+
+		private global::Gamma.GtkWidgets.yTable tableSettings;
 
 		private global::Gamma.Widgets.yListComboBox comboDevice;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel1;
 
-		private global::Gamma.GtkWidgets.yLabel ylabelCardID;
+		private global::Gamma.GtkWidgets.yLabel ylabel2;
+
+		private global::Gamma.GtkWidgets.yTreeView ytreeviewCardTypes;
 
 		protected virtual void Build()
 		{
@@ -25,41 +39,109 @@ namespace workwear.Views.Stock
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.table1 = new global::Gtk.Table(((uint)(3)), ((uint)(3)), false);
-			this.table1.Name = "table1";
-			this.table1.RowSpacing = ((uint)(6));
-			this.table1.ColumnSpacing = ((uint)(6));
-			// Container child table1.Gtk.Table+TableChild
+			this.hbox2 = new global::Gtk.HBox();
+			this.hbox2.Name = "hbox2";
+			this.hbox2.Spacing = 6;
+			// Container child hbox2.Gtk.Box+BoxChild
+			this.eventboxStatus = new global::Gtk.EventBox();
+			this.eventboxStatus.Name = "eventboxStatus";
+			// Container child eventboxStatus.Gtk.Container+ContainerChild
+			this.ylabelStatus = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelStatus.Name = "ylabelStatus";
+			this.ylabelStatus.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel1");
+			this.eventboxStatus.Add(this.ylabelStatus);
+			this.hbox2.Add(this.eventboxStatus);
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.eventboxStatus]));
+			w2.Position = 0;
+			// Container child hbox2.Gtk.Box+BoxChild
+			this.checkSettings = new global::Gamma.GtkWidgets.yCheckButton();
+			this.checkSettings.CanFocus = true;
+			this.checkSettings.Name = "checkSettings";
+			this.checkSettings.Label = global::Mono.Unix.Catalog.GetString("Настройка");
+			this.checkSettings.DrawIndicator = false;
+			this.checkSettings.UseUnderline = true;
+			this.hbox2.Add(this.checkSettings);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.checkSettings]));
+			w3.Position = 1;
+			w3.Expand = false;
+			w3.Fill = false;
+			this.vbox1.Add(this.hbox2);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox2]));
+			w4.Position = 0;
+			w4.Expand = false;
+			w4.Fill = false;
+			// Container child vbox1.Gtk.Box+BoxChild
+			this.hbox1 = new global::Gtk.HBox();
+			this.hbox1.Name = "hbox1";
+			this.hbox1.Spacing = 6;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.vseparator1 = new global::Gtk.VSeparator();
+			this.vseparator1.Name = "vseparator1";
+			this.hbox1.Add(this.vseparator1);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.vseparator1]));
+			w5.Position = 1;
+			w5.Expand = false;
+			w5.Fill = false;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.tableSettings = new global::Gamma.GtkWidgets.yTable();
+			this.tableSettings.Name = "tableSettings";
+			this.tableSettings.NRows = ((uint)(3));
+			this.tableSettings.NColumns = ((uint)(2));
+			this.tableSettings.RowSpacing = ((uint)(6));
+			this.tableSettings.ColumnSpacing = ((uint)(6));
+			// Container child tableSettings.Gtk.Table+TableChild
 			this.comboDevice = new global::Gamma.Widgets.yListComboBox();
 			this.comboDevice.Name = "comboDevice";
 			this.comboDevice.AddIfNotExist = false;
 			this.comboDevice.DefaultFirst = true;
-			this.table1.Add(this.comboDevice);
-			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.comboDevice]));
-			w1.LeftAttach = ((uint)(1));
-			w1.RightAttach = ((uint)(2));
-			w1.XOptions = ((global::Gtk.AttachOptions)(4));
-			w1.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table1.Gtk.Table+TableChild
+			this.tableSettings.Add(this.comboDevice);
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.comboDevice]));
+			w6.LeftAttach = ((uint)(1));
+			w6.RightAttach = ((uint)(2));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child tableSettings.Gtk.Table+TableChild
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
+			this.ylabel1.Xalign = 1F;
 			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Считыватель:");
-			this.table1.Add(this.ylabel1);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel1]));
-			w2.XOptions = ((global::Gtk.AttachOptions)(4));
-			w2.YOptions = ((global::Gtk.AttachOptions)(4));
-			this.vbox1.Add(this.table1);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.table1]));
-			w3.Position = 0;
-			// Container child vbox1.Gtk.Box+BoxChild
-			this.ylabelCardID = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabelCardID.Name = "ylabelCardID";
-			this.ylabelCardID.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel1");
-			this.vbox1.Add(this.ylabelCardID);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.ylabelCardID]));
-			w4.Position = 1;
-			w4.Expand = false;
-			w4.Fill = false;
+			this.tableSettings.Add(this.ylabel1);
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.ylabel1]));
+			w7.XOptions = ((global::Gtk.AttachOptions)(4));
+			w7.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child tableSettings.Gtk.Table+TableChild
+			this.ylabel2 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel2.Name = "ylabel2";
+			this.ylabel2.Xalign = 1F;
+			this.ylabel2.Yalign = 0F;
+			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Типы карт:");
+			this.tableSettings.Add(this.ylabel2);
+			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.ylabel2]));
+			w8.TopAttach = ((uint)(1));
+			w8.BottomAttach = ((uint)(2));
+			w8.XOptions = ((global::Gtk.AttachOptions)(4));
+			w8.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child tableSettings.Gtk.Table+TableChild
+			this.ytreeviewCardTypes = new global::Gamma.GtkWidgets.yTreeView();
+			this.ytreeviewCardTypes.CanFocus = true;
+			this.ytreeviewCardTypes.Name = "ytreeviewCardTypes";
+			this.ytreeviewCardTypes.HeadersVisible = false;
+			this.tableSettings.Add(this.ytreeviewCardTypes);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.ytreeviewCardTypes]));
+			w9.TopAttach = ((uint)(1));
+			w9.BottomAttach = ((uint)(2));
+			w9.LeftAttach = ((uint)(1));
+			w9.RightAttach = ((uint)(2));
+			w9.XOptions = ((global::Gtk.AttachOptions)(4));
+			w9.YOptions = ((global::Gtk.AttachOptions)(4));
+			this.hbox1.Add(this.tableSettings);
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.tableSettings]));
+			w10.Position = 2;
+			w10.Expand = false;
+			w10.Fill = false;
+			this.vbox1.Add(this.hbox1);
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
+			w11.Position = 1;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{
