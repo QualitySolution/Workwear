@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
+using RglibInterop;
 using workwear.Tools.IdentityCards;
 
 namespace workwear.ViewModels.Stock
@@ -15,6 +17,7 @@ namespace workwear.ViewModels.Stock
 		{
 			this.rusGuardService = rusGuardService;
 			IsModal = false;
+			Title = "Выдача по картам СКУД";
 			if(rusGuardService != null) {
 				rusGuardService.RefreshDevices();
 			}
@@ -22,6 +25,14 @@ namespace workwear.ViewModels.Stock
 				CurrentState = "Библиотека RusGuard не загружена";
 				CurrentStateColor = "Orange Red";
 			}
+
+			CardFamilies.ListChanged += CardFamilies_ListChanged;
+		}
+
+		void CardFamilies_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			if(rusGuardService != null && SelectedDevice != null)
+				rusGuardService.SetCardMask(SelectedDevice, CardFamilies);
 		}
 
 		#region Свойства View
@@ -51,7 +62,18 @@ namespace workwear.ViewModels.Stock
 			get => selectedDevice;
 			set => SetField(ref selectedDevice, value);
 		}
-		#endregion
-		#endregion
-	}
+
+		public BindingList<CardType> CardFamilies = new BindingList<CardType>() {
+                new CardType(RG_CARD_FAMILY_CODE.CF_COTAG),
+                new CardType(RG_CARD_FAMILY_CODE.CF_EMMARINE),
+                new CardType(RG_CARD_FAMILY_CODE.CF_HID),
+                new CardType(RG_CARD_FAMILY_CODE.CF_INDALA),
+                new CardType(RG_CARD_FAMILY_CODE.CF_PINCODE),
+                new CardType(RG_CARD_FAMILY_CODE.CF_TEMIC),
+                new CardType(RG_CARD_FAMILY_CODE.EF_MIFARE)
+
+			};
+	#endregion
+	#endregion
+}
 }

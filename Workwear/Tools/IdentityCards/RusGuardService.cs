@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using RglibInterop;
 
 namespace workwear.Tools.IdentityCards
@@ -59,6 +60,22 @@ namespace workwear.Tools.IdentityCards
 					}
 					RG_CloseResource(endPointsListHandle);
 				}
+			}
+		}
+
+		public void SetCardMask(DeviceInfo device, IList<CardType> cardTypes)
+		{
+			logger.Debug("Устанавливаем маску используемых карт.");
+			byte mask = 0;
+			foreach(var type in cardTypes.Where(x => x.Active)) {
+				mask |= (byte)type.CardTypeFamily;
+			}
+
+			RG_ENDPOINT portEndpoin = device.Endpoint;
+			byte address = device.DeviceInfoShort.DeviceAddress;
+			uint errorCode = RG_SetCardsMask(ref portEndpoin, address, mask);
+			if(errorCode != 0) {
+				throw new ApplicationException($"Ошибка {errorCode} при установке маски карт");
 			}
 		}
 		#endregion

@@ -472,6 +472,7 @@
     <Compile Include="Tools\IdentityCards\RusGuardService.cs" />
     <Compile Include="Tools\IdentityCards\CardReader.cs" />
     <Compile Include="Tools\IdentityCards\DeviceInfo.cs" />
+    <Compile Include="Tools\IdentityCards\CardType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

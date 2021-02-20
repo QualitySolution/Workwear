@@ -24,6 +24,12 @@ namespace workwear.Views.Stock
 			checkSettings.Binding.AddBinding(viewModel, v => v.ShowSettings, w => w.Active).InitializeFromSource();
 			tableSettings.Binding.AddBinding(viewModel, v => v.ShowSettings, w => w.Visible).InitializeFromSource();
 
+			ytreeviewCardTypes.CreateFluentColumnsConfig<CardType>()
+				.AddColumn("Вкл.").AddToggleRenderer(x => x.Active).Editing()
+				.AddColumn("Тип карты").AddTextRenderer(x => x.Title)
+				.Finish();
+			ytreeviewCardTypes.ItemsDataSource = ViewModel.CardFamilies;
+
 			viewModel.PropertyChanged += ViewModel_PropertyChanged;
 
 		}
