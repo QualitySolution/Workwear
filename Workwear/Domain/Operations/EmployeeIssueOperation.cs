@@ -192,6 +192,20 @@ namespace workwear.Domain.Operations
 			set { SetField(ref employeeOperationIssueOnWriteOff, value); }
 		}
 
+		private string signCardKey;
+		[Display(Name = "UID карты доступа")]
+		public virtual string SignCardKey {
+			get => signCardKey;
+			set => SetField(ref signCardKey, value);
+		}
+
+		private DateTime signTimestamp;
+		[Display(Name = "Отметка времени подписи")]
+		public virtual DateTime SignTimestamp {
+			get => signTimestamp;
+			set => SetField(ref signTimestamp, value);
+		}
+
 		/// <summary>
 		/// Для создания операций выдачи надо использвать конструктор с BaseParameters
 		/// </summary>

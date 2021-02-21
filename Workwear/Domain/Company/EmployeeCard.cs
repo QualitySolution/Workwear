@@ -76,6 +76,13 @@ namespace workwear.Domain.Company
 			set { SetField (ref patronymic, value, () => Patronymic); }
 		}
 
+		private string cardKey;
+		[Display(Name = "UID карты доступа")]
+		public virtual string CardKey {
+			get => cardKey;
+			set => SetField(ref cardKey, value);
+		}
+
 		Post post;
 
 		[Display (Name = "Должность")]
