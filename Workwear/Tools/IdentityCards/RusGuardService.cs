@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Timers;
 using RglibInterop;
 
 namespace workwear.Tools.IdentityCards
@@ -78,6 +79,73 @@ namespace workwear.Tools.IdentityCards
 				throw new ApplicationException($"Ошибка {errorCode} при установке маски карт");
 			}
 		}
+
+		public void StartDevice(DeviceInfo device)
+		{
+			//Записываю Кодограмму
+			RG_ENDPOINT portEndpoin = device.Endpoint;
+			RG_CODOGRAMM codogram = new RG_CODOGRAMM {
+				Length = 32,
+				Body = 0x00000000
+			};
+			byte codogramNumber = 1;
+			uint errorCode = RG_WriteCodogramm(ref portEndpoin, device.DeviceInfoShort.DeviceAddress, codogramNumber, ref codogram);
+			if(errorCode != 0) {
+				throw new ApplicationException($"Ошибка при записи кодограммы = {errorCode}");
+			}
+		}
+
+		#endregion
+		#region Авто опрос
+
+		public bool IsAutoPoll;
+		public event EventHandler<CardStateEventArgs> СardStatusRead;
+
+		private Timer AutoPollTimer;
+		private DeviceInfo AutoPullDevice;
+
+		public void StartAutoPoll(DeviceInfo deviceInfo)
+		{
+			if(IsAutoPoll)
+				return;
+
+			IsAutoPoll = true;
+			AutoPullDevice = deviceInfo;
+			AutoPollTimer = new Timer(200);
+			AutoPollTimer.Elapsed += AutoPollTimer_Elapsed;
+			AutoPollTimer.Enabled = true;
+		}
+
+		void AutoPollTimer_Elapsed(object sender, ElapsedEventArgs e)
+		{
+			RG_ENDPOINT portEndpoin = AutoPullDevice.Endpoint;
+			byte address = AutoPullDevice.DeviceInfoShort.DeviceAddress;
+
+			RG_PIN_SATETS_16 pinStates = new RG_PIN_SATETS_16();
+			RG_DEVICE_STATUS_TYPE statusType = RG_DEVICE_STATUS_TYPE.DS_UNKNONWN;
+			RG_CARD_INFO cardInfo = new RG_CARD_INFO() { CardType = RG_CARD_TYPE_CODE.CT_UNKNOWN };
+			RG_CARD_MEMORY cardMemory = new RG_CARD_MEMORY() {
+				ProfileBlock = 0,
+				MemBlock = new byte[16]
+			};
+
+			uint errorCode = RG_GetStatus(ref portEndpoin, address,
+				ref statusType, ref pinStates, ref cardInfo, ref cardMemory);
+			if(errorCode != 0 && statusType == RG_DEVICE_STATUS_TYPE.DS_UNKNONWN) {
+				throw new ApplicationException($"Ошибка {errorCode} при запросе статуса устройства");
+			}
+
+			logger.Debug("Тампер: {0} Контрольный выход: {1}", pinStates.Pin00, pinStates.Pin01);
+			var result = new CardStateEventArgs(pinStates, statusType, cardInfo, cardMemory);
+			СardStatusRead?.Invoke(this, result);
+		}
+
+		public void StopAutoPoll()
+		{
+			IsAutoPoll = false;
+			AutoPollTimer.Enabled = false;
+		}
+
 		#endregion
 	}
 }

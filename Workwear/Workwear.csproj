@@ -470,9 +470,9 @@
     <Compile Include="Views\Stock\IssueByIdentifierView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.IssueByIdentifierView.cs" />
     <Compile Include="Tools\IdentityCards\RusGuardService.cs" />
-    <Compile Include="Tools\IdentityCards\CardReader.cs" />
     <Compile Include="Tools\IdentityCards\DeviceInfo.cs" />
     <Compile Include="Tools\IdentityCards\CardType.cs" />
+    <Compile Include="Tools\IdentityCards\CardStateEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
