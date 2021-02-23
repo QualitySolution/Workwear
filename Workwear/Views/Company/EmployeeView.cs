@@ -80,6 +80,13 @@ namespace workwear.Views.Company
 			entityLeader.ViewModel = ViewModel.EntryLeaderViewModel;
 			entityPost.ViewModel = ViewModel.EntryPostViewModel;
 
+			ylabelCardUid.Binding.AddBinding(ViewModel, v => v.VisibleCardUid, w => w.Visible).InitializeFromSource();
+			entryCardUid.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.VisibleCardUid, w => w.Visible)
+				.AddBinding(v => v.CardUid, w => w.Text)
+				.AddBinding(v => v.CardUidEntryColor, w => w.TextColor)
+				.InitializeFromSource();
+
 			//Устанавливаем последовательность фокуса по Tab
 			//!!!!!!!! НЕ ЗАБЫВАЕМ КОРРЕКТИРОВАТЬ ПОРЯДОК ПРИ ДОБАВЛЕНИИ ВИДЖЕТОВ В ТАБЛИЦУ !!!!!!!!
 			//Это порядок только внутри таблицы! А не всего диалога.

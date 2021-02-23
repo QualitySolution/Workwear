@@ -78,6 +78,7 @@ namespace workwear.Domain.Company
 
 		private string cardKey;
 		[Display(Name = "UID карты доступа")]
+		[StringLength(14, ErrorMessage = "Максимальная длинна UID карты 14 символов или 7 байт в шестнадцатиричном виде")]
 		public virtual string CardKey {
 			get => cardKey;
 			set => SetField(ref cardKey, value);
@@ -370,6 +371,9 @@ namespace workwear.Domain.Company
 
 			if (Sex == Sex.None)
 				yield return new ValidationResult ("Пол должен быть указан.", new[] { this.GetPropertyName (o => o.Sex) });
+
+			if(!String.IsNullOrEmpty(CardKey) && !System.Text.RegularExpressions.Regex.IsMatch(CardKey, @"\A\b[0-9a-fA-F]+\b\Z"))
+				yield return new ValidationResult("UID карты должен быть задан в шестнадцатиричном виде, то есть может содержать только сиволы 0-9 и A-F.", new[] { nameof(CardKey) });
 		}
 
 		#endregion

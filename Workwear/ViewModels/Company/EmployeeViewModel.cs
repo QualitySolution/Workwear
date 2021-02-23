@@ -19,6 +19,7 @@ using QSReport;
 using workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
 using workwear.Measurements;
+using workwear.Tools.Features;
 using workwear.ViewModels.Company.EmployeeChilds;
 
 namespace workwear.ViewModels.Company
@@ -32,6 +33,7 @@ namespace workwear.ViewModels.Company
 		ILifetimeScope AutofacScope;
 		private readonly SizeService sizeService;
 		private readonly IInteractiveQuestion interactive;
+		private readonly FeaturesService featuresService;
 		private readonly CommonMessages messages;
 
 		public EmployeeViewModel(
@@ -43,12 +45,14 @@ namespace workwear.ViewModels.Company
 			ILifetimeScope autofacScope,
 			SizeService sizeService,
 			IInteractiveQuestion interactive,
+			FeaturesService featuresService,
 			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
 
@@ -108,6 +112,7 @@ namespace workwear.ViewModels.Company
 
 		public bool VisibleListedItem => !UoW.IsNew;
 		public bool VisibleHistory => !UoW.IsNew;
+		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
 
 		#endregion
 
@@ -133,6 +138,20 @@ namespace workwear.ViewModels.Company
 		public string CreatedByUser => Entity.CreatedbyUser?.Name;
 
 		public string SubdivisionAddress => Entity.Subdivision?.Address ?? "--//--";
+
+		#region CardUid
+		public virtual string CardUid {
+			get => Entity.CardKey;
+			set {
+				Entity.CardKey = value;
+				OnPropertyChanged(nameof(CardUid));
+				OnPropertyChanged(nameof(CardUidEntryColor));
+			}
+		}
+
+		public string CardUidEntryColor => (String.IsNullOrEmpty(CardUid) || System.Text.RegularExpressions.Regex.IsMatch(CardUid, @"\A\b[0-9a-fA-F]+\b\Z")) ? "black" : "red";
+
+		#endregion
 
 		#endregion
 
