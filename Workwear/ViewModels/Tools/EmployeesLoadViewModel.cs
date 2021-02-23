@@ -98,6 +98,18 @@ namespace workwear.ViewModels.Tools
 
 		public List<SheetRow> DisplayRows => XlsRows.Skip(HeaderRow).ToList();
 
+		public bool SensetiveStep3Button => Columns.Any(x => x.DataType == DataType.Fio) 
+			|| (Columns.Any(x => x.DataType == DataType.LastName) && Columns.Any(x => x.DataType == DataType.FirstName));
+
+		#endregion
+
+		#region Шаг 3
+
+		public void ReadEmployees()
+		{
+
+		}
+
 		#endregion
 
 		#region private Methods
@@ -186,11 +198,20 @@ namespace workwear.ViewModels.Tools
 				i++;
 			}
 			Columns.Clear();
-			for(int icol = 0; icol < maxColumns; icol++)
-				Columns.Add(new ImportedColumn());
+			for(int icol = 0; icol < maxColumns; icol++) {
+				var column = new ImportedColumn();
+				column.PropertyChanged += Column_PropertyChanged;;
+				Columns.Add(column);
+			}
 			MaxSourceColumns = maxColumns;
 
 			logger.Info($"Прочитано {maxColumns} колонок и {i} строк");
+		}
+
+		void Column_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(ImportedColumn.DataType))
+				OnPropertyChanged(nameof(SensetiveStep3Button));
 		}
 
 		#endregion

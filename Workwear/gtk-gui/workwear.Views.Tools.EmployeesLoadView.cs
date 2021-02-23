@@ -30,6 +30,8 @@ namespace workwear.Views.Tools
 
 		private global::Gamma.GtkWidgets.yLabel ylabel1;
 
+		private global::Gtk.VBox vbox3;
+
 		private global::Gtk.Frame frame1;
 
 		private global::Gtk.Alignment GtkAlignment;
@@ -38,7 +40,11 @@ namespace workwear.Views.Tools
 
 		private global::Gtk.Label GtkLabel2;
 
+		private global::Gamma.GtkWidgets.yButton buttonReadEmployees;
+
 		private global::Gtk.Label label2;
+
+		private global::Gtk.Label label4;
 
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 
@@ -157,6 +163,10 @@ namespace workwear.Views.Tools
 			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.tableColumns]));
 			w9.Position = 0;
 			// Container child hbox1.Gtk.Box+BoxChild
+			this.vbox3 = new global::Gtk.VBox();
+			this.vbox3.Name = "vbox3";
+			this.vbox3.Spacing = 6;
+			// Container child vbox3.Gtk.Box+BoxChild
 			this.frame1 = new global::Gtk.Frame();
 			this.frame1.Name = "frame1";
 			this.frame1.ShadowType = ((global::Gtk.ShadowType)(0));
@@ -169,7 +179,8 @@ namespace workwear.Views.Tools
 			this.label3.Name = "label3";
 			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString(@"Установите номер строки с заголовком данных, таким образом чтобы название колонок было корретно. Если в таблице заголовки отутствуют укажите 0.
 Далее для каждой значимой колонки проставьте тип данных которых находится в таблице.
-При загрузки листа программа автоматически пытается найти залоговок таблицы и выбрать тип данных.");
+При загрузки листа программа автоматически пытается найти залоговок таблицы и выбрать тип данных.
+Обязательными данными являются Фамилия и Имя или ФИО.");
 			this.label3.Wrap = true;
 			this.label3.Justify = ((global::Gtk.Justification)(3));
 			this.GtkAlignment.Add(this.label3);
@@ -179,24 +190,49 @@ namespace workwear.Views.Tools
 			this.GtkLabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Рекомендации");
 			this.GtkLabel2.UseMarkup = true;
 			this.frame1.LabelWidget = this.GtkLabel2;
-			this.hbox1.Add(this.frame1);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.frame1]));
-			w12.Position = 1;
+			this.vbox3.Add(this.frame1);
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.frame1]));
+			w12.Position = 0;
 			w12.Expand = false;
 			w12.Fill = false;
-			this.notebookSteps.Add(this.hbox1);
-			global::Gtk.Notebook.NotebookChild w13 = ((global::Gtk.Notebook.NotebookChild)(this.notebookSteps[this.hbox1]));
+			// Container child vbox3.Gtk.Box+BoxChild
+			this.buttonReadEmployees = new global::Gamma.GtkWidgets.yButton();
+			this.buttonReadEmployees.CanFocus = true;
+			this.buttonReadEmployees.Name = "buttonReadEmployees";
+			this.buttonReadEmployees.UseUnderline = true;
+			this.buttonReadEmployees.Label = global::Mono.Unix.Catalog.GetString("Сопоставление с сотрудниками.");
+			this.vbox3.Add(this.buttonReadEmployees);
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.buttonReadEmployees]));
 			w13.Position = 1;
+			w13.Expand = false;
+			w13.Fill = false;
+			this.hbox1.Add(this.vbox3);
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.vbox3]));
+			w14.Position = 1;
+			w14.Expand = false;
+			w14.Fill = false;
+			this.notebookSteps.Add(this.hbox1);
+			global::Gtk.Notebook.NotebookChild w15 = ((global::Gtk.Notebook.NotebookChild)(this.notebookSteps[this.hbox1]));
+			w15.Position = 1;
 			// Notebook tab
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
 			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Формат файла [Шаг 2]");
 			this.notebookSteps.SetTabLabel(this.hbox1, this.label2);
 			this.label2.ShowAll();
+			// Notebook tab
+			global::Gtk.Label w16 = new global::Gtk.Label();
+			w16.Visible = true;
+			this.notebookSteps.Add(w16);
+			this.label4 = new global::Gtk.Label();
+			this.label4.Name = "label4";
+			this.label4.LabelProp = global::Mono.Unix.Catalog.GetString("Обработка данных [Шаг 4]");
+			this.notebookSteps.SetTabLabel(w16, this.label4);
+			this.label4.ShowAll();
 			this.vbox1.Add(this.notebookSteps);
-			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.notebookSteps]));
-			w14.Position = 0;
-			w14.Expand = false;
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.notebookSteps]));
+			w17.Position = 0;
+			w17.Expand = false;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -207,8 +243,8 @@ namespace workwear.Views.Tools
 			this.treeviewRows.Name = "treeviewRows";
 			this.GtkScrolledWindow.Add(this.treeviewRows);
 			this.vbox1.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
-			w16.Position = 1;
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
+			w19.Position = 1;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{

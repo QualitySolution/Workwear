@@ -46,6 +46,7 @@ namespace workwear.Views.Tools
 			#endregion
 			#region Шаг 2
 			spinTitleRow.Binding.AddBinding(viewModel, v => v.HeaderRow, w => w.ValueAsInt).InitializeFromSource();
+			buttonReadEmployees.Binding.AddBinding(viewModel, v => v.SensetiveStep3Button, w => w.Sensitive).InitializeFromSource();
 			#endregion
 		}
 
@@ -100,6 +101,11 @@ namespace workwear.Views.Tools
 				tableColumns.Attach(combo, 1, 2, nrow, nrow + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 			}
 			tableColumns.ShowAll();
+		}
+
+		protected void OnButtonReadEmployeesClicked(object sender, EventArgs e)
+		{
+			ViewModel.ReadEmployees();
 		}
 	}
 }
