@@ -34,6 +34,8 @@ namespace workwear.Views.Tools
 
 		private global::Gtk.Alignment GtkAlignment;
 
+		private global::Gtk.Label label3;
+
 		private global::Gtk.Label GtkLabel2;
 
 		private global::Gtk.Label label2;
@@ -56,7 +58,7 @@ namespace workwear.Views.Tools
 			this.notebookSteps = new global::Gamma.GtkWidgets.yNotebook();
 			this.notebookSteps.CanFocus = true;
 			this.notebookSteps.Name = "notebookSteps";
-			this.notebookSteps.CurrentPage = 0;
+			this.notebookSteps.CurrentPage = 1;
 			this.notebookSteps.ShowBorder = false;
 			// Container child notebookSteps.Gtk.Notebook+NotebookChild
 			this.vbox2 = new global::Gtk.VBox();
@@ -74,7 +76,6 @@ namespace workwear.Views.Tools
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.ytable2 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable2.Name = "ytable2";
-			this.ytable2.NRows = ((uint)(3));
 			this.ytable2.NColumns = ((uint)(3));
 			this.ytable2.RowSpacing = ((uint)(6));
 			this.ytable2.ColumnSpacing = ((uint)(6));
@@ -100,6 +101,8 @@ namespace workwear.Views.Tools
 			this.vbox2.Add(this.ytable2);
 			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ytable2]));
 			w4.Position = 1;
+			w4.Expand = false;
+			w4.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.buttonLoad = new global::Gamma.GtkWidgets.yButton();
 			this.buttonLoad.CanFocus = true;
@@ -161,6 +164,15 @@ namespace workwear.Views.Tools
 			this.GtkAlignment = new global::Gtk.Alignment(0F, 0F, 1F, 1F);
 			this.GtkAlignment.Name = "GtkAlignment";
 			this.GtkAlignment.LeftPadding = ((uint)(12));
+			// Container child GtkAlignment.Gtk.Container+ContainerChild
+			this.label3 = new global::Gtk.Label();
+			this.label3.Name = "label3";
+			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString(@"Установите номер строки с заголовком данных, таким образом чтобы название колонок было корретно. Если в таблице заголовки отутствуют укажите 0.
+Далее для каждой значимой колонки проставьте тип данных которых находится в таблице.
+При загрузки листа программа автоматически пытается найти залоговок таблицы и выбрать тип данных.");
+			this.label3.Wrap = true;
+			this.label3.Justify = ((global::Gtk.Justification)(3));
+			this.GtkAlignment.Add(this.label3);
 			this.frame1.Add(this.GtkAlignment);
 			this.GtkLabel2 = new global::Gtk.Label();
 			this.GtkLabel2.Name = "GtkLabel2";
@@ -168,13 +180,13 @@ namespace workwear.Views.Tools
 			this.GtkLabel2.UseMarkup = true;
 			this.frame1.LabelWidget = this.GtkLabel2;
 			this.hbox1.Add(this.frame1);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.frame1]));
-			w11.Position = 1;
-			w11.Expand = false;
-			w11.Fill = false;
-			this.notebookSteps.Add(this.hbox1);
-			global::Gtk.Notebook.NotebookChild w12 = ((global::Gtk.Notebook.NotebookChild)(this.notebookSteps[this.hbox1]));
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.frame1]));
 			w12.Position = 1;
+			w12.Expand = false;
+			w12.Fill = false;
+			this.notebookSteps.Add(this.hbox1);
+			global::Gtk.Notebook.NotebookChild w13 = ((global::Gtk.Notebook.NotebookChild)(this.notebookSteps[this.hbox1]));
+			w13.Position = 1;
 			// Notebook tab
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
@@ -182,8 +194,9 @@ namespace workwear.Views.Tools
 			this.notebookSteps.SetTabLabel(this.hbox1, this.label2);
 			this.label2.ShowAll();
 			this.vbox1.Add(this.notebookSteps);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.notebookSteps]));
-			w13.Position = 0;
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.notebookSteps]));
+			w14.Position = 0;
+			w14.Expand = false;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -194,8 +207,8 @@ namespace workwear.Views.Tools
 			this.treeviewRows.Name = "treeviewRows";
 			this.GtkScrolledWindow.Add(this.treeviewRows);
 			this.vbox1.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
-			w15.Position = 1;
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
+			w16.Position = 1;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{

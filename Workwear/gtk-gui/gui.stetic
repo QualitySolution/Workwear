@@ -13454,7 +13454,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Tools.EmployeesLoadView" design-size="410 300">
+  <widget class="Gtk.Bin" id="workwear.Views.Tools.EmployeesLoadView" design-size="1341 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -13465,7 +13465,7 @@
           <widget class="Gamma.GtkWidgets.yNotebook" id="notebookSteps">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">0</property>
+            <property name="CurrentPage">1</property>
             <property name="ShowBorder">False</property>
             <child>
               <widget class="Gtk.VBox" id="vbox2">
@@ -13486,28 +13486,9 @@
                 <child>
                   <widget class="Gamma.GtkWidgets.yTable" id="ytable2">
                     <property name="MemberName" />
-                    <property name="NRows">3</property>
                     <property name="NColumns">3</property>
                     <property name="RowSpacing">6</property>
                     <property name="ColumnSpacing">6</property>
-                    <child>
-                      <placeholder />
-                    </child>
-                    <child>
-                      <placeholder />
-                    </child>
-                    <child>
-                      <placeholder />
-                    </child>
-                    <child>
-                      <placeholder />
-                    </child>
-                    <child>
-                      <placeholder />
-                    </child>
-                    <child>
-                      <placeholder />
-                    </child>
                     <child>
                       <placeholder />
                     </child>
@@ -13554,6 +13535,8 @@
                   <packing>
                     <property name="Position">1</property>
                     <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
                   </packing>
                 </child>
                 <child>
@@ -13666,7 +13649,14 @@
                         <property name="Yalign">0</property>
                         <property name="LeftPadding">12</property>
                         <child>
-                          <placeholder />
+                          <widget class="Gtk.Label" id="label3">
+                            <property name="MemberName" />
+                            <property name="LabelProp" translatable="yes">Установите номер строки с заголовком данных, таким образом чтобы название колонок было корретно. Если в таблице заголовки отутствуют укажите 0.
+Далее для каждой значимой колонки проставьте тип данных которых находится в таблице.
+При загрузки листа программа автоматически пытается найти залоговок таблицы и выбрать тип данных.</property>
+                            <property name="Wrap">True</property>
+                            <property name="Justify">Fill</property>
+                          </widget>
                         </child>
                       </widget>
                     </child>
@@ -13705,7 +13695,8 @@
           </widget>
           <packing>
             <property name="Position">0</property>
-            <property name="AutoSize">True</property>
+            <property name="AutoSize">False</property>
+            <property name="Expand">False</property>
           </packing>
         </child>
         <child>

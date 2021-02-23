@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Gamma.GtkWidgets;
+using Gamma.Widgets;
 using Gtk;
 using QS.Views.Dialog;
 using workwear.Tools.Import;
@@ -9,6 +11,9 @@ namespace workwear.Views.Tools
 {
 	public partial class EmployeesLoadView : DialogViewBase<EmployeesLoadViewModel>
 	{
+		List<yLabel> columnsLabels = new List<yLabel>();
+		List<yEnumComboBox> columnsTypeCombos = new List<yEnumComboBox>();
+
 		public EmployeesLoadView(EmployeesLoadViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
@@ -47,7 +52,9 @@ namespace workwear.Views.Tools
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == nameof(ViewModel.Columns))
-				RefreshColumns();
+				RefreshTableColumns();
+			if(e.PropertyName == nameof(ViewModel.MaxSourceColumns))
+				RefreshColumnsWidgets();
 		}
 
 
@@ -56,7 +63,7 @@ namespace workwear.Views.Tools
 			ViewModel.SecondStep();
 		}
 
-		private void RefreshColumns()
+		private void RefreshTableColumns()
 		{
 			var config = ColumnsConfigFactory.Create<SheetRow>();
 			for(int i = 0; i < ViewModel.Columns.Count; i++) {
@@ -67,6 +74,32 @@ namespace workwear.Views.Tools
 			config.AddColumn(String.Empty);
 
 			treeviewRows.ColumnsConfig = config.Finish();
+		}
+
+		public void RefreshColumnsWidgets()
+		{
+			foreach(var label in columnsLabels) 
+				tableColumns.Remove(label);
+			foreach(var combo in columnsTypeCombos)
+				tableColumns.Remove(combo);
+			tableColumns.NRows = (uint)ViewModel.MaxSourceColumns + 1;
+			columnsLabels.Clear();
+			columnsTypeCombos.Clear();
+			uint nrow = 0;
+			foreach(var column in ViewModel.Columns) {
+				nrow++;
+				var label = new yLabel();
+				label.Xalign = 1;
+				label.Binding.AddBinding(column, c => c.Title, w => w.LabelProp).InitializeFromSource();
+				columnsLabels.Add(label);
+				tableColumns.Attach(label, 0, 1, nrow, nrow + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+				var combo = new yEnumComboBox();
+				combo.ItemsEnum = typeof(DataType);
+				combo.Binding.AddBinding(column, c => c.DataType, w => w.SelectedItem).InitializeFromSource();
+				columnsTypeCombos.Add(combo);
+				tableColumns.Attach(combo, 1, 2, nrow, nrow + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+			}
+			tableColumns.ShowAll();
 		}
 	}
 }

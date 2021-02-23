@@ -185,10 +185,10 @@ namespace workwear.ViewModels.Tools
 				maxColumns = Math.Max(sh.GetRow(i).Cells.Count, maxColumns);
 				i++;
 			}
-			MaxSourceColumns = maxColumns;
 			Columns.Clear();
-			for(int icol = 0; icol < MaxSourceColumns; icol++)
+			for(int icol = 0; icol < maxColumns; icol++)
 				Columns.Add(new ImportedColumn());
+			MaxSourceColumns = maxColumns;
 
 			logger.Info($"Прочитано {maxColumns} колонок и {i} строк");
 		}

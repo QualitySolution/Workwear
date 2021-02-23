@@ -49,6 +49,7 @@ using workwear.Repository.Operations;
 using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
+using workwear.Tools.Import;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
 
@@ -209,6 +210,10 @@ namespace workwear
 			#region Работа со считывателями
 			if(QSProjectsLib.WindowStartupFix.IsWindows)//FIXME Было лень реализовывать загрузку библиотеки под линукс.
 				builder.RegisterType<RusGuardService>().AsSelf();
+			#endregion
+
+			#region Импрорт данных
+			builder.RegisterType<DataParser>().AsSelf();
 			#endregion
 			AppDIContainer = builder.Build();
 		}
