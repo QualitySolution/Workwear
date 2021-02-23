@@ -4884,7 +4884,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Window" id="MainWindow" design-size="943 458">
+  <widget class="Gtk.Window" id="MainWindow" design-size="1022 458">
     <action-group name="Default">
       <action id="ActionBase">
         <property name="Type">Action</property>
@@ -5330,10 +5330,11 @@
             <property name="MemberName" />
             <node name="menubar1" type="Menubar">
               <node type="Menu" action="ActionBase">
-                <node type="Menuitem" action="dialogAuthenticationAction" />
                 <node type="Menuitem" action="UsersAction" />
-                <node type="Menuitem" action="ActionBaseSettings" />
+                <node type="Menuitem" action="dialogAuthenticationAction" />
                 <node type="Menuitem" action="ActionUserSettings" />
+                <node type="Separator" />
+                <node type="Menuitem" action="ActionBaseSettings" />
                 <node type="Separator" />
                 <node type="Menuitem" action="quitAction" />
               </node>
