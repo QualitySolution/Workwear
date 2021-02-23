@@ -301,7 +301,8 @@ public partial class MainWindow : Gtk.Window
 		MainTelemetry.AddCount("OpenDocumentation");
 		try {
 			System.Diagnostics.Process.Start("user-guide.pdf");
-		} catch (System.ComponentModel.Win32Exception ex) {
+		}
+		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
 			$"При открытии PDF файла с документацией произошла ошибка:\n{ex.Message}\n" +
 				"Возможно на компьютере не установлена или неисправна программа для открыти PDF");
@@ -673,5 +674,10 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionCardIssueeActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<IssueByIdentifierViewModel>(null);
+	}
+
+	protected void OnActionEmployeeLoadActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<EmployeesLoadViewModel>(null);
 	}
 }

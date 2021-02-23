@@ -112,7 +112,7 @@
       <HintPath>..\packages\NHibernate.5.3.3\lib\net461\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\packages\BouncyCastle.1.8.6.1\lib\BouncyCastle.Crypto.dll</HintPath>
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.6\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\packages\SharpZipLib.1.3.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -164,6 +164,18 @@
     </Reference>
     <Reference Include="Autofac">
       <HintPath>..\packages\Autofac.5.2.0\lib\net461\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -473,6 +485,13 @@
     <Compile Include="Tools\IdentityCards\DeviceInfo.cs" />
     <Compile Include="Tools\IdentityCards\CardType.cs" />
     <Compile Include="Tools\IdentityCards\CardStateEventArgs.cs" />
+    <Compile Include="ViewModels\Tools\EmployeesLoadViewModel.cs" />
+    <Compile Include="Views\Tools\EmployeesLoadView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Tools.EmployeesLoadView.cs" />
+    <Compile Include="Tools\Import\ImportedColumn.cs" />
+    <Compile Include="Tools\Import\ImportedSheet.cs" />
+    <Compile Include="Tools\Import\SheetRow.cs" />
+    <Compile Include="Tools\Import\DataParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -650,6 +669,7 @@
     <Folder Include="ReportParameters\ViewModels\" />
     <Folder Include="ReportParameters\Views\" />
     <Folder Include="Tools\IdentityCards\" />
+    <Folder Include="Tools\Import\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
