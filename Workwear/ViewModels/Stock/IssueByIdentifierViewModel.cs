@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -114,7 +114,7 @@ namespace workwear.ViewModels.Stock
 		#region Внутренние методы
 		void UpdateState()
 		{
-			if(rusGuardService != null) {
+			if(rusGuardService == null) {
 				CurrentState = "Библиотека RusGuard не загружена";
 				CurrentStateColor = "Orange Red";
 				return;
