@@ -123,6 +123,7 @@
     <Compile Include="Integration\Stock\StockRepositoryTest.cs" />
     <Compile Include="Integration\Organization\EmployeeCardIntegratedTest.cs" />
     <Compile Include="Integration\Stock\WriteoffEmployeeIntegratedTest.cs" />
+    <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.Testing\QS.Testing.csproj">
@@ -153,6 +154,10 @@
       <Project>{F22749B2-E35B-455D-BD8D-081373B16FC7}</Project>
       <Name>QS.BusinessCommon</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\RusGuardSharp\rglib.interop\rglib.interop.csproj">
+      <Project>{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}</Project>
+      <Name>rglib.interop</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Operations\" />
@@ -165,6 +170,7 @@
     <Folder Include="Integration\Organization\" />
     <Folder Include="Integration\Stock\" />
     <Folder Include="ViewModels\" />
+    <Folder Include="ViewModels\Stock\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

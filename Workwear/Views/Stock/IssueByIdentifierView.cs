@@ -12,7 +12,7 @@ namespace workwear.Views.Stock
 		{
 			this.Build();
 			ylabelStatus.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.CurentState, w => w.LabelProp)
+				.AddBinding(v => v.CurrentState, w => w.LabelProp)
 				.InitializeFromSource();
 			eventboxStatus.ModifyBg(Gtk.StateType.Normal, ColorUtil.Create(ViewModel.CurrentStateColor));
 

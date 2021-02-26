@@ -6,7 +6,7 @@ using RglibInterop;
 
 namespace workwear.Tools.IdentityCards
 {
-	public class RusGuardService : RglibInterface
+	public class RusGuardService : RglibInterface, ICardReaderService
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -20,7 +20,7 @@ namespace workwear.Tools.IdentityCards
 		}
 
 		#region Данные
-		public readonly List<DeviceInfo> Devices = new List<DeviceInfo>();
+		public List<DeviceInfo> Devices { get; } = new List<DeviceInfo>();
 		#endregion
 
 		#region Методы
@@ -97,9 +97,9 @@ namespace workwear.Tools.IdentityCards
 
 		#endregion
 		#region Авто опрос
-
-		public bool IsAutoPoll;
 		public event EventHandler<CardStateEventArgs> СardStatusRead;
+
+		public bool IsAutoPoll { get; private set; }
 
 		private Timer AutoPollTimer;
 		private DeviceInfo AutoPullDevice;

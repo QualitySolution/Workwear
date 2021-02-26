@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -15,18 +15,18 @@ namespace workwear.ViewModels.Stock
 	public class IssueByIdentifierViewModel : WindowDialogViewModelBase
 	{
 		private readonly IGuiDispatcher guiDispatcher;
-		private readonly RusGuardService rusGuardService;
+		private readonly ICardReaderService cardReaderService;
 		private TextSpinner textSpinner = new TextSpinner(new SpinnerTemplateDots());
 
-		public IssueByIdentifierViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IGuiDispatcher guiDispatcher, RusGuardService rusGuardService = null) : base(navigation)
+		public IssueByIdentifierViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IGuiDispatcher guiDispatcher, ICardReaderService cardReaderService = null) : base(navigation)
 		{
 			this.guiDispatcher = guiDispatcher ?? throw new ArgumentNullException(nameof(guiDispatcher));
-			this.rusGuardService = rusGuardService;
+			this.cardReaderService = cardReaderService;
 			IsModal = false;
 			Title = "Выдача по картам СКУД";
-			if(rusGuardService != null) {
-				rusGuardService.RefreshDevices();
-				rusGuardService.СardStatusRead += RusGuardService_СardStatusRead;
+			if(cardReaderService != null) {
+				cardReaderService.RefreshDevices();
+				cardReaderService.СardStatusRead += RusGuardService_СardStatusRead;
 			}
 			UpdateState();
 
@@ -35,8 +35,8 @@ namespace workwear.ViewModels.Stock
 
 		void CardFamilies_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			if(rusGuardService != null && SelectedDevice != null)
-				rusGuardService.SetCardMask(SelectedDevice, CardFamilies);
+			if(cardReaderService != null && SelectedDevice != null)
+				cardReaderService.SetCardMask(SelectedDevice, CardFamilies);
 			UpdateState();
 			TryStartPoll();
 		}
@@ -51,10 +51,10 @@ namespace workwear.ViewModels.Stock
 		}
 
 		#region Свойства View
-		private string CurrentState;
-		public virtual string CurentState {
-			get => CurrentState;
-			set => SetField(ref CurrentState, value);
+		private string currentState;
+		public virtual string CurrentState {
+			get => currentState;
+			set => SetField(ref currentState, value);
 		}
 
 		private string currentStateColor;
@@ -82,14 +82,14 @@ namespace workwear.ViewModels.Stock
 		}
 
 		#region Настройки
-		public List<DeviceInfo> Devices => rusGuardService?.Devices;
+		public List<DeviceInfo> Devices => cardReaderService?.Devices;
 
 		private DeviceInfo selectedDevice;
 		public virtual DeviceInfo SelectedDevice {
 			get => selectedDevice;
 			set {
-				if(selectedDevice != value && rusGuardService.IsAutoPoll)
-					rusGuardService.StopAutoPoll();
+				if(selectedDevice != value && cardReaderService.IsAutoPoll)
+					cardReaderService.StopAutoPoll();
 				SetField(ref selectedDevice, value);
 				UpdateState();
 				if(SelectedDevice != null) {
@@ -114,7 +114,7 @@ namespace workwear.ViewModels.Stock
 		#region Внутренние методы
 		void UpdateState()
 		{
-			if(rusGuardService == null) {
+			if(cardReaderService == null) {
 				CurrentState = "Библиотека RusGuard не загружена";
 				CurrentStateColor = "Orange Red";
 				return;
@@ -135,7 +135,7 @@ namespace workwear.ViewModels.Stock
 				return;
 			}
 
-			if(rusGuardService?.IsAutoPoll == true) {
+			if(cardReaderService?.IsAutoPoll == true) {
 				if(NoCard) {
 					CurrentState = "Нет карты\t" + textSpinner.GetFrame();
 					CurrentStateColor = "Dark Salmon";
@@ -154,15 +154,15 @@ namespace workwear.ViewModels.Stock
 
 		void TryStartPoll()
 		{
-			if(rusGuardService == null)
+			if(cardReaderService == null)
 				return;
 			if(SelectedDevice == null)
 				return;
 			if(!CardFamilies.Any(x => x.Active))
 				return;
 
-			rusGuardService.StartDevice(SelectedDevice);
-			rusGuardService.StartAutoPoll(SelectedDevice);
+			cardReaderService.StartDevice(SelectedDevice);
+			cardReaderService.StartAutoPoll(SelectedDevice);
 		}
 
 		#endregion
