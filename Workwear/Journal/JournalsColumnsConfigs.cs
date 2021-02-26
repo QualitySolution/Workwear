@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using QS.Journal.GtkUI;
@@ -25,14 +27,16 @@ namespace workwear.Journal
 			);
 
 			TreeViewColumnsConfigFactory.Register<EmployeeJournalViewModel>(
-			() => FluentColumnsConfig<EmployeeJournalNode>.Create()
-				.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
-				.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
-				.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
-				.AddColumn("Должность").AddTextRenderer(node => node.Post)
-				.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
-				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Dismiss ? "gray" : "black")
-				.Finish()
+				(jvm) => FluentColumnsConfig<EmployeeJournalNode>.Create()
+					.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
+					.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
+					.AddColumn("Карта").Visible(jvm.FeaturesService.Available(Tools.Features.WorkwearFeature.IdentityCards))
+						.AddPixbufRenderer(x => String.IsNullOrEmpty(x.CardKey) ? null : new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "workwear.icon.buttons.smart-card.png"))
+					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
+					.AddColumn("Должность").AddTextRenderer(node => node.Post)
+					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Dismiss ? "gray" : "black")
+					.Finish()
 			);
 
 			TreeViewColumnsConfigFactory.Register<LeadersJournalViewModel>(
