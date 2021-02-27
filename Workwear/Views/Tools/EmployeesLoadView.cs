@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Gamma.Binding.Converters;
 using Gamma.GtkWidgets;
 using Gamma.Widgets;
 using Gtk;
@@ -47,6 +48,11 @@ namespace workwear.Views.Tools
 			#region Шаг 2
 			spinTitleRow.Binding.AddBinding(viewModel, v => v.HeaderRow, w => w.ValueAsInt).InitializeFromSource();
 			buttonReadEmployees.Binding.AddBinding(viewModel, v => v.SensetiveStep3Button, w => w.Sensitive).InitializeFromSource();
+			#endregion
+			#region Шаг 3
+			var converter = new NumbersToStringConverter();
+			labelCountMultiMatch.Binding.AddBinding(viewModel, v => v.CountMultiMatch, w => w.LabelProp, converter).InitializeFromSource();
+			labelCountSkipRows.Binding.AddBinding(viewModel, v => v.CountSkipRows, w => w.LabelProp, converter).InitializeFromSource();
 			#endregion
 		}
 

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using NPOI.SS.UserModel;
+using workwear.Domain.Company;
 
 namespace workwear.Tools.Import
 {
@@ -27,5 +29,13 @@ namespace workwear.Tools.Import
 			}
 			return null;
 		}
+
+		#region Сопоставление с сотрудниками
+
+		public List<EmployeeCard> Employees = new List<EmployeeCard>();
+
+		public bool Skiped;
+
+		#endregion
 	}
 }

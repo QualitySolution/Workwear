@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NHibernate;
+using NHibernate.Criterion;
+using NHibernate.Dialect.Function;
 using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
 using QS.Dialog;
@@ -9,6 +12,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
+using workwear.Domain.Company;
 using workwear.Tools.Import;
 
 namespace workwear.ViewModels.Tools
@@ -84,6 +88,8 @@ namespace workwear.ViewModels.Tools
 
 		public List<ImportedColumn> Columns = new List<ImportedColumn>();
 
+		public ImportedColumn GetColumn(DataType dataType) => Columns.FirstOrDefault(x => x.DataType == dataType);
+
 		private int maxSourceColumns;
 		public virtual int MaxSourceColumns {
 			get => maxSourceColumns;
@@ -104,10 +110,90 @@ namespace workwear.ViewModels.Tools
 		#endregion
 
 		#region Шаг 3
+		#region Статистика
+		private int countSkipRows;
+		public virtual int CountSkipRows {
+			get => countSkipRows;
+			set => SetField(ref countSkipRows, value);
+		}
+
+		private int countMultiMatch;
+		public virtual int CountMultiMatch {
+			get => countMultiMatch;
+			set => SetField(ref countMultiMatch, value);
+		}
+		#endregion
 
 		public void ReadEmployees()
 		{
+			CurrentStep = 2;
+			if(Columns.Any(x => x.DataType == DataType.PersonnelNumber))
+				MatchByNumber();
+			else
+				MatchByName();
+		}
 
+		private void MatchByName()
+		{
+			var list = DisplayRows;
+			var lastnameColumn = GetColumn(DataType.LastName);
+			var firstColumn = GetColumn(DataType.FirstName);
+			var patronymicColumn = GetColumn(DataType.Patronymic);
+			var searchValues = list.Select(x => (x.CellValue(lastnameColumn.Index) + "|" + x.CellValue(firstColumn.Index)).ToUpper())
+							.Where(x => x != "|")
+							.Distinct().ToArray();
+			var exists = UoW.Session.QueryOver<EmployeeCard>()
+				.Where(Restrictions.In(
+				Projections.SqlFunction(
+							  "upper", NHibernateUtil.String,
+							  Projections.SqlFunction(new StandardSQLFunction("CONCAT_WS"),
+							  	NHibernateUtil.String,
+							  	Projections.Constant(""),
+								Projections.Property<EmployeeCard>(x => x.LastName),
+								Projections.Constant("|"),
+								Projections.Property<EmployeeCard>(x => x.FirstName)
+							   )),
+						   searchValues))
+				.List();
+
+			foreach(var employee in exists) {
+				var found = list.Where(x => String.Equals(x.CellValue(lastnameColumn.Index), employee.LastName, StringComparison.CurrentCultureIgnoreCase) 
+					&& String.Equals(x.CellValue(firstColumn.Index), employee.FirstName, StringComparison.CurrentCultureIgnoreCase)
+					&& (patronymicColumn == null || String.Equals(x.CellValue(patronymicColumn.Index), employee.Patronymic, StringComparison.CurrentCultureIgnoreCase))
+				).ToArray();
+				found.First().Employees.Add(employee);
+				if(found.First().Employees.Count == 2)
+					CountMultiMatch++;
+				//Пропускаем дубликаты строк в файле
+				foreach(var toSkip in found.Skip(1)) {
+					toSkip.Skiped = true;
+					CountSkipRows++;
+				}
+			}
+		}
+
+		private void MatchByNumber()
+		{
+			var list = DisplayRows;
+			var numberColumn = GetColumn(DataType.PersonnelNumber);
+			var numbers = list.Select(x => x.CellValue(numberColumn.Index))
+							.Where(x => !String.IsNullOrWhiteSpace(x))
+							.Distinct().ToArray();
+			var exists = UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.PersonnelNumber.IsIn(numbers))
+				.List();
+
+			foreach(var employee in exists) {
+				var found = list.Where(x => x.CellValue(numberColumn.Index) == employee.PersonnelNumber).ToArray();
+				found.First().Employees.Add(employee);
+				if(found.First().Employees.Count == 2)
+					CountMultiMatch++;
+				//Пропускаем дубликаты строк в файле
+				foreach(var toSkip in found.Skip(1)) {
+					toSkip.Skiped = true;
+					CountSkipRows++;
+				}
+			}
 		}
 
 		#endregion
@@ -199,7 +285,7 @@ namespace workwear.ViewModels.Tools
 			}
 			Columns.Clear();
 			for(int icol = 0; icol < maxColumns; icol++) {
-				var column = new ImportedColumn();
+				var column = new ImportedColumn(icol);
 				column.PropertyChanged += Column_PropertyChanged;;
 				Columns.Add(column);
 			}

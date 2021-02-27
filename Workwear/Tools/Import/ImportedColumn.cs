@@ -6,6 +6,8 @@ namespace workwear.Tools.Import
 {
 	public class ImportedColumn : PropertyChangedBase
 	{
+		public readonly int Index;
+
 		private string title;
 		public virtual string Title {
 			get => title;
@@ -18,8 +20,9 @@ namespace workwear.Tools.Import
 			set => SetField(ref dataType, value);
 		}
 
-		public ImportedColumn()
+		public ImportedColumn(int index)
 		{
+			Index = index;
 		}
 	}
 
