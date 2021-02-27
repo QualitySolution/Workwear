@@ -11,6 +11,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Utilities.Text;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
 using workwear.Tools.Import;
@@ -151,17 +152,17 @@ namespace workwear.ViewModels.Tools
 				MatchByName();
 
 			FindChanges();
+			OnPropertyChanged(nameof(DisplayRows));
 		}
 
 		private void MatchByName()
 		{
 			var list = DisplayRows;
-			var lastnameColumn = GetColumn(DataType.LastName);
-			var firstColumn = GetColumn(DataType.FirstName);
-			var patronymicColumn = GetColumn(DataType.Patronymic);
-			var searchValues = list.Select(x => (x.CellValue(lastnameColumn.Index) + "|" + x.CellValue(firstColumn.Index)).ToUpper())
-							.Where(x => x != "|")
-							.Distinct().ToArray();
+
+			var searchValues = list.Select(GetFIO)
+				.Where(fio => !String.IsNullOrEmpty(fio.LastName) || !String.IsNullOrEmpty(fio.FirstName))
+				.Select(fio => (fio.LastName + "|" + fio.FirstName).ToUpper())
+				.Distinct().ToArray();
 			var exists = UoW.Session.QueryOver<EmployeeCard>()
 				.Where(Restrictions.In(
 				Projections.SqlFunction(
@@ -177,10 +178,13 @@ namespace workwear.ViewModels.Tools
 				.List();
 
 			foreach(var employee in exists) {
-				var found = list.Where(x => String.Equals(x.CellValue(lastnameColumn.Index), employee.LastName, StringComparison.CurrentCultureIgnoreCase) 
-					&& String.Equals(x.CellValue(firstColumn.Index), employee.FirstName, StringComparison.CurrentCultureIgnoreCase)
-					&& (patronymicColumn == null || String.Equals(x.CellValue(patronymicColumn.Index), employee.Patronymic, StringComparison.CurrentCultureIgnoreCase))
-				).ToArray();
+				Func<SheetRow, bool> comparefio = delegate (SheetRow x) {
+					var fio = GetFIO(x);
+					return String.Equals(fio.LastName, employee.LastName, StringComparison.CurrentCultureIgnoreCase)
+						&& String.Equals(fio.FirstName, employee.FirstName, StringComparison.CurrentCultureIgnoreCase)
+						&& (fio.Patronymic == null || String.Equals(fio.Patronymic, employee.Patronymic, StringComparison.CurrentCultureIgnoreCase));
+				};
+				var found = list.Where(comparefio).ToArray();
 				found.First().Employees.Add(employee);
 				if(found.First().Employees.Count == 2)
 					CountMultiMatch++;
@@ -341,6 +345,28 @@ namespace workwear.ViewModels.Tools
 		{
 			if(e.PropertyName == nameof(ImportedColumn.DataType))
 				OnPropertyChanged(nameof(SensetiveStep3Button));
+		}
+
+		#endregion
+
+		#region Helpers
+
+		public FIO GetFIO(SheetRow row)
+		{
+			var fio = new FIO();
+			var lastnameColumn = GetColumn(DataType.LastName);
+			var firstNameColumn = GetColumn(DataType.FirstName);
+			var patronymicColumn = GetColumn(DataType.Patronymic);
+			var fioColumn = GetColumn(DataType.Fio);
+			if(fioColumn != null)
+				row.CellValue(fioColumn.Index).SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
+			if(lastnameColumn != null)
+				fio.LastName = row.CellValue(lastnameColumn.Index);
+			if(firstNameColumn != null)
+				fio.FirstName = row.CellValue(firstNameColumn.Index);
+			if(patronymicColumn != null)
+				fio.Patronymic = row.CellValue(patronymicColumn.Index);
+			return fio;
 		}
 
 		#endregion
