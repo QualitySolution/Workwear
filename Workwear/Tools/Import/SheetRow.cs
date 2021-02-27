@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NPOI.SS.UserModel;
 using workwear.Domain.Company;
 
@@ -30,11 +31,18 @@ namespace workwear.Tools.Import
 			return null;
 		}
 
+		public string CellBackgroundColor(int col)
+		{
+			return ChangedColumns.Any(x => x.Index == col) ? "Pale Green" : null;
+		}
+
 		#region Сопоставление с сотрудниками
 
 		public List<EmployeeCard> Employees = new List<EmployeeCard>();
 
 		public bool Skiped;
+
+		public List<ImportedColumn> ChangedColumns = new List<ImportedColumn>();
 
 		#endregion
 	}

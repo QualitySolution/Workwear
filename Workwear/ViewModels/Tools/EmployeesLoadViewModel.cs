@@ -122,6 +122,24 @@ namespace workwear.ViewModels.Tools
 			get => countMultiMatch;
 			set => SetField(ref countMultiMatch, value);
 		}
+
+		private int countNewEmployees;
+		public virtual int CountNewEmployees {
+			get => countNewEmployees;
+			set => SetField(ref countNewEmployees, value);
+		}
+
+		private int countChangedEmployees;
+		public virtual int CountChangedEmployees {
+			get => countChangedEmployees;
+			set => SetField(ref countChangedEmployees, value);
+		}
+
+		private int countNoChangesEmployees;
+		public virtual int CountNoChangesEmployees {
+			get => countNoChangesEmployees;
+			set => SetField(ref countNoChangesEmployees, value);
+		}
 		#endregion
 
 		public void ReadEmployees()
@@ -131,6 +149,8 @@ namespace workwear.ViewModels.Tools
 				MatchByNumber();
 			else
 				MatchByName();
+
+			FindChanges();
 		}
 
 		private void MatchByName()
@@ -193,6 +213,29 @@ namespace workwear.ViewModels.Tools
 					toSkip.Skiped = true;
 					CountSkipRows++;
 				}
+			}
+		}
+
+		private void FindChanges()
+		{
+			var meaningfulColumns = Columns.Where(x => x.DataType != DataType.Unknown).ToArray();
+			foreach(var row in DisplayRows) {
+				if(row.Skiped)
+					continue;
+				if(!row.Employees.Any()) {
+					CountNewEmployees++;
+					row.ChangedColumns.AddRange(meaningfulColumns);
+					continue;
+				}
+				var employee = row.Employees.First();
+				foreach(var column in meaningfulColumns) {
+					if(dataParser.IsDiff(employee, column.DataType, row.CellValue(column.Index)))
+						row.ChangedColumns.Add(column);
+				}
+				if(row.ChangedColumns.Any())
+					CountChangedEmployees++;
+				else
+					CountNoChangesEmployees++;
 			}
 		}
 

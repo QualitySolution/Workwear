@@ -51,6 +51,9 @@ namespace workwear.Views.Tools
 			#endregion
 			#region Шаг 3
 			var converter = new NumbersToStringConverter();
+			labelCountNewEmployees.Binding.AddBinding(viewModel, v => v.CountNewEmployees, w => w.LabelProp, converter).InitializeFromSource();
+			labelCountChangedEmployees.Binding.AddBinding(viewModel, v => v.CountChangedEmployees, w => w.LabelProp, converter).InitializeFromSource();
+			labelCountNoChangesEmployees.Binding.AddBinding(viewModel, v => v.CountNoChangesEmployees, w => w.LabelProp, converter).InitializeFromSource();
 			labelCountMultiMatch.Binding.AddBinding(viewModel, v => v.CountMultiMatch, w => w.LabelProp, converter).InitializeFromSource();
 			labelCountSkipRows.Binding.AddBinding(viewModel, v => v.CountSkipRows, w => w.LabelProp, converter).InitializeFromSource();
 			#endregion
@@ -76,7 +79,8 @@ namespace workwear.Views.Tools
 			for(int i = 0; i < ViewModel.Columns.Count; i++) {
 				int col = i;
 				config.AddColumn(ViewModel.Columns[i].Title).HeaderAlignment(0.5f).Resizable()
-					.AddTextRenderer(x => x.CellValue(col));
+					.AddTextRenderer(x => x.CellValue(col))
+					.AddSetter((c, x) => c.Background = x.CellBackgroundColor(col));
 			}
 			config.AddColumn(String.Empty);
 

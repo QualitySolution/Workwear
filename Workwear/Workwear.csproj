@@ -494,6 +494,7 @@
     <Compile Include="Tools\Import\SheetRow.cs" />
     <Compile Include="Tools\Import\DataParser.cs" />
     <Compile Include="Tools\IdentityCards\ICardReaderService.cs" />
+    <Compile Include="Tools\Import\DataType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
