@@ -20,7 +20,7 @@ namespace workwear.Views.Regulations
 			entryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 
 			entryCode.ValidationMode = QS.Widgets.ValidationType.Numeric;
-			entryCode.Binding.AddBinding(Entity, e => e.Code, w => w.Text, new UintToStringConverter()).InitializeFromSource();
+			entryCode.Binding.AddBinding(Entity, e => e.Code, w => w.Text, new NumbersToStringConverter()).InitializeFromSource();
 		}
 	}
 }
