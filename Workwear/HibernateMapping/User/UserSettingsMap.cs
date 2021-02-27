@@ -1,7 +1,7 @@
 ﻿using FluentNHibernate.Mapping;
 using workwear.Domain.Users;
 
-namespace Vodovoz.HibernateMapping
+namespace workwear.HibernateMapping.User
 {
 	public class UserSettingsMap : ClassMap<UserSettings>
 	{
