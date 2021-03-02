@@ -13746,6 +13746,56 @@
                           <placeholder />
                         </child>
                         <child>
+                          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkSaveChangedEmployees">
+                            <property name="MemberName" />
+                            <property name="CanFocus">True</property>
+                            <property name="Label" translatable="yes">Сохранить</property>
+                            <property name="Active">True</property>
+                            <property name="DrawIndicator">True</property>
+                            <property name="HasLabel">True</property>
+                            <property name="UseUnderline">True</property>
+                          </widget>
+                          <packing>
+                            <property name="TopAttach">1</property>
+                            <property name="BottomAttach">2</property>
+                            <property name="LeftAttach">2</property>
+                            <property name="RightAttach">3</property>
+                            <property name="AutoSize">True</property>
+                            <property name="XOptions">Fill</property>
+                            <property name="YOptions">Fill</property>
+                            <property name="XExpand">False</property>
+                            <property name="XFill">True</property>
+                            <property name="XShrink">False</property>
+                            <property name="YExpand">False</property>
+                            <property name="YFill">True</property>
+                            <property name="YShrink">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkSaveNewEmployees">
+                            <property name="MemberName" />
+                            <property name="CanFocus">True</property>
+                            <property name="Label" translatable="yes">Сохранить</property>
+                            <property name="Active">True</property>
+                            <property name="DrawIndicator">True</property>
+                            <property name="HasLabel">True</property>
+                            <property name="UseUnderline">True</property>
+                          </widget>
+                          <packing>
+                            <property name="LeftAttach">2</property>
+                            <property name="RightAttach">3</property>
+                            <property name="AutoSize">True</property>
+                            <property name="XOptions">Fill</property>
+                            <property name="YOptions">Fill</property>
+                            <property name="XExpand">False</property>
+                            <property name="XFill">True</property>
+                            <property name="XShrink">False</property>
+                            <property name="YExpand">False</property>
+                            <property name="YFill">True</property>
+                            <property name="YShrink">False</property>
+                          </packing>
+                        </child>
+                        <child>
                           <widget class="Gtk.Label" id="label5">
                             <property name="MemberName" />
                             <property name="Xalign">1</property>
@@ -13869,56 +13919,6 @@
                           </packing>
                         </child>
                         <child>
-                          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbutton1">
-                            <property name="MemberName" />
-                            <property name="CanFocus">True</property>
-                            <property name="Label" translatable="yes">Сохранить</property>
-                            <property name="Active">True</property>
-                            <property name="DrawIndicator">True</property>
-                            <property name="HasLabel">True</property>
-                            <property name="UseUnderline">True</property>
-                          </widget>
-                          <packing>
-                            <property name="LeftAttach">2</property>
-                            <property name="RightAttach">3</property>
-                            <property name="AutoSize">True</property>
-                            <property name="XOptions">Fill</property>
-                            <property name="YOptions">Fill</property>
-                            <property name="XExpand">False</property>
-                            <property name="XFill">True</property>
-                            <property name="XShrink">False</property>
-                            <property name="YExpand">False</property>
-                            <property name="YFill">True</property>
-                            <property name="YShrink">False</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbutton2">
-                            <property name="MemberName" />
-                            <property name="CanFocus">True</property>
-                            <property name="Label" translatable="yes">Сохранить</property>
-                            <property name="Active">True</property>
-                            <property name="DrawIndicator">True</property>
-                            <property name="HasLabel">True</property>
-                            <property name="UseUnderline">True</property>
-                          </widget>
-                          <packing>
-                            <property name="TopAttach">1</property>
-                            <property name="BottomAttach">2</property>
-                            <property name="LeftAttach">2</property>
-                            <property name="RightAttach">3</property>
-                            <property name="AutoSize">True</property>
-                            <property name="XOptions">Fill</property>
-                            <property name="YOptions">Fill</property>
-                            <property name="XExpand">False</property>
-                            <property name="XFill">True</property>
-                            <property name="XShrink">False</property>
-                            <property name="YExpand">False</property>
-                            <property name="YFill">True</property>
-                            <property name="YShrink">False</property>
-                          </packing>
-                        </child>
-                        <child>
                           <widget class="Gamma.GtkWidgets.yLabel" id="ylabel10">
                             <property name="MemberName" />
                             <property name="Xalign">1</property>
@@ -14005,16 +14005,25 @@
                       </packing>
                     </child>
                     <child>
-                      <placeholder />
+                      <widget class="QS.Widgets.ProgressWidget" id="progressStep3">
+                        <property name="MemberName" />
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
                     </child>
                     <child>
-                      <widget class="Gamma.GtkWidgets.yButton" id="ybutton2">
+                      <widget class="Gamma.GtkWidgets.yButton" id="buttonSave">
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
                         <property name="Type">TextAndIcon</property>
                         <property name="Icon">stock:gtk-save Menu</property>
                         <property name="Label" translatable="yes">Сохранить</property>
                         <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonSaveClicked" />
                       </widget>
                       <packing>
                         <property name="Position">2</property>
@@ -14039,7 +14048,7 @@
             <child>
               <widget class="Gtk.Label" id="label4">
                 <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Обработка данных [Шаг 4]</property>
+                <property name="LabelProp" translatable="yes">Обработка данных [Шаг 3]</property>
               </widget>
               <packing>
                 <property name="type">tab</property>

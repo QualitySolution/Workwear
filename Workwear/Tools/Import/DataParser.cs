@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
 
@@ -73,6 +74,52 @@ namespace workwear.Tools.Import
 					bool firstDiff = !String.IsNullOrEmpty(firstName) && !String.Equals(employee.FirstName, value, StringComparison.CurrentCultureIgnoreCase);
 					bool patronymicDiff = !String.IsNullOrEmpty(patronymic) && !String.Equals(employee.Patronymic, value, StringComparison.CurrentCultureIgnoreCase);
 					return lastDiff || firstDiff || patronymicDiff;
+				default:
+					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
+			}
+		}
+
+		public EmployeeCard PrepareToSave(SheetRow row)
+		{
+			var employee = row.Employees.FirstOrDefault() ?? new EmployeeCard();
+			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
+			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученой из общего поля ФИО.
+			foreach(var column in row.ChangedColumns.OrderBy(x => x.DataType)) {
+				SetValue(employee, column.DataType, row.CellValue(column.Index));
+			}
+			return employee;
+		}
+
+		private void SetValue(EmployeeCard employee, DataType dataType, string value)
+		{
+			if(String.IsNullOrWhiteSpace(value))
+				return;
+
+			switch(dataType) {
+				case DataType.CardKey:
+					employee.CardKey = value;
+					break;
+				case DataType.PersonnelNumber:
+					employee.PersonnelNumber = value;
+					break;
+				case DataType.LastName:
+					employee.LastName = value;
+					break;
+				case DataType.FirstName:
+					employee.FirstName = value;
+					break;
+				case DataType.Patronymic:
+					employee.Patronymic = value;
+					break;
+				case DataType.Fio:
+					value.SplitFullName(out string lastName, out string firstName, out string patronymic);
+					if(!String.IsNullOrEmpty(lastName) && !String.Equals(employee.LastName, value, StringComparison.CurrentCultureIgnoreCase))
+						employee.LastName = lastName;
+					if(!String.IsNullOrEmpty(firstName) && !String.Equals(employee.FirstName, value, StringComparison.CurrentCultureIgnoreCase))
+						employee.FirstName = firstName;
+					if(!String.IsNullOrEmpty(patronymic) && !String.Equals(employee.Patronymic, value, StringComparison.CurrentCultureIgnoreCase))
+						employee.Patronymic = patronymic;
+					break;
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
 			}

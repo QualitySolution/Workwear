@@ -143,6 +143,28 @@ namespace workwear.ViewModels.Tools
 		}
 		#endregion
 
+		#region Свойства View
+		public IProgressBarDisplayable ProgressStep3;
+
+		public bool SensetiveSaveButton => SaveNewEmployees || SaveChangedEmployees;
+		#endregion
+
+		#region Настройки
+		private bool saveNewEmployees;
+		[PropertyChangedAlso(nameof(SensetiveSaveButton))]
+		public virtual bool SaveNewEmployees {
+			get => saveNewEmployees;
+			set => SetField(ref saveNewEmployees, value);
+		}
+
+		private bool saveChangedEmployees;
+		[PropertyChangedAlso(nameof(SensetiveSaveButton))]
+		public virtual bool SaveChangedEmployees {
+			get => saveChangedEmployees;
+			set => SetField(ref saveChangedEmployees, value);
+		}
+		#endregion
+
 		public void ReadEmployees()
 		{
 			CurrentStep = 2;
@@ -241,6 +263,29 @@ namespace workwear.ViewModels.Tools
 				else
 					CountNoChangesEmployees++;
 			}
+		}
+
+		public new void Save()
+		{
+			int i = 0;
+			var toSave = DisplayRows.Where(x => (SaveNewEmployees && !x.Employees.Any()) 
+					|| (SaveChangedEmployees && x.Employees.Any() && x.ChangedColumns.Any()))
+				.ToList();
+			logger.Info($"Новых: {toSave.Count(x => !x.Employees.Any())} Измененых: {toSave.Count(x => x.Employees.Any())} Всего: {toSave.Count}");
+			ProgressStep3.Start(toSave.Count);
+			foreach(var row in toSave) {
+				var employee = dataParser.PrepareToSave(row);
+				UoW.Save(employee);
+				i++;
+				if(i % 50 == 0) {
+					UoW.Commit();
+					Console.Write($"\r\tСохранили {i} [{(float)i / toSave.Count:P}]... ");
+				}
+				ProgressStep3.Add();
+			}
+			UoW.Commit();
+			ProgressStep3.Close();
+			Close(false, CloseSource.Save);
 		}
 
 		#endregion

@@ -56,6 +56,11 @@ namespace workwear.Views.Tools
 			labelCountNoChangesEmployees.Binding.AddBinding(viewModel, v => v.CountNoChangesEmployees, w => w.LabelProp, converter).InitializeFromSource();
 			labelCountMultiMatch.Binding.AddBinding(viewModel, v => v.CountMultiMatch, w => w.LabelProp, converter).InitializeFromSource();
 			labelCountSkipRows.Binding.AddBinding(viewModel, v => v.CountSkipRows, w => w.LabelProp, converter).InitializeFromSource();
+
+			buttonSave.Binding.AddBinding(ViewModel, v => v.SensetiveSaveButton, w => w.Sensitive).InitializeFromSource();
+			checkSaveNewEmployees.Binding.AddBinding(ViewModel, v => v.SaveNewEmployees, w => w.Active).InitializeFromSource();
+			checkSaveChangedEmployees.Binding.AddBinding(ViewModel, v => v.SaveChangedEmployees, w => w.Active).InitializeFromSource();
+			ViewModel.ProgressStep3 = progressStep3;
 			#endregion
 		}
 
@@ -116,6 +121,11 @@ namespace workwear.Views.Tools
 		protected void OnButtonReadEmployeesClicked(object sender, EventArgs e)
 		{
 			ViewModel.ReadEmployees();
+		}
+
+		protected void OnButtonSaveClicked(object sender, EventArgs e)
+		{
+			ViewModel.Save();
 		}
 	}
 }
