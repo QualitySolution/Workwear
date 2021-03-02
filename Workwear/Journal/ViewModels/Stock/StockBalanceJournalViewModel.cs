@@ -129,6 +129,9 @@ namespace workwear.Journal.ViewModels.Stock
 			   .Select(projection).WithAlias(() => resultAlias.Amount)
 				)
 				.OrderBy(() => nomenclatureAlias.Name).Asc
+				.ThenBy(Projections.SqlFunction(
+					new SQLFunctionTemplate(NHibernateUtil.String, "CAST(SUBSTRING_INDEX(?1, '-', 1) AS DOUBLE)"), NHibernateUtil.String, Projections.Property(() => warehouseOperationAlias.Size))).Asc
+				.ThenBy(() => warehouseOperationAlias.Growth).Asc
 				.TransformUsing(Transformers.AliasToBean<StockBalanceJournalNode>());
 		}
 	}
