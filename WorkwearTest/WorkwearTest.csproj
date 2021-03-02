@@ -102,6 +102,9 @@
     <None Include="Integration\Reports\NoDBTestReport.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="cardkey_list.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigureOneTime.cs" />
@@ -124,6 +127,7 @@
     <Compile Include="Integration\Organization\EmployeeCardIntegratedTest.cs" />
     <Compile Include="Integration\Stock\WriteoffEmployeeIntegratedTest.cs" />
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
+    <Compile Include="Integration\Tools\EmployeesLoadViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.Testing\QS.Testing.csproj">

@@ -43,11 +43,11 @@ namespace workwear.Views.Tools
 				.AddBinding(v => v.Sheets, w => w.ItemsList)
 				.AddBinding(v => v.SelectedSheet, w => w.SelectedItem);
 
-			buttonLoad.Binding.AddBinding(viewModel, v => v.SensetiveLoadButton, w => w.Sensitive).InitializeFromSource();
+			buttonLoad.Binding.AddBinding(viewModel, v => v.SensetiveSecondStepButton, w => w.Sensitive).InitializeFromSource();
 			#endregion
 			#region Шаг 2
 			spinTitleRow.Binding.AddBinding(viewModel, v => v.HeaderRow, w => w.ValueAsInt).InitializeFromSource();
-			buttonReadEmployees.Binding.AddBinding(viewModel, v => v.SensetiveStep3Button, w => w.Sensitive).InitializeFromSource();
+			buttonReadEmployees.Binding.AddBinding(viewModel, v => v.SensetiveThirdStepButton, w => w.Sensitive).InitializeFromSource();
 			#endregion
 			#region Шаг 3
 			var converter = new NumbersToStringConverter();
@@ -120,7 +120,7 @@ namespace workwear.Views.Tools
 
 		protected void OnButtonReadEmployeesClicked(object sender, EventArgs e)
 		{
-			ViewModel.ReadEmployees();
+			ViewModel.ThirdStep();
 		}
 
 		protected void OnButtonSaveClicked(object sender, EventArgs e)

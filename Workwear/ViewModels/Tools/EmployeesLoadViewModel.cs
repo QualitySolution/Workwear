@@ -42,7 +42,7 @@ namespace workwear.ViewModels.Tools
 
 		#region Шаг 1
 
-		public bool SensetiveLoadButton => SelectedSheet != null;
+		public bool SensetiveSecondStepButton => SelectedSheet != null;
 
 		private string fileName;
 		private readonly IInteractiveMessage interactiveMessage;
@@ -59,7 +59,7 @@ namespace workwear.ViewModels.Tools
 
 		public List<ImportedSheet> Sheets { get; set; } = new List<ImportedSheet>();
 		private ImportedSheet selectedSheet;
-		[PropertyChangedAlso(nameof(SensetiveLoadButton))]
+		[PropertyChangedAlso(nameof(SensetiveSecondStepButton))]
 		public virtual ImportedSheet SelectedSheet {
 			get => selectedSheet;
 			set => SetField(ref selectedSheet, value);
@@ -105,7 +105,7 @@ namespace workwear.ViewModels.Tools
 
 		public List<SheetRow> DisplayRows => XlsRows.Skip(HeaderRow).ToList();
 
-		public bool SensetiveStep3Button => Columns.Any(x => x.DataType == DataType.Fio) 
+		public bool SensetiveThirdStepButton => Columns.Any(x => x.DataType == DataType.Fio) 
 			|| (Columns.Any(x => x.DataType == DataType.LastName) && Columns.Any(x => x.DataType == DataType.FirstName));
 
 		#endregion
@@ -165,7 +165,7 @@ namespace workwear.ViewModels.Tools
 		}
 		#endregion
 
-		public void ReadEmployees()
+		public void ThirdStep()
 		{
 			CurrentStep = 2;
 			if(Columns.Any(x => x.DataType == DataType.PersonnelNumber))
@@ -389,7 +389,7 @@ namespace workwear.ViewModels.Tools
 		void Column_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == nameof(ImportedColumn.DataType))
-				OnPropertyChanged(nameof(SensetiveStep3Button));
+				OnPropertyChanged(nameof(SensetiveThirdStepButton));
 		}
 
 		#endregion
