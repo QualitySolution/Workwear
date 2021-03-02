@@ -14,6 +14,8 @@ namespace workwear.Tools.Import
 		FirstName,
 		[Display(Name = "Отчество")]
 		Patronymic,
+		[Display(Name = "Пол")]
+		Sex,
 		[Display(Name = "Табельный номер")]
 		PersonnelNumber,
 		[Display(Name = "UID карты")]

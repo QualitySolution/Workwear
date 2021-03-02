@@ -39,6 +39,11 @@ namespace workwear.Tools.Import
 				"Patronymic name",
 				"Отчество"
 				);
+			AddColumnName(DataType.Sex,
+				"Sex",
+				"Gender",
+				"Пол"
+				);
 			AddColumnName(DataType.PersonnelNumber,
 				"TN",
 				"Табельный номер"
@@ -68,6 +73,13 @@ namespace workwear.Tools.Import
 					return !String.Equals(employee.FirstName, value, StringComparison.CurrentCultureIgnoreCase);
 				case DataType.Patronymic:
 					return !String.Equals(employee.Patronymic, value, StringComparison.CurrentCultureIgnoreCase);
+				case DataType.Sex:
+					//Первая М английская, вторая русская.
+					if(value.StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("М", StringComparison.CurrentCultureIgnoreCase))
+						return employee.Sex != Sex.M;
+					if(value.StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase))
+						return employee.Sex != Sex.F;
+					return false;
 				case DataType.Fio:
 					value.SplitFullName(out string lastName, out string firstName, out string patronymic);
 					bool lastDiff = !String.IsNullOrEmpty(lastName) && !String.Equals(employee.LastName, value, StringComparison.CurrentCultureIgnoreCase);
@@ -110,6 +122,13 @@ namespace workwear.Tools.Import
 					break;
 				case DataType.Patronymic:
 					employee.Patronymic = value;
+					break;
+				case DataType.Sex:
+					//Первая М английская, вторая русская.
+					if(value.StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("М", StringComparison.CurrentCultureIgnoreCase))
+						employee.Sex = Sex.M;
+					if(value.StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase))
+						employee.Sex = Sex.F;
 					break;
 				case DataType.Fio:
 					value.SplitFullName(out string lastName, out string firstName, out string patronymic);
