@@ -150,14 +150,14 @@ namespace workwear.ViewModels.Tools
 		#endregion
 
 		#region Настройки
-		private bool saveNewEmployees;
+		private bool saveNewEmployees = true;
 		[PropertyChangedAlso(nameof(SensetiveSaveButton))]
 		public virtual bool SaveNewEmployees {
 			get => saveNewEmployees;
 			set => SetField(ref saveNewEmployees, value);
 		}
 
-		private bool saveChangedEmployees;
+		private bool saveChangedEmployees = true;
 		[PropertyChangedAlso(nameof(SensetiveSaveButton))]
 		public virtual bool SaveChangedEmployees {
 			get => saveChangedEmployees;
