@@ -215,6 +215,7 @@
     <EmbeddedResource Include="Updates\2.5.sql" />
     <EmbeddedResource Include="icon\toolbar\smart-card.png" />
     <EmbeddedResource Include="icon\buttons\smart-card.png" />
+    <EmbeddedResource Include="icon\art\hand-holding-rfid.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -496,6 +497,7 @@
     <Compile Include="Tools\IdentityCards\ICardReaderService.cs" />
     <Compile Include="Tools\Import\DataType.cs" />
     <Compile Include="Tools\Import\FIO.cs" />
+    <Compile Include="Tools\IdentityCards\VirtualCardReaderService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

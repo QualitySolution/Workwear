@@ -11,6 +11,7 @@ namespace workwear.Views.Stock
 		public IssueByIdentifierView(IssueByIdentifierViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
+			#region Считыватель
 			ylabelStatus.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.CurrentState, w => w.LabelProp)
 				.InitializeFromSource();
@@ -29,6 +30,13 @@ namespace workwear.Views.Stock
 				.AddColumn("Тип карты").AddTextRenderer(x => x.Title)
 				.Finish();
 			ytreeviewCardTypes.ItemsDataSource = ViewModel.CardFamilies;
+			#endregion
+			#region Выдача
+			labelFIO.Binding.AddFuncBinding(ViewModel, v => $"<span foreground=\"Dark Green\" size=\"28000\">{v.EmployeeFullName}</span>", w => w.LabelProp).InitializeFromSource();
+
+			labelRecommendedActions.Binding.AddFuncBinding(ViewModel, v => $"<span foreground=\"blue\" size=\"28000\">{v.RecommendedActions}</span>", w => w.LabelProp).InitializeFromSource();
+			hboxRecommendedActions.Binding.AddBinding(ViewModel, v => v.VisibleRecommendedActions, w => w.Visible).InitializeFromSource();
+			#endregion
 
 			viewModel.PropertyChanged += ViewModel_PropertyChanged;
 

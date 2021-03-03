@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Utilities.Text;
@@ -33,6 +34,9 @@ namespace workwear.ViewModels.Stock
 			CardFamilies.ListChanged += CardFamilies_ListChanged;
 		}
 
+
+		#region Считыватель
+		#region События
 		void CardFamilies_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			if(cardReaderService != null && SelectedDevice != null)
@@ -49,6 +53,7 @@ namespace workwear.ViewModels.Stock
 				UpdateState();
 			});
 		}
+		#endregion
 
 		#region Свойства View
 		private string currentState;
@@ -76,6 +81,7 @@ namespace workwear.ViewModels.Stock
 		}
 
 		private bool noCard;
+		[PropertyChangedAlso(nameof(VisibleRecommendedActions))]
 		public virtual bool NoCard {
 			get => noCard;
 			set => SetField(ref noCard, value);
@@ -163,8 +169,21 @@ namespace workwear.ViewModels.Stock
 
 			cardReaderService.StartDevice(SelectedDevice);
 			cardReaderService.StartAutoPoll(SelectedDevice);
+			OnPropertyChanged(nameof(VisibleRecommendedActions));
 		}
 
+		#endregion
+		#endregion
+		#region Выдача
+		private string employeeFullName;
+		public virtual string EmployeeFullName {
+			get => employeeFullName;
+			set => SetField(ref employeeFullName, value);
+		}
+
+		public bool VisibleRecommendedActions => cardReaderService?.IsAutoPoll == true && NoCard;
+
+		public string RecommendedActions => "Приложите карту для идентификации сотрудника";
 		#endregion
 	}
 }
