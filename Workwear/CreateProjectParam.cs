@@ -209,7 +209,11 @@ namespace workwear
 
 			#region Работа со считывателями
 			if(QSProjectsLib.WindowStartupFix.IsWindows)//FIXME Было лень реализовывать загрузку библиотеки под линукс.
-				builder.RegisterType<RusGuardService>().AsSelf();
+				builder.RegisterType<RusGuardService>().As<ICardReaderService>();
+		#if DEBUG
+			else
+				builder.RegisterType<VirtualCardReaderService>().As<ICardReaderService>();
+		#endif
 			#endregion
 
 			#region Импрорт данных
