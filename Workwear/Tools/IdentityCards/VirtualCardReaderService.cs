@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Timers;
+using QS.DomainModel.UoW;
 using RglibInterop;
+using workwear.Domain.Company;
 
 namespace workwear.Tools.IdentityCards
 {
 	public class VirtualCardReaderService : ICardReaderService
 	{
-		public VirtualCardReaderService()
+		private readonly IUnitOfWorkFactory unitOfWorkFactory;
+
+		public VirtualCardReaderService(IUnitOfWorkFactory unitOfWorkFactory)
 		{
+			this.unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
 		}
 
 		public List<DeviceInfo> Devices { get; private set; }
@@ -18,7 +24,7 @@ namespace workwear.Tools.IdentityCards
 			var device1 = new DeviceInfo(
 				new RglibInterop.RG_ENDPOINT_INFO {
 					Address = "0000000",
-					FriendlyName = "Виртуальный картридер",
+					FriendlyName = "Случайные карты",
 					PortType = RglibInterop.RG_ENDPOINT_TYPE.PT_USBHID
 				},
 				new RglibInterop.RG_DEVICE_INFO_SHORT {
@@ -26,7 +32,18 @@ namespace workwear.Tools.IdentityCards
 				}
 			);
 
-			Devices = new List<DeviceInfo> { device1 };
+			var device2 = new DeviceInfo(
+				new RglibInterop.RG_ENDPOINT_INFO {
+					Address = "0000001",
+					FriendlyName = "Сотрудники из базы",
+					PortType = RglibInterop.RG_ENDPOINT_TYPE.PT_USBHID
+				},
+				new RglibInterop.RG_DEVICE_INFO_SHORT {
+					DeviceAddress = 1,
+				}
+			);
+
+			Devices = new List<DeviceInfo> { device1, device2 };
 		}
 
 		public void SetCardMask(DeviceInfo device, IList<CardType> cardTypes)
@@ -36,8 +53,17 @@ namespace workwear.Tools.IdentityCards
 
 		public void StartDevice(DeviceInfo device)
 		{
-
+			if(device.DeviceInfoShort.DeviceAddress == 1) {
+				using(var uow = unitOfWorkFactory.CreateWithoutRoot()) {
+					Uids = uow.Session.QueryOver<EmployeeCard>()
+						.Where(x => x.CardKey != null)
+						.Select(x => x.CardKey)
+						.List<string>();
+				}
+			}
 		}
+
+		private IList<string> Uids;
 
 		#region Авто опрос
 		public event EventHandler<CardStateEventArgs> СardStatusRead;
@@ -79,7 +105,15 @@ namespace workwear.Tools.IdentityCards
 			if(ticksLeft <= 0) {
 				if(stateNoCard) {
 					stateNoCard = false;
-					random.NextBytes(lastUid);
+					if(AutoPullDevice.DeviceInfoShort.DeviceAddress == 0)
+						random.NextBytes(lastUid);
+					else if(AutoPullDevice.DeviceInfoShort.DeviceAddress == 1) {
+						var strUid = Uids[random.Next(Uids.Count)];
+						lastUid = Enumerable.Range(0, strUid.Length)
+					 		.Where(x => x % 2 == 0)
+					 		.Select(x => Convert.ToByte(strUid.Substring(x, 2), 16))
+					 		.ToArray();
+					}
 					ticksLeft = 10;
 				}
 				else {
