@@ -9,21 +9,25 @@ using QS.Navigation;
 using QS.Utilities.Text;
 using QS.ViewModels.Dialog;
 using RglibInterop;
+using workwear.Domain.Company;
 using workwear.Tools.IdentityCards;
 
 namespace workwear.ViewModels.Stock
 {
 	public class IssueByIdentifierViewModel : WindowDialogViewModelBase
 	{
+		private readonly IUnitOfWorkFactory unitOfWorkFactory;
 		private readonly IGuiDispatcher guiDispatcher;
 		private readonly ICardReaderService cardReaderService;
 		private TextSpinner textSpinner = new TextSpinner(new SpinnerTemplateDots());
 
 		public IssueByIdentifierViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IGuiDispatcher guiDispatcher, ICardReaderService cardReaderService = null) : base(navigation)
 		{
+			this.unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
 			this.guiDispatcher = guiDispatcher ?? throw new ArgumentNullException(nameof(guiDispatcher));
 			this.cardReaderService = cardReaderService;
 			IsModal = false;
+			EnableMinimizeMaximize = true;
 			Title = "Выдача по картам СКУД";
 			if(cardReaderService != null) {
 				cardReaderService.RefreshDevices();
@@ -75,12 +79,21 @@ namespace workwear.ViewModels.Stock
 		}
 
 		private string cardUid;
+		[PropertyChangedAlso(nameof(RecommendedActions))]
+		[PropertyChangedAlso(nameof(VisibleRecommendedActions))]
 		public virtual string CardUid {
 			get => cardUid;
-			set => SetField(ref cardUid, value);
+			set {
+				if(SetField(ref cardUid, value)) {
+					TimeOfSetUid = DateTime.Now;
+					NewCardUid();
+					OnPropertyChanged(nameof(EmployeeFullName));
+				}
+			}
 		}
 
 		private bool noCard;
+		[PropertyChangedAlso(nameof(RecommendedActions))]
 		[PropertyChangedAlso(nameof(VisibleRecommendedActions))]
 		public virtual bool NoCard {
 			get => noCard;
@@ -175,15 +188,93 @@ namespace workwear.ViewModels.Stock
 		#endregion
 		#endregion
 		#region Выдача
-		private string employeeFullName;
+		private DateTime TimeOfSetUid;
+		private IUnitOfWork uow;
+
 		public virtual string EmployeeFullName {
-			get => employeeFullName;
-			set => SetField(ref employeeFullName, value);
+			get => Employee?.FullName ?? (String.IsNullOrEmpty(CardUid) ? null : $"Сотрудник с картой: {CardUid} не найден");
 		}
 
-		public bool VisibleRecommendedActions => cardReaderService?.IsAutoPoll == true && NoCard;
+		private bool canAccept;
+		public virtual bool CanAccept {
+			get => canAccept;
+			set => SetField(ref canAccept, value);
+		}
 
-		public string RecommendedActions => "Приложите карту для идентификации сотрудника";
+		public bool VisibleCancelButton => Employee != null;
+		public bool VisibleRecommendedActions => cardReaderService?.IsAutoPoll == true && !String.IsNullOrEmpty(RecommendedActions);
+
+		public string RecommendedActions {
+			get {
+				if(NoCard && Employee == null)
+					return "Приложите карту для идентификации сотрудника";
+				if(NoCard && CanAccept)
+					return "Приложите карту для подтверждения выдачи";
+				if(!String.IsNullOrEmpty(CardUid) && Employee != null)
+					return 	(DateTime.Now - TimeOfSetUid).TotalSeconds < 3 
+					? "Уберите карту и проверьте список выдаваемого"
+					: "Уберите карту";
+				
+				return String.Empty;
+			}
+		}
+
+		private EmployeeCard employee;
+		[PropertyChangedAlso(nameof(EmployeeFullName))]
+		[PropertyChangedAlso(nameof(VisibleCancelButton))]
+		public virtual EmployeeCard Employee {
+			get => employee;
+			set => SetField(ref employee, value);
+		}
+
+		#region Вызовы View
+
+		public void CleanEmployee()
+		{
+			Employee = null;
+			if(uow != null) {
+				uow.Dispose();
+				uow = null;
+			}
+		}
+
+		#endregion
+
+		#region Внутрение Методы
+
+		private void NewCardUid()
+		{
+			if(String.IsNullOrEmpty(CardUid))
+				return;
+
+			if(Employee == null) {
+				LoadEmployee();
+			}
+			else {
+				if(CanAccept)
+					AcceptIssue();
+			}
+		}
+
+		private void LoadEmployee()
+		{
+			var cardUidstr = CardUid.Replace("-", "");
+			uow = unitOfWorkFactory.CreateWithoutRoot();
+			Employee = uow.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.CardKey == cardUidstr)
+				.Take(1)
+				.SingleOrDefault();
+			if(Employee == null) {
+				uow.Dispose();
+				uow = null;
+			}
+		}
+
+		private void AcceptIssue()
+		{
+		}
+
+		#endregion
 		#endregion
 	}
 }

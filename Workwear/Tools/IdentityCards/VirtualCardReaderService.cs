@@ -109,10 +109,7 @@ namespace workwear.Tools.IdentityCards
 						random.NextBytes(lastUid);
 					else if(AutoPullDevice.DeviceInfoShort.DeviceAddress == 1) {
 						var strUid = Uids[random.Next(Uids.Count)];
-						lastUid = Enumerable.Range(0, strUid.Length)
-					 		.Where(x => x % 2 == 0)
-					 		.Select(x => Convert.ToByte(strUid.Substring(x, 2), 16))
-					 		.ToArray();
+						lastUid = RusGuardService.UidToBytes(strUid);
 					}
 					ticksLeft = 10;
 				}

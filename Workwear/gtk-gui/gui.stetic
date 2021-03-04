@@ -13329,10 +13329,39 @@
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
                 <child>
-                  <widget class="Gamma.GtkWidgets.yLabel" id="labelFIO">
+                  <widget class="Gamma.GtkWidgets.yHBox" id="yhbox1">
                     <property name="MemberName" />
-                    <property name="LabelProp" translatable="yes">ylabel1</property>
-                    <property name="UseMarkup">True</property>
+                    <property name="Spacing">6</property>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yLabel" id="labelFIO">
+                        <property name="MemberName" />
+                        <property name="LabelProp" translatable="yes">ylabel1</property>
+                        <property name="UseMarkup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yButton" id="buttonCancel">
+                        <property name="MemberName" />
+                        <property name="Tooltip" translatable="yes">Отменить выдачу сотруднику</property>
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextAndIcon</property>
+                        <property name="Icon">stock:gtk-cancel LargeToolbar</property>
+                        <property name="Label" translatable="yes" />
+                        <property name="UseUnderline">True</property>
+                        <property name="Relief">None</property>
+                        <signal name="Clicked" handler="OnButtonCancelClicked" />
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
                   </widget>
                   <packing>
                     <property name="Position">0</property>

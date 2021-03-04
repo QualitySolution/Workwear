@@ -32,6 +32,7 @@ namespace workwear.Views.Stock
 			ytreeviewCardTypes.ItemsDataSource = ViewModel.CardFamilies;
 			#endregion
 			#region Выдача
+			buttonCancel.Binding.AddBinding(ViewModel, v => v.VisibleCancelButton, w => w.Visible).InitializeFromSource();
 			labelFIO.Binding.AddFuncBinding(ViewModel, v => $"<span foreground=\"Dark Green\" size=\"28000\">{v.EmployeeFullName}</span>", w => w.LabelProp).InitializeFromSource();
 
 			labelRecommendedActions.Binding.AddFuncBinding(ViewModel, v => $"<span foreground=\"blue\" size=\"28000\">{v.RecommendedActions}</span>", w => w.LabelProp).InitializeFromSource();
@@ -44,8 +45,13 @@ namespace workwear.Views.Stock
 
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if(e.PropertyName == nameof( ViewModel.CurrentStateColor))
+			if(e.PropertyName == nameof(ViewModel.CurrentStateColor))
 				eventboxStatus.ModifyBg(Gtk.StateType.Normal, ColorUtil.Create(ViewModel.CurrentStateColor));
+		}
+
+		protected void OnButtonCancelClicked(object sender, EventArgs e)
+		{
+			ViewModel.CleanEmployee();
 		}
 	}
 }

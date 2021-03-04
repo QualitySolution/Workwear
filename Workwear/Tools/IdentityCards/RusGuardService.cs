@@ -148,5 +148,17 @@ namespace workwear.Tools.IdentityCards
 		}
 
 		#endregion
+
+		#region Helpers
+
+		public static byte[] UidToBytes(string uid)
+		{
+			return Enumerable.Range(0, uid.Length)
+					 		.Where(x => x % 2 == 0)
+					 		.Select(x => Convert.ToByte(uid.Substring(x, 2), 16))
+					 		.ToArray();
+		}
+
+		#endregion
 	}
 }
