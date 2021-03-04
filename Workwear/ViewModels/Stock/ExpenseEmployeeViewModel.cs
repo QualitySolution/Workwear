@@ -103,8 +103,6 @@ namespace workwear.ViewModels.Stock
 
 			Entity.Employee.FillWearInStockInfo(UoW, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
 
-			var r = Entity.Employee;
-			if (Entity.Employee.WorkwearItems.Count > 0)
 			foreach(var item in Entity.Employee.WorkwearItems) {
 				Entity.AddItem(item);
 			}
