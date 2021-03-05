@@ -19,7 +19,7 @@ namespace workwear.Views.Stock
 			ylabelStatus.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.CurrentState, w => w.LabelProp)
 				.InitializeFromSource();
-			eventboxStatus.ModifyBg(Gtk.StateType.Normal, ColorUtil.Create(ViewModel.CurrentStateColor));
+			eventboxStatus.Binding.AddBinding(ViewModel, v => v.CurrentStateColor, w => w.BackgroundColor).InitializeFromSource();
 
 			comboDevice.SetRenderTextFunc<DeviceInfo>(x => x.Title);
 			comboDevice.Binding.AddSource(viewModel)
@@ -48,7 +48,6 @@ namespace workwear.Views.Stock
 			treeItems.Binding.AddBinding(ViewModel, v => v.ObservableItems, w => w.ItemsDataSource).InitializeFromSource();
 			#endregion
 
-			viewModel.PropertyChanged += ViewModel_PropertyChanged;
 			CreateTable();
 		}
 
@@ -106,12 +105,6 @@ namespace workwear.Views.Stock
 		}
 		#endregion
 		#region Обработка событий
-		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(e.PropertyName == nameof(ViewModel.CurrentStateColor))
-				eventboxStatus.ModifyBg(Gtk.StateType.Normal, ColorUtil.Create(ViewModel.CurrentStateColor));
-		}
-
 		protected void OnButtonCancelClicked(object sender, EventArgs e)
 		{
 			ViewModel.CleanEmployee();

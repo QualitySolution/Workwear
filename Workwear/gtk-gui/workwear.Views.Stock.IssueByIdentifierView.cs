@@ -8,7 +8,7 @@ namespace workwear.Views.Stock
 
 		private global::Gtk.HBox hbox2;
 
-		private global::Gtk.EventBox eventboxStatus;
+		private global::Gamma.GtkWidgets.yEventBox eventboxStatus;
 
 		private global::Gamma.GtkWidgets.yLabel ylabelStatus;
 
@@ -65,7 +65,7 @@ namespace workwear.Views.Stock
 			this.hbox2.Name = "hbox2";
 			this.hbox2.Spacing = 6;
 			// Container child hbox2.Gtk.Box+BoxChild
-			this.eventboxStatus = new global::Gtk.EventBox();
+			this.eventboxStatus = new global::Gamma.GtkWidgets.yEventBox();
 			this.eventboxStatus.Name = "eventboxStatus";
 			// Container child eventboxStatus.Gtk.Container+ContainerChild
 			this.ylabelStatus = new global::Gamma.GtkWidgets.yLabel();

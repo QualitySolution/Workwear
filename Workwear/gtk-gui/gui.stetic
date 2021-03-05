@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -13282,7 +13282,7 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gtk.EventBox" id="eventboxStatus">
+              <widget class="Gamma.GtkWidgets.yEventBox" id="eventboxStatus">
                 <property name="MemberName" />
                 <child>
                   <widget class="Gamma.GtkWidgets.yLabel" id="ylabelStatus">
