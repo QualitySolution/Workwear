@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace workwear.Tools.IdentityCards
 {
-	public interface ICardReaderService
+	public interface ICardReaderService : IDisposable
 	{
 		event EventHandler<CardStateEventArgs> СardStatusRead;
 

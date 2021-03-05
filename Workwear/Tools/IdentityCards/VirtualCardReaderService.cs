@@ -139,6 +139,12 @@ namespace workwear.Tools.IdentityCards
 			AutoPollTimer.Enabled = false;
 		}
 
+		public void Dispose()
+		{
+			if(IsAutoPoll)
+				StopAutoPoll();
+		}
+
 		#endregion
 	}
 }

@@ -160,5 +160,12 @@ namespace workwear.Tools.IdentityCards
 		}
 
 		#endregion
+
+		protected override void Dispose(bool disposing)
+		{
+			if(IsAutoPoll)
+				StopAutoPoll();
+			base.Dispose(disposing);
+		}
 	}
 }
