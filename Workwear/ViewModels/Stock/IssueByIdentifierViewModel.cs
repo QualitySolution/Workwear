@@ -3,19 +3,23 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
+using System.Timers;
 using Autofac;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Services;
+using QS.Utilities;
 using QS.Utilities.Text;
+using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using RglibInterop;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository.Stock;
+using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
 
@@ -23,10 +27,14 @@ namespace workwear.ViewModels.Stock
 {
 	public class IssueByIdentifierViewModel : WindowDialogViewModelBase
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly IUnitOfWorkFactory unitOfWorkFactory;
 		private readonly IGuiDispatcher guiDispatcher;
 		private readonly IUserService userService;
 		private readonly ILifetimeScope autofacScope;
+		private readonly IValidator validator;
+		private readonly BaseParameters baseParameters;
+		private readonly IInteractiveQuestion interactive;
 		private readonly ICardReaderService cardReaderService;
 		private TextSpinner textSpinner = new TextSpinner(new SpinnerTemplateDots());
 		private readonly IUnitOfWork UowOfDialog;
@@ -39,12 +47,18 @@ namespace workwear.ViewModels.Stock
 			ILifetimeScope autofacScope,
 			StockRepository stockRepository,
 			FeaturesService featuresService,
+			IValidator validator,
+			BaseParameters baseParameters,
+			IInteractiveQuestion interactive,
 			ICardReaderService cardReaderService = null) : base(navigation)
 		{
 			this.unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
 			this.guiDispatcher = guiDispatcher ?? throw new ArgumentNullException(nameof(guiDispatcher));
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			this.validator = validator ?? throw new ArgumentNullException(nameof(validator));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.cardReaderService = cardReaderService;
 			IsModal = false;
 			EnableMinimizeMaximize = true;
@@ -63,6 +77,13 @@ namespace workwear.ViewModels.Stock
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 			Warehouse = stockRepository.GetDefaultWarehouse(UowOfDialog, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+
+			//Настройка таймера сброса
+			timerCleanSuccessfullyText = new Timer(40000);
+			timerCleanSuccessfullyText.AutoReset = false;
+			timerCleanSuccessfullyText.Elapsed += delegate (object sender, ElapsedEventArgs e) { 
+				guiDispatcher.RunInGuiTread(() => SuccessfullyText = null); 
+			};
 		}
 
 		#region Считыватель
@@ -238,14 +259,28 @@ namespace workwear.ViewModels.Stock
 
 		public virtual bool CanAccept => Expense.Items.Any(x => x.Amount > 0);
 
+		private bool canAcceptByTime => (DateTime.Now - LastRemoveCard).TotalSeconds > 3;
+
 		public bool VisibleCancelButton => Employee != null;
 		public bool VisibleRecommendedActions => cardReaderService?.IsAutoPoll == true && !String.IsNullOrEmpty(RecommendedActions);
+
+		private Timer timerCleanSuccessfullyText;
+		public bool VisibleSuccessfully => !String.IsNullOrEmpty(SuccessfullyText);
+
+		private string successfullyText;
+		[PropertyChangedAlso(nameof(VisibleSuccessfully))]
+		public virtual string SuccessfullyText {
+			get => successfullyText;
+			set {
+				if(SetField(ref successfullyText, value))
+					timerCleanSuccessfullyText.Enabled = !String.IsNullOrEmpty(successfullyText);
+			}
+		}
 
 		public string RecommendedActions {
 			get {
 				if(NoCard && Employee == null)
 					return "Приложите карту для идентификации сотрудника";
-				bool canAcceptByTime = (DateTime.Now - LastRemoveCard).TotalSeconds > 3;
 				if(NoCard && CanAccept && canAcceptByTime)
 					return "Приложите карту для подтверждения выдачи";
 				if(!String.IsNullOrEmpty(CardUid) && Employee != null) {
@@ -254,7 +289,9 @@ namespace workwear.ViewModels.Stock
 					else
 						return "Уберите карту и проверьте список выдаваемого";
 				}
-				
+				if(!String.IsNullOrEmpty(CardUid) && Employee == null)
+					return "Уберите карту";
+
 				return String.Empty;
 			}
 		}
@@ -297,13 +334,13 @@ namespace workwear.ViewModels.Stock
 			if(String.IsNullOrEmpty(CardUid))
 				return;
 
+			SuccessfullyText = null;
+
 			if(Employee == null) {
 				LoadEmployee();
 			}
-			else {
-				if(CanAccept)
-					AcceptIssue();
-			}
+			else if(CanAccept && canAcceptByTime && Employee.CardKey == CardUid.Replace("-", ""))
+				AcceptIssue();
 		}
 
 		private void LoadEmployee()
@@ -318,6 +355,7 @@ namespace workwear.ViewModels.Stock
 				uow.Dispose();
 				uow = null;
 			}
+			SuccessfullyText = null;
 		}
 
 		private void CreateExpenseDoc()
@@ -328,6 +366,7 @@ namespace workwear.ViewModels.Stock
 			Expense.CreatedbyUser = userService.GetCurrentUser(uow);
 			Expense.Operation = ExpenseOperations.Employee;
 			Expense.Employee = Employee;
+			Expense.Warehouse = Warehouse;
 			Expense.ObservableItems.Clear();
 
 			Employee.FillWearInStockInfo(uow, Warehouse, Expense.Date, onlyUnderreceived: false);
@@ -338,6 +377,28 @@ namespace workwear.ViewModels.Stock
 
 		private void AcceptIssue()
 		{
+			if(!validator.Validate(Expense))
+				return;
+
+			Expense.CleanupItems();
+			Expense.UpdateOperations(uow, baseParameters, interactive);
+			uow.Save(Expense);
+
+			logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
+			Expense.UpdateEmployeeWearItems();
+			uow.Commit();
+			logger.Info($"Записан документ выдачи №{Expense.Id} на {Employee.ShortName}");
+			SuccessfullyText = MakeConfirmText();
+			CleanEmployee();
+		}
+
+		private string MakeConfirmText()
+		{
+			var text = Expense.Employee.ShortName;
+			text += Expense.Employee.Sex == Sex.F ? " подтвердила " : " подтвердил ";
+			text += $"выдачу №{Expense.Id} в количестве ";
+			text += NumberToTextRus.FormatCase(Expense.Items.Sum(x => x.Amount), "{0} единицы", "{0} единиц", "{0} единиц");
+			return text;
 		}
 
 		#endregion

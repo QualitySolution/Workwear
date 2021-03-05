@@ -28,6 +28,10 @@ namespace workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yTreeView treeItems;
 
+		private global::Gamma.GtkWidgets.yEventBox eventboxSuccessfully;
+
+		private global::Gamma.GtkWidgets.yLabel labelSuccessfully;
+
 		private global::Gamma.GtkWidgets.yHBox hboxRecommendedActions;
 
 		private global::Gamma.GtkWidgets.yImage imageHand;
@@ -145,6 +149,20 @@ namespace workwear.Views.Stock
 			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.GtkScrolledWindow]));
 			w10.Position = 1;
 			// Container child vbox2.Gtk.Box+BoxChild
+			this.eventboxSuccessfully = new global::Gamma.GtkWidgets.yEventBox();
+			this.eventboxSuccessfully.Name = "eventboxSuccessfully";
+			// Container child eventboxSuccessfully.Gtk.Container+ContainerChild
+			this.labelSuccessfully = new global::Gamma.GtkWidgets.yLabel();
+			this.labelSuccessfully.Name = "labelSuccessfully";
+			this.labelSuccessfully.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel1");
+			this.labelSuccessfully.UseMarkup = true;
+			this.eventboxSuccessfully.Add(this.labelSuccessfully);
+			this.vbox2.Add(this.eventboxSuccessfully);
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.eventboxSuccessfully]));
+			w12.Position = 2;
+			w12.Expand = false;
+			w12.Fill = false;
+			// Container child vbox2.Gtk.Box+BoxChild
 			this.hboxRecommendedActions = new global::Gamma.GtkWidgets.yHBox();
 			this.hboxRecommendedActions.Name = "hboxRecommendedActions";
 			this.hboxRecommendedActions.Spacing = 6;
@@ -153,34 +171,34 @@ namespace workwear.Views.Stock
 			this.imageHand.Name = "imageHand";
 			this.imageHand.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.art.hand-holding-rfid.png");
 			this.hboxRecommendedActions.Add(this.imageHand);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hboxRecommendedActions[this.imageHand]));
-			w11.Position = 0;
-			w11.Expand = false;
-			w11.Fill = false;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hboxRecommendedActions[this.imageHand]));
+			w13.Position = 0;
+			w13.Expand = false;
+			w13.Fill = false;
 			// Container child hboxRecommendedActions.Gtk.Box+BoxChild
 			this.labelRecommendedActions = new global::Gamma.GtkWidgets.yLabel();
 			this.labelRecommendedActions.Name = "labelRecommendedActions";
 			this.labelRecommendedActions.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel1");
 			this.labelRecommendedActions.UseMarkup = true;
 			this.hboxRecommendedActions.Add(this.labelRecommendedActions);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hboxRecommendedActions[this.labelRecommendedActions]));
-			w12.Position = 1;
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.hboxRecommendedActions[this.labelRecommendedActions]));
+			w14.Position = 1;
 			this.vbox2.Add(this.hboxRecommendedActions);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hboxRecommendedActions]));
-			w13.Position = 2;
-			w13.Expand = false;
-			w13.Fill = false;
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hboxRecommendedActions]));
+			w15.Position = 3;
+			w15.Expand = false;
+			w15.Fill = false;
 			this.hbox1.Add(this.vbox2);
-			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.vbox2]));
-			w14.Position = 0;
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.vbox2]));
+			w16.Position = 0;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.vseparator1 = new global::Gtk.VSeparator();
 			this.vseparator1.Name = "vseparator1";
 			this.hbox1.Add(this.vseparator1);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.vseparator1]));
-			w15.Position = 1;
-			w15.Expand = false;
-			w15.Fill = false;
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.vseparator1]));
+			w17.Position = 1;
+			w17.Expand = false;
+			w17.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.tableSettings = new global::Gamma.GtkWidgets.yTable();
 			this.tableSettings.Name = "tableSettings";
@@ -194,43 +212,43 @@ namespace workwear.Views.Stock
 			this.comboDevice.AddIfNotExist = false;
 			this.comboDevice.DefaultFirst = true;
 			this.tableSettings.Add(this.comboDevice);
-			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.comboDevice]));
-			w16.LeftAttach = ((uint)(1));
-			w16.RightAttach = ((uint)(2));
-			w16.XOptions = ((global::Gtk.AttachOptions)(4));
-			w16.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w18 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.comboDevice]));
+			w18.LeftAttach = ((uint)(1));
+			w18.RightAttach = ((uint)(2));
+			w18.XOptions = ((global::Gtk.AttachOptions)(4));
+			w18.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child tableSettings.Gtk.Table+TableChild
 			this.entityWarehouse = new global::QS.Views.Control.EntityEntry();
 			this.entityWarehouse.Events = ((global::Gdk.EventMask)(256));
 			this.entityWarehouse.Name = "entityWarehouse";
 			this.tableSettings.Add(this.entityWarehouse);
-			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.entityWarehouse]));
-			w17.TopAttach = ((uint)(2));
-			w17.BottomAttach = ((uint)(3));
-			w17.LeftAttach = ((uint)(1));
-			w17.RightAttach = ((uint)(2));
-			w17.XOptions = ((global::Gtk.AttachOptions)(4));
-			w17.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w19 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.entityWarehouse]));
+			w19.TopAttach = ((uint)(2));
+			w19.BottomAttach = ((uint)(3));
+			w19.LeftAttach = ((uint)(1));
+			w19.RightAttach = ((uint)(2));
+			w19.XOptions = ((global::Gtk.AttachOptions)(4));
+			w19.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child tableSettings.Gtk.Table+TableChild
 			this.labelWarehouse = new global::Gamma.GtkWidgets.yLabel();
 			this.labelWarehouse.Name = "labelWarehouse";
 			this.labelWarehouse.Xalign = 1F;
 			this.labelWarehouse.LabelProp = global::Mono.Unix.Catalog.GetString("Скалад выдачи:");
 			this.tableSettings.Add(this.labelWarehouse);
-			global::Gtk.Table.TableChild w18 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.labelWarehouse]));
-			w18.TopAttach = ((uint)(2));
-			w18.BottomAttach = ((uint)(3));
-			w18.XOptions = ((global::Gtk.AttachOptions)(4));
-			w18.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.labelWarehouse]));
+			w20.TopAttach = ((uint)(2));
+			w20.BottomAttach = ((uint)(3));
+			w20.XOptions = ((global::Gtk.AttachOptions)(4));
+			w20.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child tableSettings.Gtk.Table+TableChild
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
 			this.ylabel1.Xalign = 1F;
 			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Считыватель:");
 			this.tableSettings.Add(this.ylabel1);
-			global::Gtk.Table.TableChild w19 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.ylabel1]));
-			w19.XOptions = ((global::Gtk.AttachOptions)(4));
-			w19.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w21 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.ylabel1]));
+			w21.XOptions = ((global::Gtk.AttachOptions)(4));
+			w21.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child tableSettings.Gtk.Table+TableChild
 			this.ylabel2 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel2.Name = "ylabel2";
@@ -238,32 +256,32 @@ namespace workwear.Views.Stock
 			this.ylabel2.Yalign = 0F;
 			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Типы карт:");
 			this.tableSettings.Add(this.ylabel2);
-			global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.ylabel2]));
-			w20.TopAttach = ((uint)(1));
-			w20.BottomAttach = ((uint)(2));
-			w20.XOptions = ((global::Gtk.AttachOptions)(4));
-			w20.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w22 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.ylabel2]));
+			w22.TopAttach = ((uint)(1));
+			w22.BottomAttach = ((uint)(2));
+			w22.XOptions = ((global::Gtk.AttachOptions)(4));
+			w22.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child tableSettings.Gtk.Table+TableChild
 			this.ytreeviewCardTypes = new global::Gamma.GtkWidgets.yTreeView();
 			this.ytreeviewCardTypes.CanFocus = true;
 			this.ytreeviewCardTypes.Name = "ytreeviewCardTypes";
 			this.ytreeviewCardTypes.HeadersVisible = false;
 			this.tableSettings.Add(this.ytreeviewCardTypes);
-			global::Gtk.Table.TableChild w21 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.ytreeviewCardTypes]));
-			w21.TopAttach = ((uint)(1));
-			w21.BottomAttach = ((uint)(2));
-			w21.LeftAttach = ((uint)(1));
-			w21.RightAttach = ((uint)(2));
-			w21.XOptions = ((global::Gtk.AttachOptions)(4));
-			w21.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w23 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.ytreeviewCardTypes]));
+			w23.TopAttach = ((uint)(1));
+			w23.BottomAttach = ((uint)(2));
+			w23.LeftAttach = ((uint)(1));
+			w23.RightAttach = ((uint)(2));
+			w23.XOptions = ((global::Gtk.AttachOptions)(4));
+			w23.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.hbox1.Add(this.tableSettings);
-			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.tableSettings]));
-			w22.Position = 2;
-			w22.Expand = false;
-			w22.Fill = false;
+			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.tableSettings]));
+			w24.Position = 2;
+			w24.Expand = false;
+			w24.Fill = false;
 			this.vbox1.Add(this.hbox1);
-			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
-			w23.Position = 1;
+			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
+			w25.Position = 1;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{

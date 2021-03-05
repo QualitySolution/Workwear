@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Gamma.Utilities;
 using Gtk;
 using QS.Views.Dialog;
 using workwear.Domain.Stock;
@@ -46,6 +45,10 @@ namespace workwear.Views.Stock
 			hboxRecommendedActions.Binding.AddBinding(ViewModel, v => v.VisibleRecommendedActions, w => w.Visible).InitializeFromSource();
 
 			treeItems.Binding.AddBinding(ViewModel, v => v.ObservableItems, w => w.ItemsDataSource).InitializeFromSource();
+
+			eventboxSuccessfully.Binding.AddBinding(ViewModel, v => v.VisibleSuccessfully, w => w.Visible).InitializeFromSource();
+			eventboxSuccessfully.BackgroundColor = "Pale Green";
+			labelSuccessfully.Binding.AddFuncBinding(ViewModel, v => $"<span foreground=\"Dark Green\" size=\"28000\">{v.SuccessfullyText}</span>", w => w.LabelProp).InitializeFromSource();
 			#endregion
 
 			CreateTable();

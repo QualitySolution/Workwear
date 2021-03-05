@@ -13388,6 +13388,24 @@
                   </packing>
                 </child>
                 <child>
+                  <widget class="Gamma.GtkWidgets.yEventBox" id="eventboxSuccessfully">
+                    <property name="MemberName" />
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yLabel" id="labelSuccessfully">
+                        <property name="MemberName" />
+                        <property name="LabelProp" translatable="yes">ylabel1</property>
+                        <property name="UseMarkup">True</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="Gamma.GtkWidgets.yHBox" id="hboxRecommendedActions">
                     <property name="MemberName" />
                     <property name="Spacing">6</property>
@@ -13416,7 +13434,7 @@
                     </child>
                   </widget>
                   <packing>
-                    <property name="Position">2</property>
+                    <property name="Position">3</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>

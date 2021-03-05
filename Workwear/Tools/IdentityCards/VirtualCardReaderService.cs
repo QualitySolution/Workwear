@@ -10,6 +10,7 @@ namespace workwear.Tools.IdentityCards
 {
 	public class VirtualCardReaderService : ICardReaderService
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly IUnitOfWorkFactory unitOfWorkFactory;
 
 		public VirtualCardReaderService(IUnitOfWorkFactory unitOfWorkFactory)
@@ -76,6 +77,7 @@ namespace workwear.Tools.IdentityCards
 		private byte[] lastUid = new byte[7];
 		private bool stateNoCard;
 		private uint ticksLeft;
+		private uint step = 0;
 
 		public void StartAutoPoll(DeviceInfo deviceInfo)
 		{
@@ -108,8 +110,7 @@ namespace workwear.Tools.IdentityCards
 					if(AutoPullDevice.DeviceInfoShort.DeviceAddress == 0)
 						random.NextBytes(lastUid);
 					else if(AutoPullDevice.DeviceInfoShort.DeviceAddress == 1) {
-						var strUid = Uids[random.Next(Uids.Count)];
-						lastUid = RusGuardService.UidToBytes(strUid);
+						NextStepReader1();
 					}
 					ticksLeft = 10;
 				}
@@ -131,6 +132,29 @@ namespace workwear.Tools.IdentityCards
 
 			var result = new CardStateEventArgs(pinStates, statusType, cardInfo, cardMemory);
 			СardStatusRead?.Invoke(this, result);
+		}
+
+		private string step1Uid;
+
+		private void NextStepReader1()
+		{
+			step++;
+			logger.Debug($"Сценарий виртуального картридера: Шаг {step}");
+			//Карточка нового сотрудника
+			if(step == 1) {
+				step1Uid = Uids[random.Next(Uids.Count)];
+				lastUid = RusGuardService.UidToBytes(step1Uid);
+			}
+			//Неправильная попытка подтвердить другой карточкой.
+			if(step == 2) {
+				var strUid = Uids[random.Next(Uids.Count)];
+				lastUid = RusGuardService.UidToBytes(strUid);
+			}
+			//Подтверждение правильной карточкой.
+			if(step == 3) {
+				lastUid = RusGuardService.UidToBytes(step1Uid);
+				step = 0;
+			}
 		}
 
 		public void StopAutoPoll()
