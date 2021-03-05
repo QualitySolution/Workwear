@@ -198,7 +198,7 @@ namespace workwear.Domain.Stock
 
 		#region Функции
 
-		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser)
+		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null)
 		{
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
@@ -210,7 +210,7 @@ namespace workwear.Domain.Stock
 					EmployeeIssueOperation = new EmployeeIssueOperation();
 				}
 
-				EmployeeIssueOperation.Update(uow, baseParameters, askUser, this);
+				EmployeeIssueOperation.Update(uow, baseParameters, askUser, this, signCardUid);
 
 				UpdateIssuedWriteOffOperation(uow);
 									

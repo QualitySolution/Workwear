@@ -207,9 +207,9 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser)
+		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null)
 		{
-			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser));
+			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser, signCardUid));
 		}
 
 		public virtual void UpdateEmployeeWearItems()

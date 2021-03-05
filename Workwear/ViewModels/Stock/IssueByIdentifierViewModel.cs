@@ -141,6 +141,8 @@ namespace workwear.ViewModels.Stock
 			}
 		}
 
+		public string CardUidСompact => CardUid.Replace("-", "");
+
 		private bool noCard;
 		[PropertyChangedAlso(nameof(RecommendedActions))]
 		[PropertyChangedAlso(nameof(VisibleRecommendedActions))]
@@ -284,7 +286,7 @@ namespace workwear.ViewModels.Stock
 				if(NoCard && CanAccept && canAcceptByTime)
 					return "Приложите карту для подтверждения выдачи";
 				if(!String.IsNullOrEmpty(CardUid) && Employee != null) {
-					if(Employee.CardKey != CardUid.Replace("-", ""))
+					if(Employee.CardKey != CardUidСompact)
 						return "Для подтверждения приложите карту " + Employee.ShortName;
 					else
 						return "Уберите карту и проверьте список выдаваемого";
@@ -339,13 +341,13 @@ namespace workwear.ViewModels.Stock
 			if(Employee == null) {
 				LoadEmployee();
 			}
-			else if(CanAccept && canAcceptByTime && Employee.CardKey == CardUid.Replace("-", ""))
+			else if(CanAccept && canAcceptByTime && Employee.CardKey == CardUidСompact)
 				AcceptIssue();
 		}
 
 		private void LoadEmployee()
 		{
-			var cardUidstr = CardUid.Replace("-", "");
+			var cardUidstr = CardUidСompact;
 			uow = unitOfWorkFactory.CreateWithoutRoot();
 			Employee = uow.Session.QueryOver<EmployeeCard>()
 				.Where(x => x.CardKey == cardUidstr)
@@ -381,7 +383,7 @@ namespace workwear.ViewModels.Stock
 				return;
 
 			Expense.CleanupItems();
-			Expense.UpdateOperations(uow, baseParameters, interactive);
+			Expense.UpdateOperations(uow, baseParameters, interactive, CardUidСompact);
 			uow.Save(Expense);
 
 			logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
