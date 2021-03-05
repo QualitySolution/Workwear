@@ -63,6 +63,8 @@ namespace workwear.ViewModels.Stock
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 				Entity.Operation = ExpenseOperations.Employee;
 			}
+			if(Entity.Operation != ExpenseOperations.Employee)
+				throw new InvalidOperationException("Диалог предназначен только для операций выдачи сотруднику.");
 
 			if(employee != null) {
 				Entity.Employee = UoW.GetById<EmployeeCard>(employee.Id);
@@ -135,20 +137,15 @@ namespace workwear.ViewModels.Stock
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
 
-
-
 			Entity.UpdateIssuedWriteOffOperation();
 
 			if(Entity.WriteOffDoc != null)
 				UoW.Save(Entity.WriteOffDoc);
 
 			UoWGeneric.Save();
-			if(Entity.Operation == ExpenseOperations.Employee) {
-				logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
-				Entity.UpdateEmployeeWearItems();
-				UoWGeneric.Commit();
-			}
-
+			logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
+			Entity.UpdateEmployeeWearItems();
+			UoWGeneric.Commit();
 			logger.Info("Ok");
 			return true;
 		}
