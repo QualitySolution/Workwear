@@ -59,6 +59,8 @@ namespace workwear.ViewModels.Stock
 				Entity.Operation = ExpenseOperations.Object;
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 			}
+			if(Entity.Operation != ExpenseOperations.Object)
+				throw new InvalidOperationException("Диалог предназначен только для операций выдачи на объект.");
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featutesService, autofacScope.Resolve<IUserService>().CurrentUserId);
@@ -92,9 +94,6 @@ namespace workwear.ViewModels.Stock
 
 			logger.Info("Запись документа...");
 			Entity.UpdateOperations(UoW, baseParameters, interactive);
-			Entity.UpdateIssuanceSheet();
-			if(Entity.IssuanceSheet != null)
-				UoW.Save(Entity.IssuanceSheet);
 			UoWGeneric.Save();
 
 			logger.Info("Ok");
