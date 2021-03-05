@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -5910,7 +5910,7 @@
                   <widget class="Gtk.Label" id="label8">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Название:</property>
+                    <property name="LabelProp" translatable="yes">Название нормы:</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">4</property>
