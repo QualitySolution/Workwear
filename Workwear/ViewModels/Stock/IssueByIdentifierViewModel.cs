@@ -111,7 +111,8 @@ namespace workwear.ViewModels.Stock
 			get => cardUid;
 			set {
 				if(SetField(ref cardUid, value)) {
-					TimeOfSetUid = DateTime.Now;
+					if(String.IsNullOrEmpty(CardUid))
+						LastRemoveCard = DateTime.Now;
 					NewCardUid();
 					OnPropertyChanged(nameof(EmployeeFullName));
 					CreateExpenseDoc();
@@ -228,18 +229,14 @@ namespace workwear.ViewModels.Stock
 		#endregion
 		#endregion
 		#region Выдача
-		private DateTime TimeOfSetUid;
+		private DateTime LastRemoveCard;
 		private IUnitOfWork uow;
 
 		public virtual string EmployeeFullName {
 			get => Employee?.FullName ?? (String.IsNullOrEmpty(CardUid) ? null : $"Сотрудник с картой: {CardUid} не найден");
 		}
 
-		private bool canAccept;
-		public virtual bool CanAccept {
-			get => canAccept;
-			set => SetField(ref canAccept, value);
-		}
+		public virtual bool CanAccept => Expense.Items.Any(x => x.Amount > 0);
 
 		public bool VisibleCancelButton => Employee != null;
 		public bool VisibleRecommendedActions => cardReaderService?.IsAutoPoll == true && !String.IsNullOrEmpty(RecommendedActions);
@@ -248,12 +245,15 @@ namespace workwear.ViewModels.Stock
 			get {
 				if(NoCard && Employee == null)
 					return "Приложите карту для идентификации сотрудника";
-				if(NoCard && CanAccept)
+				bool canAcceptByTime = (DateTime.Now - LastRemoveCard).TotalSeconds > 3;
+				if(NoCard && CanAccept && canAcceptByTime)
 					return "Приложите карту для подтверждения выдачи";
-				if(!String.IsNullOrEmpty(CardUid) && Employee != null)
-					return 	(DateTime.Now - TimeOfSetUid).TotalSeconds < 3 
-					? "Уберите карту и проверьте список выдаваемого"
-					: "Уберите карту";
+				if(!String.IsNullOrEmpty(CardUid) && Employee != null) {
+					if(Employee.CardKey != CardUid.Replace("-", ""))
+						return "Для подтверждения приложите карту " + Employee.ShortName;
+					else
+						return "Уберите карту и проверьте список выдаваемого";
+				}
 				
 				return String.Empty;
 			}
