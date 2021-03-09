@@ -1,11 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using NSubstitute;
 using NUnit.Framework;
+using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Services;
 using QS.Testing.Gui;
+using QS.Validation;
+using QS.ViewModels.Resolve;
 using RglibInterop;
+using workwear.Repository.Stock;
+using workwear.Tools;
+using workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
 using workwear.ViewModels.Stock;
 
@@ -20,12 +28,24 @@ namespace WorkwearTest.ViewModels.Stock
 			var uowFactory = Substitute.For<IUnitOfWorkFactory>();
 			var navigation = Substitute.For<INavigationManager>();
 			var guiDispatcher = new GuiDispatcherForTests();
+			var resolver = Substitute.For<IViewModelResolver>();
+			var stockRepository = Substitute.For<StockRepository>();
+			var featuresService = Substitute.For<FeaturesService>();
+			var userService = Substitute.For<IUserService>();
+			var validator = Substitute.For<IValidator>();
+			var baseParameters = Substitute.For<BaseParameters>();
+			var interactive = Substitute.For<IInteractiveQuestion>();
 			var device = Substitute.For<DeviceInfo>(new RG_ENDPOINT_INFO(), new RG_DEVICE_INFO_SHORT());
 			var cardReaderService = Substitute.For<ICardReaderService>();
 			cardReaderService.Devices.Returns(new List<DeviceInfo> { device });
 
+			var builder = new ContainerBuilder();
+			builder.Register(x => Substitute.For<IViewModelResolver>()).As<IViewModelResolver>();
+			builder.Register(x => Substitute.For<IUserService>()).As<IUserService>();
+			var container = builder.Build();
+
 			bool UidCardWasСalled = false, CurentStateWasСalled =false;
-			var viewModel = new IssueByIdentifierViewModel(uowFactory, navigation, guiDispatcher, cardReaderService);
+			var viewModel = new IssueByIdentifierViewModel(uowFactory, navigation, guiDispatcher, userService, container.BeginLifetimeScope(), stockRepository, featuresService, validator, baseParameters, interactive, cardReaderService);
 			viewModel.SelectedDevice = viewModel.Devices.First();
 			viewModel.CardFamilies.First(x => x.CardTypeFamily == RG_CARD_FAMILY_CODE.EF_MIFARE).Active = true;
 			cardReaderService.IsAutoPoll.Returns(true);
