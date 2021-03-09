@@ -18,6 +18,7 @@ using QS.ViewModels.Dialog;
 using RglibInterop;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
+using workwear.Repository.Company;
 using workwear.Repository.Stock;
 using workwear.Tools;
 using workwear.Tools.Features;
@@ -32,6 +33,7 @@ namespace workwear.ViewModels.Stock
 		private readonly IGuiDispatcher guiDispatcher;
 		private readonly IUserService userService;
 		private readonly ILifetimeScope autofacScope;
+		private readonly EmployeeRepository employeeRepository;
 		private readonly IValidator validator;
 		private readonly BaseParameters baseParameters;
 		private readonly IInteractiveQuestion interactive;
@@ -46,6 +48,7 @@ namespace workwear.ViewModels.Stock
 			IUserService userService,
 			ILifetimeScope autofacScope,
 			StockRepository stockRepository,
+			EmployeeRepository employeeRepository,
 			FeaturesService featuresService,
 			IValidator validator,
 			BaseParameters baseParameters,
@@ -56,6 +59,7 @@ namespace workwear.ViewModels.Stock
 			this.guiDispatcher = guiDispatcher ?? throw new ArgumentNullException(nameof(guiDispatcher));
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.validator = validator ?? throw new ArgumentNullException(nameof(validator));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
@@ -347,12 +351,8 @@ namespace workwear.ViewModels.Stock
 
 		private void LoadEmployee()
 		{
-			var cardUidstr = CardUidСompact;
 			uow = unitOfWorkFactory.CreateWithoutRoot();
-			Employee = uow.Session.QueryOver<EmployeeCard>()
-				.Where(x => x.CardKey == cardUidstr)
-				.Take(1)
-				.SingleOrDefault();
+			Employee = employeeRepository.GetEmployeeByCardkey(uow, CardUidСompact);
 			if(Employee == null) {
 				uow.Dispose();
 				uow = null;

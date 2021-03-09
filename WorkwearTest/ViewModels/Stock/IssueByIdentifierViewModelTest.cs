@@ -11,6 +11,8 @@ using QS.Testing.Gui;
 using QS.Validation;
 using QS.ViewModels.Resolve;
 using RglibInterop;
+using workwear.Domain.Company;
+using workwear.Repository.Company;
 using workwear.Repository.Stock;
 using workwear.Tools;
 using workwear.Tools.Features;
@@ -30,6 +32,8 @@ namespace WorkwearTest.ViewModels.Stock
 			var guiDispatcher = new GuiDispatcherForTests();
 			var resolver = Substitute.For<IViewModelResolver>();
 			var stockRepository = Substitute.For<StockRepository>();
+			var employeeRepository = Substitute.For<EmployeeRepository>();
+			employeeRepository.GetEmployeeByCardkey(Arg.Any<IUnitOfWork>(), Arg.Any<string>()).Returns((EmployeeCard)null);
 			var featuresService = Substitute.For<FeaturesService>();
 			var userService = Substitute.For<IUserService>();
 			var validator = Substitute.For<IValidator>();
@@ -45,7 +49,7 @@ namespace WorkwearTest.ViewModels.Stock
 			var container = builder.Build();
 
 			bool UidCardWasСalled = false, CurentStateWasСalled =false;
-			var viewModel = new IssueByIdentifierViewModel(uowFactory, navigation, guiDispatcher, userService, container.BeginLifetimeScope(), stockRepository, featuresService, validator, baseParameters, interactive, cardReaderService);
+			var viewModel = new IssueByIdentifierViewModel(uowFactory, navigation, guiDispatcher, userService, container.BeginLifetimeScope(), stockRepository, employeeRepository, featuresService, validator, baseParameters, interactive, cardReaderService);
 			viewModel.SelectedDevice = viewModel.Devices.First();
 			viewModel.CardFamilies.First(x => x.CardTypeFamily == RG_CARD_FAMILY_CODE.EF_MIFARE).Active = true;
 			cardReaderService.IsAutoPoll.Returns(true);

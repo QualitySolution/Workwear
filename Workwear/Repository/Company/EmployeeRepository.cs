@@ -8,11 +8,10 @@ using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
-using workwear.Domain.Stock;
 
 namespace workwear.Repository.Company
 {
-	public static class EmployeeRepository
+	public class EmployeeRepository
 	{
 
 		public static QueryOver<EmployeeCard> ActiveEmployeesQuery ()
@@ -91,6 +90,14 @@ namespace workwear.Repository.Company
 		{
 			return uow.Session.QueryOver<EmployeeCard>()
 				.Where(x => x.PersonnelNumber == personalNumber)
+				.SingleOrDefault();
+		}
+
+		public virtual EmployeeCard GetEmployeeByCardkey(IUnitOfWork uow, string cardkey)
+		{
+			return uow.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.CardKey == cardkey)
+				.Take(1)
 				.SingleOrDefault();
 		}
 	}
