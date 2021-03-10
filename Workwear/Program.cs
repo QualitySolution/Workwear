@@ -7,7 +7,6 @@ using QS.Project.DB;
 using QS.Project.Repositories;
 using QS.Project.Versioning;
 using QS.Updater.DB;
-using QSMachineConfig;
 using QSProjectsLib;
 using QSTelemetry;
 
@@ -50,7 +49,7 @@ namespace workwear
 				return;
 			}
 
-			RegisterSQLScripts ();
+			RegisterSQLScripts();
 			AutofacClassConfig();
 
 			// Создаем окно входа

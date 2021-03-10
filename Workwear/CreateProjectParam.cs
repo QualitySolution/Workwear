@@ -1,6 +1,5 @@
 using System.Data.Common;
 using Autofac;
-using MySql.Data.MySqlClient;
 using QS.BaseParameters;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
@@ -72,8 +71,11 @@ namespace workwear
 				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),
 			});
 
-			//Настраиваем классы сущьностей
+			#if DEBUG
+			NLog.LogManager.Configuration.RemoveRuleByName("HideNhibernate");
+			#endif
 
+			//Настраиваем классы сущьностей
 			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
 			//Спецодежда
 			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
