@@ -104,7 +104,6 @@ namespace workwear.ViewModels.Stock
 		{
 			guiDispatcher.RunInGuiTread(delegate {;
 				CardUid = e.CardUid;
-				NoCard = String.IsNullOrEmpty(e.CardUid);
 				UpdateState();
 			});
 		}
@@ -132,6 +131,7 @@ namespace workwear.ViewModels.Stock
 		private string cardUid;
 		[PropertyChangedAlso(nameof(RecommendedActions))]
 		[PropertyChangedAlso(nameof(VisibleRecommendedActions))]
+		[PropertyChangedAlso(nameof(NoCard))]
 		public virtual string CardUid {
 			get => cardUid;
 			set {
@@ -147,13 +147,7 @@ namespace workwear.ViewModels.Stock
 
 		public string CardUidСompact => CardUid.Replace("-", "");
 
-		private bool noCard;
-		[PropertyChangedAlso(nameof(RecommendedActions))]
-		[PropertyChangedAlso(nameof(VisibleRecommendedActions))]
-		public virtual bool NoCard {
-			get => noCard;
-			set => SetField(ref noCard, value);
-		}
+		public bool NoCard => String.IsNullOrEmpty(CardUid);
 
 		#region Настройки
 		public List<DeviceInfo> Devices => cardReaderService?.Devices;
