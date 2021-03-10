@@ -19,7 +19,6 @@ namespace workwear.Tools.IdentityCards
 		}
 
 		#region Обработанные
-		public bool ReadBad => pinStates.Pin00;
 		public string CardCode => statusType != RG_DEVICE_STATUS_TYPE.DS_NOCARD ? ((byte)cardInfo.CardType).ToString("X2") : String.Empty;
 		public RG_CARD_TYPE_CODE CardType => cardInfo.CardType;
 		public string CardUid => statusType != RG_DEVICE_STATUS_TYPE.DS_NOCARD ? BitConverter.ToString(cardInfo.CardUid) : String.Empty;

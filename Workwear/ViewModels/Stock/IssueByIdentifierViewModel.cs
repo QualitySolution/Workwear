@@ -104,7 +104,7 @@ namespace workwear.ViewModels.Stock
 		{
 			guiDispatcher.RunInGuiTread(delegate {;
 				CardUid = e.CardUid;
-				NoCard = !e.ReadBad && String.IsNullOrEmpty(e.CardUid);
+				NoCard = String.IsNullOrEmpty(e.CardUid);
 				UpdateState();
 			});
 		}
