@@ -135,9 +135,9 @@ namespace workwear.Tools.IdentityCards
 				throw new ApplicationException($"Ошибка {errorCode} при запросе статуса устройства");
 			}
 
-			if(statusType != RG_DEVICE_STATUS_TYPE.DS_NOCARD)
-				logger.Debug($"Прочитана карта: {cardInfo.CardUid}");
 			var result = new CardStateEventArgs(pinStates, statusType, cardInfo, cardMemory);
+			if(statusType != RG_DEVICE_STATUS_TYPE.DS_NOCARD)
+				logger.Debug($"Прочитана карта: {result.CardUid}");
 			СardStatusRead?.Invoke(this, result);
 		}
 
