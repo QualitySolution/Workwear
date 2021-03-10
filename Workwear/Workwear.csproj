@@ -177,6 +177,9 @@
     <Reference Include="NPOI.OpenXmlFormats">
       <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
     </Reference>
+    <Reference Include="NHibernate.NLog">
+      <HintPath>..\packages\nhibernate.logger.nlog.1.1.2\lib\net35\NHibernate.NLog.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -711,7 +714,6 @@
     <None Include="Reports\MonthRequestSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="app.config" />
     <None Include="RdlEngineConfig.Linux.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -746,6 +748,7 @@
     <None Include="Reports\AmountIssuedWear.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="App.config" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
