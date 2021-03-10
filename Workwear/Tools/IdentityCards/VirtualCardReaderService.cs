@@ -74,7 +74,7 @@ namespace workwear.Tools.IdentityCards
 		private Timer AutoPollTimer;
 		private DeviceInfo AutoPullDevice;
 		private Random random = new Random();
-		private byte[] lastUid = new byte[7];
+		private byte[] lastUid = new byte[8];
 		private bool stateNoCard;
 		private uint ticksLeft;
 		private uint step = 0;

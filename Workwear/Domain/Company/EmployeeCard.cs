@@ -80,7 +80,7 @@ namespace workwear.Domain.Company
 
 		private string cardKey;
 		[Display(Name = "UID карты доступа")]
-		[StringLength(14, ErrorMessage = "Максимальная длинна UID карты 14 символов или 7 байт в шестнадцатиричном виде")]
+		[StringLength(16, ErrorMessage = "Максимальная длинна UID карты 16 символов или 8 байт в шестнадцатиричном виде")]
 		public virtual string CardKey {
 			get => cardKey;
 			set => SetField(ref cardKey, value?.ToUpper());

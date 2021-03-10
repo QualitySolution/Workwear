@@ -370,7 +370,7 @@ namespace workwear.Views.Company
 			this.entryCardUid.CanFocus = true;
 			this.entryCardUid.Name = "entryCardUid";
 			this.entryCardUid.IsEditable = true;
-			this.entryCardUid.MaxLength = 14;
+			this.entryCardUid.MaxLength = 16;
 			this.entryCardUid.InvisibleChar = '●';
 			this.table1.Add(this.entryCardUid);
 			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table1[this.entryCardUid]));
