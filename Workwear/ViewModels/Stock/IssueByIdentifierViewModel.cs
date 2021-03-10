@@ -38,7 +38,7 @@ namespace workwear.ViewModels.Stock
 		private readonly BaseParameters baseParameters;
 		private readonly IInteractiveQuestion interactive;
 		private readonly ICardReaderService cardReaderService;
-		private TextSpinner textSpinner = new TextSpinner(new SpinnerTemplateDots());
+		private TextSpinner textSpinner = new TextSpinner(new SpinnerTemplateBouncingBar());
 		private readonly IUnitOfWork UowOfDialog;
 
 		public IssueByIdentifierViewModel(
