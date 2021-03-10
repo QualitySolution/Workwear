@@ -100,7 +100,7 @@ namespace workwear
             MainTelemetry.Edition = applicationInfo.Modification;
             MainTelemetry.Version = applicationInfo.Version.ToString();
             MainTelemetry.IsDemo = Login.ApplicationDemoServer == QSMain.connectionDB.DataSource;
-			var appConfig = MachineConfig.ConfigSource.Configs["Application"];
+			var appConfig = QSMachineConfig.MachineConfig.ConfigSource.Configs["Application"];
 			if (appConfig != null)
 				MainTelemetry.DoNotTrack = appConfig.GetBoolean("DoNotTrack", false);
 
