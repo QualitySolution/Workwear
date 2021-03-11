@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Bindings.Collections.Generic;
@@ -38,7 +38,7 @@ namespace workwear.ViewModels.Stock
 		private readonly BaseParameters baseParameters;
 		private readonly IInteractiveQuestion interactive;
 		private readonly ICardReaderService cardReaderService;
-		private TextSpinner textSpinner = new TextSpinner(new SpinnerTemplateBouncingBar());
+		private TextSpinner textSpinner = new TextSpinner(new SpinnerTemplateAestheticScrolling());
 		private readonly IUnitOfWork UowOfDialog;
 
 		public IssueByIdentifierViewModel(
