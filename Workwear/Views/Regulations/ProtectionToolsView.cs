@@ -43,6 +43,8 @@ namespace workwear.Views.Regulations
 			.Finish();
 			ytreeItems.ItemsDataSource = Entity.ObservableNomenclatures;
 			ytreeItems.Selection.Changed += Nomenclature_Selection_Changed;
+
+			buttonCreateNomenclature.Binding.AddBinding(ViewModel, v => v.SensetiveCreateNomenclature, w => w.Sensitive).InitializeFromSource();
 		}
 
 		#region Аналоги
@@ -76,6 +78,11 @@ namespace workwear.Views.Regulations
 		void Nomenclature_Selection_Changed(object sender, EventArgs e)
 		{
 			buttonRemoveNomeclature.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
+		}
+
+		protected void OnButtonCreateNomenclatureClicked(object sender, EventArgs e)
+		{
+			ViewModel.CreateNomeclature();
 		}
 		#endregion
 

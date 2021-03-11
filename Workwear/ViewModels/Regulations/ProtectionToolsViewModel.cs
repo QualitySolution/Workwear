@@ -31,6 +31,7 @@ namespace workwear.ViewModels.Regulations
 			.MakeByType()
 			.Finish();
 
+			Entity.ObservableNomenclatures.ListChanged += (aList) => OnPropertyChanged(nameof(SensetiveCreateNomenclature));
 		}
 
 		#region EntityViewModels
@@ -96,6 +97,20 @@ namespace workwear.ViewModels.Regulations
 				Entity.RemoveNomeclature(item);
 			}
 		}
+
+		public bool SensetiveCreateNomenclature => !Entity.Nomenclatures.Any(x => x.Name == Entity.Name);
+
+		public void CreateNomeclature()
+		{
+			var nomenclaure = new Nomenclature {
+				Name = Entity.Name,
+				Comment = Entity.Comment,
+				Type = Entity.Type,
+				Sex = Measurements.ClothesSex.Universal,
+			};
+			Entity.AddNomeclature(nomenclaure);
+		}
+
 		#endregion
 		#endregion
 	}
