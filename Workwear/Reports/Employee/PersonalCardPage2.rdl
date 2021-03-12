@@ -49,7 +49,7 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>167.3pt</Width>
+            <Width>159.7pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>97.6pt</Width>
@@ -64,7 +64,7 @@
             <Width>44.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>1in</Width>
+            <Width>74.6pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>69.9pt</Width>
@@ -76,7 +76,7 @@
             <Width>45.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>1in</Width>
+            <Width>77.8pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>1in</Width>
@@ -108,7 +108,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox19">
-                      <Value>№</Value>
+                      <Value>№ сертификата</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -186,7 +186,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox3">
-                      <Value>сертификата или декларации соответствия</Value>
+                      <Value>или декларации соответствия</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -652,12 +652,12 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox37">
-                      <Value>=Fields!issue_buh_document.Value</Value>
+                      <Value>=Fields!issue_sign.Value</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
-                        <FontSize>11pt</FontSize>
+                        <FontSize>9pt</FontSize>
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
@@ -726,12 +726,12 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox45">
-                      <Value>=Fields!returned_buh_document.Value</Value>
+                      <Value>=Fields!returned_sign.Value</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
-                        <FontSize>11pt</FontSize>
+                        <FontSize>9pt</FontSize>
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
@@ -796,7 +796,9 @@ LIMIT 1
     '%d.%m.%Y'
 ) AS expense_date, operation_issued_by_employee.issued AS expense_quantity, ROUND(
     operation_issued_by_employee.wear_percent * 100
-) AS wearout, operation_issued_by_employee.buh_document AS issue_buh_document, CONCAT_WS(
+) AS wearout, 
+IFNULL(CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')), operation_issued_by_employee.buh_document) AS issue_sign, 
+CONCAT_WS(
     '\n',
     GROUP_CONCAT(
         DATE_FORMAT(returned.date, '%d.%m.%Y') SEPARATOR '\n'
@@ -822,8 +824,9 @@ LIMIT 1
                 operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE() AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0, 100, NULL)
             ) AS returned_wearout,
             GROUP_CONCAT(
-                returned.buh_document SEPARATOR '\n'
-            ) AS returned_buh_document
+                IFNULL(CONCAT(returned.sign_key, " - ", DATE_FORMAT(returned.sign_timestamp, '%d.%m.%Y %H:%i:%s')), returned.buh_document) 
+                SEPARATOR '\n'
+            ) AS returned_sign
         FROM
             operation_issued_by_employee
         LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
@@ -835,6 +838,8 @@ LIMIT 1
                 return_detail.operation_time AS DATE,
                 return_detail.returned AS quantity,
                 return_detail.wear_percent,
+                return_detail.sign_key,
+                return_detail.sign_timestamp,
                 return_detail.buh_document
             FROM
                 operation_issued_by_employee AS return_detail
@@ -876,8 +881,8 @@ LIMIT 1
           <DataField>wearout</DataField>
           <TypeName>System.Decimal</TypeName>
         </Field>
-        <Field Name="issue_buh_document">
-          <DataField>issue_buh_document</DataField>
+        <Field Name="issue_sign">
+          <DataField>issue_sign</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="returned_date">
@@ -892,8 +897,8 @@ LIMIT 1
           <DataField>returned_wearout</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="returned_buh_document">
-          <DataField>returned_buh_document</DataField>
+        <Field Name="returned_sign">
+          <DataField>returned_sign</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
