@@ -1,8 +1,11 @@
+using System;
 using System.Data.Common;
+using System.IO;
 using Autofac;
 using QS.BaseParameters;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
+using QS.Configuration;
 using QS.Deletion;
 using QS.Deletion.Views;
 using QS.Dialog;
@@ -207,6 +210,10 @@ namespace workwear
 			#region Разделение версий
 			builder.RegisterType<FeaturesService>().As<IProductService>().AsSelf();
 			builder.RegisterModule<FeaturesAutofacModule>();
+			#endregion
+
+			#region Настройка
+			builder.Register(c => new IniFileConfiguration(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "workwear.ini"))).As<IChangeableConfiguration>().AsSelf();
 			#endregion
 
 			#region Работа со считывателями

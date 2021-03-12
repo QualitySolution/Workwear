@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using Autofac;
+using QS.Configuration;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -37,6 +38,7 @@ namespace workwear.ViewModels.Stock
 		private readonly IValidator validator;
 		private readonly BaseParameters baseParameters;
 		private readonly IInteractiveQuestion interactive;
+		private readonly IChangeableConfiguration configuration;
 		private readonly ICardReaderService cardReaderService;
 		private TextSpinner textSpinner = new TextSpinner(new SpinnerTemplateAestheticScrolling());
 		private readonly IUnitOfWork UowOfDialog;
@@ -53,6 +55,7 @@ namespace workwear.ViewModels.Stock
 			IValidator validator,
 			BaseParameters baseParameters,
 			IInteractiveQuestion interactive,
+			IChangeableConfiguration configuration,
 			ICardReaderService cardReaderService = null) : base(navigation)
 		{
 			this.unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
@@ -63,6 +66,7 @@ namespace workwear.ViewModels.Stock
 			this.validator = validator ?? throw new ArgumentNullException(nameof(validator));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.configuration = configuration;
 			this.cardReaderService = cardReaderService;
 			IsModal = false;
 			EnableMinimizeMaximize = true;
@@ -88,6 +92,8 @@ namespace workwear.ViewModels.Stock
 			timerCleanSuccessfullyText.Elapsed += delegate (object sender, ElapsedEventArgs e) { 
 				guiDispatcher.RunInGuiTread(() => SuccessfullyText = null); 
 			};
+
+			ReadConfig();
 		}
 
 		#region Считыватель
@@ -98,6 +104,7 @@ namespace workwear.ViewModels.Stock
 				cardReaderService.SetCardMask(SelectedDevice, CardFamilies);
 			UpdateState();
 			TryStartPoll();
+			SetCardFamiliesConfig();
 		}
 
 		void RusGuardService_СardStatusRead(object sender, CardStateEventArgs e)
@@ -162,6 +169,7 @@ namespace workwear.ViewModels.Stock
 				UpdateState();
 				if(SelectedDevice != null) {
 					TryStartPoll();
+					configuration["CardReader:Address"] = SelectedDevice.EndpointInfo.Address + ':' + SelectedDevice.DeviceInfoShort.DeviceAddress.ToString();
 				}
 			}
 		}
@@ -245,6 +253,33 @@ namespace workwear.ViewModels.Stock
 			cardReaderService.StartDevice(SelectedDevice);
 			cardReaderService.StartAutoPoll(SelectedDevice);
 			OnPropertyChanged(nameof(VisibleRecommendedActions));
+		}
+
+		private void ReadConfig()
+		{
+			var readerAddress = configuration["CardReader:Address"];
+			if(!String.IsNullOrEmpty(readerAddress) && readerAddress.Contains(':')) {
+				var parts = readerAddress.Split(':');
+				SelectedDevice = Devices.First(x => x.Endpoint.Address == parts[0] && x.DeviceInfoShort.DeviceAddress == int.Parse(parts[1]));
+			}
+
+			var cardTypes = configuration["CardReader:CardTypes"];
+			if(!String.IsNullOrEmpty(cardTypes)) {
+				var parts = cardTypes.Split(',');
+				foreach(var part in parts) {
+					var family = CardFamilies.FirstOrDefault(x => x.CardTypeFamily.ToString() == part);
+					if(family != null)
+						family.Active = true;
+				}
+			}
+		}
+
+		private void SetCardFamiliesConfig()
+		{
+			if(CardFamilies.Any(x => x.Active))
+				configuration["CardReader:CardTypes"] = String.Join(",", CardFamilies.Where(x => x.Active).Select(x => x.CardTypeFamily.ToString()));
+			else
+				configuration["CardReader:CardTypes"] = null;
 		}
 
 		#endregion
