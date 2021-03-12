@@ -13,6 +13,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.DTO;
 using workwear.Repository.Operations;
+using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
@@ -22,12 +23,14 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		private readonly EmployeeViewModel employeeViewModel;
+		private readonly FeaturesService featuresService;
 		private readonly ITdiCompatibilityNavigation navigation;
 		List<EmployeeCardMovements> movements;
 
-		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, ITdiCompatibilityNavigation navigation)
+		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, FeaturesService featuresService, ITdiCompatibilityNavigation navigation)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 		}
 
@@ -41,7 +44,9 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		}
 
 		#endregion
-
+		#region Visible
+		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
+		#endregion
 		#region Публичные
 		private bool isConfigured = false;
 
