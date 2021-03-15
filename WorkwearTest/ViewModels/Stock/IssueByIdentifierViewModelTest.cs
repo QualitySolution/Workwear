@@ -3,6 +3,7 @@ using System.Linq;
 using Autofac;
 using NSubstitute;
 using NUnit.Framework;
+using QS.Configuration;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -39,6 +40,7 @@ namespace WorkwearTest.ViewModels.Stock
 			var validator = Substitute.For<IValidator>();
 			var baseParameters = Substitute.For<BaseParameters>();
 			var interactive = Substitute.For<IInteractiveQuestion>();
+			var configuration = Substitute.For<IChangeableConfiguration>();
 			var device = Substitute.For<DeviceInfo>(new RG_ENDPOINT_INFO(), new RG_DEVICE_INFO_SHORT());
 			var cardReaderService = Substitute.For<ICardReaderService>();
 			cardReaderService.Devices.Returns(new List<DeviceInfo> { device });
@@ -49,7 +51,7 @@ namespace WorkwearTest.ViewModels.Stock
 			var container = builder.Build();
 
 			bool UidCardWasСalled = false, CurentStateWasСalled =false;
-			var viewModel = new IssueByIdentifierViewModel(uowFactory, navigation, guiDispatcher, userService, container.BeginLifetimeScope(), stockRepository, employeeRepository, featuresService, validator, baseParameters, interactive, cardReaderService);
+			var viewModel = new IssueByIdentifierViewModel(uowFactory, navigation, guiDispatcher, userService, container.BeginLifetimeScope(), stockRepository, employeeRepository, featuresService, validator, baseParameters, interactive, configuration, cardReaderService);
 			viewModel.SelectedDevice = viewModel.Devices.First();
 			viewModel.CardFamilies.First(x => x.CardTypeFamily == RG_CARD_FAMILY_CODE.EF_MIFARE).Active = true;
 			cardReaderService.IsAutoPoll.Returns(true);
