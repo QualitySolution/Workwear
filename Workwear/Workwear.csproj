@@ -501,6 +501,9 @@
     <Compile Include="Tools\Import\DataType.cs" />
     <Compile Include="Tools\Import\FIO.cs" />
     <Compile Include="Tools\IdentityCards\VirtualCardReaderService.cs" />
+    <Compile Include="ReportParameters\ViewModels\GokIssuedWearViewModel.cs" />
+    <Compile Include="ReportParameters\Views\GokIssuedWearView.cs" />
+    <Compile Include="gtk-gui\workwear.ReportParameters.Views.GokIssuedWearView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -749,6 +752,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="App.config" />
+    <None Include="Reports\Gok\IssuedWear.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

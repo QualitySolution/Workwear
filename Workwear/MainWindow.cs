@@ -680,4 +680,9 @@ public partial class MainWindow : Gtk.Window
 	{
 		NavigationManager.OpenViewModel<EmployeesLoadViewModel>(null);
 	}
+
+	protected void OnAction39Activated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(GokIssuedWearViewModel));
+	}
 }

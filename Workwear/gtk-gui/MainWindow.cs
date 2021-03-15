@@ -135,6 +135,10 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionEmployeeLoad;
 
+	private global::Gtk.Action ActionGok;
+
+	private global::Gtk.Action Action39;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -292,7 +296,7 @@ public partial class MainWindow
 		this.ActionToolBarIconOnly.ShortLabel = global::Mono.Unix.Catalog.GetString("Только иконки");
 		w1.Add(this.ActionToolBarIconOnly, null);
 		this.ActionToolBarTextAndIcon = new global::Gtk.RadioAction("ActionToolBarTextAndIcon", global::Mono.Unix.Catalog.GetString("Иконки и текст"), null, null, 0);
-		this.ActionToolBarTextAndIcon.Group = this.ActionToolBarIconOnly.Group;
+		this.ActionToolBarTextAndIcon.Group = this.ActionToolBarTextOnly.Group;
 		this.ActionToolBarTextAndIcon.ShortLabel = global::Mono.Unix.Catalog.GetString("Иконки и текст");
 		w1.Add(this.ActionToolBarTextAndIcon, null);
 		this.ActionIconsExtraSmall = new global::Gtk.RadioAction("ActionIconsExtraSmall", global::Mono.Unix.Catalog.GetString("Очень маленькие иконки"), null, null, 0);
@@ -374,6 +378,12 @@ public partial class MainWindow
 		this.ActionEmployeeLoad = new global::Gtk.Action("ActionEmployeeLoad", global::Mono.Unix.Catalog.GetString("Загрузка данных о сотрудниках"), null, "gtk-convert");
 		this.ActionEmployeeLoad.ShortLabel = global::Mono.Unix.Catalog.GetString("Загрузка данных о сотрудниках");
 		w1.Add(this.ActionEmployeeLoad, null);
+		this.ActionGok = new global::Gtk.Action("ActionGok", global::Mono.Unix.Catalog.GetString("Стойленский Гок"), null, null);
+		this.ActionGok.ShortLabel = global::Mono.Unix.Catalog.GetString("Стойленский Гок");
+		w1.Add(this.ActionGok, null);
+		this.Action39 = new global::Gtk.Action("Action39", global::Mono.Unix.Catalog.GetString("Сводная ведомость"), null, null);
+		this.Action39.ShortLabel = global::Mono.Unix.Catalog.GetString("Сводная ведомость");
+		w1.Add(this.Action39, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -421,16 +431,17 @@ public partial class MainWindow
 				"ActionAverageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><separator/><menuitem" +
 				" name=\'Action22\' action=\'Action22\'/><menuitem name=\'ActionAmountEmployeeGetWear\'" +
 				" action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear\' a" +
-				"ction=\'ActionAmountIssuedWear\'/></menu><menu name=\'ActionHelp\' action=\'ActionHel" +
-				"p\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionHistor" +
-				"y\' action=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/>" +
-				"<separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'Act" +
-				"ionOpenReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Acti" +
-				"on38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnokla" +
-				"sniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'Actio" +
-				"nTwitter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separa" +
-				"tor/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'ab" +
-				"outAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"ction=\'ActionAmountIssuedWear\'/><menu name=\'ActionGok\' action=\'ActionGok\'><menui" +
+				"tem name=\'Action39\' action=\'Action39\'/></menu></menu><menu name=\'ActionHelp\' act" +
+				"ion=\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name" +
+				"=\'ActionHistory\' action=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'A" +
+				"ctionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menu" +
+				"item name=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action38" +
+				"\' action=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=" +
+				"\'ActionOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\'" +
+				" action=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/>" +
+				"</menu><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><men" +
+				"uitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -628,5 +639,6 @@ public partial class MainWindow
 		this.ActionUserSettings.Activated += new global::System.EventHandler(this.OnActionUserSettingsActivated);
 		this.ActionCardIssuee.Activated += new global::System.EventHandler(this.OnActionCardIssueeActivated);
 		this.ActionEmployeeLoad.Activated += new global::System.EventHandler(this.OnActionEmployeeLoadActivated);
+		this.Action39.Activated += new global::System.EventHandler(this.OnAction39Activated);
 	}
 }
