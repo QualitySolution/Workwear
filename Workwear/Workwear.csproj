@@ -504,6 +504,9 @@
     <Compile Include="ReportParameters\ViewModels\GokIssuedWearViewModel.cs" />
     <Compile Include="ReportParameters\Views\GokIssuedWearView.cs" />
     <Compile Include="gtk-gui\workwear.ReportParameters.Views.GokIssuedWearView.cs" />
+    <Compile Include="ReportParameters\ViewModels\Gok\IssuanceSheetM52ViewModel.cs" />
+    <Compile Include="ReportParameters\Views\Gok\IssuanceSheetM52View.cs" />
+    <Compile Include="gtk-gui\workwear.ReportParameters.Views.Gok.IssuanceSheetM52View.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -682,6 +685,8 @@
     <Folder Include="ReportParameters\Views\" />
     <Folder Include="Tools\IdentityCards\" />
     <Folder Include="Tools\Import\" />
+    <Folder Include="ReportParameters\ViewModels\Gok\" />
+    <Folder Include="ReportParameters\Views\Gok\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
@@ -753,6 +758,9 @@
     </None>
     <None Include="App.config" />
     <None Include="Reports\Gok\IssuedWear.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\Gok\IssuanceSheetM52.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

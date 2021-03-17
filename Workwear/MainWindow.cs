@@ -41,6 +41,7 @@ using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.JournalViewers;
 using workwear.ReportParameters.ViewModels;
+using workwear.ReportParameters.ViewModels.Gok;
 using workwear.ReportsDlg;
 using workwear.Tools;
 using workwear.Tools.Features;
@@ -684,5 +685,10 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction39Activated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(GokIssuedWearViewModel));
+	}
+
+	protected void On52ActionActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(IssuanceSheetM52ViewModel));
 	}
 }

@@ -137,7 +137,9 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionGok;
 
-	private global::Gtk.Action Action39;
+	private global::Gtk.Action Action;
+
+	private global::Gtk.Action ActionM52;
 
 	private global::Gtk.VBox vbox1;
 
@@ -381,9 +383,12 @@ public partial class MainWindow
 		this.ActionGok = new global::Gtk.Action("ActionGok", global::Mono.Unix.Catalog.GetString("Стойленский Гок"), null, null);
 		this.ActionGok.ShortLabel = global::Mono.Unix.Catalog.GetString("Стойленский Гок");
 		w1.Add(this.ActionGok, null);
-		this.Action39 = new global::Gtk.Action("Action39", global::Mono.Unix.Catalog.GetString("Сводная ведомость"), null, null);
-		this.Action39.ShortLabel = global::Mono.Unix.Catalog.GetString("Сводная ведомость");
-		w1.Add(this.Action39, null);
+		this.Action = new global::Gtk.Action("Action", global::Mono.Unix.Catalog.GetString("Сводная ведомость по СИЗ"), null, null);
+		this.Action.ShortLabel = global::Mono.Unix.Catalog.GetString("Сводная ведомость");
+		w1.Add(this.Action, null);
+		this.ActionM52 = new global::Gtk.Action("ActionM52", global::Mono.Unix.Catalog.GetString("Ведомость М-52"), null, null);
+		this.ActionM52.ShortLabel = global::Mono.Unix.Catalog.GetString("Ведомость М-52");
+		w1.Add(this.ActionM52, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -432,16 +437,17 @@ public partial class MainWindow
 				" name=\'Action22\' action=\'Action22\'/><menuitem name=\'ActionAmountEmployeeGetWear\'" +
 				" action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear\' a" +
 				"ction=\'ActionAmountIssuedWear\'/><menu name=\'ActionGok\' action=\'ActionGok\'><menui" +
-				"tem name=\'Action39\' action=\'Action39\'/></menu></menu><menu name=\'ActionHelp\' act" +
-				"ion=\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name" +
-				"=\'ActionHistory\' action=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'A" +
-				"ctionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menu" +
-				"item name=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action38" +
-				"\' action=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=" +
-				"\'ActionOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\'" +
-				" action=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/>" +
-				"</menu><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><men" +
-				"uitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"tem name=\'Action\' action=\'Action\'/><menuitem name=\'ActionM52\' action=\'ActionM52\'" +
+				"/></menu></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuitem name=\'help" +
+				"Action\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' action=\'ActionHistor" +
+				"y\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuitem n" +
+				"ame=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReformal\' action" +
+				"=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuitem name=\'A" +
+				"ctionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=\'ActionOd" +
+				"noklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><menuitem na" +
+				"me=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><menuitem name=\'Ac" +
+				"tionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'abou" +
+				"tAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -639,6 +645,7 @@ public partial class MainWindow
 		this.ActionUserSettings.Activated += new global::System.EventHandler(this.OnActionUserSettingsActivated);
 		this.ActionCardIssuee.Activated += new global::System.EventHandler(this.OnActionCardIssueeActivated);
 		this.ActionEmployeeLoad.Activated += new global::System.EventHandler(this.OnActionEmployeeLoadActivated);
-		this.Action39.Activated += new global::System.EventHandler(this.OnAction39Activated);
+		this.Action.Activated += new global::System.EventHandler(this.OnAction39Activated);
+		this.ActionM52.Activated += new global::System.EventHandler(this.On52ActionActivated);
 	}
 }
