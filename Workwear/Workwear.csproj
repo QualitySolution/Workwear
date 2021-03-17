@@ -507,6 +507,9 @@
     <Compile Include="ReportParameters\ViewModels\Gok\IssuanceSheetM52ViewModel.cs" />
     <Compile Include="ReportParameters\Views\Gok\IssuanceSheetM52View.cs" />
     <Compile Include="gtk-gui\workwear.ReportParameters.Views.Gok.IssuanceSheetM52View.cs" />
+    <Compile Include="ReportParameters\ViewModels\Gok\IssuanceSheet138ViewModel.cs" />
+    <Compile Include="ReportParameters\Views\Gok\IssuanceSheet138View.cs" />
+    <Compile Include="gtk-gui\workwear.ReportParameters.Views.Gok.IssuanceSheet138View.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -761,6 +764,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\Gok\IssuanceSheetM52.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\Gok\IssuanceSheet138.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

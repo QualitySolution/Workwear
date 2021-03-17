@@ -691,4 +691,9 @@ public partial class MainWindow : Gtk.Window
 	{
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(IssuanceSheetM52ViewModel));
 	}
+
+	protected void OnActionIssuanceSheet138Activated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(IssuanceSheet138ViewModel));
+	}
 }
