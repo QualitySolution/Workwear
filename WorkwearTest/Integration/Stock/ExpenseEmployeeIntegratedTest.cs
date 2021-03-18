@@ -208,6 +208,77 @@ namespace WorkwearTest.Integration.Stock
 			}
 		}
 
+		[Test(Description = "Убеждаемся что корректно рассчитываем дату следущей выдачи при норме в 1 месяц. Реальный баг.")]
+		[Category("real case")]
+		[Category("Integrated")]
+		public void UpdateOperations_OneMonthNormTest()
+		{
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
+
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				uow.Save(nomenclature);
+
+				var position1 = new StockPosition(nomenclature, null, null, 0);
+
+				var protectionTools = new ProtectionTools();
+				protectionTools.Name = "СИЗ для тестирования";
+				protectionTools.AddNomeclature(nomenclature);
+				uow.Save(protectionTools);
+
+				var norm = new Norm();
+				var normItem = norm.AddItem(protectionTools);
+				normItem.Amount = 1;
+				normItem.NormPeriod = NormPeriodType.Month;
+				normItem.PeriodCount = 1;
+				uow.Save(norm);
+
+				var employee = new EmployeeCard();
+				employee.AddUsedNorm(norm);
+				uow.Save(employee);
+				uow.Commit();
+
+				var income = new Income();
+				income.Warehouse = warehouse;
+				income.Date = new DateTime(2017, 1, 1);
+				income.Operation = IncomeOperations.Enter;
+				var incomeItem1 = income.AddItem(nomenclature);
+				incomeItem1.Amount = 10;
+				income.UpdateOperations(uow, ask);
+				uow.Save(income);
+
+				var expense = new Expense();
+				expense.Operation = ExpenseOperations.Employee;
+				expense.Warehouse = warehouse;
+				expense.Employee = employee;
+				expense.Date = new DateTime(2018, 10, 22);
+				expense.AddItem(position1, 1);
+
+				var baseParameters = Substitute.For<BaseParameters>();
+				baseParameters.ColDayAheadOfShedule.Returns(0);
+
+				//Обновление операций
+				expense.UpdateOperations(uow, baseParameters, ask);
+				uow.Save(expense);
+				uow.Commit();
+
+				expense.UpdateEmployeeWearItems();
+
+				Assert.That(employee.WorkwearItems[0].NextIssue,
+					Is.EqualTo(new DateTime(2018, 11, 22))
+				);
+			}
+		}
+
 		[Test(Description = "Убеждаемся что на созданную выдачу можем добавить ведомость.")]
 		[Category("Integrated")]
 		public void IssueAndCreateIssuanceSheetTest()
