@@ -197,7 +197,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(expense);
 				uow.Commit();
 
-				employee.UpdateNextIssue(expense.Items.Select(x => x.Nomenclature.Type).ToArray());
+				employee.UpdateNextIssue(expense.Items.Select(x => x.ProtectionTools).ToArray());
 
 				//Тут ожидаем предложение перенести дату использование второй номенклатуры на год.
 				ask.ReceivedWithAnyArgs().Question(String.Empty);
@@ -208,11 +208,12 @@ namespace WorkwearTest.Integration.Stock
 			}
 		}
 
-		[Test(Description = "Убеждаемся что корректно рассчитываем дату следущей выдачи при норме в 1 месяц. Реальный баг.")]
+		[Test(Description = "Убеждаемся что корректно рассчитываем дату следущей выдачи при норме в 1 месяц. При разных id. Реальный баг был втом что проверялись id не тех сущьностей, но вы тестах id одинаковые, поэтому тесты работали..")]
 		[Category("real case")]
 		[Category("Integrated")]
-		public void UpdateOperations_OneMonthNormTest()
+		public void UpdateEmployeeWearItems_NextIssueDiffIdsTest()
 		{
+			NewSessionWithSameDB();
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
@@ -224,11 +225,18 @@ namespace WorkwearTest.Integration.Stock
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				uow.Save(nomenclatureType);
 
+				//Поднимаем id номеклатуры до 2.
+				uow.Save(new Nomenclature());
+
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
 				var position1 = new StockPosition(nomenclature, null, null, 0);
+
+				//Поднимаем id сиза до 3.
+				uow.Save(new ProtectionTools { Name = "Id = 1" });
+				uow.Save(new ProtectionTools { Name = "Id = 2" });
 
 				var protectionTools = new ProtectionTools();
 				protectionTools.Name = "СИЗ для тестирования";
@@ -272,10 +280,12 @@ namespace WorkwearTest.Integration.Stock
 				uow.Commit();
 
 				expense.UpdateEmployeeWearItems();
+				uow.Commit();
 
-				Assert.That(employee.WorkwearItems[0].NextIssue,
-					Is.EqualTo(new DateTime(2018, 11, 22))
-				);
+				using(var uow2 = UnitOfWorkFactory.CreateWithoutRoot()) {
+					var employeeTest = uow2.GetById<EmployeeCard>(employee.Id);
+					Assert.That(employeeTest.WorkwearItems[0].NextIssue, Is.EqualTo(new DateTime(2018, 11, 22)));
+				}
 			}
 		}
 

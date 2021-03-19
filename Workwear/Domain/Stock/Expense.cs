@@ -214,7 +214,7 @@ namespace workwear.Domain.Stock
 
 		public virtual void UpdateEmployeeWearItems()
 		{
-			Employee.UpdateNextIssue(Items.Select(x => x.Nomenclature.Type).ToArray());
+			Employee.UpdateNextIssue(Items.Select(x => x.ProtectionTools).ToArray());
 			Employee.FillWearRecivedInfo(UoW);
 			UoW.Save(Employee);
 		}

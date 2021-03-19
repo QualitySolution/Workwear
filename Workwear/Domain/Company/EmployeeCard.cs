@@ -487,14 +487,18 @@ namespace workwear.Domain.Company
 			}
 		}
 
-		public virtual void UpdateNextIssue(params ItemsType[] itemsTypes)
+		public virtual void UpdateNextIssue(params ProtectionTools[] protectionTools)
 		{
-			foreach(var itemsGroup in itemsTypes.GroupBy(i => i.Id)) {
-				var wearItem = WorkwearItems.FirstOrDefault(i => i.ProtectionTools.Id == itemsGroup.Key);
-				if(wearItem == null) {
-					logger.Debug("Позиции <{0}> не требуется к выдаче, пропускаем...", itemsGroup.First().Name);
-					continue;
-				}
+			var ids = new HashSet<int>(protectionTools.Select(x => x.Id));
+			foreach(var wearItem in WorkwearItems) {
+				if(wearItem.ProtectionTools.MatchedProtectionTools.Any(x => ids.Contains(x.Id)))
+					wearItem.UpdateNextIssue(UoW);
+			}
+		}
+
+		public virtual void UpdateNextIssueAll()
+		{
+			foreach(var wearItem in WorkwearItems) {
 				wearItem.UpdateNextIssue(UoW);
 			}
 		}
