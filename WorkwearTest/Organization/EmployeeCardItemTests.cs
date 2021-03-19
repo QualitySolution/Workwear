@@ -72,6 +72,7 @@ namespace WorkwearTest.Organization
 		}
 
 		[Test(Description = "Проверяем что алгоритм не падает в случае если нет автосписания и нет даты износа по норме.(bug)")]
+		[Category("real case")]
 		public void UpdateNextIssue_WihtoutWriteoffAndWithoutExpiryByNormCase()
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();

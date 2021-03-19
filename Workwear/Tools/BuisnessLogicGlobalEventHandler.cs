@@ -2,10 +2,9 @@
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
-using workwear.Domain.Operations;
 using workwear.Domain.Company;
-using workwear.Domain.Stock;
-using workwear.Repository.Stock;
+using workwear.Domain.Operations;
+using workwear.Domain.Regulations;
 
 namespace workwear.Tools
 {
@@ -55,9 +54,9 @@ namespace workwear.Tools
 					var employee = uow.GetById<EmployeeCard>(employeeGroup.Key);
 					if(employee == null)
 						continue; //Видимо сотрудник был удален, поэтому пересчитывать глупо.
-					var nomenclatures = employeeGroup.Select(x => x.GetOldValueCast<EmployeeIssueOperation, Nomenclature>(e => e.Nomenclature)).ToArray();
-					var types = NomenclatureRepository.GetTypesOfNomenclatures(uow, nomenclatures).ToArray();
-					employee.UpdateNextIssue(types);
+					var protectionTools = employeeGroup.Select(x => x.GetOldValueCast<EmployeeIssueOperation, ProtectionTools>(e => e.ProtectionTools))
+						.Where(x => x != null).Distinct().ToArray();
+					employee.UpdateNextIssue(protectionTools);
 				}
 				uow.Commit();
 			}
