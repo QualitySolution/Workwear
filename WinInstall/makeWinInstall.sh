@@ -17,6 +17,9 @@ while [ "$1" != "" ]; do
 		BinDir=../$ProjectName/bin/Debug
 		Configuration="Debug"
                 ;;
+        -g | --sgok ) 
+		NsisOptions+=" /DSGOK"
+                ;;                
     esac
     shift
 done

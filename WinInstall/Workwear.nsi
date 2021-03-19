@@ -19,6 +19,12 @@ Unicode true
 	!define /redef SETUP_POSTFIX "-beta"
 !endif
 
+!ifdef SGOK
+	!define /redef PRODUCT_NAME "QS: Спецодежда СГОК"
+	!define /redef UNINSTAL_KEY "workwear"
+	!define /redef SETUP_POSTFIX "-sgok"
+!endif
+
 ; The name of the installer
 Name "${PRODUCT_NAME}"
 
