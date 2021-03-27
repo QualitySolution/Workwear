@@ -215,6 +215,7 @@
     <EmbeddedResource Include="Updates\2.3.3.sql" />
     <EmbeddedResource Include="Updates\2.4.sql" />
     <EmbeddedResource Include="Updates\2.4.1.sql" />
+    <EmbeddedResource Include="Updates\2.4.3.sql" />
     <EmbeddedResource Include="Updates\2.5.sql" />
     <EmbeddedResource Include="icon\toolbar\smart-card.png" />
     <EmbeddedResource Include="icon\buttons\smart-card.png" />
