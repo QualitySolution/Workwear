@@ -13,7 +13,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Card">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     IFNULL(wear_cards.card_number, wear_cards.id) AS id,
@@ -30,7 +30,14 @@
     wear_cards.size_headdress,
     wear_cards.size_gloves,
     posts.name AS post,
-    leaders.name AS leader,
+    CONCAT_WS('',
+            CONCAT(leaders.surname, ' '),
+            IF(leaders.name = '',
+                NULL,
+                CONCAT(LEFT(leaders.name, 1), '.')),
+            IF(leaders.patronymic = '',
+                NULL,
+                CONCAT(LEFT(leaders.patronymic, 1), '.'))) AS leader,
     objects.name AS subdivision,
     (SELECT 
             GROUP_CONCAT(DISTINCT CONCAT_WS(' ',
@@ -63,7 +70,7 @@ WHERE
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="id">
           <DataField>id</DataField>
           <TypeName>System.String</TypeName>
