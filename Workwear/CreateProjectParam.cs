@@ -110,6 +110,7 @@ namespace workwear
 			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf();
 			builder.Register(c => QSProjectsLib.QSMain.ConnectionStringBuilder).AsSelf();
+			builder.RegisterType<NhDataBaseInfo>().As<IDataBaseInfo>();
 			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
 			#endregion
 

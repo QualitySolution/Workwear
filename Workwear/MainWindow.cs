@@ -18,6 +18,7 @@ using QS.Project.Versioning;
 using QS.Project.Views;
 using QS.Report;
 using QS.Serial.ViewModels;
+using QS.Services;
 using QS.Tdi;
 using QS.Tdi.Gtk;
 using QS.Updater;
@@ -73,7 +74,10 @@ public partial class MainWindow : Gtk.Window
 		var checker = new VersionCheckerService(MainClass.AppDIContainer);
 		checker.RunUpdate();
 
-		if(QSMain.User.Login == "root") {
+		var userService = AutofacScope.Resolve<IUserService>();
+		var user = userService.GetCurrentUser(UoW);
+		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
+		if(user.Login == "root") {
 			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
 			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
 												  MessageType.Info,
@@ -88,7 +92,7 @@ public partial class MainWindow : Gtk.Window
 			return;
 		}
 
-		if(QSMain.connectionDB.DataSource == "demo.qsolution.ru") {
+		if(databaseInfo.IsDemo) {
 			string Message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
 				"Введенные данные будут доступны другим пользователям.\n\nДля работы вам необходимо " +
 				"установить собственный сервер или купить подписку на QS:Облако.";
@@ -99,14 +103,15 @@ public partial class MainWindow : Gtk.Window
 			md.Run();
 			md.Destroy();
 			dialogAuthenticationAction.Sensitive = false;
+			ActionSN.Sensitive = false;
 		}
 
 		this.KeyReleaseEvent += ClipboardWorkaround.HandleKeyReleaseEvent;
 		TDIMain.MainNotebook = tdiMain;
 		this.KeyReleaseEvent += TDIMain.TDIHandleKeyReleaseEvent;
 
-		UsersAction.Sensitive = QSMain.User.Admin;
-		labelUser.LabelProp = QSMain.User.Name;
+		UsersAction.Sensitive = user.IsAdmin;
+		labelUser.LabelProp = user.Name;
 
 		//Настраиваем новости
 		var feeds = new List<NewsFeed>(){
