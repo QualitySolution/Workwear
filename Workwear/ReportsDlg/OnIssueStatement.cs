@@ -20,57 +20,59 @@ namespace workwear
 		{
 			this.Build ();
 
-			var uow = UnitOfWorkFactory.CreateWithoutRoot ();
-
-			// Заполняем месяца
-			ylistcomboMonth.SetRenderTextFunc<int> (DateHelper.GetMonthName);
-            ylistcomboMonth1.SetRenderTextFunc<int>(DateHelper.GetMonthName);
-            ylistcomboMonth2.SetRenderTextFunc<int>(DateHelper.GetMonthName);
-			var months = new List<int> ();
-			for (int i = 1; i <= 12; i++)
-				months.Add (i);
-			ylistcomboMonth.ItemsList = months;
-			ylistcomboMonth.SelectedItem = DateTime.Today.Month;
-            ylistcomboMonth1.ItemsList = months;
-            ylistcomboMonth1.SelectedItem = DateTime.Today.Month;
-            ylistcomboMonth2.ItemsList = months;
-            ylistcomboMonth2.SelectedItem = DateTime.Today.Month;
-
-            entryreferenceFacility.SubjectType = typeof(Subdivision);
-			entryEmploee.SubjectType = typeof(EmployeeCard);
-
 			//Заполняем года
-			DateTime startDate = uow.Session.QueryOver<EmployeeCardItem>()
-				.Select(Projections.Min<EmployeeCardItem>(e => e.NextIssue)).SingleOrDefault<DateTime>();
-			DateTime endDate = uow.Session.QueryOver<EmployeeCardItem>()
-				.Select(Projections.Max<EmployeeCardItem>(e => e.NextIssue)).SingleOrDefault<DateTime>();
+			DateTime startDate;
+			DateTime endDate;
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 
-			if(startDate == default(DateTime)) {
-				buttonRun.Sensitive = false;
-				labelError.Markup = "<span foreground=\"red\">У всех сотрудников нет потребности в выдачи спецодежды. Сначала заполните карточки сотрудников.</span>";
-				errorStartDate = true;
-				return;
+				// Заполняем месяца
+				ylistcomboMonth.SetRenderTextFunc<int>(DateHelper.GetMonthName);
+				ylistcomboMonth1.SetRenderTextFunc<int>(DateHelper.GetMonthName);
+				ylistcomboMonth2.SetRenderTextFunc<int>(DateHelper.GetMonthName);
+				var months = new List<int>();
+				for(int i = 1; i <= 12; i++)
+					months.Add(i);
+				ylistcomboMonth.ItemsList = months;
+				ylistcomboMonth.SelectedItem = DateTime.Today.Month;
+				ylistcomboMonth1.ItemsList = months;
+				ylistcomboMonth1.SelectedItem = DateTime.Today.Month;
+				ylistcomboMonth2.ItemsList = months;
+				ylistcomboMonth2.SelectedItem = DateTime.Today.Month;
+
+				entryreferenceFacility.SubjectType = typeof(Subdivision);
+				entryEmploee.SubjectType = typeof(EmployeeCard);
+				startDate = uow.Session.QueryOver<EmployeeCardItem>()
+								.Select(Projections.Min<EmployeeCardItem>(e => e.NextIssue)).SingleOrDefault<DateTime>();
+				endDate = uow.Session.QueryOver<EmployeeCardItem>()
+								.Select(Projections.Max<EmployeeCardItem>(e => e.NextIssue)).SingleOrDefault<DateTime>();
+
+
+				if(startDate == default(DateTime)) {
+					buttonRun.Sensitive = false;
+					labelError.Markup = "<span foreground=\"red\">У всех сотрудников нет потребности в выдачи спецодежды. Сначала заполните карточки сотрудников.</span>";
+					errorStartDate = true;
+					return;
+				}
+
+				var years = new List<int>();
+				DateTime temp = startDate;
+				do {
+					years.Add(temp.Year);
+					temp = temp.AddYears(1);
+				} while(temp.Year <= endDate.Year);
+				ylistcomboYear.ItemsList = years;
+				ylistcomboYear1.ItemsList = years;
+				ylistcomboYear2.ItemsList = years;
+				int setYear;
+				if(years.Contains(DateTime.Today.Year))
+					setYear = DateTime.Today.Year;
+				else
+					setYear = years.Max();
+
+				ylistcomboYear.SelectedItem = setYear;
+				ylistcomboYear1.SelectedItem = setYear;
+				ylistcomboYear2.SelectedItem = setYear;
 			}
-
-			var years = new List<int>();
-			DateTime temp = startDate;
-			do {
-				years.Add(temp.Year);
-				temp = temp.AddYears(1);
-			} while(temp.Year <= endDate.Year);
-			ylistcomboYear.ItemsList = years;
-			ylistcomboYear1.ItemsList = years;
-			ylistcomboYear2.ItemsList = years;
-			int setYear;
-			if(years.Contains(DateTime.Today.Year))
-				setYear = DateTime.Today.Year;
-			else
-				setYear = years.Max();
-
-			ylistcomboYear.SelectedItem = setYear;
-			ylistcomboYear1.SelectedItem = setYear;
-			ylistcomboYear2.SelectedItem = setYear;
-
 		}
 
 		public event EventHandler<LoadReportEventArgs> LoadReport;
