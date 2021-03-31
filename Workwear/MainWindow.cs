@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Autofac;
 using Gtk;
+using MySql.Data.MySqlClient;
 using NLog;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
@@ -77,7 +78,10 @@ public partial class MainWindow : Gtk.Window
 		var userService = AutofacScope.Resolve<IUserService>();
 		var user = userService.GetCurrentUser(UoW);
 		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
-		if(user.Login == "root") {
+
+		//Пока такая реализация чтобы не плодить сущьностей.
+		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
+		if(connectionBuilder.UserID == "root") {
 			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
 			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
 												  MessageType.Info,

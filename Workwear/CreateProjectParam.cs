@@ -1,6 +1,5 @@
 ﻿using System.Data.Common;
 using Autofac;
-using MySql.Data.MySqlClient;
 using QS.BaseParameters;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
