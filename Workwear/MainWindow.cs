@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Autofac;
 using Gtk;
+using MySql.Data.MySqlClient;
 using NLog;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
@@ -79,7 +80,13 @@ public partial class MainWindow : Gtk.Window
 		var checker = new VersionCheckerService(MainClass.AppDIContainer);
 		checker.RunUpdate();
 
-		if(QSMain.User.Login == "root") {
+		var userService = AutofacScope.Resolve<IUserService>();
+		var user = userService.GetCurrentUser(UoW);
+		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
+
+		//Пока такая реализация чтобы не плодить сущьностей.
+		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
+		if(connectionBuilder.UserID == "root") {
 			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
 			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
 												  MessageType.Info,
@@ -94,12 +101,10 @@ public partial class MainWindow : Gtk.Window
 			return;
 		}
 
-		if(QSMain.connectionDB.DataSource == "demo.qsolution.ru") {
-			string Message = "Вы подключились к демонстрационному серверу. Сервер предназначен для оценки " +
-				"возможностей программы, не используйте его для работы, так как ваши данные будут доступны " +
-				"любому пользователю через интернет.\n\nДля полноценного использования программы вам необходимо " +
-				"установить собственный сервер. Для его установки обратитесь к документации.\n\nЕсли у вас возникнут " +
-				"вопросы вы можете обратится в нашу тех. поддержку.";
+		if(databaseInfo.IsDemo) {
+			string Message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
+				"Введенные данные будут доступны другим пользователям.\n\nДля работы вам необходимо " +
+				"установить собственный сервер или купить подписку на QS:Облако.";
 			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
 												  MessageType.Info,
 												  ButtonsType.Ok,
@@ -107,14 +112,15 @@ public partial class MainWindow : Gtk.Window
 			md.Run();
 			md.Destroy();
 			dialogAuthenticationAction.Sensitive = false;
+			ActionSN.Sensitive = false;
 		}
 
 		this.KeyReleaseEvent += ClipboardWorkaround.HandleKeyReleaseEvent;
 		TDIMain.MainNotebook = tdiMain;
 		this.KeyReleaseEvent += TDIMain.TDIHandleKeyReleaseEvent;
 
-		UsersAction.Sensitive = QSMain.User.Admin;
-		labelUser.LabelProp = QSMain.User.Name;
+		UsersAction.Sensitive = user.IsAdmin;
+		labelUser.LabelProp = user.Name;
 
 		//Настраиваем новости
 		var feeds = new List<NewsFeed>(){
