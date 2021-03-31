@@ -31,18 +31,18 @@ namespace workwear
 			uow = UnitOfWorkFactory.CreateWithoutRoot ();
 
 			// Заполняем месяца
-			ylistcomboMonth.SetRenderTextFunc<int> (DateHelper.GetMonthName);
-            ylistcomboMonth1.SetRenderTextFunc<int>(DateHelper.GetMonthName);
-            ylistcomboMonth2.SetRenderTextFunc<int>(DateHelper.GetMonthName);
-			var months = new List<int> ();
-			for (int i = 1; i <= 12; i++)
-				months.Add (i);
+			ylistcomboMonth.SetRenderTextFunc<int>(DateHelper.GetMonthName);
+			ylistcomboMonth1.SetRenderTextFunc<int>(DateHelper.GetMonthName);
+			ylistcomboMonth2.SetRenderTextFunc<int>(DateHelper.GetMonthName);
+			var months = new List<int>();
+			for(int i = 1; i <= 12; i++)
+				months.Add(i);
 			ylistcomboMonth.ItemsList = months;
 			ylistcomboMonth.SelectedItem = DateTime.Today.Month;
-            ylistcomboMonth1.ItemsList = months;
-            ylistcomboMonth1.SelectedItem = DateTime.Today.Month;
-            ylistcomboMonth2.ItemsList = months;
-            ylistcomboMonth2.SelectedItem = DateTime.Today.Month;
+			ylistcomboMonth1.ItemsList = months;
+			ylistcomboMonth1.SelectedItem = DateTime.Today.Month;
+			ylistcomboMonth2.ItemsList = months;
+			ylistcomboMonth2.SelectedItem = DateTime.Today.Month;
 
 			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 
@@ -95,7 +95,6 @@ namespace workwear
 			ylistcomboYear.SelectedItem = setYear;
 			ylistcomboYear1.SelectedItem = setYear;
 			ylistcomboYear2.SelectedItem = setYear;
-
 		}
 
 		public event EventHandler<LoadReportEventArgs> LoadReport;
