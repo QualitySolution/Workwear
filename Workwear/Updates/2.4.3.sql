@@ -12,3 +12,17 @@ ADD CONSTRAINT `fk_objects_1`
   REFERENCES `warehouse` (`id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
+  
+-- Исправляем некорректный внешний ключ. Добаленный по ошибке в 2.4
+  
+ALTER TABLE `issuance_sheet` 
+DROP FOREIGN KEY `fk_issuance_sheet_2`;
+ALTER TABLE `issuance_sheet` 
+ADD INDEX `fk_issuance_sheet_2_idx` (`subdivision_id` ASC);
+
+ALTER TABLE `issuance_sheet` 
+ADD CONSTRAINT `fk_issuance_sheet_2`
+  FOREIGN KEY (`subdivision_id`)
+  REFERENCES `objects` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE;
