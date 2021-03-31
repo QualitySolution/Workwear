@@ -193,9 +193,7 @@ namespace workwear
 		protected void OnButtonIssuanceSheetOpenClicked(object sender, EventArgs e)
 		{
 			if(UoW.HasChanges) {
-				if(MessageDialogHelper.RunQuestionDialog("Сохранить документ выдачи перед открытием ведомости?"))
-					Save();
-				else
+				if(!MessageDialogHelper.RunQuestionDialog("Сохранить документ выдачи перед открытием ведомости?") || !Save())
 					return;
 			}
 
@@ -208,9 +206,7 @@ namespace workwear
 			var doc = (IssuedSheetPrint)e.ItemEnum;
 
 			if(UoW.HasChanges) {
-				if(CommonDialogs.SaveBeforePrint(Entity.GetType(), "ведомости"))
-					Save();
-				else
+				if(!CommonDialogs.SaveBeforePrint(Entity.GetType(), "ведомости") || !Save())
 					return;
 			}
 
