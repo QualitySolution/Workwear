@@ -159,9 +159,7 @@ namespace workwear.ViewModels.Stock
 		public void OpenIssuenceSheet()
 		{
 			if(UoW.HasChanges) {
-				if(MessageDialogHelper.RunQuestionDialog("Сохранить документ выдачи перед открытием ведомости?"))
-					Save();
-				else
+				if(!MessageDialogHelper.RunQuestionDialog("Сохранить документ выдачи перед открытием ведомости?") || !Save())
 					return;
 			}
 			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
@@ -175,9 +173,7 @@ namespace workwear.ViewModels.Stock
 		public void PrintIssuenceSheet(IssuedSheetPrint doc)
 		{
 			if(UoW.HasChanges) {
-				if(commonMessages.SaveBeforePrint(Entity.GetType(), "ведомости"))
-					Save();
-				else
+				if(!commonMessages.SaveBeforePrint(Entity.GetType(), "ведомости") || !Save())
 					return;
 			}
 
