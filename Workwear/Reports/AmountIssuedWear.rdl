@@ -54,7 +54,13 @@
             <Width>87.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>583.6pt</Width>
+            <Width>500.5pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>96.8pt</Width>
+            <Visibility>
+              <Hidden>=!{?bySize}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>67.3pt</Width>
@@ -90,6 +96,26 @@
                         <Textbox Name="Textbox8">
                           <Value>Итого:</Value>
                           <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                              <Left>None</Left>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Right</TextAlign>
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox14">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>Solid</Default>
                               <Right>None</Right>
@@ -192,6 +218,26 @@
                     </TableCell>
                     <TableCell>
                       <ReportItems>
+                        <Textbox Name="Textbox6">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                            <VerticalAlign>Bottom</VerticalAlign>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
                         <Textbox Name="Textbox4">
                           <Value>
                           </Value>
@@ -235,6 +281,22 @@
                         <Textbox Name="Textbox29">
                           <Value>Наименование</Value>
                           <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <BackgroundColor>#E9E9E9</BackgroundColor>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox10">
+                          <Value>Размер</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>Solid</Default>
                             </BorderStyle>
@@ -307,6 +369,22 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox3">
+                      <Value>={size} + Iif(Fields!growth.IsMissing, "", "/" + {growth})</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox13" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                       <Value>={sum}</Value>
                       <CanGrow>false</CanGrow>
@@ -359,15 +437,15 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>select if(@summary, NULL, objects.id) as subdivision_id, objects.name as object, nomenclature.name as nomen, sum(issued) as sum, nomenclature.number, operation_issued_by_employee.nomenclature_id, objects.code 
+        <CommandText>select if(@summary, NULL, objects.id) as subdivision_id, objects.name as object, nomenclature.name as nomen, sum(issued) as sum, nomenclature.number, operation_issued_by_employee.size, operation_issued_by_employee.growth, objects.code 
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
 LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
 WHERE operation_issued_by_employee.operation_time &gt;= @dateStart and operation_issued_by_employee.operation_time &lt;= @dateEnd
 and operation_issued_by_employee.returned = 0 AND (@summary OR (@withoutsub AND objects.id IS NULL) OR objects.id IN (@subdivisions))
-GROUP BY IF(@summary, NULL, objects.id), nomenclature_id
-ORDER BY CAST(objects.code AS UNSIGNED), nomen;</CommandText>
+GROUP BY IF(@summary, NULL, objects.id), nomenclature_id, IF(@bysize, operation_issued_by_employee.size, NULL), IF(@bysize, operation_issued_by_employee.growth, NULL)
+ORDER BY CAST(objects.code AS UNSIGNED), nomen, operation_issued_by_employee.size, operation_issued_by_employee.growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
             <Value>=Format({?dateStart}, "yyyy-MM-dd")</Value>
@@ -384,9 +462,16 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen;</CommandText>
           <QueryParameter Name="summary">
             <Value>={?summary}</Value>
           </QueryParameter>
+          <QueryParameter Name="bysize">
+            <Value>={?bySize}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields >
+        <Field Name="subdivision_id">
+          <DataField>subdivision_id</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
         <Field Name="object">
           <DataField>object</DataField>
           <TypeName>System.String</TypeName>
@@ -399,17 +484,21 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen;</CommandText>
           <DataField>sum</DataField>
           <TypeName>System.Int32</TypeName>
         </Field>
-        <Field Name="code">
-          <DataField>code</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
         <Field Name="number">
           <DataField>number</DataField>
           <TypeName>System.Int32</TypeName>
         </Field>
-        <Field Name="subdivision_id">
-          <DataField>subdivision_id</DataField>
-          <TypeName>System.Int32</TypeName>
+        <Field Name="size">
+          <DataField>size</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="growth">
+          <DataField>growth</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="code">
+          <DataField>code</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -463,6 +552,13 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen;</CommandText>
       <MultiValue>false</MultiValue>
       <Prompt>
       </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="bySize">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>

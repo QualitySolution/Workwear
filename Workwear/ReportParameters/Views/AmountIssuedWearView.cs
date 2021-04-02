@@ -16,6 +16,8 @@ namespace workwear.ReportParameters.Views
 				.AddBinding(v => v.EndDate, w => w.EndDateOrNull)
 				.InitializeFromSource();
 
+			checkBySize.Binding.AddBinding(ViewModel, v => v.BySize, w => w.Active).InitializeFromSource();
+
 			ycheckSummry.Binding.AddBinding(viewModel, v => v.Summary, w => w.Active).InitializeFromSource();
 			ycheckAll.Binding.AddSource(viewModel)
 				.AddBinding(v => v.SelectAll, w => w.Active)
