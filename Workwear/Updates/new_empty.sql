@@ -360,7 +360,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `regulations` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` TINYTEXT NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
   `number` VARCHAR(10) NULL DEFAULT NULL,
   `doc_date` DATE NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
@@ -375,7 +375,7 @@ CREATE TABLE IF NOT EXISTS `regulations_annex` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `regulations_id` INT UNSIGNED NOT NULL,
   `number` TINYINT NOT NULL,
-  `name` TINYTEXT NULL DEFAULT NULL,
+  `name` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_regulations_appendix_1_idx` (`regulations_id` ASC),
   CONSTRAINT `fk_regulations_appendix_1`
