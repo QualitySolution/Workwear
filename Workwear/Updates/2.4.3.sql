@@ -26,3 +26,13 @@ ADD CONSTRAINT `fk_issuance_sheet_2`
   REFERENCES `objects` (`id`)
   ON DELETE NO ACTION
   ON UPDATE CASCADE;
+  
+-- Заменяем тип поля с именем документа и приложения, так как используемый tynyTEXT не позволяет понять длинну в символах при использвании кирилицы.
+  
+ALTER TABLE `regulations` 
+CHARACTER SET = utf8mb4 , COLLATE = utf8mb4_general_ci ,
+CHANGE COLUMN `name` `name` VARCHAR(255) NOT NULL ;
+
+ALTER TABLE `regulations_annex` 
+CHARACTER SET = utf8mb4 , COLLATE = utf8mb4_general_ci ,
+CHANGE COLUMN `name` `name` VARCHAR(255) NULL DEFAULT NULL ;
