@@ -3,7 +3,6 @@ using Gamma.ColumnConfig;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using QSOrmProject;
-using QSProjectsLib;
 using workwear.Domain.Regulations;
 
 namespace workwear.Dialogs.Regulations
@@ -36,7 +35,7 @@ namespace workwear.Dialogs.Regulations
 			yentryNumber.Binding.AddBinding(Entity, e => e.Number, w => w.Text).InitializeFromSource();
 
 			ytreeAnnexes.ColumnsConfig = FluentColumnsConfig<RegulationDocAnnex>.Create()
-				.AddColumn("Номер").AddNumericRenderer(x => x.Number).Editing(new Gtk.Adjustment(1, 1, 255, 1, 10, 10))
+				.AddColumn("Номер").AddNumericRenderer(x => x.Number).Editing(new Gtk.Adjustment(1, 1, 127, 1, 10, 10))
 				.AddColumn("Наименование").AddTextRenderer(p => p.Name).Editable()
 				.Finish();
 			ytreeAnnexes.Selection.Changed += treeAnnexes_Selection_Changed;

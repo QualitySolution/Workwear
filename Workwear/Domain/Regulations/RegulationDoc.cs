@@ -90,6 +90,13 @@ namespace workwear.Domain.Regulations
 			if (String.IsNullOrWhiteSpace(Name))
 				yield return new ValidationResult("Название документа должно быть заполнено.",
 												  new[] { this.GetPropertyName(o => o.Name) });
+			if(Annexess.Any(x => x.Number < 0))
+				yield return new ValidationResult("Номер приложения должен быть положительным числом.",
+												  new[] { nameof(Annexess) });
+			if(Annexess.Any(x => x.Number > 127))
+				yield return new ValidationResult("Номер приложения не может превышать 127.",
+												  new[] { nameof(Annexess) });
+
 		}
 
 		#region Методы
