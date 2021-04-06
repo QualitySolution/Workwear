@@ -88,7 +88,9 @@ namespace workwear.ViewModels.Statements
 
 		void NomenclatureJournal_ObjectSelected(object sender, OrmReferenceObjectSectedEventArgs e)
 		{
-			foreach(var nomenclature in e.GetEntities<Nomenclature>()) {
+			var ids = e.GetEntities<Nomenclature>().Select(x => x.Id);
+			var nomenclatures = UoW.GetById<Nomenclature>(ids);
+			foreach(var nomenclature in nomenclatures) {
 				var item = new IssuanceSheetItem {
 					IssuanceSheet = Entity,
 					Nomenclature = nomenclature,
