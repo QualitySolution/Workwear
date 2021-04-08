@@ -146,7 +146,7 @@ namespace workwear.ViewModels.Statements
 		{
 			var items = (sender as OrmReference).Tag as IssuanceSheetItem[];
 			foreach(var item in items) {
-				item.Nomenclature = e.Subject as Nomenclature;
+				item.Nomenclature = UoW.GetById<Nomenclature>(e.Subject.GetId());
 			}
 		}
 
