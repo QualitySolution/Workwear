@@ -54,8 +54,20 @@ namespace workwear.Dialogs.Organization
 
 		void HandleEntityChangeEvent(EntityChangeEvent[] changeEvents)
 		{
-			if(changeEvents.Select(e => e.Entity).OfType<EmployeeCardItem>().Any(x => x.EmployeeCard.IsSame(RootEntity)))
+			if(!ItemsLoaded)
+				return;
+			if(changeEvents.First().Session == UoW.Session)
+				return; //Не чего не делаем если это наше собственное изменение.
+			if(changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Delete).Select(e => e.Entity).OfType<EmployeeCardItem>().Any(x => x.EmployeeCard.IsSame(RootEntity))) {
+				//Если сделано удаление строк, просто закрываем диалог, так как заставить корректно сохранить сотрудника все равно не поучится.
+				//Не работаел следующий сценарий: Открываем диалог сотрудника, строка добавленая по норме есть в списке, открываем норму, удаляем одну из строк, сохраняем норму. После этого пытаемся сохранить сотрудника.
+				(EntityDialog as EmployeeCardDlg).CloseDlg();
+				return;
+			}
+
+			if(changeEvents.Select(e => e.Entity).OfType<EmployeeCardItem>().Any(x => x.EmployeeCard.IsSame(RootEntity))) {
 				RefreshWorkItems();
+			}
 		}
 
 		protected void OnButtonGiveWearByNormClicked(object sender, EventArgs e)

@@ -157,7 +157,7 @@ namespace workwear.Dialogs.Regulations
 					mes += String.Join("\n", operations.Take(10));
 					if (operations.Count > 10)
 						mes += String.Format("\n... и еще {0}", operations.Count - 10);
-					mes += "\nВы уверены что хотите выполнить удаление?";
+					mes += "\nОткрытые диалоги этих сотрудников будут закрыты.\nВы уверены что хотите выполнить удаление?";
 					logger.Info("Ок");
 					if (!MessageDialogHelper.RunQuestionDialog(mes))
 						return;

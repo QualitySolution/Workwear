@@ -174,6 +174,11 @@ namespace workwear.Dialogs.Organization
 			return true;
 		}
 
+		public void CloseDlg()
+		{
+			OnCloseTab(false, QS.Navigation.CloseSource.Self);
+		}
+
 		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			//Так как склад подбора мог поменятся при смене подразделения.
