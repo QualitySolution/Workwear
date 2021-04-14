@@ -114,7 +114,10 @@ namespace workwear
 				var selected = ytreeItems.GetSelectedObject<IncomeItem>();
 				var item = new MenuItemId<IncomeItem>("Открыть номеклатуру");
 				item.ID = selected;
-				item.Activated += Item_Activated;
+				if(selected == null)
+					item.Sensitive = false;
+				else
+					item.Activated += Item_Activated;
 				menu.Add(item);
 				menu.ShowAll();
 				menu.Popup();
