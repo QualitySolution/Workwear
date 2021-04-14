@@ -96,7 +96,7 @@ namespace workwear.Domain.Regulations
 				yield return new ValidationResult("Номер приложения не может превышать 127.",
 												  new[] { nameof(Annexess) });
 
-			if(Annexess.Any(x => x.Name.Length > 255))
+			if(Annexess.Any(x => !String.IsNullOrEmpty(x.Name) && x.Name.Length > 255))
 				yield return new ValidationResult("Название приложения не может превышать 255 символов.",
 												  new[] { nameof(Annexess) });
 		}
