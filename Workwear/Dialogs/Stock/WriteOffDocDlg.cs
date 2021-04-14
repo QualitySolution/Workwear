@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using Autofac;
+using Gamma.Binding.Converters;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
-using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository;
