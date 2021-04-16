@@ -124,6 +124,7 @@
     <Compile Include="Integration\Stock\IncomeIntegratedTest.cs" />
     <Compile Include="Integration\Stock\ExpenseSubdivisionIntegratedTest.cs" />
     <Compile Include="Integration\Stock\StockRepositoryTest.cs" />
+    <Compile Include="Stock\WriteoffTest.cs" />
     <Compile Include="Integration\Organization\EmployeeCardIntegratedTest.cs" />
     <Compile Include="Integration\Stock\WriteoffEmployeeIntegratedTest.cs" />
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
