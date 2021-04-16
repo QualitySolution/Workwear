@@ -22,6 +22,9 @@ namespace workwear.Repository.Company
 
 		public static IList<SubdivisionRecivedInfo> ItemsBalance(IUnitOfWork uow, Subdivision subdivision)
 		{
+			if(subdivision.Id == 0) //Если подразделение не сохранено возвращаем пустой лист.
+				return new List<SubdivisionRecivedInfo>();
+
 			SubdivisionRecivedInfo resultAlias = null;
 
 			SubdivisionIssueOperation subdivisionIssueOperationAlias = null;
