@@ -278,7 +278,6 @@ namespace workwear.Domain.Operations
 				OperationTime = item.Document.Date;
 			
 			Nomenclature = item.Nomenclature;
-			WearPercent = IssuedOperation.CalculatePercentWear(OperationTime);
 			Issued = 0;
 			Returned = item.Amount;
 			WarehouseOperation = item.WarehouseOperation;

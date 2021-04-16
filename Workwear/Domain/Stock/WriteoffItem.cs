@@ -126,7 +126,15 @@ namespace workwear.Domain.Stock
 				if(SubdivisionWriteoffOperation != null)
 					return SubdivisionWriteoffOperation.WearPercent;
 
-				throw new InvalidOperationException("Строка документа списания находится в поломанном состоянии. Должна быть заполнена только одна операция.");
+				throw new InvalidOperationException("Строка документа списания находится в поломанном состоянии. Должна быть заполнена хотя бы одна операция.");
+			}
+			set {
+				if(WarehouseOperation != null)
+					WarehouseOperation.WearPercent = value;
+				if(EmployeeWriteoffOperation != null)
+					EmployeeWriteoffOperation.WearPercent = value;
+				if(SubdivisionWriteoffOperation != null)
+					SubdivisionWriteoffOperation.WearPercent = value;
 			}
 		}
 
@@ -143,7 +151,7 @@ namespace workwear.Domain.Stock
 				if(EmployeeWriteoffOperation == null && WarehouseOperation != null && SubdivisionWriteoffOperation == null)
 					return WriteoffFrom.Warehouse;
 
-				throw new InvalidOperationException("Строка документа списания находится в поломанном состоянии. Должна быть заполнена только одна операция.");
+				throw new InvalidOperationException("Строка документа списания находится в поломанном состоянии. Должна быть заполнена хотя бы одна операция.");
 			}
 		}
 
@@ -178,7 +186,8 @@ namespace workwear.Domain.Stock
 				Nomenclature = issueOperation.Nomenclature,
 				Size = issueOperation.Size,
 				WearGrowth = issueOperation.WearGrowth,
-			};
+				WearPercent = issueOperation.CalculatePercentWear(document.Date)
+		};
 			this.nomenclature = issueOperation.Nomenclature;
 			this.size = issueOperation.Size;
 			this.wearGrowth = issueOperation.WearGrowth;
@@ -196,6 +205,7 @@ namespace workwear.Domain.Stock
 				Nomenclature = issueOperation.Nomenclature,
 				Size = issueOperation.Size,
 				WearGrowth = issueOperation.WearGrowth,
+				WearPercent = issueOperation.CalculatePercentWear(document.Date),
 			};
 			this.nomenclature = issueOperation.Nomenclature;
 			this.size = issueOperation.Size;
