@@ -32,7 +32,7 @@ namespace WorkwearTest.Stock
 			writeoff.Items[0].WearPercent = 2;
 
 			//Выполняем
-			writeoff.UpdateOperations(uow, null);
+			writeoff.UpdateOperations(uow);
 
 			Assert.That(writeoff.Items[0].WearPercent, Is.EqualTo(2));
 		}
@@ -65,7 +65,7 @@ namespace WorkwearTest.Stock
 			writeoff.Items[0].WearPercent = 2;
 
 			//Выполняем
-			writeoff.UpdateOperations(uow, null);
+			writeoff.UpdateOperations(uow);
 
 			Assert.That(writeoff.Items[0].WearPercent, Is.EqualTo(2));
 		}
@@ -98,7 +98,7 @@ namespace WorkwearTest.Stock
 			writeoff.Items[0].WearPercent = 2;
 
 			//Выполняем
-			writeoff.UpdateOperations(uow, null);
+			writeoff.UpdateOperations(uow);
 
 			Assert.That(writeoff.Items[0].WearPercent, Is.EqualTo(2));
 		}
