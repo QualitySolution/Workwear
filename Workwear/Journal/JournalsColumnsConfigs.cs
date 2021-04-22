@@ -161,13 +161,13 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<StockDocumentsJournalViewModel>(
 				(jvm) => FluentColumnsConfig<StockDocumentsJournalNode>.Create()
-					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString())
+					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Тип документа").AddTextRenderer(node => node.DocTypeString)
 					.AddColumn("Операция").AddTextRenderer(node => node.Operation)
 					.AddColumn("Дата").AddTextRenderer(node => node.DateString)
 					.AddColumn("Склад").Visible(jvm.FeaturesService.Available(WorkwearFeature.Warehouses)).AddTextRenderer(x => x.Warehouse)
-					.AddColumn("Автор").AddTextRenderer(node => node.Author)
-					.AddColumn("Детали").AddTextRenderer(node => node.Description)
+					.AddColumn("Автор").AddTextRenderer(node => node.Author).SearchHighlight()
+					.AddColumn("Детали").AddTextRenderer(node => node.Description).SearchHighlight()
 					.Finish()
 			);
 

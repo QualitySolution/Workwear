@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Autofac;
-using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NHibernate;
 using NHibernate.Criterion;
@@ -76,7 +75,7 @@ namespace workwear.Journal.ViewModels.Stock
 		#region Формирование запроса
 		private StockDocumentsJournalNode resultAlias = null;
 		private EmployeeCard employeeAlias = null;
-		private Subdivision facilityAlias = null;
+		private Subdivision subdivisionAlias = null;
 		private UserBase authorAlias = null;
 		private Warehouse warehouseReceiptAlias = null;
 		private Warehouse warehouseExpenseAlias = null;
@@ -96,16 +95,25 @@ namespace workwear.Journal.ViewModels.Stock
 			if(Filter.Warehouse != null)
 				incomeQuery.Where(x => x.Warehouse == Filter.Warehouse);
 
+			incomeQuery.Where(GetSearchCriterion(
+				() => incomeAlias.Id,
+				() => authorAlias.Name,
+				() => employeeAlias.LastName,
+				() => employeeAlias.FirstName,
+				() => employeeAlias.Patronymic,
+				() => subdivisionAlias.Name
+			));
+
 			incomeQuery
 				.JoinQueryOver(() => incomeAlias.EmployeeCard, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinQueryOver(() => incomeAlias.Subdivision, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinQueryOver(() => incomeAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => incomeAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => incomeAlias.Warehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => incomeAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => incomeAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => incomeAlias.Operation).WithAlias(() => resultAlias.IncomeOperation)
-						.Select(() => facilityAlias.Name).WithAlias(() => resultAlias.Subdivision)
+						.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 						.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
@@ -138,16 +146,25 @@ namespace workwear.Journal.ViewModels.Stock
 			if(Filter.Warehouse != null)
 				expenseQuery.Where(x => x.Warehouse == Filter.Warehouse);
 
+			expenseQuery.Where(GetSearchCriterion(
+				() => expenseAlias.Id,
+				() => authorAlias.Name,
+				() => employeeAlias.LastName,
+				() => employeeAlias.FirstName,
+				() => employeeAlias.Patronymic,
+				() => subdivisionAlias.Name
+			));
+
 			expenseQuery
 				.JoinQueryOver(() => expenseAlias.Employee, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinQueryOver(() => expenseAlias.Subdivision, () => facilityAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinQueryOver(() => expenseAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => expenseAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => expenseAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 						.Select(() => expenseAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => expenseAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => expenseAlias.Operation).WithAlias(() => resultAlias.ExpenseOperation)
-						.Select(() => facilityAlias.Name).WithAlias(() => resultAlias.Subdivision)
+						.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 						.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
@@ -174,6 +191,11 @@ namespace workwear.Journal.ViewModels.Stock
 				massExpenseQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
 			if(Filter.Warehouse != null)
 				massExpenseQuery.Where(x => x.WarehouseFrom == Filter.Warehouse);
+
+			massExpenseQuery.Where(GetSearchCriterion(
+				() => massExpenseAlias.Id,
+				() => authorAlias.Name
+			));
 
 			massExpenseQuery
 				.JoinAlias(() => massExpenseAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
@@ -205,6 +227,11 @@ namespace workwear.Journal.ViewModels.Stock
 				transferQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
 			if(Filter.Warehouse != null)
 				transferQuery.Where(x => x.WarehouseFrom == Filter.Warehouse || x.WarehouseTo == Filter.Warehouse);
+
+			transferQuery.Where(GetSearchCriterion(
+				() => transferAlias.Id,
+				() => authorAlias.Name
+			));
 
 			transferQuery
 				.JoinAlias(() => transferAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
@@ -239,6 +266,11 @@ namespace workwear.Journal.ViewModels.Stock
 				writeoffQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
 			if(Filter.Warehouse != null)
 				writeoffQuery.Where(() => writeoffItemAlias.Warehouse == Filter.Warehouse);
+
+			writeoffQuery.Where(GetSearchCriterion(
+				() => writeoffAlias.Id,
+				() => authorAlias.Name
+			));
 
 			var concatPrpjection = Projections.SqlFunction(
 					new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT(DISTINCT ?1 SEPARATOR ?2)"),
@@ -363,7 +395,6 @@ namespace workwear.Journal.ViewModels.Stock
 	{
 		private ExpenseOperations _expenseOperation;
 
-		[SearchHighlight]
 		public int Id { get; set; }
 
 		public StokDocumentType DocTypeEnum { get; set; }
@@ -398,7 +429,6 @@ namespace workwear.Journal.ViewModels.Stock
 			}
 		}
 
-		[SearchHighlight]
 		public string Description {
 			get {
 				string text = String.Empty;
@@ -413,13 +443,11 @@ namespace workwear.Journal.ViewModels.Stock
 		public string ReceiptWarehouse { get; set; }
 		public string ExpenseWarehouse { get; set; }
 
-		[SearchHighlight]
 		public string Warehouse => ReceiptWarehouse == null && ExpenseWarehouse == null ? String.Empty :
 			ReceiptWarehouse == null ? $" {ExpenseWarehouse} =>" : $"{ExpenseWarehouse} => {ReceiptWarehouse}";
 
 		public string Subdivision { get; set; }
 
-		[SearchHighlight]
 		public string Author { get; set; }
 
 		public string EmployeeSurname { get; set; }
