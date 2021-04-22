@@ -276,12 +276,7 @@
     <Compile Include="gtk-gui\workwear.ObjectBalanceFilter.cs" />
     <Compile Include="Measurements\WearGrowth.cs" />
     <Compile Include="Measurements\WearSize.cs" />
-    <Compile Include="JournalViewers\StockDocumentsView.cs" />
-    <Compile Include="gtk-gui\workwear.JournalViewers.StockDocumentsView.cs" />
-    <Compile Include="JournalFilters\StockDocumentsFilter.cs" />
-    <Compile Include="gtk-gui\workwear.JournalFilters.StockDocumentsFilter.cs" />
     <Compile Include="Domain\Stock\StockDocument.cs" />
-    <Compile Include="Representations\StockDocumentsVM.cs" />
     <Compile Include="Domain\User\UserSettings.cs" />
     <Compile Include="HibernateMapping\User\UserMap.cs" />
     <Compile Include="HibernateMapping\User\UserSettingsMap.cs" />
@@ -502,6 +497,10 @@
     <Compile Include="Tools\Import\DataType.cs" />
     <Compile Include="Tools\Import\FIO.cs" />
     <Compile Include="Tools\IdentityCards\VirtualCardReaderService.cs" />
+    <Compile Include="Journal\ViewModels\Stock\StockDocumentsJournalViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Stock\StockDocumentsFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.StockDocumentsFilterView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Stock\StockDocumentsFilterViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -624,7 +623,6 @@
     <Folder Include="Domain\Stock\" />
     <Folder Include="HibernateMapping\Stock\" />
     <Folder Include="JournalFilters\" />
-    <Folder Include="JournalViewers\" />
     <Folder Include="Domain\User\" />
     <Folder Include="HibernateMapping\User\" />
     <Folder Include="Domain\Regulations\" />

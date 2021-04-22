@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.Project.Versioning;
 using QS.Project.Versioning.Product;
@@ -64,6 +65,8 @@ namespace workwear.Tools.Features
 					return ProductEdition == 3;
 				case WorkwearFeature.IdentityCards:
 					return ProductEdition == 3;
+				case WorkwearFeature.MassExpense:
+					return ProductEdition == 2 || ProductEdition == 3;
 				default:
 					return false;
 			}
@@ -72,7 +75,11 @@ namespace workwear.Tools.Features
 
 	public enum WorkwearFeature
 	{
+		[Display(Name = "Работа с несколькими складами")]
 		Warehouses,
+		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,
+		[Display(Name = "Массовая выдача")]
+		MassExpense
 	}
 }

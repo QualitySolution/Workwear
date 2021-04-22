@@ -8,7 +8,6 @@ using MySql.Data.MySqlClient;
 using NLog;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
-using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -40,7 +39,6 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
-using workwear.JournalViewers;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear.Tools;
@@ -399,9 +397,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionStockDocsActivated(object sender, EventArgs e)
 	{
-		tdiMain.OpenTab(TdiTabBase.GenerateHashName<StockDocumentsView>(),
-				() => new StockDocumentsView()
-			   );
+		NavigationManager.OpenViewModel<StockDocumentsJournalViewModel>(null);
 	}
 
 	protected void OnActionEmployeesActivated(object sender, EventArgs e)

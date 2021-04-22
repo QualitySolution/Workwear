@@ -8,6 +8,7 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Tools.Features;
 
 namespace workwear.Journal
 {
@@ -30,7 +31,7 @@ namespace workwear.Journal
 				(jvm) => FluentColumnsConfig<EmployeeJournalNode>.Create()
 					.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
 					.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
-					.AddColumn("Карта").Visible(jvm.FeaturesService.Available(Tools.Features.WorkwearFeature.IdentityCards))
+					.AddColumn("Карта").Visible(jvm.FeaturesService.Available(WorkwearFeature.IdentityCards))
 						.AddPixbufRenderer(x => String.IsNullOrEmpty(x.CardKey) ? null : new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "workwear.icon.buttons.smart-card.png"))
 					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
 					.AddColumn("Должность").AddTextRenderer(node => node.Post)
@@ -156,6 +157,18 @@ namespace workwear.Journal
 						.AddColumn("Пол одежды").AddTextRenderer(e => e.Sex != null ? e.Sex.GetAttribute<DisplayAttribute>().Name : "").SearchHighlight()
 						.AddColumn("Количество").AddTextRenderer(e => e.BalanceText, useMarkup: true)
 						.Finish()
+			);
+
+			TreeViewColumnsConfigFactory.Register<StockDocumentsJournalViewModel>(
+				(jvm) => FluentColumnsConfig<StockDocumentsJournalNode>.Create()
+					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString())
+					.AddColumn("Тип документа").AddTextRenderer(node => node.DocTypeString)
+					.AddColumn("Операция").AddTextRenderer(node => node.Operation)
+					.AddColumn("Дата").AddTextRenderer(node => node.DateString)
+					.AddColumn("Склад").Visible(jvm.FeaturesService.Available(WorkwearFeature.Warehouses)).AddTextRenderer(x => x.Warehouse)
+					.AddColumn("Автор").AddTextRenderer(node => node.Author)
+					.AddColumn("Детали").AddTextRenderer(node => node.Description)
+					.Finish()
 			);
 
 			TreeViewColumnsConfigFactory.Register<WarehouseJournalViewModel>(
