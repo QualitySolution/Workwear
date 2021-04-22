@@ -251,7 +251,7 @@ namespace workwear.Journal.ViewModels.Stock
 			return transferQuery;
 		}
 
-		protected IQueryOver<Writeoff> QueryWriteoffDoc(IUnitOfWork uow)
+		protected IQueryOver<Writeoff> QueryWriteoffDoc(IUnitOfWork uow, bool isCounting)
 		{
 			if(Filter.StokDocumentType != null && Filter.StokDocumentType != StokDocumentType.WriteoffDoc)
 				return null;
@@ -278,10 +278,14 @@ namespace workwear.Journal.ViewModels.Stock
 					Projections.Property(() => warehouseExpenseAlias.Name),
 					Projections.Constant(", "));
 
+			if(!isCounting) {
+				writeoffQuery
+				.JoinAlias(() => writeoffAlias.Items, () => writeoffItemAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => writeoffItemAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin);
+			}
+
 			writeoffQuery
 				.JoinAlias(() => writeoffAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(() => writeoffAlias.Items, () => writeoffItemAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(() => writeoffItemAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.SelectGroup(() => writeoffAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => writeoffAlias.Date).WithAlias(() => resultAlias.Date)
