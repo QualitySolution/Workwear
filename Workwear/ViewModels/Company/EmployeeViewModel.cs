@@ -19,6 +19,7 @@ using QSReport;
 using workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
 using workwear.Measurements;
+using workwear.Repository.Company;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company.EmployeeChilds;
 using workwear.ViewModels.IdentityCards;
@@ -35,6 +36,7 @@ namespace workwear.ViewModels.Company
 		private readonly SizeService sizeService;
 		private readonly IInteractiveQuestion interactive;
 		private readonly FeaturesService featuresService;
+		private readonly EmployeeRepository employeeRepository;
 		private readonly CommonMessages messages;
 
 		public EmployeeViewModel(
@@ -47,6 +49,7 @@ namespace workwear.ViewModels.Company
 			SizeService sizeService,
 			IInteractiveQuestion interactive,
 			FeaturesService featuresService,
+			EmployeeRepository employeeRepository,
 			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
@@ -54,6 +57,7 @@ namespace workwear.ViewModels.Company
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
 
@@ -245,6 +249,27 @@ namespace workwear.ViewModels.Company
 		}
 
 		#endregion
+
+		protected override bool Validate()
+		{
+			if(!base.Validate())
+				return false;
+			if(!String.IsNullOrWhiteSpace(Entity.CardKey)) {
+				var employeeSameUid = employeeRepository.GetEmployeeByCardkey(UoW, Entity.CardKey);
+				if(employeeSameUid != null && !employeeSameUid.IsSame(Entity)) {
+					if(interactive.Question($"UID карты уже привязан к сотруднику {employeeSameUid.ShortName}. Перепривязать карту к {Entity.ShortName}?")) {
+						//Здесь сохраняем удаляем UID через отдельный uow чтобы избежать ошибки базы по уникальному значению поля.
+						using(var uow2 = UnitOfWorkFactory.CreateForRoot<EmployeeCard>(employeeSameUid.Id)) {
+							uow2.Root.CardKey = null;
+							uow2.Save();
+						}
+					}
+					else
+						return false;
+				}
+			}
+			return true;
+		}
 
 		public override bool Save()
 		{
