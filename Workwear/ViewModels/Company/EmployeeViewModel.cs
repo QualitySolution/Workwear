@@ -21,6 +21,7 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Measurements;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company.EmployeeChilds;
+using workwear.ViewModels.IdentityCards;
 
 namespace workwear.ViewModels.Company
 {
@@ -347,5 +348,18 @@ namespace workwear.ViewModels.Company
 		}
 		#endregion
 
+		#region Uid
+
+		public void ReadUid()
+		{
+			var page = NavigationManager.OpenViewModel<ReadCardViewModel>(this);
+			page.PageClosed += delegate (object sender, PageClosedEventArgs e) {
+				if(e.CloseSource != CloseSource.Save)
+					return;
+				CardUid = page.ViewModel.CardUid.Replace("-", "");
+			};
+		}
+
+		#endregion
 	}
 }

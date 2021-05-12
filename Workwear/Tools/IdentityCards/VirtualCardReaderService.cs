@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Timers;
 using QS.DomainModel.UoW;
@@ -47,10 +48,16 @@ namespace workwear.Tools.IdentityCards
 			Devices = new List<DeviceInfo> { device1, device2 };
 		}
 
-		public void SetCardMask(DeviceInfo device, IList<CardType> cardTypes)
-		{
+		public BindingList<CardType> CardFamilies { get; } = new BindingList<CardType>() {
+				new CardType(RG_CARD_FAMILY_CODE.CF_COTAG),
+				new CardType(RG_CARD_FAMILY_CODE.CF_EMMARINE),
+				new CardType(RG_CARD_FAMILY_CODE.CF_HID),
+				new CardType(RG_CARD_FAMILY_CODE.CF_INDALA),
+				new CardType(RG_CARD_FAMILY_CODE.CF_PINCODE),
+				new CardType(RG_CARD_FAMILY_CODE.CF_TEMIC),
+				new CardType(RG_CARD_FAMILY_CODE.EF_MIFARE)
 
-		}
+			};
 
 		public void StartDevice(DeviceInfo device)
 		{

@@ -501,6 +501,9 @@
     <Compile Include="Journal\Filter.Views\Stock\StockDocumentsFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.StockDocumentsFilterView.cs" />
     <Compile Include="Journal\Filter.ViewModels\Stock\StockDocumentsFilterViewModel.cs" />
+    <Compile Include="ViewModels\IdentityCards\ReadCardViewModel.cs" />
+    <Compile Include="Views\IdentityCards\ReadCardView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.IdentityCards.ReadCardView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -677,6 +680,8 @@
     <Folder Include="ReportParameters\Views\" />
     <Folder Include="Tools\IdentityCards\" />
     <Folder Include="Tools\Import\" />
+    <Folder Include="Views\IdentityCards\" />
+    <Folder Include="ViewModels\IdentityCards\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

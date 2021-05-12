@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Timers;
 using RglibInterop;
@@ -17,10 +18,33 @@ namespace workwear.Tools.IdentityCards
 			uint libVersion = RG_GetVersion();
 			logger.Info(string.Format("Библиотека RusGuard версии {0}.{1}.{2}",
 					libVersion >> 24, (libVersion >> 16) & 0xFF, libVersion & 0xFFFF));
+
+			CardFamilies.ListChanged += CardFamilies_ListChanged;
 		}
 
 		#region Данные
 		public List<DeviceInfo> Devices { get; } = new List<DeviceInfo>();
+
+		public BindingList<CardType> CardFamilies { get; } = new BindingList<CardType>() {
+				new CardType(RG_CARD_FAMILY_CODE.CF_COTAG),
+				new CardType(RG_CARD_FAMILY_CODE.CF_EMMARINE),
+				new CardType(RG_CARD_FAMILY_CODE.CF_HID),
+				new CardType(RG_CARD_FAMILY_CODE.CF_INDALA),
+				new CardType(RG_CARD_FAMILY_CODE.CF_PINCODE),
+				new CardType(RG_CARD_FAMILY_CODE.CF_TEMIC),
+				new CardType(RG_CARD_FAMILY_CODE.EF_MIFARE)
+
+			};
+		#endregion
+
+		#region События
+
+		void CardFamilies_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			if(AutoPullDevice != null)
+				SetCardMask(AutoPullDevice, CardFamilies);
+		}
+
 		#endregion
 
 		#region Методы
@@ -64,7 +88,7 @@ namespace workwear.Tools.IdentityCards
 			}
 		}
 
-		public void SetCardMask(DeviceInfo device, IList<CardType> cardTypes)
+		private void SetCardMask(DeviceInfo device, IList<CardType> cardTypes)
 		{
 			logger.Debug("Устанавливаем маску используемых карт.");
 			byte mask = 0;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace workwear.Tools.IdentityCards
 {
@@ -8,10 +9,10 @@ namespace workwear.Tools.IdentityCards
 		event EventHandler<CardStateEventArgs> СardStatusRead;
 
 		List<DeviceInfo> Devices { get; }
+		BindingList<CardType> CardFamilies { get; }
 		bool IsAutoPoll { get; }
 
 		void RefreshDevices();
-		void SetCardMask(DeviceInfo device, IList<CardType> cardTypes);
 		void StartDevice(DeviceInfo device);
 		void StartAutoPoll(DeviceInfo deviceInfo);
 		void StopAutoPoll();

@@ -80,9 +80,9 @@ namespace workwear.Views.Company
 			entityLeader.ViewModel = ViewModel.EntryLeaderViewModel;
 			entityPost.ViewModel = ViewModel.EntryPostViewModel;
 
+			hboxCardUid.Binding.AddBinding(ViewModel, v => v.VisibleCardUid, w => w.Visible).InitializeFromSource();
 			ylabelCardUid.Binding.AddBinding(ViewModel, v => v.VisibleCardUid, w => w.Visible).InitializeFromSource();
 			entryCardUid.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.VisibleCardUid, w => w.Visible)
 				.AddBinding(v => v.CardUid, w => w.Text)
 				.AddBinding(v => v.CardUidEntryColor, w => w.TextColor)
 				.InitializeFromSource();
@@ -256,6 +256,11 @@ namespace workwear.Views.Company
 			CellRendererText text = new CellRendererText();
 			combo.PackStart(text, true);
 			combo.AddAttribute(text, "text", 0);
+		}
+
+		protected void OnButtonReadUidClicked(object sender, EventArgs e)
+		{
+			ViewModel.ReadUid();
 		}
 	}
 }

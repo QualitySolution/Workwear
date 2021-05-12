@@ -16,7 +16,6 @@ using QS.Utilities.Text;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using RglibInterop;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository.Company;
@@ -66,7 +65,7 @@ namespace workwear.ViewModels.Stock
 			this.validator = validator ?? throw new ArgumentNullException(nameof(validator));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-			this.configuration = configuration;
+			this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 			this.cardReaderService = cardReaderService;
 			IsModal = false;
 			EnableMinimizeMaximize = true;
@@ -78,10 +77,10 @@ namespace workwear.ViewModels.Stock
 			if(cardReaderService != null) {
 				cardReaderService.RefreshDevices();
 				cardReaderService.СardStatusRead += RusGuardService_СardStatusRead;
+				cardReaderService.CardFamilies.ListChanged += CardFamilies_ListChanged;
 			}
 			UpdateState();
 
-			CardFamilies.ListChanged += CardFamilies_ListChanged;
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 			Warehouse = stockRepository.GetDefaultWarehouse(UowOfDialog, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
@@ -100,8 +99,6 @@ namespace workwear.ViewModels.Stock
 		#region События
 		void CardFamilies_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			if(cardReaderService != null && SelectedDevice != null)
-				cardReaderService.SetCardMask(SelectedDevice, CardFamilies);
 			UpdateState();
 			TryStartPoll();
 			SetCardFamiliesConfig();
@@ -109,7 +106,7 @@ namespace workwear.ViewModels.Stock
 
 		void RusGuardService_СardStatusRead(object sender, CardStateEventArgs e)
 		{
-			guiDispatcher.RunInGuiTread(delegate {;
+			guiDispatcher.RunInGuiTread(delegate {
 				CardUid = e.CardUid;
 				UpdateState();
 			});
@@ -159,6 +156,8 @@ namespace workwear.ViewModels.Stock
 		#region Настройки
 		public List<DeviceInfo> Devices => cardReaderService?.Devices;
 
+		public BindingList<CardType> CardFamilies => cardReaderService.CardFamilies;
+
 		private DeviceInfo selectedDevice;
 		public virtual DeviceInfo SelectedDevice {
 			get => selectedDevice;
@@ -173,17 +172,6 @@ namespace workwear.ViewModels.Stock
 				}
 			}
 		}
-
-		public BindingList<CardType> CardFamilies = new BindingList<CardType>() {
-                new CardType(RG_CARD_FAMILY_CODE.CF_COTAG),
-                new CardType(RG_CARD_FAMILY_CODE.CF_EMMARINE),
-                new CardType(RG_CARD_FAMILY_CODE.CF_HID),
-                new CardType(RG_CARD_FAMILY_CODE.CF_INDALA),
-                new CardType(RG_CARD_FAMILY_CODE.CF_PINCODE),
-                new CardType(RG_CARD_FAMILY_CODE.CF_TEMIC),
-                new CardType(RG_CARD_FAMILY_CODE.EF_MIFARE)
-
-			};
 
 		private Warehouse warehouse;
 		public virtual Warehouse Warehouse {
@@ -213,7 +201,7 @@ namespace workwear.ViewModels.Stock
 				CurrentStateColor = "Cornflower Blue";
 				return;
 			}
-			if(!CardFamilies.Any(x => x.Active)) {
+			if(!cardReaderService.CardFamilies.Any(x => x.Active)) {
 				CurrentState = "Не выбран тип карт";
 				CurrentStateColor = "Cornflower Blue";
 				return;
@@ -247,7 +235,7 @@ namespace workwear.ViewModels.Stock
 				return;
 			if(SelectedDevice == null)
 				return;
-			if(!CardFamilies.Any(x => x.Active))
+			if(!cardReaderService.CardFamilies.Any(x => x.Active))
 				return;
 
 			cardReaderService.StartDevice(SelectedDevice);
@@ -267,7 +255,7 @@ namespace workwear.ViewModels.Stock
 			if(!String.IsNullOrEmpty(cardTypes)) {
 				var parts = cardTypes.Split(',');
 				foreach(var part in parts) {
-					var family = CardFamilies.FirstOrDefault(x => x.CardTypeFamily.ToString() == part);
+					var family = cardReaderService.CardFamilies.FirstOrDefault(x => x.CardTypeFamily.ToString() == part);
 					if(family != null)
 						family.Active = true;
 				}
@@ -276,8 +264,8 @@ namespace workwear.ViewModels.Stock
 
 		private void SetCardFamiliesConfig()
 		{
-			if(CardFamilies.Any(x => x.Active))
-				configuration["CardReader:CardTypes"] = String.Join(",", CardFamilies.Where(x => x.Active).Select(x => x.CardTypeFamily.ToString()));
+			if(cardReaderService.CardFamilies.Any(x => x.Active))
+				configuration["CardReader:CardTypes"] = String.Join(",", cardReaderService.CardFamilies.Where(x => x.Active).Select(x => x.CardTypeFamily.ToString()));
 			else
 				configuration["CardReader:CardTypes"] = null;
 		}
