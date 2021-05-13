@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Gamma.Binding.Converters;
 using Gtk;
 using NLog;
@@ -14,6 +15,9 @@ namespace workwear.Views.Company
 	public partial class EmployeeView : EntityDialogViewBase<EmployeeViewModel, EmployeeCard>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
+
+		private readonly Image eyeIcon = new Image(Assembly.GetExecutingAssembly(), "workwear.icon.buttons.eye.png");
+		private readonly Image crossedEyeIcon = new Image(Assembly.GetExecutingAssembly(), "workwear.icon.buttons.eye-crossed.png");
 
 		public EmployeeView(EmployeeViewModel viewModel) : base(viewModel)
 		{
@@ -90,6 +94,17 @@ namespace workwear.Views.Company
 				.AddBinding(v => v.CardUidEntryColor, w => w.TextColor)
 				.InitializeFromSource();
 
+			entryPhone.PhoneFormat = QS.Utilities.Numeric.PhoneFormat.RussiaOnlyHyphenated;
+			entryPhone.Binding.AddBinding(Entity, e => e.PhoneNumber, w => w.Text).InitializeFromSource();
+
+			labelLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkPassword, w => w.Visible).InitializeFromSource();
+			hboxLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkPassword, w => w.Visible).InitializeFromSource();
+
+			entryLkPassword.Binding
+				.AddBinding(Entity, e => e.LkPassword, w => w.Text)
+				.AddBinding(ViewModel, v => v.ShowPassword, w => w.Visibility)
+				.InitializeFromSource();
+
 			//Устанавливаем последовательность фокуса по Tab
 			//!!!!!!!! НЕ ЗАБЫВАЕМ КОРРЕКТИРОВАТЬ ПОРЯДОК ПРИ ДОБАВЛЕНИИ ВИДЖЕТОВ В ТАБЛИЦУ !!!!!!!!
 			//Это порядок только внутри таблицы! А не всего диалога.
@@ -116,22 +131,19 @@ namespace workwear.Views.Company
 
 		protected void OnComboSexChanged(object sender, EventArgs e)
 		{
-			if (Entity.Sex == Sex.M)
-			{
+			if(Entity.Sex == Sex.M) {
 				ycomboWearStd.ItemsEnum = typeof(SizeStandartMenWear);
 				ycomboShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
 				ycomboWinterShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
 				FillSizeCombo(ycomboWearGrowth, ViewModel.GetGrowths(Entity.Sex));
 			}
-			else if (Entity.Sex == Sex.F)
-			{
+			else if(Entity.Sex == Sex.F) {
 				ycomboWearStd.ItemsEnum = typeof(SizeStandartWomenWear);
 				ycomboShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
 				ycomboWinterShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
 				FillSizeCombo(ycomboWearGrowth, ViewModel.GetGrowths(Entity.Sex));
 			}
-			else
-			{
+			else {
 				ycomboWearStd.ItemsEnum = null;
 				ycomboShoesStd.ItemsEnum = null;
 				ycomboWinterShoesStd.ItemsEnum = null;
@@ -141,7 +153,7 @@ namespace workwear.Views.Company
 
 		protected void OnYcomboHeaddressChanged(object sender, EventArgs e)
 		{
-			if (ycomboHeaddressStd.SelectedItemOrNull != null)
+			if(ycomboHeaddressStd.SelectedItemOrNull != null)
 				FillSizeCombo(ycomboHeaddressSize, ViewModel.GetSizes((Enum)ycomboHeaddressStd.SelectedItem));
 			else
 				ycomboHeaddressSize.Clear();
@@ -149,7 +161,7 @@ namespace workwear.Views.Company
 
 		protected void OnYcomboWearStdChanged(object sender, EventArgs e)
 		{
-			if (ycomboWearStd.SelectedItemOrNull != null)
+			if(ycomboWearStd.SelectedItemOrNull != null)
 				FillSizeCombo(ycomboWearSize, ViewModel.GetSizes((Enum)ycomboWearStd.SelectedItem));
 			else
 				ycomboWearSize.Clear();
@@ -157,7 +169,7 @@ namespace workwear.Views.Company
 
 		protected void OnYcomboShoesStdChanged(object sender, EventArgs e)
 		{
-			if (ycomboShoesStd.SelectedItemOrNull != null)
+			if(ycomboShoesStd.SelectedItemOrNull != null)
 				FillSizeCombo(ycomboShoesSize, ViewModel.GetSizes((Enum)ycomboShoesStd.SelectedItem));
 			else
 				ycomboShoesSize.Clear();
@@ -165,7 +177,7 @@ namespace workwear.Views.Company
 
 		protected void OnYcomboWinterShoesStdChanged(object sender, EventArgs e)
 		{
-			if (ycomboWinterShoesStd.SelectedItemOrNull != null)
+			if(ycomboWinterShoesStd.SelectedItemOrNull != null)
 				FillSizeCombo(ycomboWinterShoesSize, ViewModel.GetSizes((Enum)ycomboWinterShoesStd.SelectedItem));
 			else
 				ycomboWinterShoesSize.Clear();
@@ -173,7 +185,7 @@ namespace workwear.Views.Company
 
 		protected void OnYcomboGlovesStdChanged(object sender, EventArgs e)
 		{
-			if (ycomboGlovesStd.SelectedItemOrNull != null)
+			if(ycomboGlovesStd.SelectedItemOrNull != null)
 				FillSizeCombo(ycomboGlovesSize, ViewModel.GetSizes((Enum)ycomboGlovesStd.SelectedItem));
 			else
 				ycomboGlovesSize.Clear();
@@ -217,6 +229,17 @@ namespace workwear.Views.Company
 		protected void OnButtonReadUidClicked(object sender, EventArgs e)
 		{
 			ViewModel.ReadUid();
+		}
+
+		protected void OnButtonShowPasswordClicked(object sender, EventArgs e)
+		{
+			ViewModel.ShowPassword = !ViewModel.ShowPassword;
+			buttonShowPassword.Image = ViewModel.ShowPassword ? crossedEyeIcon : eyeIcon;
+		}
+
+		protected void OnButtonGeneratePasswordClicked(object sender, EventArgs e)
+		{
+			ViewModel.CreateLkPassword();
 		}
 	}
 }

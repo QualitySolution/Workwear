@@ -86,6 +86,20 @@ namespace workwear.Domain.Company
 			set => SetField(ref cardKey, value?.ToUpper());
 		}
 
+		private string phoneNumber;
+		[Display(Name = "Телефон")]
+		[StringLength(16, ErrorMessage = "Максимальная длинна телефона 16 символов")]
+		public virtual string PhoneNumber {
+			get => phoneNumber;
+			set => SetField(ref phoneNumber, value);
+		}
+
+		private string lkPassword;
+		public virtual string LkPassword {
+			get => lkPassword;
+			set => SetField(ref lkPassword, value);
+		}
+
 		Post post;
 
 		[Display (Name = "Должность")]

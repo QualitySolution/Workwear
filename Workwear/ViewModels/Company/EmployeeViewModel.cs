@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 using Autofac;
 using Gamma.Utilities;
 using QS.Dialog;
@@ -123,6 +124,7 @@ namespace workwear.ViewModels.Company
 		public bool VisibleListedItem => !UoW.IsNew;
 		public bool VisibleHistory => !UoW.IsNew;
 		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
+		public bool VisibleLkPassword => featuresService.Available(WorkwearFeature.EmployeeLk);
 
 		private bool visiblePhoto;
 		public virtual bool VisiblePhoto {
@@ -165,6 +167,29 @@ namespace workwear.ViewModels.Company
 		}
 
 		public string CardUidEntryColor => (String.IsNullOrEmpty(CardUid) || System.Text.RegularExpressions.Regex.IsMatch(CardUid, @"\A\b[0-9a-fA-F]+\b\Z")) ? "black" : "red";
+
+		#endregion
+
+		#region Личный кабинет
+
+		private bool showPassword;
+		public virtual bool ShowPassword {
+			get => showPassword;
+			set => SetField(ref showPassword, value);
+		}
+
+		public void CreateLkPassword()
+		{
+			var length = 6;
+			var random = new Random();
+			var charStr = "abcdefghijklmnpqrstuvwxyz0123456789";
+			var password = new StringBuilder(length);
+			for(int i = 0; i < length; i++) {
+				password.Append(charStr[random.Next(0, charStr.Length)]);
+			}
+
+			Entity.LkPassword = password.ToString();
+		}
 
 		#endregion
 

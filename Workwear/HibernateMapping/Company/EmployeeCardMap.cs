@@ -21,6 +21,9 @@ namespace workwear.HibernateMapping.Company
 			Map (x => x.DismissDate).Column ("dismiss_date");
 			Map(x => x.Comment).Column("comment");
 
+			Map(x => x.PhoneNumber).Column("phone_number");
+			Map(x => x.LkPassword).Column("lk_password");
+
 			Map(x => x.Photo).Column("photo").LazyLoad().CustomSqlType ("BinaryBlob");
 			Map (x => x.Sex).Column ("sex").CustomType<SexStringType> ();
 

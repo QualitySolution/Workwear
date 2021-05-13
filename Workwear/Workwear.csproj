@@ -220,6 +220,8 @@
     <EmbeddedResource Include="icon\toolbar\smart-card.png" />
     <EmbeddedResource Include="icon\buttons\smart-card.png" />
     <EmbeddedResource Include="icon\art\hand-holding-rfid.png" />
+    <EmbeddedResource Include="icon\buttons\eye.png" />
+    <EmbeddedResource Include="icon\buttons\eye-crossed.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
