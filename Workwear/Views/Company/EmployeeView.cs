@@ -109,9 +109,13 @@ namespace workwear.Views.Company
 			//!!!!!!!! НЕ ЗАБЫВАЕМ КОРРЕКТИРОВАТЬ ПОРЯДОК ПРИ ДОБАВЛЕНИИ ВИДЖЕТОВ В ТАБЛИЦУ !!!!!!!!
 			//Это порядок только внутри таблицы! А не всего диалога.
 			table1.FocusChain = new Widget[] {hbox7, entryLastName, entryFirstName, entryPatronymic,
-				entitySubdivision, entityDepartment, entityPost, entityLeader, yentryPersonnelNumber, dateHire, dateChangePosition, dateDismiss, 
-				GtkScrolledWindowComments, comboSex, ycomboWearGrowth, 
-				ycomboWearStd, ycomboWearSize, 
+				yentryPersonnelNumber, entryPhone, hboxLkPassword, hboxCardUid,
+				dateHire, dateChangePosition, dateDismiss,
+				entitySubdivision, entityDepartment, entityPost, entityLeader,   
+				GtkScrolledWindowComments,
+			};
+			table2.FocusChain = new Widget[] {comboSex, ycomboWearGrowth,
+				ycomboWearStd, ycomboWearSize,
 				ycomboShoesStd, ycomboShoesSize,
 				ycomboWinterShoesStd, ycomboWinterShoesSize,
 				ycomboHeaddressStd, ycomboHeaddressSize,
