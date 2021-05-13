@@ -1,4 +1,5 @@
 ﻿using System;
+using Gamma.Binding.Converters;
 using Gtk;
 using NLog;
 using QS.Views.Dialog;
@@ -6,6 +7,7 @@ using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Measurements;
 using workwear.ViewModels.Company;
+using workwear.Views.Company.EmployeeChilds;
 
 namespace workwear.Views.Company
 {
@@ -27,6 +29,9 @@ namespace workwear.Views.Company
 			employeecardlisteditemsview.ViewModel = ViewModel.ListedItemsViewModel;
 			employeemovementsview1.ViewModel = ViewModel.MovementsViewModel;
 			employeevacationsview1.ViewModel = ViewModel.VacationsViewModel;
+			
+			panelEmploeePhoto.Panel = new EmployeePhotoView(ViewModel.EmployeePhotoViewModel);
+			panelEmploeePhoto.Binding.AddBinding(ViewModel, v => v.VisiblePhoto, w => w.IsHided, new BoolReverseConverter()).InitializeFromSource();
 
 			notebook1.GetNthPage(2).Visible = ViewModel.VisibleListedItem;
 			notebook1.GetNthPage(3).Visible = ViewModel.VisibleHistory;
@@ -73,8 +78,6 @@ namespace workwear.Views.Company
 			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoCardNumber, w => w.Active).InitializeFromSource();
 			labelUser.Binding.AddBinding(ViewModel, vm => vm.CreatedByUser, w => w.LabelProp).InitializeFromSource();
 
-			yimagePhoto.Binding.AddBinding (Entity, e => e.Photo, w => w.ImageFile).InitializeFromSource ();
-
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
 			entityDepartment.ViewModel = ViewModel.EntryDepartmentViewModel;
 			entityLeader.ViewModel = ViewModel.EntryLeaderViewModel;
@@ -109,53 +112,6 @@ namespace workwear.Views.Company
 		protected void OnNotebook1SwitchPage(object o, SwitchPageArgs args)
 		{
 			ViewModel.SwitchOn((int)args.PageNum);
-		}
-
-		protected void OnButtonSavePhotoClicked(object sender, EventArgs e)
-		{
-			FileChooserDialog fc =
-				new FileChooserDialog("Укажите файл для сохранения фотографии",
-									   (Gtk.Window)this.Toplevel,
-					FileChooserAction.Save,
-					"Отмена", ResponseType.Cancel,
-					"Сохранить", ResponseType.Accept);
-			fc.CurrentName = ViewModel.SuggestedPhotoName;
-			fc.Show();
-			if (fc.Run() == (int)ResponseType.Accept)
-			{
-				fc.Hide();
-				ViewModel.SavePhoto(fc.Filename);
-			}
-			fc.Destroy();
-		}
-
-		protected void OnButtonLoadPhotoClicked(object sender, EventArgs e)
-		{
-			FileChooserDialog Chooser = new FileChooserDialog("Выберите фото для загрузки...",
-															   (Gtk.Window)this.Toplevel,
-				FileChooserAction.Open,
-				"Отмена", ResponseType.Cancel,
-				"Загрузить", ResponseType.Accept);
-
-			FileFilter Filter = new FileFilter();
-			Filter.AddPixbufFormats();
-			Filter.Name = "Все изображения";
-			Chooser.AddFilter(Filter);
-
-			if ((ResponseType)Chooser.Run() == ResponseType.Accept)
-			{
-				Chooser.Hide();
-				ViewModel.LoadPhoto(Chooser.Filename);
-			}
-			Chooser.Destroy();
-		}
-
-		protected void OnYimagePhotoButtonPressEvent(object o, ButtonPressEventArgs args)
-		{
-			if (args.Event.Type == Gdk.EventType.TwoButtonPress)
-			{
-				ViewModel.OpenPhoto();
-			}
 		}
 
 		protected void OnComboSexChanged(object sender, EventArgs e)

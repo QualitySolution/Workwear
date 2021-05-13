@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using Autofac;
 using Gamma.Utilities;
 using QS.Dialog;
@@ -32,7 +31,7 @@ namespace workwear.ViewModels.Company
 
 		private readonly IUserService userService;
 
-		ILifetimeScope AutofacScope;
+		public ILifetimeScope AutofacScope;
 		private readonly SizeService sizeService;
 		private readonly IInteractiveQuestion interactive;
 		private readonly FeaturesService featuresService;
@@ -102,6 +101,10 @@ namespace workwear.ViewModels.Company
 			ListedItemsViewModel = AutofacScope.Resolve<EmployeeListedItemsViewModel>(parameter);
 			MovementsViewModel = AutofacScope.Resolve<EmployeeMovementsViewModel>(parameter);
 			VacationsViewModel = AutofacScope.Resolve<EmployeeVacationsViewModel>(parameter);
+			//Панели
+			EmployeePhotoViewModel = AutofacScope.Resolve<EmployeePhotoViewModel>(parameter);
+
+			VisiblePhoto = Entity.Photo != null;
 		}
 
 		#region Контролы
@@ -111,6 +114,8 @@ namespace workwear.ViewModels.Company
 		public readonly EntityEntryViewModel<Department> EntryDepartmentViewModel;
 		public readonly EntityEntryViewModel<Post> EntryPostViewModel;
 
+		public EmployeePhotoViewModel EmployeePhotoViewModel;
+
 		#endregion
 
 		#region Visible
@@ -119,12 +124,17 @@ namespace workwear.ViewModels.Company
 		public bool VisibleHistory => !UoW.IsNew;
 		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
 
+		private bool visiblePhoto;
+		public virtual bool VisiblePhoto {
+			get => visiblePhoto;
+			set => SetField(ref visiblePhoto, value);
+		}
+
 		#endregion
 
 		#region Sensetive
 
 		public bool SensetiveCardNumber => !AutoCardNumber;
-		public bool SensetiveSavePhoto => Entity.Photo != null;
 
 		#endregion
 
@@ -310,49 +320,6 @@ namespace workwear.ViewModels.Company
 			};
 
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
-		}
-
-		#endregion
-
-		#region Фото
-
-		public string SuggestedPhotoName => Entity.FullName + ".jpg";
-
-		public void SavePhoto(string fileName)
-		{
-			using(FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write)) {
-				fs.Write(UoWGeneric.Root.Photo, 0, UoWGeneric.Root.Photo.Length);
-			}
-		}
-
-		public void LoadPhoto(string fileName)
-		{
-			logger.Info("Загрузка фотографии...");
-
-			using(FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read)) {
-				if(fileName.ToLower().EndsWith(".jpg")) {
-					using(MemoryStream ms = new MemoryStream()) {
-						fs.CopyTo(ms);
-						Entity.Photo = ms.ToArray();
-					}
-				}
-				else {
-					logger.Info("Конвертация в jpg ...");
-					Gdk.Pixbuf image = new Gdk.Pixbuf(fs);
-					Entity.Photo = image.SaveToBuffer("jpeg");
-				}
-			}
-			OnPropertyChanged(nameof(SensetiveSavePhoto));
-			logger.Info("Ok");
-		}
-
-		public void OpenPhoto()
-		{
-			string filePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "temp_img.jpg");
-			using(FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write)) {
-				fs.Write(UoWGeneric.Root.Photo, 0, UoWGeneric.Root.Photo.Length);
-			}
-			System.Diagnostics.Process.Start(filePath);
 		}
 
 		#endregion

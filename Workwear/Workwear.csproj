@@ -504,6 +504,9 @@
     <Compile Include="ViewModels\IdentityCards\ReadCardViewModel.cs" />
     <Compile Include="Views\IdentityCards\ReadCardView.cs" />
     <Compile Include="gtk-gui\workwear.Views.IdentityCards.ReadCardView.cs" />
+    <Compile Include="Views\Company\EmployeeChilds\EmployeePhotoView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeePhotoView.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChilds\EmployeePhotoViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
