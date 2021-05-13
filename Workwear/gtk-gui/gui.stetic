@@ -5538,7 +5538,7 @@
             <property name="Scrollable">True</property>
             <property name="UseTabColors">False</property>
             <property name="KeepColors">False</property>
-            <property name="AllowToReorderTabs">False</property>
+            <property name="AllowToReorderTabs">True</property>
           </widget>
           <packing>
             <property name="Position">3</property>

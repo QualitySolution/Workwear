@@ -524,6 +524,9 @@ public partial class MainWindow
 		this.tdiMain.CurrentPage = 0;
 		this.tdiMain.ShowTabs = false;
 		this.tdiMain.Scrollable = true;
+		this.tdiMain.UseTabColors = false;
+		this.tdiMain.KeepColors = false;
+		this.tdiMain.AllowToReorderTabs = true;
 		this.vbox1.Add(this.tdiMain);
 		global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.tdiMain]));
 		w11.Position = 3;
