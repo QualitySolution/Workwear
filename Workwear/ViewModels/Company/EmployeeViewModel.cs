@@ -241,12 +241,13 @@ namespace workwear.ViewModels.Company
 		#endregion
 
 		#region Вкладки
-
-		public EmployeeNormsViewModel NormsViewModel;				//0
-		public EmployeeWearItemsViewModel WearItemsViewModel; 		//1
-		public EmployeeListedItemsViewModel ListedItemsViewModel;  //2
-		public EmployeeMovementsViewModel MovementsViewModel;      //3
-		public EmployeeVacationsViewModel VacationsViewModel;       //4
+																	// 0 - Информация
+																	// 1 - Размеры
+		public EmployeeNormsViewModel NormsViewModel;				//2
+		public EmployeeWearItemsViewModel WearItemsViewModel; 		//3
+		public EmployeeListedItemsViewModel ListedItemsViewModel;  //4
+		public EmployeeMovementsViewModel MovementsViewModel;      //5
+		public EmployeeVacationsViewModel VacationsViewModel;       //6
 
 		private int lastTab;
 		private int currentTab;
@@ -258,15 +259,15 @@ namespace workwear.ViewModels.Company
 		public void SwitchOn(int tab)
 		{
 			switch(tab) {
-				case 0: NormsViewModel.OnShow();
+				case 2: NormsViewModel.OnShow();
 					break;
-				case 1: WearItemsViewModel.OnShow();
+				case 3: WearItemsViewModel.OnShow();
 					break;
-				case 2: ListedItemsViewModel.OnShow();
+				case 4: ListedItemsViewModel.OnShow();
 					break;
-				case 3: MovementsViewModel.OnShow();
+				case 5: MovementsViewModel.OnShow();
 					break;
-				case 4:
+				case 6:
 					if(UoW.IsNew) {
 						if(interactive.Question("Перед открытием отпусков необходимо сохранить сотрудника. Сохранить?", "Сохранить сотрудника?")
 								&& Save()) {

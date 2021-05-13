@@ -95,6 +95,7 @@ namespace workwear.Domain.Company
 		}
 
 		private string lkPassword;
+		[StringLength(32, ErrorMessage = "Максимальная длинна пароля от личного кабинета 32 символа")]
 		public virtual string LkPassword {
 			get => lkPassword;
 			set => SetField(ref lkPassword, value);
