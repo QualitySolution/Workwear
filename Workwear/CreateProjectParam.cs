@@ -5,6 +5,7 @@ using Autofac;
 using QS.BaseParameters;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
+using QS.Cloud.Client;
 using QS.Configuration;
 using QS.Deletion;
 using QS.Deletion.Views;
@@ -206,6 +207,11 @@ namespace workwear
 			builder.RegisterType<ApplicationVersionInfo>().As<IApplicationInfo>();
 			builder.RegisterModule(new UpdaterAutofacModule());
 			builder.Register(c => MainClass.MakeUpdateConfiguration()).AsSelf();
+			#endregion
+
+			#region Облако
+				builder.RegisterType<CloudClientService>();
+
 			#endregion
 
 			#region Разделение версий

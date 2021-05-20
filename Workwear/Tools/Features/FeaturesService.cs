@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using QS.Cloud.Client;
 using QS.Project.Versioning;
 using QS.Project.Versioning.Product;
 using QS.Serial;
@@ -10,6 +11,8 @@ namespace workwear.Tools.Features
 {
 	public class FeaturesService : IProductService
 	{
+		static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		public static ProductEdition[] SupportEditions = new[] {
 			new ProductEdition(0, "Демонстрационная"),
 			new ProductEdition(1, "Однопользовательская"),
@@ -17,15 +20,17 @@ namespace workwear.Tools.Features
 			new ProductEdition(3, "Предприятие")
 		};
 		private readonly SerialNumberEncoder serialNumberEncoder;
+		private readonly CloudClientService cloudClientService;
 		private readonly IDataBaseInfo dataBaseInfo;
 
 		public byte ProductEdition { get; }
 
 		public string EditionName => SupportEditions.First(x => x.Number == ProductEdition).Name;
 
-		public FeaturesService(ISerialNumberService serialNumberService, SerialNumberEncoder serialNumberEncoder, IDataBaseInfo dataBaseInfo = null)
+		public FeaturesService(ISerialNumberService serialNumberService, SerialNumberEncoder serialNumberEncoder, CloudClientService cloudClientService = null, IDataBaseInfo dataBaseInfo = null)
 		{
 			this.serialNumberEncoder = serialNumberEncoder ?? throw new ArgumentNullException(nameof(serialNumberEncoder));
+			this.cloudClientService = cloudClientService ?? throw new ArgumentNullException(nameof(cloudClientService));
 			this.dataBaseInfo = dataBaseInfo;
 			if(dataBaseInfo?.IsDemo == true) {
 				ProductEdition = 0;
@@ -68,7 +73,16 @@ namespace workwear.Tools.Features
 				case WorkwearFeature.MassExpense:
 					return ProductEdition == 2 || ProductEdition == 3;
 				case WorkwearFeature.EmployeeLk:
-					return dataBaseInfo.IsCloud && (ProductEdition == 2 || ProductEdition == 3);
+					if(ProductEdition != 2 && ProductEdition != 3)
+						return false;
+					if(!QSSaaS.Session.IsSaasConnection)
+						return false;
+					if(dataBaseInfo.BaseGuid == null) {
+						logger.Debug($"Функциональность мобильного кабинета не доступна: dataBaseInfo.BaseGuid = null");
+						return false;
+					}
+					var functionLists = cloudClientService.GetAvailableFeatures(dataBaseInfo.BaseGuid.Value.ToString());
+					return functionLists.Any(x => x.Name == "wear_lk");
 				default:
 					return false;
 			}

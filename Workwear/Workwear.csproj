@@ -180,6 +180,9 @@
     <Reference Include="NPOI.OpenXmlFormats">
       <HintPath>..\packages\NPOI.2.5.2\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
     </Reference>
+    <Reference Include="QS.Cloud.Client">
+      <HintPath>..\..\QSProjects\QS.Cloud.Client\bin\x86\Debug\netstandard2.0\publish\QS.Cloud.Client.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">

@@ -4,10 +4,14 @@ echo "1) git pull"
 echo "2) nuget restore"
 echo "3) cleanup packages directories"
 echo "4) cleanup bin directories"
+echo "5) rebuild dependent dotnet libraries"
 echo "Можно вызывать вместе, например git+nuget=12"
 read case;
 
 case $case in
+    *5*)
+dotnet publish /p:Platform=x86 ../QSProjects/QS.Cloud.Client/QS.Cloud.Client.csproj    
+;;&
     *4*)
 rm -v -f -R ./Workwear/bin/*
 rm -v -f -R ../QSProjects/*/bin/*

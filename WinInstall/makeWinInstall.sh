@@ -21,6 +21,9 @@ while [ "$1" != "" ]; do
     shift
 done
 
+# Библиотет для dotnet
+dotnet publish /p:Platform=x86 ../../QSProjects/QS.Cloud.Client/QS.Cloud.Client.csproj
+
 # Сборка релиза
 msbuild /p:Configuration=${Configuration} /p:Platform=x86 ../Workwear.sln
 
