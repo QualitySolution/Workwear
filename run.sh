@@ -1,3 +1,3 @@
 #!/bin/bash
-cd Workwear/bin/Debug
+cd "$(dirname "$0")/Workwear/bin/Debug"
 mono workwear.exe

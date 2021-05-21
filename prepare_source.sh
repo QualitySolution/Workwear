@@ -8,6 +8,8 @@ echo "5) rebuild dependent dotnet libraries"
 echo "Можно вызывать вместе, например git+nuget=12"
 read case;
 
+cd "$(dirname "$0")"
+
 case $case in
     *5*)
 dotnet publish /p:Platform=x86 ../QSProjects/QS.Cloud.Client/QS.Cloud.Client.csproj    
