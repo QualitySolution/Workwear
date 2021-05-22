@@ -12,7 +12,8 @@ cd "$(dirname "$0")"
 
 case $case in
     *5*)
-dotnet publish /p:Platform=x86 ../QSProjects/QS.Cloud.Client/QS.Cloud.Client.csproj    
+dotnet publish /p:Platform=x86 ../QSProjects/QS.Cloud.Client/QS.Cloud.Client.csproj
+dotnet publish /p:Platform=x86 ./QS.Cloud.WearLk.Client/QS.Cloud.WearLk.Client.csproj  
 ;;&
     *4*)
 rm -v -f -R ./Workwear/bin/*

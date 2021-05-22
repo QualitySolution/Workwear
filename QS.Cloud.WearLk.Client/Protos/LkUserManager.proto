@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package QS.Cloud.WearLk;
+
+service LkUserManager {
+  rpc GetPassword (GetPasswordRequest) returns (GetPasswordResponse);
+  rpc SetPassword (SetPasswordRequest) returns (SetPasswordResponse);
+  rpc ReplacePhone (ReplacePhoneRequest) returns (ReplacePhoneResponse);
+}
+
+message GetPasswordRequest {
+  string phone = 1;
+}
+
+message GetPasswordResponse {
+  string password = 1;
+}
+
+message SetPasswordRequest {
+  string phone = 1;
+  string password = 2;
+}
+
+message SetPasswordResponse {
+
+}
+
+message ReplacePhoneRequest {
+  string old_phone = 1;
+  string new_phone = 2;
+}
+
+message ReplacePhoneResponse {
+
+}
