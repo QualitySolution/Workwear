@@ -97,12 +97,13 @@ namespace workwear.Views.Company
 			entryPhone.PhoneFormat = QS.Utilities.Numeric.PhoneFormat.RussiaOnlyHyphenated;
 			entryPhone.Binding.AddBinding(Entity, e => e.PhoneNumber, w => w.Text).InitializeFromSource();
 
-			labelLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkPassword, w => w.Visible).InitializeFromSource();
-			hboxLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkPassword, w => w.Visible).InitializeFromSource();
+			labelLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkRegistration, w => w.Visible).InitializeFromSource();
+			hboxLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkRegistration, w => w.Visible).InitializeFromSource();
+			buttonShowPassword.Binding.AddFuncBinding(ViewModel, v => v.ShowLkPassword ? crossedEyeIcon : eyeIcon, w => w.Image).InitializeFromSource();
 
 			entryLkPassword.Binding
-				.AddBinding(Entity, e => e.LkPassword, w => w.Text)
-				.AddBinding(ViewModel, v => v.ShowPassword, w => w.Visibility)
+				.AddBinding(ViewModel, v => v.LkPassword, w => w.Text)
+				.AddBinding(ViewModel, v => v.ShowLkPassword, w => w.Visibility)
 				.InitializeFromSource();
 
 			//Устанавливаем последовательность фокуса по Tab
@@ -237,8 +238,7 @@ namespace workwear.Views.Company
 
 		protected void OnButtonShowPasswordClicked(object sender, EventArgs e)
 		{
-			ViewModel.ShowPassword = !ViewModel.ShowPassword;
-			buttonShowPassword.Image = ViewModel.ShowPassword ? crossedEyeIcon : eyeIcon;
+			ViewModel.ToggleShowPassword();
 		}
 
 		protected void OnButtonGeneratePasswordClicked(object sender, EventArgs e)

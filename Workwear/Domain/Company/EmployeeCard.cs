@@ -12,6 +12,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Project.Domain;
+using QS.Utilities.Numeric;
 using QS.Utilities.Text;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
@@ -94,11 +95,10 @@ namespace workwear.Domain.Company
 			set => SetField(ref phoneNumber, value);
 		}
 
-		private string lkPassword;
-		[StringLength(32, ErrorMessage = "Максимальная длинна пароля от личного кабинета 32 символа")]
-		public virtual string LkPassword {
-			get => lkPassword;
-			set => SetField(ref lkPassword, value);
+		private bool lkRegistered;
+		public virtual bool LkRegistered {
+			get => lkRegistered;
+			set => SetField(ref lkRegistered, value);
 		}
 
 		Post post;
@@ -393,6 +393,10 @@ namespace workwear.Domain.Company
 				yield return new ValidationResult("UID карты должен быть задан в шестнадцатиричном виде, то есть может содержать только сиволы 0-9 и A-F.", new[] { nameof(CardKey) });
 			if(!String.IsNullOrEmpty(CardKey) && (CardKey.Length % 2 != 0))
 				yield return new ValidationResult("UID карты должен быть задан в шестнадцатиричном виде, число символов должно быть кратно двум.", new[] { nameof(CardKey) });
+
+			var phoneValidator = new PhoneValidator(PhoneFormat.RussiaOnlyHyphenated);
+			if(!phoneValidator.Validate(PhoneNumber, true))
+				yield return new ValidationResult($"Телефон должен быть задан в формате {PhoneFormat.RussiaOnlyHyphenated.GetEnumTitle()}", new[] { nameof(PhoneNumber) });
 		}
 
 		#endregion

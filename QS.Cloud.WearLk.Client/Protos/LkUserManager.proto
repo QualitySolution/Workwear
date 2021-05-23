@@ -6,6 +6,7 @@ service LkUserManager {
   rpc GetPassword (GetPasswordRequest) returns (GetPasswordResponse);
   rpc SetPassword (SetPasswordRequest) returns (SetPasswordResponse);
   rpc ReplacePhone (ReplacePhoneRequest) returns (ReplacePhoneResponse);
+  rpc RemovePhone (RemovePhoneRequest) returns (RemovePhoneResponse);
 }
 
 message GetPasswordRequest {
@@ -31,5 +32,13 @@ message ReplacePhoneRequest {
 }
 
 message ReplacePhoneResponse {
+
+}
+
+message RemovePhoneRequest {
+  string phone = 1;
+}
+
+message RemovePhoneResponse {
 
 }

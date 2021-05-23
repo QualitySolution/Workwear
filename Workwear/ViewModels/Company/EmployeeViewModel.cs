@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Autofac;
 using Gamma.Utilities;
+using QS.Cloud.WearLk.Client;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -26,7 +27,7 @@ using workwear.ViewModels.IdentityCards;
 
 namespace workwear.ViewModels.Company
 {
-	public class EmployeeViewModel : EntityDialogViewModelBase<EmployeeCard>
+	public class EmployeeViewModel : EntityDialogViewModelBase<EmployeeCard>, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -34,9 +35,10 @@ namespace workwear.ViewModels.Company
 
 		public ILifetimeScope AutofacScope;
 		private readonly SizeService sizeService;
-		private readonly IInteractiveQuestion interactive;
+		private readonly IInteractiveService interactive;
 		private readonly FeaturesService featuresService;
 		private readonly EmployeeRepository employeeRepository;
+		private readonly LkUserManagerService lkUserManagerService;
 		private readonly CommonMessages messages;
 
 		public EmployeeViewModel(
@@ -47,9 +49,10 @@ namespace workwear.ViewModels.Company
 			IUserService userService,
 			ILifetimeScope autofacScope,
 			SizeService sizeService,
-			IInteractiveQuestion interactive,
+			IInteractiveService interactive,
 			FeaturesService featuresService,
 			EmployeeRepository employeeRepository,
+			LkUserManagerService lkUserManagerService,
 			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
@@ -58,6 +61,7 @@ namespace workwear.ViewModels.Company
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			this.lkUserManagerService = lkUserManagerService ?? throw new ArgumentNullException(nameof(lkUserManagerService));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
 
@@ -106,6 +110,10 @@ namespace workwear.ViewModels.Company
 			EmployeePhotoViewModel = AutofacScope.Resolve<EmployeePhotoViewModel>(parameter);
 
 			VisiblePhoto = Entity.Photo != null;
+			lkLastPhone = Entity.PhoneNumber;
+			LkPassword = Entity.LkRegistered ? unknownPassword : String.Empty;
+
+			Validations.Add(new ValidationRequest(this));
 		}
 
 		#region Контролы
@@ -124,7 +132,7 @@ namespace workwear.ViewModels.Company
 		public bool VisibleListedItem => !UoW.IsNew;
 		public bool VisibleHistory => !UoW.IsNew;
 		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
-		public bool VisibleLkPassword => featuresService.Available(WorkwearFeature.EmployeeLk);
+		public bool VisibleLkRegistration => featuresService.Available(WorkwearFeature.EmployeeLk);
 
 		private bool visiblePhoto;
 		public virtual bool VisiblePhoto {
@@ -170,31 +178,7 @@ namespace workwear.ViewModels.Company
 
 		#endregion
 
-		#region Личный кабинет
-
-		private bool showPassword;
-		public virtual bool ShowPassword {
-			get => showPassword;
-			set => SetField(ref showPassword, value);
-		}
-
-		public void CreateLkPassword()
-		{
-			var length = 6;
-			var random = new Random();
-			var charStr = "abcdefghijklmnpqrstuvwxyz0123456789";
-			var password = new StringBuilder(length);
-			for(int i = 0; i < length; i++) {
-				password.Append(charStr[random.Next(0, charStr.Length)]);
-			}
-
-			Entity.LkPassword = password.ToString();
-		}
-
 		#endregion
-
-		#endregion
-
 
 		#region Size
 
@@ -202,6 +186,70 @@ namespace workwear.ViewModels.Company
 		public string[] GetSizes(Enum std) => sizeService.GetSizesForEmployee(std);
 
 		public string[] GetGrowths(Sex sex) => sizeService.GetSizesForEmployee(sex == Sex.F ? GrowthStandartWear.Women : GrowthStandartWear.Men);
+
+		#endregion
+
+		#region Личный кабинет
+
+		const int lkPasswordLength = 6;
+		const string unknownPassword = "Unknown";
+
+		private string lkLastPhone;
+		private string lkLastPassword;
+
+		private bool showLkPassword;
+		public virtual bool ShowLkPassword {
+			get => showLkPassword;
+			set => SetField(ref showLkPassword, value);
+		}
+
+		private string lkPassword;
+		public virtual string LkPassword {
+			get => lkPassword;
+			set => SetField(ref lkPassword, value);
+		}
+
+		public void ToggleShowPassword()
+		{
+			if(LkPassword == unknownPassword)
+				LkPassword = lkLastPassword = lkUserManagerService.GetPassword(lkLastPhone);
+			ShowLkPassword = !ShowLkPassword;
+		}
+
+		public void CreateLkPassword()
+		{
+			var random = new Random();
+			var charStr = "abcdefghijklmnpqrstuvwxyz0123456789";
+			var password = new StringBuilder(lkPasswordLength);
+			for(int i = 0; i < lkPasswordLength; i++) {
+				password.Append(charStr[random.Next(0, charStr.Length)]);
+			}
+
+			LkPassword = password.ToString();
+		}
+
+		public void SyncLkPassword()
+		{
+			if(String.IsNullOrWhiteSpace(LkPassword) || String.IsNullOrWhiteSpace(Entity.PhoneNumber)) {
+				if(Entity.LkRegistered) {
+					lkUserManagerService.RemovePhone(lkLastPhone);
+					Entity.LkRegistered = false;
+				}
+				return;
+			}
+			if(lkLastPhone != Entity.PhoneNumber && Entity.LkRegistered)
+				lkUserManagerService.ReplacePhone(lkLastPhone, Entity.PhoneNumber);
+
+			if(LkPasswordNotChanged)
+				return;
+
+			lkUserManagerService.SetPassword(Entity.PhoneNumber, LkPassword);
+			Entity.LkRegistered = true;
+		}
+
+		//Пароль не менялся, проверяем не полное вхождение на случай случайного удаления части символов.
+		public bool LkPasswordNotChanged => unknownPassword.StartsWith(LkPassword, StringComparison.InvariantCulture)
+			|| LkPassword == lkLastPassword;
 
 		#endregion
 
@@ -286,14 +334,17 @@ namespace workwear.ViewModels.Company
 
 		#endregion
 
+		#region Сохранение и Валидация
+
 		protected override bool Validate()
 		{
 			if(!base.Validate())
 				return false;
+			//Проверка номера карты на уникальность для базы
 			if(!String.IsNullOrWhiteSpace(Entity.CardKey)) {
 				var employeeSameUid = employeeRepository.GetEmployeeByCardkey(UoW, Entity.CardKey);
 				if(employeeSameUid != null && !employeeSameUid.IsSame(Entity)) {
-					if(interactive.Question($"UID карты уже привязан к сотруднику {employeeSameUid.ShortName}. Перепривязать карту к {Entity.ShortName}?")) {
+					if(interactive.Question($"UID карты уже привязан к сотруднику {employeeSameUid.ShortName}, удалить у него UID карты? Чтобы сохранить {Entity.ShortName}.")) {
 						//Здесь сохраняем удаляем UID через отдельный uow чтобы избежать ошибки базы по уникальному значению поля.
 						using(var uow2 = UnitOfWorkFactory.CreateForRoot<EmployeeCard>(employeeSameUid.Id)) {
 							uow2.Root.CardKey = null;
@@ -304,6 +355,26 @@ namespace workwear.ViewModels.Company
 						return false;
 				}
 			}
+			//Проверка номера телефона на уникальность для базы
+			if(!String.IsNullOrWhiteSpace(Entity.PhoneNumber)) {
+				var employeeSamePhone = employeeRepository.GetEmployeeByPhone(UoW, Entity.PhoneNumber);
+				if(employeeSamePhone != null && !employeeSamePhone.IsSame(Entity)) {
+					if(interactive.Question($"Телефон {Entity.PhoneNumber} уже привязан к сотруднику {employeeSamePhone.ShortName}. Удалить у него телефон? Чтобы сохранить {Entity.ShortName}?")) {
+						//Здесь сохраняем удаляем телефон через отдельный uow чтобы избежать ошибки базы по уникальному значению поля.
+						using(var uow2 = UnitOfWorkFactory.CreateForRoot<EmployeeCard>(employeeSamePhone.Id)) {
+							if(uow2.Root.LkRegistered)
+								lkUserManagerService.RemovePhone(uow2.Root.PhoneNumber);
+							uow2.Root.PhoneNumber = null;
+							uow2.Root.LkRegistered = false;
+							uow2.Save();
+						}
+					}
+					else
+						return false;
+				}
+			}
+
+			SyncLkPassword();
 			return true;
 		}
 
@@ -316,6 +387,22 @@ namespace workwear.ViewModels.Company
 
 			return result;
 		}
+
+		IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+		{
+			if(!String.IsNullOrEmpty(LkPassword)) {
+			 	if(String.IsNullOrEmpty(Entity.PhoneNumber))
+					yield return new ValidationResult("Для установки пароля от личного кабинета сотрудника необходимо так же указать его телефон.", new[] { nameof(LkPassword) });
+
+				if(LkPassword.Length < 3)
+					yield return new ValidationResult("Длинна пароля от личного кабинета должна быть не менее 3-х символов.", new[] { nameof(LkPassword) });
+
+				if(LkPassword.Length > 32)
+					yield return new ValidationResult("Длинна пароля от личного кабинета должна быть не более 32-х символов.", new[] { nameof(LkPassword) });
+			}
+		}
+
+		#endregion
 
 		#region Печать
 

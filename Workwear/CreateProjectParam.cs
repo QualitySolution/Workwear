@@ -6,6 +6,7 @@ using QS.BaseParameters;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
 using QS.Cloud.Client;
+using QS.Cloud.WearLk.Client;
 using QS.Configuration;
 using QS.Deletion;
 using QS.Deletion.Views;
@@ -210,8 +211,8 @@ namespace workwear
 			#endregion
 
 			#region Облако
-				builder.RegisterType<CloudClientService>();
-
+			builder.Register(c => new CloudClientService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
+			builder.Register(c => new LkUserManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			#endregion
 
 			#region Разделение версий

@@ -127,6 +127,7 @@ namespace workwear
 				MainTelemetry.SendTelemetry();
 			}
 			QSSaaS.Session.StopSessionRefresh ();
+			MainClass.AppDIContainer.Dispose();
 		}
 
 		static void RegisterSQLScripts()

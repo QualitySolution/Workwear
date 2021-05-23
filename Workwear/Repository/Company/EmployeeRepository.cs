@@ -100,6 +100,14 @@ namespace workwear.Repository.Company
 				.Take(1)
 				.SingleOrDefault();
 		}
+
+		public virtual EmployeeCard GetEmployeeByPhone(IUnitOfWork uow, string phone)
+		{
+			return uow.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.PhoneNumber == phone)
+				.Take(1)
+				.SingleOrDefault();
+		}
 	}
 
 	public class EmployeeRecivedInfo
