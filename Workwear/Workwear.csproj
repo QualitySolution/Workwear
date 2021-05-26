@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{63B06122-016A-42D4-B621-8E0F9FA8E738}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Workwear</RootNamespace>
+    <RootNamespace>workwear</RootNamespace>
     <AssemblyName>workwear</AssemblyName>
     <ApplicationIcon>icon\logo.ico</ApplicationIcon>
     <StartupObject>workwear.MainClass</StartupObject>
