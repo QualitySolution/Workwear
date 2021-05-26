@@ -51,13 +51,9 @@ namespace workwear.ViewModels.Stock.Widgets
 		/// <param name="clothesType">Тип одежды.</param>
 		private void ConfigureSizes(ClothesSex sex, СlothesType clothesType)
 		{
-			GrowthStandartWear? standartWear = SizeHelper.GetGrowthStandart(clothesType, sex);
-			if(standartWear != null)
-			{
-				if(SizeHelper.HasGrowthStandart(clothesType)) {
-					WearGrowths = SizeHelper.GetGrowthsArray(standartWear).ToList();
-					IsUseGrowth = true;
-				}
+			if(SizeHelper.HasGrowthStandart(clothesType)) {
+				WearGrowths = SizeHelper.GetGrowthsArray().ToList();
+				IsUseGrowth = true;
 			}
 			this.WearSizes = SizeHelper.GetSizesListByStdCode(nomenclature.SizeStd).ToList();
 		}

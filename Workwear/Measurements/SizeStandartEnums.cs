@@ -3,19 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace workwear.Measurements
 {
-	public enum GrowthStandartWear
-	{
-		[StdCode("MenGrowth")]
-		[Display(Name = "Мужской рост", ShortName = "Муж.")]
-		Men,
-		[StdCode("WomenGrowth")]
-		[Display(Name = "Женский рост", ShortName = "Жен.")]
-		Women,
-		[StdCode("UnisexGrowth")]
-		[Display(Name = "Универсальный рост", ShortName = "Уни.")]
-		Universal,
-	}
-
 	public enum SizeStandartMenWear
 	{
 		[StdCode("MenWearRus")]

@@ -422,14 +422,6 @@ namespace workwear.Domain.Company
 			}
 		}
 
-		public virtual SizePair GetGrow()
-		{
-			var growStd = SizeHelper.GetGrowthStandart(СlothesType.Wear, Sex, SizeUsePlace.Human);
-			if (growStd == null || growStd.Length == 0)
-				return null;
-			return new SizePair(SizeHelper.GetSizeStdCode(growStd[0]), WearGrowth);
-		}
-
 		#region Функции для работы с коллекцией норм
 
 		public virtual void AddUsedNorm(Norm norm)

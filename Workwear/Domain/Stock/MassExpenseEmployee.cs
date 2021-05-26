@@ -245,14 +245,6 @@ namespace workwear.Domain.Stock
 					return null;
 			}
 		}
-
-		public virtual SizePair GetGrow()
-		{
-			var growStd = SizeHelper.GetGrowthStandart(СlothesType.Wear, Sex, SizeUsePlace.Human);
-			if(growStd == null || growStd.Length == 0)
-				return null;
-			return new SizePair(SizeHelper.GetSizeStdCode(growStd[0]), WearGrowth);
-		}
 		#endregion
 	}
 }

@@ -55,6 +55,7 @@ namespace workwear.Views.Company
 			ycomboGlovesStd.ItemsEnum = typeof(SizeStandartGloves);
 			ycomboGlovesStd.Binding.AddBinding (Entity, e => e.GlovesSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
 
+			FillSizeCombo(ycomboWearGrowth, ViewModel.GetGrowths());
 			ycomboWearGrowth.Binding.AddBinding (Entity, e => e.WearGrowth, w => w.ActiveText).InitializeFromSource ();
 			ycomboWearSize.Binding.AddBinding (Entity, e => e.WearSize, w => w.ActiveText).InitializeFromSource ();
 			ycomboShoesSize.Binding.AddBinding (Entity, e => e.ShoesSize, w => w.ActiveText).InitializeFromSource ();
@@ -140,19 +141,16 @@ namespace workwear.Views.Company
 				ycomboWearStd.ItemsEnum = typeof(SizeStandartMenWear);
 				ycomboShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
 				ycomboWinterShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
-				FillSizeCombo(ycomboWearGrowth, ViewModel.GetGrowths(Entity.Sex));
 			}
 			else if(Entity.Sex == Sex.F) {
 				ycomboWearStd.ItemsEnum = typeof(SizeStandartWomenWear);
 				ycomboShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
 				ycomboWinterShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
-				FillSizeCombo(ycomboWearGrowth, ViewModel.GetGrowths(Entity.Sex));
 			}
 			else {
 				ycomboWearStd.ItemsEnum = null;
 				ycomboShoesStd.ItemsEnum = null;
 				ycomboWinterShoesStd.ItemsEnum = null;
-				ycomboWearGrowth.Clear();
 			}
 		}
 

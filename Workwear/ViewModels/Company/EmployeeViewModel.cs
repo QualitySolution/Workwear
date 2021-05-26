@@ -184,8 +184,7 @@ namespace workwear.ViewModels.Company
 
 		public string[] GetSizes(string code) => sizeService.GetSizesForEmployee(code);
 		public string[] GetSizes(Enum std) => sizeService.GetSizesForEmployee(std);
-
-		public string[] GetGrowths(Sex sex) => sizeService.GetSizesForEmployee(sex == Sex.F ? GrowthStandartWear.Women : GrowthStandartWear.Men);
+		public string[] GetGrowths() => sizeService.GetGrowthForEmployee();
 
 		#endregion
 

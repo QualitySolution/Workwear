@@ -20,7 +20,6 @@ namespace workwear.Measurements
 
 		/// <summary>
 		/// Получения списка доступных размеров для использования в сотруднике.
-		/// В том числе и ростов по коду стандарта роста.
 		/// </summary>
 		/// <param name="stdCode">Код стандарта размера</param>
 		public string[] GetSizesForEmployee(string stdCode)
@@ -31,12 +30,19 @@ namespace workwear.Measurements
 
 		/// <summary>
 		/// Получения списка доступных размеров для использования в сотруднике.
-		/// В том числе и ростов по коду стандарта роста.
 		/// </summary>
 		/// <param name="std">стандарта размера</param>
 		public string[] GetSizesForEmployee(Enum std)
 		{
 			return SizeHelper.GetSizesList(std, GetExcludedSizeUseForEmployee());
+		}
+
+		/// <summary>
+		/// Получения списка доступных ростов для использования в сотруднике.
+		/// </summary>>
+		public string[] GetGrowthForEmployee()
+		{
+			return SizeHelper.GetGrowthList(GetExcludedSizeUseForEmployee());
 		}
 		#endregion
 
