@@ -3,7 +3,7 @@ echo "Что делаем?"
 echo "1) git pull"
 echo "2) nuget restore"
 echo "3) cleanup packages directories"
-echo "4) cleanup bin directories"
+echo "4) cleanup bin and obj directories"
 echo "5) rebuild dependent dotnet libraries"
 echo "Можно вызывать вместе, например git+nuget=12"
 read case;
@@ -19,6 +19,9 @@ dotnet publish /p:Platform=x86 ./QS.Cloud.WearLk.Client/QS.Cloud.WearLk.Client.c
 rm -v -f -R ./Workwear/bin/*
 rm -v -f -R ../QSProjects/*/bin/*
 rm -v -f -R ../My-FyiReporting/*/bin/*
+rm -v -f -R ./Workwear/obj/*
+rm -v -f -R ../QSProjects/*/obj/*
+rm -v -f -R ../My-FyiReporting/*/obj/*
 ;;&
     *3*)
 rm -v -f -R ./packages/*
