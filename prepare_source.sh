@@ -11,10 +11,6 @@ read case;
 cd "$(dirname "$0")"
 
 case $case in
-    *5*)
-dotnet publish /p:Platform=x86 ../QSProjects/QS.Cloud.Client/QS.Cloud.Client.csproj
-dotnet publish /p:Platform=x86 ./QS.Cloud.WearLk.Client/QS.Cloud.WearLk.Client.csproj  
-;;&
     *4*)
 rm -v -f -R ./Workwear/bin/*
 rm -v -f -R ../QSProjects/*/bin/*
@@ -44,6 +40,10 @@ cd ../Workwear
 nuget restore Workwear.sln;
 nuget restore ../QSProjects/QSProjectsLib.sln;
 nuget restore ../My-FyiReporting/MajorsilenceReporting-Linux-GtkViewer.sln
+;;&
+    *5*)
+dotnet publish /p:Platform=x86 ../QSProjects/QS.Cloud.Client/QS.Cloud.Client.csproj
+dotnet publish /p:Platform=x86 ./QS.Cloud.WearLk.Client/QS.Cloud.WearLk.Client.csproj  
 ;;&
 esac
 
