@@ -23,6 +23,7 @@ using workwear.Repository.Stock;
 using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
+using Workwear.Measurements;
 
 namespace workwear.ViewModels.Stock
 {
@@ -55,6 +56,7 @@ namespace workwear.ViewModels.Stock
 			BaseParameters baseParameters,
 			IInteractiveQuestion interactive,
 			IChangeableConfiguration configuration,
+			SizeService sizeService,
 			ICardReaderService cardReaderService = null) : base(navigation)
 		{
 			this.unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
@@ -66,6 +68,7 @@ namespace workwear.ViewModels.Stock
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.cardReaderService = cardReaderService;
 			IsModal = false;
 			EnableMinimizeMaximize = true;
@@ -114,6 +117,8 @@ namespace workwear.ViewModels.Stock
 		#endregion
 
 		#region Свойства View
+		public SizeService SizeService { get; }
+
 		private string currentState;
 		public virtual string CurrentState {
 			get => currentState;

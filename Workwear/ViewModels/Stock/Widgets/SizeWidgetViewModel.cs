@@ -5,6 +5,7 @@ using QS.Navigation;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Stock;
 using workwear.Measurements;
+using Workwear.Measurements;
 
 namespace workwear.ViewModels.Stock.Widgets
 {
@@ -15,17 +16,20 @@ namespace workwear.ViewModels.Stock.Widgets
 		public bool IsUseGrowth { get; set; } = false;
 
 		private Nomenclature nomenclature;
+		private readonly SizeService sizeService;
 		public readonly Dictionary<string, List<string>> ExcludedSizesDictionary;
 		public Action<object, AddedSizesEventArgs> AddedSizes { get; set; } = (s,e) => { };
 
 		public SizeWidgetViewModel(
 			Nomenclature nomenclature,
-			INavigationManager navigationManager
+			INavigationManager navigationManager,
+			SizeService sizeService
 			) : base(navigationManager)
 		{
 			IsModal = true;
 			Title = "Добавить размеры:";
 			this.nomenclature = nomenclature;
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			ClothesSex sex = nomenclature.Sex ?? throw new ArgumentNullException("At SizeWidgetViewModel.SizeWidgetViewModel() constructor, " + typeof(ClothesSex).Name + " variable was null!");
 			СlothesType clothesType = nomenclature.Type.WearCategory ?? throw new NullReferenceException("At SizeWidgetViewModel.SizeWidgetViewModel() constructor" + typeof(СlothesType).Name + " variable was null!");
 			ConfigureSizes(sex,clothesType);
@@ -38,8 +42,9 @@ namespace workwear.ViewModels.Stock.Widgets
 		public SizeWidgetViewModel(
 			Dictionary<string, List<string>> ExcludedSizesDictionary,
 			Nomenclature nomenclature,
-			INavigationManager navigationManager
-			) : this(nomenclature,navigationManager)
+			INavigationManager navigationManager,
+			SizeService sizeService
+			) : this(nomenclature, navigationManager, sizeService)
 		{
 			this.ExcludedSizesDictionary = ExcludedSizesDictionary;
 		}
@@ -52,7 +57,7 @@ namespace workwear.ViewModels.Stock.Widgets
 		private void ConfigureSizes(ClothesSex sex, СlothesType clothesType)
 		{
 			if(SizeHelper.HasGrowthStandart(clothesType)) {
-				WearGrowths = SizeHelper.GetGrowthsArray().ToList();
+				WearGrowths = sizeService.GetGrowthForEmployee();
 				IsUseGrowth = true;
 			}
 			this.WearSizes = SizeHelper.GetSizesListByStdCode(nomenclature.SizeStd).ToList();

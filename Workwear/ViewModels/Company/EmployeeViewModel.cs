@@ -24,6 +24,7 @@ using workwear.Repository.Company;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company.EmployeeChilds;
 using workwear.ViewModels.IdentityCards;
+using Workwear.Measurements;
 
 namespace workwear.ViewModels.Company
 {

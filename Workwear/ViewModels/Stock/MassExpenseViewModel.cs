@@ -22,10 +22,10 @@ using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
-using workwear.Measurements;
 using workwear.Repository.Stock;
 using workwear.Tools.Features;
 using workwear.ViewModels.Statements;
+using Workwear.Measurements;
 
 namespace workwear.ViewModels.Stock
 {

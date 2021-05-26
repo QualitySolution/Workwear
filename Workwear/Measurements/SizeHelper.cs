@@ -13,7 +13,7 @@ namespace workwear.Measurements
 
 		#region Стандарты
 
-		public static readonly Type[] AllSizeStdEnums = new[] {
+		private static readonly Type[] AllSizeStdEnums = new[] {
 			typeof(SizeStandartMenWear),
 			typeof(SizeStandartWomenWear),
 			typeof(SizeStandartUnisexWear),
@@ -25,8 +25,11 @@ namespace workwear.Measurements
 			typeof(SizeStandartMittens)
 		};
 
+		#endregion
+
 		#region Работа с кодами стандартов
 
+		[Obsolete("Используйте SizeService")]
 		public static string GetSizeStdCode(object standartEnum)
 		{
 			Enum value = standartEnum as Enum;
@@ -37,6 +40,7 @@ namespace workwear.Measurements
 			return att == null ? null : att.Code;
 		}
 
+		[Obsolete("Используйте SizeService")]
 		public static object GetSizeStdEnum(string code)
 		{
 			if (String.IsNullOrWhiteSpace (code))
@@ -62,6 +66,7 @@ namespace workwear.Measurements
 
 		#region Получение отображаемого названия стандарта
 
+		[Obsolete("Используйте SizeService")]
 		public static string GetSizeStdShortTitle(string code)
 		{
 			if(GetSizeStdEnum(code) == null)
@@ -157,8 +162,6 @@ namespace workwear.Measurements
 			return wearCategory.GetAttributes<SizeStandartsAttribute> ();
 		}
 
-		#endregion
-
 		#region Размеры
 
 		[Obsolete("Желательно не использовать напряму, а использовать специальные методы из SizeService")]
@@ -167,17 +170,14 @@ namespace workwear.Measurements
 			if(stdCode == null) return new string[] { " "};
 			return GetSizesList(GetSizeStdEnum(stdCode), excludeUse);
 		}
-		public static string[] GetGrowthsArray()
-		{
-			return LookupSizes.UniversalGrowth.Select(g => g.Name).ToArray();
-		}
 
+		[Obsolete("Используйте SizeService")]
 		public static string[] GetGrowthList(params SizeUse[] excludeUse)
 		{
 			return LookupSizes.UniversalGrowth.Where(x => !excludeUse.Contains(x.Use)).Select(g => g.Name).ToArray();
 		}
 
-		public static string[] GetSizesList (object stdEnum, params SizeUse[] excludeUse)
+		private static string[] GetSizesList (object stdEnum, params SizeUse[] excludeUse)
 		{
 			var array = GetSizeLookup (stdEnum.GetType());
 

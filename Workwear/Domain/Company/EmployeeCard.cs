@@ -22,6 +22,7 @@ using workwear.Repository.Company;
 using workwear.Repository.Operations;
 using workwear.Repository.Stock;
 using workwear.Tools;
+using Workwear.Measurements;
 
 namespace workwear.Domain.Company
 {

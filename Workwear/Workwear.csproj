@@ -244,7 +244,6 @@
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Measurements\SizeStandardConverter.cs" />
     <Compile Include="Measurements\SizeStandart.cs" />
-    <Compile Include="Measurements\SizeStandartEnums.cs" />
     <Compile Include="Measurements\СlothesType.cs" />
     <Compile Include="Measurements\SizeHelper.cs" />
     <Compile Include="Repository\NormRepository.cs" />
@@ -479,7 +478,6 @@
     <Compile Include="ReportParameters\ViewModels\AmountIssuedWearViewModel.cs" />
     <Compile Include="ReportParameters\Views\AmountIssuedWearView.cs" />
     <Compile Include="gtk-gui\workwear.ReportParameters.Views.AmountIssuedWearView.cs" />
-    <Compile Include="Measurements\SizeService.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.MassExpenseView.cs" />
     <Compile Include="Journal\Filter.ViewModels\Stock\NomenclatureFilterViewModel.cs" />
     <Compile Include="Journal\Filter.Views\Stock\NomenclatureFilterView.cs" />
@@ -523,6 +521,16 @@
     </Compile>
     <Compile Include="..\Workwear.Core\Measurements\WearSize.cs">
       <Link>Measurements\WearSize.cs</Link>
+    </Compile>
+    <Compile Include="..\Workwear.Core\Measurements\SizeService.cs">
+      <Link>Measurements\SizeService.cs</Link>
+    </Compile>
+    <Compile Include="..\Workwear.Core\Measurements\ISizeSettings.cs">
+      <Link>Measurements\ISizeSettings.cs</Link>
+    </Compile>
+    <Compile Include="Measurements\BaseSizeSettings.cs" />
+    <Compile Include="..\Workwear.Core\Measurements\SizeStandartEnums.cs">
+      <Link>Measurements\SizeStandartEnums.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

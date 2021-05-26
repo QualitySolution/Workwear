@@ -48,7 +48,7 @@ namespace workwear.Views.Statements
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.SizeStd != null)
 				.AddColumn("Рост")
 					.AddComboRenderer(x => x.WearGrowth)
-					.FillItems(SizeHelper.GetGrowthList(SizeUse.HumanOnly))
+					.FillItems(ViewModel.SizeService.GetGrowthForNomenclature())
 					.AddSetter((c, n) => c.Editable = SizeHelper.HasGrowthStandart(n.Nomenclature.Type.WearCategory.Value))
 				.AddColumn("Количество")
 					.AddNumericRenderer(x => x.Amount).Editing(ViewModel.CanEditItems).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)

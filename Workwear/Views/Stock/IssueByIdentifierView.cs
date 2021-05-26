@@ -74,7 +74,7 @@ namespace workwear.Views.Stock
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.SizeStd != null && n.EmployeeCardItem == null)
 				.AddColumn("Рост")
 					.AddComboRenderer(x => x.WearGrowth)
-					.FillItems(SizeHelper.GetGrowthList(SizeUse.HumanOnly))
+					.FillItems(ViewModel.SizeService.GetGrowthForNomenclature())
 					.AddSetter((c, n) => c.Editable = SizeHelper.HasGrowthStandart(n.Nomenclature.Type.WearCategory.Value))
 				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))

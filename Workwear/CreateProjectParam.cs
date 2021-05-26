@@ -48,7 +48,6 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
 using workwear.Journal;
-using workwear.Measurements;
 using workwear.Repository.Operations;
 using workwear.Tools;
 using workwear.Tools.Features;
@@ -56,6 +55,7 @@ using workwear.Tools.IdentityCards;
 using workwear.Tools.Import;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
+using Workwear.Measurements;
 
 namespace workwear
 {
@@ -161,6 +161,7 @@ namespace workwear
 
 			#region Размеры
 			builder.RegisterType<SizeService>().AsSelf();
+			builder.RegisterType<BaseSizeSettings>().As<ISizeSettings>();
 			#endregion
 
 			#region Старые диалоги
