@@ -78,7 +78,7 @@ namespace workwear.Tools.Features
 					if(!QSSaaS.Session.IsSaasConnection)
 						return false;
 					if(dataBaseInfo.BaseGuid == null) {
-						logger.Debug($"Функциональность мобильного кабинета не доступна: dataBaseInfo.BaseGuid = null");
+						logger.Warn($"Функциональность мобильного кабинета не доступна: dataBaseInfo.BaseGuid = null");
 						return false;
 					}
 					var functionLists = cloudClientService.GetAvailableFeatures(dataBaseInfo.BaseGuid.Value.ToString());
