@@ -251,11 +251,9 @@ namespace WorkwearTest.Organization
 			var itemType = Substitute.For<ItemsType>();
 			itemType.WearCategory.Returns(СlothesType.Wear);
 			var sizeStd = SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus);
-			var growthStd = SizeHelper.GetSizeStdCode(GrowthStandartWear.Men);
 			var nomenclature = Substitute.For<Nomenclature>();
 			nomenclature.Type.Returns(itemType);
 			nomenclature.SizeStd.Returns(sizeStd);
-			nomenclature.WearGrowthStd.Returns(growthStd);
 			var protectionTools = Substitute.For<ProtectionTools>();
 			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
 			var employee = Substitute.For<EmployeeCard>();
@@ -289,7 +287,6 @@ namespace WorkwearTest.Organization
 			var nomenclature = Substitute.For<Nomenclature>();
 			nomenclature.Id.Returns(25);
 			nomenclature.Type.Returns(itemType);
-			nomenclature.WearGrowthStd.Returns(SizeHelper.GetSizeStdCode(GrowthStandartWear.Universal));
 			nomenclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
 			var protectionTools = Substitute.For<ProtectionTools>();
 			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
@@ -318,7 +315,6 @@ namespace WorkwearTest.Organization
 			var nomenclature = Substitute.For<Nomenclature>();
 			nomenclature.Id.Returns(25);
 			nomenclature.Type.Returns(itemType);
-			nomenclature.WearGrowthStd.Returns(SizeHelper.GetSizeStdCode(GrowthStandartWear.Universal));
 			nomenclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
 
 			var protectionTools = Substitute.For<ProtectionTools>();
@@ -347,7 +343,6 @@ namespace WorkwearTest.Organization
 			var nomenclature = Substitute.For<Nomenclature>();
 			nomenclature.Id.Returns(25);
 			nomenclature.Type.Returns(itemType);
-			nomenclature.WearGrowthStd.Returns(SizeHelper.GetSizeStdCode(GrowthStandartWear.Universal));
 			nomenclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
 			var protectionTools = Substitute.For<ProtectionTools>();
 			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });

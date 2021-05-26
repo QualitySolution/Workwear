@@ -117,14 +117,12 @@ namespace WorkwearTest.Integration.Organization
 				nomenclature.Type = nomenclatureType;
 				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
 				nomenclature.SizeStd = "UnisexWearRus";
-				nomenclature.WearGrowthStd = "UnisexGrowth";
 				uow.Save(nomenclature);
 
 				var nomenclature2 = new Nomenclature();
 				nomenclature2.Type = nomenclatureType;
 				nomenclature2.Sex = workwear.Measurements.ClothesSex.Men;
 				nomenclature2.SizeStd = "UnisexWearRus";
-				nomenclature2.WearGrowthStd = "UnisexGrowth";
 				uow.Save(nomenclature2);
 
 				var protectionTools = new ProtectionTools();
@@ -416,7 +414,6 @@ namespace WorkwearTest.Integration.Organization
 				nomenclature.Type = nomenclatureType;
 				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
 				nomenclature.SizeStd = "UnisexWearRus";
-				nomenclature.WearGrowthStd = "UnisexGrowth";
 				uow.Save(nomenclature);
 
 				var protectionToolsAnalog = new ProtectionTools();
@@ -489,7 +486,6 @@ namespace WorkwearTest.Integration.Organization
 				nomenclature.Type = nomenclatureType;
 				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
 				nomenclature.SizeStd = "UnisexWearRus";
-				nomenclature.WearGrowthStd = "UnisexGrowth";
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
@@ -578,7 +574,6 @@ namespace WorkwearTest.Integration.Organization
 				nomenclature.Type = nomenclatureType;
 				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
 				nomenclature.SizeStd = "UnisexWearRus";
-				nomenclature.WearGrowthStd = "UnisexGrowth";
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
@@ -685,7 +680,6 @@ namespace WorkwearTest.Integration.Organization
 				nomenclature.Type = nomenclatureType;
 				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
 				nomenclature.SizeStd = "UnisexWearRus";
-				nomenclature.WearGrowthStd = "UnisexGrowth";
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
@@ -771,7 +765,6 @@ namespace WorkwearTest.Integration.Organization
 				nomenclature.Type = nomenclatureType;
 				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
 				nomenclature.SizeStd = "UnisexWearRus";
-				nomenclature.WearGrowthStd = "UnisexGrowth";
 				uow.Save(nomenclature);
 
 				var protectionToolsAnalog = new ProtectionTools();
