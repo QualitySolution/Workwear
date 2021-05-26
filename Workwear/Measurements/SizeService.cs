@@ -1,5 +1,6 @@
 ﻿using System;
 using workwear.Tools;
+using Workwear.Measurements;
 
 namespace workwear.Measurements
 {

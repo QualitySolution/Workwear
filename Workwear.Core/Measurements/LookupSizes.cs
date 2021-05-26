@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace workwear.Measurements
+namespace Workwear.Measurements
 {
 	public static class LookupSizes
 	{

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace workwear.Measurements
+namespace Workwear.Measurements
 {
 
 	public struct WearGrowth{

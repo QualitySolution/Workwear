@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Workwear.Measurements;
 
 namespace workwear.Measurements
 {
@@ -86,12 +87,6 @@ namespace workwear.Measurements
 		Men,
 		[Display(Name = "Универсальная")]
 		Universal,
-	}
-
-	public enum SizeUse{
-		Both,
-		HumanOnly,
-		СlothesOnly,
 	}
 
 	public enum SizeUsePlace{

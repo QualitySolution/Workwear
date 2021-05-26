@@ -247,7 +247,6 @@
     <Compile Include="Measurements\SizeStandartEnums.cs" />
     <Compile Include="Measurements\СlothesType.cs" />
     <Compile Include="Measurements\SizeHelper.cs" />
-    <Compile Include="Measurements\LookupSizes.cs" />
     <Compile Include="Repository\NormRepository.cs" />
     <Compile Include="Domain\Stock\Expense.cs" />
     <Compile Include="HibernateMapping\Stock\ExpenseMap.cs" />
@@ -282,8 +281,6 @@
     <Compile Include="Representations\ObjectBalanceVM.cs" />
     <Compile Include="JournalFilters\ObjectBalanceFilter.cs" />
     <Compile Include="gtk-gui\workwear.ObjectBalanceFilter.cs" />
-    <Compile Include="Measurements\WearGrowth.cs" />
-    <Compile Include="Measurements\WearSize.cs" />
     <Compile Include="Domain\Stock\StockDocument.cs" />
     <Compile Include="Domain\User\UserSettings.cs" />
     <Compile Include="HibernateMapping\User\UserMap.cs" />
@@ -515,6 +512,18 @@
     <Compile Include="Views\Company\EmployeeChilds\EmployeePhotoView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeePhotoView.cs" />
     <Compile Include="ViewModels\Company\EmployeeChilds\EmployeePhotoViewModel.cs" />
+    <Compile Include="..\Workwear.Core\Measurements\LookupSizes.cs">
+      <Link>Measurements\LookupSizes.cs</Link>
+    </Compile>
+    <Compile Include="..\Workwear.Core\Measurements\SizeUse.cs">
+      <Link>Measurements\SizeUse.cs</Link>
+    </Compile>
+    <Compile Include="..\Workwear.Core\Measurements\WearGrowth.cs">
+      <Link>Measurements\WearGrowth.cs</Link>
+    </Compile>
+    <Compile Include="..\Workwear.Core\Measurements\WearSize.cs">
+      <Link>Measurements\WearSize.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

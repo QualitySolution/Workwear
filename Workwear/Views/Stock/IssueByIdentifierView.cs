@@ -6,6 +6,7 @@ using workwear.Domain.Stock;
 using workwear.Measurements;
 using workwear.Tools.IdentityCards;
 using workwear.ViewModels.Stock;
+using Workwear.Measurements;
 
 namespace workwear.Views.Stock
 {

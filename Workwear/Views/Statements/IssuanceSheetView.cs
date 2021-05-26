@@ -8,6 +8,7 @@ using QSWidgetLib;
 using workwear.Domain.Statements;
 using workwear.Measurements;
 using workwear.ViewModels.Statements;
+using Workwear.Measurements;
 
 namespace workwear.Views.Statements
 {

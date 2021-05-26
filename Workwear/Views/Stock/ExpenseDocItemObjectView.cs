@@ -7,6 +7,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Measurements;
 using workwear.ViewModels.Stock;
+using Workwear.Measurements;
 
 namespace workwear.Views.Stock
 {
