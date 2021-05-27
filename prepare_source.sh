@@ -15,9 +15,11 @@ case $case in
 rm -v -f -R ./Workwear/bin/*
 rm -v -f -R ../QSProjects/*/bin/*
 rm -v -f -R ../My-FyiReporting/*/bin/*
+rm -v -f -R ../GammaBinding/*/bin/*
 rm -v -f -R ./Workwear/obj/*
 rm -v -f -R ../QSProjects/*/obj/*
 rm -v -f -R ../My-FyiReporting/*/obj/*
+rm -v -f -R ../GammaBinding/*/obj/*
 ;;&
     *3*)
 rm -v -f -R ./packages/*
