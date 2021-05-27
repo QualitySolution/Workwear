@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="Слой_1"
+   data-name="Слой 1"
+   viewBox="0 0 32 32"
+   version="1.1"
+   sodipodi:docname="rounded_icon.svg"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15)">
+  <metadata
+     id="metadata37">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Иконка Вариант 1.2 32х32</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1014"
+     id="namedview35"
+     showgrid="false"
+     inkscape:zoom="18.826718"
+     inkscape:cx="14.85446"
+     inkscape:cy="15.401729"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Слой_1" />
+  <defs
+     id="defs4">
+    <style
+       id="style2">.cls-1{fill:#999;}.cls-2{fill:#fcce21;}.cls-3{fill:#4d4d4d;}.cls-4{fill:#fff;}</style>
+  </defs>
+  <title
+     id="title6">Иконка Вариант 1.2 32х32</title>
+  <rect
+     class="cls-1"
+     width="32"
+     height="32"
+     id="rect8"
+     ry="4.8354526"
+     x="0"
+     y="0"
+     inkscape:export-xdpi="3072"
+     inkscape:export-ydpi="3072" />
+  <path
+     class="cls-2"
+     d="M6.83,15.92a1.44,1.44,0,0,1-1.56-.36,1.38,1.38,0,0,1-.31-1L13.1,3.17,15,4.5Z"
+     id="path10" />
+  <path
+     class="cls-3"
+     d="M9.38,4c.15.71.94.58,3.19,1.86,1.23.7,1.79,1.12,2.56,1l.3-.09a6,6,0,0,0,.8-.36c.7-.37,2.13.91,2.25.77a6.17,6.17,0,0,0-2-2.45,11.78,11.78,0,0,0-6.18-2.58C9.29,3.16,9.33,3.79,9.38,4Z"
+     id="path12" />
+  <path
+     class="cls-4"
+     d="M26.18,11.17c-.34-.89-1.79-1.18-1.79-1.18a64.46,64.46,0,0,1-8-3.08V4.4A.9.9,0,0,0,16,3.75a1.71,1.71,0,0,0-1.07-.1h0a1.77,1.77,0,0,1,.44.35.87.87,0,0,1,.17.52l-.06,2.22A61.84,61.84,0,0,1,7.23,10s-1.45.29-1.79,1.18a1,1,0,0,0-.07.32H26.25A1,1,0,0,0,26.18,11.17ZM16,10.74H8l7.78-3,7.78,3Z"
+     id="path14" />
+  <path
+     class="cls-2"
+     d="M17.91,30.19a6.65,6.65,0,0,0,2.48-.13,6.81,6.81,0,0,0,2.72-1.38L21,14V10.74H10.57V14L8.79,28.57a7.5,7.5,0,0,0,4.93,1.62l2-13.77Z"
+     id="path16" />
+  <rect
+     class="cls-3"
+     x="10.57"
+     y="11.89"
+     width="10.47"
+     height="1.86"
+     id="rect18" />
+  <path
+     class="cls-3"
+     d="M9.87,19.44a3.67,3.67,0,0,0,2-1.1c.88-1,1.26-2.51.81-2.91-.17-.15-.35-.05-1.3-.14-.4,0-.73-.09-.94-.12Z"
+     id="path20" />
+  <path
+     class="cls-3"
+     d="M21.81,19.38a3.68,3.68,0,0,1-2-1c-.92-1-1.27-2.52-.81-2.91.18-.16.38,0,1.3-.14a9.13,9.13,0,0,0,.91-.14Z"
+     id="path22" />
+  <path
+     class="cls-3"
+     d="M22,12.59a.44.44,0,0,1,.22-.31c1.28-.94,6-1.61,6.24-.48a.81.81,0,0,1-.19.58c-.94,1.56-3.46,1.33-3.78,1.3C23.31,13.56,21.95,13.05,22,12.59Z"
+     id="path24" />
+  <path
+     class="cls-2"
+     d="M22,12.28a4.77,4.77,0,0,1,.77-2.94,3.76,3.76,0,0,1,2.81-1.87,3.46,3.46,0,0,1,3.28,2.32,2.27,2.27,0,0,1,.05,1.65c-.55,1.29-2.58,1.42-3.46,1.48A7.4,7.4,0,0,1,22,12.28Z"
+     id="path26" />
+  <path
+     class="cls-2"
+     d="M22,12.29a4.14,4.14,0,0,0,1.92.93A5.38,5.38,0,0,0,29,10.58,5.21,5.21,0,0,1,26.89,14a4.92,4.92,0,0,1-3,.8c-.57,0-2-.09-2.31-.94A1.83,1.83,0,0,1,22,12.29Z"
+     id="path28" />
+  <path
+     class="cls-3"
+     d="M24.23,10.46A2.38,2.38,0,0,1,25,8.92,3,3,0,0,1,27.31,8a6.33,6.33,0,0,0-1.88,1A9.73,9.73,0,0,0,24.23,10.46Z"
+     id="path30" />
+  <path
+     class="cls-3"
+     d="M23.16,10a2.07,2.07,0,0,1,.65-1.34,2.64,2.64,0,0,1,2-.8,5.49,5.49,0,0,0-1.63.88A8.45,8.45,0,0,0,23.16,10Z"
+     id="path32" />
+</svg>
