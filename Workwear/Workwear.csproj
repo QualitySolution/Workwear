@@ -532,6 +532,9 @@
     <Compile Include="..\Workwear.Core\Measurements\SizeStandartEnums.cs">
       <Link>Measurements\SizeStandartEnums.cs</Link>
     </Compile>
+    <Compile Include="..\Workwear.Core\Domain\Company\Sex.cs">
+      <Link>Domain\Company\Sex.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

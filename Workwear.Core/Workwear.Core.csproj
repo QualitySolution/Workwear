@@ -13,4 +13,8 @@
       <ProjectReference Include="..\..\GammaBinding\GammaUtil\Gamma.Utilities.dotnet.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Domain\Company" />
+    </ItemGroup>
+
 </Project>

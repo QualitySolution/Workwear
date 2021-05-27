@@ -9,6 +9,7 @@ using workwear.Domain.Company;
 using workwear.Measurements;
 using workwear.ViewModels.Company;
 using workwear.Views.Company.EmployeeChilds;
+using Workwear.Domain.Company;
 using Workwear.Measurements;
 
 namespace workwear.Views.Company

@@ -23,6 +23,7 @@ using workwear.Repository.Stock;
 using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
+using Workwear.Domain.Company;
 using Workwear.Measurements;
 
 namespace workwear.ViewModels.Stock

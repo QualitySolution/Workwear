@@ -37,7 +37,7 @@ namespace Workwear.Measurements
 		{
 			Enum value = standartEnum as Enum;
 			if(value == null)
-				throw new InvalidCastException("standartEnum должент быть перечислением.");
+				throw new InvalidCastException("standartEnum должен быть перечислением.");
 
 			var att = value.GetAttribute<StdCodeAttribute>();
 			return att == null ? null : att.Code;

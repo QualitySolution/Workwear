@@ -6,6 +6,7 @@ using QS.DomainModel.Entity;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Measurements;
+using Workwear.Domain.Company;
 using Workwear.Measurements;
 
 namespace workwear.Domain.Stock

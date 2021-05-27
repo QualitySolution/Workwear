@@ -6,6 +6,4 @@
 		HumanOnly,
 		СlothesOnly,
 	}
-
 }
-

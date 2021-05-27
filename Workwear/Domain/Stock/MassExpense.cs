@@ -12,6 +12,7 @@ using workwear.Domain.Operations;
 using workwear.Domain.Statements;
 using workwear.Measurements;
 using workwear.Repository.Stock;
+using Workwear.Domain.Company;
 using Workwear.Measurements;
 
 namespace workwear.Domain.Stock

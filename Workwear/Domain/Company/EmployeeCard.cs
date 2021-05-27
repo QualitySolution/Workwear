@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using Gamma.Utilities;
 using NHibernate;
 using NHibernate.Criterion;
-using NHibernate.Engine;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -22,6 +20,7 @@ using workwear.Repository.Company;
 using workwear.Repository.Operations;
 using workwear.Repository.Stock;
 using workwear.Tools;
+using Workwear.Domain.Company;
 using Workwear.Measurements;
 
 namespace workwear.Domain.Company
@@ -627,29 +626,5 @@ namespace workwear.Domain.Company
 			}
 		}
 	}
-
-	public enum Sex{
-		[Display(Name = "Нет")]
-		None,
-		[Display(Name = "Мужской")]
-		M,
-		[Display(Name = "Женский")]
-		F
-	}
-
-	public class SexStringType : NHibernate.Type.EnumStringType
-	{
-		public SexStringType () : base (typeof(Sex))
-		{
-		}
-
-		public override void NullSafeSet(DbCommand st, object value, int index, bool[] settable, ISessionImplementor session)
-		{
-			if(Equals(value, Sex.None))
-				value = null;
-			base.NullSafeSet(st, value, index, settable, session);
-		}
-	}
-
 }
 

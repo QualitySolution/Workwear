@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
+using Workwear.Domain.Company;
 
 namespace workwear.Tools.Import
 {
