@@ -786,6 +786,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="App.config" />
+    <None Condition=" '$(TargetOS)' == 'Linux' " Include="..\..\..\.nuget\packages\grpc.core\2.32.0\runtimes\linux\native\libgrpc_csharp_ext.x64.so">
+      <Link>libgrpc_csharp_ext.x64.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
