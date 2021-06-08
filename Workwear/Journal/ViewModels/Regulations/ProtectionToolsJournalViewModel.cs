@@ -7,6 +7,7 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using workwear.Domain.Regulations;
+using workwear.Domain.Stock;
 using workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations
@@ -21,7 +22,9 @@ namespace workwear.Journal.ViewModels.Regulations
 		protected override IQueryOver<ProtectionTools> ItemsQuery(IUnitOfWork uow)
 		{
 			ProtectionToolsJournalNode resultAlias = null;
+			ItemsType itemsTypeAlias = null;
 			return uow.Session.QueryOver<ProtectionTools>()
+				.Left.JoinAlias(x => x.Type, () => itemsTypeAlias)
 				.Where(GetSearchCriterion<ProtectionTools>(
 					x => x.Id,
 					x => x.Name
@@ -29,6 +32,7 @@ namespace workwear.Journal.ViewModels.Regulations
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
+					.Select(() => itemsTypeAlias.Name).WithAlias(() => resultAlias.TypeName)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<ProtectionToolsJournalNode>());
 		}
@@ -38,5 +42,6 @@ namespace workwear.Journal.ViewModels.Regulations
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
+		public string TypeName { get; set; }
 	}
 }
