@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.Utilities;
+using Workwear.Domain.Regulations;
 
 namespace workwear.Domain.Regulations
 {
@@ -166,22 +167,6 @@ namespace workwear.Domain.Regulations
 			newNormItem.periodCount = this.periodCount;
 			newNormItem.amount = this.amount;
 			return newNormItem;
-		}
-	}
-
-	public enum NormPeriodType{
-		[Display(Name = "Год")]
-		Year,
-		[Display(Name = "Месяц")]
-		Month,
-		[Display(Name = "Смена")]
-		Shift,
-	}
-
-	public class NormPeriodTypeType : NHibernate.Type.EnumStringType
-	{
-		public NormPeriodTypeType () : base (typeof(NormPeriodType))
-		{
 		}
 	}
 }

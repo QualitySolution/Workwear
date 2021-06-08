@@ -6,6 +6,7 @@ using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 
 namespace workwear.Domain.Regulations
 {

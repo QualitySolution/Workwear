@@ -535,6 +535,9 @@
     <Compile Include="..\Workwear.Core\Domain\Company\Sex.cs">
       <Link>Domain\Company\Sex.cs</Link>
     </Compile>
+    <Compile Include="..\Workwear.Core\Domain\Regulations\NormPeriodType.cs">
+      <Link>Domain\Regulations\NormPeriodType.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
