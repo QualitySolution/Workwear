@@ -9,15 +9,14 @@ using workwear.Measurements;
 
 namespace workwear.Domain.Stock
 {
-	[Appellative(Gender = GrammaticalGender.Feminine,
-	NominativePlural = "строки массовой выдачи",
-	Nominative = "строка массовой выдачи")]
+	[Appellative(Gender = GrammaticalGender.Masculine,
+	NominativePlural = "сотрудники выдачи списком",
+	Nominative = "сотрудник выдачи списком")]
 	public class MassExpenseEmployee : PropertyChangedBase, IDomainObject
 	{
 		public MassExpenseEmployee()
 		{
 		}
-
 
 		public MassExpenseEmployee(MassExpense doc)
 		{

@@ -1,16 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
-using QS.DomainModel.UoW;
 using workwear.Domain.Company;
-using workwear.Domain.Operations;
 using workwear.Domain.Statements;
 
 namespace workwear.Domain.Stock
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
-	NominativePlural = "строки перевода массовой выдачи",
-	Nominative = "строка перевода массовой выдачи")]
+	NominativePlural = "номеклатуры выдачи списком",
+	Nominative = "номеклатура выдачи списком")]
 	public class MassExpenseNomenclature : PropertyChangedBase, IDomainObject
 	{
 
