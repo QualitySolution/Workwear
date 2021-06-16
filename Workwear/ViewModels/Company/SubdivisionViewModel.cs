@@ -13,6 +13,7 @@ using workwear.Domain.Operations;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository.Company;
+using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
 
 namespace workwear.ViewModels.Company
@@ -21,11 +22,20 @@ namespace workwear.ViewModels.Company
 	{
 		private readonly ITdiCompatibilityNavigation navigation;
 		private readonly ILifetimeScope autofacScope;
+		private readonly FeaturesService featuresService;
 
-		public SubdivisionViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiCompatibilityNavigation navigation, IValidator validator, ILifetimeScope autofacScope) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+		public SubdivisionViewModel(
+			IEntityUoWBuilder uowBuilder, 
+			IUnitOfWorkFactory unitOfWorkFactory, 
+			ITdiCompatibilityNavigation navigation, 
+			IValidator validator, 
+			ILifetimeScope autofacScope,
+			FeaturesService featuresService
+			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			var builder = new CommonEEVMBuilderFactory<Subdivision>(this, Entity, UoW, NavigationManager, autofacScope);
 
 			EntryWarehouse = builder.ForProperty(x => x.Warehouse)
@@ -42,6 +52,10 @@ namespace workwear.ViewModels.Company
 
 		public IList<SubdivisionRecivedInfo> Items => SubdivisionRepository.ItemsBalance(UoW, Entity);
 
+		#endregion
+
+		#region Visible
+		public bool VisibleWarehouse => featuresService.Available(WorkwearFeature.Warehouses);
 		#endregion
 
 		#region Controls
