@@ -327,7 +327,7 @@ namespace workwear.ViewModels.Tools
 				var types = new DataType[MaxSourceColumns];
 				rowNum++;
 				for(int i = 0; i < MaxSourceColumns; i++) {
-					var value = row.CellValue(i).ToLower();
+					var value = row.CellValue(i)?.ToLower() ?? String.Empty;
 					types[i] = dataParser.ColumnNames.ContainsKey(value) ? dataParser.ColumnNames[value] : DataType.Unknown;
 				}
 				if(bestColumns < types.Count(x => x != DataType.Unknown)) {
