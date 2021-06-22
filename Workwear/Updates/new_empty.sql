@@ -2,7 +2,7 @@
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
 -- Schema workwear
@@ -187,7 +187,6 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `type_id` INT UNSIGNED NULL DEFAULT NULL,
   `sex` ENUM('Women','Men', 'Universal') NULL DEFAULT NULL,
   `size_std` VARCHAR(20) NULL DEFAULT NULL,
-  `growth_std` VARCHAR(20) NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `number` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -235,6 +234,8 @@ CREATE TABLE IF NOT EXISTS `wear_cards` (
   `size_gloves` VARCHAR(10) NULL DEFAULT NULL,
   `size_gloves_std` VARCHAR(20) NULL DEFAULT NULL,
   `size_mittens` VARCHAR(10) NULL DEFAULT NULL,
+  `phone_number` VARCHAR(16) NULL DEFAULT NULL,
+  `lk_registered` TINYINT(1) NOT NULL DEFAULT 0,
   `photo` MEDIUMBLOB NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -374,8 +375,8 @@ AUTO_INCREMENT = 1000;
 CREATE TABLE IF NOT EXISTS `regulations_annex` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `regulations_id` INT UNSIGNED NOT NULL,
-  `number` TINYINT NOT NULL,
-  `name` VARCHAR(255) NULL DEFAULT NULL,
+  `number` VARCHAR(255) NOT NULL,
+  `name` TINYTEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_regulations_appendix_1_idx` (`regulations_id` ASC),
   CONSTRAINT `fk_regulations_appendix_1`
@@ -1360,8 +1361,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.5');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('edition', 'gpl');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.6');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;
