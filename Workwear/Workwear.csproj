@@ -184,7 +184,7 @@
       <HintPath>..\..\QSProjects\QS.Cloud.Client\bin\x86\Debug\netstandard2.0\publish\QS.Cloud.Client.dll</HintPath>
     </Reference>
     <Reference Include="QS.Cloud.WearLk.Client">
-      <HintPath>..\QS.Cloud.WearLk.Client\bin\Debug\netstandard2.0\QS.Cloud.WearLk.Client.dll</HintPath>
+      <HintPath>..\QS.Cloud.WearLk.Client\bin\x86\Debug\netstandard2.0\publish\QS.Cloud.WearLk.Client.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
