@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using NSubstitute;
 using NUnit.Framework;
+using QS.Deletion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.Testing.DB;
+using workwear;
+using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Operations.Graph;
-using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Tools;
-using workwear;
-using QS.Deletion;
-using System.Threading;
+using Workwear.Domain.Regulations;
 
 namespace WorkwearTest.Integration.Tools
 {

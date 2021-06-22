@@ -11,6 +11,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Tools;
+using Workwear.Domain.Regulations;
 
 namespace WorkwearTest.Integration.Tools
 {

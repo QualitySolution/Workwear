@@ -8,6 +8,8 @@ using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 
 namespace WorkwearTest.Integration.Organization
 {

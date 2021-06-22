@@ -19,6 +19,7 @@ using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
 using workwear.ViewModels.Stock;
+using Workwear.Measurements;
 
 namespace WorkwearTest.ViewModels.Stock
 {
@@ -41,6 +42,7 @@ namespace WorkwearTest.ViewModels.Stock
 			var baseParameters = Substitute.For<BaseParameters>();
 			var interactive = Substitute.For<IInteractiveQuestion>();
 			var configuration = Substitute.For<IChangeableConfiguration>();
+			var sizeService = Substitute.For<SizeService>();
 			var device = Substitute.For<DeviceInfo>(new RG_ENDPOINT_INFO(), new RG_DEVICE_INFO_SHORT());
 			var cardReaderService = Substitute.For<ICardReaderService>();
 			cardReaderService.Devices.Returns(new List<DeviceInfo> { device });
@@ -51,7 +53,7 @@ namespace WorkwearTest.ViewModels.Stock
 			var container = builder.Build();
 
 			bool UidCardWasСalled = false, CurentStateWasСalled =false;
-			var viewModel = new IssueByIdentifierViewModel(uowFactory, navigation, guiDispatcher, userService, container.BeginLifetimeScope(), stockRepository, employeeRepository, featuresService, validator, baseParameters, interactive, configuration, cardReaderService);
+			var viewModel = new IssueByIdentifierViewModel(uowFactory, navigation, guiDispatcher, userService, container.BeginLifetimeScope(), stockRepository, employeeRepository, featuresService, validator, baseParameters, interactive, configuration, sizeService, cardReaderService);
 			viewModel.SelectedDevice = viewModel.Devices.First();
 			viewModel.CardFamilies.First(x => x.CardTypeFamily == RG_CARD_FAMILY_CODE.EF_MIFARE).Active = true;
 			cardReaderService.IsAutoPoll.Returns(true);

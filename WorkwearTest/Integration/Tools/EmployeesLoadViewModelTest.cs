@@ -8,6 +8,7 @@ using QS.Testing.DB;
 using workwear.Domain.Company;
 using workwear.Tools.Import;
 using workwear.ViewModels.Tools;
+using Workwear.Domain.Company;
 
 namespace WorkwearTest.Integration.Tools
 {
