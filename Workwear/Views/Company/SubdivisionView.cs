@@ -1,5 +1,4 @@
 ﻿using System;
-using Autofac;
 using NLog;
 using QS.Views.Dialog;
 using QSProjectsLib;
@@ -38,6 +37,7 @@ namespace workwear.Views.Company
 
 			entitywarehouse.ViewModel = ViewModel.EntryWarehouse;
 
+			lbWarehouse.Visible = entitywarehouse.Visible = ViewModel.VisibleWarehouse;
 			buttonPlacement.Sensitive = buttonGive.Sensitive = buttonReturn.Sensitive = buttonWriteOff.Sensitive = !ViewModel.UoW.IsNew;
 		}
 

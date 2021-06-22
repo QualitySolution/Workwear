@@ -17,16 +17,12 @@ using Workwear.Measurements;
 
 namespace workwear.Domain.Stock
 {
-	[Appellative(Gender = GrammaticalGender.Neuter,
-	NominativePlural = "массовое списание",
-	Nominative = "массовое списание",
-	PrepositionalPlural = "массовое списание")]
+	[Appellative(Gender = GrammaticalGender.Feminine,
+	NominativePlural = "выдачи списком",
+	Nominative = "выдача списком",
+	PrepositionalPlural = "выдаче списком")]
 	public class MassExpense : StockDocument, IValidatableObject
 	{
-		[Appellative(Gender = GrammaticalGender.Masculine,
-		NominativePlural = "документы выдачи",
-		Nominative = "документ массовой выдачи")]
-
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		private Warehouse warehouseFrom;

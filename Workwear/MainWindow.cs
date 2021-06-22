@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Autofac;
 using Gtk;
 using MySql.Data.MySqlClient;
@@ -112,7 +113,9 @@ public partial class MainWindow : Gtk.Window
 			ActionSN.Sensitive = false;
 		}
 
-		this.KeyReleaseEvent += ClipboardWorkaround.HandleKeyReleaseEvent;
+		bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+		if(isWindows)
+			this.KeyReleaseEvent += ClipboardWorkaround.HandleKeyReleaseEvent;
 		TDIMain.MainNotebook = tdiMain;
 		this.KeyReleaseEvent += TDIMain.TDIHandleKeyReleaseEvent;
 

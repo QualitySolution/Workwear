@@ -67,6 +67,7 @@ namespace workwear
 
 			// Настройка ORM
 			var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
+				.Dialect<MySQL57ExtendedDialect>()
 				.ConnectionString (QSProjectsLib.QSMain.ConnectionString)
 				.ShowSql ()
 				.FormatSql ();

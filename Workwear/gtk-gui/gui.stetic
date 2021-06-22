@@ -1144,7 +1144,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Label" id="lb5">
+              <widget class="Gtk.Label" id="lbWarehouse">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Склад выдачи:</property>

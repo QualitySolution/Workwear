@@ -4,7 +4,7 @@ using QS.DomainModel.Entity;
 
 namespace workwear.Domain.Company
 {
-	[Appellative(Gender = GrammaticalGender.Feminine,
+	[Appellative(Gender = GrammaticalGender.Masculine,
 		NominativePlural = "виды отпусков",
 		Nominative = "вид отпуска")]
 	public class VacationType : PropertyChangedBase, IDomainObject
