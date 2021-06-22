@@ -20,7 +20,8 @@ namespace workwear.Tools.Import
 			AddColumnName(DataType.Fio,
 				"ФИО",
 				"Ф.И.О.",
-				"Фамилия Имя Отчество"
+				"Фамилия Имя Отчество",
+				"Наименование"//Встречается при выгрузке из 1C
 				);
 			AddColumnName(DataType.CardKey,
 				"CARD_KEY",
@@ -51,7 +52,8 @@ namespace workwear.Tools.Import
 				);
 			AddColumnName(DataType.PersonnelNumber,
 				"TN",
-				"Табельный номер"
+				"Табельный номер",
+				"Табельный №"
 				);
 		}
 
