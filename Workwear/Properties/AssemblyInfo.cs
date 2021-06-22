@@ -8,7 +8,6 @@ using QS.Project.Versioning;
 #if DEBUG
 [assembly: AssemblyBetaBuild]
 #endif
-[assembly: AssemblyСompatibleModification("gpl")]
 [assembly: AssemblyDescription("Программа позволяет вести учет внутреннего склада спецодежды и имущества выдаваемого сотрудникам.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]
