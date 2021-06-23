@@ -19,6 +19,8 @@ namespace workwear.Tools.Import
 		[Display(Name = "Табельный номер")]
 		PersonnelNumber,
 		[Display(Name = "UID карты")]
-		CardKey
+		CardKey,
+		[Display(Name = "Дата приёма на работу")]
+		HireDate,
 	}
 }

@@ -42,7 +42,6 @@ namespace workwear.Tools.Import
 				"SECOND_NAME",
 				"SECOND NAME",
 				"Patronymic",
-				"Patronymic name",
 				"Отчество"
 				);
 			AddColumnName(DataType.Sex,
@@ -52,8 +51,11 @@ namespace workwear.Tools.Import
 				);
 			AddColumnName(DataType.PersonnelNumber,
 				"TN",
-				"Табельный номер",
-				"Табельный №"
+				"Табельный"
+				);
+			AddColumnName(DataType.HireDate,
+				"Дата приема",
+				"Дата приёма"
 				);
 		}
 
@@ -93,6 +95,8 @@ namespace workwear.Tools.Import
 					bool firstDiff = !String.IsNullOrEmpty(firstName) && !String.Equals(employee.FirstName, firstName, StringComparison.CurrentCultureIgnoreCase);
 					bool patronymicDiff = !String.IsNullOrEmpty(patronymic) && !String.Equals(employee.Patronymic, patronymic, StringComparison.CurrentCultureIgnoreCase);
 					return lastDiff || firstDiff || patronymicDiff;
+				case DataType.HireDate:
+					return !String.IsNullOrWhiteSpace(value) && DateTime.TryParse(value, out DateTime date) && employee.HireDate != date;
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
 			}
@@ -157,6 +161,10 @@ namespace workwear.Tools.Import
 						if(FemaleNames.Contains(employee.FirstName.ToUpper()))
 							employee.Sex = Sex.F;
 					}
+					break;
+				case DataType.HireDate:
+					if(DateTime.TryParse(value, out DateTime date))
+					 	employee.HireDate = date;
 					break;
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
