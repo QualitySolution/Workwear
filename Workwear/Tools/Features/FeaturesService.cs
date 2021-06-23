@@ -67,6 +67,8 @@ namespace workwear.Tools.Features
 					return ProductEdition == 3;
 				case WorkwearFeature.MassExpense:
 					return ProductEdition == 2 || ProductEdition == 3;
+				case WorkwearFeature.LoadExcel:
+					return ProductEdition == 2 || ProductEdition == 3;
 				default:
 					return false;
 			}
@@ -80,6 +82,8 @@ namespace workwear.Tools.Features
 		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,
 		[Display(Name = "Массовая выдача")]
-		MassExpense
+		MassExpense,
+		[Display(Name = "Загрузка из Excel")]
+		LoadExcel
 	}
 }
