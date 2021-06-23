@@ -5,6 +5,8 @@ using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
 using QS.Dialog;
@@ -40,8 +42,8 @@ namespace workwear.ViewModels.Tools
 		}
 
 		#region private
-		XSSFWorkbook wb;
-		XSSFSheet sh;
+		IWorkbook wb;
+		ISheet sh;
 		#endregion
 
 		#region Шаг 1
@@ -319,7 +321,10 @@ namespace workwear.ViewModels.Tools
 		{
 			try {
 				using(var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read)) {
-					wb = new XSSFWorkbook(fs);
+					if(FileName.EndsWith(".xls", StringComparison.InvariantCultureIgnoreCase))
+						wb = new HSSFWorkbook(fs);
+					else
+						wb = new XSSFWorkbook(fs);
 				}
 			}
 			catch(IOException ex) when(ex.HResult == -2147024864) {
@@ -390,7 +395,7 @@ namespace workwear.ViewModels.Tools
 		private void LoadSheet()
 		{
 			logger.Info("Читаем лист...");
-			sh = (XSSFSheet)wb.GetSheet(SelectedSheet.Title);
+			sh = wb.GetSheet(SelectedSheet.Title);
 			XlsRows = new List<SheetRow>();
 
 			int maxColumns = 0;
