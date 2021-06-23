@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NPOI.SS.UserModel;
 using workwear.Domain.Company;
+using workwear.ViewModels.Tools;
 
 namespace workwear.Tools.Import
 {
@@ -33,7 +33,16 @@ namespace workwear.Tools.Import
 
 		public string CellBackgroundColor(int col)
 		{
-			return ChangedColumns.Any(x => x.Index == col) ? "Pale Green" : null;
+			if(Skiped)
+				return EmployeesLoadViewModel.ColorOfSkiped;
+
+			if(ChangedColumns.Any(x => x.Index == col)) {
+				if(Employees.Any())
+					return EmployeesLoadViewModel.ColorOfChanged;
+				else
+					return EmployeesLoadViewModel.ColorOfNew;
+			}
+			return null;
 		}
 
 		#region Сопоставление с сотрудниками

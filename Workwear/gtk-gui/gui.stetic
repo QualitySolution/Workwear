@@ -13950,14 +13950,20 @@
                           </packing>
                         </child>
                         <child>
-                          <widget class="Gtk.Label" id="label5">
+                          <widget class="Gamma.GtkWidgets.yEventBox" id="eventboxCountChangedEmployees">
                             <property name="MemberName" />
-                            <property name="Xalign">1</property>
-                            <property name="LabelProp" translatable="yes">Несколько соответствий:</property>
+                            <child>
+                              <widget class="Gamma.GtkWidgets.yLabel" id="labelCountChangedEmployees">
+                                <property name="MemberName" />
+                                <property name="LabelProp" translatable="yes">ylabel5</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
-                            <property name="TopAttach">4</property>
-                            <property name="BottomAttach">5</property>
+                            <property name="TopAttach">1</property>
+                            <property name="BottomAttach">2</property>
+                            <property name="LeftAttach">1</property>
+                            <property name="RightAttach">2</property>
                             <property name="AutoSize">True</property>
                             <property name="XOptions">Fill</property>
                             <property name="YOptions">Fill</property>
@@ -13970,15 +13976,64 @@
                           </packing>
                         </child>
                         <child>
-                          <widget class="Gamma.GtkWidgets.yLabel" id="labelCountChangedEmployees">
+                          <widget class="Gamma.GtkWidgets.yEventBox" id="eventboxCountNewEmployees">
                             <property name="MemberName" />
-                            <property name="LabelProp" translatable="yes">ylabel5</property>
+                            <child>
+                              <widget class="Gamma.GtkWidgets.yLabel" id="labelCountNewEmployees">
+                                <property name="MemberName" />
+                                <property name="LabelProp" translatable="yes">ylabel4</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
-                            <property name="TopAttach">1</property>
-                            <property name="BottomAttach">2</property>
                             <property name="LeftAttach">1</property>
                             <property name="RightAttach">2</property>
+                            <property name="AutoSize">True</property>
+                            <property name="XOptions">Fill</property>
+                            <property name="YOptions">Fill</property>
+                            <property name="XExpand">False</property>
+                            <property name="XFill">True</property>
+                            <property name="XShrink">False</property>
+                            <property name="YExpand">False</property>
+                            <property name="YFill">True</property>
+                            <property name="YShrink">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="Gamma.GtkWidgets.yEventBox" id="eventboxCountSkipRows">
+                            <property name="MemberName" />
+                            <child>
+                              <widget class="Gamma.GtkWidgets.yLabel" id="labelCountSkipRows">
+                                <property name="MemberName" />
+                                <property name="LabelProp" translatable="yes">ylabel3</property>
+                              </widget>
+                            </child>
+                          </widget>
+                          <packing>
+                            <property name="TopAttach">3</property>
+                            <property name="BottomAttach">4</property>
+                            <property name="LeftAttach">1</property>
+                            <property name="RightAttach">2</property>
+                            <property name="AutoSize">True</property>
+                            <property name="XOptions">Fill</property>
+                            <property name="YOptions">Fill</property>
+                            <property name="XExpand">False</property>
+                            <property name="XFill">True</property>
+                            <property name="XShrink">False</property>
+                            <property name="YExpand">False</property>
+                            <property name="YFill">True</property>
+                            <property name="YShrink">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="Gtk.Label" id="label5">
+                            <property name="MemberName" />
+                            <property name="Xalign">1</property>
+                            <property name="LabelProp" translatable="yes">Несколько соответствий:</property>
+                          </widget>
+                          <packing>
+                            <property name="TopAttach">4</property>
+                            <property name="BottomAttach">5</property>
                             <property name="AutoSize">True</property>
                             <property name="XOptions">Fill</property>
                             <property name="YOptions">Fill</property>
@@ -14012,25 +14067,6 @@
                           </packing>
                         </child>
                         <child>
-                          <widget class="Gamma.GtkWidgets.yLabel" id="labelCountNewEmployees">
-                            <property name="MemberName" />
-                            <property name="LabelProp" translatable="yes">ylabel4</property>
-                          </widget>
-                          <packing>
-                            <property name="LeftAttach">1</property>
-                            <property name="RightAttach">2</property>
-                            <property name="AutoSize">True</property>
-                            <property name="XOptions">Fill</property>
-                            <property name="YOptions">Fill</property>
-                            <property name="XExpand">False</property>
-                            <property name="XFill">True</property>
-                            <property name="XShrink">False</property>
-                            <property name="YExpand">False</property>
-                            <property name="YFill">True</property>
-                            <property name="YShrink">False</property>
-                          </packing>
-                        </child>
-                        <child>
                           <widget class="Gamma.GtkWidgets.yLabel" id="labelCountNoChangesEmployees">
                             <property name="MemberName" />
                             <property name="LabelProp" translatable="yes">ylabel6</property>
@@ -14038,27 +14074,6 @@
                           <packing>
                             <property name="TopAttach">2</property>
                             <property name="BottomAttach">3</property>
-                            <property name="LeftAttach">1</property>
-                            <property name="RightAttach">2</property>
-                            <property name="AutoSize">True</property>
-                            <property name="XOptions">Fill</property>
-                            <property name="YOptions">Fill</property>
-                            <property name="XExpand">False</property>
-                            <property name="XFill">True</property>
-                            <property name="XShrink">False</property>
-                            <property name="YExpand">False</property>
-                            <property name="YFill">True</property>
-                            <property name="YShrink">False</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <widget class="Gamma.GtkWidgets.yLabel" id="labelCountSkipRows">
-                            <property name="MemberName" />
-                            <property name="LabelProp" translatable="yes">ylabel3</property>
-                          </widget>
-                          <packing>
-                            <property name="TopAttach">3</property>
-                            <property name="BottomAttach">4</property>
                             <property name="LeftAttach">1</property>
                             <property name="RightAttach">2</property>
                             <property name="AutoSize">True</property>
