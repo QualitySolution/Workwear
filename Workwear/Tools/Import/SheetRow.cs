@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NPOI.SS.UserModel;
 using workwear.Domain.Company;
+using workwear.ViewModels.Tools;
 
 namespace workwear.Tools.Import
 {
@@ -33,6 +33,8 @@ namespace workwear.Tools.Import
 
 		public string CellBackgroundColor(int col)
 		{
+			if(Skiped)
+				return EmployeesLoadViewModel.SkipedColor;
 			return ChangedColumns.Any(x => x.Index == col) ? "Pale Green" : null;
 		}
 

@@ -22,6 +22,8 @@ namespace workwear.ViewModels.Tools
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+		public static readonly string SkipedColor = "Dark Orchid";
+
 		public EmployeesLoadViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IInteractiveMessage interactiveMessage, DataParser dataParser) : base(unitOfWorkFactory, navigation)
 		{
 			Title = "Загрузка сотрудников";
@@ -234,9 +236,19 @@ namespace workwear.ViewModels.Tools
 				found.First().Employees.Add(employee);
 				if(found.First().Employees.Count == 2)
 					CountMultiMatch++;
-				//Пропускаем дубликаты строк в файле
-				foreach(var toSkip in found.Skip(1)) {
-					toSkip.Skiped = true;
+			}
+
+			//Пропускаем дубликаты Табельных номеров в файле
+			var groups = list.GroupBy(x => x.CellValue(numberColumn.Index));
+			foreach(var group in groups) {
+				//FIXME надо загружать по имени.
+				if(String.IsNullOrWhiteSpace(group.Key))
+					continue;
+				if(group.Count() == 1)
+					continue;
+
+				foreach(var item in group.Skip(1)) {
+					item.Skiped = true;
 					CountSkipRows++;
 				}
 			}
