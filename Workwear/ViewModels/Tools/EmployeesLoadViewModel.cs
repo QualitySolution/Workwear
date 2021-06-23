@@ -175,18 +175,16 @@ namespace workwear.ViewModels.Tools
 			if(Columns.Any(x => x.DataType == DataType.PersonnelNumber))
 				MatchByNumber();
 			else
-				MatchByName();
+				MatchByName(DisplayRows);
 
 			FindChanges();
 			OnPropertyChanged(nameof(DisplayRows));
 		}
 
-		private void MatchByName()
+		private void MatchByName(List<SheetRow> list)
 		{
-			var list = DisplayRows;
-
 			var searchValues = list.Select(GetFIO)
-				.Where(fio => !String.IsNullOrEmpty(fio.LastName) || !String.IsNullOrEmpty(fio.FirstName))
+				.Where(fio => !String.IsNullOrEmpty(fio.LastName) && !String.IsNullOrEmpty(fio.FirstName))
 				.Select(fio => (fio.LastName + "|" + fio.FirstName).ToUpper())
 				.Distinct().ToArray();
 			var exists = UoW.Session.QueryOver<EmployeeCard>()
@@ -204,22 +202,34 @@ namespace workwear.ViewModels.Tools
 				.List();
 
 			foreach(var employee in exists) {
-				Func<SheetRow, bool> comparefio = delegate (SheetRow x) {
-					var fio = GetFIO(x);
-					return String.Equals(fio.LastName, employee.LastName, StringComparison.CurrentCultureIgnoreCase)
-						&& String.Equals(fio.FirstName, employee.FirstName, StringComparison.CurrentCultureIgnoreCase)
-						&& (fio.Patronymic == null || String.Equals(fio.Patronymic, employee.Patronymic, StringComparison.CurrentCultureIgnoreCase));
-				};
-				var found = list.Where(comparefio).ToArray();
+				var found = list.Where(x => СompareFio(x, employee)).ToArray();
+				if(!found.Any())
+					continue; //Так как из базе ищем без отчества, могуть быть лишние.
 				found.First().Employees.Add(employee);
 				if(found.First().Employees.Count == 2)
 					CountMultiMatch++;
-				//Пропускаем дубликаты строк в файле
-				foreach(var toSkip in found.Skip(1)) {
-					toSkip.Skiped = true;
+			}
+			//Пропускаем дубликаты имен в файле
+			var groups = list.GroupBy(x => GetFIO(x).GetHash());
+			foreach(var group in groups) {
+				if(String.IsNullOrWhiteSpace(group.Key)) {
+					group.First().Skiped = true;
+					CountSkipRows++;
+				}
+
+				foreach(var item in group.Skip(1)) {
+					item.Skiped = true;
 					CountSkipRows++;
 				}
 			}
+		}
+
+		private bool СompareFio(SheetRow x, EmployeeCard employee)
+		{
+			var fio = GetFIO(x);
+			return String.Equals(fio.LastName, employee.LastName, StringComparison.CurrentCultureIgnoreCase)
+				&& String.Equals(fio.FirstName, employee.FirstName, StringComparison.CurrentCultureIgnoreCase)
+				&& (fio.Patronymic == null || String.Equals(fio.Patronymic, employee.Patronymic, StringComparison.CurrentCultureIgnoreCase));
 		}
 
 		private void MatchByNumber()
@@ -243,11 +253,10 @@ namespace workwear.ViewModels.Tools
 			//Пропускаем дубликаты Табельных номеров в файле
 			var groups = list.GroupBy(x => x.CellValue(numberColumn.Index));
 			foreach(var group in groups) {
-				//FIXME надо загружать по имени.
-				if(String.IsNullOrWhiteSpace(group.Key))
-					continue;
-				if(group.Count() == 1)
-					continue;
+				if(String.IsNullOrWhiteSpace(group.Key)) {
+					//Если табельного номера нет проверяем по FIO
+					MatchByName(group.ToList());
+				}
 
 				foreach(var item in group.Skip(1)) {
 					item.Skiped = true;
