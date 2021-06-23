@@ -89,9 +89,9 @@ namespace workwear.Tools.Import
 					return false;
 				case DataType.Fio:
 					value.SplitFullName(out string lastName, out string firstName, out string patronymic);
-					bool lastDiff = !String.IsNullOrEmpty(lastName) && !String.Equals(employee.LastName, value, StringComparison.CurrentCultureIgnoreCase);
-					bool firstDiff = !String.IsNullOrEmpty(firstName) && !String.Equals(employee.FirstName, value, StringComparison.CurrentCultureIgnoreCase);
-					bool patronymicDiff = !String.IsNullOrEmpty(patronymic) && !String.Equals(employee.Patronymic, value, StringComparison.CurrentCultureIgnoreCase);
+					bool lastDiff = !String.IsNullOrEmpty(lastName) && !String.Equals(employee.LastName, lastName, StringComparison.CurrentCultureIgnoreCase);
+					bool firstDiff = !String.IsNullOrEmpty(firstName) && !String.Equals(employee.FirstName, firstName, StringComparison.CurrentCultureIgnoreCase);
+					bool patronymicDiff = !String.IsNullOrEmpty(patronymic) && !String.Equals(employee.Patronymic, patronymic, StringComparison.CurrentCultureIgnoreCase);
 					return lastDiff || firstDiff || patronymicDiff;
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
