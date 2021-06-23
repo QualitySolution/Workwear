@@ -81,7 +81,7 @@ namespace workwear.Tools.Features
 		Warehouses,
 		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,
-		[Display(Name = "Массовая выдача")]
+		[Display(Name = "Выдача списком")]
 		MassExpense,
 		[Display(Name = "Загрузка из Excel")]
 		LoadExcel
