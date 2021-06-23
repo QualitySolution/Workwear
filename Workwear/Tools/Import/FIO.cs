@@ -6,5 +6,7 @@ namespace workwear.Tools.Import
 		public string LastName;
 		public string FirstName;
 		public string Patronymic;
+
+		public string GetHash() => LastName + FirstName + Patronymic;
 	}
 }
