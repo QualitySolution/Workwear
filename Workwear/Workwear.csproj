@@ -791,6 +791,10 @@
       <Link>libgrpc_csharp_ext.x64.so</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Condition=" '$(TargetOS)' == 'Win' " Include="..\..\..\.nuget\packages\grpc.core\2.32.0\runtimes\win\native\grpc_csharp_ext.x86.dll">
+      <Link>grpc_csharp_ext.x86.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
