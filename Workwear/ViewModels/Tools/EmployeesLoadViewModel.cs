@@ -22,7 +22,9 @@ namespace workwear.ViewModels.Tools
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-		public static readonly string SkipedColor = "Dark Orchid";
+		public static readonly string ColorOfNew = "Pale Turquoise";
+		public static readonly string ColorOfChanged = "Pale Green";
+		public static readonly string ColorOfSkiped = "Orchid";
 
 		public EmployeesLoadViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IInteractiveMessage interactiveMessage, DataParser dataParser) : base(unitOfWorkFactory, navigation)
 		{

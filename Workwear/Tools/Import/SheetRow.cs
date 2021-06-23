@@ -34,8 +34,15 @@ namespace workwear.Tools.Import
 		public string CellBackgroundColor(int col)
 		{
 			if(Skiped)
-				return EmployeesLoadViewModel.SkipedColor;
-			return ChangedColumns.Any(x => x.Index == col) ? "Pale Green" : null;
+				return EmployeesLoadViewModel.ColorOfSkiped;
+
+			if(ChangedColumns.Any(x => x.Index == col)) {
+				if(Employees.Any())
+					return EmployeesLoadViewModel.ColorOfChanged;
+				else
+					return EmployeesLoadViewModel.ColorOfNew;
+			}
+			return null;
 		}
 
 		#region Сопоставление с сотрудниками

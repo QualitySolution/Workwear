@@ -58,7 +58,9 @@ namespace workwear.Views.Tools
 			labelCountMultiMatch.Binding.AddBinding(viewModel, v => v.CountMultiMatch, w => w.LabelProp, converter).InitializeFromSource();
 			labelCountSkipRows.Binding.AddBinding(viewModel, v => v.CountSkipRows, w => w.LabelProp, converter).InitializeFromSource();
 
-			labelCountSkipRows.ModifyFg(StateType.Normal, ColorUtil.Create(EmployeesLoadViewModel.SkipedColor));
+			eventboxCountNewEmployees.ModifyBg(StateType.Normal, ColorUtil.Create(EmployeesLoadViewModel.ColorOfNew));
+			eventboxCountChangedEmployees.ModifyBg(StateType.Normal, ColorUtil.Create(EmployeesLoadViewModel.ColorOfChanged));
+			eventboxCountSkipRows.ModifyBg(StateType.Normal, ColorUtil.Create(EmployeesLoadViewModel.ColorOfSkiped));
 
 			buttonSave.Binding.AddBinding(ViewModel, v => v.SensetiveSaveButton, w => w.Sensitive).InitializeFromSource();
 			checkSaveNewEmployees.Binding.AddBinding(ViewModel, v => v.SaveNewEmployees, w => w.Active).InitializeFromSource();
