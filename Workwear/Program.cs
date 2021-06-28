@@ -212,7 +212,10 @@ namespace workwear
 				new Version(2, 4, 1),
 				new Version(2, 4, 3),
 				"workwear.Updates.2.4.3.sql");
-
+			configuration.AddUpdate(
+				new Version(2, 4, 3),
+				new Version(2, 5),
+				"workwear.Updates.2.5.sql");
 
 			return configuration;
 		}
