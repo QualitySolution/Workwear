@@ -87,6 +87,12 @@
     <Reference Include="mscorlib" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="QS.Updater.Core">
+      <HintPath>..\Workwear.Sql\bin\x86\Debug\netstandard2.0\publish\QS.Updater.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Workwear.Sql">
+      <HintPath>..\Workwear.Sql\bin\x86\Debug\netstandard2.0\publish\Workwear.Sql.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -94,35 +100,17 @@
     </EmbeddedResource>
     <EmbeddedResource Include="icon\logo.png" />
     <EmbeddedResource Include="icon\logo.ico" />
-    <EmbeddedResource Include="Updates\1.0.4.sql" />
-    <EmbeddedResource Include="Updates\1.0.5.sql" />
-    <EmbeddedResource Include="Updates\Update to 1.1.sql" />
-    <EmbeddedResource Include="Updates\Update to 1.2.sql" />
-    <EmbeddedResource Include="Updates\1.2.1.sql" />
-    <EmbeddedResource Include="Updates\1.2.2.sql" />
-    <EmbeddedResource Include="Updates\1.2.4.sql" />
     <EmbeddedResource Include="icon\toolbar\store-balance.png" />
     <EmbeddedResource Include="icon\toolbar\store.png" />
     <EmbeddedResource Include="icon\toolbar\employees.png" />
     <EmbeddedResource Include="icon\toolbar\go-home.png" />
-    <EmbeddedResource Include="Updates\2.0.sql" />
     <EmbeddedResource Include="icon\menu\www.png" />
     <EmbeddedResource Include="icon\menu\youtube.png" />
     <EmbeddedResource Include="icon\menu\vk.png" />
     <EmbeddedResource Include="icon\menu\twitter.png" />
     <EmbeddedResource Include="icon\menu\google-plus.png" />
     <EmbeddedResource Include="icon\menu\odnoklasniki.png" />
-    <EmbeddedResource Include="Updates\2.0.2.sql" />
-    <EmbeddedResource Include="Updates\2.1.sql" />
     <EmbeddedResource Include="icon\buttons\timeline_marker.png" />
-    <EmbeddedResource Include="Updates\2.2.sql" />
-    <EmbeddedResource Include="Updates\2.1.1.sql" />
-    <EmbeddedResource Include="Updates\2.3.sql" />
-    <EmbeddedResource Include="Updates\2.3.3.sql" />
-    <EmbeddedResource Include="Updates\2.4.sql" />
-    <EmbeddedResource Include="Updates\2.4.1.sql" />
-    <EmbeddedResource Include="Updates\2.4.3.sql" />
-    <EmbeddedResource Include="Updates\2.5.sql" />
     <EmbeddedResource Include="icon\toolbar\smart-card.png" />
     <EmbeddedResource Include="icon\buttons\smart-card.png" />
     <EmbeddedResource Include="icon\art\hand-holding-rfid.png" />
@@ -522,7 +510,6 @@
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
     <Folder Include="Reports\" />
-    <Folder Include="Updates\" />
     <Folder Include="viewDTOs\" />
     <Folder Include="Domain\" />
     <Folder Include="Dialogs\" />

@@ -54,6 +54,7 @@ using workwear.Tools.IdentityCards;
 using workwear.Tools.Import;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
+using Workwear.Sql;
 
 namespace workwear
 {
@@ -206,7 +207,7 @@ namespace workwear
 			#region Обновления и версии
 			builder.RegisterType<ApplicationVersionInfo>().As<IApplicationInfo>();
 			builder.RegisterModule(new UpdaterAutofacModule());
-			builder.Register(c => MainClass.MakeUpdateConfiguration()).AsSelf();
+			builder.Register(c => ScriptsConfiguration.MakeUpdateConfiguration()).AsSelf();
 			#endregion
 
 			#region Разделение версий
