@@ -115,7 +115,6 @@
     <EmbeddedResource Include="Updates\2.0.2.sql" />
     <EmbeddedResource Include="Updates\2.1.sql" />
     <EmbeddedResource Include="icon\buttons\timeline_marker.png" />
-    <EmbeddedResource Include="Updates\new_empty.sql" />
     <EmbeddedResource Include="Updates\2.2.sql" />
     <EmbeddedResource Include="Updates\2.1.1.sql" />
     <EmbeddedResource Include="Updates\2.3.sql" />
@@ -127,6 +126,7 @@
     <EmbeddedResource Include="icon\toolbar\smart-card.png" />
     <EmbeddedResource Include="icon\buttons\smart-card.png" />
     <EmbeddedResource Include="icon\art\hand-holding-rfid.png" />
+    <EmbeddedResource Include="Properties\new_empty.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
