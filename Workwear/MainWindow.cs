@@ -177,6 +177,7 @@ public partial class MainWindow : Gtk.Window
 	{
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
+		ActionEmployeeLoad.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
 	}
 	#endregion
 

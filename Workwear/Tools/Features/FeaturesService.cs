@@ -72,6 +72,8 @@ namespace workwear.Tools.Features
 					return ProductEdition == 3;
 				case WorkwearFeature.MassExpense:
 					return ProductEdition == 2 || ProductEdition == 3;
+				case WorkwearFeature.LoadExcel:
+					return ProductEdition == 2 || ProductEdition == 3;
 				case WorkwearFeature.EmployeeLk:
 					if(ProductEdition != 2 && ProductEdition != 3)
 						return false;
@@ -95,8 +97,10 @@ namespace workwear.Tools.Features
 		Warehouses,
 		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,
-		[Display(Name = "Массовая выдача")]
+		[Display(Name = "Выдача списком")]
 		MassExpense,
+		[Display(Name = "Загрузка из Excel")]
+		LoadExcel
 		[Display(Name = "Мобильный кабинет сотрудника")]
 		EmployeeLk,
 	}
