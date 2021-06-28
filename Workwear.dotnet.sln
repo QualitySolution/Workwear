@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Cloud.WearLk.Client", "QS.Cloud.WearLk.Client\QS.Cloud.WearLk.Client.csproj", "{39AB71A6-C533-4F17-8B72-67AFACF0395F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workwear.Core", "Workwear.Core\Workwear.Core.csproj", "{8F85AB20-0F1A-42B9-84FD-F8998E39FCC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workwear.Sql", "Workwear.Sql\Workwear.Sql.csproj", "{BD3512F9-0B7B-4FD6-B865-4AB24B44992C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workwear.Test.Sql", "Workwear.Test.Sql\Workwear.Test.Sql.csproj", "{7CB81C3D-6A1B-4812-B594-484832D269FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QSLibs", "QSLibs", "{76B90BB6-7148-482C-A624-4E4669AAC405}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updater.Core", "..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj", "{7DC70497-54DD-4ECF-B88E-5AE36DFEFE39}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{39AB71A6-C533-4F17-8B72-67AFACF0395F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39AB71A6-C533-4F17-8B72-67AFACF0395F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39AB71A6-C533-4F17-8B72-67AFACF0395F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39AB71A6-C533-4F17-8B72-67AFACF0395F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F85AB20-0F1A-42B9-84FD-F8998E39FCC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F85AB20-0F1A-42B9-84FD-F8998E39FCC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F85AB20-0F1A-42B9-84FD-F8998E39FCC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F85AB20-0F1A-42B9-84FD-F8998E39FCC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD3512F9-0B7B-4FD6-B865-4AB24B44992C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD3512F9-0B7B-4FD6-B865-4AB24B44992C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD3512F9-0B7B-4FD6-B865-4AB24B44992C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD3512F9-0B7B-4FD6-B865-4AB24B44992C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CB81C3D-6A1B-4812-B594-484832D269FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CB81C3D-6A1B-4812-B594-484832D269FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CB81C3D-6A1B-4812-B594-484832D269FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CB81C3D-6A1B-4812-B594-484832D269FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DC70497-54DD-4ECF-B88E-5AE36DFEFE39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DC70497-54DD-4ECF-B88E-5AE36DFEFE39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DC70497-54DD-4ECF-B88E-5AE36DFEFE39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DC70497-54DD-4ECF-B88E-5AE36DFEFE39}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7DC70497-54DD-4ECF-B88E-5AE36DFEFE39} = {76B90BB6-7148-482C-A624-4E4669AAC405}
+	EndGlobalSection
+EndGlobal
