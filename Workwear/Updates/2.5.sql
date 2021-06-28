@@ -3,7 +3,7 @@ DELETE FROM base_parameters WHERE name = 'micro_updates';
 DELETE FROM base_parameters WHERE name = 'edition';
 
 -- Обновление схемы
-ALTER SCHEMA DATABASE() DEFAULT CHARACTER SET utf8mb4  DEFAULT COLLATE utf8mb4_general_ci ;
+ALTER SCHEMA DEFAULT CHARACTER SET utf8mb4  DEFAULT COLLATE utf8mb4_general_ci ;
 
 -- Удаляем обновляемые ключи
 ALTER TABLE `stock_expense` 
@@ -231,6 +231,21 @@ DEFAULT CHARACTER SET = utf8mb4;
 ALTER TABLE `stock_transfer` 
 CHARACTER SET = utf8mb4 , COLLATE = utf8mb4_general_ci ;
 
+CREATE TABLE IF NOT EXISTS `protection_tools` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(240) NOT NULL,
+  `item_types_id` INT(10) UNSIGNED NOT NULL DEFAULT 1,
+  `comments` TEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_protection_tools_1_idx` (`item_types_id` ASC),
+  CONSTRAINT `fk_protection_tools_1` 
+    FOREIGN KEY (`item_types_id`)
+    REFERENCES `item_types` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
 CREATE TABLE IF NOT EXISTS `protection_tools_replacement` (
   `protection_tools_id` INT(10) UNSIGNED NOT NULL,
   `protection_tools_analog_id` INT(10) UNSIGNED NOT NULL,
@@ -272,21 +287,6 @@ CREATE TABLE IF NOT EXISTS `professions` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `protection_tools` (
-  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(240) NOT NULL,
-  `item_types_id` INT(10) UNSIGNED NOT NULL DEFAULT 1,
-  `comments` TEXT NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_protection_tools_1_idx` (`item_types_id` ASC),
-  CONSTRAINT `fk_protection_tools_1` 
-    FOREIGN KEY (`item_types_id`)
-    REFERENCES `item_types` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
-
 CREATE TABLE IF NOT EXISTS `protection_tools_nomenclature` (
   `protection_tools_id` INT(10) UNSIGNED NOT NULL,
   `nomenclature_id` INT(10) UNSIGNED NOT NULL,
@@ -301,7 +301,7 @@ ALTER TABLE `norms`
 CHARACTER SET = utf8mb4 , COLLATE = utf8mb4_general_ci ,
 ADD COLUMN `name` VARCHAR(200) NULL DEFAULT NULL AFTER `regulations_annex_id`;
 -- Заполняем названия норма старыми данными
-UPDATE `norms` SET `name`= CONCAT_WS(' ', CONCAT('ТОН №', `ton_number`), concat('прил. ', `ton_attachment`), CONCAT('п. ', `ton_paragraph`))
+UPDATE `norms` SET `name`= CONCAT_WS(' ', CONCAT('ТОН №', `ton_number`), concat('прил. ', `ton_attachment`), CONCAT('п. ', `ton_paragraph`));
 -- Удаляем старые поля нормы
 ALTER TABLE `norms` 
 DROP COLUMN `ton_attachment`,
@@ -309,7 +309,7 @@ DROP COLUMN `ton_number`;
 
 -- Создаем protection_tools
 INSERT INTO protection_tools
-(name, itemtype_id, comments)
+(name, item_types_id, comments)
 SELECT item_types.name, item_types.id, "Перенос из версии 2.4"
 FROM item_types;
 
@@ -318,7 +318,7 @@ INSERT INTO protection_tools_nomenclature
 (protection_tools_id, nomenclature_id)
 SELECT protection_tools.id, nomenclature.id
 FROM nomenclature
-JOIN protection_tools ON protection_tools.itemtype_id = nomenclature.type_id;
+JOIN protection_tools ON protection_tools.item_types_id = nomenclature.type_id;
 
 -- Заполняем stock_expense_detail.`protection_tools_id`
 UPDATE stock_expense_detail
@@ -333,7 +333,7 @@ DROP INDEX `fk_norms_item_2_idx` ,
 ADD INDEX `fk_norms_item_2_idx` (`protection_tools_id` ASC);
 
 UPDATE norms_item
-JOIN protection_tools ON protection_tools.itemtype_id = norms_item.itemtype_id
+JOIN protection_tools ON protection_tools.item_types_id = norms_item.itemtype_id
 SET norms_item.protection_tools_id = protection_tools.id;
 
 ALTER TABLE `norms_item` 
@@ -347,7 +347,7 @@ DROP INDEX `fk_wear_cards_item_2_idx` ,
 ADD INDEX `fk_wear_cards_item_2_idx` (`protection_tools_id` ASC);
 
 UPDATE wear_cards_item
-JOIN protection_tools ON protection_tools.itemtype_id = wear_cards_item.itemtype_id
+JOIN protection_tools ON protection_tools.item_types_id = wear_cards_item.itemtype_id
 SET wear_cards_item.protection_tools_id = protection_tools.id;
 
 ALTER TABLE `wear_cards_item` 
@@ -366,7 +366,7 @@ DROP INDEX `fk_issuance_sheet_items_6_idx` ,
 ADD INDEX `fk_issuance_sheet_items_6_idx` (`protection_tools_id` ASC);
 
 UPDATE issuance_sheet_items
-JOIN protection_tools ON protection_tools.itemtype_id = issuance_sheet_items.itemtype_id
+JOIN protection_tools ON protection_tools.item_types_id = issuance_sheet_items.itemtype_id
 SET issuance_sheet_items.protection_tools_id = protection_tools.id;
 
 ALTER TABLE `issuance_sheet_items` 
