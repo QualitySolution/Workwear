@@ -20,12 +20,12 @@ namespace workwear.Views.Stock
 
 		private void ConfigureDlg()
 		{
-			yentryNumber.Binding.AddBinding(Entity, e => e.Number, w => w.Text, new NumbersToStringConverter()).InitializeFromSource();
+			//yentryNumber.Binding.AddBinding(Entity, e => e.Number, w => w.Text, new NumbersToStringConverter()).InitializeFromSource();
 
 			yentryName.Binding.AddBinding (Entity, e => e.Name, w => w.Text).InitializeFromSource ();
 
 			entryOZM.ValidationMode = QS.Widgets.ValidationType.Numeric;
-			entryOZM.Binding.AddBinding(Entity, e => e.Ozm, w => w.Text, new UintToStringConverter()).InitializeFromSource();
+			entryOZM.Binding.AddBinding(Entity, e => e.Ozm, w => w.Text, new NumbersToStringConverter()).InitializeFromSource();
 
 			ycomboClothesSex.ItemsEnum = typeof(ClothesSex);
 			ycomboClothesSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItemOrNull).InitializeFromSource ();

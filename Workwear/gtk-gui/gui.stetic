@@ -1368,6 +1368,9 @@
                   <placeholder />
                 </child>
                 <child>
+                  <placeholder />
+                </child>
+                <child>
                   <widget class="Gamma.Widgets.yEnumComboBox" id="comboSex">
                     <property name="MemberName" />
                     <property name="IsTextCombo">False</property>
@@ -2025,7 +2028,7 @@
                   </widget>
                   <packing>
                     <property name="TopAttach">5</property>
-                    <property name="BottomAttach">8</property>
+                    <property name="BottomAttach">7</property>
                     <property name="LeftAttach">2</property>
                     <property name="RightAttach">3</property>
                     <property name="AutoSize">True</property>
@@ -2219,9 +2222,9 @@
                   </widget>
                   <packing>
                     <property name="TopAttach">7</property>
-                    <property name="BottomAttach">9</property>
+                    <property name="BottomAttach">8</property>
                     <property name="LeftAttach">1</property>
-                    <property name="RightAttach">2</property>
+                    <property name="RightAttach">3</property>
                     <property name="AutoSize">False</property>
                     <property name="XOptions">Fill</property>
                     <property name="YOptions">Fill</property>

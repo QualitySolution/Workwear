@@ -55,8 +55,8 @@ namespace workwear.ViewModels.Company
 			EmployeeRepository employeeRepository,
 			CommonMessages messages,
 			SubdivisionRepository subdivisionRepository,
-			HRSystem hRSystem,
-			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+			HRSystem hRSystem
+			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));

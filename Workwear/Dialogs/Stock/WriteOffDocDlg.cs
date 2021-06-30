@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
-using Gamma.Binding.Converters;
 using NLog;
 using QS.Dialog.Gtk;
-using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
+using QS.Report;
+using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository;
 using workwear.Repository.Stock;
-using workwear.Tools.Features;
 
 namespace workwear
 {
@@ -50,7 +49,7 @@ namespace workwear
 
 		private void ConfigureDlg()
 		{
-			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource ();
+			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new Gamma.Binding.Converters.IdToStringConverter()).InitializeFromSource ();
 
 			ylabelCreatedBy.Binding.AddFuncBinding (Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource ();
 
