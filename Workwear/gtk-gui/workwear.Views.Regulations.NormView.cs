@@ -262,7 +262,7 @@ namespace workwear.Views.Regulations
 			this.label8 = new global::Gtk.Label();
 			this.label8.Name = "label8";
 			this.label8.Xalign = 1F;
-			this.label8.LabelProp = global::Mono.Unix.Catalog.GetString("Название:");
+			this.label8.LabelProp = global::Mono.Unix.Catalog.GetString("Название нормы:");
 			this.table1.Add(this.label8);
 			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table1[this.label8]));
 			w17.TopAttach = ((uint)(4));

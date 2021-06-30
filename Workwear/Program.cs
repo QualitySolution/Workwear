@@ -53,7 +53,12 @@ namespace workwear
 			}
 
 			RegisterSQLScripts ();
-			AutofacClassConfig();
+			try {
+				AutofacClassConfig();
+			}catch(MissingMethodException ex) when (ex.Message.Contains("System.String System.String.Format"))
+			{
+				WindowStartupFix.DisplayWindowsOkMessage("Версия .Net Framework должна быть не ниже 4.6.1. Установите боллее новую платформу.", "Старая версия .Net");
+			}
 
 			// Создаем окно входа
 			Login LoginDialog = new Login ();
@@ -106,7 +111,7 @@ namespace workwear
             MainTelemetry.Edition = applicationInfo.Modification;
             MainTelemetry.Version = applicationInfo.Version.ToString();
             MainTelemetry.IsDemo = Login.ApplicationDemoServer == QSMain.connectionDB.DataSource;
-			var appConfig = MachineConfig.ConfigSource.Configs["Application"];
+			var appConfig = QSMachineConfig.MachineConfig.ConfigSource.Configs["Application"];
 			if (appConfig != null)
 				MainTelemetry.DoNotTrack = appConfig.GetBoolean("DoNotTrack", false);
 
@@ -208,6 +213,14 @@ namespace workwear
 				new Version(2, 4),
 				new Version(2, 4, 1),
 				"workwear.Updates.2.4.1.sql");
+			configuration.AddMicroUpdate(
+				new Version(2, 4, 1),
+				new Version(2, 4, 3),
+				"workwear.Updates.2.4.3.sql");
+			configuration.AddUpdate(
+				new Version(2, 4, 3),
+				new Version(2, 5),
+				"workwear.Updates.2.5.sql");
 
 			return configuration;
 		}

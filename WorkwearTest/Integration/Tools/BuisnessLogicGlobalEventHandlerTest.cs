@@ -13,7 +13,6 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Tools;
 using workwear;
-using Autofac;
 using QS.Deletion;
 using System.Threading;
 

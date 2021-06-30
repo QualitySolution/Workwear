@@ -9,7 +9,6 @@ using QS.Project.Versioning;
 [assembly: AssemblyBetaBuild]
 #endif
 [assembly: AssemblyModification("nlmk", Title = "НЛМК")]
-[assembly: AssemblyСompatibleModification("gpl")]
 [assembly: AssemblyDescription("Программа позволяет вести учет внутреннего склада спецодежды и имущества выдаваемого сотрудникам.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]

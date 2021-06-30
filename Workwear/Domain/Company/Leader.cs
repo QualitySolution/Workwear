@@ -4,7 +4,7 @@ using QS.Utilities.Text;
 
 namespace workwear.Domain.Company
 {
-	[Appellative (Gender = GrammaticalGender.Feminine,
+	[Appellative (Gender = GrammaticalGender.Neuter,
 		NominativePlural = "должностные лица",
 		Nominative = "должносное лицо")]
 	public class Leader : PropertyChangedBase, IDomainObject

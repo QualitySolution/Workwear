@@ -154,6 +154,47 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			);
 		}
 
+		[Test(Description = "Проверяем что в операцию действительно проставляется подпись с карты скуд.")]
+		public void UpdateOperations_SignCardKeyTest()
+		{
+			var uow = Substitute.For<IUnitOfWork>();
+			var employee = Substitute.For<EmployeeCard>();
+			employee.CardKey.Returns("80313E3A437A04");
+			var norm = Substitute.For<NormItem>();
+			norm.Amount.Returns(1);
+			var incomeOperation = Substitute.For<EmployeeIssueOperation>();
+			var nomeclature = Substitute.For<Nomenclature>();
+
+			var warehouse = Substitute.For<Warehouse>();
+
+			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<EmployeeIssueOperation>() { });
+
+			var expenseItem = new ExpenseItem();
+			expenseItem.Nomenclature = nomeclature;
+			expenseItem.Amount = 1;
+			var expense = new Expense();
+			expense.Employee = employee;
+			expense.Date = new DateTime(2019, 1, 15);
+			expense.Operation = ExpenseOperations.Employee;
+			expense.Warehouse = warehouse;
+			expense.Items.Add(expenseItem);
+			expenseItem.ExpenseDoc = expense;
+
+			var ask = Substitute.For<IInteractiveQuestion>();
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+
+			//Выполняем
+			expense.UpdateOperations(uow, baseParameters, ask, "80313E3A437A04");
+
+			//В данном сценарии мы не должны ничего спрашивать у пользователя. Предпологается что мы могли попросить передвинуть дату начала, если бы не проигнорировали свою же операцию.
+			ask.DidNotReceiveWithAnyArgs().Question(string.Empty);
+
+			Assert.That(expense.Items[0].EmployeeIssueOperation.SignCardKey, Is.EqualTo("80313E3A437A04"));
+			Assert.That(expense.Items[0].EmployeeIssueOperation.SignTimestamp, Is.Not.Null);
+			Assert.That((expense.Items[0].EmployeeIssueOperation.SignTimestamp.Value - DateTime.Now).TotalMinutes, Is.LessThan(1));
+		}
+
 		[TearDown]
 		public void RemoveStaticGaps()
 		{

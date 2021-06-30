@@ -6,8 +6,8 @@ using workwear.Domain.Operations;
 namespace workwear.Domain.Stock
 {
 	[Appellative( Gender = GrammaticalGender.Feminine,
-		Nominative = "проводка операций",
-		NominativePlural = "проводки операций"
+		Nominative = "проводка выдачи списком",
+		NominativePlural = "проводки выдачи списком"
 		)]
 	public class MassExpenseOperation : PropertyChangedBase, IDomainObject
 	{

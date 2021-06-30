@@ -9,17 +9,20 @@ using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Tools.Features;
 
 namespace workwear.ViewModels.Stock
 {
 	public class ExpenseDocItemsEmployeeViewModel : ViewModelBase
 	{
 		public readonly ExpenseEmployeeViewModel expenseEmployeeViewModel;
+		private readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 
-		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, INavigationManager navigation)
+		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, FeaturesService featuresService, INavigationManager navigation)
 		{
 			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
@@ -61,11 +64,11 @@ namespace workwear.ViewModels.Stock
 
 		#endregion
 		#region Sensetive
-
 		public bool SensetiveFillBuhDoc => Entity.Items.Count > 0;
-
 		#endregion
-
+		#region Visible
+		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
+		#endregion
 		#region Действия View
 		public void FillBuhDoc()
 		{

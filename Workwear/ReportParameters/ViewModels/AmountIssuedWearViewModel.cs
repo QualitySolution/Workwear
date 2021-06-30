@@ -39,6 +39,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"dateStart", StartDate },
 					{"dateEnd", EndDate},
 					{"summary", Summary},
+					{"bySize", BySize},
 					{"withoutsub", Summary ? false : Subdivisons.First().Select },
 					{"subdivisions", Summary ? new int[] {-1} : Subdivisons.Where(x => x.Select).Select(x => x.Id).ToArray() },
 				 };
@@ -64,6 +65,12 @@ namespace workwear.ReportParameters.ViewModels
 		public virtual bool Summary {
 			get => summary;
 			set => SetField(ref summary, value);
+		}
+
+		private bool bySize;
+		public virtual bool BySize {
+			get => bySize;
+			set => SetField(ref bySize, value);
 		}
 
 		#endregion

@@ -35,7 +35,7 @@ namespace workwear.Domain.Stock
 
 		[Display(Name = "Номенклатура ТОН")]
 		public virtual ProtectionTools ProtectionTools {
-			get { return protectionTools; }
+			get { return protectionTools ?? EmployeeIssueOperation?.ProtectionTools; }
 			set { SetField(ref protectionTools, value, () => ProtectionTools); }
 		}
 
@@ -186,8 +186,8 @@ namespace workwear.Domain.Stock
 			get { return String.Format ("Выдача со склада {0} в количестве {1} {2}",
 				Nomenclature.Name,
 				Amount,
-				Nomenclature.Type.Units.Name
-			);}
+				Nomenclature.Type.Units?.Name
+			).TrimEnd();}
 		}
 
 		#endregion
@@ -198,7 +198,7 @@ namespace workwear.Domain.Stock
 
 		#region Функции
 
-		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser)
+		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null)
 		{
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
@@ -210,7 +210,7 @@ namespace workwear.Domain.Stock
 					EmployeeIssueOperation = new EmployeeIssueOperation();
 				}
 
-				EmployeeIssueOperation.Update(uow, baseParameters, askUser, this);
+				EmployeeIssueOperation.Update(uow, baseParameters, askUser, this, signCardUid);
 
 				UpdateIssuedWriteOffOperation(uow);
 									

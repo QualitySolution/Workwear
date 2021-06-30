@@ -1,11 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
-using workwear.Domain.Company;
 
 namespace workwear.Domain.Stock
 {
-	[Appellative(Gender = GrammaticalGender.Feminine,
+	[Appellative(Gender = GrammaticalGender.Masculine,
 		NominativePlural = "склады",
 		Nominative = "склад")]
 	public class Warehouse: PropertyChangedBase, IDomainObject

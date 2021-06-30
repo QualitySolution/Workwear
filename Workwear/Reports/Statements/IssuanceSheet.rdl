@@ -35,13 +35,13 @@
             <Width>46.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>128.3pt</Width>
+            <Width>125.9pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>62.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>151.6pt</Width>
+            <Width>141.5pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>59.0pt</Width>
@@ -62,7 +62,7 @@
             <Width>43.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>59.8pt</Width>
+            <Width>73.9pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -789,19 +789,21 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox54">
-                      <Value>
-                      </Value>
+                      <Value>=Fields!sign_text.Value</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize >9pt</FontSize>
+                        <TextAlign >Center</TextAlign>
                       </Style>
                       <Visibility>
                         <Hidden>
                         </Hidden>
                       </Visibility>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -1874,6 +1876,7 @@
     measurement_units.okei,
     issuance_sheet_items.amount,
     issuance_sheet_items.start_of_use,
+    CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')) as sign_text,
     issuance_sheet_items.lifetime
 FROM
     issuance_sheet_items
@@ -1944,6 +1947,10 @@ WHERE
         <Field Name="lifetime">
           <DataField>lifetime</DataField>
           <TypeName>System.Decimal</TypeName>
+        </Field>
+        <Field Name="sign_text">
+          <DataField>sign_text</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
       </Fields>
     </DataSet>

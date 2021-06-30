@@ -21,6 +21,8 @@ namespace workwear.HMap
 			Map(x => x.BuhDocument).Column("buh_document");
 			Map(x => x.StartOfUse).Column("StartOfUse");
 			Map(x => x.ExpiryByNorm).Column("ExpiryByNorm");
+			Map(x => x.SignCardKey).Column("sign_key");
+			Map(x => x.SignTimestamp).Column("sign_timestamp");
 			#region NLMK
 			Map(x => x.NlmkCardRowId).Column("nlmk_card_row_id");
 			#endregion

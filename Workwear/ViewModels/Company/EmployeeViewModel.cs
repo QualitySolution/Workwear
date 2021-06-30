@@ -20,8 +20,10 @@ using workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
 using workwear.Measurements;
 using workwear.Repository.Company;
+using workwear.Tools.Features;
 using workwear.Tools.Oracle;
 using workwear.ViewModels.Company.EmployeeChilds;
+using workwear.ViewModels.IdentityCards;
 
 namespace workwear.ViewModels.Company
 {
@@ -34,6 +36,8 @@ namespace workwear.ViewModels.Company
 		ILifetimeScope AutofacScope;
 		private readonly SizeService sizeService;
 		private readonly IInteractiveQuestion interactive;
+		private readonly FeaturesService featuresService;
+		private readonly EmployeeRepository employeeRepository;
 		private readonly CommonMessages messages;
 		private readonly SubdivisionRepository subdivisionRepository;
 		private readonly HRSystem hRSystem;
@@ -47,14 +51,19 @@ namespace workwear.ViewModels.Company
 			ILifetimeScope autofacScope,
 			SizeService sizeService,
 			IInteractiveQuestion interactive,
+			FeaturesService featuresService,
+			EmployeeRepository employeeRepository,
 			CommonMessages messages,
 			SubdivisionRepository subdivisionRepository,
-			HRSystem hRSystem) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+			HRSystem hRSystem,
+			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			this.subdivisionRepository = subdivisionRepository ?? throw new ArgumentNullException(nameof(subdivisionRepository));
 			this.hRSystem = hRSystem ?? throw new ArgumentNullException(nameof(hRSystem));
@@ -121,6 +130,7 @@ namespace workwear.ViewModels.Company
 
 		public bool VisibleListedItem => !UoW.IsNew;
 		public bool VisibleHistory => !UoW.IsNew;
+		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
 
 		#endregion
 
@@ -146,6 +156,20 @@ namespace workwear.ViewModels.Company
 		public string CreatedByUser => Entity.CreatedbyUser?.Name;
 
 		public string SubdivisionAddress => Entity.Subdivision?.Address ?? "--//--";
+
+		#region CardUid
+		public virtual string CardUid {
+			get => Entity.CardKey;
+			set {
+				Entity.CardKey = value;
+				OnPropertyChanged(nameof(CardUid));
+				OnPropertyChanged(nameof(CardUidEntryColor));
+			}
+		}
+
+		public string CardUidEntryColor => (String.IsNullOrEmpty(CardUid) || System.Text.RegularExpressions.Regex.IsMatch(CardUid, @"\A\b[0-9a-fA-F]+\b\Z")) ? "black" : "red";
+
+		#endregion
 
 		#endregion
 
@@ -238,6 +262,27 @@ namespace workwear.ViewModels.Company
 		}
 
 		#endregion
+
+		protected override bool Validate()
+		{
+			if(!base.Validate())
+				return false;
+			if(!String.IsNullOrWhiteSpace(Entity.CardKey)) {
+				var employeeSameUid = employeeRepository.GetEmployeeByCardkey(UoW, Entity.CardKey);
+				if(employeeSameUid != null && !employeeSameUid.IsSame(Entity)) {
+					if(interactive.Question($"UID карты уже привязан к сотруднику {employeeSameUid.ShortName}. Перепривязать карту к {Entity.ShortName}?")) {
+						//Здесь сохраняем удаляем UID через отдельный uow чтобы избежать ошибки базы по уникальному значению поля.
+						using(var uow2 = UnitOfWorkFactory.CreateForRoot<EmployeeCard>(employeeSameUid.Id)) {
+							uow2.Root.CardKey = null;
+							uow2.Save();
+						}
+					}
+					else
+						return false;
+				}
+			}
+			return true;
+		}
 
 		public override bool Save()
 		{
@@ -390,6 +435,19 @@ namespace workwear.ViewModels.Company
 		{
 			EntryPostViewModel.IsEditable = EntryDepartmentViewModel.IsEditable = EntrySubdivisionViewModel.IsEditable
 				= String.IsNullOrEmpty(Entity.PersonnelNumber);
+		}
+
+		#endregion
+		#region Uid
+
+		public void ReadUid()
+		{
+			var page = NavigationManager.OpenViewModel<ReadCardViewModel>(this);
+			page.PageClosed += delegate (object sender, PageClosedEventArgs e) {
+				if(e.CloseSource != CloseSource.Save)
+					return;
+				CardUid = page.ViewModel.CardUid.Replace("-", "");
+			};
 		}
 
 		#endregion

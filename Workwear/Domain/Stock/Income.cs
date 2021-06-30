@@ -10,7 +10,6 @@ using QS.DomainModel.UoW;
 using QS.Utilities;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
-using workwear.Measurements;
 
 namespace workwear.Domain.Stock
 {
@@ -235,7 +234,7 @@ namespace workwear.Domain.Stock
 
 		public virtual void UpdateEmployeeWearItems()
 		{
-			EmployeeCard.UpdateNextIssue(Items.Select(x => x.Nomenclature.Type).ToArray());
+			EmployeeCard.UpdateNextIssue(Items.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools).Where(x => x != null).Distinct().ToArray());
 			EmployeeCard.FillWearRecivedInfo(UoW);
 			UoW.Save(EmployeeCard);
 		}

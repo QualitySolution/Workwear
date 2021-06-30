@@ -19,7 +19,6 @@ using QSReport;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
-using workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository.Stock;
@@ -68,6 +67,8 @@ namespace workwear.ViewModels.Stock
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 				Entity.Operation = ExpenseOperations.Employee;
 			}
+			if(Entity.Operation != ExpenseOperations.Employee)
+				throw new InvalidOperationException("Диалог предназначен только для операций выдачи сотруднику.");
 
 			if(employee != null) {
 				Entity.Employee = UoW.GetById<EmployeeCard>(employee.Id);
@@ -107,8 +108,6 @@ namespace workwear.ViewModels.Stock
 
 			Entity.Employee.FillWearInStockInfo(UoW, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
 
-			var r = Entity.Employee;
-			if (Entity.Employee.WorkwearItems.Count > 0)
 			foreach(var item in Entity.Employee.WorkwearItems) {
 				Entity.AddItem(item);
 			}
@@ -142,20 +141,15 @@ namespace workwear.ViewModels.Stock
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
 
-
-
 			Entity.UpdateIssuedWriteOffOperation();
 
 			if(Entity.WriteOffDoc != null)
 				UoW.Save(Entity.WriteOffDoc);
 
 			UoWGeneric.Save();
-			if(Entity.Operation == ExpenseOperations.Employee) {
-				logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
-				Entity.UpdateEmployeeWearItems();
-				UoWGeneric.Commit();
-			}
-
+			logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
+			Entity.UpdateEmployeeWearItems();
+			UoWGeneric.Commit();
 			logger.Info("Ok");
 			return true;
 		}
@@ -169,9 +163,7 @@ namespace workwear.ViewModels.Stock
 		public void OpenIssuenceSheet()
 		{
 			if(UoW.HasChanges) {
-				if(MessageDialogHelper.RunQuestionDialog("Сохранить документ выдачи перед открытием ведомости?"))
-					Save();
-				else
+				if(!MessageDialogHelper.RunQuestionDialog("Сохранить документ выдачи перед открытием ведомости?") || !Save())
 					return;
 			}
 			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
@@ -185,9 +177,7 @@ namespace workwear.ViewModels.Stock
 		public void PrintIssuenceSheet(IssuedSheetPrint doc)
 		{
 			if(UoW.HasChanges) {
-				if(commonMessages.SaveBeforePrint(Entity.GetType(), "ведомости"))
-					Save();
-				else
+				if(!commonMessages.SaveBeforePrint(Entity.GetType(), "ведомости") || !Save())
 					return;
 			}
 

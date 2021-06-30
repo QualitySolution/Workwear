@@ -50,6 +50,12 @@ namespace workwear.Views.Company
 
 		private global::Gamma.GtkWidgets.yCheckButton checkAuto;
 
+		private global::Gamma.GtkWidgets.yHBox hboxCardUid;
+
+		private global::Gamma.GtkWidgets.yEntry entryCardUid;
+
+		private global::Gamma.GtkWidgets.yButton buttonReadUid;
+
 		private global::Gtk.Label label1;
 
 		private global::Gtk.Label label10;
@@ -123,6 +129,8 @@ namespace workwear.Views.Company
 		private global::Gamma.Widgets.yEnumComboBox ycomboWinterShoesStd;
 
 		private global::Gamma.GtkWidgets.yEntry yentryPersonnelNumber;
+
+		private global::Gamma.GtkWidgets.yLabel ylabelCardUid;
 
 		private global::Gtk.VBox vbox2;
 
@@ -449,6 +457,42 @@ namespace workwear.Views.Company
 			w23.RightAttach = ((uint)(2));
 			w23.XOptions = ((global::Gtk.AttachOptions)(4));
 			w23.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.hboxCardUid = new global::Gamma.GtkWidgets.yHBox();
+			this.hboxCardUid.Name = "hboxCardUid";
+			this.hboxCardUid.Spacing = 6;
+			// Container child hboxCardUid.Gtk.Box+BoxChild
+			this.entryCardUid = new global::Gamma.GtkWidgets.yEntry();
+			this.entryCardUid.CanFocus = true;
+			this.entryCardUid.Name = "entryCardUid";
+			this.entryCardUid.IsEditable = true;
+			this.entryCardUid.MaxLength = 16;
+			this.entryCardUid.InvisibleChar = '●';
+			this.hboxCardUid.Add(this.entryCardUid);
+			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.hboxCardUid[this.entryCardUid]));
+			w25.Position = 0;
+			// Container child hboxCardUid.Gtk.Box+BoxChild
+			this.buttonReadUid = new global::Gamma.GtkWidgets.yButton();
+			this.buttonReadUid.CanFocus = true;
+			this.buttonReadUid.Name = "buttonReadUid";
+			this.buttonReadUid.UseUnderline = true;
+			this.buttonReadUid.Label = global::Mono.Unix.Catalog.GetString("Прочитать");
+			global::Gtk.Image w26 = new global::Gtk.Image();
+			w26.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.smart-card.png");
+			this.buttonReadUid.Image = w26;
+			this.hboxCardUid.Add(this.buttonReadUid);
+			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.hboxCardUid[this.buttonReadUid]));
+			w27.Position = 1;
+			w27.Expand = false;
+			w27.Fill = false;
+			this.table1.Add(this.hboxCardUid);
+			global::Gtk.Table.TableChild w28 = ((global::Gtk.Table.TableChild)(this.table1[this.hboxCardUid]));
+			w28.TopAttach = ((uint)(8));
+			w28.BottomAttach = ((uint)(9));
+			w28.LeftAttach = ((uint)(1));
+			w28.RightAttach = ((uint)(2));
+			w28.XOptions = ((global::Gtk.AttachOptions)(4));
+			w28.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
@@ -1079,6 +1123,7 @@ namespace workwear.Views.Company
 			this.ycomboShoesStd.Changed += new global::System.EventHandler(this.OnYcomboShoesStdChanged);
 			this.ycomboHeaddressStd.Changed += new global::System.EventHandler(this.OnYcomboHeaddressChanged);
 			this.ycomboGlovesStd.Changed += new global::System.EventHandler(this.OnYcomboGlovesStdChanged);
+			this.buttonReadUid.Clicked += new global::System.EventHandler(this.OnButtonReadUidClicked);
 			this.comboSex.Changed += new global::System.EventHandler(this.OnComboSexChanged);
 			this.yimagePhoto.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler(this.OnYimagePhotoButtonPressEvent);
 			this.buttonLoadPhoto.Clicked += new global::System.EventHandler(this.OnButtonLoadPhotoClicked);

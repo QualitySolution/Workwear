@@ -5,7 +5,6 @@ using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
-using QSOrmProject;
 
 namespace workwear.Domain.Regulations
 {
@@ -90,6 +89,16 @@ namespace workwear.Domain.Regulations
 			if (String.IsNullOrWhiteSpace(Name))
 				yield return new ValidationResult("Название документа должно быть заполнено.",
 												  new[] { this.GetPropertyName(o => o.Name) });
+			if(Annexess.Any(x => x.Number < 0))
+				yield return new ValidationResult("Номер приложения должен быть положительным числом.",
+												  new[] { nameof(Annexess) });
+			if(Annexess.Any(x => x.Number > 127))
+				yield return new ValidationResult("Номер приложения не может превышать 127.",
+												  new[] { nameof(Annexess) });
+
+			if(Annexess.Any(x => !String.IsNullOrEmpty(x.Name) && x.Name.Length > 255))
+				yield return new ValidationResult("Название приложения не может превышать 255 символов.",
+												  new[] { nameof(Annexess) });
 		}
 
 		#region Методы

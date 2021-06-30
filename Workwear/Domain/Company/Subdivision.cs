@@ -5,7 +5,7 @@ using workwear.Domain.Stock;
 
 namespace workwear.Domain.Company
 {
-	[Appellative (Gender = GrammaticalGender.Feminine,
+	[Appellative (Gender = GrammaticalGender.Neuter,
 		NominativePlural = "подразделения",
 		Nominative = "подразделение")]
 	

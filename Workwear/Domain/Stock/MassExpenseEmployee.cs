@@ -9,15 +9,14 @@ using workwear.Measurements;
 
 namespace workwear.Domain.Stock
 {
-	[Appellative(Gender = GrammaticalGender.Feminine,
-	NominativePlural = "строки массовой выдачи",
-	Nominative = "строка массовой выдачи")]
+	[Appellative(Gender = GrammaticalGender.Masculine,
+	NominativePlural = "сотрудники выдачи списком",
+	Nominative = "сотрудник выдачи списком")]
 	public class MassExpenseEmployee : PropertyChangedBase, IDomainObject
 	{
 		public MassExpenseEmployee()
 		{
 		}
-
 
 		public MassExpenseEmployee(MassExpense doc)
 		{
@@ -77,7 +76,7 @@ namespace workwear.Domain.Stock
 			get { return wearSizeStd; }
 			set { 
 				SetField(ref wearSizeStd, value, () => WearSizeStd);
-				if(wearSizeStd == null || !DocumentMassExpense.SizeService.GetSizesForEmployee(wearSizeStd).Contains(WearSize))
+				if(wearSizeStd == null || !(DocumentMassExpense?.SizeService?.GetSizesForEmployee(wearSizeStd).Contains(WearSize) ?? true))
 					wearSize = null;
 			}
 		}
@@ -96,7 +95,7 @@ namespace workwear.Domain.Stock
 		public virtual string ShoesSizeStd {
 			get { return shoesSizeStd; }
 			set { SetField(ref shoesSizeStd, value, () => ShoesSizeStd);
-				if(shoesSizeStd == null || !DocumentMassExpense.SizeService.GetSizesForEmployee(shoesSizeStd).Contains(ShoesSize))
+				if(shoesSizeStd == null || !(DocumentMassExpense?.SizeService?.GetSizesForEmployee(shoesSizeStd).Contains(ShoesSize) ?? true))
 					ShoesSize = null;
 			}
 		}
@@ -115,7 +114,7 @@ namespace workwear.Domain.Stock
 		public virtual string WinterShoesSizeStd {
 			get { return winterShoesSizeStd; }
 			set { SetField(ref winterShoesSizeStd, value, () => WinterShoesSizeStd);
-				if(winterShoesSizeStd == null || !DocumentMassExpense.SizeService.GetSizesForEmployee(winterShoesSizeStd).Contains(winterShoesSize))
+				if(winterShoesSizeStd == null || !(DocumentMassExpense?.SizeService?.GetSizesForEmployee(winterShoesSizeStd).Contains(winterShoesSize) ?? true))
 					WinterShoesSize = null;
 			}
 		}
@@ -134,7 +133,7 @@ namespace workwear.Domain.Stock
 		public virtual string HeaddressSizeStd {
 			get { return headdressSizeStd; }
 			set { SetField(ref headdressSizeStd, value, () => HeaddressSizeStd);
-				if(headdressSizeStd == null || !DocumentMassExpense.SizeService.GetSizesForEmployee(headdressSizeStd).Contains(HeaddressSize))
+				if(headdressSizeStd == null || !(DocumentMassExpense?.SizeService?.GetSizesForEmployee(headdressSizeStd).Contains(HeaddressSize) ?? true))
 					HeaddressSize = null;
 			}
 		}
@@ -153,7 +152,7 @@ namespace workwear.Domain.Stock
 		public virtual string GlovesSizeStd {
 			get { return glovesSizeStd; }
 			set { SetField(ref glovesSizeStd, value, () => GlovesSizeStd);
-				if(glovesSizeStd == null || !DocumentMassExpense.SizeService.GetSizesForEmployee(glovesSizeStd).Contains(GlovesSize))
+				if(glovesSizeStd == null || !(DocumentMassExpense?.SizeService?.GetSizesForEmployee(glovesSizeStd).Contains(GlovesSize) ?? true))
 					GlovesSize = null;
 			}
 		}
@@ -173,7 +172,7 @@ namespace workwear.Domain.Stock
 			get { return mittensSizeStd; }
 			set {
 				SetField(ref mittensSizeStd, value, () => MittensSizeStd);
-				if(mittensSizeStd == null || !DocumentMassExpense.SizeService.GetSizesForEmployee(mittensSizeStd).Contains(MittensSize))
+				if(mittensSizeStd == null || !(DocumentMassExpense?.SizeService?.GetSizesForEmployee(mittensSizeStd).Contains(MittensSize) ?? true))
 					MittensSize = null;
 			}
 		}

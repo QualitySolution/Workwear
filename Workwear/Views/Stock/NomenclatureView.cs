@@ -20,7 +20,7 @@ namespace workwear.Views.Stock
 
 		private void ConfigureDlg()
 		{
-			//yentryNumber.Binding.AddBinding(Entity, e => e.Number, w => w.Text, new UintToStringConverter()).InitializeFromSource();
+			yentryNumber.Binding.AddBinding(Entity, e => e.Number, w => w.Text, new NumbersToStringConverter()).InitializeFromSource();
 
 			yentryName.Binding.AddBinding (Entity, e => e.Name, w => w.Text).InitializeFromSource ();
 

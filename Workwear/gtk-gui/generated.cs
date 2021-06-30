@@ -32,6 +32,8 @@ namespace Stetic
 				w1.Add("google-plus", w10);
 				global::Gtk.IconSet w11 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("workwear.icon.menu.odnoklasniki.png"));
 				w1.Add("odnoklasniki", w11);
+				global::Gtk.IconSet w12 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("workwear.icon.toolbar.smart-card.png"));
+				w1.Add("smart-card", w12);
 				w1.AddDefault();
 			}
 		}

@@ -12,7 +12,7 @@
 
 .Руководство администратора
 * xref:install.adoc[Установка]
-* xref:install.adoc[Обновление]
+* xref:update.adoc[Обновление]
 * xref:users.adoc[Работа с пользователями]
 * xref:install.adoc[Лицензирование]
 * xref:technical.adoc[Технические подробности]

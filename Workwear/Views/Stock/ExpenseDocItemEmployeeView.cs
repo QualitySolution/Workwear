@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Bindings.Utilities;
 using System.Linq;
+using System.Reflection;
 using Gtk;
 using QSWidgetLib;
 using workwear.Domain.Stock;
@@ -12,12 +13,6 @@ namespace workwear.Views.Stock
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class ExpenseDocItemEmployeeView : Gtk.Bin
 	{
-		private enum ColumnTags
-		{
-			FacilityPlace,
-			BuhDoc
-		}
-
 		public ExpenseDocItemEmployeeView()
 		{
 			this.Build();
@@ -52,6 +47,7 @@ namespace workwear.Views.Stock
 
 		void CreateTable()
 		{
+			var cardIcon = new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "workwear.icon.buttons.smart-card.png");
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseItem>()
 				.AddColumn("Номенаклатуры ТОН").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
 				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
@@ -73,7 +69,10 @@ namespace workwear.Views.Stock
 				.AddColumn("Списание").AddToggleRenderer(e => e.IsWriteOff).Editing()
 				.AddSetter((c, e) => c.Visible = e.IsEnableWriteOff)
 				.AddColumn("Номер акта").AddTextRenderer(e => e.AktNumber).Editable().AddSetter((c, e) => c.Visible = e.IsWriteOff)
-				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument).Editable()
+				.AddColumn("Бухгалтерский документ").AddTextRenderer(e => e.BuhDocument).Editable()
+				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
+						.AddPixbufRenderer(x => x.EmployeeIssueOperation == null || String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? null : cardIcon)
+						.AddTextRenderer(x => x.EmployeeIssueOperation != null && !String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? x.EmployeeIssueOperation.SignCardKey + " " + x.EmployeeIssueOperation.SignTimestamp.Value.ToString("dd.MM.yyyy HH:mm:ss") : null)
 				.AddColumn("")
 				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 				.Finish();
@@ -87,7 +86,11 @@ namespace workwear.Views.Stock
 				var selected = ytreeItems.GetSelectedObject<ExpenseItem>();
 				var item = new MenuItemId<ExpenseItem>("Открыть номеклатуру");
 				item.ID = selected;
-				item.Activated += Item_Activated;
+				item.Sensitive = selected.Nomenclature != null;
+				if(selected == null)
+					item.Sensitive = false;
+				else
+					item.Activated += Item_Activated;
 				menu.Add(item);
 				menu.ShowAll();
 				menu.Popup();
@@ -125,13 +128,6 @@ namespace workwear.Views.Stock
 		#region События
 		void ExpenseDoc_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if(e.PropertyName == ViewModel.GetPropertyName(x => x.Operation)) {
-
-				var buhDocColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.BuhDoc).First();
-				buhDocColumn.Visible = ViewModel.Operation == ExpenseOperations.Employee;
-
-				buttonFillBuhDoc.Visible = ViewModel.Operation == ExpenseOperations.Employee;
-			}
 			if(e.PropertyName == nameof(ViewModel.Warehouse))
 				buttonAdd.Sensitive = ViewModel.Warehouse != null;
 		}

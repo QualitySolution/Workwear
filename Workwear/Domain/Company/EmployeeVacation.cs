@@ -8,7 +8,7 @@ using workwear.Tools;
 
 namespace workwear.Domain.Company
 {
-	[Appellative(Gender = GrammaticalGender.Feminine,
+	[Appellative(Gender = GrammaticalGender.Masculine,
 		NominativePlural = "отпуска сотрудника",
 		Nominative = "отпуск сотрудника")]
 	public class EmployeeVacation : PropertyChangedBase, IDomainObject, IValidatableObject

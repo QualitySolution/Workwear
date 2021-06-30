@@ -71,18 +71,9 @@
     <Reference Include="Nini">
       <HintPath>..\..\QSProjects\lib\Nini.dll</HintPath>
     </Reference>
-    <Reference Include="Antlr3.Runtime">
-      <HintPath>..\packages\Antlr3.Runtime.3.5.1\lib\net40-client\Antlr3.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Iesi.Collections">
-      <HintPath>..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
-    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
-    <Reference Include="FluentNHibernate">
-      <HintPath>..\packages\FluentNHibernate.3.0.1\lib\net461\FluentNHibernate.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
@@ -93,85 +84,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Management" />
-    <Reference Include="Google.Protobuf">
-      <HintPath>..\packages\Google.Protobuf.3.13.0\lib\net45\Google.Protobuf.dll</HintPath>
-    </Reference>
-    <Reference Include="Remotion.Linq">
-      <HintPath>..\packages\Remotion.Linq.2.2.0\lib\net45\Remotion.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="Remotion.Linq.EagerFetching">
-      <HintPath>..\packages\Remotion.Linq.EagerFetching.2.2.0\lib\net45\Remotion.Linq.EagerFetching.dll</HintPath>
-    </Reference>
-    <Reference Include="MySql.Data">
-      <HintPath>..\packages\MySql.Data.8.0.22\lib\net452\MySql.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog">
-      <HintPath>..\packages\NLog.4.7.5\lib\net45\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="NHibernate">
-      <HintPath>..\packages\NHibernate.5.3.3\lib\net461\NHibernate.dll</HintPath>
-    </Reference>
-    <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\packages\BouncyCastle.1.8.6.1\lib\BouncyCastle.Crypto.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>..\packages\SharpZipLib.1.3.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="Renci.SshNet">
-      <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Buffers">
-      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics.Vectors">
-      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.1\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Memory">
-      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="Ubiety.Dns.Core">
-      <HintPath>..\packages\MySql.Data.8.0.22\lib\net452\Ubiety.Dns.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.1\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.ValueTuple">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="Oracle.ManagedDataAccess">
-      <HintPath>..\packages\Oracle.ManagedDataAccess.19.7.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
-    </Reference>
-    <Reference Include="Dapper">
-      <HintPath>..\packages\Dapper.2.0.35\lib\net461\Dapper.dll</HintPath>
-    </Reference>
-    <Reference Include="K4os.Compression.LZ4">
-      <HintPath>..\packages\K4os.Compression.LZ4.1.2.6\lib\net46\K4os.Compression.LZ4.dll</HintPath>
-    </Reference>
-    <Reference Include="K4os.Hash.xxHash">
-      <HintPath>..\packages\K4os.Hash.xxHash.1.0.6\lib\net46\K4os.Hash.xxHash.dll</HintPath>
-    </Reference>
-    <Reference Include="K4os.Compression.LZ4.Streams">
-      <HintPath>..\packages\K4os.Compression.LZ4.Streams.1.2.6\lib\net46\K4os.Compression.LZ4.Streams.dll</HintPath>
-    </Reference>
-    <Reference Include="Zstandard.Net">
-      <HintPath>..\packages\MySql.Data.8.0.22\lib\net452\Zstandard.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Diagnostics.DiagnosticSource">
-      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.7.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
-    </Reference>
-    <Reference Include="Autofac">
-      <HintPath>..\packages\Autofac.5.2.0\lib\net461\Autofac.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -207,7 +122,11 @@
     <EmbeddedResource Include="Updates\2.3.3.sql" />
     <EmbeddedResource Include="Updates\2.4.sql" />
     <EmbeddedResource Include="Updates\2.4.1.sql" />
+    <EmbeddedResource Include="Updates\2.4.3.sql" />
     <EmbeddedResource Include="Updates\2.5.sql" />
+    <EmbeddedResource Include="icon\toolbar\smart-card.png" />
+    <EmbeddedResource Include="icon\buttons\smart-card.png" />
+    <EmbeddedResource Include="icon\art\hand-holding-rfid.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -264,12 +183,7 @@
     <Compile Include="gtk-gui\workwear.ObjectBalanceFilter.cs" />
     <Compile Include="Measurements\WearGrowth.cs" />
     <Compile Include="Measurements\WearSize.cs" />
-    <Compile Include="JournalViewers\StockDocumentsView.cs" />
-    <Compile Include="gtk-gui\workwear.JournalViewers.StockDocumentsView.cs" />
-    <Compile Include="JournalFilters\StockDocumentsFilter.cs" />
-    <Compile Include="gtk-gui\workwear.JournalFilters.StockDocumentsFilter.cs" />
     <Compile Include="Domain\Stock\StockDocument.cs" />
-    <Compile Include="Representations\StockDocumentsVM.cs" />
     <Compile Include="Domain\User\UserSettings.cs" />
     <Compile Include="HibernateMapping\User\UserMap.cs" />
     <Compile Include="HibernateMapping\User\UserSettingsMap.cs" />
@@ -480,6 +394,31 @@
     <Compile Include="Journal\Filter.ViewModels\Stock\NomenclatureFilterViewModel.cs" />
     <Compile Include="Journal\Filter.Views\Stock\NomenclatureFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.NomenclatureFilterView.cs" />
+    <Compile Include="ViewModels\Stock\IssueByIdentifierViewModel.cs" />
+    <Compile Include="Views\Stock\IssueByIdentifierView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.IssueByIdentifierView.cs" />
+    <Compile Include="Tools\IdentityCards\RusGuardService.cs" />
+    <Compile Include="Tools\IdentityCards\DeviceInfo.cs" />
+    <Compile Include="Tools\IdentityCards\CardType.cs" />
+    <Compile Include="Tools\IdentityCards\CardStateEventArgs.cs" />
+    <Compile Include="ViewModels\Tools\EmployeesLoadViewModel.cs" />
+    <Compile Include="Views\Tools\EmployeesLoadView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Tools.EmployeesLoadView.cs" />
+    <Compile Include="Tools\Import\ImportedColumn.cs" />
+    <Compile Include="Tools\Import\ImportedSheet.cs" />
+    <Compile Include="Tools\Import\SheetRow.cs" />
+    <Compile Include="Tools\Import\DataParser.cs" />
+    <Compile Include="Tools\IdentityCards\ICardReaderService.cs" />
+    <Compile Include="Tools\Import\DataType.cs" />
+    <Compile Include="Tools\Import\FIO.cs" />
+    <Compile Include="Tools\IdentityCards\VirtualCardReaderService.cs" />
+    <Compile Include="Journal\ViewModels\Stock\StockDocumentsJournalViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Stock\StockDocumentsFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.StockDocumentsFilterView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Stock\StockDocumentsFilterViewModel.cs" />
+    <Compile Include="ViewModels\IdentityCards\ReadCardViewModel.cs" />
+    <Compile Include="Views\IdentityCards\ReadCardView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.IdentityCards.ReadCardView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -583,6 +522,10 @@
       <Project>{8984DB2F-4849-4F5B-915C-CE69537E93A8}</Project>
       <Name>QS.Features</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\RusGuardSharp\rglib.interop\rglib.interop.csproj">
+      <Project>{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}</Project>
+      <Name>rglib.interop</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
@@ -598,7 +541,6 @@
     <Folder Include="Domain\Stock\" />
     <Folder Include="HibernateMapping\Stock\" />
     <Folder Include="JournalFilters\" />
-    <Folder Include="JournalViewers\" />
     <Folder Include="Domain\User\" />
     <Folder Include="HibernateMapping\User\" />
     <Folder Include="Domain\Regulations\" />
@@ -609,7 +551,6 @@
     <Folder Include="Dialogs\Regulations\" />
     <Folder Include="Domain\Operations\" />
     <Folder Include="HibernateMapping\Operations\" />
-    <Folder Include="Dialogs\DataBase\" />
     <Folder Include="Domain\Operations\Graph\" />
     <Folder Include="Repository\Stock\" />
     <Folder Include="Dialogs\Issuance\" />
@@ -654,6 +595,10 @@
     <Folder Include="ReportParameters\" />
     <Folder Include="ReportParameters\ViewModels\" />
     <Folder Include="ReportParameters\Views\" />
+    <Folder Include="Tools\IdentityCards\" />
+    <Folder Include="Tools\Import\" />
+    <Folder Include="Views\IdentityCards\" />
+    <Folder Include="ViewModels\IdentityCards\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
@@ -689,7 +634,6 @@
     <None Include="Reports\MonthRequestSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="app.config" />
     <None Include="RdlEngineConfig.Linux.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -711,7 +655,6 @@
     <None Include="Reports\Employee\PersonalCardPage2.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
     <None Include="Reports\Statements\IssuanceSheet.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -728,6 +671,36 @@
     <None Include="Reports\AmountIssuedWear.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Antlr3.Runtime" Version="3.5.1" />
+    <PackageReference Include="Autofac" Version="6.2.0" />
+    <PackageReference Include="BouncyCastle" Version="1.8.9" />
+    <PackageReference Include="FluentNHibernate" Version="3.1.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.17.3" />
+    <PackageReference Include="Iesi.Collections" Version="4.0.4" />
+    <PackageReference Include="K4os.Compression.LZ4" Version="1.2.6" />
+    <PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.2.6" />
+    <PackageReference Include="K4os.Hash.xxHash" Version="1.0.6" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
+    <PackageReference Include="MySql.Data" Version="8.0.25" />
+    <PackageReference Include="NHibernate" Version="5.3.8" />
+    <PackageReference Include="nhibernate.logger.nlog" Version="1.1.2" />
+    <PackageReference Include="NLog" Version="4.7.10" />
+    <PackageReference Include="NPOI" Version="2.5.3" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.10" />
+    <PackageReference Include="Remotion.Linq" Version="2.2.0" />
+    <PackageReference Include="Remotion.Linq.EagerFetching" Version="2.2.0" />
+    <PackageReference Include="SharpZipLib" Version="1.3.2" />
+    <PackageReference Include="SSH.NET" Version="2020.0.1" />
+    <PackageReference Include="System.Buffers" Version="4.5.1" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="5.0.1" />
+    <PackageReference Include="System.Memory" Version="4.5.4" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

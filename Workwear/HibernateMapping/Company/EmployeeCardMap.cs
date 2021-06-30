@@ -12,6 +12,7 @@ namespace workwear.HibernateMapping.Company
 			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
 			Map (x => x.CardNumber).Column ("card_number");
 			Map (x => x.PersonnelNumber).Column ("personnel_number");
+			Map(x => x.CardKey).Column("card_key");
 			Map (x => x.LastName).Column ("last_name");
 			Map (x => x.FirstName).Column ("first_name");
 			Map (x => x.Patronymic).Column ("patronymic_name");

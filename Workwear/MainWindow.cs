@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Autofac;
 using Gtk;
+using MySql.Data.MySqlClient;
 using NLog;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
-using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -19,8 +20,8 @@ using QS.Project.Versioning;
 using QS.Project.Views;
 using QS.Report;
 using QS.Report.ViewModels;
-using QS.Services;
 using QS.Serial.ViewModels;
+using QS.Services;
 using QS.Tdi;
 using QS.Tdi.Gtk;
 using QS.Updater;
@@ -31,7 +32,6 @@ using QSOrmProject;
 using QSProjectsLib;
 using QSTelemetry;
 using workwear;
-using workwear.Dialogs.Organization;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
@@ -40,14 +40,14 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
-using workwear.JournalViewers;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company;
-using workwear.ViewModels.User;
+using workwear.ViewModels.Stock;
 using workwear.ViewModels.Tools;
+using workwear.ViewModels.User;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -78,7 +78,13 @@ public partial class MainWindow : Gtk.Window
 		var checker = new VersionCheckerService(MainClass.AppDIContainer);
 		checker.RunUpdate();
 
-		if(QSMain.User.Login == "root") {
+		var userService = AutofacScope.Resolve<IUserService>();
+		var user = userService.GetCurrentUser(UoW);
+		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
+
+		//Пока такая реализация чтобы не плодить сущьностей.
+		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
+		if(connectionBuilder.UserID == "root") {
 			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
 			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
 												  MessageType.Info,
@@ -93,12 +99,10 @@ public partial class MainWindow : Gtk.Window
 			return;
 		}
 
-		if(QSMain.connectionDB.DataSource == "demo.qsolution.ru") {
-			string Message = "Вы подключились к демонстрационному серверу. Сервер предназначен для оценки " +
-				"возможностей программы, не используйте его для работы, так как ваши данные будут доступны " +
-				"любому пользователю через интернет.\n\nДля полноценного использования программы вам необходимо " +
-				"установить собственный сервер. Для его установки обратитесь к документации.\n\nЕсли у вас возникнут " +
-				"вопросы вы можете обратится в нашу тех. поддержку.";
+		if(databaseInfo.IsDemo) {
+			string Message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
+				"Введенные данные будут доступны другим пользователям.\n\nДля работы вам необходимо " +
+				"установить собственный сервер или купить подписку на QS:Облако.";
 			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
 												  MessageType.Info,
 												  ButtonsType.Ok,
@@ -106,14 +110,17 @@ public partial class MainWindow : Gtk.Window
 			md.Run();
 			md.Destroy();
 			dialogAuthenticationAction.Sensitive = false;
+			ActionSN.Sensitive = false;
 		}
 
-		this.KeyReleaseEvent += ClipboardWorkaround.HandleKeyReleaseEvent;
+		bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+		if(isWindows)
+			this.KeyReleaseEvent += ClipboardWorkaround.HandleKeyReleaseEvent;
 		TDIMain.MainNotebook = tdiMain;
 		this.KeyReleaseEvent += TDIMain.TDIHandleKeyReleaseEvent;
 
-		UsersAction.Sensitive = QSMain.User.Admin;
-		labelUser.LabelProp = QSMain.User.Name;
+		UsersAction.Sensitive = user.IsAdmin;
+		labelUser.LabelProp = user.Name;
 
 		//Настраиваем новости
 		var feeds = new List<NewsFeed>(){
@@ -159,9 +166,9 @@ public partial class MainWindow : Gtk.Window
 	#region Workwear featrures
 	private void DisableFeatures()
 	{
-		if(!FeaturesService.Available(WorkwearFeature.Warehouses)) {
-			ActionWarehouse.Visible = false;
-		}
+		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
+		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
+		ActionEmployeeLoad.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
 	}
 	#endregion
 
@@ -302,7 +309,8 @@ public partial class MainWindow : Gtk.Window
 		MainTelemetry.AddCount("OpenDocumentation");
 		try {
 			System.Diagnostics.Process.Start("user-guide.pdf");
-		} catch (System.ComponentModel.Win32Exception ex) {
+		}
+		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
 			$"При открытии PDF файла с документацией произошла ошибка:\n{ex.Message}\n" +
 				"Возможно на компьютере не установлена или неисправна программа для открыти PDF");
@@ -393,9 +401,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionStockDocsActivated(object sender, EventArgs e)
 	{
-		tdiMain.OpenTab(TdiTabBase.GenerateHashName<StockDocumentsView>(),
-				() => new StockDocumentsView()
-			   );
+		NavigationManager.OpenViewModel<StockDocumentsJournalViewModel>(null);
 	}
 
 	protected void OnActionEmployeesActivated(object sender, EventArgs e)
@@ -671,9 +677,19 @@ public partial class MainWindow : Gtk.Window
 			var user = AutofacScope.Resolve<IUserService>();
 			idSetting = uow.Session.QueryOver<UserSettings>()
 			.Where(x => x.User.Id == user.CurrentUserId)
-			.Select(x => x.Id)	
+			.Select(x => x.Id)
 			.SingleOrDefault<int>();
 		}
-		MainClass.MainWin.NavigationManager.OpenViewModel<UserSettingsViewModel, IEntityUoWBuilder > (null, EntityUoWBuilder.ForOpen(idSetting));
+		MainClass.MainWin.NavigationManager.OpenViewModel<UserSettingsViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForOpen(idSetting));
+	}
+
+	protected void OnActionCardIssueeActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<IssueByIdentifierViewModel>(null);
+	}
+
+	protected void OnActionEmployeeLoadActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<EmployeesLoadViewModel>(null);
 	}
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Autofac;
 using Gamma.ColumnConfig;
 using NHibernate;
@@ -11,6 +11,7 @@ using QS.Services;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
 using workwear.Journal.Filter.ViewModels.Company;
+using workwear.Tools.Features;
 using workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
@@ -23,16 +24,19 @@ namespace workwear.Journal.ViewModels.Company
 		/// </summary>
 		public object Tag;
 
+		public readonly FeaturesService FeaturesService;
+
 		public EmployeeFilterViewModel Filter { get; private set; }
 
-		public EmployeeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager,
-										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, ICurrentPermissionService currentPermissionService = null)
+		public EmployeeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
+										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, FeaturesService featuresService, ICurrentPermissionService currentPermissionService = null) 
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = false;
 
 			AutofacScope = autofacScope;
 			JournalFilter = Filter = AutofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			this.FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 		}
 
 		protected override IQueryOver<EmployeeCard> ItemsQuery(IUnitOfWork uow)
@@ -69,6 +73,7 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.CardNumber).WithAlias(() => resultAlias.CardNumber)
 					.Select(x => x.PersonnelNumber).WithAlias(() => resultAlias.PersonnelNumber)
+					.Select(x => x.CardKey).WithAlias(() => resultAlias.CardKey)
 					.Select(x => x.FirstName).WithAlias(() => resultAlias.FirstName)
 					.Select(x => x.LastName).WithAlias(() => resultAlias.LastName)
 					.Select(x => x.Patronymic).WithAlias(() => resultAlias.Patronymic)
@@ -98,6 +103,7 @@ namespace workwear.Journal.ViewModels.Company
 
 		[SearchHighlight]
 		public string PersonnelNumber { get; set; }
+		public string CardKey { get; set; }
 
 		public string FirstName { get; set; }
 		public string LastName { get; set; }

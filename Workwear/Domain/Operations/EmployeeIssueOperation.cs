@@ -192,6 +192,20 @@ namespace workwear.Domain.Operations
 			set { SetField(ref employeeOperationIssueOnWriteOff, value); }
 		}
 
+		private string signCardKey;
+		[Display(Name = "UID карты доступа")]
+		public virtual string SignCardKey {
+			get => signCardKey;
+			set => SetField(ref signCardKey, value);
+		}
+
+		private DateTime? signTimestamp;
+		[Display(Name = "Отметка времени подписи")]
+		public virtual DateTime? SignTimestamp {
+			get => signTimestamp;
+			set => SetField(ref signTimestamp, value);
+		}
+
 		/// <summary>
 		/// Для создания операций выдачи надо использвать конструктор с BaseParameters
 		/// </summary>
@@ -270,7 +284,7 @@ namespace workwear.Domain.Operations
 
 		#region Методы обновленя операций
 
-		public virtual void Update(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, ExpenseItem item)
+		public virtual void Update(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, ExpenseItem item, string signCardUid = null)
 		{
 			//Внимание здесь сравниваются даты без времени.
 			if (item.ExpenseDoc.Date.Date != OperationTime.Date)
@@ -286,6 +300,11 @@ namespace workwear.Domain.Operations
 			IssuedOperation = null;
 			BuhDocument = item.BuhDocument;
 			WarehouseOperation = item.WarehouseOperation;
+
+			if(!String.IsNullOrEmpty(signCardUid)) {
+				SignCardKey = signCardUid;
+				SignTimestamp = DateTime.Now;
+			}
 
 			if (NormItem == null)
 				NormItem = Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.MatchedNomenclatures.Contains(Nomenclature))?.ActiveNormItem;
@@ -398,7 +417,6 @@ namespace workwear.Domain.Operations
 				OperationTime = item.Document.Date;
 				
 			Nomenclature = item.Nomenclature;
-			WearPercent = IssuedOperation.CalculatePercentWear(OperationTime);
 			Issued = 0;
 			Returned = item.Amount;
 			WarehouseOperation = item.WarehouseOperation;

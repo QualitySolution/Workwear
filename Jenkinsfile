@@ -11,18 +11,21 @@ node {
       sh 'nuget restore Workwear/Workwear.sln'
    }
    stage('QSProjects') {
-      checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'QSProjects']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/QSProjects.git']]])
+      checkout([$class: 'GitSCM', branches: [[name: '*/release/1.5']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'QSProjects']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/QSProjects.git']]])
       sh 'nuget restore QSProjects/QSProjectsLib.sln'
    }
    stage('Gtk.DataBindings') {
       checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'Gtk.DataBindings']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/Gtk.DataBindings.git']]]
    }
    stage('GammaBinding') {
-      checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'GammaBinding']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/GammaBinding.git']]]
+      checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'GammaBinding']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/GammaBinding.git']]]
    }
    stage('My-FyiReporting') {
       checkout changelog: false, scm: [$class: 'GitSCM', branches: [[name: '*/QSBuild']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'My-FyiReporting']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/My-FyiReporting.git']]]
       sh 'nuget restore My-FyiReporting/MajorsilenceReporting-Linux-GtkViewer.sln'
+   }
+   stage('RusGuard') {
+      checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'RusGuardSharp']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/RusGuardSharp.git']]]
    }
    stage('Build') {
         sh 'rm -f Workwear/WinInstall/workwear-*.exe'
@@ -34,7 +37,7 @@ node {
        try {
             sh '''
                 cd Workwear/WorkwearTest/bin/ReleaseWin
-                cp ../../../packages/NUnit.ConsoleRunner.3.11.1/tools/* .
+                cp -r ../../../packages/NUnit.ConsoleRunner.3.12.0/tools/* .
                 mono nunit3-console.exe WorkwearTest.dll
             '''
        } catch (e) {}

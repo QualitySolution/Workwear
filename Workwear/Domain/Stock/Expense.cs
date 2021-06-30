@@ -7,11 +7,9 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
-using workwear.Domain.Operations;
 using workwear.Domain.Statements;
-using workwear.Tools;
 using workwear.Repository.Company;
-using workwear.Repository.Operations;
+using workwear.Tools;
 
 namespace workwear.Domain.Stock
 {
@@ -207,14 +205,14 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser)
+		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null)
 		{
-			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser));
+			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser, signCardUid));
 		}
 
 		public virtual void UpdateEmployeeWearItems()
 		{
-			Employee.UpdateNextIssue(Items.Select(x => x.Nomenclature.Type).ToArray());
+			Employee.UpdateNextIssue(Items.Select(x => x.ProtectionTools).ToArray());
 			Employee.FillWearRecivedInfo(UoW);
 			UoW.Save(Employee);
 		}

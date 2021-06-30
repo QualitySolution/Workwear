@@ -82,6 +82,13 @@ namespace workwear.Views.Company
 
 			labelHRInfo.Binding.AddBinding(ViewModel, vm => vm.ProfessionText, w => w.LabelProp).InitializeFromSource();
 
+			hboxCardUid.Binding.AddBinding(ViewModel, v => v.VisibleCardUid, w => w.Visible).InitializeFromSource();
+			ylabelCardUid.Binding.AddBinding(ViewModel, v => v.VisibleCardUid, w => w.Visible).InitializeFromSource();
+			entryCardUid.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.CardUid, w => w.Text)
+				.AddBinding(v => v.CardUidEntryColor, w => w.TextColor)
+				.InitializeFromSource();
+
 			//Устанавливаем последовательность фокуса по Tab
 			//!!!!!!!! НЕ ЗАБЫВАЕМ КОРРЕКТИРОВАТЬ ПОРЯДОК ПРИ ДОБАВЛЕНИИ ВИДЖЕТОВ В ТАБЛИЦУ !!!!!!!!
 			//Это порядок только внутри таблицы! А не всего диалога.
@@ -252,6 +259,11 @@ namespace workwear.Views.Company
 			CellRendererText text = new CellRendererText();
 			combo.PackStart(text, true);
 			combo.AddAttribute(text, "text", 0);
+		}
+
+		protected void OnButtonReadUidClicked(object sender, EventArgs e)
+		{
+			ViewModel.ReadUid();
 		}
 	}
 }

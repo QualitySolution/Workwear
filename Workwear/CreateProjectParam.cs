@@ -1,9 +1,12 @@
-﻿using System.Data.Common;
+using System;
+using System.Data.Common;
+using System.IO;
 using Autofac;
 using Oracle.ManagedDataAccess.Client;
 using QS.BaseParameters;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
+using QS.Configuration;
 using QS.Deletion;
 using QS.Deletion.Views;
 using QS.Dialog;
@@ -48,6 +51,8 @@ using workwear.Measurements;
 using workwear.Repository.Operations;
 using workwear.Tools;
 using workwear.Tools.Features;
+using workwear.Tools.IdentityCards;
+using workwear.Tools.Import;
 using workwear.Tools.Oracle;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
@@ -62,6 +67,7 @@ namespace workwear
 
 			// Настройка ORM
 			var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
+				.Dialect<MySQL57ExtendedDialect>()
 				.ConnectionString (QSProjectsLib.QSMain.ConnectionString)
 				.ShowSql ()
 				.FormatSql ();
@@ -71,8 +77,11 @@ namespace workwear
 				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),
 			});
 
-			//Настраиваем классы сущьностей
+			#if DEBUG
+			NLog.LogManager.Configuration.RemoveRuleByName("HideNhibernate");
+			#endif
 
+			//Настраиваем классы сущьностей
 			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
 			//Спецодежда
 			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
@@ -100,9 +109,11 @@ namespace workwear
 			#region База
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
 			builder.RegisterType<DefaultSessionProvider>().As<ISessionProvider>();
-			builder.Register<DbConnection>(c => Connection.ConnectionDB).AsSelf();
+			builder.Register(c => new MySqlConnectionFactory(Connection.ConnectionString)).As<IConnectionFactory>();
+			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf();
 			builder.Register(c => QSProjectsLib.QSMain.ConnectionStringBuilder).AsSelf();
+			builder.RegisterType<NhDataBaseInfo>().As<IDataBaseInfo>();
 			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
 			#endregion
 
@@ -209,6 +220,23 @@ namespace workwear
 			#region Разделение версий
 			builder.RegisterType<FeaturesService>().As<IProductService>().AsSelf();
 			builder.RegisterModule<FeaturesAutofacModule>();
+			#endregion
+
+			#region Настройка
+			builder.Register(c => new IniFileConfiguration(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "workwear.ini"))).As<IChangeableConfiguration>().AsSelf();
+			#endregion
+
+			#region Работа со считывателями
+			if(QSProjectsLib.WindowStartupFix.IsWindows)//FIXME Было лень реализовывать загрузку библиотеки под линукс.
+				builder.RegisterType<RusGuardService>().As<ICardReaderService>();
+		#if DEBUG
+			else
+				builder.RegisterType<VirtualCardReaderService>().As<ICardReaderService>();
+		#endif
+			#endregion
+
+			#region Импрорт данных
+			builder.RegisterType<DataParser>().AsSelf();
 			#endregion
 			AppDIContainer = builder.Build();
 		}
