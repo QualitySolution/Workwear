@@ -2,6 +2,7 @@
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
+using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.DB;
@@ -10,7 +11,6 @@ using QS.Project.Services;
 using QS.Services;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
-using workwear.Domain.Stock;
 using workwear.ViewModels.Statements;
 
 namespace workwear.Journal.ViewModels.Statements
