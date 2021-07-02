@@ -208,6 +208,7 @@ namespace workwear
 			builder.RegisterType<ApplicationVersionInfo>().As<IApplicationInfo>();
 			builder.RegisterModule(new UpdaterAutofacModule());
 			builder.Register(c => ScriptsConfiguration.MakeUpdateConfiguration()).AsSelf();
+			builder.Register(c => ScriptsConfiguration.MakeCreationScript()).AsSelf();
 			#endregion
 
 			#region Разделение версий

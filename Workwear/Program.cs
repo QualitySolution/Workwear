@@ -48,8 +48,7 @@ namespace workwear
 				logger.Fatal(falalEx);
 				return;
 			}
-
-			RegisterSQLScripts ();
+			
 			try {
 				AutofacClassConfig();
 			}catch(MissingMethodException ex) when (ex.Message.Contains("System.String System.String.Format"))
@@ -127,16 +126,6 @@ namespace workwear
 				MainTelemetry.SendTelemetry();
 			}
 			QSSaaS.Session.StopSessionRefresh ();
-		}
-
-		static void RegisterSQLScripts()
-		{
-			//Скрипты создания базы
-			DBCreator.AddBaseScript(
-				new Version(2, 4),
-				"Чистая база",
-				"workwear.Properties.new_empty.sql"
-			);
 		}
 	}
 }

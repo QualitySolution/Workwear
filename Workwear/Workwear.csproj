@@ -87,12 +87,6 @@
     <Reference Include="mscorlib" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="QS.Updater.Core">
-      <HintPath>..\Workwear.Sql\bin\x86\Debug\netstandard2.0\publish\QS.Updater.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Workwear.Sql">
-      <HintPath>..\Workwear.Sql\bin\x86\Debug\netstandard2.0\publish\Workwear.Sql.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -114,7 +108,6 @@
     <EmbeddedResource Include="icon\toolbar\smart-card.png" />
     <EmbeddedResource Include="icon\buttons\smart-card.png" />
     <EmbeddedResource Include="icon\art\hand-holding-rfid.png" />
-    <EmbeddedResource Include="Properties\new_empty.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -505,6 +498,18 @@
     <ProjectReference Include="..\..\RusGuardSharp\rglib.interop\rglib.interop.csproj">
       <Project>{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}</Project>
       <Name>rglib.interop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj">
+      <Project>{80540F2C-3187-4018-BB15-DD31173C8176}</Project>
+      <Name>QS.Project.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Workwear.Sql\Workwear.Sql.csproj">
+      <Project>{CD86B5DA-6D84-4406-B7A8-0A35E87772AA}</Project>
+      <Name>Workwear.Sql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj">
+      <Project>{38A99A76-C15A-4C55-8221-375D25E29F26}</Project>
+      <Name>QS.Updater.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

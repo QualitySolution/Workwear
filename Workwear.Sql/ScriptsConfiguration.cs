@@ -1,10 +1,21 @@
 using System;
+using System.Reflection;
+using QS.DBScripts.Models;
 using QS.Updater.DB;
 
 namespace Workwear.Sql
 {
 	public class ScriptsConfiguration
 	{
+		public static CreationScript MakeCreationScript()
+		{
+			return new CreationScript {
+				Version = new Version(2, 4),
+				ResourceName = "Workwear.Sql.Scripts.new_empty.sql",
+				ResourceAssembly = Assembly.GetAssembly(typeof(ScriptsConfiguration))
+			};
+		}
+
 		public static UpdateConfiguration MakeUpdateConfiguration()
 		{
 			var configuration = new UpdateConfiguration();
