@@ -9,11 +9,11 @@ namespace Workwear.Sql
 	{
 		public static CreationScript MakeCreationScript()
 		{
-			return new CreationScript {
-				Version = new Version(2, 5),
-				ResourceName = "Workwear.Sql.Scripts.new_empty.sql",
-				ResourceAssembly = Assembly.GetAssembly(typeof(ScriptsConfiguration))
-			};
+			return new CreationScript(
+				Assembly.GetAssembly(typeof(ScriptsConfiguration)),
+				"Workwear.Sql.Scripts.new_empty.sql",
+				new Version(2, 5)
+			);
 		}
 
 		public static UpdateConfiguration MakeUpdateConfiguration()
