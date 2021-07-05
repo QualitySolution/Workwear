@@ -10,6 +10,7 @@ using QS.Deletion;
 using QS.Deletion.Views;
 using QS.Dialog;
 using QS.Dialog.GtkUI;
+using QS.Dialog.ViewModels;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Features;
@@ -190,6 +191,9 @@ namespace workwear
 			#region ViewModels
 			builder.Register(x => new AutofacViewModelResolver(AppDIContainer)).As<IViewModelResolver>();
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(OrganizationViewModel)))
+				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
+				.AsSelf();
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(ProgressWindowViewModel)))
 				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
 				.AsSelf();
 			#endregion

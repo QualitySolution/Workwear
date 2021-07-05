@@ -10,7 +10,7 @@ namespace Workwear.Sql
 		public static CreationScript MakeCreationScript()
 		{
 			return new CreationScript {
-				Version = new Version(2, 4),
+				Version = new Version(2, 5),
 				ResourceName = "Workwear.Sql.Scripts.new_empty.sql",
 				ResourceAssembly = Assembly.GetAssembly(typeof(ScriptsConfiguration))
 			};

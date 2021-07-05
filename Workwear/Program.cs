@@ -1,12 +1,14 @@
 using System;
+using Autofac;
 using Gtk;
 using NLog;
+using QS.DBScripts.Controllers;
 using QS.Dialog;
 using QS.ErrorReporting;
+using QS.Navigation;
 using QS.Project.DB;
 using QS.Project.Repositories;
 using QS.Project.Versioning;
-using QS.Updater.DB;
 using QSProjectsLib;
 using QSTelemetry;
 
@@ -55,7 +57,11 @@ namespace workwear
 			{
 				WindowStartupFix.DisplayWindowsOkMessage("Версия .Net Framework должна быть не ниже 4.6.1. Установите боллее новую платформу.", "Старая версия .Net");
 			}
-
+			ILifetimeScope scopeLoginTime = null;
+			scopeLoginTime = AppDIContainer.BeginLifetimeScope(builder => {
+				builder.RegisterType<GtkWindowsNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
+				builder.Register((ctx) => new AutofacViewModelsGtkPageFactory(scopeLoginTime)).As<IViewModelsPageFactory>();
+			});
 			// Создаем окно входа
 			Login LoginDialog = new Login ();
 			LoginDialog.Logo = Gdk.Pixbuf.LoadFromResource ("workwear.icon.logo.png");
@@ -73,6 +79,7 @@ namespace workwear
 			"Для установки собственного сервера обратитесь к документации.";
 			Login.CreateDBHelpTooltip = "Инструкция по установке сервера MySQL";
 			Login.CreateDBHelpUrl = "http://workwear.qsolution.ru/?page_id=168&utm_source=qs&utm_medium=app_workwear&utm_campaign=connection_editor";
+			LoginDialog.GetDBCreator = scopeLoginTime.Resolve<IDBCreator>;
 
 			LoginDialog.UpdateFromGConf ();
 
@@ -82,6 +89,8 @@ namespace workwear
 				return;
 
 			LoginDialog.Destroy ();
+			scopeLoginTime.Dispose();
+
 			QSSaaS.Session.StartSessionRefresh ();
 
 			//Прописываем системную валюту
