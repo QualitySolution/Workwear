@@ -31,11 +31,11 @@ namespace Workwear.Sql
 			configuration.AddUpdate (
 				new Version (1, 0),
 				new Version (1, 1),
-				"Workwear.Sql.Scripts.Update to 1.1.sql");
+				"Workwear.Sql.Scripts.1.1.sql");
 			configuration.AddUpdate (
 				new Version (1, 1),
 				new Version (1, 2),
-				"Workwear.Sql.Scripts.Update to 1.2.sql");
+				"Workwear.Sql.Scripts.1.2.sql");
 			configuration.AddMicroUpdate (
 				new Version (1, 2),
 				new Version (1, 2, 1),
