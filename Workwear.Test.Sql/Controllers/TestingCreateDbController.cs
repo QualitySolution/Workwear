@@ -26,6 +26,12 @@ namespace QS.DBScripts.Controllers
 			var createModel = new MySqlDbCreateModel(this, creationScript);
 			return createModel.RunCreation(server, sample.DbName, login, password);
 		}
+		
+		public bool StartCreation(CreationScript script, string dbname)
+		{
+			var createModel = new MySqlDbCreateModel(this, script);
+			return createModel.RunCreation(server, dbname, login, password);
+		}
 
 		#region Взаимодействие с моделью
 		public void WasError(string text)

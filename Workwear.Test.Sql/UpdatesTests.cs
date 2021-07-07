@@ -39,5 +39,20 @@ namespace Workwear.Test.Sql
 			//Выполняем обновление
 			//Может быть какие то проверки корректности
 		}
+		
+		[Test(Description = "Проверяем что можно создать базу из текущего скрипта создания.")]
+		public void CreateCurrentNewBaseTest()
+		{
+			//Создаем чистую базу
+			var configuration = TestsConfiguration.Configuration;
+			var server = configuration.GetSection("SQLServer");
+			var creator = new TestingCreateDbController(
+				server.GetValue<string>("Address"),
+				server.GetValue<string>("Login"),
+				server.GetValue<string>("Password")
+			);
+			var success = creator.StartCreation(ScriptsConfiguration.MakeCreationScript(), "workwear_sqltest_current");
+			Assert.That(success, Is.True);
+		}
 	}
 }
