@@ -5,6 +5,14 @@ DELETE FROM base_parameters WHERE name = 'edition';
 -- Обновление схемы
 ALTER SCHEMA DEFAULT CHARACTER SET utf8mb4  DEFAULT COLLATE utf8mb4_general_ci ;
 
+-- Удаляем дубликаты Табельных номеров, в новой версии поле должно быть уникально
+UPDATE wear_cards SET wear_cards.personnel_number = NULL WHERE 
+EXISTS(SELECT 1 FROM wear_cards sub WHERE sub.personnel_number = wear_cards.personnel_number AND sub.id > wear_cards.id);
+
+-- Удаляем дубликаты номеров карточек, в новой версии поле должно быть уникально
+UPDATE wear_cards SET wear_cards.card_number = NULL WHERE
+    EXISTS(SELECT 1 FROM wear_cards sub WHERE sub.card_number = wear_cards.card_number AND sub.id > wear_cards.id);
+
 -- Удаляем обновляемые ключи
 ALTER TABLE `stock_expense` 
 DROP FOREIGN KEY `fk_stock_expense_1`;
