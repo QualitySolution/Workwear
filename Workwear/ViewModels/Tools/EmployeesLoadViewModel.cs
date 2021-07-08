@@ -299,7 +299,7 @@ namespace workwear.ViewModels.Tools
 			logger.Info($"Новых: {toSave.Count(x => !x.Employees.Any())} Измененых: {toSave.Count(x => x.Employees.Any())} Всего: {toSave.Count}");
 			ProgressStep3.Start(toSave.Count);
 			foreach(var row in toSave) {
-				var employee = dataParser.PrepareToSave(row);
+				var employee = dataParser.PrepareToSave(UoW, row);
 				UoW.Save(employee);
 				i++;
 				if(i % 50 == 0) {

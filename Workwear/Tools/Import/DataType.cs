@@ -22,5 +22,9 @@ namespace workwear.Tools.Import
 		CardKey,
 		[Display(Name = "Дата приёма на работу")]
 		HireDate,
+		[Display(Name = "Подразделение")]
+		Subdivision,
+		[Display(Name = "Должность")]
+		Post,
 	}
 }
