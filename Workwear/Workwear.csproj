@@ -440,6 +440,7 @@
     <Compile Include="..\Workwear.Core\Domain\Regulations\NormPeriodType.cs">
       <Link>Domain\Regulations\NormPeriodType.cs</Link>
     </Compile>
+    <Compile Include="Repository\Company\PostRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -546,6 +547,14 @@
     <ProjectReference Include="..\..\RusGuardSharp\rglib.interop\rglib.interop.csproj">
       <Project>{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}</Project>
       <Name>rglib.interop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QS.Cloud.WearLk.Client\QS.Cloud.WearLk.Client.csproj">
+      <Project>{B0F853E4-43C9-4C7E-8812-2060FA43B5FE}</Project>
+      <Name>QS.Cloud.WearLk.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Cloud.Client\QS.Cloud.Client.csproj">
+      <Project>{390CE39B-B071-424E-9763-645E7624D9E3}</Project>
+      <Name>QS.Cloud.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

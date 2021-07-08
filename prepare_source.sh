@@ -4,7 +4,6 @@ echo "1) git pull"
 echo "2) nuget restore"
 echo "3) cleanup packages directories"
 echo "4) cleanup bin and obj directories"
-echo "5) rebuild dependent dotnet libraries"
 echo "Можно вызывать вместе, например git+nuget=12"
 read case;
 
@@ -42,10 +41,6 @@ cd ../Workwear
 nuget restore Workwear.sln;
 nuget restore ../QSProjects/QSProjectsLib.sln;
 nuget restore ../My-FyiReporting/MajorsilenceReporting-Linux-GtkViewer.sln
-;;&
-    *5*)
-dotnet publish /p:Platform=x86 ../QSProjects/QS.Cloud.Client/QS.Cloud.Client.csproj
-dotnet publish /p:Platform=x86 ./QS.Cloud.WearLk.Client/QS.Cloud.WearLk.Client.csproj  
 ;;&
 esac
 
