@@ -35,9 +35,10 @@ node {
    }
    stage('Test'){
        try {
+            def PACKAGES_LOCATION = "${JENKINS_HOME}/.nuget/packages"
             sh '''
                 cd Workwear/WorkwearTest/bin/ReleaseWin
-                cp -r ../../../packages/NUnit.ConsoleRunner.3.12.0/tools/* .
+                cp -r ${PACKAGES_LOCATION}/nunit.consolerunner/3.12.0/tools/* .
                 mono nunit3-console.exe WorkwearTest.dll
             '''
        } catch (e) {}
