@@ -100,7 +100,7 @@ namespace workwear.Tools.Features
 		[Display(Name = "Выдача списком")]
 		MassExpense,
 		[Display(Name = "Загрузка из Excel")]
-		LoadExcel
+		LoadExcel,
 		[Display(Name = "Мобильный кабинет сотрудника")]
 		EmployeeLk,
 	}
