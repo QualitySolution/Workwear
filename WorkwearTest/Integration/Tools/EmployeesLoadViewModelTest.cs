@@ -32,7 +32,7 @@ namespace WorkwearTest.Integration.Tools
 			var dataparser = new DataParserEmployee();
 			using(var employeesLoad = new EmployeesLoadViewModel(UnitOfWorkFactory, navigation, interactive, dataparser)) {
 				employeesLoad.ProgressStep3 = progressStep3;
-				employeesLoad.FileName = "cardkey_list.xlsx";
+				employeesLoad.FileName = "Samples/Excel/cardkey_list.xlsx";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 				Assert.That(employeesLoad.SensetiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");

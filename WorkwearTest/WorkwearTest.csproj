@@ -46,7 +46,7 @@
     <None Include="Integration\Reports\NoDBTestReport.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="cardkey_list.xlsx">
+    <None Include="Samples\Excel\cardkey_list.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
