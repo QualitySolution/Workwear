@@ -5391,12 +5391,24 @@
         <property name="StockId">smart-card</property>
         <signal name="Activated" handler="OnActionCardIssueeActivated" />
       </action>
+      <action id="ActionImport">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Импорт данных</property>
+        <property name="ShortLabel" translatable="yes">Импорт данных</property>
+        <property name="StockId">gtk-convert</property>
+      </action>
       <action id="ActionEmployeeLoad">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Загрузка данных о сотрудниках</property>
-        <property name="ShortLabel" translatable="yes">Загрузка данных о сотрудниках</property>
-        <property name="StockId">gtk-convert</property>
+        <property name="Label" translatable="yes">Сотрудники</property>
+        <property name="ShortLabel" translatable="yes">Сотрудники</property>
+        <property name="Tooltip" translatable="yes">Загрузка сотрудников из Excel</property>
         <signal name="Activated" handler="OnActionEmployeeLoadActivated" />
+      </action>
+      <action id="ActionNormsLoad">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Нормы</property>
+        <property name="ShortLabel" translatable="yes">Нормы</property>
+        <signal name="Activated" handler="OnActionNormsLoadActivated" />
       </action>
     </action-group>
     <property name="MemberName" />
@@ -5418,7 +5430,10 @@
                 <node type="Menuitem" action="ActionUserSettings" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionBaseSettings" />
-                <node type="Menuitem" action="ActionEmployeeLoad" />
+                <node type="Menu" action="ActionImport">
+                  <node type="Menuitem" action="ActionEmployeeLoad" />
+                  <node type="Menuitem" action="ActionNormsLoad" />
+                </node>
                 <node type="Separator" />
                 <node type="Menuitem" action="quitAction" />
               </node>

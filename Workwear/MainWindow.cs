@@ -177,7 +177,7 @@ public partial class MainWindow : Gtk.Window
 	{
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
-		ActionEmployeeLoad.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
+		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
 	}
 	#endregion
 
@@ -694,5 +694,9 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionEmployeeLoadActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<EmployeesLoadViewModel>(null);
+	}
+
+	protected void OnActionNormsLoadActivated(object sender, EventArgs e)
+	{
 	}
 }
