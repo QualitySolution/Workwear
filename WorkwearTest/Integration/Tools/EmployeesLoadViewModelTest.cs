@@ -29,7 +29,7 @@ namespace WorkwearTest.Integration.Tools
 			var navigation = Substitute.For<INavigationManager>();
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep3 = Substitute.For<IProgressBarDisplayable>();
-			var dataparser = new DataParser();
+			var dataparser = new DataParserEmployee();
 			using(var employeesLoad = new EmployeesLoadViewModel(UnitOfWorkFactory, navigation, interactive, dataparser)) {
 				employeesLoad.ProgressStep3 = progressStep3;
 				employeesLoad.FileName = "cardkey_list.xlsx";

@@ -28,7 +28,7 @@ namespace workwear.ViewModels.Tools
 		public static readonly string ColorOfChanged = "Pale Green";
 		public static readonly string ColorOfSkiped = "Orchid";
 
-		public EmployeesLoadViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IInteractiveMessage interactiveMessage, DataParser dataParser) : base(unitOfWorkFactory, navigation)
+		public EmployeesLoadViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IInteractiveMessage interactiveMessage, DataParserEmployee dataParser) : base(unitOfWorkFactory, navigation)
 		{
 			Title = "Загрузка сотрудников";
 			this.interactiveMessage = interactiveMessage ?? throw new ArgumentNullException(nameof(interactiveMessage));
@@ -52,7 +52,7 @@ namespace workwear.ViewModels.Tools
 
 		private string fileName;
 		private readonly IInteractiveMessage interactiveMessage;
-		private readonly DataParser dataParser;
+		private readonly DataParserEmployee dataParser;
 
 		public virtual string FileName {
 			get => fileName;

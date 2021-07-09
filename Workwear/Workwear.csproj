@@ -397,7 +397,7 @@
     <Compile Include="Tools\Import\ImportedColumn.cs" />
     <Compile Include="Tools\Import\ImportedSheet.cs" />
     <Compile Include="Tools\Import\SheetRow.cs" />
-    <Compile Include="Tools\Import\DataParser.cs" />
+    <Compile Include="Tools\Import\DataParserEmployee.cs" />
     <Compile Include="Tools\IdentityCards\ICardReaderService.cs" />
     <Compile Include="Tools\Import\DataType.cs" />
     <Compile Include="Tools\Import\FIO.cs" />
