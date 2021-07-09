@@ -13,6 +13,8 @@ base/*.mwb.bak
 *.usertasks
 *~
 .vs/
+*.sln.DotSettings.user
+.idea/
 
 #Doc
 docs/modules/ROOT/pages/*.pdf
