@@ -5,6 +5,8 @@ using Autofac;
 using QS.BaseParameters;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
+using QS.Cloud.Client;
+using QS.Cloud.WearLk.Client;
 using QS.Configuration;
 using QS.Deletion;
 using QS.Deletion.Views;
@@ -47,7 +49,6 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
 using workwear.Journal;
-using workwear.Measurements;
 using workwear.Repository.Operations;
 using workwear.Tools;
 using workwear.Tools.Features;
@@ -55,6 +56,7 @@ using workwear.Tools.IdentityCards;
 using workwear.Tools.Import;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
+using Workwear.Measurements;
 using Workwear.Sql;
 
 namespace workwear
@@ -215,6 +217,8 @@ namespace workwear
 			builder.Register(c => ScriptsConfiguration.MakeUpdateConfiguration()).AsSelf();
 			builder.Register(c => ScriptsConfiguration.MakeCreationScript()).AsSelf();
 			#endregion
+
+			#region Облако
 			builder.Register(c => new CloudClientService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			builder.Register(c => new LkUserManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			#endregion
