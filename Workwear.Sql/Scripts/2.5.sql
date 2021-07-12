@@ -5,6 +5,14 @@ DELETE FROM base_parameters WHERE name = 'edition';
 -- Обновление схемы
 ALTER SCHEMA DEFAULT CHARACTER SET utf8mb4  DEFAULT COLLATE utf8mb4_general_ci ;
 
+-- Удаляем дубликаты Табельных номеров, в новой версии поле должно быть уникально
+UPDATE wear_cards SET wear_cards.personnel_number = NULL WHERE 
+EXISTS(SELECT 1 FROM wear_cards sub WHERE sub.personnel_number = wear_cards.personnel_number AND sub.id > wear_cards.id);
+
+-- Удаляем дубликаты номеров карточек, в новой версии поле должно быть уникально
+UPDATE wear_cards SET wear_cards.card_number = NULL WHERE
+    EXISTS(SELECT 1 FROM wear_cards sub WHERE sub.card_number = wear_cards.card_number AND sub.id > wear_cards.id);
+
 -- Удаляем обновляемые ключи
 ALTER TABLE `stock_expense` 
 DROP FOREIGN KEY `fk_stock_expense_1`;
@@ -44,7 +52,6 @@ ADD COLUMN `comments` TEXT NULL DEFAULT NULL AFTER `profession_id`,
 ADD INDEX `fk_posts_subdivision_idx` (`subdivision_id` ASC),
 ADD INDEX `fk_posts_department_idx` (`department_id` ASC),
 ADD INDEX `fk_posts_professions_idx` (`profession_id` ASC);
-;
 
 ALTER TABLE `leaders` 
 CHARACTER SET = utf8mb4 , COLLATE = utf8mb4_general_ci ;
@@ -96,7 +103,6 @@ ADD INDEX `fk_user_settings_warehouse_id_idx` (`default_warehouse_id` ASC),
 ADD INDEX `fk_user_settings_organization_id_idx` (`default_organization_id` ASC),
 ADD INDEX `fk_user_settings_leader_id_idx` (`default_leader_id` ASC),
 ADD INDEX `fk_user_settings_responsible_person_id_idx` (`default_responsible_person_id` ASC);
-;
 
 ALTER TABLE `operation_issued_by_employee` 
 CHARACTER SET = utf8mb4 , COLLATE = utf8mb4_general_ci ,
@@ -104,7 +110,11 @@ ADD COLUMN `protection_tools_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `auto_
 ADD COLUMN `operation_write_off_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `buh_document`,
 ADD COLUMN `sign_key` VARCHAR(16) NULL DEFAULT NULL AFTER `operation_write_off_id`,
 ADD COLUMN `sign_timestamp` DATETIME NULL DEFAULT NULL AFTER `sign_key`,
+ADD INDEX IF NOT EXISTS `fk_operation_issued_by_employee_4_idx` (`warehouse_operation_id` ASC),
 ADD INDEX `fk_operation_issued_by_employee_protection_tools_idx` (`protection_tools_id` ASC),
+DROP INDEX IF EXISTS `fk_operation_issued_by_employee_6_idx`;
+
+ALTER TABLE `operation_issued_by_employee`
 ADD INDEX `fk_operation_issued_by_employee_6_idx` (`operation_write_off_id` ASC);
 
 ALTER TABLE `vacation_type` 

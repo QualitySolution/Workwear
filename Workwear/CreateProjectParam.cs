@@ -5,13 +5,12 @@ using Autofac;
 using QS.BaseParameters;
 using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
-using QS.Cloud.Client;
-using QS.Cloud.WearLk.Client;
 using QS.Configuration;
 using QS.Deletion;
 using QS.Deletion.Views;
 using QS.Dialog;
 using QS.Dialog.GtkUI;
+using QS.Dialog.ViewModels;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Features;
@@ -48,6 +47,7 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
 using workwear.Journal;
+using workwear.Measurements;
 using workwear.Repository.Operations;
 using workwear.Tools;
 using workwear.Tools.Features;
@@ -55,7 +55,7 @@ using workwear.Tools.IdentityCards;
 using workwear.Tools.Import;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
-using Workwear.Measurements;
+using Workwear.Sql;
 
 namespace workwear
 {
@@ -194,6 +194,9 @@ namespace workwear
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(OrganizationViewModel)))
 				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
 				.AsSelf();
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(ProgressWindowViewModel)))
+				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
+				.AsSelf();
 			#endregion
 
 			#region Repository
@@ -209,10 +212,9 @@ namespace workwear
 			#region Обновления и версии
 			builder.RegisterType<ApplicationVersionInfo>().As<IApplicationInfo>();
 			builder.RegisterModule(new UpdaterAutofacModule());
-			builder.Register(c => MainClass.MakeUpdateConfiguration()).AsSelf();
+			builder.Register(c => ScriptsConfiguration.MakeUpdateConfiguration()).AsSelf();
+			builder.Register(c => ScriptsConfiguration.MakeCreationScript()).AsSelf();
 			#endregion
-
-			#region Облако
 			builder.Register(c => new CloudClientService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			builder.Register(c => new LkUserManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			#endregion

@@ -8,7 +8,6 @@ node {
          extensions: scm.extensions + [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'Workwear']],
          userRemoteConfigs: scm.userRemoteConfigs
       ])
-      sh 'nuget restore Workwear/Workwear.sln'
    }
    stage('QSProjects') {
       checkout([$class: 'GitSCM', branches: [[name: '*/release/1.5']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'QSProjects']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/QSProjects.git']]])
@@ -28,6 +27,7 @@ node {
       checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'RusGuardSharp']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/RusGuardSharp.git']]]
    }
    stage('Build') {
+   	    sh 'nuget restore Workwear/Workwear.sln'
         sh 'rm -f Workwear/WinInstall/workwear-*.exe'
         sh 'Workwear/WinInstall/makeWinInstall.sh'
         recordIssues enabledForFailure: true, tool: msBuild()

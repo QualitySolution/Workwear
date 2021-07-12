@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="Scripts\*.sql" />
+      <EmbeddedResource Include="Scripts\*.sql" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj" />
+    </ItemGroup>
+
+</Project>

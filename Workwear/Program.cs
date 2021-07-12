@@ -1,12 +1,14 @@
 using System;
+using Autofac;
 using Gtk;
 using NLog;
+using QS.DBScripts.Controllers;
 using QS.Dialog;
 using QS.ErrorReporting;
+using QS.Navigation;
 using QS.Project.DB;
 using QS.Project.Repositories;
 using QS.Project.Versioning;
-using QS.Updater.DB;
 using QSProjectsLib;
 using QSTelemetry;
 
@@ -48,15 +50,18 @@ namespace workwear
 				logger.Fatal(falalEx);
 				return;
 			}
-
-			RegisterSQLScripts ();
+			
 			try {
 				AutofacClassConfig();
 			}catch(MissingMethodException ex) when (ex.Message.Contains("System.String System.String.Format"))
 			{
 				WindowStartupFix.DisplayWindowsOkMessage("Версия .Net Framework должна быть не ниже 4.6.1. Установите боллее новую платформу.", "Старая версия .Net");
 			}
-
+			ILifetimeScope scopeLoginTime = null;
+			scopeLoginTime = AppDIContainer.BeginLifetimeScope(builder => {
+				builder.RegisterType<GtkWindowsNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
+				builder.Register((ctx) => new AutofacViewModelsGtkPageFactory(scopeLoginTime)).As<IViewModelsPageFactory>();
+			});
 			// Создаем окно входа
 			Login LoginDialog = new Login ();
 			LoginDialog.Logo = Gdk.Pixbuf.LoadFromResource ("workwear.icon.logo.png");
@@ -74,6 +79,7 @@ namespace workwear
 			"Для установки собственного сервера обратитесь к документации.";
 			Login.CreateDBHelpTooltip = "Инструкция по установке сервера MySQL";
 			Login.CreateDBHelpUrl = "http://workwear.qsolution.ru/?page_id=168&utm_source=qs&utm_medium=app_workwear&utm_campaign=connection_editor";
+			LoginDialog.GetDBCreator = scopeLoginTime.Resolve<IDBCreator>;
 
 			LoginDialog.UpdateFromGConf ();
 
@@ -83,6 +89,8 @@ namespace workwear
 				return;
 
 			LoginDialog.Destroy ();
+			scopeLoginTime.Dispose();
+
 			QSSaaS.Session.StartSessionRefresh ();
 
 			//Прописываем системную валюту
@@ -128,96 +136,6 @@ namespace workwear
 			}
 			QSSaaS.Session.StopSessionRefresh ();
 			MainClass.AppDIContainer.Dispose();
-		}
-
-		static void RegisterSQLScripts()
-		{
-			//Скрипты создания базы
-			DBCreator.AddBaseScript(
-				new Version(2, 4),
-				"Чистая база",
-				"workwear.Updates.new_empty.sql"
-			);
-		}
-
-		public static UpdateConfiguration MakeUpdateConfiguration()
-		{
-			var configuration = new UpdateConfiguration();
-
-			configuration.AddMicroUpdate (
-				new Version (1, 0),
-				new Version (1, 0, 4),
-				"workwear.Updates.1.0.4.sql");
-			configuration.AddMicroUpdate (
-				new Version (1, 0, 4),
-				new Version (1, 0, 5),
-				"workwear.Updates.1.0.5.sql");
-			configuration.AddUpdate (
-				new Version (1, 0),
-				new Version (1, 1),
-				"workwear.Updates.Update to 1.1.sql");
-			configuration.AddUpdate (
-				new Version (1, 1),
-				new Version (1, 2),
-				"workwear.Updates.Update to 1.2.sql");
-			configuration.AddMicroUpdate (
-				new Version (1, 2),
-				new Version (1, 2, 1),
-				"workwear.Updates.1.2.1.sql");
-			configuration.AddMicroUpdate (
-				new Version (1, 2, 1),
-				new Version (1, 2, 2),
-				"workwear.Updates.1.2.2.sql");
-			configuration.AddMicroUpdate (
-				new Version (1, 2, 2),
-				new Version (1, 2, 4),
-				"workwear.Updates.1.2.4.sql");
-			configuration.AddUpdate (
-				new Version (1, 2),
-				new Version (2, 0),
-				"workwear.Updates.2.0.sql");
-			configuration.AddMicroUpdate(
-				new Version(2, 0),
-				new Version(2, 0, 2),
-				"workwear.Updates.2.0.2.sql");
-			configuration.AddUpdate(
-				new Version(2, 0),
-				new Version(2, 1),
-				"workwear.Updates.2.1.sql");
-			configuration.AddMicroUpdate(
-				new Version(2, 1),
-				new Version(2, 1, 1),
-				"workwear.Updates.2.1.1.sql");
-			configuration.AddUpdate(
-				new Version(2, 1),
-				new Version(2, 2),
-				"workwear.Updates.2.2.sql");
-			configuration.AddUpdate(
-				new Version(2, 2),
-				new Version(2, 3),
-				"workwear.Updates.2.3.sql");
-			configuration.AddMicroUpdate(
-				new Version(2, 3),
-				new Version(2, 3, 3),
-				"workwear.Updates.2.3.3.sql");
-			configuration.AddUpdate(
-				new Version(2, 3),
-				new Version(2, 4),
-				"workwear.Updates.2.4.sql");
-			configuration.AddMicroUpdate(
-				new Version(2, 4),
-				new Version(2, 4, 1),
-				"workwear.Updates.2.4.1.sql");
-			configuration.AddMicroUpdate(
-				new Version(2, 4, 1),
-				new Version(2, 4, 3),
-				"workwear.Updates.2.4.3.sql");
-			configuration.AddUpdate(
-				new Version(2, 4, 3),
-				new Version(2, 5),
-				"workwear.Updates.2.5.sql");
-
-			return configuration;
 		}
 	}
 }

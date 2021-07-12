@@ -94,36 +94,17 @@
     </EmbeddedResource>
     <EmbeddedResource Include="icon\logo.png" />
     <EmbeddedResource Include="icon\logo.ico" />
-    <EmbeddedResource Include="Updates\1.0.4.sql" />
-    <EmbeddedResource Include="Updates\1.0.5.sql" />
-    <EmbeddedResource Include="Updates\Update to 1.1.sql" />
-    <EmbeddedResource Include="Updates\Update to 1.2.sql" />
-    <EmbeddedResource Include="Updates\1.2.1.sql" />
-    <EmbeddedResource Include="Updates\1.2.2.sql" />
-    <EmbeddedResource Include="Updates\1.2.4.sql" />
     <EmbeddedResource Include="icon\toolbar\store-balance.png" />
     <EmbeddedResource Include="icon\toolbar\store.png" />
     <EmbeddedResource Include="icon\toolbar\employees.png" />
     <EmbeddedResource Include="icon\toolbar\go-home.png" />
-    <EmbeddedResource Include="Updates\2.0.sql" />
     <EmbeddedResource Include="icon\menu\www.png" />
     <EmbeddedResource Include="icon\menu\youtube.png" />
     <EmbeddedResource Include="icon\menu\vk.png" />
     <EmbeddedResource Include="icon\menu\twitter.png" />
     <EmbeddedResource Include="icon\menu\google-plus.png" />
     <EmbeddedResource Include="icon\menu\odnoklasniki.png" />
-    <EmbeddedResource Include="Updates\2.0.2.sql" />
-    <EmbeddedResource Include="Updates\2.1.sql" />
     <EmbeddedResource Include="icon\buttons\timeline_marker.png" />
-    <EmbeddedResource Include="Updates\new_empty.sql" />
-    <EmbeddedResource Include="Updates\2.2.sql" />
-    <EmbeddedResource Include="Updates\2.1.1.sql" />
-    <EmbeddedResource Include="Updates\2.3.sql" />
-    <EmbeddedResource Include="Updates\2.3.3.sql" />
-    <EmbeddedResource Include="Updates\2.4.sql" />
-    <EmbeddedResource Include="Updates\2.4.1.sql" />
-    <EmbeddedResource Include="Updates\2.4.3.sql" />
-    <EmbeddedResource Include="Updates\2.5.sql" />
     <EmbeddedResource Include="icon\toolbar\smart-card.png" />
     <EmbeddedResource Include="icon\buttons\smart-card.png" />
     <EmbeddedResource Include="icon\art\hand-holding-rfid.png" />
@@ -444,6 +425,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <ProjectReference Include="..\..\QSProjects\QS.Project.Desktop\QS.Project.Desktop.csproj">
+      <Project>{5ef2a7da-3886-4809-95df-880bd783a211}</Project>
+      <Name>QS.Project.Desktop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QSProjectsLib\QSProjectsLib.csproj">
       <Project>{A6C1914F-7732-49F5-BABA-8BBBA521FAAB}</Project>
       <Name>QSProjectsLib</Name>
@@ -556,11 +541,22 @@
       <Project>{390CE39B-B071-424E-9763-645E7624D9E3}</Project>
       <Name>QS.Cloud.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj">
+      <Project>{80540F2C-3187-4018-BB15-DD31173C8176}</Project>
+      <Name>QS.Project.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Workwear.Sql\Workwear.Sql.csproj">
+      <Project>{CD86B5DA-6D84-4406-B7A8-0A35E87772AA}</Project>
+      <Name>Workwear.Sql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj">
+      <Project>{38A99A76-C15A-4C55-8221-375D25E29F26}</Project>
+      <Name>QS.Updater.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
     <Folder Include="Reports\" />
-    <Folder Include="Updates\" />
     <Folder Include="viewDTOs\" />
     <Folder Include="Domain\" />
     <Folder Include="Dialogs\" />

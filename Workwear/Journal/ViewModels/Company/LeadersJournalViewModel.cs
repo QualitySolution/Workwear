@@ -1,12 +1,13 @@
-﻿using QS.Services;
+﻿using NHibernate;
+using NHibernate.Transform;
+using QS.Dialog;
+using QS.DomainModel.UoW;
+using QS.Navigation;
 using QS.Project.Journal;
+using QS.Project.Services;
+using QS.Services;
 using workwear.Domain.Company;
 using workwear.ViewModels.Company;
-using QS.DomainModel.UoW;
-using NHibernate;
-using NHibernate.Transform;
-using QS.Navigation;
-using QS.Project.Services;
 
 namespace workwear.Journal.ViewModels.Company
 {
