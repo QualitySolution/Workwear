@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace workwear.Tools.Import
+namespace workwear.Models.Import
 {
-	public enum DataType
+	public enum DataTypeEmployee
 	{
 		[Display(Name = "Пропустить")]
 		Unknown,

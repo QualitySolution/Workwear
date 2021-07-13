@@ -1,5 +1,5 @@
 ﻿using System;
-namespace workwear.Tools.Import
+namespace workwear.Models.Import
 {
 	public class FIO
 	{

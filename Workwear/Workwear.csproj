@@ -27,6 +27,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <Optimize>true</Optimize>
@@ -35,6 +36,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWin|x86' ">
     <Optimize>true</Optimize>
@@ -43,6 +45,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="$(Configuration.Contains('Win'))">
     <TargetOS>Win</TargetOS>
@@ -375,13 +378,7 @@
     <Compile Include="ViewModels\Tools\EmployeesLoadViewModel.cs" />
     <Compile Include="Views\Tools\EmployeesLoadView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Tools.EmployeesLoadView.cs" />
-    <Compile Include="Tools\Import\ImportedColumn.cs" />
-    <Compile Include="Tools\Import\ImportedSheet.cs" />
-    <Compile Include="Tools\Import\SheetRow.cs" />
-    <Compile Include="Tools\Import\DataParserEmployee.cs" />
     <Compile Include="Tools\IdentityCards\ICardReaderService.cs" />
-    <Compile Include="Tools\Import\DataType.cs" />
-    <Compile Include="Tools\Import\FIO.cs" />
     <Compile Include="Tools\IdentityCards\VirtualCardReaderService.cs" />
     <Compile Include="Journal\ViewModels\Stock\StockDocumentsJournalViewModel.cs" />
     <Compile Include="Journal\Filter.Views\Stock\StockDocumentsFilterView.cs" />
@@ -422,6 +419,18 @@
       <Link>Domain\Regulations\NormPeriodType.cs</Link>
     </Compile>
     <Compile Include="Repository\Company\PostRepository.cs" />
+    <Compile Include="ViewModels\Tools\ExcelLoadViewModelBase.cs" />
+    <Compile Include="Models\Import\DataParserEmployee.cs" />
+    <Compile Include="Models\Import\DataParserNorm.cs" />
+    <Compile Include="Models\Import\DataTypeEmployee.cs" />
+    <Compile Include="Models\Import\DataTypeNorm.cs" />
+    <Compile Include="Models\Import\FIO.cs" />
+    <Compile Include="Models\Import\ImportedColumn.cs" />
+    <Compile Include="Models\Import\ImportedSheet.cs" />
+    <Compile Include="Models\Import\SheetRowBase.cs" />
+    <Compile Include="Models\Import\IDataParser.cs" />
+    <Compile Include="Models\Import\DataParserBase.cs" />
+    <Compile Include="Models\Import\SheetRowEmployee.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -542,7 +551,7 @@
       <Name>QS.Cloud.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj">
-      <Project>{80540F2C-3187-4018-BB15-DD31173C8176}</Project>
+      <Project>{C01AE5A4-3CFF-4C7B-884D-45B07ACDE761}</Project>
       <Name>QS.Project.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Workwear.Sql\Workwear.Sql.csproj">
@@ -550,7 +559,7 @@
       <Name>Workwear.Sql</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj">
-      <Project>{38A99A76-C15A-4C55-8221-375D25E29F26}</Project>
+      <Project>{BC159BA7-EF22-4800-AC34-DE4B2B386AAE}</Project>
       <Name>QS.Updater.Core</Name>
     </ProjectReference>
   </ItemGroup>
@@ -620,9 +629,10 @@
     <Folder Include="ReportParameters\ViewModels\" />
     <Folder Include="ReportParameters\Views\" />
     <Folder Include="Tools\IdentityCards\" />
-    <Folder Include="Tools\Import\" />
     <Folder Include="Views\IdentityCards\" />
     <Folder Include="ViewModels\IdentityCards\" />
+    <Folder Include="Models\" />
+    <Folder Include="Models\Import\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

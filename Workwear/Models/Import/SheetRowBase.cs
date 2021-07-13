@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NPOI.SS.UserModel;
-using workwear.Domain.Company;
 using workwear.ViewModels.Tools;
 
-namespace workwear.Tools.Import
+namespace workwear.Models.Import
 {
-	public class SheetRow
+	public abstract class SheetRowBase<TDataTypeEnum>
+		where TDataTypeEnum : System.Enum
 	{
 		private readonly IRow cells;
 
-		public SheetRow(IRow cells)
+		public SheetRowBase(IRow cells)
 		{
 			this.cells = cells;
 		}
@@ -34,25 +34,21 @@ namespace workwear.Tools.Import
 		public string CellBackgroundColor(int col)
 		{
 			if(Skiped)
-				return EmployeesLoadViewModel.ColorOfSkiped;
+				return ExcelLoadViewModelBase<TDataTypeEnum>.ColorOfSkiped;
 
 			if(ChangedColumns.Any(x => x.Index == col)) {
-				if(Employees.Any())
-					return EmployeesLoadViewModel.ColorOfChanged;
+				if(NeedCreateItem)
+					return ExcelLoadViewModelBase<TDataTypeEnum>.ColorOfNew;
 				else
-					return EmployeesLoadViewModel.ColorOfNew;
+					return ExcelLoadViewModelBase<TDataTypeEnum>.ColorOfChanged;
 			}
 			return null;
 		}
 
-		#region Сопоставление с сотрудниками
-
-		public List<EmployeeCard> Employees = new List<EmployeeCard>();
+		protected abstract bool NeedCreateItem {get;}
 
 		public bool Skiped;
 
-		public List<ImportedColumn> ChangedColumns = new List<ImportedColumn>();
-
-		#endregion
+		public List<ImportedColumn<TDataTypeEnum>> ChangedColumns = new List<ImportedColumn<TDataTypeEnum>>();
 	}
 }

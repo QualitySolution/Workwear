@@ -6,7 +6,7 @@ using Gamma.Utilities;
 using Gamma.Widgets;
 using Gtk;
 using QS.Views.Dialog;
-using workwear.Tools.Import;
+using workwear.Models.Import;
 using workwear.ViewModels.Tools;
 
 namespace workwear.Views.Tools
@@ -85,7 +85,7 @@ namespace workwear.Views.Tools
 
 		private void RefreshTableColumns()
 		{
-			var config = ColumnsConfigFactory.Create<SheetRow>();
+			var config = ColumnsConfigFactory.Create<SheetRowEmployee>();
 			for(int i = 0; i < ViewModel.Columns.Count; i++) {
 				int col = i;
 				config.AddColumn(ViewModel.Columns[i].Title).HeaderAlignment(0.5f).Resizable()
@@ -115,7 +115,7 @@ namespace workwear.Views.Tools
 				columnsLabels.Add(label);
 				tableColumns.Attach(label, 0, 1, nrow, nrow + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 				var combo = new yEnumComboBox();
-				combo.ItemsEnum = typeof(DataType);
+				combo.ItemsEnum = typeof(DataTypeEmployee);
 				combo.Binding.AddBinding(column, c => c.DataType, w => w.SelectedItem).InitializeFromSource();
 				columnsTypeCombos.Add(combo);
 				tableColumns.Attach(combo, 1, 2, nrow, nrow + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);

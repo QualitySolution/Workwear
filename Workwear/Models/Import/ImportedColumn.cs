@@ -2,9 +2,10 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 
-namespace workwear.Tools.Import
+namespace workwear.Models.Import
 {
-	public class ImportedColumn : PropertyChangedBase
+	public class ImportedColumn<TDataTypeEnum> : PropertyChangedBase
+		where TDataTypeEnum : System.Enum
 	{
 		public readonly int Index;
 
@@ -14,8 +15,8 @@ namespace workwear.Tools.Import
 			set => SetField(ref title, value);
 		}
 
-		private DataType dataType;
-		public virtual DataType DataType {
+		private TDataTypeEnum dataType;
+		public virtual TDataTypeEnum DataType {
 			get => dataType;
 			set => SetField(ref dataType, value);
 		}
