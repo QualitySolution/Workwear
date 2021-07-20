@@ -39,7 +39,7 @@ namespace workwear.Journal.ViewModels.Regulations
 			return norms
 				.JoinAlias(n => n.Document, () => regulationDocAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(n => n.Annex, () => docAnnexAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinQueryOver(() => normAlias.Professions, () => professionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinQueryOver(() => normAlias.Posts, () => professionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.Where(GetSearchCriterion(
 					() => normAlias.Name,
 					() => normAlias.TONParagraph

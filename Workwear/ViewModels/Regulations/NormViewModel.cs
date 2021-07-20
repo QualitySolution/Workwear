@@ -68,7 +68,7 @@ namespace workwear.ViewModels.Regulations
 			if(e.CloseSource == CloseSource.Save) {
 				var page = sender as IPage<PostViewModel>;
 				var post = UoW.GetById<Post>(page.ViewModel.Entity.Id);
-				Entity.AddProfession(post);
+				Entity.AddPost(post);
 			}
 		}
 
@@ -83,14 +83,14 @@ namespace workwear.ViewModels.Regulations
 		{
 			foreach(var postNode in e.SelectedObjects) {
 				var post = UoW.GetById<Post>(postNode.GetId());
-				Entity.AddProfession(post);
+				Entity.AddPost(post);
 			}
 		}
 
 		public void RemoveProfession(Post[] professions)
 		{
 			foreach(var prof in professions) {
-				Entity.RemoveProfession(prof);
+				Entity.RemovePost(prof);
 			}
 		}
 		#endregion

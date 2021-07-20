@@ -49,7 +49,7 @@ namespace workwear
 				.AddClearDependence<UserSettings>(x => x.DefaultOrganization);
 
 			DeleteConfig.AddHibernateDeleteInfo<Post>()
-				.AddRemoveFromDependence<Norm>(x => x.Professions)
+				.AddRemoveFromDependence<Norm>(x => x.Posts)
 				.AddClearDependence<EmployeeCard>(x => x.Post);
 
 			DeleteConfig.AddHibernateDeleteInfo<Subdivision> ()

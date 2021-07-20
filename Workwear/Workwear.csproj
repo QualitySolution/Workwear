@@ -132,7 +132,6 @@
     <Compile Include="Measurements\SizeStandart.cs" />
     <Compile Include="Measurements\СlothesType.cs" />
     <Compile Include="Measurements\SizeHelper.cs" />
-    <Compile Include="Repository\NormRepository.cs" />
     <Compile Include="Domain\Stock\Expense.cs" />
     <Compile Include="HibernateMapping\Stock\ExpenseMap.cs" />
     <Compile Include="Domain\Stock\ExpenseItem.cs" />
@@ -375,9 +374,6 @@
     <Compile Include="Tools\IdentityCards\DeviceInfo.cs" />
     <Compile Include="Tools\IdentityCards\CardType.cs" />
     <Compile Include="Tools\IdentityCards\CardStateEventArgs.cs" />
-    <Compile Include="ViewModels\Tools\EmployeesLoadViewModel.cs" />
-    <Compile Include="Views\Tools\EmployeesLoadView.cs" />
-    <Compile Include="gtk-gui\workwear.Views.Tools.EmployeesLoadView.cs" />
     <Compile Include="Tools\IdentityCards\ICardReaderService.cs" />
     <Compile Include="Tools\IdentityCards\VirtualCardReaderService.cs" />
     <Compile Include="Journal\ViewModels\Stock\StockDocumentsJournalViewModel.cs" />
@@ -419,7 +415,6 @@
       <Link>Domain\Regulations\NormPeriodType.cs</Link>
     </Compile>
     <Compile Include="Repository\Company\PostRepository.cs" />
-    <Compile Include="ViewModels\Tools\ExcelLoadViewModelBase.cs" />
     <Compile Include="Models\Import\DataParserEmployee.cs" />
     <Compile Include="Models\Import\DataParserNorm.cs" />
     <Compile Include="Models\Import\DataTypeEmployee.cs" />
@@ -431,6 +426,25 @@
     <Compile Include="Models\Import\IDataParser.cs" />
     <Compile Include="Models\Import\DataParserBase.cs" />
     <Compile Include="Models\Import\SheetRowEmployee.cs" />
+    <Compile Include="Models\Import\SheetRowNorm.cs" />
+    <Compile Include="Repository\Regulations\NormRepository.cs" />
+    <Compile Include="Repository\Regulations\ProtectionToolsRepository.cs" />
+    <Compile Include="Models\Import\ChangeType.cs" />
+    <Compile Include="ViewModels\Import\CountersViewModel.cs" />
+    <Compile Include="Models\Import\CountersNorm.cs" />
+    <Compile Include="Models\Import\CountersEmployee.cs" />
+    <Compile Include="Views\Import\ExcelImportView.cs" />
+    <Compile Include="Models\Import\IImportModel.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Import.ExcelImportView.cs" />
+    <Compile Include="ViewModels\Import\ExcelImportViewModel.cs" />
+    <Compile Include="Models\Import\ImportModelEmployee.cs" />
+    <Compile Include="Models\Import\ImportModelNorm.cs" />
+    <Compile Include="Views\Import\CountersView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Import.CountersView.cs" />
+    <Compile Include="Models\Import\Counter.cs" />
+    <Compile Include="Models\Import\ImportModelBase.cs" />
+    <Compile Include="Tools\NHibernate\ProgresSessionProvider.cs" />
+    <Compile Include="Tools\NHibernate\ProgressInterceptor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -633,6 +647,10 @@
     <Folder Include="ViewModels\IdentityCards\" />
     <Folder Include="Models\" />
     <Folder Include="Models\Import\" />
+    <Folder Include="Repository\Regulations\" />
+    <Folder Include="ViewModels\Import\" />
+    <Folder Include="Views\Import\" />
+    <Folder Include="Tools\NHibernate\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
@@ -710,6 +728,7 @@
       <Link>grpc_csharp_ext.x86.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="ViewModels\Tools\NormsLoadViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Antlr3.Runtime" Version="3.5.1" />

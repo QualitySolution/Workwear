@@ -37,7 +37,7 @@ namespace workwear.Views.Regulations
 				.AddColumn ("Должность").AddTextRenderer (p => p.Name)
 				.Finish ();
 			ytreeProfessions.Selection.Mode = Gtk.SelectionMode.Multiple;
-			ytreeProfessions.ItemsDataSource = Entity.ObservableProfessions;
+			ytreeProfessions.ItemsDataSource = Entity.ObservablePosts;
 			ytreeProfessions.Selection.Changed += YtreeProfessions_Selection_Changed;
 
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<NormItem>.Create ()

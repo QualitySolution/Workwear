@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NPOI.SS.UserModel;
-using workwear.ViewModels.Tools;
+using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import
 {
-	public abstract class SheetRowBase<TDataTypeEnum>
+	public abstract class SheetRowBase<TDataTypeEnum> : ISheetRow
 		where TDataTypeEnum : System.Enum
 	{
 		private readonly IRow cells;
@@ -34,21 +34,27 @@ namespace workwear.Models.Import
 		public string CellBackgroundColor(int col)
 		{
 			if(Skiped)
-				return ExcelLoadViewModelBase<TDataTypeEnum>.ColorOfSkiped;
+				return ExcelImportViewModel.ColorOfSkiped;
 
-			if(ChangedColumns.Any(x => x.Index == col)) {
-				if(NeedCreateItem)
-					return ExcelLoadViewModelBase<TDataTypeEnum>.ColorOfNew;
-				else
-					return ExcelLoadViewModelBase<TDataTypeEnum>.ColorOfChanged;
+			var column = ChangedColumns.Keys.FirstOrDefault(x => x.Index == col);
+
+			if(column != null) {
+				switch(ChangedColumns[column]) {
+					case ChangeType.NewEntity : return ExcelImportViewModel.ColorOfNew;
+					case ChangeType.ChangeValue : return ExcelImportViewModel.ColorOfChanged;
+				}
 			}
 			return null;
 		}
 
-		protected abstract bool NeedCreateItem {get;}
-
 		public bool Skiped;
 
-		public List<ImportedColumn<TDataTypeEnum>> ChangedColumns = new List<ImportedColumn<TDataTypeEnum>>();
+		public Dictionary<ImportedColumn<TDataTypeEnum>, ChangeType> ChangedColumns = new Dictionary<ImportedColumn<TDataTypeEnum>, ChangeType>();
+	}
+
+	public interface ISheetRow
+	{
+		string CellValue(int col);
+		string CellBackgroundColor(int col);
 	}
 }

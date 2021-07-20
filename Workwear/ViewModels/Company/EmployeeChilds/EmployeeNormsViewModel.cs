@@ -8,6 +8,7 @@ using QS.ViewModels;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
+using workwear.Repository.Regulations;
 using workwear.ViewModels.Regulations;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
@@ -79,7 +80,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void NormFromPost()
 		{
-			var norms = Repository.NormRepository.GetNormForPost(UoW, Entity.Post);
+			var norms = NormRepository.GetNormForPost(UoW, Entity.Post);
 			foreach(var norm in norms)
 				Entity.AddUsedNorm(norm);
 		}
@@ -96,6 +97,5 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 			if(e.PropertyName == nameof(Entity.Post))
 				OnPropertyChanged(nameof(SensetiveNormFromPost));
 		}
-
 	}
 }

@@ -54,6 +54,7 @@ using workwear.Repository.Operations;
 using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
+using workwear.Tools.Nhibernate;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
 using Workwear.Measurements;
@@ -110,7 +111,8 @@ namespace workwear
 
 			#region База
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
-			builder.RegisterType<DefaultSessionProvider>().As<ISessionProvider>();
+			builder.RegisterType<ProgressInterceptor>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<ProgresSessionProvider>().As<ISessionProvider>();
 			builder.Register(c => new MySqlConnectionFactory(Connection.ConnectionString)).As<IConnectionFactory>();
 			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf();
@@ -243,6 +245,7 @@ namespace workwear
 
 			#region Импрорт данных
 			builder.RegisterType<DataParserEmployee>().AsSelf();
+			builder.RegisterType<DataParserNorm>().AsSelf();
 			#endregion
 			AppDIContainer = builder.Build();
 		}

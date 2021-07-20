@@ -4,7 +4,7 @@ using QS.DomainModel.Entity;
 
 namespace workwear.Models.Import
 {
-	public class ImportedColumn<TDataTypeEnum> : PropertyChangedBase
+	public class ImportedColumn<TDataTypeEnum> : PropertyChangedBase, IDataColumn
 		where TDataTypeEnum : System.Enum
 	{
 		public readonly int Index;
@@ -21,9 +21,17 @@ namespace workwear.Models.Import
 			set => SetField(ref dataType, value);
 		}
 
+		Enum IDataColumn.DataType => dataType;
+
 		public ImportedColumn(int index)
 		{
 			Index = index;
 		}
+	}
+
+	public interface IDataColumn
+	{
+		string Title { get; }
+		Enum DataType { get; }
 	}
 }

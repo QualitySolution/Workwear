@@ -58,21 +58,21 @@ namespace workwear.Domain.Regulations
 			set => SetField(ref name, value);
 		}
 
-		private IList<Post> professions = new List<Post>();
+		private IList<Post> posts = new List<Post>();
 
-		[Display (Name = "Профессии")]
-		public virtual IList<Post> Professions {
-			get { return professions; }
-			set { SetField (ref professions, value, () => Professions); }
+		[Display (Name = "Должности")]
+		public virtual IList<Post> Posts {
+			get { return posts; }
+			set { SetField (ref posts, value, () => Posts); }
 		}
 
-		GenericObservableList<Post> observableProfessions;
+		GenericObservableList<Post> observablePosts;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<Post> ObservableProfessions {
+		public virtual GenericObservableList<Post> ObservablePosts {
 			get {
-				if (observableProfessions == null)
-					observableProfessions = new GenericObservableList<Post> (Professions);
-				return observableProfessions;
+				if (observablePosts == null)
+					observablePosts = new GenericObservableList<Post> (Posts);
+				return observablePosts;
 			}
 		}
 
@@ -121,7 +121,7 @@ namespace workwear.Domain.Regulations
 		#region Генерируемые
 
 		public virtual string ProfessionsText {
-			get{ return String.Join ("; ", Professions.Select (p => p.Name));
+			get{ return String.Join ("; ", Posts.Select (p => p.Name));
 			}
 		}
 
@@ -150,19 +150,19 @@ namespace workwear.Domain.Regulations
 		#endregion
 
 
-		public virtual void AddProfession(Post prof)
+		public virtual void AddPost(Post prof)
 		{
-			if(Professions.Any (p => DomainHelper.EqualDomainObjects (p, prof)))
+			if(Posts.Any (p => DomainHelper.EqualDomainObjects (p, prof)))
 			{
 				logger.Warn ("Такая профессия уже добавлена. Пропускаем...");
 				return;
 			}
-			ObservableProfessions.Add (prof);
+			ObservablePosts.Add (prof);
 		}
 
-		public virtual void RemoveProfession(Post prof)
+		public virtual void RemovePost(Post prof)
 		{
-			ObservableProfessions.Remove (prof);
+			ObservablePosts.Remove (prof);
 		}
 
 		public virtual NormItem AddItem(ProtectionTools tools)
@@ -201,8 +201,8 @@ namespace workwear.Domain.Regulations
 			newNorm.TONParagraph= this.tonParagraph;
 			newNorm.Name = this.name;
 			//тут передобавлять
-			foreach(var item in this.professions) {
-				newNorm.ObservableProfessions.Add(item);
+			foreach(var item in this.posts) {
+				newNorm.ObservablePosts.Add(item);
 			}
 			//тут передобавлять
 			foreach(var item in this.items.Select(i => i.CopyNormItem(newNorm))) {

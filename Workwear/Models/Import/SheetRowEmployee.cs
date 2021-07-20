@@ -13,7 +13,5 @@ namespace workwear.Models.Import
 		}
 
 		public List<EmployeeCard> Employees = new List<EmployeeCard>();
-
-		protected override bool NeedCreateItem => !Employees.Any();
 	}
 }

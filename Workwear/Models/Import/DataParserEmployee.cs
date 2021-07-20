@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NHibernate;
+using NHibernate.Criterion;
+using NHibernate.Dialect.Function;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Utilities.Text;
@@ -80,7 +83,27 @@ namespace workwear.Models.Import
 				ColumnNames.Add(name.ToLower(), type);
 		}
 
-		#region Обработка данных
+		#region Обработка изменений
+		public void FindChanges(IEnumerable<SheetRowEmployee> list, ImportedColumn<DataTypeEmployee>[] meaningfulColumns)
+		{
+			foreach(var row in list) {
+				if(row.Skiped)
+					continue;
+
+				if(!row.Employees.Any()) {
+					foreach(var column in meaningfulColumns) {
+						row.ChangedColumns.Add(column, ChangeType.NewEntity);
+					}
+					continue;
+				}
+				var employee = row.Employees.First();
+				foreach(var column in meaningfulColumns) {
+					if(IsDiff(employee, column.DataType, row.CellValue(column.Index)))
+						row.ChangedColumns.Add(column, ChangeType.ChangeValue);
+				}
+			}
+		}
+
 		public bool IsDiff(EmployeeCard employee, DataTypeEmployee dataType, string value)
 		{
 			if(String.IsNullOrWhiteSpace(value))
@@ -121,24 +144,106 @@ namespace workwear.Models.Import
 			}
 		}
 		#endregion
+
+		#region Сопоставление
+		public void MatchByName(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns)
+		{
+			var searchValues = list.Select(x => GetFIO(x, columns))
+				.Where(fio => !String.IsNullOrEmpty(fio.LastName) && !String.IsNullOrEmpty(fio.FirstName))
+				.Select(fio => (fio.LastName + "|" + fio.FirstName).ToUpper())
+				.Distinct().ToArray();
+			var exists = uow.Session.QueryOver<EmployeeCard>()
+				.Where(Restrictions.In(
+				Projections.SqlFunction(
+							  "upper", NHibernateUtil.String,
+							  Projections.SqlFunction(new StandardSQLFunction("CONCAT_WS"),
+							  	NHibernateUtil.String,
+							  	Projections.Constant(""),
+								Projections.Property<EmployeeCard>(x => x.LastName),
+								Projections.Constant("|"),
+								Projections.Property<EmployeeCard>(x => x.FirstName)
+							   )),
+						   searchValues))
+				.List();
+
+			foreach(var employee in exists) {
+				var found = list.Where(x => СompareFio(x, employee, columns)).ToArray();
+				if(!found.Any())
+					continue; //Так как из базе ищем без отчества, могуть быть лишние.
+				found.First().Employees.Add(employee);
+			}
+			//Пропускаем дубликаты имен в файле
+			var groups = list.GroupBy(x => GetFIO(x, columns).GetHash());
+			foreach(var group in groups) {
+				if(String.IsNullOrWhiteSpace(group.Key)) {
+					group.First().Skiped = true;
+				}
+
+				foreach(var item in group.Skip(1)) {
+					item.Skiped = true;
+				}
+			}
+		}
+
+		private bool СompareFio(SheetRowEmployee x, EmployeeCard employee, List<ImportedColumn<DataTypeEmployee>> columns)
+		{
+			var fio = GetFIO(x, columns);
+			return String.Equals(fio.LastName, employee.LastName, StringComparison.CurrentCultureIgnoreCase)
+				&& String.Equals(fio.FirstName, employee.FirstName, StringComparison.CurrentCultureIgnoreCase)
+				&& (fio.Patronymic == null || String.Equals(fio.Patronymic, employee.Patronymic, StringComparison.CurrentCultureIgnoreCase));
+		}
+
+		public void MatchByNumber(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns)
+		{
+			var numberColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.PersonnelNumber);
+			var numbers = list.Select(x => x.CellValue(numberColumn.Index))
+							.Where(x => !String.IsNullOrWhiteSpace(x))
+							.Distinct().ToArray();
+			var exists = uow.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.PersonnelNumber.IsIn(numbers))
+				.List();
+
+			foreach(var employee in exists) {
+				var found = list.Where(x => x.CellValue(numberColumn.Index) == employee.PersonnelNumber).ToArray();
+				found.First().Employees.Add(employee);
+			}
+
+			//Пропускаем дубликаты Табельных номеров в файле
+			var groups = list.GroupBy(x => x.CellValue(numberColumn.Index));
+			foreach(var group in groups) {
+				if(String.IsNullOrWhiteSpace(group.Key)) {
+					//Если табельного номера нет проверяем по FIO
+					MatchByName(uow, group, columns);
+				}
+
+				foreach(var item in group.Skip(1)) {
+					item.Skiped = true;
+				}
+			}
+		}
+
+		#endregion
+
 		#region Сохранение данных
 		private List<Subdivision> createdSubdivisions = new List<Subdivision>();
 		private List<Post> createdPosts = new List<Post>();
-		public EmployeeCard PrepareToSave(IUnitOfWork uow, SheetRowEmployee row)
+
+		public IEnumerable<object> PrepareToSave(IUnitOfWork uow, SheetRowEmployee row)
 		{
 			var employee = row.Employees.FirstOrDefault() ?? new EmployeeCard();
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
 			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученой из общего поля ФИО.
-			foreach(var column in row.ChangedColumns.OrderBy(x => x.DataType)) {
-				SetValue(uow, employee, column.DataType, row.CellValue(column.Index));
+			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType)) {
+				foreach(var toSave in SetValue(uow, employee, column.DataType, row.CellValue(column.Index)))
+					yield return toSave;
 			}
-			return employee;
+			yield return employee;
 		}
 
-		private void SetValue(IUnitOfWork uow, EmployeeCard employee, DataTypeEmployee dataType, string value)
+		private IEnumerable<object> SetValue(IUnitOfWork uow, EmployeeCard employee, DataTypeEmployee dataType, string value)
 		{
 			if(String.IsNullOrWhiteSpace(value))
-				return;
+				yield break;
 
 			switch(dataType) {
 				case DataTypeEmployee.CardKey:
@@ -196,8 +301,8 @@ namespace workwear.Models.Import
 						subdivision = subdivisionRepository.GetSubdivisionByName(uow, value);
 					if(subdivision == null) {
 						subdivision = new Subdivision { Name = value };
-						uow.Save(subdivision);
 						createdSubdivisions.Add(subdivision);
+						yield return subdivision;
 					}
 					employee.Subdivision = subdivision;
 					break;
@@ -209,14 +314,35 @@ namespace workwear.Models.Import
 						post = postRepository.GetPostByName(uow, value, employee.Subdivision);
 					if(post == null) {
 						post = new Post { Name = value, Subdivision = employee.Subdivision};
-						uow.Save(post);
 						createdPosts.Add(post);
+						yield return post;
 					}
 					employee.Post = post;
 					break;
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
 			}
+		}
+		#endregion
+
+		#region Helpers
+
+		public FIO GetFIO(SheetRowEmployee row, List<ImportedColumn<DataTypeEmployee>> columns)
+		{
+			var fio = new FIO();
+			var lastnameColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.LastName);
+			var firstNameColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.FirstName);
+			var patronymicColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Patronymic);
+			var fioColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Fio);
+			if(fioColumn != null)
+				row.CellValue(fioColumn.Index).SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
+			if(lastnameColumn != null)
+				fio.LastName = row.CellValue(lastnameColumn.Index);
+			if(firstNameColumn != null)
+				fio.FirstName = row.CellValue(firstNameColumn.Index);
+			if(patronymicColumn != null)
+				fio.Patronymic = row.CellValue(patronymicColumn.Index);
+			return fio;
 		}
 		#endregion
 	}
