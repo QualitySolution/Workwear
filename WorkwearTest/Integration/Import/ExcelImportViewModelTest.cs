@@ -6,16 +6,17 @@ using QS.Dialog;
 using QS.Navigation;
 using QS.Testing.DB;
 using workwear.Domain.Company;
-using workwear.Tools.Import;
-using workwear.ViewModels.Tools;
 using Workwear.Domain.Company;
+using workwear.Models.Import;
 using workwear.Repository.Company;
+using workwear.Tools.Nhibernate;
+using workwear.ViewModels.Import;
 
 namespace WorkwearTest.Integration.Tools
 {
-	[TestFixture(TestOf = typeof(EmployeesLoadViewModel))]
+	[TestFixture(TestOf = typeof(ExcelImportViewModel))]
 	[Category("Integrated")]
-	public class EmployeesLoadViewModelTest : InMemoryDBGlobalConfigTestFixtureBase
+	public class ExcelImportViewModelTest : InMemoryDBGlobalConfigTestFixtureBase
 	{
 		[OneTimeSetUp]
 		public void Init()
@@ -25,14 +26,18 @@ namespace WorkwearTest.Integration.Tools
 		}
 
 		[Test(Description = "Проверяем что без проблем можем загрузить файл формата со Стойленского ГОК")]
-		public void EmployeesLoadStolenskyGok()
+		public void EmployeesLoad_StolenskyGok()
 		{
 			var navigation = Substitute.For<INavigationManager>();
 			var interactive = Substitute.For<IInteractiveMessage>();
-			var progressStep3 = Substitute.For<IProgressBarDisplayable>();
-			var dataparser = new DataParserEmployee();
-			using(var employeesLoad = new EmployeesLoadViewModel(UnitOfWorkFactory, navigation, interactive, dataparser)) {
-				employeesLoad.ProgressStep3 = progressStep3;
+			var progressStep = Substitute.For<IProgressBarDisplayable>();
+			var progressInterceptor = Substitute.For<ProgressInterceptor>();
+			var subdivisionRepository = Substitute.For<SubdivisionRepository>();
+			var postRepository = Substitute.For<PostRepository>();
+			var dataparser = new DataParserEmployee(subdivisionRepository, postRepository);
+			var model = new ImportModelEmployee(dataparser);
+			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
+				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/cardkey_list.xlsx";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
@@ -56,14 +61,18 @@ namespace WorkwearTest.Integration.Tools
 		}
 		
 		[Test(Description = "Проверяем что без проблем можем загрузить файл формата со ОСМиБТ")]
-		public void EmployeesLoadVostok1c()
+		public void EmployeesLoad_Vostok1c()
 		{
 			var navigation = Substitute.For<INavigationManager>();
 			var interactive = Substitute.For<IInteractiveMessage>();
-			var progressStep3 = Substitute.For<IProgressBarDisplayable>();
-			var dataparser = new DataParserEmployee(new SubdivisionRepository(), new PostRepository());
-			using(var employeesLoad = new EmployeesLoadViewModel(UnitOfWorkFactory, navigation, interactive, dataparser)) {
-				employeesLoad.ProgressStep3 = progressStep3;
+			var progressStep = Substitute.For<IProgressBarDisplayable>();
+			var progressInterceptor = Substitute.For<ProgressInterceptor>();
+			var subdivisionRepository = Substitute.For<SubdivisionRepository>();
+			var postRepository = Substitute.For<PostRepository>();
+			var dataparser = new DataParserEmployee(subdivisionRepository, postRepository);
+			var model = new ImportModelEmployee(dataparser);
+			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
+				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/vostok_1c_employee.xls";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
