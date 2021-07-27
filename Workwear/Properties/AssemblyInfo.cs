@@ -1,14 +1,16 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using QS.Project.Versioning;
 
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
-[assembly: AssemblyTitle("QS: Спецодежда и имущество")]
+[assembly: AssemblyTitle("QS: Спецопошив Аутсорсинг")]
 #if DEBUG
 [assembly: AssemblyBetaBuild]
 #endif
-[assembly: AssemblyDescription("Программа позволяет вести учет внутреннего склада спецодежды и имущества выдаваемого сотрудникам.")]
+[assembly: AssemblyDescription("Программа выдачи и обслуживания спецодежды по договорам «Спецпошив Аутсорсинг».")]
+[assembly: AssemblyModification("sposhiv", HideFromUser = true)]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]
 [assembly: AssemblyProductCode(2)]

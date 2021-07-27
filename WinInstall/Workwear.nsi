@@ -3,12 +3,12 @@ Unicode true
 !define PRODUCT_VERSION "2.6"
 !define NET_VERSION "4.6.1"
 !define EXE_NAME "workwear"
-!define PRODUCT_NAME "QS: Спецодежда и имущество"
-!define SHORTCUT_NAME "QS Спецодежда и имущество"
-!define MENU_DIR_NAME "Спецодежда и имущество"
-!define APP_DIR_NAME "Спецодежда и имущество"
-!define UNINSTAL_KEY "workwear"
-!define SETUP_POSTFIX ""
+!define PRODUCT_NAME "QS: Спецпошив Аутсорсинг"
+!define SHORTCUT_NAME "QS Спецпошив Аутсорсинг"
+!define MENU_DIR_NAME "Спецпошив Аутсорсинг"
+!define APP_DIR_NAME "Спецпошив Аутсорсинг"
+!define UNINSTAL_KEY "workwear-sposhiv"
+!define SETUP_POSTFIX "-sposhiv"
 
 !ifdef BETA
 	!define /redef PRODUCT_NAME "QS: Спецодежда и имущество БЕТА"
