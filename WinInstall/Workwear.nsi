@@ -4,7 +4,7 @@ Unicode true
 !define NET_VERSION "4.6.1"
 !define EXE_NAME "workwear"
 !define PRODUCT_NAME "QS: Спецпошив Аутсорсинг"
-!define SHORTCUT_NAME "QS Спецпошив Аутсорсинг"
+!define SHORTCUT_NAME "Спецпошив Аутсорсинг"
 !define MENU_DIR_NAME "Спецпошив Аутсорсинг"
 !define APP_DIR_NAME "Спецпошив Аутсорсинг"
 !define UNINSTAL_KEY "workwear-sposhiv"
