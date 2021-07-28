@@ -39,11 +39,11 @@ node {
    stage('Test'){
        try {
             def PACKAGES_LOCATION = "${JENKINS_HOME}/.nuget/packages"
-            sh '''
+            sh """
                 cd Workwear/WorkwearTest/bin/ReleaseWin
                 cp -r ${PACKAGES_LOCATION}/nunit.consolerunner/3.12.0/tools/* .
                 mono nunit3-console.exe WorkwearTest.dll
-            '''
+            """
        } catch (e) {}
        finally{
            nunit testResultsPattern: 'Workwear/WorkwearTest/bin/ReleaseWin/TestResult.xml'
