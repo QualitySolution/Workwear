@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NPOI.SS.UserModel;
 using workwear.ViewModels.Import;
@@ -42,6 +43,10 @@ namespace workwear.Models.Import
 				switch(ChangedColumns[column]) {
 					case ChangeType.NewEntity : return ExcelImportViewModel.ColorOfNew;
 					case ChangeType.ChangeValue : return ExcelImportViewModel.ColorOfChanged;
+					case ChangeType.ParseError: return ExcelImportViewModel.ColorOfError;
+					case ChangeType.NotChanged: break;
+					default:
+						throw new NotImplementedException("Не известный тип изменения");
 				}
 			}
 			return null;

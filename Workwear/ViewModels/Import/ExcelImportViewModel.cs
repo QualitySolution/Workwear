@@ -21,7 +21,7 @@ namespace workwear.ViewModels.Import
 
 		public static readonly string ColorOfNew = "Pale Turquoise";
 		public static readonly string ColorOfChanged = "Pale Green";
-		public static readonly string ColorOfError = "Red";
+		public static readonly string ColorOfError = "Pink";
 		public static readonly string ColorOfSkiped = "Orchid";
 
 		public ExcelImportViewModel(IImportModel importModel, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IInteractiveMessage interactiveMessage, ProgressInterceptor progressInterceptor, IValidator validator = null) : base(unitOfWorkFactory, navigation, validator)

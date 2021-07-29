@@ -19,6 +19,8 @@ namespace workwear.Models.Import
 		NewPosts,
 		[Display(Name = "Новых номеклатур нормы")]
 		NewProtectionTools,
+		[Display(Name = "Неоднозначных норм")]
+		AmbiguousNorms,
 		[Display(Name = "Пропущено строк")]
 		SkipRows
 	}

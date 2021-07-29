@@ -75,13 +75,11 @@ namespace workwear.Models.Import
 
 			switch(dataType) {
 				case DataTypeNorm.Subdivision:
+					return row.SubdivisionPostPair.Post.Subdivision?.Id == 0 ? ChangeType.NewEntity : ChangeType.NotChanged;
 				case DataTypeNorm.Post:
-					return row.SubdivisionPostPair.Norms.Any() ? ChangeType.NotChanged : ChangeType.NewEntity;
+					return row.SubdivisionPostPair.Post.Id == 0 ? ChangeType.NewEntity : ChangeType.NotChanged;
 				case DataTypeNorm.ProtectionTools:
-					if(row.NormItem != null)
-						return ChangeType.NotChanged;
-					else
-						return ChangeType.NewEntity;
+					return row.NormItem.ProtectionTools.Id == 0 ? ChangeType.NewEntity : ChangeType.NotChanged;
 				case DataTypeNorm.PeriodAndCount:
 					if(TryParsePeriodAndCount(value, out int amount, out int periods, out NormPeriodType periodType)) {
 						return (row.NormItem.Amount == amount && row.NormItem.PeriodCount == periods && row.NormItem.NormPeriod == periodType)
@@ -102,106 +100,129 @@ namespace workwear.Models.Import
 			var postColumn = columns.FirstOrDefault(x => x.DataType == DataTypeNorm.Post);
 			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeNorm.Subdivision);
 			var protectionToolsColumn = columns.FirstOrDefault(x => x.DataType == DataTypeNorm.ProtectionTools);
-			var matchPairs = new List<SubdivisionPostPair>();
 
 			foreach(var row in list) {
 				var postName = row.CellValue(postColumn.Index);
 				var subdivisionName = subdivisionColumn != null ? row.CellValue(subdivisionColumn.Index) : null;
 
-				var pair = matchPairs.FirstOrDefault(x => x.PostName == postName && x.SubdivisionName == subdivisionName);
+				if(String.IsNullOrWhiteSpace(postName)) {
+					row.Skiped = true;
+					continue;
+				}
+
+				var pair = MatchPairs.FirstOrDefault(x => x.PostName == postName && x.SubdivisionName == subdivisionName);
 				if(pair == null) {
 					pair = new SubdivisionPostPair(postName, subdivisionName);
-					matchPairs.Add(pair);
+					MatchPairs.Add(pair);
 				}
 				row.SubdivisionPostPair = pair;
 			}
 
-			var postNames = matchPairs.Select(x => x.PostName).Distinct().ToArray();
+			var postNames = MatchPairs.Select(x => x.PostName).Distinct().ToArray();
 			var posts = uow.Session.QueryOver<Post>()
 				.Where(x => x.Name.IsIn(postNames))
 				.Fetch(SelectMode.Fetch, x => x.Subdivision)
 				.List();
 
-			foreach(var post in posts) {
-				var pair = matchPairs.FirstOrDefault(x => x.PostName == post.Name && x.SubdivisionName == post.Subdivision?.Name);
-				if(pair != null)
-					pair.Post = post;
-			}
+			var subdivisionNames = MatchPairs.Select(x => x.SubdivisionName).Distinct().ToArray();
+			var subdivisions = uow.Session.QueryOver<Subdivision>()
+				.Where(x => x.Name.IsIn(subdivisionNames))
+				.List();
 
-			var norms = normRepository.GetNormsForPost(uow, posts.ToArray());
+			//Заполняем и создаем отсутствующие должности
+			foreach(var pair in MatchPairs)
+				SetOrMakePost(pair, posts, subdivisions);
+
+			//Заполняем существующие нормы
+			var norms = normRepository.GetNormsForPost(uow, UsedPosts.Where(x => x.Id > 0).ToArray());
 			foreach(var norm in norms) {
 				foreach(var normPost in norm.Posts) {
-					var pair = matchPairs.FirstOrDefault(x => normPost.IsSame(x.Post));
+					var pair = MatchPairs.FirstOrDefault(x => normPost.IsSame(x.Post));
 					if(pair != null)
 						pair.Norms.Add(norm);
 				}
 			}
+			//Создаем отсутствующие нормы
+			foreach(var pair in MatchPairs) {
+				if(pair.Norms.Any())
+					continue;
 
+				var norm = new Norm();
+				norm.AddPost(pair.Post);
+				pair.Norms.Add(norm);
+			}
+
+			//Заполняем строки
 			var protectionNames = list.Select(x => x.CellValue(protectionToolsColumn.Index)).Distinct().ToArray();
 			var protections = protectionToolsRepository.GetProtectionToolsByName(uow, protectionNames);
-			foreach(var row in list) {
-				row.ProtectionTools = protections.FirstOrDefault(x => x.Name == row.CellValue(protectionToolsColumn.Index));
-				if(row.SubdivisionPostPair.Norms.Count > 1)
+			foreach(var row in list.Where(x => !x.Skiped)) {
+				if(row.SubdivisionPostPair.Norms.Count > 1) {
 					row.Skiped = true;
-				else if(row.SubdivisionPostPair.Norms.Count == 1 && row.ProtectionTools != null) {
-					var norm = row.SubdivisionPostPair.Norms[0];
-					row.NormItem = norm.Items.FirstOrDefault(x => row.ProtectionTools.IsSame(x.ProtectionTools));
+					continue;
+				}
+
+				var protectionName = row.CellValue(protectionToolsColumn.Index);
+				var protection = UsedProtectionTools.FirstOrDefault(x => String.Equals(x.Name, protectionName, StringComparison.CurrentCultureIgnoreCase));
+				if(protection == null) {
+					protection = protections.FirstOrDefault(x => String.Equals(x.Name, protectionName, StringComparison.CurrentCultureIgnoreCase));
+					if(protection == null) {
+						protection = new ProtectionTools {Name = protectionName };
+						//FIXME Тут думаю надо заполнять тип.
+					}
+					UsedProtectionTools.Add(protection);
+				}
+
+				var norm = row.SubdivisionPostPair.Norms[0];
+				row.NormItem = norm.Items.FirstOrDefault(x => protection.IsSame(x.ProtectionTools));
+				if(row.NormItem == null) {
+					row.NormItem = norm.AddItem(protection);
 				}
 			}
+		}
+
+		void SetOrMakePost(SubdivisionPostPair pair, IList<Post> posts, IList<Subdivision> subdivisions)
+		{
+			var post = UsedPosts.FirstOrDefault(x =>
+							String.Equals(x.Name, pair.PostName, StringComparison.CurrentCultureIgnoreCase)
+							&& String.Equals(x.Subdivision?.Name, pair.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
+			if(post == null) {
+				post = posts.FirstOrDefault(x => String.Equals(x.Name, pair.PostName, StringComparison.CurrentCultureIgnoreCase)
+					&& String.Equals(x.Subdivision?.Name, pair.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
+
+				if(post == null) {
+					post = new Post { Name = pair.PostName };
+					if(!String.IsNullOrEmpty(pair.SubdivisionName)) {
+						var subdivision = UsedSubdivisions.FirstOrDefault(x =>
+							String.Equals(x.Name, pair.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
+
+						if(subdivision == null) {
+							subdivision = subdivisions.FirstOrDefault(x =>
+									String.Equals(x.Name, pair.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
+
+							if(subdivision == null) {
+								subdivision = new Subdivision { Name = pair.SubdivisionName };
+							}
+							UsedSubdivisions.Add(subdivision);
+						}
+						post.Subdivision = subdivision;
+					}
+				}
+				UsedPosts.Add(post);
+			}
+			pair.Post = post;
 		}
 
 		#endregion
 
 		#region Сохранение данных
-		private List<Norm> createdNorms = new List<Norm>();
-		private List<Subdivision> createdSubdivisions = new List<Subdivision>();
-		private List<Post> createdPosts = new List<Post>();
-		private List<ProtectionTools> createdProtectionTools = new List<ProtectionTools>();
+		public readonly List<SubdivisionPostPair> MatchPairs = new List<SubdivisionPostPair>();
+		public IEnumerable<Norm> UsedNorms => MatchPairs.Where(x => x.Norms.Count == 1).Select(x => x.Norms[0]);
+		public readonly List<Subdivision> UsedSubdivisions = new List<Subdivision>();
+		public readonly List<Post> UsedPosts = new List<Post>();
+		public readonly List<ProtectionTools> UsedProtectionTools = new List<ProtectionTools>();
 
 		public IEnumerable<object> PrepareToSave(IUnitOfWork uow, SheetRowNorm row)
 		{
-			var norm = row.SubdivisionPostPair.Norms.FirstOrDefault();
-			if(norm == null) {
-				norm = new Norm();
-				row.SubdivisionPostPair.Norms.Add(norm);
-				if(row.SubdivisionPostPair.Post == null) {
-					row.SubdivisionPostPair.Post = createdPosts.FirstOrDefault(x =>
-							String.Equals(x.Name, row.SubdivisionPostPair.PostName, StringComparison.CurrentCultureIgnoreCase)
-							&& String.Equals(x.Subdivision?.Name, row.SubdivisionPostPair.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
-					if(row.SubdivisionPostPair.Post == null) {
-						row.SubdivisionPostPair.Post = new Post { Name = row.SubdivisionPostPair.PostName };
-						if(!String.IsNullOrEmpty(row.SubdivisionPostPair.SubdivisionName)){
-							row.SubdivisionPostPair.Post.Subdivision = createdSubdivisions.FirstOrDefault(x =>
-							String.Equals(x.Name, row.SubdivisionPostPair.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
-							if(row.SubdivisionPostPair.Post.Subdivision == null) {
-								row.SubdivisionPostPair.Post.Subdivision = new Subdivision { Name = row.SubdivisionPostPair.SubdivisionName };
-								createdSubdivisions.Add(row.SubdivisionPostPair.Post.Subdivision);
-								yield return row.SubdivisionPostPair.Post.Subdivision;
-							}
-						}
-						createdPosts.Add(row.SubdivisionPostPair.Post);
-						norm.AddPost(row.SubdivisionPostPair.Post);
-						yield return row.SubdivisionPostPair.Post;
-					}
-				}
-				yield return norm;
-			}
-			if(row.ProtectionTools == null) {
-				var protectionColumn = row.ChangedColumns.Keys.First(x => x.DataType == DataTypeNorm.ProtectionTools);
-				row.ProtectionTools = createdProtectionTools.FirstOrDefault(x =>
-							String.Equals(x.Name, row.CellValue(protectionColumn.Index), StringComparison.CurrentCultureIgnoreCase));
-				if(row.ProtectionTools == null) {
-					row.ProtectionTools = new ProtectionTools { Name = row.CellValue(protectionColumn.Index) };
-					//FIXME Тут думаю надо заполнять тип.
-					createdProtectionTools.Add(row.ProtectionTools);
-					yield return row.ProtectionTools;
-				}
-			}
-
-			if(row.NormItem == null) {
-				row.NormItem = norm.AddItem(row.ProtectionTools);
-			}
-
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
 			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученой из общего поля ФИО.
 			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType)) {
@@ -241,11 +262,14 @@ namespace workwear.Models.Import
 			periods = 0;
 			periodType = NormPeriodType.Month;
 			var regexp = new Regex(@"\((\d+) в (\d+) (месяц|месяца|месяцев)\)");
-			var parts = regexp.Matches(value);
-			if(parts.Count != 3)
+			var matches = regexp.Matches(value);
+			if(matches.Count == 0)
 				return false;
-			amount = int.Parse(parts[0].Value);
-			periods = int.Parse(parts[1].Value);
+			var parts = matches[0].Groups;
+			if(parts.Count != 4)
+				return false;
+			amount = int.Parse(parts[1].Value);
+			periods = int.Parse(parts[2].Value);
 			return true;
 		}
 

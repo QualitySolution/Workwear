@@ -15,7 +15,6 @@ namespace workwear.Models.Import
 
 		#region Найденные соответствия
 		public SubdivisionPostPair SubdivisionPostPair;
-		public ProtectionTools ProtectionTools;
 		public NormItem NormItem;
 		#endregion
 	}
