@@ -62,17 +62,19 @@ namespace workwear.Models.Import
 				foreach(var column in meaningfulColumns) {
 					row.ChangedColumns.Add(column, CalculateChange(row, column.DataType, row.CellValue(column.Index)));
 				}
+				if(!row.ChangedColumns.Any(x => x.Key.DataType == DataTypeNorm.PeriodAndCount))
+					row.Skiped = true;
+				else if(row.ChangedColumns.First(x => x.Key.DataType == DataTypeNorm.PeriodAndCount).Value == ChangeType.ParseError)
+					row.Skiped = true;
 			}
 		}
 
 		public ChangeType CalculateChange(SheetRowNorm row, DataTypeNorm dataType, string value)
 		{
-			if(String.IsNullOrWhiteSpace(value))
-				return ChangeType.NotChanged;
-
-			if(row.NormItem == null)
-				return ChangeType.NewEntity;
-
+			if(String.IsNullOrWhiteSpace(value)) {
+				return dataType == DataTypeNorm.PeriodAndCount ? ChangeType.ParseError : ChangeType.NotChanged;
+			}
+				
 			switch(dataType) {
 				case DataTypeNorm.Subdivision:
 					return row.SubdivisionPostPair.Post.Subdivision?.Id == 0 ? ChangeType.NewEntity : ChangeType.NotChanged;
@@ -83,7 +85,7 @@ namespace workwear.Models.Import
 				case DataTypeNorm.PeriodAndCount:
 					if(TryParsePeriodAndCount(value, out int amount, out int periods, out NormPeriodType periodType)) {
 						return (row.NormItem.Amount == amount && row.NormItem.PeriodCount == periods && row.NormItem.NormPeriod == periodType)
-								? ChangeType.NotChanged : ChangeType.ChangeValue;
+								? ChangeType.NotChanged : (row.NormItem.Id == 0 ? ChangeType.NewEntity : ChangeType.ChangeValue);
 					}
 					else
 						return ChangeType.ParseError;

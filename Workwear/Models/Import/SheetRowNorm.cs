@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NPOI.SS.UserModel;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
@@ -11,7 +12,6 @@ namespace workwear.Models.Import
 		public SheetRowNorm(IRow cells) : base(cells)
 		{
 		}
-
 
 		#region Найденные соответствия
 		public SubdivisionPostPair SubdivisionPostPair;

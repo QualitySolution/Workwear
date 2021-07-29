@@ -72,6 +72,7 @@ namespace workwear
 			var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
 				.Dialect<MySQL57ExtendedDialect>()
 				.ConnectionString (QSProjectsLib.QSMain.ConnectionString)
+				.AdoNetBatchSize(100)
 				.ShowSql ()
 				.FormatSql ();
 
