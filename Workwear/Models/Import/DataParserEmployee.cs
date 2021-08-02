@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -335,7 +335,7 @@ namespace workwear.Models.Import
 			var patronymicColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Patronymic);
 			var fioColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Fio);
 			if(fioColumn != null)
-				row.CellValue(fioColumn.Index).SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
+				row.CellValue(fioColumn.Index)?.SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
 			if(lastnameColumn != null)
 				fio.LastName = row.CellValue(lastnameColumn.Index);
 			if(firstNameColumn != null)
