@@ -8,6 +8,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using workwear.Domain.Stock;
 using workwear.Repository.Company;
 using workwear.Repository.Regulations;
 using Workwear.Domain.Regulations;
@@ -16,6 +17,8 @@ namespace workwear.Models.Import
 {
 	public class DataParserNorm : DataParserBase<DataTypeNorm>
 	{
+		static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		private readonly NormRepository normRepository;
 		private readonly ProtectionToolsRepository protectionToolsRepository;
 		private readonly SubdivisionRepository subdivisionRepository;
@@ -155,7 +158,8 @@ namespace workwear.Models.Import
 			}
 
 			//Заполняем строки
-			var protectionNames = list.Select(x => x.CellValue(protectionToolsColumn.Index)).Distinct().ToArray();
+			var nomenclatureTypes = new NomenclatureTypes(uow, true);
+			var protectionNames = list.Select(x => x.CellValue(protectionToolsColumn.Index)).Where(x => x != null).Distinct().ToArray();
 			var protections = protectionToolsRepository.GetProtectionToolsByName(uow, protectionNames);
 			foreach(var row in list.Where(x => !x.Skiped)) {
 				if(row.SubdivisionPostPair.Norms.Count > 1) {
@@ -164,12 +168,21 @@ namespace workwear.Models.Import
 				}
 
 				var protectionName = row.CellValue(protectionToolsColumn.Index);
+				if(String.IsNullOrWhiteSpace(protectionName)) {
+					row.Skiped = true;
+					continue;
+				}
+
 				var protection = UsedProtectionTools.FirstOrDefault(x => String.Equals(x.Name, protectionName, StringComparison.CurrentCultureIgnoreCase));
 				if(protection == null) {
 					protection = protections.FirstOrDefault(x => String.Equals(x.Name, protectionName, StringComparison.CurrentCultureIgnoreCase));
 					if(protection == null) {
 						protection = new ProtectionTools {Name = protectionName };
-						//FIXME Тут думаю надо заполнять тип.
+						protection.Type = nomenclatureTypes.ParseNomenclatureName(protectionName, false);
+						if(protection.Type == null) {
+							protection.Type = nomenclatureTypes.GetUnknownType();
+							UndefinedProtectionNames.Add(protectionName);
+						}
 					}
 					UsedProtectionTools.Add(protection);
 				}
@@ -222,6 +235,9 @@ namespace workwear.Models.Import
 		public readonly List<Subdivision> UsedSubdivisions = new List<Subdivision>();
 		public readonly List<Post> UsedPosts = new List<Post>();
 		public readonly List<ProtectionTools> UsedProtectionTools = new List<ProtectionTools>();
+		public IEnumerable<ItemsType> UsedItemTypes => UsedProtectionTools.Select(x => x.Type).Distinct();
+
+		public List<string> UndefinedProtectionNames = new List<string>();
 
 		public IEnumerable<object> PrepareToSave(IUnitOfWork uow, SheetRowNorm row)
 		{

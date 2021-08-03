@@ -29,8 +29,8 @@ namespace workwear.Domain.Regulations
 
 		ItemsType type;
 
-		[Display(Name = "Группа номенклатур")]
-		[Required(ErrorMessage = "Номенклатурная группа должна быть указана.")]
+		[Display(Name = "Группа номенклатуры")]
+		[Required(ErrorMessage = "Группа номенклатуры должна быть указана.")]
 		public virtual ItemsType Type {
 			get { return type; }
 			set { SetField(ref type, value, () => Type); }

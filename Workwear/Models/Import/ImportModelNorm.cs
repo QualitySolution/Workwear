@@ -40,6 +40,7 @@ namespace workwear.Models.Import
 			List<object> toSave = new List<object>();
 			toSave.AddRange(dataParser.UsedSubdivisions.Where(x => x.Id == 0));
 			toSave.AddRange(dataParser.UsedPosts.Where(x => x.Id == 0));
+			toSave.AddRange(dataParser.UsedItemTypes.Where(x => x.Id == 0));
 			toSave.AddRange(dataParser.UsedProtectionTools.Where(x => x.Id == 0));
 			toSave.AddRange(dataParser.UsedNorms.Where(x => x.Id == 0));
 			foreach(var row in rows) {
@@ -63,6 +64,8 @@ namespace workwear.Models.Import
 			counters.SetCount(CountersNorm.NewPosts, dataParser.UsedPosts.Count(x => x.Id == 0));
 			counters.SetCount(CountersNorm.NewSubdivisions, dataParser.UsedSubdivisions.Count(x => x.Id == 0));
 			counters.SetCount(CountersNorm.NewProtectionTools, dataParser.UsedProtectionTools.Count(x => x.Id == 0));
+			counters.SetCount(CountersNorm.NewItemTypes, dataParser.UsedItemTypes.Count(x => x.Id == 0));
+			counters.SetCount(CountersNorm.UndefinedItemTypes, dataParser.UndefinedProtectionNames.Count);
 
 			CanSave = counters.GetCount(CountersNorm.ChangedNormItems) > 0
 				|| counters.GetCount(CountersNorm.NewNormItems) > 0

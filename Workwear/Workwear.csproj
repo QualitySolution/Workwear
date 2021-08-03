@@ -445,6 +445,7 @@
     <Compile Include="Models\Import\ImportModelBase.cs" />
     <Compile Include="Tools\NHibernate\ProgresSessionProvider.cs" />
     <Compile Include="Tools\NHibernate\ProgressInterceptor.cs" />
+    <Compile Include="Models\Import\NomenclatureTypes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

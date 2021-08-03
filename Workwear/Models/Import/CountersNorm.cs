@@ -19,6 +19,10 @@ namespace workwear.Models.Import
 		NewPosts,
 		[Display(Name = "Новых номеклатур нормы")]
 		NewProtectionTools,
+		[Display(Name = "Новых типов номеклатуры")]
+		NewItemTypes,
+		[Display(Name = "Не распознанных номеклатур")]
+		UndefinedItemTypes,
 		[Display(Name = "Неоднозначных норм")]
 		AmbiguousNorms,
 		[Display(Name = "Пропущено строк")]
