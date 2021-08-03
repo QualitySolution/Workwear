@@ -45,7 +45,7 @@ namespace WorkwearTest.Integration.Tools
 				employeesLoad.SecondStep();
 				Assert.That(employeesLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
 				employeesLoad.ThirdStep();
-				Assert.That(employeesLoad.SensetiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
+				Assert.That(employeesLoad.SensitiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
 				employeesLoad.Save();
 
 				var uow = employeesLoad.UoW;
@@ -80,7 +80,7 @@ namespace WorkwearTest.Integration.Tools
 				employeesLoad.SecondStep();
 				Assert.That(employeesLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
 				employeesLoad.ThirdStep();
-				Assert.That(employeesLoad.SensetiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
+				Assert.That(employeesLoad.SensitiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
 				employeesLoad.Save();
 
 				var uow = employeesLoad.UoW;
