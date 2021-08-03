@@ -178,7 +178,7 @@ namespace workwear.Models.Import
 					protection = protections.FirstOrDefault(x => String.Equals(x.Name, protectionName, StringComparison.CurrentCultureIgnoreCase));
 					if(protection == null) {
 						protection = new ProtectionTools {Name = protectionName };
-						protection.Type = nomenclatureTypes.ParseNomenclatureName(protectionName, false);
+						protection.Type = nomenclatureTypes.ParseNomenclatureName(protectionName);
 						if(protection.Type == null) {
 							protection.Type = nomenclatureTypes.GetUnknownType();
 							UndefinedProtectionNames.Add(protectionName);
