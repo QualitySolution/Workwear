@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -17,8 +17,6 @@ namespace workwear.Models.Import
 	{
 		private readonly SubdivisionRepository subdivisionRepository;
 		private readonly PostRepository postRepository;
-
-
 
 		public HashSet<string> MaleNames = new HashSet<string> { "АБРАМ", "АВАЗ", "АВВАКУМ", "АВГУСТ", "АВДЕЙ", "АВРААМ", "АВТАНДИЛ", "АГАП", "АГАФОН", "АГГЕЙ", "АДАМ", "АДИС", "АДОЛЬФ", "АДРИАН", "АЗАМАТ", "АЗАРИЙ", "АЗАТ", "АЙДАР", "АЙНУР", "АЙРАТ", "АКАКИЙ", "АКИМ", "АЛАН", "АЛЕКСАНДР", "АЛЕКСЕЙ", "АЛИ", "АЛИХАН", "АЛМАЗ", "АЛЬБЕРТ", "АЛЬФРЕД", "АМАДЕЙ", "АМАДЕУС", "АМАЯК", "АМИН", "АМВРОСИЙ", "АНАТОЛИЙ", "АНВАР", "АНГЕЛ", "АНДРЕЙ", "АНДРЭ", "АНИКИТА", "АНТОН", "АНУФРИЙ", "АНФИМ", "АПОЛЛИНАРИЙ", "АРАМ", "АРИСТАРХ", "АРКАДИЙ", "АРМАН", "АРМЕН", "АРНО", "АРНОЛЬД", "АРОН", "АРСЕН", "АРСЕНИЙ", "АРСЛАН", "АРТЕМ", "АРТЕМИЙ", "АРТУР", "АРХИП", "АСКОЛЬД", "АФАНАСИЙ", "АХМЕТ", "АШОТ", "БАХРАМ", "БЕЖЕН", "БЕНЕДИКТ", "БЕРЕК", "БЕРНАР", "БОГДАН", "БОГОЛЮБ", "БОНИФАЦИЙ", "БОРЕСЛАВ", "БОРИС", "БОРИСЛАВ", "БОЯН", "БРОНИСЛАВ", "БРУНО", "БУЛАТ", "ВАДИМ", "ВАЛЕНТИН", "ВАЛЕРИЙ", "ВАЛЬДЕМАР", "ВАЛЬТЕР", "ВАРДАН", "ВАРЛААМ", "ВАРФОЛОМЕЙ", "ВАСИЛИЙ", "ВАТСЛАВ", "ВЕЛИЗАР", "ВЕЛОР", "ВЕНЕДИКТ", "ВЕНИАМИН", "ВИКЕНТИЙ", "ВИКТОР", "ВИЛЕН", "ВИЛЛИ", "ВИЛЬГЕЛЬМ", "ВИССАРИОН", "ВИТАЛИЙ", "ВИТАУТАС", "ВИТОЛЬД", "ВЛАДИМИР", "ВЛАДИСЛАВ", "ВЛАДЛЕН", "ВЛАС", "ВОЛОДАР", "ВСЕВОЛОД", "ВЯЧЕСЛАВ", "ГАВРИИЛ", "ГАЛАКТИОН", "ГАМЛЕТ", "ГАРРИ", "ГАЯС", "ГЕВОР", "ГЕВОРГ", "ГЕННАДИЙ", "ГЕНРИ", "ГЕНРИХ", "ГЕОРГИЙ", "ГЕРАЛЬД", "ГЕРАСИМ", "ГЕРМАН", "ГЛЕБ", "ГОАР", "ГОРДЕЙ", "ГОРДОН", "ГОРИСЛАВ", "ГРАДИМИР", "ГРИГОРИЙ", "ГУРИЙ", "ГУСТАВ", "ДАВИД", "ДАВЛАТ", "ДАМИР", "ДАНИИЛ", "ДАНИСЛАВ", "ДАНЬЯР", "ДЕМИД", "ДЕМЬЯН", "ДЕНИС", "ДЖАМАЛ", "ДЖЕЙМС", "ДЖЕРЕМИ", "ДЖОЗЕФ", "ДЖОРДАН", "ДЖОРЖ", "ДИК", "ДИНАР", "ДИНАСИЙ", "ДМИТРИЙ", "ДОБРЫНЯ", "ДОНАЛЬД", "ДОНАТ", "ДОНАТОС", "ДОРОФЕЙ", "ЕВГЕНИЙ", "ЕВГРАФ", "ЕВДОКИМ", "ЕВСЕЙ", "ЕВСТАФИЙ", "ЕГОР", "ЕЛИЗАР", "ЕЛИСЕЙ", "ЕМЕЛЬЯН", "ЕРЕМЕЙ", "ЕРМОЛАЙ", "ЕРОФЕЙ", "ЕФИМ", "ЕФРЕМ", "ЖАН", "ЖДАН", "ЖЕРАР", "ЗАКИР", "ЗАМИР", "ЗАУР", "ЗАХАР", "ЗЕНОН", "ЗИГМУНД", "ЗИНОВИЙ", "ЗУРАБ", "ИБРАГИМ", "ИВАН", "ИГНАТ", "ИГНАТИЙ", "ИГОРЬ", "ИЕРОНИМ", "ИЗМАИЛ", "ИЗРАИЛЬ", "ИЛИАН", "ИЛЛАРИОН", "ИЛЬХАМ", "ИЛЬШАТ", "ИЛЬЯ", "ИЛЬЯС", "ИНОКЕНТИЙ", "ИОАНН", "ИОАКИМ", "ИОН", "ИОСИФ", "ИППОЛИТ", "ИРАКЛИЙ", "ИСА", "ИСААК", "ИСИДОР", "ИСКАНДЕР", "ИСЛАМ", "ИСМАИЛ", "КАЗБЕК", "КАЗИМИР", "КАМИЛЬ", "КАРЕН", "КАРИМ", "КАРЛ", "КИМ", "КИР", "КИРИЛЛ", "КЛАВДИЙ", "КЛАУС", "КЛИМ", "КЛИМЕНТ", "КЛОД", "КОНДРАТ", "КОНСТАНТИН", "КОРНЕЙ", "КОРНИЛИЙ", "КУЗЬМА", "ЛАВР", "ЛАВРЕНТИЙ", "ЛАЗАРЬ", "ЛЕВ", "ЛЕВАН", "ЛЕВОН", "ЛЕНАР", "ЛЕОН", "ЛЕОНАРД", "ЛЕОНИД", "ЛЕОНТИЙ", "ЛЕОПОЛЬД", "ЛУКА", "ЛУКЬЯН", "ЛЮБИМ", "ЛЮБОМИР", "ЛЮДВИГ", "ЛЮСЬЕН", "ЛЮЦИЙ", "МАВЛЮДА", "МАДЛЕН", "МАЙ", "МАЙКЛ", "МАКАР", "МАКАРИЙ", "МАКСИМ", "МАКСИМИЛЬЯН", "МАКСУД", "МАНСУР", "МАНУИЛ", "МАР", "МАРАТ", "МАРИАН", "МАРК", "МАРСЕЛЬ", "МАРТИН", "МАТВЕЙ", "МАХМУД", "МЕРАБ", "МЕФОДИЙ", "МЕЧЕСЛАВ", "МИКУЛА", "МИЛАН", "МИРОН", "МИРОСЛАВ", "МИТРОФАН", "МИХАИЛ", "МИШЛОВ", "МОДЕСТ", "МОИСЕЙ", "МСТИСЛАВ", "МУРАТ", "МУСЛИМ", "МУХАММЕД", "НАЗАР", "НАЗАРИЙ", "НАИЛЬ", "НАТАН", "НАУМ", "НЕСТОР", "НИКАНОР", "НИКИТА", "НИКИФОР", "НИКОДИМ", "НИКОЛА", "НИКОЛАЙ", "НИКОН", "НИЛЬС", "НИСОН", "НИФОНТ", "НОРМАНН", "ОВИДИЙ", "ОЛАН", "ОЛЕГ", "ОЛЕСЬ", "ОНИСИМ", "ОРЕСТ", "ОРЛАНДО", "ОСИП", "ОСКАР", "ОСТАП", "ПАВЕЛ", "ПАНКРАТ", "ПАРАМОН", "ПЕТР", "ПЛАТОН", "ПОРФИРИЙ", "ПОТАП", "ПРОКОФИЙ", "ПРОХОР", "РАВИЛЬ", "РАДИЙ", "РАДИК", "РАДОМИР", "РАДОСЛАВ", "РАЗИЛЬ", "РАЙАН", "РАЙМОНД", "РАИС", "РАМАЗАН", "РАМИЗ", "РАМИЛЬ", "РАМОН", "РАНЕЛЬ", "РАСИМ", "РАСУЛ", "РАТИБОР", "РАТМИР", "РАФАИЛ", "РАФАЭЛЬ", "РАФИК", "РАШИД", "РЕМ", "РИНАТ", "РИФАТ", "РИХАРД", "РИЧАРД", "РОБЕРТ", "РОДИОН", "РОЛАН", "РОМАН", "РОСТИСЛАВ", "РУБЕН", "РУДОЛЬФ", "РУСЛАН", "РУСТАМ", "РУФИН", "РУШАН", "РЭЙ", "САБИР", "САВВА", "САВЕЛИЙ", "САМВЕЛ", "САМСОН", "САМУИЛ", "СВЯТОСЛАВ", "СЕВАСТЬЯН", "СЕВЕРИН", "СЕМЕН", "СЕРАФИМ", "СЕРГЕЙ", "СИДОР", "СОКРАТ", "СОЛОМОН", "СПАРТАК", "СПИРИДОН", "СТАКРАТ", "СТАНИСЛАВ", "СТЕПАН", "СТЕФАН", "СТИВЕН", "СТОЯН", "СУЛТАН", "ТАГИР", "ТАИС", "ТАЙЛЕР", "ТАЛИК", "ТАМАЗ", "ТАМЕРЛАН", "ТАРАС", "ТЕЛЬМАН", "ТЕОДОР", "ТЕРЕНТИЙ", "ТИБОР", "ТИГРАМ", "ТИГРАН", "ТИГРИЙ", "ТИМОФЕЙ", "ТИМУР", "ТИТ", "ТИХОН", "ТОМАС", "ТРИФОН", "ТРОФИМ", "УЛЬМАНАС", "УМАР", "УСТИН", "ФАДЕЙ", "ФАЗИЛЬ", "ФАНИС", "ФАРИД", "ФАРХАД", "ФЕДОР", "ФЕДОТ", "ФЕЛИКС", "ФЕОДОСИЙ", "ФЕРДИНАНД", "ФИДЕЛЬ", "ФИЛИМОН", "ФИЛИПП", "ФЛОРЕНТИЙ", "ФОМА", "ФРАНЦ", "ФРЕД", "ФРИДРИХ", "ФУАД", "ХАБИБ", "ХАКИМ", "ХАРИТОН", "ХРИСТИАН", "ХРИСТОС", "ХРИСТОФОР", "ЦЕЗАРЬ", "ЧАРЛЬЗ", "ЧЕСЛАВ", "ЧИНГИЗ", "ШАМИЛЬ", "ШАРЛЬ", "ЭДВАРД", "ЭДГАР", "ЭДМУНД", "ЭДУАРД", "ЭЛЬДАР", "ЭМИЛЬ", "ЭМИН", "ЭММАНУИЛ", "ЭРАСТ", "ЭРИК", "ЭРНЕСТ", "ЮЛИАН", "ЮЛИЙ", "ЮНУС", "ЮРИЙ", "ЮХИМ", "ЯКОВ", "ЯН", "ЯНУАРИЙ", "ЯРОСЛАВ", "ЯСОН" };
 
@@ -90,55 +88,76 @@ namespace workwear.Models.Import
 				if(row.Skiped)
 					continue;
 
-				if(!row.Employees.Any()) {
-					foreach(var column in meaningfulColumns) {
-						row.ChangedColumns.Add(column, ChangeType.NewEntity);
-					}
-					continue;
+				var employee = row.Employees.FirstOrDefault();
+				var rowChange = ChangeType.ChangeValue;
+
+				if(employee == null) {
+					employee = new EmployeeCard();
+					row.Employees.Add(employee);
+					rowChange = ChangeType.NewEntity;
 				}
-				var employee = row.Employees.First();
+
 				foreach(var column in meaningfulColumns) {
-					if(IsDiff(employee, column.DataType, row.CellValue(column.Index)))
-						row.ChangedColumns.Add(column, ChangeType.ChangeValue);
+					row.ChangedColumns.Add(column, MakeChange(employee, column.DataType, row.CellValue(column.Index), rowChange));
 				}
 			}
 		}
 
-		public bool IsDiff(EmployeeCard employee, DataTypeEmployee dataType, string value)
+		public ChangeType MakeChange(EmployeeCard employee, DataTypeEmployee dataType, string value, ChangeType rowChange)
 		{
 			if(String.IsNullOrWhiteSpace(value))
-				return false;
+				return ChangeType.NotChanged;
 
 			switch(dataType) {
 				case DataTypeEmployee.CardKey:
-					return !String.Equals(employee.CardKey, value, StringComparison.InvariantCultureIgnoreCase);
+					return String.Equals(employee.CardKey, value, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
 				case DataTypeEmployee.PersonnelNumber:
-					return !String.Equals(employee.PersonnelNumber, value, StringComparison.InvariantCultureIgnoreCase);
+					return String.Equals(employee.PersonnelNumber, value, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
 				case DataTypeEmployee.LastName:
-					return !String.Equals(employee.LastName, value, StringComparison.CurrentCultureIgnoreCase);
+					return String.Equals(employee.LastName, value, StringComparison.CurrentCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
 				case DataTypeEmployee.FirstName:
-					return !String.Equals(employee.FirstName, value, StringComparison.CurrentCultureIgnoreCase);
+					return String.Equals(employee.FirstName, value, StringComparison.CurrentCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
 				case DataTypeEmployee.Patronymic:
-					return !String.Equals(employee.Patronymic, value, StringComparison.CurrentCultureIgnoreCase);
+					return String.Equals(employee.Patronymic, value, StringComparison.CurrentCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
 				case DataTypeEmployee.Sex:
 					//Первая М английская, вторая русская.
 					if(value.StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("М", StringComparison.CurrentCultureIgnoreCase))
-						return employee.Sex != Sex.M;
+						return employee.Sex == Sex.M ? ChangeType.NotChanged : rowChange;
 					if(value.StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase))
-						return employee.Sex != Sex.F;
-					return false;
+						return employee.Sex == Sex.F ? ChangeType.NotChanged : rowChange;
+					return ChangeType.ParseError;
 				case DataTypeEmployee.Fio:
 					value.SplitFullName(out string lastName, out string firstName, out string patronymic);
 					bool lastDiff = !String.IsNullOrEmpty(lastName) && !String.Equals(employee.LastName, lastName, StringComparison.CurrentCultureIgnoreCase);
 					bool firstDiff = !String.IsNullOrEmpty(firstName) && !String.Equals(employee.FirstName, firstName, StringComparison.CurrentCultureIgnoreCase);
 					bool patronymicDiff = !String.IsNullOrEmpty(patronymic) && !String.Equals(employee.Patronymic, patronymic, StringComparison.CurrentCultureIgnoreCase);
-					return lastDiff || firstDiff || patronymicDiff;
+					return (lastDiff || firstDiff || patronymicDiff) ? rowChange : ChangeType.NotChanged;
 				case DataTypeEmployee.HireDate:
-					return !String.IsNullOrWhiteSpace(value) && DateTime.TryParse(value, out DateTime date) && employee.HireDate != date;
+					return (DateTime.TryParse(value, out DateTime date) && employee.HireDate != date) ? rowChange : ChangeType.NotChanged;
 				case DataTypeEmployee.Subdivision:
-					return !String.IsNullOrWhiteSpace(value) && !String.Equals(employee.Subdivision?.Name, value, StringComparison.CurrentCultureIgnoreCase);
+					if(String.Equals(employee.Subdivision?.Name, value, StringComparison.CurrentCultureIgnoreCase))
+						return ChangeType.NotChanged;
+
+					Subdivision subdivision = UsedSubdivisions.FirstOrDefault(x =>
+						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase));
+					if(subdivision == null) {
+						subdivision = new Subdivision { Name = value };
+						UsedSubdivisions.Add(subdivision);
+					}
+					employee.Subdivision = subdivision;
+					return subdivision.Id == 0 ? ChangeType.NewEntity : rowChange;
 				case DataTypeEmployee.Post:
-					return !String.IsNullOrWhiteSpace(value) && !String.Equals(employee.Post?.Name, value, StringComparison.CurrentCultureIgnoreCase);
+					if(String.Equals(employee.Post?.Name, value, StringComparison.CurrentCultureIgnoreCase))
+						return ChangeType.NotChanged;
+					Post post = UsedPosts.FirstOrDefault(x =>
+						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase)
+						&& DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision));
+					if(post == null) {
+						post = new Post { Name = value, Subdivision = employee.Subdivision };
+						UsedPosts.Add(post);
+					}
+					employee.Post = post;
+					return post.Id == 0 ? ChangeType.NewEntity : rowChange;
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
 			}
@@ -221,12 +240,33 @@ namespace workwear.Models.Import
 				}
 			}
 		}
-
 		#endregion
 
+		#region Создание объектов
+
+		public readonly List<Subdivision> UsedSubdivisions = new List<Subdivision>();
+		public readonly List<Post> UsedPosts = new List<Post>();
+
+		public void FillExistEntities(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns)
+		{
+			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Subdivision);
+			if(subdivisionColumn != null) {
+				var subdivisionNames = list.Select(x => x.CellValue(subdivisionColumn.Index)).Distinct().ToArray();
+				UsedSubdivisions.AddRange(uow.Session.QueryOver<Subdivision>()
+					.Where(x => x.Name.IsIn(subdivisionNames))
+					.List());
+			}
+			var postColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Post);
+			if(postColumn != null) {
+				var postNames = list.Select(x => x.CellValue(postColumn.Index)).Distinct().ToArray();
+				UsedPosts.AddRange( uow.Session.QueryOver<Post>()
+					.Where(x => x.Name.IsIn(postNames))
+					.List());
+			}
+		}
+
+		#endregion
 		#region Сохранение данных
-		private List<Subdivision> createdSubdivisions = new List<Subdivision>();
-		private List<Post> createdPosts = new List<Post>();
 
 		public IEnumerable<object> PrepareToSave(IUnitOfWork uow, SheetRowEmployee row)
 		{
@@ -234,16 +274,15 @@ namespace workwear.Models.Import
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
 			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученой из общего поля ФИО.
 			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType)) {
-				foreach(var toSave in SetValue(uow, employee, column.DataType, row.CellValue(column.Index)))
-					yield return toSave;
+				SetValue(uow, employee, column.DataType, row.CellValue(column.Index));
 			}
 			yield return employee;
 		}
 
-		private IEnumerable<object> SetValue(IUnitOfWork uow, EmployeeCard employee, DataTypeEmployee dataType, string value)
+		private void SetValue(IUnitOfWork uow, EmployeeCard employee, DataTypeEmployee dataType, string value)
 		{
 			if(String.IsNullOrWhiteSpace(value))
-				yield break;
+				return;
 
 			switch(dataType) {
 				case DataTypeEmployee.CardKey:
@@ -295,29 +334,8 @@ namespace workwear.Models.Import
 					break;
 
 				case DataTypeEmployee.Subdivision:
-					Subdivision subdivision = createdSubdivisions.FirstOrDefault(x =>
-						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase));
-					if(subdivision == null)
-						subdivision = subdivisionRepository.GetSubdivisionByName(uow, value);
-					if(subdivision == null) {
-						subdivision = new Subdivision { Name = value };
-						createdSubdivisions.Add(subdivision);
-						yield return subdivision;
-					}
-					employee.Subdivision = subdivision;
-					break;
 				case DataTypeEmployee.Post:
-					Post post = createdPosts.FirstOrDefault(x =>
-						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase)
-						&& DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision));
-					if(post == null)
-						post = postRepository.GetPostByName(uow, value, employee.Subdivision);
-					if(post == null) {
-						post = new Post { Name = value, Subdivision = employee.Subdivision};
-						createdPosts.Add(post);
-						yield return post;
-					}
-					employee.Post = post;
+					//Устанавливаем в MakeChange;
 					break;
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");

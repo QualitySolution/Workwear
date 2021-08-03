@@ -30,6 +30,8 @@ namespace workwear.Models.Import
 			&& Columns.Any(x => x.DataType == DataTypeNorm.PeriodAndCount)
 		);
 
+		public bool CanSave { get; private set; }
+
 		public List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
 			var rows = UsedRows.Where(x => !x.Skiped && x.ChangedColumns.Any()).ToList();
@@ -61,6 +63,13 @@ namespace workwear.Models.Import
 			counters.SetCount(CountersNorm.NewPosts, dataParser.UsedPosts.Count(x => x.Id == 0));
 			counters.SetCount(CountersNorm.NewSubdivisions, dataParser.UsedSubdivisions.Count(x => x.Id == 0));
 			counters.SetCount(CountersNorm.NewProtectionTools, dataParser.UsedProtectionTools.Count(x => x.Id == 0));
+
+			CanSave = counters.GetCount(CountersNorm.ChangedNormItems) > 0
+				|| counters.GetCount(CountersNorm.NewNormItems) > 0
+				|| counters.GetCount(CountersNorm.NewNorms) > 0
+				|| counters.GetCount(CountersNorm.NewPosts) > 0
+				|| counters.GetCount(CountersNorm.NewSubdivisions) > 0
+				|| counters.GetCount(CountersNorm.NewProtectionTools) > 0;
 		}
 	}
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
-using workwear.Domain.Company;
 using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import
@@ -28,12 +27,16 @@ namespace workwear.Models.Import
 		public override bool CanMatch => Columns.Any(x => x.DataType == DataTypeEmployee.Fio)
 			|| (Columns.Any(x => x.DataType == DataTypeEmployee.LastName) && Columns.Any(x => x.DataType == DataTypeEmployee.FirstName));
 
+		public bool CanSave { get; private set; }
+
 		public List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
 			var rows = UsedRows.Where(x => x.ChangedColumns.Any()).ToList();
 			progress.Start(maxValue: rows.Count, text: "Подготовка");
 
 			List<object> toSave = new List<object>();
+			toSave.AddRange(dataParser.UsedSubdivisions.Where(x => x.Id == 0));
+			toSave.AddRange(dataParser.UsedPosts.Where(x => x.Id == 0));
 			foreach(var row in rows) {
 				toSave.AddRange(dataParser.PrepareToSave(uow, row));
 			}
@@ -47,8 +50,22 @@ namespace workwear.Models.Import
 			else
 				dataParser.MatchByName(uow, UsedRows, Columns);
 
+			dataParser.FillExistEntities(uow, UsedRows, Columns);
 			dataParser.FindChanges(UsedRows, Columns.Where(x => x.DataType != DataTypeEmployee.Unknown).ToArray());
 			OnPropertyChanged(nameof(DisplayRows));
+			counters.SetCount(CountersEmployee.SkipRows, UsedRows.Count(x => x.Skiped));
+			counters.SetCount(CountersEmployee.MultiMatch, UsedRows.Count(x => x.Employees.Count > 1));
+			counters.SetCount(CountersEmployee.NewEmployee, UsedRows.Count(x => !x.Skiped && x.EditingEmployee.Id == 0));
+			counters.SetCount(CountersEmployee.NotChangedEmployee, UsedRows.Count(x => !x.HasChanges));
+			counters.SetCount(CountersEmployee.ChangedEmployee, UsedRows.Count(x => x.HasChanges && x.EditingEmployee.Id > 0));
+
+			counters.SetCount(CountersEmployee.NewPosts, dataParser.UsedPosts.Count(x => x.Id == 0));
+			counters.SetCount(CountersEmployee.NewSubdivisions, dataParser.UsedSubdivisions.Count(x => x.Id == 0));
+
+			CanSave = counters.GetCount(CountersEmployee.ChangedEmployee) > 0
+				|| counters.GetCount(CountersEmployee.NewEmployee) > 0
+				|| counters.GetCount(CountersEmployee.NewPosts) > 0
+				|| counters.GetCount(CountersEmployee.NewSubdivisions) > 0;
 		}
 	}
 }

@@ -55,6 +55,8 @@ namespace workwear.Models.Import
 		public bool Skiped;
 
 		public Dictionary<ImportedColumn<TDataTypeEnum>, ChangeType> ChangedColumns = new Dictionary<ImportedColumn<TDataTypeEnum>, ChangeType>();
+
+		public bool HasChanges => !Skiped && ChangedColumns.Any(x => x.Value == ChangeType.ChangeValue || x.Value == ChangeType.NewEntity);
 	}
 
 	public interface ISheetRow

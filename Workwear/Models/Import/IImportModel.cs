@@ -33,6 +33,7 @@ namespace workwear.Models.Import
 		#endregion
 
 		#region Сохранение
+		bool CanSave { get; }
 		List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow);
 		#endregion
 	}
