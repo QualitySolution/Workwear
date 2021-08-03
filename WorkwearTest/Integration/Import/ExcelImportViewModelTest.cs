@@ -41,9 +41,9 @@ namespace WorkwearTest.Integration.Tools
 				employeesLoad.FileName = "Samples/Excel/cardkey_list.xlsx";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
-				Assert.That(employeesLoad.SensetiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
+				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
 				employeesLoad.SecondStep();
-				Assert.That(employeesLoad.SensetiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
+				Assert.That(employeesLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
 				employeesLoad.ThirdStep();
 				Assert.That(employeesLoad.SensetiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
 				employeesLoad.Save();
@@ -76,9 +76,9 @@ namespace WorkwearTest.Integration.Tools
 				employeesLoad.FileName = "Samples/Excel/vostok_1c_employee.xls";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
-				Assert.That(employeesLoad.SensetiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
+				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
 				employeesLoad.SecondStep();
-				Assert.That(employeesLoad.SensetiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
+				Assert.That(employeesLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
 				employeesLoad.ThirdStep();
 				Assert.That(employeesLoad.SensetiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
 				employeesLoad.Save();

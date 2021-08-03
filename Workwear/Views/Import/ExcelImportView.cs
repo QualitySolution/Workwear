@@ -43,11 +43,11 @@ namespace workwear.Views.Import
 				.AddBinding(v => v.Sheets, w => w.ItemsList)
 				.AddBinding(v => v.SelectedSheet, w => w.SelectedItem);
 
-			buttonLoad.Binding.AddBinding(viewModel, v => v.SensetiveSecondStepButton, w => w.Sensitive).InitializeFromSource();
+			buttonLoad.Binding.AddBinding(viewModel, v => v.SensitiveSecondStepButton, w => w.Sensitive).InitializeFromSource();
 			#endregion
 			#region Шаг 2
 			spinTitleRow.Binding.AddBinding(viewModel.ImportModel, v => v.HeaderRow, w => w.ValueAsInt).InitializeFromSource();
-			buttonReadEmployees.Binding.AddBinding(viewModel, v => v.SensetiveThirdStepButton, w => w.Sensitive).InitializeFromSource();
+			buttonReadEmployees.Binding.AddBinding(viewModel, v => v.SensitiveThirdStepButton, w => w.Sensitive).InitializeFromSource();
 			labelColumnRecomendations.LabelProp = ViewModel.ImportModel.DataColunmsRecomendations;
 			#endregion
 			#region Шаг 3
@@ -60,7 +60,7 @@ namespace workwear.Views.Import
 			eventboxLegendaError.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfError));
 			eventboxLegendaSkipRows.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfSkiped));
 
-			buttonSave.Binding.AddBinding(ViewModel, v => v.SensetiveSaveButton, w => w.Sensitive).InitializeFromSource();
+			buttonSave.Binding.AddBinding(ViewModel, v => v.SensitiveSaveButton, w => w.Sensitive).InitializeFromSource();
 			ViewModel.ProgressStep = progressTotal;
 			#endregion
 		}

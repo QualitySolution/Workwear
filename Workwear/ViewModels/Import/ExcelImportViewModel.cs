@@ -46,7 +46,7 @@ namespace workwear.ViewModels.Import
 		void ImportModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == nameof(ImportModel.CanMatch))
-				OnPropertyChanged(nameof(SensetiveThirdStepButton));
+				OnPropertyChanged(nameof(SensitiveThirdStepButton));
 		}
 		#endregion
 
@@ -59,7 +59,7 @@ namespace workwear.ViewModels.Import
 
 		#region Шаг 1
 
-		public bool SensetiveSecondStepButton => SelectedSheet != null;
+		public bool SensitiveSecondStepButton => SelectedSheet != null;
 
 		private string fileName;
 
@@ -74,7 +74,7 @@ namespace workwear.ViewModels.Import
 
 		public List<ImportedSheet> Sheets { get; set; } = new List<ImportedSheet>();
 		private ImportedSheet selectedSheet;
-		[PropertyChangedAlso(nameof(SensetiveSecondStepButton))]
+		[PropertyChangedAlso(nameof(SensitiveSecondStepButton))]
 		public virtual ImportedSheet SelectedSheet {
 			get => selectedSheet;
 			set => SetField(ref selectedSheet, value);
@@ -91,7 +91,7 @@ namespace workwear.ViewModels.Import
 
 		#region Шаг 2
 
-		public bool SensetiveThirdStepButton => ImportModel.CanMatch;
+		public bool SensitiveThirdStepButton => ImportModel.CanMatch;
 		#endregion
 
 		#region Шаг 3
@@ -100,6 +100,7 @@ namespace workwear.ViewModels.Import
 		{
 			CurrentStep = 2;
 			ImportModel.MatchAndChanged(UoW, CountersViewModel);
+			SensitiveSaveButton = ImportModel.CanSave;
 		}
 
 		#region Статистика
@@ -109,29 +110,19 @@ namespace workwear.ViewModels.Import
 		#region Свойства View
 		public IProgressBarDisplayable ProgressStep;
 
-		public bool SensetiveSaveButton => SaveNewItems || SaveChangedItems;
-		#endregion
-
-		#region Настройки
-		private bool saveNewItems = true;
-		[PropertyChangedAlso(nameof(SensetiveSaveButton))]
-		public virtual bool SaveNewItems {
-			get => saveNewItems;
-			set => SetField(ref saveNewItems, value);
-		}
-
-		private bool saveChangedItems = true;
-		[PropertyChangedAlso(nameof(SensetiveSaveButton))]
-		public virtual bool SaveChangedItems {
-			get => saveChangedItems;
-			set => SetField(ref saveChangedItems, value);
+		private bool sensitiveSaveButton;
+		public virtual bool SensitiveSaveButton {
+			get => sensitiveSaveButton;
+			set => SetField(ref sensitiveSaveButton, value);
 		}
 		#endregion
+
 		#endregion
 
 		#region Сохранение
 		public new void Save()
 		{
+			sensitiveSaveButton = false;
 			progressInterceptor.PrepareStatement += (sender, e) => ProgressStep.Add();
 			var toSave = ImportModel.MakeToSave(ProgressStep, UoW);
 			ProgressStep.Start(toSave.Count, text: "Сохранение");
