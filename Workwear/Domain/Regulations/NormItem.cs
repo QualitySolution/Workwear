@@ -66,15 +66,17 @@ namespace workwear.Domain.Regulations
 				double years = -1;
 				switch(NormPeriod)
 				{
-				case NormPeriodType.Year:
-					years = PeriodCount;
-					break;
-				case NormPeriodType.Month:
-					years = (double)PeriodCount / 12;
-					break;
-				case NormPeriodType.Shift:
-					years = (double)PeriodCount / 247;
-					break;
+					case NormPeriodType.Year:
+						years = PeriodCount;
+						break;
+					case NormPeriodType.Month:
+						years = (double)PeriodCount / 12;
+						break;
+					case NormPeriodType.Shift:
+						years = (double)PeriodCount / 247;
+						break;
+					case NormPeriodType.Wearout:
+						return 0;
 				}
 				return Amount / years;
 			}
@@ -118,8 +120,10 @@ namespace workwear.Domain.Regulations
 		/// <summary>
 		/// Рассчитывает дату износа пропорционально количеству выданного.
 		/// </summary>
-		public virtual DateTime CalculateExpireDate(DateTime issueDate, int amount)
+		public virtual DateTime? CalculateExpireDate(DateTime issueDate, int amount)
 		{
+			if(NormPeriod == NormPeriodType.Wearout)
+				return null;
 			//TODO Некорректно считаем смены
 			double oneItemByMonths = (double)PeriodInMonths / Amount;
 			double months = amount * oneItemByMonths;
@@ -131,8 +135,10 @@ namespace workwear.Domain.Regulations
 		/// <summary>
 		/// Рассчитывает дату износа по норме.
 		/// </summary>
-		public virtual DateTime CalculateExpireDate(DateTime issueDate)
+		public virtual DateTime? CalculateExpireDate(DateTime issueDate)
 		{
+			if(NormPeriod == NormPeriodType.Wearout)
+				return null;
 			//TODO Некорректно считаем смены
 			return issueDate.AddMonths(PeriodInMonths);
 		}
