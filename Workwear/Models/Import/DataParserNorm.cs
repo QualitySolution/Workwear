@@ -278,8 +278,14 @@ namespace workwear.Models.Import
 		{
 			amount = 0;
 			periods = 0;
-			periodType = NormPeriodType.Month;
+			if(value.ToLower().Contains("до износа")) {
+				amount = 1;
+				periodType = NormPeriodType.Wearout;
+				return true;
+			}
+
 			var regexp = new Regex(@"\((\d+) в (\d+) (месяц|месяца|месяцев)\)");
+			periodType = NormPeriodType.Month;
 			var matches = regexp.Matches(value);
 			if(matches.Count == 0)
 				return false;

@@ -773,7 +773,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox36">
-                      <Value>={lifetime}</Value>
+                      <Value>=Iif({lifetime} = 0, "до износа", Format({lifetime}, "0.##"))</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -781,7 +781,6 @@
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
-                        <Format>0.##</Format>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -796,14 +795,14 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
-                        <FontSize >9pt</FontSize>
-                        <TextAlign >Center</TextAlign>
+                        <FontSize>9pt</FontSize>
+                        <TextAlign>Center</TextAlign>
                       </Style>
                       <Visibility>
                         <Hidden>
                         </Hidden>
                       </Visibility>
-                      <CanGrow >true</CanGrow>
+                      <CanGrow>true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -1827,7 +1826,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     wear_cards.last_name,
@@ -1861,7 +1860,7 @@ WHERE
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="last_name">
           <DataField>last_name</DataField>
           <TypeName>System.String</TypeName>
