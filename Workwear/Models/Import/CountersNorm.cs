@@ -17,11 +17,11 @@ namespace workwear.Models.Import
 		NewSubdivisions,
 		[Display(Name = "Новых должностей")]
 		NewPosts,
-		[Display(Name = "Новых номеклатур нормы")]
+		[Display(Name = "Новых номенклатур нормы")]
 		NewProtectionTools,
-		[Display(Name = "Новых типов номеклатуры")]
+		[Display(Name = "Новых типов номенклатуры")]
 		NewItemTypes,
-		[Display(Name = "Не распознанных номеклатур")]
+		[Display(Name = "Не распознанных номенклатур")]
 		UndefinedItemTypes,
 		[Display(Name = "Неоднозначных норм")]
 		AmbiguousNorms,
