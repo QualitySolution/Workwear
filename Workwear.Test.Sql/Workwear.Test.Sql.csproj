@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\QSProjects\QS.Utilities\QS.Utilities.Core.csproj" />
+      <ProjectReference Include="..\..\QSProjects\QS.Utilities\QS.Utilities.csproj" />
       <ProjectReference Include="..\Workwear.Sql\Workwear.Sql.csproj" />
     </ItemGroup>
 

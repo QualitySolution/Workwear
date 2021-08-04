@@ -39,7 +39,7 @@ namespace QS.DBScripts.Controllers
 			throw new Exception(text);
 		}
 
-		public bool BaseExistDropIt(string dbname)
+		public bool NeedDropDatabaseIfExists(string dbname)
 		{
 			return true;
 		}
