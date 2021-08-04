@@ -10,11 +10,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\GammaBinding\GammaUtil\Gamma.Utilities.dotnet.csproj" />
+      <Folder Include="Domain\Company" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Domain\Company" />
+      <ProjectReference Include="..\..\GammaBinding\Gamma.Utilities\Gamma.Utilities.csproj" />
     </ItemGroup>
 
 </Project>
