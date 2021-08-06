@@ -40,6 +40,7 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Journal.ViewModels.Tools;
 using workwear.Models.Import;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
@@ -695,7 +696,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionEmployeeLoadActivated(object sender, EventArgs e)
 	{
-		NavigationManager.OpenViewModel<ExcelImportViewModel>(null, 
+		NavigationManager.OpenViewModel<ExcelImportViewModel>(null,
 			addingRegistrations: c => c.RegisterType<ImportModelEmployee>().As<IImportModel>());
 	}
 
@@ -704,5 +705,10 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager.OpenViewModel<ExcelImportViewModel>(null,
 			addingRegistrations: c => c.RegisterType<ImportModelNorm>().As<IImportModel>());
 
+	}
+
+	protected void OnActionSetNormsActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<EmployeeSetNormViewModel>(null);
 	}
 }

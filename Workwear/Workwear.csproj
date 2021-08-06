@@ -446,6 +446,7 @@
     <Compile Include="Tools\NHibernate\ProgresSessionProvider.cs" />
     <Compile Include="Tools\NHibernate\ProgressInterceptor.cs" />
     <Compile Include="Models\Import\NomenclatureTypes.cs" />
+    <Compile Include="Journal\ViewModels\Tools\EmployeeSetNormViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -652,6 +653,7 @@
     <Folder Include="ViewModels\Import\" />
     <Folder Include="Views\Import\" />
     <Folder Include="Tools\NHibernate\" />
+    <Folder Include="Journal\ViewModels\Tools\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
