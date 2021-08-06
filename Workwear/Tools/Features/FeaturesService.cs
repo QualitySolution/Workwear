@@ -67,12 +67,11 @@ namespace workwear.Tools.Features
 
 			switch(feature) {
 				case WorkwearFeature.Warehouses:
-					return ProductEdition == 3;
 				case WorkwearFeature.IdentityCards:
 					return ProductEdition == 3;
 				case WorkwearFeature.MassExpense:
-					return ProductEdition == 2 || ProductEdition == 3;
 				case WorkwearFeature.LoadExcel:
+				case WorkwearFeature.BatchProcessing:
 					return ProductEdition == 2 || ProductEdition == 3;
 				case WorkwearFeature.EmployeeLk:
 					if(ProductEdition != 2 && ProductEdition != 3)
@@ -101,6 +100,8 @@ namespace workwear.Tools.Features
 		MassExpense,
 		[Display(Name = "Загрузка из Excel")]
 		LoadExcel,
+		[Display(Name = "Групповая обработка")]
+		BatchProcessing,
 		[Display(Name = "Мобильный кабинет сотрудника")]
 		EmployeeLk,
 	}

@@ -181,6 +181,7 @@ public partial class MainWindow : Gtk.Window
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
+		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
 	}
 	#endregion
 

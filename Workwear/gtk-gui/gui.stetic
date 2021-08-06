@@ -5410,7 +5410,7 @@
         <property name="ShortLabel" translatable="yes">Нормы</property>
         <signal name="Activated" handler="OnActionNormsLoadActivated" />
       </action>
-      <action id="executeAction">
+      <action id="ActionBatchProcessing">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Обработка</property>
         <property name="ShortLabel" translatable="yes">Обработка</property>
@@ -5446,7 +5446,7 @@
                   <node type="Menuitem" action="ActionEmployeeLoad" />
                   <node type="Menuitem" action="ActionNormsLoad" />
                 </node>
-                <node type="Menu" action="executeAction">
+                <node type="Menu" action="ActionBatchProcessing">
                   <node type="Menuitem" action="ActionSetNorms" />
                 </node>
                 <node type="Separator" />
