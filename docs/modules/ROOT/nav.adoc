@@ -7,6 +7,7 @@
 * xref:employees.adoc[Данные о сотрудниках]
 * xref:stock-documents.adoc[Складские документы]
 * xref:reports.adoc[Отчеты]
+* xref:manipulation.adoc[Обработка]
 * xref:settings.adoc[Настройки программы]
 * xref:index.adoc[Старая документация]
 

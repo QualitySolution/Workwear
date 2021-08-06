@@ -26,6 +26,8 @@ include::interface.adoc[]
 
 include::employees.adoc[]
 
+include::manipulation.adoc[]
+
 include::technical.adoc[]
 
 :leveloffset: 0
