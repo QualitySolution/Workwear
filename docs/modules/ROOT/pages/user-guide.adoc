@@ -1,7 +1,7 @@
 :title-separator: {sp}|
 = QS: Спецодежда и имущество | Руководство пользователя
-Quality Solution 2020
-версия 2.3
+Quality Solution 2021
+версия 2.5
 :organization: Quality Solution
 :doctype: book
 :sectnums:
