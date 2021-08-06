@@ -35,6 +35,7 @@ namespace workwear.Journal.ViewModels.Tools
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = false;
+			Title = "Установка норм сотрудникам";
 
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 
