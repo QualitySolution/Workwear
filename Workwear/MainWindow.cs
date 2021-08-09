@@ -146,7 +146,7 @@ public partial class MainWindow : Gtk.Window
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
 		NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
 
-		#region Одноразовый исправления базы
+		#region Проверки и исправления базы
 		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользовтель его создать не сможет.
 		if(UoW.GetAll<Warehouse>().Count() == 0)
 			CreateDefaultWarehouse();
