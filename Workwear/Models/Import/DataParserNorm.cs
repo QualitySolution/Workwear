@@ -152,7 +152,9 @@ namespace workwear.Models.Import
 				if(pair.Norms.Any())
 					continue;
 
-				var norm = new Norm();
+				var norm = new Norm {
+					Comment = "Импортирована из Excel"
+				};
 				norm.AddPost(pair.Post);
 				pair.Norms.Add(norm);
 			}
@@ -205,7 +207,10 @@ namespace workwear.Models.Import
 					&& String.Equals(x.Subdivision?.Name, pair.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
 
 				if(post == null) {
-					post = new Post { Name = pair.PostName };
+					post = new Post { 
+						Name = pair.PostName,
+						Comments = "Создана при импорте норм из Excel", 
+					};
 					if(!String.IsNullOrEmpty(pair.SubdivisionName)) {
 						var subdivision = UsedSubdivisions.FirstOrDefault(x =>
 							String.Equals(x.Name, pair.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
