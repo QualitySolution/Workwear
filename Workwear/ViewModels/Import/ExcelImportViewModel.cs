@@ -100,7 +100,7 @@ namespace workwear.ViewModels.Import
 		public void ThirdStep()
 		{
 			CurrentStep = 2;
-			ImportModel.MatchAndChanged(UoW, CountersViewModel);
+			ImportModel.MatchAndChanged(ProgressStep, UoW, CountersViewModel);
 			SensitiveSaveButton = ImportModel.CanSave;
 		}
 

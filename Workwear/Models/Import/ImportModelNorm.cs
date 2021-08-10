@@ -49,7 +49,7 @@ namespace workwear.Models.Import
 			return toSave;
 		}
 
-		public void MatchAndChanged(IUnitOfWork uow, CountersViewModel counters)
+		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow, CountersViewModel counters)
 		{
 			dataParser.MatchWithExist(uow, UsedRows, Columns);
 			dataParser.FindChanges(UsedRows, Columns.Where(x => x.DataType != DataTypeNorm.Unknown).ToArray());

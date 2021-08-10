@@ -43,7 +43,7 @@ namespace workwear.Models.Import
 			return toSave;
 		}
 
-		public void MatchAndChanged(IUnitOfWork uow, CountersViewModel counters)
+		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow, CountersViewModel counters)
 		{
 			if(Columns.Any(x => x.DataType == DataTypeEmployee.PersonnelNumber))
 				dataParser.MatchByNumber(uow, UsedRows, Columns);

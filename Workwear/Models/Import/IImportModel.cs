@@ -29,7 +29,7 @@ namespace workwear.Models.Import
 
 		#region Сопоставление
 		bool CanMatch { get; }
-		void MatchAndChanged(IUnitOfWork uow, CountersViewModel counters);
+		void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow, CountersViewModel counters);
 		#endregion
 
 		#region Сохранение

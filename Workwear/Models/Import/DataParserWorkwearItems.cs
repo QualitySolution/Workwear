@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using NHibernate;
 using NHibernate.Criterion;
+using QS.Dialog;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
-using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Repository.Company;
 using workwear.Repository.Regulations;
@@ -67,7 +67,7 @@ namespace workwear.Models.Import
 
 		#region Сопоставление данных
 
-		public void MatchChanges(IUnitOfWork uow, IEnumerable<SheetRowWorkwearItems> list, List<ImportedColumn<DataTypeWorkwearItems>> columns)
+		public void MatchChanges(IProgressBarDisplayable progress, IUnitOfWork uow, IEnumerable<SheetRowWorkwearItems> list, List<ImportedColumn<DataTypeWorkwearItems>> columns)
 		{
 			var personnelNumberColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.PersonnelNumber);
 			var protectionToolsColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.ProtectionTools);
@@ -75,6 +75,7 @@ namespace workwear.Models.Import
 			var issuedateColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.IssueDate);
 			var countColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Count);
 
+			progress.Start(list.Count() * 2 + 3, text: "Загрузка сотрудников");
 			var personnelNumbers = list.Select(x => x.CellValue(personnelNumberColumn.Index))
 				.Where(x => !String.IsNullOrWhiteSpace(x)).Distinct().ToArray();
 
@@ -84,6 +85,7 @@ namespace workwear.Models.Import
 				.List();
 
 			foreach(var row in list) {
+				progress.Add(text: "Сопоставление");
 				row.Date = ParseDateOrNull(row.CellValue(issuedateColumn.Index));
 				if(row.Date == null) {
 					row.Skiped = true;
@@ -113,10 +115,12 @@ namespace workwear.Models.Import
 				}
 			}
 
+			progress.Add(text: "Загрузка номеклатуры");
 			var nomenclatureTypes = new NomenclatureTypes(uow, true);
 			var nomenclatureNames = list.Select(x => x.CellValue(nomenclatureColumn.Index)).Where(x => x != null).Distinct().ToArray();
 			var nomenclatures = nomenclatureRepository.GetNomenclatureByName(uow, nomenclatureNames);
 
+			progress.Add(text: "Загрузка операций выдачи");
 			var dates = list
 				.Select(x => x.Date)
 				.Where(x => x != null)
@@ -132,8 +136,10 @@ namespace workwear.Models.Import
 				.List()
 				.GroupBy(x => x.Employee);
 
-			foreach(var row in list.Where(x => !x.Skiped)) {
-
+			foreach(var row in list) {
+				progress.Add(text: "Обработка операций выдачи");
+				if(row.Skiped)
+					continue;
 				var nomeclatureName = row.CellValue(nomenclatureColumn.Index);
 				if(String.IsNullOrWhiteSpace(nomeclatureName)) {
 					row.ChangedColumns.Add(nomenclatureColumn, ChangeType.NotFound);
@@ -150,11 +156,6 @@ namespace workwear.Models.Import
 							Comment = "Создана при импорте выдачи из Excel", 
 						};
 						row.WorkwearItem.ProtectionTools.AddNomeclature(nomenclature);
-						//nomenclature.Type = nomenclatureTypes.ParseNomenclatureName(nomeclatureName);
-						//if(nomenclature.Type == null) {
-						//	nomenclature.Type = nomenclatureTypes.GetUnknownType();
-						//	UndefinedNomeclatureNames.Add(nomeclatureName);
-						//}
 					}
 					UsedNomeclature.Add(nomenclature);
 				}
@@ -163,7 +164,7 @@ namespace workwear.Models.Import
 					?.FirstOrDefault(x => x.OperationTime.Date == row.Date && x.Nomenclature == nomenclature);
 
 				if(row.Operation != null) {
-					//Обновление операций не реализовано
+					//TODO Обновление операций не реализовано
 					continue;
 				}
 
@@ -191,13 +192,12 @@ namespace workwear.Models.Import
 						row.ChangedColumns.Add(column, ChangeType.NewEntity);
 				}
 			}
+			progress.Close();
 		}
 
 		#endregion
 
-
 		public readonly List<Nomenclature> UsedNomeclature = new List<Nomenclature>();
-		//public List<string> UndefinedNomeclatureNames = new List<string>();
 		
 		#region Helpers
 		DateTime? ParseDateOrNull(string value)
