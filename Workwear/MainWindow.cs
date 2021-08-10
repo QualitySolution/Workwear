@@ -712,4 +712,10 @@ public partial class MainWindow : Gtk.Window
 	{
 		NavigationManager.OpenViewModel<EmployeeSetNormViewModel>(null);
 	}
+
+	protected void OnActionImportWorkwearItemsActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<ExcelImportViewModel>(null,
+			addingRegistrations: c => c.RegisterType<ImportModelWorkwearItems>().As<IImportModel>());
+	}
 }

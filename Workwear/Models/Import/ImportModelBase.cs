@@ -4,7 +4,6 @@ using System.Linq;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using QS.DomainModel.Entity;
-using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import
 {

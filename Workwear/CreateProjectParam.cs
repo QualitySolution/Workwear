@@ -247,6 +247,7 @@ namespace workwear
 			#region Импрорт данных
 			builder.RegisterType<DataParserEmployee>().AsSelf();
 			builder.RegisterType<DataParserNorm>().AsSelf();
+			builder.RegisterType<DataParserWorkwearItems>().AsSelf();
 			#endregion
 			AppDIContainer = builder.Build();
 		}

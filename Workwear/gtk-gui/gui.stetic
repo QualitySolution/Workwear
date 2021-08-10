@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -5422,6 +5422,12 @@
         <property name="ShortLabel" translatable="yes">Установка норм сотрудникам</property>
         <signal name="Activated" handler="OnActionSetNormsActivated" />
       </action>
+      <action id="ActionImportWorkwearItems">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Выдачи</property>
+        <property name="ShortLabel" translatable="yes">Выдачи</property>
+        <signal name="Activated" handler="OnActionImportWorkwearItemsActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -5445,6 +5451,7 @@
                 <node type="Menu" action="ActionImport">
                   <node type="Menuitem" action="ActionEmployeeLoad" />
                   <node type="Menuitem" action="ActionNormsLoad" />
+                  <node type="Menuitem" action="ActionImportWorkwearItems" />
                 </node>
                 <node type="Menu" action="ActionBatchProcessing">
                   <node type="Menuitem" action="ActionSetNorms" />

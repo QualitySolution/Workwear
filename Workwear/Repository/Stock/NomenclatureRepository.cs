@@ -1,15 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.UoW;
-using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using NHibernate.Criterion;
 
 namespace workwear.Repository.Stock
 {
-	public static class NomenclatureRepository
+	public class NomenclatureRepository
 	{
+		public IList<Nomenclature> GetNomenclatureByName(IUnitOfWork uow, params string[] names)
+		{
+			return uow.Session.QueryOver<Nomenclature>()
+				.Where(x => x.Name.IsIn(names))
+				.List();
+		}
+
+		#region Статические
 		public static IList<Nomenclature> GetNomenclaturesOfType(IUnitOfWork uow, ItemsType itemsType)
 		{
 			return uow.Session.QueryOver<Nomenclature>()
@@ -26,5 +32,6 @@ namespace workwear.Repository.Stock
 				.Select(x => x.Type)
 				.List<ItemsType>();
 		}
+		#endregion
 	}
 }
