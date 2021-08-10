@@ -32,24 +32,40 @@ namespace workwear.Models.Import
 			return null;
 		}
 
+		public int? CellIntValue(int col)
+		{
+			var cell = cells.GetCell(col);
+
+			if(cell != null) {
+				switch(cell.CellType) {
+					case NPOI.SS.UserModel.CellType.Numeric:
+						return Convert.ToInt32(cell.NumericCellValue);
+					case NPOI.SS.UserModel.CellType.String:
+						if(int.TryParse(cell.StringCellValue, out int value))
+							return value;
+						else
+							return null;
+				}
+			}
+			return null;
+		}
+
 		public string CellBackgroundColor(int col)
 		{
-			if(Skiped)
-				return ExcelImportViewModel.ColorOfSkiped;
-
 			var column = ChangedColumns.Keys.FirstOrDefault(x => x.Index == col);
 
 			if(column != null) {
 				switch(ChangedColumns[column]) {
 					case ChangeType.NewEntity : return ExcelImportViewModel.ColorOfNew;
 					case ChangeType.ChangeValue : return ExcelImportViewModel.ColorOfChanged;
+					case ChangeType.NotFound: return ExcelImportViewModel.ColorOfNotFound;
 					case ChangeType.ParseError: return ExcelImportViewModel.ColorOfError;
 					case ChangeType.NotChanged: break;
 					default:
 						throw new NotImplementedException("Не известный тип изменения");
 				}
 			}
-			return null;
+			return Skiped ? ExcelImportViewModel.ColorOfSkiped : null;
 		}
 
 		public bool Skiped;
@@ -62,6 +78,7 @@ namespace workwear.Models.Import
 	public interface ISheetRow
 	{
 		string CellValue(int col);
+		int? CellIntValue(int col);
 		string CellBackgroundColor(int col);
 	}
 }

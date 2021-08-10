@@ -13997,7 +13997,7 @@
                             <child>
                               <widget class="Gtk.Table" id="table2">
                                 <property name="MemberName" />
-                                <property name="NRows">4</property>
+                                <property name="NRows">5</property>
                                 <property name="RowSpacing">6</property>
                                 <property name="ColumnSpacing">6</property>
                                 <child>
@@ -14035,8 +14035,8 @@
                                     </child>
                                   </widget>
                                   <packing>
-                                    <property name="TopAttach">2</property>
-                                    <property name="BottomAttach">3</property>
+                                    <property name="TopAttach">3</property>
+                                    <property name="BottomAttach">4</property>
                                     <property name="AutoSize">True</property>
                                     <property name="XOptions">Fill</property>
                                     <property name="YOptions">Fill</property>
@@ -14071,6 +14071,30 @@
                                   </packing>
                                 </child>
                                 <child>
+                                  <widget class="Gamma.GtkWidgets.yEventBox" id="eventboxLegendaNotFound">
+                                    <property name="MemberName" />
+                                    <child>
+                                      <widget class="Gamma.GtkWidgets.yLabel" id="labelLegendNotFound">
+                                        <property name="MemberName" />
+                                        <property name="LabelProp" translatable="yes">Не найдено</property>
+                                      </widget>
+                                    </child>
+                                  </widget>
+                                  <packing>
+                                    <property name="TopAttach">2</property>
+                                    <property name="BottomAttach">3</property>
+                                    <property name="AutoSize">True</property>
+                                    <property name="XOptions">Fill</property>
+                                    <property name="YOptions">Fill</property>
+                                    <property name="XExpand">False</property>
+                                    <property name="XFill">True</property>
+                                    <property name="XShrink">False</property>
+                                    <property name="YExpand">False</property>
+                                    <property name="YFill">True</property>
+                                    <property name="YShrink">False</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <widget class="Gamma.GtkWidgets.yEventBox" id="eventboxLegendaSkipRows">
                                     <property name="MemberName" />
                                     <child>
@@ -14081,8 +14105,8 @@
                                     </child>
                                   </widget>
                                   <packing>
-                                    <property name="TopAttach">3</property>
-                                    <property name="BottomAttach">4</property>
+                                    <property name="TopAttach">4</property>
+                                    <property name="BottomAttach">5</property>
                                     <property name="AutoSize">True</property>
                                     <property name="XOptions">Fill</property>
                                     <property name="YOptions">Fill</property>

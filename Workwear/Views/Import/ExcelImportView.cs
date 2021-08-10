@@ -53,10 +53,11 @@ namespace workwear.Views.Import
 			#region Шаг 3
 			var countersView = new CountersView(ViewModel.CountersViewModel);
 			vboxCounters.PackStart(countersView, false, true, 2);
-			countersView.Visible = true; 
+			countersView.Visible = true;
 
 			eventboxLegendaNew.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfNew));
 			eventboxLegendaChanged.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfChanged));
+			eventboxLegendaNotFound.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfNotFound));
 			eventboxLegendaError.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfError));
 			eventboxLegendaSkipRows.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfSkiped));
 
