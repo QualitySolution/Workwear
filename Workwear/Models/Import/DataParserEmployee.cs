@@ -4,6 +4,7 @@ using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Services;
@@ -86,9 +87,11 @@ namespace workwear.Models.Import
 		}
 
 		#region Обработка изменений
-		public void FindChanges(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, ImportedColumn<DataTypeEmployee>[] meaningfulColumns, SettingsMatchEmployeesViewModel settings)
+		public void FindChanges(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, ImportedColumn<DataTypeEmployee>[] meaningfulColumns, IProgressBarDisplayable progress, SettingsMatchEmployeesViewModel settings)
 		{
+			progress.Start(list.Count(), text: "Поиск изменений");
 			foreach(var row in list) {
+				progress.Add();
 				if(row.Skiped)
 					continue;
 
@@ -107,6 +110,7 @@ namespace workwear.Models.Import
 					row.ChangedColumns.Add(column, MakeChange(settings, employee, column.DataType, row.CellValue(column.Index), rowChange));
 				}
 			}
+			progress.Close();
 		}
 
 		public ChangeType MakeChange(SettingsMatchEmployeesViewModel settings, EmployeeCard employee, DataTypeEmployee dataType, string value, ChangeType rowChange)
@@ -175,8 +179,9 @@ namespace workwear.Models.Import
 		#endregion
 
 		#region Сопоставление
-		public void MatchByName(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns)
+		public void MatchByName(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns, IProgressBarDisplayable progress)
 		{
+			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
 			var searchValues = list.Select(x => GetFIO(x, columns))
 				.Where(fio => !String.IsNullOrEmpty(fio.LastName) && !String.IsNullOrEmpty(fio.FirstName))
 				.Select(fio => (fio.LastName + "|" + fio.FirstName).ToUpper())
@@ -195,12 +200,15 @@ namespace workwear.Models.Import
 						   searchValues))
 				.List();
 
+			progress.Add();
 			foreach(var employee in exists) {
 				var found = list.Where(x => СompareFio(x, employee, columns)).ToArray();
 				if(!found.Any())
 					continue; //Так как из базе ищем без отчества, могуть быть лишние.
 				found.First().Employees.Add(employee);
 			}
+
+			progress.Add();
 			//Пропускаем дубликаты имен в файле
 			var groups = list.GroupBy(x => GetFIO(x, columns).GetHash());
 			foreach(var group in groups) {
@@ -212,6 +220,7 @@ namespace workwear.Models.Import
 					item.Skiped = true;
 				}
 			}
+			progress.Close();
 		}
 
 		private bool СompareFio(SheetRowEmployee x, EmployeeCard employee, List<ImportedColumn<DataTypeEmployee>> columns)
@@ -222,8 +231,9 @@ namespace workwear.Models.Import
 				&& (fio.Patronymic == null || String.Equals(fio.Patronymic, employee.Patronymic, StringComparison.CurrentCultureIgnoreCase));
 		}
 
-		public void MatchByNumber(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns, SettingsMatchEmployeesViewModel settings)
+		public void MatchByNumber(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns, SettingsMatchEmployeesViewModel settings, IProgressBarDisplayable progress)
 		{
+			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
 			var numberColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.PersonnelNumber);
 			var numbers = list.Select(x => settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellValue(numberColumn.Index)) : x.CellValue(numberColumn.Index))
 							.Where(x => !String.IsNullOrWhiteSpace(x))
@@ -232,23 +242,26 @@ namespace workwear.Models.Import
 				.Where(x => x.PersonnelNumber.IsIn(numbers))
 				.List();
 
+			progress.Add();
 			foreach(var employee in exists) {
 				var found = list.Where(x => (settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellValue(numberColumn.Index)) : x.CellValue(numberColumn.Index)) == employee.PersonnelNumber).ToArray();
 				found.First().Employees.Add(employee);
 			}
 
 			//Пропускаем дубликаты Табельных номеров в файле
+			progress.Add();
 			var groups = list.GroupBy(x => settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellValue(numberColumn.Index)) : x.CellValue(numberColumn.Index));
 			foreach(var group in groups) {
 				if(String.IsNullOrWhiteSpace(group.Key)) {
 					//Если табельного номера нет проверяем по FIO
-					MatchByName(uow, group, columns);
+					MatchByName(uow, group, columns, progress);
 				}
 
 				foreach(var item in group.Skip(1)) {
 					item.Skiped = true;
 				}
 			}
+			progress.Close();
 		}
 		#endregion
 
@@ -257,8 +270,9 @@ namespace workwear.Models.Import
 		public readonly List<Subdivision> UsedSubdivisions = new List<Subdivision>();
 		public readonly List<Post> UsedPosts = new List<Post>();
 
-		public void FillExistEntities(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns)
+		public void FillExistEntities(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns, IProgressBarDisplayable progress)
 		{
+			progress.Start(2, text: "Загружаем должности и подразделения");
 			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Subdivision);
 			if(subdivisionColumn != null) {
 				var subdivisionNames = list.Select(x => x.CellValue(subdivisionColumn.Index)).Distinct().ToArray();
@@ -266,6 +280,7 @@ namespace workwear.Models.Import
 					.Where(x => x.Name.IsIn(subdivisionNames))
 					.List());
 			}
+			progress.Add();
 			var postColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Post);
 			if(postColumn != null) {
 				var postNames = list.Select(x => x.CellValue(postColumn.Index)).Distinct().ToArray();
@@ -273,6 +288,7 @@ namespace workwear.Models.Import
 					.Where(x => x.Name.IsIn(postNames))
 					.List());
 			}
+			progress.Close();
 		}
 
 		#endregion

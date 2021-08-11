@@ -48,12 +48,12 @@ namespace workwear.Models.Import
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow, CountersViewModel counters)
 		{
 			if(Columns.Any(x => x.DataType == DataTypeEmployee.PersonnelNumber))
-				dataParser.MatchByNumber(uow, UsedRows, Columns, matchSettingsViewModel);
+				dataParser.MatchByNumber(uow, UsedRows, Columns, matchSettingsViewModel, progress);
 			else
-				dataParser.MatchByName(uow, UsedRows, Columns);
+				dataParser.MatchByName(uow, UsedRows, Columns, progress);
 
-			dataParser.FillExistEntities(uow, UsedRows, Columns);
-			dataParser.FindChanges(uow, UsedRows, Columns.Where(x => x.DataType != DataTypeEmployee.Unknown).ToArray(), matchSettingsViewModel);
+			dataParser.FillExistEntities(uow, UsedRows, Columns, progress);
+			dataParser.FindChanges(uow, UsedRows, Columns.Where(x => x.DataType != DataTypeEmployee.Unknown).ToArray(), progress, matchSettingsViewModel);
 			OnPropertyChanged(nameof(DisplayRows));
 			counters.SetCount(CountersEmployee.SkipRows, UsedRows.Count(x => x.Skiped));
 			counters.SetCount(CountersEmployee.MultiMatch, UsedRows.Count(x => x.Employees.Count > 1));
