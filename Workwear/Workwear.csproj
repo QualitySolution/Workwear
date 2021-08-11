@@ -452,6 +452,9 @@
     <Compile Include="Models\Import\DataTypeWorkwearItems.cs" />
     <Compile Include="Models\Import\SheetRowWorkwearItems.cs" />
     <Compile Include="Models\Import\CountersWorkwearItems.cs" />
+    <Compile Include="Views\Import\SettingsMatchEmployeesView.cs" />
+    <Compile Include="ViewModels\Import\SettingsMatchEmployeesViewModel.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Import.SettingsMatchEmployeesView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

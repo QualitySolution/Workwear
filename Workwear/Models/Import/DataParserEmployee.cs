@@ -10,6 +10,7 @@ using QS.Services;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
 using workwear.Repository.Company;
+using workwear.ViewModels.Import;
 using Workwear.Domain.Company;
 
 namespace workwear.Models.Import
@@ -85,7 +86,7 @@ namespace workwear.Models.Import
 		}
 
 		#region Обработка изменений
-		public void FindChanges(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, ImportedColumn<DataTypeEmployee>[] meaningfulColumns)
+		public void FindChanges(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, ImportedColumn<DataTypeEmployee>[] meaningfulColumns, SettingsMatchEmployeesViewModel settings)
 		{
 			foreach(var row in list) {
 				if(row.Skiped)
@@ -103,12 +104,12 @@ namespace workwear.Models.Import
 				}
 
 				foreach(var column in meaningfulColumns) {
-					row.ChangedColumns.Add(column, MakeChange(employee, column.DataType, row.CellValue(column.Index), rowChange));
+					row.ChangedColumns.Add(column, MakeChange(settings, employee, column.DataType, row.CellValue(column.Index), rowChange));
 				}
 			}
 		}
 
-		public ChangeType MakeChange(EmployeeCard employee, DataTypeEmployee dataType, string value, ChangeType rowChange)
+		public ChangeType MakeChange(SettingsMatchEmployeesViewModel settings, EmployeeCard employee, DataTypeEmployee dataType, string value, ChangeType rowChange)
 		{
 			if(String.IsNullOrWhiteSpace(value))
 				return ChangeType.NotChanged;
@@ -117,7 +118,7 @@ namespace workwear.Models.Import
 				case DataTypeEmployee.CardKey:
 					return String.Equals(employee.CardKey, value, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
 				case DataTypeEmployee.PersonnelNumber:
-					return String.Equals(employee.PersonnelNumber, value, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+					return String.Equals(employee.PersonnelNumber, settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(value) : value, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
 				case DataTypeEmployee.LastName:
 					return String.Equals(employee.LastName, value, StringComparison.CurrentCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
 				case DataTypeEmployee.FirstName:
@@ -221,10 +222,10 @@ namespace workwear.Models.Import
 				&& (fio.Patronymic == null || String.Equals(fio.Patronymic, employee.Patronymic, StringComparison.CurrentCultureIgnoreCase));
 		}
 
-		public void MatchByNumber(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns)
+		public void MatchByNumber(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns, SettingsMatchEmployeesViewModel settings)
 		{
 			var numberColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.PersonnelNumber);
-			var numbers = list.Select(x => x.CellValue(numberColumn.Index))
+			var numbers = list.Select(x => settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellValue(numberColumn.Index)) : x.CellValue(numberColumn.Index))
 							.Where(x => !String.IsNullOrWhiteSpace(x))
 							.Distinct().ToArray();
 			var exists = uow.Session.QueryOver<EmployeeCard>()
@@ -232,12 +233,12 @@ namespace workwear.Models.Import
 				.List();
 
 			foreach(var employee in exists) {
-				var found = list.Where(x => x.CellValue(numberColumn.Index) == employee.PersonnelNumber).ToArray();
+				var found = list.Where(x => (settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellValue(numberColumn.Index)) : x.CellValue(numberColumn.Index)) == employee.PersonnelNumber).ToArray();
 				found.First().Employees.Add(employee);
 			}
 
 			//Пропускаем дубликаты Табельных номеров в файле
-			var groups = list.GroupBy(x => x.CellValue(numberColumn.Index));
+			var groups = list.GroupBy(x => settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellValue(numberColumn.Index)) : x.CellValue(numberColumn.Index));
 			foreach(var group in groups) {
 				if(String.IsNullOrWhiteSpace(group.Key)) {
 					//Если табельного номера нет проверяем по FIO
@@ -277,18 +278,18 @@ namespace workwear.Models.Import
 		#endregion
 		#region Сохранение данных
 
-		public IEnumerable<object> PrepareToSave(IUnitOfWork uow, SheetRowEmployee row)
+		public IEnumerable<object> PrepareToSave(IUnitOfWork uow, SettingsMatchEmployeesViewModel settings, SheetRowEmployee row)
 		{
 			var employee = row.Employees.FirstOrDefault() ?? new EmployeeCard();
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
 			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученой из общего поля ФИО.
 			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType)) {
-				SetValue(uow, employee, column.DataType, row.CellValue(column.Index));
+				SetValue(settings, uow, employee, column.DataType, row.CellValue(column.Index));
 			}
 			yield return employee;
 		}
 
-		private void SetValue(IUnitOfWork uow, EmployeeCard employee, DataTypeEmployee dataType, string value)
+		private void SetValue(SettingsMatchEmployeesViewModel settings, IUnitOfWork uow, EmployeeCard employee, DataTypeEmployee dataType, string value)
 		{
 			if(String.IsNullOrWhiteSpace(value))
 				return;
@@ -298,7 +299,7 @@ namespace workwear.Models.Import
 					employee.CardKey = value;
 					break;
 				case DataTypeEmployee.PersonnelNumber:
-					employee.PersonnelNumber = value;
+					employee.PersonnelNumber = settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(value) : value;
 					break;
 				case DataTypeEmployee.LastName:
 					employee.LastName = value;
@@ -370,6 +371,14 @@ namespace workwear.Models.Import
 			if(patronymicColumn != null)
 				fio.Patronymic = row.CellValue(patronymicColumn.Index);
 			return fio;
+		}
+
+		public string ConvertPersonnelNumber (string cellValue)
+		{
+			if(int.TryParse(cellValue, out int number))
+				return number.ToString();
+			else
+				return cellValue;
 		}
 		#endregion
 	}

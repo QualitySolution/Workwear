@@ -28,7 +28,7 @@ namespace workwear.Views.Import
 
 		private global::Gtk.Table tableColumns;
 
-		private global::Gamma.GtkWidgets.yTable ytable1;
+		private global::Gamma.GtkWidgets.yTable tableMatchSettings;
 
 		private global::Gamma.GtkWidgets.ySpinButton spinTitleRow;
 
@@ -100,12 +100,13 @@ namespace workwear.Views.Import
 			this.Name = "workwear.Views.Import.ExcelImportView";
 			// Container child workwear.Views.Import.ExcelImportView.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox();
+			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.notebookSteps = new global::Gamma.GtkWidgets.yNotebook();
 			this.notebookSteps.CanFocus = true;
 			this.notebookSteps.Name = "notebookSteps";
-			this.notebookSteps.CurrentPage = 2;
+			this.notebookSteps.CurrentPage = 1;
 			this.notebookSteps.ShowBorder = false;
 			// Container child notebookSteps.Gtk.Notebook+NotebookChild
 			this.vbox2 = new global::Gtk.VBox();
@@ -191,13 +192,13 @@ namespace workwear.Views.Import
 			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.GtkScrolledColumns]));
 			w10.Position = 0;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.ytable1 = new global::Gamma.GtkWidgets.yTable();
-			this.ytable1.Name = "ytable1";
-			this.ytable1.NRows = ((uint)(3));
-			this.ytable1.NColumns = ((uint)(2));
-			this.ytable1.RowSpacing = ((uint)(6));
-			this.ytable1.ColumnSpacing = ((uint)(6));
-			// Container child ytable1.Gtk.Table+TableChild
+			this.tableMatchSettings = new global::Gamma.GtkWidgets.yTable();
+			this.tableMatchSettings.Name = "tableMatchSettings";
+			this.tableMatchSettings.NRows = ((uint)(2));
+			this.tableMatchSettings.NColumns = ((uint)(2));
+			this.tableMatchSettings.RowSpacing = ((uint)(6));
+			this.tableMatchSettings.ColumnSpacing = ((uint)(6));
+			// Container child tableMatchSettings.Gtk.Table+TableChild
 			this.spinTitleRow = new global::Gamma.GtkWidgets.ySpinButton(0D, 100D, 1D);
 			this.spinTitleRow.CanFocus = true;
 			this.spinTitleRow.Name = "spinTitleRow";
@@ -206,22 +207,22 @@ namespace workwear.Views.Import
 			this.spinTitleRow.Numeric = true;
 			this.spinTitleRow.ValueAsDecimal = 0m;
 			this.spinTitleRow.ValueAsInt = 0;
-			this.ytable1.Add(this.spinTitleRow);
-			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.ytable1[this.spinTitleRow]));
+			this.tableMatchSettings.Add(this.spinTitleRow);
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.tableMatchSettings[this.spinTitleRow]));
 			w11.LeftAttach = ((uint)(1));
 			w11.RightAttach = ((uint)(2));
 			w11.XOptions = ((global::Gtk.AttachOptions)(4));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child ytable1.Gtk.Table+TableChild
+			// Container child tableMatchSettings.Gtk.Table+TableChild
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
 			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Номер строки с заголовками:");
-			this.ytable1.Add(this.ylabel1);
-			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel1]));
+			this.tableMatchSettings.Add(this.ylabel1);
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.tableMatchSettings[this.ylabel1]));
 			w12.XOptions = ((global::Gtk.AttachOptions)(4));
 			w12.YOptions = ((global::Gtk.AttachOptions)(4));
-			this.hbox1.Add(this.ytable1);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.ytable1]));
+			this.hbox1.Add(this.tableMatchSettings);
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.tableMatchSettings]));
 			w13.Position = 1;
 			w13.Expand = false;
 			w13.Fill = false;

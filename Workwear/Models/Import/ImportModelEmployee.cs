@@ -10,10 +10,12 @@ namespace workwear.Models.Import
 	public class ImportModelEmployee : ImportModelBase<DataTypeEmployee, SheetRowEmployee>, IImportModel
 	{
 		private readonly DataParserEmployee dataParser;
+		readonly SettingsMatchEmployeesViewModel matchSettingsViewModel;
 
-		public ImportModelEmployee(DataParserEmployee dataParser) : base(dataParser)
+		public ImportModelEmployee(DataParserEmployee dataParser, SettingsMatchEmployeesViewModel matchSettingsViewModel) : base(dataParser, matchSettingsViewModel)
 		{
-			this.dataParser = dataParser;
+			this.matchSettingsViewModel = matchSettingsViewModel ?? throw new ArgumentNullException(nameof(matchSettingsViewModel));
+			this.dataParser = dataParser ?? throw new ArgumentNullException(nameof(dataParser));
 		}
 
 		#region Параметры
@@ -38,7 +40,7 @@ namespace workwear.Models.Import
 			toSave.AddRange(dataParser.UsedSubdivisions.Where(x => x.Id == 0));
 			toSave.AddRange(dataParser.UsedPosts.Where(x => x.Id == 0));
 			foreach(var row in rows) {
-				toSave.AddRange(dataParser.PrepareToSave(uow, row));
+				toSave.AddRange(dataParser.PrepareToSave(uow, matchSettingsViewModel, row));
 			}
 			return toSave;
 		}
@@ -46,12 +48,12 @@ namespace workwear.Models.Import
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow, CountersViewModel counters)
 		{
 			if(Columns.Any(x => x.DataType == DataTypeEmployee.PersonnelNumber))
-				dataParser.MatchByNumber(uow, UsedRows, Columns);
+				dataParser.MatchByNumber(uow, UsedRows, Columns, matchSettingsViewModel);
 			else
 				dataParser.MatchByName(uow, UsedRows, Columns);
 
 			dataParser.FillExistEntities(uow, UsedRows, Columns);
-			dataParser.FindChanges(uow, UsedRows, Columns.Where(x => x.DataType != DataTypeEmployee.Unknown).ToArray());
+			dataParser.FindChanges(uow, UsedRows, Columns.Where(x => x.DataType != DataTypeEmployee.Unknown).ToArray(), matchSettingsViewModel);
 			OnPropertyChanged(nameof(DisplayRows));
 			counters.SetCount(CountersEmployee.SkipRows, UsedRows.Count(x => x.Skiped));
 			counters.SetCount(CountersEmployee.MultiMatch, UsedRows.Count(x => x.Employees.Count > 1));

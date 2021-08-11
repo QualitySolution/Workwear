@@ -4,6 +4,7 @@ using System.ComponentModel;
 using NPOI.SS.UserModel;
 using QS.Dialog;
 using QS.DomainModel.UoW;
+using QS.ViewModels;
 using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import
@@ -28,6 +29,7 @@ namespace workwear.Models.Import
 		#endregion
 
 		#region Сопоставление
+		ViewModelBase MatchSettingsViewModel { get; }
 		bool CanMatch { get; }
 		void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow, CountersViewModel counters);
 		#endregion
