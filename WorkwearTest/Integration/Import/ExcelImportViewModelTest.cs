@@ -72,6 +72,7 @@ namespace WorkwearTest.Integration.Tools
 			var postRepository = Substitute.For<PostRepository>();
 			var dataparser = new DataParserEmployee(subdivisionRepository, postRepository);
 			var setting = new SettingsMatchEmployeesViewModel();
+			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
 			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
