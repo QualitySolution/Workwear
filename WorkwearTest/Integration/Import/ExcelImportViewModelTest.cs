@@ -35,7 +35,8 @@ namespace WorkwearTest.Integration.Tools
 			var subdivisionRepository = Substitute.For<SubdivisionRepository>();
 			var postRepository = Substitute.For<PostRepository>();
 			var dataparser = new DataParserEmployee(subdivisionRepository, postRepository);
-			var model = new ImportModelEmployee(dataparser);
+			var setting = new SettingsMatchEmployeesViewModel();
+			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/cardkey_list.xlsx";
@@ -70,7 +71,9 @@ namespace WorkwearTest.Integration.Tools
 			var subdivisionRepository = Substitute.For<SubdivisionRepository>();
 			var postRepository = Substitute.For<PostRepository>();
 			var dataparser = new DataParserEmployee(subdivisionRepository, postRepository);
-			var model = new ImportModelEmployee(dataparser);
+			var setting = new SettingsMatchEmployeesViewModel();
+			setting.ConvertPersonnelNumber = true;
+			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/vostok_1c_employee.xls";
@@ -86,7 +89,7 @@ namespace WorkwearTest.Integration.Tools
 				var uow = employeesLoad.UoW;
 				var employees = uow.GetAll<EmployeeCard>().ToList();
 				Assert.That(employees.Count, Is.EqualTo(4));
-				var olga = employees.First(x => x.PersonnelNumber == "00001");
+				var olga = employees.First(x => x.PersonnelNumber == "1");
 				Assert.That(olga.LastName, Is.EqualTo("Гриднева"));
 				Assert.That(olga.FirstName, Is.EqualTo("Ольга"));
 				Assert.That(olga.Patronymic, Is.EqualTo("Николаевна"));
@@ -97,14 +100,14 @@ namespace WorkwearTest.Integration.Tools
 				Assert.That(olga.Post.Subdivision.Name, Is.EqualTo("500006 Отдел главного энергетика"));
 				
 				//Проверяем что должности из разных подразделений не сливаются.
-				var natalia = employees.First(x => x.PersonnelNumber == "00002");
+				var natalia = employees.First(x => x.PersonnelNumber == "2");
 				Assert.That(natalia.Subdivision.Name, Is.EqualTo("500007 Отдел главного механика"));
 				Assert.That(natalia.Post.Name, Is.EqualTo("Ведущий инженер"));
 				Assert.That(natalia.Post.Subdivision.Name, Is.EqualTo("500007 Отдел главного механика"));
 				
 				//Проверяем что не дублируем должности и подразделения.
-				var igor = employees.First(x => x.PersonnelNumber == "00003");
-				var ury = employees.First(x => x.PersonnelNumber == "00005");
+				var igor = employees.First(x => x.PersonnelNumber == "3");
+				var ury = employees.First(x => x.PersonnelNumber == "5");
 				Assert.That(igor.Subdivision.Name, Is.EqualTo("500300 Цех санитарных керамических изделий"));
 				Assert.That(igor.Post.Name, Is.EqualTo("Изготовитель капов (из эпоксидной смолы)."));
 				Assert.That(igor.Post.Subdivision.Name, Is.EqualTo("500300 Цех санитарных керамических изделий"));
