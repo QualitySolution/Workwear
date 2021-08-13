@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
@@ -13,15 +13,20 @@ using QS.Project.Services;
 using QS.Services;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using workwear.Journal.Filter.ViewModels.Regulations;
 using workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations
 {
 	public class NormJournalViewModel : EntityJournalViewModelBase<Norm, NormViewModel, NormJournalNode>
 	{
-		public NormJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		public NormFilterViewModel Filter { get; private set; }
+
+		public NormJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
+			AutofacScope = autofacScope;
+			JournalFilter = Filter = AutofacScope.Resolve<NormFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			CreatePopupActions();
 		}
 
@@ -34,16 +39,18 @@ namespace workwear.Journal.ViewModels.Regulations
 			RegulationDoc regulationDocAlias = null;
 			RegulationDocAnnex docAnnexAlias = null;
 
-			var norms = uow.Session.QueryOver<Norm>(() => normAlias);
-
-			return norms
+			var norms = uow.Session.QueryOver<Norm>(() => normAlias)
 				.JoinAlias(n => n.Document, () => regulationDocAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(n => n.Annex, () => docAnnexAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinQueryOver(() => normAlias.Posts, () => professionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.Where(GetSearchCriterion(
 					() => normAlias.Name,
 					() => normAlias.TONParagraph
-					))
+					));
+			if(Filter.Post != null)
+				norms.Where(x => x.Id == Filter.Post.Id);
+
+			return norms
 				.SelectList(list => list
 				   .SelectGroup(() => normAlias.Id).WithAlias(() => resultAlias.Id)
 				   .Select(() => regulationDocAlias.Number).WithAlias(() => resultAlias.TonNumber)

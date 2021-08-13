@@ -46,7 +46,7 @@ namespace workwear.Journal.Filter.ViewModels.Company
 
 		#endregion
 
-		public EmployeeFilterViewModel(JournalViewModelBase journalViewModel, JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, IUnitOfWorkFactory unitOfWorkFactory = null) : base(journalViewModel, unitOfWorkFactory)
+		public EmployeeFilterViewModel(JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, IUnitOfWorkFactory unitOfWorkFactory = null) : base(journal, unitOfWorkFactory)
 		{
 			var builder = new CommonEEVMBuilderFactory<EmployeeFilterViewModel>(journal, this, UoW, navigation, autofacScope);
 

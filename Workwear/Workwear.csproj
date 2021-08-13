@@ -457,6 +457,9 @@
     <Compile Include="gtk-gui\workwear.Views.Import.SettingsMatchEmployeesView.cs" />
     <Compile Include="Models\Import\SizeParser.cs" />
     <Compile Include="Measurements\SizePair.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Regulations\NormFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Regulations\NormFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Regulations.NormFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -664,6 +667,8 @@
     <Folder Include="Views\Import\" />
     <Folder Include="Tools\NHibernate\" />
     <Folder Include="Journal\ViewModels\Tools\" />
+    <Folder Include="Journal\Filter.ViewModels\Regulations\" />
+    <Folder Include="Journal\Filter.Views\Regulations\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
