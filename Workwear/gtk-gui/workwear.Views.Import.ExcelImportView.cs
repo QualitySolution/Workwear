@@ -106,7 +106,7 @@ namespace workwear.Views.Import
 			this.notebookSteps = new global::Gamma.GtkWidgets.yNotebook();
 			this.notebookSteps.CanFocus = true;
 			this.notebookSteps.Name = "notebookSteps";
-			this.notebookSteps.CurrentPage = 1;
+			this.notebookSteps.CurrentPage = 0;
 			this.notebookSteps.ShowBorder = false;
 			// Container child notebookSteps.Gtk.Notebook+NotebookChild
 			this.vbox2 = new global::Gtk.VBox();
@@ -115,7 +115,7 @@ namespace workwear.Views.Import
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.filechooser = new global::Gamma.GtkWidgets.yFileChooserButton();
 			this.filechooser.Name = "filechooser";
-			this.filechooser.Title = global::Mono.Unix.Catalog.GetString("Выберите файл со списком сотрудников");
+			this.filechooser.Title = global::Mono.Unix.Catalog.GetString("Выберите Excel файл с данными для импорта");
 			this.vbox2.Add(this.filechooser);
 			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.filechooser]));
 			w1.Position = 0;
