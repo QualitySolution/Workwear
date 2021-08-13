@@ -54,7 +54,6 @@ namespace workwear.Models.Import
 			counters.SetCount(CountersWorkwearItems.SkipRows, UsedRows.Count(x => x.Skiped));
 			counters.SetCount(CountersWorkwearItems.UsedEmployees, UsedRows.Select(x => x.Employee).Distinct().Count(x => x!= null));
 			counters.SetCount(CountersWorkwearItems.NewOperations, UsedRows.Count(x => x.Operation != null && x.Operation.Id == 0));
-			counters.SetCount(CountersWorkwearItems.EmployeeNotFound, UsedRows.Count(x => x.Employee == null));
 			counters.SetCount(CountersWorkwearItems.WorkwearItemNotFound, UsedRows.Count(x => x.Employee != null && x.WorkwearItem == null));
 			counters.SetCount(CountersWorkwearItems.NewNomenclatures, dataParser.UsedNomeclature.Count(x => x.Id == 0));
 

@@ -99,6 +99,7 @@ namespace workwear.Models.Import
 				if(row.Employee == null) {
 					row.Skiped = true;
 					row.ChangedColumns.Add(personnelNumberColumn, ChangeType.NotFound);
+					counters.AddCount(CountersWorkwearItems.EmployeeNotFound);
 					continue;
 				}
 
@@ -221,7 +222,8 @@ namespace workwear.Models.Import
 					}
 
 					foreach(var column in columns.Where(x => x.DataType != DataTypeWorkwearItems.Unknown && x.DataType != DataTypeWorkwearItems.SizeAndGrowth)) {
-						row.ChangedColumns.Add(column, ChangeType.NewEntity);
+						if(!row.ChangedColumns.ContainsKey(column))
+							row.ChangedColumns.Add(column, ChangeType.NewEntity);
 					}
 				}
 			}
