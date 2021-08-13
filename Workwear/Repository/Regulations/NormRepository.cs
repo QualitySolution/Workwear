@@ -19,7 +19,7 @@ namespace workwear.Repository.Regulations
 				.List ();
 		}
 
-		public IList<Norm> GetNormsForPost(IUnitOfWork uow, Post[] posts)
+		public IList<Norm> GetNormsForPost(IUnitOfWork uow, params Post[] posts)
 		{
 			Post postAliace = null;
 

@@ -12,8 +12,10 @@ namespace workwear.Models.Import
 		ProtectionTools,
 		[Display(Name = "Номеклатура выдачи")]
 		Nomenclature,
-		//[Display(Name = "Количество и период")]
-		//PeriodAndCount,
+		[Display(Name = "Подразделение")]
+		Subdivision,
+		[Display(Name = "Должность")]
+		Post,
 		[Display(Name = "Размер и рост")]
 		SizeAndGrowth,
 		[Display(Name = "Дата выдачи")]

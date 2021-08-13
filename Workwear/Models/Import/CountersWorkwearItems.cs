@@ -9,6 +9,8 @@ namespace workwear.Models.Import
 		UsedEmployees,
 		[Display(Name = "Проставлено размеров в сотрудника")]
 		EmployeesSetSize,
+		[Display(Name = "Добавлено норм в сотрудника")]
+		EmployeesAddNorm,
 		[Display(Name = "Операций выдачи")]
 		NewOperations,
 		[Display(Name = "Новых номенклатур")]

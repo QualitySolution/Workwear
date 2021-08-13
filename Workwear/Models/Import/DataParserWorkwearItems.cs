@@ -10,6 +10,8 @@ using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
 using workwear.Measurements;
+using workwear.Repository.Company;
+using workwear.Repository.Regulations;
 using workwear.Repository.Stock;
 using workwear.ViewModels.Import;
 using Workwear.Domain.Regulations;
@@ -22,10 +24,14 @@ namespace workwear.Models.Import
 		static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		private readonly NomenclatureRepository nomenclatureRepository;
+		private readonly PostRepository postRepository;
+		private readonly NormRepository normRepository;
 		private readonly SizeService sizeService;
 
 		public DataParserWorkwearItems(
 			NomenclatureRepository nomenclatureRepository,
+			PostRepository postRepository,
+			NormRepository normRepository,
 			SizeService sizeService)
 		{
 			AddColumnName(DataTypeWorkwearItems.PersonnelNumber,
@@ -37,9 +43,12 @@ namespace workwear.Models.Import
 			AddColumnName(DataTypeWorkwearItems.Nomenclature,
 				"Номенклатура"
 				);
-			//AddColumnName(DataTypeWorkwearItems.PeriodAndCount,
-				//"Норма выдачи"
-				//);
+			AddColumnName(DataTypeWorkwearItems.Subdivision,
+				"Подразделение"
+				);
+			AddColumnName(DataTypeWorkwearItems.Post,
+				"Должность"
+				);
 			AddColumnName(DataTypeWorkwearItems.SizeAndGrowth,
 				"Характеристика номенклатуры"
 				);
@@ -51,6 +60,8 @@ namespace workwear.Models.Import
 				);
 				
 			this.nomenclatureRepository = nomenclatureRepository ?? throw new ArgumentNullException(nameof(nomenclatureRepository));
+			this.postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
+			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 		}
 
@@ -70,6 +81,8 @@ namespace workwear.Models.Import
 			var issuedateColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.IssueDate);
 			var countColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Count);
 			var sizeAndGrowthColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.SizeAndGrowth);
+			var postColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Post);
+			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Subdivision);
 
 			progress.Start(list.Count() * 2 + 3, text: "Загрузка сотрудников");
 			var personnelNumbers = list.Select(x => x.CellValue(personnelNumberColumn.Index))
@@ -105,6 +118,14 @@ namespace workwear.Models.Import
 
 				var protectionToolName = row.CellValue(protectionToolsColumn.Index);
 				row.WorkwearItem = row.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.Name == protectionToolName);
+				if(row.WorkwearItem == null) {
+					if(!TryAddNorm(uow, row.CellValue(postColumn.Index), row.CellValue(subdivisionColumn.Index), row.Employee)) {
+						row.ChangedColumns.Add(postColumn, ChangeType.NotFound);
+						row.ChangedColumns.Add(subdivisionColumn, ChangeType.NotFound);
+					}
+					else
+						counters.AddCount(CountersWorkwearItems.EmployeesAddNorm);
+				}
 				if(row.WorkwearItem == null) {
 					row.Skiped = true;
 					row.ChangedColumns.Add(protectionToolsColumn, ChangeType.NotFound);
@@ -230,6 +251,22 @@ namespace workwear.Models.Import
 			progress.Close();
 		}
 
+
+		private bool TryAddNorm(IUnitOfWork uow, string postName, string subdivisionName, EmployeeCard employee)
+		{
+			var post = postRepository.GetPostByName(uow, postName, subdivisionName);
+			if(post == null)
+				return false;
+
+			var norm = normRepository.GetNormsForPost(uow, post);
+			if(!norm.Any())
+				return false;
+
+			//FIXME в идеале здесь перебирать все нормы и искать в них именно тот СИЗ который выдается.
+			employee.AddUsedNorm(norm.First());
+			ChangedEmployees.Add(employee);
+			return true;
+		}
 		#endregion
 
 		public readonly List<Nomenclature> UsedNomeclature = new List<Nomenclature>();
