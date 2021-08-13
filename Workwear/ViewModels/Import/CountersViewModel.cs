@@ -29,5 +29,10 @@ namespace workwear.ViewModels.Import
 		{
 			return Counters[counter.ToString()].Count;
 		}
+
+		public void AddCount(Enum counter, int value = 1)
+		{
+			Counters[counter.ToString()].Count += value;
+		}
 	}
 }

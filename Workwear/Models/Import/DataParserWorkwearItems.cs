@@ -11,6 +11,7 @@ using workwear.Domain.Operations;
 using workwear.Domain.Stock;
 using workwear.Measurements;
 using workwear.Repository.Stock;
+using workwear.ViewModels.Import;
 using Workwear.Domain.Regulations;
 using Workwear.Measurements;
 
@@ -61,7 +62,7 @@ namespace workwear.Models.Import
 
 		#region Сопоставление данных
 
-		public void MatchChanges(IProgressBarDisplayable progress, IUnitOfWork uow, IEnumerable<SheetRowWorkwearItems> list, List<ImportedColumn<DataTypeWorkwearItems>> columns)
+		public void MatchChanges(IProgressBarDisplayable progress, CountersViewModel counters, IUnitOfWork uow, IEnumerable<SheetRowWorkwearItems> list, List<ImportedColumn<DataTypeWorkwearItems>> columns)
 		{
 			var personnelNumberColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.PersonnelNumber);
 			var protectionToolsColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.ProtectionTools);
@@ -182,10 +183,9 @@ namespace workwear.Models.Import
 						StartOfUse = row.Date,
 						UseAutoWriteoff = expenseDate != null,
 					};
+					//Обрабатываем размер.
 					var sizeAndGrowthValue = row.CellValue(sizeAndGrowthColumn.Index);
 					if(!String.IsNullOrEmpty(sizeAndGrowthValue)) {
-						if(nomenclature.Name == "Перчатки ANSELL ALPHATEC 87-190 жел.")
-							Console.WriteLine();
 						var sizeAndGrowth = SizeParser.ParseSizeAndGrowth(sizeAndGrowthValue);
 						row.Operation.Size = sizeAndGrowth.Size;
 						row.Operation.WearGrowth = sizeAndGrowth.Growth;
@@ -204,6 +204,21 @@ namespace workwear.Models.Import
 							|| sizeService.GetGrowthForNomenclature().Contains(sizeAndGrowth.Growth);
 						row.ChangedColumns.Add(sizeAndGrowthColumn, sizeOk && growthOk ? ChangeType.NewEntity : ChangeType.ParseError);
 					}
+					//Проставляем размер в сотрудника.
+					if(!String.IsNullOrEmpty(row.Operation.WearGrowth) && String.IsNullOrEmpty(row.Employee.WearGrowth)) {
+						row.Employee.WearGrowth = row.Operation.WearGrowth;
+						ChangedEmployees.Add(row.Employee);
+						counters.AddCount(CountersWorkwearItems.EmployeesSetSize);
+					}
+					if(!String.IsNullOrEmpty(row.Operation.Size)) {
+						var employeeSize = row.Employee.GetSize(nomenclature.Type.WearCategory.Value);
+						if(employeeSize != null && String.IsNullOrEmpty(employeeSize.Size)) {
+							var newSize = new SizePair(nomenclature.SizeStd, row.Operation.Size);
+							row.Employee.SetSize(nomenclature.Type.WearCategory.Value, newSize);
+							ChangedEmployees.Add(row.Employee);
+							counters.AddCount(CountersWorkwearItems.EmployeesSetSize);
+						}
+					}
 
 					foreach(var column in columns.Where(x => x.DataType != DataTypeWorkwearItems.Unknown && x.DataType != DataTypeWorkwearItems.SizeAndGrowth)) {
 						row.ChangedColumns.Add(column, ChangeType.NewEntity);
@@ -216,6 +231,7 @@ namespace workwear.Models.Import
 		#endregion
 
 		public readonly List<Nomenclature> UsedNomeclature = new List<Nomenclature>();
+		public readonly HashSet<EmployeeCard> ChangedEmployees = new HashSet<EmployeeCard>();
 		
 		#region Helpers
 		DateTime? ParseDateOrNull(string value)

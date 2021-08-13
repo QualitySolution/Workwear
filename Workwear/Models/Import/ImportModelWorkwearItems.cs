@@ -48,7 +48,7 @@ namespace workwear.Models.Import
 
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow, CountersViewModel counters)
 		{
-			dataParser.MatchChanges(progress, uow, UsedRows, Columns);
+			dataParser.MatchChanges(progress, counters, uow, UsedRows, Columns);
 			OnPropertyChanged(nameof(DisplayRows));
 
 			counters.SetCount(CountersWorkwearItems.SkipRows, UsedRows.Count(x => x.Skiped));

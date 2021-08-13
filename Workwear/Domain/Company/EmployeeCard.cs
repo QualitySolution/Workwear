@@ -332,7 +332,7 @@ namespace workwear.Domain.Company
 
 		private IList<EmployeeVacation> vacations = new List<EmployeeVacation>();
 
-		[Display(Name = "Спецодежда")]
+		[Display(Name = "Отпуска")]
 		public virtual IList<EmployeeVacation> Vacations {
 			get { return vacations; }
 			set { SetField(ref vacations, value, () => Vacations); }
@@ -401,6 +401,7 @@ namespace workwear.Domain.Company
 
 		#endregion
 
+		#region Работа с размерами
 		public virtual SizePair GetSize(СlothesType wearCategory)
 		{
 			switch (wearCategory)
@@ -421,6 +422,41 @@ namespace workwear.Domain.Company
 					return null;
 			}
 		}
+
+		public virtual void SetSize(СlothesType wearCategory, SizePair size)
+		{
+			switch(wearCategory) {
+				case СlothesType.Wear:
+					WearSizeStd = size.StandardCode;
+					WearSize = size.Size;
+					break;
+				case СlothesType.Shoes:
+					ShoesSizeStd = size.StandardCode;
+					ShoesSize = size.Size;
+					break;
+				case СlothesType.WinterShoes:
+					WinterShoesSizeStd = size.StandardCode;
+					WinterShoesSize = size.Size;
+					break;
+				case СlothesType.Gloves:
+					GlovesSizeStd = size.StandardCode;
+					GlovesSize = size.Size;
+					break;
+				case СlothesType.Mittens:
+					if(size.StandardCode != SizeHelper.GetSizeStdCode(SizeStandartMittens.Rus))
+						throw new NotImplementedException("Другие стандарты не реализованы");
+					MittensSize = size.Size;
+					break;
+				case СlothesType.Headgear:
+					HeaddressSizeStd = size.StandardCode;
+					HeaddressSize = size.Size;
+					break;
+				default:
+					throw new NotImplementedException($"Работам с типом одежды {wearCategory} пока не реализована");
+			}
+		}
+
+		#endregion
 
 		#region Функции для работы с коллекцией норм
 
