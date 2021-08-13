@@ -173,7 +173,7 @@ namespace workwear.Models.Import
 							Type = row.WorkwearItem.ProtectionTools.Type,
 							Comment = "Создана при импорте выдачи из Excel",
 						};
-						if(SizeHelper.HasClothesSex(nomenclature.Type.WearCategory.Value)) {
+						if(nomenclature.Type.WearCategory != null && SizeHelper.HasClothesSex(nomenclature.Type.WearCategory.Value)) {
 							nomenclature.Sex = nomenclatureTypes.ParseSex(nomenclature.Name) ?? ClothesSex.Universal;
 						}
 						row.WorkwearItem.ProtectionTools.AddNomeclature(nomenclature);
@@ -222,7 +222,7 @@ namespace workwear.Models.Import
 						bool sizeOk = !SizeHelper.HasСlothesSizeStd(nomenclature.Type.WearCategory.Value)
 									|| sizeService.GetSizesForNomeclature(nomenclature.SizeStd).Contains(sizeAndGrowth.Size);
 						bool growthOk = !SizeHelper.HasGrowthStandart(nomenclature.Type.WearCategory.Value)
-							|| nomenclature.SizeStd.EndsWith("Intl", StringComparison.InvariantCulture)
+							|| (nomenclature.SizeStd?.EndsWith("Intl", StringComparison.InvariantCulture) ?? false)
 							|| sizeService.GetGrowthForNomenclature().Contains(sizeAndGrowth.Growth);
 						row.ChangedColumns.Add(sizeAndGrowthColumn, sizeOk && growthOk ? ChangeType.NewEntity : ChangeType.ParseError);
 					}
