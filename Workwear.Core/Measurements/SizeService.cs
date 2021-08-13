@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
+using workwear.Measurements;
+using Workwear.Domain.Company;
 
 namespace Workwear.Measurements
 {
@@ -74,6 +77,30 @@ namespace Workwear.Measurements
 
 		#endregion
 
+		#region Получение стандарта
+
+		public object GetDefaultSizeStd(СlothesType wearCategory, Sex sex)
+		{
+			var type = SizeHelper.GetSizeStandartsEnum(wearCategory, sex);
+			return Enum.GetValues(type).GetValue(0);
+		}
+
+		public object GetDefaultSizeStd(СlothesType wearCategory, ClothesSex sex)
+		{
+			var type = SizeHelper.GetSizeStandartsEnum(wearCategory, sex);
+			return Enum.GetValues(type).GetValue(0);
+		}
+
+		public string GetDefaultSizeStdCode(СlothesType wearCategory, ClothesSex? sex)
+		{
+			var type = SizeHelper.GetSizeStandartsEnum(wearCategory, sex);
+			if(type == null)
+				return null;
+			return GetSizeStdCode(Enum.GetValues(type).GetValue(0));
+		}
+
+		#endregion
+
 		#region Получить списки размеров
 
 		/// <summary>
@@ -87,12 +114,35 @@ namespace Workwear.Measurements
 		}
 
 		/// <summary>
+		/// Получения списка доступных размеров для использования в номеклатуре.
+		/// </summary>
+		/// <param name="stdCode">Код стандарта размера</param>
+		public string[] GetSizesForNomeclature(string stdCode)
+		{
+			if(stdCode == null) return new string[] { " " };
+			return GetSizesList(GetSizeStdEnum(stdCode), GetExcludedSizeUseForNomencleture());
+		}
+
+		/// <summary>
 		/// Получения списка доступных размеров для использования в сотруднике.
 		/// </summary>
 		/// <param name="std">стандарта размера</param>
 		public string[] GetSizesForEmployee(Enum std)
 		{
 			return GetSizesList(std, GetExcludedSizeUseForEmployee());
+		}
+
+		/// <summary>
+		/// Получения списка все доступных размеров, всех стандартов для использования в номеклатуре.
+		/// </summary>
+		/// <param name="standartsEnum">Тип перечисления стандартов</param>
+		public SizePair[] GetAllSizesForNomeclature(Type standartsEnum)
+		{
+			var list = new List<SizePair>();
+			foreach(var std in Enum.GetValues(standartsEnum))
+				foreach(var size in GetSizesList(std, GetExcludedSizeUseForNomencleture()))
+					list.Add(new SizePair(GetSizeStdCode(std), size));
+			return list.ToArray();
 		}
 
 		/// <summary>
@@ -119,6 +169,14 @@ namespace Workwear.Measurements
 		private SizeUse[] GetExcludedSizeUseForEmployee()
 		{
 			return settings.EmployeeSizeRanges ? new SizeUse[] { } : new SizeUse[] { SizeUse.СlothesOnly };
+		}
+
+		/// <summary>
+		/// Возвращает исключения для использования размеров в номеклатуре.
+		/// </summary>
+		private SizeUse[] GetExcludedSizeUseForNomencleture()
+		{
+			return new SizeUse[] { };
 		}
 
 		private string[] GetSizesList(object stdEnum, params SizeUse[] excludeUse)

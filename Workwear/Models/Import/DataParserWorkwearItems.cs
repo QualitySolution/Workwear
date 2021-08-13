@@ -9,10 +9,10 @@ using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
-using workwear.Repository.Company;
-using workwear.Repository.Regulations;
+using workwear.Measurements;
 using workwear.Repository.Stock;
 using Workwear.Domain.Regulations;
+using Workwear.Measurements;
 
 namespace workwear.Models.Import
 {
@@ -20,16 +20,12 @@ namespace workwear.Models.Import
 	{
 		static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-		private readonly NormRepository normRepository;
-		private readonly ProtectionToolsRepository protectionToolsRepository;
 		private readonly NomenclatureRepository nomenclatureRepository;
-		private readonly PostRepository postRepository;
+		private readonly SizeService sizeService;
 
 		public DataParserWorkwearItems(
-			NormRepository normRepository, 
-			ProtectionToolsRepository protectionToolsRepository,
-			NomenclatureRepository nomenclatureRepository, 
-			PostRepository postRepository)
+			NomenclatureRepository nomenclatureRepository,
+			SizeService sizeService)
 		{
 			AddColumnName(DataTypeWorkwearItems.PersonnelNumber,
 				"Табельный номер"
@@ -52,11 +48,9 @@ namespace workwear.Models.Import
 			AddColumnName(DataTypeWorkwearItems.Count,
 				"Количество"
 				);
-
-			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
-			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
+				
 			this.nomenclatureRepository = nomenclatureRepository ?? throw new ArgumentNullException(nameof(nomenclatureRepository));
-			this.postRepository = postRepository;
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 		}
 
 		private void AddColumnName(DataTypeWorkwearItems type, params string[] names)
@@ -74,6 +68,7 @@ namespace workwear.Models.Import
 			var nomenclatureColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Nomenclature);
 			var issuedateColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.IssueDate);
 			var countColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Count);
+			var sizeAndGrowthColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.SizeAndGrowth);
 
 			progress.Start(list.Count() * 2 + 3, text: "Загрузка сотрудников");
 			var personnelNumbers = list.Select(x => x.CellValue(personnelNumberColumn.Index))
@@ -153,8 +148,11 @@ namespace workwear.Models.Import
 						nomenclature = new Nomenclature {
 							Name = nomeclatureName,
 							Type = row.WorkwearItem.ProtectionTools.Type,
-							Comment = "Создана при импорте выдачи из Excel", 
+							Comment = "Создана при импорте выдачи из Excel",
 						};
+						if(SizeHelper.HasClothesSex(nomenclature.Type.WearCategory.Value)) {
+							nomenclature.Sex = nomenclatureTypes.ParseSex(nomenclature.Name) ?? ClothesSex.Universal;
+						}
 						row.WorkwearItem.ProtectionTools.AddNomeclature(nomenclature);
 					}
 					UsedNomeclature.Add(nomenclature);
@@ -183,13 +181,33 @@ namespace workwear.Models.Import
 						Returned = 0,
 						StartOfUse = row.Date,
 						UseAutoWriteoff = expenseDate != null,
-						//FIXME Размеры
-						//Size =
-						//WearGrowth =  
 					};
+					var sizeAndGrowthValue = row.CellValue(sizeAndGrowthColumn.Index);
+					if(!String.IsNullOrEmpty(sizeAndGrowthValue)) {
+						if(nomenclature.Name == "Перчатки ANSELL ALPHATEC 87-190 жел.")
+							Console.WriteLine();
+						var sizeAndGrowth = SizeParser.ParseSizeAndGrowth(sizeAndGrowthValue);
+						row.Operation.Size = sizeAndGrowth.Size;
+						row.Operation.WearGrowth = sizeAndGrowth.Growth;
+						//Если стандарт размера не заполнен для номеклатуры, проставляем его, по обнаруженному размеру.
+						if(!String.IsNullOrEmpty(sizeAndGrowth.Size) 
+							&& SizeHelper.HasСlothesSizeStd(nomenclature.Type.WearCategory.Value)
+							&& String.IsNullOrEmpty(nomenclature.SizeStd)) {
+							var standarts = SizeHelper.GetSizeStandartsEnum(nomenclature.Type.WearCategory.Value, nomenclature.Sex);
+								nomenclature.SizeStd = sizeService.GetAllSizesForNomeclature(standarts).FirstOrDefault(x => x.Size == sizeAndGrowth.Size)?.StandardCode;
+						}
 
-					foreach(var column in columns.Where(x => x.DataType != DataTypeWorkwearItems.Unknown))
+						bool sizeOk = !SizeHelper.HasСlothesSizeStd(nomenclature.Type.WearCategory.Value)
+									|| sizeService.GetSizesForNomeclature(nomenclature.SizeStd).Contains(sizeAndGrowth.Size);
+						bool growthOk = !SizeHelper.HasGrowthStandart(nomenclature.Type.WearCategory.Value)
+							|| nomenclature.SizeStd.EndsWith("Intl", StringComparison.InvariantCulture)
+							|| sizeService.GetGrowthForNomenclature().Contains(sizeAndGrowth.Growth);
+						row.ChangedColumns.Add(sizeAndGrowthColumn, sizeOk && growthOk ? ChangeType.NewEntity : ChangeType.ParseError);
+					}
+
+					foreach(var column in columns.Where(x => x.DataType != DataTypeWorkwearItems.Unknown && x.DataType != DataTypeWorkwearItems.SizeAndGrowth)) {
 						row.ChangedColumns.Add(column, ChangeType.NewEntity);
+					}
 				}
 			}
 			progress.Close();

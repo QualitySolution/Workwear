@@ -455,6 +455,8 @@
     <Compile Include="Views\Import\SettingsMatchEmployeesView.cs" />
     <Compile Include="ViewModels\Import\SettingsMatchEmployeesViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Import.SettingsMatchEmployeesView.cs" />
+    <Compile Include="Models\Import\SizeParser.cs" />
+    <Compile Include="Measurements\SizePair.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

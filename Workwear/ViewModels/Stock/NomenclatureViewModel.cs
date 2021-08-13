@@ -93,8 +93,6 @@ namespace workwear.ViewModels.Stock
 			if(e.PropertyName == nameof(Entity.Sex)) {
 				OnPropertyChanged(nameof(SensitiveSizeStd));
 				OnPropertyChanged(nameof(SizeStdEnum));
-
-
 			}
 		}
 	}
