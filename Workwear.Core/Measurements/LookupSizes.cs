@@ -240,6 +240,7 @@ namespace Workwear.Measurements
 			new WearSize(new []{ "7,5", "M" }),
 			new WearSize(new []{ "8", "L" }),
 			new WearSize(new []{ "8,5", "XL" }),
+			new WearSize(new []{ "8,5-9", null }, SizeUse.СlothesOnly, new []{ "8,5", "XL" }, new []{ "9", "XXL" }),
 			new WearSize(new []{ "9", "XXL" }),
 			new WearSize(new []{ "9,5", "XXXL" }),
 			new WearSize(new []{ "10", null }),

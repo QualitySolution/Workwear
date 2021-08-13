@@ -30,7 +30,7 @@ namespace workwear.Models.Import
 					number += character;
 				else if(character == ',' || character == '.') {
 					isFloat = true;
-					number += character;
+					number += ',';
 					continue;
 				}
 				else if(character == '-' && !isSeparator) {
