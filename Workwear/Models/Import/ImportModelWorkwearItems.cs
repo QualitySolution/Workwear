@@ -36,12 +36,26 @@ namespace workwear.Models.Import
 
 		public List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
+			var countColumn = Columns.First(x => x.DataType == DataTypeWorkwearItems.Count);
 			var rows = UsedRows.Where(x => !x.Skiped && x.ChangedColumns.Any()).ToList();
-			progress.Start(maxValue: rows.Count, text: "Подготовка");
+			var grouped = UsedRows.Where(x => x.Operation != null)
+				.GroupBy(x => x.Employee);
+			progress.Start(maxValue: grouped.Count(), text: "Подготовка");
+			foreach(var employeeGroup in grouped) {
+				progress.Add( text: $"Подготовка {employeeGroup.Key.ShortName}");
+				var rowByItem = employeeGroup.GroupBy(x => x.WorkwearItem);
+				foreach(var itemGroup in rowByItem) {
+					var last = itemGroup.OrderByDescending(x => x.Date).First();
+					itemGroup.Key.LastIssue = last.Date;
+					itemGroup.Key.Amount = last.CellIntValue(countColumn.Index).Value;
+					itemGroup.Key.NextIssue = itemGroup.Key.ActiveNormItem.CalculateExpireDate(last.Date.Value, itemGroup.Key.Amount);
+					dataParser.ChangedEmployees.Add(employeeGroup.Key);
+				}
+			}
 
 			List<object> toSave = new List<object>();
 			toSave.AddRange(dataParser.UsedNomeclature.Where(x => x.Id == 0));
-			toSave.AddRange(UsedRows.Where(x => x.Operation != null).Select(x => x.Employee).Distinct());
+			toSave.AddRange(dataParser.ChangedEmployees);
 			toSave.AddRange(UsedRows.Where(x => x.Operation != null).Select(x => x.Operation));
 			return toSave;
 		}
