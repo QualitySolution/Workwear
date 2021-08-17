@@ -130,7 +130,6 @@
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Measurements\SizeStandardConverter.cs" />
     <Compile Include="Measurements\SizeStandart.cs" />
-    <Compile Include="Measurements\СlothesType.cs" />
     <Compile Include="Measurements\SizeHelper.cs" />
     <Compile Include="Domain\Stock\Expense.cs" />
     <Compile Include="HibernateMapping\Stock\ExpenseMap.cs" />
@@ -386,34 +385,7 @@
     <Compile Include="Views\Company\EmployeeChilds\EmployeePhotoView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeePhotoView.cs" />
     <Compile Include="ViewModels\Company\EmployeeChilds\EmployeePhotoViewModel.cs" />
-    <Compile Include="..\Workwear.Core\Measurements\LookupSizes.cs">
-      <Link>Measurements\LookupSizes.cs</Link>
-    </Compile>
-    <Compile Include="..\Workwear.Core\Measurements\SizeUse.cs">
-      <Link>Measurements\SizeUse.cs</Link>
-    </Compile>
-    <Compile Include="..\Workwear.Core\Measurements\WearGrowth.cs">
-      <Link>Measurements\WearGrowth.cs</Link>
-    </Compile>
-    <Compile Include="..\Workwear.Core\Measurements\WearSize.cs">
-      <Link>Measurements\WearSize.cs</Link>
-    </Compile>
-    <Compile Include="..\Workwear.Core\Measurements\SizeService.cs">
-      <Link>Measurements\SizeService.cs</Link>
-    </Compile>
-    <Compile Include="..\Workwear.Core\Measurements\ISizeSettings.cs">
-      <Link>Measurements\ISizeSettings.cs</Link>
-    </Compile>
     <Compile Include="Measurements\BaseSizeSettings.cs" />
-    <Compile Include="..\Workwear.Core\Measurements\SizeStandartEnums.cs">
-      <Link>Measurements\SizeStandartEnums.cs</Link>
-    </Compile>
-    <Compile Include="..\Workwear.Core\Domain\Company\Sex.cs">
-      <Link>Domain\Company\Sex.cs</Link>
-    </Compile>
-    <Compile Include="..\Workwear.Core\Domain\Regulations\NormPeriodType.cs">
-      <Link>Domain\Regulations\NormPeriodType.cs</Link>
-    </Compile>
     <Compile Include="Repository\Company\PostRepository.cs" />
     <Compile Include="Models\Import\DataParserEmployee.cs" />
     <Compile Include="Models\Import\DataParserNorm.cs" />
@@ -456,7 +428,6 @@
     <Compile Include="ViewModels\Import\SettingsMatchEmployeesViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Import.SettingsMatchEmployeesView.cs" />
     <Compile Include="Models\Import\SizeParser.cs" />
-    <Compile Include="Measurements\SizePair.cs" />
     <Compile Include="Journal\Filter.ViewModels\Regulations\NormFilterViewModel.cs" />
     <Compile Include="Journal\Filter.Views\Regulations\NormFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Regulations.NormFilterView.cs" />
@@ -582,6 +553,10 @@
     <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj">
       <Project>{C01AE5A4-3CFF-4C7B-884D-45B07ACDE761}</Project>
       <Name>QS.Project.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Workwear.Core\Workwear.Core.csproj">
+      <Project>{8c8e9ac8-13c1-4b54-b4f4-9f8cd62a5744}</Project>
+      <Name>Workwear.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Workwear.Sql\Workwear.Sql.csproj">
       <Project>{CD86B5DA-6D84-4406-B7A8-0A35E87772AA}</Project>

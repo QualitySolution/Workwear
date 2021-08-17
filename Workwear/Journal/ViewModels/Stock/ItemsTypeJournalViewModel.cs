@@ -8,7 +8,7 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using workwear.Domain.Stock;
-using workwear.Measurements;
+using Workwear.Measurements;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock

@@ -1,4 +1,4 @@
-﻿namespace workwear.Measurements
+﻿namespace Workwear.Measurements
 {
 	public class SizePair
 	{

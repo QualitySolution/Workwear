@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-#if !NETSTANDARD
 using System.Data.Common;
 using NHibernate.Engine;
-#endif
 
 namespace Workwear.Domain.Company
 {
@@ -15,8 +13,7 @@ namespace Workwear.Domain.Company
 		[Display(Name = "Женский")]
 		F
 	}
-
-#if !NETSTANDARD
+	
 	public class SexStringType : NHibernate.Type.EnumStringType
 	{
 		public SexStringType() : base(typeof(Sex))
@@ -30,6 +27,5 @@ namespace Workwear.Domain.Company
 			base.NullSafeSet(st, value, index, settable, session);
 		}
 	}
-#endif
 }
 

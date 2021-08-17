@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
-using workwear.Measurements;
-using Workwear.Domain.Company;
 
 namespace Workwear.Measurements
 {
@@ -78,26 +76,6 @@ namespace Workwear.Measurements
 		#endregion
 
 		#region Получение стандарта
-
-		public object GetDefaultSizeStd(СlothesType wearCategory, Sex sex)
-		{
-			var type = SizeHelper.GetSizeStandartsEnum(wearCategory, sex);
-			return Enum.GetValues(type).GetValue(0);
-		}
-
-		public object GetDefaultSizeStd(СlothesType wearCategory, ClothesSex sex)
-		{
-			var type = SizeHelper.GetSizeStandartsEnum(wearCategory, sex);
-			return Enum.GetValues(type).GetValue(0);
-		}
-
-		public string GetDefaultSizeStdCode(СlothesType wearCategory, ClothesSex? sex)
-		{
-			var type = SizeHelper.GetSizeStandartsEnum(wearCategory, sex);
-			if(type == null)
-				return null;
-			return GetSizeStdCode(Enum.GetValues(type).GetValue(0));
-		}
 
 		#endregion
 

@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using Gtk;
 using QS.Views.Dialog;
-using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Measurements;
+using Workwear.Measurements;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock

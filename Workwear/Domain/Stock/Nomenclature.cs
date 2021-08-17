@@ -6,6 +6,7 @@ using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using workwear.Domain.Regulations;
 using workwear.Measurements;
+using Workwear.Measurements;
 
 namespace workwear.Domain.Stock
 {

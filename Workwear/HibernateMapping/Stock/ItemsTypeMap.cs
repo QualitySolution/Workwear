@@ -1,6 +1,6 @@
 ﻿using FluentNHibernate.Mapping;
 using workwear.Domain.Stock;
-using workwear.Measurements;
+using Workwear.Measurements;
 
 namespace workwear.HMap
 {

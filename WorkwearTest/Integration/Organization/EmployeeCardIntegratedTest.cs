@@ -10,6 +10,7 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.Measurements;
 
 namespace WorkwearTest.Integration.Organization
 {
@@ -39,7 +40,7 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = workwear.Measurements.СlothesType.PPE;
+				nomenclatureType.WearCategory = СlothesType.PPE;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
@@ -112,18 +113,18 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = workwear.Measurements.СlothesType.Wear;
+				nomenclatureType.WearCategory = СlothesType.Wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
-				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
+				nomenclature.Sex = ClothesSex.Men;
 				nomenclature.SizeStd = "UnisexWearRus";
 				uow.Save(nomenclature);
 
 				var nomenclature2 = new Nomenclature();
 				nomenclature2.Type = nomenclatureType;
-				nomenclature2.Sex = workwear.Measurements.ClothesSex.Men;
+				nomenclature2.Sex = ClothesSex.Men;
 				nomenclature2.SizeStd = "UnisexWearRus";
 				uow.Save(nomenclature2);
 
@@ -201,30 +202,30 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Обувь";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = workwear.Measurements.СlothesType.Shoes;
+				nomenclatureType.WearCategory = СlothesType.Shoes;
 				uow.Save(nomenclatureType);
 
 				var nomenclatureType2 = new ItemsType();
 				nomenclatureType2.Name = "Зимняя обувь";
 				nomenclatureType2.Category = ItemTypeCategory.wear;
-				nomenclatureType2.WearCategory = workwear.Measurements.СlothesType.WinterShoes;
+				nomenclatureType2.WearCategory = СlothesType.WinterShoes;
 				uow.Save(nomenclatureType2);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
-				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
+				nomenclature.Sex = ClothesSex.Men;
 				nomenclature.SizeStd = "MenShoesRus";
 				uow.Save(nomenclature);
 
 				var nomenclature2 = new Nomenclature();
 				nomenclature2.Type = nomenclatureType2;
-				nomenclature2.Sex = workwear.Measurements.ClothesSex.Men;
+				nomenclature2.Sex = ClothesSex.Men;
 				nomenclature2.SizeStd = "MenShoesRus";
 				uow.Save(nomenclature2);
 
 				var nomenclature3 = new Nomenclature();
 				nomenclature3.Type = nomenclatureType;
-				nomenclature3.Sex = workwear.Measurements.ClothesSex.Men;
+				nomenclature3.Sex = ClothesSex.Men;
 				nomenclature3.SizeStd = "MenShoesRus";
 				uow.Save(nomenclature3);
 
@@ -318,18 +319,18 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Обувь";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = workwear.Measurements.СlothesType.Shoes;
+				nomenclatureType.WearCategory = СlothesType.Shoes;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
-				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
+				nomenclature.Sex = ClothesSex.Men;
 				nomenclature.SizeStd = "MenShoesRus";
 				uow.Save(nomenclature);
 
 				var nomenclature2 = new Nomenclature();
 				nomenclature2.Type = nomenclatureType;
-				nomenclature2.Sex = workwear.Measurements.ClothesSex.Men;
+				nomenclature2.Sex = ClothesSex.Men;
 				nomenclature2.SizeStd = "MenShoesRus";
 				uow.Save(nomenclature2);
 
@@ -409,12 +410,12 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = workwear.Measurements.СlothesType.Wear;
+				nomenclatureType.WearCategory = СlothesType.Wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
-				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
+				nomenclature.Sex = ClothesSex.Men;
 				nomenclature.SizeStd = "UnisexWearRus";
 				uow.Save(nomenclature);
 
@@ -481,12 +482,12 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = workwear.Measurements.СlothesType.Wear;
+				nomenclatureType.WearCategory = СlothesType.Wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
-				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
+				nomenclature.Sex = ClothesSex.Men;
 				nomenclature.SizeStd = "UnisexWearRus";
 				uow.Save(nomenclature);
 
@@ -569,12 +570,12 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = workwear.Measurements.СlothesType.Wear;
+				nomenclatureType.WearCategory = СlothesType.Wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
-				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
+				nomenclature.Sex = ClothesSex.Men;
 				nomenclature.SizeStd = "UnisexWearRus";
 				uow.Save(nomenclature);
 
@@ -675,12 +676,12 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = workwear.Measurements.СlothesType.Wear;
+				nomenclatureType.WearCategory = СlothesType.Wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
-				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
+				nomenclature.Sex = ClothesSex.Men;
 				nomenclature.SizeStd = "UnisexWearRus";
 				uow.Save(nomenclature);
 
@@ -760,12 +761,12 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = workwear.Measurements.СlothesType.Wear;
+				nomenclatureType.WearCategory = СlothesType.Wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
-				nomenclature.Sex = workwear.Measurements.ClothesSex.Men;
+				nomenclature.Sex = ClothesSex.Men;
 				nomenclature.SizeStd = "UnisexWearRus";
 				uow.Save(nomenclature);
 

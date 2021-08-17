@@ -89,6 +89,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamma.Utilities", "..\QSPro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamma.Utilities.Gtk", "..\QSProjects\Binding\Gamma.Utilities.Gtk\Gamma.Utilities.Gtk.csproj", "{5735D438-792E-40CE-BAFD-25814C8879BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workwear.Core", "Workwear.Core\Workwear.Core.csproj", "{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -488,6 +490,24 @@ Global
 		{5735D438-792E-40CE-BAFD-25814C8879BC}.ReleaseWin|x86.Build.0 = Release|Any CPU
 		{5735D438-792E-40CE-BAFD-25814C8879BC}.ReleaseWinEnterprise|x86.ActiveCfg = Debug|Any CPU
 		{5735D438-792E-40CE-BAFD-25814C8879BC}.ReleaseWinEnterprise|x86.Build.0 = Debug|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.Debug|x86.Build.0 = Debug|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.Release|x86.ActiveCfg = Release|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.Release|x86.Build.0 = Release|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.Debug|x64.Build.0 = Debug|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.Release|x64.ActiveCfg = Release|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.Release|x64.Build.0 = Release|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.BundleLinux|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.BundleLinux|Any CPU.Build.0 = Debug|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.BundleLinux|x86.ActiveCfg = Debug|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.BundleLinux|x86.Build.0 = Debug|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.BundleLinux|x64.ActiveCfg = Debug|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.BundleLinux|x64.Build.0 = Debug|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.ReleaseWin|x86.ActiveCfg = Debug|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.ReleaseWin|x86.Build.0 = Debug|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.ReleaseWinEnterprise|x86.ActiveCfg = Debug|Any CPU
+		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.ReleaseWinEnterprise|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A6C1914F-7732-49F5-BABA-8BBBA521FAAB} = {792D3656-91FD-45AA-A40B-A0D63306A113}
