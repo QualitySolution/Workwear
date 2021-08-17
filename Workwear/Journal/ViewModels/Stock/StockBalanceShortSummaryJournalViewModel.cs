@@ -14,7 +14,7 @@ using QS.Project.Journal.DataLoader;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
-using workwear.Measurements;
+using Workwear.Measurements;
 
 namespace workwear.Journal.ViewModels.Stock
 {

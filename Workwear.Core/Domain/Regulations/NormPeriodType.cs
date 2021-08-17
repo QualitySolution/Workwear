@@ -13,14 +13,14 @@ namespace Workwear.Domain.Regulations
 		Month,
 		[Display(Name = "Смена")]
 		Shift,
+		[Display(Name = "До износа")]
+		Wearout,
 	}
-#if !NETSTANDARD
 	public class NormPeriodTypeType : NHibernate.Type.EnumStringType
 	{
 		public NormPeriodTypeType() : base(typeof(NormPeriodType))
 		{
 		}
 	}
-#endif
 }
 

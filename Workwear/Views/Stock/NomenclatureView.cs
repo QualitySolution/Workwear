@@ -3,6 +3,7 @@ using NLog;
 using QS.Views.Dialog;
 using workwear.Domain.Stock;
 using workwear.Measurements;
+using Workwear.Measurements;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock

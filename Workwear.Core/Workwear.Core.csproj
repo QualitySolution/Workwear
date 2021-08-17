@@ -6,15 +6,16 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="NHibernate" Version="5.3.8" />
       <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\GammaBinding\GammaUtil\Gamma.Utilities.dotnet.csproj" />
+      <Folder Include="Domain\Company" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Domain\Company" />
+      <ProjectReference Include="..\..\QSProjects\Binding\Gamma.Utilities\Gamma.Utilities.csproj" />
     </ItemGroup>
 
 </Project>

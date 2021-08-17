@@ -88,7 +88,7 @@ namespace workwear.Measurements
 			return GetSizeStandartsEnum (wearCategory, sex == Sex.F ? ClothesSex.Women : ClothesSex.Men);
 		}
 
-		public static Type GetSizeStandartsEnum(СlothesType wearCategory, ClothesSex sex)
+		public static Type GetSizeStandartsEnum(СlothesType wearCategory, ClothesSex? sex)
 		{
 			var att = wearCategory.GetAttributes<SizeStandartsAttribute> ();
 			if (att.Length == 0)
@@ -96,7 +96,7 @@ namespace workwear.Measurements
 
 			var found = att.FirstOrDefault (a => a.Sex == sex || a.Sex == ClothesSex.Universal);
 
-			return found != null ? found.StandartsEnumType : null;
+			return found?.StandartsEnumType;
 		}
 
 		public static bool HasСlothesSizeStd(СlothesType wearCategory)
@@ -130,11 +130,13 @@ namespace workwear.Measurements
 				.First().GetValue(null);
 		}
 
+		[Obsolete("Используйте аналогичный метод из SizeService")]
 		public static object GetDefaultSizeStd(СlothesType wearCategory, Sex sex)
 		{
 			var type = SizeHelper.GetSizeStandartsEnum(wearCategory, sex);
 			return Enum.GetValues(type).GetValue(0);
 		}
+
 
 		#region Sex
 
@@ -320,17 +322,6 @@ namespace workwear.Measurements
 
 		#endregion
 
-	}
-
-	public class SizePair{
-		public string StandardCode { get; private set;}
-		public string Size { get; private set;}
-
-		public SizePair(string std, string size)
-		{
-			StandardCode = std;
-			Size = size;
-		}
 	}
 }
 

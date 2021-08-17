@@ -11,6 +11,8 @@ namespace workwear.Models.Import
 		NewEntity,
 		[Display(Name = "Изменилось значение")]
 		ChangeValue,
+		[Display(Name = "Не найдено")]
+		NotFound,
 		[Display(Name = "Ошибка разбора")]
 		ParseError
 	}

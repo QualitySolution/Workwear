@@ -13,5 +13,7 @@ namespace workwear.Models.Import
 		}
 
 		public List<EmployeeCard> Employees = new List<EmployeeCard>();
+
+		public EmployeeCard EditingEmployee => Employees.FirstOrDefault();
 	}
 }

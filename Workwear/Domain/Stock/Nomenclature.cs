@@ -6,6 +6,7 @@ using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using workwear.Domain.Regulations;
 using workwear.Measurements;
+using Workwear.Measurements;
 
 namespace workwear.Domain.Stock
 {
@@ -122,25 +123,6 @@ namespace workwear.Domain.Stock
 			if(Type != null && Type.WearCategory != null && Type.WearCategory != СlothesType.PPE && String.IsNullOrWhiteSpace(SizeStd))
 				yield return new ValidationResult("Необходимо указать стандарт размера спецодежды.",
 					new[] { this.GetPropertyName(o => o.SizeStd) });
-		}
-
-		#endregion
-
-		#region Функции
-		/// <summary>
-		/// Копирует текущий объект Nomenclature и возвращает ссылку на копию.
-		/// </summary>
-		/// <returns>The Nomenclature clone.</returns>
-		public virtual Nomenclature Clone()
-		{
-			Nomenclature nomenclature = new Nomenclature();
-			nomenclature.name = this.Name;
-			nomenclature.type = this.type;
-			nomenclature.sex = this.sex;
-			nomenclature.sizeStd = this.sizeStd;
-			nomenclature.comment = this.comment;
-			nomenclature.number = this.number;
-			return nomenclature;
 		}
 
 		#endregion

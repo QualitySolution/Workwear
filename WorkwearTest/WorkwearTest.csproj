@@ -88,6 +88,10 @@
       <Project>{28A78143-42E3-40E7-86F5-DD7E1679BE86}</Project>
       <Name>QS.Project</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Workwear.Core\Workwear.Core.csproj">
+      <Project>{8c8e9ac8-13c1-4b54-b4f4-9f8cd62a5744}</Project>
+      <Name>Workwear.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Workwear\Workwear.csproj">
       <Project>{63B06122-016A-42D4-B621-8E0F9FA8E738}</Project>
       <Name>Workwear</Name>

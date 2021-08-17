@@ -4,7 +4,7 @@ using System.Data.Bindings.Collections.Generic;
 using Gamma.Utilities;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
-using workwear.Measurements;
+using Workwear.Measurements;
 
 namespace workwear.Domain.Stock
 {

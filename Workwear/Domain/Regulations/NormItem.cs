@@ -44,7 +44,10 @@ namespace workwear.Domain.Regulations
 		[Display (Name = "Период нормы")]
 		public virtual NormPeriodType NormPeriod {
 			get { return normPeriod; }
-			set { SetField (ref normPeriod, value, () => NormPeriod); }
+			set { SetField (ref normPeriod, value, () => NormPeriod);
+				if(value == NormPeriodType.Wearout)
+					PeriodCount = 0;
+			  }
 		}
 
 		int periodCount;
@@ -63,15 +66,17 @@ namespace workwear.Domain.Regulations
 				double years = -1;
 				switch(NormPeriod)
 				{
-				case NormPeriodType.Year:
-					years = PeriodCount;
-					break;
-				case NormPeriodType.Month:
-					years = (double)PeriodCount / 12;
-					break;
-				case NormPeriodType.Shift:
-					years = (double)PeriodCount / 247;
-					break;
+					case NormPeriodType.Year:
+						years = PeriodCount;
+						break;
+					case NormPeriodType.Month:
+						years = (double)PeriodCount / 12;
+						break;
+					case NormPeriodType.Shift:
+						years = (double)PeriodCount / 247;
+						break;
+					case NormPeriodType.Wearout:
+						return 0;
 				}
 				return Amount / years;
 			}
@@ -88,6 +93,8 @@ namespace workwear.Domain.Regulations
 					return PeriodCount;
 				case NormPeriodType.Shift:
 					return PeriodCount / 21;
+				case NormPeriodType.Wearout:
+					return 0;
 				}
 				return -1;
 			}
@@ -95,24 +102,28 @@ namespace workwear.Domain.Regulations
 
 		public virtual string LifeText{
 			get{
-				switch(NormPeriod)
-				{
-				case NormPeriodType.Year:
-					return NumberToTextRus.FormatCase (PeriodCount, "{0} год", "{0} года", "{0} лет");
-				case NormPeriodType.Month:
-					return NumberToTextRus.FormatCase (PeriodCount, "{0} месяц", "{0} месяца", "{0} месяцев");
-				case NormPeriodType.Shift:
-					return NumberToTextRus.FormatCase (PeriodCount, "{0} смена", "{0} смены", "{0} смен");
+				switch(NormPeriod) {
+					case NormPeriodType.Year:
+						return NumberToTextRus.FormatCase (PeriodCount, "{0} год", "{0} года", "{0} лет");
+					case NormPeriodType.Month:
+						return NumberToTextRus.FormatCase (PeriodCount, "{0} месяц", "{0} месяца", "{0} месяцев");
+					case NormPeriodType.Shift:
+						return NumberToTextRus.FormatCase (PeriodCount, "{0} смена", "{0} смены", "{0} смен");
+					case NormPeriodType.Wearout:
+						return "До износа";
+					default:
+						return String.Empty;
 				}
-				return String.Empty;
 			}
 		}
 
 		/// <summary>
 		/// Рассчитывает дату износа пропорционально количеству выданного.
 		/// </summary>
-		public virtual DateTime CalculateExpireDate(DateTime issueDate, int amount)
+		public virtual DateTime? CalculateExpireDate(DateTime issueDate, int amount)
 		{
+			if(NormPeriod == NormPeriodType.Wearout)
+				return null;
 			//TODO Некорректно считаем смены
 			double oneItemByMonths = (double)PeriodInMonths / Amount;
 			double months = amount * oneItemByMonths;
@@ -124,8 +135,10 @@ namespace workwear.Domain.Regulations
 		/// <summary>
 		/// Рассчитывает дату износа по норме.
 		/// </summary>
-		public virtual DateTime CalculateExpireDate(DateTime issueDate)
+		public virtual DateTime? CalculateExpireDate(DateTime issueDate)
 		{
+			if(NormPeriod == NormPeriodType.Wearout)
+				return null;
 			//TODO Некорректно считаем смены
 			return issueDate.AddMonths(PeriodInMonths);
 		}

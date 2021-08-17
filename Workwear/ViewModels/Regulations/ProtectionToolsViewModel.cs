@@ -6,7 +6,6 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
-using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
@@ -14,6 +13,7 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Measurements;
 
 namespace workwear.ViewModels.Regulations
 {
@@ -106,7 +106,7 @@ namespace workwear.ViewModels.Regulations
 				Name = Entity.Name,
 				Comment = Entity.Comment,
 				Type = Entity.Type,
-				Sex = Measurements.ClothesSex.Universal,
+				Sex = ClothesSex.Universal,
 			};
 			Entity.AddNomeclature(nomenclaure);
 		}

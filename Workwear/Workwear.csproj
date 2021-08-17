@@ -130,7 +130,6 @@
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Measurements\SizeStandardConverter.cs" />
     <Compile Include="Measurements\SizeStandart.cs" />
-    <Compile Include="Measurements\СlothesType.cs" />
     <Compile Include="Measurements\SizeHelper.cs" />
     <Compile Include="Domain\Stock\Expense.cs" />
     <Compile Include="HibernateMapping\Stock\ExpenseMap.cs" />
@@ -386,34 +385,7 @@
     <Compile Include="Views\Company\EmployeeChilds\EmployeePhotoView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeePhotoView.cs" />
     <Compile Include="ViewModels\Company\EmployeeChilds\EmployeePhotoViewModel.cs" />
-    <Compile Include="..\Workwear.Core\Measurements\LookupSizes.cs">
-      <Link>Measurements\LookupSizes.cs</Link>
-    </Compile>
-    <Compile Include="..\Workwear.Core\Measurements\SizeUse.cs">
-      <Link>Measurements\SizeUse.cs</Link>
-    </Compile>
-    <Compile Include="..\Workwear.Core\Measurements\WearGrowth.cs">
-      <Link>Measurements\WearGrowth.cs</Link>
-    </Compile>
-    <Compile Include="..\Workwear.Core\Measurements\WearSize.cs">
-      <Link>Measurements\WearSize.cs</Link>
-    </Compile>
-    <Compile Include="..\Workwear.Core\Measurements\SizeService.cs">
-      <Link>Measurements\SizeService.cs</Link>
-    </Compile>
-    <Compile Include="..\Workwear.Core\Measurements\ISizeSettings.cs">
-      <Link>Measurements\ISizeSettings.cs</Link>
-    </Compile>
     <Compile Include="Measurements\BaseSizeSettings.cs" />
-    <Compile Include="..\Workwear.Core\Measurements\SizeStandartEnums.cs">
-      <Link>Measurements\SizeStandartEnums.cs</Link>
-    </Compile>
-    <Compile Include="..\Workwear.Core\Domain\Company\Sex.cs">
-      <Link>Domain\Company\Sex.cs</Link>
-    </Compile>
-    <Compile Include="..\Workwear.Core\Domain\Regulations\NormPeriodType.cs">
-      <Link>Domain\Regulations\NormPeriodType.cs</Link>
-    </Compile>
     <Compile Include="Repository\Company\PostRepository.cs" />
     <Compile Include="Models\Import\DataParserEmployee.cs" />
     <Compile Include="Models\Import\DataParserNorm.cs" />
@@ -445,9 +417,35 @@
     <Compile Include="Models\Import\ImportModelBase.cs" />
     <Compile Include="Tools\NHibernate\ProgresSessionProvider.cs" />
     <Compile Include="Tools\NHibernate\ProgressInterceptor.cs" />
+    <Compile Include="Models\Import\NomenclatureTypes.cs" />
+    <Compile Include="Journal\ViewModels\Tools\EmployeeSetNormViewModel.cs" />
+    <Compile Include="Models\Import\ImportModelWorkwearItems.cs" />
+    <Compile Include="Models\Import\DataParserWorkwearItems.cs" />
+    <Compile Include="Models\Import\DataTypeWorkwearItems.cs" />
+    <Compile Include="Models\Import\SheetRowWorkwearItems.cs" />
+    <Compile Include="Models\Import\CountersWorkwearItems.cs" />
+    <Compile Include="Views\Import\SettingsMatchEmployeesView.cs" />
+    <Compile Include="ViewModels\Import\SettingsMatchEmployeesViewModel.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Import.SettingsMatchEmployeesView.cs" />
+    <Compile Include="Models\Import\SizeParser.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Regulations\NormFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Regulations\NormFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Regulations.NormFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <ProjectReference Include="..\..\QSProjects\Binding\Gamma.Binding\Gamma.Binding.csproj">
+      <Project>{190cea0d-ea23-4c91-8030-203a5afed7b7}</Project>
+      <Name>Gamma.Binding</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\Binding\Gamma.Utilities.Gtk\Gamma.Utilities.Gtk.csproj">
+      <Project>{5735d438-792e-40ce-bafd-25814c8879bc}</Project>
+      <Name>Gamma.Utilities.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\Binding\Gamma.Utilities\Gamma.Utilities.csproj">
+      <Project>{1bf2a638-420d-456c-96a7-36873a0fb894}</Project>
+      <Name>Gamma.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QS.Project.Desktop\QS.Project.Desktop.csproj">
       <Project>{5ef2a7da-3886-4809-95df-880bd783a211}</Project>
       <Name>QS.Project.Desktop</Name>
@@ -464,10 +462,6 @@
       <Project>{4B502FE5-D419-4B5C-9276-0A25EF2F508A}</Project>
       <Name>QSSaaS</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\GammaBinding\GammaBinding\GammaBinding.csproj">
-      <Project>{190CEA0D-EA23-4C91-8030-203A5AFED7B7}</Project>
-      <Name>GammaBinding</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Gtk.DataBindings\System.Data.Bindings\System.Data.Bindings.csproj">
       <Project>{54F958F5-7E58-4C89-9A04-8835E63B97C3}</Project>
       <Name>System.Data.Bindings</Name>
@@ -475,10 +469,6 @@
     <ProjectReference Include="..\..\QSProjects\QSOrmProject\QSOrmProject.csproj">
       <Project>{00D32969-612C-417E-9565-BEC6A7719F80}</Project>
       <Name>QSOrmProject</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\GammaBinding\GammaUtil\GammaUtil.csproj">
-      <Project>{1BF2A638-420D-456C-96A7-36873A0FB894}</Project>
-      <Name>GammaUtil</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\Modules\QSBusinessCommon\QSBusinessCommon.csproj">
       <Project>{AD329D59-938D-42AC-ABE2-B0F14FDBB7C6}</Project>
@@ -511,10 +501,6 @@
     <ProjectReference Include="..\..\QSProjects\QS.Project.Gtk\QS.Project.Gtk.csproj">
       <Project>{3C0F3944-CBD5-4BD6-83D4-CF33AD6FC68C}</Project>
       <Name>QS.Project.Gtk</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\GammaBinding\Gamma.Utilities.Gtk\Gamma.Utilities.Gtk.csproj">
-      <Project>{5735D438-792E-40CE-BAFD-25814C8879BC}</Project>
-      <Name>Gamma.Utilities.Gtk</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\Modules\QS.BusinessCommon\QS.BusinessCommon.csproj">
       <Project>{F22749B2-E35B-455D-BD8D-081373B16FC7}</Project>
@@ -567,6 +553,10 @@
     <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj">
       <Project>{C01AE5A4-3CFF-4C7B-884D-45B07ACDE761}</Project>
       <Name>QS.Project.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Workwear.Core\Workwear.Core.csproj">
+      <Project>{8c8e9ac8-13c1-4b54-b4f4-9f8cd62a5744}</Project>
+      <Name>Workwear.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Workwear.Sql\Workwear.Sql.csproj">
       <Project>{CD86B5DA-6D84-4406-B7A8-0A35E87772AA}</Project>
@@ -651,6 +641,9 @@
     <Folder Include="ViewModels\Import\" />
     <Folder Include="Views\Import\" />
     <Folder Include="Tools\NHibernate\" />
+    <Folder Include="Journal\ViewModels\Tools\" />
+    <Folder Include="Journal\Filter.ViewModels\Regulations\" />
+    <Folder Include="Journal\Filter.Views\Regulations\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
@@ -728,7 +721,6 @@
       <Link>grpc_csharp_ext.x86.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ViewModels\Tools\NormsLoadViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Antlr3.Runtime" Version="3.5.1" />

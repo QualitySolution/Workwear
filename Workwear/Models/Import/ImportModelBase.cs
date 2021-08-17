@@ -4,7 +4,7 @@ using System.Linq;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using QS.DomainModel.Entity;
-using workwear.ViewModels.Import;
+using QS.ViewModels;
 
 namespace workwear.Models.Import
 {
@@ -20,10 +20,13 @@ namespace workwear.Models.Import
 
 		private readonly IDataParser<TDataTypeEnum> dataParser;
 
-		protected ImportModelBase(IDataParser<TDataTypeEnum> dataParser)
+		protected ImportModelBase(IDataParser<TDataTypeEnum> dataParser, ViewModelBase matchSettingsViewModel = null)
 		{
 			this.dataParser = dataParser;
+			this.MatchSettingsViewModel = matchSettingsViewModel;
 		}
+
+		public ViewModelBase MatchSettingsViewModel { get; }
 
 		#region Колонки
 		public List<ImportedColumn<TDataTypeEnum>> Columns = new List<ImportedColumn<TDataTypeEnum>>();
@@ -140,12 +143,6 @@ namespace workwear.Models.Import
 			TSheetRow row = (TSheetRow)Activator.CreateInstance(typeof(TSheetRow), new object[] {cells });
 			XlsRows.Add(row);
 		}
-
-		#endregion
-
-		#region Данные
-
-
 
 		#endregion
 	}

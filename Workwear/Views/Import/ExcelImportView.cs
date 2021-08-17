@@ -5,6 +5,7 @@ using Gamma.Utilities;
 using Gamma.Widgets;
 using Gtk;
 using QS.Views.Dialog;
+using QS.Views.Resolve;
 using workwear.Models.Import;
 using workwear.ViewModels.Import;
 
@@ -15,7 +16,7 @@ namespace workwear.Views.Import
 		List<yLabel> columnsLabels = new List<yLabel>();
 		List<yEnumComboBox> columnsTypeCombos = new List<yEnumComboBox>();
 
-		public ExcelImportView(ExcelImportViewModel viewModel) : base(viewModel)
+		public ExcelImportView(ExcelImportViewModel viewModel, IGtkViewResolver viewResolver) : base(viewModel)
 		{
 			this.Build();
 
@@ -43,24 +44,30 @@ namespace workwear.Views.Import
 				.AddBinding(v => v.Sheets, w => w.ItemsList)
 				.AddBinding(v => v.SelectedSheet, w => w.SelectedItem);
 
-			buttonLoad.Binding.AddBinding(viewModel, v => v.SensetiveSecondStepButton, w => w.Sensitive).InitializeFromSource();
+			buttonLoad.Binding.AddBinding(viewModel, v => v.SensitiveSecondStepButton, w => w.Sensitive).InitializeFromSource();
 			#endregion
 			#region Шаг 2
 			spinTitleRow.Binding.AddBinding(viewModel.ImportModel, v => v.HeaderRow, w => w.ValueAsInt).InitializeFromSource();
-			buttonReadEmployees.Binding.AddBinding(viewModel, v => v.SensetiveThirdStepButton, w => w.Sensitive).InitializeFromSource();
+			buttonReadEmployees.Binding.AddBinding(viewModel, v => v.SensitiveThirdStepButton, w => w.Sensitive).InitializeFromSource();
 			labelColumnRecomendations.LabelProp = ViewModel.ImportModel.DataColunmsRecomendations;
+			if(viewModel.ImportModel.MatchSettingsViewModel != null) {
+				var settingsView = viewResolver.Resolve(viewModel.ImportModel.MatchSettingsViewModel);
+				tableMatchSettings.Attach(settingsView, 0, 2, 1, 2);
+				settingsView.Show();
+			}
 			#endregion
 			#region Шаг 3
 			var countersView = new CountersView(ViewModel.CountersViewModel);
 			vboxCounters.PackStart(countersView, false, true, 2);
-			countersView.Visible = true; 
+			countersView.Visible = true;
 
 			eventboxLegendaNew.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfNew));
 			eventboxLegendaChanged.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfChanged));
+			eventboxLegendaNotFound.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfNotFound));
 			eventboxLegendaError.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfError));
 			eventboxLegendaSkipRows.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfSkiped));
 
-			buttonSave.Binding.AddBinding(ViewModel, v => v.SensetiveSaveButton, w => w.Sensitive).InitializeFromSource();
+			buttonSave.Binding.AddBinding(ViewModel, v => v.SensitiveSaveButton, w => w.Sensitive).InitializeFromSource();
 			ViewModel.ProgressStep = progressTotal;
 			#endregion
 		}

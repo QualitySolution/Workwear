@@ -18,5 +18,21 @@ namespace workwear.Repository.Company
 				.Take(1)
 				.SingleOrDefault();
 		}
+
+		public Post GetPostByName(IUnitOfWork uow, string name, string subdivisionName)
+		{
+			Subdivision subdivisionAlias = null;
+
+			var query = uow.Session.QueryOver<Post>()
+				.Where(x => x.Name == name);
+
+			if(!String.IsNullOrEmpty( subdivisionName))
+				query.Left.JoinQueryOver(x => x.Subdivision, () => subdivisionAlias)
+				.Where(() => subdivisionAlias.Name == subdivisionName);
+
+			return query
+				.Take(1)
+				.SingleOrDefault();
+		}
 	}
 }

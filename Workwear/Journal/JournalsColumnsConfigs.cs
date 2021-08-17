@@ -8,6 +8,7 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Journal.ViewModels.Tools;
 using workwear.Tools.Features;
 
 namespace workwear.Journal
@@ -178,6 +179,24 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<WarehouseJournalNode>.Create()
 					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.Finish()
+			);
+
+			#endregion
+
+			#region Tools
+
+			TreeViewColumnsConfigFactory.Register<EmployeeSetNormViewModel>(
+				() => FluentColumnsConfig<EmployeeSetNormJournalNode>.Create()
+					.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
+					.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
+					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
+					.AddColumn("Результат").AddTextRenderer(node => node.Result)
+						.AddSetter((c, x) => c.Foreground = x.Result == "ОК" ? "green" : "red")
+					.AddColumn("Нормы").AddTextRenderer(node => node.Norms)
+					.AddColumn("Должность").AddTextRenderer(node => node.Post)
+					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Background = x.Dismiss ? "White Smoke" : null)
 					.Finish()
 			);
 

@@ -40,6 +40,7 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Journal.ViewModels.Tools;
 using workwear.Models.Import;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
@@ -145,7 +146,7 @@ public partial class MainWindow : Gtk.Window
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
 		NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
 
-		#region Одноразовый исправления базы
+		#region Проверки и исправления базы
 		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользовтель его создать не сможет.
 		if(UoW.GetAll<Warehouse>().Count() == 0)
 			CreateDefaultWarehouse();
@@ -180,6 +181,7 @@ public partial class MainWindow : Gtk.Window
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
+		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
 	}
 	#endregion
 
@@ -695,7 +697,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionEmployeeLoadActivated(object sender, EventArgs e)
 	{
-		NavigationManager.OpenViewModel<ExcelImportViewModel>(null, 
+		NavigationManager.OpenViewModel<ExcelImportViewModel>(null,
 			addingRegistrations: c => c.RegisterType<ImportModelEmployee>().As<IImportModel>());
 	}
 
@@ -704,5 +706,16 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager.OpenViewModel<ExcelImportViewModel>(null,
 			addingRegistrations: c => c.RegisterType<ImportModelNorm>().As<IImportModel>());
 
+	}
+
+	protected void OnActionSetNormsActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<EmployeeSetNormViewModel>(null);
+	}
+
+	protected void OnActionImportWorkwearItemsActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<ExcelImportViewModel>(null,
+			addingRegistrations: c => c.RegisterType<ImportModelWorkwearItems>().As<IImportModel>());
 	}
 }

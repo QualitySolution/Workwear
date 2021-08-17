@@ -4,6 +4,7 @@ using QS.Views.Dialog;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.ViewModels.Regulations;
+using Workwear.Domain.Regulations;
 
 namespace workwear.Views.Regulations
 {
@@ -47,6 +48,7 @@ namespace workwear.Views.Regulations
 				.AddTextRenderer (i => i.ProtectionTools != null && i.ProtectionTools.Type.Units != null ? i.ProtectionTools.Type.Units.Name : String.Empty)
 				.AddColumn ("Период")
 				.AddNumericRenderer (i => i.PeriodCount).WidthChars(6).Editing ().Adjustment (new Gtk.Adjustment(1, 0, 100, 1, 10, 10))
+					.AddSetter((c,n) => c.Visible = n.NormPeriod != NormPeriodType.Wearout)
 				.AddEnumRenderer (i => i.NormPeriod).Editing ()
 				.AddColumn(String.Empty)
 				.Finish ();
