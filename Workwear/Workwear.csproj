@@ -166,7 +166,6 @@
     <Compile Include="Measurements\WearSize.cs" />
     <Compile Include="Domain\Stock\StockDocument.cs" />
     <Compile Include="Domain\User\UserSettings.cs" />
-    <Compile Include="HibernateMapping\User\UserMap.cs" />
     <Compile Include="HibernateMapping\User\UserSettingsMap.cs" />
     <Compile Include="Tools\CurrentUserSettings.cs" />
     <Compile Include="gtk-gui\workwear.RequestSheetDlg.cs" />
@@ -512,7 +511,7 @@
       <Name>Workwear.Sql</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj">
-      <Project>{38A99A76-C15A-4C55-8221-375D25E29F26}</Project>
+      <Project>{C01AE5A4-3CFF-4C7B-884D-45B07ACDE761}</Project>
       <Name>QS.Updater.Core</Name>
     </ProjectReference>
   </ItemGroup>

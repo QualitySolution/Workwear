@@ -75,6 +75,7 @@ namespace workwear
 			OrmConfig.ConfigureOrm (db, new System.Reflection.Assembly[] {
 				System.Reflection.Assembly.GetAssembly (typeof(MainClass)),
 				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),
+				System.Reflection.Assembly.GetAssembly (typeof(UserBase)),
 			});
 
 			#if DEBUG
