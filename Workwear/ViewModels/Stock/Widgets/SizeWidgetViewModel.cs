@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Stock;
@@ -57,14 +56,14 @@ namespace workwear.ViewModels.Stock.Widgets
 		private void ConfigureSizes(ClothesSex sex, СlothesType clothesType)
 		{
 			if(SizeHelper.HasGrowthStandart(clothesType)) {
-				WearGrowths = sizeService.GetGrowthForEmployee();
+				WearGrowths = sizeService.GetGrowthForNomenclature();
 				IsUseGrowth = true;
 			}
-			this.WearSizes = SizeHelper.GetSizesListByStdCode(nomenclature.SizeStd).ToList();
+			this.WearSizes = sizeService.GetSizesForNomeclature(nomenclature.SizeStd);
 		}
 
 		/// <summary>
-		/// Добавляет размеры,превращая их в объекты номенклатуры, и вызывает закрытие диалога
+		/// Добавляет размеры, превращая их в объекты номенклатуры и вызывает закрытие диалога
 		/// </summary>
 		/// <param name="currentGrowth">Выбранный рост.</param>
 		/// <param name="sizes"> Словарь размеров, где ключ - размер , значение - количество .</param>
@@ -76,7 +75,7 @@ namespace workwear.ViewModels.Stock.Widgets
 		}
 	}
 	/// <summary>
-	/// Класс содержащий объекты номеклатуры , с добавленными размерами
+	/// Класс содержащий объекты номеклатуры, с добавленными размерами
 	/// </summary>
 	public class AddedSizesEventArgs : EventArgs
 	{
