@@ -1,6 +1,6 @@
 ﻿-- Очищаем старые параметры базы
 DELETE FROM base_parameters WHERE name = 'micro_updates';
-DELETE FROM base_parameters WHERE name = 'edition';
+UPDATE base_parameters SET str_value = 'general' WHERE name = 'edition';
 
 -- Обновление схемы
 ALTER SCHEMA DEFAULT CHARACTER SET utf8mb4  DEFAULT COLLATE utf8mb4_general_ci ;

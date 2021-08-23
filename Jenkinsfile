@@ -1,4 +1,7 @@
-properties([parameters([booleanParam(defaultValue: false, description: 'Выкладывать сборку на сервер files.qsolution.ru', name: 'Publish')])])
+properties([parameters([
+	booleanParam(defaultValue: false, description: 'Запускать тесты скриптов SQL', name: 'SQLTests'),
+	booleanParam(defaultValue: false, description: 'Выкладывать сборку на сервер files.qsolution.ru', name: 'Publish')
+])])
 node {
    stage('Workwear') {
       checkout([
@@ -42,6 +45,11 @@ node {
        finally{
            nunit testResultsPattern: 'Workwear/WorkwearTest/bin/ReleaseWin/TestResult.xml'
        }
+   }
+   if (params.SQLTests) {
+      stage('SQLTests'){
+         sh 'dotnet test Workwear/Workwear.Test.Sql/Workwear.Test.Sql.csproj '
+      }
    }
    if (params.Publish) {
       stage('Publish'){
