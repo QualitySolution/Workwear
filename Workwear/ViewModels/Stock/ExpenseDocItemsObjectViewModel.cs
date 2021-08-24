@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Gtk;
 using QS.DomainModel.UoW;
@@ -28,6 +29,10 @@ namespace workwear.ViewModels.Stock
 		#region Хелперы
 		private IUnitOfWork UoW => expenseObjectViewModel.UoW;
 		private Expense Entity => expenseObjectViewModel.Entity;
+		#endregion
+
+		#region Получение данных
+		public IList<SubdivisionPlace> Places => Entity.Subdivision?.Places;
 		#endregion
 
 		#region Поля

@@ -216,7 +216,7 @@ namespace workwear.Views.Stock
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
 			this.label2.Xalign = 1F;
-			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Название группы<span foreground=\"red\">*</span>:");
+			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Название<span foreground=\"red\">*</span>:");
 			this.label2.UseMarkup = true;
 			this.table1.Add(this.label2);
 			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));

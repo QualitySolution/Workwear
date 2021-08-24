@@ -24,6 +24,10 @@ include::users.adoc[]
 
 include::interface.adoc[]
 
+include::organization.adoc[]
+
+include::nomenclature.adoc[]
+
 include::employees.adoc[]
 
 include::manipulation.adoc[]

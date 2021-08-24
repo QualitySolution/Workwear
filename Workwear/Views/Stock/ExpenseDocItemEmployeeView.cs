@@ -63,7 +63,7 @@ namespace workwear.Views.Stock
 				.AddColumn("Рост")
 					.AddComboRenderer(x => x.WearGrowth)
 					.FillItems(ViewModel.SizeService.GetGrowthForNomenclature())
-					.AddSetter((c, n) => c.Editable = SizeHelper.HasGrowthStandart(n.Nomenclature.Type.WearCategory.Value))
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.WearCategory != null &&  SizeHelper.HasGrowthStandart(n.Nomenclature.Type.WearCategory.Value))
 				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer(e => e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)

@@ -192,7 +192,7 @@ Section "${PRODUCT_NAME}" SecProgram
   CreateDirectory "$SMPROGRAMS\${MENU_DIR_NAME}"
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Удаление.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\${EXE_NAME}.exe" "" "$INSTDIR\${EXE_NAME}.exe" 0
-  CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Документация.lnk" "$INSTDIR\workwear_ru.pdf"
+  CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Документация.lnk" "$INSTDIR\user-guide.pdf"
   
   ; Удяляем файлы ненужные после версии 1.2.4.2
   Delete $INSTDIR\gtk-databind-lib.dll

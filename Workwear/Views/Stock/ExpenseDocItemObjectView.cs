@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Data.Bindings.Utilities;
-using System.Linq;
 using Gtk;
+using QS.DomainModel.Entity;
 using QSWidgetLib;
-using workwear.Domain.Company;
 using workwear.Domain.Stock;
-using workwear.Measurements;
 using workwear.ViewModels.Stock;
 using Workwear.Measurements;
 
@@ -17,7 +15,6 @@ namespace workwear.Views.Stock
 		private enum ColumnTags
 		{
 			FacilityPlace,
-			BuhDoc
 		}
 
 		public ExpenseDocItemObjectView()
@@ -55,20 +52,12 @@ namespace workwear.Views.Stock
 		{
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseItem>()
 				.AddColumn("Наименование").AddTextRenderer(e => e.Nomenclature.Name)
-				.AddColumn("Размер")
-					.AddComboRenderer(x => x.Size)
-					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.SizeStd, SizeUse.HumanOnly))
-					.AddSetter((c, n) => c.Editable = n.Nomenclature.SizeStd != null)
-				.AddColumn("Рост")
-					.AddComboRenderer(x => x.WearGrowth)
-					.FillItems(SizeHelper.GetGrowthList(SizeUse.HumanOnly))
-					.AddSetter((c, n) => c.Editable = SizeHelper.HasGrowthStandart(n.Nomenclature.Type.WearCategory.Value))
 				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer(e => e.Nomenclature.Type.Units.Name)
-				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument).Editable()
 				.AddColumn("Расположение").Tag(ColumnTags.FacilityPlace).AddComboRenderer(e => e.SubdivisionPlace).Editing()
-					.SetDisplayFunc(x => (x as SubdivisionPlace) != null ? (x as SubdivisionPlace).Name : String.Empty)
+					.DynamicFillListFunc(x => ViewModel.Places)
+					.SetDisplayFunc(x => DomainHelper.GetTitle(x))
 				.AddColumn("")
 				.Finish();
 		}
@@ -101,15 +90,6 @@ namespace workwear.Views.Stock
 
 		void ExpenseDoc_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if(e.PropertyName == ViewModel.expenseObjectViewModel.Entity.GetPropertyName(x => x.Operation)) {
-				var placeColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.FacilityPlace).First();
-				placeColumn.Visible = ViewModel.expenseObjectViewModel.Entity.Operation == ExpenseOperations.Object;
-
-				var buhDocColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.BuhDoc).First();
-				buhDocColumn.Visible = ViewModel.expenseObjectViewModel.Entity.Operation == ExpenseOperations.Employee;
-
-				buttonFillBuhDoc.Visible = ViewModel.expenseObjectViewModel.Entity.Operation == ExpenseOperations.Employee;
-			}
 			if(e.PropertyName == nameof(ViewModel.expenseObjectViewModel.Entity.Warehouse))
 				buttonAdd.Sensitive = ViewModel.expenseObjectViewModel.Entity.Warehouse != null;
 		}
@@ -117,7 +97,6 @@ namespace workwear.Views.Stock
 		void SetSum()
 		{
 			labelSum.Markup = viewModel.Sum;
-			buttonFillBuhDoc.Sensitive = ViewModel.SensetiveFillBuhDoc;
 		}
 
 		protected void OnButtonFillBuhDocClicked(object sender, EventArgs e)
