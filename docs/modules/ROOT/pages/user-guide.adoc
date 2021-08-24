@@ -30,6 +30,8 @@ include::nomenclature.adoc[]
 
 include::employees.adoc[]
 
+include::settings.adoc[]
+
 include::technical.adoc[]
 
 :leveloffset: 0
