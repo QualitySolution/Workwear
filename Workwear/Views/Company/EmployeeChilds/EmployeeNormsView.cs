@@ -30,6 +30,8 @@ namespace workwear.Views.Company.EmployeeChilds
 			set {
 				viewModel = value;
 				viewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+				buttonNormFromPost.Binding.AddBinding(viewModel, v => v.SensetiveNormFromPost, w => w.Sensitive).InitializeFromSource();
 			}
 		}
 
