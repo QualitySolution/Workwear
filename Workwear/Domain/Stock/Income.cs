@@ -176,6 +176,8 @@ namespace workwear.Domain.Stock
 			var newItem = new IncomeItem(this) {
 				Amount = count,
 				Nomenclature = issuedOperation.Nomenclature,
+				Size = issuedOperation.Size,
+				WearGrowth = issuedOperation.WearGrowth,
 				IssuedEmployeeOnOperation = issuedOperation,
 				Cost = issuedOperation.CalculateDepreciationCost(Date),
 				WearPercent = issuedOperation.CalculatePercentWear(Date),
