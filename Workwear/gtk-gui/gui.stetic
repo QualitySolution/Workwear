@@ -11264,7 +11264,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Button" id="buttonNormFromPost">
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonNormFromPost">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>

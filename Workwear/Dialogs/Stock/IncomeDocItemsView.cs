@@ -74,6 +74,10 @@ namespace workwear
 					|| IncomeDoc.Operation == IncomeOperations.Enter;
 			}
 
+			if(e.PropertyName == nameof(IncomeDoc.Operation)) {
+				buttonAddSizes.Visible = IncomeDoc.Operation == IncomeOperations.Enter;
+			}
+
 			if (e.PropertyName == IncomeDoc.GetPropertyName(x => x.Operation))
 			{
 				var buhDocColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.BuhDoc).First();
