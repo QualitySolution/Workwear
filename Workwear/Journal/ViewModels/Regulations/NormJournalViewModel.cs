@@ -34,7 +34,8 @@ namespace workwear.Journal.ViewModels.Regulations
 		{
 			NormJournalNode resultAlias = null;
 
-			Post professionAlias = null;
+			Post postAlias = null;
+			Subdivision subdivisionAlias = null;
 			Norm normAlias = null;
 			RegulationDoc regulationDocAlias = null;
 			RegulationDocAnnex docAnnexAlias = null;
@@ -42,7 +43,8 @@ namespace workwear.Journal.ViewModels.Regulations
 			var norms = uow.Session.QueryOver<Norm>(() => normAlias)
 				.JoinAlias(n => n.Document, () => regulationDocAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(n => n.Annex, () => docAnnexAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinQueryOver(() => normAlias.Posts, () => professionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => normAlias.Posts, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => postAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.Where(GetSearchCriterion(
 					() => normAlias.Name,
 					() => normAlias.TONParagraph
@@ -58,11 +60,12 @@ namespace workwear.Journal.ViewModels.Regulations
 				   .Select(() => normAlias.TONParagraph).WithAlias(() => resultAlias.TonParagraph)
 				   .Select(() => normAlias.Name).WithAlias(() => resultAlias.Name)
 				   .Select(Projections.SqlFunction(
-					   new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT( ?1 SEPARATOR ?2)"),
+					   new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT( CONCAT_WS(' ', ?1, CONCAT('[', ?2 ,']')) SEPARATOR ?3)"),
 					   NHibernateUtil.String,
-					   Projections.Property(() => professionAlias.Name),
-					   Projections.Constant("; "))
-				   ).WithAlias(() => resultAlias.Professions)
+					   Projections.Property(() => postAlias.Name),
+					   Projections.Property(() => subdivisionAlias.Name),
+					   Projections.Constant("\n"))
+				   ).WithAlias(() => resultAlias.Posts)
 				)
 				.OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<NormJournalNode>());
@@ -107,6 +110,6 @@ namespace workwear.Journal.ViewModels.Regulations
 
 		public string TonParagraph { get; set; }
 
-		public string Professions { get; set; }
+		public string Posts { get; set; }
 	}
 }
