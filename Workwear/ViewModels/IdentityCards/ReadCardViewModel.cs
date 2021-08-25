@@ -64,7 +64,6 @@ namespace workwear.ViewModels.IdentityCards
 			DeviceInfo device = null;
 			cardReaderService.RefreshDevices();
 
-
 			var readerAddress = configuration["CardReader:Address"];
 			if(!String.IsNullOrEmpty(readerAddress) && readerAddress.Contains(':')) {
 				var parts = readerAddress.Split(':');
@@ -73,6 +72,11 @@ namespace workwear.ViewModels.IdentityCards
 
 			if(device == null)
 				device = cardReaderService.Devices.FirstOrDefault();
+
+			if(device == null) {
+				UpdateState(null);
+				return;
+			}
 
 			var cardTypes = configuration["CardReader:CardTypes"];
 			if(!String.IsNullOrEmpty(cardTypes)) {

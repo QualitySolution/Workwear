@@ -14,7 +14,7 @@ namespace workwear.Views.Company.EmployeeChilds
 
 		private global::Gtk.Button buttonAddNorm;
 
-		private global::Gtk.Button buttonNormFromPost;
+		private global::Gamma.GtkWidgets.yButton buttonNormFromPost;
 
 		private global::Gtk.Button buttonNormOpen;
 
@@ -62,7 +62,7 @@ namespace workwear.Views.Company.EmployeeChilds
 			w4.Expand = false;
 			w4.Fill = false;
 			// Container child hbox10.Gtk.Box+BoxChild
-			this.buttonNormFromPost = new global::Gtk.Button();
+			this.buttonNormFromPost = new global::Gamma.GtkWidgets.yButton();
 			this.buttonNormFromPost.CanFocus = true;
 			this.buttonNormFromPost.Name = "buttonNormFromPost";
 			this.buttonNormFromPost.UseUnderline = true;
