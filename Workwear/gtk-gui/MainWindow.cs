@@ -356,8 +356,8 @@ public partial class MainWindow
 		this.ActionProfession = new global::Gtk.Action("ActionProfession", global::Mono.Unix.Catalog.GetString("Профессии"), null, null);
 		this.ActionProfession.ShortLabel = global::Mono.Unix.Catalog.GetString("Профессии");
 		w1.Add(this.ActionProfession, null);
-		this.ActionProtectionTools = new global::Gtk.Action("ActionProtectionTools", global::Mono.Unix.Catalog.GetString("Номенклатура ТОН"), null, null);
-		this.ActionProtectionTools.ShortLabel = global::Mono.Unix.Catalog.GetString("Номенклатура ТОН");
+		this.ActionProtectionTools = new global::Gtk.Action("ActionProtectionTools", global::Mono.Unix.Catalog.GetString("Номенклатура нормы"), null, null);
+		this.ActionProtectionTools.ShortLabel = global::Mono.Unix.Catalog.GetString("Номенклатура нормы");
 		w1.Add(this.ActionProtectionTools, null);
 		this.ActionAmountEmployeeGetWear = new global::Gtk.Action("ActionAmountEmployeeGetWear", global::Mono.Unix.Catalog.GetString("Количество сотрудников получивших СИЗ"), null, null);
 		this.ActionAmountEmployeeGetWear.ShortLabel = global::Mono.Unix.Catalog.GetString("Количество сотрудников получивших СИЗ");

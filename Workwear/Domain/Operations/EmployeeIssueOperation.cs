@@ -43,7 +43,7 @@ namespace workwear.Domain.Operations
 		}
 
 		private ProtectionTools protectionTools;
-		[Display(Name = "Номеклатура ТОН")]
+		[Display(Name = "Номенаклатуры нормы")]
 		public virtual ProtectionTools ProtectionTools {
 			get => protectionTools;
 			set => SetField(ref protectionTools, value);
@@ -321,7 +321,7 @@ namespace workwear.Domain.Operations
 		public virtual void RecalculateDatesOfIssueOperation(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser)
 		{
 			if(ProtectionTools == null) {
-				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature.Name} от {OperationTime} не указана 'Номеклатура ТОН' поэтому прерасчет даты выдачи и использования не возможен.");
+				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature.Name} от {OperationTime} не указана 'Номеклатура нормы' поэтому прерасчет даты выдачи и использования не возможен.");
 				return;
 			}
 
