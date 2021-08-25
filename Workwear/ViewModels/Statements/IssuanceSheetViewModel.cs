@@ -12,7 +12,6 @@ using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
-using QS.Tdi;
 using QS.Validation;
 using QS.ViewModels;
 using QS.ViewModels.Control.EEVM;
@@ -29,22 +28,20 @@ using workwear.ViewModels.Stock;
 
 namespace workwear.ViewModels.Statements
 {
-	public class IssuanceSheetViewModel : LegacyEntityDialogViewModelBase<IssuanceSheet>
+	public class IssuanceSheetViewModel : EntityDialogViewModelBase<IssuanceSheet>
 	{
 		public EntityEntryViewModel<Organization> OrganizationEntryViewModel;
 		public EntityEntryViewModel<Subdivision> SubdivisionEntryViewModel;
 		public EntityEntryViewModel<Leader> ResponsiblePersonEntryViewModel;
 		public EntityEntryViewModel<Leader> HeadOfDivisionPersonEntryViewModel;
 		public ILifetimeScope AutofacScope;
-		public ITdiCompatibilityNavigation tdiNavigationManager;
 		private readonly CommonMessages commonMessages;
 
-		public IssuanceSheetViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, ITdiTab myTab, ITdiCompatibilityNavigation navigationManager, IValidator validator, ILifetimeScope autofacScope, CommonMessages commonMessages) : base(uowBuilder, unitOfWorkFactory, myTab, navigationManager, validator)
+		public IssuanceSheetViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigationManager, IValidator validator, ILifetimeScope autofacScope, CommonMessages commonMessages) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator)
 		{
-			this.tdiNavigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.commonMessages = commonMessages;
-			var entryBuilder = new LegacyEEVMBuilderFactory<IssuanceSheet>(this, TdiTab, Entity, UoW, navigationManager) {
+			var entryBuilder = new CommonEEVMBuilderFactory<IssuanceSheet>(this, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
 
@@ -209,9 +206,9 @@ namespace workwear.ViewModels.Statements
 		public void OpenExpense()
 		{
 			if (Entity.Expense != null)
-				tdiNavigationManager.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.Expense.Id));
+				NavigationManager.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.Expense.Id));
 			else
-				tdiNavigationManager.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.MassExpense.Id));
+				NavigationManager.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.MassExpense.Id));
 
 		}
 
