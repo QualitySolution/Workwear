@@ -44,7 +44,8 @@ namespace workwear.Journal.ViewModels.Regulations
 				.JoinAlias(() => postAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.Where(GetSearchCriterion(
 					() => normAlias.Name,
-					() => normAlias.TONParagraph
+					() => postAlias.Name,
+					() => subdivisionAlias.Name
 					))
 				.SelectList(list => list
 				   .SelectGroup(() => normAlias.Id).WithAlias(() => resultAlias.Id)
