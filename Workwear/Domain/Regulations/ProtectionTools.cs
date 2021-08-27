@@ -9,8 +9,8 @@ using workwear.Domain.Stock;
 namespace workwear.Domain.Regulations
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
-		NominativePlural = "номенклатуры ТОН",
-		Nominative = "номеклатура ТОН")]
+		NominativePlural = "номенклатуры нормы",
+		Nominative = "номеклатура нормы")]
 	public class ProtectionTools : PropertyChangedBase, IDomainObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();

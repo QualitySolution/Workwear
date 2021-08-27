@@ -43,7 +43,7 @@ namespace workwear.Domain.Statements
 		}
 
 		private ProtectionTools protectionTools;
-		[Display(Name = "Номеклатура ТОН")]
+		[Display(Name = "Номенклатура нормы")]
 		public virtual ProtectionTools ProtectionTools {
 			get => protectionTools;
 			set => SetField(ref protectionTools, value);

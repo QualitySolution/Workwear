@@ -53,7 +53,7 @@ namespace WorkwearTest.Integration.Organization
 				var position2 = new StockPosition(nomenclature2, null, null, 0);
 
 				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номенклатура ТОН";
+				protectionTools.Name = "Номенклатура нормы";
 				protectionTools.AddNomeclature(nomenclature);
 				protectionTools.AddNomeclature(nomenclature2);
 				uow.Save(protectionTools);
@@ -128,7 +128,7 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(nomenclature2);
 
 				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номенклатура ТОН";
+				protectionTools.Name = "Номенклатура нормы";
 				protectionTools.AddNomeclature(nomenclature);
 				protectionTools.AddNomeclature(nomenclature2);
 				uow.Save(protectionTools);
@@ -229,14 +229,14 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(nomenclature3);
 
 				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номенклатура ТОН";
+				protectionTools.Name = "Номеклатура нормы";
 				protectionTools.AddNomeclature(nomenclature);
 				protectionTools.AddNomeclature(nomenclature3);
 
 				uow.Save(protectionTools);
 
 				var protectionTools2 = new ProtectionTools();
-				protectionTools2.Name = "Номенклатура ТОН_2";
+				protectionTools2.Name = "Номенклатура нормы_2";
 				protectionTools2.AddNomeclature(nomenclature2);
 				uow.Save(protectionTools2);
 
@@ -334,11 +334,11 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(nomenclature2);
 
 				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номенклатура ТОН";
+				protectionTools.Name = "Номенклатура нормы";
 				protectionTools.AddNomeclature(nomenclature);
 
 				var protectionTools2 = new ProtectionTools();
-				protectionTools2.Name = "Номенклатура ТОН_2";
+				protectionTools2.Name = "Номенклатура нормы_2";
 				protectionTools2.AddNomeclature(nomenclature2);
 
 				protectionTools.AddAnalog(protectionTools2);
@@ -420,12 +420,12 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(nomenclature);
 
 				var protectionToolsAnalog = new ProtectionTools();
-				protectionToolsAnalog.Name = "Номенклатура ТОН Аналог";
+				protectionToolsAnalog.Name = "Номенклатура нормы Аналог";
 				protectionToolsAnalog.AddNomeclature(nomenclature);
 				uow.Save(protectionToolsAnalog);
 
 				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номенклатура ТОН";
+				protectionTools.Name = "Номенклатура нормы";
 				protectionTools.AddAnalog(protectionToolsAnalog);
 				uow.Save(protectionTools);
 
@@ -493,7 +493,7 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номенклатура ТОН";
+				protectionTools.Name = "Номенклатура нормы";
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
@@ -582,7 +582,7 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номенклатура ТОН";
+				protectionTools.Name = "Номенклатура нормы";
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
@@ -689,7 +689,7 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номенклатура ТОН";
+				protectionTools.Name = "Номенклатура нормы";
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
@@ -775,11 +775,11 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(nomenclature);
 
 				var protectionToolsAnalog = new ProtectionTools();
-				protectionToolsAnalog.Name = "Номенклатура ТОН Аналог";
+				protectionToolsAnalog.Name = "Номенклатура нормы Аналог";
 				protectionToolsAnalog.AddNomeclature(nomenclature);
 
 				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номенклатура ТОН";
+				protectionTools.Name = "Номенклатура нормы";
 				protectionTools.AddAnalog(protectionToolsAnalog);
 				protectionTools.AddNomeclature(nomenclature);
 				protectionToolsAnalog.AddAnalog(protectionTools);
