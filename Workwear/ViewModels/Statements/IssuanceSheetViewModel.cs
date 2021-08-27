@@ -36,19 +36,17 @@ namespace workwear.ViewModels.Statements
 		public EntityEntryViewModel<Leader> ResponsiblePersonEntryViewModel;
 		public EntityEntryViewModel<Leader> HeadOfDivisionPersonEntryViewModel;
 		public ILifetimeScope AutofacScope;
-		public ITdiCompatibilityNavigation tdiNavigationManager;
 		private readonly CommonMessages commonMessages;
 
 		public IssuanceSheetViewModel(
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
-			ITdiCompatibilityNavigation navigationManager, 
+			INavigationManager navigationManager, 
 			IValidator validator, 
 			ILifetimeScope autofacScope,
 			SizeService sizeService,
 			CommonMessages commonMessages) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator)
 		{
-			this.tdiNavigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.commonMessages = commonMessages;
@@ -178,14 +176,14 @@ namespace workwear.ViewModels.Statements
 
 		#region Sensetive
 
-		public bool CanEditItems => Entity.Expense == null;
+		public bool CanEditItems => Entity.Expense == null && Entity.MassExpense == null;
 
 		#endregion
 
 		#region Visible
 
-		public bool VisibleExpense => Entity.Expense != null;
-		public bool VisibleFillBy => Entity.Expense == null;
+		public bool VisibleExpense => Entity.Expense != null || Entity.MassExpense != null;
+		public bool VisibleFillBy => CanEditItems;
 		public bool VisibleCloseFillBy => FillByViewModel != null;
 
 		#endregion
@@ -218,10 +216,12 @@ namespace workwear.ViewModels.Statements
 
 		public void OpenExpense()
 		{
-			if (Entity.Expense != null)
-				tdiNavigationManager.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.Expense.Id));
+			if(Entity.Expense != null)
+				NavigationManager.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.Expense.Id));
+			else if(Entity.MassExpense != null)
+				NavigationManager.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.MassExpense.Id));
 			else
-				tdiNavigationManager.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.MassExpense.Id));
+				throw new NotSupportedException();
 
 		}
 

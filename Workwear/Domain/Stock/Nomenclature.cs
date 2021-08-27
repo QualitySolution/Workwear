@@ -88,7 +88,7 @@ namespace workwear.Domain.Stock
 
 		private IList<ProtectionTools> protectionTools = new List<ProtectionTools>();
 
-		[Display(Name = "Номенклатры ТОН")]
+		[Display(Name = "Номенаклатуры нормы")]
 		public virtual IList<ProtectionTools> ProtectionTools {
 			get { return protectionTools; }
 			set { SetField(ref protectionTools, value, () => ProtectionTools); }
