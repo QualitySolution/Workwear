@@ -16,7 +16,16 @@ namespace workwear.Models.Import
 			this.cells = cells;
 		}
 
+		/// <summary>
+		/// Получает значение ячейки видимое пользователю.
+		/// </summary>
 		public string CellValue(int col)
+		{
+			var cell = cells.GetCell(col);
+			return cell?.ToString();
+		}
+
+		public string CellStringValue(int col)
 		{
 			var cell = cells.GetCell(col);
 
@@ -96,7 +105,6 @@ namespace workwear.Models.Import
 	public interface ISheetRow
 	{
 		string CellValue(int col);
-		int? CellIntValue(int col);
 		string CellBackgroundColor(int col);
 	}
 }

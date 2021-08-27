@@ -120,7 +120,7 @@ namespace workwear.Models.Import
 
 		public ChangeType MakeChange(SettingsMatchEmployeesViewModel settings, EmployeeCard employee, SheetRowEmployee row, ImportedColumn<DataTypeEmployee> column, ChangeType rowChange)
 		{
-			string value = row.CellValue(column.Index);
+			string value = row.CellStringValue(column.Index);
 			var dataType = column.DataType;
 			if(String.IsNullOrWhiteSpace(value))
 				return ChangeType.NotChanged;
@@ -253,7 +253,7 @@ namespace workwear.Models.Import
 		{
 			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
 			var numberColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.PersonnelNumber);
-			var numbers = list.Select(x => settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellValue(numberColumn.Index)) : x.CellValue(numberColumn.Index))
+			var numbers = list.Select(x => settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellStringValue(numberColumn.Index)) : x.CellStringValue(numberColumn.Index))
 							.Where(x => !String.IsNullOrWhiteSpace(x))
 							.Distinct().ToArray();
 			var exists = uow.Session.QueryOver<EmployeeCard>()
@@ -262,13 +262,13 @@ namespace workwear.Models.Import
 
 			progress.Add();
 			foreach(var employee in exists) {
-				var found = list.Where(x => (settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellValue(numberColumn.Index)) : x.CellValue(numberColumn.Index)) == employee.PersonnelNumber).ToArray();
+				var found = list.Where(x => (settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellStringValue(numberColumn.Index)) : x.CellStringValue(numberColumn.Index)) == employee.PersonnelNumber).ToArray();
 				found.First().Employees.Add(employee);
 			}
 
 			//Пропускаем дубликаты Табельных номеров в файле
 			progress.Add();
-			var groups = list.GroupBy(x => settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellValue(numberColumn.Index)) : x.CellValue(numberColumn.Index));
+			var groups = list.GroupBy(x => settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellStringValue(numberColumn.Index)) : x.CellStringValue(numberColumn.Index));
 			foreach(var group in groups) {
 				if(String.IsNullOrWhiteSpace(group.Key)) {
 					//Если табельного номера нет проверяем по FIO
@@ -293,7 +293,7 @@ namespace workwear.Models.Import
 			progress.Start(2, text: "Загружаем должности и подразделения");
 			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Subdivision);
 			if(subdivisionColumn != null) {
-				var subdivisionNames = list.Select(x => x.CellValue(subdivisionColumn.Index)).Distinct().ToArray();
+				var subdivisionNames = list.Select(x => x.CellStringValue(subdivisionColumn.Index)).Distinct().ToArray();
 				UsedSubdivisions.AddRange(uow.Session.QueryOver<Subdivision>()
 					.Where(x => x.Name.IsIn(subdivisionNames))
 					.List());
@@ -301,7 +301,7 @@ namespace workwear.Models.Import
 			progress.Add();
 			var postColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Post);
 			if(postColumn != null) {
-				var postNames = list.Select(x => x.CellValue(postColumn.Index)).Distinct().ToArray();
+				var postNames = list.Select(x => x.CellStringValue(postColumn.Index)).Distinct().ToArray();
 				UsedPosts.AddRange( uow.Session.QueryOver<Post>()
 					.Where(x => x.Name.IsIn(postNames))
 					.List());
@@ -325,7 +325,7 @@ namespace workwear.Models.Import
 
 		private void SetValue(SettingsMatchEmployeesViewModel settings, IUnitOfWork uow, EmployeeCard employee, SheetRowEmployee row, ImportedColumn<DataTypeEmployee> column)
 		{
-			string value = row.CellValue(column.Index);
+			string value = row.CellStringValue(column.Index);
 			var dataType = column.DataType;
 			if(String.IsNullOrWhiteSpace(value))
 				return;
@@ -405,13 +405,13 @@ namespace workwear.Models.Import
 			var patronymicColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Patronymic);
 			var fioColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Fio);
 			if(fioColumn != null)
-				row.CellValue(fioColumn.Index)?.SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
+				row.CellStringValue(fioColumn.Index)?.SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
 			if(lastnameColumn != null)
-				fio.LastName = row.CellValue(lastnameColumn.Index);
+				fio.LastName = row.CellStringValue(lastnameColumn.Index);
 			if(firstNameColumn != null)
-				fio.FirstName = row.CellValue(firstNameColumn.Index);
+				fio.FirstName = row.CellStringValue(firstNameColumn.Index);
 			if(patronymicColumn != null)
-				fio.Patronymic = row.CellValue(patronymicColumn.Index);
+				fio.Patronymic = row.CellStringValue(patronymicColumn.Index);
 			return fio;
 		}
 

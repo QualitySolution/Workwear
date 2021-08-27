@@ -63,7 +63,7 @@ namespace workwear.Models.Import
 					continue;
 
 				foreach(var column in meaningfulColumns) {
-					row.ChangedColumns.Add(column, CalculateChange(row, column.DataType, row.CellValue(column.Index)));
+					row.ChangedColumns.Add(column, CalculateChange(row, column.DataType, row.CellStringValue(column.Index)));
 				}
 				if(!row.ChangedColumns.Any(x => x.Key.DataType == DataTypeNorm.PeriodAndCount))
 					row.Skiped = true;
@@ -107,8 +107,8 @@ namespace workwear.Models.Import
 			var protectionToolsColumn = columns.FirstOrDefault(x => x.DataType == DataTypeNorm.ProtectionTools);
 
 			foreach(var row in list) {
-				var postName = row.CellValue(postColumn.Index);
-				var subdivisionName = subdivisionColumn != null ? row.CellValue(subdivisionColumn.Index) : null;
+				var postName = row.CellStringValue(postColumn.Index);
+				var subdivisionName = subdivisionColumn != null ? row.CellStringValue(subdivisionColumn.Index) : null;
 
 				if(String.IsNullOrWhiteSpace(postName)) {
 					row.Skiped = true;
@@ -161,7 +161,7 @@ namespace workwear.Models.Import
 
 			//Заполняем строки
 			var nomenclatureTypes = new NomenclatureTypes(uow, true);
-			var protectionNames = list.Select(x => x.CellValue(protectionToolsColumn.Index)).Where(x => x != null).Distinct().ToArray();
+			var protectionNames = list.Select(x => x.CellStringValue(protectionToolsColumn.Index)).Where(x => x != null).Distinct().ToArray();
 			var protections = protectionToolsRepository.GetProtectionToolsByName(uow, protectionNames);
 			foreach(var row in list.Where(x => !x.Skiped)) {
 				if(row.SubdivisionPostPair.Norms.Count > 1) {
@@ -169,7 +169,7 @@ namespace workwear.Models.Import
 					continue;
 				}
 
-				var protectionName = row.CellValue(protectionToolsColumn.Index);
+				var protectionName = row.CellStringValue(protectionToolsColumn.Index);
 				if(String.IsNullOrWhiteSpace(protectionName)) {
 					row.Skiped = true;
 					continue;
@@ -249,7 +249,7 @@ namespace workwear.Models.Import
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
 			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученой из общего поля ФИО.
 			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType)) {
-				SetValue(uow, row.NormItem, column.DataType, row.CellValue(column.Index));
+				SetValue(uow, row.NormItem, column.DataType, row.CellStringValue(column.Index));
 			}
 
 			yield return row.NormItem;
