@@ -3,6 +3,8 @@ using NHibernate.Mapping;
 using NUnit.Framework;
 using QS.Deletion.Configuration;
 using QS.Deletion.Testing;
+using QS.DomainModel.Entity.EntityPermissions.EntityExtendedPermission;
+using QS.Project.Domain;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Statements;
@@ -17,9 +19,14 @@ namespace WorkwearTest.Deletion
 		{
 			ConfigureOneTime.ConfigureNh();
 			ConfigureOneTime.ConfigureDeletion();
-
-			//Так как этот класс в общей библиотеке и пока никак не используется для удаления.
-			//IgnoreMissingClass.Add(typeof(QS.Project.Domain.UserBase));
+			
+			AddIgnoredClass<EntityPermissionBase>("Класс не используется в проекте");
+			AddIgnoredClass<EntityPermissionExtendedBase>("Класс не используется в проекте");
+			AddIgnoredClass<EntityUserPermission>("Класс не используется в проекте");
+			AddIgnoredClass<EntityUserPermissionExtended>("Класс не используется в проекте");
+			AddIgnoredClass<PresetUserPermission>("Класс не используется в проекте");
+			AddIgnoredClass<TypeOfEntity>("Класс не используется в проекте");
+			
 			AddIgnoredProperty<EmployeeIssueOperation>(x => x.IssuedOperation, "Потому что если мы удаляем операцию списания, мы не должны при этом удалять операцию выдачи.");
 			AddIgnoredProperty<EmployeeIssueOperation>(x => x.WarehouseOperation, "Является лиш дополнительной сылкой на операцию. И скорей всего и так вместе будет удалятся за счет других ссылок.");
 			AddIgnoredProperty<SubdivisionIssueOperation>(x => x.IssuedOperation, "Потому что если мы удаляем операцию списания, мы не должны при этом удалять операцию выдачи.");
