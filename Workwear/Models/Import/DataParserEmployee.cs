@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
+using NHibernate.Dialect;
 using NHibernate.Dialect.Function;
+using NHibernate.Engine;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -68,6 +70,9 @@ namespace workwear.Models.Import
 				"Дата приема",
 				"Дата приёма"
 				);
+			AddColumnName(DataTypeEmployee.DismissDate,
+				"Дата увольнения"
+			);
 			AddColumnName(DataTypeEmployee.Subdivision,
 				"Подразделение"
 				);
@@ -107,14 +112,16 @@ namespace workwear.Models.Import
 				}
 
 				foreach(var column in meaningfulColumns) {
-					row.ChangedColumns.Add(column, MakeChange(settings, employee, column.DataType, row.CellValue(column.Index), rowChange));
+					row.ChangedColumns.Add(column, MakeChange(settings, employee, row, column, rowChange));
 				}
 			}
 			progress.Close();
 		}
 
-		public ChangeType MakeChange(SettingsMatchEmployeesViewModel settings, EmployeeCard employee, DataTypeEmployee dataType, string value, ChangeType rowChange)
+		public ChangeType MakeChange(SettingsMatchEmployeesViewModel settings, EmployeeCard employee, SheetRowEmployee row, ImportedColumn<DataTypeEmployee> column, ChangeType rowChange)
 		{
+			string value = row.CellValue(column.Index);
+			var dataType = column.DataType;
 			if(String.IsNullOrWhiteSpace(value))
 				return ChangeType.NotChanged;
 
@@ -143,7 +150,9 @@ namespace workwear.Models.Import
 					bool patronymicDiff = !String.IsNullOrEmpty(patronymic) && !String.Equals(employee.Patronymic, patronymic, StringComparison.CurrentCultureIgnoreCase);
 					return (lastDiff || firstDiff || patronymicDiff) ? rowChange : ChangeType.NotChanged;
 				case DataTypeEmployee.HireDate:
-					return (DateTime.TryParse(value, out DateTime date) && employee.HireDate != date) ? rowChange : ChangeType.NotChanged;
+					return employee.HireDate != row.CellDateTimeValue(column.Index) ? rowChange : ChangeType.NotChanged;
+				case DataTypeEmployee.DismissDate:
+					return employee.DismissDate != row.CellDateTimeValue(column.Index) ? rowChange : ChangeType.NotChanged;
 				case DataTypeEmployee.Subdivision:
 					if(String.Equals(employee.Subdivision?.Name, value, StringComparison.CurrentCultureIgnoreCase))
 						return ChangeType.NotChanged;
@@ -186,11 +195,20 @@ namespace workwear.Models.Import
 				.Where(fio => !String.IsNullOrEmpty(fio.LastName) && !String.IsNullOrEmpty(fio.FirstName))
 				.Select(fio => (fio.LastName + "|" + fio.FirstName).ToUpper())
 				.Distinct().ToArray();
+			
+			Console.WriteLine((uow.Session.SessionFactory as ISessionFactoryImplementor).Dialect);
 			var exists = uow.Session.QueryOver<EmployeeCard>()
 				.Where(Restrictions.In(
 				Projections.SqlFunction(
 							  "upper", NHibernateUtil.String,
-							  Projections.SqlFunction(new StandardSQLFunction("CONCAT_WS"),
+							  (uow.Session.SessionFactory as ISessionFactoryImplementor).Dialect is SQLiteDialect //Данный диалект используется в тестах.
+								  ? 
+								  Projections.SqlFunction(new SQLFunctionTemplate(NHibernateUtil.String, "( ?1 || '|' || ?2)"),
+									  NHibernateUtil.String,
+									  Projections.Property<EmployeeCard>(x => x.LastName),
+									  Projections.Property<EmployeeCard>(x => x.FirstName)
+								  )
+							: Projections.SqlFunction(new StandardSQLFunction("CONCAT_WS"),
 							  	NHibernateUtil.String,
 							  	Projections.Constant(""),
 								Projections.Property<EmployeeCard>(x => x.LastName),
@@ -300,13 +318,15 @@ namespace workwear.Models.Import
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
 			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученой из общего поля ФИО.
 			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType)) {
-				SetValue(settings, uow, employee, column.DataType, row.CellValue(column.Index));
+				SetValue(settings, uow, employee, row, column);
 			}
 			yield return employee;
 		}
 
-		private void SetValue(SettingsMatchEmployeesViewModel settings, IUnitOfWork uow, EmployeeCard employee, DataTypeEmployee dataType, string value)
+		private void SetValue(SettingsMatchEmployeesViewModel settings, IUnitOfWork uow, EmployeeCard employee, SheetRowEmployee row, ImportedColumn<DataTypeEmployee> column)
 		{
+			string value = row.CellValue(column.Index);
+			var dataType = column.DataType;
 			if(String.IsNullOrWhiteSpace(value))
 				return;
 
@@ -355,8 +375,14 @@ namespace workwear.Models.Import
 					}
 					break;
 				case DataTypeEmployee.HireDate:
-					if(DateTime.TryParse(value, out DateTime date))
-					 	employee.HireDate = date;
+					var hireDate = row.CellDateTimeValue(column.Index);
+					if(hireDate != null)
+					 	employee.HireDate = hireDate;
+					break;
+				case DataTypeEmployee.DismissDate:
+					var dismissDate = row.CellDateTimeValue(column.Index);
+					if(dismissDate != null)
+						employee.DismissDate = dismissDate;
 					break;
 
 				case DataTypeEmployee.Subdivision:

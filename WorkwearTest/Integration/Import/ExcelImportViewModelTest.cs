@@ -12,7 +12,7 @@ using workwear.Repository.Company;
 using workwear.Tools.Nhibernate;
 using workwear.ViewModels.Import;
 
-namespace WorkwearTest.Integration.Tools
+namespace WorkwearTest.Integration.Import
 {
 	[TestFixture(TestOf = typeof(ExcelImportViewModel))]
 	[Category("Integrated")]
@@ -115,6 +115,50 @@ namespace WorkwearTest.Integration.Tools
 				Assert.That(igor.Subdivision.Id, Is.EqualTo(ury.Subdivision.Id));
 				Assert.That(igor.Post.Id, Is.EqualTo(ury.Post.Id));
 				Assert.That(igor.Post.Subdivision.Id, Is.EqualTo(ury.Post.Subdivision.Id));
+			}
+		}
+		
+		[Test(Description = "Проверяем что нормально работаем с датами при чтении даты поступления и увольнения")]
+		public void EmployeesLoad_DateWorks()
+		{
+			var navigation = Substitute.For<INavigationManager>();
+			var interactive = Substitute.For<IInteractiveMessage>();
+			var progressStep = Substitute.For<IProgressBarDisplayable>();
+			var progressInterceptor = Substitute.For<ProgressInterceptor>();
+			var subdivisionRepository = Substitute.For<SubdivisionRepository>();
+			var postRepository = Substitute.For<PostRepository>();
+			var dataparser = new DataParserEmployee(subdivisionRepository, postRepository);
+			var setting = new SettingsMatchEmployeesViewModel();
+			var model = new ImportModelEmployee(dataparser, setting);
+			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
+				var importModel = employeesLoad.ImportModel as ImportModelEmployee;
+				employeesLoad.ProgressStep = progressStep;
+				employeesLoad.FileName = "Samples/Excel/dismissed_employees.xls";
+				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
+				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
+				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
+				employeesLoad.SecondStep();
+				importModel.Columns[1].DataType = DataTypeEmployee.DismissDate; //Вторая колонка дата увольнения.
+				Assert.That(employeesLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
+				employeesLoad.ThirdStep();
+				Assert.That(employeesLoad.SensitiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
+				employeesLoad.Save();
+
+				var uow = employeesLoad.UoW;
+				var employees = uow.GetAll<EmployeeCard>().ToList();
+				
+				Assert.That(employees.Count, Is.EqualTo(2));
+				var anastasia = employees.First(x => x.FirstName == "Анастасия");
+				Assert.That(anastasia.LastName, Is.EqualTo("Устинова"));
+				Assert.That(anastasia.Patronymic, Is.EqualTo("Владимировна"));
+				Assert.That(anastasia.HireDate, Is.EqualTo(new DateTime(2006, 4, 4)));
+				Assert.That(anastasia.Sex, Is.EqualTo(Sex.F));
+				Assert.That(anastasia.DismissDate, Is.EqualTo(new DateTime(2021, 3, 31)));
+				
+				var natalia = employees.First(x => x.FirstName == "Наталья");
+				Assert.That(natalia.HireDate, Is.EqualTo(new DateTime(2020, 12, 11)));
+				Assert.That(natalia.Sex, Is.EqualTo(Sex.F));
+				Assert.That(natalia.DismissDate, Is.EqualTo(new DateTime(2021, 1, 13)));
 			}
 		}
 	}

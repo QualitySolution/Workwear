@@ -50,6 +50,24 @@ namespace workwear.Models.Import
 			return null;
 		}
 
+		public DateTime? CellDateTimeValue(int col)
+		{
+			var cell = cells.GetCell(col);
+
+			if(cell != null) {
+				switch(cell.CellType) {
+					case NPOI.SS.UserModel.CellType.Numeric:
+						return cell.DateCellValue;
+					case NPOI.SS.UserModel.CellType.String:
+						if(DateTime.TryParse(cell.StringCellValue, out DateTime value))
+							return value;
+						else
+							return null;
+				}
+			}
+			return null;
+		}
+		
 		public string CellBackgroundColor(int col)
 		{
 			var column = ChangedColumns.Keys.FirstOrDefault(x => x.Index == col);
