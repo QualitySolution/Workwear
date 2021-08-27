@@ -1,6 +1,7 @@
 ﻿using System;
 using QS.BusinessCommon.Domain;
 using QS.Project.DB;
+using QS.Project.Domain;
 using workwear;
 
 namespace WorkwearTest
@@ -23,6 +24,7 @@ namespace WorkwearTest
 			OrmConfig.ConfigureOrm(db_config, new System.Reflection.Assembly[] {
 				System.Reflection.Assembly.GetAssembly (typeof(workwear.Domain.Users.UserSettings)),
 				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),
+				System.Reflection.Assembly.GetAssembly (typeof(UserBase)),
 			});
 
 			NhConfigered = true;
