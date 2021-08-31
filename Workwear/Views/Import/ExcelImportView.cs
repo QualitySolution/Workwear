@@ -91,6 +91,7 @@ namespace workwear.Views.Import
 			for(int i = 0; i < ViewModel.ImportModel.DisplayColumns.Count; i++) {
 				int col = i;
 				config.AddColumn(ViewModel.ImportModel.DisplayColumns[i].Title).HeaderAlignment(0.5f).Resizable()
+					.ToolTipText(x => x.CellTooltip(col))
 					.AddTextRenderer(x => x.CellValue(col))
 					.AddSetter((c, x) => c.Background = x.CellBackgroundColor(col));
 			}

@@ -112,50 +112,67 @@ namespace workwear.Models.Import
 				}
 
 				foreach(var column in meaningfulColumns) {
-					row.ChangedColumns.Add(column, MakeChange(settings, employee, row, column, rowChange));
+					MakeChange(settings, employee, row, column, rowChange);
 				}
 			}
 			progress.Close();
 		}
 
-		public ChangeType MakeChange(SettingsMatchEmployeesViewModel settings, EmployeeCard employee, SheetRowEmployee row, ImportedColumn<DataTypeEmployee> column, ChangeType rowChange)
+		public void MakeChange(SettingsMatchEmployeesViewModel settings, EmployeeCard employee, SheetRowEmployee row, ImportedColumn<DataTypeEmployee> column, ChangeType rowChange)
 		{
 			string value = row.CellStringValue(column.Index);
 			var dataType = column.DataType;
-			if(String.IsNullOrWhiteSpace(value))
-				return ChangeType.NotChanged;
+			if(String.IsNullOrWhiteSpace(value)) {
+				row.AddColumnChange(column, ChangeType.NotChanged);
+				return;
+			}
 
 			switch(dataType) {
 				case DataTypeEmployee.CardKey:
-					return String.Equals(employee.CardKey, value, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+					row.ChangedColumns.Add(column, CompareString(employee.CardKey, value, rowChange));
+					break;
 				case DataTypeEmployee.PersonnelNumber:
-					return String.Equals(employee.PersonnelNumber, settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(value) : value, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+					row.ChangedColumns.Add(column, CompareString(employee.PersonnelNumber, settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(value) : value, rowChange));
+					break;
 				case DataTypeEmployee.LastName:
-					return String.Equals(employee.LastName, value, StringComparison.CurrentCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+					row.ChangedColumns.Add(column, CompareString(employee.LastName, value, rowChange));
+					break;
 				case DataTypeEmployee.FirstName:
-					return String.Equals(employee.FirstName, value, StringComparison.CurrentCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+					row.ChangedColumns.Add(column, CompareString(employee.FirstName, value, rowChange));
+					break;
 				case DataTypeEmployee.Patronymic:
-					return String.Equals(employee.Patronymic, value, StringComparison.CurrentCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+					row.ChangedColumns.Add(column, CompareString(employee.Patronymic, value, rowChange));
+					break;
 				case DataTypeEmployee.Sex:
 					//Первая М английская, вторая русская.
-					if(value.StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("М", StringComparison.CurrentCultureIgnoreCase))
-						return employee.Sex == Sex.M ? ChangeType.NotChanged : rowChange;
-					if(value.StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase))
-						return employee.Sex == Sex.F ? ChangeType.NotChanged : rowChange;
-					return ChangeType.ParseError;
+					if(value.StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("М", StringComparison.CurrentCultureIgnoreCase)) {
+						row.AddColumnChange(column, employee.Sex == Sex.M ? ChangeType.NotChanged : rowChange);
+						break;
+					}
+					if(value.StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase)) {
+						row.AddColumnChange(column, employee.Sex == Sex.F ? ChangeType.NotChanged : rowChange);
+						break;
+					}
+					row.AddColumnChange(column, ChangeType.ParseError);
+					break;
 				case DataTypeEmployee.Fio:
 					value.SplitFullName(out string lastName, out string firstName, out string patronymic);
 					bool lastDiff = !String.IsNullOrEmpty(lastName) && !String.Equals(employee.LastName, lastName, StringComparison.CurrentCultureIgnoreCase);
 					bool firstDiff = !String.IsNullOrEmpty(firstName) && !String.Equals(employee.FirstName, firstName, StringComparison.CurrentCultureIgnoreCase);
 					bool patronymicDiff = !String.IsNullOrEmpty(patronymic) && !String.Equals(employee.Patronymic, patronymic, StringComparison.CurrentCultureIgnoreCase);
-					return (lastDiff || firstDiff || patronymicDiff) ? rowChange : ChangeType.NotChanged;
+					row.AddColumnChange(column, (lastDiff || firstDiff || patronymicDiff) ? rowChange : ChangeType.NotChanged);
+					break;
 				case DataTypeEmployee.HireDate:
-					return employee.HireDate != row.CellDateTimeValue(column.Index) ? rowChange : ChangeType.NotChanged;
+					row.ChangedColumns.Add(column, CompareDate(employee.HireDate, row.CellDateTimeValue(column.Index), rowChange));
+					break;
 				case DataTypeEmployee.DismissDate:
-					return employee.DismissDate != row.CellDateTimeValue(column.Index) ? rowChange : ChangeType.NotChanged;
+					row.ChangedColumns.Add(column, CompareDate(employee.DismissDate, row.CellDateTimeValue(column.Index), rowChange));
+					break;
 				case DataTypeEmployee.Subdivision:
-					if(String.Equals(employee.Subdivision?.Name, value, StringComparison.CurrentCultureIgnoreCase))
-						return ChangeType.NotChanged;
+					if(String.Equals(employee.Subdivision?.Name, value, StringComparison.CurrentCultureIgnoreCase)) {
+						row.AddColumnChange(column, ChangeType.NotChanged);
+						break;
+					}
 
 					Subdivision subdivision = UsedSubdivisions.FirstOrDefault(x =>
 						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase));
@@ -163,11 +180,14 @@ namespace workwear.Models.Import
 						subdivision = new Subdivision { Name = value };
 						UsedSubdivisions.Add(subdivision);
 					}
+					row.AddColumnChange(column, subdivision.Id == 0 ? ChangeType.NewEntity : rowChange, employee.Subdivision?.Name);
 					employee.Subdivision = subdivision;
-					return subdivision.Id == 0 ? ChangeType.NewEntity : rowChange;
+					break;
 				case DataTypeEmployee.Post:
-					if(String.Equals(employee.Post?.Name, value, StringComparison.CurrentCultureIgnoreCase))
-						return ChangeType.NotChanged;
+					if(String.Equals(employee.Post?.Name, value, StringComparison.CurrentCultureIgnoreCase)) {
+						row.AddColumnChange(column, ChangeType.NotChanged);
+						break;
+					}
 					Post post = UsedPosts.FirstOrDefault(x =>
 						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase)
 						&& DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision));
@@ -179,11 +199,28 @@ namespace workwear.Models.Import
 						};
 						UsedPosts.Add(post);
 					}
+					row.AddColumnChange(column, post.Id == 0 ? ChangeType.NewEntity : rowChange, employee.Post?.Name);
 					employee.Post = post;
-					return post.Id == 0 ? ChangeType.NewEntity : rowChange;
+					break;
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
 			}
+		}
+
+		private ChangeState CompareString(string fieldValue, string newValue, ChangeType rowChange)
+		{
+			var changeType = String.Equals(fieldValue, newValue, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+			if(changeType == ChangeType.ChangeValue)
+				return new ChangeState(changeType, fieldValue);
+			return new ChangeState(changeType);
+		}
+
+		private ChangeState CompareDate(DateTime? fieldValue, DateTime? newValue, ChangeType rowChange)
+		{
+			var changeType = fieldValue == newValue ? ChangeType.NotChanged : rowChange;
+			if(changeType == ChangeType.ChangeValue)
+				return new ChangeState(changeType, fieldValue?.ToShortDateString());
+			return new ChangeState(changeType);
 		}
 		#endregion
 

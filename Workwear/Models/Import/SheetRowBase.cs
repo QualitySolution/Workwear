@@ -82,7 +82,7 @@ namespace workwear.Models.Import
 			var column = ChangedColumns.Keys.FirstOrDefault(x => x.Index == col);
 
 			if(column != null) {
-				switch(ChangedColumns[column]) {
+				switch(ChangedColumns[column].ChangeType) {
 					case ChangeType.NewEntity : return ExcelImportViewModel.ColorOfNew;
 					case ChangeType.ChangeValue : return ExcelImportViewModel.ColorOfChanged;
 					case ChangeType.NotFound: return ExcelImportViewModel.ColorOfNotFound;
@@ -97,14 +97,47 @@ namespace workwear.Models.Import
 
 		public bool Skiped;
 
-		public Dictionary<ImportedColumn<TDataTypeEnum>, ChangeType> ChangedColumns = new Dictionary<ImportedColumn<TDataTypeEnum>, ChangeType>();
+		#region Работа с изменениями
 
-		public bool HasChanges => !Skiped && ChangedColumns.Any(x => x.Value == ChangeType.ChangeValue || x.Value == ChangeType.NewEntity);
+		public Dictionary<ImportedColumn<TDataTypeEnum>, ChangeState> ChangedColumns = new Dictionary<ImportedColumn<TDataTypeEnum>, ChangeState>();
+
+		public void AddColumnChange(ImportedColumn<TDataTypeEnum> column, ChangeType changeType, string oldValue = null)
+		{
+			ChangedColumns.Add(column, new ChangeState(changeType, oldValue));
+		}
+
+		public string CellTooltip(int col)
+		{
+			var column = ChangedColumns.Keys.FirstOrDefault(x => x.Index == col);
+			if(column != null) {
+				var change = ChangedColumns[column];
+				if(change.OldValue != null)
+					return $"Старое значение: {change.OldValue}";
+			}
+			return null;
+		}
+
+		public bool HasChanges => !Skiped && ChangedColumns.Any(x => x.Value.ChangeType == ChangeType.ChangeValue || x.Value.ChangeType == ChangeType.NewEntity);
+
+		#endregion
 	}
 
 	public interface ISheetRow
 	{
 		string CellValue(int col);
+		string CellTooltip(int col);
 		string CellBackgroundColor(int col);
+	}
+
+	public class ChangeState
+	{
+		public ChangeType ChangeType;
+		public string OldValue;
+
+		public ChangeState(ChangeType changeType, string oldValue = null)
+		{
+			ChangeType = changeType;
+			OldValue = oldValue;
+		}
 	}
 }

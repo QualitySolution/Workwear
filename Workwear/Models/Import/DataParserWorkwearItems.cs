@@ -98,20 +98,20 @@ namespace workwear.Models.Import
 				row.Date = ParseDateOrNull(row.CellStringValue(issuedateColumn.Index));
 				if(row.Date == null) {
 					row.Skiped = true;
-					row.ChangedColumns.Add(issuedateColumn, ChangeType.ParseError);
+					row.AddColumnChange(issuedateColumn, ChangeType.ParseError);
 					continue;
 				}
 
 				if(row.CellIntValue(countColumn.Index) == null) {
 					row.Skiped = true;
-					row.ChangedColumns.Add(countColumn, ChangeType.ParseError);
+					row.AddColumnChange(countColumn, ChangeType.ParseError);
 					continue;
 				}
 
 				row.Employee = employees.FirstOrDefault(x => x.PersonnelNumber == row.CellStringValue(personnelNumberColumn.Index));
 				if(row.Employee == null) {
 					row.Skiped = true;
-					row.ChangedColumns.Add(personnelNumberColumn, ChangeType.NotFound);
+					row.AddColumnChange(personnelNumberColumn, ChangeType.NotFound);
 					counters.AddCount(CountersWorkwearItems.EmployeeNotFound);
 					continue;
 				}
@@ -120,15 +120,15 @@ namespace workwear.Models.Import
 				row.WorkwearItem = row.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.Name == protectionToolName);
 				if(row.WorkwearItem == null) {
 					if(!TryAddNorm(uow, row.CellStringValue(postColumn.Index), row.CellStringValue(subdivisionColumn.Index), row.Employee)) {
-						row.ChangedColumns.Add(postColumn, ChangeType.NotFound);
-						row.ChangedColumns.Add(subdivisionColumn, ChangeType.NotFound);
+						row.AddColumnChange(postColumn, ChangeType.NotFound);
+						row.AddColumnChange(subdivisionColumn, ChangeType.NotFound);
 					}
 					else
 						counters.AddCount(CountersWorkwearItems.EmployeesAddNorm);
 				}
 				if(row.WorkwearItem == null) {
 					row.Skiped = true;
-					row.ChangedColumns.Add(protectionToolsColumn, ChangeType.NotFound);
+					row.AddColumnChange(protectionToolsColumn, ChangeType.NotFound);
 					continue;
 				}
 			}
@@ -160,7 +160,7 @@ namespace workwear.Models.Import
 					continue;
 				var nomeclatureName = row.CellStringValue(nomenclatureColumn.Index);
 				if(String.IsNullOrWhiteSpace(nomeclatureName)) {
-					row.ChangedColumns.Add(nomenclatureColumn, ChangeType.NotFound);
+					row.AddColumnChange(nomenclatureColumn, ChangeType.NotFound);
 					continue;
 				}
 
@@ -224,7 +224,7 @@ namespace workwear.Models.Import
 						bool growthOk = !SizeHelper.HasGrowthStandart(nomenclature.Type.WearCategory.Value)
 							|| (nomenclature.SizeStd?.EndsWith("Intl", StringComparison.InvariantCulture) ?? false)
 							|| sizeService.GetGrowthForNomenclature().Contains(sizeAndGrowth.Growth);
-						row.ChangedColumns.Add(sizeAndGrowthColumn, sizeOk && growthOk ? ChangeType.NewEntity : ChangeType.ParseError);
+						row.ChangedColumns.Add(sizeAndGrowthColumn, new ChangeState( sizeOk && growthOk ? ChangeType.NewEntity : ChangeType.ParseError));
 					}
 					//Проставляем размер в сотрудника.
 					if(!String.IsNullOrEmpty(row.Operation.WearGrowth) && String.IsNullOrEmpty(row.Employee.WearGrowth)) {
@@ -244,7 +244,7 @@ namespace workwear.Models.Import
 
 					foreach(var column in columns.Where(x => x.DataType != DataTypeWorkwearItems.Unknown && x.DataType != DataTypeWorkwearItems.SizeAndGrowth)) {
 						if(!row.ChangedColumns.ContainsKey(column))
-							row.ChangedColumns.Add(column, ChangeType.NewEntity);
+							row.ChangedColumns.Add(column, new ChangeState(ChangeType.NewEntity));
 					}
 				}
 			}

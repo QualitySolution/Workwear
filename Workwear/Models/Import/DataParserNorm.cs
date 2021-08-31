@@ -63,11 +63,11 @@ namespace workwear.Models.Import
 					continue;
 
 				foreach(var column in meaningfulColumns) {
-					row.ChangedColumns.Add(column, CalculateChange(row, column.DataType, row.CellStringValue(column.Index)));
+					row.AddColumnChange(column, CalculateChange(row, column.DataType, row.CellStringValue(column.Index)));
 				}
 				if(!row.ChangedColumns.Any(x => x.Key.DataType == DataTypeNorm.PeriodAndCount))
 					row.Skiped = true;
-				else if(row.ChangedColumns.First(x => x.Key.DataType == DataTypeNorm.PeriodAndCount).Value == ChangeType.ParseError)
+				else if(row.ChangedColumns.First(x => x.Key.DataType == DataTypeNorm.PeriodAndCount).Value.ChangeType == ChangeType.ParseError)
 					row.Skiped = true;
 			}
 		}
