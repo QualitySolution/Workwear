@@ -6,6 +6,7 @@ using Gamma.Widgets;
 using Gtk;
 using QS.Views.Dialog;
 using QS.Views.Resolve;
+using QSWidgetLib;
 using workwear.Models.Import;
 using workwear.ViewModels.Import;
 
@@ -26,6 +27,7 @@ namespace workwear.Views.Import
 
 			treeviewRows.EnableGridLines = TreeViewGridLines.Both;
 			treeviewRows.Binding.AddBinding(viewModel.ImportModel, v => v.DisplayRows, w => w.ItemsDataSource);
+			treeviewRows.ButtonReleaseEvent += TreeviewRows_ButtonReleaseEvent;
 
 			viewModel.ImportModel.PropertyChanged += IImportModel_PropertyChanged;
 			#endregion
@@ -135,5 +137,28 @@ namespace workwear.Views.Import
 		{
 			ViewModel.Save();
 		}
+
+		#region PopupMenu
+		void TreeviewRows_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
+		{
+			if(args.Event.Button == 3 && ViewModel.CurrentStep == 2) {
+				var menu = new Menu();
+				var selected = treeviewRows.GetSelectedObject<ISheetRow>();
+				var item = new MenuItemId<ISheetRow>(selected.UserSkiped ? "Загружать" : "Не загружать");
+				item.ID = selected;
+					item.Activated += Item_Activated;;
+				menu.Add(item);
+				menu.ShowAll();
+				menu.Popup();
+			}
+		}
+
+		void Item_Activated(object sender, EventArgs e)
+		{
+			var item = (MenuItemId<ISheetRow>)sender;
+			item.ID.UserSkiped = !item.ID.UserSkiped;
+		}
+
+		#endregion
 	}
 }

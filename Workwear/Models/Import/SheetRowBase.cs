@@ -95,7 +95,7 @@ namespace workwear.Models.Import
 			return Skiped ? ExcelImportViewModel.ColorOfSkiped : null;
 		}
 
-		public bool Skiped;
+		public bool Skiped => ProgramSkiped || UserSkiped;
 
 		#region Работа с изменениями
 
@@ -119,6 +119,10 @@ namespace workwear.Models.Import
 
 		public bool HasChanges => !Skiped && ChangedColumns.Any(x => x.Value.ChangeType == ChangeType.ChangeValue || x.Value.ChangeType == ChangeType.NewEntity);
 
+		public bool ProgramSkiped { get; set; }
+
+		public bool UserSkiped { get; set ; }
+
 		#endregion
 	}
 
@@ -127,6 +131,8 @@ namespace workwear.Models.Import
 		string CellValue(int col);
 		string CellTooltip(int col);
 		string CellBackgroundColor(int col);
+
+		bool UserSkiped { get; set; }
 	}
 
 	public class ChangeState

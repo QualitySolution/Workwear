@@ -97,20 +97,20 @@ namespace workwear.Models.Import
 				progress.Add(text: "Сопоставление");
 				row.Date = ParseDateOrNull(row.CellStringValue(issuedateColumn.Index));
 				if(row.Date == null) {
-					row.Skiped = true;
+					row.ProgramSkiped = true;
 					row.AddColumnChange(issuedateColumn, ChangeType.ParseError);
 					continue;
 				}
 
 				if(row.CellIntValue(countColumn.Index) == null) {
-					row.Skiped = true;
+					row.ProgramSkiped = true;
 					row.AddColumnChange(countColumn, ChangeType.ParseError);
 					continue;
 				}
 
 				row.Employee = employees.FirstOrDefault(x => x.PersonnelNumber == row.CellStringValue(personnelNumberColumn.Index));
 				if(row.Employee == null) {
-					row.Skiped = true;
+					row.ProgramSkiped = true;
 					row.AddColumnChange(personnelNumberColumn, ChangeType.NotFound);
 					counters.AddCount(CountersWorkwearItems.EmployeeNotFound);
 					continue;
@@ -127,7 +127,7 @@ namespace workwear.Models.Import
 						counters.AddCount(CountersWorkwearItems.EmployeesAddNorm);
 				}
 				if(row.WorkwearItem == null) {
-					row.Skiped = true;
+					row.ProgramSkiped = true;
 					row.AddColumnChange(protectionToolsColumn, ChangeType.NotFound);
 					continue;
 				}

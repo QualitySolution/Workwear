@@ -268,11 +268,11 @@ namespace workwear.Models.Import
 			var groups = list.GroupBy(x => GetFIO(x, columns).GetHash());
 			foreach(var group in groups) {
 				if(String.IsNullOrWhiteSpace(group.Key)) {
-					group.First().Skiped = true;
+					group.First().ProgramSkiped = true;
 				}
 
 				foreach(var item in group.Skip(1)) {
-					item.Skiped = true;
+					item.ProgramSkiped = true;
 				}
 			}
 			progress.Close();
@@ -313,7 +313,7 @@ namespace workwear.Models.Import
 				}
 
 				foreach(var item in group.Skip(1)) {
-					item.Skiped = true;
+					item.ProgramSkiped = true;
 				}
 			}
 			progress.Close();

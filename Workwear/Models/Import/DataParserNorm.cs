@@ -66,9 +66,9 @@ namespace workwear.Models.Import
 					row.AddColumnChange(column, CalculateChange(row, column.DataType, row.CellStringValue(column.Index)));
 				}
 				if(!row.ChangedColumns.Any(x => x.Key.DataType == DataTypeNorm.PeriodAndCount))
-					row.Skiped = true;
+					row.ProgramSkiped = true;
 				else if(row.ChangedColumns.First(x => x.Key.DataType == DataTypeNorm.PeriodAndCount).Value.ChangeType == ChangeType.ParseError)
-					row.Skiped = true;
+					row.ProgramSkiped = true;
 			}
 		}
 
@@ -111,7 +111,7 @@ namespace workwear.Models.Import
 				var subdivisionName = subdivisionColumn != null ? row.CellStringValue(subdivisionColumn.Index) : null;
 
 				if(String.IsNullOrWhiteSpace(postName)) {
-					row.Skiped = true;
+					row.ProgramSkiped = true;
 					continue;
 				}
 
@@ -165,13 +165,13 @@ namespace workwear.Models.Import
 			var protections = protectionToolsRepository.GetProtectionToolsByName(uow, protectionNames);
 			foreach(var row in list.Where(x => !x.Skiped)) {
 				if(row.SubdivisionPostPair.Norms.Count > 1) {
-					row.Skiped = true;
+					row.ProgramSkiped = true;
 					continue;
 				}
 
 				var protectionName = row.CellStringValue(protectionToolsColumn.Index);
 				if(String.IsNullOrWhiteSpace(protectionName)) {
-					row.Skiped = true;
+					row.ProgramSkiped = true;
 					continue;
 				}
 
