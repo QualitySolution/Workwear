@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -64,7 +64,9 @@ namespace workwear.Models.Import
 				);
 			AddColumnName(DataTypeEmployee.PersonnelNumber,
 				"TN",
-				"Табельный"
+				"Табельный",
+				"Таб. №",
+				"Таб."//Если такой вариант будет пересекаться с другими полями его можно удалить.
 				);
 			AddColumnName(DataTypeEmployee.HireDate,
 				"Дата приема",
