@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -134,7 +134,7 @@ namespace workwear.Models.Import
 					row.ChangedColumns.Add(column, CompareString(employee.CardKey, value, rowChange));
 					break;
 				case DataTypeEmployee.PersonnelNumber:
-					row.ChangedColumns.Add(column, CompareString(employee.PersonnelNumber, settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(value) : value, rowChange));
+					row.ChangedColumns.Add(column, CompareString(employee.PersonnelNumber, (settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(value) : value)?.Trim(), rowChange));
 					break;
 				case DataTypeEmployee.LastName:
 					row.ChangedColumns.Add(column, CompareString(employee.LastName, value, rowChange));
@@ -292,7 +292,7 @@ namespace workwear.Models.Import
 		{
 			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
 			var numberColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.PersonnelNumber);
-			var numbers = list.Select(x => settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellStringValue(numberColumn.Index)) : x.CellStringValue(numberColumn.Index))
+			var numbers = list.Select(x => GetPersonalNumber(settings, x, numberColumn.Index))
 							.Where(x => !String.IsNullOrWhiteSpace(x))
 							.Distinct().ToArray();
 			var exists = uow.Session.QueryOver<EmployeeCard>()
@@ -301,13 +301,13 @@ namespace workwear.Models.Import
 
 			progress.Add();
 			foreach(var employee in exists) {
-				var found = list.Where(x => (settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellStringValue(numberColumn.Index)) : x.CellStringValue(numberColumn.Index)) == employee.PersonnelNumber).ToArray();
+				var found = list.Where(x => GetPersonalNumber(settings, x, numberColumn.Index) == employee.PersonnelNumber).ToArray();
 				found.First().Employees.Add(employee);
 			}
 
 			//Пропускаем дубликаты Табельных номеров в файле
 			progress.Add();
-			var groups = list.GroupBy(x => settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellStringValue(numberColumn.Index)) : x.CellStringValue(numberColumn.Index));
+			var groups = list.GroupBy(x => GetPersonalNumber(settings, x, numberColumn.Index));
 			foreach(var group in groups) {
 				if(String.IsNullOrWhiteSpace(group.Key)) {
 					//Если табельного номера нет проверяем по FIO
@@ -374,7 +374,7 @@ namespace workwear.Models.Import
 					employee.CardKey = value;
 					break;
 				case DataTypeEmployee.PersonnelNumber:
-					employee.PersonnelNumber = settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(value) : value;
+					employee.PersonnelNumber = (settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(value) : value)?.Trim();
 					break;
 				case DataTypeEmployee.LastName:
 					employee.LastName = value;
@@ -460,6 +460,12 @@ namespace workwear.Models.Import
 				return number.ToString();
 			else
 				return cellValue;
+		}
+
+		public string GetPersonalNumber(SettingsMatchEmployeesViewModel settings, SheetRowEmployee row, int columnIndex)
+		{
+			var original = settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(row.CellStringValue(columnIndex)) : row.CellStringValue(columnIndex);
+			return original?.Trim();
 		}
 		#endregion
 	}
