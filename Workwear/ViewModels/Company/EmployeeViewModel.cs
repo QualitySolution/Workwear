@@ -19,7 +19,6 @@ using QS.ViewModels.Dialog;
 using QSReport;
 using workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
-using workwear.Measurements;
 using workwear.Repository.Company;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company.EmployeeChilds;
