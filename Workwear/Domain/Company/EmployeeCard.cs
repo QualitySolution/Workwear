@@ -18,6 +18,7 @@ using workwear.Domain.Stock;
 using workwear.Measurements;
 using workwear.Repository.Company;
 using workwear.Repository.Operations;
+using workwear.Repository.Regulations;
 using workwear.Repository.Stock;
 using workwear.Tools;
 using Workwear.Domain.Company;
@@ -475,6 +476,13 @@ namespace workwear.Domain.Company
 		{
 			ObservableUsedNorms.Remove (norm);
 			UpdateWorkwearItems ();
+		}
+
+		public virtual void NormFromPost(IUnitOfWork uow, NormRepository normRepository)
+		{
+			var norms = normRepository.GetNormsForPost(UoW, Post);
+			foreach(var norm in norms)
+				AddUsedNorm(norm);
 		}
 
 		#endregion

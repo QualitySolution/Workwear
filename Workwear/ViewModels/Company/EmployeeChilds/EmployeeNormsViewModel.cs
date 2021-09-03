@@ -8,7 +8,6 @@ using QS.ViewModels;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
-using workwear.Repository.Regulations;
 using workwear.ViewModels.Regulations;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
@@ -80,9 +79,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void NormFromPost()
 		{
-			var norms = NormRepository.GetNormForPost(UoW, Entity.Post);
-			foreach(var norm in norms)
-				Entity.AddUsedNorm(norm);
+			Entity.NormFromPost(UoW, employeeViewModel.NormRepository);
 		}
 
 		public void OpenNorm(Norm norm)

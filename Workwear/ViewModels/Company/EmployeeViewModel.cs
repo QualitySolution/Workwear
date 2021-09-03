@@ -20,6 +20,7 @@ using QSReport;
 using workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
 using workwear.Repository.Company;
+using workwear.Repository.Regulations;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company.EmployeeChilds;
 using workwear.ViewModels.IdentityCards;
@@ -34,6 +35,8 @@ namespace workwear.ViewModels.Company
 		private readonly IUserService userService;
 
 		public ILifetimeScope AutofacScope;
+		public NormRepository NormRepository { get; }
+
 		private readonly SizeService sizeService;
 		private readonly IInteractiveService interactive;
 		private readonly FeaturesService featuresService;
@@ -52,6 +55,7 @@ namespace workwear.ViewModels.Company
 			IInteractiveService interactive,
 			FeaturesService featuresService,
 			EmployeeRepository employeeRepository,
+			NormRepository normRepository,
 			LkUserManagerService lkUserManagerService,
 			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
@@ -61,6 +65,7 @@ namespace workwear.ViewModels.Company
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			NormRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.lkUserManagerService = lkUserManagerService ?? throw new ArgumentNullException(nameof(lkUserManagerService));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
@@ -259,7 +264,8 @@ namespace workwear.ViewModels.Company
 			//Так как склад подбора мог поменятся при смене подразделения.
 			if(e.PropertyName == nameof(Entity.Subdivision)) {
 				Entity.FillWearInStockInfo(UoW, Entity.Subdivision?.Warehouse, DateTime.Now);
-				OnPropertyChanged(nameof(SubdivisionAddress));			}
+				OnPropertyChanged(nameof(SubdivisionAddress));
+			}
 		}
 
 		void CheckSizeChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -445,6 +451,9 @@ namespace workwear.ViewModels.Company
 			}
 			if(e.PropertyName == nameof(Entity.Subdivision) && lastSubdivision != null && interactive.Question("Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?")) {
 				Entity.ChangeOfPositionDate = DateTime.Today;
+			}
+			if(e.PropertyName == nameof(Entity.Post) && Entity.UsedNorms.Count == 0 && interactive.Question("Установить норму по должности?")) {
+				Entity.NormFromPost(UoW, NormRepository);
 			}
 		}
 		#endregion

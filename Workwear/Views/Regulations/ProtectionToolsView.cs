@@ -2,7 +2,6 @@
 using Gamma.Binding.Converters;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
-using QS.BusinessCommon.Repository;
 using QS.Views.Dialog;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
