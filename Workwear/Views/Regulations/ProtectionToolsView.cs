@@ -38,6 +38,7 @@ namespace workwear.Views.Regulations
 
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
 			.AddColumn("Тип").AddTextRenderer(p => p.TypeName)
+			.AddColumn("Номер").AddTextRenderer(n => $"{n.Number}")
 			.AddColumn("Наименование").AddTextRenderer(p => p.Name)
 			.AddColumn("Пол").AddTextRenderer(p => p.Sex != null ? p.Sex.GetEnumTitle() : String.Empty)
 			.Finish();
