@@ -25,7 +25,7 @@ namespace workwear.Domain.Stock
 		[StringLength(240)]
 		public virtual string Name {
 			get { return name; }
-			set { SetField (ref name, value, () => Name); }
+			set { SetField (ref name, value?.Trim()); }
 		}
 
 		MeasurementUnits units;

@@ -53,7 +53,7 @@ namespace workwear.Domain.Company
 		[Display (Name = "Табельный номер")]
 		public virtual string PersonnelNumber {
 			get { return personnelNumber; }
-			set { SetField (ref personnelNumber, value, () => PersonnelNumber); }
+			set { SetField (ref personnelNumber, value?.Trim()); }
 		}
 
 		string name;
