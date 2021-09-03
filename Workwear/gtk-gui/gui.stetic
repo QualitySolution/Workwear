@@ -5361,8 +5361,8 @@
       </action>
       <action id="ActionProtectionTools">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Номенклатура ТОН</property>
-        <property name="ShortLabel" translatable="yes">Номенклатура ТОН</property>
+        <property name="Label" translatable="yes">Номенклатура нормы</property>
+        <property name="ShortLabel" translatable="yes">Номенклатура нормы</property>
         <signal name="Activated" handler="OnActionProtectionToolsActivated" />
       </action>
       <action id="ActionAmountEmployeeGetWear">

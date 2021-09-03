@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Linq;
 using Gamma.Utilities;
+using Gtk;
 using QS.Utilities;
+using QSWidgetLib;
 using workwear.Domain.Company;
 using workwear.ViewModels.Company.EmployeeChilds;
 
@@ -33,6 +34,7 @@ namespace workwear.Views.Company.EmployeeChilds
 				.AddSetter((w, node) => w.Foreground = node.InStockState.GetEnumColor())
 				.Finish();
 			ytreeWorkwear.Selection.Changed += ytreeWorkwear_Selection_Changed;
+			ytreeWorkwear.ButtonReleaseEvent += YtreeWorkwear_ButtonReleaseEvent;
 		}
 
 		private EmployeeWearItemsViewModel viewModel;
@@ -81,5 +83,25 @@ namespace workwear.Views.Company.EmployeeChilds
 		{
 			ViewModel.UpdateWorkwearItems();
 		}
+
+		#region PopupMenu
+		void YtreeWorkwear_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
+		{
+			if(args.Event.Button == 3) {
+				var menu = new Menu();
+				var selected = ytreeWorkwear.GetSelectedObject<EmployeeCardItem>();
+				var item = new MenuItemId<EmployeeCardItem>("Открыть номеклатуру нормы");
+				item.ID = selected;
+				item.Sensitive = selected.ProtectionTools != null;
+				if(selected == null)
+					item.Sensitive = false;
+				else
+					item.Activated += (sender, e) => viewModel.OpenProtectionTools(((MenuItemId<EmployeeCardItem>)sender).ID);
+				menu.Add(item);
+				menu.ShowAll();
+				menu.Popup();
+			}
+		}
+		#endregion
 	}
 }

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
+using NHibernate.Dialect;
 using NHibernate.Dialect.Function;
+using NHibernate.Engine;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -62,12 +64,17 @@ namespace workwear.Models.Import
 				);
 			AddColumnName(DataTypeEmployee.PersonnelNumber,
 				"TN",
-				"Табельный"
+				"Табельный",
+				"Таб. №",
+				"Таб."//Если такой вариант будет пересекаться с другими полями его можно удалить.
 				);
 			AddColumnName(DataTypeEmployee.HireDate,
 				"Дата приема",
 				"Дата приёма"
 				);
+			AddColumnName(DataTypeEmployee.DismissDate,
+				"Дата увольнения"
+			);
 			AddColumnName(DataTypeEmployee.Subdivision,
 				"Подразделение"
 				);
@@ -107,46 +114,67 @@ namespace workwear.Models.Import
 				}
 
 				foreach(var column in meaningfulColumns) {
-					row.ChangedColumns.Add(column, MakeChange(settings, employee, column.DataType, row.CellValue(column.Index), rowChange));
+					MakeChange(settings, employee, row, column, rowChange);
 				}
 			}
 			progress.Close();
 		}
 
-		public ChangeType MakeChange(SettingsMatchEmployeesViewModel settings, EmployeeCard employee, DataTypeEmployee dataType, string value, ChangeType rowChange)
+		public void MakeChange(SettingsMatchEmployeesViewModel settings, EmployeeCard employee, SheetRowEmployee row, ImportedColumn<DataTypeEmployee> column, ChangeType rowChange)
 		{
-			if(String.IsNullOrWhiteSpace(value))
-				return ChangeType.NotChanged;
+			string value = row.CellStringValue(column.Index);
+			var dataType = column.DataType;
+			if(String.IsNullOrWhiteSpace(value)) {
+				row.AddColumnChange(column, ChangeType.NotChanged);
+				return;
+			}
 
 			switch(dataType) {
 				case DataTypeEmployee.CardKey:
-					return String.Equals(employee.CardKey, value, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+					row.ChangedColumns.Add(column, CompareString(employee.CardKey, value, rowChange));
+					break;
 				case DataTypeEmployee.PersonnelNumber:
-					return String.Equals(employee.PersonnelNumber, settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(value) : value, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+					row.ChangedColumns.Add(column, CompareString(employee.PersonnelNumber, (settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(value) : value)?.Trim(), rowChange));
+					break;
 				case DataTypeEmployee.LastName:
-					return String.Equals(employee.LastName, value, StringComparison.CurrentCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+					row.ChangedColumns.Add(column, CompareString(employee.LastName, value, rowChange));
+					break;
 				case DataTypeEmployee.FirstName:
-					return String.Equals(employee.FirstName, value, StringComparison.CurrentCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+					row.ChangedColumns.Add(column, CompareString(employee.FirstName, value, rowChange));
+					break;
 				case DataTypeEmployee.Patronymic:
-					return String.Equals(employee.Patronymic, value, StringComparison.CurrentCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+					row.ChangedColumns.Add(column, CompareString(employee.Patronymic, value, rowChange));
+					break;
 				case DataTypeEmployee.Sex:
 					//Первая М английская, вторая русская.
-					if(value.StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("М", StringComparison.CurrentCultureIgnoreCase))
-						return employee.Sex == Sex.M ? ChangeType.NotChanged : rowChange;
-					if(value.StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase))
-						return employee.Sex == Sex.F ? ChangeType.NotChanged : rowChange;
-					return ChangeType.ParseError;
+					if(value.StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("М", StringComparison.CurrentCultureIgnoreCase)) {
+						row.AddColumnChange(column, employee.Sex == Sex.M ? ChangeType.NotChanged : rowChange);
+						break;
+					}
+					if(value.StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase)) {
+						row.AddColumnChange(column, employee.Sex == Sex.F ? ChangeType.NotChanged : rowChange);
+						break;
+					}
+					row.AddColumnChange(column, ChangeType.ParseError);
+					break;
 				case DataTypeEmployee.Fio:
 					value.SplitFullName(out string lastName, out string firstName, out string patronymic);
 					bool lastDiff = !String.IsNullOrEmpty(lastName) && !String.Equals(employee.LastName, lastName, StringComparison.CurrentCultureIgnoreCase);
 					bool firstDiff = !String.IsNullOrEmpty(firstName) && !String.Equals(employee.FirstName, firstName, StringComparison.CurrentCultureIgnoreCase);
 					bool patronymicDiff = !String.IsNullOrEmpty(patronymic) && !String.Equals(employee.Patronymic, patronymic, StringComparison.CurrentCultureIgnoreCase);
-					return (lastDiff || firstDiff || patronymicDiff) ? rowChange : ChangeType.NotChanged;
+					row.AddColumnChange(column, (lastDiff || firstDiff || patronymicDiff) ? rowChange : ChangeType.NotChanged);
+					break;
 				case DataTypeEmployee.HireDate:
-					return (DateTime.TryParse(value, out DateTime date) && employee.HireDate != date) ? rowChange : ChangeType.NotChanged;
+					row.ChangedColumns.Add(column, CompareDate(employee.HireDate, row.CellDateTimeValue(column.Index), rowChange));
+					break;
+				case DataTypeEmployee.DismissDate:
+					row.ChangedColumns.Add(column, CompareDate(employee.DismissDate, row.CellDateTimeValue(column.Index), rowChange));
+					break;
 				case DataTypeEmployee.Subdivision:
-					if(String.Equals(employee.Subdivision?.Name, value, StringComparison.CurrentCultureIgnoreCase))
-						return ChangeType.NotChanged;
+					if(String.Equals(employee.Subdivision?.Name, value, StringComparison.CurrentCultureIgnoreCase)) {
+						row.AddColumnChange(column, ChangeType.NotChanged);
+						break;
+					}
 
 					Subdivision subdivision = UsedSubdivisions.FirstOrDefault(x =>
 						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase));
@@ -154,11 +182,14 @@ namespace workwear.Models.Import
 						subdivision = new Subdivision { Name = value };
 						UsedSubdivisions.Add(subdivision);
 					}
+					row.AddColumnChange(column, subdivision.Id == 0 ? ChangeType.NewEntity : rowChange, employee.Subdivision?.Name);
 					employee.Subdivision = subdivision;
-					return subdivision.Id == 0 ? ChangeType.NewEntity : rowChange;
+					break;
 				case DataTypeEmployee.Post:
-					if(String.Equals(employee.Post?.Name, value, StringComparison.CurrentCultureIgnoreCase))
-						return ChangeType.NotChanged;
+					if(String.Equals(employee.Post?.Name, value, StringComparison.CurrentCultureIgnoreCase)) {
+						row.AddColumnChange(column, ChangeType.NotChanged);
+						break;
+					}
 					Post post = UsedPosts.FirstOrDefault(x =>
 						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase)
 						&& DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision));
@@ -170,11 +201,28 @@ namespace workwear.Models.Import
 						};
 						UsedPosts.Add(post);
 					}
+					row.AddColumnChange(column, post.Id == 0 ? ChangeType.NewEntity : rowChange, employee.Post?.Name);
 					employee.Post = post;
-					return post.Id == 0 ? ChangeType.NewEntity : rowChange;
+					break;
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
 			}
+		}
+
+		private ChangeState CompareString(string fieldValue, string newValue, ChangeType rowChange)
+		{
+			var changeType = String.Equals(fieldValue, newValue, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+			if(changeType == ChangeType.ChangeValue)
+				return new ChangeState(changeType, fieldValue);
+			return new ChangeState(changeType);
+		}
+
+		private ChangeState CompareDate(DateTime? fieldValue, DateTime? newValue, ChangeType rowChange)
+		{
+			var changeType = fieldValue == newValue ? ChangeType.NotChanged : rowChange;
+			if(changeType == ChangeType.ChangeValue)
+				return new ChangeState(changeType, fieldValue?.ToShortDateString());
+			return new ChangeState(changeType);
 		}
 		#endregion
 
@@ -186,11 +234,20 @@ namespace workwear.Models.Import
 				.Where(fio => !String.IsNullOrEmpty(fio.LastName) && !String.IsNullOrEmpty(fio.FirstName))
 				.Select(fio => (fio.LastName + "|" + fio.FirstName).ToUpper())
 				.Distinct().ToArray();
+			
+			Console.WriteLine((uow.Session.SessionFactory as ISessionFactoryImplementor).Dialect);
 			var exists = uow.Session.QueryOver<EmployeeCard>()
 				.Where(Restrictions.In(
 				Projections.SqlFunction(
 							  "upper", NHibernateUtil.String,
-							  Projections.SqlFunction(new StandardSQLFunction("CONCAT_WS"),
+							  (uow.Session.SessionFactory as ISessionFactoryImplementor).Dialect is SQLiteDialect //Данный диалект используется в тестах.
+								  ? 
+								  Projections.SqlFunction(new SQLFunctionTemplate(NHibernateUtil.String, "( ?1 || '|' || ?2)"),
+									  NHibernateUtil.String,
+									  Projections.Property<EmployeeCard>(x => x.LastName),
+									  Projections.Property<EmployeeCard>(x => x.FirstName)
+								  )
+							: Projections.SqlFunction(new StandardSQLFunction("CONCAT_WS"),
 							  	NHibernateUtil.String,
 							  	Projections.Constant(""),
 								Projections.Property<EmployeeCard>(x => x.LastName),
@@ -213,11 +270,11 @@ namespace workwear.Models.Import
 			var groups = list.GroupBy(x => GetFIO(x, columns).GetHash());
 			foreach(var group in groups) {
 				if(String.IsNullOrWhiteSpace(group.Key)) {
-					group.First().Skiped = true;
+					group.First().ProgramSkiped = true;
 				}
 
 				foreach(var item in group.Skip(1)) {
-					item.Skiped = true;
+					item.ProgramSkiped = true;
 				}
 			}
 			progress.Close();
@@ -235,7 +292,7 @@ namespace workwear.Models.Import
 		{
 			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
 			var numberColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.PersonnelNumber);
-			var numbers = list.Select(x => settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellValue(numberColumn.Index)) : x.CellValue(numberColumn.Index))
+			var numbers = list.Select(x => GetPersonalNumber(settings, x, numberColumn.Index))
 							.Where(x => !String.IsNullOrWhiteSpace(x))
 							.Distinct().ToArray();
 			var exists = uow.Session.QueryOver<EmployeeCard>()
@@ -244,13 +301,13 @@ namespace workwear.Models.Import
 
 			progress.Add();
 			foreach(var employee in exists) {
-				var found = list.Where(x => (settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellValue(numberColumn.Index)) : x.CellValue(numberColumn.Index)) == employee.PersonnelNumber).ToArray();
+				var found = list.Where(x => GetPersonalNumber(settings, x, numberColumn.Index) == employee.PersonnelNumber).ToArray();
 				found.First().Employees.Add(employee);
 			}
 
 			//Пропускаем дубликаты Табельных номеров в файле
 			progress.Add();
-			var groups = list.GroupBy(x => settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(x.CellValue(numberColumn.Index)) : x.CellValue(numberColumn.Index));
+			var groups = list.GroupBy(x => GetPersonalNumber(settings, x, numberColumn.Index));
 			foreach(var group in groups) {
 				if(String.IsNullOrWhiteSpace(group.Key)) {
 					//Если табельного номера нет проверяем по FIO
@@ -258,7 +315,7 @@ namespace workwear.Models.Import
 				}
 
 				foreach(var item in group.Skip(1)) {
-					item.Skiped = true;
+					item.ProgramSkiped = true;
 				}
 			}
 			progress.Close();
@@ -275,7 +332,7 @@ namespace workwear.Models.Import
 			progress.Start(2, text: "Загружаем должности и подразделения");
 			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Subdivision);
 			if(subdivisionColumn != null) {
-				var subdivisionNames = list.Select(x => x.CellValue(subdivisionColumn.Index)).Distinct().ToArray();
+				var subdivisionNames = list.Select(x => x.CellStringValue(subdivisionColumn.Index)).Distinct().ToArray();
 				UsedSubdivisions.AddRange(uow.Session.QueryOver<Subdivision>()
 					.Where(x => x.Name.IsIn(subdivisionNames))
 					.List());
@@ -283,7 +340,7 @@ namespace workwear.Models.Import
 			progress.Add();
 			var postColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Post);
 			if(postColumn != null) {
-				var postNames = list.Select(x => x.CellValue(postColumn.Index)).Distinct().ToArray();
+				var postNames = list.Select(x => x.CellStringValue(postColumn.Index)).Distinct().ToArray();
 				UsedPosts.AddRange( uow.Session.QueryOver<Post>()
 					.Where(x => x.Name.IsIn(postNames))
 					.List());
@@ -300,13 +357,15 @@ namespace workwear.Models.Import
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
 			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученой из общего поля ФИО.
 			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType)) {
-				SetValue(settings, uow, employee, column.DataType, row.CellValue(column.Index));
+				SetValue(settings, uow, employee, row, column);
 			}
 			yield return employee;
 		}
 
-		private void SetValue(SettingsMatchEmployeesViewModel settings, IUnitOfWork uow, EmployeeCard employee, DataTypeEmployee dataType, string value)
+		private void SetValue(SettingsMatchEmployeesViewModel settings, IUnitOfWork uow, EmployeeCard employee, SheetRowEmployee row, ImportedColumn<DataTypeEmployee> column)
 		{
+			string value = row.CellStringValue(column.Index);
+			var dataType = column.DataType;
 			if(String.IsNullOrWhiteSpace(value))
 				return;
 
@@ -315,7 +374,7 @@ namespace workwear.Models.Import
 					employee.CardKey = value;
 					break;
 				case DataTypeEmployee.PersonnelNumber:
-					employee.PersonnelNumber = settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(value) : value;
+					employee.PersonnelNumber = (settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(value) : value)?.Trim();
 					break;
 				case DataTypeEmployee.LastName:
 					employee.LastName = value;
@@ -355,8 +414,14 @@ namespace workwear.Models.Import
 					}
 					break;
 				case DataTypeEmployee.HireDate:
-					if(DateTime.TryParse(value, out DateTime date))
-					 	employee.HireDate = date;
+					var hireDate = row.CellDateTimeValue(column.Index);
+					if(hireDate != null)
+					 	employee.HireDate = hireDate;
+					break;
+				case DataTypeEmployee.DismissDate:
+					var dismissDate = row.CellDateTimeValue(column.Index);
+					if(dismissDate != null)
+						employee.DismissDate = dismissDate;
 					break;
 
 				case DataTypeEmployee.Subdivision:
@@ -379,13 +444,13 @@ namespace workwear.Models.Import
 			var patronymicColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Patronymic);
 			var fioColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Fio);
 			if(fioColumn != null)
-				row.CellValue(fioColumn.Index)?.SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
+				row.CellStringValue(fioColumn.Index)?.SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
 			if(lastnameColumn != null)
-				fio.LastName = row.CellValue(lastnameColumn.Index);
+				fio.LastName = row.CellStringValue(lastnameColumn.Index);
 			if(firstNameColumn != null)
-				fio.FirstName = row.CellValue(firstNameColumn.Index);
+				fio.FirstName = row.CellStringValue(firstNameColumn.Index);
 			if(patronymicColumn != null)
-				fio.Patronymic = row.CellValue(patronymicColumn.Index);
+				fio.Patronymic = row.CellStringValue(patronymicColumn.Index);
 			return fio;
 		}
 
@@ -395,6 +460,12 @@ namespace workwear.Models.Import
 				return number.ToString();
 			else
 				return cellValue;
+		}
+
+		public string GetPersonalNumber(SettingsMatchEmployeesViewModel settings, SheetRowEmployee row, int columnIndex)
+		{
+			var original = settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(row.CellStringValue(columnIndex)) : row.CellStringValue(columnIndex);
+			return original?.Trim();
 		}
 		#endregion
 	}

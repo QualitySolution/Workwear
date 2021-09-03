@@ -22,6 +22,8 @@ namespace workwear.Models.Import
 		CardKey,
 		[Display(Name = "Дата приёма на работу")]
 		HireDate,
+		[Display(Name = "Дата увольнения")]
+		DismissDate,
 		[Display(Name = "Подразделение")]
 		Subdivision,
 		[Display(Name = "Должность")]

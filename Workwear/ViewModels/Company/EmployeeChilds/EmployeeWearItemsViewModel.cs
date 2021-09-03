@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -12,6 +11,7 @@ using QS.ViewModels;
 using workwear.Dialogs.Issuance;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using workwear.ViewModels.Regulations;
 using workwear.ViewModels.Stock;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
@@ -105,6 +105,11 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		public void UpdateWorkwearItems()
 		{
 			Entity.UpdateWorkwearItems();
+		}
+
+		public void OpenProtectionTools(EmployeeCardItem row)
+		{
+			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(row.ProtectionTools.Id));
 		}
 
 		#endregion

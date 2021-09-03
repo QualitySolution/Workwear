@@ -85,7 +85,7 @@ namespace workwear.Models.Import
 			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Subdivision);
 
 			progress.Start(list.Count() * 2 + 3, text: "Загрузка сотрудников");
-			var personnelNumbers = list.Select(x => x.CellValue(personnelNumberColumn.Index))
+			var personnelNumbers = list.Select(x => x.CellStringValue(personnelNumberColumn.Index))
 				.Where(x => !String.IsNullOrWhiteSpace(x)).Distinct().ToArray();
 
 			var employees = uow.Session.QueryOver<EmployeeCard>()
@@ -95,47 +95,47 @@ namespace workwear.Models.Import
 
 			foreach(var row in list) {
 				progress.Add(text: "Сопоставление");
-				row.Date = ParseDateOrNull(row.CellValue(issuedateColumn.Index));
+				row.Date = ParseDateOrNull(row.CellStringValue(issuedateColumn.Index));
 				if(row.Date == null) {
-					row.Skiped = true;
-					row.ChangedColumns.Add(issuedateColumn, ChangeType.ParseError);
+					row.ProgramSkiped = true;
+					row.AddColumnChange(issuedateColumn, ChangeType.ParseError);
 					continue;
 				}
 
 				if(row.CellIntValue(countColumn.Index) == null) {
-					row.Skiped = true;
-					row.ChangedColumns.Add(countColumn, ChangeType.ParseError);
+					row.ProgramSkiped = true;
+					row.AddColumnChange(countColumn, ChangeType.ParseError);
 					continue;
 				}
 
-				row.Employee = employees.FirstOrDefault(x => x.PersonnelNumber == row.CellValue(personnelNumberColumn.Index));
+				row.Employee = employees.FirstOrDefault(x => x.PersonnelNumber == row.CellStringValue(personnelNumberColumn.Index));
 				if(row.Employee == null) {
-					row.Skiped = true;
-					row.ChangedColumns.Add(personnelNumberColumn, ChangeType.NotFound);
+					row.ProgramSkiped = true;
+					row.AddColumnChange(personnelNumberColumn, ChangeType.NotFound);
 					counters.AddCount(CountersWorkwearItems.EmployeeNotFound);
 					continue;
 				}
 
-				var protectionToolName = row.CellValue(protectionToolsColumn.Index);
+				var protectionToolName = row.CellStringValue(protectionToolsColumn.Index);
 				row.WorkwearItem = row.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.Name == protectionToolName);
 				if(row.WorkwearItem == null) {
-					if(!TryAddNorm(uow, row.CellValue(postColumn.Index), row.CellValue(subdivisionColumn.Index), row.Employee)) {
-						row.ChangedColumns.Add(postColumn, ChangeType.NotFound);
-						row.ChangedColumns.Add(subdivisionColumn, ChangeType.NotFound);
+					if(!TryAddNorm(uow, row.CellStringValue(postColumn.Index), row.CellStringValue(subdivisionColumn.Index), row.Employee)) {
+						row.AddColumnChange(postColumn, ChangeType.NotFound);
+						row.AddColumnChange(subdivisionColumn, ChangeType.NotFound);
 					}
 					else
 						counters.AddCount(CountersWorkwearItems.EmployeesAddNorm);
 				}
 				if(row.WorkwearItem == null) {
-					row.Skiped = true;
-					row.ChangedColumns.Add(protectionToolsColumn, ChangeType.NotFound);
+					row.ProgramSkiped = true;
+					row.AddColumnChange(protectionToolsColumn, ChangeType.NotFound);
 					continue;
 				}
 			}
 
 			progress.Add(text: "Загрузка номеклатуры");
 			var nomenclatureTypes = new NomenclatureTypes(uow, true);
-			var nomenclatureNames = list.Select(x => x.CellValue(nomenclatureColumn.Index)).Where(x => x != null).Distinct().ToArray();
+			var nomenclatureNames = list.Select(x => x.CellStringValue(nomenclatureColumn.Index)).Where(x => x != null).Distinct().ToArray();
 			var nomenclatures = nomenclatureRepository.GetNomenclatureByName(uow, nomenclatureNames);
 
 			progress.Add(text: "Загрузка операций выдачи");
@@ -158,9 +158,9 @@ namespace workwear.Models.Import
 				progress.Add(text: "Обработка операций выдачи");
 				if(row.Skiped)
 					continue;
-				var nomeclatureName = row.CellValue(nomenclatureColumn.Index);
+				var nomeclatureName = row.CellStringValue(nomenclatureColumn.Index);
 				if(String.IsNullOrWhiteSpace(nomeclatureName)) {
-					row.ChangedColumns.Add(nomenclatureColumn, ChangeType.NotFound);
+					row.AddColumnChange(nomenclatureColumn, ChangeType.NotFound);
 					continue;
 				}
 
@@ -206,7 +206,7 @@ namespace workwear.Models.Import
 						UseAutoWriteoff = expenseDate != null,
 					};
 					//Обрабатываем размер.
-					var sizeAndGrowthValue = row.CellValue(sizeAndGrowthColumn.Index);
+					var sizeAndGrowthValue = row.CellStringValue(sizeAndGrowthColumn.Index);
 					if(!String.IsNullOrEmpty(sizeAndGrowthValue)) {
 						var sizeAndGrowth = SizeParser.ParseSizeAndGrowth(sizeAndGrowthValue);
 						row.Operation.Size = sizeAndGrowth.Size;
@@ -224,7 +224,7 @@ namespace workwear.Models.Import
 						bool growthOk = !SizeHelper.HasGrowthStandart(nomenclature.Type.WearCategory.Value)
 							|| (nomenclature.SizeStd?.EndsWith("Intl", StringComparison.InvariantCulture) ?? false)
 							|| sizeService.GetGrowthForNomenclature().Contains(sizeAndGrowth.Growth);
-						row.ChangedColumns.Add(sizeAndGrowthColumn, sizeOk && growthOk ? ChangeType.NewEntity : ChangeType.ParseError);
+						row.ChangedColumns.Add(sizeAndGrowthColumn, new ChangeState( sizeOk && growthOk ? ChangeType.NewEntity : ChangeType.ParseError));
 					}
 					//Проставляем размер в сотрудника.
 					if(!String.IsNullOrEmpty(row.Operation.WearGrowth) && String.IsNullOrEmpty(row.Employee.WearGrowth)) {
@@ -244,7 +244,7 @@ namespace workwear.Models.Import
 
 					foreach(var column in columns.Where(x => x.DataType != DataTypeWorkwearItems.Unknown && x.DataType != DataTypeWorkwearItems.SizeAndGrowth)) {
 						if(!row.ChangedColumns.ContainsKey(column))
-							row.ChangedColumns.Add(column, ChangeType.NewEntity);
+							row.ChangedColumns.Add(column, new ChangeState(ChangeType.NewEntity));
 					}
 				}
 			}

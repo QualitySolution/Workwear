@@ -212,9 +212,9 @@ namespace workwear.Views.Company
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == nameof(ViewModel.VisibleListedItem))
-				notebook1.GetNthPage(2).Visible = ViewModel.VisibleListedItem;
+				notebook1.GetNthPage(4).Visible = ViewModel.VisibleListedItem;
 			if(e.PropertyName == nameof(ViewModel.VisibleHistory))
-				notebook1.GetNthPage(3).Visible = ViewModel.VisibleHistory;
+				notebook1.GetNthPage(5).Visible = ViewModel.VisibleHistory;
 		}
 		#endregion
 

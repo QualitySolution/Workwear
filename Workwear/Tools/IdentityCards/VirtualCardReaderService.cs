@@ -56,8 +56,7 @@ namespace workwear.Tools.IdentityCards
 				new CardType(RG_CARD_FAMILY_CODE.CF_PINCODE),
 				new CardType(RG_CARD_FAMILY_CODE.CF_TEMIC),
 				new CardType(RG_CARD_FAMILY_CODE.EF_MIFARE)
-
-			};
+		};
 
 		public void StartDevice(DeviceInfo device)
 		{

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NPOI.SS.UserModel;
@@ -97,7 +97,7 @@ namespace workwear.Models.Import
 				var types = new TDataTypeEnum[MaxSourceColumns];
 				rowNum++;
 				for(int i = 0; i < MaxSourceColumns; i++) {
-					var value = row.CellValue(i)?.ToLower() ?? String.Empty;
+					var value = row.CellStringValue(i)?.ToLower() ?? String.Empty;
 					types[i] = dataParser.DetectDataType(value);
 				}
 				if(bestColumns < types.Count(x => !default(TDataTypeEnum).Equals(x))) {

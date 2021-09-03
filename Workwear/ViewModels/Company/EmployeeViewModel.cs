@@ -19,7 +19,6 @@ using QS.ViewModels.Dialog;
 using QSReport;
 using workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
-using workwear.Measurements;
 using workwear.Repository.Company;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company.EmployeeChilds;
@@ -414,9 +413,6 @@ namespace workwear.ViewModels.Company
 			[Display(Name = "Оборотная сторона")]
 			[ReportIdentifier("Employee.PersonalCardPage2")]
 			PersonalCardPage2,
-			[Display(Name = "Внутренная с фотографией")]
-			[ReportIdentifier("WearCard")]
-			CardWithPhoto,
 		}
 
 		public void Print(PersonalCardPrint doc)
