@@ -16,6 +16,10 @@ namespace workwear.Models.Import
 		Subdivision,
 		[Display(Name = "Должность")]
 		Post,
+		[Display(Name = "Размер")]
+		Size,
+		[Display(Name = "Рост")]
+		Growth,
 		[Display(Name = "Размер и рост")]
 		SizeAndGrowth,
 		[Display(Name = "Дата выдачи")]
