@@ -19,6 +19,7 @@ using QS.ViewModels.Dialog;
 using QSReport;
 using workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
+using workwear.Models.Company;
 using workwear.Repository.Company;
 using workwear.Repository.Regulations;
 using workwear.Tools.Features;
@@ -38,6 +39,7 @@ namespace workwear.ViewModels.Company
 		public NormRepository NormRepository { get; }
 
 		private readonly SizeService sizeService;
+		private readonly PersonNames personNames;
 		private readonly IInteractiveService interactive;
 		private readonly FeaturesService featuresService;
 		private readonly EmployeeRepository employeeRepository;
@@ -52,6 +54,7 @@ namespace workwear.ViewModels.Company
 			IUserService userService,
 			ILifetimeScope autofacScope,
 			SizeService sizeService,
+			PersonNames personNames,
 			IInteractiveService interactive,
 			FeaturesService featuresService,
 			EmployeeRepository employeeRepository,
@@ -62,6 +65,7 @@ namespace workwear.ViewModels.Company
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
+			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
@@ -266,6 +270,12 @@ namespace workwear.ViewModels.Company
 				Entity.FillWearInStockInfo(UoW, Entity.Subdivision?.Warehouse, DateTime.Now);
 				OnPropertyChanged(nameof(SubdivisionAddress));
 			}
+			if(e.PropertyName == nameof(Entity.FirstName)) {
+				var sex = personNames.GetSexByName(Entity.FirstName);
+				if(sex != Workwear.Domain.Company.Sex.None)
+					Entity.Sex = sex;
+			}
+			Console.WriteLine();
 		}
 
 		void CheckSizeChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
