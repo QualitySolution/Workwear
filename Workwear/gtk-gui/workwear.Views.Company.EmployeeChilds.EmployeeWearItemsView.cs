@@ -20,6 +20,8 @@ namespace workwear.Views.Company.EmployeeChilds
 
 		private global::Gtk.Button buttonRefreshWorkwearItems;
 
+		private global::Gamma.GtkWidgets.yButton buttonManualIssueDate;
+
 		private global::Gtk.Button buttonTimeLine;
 
 		protected virtual void Build()
@@ -106,25 +108,36 @@ namespace workwear.Views.Company.EmployeeChilds
 			w10.Expand = false;
 			w10.Fill = false;
 			// Container child hbox11.Gtk.Box+BoxChild
+			this.buttonManualIssueDate = new global::Gamma.GtkWidgets.yButton();
+			this.buttonManualIssueDate.CanFocus = true;
+			this.buttonManualIssueDate.Name = "buttonManualIssueDate";
+			this.buttonManualIssueDate.UseUnderline = true;
+			this.buttonManualIssueDate.Label = global::Mono.Unix.Catalog.GetString("Установить дату выдачи");
+			this.hbox11.Add(this.buttonManualIssueDate);
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonManualIssueDate]));
+			w11.Position = 4;
+			w11.Expand = false;
+			w11.Fill = false;
+			// Container child hbox11.Gtk.Box+BoxChild
 			this.buttonTimeLine = new global::Gtk.Button();
 			this.buttonTimeLine.CanFocus = true;
 			this.buttonTimeLine.Name = "buttonTimeLine";
 			this.buttonTimeLine.UseUnderline = true;
 			this.buttonTimeLine.Label = global::Mono.Unix.Catalog.GetString("Хронология");
-			global::Gtk.Image w11 = new global::Gtk.Image();
-			w11.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.timeline_marker.png");
-			this.buttonTimeLine.Image = w11;
+			global::Gtk.Image w12 = new global::Gtk.Image();
+			w12.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.timeline_marker.png");
+			this.buttonTimeLine.Image = w12;
 			this.hbox11.Add(this.buttonTimeLine);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonTimeLine]));
-			w12.PackType = ((global::Gtk.PackType)(1));
-			w12.Position = 4;
-			w12.Expand = false;
-			w12.Fill = false;
-			this.vbox7.Add(this.hbox11);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox7[this.hbox11]));
-			w13.Position = 1;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonTimeLine]));
+			w13.PackType = ((global::Gtk.PackType)(1));
+			w13.Position = 5;
 			w13.Expand = false;
 			w13.Fill = false;
+			this.vbox7.Add(this.hbox11);
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox7[this.hbox11]));
+			w14.Position = 1;
+			w14.Expand = false;
+			w14.Fill = false;
 			this.Add(this.vbox7);
 			if ((this.Child != null))
 			{
@@ -135,6 +148,7 @@ namespace workwear.Views.Company.EmployeeChilds
 			this.buttonReturnWear1.Clicked += new global::System.EventHandler(this.OnButtonReturnWearClicked);
 			this.buttonWriteOffWear1.Clicked += new global::System.EventHandler(this.OnButtonWriteOffWearClicked);
 			this.buttonRefreshWorkwearItems.Clicked += new global::System.EventHandler(this.OnButtonRefreshWorkwearItemsClicked);
+			this.buttonManualIssueDate.Clicked += new global::System.EventHandler(this.OnButtonManualIssueDateClicked);
 			this.buttonTimeLine.Clicked += new global::System.EventHandler(this.OnButtonTimeLineClicked);
 		}
 	}

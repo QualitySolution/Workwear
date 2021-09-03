@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
-using workwear.Domain.Operations;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
+using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using System.Linq;
 
 namespace workwear.Repository.Operations
 {
@@ -43,6 +44,17 @@ namespace workwear.Repository.Operations
 				.Where(o => o.Employee.Id.IsIn(employeeIds))
 				//Проверяем попадает ли операция в диапазон, обратным стравлением условий. Проверяем 2 даты и начала и конца, так как по сути для наса важны StartOfUse и ExpiryByNorm но они могут быть null.
 				.Where(o => (o.OperationTime <= end || o.StartOfUse <= end) && (o.ExpiryByNorm >= begin || o.AutoWriteoffDate >= begin));
+
+			makeEager?.Invoke(query);
+
+			return query.OrderBy(x => x.OperationTime).Asc.List();
+		}
+
+		public IList<EmployeeIssueOperation> GetOperationsForEmployee(IUnitOfWork uow, EmployeeCard employee, ProtectionTools protectionTools, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null)
+		{
+			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
+				.Where(o => o.Employee == employee)
+				.Where(o => o.ProtectionTools == protectionTools);
 
 			makeEager?.Invoke(query);
 

@@ -431,6 +431,9 @@
     <Compile Include="Journal\Filter.Views\Regulations\NormFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Regulations.NormFilterView.cs" />
     <Compile Include="Models\Company\PersonNames.cs" />
+    <Compile Include="ViewModels\Operations\ManualEmployeeIssueOperationViewModel.cs" />
+    <Compile Include="Views\Operations\ManualEmployeeIssueOperationView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Operations.ManualEmployeeIssueOperationView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -645,6 +648,8 @@
     <Folder Include="Journal\Filter.ViewModels\Regulations\" />
     <Folder Include="Journal\Filter.Views\Regulations\" />
     <Folder Include="Models\Company\" />
+    <Folder Include="ViewModels\Operations\" />
+    <Folder Include="Views\Operations\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

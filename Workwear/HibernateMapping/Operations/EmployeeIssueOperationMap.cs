@@ -23,9 +23,10 @@ namespace workwear.HMap
 			Map(x => x.ExpiryByNorm).Column("ExpiryByNorm");
 			Map(x => x.SignCardKey).Column("sign_key");
 			Map(x => x.SignTimestamp).Column("sign_timestamp");
+			Map(x => x.ManualOperation).Column("manual_operation");
 
 			References(x => x.Employee).Column("employee_id").Not.Nullable();
-			References(x => x.Nomenclature).Column("nomenclature_id").Not.Nullable();
+			References(x => x.Nomenclature).Column("nomenclature_id");
 			References(x => x.NormItem).Column("norm_item_id");
 			References(x => x.ProtectionTools).Column("protection_tools_id");
 			References(x => x.IssuedOperation).Column("issued_operation_id");

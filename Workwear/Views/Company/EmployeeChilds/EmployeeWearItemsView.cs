@@ -54,14 +54,15 @@ namespace workwear.Views.Company.EmployeeChilds
 			}
 		}
 
-		protected void OnButtonGiveWearByNormClicked(object sender, EventArgs e)
-		{
-			ViewModel.GiveWearByNorm();
-		}
-
 		void ytreeWorkwear_Selection_Changed(object sender, EventArgs e)
 		{
 			buttonTimeLine.Sensitive = ytreeWorkwear.Selection.CountSelectedRows() > 0;
+		}
+
+		#region Кнопки
+		protected void OnButtonGiveWearByNormClicked(object sender, EventArgs e)
+		{
+			ViewModel.GiveWearByNorm();
 		}
 
 		protected void OnButtonReturnWearClicked(object sender, EventArgs e)
@@ -83,6 +84,12 @@ namespace workwear.Views.Company.EmployeeChilds
 		{
 			ViewModel.UpdateWorkwearItems();
 		}
+
+		protected void OnButtonManualIssueDateClicked(object sender, EventArgs e)
+		{
+			ViewModel.SetIssueDateManual(ytreeWorkwear.GetSelectedObject<EmployeeCardItem>());
+		}
+		#endregion
 
 		#region PopupMenu
 		void YtreeWorkwear_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
