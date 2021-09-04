@@ -49,6 +49,13 @@ namespace workwear.Models.Import
 			AddColumnName(DataTypeWorkwearItems.Post,
 				"Должность"
 				);
+			AddColumnName(DataTypeWorkwearItems.Size,
+				"Размер",
+				"Значение антропометрии" //ОСМиБТ
+				);
+			AddColumnName(DataTypeWorkwearItems.Growth,
+				"Рост"
+				);
 			AddColumnName(DataTypeWorkwearItems.SizeAndGrowth,
 				"Характеристика номенклатуры"
 				);
@@ -80,9 +87,11 @@ namespace workwear.Models.Import
 			var nomenclatureColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Nomenclature);
 			var issuedateColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.IssueDate);
 			var countColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Count);
-			var sizeAndGrowthColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.SizeAndGrowth);
 			var postColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Post);
 			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Subdivision);
+			var sizeAndGrowthColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.SizeAndGrowth);
+			var sizeColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Size);
+			var growthColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Growth);
 
 			progress.Start(list.Count() * 2 + 3, text: "Загрузка сотрудников");
 			var personnelNumbers = list.Select(x => x.CellStringValue(personnelNumberColumn.Index))
@@ -206,9 +215,7 @@ namespace workwear.Models.Import
 						UseAutoWriteoff = expenseDate != null,
 					};
 					//Обрабатываем размер.
-					var sizeAndGrowthValue = row.CellStringValue(sizeAndGrowthColumn.Index);
-					if(!String.IsNullOrEmpty(sizeAndGrowthValue)) {
-						var sizeAndGrowth = SizeParser.ParseSizeAndGrowth(sizeAndGrowthValue);
+					if(TryParseSizeAndGrowth(row, columns, out SizeAndGrowth sizeAndGrowth)) {
 						row.Operation.Size = sizeAndGrowth.Size;
 						row.Operation.WearGrowth = sizeAndGrowth.Growth;
 						//Если стандарт размера не заполнен для номеклатуры, проставляем его, по обнаруженному размеру.
@@ -224,7 +231,12 @@ namespace workwear.Models.Import
 						bool growthOk = !SizeHelper.HasGrowthStandart(nomenclature.Type.WearCategory.Value)
 							|| (nomenclature.SizeStd?.EndsWith("Intl", StringComparison.InvariantCulture) ?? false)
 							|| sizeService.GetGrowthForNomenclature().Contains(sizeAndGrowth.Growth);
-						row.ChangedColumns.Add(sizeAndGrowthColumn, new ChangeState( sizeOk && growthOk ? ChangeType.NewEntity : ChangeType.ParseError));
+						if(sizeAndGrowthColumn != null)
+							row.ChangedColumns.Add(sizeAndGrowthColumn, new ChangeState( sizeOk && growthOk ? ChangeType.NewEntity : ChangeType.ParseError));
+						if(sizeColumn != null)
+							row.ChangedColumns.Add(sizeColumn, new ChangeState(sizeOk ? ChangeType.NewEntity : ChangeType.ParseError));
+						if(growthColumn != null)
+							row.ChangedColumns.Add(growthColumn, new ChangeState(growthOk ? ChangeType.NewEntity : ChangeType.ParseError));
 					}
 					//Проставляем размер в сотрудника.
 					if(!String.IsNullOrEmpty(row.Operation.WearGrowth) && String.IsNullOrEmpty(row.Employee.WearGrowth)) {
@@ -241,8 +253,13 @@ namespace workwear.Models.Import
 							counters.AddCount(CountersWorkwearItems.EmployeesSetSize);
 						}
 					}
-
-					foreach(var column in columns.Where(x => x.DataType != DataTypeWorkwearItems.Unknown && x.DataType != DataTypeWorkwearItems.SizeAndGrowth)) {
+					var toSetChangeColumns = columns.Where(
+						x => x.DataType != DataTypeWorkwearItems.Unknown 
+						  && x.DataType != DataTypeWorkwearItems.SizeAndGrowth
+						  && x.DataType != DataTypeWorkwearItems.Size
+						  && x.DataType != DataTypeWorkwearItems.Growth
+						);
+					foreach(var column in toSetChangeColumns) {
 						if(!row.ChangedColumns.ContainsKey(column))
 							row.ChangedColumns.Add(column, new ChangeState(ChangeType.NewEntity));
 					}
@@ -302,6 +319,24 @@ namespace workwear.Models.Import
 			amount = int.Parse(parts[1].Value);
 			periods = int.Parse(parts[2].Value);
 			return true;
+		}
+
+		private bool TryParseSizeAndGrowth(SheetRowWorkwearItems row, List<ImportedColumn<DataTypeWorkwearItems>> columns, out SizeAndGrowth sizeAndGrowth)
+		{
+			sizeAndGrowth = new SizeAndGrowth();
+			var sizeAndGrowthColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.SizeAndGrowth);
+			var sizeColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Size);
+			var growthColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Growth);
+			if(sizeAndGrowthColumn != null) {
+				var sizeAndGrowthValue = row.CellStringValue(sizeAndGrowthColumn.Index);
+				if(!String.IsNullOrEmpty(sizeAndGrowthValue))
+					sizeAndGrowth = SizeParser.ParseSizeAndGrowth(sizeAndGrowthValue);
+			};
+			if(sizeColumn != null && String.IsNullOrEmpty(sizeAndGrowth.Size))
+				sizeAndGrowth.Size = SizeParser.ParseSize(row.CellStringValue(sizeColumn.Index));
+			if(growthColumn != null && String.IsNullOrEmpty(sizeAndGrowth.Growth))
+				sizeAndGrowth.Growth = SizeParser.ParseSize(row.CellStringValue(sizeColumn.Index));
+			return !String.IsNullOrEmpty(sizeAndGrowth.Size) || !String.IsNullOrEmpty(sizeAndGrowth.Growth);
 		}
 
 		#endregion

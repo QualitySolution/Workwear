@@ -72,6 +72,16 @@ namespace workwear.Models.Import
 
 			return result;
 		}
+
+		public static string ParseSize(string value)
+		{
+			return value;
+		}
+
+		public static string ParseGrowth(string value)
+		{
+			return value;
+		}
 	}
 
 	public struct SizeAndGrowth

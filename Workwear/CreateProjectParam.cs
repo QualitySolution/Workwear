@@ -49,6 +49,7 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
 using workwear.Journal;
+using workwear.Models.Company;
 using workwear.Models.Import;
 using workwear.Repository.Operations;
 using workwear.Tools;
@@ -203,6 +204,10 @@ namespace workwear
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(ProgressWindowViewModel)))
 				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
 				.AsSelf();
+			#endregion
+
+			#region Common Models
+			builder.RegisterType<PersonNames>().AsSelf();
 			#endregion
 
 			#region Repository

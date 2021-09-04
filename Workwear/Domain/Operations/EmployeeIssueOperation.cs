@@ -206,6 +206,13 @@ namespace workwear.Domain.Operations
 			set => SetField(ref signTimestamp, value);
 		}
 
+		private bool manualOperation;
+		[Display(Name = "Ручная операция")]
+		public virtual bool ManualOperation {
+			get => manualOperation;
+			set => SetField(ref manualOperation, value);
+		}
+
 		/// <summary>
 		/// Для создания операций выдачи надо использвать конструктор с BaseParameters
 		/// </summary>
@@ -221,8 +228,8 @@ namespace workwear.Domain.Operations
 		#region Расчетные
 
 		public virtual string Title => Issued > Returned
-			? $"Выдача {Employee.ShortName} <= {Issued} х {Nomenclature.Name}"
-			: $"Списание {Employee.ShortName} => {Returned} х {Nomenclature.Name}";
+			? $"Выдача {Employee.ShortName} <= {Issued} х {Nomenclature?.Name ?? ProtectionTools.Name}"
+			: $"Списание {Employee.ShortName} => {Returned} х {Nomenclature?.Name ?? ProtectionTools.Name}";
 
 		public virtual decimal? LifetimeMonth {
 			get {

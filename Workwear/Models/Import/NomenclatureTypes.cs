@@ -52,7 +52,8 @@ namespace workwear.Models.Import
 			AddType("Сапоги", СlothesType.Shoes, pair, new string[] { "САПОГИ", "ПОЛУСАПОГИ" });
 			AddType("Ботинки", СlothesType.Shoes, pair, new string[] { "БОТИНКИ", "ЧУВЯКИ", "боты" });
 			AddType("Туфли", СlothesType.Shoes, pair, new string[] { "Туфли" });
-			AddType("Тапочки", СlothesType.Shoes, pair, new string[] { "Тапки,", "Тапочки", "Сабо", "Сандалии", "Сандали" });
+			AddType("Тапочки", СlothesType.Shoes, pair, new string[] { "Тапки,", "Тапочки" });
+			AddType("Сандалии", СlothesType.Shoes, pair, new string[] { "Сабо", "Сандалии", "Сандали" });
 			AddType("Валенки", СlothesType.WinterShoes, pair, new string[] { "ВАЛЕНКИ" });
 			AddType("Галоши", СlothesType.WinterShoes, pair, new string[] { "ГАЛОШИ" });
 			AddType("Перчатки", СlothesType.Gloves, pair, new string[] { "ПЕРЧАТКИ", "КРАГИ" });

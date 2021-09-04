@@ -18,6 +18,7 @@ using workwear.Domain.Stock;
 using workwear.Measurements;
 using workwear.Repository.Company;
 using workwear.Repository.Operations;
+using workwear.Repository.Regulations;
 using workwear.Repository.Stock;
 using workwear.Tools;
 using Workwear.Domain.Company;
@@ -52,7 +53,7 @@ namespace workwear.Domain.Company
 		[Display (Name = "Табельный номер")]
 		public virtual string PersonnelNumber {
 			get { return personnelNumber; }
-			set { SetField (ref personnelNumber, value, () => PersonnelNumber); }
+			set { SetField (ref personnelNumber, value?.Trim()); }
 		}
 
 		string name;
@@ -477,6 +478,13 @@ namespace workwear.Domain.Company
 			UpdateWorkwearItems ();
 		}
 
+		public virtual void NormFromPost(IUnitOfWork uow, NormRepository normRepository)
+		{
+			var norms = normRepository.GetNormsForPost(UoW, Post);
+			foreach(var norm in norms)
+				AddUsedNorm(norm);
+		}
+
 		#endregion
 
 		#region Функции для работы с коллекцией потребностей
@@ -550,7 +558,7 @@ namespace workwear.Domain.Company
 			}
 		}
 
-		public virtual void FillWearRecivedInfo(IUnitOfWork uow, DateTime? ondate = null)
+		public virtual void FillWearRecivedInfo(EmployeeIssueRepository issueRepository)
 		{
 			if (Id == 0) // Не надо проверять выдачи, так как сотрудник еще не сохранен.
 				return; 
@@ -559,23 +567,32 @@ namespace workwear.Domain.Company
 				item.LastIssue = null;
 			}
 
-			var receiveds = EmployeeRepository.ItemsBalance (uow, this, ondate ?? DateTime.Now);
-			//OrderBy - чтобы сдвинуть все значения без нормы в конец обработки
-			foreach(var recive in receiveds.OrderBy(x => x.NormRowId == null))
+			var receiveds = issueRepository.AllOperationsForEmployee(this).Where(x => x.Issued > 0);
+			var protectionGroups = receiveds.GroupBy(x => x.ProtectionTools?.Id).ToDictionary(g => g.Key, g => g);
+
+			//Основное заполнение выдачи
+			foreach (var item in WorkwearItems)
 			{
-
-				var matched = WorkwearItems.Where(x => x.ProtectionTools.MatchedProtectionTools.Any(p => p.Id == recive.ProtectionToolsId)).ToList();
-				EmployeeCardItem item = WorkwearItems.FirstOrDefault(x => x.ActiveNormItem.Id == recive.NormRowId);
-				if(item == null)
-					item = WorkwearItems.FirstOrDefault(x => x.ProtectionTools != null && x.ProtectionTools.Id == recive.ProtectionToolsId && x.Amount < x.NeededAmount);
-				if(item == null)
-					item = WorkwearItems.FirstOrDefault(x => x.ProtectionTools != null && x.ProtectionTools.Id == recive.ProtectionToolsId);
-				if(item == null)
+				if(!protectionGroups.ContainsKey(item.ProtectionTools.Id))
 					continue;
-
-				item.Amount += recive.Amount;
-				if(item.LastIssue == null || item.LastIssue < recive.LastReceive)
-					item.LastIssue = recive.LastReceive;
+				var operations = protectionGroups[item.ProtectionTools.Id];
+				var lastOperation = operations.OrderByDescending(x => x.OperationTime).First();
+				item.Amount = lastOperation.Issued;
+				item.LastIssue = lastOperation.OperationTime;
+				protectionGroups.Remove(item.ProtectionTools.Id);
+			}
+			
+			//Дополнительно ищем по аналогам.
+			foreach (var item in WorkwearItems)
+			{
+			 	var matched = item.ProtectionTools.MatchedProtectionTools.FirstOrDefault(x => protectionGroups.ContainsKey(x.Id));
+				if(matched == null)
+					continue;
+				var operations = protectionGroups[matched.Id];
+				var lastOperation = operations.OrderByDescending(x => x.OperationTime).First();
+				item.Amount = lastOperation.Issued;
+				item.LastIssue = lastOperation.OperationTime;
+				protectionGroups.Remove(item.ProtectionTools.Id);
 			}
 		}
 

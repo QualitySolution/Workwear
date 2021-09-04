@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 echo "Что делаем?"
 echo "1) git pull"
 echo "2) nuget restore"
@@ -59,6 +61,5 @@ mono nunit3-console.exe WorkwearTest.dll
 cd "$(dirname "$0")"
 ;;&
 esac
-
 
 read -p "Press enter to exit"

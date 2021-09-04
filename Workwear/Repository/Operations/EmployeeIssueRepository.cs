@@ -1,25 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
-using workwear.Domain.Operations;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
+using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using System.Linq;
 
 namespace workwear.Repository.Operations
 {
 	public class EmployeeIssueRepository
 	{
-		public static IList<EmployeeIssueOperation> AllOperationsForEmployee(IUnitOfWork uow, EmployeeCard employee, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager)
+		public IUnitOfWork RepoUow;
+
+		public EmployeeIssueRepository(IUnitOfWork uow = null)
 		{
-			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
+			RepoUow = uow;
+		}
+		/// <summary>
+		/// Получаем все операции выдачи сотруднику отсортированные в порядке убывания.
+		/// </summary>
+		/// <returns></returns>
+		public IList<EmployeeIssueOperation> AllOperationsForEmployee(EmployeeCard employee, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null)
+		{
+			var query = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.Employee == employee);
 
 			makeEager?.Invoke(query);
 
-			return query.OrderBy(x => x.OperationTime).Asc.List();
+			return query.OrderBy(x => x.OperationTime).Desc.List();
 		}
 
 		[Obsolete("Используйте нестатический класс для этого запроса.")]
@@ -49,6 +60,17 @@ namespace workwear.Repository.Operations
 			return query.OrderBy(x => x.OperationTime).Asc.List();
 		}
 
+		public IList<EmployeeIssueOperation> GetOperationsForEmployee(IUnitOfWork uow, EmployeeCard employee, ProtectionTools protectionTools, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null)
+		{
+			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
+				.Where(o => o.Employee == employee)
+				.Where(o => o.ProtectionTools == protectionTools);
+
+			makeEager?.Invoke(query);
+
+			return query.OrderBy(x => x.OperationTime).Asc.List();
+		}
+
 		public static ExpenseItem GetExpenseItemForOperation(IUnitOfWork uow, EmployeeIssueOperation operation)
 		{
 			return uow.Session.QueryOver<ExpenseItem>()
@@ -56,11 +78,11 @@ namespace workwear.Repository.Operations
 				.SingleOrDefault();
 		}
 
-		public static IList<ReferencedDocument> GetReferencedDocuments(IUnitOfWork uow, int[] operationsIds)
+		public IList<ReferencedDocument> GetReferencedDocuments(int[] operationsIds)
 		{
 			ReferencedDocument docAlias = null;
 
-			var listIncoms = uow.Session.QueryOver<IncomeItem>()
+			var listIncoms = RepoUow.Session.QueryOver<IncomeItem>()
 				.Where(x => x.ReturnFromEmployeeOperation.Id.IsIn(operationsIds))
 				.SelectList(list => list
 					.Select(i => i.ReturnFromEmployeeOperation.Id).WithAlias(() => docAlias.OpId)
@@ -70,7 +92,7 @@ namespace workwear.Repository.Operations
 				.TransformUsing(Transformers.AliasToBean<ReferencedDocument>())
 				.List<ReferencedDocument>();
 
-			var listExpense = uow.Session.QueryOver<ExpenseItem>()
+			var listExpense = RepoUow.Session.QueryOver<ExpenseItem>()
 				.Where(x => x.EmployeeIssueOperation.Id.IsIn(operationsIds))
 				.SelectList(list => list
 					.Select(i => i.EmployeeIssueOperation.Id).WithAlias(() => docAlias.OpId)
@@ -80,7 +102,7 @@ namespace workwear.Repository.Operations
 				.TransformUsing(Transformers.AliasToBean<ReferencedDocument>())
 				.List<ReferencedDocument>();
 
-			var listwriteoff = uow.Session.QueryOver<WriteoffItem>()
+			var listwriteoff = RepoUow.Session.QueryOver<WriteoffItem>()
 				.Where(x => x.EmployeeWriteoffOperation.Id.IsIn(operationsIds))
 				.SelectList(list => list
 					.Select(i => i.EmployeeWriteoffOperation.Id).WithAlias(() => docAlias.OpId)

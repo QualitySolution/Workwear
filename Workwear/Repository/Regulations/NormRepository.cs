@@ -9,16 +9,6 @@ namespace workwear.Repository.Regulations
 {
 	public class NormRepository
 	{
-		public static IList<Norm> GetNormForPost(IUnitOfWork uow, Post post)
-		{
-			Post postAliace = null;
-
-			return uow.Session.QueryOver<Norm> ()
-				.JoinQueryOver (n => n.Posts, () => postAliace)
-				.Where (p => p.Id == post.Id)
-				.List ();
-		}
-
 		public IList<Norm> GetNormsForPost(IUnitOfWork uow, params Post[] posts)
 		{
 			Post postAliace = null;
