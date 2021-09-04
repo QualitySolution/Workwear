@@ -13,8 +13,8 @@ namespace workwear.DTO
 
 		public DateTime Date => Operation.OperationTime;
 		public int? DocumentId => ReferencedDocument?.DocId;
-		public string NomenclatureName => Operation.Nomenclature.Name;
-		public string UnitsName => Operation.Nomenclature.Type.Units.Name;
+		public string NomenclatureName => Operation.Nomenclature?.Name ?? Operation.ProtectionTools.Name;
+		public string UnitsName => Operation.Nomenclature?.Type.Units.Name ?? Operation.ProtectionTools.Type.Units.Name;
 		public decimal? WearPercet => Operation.WearPercent;
 		public decimal? Cost => Operation.WarehouseOperation?.Cost;
 

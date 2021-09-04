@@ -8,6 +8,8 @@ using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Measurements;
+using workwear.Repository.Operations;
 
 namespace WorkwearTest.Integration.Organization
 {
@@ -466,7 +468,7 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(operation);
 				uow.Commit();
 
-				employee.FillWearRecivedInfo(uow, new DateTime(2019, 1, 10));
+				employee.FillWearRecivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
 				Assert.That(item.Amount, Is.EqualTo(1));
 				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2018, 1, 20)));
@@ -556,7 +558,7 @@ namespace WorkwearTest.Integration.Organization
 
 				uow.Commit();
 
-				employee.FillWearRecivedInfo(uow, new DateTime(2019, 3, 10));
+				employee.FillWearRecivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
 				Assert.That(item.Amount, Is.EqualTo(1));
 				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2019, 1, 20)));
@@ -663,7 +665,7 @@ namespace WorkwearTest.Integration.Organization
 
 				uow.Commit();
 
-				employee.FillWearRecivedInfo(uow, new DateTime(2019, 3, 10));
+				employee.FillWearRecivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
 				Assert.That(item.Amount, Is.EqualTo(5));
 				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2019, 1, 20)));
@@ -749,9 +751,80 @@ namespace WorkwearTest.Integration.Organization
 
 				uow.Commit();
 
-				employee.FillWearRecivedInfo(uow, new DateTime(2019, 3, 10));
+				employee.FillWearRecivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
-				Assert.That(item.Amount, Is.EqualTo(0));
+				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2018, 1, 20)));
+				Assert.That(item.Amount, Is.EqualTo(1));
+				
+			}
+		}
+
+		[Test(Description = "Проверяем что при заполнении выданной спецодежды дата последней выдачи и количество отображается, даже если СИЗ уже изношен.")]
+		[Category("Integrated")]
+		public void FillWearRecivedInfo_LastIssueDateExistAfterAutoWriteoffDateTest()
+		{
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				nomenclatureType.Category = ItemTypeCategory.wear;
+				nomenclatureType.WearCategory = СlothesType.Wear;
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				nomenclature.Sex = ClothesSex.Men;
+				nomenclature.SizeStd = "UnisexWearRus";
+				uow.Save(nomenclature);
+
+				var protectionTools = new ProtectionTools();
+				protectionTools.Name = "Номенклатура нормы";
+				protectionTools.AddNomeclature(nomenclature);
+				uow.Save(protectionTools);
+
+				var norm = new Norm();
+				var normItem = norm.AddItem(protectionTools);
+				normItem.Amount = 1;
+				normItem.NormPeriod = NormPeriodType.Year;
+				normItem.PeriodCount = 1;
+				uow.Save(norm);
+
+				var employee = new EmployeeCard();
+				employee.AddUsedNorm(norm);
+				employee.Sex = Sex.M;
+				employee.WearSizeStd = "MenWearRus";
+				employee.WearSize = "50";
+				employee.WearGrowth = "176";
+				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
+				uow.Save(employee);
+				uow.Commit();
+
+				var warehouseOperation = new WarehouseOperation {
+					Nomenclature = nomenclature,
+					Amount = 1,
+					OperationTime = new DateTime(2018, 1, 20),
+				};
+				uow.Save(warehouseOperation);
+
+				var operationIssue = new EmployeeIssueOperation {
+					Employee = employee,
+					ExpiryByNorm = new DateTime(2019, 1, 20),
+					AutoWriteoffDate = new DateTime(2019, 1, 20),
+					UseAutoWriteoff = true,
+					Issued = 1,
+					Nomenclature = nomenclature,
+					NormItem = normItem,
+					ProtectionTools = protectionTools,
+					OperationTime = new DateTime(2018, 1, 20),
+					StartOfUse = new DateTime(2018, 1, 20),
+					WarehouseOperation = warehouseOperation,
+				};
+				uow.Save(operationIssue);
+
+				uow.Commit();
+
+				employee.FillWearRecivedInfo(new EmployeeIssueRepository(uow));
+				var item = employee.WorkwearItems.First();
+				Assert.That(item.Amount, Is.EqualTo(1));
 				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2018, 1, 20)));
 			}
 		}
@@ -847,7 +920,7 @@ namespace WorkwearTest.Integration.Organization
 
 				uow.Commit();
 
-				employee.FillWearRecivedInfo(uow, new DateTime(2019, 1, 10));
+				employee.FillWearRecivedInfo(new EmployeeIssueRepository(uow));
 				var item1 = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normItem);
 				Assert.That(item1.Amount, Is.EqualTo(1));
 				var item2 = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normItem2);

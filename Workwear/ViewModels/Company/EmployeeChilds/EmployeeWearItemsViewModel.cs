@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Bindings.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using NHibernate;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
@@ -12,6 +14,7 @@ using QS.ViewModels;
 using workwear.Dialogs.Issuance;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using workwear.Repository.Operations;
 using workwear.ViewModels.Stock;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
@@ -19,12 +22,19 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 	public class EmployeeWearItemsViewModel : ViewModelBase, IDisposable
 	{
 		private readonly EmployeeViewModel employeeViewModel;
+		private readonly EmployeeIssueRepository employeeIssueRepository;
+		private readonly IInteractiveQuestion interactive;
 		private readonly ITdiCompatibilityNavigation navigation;
 
-		public EmployeeWearItemsViewModel(EmployeeViewModel employeeViewModel, ITdiCompatibilityNavigation navigation)
+		public EmployeeWearItemsViewModel(EmployeeViewModel employeeViewModel, EmployeeIssueRepository employeeIssueRepository, IInteractiveQuestion interactive, ITdiCompatibilityNavigation navigation)
 		{
+			Contract.Requires(interactive != null);
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
+			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+
+			employeeIssueRepository.RepoUow = UoW;
 			NotifyConfiguration.Instance.BatchSubscribeOnEntity<EmployeeCardItem>(HandleEntityChangeEvent);
 		}
 
@@ -43,7 +53,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 			if(!isConfigured) {
 				isConfigured = true;
 				Entity.FillWearInStockInfo(UoW, Entity.Subdivision?.Warehouse, DateTime.Now);
-				Entity.FillWearRecivedInfo(UoW);
+				Entity.FillWearRecivedInfo(employeeIssueRepository);
 				OnPropertyChanged(nameof(ObservableWorkwearItems));
 			}
 		}
@@ -117,7 +127,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 				UoW.Session.Refresh(item);
 			}
 			Entity.FillWearInStockInfo(UoW, Entity.Subdivision?.Warehouse, DateTime.Now);
-			Entity.FillWearRecivedInfo(UoW);
+			Entity.FillWearRecivedInfo(employeeIssueRepository);
 		}
 
 		public void Dispose()
