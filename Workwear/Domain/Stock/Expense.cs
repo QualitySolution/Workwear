@@ -9,6 +9,7 @@ using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Repository.Company;
+using workwear.Repository.Operations;
 using workwear.Tools;
 
 namespace workwear.Domain.Stock
@@ -213,7 +214,7 @@ namespace workwear.Domain.Stock
 		public virtual void UpdateEmployeeWearItems()
 		{
 			Employee.UpdateNextIssue(Items.Select(x => x.ProtectionTools).ToArray());
-			Employee.FillWearRecivedInfo(UoW);
+			Employee.FillWearRecivedInfo(new EmployeeIssueRepository(UoW));
 			UoW.Save(Employee);
 		}
 

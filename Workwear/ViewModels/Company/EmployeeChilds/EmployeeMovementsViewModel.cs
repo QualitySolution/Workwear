@@ -23,15 +23,19 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		private readonly EmployeeViewModel employeeViewModel;
+		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly FeaturesService featuresService;
 		private readonly ITdiCompatibilityNavigation navigation;
 		List<EmployeeCardMovements> movements;
 
-		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, FeaturesService featuresService, ITdiCompatibilityNavigation navigation)
+		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, EmployeeIssueRepository employeeIssueRepository,  FeaturesService featuresService, ITdiCompatibilityNavigation navigation)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
+			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+
+			this.employeeIssueRepository.RepoUow = UoW;
 		}
 
 		#region Хелперы
@@ -87,8 +91,8 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 			var prepareMovements = new List<EmployeeCardMovements>();
 
-			var list = EmployeeIssueRepository.AllOperationsForEmployee(UoW, Entity, query => query.Fetch(SelectMode.Fetch, x => x.Nomenclature));
-			var docs = EmployeeIssueRepository.GetReferencedDocuments(UoW, list.Select(x => x.Id).ToArray());
+			var list = employeeIssueRepository.AllOperationsForEmployee(Entity, query => query.Fetch(SelectMode.Fetch, x => x.Nomenclature));
+			var docs = employeeIssueRepository.GetReferencedDocuments(list.Select(x => x.Id).ToArray());
 			foreach(var operation in list) {
 				var item = new EmployeeCardMovements();
 				item.Operation = operation;
