@@ -75,6 +75,7 @@
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
     <Compile Include="Integration\Tools\DeletionEntitiesTest.cs" />
     <Compile Include="Models\Company\PersonNamesTest.cs" />
+    <Compile Include="Integration\Operations\IssueGraphIntegratedTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj">
@@ -136,6 +137,7 @@
     <Folder Include="ViewModels\Stock\" />
     <Folder Include="Models\" />
     <Folder Include="Models\Company\" />
+    <Folder Include="Integration\Operations\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Antlr3.Runtime" Version="3.5.1" />
