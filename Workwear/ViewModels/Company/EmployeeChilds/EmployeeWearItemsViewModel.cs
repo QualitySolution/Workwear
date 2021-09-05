@@ -12,6 +12,7 @@ using QS.Project.Domain;
 using QS.ViewModels;
 using workwear.Dialogs.Issuance;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
 using workwear.Repository.Operations;
 using workwear.ViewModels.Operations;
@@ -122,12 +123,28 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		public void SetIssueDateManual(EmployeeCardItem row)
 		{
 			var operations = employeeIssueRepository.GetOperationsForEmployee(UoW, Entity, row.ProtectionTools).OrderByDescending(x => x.OperationTime).ToList();
+			IPage<ManualEmployeeIssueOperationViewModel> page;
 			if(!operations.Any())
-				navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
+				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
 			else if(operations.First().ManualOperation)
-				navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(operations.First().Id), OpenPageOptions.AsSlave);
+				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(operations.First().Id), OpenPageOptions.AsSlave);
 			else if(interactive.Question($"Для «{row.ProtectionTools.Name}» уже выполнялись полоноценные выдачи внесение ручных изменений может привести к нежелательным результатам. Продолжить?"))
-				navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
+				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
+			else
+				return;
+			page.PageClosed += SetIssueDateManual_PageClosed;
+		}
+
+		void SetIssueDateManual_PageClosed(object sender, PageClosedEventArgs e)
+		{
+			if(e.CloseSource == CloseSource.Save) {
+				var page = sender as IPage<ManualEmployeeIssueOperationViewModel>;
+				var operation = (UoW.Session as NHibernate.Impl.SessionImpl).PersistenceContext.EntitiesByKey.SingleOrDefault(x => x.Value is EmployeeIssueOperation && (int)x.Key.Identifier == page.ViewModel.Entity.Id);
+				if(operation.Value != null)
+					UoW.Session.Refresh(operation.Value);
+				Entity.FillWearRecivedInfo(employeeIssueRepository);
+				Entity.UpdateNextIssue(page.ViewModel.Entity.ProtectionTools);
+			}
 		}
 
 		public void OpenProtectionTools(EmployeeCardItem row)
