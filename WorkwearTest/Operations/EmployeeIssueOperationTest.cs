@@ -1,11 +1,11 @@
-﻿using NSubstitute;
+﻿using System;
+using System.Collections.Generic;
+using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
-using System;
-using System.Collections.Generic;
+using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Operations.Graph;
-using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Tools;

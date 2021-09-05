@@ -109,10 +109,11 @@ namespace workwear.Domain.Operations.Graph
 				return MakeIssueGraphTestGap(employee, protectionTools);
 
 			var nomenclatures = protectionTools.MatchedNomenclatures;
+			var matchedProtectionTools = protectionTools.MatchedProtectionTools;
 
 			var issues = uow.Session.QueryOver<EmployeeIssueOperation>()
 					.Where(x => x.Employee.Id == employee.Id)
-					.Where(x => x.Nomenclature.Id.IsIn(nomenclatures.Select(n => n.Id).ToArray()))
+					.Where(x => x.ProtectionTools.Id.IsIn(matchedProtectionTools.Select(n => n.Id).ToArray()) || x.Nomenclature.Id.IsIn(nomenclatures.Select(n => n.Id).ToArray()))
 					.OrderBy(x => x.OperationTime).Asc
 					.List();
 
