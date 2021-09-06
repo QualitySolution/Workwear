@@ -122,6 +122,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => nomenclatureAlias.Type, () => itemtypesAlias)
 				.JoinAlias(() => itemtypesAlias.Units, () => unitsAlias)
 				.Where(GetSearchCriterion(
+					() => nomenclatureAlias.Number,
 					() => nomenclatureAlias.Name,
 					() => warehouseOperationAlias.Size,
 					() => warehouseOperationAlias.Growth))
@@ -129,6 +130,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.SelectList(list => list
 			   .SelectGroup(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.Id)
 			   .Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
+			   .Select(() => nomenclatureAlias.Number).WithAlias(() => resultAlias.NomenclatureNumber)
 			   .Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
 			   .SelectGroup(() => warehouseOperationAlias.Size).WithAlias(() => resultAlias.Size)
 			   .SelectGroup(() => warehouseOperationAlias.Growth).WithAlias(() => resultAlias.Growth)
@@ -148,6 +150,7 @@ namespace workwear.Journal.ViewModels.Stock
 		public int Id { get; set; }
 
 		public string NomenclatureName { get; set; }
+		public uint? NomenclatureNumber { get; set; }
 		public string UnitsName { get; set; }
 		public string Size { get; set; }
 		public string Growth { get; set; }
