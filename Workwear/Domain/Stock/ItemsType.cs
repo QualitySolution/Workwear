@@ -60,6 +60,14 @@ namespace workwear.Domain.Stock
 			set { SetField (ref wearCategory, value, () => WearCategory); }
 		}
 
+		private IssueType issueType;
+		[Display(Name = "Тип выдачи")]
+		public virtual IssueType IssueType {
+			get => issueType;
+			set => SetField(ref issueType, value);
+		}
+
+
 		int? lifeMonths;
 
 		[Display (Name = "Срок службы")]
@@ -126,6 +134,21 @@ namespace workwear.Domain.Stock
 	public class ItemTypeCategoryType : NHibernate.Type.EnumStringType
 	{
 		public ItemTypeCategoryType () : base (typeof(ItemTypeCategory))
+		{
+		}
+	}
+
+	public enum IssueType
+	{
+		[Display(Name = "Персональная")]
+		Personal,
+		[Display(Name = "Коллективная")]
+		Сollective
+	}
+
+	public class IssueTypeEnumType : NHibernate.Type.EnumStringType
+	{
+		public IssueTypeEnumType() : base(typeof(IssueType))
 		{
 		}
 	}
