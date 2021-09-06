@@ -46,6 +46,26 @@ namespace workwear.Repository.Operations
 			return instance.GetOperationsTouchDates(uow, new[] { employee }, begin, end, makeEager);
 		}
 
+		/// <summary>
+		/// Получаем операции выдачи выполненые в определенные даты.
+		/// </summary>
+		public IList<EmployeeIssueOperation> GetOperationsByDates(EmployeeCard[] employees, DateTime begin, DateTime end, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null)
+		{
+			var employeeIds = employees.Select(x => x.Id).Distinct().ToArray();
+
+			var query = RepoUow.Session.QueryOver<EmployeeIssueOperation>()
+				.Where(o => o.Employee.Id.IsIn(employeeIds))
+				//Проверяем попадает ли операция в диапазон, обратным стравлением условий. Проверяем 2 даты и начала и конца, так как по сути для наса важны StartOfUse и ExpiryByNorm но они могут быть null.
+				.Where(o => (o.OperationTime <= end) && (o.OperationTime >= begin));
+
+			makeEager?.Invoke(query);
+
+			return query.OrderBy(x => x.OperationTime).Asc.List();
+		}
+
+		/// <summary>
+		/// Получаем операции числящееся по сотрудникам которых затрагивает опеределенны диапазон дат.
+		/// </summary>
 		public IList<EmployeeIssueOperation> GetOperationsTouchDates(IUnitOfWork uow, EmployeeCard[] employees, DateTime begin, DateTime end, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null) { 
 
 			var employeeIds = employees.Select(x => x.Id).Distinct().ToArray();

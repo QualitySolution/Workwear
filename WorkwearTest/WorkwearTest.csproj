@@ -76,6 +76,7 @@
     <Compile Include="Integration\Tools\DeletionEntitiesTest.cs" />
     <Compile Include="Models\Company\PersonNamesTest.cs" />
     <Compile Include="Integration\Operations\IssueGraphIntegratedTest.cs" />
+    <Compile Include="Integration\Operations\EmployeeIssueRepositoryTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj">
