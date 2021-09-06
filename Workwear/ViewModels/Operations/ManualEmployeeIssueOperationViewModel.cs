@@ -24,14 +24,14 @@ namespace workwear.ViewModels.Operations
 				if(employeeCardItem == null)
 					throw new ArgumentNullException(nameof(employeeCardItem));
 				Entity.Employee = employeeCardItem.EmployeeCard;
-				Entity.Issued = employeeCardItem.NeededAmount;
+				Entity.Issued = employeeCardItem.ActiveNormItem?.Amount ?? 1;
 				Entity.ManualOperation = true;
 				Entity.NormItem = employeeCardItem.ActiveNormItem;
 				Entity.ProtectionTools = employeeCardItem.ProtectionTools;
 				Entity.Returned = 0;
 				Entity.WearPercent = 0m;
 				Entity.UseAutoWriteoff = true;
-				Entity.OperationTime = DateTime.Today;
+				Entity.OperationTime = employeeCardItem.NextIssue ?? DateTime.Today;
 			}
 			if(!Entity.ManualOperation)
 				throw new NotSupportedException("Этот диалог предназначен только для ручных операций");
