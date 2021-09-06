@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using QS.Dialog;
+using QS.Dialog.ViewModels;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -21,12 +22,10 @@ namespace workwear.ViewModels.Regulations
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly IInteractiveQuestion interactive;
-		private readonly IProgressBarDisplayable progressBar;
 
-		public NormViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IInteractiveQuestion interactive, IProgressBarDisplayable progressBar, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+		public NormViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IInteractiveQuestion interactive, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.interactive = interactive;
-			this.progressBar = progressBar;
 		}
 
 		/// <summary>
@@ -142,17 +141,18 @@ namespace workwear.ViewModels.Regulations
 
 			if(worksEmployees != null) {
 				SaveSensitive = CancelSensitive = false;
-				progressBar.Start(worksEmployees.Count);
+				var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(this); 
+				progressPage.ViewModel.Progress.Start(worksEmployees.Count, text: "Обработка сотрудников...");
 
 				foreach(var emp in worksEmployees) {
 					emp.UoW = UoW;
 					emp.UpdateWorkwearItems();
 					UoW.Save(emp);
-					progressBar.Add();
+					progressPage.ViewModel.Progress.Add();
 				}
 
 				SaveSensitive = CancelSensitive = true;
-				progressBar.Close();
+				NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
 			}
 		}
 		#endregion
