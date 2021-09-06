@@ -5,6 +5,7 @@ using System.Linq;
 using NHibernate;
 using QS.Dialog;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels;
 using workwear.Domain.Company;
@@ -46,6 +47,12 @@ namespace workwear.ViewModels.Statements
 
 		#endregion
 
+		#region Helpers
+
+		IUnitOfWork UoW => issuanceSheetViewModel.UoW;
+
+		#endregion
+
 		List<EmployeeCard> employees = new List<EmployeeCard>();
 
 		GenericObservableList<EmployeeCard> observableEmployees;
@@ -63,6 +70,8 @@ namespace workwear.ViewModels.Statements
 			this.issuanceSheetViewModel = issuanceSheetViewModel ?? throw new ArgumentNullException(nameof(issuanceSheetViewModel));
 			this.employeeIssueRepository = employeeIssueRepository;
 			this.question = question;
+
+			employeeIssueRepository.RepoUow = UoW;
 		}
 
 		#region Команды	
@@ -144,9 +153,9 @@ namespace workwear.ViewModels.Statements
 
 		private void FillByExpense()
 		{
-			var issueOperations = employeeIssueRepository.GetOperationsTouchDates(issuanceSheetViewModel.UoW, 
+			var issueOperations = employeeIssueRepository.GetOperationsByDates( 
 				employees.ToArray(), 
-				BeginDate.Value, 
+				BeginDate.Value,
 				EndDate.Value,
 				x => x.Fetch(SelectMode.Fetch, f => f.Nomenclature));
 
