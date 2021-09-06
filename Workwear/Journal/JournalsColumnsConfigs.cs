@@ -146,6 +146,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
 				() => FluentColumnsConfig<StockBalanceJournalNode>.Create()
+					.AddColumn("Номер").AddTextRenderer(e => $"{e.NomenclatureNumber}").SearchHighlight()
 					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
 					.AddColumn("Размер").AddTextRenderer(e => e.Size).SearchHighlight()
 					.AddColumn("Рост").AddTextRenderer(e => e.Growth).SearchHighlight()
@@ -156,6 +157,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<StockBalanceShortSummaryJournalViewModel>(
 				() => FluentColumnsConfig<StockBalanceShortSummaryJournalNode>.Create()
+						.AddColumn("Номер").AddTextRenderer(e => $"{e.NomenclatureNumber}").SearchHighlight()
 						.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
 						.AddColumn("Размер").AddTextRenderer(e => e.Size).SearchHighlight()
 						.AddColumn("Пол одежды").AddTextRenderer(e => e.Sex != null ? e.Sex.GetAttribute<DisplayAttribute>().Name : "").SearchHighlight()

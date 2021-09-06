@@ -124,7 +124,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		{
 			var operations = employeeIssueRepository.GetOperationsForEmployee(UoW, Entity, row.ProtectionTools).OrderByDescending(x => x.OperationTime).ToList();
 			IPage<ManualEmployeeIssueOperationViewModel> page;
-			if(!operations.Any())
+			if(!operations.Any() || operations.First().ExpiryByNorm < DateTime.Today)
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
 			else if(operations.First().ManualOperation)
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(operations.First().Id), OpenPageOptions.AsSlave);
@@ -141,7 +141,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 				var page = sender as IPage<ManualEmployeeIssueOperationViewModel>;
 				var operation = (UoW.Session as NHibernate.Impl.SessionImpl).PersistenceContext.EntitiesByKey.SingleOrDefault(x => x.Value is EmployeeIssueOperation && (int)x.Key.Identifier == page.ViewModel.Entity.Id);
 				if(operation.Value != null)
-					UoW.Session.Refresh(operation.Value);
+					UoW.Session.Refresh(operation.Value);//Почему то не срабатывает при втором вызове. Но не смог починить.
 				Entity.FillWearRecivedInfo(employeeIssueRepository);
 				Entity.UpdateNextIssue(page.ViewModel.Entity.ProtectionTools);
 			}
