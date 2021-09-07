@@ -37,7 +37,10 @@ namespace workwear.Views.Stock
 			ycomboUnits.ItemsList = MeasurementUnitsRepository.GetActiveUnits (ViewModel.UoW);
 			ycomboUnits.Binding.AddBinding (Entity, e => e.Units, w => w.SelectedItem).InitializeFromSource ();
 
-			yspinMonths.Binding.AddBinding(Entity, e => e.LifeMonths, w => w.ValueAsInt, new QSOrmProject.NullToZeroConverter()).InitializeFromSource();
+			comboIssueType.ItemsEnum = typeof(IssueType);
+			comboIssueType.Binding.AddBinding(Entity, e => e.IssueType, w => w.SelectedItem).InitializeFromSource();
+
+			yspinMonths.Binding.AddBinding(Entity, e => e.LifeMonths, w => w.ValueAsInt, new NullToZeroConverter()).InitializeFromSource();
 			ycheckLife.Active = Entity.LifeMonths.HasValue;
 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();

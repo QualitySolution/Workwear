@@ -102,10 +102,10 @@ namespace workwear.ViewModels.Stock
 		{
 			Entity.ObservableItems.Clear();
 
-			Entity.Employee.FillWearInStockInfo(UoW, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
+			Entity.Employee.FillWearInStockInfo(UoW, baseParameters, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
 
 			foreach(var item in Entity.Employee.WorkwearItems) {
-				Entity.AddItem(item);
+				Entity.AddItem(item, baseParameters);
 			}
 		}
 

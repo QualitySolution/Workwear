@@ -99,11 +99,12 @@ namespace workwear.Views.Stock
 
 		private string GetRowColor(ExpenseItem item)
 		{
-			if(item.EmployeeCardItem?.NeededAmount > 0 && item.Nomenclature == null)
+			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(ViewModel.BaseParameters);
+			if(requiredIssue > 0 && item.Nomenclature == null)
 				return item.Amount == 0 ? "red" : "Dark red";
-			if(item.EmployeeCardItem?.NeededAmount > 0 && item.Amount == 0)
+			if(requiredIssue > 0 && item.Amount == 0)
 				return "blue";
-			if(item.EmployeeCardItem?.NeededAmount <= 0 && item.Amount == 0)
+			if(requiredIssue <= 0 && item.Amount == 0)
 				return "gray";
 			return null;
 		}

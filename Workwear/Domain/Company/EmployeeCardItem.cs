@@ -13,6 +13,7 @@ using workwear.Domain.Stock;
 using workwear.Measurements;
 using Workwear.Measurements;
 using workwear.Repository.Stock;
+using workwear.Tools;
 
 namespace workwear.Domain.Company
 {
@@ -115,10 +116,6 @@ namespace workwear.Domain.Company
 			}
 		}
 
-		public virtual int NeededAmount{
-			get{ return ActiveNormItem.Amount - Amount;	}
-		}
-
 		public virtual string Title{
 			get{ return String.Format ("Потребность сотрудника {3} в {0} - {1} на {2}", ProtectionTools.Name, ProtectionTools.GetAmountAndUnitsText(ActiveNormItem.Amount), ActiveNormItem.LifeText, EmployeeCard.ShortName);
 			}
@@ -132,7 +129,7 @@ namespace workwear.Domain.Company
 				if(!ProtectionTools.MatchedNomenclatures.Any())
 					return StockStateInfo.UnknownNomenclature;
 
-				if(InStock.Any(x => x.Amount >= NeededAmount))
+				if(InStock.Any(x => x.Amount >= ActiveNormItem.Amount))
 					return StockStateInfo.Enough;
 
 				if(InStock.Sum(x => x.Amount) <= 0)
@@ -188,6 +185,19 @@ namespace workwear.Domain.Company
 			NextIssue = Created = DateTime.Today;
 		}
 
+		#region Methods
+
+		/// <summary>
+		/// Необходимое к выдачи количество.
+		/// Внимание! Не корректно считает сложные ситуации, с неполной выдачей.
+		/// </summary>
+		public virtual int CalculateRequiredIssue(BaseParameters parameters)
+		{
+			if(NextIssue.HasValue && NextIssue.Value.AddDays(-parameters.ColDayAheadOfShedule) <= DateTime.Today)
+				return ActiveNormItem.Amount;
+			else 
+				return ActiveNormItem.Amount - Amount;
+		}
 		public virtual bool MatcheStockPosition(StockPosition stockPosition)
 		{
 			if(!ProtectionTools.MatchedNomenclatures.Any(n => n.Id == stockPosition.Nomenclature.Id))
@@ -272,7 +282,8 @@ namespace workwear.Domain.Company
 				uow.Save (this);
 			}
 		}
-
+		#endregion
+		
 		#region Зазоры для тестирования
 
 		protected internal virtual IssueGraph GetIssueGraphForItem(IUnitOfWork uow)
