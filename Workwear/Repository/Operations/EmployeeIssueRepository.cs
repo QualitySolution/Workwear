@@ -55,7 +55,7 @@ namespace workwear.Repository.Operations
 			var query = RepoUow.Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.Employee.Id.IsIn(employeeIds))
 				//Проверяем попадает ли операция в диапазон, обратным стравлением условий. Проверяем 2 даты и начала и конца, так как по сути для наса важны StartOfUse и ExpiryByNorm но они могут быть null.
-				.Where(o => (o.OperationTime <= end) && (o.OperationTime >= begin));
+				.Where(o => (o.OperationTime < end.Date.AddDays(1)) && (o.OperationTime >= begin));
 
 			makeEager?.Invoke(query);
 
