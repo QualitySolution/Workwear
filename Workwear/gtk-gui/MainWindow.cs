@@ -137,6 +137,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionEmployeeLoad;
 
+	private global::Gtk.ToggleAction ActionMaxizizeOnStart;
+
 	private global::Gtk.Action ActionNormsLoad;
 
 	private global::Gtk.Action ActionBatchProcessing;
@@ -387,6 +389,9 @@ public partial class MainWindow
 		this.ActionEmployeeLoad = new global::Gtk.Action("ActionEmployeeLoad", global::Mono.Unix.Catalog.GetString("Сотрудники"), global::Mono.Unix.Catalog.GetString("Загрузка сотрудников из Excel"), null);
 		this.ActionEmployeeLoad.ShortLabel = global::Mono.Unix.Catalog.GetString("Сотрудники");
 		w1.Add(this.ActionEmployeeLoad, null);
+		this.ActionMaxizizeOnStart = new global::Gtk.ToggleAction("ActionMaxizizeOnStart", global::Mono.Unix.Catalog.GetString("Разворачивать при запуске"), null, null);
+		this.ActionMaxizizeOnStart.ShortLabel = global::Mono.Unix.Catalog.GetString("Разворачивать при запуске");
+		w1.Add(this.ActionMaxizizeOnStart, null);
 		this.ActionNormsLoad = new global::Gtk.Action("ActionNormsLoad", global::Mono.Unix.Catalog.GetString("Нормы"), null, null);
 		this.ActionNormsLoad.ShortLabel = global::Mono.Unix.Catalog.GetString("Нормы");
 		w1.Add(this.ActionNormsLoad, null);
@@ -404,7 +409,6 @@ public partial class MainWindow
 		this.Name = "MainWindow";
 		this.Title = global::Mono.Unix.Catalog.GetString("QS: Спецодежда и имущество");
 		this.Icon = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.logo.ico");
-		this.WindowPosition = ((global::Gtk.WindowPosition)(3));
 		// Container child MainWindow.Gtk.Container+ContainerChild
 		this.vbox1 = new global::Gtk.VBox();
 		this.vbox1.Name = "vbox1";
@@ -660,6 +664,7 @@ public partial class MainWindow
 		this.ActionUserSettings.Activated += new global::System.EventHandler(this.OnActionUserSettingsActivated);
 		this.ActionCardIssuee.Activated += new global::System.EventHandler(this.OnActionCardIssueeActivated);
 		this.ActionEmployeeLoad.Activated += new global::System.EventHandler(this.OnActionEmployeeLoadActivated);
+		this.ActionMaxizizeOnStart.Toggled += new global::System.EventHandler(this.OnActionMaxizizeOnStartToggled);
 		this.ActionNormsLoad.Activated += new global::System.EventHandler(this.OnActionNormsLoadActivated);
 		this.ActionSetNorms.Activated += new global::System.EventHandler(this.OnActionSetNormsActivated);
 		this.ActionImportWorkwearItems.Activated += new global::System.EventHandler(this.OnActionImportWorkwearItemsActivated);

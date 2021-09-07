@@ -5450,6 +5450,14 @@
         <property name="Tooltip" translatable="yes">Загрузка сотрудников из Excel</property>
         <signal name="Activated" handler="OnActionEmployeeLoadActivated" />
       </action>
+      <action id="ActionMaxizizeOnStart">
+        <property name="Type">Toggle</property>
+        <property name="Label" translatable="yes">Разворачивать при запуске</property>
+        <property name="ShortLabel" translatable="yes">Разворачивать при запуске</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">False</property>
+        <signal name="Toggled" handler="OnActionMaxizizeOnStartToggled" />
+      </action>
       <action id="ActionNormsLoad">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Нормы</property>
@@ -5478,7 +5486,6 @@
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
     <property name="Icon">resource:workwear.icon.logo.ico</property>
-    <property name="WindowPosition">CenterAlways</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>
       <widget class="Gtk.VBox" id="vbox1">
@@ -5518,6 +5525,7 @@
                   <node type="Menuitem" action="ActionIconsMiddle" />
                   <node type="Menuitem" action="ActionIconsLarge" />
                 </node>
+                <node type="Menuitem" action="ActionMaxizizeOnStart" />
               </node>
               <node type="Menu" action="Action21">
                 <node type="Menuitem" action="ActionStockDocs" />

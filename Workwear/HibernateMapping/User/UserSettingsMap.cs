@@ -13,6 +13,7 @@ namespace workwear.HibernateMapping.User
 			Map (x => x.ToolbarStyle).Column ("toolbar_style").CustomType<ToolbarStyleStringType>();
 			Map (x => x.ToolBarIconsSize).Column ("toolbar_icons_size").CustomType<ToolBarIconsSizeStringType>();
 			Map(x => x.ShowToolbar).Column("toolbar_show");
+			Map(x => x.MaximizeOnStart).Column("maximize_on_start");
 
 			References(x => x.DefaultWarehouse).Column("default_warehouse_id").Cascade.All();
 			References(x => x.DefaultLeader).Column("default_leader_id").Cascade.All();
