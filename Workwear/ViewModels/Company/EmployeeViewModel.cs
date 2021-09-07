@@ -20,6 +20,7 @@ using workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
 using workwear.Measurements;
 using workwear.Repository.Company;
+using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company.EmployeeChilds;
 using workwear.ViewModels.IdentityCards;
@@ -37,6 +38,7 @@ namespace workwear.ViewModels.Company
 		private readonly IInteractiveQuestion interactive;
 		private readonly FeaturesService featuresService;
 		private readonly EmployeeRepository employeeRepository;
+		private readonly BaseParameters baseParameters;
 		private readonly CommonMessages messages;
 
 		public EmployeeViewModel(
@@ -50,6 +52,7 @@ namespace workwear.ViewModels.Company
 			IInteractiveQuestion interactive,
 			FeaturesService featuresService,
 			EmployeeRepository employeeRepository,
+			BaseParameters baseParameters,
 			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
@@ -58,6 +61,7 @@ namespace workwear.ViewModels.Company
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
 
@@ -176,7 +180,7 @@ namespace workwear.ViewModels.Company
 		{
 			//Так как склад подбора мог поменятся при смене подразделения.
 			if(e.PropertyName == nameof(Entity.Subdivision)) {
-				Entity.FillWearInStockInfo(UoW, Entity.Subdivision?.Warehouse, DateTime.Now);
+				Entity.FillWearInStockInfo(UoW, baseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
 				OnPropertyChanged(nameof(SubdivisionAddress));			}
 		}
 
@@ -200,7 +204,7 @@ namespace workwear.ViewModels.Company
 			else return;
 
 			//Обновляем подобранную номенклатуру
-			Entity.FillWearInStockInfo(UoW, Entity?.Subdivision?.Warehouse, DateTime.Now);
+			Entity.FillWearInStockInfo(UoW, baseParameters, Entity?.Subdivision?.Warehouse, DateTime.Now);
 		}
 
 		#endregion

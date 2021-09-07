@@ -11,6 +11,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Measurements;
+using workwear.Tools;
 using workwear.Tools.Features;
 
 namespace workwear.ViewModels.Stock
@@ -23,14 +24,16 @@ namespace workwear.ViewModels.Stock
 		private readonly IDeleteEntityService deleteService;
 
 		public SizeService SizeService { get; }
+		public BaseParameters BaseParameters { get; }
 
-		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService)
+		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, BaseParameters baseParameters)
 		{
 			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
+			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 			Entity.FillCanWriteoffInfo(UoW);

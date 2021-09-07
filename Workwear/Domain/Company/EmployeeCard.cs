@@ -354,7 +354,7 @@ namespace workwear.Domain.Company
 
 		#region Фильтрованные коллекции
 
-		public virtual IEnumerable<EmployeeCardItem> UnderreceivedItems => WorkwearItems.Where(x => x.NeededAmount > 0);
+		public virtual IEnumerable<EmployeeCardItem> GetUnderreceivedItems(BaseParameters baseParameters) => WorkwearItems.Where(x => x.CalculateRequiredIssue(baseParameters) > 0);
 
 		#endregion
 
@@ -541,9 +541,9 @@ namespace workwear.Domain.Company
 			}
 		}
 
-		public virtual void FillWearInStockInfo(IUnitOfWork uow, Warehouse warehouse, DateTime onTime, bool onlyUnderreceived = false)
+		public virtual void FillWearInStockInfo(IUnitOfWork uow, BaseParameters baseParameters, Warehouse warehouse, DateTime onTime, bool onlyUnderreceived = false)
 		{
-			var actualItems = onlyUnderreceived ? UnderreceivedItems : WorkwearItems;
+			var actualItems = onlyUnderreceived ? GetUnderreceivedItems(baseParameters) : WorkwearItems;
 			FetchEntitiesInWearItems(uow, actualItems);
 			var allNomenclatures = actualItems.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
 			var stockRepo = new StockRepository();

@@ -35,7 +35,7 @@ namespace workwear.ViewModels.Stock
 		private readonly ILifetimeScope autofacScope;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly IValidator validator;
-		private readonly BaseParameters baseParameters;
+		public readonly BaseParameters BaseParameters;
 		private readonly IInteractiveQuestion interactive;
 		private readonly IChangeableConfiguration configuration;
 		private readonly ICardReaderService cardReaderService;
@@ -63,7 +63,7 @@ namespace workwear.ViewModels.Stock
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.validator = validator ?? throw new ArgumentNullException(nameof(validator));
-			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 			this.cardReaderService = cardReaderService;
@@ -388,9 +388,9 @@ namespace workwear.ViewModels.Stock
 			Expense.Warehouse = Warehouse;
 			Expense.ObservableItems.Clear();
 
-			Employee.FillWearInStockInfo(uow, Warehouse, Expense.Date, onlyUnderreceived: false);
+			Employee.FillWearInStockInfo(uow, BaseParameters, Warehouse, Expense.Date, onlyUnderreceived: false);
 			foreach(var item in Employee.WorkwearItems) {
-				Expense.AddItem(item);
+				Expense.AddItem(item, BaseParameters);
 			}
 		}
 
@@ -400,7 +400,7 @@ namespace workwear.ViewModels.Stock
 				return;
 
 			Expense.CleanupItems();
-			Expense.UpdateOperations(uow, baseParameters, interactive, CardUidСompact);
+			Expense.UpdateOperations(uow, BaseParameters, interactive, CardUidСompact);
 			uow.Save(Expense);
 
 			logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");

@@ -10,6 +10,7 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Measurements;
 using workwear.Repository.Operations;
+using workwear.Tools;
 
 namespace WorkwearTest.Integration.Organization
 {
@@ -31,6 +32,8 @@ namespace WorkwearTest.Integration.Organization
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -87,9 +90,9 @@ namespace WorkwearTest.Integration.Organization
 
 				var operationTime = uow.GetAll<WarehouseOperation>().Select(x => x.OperationTime).ToList();
 				
-				employee.FillWearInStockInfo(uow, warehouse, new DateTime(2020, 07, 22), false);
-				Assert.That(employee.UnderreceivedItems.Count(), Is.GreaterThan(0));
-				var employeeCardItem = employee.UnderreceivedItems.First();
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22), false);
+				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.GreaterThan(0));
+				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters).First();
 				Assert.That(employeeCardItem.BestChoiceInStock.Count(), Is.GreaterThan(0));
 
 				var bestChoice = employeeCardItem.BestChoiceInStock.First();
@@ -104,6 +107,8 @@ namespace WorkwearTest.Integration.Organization
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -172,10 +177,10 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(income);
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
 
-				employee.FillWearInStockInfo(uow, warehouse, new DateTime(2020, 07, 22), false);
-				Assert.That(employee.UnderreceivedItems.Count(), Is.GreaterThan(0));
-				var employeeCardItem = employee.UnderreceivedItems.First();
-				var employeeCardItemCount = employee.UnderreceivedItems.Count();
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22), false);
+				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.GreaterThan(0));
+				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters).First();
+				var employeeCardItemCount = employee.GetUnderreceivedItems(baseParameters).Count();
 
 				var inStock = employeeCardItem.InStock;
 
@@ -195,6 +200,8 @@ namespace WorkwearTest.Integration.Organization
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -289,12 +296,12 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(income);
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(3));
 
-				employee.FillWearInStockInfo(uow, warehouse, new DateTime(2020, 07, 22), false);
-				Assert.That(employee.UnderreceivedItems.Count(), Is.GreaterThan(0));
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22), false);
+				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.GreaterThan(0));
 
-				Assert.That(employee.UnderreceivedItems.Count(), Is.EqualTo(2));
+				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.EqualTo(2));
 
-				var employeeCardItem = employee.UnderreceivedItems.First();
+				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters).First();
 
 				Assert.That(employeeCardItem.InStock.Count(), Is.GreaterThan(0));
 
@@ -312,6 +319,8 @@ namespace WorkwearTest.Integration.Organization
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -388,7 +397,7 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(income);
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
 
-				employee.FillWearInStockInfo(uow, warehouse, new DateTime(2020, 07, 22));
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22));
 				var item1 = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normItem);
 				var item2 = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normItem2);
 				Assert.That(item1.BestChoiceInStock.First().Nomenclature.Id, Is.EqualTo(nomenclature.Id));
