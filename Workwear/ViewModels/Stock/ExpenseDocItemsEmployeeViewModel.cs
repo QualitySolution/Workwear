@@ -4,11 +4,13 @@ using Gtk;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Project.Services;
 using QS.ViewModels;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Measurements;
 using workwear.Tools.Features;
 using Workwear.Measurements;
 
@@ -19,15 +21,17 @@ namespace workwear.ViewModels.Stock
 		public readonly ExpenseEmployeeViewModel expenseEmployeeViewModel;
 		private readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
+		private readonly IDeleteEntityService deleteService;
 
 		public SizeService SizeService { get; }
 
-		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService)
+		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService)
 		{
 			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
+			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 			Entity.FillCanWriteoffInfo(UoW);
@@ -135,7 +139,10 @@ namespace workwear.ViewModels.Stock
 
 		public void Delete(ExpenseItem item)
 		{
-			Entity.RemoveItem(item);
+			if(item.Id > 0)
+				deleteService.DeleteEntity<ExpenseItem>(item.Id, UoW, () => Entity.RemoveItem(item));
+			else
+				Entity.RemoveItem(item);
 			CalculateTotal();
 		}
 
