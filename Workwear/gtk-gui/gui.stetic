@@ -5072,10 +5072,10 @@
         <property name="ShortLabel" translatable="yes">Должности</property>
         <signal name="Activated" handler="OnAction8Activated" />
       </action>
-      <action id="Action9">
+      <action id="ActionLeaders">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Руководители</property>
-        <property name="ShortLabel" translatable="yes">Руководители</property>
+        <property name="Label" translatable="yes">Должностные лица</property>
+        <property name="ShortLabel" translatable="yes">Должностные лица</property>
         <signal name="Activated" handler="OnAction9Activated" />
       </action>
       <action id="aboutAction">
@@ -5544,7 +5544,7 @@
                 <node type="Menuitem" action="ActionProfession" />
                 <node type="Menuitem" action="Action8" />
                 <node type="Menuitem" action="ActionVacationTypes" />
-                <node type="Menuitem" action="Action9" />
+                <node type="Menuitem" action="ActionLeaders" />
               </node>
               <node type="Menu" action="ActionReports">
                 <node type="Menuitem" action="Action10" />
