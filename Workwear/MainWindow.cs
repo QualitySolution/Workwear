@@ -444,6 +444,9 @@ public partial class MainWindow : Gtk.Window
 				break;
 		}
 		ActionShowBar.Active = CurrentUserSettings.Settings.ShowToolbar;
+		if(CurrentUserSettings.Settings.MaximizeOnStart)
+			Maximize();
+		ActionMaxizizeOnStart.Active = CurrentUserSettings.Settings.MaximizeOnStart;
 	}
 
 	private void ToolBarMode(ToolbarStyle style)
@@ -685,5 +688,13 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionEmployeeLoadActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<EmployeesLoadViewModel>(null);
+	}
+
+	protected void OnActionMaxizizeOnStartToggled(object sender, EventArgs e)
+	{
+		if(CurrentUserSettings.Settings.MaximizeOnStart != ActionMaxizizeOnStart.Active) {
+			CurrentUserSettings.Settings.MaximizeOnStart = ActionMaxizizeOnStart.Active;
+			CurrentUserSettings.SaveSettings();
+		}
 	}
 }

@@ -5349,6 +5349,14 @@
         <property name="StockId">gtk-convert</property>
         <signal name="Activated" handler="OnActionEmployeeLoadActivated" />
       </action>
+      <action id="ActionMaxizizeOnStart">
+        <property name="Type">Toggle</property>
+        <property name="Label" translatable="yes">Разворачивать при запуске</property>
+        <property name="ShortLabel" translatable="yes">Разворачивать при запуске</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">False</property>
+        <signal name="Toggled" handler="OnActionMaxizizeOnStartToggled" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -5385,6 +5393,7 @@
                   <node type="Menuitem" action="ActionIconsMiddle" />
                   <node type="Menuitem" action="ActionIconsLarge" />
                 </node>
+                <node type="Menuitem" action="ActionMaxizizeOnStart" />
               </node>
               <node type="Menu" action="Action21">
                 <node type="Menuitem" action="ActionStockDocs" />

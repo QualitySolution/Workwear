@@ -49,6 +49,13 @@ namespace workwear.Domain.Users
 			set { SetField(ref showToolbar, value, () => ShowToolbar); }
 		}
 
+		private bool maximizeOnStart;
+		[Display(Name = "Разворачивать окно при запуске")]
+		public virtual bool MaximizeOnStart {
+			get => maximizeOnStart;
+			set => SetField(ref maximizeOnStart, value);
+		}
+
 		private Warehouse defaultWarehouse;
 
 		[Display(Name = "Склад по умолчанию")]
