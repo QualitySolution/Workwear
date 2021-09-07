@@ -4,7 +4,6 @@ using workwear.ViewModels.Company;
 
 namespace workwear.Views.Company
 {
-	[System.ComponentModel.ToolboxItem(true)]
 	public partial class LeadersView : EntityDialogViewBase<LeadersViewModel, Leader>
 	{
 		public LeadersView(LeadersViewModel viewModel ) : base(viewModel)
@@ -20,6 +19,8 @@ namespace workwear.Views.Company
 			tbSurName.Binding.AddBinding(Entity, e => e.Surname, w => w.Text).InitializeFromSource();
 			tbPatronymic.Binding.AddBinding(Entity, e => e.Patronymic, w=> w.Text).InitializeFromSource();
 			tbPosition.Binding.AddBinding(Entity, e => e.Position, w => w.Text).InitializeFromSource();
+
+			entryEmployee.ViewModel = ViewModel.EntryEmployee;
 		}
 	}
 }

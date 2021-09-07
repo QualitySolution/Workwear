@@ -49,6 +49,13 @@ namespace workwear.Domain.Company
 			set { SetField(ref position, value); }
 		}
 
+		private EmployeeCard employee;
+		[Display(Name = "Карточка сотрудника")]
+		public virtual EmployeeCard Employee {
+			get => employee;
+			set => SetField(ref employee, value);
+		}
+
 		#endregion
 
 		public virtual string Title => PersonHelper.PersonNameWithInitials(Surname, Name, Patronymic);

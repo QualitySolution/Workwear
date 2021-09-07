@@ -14,6 +14,8 @@ namespace workwear.HibernateMapping.Company
 			Map(x => x.Name).Column("name");
 			Map(x => x.Patronymic).Column("patronymic");
 			Map(x => x.Position).Column("position");
+
+			References(x => x.Employee).Column("employee_id");
 		}
 	}
 }

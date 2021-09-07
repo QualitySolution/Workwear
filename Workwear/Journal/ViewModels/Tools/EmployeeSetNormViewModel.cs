@@ -16,6 +16,7 @@ using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
 using QS.Services;
 using QS.Utilities.Text;
+using QS.ViewModels.Resolve;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
@@ -24,6 +25,7 @@ using workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Tools
 {
+	[DontUseAsDefaultViewModel]
 	public class EmployeeSetNormViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeSetNormJournalNode>
 	{
 		private readonly NormRepository normRepository;
