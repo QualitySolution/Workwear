@@ -513,7 +513,7 @@ namespace workwear.Domain.Company
 			}
 
 			var receiveds = issueRepository.AllOperationsForEmployee(this).Where(x => x.Issued > 0);
-			var protectionGroups = receiveds.GroupBy(x => x.ProtectionTools?.Id).ToDictionary(g => g.Key, g => g);
+			var protectionGroups = receiveds.Where(x => x.ProtectionTools != null).GroupBy(x => x.ProtectionTools?.Id).ToDictionary(g => g.Key, g => g);
 
 			//Основное заполнение выдачи
 			foreach (var item in WorkwearItems)
