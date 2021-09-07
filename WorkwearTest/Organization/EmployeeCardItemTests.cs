@@ -11,6 +11,7 @@ using workwear.Domain.Stock;
 using workwear.Measurements;
 using Workwear.Measurements;
 using Workwear.Domain.Company;
+using workwear.Tools;
 
 namespace WorkwearTest.Organization
 {
@@ -241,6 +242,117 @@ namespace WorkwearTest.Organization
 		}
 		#endregion
 
+		#region CalculateRequiredIssue
+
+		[Test(Description = "Не получали совсем, должны получить все")]
+		public void CalculateRequiredIssue_NotRecivedCase()
+		{
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+			
+			var norm = new NormItem {
+				Amount = 5
+			};
+			var item = new EmployeeCardItem {
+				ActiveNormItem = norm,
+				Amount = 0,
+				LastIssue = null,
+				NextIssue = DateTime.Today.AddDays(30)
+			};
+			Assert.That(item.CalculateRequiredIssue(baseParameters), Is.EqualTo(5));
+		}
+
+		[Test(Description = "Все получили")]
+		public void CalculateRequiredIssue_RecivedFullyCase()
+		{
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+			
+			var norm = new NormItem {
+				Amount = 4
+			};
+			var item = new EmployeeCardItem {
+				ActiveNormItem = norm,
+				Amount = 4,
+				LastIssue = DateTime.Today.AddDays(-30),
+				NextIssue = DateTime.Today.AddDays(30)
+			};
+			Assert.That(item.CalculateRequiredIssue(baseParameters), Is.EqualTo(0));
+		}
+		
+		[Test(Description = "Получили частично")]
+		public void CalculateRequiredIssue_RecivedPartCase()
+		{
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+			
+			var norm = new NormItem {
+				Amount = 4
+			};
+			//FIXME Возможно некоректная ситуация, надо подумать как в этом месте будет более правильно поставить дату следующей выдачи
+			var item = new EmployeeCardItem {
+				ActiveNormItem = norm,
+				Amount = 1,
+				LastIssue = DateTime.Today.AddDays(-30),
+				NextIssue = DateTime.Today.AddDays(30)
+			};
+			Assert.That(item.CalculateRequiredIssue(baseParameters), Is.EqualTo(3));
+		}
+		
+		[Test(Description = "Получили, но дожны получить заново")]
+		public void CalculateRequiredIssue_NextIssueIsNullCase()
+		{
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+			
+			var norm = new NormItem {
+				Amount = 2
+			};
+			var item = new EmployeeCardItem {
+				ActiveNormItem = norm,
+				Amount = 2,
+				LastIssue = DateTime.Today.AddDays(-30),
+				NextIssue = null
+			};
+			Assert.That(item.CalculateRequiredIssue(baseParameters), Is.EqualTo(0));
+		}
+		
+		[Test(Description = "Проверяем учитывает ли расчет даты следущей выдачи дату автосписания.")]
+		public void CalculateRequiredIssue_ReciveExpiredCase()
+		{
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+			
+			var norm = new NormItem {
+				Amount = 1
+			};
+			var item = new EmployeeCardItem {
+				ActiveNormItem = norm,
+				Amount = 1,
+				LastIssue = DateTime.Today.AddDays(-40),
+				NextIssue = DateTime.Today.AddDays(-10)
+			};
+			Assert.That(item.CalculateRequiredIssue(baseParameters), Is.EqualTo(1));
+		}
+		[Test(Description = "В настройках базы стоит возможность выдачи раньше на 30 дней.")]
+		public void CalculateRequiredIssue_ReciveBeforeExpiredCase()
+		{
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(30);
+			
+			var norm = new NormItem {
+				Amount = 1
+			};
+			var item = new EmployeeCardItem {
+				ActiveNormItem = norm,
+				Amount = 1,
+				LastIssue = DateTime.Today.AddMonths(-5),
+				NextIssue = DateTime.Today.AddDays(-10)
+			};
+			Assert.That(item.CalculateRequiredIssue(baseParameters), Is.EqualTo(1));
+		}
+		
+		#endregion
 		#region MatcheStockPosition
 
 		[Test(Description = "Проверяем случай при котором у складской позиции отсутсвует рост, значит эта номеклатура без роста и не надо сравнивать ее по росту с сотрудником.")]

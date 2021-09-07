@@ -142,7 +142,7 @@ namespace workwear.Domain.Stock
 			return newItem;
 		}
 
-		public virtual ExpenseItem AddItem(EmployeeCardItem employeeCardItem)
+		public virtual ExpenseItem AddItem(EmployeeCardItem employeeCardItem, BaseParameters baseParameters)
 		{
 			if(employeeCardItem == null)
 				throw new ArgumentNullException(nameof(employeeCardItem));
@@ -160,8 +160,8 @@ namespace workwear.Domain.Stock
 			newItem.EmployeeCardItem = employeeCardItem;
 			newItem.ProtectionTools = employeeCardItem.ProtectionTools;
 
-			if(Employee.UnderreceivedItems.Contains(employeeCardItem) && newItem.Nomenclature != null) 
-				newItem.Amount = employeeCardItem.NeededAmount;
+			if(Employee.GetUnderreceivedItems(baseParameters).Contains(employeeCardItem) && newItem.Nomenclature != null) 
+				newItem.Amount = employeeCardItem.CalculateRequiredIssue(baseParameters);
 			else newItem.Amount = 0;
 
 			return newItem;

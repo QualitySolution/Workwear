@@ -85,7 +85,7 @@ namespace workwear.Views.Tools
 			global::Gtk.Viewport w6 = new global::Gtk.Viewport();
 			w6.ShadowType = ((global::Gtk.ShadowType)(0));
 			// Container child GtkViewport.Gtk.Container+ContainerChild
-			this.table1 = new global::Gtk.Table(((uint)(5)), ((uint)(2)), false);
+			this.table1 = new global::Gtk.Table(((uint)(6)), ((uint)(2)), false);
 			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
@@ -133,7 +133,7 @@ namespace workwear.Views.Tools
 			this.label3 = new global::Gtk.Label();
 			this.label3.Name = "label3";
 			this.label3.Xalign = 1F;
-			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Диапазоны размеров в сотруднике:");
+			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Диапазоны в размерах сотрудника:");
 			this.table1.Add(this.label3);
 			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1[this.label3]));
 			w10.TopAttach = ((uint)(2));
