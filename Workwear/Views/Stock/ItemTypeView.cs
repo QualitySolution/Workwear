@@ -40,6 +40,8 @@ namespace workwear.Views.Stock
 			comboIssueType.ItemsEnum = typeof(IssueType);
 			comboIssueType.Binding.AddBinding(Entity, e => e.IssueType, w => w.SelectedItem).InitializeFromSource();
 
+			comboIssueType.Visible = labelIssueType.Visible = ViewModel.VisibleIssueType;
+
 			yspinMonths.Binding.AddBinding(Entity, e => e.LifeMonths, w => w.ValueAsInt, new NullToZeroConverter()).InitializeFromSource();
 			ycheckLife.Active = Entity.LifeMonths.HasValue;
 

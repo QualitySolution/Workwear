@@ -70,6 +70,7 @@ namespace workwear.Tools.Features
 				case WorkwearFeature.IdentityCards:
 					return ProductEdition == 3;
 				case WorkwearFeature.MassExpense:
+				case WorkwearFeature.CollectiveExpense:
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.BatchProcessing:
 					return ProductEdition == 2 || ProductEdition == 3;
@@ -98,6 +99,8 @@ namespace workwear.Tools.Features
 		IdentityCards,
 		[Display(Name = "Выдача списком")]
 		MassExpense,
+		[Display(Name = "Коллективная выдача")]
+		CollectiveExpense,
 		[Display(Name = "Загрузка из Excel")]
 		LoadExcel,
 		[Display(Name = "Групповая обработка")]

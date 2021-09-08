@@ -128,10 +128,12 @@ namespace workwear.Journal
 			#region Stock
 
 			TreeViewColumnsConfigFactory.Register<ItemsTypeJournalViewModel>(
-				() => FluentColumnsConfig<ItemsTypeJournalNode>.Create()
+				(jvm) => FluentColumnsConfig<ItemsTypeJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Вид одежды").AddTextRenderer(node => node.WearCategoryText)
+					.AddColumn("Тип выдачи").Visible(jvm.FeaturesService.Available(WorkwearFeature.CollectiveExpense))
+						.AddTextRenderer(n => n.IssueTypeText)
 					.Finish()
 			);
 

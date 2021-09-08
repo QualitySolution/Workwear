@@ -8,16 +8,20 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using workwear.Domain.Stock;
-using Workwear.Measurements;
+using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
+using Workwear.Measurements;
 
 namespace workwear.Journal.ViewModels.Stock
 {
 	public class ItemsTypeJournalViewModel : EntityJournalViewModelBase<ItemsType, ItemTypeViewModel, ItemsTypeJournalNode>
 	{
-		public ItemsTypeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		public FeaturesService FeaturesService { get; }
+
+		public ItemsTypeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, FeaturesService featuresService, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
+			FeaturesService = featuresService ?? throw new System.ArgumentNullException(nameof(featuresService));
 		}
 
 		protected override IQueryOver<ItemsType> ItemsQuery(IUnitOfWork uow)
@@ -32,6 +36,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(x => x.WearCategory).WithAlias(() => resultAlias.WearCategory)
+					.Select(x => x.IssueType).WithAlias(() => resultAlias.IssueType)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<ItemsTypeJournalNode>());
 		}
@@ -42,7 +47,9 @@ namespace workwear.Journal.ViewModels.Stock
 		public int Id { get; set; }
 		public string Name { get; set; }
 		public СlothesType? WearCategory { get; set; }
+		public IssueType IssueType { get; set; }
 
 		public string WearCategoryText => WearCategory?.GetEnumTitle();
+		public string IssueTypeText => IssueType.GetEnumTitle();
 	}
 }
