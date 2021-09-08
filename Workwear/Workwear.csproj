@@ -113,7 +113,6 @@
     <EmbeddedResource Include="icon\art\hand-holding-rfid.png" />
     <EmbeddedResource Include="icon\buttons\eye.png" />
     <EmbeddedResource Include="icon\buttons\eye-crossed.png" />
-    <EmbeddedResource Include="Updates\2.6.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
