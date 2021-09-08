@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -3478,10 +3478,9 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gtk.Button" id="buttonAdd">
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonAdd">
                 <property name="MemberName" />
                 <property name="Sensitive">False</property>
-                <property name="Tooltip" translatable="yes">Добавить услугу из начисления</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-add Menu</property>
@@ -5250,7 +5249,6 @@
             <child>
               <widget class="Gtk.Button" id="buttonAddStore">
                 <property name="MemberName" />
-                <property name="Tooltip" translatable="yes">Добавить услугу из начисления</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-add Menu</property>
@@ -5268,7 +5266,6 @@
             <child>
               <widget class="Gtk.Button" id="buttonAddWorker">
                 <property name="MemberName" />
-                <property name="Tooltip" translatable="yes">Добавить услугу из начисления</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-add Menu</property>
@@ -8471,7 +8468,7 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gtk.Button" id="buttonAdd">
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonAdd">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
@@ -9678,9 +9675,8 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gtk.Button" id="buttonAdd">
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonAdd">
                 <property name="MemberName" />
-                <property name="Tooltip" translatable="yes">Добавить услугу из начисления</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-add Menu</property>
@@ -9835,7 +9831,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Button" id="buttonAdd">
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonAdd">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
@@ -13157,7 +13153,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Label" id="labelSum">
+              <widget class="Gamma.GtkWidgets.yLabel" id="labelSum">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Количество:</property>
@@ -13235,9 +13231,8 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gtk.Button" id="buttonAdd">
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonAdd">
                 <property name="MemberName" />
-                <property name="Tooltip" translatable="yes">Добавить услугу из начисления</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-add Menu</property>
