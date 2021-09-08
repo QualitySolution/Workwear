@@ -438,6 +438,12 @@
     <Compile Include="Domain\Stock\CollectiveExpenseItem.cs" />
     <Compile Include="HibernateMapping\Stock\CollectiveExpenseItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\CollectiveExpenseMap.cs" />
+    <Compile Include="ViewModels\Stock\CollectiveExpenseViewModel.cs" />
+    <Compile Include="ViewModels\Stock\CollectiveExpenseItemsViewModel.cs" />
+    <Compile Include="Views\Stock\CollectiveExpenseView.cs" />
+    <Compile Include="Views\Stock\CollectiveExpenseItemsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.CollectiveExpenseView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.CollectiveExpenseItemsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

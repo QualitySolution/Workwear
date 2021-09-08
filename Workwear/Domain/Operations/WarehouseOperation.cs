@@ -17,8 +17,6 @@ namespace workwear.Domain.Operations
 		public virtual int Id { get; set; }
 
 		DateTime operationTime;
-
-
 		public virtual DateTime OperationTime {
 			get { return operationTime; }
 			set { SetField(ref operationTime, value); }
@@ -40,7 +38,6 @@ namespace workwear.Domain.Operations
 			set { SetField(ref expenseWarehouse, value); }
 		}
 
-
 		Nomenclature nomenclature;
 
 		[Display(Name = "Номеклатура")]
@@ -48,7 +45,6 @@ namespace workwear.Domain.Operations
 			get { return nomenclature; }
 			set { SetField(ref nomenclature, value); }
 		}
-
 
 		string size;
 
@@ -58,7 +54,6 @@ namespace workwear.Domain.Operations
 			set { SetField(ref size, value); }
 		}
 
-
 		string growth;
 
 		[Display(Name = "Рост")]
@@ -66,7 +61,6 @@ namespace workwear.Domain.Operations
 			get { return growth; }
 			set { SetField(ref growth, value); }
 		}
-
 
 		int amount;
 
@@ -117,6 +111,20 @@ namespace workwear.Domain.Operations
 				OperationTime = item.ExpenseDoc.Date;
 
 			ExpenseWarehouse = item.ExpenseDoc.Warehouse;
+			ReceiptWarehouse = null;
+			Nomenclature = item.Nomenclature;
+			Size = item.Size;
+			Growth = item.WearGrowth;
+			Amount = item.Amount;
+		}
+
+		public virtual void Update(IUnitOfWork uow, CollectiveExpenseItem item)
+		{
+			//Внимание здесь сравниваются даты без времени.
+			if(item.Document.Date.Date != OperationTime.Date)
+				OperationTime = item.Document.Date;
+
+			ExpenseWarehouse = item.Document.Warehouse;
 			ReceiptWarehouse = null;
 			Nomenclature = item.Nomenclature;
 			Size = item.Size;

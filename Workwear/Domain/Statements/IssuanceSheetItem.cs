@@ -56,6 +56,13 @@ namespace workwear.Domain.Statements
 			set => SetField(ref expenseItem, value);
 		}
 
+		private CollectiveExpenseItem collectiveExpenseItem;
+		[Display(Name = "Строка коллективной выдачи")]
+		public virtual CollectiveExpenseItem CollectiveExpenseItem {
+			get => collectiveExpenseItem;
+			set => SetField(ref collectiveExpenseItem, value);
+		}
+
 		private EmployeeIssueOperation issueOperation;
 
 		[Display(Name = "Операция выдачи")]
@@ -142,6 +149,21 @@ namespace workwear.Domain.Statements
 			StartOfUse = ExpenseItem.EmployeeIssueOperation?.StartOfUse ?? IssuanceSheet.Date;
 			Lifetime = ExpenseItem.EmployeeIssueOperation?.LifetimeMonth ?? 0;
 			IssueOperation = ExpenseItem.EmployeeIssueOperation;
+		}
+
+		public virtual void UpdateFromCollectiveExpense()
+		{
+			if(CollectiveExpenseItem == null)
+				return;
+
+			Employee = CollectiveExpenseItem.Employee;
+			Nomenclature = CollectiveExpenseItem.Nomenclature;
+			Amount = (uint)CollectiveExpenseItem.Amount;
+			Size = CollectiveExpenseItem.Size;
+			WearGrowth = CollectiveExpenseItem.WearGrowth;
+			StartOfUse = CollectiveExpenseItem.EmployeeIssueOperation?.StartOfUse ?? IssuanceSheet.Date;
+			Lifetime = CollectiveExpenseItem.EmployeeIssueOperation?.LifetimeMonth ?? 0;
+			IssueOperation = CollectiveExpenseItem.EmployeeIssueOperation;
 		}
 
 		public virtual void UpdateFromMassExpense(EmployeeIssueOperation employeeIssueOperation)

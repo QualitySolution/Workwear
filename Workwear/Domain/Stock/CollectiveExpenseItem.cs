@@ -1,12 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
-using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Statements;
 using workwear.Repository.Stock;

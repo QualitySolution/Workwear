@@ -21,9 +21,9 @@ namespace workwear.HMap
 			References(x => x.EmployeeIssueOperation).Column("employee_issue_operation_id").Cascade.All();
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Not.Nullable().Cascade.All();
 
-			//HasOne(x => x.IssuanceSheetItem)
-				//.Cascade.All()
-				//.PropertyRef(x => x.ExpenseItem);
+			HasOne(x => x.IssuanceSheetItem)
+				.Cascade.All()
+				.PropertyRef(x => x.CollectiveExpenseItem);
 		}
 	}
 }

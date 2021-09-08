@@ -111,7 +111,7 @@ namespace workwear.Domain.Statements
 
 		#endregion
 
-		#region Методы
+		#region Добавление строк
 
 		public virtual IssuanceSheetItem AddItem(ExpenseItem expenseItem)
 		{
@@ -121,6 +121,17 @@ namespace workwear.Domain.Statements
 			};
 			ObservableItems.Add(item);
 			item.UpdateFromExpense();
+			return item;
+		}
+
+		public virtual IssuanceSheetItem AddItem(CollectiveExpenseItem expenseItemItem)
+		{
+			var item = new IssuanceSheetItem {
+				IssuanceSheet = this,
+				CollectiveExpenseItem = expenseItemItem
+			};
+			ObservableItems.Add(item);
+			item.UpdateFromCollectiveExpense();
 			return item;
 		}
 

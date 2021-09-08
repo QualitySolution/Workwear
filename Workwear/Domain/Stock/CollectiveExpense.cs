@@ -8,7 +8,6 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
-using workwear.Repository.Company;
 using workwear.Repository.Operations;
 using workwear.Tools;
 
@@ -115,10 +114,7 @@ namespace workwear.Domain.Stock
 
 			newItem.EmployeeCardItem = employeeCardItem;
 			newItem.ProtectionTools = employeeCardItem.ProtectionTools;
-
-			if(Employee.GetUnderreceivedItems(baseParameters).Contains(employeeCardItem) && newItem.Nomenclature != null) 
-				newItem.Amount = employeeCardItem.CalculateRequiredIssue(baseParameters);
-			else newItem.Amount = 0;
+			newItem.Amount = newItem.Nomenclature != null ? employeeCardItem.CalculateRequiredIssue(baseParameters) : 0;
 
 			return newItem;
 		}
@@ -139,32 +135,21 @@ namespace workwear.Domain.Stock
 
 		#region Методы
 
-		public virtual void FillCanWriteoffInfo(IUnitOfWork uow)
+		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser)
 		{
-			var itemsBalance = EmployeeRepository.ItemsBalance(uow, Employee, Date);
-			foreach(var item in Items) {
-				item.IsWriteOff = item.EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff != null;
-				item.IsEnableWriteOff = item.IsWriteOff || itemsBalance.Where(x => x.ProtectionToolsId == item.ProtectionTools?.Id).Sum(x => x.Amount) > 0;
-				if(WriteOffDoc != null) {
-					var relatedWriteoffItem = WriteOffDoc.Items
-					.FirstOrDefault(x => item.EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff.IsSame(x.EmployeeWriteoffOperation));
-					if(relatedWriteoffItem != null)
-						item.AktNumber = relatedWriteoffItem.AktNumber;
-				}
+			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser));
+		}
 
+		public virtual void UpdateEmployeeWearItems(IProgressBarDisplayable progress)
+		{
+			var groups = Items.GroupBy(x => x.Employee);
+			foreach(var employeeGroup in groups) {
+				progress.Add(text: $"Обновляем потребности {employeeGroup.Key.ShortName}");
+				employeeGroup.Key.UpdateNextIssue(employeeGroup.Select(x => x.ProtectionTools).ToArray());
+				progress.Add();
+				employeeGroup.Key.FillWearRecivedInfo(new EmployeeIssueRepository(UoW));
+				UoW.Save(employeeGroup.Key);
 			}
-		}
-
-		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null)
-		{
-			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser, signCardUid));
-		}
-
-		public virtual void UpdateEmployeeWearItems()
-		{
-			Employee.UpdateNextIssue(Items.Select(x => x.ProtectionTools).ToArray());
-			Employee.FillWearRecivedInfo(new EmployeeIssueRepository(UoW));
-			UoW.Save(Employee);
 		}
 
 		public virtual void CreateIssuanceSheet()
@@ -173,7 +158,7 @@ namespace workwear.Domain.Stock
 				return;
 
 			IssuanceSheet = new IssuanceSheet {
-				Expense = this
+				CollectiveExpense = this
 			 };
 			UpdateIssuanceSheet();
 		}
@@ -183,18 +168,18 @@ namespace workwear.Domain.Stock
 			if(IssuanceSheet == null)
 				return;
 
-			if(Employee == null)
-				throw new NullReferenceException("Для обновления ведомости сотрудник должен быть указан.");
-
 			IssuanceSheet.Date = Date;
-			IssuanceSheet.Subdivision = Employee.Subdivision;
+			IssuanceSheet.Subdivision = Items.GroupBy(x => x.Employee.Subdivision)
+											 .Where(x => x.Key != null)
+				                             .OrderByDescending(x => x.Count())
+											 .FirstOrDefault()?.Key;
 
 			foreach(var item in Items.ToList()) {
 				if(item.IssuanceSheetItem == null && item.Amount > 0) 
 					item.IssuanceSheetItem = IssuanceSheet.AddItem(item);
 
 				if(item.IssuanceSheetItem != null)
-					item.IssuanceSheetItem.UpdateFromExpense();
+					item.IssuanceSheetItem.UpdateFromCollectiveExpense();
 
 				if(item.IssuanceSheetItem != null && item.Amount == 0)
 					IssuanceSheet.Items.Remove(item.IssuanceSheetItem);

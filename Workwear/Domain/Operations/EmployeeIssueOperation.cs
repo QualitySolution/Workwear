@@ -325,6 +325,37 @@ namespace workwear.Domain.Operations
 			RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 		}
 
+		public virtual void Update(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, CollectiveExpenseItem item)
+		{
+			//Внимание здесь сравниваются даты без времени.
+			if(item.Document.Date.Date != OperationTime.Date)
+				OperationTime = item.Document.Date;
+
+			Employee = item.Employee;
+			Nomenclature = item.Nomenclature;
+			Size = item.Size;
+			WearGrowth = item.WearGrowth;
+			WearPercent = item.WarehouseOperation.WearPercent;
+			Issued = item.Amount;
+			Returned = 0;
+			IssuedOperation = null;
+			WarehouseOperation = item.WarehouseOperation;
+
+			if(item.EmployeeCardItem?.ActiveNormItem != null)
+				NormItem = item.EmployeeCardItem.ActiveNormItem;
+
+			if(NormItem == null) {
+				logger.Warn($"В операции выдачи {Nomenclature.Name} не указана ссылка на норму, перерасчет сроков выдачи невозможен.");
+				return;
+			}
+
+			if(item.EmployeeCardItem?.ProtectionTools != null)
+				ProtectionTools = item.EmployeeCardItem.ProtectionTools;
+				
+			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools);
+			RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
+		}
+
 		public virtual void RecalculateDatesOfIssueOperation(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser)
 		{
 			if(ProtectionTools == null) {
