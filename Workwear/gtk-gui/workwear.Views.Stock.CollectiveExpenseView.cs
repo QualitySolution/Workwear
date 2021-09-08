@@ -314,12 +314,12 @@ namespace workwear.Views.Stock
 			w27.Expand = false;
 			w27.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.expensedocitememployeeview1 = null;
+			this.expensedocitememployeeview1 = new global::workwear.Views.Stock.CollectiveExpenseItemsView();
+			this.expensedocitememployeeview1.Events = ((global::Gdk.EventMask)(256));
+			this.expensedocitememployeeview1.Name = "expensedocitememployeeview1";
 			this.dialog1_VBox.Add(this.expensedocitememployeeview1);
 			global::Gtk.Box.BoxChild w28 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expensedocitememployeeview1]));
 			w28.Position = 2;
-			w28.Expand = false;
-			w28.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
