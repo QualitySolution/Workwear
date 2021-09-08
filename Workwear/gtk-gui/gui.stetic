@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -3532,7 +3532,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Label" id="labelSum">
+              <widget class="Gamma.GtkWidgets.yLabel" id="labelSum">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Количество:</property>
@@ -4908,7 +4908,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Label" id="labelSum">
+              <widget class="Gamma.GtkWidgets.yLabel" id="labelSum">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Количество:</property>
@@ -12732,7 +12732,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Label" id="labelSum">
+              <widget class="Gamma.GtkWidgets.yLabel" id="labelSum">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Количество:</property>

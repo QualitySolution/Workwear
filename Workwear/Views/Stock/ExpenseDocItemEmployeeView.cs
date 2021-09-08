@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Bindings.Utilities;
 using System.Linq;
 using System.Reflection;
 using Gtk;
@@ -36,7 +35,7 @@ namespace workwear.Views.Stock
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 
-			ExpenseDoc_PropertyChanged(ViewModel.expenseEmployeeViewModel.Entity, new System.ComponentModel.PropertyChangedEventArgs(ViewModel.expenseEmployeeViewModel.Entity.GetPropertyName(x => x.Operation)));
+			labelSum.Binding.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp).InitializeFromSource();
 
 			buttonAdd.Sensitive = ViewModel.Warehouse != null;
 
@@ -119,12 +118,6 @@ namespace workwear.Views.Stock
 			return null;
 		}
 
-		void SetSum()
-		{
-			labelSum.Markup = viewModel.Sum;
-			buttonFillBuhDoc.Sensitive = ViewModel.SensetiveFillBuhDoc;
-		}
-
 		#endregion
 
 		#region События
@@ -136,7 +129,7 @@ namespace workwear.Views.Stock
 
 		void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			SetSum();
+			buttonFillBuhDoc.Sensitive = ViewModel.SensetiveFillBuhDoc;
 		}
 		#endregion
 

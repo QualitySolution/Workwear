@@ -24,7 +24,7 @@ namespace workwear.Views.Stock
 
 		private global::Gtk.Button buttonShowAllSize;
 
-		private global::Gtk.Label labelSum;
+		private global::Gamma.GtkWidgets.yLabel labelSum;
 
 		protected virtual void Build()
 		{
@@ -129,7 +129,7 @@ namespace workwear.Views.Stock
 			w11.Expand = false;
 			w11.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.labelSum = new global::Gtk.Label();
+			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
