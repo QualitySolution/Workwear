@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Gtk;
 using QSWidgetLib;
@@ -68,6 +68,12 @@ namespace workwear.Views.Stock
 			if(args.Event.Button == 3) {
 				var menu = new Menu();
 				var selected = ytreeItems.GetSelectedObject<CollectiveExpenseItem>();
+				var itemOpenPtotection = new MenuItemId<CollectiveExpenseItem>("Открыть номеклатуру нормы");
+				itemOpenPtotection.ID = selected;
+				itemOpenPtotection.Sensitive = selected.Nomenclature != null && selected != null;
+				itemOpenPtotection.Activated += ItemOpenPtotection_Activated;;
+				menu.Add(itemOpenPtotection);
+
 				var item = new MenuItemId<CollectiveExpenseItem>("Открыть номеклатуру");
 				item.ID = selected;
 				item.Sensitive = selected.Nomenclature != null;
@@ -85,6 +91,12 @@ namespace workwear.Views.Stock
 		{
 			var item = (sender as MenuItemId<CollectiveExpenseItem>).ID;
 			viewModel.OpenNomenclature(item.Nomenclature);
+		}
+
+		void ItemOpenPtotection_Activated(object sender, EventArgs e)
+		{
+			var item = (sender as MenuItemId<CollectiveExpenseItem>).ID;
+			viewModel.OpenProtectionTools(item.ProtectionTools);
 		}
 		#endregion
 

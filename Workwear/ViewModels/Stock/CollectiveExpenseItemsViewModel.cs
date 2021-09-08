@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.UoW;
@@ -118,6 +118,11 @@ namespace workwear.ViewModels.Stock
 		public void OpenNomenclature(Nomenclature nomenclature)
 		{
 			navigation.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(nomenclature.Id));
+		}
+
+		public void OpenProtectionTools(ProtectionTools protectionTools)
+		{
+			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(protectionTools.Id));
 		}
 		#endregion
 
