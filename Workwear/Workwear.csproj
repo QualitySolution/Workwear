@@ -434,6 +434,10 @@
     <Compile Include="ViewModels\Operations\ManualEmployeeIssueOperationViewModel.cs" />
     <Compile Include="Views\Operations\ManualEmployeeIssueOperationView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Operations.ManualEmployeeIssueOperationView.cs" />
+    <Compile Include="Domain\Stock\CollectiveExpense.cs" />
+    <Compile Include="Domain\Stock\CollectiveExpenseItem.cs" />
+    <Compile Include="HibernateMapping\Stock\CollectiveExpenseItemMap.cs" />
+    <Compile Include="HibernateMapping\Stock\CollectiveExpenseMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

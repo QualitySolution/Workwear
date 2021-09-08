@@ -53,10 +53,17 @@ namespace workwear.Domain.Statements
 		}
 
 		private MassExpense massExpense;
-		[Display (Name = "Документ массовой выдачи")]
+		[Display (Name = "Документ выдачи списком")]
 		public virtual MassExpense MassExpense {
 			get => massExpense;
 			set => SetField(ref massExpense, value);
+		}
+
+		private CollectiveExpense collectiveExpense;
+		[Display(Name = "Документ коллективной выдачи")]
+		public virtual CollectiveExpense CollectiveExpense {
+			get => collectiveExpense;
+			set => SetField(ref collectiveExpense, value);
 		}
 
 		#region Подписи
