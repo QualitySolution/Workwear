@@ -120,7 +120,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		public void UpdateWorkwearItems()
 		{
 			Entity.UpdateWorkwearItems();
-			Entity.FillWearInStockInfo(UoW, Entity.Subdivision?.Warehouse, DateTime.Now);
+			Entity.FillWearInStockInfo(UoW, baseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
 		}
 
 		public void SetIssueDateManual(EmployeeCardItem row)

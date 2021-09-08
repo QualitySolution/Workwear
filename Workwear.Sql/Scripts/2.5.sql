@@ -95,7 +95,8 @@ CHARACTER SET = utf8mb4 , COLLATE = utf8mb4_general_ci ;
 
 ALTER TABLE `user_settings` 
 CHARACTER SET = utf8mb4 , COLLATE = utf8mb4_general_ci ,
-ADD COLUMN `default_warehouse_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `toolbar_show`,
+ADD COLUMN `maximize_on_start` TINYINT(1) NOT NULL DEFAULT 1 AFTER `toolbar_show`,
+ADD COLUMN `default_warehouse_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `maximize_on_start`,
 ADD COLUMN `default_organization_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `default_warehouse_id`,
 ADD COLUMN `default_responsible_person_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `default_organization_id`,
 ADD COLUMN `default_leader_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `default_responsible_person_id`,
