@@ -44,6 +44,7 @@ namespace workwear.ViewModels.Stock
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
+			CalculateTotal();
 		}
 
 		#region Хелперы

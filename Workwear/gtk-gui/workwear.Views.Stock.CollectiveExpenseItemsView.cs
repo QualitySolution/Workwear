@@ -115,6 +115,7 @@ namespace workwear.Views.Stock
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
+			this.labelSum.UseMarkup = true;
 			this.hbox1.Add(this.labelSum);
 			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelSum]));
 			w10.Position = 3;

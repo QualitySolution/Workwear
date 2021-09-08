@@ -13027,6 +13027,7 @@
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Количество:</property>
+                <property name="UseMarkup">True</property>
               </widget>
               <packing>
                 <property name="Position">3</property>
@@ -13157,6 +13158,7 @@
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Количество:</property>
+                <property name="UseMarkup">True</property>
               </widget>
               <packing>
                 <property name="Position">3</property>
@@ -13270,6 +13272,7 @@
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Количество:</property>
+                <property name="UseMarkup">True</property>
               </widget>
               <packing>
                 <property name="Position">2</property>
