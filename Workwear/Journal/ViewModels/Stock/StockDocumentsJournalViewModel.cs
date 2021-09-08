@@ -207,6 +207,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => collectiveExpenseAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+						.Select(() => StokDocumentType.CollectiveExpense).WithAlias(() => resultAlias.DocTypeEnum)
 					   )
 			.OrderBy(() => collectiveExpenseAlias.Date).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
