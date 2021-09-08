@@ -13110,7 +13110,7 @@
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-add Menu</property>
-                <property name="Label" translatable="yes">Добавить</property>
+                <property name="Label" translatable="yes">Добавить сотрудника</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonAddClicked" />
               </widget>

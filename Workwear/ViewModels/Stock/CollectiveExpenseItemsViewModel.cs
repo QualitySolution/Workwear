@@ -1,16 +1,24 @@
-using System;
+﻿using System;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
+using NHibernate;
+using NHibernate.Criterion;
+using NHibernate.Transform;
+using QS.Dialog.ViewModels;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Services;
 using QS.ViewModels;
 using QS.ViewModels.Dialog;
+using workwear.Domain.Company;
+using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Tools;
 using workwear.Tools.Features;
+using workwear.ViewModels.Regulations;
 using Workwear.Measurements;
 
 namespace workwear.ViewModels.Stock
@@ -68,17 +76,35 @@ namespace workwear.ViewModels.Stock
 		#region Действия View
 		public void AddItem()
 		{
-			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(сollectiveExpenseViewModel, QS.Navigation.OpenPageOptions.AsSlave);
-
-			selectJournal.ViewModel.Filter.Warehouse = сollectiveExpenseViewModel.Entity.Warehouse;
-			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
+			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
-			selectJournal.ViewModel.OnSelectResult += AddNomenclature;
+			selectJournal.ViewModel.OnSelectResult += AddEmployees;
+		}
+
+		public void AddEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		{
+			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
+			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
+			var progress = progressPage.ViewModel.Progress;
+
+			progress.Start(employeeIds.Length * 2 + 1, text: "Загружаем сотрудников");
+			var employees = UoW.Query<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.List();
+			foreach(var employee in employees) {
+				progress.Add(text: employee.ShortName);
+				employee.FillWearInStockInfo(UoW, BaseParameters, Warehouse, Entity.Date);
+				progress.Add();
+				Entity.AddItems(employee, BaseParameters);
+			}
+			CalculateTotal();
+			progress.Close();
+			navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
 		}
 
 		public void ShowAllSize(CollectiveExpenseItem item)
 		{
-			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(сollectiveExpenseViewModel, QS.Navigation.OpenPageOptions.AsSlave);
+			var selectJournal = navigation.OpenViewModel<StockBalanceJournalViewModel>(сollectiveExpenseViewModel, QS.Navigation.OpenPageOptions.AsSlave);
 
 			selectJournal.ViewModel.Filter.Warehouse = сollectiveExpenseViewModel.Entity.Warehouse;
 			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
@@ -88,19 +114,11 @@ namespace workwear.ViewModels.Stock
 			selectJournal.ViewModel.OnSelectResult += AddNomenclatureProtectionTools;
 		}
 
-		public void AddNomenclature(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
-		{
-			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
-				сollectiveExpenseViewModel.Entity.AddItem(node.GetStockPosition(сollectiveExpenseViewModel.UoW));
-			}
-			CalculateTotal();
-		}
-
 		public void AddNomenclatureProtectionTools(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			var page = navigation.FindPage((DialogViewModelBase)sender);
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
-				var item = page.Tag as ExpenseItem;
+				var item = page.Tag as CollectiveExpenseItem;
 				item.StockPosition = node.GetStockPosition(UoW);
 			}
 			CalculateTotal();

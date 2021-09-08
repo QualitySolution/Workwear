@@ -82,6 +82,15 @@ namespace workwear.Domain.Stock
 
 		#region Добавление удаление строк
 
+		public virtual void AddItems(EmployeeCard employee, BaseParameters baseParameters)
+		{
+			foreach(var item in employee.WorkwearItems) {
+				if(item.ProtectionTools?.Type.IssueType != IssueType.Сollective)
+					continue;
+				AddItem(item, baseParameters);
+			}
+		}
+
 		public virtual CollectiveExpenseItem AddItem(StockPosition position, int amount = 1)
 		{
 			var newItem = new CollectiveExpenseItem() {
@@ -102,6 +111,9 @@ namespace workwear.Domain.Stock
 			if(employeeCardItem == null)
 				throw new ArgumentNullException(nameof(employeeCardItem));
 
+			if(Items.Any(x => employeeCardItem.IsSame(x.EmployeeCardItem)))
+				return null;
+
 			CollectiveExpenseItem newItem;
 			if(employeeCardItem.BestChoiceInStock.Any())
 				newItem = AddItem(employeeCardItem.BestChoiceInStock.First().StockPosition);
@@ -112,6 +124,7 @@ namespace workwear.Domain.Stock
 				ObservableItems.Add(newItem);
 			}
 
+			newItem.Employee = employeeCardItem.EmployeeCard;
 			newItem.EmployeeCardItem = employeeCardItem;
 			newItem.ProtectionTools = employeeCardItem.ProtectionTools;
 			newItem.Amount = newItem.Nomenclature != null ? employeeCardItem.CalculateRequiredIssue(baseParameters) : 0;
