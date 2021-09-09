@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Gamma.Binding.Converters;
 using NLog;
 using QS.Views.Dialog;
@@ -40,7 +39,6 @@ namespace workwear.Views.Stock
 
 		private void IssuanceSheetSensetive()
 		{
-			buttonIssuanceSheetCreate.Sensitive = Entity.Items.Any();
 			buttonIssuanceSheetCreate.Visible = Entity.IssuanceSheet == null;
 			buttonIssuanceSheetOpen.Visible = enumPrint.Visible = Entity.IssuanceSheet != null;
 		}
