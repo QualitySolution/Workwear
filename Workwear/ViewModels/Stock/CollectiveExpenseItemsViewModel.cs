@@ -18,6 +18,7 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Tools;
 using workwear.Tools.Features;
+using workwear.ViewModels.Company;
 using workwear.ViewModels.Regulations;
 using Workwear.Measurements;
 
@@ -134,14 +135,19 @@ namespace workwear.ViewModels.Stock
 			CalculateTotal();
 		}
 
-		public void OpenNomenclature(Nomenclature nomenclature)
+		public void OpenEmployee(CollectiveExpenseItem item)
 		{
-			navigation.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(nomenclature.Id));
+			navigation.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.Employee.Id));
 		}
 
-		public void OpenProtectionTools(ProtectionTools protectionTools)
+		public void OpenNomenclature(CollectiveExpenseItem item)
 		{
-			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(protectionTools.Id));
+			navigation.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.Nomenclature.Id));
+		}
+
+		public void OpenProtectionTools(CollectiveExpenseItem item)
+		{
+			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.ProtectionTools.Id));
 		}
 		#endregion
 

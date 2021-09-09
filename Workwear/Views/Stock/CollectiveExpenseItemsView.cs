@@ -69,10 +69,17 @@ namespace workwear.Views.Stock
 			if(args.Event.Button == 3) {
 				var menu = new Menu();
 				var selected = ytreeItems.GetSelectedObject<CollectiveExpenseItem>();
+
+				var itemOpenEmployee = new MenuItemId<CollectiveExpenseItem>("Открыть сотрудника");
+				itemOpenEmployee.ID = selected;
+				itemOpenEmployee.Sensitive = selected.Employee != null && selected != null;
+				itemOpenEmployee.Activated += ItemOpenEmployee_Activated;
+				menu.Add(itemOpenEmployee);
+
 				var itemOpenPtotection = new MenuItemId<CollectiveExpenseItem>("Открыть номеклатуру нормы");
 				itemOpenPtotection.ID = selected;
 				itemOpenPtotection.Sensitive = selected.ProtectionTools != null && selected != null;
-				itemOpenPtotection.Activated += ItemOpenPtotection_Activated;;
+				itemOpenPtotection.Activated += ItemOpenPtotection_Activated;
 				menu.Add(itemOpenPtotection);
 
 				var itemOpenNomenclature = new MenuItemId<CollectiveExpenseItem>("Открыть номеклатуру");
@@ -80,21 +87,25 @@ namespace workwear.Views.Stock
 				itemOpenNomenclature.Sensitive = selected.Nomenclature != null && selected != null;
 				itemOpenNomenclature.Activated += Item_Activated;
 				menu.Add(itemOpenNomenclature);
+
 				menu.ShowAll();
 				menu.Popup();
 			}
 		}
 
+		void ItemOpenEmployee_Activated(object sender, EventArgs e)
+		{
+			viewModel.OpenEmployee((sender as MenuItemId<CollectiveExpenseItem>).ID);
+		}	
+
 		void Item_Activated(object sender, EventArgs e)
 		{
-			var item = (sender as MenuItemId<CollectiveExpenseItem>).ID;
-			viewModel.OpenNomenclature(item.Nomenclature);
+			viewModel.OpenNomenclature((sender as MenuItemId<CollectiveExpenseItem>).ID);
 		}
 
 		void ItemOpenPtotection_Activated(object sender, EventArgs e)
 		{
-			var item = (sender as MenuItemId<CollectiveExpenseItem>).ID;
-			viewModel.OpenProtectionTools(item.ProtectionTools);
+			viewModel.OpenProtectionTools((sender as MenuItemId<CollectiveExpenseItem>).ID);
 		}
 		#endregion
 
