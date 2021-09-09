@@ -1,4 +1,5 @@
 ﻿using System;
+using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
@@ -11,14 +12,25 @@ using QS.Project.Services;
 using QS.Services;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
+using workwear.Journal.Filter.ViewModels.Statements;
 using workwear.ViewModels.Statements;
 
 namespace workwear.Journal.ViewModels.Statements
 {
 	public class IssuanceSheetJournalViewModel : EntityJournalViewModelBase<IssuanceSheet, IssuanceSheetViewModel, IssuanceSheetJournalNode>
 	{
-		public IssuanceSheetJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager = null, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		public IssuanceSheetFilterViewModel Filter { get; private set; }
+
+		public IssuanceSheetJournalViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory, 
+			IInteractiveService interactiveService,
+			ILifetimeScope autofacScope,
+			INavigationManager navigationManager = null, 
+			IDeleteEntityService deleteEntityService = null, 
+			ICurrentPermissionService currentPermissionService = null
+		) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
+			JournalFilter = Filter = autofacScope.Resolve<IssuanceSheetFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 		}
 
 		protected override IQueryOver<IssuanceSheet> ItemsQuery(IUnitOfWork uow)
@@ -36,7 +48,14 @@ namespace workwear.Journal.ViewModels.Statements
 				.JoinQueryOver(x => x.Employee, () => employeeCardAlias)
 				.Select(CustomProjections.GroupConcat(Projections.Property(() => employeeCardAlias.LastName), useDistinct: true, separator: ", "));
 
-			return uow.Session.QueryOver<IssuanceSheet>(() => issuanceSheetAlias)
+			var query = uow.Session.QueryOver<IssuanceSheet>(() => issuanceSheetAlias);
+
+			if(Filter.StartDate != null)
+				query.Where(x => x.Date >= Filter.StartDate);
+			if(Filter.EndDate != null)
+				query.Where(x => x.Date <= Filter.EndDate);
+
+			return query
 				.Where(GetSearchCriterion(
 					() => issuanceSheetAlias.Id,
 					() => organizationAlias.Name,
