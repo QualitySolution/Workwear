@@ -13,6 +13,8 @@ namespace workwear.Models.Import
 		NotChangedEmployee,
 		[Display(Name = "Новых подразделений")]
 		NewSubdivisions,
+		[Display(Name = "Новых отделов")]
+		NewDepartments,
 		[Display(Name = "Новых должностей")]
 		NewPosts,
 		[Display(Name = "Пропущено строк")]

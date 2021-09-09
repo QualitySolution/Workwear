@@ -26,6 +26,8 @@ namespace workwear.Models.Import
 		DismissDate,
 		[Display(Name = "Подразделение")]
 		Subdivision,
+		[Display(Name = "Отдел")]
+		Department,
 		[Display(Name = "Должность")]
 		Post,
 	}

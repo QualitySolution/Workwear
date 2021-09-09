@@ -38,6 +38,7 @@ namespace workwear.Models.Import
 
 			List<object> toSave = new List<object>();
 			toSave.AddRange(dataParser.UsedSubdivisions.Where(x => x.Id == 0));
+			toSave.AddRange(dataParser.UsedDepartment.Where(x => x.Id == 0));
 			toSave.AddRange(dataParser.UsedPosts.Where(x => x.Id == 0));
 			foreach(var row in rows) {
 				toSave.AddRange(dataParser.PrepareToSave(uow, matchSettingsViewModel, row));
@@ -62,11 +63,13 @@ namespace workwear.Models.Import
 			counters.SetCount(CountersEmployee.ChangedEmployee, UsedRows.Count(x => x.HasChanges && x.EditingEmployee.Id > 0));
 
 			counters.SetCount(CountersEmployee.NewPosts, dataParser.UsedPosts.Count(x => x.Id == 0));
+			counters.SetCount(CountersEmployee.NewDepartments, dataParser.UsedDepartment.Count(x => x.Id == 0));
 			counters.SetCount(CountersEmployee.NewSubdivisions, dataParser.UsedSubdivisions.Count(x => x.Id == 0));
 
 			CanSave = counters.GetCount(CountersEmployee.ChangedEmployee) > 0
 				|| counters.GetCount(CountersEmployee.NewEmployee) > 0
 				|| counters.GetCount(CountersEmployee.NewPosts) > 0
+				|| counters.GetCount(CountersEmployee.NewDepartments) > 0
 				|| counters.GetCount(CountersEmployee.NewSubdivisions) > 0;
 		}
 	}
