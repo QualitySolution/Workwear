@@ -76,6 +76,11 @@ namespace workwear.Models.Import
 			AddColumnName(DataTypeEmployee.Subdivision,
 				"Подразделение"
 				);
+			AddColumnName(DataTypeEmployee.Department,
+				"Отдел",
+				"Бригада",
+				"Бригады"
+				);
 			AddColumnName(DataTypeEmployee.Post,
 				"Должность"
 				);
@@ -182,6 +187,25 @@ namespace workwear.Models.Import
 					}
 					row.AddColumnChange(column, subdivision.Id == 0 ? ChangeType.NewEntity : rowChange, employee.Subdivision?.Name);
 					employee.Subdivision = subdivision;
+					break;
+				case DataTypeEmployee.Department:
+					if(String.Equals(employee.Department?.Name, value, StringComparison.CurrentCultureIgnoreCase)) {
+						row.AddColumnChange(column, ChangeType.NotChanged);
+						break;
+					}
+					Department department = UsedDepartment.FirstOrDefault(x =>
+						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase)
+						&& DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision));
+					if(department == null) {
+						department = new Department {
+							Name = value,
+							Subdivision = employee.Subdivision,
+							Comments = "Создан при импорте сотрудников из Excel"
+						};
+						UsedDepartment.Add(department);
+					}
+					row.AddColumnChange(column, department.Id == 0 ? ChangeType.NewEntity : rowChange, employee.Department?.Name);
+					employee.Department = department;
 					break;
 				case DataTypeEmployee.Post:
 					if(String.Equals(employee.Post?.Name, value, StringComparison.CurrentCultureIgnoreCase)) {
@@ -324,10 +348,11 @@ namespace workwear.Models.Import
 
 		public readonly List<Subdivision> UsedSubdivisions = new List<Subdivision>();
 		public readonly List<Post> UsedPosts = new List<Post>();
+		public readonly List<Department> UsedDepartment = new List<Department>();
 
 		public void FillExistEntities(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns, IProgressBarDisplayable progress)
 		{
-			progress.Start(2, text: "Загружаем должности и подразделения");
+			progress.Start(3, text: "Загружаем подразделения");
 			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Subdivision);
 			if(subdivisionColumn != null) {
 				var subdivisionNames = list.Select(x => x.CellStringValue(subdivisionColumn.Index)).Distinct().ToArray();
@@ -335,7 +360,15 @@ namespace workwear.Models.Import
 					.Where(x => x.Name.IsIn(subdivisionNames))
 					.List());
 			}
-			progress.Add();
+			progress.Add(text: "Загружаем отделы");
+			var departmentColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Department);
+			if(departmentColumn != null) {
+				var departmentNames = list.Select(x => x.CellStringValue(departmentColumn.Index)).Distinct().ToArray();
+				UsedDepartment.AddRange(uow.Session.QueryOver<Department>()
+					.Where(x => x.Name.IsIn(departmentNames))
+					.List());
+			}
+			progress.Add(text: "Загружаем должности");
 			var postColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Post);
 			if(postColumn != null) {
 				var postNames = list.Select(x => x.CellStringValue(postColumn.Index)).Distinct().ToArray();
@@ -415,6 +448,7 @@ namespace workwear.Models.Import
 					break;
 
 				case DataTypeEmployee.Subdivision:
+				case DataTypeEmployee.Department:
 				case DataTypeEmployee.Post:
 					//Устанавливаем в MakeChange;
 					break;
