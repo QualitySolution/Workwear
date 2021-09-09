@@ -71,18 +71,15 @@ namespace workwear.Views.Stock
 				var selected = ytreeItems.GetSelectedObject<CollectiveExpenseItem>();
 				var itemOpenPtotection = new MenuItemId<CollectiveExpenseItem>("Открыть номеклатуру нормы");
 				itemOpenPtotection.ID = selected;
-				itemOpenPtotection.Sensitive = selected.Nomenclature != null && selected != null;
+				itemOpenPtotection.Sensitive = selected.ProtectionTools != null && selected != null;
 				itemOpenPtotection.Activated += ItemOpenPtotection_Activated;;
 				menu.Add(itemOpenPtotection);
 
-				var item = new MenuItemId<CollectiveExpenseItem>("Открыть номеклатуру");
-				item.ID = selected;
-				item.Sensitive = selected.Nomenclature != null;
-				if(selected == null)
-					item.Sensitive = false;
-				else
-					item.Activated += Item_Activated;
-				menu.Add(item);
+				var itemOpenNomenclature = new MenuItemId<CollectiveExpenseItem>("Открыть номеклатуру");
+				itemOpenNomenclature.ID = selected;
+				itemOpenNomenclature.Sensitive = selected.Nomenclature != null && selected != null;
+				itemOpenNomenclature.Activated += Item_Activated;
+				menu.Add(itemOpenNomenclature);
 				menu.ShowAll();
 				menu.Popup();
 			}
