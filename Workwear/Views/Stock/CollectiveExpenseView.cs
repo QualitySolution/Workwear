@@ -59,5 +59,10 @@ namespace workwear.Views.Stock
 		{
 			ViewModel.PrintIssuenceSheet((IssuedSheetPrint)e.ItemEnum);
 		}
+
+		protected void OnButtonPrintAssemblyTaskClicked(object sender, EventArgs e)
+		{
+			ViewModel.PrintAssemblyTask();
+		}
 	}
 }

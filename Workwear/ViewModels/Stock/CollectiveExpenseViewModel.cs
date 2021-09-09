@@ -72,17 +72,6 @@ namespace workwear.ViewModels.Stock
 		public EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		#endregion
 
-		//private void FillUnderreceived()
-		//{
-		//	Entity.ObservableItems.Clear();
-
-		//	Entity.Employee.FillWearInStockInfo(UoW, baseParameters, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
-
-		//	foreach(var item in Entity.Employee.WorkwearItems) {
-		//		Entity.AddItem(item, baseParameters);
-		//	}
-		//}
-
 		public override bool Save()
 		{
 			if(!Validate())
@@ -145,6 +134,24 @@ namespace workwear.ViewModels.Stock
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.IssuanceSheet.Id }
+				}
+			};
+
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
+
+		public void PrintAssemblyTask()
+		{
+			if(UoW.HasChanges) {
+				if(!commonMessages.SaveBeforePrint(Entity.GetType(), "задание на сборку") || !Save())
+					return;
+			}
+
+			var reportInfo = new ReportInfo {
+				Title = String.Format("Задание на сборку №{0}", Entity.Id),
+				Identifier = "Stock.AssemblyTask",
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id }
 				}
 			};
 
