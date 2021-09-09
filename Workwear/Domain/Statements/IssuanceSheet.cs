@@ -53,10 +53,17 @@ namespace workwear.Domain.Statements
 		}
 
 		private MassExpense massExpense;
-		[Display (Name = "Документ массовой выдачи")]
+		[Display (Name = "Документ выдачи списком")]
 		public virtual MassExpense MassExpense {
 			get => massExpense;
 			set => SetField(ref massExpense, value);
+		}
+
+		private CollectiveExpense collectiveExpense;
+		[Display(Name = "Документ коллективной выдачи")]
+		public virtual CollectiveExpense CollectiveExpense {
+			get => collectiveExpense;
+			set => SetField(ref collectiveExpense, value);
 		}
 
 		#region Подписи
@@ -104,7 +111,7 @@ namespace workwear.Domain.Statements
 
 		#endregion
 
-		#region Методы
+		#region Добавление строк
 
 		public virtual IssuanceSheetItem AddItem(ExpenseItem expenseItem)
 		{
@@ -114,6 +121,17 @@ namespace workwear.Domain.Statements
 			};
 			ObservableItems.Add(item);
 			item.UpdateFromExpense();
+			return item;
+		}
+
+		public virtual IssuanceSheetItem AddItem(CollectiveExpenseItem expenseItemItem)
+		{
+			var item = new IssuanceSheetItem {
+				IssuanceSheet = this,
+				CollectiveExpenseItem = expenseItemItem
+			};
+			ObservableItems.Add(item);
+			item.UpdateFromCollectiveExpense();
 			return item;
 		}
 

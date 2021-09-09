@@ -79,6 +79,7 @@ namespace workwear.ViewModels.Statements
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
 			NotifyConfiguration.Instance.BatchSubscribeOnEntity<ExpenseItem>(Expense_Changed);
+			NotifyConfiguration.Instance.BatchSubscribeOnEntity<CollectiveExpenseItem>(CollectiveExpense_Changed);
 			if (Entity.Id == 0 )
 				GetDefualtSetting();
 		}
@@ -176,13 +177,13 @@ namespace workwear.ViewModels.Statements
 
 		#region Sensetive
 
-		public bool CanEditItems => Entity.Expense == null && Entity.MassExpense == null;
+		public bool CanEditItems => Entity.Expense == null && Entity.MassExpense == null && Entity.CollectiveExpense == null;
 
 		#endregion
 
 		#region Visible
 
-		public bool VisibleExpense => Entity.Expense != null || Entity.MassExpense != null;
+		public bool VisibleExpense => Entity.Expense != null || Entity.MassExpense != null || Entity.CollectiveExpense != null;
 		public bool VisibleFillBy => CanEditItems;
 		public bool VisibleCloseFillBy => FillByViewModel != null;
 
@@ -220,6 +221,8 @@ namespace workwear.ViewModels.Statements
 				NavigationManager.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.Expense.Id));
 			else if(Entity.MassExpense != null)
 				NavigationManager.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.MassExpense.Id));
+			else if(Entity.CollectiveExpense != null)
+				NavigationManager.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.CollectiveExpense.Id));
 			else
 				throw new NotSupportedException();
 
@@ -228,6 +231,14 @@ namespace workwear.ViewModels.Statements
 		void Expense_Changed(EntityChangeEvent[] changeEvents)
 		{
 			if(changeEvents.Any(x => (x.Entity as ExpenseItem).ExpenseDoc.Id == Entity.Expense?.Id)){
+				Entity.ReloadChildCollection(x => x.Items, x => x.IssuanceSheet, UoW.Session);
+				Entity.CleanObservableItems();
+			}
+		}
+
+		void CollectiveExpense_Changed(EntityChangeEvent[] changeEvents)
+		{
+			if(changeEvents.Any(x => (x.Entity as CollectiveExpenseItem).Document.Id == Entity.CollectiveExpense?.Id)) {
 				Entity.ReloadChildCollection(x => x.Items, x => x.IssuanceSheet, UoW.Session);
 				Entity.CleanObservableItems();
 			}

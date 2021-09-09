@@ -47,20 +47,6 @@ namespace workwear.ViewModels.Stock
 			set => SetField(ref sum, value);
 		}
 
-		public Subdivision Subdivision {
-			get { return Entity.Subdivision; }
-			set { Entity.Subdivision = value; }
-		}
-
-		public ExpenseOperations Operation {
-			get { return Entity.Operation; }
-			set { Entity.Operation = value; }
-		}
-
-		public virtual Warehouse Warehouse {
-			get { return Entity.Warehouse; }
-			set { Entity.Warehouse = value; }
-		}
 		#endregion
 		#region Sensetive
 

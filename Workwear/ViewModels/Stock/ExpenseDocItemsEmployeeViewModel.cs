@@ -7,10 +7,8 @@ using QS.Project.Domain;
 using QS.Project.Services;
 using QS.ViewModels;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
-using workwear.Measurements;
 using workwear.Tools;
 using workwear.Tools.Features;
 using Workwear.Measurements;
@@ -55,16 +53,6 @@ namespace workwear.ViewModels.Stock
 		public virtual string Sum {
 			get => sum;
 			set => SetField(ref sum, value);
-		}
-
-		public Subdivision Subdivision {
-			get { return Entity.Subdivision; }
-			set { Entity.Subdivision = value; }
-		}
-
-		public ExpenseOperations Operation {
-			get { return Entity.Operation; }
-			set { Entity.Operation = value; }
 		}
 
 		public virtual Warehouse Warehouse {

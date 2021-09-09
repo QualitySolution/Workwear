@@ -5,13 +5,23 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Stock;
+using workwear.Tools.Features;
 
 namespace workwear.ViewModels.Stock
 {
 	public class ItemTypeViewModel : EntityDialogViewModelBase<ItemsType>
 	{
-		public ItemTypeViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+		private readonly FeaturesService featuresService;
+
+		public ItemTypeViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, FeaturesService featuresService, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 		}
+
+		#region Visible
+
+		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
+
+		#endregion
 	}
 }

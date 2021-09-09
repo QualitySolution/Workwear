@@ -38,14 +38,10 @@ namespace workwear.Views.Stock
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 
-			ExpenseDoc_PropertyChanged(ViewModel.expenseObjectViewModel.Entity, new System.ComponentModel.PropertyChangedEventArgs(ViewModel.expenseObjectViewModel.Entity.GetPropertyName(x => x.Operation)));
-			if(ViewModel.expenseObjectViewModel.Entity.Operation == ExpenseOperations.Object)
-				ExpenseDoc_PropertyChanged(ViewModel.expenseObjectViewModel.Entity, new System.ComponentModel.PropertyChangedEventArgs(ViewModel.expenseObjectViewModel.Entity.GetPropertyName(x => x.Subdivision)));
+			labelSum.Binding.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp).InitializeFromSource();
 
 			ViewModel.expenseObjectViewModel.Entity.PropertyChanged += ExpenseDoc_PropertyChanged;
-			ViewModel.PropertyChanged += PropertyChanged;
 			ViewModel.CalculateTotal();
-
 		}
 
 		void CreateTable()
@@ -94,11 +90,6 @@ namespace workwear.Views.Stock
 				buttonAdd.Sensitive = ViewModel.expenseObjectViewModel.Entity.Warehouse != null;
 		}
 
-		void SetSum()
-		{
-			labelSum.Markup = viewModel.Sum;
-		}
-
 		protected void OnButtonFillBuhDocClicked(object sender, EventArgs e)
 		{
 			ViewModel.FillBuhDoc();
@@ -122,10 +113,6 @@ namespace workwear.Views.Stock
 		void AddNomenclature_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			ViewModel.AddNomenclature(sender, e);
-		}
-		void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			SetSum();
 		}
 	}
 }

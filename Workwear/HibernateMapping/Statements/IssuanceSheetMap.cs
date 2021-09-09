@@ -15,6 +15,7 @@ namespace workwear.HibernateMapping.Statements
 			References(x => x.Organization).Column("organization_id");
 			References(x => x.Subdivision).Column("subdivision_id");
 			References(x => x.Expense).Column("stock_expense_id");
+			References(x => x.CollectiveExpense).Column("stock_collective_expense_id");
 			References(x => x.ResponsiblePerson).Column("responsible_person_id");
 			References(x => x.HeadOfDivisionPerson).Column("head_of_division_person_id");
 			References(x => x.MassExpense).Column("stock_mass_expense_id");

@@ -16,11 +16,11 @@ namespace workwear.Views.Stock
 
 		private global::Gtk.HBox hbox1;
 
-		private global::Gtk.Button buttonAdd;
+		private global::Gamma.GtkWidgets.yButton buttonAdd;
 
 		private global::Gtk.Button buttonDel;
 
-		private global::Gtk.Label labelSum;
+		private global::Gamma.GtkWidgets.yLabel labelSum;
 
 		protected virtual void Build()
 		{
@@ -68,8 +68,7 @@ namespace workwear.Views.Stock
 			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.buttonAdd = new global::Gtk.Button();
-			this.buttonAdd.TooltipMarkup = "Добавить услугу из начисления";
+			this.buttonAdd = new global::Gamma.GtkWidgets.yButton();
 			this.buttonAdd.CanFocus = true;
 			this.buttonAdd.Name = "buttonAdd";
 			this.buttonAdd.UseUnderline = true;
@@ -98,10 +97,11 @@ namespace workwear.Views.Stock
 			w8.Expand = false;
 			w8.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.labelSum = new global::Gtk.Label();
+			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
+			this.labelSum.UseMarkup = true;
 			this.hbox1.Add(this.labelSum);
 			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelSum]));
 			w9.Position = 2;

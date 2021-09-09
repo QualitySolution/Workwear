@@ -56,6 +56,7 @@ namespace workwear.Journal.ViewModels.Stock
 			var dataLoader = new ThreadDataLoader<StockDocumentsJournalNode>(unitOfWorkFactory);
 			dataLoader.AddQuery(QueryIncomeDoc);
 			dataLoader.AddQuery(QueryExpenseDoc);
+			dataLoader.AddQuery(QueryCollectiveExpenseDoc);
 			dataLoader.AddQuery(QueryWriteoffDoc);
 			dataLoader.AddQuery(QueryMassExpenseDoc);
 			dataLoader.AddQuery(QueryTransferDoc);
@@ -65,7 +66,7 @@ namespace workwear.Journal.ViewModels.Stock
 			CreateNodeActions();
 			CreateDocumentsActions();
 
-			UpdateOnChanges(typeof(Expense), typeof(Income), typeof(Writeoff), typeof(MassExpense), typeof(Transfer));
+			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), typeof(Writeoff), typeof(MassExpense), typeof(Transfer));
 		}
 
 		#region Опциональные зависимости
@@ -176,6 +177,42 @@ namespace workwear.Journal.ViewModels.Stock
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
 
 			return expenseQuery;
+		}
+
+		protected IQueryOver<CollectiveExpense> QueryCollectiveExpenseDoc(IUnitOfWork uow)
+		{
+			if(Filter.StokDocumentType != null && Filter.StokDocumentType != StokDocumentType.CollectiveExpense)
+				return null;
+
+			CollectiveExpense collectiveExpenseAlias = null;
+
+			var collectiveExpenseQuery = uow.Session.QueryOver<CollectiveExpense>(() => collectiveExpenseAlias);
+			if(Filter.StartDate.HasValue)
+				collectiveExpenseQuery.Where(o => o.Date >= Filter.StartDate.Value);
+			if(Filter.EndDate.HasValue)
+				collectiveExpenseQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
+			if(Filter.Warehouse != null)
+				collectiveExpenseQuery.Where(x => x.Warehouse == Filter.Warehouse);
+
+			collectiveExpenseQuery.Where(GetSearchCriterion(
+				() => collectiveExpenseAlias.Id,
+				() => authorAlias.Name
+			));
+
+			collectiveExpenseQuery
+				.JoinAlias(() => collectiveExpenseAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => collectiveExpenseAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+			.SelectList(list => list
+						.Select(() => collectiveExpenseAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => collectiveExpenseAlias.Date).WithAlias(() => resultAlias.Date)
+						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
+						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+						.Select(() => StokDocumentType.CollectiveExpense).WithAlias(() => resultAlias.DocTypeEnum)
+					   )
+			.OrderBy(() => collectiveExpenseAlias.Date).Desc
+			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
+
+			return collectiveExpenseQuery;
 		}
 
 		protected IQueryOver<MassExpense> QueryMassExpenseDoc(IUnitOfWork uow)
@@ -313,6 +350,8 @@ namespace workwear.Journal.ViewModels.Stock
 			foreach(StokDocumentType docType in Enum.GetValues(typeof(StokDocumentType))) {
 				if(docType is StokDocumentType.MassExpense && !FeaturesService.Available(WorkwearFeature.MassExpense))
 					continue;
+				if(docType is StokDocumentType.CollectiveExpense && !FeaturesService.Available(WorkwearFeature.CollectiveExpense))
+					continue;
 				if(docType is StokDocumentType.TransferDoc && !FeaturesService.Available(WorkwearFeature.Warehouses))
 					continue;
 				var insertDocAction = new JournalAction(
@@ -349,6 +388,8 @@ namespace workwear.Journal.ViewModels.Stock
 				NavigationManager.OpenViewModel<WarehouseTransferViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
 			else if(docType == StokDocumentType.MassExpense)
 				NavigationManager.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
+			else if(docType == StokDocumentType.CollectiveExpense)
+				NavigationManager.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
 			else if(docType == StokDocumentType.ExpenseEmployeeDoc)
 				NavigationManager.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
 			else if(docType == StokDocumentType.ExpenseObjectDoc)
@@ -371,6 +412,9 @@ namespace workwear.Journal.ViewModels.Stock
 					break;
 				case StokDocumentType.ExpenseObjectDoc:
 					NavigationManager.OpenViewModel<ExpenseObjectViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
+					break;
+				case StokDocumentType.CollectiveExpense:
+					NavigationManager.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
 					break;
 				case StokDocumentType.WriteoffDoc:
 					tdiNavigation.OpenTdiTab<WriteOffDocDlg, int>(this, node.Id);
