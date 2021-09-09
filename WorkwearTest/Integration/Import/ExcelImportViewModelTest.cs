@@ -26,6 +26,12 @@ namespace WorkwearTest.Integration.Import
 			InitialiseUowFactory();
 		}
 
+		[TearDown]
+		public void TestTearDown()
+		{
+			NewSessionWithNewDB();
+		}
+		
 		[Test(Description = "Проверяем что без проблем можем загрузить файл формата со Стойленского ГОК")]
 		public void EmployeesLoad_StolenskyGok()
 		{
@@ -119,6 +125,68 @@ namespace WorkwearTest.Integration.Import
 			}
 		}
 		
+		[Test(Description = "Проверяем что без проблем можем загрузить файл формата со ОСМиБТ и можем обновить сотрудника")]
+		public void EmployeesLoad_osmbtDepartments()
+		{
+			NewSessionWithSameDB();
+			var navigation = Substitute.For<INavigationManager>();
+			var interactive = Substitute.For<IInteractiveMessage>();
+			var progressStep = Substitute.For<IProgressBarDisplayable>();
+			var progressInterceptor = Substitute.For<ProgressInterceptor>();
+			var subdivisionRepository = Substitute.For<SubdivisionRepository>();
+			var postRepository = Substitute.For<PostRepository>();
+			var dataparser = new DataParserEmployee(new PersonNames(), subdivisionRepository, postRepository);
+			var setting = new SettingsMatchEmployeesViewModel();
+			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
+			setting.ConvertPersonnelNumber = true;
+			var model = new ImportModelEmployee(dataparser, setting);
+			
+			using (var rootUow = UnitOfWorkFactory.CreateWithoutRoot())
+			{
+				var existEmployee = new EmployeeCard
+				{
+					PersonnelNumber = "5213",
+					LastName = "Старая фамилия",
+					FirstName = "Старое имя",
+					Comment = "Старый комментарий"
+				};
+				rootUow.Save(existEmployee);
+				rootUow.Commit();
+				
+				using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
+					var uow = employeesLoad.UoW;
+					var employeesold = uow.GetAll<EmployeeCard>().ToList();
+					Assert.That(employeesold.Count, Is.EqualTo(1));
+					
+					employeesLoad.ProgressStep = progressStep;
+					employeesLoad.FileName = "Samples/Excel/osmbt.xls";
+					Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
+					employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
+					Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
+					employeesLoad.SecondStep();
+					Assert.That(employeesLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
+					employeesLoad.ThirdStep();
+					Assert.That(employeesLoad.SensitiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
+					employeesLoad.Save();
+
+					var employees = uow.GetAll<EmployeeCard>().ToList();
+					Assert.That(employees.Count, Is.EqualTo(2));
+					var artem = employees.First(x => x.PersonnelNumber == "5213");
+					Assert.That(artem.FirstName, Is.EqualTo("Артем"));
+					Assert.That(artem.LastName, Is.EqualTo("Беляев"));
+					Assert.That(artem.Comment, Is.EqualTo("Старый комментарий")); //Фамилия и имя заменились, комментарий остался старым.
+					Assert.That(artem.Subdivision.Name, Is.EqualTo("500100 Цех керамического кирпича"));
+					Assert.That(artem.Department.Name, Is.EqualTo("Участок Е1 Бригада 7  (Е1)"));
+					
+					//Проверяем что не дублируем должности и подразделения.
+					var igor = employees.First(x => x.PersonnelNumber == "4103");
+					Assert.That(igor.Subdivision.Name, Is.EqualTo("500100 Цех керамического кирпича"));
+					Assert.That(igor.Post.Name, Is.EqualTo("Заведующий хозяйством"));
+					Assert.That(igor.Department.Name, Is.EqualTo("Участок 500100"));
+				}
+			}
+		}
+
 		[Test(Description = "Проверяем что нормально работаем с датами при чтении даты поступления и увольнения")]
 		public void EmployeesLoad_DateWorks()
 		{
