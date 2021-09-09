@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
-using NHibernate;
 using NHibernate.Criterion;
-using NHibernate.Transform;
 using QS.Dialog.ViewModels;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -12,7 +10,6 @@ using QS.Project.Services;
 using QS.ViewModels;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
-using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
