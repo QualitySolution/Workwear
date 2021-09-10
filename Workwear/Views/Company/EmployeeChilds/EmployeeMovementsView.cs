@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using workwear.DTO;
 using workwear.Repository.Operations;
 using workwear.ViewModels.Company.EmployeeChilds;
@@ -52,7 +52,7 @@ namespace workwear.Views.Company.EmployeeChilds
 				.AddColumn("Получено").AddTextRenderer(e => e.AmountReceivedText)
 				.AddColumn("Сдано\\списано").AddTextRenderer(e => e.AmountReturnedText)
 				.AddColumn("Автосписание").AddToggleRenderer(e => e.UseAutoWriteOff, false)
-					.AddSetter((c, e) => c.Visible = e.ReferencedDocument?.DocType == EmployeeIssueOpReferenceDoc.ReceivedFromStock)
+					.AddSetter((c, e) => c.Visible = e.AmountReceived > 0)
 					.AddSetter((c, e) => c.Activatable = e.Operation.ExpiryByNorm.HasValue)
 					.AddTextRenderer(e => e.AutoWriteOffDateTextColored, useMarkup: true)
 				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
