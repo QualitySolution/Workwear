@@ -1,6 +1,7 @@
 using System.Reflection;
+using Gtk;
+using QSWidgetLib;
 using workwear.DTO;
-using workwear.Repository.Operations;
 using workwear.ViewModels.Company.EmployeeChilds;
 
 namespace workwear.Views.Company.EmployeeChilds
@@ -25,6 +26,7 @@ namespace workwear.Views.Company.EmployeeChilds
 			}
 		}
 
+		#region События
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == nameof(viewModel.Movements))
@@ -38,6 +40,24 @@ namespace workwear.Views.Company.EmployeeChilds
 				ViewModel.OpenDoc(item);
 			}
 		}
+
+		void YtreeviewMovements_ButtonReleaseEvent(object o, Gtk.ButtonReleaseEventArgs args)
+		{
+			if(args.Event.Button == 3) {
+				var menu = new Menu();
+				var selected = ytreeviewMovements.GetSelectedObject<EmployeeCardMovements>();
+
+				var itemOpenLastIssue = new MenuItemId<EmployeeCardMovements>("Открыть документ");
+				itemOpenLastIssue.ID = selected;
+				itemOpenLastIssue.Sensitive = selected?.EmployeeIssueReference?.DocumentType != null;
+				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenDoc(((MenuItemId<EmployeeCardMovements>)sender).ID);
+				menu.Add(itemOpenLastIssue);
+
+				menu.ShowAll();
+				menu.Popup();
+			}
+		}
+		#endregion
 
 		private void CreateTable()
 		{
@@ -62,6 +82,7 @@ namespace workwear.Views.Company.EmployeeChilds
 				.Finish();
 
 			ytreeviewMovements.RowActivated += YtreeviewMovements_RowActivated;
+			ytreeviewMovements.ButtonReleaseEvent += YtreeviewMovements_ButtonReleaseEvent;
 		}
 	}
 }
