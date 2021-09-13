@@ -9,7 +9,11 @@ namespace workwear.HibernateMapping.Statements
 		{
 			Table("issuance_sheet_items");
 
-			Id(x => x.Id).Column("id").GeneratedBy.Native();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map(x => x.Amount).Column("amount");
 			Map(x => x.StartOfUse).Column("start_of_use");
 			Map(x => x.Lifetime).Column("lifetime");

@@ -88,6 +88,8 @@ namespace WorkwearTest.Integration.Organization
 				incomeItem2.Amount = 5;
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
+				
+				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
 
 				var operationTime = uow.GetAll<WarehouseOperation>().Select(x => x.OperationTime).ToList();
@@ -175,6 +177,7 @@ namespace WorkwearTest.Integration.Organization
 
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
+				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
 
 				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22), false);
@@ -294,6 +297,7 @@ namespace WorkwearTest.Integration.Organization
 
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
+				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(3));
 
 				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22), false);
@@ -395,6 +399,7 @@ namespace WorkwearTest.Integration.Organization
 
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
+				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
 
 				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22));

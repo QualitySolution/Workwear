@@ -10,7 +10,11 @@ namespace workwear.HMap
 		{
 			Table ("norms_item");
 
-			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map (x => x.Amount).Column ("amount");
 			Map (x => x.NormPeriod).Column ("period_type").CustomType<NormPeriodTypeType> ();
 			Map (x => x.PeriodCount).Column ("period_count");

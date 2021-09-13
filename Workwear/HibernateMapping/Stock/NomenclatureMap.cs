@@ -11,7 +11,11 @@ namespace workwear.HMap
 		{
 			Table ("nomenclature");
 
-			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map (x => x.Name).Column ("name");
 			Map (x => x.Sex).Column ("sex").CustomType<ClothesSexType> ();
 			Map (x => x.SizeStd).Column ("size_std");

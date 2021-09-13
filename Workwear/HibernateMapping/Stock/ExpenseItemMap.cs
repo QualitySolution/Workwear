@@ -1,4 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
+using NPOI.SS.Formula.Functions;
 using workwear.Domain.Stock;
 
 namespace workwear.HMap
@@ -9,7 +10,11 @@ namespace workwear.HMap
 		{
 			Table ("stock_expense_detail");
 
-			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map (x => x.Amount).Column ("quantity");
 			Map(x => x.Size).Column("size");
 			Map(x => x.WearGrowth).Column("growth");

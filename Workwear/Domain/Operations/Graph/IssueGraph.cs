@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate.Criterion;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
@@ -103,7 +104,7 @@ namespace workwear.Domain.Operations.Graph
 
 		internal static Func<EmployeeCard, ProtectionTools, IssueGraph> MakeIssueGraphTestGap;
 
-		public static IssueGraph MakeIssueGraph(IUnitOfWork uow, EmployeeCard employee, ProtectionTools protectionTools)
+		public static IssueGraph MakeIssueGraph(IUnitOfWork uow, EmployeeCard employee, ProtectionTools protectionTools, EmployeeIssueOperation[] unsavedOprarations = null)
 		{
 			if(MakeIssueGraphTestGap != null)
 				return MakeIssueGraphTestGap(employee, protectionTools);
@@ -116,7 +117,13 @@ namespace workwear.Domain.Operations.Graph
 					.Where(x => x.ProtectionTools.Id.IsIn(matchedProtectionTools.Select(n => n.Id).ToArray()) || x.Nomenclature.Id.IsIn(nomenclatures.Select(n => n.Id).ToArray()))
 					.OrderBy(x => x.OperationTime).Asc
 					.List();
-
+			if(unsavedOprarations != null)
+				foreach (var operation in unsavedOprarations)
+				{
+					if(!issues.Any(x => x.IsSame(operation)))
+						issues.Add(operation);
+				}
+			
 			return new IssueGraph(issues);
 		}
 

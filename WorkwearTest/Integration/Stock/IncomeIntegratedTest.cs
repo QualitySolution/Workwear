@@ -238,6 +238,8 @@ namespace WorkwearTest.Integration.Stock
 				returnOnStock.AddItem(expense.Items.First().EmployeeIssueOperation, 1);
 				returnOnStock.UpdateOperations(uow, ask);
 				uow.Save(returnOnStock);
+				uow.Commit();
+
 				returnOnStock.UpdateEmployeeWearItems();
 				uow.Commit();
 
@@ -296,7 +298,8 @@ namespace WorkwearTest.Integration.Stock
 				income2Item1.Amount = 7;
 				income2.UpdateOperations(uow, ask);
 				uow.Save(income2);
-
+				
+				uow.Commit();
 				var stockRepository = new StockRepository();
 				var stock1 = stockRepository.StockBalances(uow, warehouse, new List<Nomenclature> { nomenclature }, new DateTime(2017, 1, 2));
 				Assert.That(stock1.Sum(x => x.Amount), Is.EqualTo(15));

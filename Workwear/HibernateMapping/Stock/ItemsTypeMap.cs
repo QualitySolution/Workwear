@@ -10,7 +10,11 @@ namespace workwear.HMap
 		{
 			Table ("item_types");
 
-			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map (x => x.Name).Column ("name").Not.Nullable ();
 			Map (x => x.Category).Column ("category").CustomType<ItemTypeCategoryType> ();
 			Map (x => x.WearCategory).Column ("wear_category").CustomType<СlothesTypeType> ();

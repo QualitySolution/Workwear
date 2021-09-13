@@ -10,7 +10,11 @@ namespace workwear.HibernateMapping.Stock
 		{
 			Table("stock_transfer_detail");
 
-			Id(x => x.Id).Column("id").GeneratedBy.Native();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map(x => x.Amount).Column("quantity");
 
 			References(x => x.Document).Column("stock_transfer_id").Not.Nullable();
