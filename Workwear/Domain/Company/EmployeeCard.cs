@@ -579,6 +579,7 @@ namespace workwear.Domain.Company
 				var lastOperation = operations.OrderByDescending(x => x.OperationTime).First();
 				item.Amount = lastOperation.Issued;
 				item.LastIssue = lastOperation.OperationTime;
+				item.LastIssueOperation = lastOperation;
 				protectionGroups.Remove(item.ProtectionTools.Id);
 			}
 			
@@ -592,6 +593,7 @@ namespace workwear.Domain.Company
 				var lastOperation = operations.OrderByDescending(x => x.OperationTime).First();
 				item.Amount = lastOperation.Issued;
 				item.LastIssue = lastOperation.OperationTime;
+				item.LastIssueOperation = lastOperation;
 				protectionGroups.Remove(item.ProtectionTools.Id);
 			}
 		}

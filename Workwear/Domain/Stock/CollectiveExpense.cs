@@ -91,10 +91,11 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public virtual CollectiveExpenseItem AddItem(StockPosition position, int amount = 1)
+		public virtual CollectiveExpenseItem AddItem(EmployeeCard employee, StockPosition position, int amount = 1)
 		{
 			var newItem = new CollectiveExpenseItem() {
 				Document = this,
+				Employee = employee,
 				Amount = amount,
 				Nomenclature = position.Nomenclature,
 				Size = position.Size,
@@ -116,15 +117,15 @@ namespace workwear.Domain.Stock
 
 			CollectiveExpenseItem newItem;
 			if(employeeCardItem.BestChoiceInStock.Any())
-				newItem = AddItem(employeeCardItem.BestChoiceInStock.First().StockPosition);
+				newItem = AddItem(employeeCardItem.EmployeeCard, employeeCardItem.BestChoiceInStock.First().StockPosition);
 			else { 
 				newItem = new CollectiveExpenseItem() {
 					Document = this,
+					Employee = employeeCardItem.EmployeeCard
 				};
 				ObservableItems.Add(newItem);
 			}
-
-			newItem.Employee = employeeCardItem.EmployeeCard;
+			
 			newItem.EmployeeCardItem = employeeCardItem;
 			newItem.ProtectionTools = employeeCardItem.ProtectionTools;
 			newItem.Amount = newItem.Nomenclature != null ? employeeCardItem.CalculateRequiredIssue(baseParameters) : 0;

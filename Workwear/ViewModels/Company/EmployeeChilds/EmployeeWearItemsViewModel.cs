@@ -14,6 +14,7 @@ using workwear.Dialogs.Issuance;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
+using workwear.Models.Stock;
 using workwear.Repository.Operations;
 using workwear.ViewModels.Operations;
 using workwear.ViewModels.Regulations;
@@ -27,16 +28,17 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly BaseParameters baseParameters;
-		private readonly IInteractiveQuestion interactive;
+		private readonly IInteractiveService interactive;
 		private readonly ITdiCompatibilityNavigation navigation;
+		private readonly OpenStockDocumentsModel stockDocumentsModel;
 
-		public EmployeeWearItemsViewModel(EmployeeViewModel employeeViewModel, EmployeeIssueRepository employeeIssueRepository, BaseParameters baseParameters, IInteractiveQuestion interactive, ITdiCompatibilityNavigation navigation)
+		public EmployeeWearItemsViewModel(EmployeeViewModel employeeViewModel, EmployeeIssueRepository employeeIssueRepository, BaseParameters baseParameters, IInteractiveService interactive, ITdiCompatibilityNavigation navigation, OpenStockDocumentsModel stockDocumentsModel)
 		{
-			Contract.Requires(interactive != null);
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+			this.stockDocumentsModel = stockDocumentsModel ?? throw new ArgumentNullException(nameof(stockDocumentsModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 
 			employeeIssueRepository.RepoUow = UoW;
@@ -153,6 +155,16 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		public void OpenProtectionTools(EmployeeCardItem row)
 		{
 			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(row.ProtectionTools.Id));
+		}
+
+		public void OpenLastIssue(EmployeeCardItem row)
+		{
+			var referencedoc = employeeIssueRepository.GetReferencedDocuments(row.LastIssueOperation.Id);
+			if (!referencedoc.Any() || referencedoc.First().DocumentType == null) {
+				interactive.ShowMessage(ImportanceLevel.Error, "Не найдена ссылка на документ выдачи");
+				return;
+			}
+			stockDocumentsModel.EditDocumentDialog(employeeViewModel, referencedoc.First());
 		}
 
 		#endregion
