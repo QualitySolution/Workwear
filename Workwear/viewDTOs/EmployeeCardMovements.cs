@@ -1,4 +1,5 @@
 using System;
+using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QSProjectsLib;
 using workwear.Domain.Operations;
@@ -9,10 +10,9 @@ namespace workwear.DTO
 	public class EmployeeCardMovements : PropertyChangedBase
 	{
 		public EmployeeIssueOperation Operation { get; set; }
-		public ReferencedDocument ReferencedDocument { get; set; }
+		public EmployeeIssueReference EmployeeIssueReference { get; set; }
 
 		public DateTime Date => Operation.OperationTime;
-		public int? DocumentId => ReferencedDocument?.DocId;
 		public string NomenclatureName => Operation.Nomenclature?.Name ?? Operation.ProtectionTools.Name;
 		public string UnitsName => Operation.Nomenclature?.Type.Units.Name ?? Operation.ProtectionTools.Type.Units.Name;
 		public decimal? WearPercet => Operation.WearPercent;
@@ -21,44 +21,13 @@ namespace workwear.DTO
 		public int AmountReceived => Operation.Issued;
 		public int AmountReturned => Operation.Returned;
 
-		public string AmountReceivedText {
-			get {
-				return AmountReceived > 0 ? String.Format("{0} {1}", AmountReceived, UnitsName) : String.Empty;
-			}
-		}
+		public string AmountReceivedText => AmountReceived > 0 ? String.Format("{0} {1}", AmountReceived, UnitsName) : String.Empty;
 
-		public string AmountReturnedText {
-			get {
-				return AmountReturned > 0 ? String.Format("{0} {1}", AmountReturned, UnitsName) : String.Empty;
-			}
-		}
+		public string AmountReturnedText => AmountReturned > 0 ? String.Format("{0} {1}", AmountReturned, UnitsName) : String.Empty;
 
-		public string CostText {
-			get {
-				return Cost.HasValue ? CurrencyWorks.GetShortCurrencyString(Cost.Value) : String.Empty;
-			}
-		}
+		public string CostText => Cost.HasValue ? CurrencyWorks.GetShortCurrencyString(Cost.Value) : String.Empty;
 
-		public string DocumentName {
-			get {
-				switch(ReferencedDocument?.DocType) {
-					case EmployeeIssueOpReferenceDoc.ReceivedFromStock:
-						return String.Format("Выдача №{0}", DocumentId);
-					case EmployeeIssueOpReferenceDoc.RetutnedToStock:
-						return String.Format("Возврат №{0}", DocumentId);
-					case EmployeeIssueOpReferenceDoc.WriteOff:
-						return String.Format("Списание №{0}", DocumentId);
-					default:
-						return String.Empty;
-				}
-			}
-		}
-
-		public string WearPercentText {
-			get {
-				return WearPercet.HasValue ? WearPercet.Value.ToString("P0") : String.Empty;
-			}
-		}
+		public string WearPercentText => WearPercet.HasValue ? WearPercet.Value.ToString("P0") : String.Empty;
 
 		[PropertyChangedAlso(nameof(AutoWriteOffDateTextColored))]
 		public bool UseAutoWriteOff {
@@ -89,5 +58,9 @@ namespace workwear.DTO
 		public string SingText => IsSigned ? Operation.SignCardKey + " " + Operation.SignTimestamp.Value.ToString("dd.MM.yyyy HH:mm:ss") : null;
 
 		public bool IsSigned => !String.IsNullOrEmpty(Operation.SignCardKey);
+
+		public string DocumentTitle => EmployeeIssueReference?.DocumentType != null
+			? $"{EmployeeIssueReference.DocumentType.GetEnumTitle()} №{EmployeeIssueReference.DocumentId}"
+			: String.Empty;
 	}
 }

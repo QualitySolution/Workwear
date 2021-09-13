@@ -45,7 +45,7 @@ namespace workwear.Views.Company.EmployeeChilds
 			ytreeviewMovements.CreateFluentColumnsConfig<EmployeeCardMovements>()
 				.AddColumn("Дата").AddTextRenderer(e => e.Date.ToShortDateString())
 				//Заголовок колонки используется в методе YtreeviewMovements_RowActivated
-				.AddColumn("Документ").AddTextRenderer(e => e.DocumentName)
+				.AddColumn("Документ").AddTextRenderer(e => e.DocumentTitle)
 				.AddColumn("Номенклатура").AddTextRenderer(e => e.NomenclatureName)
 				.AddColumn("% износа").AddTextRenderer(e => e.WearPercentText)
 				.AddColumn("Стоимость").AddTextRenderer(e => e.CostText)

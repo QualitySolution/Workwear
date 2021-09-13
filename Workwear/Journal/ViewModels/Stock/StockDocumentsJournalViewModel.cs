@@ -20,6 +20,7 @@ using QS.ViewModels.Resolve;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
+using workwear.Models.Stock;
 using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
 
@@ -28,18 +29,17 @@ namespace workwear.Journal.ViewModels.Stock
 	public class StockDocumentsJournalViewModel : JournalViewModelBase
 	{
 		public readonly FeaturesService FeaturesService;
-		private readonly IViewModelResolver viewModelResolver;
-		private ITdiCompatibilityNavigation tdiNavigation;
+		private readonly OpenStockDocumentsModel openStockDocumentsModel;
 
 		public StockDocumentsFilterViewModel Filter { get; private set; }
 
 		public StockDocumentsJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
-			ITdiCompatibilityNavigation navigation, 
+			INavigationManager navigation,
+			OpenStockDocumentsModel openStockDocumentsModel,
 			ILifetimeScope autofacScope, 
-			FeaturesService featuresService, 
-			IViewModelResolver viewModelResolver, 
+			FeaturesService featuresService,
 			ICurrentPermissionService currentPermissionService = null, 
 			IDeleteEntityService deleteEntityService = null)
 			: base(unitOfWorkFactory, interactiveService, navigation)
@@ -48,9 +48,8 @@ namespace workwear.Journal.ViewModels.Stock
 			AutofacScope = autofacScope;
 			CurrentPermissionService = currentPermissionService;
 			DeleteEntityService = deleteEntityService;
-			tdiNavigation = navigation;
+			this.openStockDocumentsModel = openStockDocumentsModel ?? throw new ArgumentNullException(nameof(openStockDocumentsModel));
 			this.FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-			this.viewModelResolver = viewModelResolver ?? throw new ArgumentNullException(nameof(viewModelResolver));
 			JournalFilter = Filter = AutofacScope.Resolve<StockDocumentsFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
 			var dataLoader = new ThreadDataLoader<StockDocumentsJournalNode>(unitOfWorkFactory);
@@ -358,7 +357,7 @@ namespace workwear.Journal.ViewModels.Stock
 					docType.GetEnumTitle(),
 					(selected) => true,
 					(selected) => true,
-					(selected) => CreateEntityDialog(docType)
+					(selected) => openStockDocumentsModel.CreateDocumentDialog(this, docType)
 				);
 				addAction.ChildActionsList.Add(insertDocAction);
 			}
@@ -366,7 +365,8 @@ namespace workwear.Journal.ViewModels.Stock
 			var editAction = new JournalAction("Изменить",
 					(selected) => selected.Any(),
 					(selected) => true,
-					(selected) => selected.Cast<StockDocumentsJournalNode>().ToList().ForEach(EditEntityDialog)
+					(selected) => selected.Cast<StockDocumentsJournalNode>().ToList()
+						.ForEach(n => openStockDocumentsModel.EditDocumentDialog(this, n.DocTypeEnum, n.Id))
 					);
 			NodeActionsList.Add(editAction);
 
@@ -380,54 +380,6 @@ namespace workwear.Journal.ViewModels.Stock
 					"Delete"
 					);
 			NodeActionsList.Add(deleteAction);
-		}
-
-		protected virtual void CreateEntityDialog(StokDocumentType docType)
-		{
-			if(docType == StokDocumentType.TransferDoc) 
-				NavigationManager.OpenViewModel<WarehouseTransferViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
-			else if(docType == StokDocumentType.MassExpense)
-				NavigationManager.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
-			else if(docType == StokDocumentType.CollectiveExpense)
-				NavigationManager.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
-			else if(docType == StokDocumentType.ExpenseEmployeeDoc)
-				NavigationManager.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
-			else if(docType == StokDocumentType.ExpenseObjectDoc)
-				NavigationManager.OpenViewModel<ExpenseObjectViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
-			else if(docType == StokDocumentType.IncomeDoc)
-				tdiNavigation.OpenTdiTab<IncomeDocDlg>(this);
-			else if(docType == StokDocumentType.WriteoffDoc)
-				tdiNavigation.OpenTdiTab<WriteOffDocDlg>(this);
-		}
-
-		protected virtual void EditEntityDialog(StockDocumentsJournalNode node)
-		{
-			switch (node.DocTypeEnum)
-			{
-				case StokDocumentType.IncomeDoc:
-					tdiNavigation.OpenTdiTab<IncomeDocDlg, int>(this, node.Id);
-					break;
-				case StokDocumentType.ExpenseEmployeeDoc:
-					NavigationManager.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
-					break;
-				case StokDocumentType.ExpenseObjectDoc:
-					NavigationManager.OpenViewModel<ExpenseObjectViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
-					break;
-				case StokDocumentType.CollectiveExpense:
-					NavigationManager.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
-					break;
-				case StokDocumentType.WriteoffDoc:
-					tdiNavigation.OpenTdiTab<WriteOffDocDlg, int>(this, node.Id);
-					break;
-				case StokDocumentType.TransferDoc:
-					NavigationManager.OpenViewModel<WarehouseTransferViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
-					break;
-				case StokDocumentType.MassExpense:
-					NavigationManager.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
-					break;
-				default:
-					throw new NotSupportedException("Тип документа не поддерживается.");
-			}
 		}
 
 		protected virtual void DeleteEntities(StockDocumentsJournalNode[] nodes)

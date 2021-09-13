@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using NSubstitute;
 using NUnit.Framework;
+using QS.Dialog;
 using QS.Testing.DB;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
@@ -8,6 +10,7 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Repository.Operations;
+using workwear.Tools;
 
 namespace WorkwearTest.Integration.Operations
 {
@@ -21,11 +24,11 @@ namespace WorkwearTest.Integration.Operations
 			InitialiseUowFactory();
 		}
 
+		#region GetOperationsTouchDates
 		[Test(Description = "Проверяем что запрос не захватывает операции до даты выдачи.")]
 		[Category("Integrated")]
 		public void GetOperationsTouchDates_GetNotOperationBeforeAndAfterSelectedDateTest()
 		{
-
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 
 				var nomenclatureType = new ItemsType();
@@ -149,5 +152,274 @@ namespace WorkwearTest.Integration.Operations
 				Assert.That(result.Count, Is.EqualTo(2));
 			}
 		}
+		#endregion
+		#region GetReferencedDocuments
+		[Test(Description = "Проверяем получение ссылки на документ выдачи")]
+		[Category("Integrated")]
+		public void GetReferencedDocuments_ExpenseTest()
+		{
+			var interactive = Substitute.For<IInteractiveQuestion>();
+			interactive.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
+
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				uow.Save(nomenclature);
+
+				var employee = new EmployeeCard();
+				uow.Save(employee);
+
+				var expense = new Expense {
+					Date = new DateTime(2021, 9, 10),
+					Employee = employee,
+					Operation = ExpenseOperations.Employee,
+					Warehouse = warehouse,
+				};
+
+				var stockPosition = new StockPosition(nomenclature, null, null, 0);
+				var item = expense.AddItem(stockPosition, 1);
+
+				expense.UpdateOperations(uow, baseParameters, interactive);
+				uow.Save(expense);
+				uow.Commit();
+
+				var repository = new EmployeeIssueRepository(uow);
+				var result = repository.GetReferencedDocuments(item.EmployeeIssueOperation.Id);
+				Assert.That(result.First().DocumentType, Is.EqualTo(StokDocumentType.ExpenseEmployeeDoc));
+				Assert.That(result.First().DocumentId, Is.EqualTo(expense.Id));
+				Assert.That(result.First().ExpenceItemId, Is.EqualTo(item.Id));
+			}
+		}
+		
+		[Test(Description = "Проверяем получение ссылки на документ коллективной выдачи")]
+		[Category("Integrated")]
+		public void GetReferencedDocuments_CollectiveExpenseTest()
+		{
+			var interactive = Substitute.For<IInteractiveQuestion>();
+			interactive.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
+
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				uow.Save(nomenclature);
+
+				var employee = new EmployeeCard();
+				uow.Save(employee);
+				
+				var employee2 = new EmployeeCard();
+				uow.Save(employee2);
+
+				var expense = new CollectiveExpense() {
+					Date = new DateTime(2021, 9, 10),
+					Warehouse = warehouse,
+				};
+
+				var stockPosition = new StockPosition(nomenclature, null, null, 0);
+				var item = expense.AddItem(employee, stockPosition, 1);
+				var item2 = expense.AddItem(employee2, stockPosition, 10);
+
+				expense.UpdateOperations(uow, baseParameters, interactive);
+				uow.Save(expense);
+				uow.Commit();
+
+				var repository = new EmployeeIssueRepository(uow);
+				var results = repository.GetReferencedDocuments(item.EmployeeIssueOperation.Id, item2.EmployeeIssueOperation.Id);
+				var result1 = results.First(x => x.OperationId == item.EmployeeIssueOperation.Id);
+				Assert.That(result1.DocumentType, Is.EqualTo(StokDocumentType.CollectiveExpense));
+				Assert.That(result1.DocumentId, Is.EqualTo(expense.Id));
+				Assert.That(result1.CollectiveExpenseItemId, Is.EqualTo(item.Id));
+				var result2 = results.First(x => x.OperationId == item2.EmployeeIssueOperation.Id);
+				Assert.That(result2.DocumentType, Is.EqualTo(StokDocumentType.CollectiveExpense));
+				Assert.That(result2.DocumentId, Is.EqualTo(expense.Id));
+				Assert.That(result2.CollectiveExpenseItemId, Is.EqualTo(item2.Id));
+			}
+		}
+		
+		[Test(Description = "Проверяем получение ссылки на докумен возврата от сотрудника")]
+		[Category("Integrated")]
+		public void GetReferencedDocuments_ReturnTest()
+		{
+			var interactive = Substitute.For<IInteractiveQuestion>();
+			interactive.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
+
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				uow.Save(nomenclature);
+
+				var employee = new EmployeeCard();
+				uow.Save(employee);
+
+				var expense = new Expense {
+					Date = new DateTime(2021, 9, 10),
+					Employee = employee,
+					Operation = ExpenseOperations.Employee,
+					Warehouse = warehouse,
+				};
+
+				var stockPosition = new StockPosition(nomenclature, null, null, 0);
+				var item = expense.AddItem(stockPosition, 10);
+
+				expense.UpdateOperations(uow, baseParameters, interactive);
+				uow.Save(expense);
+				
+				//Возвращаем 2 штуки
+				var income = new Income {
+					Date = new DateTime(2021, 9, 11),
+					Operation = IncomeOperations.Return,
+					EmployeeCard = employee,
+					Warehouse = warehouse,
+				};
+				
+				var returnItem = income.AddItem(item.EmployeeIssueOperation, 2);
+				income.UpdateOperations(uow, interactive);
+				uow.Save(income);
+				uow.Commit();
+
+				var repository = new EmployeeIssueRepository(uow);
+				var result = repository.GetReferencedDocuments(returnItem.ReturnFromEmployeeOperation.Id);
+				Assert.That(result.First().DocumentType, Is.EqualTo(StokDocumentType.IncomeDoc));
+				Assert.That(result.First().DocumentId, Is.EqualTo(income.Id));
+				Assert.That(result.First().IncomeItemId, Is.EqualTo(returnItem.Id));
+			}
+		}
+		
+		[Test(Description = "Проверяем получение ссылки на докумен списания от сотрудника")]
+		[Category("Integrated")]
+		public void GetReferencedDocuments_WriteOffTest()
+		{
+			var interactive = Substitute.For<IInteractiveQuestion>();
+			interactive.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
+
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				uow.Save(nomenclature);
+
+				var employee = new EmployeeCard();
+				uow.Save(employee);
+
+				var expense = new Expense {
+					Date = new DateTime(2021, 9, 10),
+					Employee = employee,
+					Operation = ExpenseOperations.Employee,
+					Warehouse = warehouse,
+				};
+
+				var stockPosition = new StockPosition(nomenclature, null, null, 0);
+				var item = expense.AddItem(stockPosition, 10);
+
+				expense.UpdateOperations(uow, baseParameters, interactive);
+				uow.Save(expense);
+				
+				//Списываем 3 штуки
+				var writeoff = new Writeoff() {
+					Date = new DateTime(2021, 9, 11),
+				};
+				
+				var writeoffItem = writeoff.AddItem(item.EmployeeIssueOperation, 2);
+				writeoff.UpdateOperations(uow);
+				uow.Save(writeoff);
+				uow.Commit();
+
+				var repository = new EmployeeIssueRepository(uow);
+				var result = repository.GetReferencedDocuments(writeoffItem.EmployeeWriteoffOperation.Id);
+				Assert.That(result.First().DocumentType, Is.EqualTo(StokDocumentType.WriteoffDoc));
+				Assert.That(result.First().DocumentId, Is.EqualTo(writeoff.Id));
+				Assert.That(result.First().WriteoffItemId, Is.EqualTo(writeoffItem.Id));
+			}
+		}
+		
+		[Test(Description = "Проверяем получение ссылки на докумен массовой выдачи")]
+		[Ignore("Пока не реализовано полноценно. Есть вопросы с самому документу надо обсуждать.")]
+		[Category("Integrated")]
+		public void GetReferencedDocuments_MassExpenseTest()
+		{
+			var interactive = Substitute.For<IInteractiveMessage>();
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
+
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				uow.Save(nomenclature);
+
+				var employee = new EmployeeCard();
+				uow.Save(employee);
+				
+				var employee2 = new EmployeeCard();
+				uow.Save(employee2);
+
+				var expense = new MassExpense {
+					Date = new DateTime(2021, 9, 10),
+					WarehouseFrom = warehouse,
+				};
+				
+				expense.AddEmployee(employee, interactive);
+				expense.AddEmployee(employee2, interactive);
+				
+				var item = expense.AddItemNomenclature(nomenclature, interactive, uow);
+				item.Amount = 1;
+
+				expense.UpdateOperations(uow, s => true);
+				uow.Save(expense);
+				uow.Commit();
+
+				var repository = new EmployeeIssueRepository(uow);
+				var results = repository.GetReferencedDocuments(expense.MassExpenseOperations.Select(x => x.EmployeeIssueOperation.Id).ToArray());
+				Assert.That(results.Count, Is.EqualTo(2));
+				var result1 = results.First(x => x.OperationId == expense.MassExpenseOperations[0].EmployeeIssueOperation.Id);
+				Assert.That(result1.DocumentType, Is.EqualTo(StokDocumentType.MassExpense));
+				Assert.That(result1.DocumentId, Is.EqualTo(expense.Id));
+				Assert.That(result1.MassOperationItemItemId, Is.EqualTo(expense.MassExpenseOperations[0].Id));
+				var result2 = results.First(x => x.OperationId == expense.MassExpenseOperations[1].EmployeeIssueOperation.Id);
+				Assert.That(result2.DocumentType, Is.EqualTo(StokDocumentType.MassExpense));
+				Assert.That(result2.DocumentId, Is.EqualTo(expense.Id));
+				Assert.That(result2.MassOperationItemItemId, Is.EqualTo(expense.MassExpenseOperations[1].Id));
+			}
+		}
+		#endregion
 	}
 }

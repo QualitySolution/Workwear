@@ -12,6 +12,7 @@ using QS.ViewModels;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.DTO;
+using workwear.Models.Stock;
 using workwear.Repository.Operations;
 using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
@@ -23,14 +24,16 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		private readonly EmployeeViewModel employeeViewModel;
+		private readonly OpenStockDocumentsModel openStockDocumentsModel;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly FeaturesService featuresService;
 		private readonly ITdiCompatibilityNavigation navigation;
 		List<EmployeeCardMovements> movements;
 
-		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, EmployeeIssueRepository employeeIssueRepository,  FeaturesService featuresService, ITdiCompatibilityNavigation navigation)
+		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, OpenStockDocumentsModel openStockDocumentsModel,  EmployeeIssueRepository employeeIssueRepository,  FeaturesService featuresService, ITdiCompatibilityNavigation navigation)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
+			this.openStockDocumentsModel = openStockDocumentsModel ?? throw new ArgumentNullException(nameof(openStockDocumentsModel));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
@@ -65,20 +68,10 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void OpenDoc(EmployeeCardMovements item)
 		{
-			if(item.ReferencedDocument == null)
+			if(item.EmployeeIssueReference?.DocumentType == null)
 				return;
 
-			switch(item.ReferencedDocument.DocType) {
-				case EmployeeIssueOpReferenceDoc.ReceivedFromStock:
-					navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForOpen(item.ReferencedDocument.DocId), Entity);
-					break;
-				case EmployeeIssueOpReferenceDoc.RetutnedToStock:
-					navigation.OpenTdiTab<IncomeDocDlg, int>(employeeViewModel, item.ReferencedDocument.DocId);
-					break;
-				case EmployeeIssueOpReferenceDoc.WriteOff:
-					navigation.OpenTdiTab<WriteOffDocDlg, int>(employeeViewModel, item.ReferencedDocument.DocId);
-					break;
-			}
+			openStockDocumentsModel.EditDocumentDialog(employeeViewModel, item.EmployeeIssueReference);
 		}
 
 		#endregion
@@ -96,7 +89,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 			foreach(var operation in list) {
 				var item = new EmployeeCardMovements();
 				item.Operation = operation;
-				item.ReferencedDocument = docs.FirstOrDefault(x => x.OpId == operation.Id);
+				item.EmployeeIssueReference = docs.FirstOrDefault(x => x.OperationId == operation.Id);
 				item.PropertyChanged += Item_PropertyChanged;
 				prepareMovements.Add(item);
 			}
