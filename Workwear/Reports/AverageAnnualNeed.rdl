@@ -794,8 +794,8 @@
       <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
-    item_types.name AS type_name,
-    item_types.id AS type_id,
+    protection_tools.name AS type_name,
+    protection_tools.id AS type_id,
     CASE item_types.wear_category
         WHEN 'Wear' THEN wear_cards.wear_growth
         ELSE NULL
@@ -805,6 +805,8 @@
         WHEN 'Shoes' THEN wear_cards.size_shoes
         WHEN 'WinterShoes' THEN wear_cards.size_winter_shoes
         WHEN 'Gloves' THEN wear_cards.size_gloves
+        WHEN 'Headgear' THEN wear_cards.size_headdress
+        WHEN 'Mittens' THEN wear_cards.size_mittens
         ELSE NULL
     END AS size,
     measurement_units.name AS unit,
@@ -827,8 +829,8 @@ FROM
         LEFT JOIN
     norms_item ON wear_cards_item.norm_item_id = norms_item.id
 WHERE wear_cards.dismiss_date IS NULL
-GROUP BY item_types.id , size , growth
-ORDER BY type_name , size , growth</CommandText>
+GROUP BY protection_tools.id , size , growth
+ORDER BY type_name, size, growth</CommandText>
       </Query>
       <Fields >
         <Field Name="type_name">
