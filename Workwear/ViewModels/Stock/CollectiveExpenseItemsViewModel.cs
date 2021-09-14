@@ -65,6 +65,12 @@ namespace workwear.ViewModels.Stock
 			set { Entity.Warehouse = value; }
 		}
 
+		private CollectiveExpenseItem selectedItem;
+		public virtual CollectiveExpenseItem SelectedItem {
+			get => selectedItem;
+			set => SetField(ref selectedItem, value);
+		}
+
 		#endregion
 		#region Sensetive
 		public bool SensetiveAddButton => Entity.Warehouse != null;

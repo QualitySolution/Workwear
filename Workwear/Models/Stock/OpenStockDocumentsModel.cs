@@ -39,33 +39,29 @@ namespace workwear.Models.Stock
 
 		public virtual void EditDocumentDialog(DialogViewModelBase master, EmployeeIssueReference reference)
 		{
-			EditDocumentDialog(master, reference.DocumentType.Value, reference.DocumentId.Value);
+			var page = EditDocumentDialog(master, reference.DocumentType.Value, reference.DocumentId.Value);
+			if(page.ViewModel is ISelectItem select)
+				select.SelectItem(reference.ItemId.Value);
 		}
-		public virtual void EditDocumentDialog(DialogViewModelBase master, StokDocumentType documentType, int id)
+
+		public virtual IPage EditDocumentDialog(DialogViewModelBase master, StokDocumentType documentType, int id)
 		{
 			switch (documentType)
 			{
 				case StokDocumentType.IncomeDoc:
-					navigation.OpenTdiTab<IncomeDocDlg, int>(master, id);
-					break;
+					return navigation.OpenTdiTab<IncomeDocDlg, int>(master, id);
 				case StokDocumentType.ExpenseEmployeeDoc:
-					navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
-					break;
+					return navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
 				case StokDocumentType.ExpenseObjectDoc:
-					navigation.OpenViewModel<ExpenseObjectViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
-					break;
+					return navigation.OpenViewModel<ExpenseObjectViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
 				case StokDocumentType.CollectiveExpense:
-					navigation.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
-					break;
+					return navigation.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
 				case StokDocumentType.WriteoffDoc:
-					navigation.OpenTdiTab<WriteOffDocDlg, int>(master, id);
-					break;
+					return navigation.OpenTdiTab<WriteOffDocDlg, int>(master, id);
 				case StokDocumentType.TransferDoc:
-					navigation.OpenViewModel<WarehouseTransferViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
-					break;
+					return navigation.OpenViewModel<WarehouseTransferViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
 				case StokDocumentType.MassExpense:
-					navigation.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
-					break;
+					return navigation.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
 				default:
 					throw new NotSupportedException($"Тип документа {documentType} не поддерживается.");
 			}

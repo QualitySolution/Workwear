@@ -158,5 +158,7 @@ namespace workwear.Repository.Operations
 		//Внимание здесь последовательность получения ID желательно сохранять такую же как у типа документа.
 		//Так как в случае ошибочной связи операции с двумя документами возьмется первый надейнных с обоих случаях, не тип из одного а id от другого.
 		public int? DocumentId => ExpenceId ?? CollectiveExpenseId ?? IncomeId ?? WriteoffId;
+
+		public int? ItemId => ExpenceItemId ?? CollectiveExpenseItemId ?? IncomeItemId ?? WriteoffItemId;
 	}
 }
