@@ -10,6 +10,8 @@ namespace workwear.Models.Stock
 {
 	public class OpenStockDocumentsModel
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		private ITdiCompatibilityNavigation navigation;
 
 		public OpenStockDocumentsModel(ITdiCompatibilityNavigation navigation)
@@ -45,6 +47,14 @@ namespace workwear.Models.Stock
 		}
 
 		public virtual IPage EditDocumentDialog(DialogViewModelBase master, StokDocumentType documentType, int id)
+		{
+			var start = DateTime.Now;
+			var page = OpenEditDialog(master, documentType, id);
+			logger.Info($"Документ открыт за {(DateTime.Now - start).TotalSeconds} сек.");
+			return page;
+		}
+
+		private IPage OpenEditDialog(DialogViewModelBase master, StokDocumentType documentType, int id)
 		{
 			switch (documentType)
 			{
