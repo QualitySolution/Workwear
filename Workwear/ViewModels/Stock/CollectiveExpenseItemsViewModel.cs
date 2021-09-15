@@ -40,7 +40,7 @@ namespace workwear.ViewModels.Stock
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
-			Entity.PrepareItems();
+			Entity.PrepareItems(UoW, baseParameters);
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
@@ -49,13 +49,10 @@ namespace workwear.ViewModels.Stock
 
 		#region Хелперы
 		private IUnitOfWork UoW => сollectiveExpenseViewModel.UoW;
-		private CollectiveExpense Entity => сollectiveExpenseViewModel.Entity;
+		public CollectiveExpense Entity => сollectiveExpenseViewModel.Entity;
 		#endregion
 
 		#region Поля
-
-		public GenericObservableList<CollectiveExpenseItem> ObservableItems => Entity.ObservableItems;
-
 		private string sum;
 		public virtual string Sum {
 			get => sum;
@@ -104,6 +101,7 @@ namespace workwear.ViewModels.Stock
 				progress.Add();
 				Entity.AddItems(employee, BaseParameters);
 			}
+			Entity.ResortItems();
 			CalculateTotal();
 			progress.Close();
 			navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
@@ -139,7 +137,28 @@ namespace workwear.ViewModels.Stock
 				Entity.RemoveItem(item);
 			CalculateTotal();
 		}
+		#endregion
 
+		#region Обновление документа
+
+		public void RefreshAll()
+		{
+			var Employees = Entity.Items.Select(x => x.Employee).Distinct().ToList();
+			foreach(var employee in Employees) {
+				Entity.AddItems(employee, BaseParameters);
+			}
+			Entity.ResortItems();
+		}
+
+		public void RefreshItem(CollectiveExpenseItem item)
+		{
+			Entity.AddItems(item.Employee, BaseParameters);
+			Entity.ResortItems();
+		}
+
+		#endregion
+
+		#region Открытие
 		public void OpenEmployee(CollectiveExpenseItem item)
 		{
 			navigation.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.Employee.Id));

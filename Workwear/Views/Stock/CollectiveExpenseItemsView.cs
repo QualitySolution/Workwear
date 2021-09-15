@@ -29,10 +29,14 @@ namespace workwear.Views.Stock
 		public void Configure()
 		{
 			CreateTable();
-			ytreeItems.ItemsDataSource = ViewModel.ObservableItems;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
-			ytreeItems.Binding.AddBinding(viewModel, v => v.SelectedItem, w => w.SelectedRow);
+			ytreeItems.Binding
+				.AddSource(ViewModel)
+					.AddBinding(v => v.SelectedItem, w => w.SelectedRow)
+				.AddSource(ViewModel.Entity)
+					.AddBinding(e => e.ObservableItems, w => w.ItemsDataSource)
+				.InitializeFromSource();
 
 			labelSum.Binding.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp).InitializeFromSource();
 			buttonAdd.Binding.AddBinding(ViewModel, v => v.SensetiveAddButton, w => w.Sensitive).InitializeFromSource();
@@ -134,7 +138,7 @@ namespace workwear.Views.Stock
 
 		void YtreeItems_Selection_Changed(object sender, EventArgs e)
 		{
-			buttonDel.Sensitive = buttonShowAllSize.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
+			buttonDel.Sensitive = buttonShowAllSize.Sensitive = buttonRefreshEmployee.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
 		}
 
 		protected void OnButtonAddClicked(object sender, EventArgs e)
@@ -145,6 +149,16 @@ namespace workwear.Views.Stock
 		protected void OnButtonShowAllSizeClicked(object sender, EventArgs e)
 		{
 			viewModel.ShowAllSize(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+		}
+
+		protected void OnButtonRefreshEmployeesClicked(object sender, EventArgs e)
+		{
+			ViewModel.RefreshAll();
+		}
+
+		protected void OnButtonRefreshEmployeeClicked(object sender, EventArgs e)
+		{
+			ViewModel.RefreshItem(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 		}
 		#endregion
 	}

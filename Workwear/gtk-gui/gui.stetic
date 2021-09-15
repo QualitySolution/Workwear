@@ -13073,7 +13073,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Stock.CollectiveExpenseItemsView" design-size="575 234">
+  <widget class="Gtk.Bin" id="workwear.Views.Stock.CollectiveExpenseItemsView" design-size="745 234">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -13098,7 +13098,22 @@
               </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonRefreshEmployees">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-redo Menu</property>
+                <property name="Label" translatable="yes">Перезаполнить документ</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonRefreshEmployeesClicked" />
+              </widget>
+              <packing>
+                <property name="PackType">End</property>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
             </child>
           </widget>
           <packing>
@@ -13147,6 +13162,23 @@
               </packing>
             </child>
             <child>
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonRefreshEmployee">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-redo Menu</property>
+                <property name="Label" translatable="yes">Перезаполнить сотрудника</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonRefreshEmployeeClicked" />
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
               <widget class="Gtk.Button" id="buttonDel">
                 <property name="MemberName" />
                 <property name="Sensitive">False</property>
@@ -13158,7 +13190,7 @@
                 <signal name="Clicked" handler="OnButtonDelClicked" />
               </widget>
               <packing>
-                <property name="Position">1</property>
+                <property name="Position">2</property>
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
@@ -13175,7 +13207,7 @@
                 <signal name="Clicked" handler="OnButtonShowAllSizeClicked" />
               </widget>
               <packing>
-                <property name="Position">2</property>
+                <property name="Position">3</property>
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
@@ -13189,7 +13221,7 @@
                 <property name="UseMarkup">True</property>
               </widget>
               <packing>
-                <property name="Position">3</property>
+                <property name="Position">4</property>
                 <property name="AutoSize">False</property>
               </packing>
             </child>

@@ -35,8 +35,8 @@ namespace workwear.Domain.Stock
 
 		[Display (Name = "Строки документа")]
 		public virtual IList<CollectiveExpenseItem> Items {
-			get { return items; }
-			set { SetField (ref items, value, () => Items); }
+			get => items;
+			set => SetField(ref items, value);
 		}
 
 		System.Data.Bindings.Collections.Generic.GenericObservableList<CollectiveExpenseItem> observableItems;
@@ -145,6 +145,13 @@ namespace workwear.Domain.Stock
 			}
 		}
 
+		public virtual void ResortItems()
+		{
+			Items = Items.OrderBy(x => x.Employee.FullName).ThenBy(x => x.ProtectionTools.Name).ToList();
+			observableItems = null;
+			OnPropertyChanged(nameof(ObservableItems));
+		}
+
 		#endregion
 
 		#region Методы
@@ -154,11 +161,11 @@ namespace workwear.Domain.Stock
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser));
 		}
 
-		public virtual void PrepareItems()
+		public virtual void PrepareItems(IUnitOfWork uow, BaseParameters baseParameters)
 		{
 			var employeeGroups = Items.GroupBy(x => x.Employee);
 			foreach(var employeeGroup in employeeGroups) {
-				employeeGroup.Key.FillWearRecivedInfo(new EmployeeIssueRepository(UoW));
+				employeeGroup.Key.FillWearInStockInfo(uow, baseParameters, Warehouse, Date);
 				foreach(var docItem in employeeGroup) {
 					docItem.EmployeeCardItem = employeeGroup.Key.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
 				}
