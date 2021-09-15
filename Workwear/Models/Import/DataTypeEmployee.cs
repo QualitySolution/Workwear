@@ -30,5 +30,11 @@ namespace workwear.Models.Import
 		Department,
 		[Display(Name = "Должность")]
 		Post,
+		[Display(Name = "Рост")]
+		Growth,
+		[Display(Name = "Размер одежды")]
+		WearSize,
+		[Display(Name = "Размер обуви")]
+		ShoesSize,
 	}
 }

@@ -12,21 +12,29 @@ using QS.DomainModel.UoW;
 using QS.Services;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
+using workwear.Measurements;
 using workwear.Models.Company;
 using workwear.Repository.Company;
 using workwear.ViewModels.Import;
 using Workwear.Domain.Company;
+using Workwear.Measurements;
 
 namespace workwear.Models.Import
 {
 	public class DataParserEmployee : DataParserBase<DataTypeEmployee>
 	{
 		private readonly PersonNames personNames;
+		private readonly SizeService sizeService;
 		private readonly SubdivisionRepository subdivisionRepository;
 		private readonly PostRepository postRepository;
 		private readonly IUserService userService;
 
-		public DataParserEmployee(PersonNames personNames, SubdivisionRepository subdivisionRepository = null, PostRepository postRepository = null, IUserService userService = null)
+		public DataParserEmployee(
+			PersonNames personNames,
+			SizeService sizeService,
+			SubdivisionRepository subdivisionRepository = null,
+			PostRepository postRepository = null,
+			IUserService userService = null)
 		{
 			AddColumnName(DataTypeEmployee.Fio,
 				"ФИО",
@@ -84,7 +92,19 @@ namespace workwear.Models.Import
 			AddColumnName(DataTypeEmployee.Post,
 				"Должность"
 				);
+			AddColumnName(DataTypeEmployee.Growth,
+				"Рост"
+				);
+			AddColumnName(DataTypeEmployee.ShoesSize,
+				"Обувь"
+				);
+			//Разместил былиже к концу чтобы слово "размер", срабатывало только в том случае если другого не нашли.
+			AddColumnName(DataTypeEmployee.WearSize,
+				"Размер",
+				"Одежда"
+				);
 			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.subdivisionRepository = subdivisionRepository;
 			this.postRepository = postRepository;
 			this.userService = userService;
@@ -226,6 +246,16 @@ namespace workwear.Models.Import
 					row.AddColumnChange(column, post.Id == 0 ? ChangeType.NewEntity : rowChange, employee.Post?.Name);
 					employee.Post = post;
 					break;
+				case DataTypeEmployee.Growth:
+					row.ChangedColumns.Add(column, CompareString(employee.WearGrowth, row.CellStringValue(column.Index), rowChange));
+					break;
+				case DataTypeEmployee.WearSize:
+					row.ChangedColumns.Add(column, CompareSize(employee.WearSize, row.CellStringValue(column.Index), СlothesType.Wear, employee.Sex, rowChange));
+					break;
+				case DataTypeEmployee.ShoesSize:
+					row.ChangedColumns.Add(column, CompareSize(employee.ShoesSize, row.CellStringValue(column.Index), СlothesType.Shoes, employee.Sex, rowChange));
+					break;
+
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
 			}
@@ -246,6 +276,22 @@ namespace workwear.Models.Import
 				return new ChangeState(changeType, fieldValue?.ToShortDateString());
 			return new ChangeState(changeType);
 		}
+
+		private ChangeState CompareSize(string fieldValue, string newValue, СlothesType сlothesType, Sex sex, ChangeType rowChange)
+		{
+			var changeType = String.Equals(fieldValue, newValue, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+			if(changeType != ChangeType.NotChanged) {
+				var standarts = SizeHelper.GetSizeStandartsEnum(сlothesType, sex);
+				var sizes = sizeService.GetAllSizesForEmployee(standarts);
+				if(!sizes.Any(x => String.Equals(x.Size, newValue, StringComparison.InvariantCultureIgnoreCase)))
+					changeType = ChangeType.ParseError;
+			}
+
+			if(changeType == ChangeType.ChangeValue)
+				return new ChangeState(changeType, fieldValue);
+			return new ChangeState(changeType);
+		}
+
 		#endregion
 
 		#region Сопоставление
@@ -388,7 +434,8 @@ namespace workwear.Models.Import
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
 			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученой из общего поля ФИО.
 			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType)) {
-				SetValue(settings, uow, employee, row, column);
+				if(row.ChangedColumns[column].ChangeType == ChangeType.NewEntity || row.ChangedColumns[column].ChangeType == ChangeType.ChangeValue)
+					SetValue(settings, uow, employee, row, column);
 			}
 			yield return employee;
 		}
@@ -452,6 +499,25 @@ namespace workwear.Models.Import
 				case DataTypeEmployee.Post:
 					//Устанавливаем в MakeChange;
 					break;
+
+				case DataTypeEmployee.Growth:
+					employee.WearGrowth = value;
+					break;
+				case DataTypeEmployee.WearSize:
+					var standartsWear = SizeHelper.GetSizeStandartsEnum(СlothesType.Wear, employee.Sex);
+					var sizesWear = sizeService.GetAllSizesForEmployee(standartsWear);
+					var pairWear = sizesWear.First(x => String.Equals(x.Size, value, StringComparison.InvariantCultureIgnoreCase));
+					employee.WearSize = pairWear.Size;
+					employee.WearSizeStd = pairWear.StandardCode;
+					break;
+				case DataTypeEmployee.ShoesSize:
+					var standartsShoes = SizeHelper.GetSizeStandartsEnum(СlothesType.Shoes, employee.Sex);
+					var sizesShoes = sizeService.GetAllSizesForEmployee(standartsShoes);
+					var pairShoes = sizesShoes.First(x => String.Equals(x.Size, value, StringComparison.InvariantCultureIgnoreCase));
+					employee.ShoesSize = pairShoes.Size;
+					employee.ShoesSizeStd = pairShoes.StandardCode;
+					break;
+
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
 			}
