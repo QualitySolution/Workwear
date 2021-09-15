@@ -230,5 +230,48 @@ namespace WorkwearTest.Integration.Import
 				Assert.That(natalia.DismissDate, Is.EqualTo(new DateTime(2021, 1, 13)));
 			}
 		}
+		
+		[Test(Description = "Проверяем что нормально работаем с файлами имеющими пустые строки")]
+		public void EmployeesLoad_EmptyRows_A2Case()
+		{
+			var navigation = Substitute.For<INavigationManager>();
+			var interactive = Substitute.For<IInteractiveMessage>();
+			var progressStep = Substitute.For<IProgressBarDisplayable>();
+			var progressInterceptor = Substitute.For<ProgressInterceptor>();
+			var subdivisionRepository = Substitute.For<SubdivisionRepository>();
+			var postRepository = Substitute.For<PostRepository>();
+			var dataparser = new DataParserEmployee(new PersonNames(), subdivisionRepository, postRepository);
+			var setting = new SettingsMatchEmployeesViewModel();
+			var model = new ImportModelEmployee(dataparser, setting);
+			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
+				var importModel = employeesLoad.ImportModel as ImportModelEmployee;
+				employeesLoad.ProgressStep = progressStep;
+				employeesLoad.FileName = "Samples/Excel/empty_first_row_a2.xls";
+				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
+				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
+				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
+				employeesLoad.SecondStep();
+				Assert.That(employeesLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
+				employeesLoad.ThirdStep();
+				Assert.That(employeesLoad.SensitiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
+				employeesLoad.Save();
+
+				var uow = employeesLoad.UoW;
+				var employees = uow.GetAll<EmployeeCard>().ToList();
+				
+				Assert.That(employees.Count, Is.EqualTo(2));
+				// var anastasia = employees.First(x => x.FirstName == "Анастасия");
+				// Assert.That(anastasia.LastName, Is.EqualTo("Устинова"));
+				// Assert.That(anastasia.Patronymic, Is.EqualTo("Владимировна"));
+				// Assert.That(anastasia.HireDate, Is.EqualTo(new DateTime(2006, 4, 4)));
+				// Assert.That(anastasia.Sex, Is.EqualTo(Sex.F));
+				// Assert.That(anastasia.DismissDate, Is.EqualTo(new DateTime(2021, 3, 31)));
+				//
+				// var natalia = employees.First(x => x.FirstName == "Наталья");
+				// Assert.That(natalia.HireDate, Is.EqualTo(new DateTime(2020, 12, 11)));
+				// Assert.That(natalia.Sex, Is.EqualTo(Sex.F));
+				// Assert.That(natalia.DismissDate, Is.EqualTo(new DateTime(2021, 1, 13)));
+			}
+		}
 	}
 }
