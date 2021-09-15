@@ -58,6 +58,9 @@ namespace workwear.Journal.ViewModels.Statements
 			return query
 				.Where(GetSearchCriterion(
 					() => issuanceSheetAlias.Id,
+					() => issuanceSheetAlias.Expense.Id,
+					() => issuanceSheetAlias.MassExpense.Id,
+					() => issuanceSheetAlias.CollectiveExpense.Id,
 					() => organizationAlias.Name,
 					() => subdivisionAlias.Name,
 					() => subdivisionAlias.Code
