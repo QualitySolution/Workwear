@@ -270,11 +270,15 @@ namespace WorkwearTest.Integration.Import
 				var uow = employeesLoad.UoW;
 				var employees = uow.GetAll<EmployeeCard>().ToList();
 				
-				Assert.That(employees.Count, Is.EqualTo(2));
+				Assert.That(employees.Count, Is.EqualTo(3));
 				var nikolay = employees.First(x => x.FirstName == "Николай");
 				Assert.That(nikolay.WearGrowth, Is.EqualTo("170-176"));
 				Assert.That(nikolay.WearSize, Is.EqualTo("48-50"));
 				Assert.That(nikolay.ShoesSize, Is.EqualTo("38"));
+				
+				//Проверяем что должности не задублировались
+				var posts = uow.GetAll<Post>();
+				Assert.That(posts.Count, Is.EqualTo(2));
 			}
 		}
 	}
