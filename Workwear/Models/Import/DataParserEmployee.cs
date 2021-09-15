@@ -215,7 +215,7 @@ namespace workwear.Models.Import
 					}
 					Department department = UsedDepartment.FirstOrDefault(x =>
 						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase)
-						&& DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision));
+						&& ((employee.Subdivision == null && x.Subdivision == null) || DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision)));
 					if(department == null) {
 						department = new Department {
 							Name = value,
@@ -234,7 +234,7 @@ namespace workwear.Models.Import
 					}
 					Post post = UsedPosts.FirstOrDefault(x =>
 						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase)
-						&& DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision));
+						&&((employee.Subdivision == null && x.Subdivision == null) || DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision)));
 					if(post == null) {
 						post = new Post { 
 							Name = value, 
