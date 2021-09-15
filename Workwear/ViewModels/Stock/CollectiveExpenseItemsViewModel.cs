@@ -40,6 +40,8 @@ namespace workwear.ViewModels.Stock
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
+			Entity.PrepareItems();
+
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 			CalculateTotal();
@@ -116,10 +118,10 @@ namespace workwear.ViewModels.Stock
 			selectJournal.ViewModel.Filter.ProtectionTools = item.ProtectionTools;
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			selectJournal.Tag = item;
-			selectJournal.ViewModel.OnSelectResult += AddNomenclatureProtectionTools;
+			selectJournal.ViewModel.OnSelectResult += SetNomenclatureForRow;
 		}
 
-		public void AddNomenclatureProtectionTools(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		public void SetNomenclatureForRow(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			var page = navigation.FindPage((DialogViewModelBase)sender);
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {

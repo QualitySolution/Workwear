@@ -154,6 +154,17 @@ namespace workwear.Domain.Stock
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser));
 		}
 
+		public virtual void PrepareItems()
+		{
+			var employeeGroups = Items.GroupBy(x => x.Employee);
+			foreach(var employeeGroup in employeeGroups) {
+				employeeGroup.Key.FillWearRecivedInfo(new EmployeeIssueRepository(UoW));
+				foreach(var docItem in employeeGroup) {
+					docItem.EmployeeCardItem = employeeGroup.Key.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
+				}
+			}
+		}
+
 		public virtual void UpdateEmployeeWearItems(IProgressBarDisplayable progress)
 		{
 			var groups = Items.GroupBy(x => x.Employee);
@@ -165,7 +176,9 @@ namespace workwear.Domain.Stock
 				UoW.Save(employeeGroup.Key);
 			}
 		}
+		#endregion
 
+		#region Ведомость
 		public virtual void CreateIssuanceSheet()
 		{
 			if(IssuanceSheet != null)
@@ -199,7 +212,6 @@ namespace workwear.Domain.Stock
 					IssuanceSheet.Items.Remove(item.IssuanceSheetItem);
 			}
 		}
-
 		#endregion
 	}
 }
