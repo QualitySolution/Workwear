@@ -70,8 +70,9 @@ namespace workwear.Journal.ViewModels.Statements
 					.Select(() => organizationAlias.Name).WithAlias(() => resultAlias.Organigation)
 					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 					.Select(() => subdivisionAlias.Code).WithAlias(() => resultAlias.SubdivisionCode)
-					.Select(x => x.Expense.Id).WithAlias(() => resultAlias.DocExpense)
-					.Select(x => x.MassExpense.Id).WithAlias(() => resultAlias.DocMassExpense)
+					.Select(x => x.Expense.Id).WithAlias(() => resultAlias.DocExpenseId)
+					.Select(x => x.MassExpense.Id).WithAlias(() => resultAlias.DocMassExpenseId)
+					.Select(x => x.CollectiveExpense.Id).WithAlias(() => resultAlias.DocCollectiveExpenseId)
 					.SelectSubQuery(employeesSubquery).WithAlias(() => resultAlias.Employees)
 				).TransformUsing(Transformers.AliasToBean<IssuanceSheetJournalNode>());
 		}
@@ -84,14 +85,17 @@ namespace workwear.Journal.ViewModels.Statements
 		public string SubdivisionCode { get; set; }
 		public string Subdivision { get; set; }
 
-		public int? DocExpense { get; set; }
-		public int? DocMassExpense { get; set; }
+		public int? DocExpenseId { get; set; }
+		public int? DocMassExpenseId { get; set; }
+		public int? DocCollectiveExpenseId { get; set; }
 		public string Document { 
 			get{
-				if(DocExpense != null)
-					return $"Выдача №{DocExpense}";
-				if(DocMassExpense != null)
-					return $"Массовая выдача №{DocMassExpense}";
+				if(DocExpenseId != null)
+					return $"Выдача №{DocExpenseId}";
+				if(DocMassExpenseId != null)
+					return $"Массовая выдача №{DocMassExpenseId}";
+				if(DocCollectiveExpenseId != null)
+					return $"Коллективная выдача №{DocCollectiveExpenseId}";
 				return null;
 			} }
 
