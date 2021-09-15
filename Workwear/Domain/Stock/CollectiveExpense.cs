@@ -163,12 +163,10 @@ namespace workwear.Domain.Stock
 
 		public virtual void PrepareItems(IUnitOfWork uow, BaseParameters baseParameters)
 		{
-			var employeeGroups = Items.GroupBy(x => x.Employee);
-			foreach(var employeeGroup in employeeGroups) {
-				employeeGroup.Key.FillWearInStockInfo(uow, baseParameters, Warehouse, Date);
-				foreach(var docItem in employeeGroup) {
-					docItem.EmployeeCardItem = employeeGroup.Key.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
-				}
+			var cardItems = Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
+			EmployeeCard.FillWearInStockInfo(uow, baseParameters, Warehouse, Date, cardItems);
+			foreach(var docItem in Items) {
+				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
 			}
 		}
 

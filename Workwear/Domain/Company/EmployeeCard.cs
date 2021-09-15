@@ -601,17 +601,21 @@ namespace workwear.Domain.Company
 		public virtual void FillWearInStockInfo(IUnitOfWork uow, BaseParameters baseParameters, Warehouse warehouse, DateTime onTime, bool onlyUnderreceived = false)
 		{
 			var actualItems = onlyUnderreceived ? GetUnderreceivedItems(baseParameters) : WorkwearItems;
-			FetchEntitiesInWearItems(uow, actualItems);
-			var allNomenclatures = actualItems.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
+			FillWearInStockInfo(uow, baseParameters, warehouse, onTime, actualItems);
+		}
+
+		public static void FillWearInStockInfo(IUnitOfWork uow, BaseParameters baseParameters, Warehouse warehouse, DateTime onTime, IEnumerable<EmployeeCardItem> items)
+		{
+			FetchEntitiesInWearItems(uow, items);
+			var allNomenclatures = items.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
 			var stockRepo = new StockRepository();
-			var stock = stockRepo.StockBalances (uow, warehouse, allNomenclatures, onTime);
-			foreach(var item in actualItems)
-			{
+			var stock = stockRepo.StockBalances(uow, warehouse, allNomenclatures, onTime);
+			foreach(var item in items) {
 				item.InStock = stock.Where(x => item.MatcheStockPosition(x.StockPosition)).ToList();
 			}
 		}
 
-		public virtual void FetchEntitiesInWearItems(IUnitOfWork uow, IEnumerable<EmployeeCardItem> cardItems)
+		public static void FetchEntitiesInWearItems(IUnitOfWork uow, IEnumerable<EmployeeCardItem> cardItems)
 		{
 			var protectionToolsIds = cardItems.Select(x => x.ProtectionTools.Id).ToArray();
 

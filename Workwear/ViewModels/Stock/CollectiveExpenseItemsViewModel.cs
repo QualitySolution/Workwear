@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
+using NHibernate;
 using NHibernate.Criterion;
+using QS.Dialog;
 using QS.Dialog.ViewModels;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -31,7 +32,7 @@ namespace workwear.ViewModels.Stock
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
-		public CollectiveExpenseItemsViewModel(CollectiveExpenseViewModel сollectiveExpenseViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, BaseParameters baseParameters)
+		public CollectiveExpenseItemsViewModel(CollectiveExpenseViewModel сollectiveExpenseViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, BaseParameters baseParameters, IProgressBarDisplayable globalProgress)
 		{
 			this.сollectiveExpenseViewModel = сollectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(сollectiveExpenseViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
@@ -40,11 +41,33 @@ namespace workwear.ViewModels.Stock
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
+			//Предварительная загрузка элементов для более быстрого открыти документа
+			globalProgress.Start(2);
+			var query = UoW.Session.QueryOver<CollectiveExpenseItem>()
+				.Where(x => x.Document.Id == Entity.Id)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Skip, x => x.IssuanceSheetItem)
+				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.Future();
+
+			UoW.Session.QueryOver<CollectiveExpenseItem>()
+				.Where(x => x.Document.Id == Entity.Id)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Skip, x => x.IssuanceSheetItem)
+				.Fetch(SelectMode.Fetch, x => x.Employee)
+				.Fetch(SelectMode.Fetch, x => x.Employee.WorkwearItems)
+				.Future();
+
+			query.ToList();
+			globalProgress.Add();
+
 			Entity.PrepareItems(UoW, baseParameters);
+			globalProgress.Add();
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 			CalculateTotal();
+			globalProgress.Close();
 		}
 
 		#region Хелперы
