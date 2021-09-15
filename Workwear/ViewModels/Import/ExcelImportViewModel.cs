@@ -166,19 +166,20 @@ namespace workwear.ViewModels.Import
 
 		private void LoadSheet()
 		{
-			logger.Info("Читаем лист...");
 			sh = wb.GetSheet(SelectedSheet.Title);
+			ProgressStep.Start(sh.LastRowNum, text: "Читаем лист...");
 
 			int maxColumns = 0;
-			int i = 0;
-			while(sh.GetRow(i) != null) {
+			for(int i = 0; i <= sh.LastRowNum; i++) {
+				ProgressStep.Add();
+				if(sh.GetRow(i) == null)
+					continue;
 				ImportModel.AddRow(sh.GetRow(i));
 				maxColumns = Math.Max(sh.GetRow(i).Cells.Count, maxColumns);
-				i++;
 			}
 			ImportModel.MaxSourceColumns = maxColumns;
-
-			logger.Info($"Прочитано {maxColumns} колонок и {i} строк");
+			ProgressStep.Close();
+			logger.Info($"Прочитано {maxColumns} колонок и {sh.LastRowNum} строк");
 		}
 		#endregion
 	}
