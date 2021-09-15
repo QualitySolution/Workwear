@@ -123,6 +123,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		{
 			Entity.UpdateWorkwearItems();
 			Entity.FillWearInStockInfo(UoW, baseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
+			Entity.UpdateAllNextIssue();
 		}
 
 		public void SetIssueDateManual(EmployeeCardItem row)
