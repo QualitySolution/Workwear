@@ -11,6 +11,7 @@ using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Tools;
 using workwear.Tools.Features;
+using workwear.ViewModels.Regulations;
 using Workwear.Measurements;
 
 namespace workwear.ViewModels.Stock
@@ -143,9 +144,14 @@ namespace workwear.ViewModels.Stock
 			CalculateTotal();
 		}
 
-		public void OpenNomenclature(Nomenclature nomenclature)
+		public void OpenNomenclature(ExpenseItem item)
 		{
-			navigation.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(expenseEmployeeViewModel, EntityUoWBuilder.ForOpen(nomenclature.Id));
+			navigation.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(expenseEmployeeViewModel, EntityUoWBuilder.ForOpen(item.Nomenclature.Id));
+		}
+
+		public void OpenProtectionTools(ExpenseItem item)
+		{
+			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(expenseEmployeeViewModel, EntityUoWBuilder.ForOpen(item.ProtectionTools.Id));
 		}
 		#endregion
 

@@ -85,23 +85,35 @@ namespace workwear.Views.Stock
 			if(args.Event.Button == 3) {
 				var menu = new Menu();
 				var selected = ytreeItems.GetSelectedObject<ExpenseItem>();
-				var item = new MenuItemId<ExpenseItem>("Открыть номеклатуру");
-				item.ID = selected;
-				item.Sensitive = selected.Nomenclature != null;
+
+				var itemOpenProtection = new MenuItemId<ExpenseItem>("Открыть номеклатуру нормы");
+				itemOpenProtection.ID = selected;
+				itemOpenProtection.Sensitive = selected.ProtectionTools != null && selected != null;
+				itemOpenProtection.Activated += ItemOpenProtection_Activated;;
+				menu.Add(itemOpenProtection);
+
+				var itemNomenclature = new MenuItemId<ExpenseItem>("Открыть номеклатуру");
+				itemNomenclature.ID = selected;
+				itemNomenclature.Sensitive = selected.Nomenclature != null;
 				if(selected == null)
-					item.Sensitive = false;
+					itemNomenclature.Sensitive = false;
 				else
-					item.Activated += Item_Activated;
-				menu.Add(item);
+					itemNomenclature.Activated += Item_Activated;
+				menu.Add(itemNomenclature);
 				menu.ShowAll();
 				menu.Popup();
 			}
 		}
 
+		void ItemOpenProtection_Activated(object sender, EventArgs e)
+		{
+			viewModel.OpenProtectionTools((sender as MenuItemId<ExpenseItem>).ID);
+		}
+
+
 		void Item_Activated(object sender, EventArgs e)
 		{
-			var item = (sender as MenuItemId<ExpenseItem>).ID;
-			viewModel.OpenNomenclature(item.Nomenclature);
+			viewModel.OpenNomenclature((sender as MenuItemId<ExpenseItem>).ID);
 		}
 		#endregion
 
