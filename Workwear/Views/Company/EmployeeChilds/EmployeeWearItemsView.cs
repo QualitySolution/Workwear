@@ -17,6 +17,7 @@ namespace workwear.Views.Company.EmployeeChilds
 
 			ytreeWorkwear.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItem>()
 				.AddColumn("ТОН").AddTextRenderer(node => node.TonText)
+				.AddColumn("Тип выдачи").AddTextRenderer(x => x.ProtectionTools.Type.IssueType.GetEnumTitle())
 				.AddColumn("Наименование").AddTextRenderer(node => node.ProtectionTools.Name)
 				.AddColumn("По норме").AddTextRenderer(node => node.AmountByNormText)
 				.AddColumn("Срок службы").AddTextRenderer(node => node.NormLifeText)
