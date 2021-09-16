@@ -110,7 +110,6 @@ namespace workwear.Views.Stock
 			viewModel.OpenProtectionTools((sender as MenuItemId<ExpenseItem>).ID);
 		}
 
-
 		void Item_Activated(object sender, EventArgs e)
 		{
 			viewModel.OpenNomenclature((sender as MenuItemId<ExpenseItem>).ID);
@@ -122,6 +121,8 @@ namespace workwear.Views.Stock
 		private string GetRowColor(ExpenseItem item)
 		{
 			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(ViewModel.BaseParameters);
+			if(item.ProtectionTools?.Type.IssueType == IssueType.Сollective) 
+				return item.Amount > 0 ? "#7B3F00" : "Burlywood";
 			if(requiredIssue > 0 && item.Nomenclature == null)
 				return item.Amount == 0 ? "red" : "Dark red";
 			if(requiredIssue > 0 && item.Amount == 0)

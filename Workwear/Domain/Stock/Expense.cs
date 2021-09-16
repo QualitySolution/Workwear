@@ -160,7 +160,7 @@ namespace workwear.Domain.Stock
 			newItem.EmployeeCardItem = employeeCardItem;
 			newItem.ProtectionTools = employeeCardItem.ProtectionTools;
 
-			if(Employee.GetUnderreceivedItems(baseParameters).Contains(employeeCardItem) && newItem.Nomenclature != null) 
+			if(Employee.GetUnderreceivedItems(baseParameters).Contains(employeeCardItem) && newItem.Nomenclature != null && newItem.ProtectionTools?.Type.IssueType == IssueType.Personal) 
 				newItem.Amount = employeeCardItem.CalculateRequiredIssue(baseParameters);
 			else newItem.Amount = 0;
 
