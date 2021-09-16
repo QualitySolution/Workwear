@@ -14,6 +14,7 @@ using workwear.Measurements;
 using Workwear.Measurements;
 using workwear.Repository.Stock;
 using workwear.Tools;
+using workwear.Domain.Operations;
 
 namespace workwear.Domain.Company
 {
@@ -96,6 +97,8 @@ namespace workwear.Domain.Company
 			get { return inStock; }
 			set { SetField (ref inStock, value, () => InStock); }
 		}
+
+		public virtual EmployeeIssueOperation LastIssueOperation { get; set; }
 
 		#endregion
 
@@ -198,6 +201,7 @@ namespace workwear.Domain.Company
 			else 
 				return ActiveNormItem.Amount - Amount;
 		}
+
 		public virtual bool MatcheStockPosition(StockPosition stockPosition)
 		{
 			if(!ProtectionTools.MatchedNomenclatures.Any(n => n.Id == stockPosition.Nomenclature.Id))

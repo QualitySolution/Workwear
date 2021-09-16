@@ -9,7 +9,11 @@ namespace workwear.HMap
 		{
 			Table ("operation_issued_in_subdivision");
 
-			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map (x => x.OperationTime).Column ("operation_time").Not.Nullable ();
 			Map(x => x.Size).Column("size");
 			Map(x => x.WearGrowth).Column("growth");

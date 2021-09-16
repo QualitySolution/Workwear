@@ -9,7 +9,11 @@ namespace workwear.HibernateMapping.Company
 		{
 			Table ("wear_cards_item");
 
-			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map (x => x.Amount).Column ("amount");
 			Map (x => x.Created).Column ("created");
 			Map (x => x.LastIssue).Column ("last_issue");

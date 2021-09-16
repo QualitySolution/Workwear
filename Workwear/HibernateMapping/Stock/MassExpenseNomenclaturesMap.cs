@@ -10,7 +10,11 @@ namespace workwear.HibernateMapping.Stock
 		{
 			Table("stock_mass_expense_nomenclatures");
 
-			Id(x => x.Id).Column("id").GeneratedBy.Native();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map(x => x.Amount).Column("quantity");
 
 			References(x => x.Nomenclature).Column("nomenclature_id").Not.Nullable();

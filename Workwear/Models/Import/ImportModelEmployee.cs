@@ -54,7 +54,7 @@ namespace workwear.Models.Import
 				dataParser.MatchByName(uow, UsedRows, Columns, progress);
 
 			dataParser.FillExistEntities(uow, UsedRows, Columns, progress);
-			dataParser.FindChanges(uow, UsedRows, Columns.Where(x => x.DataType != DataTypeEmployee.Unknown).ToArray(), progress, matchSettingsViewModel);
+			dataParser.FindChanges(uow, UsedRows, Columns.Where(x => x.DataType != DataTypeEmployee.Unknown).OrderBy(x => x.DataType).ToArray(), progress, matchSettingsViewModel);
 			OnPropertyChanged(nameof(DisplayRows));
 			counters.SetCount(CountersEmployee.SkipRows, UsedRows.Count(x => x.Skiped));
 			counters.SetCount(CountersEmployee.MultiMatch, UsedRows.Count(x => x.Employees.Count > 1));

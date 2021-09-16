@@ -10,7 +10,11 @@ namespace workwear.HibernateMapping.Company
 		{
 			Table("vacation_type");
 
-			Id(x => x.Id).Column("id").GeneratedBy.Native();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map(x => x.Name).Column("name").Not.Nullable();
 			Map(x => x.ExcludeFromWearing).Column("exclude_from_wearing");
 			Map(x => x.Comments).Column("comment");

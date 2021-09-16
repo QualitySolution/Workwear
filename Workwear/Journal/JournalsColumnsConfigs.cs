@@ -115,7 +115,7 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<IssuanceSheetJournalNode>.Create()
 					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Дата").AddTextRenderer(node => node.Date.ToShortDateString())
-					.AddColumn("Документ").AddTextRenderer(node => node.Document)
+					.AddColumn("Документ").AddTextRenderer(node => node.Document).SearchHighlight()
 					.AddColumn("Организация").AddTextRenderer(node => node.Organigation).SearchHighlight()
 					.AddColumn("Код подр.").AddTextRenderer(node => node.SubdivisionCode).SearchHighlight()
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()

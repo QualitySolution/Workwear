@@ -26,7 +26,7 @@ using workwear.ViewModels.Statements;
 
 namespace workwear.ViewModels.Stock
 {
-	public class CollectiveExpenseViewModel : EntityDialogViewModelBase<CollectiveExpense>
+	public class CollectiveExpenseViewModel : EntityDialogViewModelBase<CollectiveExpense>, ISelectItem
 	{
 		ILifetimeScope autofacScope;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -157,5 +157,12 @@ namespace workwear.ViewModels.Stock
 
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
+
+		#region ISelectItem
+		public void SelectItem(int id)
+		{
+			CollectiveExpenseItemsViewModel.SelectedItem = Entity.Items.First(x => x.Id == id);
+		}
+		#endregion
 	}
 }

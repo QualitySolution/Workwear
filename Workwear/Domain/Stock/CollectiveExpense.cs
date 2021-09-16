@@ -35,8 +35,8 @@ namespace workwear.Domain.Stock
 
 		[Display (Name = "Строки документа")]
 		public virtual IList<CollectiveExpenseItem> Items {
-			get { return items; }
-			set { SetField (ref items, value, () => Items); }
+			get => items;
+			set => SetField(ref items, value);
 		}
 
 		System.Data.Bindings.Collections.Generic.GenericObservableList<CollectiveExpenseItem> observableItems;
@@ -91,10 +91,11 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public virtual CollectiveExpenseItem AddItem(StockPosition position, int amount = 1)
+		public virtual CollectiveExpenseItem AddItem(EmployeeCard employee, StockPosition position, int amount = 1)
 		{
 			var newItem = new CollectiveExpenseItem() {
 				Document = this,
+				Employee = employee,
 				Amount = amount,
 				Nomenclature = position.Nomenclature,
 				Size = position.Size,
@@ -116,15 +117,15 @@ namespace workwear.Domain.Stock
 
 			CollectiveExpenseItem newItem;
 			if(employeeCardItem.BestChoiceInStock.Any())
-				newItem = AddItem(employeeCardItem.BestChoiceInStock.First().StockPosition);
+				newItem = AddItem(employeeCardItem.EmployeeCard, employeeCardItem.BestChoiceInStock.First().StockPosition);
 			else { 
 				newItem = new CollectiveExpenseItem() {
 					Document = this,
+					Employee = employeeCardItem.EmployeeCard
 				};
 				ObservableItems.Add(newItem);
 			}
-
-			newItem.Employee = employeeCardItem.EmployeeCard;
+			
 			newItem.EmployeeCardItem = employeeCardItem;
 			newItem.ProtectionTools = employeeCardItem.ProtectionTools;
 			newItem.Amount = newItem.Nomenclature != null ? employeeCardItem.CalculateRequiredIssue(baseParameters) : 0;
@@ -144,6 +145,13 @@ namespace workwear.Domain.Stock
 			}
 		}
 
+		public virtual void ResortItems()
+		{
+			Items = Items.OrderBy(x => x.Employee.FullName).ThenBy(x => x.ProtectionTools.Name).ToList();
+			observableItems = null;
+			OnPropertyChanged(nameof(ObservableItems));
+		}
+
 		#endregion
 
 		#region Методы
@@ -151,6 +159,15 @@ namespace workwear.Domain.Stock
 		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser)
 		{
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser));
+		}
+
+		public virtual void PrepareItems(IUnitOfWork uow, BaseParameters baseParameters)
+		{
+			var cardItems = Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
+			EmployeeCard.FillWearInStockInfo(uow, baseParameters, Warehouse, Date, cardItems);
+			foreach(var docItem in Items) {
+				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
+			}
 		}
 
 		public virtual void UpdateEmployeeWearItems(IProgressBarDisplayable progress)
@@ -164,7 +181,9 @@ namespace workwear.Domain.Stock
 				UoW.Save(employeeGroup.Key);
 			}
 		}
+		#endregion
 
+		#region Ведомость
 		public virtual void CreateIssuanceSheet()
 		{
 			if(IssuanceSheet != null)
@@ -198,7 +217,6 @@ namespace workwear.Domain.Stock
 					IssuanceSheet.Items.Remove(item.IssuanceSheetItem);
 			}
 		}
-
 		#endregion
 	}
 }

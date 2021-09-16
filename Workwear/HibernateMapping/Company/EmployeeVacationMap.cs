@@ -10,7 +10,11 @@ namespace workwear.HibernateMapping.Company
 		{
 			Table("wear_cards_vacations");
 
-			Id(x => x.Id).Column("id").GeneratedBy.Native();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map(x => x.BeginDate).Column("begin_date").Not.Nullable();
 			Map(x => x.EndDate).Column("end_date").Not.Nullable();
 			Map(x => x.Comments).Column("comment");

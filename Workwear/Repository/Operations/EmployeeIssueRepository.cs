@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NHibernate;
 using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
@@ -91,76 +93,72 @@ namespace workwear.Repository.Operations
 			return query.OrderBy(x => x.OperationTime).Asc.List();
 		}
 
-		public static ExpenseItem GetExpenseItemForOperation(IUnitOfWork uow, EmployeeIssueOperation operation)
+		public IList<EmployeeIssueReference> GetReferencedDocuments(params int[] operationsIds)
 		{
-			return uow.Session.QueryOver<ExpenseItem>()
-				.Where(x => x.EmployeeIssueOperation.Id == operation.Id)
-				.SingleOrDefault();
-		}
-
-		public IList<ReferencedDocument> GetReferencedDocuments(int[] operationsIds)
-		{
-			ReferencedDocument docAlias = null;
-
-			var listIncoms = RepoUow.Session.QueryOver<IncomeItem>()
-				.Where(x => x.ReturnFromEmployeeOperation.Id.IsIn(operationsIds))
+			EmployeeIssueReference docAlias = null;
+			EmployeeIssueOperation employeeIssueOperationAlias = null;
+			ExpenseItem expenseItemAlias = null;
+			IncomeItem incomeItemAlias = null;
+			MassExpenseOperation massExpenseOperationAlias = null;
+			CollectiveExpenseItem collectiveExpenseItemAlias = null;
+			WriteoffItem writeoffItemAlias = null;
+			
+			return RepoUow.Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
+				.JoinEntityAlias(() => expenseItemAlias, () => expenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.ReturnFromEmployeeOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.EmployeeWriteoffOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
+				.Where(x => x.Id.IsIn(operationsIds))
 				.SelectList(list => list
-					.Select(i => i.ReturnFromEmployeeOperation.Id).WithAlias(() => docAlias.OpId)
-					.Select(i => i.Document.Id).WithAlias(() => docAlias.DocId)
-					.Select(() => EmployeeIssueOpReferenceDoc.RetutnedToStock).WithAlias(() => docAlias.DocType)
+					.Select(i => i.Id).WithAlias(() => docAlias.OperationId)
+					.Select(() => expenseItemAlias.Id).WithAlias(() => docAlias.ExpenceItemId)
+					.Select(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => docAlias.ExpenceId)
+					.Select(() => collectiveExpenseItemAlias.Id).WithAlias(() => docAlias.CollectiveExpenseItemId)
+					.Select(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => docAlias.CollectiveExpenseId)
+					.Select(() => incomeItemAlias.Id).WithAlias(() => docAlias.IncomeItemId)
+					.Select(() => incomeItemAlias.Document.Id).WithAlias(() => docAlias.IncomeId)
+					.Select(() => writeoffItemAlias.Id).WithAlias(() => docAlias.WriteoffItemId)
+					.Select(() => writeoffItemAlias.Document.Id).WithAlias(() => docAlias.WriteoffId)
 				)
-				.TransformUsing(Transformers.AliasToBean<ReferencedDocument>())
-				.List<ReferencedDocument>();
-
-			var listExpense = RepoUow.Session.QueryOver<ExpenseItem>()
-				.Where(x => x.EmployeeIssueOperation.Id.IsIn(operationsIds))
-				.SelectList(list => list
-					.Select(i => i.EmployeeIssueOperation.Id).WithAlias(() => docAlias.OpId)
-					.Select(i => i.ExpenseDoc.Id).WithAlias(() => docAlias.DocId)
-					.Select(() => EmployeeIssueOpReferenceDoc.ReceivedFromStock).WithAlias(() => docAlias.DocType)
-				)
-				.TransformUsing(Transformers.AliasToBean<ReferencedDocument>())
-				.List<ReferencedDocument>();
-
-			var listwriteoff = RepoUow.Session.QueryOver<WriteoffItem>()
-				.Where(x => x.EmployeeWriteoffOperation.Id.IsIn(operationsIds))
-				.SelectList(list => list
-					.Select(i => i.EmployeeWriteoffOperation.Id).WithAlias(() => docAlias.OpId)
-					.Select(i => i.Document.Id).WithAlias(() => docAlias.DocId)
-					.Select(() => EmployeeIssueOpReferenceDoc.WriteOff).WithAlias(() => docAlias.DocType)
-				)
-				.TransformUsing(Transformers.AliasToBean<ReferencedDocument>())
-				.List<ReferencedDocument>();
-
-			var resultList = new List<ReferencedDocument>();
-			resultList.AddRange(listIncoms);
-			resultList.AddRange(listExpense);
-			resultList.AddRange(listwriteoff);
-
-			return resultList;
+				.TransformUsing(Transformers.AliasToBean<EmployeeIssueReference>())
+				.List<EmployeeIssueReference>();
 		}
 	}
 
-	public class ReferencedDocument
+	public class EmployeeIssueReference
 	{
-		public int OpId;
-		public int DocId;
-		public EmployeeIssueOpReferenceDoc DocType;
+		public int OperationId;
+		public int? ExpenceId;
+		public int? ExpenceItemId;
+		public int? IncomeId;
+		public int? IncomeItemId;
+		public int? CollectiveExpenseId;
+		public int? CollectiveExpenseItemId;
+		public int? WriteoffId;
+		public int? WriteoffItemId;
+		public int? MassExpenseId;
+		public int? MassOperationItemItemId;
 
-		public ReferencedDocument() { }
+		
+		
+		public StokDocumentType? DocumentType {
+			get {
+				if (ExpenceId.HasValue)
+					return StokDocumentType.ExpenseEmployeeDoc;
+				if (CollectiveExpenseId.HasValue)
+					return StokDocumentType.CollectiveExpense;
+				if (IncomeId.HasValue)
+					return StokDocumentType.IncomeDoc;
+				if (WriteoffId.HasValue)
+					return StokDocumentType.WriteoffDoc;
 
-		public ReferencedDocument(int opId, EmployeeIssueOpReferenceDoc docType, int docId)
-		{
-			OpId = opId;
-			DocType = docType;
-			DocId = docId;
+				return null;
+			}
 		}
-	}
+		//Внимание здесь последовательность получения ID желательно сохранять такую же как у типа документа.
+		//Так как в случае ошибочной связи операции с двумя документами возьмется первый надейнных с обоих случаях, не тип из одного а id от другого.
+		public int? DocumentId => ExpenceId ?? CollectiveExpenseId ?? IncomeId ?? WriteoffId;
 
-	public enum EmployeeIssueOpReferenceDoc
-	{
-		ReceivedFromStock,
-		RetutnedToStock,
-		WriteOff
+		public int? ItemId => ExpenceItemId ?? CollectiveExpenseItemId ?? IncomeItemId ?? WriteoffItemId;
 	}
 }

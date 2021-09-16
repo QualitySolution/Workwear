@@ -9,7 +9,11 @@ namespace workwear.HibernateMapping.Statements
 		{
 			Table("issuance_sheet");
 
-			Id(x => x.Id).Column("id").GeneratedBy.Native();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map(x => x.Date).Column("date");
 
 			References(x => x.Organization).Column("organization_id");

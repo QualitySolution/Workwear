@@ -8,8 +8,11 @@ namespace workwear.HMap
 		public ExpenseMap ()
 		{
 			Table ("stock_expense");
-
-			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map (x => x.Operation).Column ("operation").CustomType<ExpenseOperationsType> ();
 			Map (x => x.Date).Column ("date");
 			Map(x => x.Comment).Column("comment");

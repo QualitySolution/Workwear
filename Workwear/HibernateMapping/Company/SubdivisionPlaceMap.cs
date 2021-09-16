@@ -9,7 +9,11 @@ namespace workwear.HibernateMapping.Company
 		{
 			Table ("object_places");
 
-			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map (x => x.Name).Column ("name").Not.Nullable ();
 
 			References(x => x.Subdivision).Column("object_id").Not.Nullable ();

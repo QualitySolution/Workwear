@@ -321,7 +321,10 @@ namespace workwear.Domain.Operations
 					this.EmployeeOperationIssueOnWriteOff.OperationTime = item.ExpenseDoc.Date;
 			}
 
-			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools);
+			var anotherRows =
+				item.ExpenseDoc.Items.Where(x => x.EmployeeIssueOperation != null && DomainHelper.EqualDomainObjects(x.ProtectionTools, ProtectionTools))
+					.Select(x => x.EmployeeIssueOperation).ToArray();
+			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools, anotherRows);
 			RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 		}
 

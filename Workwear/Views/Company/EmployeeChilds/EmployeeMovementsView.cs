@@ -1,6 +1,7 @@
-﻿using System.Reflection;
+using System.Reflection;
+using Gtk;
+using QSWidgetLib;
 using workwear.DTO;
-using workwear.Repository.Operations;
 using workwear.ViewModels.Company.EmployeeChilds;
 
 namespace workwear.Views.Company.EmployeeChilds
@@ -25,6 +26,7 @@ namespace workwear.Views.Company.EmployeeChilds
 			}
 		}
 
+		#region События
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == nameof(viewModel.Movements))
@@ -39,20 +41,38 @@ namespace workwear.Views.Company.EmployeeChilds
 			}
 		}
 
+		void YtreeviewMovements_ButtonReleaseEvent(object o, Gtk.ButtonReleaseEventArgs args)
+		{
+			if(args.Event.Button == 3) {
+				var menu = new Menu();
+				var selected = ytreeviewMovements.GetSelectedObject<EmployeeCardMovements>();
+
+				var itemOpenLastIssue = new MenuItemId<EmployeeCardMovements>("Открыть документ");
+				itemOpenLastIssue.ID = selected;
+				itemOpenLastIssue.Sensitive = selected?.EmployeeIssueReference?.DocumentType != null;
+				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenDoc(((MenuItemId<EmployeeCardMovements>)sender).ID);
+				menu.Add(itemOpenLastIssue);
+
+				menu.ShowAll();
+				menu.Popup();
+			}
+		}
+		#endregion
+
 		private void CreateTable()
 		{
 			var cardIcon = new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "workwear.icon.buttons.smart-card.png");
 			ytreeviewMovements.CreateFluentColumnsConfig<EmployeeCardMovements>()
 				.AddColumn("Дата").AddTextRenderer(e => e.Date.ToShortDateString())
 				//Заголовок колонки используется в методе YtreeviewMovements_RowActivated
-				.AddColumn("Документ").AddTextRenderer(e => e.DocumentName)
+				.AddColumn("Документ").AddTextRenderer(e => e.DocumentTitle)
 				.AddColumn("Номенклатура").AddTextRenderer(e => e.NomenclatureName)
 				.AddColumn("% износа").AddTextRenderer(e => e.WearPercentText)
 				.AddColumn("Стоимость").AddTextRenderer(e => e.CostText)
 				.AddColumn("Получено").AddTextRenderer(e => e.AmountReceivedText)
 				.AddColumn("Сдано\\списано").AddTextRenderer(e => e.AmountReturnedText)
 				.AddColumn("Автосписание").AddToggleRenderer(e => e.UseAutoWriteOff, false)
-					.AddSetter((c, e) => c.Visible = e.ReferencedDocument?.DocType == EmployeeIssueOpReferenceDoc.ReceivedFromStock)
+					.AddSetter((c, e) => c.Visible = e.AmountReceived > 0)
 					.AddSetter((c, e) => c.Activatable = e.Operation.ExpiryByNorm.HasValue)
 					.AddTextRenderer(e => e.AutoWriteOffDateTextColored, useMarkup: true)
 				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
@@ -62,6 +82,7 @@ namespace workwear.Views.Company.EmployeeChilds
 				.Finish();
 
 			ytreeviewMovements.RowActivated += YtreeviewMovements_RowActivated;
+			ytreeviewMovements.ButtonReleaseEvent += YtreeviewMovements_ButtonReleaseEvent;
 		}
 	}
 }

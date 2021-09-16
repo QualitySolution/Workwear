@@ -59,6 +59,7 @@ using workwear.Tools.Nhibernate;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
 using Workwear.Measurements;
+using workwear.Models.Stock;
 using Workwear.Sql;
 
 namespace workwear
@@ -208,6 +209,7 @@ namespace workwear
 
 			#region Common Models
 			builder.RegisterType<PersonNames>().AsSelf();
+			builder.RegisterType<OpenStockDocumentsModel>().AsSelf();
 			#endregion
 
 			#region Repository

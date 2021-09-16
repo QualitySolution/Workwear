@@ -12,6 +12,7 @@ using workwear.Models.Import;
 using workwear.Repository.Company;
 using workwear.Tools.Nhibernate;
 using workwear.ViewModels.Import;
+using Workwear.Measurements;
 
 namespace WorkwearTest.Integration.Import
 {
@@ -41,7 +42,9 @@ namespace WorkwearTest.Integration.Import
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var subdivisionRepository = Substitute.For<SubdivisionRepository>();
 			var postRepository = Substitute.For<PostRepository>();
-			var dataparser = new DataParserEmployee(new PersonNames(), subdivisionRepository, postRepository);
+			var sizeSettings = Substitute.For<ISizeSettings>();
+			sizeSettings.EmployeeSizeRanges.Returns(false);
+			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(sizeSettings), subdivisionRepository, postRepository);
 			var setting = new SettingsMatchEmployeesViewModel();
 			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
@@ -77,7 +80,9 @@ namespace WorkwearTest.Integration.Import
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var subdivisionRepository = Substitute.For<SubdivisionRepository>();
 			var postRepository = Substitute.For<PostRepository>();
-			var dataparser = new DataParserEmployee(new PersonNames(), subdivisionRepository, postRepository);
+			var sizeSettings = Substitute.For<ISizeSettings>();
+			sizeSettings.EmployeeSizeRanges.Returns(false);
+			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(sizeSettings), subdivisionRepository, postRepository);
 			var setting = new SettingsMatchEmployeesViewModel();
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
@@ -135,7 +140,9 @@ namespace WorkwearTest.Integration.Import
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var subdivisionRepository = Substitute.For<SubdivisionRepository>();
 			var postRepository = Substitute.For<PostRepository>();
-			var dataparser = new DataParserEmployee(new PersonNames(), subdivisionRepository, postRepository);
+			var sizeSettings = Substitute.For<ISizeSettings>();
+			sizeSettings.EmployeeSizeRanges.Returns(false);
+			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(sizeSettings), subdivisionRepository, postRepository);
 			var setting = new SettingsMatchEmployeesViewModel();
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
@@ -196,7 +203,9 @@ namespace WorkwearTest.Integration.Import
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var subdivisionRepository = Substitute.For<SubdivisionRepository>();
 			var postRepository = Substitute.For<PostRepository>();
-			var dataparser = new DataParserEmployee(new PersonNames(), subdivisionRepository, postRepository);
+			var sizeSettings = Substitute.For<ISizeSettings>();
+			sizeSettings.EmployeeSizeRanges.Returns(false);
+			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(sizeSettings), subdivisionRepository, postRepository);
 			var setting = new SettingsMatchEmployeesViewModel();
 			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
@@ -228,6 +237,48 @@ namespace WorkwearTest.Integration.Import
 				Assert.That(natalia.HireDate, Is.EqualTo(new DateTime(2020, 12, 11)));
 				Assert.That(natalia.Sex, Is.EqualTo(Sex.F));
 				Assert.That(natalia.DismissDate, Is.EqualTo(new DateTime(2021, 1, 13)));
+			}
+		}
+		
+		[Test(Description = "Проверяем что нормально работаем с файлами имеющими пустые строки + размеры сотрудника")]
+		public void EmployeesLoad_EmptyRows_Sizes_A2Case()
+		{
+			var navigation = Substitute.For<INavigationManager>();
+			var interactive = Substitute.For<IInteractiveMessage>();
+			var progressStep = Substitute.For<IProgressBarDisplayable>();
+			var progressInterceptor = Substitute.For<ProgressInterceptor>();
+			var subdivisionRepository = Substitute.For<SubdivisionRepository>();
+			var postRepository = Substitute.For<PostRepository>();
+			var sizeSettings = Substitute.For<ISizeSettings>();
+			sizeSettings.EmployeeSizeRanges.Returns(true);
+			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(sizeSettings), subdivisionRepository, postRepository);
+			var setting = new SettingsMatchEmployeesViewModel();
+			var model = new ImportModelEmployee(dataparser, setting);
+			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
+				var importModel = employeesLoad.ImportModel as ImportModelEmployee;
+				employeesLoad.ProgressStep = progressStep;
+				employeesLoad.FileName = "Samples/Excel/empty_first_row_a2.xls";
+				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
+				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
+				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
+				employeesLoad.SecondStep();
+				Assert.That(employeesLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
+				employeesLoad.ThirdStep();
+				Assert.That(employeesLoad.SensitiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
+				employeesLoad.Save();
+
+				var uow = employeesLoad.UoW;
+				var employees = uow.GetAll<EmployeeCard>().ToList();
+				
+				Assert.That(employees.Count, Is.EqualTo(5));
+				var nikolay = employees.First(x => x.FirstName == "Николай");
+				Assert.That(nikolay.WearGrowth, Is.EqualTo("170-176"));
+				Assert.That(nikolay.WearSize, Is.EqualTo("48-50"));
+				Assert.That(nikolay.ShoesSize, Is.EqualTo("38"));
+				
+				//Проверяем что должности не задублировались
+				var posts = uow.GetAll<Post>();
+				Assert.That(posts.Count, Is.EqualTo(3));
 			}
 		}
 	}

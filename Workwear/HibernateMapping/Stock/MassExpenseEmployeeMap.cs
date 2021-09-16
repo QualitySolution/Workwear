@@ -11,7 +11,11 @@ namespace workwear.HibernateMapping.Stock
 
 			Table("stock_mass_expense_employee");
 
-			Id(x => x.Id).Column("id").GeneratedBy.Native();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map(x => x.Sex).Column("sex").CustomType<SexStringType>();
 
 			Map(x => x.WearGrowth).Column("wear_growth");

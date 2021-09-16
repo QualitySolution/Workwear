@@ -111,6 +111,19 @@ namespace Workwear.Measurements
 		}
 
 		/// <summary>
+		/// Получения списка все доступных размеров, всех стандартов для использования в сотруднике.
+		/// </summary>
+		/// <param name="standartsEnum">Тип перечисления стандартов</param>
+		public SizePair[] GetAllSizesForEmployee(Type standartsEnum)
+		{
+			var list = new List<SizePair>();
+			foreach(var std in Enum.GetValues(standartsEnum))
+				foreach(var size in GetSizesList(std, GetExcludedSizeUseForEmployee()))
+					list.Add(new SizePair(GetSizeStdCode(std), size));
+			return list.ToArray();
+		}
+
+		/// <summary>
 		/// Получения списка все доступных размеров, всех стандартов для использования в номеклатуре.
 		/// </summary>
 		/// <param name="standartsEnum">Тип перечисления стандартов</param>

@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
+using NHibernate;
 using NHibernate.Criterion;
+using QS.Dialog;
 using QS.Dialog.ViewModels;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -31,7 +32,7 @@ namespace workwear.ViewModels.Stock
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
-		public CollectiveExpenseItemsViewModel(CollectiveExpenseViewModel сollectiveExpenseViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, BaseParameters baseParameters)
+		public CollectiveExpenseItemsViewModel(CollectiveExpenseViewModel сollectiveExpenseViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, BaseParameters baseParameters, IProgressBarDisplayable globalProgress)
 		{
 			this.сollectiveExpenseViewModel = сollectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(сollectiveExpenseViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
@@ -40,20 +41,41 @@ namespace workwear.ViewModels.Stock
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
+			//Предварительная загрузка элементов для более быстрого открыти документа
+			globalProgress.Start(2);
+			var query = UoW.Session.QueryOver<CollectiveExpenseItem>()
+				.Where(x => x.Document.Id == Entity.Id)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Skip, x => x.IssuanceSheetItem)
+				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.Future();
+
+			UoW.Session.QueryOver<CollectiveExpenseItem>()
+				.Where(x => x.Document.Id == Entity.Id)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Skip, x => x.IssuanceSheetItem)
+				.Fetch(SelectMode.Fetch, x => x.Employee)
+				.Fetch(SelectMode.Fetch, x => x.Employee.WorkwearItems)
+				.Future();
+
+			query.ToList();
+			globalProgress.Add();
+
+			Entity.PrepareItems(UoW, baseParameters);
+			globalProgress.Add();
+
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 			CalculateTotal();
+			globalProgress.Close();
 		}
 
 		#region Хелперы
 		private IUnitOfWork UoW => сollectiveExpenseViewModel.UoW;
-		private CollectiveExpense Entity => сollectiveExpenseViewModel.Entity;
+		public CollectiveExpense Entity => сollectiveExpenseViewModel.Entity;
 		#endregion
 
 		#region Поля
-
-		public GenericObservableList<CollectiveExpenseItem> ObservableItems => Entity.ObservableItems;
-
 		private string sum;
 		public virtual string Sum {
 			get => sum;
@@ -63,6 +85,12 @@ namespace workwear.ViewModels.Stock
 		public virtual Warehouse Warehouse {
 			get { return Entity.Warehouse; }
 			set { Entity.Warehouse = value; }
+		}
+
+		private CollectiveExpenseItem selectedItem;
+		public virtual CollectiveExpenseItem SelectedItem {
+			get => selectedItem;
+			set => SetField(ref selectedItem, value);
 		}
 
 		#endregion
@@ -96,6 +124,7 @@ namespace workwear.ViewModels.Stock
 				progress.Add();
 				Entity.AddItems(employee, BaseParameters);
 			}
+			Entity.ResortItems();
 			CalculateTotal();
 			progress.Close();
 			navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
@@ -110,10 +139,10 @@ namespace workwear.ViewModels.Stock
 			selectJournal.ViewModel.Filter.ProtectionTools = item.ProtectionTools;
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			selectJournal.Tag = item;
-			selectJournal.ViewModel.OnSelectResult += AddNomenclatureProtectionTools;
+			selectJournal.ViewModel.OnSelectResult += SetNomenclatureForRow;
 		}
 
-		public void AddNomenclatureProtectionTools(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		public void SetNomenclatureForRow(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			var page = navigation.FindPage((DialogViewModelBase)sender);
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
@@ -131,7 +160,28 @@ namespace workwear.ViewModels.Stock
 				Entity.RemoveItem(item);
 			CalculateTotal();
 		}
+		#endregion
 
+		#region Обновление документа
+
+		public void RefreshAll()
+		{
+			var Employees = Entity.Items.Select(x => x.Employee).Distinct().ToList();
+			foreach(var employee in Employees) {
+				Entity.AddItems(employee, BaseParameters);
+			}
+			Entity.ResortItems();
+		}
+
+		public void RefreshItem(CollectiveExpenseItem item)
+		{
+			Entity.AddItems(item.Employee, BaseParameters);
+			Entity.ResortItems();
+		}
+
+		#endregion
+
+		#region Открытие
 		public void OpenEmployee(CollectiveExpenseItem item)
 		{
 			navigation.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.Employee.Id));

@@ -60,6 +60,12 @@ namespace workwear.ViewModels.Stock
 			set { Entity.Warehouse = value; }
 		}
 
+		private ExpenseItem selectedItem;
+		public virtual ExpenseItem SelectedItem {
+			get => selectedItem;
+			set => SetField(ref selectedItem, value);
+		}
+
 		#endregion
 		#region Sensetive
 		public bool SensetiveFillBuhDoc => Entity.Items.Count > 0;

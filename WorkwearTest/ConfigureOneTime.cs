@@ -3,6 +3,7 @@ using QS.BusinessCommon.Domain;
 using QS.Project.DB;
 using QS.Project.Domain;
 using workwear;
+using workwear.HibernateMapping;
 
 namespace WorkwearTest
 {
@@ -16,6 +17,11 @@ namespace WorkwearTest
 			if(NhConfigered)
 				return;
 
+			//Использование другого способа формировать id объектов, чтобы они не пересекались.
+			//По умолчанию все первые объекты каждого типа были 1, а вторые 2. Если сравнивать объекты по id, то не всегда можно
+			//действительно проверить что id правильный. Что в некторых случаях приводило к некоректной проверки в тестах. Когда сравнивались id, разных объектов,
+			//при этом тест проходил так как номера их совпадали.
+			MappingParams.UseIdsForTest = true;
 			Console.WriteLine("Инициализация");
 			var db_config = FluentNHibernate.Cfg.Db.MonoSqliteConfiguration.Standard.InMemory();
 

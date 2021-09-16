@@ -116,7 +116,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="HibernateMapping\MappingParams.cs" />
     <Compile Include="MainWindow.cs" />
+    <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
@@ -444,6 +446,7 @@
     <Compile Include="Journal\Filter.ViewModels\Statements\IssuanceSheetFilterViewModel.cs" />
     <Compile Include="Journal\Filter.Views\Statements\IssuanceSheetFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Statements.IssuanceSheetFilterView.cs" />
+    <Compile Include="ViewModels\Stock\ISelectItem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

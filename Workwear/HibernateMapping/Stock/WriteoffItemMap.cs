@@ -9,7 +9,11 @@ namespace workwear.HMap
 		{
 			Table ("stock_write_off_detail");
 
-			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+            	Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+            else 
+            	Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map (x => x.Amount).Column ("quantity");
 			Map(x => x.Size).Column("size");
 			Map(x => x.WearGrowth).Column("growth");

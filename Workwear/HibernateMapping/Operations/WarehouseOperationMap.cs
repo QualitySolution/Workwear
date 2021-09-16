@@ -9,7 +9,11 @@ namespace workwear.HibernateMapping.Stock
 		{
 			Table("operation_warehouse");
 
-			Id(x => x.Id).Column("id").GeneratedBy.Native();
+			if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
+			else 
+				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			
 			Map(x => x.OperationTime).Column("operation_time");
 			Map(x => x.Size).Column("size");
 			Map(x => x.Growth).Column("growth");

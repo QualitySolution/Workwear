@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading;
 using NSubstitute;
@@ -199,6 +199,7 @@ namespace WorkwearTest.Integration.Tools
 				graph = IssueGraph.MakeIssueGraph(uow, employee, protectionTools);
 				expenseOp2.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
 				uow.Save(expenseOp2);
+				uow.Commit();
 
 				vacation.UpdateRelatedOperations(uow, baseParameters, ask);
 				uow.Commit();
@@ -304,6 +305,7 @@ namespace WorkwearTest.Integration.Tools
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
 				uow.Save(expense);
+				uow.Commit();
 				expense.UpdateEmployeeWearItems();
 				employee.WorkwearItems.First(e => e.ProtectionTools.IsSame(protectionTools2)).Created = new DateTime(2018, 4, 22);
 				uow.Save(expense.Employee);

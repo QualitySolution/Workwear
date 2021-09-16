@@ -164,14 +164,14 @@ namespace workwear.Domain.Stock
 			ObservableItems.Add (newItem);
 		}
 
-		public virtual void AddItem(EmployeeIssueOperation issuedOperation, int count)
+		public virtual IncomeItem AddItem(EmployeeIssueOperation issuedOperation, int count)
 		{
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
 			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedEmployeeOnOperation, issuedOperation))) {
 				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
-				return;
+				return null;
 			}
 
 			var newItem = new IncomeItem(this) {
@@ -185,6 +185,7 @@ namespace workwear.Domain.Stock
 			};
 
 			ObservableItems.Add(newItem);
+			return newItem;
 		}
 
 		public virtual IncomeItem AddItem(Nomenclature nomenclature)

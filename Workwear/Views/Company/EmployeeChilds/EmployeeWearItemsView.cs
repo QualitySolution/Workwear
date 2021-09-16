@@ -98,14 +98,21 @@ namespace workwear.Views.Company.EmployeeChilds
 			if(args.Event.Button == 3) {
 				var menu = new Menu();
 				var selected = ytreeWorkwear.GetSelectedObject<EmployeeCardItem>();
-				var item = new MenuItemId<EmployeeCardItem>("Открыть номеклатуру нормы");
-				item.ID = selected;
-				item.Sensitive = selected.ProtectionTools != null;
-				if(selected == null)
-					item.Sensitive = false;
-				else
-					item.Activated += (sender, e) => viewModel.OpenProtectionTools(((MenuItemId<EmployeeCardItem>)sender).ID);
-				menu.Add(item);
+
+				var itemOpenProtectionTools = new MenuItemId<EmployeeCardItem>("Открыть номеклатуру нормы");
+				itemOpenProtectionTools.ID = selected;
+				itemOpenProtectionTools.Sensitive = selected?.ProtectionTools != null;
+				itemOpenProtectionTools.Activated += (sender, e) => viewModel.OpenProtectionTools(((MenuItemId<EmployeeCardItem>)sender).ID);
+				menu.Add(itemOpenProtectionTools);
+
+				menu.Add(new SeparatorMenuItem());
+
+				var itemOpenLastIssue = new MenuItemId<EmployeeCardItem>("Открыть последнюю выдачу");
+				itemOpenLastIssue.ID = selected;
+				itemOpenLastIssue.Sensitive = selected?.LastIssueOperation != null;
+				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenLastIssue(((MenuItemId<EmployeeCardItem>)sender).ID);
+				menu.Add(itemOpenLastIssue);
+
 				menu.ShowAll();
 				menu.Popup();
 			}

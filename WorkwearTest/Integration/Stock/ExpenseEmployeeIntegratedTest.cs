@@ -35,7 +35,7 @@ namespace WorkwearTest.Integration.Stock
 		[Test(Description = "Корректно обрабатываем выдачу одной номенклатуры несколько раз за день. Реальный баг.")]
 		[Category("real case")]
 		[Category("Integrated")]
-		public void UpdateOperations_IssuingMultipleRows_TwoNomeclatureSameNeedsTest()
+		public void UpdateOperations_IssuingMultipleRows_TwoNomenclatureSameNeedsTest()
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
