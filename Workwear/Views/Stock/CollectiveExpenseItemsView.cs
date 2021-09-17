@@ -81,11 +81,11 @@ namespace workwear.Views.Stock
 				itemOpenEmployee.Activated += ItemOpenEmployee_Activated;
 				menu.Add(itemOpenEmployee);
 
-				var itemOpenPtotection = new MenuItemId<CollectiveExpenseItem>("Открыть номеклатуру нормы");
-				itemOpenPtotection.ID = selected;
-				itemOpenPtotection.Sensitive = selected.ProtectionTools != null && selected != null;
-				itemOpenPtotection.Activated += ItemOpenPtotection_Activated;
-				menu.Add(itemOpenPtotection);
+				var itemOpenProtection = new MenuItemId<CollectiveExpenseItem>("Открыть номеклатуру нормы");
+				itemOpenProtection.ID = selected;
+				itemOpenProtection.Sensitive = selected.ProtectionTools != null && selected != null;
+				itemOpenProtection.Activated += ItemOpenProtection_Activated;
+				menu.Add(itemOpenProtection);
 
 				var itemOpenNomenclature = new MenuItemId<CollectiveExpenseItem>("Открыть номеклатуру");
 				itemOpenNomenclature.ID = selected;
@@ -108,7 +108,7 @@ namespace workwear.Views.Stock
 			viewModel.OpenNomenclature((sender as MenuItemId<CollectiveExpenseItem>).ID);
 		}
 
-		void ItemOpenPtotection_Activated(object sender, EventArgs e)
+		void ItemOpenProtection_Activated(object sender, EventArgs e)
 		{
 			viewModel.OpenProtectionTools((sender as MenuItemId<CollectiveExpenseItem>).ID);
 		}

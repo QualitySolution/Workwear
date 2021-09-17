@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Gtk;
+using QS.Dialog.GtkUI;
 using QSWidgetLib;
 using workwear.Domain.Stock;
 using workwear.Measurements;
@@ -85,23 +86,34 @@ namespace workwear.Views.Stock
 			if(args.Event.Button == 3) {
 				var menu = new Menu();
 				var selected = ytreeItems.GetSelectedObject<ExpenseItem>();
-				var item = new MenuItemId<ExpenseItem>("Открыть номеклатуру");
-				item.ID = selected;
-				item.Sensitive = selected.Nomenclature != null;
+
+				var itemOpenProtection = new MenuItemId<ExpenseItem>("Открыть номеклатуру нормы");
+				itemOpenProtection.ID = selected;
+				itemOpenProtection.Sensitive = selected.ProtectionTools != null && selected != null;
+				itemOpenProtection.Activated += ItemOpenProtection_Activated;;
+				menu.Add(itemOpenProtection);
+
+				var itemNomenclature = new MenuItemId<ExpenseItem>("Открыть номеклатуру");
+				itemNomenclature.ID = selected;
+				itemNomenclature.Sensitive = selected.Nomenclature != null;
 				if(selected == null)
-					item.Sensitive = false;
+					itemNomenclature.Sensitive = false;
 				else
-					item.Activated += Item_Activated;
-				menu.Add(item);
+					itemNomenclature.Activated += Item_Activated;
+				menu.Add(itemNomenclature);
 				menu.ShowAll();
 				menu.Popup();
 			}
 		}
 
+		void ItemOpenProtection_Activated(object sender, EventArgs e)
+		{
+			viewModel.OpenProtectionTools((sender as MenuItemId<ExpenseItem>).ID);
+		}
+
 		void Item_Activated(object sender, EventArgs e)
 		{
-			var item = (sender as MenuItemId<ExpenseItem>).ID;
-			viewModel.OpenNomenclature(item.Nomenclature);
+			viewModel.OpenNomenclature((sender as MenuItemId<ExpenseItem>).ID);
 		}
 		#endregion
 
@@ -110,12 +122,16 @@ namespace workwear.Views.Stock
 		private string GetRowColor(ExpenseItem item)
 		{
 			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(ViewModel.BaseParameters);
+			if(item.ProtectionTools?.Type.IssueType == IssueType.Сollective) 
+				return item.Amount > 0 ? "#7B3F00" : "Burlywood";
 			if(requiredIssue > 0 && item.Nomenclature == null)
 				return item.Amount == 0 ? "red" : "Dark red";
-			if(requiredIssue > 0 && item.Amount == 0)
-				return "blue";
 			if(requiredIssue <= 0 && item.Amount == 0)
 				return "gray";
+			if(requiredIssue > item.Amount)
+				return "blue";
+			if(requiredIssue < item.Amount)
+				return "Purple";
 			return null;
 		}
 
@@ -158,6 +174,20 @@ namespace workwear.Views.Stock
 		protected void OnButtonShowAllSizeClicked(object sender, EventArgs e)
 		{
 			viewModel.ShowAllSize(ytreeItems.GetSelectedObject<ExpenseItem>());
+		}
+
+		protected void OnButtonColorsLegendClicked(object sender, EventArgs e)
+		{
+			MessageDialogHelper.RunInfoDialog(
+				"<span color='black'>●</span> — обычная выдача\n" +
+				"<span color='gray'>●</span> — выдача не требуется\n" +
+				"<span color='blue'>●</span> — выдаваемого количества не достаточно\n" +
+				"<span color='Purple'>●</span> — выдается больше необходимого\n" +
+				"<span color='red'>●</span> — отсутсвует номеклатура\n" +
+				"<span color='Dark red'>●</span> — указано количество без номенклатуры\n" +
+				"<span color='Burlywood'>●</span> — позиция выдается коллективно\n" +
+				"<span color='#7B3F00'>●</span> — выдача коллективной номеклатуры"
+			);
 		}
 		#endregion
 	}
