@@ -143,7 +143,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 			IPage<ManualEmployeeIssueOperationViewModel> page;
 			if(!operations.Any() || operations.First().ExpiryByNorm < DateTime.Today)
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
-			else if(operations.First().ManualOperation)
+			else if(operations.First().OverrideBefore)
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(operations.First().Id), OpenPageOptions.AsSlave);
 			else if(interactive.Question($"Для «{row.ProtectionTools.Name}» уже выполнялись полоноценные выдачи внесение ручных изменений может привести к нежелательным результатам. Продолжить?"))
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);

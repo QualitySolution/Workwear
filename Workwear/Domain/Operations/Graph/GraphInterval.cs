@@ -7,6 +7,11 @@ namespace workwear.Domain.Operations.Graph
 	public class GraphInterval
 	{
 		public DateTime StartDate;
+		
+		/// <summary>
+		/// Интервал содержит операцию переопределяющую все предыдущие выдачи. То есть если до этого чтото было не списано, то после этой выдачи оно обнуляется
+		/// </summary>
+		public bool Reset = false;
 		public List<GraphItem> ActiveItems = new List<GraphItem>();
 		public int CurrentCount;
 
