@@ -20,6 +20,7 @@ using workwear.ViewModels.Operations;
 using workwear.ViewModels.Regulations;
 using workwear.Tools;
 using workwear.ViewModels.Stock;
+using workwear.Tools.Features;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
 {
@@ -32,13 +33,21 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		private readonly ITdiCompatibilityNavigation navigation;
 		private readonly OpenStockDocumentsModel stockDocumentsModel;
 
-		public EmployeeWearItemsViewModel(EmployeeViewModel employeeViewModel, EmployeeIssueRepository employeeIssueRepository, BaseParameters baseParameters, IInteractiveService interactive, ITdiCompatibilityNavigation navigation, OpenStockDocumentsModel stockDocumentsModel)
+		public EmployeeWearItemsViewModel(
+			EmployeeViewModel employeeViewModel,
+			EmployeeIssueRepository employeeIssueRepository,
+			BaseParameters baseParameters,
+			IInteractiveService interactive,
+			ITdiCompatibilityNavigation navigation,
+			OpenStockDocumentsModel stockDocumentsModel,
+			FeaturesService featuresService)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.stockDocumentsModel = stockDocumentsModel ?? throw new ArgumentNullException(nameof(stockDocumentsModel));
+			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 
 			employeeIssueRepository.RepoUow = UoW;
@@ -70,6 +79,8 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		#region Свойства
 
 		public GenericObservableList<EmployeeCardItem> ObservableWorkwearItems => Entity.ObservableWorkwearItems;
+
+		public FeaturesService FeaturesService { get; }
 
 		#endregion
 
