@@ -113,6 +113,7 @@
     <EmbeddedResource Include="icon\art\hand-holding-rfid.png" />
     <EmbeddedResource Include="icon\buttons\eye.png" />
     <EmbeddedResource Include="icon\buttons\eye-crossed.png" />
+    <EmbeddedResource Include="icon\buttons\legend.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />

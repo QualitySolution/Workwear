@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Gtk;
+using QS.Dialog.GtkUI;
 using QSWidgetLib;
 using workwear.Domain.Stock;
 using workwear.Measurements;
@@ -125,10 +126,12 @@ namespace workwear.Views.Stock
 				return item.Amount > 0 ? "#7B3F00" : "Burlywood";
 			if(requiredIssue > 0 && item.Nomenclature == null)
 				return item.Amount == 0 ? "red" : "Dark red";
-			if(requiredIssue > 0 && item.Amount == 0)
-				return "blue";
 			if(requiredIssue <= 0 && item.Amount == 0)
 				return "gray";
+			if(requiredIssue > item.Amount)
+				return "blue";
+			if(requiredIssue < item.Amount)
+				return "Purple";
 			return null;
 		}
 
@@ -171,6 +174,20 @@ namespace workwear.Views.Stock
 		protected void OnButtonShowAllSizeClicked(object sender, EventArgs e)
 		{
 			viewModel.ShowAllSize(ytreeItems.GetSelectedObject<ExpenseItem>());
+		}
+
+		protected void OnButtonColorsLegendClicked(object sender, EventArgs e)
+		{
+			MessageDialogHelper.RunInfoDialog(
+				"<span color='black'>●</span> — обычная выдача\n" +
+				"<span color='gray'>●</span> — выдача не требуется\n" +
+				"<span color='blue'>●</span> — выдаваемого количества не достаточно\n" +
+				"<span color='Purple'>●</span> — выдается больше необходимого\n" +
+				"<span color='red'>●</span> — отсутсвует номеклатура\n" +
+				"<span color='Dark red'>●</span> — указано количество без номенклатуры\n" +
+				"<span color='Burlywood'>●</span> — позиция выдается коллективно\n" +
+				"<span color='#7B3F00'>●</span> — выдача коллективной номеклатуры"
+			);
 		}
 		#endregion
 	}
