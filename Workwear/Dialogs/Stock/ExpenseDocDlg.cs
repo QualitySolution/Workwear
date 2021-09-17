@@ -52,13 +52,15 @@ namespace workwear
 			Entity.Operation = ExpenseOperations.Object;
 
 			Entity.Subdivision = subdivision;
-			Entity.Warehouse = subdivision.Warehouse;
+			if(featuresService.Available(WorkwearFeature.Warehouses) && subdivision.Warehouse != null)
+				Entity.Warehouse = subdivision.Warehouse;
 		}
 
 		public ExpenseDocDlg (EmployeeCard employee, bool fillUnderreceived = false) : this () {
 			Entity.Operation = ExpenseOperations.Employee;
 			Entity.Employee = UoW.GetById<EmployeeCard> (employee.Id);
-			Entity.Warehouse = Entity.Employee.Subdivision?.Warehouse;
+			if(featuresService.Available(WorkwearFeature.Warehouses) && Entity.Employee.Subdivision?.Warehouse != null)
+				Entity.Warehouse = Entity.Employee.Subdivision?.Warehouse;
 			if(fillUnderreceived)
 				FillUnderreceived();
 		}
