@@ -50,7 +50,7 @@ namespace WorkwearTest.Integration.Operations
 				manualOp.Employee = employee;
 				manualOp.ProtectionTools = protectionTools;
 				manualOp.Issued = 1;
-				manualOp.ManualOperation = true;
+				manualOp.OverrideBefore = true;
 				uow.Save(manualOp);
 
 				var expenseOp = new EmployeeIssueOperation();

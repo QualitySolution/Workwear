@@ -25,7 +25,7 @@ namespace workwear.ViewModels.Operations
 					throw new ArgumentNullException(nameof(employeeCardItem));
 				Entity.Employee = employeeCardItem.EmployeeCard;
 				Entity.Issued = employeeCardItem.ActiveNormItem?.Amount ?? 1;
-				Entity.ManualOperation = true;
+				Entity.OverrideBefore = true;
 				Entity.NormItem = employeeCardItem.ActiveNormItem;
 				Entity.ProtectionTools = employeeCardItem.ProtectionTools;
 				Entity.Returned = 0;
@@ -33,7 +33,7 @@ namespace workwear.ViewModels.Operations
 				Entity.UseAutoWriteoff = true;
 				Entity.OperationTime = employeeCardItem.NextIssue ?? DateTime.Today;
 			}
-			if(!Entity.ManualOperation)
+			if(!Entity.OverrideBefore)
 				throw new NotSupportedException("Этот диалог предназначен только для ручных операций");
 			IssueDate = Entity.OperationTime;
 		}

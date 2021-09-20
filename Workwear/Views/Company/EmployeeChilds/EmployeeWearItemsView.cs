@@ -4,6 +4,7 @@ using Gtk;
 using QS.Utilities;
 using QSWidgetLib;
 using workwear.Domain.Company;
+using workwear.Tools.Features;
 using workwear.ViewModels.Company.EmployeeChilds;
 
 namespace workwear.Views.Company.EmployeeChilds
@@ -14,10 +15,38 @@ namespace workwear.Views.Company.EmployeeChilds
 		public EmployeeWearItemsView()
 		{
 			this.Build();
+		}
 
+		private EmployeeWearItemsViewModel viewModel;
+
+		public EmployeeWearItemsViewModel ViewModel {
+			get => viewModel;
+			set {
+				viewModel = value;
+				viewModel.PropertyChanged += ViewModel_PropertyChanged;
+				ConfigureTable();
+			}
+		}
+
+		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(ViewModel.ObservableWorkwearItems)) {
+				ytreeWorkwear.ItemsDataSource = ViewModel.ObservableWorkwearItems;
+			}
+		}
+
+		void ytreeWorkwear_Selection_Changed(object sender, EventArgs e)
+		{
+			buttonTimeLine.Sensitive = ytreeWorkwear.Selection.CountSelectedRows() > 0;
+		}
+
+		#region private
+		void ConfigureTable()
+		{
 			ytreeWorkwear.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItem>()
 				.AddColumn("ТОН").AddTextRenderer(node => node.TonText)
-				.AddColumn("Тип выдачи").AddTextRenderer(x => x.ProtectionTools.Type.IssueType.GetEnumTitle())
+				.AddColumn("Тип выдачи").Visible(ViewModel.FeaturesService.Available(WorkwearFeature.CollectiveExpense))
+					.AddTextRenderer(x => x.ProtectionTools.Type.IssueType.GetEnumTitle())
 				.AddColumn("Наименование").AddTextRenderer(node => node.ProtectionTools.Name)
 				.AddColumn("По норме").AddTextRenderer(node => node.AmountByNormText)
 				.AddColumn("Срок службы").AddTextRenderer(node => node.NormLifeText)
@@ -38,28 +67,7 @@ namespace workwear.Views.Company.EmployeeChilds
 			ytreeWorkwear.Selection.Changed += ytreeWorkwear_Selection_Changed;
 			ytreeWorkwear.ButtonReleaseEvent += YtreeWorkwear_ButtonReleaseEvent;
 		}
-
-		private EmployeeWearItemsViewModel viewModel;
-
-		public EmployeeWearItemsViewModel ViewModel {
-			get => viewModel;
-			set {
-				viewModel = value;
-				viewModel.PropertyChanged += ViewModel_PropertyChanged;
-			}
-		}
-
-		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(e.PropertyName == nameof(ViewModel.ObservableWorkwearItems)) {
-				ytreeWorkwear.ItemsDataSource = ViewModel.ObservableWorkwearItems;
-			}
-		}
-
-		void ytreeWorkwear_Selection_Changed(object sender, EventArgs e)
-		{
-			buttonTimeLine.Sensitive = ytreeWorkwear.Selection.CountSelectedRows() > 0;
-		}
+		#endregion
 
 		#region Кнопки
 		protected void OnButtonGiveWearByNormClicked(object sender, EventArgs e)

@@ -50,18 +50,25 @@ namespace workwear.Domain.Operations.Graph
 				item.WriteOffOperations.Add(issue);
 			}
 
+			var resetDate = new DateTime();
 			foreach (var date in starts)
 			{
 				var interval = new GraphInterval();
 				interval.StartDate = date;
-				foreach (var item in graphItems.Where(x => x.IssueOperation.OperationTime.Date <= date))
+				interval.Reset = graphItems.Any(x =>
+					x.IssueOperation.OperationTime.Date == date && x.IssueOperation.OverrideBefore);
+				if (interval.Reset)
+					resetDate = date;
+				foreach (var item in graphItems.Where(x => x.IssueOperation.OperationTime.Date <= date && x.IssueOperation.OperationTime.Date >= resetDate))
 				{
 					if (item.AmountAtBeginOfDay(date) <= 0)
 						continue;
 					interval.ActiveItems.Add(item);
 					interval.CurrentCount += item.AmountAtEndOfDay(date);
 				}
-				Intervals.Add(interval);
+    
+				if (interval.Issued != 0 || interval.WriteOff != 0)
+					Intervals.Add(interval);
 			}
 		}
 

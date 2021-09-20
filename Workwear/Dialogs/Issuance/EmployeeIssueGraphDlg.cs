@@ -30,7 +30,8 @@ namespace workwear.Dialogs.Issuance
 				.AddColumn("C даты").AddTextRenderer(node => node.StartDate.ToShortDateString())
 				.AddColumn("Выдано").AddNumericRenderer(node => node.Issued)
 				.AddColumn("Списано").AddNumericRenderer(node => node.WriteOff)
-				.AddColumn("Числится количество").AddNumericRenderer(node => node.CurrentCount)
+				.AddColumn("Числится").AddNumericRenderer(node => node.CurrentCount)
+				.AddColumn("Корректировка").AddTextRenderer(x => x.Reset ? "Да" : String.Empty)
 				.Finish();
 			ShowAll();
 		}

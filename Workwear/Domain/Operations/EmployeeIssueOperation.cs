@@ -206,11 +206,11 @@ namespace workwear.Domain.Operations
 			set => SetField(ref signTimestamp, value);
 		}
 
-		private bool manualOperation;
-		[Display(Name = "Ручная операция")]
-		public virtual bool ManualOperation {
-			get => manualOperation;
-			set => SetField(ref manualOperation, value);
+		private bool overrideBefore;
+		[Display(Name = "Сбрасывает предыдущие движения")]
+		public virtual bool OverrideBefore {
+			get => overrideBefore;
+			set => SetField(ref overrideBefore, value);
 		}
 
 		/// <summary>
