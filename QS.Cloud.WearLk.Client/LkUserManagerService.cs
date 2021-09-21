@@ -35,7 +35,7 @@ namespace QS.Cloud.WearLk.Client
             if (string.IsNullOrWhiteSpace(phone))
                 throw new ArgumentException("Телефон должен быть указан", nameof(phone));
             
-            var client = new LkUserManager.LkUserManagerClient(channel);
+            var client = new LkUserManager.LkUserManagerClient(Channel);
             var request = new GetPasswordRequest
             {
                  Phone = phone
@@ -51,7 +51,7 @@ namespace QS.Cloud.WearLk.Client
             if (string.IsNullOrWhiteSpace(password))
                 throw new ArgumentException("Пароль должен быть указан", nameof(password));
             
-            var client = new LkUserManager.LkUserManagerClient(channel);
+            var client = new LkUserManager.LkUserManagerClient(Channel);
             var request = new SetPasswordRequest
             {
                 Phone = phone,
@@ -66,7 +66,7 @@ namespace QS.Cloud.WearLk.Client
             if (string.IsNullOrWhiteSpace(oldPhone))
                 throw new ArgumentException("Изменяемый телефон должен быть указан", nameof(oldPhone));
             
-            var client = new LkUserManager.LkUserManagerClient(channel);
+            var client = new LkUserManager.LkUserManagerClient(Channel);
             var request = new ReplacePhoneRequest()
             {
                 OldPhone = oldPhone,
@@ -81,7 +81,7 @@ namespace QS.Cloud.WearLk.Client
             if (string.IsNullOrWhiteSpace(phone))
                 throw new ArgumentException("Телефон должен быть указан", nameof(phone));
             
-            var client = new LkUserManager.LkUserManagerClient(channel);
+            var client = new LkUserManager.LkUserManagerClient(Channel);
             var request = new RemovePhoneRequest()
             {
                 Phone = phone,
