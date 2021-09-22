@@ -147,9 +147,9 @@ namespace workwear.Domain.Stock
 
 		public virtual void ResortItems()
 		{
-			Items = Items.OrderBy(x => x.Employee.FullName).ThenBy(x => x.ProtectionTools.Name).ToList();
-			observableItems = null;
-			OnPropertyChanged(nameof(ObservableItems));
+			//Items = Items.OrderBy(x => x.Employee.FullName).ThenBy(x => x.ProtectionTools.Name).ToList();
+			//observableItems = null;
+			//OnPropertyChanged(nameof(ObservableItems));
 		}
 
 		#endregion
