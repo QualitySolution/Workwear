@@ -16,7 +16,7 @@ namespace workwear.Views.Statements
 
 		private global::Gtk.Button buttonAddBySubdivision;
 
-		private global::Gtk.Button buttonAdd;
+		private global::Gamma.GtkWidgets.yButton buttonAdd;
 
 		private global::Gtk.Button buttonRemove;
 
@@ -97,7 +97,7 @@ namespace workwear.Views.Statements
 			w5.Expand = false;
 			w5.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.buttonAdd = new global::Gtk.Button();
+			this.buttonAdd = new global::Gamma.GtkWidgets.yButton();
 			this.buttonAdd.CanFocus = true;
 			this.buttonAdd.Name = "buttonAdd";
 			this.buttonAdd.UseUnderline = true;

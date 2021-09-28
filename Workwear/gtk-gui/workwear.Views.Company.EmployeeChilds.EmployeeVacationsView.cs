@@ -12,7 +12,7 @@ namespace workwear.Views.Company.EmployeeChilds
 
 		private global::Gtk.HBox hbox1;
 
-		private global::Gtk.Button buttonAdd;
+		private global::Gamma.GtkWidgets.yButton buttonAdd;
 
 		private global::Gtk.Button buttonEdit;
 
@@ -45,7 +45,7 @@ namespace workwear.Views.Company.EmployeeChilds
 			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.buttonAdd = new global::Gtk.Button();
+			this.buttonAdd = new global::Gamma.GtkWidgets.yButton();
 			this.buttonAdd.CanFocus = true;
 			this.buttonAdd.Name = "buttonAdd";
 			this.buttonAdd.UseUnderline = true;

@@ -26,7 +26,7 @@ namespace workwear
 
 		private global::Gtk.Button buttonDel;
 
-		private global::Gtk.Label labelSum;
+		private global::Gamma.GtkWidgets.yLabel labelSum;
 
 		protected virtual void Build()
 		{
@@ -90,7 +90,6 @@ namespace workwear
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.buttonAddStore = new global::Gtk.Button();
-			this.buttonAddStore.TooltipMarkup = "Добавить услугу из начисления";
 			this.buttonAddStore.CanFocus = true;
 			this.buttonAddStore.Name = "buttonAddStore";
 			this.buttonAddStore.UseUnderline = true;
@@ -105,7 +104,6 @@ namespace workwear
 			w8.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.buttonAddWorker = new global::Gtk.Button();
-			this.buttonAddWorker.TooltipMarkup = "Добавить услугу из начисления";
 			this.buttonAddWorker.CanFocus = true;
 			this.buttonAddWorker.Name = "buttonAddWorker";
 			this.buttonAddWorker.UseUnderline = true;
@@ -147,7 +145,7 @@ namespace workwear
 			w14.Expand = false;
 			w14.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.labelSum = new global::Gtk.Label();
+			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");

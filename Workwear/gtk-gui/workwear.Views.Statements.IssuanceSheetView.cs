@@ -60,7 +60,7 @@ namespace workwear.Views.Statements
 
 		private global::Gtk.HBox hbox8;
 
-		private global::Gtk.Button buttonAdd;
+		private global::Gamma.GtkWidgets.yButton buttonAdd;
 
 		private global::Gtk.Button buttonDel;
 
@@ -368,8 +368,7 @@ namespace workwear.Views.Statements
 			this.hbox8.Name = "hbox8";
 			this.hbox8.Spacing = 6;
 			// Container child hbox8.Gtk.Box+BoxChild
-			this.buttonAdd = new global::Gtk.Button();
-			this.buttonAdd.TooltipMarkup = "Добавить услугу из начисления";
+			this.buttonAdd = new global::Gamma.GtkWidgets.yButton();
 			this.buttonAdd.CanFocus = true;
 			this.buttonAdd.Name = "buttonAdd";
 			this.buttonAdd.UseUnderline = true;

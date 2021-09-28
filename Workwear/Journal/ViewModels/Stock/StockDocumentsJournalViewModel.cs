@@ -16,13 +16,12 @@ using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
 using QS.Services;
 using QS.Utilities.Text;
-using QS.ViewModels.Resolve;
 using workwear.Domain.Company;
+using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Models.Stock;
 using workwear.Tools.Features;
-using workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock
 {
@@ -80,6 +79,7 @@ namespace workwear.Journal.ViewModels.Stock
 		private UserBase authorAlias = null;
 		private Warehouse warehouseReceiptAlias = null;
 		private Warehouse warehouseExpenseAlias = null;
+		private IssuanceSheet issuanceSheetAlias = null;  
 
 		protected IQueryOver<Income> QueryIncomeDoc(IUnitOfWork uow)
 		{
@@ -120,7 +120,8 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
 						.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
 						.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
-						.Select(() => StokDocumentType.IncomeDoc).WithAlias(() => resultAlias.DocTypeEnum)
+						.Select(() => incomeAlias.Comment).WithAlias(() => resultAlias.Comment)
+			            .Select(() => StokDocumentType.IncomeDoc).WithAlias(() => resultAlias.DocTypeEnum)
 					)
 			.OrderBy(() => incomeAlias.Date).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
@@ -149,6 +150,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			expenseQuery.Where(GetSearchCriterion(
 				() => expenseAlias.Id,
+				() => issuanceSheetAlias.Id,
 				() => authorAlias.Name,
 				() => employeeAlias.LastName,
 				() => employeeAlias.FirstName,
@@ -161,16 +163,19 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinQueryOver(() => expenseAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => expenseAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => expenseAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.Left.JoinAlias(() => expenseAlias.IssuanceSheet, () => issuanceSheetAlias)
 			.SelectList(list => list
 						.Select(() => expenseAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => expenseAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => expenseAlias.Operation).WithAlias(() => resultAlias.ExpenseOperation)
+						.Select(() => issuanceSheetAlias.Id).WithAlias(() => resultAlias.IssueSheetId)
 						.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 						.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
 						.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+						.Select(() => expenseAlias.Comment).WithAlias(() => resultAlias.Comment)
 					   )
 			.OrderBy(() => expenseAlias.Date).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
@@ -195,17 +200,21 @@ namespace workwear.Journal.ViewModels.Stock
 
 			collectiveExpenseQuery.Where(GetSearchCriterion(
 				() => collectiveExpenseAlias.Id,
-				() => authorAlias.Name
+				() => authorAlias.Name,
+				() => issuanceSheetAlias.Id
 			));
 
 			collectiveExpenseQuery
 				.JoinAlias(() => collectiveExpenseAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => collectiveExpenseAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.Left.JoinAlias(() => collectiveExpenseAlias.IssuanceSheet, () => issuanceSheetAlias)
 			.SelectList(list => list
 						.Select(() => collectiveExpenseAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => collectiveExpenseAlias.Date).WithAlias(() => resultAlias.Date)
+						.Select(() => issuanceSheetAlias.Id).WithAlias(() => resultAlias.IssueSheetId)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+						.Select(() => collectiveExpenseAlias.Comment).WithAlias(() => resultAlias.Comment)
 						.Select(() => StokDocumentType.CollectiveExpense).WithAlias(() => resultAlias.DocTypeEnum)
 					   )
 			.OrderBy(() => collectiveExpenseAlias.Date).Desc
@@ -231,17 +240,21 @@ namespace workwear.Journal.ViewModels.Stock
 
 			massExpenseQuery.Where(GetSearchCriterion(
 				() => massExpenseAlias.Id,
-				() => authorAlias.Name
+				() => authorAlias.Name,
+				() => issuanceSheetAlias.Id
 			));
 
 			massExpenseQuery
 				.JoinAlias(() => massExpenseAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => massExpenseAlias.WarehouseFrom, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.Left.JoinAlias(() => massExpenseAlias.IssuanceSheet, () => issuanceSheetAlias)
 			.SelectList(list => list
 			   			.Select(() => massExpenseAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => massExpenseAlias.Date).WithAlias(() => resultAlias.Date)
+						.Select(() => issuanceSheetAlias.Id).WithAlias(() => resultAlias.IssueSheetId)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
+			            .Select(() => massExpenseAlias.Comment).WithAlias(() => resultAlias.Comment)
 						.Select(() => StokDocumentType.MassExpense).WithAlias(() => resultAlias.DocTypeEnum)
 						)
 			.OrderBy(() => massExpenseAlias.Date).Desc
@@ -280,6 +293,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+			            .Select(() => transferAlias.Comment).WithAlias(() => resultAlias.Comment)
 						.Select(() => StokDocumentType.TransferDoc).WithAlias(() => resultAlias.DocTypeEnum)
 					   )
 			.OrderBy(() => transferAlias.Date).Desc
@@ -329,6 +343,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(concatPrpjection).WithAlias(() => resultAlias.ExpenseWarehouse)
 						.Select(() => StokDocumentType.WriteoffDoc).WithAlias(() => resultAlias.DocTypeEnum)
+			            .Select(() => writeoffAlias.Comment).WithAlias(() => resultAlias.Comment)
 					   )
 			.OrderBy(() => writeoffAlias.Date).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
@@ -456,5 +471,9 @@ namespace workwear.Journal.ViewModels.Stock
 		public string EmployeePatronymic { get; set; }
 
 		public string Employee => PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
+
+		public string Comment { get; set; }
+
+		public int? IssueSheetId { get; set; }
 	}
 }
