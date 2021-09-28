@@ -169,10 +169,11 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<StockDocumentsJournalViewModel>(
 				(jvm) => FluentColumnsConfig<StockDocumentsJournalNode>.Create()
-					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight().XAlign(0.5f)
 					.AddColumn("Тип документа").AddTextRenderer(node => node.DocTypeString)
 					.AddColumn("Операция").AddTextRenderer(node => node.Operation)
-					.AddColumn("Дата").AddTextRenderer(node => node.DateString)
+					.AddColumn("Дата").AddTextRenderer(node => node.DateString).XAlign(0.5f)
+					.AddColumn("Ведомость").AddTextRenderer(node => $"{node.IssueSheetId}").SearchHighlight().XAlign(0.5f)
 					.AddColumn("Склад").Visible(jvm.FeaturesService.Available(WorkwearFeature.Warehouses)).AddTextRenderer(x => x.Warehouse)
 					.AddColumn("Автор").AddTextRenderer(node => node.Author).SearchHighlight()
 					.AddColumn("Детали").AddTextRenderer(node => node.Description).SearchHighlight()
