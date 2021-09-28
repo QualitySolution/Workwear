@@ -120,7 +120,8 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
 						.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
 						.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
-						.Select(() => StokDocumentType.IncomeDoc).WithAlias(() => resultAlias.DocTypeEnum)
+						.Select(() => incomeAlias.Comment).WithAlias(() => resultAlias.Comment)
+			            .Select(() => StokDocumentType.IncomeDoc).WithAlias(() => resultAlias.DocTypeEnum)
 					)
 			.OrderBy(() => incomeAlias.Date).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
@@ -171,6 +172,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
 						.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+						.Select(() => expenseAlias.Comment).WithAlias(() => resultAlias.Comment)
 					   )
 			.OrderBy(() => expenseAlias.Date).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
@@ -206,6 +208,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => collectiveExpenseAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+						.Select(() => collectiveExpenseAlias.Comment).WithAlias(() => resultAlias.Comment)
 						.Select(() => StokDocumentType.CollectiveExpense).WithAlias(() => resultAlias.DocTypeEnum)
 					   )
 			.OrderBy(() => collectiveExpenseAlias.Date).Desc
@@ -242,6 +245,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => massExpenseAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
+			            .Select(() => massExpenseAlias.Comment).WithAlias(() => resultAlias.Comment)
 						.Select(() => StokDocumentType.MassExpense).WithAlias(() => resultAlias.DocTypeEnum)
 						)
 			.OrderBy(() => massExpenseAlias.Date).Desc
@@ -280,6 +284,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+			            .Select(() => transferAlias.Comment).WithAlias(() => resultAlias.Comment)
 						.Select(() => StokDocumentType.TransferDoc).WithAlias(() => resultAlias.DocTypeEnum)
 					   )
 			.OrderBy(() => transferAlias.Date).Desc
@@ -329,6 +334,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(concatPrpjection).WithAlias(() => resultAlias.ExpenseWarehouse)
 						.Select(() => StokDocumentType.WriteoffDoc).WithAlias(() => resultAlias.DocTypeEnum)
+			            .Select(() => writeoffAlias.Comment).WithAlias(() => resultAlias.Comment)
 					   )
 			.OrderBy(() => writeoffAlias.Date).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
@@ -456,5 +462,7 @@ namespace workwear.Journal.ViewModels.Stock
 		public string EmployeePatronymic { get; set; }
 
 		public string Employee => PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
+
+		public string Comment { get; set; }
 	}
 }
