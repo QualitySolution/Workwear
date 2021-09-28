@@ -21,20 +21,21 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT nomenclature.number, nomenclature.name, stock_collective_expense_detail.size, stock_collective_expense_detail.growth, SUM(stock_collective_expense_detail.quantity) as amount 
-FROM stock_collective_expense_detail 
-LEFT JOIN nomenclature ON stock_collective_expense_detail.nomenclature_id = nomenclature.id
-WHERE stock_collective_expense_detail.stock_collective_expense_id = @id
-GROUP BY stock_collective_expense_detail.nomenclature_id;</CommandText>
+        <CommandText>SELECT nomenclature.number, IFNULL(nomenclature.name, protection_tools.name) as name, issuance_sheet_items.size, issuance_sheet_items.growth, SUM(issuance_sheet_items.amount) as amount 
+FROM issuance_sheet_items 
+LEFT JOIN nomenclature ON issuance_sheet_items.nomenclature_id = nomenclature.id
+LEFT JOIN protection_tools ON protection_tools.id = issuance_sheet_items.protection_tools_id
+WHERE issuance_sheet_items.issuance_sheet_id = @id
+GROUP BY IFNULL(issuance_sheet_items.nomenclature_id, issuance_sheet_items.protection_tools_id), issuance_sheet_items.size, issuance_sheet_items.growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>=Parameters!id</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="number">
           <DataField>number</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
@@ -58,11 +59,11 @@ GROUP BY stock_collective_expense_detail.nomenclature_id;</CommandText>
       </Fields>
     </DataSet>
     <DataSet Name="document">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    stock_collective_expense.id,
-    stock_collective_expense.date,
+    issuance_sheet.id,
+    issuance_sheet.date,
     CONCAT_WS(
         '',
         CONCAT(responsible_person.surname, ' '),
@@ -87,17 +88,16 @@ GROUP BY stock_collective_expense_detail.nomenclature_id;</CommandText>
         )
     ) AS responsible_person_name
 FROM
-    stock_collective_expense
-LEFT JOIN issuance_sheet ON issuance_sheet.stock_collective_expense_id = stock_collective_expense.id
+    issuance_sheet
 LEFT JOIN leaders responsible_person ON responsible_person.id = issuance_sheet.responsible_person_id
-WHERE stock_collective_expense.id = @id;</CommandText>
+WHERE issuance_sheet.id = @id;</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="id">
           <DataField>id</DataField>
           <TypeName>System.UInt32</TypeName>

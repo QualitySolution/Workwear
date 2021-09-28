@@ -48,6 +48,7 @@ namespace workwear.Views.Stock
 			ViewModel.CreateIssuenceSheet();
 			IssuanceSheetSensetive();
 		}
+
 		protected void OnButtonIssuanceSheetOpenClicked(object sender, EventArgs e)
 		{
 			ViewModel.OpenIssuenceSheet();
@@ -56,11 +57,6 @@ namespace workwear.Views.Stock
 		protected void OnEnumPrintEnumItemClicked(object sender, QSOrmProject.EnumItemClickedEventArgs e)
 		{
 			ViewModel.PrintIssuenceSheet((IssuedSheetPrint)e.ItemEnum);
-		}
-
-		protected void OnButtonPrintAssemblyTaskClicked(object sender, EventArgs e)
-		{
-			ViewModel.PrintAssemblyTask();
 		}
 	}
 }

@@ -215,5 +215,8 @@ namespace workwear.Domain.Statements
 		[Display(Name = "Книжная")]
 		[ReportIdentifier("Statements.IssuanceSheetVertical")]
 		IssuanceSheetVertical,
+		[Display(Name = "Задание на сборку")]
+		[ReportIdentifier("Statements.AssemblyTask")]
+		AssemblyTask,
 	}
 }

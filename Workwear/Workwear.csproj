@@ -740,7 +740,7 @@
       <Link>grpc_csharp_ext.x86.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Reports\Stock\AssemblyTask.rdl">
+    <None Include="Reports\Statements\AssemblyTask.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

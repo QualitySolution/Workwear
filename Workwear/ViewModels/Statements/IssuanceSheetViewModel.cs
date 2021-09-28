@@ -201,7 +201,7 @@ namespace workwear.ViewModels.Statements
 			}
 
 			var reportInfo = new ReportInfo {
-				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.Id),
+				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.Id}" : $"Ведомость №{Entity.Id} (МБ-7)",
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.Id }

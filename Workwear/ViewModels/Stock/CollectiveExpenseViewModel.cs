@@ -125,33 +125,15 @@ namespace workwear.ViewModels.Stock
 		public void PrintIssuenceSheet(IssuedSheetPrint doc)
 		{
 			if(UoW.HasChanges) {
-				if(!commonMessages.SaveBeforePrint(Entity.GetType(), "ведомости") || !Save())
+				if(!commonMessages.SaveBeforePrint(Entity.GetType(), doc == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())
 					return;
 			}
 
 			var reportInfo = new ReportInfo {
-				Title = String.Format("Ведомость №{0} (МБ-7)", Entity.IssuanceSheet.Id),
+				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.IssuanceSheet.Id}" : $"Ведомость №{Entity.IssuanceSheet.Id} (МБ-7)",
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.IssuanceSheet.Id }
-				}
-			};
-
-			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
-		}
-
-		public void PrintAssemblyTask()
-		{
-			if(UoW.HasChanges) {
-				if(!commonMessages.SaveBeforePrint(Entity.GetType(), "задание на сборку") || !Save())
-					return;
-			}
-
-			var reportInfo = new ReportInfo {
-				Title = String.Format("Задание на сборку №{0}", Entity.Id),
-				Identifier = "Stock.AssemblyTask",
-				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id }
 				}
 			};
 
