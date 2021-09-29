@@ -17,7 +17,7 @@
     <PrintOnLastPage>false</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>344.4pt</Height>
+    <Height>353.7pt</Height>
     <Columns>1</Columns>
     <ReportItems>
       <Table Name="Table1">
@@ -1863,8 +1863,21 @@
           </TableRows>
         </Details>
         <Left>0.8pt</Left>
-        <Top>279.8pt</Top>
+        <Top>286.2pt</Top>
       </Table>
+      <Textbox Name="Textbox42" >
+        <Height>11.99pt</Height>
+        <Width>275.43pt</Width>
+        <Value>="Сотрудников в ведомости: " + Countdistinct({employee_id}, "Data")</Value>
+        <ZIndex>1</ZIndex>
+        <Left>1.4pt</Left>
+        <Top>267.0pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Textbox>
     </ReportItems>
   </Body>
   <PageFooter>
@@ -1876,9 +1889,10 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
+    wear_cards.id as employee_id,
     wear_cards.last_name,
     wear_cards.first_name,
     wear_cards.patronymic_name,
@@ -1909,7 +1923,7 @@ WHERE
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="last_name">
           <DataField>last_name</DataField>
           <TypeName>System.String</TypeName>
@@ -1961,6 +1975,10 @@ WHERE
         <Field Name="lifetime">
           <DataField>lifetime</DataField>
           <TypeName>System.Decimal</TypeName>
+        </Field>
+        <Field Name="employee_id">
+          <DataField>employee_id</DataField>
+          <TypeName>System.Int32</TypeName>
         </Field>
       </Fields>
     </DataSet>
