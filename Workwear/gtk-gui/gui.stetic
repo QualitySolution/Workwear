@@ -9750,6 +9750,20 @@
                 <property name="Fill">False</property>
               </packing>
             </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="labelFooter">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">ylabel1</property>
+                <property name="UseMarkup">True</property>
+              </widget>
+              <packing>
+                <property name="PackType">End</property>
+                <property name="Position">4</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
           </widget>
           <packing>
             <property name="Position">4</property>
@@ -13078,7 +13092,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Stock.CollectiveExpenseItemsView" design-size="745 234">
+  <widget class="Gtk.Bin" id="workwear.Views.Stock.CollectiveExpenseItemsView" design-size="763 234">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>

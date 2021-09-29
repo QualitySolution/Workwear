@@ -38,6 +38,7 @@ namespace workwear.Views.Statements
 			ytreeviewItems.Sensitive = ViewModel.CanEditItems;
 			buttonAdd.Sensitive = ViewModel.CanEditItems;
 			buttonCloseFillBy.Binding.AddBinding(ViewModel, v => v.VisibleCloseFillBy, w => w.Visible).InitializeFromSource();
+			labelFooter.Binding.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp).InitializeFromSource();
 
 			ytreeviewItems.CreateFluentColumnsConfig<IssuanceSheetItem>()
 				.AddColumn("Ф.И.О.").Tag("IsFIOColumn").AddTextRenderer(x => x.Employee != null ? x.Employee.ShortName : String.Empty)

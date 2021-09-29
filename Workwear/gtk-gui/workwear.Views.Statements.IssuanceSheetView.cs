@@ -68,6 +68,8 @@ namespace workwear.Views.Statements
 
 		private global::Gtk.Button buttonSetEmployee;
 
+		private global::Gamma.GtkWidgets.yLabel labelFooter;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -415,11 +417,22 @@ namespace workwear.Views.Statements
 			w37.Position = 3;
 			w37.Expand = false;
 			w37.Fill = false;
-			this.vbox2.Add(this.hbox8);
-			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox8]));
+			// Container child hbox8.Gtk.Box+BoxChild
+			this.labelFooter = new global::Gamma.GtkWidgets.yLabel();
+			this.labelFooter.Name = "labelFooter";
+			this.labelFooter.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel1");
+			this.labelFooter.UseMarkup = true;
+			this.hbox8.Add(this.labelFooter);
+			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.labelFooter]));
+			w38.PackType = ((global::Gtk.PackType)(1));
 			w38.Position = 4;
 			w38.Expand = false;
 			w38.Fill = false;
+			this.vbox2.Add(this.hbox8);
+			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox8]));
+			w39.Position = 4;
+			w39.Expand = false;
+			w39.Fill = false;
 			this.Add(this.vbox2);
 			if ((this.Child != null))
 			{

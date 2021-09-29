@@ -66,7 +66,7 @@ namespace workwear.ViewModels.Stock
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
-			CalculateTotal();
+			OnPropertyChanged(nameof(Sum));
 			globalProgress.Close();
 		}
 
@@ -76,11 +76,9 @@ namespace workwear.ViewModels.Stock
 		#endregion
 
 		#region Поля
-		private string sum;
-		public virtual string Sum {
-			get => sum;
-			set => SetField(ref sum, value);
-		}
+		public string Sum => $"Строк в документе: <u>{Entity.Items.Count}</u>" +
+				$" Сотрудников: <u>{Entity.Items.Select(x => x.Employee.Id).Distinct().Count()}</u>" +
+				$" Единиц продукции: <u>{Entity.Items.Sum(x => x.Amount)}</u>";
 
 		public virtual Warehouse Warehouse {
 			get { return Entity.Warehouse; }
@@ -125,7 +123,7 @@ namespace workwear.ViewModels.Stock
 				Entity.AddItems(employee, BaseParameters);
 			}
 			Entity.ResortItems();
-			CalculateTotal();
+			OnPropertyChanged(nameof(Sum));
 			progress.Close();
 			navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
 		}
@@ -149,7 +147,7 @@ namespace workwear.ViewModels.Stock
 				var item = page.Tag as CollectiveExpenseItem;
 				item.StockPosition = node.GetStockPosition(UoW);
 			}
-			CalculateTotal();
+			OnPropertyChanged(nameof(Sum));
 		}
 
 		public void Delete(CollectiveExpenseItem item)
@@ -158,7 +156,7 @@ namespace workwear.ViewModels.Stock
 				deleteService.DeleteEntity<CollectiveExpenseItem>(item.Id, UoW, () => Entity.RemoveItem(item));
 			else
 				Entity.RemoveItem(item);
-			CalculateTotal();
+			OnPropertyChanged(nameof(Sum));
 		}
 		#endregion
 
@@ -198,17 +196,9 @@ namespace workwear.ViewModels.Stock
 		}
 		#endregion
 
-		public void CalculateTotal()
-		{
-			Sum = String.Format("Позиций в документе: <u>{0}</u>  Количество единиц: <u>{1}</u>",
-				Entity.Items.Count,
-				Entity.Items.Sum(x => x.Amount)
-			);
-		}
-
 		void ExpenceDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
-			CalculateTotal();
+			OnPropertyChanged(nameof(Sum));
 		}
 
 		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
