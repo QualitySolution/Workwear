@@ -8,6 +8,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
+using workwear.Domain.Users;
 using workwear.Repository.Company;
 using workwear.Repository.Operations;
 using workwear.Tools;
@@ -218,14 +219,17 @@ namespace workwear.Domain.Stock
 			UoW.Save(Employee);
 		}
 
-		public virtual void CreateIssuanceSheet()
+		public virtual void CreateIssuanceSheet(UserSettings userSettings)
 		{
 			if(IssuanceSheet != null)
 				return;
 
 			IssuanceSheet = new IssuanceSheet {
-				Expense = this
-			 };
+				Expense = this,
+				Organization = userSettings?.DefaultOrganization,
+				HeadOfDivisionPerson = userSettings?.DefaultLeader,
+				ResponsiblePerson = userSettings?.DefaultResponsiblePerson,
+			};
 			UpdateIssuanceSheet();
 		}
 
@@ -238,7 +242,8 @@ namespace workwear.Domain.Stock
 				throw new NullReferenceException("Для обновления ведомости сотрудник должен быть указан.");
 
 			IssuanceSheet.Date = Date;
-			IssuanceSheet.Subdivision = Employee.Subdivision;
+			if(Employee.Subdivision != null)
+				IssuanceSheet.Subdivision = Employee.Subdivision;
 
 			foreach(var item in Items.ToList()) {
 				if(item.IssuanceSheetItem == null && item.Amount > 0) 

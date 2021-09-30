@@ -22,6 +22,7 @@ using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Repository;
 using workwear.Repository.Stock;
 using workwear.Tools.Features;
 using workwear.ViewModels.Statements;
@@ -34,6 +35,7 @@ namespace workwear.ViewModels.Stock
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
 		public ILifetimeScope AutofacScope;
 		private readonly IInteractiveService interactive;
+		private readonly UserRepository userRepository;
 		private readonly SizeService sizeService;
 		private readonly CommonMessages messages;
 
@@ -50,6 +52,7 @@ namespace workwear.ViewModels.Stock
 			ILifetimeScope autofacScope, 
 			IInteractiveService interactive, 
 			IUserService userService,
+			UserRepository userRepository,
 			StockRepository stockRepository,
 			FeaturesService featutesService,
 			SizeService sizeService,
@@ -58,6 +61,7 @@ namespace workwear.ViewModels.Stock
 		{
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			if(UoW.IsNew)
@@ -185,7 +189,8 @@ namespace workwear.ViewModels.Stock
 
 		public void IssuanceSheetCreate()
 		{
-			Entity.CreateIssuanceSheet();
+			var userSettings = userRepository.GetCurrentUserSettings(UoW);
+			Entity.CreateIssuanceSheet(userSettings);
 		}
 
 		public void IssuanceSheetOpen()

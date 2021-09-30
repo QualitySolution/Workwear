@@ -1,5 +1,6 @@
 ﻿using QSOrmProject.Users;
 using workwear.Domain.Users;
+using workwear.Repository;
 
 namespace workwear.Tools
 {
@@ -9,8 +10,9 @@ namespace workwear.Tools
 
 		static CurrentUserSettings()
 		{
-			manager.CreateUserSettings = uow => new UserSettings(Repository.UserRepository.GetMyUser(uow));
-			manager.LoadUserSettings = uow => Repository.UserRepository.GetCurrentUserSettings(uow);
+			var userRepository = new UserRepository();
+			manager.CreateUserSettings = uow => new UserSettings(UserRepository.GetMyUser(uow));
+			manager.LoadUserSettings = userRepository.GetCurrentUserSettings;
 		}
 
 		public static UserSettings Settings

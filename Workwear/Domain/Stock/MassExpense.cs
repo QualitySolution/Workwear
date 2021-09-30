@@ -10,6 +10,7 @@ using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Statements;
+using workwear.Domain.Users;
 using workwear.Measurements;
 using workwear.Repository.Stock;
 using Workwear.Domain.Company;
@@ -83,13 +84,16 @@ namespace workwear.Domain.Stock
 			set => SetField(ref issuanceSheet, value);
 		}
 
-		public virtual void CreateIssuanceSheet()
+		public virtual void CreateIssuanceSheet(UserSettings userSettings)
 		{
 			if(IssuanceSheet != null)
 				return;
 
 			IssuanceSheet = new IssuanceSheet {
-				MassExpense = this
+				MassExpense = this,
+				Organization = userSettings?.DefaultOrganization,
+				HeadOfDivisionPerson = userSettings?.DefaultLeader,
+				ResponsiblePerson = userSettings?.DefaultResponsiblePerson,
 			};
 		}
 
@@ -104,6 +108,10 @@ namespace workwear.Domain.Stock
 				throw new NullReferenceException("Для обновления ведомости номенклатура должна быть указана.");
 
 			IssuanceSheet.Date = Date;
+			IssuanceSheet.Subdivision = ListEmployees.GroupBy(x => x.EmployeeCard.Subdivision)
+								 .Where(x => x.Key != null)
+								 .OrderByDescending(x => x.Count())
+								 .FirstOrDefault()?.Key;
 
 			for(int i = IssuanceSheet.Items.Count - 1; i > -1; i--)
 				if(ItemsNomenclature.FirstOrDefault(x => x.Nomenclature == IssuanceSheet.Items[i].Nomenclature) == null || ListEmployees.FirstOrDefault(x => x.EmployeeCard == IssuanceSheet.Items[i].Employee) == null)
