@@ -346,7 +346,7 @@ namespace WorkwearTest.Integration.Stock
 				expense.Date = new DateTime(2018, 10, 22);
 				var expenseItem = expense.AddItem(position1, 1);
 
-				expense.CreateIssuanceSheet();
+				expense.CreateIssuanceSheet(null);
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
