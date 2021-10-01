@@ -77,7 +77,10 @@ namespace workwear.Journal.ViewModels.Statements
 					.Select(x => x.MassExpense.Id).WithAlias(() => resultAlias.DocMassExpenseId)
 					.Select(x => x.CollectiveExpense.Id).WithAlias(() => resultAlias.DocCollectiveExpenseId)
 					.SelectSubQuery(employeesSubquery).WithAlias(() => resultAlias.Employees)
-				).TransformUsing(Transformers.AliasToBean<IssuanceSheetJournalNode>());
+				)
+				.OrderBy(() => issuanceSheetAlias.Date).Desc
+				.ThenBy(() => issuanceSheetAlias.Id).Desc
+				.TransformUsing(Transformers.AliasToBean<IssuanceSheetJournalNode>());
 		}
 	}
 

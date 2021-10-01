@@ -69,12 +69,10 @@ namespace workwear.ViewModels.Statements
 													.UseViewModelDialog<LeadersViewModel>()
 													.Finish();
 
-
 			HeadOfDivisionPersonEntryViewModel = entryBuilder.ForProperty(x => x.HeadOfDivisionPerson)
 													.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
 													.UseViewModelDialog<LeadersViewModel>()
 													.Finish();
-
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
@@ -82,7 +80,15 @@ namespace workwear.ViewModels.Statements
 			NotifyConfiguration.Instance.BatchSubscribeOnEntity<CollectiveExpenseItem>(CollectiveExpense_Changed);
 			if (Entity.Id == 0 )
 				GetDefualtSetting();
+
+			Entity.ObservableItems.ListChanged += (aList) => OnPropertyChanged(nameof(Sum));
 		}
+
+		#region Поля View
+		public string Sum => $"Строк в документе: <u>{Entity.Items.Count}</u>" +
+			$" Сотрудников: <u>{Entity.Items.Select(x => x.Employee.Id).Distinct().Count()}</u>" +
+			$" Единиц продукции: <u>{Entity.Items.Sum(x => x.Amount)}</u>";
+		#endregion
 
 		#region Таблица 
 

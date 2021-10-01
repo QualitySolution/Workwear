@@ -19,6 +19,7 @@ using QS.ViewModels.Dialog;
 using QSReport;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
+using workwear.Repository;
 using workwear.Repository.Stock;
 using workwear.Tools;
 using workwear.Tools.Features;
@@ -29,6 +30,7 @@ namespace workwear.ViewModels.Stock
 	public class CollectiveExpenseViewModel : EntityDialogViewModelBase<CollectiveExpense>, ISelectItem
 	{
 		ILifetimeScope autofacScope;
+		private readonly UserRepository userRepository;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public CollectiveExpenseItemsViewModel CollectiveExpenseItemsViewModel;
 		IInteractiveQuestion interactive;
@@ -42,6 +44,7 @@ namespace workwear.ViewModels.Stock
 			ILifetimeScope autofacScope, 
 			IValidator validator,
 			IUserService userService,
+			UserRepository userRepository,
 			IInteractiveQuestion interactive,
 			StockRepository stockRepository,
 			CommonMessages commonMessages,
@@ -50,6 +53,7 @@ namespace workwear.ViewModels.Stock
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
 			this.interactive = interactive;
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
@@ -119,7 +123,8 @@ namespace workwear.ViewModels.Stock
 
 		public void CreateIssuenceSheet()
 		{
-			Entity.CreateIssuanceSheet();
+			var userSettings = userRepository.GetCurrentUserSettings(UoW);
+			Entity.CreateIssuanceSheet(userSettings);
 		}
 
 		public void PrintIssuenceSheet(IssuedSheetPrint doc)
