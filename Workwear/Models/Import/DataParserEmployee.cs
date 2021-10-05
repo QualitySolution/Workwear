@@ -76,10 +76,12 @@ namespace workwear.Models.Import
 				);
 			AddColumnName(DataTypeEmployee.HireDate,
 				"Дата приема",
-				"Дата приёма"
+				"Дата приёма",
+				"Принят"
 				);
 			AddColumnName(DataTypeEmployee.DismissDate,
-				"Дата увольнения"
+				"Дата увольнения",
+				"Уволен"
 			);
 			AddColumnName(DataTypeEmployee.Subdivision,
 				"Подразделение"
