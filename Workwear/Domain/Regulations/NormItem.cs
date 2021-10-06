@@ -131,8 +131,8 @@ namespace workwear.Domain.Regulations
 			double months = amount * oneItemByMonths;
 			int wholeMonths = (int)months;
 			int addintionDays = (int)Math.Round((months - wholeMonths) * 30);
-			if(wholeMonths > 120000) {
-				logger.Warn("Расчет периода вышел за 120000 месяцев. Скорей всего изначальные данные некорректны.");
+			if(Math.Abs(wholeMonths) > 100000) {
+				logger.Warn("Расчет периода вышел за 100000 месяцев. Скорей всего изначальные данные некорректны.");
 				return null;
 			}
 			return issueDate.AddMonths(wholeMonths).AddDays(addintionDays);
