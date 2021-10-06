@@ -127,7 +127,7 @@ namespace workwear.Models.Import
 
 				var protectionToolName = row.CellStringValue(protectionToolsColumn.Index);
 				row.WorkwearItem = row.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.Name == protectionToolName);
-				if(row.WorkwearItem == null) {
+				if(row.WorkwearItem == null && postColumn != null && subdivisionColumn != null) {
 					if(!TryAddNorm(uow, row.CellStringValue(postColumn.Index), row.CellStringValue(subdivisionColumn.Index), row.Employee)) {
 						row.AddColumnChange(postColumn, ChangeType.NotFound);
 						row.AddColumnChange(subdivisionColumn, ChangeType.NotFound);
