@@ -159,7 +159,7 @@ namespace workwear.Models.Import
 					row.ChangedColumns.Add(column, CompareString(employee.CardKey, value, rowChange));
 					break;
 				case DataTypeEmployee.PersonnelNumber:
-					row.ChangedColumns.Add(column, CompareString(employee.PersonnelNumber, (settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(value) : value)?.Trim(), rowChange));
+					row.ChangedColumns.Add(column, CompareString(employee.PersonnelNumber, (settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(value) : value)?.Trim(), rowChange));
 					break;
 				case DataTypeEmployee.LastName:
 					row.ChangedColumns.Add(column, CompareString(employee.LastName, value, rowChange));
@@ -454,7 +454,7 @@ namespace workwear.Models.Import
 					employee.CardKey = value;
 					break;
 				case DataTypeEmployee.PersonnelNumber:
-					employee.PersonnelNumber = (settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(value) : value)?.Trim();
+					employee.PersonnelNumber = (settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(value) : value)?.Trim();
 					break;
 				case DataTypeEmployee.LastName:
 					employee.LastName = value;
@@ -546,17 +546,9 @@ namespace workwear.Models.Import
 			return fio;
 		}
 
-		public string ConvertPersonnelNumber (string cellValue)
-		{
-			if(int.TryParse(cellValue, out int number))
-				return number.ToString();
-			else
-				return cellValue;
-		}
-
 		public string GetPersonalNumber(SettingsMatchEmployeesViewModel settings, SheetRowEmployee row, int columnIndex)
 		{
-			var original = settings.ConvertPersonnelNumber ? ConvertPersonnelNumber(row.CellStringValue(columnIndex)) : row.CellStringValue(columnIndex);
+			var original = settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(row.CellStringValue(columnIndex)) : row.CellStringValue(columnIndex);
 			return original?.Trim();
 		}
 		#endregion

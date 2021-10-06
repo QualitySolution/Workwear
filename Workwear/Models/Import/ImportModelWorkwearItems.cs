@@ -10,10 +10,12 @@ namespace workwear.Models.Import
 	public class ImportModelWorkwearItems : ImportModelBase<DataTypeWorkwearItems, SheetRowWorkwearItems>, IImportModel
 	{
 		private readonly DataParserWorkwearItems dataParser;
+		private readonly SettingsWorkwearItemsViewModel settingsWorkwearItemsViewModel;
 
-		public ImportModelWorkwearItems(DataParserWorkwearItems dataParser) : base(dataParser)
+		public ImportModelWorkwearItems(DataParserWorkwearItems dataParser, SettingsWorkwearItemsViewModel settingsWorkwearItemsViewModel) : base(dataParser, settingsWorkwearItemsViewModel)
 		{
 			this.dataParser = dataParser ?? throw new ArgumentNullException(nameof(dataParser));
+			this.settingsWorkwearItemsViewModel = settingsWorkwearItemsViewModel ?? throw new ArgumentNullException(nameof(settingsWorkwearItemsViewModel));
 		}
 
 		#region Параметры
@@ -62,7 +64,7 @@ namespace workwear.Models.Import
 
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow, CountersViewModel counters)
 		{
-			dataParser.MatchChanges(progress, counters, uow, UsedRows, Columns);
+			dataParser.MatchChanges(progress, settingsWorkwearItemsViewModel, counters, uow, UsedRows, Columns);
 			OnPropertyChanged(nameof(DisplayRows));
 
 			counters.SetCount(CountersWorkwearItems.SkipRows, UsedRows.Count(x => x.Skiped));
