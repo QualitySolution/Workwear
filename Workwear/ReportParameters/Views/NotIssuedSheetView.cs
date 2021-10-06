@@ -1,0 +1,27 @@
+﻿using System;
+using QS.Views;
+using workwear.ReportParameters.ViewModels;
+
+namespace workwear.ReportParameters.Views
+{
+	public partial class NotIssuedSheetView : ViewBase<NotIssuedSheetViewModel>
+	{
+
+		public NotIssuedSheetView(NotIssuedSheetViewModel viewModel) : base(viewModel)
+		{
+			this.Build();
+
+			ydateReport.Binding.AddBinding(ViewModel, v => v.ReportDate, w => w.DateOrNull).InitializeFromSource();
+			checkOnlyMissing.Binding.AddBinding(ViewModel, v => v.OnlyMissing, w => w.Active).InitializeFromSource();
+
+			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
+
+			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
+		}
+
+		protected void OnButtonRunClicked(object sender, EventArgs e)
+		{
+			ViewModel.LoadReport();
+		}
+	}
+}
