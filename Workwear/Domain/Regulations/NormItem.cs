@@ -11,6 +11,8 @@ namespace workwear.Domain.Regulations
 		Nominative = "строка нормы")]
 	public class NormItem : PropertyChangedBase, IDomainObject
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		#region Свойства
 
 		public virtual int Id { get; set; }
@@ -129,6 +131,10 @@ namespace workwear.Domain.Regulations
 			double months = amount * oneItemByMonths;
 			int wholeMonths = (int)months;
 			int addintionDays = (int)Math.Round((months - wholeMonths) * 30);
+			if(wholeMonths > 120000) {
+				logger.Warn("Расчет периода вышел за 120000 месяцев. Скорей всего изначальные данные некорректны.");
+				return null;
+			}
 			return issueDate.AddMonths(wholeMonths).AddDays(addintionDays);
 		}
 
