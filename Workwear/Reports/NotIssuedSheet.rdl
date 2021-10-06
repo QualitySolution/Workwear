@@ -741,7 +741,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     wear_cards.id as employee_id,
@@ -821,11 +821,10 @@ LEFT JOIN departments ON wear_cards.department_id = departments.id
 LEFT JOIN posts ON wear_cards.post_id = posts.id
 LEFT JOIN objects ON wear_cards.object_id = objects.id OR wear_cards.object_id IS NULL AND posts.subdivision_id = objects.id
 WHERE
-    wear_cards.dismiss_date IS NULL AND(
-        @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id
-    ) AND(
-        NOT @onlyMissing OR wear_cards_item.next_issue &lt; @report_date
-    )
+    wear_cards.dismiss_date IS NULL 
+    AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
+    AND( @issue_type = "" OR item_types.issue_type = @issue_type )
+    AND( NOT @onlyMissing OR wear_cards_item.next_issue &lt; @report_date)
 GROUP BY
     wear_cards_item.wear_card_id,
     wear_cards_item.protection_tools_id
@@ -846,9 +845,12 @@ ORDER BY
           <QueryParameter Name="@subdivision_id">
             <Value>={?subdivision_id}</Value>
           </QueryParameter>
+          <QueryParameter Name="@issue_type">
+            <Value>={?issue_type}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="employee_id">
           <DataField>employee_id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -937,7 +939,7 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
@@ -973,6 +975,14 @@ ORDER BY
       </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="issue_type">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt>
       </Prompt>

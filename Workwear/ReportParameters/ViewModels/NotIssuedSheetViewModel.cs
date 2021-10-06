@@ -7,6 +7,7 @@ using QS.Navigation;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using workwear.Domain.Company;
+using workwear.Domain.Stock;
 
 namespace workwear.ReportParameters.ViewModels
 {
@@ -29,6 +30,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"report_date", ReportDate },
 					{"only_missing", OnlyMissing},
 					{"subdivision_id", SubdivisionEntry.Entity == null ? -1 : SubdivisionEntry.Entity.Id },
+					{"issue_type", IssueType?.ToString() },
 				 };
 
 		#region Параметры
@@ -45,6 +47,11 @@ namespace workwear.ReportParameters.ViewModels
 			set => SetField(ref onlyMissing, value);
 		}
 
+		private IssueType? issueType;
+		public virtual IssueType? IssueType {
+			get => issueType;
+			set => SetField(ref issueType, value);
+		}
 		#endregion
 		#region Свойства
 		public bool SensetiveLoad => ReportDate != null;

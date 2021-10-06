@@ -1,5 +1,6 @@
 ﻿using System;
 using QS.Views;
+using workwear.Domain.Stock;
 using workwear.ReportParameters.ViewModels;
 
 namespace workwear.ReportParameters.Views
@@ -13,6 +14,8 @@ namespace workwear.ReportParameters.Views
 
 			ydateReport.Binding.AddBinding(ViewModel, v => v.ReportDate, w => w.DateOrNull).InitializeFromSource();
 			checkOnlyMissing.Binding.AddBinding(ViewModel, v => v.OnlyMissing, w => w.Active).InitializeFromSource();
+			comboIssueType.ItemsEnum = typeof(IssueType);
+			comboIssueType.Binding.AddBinding(ViewModel, v => v.IssueType, w => w.SelectedItemOrNull).InitializeFromSource();
 
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 
