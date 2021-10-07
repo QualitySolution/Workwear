@@ -9,6 +9,8 @@ namespace workwear.Models.Import
 {
 	public class ImportModelWorkwearItems : ImportModelBase<DataTypeWorkwearItems, SheetRowWorkwearItems>, IImportModel
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		private readonly DataParserWorkwearItems dataParser;
 		private readonly SettingsWorkwearItemsViewModel settingsWorkwearItemsViewModel;
 
@@ -42,16 +44,19 @@ namespace workwear.Models.Import
 			var rows = UsedRows.Where(x => !x.Skiped && x.ChangedColumns.Any()).ToList();
 			var grouped = UsedRows.Where(x => x.Operation != null)
 				.GroupBy(x => x.Employee);
+			logger.Debug($"В обработке {grouped.Count()} сотрудников.");
 			progress.Start(maxValue: grouped.Count(), text: "Подготовка");
 			foreach(var employeeGroup in grouped) {
-				progress.Add( text: $"Подготовка {employeeGroup.Key.ShortName}");
+				progress.Add(text: $"Подготовка {employeeGroup.Key.ShortName}");
 				var rowByItem = employeeGroup.GroupBy(x => x.WorkwearItem);
 				foreach(var itemGroup in rowByItem) {
 					var last = itemGroup.OrderByDescending(x => x.Date).First();
-					itemGroup.Key.LastIssue = last.Date;
-					itemGroup.Key.Amount = last.CellIntValue(countColumn.Index).Value;
-					itemGroup.Key.NextIssue = itemGroup.Key.ActiveNormItem.CalculateExpireDate(last.Date.Value, itemGroup.Key.Amount);
-					dataParser.ChangedEmployees.Add(employeeGroup.Key);
+					if(itemGroup.Key.LastIssue == null || itemGroup.Key.LastIssue < last.Date) {
+						itemGroup.Key.LastIssue = last.Date;
+						itemGroup.Key.Amount = last.CellIntValue(countColumn.Index).Value;
+						itemGroup.Key.NextIssue = itemGroup.Key.ActiveNormItem.CalculateExpireDate(last.Date.Value, itemGroup.Key.Amount);
+						dataParser.ChangedEmployees.Add(employeeGroup.Key);
+					}
 				}
 			}
 
