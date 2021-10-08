@@ -209,141 +209,6 @@
                 </TableCell>
               </TableCells>
             </TableRow>
-            <TableRow>
-              <Height>12pt</Height>
-              <TableCells>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox19">
-                      <Value>1</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox22">
-                      <Value>2</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox24">
-                      <Value>3</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox25">
-                      <Value>4</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox29">
-                      <Value>5</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox32">
-                      <Value>6</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox35">
-                      <Value>7</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox53">
-                      <Value>8</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                      <Visibility>
-                      </Visibility>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-              </TableCells>
-            </TableRow>
           </TableRows>
           <RepeatOnNewPage>true</RepeatOnNewPage>
         </Header>
@@ -446,6 +311,7 @@
                         <BorderWidth />
                         <Format>d</Format>
                         <VerticalAlign>Middle</VerticalAlign>
+                        <BackgroundColor>=Iif(Fields!last_issue.IsMissing, "#CCCCFF", "")</BackgroundColor>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -463,6 +329,9 @@
                         <BorderWidth />
                         <Format>0</Format>
                         <VerticalAlign>Middle</VerticalAlign>
+                        <BackgroundColor>
+                        </BackgroundColor>
+                        <Color>Black</Color>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -491,7 +360,7 @@
           </TableRows>
         </Details>
         <Left>0.8pt</Left>
-        <Top>32.1pt</Top>
+        <Top>49.7pt</Top>
         <TableGroups>
           <TableGroup>
             <Grouping Name="Subdivision">
@@ -730,6 +599,70 @@
           <FontSize>16pt</FontSize>
         </Style>
       </Textbox>
+      <Table Name="Table2">
+        <DataSetName>One</DataSetName>
+        <NoRows>Query returned no rows!</NoRows>
+        <Style>
+          <BorderStyle>
+            <Default>Solid</Default>
+          </BorderStyle>
+        </Style>
+        <TableColumns>
+          <TableColumn>
+            <Width>29.7pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>88.2pt</Width>
+          </TableColumn>
+        </TableColumns>
+        <Details>
+          <TableRows>
+            <TableRow>
+              <Height>12 pt</Height>
+              <Visibility>
+                <Hidden>=Iif(Fields!1.Value = Nothing, true, false)</Hidden>
+              </Visibility>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox6">
+                      <Value>
+                      </Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <BackgroundColor>#CCCCFF</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox11">
+                      <Value> - первая выдача</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <BackgroundColor>
+                        </BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+        </Details>
+        <Left>455.6pt</Left>
+        <Top>32.4pt</Top>
+      </Table>
     </ReportItems>
   </Body>
   <PageFooter>
@@ -741,8 +674,9 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
+        <Timeout>300</Timeout>
         <CommandText>SELECT
     wear_cards.id as employee_id,
     CONCAT_WS(
@@ -753,6 +687,7 @@
     ) AS employee,
     wear_cards.personnel_number,
     wear_cards_item.next_issue,
+    wear_cards_item.last_issue,
     IF(
         wear_cards_item.next_issue &lt;= @report_date,
         DATEDIFF(
@@ -850,7 +785,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="employee_id">
           <DataField>employee_id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -865,6 +800,10 @@ ORDER BY
         </Field>
         <Field Name="next_issue">
           <DataField>next_issue</DataField>
+          <TypeName>System.DateTime</TypeName>
+        </Field>
+        <Field Name="last_issue">
+          <DataField>last_issue</DataField>
           <TypeName>System.DateTime</TypeName>
         </Field>
         <Field Name="delay">
@@ -929,6 +868,18 @@ ORDER BY
         </Field>
       </Fields>
     </DataSet>
+    <DataSet Name="One">
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT 1</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="1">
+          <DataField>1</DataField>
+          <TypeName>System.Int32</TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
   </DataSets>
   <DataSources>
     <DataSource Name="DS1">
@@ -939,7 +890,7 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
