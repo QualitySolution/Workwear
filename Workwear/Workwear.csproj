@@ -453,6 +453,9 @@
     <Compile Include="Views\Import\SettingsWorkwearItemsView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Import.SettingsWorkwearItemsView.cs" />
     <Compile Include="Models\Import\EmployeeParse.cs" />
+    <Compile Include="ReportParameters\Views\NotIssuedSheetSummaryView.cs" />
+    <Compile Include="ReportParameters\ViewModels\NotIssuedSheetSummaryViewModel.cs" />
+    <Compile Include="gtk-gui\workwear.ReportParameters.Views.NotIssuedSheetSummaryView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -746,6 +749,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\Statements\AssemblyTask.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\NotIssuedSheetSummary.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

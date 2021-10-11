@@ -367,9 +367,14 @@ public partial class MainWindow : Gtk.Window
 		);
 	}
 
-	protected void OnAction17Activated(object sender, EventArgs e)
+	protected void OnActionNotIssuedSheetDetailActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(NotIssuedSheetViewModel));
+	}
+
+	protected void OnActionNotIssuedSheetSummaryActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(NotIssuedSheetSummaryViewModel));
 	}
 
 	protected void OnActionYearRequestSheetActivated(object sender, EventArgs e)

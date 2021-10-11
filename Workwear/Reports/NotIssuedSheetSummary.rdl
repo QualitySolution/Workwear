@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Description>
+  </Description>
+  <Author>
+  </Author>
+  <PageHeight>297mm</PageHeight>
+  <PageWidth>210mm</PageWidth>
+  <Width>1pt</Width>
+  <TopMargin>.25in</TopMargin>
+  <LeftMargin>4mm</LeftMargin>
+  <RightMargin>4mm</RightMargin>
+  <BottomMargin>.25in</BottomMargin>
+  <PageHeader>
+    <Height>0.0pt</Height>
+    <PrintOnFirstPage>false</PrintOnFirstPage>
+    <PrintOnLastPage>false</PrintOnLastPage>
+  </PageHeader>
+  <Body>
+    <Height>95.0pt</Height>
+    <Columns>1</Columns>
+    <ReportItems>
+      <Table Name="Table1">
+        <DataSetName>Data</DataSetName>
+        <NoRows>Нет данных.</NoRows>
+        <Style>
+          <BorderStyle>
+            <Default>Solid</Default>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <TableColumns>
+          <TableColumn>
+            <Width>41.3pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>319.4pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>43.2pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>45.4pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>56.4pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>64.5pt</Width>
+          </TableColumn>
+        </TableColumns>
+        <Header>
+          <TableRows>
+            <TableRow>
+              <Height>25.5pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox1">
+                      <Value>№</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox13">
+                      <Value>Наименование</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox9">
+                      <Value>Размер</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox7">
+                      <Value>Рост</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox28">
+                      <Value>Коли-чество</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox45">
+                      <Value>Количество на складе</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                      <Visibility>
+                      </Visibility>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+          <RepeatOnNewPage>true</RepeatOnNewPage>
+        </Header>
+        <Details>
+          <TableRows>
+            <TableRow>
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox2">
+                      <Value>=RowNumber()</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox14">
+                      <Value>=Fields!protection_tools_name.Value</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox10">
+                      <Value>={size}</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox8">
+                      <Value>={growth}</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox30">
+                      <Value>={amount} + " " + {unit}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <Format>0</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox54">
+                      <Value>={in_stock}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <Format>0</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                      <Visibility>
+                      </Visibility>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+        </Details>
+        <Left>0.8pt</Left>
+        <Top>34.5pt</Top>
+        <TableGroups >
+          <TableGroup>
+            <Grouping Name="ProtectionTools">
+              <PageBreakAtStart>false</PageBreakAtStart>
+              <PageBreakAtEnd>false</PageBreakAtEnd>
+              <GroupExpressions>
+                <GroupExpression>={protection_tools_id}</GroupExpression>
+              </GroupExpressions>
+            </Grouping>
+            <Footer>
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>.2in</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox6">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox11">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox12">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox15">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Right</TextAlign>
+                          </Style>
+                          <Value>Всего:</Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox16">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                          <Value>=Sum({amount})</Value>
+                          <Visibility>
+                            <Hidden>
+                            </Hidden>
+                          </Visibility>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox17">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                  </TableCells>
+                  <Visibility>
+                    <Hidden>=Count({amount}) = 1</Hidden>
+                  </Visibility>
+                </TableRow>
+              </TableRows>
+            </Footer>
+            <Sorting>
+              <SortBy>
+                <SortExpression>={protection_tools_name}</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
+          </TableGroup>
+        </TableGroups>
+      </Table>
+      <Textbox Name="Textbox50">
+        <Height>20.21pt</Height>
+        <Width>561.64pt</Width>
+        <Value>="Справка по невыданному на " + Format(CDate({?report_date}), "D")</Value>
+        <ZIndex>1</ZIndex>
+        <Left>0.00pt</Left>
+        <Top>5.70pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <TextAlign>Center</TextAlign>
+          <FontWeight>Bold</FontWeight>
+          <FontSize>16pt</FontSize>
+        </Style>
+      </Textbox>
+    </ReportItems>
+  </Body>
+  <PageFooter>
+    <Height>0.0pt</Height>
+    <PrintOnFirstPage>false</PrintOnFirstPage>
+    <PrintOnLastPage>false</PrintOnLastPage>
+  </PageFooter>
+  <DataElementName>Report</DataElementName>
+  <DataElementStyle>AttributeNormal</DataElementStyle>
+  <DataSets>
+    <DataSet Name="Data">
+      <Query >
+        <DataSourceName>DS1</DataSourceName>
+        <Timeout>300</Timeout>
+        <CommandText>SELECT
+    protection_tools.name AS protection_tools_name,
+    wear_cards_item.protection_tools_id,
+    (
+        CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.size_wear WHEN item_types.wear_category = 'Shoes' THEN wear_cards.size_shoes WHEN item_types.wear_category = 'Gloves' THEN wear_cards.size_gloves WHEN item_types.wear_category = 'Headgear' THEN wear_cards.size_headdress WHEN item_types.wear_category = 'WinterShoes' THEN wear_cards.size_winter_shoes WHEN item_types.wear_category = 'Mittens' THEN wear_cards.size_mittens ELSE NULL
+    END
+) AS size,
+(
+    CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.wear_growth ELSE NULL
+END
+) AS growth,
+measurement_units.name AS unit,
+SUM(norms_item.amount) AS amount,
+(
+    SELECT
+        (
+            SUM(
+                CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+            END
+        ) - SUM(
+            CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+        END
+)
+) AS SUM
+FROM
+    operation_warehouse
+WHERE
+    operation_warehouse.operation_time &lt;= @report_date AND operation_warehouse.nomenclature_id IN(
+    SELECT
+        protection_tools_nomenclature.nomenclature_id
+    FROM
+        protection_tools_nomenclature
+    WHERE
+        protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id OR protection_tools_nomenclature.protection_tools_id IN(
+        SELECT
+            protection_tools_replacement.protection_tools_analog_id
+        FROM
+            protection_tools_replacement
+        WHERE
+            protection_tools_replacement.protection_tools_id = wear_cards_item.protection_tools_id
+    )
+)
+) AS in_stock
+FROM
+    wear_cards_item
+JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
+JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
+LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
+WHERE
+    wear_cards.dismiss_date IS NULL 
+    AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
+    AND( @issue_type = "" OR item_types.issue_type = @issue_type )
+    AND wear_cards_item.next_issue &lt; @report_date
+GROUP BY
+    wear_cards_item.protection_tools_id, 
+    CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.size_wear WHEN item_types.wear_category = 'Shoes' THEN wear_cards.size_shoes WHEN item_types.wear_category = 'Gloves' THEN wear_cards.size_gloves WHEN item_types.wear_category = 'Headgear' THEN wear_cards.size_headdress WHEN item_types.wear_category = 'WinterShoes' THEN wear_cards.size_winter_shoes WHEN item_types.wear_category = 'Mittens' THEN wear_cards.size_mittens ELSE NULL END,
+    CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.wear_growth ELSE NULL
+END
+ORDER BY
+    protection_tools_name,
+    size,
+    growth;</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@report_date">
+            <Value>={?report_date}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@subdivision_id">
+            <Value>={?subdivision_id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@issue_type">
+            <Value>={?issue_type}</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields >
+        <Field Name="protection_tools_name">
+          <DataField>protection_tools_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="protection_tools_id">
+          <DataField>protection_tools_id</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
+        <Field Name="size">
+          <DataField>size</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="growth">
+          <DataField>growth</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="unit">
+          <DataField>unit</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="amount">
+          <DataField>amount</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
+        <Field Name="in_stock">
+          <DataField>in_stock</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="One">
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT 1</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="1">
+          <DataField>1</DataField>
+          <TypeName>System.Int32</TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySQL.NET</DataProvider>
+        <ConnectString>database=workwear_dev26;user=andrey;password=123;port=3306;server=office.qsolution.ru</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportParameters>
+    <ReportParameter Name="report_date">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2021-10-01</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="subdivision_id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="issue_type">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+  </ReportParameters>
+</Report>
