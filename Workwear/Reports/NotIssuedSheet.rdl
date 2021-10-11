@@ -389,6 +389,7 @@
                             <FontSize>12pt</FontSize>
                           </Style>
                           <Value>=Iif(Fields!subdivision_id.IsMissing, "Без подразделения", Fields!subdivision_name.Value)</Value>
+                          <CanGrow >true</CanGrow>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>8</ColSpan>
@@ -518,6 +519,7 @@
                             <FontSize>12pt</FontSize>
                           </Style>
                           <Value>=Fields!department_name.Value</Value>
+                          <CanGrow >true</CanGrow>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>8</ColSpan>
@@ -566,6 +568,7 @@
                             <PaddingLeft>5pt</PaddingLeft>
                           </Style>
                           <Value>= {personnel_number}+ "  " +{employee} + Iif(Fields!post_id.IsMissing, "", " [" + {post_name} + "]")</Value>
+                          <CanGrow >true</CanGrow>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>8</ColSpan>
