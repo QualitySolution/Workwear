@@ -57,13 +57,14 @@ namespace workwear.Models.Import
 				"Рост"
 				);
 			AddColumnName(DataTypeWorkwearItems.SizeAndGrowth,
-				"Характеристика номенклатуры"
+				"Характеристика"
 				);
 			AddColumnName(DataTypeWorkwearItems.IssueDate,
 				"Дата выдачи"
 				);
 			AddColumnName(DataTypeWorkwearItems.Count,
-				"Количество"
+				"Количество",
+				"Кол-во"
 				);
 				
 			this.nomenclatureRepository = nomenclatureRepository ?? throw new ArgumentNullException(nameof(nomenclatureRepository));
