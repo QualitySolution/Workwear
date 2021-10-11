@@ -157,8 +157,6 @@
     <Compile Include="gtk-gui\workwear.EmployeeBalanceFilter.cs" />
     <Compile Include="ReportsDlg\OnIssueStatement.cs" />
     <Compile Include="gtk-gui\workwear.OnIssueStatement.cs" />
-    <Compile Include="ReportsDlg\NotIssuedSheetReportDlg.cs" />
-    <Compile Include="gtk-gui\workwear.NotIssuedSheetReportDlg.cs" />
     <Compile Include="ConfigureDeletion.cs" />
     <Compile Include="ReportsDlg\RequestSheetDlg.cs" />
     <Compile Include="Representations\ObjectBalanceVM.cs" />
@@ -448,6 +446,13 @@
     <Compile Include="Journal\Filter.Views\Statements\IssuanceSheetFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Statements.IssuanceSheetFilterView.cs" />
     <Compile Include="ViewModels\Stock\ISelectItem.cs" />
+    <Compile Include="ReportParameters\Views\NotIssuedSheetView.cs" />
+    <Compile Include="ReportParameters\ViewModels\NotIssuedSheetViewModel.cs" />
+    <Compile Include="gtk-gui\workwear.ReportParameters.Views.NotIssuedSheetView.cs" />
+    <Compile Include="ViewModels\Import\SettingsWorkwearItemsViewModel.cs" />
+    <Compile Include="Views\Import\SettingsWorkwearItemsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Import.SettingsWorkwearItemsView.cs" />
+    <Compile Include="Models\Import\EmployeeParse.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

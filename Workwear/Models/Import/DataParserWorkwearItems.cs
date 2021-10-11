@@ -57,13 +57,14 @@ namespace workwear.Models.Import
 				"Рост"
 				);
 			AddColumnName(DataTypeWorkwearItems.SizeAndGrowth,
-				"Характеристика номенклатуры"
+				"Характеристика"
 				);
 			AddColumnName(DataTypeWorkwearItems.IssueDate,
 				"Дата выдачи"
 				);
 			AddColumnName(DataTypeWorkwearItems.Count,
-				"Количество"
+				"Количество",
+				"Кол-во"
 				);
 				
 			this.nomenclatureRepository = nomenclatureRepository ?? throw new ArgumentNullException(nameof(nomenclatureRepository));
@@ -80,7 +81,7 @@ namespace workwear.Models.Import
 
 		#region Сопоставление данных
 
-		public void MatchChanges(IProgressBarDisplayable progress, CountersViewModel counters, IUnitOfWork uow, IEnumerable<SheetRowWorkwearItems> list, List<ImportedColumn<DataTypeWorkwearItems>> columns)
+		public void MatchChanges(IProgressBarDisplayable progress, SettingsWorkwearItemsViewModel settings, CountersViewModel counters, IUnitOfWork uow, IEnumerable<SheetRowWorkwearItems> list, List<ImportedColumn<DataTypeWorkwearItems>> columns)
 		{
 			var personnelNumberColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.PersonnelNumber);
 			var protectionToolsColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.ProtectionTools);
@@ -94,7 +95,7 @@ namespace workwear.Models.Import
 			var growthColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Growth);
 
 			progress.Start(list.Count() * 2 + 3, text: "Загрузка сотрудников");
-			var personnelNumbers = list.Select(x => x.CellStringValue(personnelNumberColumn.Index))
+			var personnelNumbers = list.Select(x => GetPersonalNumber(settings, x, personnelNumberColumn.Index))
 				.Where(x => !String.IsNullOrWhiteSpace(x)).Distinct().ToArray();
 
 			var employees = uow.Session.QueryOver<EmployeeCard>()
@@ -117,8 +118,9 @@ namespace workwear.Models.Import
 					continue;
 				}
 
-				row.Employee = employees.FirstOrDefault(x => x.PersonnelNumber == row.CellStringValue(personnelNumberColumn.Index));
+				row.Employee = employees.FirstOrDefault(x => x.PersonnelNumber == GetPersonalNumber(settings, row, personnelNumberColumn.Index));
 				if(row.Employee == null) {
+					logger.Warn($"Не найден сотрудник в табельным номером [{GetPersonalNumber(settings, row, personnelNumberColumn.Index)}]. Пропускаем.");
 					row.ProgramSkiped = true;
 					row.AddColumnChange(personnelNumberColumn, ChangeType.NotFound);
 					counters.AddCount(CountersWorkwearItems.EmployeeNotFound);
@@ -127,7 +129,7 @@ namespace workwear.Models.Import
 
 				var protectionToolName = row.CellStringValue(protectionToolsColumn.Index);
 				row.WorkwearItem = row.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.Name == protectionToolName);
-				if(row.WorkwearItem == null) {
+				if(row.WorkwearItem == null && postColumn != null && subdivisionColumn != null) {
 					if(!TryAddNorm(uow, row.CellStringValue(postColumn.Index), row.CellStringValue(subdivisionColumn.Index), row.Employee)) {
 						row.AddColumnChange(postColumn, ChangeType.NotFound);
 						row.AddColumnChange(subdivisionColumn, ChangeType.NotFound);
@@ -337,6 +339,12 @@ namespace workwear.Models.Import
 			if(growthColumn != null && String.IsNullOrEmpty(sizeAndGrowth.Growth))
 				sizeAndGrowth.Growth = SizeParser.ParseSize(row.CellStringValue(sizeColumn.Index));
 			return !String.IsNullOrEmpty(sizeAndGrowth.Size) || !String.IsNullOrEmpty(sizeAndGrowth.Growth);
+		}
+
+		public string GetPersonalNumber(SettingsWorkwearItemsViewModel settings, SheetRowWorkwearItems row, int columnIndex)
+		{
+			var original = settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(row.CellStringValue(columnIndex)) : row.CellStringValue(columnIndex);
+			return original?.Trim();
 		}
 
 		#endregion

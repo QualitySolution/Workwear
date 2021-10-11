@@ -22,6 +22,10 @@ namespace workwear.Models.Import
 		public string CellValue(int col)
 		{
 			var cell = cells.GetCell(col);
+			if(cell?.CellType == CellType.Blank)
+				return null;
+			if(cell?.CellType == CellType.Error && cell.ErrorCellValue == 0)
+				return null;
 			return cell?.ToString();
 		}
 

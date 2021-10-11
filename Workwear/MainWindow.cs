@@ -369,12 +369,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnAction17Activated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("ReportNotIssuedSheet");
-		var widget = new NotIssuedSheetReportDlg();
-		tdiMain.OpenTab(
-			QSReport.ReportViewDlg.GenerateHashName(widget),
-			() => new QSReport.ReportViewDlg(widget)
-		);
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(NotIssuedSheetViewModel));
 	}
 
 	protected void OnActionYearRequestSheetActivated(object sender, EventArgs e)
