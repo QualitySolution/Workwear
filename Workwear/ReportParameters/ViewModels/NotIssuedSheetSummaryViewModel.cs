@@ -11,14 +11,14 @@ using workwear.Domain.Stock;
 
 namespace workwear.ReportParameters.ViewModels
 {
-	public class NotIssuedSheetViewModel : ReportParametersViewModelBase, IDisposable
+	public class NotIssuedSheetSummaryViewModel : ReportParametersViewModelBase, IDisposable
 	{
 		IUnitOfWork UoW;
 
-		public NotIssuedSheetViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope autofacScope) : base(rdlViewerViewModel)
+		public NotIssuedSheetSummaryViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope autofacScope) : base(rdlViewerViewModel)
 		{
-			Title = "Справка по невыданному (Детально)";
-			Identifier = "NotIssuedSheet";
+			Title = "Справка по невыданному (Суммарно)";
+			Identifier = "NotIssuedSheetSummary";
 
 			UoW = uowFactory.CreateWithoutRoot();
 

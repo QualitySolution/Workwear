@@ -53,7 +53,7 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionAverageAnnualNeed;
 
-	private global::Gtk.Action Action22;
+	private global::Gtk.Action Action;
 
 	private global::Gtk.Action Action33;
 
@@ -146,6 +146,10 @@ public partial class MainWindow
 	private global::Gtk.Action ActionSetNorms;
 
 	private global::Gtk.Action ActionImportWorkwearItems;
+
+	private global::Gtk.Action ActionNotIssuedSheetDetail;
+
+	private global::Gtk.Action ActionNotIssuedSheetSummary;
 
 	private global::Gtk.VBox vbox1;
 
@@ -255,9 +259,9 @@ public partial class MainWindow
 		this.ActionAverageAnnualNeed = new global::Gtk.Action("ActionAverageAnnualNeed", global::Mono.Unix.Catalog.GetString("Среднегодовая потребность"), null, null);
 		this.ActionAverageAnnualNeed.ShortLabel = global::Mono.Unix.Catalog.GetString("Сводная заявка");
 		w1.Add(this.ActionAverageAnnualNeed, null);
-		this.Action22 = new global::Gtk.Action("Action22", global::Mono.Unix.Catalog.GetString("Справка по невыданному"), null, null);
-		this.Action22.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка по невыданному");
-		w1.Add(this.Action22, null);
+		this.Action = new global::Gtk.Action("Action", global::Mono.Unix.Catalog.GetString("Справка по невыданному"), null, null);
+		this.Action.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка по невыданному");
+		w1.Add(this.Action, null);
 		this.Action33 = new global::Gtk.Action("Action33", global::Mono.Unix.Catalog.GetString("Вид"), null, null);
 		this.Action33.ShortLabel = global::Mono.Unix.Catalog.GetString("Вид");
 		w1.Add(this.Action33, null);
@@ -304,7 +308,7 @@ public partial class MainWindow
 		this.ActionToolBarIconOnly.ShortLabel = global::Mono.Unix.Catalog.GetString("Только иконки");
 		w1.Add(this.ActionToolBarIconOnly, null);
 		this.ActionToolBarTextAndIcon = new global::Gtk.RadioAction("ActionToolBarTextAndIcon", global::Mono.Unix.Catalog.GetString("Иконки и текст"), null, null, 0);
-		this.ActionToolBarTextAndIcon.Group = this.ActionToolBarTextOnly.Group;
+		this.ActionToolBarTextAndIcon.Group = this.ActionToolBarIconOnly.Group;
 		this.ActionToolBarTextAndIcon.ShortLabel = global::Mono.Unix.Catalog.GetString("Иконки и текст");
 		w1.Add(this.ActionToolBarTextAndIcon, null);
 		this.ActionIconsExtraSmall = new global::Gtk.RadioAction("ActionIconsExtraSmall", global::Mono.Unix.Catalog.GetString("Очень маленькие иконки"), null, null, 0);
@@ -316,11 +320,11 @@ public partial class MainWindow
 		this.ActionIconsSmall.ShortLabel = global::Mono.Unix.Catalog.GetString("Маленькие иконки");
 		w1.Add(this.ActionIconsSmall, null);
 		this.ActionIconsMiddle = new global::Gtk.RadioAction("ActionIconsMiddle", global::Mono.Unix.Catalog.GetString("Средние иконки"), null, null, 0);
-		this.ActionIconsMiddle.Group = this.ActionIconsExtraSmall.Group;
+		this.ActionIconsMiddle.Group = this.ActionIconsSmall.Group;
 		this.ActionIconsMiddle.ShortLabel = global::Mono.Unix.Catalog.GetString("Средние иконки");
 		w1.Add(this.ActionIconsMiddle, null);
 		this.ActionIconsLarge = new global::Gtk.RadioAction("ActionIconsLarge", global::Mono.Unix.Catalog.GetString("Большие иконки"), null, null, 0);
-		this.ActionIconsLarge.Group = this.ActionIconsMiddle.Group;
+		this.ActionIconsLarge.Group = this.ActionIconsSmall.Group;
 		this.ActionIconsLarge.ShortLabel = global::Mono.Unix.Catalog.GetString("Большие иконки");
 		w1.Add(this.ActionIconsLarge, null);
 		this.ActionSite = new global::Gtk.Action("ActionSite", global::Mono.Unix.Catalog.GetString("Сайт программы"), null, "www");
@@ -404,6 +408,12 @@ public partial class MainWindow
 		this.ActionImportWorkwearItems = new global::Gtk.Action("ActionImportWorkwearItems", global::Mono.Unix.Catalog.GetString("Выдачи"), null, null);
 		this.ActionImportWorkwearItems.ShortLabel = global::Mono.Unix.Catalog.GetString("Выдачи");
 		w1.Add(this.ActionImportWorkwearItems, null);
+		this.ActionNotIssuedSheetDetail = new global::Gtk.Action("ActionNotIssuedSheetDetail", global::Mono.Unix.Catalog.GetString("Детально"), null, null);
+		this.ActionNotIssuedSheetDetail.ShortLabel = global::Mono.Unix.Catalog.GetString("Детально");
+		w1.Add(this.ActionNotIssuedSheetDetail, null);
+		this.ActionNotIssuedSheetSummary = new global::Gtk.Action("ActionNotIssuedSheetSummary", global::Mono.Unix.Catalog.GetString("Суммарно"), null, null);
+		this.ActionNotIssuedSheetSummary.ShortLabel = global::Mono.Unix.Catalog.GetString("Суммарно");
+		w1.Add(this.ActionNotIssuedSheetSummary, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -453,18 +463,20 @@ public partial class MainWindow
 				"ction12\' action=\'Action12\'/><separator/><menuitem name=\'Action13\' action=\'Action" +
 				"13\'/><menuitem name=\'ActionRequestSheet\' action=\'ActionRequestSheet\'/><menuitem " +
 				"name=\'ActionAverageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><separator/><me" +
-				"nuitem name=\'Action22\' action=\'Action22\'/><menuitem name=\'ActionAmountEmployeeGe" +
-				"tWear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionAmountIssuedW" +
-				"ear\' action=\'ActionAmountIssuedWear\'/></menu><menu name=\'ActionHelp\' action=\'Act" +
-				"ionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'Action" +
-				"History\' action=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpd" +
-				"ate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem nam" +
-				"e=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action" +
-				"=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionO" +
-				"dnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=" +
-				"\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><" +
-				"separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem na" +
-				"me=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"nu name=\'Action\' action=\'Action\'><menuitem name=\'ActionNotIssuedSheetDetail\' act" +
+				"ion=\'ActionNotIssuedSheetDetail\'/><menuitem name=\'ActionNotIssuedSheetSummary\' a" +
+				"ction=\'ActionNotIssuedSheetSummary\'/></menu><menuitem name=\'ActionAmountEmployee" +
+				"GetWear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionAmountIssue" +
+				"dWear\' action=\'ActionAmountIssuedWear\'/></menu><menu name=\'ActionHelp\' action=\'A" +
+				"ctionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'Acti" +
+				"onHistory\' action=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionU" +
+				"pdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem n" +
+				"ame=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' acti" +
+				"on=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'Actio" +
+				"nOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' actio" +
+				"n=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu" +
+				"><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem " +
+				"name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -628,7 +640,6 @@ public partial class MainWindow
 		this.Action13.Activated += new global::System.EventHandler(this.OnAction13Activated);
 		this.ActionRequestSheet.Activated += new global::System.EventHandler(this.OnAction21Activated);
 		this.ActionAverageAnnualNeed.Activated += new global::System.EventHandler(this.OnActionYearRequestSheetActivated);
-		this.Action22.Activated += new global::System.EventHandler(this.OnAction17Activated);
 		this.ActionStockDocs.Activated += new global::System.EventHandler(this.OnActionStockDocsActivated);
 		this.ActionStockBalance.Activated += new global::System.EventHandler(this.OnActionStockBalanceActivated);
 		this.ActionObjects.Activated += new global::System.EventHandler(this.OnActionObjectsActivated);
@@ -669,5 +680,7 @@ public partial class MainWindow
 		this.ActionNormsLoad.Activated += new global::System.EventHandler(this.OnActionNormsLoadActivated);
 		this.ActionSetNorms.Activated += new global::System.EventHandler(this.OnActionSetNormsActivated);
 		this.ActionImportWorkwearItems.Activated += new global::System.EventHandler(this.OnActionImportWorkwearItemsActivated);
+		this.ActionNotIssuedSheetDetail.Activated += new global::System.EventHandler(this.OnActionNotIssuedSheetDetailActivated);
+		this.ActionNotIssuedSheetSummary.Activated += new global::System.EventHandler(this.OnActionNotIssuedSheetSummaryActivated);
 	}
 }

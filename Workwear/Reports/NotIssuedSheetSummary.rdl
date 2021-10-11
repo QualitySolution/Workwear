@@ -17,7 +17,7 @@
     <PrintOnLastPage>false</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>166.3pt</Height>
+    <Height>95.0pt</Height>
     <Columns>1</Columns>
     <ReportItems>
       <Table Name="Table1">
@@ -35,7 +35,7 @@
             <Width>41.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>192.4pt</Width>
+            <Width>319.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>43.2pt</Width>
@@ -47,19 +47,13 @@
             <Width>56.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>66.2pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>63.9pt</Width>
-          </TableColumn>
-          <TableColumn>
             <Width>64.5pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
           <TableRows>
             <TableRow>
-              <Height>36pt</Height>
+              <Height>25.5pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -137,42 +131,6 @@
                   <ReportItems>
                     <Textbox Name="Textbox28">
                       <Value>Коли-чество</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox31">
-                      <Value>Дата выдачи по сроку</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox34">
-                      <Value>Количество дней просрочки</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -284,7 +242,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox30">
-                      <Value>={amount_by_norm} + " " + {unit}</Value>
+                      <Value>={amount} + " " + {unit}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -294,44 +252,6 @@
                         <TextAlign>Center</TextAlign>
                         <Format>0</Format>
                         <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox33">
-                      <Value>={next_issue}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <TextAlign>Center</TextAlign>
-                        <BorderColor />
-                        <BorderWidth />
-                        <Format>d</Format>
-                        <VerticalAlign>Middle</VerticalAlign>
-                        <BackgroundColor>=Iif(Fields!last_issue.IsMissing, "#CCCCFF", "")</BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox36">
-                      <Value>={delay}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <TextAlign>Center</TextAlign>
-                        <BorderColor />
-                        <BorderWidth />
-                        <Format>0</Format>
-                        <VerticalAlign>Middle</VerticalAlign>
-                        <BackgroundColor>
-                        </BackgroundColor>
-                        <Color>Black</Color>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -360,17 +280,17 @@
           </TableRows>
         </Details>
         <Left>0.8pt</Left>
-        <Top>49.7pt</Top>
-        <TableGroups>
+        <Top>34.5pt</Top>
+        <TableGroups >
           <TableGroup>
-            <Grouping Name="Subdivision">
+            <Grouping Name="ProtectionTools">
               <PageBreakAtStart>false</PageBreakAtStart>
               <PageBreakAtEnd>false</PageBreakAtEnd>
               <GroupExpressions>
-                <GroupExpression>={subdivision_id}</GroupExpression>
+                <GroupExpression>={protection_tools_id}</GroupExpression>
               </GroupExpressions>
             </Grouping>
-            <Header>
+            <Footer>
               <RepeatOnNewPage>false</RepeatOnNewPage>
               <TableRows>
                 <TableRow>
@@ -378,208 +298,114 @@
                   <TableCells>
                     <TableCell>
                       <ReportItems>
-                        <Textbox Name="Textbox3">
+                        <Textbox Name="Textbox6">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox11">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox12">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox15">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Right</TextAlign>
+                          </Style>
+                          <Value>Всего:</Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox16">
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
-                            <FontWeight>Bold</FontWeight>
-                            <FontSize>12pt</FontSize>
-                          </Style>
-                          <Value>=Iif(Fields!subdivision_id.IsMissing, "Без подразделения", Fields!subdivision_name.Value)</Value>
-                          <CanGrow>true</CanGrow>
-                        </Textbox>
-                      </ReportItems>
-                      <ColSpan>8</ColSpan>
-                    </TableCell>
-                  </TableCells>
-                </TableRow>
-              </TableRows>
-            </Header>
-            <Footer>
-              <RepeatOnNewPage>false</RepeatOnNewPage>
-              <TableRows>
-                <TableRow>
-                  <Height>19.9pt</Height>
-                  <TableCells>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox55">
-                          <Style>
-                            <BorderStyle>
-                              <Default>None</Default>
-                              <Left>None</Left>
-                              <Right>None</Right>
-                              <Top>None</Top>
-                              <Bottom>None</Bottom>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                          </Style>
-                          <Value>="Сотрудников по подразделению: " + Countdistinct({employee_id})</Value>
-                        </Textbox>
-                      </ReportItems>
-                      <ColSpan>3</ColSpan>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox60">
-                          <Style>
-                            <BorderStyle>
-                              <Default>None</Default>
-                              <Left>None</Left>
-                              <Right>None</Right>
-                              <Top>None</Top>
-                              <Bottom>None</Bottom>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <TextAlign>Right</TextAlign>
-                          </Style>
-                          <Value>Единиц:</Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox61">
-                          <Style>
-                            <BorderStyle>
-                              <Default>None</Default>
-                              <Left>None</Left>
-                              <Right>None</Right>
-                              <Top>None</Top>
-                              <Bottom>None</Bottom>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
                             <TextAlign>Center</TextAlign>
-                            <VerticalAlign>Top</VerticalAlign>
                           </Style>
-                          <Value>=Sum({amount_by_norm})</Value>
+                          <Value>=Sum({amount})</Value>
+                          <Visibility>
+                            <Hidden>
+                            </Hidden>
+                          </Visibility>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
                     <TableCell>
                       <ReportItems>
-                        <Textbox Name="Textbox62">
+                        <Textbox Name="Textbox17">
                           <Style>
                             <BorderStyle>
-                              <Default>None</Default>
-                              <Left>None</Left>
-                              <Right>None</Right>
-                              <Top>None</Top>
-                              <Bottom>None</Bottom>
+                              <Default>Solid</Default>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
-                            <TextAlign>Right</TextAlign>
                           </Style>
-                          <Value>="Видов СИЗ: " + Countdistinct({protection_tools_id})</Value>
+                          <Value>
+                          </Value>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>3</ColSpan>
                     </TableCell>
                   </TableCells>
+                  <Visibility>
+                    <Hidden>=Count({amount}) = 1</Hidden>
+                  </Visibility>
                 </TableRow>
               </TableRows>
             </Footer>
             <Sorting>
               <SortBy>
-                <SortExpression>={subdivision_name}</SortExpression>
-                <Direction>Ascending</Direction>
-              </SortBy>
-            </Sorting>
-          </TableGroup>
-          <TableGroup>
-            <Grouping Name="Department">
-              <PageBreakAtStart>false</PageBreakAtStart>
-              <PageBreakAtEnd>false</PageBreakAtEnd>
-              <GroupExpressions>
-                <GroupExpression>={department_id}</GroupExpression>
-              </GroupExpressions>
-            </Grouping>
-            <Header>
-              <RepeatOnNewPage>false</RepeatOnNewPage>
-              <TableRows>
-                <TableRow>
-                  <Height>.2in</Height>
-                  <TableCells>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox4">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <FontSize>12pt</FontSize>
-                          </Style>
-                          <Value>=Fields!department_name.Value</Value>
-                          <CanGrow>true</CanGrow>
-                        </Textbox>
-                      </ReportItems>
-                      <ColSpan>8</ColSpan>
-                    </TableCell>
-                  </TableCells>
-                  <Visibility>
-                    <Hidden>=Fields!department_name.IsMissing</Hidden>
-                  </Visibility>
-                </TableRow>
-              </TableRows>
-            </Header>
-            <Sorting>
-              <SortBy>
-                <SortExpression>={department_name}</SortExpression>
-                <Direction>Ascending</Direction>
-              </SortBy>
-            </Sorting>
-          </TableGroup>
-          <TableGroup>
-            <Grouping Name="Employee">
-              <PageBreakAtStart>false</PageBreakAtStart>
-              <PageBreakAtEnd>false</PageBreakAtEnd>
-              <GroupExpressions>
-                <GroupExpression>={employee_id}</GroupExpression>
-              </GroupExpressions>
-            </Grouping>
-            <Header>
-              <RepeatOnNewPage>false</RepeatOnNewPage>
-              <TableRows>
-                <TableRow>
-                  <Height>.2in</Height>
-                  <TableCells>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox5">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Right>Solid</Right>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <TextAlign>Left</TextAlign>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <BackgroundColor>#EFEFEF</BackgroundColor>
-                            <PaddingLeft>5pt</PaddingLeft>
-                          </Style>
-                          <Value>= {personnel_number}+ "  " +{employee} + Iif(Fields!post_id.IsMissing, "", " [" + {post_name} + "]")</Value>
-                          <CanGrow>true</CanGrow>
-                        </Textbox>
-                      </ReportItems>
-                      <ColSpan>8</ColSpan>
-                    </TableCell>
-                  </TableCells>
-                </TableRow>
-              </TableRows>
-            </Header>
-            <Sorting>
-              <SortBy>
-                <SortExpression>={employee}</SortExpression>
+                <SortExpression>={protection_tools_name}</SortExpression>
                 <Direction>Ascending</Direction>
               </SortBy>
             </Sorting>
@@ -602,70 +428,6 @@
           <FontSize>16pt</FontSize>
         </Style>
       </Textbox>
-      <Table Name="Table2">
-        <DataSetName>One</DataSetName>
-        <NoRows>Query returned no rows!</NoRows>
-        <Style>
-          <BorderStyle>
-            <Default>Solid</Default>
-          </BorderStyle>
-        </Style>
-        <TableColumns>
-          <TableColumn>
-            <Width>29.7pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>88.2pt</Width>
-          </TableColumn>
-        </TableColumns>
-        <Details>
-          <TableRows>
-            <TableRow>
-              <Height>12 pt</Height>
-              <Visibility>
-                <Hidden>=Iif(Fields!1.Value = Nothing, true, false)</Hidden>
-              </Visibility>
-              <TableCells>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox6">
-                      <Value>
-                      </Value>
-                      <CanGrow>true</CanGrow>
-                      <Style>
-                        <BorderStyle>
-                          <Default>None</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <BackgroundColor>#CCCCFF</BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox11">
-                      <Value> - первая выдача</Value>
-                      <Style>
-                        <BorderStyle>
-                          <Default>None</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <BackgroundColor>
-                        </BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-              </TableCells>
-            </TableRow>
-          </TableRows>
-        </Details>
-        <Left>455.6pt</Left>
-        <Top>32.4pt</Top>
-      </Table>
     </ReportItems>
   </Body>
   <PageFooter>
@@ -677,36 +439,12 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <Timeout>300</Timeout>
         <CommandText>SELECT
-    wear_cards.id as employee_id,
-    CONCAT_WS(
-        ' ',
-        wear_cards.last_name,
-        wear_cards.first_name,
-        wear_cards.patronymic_name
-    ) AS employee,
-    wear_cards.personnel_number,
-    wear_cards_item.next_issue,
-    wear_cards_item.last_issue,
-    IF(
-        wear_cards_item.next_issue &lt;= @report_date,
-        DATEDIFF(
-            @report_date,
-            wear_cards_item.next_issue
-        ),
-        NULL
-    ) AS delay,
     protection_tools.name AS protection_tools_name,
     wear_cards_item.protection_tools_id,
-    objects.id as subdivision_id,
-    objects.name as subdivision_name,
-    posts.id as post_id,
-    posts.name as post_name,
-    departments.id as department_id,
-    departments.name as department_name,
     (
         CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.size_wear WHEN item_types.wear_category = 'Shoes' THEN wear_cards.size_shoes WHEN item_types.wear_category = 'Gloves' THEN wear_cards.size_gloves WHEN item_types.wear_category = 'Headgear' THEN wear_cards.size_headdress WHEN item_types.wear_category = 'WinterShoes' THEN wear_cards.size_winter_shoes WHEN item_types.wear_category = 'Mittens' THEN wear_cards.size_mittens ELSE NULL
     END
@@ -716,8 +454,7 @@
 END
 ) AS growth,
 measurement_units.name AS unit,
-norms_item.amount AS amount_by_norm,
-wear_cards_item.amount AS received,
+SUM(norms_item.amount) AS amount,
 (
     SELECT
         (
@@ -755,20 +492,20 @@ JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_
 LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
 LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
 JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
-LEFT JOIN departments ON wear_cards.department_id = departments.id
-LEFT JOIN posts ON wear_cards.post_id = posts.id
-LEFT JOIN objects ON wear_cards.object_id = objects.id OR wear_cards.object_id IS NULL AND posts.subdivision_id = objects.id
 WHERE
     wear_cards.dismiss_date IS NULL 
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
     AND wear_cards_item.next_issue &lt; @report_date
 GROUP BY
-    wear_cards_item.wear_card_id,
-    wear_cards_item.protection_tools_id
+    wear_cards_item.protection_tools_id, 
+    CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.size_wear WHEN item_types.wear_category = 'Shoes' THEN wear_cards.size_shoes WHEN item_types.wear_category = 'Gloves' THEN wear_cards.size_gloves WHEN item_types.wear_category = 'Headgear' THEN wear_cards.size_headdress WHEN item_types.wear_category = 'WinterShoes' THEN wear_cards.size_winter_shoes WHEN item_types.wear_category = 'Mittens' THEN wear_cards.size_mittens ELSE NULL END,
+    CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.wear_growth ELSE NULL
+END
 ORDER BY
-    employee,
-    protection_tools_name;</CommandText>
+    protection_tools_name,
+    size,
+    growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="@report_date">
             <Value>={?report_date}</Value>
@@ -781,31 +518,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
-        <Field Name="employee_id">
-          <DataField>employee_id</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
-        <Field Name="employee">
-          <DataField>employee</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="personnel_number">
-          <DataField>personnel_number</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="next_issue">
-          <DataField>next_issue</DataField>
-          <TypeName>System.DateTime</TypeName>
-        </Field>
-        <Field Name="last_issue">
-          <DataField>last_issue</DataField>
-          <TypeName>System.DateTime</TypeName>
-        </Field>
-        <Field Name="delay">
-          <DataField>delay</DataField>
-          <TypeName>System.Int32</TypeName>
-        </Field>
+      <Fields >
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
@@ -813,30 +526,6 @@ ORDER BY
         <Field Name="protection_tools_id">
           <DataField>protection_tools_id</DataField>
           <TypeName>System.UInt32</TypeName>
-        </Field>
-        <Field Name="subdivision_id">
-          <DataField>subdivision_id</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
-        <Field Name="subdivision_name">
-          <DataField>subdivision_name</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="post_id">
-          <DataField>post_id</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
-        <Field Name="post_name">
-          <DataField>post_name</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="department_id">
-          <DataField>department_id</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
-        <Field Name="department_name">
-          <DataField>department_name</DataField>
-          <TypeName>System.String</TypeName>
         </Field>
         <Field Name="size">
           <DataField>size</DataField>
@@ -850,13 +539,9 @@ ORDER BY
           <DataField>unit</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="amount_by_norm">
-          <DataField>amount_by_norm</DataField>
-          <TypeName>System.UInt16</TypeName>
-        </Field>
-        <Field Name="received">
-          <DataField>received</DataField>
-          <TypeName>System.Int32</TypeName>
+        <Field Name="amount">
+          <DataField>amount</DataField>
+          <TypeName>System.Decimal</TypeName>
         </Field>
         <Field Name="in_stock">
           <DataField>in_stock</DataField>
