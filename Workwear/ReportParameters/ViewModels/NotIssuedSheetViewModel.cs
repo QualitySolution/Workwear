@@ -28,7 +28,6 @@ namespace workwear.ReportParameters.ViewModels
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"report_date", ReportDate },
-					{"only_missing", OnlyMissing},
 					{"subdivision_id", SubdivisionEntry.Entity == null ? -1 : SubdivisionEntry.Entity.Id },
 					{"issue_type", IssueType?.ToString() },
 				 };
@@ -39,12 +38,6 @@ namespace workwear.ReportParameters.ViewModels
 		public virtual DateTime? ReportDate {
 			get => reportDate;
 			set => SetField(ref reportDate, value);
-		}
-
-		private bool onlyMissing = false;
-		public virtual bool OnlyMissing {
-			get => onlyMissing;
-			set => SetField(ref onlyMissing, value);
 		}
 
 		private IssueType? issueType;

@@ -13,7 +13,6 @@ namespace workwear.ReportParameters.Views
 			this.Build();
 
 			ydateReport.Binding.AddBinding(ViewModel, v => v.ReportDate, w => w.DateOrNull).InitializeFromSource();
-			checkOnlyMissing.Binding.AddBinding(ViewModel, v => v.OnlyMissing, w => w.Active).InitializeFromSource();
 			comboIssueType.ItemsEnum = typeof(IssueType);
 			comboIssueType.Binding.AddBinding(ViewModel, v => v.IssueType, w => w.SelectedItemOrNull).InitializeFromSource();
 

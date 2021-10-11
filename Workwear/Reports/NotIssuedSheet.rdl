@@ -17,7 +17,7 @@
     <PrintOnLastPage>false</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>161.6pt</Height>
+    <Height>166.3pt</Height>
     <Columns>1</Columns>
     <ReportItems>
       <Table Name="Table1">
@@ -674,7 +674,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <Timeout>300</Timeout>
         <CommandText>SELECT
@@ -759,21 +759,14 @@ WHERE
     wear_cards.dismiss_date IS NULL 
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
-    AND( NOT @onlyMissing OR wear_cards_item.next_issue &lt; @report_date)
+    AND wear_cards_item.next_issue &lt; @report_date
 GROUP BY
     wear_cards_item.wear_card_id,
     wear_cards_item.protection_tools_id
-HAVING
-    @onlyMissing OR(
-        received IS NULL OR received &lt; amount_by_norm
-    )
 ORDER BY
     employee,
     protection_tools_name;</CommandText>
         <QueryParameters>
-          <QueryParameter Name="@onlyMissing">
-            <Value>={?only_missing}</Value>
-          </QueryParameter>
           <QueryParameter Name="@report_date">
             <Value>={?report_date}</Value>
           </QueryParameter>
@@ -785,7 +778,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="employee_id">
           <DataField>employee_id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -890,25 +883,12 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
           <Value>2021-10-01</Value>
-        </Values>
-      </DefaultValue>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
-      <MultiValue>false</MultiValue>
-      <Prompt>
-      </Prompt>
-    </ReportParameter>
-    <ReportParameter Name="only_missing">
-      <DataType>Boolean</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>False</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
