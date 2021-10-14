@@ -1,5 +1,6 @@
 ﻿using System;
 using Gamma.Utilities;
+using Gdk;
 using Gtk;
 using QS.Utilities;
 using QSWidgetLib;
@@ -41,6 +42,8 @@ namespace workwear.Views.Company.EmployeeChilds
 		}
 
 		#region private
+		Pixbuf handIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "workwear.icon.rows.нand.png");
+
 		void ConfigureTable()
 		{
 			ytreeWorkwear.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItem>()
@@ -50,7 +53,9 @@ namespace workwear.Views.Company.EmployeeChilds
 				.AddColumn("Наименование").AddTextRenderer(node => node.ProtectionTools.Name)
 				.AddColumn("По норме").AddTextRenderer(node => node.AmountByNormText)
 				.AddColumn("Срок службы").AddTextRenderer(node => node.NormLifeText)
-				.AddColumn("Дата получения").AddTextRenderer(node => String.Format("{0:d}", node.LastIssue))
+				.AddColumn("Дата получения")
+					.AddPixbufRenderer(node => node.LastIssueOperation != null && node.LastIssueOperation.OverrideBefore ? handIcon : null) //FIXME пока так определеяем ручную операцию. Когда будут типы операций надо переделать.
+					.AddTextRenderer(node => String.Format("{0:d}", node.LastIssue))
 				.AddColumn("Получено").AddTextRenderer(node => node.AmountText)
 					.AddSetter((w, node) => w.Foreground = node.AmountColor)
 				.AddColumn("След. получение").AddTextRenderer(node => String.Format("{0:d}", node.NextIssue))
