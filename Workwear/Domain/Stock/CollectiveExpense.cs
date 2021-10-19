@@ -79,9 +79,10 @@ namespace workwear.Domain.Stock
 			if(Items.Any (i => i.Amount > 0 && i.Nomenclature == null))
 				yield return new ValidationResult ("Документ не должен содержать строки без выбранной номенклатуры и с указанным количеством.", 
 					new[] { nameof(Items)});
-			
+
 			//Проверка наличия на складе
-			if(UoW != null) {
+			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
+			if(UoW != null && baseParameters.CheckBalances) {
 				var repository = new StockRepository();
 				var nomenclatures = Items.Select(x => x.Nomenclature).Distinct().ToList();
 				var excludeOperations = Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
@@ -12,6 +14,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Tools;
 
 namespace workwear.ViewModels.Stock
 {
@@ -30,7 +33,8 @@ namespace workwear.ViewModels.Stock
 			INavigationManager navigationManager, 
 			ILifetimeScope autofacScope, 
 			IValidator validator, 
-			IUserService userService, 
+			IUserService userService,
+			BaseParameters baseParameters,
 			IInteractiveQuestion interactive) 
 			: base(uowBuilder, unitOfWorkFactory, navigationManager, validator)
 		{
@@ -54,6 +58,10 @@ namespace workwear.ViewModels.Stock
 			LoadActualAmountFromStock();
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			lastWarehouse = Entity.WarehouseFrom;
+
+			//Переопределяем параметры валидации
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 		}
 
 		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

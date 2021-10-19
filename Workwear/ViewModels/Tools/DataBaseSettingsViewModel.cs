@@ -16,16 +16,19 @@ namespace workwear.ViewModels.Tools
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			DefaultAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 			EmployeeSizeRanges = baseParameters.EmployeeSizeRanges;
+			CheckBalances = baseParameters.CheckBalances;
 			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedule;
 		}
 
 		public override bool HasChanges => DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff 
 			|| EmployeeSizeRanges != baseParameters.EmployeeSizeRanges
+			|| CheckBalances != baseParameters.CheckBalances
 			|| ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedule;
 
 		#region Parameters
 		public bool DefaultAutoWriteoff { get; set; }
 		public bool EmployeeSizeRanges { get; set; }
+		public bool CheckBalances { get; set; }
 		public int ColDayAheadOfShedule { get; set; }
 		#endregion
 
@@ -35,6 +38,8 @@ namespace workwear.ViewModels.Tools
 				baseParameters.DefaultAutoWriteoff = DefaultAutoWriteoff;
 			if(EmployeeSizeRanges != baseParameters.EmployeeSizeRanges)
 				baseParameters.EmployeeSizeRanges = EmployeeSizeRanges;
+			if(CheckBalances != baseParameters.CheckBalances)
+				baseParameters.CheckBalances = CheckBalances;
 			if(ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedule)
 				baseParameters.ColDayAheadOfShedule = ColDayAheadOfShedule;
 			return true;

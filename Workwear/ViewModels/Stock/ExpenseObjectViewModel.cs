@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Autofac;
 using NLog;
 using QS.Dialog;
@@ -80,6 +82,10 @@ namespace workwear.ViewModels.Stock
 								
 			var parameter = new TypedParameter(typeof(ExpenseObjectViewModel), this);
 			DocItemsObjectViewModel = this.autofacScope.Resolve<ExpenseDocItemsObjectViewModel>(parameter);
+
+			//Переопределяем параметры валидации
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 		}
 
 		#region EntityViewModels

@@ -7,6 +7,7 @@ using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Repository.Stock;
+using workwear.Tools;
 
 namespace workwear.Domain.Stock
 {
@@ -70,37 +71,39 @@ namespace workwear.Domain.Stock
 		{
 			if(Date < new DateTime(1990, 1, 1))
 				yield return new ValidationResult("Дата должна быть указана",
-					new[] { this.GetPropertyName(o => o.Date) });
+					new[] { nameof(Date) });
 
 			if(Items.Count == 0)
 				yield return new ValidationResult("Документ должен содержать хотя бы одну строку.",
-					new[] { this.GetPropertyName(o => o.Items) });
+					new[] { nameof(Items) });
 
 			if(Items.Any(i => i.Amount <= 0))
 				yield return new ValidationResult("Документ не должен содержать строк с нулевым количеством.",
-					new[] { this.GetPropertyName(o => o.Items) });
+					new[] { nameof(Items) });
 
 			if (warehouseTo == null)
 				yield return new ValidationResult("Склад добавления должен быть указан",
-				new[] { this.GetPropertyName(o => o.Items) });
+				new[] { nameof(Items) });
 
 			if(warehouseFrom == null)
 				yield return new ValidationResult("Склад списания должен быть указан",
-				new[] { this.GetPropertyName(o => o.Items) });
+				new[] { nameof(Items) });
 
 			if (WarehouseTo == WarehouseFrom)
 				yield return new ValidationResult("Склад добавления должен отличаться от склада списания",
-				new[] { this.GetPropertyName(o => o.Items) });
+				new[] { nameof(Items) });
 
 
-			string strNom = "";
-			foreach(var transferItem in items) 
-				if(transferItem.Amount > transferItem.AmountInStock)
-					strNom += $"\"{transferItem.Nomenclature.Name}\"\n";
-			if(strNom.Length > 0)
-			yield return new ValidationResult($"Количество у номенклатур:\n{strNom}больше, чем доступно на складе",
-			new[] { this.GetPropertyName(o => o.Items) });
-
+			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
+			if(baseParameters.CheckBalances) {
+				string strNom = "";
+				foreach(var transferItem in items)
+					if(transferItem.Amount > transferItem.AmountInStock)
+						strNom += $"\"{transferItem.Nomenclature.Name}\"\n";
+				if(strNom.Length > 0)
+					yield return new ValidationResult($"Количество у номенклатур:\n{strNom}больше, чем доступно на складе",
+					new[] { nameof(Items) });
+			}
 		}
 
 		#endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
@@ -38,10 +39,10 @@ namespace workwear.ViewModels.Stock
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;
 
-		public CollectiveExpenseViewModel(IEntityUoWBuilder uowBuilder, 
-			IUnitOfWorkFactory unitOfWorkFactory, 
-			INavigationManager navigation, 
-			ILifetimeScope autofacScope, 
+		public CollectiveExpenseViewModel(IEntityUoWBuilder uowBuilder,
+			IUnitOfWorkFactory unitOfWorkFactory,
+			INavigationManager navigation,
+			ILifetimeScope autofacScope,
 			IValidator validator,
 			IUserService userService,
 			UserRepository userRepository,
@@ -67,9 +68,12 @@ namespace workwear.ViewModels.Stock
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
-									
+
 			var parameter = new TypedParameter(typeof(CollectiveExpenseViewModel), this);
 			CollectiveExpenseItemsViewModel = this.autofacScope.Resolve<CollectiveExpenseItemsViewModel>(parameter);
+			//Переопределяем параметры валидации
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 		}
 
 		#region EntityViewModels
