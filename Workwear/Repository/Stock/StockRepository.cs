@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
-using QS.Services;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
@@ -39,7 +37,7 @@ namespace workwear.Repository.Stock
 			return warehouses.Count == 1 ? warehouses.First() : null; 
 		}
 
-		public virtual IList<StockBalanceDTO> StockBalances(IUnitOfWork uow, Warehouse warehouse, IList<Nomenclature> nomenclatures, DateTime onTime)
+		public virtual IList<StockBalanceDTO> StockBalances(IUnitOfWork uow, Warehouse warehouse, IList<Nomenclature> nomenclatures, DateTime onTime, IList<WarehouseOperation> excludeOperations = null)
 		{
 			StockBalanceDTO resultAlias = null;
 
@@ -48,6 +46,8 @@ namespace workwear.Repository.Stock
 			WarehouseOperation warehouseOperationAlias = null;
 
 			Nomenclature nomenclatureAlias = null;
+
+			List<int> excludeIds = excludeOperations?.Select(x => x.Id).ToList();
 
 			// null == null => null              null <=> null => true
 			var expensequery = QueryOver.Of<WarehouseOperation>(() => warehouseExpenseOperationAlias)
@@ -64,6 +64,9 @@ namespace workwear.Repository.Stock
 			else
 				expensequery.Where(x => x.ExpenseWarehouse == warehouse);
 
+			if(excludeIds != null && excludeIds.Count > 0)
+				expensequery.WhereNot(x => x.Id.IsIn(excludeIds));
+
 			expensequery.Select(Projections.Sum(Projections.Property(() => warehouseExpenseOperationAlias.Amount)));
 
 			var incomeSubQuery = QueryOver.Of<WarehouseOperation>(() => warehouseIncomeOperationAlias)
@@ -73,14 +76,15 @@ namespace workwear.Repository.Stock
 				&& (warehouseIncomeOperationAlias.Growth == warehouseOperationAlias.Growth ||
 				(warehouseIncomeOperationAlias.Growth == null && warehouseOperationAlias.Growth == null))
 				&& (warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent))
-
 				.Where(e => e.OperationTime < DateTime.Now);
-
 
 			if(warehouse == null)
 				incomeSubQuery.Where(x => x.ReceiptWarehouse != null);
 			else
 				incomeSubQuery.Where(x => x.ReceiptWarehouse == warehouse);
+
+			if(excludeIds != null && excludeIds.Count > 0)
+				incomeSubQuery.WhereNot(x => x.Id.IsIn(excludeIds));
 
 			incomeSubQuery.Select(Projections.Sum(Projections.Property(() => warehouseIncomeOperationAlias.Amount)));
 
