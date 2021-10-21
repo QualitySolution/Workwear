@@ -35,7 +35,13 @@
             <Width>41.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>319.4pt</Width>
+            <Width>299.0pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>25.8pt</Width>
+            <Visibility >
+              <Hidden>=!{?show_sex}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>43.2pt</Width>
@@ -78,6 +84,24 @@
                     <Textbox Name="Textbox13">
                       <Value>Наименование</Value>
                       <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox3">
+                      <Value>Пол</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -209,6 +233,22 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox4">
+                      <Value>=Switch({sex} = 'F', 'Ж', {sex} = 'M', 'М', true, '')</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox10">
                       <Value>={size}</Value>
                       <Style>
@@ -281,7 +321,7 @@
         </Details>
         <Left>0.8pt</Left>
         <Top>34.5pt</Top>
-        <TableGroups >
+        <TableGroups>
           <TableGroup>
             <Grouping Name="ProtectionTools">
               <PageBreakAtStart>false</PageBreakAtStart>
@@ -326,6 +366,23 @@
                           </Style>
                           <Value>
                           </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox5">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
@@ -445,6 +502,7 @@
         <CommandText>SELECT
     protection_tools.name AS protection_tools_name,
     wear_cards_item.protection_tools_id,
+    wear_cards.sex,
     (
         CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.size_wear WHEN item_types.wear_category = 'Shoes' THEN wear_cards.size_shoes WHEN item_types.wear_category = 'Gloves' THEN wear_cards.size_gloves WHEN item_types.wear_category = 'Headgear' THEN wear_cards.size_headdress WHEN item_types.wear_category = 'WinterShoes' THEN wear_cards.size_winter_shoes WHEN item_types.wear_category = 'Mittens' THEN wear_cards.size_mittens ELSE NULL
     END
@@ -498,12 +556,14 @@ WHERE
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
     AND wear_cards_item.next_issue &lt; @report_date
 GROUP BY
-    wear_cards_item.protection_tools_id, 
+    wear_cards_item.protection_tools_id,
+    IF(@show_sex, wear_cards.sex, NULL),
     CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.size_wear WHEN item_types.wear_category = 'Shoes' THEN wear_cards.size_shoes WHEN item_types.wear_category = 'Gloves' THEN wear_cards.size_gloves WHEN item_types.wear_category = 'Headgear' THEN wear_cards.size_headdress WHEN item_types.wear_category = 'WinterShoes' THEN wear_cards.size_winter_shoes WHEN item_types.wear_category = 'Mittens' THEN wear_cards.size_mittens ELSE NULL END,
     CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.wear_growth ELSE NULL
 END
 ORDER BY
     protection_tools_name,
+    IF(@show_sex, wear_cards.sex, NULL),
     size,
     growth;</CommandText>
         <QueryParameters>
@@ -516,6 +576,9 @@ ORDER BY
           <QueryParameter Name="@issue_type">
             <Value>={?issue_type}</Value>
           </QueryParameter>
+          <QueryParameter Name="@show_sex">
+            <Value>={?show_sex}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields >
@@ -526,6 +589,10 @@ ORDER BY
         <Field Name="protection_tools_id">
           <DataField>protection_tools_id</DataField>
           <TypeName>System.UInt32</TypeName>
+        </Field>
+        <Field Name="sex">
+          <DataField>sex</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
         <Field Name="size">
           <DataField>size</DataField>
@@ -571,7 +638,7 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
@@ -602,6 +669,14 @@ ORDER BY
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_sex">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt>
       </Prompt>
