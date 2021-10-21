@@ -74,7 +74,7 @@ namespace workwear
 				.AddColumn("Рост").MinWidth(70)
 					.AddComboRenderer(x => x.WearGrowth)
 					.FillItems(SizeHelper.GetGrowthList(SizeUse.HumanOnly))
-					.AddSetter((c, n) => c.Editable = SizeHelper.HasGrowthStandart(n.Nomenclature.Type.WearCategory.Value))
+					.AddSetter((c, n) => c.Editable = n.Nomenclature.Type.WearCategory.HasValue && SizeHelper.HasGrowthStandart(n.Nomenclature.Type.WearCategory.Value))
 				.AddColumn ("Процент износа").AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter()).Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
 				.AddTextRenderer(e => "%", expand: false)
 				.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
