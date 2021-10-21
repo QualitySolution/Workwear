@@ -10,6 +10,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Users;
 using workwear.Repository.Operations;
+using workwear.Repository.Stock;
 using workwear.Tools;
 
 namespace workwear.Domain.Stock
@@ -69,15 +70,43 @@ namespace workwear.Domain.Stock
 		{
 			if (Date < new DateTime(2008, 1, 1))
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
-					new[] { this.GetPropertyName (o => o.Date)});
+					new[] { nameof(Date)});
 					
 			if(Items.All(i => i.Amount <= 0))
 				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку с количеством больше 0.", 
-					new[] { this.GetPropertyName (o => o.Items)});
+					new[] { nameof(Items)});
 
 			if(Items.Any (i => i.Amount > 0 && i.Nomenclature == null))
 				yield return new ValidationResult ("Документ не должен содержать строки без выбранной номенклатуры и с указанным количеством.", 
-					new[] { this.GetPropertyName (o => o.Items)});
+					new[] { nameof(Items)});
+
+			//Проверка наличия на складе
+			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
+			if(UoW != null && baseParameters.CheckBalances) {
+				var repository = new StockRepository();
+				var nomenclatures = Items.Select(x => x.Nomenclature).Distinct().ToList();
+				var excludeOperations = Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
+				var balance = repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
+
+				var positionGroups = Items.GroupBy(x => x.StockPosition);
+				foreach(var position in positionGroups) {
+					var amount = position.Sum(x => x.Amount);
+					if(amount == 0)
+						continue;
+
+					var stockExist = balance.FirstOrDefault(x => x.StockPosition.Equals(position.Key));
+
+					if(stockExist == null) {
+						yield return new ValidationResult($"На складе отсутствует - {position.Key.Title}", new[] { nameof(Items) });
+						continue;
+					}
+
+					if(stockExist.Amount < amount) {
+						yield return new ValidationResult($"Недостаточное количество - {position.Key.Title}, Необходимо: {amount} На складе: {stockExist.Amount}", new[] { nameof(Items) });
+						continue;
+					}
+				}
+			}
 		}
 		#endregion
 

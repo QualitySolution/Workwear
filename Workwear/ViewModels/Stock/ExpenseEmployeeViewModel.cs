@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
@@ -95,6 +96,10 @@ namespace workwear.ViewModels.Stock
 			var parameter = new TypedParameter(typeof(ExpenseEmployeeViewModel), this);
 			DocItemsEmployeeViewModel = this.autofacScope.Resolve<ExpenseDocItemsEmployeeViewModel>(parameter);
 			Entity.PropertyChanged += EntityChange;
+
+			//Переопределяем параметры валидации
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 		}
 
 		#region EntityViewModels

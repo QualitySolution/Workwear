@@ -65,7 +65,8 @@ namespace workwear.Journal.ViewModels.Company
 					() => employeeAlias.FirstName,
 					() => employeeAlias.Patronymic,
 					() => postAlias.Name,
-					() => subdivisionAlias.Name
+					() => subdivisionAlias.Name,
+					() => employeeAlias.Comment
  					))
 
 				.JoinAlias(() => employeeAlias.Post, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
@@ -81,6 +82,7 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(() => employeeAlias.DismissDate).WithAlias(() => resultAlias.DismissDate)
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
 	   				.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
+					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
  					)
 				.OrderBy(() => employeeAlias.LastName).Asc
 				.ThenBy(() => employeeAlias.FirstName).Asc
@@ -124,6 +126,10 @@ namespace workwear.Journal.ViewModels.Company
 		public bool Dismiss { get { return DismissDate.HasValue; } }
 
 		public DateTime? DismissDate { get; set; }
+
+		[SearchHighlight]
+		public string Comment { get; set; }
+
 		public string Title => PersonHelper.PersonNameWithInitials(LastName, FirstName, Patronymic);
 	}
 }

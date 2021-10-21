@@ -114,6 +114,7 @@
     <EmbeddedResource Include="icon\buttons\eye.png" />
     <EmbeddedResource Include="icon\buttons\eye-crossed.png" />
     <EmbeddedResource Include="icon\buttons\legend.png" />
+    <EmbeddedResource Include="icon\rows\нand.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />

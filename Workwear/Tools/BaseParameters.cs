@@ -36,6 +36,14 @@ namespace workwear.Tools
 			get => Dynamic.ColDayAheadOfShedule(typeof(int)) ?? 0;
 			set => Dynamic[nameof(ColDayAheadOfShedule)] = value;
 		}
+
+		/// <summary>
+		/// Проверять остатки при расходе со склада.
+		/// </summary>
+		public virtual bool CheckBalances {
+			get => Dynamic.CheckBalances(typeof(bool)) ?? true;
+			set => Dynamic[nameof(CheckBalances)] = value;
+		}
 		#endregion
 	}
 }

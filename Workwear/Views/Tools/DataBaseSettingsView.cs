@@ -10,6 +10,7 @@ namespace workwear.Views.Tools
 			this.Build();
 
 			ycheckAutoWriteoff.Binding.AddBinding(ViewModel, v => v.DefaultAutoWriteoff, w => w.Active).InitializeFromSource();
+			checkCheckBalances.Binding.AddBinding(ViewModel, v => v.CheckBalances, w => w.Active).InitializeFromSource();
 			checkEmployeeSizeRanges.Binding.AddBinding(ViewModel, v => v.EmployeeSizeRanges, w => w.Active).InitializeFromSource();
 			spbutAheadOfShedule.Binding.AddBinding(ViewModel, v => v.ColDayAheadOfShedule, w => w.ValueAsInt).InitializeFromSource();
 			CommonButtonSubscription();

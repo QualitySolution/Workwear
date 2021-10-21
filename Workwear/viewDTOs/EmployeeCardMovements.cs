@@ -59,8 +59,14 @@ namespace workwear.DTO
 
 		public bool IsSigned => !String.IsNullOrEmpty(Operation.SignCardKey);
 
-		public string DocumentTitle => EmployeeIssueReference?.DocumentType != null
-			? $"{EmployeeIssueReference.DocumentType.GetEnumTitle()} №{EmployeeIssueReference.DocumentId}"
-			: String.Empty;
+		public string DocumentTitle {
+			get {
+				if(EmployeeIssueReference?.DocumentType != null)
+					return $"{EmployeeIssueReference.DocumentType.GetEnumTitle()} №{EmployeeIssueReference.DocumentId}";
+				if(Operation.OverrideBefore)
+					return "Ручная операция";
+				return String.Empty;
+			}
+		}
 	}
 }

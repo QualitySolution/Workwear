@@ -30,6 +30,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"report_date", ReportDate },
 					{"subdivision_id", SubdivisionEntry.Entity == null ? -1 : SubdivisionEntry.Entity.Id },
 					{"issue_type", IssueType?.ToString() },
+					{"show_sex", ShowSex },
 				 };
 
 		#region Параметры
@@ -45,6 +46,8 @@ namespace workwear.ReportParameters.ViewModels
 			get => issueType;
 			set => SetField(ref issueType, value);
 		}
+
+		public bool ShowSex { get; set; }
 		#endregion
 		#region Свойства
 		public bool SensetiveLoad => ReportDate != null;
