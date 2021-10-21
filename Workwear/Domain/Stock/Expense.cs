@@ -129,11 +129,11 @@ namespace workwear.Domain.Stock
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
 			if(UoW != null && baseParameters.CheckBalances) {
 				var repository = new StockRepository();
-				var nomenclatures = Items.Select(x => x.Nomenclature).Distinct().ToList();
+				var nomenclatures = Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
 				var excludeOperations = Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
 				var balance = repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
 
-				var positionGoups = Items.GroupBy(x => x.StockPosition);
+				var positionGoups = Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
 				foreach(var position in positionGoups) {
 					var amount = position.Sum(x => x.Amount);
 					if(amount == 0)
