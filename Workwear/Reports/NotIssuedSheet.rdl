@@ -677,7 +677,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <Timeout>300</Timeout>
         <CommandText>SELECT
@@ -763,6 +763,7 @@ WHERE
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
     AND wear_cards_item.next_issue &lt; @report_date
+    AND (@exclude_before = "" OR @exclude_before &lt; wear_cards_item.next_issue)
 GROUP BY
     wear_cards_item.wear_card_id,
     wear_cards_item.protection_tools_id
@@ -779,9 +780,12 @@ ORDER BY
           <QueryParameter Name="@issue_type">
             <Value>={?issue_type}</Value>
           </QueryParameter>
+          <QueryParameter Name="@exclude_before">
+            <Value>={?exclude_before}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="employee_id">
           <DataField>employee_id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -886,7 +890,7 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
@@ -916,6 +920,14 @@ ORDER BY
     <ReportParameter Name="issue_type">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="exclude_before">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
       <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt>

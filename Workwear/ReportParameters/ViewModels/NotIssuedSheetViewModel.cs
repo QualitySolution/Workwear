@@ -30,6 +30,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"report_date", ReportDate },
 					{"subdivision_id", SubdivisionEntry.Entity == null ? -1 : SubdivisionEntry.Entity.Id },
 					{"issue_type", IssueType?.ToString() },
+					{"exclude_before", ExcludeBefore },
 				 };
 
 		#region Параметры
@@ -38,6 +39,12 @@ namespace workwear.ReportParameters.ViewModels
 		public virtual DateTime? ReportDate {
 			get => reportDate;
 			set => SetField(ref reportDate, value);
+		}
+
+		private DateTime? excludeBefore;
+		public virtual DateTime? ExcludeBefore {
+			get => excludeBefore;
+			set => SetField(ref excludeBefore, value);
 		}
 
 		private IssueType? issueType;
