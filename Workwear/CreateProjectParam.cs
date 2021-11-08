@@ -158,7 +158,7 @@ namespace workwear
 			#endregion
 
 			#region Главное окно
-			builder.Register((ctx) => MainWin.ProgressBar).As<IProgressBarDisplayable>();
+			builder.Register((ctx) => MainWin.ProgressBar).As<IProgressBarDisplayable>().ExternallyOwned();
 			#endregion
 
 			#region Размеры
