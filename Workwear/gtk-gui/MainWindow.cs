@@ -137,6 +137,8 @@ public partial class MainWindow
 
 	private global::Gtk.ToggleAction ActionMaxizizeOnStart;
 
+	private global::Gtk.Action ActionPay;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -227,11 +229,11 @@ public partial class MainWindow
 		this.ActionHistory = new global::Gtk.Action("ActionHistory", global::Mono.Unix.Catalog.GetString("История версий"), null, "gtk-file");
 		this.ActionHistory.ShortLabel = global::Mono.Unix.Catalog.GetString("История версий");
 		w1.Add(this.ActionHistory, null);
-		this.ActionUpdate = new global::Gtk.Action("ActionUpdate", global::Mono.Unix.Catalog.GetString("Проверить обновление..."), null, "gtk-go-down");
-		this.ActionUpdate.ShortLabel = global::Mono.Unix.Catalog.GetString("Проверить обновление...");
+		this.ActionUpdate = new global::Gtk.Action("ActionUpdate", global::Mono.Unix.Catalog.GetString("Проверить обновление"), null, "gtk-go-down");
+		this.ActionUpdate.ShortLabel = global::Mono.Unix.Catalog.GetString("Проверить обновление");
 		w1.Add(this.ActionUpdate, null);
-		this.ActionSN = new global::Gtk.Action("ActionSN", global::Mono.Unix.Catalog.GetString("Ввести серийный номер..."), null, null);
-		this.ActionSN.ShortLabel = global::Mono.Unix.Catalog.GetString("Ввести серийный номер...");
+		this.ActionSN = new global::Gtk.Action("ActionSN", global::Mono.Unix.Catalog.GetString("Ввести серийный номер"), null, null);
+		this.ActionSN.ShortLabel = global::Mono.Unix.Catalog.GetString("Ввести серийный номер");
 		w1.Add(this.ActionSN, null);
 		this.ActionNorms = new global::Gtk.Action("ActionNorms", global::Mono.Unix.Catalog.GetString("Нормы выдачи"), null, null);
 		this.ActionNorms.ShortLabel = global::Mono.Unix.Catalog.GetString("Нормы выдачи");
@@ -306,11 +308,11 @@ public partial class MainWindow
 		this.ActionIconsSmall.ShortLabel = global::Mono.Unix.Catalog.GetString("Маленькие иконки");
 		w1.Add(this.ActionIconsSmall, null);
 		this.ActionIconsMiddle = new global::Gtk.RadioAction("ActionIconsMiddle", global::Mono.Unix.Catalog.GetString("Средние иконки"), null, null, 0);
-		this.ActionIconsMiddle.Group = this.ActionIconsExtraSmall.Group;
+		this.ActionIconsMiddle.Group = this.ActionIconsSmall.Group;
 		this.ActionIconsMiddle.ShortLabel = global::Mono.Unix.Catalog.GetString("Средние иконки");
 		w1.Add(this.ActionIconsMiddle, null);
 		this.ActionIconsLarge = new global::Gtk.RadioAction("ActionIconsLarge", global::Mono.Unix.Catalog.GetString("Большие иконки"), null, null, 0);
-		this.ActionIconsLarge.Group = this.ActionIconsExtraSmall.Group;
+		this.ActionIconsLarge.Group = this.ActionIconsSmall.Group;
 		this.ActionIconsLarge.ShortLabel = global::Mono.Unix.Catalog.GetString("Большие иконки");
 		w1.Add(this.ActionIconsLarge, null);
 		this.ActionSite = new global::Gtk.Action("ActionSite", global::Mono.Unix.Catalog.GetString("Сайт программы"), null, "www");
@@ -379,6 +381,9 @@ public partial class MainWindow
 		this.ActionMaxizizeOnStart = new global::Gtk.ToggleAction("ActionMaxizizeOnStart", global::Mono.Unix.Catalog.GetString("Разворачивать при запуске"), null, null);
 		this.ActionMaxizizeOnStart.ShortLabel = global::Mono.Unix.Catalog.GetString("Разворачивать при запуске");
 		w1.Add(this.ActionMaxizizeOnStart, null);
+		this.ActionPay = new global::Gtk.Action("ActionPay", global::Mono.Unix.Catalog.GetString("Купить программу"), null, null);
+		this.ActionPay.ShortLabel = global::Mono.Unix.Catalog.GetString("Купить программу");
+		w1.Add(this.ActionPay, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -434,8 +439,9 @@ public partial class MainWindow
 				"nuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' ac" +
 				"tion=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'" +
 				"/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><men" +
-				"uitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction" +
-				"\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"uitem name=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'Act" +
+				"ionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></" +
+				"menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -637,5 +643,6 @@ public partial class MainWindow
 		this.ActionCardIssuee.Activated += new global::System.EventHandler(this.OnActionCardIssueeActivated);
 		this.ActionEmployeeLoad.Activated += new global::System.EventHandler(this.OnActionEmployeeLoadActivated);
 		this.ActionMaxizizeOnStart.Toggled += new global::System.EventHandler(this.OnActionMaxizizeOnStartToggled);
+		this.ActionPay.Activated += new global::System.EventHandler(this.OnActionPayActivated);
 	}
 }
