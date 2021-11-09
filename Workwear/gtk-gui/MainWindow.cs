@@ -139,6 +139,8 @@ public partial class MainWindow
 
 	private global::Gtk.ToggleAction ActionMaxizizeOnStart;
 
+	private global::Gtk.Action ActionPay;
+
 	private global::Gtk.Action ActionNormsLoad;
 
 	private global::Gtk.Action ActionBatchProcessing;
@@ -241,11 +243,11 @@ public partial class MainWindow
 		this.ActionHistory = new global::Gtk.Action("ActionHistory", global::Mono.Unix.Catalog.GetString("История версий"), null, "gtk-file");
 		this.ActionHistory.ShortLabel = global::Mono.Unix.Catalog.GetString("История версий");
 		w1.Add(this.ActionHistory, null);
-		this.ActionUpdate = new global::Gtk.Action("ActionUpdate", global::Mono.Unix.Catalog.GetString("Проверить обновление..."), null, "gtk-go-down");
-		this.ActionUpdate.ShortLabel = global::Mono.Unix.Catalog.GetString("Проверить обновление...");
+		this.ActionUpdate = new global::Gtk.Action("ActionUpdate", global::Mono.Unix.Catalog.GetString("Проверить обновление"), null, "gtk-go-down");
+		this.ActionUpdate.ShortLabel = global::Mono.Unix.Catalog.GetString("Проверить обновление");
 		w1.Add(this.ActionUpdate, null);
-		this.ActionSN = new global::Gtk.Action("ActionSN", global::Mono.Unix.Catalog.GetString("Ввести серийный номер..."), null, null);
-		this.ActionSN.ShortLabel = global::Mono.Unix.Catalog.GetString("Ввести серийный номер...");
+		this.ActionSN = new global::Gtk.Action("ActionSN", global::Mono.Unix.Catalog.GetString("Ввести серийный номер"), null, null);
+		this.ActionSN.ShortLabel = global::Mono.Unix.Catalog.GetString("Ввести серийный номер");
 		w1.Add(this.ActionSN, null);
 		this.ActionNorms = new global::Gtk.Action("ActionNorms", global::Mono.Unix.Catalog.GetString("Нормы выдачи"), null, null);
 		this.ActionNorms.ShortLabel = global::Mono.Unix.Catalog.GetString("Нормы выдачи");
@@ -396,6 +398,9 @@ public partial class MainWindow
 		this.ActionMaxizizeOnStart = new global::Gtk.ToggleAction("ActionMaxizizeOnStart", global::Mono.Unix.Catalog.GetString("Разворачивать при запуске"), null, null);
 		this.ActionMaxizizeOnStart.ShortLabel = global::Mono.Unix.Catalog.GetString("Разворачивать при запуске");
 		w1.Add(this.ActionMaxizizeOnStart, null);
+		this.ActionPay = new global::Gtk.Action("ActionPay", global::Mono.Unix.Catalog.GetString("Купить программу"), null, null);
+		this.ActionPay.ShortLabel = global::Mono.Unix.Catalog.GetString("Купить программу");
+		w1.Add(this.ActionPay, null);
 		this.ActionNormsLoad = new global::Gtk.Action("ActionNormsLoad", global::Mono.Unix.Catalog.GetString("Нормы"), null, null);
 		this.ActionNormsLoad.ShortLabel = global::Mono.Unix.Catalog.GetString("Нормы");
 		w1.Add(this.ActionNormsLoad, null);
@@ -682,5 +687,6 @@ public partial class MainWindow
 		this.ActionImportWorkwearItems.Activated += new global::System.EventHandler(this.OnActionImportWorkwearItemsActivated);
 		this.ActionNotIssuedSheetDetail.Activated += new global::System.EventHandler(this.OnActionNotIssuedSheetDetailActivated);
 		this.ActionNotIssuedSheetSummary.Activated += new global::System.EventHandler(this.OnActionNotIssuedSheetSummaryActivated);
+		this.ActionPay.Activated += new global::System.EventHandler(this.OnActionPayActivated);
 	}
 }

@@ -5540,15 +5540,15 @@
       </action>
       <action id="ActionUpdate">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Проверить обновление...</property>
-        <property name="ShortLabel" translatable="yes">Проверить обновление...</property>
+        <property name="Label" translatable="yes">Проверить обновление</property>
+        <property name="ShortLabel" translatable="yes">Проверить обновление</property>
         <property name="StockId">gtk-go-down</property>
         <signal name="Activated" handler="OnActionUpdateActivated" />
       </action>
       <action id="ActionSN">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Ввести серийный номер...</property>
-        <property name="ShortLabel" translatable="yes">Ввести серийный номер...</property>
+        <property name="Label" translatable="yes">Ввести серийный номер</property>
+        <property name="ShortLabel" translatable="yes">Ввести серийный номер</property>
         <signal name="Activated" handler="OnActionSNActivated" />
       </action>
       <action id="ActionNorms">
@@ -5914,6 +5914,12 @@
         <property name="ShortLabel" translatable="yes">Суммарно</property>
         <signal name="Activated" handler="OnActionNotIssuedSheetSummaryActivated" />
       </action>
+      <action id="ActionPay">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Купить программу</property>
+        <property name="ShortLabel" translatable="yes">Купить программу</property>
+        <signal name="Activated" handler="OnActionPayActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -6017,6 +6023,7 @@
                   <node type="Menuitem" action="ActionYouTube" />
                 </node>
                 <node type="Separator" />
+                <node type="Menuitem" action="ActionPay" />
                 <node type="Menuitem" action="ActionSN" />
                 <node type="Separator" />
                 <node type="Menuitem" action="aboutAction" />
