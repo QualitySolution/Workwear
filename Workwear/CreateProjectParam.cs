@@ -120,7 +120,7 @@ namespace workwear
 			builder.Register(c => new MySqlConnectionFactory(Connection.ConnectionString)).As<IConnectionFactory>();
 			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf();
-			builder.Register(c => QSProjectsLib.QSMain.ConnectionStringBuilder).AsSelf();
+			builder.Register(c => QSProjectsLib.QSMain.ConnectionStringBuilder).AsSelf().ExternallyOwned();
 			builder.RegisterType<NhDataBaseInfo>().As<IDataBaseInfo>();
 			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
 			#endregion
@@ -137,7 +137,7 @@ namespace workwear
 			#region Удаление
 			builder.RegisterModule(new DeletionAutofacModule());
 			builder.RegisterType<DeleteEntityGUIService>().As<IDeleteEntityService>();
-			builder.Register(x => DeleteConfig.Main).AsSelf();
+			builder.Register(x => DeleteConfig.Main).AsSelf().ExternallyOwned();
  			#endregion
 			//FIXME Нужно в конечнои итоге попытаться избавится от CommonServce вообще.
 			builder.RegisterType<CommonServices>().As<ICommonServices>();
@@ -165,7 +165,7 @@ namespace workwear
 			#endregion
 
 			#region Главное окно
-			builder.Register((ctx) => MainWin.ProgressBar).As<IProgressBarDisplayable>();
+			builder.Register((ctx) => MainWin.ProgressBar).As<IProgressBarDisplayable>().ExternallyOwned();
 			#endregion
 
 			#region Размеры
