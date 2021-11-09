@@ -379,16 +379,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionYearRequestSheetActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("AverageAnnualNeedReport");
-		var reportInfo = new ReportInfo {
-			Title = "Среднегодовая потребность",
-			Identifier = "AverageAnnualNeed",
-		};
-
-		tdiMain.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
-						  () => new QSReport.ReportViewDlg(reportInfo)
-						 );
-
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(AverageAnnualNeedViewModel));
 	}
 
 	protected void OnAction21Activated(object sender, EventArgs e)

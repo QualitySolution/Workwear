@@ -457,6 +457,9 @@
     <Compile Include="ReportParameters\Views\NotIssuedSheetSummaryView.cs" />
     <Compile Include="ReportParameters\ViewModels\NotIssuedSheetSummaryViewModel.cs" />
     <Compile Include="gtk-gui\workwear.ReportParameters.Views.NotIssuedSheetSummaryView.cs" />
+    <Compile Include="ReportParameters\Views\AverageAnnualNeedView.cs" />
+    <Compile Include="ReportParameters\ViewModels\AverageAnnualNeedViewModel.cs" />
+    <Compile Include="gtk-gui\workwear.ReportParameters.Views.AverageAnnualNeedView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
