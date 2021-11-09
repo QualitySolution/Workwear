@@ -151,6 +151,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionNotIssuedSheetSummary;
 
+	private global::Gtk.Action ActionPay;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -241,11 +243,11 @@ public partial class MainWindow
 		this.ActionHistory = new global::Gtk.Action("ActionHistory", global::Mono.Unix.Catalog.GetString("История версий"), null, "gtk-file");
 		this.ActionHistory.ShortLabel = global::Mono.Unix.Catalog.GetString("История версий");
 		w1.Add(this.ActionHistory, null);
-		this.ActionUpdate = new global::Gtk.Action("ActionUpdate", global::Mono.Unix.Catalog.GetString("Проверить обновление..."), null, "gtk-go-down");
-		this.ActionUpdate.ShortLabel = global::Mono.Unix.Catalog.GetString("Проверить обновление...");
+		this.ActionUpdate = new global::Gtk.Action("ActionUpdate", global::Mono.Unix.Catalog.GetString("Проверить обновление"), null, "gtk-go-down");
+		this.ActionUpdate.ShortLabel = global::Mono.Unix.Catalog.GetString("Проверить обновление");
 		w1.Add(this.ActionUpdate, null);
-		this.ActionSN = new global::Gtk.Action("ActionSN", global::Mono.Unix.Catalog.GetString("Ввести серийный номер..."), null, null);
-		this.ActionSN.ShortLabel = global::Mono.Unix.Catalog.GetString("Ввести серийный номер...");
+		this.ActionSN = new global::Gtk.Action("ActionSN", global::Mono.Unix.Catalog.GetString("Ввести серийный номер"), null, null);
+		this.ActionSN.ShortLabel = global::Mono.Unix.Catalog.GetString("Ввести серийный номер");
 		w1.Add(this.ActionSN, null);
 		this.ActionNorms = new global::Gtk.Action("ActionNorms", global::Mono.Unix.Catalog.GetString("Нормы выдачи"), null, null);
 		this.ActionNorms.ShortLabel = global::Mono.Unix.Catalog.GetString("Нормы выдачи");
@@ -414,6 +416,9 @@ public partial class MainWindow
 		this.ActionNotIssuedSheetSummary = new global::Gtk.Action("ActionNotIssuedSheetSummary", global::Mono.Unix.Catalog.GetString("Суммарно"), null, null);
 		this.ActionNotIssuedSheetSummary.ShortLabel = global::Mono.Unix.Catalog.GetString("Суммарно");
 		w1.Add(this.ActionNotIssuedSheetSummary, null);
+		this.ActionPay = new global::Gtk.Action("ActionPay", global::Mono.Unix.Catalog.GetString("Купить программу"), null, null);
+		this.ActionPay.ShortLabel = global::Mono.Unix.Catalog.GetString("Купить программу");
+		w1.Add(this.ActionPay, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -475,8 +480,9 @@ public partial class MainWindow
 				"on=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'Actio" +
 				"nOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' actio" +
 				"n=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu" +
-				"><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem " +
-				"name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"><separator/><menuitem name=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'Acti" +
+				"onSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutA" +
+				"ction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -682,5 +688,6 @@ public partial class MainWindow
 		this.ActionImportWorkwearItems.Activated += new global::System.EventHandler(this.OnActionImportWorkwearItemsActivated);
 		this.ActionNotIssuedSheetDetail.Activated += new global::System.EventHandler(this.OnActionNotIssuedSheetDetailActivated);
 		this.ActionNotIssuedSheetSummary.Activated += new global::System.EventHandler(this.OnActionNotIssuedSheetSummaryActivated);
+		this.ActionPay.Activated += new global::System.EventHandler(this.OnActionPayActivated);
 	}
 }

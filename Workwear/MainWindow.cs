@@ -720,4 +720,10 @@ public partial class MainWindow : Gtk.Window
 			CurrentUserSettings.SaveSettings();
 		}
 	}
+
+	protected void OnActionPayActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount("pay.qsolution.ru");
+		System.Diagnostics.Process.Start("http://pay.qsolution.ru/");
+	}
 }
