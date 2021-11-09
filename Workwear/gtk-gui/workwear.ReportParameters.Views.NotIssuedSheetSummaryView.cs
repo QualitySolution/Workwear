@@ -150,7 +150,7 @@ namespace workwear.ReportParameters.Views
 			this.ylabel2 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel2.Name = "ylabel2";
 			this.ylabel2.Xalign = 1F;
-			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Показывать пол:");
+			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Учитывать пол:");
 			this.table1.Add(this.ylabel2);
 			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel2]));
 			w9.TopAttach = ((uint)(3));

@@ -7692,7 +7692,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabel2">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Показывать пол:</property>
+                <property name="LabelProp" translatable="yes">Учитывать пол:</property>
               </widget>
               <packing>
                 <property name="TopAttach">3</property>
