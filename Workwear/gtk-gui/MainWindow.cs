@@ -139,8 +139,6 @@ public partial class MainWindow
 
 	private global::Gtk.ToggleAction ActionMaxizizeOnStart;
 
-	private global::Gtk.Action ActionPay;
-
 	private global::Gtk.Action ActionNormsLoad;
 
 	private global::Gtk.Action ActionBatchProcessing;
@@ -152,6 +150,8 @@ public partial class MainWindow
 	private global::Gtk.Action ActionNotIssuedSheetDetail;
 
 	private global::Gtk.Action ActionNotIssuedSheetSummary;
+
+	private global::Gtk.Action ActionPay;
 
 	private global::Gtk.VBox vbox1;
 
@@ -398,9 +398,6 @@ public partial class MainWindow
 		this.ActionMaxizizeOnStart = new global::Gtk.ToggleAction("ActionMaxizizeOnStart", global::Mono.Unix.Catalog.GetString("Разворачивать при запуске"), null, null);
 		this.ActionMaxizizeOnStart.ShortLabel = global::Mono.Unix.Catalog.GetString("Разворачивать при запуске");
 		w1.Add(this.ActionMaxizizeOnStart, null);
-		this.ActionPay = new global::Gtk.Action("ActionPay", global::Mono.Unix.Catalog.GetString("Купить программу"), null, null);
-		this.ActionPay.ShortLabel = global::Mono.Unix.Catalog.GetString("Купить программу");
-		w1.Add(this.ActionPay, null);
 		this.ActionNormsLoad = new global::Gtk.Action("ActionNormsLoad", global::Mono.Unix.Catalog.GetString("Нормы"), null, null);
 		this.ActionNormsLoad.ShortLabel = global::Mono.Unix.Catalog.GetString("Нормы");
 		w1.Add(this.ActionNormsLoad, null);
@@ -419,6 +416,9 @@ public partial class MainWindow
 		this.ActionNotIssuedSheetSummary = new global::Gtk.Action("ActionNotIssuedSheetSummary", global::Mono.Unix.Catalog.GetString("Суммарно"), null, null);
 		this.ActionNotIssuedSheetSummary.ShortLabel = global::Mono.Unix.Catalog.GetString("Суммарно");
 		w1.Add(this.ActionNotIssuedSheetSummary, null);
+		this.ActionPay = new global::Gtk.Action("ActionPay", global::Mono.Unix.Catalog.GetString("Купить программу"), null, null);
+		this.ActionPay.ShortLabel = global::Mono.Unix.Catalog.GetString("Купить программу");
+		w1.Add(this.ActionPay, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -480,8 +480,9 @@ public partial class MainWindow
 				"on=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'Actio" +
 				"nOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' actio" +
 				"n=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu" +
-				"><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem " +
-				"name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"><separator/><menuitem name=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'Acti" +
+				"onSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutA" +
+				"ction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
