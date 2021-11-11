@@ -42,6 +42,7 @@ using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
+using workwear.Repository.Stock;
 using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company;
@@ -393,10 +394,7 @@ public partial class MainWindow : Gtk.Window
 		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
 		page.ViewModel.ShowSummary = true;
 		page.ViewModel.Filter.ShowNegativeBalance = true;
-		if(!FeaturesService.Available(WorkwearFeature.Warehouses)) {
-			//Здесь устанавливается склад,т.к. по другому как его поставить я не нашёл
-			page.ViewModel.Filter.Warehouse = new workwear.Repository.Stock.StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
-		}
+		page.ViewModel.Filter.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
 	}
 
 	protected void OnActionStockDocsActivated(object sender, EventArgs e)
