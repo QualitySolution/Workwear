@@ -9,7 +9,8 @@ namespace workwear.Journal.Filter.Views.Regulations
 		public NormFilterView(NormFilterViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
-			entryPost.ViewModel = viewModel.PostEntry;
+			entryPost.ViewModel = viewModel.EntryPost;
+			entryProtectionTools.ViewModel = viewModel.EntryProtectionTools;
 		}
 	}
 }

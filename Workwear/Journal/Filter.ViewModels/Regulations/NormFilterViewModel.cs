@@ -4,6 +4,7 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
 using workwear.Domain.Company;
+using workwear.Domain.Regulations;
 
 namespace workwear.Journal.Filter.ViewModels.Regulations
 {
@@ -13,19 +14,26 @@ namespace workwear.Journal.Filter.ViewModels.Regulations
 		{
 			var builder = new CommonEEVMBuilderFactory<NormFilterViewModel>(journal, this, UoW, navigation, autofacScope);
 
-			PostEntry = builder.ForProperty(x => x.Post)
-				.MakeByType()
-				.Finish();
+			EntryPost = builder.ForProperty(x => x.Post).MakeByType().Finish();
+			EntryProtectionTools = builder.ForProperty(x => x.ProtectionTools).MakeByType().Finish();
 		}
 
+		#region Ограничения
 		private Post post;
 		public virtual Post Post {
 			get => post;
 			set => SetField(ref post, value);
 		}
-		#region EntityModels
 
-		public EntityEntryViewModel<Post> PostEntry;
+		private ProtectionTools protectionTools;
+		public virtual ProtectionTools ProtectionTools {
+			get => protectionTools;
+			set => SetField(ref protectionTools, value);
+		}
+		#endregion
+		#region EntityModels
+		public EntityEntryViewModel<Post> EntryPost;
+		public EntityEntryViewModel<ProtectionTools> EntryProtectionTools;
 		#endregion
 	}
 }
