@@ -10,6 +10,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Models.Operations;
 
 namespace workwear.Repository.Operations
 {
@@ -93,17 +94,17 @@ namespace workwear.Repository.Operations
 			return query.OrderBy(x => x.OperationTime).Asc.List();
 		}
 
-		public IList<EmployeeIssueReference> GetReferencedDocuments(params int[] operationsIds)
+		public IList<OperationToDocumentReference> GetReferencedDocuments(params int[] operationsIds)
 		{
-			EmployeeIssueReference docAlias = null;
+			OperationToDocumentReference docAlias = null;
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			ExpenseItem expenseItemAlias = null;
 			IncomeItem incomeItemAlias = null;
-			MassExpenseOperation massExpenseOperationAlias = null;
+			MassExpenseOperation massExpenseOperationAlias = null; //FIXME не реализовано
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
 			WriteoffItem writeoffItemAlias = null;
 			
-			return RepoUow.Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
+			var result = RepoUow.Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
 				.JoinEntityAlias(() => expenseItemAlias, () => expenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.ReturnFromEmployeeOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
@@ -120,45 +121,13 @@ namespace workwear.Repository.Operations
 					.Select(() => writeoffItemAlias.Id).WithAlias(() => docAlias.WriteoffItemId)
 					.Select(() => writeoffItemAlias.Document.Id).WithAlias(() => docAlias.WriteoffId)
 				)
-				.TransformUsing(Transformers.AliasToBean<EmployeeIssueReference>())
-				.List<EmployeeIssueReference>();
+				.TransformUsing(Transformers.AliasToBean<OperationToDocumentReference>())
+				.List<OperationToDocumentReference>();
+
+			foreach(var item in result)
+				item.OperationType = OperationType.EmployeeIssue;
+
+			return result;
 		}
-	}
-
-	public class EmployeeIssueReference
-	{
-		public int OperationId;
-		public int? ExpenceId;
-		public int? ExpenceItemId;
-		public int? IncomeId;
-		public int? IncomeItemId;
-		public int? CollectiveExpenseId;
-		public int? CollectiveExpenseItemId;
-		public int? WriteoffId;
-		public int? WriteoffItemId;
-		public int? MassExpenseId;
-		public int? MassOperationItemItemId;
-
-		
-		
-		public StokDocumentType? DocumentType {
-			get {
-				if (ExpenceId.HasValue)
-					return StokDocumentType.ExpenseEmployeeDoc;
-				if (CollectiveExpenseId.HasValue)
-					return StokDocumentType.CollectiveExpense;
-				if (IncomeId.HasValue)
-					return StokDocumentType.IncomeDoc;
-				if (WriteoffId.HasValue)
-					return StokDocumentType.WriteoffDoc;
-
-				return null;
-			}
-		}
-		//Внимание здесь последовательность получения ID желательно сохранять такую же как у типа документа.
-		//Так как в случае ошибочной связи операции с двумя документами возьмется первый надейнных с обоих случаях, не тип из одного а id от другого.
-		public int? DocumentId => ExpenceId ?? CollectiveExpenseId ?? IncomeId ?? WriteoffId;
-
-		public int? ItemId => ExpenceItemId ?? CollectiveExpenseItemId ?? IncomeItemId ?? WriteoffItemId;
 	}
 }

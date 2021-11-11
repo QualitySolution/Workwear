@@ -182,6 +182,14 @@ namespace workwear.Journal
 					.Finish()
 			);
 
+			TreeViewColumnsConfigFactory.Register<StockMovmentsJournalViewModel>(
+				() => FluentColumnsConfig<StockMovmentsJournalNode>.Create()
+					.AddColumn("Дата").AddTextRenderer(node => node.OperationTimeText)
+					.AddColumn("Документ").AddTextRenderer(node => node.DocumentText)
+					.AddColumn("Поступление\\расход").AddTextRenderer(node => node.AmountText, useMarkup: true)
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<WarehouseJournalViewModel>(
 				() => FluentColumnsConfig<WarehouseJournalNode>.Create()
 					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()

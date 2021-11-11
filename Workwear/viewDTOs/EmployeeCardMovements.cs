@@ -3,14 +3,14 @@ using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QSProjectsLib;
 using workwear.Domain.Operations;
-using workwear.Repository.Operations;
+using workwear.Models.Operations;
 
 namespace workwear.DTO
 {
 	public class EmployeeCardMovements : PropertyChangedBase
 	{
 		public EmployeeIssueOperation Operation { get; set; }
-		public EmployeeIssueReference EmployeeIssueReference { get; set; }
+		public OperationToDocumentReference EmployeeIssueReference { get; set; }
 
 		public DateTime Date => Operation.OperationTime;
 		public string NomenclatureName => Operation.Nomenclature?.Name ?? Operation.ProtectionTools.Name;

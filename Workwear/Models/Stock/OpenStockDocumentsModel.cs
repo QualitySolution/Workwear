@@ -3,7 +3,7 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Stock;
-using workwear.Repository.Operations;
+using workwear.Models.Operations;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Models.Stock
@@ -39,7 +39,7 @@ namespace workwear.Models.Stock
 				throw new NotSupportedException($"Тип документа {documentType} не поддерживается.");
 		}
 
-		public virtual void EditDocumentDialog(DialogViewModelBase master, EmployeeIssueReference reference)
+		public virtual void EditDocumentDialog(DialogViewModelBase master, OperationToDocumentReference reference)
 		{
 			var page = EditDocumentDialog(master, reference.DocumentType.Value, reference.DocumentId.Value);
 			if(page.ViewModel is ISelectItem select)
