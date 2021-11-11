@@ -39,7 +39,7 @@ namespace workwear.Journal.ViewModels.Stock
 			CreateNodeActions();
 
 			UpdateOnChanges(typeof(WarehouseOperation), typeof(Nomenclature));
-			TabName = TabName = "Остатки по складу" + Filter.Warehouse?.Name;
+			TabName = "Остатки по складу" + Filter.Warehouse?.Name;
 
 			Filter.PropertyChanged += (sender, e) => TabName = "Остатки по складу " + Filter.Warehouse?.Name;
 		}

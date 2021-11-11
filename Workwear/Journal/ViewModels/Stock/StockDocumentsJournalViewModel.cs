@@ -323,7 +323,7 @@ namespace workwear.Journal.ViewModels.Stock
 				() => authorAlias.Name
 			));
 
-			var concatPrpjection = Projections.SqlFunction(
+			var concatProjection = Projections.SqlFunction(
 					new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT(DISTINCT ?1 SEPARATOR ?2)"),
 					NHibernateUtil.String,
 					Projections.Property(() => warehouseExpenseAlias.Name),
@@ -341,7 +341,7 @@ namespace workwear.Journal.ViewModels.Stock
 			   			.SelectGroup(() => writeoffAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => writeoffAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
-						.Select(concatPrpjection).WithAlias(() => resultAlias.ExpenseWarehouse)
+						.Select(concatProjection).WithAlias(() => resultAlias.ExpenseWarehouse)
 						.Select(() => StokDocumentType.WriteoffDoc).WithAlias(() => resultAlias.DocTypeEnum)
 			            .Select(() => writeoffAlias.Comment).WithAlias(() => resultAlias.Comment)
 					   )
