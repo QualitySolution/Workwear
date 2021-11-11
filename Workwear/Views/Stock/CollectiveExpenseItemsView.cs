@@ -40,6 +40,8 @@ namespace workwear.Views.Stock
 
 			labelSum.Binding.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp).InitializeFromSource();
 			buttonAdd.Binding.AddBinding(ViewModel, v => v.SensetiveAddButton, w => w.Sensitive).InitializeFromSource();
+
+			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 		}
 
 		void CreateTable()
@@ -159,6 +161,17 @@ namespace workwear.Views.Stock
 		protected void OnButtonRefreshEmployeeClicked(object sender, EventArgs e)
 		{
 			ViewModel.RefreshItem(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+		}
+		#endregion
+
+		#region События
+		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(ViewModel.SelectedItem) && ViewModel.SelectedItem != null) {
+				var iter = ytreeItems.YTreeModel.IterFromNode(ViewModel.SelectedItem);
+				var path = ytreeItems.YTreeModel.GetPath(iter);
+				ytreeItems.ScrollToCell(path, ytreeItems.Columns.First(), false, 0.5f, 0);
+			}
 		}
 		#endregion
 	}
