@@ -20,13 +20,12 @@ namespace workwear.HMap
 			References(x => x.Warehouse).Column("warehouse_id").Not.Nullable();
 
 			HasOne(x => x.IssuanceSheet)
-				.Cascade.All()
 				.PropertyRef(x => x.Expense);
 
 			HasMany (x => x.Items)
 				.Inverse()
 				.KeyColumn ("stock_expense_id").Not.KeyNullable ()
-				.Cascade.AllDeleteOrphan ().Inverse ()
+				.Cascade.AllDeleteOrphan ()
 				.LazyLoad ();
 		}
 	}
