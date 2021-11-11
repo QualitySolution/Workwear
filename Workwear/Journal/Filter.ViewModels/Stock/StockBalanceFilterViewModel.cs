@@ -20,7 +20,6 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			set => SetField(ref warehouse, value);
 		}
 
-
 		private bool showNegativeBalance;
 		public virtual bool ShowNegativeBalance {
 			get => showNegativeBalance;
