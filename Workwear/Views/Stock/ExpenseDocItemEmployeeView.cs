@@ -147,6 +147,11 @@ namespace workwear.Views.Stock
 		void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			buttonFillBuhDoc.Sensitive = ViewModel.SensetiveFillBuhDoc;
+			if(e.PropertyName == nameof(ViewModel.SelectedItem) && ViewModel.SelectedItem != null) {
+				var iter = ytreeItems.YTreeModel.IterFromNode(ViewModel.SelectedItem);
+				var path = ytreeItems.YTreeModel.GetPath(iter);
+				ytreeItems.ScrollToCell(path, ytreeItems.Columns.First(), false, 0.5f, 0);
+			}
 		}
 		#endregion
 

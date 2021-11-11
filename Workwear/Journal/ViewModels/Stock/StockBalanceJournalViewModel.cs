@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Autofac;
 using NHibernate;
@@ -41,7 +41,7 @@ namespace workwear.Journal.ViewModels.Stock
 			CreateNodeActions();
 
 			UpdateOnChanges(typeof(WarehouseOperation), typeof(Nomenclature));
-			TabName = TabName = "Остатки по складу " + (featuresService.Available(WorkwearFeature.Warehouses) ? Filter.Warehouse?.Name : "");
+			TabName = "Остатки по складу " + (featuresService.Available(WorkwearFeature.Warehouses) ? Filter.Warehouse?.Name : "");
 
 			Filter.PropertyChanged += (sender, e) => TabName = "Остатки по складу " + (featuresService.Available(WorkwearFeature.Warehouses) ? Filter.Warehouse?.Name : "");
 		}
@@ -142,6 +142,29 @@ namespace workwear.Journal.ViewModels.Stock
 					new SQLFunctionTemplate(NHibernateUtil.String, "CAST(SUBSTRING_INDEX(?1, '-', 1) AS DOUBLE)"), NHibernateUtil.String, Projections.Property(() => warehouseOperationAlias.Size))).Asc
 				.ThenBy(() => warehouseOperationAlias.Growth).Asc
 				.TransformUsing(Transformers.AliasToBean<StockBalanceJournalNode>());
+		}
+
+		protected override void CreateNodeActions()
+		{
+			base.CreateNodeActions();
+
+			var updateStatusAction = new JournalAction("Показать движения",
+					(selected) => selected.Any() && Filter.Warehouse != null,
+					(selected) => true,
+					(selected) => OpenMovements(selected.Cast<StockBalanceJournalNode>().ToArray())
+					);
+			NodeActionsList.Add(updateStatusAction);
+		}
+
+		void OpenMovements(StockBalanceJournalNode[] nodes)
+		{
+			foreach(var node in nodes) {
+				var journal = NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(this);
+				journal.ViewModel.Filter.SetAndRefilterAtOnce(new Action<StockMovementsFilterViewModel>[] {
+					filter => filter.Warehouse = Filter.Warehouse,
+					filter => filter.StockPosition = node.GetStockPosition(journal.ViewModel.UoW),
+				});
+			}
 		}
 	}
 
