@@ -988,7 +988,7 @@
             wear_cards.patronymic_name) AS employee,
     wear_cards.personnel_number,
     wear_cards_item.next_issue,
-    IF(wear_cards_item.next_issue &lt;= @report_date,
+    IF(wear_cards_item.next_issue &lt;= Convert(@report_date, date),
         DATEDIFF(@report_date, wear_cards_item.next_issue),
         NULL) AS delay,
     item_types.name AS type_name,
@@ -1033,7 +1033,7 @@ FROM
     norms_item ON wear_cards_item.norm_item_id = norms_item.id
     WHERE wear_cards.dismiss_date IS NULL AND (
     NOT @onlyMissing
-        OR wear_cards_item.next_issue &lt; @report_date)
+        OR wear_cards_item.next_issue &lt; CONVERT(@report_date, date))
         group by wear_cards_item.wear_card_id, wear_cards_item.itemtype_id, wear_cards_item.norm_item_id
 HAVING @onlyMissing
     OR (received IS NULL
@@ -1136,7 +1136,7 @@ ORDER BY employee, type_name) as result
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>database=workwear_depot;user=depot_demo;password=beta;port=3306;server=192.168.1.5</ConnectString>
+        <ConnectString>database=workwear_24;user=andrey;password=123;port=3306;server=localhost</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
@@ -1146,7 +1146,7 @@ ORDER BY employee, type_name) as result
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>2016-01-01</Value>
+          <Value>2021-12-01</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
