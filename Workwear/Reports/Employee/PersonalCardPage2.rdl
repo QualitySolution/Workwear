@@ -775,7 +775,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     item_types.name AS name_siz,
@@ -797,7 +797,8 @@ LIMIT 1
 ) AS expense_date, operation_issued_by_employee.issued AS expense_quantity, ROUND(
     operation_issued_by_employee.wear_percent * 100
 ) AS wearout, 
-IFNULL(CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')), operation_issued_by_employee.buh_document) AS issue_sign, 
+IFNULL(CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')), 
+    IFNULL(NULLIF(operation_issued_by_employee.buh_document, ' '), CONCAT('Ведомость №', issuance_sheet_items.issuance_sheet_id))) AS issue_sign, 
 CONCAT_WS(
     '\n',
     GROUP_CONCAT(
@@ -832,6 +833,7 @@ CONCAT_WS(
         LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
         LEFT JOIN item_types ON item_types.id = nomenclature.type_id
         LEFT JOIN operation_warehouse ON operation_issued_by_employee.warehouse_operation_id = operation_warehouse.id
+        LEFT JOIN issuance_sheet_items ON issuance_sheet_items.issued_operation_id = operation_issued_by_employee.id
         LEFT JOIN(
             SELECT
                 return_detail.issued_operation_id,
@@ -860,7 +862,7 @@ CONCAT_WS(
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="name_siz">
           <DataField>name_siz</DataField>
           <TypeName>System.String</TypeName>
