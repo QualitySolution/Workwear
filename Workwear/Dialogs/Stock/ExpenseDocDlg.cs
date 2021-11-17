@@ -38,11 +38,12 @@ namespace workwear
 		public ExpenseDocDlg()
 		{
 			this.Build();
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+			featuresService = AutofacScope.Resolve<FeaturesService>();
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Expense> ();
+
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
-
-			featuresService = MainClass.AppDIContainer.Resolve<FeaturesService>();
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW,featuresService);
 			ConfigureDlg ();
@@ -87,7 +88,8 @@ namespace workwear
 		public ExpenseDocDlg (int id)
 		{
 			this.Build ();
-			featuresService = MainClass.AppDIContainer.Resolve<FeaturesService>(); 
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+			featuresService = AutofacScope.Resolve<FeaturesService>(); 
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Expense> (id);
 			ConfigureDlg ();
 		}
@@ -114,8 +116,6 @@ namespace workwear
 			ItemsTable.ExpenceDoc = Entity;
 
 			enumPrint.ItemsEnum = typeof(IssuedSheetPrint);
-
-			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 
 			var builder = new LegacyEEVMBuilderFactory<Expense>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
 
@@ -221,7 +221,6 @@ namespace workwear
 			};
 
 			MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<RdlViewerViewModel, ReportInfo>(this, reportInfo);
-
 		}
 
 		#endregion
