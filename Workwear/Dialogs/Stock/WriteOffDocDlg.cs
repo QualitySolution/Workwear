@@ -18,13 +18,16 @@ namespace workwear
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
+		ILifetimeScope AutofacScope;
+
 		public WriteOffDocDlg()
 		{
 			this.Build();
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Writeoff> ();
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
-			ItemsTable.CurWarehouse = new StockRepository().GetDefaultWarehouse(UoW, MainClass.AppDIContainer.Resolve<FeaturesService>());
+			ItemsTable.CurWarehouse = new StockRepository().GetDefaultWarehouse(UoW, AutofacScope.Resolve<FeaturesService>());
 			ConfigureDlg ();
 		}
 
@@ -43,6 +46,7 @@ namespace workwear
 		public WriteOffDocDlg (int id)
 		{
 			this.Build ();
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Writeoff> (id);
 			ConfigureDlg ();
 		}
@@ -93,6 +97,12 @@ namespace workwear
 			
 			logger.Info ("Ok");
 			return true;
+		}
+
+		public override void Destroy()
+		{
+			base.Destroy();
+			AutofacScope.Dispose();
 		}
 	}
 }

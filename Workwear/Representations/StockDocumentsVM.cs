@@ -22,6 +22,8 @@ namespace workwear.Representations
 	public class StockDocumentsVM : RepresentationModelWithoutEntityBase<StockDocumentsVMNode>
 	{
 		private FeaturesService featuresService;
+		ILifetimeScope AutofacScope;
+
 		public StockDocumentsFilter Filter
 		{
 			get
@@ -223,11 +225,18 @@ namespace workwear.Representations
 		)
 		{
 			this.UoW = uow;
-			featuresService = MainClass.AppDIContainer.Resolve<FeaturesService>();
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+			featuresService = AutofacScope.Resolve<FeaturesService>();
 			if(!featuresService.Available(WorkwearFeature.Warehouses)) {
 				var column = columnsConfig.GetColumnsByTag("warehouse");
 				column.First().Visible = false;
 			}
+		}
+
+		public override void Destroy()
+		{
+			base.Destroy();
+			AutofacScope.Dispose();
 		}
 	}
 

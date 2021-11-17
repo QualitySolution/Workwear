@@ -20,6 +20,8 @@ namespace workwear.JournalViewers
 		IUnitOfWork uow;
 
 		private FeaturesService featuresService;
+		ILifetimeScope AutofacScope;
+
 		public StockDocumentsView()
 		{
 			this.Build();
@@ -32,7 +34,8 @@ namespace workwear.JournalViewers
 			uow = tableDocuments.RepresentationModel.UoW;
 			buttonAdd.ItemsEnum = typeof(StokDocumentType);
 
-			featuresService = MainClass.AppDIContainer.Resolve<FeaturesService>();
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+			featuresService = AutofacScope.Resolve<FeaturesService>();
 			if(!featuresService.Available(WorkwearFeature.Warehouses)) {
 				buttonAdd.SetVisibility(StokDocumentType.TransferDoc, false);
 			}
@@ -121,6 +124,12 @@ namespace workwear.JournalViewers
 		protected void OnButtonRefreshClicked(object sender, EventArgs e)
 		{
 			tableDocuments.RepresentationModel.UpdateNodes();
+		}
+
+		public override void Destroy()
+		{
+			base.Destroy();
+			AutofacScope.Dispose();
 		}
 	}
 }

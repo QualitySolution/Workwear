@@ -29,10 +29,11 @@ namespace workwear
 		public IncomeDocDlg()
 		{
 			this.Build();
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Income> ();
+			featuresService = AutofacScope.Resolve<FeaturesService>();
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
-			featuresService = MainClass.AppDIContainer.Resolve<FeaturesService>();
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW,featuresService);
 
@@ -56,8 +57,9 @@ namespace workwear
 		public IncomeDocDlg (int id)
 		{
 			this.Build ();
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Income> (id);
-			featuresService = MainClass.AppDIContainer.Resolve<FeaturesService>();
+			featuresService = AutofacScope.Resolve<FeaturesService>();
 			ConfigureDlg ();
 		}
 
@@ -84,10 +86,7 @@ namespace workwear
 
 			ItemsTable.IncomeDoc = Entity;
 
-			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
-
 			var builder = new LegacyEEVMBuilderFactory<Income>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
-
 
 			entityWarehouseIncome.ViewModel = builder.ForProperty(x => x.Warehouse)
 									.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
@@ -140,6 +139,12 @@ namespace workwear
 				break;
 			}
 
+		}
+
+		public override void Destroy()
+		{
+			base.Destroy();
+			AutofacScope.Dispose();
 		}
 
 		#region Workwear featrures
