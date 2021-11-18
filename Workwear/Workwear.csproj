@@ -527,7 +527,6 @@
     <Folder Include="Dialogs\Regulations\" />
     <Folder Include="Domain\Operations\" />
     <Folder Include="HibernateMapping\Operations\" />
-    <Folder Include="Dialogs\DataBase\" />
     <Folder Include="Domain\Operations\Graph\" />
     <Folder Include="Repository\Stock\" />
     <Folder Include="Dialogs\Issuance\" />
