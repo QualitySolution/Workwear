@@ -130,7 +130,7 @@ namespace workwear.Journal.ViewModels.Stock
 				)
 				.OrderBy(() => nomenclatureAlias.Name).Asc
 				.ThenBy(Projections.SqlFunction(
-					new SQLFunctionTemplate(NHibernateUtil.String, "CAST(SUBSTRING_INDEX(?1, '-', 1) AS DOUBLE)"), NHibernateUtil.String, Projections.Property(() => warehouseOperationAlias.Size))).Asc
+					new SQLFunctionTemplate(NHibernateUtil.String, "CAST(SUBSTRING_INDEX(?1, '-', 1) AS DECIMAL(5,1))"), NHibernateUtil.String, Projections.Property(() => warehouseOperationAlias.Size))).Asc
 				.ThenBy(() => warehouseOperationAlias.Growth).Asc
 				.TransformUsing(Transformers.AliasToBean<StockBalanceJournalNode>());
 		}
