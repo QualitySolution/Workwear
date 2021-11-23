@@ -15,7 +15,7 @@ using workwear.Tools;
 
 namespace workwear.Domain.Stock
 {
-	[Appellative (Gender = GrammaticalGender.Masculine,
+	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "коллективные выдачи",
 		Nominative = "коллективная выдача")]
 	public class CollectiveExpense : StockDocument, IValidatableObject
