@@ -11,6 +11,7 @@
 * xref:index.adoc[Старая документация]
 
 .Руководство администратора
+* xref:requirements.adoc[Системные требования]
 * xref:install.adoc[Установка]
 * xref:update.adoc[Обновление]
 * xref:users.adoc[Работа с пользователями]

@@ -21,7 +21,6 @@ namespace workwear.HMap
 			References(x => x.WriteOffDoc).Column("write_off_doc");
 
 			HasOne(x => x.IssuanceSheet)
-				.Cascade.All()
 				.PropertyRef(x => x.Expense);
 
 			HasMany (x => x.Items)

@@ -12,12 +12,14 @@ namespace workwear.ReportsDlg
 	public partial class StockAllWearDlg : Gtk.Bin, IParametersWidget
 	{
 		private FeaturesService featureService;
+		ILifetimeScope AutofacScope;
 
 		public StockAllWearDlg()
 		{
 			this.Build();
 			ComboWorks.ComboFillReference(comboObject, "warehouse", ComboWorks.ListMode.OnlyItems, true, "name");
-			featureService = MainClass.AppDIContainer.Resolve<FeaturesService>();
+			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+			featureService = AutofacScope.Resolve<FeaturesService>();
 			DisableFeatures();
 			comboObject.Active = 0;
 		}
@@ -60,5 +62,10 @@ namespace workwear.ReportsDlg
 			buttonRun.Sensitive = ComboWorks.GetActiveId(comboObject) > 0;
 		}
 
+		public override void Destroy()
+		{
+			base.Destroy();
+			AutofacScope.Dispose();
+		}
 	}
 }

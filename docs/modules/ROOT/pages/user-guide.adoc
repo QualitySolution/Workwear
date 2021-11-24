@@ -18,6 +18,8 @@ Quality Solution 2021
 
 include::introduction.adoc[]
 
+include::requirements.adoc[]
+
 include::install.adoc[]
 
 include::users.adoc[]

@@ -1143,7 +1143,7 @@ ORDER BY
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>2016-01-01</Value>
+          <Value>2021-12-01</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>

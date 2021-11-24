@@ -22,7 +22,7 @@ namespace workwear.HibernateMapping.Statements
 			HasMany(x => x.Items)
 				.Inverse()
 				.KeyColumn("issuance_sheet_id").Not.KeyNullable()
-				.Cascade.AllDeleteOrphan().Inverse()
+				.Cascade.AllDeleteOrphan()
 				.LazyLoad();
 		}
 	}
