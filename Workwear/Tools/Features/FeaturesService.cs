@@ -62,6 +62,9 @@ namespace workwear.Tools.Features
 
 		virtual public bool Available(WorkwearFeature feature)
 		{
+			if(feature == WorkwearFeature.MassExpense)
+				return false; //TODO Документ временно отключен совсем. Пока не будет принято решение чиним его или удаляем за не надобностью. Так как в 2.6 добавлен вполне рабочий документ колективной выдачи, который во многом повторяет задачу этого документа.
+
 			if(ProductEdition == 0)
 				return true; //В демо редакции доступны все возможности.
 

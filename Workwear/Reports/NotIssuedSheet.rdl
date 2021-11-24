@@ -896,6 +896,7 @@ ORDER BY
       <DefaultValue>
         <Values>
           <Value>2021-10-01</Value>
+          <Value>2021-12-01</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>

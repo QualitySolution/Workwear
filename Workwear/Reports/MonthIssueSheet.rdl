@@ -1056,7 +1056,7 @@ WHERE
 wear_cards.dismiss_date IS NULL AND 
 (@facility = -1 OR wear_cards.object_id = @facility) AND
 (@employee = -1 OR wear_cards.id = @employee) AND
-wear_cards_item.next_issue &gt;= @start_date AND wear_cards_item.next_issue &lt;= @end_date
+wear_cards_item.next_issue &gt;= CONVERT(@start_date, DATE) AND wear_cards_item.next_issue &lt;= CONVERT(@end_date, DATE)
 ORDER BY employee;</CommandText>
         <QueryParameters>
           <QueryParameter Name="@start_date">
