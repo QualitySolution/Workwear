@@ -724,4 +724,9 @@ public partial class MainWindow : Gtk.Window
 		MainTelemetry.AddCount("pay.qsolution.ru");
 		System.Diagnostics.Process.Start("http://pay.qsolution.ru/");
 	}
+
+	protected void OnActionReplaceEntityActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<ReplaceEntityViewModel>(null);
+	}
 }
