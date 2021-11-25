@@ -59,7 +59,7 @@ namespace workwear.Views.Company.EmployeeChilds
 				.AddColumn("Получено").AddTextRenderer(node => node.AmountText)
 					.AddSetter((w, node) => w.Foreground = node.AmountColor)
 				.AddColumn("След. получение").AddTextRenderer(node => String.Format("{0:d}", node.NextIssue))
-					.AddSetter((w, node) => w.Foreground = node.NextIssue < DateTime.Now ? "red" : "black")
+					.AddSetter((w, node) => w.Foreground = node.NextIssueColor(ViewModel.BaseParameters))
 				.AddColumn("Просрочка").AddTextRenderer(
 					node => node.NextIssue.HasValue && node.NextIssue.Value < DateTime.Today
 					? NumberToTextRus.FormatCase((int)(DateTime.Today - node.NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней")

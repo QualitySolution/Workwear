@@ -146,6 +146,7 @@ namespace workwear.ViewModels.Company
 		public bool VisibleHistory => !UoW.IsNew;
 		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool VisibleLkRegistration => featuresService.Available(WorkwearFeature.EmployeeLk);
+		public bool VisibleColorsLegend => CurrentTab == 3;
 
 		private bool visiblePhoto;
 		public virtual bool VisiblePhoto {
@@ -318,6 +319,7 @@ namespace workwear.ViewModels.Company
 
 		private int lastTab;
 		private int currentTab;
+		[PropertyChangedAlso(nameof(VisibleColorsLegend))]
 		public virtual int CurrentTab {
 			get => currentTab;
 			set => SetField(ref currentTab, value);

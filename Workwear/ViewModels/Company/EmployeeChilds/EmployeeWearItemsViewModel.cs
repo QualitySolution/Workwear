@@ -28,11 +28,11 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 	{
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
-		private readonly BaseParameters baseParameters;
 		private readonly IInteractiveService interactive;
 		private readonly ITdiCompatibilityNavigation navigation;
 		private readonly OpenStockDocumentsModel stockDocumentsModel;
 
+		public readonly BaseParameters BaseParameters;
 		public EmployeeWearItemsViewModel(
 			EmployeeViewModel employeeViewModel,
 			EmployeeIssueRepository employeeIssueRepository,
@@ -44,7 +44,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
-			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.stockDocumentsModel = stockDocumentsModel ?? throw new ArgumentNullException(nameof(stockDocumentsModel));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
@@ -68,7 +68,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		{
 			if(!isConfigured) {
 				isConfigured = true;
-				Entity.FillWearInStockInfo(UoW, baseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
+				Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
 				Entity.FillWearRecivedInfo(employeeIssueRepository);
 				OnPropertyChanged(nameof(ObservableWorkwearItems));
 			}
@@ -133,7 +133,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		public void UpdateWorkwearItems()
 		{
 			Entity.UpdateWorkwearItems();
-			Entity.FillWearInStockInfo(UoW, baseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
+			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
 			Entity.UpdateAllNextIssue();
 		}
 
@@ -188,7 +188,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 			foreach(var item in Entity.WorkwearItems) {
 				UoW.Session.Refresh(item);
 			}
-			Entity.FillWearInStockInfo(UoW, baseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
+			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
 			Entity.FillWearRecivedInfo(employeeIssueRepository);
 		}
 

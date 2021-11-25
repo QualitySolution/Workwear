@@ -118,6 +118,14 @@ namespace workwear.Domain.Company
 					return "orange";
 			}
 		}
+		
+		public virtual string NextIssueColor(BaseParameters parameters) {
+			if(DateTime.Today > NextIssue)
+					return "red";
+			if (DateTime.Today.AddDays(parameters.ColDayAheadOfShedule) > NextIssue)
+				return "darkgreen";
+			return "black";
+		}
 
 		public virtual string Title{
 			get{ return String.Format ("Потребность сотрудника {3} в {0} - {1} на {2}", ProtectionTools.Name, ProtectionTools.GetAmountAndUnitsText(ActiveNormItem.Amount), ActiveNormItem.LifeText, EmployeeCard.ShortName);

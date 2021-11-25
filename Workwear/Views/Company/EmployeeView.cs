@@ -3,6 +3,7 @@ using System.Reflection;
 using Gamma.Binding.Converters;
 using Gtk;
 using NLog;
+using QS.Dialog.GtkUI;
 using QS.Views.Dialog;
 using QSOrmProject;
 using workwear.Domain.Company;
@@ -43,6 +44,8 @@ namespace workwear.Views.Company
 			notebook1.GetNthPage(5).Visible = ViewModel.VisibleHistory;
 
 			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage);
+
+			buttonColorsLegend.Binding.AddBinding(ViewModel, v => v.VisibleColorsLegend, w => w.Visible).InitializeFromSource();
 
 			comboSex.ItemsEnum = typeof(Sex);
 			comboSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItem).InitializeFromSource ();
@@ -206,6 +209,24 @@ namespace workwear.Views.Company
 			ViewModel.Print(doc);
 		}
 
+		protected void OnButtonColorsLegendClicked(object sender, EventArgs e)
+		{
+			MessageDialogHelper.RunInfoDialog(
+				"<b>Колонка «Получено»:</b>\n" +
+				"<span color='darkgreen'>●</span> — потребность закрыта полностью\n" +
+				"<span color='blue'>●</span> — получено больше необходимого\n" +
+				"<span color='orange'>●</span> — получено меньше необходимого\n" +
+				"<span color='red'>●</span> — получения не было\n" +
+				"\n<b>Колонка «След. получение»:</b>\n" +
+				"<span color='red'>●</span> — получение просрочено\n" +
+				"<span color='darkgreen'>●</span> — возможна выдача раньше срока\n" +
+				"\n<b>Колонка «На складе»:</b>\n" +
+				"<span color='orange'>●</span> — подходящей номеклатуры не найдено\n" +
+				"<span color='red'>●</span> — номенклатура на складе отсутствует\n" +
+				"<span color='blue'>●</span> — на складе не достаточное количество\n" +
+				"<span color='green'>●</span> — на складе достаточное количество"
+			);
+		}
 		#endregion
 
 		#region События View

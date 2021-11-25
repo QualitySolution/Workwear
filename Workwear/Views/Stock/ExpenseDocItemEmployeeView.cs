@@ -132,6 +132,8 @@ namespace workwear.Views.Stock
 				return "blue";
 			if(requiredIssue < item.Amount)
 				return "Purple";
+			if(item.EmployeeCardItem?.NextIssue > DateTime.Today)
+				return "darkgreen";
 			return null;
 		}
 
@@ -185,6 +187,7 @@ namespace workwear.Views.Stock
 		{
 			MessageDialogHelper.RunInfoDialog(
 				"<span color='black'>●</span> — обычная выдача\n" +
+				"<span color='darkgreen'>●</span> — выдача раньше срока\n" +
 				"<span color='gray'>●</span> — выдача не требуется\n" +
 				"<span color='blue'>●</span> — выдаваемого количества не достаточно\n" +
 				"<span color='Purple'>●</span> — выдается больше необходимого\n" +
