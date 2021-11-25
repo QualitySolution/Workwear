@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Bindings.Collections.Generic;
 using QS.Views;
+using workwear.Domain.Stock;
 using workwear.ReportParameters.ViewModels;
 
 namespace workwear.ReportParameters.Views
@@ -15,6 +16,9 @@ namespace workwear.ReportParameters.Views
 				.AddBinding(v => v.StartDate, w => w.StartDateOrNull)
 				.AddBinding(v => v.EndDate, w => w.EndDateOrNull)
 				.InitializeFromSource();
+
+			comboIssueType.ItemsEnum = typeof(IssueType);
+			comboIssueType.Binding.AddBinding(ViewModel, v => v.IssueType, w => w.SelectedItemOrNull).InitializeFromSource();
 
 			checkBySize.Binding.AddBinding(ViewModel, v => v.BySize, w => w.Active).InitializeFromSource();
 

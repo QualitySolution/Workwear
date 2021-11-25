@@ -5,6 +5,7 @@ using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
+using workwear.Domain.Stock;
 using workwear.Repository.Company;
 
 namespace workwear.ReportParameters.ViewModels
@@ -42,6 +43,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"bySize", BySize},
 					{"withoutsub", Summary ? false : Subdivisons.First().Select },
 					{"subdivisions", Summary ? new int[] {-1} : Subdivisons.Where(x => x.Select).Select(x => x.Id).ToArray() },
+					{"issue_type", IssueType?.ToString() },
 				 };
 
 		#region Параметры
@@ -57,6 +59,12 @@ namespace workwear.ReportParameters.ViewModels
 		public virtual DateTime? EndDate {
 			get => endDate;
 			set => SetField(ref endDate, value);
+		}
+
+		private IssueType? issueType;
+		public virtual IssueType? IssueType {
+			get => issueType;
+			set => SetField(ref issueType, value);
 		}
 
 		private bool summary = true;
