@@ -444,6 +444,7 @@ LEFT JOIN objects on objects.id = wear_cards.object_id
 LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
 LEFT JOIN item_types ON item_types.id = nomenclature.type_id
 WHERE operation_issued_by_employee.operation_time &gt;= @dateStart and operation_issued_by_employee.operation_time &lt;= @dateEnd
+AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
 AND (@issue_type = "" OR item_types.issue_type = @issue_type)
 and operation_issued_by_employee.returned = 0 AND (@summary OR (@withoutsub AND objects.id IS NULL) OR objects.id IN (@subdivisions))
 GROUP BY IF(@summary, NULL, objects.id), nomenclature_id, IF(@bysize, operation_issued_by_employee.size, NULL), IF(@bysize, operation_issued_by_employee.growth, NULL)
