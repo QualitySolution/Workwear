@@ -16,5 +16,4 @@
 * xref:install.adoc[Установка]
 * xref:update.adoc[Обновление]
 * xref:users.adoc[Работа с пользователями]
-* xref:install.adoc[Лицензирование]
 * xref:technical.adoc[Технические подробности]
