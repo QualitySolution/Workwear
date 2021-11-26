@@ -65,16 +65,27 @@ namespace workwear.ViewModels.Tools
 		#endregion
 
 		#region Sensetive
-		public bool SensitiveReplaceButton => SourceEntryViewModel.Entity != null && TargetEntryViewModel.Entity != null && TotalLinks > 0;
+		public bool SensitiveReplaceButton => !InProgress && SourceEntryViewModel.Entity != null && TargetEntryViewModel.Entity != null && TotalLinks > 0;
+		#endregion
+
+		#region Internal
+		private bool inProgress;
+		[PropertyChangedAlso(nameof(SensitiveReplaceButton))]
+		public virtual bool InProgress {
+			get => inProgress;
+			set => SetField(ref inProgress, value);
+		}
 		#endregion
 
 		#region Events
 		void SourceEntryViewModel_Changed(object sender, EventArgs e)
 		{
-			guiDispatcher.RunInGuiTread(delegate { 
+			guiDispatcher.RunInGuiTread(delegate {
 				//Вызываем через очередь главного потока, чтобы успел закрыться журнал.
 				//И пользователь видел прогресс в процессе поиска.
+				InProgress = true;
 				TotalLinks = SourceEntryViewModel.Entity != null ? replaceEntity.CalculateTotalLinks(UoW, SourceEntryViewModel.Entity) : (int?)null;
+				InProgress = false;
 			});
 		}
 
@@ -86,15 +97,21 @@ namespace workwear.ViewModels.Tools
 
 		public void RunReplace()
 		{
+			InProgress = true;
 			var result = replaceEntity.ReplaceEverywhere(UoW, SourceEntryViewModel.Entity, TargetEntryViewModel.Entity);
+			Progress.Start(RemoveSource ? 2:1, text: "Завершение транзакции");
 			UoW.Commit();
 			if(RemoveSource) {
+				Progress.Add(text: "Удаление исходного объекта");
 				UoW.Delete(SourceEntryViewModel.Entity);
 				UoW.Commit();
 			}
+			Progress.Add();
 			logger.Info("Заменено {0} ссылок.", result);
 			SourceEntryViewModel.CleanEntity();
 			TargetEntryViewModel.CleanEntity();
+			InProgress = false;
+			Progress.Close();
 		}
 	}
 }
