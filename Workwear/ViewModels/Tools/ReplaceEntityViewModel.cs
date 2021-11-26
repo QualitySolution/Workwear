@@ -86,7 +86,7 @@ namespace workwear.ViewModels.Tools
 
 		public void RunReplace()
 		{
-			var result = replaceEntity.ReplaceEverywhere(UoW, SourceEntryViewModel.Entity, SourceEntryViewModel.Entity);
+			var result = replaceEntity.ReplaceEverywhere(UoW, SourceEntryViewModel.Entity, TargetEntryViewModel.Entity);
 			UoW.Commit();
 			if(RemoveSource) {
 				UoW.Delete(SourceEntryViewModel.Entity);
