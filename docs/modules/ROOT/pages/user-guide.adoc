@@ -34,9 +34,9 @@ include::employees.adoc[]
 
 include::stock-documents.adoc[]
 
-include::manipulation.adoc[]
-
 include::settings.adoc[]
+
+include::manipulation.adoc[]
 
 include::technical.adoc[]
 
