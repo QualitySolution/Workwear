@@ -121,46 +121,47 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public virtual CollectiveExpenseItem AddItem(EmployeeCard employee, StockPosition position, int amount = 1)
+		public virtual void AddItem(EmployeeCardItem employeeCardItem, StockPosition position, int amount = 1) //Добавляем строку когда есть на складе
 		{
 			var newItem = new CollectiveExpenseItem() {
 				Document = this,
-				Employee = employee,
+				Employee = employeeCardItem.EmployeeCard,
 				Amount = amount,
 				Nomenclature = position.Nomenclature,
 				Size = position.Size,
 				WearGrowth = position.Growth,
-				WearPercent = position.WearPercent
+				WearPercent = position.WearPercent,
+				EmployeeCardItem = employeeCardItem,
+				ProtectionTools = employeeCardItem.ProtectionTools
 			};
 
 			ObservableItems.Add(newItem);
-			return newItem;
 		}
 
-		public virtual CollectiveExpenseItem AddItem(EmployeeCardItem employeeCardItem, BaseParameters baseParameters)
+		public virtual void AddItem(EmployeeCardItem employeeCardItem, int amount = 1) //Добавляем строку когда нет на складе
+		{
+			var newItem = new CollectiveExpenseItem() {
+				Document = this,
+				Employee = employeeCardItem.EmployeeCard,
+				EmployeeCardItem = employeeCardItem,
+				ProtectionTools = employeeCardItem.ProtectionTools,
+				Amount = amount
+			};
+
+			ObservableItems.Add(newItem);
+		}
+
+		public virtual void AddItem(EmployeeCardItem employeeCardItem, BaseParameters baseParameters)
 		{
 			if(employeeCardItem == null)
 				throw new ArgumentNullException(nameof(employeeCardItem));
 
 			if(Items.Any(x => employeeCardItem.IsSame(x.EmployeeCardItem)))
-				return null;
+				return;
 
-			CollectiveExpenseItem newItem;
 			if(employeeCardItem.BestChoiceInStock.Any())
-				newItem = AddItem(employeeCardItem.EmployeeCard, employeeCardItem.BestChoiceInStock.First().StockPosition);
-			else { 
-				newItem = new CollectiveExpenseItem() {
-					Document = this,
-					Employee = employeeCardItem.EmployeeCard
-				};
-				ObservableItems.Add(newItem);
-			}
-			
-			newItem.EmployeeCardItem = employeeCardItem;
-			newItem.ProtectionTools = employeeCardItem.ProtectionTools;
-			newItem.Amount = newItem.Nomenclature != null ? employeeCardItem.CalculateRequiredIssue(baseParameters) : 0;
-
-			return newItem;
+				AddItem(employeeCardItem, employeeCardItem.BestChoiceInStock.First().StockPosition, employeeCardItem.CalculateRequiredIssue(baseParameters));
+			else AddItem(employeeCardItem, 0);
 		}
 
 		public virtual void RemoveItem(CollectiveExpenseItem item)
