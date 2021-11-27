@@ -192,10 +192,12 @@ namespace workwear.Domain.Company
 
 		/// <summary>
 		/// Необходимое к выдачи количество.
-		/// Внимание! Не корректно считает сложные ситуации, с неполной выдачей.
 		/// </summary>
 		public virtual int CalculateRequiredIssue(BaseParameters parameters)
 		{
+			if (NextIssue.HasValue && LastIssue.HasValue && LastIssue >= NextIssue) //Костыль для ловли неполной выдачи (т.к. при неполной выдачи в NextIssue проставляется текущая дата)
+				return ActiveNormItem.Amount - Amount;
+
 			if(NextIssue.HasValue && NextIssue.Value.AddDays(-parameters.ColDayAheadOfShedule) <= DateTime.Today)
 				return ActiveNormItem.Amount;
 			else 
