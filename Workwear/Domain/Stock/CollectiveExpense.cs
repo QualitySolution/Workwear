@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -159,9 +159,21 @@ namespace workwear.Domain.Stock
 			if(Items.Any(x => employeeCardItem.IsSame(x.EmployeeCardItem)))
 				return;
 
-			if(employeeCardItem.BestChoiceInStock.Any())
-				AddItem(employeeCardItem, employeeCardItem.BestChoiceInStock.First().StockPosition, employeeCardItem.CalculateRequiredIssue(baseParameters));
-			else AddItem(employeeCardItem, 0);
+			int NeedPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
+			if(employeeCardItem.BestChoiceInStock.Any()) {
+				foreach(var position in employeeCardItem.BestChoiceInStock) {
+					int ExpancePositionAmount = 0;  //Осталось на складе с учётом этого документа
+					foreach(var item in Items) if(item.Nomenclature == position.Nomenclature) ExpancePositionAmount += item.Amount;
+
+					if(position.Amount > ExpancePositionAmount)
+						if(position.Amount - ExpancePositionAmount >= NeedPositionAmount) {
+							AddItem(employeeCardItem, position.StockPosition, NeedPositionAmount); NeedPositionAmount = 0; break;
+						}
+						else AddItem(employeeCardItem, position.StockPosition, NeedPositionAmount -= (position.Amount - ExpancePositionAmount));
+				}
+				//if(NeedPositionAmount != 0) Items.Last.Color("orange"); // недовыдоча (нужен ли этот функционал?) И красный если нет совсем
+			}
+			else AddItem(employeeCardItem, NeedPositionAmount);//возможно, стоит пометить строку красным
 		}
 
 		public virtual void RemoveItem(CollectiveExpenseItem item)
