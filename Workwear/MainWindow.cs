@@ -729,4 +729,9 @@ public partial class MainWindow : Gtk.Window
 	{
 		NavigationManager.OpenViewModel<ReplaceEntityViewModel>(null);
 	}
+
+	protected void OnActionStockMovementsActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(null);
+	}
 }

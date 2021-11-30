@@ -155,6 +155,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionReplaceEntity;
 
+	private global::Gtk.Action ActionStockMovements;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -424,6 +426,9 @@ public partial class MainWindow
 		this.ActionReplaceEntity = new global::Gtk.Action("ActionReplaceEntity", global::Mono.Unix.Catalog.GetString("Замена ссылок"), null, null);
 		this.ActionReplaceEntity.ShortLabel = global::Mono.Unix.Catalog.GetString("Замена ссылок");
 		w1.Add(this.ActionReplaceEntity, null);
+		this.ActionStockMovements = new global::Gtk.Action("ActionStockMovements", global::Mono.Unix.Catalog.GetString("Складские движения"), null, "store-movements");
+		this.ActionStockMovements.ShortLabel = global::Mono.Unix.Catalog.GetString("Складские движения");
+		w1.Add(this.ActionStockMovements, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -455,40 +460,41 @@ public partial class MainWindow
 				"/><menuitem name=\'ActionIconsLarge\' action=\'ActionIconsLarge\'/></menu><menuitem " +
 				"name=\'ActionMaxizizeOnStart\' action=\'ActionMaxizizeOnStart\'/></menu><menu name=\'" +
 				"Action21\' action=\'Action21\'><menuitem name=\'ActionStockDocs\' action=\'ActionStock" +
-				"Docs\'/><menuitem name=\'ActionStockBalance\' action=\'ActionStockBalance\'/><separat" +
-				"or/><menuitem name=\'ActionIssuanceSheets\' action=\'ActionIssuanceSheets\'/></menu>" +
-				"<menu name=\'Action1\' action=\'Action1\'><menuitem name=\'ActionOrganizations\' actio" +
-				"n=\'ActionOrganizations\'/><menuitem name=\'ActionObjects\' action=\'ActionObjects\'/>" +
-				"<menuitem name=\'ActionDepartment\' action=\'ActionDepartment\'/><menuitem name=\'Act" +
-				"ionEmployees\' action=\'ActionEmployees\'/><separator/><menuitem name=\'ActionRegula" +
-				"tionDoc\' action=\'ActionRegulationDoc\'/><menuitem name=\'ActionProtectionTools\' ac" +
-				"tion=\'ActionProtectionTools\'/><menuitem name=\'ActionNorms\' action=\'ActionNorms\'/" +
-				"><separator/><menuitem name=\'Action5\' action=\'Action5\'/><menuitem name=\'Action6\'" +
-				" action=\'Action6\'/><menuitem name=\'ActionWarehouse\' action=\'ActionWarehouse\'/><s" +
-				"eparator/><menuitem name=\'Action7\' action=\'Action7\'/><separator/><menuitem name=" +
-				"\'ActionProfession\' action=\'ActionProfession\'/><menuitem name=\'Action8\' action=\'A" +
-				"ction8\'/><menuitem name=\'ActionVacationTypes\' action=\'ActionVacationTypes\'/><men" +
-				"uitem name=\'ActionLeaders\' action=\'ActionLeaders\'/></menu><menu name=\'ActionRepo" +
-				"rts\' action=\'ActionReports\'><menuitem name=\'Action10\' action=\'Action10\'/><menuit" +
-				"em name=\'Action11\' action=\'Action11\'/><separator/><menuitem name=\'Action12\' acti" +
-				"on=\'Action12\'/><separator/><menuitem name=\'Action13\' action=\'Action13\'/><menuite" +
-				"m name=\'ActionRequestSheet\' action=\'ActionRequestSheet\'/><menuitem name=\'ActionA" +
-				"verageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><separator/><menu name=\'Acti" +
-				"on\' action=\'Action\'><menuitem name=\'ActionNotIssuedSheetDetail\' action=\'ActionNo" +
-				"tIssuedSheetDetail\'/><menuitem name=\'ActionNotIssuedSheetSummary\' action=\'Action" +
-				"NotIssuedSheetSummary\'/></menu><menuitem name=\'ActionAmountEmployeeGetWear\' acti" +
-				"on=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear\' action" +
-				"=\'ActionAmountIssuedWear\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><m" +
-				"enuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' ac" +
-				"tion=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><sepa" +
-				"rator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOp" +
-				"enReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'" +
-				"><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki" +
-				"\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwit" +
-				"ter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/>" +
-				"<menuitem name=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=" +
-				"\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></men" +
-				"u></menubar></ui>");
+				"Docs\'/><menuitem name=\'ActionStockBalance\' action=\'ActionStockBalance\'/><menuite" +
+				"m name=\'ActionStockMovements\' action=\'ActionStockMovements\'/><separator/><menuit" +
+				"em name=\'ActionIssuanceSheets\' action=\'ActionIssuanceSheets\'/></menu><menu name=" +
+				"\'Action1\' action=\'Action1\'><menuitem name=\'ActionOrganizations\' action=\'ActionOr" +
+				"ganizations\'/><menuitem name=\'ActionObjects\' action=\'ActionObjects\'/><menuitem n" +
+				"ame=\'ActionDepartment\' action=\'ActionDepartment\'/><menuitem name=\'ActionEmployee" +
+				"s\' action=\'ActionEmployees\'/><separator/><menuitem name=\'ActionRegulationDoc\' ac" +
+				"tion=\'ActionRegulationDoc\'/><menuitem name=\'ActionProtectionTools\' action=\'Actio" +
+				"nProtectionTools\'/><menuitem name=\'ActionNorms\' action=\'ActionNorms\'/><separator" +
+				"/><menuitem name=\'Action5\' action=\'Action5\'/><menuitem name=\'Action6\' action=\'Ac" +
+				"tion6\'/><menuitem name=\'ActionWarehouse\' action=\'ActionWarehouse\'/><separator/><" +
+				"menuitem name=\'Action7\' action=\'Action7\'/><separator/><menuitem name=\'ActionProf" +
+				"ession\' action=\'ActionProfession\'/><menuitem name=\'Action8\' action=\'Action8\'/><m" +
+				"enuitem name=\'ActionVacationTypes\' action=\'ActionVacationTypes\'/><menuitem name=" +
+				"\'ActionLeaders\' action=\'ActionLeaders\'/></menu><menu name=\'ActionReports\' action" +
+				"=\'ActionReports\'><menuitem name=\'Action10\' action=\'Action10\'/><menuitem name=\'Ac" +
+				"tion11\' action=\'Action11\'/><separator/><menuitem name=\'Action12\' action=\'Action1" +
+				"2\'/><separator/><menuitem name=\'Action13\' action=\'Action13\'/><menuitem name=\'Act" +
+				"ionRequestSheet\' action=\'ActionRequestSheet\'/><menuitem name=\'ActionAverageAnnua" +
+				"lNeed\' action=\'ActionAverageAnnualNeed\'/><separator/><menu name=\'Action\' action=" +
+				"\'Action\'><menuitem name=\'ActionNotIssuedSheetDetail\' action=\'ActionNotIssuedShee" +
+				"tDetail\'/><menuitem name=\'ActionNotIssuedSheetSummary\' action=\'ActionNotIssuedSh" +
+				"eetSummary\'/></menu><menuitem name=\'ActionAmountEmployeeGetWear\' action=\'ActionA" +
+				"mountEmployeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear\' action=\'ActionAmo" +
+				"untIssuedWear\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuitem nam" +
+				"e=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' action=\'Actio" +
+				"nHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><men" +
+				"uitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReformal\'" +
+				" action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuitem " +
+				"name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=\'A" +
+				"ctionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><menu" +
+				"item name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><menuitem n" +
+				"ame=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'ActionSN\'/" +
+				"><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar" +
+				"></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -696,5 +702,6 @@ public partial class MainWindow
 		this.ActionNotIssuedSheetSummary.Activated += new global::System.EventHandler(this.OnActionNotIssuedSheetSummaryActivated);
 		this.ActionPay.Activated += new global::System.EventHandler(this.OnActionPayActivated);
 		this.ActionReplaceEntity.Activated += new global::System.EventHandler(this.OnActionReplaceEntityActivated);
+		this.ActionStockMovements.Activated += new global::System.EventHandler(this.OnActionStockMovementsActivated);
 	}
 }

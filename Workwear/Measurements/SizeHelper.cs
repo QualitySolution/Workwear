@@ -99,6 +99,7 @@ namespace workwear.Measurements
 			return found?.StandartsEnumType;
 		}
 
+		[Obsolete("Используйте SizeService.HasSize()")]
 		public static bool HasСlothesSizeStd(СlothesType wearCategory)
 		{
 			var att = wearCategory.GetAttributes<SizeStandartsAttribute> ();
@@ -110,6 +111,7 @@ namespace workwear.Measurements
 		/// </summary>
 		/// <returns><c>true</c>, если нужно, <c>false</c>, если не нужно.</returns>
 		/// <param name="wearCategory">Тип одежды (enum).</param>
+		[Obsolete("Используйте SizeService.HasGrowth()")]
 		public static bool HasGrowthStandart(СlothesType wearCategory)
 		{
 			var att = wearCategory.GetAttribute<NeedGrowthAttribute>();

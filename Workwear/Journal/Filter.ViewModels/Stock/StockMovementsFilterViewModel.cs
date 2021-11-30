@@ -6,14 +6,16 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
 using workwear.Domain.Stock;
-using workwear.Journal.ViewModels.Stock;
 using workwear.Tools.Features;
-using workwear.ViewModels.Stock;
+using Workwear.Measurements;
 
 namespace workwear.Journal.Filter.ViewModels.Stock
 {
 	public class StockMovementsFilterViewModel : JournalFilterViewModelBase<StockMovementsFilterViewModel>
 	{
+		public readonly FeaturesService FeaturesService;
+		private readonly SizeService sizeService;
+
 		#region Ограничения
 		private Warehouse warehouse;
 		public virtual Warehouse Warehouse {
@@ -35,33 +37,66 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 
 		private StockPosition stockPosition;
 		[PropertyChangedAlso(nameof(StockPositionTitle))]
+		[PropertyChangedAlso(nameof(SensitiveNomeclature))]
 		public virtual StockPosition StockPosition {
 			get => stockPosition;
-			set => SetField(ref stockPosition, value);
+			set {
+				if(SetField(ref stockPosition, value))
+					EntryNomenclature.IsEditable = stockPosition == null;
+			}
+		}
+
+		private Nomenclature nomenclature;
+		[PropertyChangedAlso(nameof(SensitiveSize))]
+		[PropertyChangedAlso(nameof(SensitiveGrowth))]
+		[PropertyChangedAlso(nameof(Sizes))]
+		[PropertyChangedAlso(nameof(Growths))]
+		public virtual Nomenclature Nomenclature {
+			get => nomenclature;
+			set => SetField(ref nomenclature, value);
+		}
+
+		private string size;
+		public virtual string Size {
+			get => size;
+			set => SetField(ref size, value);
+		}
+
+		private string growth;
+		public virtual string Growth {
+			get => growth;
+			set => SetField(ref growth, value);
 		}
 		#endregion
-
-		public readonly FeaturesService FeaturesService;
 
 		public string StockPositionTitle => StockPosition?.Title;
 
 		#region Visible
-
 		public bool VisibleWarehouse => FeaturesService.Available(Tools.Features.WorkwearFeature.Warehouses);
-
 		#endregion
 
+		#region Sensitive
+		public bool SensitiveNomeclature => StockPosition == null;
+		public bool SensitiveSize => sizeService.HasSize(Nomenclature?.Type?.WearCategory);
+		public bool SensitiveGrowth => sizeService.HasGrowth(Nomenclature?.Type?.WearCategory);
+		#endregion
+
+		#region ComboValues
+		public string[] Sizes => sizeService.GetSizesForNomeclature(Nomenclature?.SizeStd);
+		public string[] Growths => sizeService.GetGrowthForNomenclature();
+		#endregion
+
+		public EntityEntryViewModel<Nomenclature> EntryNomenclature;
 		public EntityEntryViewModel<Warehouse> WarehouseEntry;
 
-		public StockMovementsFilterViewModel(IUnitOfWorkFactory unitOfWorkFactory, JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, FeaturesService featuresService): base(journal, unitOfWorkFactory)
+		public StockMovementsFilterViewModel(IUnitOfWorkFactory unitOfWorkFactory, JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, SizeService sizeService, FeaturesService featuresService): base(journal, unitOfWorkFactory)
 		{
 			var builder = new CommonEEVMBuilderFactory<StockMovementsFilterViewModel>(journal, this, UoW, navigation, autofacScope);
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
+			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
-			FeaturesService = featuresService;
-
-			WarehouseEntry = builder.ForProperty(x => x.Warehouse).UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
-				.UseViewModelDialog<WarehouseViewModel>()
-				.Finish();
+			WarehouseEntry = builder.ForProperty(x => x.Warehouse).MakeByType().Finish();
+			EntryNomenclature = builder.ForProperty(x => x.Nomenclature).MakeByType().Finish();
 		}
 	}
 }

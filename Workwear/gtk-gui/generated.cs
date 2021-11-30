@@ -34,6 +34,8 @@ namespace Stetic
 				w1.Add("odnoklasniki", w11);
 				global::Gtk.IconSet w12 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("workwear.icon.toolbar.smart-card.png"));
 				w1.Add("smart-card", w12);
+				global::Gtk.IconSet w13 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("workwear.icon.toolbar.store-movements.png"));
+				w1.Add("store-movements", w13);
 				w1.AddDefault();
 			}
 		}

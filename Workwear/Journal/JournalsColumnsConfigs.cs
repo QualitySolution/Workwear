@@ -186,6 +186,10 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<StockMovmentsJournalNode>.Create()
 					.AddColumn("Дата").AddTextRenderer(node => node.OperationTimeText)
 					.AddColumn("Документ").AddTextRenderer(node => node.DocumentText)
+					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
+					.AddColumn("Размер").AddTextRenderer(e => e.Size).SearchHighlight()
+					.AddColumn("Рост").AddTextRenderer(e => e.Growth).SearchHighlight()
+					.AddColumn("Процент износа").AddTextRenderer(e => e.WearPercentText)
 					.AddColumn("Поступление\\расход").AddTextRenderer(node => node.AmountText, useMarkup: true)
 					.Finish()
 			);
