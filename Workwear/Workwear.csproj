@@ -115,6 +115,7 @@
     <EmbeddedResource Include="icon\buttons\eye-crossed.png" />
     <EmbeddedResource Include="icon\buttons\legend.png" />
     <EmbeddedResource Include="icon\rows\нand.png" />
+    <EmbeddedResource Include="icon\buttons\Dice.png" />
     <EmbeddedResource Include="icon\toolbar\store-movements.png" />
   </ItemGroup>
   <ItemGroup>
