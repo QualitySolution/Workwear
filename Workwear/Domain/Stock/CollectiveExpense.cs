@@ -121,32 +121,20 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public virtual void AddItem(EmployeeCardItem employeeCardItem, StockPosition position, int amount = 1) //Добавляем строку когда есть на складе
+		public virtual void AddItem(EmployeeCardItem employeeCardItem, StockPosition position = null, int amount = 0) //Добавляем строку когда есть на складе
 		{
 			var newItem = new CollectiveExpenseItem() {
 				Document = this,
 				Employee = employeeCardItem.EmployeeCard,
 				Amount = amount,
-				Nomenclature = position.Nomenclature,
-				Size = position.Size,
-				WearGrowth = position.Growth,
-				WearPercent = position.WearPercent,
 				EmployeeCardItem = employeeCardItem,
 				ProtectionTools = employeeCardItem.ProtectionTools
 			};
-
-			ObservableItems.Add(newItem);
-		}
-
-		public virtual void AddItem(EmployeeCardItem employeeCardItem, int amount = 1) //Добавляем строку когда нет на складе
-		{
-			var newItem = new CollectiveExpenseItem() {
-				Document = this,
-				Employee = employeeCardItem.EmployeeCard,
-				EmployeeCardItem = employeeCardItem,
-				ProtectionTools = employeeCardItem.ProtectionTools,
-				Amount = amount
-			};
+			if(position != null) {
+				newItem.Nomenclature = position.Nomenclature;
+				newItem.Size = position.Size;
+				newItem.WearGrowth = position.Growth;
+				}
 
 			ObservableItems.Add(newItem);
 		}
@@ -162,18 +150,20 @@ namespace workwear.Domain.Stock
 			int NeedPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
 			if(employeeCardItem.BestChoiceInStock.Any()) {
 				foreach(var position in employeeCardItem.BestChoiceInStock) {
-					int ExpancePositionAmount = 0;  //Осталось на складе с учётом этого документа
-					foreach(var item in Items) if(item.Nomenclature == position.Nomenclature) ExpancePositionAmount += item.Amount;
+					int ExpancePositionAmount = position.Amount;  //Есть на складе
+					foreach(var item in Items) //Считаем сколько осталось на складе c учётом этого документа
+						if(item.Nomenclature == position.Nomenclature && item.Size == position.Size) 
+							ExpancePositionAmount -= item.Amount; 
 
-					if(position.Amount > ExpancePositionAmount)
-						if(position.Amount - ExpancePositionAmount >= NeedPositionAmount) {
-							AddItem(employeeCardItem, position.StockPosition, NeedPositionAmount); NeedPositionAmount = 0; break;
-						}
-						else AddItem(employeeCardItem, position.StockPosition, NeedPositionAmount -= (position.Amount - ExpancePositionAmount));
+					if(ExpancePositionAmount >= NeedPositionAmount && position.WearPercent == 0) {
+							AddItem(employeeCardItem, position.StockPosition, NeedPositionAmount);
+							NeedPositionAmount = 0; 
+							break;
+					}
 				}
-				//if(NeedPositionAmount != 0) Items.Last.Color("orange"); // недовыдоча (нужен ли этот функционал?) И красный если нет совсем
 			}
-			else AddItem(employeeCardItem, NeedPositionAmount);//возможно, стоит пометить строку красным
+			if(NeedPositionAmount != 0)
+				AddItem(employeeCardItem);
 		}
 
 		public virtual void RemoveItem(CollectiveExpenseItem item)
