@@ -10,6 +10,7 @@ using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Stock;
 using workwear.Measurements;
 using Workwear.Measurements;
 
@@ -45,6 +46,7 @@ namespace workwear.ViewModels.Stock
 			&& Entity.Type.Category == ItemTypeCategory.wear 
 			&& Entity.Type.WearCategory.HasValue
 			&& SizeStdEnum != null;
+		public bool SensitiveOpenMovements => Entity.Id > 0;
 		#endregion
 
 		#region Data
@@ -70,6 +72,14 @@ namespace workwear.ViewModels.Stock
 			? SizeHelper.GetSizeStandartsEnum(Entity.Type.WearCategory.Value, Entity.Sex.Value)
 			: null;
 
+		#endregion
+
+		#region Actions
+		public void OpenMovements()
+		{
+			NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(this,
+					addingRegistrations: builder => builder.RegisterInstance(Entity));
+		}
 		#endregion
 
 		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

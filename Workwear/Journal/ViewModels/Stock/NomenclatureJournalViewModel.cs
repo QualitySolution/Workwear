@@ -66,7 +66,7 @@ namespace workwear.Journal.ViewModels.Stock
 				var nomenclature = new Nomenclature {
 					Id = node.Id
 				};
-				NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(null, 
+				NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(this, 
 					addingRegistrations: builder => builder.RegisterInstance(nomenclature));
 			}
 		}

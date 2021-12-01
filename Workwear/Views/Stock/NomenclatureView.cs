@@ -5,6 +5,7 @@ using workwear.Domain.Stock;
 using workwear.Measurements;
 using Workwear.Measurements;
 using workwear.ViewModels.Stock;
+using Gtk;
 
 namespace workwear.Views.Stock
 {
@@ -47,6 +48,18 @@ namespace workwear.Views.Stock
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
+			MakeMenu();
+		}
+
+		void MakeMenu()
+		{
+			var menu = new Menu();
+			var item = new MenuItem("Складские движения по номенклатуре");
+			item.Activated += (sender, e) => ViewModel.OpenMovements();
+			item.Sensitive = ViewModel.SensitiveOpenMovements;
+			menu.Add(item);
+			menuInternal.Menu = menu;
+			menu.ShowAll();
 		}
 	}
 }
