@@ -89,11 +89,21 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		public EntityEntryViewModel<Nomenclature> EntryNomenclature;
 		public EntityEntryViewModel<Warehouse> WarehouseEntry;
 
-		public StockMovementsFilterViewModel(IUnitOfWorkFactory unitOfWorkFactory, JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, SizeService sizeService, FeaturesService featuresService): base(journal, unitOfWorkFactory)
+		public StockMovementsFilterViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory,
+			JournalViewModelBase journal,
+			INavigationManager navigation,
+			ILifetimeScope autofacScope,
+			SizeService sizeService,
+			FeaturesService featuresService, 
+			Nomenclature nomenclature = null): base(journal, unitOfWorkFactory)
 		{
 			var builder = new CommonEEVMBuilderFactory<StockMovementsFilterViewModel>(journal, this, UoW, navigation, autofacScope);
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+
+			if(nomenclature != null)
+				this.nomenclature = UoW.GetById<Nomenclature>(nomenclature.Id);
 
 			WarehouseEntry = builder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 			EntryNomenclature = builder.ForProperty(x => x.Nomenclature).MakeByType().Finish();
