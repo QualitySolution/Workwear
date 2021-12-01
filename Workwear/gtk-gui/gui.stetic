@@ -1866,8 +1866,9 @@
                           <widget class="Gamma.GtkWidgets.yButton" id="buttonGeneratePassword">
                             <property name="MemberName" />
                             <property name="CanFocus">True</property>
-                            <property name="Type">TextOnly</property>
-                            <property name="Label" translatable="yes">Создать</property>
+                            <property name="Type">TextAndIcon</property>
+                            <property name="Icon">resource:workwear.icon.buttons.dice.png</property>
+                            <property name="Label" translatable="yes" />
                             <property name="UseUnderline">True</property>
                             <signal name="Clicked" handler="OnButtonGeneratePasswordClicked" />
                           </widget>
