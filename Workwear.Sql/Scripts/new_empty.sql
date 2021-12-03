@@ -1380,10 +1380,25 @@ COMMIT;
 -- Data for table `measurement_units`
 -- -----------------------------------------------------
 START TRANSACTION;
-INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (DEFAULT, 'шт.', 0, '796');
-INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (DEFAULT, 'пара', 0, '715');
-INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (DEFAULT, 'компл.', 0, '839');
-INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (DEFAULT, 'набор', 0, '704');
+INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (1, 'шт.', 0, '796');
+INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (2, 'пара', 0, '715');
+INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (3, 'компл.', 0, '839');
+INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (4, 'набор', 0, '704');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `item_types`
+-- -----------------------------------------------------
+START TRANSACTION;
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `units_id`, `norm_life`, `comment`) VALUES (DEFAULT, 'Одежда', 'wear', 'Wear', 1, NULL, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `units_id`, `norm_life`, `comment`) VALUES (DEFAULT, 'Обувь', 'wear', 'Shoes', 2, NULL, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `units_id`, `norm_life`, `comment`) VALUES (DEFAULT, 'Зимняя обувь', 'wear', 'WinterShoes', 2, NULL, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `units_id`, `norm_life`, `comment`) VALUES (DEFAULT, 'Головные уборы', 'wear', 'Headgear', 1, NULL, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `units_id`, `norm_life`, `comment`) VALUES (DEFAULT, 'Перчатки', 'wear', 'Gloves', 2, NULL, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `units_id`, `norm_life`, `comment`) VALUES (DEFAULT, 'Варежки', 'wear', 'Mittens', 2, NULL, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `units_id`, `norm_life`, `comment`) VALUES (DEFAULT, 'СИЗ', 'wear', 'PPE', 1, NULL, NULL);
 
 COMMIT;
 
