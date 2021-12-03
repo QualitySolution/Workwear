@@ -512,3 +512,32 @@ ADD CONSTRAINT `fk_issuance_sheet_items_6`
   REFERENCES `protection_tools` (`id`)
   ON DELETE SET NULL
   ON UPDATE CASCADE;
+  
+-- -----------------------------------------------------
+-- function count_issue
+-- -----------------------------------------------------
+
+DELIMITER $$
+CREATE FUNCTION `count_issue`(`amount` INT UNSIGNED, `norm_period` INT UNSIGNED, `next_month` INT UNSIGNED, `next_year` INT UNSIGNED, `begin_month` INT UNSIGNED, `begin_year` INT UNSIGNED, `end_month` INT UNSIGNED, `end_year` INT UNSIGNED) RETURNS int(10) unsigned
+    NO SQL
+    DETERMINISTIC
+    COMMENT 'Функция рассчитывает количество необходимое к выдачи.'
+BEGIN
+DECLARE issue_count, total_month_next, total_month_begin, total_month_end INT;
+
+SET total_month_begin = begin_month + begin_year * 12;
+SET total_month_end = end_month + end_year * 12;
+
+SET issue_count = 0;
+SET total_month_next = next_month + next_year * 12;
+
+WHILE total_month_next <= total_month_end DO
+    IF total_month_next >= total_month_begin THEN 
+    	SET issue_count = issue_count + amount;
+    END IF;
+  SET total_month_next = total_month_next + norm_period;  
+  END WHILE;
+RETURN issue_count;
+END$$
+
+DELIMITER ;
