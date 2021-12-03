@@ -379,16 +379,6 @@ public partial class MainWindow : Gtk.Window
 
 	}
 
-	protected void OnAction21Activated(object sender, EventArgs e)
-	{
-		MainTelemetry.AddCount("ReportMonthQuarterRequestSheet");
-		var widget = new RequestSheetDlg();
-		tdiMain.OpenTab(
-			QSReport.ReportViewDlg.GenerateHashName(widget),
-			() => new QSReport.ReportViewDlg(widget)
-		);
-	}
-
 	protected void OnActionStockBalanceActivated(object sender, EventArgs e)
 	{
 		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
@@ -700,5 +690,10 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount("pay.qsolution.ru");
 		System.Diagnostics.Process.Start("http://pay.qsolution.ru/");
+	}
+
+	protected void OnActionRequestSheetActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(RequestSheetViewModel));
 	}
 }

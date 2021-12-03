@@ -17,12 +17,12 @@
     <PrintOnLastPage>false</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>321.0pt</Height>
+    <Height>178.4pt</Height>
     <Columns>1</Columns>
     <ReportItems>
       <Table Name="Table1">
         <DataSetName>Data</DataSetName>
-        <NoRows>В этом квартале нет потребности с СИЗ</NoRows>
+        <NoRows>За период нет потребности с СИЗ</NoRows>
         <Style>
           <BorderStyle>
             <Default>Solid</Default>
@@ -35,25 +35,25 @@
             <Width>46.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>149.1pt</Width>
+            <Width>192.5pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>59.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>54.9pt</Width>
+            <Width>48.7pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>56.2pt</Width>
+            <Width>49.5pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>46.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>82.0pt</Width>
+            <Width>60.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>64.4pt</Width>
+            <Width>52.6pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -281,7 +281,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox3">
-                      <Value>Наименование</Value>
+                      <Value>Наимено-вание</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -298,7 +298,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox28">
-                      <Value>Количество</Value>
+                      <Value>Коли-чество</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -582,7 +582,7 @@
           </TableRows>
         </Details>
         <Left>0.8pt</Left>
-        <Top>40.1pt</Top>
+        <Top>53.7pt</Top>
         <Footer>
           <TableRows>
             <TableRow>
@@ -597,6 +597,7 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign>Right</TextAlign>
                       </Style>
                       <Value>Итого:</Value>
                     </Textbox>
@@ -610,9 +611,10 @@
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
-                      <Value>
-                      </Value>
+                      <Value>=Sum({amount_sum})</Value>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -624,7 +626,7 @@
       <Textbox Name="Textbox50">
         <Height>21.67pt</Height>
         <Width>560.59pt</Width>
-        <Value>="Заявка на " +{?quarter} +" квартал " +{?year}+"г. на поставку спецодежды, спецобуви, СИЗ"</Value>
+        <Value>Заявка на поставку спецодежды, спецобуви и СИЗ</Value>
         <ZIndex>1</ZIndex>
         <Left>0.00pt</Left>
         <Top>0.90pt</Top>
@@ -636,158 +638,15 @@
           <FontWeight>Bold</FontWeight>
           <FontSize>16pt</FontSize>
         </Style>
-        <CanGrow >true</CanGrow>
-      </Textbox>
-      <Textbox Name="Textbox15">
-        <Height>12.03pt</Height>
-        <Width>90.36pt</Width>
-        <Value>Согласовано:</Value>
-        <ZIndex>1</ZIndex>
-        <Left>0.0pt</Left>
-        <Top>148.4pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox16">
-        <Height>12.03pt</Height>
-        <Width>90.36pt</Width>
-        <Value>Начальник СЛД</Value>
-        <ZIndex>1</ZIndex>
-        <Left>0.0pt</Left>
-        <Top>168.4pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox17">
-        <Height>12.03pt</Height>
-        <Width>147.36pt</Width>
-        <Value>И.о. главного бухгалтера СЛД</Value>
-        <ZIndex>1</ZIndex>
-        <Left>0.0pt</Left>
-        <Top>198.4pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox18">
-        <Height>12.03pt</Height>
-        <Width>109.11pt</Width>
-        <Value>Ведущий инженер</Value>
-        <ZIndex>1</ZIndex>
-        <Left>0.0pt</Left>
-        <Top>228.4pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox20">
-        <Height>12.03pt</Height>
-        <Width>122.61pt</Width>
-        <Value>Ведущий инженер ОТ</Value>
-        <ZIndex>1</ZIndex>
-        <Left>0.0pt</Left>
-        <Top>288.4pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox21">
-        <Height>12.03pt</Height>
-        <Width>109.11pt</Width>
-        <Value>Председатель ППО</Value>
-        <ZIndex>1</ZIndex>
-        <Left>0.0pt</Left>
-        <Top>258.4pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox31">
-        <Height>12.03pt</Height>
-        <Width>273.36pt</Width>
-        <Value>_____________________(______________________)</Value>
-        <ZIndex>1</ZIndex>
-        <Left>156.70pt</Left>
-        <Top>168.40pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox32">
-        <Height>12.03pt</Height>
-        <Width>273.36pt</Width>
-        <Value>_____________________(______________________)</Value>
-        <ZIndex>1</ZIndex>
-        <Left>156.70pt</Left>
-        <Top>198.40pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox33">
-        <Height>12.03pt</Height>
-        <Width>273.36pt</Width>
-        <Value>_____________________(______________________)</Value>
-        <ZIndex>1</ZIndex>
-        <Left>156.70pt</Left>
-        <Top>228.4pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox34">
-        <Height>12.03pt</Height>
-        <Width>273.36pt</Width>
-        <Value>_____________________(______________________)</Value>
-        <ZIndex>1</ZIndex>
-        <Left>156.70pt</Left>
-        <Top>288.4pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox35">
-        <Height>12.03pt</Height>
-        <Width>273.36pt</Width>
-        <Value>_____________________(______________________)</Value>
-        <ZIndex>1</ZIndex>
-        <Left>156.70pt</Left>
-        <Top>258.4pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
+        <CanGrow>true</CanGrow>
       </Textbox>
       <Textbox Name="Textbox38" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <Height>12.74pt</Height>
         <Width>558.37pt</Width>
         <Value>="Структурное подразделение: " + First({name}, 'Facility')</Value>
         <ZIndex>1</ZIndex>
-        <Left>1.2pt</Left>
-        <Top>23.8pt</Top>
+        <Left>1.7pt</Left>
+        <Top>35.6pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -796,8 +655,23 @@
           <TextAlign>Center</TextAlign>
         </Style>
         <Visibility>
-          <Hidden>={?facility} = -1</Hidden>
+          <Hidden>={?subdivision} = -1</Hidden>
         </Visibility>
+      </Textbox>
+      <Textbox Name="Textbox15">
+        <Height>17.42pt</Height>
+        <Width>560.87pt</Width>
+        <Value>=Iif({?begin_month} = {?end_month} and {?begin_year} = {?end_year}, "на " + MonthName({?begin_month}) + " " +{?begin_year}, "на период: " + MonthName({?begin_month}) + " " +{?begin_year}+ " - " + MonthName({?end_month}) + " " +{?end_year})</Value>
+        <ZIndex>1</ZIndex>
+        <Left>0.0pt</Left>
+        <Top>20.3pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <FontSize>12pt</FontSize>
+          <TextAlign>Center</TextAlign>
+        </Style>
       </Textbox>
     </ReportItems>
   </Body>
@@ -810,94 +684,66 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
+        <CommandText>SELECT
     protection_tools.name AS type_name,
     protection_tools.id AS type_id,
-    CASE (select item_types.wear_category
-    	 	FROM protection_tools_nomenclature
-			LEFT JOIN nomenclature on nomenclature.id = protection_tools_nomenclature.nomenclature_id
-			LEFT JOIN item_types on item_types.id = nomenclature.type_id
-			WHERE protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
-		limit 1)
-        WHEN 'Wear' THEN wear_cards.wear_growth
-        ELSE NULL
-    END AS growth,
-    CASE (select item_types.wear_category
-    	 	FROM protection_tools_nomenclature
-			LEFT JOIN nomenclature on nomenclature.id = protection_tools_nomenclature.nomenclature_id
-			LEFT JOIN item_types on item_types.id = nomenclature.type_id
-			WHERE protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
-		limit 1)
-        WHEN 'Wear' THEN wear_cards.size_wear
-        WHEN 'Shoes' THEN wear_cards.size_shoes
-        WHEN 'WinterShoes' THEN wear_cards.size_winter_shoes
-        WHEN 'Gloves' THEN wear_cards.size_gloves
-        ELSE NULL
-    END AS size,
-    measurement_units.name AS unit,
-    measurement_units.okei AS okei,
-        SUM(CASE
-        WHEN
-            norms_item.period_type = 'Year'
-                OR (norms_item.period_type = 'Month'
-                AND norms_item.period_count &gt;= 3)
-        THEN
-            norms_item.amount
-        WHEN
-            norms_item.period_type = 'Month'
-                AND norms_item.period_count = 1
-        THEN
-            norms_item.amount * 3
-        WHEN
-            norms_item.period_type = 'Month'
-                AND norms_item.period_count = 2
-        THEN
-            norms_item.amount * IF(MONTH(wear_cards_item.next_issue) % 3 = 2,
-                1,
-                2)
-        ELSE NULL
-    END) AS amount_sum
+    CASE item_types.wear_category WHEN 'Wear' THEN wear_cards.wear_growth ELSE NULL
+END AS growth,
+CASE item_types.wear_category WHEN 'Wear' THEN wear_cards.size_wear WHEN 'Shoes' THEN wear_cards.size_shoes WHEN 'WinterShoes' THEN wear_cards.size_winter_shoes WHEN 'Headgear' THEN wear_cards.size_headdress WHEN 'Gloves' THEN wear_cards.size_gloves ELSE NULL
+END AS size,
+measurement_units.name AS unit,
+measurement_units.okei AS okei,
+SUM( count_issue(
+    norms_item.amount, 
+    CASE norms_item.period_type WHEN 'Year' THEN norms_item.period_count * 12 WHEN 'Month' THEN norms_item.period_count ELSE NULL END,
+    MONTH(wear_cards_item.next_issue),
+    YEAR(wear_cards_item.next_issue),
+    @begin_month,
+    @begin_year,
+    @end_month,
+    @end_year)
+) AS amount_sum
 FROM
     wear_cards_item
-        LEFT JOIN
-    wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
-        LEFT JOIN
-    protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
-    	LEFT JOIN item_types ON protection_tools.item_types_id = item_types.id
-        LEFT JOIN
-    measurement_units ON item_types.units_id = measurement_units.id 
-        LEFT JOIN
-    norms_item ON wear_cards_item.norm_item_id = norms_item.id
+LEFT JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
+LEFT JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
+LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+LEFT JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
 WHERE
-(@facility = -1 OR wear_cards.object_id = @facility) AND
-	wear_cards.dismiss_date IS NULL AND
-    wear_cards_item.next_issue &gt;= CONCAT(@year,
-            '-',
-            LPAD((@quarter * 3) - 2, 2, '00'),
-            '-01')
-        AND wear_cards_item.next_issue &lt;= DATE_SUB(DATE_ADD(CONCAT(@year,
-                    '-',
-                    LPAD((@quarter * 3), 2, '00'),
-                    '-01'),
-            INTERVAL 1 MONTH),
-        INTERVAL 1 DAY)
-GROUP BY protection_tools.id, size , growth
-ORDER BY type_name , size , growth</CommandText>
+    (@subdivision = -1 OR wear_cards.object_id = @subdivision) 
+    AND wear_cards.dismiss_date IS NULL 
+    AND wear_cards_item.next_issue &lt; DATE_ADD(CONCAT(@end_year, '-', @end_month, '-01'), INTERVAL 1 MONTH)
+GROUP BY
+    protection_tools.id,
+    size,
+    growth
+HAVING amount_sum &gt; 0
+ORDER BY
+    type_name,
+    size,
+    growth</CommandText>
         <QueryParameters>
-          <QueryParameter Name="year">
-            <Value>={?year}</Value>
+          <QueryParameter Name="begin_year">
+            <Value>={?begin_year}</Value>
           </QueryParameter>
-          <QueryParameter Name="quarter">
-            <Value>={?quarter}</Value>
+          <QueryParameter Name="begin_month">
+            <Value>={?begin_month}</Value>
           </QueryParameter>
-          <QueryParameter Name="facility">
-            <Value>={?facility}</Value>
+          <QueryParameter Name="subdivision">
+            <Value>={?subdivision}</Value>
+          </QueryParameter>
+          <QueryParameter Name="end_month">
+            <Value>={?end_month}</Value>
+          </QueryParameter>
+          <QueryParameter Name="end_year">
+            <Value>={?end_year}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="type_name">
           <DataField>type_name</DataField>
           <TypeName>System.String</TypeName>
@@ -929,16 +775,16 @@ ORDER BY type_name , size , growth</CommandText>
       </Fields>
     </DataSet>
     <DataSet Name="Facility">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT objects.name FROM objects WHERE objects.id = @facility</CommandText>
         <QueryParameters>
           <QueryParameter Name="@facility">
-            <Value>={?facility}</Value>
+            <Value>={?subdivision}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="name">
           <DataField>name</DataField>
           <TypeName>System.String</TypeName>
@@ -956,7 +802,20 @@ ORDER BY type_name , size , growth</CommandText>
     </DataSource>
   </DataSources>
   <ReportParameters>
-    <ReportParameter Name="quarter">
+    <ReportParameter Name="subdivision">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="begin_month">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
@@ -969,7 +828,7 @@ ORDER BY type_name , size , growth</CommandText>
       <Prompt>
       </Prompt>
     </ReportParameter>
-    <ReportParameter Name="year">
+    <ReportParameter Name="begin_year">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
@@ -982,17 +841,21 @@ ORDER BY type_name , size , growth</CommandText>
       <Prompt>
       </Prompt>
     </ReportParameter>
-    <ReportParameter Name="facility">
+    <ReportParameter Name="end_month">
       <DataType>Integer</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>-1</Value>
-        </Values>
-      </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="end_year">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
     </ReportParameter>
   </ReportParameters>
 </Report>
