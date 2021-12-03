@@ -5610,7 +5610,7 @@
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Заявка на спецодежду</property>
         <property name="ShortLabel" translatable="yes">Месячная заявка</property>
-        <signal name="Activated" handler="OnAction21Activated" />
+        <signal name="Activated" handler="OnActionRequestSheetActivated" />
       </action>
       <action id="ActionAverageAnnualNeed">
         <property name="Type">Action</property>
@@ -7235,7 +7235,6 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Label" translatable="yes">на месяц</property>
-                <property name="Active">True</property>
                 <property name="DrawIndicator">True</property>
                 <property name="HasLabel">True</property>
                 <property name="UseUnderline">True</property>
@@ -7976,7 +7975,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.RequestSheetDlg" design-size="411 154">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.RequestSheetView" design-size="411 159">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -8042,6 +8041,7 @@
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
                     <property name="Label" translatable="yes">Месяц</property>
+                    <property name="Active">True</property>
                     <property name="DrawIndicator">True</property>
                     <property name="HasLabel">True</property>
                     <property name="UseUnderline">True</property>
@@ -8141,7 +8141,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Label" id="labelPeriodType">
+              <widget class="Gamma.GtkWidgets.yLabel" id="labelPeriodType">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Квартал:</property>

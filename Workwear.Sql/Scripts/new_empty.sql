@@ -1464,6 +1464,34 @@ CREATE TABLE IF NOT EXISTS `protection_tools_nomenclature` (
   PRIMARY KEY (`protection_tools_id`, `nomenclature_id`))
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- function count_issue
+-- -----------------------------------------------------
+
+DELIMITER $$
+CREATE FUNCTION `count_issue`(`amount` INT UNSIGNED, `norm_period` INT UNSIGNED, `next_month` INT UNSIGNED, `next_year` INT UNSIGNED, `begin_month` INT UNSIGNED, `begin_year` INT UNSIGNED, `end_month` INT UNSIGNED, `end_year` INT UNSIGNED) RETURNS int(10) unsigned
+    NO SQL
+    DETERMINISTIC
+    COMMENT 'Функция рассчитывает количество необходимое к выдачи.'
+BEGIN
+DECLARE issue_count, total_month_next, total_month_begin, total_month_end INT;
+
+SET total_month_begin = begin_month + begin_year * 12;
+SET total_month_end = end_month + end_year * 12;
+
+SET issue_count = 0;
+SET total_month_next = next_month + next_year * 12;
+
+WHILE total_month_next <= total_month_end DO
+    IF total_month_next >= total_month_begin THEN 
+    	SET issue_count = issue_count + amount;
+    END IF;
+  SET total_month_next = total_month_next + norm_period;  
+  END WHILE;
+RETURN issue_count;
+END$$
+
+DELIMITER ;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
@@ -1493,10 +1521,25 @@ COMMIT;
 -- Data for table `measurement_units`
 -- -----------------------------------------------------
 START TRANSACTION;
-INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (DEFAULT, 'шт.', 0, '796');
-INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (DEFAULT, 'пара', 0, '715');
-INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (DEFAULT, 'компл.', 0, '839');
-INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (DEFAULT, 'набор', 0, '704');
+INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (1, 'шт.', 0, '796');
+INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (2, 'пара', 0, '715');
+INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (3, 'компл.', 0, '839');
+INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (4, 'набор', 0, '704');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `item_types`
+-- -----------------------------------------------------
+START TRANSACTION;
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `units_id`, `norm_life`, `comment`) VALUES (DEFAULT, 'Одежда', 'wear', 'Wear', 1, NULL, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `units_id`, `norm_life`, `comment`) VALUES (DEFAULT, 'Обувь', 'wear', 'Shoes', 2, NULL, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `units_id`, `norm_life`, `comment`) VALUES (DEFAULT, 'Зимняя обувь', 'wear', 'WinterShoes', 2, NULL, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `units_id`, `norm_life`, `comment`) VALUES (DEFAULT, 'Головные уборы', 'wear', 'Headgear', 1, NULL, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `units_id`, `norm_life`, `comment`) VALUES (DEFAULT, 'Перчатки', 'wear', 'Gloves', 2, NULL, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `units_id`, `norm_life`, `comment`) VALUES (DEFAULT, 'Варежки', 'wear', 'Mittens', 2, NULL, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `units_id`, `norm_life`, `comment`) VALUES (DEFAULT, 'СИЗ', 'wear', 'PPE', 1, NULL, NULL);
 
 COMMIT;
 

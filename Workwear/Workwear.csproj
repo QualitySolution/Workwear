@@ -162,7 +162,6 @@
     <Compile Include="ReportsDlg\OnIssueStatement.cs" />
     <Compile Include="gtk-gui\workwear.OnIssueStatement.cs" />
     <Compile Include="ConfigureDeletion.cs" />
-    <Compile Include="ReportsDlg\RequestSheetDlg.cs" />
     <Compile Include="Representations\ObjectBalanceVM.cs" />
     <Compile Include="JournalFilters\ObjectBalanceFilter.cs" />
     <Compile Include="gtk-gui\workwear.ObjectBalanceFilter.cs" />
@@ -170,7 +169,6 @@
     <Compile Include="Domain\User\UserSettings.cs" />
     <Compile Include="HibernateMapping\User\UserSettingsMap.cs" />
     <Compile Include="Tools\CurrentUserSettings.cs" />
-    <Compile Include="gtk-gui\workwear.RequestSheetDlg.cs" />
     <Compile Include="Domain\Regulations\RegulationDoc.cs" />
     <Compile Include="Domain\Regulations\RegulationDocAnnex.cs" />
     <Compile Include="HibernateMapping\Regulations\RegulationDocAnnexMap.cs" />
@@ -383,6 +381,9 @@
     <Compile Include="ViewModels\IdentityCards\ReadCardViewModel.cs" />
     <Compile Include="Views\IdentityCards\ReadCardView.cs" />
     <Compile Include="gtk-gui\workwear.Views.IdentityCards.ReadCardView.cs" />
+    <Compile Include="ReportParameters\Views\RequestSheetView.cs" />
+    <Compile Include="ReportParameters\ViewModels\RequestSheetViewModel.cs" />
+    <Compile Include="gtk-gui\workwear.ReportParameters.Views.RequestSheetView.cs" />
     <Compile Include="Views\Company\EmployeeChilds\EmployeePhotoView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeePhotoView.cs" />
     <Compile Include="ViewModels\Company\EmployeeChilds\EmployeePhotoViewModel.cs" />
@@ -713,13 +714,10 @@
     <None Include="Reports\NotIssuedSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Reports\QuarterRequestSheet.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Reports\AverageAnnualNeed.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Reports\MonthRequestSheet.rdl">
+    <None Include="Reports\RequestSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="RdlEngineConfig.Linux.xml">
@@ -727,9 +725,6 @@
     </None>
     <None Include="RdlEngineConfig.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Reports\YearRequestSheet.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Condition=" '$(TargetOS)' == 'Win' " Include="../lib/WinOnly/Mono.Posix.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
