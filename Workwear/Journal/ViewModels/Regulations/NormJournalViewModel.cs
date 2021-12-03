@@ -40,6 +40,13 @@ namespace workwear.Journal.ViewModels.Regulations
 			NormItem normItemAlias = null;
 			RegulationDoc regulationDocAlias = null;
 			RegulationDocAnnex docAnnexAlias = null;
+			EmployeeCard employeeAlias = null;
+			Norm usedNormAlias = null;
+
+			var employeesSubquery = QueryOver.Of<EmployeeCard>(() => employeeAlias)
+				.JoinQueryOver(e => e.UsedNorms, () => usedNormAlias)
+				.Where(() => usedNormAlias.Id == normAlias.Id)
+				.ToRowCountQuery();
 
 			var norms = uow.Session.QueryOver<Norm>(() => normAlias)
 				.JoinAlias(n => n.Document, () => regulationDocAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
@@ -65,6 +72,7 @@ namespace workwear.Journal.ViewModels.Regulations
 				   .Select(() => docAnnexAlias.Number).WithAlias(() => resultAlias.AnnexNumber)
 				   .Select(() => normAlias.TONParagraph).WithAlias(() => resultAlias.TonParagraph)
 				   .Select(() => normAlias.Name).WithAlias(() => resultAlias.Name)
+				   .SelectSubQuery(employeesSubquery).WithAlias(() => resultAlias.Usages)
 				   .Select(Projections.SqlFunction(
 					   new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT( CONCAT_WS(' ', ?1, CONCAT('[', ?2 ,']')) SEPARATOR ?3)"),
 					   NHibernateUtil.String,
@@ -117,5 +125,7 @@ namespace workwear.Journal.ViewModels.Regulations
 		public string TonParagraph { get; set; }
 
 		public string Posts { get; set; }
+
+		public int Usages { get; set; }
 	}
 }

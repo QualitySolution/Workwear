@@ -89,6 +89,7 @@ namespace workwear.Journal
 					.AddColumn("№ ТОН").AddTextRenderer(node => node.TonNumber)
 					.AddColumn("№ Приложения").AddTextRenderer(node => node.TonAttachment)
 					.AddColumn("№ Пункта").AddTextRenderer(node => node.TonParagraph).SearchHighlight()
+					.AddColumn("Использована").AddTextRenderer(node => node.Usages.ToString())
 					.AddColumn("Должности[Подразделения]").AddTextRenderer(node => node.Posts).SearchHighlight()
 					.Finish()
 			);
