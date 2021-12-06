@@ -23,6 +23,7 @@ namespace workwear.Journal.ViewModels.Stock
 			UseSlider = true;
 
 			JournalFilter = Filter = autofacScope.Resolve<NomenclatureFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			MakePopup();
 		}
 
 		protected override IQueryOver<Nomenclature> ItemsQuery(IUnitOfWork uow)
@@ -51,6 +52,25 @@ namespace workwear.Journal.ViewModels.Stock
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<NomenclatureJournalNode>());
 		}
+
+		#region Popup
+		private void MakePopup()
+		{
+			PopupActionsList.Add(new JournalAction("Открыть складские движения", n => true, n => true, OpenMovements));
+		}
+
+		private void OpenMovements(object[] nodes)
+		{
+			foreach(NomenclatureJournalNode node in nodes) {
+				//Создаем заглушку для передачи id, чтобы не создавать лишнее обращение к базе, за полноценным объектом
+				var nomenclature = new Nomenclature {
+					Id = node.Id
+				};
+				NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(this, 
+					addingRegistrations: builder => builder.RegisterInstance(nomenclature));
+			}
+		}
+		#endregion
 	}
 
 	public class NomenclatureJournalNode

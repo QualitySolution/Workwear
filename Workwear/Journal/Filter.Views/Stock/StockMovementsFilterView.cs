@@ -16,9 +16,21 @@ namespace workwear.Journal.Filter.Views.Stock
 				.InitializeFromSource();
 
 			labelStockPosition.Binding.AddFuncBinding(ViewModel, v => v.StockPositionTitle, w => w.LabelProp).InitializeFromSource();
-			entityWarehouse.ViewModel = ViewModel.WarehouseEntry;
 			entityWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
 			labelWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
+			comboSize.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.SensitiveSize, w => w.Sensitive)
+				.AddBinding(v => v.Size, w => w.ActiveText)
+				.AddBinding(v => v.Sizes, w => w.ItemsList)
+				.InitializeFromSource();
+			comboGrowth.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.SensitiveGrowth, w => w.Sensitive)
+				.AddBinding(v => v.Growth, w => w.ActiveText)
+				.AddBinding(v => v.Growths, w => w.ItemsList)
+				.InitializeFromSource();
+
+			entryNomenclature.ViewModel = ViewModel.EntryNomenclature;
+			entityWarehouse.ViewModel = ViewModel.WarehouseEntry;
 		}
 	}
 }

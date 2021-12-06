@@ -182,11 +182,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 		public string BalanceText => Amount > 0 ? String.Format("{0} {1}", Amount, UnitsName) : String.Format("<span foreground=\"red\">{0}</span> {1}", Amount, UnitsName);
 
-		public string WearPercentText {
-			get {
-				return WearPercent.ToString("P0");
-			}
-		}
+		public string WearPercentText => WearPercent.ToString("P0");
 
 		public StockPosition GetStockPosition(IUnitOfWork uow)
 		{

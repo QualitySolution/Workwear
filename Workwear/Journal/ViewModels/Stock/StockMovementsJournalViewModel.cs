@@ -79,11 +79,40 @@ namespace workwear.Journal.ViewModels.Stock
 				queryStock.Where(x => x.WearPercent == Filter.StockPosition.WearPercent);
 			}
 
-			var directionProjection = Projections.Conditional(
-				Restrictions.Eq(Projections.Property<WarehouseOperation>(x => x.ReceiptWarehouse.Id), Filter.Warehouse?.Id),
-				Projections.Constant(true),
-				Projections.Constant(false)
+			if(Filter.Nomenclature != null)
+				queryStock.Where(x => x.Nomenclature == Filter.Nomenclature);
+
+			if(!String.IsNullOrWhiteSpace(Filter.Size))
+				queryStock.Where(x => x.Size == Filter.Size);
+
+			if(!String.IsNullOrWhiteSpace(Filter.Growth))
+				queryStock.Where(x => x.Growth == Filter.Growth);
+
+			IProjection receptProjection, expenseProjection;
+			if(Filter.Warehouse != null) {
+				receptProjection = Projections.Conditional(
+						Restrictions.Eq(Projections.Property<WarehouseOperation>(x => x.ReceiptWarehouse.Id), Filter.Warehouse.Id),
+						Projections.Constant(true),
+						Projections.Constant(false)
+					);
+				expenseProjection = Projections.Conditional(
+					Restrictions.Eq(Projections.Property<WarehouseOperation>(x => x.ExpenseWarehouse.Id), Filter.Warehouse.Id),
+					Projections.Constant(true),
+					Projections.Constant(false)
+				); 
+			}
+			else {
+				receptProjection = Projections.Conditional(
+						Restrictions.IsNotNull(Projections.Property<WarehouseOperation>(x => x.ReceiptWarehouse.Id)),
+						Projections.Constant(true),
+						Projections.Constant(false)
+					);
+				expenseProjection = Projections.Conditional(
+					Restrictions.IsNotNull(Projections.Property<WarehouseOperation>(x => x.ExpenseWarehouse.Id)),
+					Projections.Constant(true),
+					Projections.Constant(false)
 				);
+			}
 
 			return queryStock
 				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
@@ -98,10 +127,15 @@ namespace workwear.Journal.ViewModels.Stock
 				    .Select(() => warehouseOperationAlias.Id).WithAlias(() => resultAlias.Id)
 				    .Select(() => warehouseOperationAlias.OperationTime).WithAlias(() => resultAlias.OperationTime)
 				    .Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
-				    .Select(directionProjection).WithAlias(() => resultAlias.Receipt)
-				    .Select(() => warehouseOperationAlias.Amount).WithAlias(() => resultAlias.Amount)
-				   	//Ссылки
-				   	.Select(() => expenseItemAlias.Id).WithAlias(() => resultAlias.ExpenceItemId)
+				    .Select(receptProjection).WithAlias(() => resultAlias.Receipt)
+					.Select(expenseProjection).WithAlias(() => resultAlias.Expense)
+					.Select(() => warehouseOperationAlias.Amount).WithAlias(() => resultAlias.Amount)
+					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
+					.Select(() => warehouseOperationAlias.Size).WithAlias(() => resultAlias.Size)
+					.Select(() => warehouseOperationAlias.Growth).WithAlias(() => resultAlias.Growth)
+					.Select(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
+					//Ссылки
+					.Select(() => expenseItemAlias.Id).WithAlias(() => resultAlias.ExpenceItemId)
 					.Select(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenceId)
 					.Select(() => collectiveExpenseItemAlias.Id).WithAlias(() => resultAlias.CollectiveExpenseItemId)
 					.Select(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
@@ -139,12 +173,30 @@ namespace workwear.Journal.ViewModels.Stock
 	{
 		public int Id { get; set; }
 		public DateTime OperationTime { get; set; }
+		public string NomenclatureName { get; set; }
 		public string UnitsName { get; set; }
 		public bool Receipt { get; set; }
+		public bool Expense { get; set; }
+		public string Size { get; set; }
+		public string Growth { get; set; }
+		public decimal WearPercent { get; set; }
 		public int Amount { get; set; }
 
-		public string AmountText => Receipt ? String.Format("{0} {1}", Amount, UnitsName) : String.Format("<span foreground=\"Blue\">-{0}</span> {1}", Amount, UnitsName);
+		public string AmountText => $"{Direction} {Amount} {UnitsName}";
 		public string OperationTimeText => OperationTime.ToString("g");
+		public string WearPercentText => WearPercent.ToString("P0");
 		public string DocumentText => DocumentType != null ? DocumentTitle : null;
+
+		public string Direction {
+			get {
+				if(Expense && Receipt)
+					return "<span foreground=\"Blue\" weight=\"ultrabold\">±</span>";
+				if(Receipt)
+					return "<span foreground=\"Green\" weight=\"ultrabold\">+</span>";
+				if(Expense)
+					return "<span foreground=\"Red\" weight=\"ultrabold\">-</span>";
+				return "<span foreground=\"Fuchsia\" weight=\"ultrabold\">?</span>";
+			}
+		}
 	}
 }

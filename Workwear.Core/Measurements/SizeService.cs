@@ -32,6 +32,34 @@ namespace Workwear.Measurements
 		};
 		#endregion
 
+		#region Проверки наличия размеров
+		/// <summary>
+		/// Проверяем нужно ли использовать размеры для текущего типа спецодежды
+		/// </summary>
+		/// <returns><c>true</c> если надо. При передаче null тоже будет <c>false</c></returns>
+		/// <param name="wearCategory">Wear category.</param>
+		public bool HasSize(СlothesType? wearCategory)
+		{
+			if(wearCategory == null)
+				return false;
+			var att = wearCategory.GetAttributes<SizeStandartsAttribute>();
+			return att.Length > 0;
+		}
+
+		/// <summary>
+		/// Проверяет нужно ли использовать рост(Growth) для текущего типа одежды
+		/// </summary>
+		/// <returns><c>true</c>, если нужно, <c>false</c>, если не нужно. При передаче null тоже будет <c>false</c></returns>
+		/// <param name="wearCategory">Тип одежды (enum).</param>
+		public bool HasGrowth(СlothesType? wearCategory)
+		{
+			if(wearCategory == null)
+				return false;
+			var att = wearCategory.GetAttribute<NeedGrowthAttribute>();
+			return att != null;
+		}
+		#endregion
+
 		#region Работа с кодами стандартов
 
 		public string GetSizeStdCode(object standartEnum)

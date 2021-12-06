@@ -138,6 +138,7 @@ namespace workwear
 			builder.RegisterModule(new DeletionAutofacModule());
 			builder.RegisterType<DeleteEntityGUIService>().As<IDeleteEntityService>();
 			builder.Register(x => DeleteConfig.Main).AsSelf().ExternallyOwned();
+			builder.RegisterType<ReplaceEntity>().AsSelf();
  			#endregion
 			//FIXME Нужно в конечнои итоге попытаться избавится от CommonServce вообще.
 			builder.RegisterType<CommonServices>().As<ICommonServices>();
