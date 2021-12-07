@@ -14,6 +14,7 @@ using QS.Services;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Regulations;
+using workwear.Journal.ViewModels.Company;
 using workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations
@@ -86,30 +87,29 @@ namespace workwear.Journal.ViewModels.Regulations
 		}
 
 		#region Popupmenu action implementation
-
-		protected override List<IJournalAction> PopupActionsList { get; set; } = new List<IJournalAction>();
-		/// <summary>
-		/// Действия, выполняемые в popup меню.
-		/// </summary>
-		public override IEnumerable<IJournalAction> PopupActions => base.PopupActions; 
 		protected override void CreatePopupActions()
 		{
-			IEnumerable<IJournalAction> popupmenuActions = new List<IJournalAction> {
-				new JournalAction("Копировать норму",(arg) => true,(arg) => arg.Length == 1,CopyNorm)
-			};
-			PopupActionsList.AddRange(popupmenuActions);
+			PopupActionsList.Add(new JournalAction("Копировать норму", (arg) => true, (arg) => arg.Length == 1, CopyNorm));
+			PopupActionsList.Add(new JournalAction("Сотрудники использующие норму", (arg) => true, (arg) => arg.Length >= 1, ShowEmployees));
 		}
+
 		private void CopyNorm(object[] nodes)
 		{
 			if(nodes.Length != 1)
 				return;
 			int normId = (nodes[0] as NormJournalNode).Id;
-			var page = NavigationManager.OpenViewModel<NormViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForCreate());
+			var page = NavigationManager.OpenViewModel<NormViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
 			page.ViewModel.CopyNormFrom(normId);
+		}
+
+		private void ShowEmployees(object[] nodes)
+		{
+			foreach(NormJournalNode node in nodes) {
+				NavigationManager.OpenViewModel<EmployeeJournalViewModel, Norm>(this, new Norm {Id = node.Id}, OpenPageOptions.IgnoreHash); //Фейковая норма для передачи id
+			}
 		}
 		#endregion
 	}
-
 	public class NormJournalNode
 	{
 		public int Id { get; set; }
