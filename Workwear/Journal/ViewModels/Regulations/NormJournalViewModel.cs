@@ -11,6 +11,7 @@ using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using QS.Utilities;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Regulations;
@@ -49,6 +50,13 @@ namespace workwear.Journal.ViewModels.Regulations
 				.Where(() => usedNormAlias.Id == normAlias.Id)
 				.ToRowCountQuery();
 
+			var employeesWorkedSubquery = QueryOver.Of<EmployeeCard>(() => employeeAlias)
+				.Where(e => e.DismissDate == null)
+				.JoinQueryOver(e => e.UsedNorms, () => usedNormAlias)
+				.Where(() => usedNormAlias.Id == normAlias.Id)
+				.ToRowCountQuery();
+
+
 			var norms = uow.Session.QueryOver<Norm>(() => normAlias)
 				.JoinAlias(n => n.Document, () => regulationDocAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(n => n.Annex, () => docAnnexAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
@@ -74,6 +82,7 @@ namespace workwear.Journal.ViewModels.Regulations
 				   .Select(() => normAlias.TONParagraph).WithAlias(() => resultAlias.TonParagraph)
 				   .Select(() => normAlias.Name).WithAlias(() => resultAlias.Name)
 				   .SelectSubQuery(employeesSubquery).WithAlias(() => resultAlias.Usages)
+				   .SelectSubQuery(employeesWorkedSubquery).WithAlias(() => resultAlias.UsagesWorked)
 				   .Select(Projections.SqlFunction(
 					   new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT( CONCAT_WS(' ', ?1, CONCAT('[', ?2 ,']')) SEPARATOR ?3)"),
 					   NHibernateUtil.String,
@@ -127,5 +136,13 @@ namespace workwear.Journal.ViewModels.Regulations
 		public string Posts { get; set; }
 
 		public int Usages { get; set; }
+
+		public int UsagesWorked { get; set; }
+
+		public string UsageText => Usages == UsagesWorked ? Usages.ToString() : $"{Usages}({UsagesWorked})";
+		public string UsageToolTip => Usages == UsagesWorked ? totalUsage : totalUsage + workedUsage;
+
+		private string totalUsage => NumberToTextRus.FormatCase(Usages, "Применена к {0} сотруднику", "Применена к {0} сотрудникам", "Применена к {0} сотрудникам");
+		private string workedUsage => NumberToTextRus.FormatCase(UsagesWorked, " (из них {0} работающий)", " (из них {0} работающих)", " (из них {0} работающих)");
 	}
 }
