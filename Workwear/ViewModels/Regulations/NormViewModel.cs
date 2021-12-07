@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using QS.Dialog;
@@ -39,13 +39,13 @@ namespace workwear.ViewModels.Regulations
 
 		#region Sensetive
 
-		private bool saveSensitive;
+		private bool saveSensitive = true;
 		public virtual bool SaveSensitive {
 			get => saveSensitive;
 			set => SetField(ref saveSensitive, value);
 		}
 
-		private bool cancelSensitive;
+		private bool cancelSensitive = true;
 		public virtual bool CancelSensitive {
 			get => cancelSensitive;
 			set => SetField(ref cancelSensitive, value);

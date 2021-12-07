@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -6307,7 +6307,7 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gtk.Button" id="buttonSave">
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonSave">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
@@ -6323,7 +6323,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Button" id="buttonCancel">
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonCancel">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Gamma.ColumnConfig;
 using QS.Views.Dialog;
 using workwear.Domain.Company;
@@ -56,15 +56,8 @@ namespace workwear.Views.Regulations
 			ytreeItems.ItemsDataSource = Entity.ObservableItems;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 
-			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-		}
-
-		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(e.PropertyName == nameof(ViewModel.SaveSensitive))
-				buttonSave.Sensitive = ViewModel.SaveSensitive;
-			if(e.PropertyName == nameof(ViewModel.CancelSensitive))
-				buttonCancel.Sensitive = ViewModel.CancelSensitive;
+			buttonSave.Binding.AddBinding(ViewModel, v => v.SaveSensitive, w => w.Sensitive).InitializeFromSource();
+			buttonCancel.Binding.AddBinding(ViewModel, v => v.CancelSensitive, w => w.Sensitive).InitializeFromSource();
 		}
 
 		void YtreeItems_Selection_Changed (object sender, EventArgs e)
