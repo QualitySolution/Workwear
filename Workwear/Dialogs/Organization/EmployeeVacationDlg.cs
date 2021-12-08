@@ -48,7 +48,7 @@ namespace workwear.Dialogs.Organization
 			if(valid.RunDlgIfNotValid((Gtk.Window)this.Toplevel))
 				return false;
 			var baseParameters = new BaseParameters(UoW.Session.Connection);
-			Entity.UpdateRelatedOperations(UoW, baseParameters, new GtkQuestionDialogsInteractive());
+			Entity.UpdateRelatedOperations(UoW, new Repository.Operations.EmployeeIssueRepository(), baseParameters, new GtkQuestionDialogsInteractive());
 			UoW.Save(Entity.Employee);
 
 			UoWGeneric.Save();

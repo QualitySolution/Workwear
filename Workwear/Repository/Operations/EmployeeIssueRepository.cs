@@ -36,19 +36,6 @@ namespace workwear.Repository.Operations
 			return query.OrderBy(x => x.OperationTime).Desc.List();
 		}
 
-		[Obsolete("Используйте нестатический класс для этого запроса.")]
-		public static Func<IUnitOfWork, EmployeeCard, DateTime, DateTime, IList<EmployeeIssueOperation>> GetOperationsTouchDatesTestGap;
-		[Obsolete("Используйте нестатический класс для этого запроса.")]
-		public static IList<EmployeeIssueOperation> GetOperationsTouchDates(IUnitOfWork uow, EmployeeCard employee, DateTime begin, DateTime end, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null)
-		{
-			if(GetOperationsTouchDatesTestGap != null)
-				return GetOperationsTouchDatesTestGap(uow, employee, begin, end);
-
-			var instance = new EmployeeIssueRepository();
-
-			return instance.GetOperationsTouchDates(uow, new[] { employee }, begin, end, makeEager);
-		}
-
 		/// <summary>
 		/// Получаем операции выдачи выполненые в определенные даты.
 		/// </summary>
@@ -69,7 +56,7 @@ namespace workwear.Repository.Operations
 		/// <summary>
 		/// Получаем операции числящееся по сотрудникам которых затрагивает опеределенны диапазон дат.
 		/// </summary>
-		public IList<EmployeeIssueOperation> GetOperationsTouchDates(IUnitOfWork uow, EmployeeCard[] employees, DateTime begin, DateTime end, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null) { 
+		public virtual IList<EmployeeIssueOperation> GetOperationsTouchDates(IUnitOfWork uow, EmployeeCard[] employees, DateTime begin, DateTime end, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null) { 
 
 			var employeeIds = employees.Select(x => x.Id).Distinct().ToArray();
 

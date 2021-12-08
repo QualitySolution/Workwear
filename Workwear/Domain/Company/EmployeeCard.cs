@@ -665,9 +665,9 @@ namespace workwear.Domain.Company
 
 		#endregion
 
-		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, DateTime begin, DateTime end)
+		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow, EmployeeIssueRepository employeeIssueRepository, BaseParameters baseParameters, IInteractiveQuestion askUser, DateTime begin, DateTime end)
 		{
-			var operations = EmployeeIssueRepository.GetOperationsTouchDates(uow, this, begin, end,
+			var operations = employeeIssueRepository.GetOperationsTouchDates(uow, new[] { this }, begin, end,
 				q => q.Fetch(SelectMode.Fetch, o => o.ProtectionTools)
 			);
 			foreach(var typeGroup in operations.GroupBy(o => o.ProtectionTools)) {
