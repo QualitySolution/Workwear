@@ -179,7 +179,7 @@ namespace workwear.ViewModels.Regulations
 		{
 			var page = NavigationManager.FindPage((DialogViewModelBase)sender);
 			var item = (NormItem)page.Tag;
-			var newProtectionTools = UoW.GetById<ProtectionTools>(e.GetId());
+			var newProtectionTools = UoW.GetById<ProtectionTools>(e.GetSelectedObjects<ProtectionToolsJournalNode>().First().Id);
 			item.ProtectionTools = newProtectionTools;
 
 			if(item.Id > 0) {
