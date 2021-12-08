@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Gamma.ColumnConfig;
 using QS.Views.Dialog;
 using workwear.Domain.Company;
@@ -62,7 +62,7 @@ namespace workwear.Views.Regulations
 
 		void YtreeItems_Selection_Changed (object sender, EventArgs e)
 		{
-			buttonRemoveItem.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
+			buttonRemoveItem.Sensitive = buttonReplaceNomeclature.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
 		}
 
 		#region Профессии
@@ -99,6 +99,10 @@ namespace workwear.Views.Regulations
 			ViewModel.RemoveItem(ytreeItems.GetSelectedObject<NormItem>());
 		}
 
+		protected void OnButtonReplaceNomeclatureClicked(object sender, EventArgs e)
+		{
+			ViewModel.ReplaceNomenclature(ytreeItems.GetSelectedObject<NormItem>());
+		}
 		#endregion
 
 		protected void OnYentryRegulationDocChanged(object sender, EventArgs e)

@@ -16,7 +16,6 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Measurements;
-using workwear.Repository.Company;
 using workwear.Repository.Operations;
 using workwear.Repository.Regulations;
 using workwear.Repository.Stock;

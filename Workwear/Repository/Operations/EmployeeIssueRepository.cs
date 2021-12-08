@@ -94,6 +94,20 @@ namespace workwear.Repository.Operations
 			return query.OrderBy(x => x.OperationTime).Asc.List();
 		}
 
+		/// <summary>
+		/// Получаем все операции выдачи выданные по указанной строке нормы.
+		/// </summary>
+		/// <returns></returns>
+		public IList<EmployeeIssueOperation> GetOperationsForNormItem(NormItem normItem, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null)
+		{
+			var query = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>()
+				.Where(o => o.NormItem == normItem);
+
+			makeEager?.Invoke(query);
+
+			return query.List();
+		}
+
 		public IList<OperationToDocumentReference> GetReferencedDocuments(params int[] operationsIds)
 		{
 			OperationToDocumentReference docAlias = null;

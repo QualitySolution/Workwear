@@ -118,6 +118,7 @@
     <EmbeddedResource Include="icon\buttons\dice.png" />
     <EmbeddedResource Include="icon\toolbar\store-movements.png" />
     <EmbeddedResource Include="icon\buttons\menu.png" />
+    <EmbeddedResource Include="icon\buttons\arrows.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
