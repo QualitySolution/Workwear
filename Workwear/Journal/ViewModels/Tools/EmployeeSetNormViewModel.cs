@@ -121,6 +121,14 @@ namespace workwear.Journal.ViewModels.Tools
 					);
 			NodeActionsList.Add(loadAllAction);
 
+			var editAction = new JournalAction("Открыть сотрудника",
+					(selected) => selected.Any(),
+					(selected) => VisibleEditAction,
+					(selected) => selected.Cast<EmployeeSetNormJournalNode>().ToList().ForEach(EditEntityDialog)
+					);
+			NodeActionsList.Add(editAction);
+			RowActivatedAction = editAction;
+
 			var updateStatusAction = new JournalAction("Установить по должности",
 					(selected) => selected.Any(),
 					(selected) => true,
@@ -128,7 +136,7 @@ namespace workwear.Journal.ViewModels.Tools
 					);
 			NodeActionsList.Add(updateStatusAction);
 
-			var UpdateNextIssueAction = new JournalAction("Обновить потребности",
+			var UpdateNextIssueAction = new JournalAction("Обновить даты след. получения",
 					(selected) => selected.Any(),
 					(selected) => true,
 					(selected) => UpdateItems(selected.Cast<EmployeeSetNormJournalNode>().ToArray())
