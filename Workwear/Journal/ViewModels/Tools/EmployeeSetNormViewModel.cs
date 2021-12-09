@@ -8,6 +8,7 @@ using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.Dialog.ViewModels;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.DB;
@@ -19,9 +20,12 @@ using QS.Utilities;
 using QS.Utilities.Text;
 using QS.ViewModels.Resolve;
 using workwear.Domain.Company;
+using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
+using workwear.Repository.Operations;
 using workwear.Repository.Regulations;
+using workwear.Tools;
 using workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Tools
@@ -29,19 +33,23 @@ namespace workwear.Journal.ViewModels.Tools
 	[DontUseAsDefaultViewModel]
 	public class EmployeeSetNormViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeSetNormJournalNode>
 	{
+		private readonly IInteractiveService interactive;
 		private readonly NormRepository normRepository;
+		private readonly BaseParameters baseParameters;
 
 		public EmployeeFilterViewModel Filter { get; private set; }
 
 		public EmployeeSetNormViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
-										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, NormRepository normRepository, ICurrentPermissionService currentPermissionService = null) 
+			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, 
+			NormRepository normRepository, BaseParameters baseParameters,
+			ICurrentPermissionService currentPermissionService = null) 
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = false;
 			Title = "Установка норм сотрудникам";
-
+			this.interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
-
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			AutofacScope = autofacScope;
 			JournalFilter = Filter = AutofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
@@ -67,7 +75,6 @@ namespace workwear.Journal.ViewModels.Tools
 			Subdivision subdivisionAlias = null;
 			EmployeeCard employeeAlias = null;
 			Norm normAlias = null;
-
 
 			var employees = uow.Session.QueryOver<EmployeeCard>(() => employeeAlias);
 			if(Filter.ShowOnlyWork)
@@ -136,12 +143,25 @@ namespace workwear.Journal.ViewModels.Tools
 					);
 			NodeActionsList.Add(updateStatusAction);
 
-			var UpdateNextIssueAction = new JournalAction("Обновить даты след. получения",
+			var RecalculateAction = new JournalAction("Пересчитать",
+					(selected) => selected.Any(),
+					(selected) => true
+					);
+			NodeActionsList.Add(RecalculateAction);
+
+			var UpdateNextIssueAction = new JournalAction("Даты следующего получения",
 					(selected) => selected.Any(),
 					(selected) => true,
-					(selected) => UpdateItems(selected.Cast<EmployeeSetNormJournalNode>().ToArray())
+					(selected) => UpdateNextIssue(selected.Cast<EmployeeSetNormJournalNode>().ToArray())
 					);
-			NodeActionsList.Add(UpdateNextIssueAction);
+			RecalculateAction.ChildActionsList.Add(UpdateNextIssueAction);
+
+			var UpdateLastIssueAction = new JournalAction("Сроки носки у полученного",
+					(selected) => selected.Any(),
+					(selected) => true,
+					(selected) => UpdateLastIssue(selected.Cast<EmployeeSetNormJournalNode>().ToArray())
+					);
+			RecalculateAction.ChildActionsList.Add(UpdateLastIssueAction);
 		}
 
 		private Dictionary<int, string> Results = new Dictionary<int, string>();
@@ -184,7 +204,7 @@ namespace workwear.Journal.ViewModels.Tools
 			Refresh();
 		}
 
-		void UpdateItems(EmployeeSetNormJournalNode[] nodes)
+		void UpdateNextIssue(EmployeeSetNormJournalNode[] nodes)
 		{
 			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
 			var progress = progressPage.ViewModel.Progress;
@@ -204,6 +224,53 @@ namespace workwear.Journal.ViewModels.Tools
 				else
 					Results.Add(employee.Id, "Без изменений");
 				UoW.Save(employee);
+				if(step % 10 == 0)
+					UoW.Commit();
+			}
+			progress.Add(text: "Готово");
+			UoW.Commit();
+			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+			Refresh();
+		}
+
+		void UpdateLastIssue(EmployeeSetNormJournalNode[] nodes)
+		{
+			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
+			var progress = progressPage.ViewModel.Progress;
+
+			progress.Start(nodes.Length + 2, text: "Загружаем сотрудников");
+			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id)).ToArray();
+			progress.Add(text: $"Получаем последние выдачи");
+			var employeeIssueRepository = AutofacScope.Resolve<EmployeeIssueRepository>(new TypedParameter(typeof(IUnitOfWork), UoW));
+			var operations = employeeIssueRepository.GetLastIssueOperationsForEmployee(employees);
+			int step = 0;
+			foreach(var employee in employees) {
+				progress.Add(text: $"Обработка {employee.ShortName}");
+				step++;
+				var employeeOperations = operations.Where(x => x.Employee.IsSame(employee)).ToList();
+				if(employeeOperations.Count == 0) {
+					Results.Add(employee.Id, "Нет выданного");
+					continue;
+				}
+				int changes = 0;
+				foreach(var operation in employeeOperations) {
+					var oldDate = operation.ExpiryByNorm;
+					var graph = IssueGraph.MakeIssueGraph(UoW, employee, operation.ProtectionTools);
+					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, interactive);
+					if(operation.ExpiryByNorm != oldDate) {
+						UoW.Save(operation);
+						changes++;
+						var item = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(operation.ProtectionTools));
+						if(item != null)
+							item.UpdateNextIssue(UoW);
+					}
+				}
+				if(changes > 0) {
+					Results.Add(employee.Id, NumberToTextRus.FormatCase(changes, "изменена {0} дата", "изменено {0} даты", "изменено {0} дат"));
+					UoW.Save(employee);
+				}
+				else
+					Results.Add(employee.Id, "Без изменений");
 				if(step % 10 == 0)
 					UoW.Commit();
 			}

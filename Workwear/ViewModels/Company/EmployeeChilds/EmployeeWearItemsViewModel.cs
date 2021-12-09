@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data.Bindings.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using NHibernate;
 using QS.Dialog;
