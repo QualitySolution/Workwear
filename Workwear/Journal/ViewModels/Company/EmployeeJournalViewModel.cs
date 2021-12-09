@@ -11,6 +11,7 @@ using QS.Project.Services;
 using QS.Services;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
+using workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company;
@@ -19,18 +20,20 @@ namespace workwear.Journal.ViewModels.Company
 {
 	public class EmployeeJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeJournalNode>
 	{
-
 		/// <summary>
 		/// Для хранения пользовательской информации как в WinForms
 		/// </summary>
 		public object Tag;
 
 		public readonly FeaturesService FeaturesService;
+		private readonly Norm norm;
 
 		public EmployeeFilterViewModel Filter { get; private set; }
 
 		public EmployeeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
-										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, FeaturesService featuresService, ICurrentPermissionService currentPermissionService = null) 
+										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, FeaturesService featuresService, ICurrentPermissionService currentPermissionService = null,
+										//Ограничения журнала
+										Norm norm = null) 
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = false;
@@ -38,6 +41,12 @@ namespace workwear.Journal.ViewModels.Company
 			AutofacScope = autofacScope;
 			JournalFilter = Filter = AutofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			this.FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.norm = norm;
+
+			if(norm != null) {
+				norm = UoW.GetById<Norm>(norm.Id); //Загружаем из своей сессии.
+				Title = "Использующие норму: " + norm.Title;
+			}
 		}
 
 		protected override IQueryOver<EmployeeCard> ItemsQuery(IUnitOfWork uow)
@@ -47,6 +56,7 @@ namespace workwear.Journal.ViewModels.Company
 			Post postAlias = null;
 			Subdivision subdivisionAlias = null;
 			EmployeeCard employeeAlias = null;
+			Norm normAlias = null;
 
 			var employees = uow.Session.QueryOver<EmployeeCard>(() => employeeAlias);
 			if(Filter.ShowOnlyWork)
@@ -55,6 +65,11 @@ namespace workwear.Journal.ViewModels.Company
 				employees.Where(x => x.Subdivision.Id == Filter.Subdivision.Id);
 			if(Filter.Department != null)
 				employees.Where(x => x.Department.Id == Filter.Department.Id);
+
+			if(norm != null) {
+				employees.JoinAlias(x => x.UsedNorms, () => normAlias)
+				 .Where(x => normAlias.Id == norm.Id);
+			}
 
 			return employees
 				.Where(GetSearchCriterion(

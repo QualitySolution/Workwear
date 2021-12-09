@@ -132,6 +132,8 @@ namespace workwear.Domain.Regulations
 		public virtual bool IsActive => (DateFrom == null || DateFrom.Value <= DateTime.Today)
 			&& (DateTo == null || DateTo >= DateTime.Today);
 
+		public virtual string Title => Name ?? $"{DocumentNumberText} {AnnexNumberText} {TONParagraph}";
+
 		# endregion
 
 		public Norm ()

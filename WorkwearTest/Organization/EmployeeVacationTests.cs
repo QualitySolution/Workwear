@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NHibernate;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
@@ -60,11 +61,11 @@ namespace WorkwearTest.Organization
 			issue.Issued = 1;
 
 			var operations = new List<EmployeeIssueOperation>() { issue };
-			var graph = new IssueGraph(operations);
-
 			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(operations);
 
-			EmployeeIssueRepository.GetOperationsTouchDatesTestGap = (arg1, arg2, arg3, arg4) => operations;
+			var employeeIssueRepository = Substitute.For<EmployeeIssueRepository>(uow);
+			employeeIssueRepository.GetOperationsTouchDates(Arg.Any<IUnitOfWork>(), Arg.Any<EmployeeCard[]>(), Arg.Any<DateTime>(), Arg.Any<DateTime>(), Arg.Any<Action<IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>>>())
+				.Returns(operations);
 
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(false);
@@ -72,7 +73,7 @@ namespace WorkwearTest.Organization
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
 
-			vacation.UpdateRelatedOperations(uow, baseParameters, ask);
+			vacation.UpdateRelatedOperations(uow, employeeIssueRepository, baseParameters, ask);
 
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 5, 20)));
 			Assert.That(issue.AutoWriteoffDate, Is.EqualTo(new DateTime(2019, 5, 20)));

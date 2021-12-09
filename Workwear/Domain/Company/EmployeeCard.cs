@@ -16,7 +16,6 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Measurements;
-using workwear.Repository.Company;
 using workwear.Repository.Operations;
 using workwear.Repository.Regulations;
 using workwear.Repository.Stock;
@@ -534,14 +533,6 @@ namespace workwear.Domain.Company
 			logger.Info("Ok");
 		}
 
-		public virtual void UpdateAllNextIssue()
-		{
-			foreach (var item in WorkwearItems)
-			{
-				item.UpdateNextIssue(UoW);
-			}
-		}
-
 		public virtual void UpdateNextIssue(params ProtectionTools[] protectionTools)
 		{
 			var ids = new HashSet<int>(protectionTools.Select(x => x.Id));
@@ -666,9 +657,9 @@ namespace workwear.Domain.Company
 
 		#endregion
 
-		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, DateTime begin, DateTime end)
+		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow, EmployeeIssueRepository employeeIssueRepository, BaseParameters baseParameters, IInteractiveQuestion askUser, DateTime begin, DateTime end)
 		{
-			var operations = EmployeeIssueRepository.GetOperationsTouchDates(uow, this, begin, end,
+			var operations = employeeIssueRepository.GetOperationsTouchDates(uow, new[] { this }, begin, end,
 				q => q.Fetch(SelectMode.Fetch, o => o.ProtectionTools)
 			);
 			foreach(var typeGroup in operations.GroupBy(o => o.ProtectionTools)) {

@@ -8,9 +8,9 @@ namespace workwear.Views.Regulations
 
 		private global::Gtk.HBox hbox4;
 
-		private global::Gtk.Button buttonSave;
+		private global::Gamma.GtkWidgets.yButton buttonSave;
 
-		private global::Gtk.Button buttonCancel;
+		private global::Gamma.GtkWidgets.yButton buttonCancel;
 
 		private global::Gtk.HBox hbox1;
 
@@ -76,6 +76,8 @@ namespace workwear.Views.Regulations
 
 		private global::Gtk.Button buttonRemoveItem;
 
+		private global::Gamma.GtkWidgets.yButton buttonReplaceNomeclature;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -91,7 +93,7 @@ namespace workwear.Views.Regulations
 			this.hbox4.Name = "hbox4";
 			this.hbox4.Spacing = 6;
 			// Container child hbox4.Gtk.Box+BoxChild
-			this.buttonSave = new global::Gtk.Button();
+			this.buttonSave = new global::Gamma.GtkWidgets.yButton();
 			this.buttonSave.CanFocus = true;
 			this.buttonSave.Name = "buttonSave";
 			this.buttonSave.UseUnderline = true;
@@ -105,7 +107,7 @@ namespace workwear.Views.Regulations
 			w2.Expand = false;
 			w2.Fill = false;
 			// Container child hbox4.Gtk.Box+BoxChild
-			this.buttonCancel = new global::Gtk.Button();
+			this.buttonCancel = new global::Gamma.GtkWidgets.yButton();
 			this.buttonCancel.CanFocus = true;
 			this.buttonCancel.Name = "buttonCancel";
 			this.buttonCancel.UseUnderline = true;
@@ -463,11 +465,29 @@ namespace workwear.Views.Regulations
 			w41.Position = 1;
 			w41.Expand = false;
 			w41.Fill = false;
+			// Container child hbox6.Gtk.Box+BoxChild
+			this.buttonReplaceNomeclature = new global::Gamma.GtkWidgets.yButton();
+			this.buttonReplaceNomeclature.TooltipMarkup = "Заменяет номеклатуру в норме на другую, при этом так же заменяя номеклатуру в вы " +
+				"выдачах и потребностях сотрудников в которых использовалась данная строка нормы." +
+				"";
+			this.buttonReplaceNomeclature.Sensitive = false;
+			this.buttonReplaceNomeclature.CanFocus = true;
+			this.buttonReplaceNomeclature.Name = "buttonReplaceNomeclature";
+			this.buttonReplaceNomeclature.UseUnderline = true;
+			this.buttonReplaceNomeclature.Label = global::Mono.Unix.Catalog.GetString("Заменить номеклатуру");
+			global::Gtk.Image w42 = new global::Gtk.Image();
+			w42.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.arrows.png");
+			this.buttonReplaceNomeclature.Image = w42;
+			this.hbox6.Add(this.buttonReplaceNomeclature);
+			global::Gtk.Box.BoxChild w43 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.buttonReplaceNomeclature]));
+			w43.Position = 2;
+			w43.Expand = false;
+			w43.Fill = false;
 			this.dialog1_VBox.Add(this.hbox6);
-			global::Gtk.Box.BoxChild w42 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox6]));
-			w42.Position = 4;
-			w42.Expand = false;
-			w42.Fill = false;
+			global::Gtk.Box.BoxChild w44 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox6]));
+			w44.Position = 4;
+			w44.Expand = false;
+			w44.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
@@ -480,6 +500,7 @@ namespace workwear.Views.Regulations
 			this.buttonRemoveProfession.Clicked += new global::System.EventHandler(this.OnButtonRemoveProfessionClicked);
 			this.buttonAddItem.Clicked += new global::System.EventHandler(this.OnButtonAddItemClicked);
 			this.buttonRemoveItem.Clicked += new global::System.EventHandler(this.OnButtonRemoveItemClicked);
+			this.buttonReplaceNomeclature.Clicked += new global::System.EventHandler(this.OnButtonReplaceNomeclatureClicked);
 		}
 	}
 }

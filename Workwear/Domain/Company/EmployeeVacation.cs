@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using workwear.Repository.Operations;
 using workwear.Tools;
 
 namespace workwear.Domain.Company
@@ -69,9 +70,9 @@ namespace workwear.Domain.Company
 
 		#region Публичные методы
 
-		public virtual void UpdateRelatedOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser)
+		public virtual void UpdateRelatedOperations(IUnitOfWork uow, EmployeeIssueRepository employeeIssueRepository, BaseParameters baseParameters, IInteractiveQuestion askUser)
 		{
-			Employee.RecalculateDatesOfIssueOperations(uow, baseParameters, askUser, BeginDate, EndDate);
+			Employee.RecalculateDatesOfIssueOperations(uow, employeeIssueRepository, baseParameters, askUser, BeginDate, EndDate);
 		}
 
 		#endregion

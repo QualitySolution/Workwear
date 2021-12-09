@@ -123,7 +123,7 @@ namespace WorkwearTest.Integration.Organization
 				vacation.EndDate = new DateTime(2019, 2, 10);
 				vacation.VacationType = vacationType;
 				employee.AddVacation(vacation);
-				vacation.UpdateRelatedOperations(uow, baseParameters, ask);
+				vacation.UpdateRelatedOperations(uow, new workwear.Repository.Operations.EmployeeIssueRepository(), baseParameters, ask);
 				uow.Save(vacationType);
 				uow.Save(vacation);
 				uow.Save(employee);

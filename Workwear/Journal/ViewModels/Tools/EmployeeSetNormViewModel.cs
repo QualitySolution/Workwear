@@ -15,6 +15,7 @@ using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
 using QS.Services;
+using QS.Utilities;
 using QS.Utilities.Text;
 using QS.ViewModels.Resolve;
 using workwear.Domain.Company;
@@ -120,12 +121,27 @@ namespace workwear.Journal.ViewModels.Tools
 					);
 			NodeActionsList.Add(loadAllAction);
 
+			var editAction = new JournalAction("Открыть сотрудника",
+					(selected) => selected.Any(),
+					(selected) => VisibleEditAction,
+					(selected) => selected.Cast<EmployeeSetNormJournalNode>().ToList().ForEach(EditEntityDialog)
+					);
+			NodeActionsList.Add(editAction);
+			RowActivatedAction = editAction;
+
 			var updateStatusAction = new JournalAction("Установить по должности",
 					(selected) => selected.Any(),
 					(selected) => true,
 					(selected) => UpdateNorms(selected.Cast<EmployeeSetNormJournalNode>().ToArray())
 					);
 			NodeActionsList.Add(updateStatusAction);
+
+			var UpdateNextIssueAction = new JournalAction("Обновить даты след. получения",
+					(selected) => selected.Any(),
+					(selected) => true,
+					(selected) => UpdateItems(selected.Cast<EmployeeSetNormJournalNode>().ToArray())
+					);
+			NodeActionsList.Add(UpdateNextIssueAction);
 		}
 
 		private Dictionary<int, string> Results = new Dictionary<int, string>();
@@ -161,6 +177,35 @@ namespace workwear.Journal.ViewModels.Tools
 				else {
 					Results.Add(employee.Id, "Подходящая норма не найдена");
 				}
+			}
+			progress.Add(text: "Готово");
+			UoW.Commit();
+			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+			Refresh();
+		}
+
+		void UpdateItems(EmployeeSetNormJournalNode[] nodes)
+		{
+			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
+			var progress = progressPage.ViewModel.Progress;
+
+			progress.Start(nodes.Length + 1, text: "Загружаем сотрудников");
+			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id));
+
+			int step = 0;
+			foreach(var employee in employees) {
+				progress.Add(text: $"Обработка {employee.ShortName}");
+				step++;
+				var oldDates = employee.WorkwearItems.Select(x => x.NextIssue).ToArray();
+				employee.UpdateNextIssueAll();
+				var changes = employee.WorkwearItems.Select((x, i) => x.NextIssue != oldDates[i]).Count(x => x);
+				if(changes > 0)
+					Results.Add(employee.Id, NumberToTextRus.FormatCase(changes, "изменена {0} строка", "изменено {0} строки", "изменено {0} строк"));
+				else
+					Results.Add(employee.Id, "Без изменений");
+				UoW.Save(employee);
+				if(step % 10 == 0)
+					UoW.Commit();
 			}
 			progress.Add(text: "Готово");
 			UoW.Commit();

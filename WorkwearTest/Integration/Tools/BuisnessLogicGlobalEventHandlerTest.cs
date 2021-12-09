@@ -16,6 +16,7 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Tools;
 using Workwear.Domain.Regulations;
+using workwear.Repository.Operations;
 
 namespace WorkwearTest.Integration.Tools
 {
@@ -201,7 +202,7 @@ namespace WorkwearTest.Integration.Tools
 				uow.Save(expenseOp2);
 				uow.Commit();
 
-				vacation.UpdateRelatedOperations(uow, baseParameters, ask);
+				vacation.UpdateRelatedOperations(uow, new EmployeeIssueRepository(), baseParameters, ask);
 				uow.Commit();
 
 				Assert.That(employee.WorkwearItems[0].NextIssue, Is.EqualTo(new DateTime(2021, 1, 11)));
