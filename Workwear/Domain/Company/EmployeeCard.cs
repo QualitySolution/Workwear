@@ -533,14 +533,6 @@ namespace workwear.Domain.Company
 			logger.Info("Ok");
 		}
 
-		public virtual void UpdateAllNextIssue()
-		{
-			foreach (var item in WorkwearItems)
-			{
-				item.UpdateNextIssue(UoW);
-			}
-		}
-
 		public virtual void UpdateNextIssue(params ProtectionTools[] protectionTools)
 		{
 			var ids = new HashSet<int>(protectionTools.Select(x => x.Id));
