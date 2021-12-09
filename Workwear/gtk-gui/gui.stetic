@@ -5933,10 +5933,10 @@
         <property name="ShortLabel" translatable="yes">Обработка</property>
         <property name="StockId">gtk-execute</property>
       </action>
-      <action id="ActionSetNorms">
+      <action id="ActionProcessEmployees">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Установка норм сотрудникам</property>
-        <property name="ShortLabel" translatable="yes">Установка норм сотрудникам</property>
+        <property name="Label" translatable="yes">Корректировка сотрудников</property>
+        <property name="ShortLabel" translatable="yes">Корректировка сотрудников</property>
         <signal name="Activated" handler="OnActionSetNormsActivated" />
       </action>
       <action id="ActionImportWorkwearItems">
@@ -6001,7 +6001,7 @@
                   <node type="Menuitem" action="ActionImportWorkwearItems" />
                 </node>
                 <node type="Menu" action="ActionBatchProcessing">
-                  <node type="Menuitem" action="ActionSetNorms" />
+                  <node type="Menuitem" action="ActionProcessEmployees" />
                   <node type="Menuitem" action="ActionReplaceEntity" />
                 </node>
                 <node type="Separator" />
