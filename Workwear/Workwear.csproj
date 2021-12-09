@@ -421,7 +421,7 @@
     <Compile Include="Tools\NHibernate\ProgresSessionProvider.cs" />
     <Compile Include="Tools\NHibernate\ProgressInterceptor.cs" />
     <Compile Include="Models\Import\NomenclatureTypes.cs" />
-    <Compile Include="Journal\ViewModels\Tools\EmployeeSetNormViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Tools\EmployeeProcessingJournalViewModel.cs" />
     <Compile Include="Models\Import\ImportModelWorkwearItems.cs" />
     <Compile Include="Models\Import\DataParserWorkwearItems.cs" />
     <Compile Include="Models\Import\DataTypeWorkwearItems.cs" />

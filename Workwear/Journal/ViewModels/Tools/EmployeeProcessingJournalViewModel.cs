@@ -31,7 +31,7 @@ using workwear.ViewModels.Company;
 namespace workwear.Journal.ViewModels.Tools
 {
 	[DontUseAsDefaultViewModel]
-	public class EmployeeSetNormViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeSetNormJournalNode>
+	public class EmployeeProcessingJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeProcessingJournalNode>
 	{
 		private readonly IInteractiveService interactive;
 		private readonly NormRepository normRepository;
@@ -39,7 +39,7 @@ namespace workwear.Journal.ViewModels.Tools
 
 		public EmployeeFilterViewModel Filter { get; private set; }
 
-		public EmployeeSetNormViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
+		public EmployeeProcessingJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
 			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, 
 			NormRepository normRepository, BaseParameters baseParameters,
 			ICurrentPermissionService currentPermissionService = null) 
@@ -59,8 +59,8 @@ namespace workwear.Journal.ViewModels.Tools
 			NodeActionsList.Clear();
 			CreateActions();
 
-			(DataLoader as ThreadDataLoader<EmployeeSetNormJournalNode>).PostLoadProcessingFunc = delegate (System.Collections.IList items, uint addedSince) {
-				foreach(EmployeeSetNormJournalNode item in items) {
+			(DataLoader as ThreadDataLoader<EmployeeProcessingJournalNode>).PostLoadProcessingFunc = delegate (System.Collections.IList items, uint addedSince) {
+				foreach(EmployeeProcessingJournalNode item in items) {
 					if(Results.ContainsKey(item.Id))
 						item.Result = Results[item.Id];
 				}
@@ -69,7 +69,7 @@ namespace workwear.Journal.ViewModels.Tools
 
 		protected override IQueryOver<EmployeeCard> ItemsQuery(IUnitOfWork uow)
 		{
-			EmployeeSetNormJournalNode resultAlias = null;
+			EmployeeProcessingJournalNode resultAlias = null;
 
 			Post postAlias = null;
 			Subdivision subdivisionAlias = null;
@@ -115,7 +115,7 @@ namespace workwear.Journal.ViewModels.Tools
 				.OrderBy(() => employeeAlias.LastName).Asc
 				.ThenBy(() => employeeAlias.FirstName).Asc
 				.ThenBy(() => employeeAlias.Patronymic).Asc
-				.TransformUsing(Transformers.AliasToBean<EmployeeSetNormJournalNode>());
+				.TransformUsing(Transformers.AliasToBean<EmployeeProcessingJournalNode>());
 		} 
 
 		#region Действия
@@ -131,7 +131,7 @@ namespace workwear.Journal.ViewModels.Tools
 			var editAction = new JournalAction("Открыть сотрудника",
 					(selected) => selected.Any(),
 					(selected) => VisibleEditAction,
-					(selected) => selected.Cast<EmployeeSetNormJournalNode>().ToList().ForEach(EditEntityDialog)
+					(selected) => selected.Cast<EmployeeProcessingJournalNode>().ToList().ForEach(EditEntityDialog)
 					);
 			NodeActionsList.Add(editAction);
 			RowActivatedAction = editAction;
@@ -139,7 +139,7 @@ namespace workwear.Journal.ViewModels.Tools
 			var updateStatusAction = new JournalAction("Установить по должности",
 					(selected) => selected.Any(),
 					(selected) => true,
-					(selected) => UpdateNorms(selected.Cast<EmployeeSetNormJournalNode>().ToArray())
+					(selected) => UpdateNorms(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
 			NodeActionsList.Add(updateStatusAction);
 
@@ -152,21 +152,21 @@ namespace workwear.Journal.ViewModels.Tools
 			var UpdateNextIssueAction = new JournalAction("Даты следующего получения",
 					(selected) => selected.Any(),
 					(selected) => true,
-					(selected) => UpdateNextIssue(selected.Cast<EmployeeSetNormJournalNode>().ToArray())
+					(selected) => UpdateNextIssue(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
 			RecalculateAction.ChildActionsList.Add(UpdateNextIssueAction);
 
 			var UpdateLastIssueAction = new JournalAction("Сроки носки у полученного",
 					(selected) => selected.Any(),
 					(selected) => true,
-					(selected) => UpdateLastIssue(selected.Cast<EmployeeSetNormJournalNode>().ToArray())
+					(selected) => UpdateLastIssue(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
 			RecalculateAction.ChildActionsList.Add(UpdateLastIssueAction);
 		}
 
 		private Dictionary<int, string> Results = new Dictionary<int, string>();
 
-		void UpdateNorms(EmployeeSetNormJournalNode[] nodes)
+		void UpdateNorms(EmployeeProcessingJournalNode[] nodes)
 		{
 			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
 			var progress = progressPage.ViewModel.Progress;
@@ -204,7 +204,7 @@ namespace workwear.Journal.ViewModels.Tools
 			Refresh();
 		}
 
-		void UpdateNextIssue(EmployeeSetNormJournalNode[] nodes)
+		void UpdateNextIssue(EmployeeProcessingJournalNode[] nodes)
 		{
 			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
 			var progress = progressPage.ViewModel.Progress;
@@ -233,7 +233,7 @@ namespace workwear.Journal.ViewModels.Tools
 			Refresh();
 		}
 
-		void UpdateLastIssue(EmployeeSetNormJournalNode[] nodes)
+		void UpdateLastIssue(EmployeeProcessingJournalNode[] nodes)
 		{
 			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
 			var progress = progressPage.ViewModel.Progress;
@@ -288,7 +288,7 @@ namespace workwear.Journal.ViewModels.Tools
 		#endregion
 	}
 
-	public class EmployeeSetNormJournalNode
+	public class EmployeeProcessingJournalNode
 	{
 		public int Id { get; set; }
 		[SearchHighlight]
