@@ -153,7 +153,7 @@ namespace workwear.Domain.Stock
 				foreach(var position in employeeCardItem.BestChoiceInStock) {
 					int ExpancePositionAmount = position.Amount;  //Есть на складе
 					foreach(var item in Items) //Считаем сколько осталось на складе c учётом этого документа
-						if(item.Nomenclature == position.Nomenclature && item.Size == position.Size) 
+						if(item.Nomenclature == position.Nomenclature && item.Size == position.Size && item.WearGrowth == position.Growth) 
 							ExpancePositionAmount -= item.Amount; 
 
 					if(ExpancePositionAmount >= NeedPositionAmount && position.WearPercent == 0)
