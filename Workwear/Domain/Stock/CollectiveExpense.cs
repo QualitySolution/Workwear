@@ -121,7 +121,7 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public virtual void AddItem(EmployeeCardItem employeeCardItem, StockPosition position = null, int amount = 0) //Добавляем строку когда есть на складе
+		public virtual CollectiveExpenseItem AddItem(EmployeeCardItem employeeCardItem, StockPosition position = null, int amount = 0) 
 		{
 			var newItem = new CollectiveExpenseItem() {
 				Document = this,
@@ -137,15 +137,16 @@ namespace workwear.Domain.Stock
 				}
 
 			ObservableItems.Add(newItem);
+			return newItem;
 		}
 
-		public virtual void AddItem(EmployeeCardItem employeeCardItem, BaseParameters baseParameters)
+		public virtual CollectiveExpenseItem AddItem(EmployeeCardItem employeeCardItem, BaseParameters baseParameters)
 		{
 			if(employeeCardItem == null)
 				throw new ArgumentNullException(nameof(employeeCardItem));
 
 			if(Items.Any(x => employeeCardItem.IsSame(x.EmployeeCardItem)))
-				return;
+				return null;
 
 			int NeedPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
 			if(employeeCardItem.BestChoiceInStock.Any()) {
@@ -155,20 +156,17 @@ namespace workwear.Domain.Stock
 						if(item.Nomenclature == position.Nomenclature && item.Size == position.Size) 
 							ExpancePositionAmount -= item.Amount; 
 
-					if(ExpancePositionAmount >= NeedPositionAmount && position.WearPercent == 0) {
-							AddItem(employeeCardItem, position.StockPosition, NeedPositionAmount);
-							NeedPositionAmount = 0; 
-							break;
-					}
+					if(ExpancePositionAmount >= NeedPositionAmount && position.WearPercent == 0)
+						return AddItem(employeeCardItem, position.StockPosition, NeedPositionAmount);
 				}
 			}
-			if(NeedPositionAmount != 0)
-				AddItem(employeeCardItem);
+			return AddItem(employeeCardItem);
 		}
 
 		public virtual void RemoveItem(CollectiveExpenseItem item)
 		{
 			ObservableItems.Remove (item);
+			Items.Remove(item);
 		}
 
 		public virtual void CleanupItems()
