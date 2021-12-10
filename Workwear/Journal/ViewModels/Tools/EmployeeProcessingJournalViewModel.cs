@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
+using NLog.Targets;
 using QS.Dialog;
 using QS.Dialog.ViewModels;
 using QS.DomainModel.Entity;
@@ -15,6 +17,7 @@ using QS.Project.DB;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
+using QS.Project.Versioning;
 using QS.Services;
 using QS.Utilities;
 using QS.Utilities.Text;
@@ -33,15 +36,19 @@ namespace workwear.Journal.ViewModels.Tools
 	[DontUseAsDefaultViewModel]
 	public class EmployeeProcessingJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeProcessingJournalNode>
 	{
+		NLog.Logger loggerProcessing = NLog.LogManager.GetLogger("EmployeeProcessing");
+		private string logFile = NLog.LogManager.Configuration.FindTargetByName<FileTarget>("EmployeeProcessing").FileName.Render(new NLog.LogEventInfo { TimeStamp = DateTime.Now });
+
 		private readonly IInteractiveService interactive;
 		private readonly NormRepository normRepository;
 		private readonly BaseParameters baseParameters;
+		private readonly IDataBaseInfo dataBaseInfo;
 
 		public EmployeeFilterViewModel Filter { get; private set; }
 
 		public EmployeeProcessingJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
 			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, 
-			NormRepository normRepository, BaseParameters baseParameters,
+			NormRepository normRepository, BaseParameters baseParameters, IDataBaseInfo dataBaseInfo,
 			ICurrentPermissionService currentPermissionService = null) 
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
@@ -50,6 +57,7 @@ namespace workwear.Journal.ViewModels.Tools
 			this.interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.dataBaseInfo = dataBaseInfo ?? throw new ArgumentNullException(nameof(dataBaseInfo));
 			AutofacScope = autofacScope;
 			JournalFilter = Filter = AutofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
@@ -162,6 +170,13 @@ namespace workwear.Journal.ViewModels.Tools
 					(selected) => UpdateLastIssue(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
 			RecalculateAction.ChildActionsList.Add(UpdateLastIssueAction);
+
+			var logAction = new JournalAction("Лог выполнения",
+					(selected) => File.Exists(logFile),
+					(selected) => true,
+					(selected) => System.Diagnostics.Process.Start(logFile)
+					);
+			NodeActionsList.Add(logAction);
 		}
 
 		private Dictionary<int, string> Results = new Dictionary<int, string>();
@@ -208,6 +223,8 @@ namespace workwear.Journal.ViewModels.Tools
 		{
 			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
 			var progress = progressPage.ViewModel.Progress;
+			loggerProcessing.Info($"Пересчет даты следующией выдачи для {nodes.Length} сотрудников");
+			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
 
 			progress.Start(nodes.Length + 1, text: "Загружаем сотрудников");
 			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id));
@@ -218,9 +235,13 @@ namespace workwear.Journal.ViewModels.Tools
 				step++;
 				var oldDates = employee.WorkwearItems.Select(x => x.NextIssue).ToArray();
 				employee.UpdateNextIssueAll();
-				var changes = employee.WorkwearItems.Select((x, i) => x.NextIssue != oldDates[i]).Count(x => x);
-				if(changes > 0)
-					Results.Add(employee.Id, NumberToTextRus.FormatCase(changes, "изменена {0} строка", "изменено {0} строки", "изменено {0} строк"));
+				var changes = employee.WorkwearItems.Select((x, i) => x.NextIssue?.Date != oldDates[i]?.Date ? $"Изменена дата следующей выдачи с {oldDates[i]:d} на {x.NextIssue:d} для потребности [{x.Title}]" : null)
+					.Where(x => x != null).ToArray();
+				if(changes.Length > 0) {
+					Results.Add(employee.Id, NumberToTextRus.FormatCase(changes.Length, "изменена {0} строка", "изменено {0} строки", "изменено {0} строк"));
+					foreach(var message in changes)
+						loggerProcessing.Info(message);
+				}
 				else
 					Results.Add(employee.Id, "Без изменений");
 				UoW.Save(employee);
@@ -237,6 +258,8 @@ namespace workwear.Journal.ViewModels.Tools
 		{
 			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
 			var progress = progressPage.ViewModel.Progress;
+			loggerProcessing.Info($"Пересчет сроков носки получного для {nodes.Length} сотрудников");
+			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
 
 			progress.Start(nodes.Length + 2, text: "Загружаем сотрудников");
 			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id)).ToArray();
@@ -257,12 +280,17 @@ namespace workwear.Journal.ViewModels.Tools
 					var oldDate = operation.ExpiryByNorm;
 					var graph = IssueGraph.MakeIssueGraph(UoW, employee, operation.ProtectionTools);
 					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, interactive);
-					if(operation.ExpiryByNorm != oldDate) {
+					if(operation.ExpiryByNorm?.Date != oldDate?.Date) {
 						UoW.Save(operation);
+						loggerProcessing.Info($"Изменена дата окончания носки с {oldDate:d} на {operation.ExpiryByNorm:d} для выдачи {operation.OperationTime} [{operation.Title}]");
 						changes++;
 						var item = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(operation.ProtectionTools));
-						if(item != null)
+						if(item != null) {
+							var lastDate = item.NextIssue;
 							item.UpdateNextIssue(UoW);
+							if(item.NextIssue?.Date != lastDate?.Date)
+								loggerProcessing.Info($"Изменена дата следующей выдачи с {lastDate:d} на {item.NextIssue:d} для потребности [{item.Title}]");
+						}
 					}
 				}
 				if(changes > 0) {
