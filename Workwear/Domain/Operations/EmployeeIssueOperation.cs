@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.Dialog;
@@ -62,7 +61,7 @@ namespace workwear.Domain.Operations
 
 		[Display(Name = "Размер")]
 		public virtual string Size {
-			get { return size; }
+			get { return String.IsNullOrWhiteSpace(size) ? null : size; }
 			set { SetField(ref size, value, () => Size); }
 		}
 
@@ -70,7 +69,7 @@ namespace workwear.Domain.Operations
 
 		[Display(Name = "Рост одежды")]
 		public virtual string WearGrowth {
-			get { return wearGrowth; }
+			get { return String.IsNullOrWhiteSpace(wearGrowth) ? null : wearGrowth; }
 			set { SetField(ref wearGrowth, value, () => WearGrowth); }
 		}
 
