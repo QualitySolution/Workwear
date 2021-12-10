@@ -53,7 +53,7 @@ namespace workwear.Journal.ViewModels.Tools
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = false;
-			Title = "Установка норм сотрудникам";
+			Title = "Корректировка сотрудников";
 			this.interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
