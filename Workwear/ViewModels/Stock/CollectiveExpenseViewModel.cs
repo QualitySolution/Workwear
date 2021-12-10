@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -119,7 +119,7 @@ namespace workwear.ViewModels.Stock
 		public void OpenIssuenceSheet()
 		{
 			if(UoW.HasChanges) {
-				if(!MessageDialogHelper.RunQuestionDialog("Сохранить документ выдачи перед открытием ведомости?") || !Save())
+				if(!interactive.Question("Сохранить документ выдачи перед открытием ведомости?") || !Save())
 					return;
 			}
 			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
