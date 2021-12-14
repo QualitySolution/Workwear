@@ -60,5 +60,18 @@ namespace workwear.ViewModels.Operations
 
 		public string Units => Entity.ProtectionTools?.Type?.Units?.Name;
 		#endregion
+
+		#region Sensitive
+		public bool SensitiveDeleteButton => !UoW.IsNew;
+		#endregion
+
+		#region Actions
+		public void Delete()
+		{
+			UoW.Delete(Entity);
+			UoW.Commit();
+			Close(false, CloseSource.Self);
+		}
+		#endregion
 	}
 }
