@@ -298,8 +298,6 @@ namespace workwear.Domain.Operations
 					if(askUser.Question($"На {operationTime:d} за сотрудником уже числится {amountAtEndDay} x {Nomenclature.TypeName}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. Передвинуть начало экспуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?")) 
 						startOfUse = firstLessNorm.StartDate;
 				}
-				else if (firstLessNorm != null)
-					startOfUse = firstLessNorm.StartDate;
 			}
 
 			ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value);
