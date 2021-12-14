@@ -1,4 +1,4 @@
-﻿using NSubstitute;
+using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
 using System;
@@ -106,6 +106,62 @@ namespace WorkwearTest.Operations
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2018, 4, 25)));
 		}
 
+		[Test(Description = "Дата начала использования не должна сдвигаться если мы не просим ее сдвинуть.(реальный случай, пользователи не понимаю почему срок носки сдвинут относительно выдачи, если вдруг будут запросы на старое поведение, возможно нужно сделать настроку для этого, но по умолчанию оставить проверяемое этим тестом.)")]
+		[Category("real case")]
+		public void RecalculateDatesOfIssueOperation_DontMoveStartOfUseTest()
+		{
+			var employee = Substitute.For<EmployeeCard>();
+
+			var protectionTools = Substitute.For<ProtectionTools>();
+
+			var norm = new NormItem()
+			{
+				Amount = 1,
+				NormPeriod = NormPeriodType.Month,
+				PeriodCount = 24,
+				ProtectionTools = protectionTools
+			};
+
+			var nomenclature = Substitute.For<Nomenclature>();
+			nomenclature.TypeName.Returns("fake");
+
+			var operation1 = Substitute.For<EmployeeIssueOperation>();
+			operation1.ProtectionTools.Returns(protectionTools);
+			operation1.OperationTime.Returns(new DateTime(2019, 4, 30));
+			operation1.StartOfUse.Returns(new DateTime(2019, 4, 30));
+			operation1.AutoWriteoffDate.Returns(new DateTime(2021, 4, 30));
+			operation1.ExpiryByNorm.Returns(new DateTime(2021, 4, 30));
+			operation1.Issued.Returns(1);
+
+			var issue = new EmployeeIssueOperation
+			{
+				ProtectionTools = protectionTools,
+				Employee = employee,
+				Nomenclature = nomenclature,
+				NormItem = norm,
+				OperationTime = new DateTime(2021, 4, 20),
+				StartOfUse = new DateTime(2021, 4, 20),
+				AutoWriteoffDate = new DateTime(2023, 4, 20),
+				ExpiryByNorm = new DateTime(2023, 4, 20),
+				Issued = 1
+			};
+			
+			var operations = new List<EmployeeIssueOperation>() {operation1, issue};
+			var graph = new IssueGraph(operations);
+
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(Arg.Any<string>()).ReturnsForAnyArgs(false);
+
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(15);
+
+			issue.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
+
+			Assert.That(issue.StartOfUse, Is.EqualTo(new DateTime(2021, 4, 20)));
+			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2023, 4, 20)));
+		}
+
+		#region Отпуск
 		[Test(Description = "Проверяем увеличение периода использования на время отпуска.")]
 		public void RecalculateDatesOfIssueOperation_LifeTimeAppendOnVacationTest()
 		{
@@ -204,7 +260,7 @@ namespace WorkwearTest.Operations
 
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 11, 27)));
 		}
-
+		#endregion
 		#endregion
 
 		#region CalculatePercentWear
