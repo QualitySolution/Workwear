@@ -17,7 +17,7 @@ namespace WorkwearTest.Operations
 	{
 		#region RecalculateDatesOfIssueOperation
 
-		[Test(Description = "Дата начала использования сдвигается на первую дырку в интервалах, с меньшим чем в норме количетвом. Проверяем дату износа через месяц.")]
+		[Test(Description = "Дата начала использования сдвигается на первую дырку в интервалах, с меньшим чем в норме количеством. Проверяем дату износа через месяц.")]
 		public void RecalculateDatesOfIssueOperation_MoveFirstLessNormTest()
 		{
 			var employee = Substitute.For<EmployeeCard>();
@@ -64,7 +64,7 @@ namespace WorkwearTest.Operations
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2018, 3, 1)));
 		}
 
-		[Test(Description = "Проверяем пропорциональное увеличение периода использовния.")]
+		[Test(Description = "Проверяем пропорциональное увеличение периода использования.")]
 		public void RecalculateDatesOfIssueOperation_LifeTimeAppendProportionalTest()
 		{
 			var employee = Substitute.For<EmployeeCard>();
@@ -106,7 +106,7 @@ namespace WorkwearTest.Operations
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2018, 4, 25)));
 		}
 
-		[Test(Description = "Проверяем увеличение периода использовния на время отпуска.")]
+		[Test(Description = "Проверяем увеличение периода использования на время отпуска.")]
 		public void RecalculateDatesOfIssueOperation_LifeTimeAppendOnVacationTest()
 		{
 			var vacationType = Substitute.For<VacationType>();
@@ -152,7 +152,7 @@ namespace WorkwearTest.Operations
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 4, 20)));
 		}
 
-		[Test(Description = "Проверяем что правильно исключаем отпуск в случае наличие времени в операции выдачи. Реальный случай некорректного рассчета.")]
+		[Test(Description = "Проверяем что правильно исключаем отпуск в случае наличие времени в операции выдачи. Реальный случай некорректного расчета.")]
 		[Category("real case")]
 		public void RecalculateDatesOfIssueOperation_LifeTimeAppendOnVacation_IgnoreTimeTest()
 		{
@@ -234,13 +234,13 @@ namespace WorkwearTest.Operations
 			Assert.That(result, Is.EqualTo(0.55m));
 		}
 
-		[Test(Description = "Не падаем в OverflowException при конвертировании в Decemal(реальный кейс при некоторых значениях)")]
+		[Test(Description = "Не падаем в OverflowException при конвертировании в Decimal(реальный кейс при некоторых значениях)")]
 		public void CalculatePercentWear_NotOverflowExceptionForDecimalConvert()
 		{
 			var result = EmployeeIssueOperation.CalculatePercentWear(new DateTime(2019, 1,1), new DateTime(2019, 1, 1), new DateTime(2019, 1, 1), 0);
 		}
 
-		[Test(Description = "Не падаем при конвертировании в Decemal, полученой бесконечности(реальный кейс при некоторых значениях)")]
+		[Test(Description = "Не падаем при конвертировании в Decimal, полученной бесконечности(реальный кейс при некоторых значениях)")]
 		public void CalculatePercentWear_InfinityWhenDecimalConvert()
 		{
 			var result = EmployeeIssueOperation.CalculatePercentWear(new DateTime(2019, 8, 2), new DateTime(2019, 7, 17), new DateTime(2019, 7, 17), 0);
