@@ -20,6 +20,7 @@ using workwear.ViewModels.Regulations;
 using workwear.Tools;
 using workwear.ViewModels.Stock;
 using workwear.Tools.Features;
+using workwear.Domain.Operations.Graph;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
 {
@@ -162,7 +163,8 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 				Entity.UpdateNextIssue(page.ViewModel.Entity.ProtectionTools);
 			}
 		}
-
+		#endregion
+		#region Контекстное меню
 		public void OpenProtectionTools(EmployeeCardItem row)
 		{
 			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(row.ProtectionTools.Id));
@@ -176,6 +178,14 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 				return;
 			}
 			stockDocumentsModel.EditDocumentDialog(employeeViewModel, referencedoc.First());
+		}
+
+		public void RecalculateLastIssue(EmployeeCardItem row)
+		{
+			var operation = row.LastIssueOperation;
+			var graph = IssueGraph.MakeIssueGraph(UoW, row.EmployeeCard, operation.ProtectionTools);
+			operation.RecalculateDatesOfIssueOperation(graph, BaseParameters, interactive);
+			row.UpdateNextIssue(UoW);
 		}
 
 		#endregion
