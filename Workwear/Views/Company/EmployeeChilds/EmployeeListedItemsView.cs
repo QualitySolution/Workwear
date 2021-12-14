@@ -30,7 +30,6 @@ namespace workwear.Views.Company.EmployeeChilds
 				treeviewListedItems.RepresentationModel = viewModel.EmployeeBalanceVM;
 		}
 
-
 		protected void OnButtonGiveWearClicked(object sender, EventArgs e)
 		{
 			viewModel.GiveWear();
