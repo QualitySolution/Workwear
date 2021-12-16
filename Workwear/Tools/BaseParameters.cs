@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
 using QS.BaseParameters;
 
@@ -44,6 +45,24 @@ namespace workwear.Tools
 			get => Dynamic.CheckBalances(typeof(bool)) ?? true;
 			set => Dynamic[nameof(CheckBalances)] = value;
 		}
+		/// <summary>
+		/// Спрашивать о  перенесении начала эксплуатации:
+		/// </summary>
+		public virtual ShiftExpluatacion ShiftEpluatacion {
+			get => Dynamic.ShiftExpluatacion(typeof(ShiftExpluatacion)) ?? ShiftExpluatacion.Ask;
+			set => Dynamic[nameof(ShiftExpluatacion)] = value;
+		}
+
 		#endregion
+	}
+	
+	public enum ShiftExpluatacion
+	{
+		[Display(Name ="Всегда да")]
+		Yes,
+		[Display(Name = "Всегда нет")]
+		No,
+		[Display(Name = "Спрашивать")]
+		Ask
 	}
 }
