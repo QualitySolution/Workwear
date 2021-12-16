@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Gtk;
 using QSWidgetLib;
@@ -42,6 +42,7 @@ namespace workwear.Views.Stock
 			buttonAdd.Binding.AddBinding(ViewModel, v => v.SensetiveAddButton, w => w.Sensitive).InitializeFromSource();
 
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+			MakeMenu();
 		}
 
 		void CreateTable()
@@ -68,6 +69,19 @@ namespace workwear.Views.Stock
 				.AddColumn("")
 				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 				.Finish();
+		}
+
+		void MakeMenu()
+		{
+			var menu = new Menu();
+			var item = new MenuItem("Удалить строку");
+			item.Activated += (sender, e) => ViewModel.Delete(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+			menu.Add(item);
+			item = new MenuItem("Удалить все строки сотрудника");
+			item.Activated += (sender, e) => ViewModel.DeleteEmployee(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+			menu.Add(item);
+			buttonDel.Menu = menu;
+			menu.ShowAll();
 		}
 
 		#region PopupMenu

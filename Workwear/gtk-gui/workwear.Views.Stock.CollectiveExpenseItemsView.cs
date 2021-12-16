@@ -22,7 +22,7 @@ namespace workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yButton buttonRefreshEmployee;
 
-		private global::Gtk.Button buttonDel;
+		private global::QS.Widgets.MenuButton buttonDel;
 
 		private global::Gtk.Button buttonShowAllSize;
 
@@ -117,11 +117,13 @@ namespace workwear.Views.Stock
 			w10.Expand = false;
 			w10.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.buttonDel = new global::Gtk.Button();
+			this.buttonDel = new global::QS.Widgets.MenuButton();
 			this.buttonDel.Sensitive = false;
 			this.buttonDel.CanFocus = true;
 			this.buttonDel.Name = "buttonDel";
 			this.buttonDel.UseUnderline = true;
+			this.buttonDel.UseMarkup = false;
+			this.buttonDel.LabelXAlign = 0F;
 			this.buttonDel.Label = global::Mono.Unix.Catalog.GetString("Удалить");
 			global::Gtk.Image w11 = new global::Gtk.Image();
 			w11.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
