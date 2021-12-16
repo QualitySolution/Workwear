@@ -388,8 +388,20 @@ namespace workwear.Domain.Operations
 					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
 				if (firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.ColDayAheadOfShedule) > OperationTime.Date)
 				{
-					if(askUser.Question($"На {operationTime:d} за {Employee.ShortName} уже числится {amountAtEndDay} x {ProtectionTools.Name}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. Передвинуть начало экспуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?")) 
-						startOfUse = firstLessNorm.StartDate;
+					switch(baseParameters.ShiftEpluatacion) {
+						case ShiftExpluatacion.Ask:
+							if(askUser.Question($"На {operationTime:d} за {Employee.ShortName} уже числится {amountAtEndDay} x {ProtectionTools.Name}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. Передвинуть начало экспуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?"))
+								startOfUse = firstLessNorm.StartDate;
+							break;
+						case ShiftExpluatacion.Yes:
+							startOfUse = firstLessNorm.StartDate;
+							break;
+						case ShiftExpluatacion.No:
+							break;
+						default:
+							throw new NotImplementedException();
+
+					}
 				}
 			}
 
