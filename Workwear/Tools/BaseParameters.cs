@@ -58,11 +58,11 @@ namespace workwear.Tools
 	
 	public enum ShiftExpluatacion
 	{
+		[Display(Name = "Спрашивать")]
+		Ask,
 		[Display(Name ="Всегда да")]
 		Yes,
 		[Display(Name = "Всегда нет")]
-		No,
-		[Display(Name = "Спрашивать")]
-		Ask
+		No
 	}
 }
