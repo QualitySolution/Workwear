@@ -55,13 +55,10 @@
             <Width>47.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>484.5pt</Width>
+            <Width>553.7pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>103.9pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>92.5pt</Width>
+            <Width>133.0pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -122,24 +119,6 @@
                     </Textbox>
                   </ReportItems>
                   <ColSpan>1</ColSpan>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox11">
-                      <Value>Количество рабоников (чел.) с начала года</Value>
-                      <Style>
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
                 </TableCell>
               </TableCells>
             </TableRow>
@@ -203,24 +182,6 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox32">
-                          <Value>=Sum({count_year})</Value>
-                          <CanGrow>false</CanGrow>
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                            <PaddingRight>2pt</PaddingRight>
-                            <TextAlign>Right</TextAlign>
-                            <BorderColor />
-                            <BorderWidth />
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
                   </TableCells>
                 </TableRow>
               </TableRows>
@@ -248,7 +209,7 @@
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
-                        <TextAlign >Center</TextAlign>
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -256,7 +217,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox33" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                      <Value>={obj}</Value>
+                      <Value>=Iif(Fields!obj.IsMissing, "Без подразделения", {obj})</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -273,23 +234,6 @@
                   <ReportItems>
                     <Textbox Name="Textbox41" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                       <Value>={count_period}</Value>
-                      <CanGrow>false</CanGrow>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <PaddingRight>2pt</PaddingRight>
-                        <TextAlign>Right</TextAlign>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox42">
-                      <Value>={count_year}</Value>
                       <CanGrow>false</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -347,27 +291,15 @@
   </DataSources>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>select obj, count_period , count_year, code from (
-(select object_id, obj, code, count(*) as count_year from (select wear_cards.id as id1, wear_cards.first_name, objects.id as object_id, objects.name as obj, objects.code
-FROM operation_issued_by_employee
-LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
-LEFT JOIN objects on objects.id = wear_cards.object_id
-where YEAR(operation_issued_by_employee.operation_time) = YEAR(NOW())
-) as table1
-GROUP BY object_id) as table_1
-LEFT JOIN (
-select obj as obj_2, object_id, count(*) as count_period from (select wear_cards.id as id1, wear_cards.first_name, objects.id as object_id, objects.name as obj, operation_issued_by_employee.nomenclature_id, operation_issued_by_employee.issued, operation_issued_by_employee.returned
-FROM operation_issued_by_employee
-LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
-LEFT JOIN objects on objects.id = wear_cards.object_id
-where operation_issued_by_employee.operation_time &gt;  @dateStart and operation_issued_by_employee.operation_time &lt; @dateEnd
-) as table2
-GROUP BY object_id
-) as table_2 on table_1.object_id = table_2.object_id
-)
-ORDER BY CAST(code AS UNSIGNED) asc;</CommandText>
+        <CommandText>SELECT objects.code, objects.name as obj, COUNT(*) as count_period 
+	FROM (SELECT DISTINCT employee_id	FROM operation_issued_by_employee 
+ 		WHERE (operation_time &gt; @dateStart AND operation_time &lt; DATE_ADD(@dateEnd,INTERVAL 1 DAY))) AS operation 
+	JOIN wear_cards ON employee_id = wear_cards.id  
+	LEFT JOIN objects ON wear_cards.object_id = objects.id 
+	GROUP BY objects.id 
+    ORDER BY objects.code</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
             <Value>=Format({?dateStart}, "yyyy-MM-dd")</Value>
@@ -377,17 +309,13 @@ ORDER BY CAST(code AS UNSIGNED) asc;</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="obj">
           <DataField>obj</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="count_period">
           <DataField>count_period</DataField>
-          <TypeName>System.Int32</TypeName>
-        </Field>
-        <Field Name="count_year">
-          <DataField>count_year</DataField>
           <TypeName>System.Int32</TypeName>
         </Field>
         <Field Name="code">
