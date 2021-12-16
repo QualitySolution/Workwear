@@ -238,14 +238,6 @@ namespace WorkwearTest.Integration.Operations
 				employee2.AddUsedNorm(norm);
 				uow.Save(employee2);
 
-				var employeeCardItem = employee.WorkwearItems.FirstOrDefault();
-				employeeCardItem.EmployeeCard = employee;
-				uow.Save(employeeCardItem);
-
-				var employeeCardItem2 = employee2.WorkwearItems.FirstOrDefault();
-				employeeCardItem2.EmployeeCard = employee2;
-				uow.Save(employeeCardItem2);
-
 				var expense = new CollectiveExpense() {
 					Date = new DateTime(2021, 9, 10),
 					Warehouse = warehouse,
