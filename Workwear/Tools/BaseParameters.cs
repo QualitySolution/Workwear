@@ -48,15 +48,22 @@ namespace workwear.Tools
 		/// <summary>
 		/// Спрашивать о  перенесении начала эксплуатации:
 		/// </summary>
-		public virtual ShiftExpluatacion ShiftEpluatacion {
-			get => Dynamic.ShiftExpluatacion(typeof(ShiftExpluatacion)) ?? ShiftExpluatacion.Ask;
+		public virtual AnswerOptions ShiftExpluatacion {
+			get => Dynamic.ShiftExpluatacion(typeof(AnswerOptions)) ?? AnswerOptions.Ask;
 			set => Dynamic[nameof(ShiftExpluatacion)] = value;
+		}
+		/// <summary>
+		/// Спрашивать об увеличении периода эксплуатации выданного пропорционально количеству
+		/// </summary>
+		public virtual AnswerOptions ExtendPeriod {
+			get => Dynamic.ExtendPeriod(typeof(AnswerOptions)) ?? AnswerOptions.Ask;
+			set => Dynamic[nameof(ExtendPeriod)] = value;
 		}
 
 		#endregion
 	}
 	
-	public enum ShiftExpluatacion
+	public enum AnswerOptions
 	{
 		[Display(Name = "Спрашивать")]
 		Ask,

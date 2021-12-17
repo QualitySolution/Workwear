@@ -8698,12 +8698,6 @@
                       <placeholder />
                     </child>
                     <child>
-                      <placeholder />
-                    </child>
-                    <child>
-                      <placeholder />
-                    </child>
-                    <child>
                       <widget class="Gamma.GtkWidgets.yCheckButton" id="checkCheckBalances">
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
@@ -8741,6 +8735,32 @@
                       <packing>
                         <property name="TopAttach">3</property>
                         <property name="BottomAttach">4</property>
+                        <property name="LeftAttach">1</property>
+                        <property name="RightAttach">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gamma.Widgets.yEnumComboBox" id="ComboExtendPeriod">
+                        <property name="MemberName" />
+                        <property name="IsTextCombo">False</property>
+                        <property name="Items" translatable="yes" />
+                        <property name="ShowSpecialStateAll">False</property>
+                        <property name="ShowSpecialStateNot">False</property>
+                        <property name="UseShortTitle">False</property>
+                        <property name="DefaultFirst">False</property>
+                      </widget>
+                      <packing>
+                        <property name="TopAttach">6</property>
+                        <property name="BottomAttach">7</property>
                         <property name="LeftAttach">1</property>
                         <property name="RightAttach">2</property>
                         <property name="AutoSize">True</property>
@@ -8957,11 +8977,31 @@
                       <widget class="Gamma.GtkWidgets.yLabel" id="ylabel3">
                         <property name="MemberName" />
                         <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">Спрашивать о  перенесении начала эксплуатации:</property>
+                        <property name="LabelProp" translatable="yes">Переносить дату начала эксплуатации:</property>
                       </widget>
                       <packing>
                         <property name="TopAttach">5</property>
                         <property name="BottomAttach">6</property>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yLabel" id="ylabel4">
+                        <property name="MemberName" />
+                        <property name="Xalign">1</property>
+                        <property name="LabelProp" translatable="yes">Увеличить период эксплуатации пропорционально кол-ву:</property>
+                      </widget>
+                      <packing>
+                        <property name="TopAttach">6</property>
+                        <property name="BottomAttach">7</property>
                         <property name="AutoSize">True</property>
                         <property name="XOptions">Fill</property>
                         <property name="YOptions">Fill</property>
