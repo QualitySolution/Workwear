@@ -53,6 +53,12 @@ namespace workwear.Views.Company.EmployeeChilds
 				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenDoc(((MenuItemId<EmployeeCardMovements>)sender).ID);
 				menu.Add(itemOpenLastIssue);
 
+				var itemRemoveOperation = new MenuItemId<EmployeeCardMovements>("Удалить операцию");
+				itemRemoveOperation.ID = selected;
+				itemRemoveOperation.Sensitive = selected?.EmployeeIssueReference?.DocumentType == null;
+				itemRemoveOperation.Activated += (sender, e) => viewModel.RemoveOperation(((MenuItemId<EmployeeCardMovements>)sender).ID);
+				menu.Add(itemRemoveOperation);
+
 				menu.ShowAll();
 				menu.Popup();
 			}

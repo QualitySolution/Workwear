@@ -81,6 +81,27 @@ namespace workwear.Repository.Operations
 			return query.OrderBy(x => x.OperationTime).Asc.List();
 		}
 
+		public IList<EmployeeIssueOperation> GetLastIssueOperationsForEmployee(EmployeeCard[] employees, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null)
+		{
+			EmployeeIssueOperation employeeIssueOperationAlias = null;
+			EmployeeIssueOperation employeeIssueOperation2Alias = null;
+			var ids = employees.Select(x => x.Id).Distinct().ToArray();
+			var query = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
+				.Where(o => o.Employee.IsIn(ids))
+				.Where(() => employeeIssueOperationAlias.Issued > 0)
+				.JoinEntityAlias(() => employeeIssueOperation2Alias,
+					() => employeeIssueOperationAlias.ProtectionTools.Id == employeeIssueOperation2Alias.ProtectionTools.Id
+					      && employeeIssueOperationAlias.Employee.Id == employeeIssueOperation2Alias.Employee.Id
+					      && employeeIssueOperation2Alias.Issued > 0
+					      && employeeIssueOperationAlias.OperationTime < employeeIssueOperation2Alias.OperationTime
+					, JoinType.LeftOuterJoin)
+				.Where(() => employeeIssueOperation2Alias.Id == null);
+
+			makeEager?.Invoke(query);
+
+			return query.List();
+		}
+
 		/// <summary>
 		/// Получаем все операции выдачи выданные по указанной строке нормы.
 		/// </summary>

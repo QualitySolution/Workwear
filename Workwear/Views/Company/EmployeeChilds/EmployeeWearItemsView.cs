@@ -121,11 +121,17 @@ namespace workwear.Views.Company.EmployeeChilds
 
 				menu.Add(new SeparatorMenuItem());
 
-				var itemOpenLastIssue = new MenuItemId<EmployeeCardItem>("Открыть последнюю выдачу");
+				var itemOpenLastIssue = new MenuItemId<EmployeeCardItem>("Открыть документ с последней выдачей");
 				itemOpenLastIssue.ID = selected;
 				itemOpenLastIssue.Sensitive = selected?.LastIssueOperation != null;
 				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenLastIssue(((MenuItemId<EmployeeCardItem>)sender).ID);
 				menu.Add(itemOpenLastIssue);
+
+				var itemRecalculateLastIssue = new MenuItemId<EmployeeCardItem>("Пересчитать сроки носки последней выдаче");
+				itemRecalculateLastIssue.ID = selected;
+				itemRecalculateLastIssue.Sensitive = selected?.LastIssueOperation != null;
+				itemRecalculateLastIssue.Activated += (sender, e) => viewModel.RecalculateLastIssue(((MenuItemId<EmployeeCardItem>)sender).ID);
+				menu.Add(itemRecalculateLastIssue);
 
 				menu.ShowAll();
 				menu.Popup();

@@ -692,7 +692,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionSetNormsActivated(object sender, EventArgs e)
 	{
-		NavigationManager.OpenViewModel<EmployeeSetNormViewModel>(null);
+		NavigationManager.OpenViewModel<EmployeeProcessingJournalViewModel>(null);
 	}
 
 	protected void OnActionImportWorkwearItemsActivated(object sender, EventArgs e)

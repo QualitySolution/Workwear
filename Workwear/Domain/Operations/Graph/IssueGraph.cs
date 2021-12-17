@@ -59,7 +59,11 @@ namespace workwear.Domain.Operations.Graph
 					x.IssueOperation.OperationTime.Date == date && x.IssueOperation.OverrideBefore);
 				if (interval.Reset)
 					resetDate = date;
-				foreach (var item in graphItems.Where(x => x.IssueOperation.OperationTime.Date <= date && x.IssueOperation.OperationTime.Date >= resetDate))
+				var activeItems = graphItems.Where(x => x.IssueOperation.OperationTime.Date <= date &&
+				                                        (x.IssueOperation.OperationTime.Date > resetDate ||
+				                                         (x.IssueOperation.OperationTime.Date == resetDate &&
+				                                          x.IssueOperation.OverrideBefore)));
+				foreach (var item in activeItems)
 				{
 					if (item.AmountAtBeginOfDay(date) <= 0)
 						continue;

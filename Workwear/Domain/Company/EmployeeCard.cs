@@ -567,7 +567,8 @@ namespace workwear.Domain.Company
 				if(!protectionGroups.ContainsKey(item.ProtectionTools.Id))
 					continue;
 				var operations = protectionGroups[item.ProtectionTools.Id];
-				var lastOperation = operations.OrderByDescending(x => x.OperationTime).First();
+				//В сортировке OverrideBefore, чтобы в ситуации когда на одну дату есть несколько операция, чтобы выводилась именно ручная.
+				var lastOperation = operations.OrderByDescending(x => x.OperationTime.Date).ThenByDescending(x => x.OverrideBefore).First();
 				item.Amount = lastOperation.Issued;
 				item.LastIssue = lastOperation.OperationTime;
 				item.LastIssueOperation = lastOperation;
@@ -581,7 +582,8 @@ namespace workwear.Domain.Company
 				if(matched == null)
 					continue;
 				var operations = protectionGroups[matched.Id];
-				var lastOperation = operations.OrderByDescending(x => x.OperationTime).First();
+				//В сортировке OverrideBefore, чтобы в ситуации когда на одну дату есть несколько операция, чтобы выводилась именно ручная.
+				var lastOperation = operations.OrderByDescending(x => x.OperationTime).ThenByDescending(x => x.OverrideBefore).First();
 				item.Amount = lastOperation.Issued;
 				item.LastIssue = lastOperation.OperationTime;
 				item.LastIssueOperation = lastOperation;

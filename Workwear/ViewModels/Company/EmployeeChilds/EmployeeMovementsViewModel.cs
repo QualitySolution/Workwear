@@ -7,7 +7,6 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
-using QS.Project.Domain;
 using QS.ViewModels;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
@@ -15,7 +14,6 @@ using workwear.DTO;
 using workwear.Models.Stock;
 using workwear.Repository.Operations;
 using workwear.Tools.Features;
-using workwear.ViewModels.Stock;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
 {
@@ -65,13 +63,24 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 				UpdateMovements();
 			}
 		}
-
+		#endregion
+		#region Контекстное меню
 		public void OpenDoc(EmployeeCardMovements item)
 		{
 			if(item.EmployeeIssueReference?.DocumentType == null)
 				return;
 
 			openStockDocumentsModel.EditDocumentDialog(employeeViewModel, item.EmployeeIssueReference);
+		}
+
+		public void RemoveOperation(EmployeeCardMovements item)
+		{
+			if(item.EmployeeIssueReference?.DocumentType != null)
+				return;
+
+			UoW.Delete(item.Operation);
+			UpdateMovements();
+			employeeViewModel.Save();
 		}
 
 		#endregion

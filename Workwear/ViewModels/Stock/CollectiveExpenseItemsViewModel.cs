@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
 using QS.Dialog;
 using QS.Dialog.ViewModels;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -152,10 +153,17 @@ namespace workwear.ViewModels.Stock
 
 		public void Delete(CollectiveExpenseItem item)
 		{
-			if(item.Id > 0)
-				deleteService.DeleteEntity<CollectiveExpenseItem>(item.Id, UoW, () => Entity.RemoveItem(item));
-			else
-				Entity.RemoveItem(item);
+			DeleteItem(item);
+			OnPropertyChanged(nameof(Sum));
+		}
+
+		public void DeleteEmployee(CollectiveExpenseItem item)
+		{
+			var toDelete = Entity.Items.Where(x => x.Employee.IsSame(item.Employee)).ToList();
+			foreach(var deleteItem in  toDelete) {
+				DeleteItem(deleteItem);
+			}
+
 			OnPropertyChanged(nameof(Sum));
 		}
 		#endregion
@@ -205,6 +213,18 @@ namespace workwear.ViewModels.Stock
 		{
 			if(nameof(Entity.Warehouse) == e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveAddButton));
+		}
+		private void DeleteItem(CollectiveExpenseItem deleteItem)
+		{
+			if(deleteItem.Id > 0) {
+				UoW.Delete(deleteItem);
+			}
+			if(deleteItem.IssuanceSheetItem != null) {
+				if(deleteItem.IssuanceSheetItem.Id > 0)
+					UoW.Delete(deleteItem);
+				Entity.IssuanceSheet.Items.Remove(deleteItem.IssuanceSheetItem);
+			}
+			Entity.RemoveItem(deleteItem);
 		}
 	}
 }

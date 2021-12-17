@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.Dialog;
@@ -62,7 +61,7 @@ namespace workwear.Domain.Operations
 
 		[Display(Name = "Размер")]
 		public virtual string Size {
-			get { return size; }
+			get { return String.IsNullOrWhiteSpace(size) ? null : size; }
 			set { SetField(ref size, value, () => Size); }
 		}
 
@@ -70,7 +69,7 @@ namespace workwear.Domain.Operations
 
 		[Display(Name = "Рост одежды")]
 		public virtual string WearGrowth {
-			get { return wearGrowth; }
+			get { return String.IsNullOrWhiteSpace(wearGrowth) ? null : wearGrowth; }
 			set { SetField(ref wearGrowth, value, () => WearGrowth); }
 		}
 
@@ -389,18 +388,28 @@ namespace workwear.Domain.Operations
 					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
 				if (firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.ColDayAheadOfShedule) > OperationTime.Date)
 				{
-					if(askUser.Question($"На {operationTime:d} за сотрудником уже числится {amountAtEndDay} x {ProtectionTools.Name}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. Передвинуть начало экспуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?")) 
-						startOfUse = firstLessNorm.StartDate;
+					switch(baseParameters.ShiftEpluatacion) {
+						case ShiftExpluatacion.Ask:
+							if(askUser.Question($"На {operationTime:d} за {Employee.ShortName} уже числится {amountAtEndDay} x {ProtectionTools.Name}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. Передвинуть начало экспуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?"))
+								startOfUse = firstLessNorm.StartDate;
+							break;
+						case ShiftExpluatacion.Yes:
+							startOfUse = firstLessNorm.StartDate;
+							break;
+						case ShiftExpluatacion.No:
+							break;
+						default:
+							throw new NotImplementedException();
+
+					}
 				}
-				else if (firstLessNorm != null)
-					startOfUse = firstLessNorm.StartDate;
 			}
 
 			ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value);
 
-			if(Issued > amountByNorm)
+			if(Issued > amountByNorm && amountByNorm > 0)
 			{
-				if(askUser.Question($"За раз выдается {Issued} x {ProtectionTools.Name} это больше чем положено по норме {amountByNorm}. Увеличить период эксплуатации выданного пропорционально количеству?"))
+				if(askUser.Question($"Сотруднику {Employee.ShortName} за раз выдается {Issued} x {ProtectionTools.Name} это больше чем положено по норме {amountByNorm}. Увеличить период эксплуатации выданного пропорционально количеству?"))
 				{
 					ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
 				}

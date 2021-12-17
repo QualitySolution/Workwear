@@ -18,18 +18,21 @@ namespace workwear.ViewModels.Tools
 			EmployeeSizeRanges = baseParameters.EmployeeSizeRanges;
 			CheckBalances = baseParameters.CheckBalances;
 			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedule;
+			ShiftEpluatacion = baseParameters.ShiftEpluatacion;
 		}
 
 		public override bool HasChanges => DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff 
 			|| EmployeeSizeRanges != baseParameters.EmployeeSizeRanges
 			|| CheckBalances != baseParameters.CheckBalances
-			|| ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedule;
+			|| ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedule 
+			|| ShiftEpluatacion != baseParameters.ShiftEpluatacion;
 
 		#region Parameters
 		public bool DefaultAutoWriteoff { get; set; }
 		public bool EmployeeSizeRanges { get; set; }
 		public bool CheckBalances { get; set; }
 		public int ColDayAheadOfShedule { get; set; }
+		public ShiftExpluatacion ShiftEpluatacion { get; set; }
 		#endregion
 
 		public override bool Save()
@@ -42,6 +45,8 @@ namespace workwear.ViewModels.Tools
 				baseParameters.CheckBalances = CheckBalances;
 			if(ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedule)
 				baseParameters.ColDayAheadOfShedule = ColDayAheadOfShedule;
+			if(ShiftEpluatacion != baseParameters.ShiftEpluatacion)
+				baseParameters.ShiftEpluatacion = ShiftEpluatacion;
 			return true;
 		}
 	}

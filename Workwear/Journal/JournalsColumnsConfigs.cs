@@ -206,8 +206,8 @@ namespace workwear.Journal
 
 			#region Tools
 
-			TreeViewColumnsConfigFactory.Register<EmployeeSetNormViewModel>(
-				() => FluentColumnsConfig<EmployeeSetNormJournalNode>.Create()
+			TreeViewColumnsConfigFactory.Register<EmployeeProcessingJournalViewModel>(
+				() => FluentColumnsConfig<EmployeeProcessingJournalNode>.Create()
 					.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
 					.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
 					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)

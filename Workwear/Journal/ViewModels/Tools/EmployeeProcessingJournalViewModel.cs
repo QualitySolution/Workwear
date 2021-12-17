@@ -1,47 +1,63 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
+using NLog.Targets;
 using QS.Dialog;
 using QS.Dialog.ViewModels;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.DB;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
+using QS.Project.Versioning;
 using QS.Services;
 using QS.Utilities;
 using QS.Utilities.Text;
 using QS.ViewModels.Resolve;
 using workwear.Domain.Company;
+using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
+using workwear.Repository.Operations;
 using workwear.Repository.Regulations;
+using workwear.Tools;
 using workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Tools
 {
 	[DontUseAsDefaultViewModel]
-	public class EmployeeSetNormViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeSetNormJournalNode>
+	public class EmployeeProcessingJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeProcessingJournalNode>
 	{
+		NLog.Logger loggerProcessing = NLog.LogManager.GetLogger("EmployeeProcessing");
+		private string logFile = NLog.LogManager.Configuration.FindTargetByName<FileTarget>("EmployeeProcessing").FileName.Render(new NLog.LogEventInfo { TimeStamp = DateTime.Now });
+
+		private readonly IInteractiveService interactive;
 		private readonly NormRepository normRepository;
+		private readonly BaseParameters baseParameters;
+		private readonly IDataBaseInfo dataBaseInfo;
 
 		public EmployeeFilterViewModel Filter { get; private set; }
 
-		public EmployeeSetNormViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
-										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, NormRepository normRepository, ICurrentPermissionService currentPermissionService = null) 
+		public EmployeeProcessingJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
+			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, 
+			NormRepository normRepository, BaseParameters baseParameters, IDataBaseInfo dataBaseInfo,
+			ICurrentPermissionService currentPermissionService = null) 
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = false;
-			Title = "Установка норм сотрудникам";
-
+			Title = "Корректировка сотрудников";
+			this.interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
-
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.dataBaseInfo = dataBaseInfo ?? throw new ArgumentNullException(nameof(dataBaseInfo));
 			AutofacScope = autofacScope;
 			JournalFilter = Filter = AutofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
@@ -51,8 +67,8 @@ namespace workwear.Journal.ViewModels.Tools
 			NodeActionsList.Clear();
 			CreateActions();
 
-			(DataLoader as ThreadDataLoader<EmployeeSetNormJournalNode>).PostLoadProcessingFunc = delegate (System.Collections.IList items, uint addedSince) {
-				foreach(EmployeeSetNormJournalNode item in items) {
+			(DataLoader as ThreadDataLoader<EmployeeProcessingJournalNode>).PostLoadProcessingFunc = delegate (System.Collections.IList items, uint addedSince) {
+				foreach(EmployeeProcessingJournalNode item in items) {
 					if(Results.ContainsKey(item.Id))
 						item.Result = Results[item.Id];
 				}
@@ -61,13 +77,12 @@ namespace workwear.Journal.ViewModels.Tools
 
 		protected override IQueryOver<EmployeeCard> ItemsQuery(IUnitOfWork uow)
 		{
-			EmployeeSetNormJournalNode resultAlias = null;
+			EmployeeProcessingJournalNode resultAlias = null;
 
 			Post postAlias = null;
 			Subdivision subdivisionAlias = null;
 			EmployeeCard employeeAlias = null;
 			Norm normAlias = null;
-
 
 			var employees = uow.Session.QueryOver<EmployeeCard>(() => employeeAlias);
 			if(Filter.ShowOnlyWork)
@@ -108,7 +123,7 @@ namespace workwear.Journal.ViewModels.Tools
 				.OrderBy(() => employeeAlias.LastName).Asc
 				.ThenBy(() => employeeAlias.FirstName).Asc
 				.ThenBy(() => employeeAlias.Patronymic).Asc
-				.TransformUsing(Transformers.AliasToBean<EmployeeSetNormJournalNode>());
+				.TransformUsing(Transformers.AliasToBean<EmployeeProcessingJournalNode>());
 		} 
 
 		#region Действия
@@ -124,7 +139,7 @@ namespace workwear.Journal.ViewModels.Tools
 			var editAction = new JournalAction("Открыть сотрудника",
 					(selected) => selected.Any(),
 					(selected) => VisibleEditAction,
-					(selected) => selected.Cast<EmployeeSetNormJournalNode>().ToList().ForEach(EditEntityDialog)
+					(selected) => selected.Cast<EmployeeProcessingJournalNode>().ToList().ForEach(EditEntityDialog)
 					);
 			NodeActionsList.Add(editAction);
 			RowActivatedAction = editAction;
@@ -132,21 +147,41 @@ namespace workwear.Journal.ViewModels.Tools
 			var updateStatusAction = new JournalAction("Установить по должности",
 					(selected) => selected.Any(),
 					(selected) => true,
-					(selected) => UpdateNorms(selected.Cast<EmployeeSetNormJournalNode>().ToArray())
+					(selected) => UpdateNorms(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
 			NodeActionsList.Add(updateStatusAction);
 
-			var UpdateNextIssueAction = new JournalAction("Обновить даты след. получения",
+			var RecalculateAction = new JournalAction("Пересчитать",
+					(selected) => selected.Any(),
+					(selected) => true
+					);
+			NodeActionsList.Add(RecalculateAction);
+
+			var UpdateNextIssueAction = new JournalAction("Даты следующего получения",
 					(selected) => selected.Any(),
 					(selected) => true,
-					(selected) => UpdateItems(selected.Cast<EmployeeSetNormJournalNode>().ToArray())
+					(selected) => UpdateNextIssue(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
-			NodeActionsList.Add(UpdateNextIssueAction);
+			RecalculateAction.ChildActionsList.Add(UpdateNextIssueAction);
+
+			var UpdateLastIssueAction = new JournalAction("Сроки носки у полученного",
+					(selected) => selected.Any(),
+					(selected) => true,
+					(selected) => UpdateLastIssue(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+					);
+			RecalculateAction.ChildActionsList.Add(UpdateLastIssueAction);
+
+			var logAction = new JournalAction("Лог выполнения",
+					(selected) => File.Exists(logFile),
+					(selected) => true,
+					(selected) => System.Diagnostics.Process.Start(logFile)
+					);
+			NodeActionsList.Add(logAction);
 		}
 
 		private Dictionary<int, string> Results = new Dictionary<int, string>();
 
-		void UpdateNorms(EmployeeSetNormJournalNode[] nodes)
+		void UpdateNorms(EmployeeProcessingJournalNode[] nodes)
 		{
 			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
 			var progress = progressPage.ViewModel.Progress;
@@ -184,10 +219,12 @@ namespace workwear.Journal.ViewModels.Tools
 			Refresh();
 		}
 
-		void UpdateItems(EmployeeSetNormJournalNode[] nodes)
+		void UpdateNextIssue(EmployeeProcessingJournalNode[] nodes)
 		{
 			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
 			var progress = progressPage.ViewModel.Progress;
+			loggerProcessing.Info($"Пересчет даты следующией выдачи для {nodes.Length} сотрудников");
+			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
 
 			progress.Start(nodes.Length + 1, text: "Загружаем сотрудников");
 			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id));
@@ -198,12 +235,70 @@ namespace workwear.Journal.ViewModels.Tools
 				step++;
 				var oldDates = employee.WorkwearItems.Select(x => x.NextIssue).ToArray();
 				employee.UpdateNextIssueAll();
-				var changes = employee.WorkwearItems.Select((x, i) => x.NextIssue != oldDates[i]).Count(x => x);
-				if(changes > 0)
-					Results.Add(employee.Id, NumberToTextRus.FormatCase(changes, "изменена {0} строка", "изменено {0} строки", "изменено {0} строк"));
+				var changes = employee.WorkwearItems.Select((x, i) => x.NextIssue?.Date != oldDates[i]?.Date ? $"Изменена дата следующей выдачи с {oldDates[i]:d} на {x.NextIssue:d} для потребности [{x.Title}]" : null)
+					.Where(x => x != null).ToArray();
+				if(changes.Length > 0) {
+					Results.Add(employee.Id, NumberToTextRus.FormatCase(changes.Length, "изменена {0} строка", "изменено {0} строки", "изменено {0} строк"));
+					foreach(var message in changes)
+						loggerProcessing.Info(message);
+				}
 				else
 					Results.Add(employee.Id, "Без изменений");
 				UoW.Save(employee);
+				if(step % 10 == 0)
+					UoW.Commit();
+			}
+			progress.Add(text: "Готово");
+			UoW.Commit();
+			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+			Refresh();
+		}
+
+		void UpdateLastIssue(EmployeeProcessingJournalNode[] nodes)
+		{
+			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
+			var progress = progressPage.ViewModel.Progress;
+			loggerProcessing.Info($"Пересчет сроков носки получного для {nodes.Length} сотрудников");
+			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
+
+			progress.Start(nodes.Length + 2, text: "Загружаем сотрудников");
+			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id)).ToArray();
+			progress.Add(text: $"Получаем последние выдачи");
+			var employeeIssueRepository = AutofacScope.Resolve<EmployeeIssueRepository>(new TypedParameter(typeof(IUnitOfWork), UoW));
+			var operations = employeeIssueRepository.GetLastIssueOperationsForEmployee(employees);
+			int step = 0;
+			foreach(var employee in employees) {
+				progress.Add(text: $"Обработка {employee.ShortName}");
+				step++;
+				var employeeOperations = operations.Where(x => x.Employee.IsSame(employee)).ToList();
+				if(employeeOperations.Count == 0) {
+					Results.Add(employee.Id, "Нет выданного");
+					continue;
+				}
+				int changes = 0;
+				foreach(var operation in employeeOperations) {
+					var oldDate = operation.ExpiryByNorm;
+					var graph = IssueGraph.MakeIssueGraph(UoW, employee, operation.ProtectionTools);
+					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, interactive);
+					if(operation.ExpiryByNorm?.Date != oldDate?.Date) {
+						UoW.Save(operation);
+						loggerProcessing.Info($"Изменена дата окончания носки с {oldDate:d} на {operation.ExpiryByNorm:d} для выдачи {operation.OperationTime} [{operation.Title}]");
+						changes++;
+						var item = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(operation.ProtectionTools));
+						if(item != null) {
+							var lastDate = item.NextIssue;
+							item.UpdateNextIssue(UoW);
+							if(item.NextIssue?.Date != lastDate?.Date)
+								loggerProcessing.Info($"Изменена дата следующей выдачи с {lastDate:d} на {item.NextIssue:d} для потребности [{item.Title}]");
+						}
+					}
+				}
+				if(changes > 0) {
+					Results.Add(employee.Id, NumberToTextRus.FormatCase(changes, "изменена {0} дата", "изменено {0} даты", "изменено {0} дат"));
+					UoW.Save(employee);
+				}
+				else
+					Results.Add(employee.Id, "Без изменений");
 				if(step % 10 == 0)
 					UoW.Commit();
 			}
@@ -221,7 +316,7 @@ namespace workwear.Journal.ViewModels.Tools
 		#endregion
 	}
 
-	public class EmployeeSetNormJournalNode
+	public class EmployeeProcessingJournalNode
 	{
 		public int Id { get; set; }
 		[SearchHighlight]

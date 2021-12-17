@@ -18,7 +18,7 @@ namespace WorkwearTest.Operations
 	{
 		#region RecalculateDatesOfIssueOperation
 
-		[Test(Description = "Дата начала использования сдвигается на первую дырку в интервалах, с меньшим чем в норме количетвом. Проверяем дату износа через месяц.")]
+		[Test(Description = "Дата начала использования сдвигается на первую дырку в интервалах, с меньшим чем в норме количеством. Проверяем дату износа через месяц.")]
 		public void RecalculateDatesOfIssueOperation_MoveFirstLessNormTest()
 		{
 			var employee = Substitute.For<EmployeeCard>();
@@ -65,7 +65,7 @@ namespace WorkwearTest.Operations
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2018, 3, 1)));
 		}
 
-		[Test(Description = "Проверяем пропорциональное увеличение периода использовния.")]
+		[Test(Description = "Проверяем пропорциональное увеличение периода использования.")]
 		public void RecalculateDatesOfIssueOperation_LifeTimeAppendProportionalTest()
 		{
 			var employee = Substitute.For<EmployeeCard>();
@@ -107,7 +107,63 @@ namespace WorkwearTest.Operations
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2018, 4, 25)));
 		}
 
-		[Test(Description = "Проверяем увеличение периода использовния на время отпуска.")]
+		[Test(Description = "Дата начала использования не должна сдвигаться если мы не просим ее сдвинуть.(реальный случай, пользователи не понимаю почему срок носки сдвинут относительно выдачи, если вдруг будут запросы на старое поведение, возможно нужно сделать настроку для этого, но по умолчанию оставить проверяемое этим тестом.)")]
+		[Category("real case")]
+		public void RecalculateDatesOfIssueOperation_DontMoveStartOfUseTest()
+		{
+			var employee = Substitute.For<EmployeeCard>();
+
+			var protectionTools = Substitute.For<ProtectionTools>();
+
+			var norm = new NormItem()
+			{
+				Amount = 1,
+				NormPeriod = NormPeriodType.Month,
+				PeriodCount = 24,
+				ProtectionTools = protectionTools
+			};
+
+			var nomenclature = Substitute.For<Nomenclature>();
+			nomenclature.TypeName.Returns("fake");
+
+			var operation1 = Substitute.For<EmployeeIssueOperation>();
+			operation1.ProtectionTools.Returns(protectionTools);
+			operation1.OperationTime.Returns(new DateTime(2019, 4, 30));
+			operation1.StartOfUse.Returns(new DateTime(2019, 4, 30));
+			operation1.AutoWriteoffDate.Returns(new DateTime(2021, 4, 30));
+			operation1.ExpiryByNorm.Returns(new DateTime(2021, 4, 30));
+			operation1.Issued.Returns(1);
+
+			var issue = new EmployeeIssueOperation
+			{
+				ProtectionTools = protectionTools,
+				Employee = employee,
+				Nomenclature = nomenclature,
+				NormItem = norm,
+				OperationTime = new DateTime(2021, 4, 20),
+				StartOfUse = new DateTime(2021, 4, 20),
+				AutoWriteoffDate = new DateTime(2023, 4, 20),
+				ExpiryByNorm = new DateTime(2023, 4, 20),
+				Issued = 1
+			};
+			
+			var operations = new List<EmployeeIssueOperation>() {operation1, issue};
+			var graph = new IssueGraph(operations);
+
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(Arg.Any<string>()).ReturnsForAnyArgs(false);
+
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(15);
+
+			issue.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
+
+			Assert.That(issue.StartOfUse, Is.EqualTo(new DateTime(2021, 4, 20)));
+			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2023, 4, 20)));
+		}
+
+		#region Отпуск
+		[Test(Description = "Проверяем увеличение периода использования на время отпуска.")]
 		public void RecalculateDatesOfIssueOperation_LifeTimeAppendOnVacationTest()
 		{
 			var vacationType = Substitute.For<VacationType>();
@@ -153,7 +209,7 @@ namespace WorkwearTest.Operations
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 4, 20)));
 		}
 
-		[Test(Description = "Проверяем что правильно исключаем отпуск в случае наличие времени в операции выдачи. Реальный случай некорректного рассчета.")]
+		[Test(Description = "Проверяем что правильно исключаем отпуск в случае наличие времени в операции выдачи. Реальный случай некорректного расчета.")]
 		[Category("real case")]
 		public void RecalculateDatesOfIssueOperation_LifeTimeAppendOnVacation_IgnoreTimeTest()
 		{
@@ -205,7 +261,7 @@ namespace WorkwearTest.Operations
 
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 11, 27)));
 		}
-
+		#endregion
 		#endregion
 
 		#region CalculatePercentWear
@@ -235,13 +291,13 @@ namespace WorkwearTest.Operations
 			Assert.That(result, Is.EqualTo(0.55m));
 		}
 
-		[Test(Description = "Не падаем в OverflowException при конвертировании в Decemal(реальный кейс при некоторых значениях)")]
+		[Test(Description = "Не падаем в OverflowException при конвертировании в Decimal(реальный кейс при некоторых значениях)")]
 		public void CalculatePercentWear_NotOverflowExceptionForDecimalConvert()
 		{
 			var result = EmployeeIssueOperation.CalculatePercentWear(new DateTime(2019, 1,1), new DateTime(2019, 1, 1), new DateTime(2019, 1, 1), 0);
 		}
 
-		[Test(Description = "Не падаем при конвертировании в Decemal, полученой бесконечности(реальный кейс при некоторых значениях)")]
+		[Test(Description = "Не падаем при конвертировании в Decimal, полученной бесконечности(реальный кейс при некоторых значениях)")]
 		public void CalculatePercentWear_InfinityWhenDecimalConvert()
 		{
 			var result = EmployeeIssueOperation.CalculatePercentWear(new DateTime(2019, 8, 2), new DateTime(2019, 7, 17), new DateTime(2019, 7, 17), 0);

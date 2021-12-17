@@ -50,7 +50,7 @@ namespace workwear.Domain.Operations
 
 		[Display(Name ="Размер")]
 		public virtual string Size {
-			get { return size; }
+			get { return String.IsNullOrWhiteSpace(size) ? null : size; }
 			set { SetField(ref size, value); }
 		}
 
@@ -58,7 +58,7 @@ namespace workwear.Domain.Operations
 
 		[Display(Name = "Рост")]
 		public virtual string Growth {
-			get { return growth; }
+			get { return String.IsNullOrWhiteSpace(growth) ? null : growth; }
 			set { SetField(ref growth, value); }
 		}
 

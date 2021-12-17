@@ -19,9 +19,13 @@ namespace workwear.Domain.Operations.Graph
 			WriteOffOperations = WriteOffOperations.OrderBy(x => x.OperationTime.Ticks).ToList();
 		}
 
+		/// <summary>
+		/// Количество числящееся на условно "начало" дня, включает только полученное в этот день, но не списанное в этот день.
+		/// </summary>
+		/// <param name="excludeOperation">Исключить из расчета указанные операции</param>
 		public int AmountAtBeginOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
 		{
-			if (IssueOperation == excludeOperation || (IssueOperation.Id > 0 && IssueOperation.Id == excludeOperation?.Id ))
+			if (IssueOperation == excludeOperation || (IssueOperation.Id > 0 && IssueOperation.Id == excludeOperation?.Id))
 				return 0;
 
 			if (IssueOperation.OperationTime.Date > date)
@@ -33,7 +37,11 @@ namespace workwear.Domain.Operations.Graph
 			return IssueOperation.Issued - WriteOffOperations.Where(x => !(x == excludeOperation || (x.Id > 0 && x.Id == excludeOperation?.Id)))
 				.Where(x => x.OperationTime.Date < date.Date).Sum(x => x.Returned);
 		}
-
+		
+		/// <summary>
+		/// Количество числящееся на конец дня, включает списания произведенные в этот день.
+		/// </summary>
+		/// <param name="excludeOperation">Исключить из расчета указанные операции</param>
 		public int AmountAtEndOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
 		{
 			if (IssueOperation == excludeOperation || (IssueOperation.Id > 0 && IssueOperation.Id == excludeOperation?.Id))
