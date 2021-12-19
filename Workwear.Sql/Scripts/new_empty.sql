@@ -1461,8 +1461,20 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `protection_tools_nomenclature` (
   `protection_tools_id` INT UNSIGNED NOT NULL,
   `nomenclature_id` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`protection_tools_id`, `nomenclature_id`))
+  PRIMARY KEY (`protection_tools_id`, `nomenclature_id`),
+  INDEX `fk_protection_tools_nomenclature_2_idx` (`nomenclature_id` ASC),
+  CONSTRAINT `fk_protection_tools_nomenclature_1`
+    FOREIGN KEY (`protection_tools_id`)
+    REFERENCES `protection_tools` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_protection_tools_nomenclature_2`
+    FOREIGN KEY (`nomenclature_id`)
+    REFERENCES `nomenclature` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- function count_issue
