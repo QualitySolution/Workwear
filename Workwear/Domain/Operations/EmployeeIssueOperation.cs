@@ -361,7 +361,7 @@ namespace workwear.Domain.Operations
 		public virtual void RecalculateDatesOfIssueOperation(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser)
 		{
 			if(ProtectionTools == null) {
-				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature.Name} от {OperationTime} не указана 'Номеклатура нормы' поэтому прерасчет даты выдачи и использования не возможен.");
+				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} не указана 'Номеклатура нормы' поэтому прерасчет даты выдачи и использования не возможен.");
 				return;
 			}
 
@@ -372,7 +372,7 @@ namespace workwear.Domain.Operations
 			}
 
 			if (NormItem == null){
-				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature.Name} от {OperationTime} не установлена норма поэтому прерасчет даты выдачи и использования не возможен.");
+				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature?.Name ?? ProtectionTools?.Name} от {OperationTime} не установлена норма поэтому прерасчет даты выдачи и использования не возможен.");
 				return;
 			}
 			StartOfUse = operationTime;
