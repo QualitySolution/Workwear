@@ -239,6 +239,7 @@ namespace workwear.Views.Regulations
 			this.yspinAssessedCost.Name = "yspinAssessedCost";
 			this.yspinAssessedCost.Adjustment.PageIncrement = 10D;
 			this.yspinAssessedCost.ClimbRate = 1D;
+			this.yspinAssessedCost.Digits = ((uint)(2));
 			this.yspinAssessedCost.Numeric = true;
 			this.yspinAssessedCost.ValueAsDecimal = 0m;
 			this.yspinAssessedCost.ValueAsInt = 0;

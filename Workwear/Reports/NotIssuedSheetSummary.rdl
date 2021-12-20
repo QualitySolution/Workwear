@@ -35,11 +35,11 @@
             <Width>41.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>299.0pt</Width>
+            <Width>244.0pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>25.8pt</Width>
-            <Visibility >
+            <Visibility>
               <Hidden>=!{?show_sex}</Hidden>
             </Visibility>
           </TableColumn>
@@ -47,13 +47,16 @@
             <Width>43.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>45.4pt</Width>
+            <Width>40.9pt</Width>
+          </TableColumn>
+          <TableColumn >
+            <Width>62.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>56.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>64.5pt</Width>
+            <Width>55.5pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -151,6 +154,24 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox18">
+                      <Value>Оценочная стоимость</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox28">
@@ -172,7 +193,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox45">
-                      <Value>Количество на складе</Value>
+                      <Value>Кол-во на складе</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -274,6 +295,23 @@
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox19">
+                      <Value>={protection_tools_assessed_cost}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <Format>0.00</Format>
                         <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
@@ -419,6 +457,22 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox20">
+                          <Value>=Sum({protection_tools_assessed_cost})</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <Format >0.00</Format>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox16">
@@ -501,6 +555,7 @@
         <Timeout>300</Timeout>
         <CommandText>SELECT
     protection_tools.name AS protection_tools_name,
+    protection_tools.assessed_cost * SUM(norms_item.amount) AS protection_tools_assessed_cost,
     wear_cards_item.protection_tools_id,
     wear_cards.sex,
     (
@@ -614,6 +669,10 @@ ORDER BY
           <DataField>in_stock</DataField>
           <TypeName>System.Decimal</TypeName>
         </Field>
+        <Field Name="protection_tools_assessed_cost">
+          <DataField>protection_tools_assessed_cost</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="One">
@@ -638,7 +697,7 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>

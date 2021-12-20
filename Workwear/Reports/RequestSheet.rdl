@@ -35,16 +35,16 @@
             <Width>46.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>192.5pt</Width>
+            <Width>159.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>59.0pt</Width>
+            <Width>57.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>48.7pt</Width>
+            <Width>41.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>49.5pt</Width>
+            <Width>38.9pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>46.9pt</Width>
@@ -53,7 +53,10 @@
             <Width>60.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>52.6pt</Width>
+            <Width>61.6pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>53.3pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -151,6 +154,25 @@
                     </Textbox>
                   </ReportItems>
                   <ColSpan>2</ColSpan>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox16">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Bottom</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
@@ -297,6 +319,23 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox17">
+                      <Value>Оценочная стоимость</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>None</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox28">
                       <Value>Коли-чество</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -431,8 +470,24 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox29">
+                    <Textbox Name="Textbox18">
                       <Value>10</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox29">
+                      <Value>11</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -564,6 +619,22 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox20">
+                      <Value>={assessed_cost}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <Format >0.00</Format>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox30">
                       <Value>={amount_sum}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -603,6 +674,21 @@
                     </Textbox>
                   </ReportItems>
                   <ColSpan>7</ColSpan>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox21">
+                      <Value>=sum({assessed_cost})</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <Format >0.00</Format>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
@@ -684,10 +770,11 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     protection_tools.name AS type_name,
+    protection_tools.assessed_cost * SUM(norms_item.amount) AS assessed_cost,
     protection_tools.id AS type_id,
     CASE item_types.wear_category WHEN 'Wear' THEN wear_cards.wear_growth ELSE NULL
 END AS growth,
@@ -743,7 +830,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="type_name">
           <DataField>type_name</DataField>
           <TypeName>System.String</TypeName>
@@ -772,10 +859,14 @@ ORDER BY
           <DataField>amount_sum</DataField>
           <TypeName>System.Decimal</TypeName>
         </Field>
+        <Field Name="assessed_cost">
+          <DataField>assessed_cost</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="Facility">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT objects.name FROM objects WHERE objects.id = @facility</CommandText>
         <QueryParameters>
@@ -784,7 +875,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="name">
           <DataField>name</DataField>
           <TypeName>System.String</TypeName>
