@@ -277,6 +277,8 @@ namespace workwear.Journal.ViewModels.Tools
 				}
 				int changes = 0;
 				foreach(var operation in employeeOperations) {
+					if(operation.ProtectionTools == null)
+						continue;
 					var oldDate = operation.ExpiryByNorm;
 					var graph = IssueGraph.MakeIssueGraph(UoW, employee, operation.ProtectionTools);
 					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, interactive);
