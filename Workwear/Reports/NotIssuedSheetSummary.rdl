@@ -35,7 +35,7 @@
             <Width>41.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>244.0pt</Width>
+            <Width>236.5pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>25.8pt</Width>
@@ -44,16 +44,16 @@
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>43.2pt</Width>
+            <Width>41.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>40.9pt</Width>
-          </TableColumn>
-          <TableColumn >
-            <Width>62.4pt</Width>
+            <Width>65.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>56.4pt</Width>
+            <Width>60.8pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>50.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>55.5pt</Width>
@@ -154,7 +154,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox18">
                       <Value>Оценочная стоимость</Value>
@@ -300,7 +300,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox19">
                       <Value>={protection_tools_assessed_cost}</Value>
@@ -457,7 +457,7 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox20">
                           <Value>=Sum({protection_tools_assessed_cost})</Value>
@@ -468,7 +468,7 @@
                             <BorderColor />
                             <BorderWidth />
                             <TextAlign>Center</TextAlign>
-                            <Format >0.00</Format>
+                            <Format>0.00</Format>
                           </Style>
                         </Textbox>
                       </ReportItems>
@@ -550,7 +550,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <Timeout>300</Timeout>
         <CommandText>SELECT
@@ -636,7 +636,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
