@@ -620,7 +620,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox20">
-                      <Value>={assessed_cost}</Value>
+                      <Value>=IIF(Fields!assessed_cost.IsMissing, "", ({assessed_cost} * {amount_sum}))</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -678,7 +678,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox21">
-                      <Value>=sum({assessed_cost})</Value>
+                      <Value>=Sum(IIF(Fields!assessed_cost.IsMissing, 0, ({assessed_cost} * {amount_sum})))</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -774,7 +774,7 @@
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     protection_tools.name AS type_name,
-    protection_tools.assessed_cost * SUM(norms_item.amount) AS assessed_cost,
+    protection_tools.assessed_cost AS assessed_cost,
     protection_tools.id AS type_id,
     CASE item_types.wear_category WHEN 'Wear' THEN wear_cards.wear_growth ELSE NULL
 END AS growth,
