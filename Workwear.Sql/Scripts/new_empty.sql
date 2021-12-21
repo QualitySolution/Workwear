@@ -1488,6 +1488,9 @@ CREATE FUNCTION `count_issue`(`amount` INT UNSIGNED, `norm_period` INT UNSIGNED,
 BEGIN
 DECLARE issue_count, total_month_next, total_month_begin, total_month_end INT;
 
+IF norm_period <= 0 THEN RETURN 0; END IF;
+IF next_month IS NULL OR next_year IS NULL THEN RETURN 0; END IF;
+
 SET total_month_begin = begin_month + begin_year * 12;
 SET total_month_end = end_month + end_year * 12;
 
