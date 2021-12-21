@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -121,17 +121,20 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public virtual CollectiveExpenseItem AddItem(EmployeeCard employee, StockPosition position, int amount = 1)
+		public virtual CollectiveExpenseItem AddItem(EmployeeCardItem employeeCardItem, StockPosition position = null, int amount = 0) 
 		{
 			var newItem = new CollectiveExpenseItem() {
 				Document = this,
-				Employee = employee,
+				Employee = employeeCardItem.EmployeeCard,
 				Amount = amount,
-				Nomenclature = position.Nomenclature,
-				Size = position.Size,
-				WearGrowth = position.Growth,
-				WearPercent = position.WearPercent
+				EmployeeCardItem = employeeCardItem,
+				ProtectionTools = employeeCardItem.ProtectionTools
 			};
+			if(position != null) {
+				newItem.Nomenclature = position.Nomenclature;
+				newItem.Size = position.Size;
+				newItem.WearGrowth = position.Growth;
+				}
 
 			ObservableItems.Add(newItem);
 			return newItem;
@@ -145,27 +148,25 @@ namespace workwear.Domain.Stock
 			if(Items.Any(x => employeeCardItem.IsSame(x.EmployeeCardItem)))
 				return null;
 
-			CollectiveExpenseItem newItem;
-			if(employeeCardItem.BestChoiceInStock.Any())
-				newItem = AddItem(employeeCardItem.EmployeeCard, employeeCardItem.BestChoiceInStock.First().StockPosition);
-			else { 
-				newItem = new CollectiveExpenseItem() {
-					Document = this,
-					Employee = employeeCardItem.EmployeeCard
-				};
-				ObservableItems.Add(newItem);
-			}
-			
-			newItem.EmployeeCardItem = employeeCardItem;
-			newItem.ProtectionTools = employeeCardItem.ProtectionTools;
-			newItem.Amount = newItem.Nomenclature != null ? employeeCardItem.CalculateRequiredIssue(baseParameters) : 0;
+			int NeedPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
+			if(employeeCardItem.BestChoiceInStock.Any()) {
+				foreach(var position in employeeCardItem.BestChoiceInStock) {
+					int ExpancePositionAmount = position.Amount;  //Есть на складе
+					foreach(var item in Items) //Считаем сколько осталось на складе c учётом этого документа
+						if(item.Nomenclature == position.Nomenclature && item.Size == position.Size && item.WearGrowth == position.Growth) 
+							ExpancePositionAmount -= item.Amount; 
 
-			return newItem;
+					if(ExpancePositionAmount >= NeedPositionAmount && position.WearPercent == 0)
+						return AddItem(employeeCardItem, position.StockPosition, NeedPositionAmount);
+				}
+			}
+			return AddItem(employeeCardItem);
 		}
 
 		public virtual void RemoveItem(CollectiveExpenseItem item)
 		{
 			ObservableItems.Remove (item);
+			Items.Remove(item);
 		}
 
 		public virtual void CleanupItems()
