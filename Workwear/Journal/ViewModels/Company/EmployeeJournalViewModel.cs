@@ -142,6 +142,20 @@ namespace workwear.Journal.ViewModels.Company
 
 		public DateTime? DismissDate { get; set; }
 
+		public bool InVocation {
+			get {
+				if(BeginDateVocation > Now && Now > EndDateVocation)
+					return true;
+				return false;
+			}
+		}
+
+		public DateTime BeginDateVocation { get; private set; }
+
+		public DateTime EndDateVocation { get; private set; }
+
+		public DateTime Now { get; } = DateTime.Now;
+
 		[SearchHighlight]
 		public string Comment { get; set; }
 

@@ -38,9 +38,16 @@ namespace workwear.Journal
 					.AddColumn("Должность").AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment)
-					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Dismiss ? "gray" : "black")
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = ForegroundColor(x))
 					.Finish()
 			);
+
+			string ForegroundColor(EmployeeJournalNode n)
+			{
+				if(n.Dismiss) { return "gray"; }
+				if(n.InVocation) { return "yellow"; }
+				return "black";
+			}
 
 			TreeViewColumnsConfigFactory.Register<LeadersJournalViewModel>(
 				() => FluentColumnsConfig<LeaderJournalNode>.Create()
