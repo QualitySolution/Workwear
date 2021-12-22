@@ -361,7 +361,7 @@ namespace workwear.Domain.Operations
 		public virtual void RecalculateDatesOfIssueOperation(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser)
 		{
 			if(ProtectionTools == null) {
-				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature.Name} от {OperationTime} не указана 'Номеклатура нормы' поэтому прерасчет даты выдачи и использования не возможен.");
+				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} не указана 'Номеклатура нормы' поэтому прерасчет даты выдачи и использования не возможен.");
 				return;
 			}
 
@@ -372,7 +372,7 @@ namespace workwear.Domain.Operations
 			}
 
 			if (NormItem == null){
-				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature.Name} от {OperationTime} не установлена норма поэтому прерасчет даты выдачи и использования не возможен.");
+				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature?.Name ?? ProtectionTools?.Name} от {OperationTime} не установлена норма поэтому прерасчет даты выдачи и использования не возможен.");
 				return;
 			}
 			StartOfUse = operationTime;
@@ -388,15 +388,15 @@ namespace workwear.Domain.Operations
 					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
 				if (firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.ColDayAheadOfShedule) > OperationTime.Date)
 				{
-					switch(baseParameters.ShiftEpluatacion) {
-						case ShiftExpluatacion.Ask:
+					switch(baseParameters.ShiftExpluatacion) {
+						case AnswerOptions.Ask:
 							if(askUser.Question($"На {operationTime:d} за {Employee.ShortName} уже числится {amountAtEndDay} x {ProtectionTools.Name}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. Передвинуть начало экспуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?"))
 								startOfUse = firstLessNorm.StartDate;
 							break;
-						case ShiftExpluatacion.Yes:
+						case AnswerOptions.Yes:
 							startOfUse = firstLessNorm.StartDate;
 							break;
-						case ShiftExpluatacion.No:
+						case AnswerOptions.No:
 							break;
 						default:
 							throw new NotImplementedException();
@@ -409,9 +409,19 @@ namespace workwear.Domain.Operations
 
 			if(Issued > amountByNorm && amountByNorm > 0)
 			{
-				if(askUser.Question($"Сотруднику {Employee.ShortName} за раз выдается {Issued} x {ProtectionTools.Name} это больше чем положено по норме {amountByNorm}. Увеличить период эксплуатации выданного пропорционально количеству?"))
-				{
-					ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
+				switch(baseParameters.ExtendPeriod) {
+					case AnswerOptions.Ask:
+						if(askUser.Question($"Сотруднику {Employee.ShortName} за раз выдается {Issued} x {ProtectionTools.Name} это больше чем положено по норме {amountByNorm}. Увеличить период эксплуатации выданного пропорционально количеству?")) {
+							ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
+						}
+						break;
+					case AnswerOptions.Yes:
+						ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
+						break;
+					case AnswerOptions.No:
+						break;
+					default:
+						throw new NotImplementedException();
 				}
 			}
 

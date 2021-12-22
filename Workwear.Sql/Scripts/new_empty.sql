@@ -1461,8 +1461,20 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `protection_tools_nomenclature` (
   `protection_tools_id` INT UNSIGNED NOT NULL,
   `nomenclature_id` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`protection_tools_id`, `nomenclature_id`))
+  PRIMARY KEY (`protection_tools_id`, `nomenclature_id`),
+  INDEX `fk_protection_tools_nomenclature_2_idx` (`nomenclature_id` ASC),
+  CONSTRAINT `fk_protection_tools_nomenclature_1`
+    FOREIGN KEY (`protection_tools_id`)
+    REFERENCES `protection_tools` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_protection_tools_nomenclature_2`
+    FOREIGN KEY (`nomenclature_id`)
+    REFERENCES `nomenclature` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- function count_issue
@@ -1475,6 +1487,9 @@ CREATE FUNCTION `count_issue`(`amount` INT UNSIGNED, `norm_period` INT UNSIGNED,
     COMMENT 'Функция рассчитывает количество необходимое к выдачи.'
 BEGIN
 DECLARE issue_count, total_month_next, total_month_begin, total_month_end INT;
+
+IF norm_period <= 0 THEN RETURN 0; END IF;
+IF next_month IS NULL OR next_year IS NULL THEN RETURN 0; END IF;
 
 SET total_month_begin = begin_month + begin_year * 12;
 SET total_month_end = end_month + end_year * 12;

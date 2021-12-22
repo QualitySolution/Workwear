@@ -213,18 +213,29 @@ namespace WorkwearTest.Integration.Operations
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
+				var protectionTools = new ProtectionTools();
+				protectionTools.Name = "Тестовая курточка";
+				uow.Save(protectionTools);
+
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
+				nomenclature.ProtectionTools.Add(protectionTools);
 				uow.Save(nomenclature);
 
+				var norm = new Norm();
+				norm.AddItem(protectionTools);
+				uow.Save(norm);
+
 				var employee = new EmployeeCard();
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
-				
+
 				var employee2 = new EmployeeCard();
+				employee2.AddUsedNorm(norm);
 				uow.Save(employee2);
 
 				var expense = new CollectiveExpense() {
@@ -233,8 +244,8 @@ namespace WorkwearTest.Integration.Operations
 				};
 
 				var stockPosition = new StockPosition(nomenclature, null, null, 0);
-				var item = expense.AddItem(employee, stockPosition, 1);
-				var item2 = expense.AddItem(employee2, stockPosition, 10);
+				var item = expense.AddItem(employee.WorkwearItems.FirstOrDefault(), stockPosition, 1);
+				var item2 = expense.AddItem(employee2.WorkwearItems.FirstOrDefault(), stockPosition, 10);
 
 				expense.UpdateOperations(uow, baseParameters, interactive);
 				uow.Save(expense);

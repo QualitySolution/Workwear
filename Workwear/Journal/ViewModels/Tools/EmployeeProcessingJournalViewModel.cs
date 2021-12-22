@@ -196,7 +196,7 @@ namespace workwear.Journal.ViewModels.Tools
 			foreach(var employee in employees) {
 				progress.Add(text: $"Обработка {employee.ShortName}");
 				if(employee.Post == null) {
-					Results.Add(employee.Id, "Отсутствует должность");
+					Results[employee.Id] = "Отсутствует должность";
 					continue;
 				}
 				var norm = norms.FirstOrDefault(x => x.IsActive && x.Posts.Contains(employee.Post));
@@ -205,12 +205,12 @@ namespace workwear.Journal.ViewModels.Tools
 					employee.UsedNorms.Clear();
 					employee.AddUsedNorm(norm);
 					UoW.Save(employee);
-					Results.Add(employee.Id, "ОК");
+					Results[employee.Id] = "ОК";
 					if(step % 10 == 0)
 						UoW.Commit();
 				}
 				else {
-					Results.Add(employee.Id, "Подходящая норма не найдена");
+					Results[employee.Id] = "Подходящая норма не найдена";
 				}
 			}
 			progress.Add(text: "Готово");
@@ -238,12 +238,12 @@ namespace workwear.Journal.ViewModels.Tools
 				var changes = employee.WorkwearItems.Select((x, i) => x.NextIssue?.Date != oldDates[i]?.Date ? $"Изменена дата следующей выдачи с {oldDates[i]:d} на {x.NextIssue:d} для потребности [{x.Title}]" : null)
 					.Where(x => x != null).ToArray();
 				if(changes.Length > 0) {
-					Results.Add(employee.Id, NumberToTextRus.FormatCase(changes.Length, "изменена {0} строка", "изменено {0} строки", "изменено {0} строк"));
+					Results[employee.Id] = NumberToTextRus.FormatCase(changes.Length, "изменена {0} строка", "изменено {0} строки", "изменено {0} строк");
 					foreach(var message in changes)
 						loggerProcessing.Info(message);
 				}
 				else
-					Results.Add(employee.Id, "Без изменений");
+					Results[employee.Id] = "Без изменений";
 				UoW.Save(employee);
 				if(step % 10 == 0)
 					UoW.Commit();
@@ -272,11 +272,13 @@ namespace workwear.Journal.ViewModels.Tools
 				step++;
 				var employeeOperations = operations.Where(x => x.Employee.IsSame(employee)).ToList();
 				if(employeeOperations.Count == 0) {
-					Results.Add(employee.Id, "Нет выданного");
+					Results[employee.Id] = "Нет выданного";
 					continue;
 				}
 				int changes = 0;
 				foreach(var operation in employeeOperations) {
+					if(operation.ProtectionTools == null)
+						continue;
 					var oldDate = operation.ExpiryByNorm;
 					var graph = IssueGraph.MakeIssueGraph(UoW, employee, operation.ProtectionTools);
 					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, interactive);
@@ -294,11 +296,11 @@ namespace workwear.Journal.ViewModels.Tools
 					}
 				}
 				if(changes > 0) {
-					Results.Add(employee.Id, NumberToTextRus.FormatCase(changes, "изменена {0} дата", "изменено {0} даты", "изменено {0} дат"));
+					Results[employee.Id] = NumberToTextRus.FormatCase(changes, "изменена {0} дата", "изменено {0} даты", "изменено {0} дат");
 					UoW.Save(employee);
 				}
 				else
-					Results.Add(employee.Id, "Без изменений");
+					Results[employee.Id] = "Без изменений";
 				if(step % 10 == 0)
 					UoW.Commit();
 			}

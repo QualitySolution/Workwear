@@ -14,8 +14,10 @@ namespace workwear.Views.Tools
 			checkCheckBalances.Binding.AddBinding(ViewModel, v => v.CheckBalances, w => w.Active).InitializeFromSource();
 			checkEmployeeSizeRanges.Binding.AddBinding(ViewModel, v => v.EmployeeSizeRanges, w => w.Active).InitializeFromSource();
 			spbutAheadOfShedule.Binding.AddBinding(ViewModel, v => v.ColDayAheadOfShedule, w => w.ValueAsInt).InitializeFromSource();
-			ComboShirtExpluatacion.ItemsEnum = typeof(ShiftExpluatacion);
-			ComboShirtExpluatacion.Binding.AddBinding(ViewModel , v=> v.ShiftEpluatacion, w=>w.SelectedItem).InitializeFromSource();
+			ComboShirtExpluatacion.ItemsEnum = typeof(AnswerOptions);
+			ComboShirtExpluatacion.Binding.AddBinding(ViewModel , v=> v.ShiftExpluatacion, w=>w.SelectedItem).InitializeFromSource();
+			ComboExtendPeriod.ItemsEnum = typeof(AnswerOptions);
+			ComboExtendPeriod.Binding.AddBinding(ViewModel, v => v.ExtendPeriod, w => w.SelectedItem).InitializeFromSource();
 			CommonButtonSubscription();
 		}
 	}

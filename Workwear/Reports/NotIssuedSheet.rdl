@@ -35,7 +35,7 @@
             <Width>41.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>192.4pt</Width>
+            <Width>145.3pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>43.2pt</Width>
@@ -44,16 +44,19 @@
             <Width>45.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>56.4pt</Width>
+            <Width>60.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>66.2pt</Width>
+            <Width>39.1pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>64.6pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>63.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>64.5pt</Width>
+            <Width>51.9pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -135,6 +138,24 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox12">
+                      <Value>Оценочная стоимость</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox28">
                       <Value>Коли-чество</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -190,7 +211,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox45">
-                      <Value>Количество на складе</Value>
+                      <Value>Кол-во на складе</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -283,6 +304,23 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox15">
+                      <Value>={protection_tools_assessed_cost}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <Format>0.00</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox30">
                       <Value>={amount_by_norm} + " " + {unit}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -359,8 +397,8 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>0.8pt</Left>
-        <Top>49.7pt</Top>
+        <Left>0.0pt</Left>
+        <Top>46.9pt</Top>
         <TableGroups>
           <TableGroup>
             <Grouping Name="Subdivision">
@@ -392,7 +430,7 @@
                           <CanGrow>true</CanGrow>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>8</ColSpan>
+                      <ColSpan>9</ColSpan>
                     </TableCell>
                   </TableCells>
                 </TableRow>
@@ -439,6 +477,27 @@
                             <TextAlign>Right</TextAlign>
                           </Style>
                           <Value>Единиц:</Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox16">
+                          <Value>=Sum({protection_tools_assessed_cost})</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>None</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Top</VerticalAlign>
+                            <Format >0.00</Format>
+                          </Style>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
@@ -522,7 +581,7 @@
                           <CanGrow>true</CanGrow>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>8</ColSpan>
+                      <ColSpan>9</ColSpan>
                     </TableCell>
                   </TableCells>
                   <Visibility>
@@ -571,7 +630,7 @@
                           <CanGrow>true</CanGrow>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>8</ColSpan>
+                      <ColSpan>9</ColSpan>
                     </TableCell>
                   </TableCells>
                 </TableRow>
@@ -700,6 +759,7 @@
         NULL
     ) AS delay,
     protection_tools.name AS protection_tools_name,
+    protection_tools.assessed_cost * norms_item.amount AS protection_tools_assessed_cost,
     wear_cards_item.protection_tools_id,
     objects.id as subdivision_id,
     objects.name as subdivision_name,
@@ -866,6 +926,10 @@ ORDER BY
           <DataField>in_stock</DataField>
           <TypeName>System.Decimal</TypeName>
         </Field>
+        <Field Name="protection_tools_assessed_cost">
+          <DataField>protection_tools_assessed_cost</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="One">
@@ -890,7 +954,7 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
