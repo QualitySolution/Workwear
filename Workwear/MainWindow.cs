@@ -695,6 +695,11 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager.OpenViewModel<EmployeeProcessingJournalViewModel>(null);
 	}
 
+	protected void OnActionSetNotificationActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<EmployeeNotificationJournalViewModel>(null);
+	}
+
 	protected void OnActionImportWorkwearItemsActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<ExcelImportViewModel>(null,
