@@ -26,6 +26,8 @@ namespace workwear.Views.Regulations
 
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
 
+			yspinAssessedCost.Binding.AddBinding(Entity, e => e.AssessedCost, w=> w.ValueAsDecimal, new NullToZeroConverter()).InitializeFromSource();
+
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			ytreeNormAnalog.ColumnsConfig = FluentColumnsConfig<ProtectionTools>.Create()
