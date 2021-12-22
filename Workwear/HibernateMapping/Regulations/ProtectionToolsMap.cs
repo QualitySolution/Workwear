@@ -18,6 +18,7 @@ namespace workwear.HibernateMapping.Regulations
 			
 			Map(x => x.Name).Column("name").Not.Nullable();
 			Map(x => x.Comment).Column("comments");
+			Map(x => x.AssessedCost).Column("assessed_cost");
 
 			References(x => x.Type).Column("item_types_id");
 

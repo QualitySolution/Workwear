@@ -42,6 +42,12 @@ namespace workwear.Domain.Regulations
 			get { return comment; }
 			set { SetField(ref comment, value); }
 		}
+		private decimal? assessedCost;
+		[Display(Name ="Оценочная стоимость")]
+		public virtual decimal? AssessedCost {
+			get { return assessedCost; }
+			set { SetField(ref assessedCost, value); }
+		}
 
 		#endregion
 
