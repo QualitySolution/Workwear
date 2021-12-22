@@ -45,7 +45,7 @@ namespace workwear.Journal
 			string ForegroundColor(EmployeeJournalNode n)
 			{
 				if(n.Dismiss) { return "gray"; }
-				if(n.InVocation) { return "yellow"; }
+				if(n.InVocation) { return "blue"; }
 				return "black";
 			}
 

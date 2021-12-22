@@ -2,6 +2,7 @@ using System;
 using Autofac;
 using Gamma.ColumnConfig;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -58,6 +59,12 @@ namespace workwear.Journal.ViewModels.Company
 			EmployeeCard employeeAlias = null;
 			Norm normAlias = null;
 
+			var vacationSubquery = QueryOver.Of<EmployeeVacation>()
+				.Where(ev => ev.Employee.Id == employeeAlias.Id)
+				.Where(ev => ev.BeginDate <= DateTime.Today && ev.EndDate >= DateTime.Today)
+				.Select(ev => ev.Id)
+				.Take(1);
+
 			var employees = uow.Session.QueryOver<EmployeeCard>(() => employeeAlias);
 			if(Filter.ShowOnlyWork)
 				employees.Where(x => x.DismissDate == null);
@@ -98,6 +105,7 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
 	   				.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
+					.SelectSubQuery(vacationSubquery).WithAlias(() => resultAlias.VacationId)
  					)
 				.OrderBy(() => employeeAlias.LastName).Asc
 				.ThenBy(() => employeeAlias.FirstName).Asc
@@ -142,19 +150,9 @@ namespace workwear.Journal.ViewModels.Company
 
 		public DateTime? DismissDate { get; set; }
 
-		public bool InVocation {
-			get {
-				if(BeginDateVocation > Now && Now > EndDateVocation)
-					return true;
-				return false;
-			}
-		}
+		public int? VacationId { get; private set; }
 
-		public DateTime BeginDateVocation { get; private set; }
-
-		public DateTime EndDateVocation { get; private set; }
-
-		public DateTime Now { get; } = DateTime.Now;
+		public bool InVocation => VacationId.HasValue;
 
 		[SearchHighlight]
 		public string Comment { get; set; }
