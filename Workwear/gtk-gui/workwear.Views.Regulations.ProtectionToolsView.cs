@@ -234,10 +234,10 @@ namespace workwear.Views.Regulations
 			w15.XOptions = ((global::Gtk.AttachOptions)(4));
 			w15.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.yspinAssessedCost = new global::Gamma.GtkWidgets.ySpinButton(0D, 100D, 1D);
+			this.yspinAssessedCost = new global::Gamma.GtkWidgets.ySpinButton(0D, 99999999D, 10D);
 			this.yspinAssessedCost.CanFocus = true;
 			this.yspinAssessedCost.Name = "yspinAssessedCost";
-			this.yspinAssessedCost.Adjustment.PageIncrement = 10D;
+			this.yspinAssessedCost.Adjustment.PageIncrement = 100D;
 			this.yspinAssessedCost.ClimbRate = 1D;
 			this.yspinAssessedCost.Digits = ((uint)(2));
 			this.yspinAssessedCost.Numeric = true;
