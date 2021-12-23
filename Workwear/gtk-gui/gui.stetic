@@ -5933,7 +5933,7 @@
         <property name="ShortLabel" translatable="yes">Обработка</property>
         <property name="StockId">gtk-execute</property>
       </action>
-      <action id="Action39">
+      <action id="ActionProcessingEmployee">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Корректировка сотрудников</property>
         <property name="ShortLabel" translatable="yes">Корректировка сотрудников</property>
@@ -5976,7 +5976,7 @@
         <property name="StockId">store-movements</property>
         <signal name="Activated" handler="OnActionStockMovementsActivated" />
       </action>
-      <action id="Action40">
+      <action id="ActionNotificationEmployee">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Уведомление сотрудников</property>
         <property name="ShortLabel" translatable="yes">Уведомление сотрудников</property>
@@ -6007,8 +6007,8 @@
                   <node type="Menuitem" action="ActionImportWorkwearItems" />
                 </node>
                 <node type="Menu" action="ActionBatchProcessing">
-                  <node type="Menuitem" action="Action39" />
-                  <node type="Menuitem" action="Action40" />
+                  <node type="Menuitem" action="ActionProcessingEmployee" />
+                  <node type="Menuitem" action="ActionNotificationEmployee" />
                   <node type="Menuitem" action="ActionReplaceEntity" />
                 </node>
                 <node type="Separator" />

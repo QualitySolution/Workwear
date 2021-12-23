@@ -1,13 +1,18 @@
-﻿using System;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
 using NHibernate;
 using NHibernate.Transform;
+using NHibernate.Util;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
+using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
 using QS.Project.Versioning;
 using QS.Services;
@@ -23,11 +28,6 @@ namespace workwear.Journal.ViewModels.Tools
 	[DontUseAsDefaultViewModel]
 	public class EmployeeNotificationJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeNotificationJournalNode>
 	{
-		NLog.Logger loggerProcessing = NLog.LogManager.GetLogger("EmployeeNotification");
-		private string logFile = "";
-		//вылетает ошибка от autofac, надо разобраться!
-		//private string logFile = NLog.LogManager.Configuration.FindTargetByName<FileTarget>("EmployeeNotification").FileName.Render(new NLog.LogEventInfo { TimeStamp = DateTime.Now });
-
 		private readonly IInteractiveService interactive;
 		private readonly BaseParameters baseParameters;
 		private readonly IDataBaseInfo dataBaseInfo;
@@ -47,6 +47,11 @@ namespace workwear.Journal.ViewModels.Tools
 			this.dataBaseInfo = dataBaseInfo ?? throw new ArgumentNullException(nameof(dataBaseInfo));
 			AutofacScope = autofacScope;
 			JournalFilter = Filter = AutofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+
+			(DataLoader as ThreadDataLoader<EmployeeNotificationJournalNode>).PostLoadProcessingFunc = delegate(IList items, uint addedSince) {
+				foreach(EmployeeNotificationJournalNode item in items)
+					item.ViewModel = this;
+			};
 
 			//Обход проблемы с тем что SelectionMode одновременно управляет и выбором в журнале, и самим режмиом журнала.
 			//То есть создает действие выбора. Удалить после того как появится рефакторинг действий журнала. 
@@ -70,7 +75,6 @@ namespace workwear.Journal.ViewModels.Tools
 				employees.Where(x => x.Subdivision.Id == Filter.Subdivision.Id);
 			if(Filter.Department != null)
 				employees.Where(x => x.Department.Id == Filter.Department.Id);
-
 
 			return employees
 				.Where(GetSearchCriterion(
@@ -120,11 +124,43 @@ namespace workwear.Journal.ViewModels.Tools
 			NodeActionsList.Add(editAction);
 
 			RowActivatedAction = editAction;
+
+			var sendMessange = new JournalAction("Отправить сообщение",
+					(selected) => true,
+					(selected) => true,
+					(selected) => SendMessange()
+					);
+			NodeActionsList.Add(sendMessange);
+
+			var invertSelected = new JournalAction("Выделить/Снять выделение",
+					(selected) => true,
+					(selected) => true,
+					(selected) => InvertSelected()
+				);
+			NodeActionsList.Add(invertSelected);
 		}
+
+		public readonly HashSet<int> SelectedList = new HashSet<int>();
 
 		void LoadAll()
 		{
 			DataLoader.DynamicLoadingEnabled = false;
+			Refresh();
+		}
+
+		void SendMessange()
+		{
+
+		}
+
+		void InvertSelected()
+		{
+			if (Items.Count == 0)
+				return;
+			
+			bool setValue = !(Items[0] as EmployeeNotificationJournalNode).Selected;
+			foreach (EmployeeNotificationJournalNode node in Items)
+				node.Selected = setValue;
 			Refresh();
 		}
 		#endregion
@@ -166,5 +202,30 @@ namespace workwear.Journal.ViewModels.Tools
 		public DateTime? DismissDate { get; set; }
 
 		public string Title => PersonHelper.PersonNameWithInitials(LastName, FirstName, Patronymic);
+
+		public EmployeeNotificationJournalViewModel ViewModel;
+
+		public bool Selected {
+			get => ViewModel.SelectedList.Contains(Id);
+			set { if(value)
+					ViewModel.SelectedList.Add(Id);
+				else
+					ViewModel.SelectedList.Remove(Id);
+			}
+		}
+		//true это затычка пока не готова серверная часть
+		public bool CanSelect { get; set; } = true;
+
+		public string Result { get; set; }
+
+		public string PersonalAccountStatus { get; set; }
+
+		public DateTime? DateLastVisit { get; set; }
+
+		public string LastVisit {
+			get {
+				return DateLastVisit == null ? "" : DateLastVisit.Value.ToString("g");
+			}
+		}
 	}
 }

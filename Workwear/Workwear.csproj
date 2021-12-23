@@ -123,6 +123,7 @@
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="HibernateMapping\MappingParams.cs" />
+    <Compile Include="Journal\ViewModels\Tools\EmployeeNotificationJournalViewModel.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
     <Compile Include="Program.cs" />
