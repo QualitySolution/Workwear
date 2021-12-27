@@ -16849,7 +16849,7 @@
           </packing>
         </child>
         <child>
-          <widget class="Gamma.Widgets.yListComboBox" id="ylistcombobox1">
+          <widget class="Gamma.Widgets.yListComboBox" id="ylistcomboboxTemplates">
             <property name="MemberName" />
             <property name="IsTextCombo">False</property>
             <property name="Items" translatable="yes" />
@@ -16864,11 +16864,25 @@
           </packing>
         </child>
         <child>
+          <widget class="Gamma.GtkWidgets.yEntry" id="yentryTitle">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="IsEditable">True</property>
+            <property name="InvisibleChar">•</property>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
             <property name="MemberName" />
             <property name="ShadowType">In</property>
             <child>
-              <widget class="Gamma.GtkWidgets.yTextView" id="ytextview1">
+              <widget class="Gamma.GtkWidgets.yTextView" id="ytextTemplate">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>
@@ -16877,8 +16891,8 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">2</property>
-            <property name="AutoSize">True</property>
+            <property name="Position">3</property>
+            <property name="AutoSize">False</property>
           </packing>
         </child>
         <child>
@@ -16886,13 +16900,14 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gamma.GtkWidgets.yButton" id="ybutton2">
+              <widget class="Gamma.GtkWidgets.yButton" id="ybuttonSend">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:stock_mail-send Menu</property>
                 <property name="Label" translatable="yes">Отправить</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonSend" />
               </widget>
               <packing>
                 <property name="PackType">End</property>
@@ -16903,13 +16918,14 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yButton" id="ybutton4">
+              <widget class="Gamma.GtkWidgets.yButton" id="ybuttonCancel">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-cancel Menu</property>
                 <property name="Label" translatable="yes">Отменить</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonCancel" />
               </widget>
               <packing>
                 <property name="PackType">End</property>
@@ -16921,7 +16937,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">3</property>
+            <property name="Position">4</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>

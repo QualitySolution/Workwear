@@ -477,6 +477,8 @@
     <Compile Include="ViewModels\Tools\SendMessangeViewModel.cs" />
     <Compile Include="Views\Tools\SendMessangeView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Tools.SendMessangeView.cs" />
+    <Compile Include="Domain\Tools\MessageTemplate.cs" />
+    <Compile Include="HibernateMapping\Tools\MessageTemplateMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -697,6 +699,7 @@
     <Folder Include="Journal\Filter.ViewModels\Statements\" />
     <Folder Include="Models\Operations\" />
     <Folder Include="Domain\Tools\" />
+    <Folder Include="HibernateMapping\Tools\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
