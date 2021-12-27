@@ -477,7 +477,6 @@
     <Compile Include="ViewModels\Tools\SendMessangeViewModel.cs" />
     <Compile Include="Views\Tools\SendMessangeView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Tools.SendMessangeView.cs" />
-    <Compile Include="Domain\Tools\MessageTemplates.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
