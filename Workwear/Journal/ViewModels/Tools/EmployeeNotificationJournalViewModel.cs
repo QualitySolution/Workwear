@@ -8,7 +8,6 @@ using NHibernate;
 using NHibernate.Transform;
 using NHibernate.Util;
 using QS.Dialog;
-using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
@@ -22,6 +21,7 @@ using workwear.Domain.Company;
 using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Tools;
 using workwear.ViewModels.Company;
+using workwear.ViewModels.Tools;
 
 namespace workwear.Journal.ViewModels.Tools
 {
@@ -150,7 +150,7 @@ namespace workwear.Journal.ViewModels.Tools
 
 		void SendMessange()
 		{
-
+			NavigationManager.OpenViewModel<SendMessangeViewModel>(this);
 		}
 
 		void InvertSelected()
