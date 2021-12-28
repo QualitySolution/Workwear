@@ -242,6 +242,14 @@ namespace workwear.Journal
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Background = x.Dismiss ? "White Smoke" : null)
 					.Finish()
 			);
+
+			TreeViewColumnsConfigFactory.Register<EditingNotificationTemplateViewModel>(
+				() => FluentColumnsConfig<NotificationTemplateJournalNode>.Create()
+					.AddColumn("Имя").AddTextRenderer(node => node.Name)
+					.AddColumn("Заголовок").AddTextRenderer(node => node.MessageTitle)
+					.AddColumn("Текст").AddTextRenderer(node => node.MessageText)
+					.Finish()
+			);
 			#endregion
 		}
 	}

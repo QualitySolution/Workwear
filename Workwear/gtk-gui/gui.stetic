@@ -5982,6 +5982,12 @@
         <property name="ShortLabel" translatable="yes">Уведомление сотрудников</property>
         <signal name="Activated" handler="OnActionSetNotificationActivated" />
       </action>
+      <action id="Action39">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Шаблоны уведомлений</property>
+        <property name="ShortLabel" translatable="yes">Шаблоны уведомлений</property>
+        <signal name="Activated" handler="OnActionEditNotificationTemplateActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -6051,6 +6057,7 @@
                 <node type="Menuitem" action="ActionWarehouse" />
                 <node type="Separator" />
                 <node type="Menuitem" action="Action7" />
+                <node type="Menuitem" action="Action39" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionProfession" />
                 <node type="Menuitem" action="Action8" />
