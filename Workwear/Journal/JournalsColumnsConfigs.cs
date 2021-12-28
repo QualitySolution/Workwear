@@ -243,7 +243,7 @@ namespace workwear.Journal
 					.Finish()
 			);
 
-			TreeViewColumnsConfigFactory.Register<EditingNotificationTemplateViewModel>(
+			TreeViewColumnsConfigFactory.Register<MessageTemplateJournalViewModel>(
 				() => FluentColumnsConfig<NotificationTemplateJournalNode>.Create()
 					.AddColumn("Имя").AddTextRenderer(node => node.Name)
 					.AddColumn("Заголовок").AddTextRenderer(node => node.MessageTitle)

@@ -11,11 +11,12 @@ using workwear.ViewModels.Tools;
 
 namespace workwear.Journal.ViewModels.Tools
 {
-	public class EditingNotificationTemplateViewModel: EntityJournalViewModelBase<MessageTemplate, MessageTemplateViewModel, NotificationTemplateJournalNode>
+	public class MessageTemplateJournalViewModel: EntityJournalViewModelBase<MessageTemplate, MessageTemplateViewModel, NotificationTemplateJournalNode>
 	{
-		public EditingNotificationTemplateViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		public MessageTemplateJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			Title = "Шаблоны уведомлений";
+			UseSlider = true;
 		}
 
 		protected override IQueryOver<MessageTemplate> ItemsQuery(IUnitOfWork uow)

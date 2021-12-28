@@ -479,8 +479,10 @@
     <Compile Include="gtk-gui\workwear.Views.Tools.SendMessangeView.cs" />
     <Compile Include="Domain\Tools\MessageTemplate.cs" />
     <Compile Include="HibernateMapping\Tools\MessageTemplateMap.cs" />
-    <Compile Include="Journal\ViewModels\Tools\EditingNotificationTemplateViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Tools\MessageTemplateJournalViewModel.cs" />
     <Compile Include="ViewModels\Tools\MessageTemplateViewModel.cs" />
+    <Compile Include="Views\Tools\MessageTemplateView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Tools.MessageTemplateView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

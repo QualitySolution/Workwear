@@ -6,6 +6,7 @@ using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
+using workwear.Domain.Tools;
 using workwear.Domain.Users;
 
 namespace workwear
@@ -254,6 +255,10 @@ namespace workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<UserSettings>();
 
+			#endregion
+
+			#region Tools
+			DeleteConfig.AddHibernateDeleteInfo<MessageTemplate>();
 			#endregion
 
 			logger.Info ("Ок");

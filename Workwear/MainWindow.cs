@@ -702,7 +702,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionEditNotificationTemplateActivated(object sender, EventArgs e)
 	{
-		NavigationManager.OpenViewModel<EditingNotificationTemplateViewModel>(null);
+		NavigationManager.OpenViewModel<MessageTemplateJournalViewModel>(null);
 	}
 
 	protected void OnActionImportWorkwearItemsActivated(object sender, EventArgs e)
