@@ -239,7 +239,6 @@ namespace workwear.Journal
 					.AddColumn("Состояние личного кабинета").AddTextRenderer(node => node.PersonalAccountStatus)
 					.AddColumn("Последний раз заходил в ЛК").AddTextRenderer(node => node.LastVisit)
 					.AddColumn("Результат").AddTextRenderer(node => node.Result)
-					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Background = x.Dismiss ? "White Smoke" : null)
 					.Finish()
 			);
 

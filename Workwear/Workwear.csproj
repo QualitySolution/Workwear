@@ -483,6 +483,9 @@
     <Compile Include="ViewModels\Tools\MessageTemplateViewModel.cs" />
     <Compile Include="Views\Tools\MessageTemplateView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Tools.MessageTemplateView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Tools\NotificationFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Tools\NotificationFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Tools.NotificationFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -704,6 +707,8 @@
     <Folder Include="Models\Operations\" />
     <Folder Include="Domain\Tools\" />
     <Folder Include="HibernateMapping\Tools\" />
+    <Folder Include="Journal\Filter.ViewModels\Tools\" />
+    <Folder Include="Journal\Filter.Views\Tools\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

@@ -18,7 +18,8 @@ using QS.Services;
 using QS.Utilities.Text;
 using QS.ViewModels.Resolve;
 using workwear.Domain.Company;
-using workwear.Journal.Filter.ViewModels.Company;
+using workwear.Journal.Filter.ViewModels.Tools;
+using workwear.Repository.Regulations;
 using workwear.Tools;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Tools;
@@ -32,11 +33,11 @@ namespace workwear.Journal.ViewModels.Tools
 		private readonly BaseParameters baseParameters;
 		private readonly IDataBaseInfo dataBaseInfo;
 
-		public EmployeeFilterViewModel Filter { get; private set; }
+		public NotificationFilterViewModel Filter { get; private set; }
 
 		public EmployeeNotificationJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager,
 			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope,
-			BaseParameters baseParameters, IDataBaseInfo dataBaseInfo,
+			NormRepository normRepository, BaseParameters baseParameters, IDataBaseInfo dataBaseInfo,
 			ICurrentPermissionService currentPermissionService = null)
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
@@ -46,7 +47,7 @@ namespace workwear.Journal.ViewModels.Tools
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.dataBaseInfo = dataBaseInfo ?? throw new ArgumentNullException(nameof(dataBaseInfo));
 			AutofacScope = autofacScope;
-			JournalFilter = Filter = AutofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			JournalFilter = Filter = AutofacScope.Resolve<NotificationFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
 			(DataLoader as ThreadDataLoader<EmployeeNotificationJournalNode>).PostLoadProcessingFunc = delegate(IList items, uint addedSince) {
 				foreach(EmployeeNotificationJournalNode item in items)
@@ -69,12 +70,9 @@ namespace workwear.Journal.ViewModels.Tools
 			EmployeeCard employeeAlias = null;
 
 			var employees = uow.Session.QueryOver<EmployeeCard>(() => employeeAlias);
-			if(Filter.ShowOnlyWork)
-				employees.Where(x => x.DismissDate == null);
+
 			if(Filter.Subdivision != null)
 				employees.Where(x => x.Subdivision.Id == Filter.Subdivision.Id);
-			if(Filter.Department != null)
-				employees.Where(x => x.Department.Id == Filter.Department.Id);
 
 			return employees
 				.Where(GetSearchCriterion(
@@ -96,7 +94,7 @@ namespace workwear.Journal.ViewModels.Tools
 					.Select(x => x.FirstName).WithAlias(() => resultAlias.FirstName)
 					.Select(x => x.LastName).WithAlias(() => resultAlias.LastName)
 					.Select(x => x.Patronymic).WithAlias(() => resultAlias.Patronymic)
-					.Select(() => employeeAlias.DismissDate).WithAlias(() => resultAlias.DismissDate)
+					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
 	   				.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
  					)
 				.OrderBy(() => employeeAlias.LastName).Asc
@@ -196,10 +194,6 @@ namespace workwear.Journal.ViewModels.Tools
 		public string Post { get; set; }
 		[SearchHighlight]
 		public string Subdivision { get; set; }
-
-		public bool Dismiss { get { return DismissDate.HasValue; } }
-
-		public DateTime? DismissDate { get; set; }
 
 		public string Title => PersonHelper.PersonNameWithInitials(LastName, FirstName, Patronymic);
 

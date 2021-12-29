@@ -56,6 +56,7 @@ namespace workwear.Views.Tools
 			this.yentryTitle.CanFocus = true;
 			this.yentryTitle.Name = "yentryTitle";
 			this.yentryTitle.IsEditable = true;
+			this.yentryTitle.MaxLength = 200;
 			this.yentryTitle.InvisibleChar = '•';
 			this.yvbox1.Add(this.yentryTitle);
 			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yentryTitle]));
