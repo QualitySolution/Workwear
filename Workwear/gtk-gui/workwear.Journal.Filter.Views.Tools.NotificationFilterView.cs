@@ -6,11 +6,15 @@ namespace workwear.Journal.Filter.Views.Tools
 	{
 		private global::Gamma.GtkWidgets.yTable ytable1;
 
+		private global::Gamma.GtkWidgets.yCheckButton checkShowOnlyWork;
+
+		private global::Gamma.Widgets.yDatePeriodPicker datePeriodIssue;
+
 		private global::QS.Views.Control.EntityEntry entitySubdivision;
 
-		private global::Gamma.GtkWidgets.yCheckButton ycheckShowOnlyOverdue;
+		private global::Gamma.GtkWidgets.yCheckButton ycheckShowOverdue;
 
-		private global::Gamma.Widgets.yDatePeriodPicker ydateperiodpicker1;
+		private global::Gamma.Widgets.yEnumComboBox yIssueType;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel3;
 
@@ -27,80 +31,113 @@ namespace workwear.Journal.Filter.Views.Tools
 			// Container child workwear.Journal.Filter.Views.Tools.NotificationFilterView.Gtk.Container+ContainerChild
 			this.ytable1 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable1.Name = "ytable1";
-			this.ytable1.NRows = ((uint)(3));
+			this.ytable1.NRows = ((uint)(4));
 			this.ytable1.NColumns = ((uint)(3));
 			this.ytable1.RowSpacing = ((uint)(6));
 			this.ytable1.ColumnSpacing = ((uint)(6));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.checkShowOnlyWork = new global::Gamma.GtkWidgets.yCheckButton();
+			this.checkShowOnlyWork.CanFocus = true;
+			this.checkShowOnlyWork.Name = "checkShowOnlyWork";
+			this.checkShowOnlyWork.Label = global::Mono.Unix.Catalog.GetString("Только работающие");
+			this.checkShowOnlyWork.Active = true;
+			this.checkShowOnlyWork.DrawIndicator = true;
+			this.checkShowOnlyWork.UseUnderline = true;
+			this.ytable1.Add(this.checkShowOnlyWork);
+			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable1[this.checkShowOnlyWork]));
+			w1.XOptions = ((global::Gtk.AttachOptions)(4));
+			w1.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.datePeriodIssue = new global::Gamma.Widgets.yDatePeriodPicker();
+			this.datePeriodIssue.Events = ((global::Gdk.EventMask)(256));
+			this.datePeriodIssue.Name = "datePeriodIssue";
+			this.datePeriodIssue.StartDate = new global::System.DateTime(0);
+			this.datePeriodIssue.EndDate = new global::System.DateTime(0);
+			this.ytable1.Add(this.datePeriodIssue);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable1[this.datePeriodIssue]));
+			w2.TopAttach = ((uint)(1));
+			w2.BottomAttach = ((uint)(2));
+			w2.LeftAttach = ((uint)(2));
+			w2.RightAttach = ((uint)(3));
+			w2.XOptions = ((global::Gtk.AttachOptions)(4));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.entitySubdivision = new global::QS.Views.Control.EntityEntry();
 			this.entitySubdivision.Events = ((global::Gdk.EventMask)(256));
 			this.entitySubdivision.Name = "entitySubdivision";
 			this.ytable1.Add(this.entitySubdivision);
-			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable1[this.entitySubdivision]));
-			w1.LeftAttach = ((uint)(2));
-			w1.RightAttach = ((uint)(3));
-			w1.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child ytable1.Gtk.Table+TableChild
-			this.ycheckShowOnlyOverdue = new global::Gamma.GtkWidgets.yCheckButton();
-			this.ycheckShowOnlyOverdue.CanFocus = true;
-			this.ycheckShowOnlyOverdue.Name = "ycheckShowOnlyOverdue";
-			this.ycheckShowOnlyOverdue.Label = global::Mono.Unix.Catalog.GetString("Просроченный");
-			this.ycheckShowOnlyOverdue.DrawIndicator = true;
-			this.ycheckShowOnlyOverdue.UseUnderline = true;
-			this.ytable1.Add(this.ycheckShowOnlyOverdue);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ycheckShowOnlyOverdue]));
-			w2.XOptions = ((global::Gtk.AttachOptions)(4));
-			w2.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child ytable1.Gtk.Table+TableChild
-			this.ydateperiodpicker1 = new global::Gamma.Widgets.yDatePeriodPicker();
-			this.ydateperiodpicker1.Events = ((global::Gdk.EventMask)(256));
-			this.ydateperiodpicker1.Name = "ydateperiodpicker1";
-			this.ydateperiodpicker1.StartDate = new global::System.DateTime(0);
-			this.ydateperiodpicker1.EndDate = new global::System.DateTime(0);
-			this.ytable1.Add(this.ydateperiodpicker1);
-			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ydateperiodpicker1]));
-			w3.TopAttach = ((uint)(1));
-			w3.BottomAttach = ((uint)(2));
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable1[this.entitySubdivision]));
 			w3.LeftAttach = ((uint)(2));
 			w3.RightAttach = ((uint)(3));
+			w3.XOptions = ((global::Gtk.AttachOptions)(4));
 			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.ycheckShowOverdue = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckShowOverdue.CanFocus = true;
+			this.ycheckShowOverdue.Name = "ycheckShowOverdue";
+			this.ycheckShowOverdue.Label = global::Mono.Unix.Catalog.GetString("Просроченный");
+			this.ycheckShowOverdue.DrawIndicator = true;
+			this.ycheckShowOverdue.UseUnderline = true;
+			this.ytable1.Add(this.ycheckShowOverdue);
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ycheckShowOverdue]));
+			w4.TopAttach = ((uint)(2));
+			w4.BottomAttach = ((uint)(3));
+			w4.LeftAttach = ((uint)(2));
+			w4.RightAttach = ((uint)(3));
+			w4.XOptions = ((global::Gtk.AttachOptions)(4));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.yIssueType = new global::Gamma.Widgets.yEnumComboBox();
+			this.yIssueType.Name = "yIssueType";
+			this.yIssueType.ShowSpecialStateAll = false;
+			this.yIssueType.ShowSpecialStateNot = false;
+			this.yIssueType.UseShortTitle = false;
+			this.yIssueType.DefaultFirst = false;
+			this.ytable1.Add(this.yIssueType);
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yIssueType]));
+			w5.TopAttach = ((uint)(3));
+			w5.BottomAttach = ((uint)(4));
+			w5.LeftAttach = ((uint)(2));
+			w5.RightAttach = ((uint)(3));
+			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabel3 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel3.Name = "ylabel3";
 			this.ylabel3.Xalign = 1F;
 			this.ylabel3.LabelProp = global::Mono.Unix.Catalog.GetString("Подразделение:");
 			this.ytable1.Add(this.ylabel3);
-			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel3]));
-			w4.LeftAttach = ((uint)(1));
-			w4.RightAttach = ((uint)(2));
-			w4.XOptions = ((global::Gtk.AttachOptions)(4));
-			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel3]));
+			w6.LeftAttach = ((uint)(1));
+			w6.RightAttach = ((uint)(2));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabel4 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel4.Name = "ylabel4";
 			this.ylabel4.Xalign = 1F;
 			this.ylabel4.LabelProp = global::Mono.Unix.Catalog.GetString("Период получения:");
 			this.ytable1.Add(this.ylabel4);
-			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel4]));
-			w5.TopAttach = ((uint)(1));
-			w5.BottomAttach = ((uint)(2));
-			w5.LeftAttach = ((uint)(1));
-			w5.RightAttach = ((uint)(2));
-			w5.XOptions = ((global::Gtk.AttachOptions)(4));
-			w5.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel4]));
+			w7.TopAttach = ((uint)(1));
+			w7.BottomAttach = ((uint)(2));
+			w7.LeftAttach = ((uint)(1));
+			w7.RightAttach = ((uint)(2));
+			w7.XOptions = ((global::Gtk.AttachOptions)(4));
+			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabel5 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel5.Name = "ylabel5";
 			this.ylabel5.Xalign = 1F;
 			this.ylabel5.LabelProp = global::Mono.Unix.Catalog.GetString("Тип выдачи:");
 			this.ytable1.Add(this.ylabel5);
-			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel5]));
-			w6.TopAttach = ((uint)(2));
-			w6.BottomAttach = ((uint)(3));
-			w6.LeftAttach = ((uint)(1));
-			w6.RightAttach = ((uint)(2));
-			w6.XOptions = ((global::Gtk.AttachOptions)(4));
-			w6.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel5]));
+			w8.TopAttach = ((uint)(3));
+			w8.BottomAttach = ((uint)(4));
+			w8.LeftAttach = ((uint)(1));
+			w8.RightAttach = ((uint)(2));
+			w8.XOptions = ((global::Gtk.AttachOptions)(4));
+			w8.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.ytable1);
 			if ((this.Child != null))
 			{

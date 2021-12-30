@@ -68,11 +68,33 @@ namespace workwear.Journal.ViewModels.Tools
 			Post postAlias = null;
 			Subdivision subdivisionAlias = null;
 			EmployeeCard employeeAlias = null;
+			EmployeeCardItem itemAlias = null;
 
-			var employees = uow.Session.QueryOver<EmployeeCard>(() => employeeAlias);
+			var employees = uow.Session.QueryOver(() => employeeAlias);
 
+			DateTime startTime;
+			if(Filter.ShowOverdue)
+				startTime = DateTime.MinValue;
+			else startTime = Filter.StartDateIssue;
+
+			if(Filter.ShowOnlyWork)
+				employees.Where(() => employeeAlias.DismissDate == null);
 			if(Filter.Subdivision != null)
-				employees.Where(x => x.Subdivision.Id == Filter.Subdivision.Id);
+				employees.Where(() => employeeAlias.Subdivision.Id == Filter.Subdivision.Id);
+
+			employees
+				.JoinAlias(() => employeeAlias.WorkwearItems, () => itemAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					.Where(() => itemAlias.NextIssue >= startTime && itemAlias.NextIssue <= Filter.EndDateIssue);
+
+			switch(Filter.IsueType) {
+				case (AskIssueType.All):
+					break;
+				case (AskIssueType.Personal):
+					break;
+				case (AskIssueType.Сollective):
+					break;
+			}
+
 
 			return employees
 				.Where(GetSearchCriterion(
@@ -93,10 +115,11 @@ namespace workwear.Journal.ViewModels.Tools
 					.Select(x => x.PersonnelNumber).WithAlias(() => resultAlias.PersonnelNumber)
 					.Select(x => x.FirstName).WithAlias(() => resultAlias.FirstName)
 					.Select(x => x.LastName).WithAlias(() => resultAlias.LastName)
+					.Select(() => employeeAlias.DismissDate).WithAlias(() => resultAlias.DismissDate)
 					.Select(x => x.Patronymic).WithAlias(() => resultAlias.Patronymic)
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
-	   				.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
- 					)
+					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
+					)
 				.OrderBy(() => employeeAlias.LastName).Asc
 				.ThenBy(() => employeeAlias.FirstName).Asc
 				.ThenBy(() => employeeAlias.Patronymic).Asc
@@ -124,7 +147,7 @@ namespace workwear.Journal.ViewModels.Tools
 			RowActivatedAction = editAction;
 
 			var sendMessange = new JournalAction("Отправить сообщение",
-					(selected) => true,
+					(selected) => SelectedList.Count !=0,
 					(selected) => true,
 					(selected) => SendMessange()
 					);
@@ -194,6 +217,10 @@ namespace workwear.Journal.ViewModels.Tools
 		public string Post { get; set; }
 		[SearchHighlight]
 		public string Subdivision { get; set; }
+
+		public bool Dismiss { get { return DismissDate.HasValue; } }
+
+		public DateTime? DismissDate { get; set; }
 
 		public string Title => PersonHelper.PersonNameWithInitials(LastName, FirstName, Patronymic);
 
