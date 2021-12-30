@@ -18,6 +18,8 @@ using QS.Services;
 using QS.Utilities.Text;
 using QS.ViewModels.Resolve;
 using workwear.Domain.Company;
+using workwear.Domain.Regulations;
+using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Tools;
 using workwear.Repository.Regulations;
 using workwear.Tools;
@@ -69,6 +71,8 @@ namespace workwear.Journal.ViewModels.Tools
 			Subdivision subdivisionAlias = null;
 			EmployeeCard employeeAlias = null;
 			EmployeeCardItem itemAlias = null;
+			ProtectionTools toolsAlias = null;
+			ItemsType typesAlias = null;
 
 			var employees = uow.Session.QueryOver(() => employeeAlias);
 
@@ -87,11 +91,17 @@ namespace workwear.Journal.ViewModels.Tools
 					.Where(() => itemAlias.NextIssue >= startTime && itemAlias.NextIssue <= Filter.EndDateIssue);
 
 			switch(Filter.IsueType) {
-				case (AskIssueType.All):
-					break;
 				case (AskIssueType.Personal):
+					employees
+						.JoinAlias(() => itemAlias.ProtectionTools, () => toolsAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+						.JoinAlias(() => toolsAlias.Type, () => typesAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+						.Where(() => typesAlias.IssueType == IssueType.Personal);
 					break;
 				case (AskIssueType.Сollective):
+					employees
+						.JoinAlias(() => itemAlias.ProtectionTools, () => toolsAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+						.JoinAlias(() => toolsAlias.Type, () => typesAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+						.Where(() => typesAlias.IssueType == IssueType.Сollective);
 					break;
 			}
 
