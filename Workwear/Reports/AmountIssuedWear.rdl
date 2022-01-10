@@ -40,7 +40,7 @@
     <ReportItems>
       <Table Name="Table1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <DataSetName>Data</DataSetName>
-        <NoRows>По указанному объекту нет данных.</NoRows>
+        <NoRows>По данному запросу нет данных</NoRows>
         <Style>
           <BorderStyle>
             <Default>Solid</Default>
@@ -447,6 +447,8 @@ WHERE operation_issued_by_employee.operation_time &gt;= @dateStart and operation
 AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
 AND (@issue_type = "" OR item_types.issue_type = @issue_type)
 and operation_issued_by_employee.returned = 0 AND (@summary OR (@withoutsub AND objects.id IS NULL) OR objects.id IN (@subdivisions))
+and (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
+and (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
 GROUP BY IF(@summary, NULL, objects.id), nomenclature_id, IF(@bysize, operation_issued_by_employee.size, NULL), IF(@bysize, operation_issued_by_employee.growth, NULL)
 ORDER BY CAST(objects.code AS UNSIGNED), nomen, operation_issued_by_employee.size, operation_issued_by_employee.growth;</CommandText>
         <QueryParameters>
@@ -470,6 +472,12 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen, operation_issued_by_employee.siz
           </QueryParameter>
           <QueryParameter Name="issue_type">
             <Value>={?issue_type}</Value>
+          </QueryParameter>
+          <QueryParameter Name="matchString">
+            <Value>={?matchString}</Value>
+          </QueryParameter>
+          <QueryParameter Name="noMatchString">
+            <Value>={?noMatchString}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -568,6 +576,22 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen, operation_issued_by_employee.siz
       </Prompt>
     </ReportParameter>
     <ReportParameter Name="issue_type">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="matchString">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="noMatchString">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>

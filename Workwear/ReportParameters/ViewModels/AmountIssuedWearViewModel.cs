@@ -44,6 +44,8 @@ namespace workwear.ReportParameters.ViewModels
 					{"withoutsub", Summary ? false : Subdivisons.First().Select },
 					{"subdivisions", Summary ? new int[] {-1} : Subdivisons.Where(x => x.Select).Select(x => x.Id).ToArray() },
 					{"issue_type", IssueType?.ToString() },
+					{"matchString", MatchString},
+					{"noMatchString", NoMatchString}
 				 };
 
 		#region Параметры
@@ -101,8 +103,24 @@ namespace workwear.ReportParameters.ViewModels
 
 		public bool SensetiveLoad => StartDate != null && EndDate != null && (Summary || Subdivisons.Any(x => x.Select));
 		public bool SensetiveSubdivisions => !Summary;
-		#endregion
-	}
+
+		private string matchString;
+		public string MatchString {
+			get => matchString;
+			set {
+				SetField(ref matchString, value);
+			}
+		}
+
+		private string noMatchString;
+		public string NoMatchString {
+			get => noMatchString;
+			set {
+				SetField(ref noMatchString, value);
+			}
+		}
+			#endregion
+		}
 
 	public class SelectedSubdivison : PropertyChangedBase
 	{
