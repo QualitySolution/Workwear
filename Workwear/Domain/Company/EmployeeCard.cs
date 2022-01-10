@@ -547,11 +547,10 @@ namespace workwear.Domain.Company
 			FetchEntitiesInWearItems(uow, actualItems);
 			var allNomenclatures = actualItems.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
 			var stockRepo = new StockRepository();
-			var stock = stockRepo.StockBalances(uow, warehouse, allNomenclatures, onTime);
-			foreach(var item in actualItems) {
-				item.InStock = stock
-					.Where(x => x.Nomenclature.MatchingEmployeeSex(item.EmployeeCard.Sex))
-					.Where(x => item.MatcheStockPosition(x.StockPosition)).ToList();
+			var stock = stockRepo.StockBalances (uow, warehouse, allNomenclatures, onTime);
+			foreach(var item in actualItems)
+			{
+				item.InStock = stock.Where(x => item.MatcheStockPosition(x.StockPosition)).ToList();
 			}
 		}
 

@@ -204,8 +204,12 @@ namespace workwear.Domain.Company
 
 			var wearCategory = stockPosition.Nomenclature.Type.WearCategory;
 
-			if(wearCategory == null || !SizeHelper.HasСlothesSizeStd(wearCategory.Value))
+			if(wearCategory == null)
 				return true;
+			
+			var sexMatching = stockPosition.Nomenclature.MatchingEmployeeSex(EmployeeCard.Sex);
+			if (!SizeHelper.HasСlothesSizeStd(wearCategory.Value) || sexMatching == false)
+				return sexMatching;
 
 			var employeeSize = EmployeeCard.GetSize(wearCategory.Value);
 			if(employeeSize == null || String.IsNullOrEmpty(employeeSize.Size) || String.IsNullOrEmpty(employeeSize.StandardCode)) {
