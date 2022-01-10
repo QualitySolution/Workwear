@@ -18,7 +18,7 @@ namespace WorkwearTest.Organization
 	{
 		#region UpdateNextIssue
 
-		[Test(Description = "Проверяем учитывает ли расчет даты следущей выдачи дату автосписания.")]
+		[Test(Description = "Проверяем учитывает ли расчет даты следующей выдачи, дату автосписания.")]
 		public void UpdateNextIssue_AutoWriteoffCase()
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
@@ -45,7 +45,7 @@ namespace WorkwearTest.Organization
 			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2018, 2, 1)));
 		}
 
-		[Test(Description = "Проверяем пороставляет ли расчет следующей выдачи дату износа по норме в том случае если авто списание последней выдачи отключено.")]
+		[Test(Description = "Проверяем проставляет ли расчет следующей выдачи дату износа по норме в том случае если авто списание последней выдачи отключено.")]
 		public void UpdateNextIssue_NotWriteoffCase()
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
@@ -100,7 +100,7 @@ namespace WorkwearTest.Organization
 			Assert.That(item.NextIssue, Is.Null);
 		}
 
-		[Test(Description = "Тест проверяет коректную установку следующей выдачи в случает когда по норме положено 10, выдали 10, потом списали 2. Следующая выдача должна быть первой датой когда стало меньше нормы, то есть в день списания.")]
+		[Test(Description = "Тест проверяет корректную установку следующей выдачи в случает когда по норме положено 10, выдали 10, потом списали 2. Следующая выдача должна быть первой датой когда стало меньше нормы, то есть в день списания.")]
 		public void UpdateNextIssue_FirstNotEnoughCase()
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
@@ -175,7 +175,7 @@ namespace WorkwearTest.Organization
 			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2017, 10, 1)));
 		}
 
-		[Test(Description = "Проверяем сдвигается ли дата следущей выдачи на первый день после отпуска.")]
+		[Test(Description = "Проверяем сдвигается ли дата следующей выдачи на первый день после отпуска.")]
 		public void UpdateNextIssue_MoveDateToLeaveEndCase()
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
@@ -353,7 +353,7 @@ namespace WorkwearTest.Organization
 		#endregion
 		#region MatcheStockPosition
 
-		[Test(Description = "Проверяем случай при котором у складской позиции отсутсвует рост, значит эта номеклатура без роста и не надо сравнивать ее по росту с сотрудником.")]
+		[Test(Description = "Проверяем случай при котором у складской позиции отсутствует рост, значит эта номенклатура без роста и не надо сравнивать ее по росту с сотрудником.")]
 		[TestCase("")]
 		[TestCase(null)]
 		[TestCase("182")]
@@ -383,10 +383,7 @@ namespace WorkwearTest.Organization
 			Assert.That(employeeCardItem.MatcheStockPosition(stockPosition)); 
 		}
 
-		#endregion
-		#region MatcheStockPosition
-
-		[Test(Description = "Проверяем что находим соответсвие размеров.")]
+		[Test(Description = "Проверяем что находим соответствие размеров.")]
 		public void MatcheStockPosition_SizeTest()
 		{
 			var employee = new EmployeeCard();
@@ -415,7 +412,7 @@ namespace WorkwearTest.Organization
 			Assert.That(result, Is.True);
 		}
 
-		[Test(Description = "Проверяем что находим соответсвия размеров когда в сотруднике установлен диапазон размера.")]
+		[Test(Description = "Проверяем что находим соответствия размеров когда в сотруднике установлен диапазон размера.")]
 		public void MatcheStockPosition_RangeSizeInEmployeeSize()
 		{
 			var employee = new EmployeeCard();
@@ -444,7 +441,7 @@ namespace WorkwearTest.Organization
 			Assert.That(result, Is.True);
 		}
 
-		[Test(Description = "Проверяем что находим соответсвия размеров когда в сотруднике установлен диапазон роста.")]
+		[Test(Description = "Проверяем что находим соответствия размеров когда в сотруднике установлен диапазон роста.")]
 		public void MatcheStockPosition_RangeGrowthInEmployeeSize()
 		{
 			var employee = new EmployeeCard();
