@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Measurements;
 using Workwear.Measurements;
@@ -134,9 +134,9 @@ namespace workwear.Domain.Stock
 				return true;
 
 			switch(employeeSex) {
-				case workwear.Domain.Company.Sex.F:
+				case Workwear.Domain.Company.Sex.F:
 					return Sex == ClothesSex.Women || Sex == ClothesSex.Universal;
-				case workwear.Domain.Company.Sex.M:
+				case Workwear.Domain.Company.Sex.M:
 					return Sex == ClothesSex.Men || Sex == ClothesSex.Universal;
 				default:
 					return false;
