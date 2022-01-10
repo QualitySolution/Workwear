@@ -36,9 +36,9 @@ namespace workwear.ReportParameters.Views
 
 			buttonPrintReport.Binding.AddBinding(viewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 
-			yentryMatch.Binding.AddBinding(viewModel, v => v.MatchString, w => w.Text);
+			yentryMatch.Binding.AddBinding(viewModel, v => v.MatchString, w => w.Text).InitializeFromSource();
 
-			yentryNoMatch.Binding.AddBinding(viewModel, v => v.NoMatchString, w => w.Text);
+			yentryNoMatch.Binding.AddBinding(viewModel, v => v.NoMatchString, w => w.Text).InitializeFromSource();
 		}
 
 		protected void OnButtonPrintReportClicked(object sender, EventArgs e)

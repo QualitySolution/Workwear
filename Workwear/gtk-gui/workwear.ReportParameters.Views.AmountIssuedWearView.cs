@@ -131,7 +131,7 @@ namespace workwear.ReportParameters.Views
 			this.ylabel2 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel2.Name = "ylabel2";
 			this.ylabel2.Xalign = 1F;
-			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("По совпадению:");
+			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Наименование содержит:");
 			this.ytable1.Add(this.ylabel2);
 			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel2]));
 			w7.TopAttach = ((uint)(2));
@@ -142,7 +142,7 @@ namespace workwear.ReportParameters.Views
 			this.ylabel3 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel3.Name = "ylabel3";
 			this.ylabel3.Xalign = 1F;
-			this.ylabel3.LabelProp = global::Mono.Unix.Catalog.GetString("Исключать:");
+			this.ylabel3.LabelProp = global::Mono.Unix.Catalog.GetString("Наименование не содержит:");
 			this.ytable1.Add(this.ylabel3);
 			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel3]));
 			w8.TopAttach = ((uint)(3));

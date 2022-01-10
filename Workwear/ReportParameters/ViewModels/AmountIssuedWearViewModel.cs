@@ -109,7 +109,6 @@ namespace workwear.ReportParameters.ViewModels
 			get => matchString;
 			set {
 				SetField(ref matchString, value);
-				matchString = value;
 			}
 		}
 
@@ -118,7 +117,6 @@ namespace workwear.ReportParameters.ViewModels
 			get => noMatchString;
 			set {
 				SetField(ref noMatchString, value);
-				noMatchString = value;
 			}
 		}
 			#endregion
