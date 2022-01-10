@@ -35,6 +35,10 @@ namespace workwear.ReportParameters.Views
 			ytreeSubdivisions.ItemsDataSource = new GenericObservableList<SelectedSubdivison>(viewModel.Subdivisons);
 
 			buttonPrintReport.Binding.AddBinding(viewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
+
+			yentryMatch.Binding.AddBinding(viewModel, v => v.MatchString, w => w.Text);
+
+			yentryNoMatch.Binding.AddBinding(viewModel, v => v.NoMatchString, w => w.Text);
 		}
 
 		protected void OnButtonPrintReportClicked(object sender, EventArgs e)
