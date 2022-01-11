@@ -12,8 +12,5 @@ namespace workwear.ViewModels.Regulations
 		public NormConditionViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 		}
-		public string Name { get; set; }
-
-		public SexNormCondition sexNormCondition { get; set; }
 	}
 }

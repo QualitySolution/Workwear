@@ -37,6 +37,8 @@ namespace workwear.ViewModels.Regulations
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			employeeIssueRepository.RepoUow = UoW;
 			this.interactive = interactive;
+
+			NormConditions = UoW.GetAll<NormCondition>().ToList();
 		}
 
 		/// <summary>
@@ -62,6 +64,10 @@ namespace workwear.ViewModels.Regulations
 			set => SetField(ref cancelSensitive, value);
 		}
 
+		#endregion
+
+		#region Свойства
+		public List<NormCondition> NormConditions { get; set; }
 		#endregion
 
 		#region Действия View

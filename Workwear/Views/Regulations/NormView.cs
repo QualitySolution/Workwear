@@ -42,16 +42,20 @@ namespace workwear.Views.Regulations
 			ytreeProfessions.ItemsDataSource = Entity.ObservablePosts;
 			ytreeProfessions.Selection.Changed += YtreeProfessions_Selection_Changed;
 
-			ytreeItems.ColumnsConfig = FluentColumnsConfig<NormItem>.Create ()
-				.AddColumn ("Наименование").AddTextRenderer (p => p.ProtectionTools != null ? p.ProtectionTools.Name : null)
-				.AddColumn ("Количество")
-				.AddNumericRenderer (i => i.Amount).WidthChars (9).Editing ().Adjustment (new Gtk.Adjustment(1, 0, 1000000, 1, 10, 10))
-				.AddTextRenderer (i => i.ProtectionTools != null && i.ProtectionTools.Type.Units != null ? i.ProtectionTools.Type.Units.Name : String.Empty)
-				.AddColumn ("Период")
-				.AddNumericRenderer (i => i.PeriodCount).WidthChars(6).Editing ().Adjustment (new Gtk.Adjustment(1, 0, 100, 1, 10, 10))
-					.AddSetter((c,n) => c.Visible = n.NormPeriod != NormPeriodType.Wearout)
-				.AddEnumRenderer (i => i.NormPeriod).Editing ()
-				.AddColumn(String.Empty)
+			ytreeItems.ColumnsConfig = FluentColumnsConfig<NormItem>.Create()
+				.AddColumn("Наименование").AddTextRenderer(p => p.ProtectionTools != null ? p.ProtectionTools.Name : null)
+				.AddColumn("Количество")
+				.AddNumericRenderer(i => i.Amount).WidthChars(9).Editing().Adjustment(new Gtk.Adjustment(1, 0, 1000000, 1, 10, 10))
+				.AddTextRenderer(i => i.ProtectionTools != null && i.ProtectionTools.Type.Units != null ? i.ProtectionTools.Type.Units.Name : String.Empty)
+				.AddColumn("Период")
+				.AddNumericRenderer(i => i.PeriodCount).WidthChars(6).Editing().Adjustment(new Gtk.Adjustment(1, 0, 100, 1, 10, 10))
+					.AddSetter((c, n) => c.Visible = n.NormPeriod != NormPeriodType.Wearout)
+				.AddEnumRenderer(i => i.NormPeriod).Editing()
+				.AddColumn("Условие нормы")
+					.AddComboRenderer(i => i.NormCondition)
+						.SetDisplayFunc(x => x?.Name)
+					.FillItems(ViewModel.NormConditions)
+					.Editing()
 				.Finish ();
 			ytreeItems.ItemsDataSource = Entity.ObservableItems;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;

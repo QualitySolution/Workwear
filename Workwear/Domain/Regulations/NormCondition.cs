@@ -3,6 +3,9 @@ using QS.DomainModel.Entity;
 
 namespace workwear.Domain.Regulations
 {
+	[Appellative(Gender = GrammaticalGender.Neuter,
+		NominativePlural = "условие нормы",
+		Nominative = "условие нормы")]
 	public class NormCondition : PropertyChangedBase, IDomainObject
 	{
 		public virtual int Id { get; set; }

@@ -8,10 +8,17 @@ namespace workwear.Views.Regulations
 	{
 		public NormConditionView(NormConditionViewModel viewModel) : base(viewModel)
 		{
-			yenumSex.ItemsEnum = typeof(SexNormCondition);
-			yenumSex.Binding.AddBinding(ViewModel, v => v.sexNormCondition, w => w.SelectedItem).InitializeFromSource();
+			this.Build();
+			ConfigureDlg();
+			CommonButtonSubscription();
+		}
 
-			yentryName.Binding.AddBinding(viewModel, v => v.Name, w => w.Text).InitializeFromSource();
+		public void ConfigureDlg() 
+		{
+			yenumSex.ItemsEnum = typeof(SexNormCondition);
+			yenumSex.Binding.AddBinding(Entity, e => e.SexNormCondition, w => w.SelectedItem).InitializeFromSource();
+
+			yentryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 		}
 	}
 }

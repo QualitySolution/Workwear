@@ -60,6 +60,14 @@ namespace workwear.Domain.Regulations
 			set { SetField (ref periodCount, value, () => PeriodCount); }
 		}
 
+		private NormCondition normCondition;
+
+		[Display(Name = "Условия нормы")]
+		public virtual NormCondition NormCondition {
+			get => normCondition; 
+			set => SetField(ref normCondition, value); 
+		}
+
 		#endregion
 
 		public virtual double AmountPerYear

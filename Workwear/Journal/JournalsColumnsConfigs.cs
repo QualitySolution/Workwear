@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
-using QS.DomainModel.Entity;
 using QS.Journal.GtkUI;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
