@@ -475,6 +475,10 @@
     <Compile Include="gtk-gui\workwear.Views.Tools.ReplaceEntityView.cs" />
     <Compile Include="Domain\Regulations\NormCondition.cs" />
     <Compile Include="HibernateMapping\Regulations\NormConditionMap.cs" />
+    <Compile Include="ViewModels\Regulations\NormConditionViewModel.cs" />
+    <Compile Include="Views\Regulations\NormConditionView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Regulations.NormConditionView.cs" />
+    <Compile Include="Journal\ViewModels\Regulations\NormConditionJournalViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

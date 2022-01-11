@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
+using QS.DomainModel.Entity;
 using QS.Journal.GtkUI;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
@@ -99,6 +100,13 @@ namespace workwear.Journal
 					.AddColumn("Использована").ToolTipText(n => n.UsageToolTip).AddTextRenderer(node => node.UsageText)
 					.AddColumn("Должности[Подразделения]").AddTextRenderer(node => node.Posts).SearchHighlight()
 					.Finish()
+			);
+
+			TreeViewColumnsConfigFactory.Register<NormConditionJournalViewModel>(
+				() => FluentColumnsConfig<NormConditionJournalNode>.Create()
+				.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+				.AddColumn("Пол").AddTextRenderer(node => node.Sex.GetEnumTitle())
+				.Finish()
 			);
 
 			TreeViewColumnsConfigFactory.Register<ProfessionJournalViewModel>(

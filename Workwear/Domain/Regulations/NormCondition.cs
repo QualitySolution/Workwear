@@ -14,15 +14,20 @@ namespace workwear.Domain.Regulations
 			set => SetField(ref name, value);
 		}
 
-		public SexNormCondition SexNormCondition;
+		private SexNormCondition sex;
+		public virtual SexNormCondition SexNormCondition {
+			get => sex;
+			set => SetField(ref sex, value);
+		}
 	}
+
 	public enum SexNormCondition
 	{
 		[Display(Name = "Для всех")]
 		ForAll,
 		[Display(Name = "Только мужчинам")]
 		OnlyMen,
-		[Display(Name = "Только жешщинам")]
+		[Display(Name = "Только женщинам")]
 		OnlyWomen
 	}
 }

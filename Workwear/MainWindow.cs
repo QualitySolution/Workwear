@@ -357,6 +357,11 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager.OpenViewModel<NormJournalViewModel>(null);
 	}
 
+	protected void OnActionConditionNormsActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<NormConditionJournalViewModel>(null);
+	}
+
 	protected void OnAction13Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportMonthIssueSheet");
