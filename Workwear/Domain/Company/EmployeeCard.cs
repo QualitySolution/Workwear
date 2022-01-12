@@ -524,6 +524,10 @@ namespace workwear.Domain.Company
 			// Удаляем больше ненужные
 			var needRemove = WorkwearItems.Where (i => !processed.Contains (i));
 
+			//Удаляем позиции не подходящие под условия нормы
+			processed
+				.RemoveAll(i => i.ActiveNormItem.NormCondition != null && !i.ActiveNormItem.NormCondition.MatchesForEmployee(this));
+
 			needRemove.ToList ().ForEach (i => ObservableWorkwearItems.Remove (i));
 			//Обновляем срок следующей выдачи
 			foreach(var item in processed)

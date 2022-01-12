@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using workwear.Domain.Company;
 
 namespace workwear.Domain.Regulations
 {
@@ -22,6 +23,23 @@ namespace workwear.Domain.Regulations
 			get => sex;
 			set => SetField(ref sex, value);
 		}
+
+		#region Методы 
+
+		public virtual bool MatchesForEmployee(EmployeeCard employee)
+		{
+
+			switch(employee.Sex) {
+				case Workwear.Domain.Company.Sex.F:
+					return SexNormCondition == SexNormCondition.OnlyWomen || SexNormCondition == SexNormCondition.ForAll;
+				case Workwear.Domain.Company.Sex.M:
+					return SexNormCondition == SexNormCondition.OnlyMen || SexNormCondition == SexNormCondition.ForAll;
+				default:
+					return false;
+			}
+		}
+
+		#endregion
 	}
 
 	public enum SexNormCondition
