@@ -503,9 +503,15 @@ namespace workwear.Domain.Company
 					var currentItem = WorkwearItems.FirstOrDefault (i => i.ProtectionTools == normItem.ProtectionTools);
 					if (currentItem == null)
 					{
+						if(normItem.NormCondition != null && !normItem.NormCondition.MatchesForEmployee(this))
+							continue;
 						//FIXME Возможно нужно проверять если что-то подходящее уже выдавалось то пересчитывать.
 						currentItem = new EmployeeCardItem (this, normItem);
 						ObservableWorkwearItems.Add (currentItem);
+					}
+					else if(normItem.NormCondition != null && !normItem.NormCondition.MatchesForEmployee(this)) {
+						ObservableWorkwearItems.Remove(currentItem);
+						continue;
 					}
 
 					if(processed.Contains (currentItem))
@@ -520,13 +526,8 @@ namespace workwear.Domain.Company
 					}
 				}
 			}
-
 			// Удаляем больше ненужные
 			var needRemove = WorkwearItems.Where (i => !processed.Contains (i));
-
-			//Удаляем позиции не подходящие под условия нормы
-			processed
-				.RemoveAll(i => i.ActiveNormItem.NormCondition != null && !i.ActiveNormItem.NormCondition.MatchesForEmployee(this));
 
 			needRemove.ToList ().ForEach (i => ObservableWorkwearItems.Remove (i));
 			//Обновляем срок следующей выдачи

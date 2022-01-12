@@ -18,8 +18,6 @@ namespace workwear.Journal.ViewModels.Regulations
 		{
 			UseSlider = true;
 			AutofacScope = autofacScope;
-			CreatePopupActions();
-
 			Title = "Условия нормы";
 		}
 
@@ -32,7 +30,7 @@ namespace workwear.Journal.ViewModels.Regulations
 
 			return normsCondition
 				.SelectList(list => list
-				   .SelectGroup(() => normConditionAlias.Id).WithAlias(() => resultAlias.Id)
+				   .Select(() => normConditionAlias.Id).WithAlias(() => resultAlias.Id)
 				   .Select(() => normConditionAlias.Name).WithAlias(() => resultAlias.Name)
 				   .Select(() => normConditionAlias.SexNormCondition).WithAlias(() => resultAlias.Sex)
 				).OrderBy(x => x.Name).Asc

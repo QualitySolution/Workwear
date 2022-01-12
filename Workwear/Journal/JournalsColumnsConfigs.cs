@@ -104,7 +104,7 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<NormConditionJournalViewModel>(
 				() => FluentColumnsConfig<NormConditionJournalNode>.Create()
 				.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
-				.AddColumn("Пол").AddTextRenderer(node => node.Sex.GetEnumTitle())
+				.AddColumn("Ограничение по полу").AddTextRenderer(node => node.Sex.GetEnumTitle())
 				.Finish()
 			);
 
