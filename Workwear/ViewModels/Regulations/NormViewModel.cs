@@ -39,6 +39,7 @@ namespace workwear.ViewModels.Regulations
 			this.interactive = interactive;
 
 			NormConditions = UoW.GetAll<NormCondition>().ToList();
+			NormConditions.Insert(0, null);
 		}
 
 		/// <summary>

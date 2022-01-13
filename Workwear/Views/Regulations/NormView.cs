@@ -54,6 +54,7 @@ namespace workwear.Views.Regulations
 				.AddColumn("Условие нормы")
 					.AddComboRenderer(i => i.NormCondition)
 						.SetDisplayFunc(x => x?.Name)
+						.SetDisplayListFunc(x => x?.Name ?? "нет")
 					.FillItems(ViewModel.NormConditions)
 					.Editing()
 				.Finish ();

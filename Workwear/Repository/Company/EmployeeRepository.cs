@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
 using NHibernate.Transform;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
@@ -13,6 +15,12 @@ namespace workwear.Repository.Company
 {
 	public class EmployeeRepository
 	{
+		public IUnitOfWork RepoUow;
+
+		public EmployeeRepository(IUnitOfWork uow = null)
+		{
+			RepoUow = uow;
+		}
 
 		public static QueryOver<EmployeeCard> ActiveEmployeesQuery ()
 		{
@@ -59,14 +67,25 @@ namespace workwear.Repository.Company
 				.Where(x => x.Employee == employee)
 				.Where(() => employeeIssueOperationAlias.AutoWriteoffDate == null || employeeIssueOperationAlias.AutoWriteoffDate > onDate)
 				.Where(() => employeeIssueOperationReceivedAlias.AutoWriteoffDate == null || employeeIssueOperationReceivedAlias.AutoWriteoffDate > onDate)
-				.SelectList (list => list
-					.SelectGroup (() => employeeIssueOperationAlias.ProtectionTools.Id).WithAlias(() => resultAlias.ProtectionToolsId)
-					.SelectGroup (() => employeeIssueOperationAlias.NormItem.Id).WithAlias (() => resultAlias.NormRowId)
-					.Select(projectionIssueDate).WithAlias (() => resultAlias.LastReceive)
-					.Select(projection).WithAlias (() => resultAlias.Amount)
+				.SelectList(list => list
+				   .SelectGroup(() => employeeIssueOperationAlias.ProtectionTools.Id).WithAlias(() => resultAlias.ProtectionToolsId)
+				   .SelectGroup(() => employeeIssueOperationAlias.NormItem.Id).WithAlias(() => resultAlias.NormRowId)
+				   .Select(projectionIssueDate).WithAlias(() => resultAlias.LastReceive)
+				   .Select(projection).WithAlias(() => resultAlias.Amount)
 				)
-				.TransformUsing (Transformers.AliasToBean<EmployeeRecivedInfo> ())
-				.List<EmployeeRecivedInfo> ();
+				.TransformUsing(Transformers.AliasToBean<EmployeeRecivedInfo>())
+				.List<EmployeeRecivedInfo>();
+		}
+
+		#region Norms
+		public IList<EmployeeCard> GetEmployeesUseNorm(Norm[] norms, IUnitOfWork uow = null)
+		{
+			Norm normAlias = null;
+			return (uow ?? RepoUow).Session.QueryOver<EmployeeCard>()
+				.JoinAlias(x => x.UsedNorms, () => normAlias)
+				.Where(x => normAlias.Id.IsIn(norms.GetIds().ToArray()))
+				.TransformUsing(Transformers.DistinctRootEntity)
+				.List();
 		}
 
 		public static IList<EmployeeCard> GetEmployeesDependenceOnNormItem(IUnitOfWork uow, NormItem item)
@@ -77,6 +96,7 @@ namespace workwear.Repository.Company
 				.Where(() => employeeItemAlias.ActiveNormItem == item)
 				.List();
 		}
+		#endregion
 
 		public static IList<EmployeeCardItem> GetItems(IUnitOfWork uow, EmployeeCard[] employees, DateTime begin, DateTime end)
 		{
