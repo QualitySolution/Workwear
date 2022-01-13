@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Gamma.Utilities;
 using NHibernate;
@@ -59,24 +60,24 @@ namespace workwear.Domain.Company
 
 		[Display (Name = "Имя")]
 		public virtual string FirstName {
-			get { return name; }
-			set { SetField (ref name, value, () => FirstName); }
+			get => name;
+			set => SetField(ref name, ToTitleCase(value));
 		}
 
 		string lastName;
 
 		[Display (Name = "Фамилия")]
 		public virtual string LastName {
-			get { return lastName; }
-			set { SetField (ref lastName, value, () => LastName); }
+			get =>lastName; 
+			set => SetField(ref lastName, ToTitleCase(value));
 		}
 
 		string patronymic;
 
 		[Display (Name = "Отчество")]
 		public virtual string Patronymic {
-			get { return patronymic; }
-			set { SetField (ref patronymic, value, () => Patronymic); }
+			get => patronymic;
+			set => SetField(ref patronymic, ToTitleCase(value));
 		}
 
 		private string cardKey;
@@ -363,6 +364,14 @@ namespace workwear.Domain.Company
 
 		public virtual string ShortName {
 			get { return PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic); }
+		}
+
+		private string ToTitleCase(string str){
+			if(!string.IsNullOrWhiteSpace(str)) {
+				TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
+				return ti.ToTitleCase(str.Trim().ToLower());
+			}
+			return string.Empty;
 		}
 
 		#endregion
