@@ -509,7 +509,12 @@ namespace workwear.Domain.Company
 			{
 				foreach (var normItem in norm.Items)
 				{
+
+					if(!normItem.NormCondition?.MatchesForEmployee(this) ?? false) 
+						continue;
+
 					var currentItem = WorkwearItems.FirstOrDefault (i => i.ProtectionTools == normItem.ProtectionTools);
+
 					if (currentItem == null)
 					{
 						//FIXME Возможно нужно проверять если что-то подходящее уже выдавалось то пересчитывать.
@@ -529,7 +534,6 @@ namespace workwear.Domain.Company
 					}
 				}
 			}
-
 			// Удаляем больше ненужные
 			var needRemove = WorkwearItems.Where (i => !processed.Contains (i));
 
