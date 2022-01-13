@@ -500,12 +500,11 @@ namespace workwear.Domain.Company
 			{
 				foreach (var normItem in norm.Items)
 				{
-					var currentItem = WorkwearItems.FirstOrDefault (i => i.ProtectionTools == normItem.ProtectionTools);
 
-					if(!normItem.NormCondition?.MatchesForEmployee(this) ?? false) {
-						if(currentItem != null && !processed.Contains(currentItem))
-							ObservableWorkwearItems.Remove(currentItem);
+					if(!normItem.NormCondition?.MatchesForEmployee(this) ?? false) 
 						continue;
+
+					var currentItem = WorkwearItems.FirstOrDefault (i => i.ProtectionTools == normItem.ProtectionTools);
 					}
 
 					if (currentItem == null)
