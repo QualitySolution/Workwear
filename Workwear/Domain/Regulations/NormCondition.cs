@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using workwear.Domain.Company;
 
 namespace workwear.Domain.Regulations
 {
 	[Appellative(Gender = GrammaticalGender.Neuter,
-		NominativePlural = "условие нормы",
+		NominativePlural = "условия нормы",
 		Nominative = "условие нормы")]
 	public class NormCondition : PropertyChangedBase, IDomainObject
 	{
