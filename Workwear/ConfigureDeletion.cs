@@ -83,6 +83,9 @@ namespace workwear
 				//Ну нужна так как должна удалятся через пересчет. .AddClearDependence<EmployeeCardItem> (x => x.ActiveNormItem) //FIXME После этого нужно пересчитать требования к выдаче, то новому списку норм.
 				;
 
+			DeleteConfig.AddHibernateDeleteInfo<NormCondition>()
+				.AddClearDependence<NormItem>(x => x.NormCondition);
+
 			DeleteConfig.AddHibernateDeleteInfo<Profession>()
 				.AddClearDependence<Post>(x => x.Profession);
 
