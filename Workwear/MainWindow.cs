@@ -354,7 +354,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionNormsActivated(object sender, EventArgs e)
 	{
-		NavigationManager.OpenViewModel<NormJournalViewModel>(null);
+		var page = NavigationManager.OpenViewModelNamedArgs<NormJournalViewModel>(null, new Dictionary<string, object> {{ "useMultiSelect", true }});
 	}
 
 	protected void OnActionConditionNormsActivated(object sender, EventArgs e)

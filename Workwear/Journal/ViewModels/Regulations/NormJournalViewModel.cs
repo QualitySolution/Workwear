@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
 using NHibernate.Transform;
 using QS.Dialog;
+using QS.Dialog.ViewModels;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -16,6 +18,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Company;
+using workwear.Repository.Company;
 using workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations
@@ -24,12 +27,14 @@ namespace workwear.Journal.ViewModels.Regulations
 	{
 		public NormFilterViewModel Filter { get; private set; }
 
-		public NormJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		public NormJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null, bool useMultiSelect = false) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
 			AutofacScope = autofacScope;
 			JournalFilter = Filter = AutofacScope.Resolve<NormFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			CreatePopupActions();
+			if(useMultiSelect)
+				UseMultiSelect();
 		}
 
 		protected override IQueryOver<Norm> ItemsQuery(IUnitOfWork uow)
@@ -95,11 +100,28 @@ namespace workwear.Journal.ViewModels.Regulations
 				.TransformUsing(Transformers.AliasToBean<NormJournalNode>());
 		}
 
+		public void UseMultiSelect()
+		{
+			//Обход проблемы с тем что SelectionMode одновременно управляет и выбором в журнале, и самим режмиом журнала.
+			//То есть создает действие выбора. Удалить после того как появится рефакторинг действий журнала. 
+			SelectionMode = JournalSelectionMode.Multiple;
+			NodeActionsList.RemoveAll(x => x.Title == "Выбрать");
+			RowActivatedAction = NodeActionsList.First(x => x.Title == "Изменить");
+			NodeActionsList.Add(new JournalAction("Обновить потребности",
+				(nodes) => nodes.Cast<NormJournalNode>().Any(x => x.UsagesWorked > 0),
+				(arg) => true,
+				UpdateWearItems));
+		}
+
 		#region Popupmenu action implementation
 		protected override void CreatePopupActions()
 		{
-			PopupActionsList.Add(new JournalAction("Копировать норму", (arg) => true, (arg) => arg.Length == 1, CopyNorm));
-			PopupActionsList.Add(new JournalAction("Сотрудники использующие норму", (arg) => true, (arg) => arg.Length >= 1, ShowEmployees));
+			PopupActionsList.Add(new JournalAction("Копировать норму", (arg) => arg.Length == 1, (arg) => true, CopyNorm));
+			PopupActionsList.Add(new JournalAction("Сотрудники использующие норму", (arg) => arg.Length == 1, (arg) => true, ShowEmployees));
+			PopupActionsList.Add(new JournalAction("Обновить потребности у использующих норму", 
+				(nodes) => nodes.Cast<NormJournalNode>().Any(x => x.UsagesWorked > 0),
+				(arg) => true,
+				UpdateWearItems));
 		}
 
 		private void CopyNorm(object[] nodes)
@@ -117,8 +139,37 @@ namespace workwear.Journal.ViewModels.Regulations
 				NavigationManager.OpenViewModel<EmployeeJournalViewModel, Norm>(this, new Norm {Id = node.Id}, OpenPageOptions.IgnoreHash); //Фейковая норма для передачи id
 			}
 		}
+
+		void UpdateWearItems(object[] nodes)
+		{
+			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
+			var progress = progressPage.ViewModel.Progress;
+
+			using(var localUow = UnitOfWorkFactory.CreateWithoutRoot("Обновление потребностей из журнала норм")) {
+				var employeeRepository = AutofacScope.Resolve<EmployeeRepository>(new TypedParameter(typeof(IUnitOfWork), localUow));
+				progress.Start(2, text: "Загружаем нормы");
+				var norms = localUow.GetById<Norm>(nodes.GetIds()).ToArray();
+				progress.Add(text: "Загружаем сотрудников");
+				var employees = employeeRepository.GetEmployeesUseNorm(norms);
+
+				progress.Start(employees.Count + 1);
+				int step = 0;
+				foreach(var employee in employees) {
+					progress.Add(text: $"Обработка {employee.ShortName}");
+					step++;
+					employee.UpdateWorkwearItems();
+					localUow.Save(employee);
+					if(step % 10 == 0)
+						localUow.Commit();
+				}
+				progress.Add(text: "Завершаем...");
+				localUow.Commit();
+			}
+			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+		}
 		#endregion
 	}
+
 	public class NormJournalNode
 	{
 		public int Id { get; set; }
