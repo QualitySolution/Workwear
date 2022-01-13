@@ -501,17 +501,18 @@ namespace workwear.Domain.Company
 				foreach (var normItem in norm.Items)
 				{
 					var currentItem = WorkwearItems.FirstOrDefault (i => i.ProtectionTools == normItem.ProtectionTools);
+
+					if(!normItem.NormCondition?.MatchesForEmployee(this) ?? false) {
+						if(currentItem != null && !processed.Contains(currentItem))
+							ObservableWorkwearItems.Remove(currentItem);
+						continue;
+					}
+
 					if (currentItem == null)
 					{
-						if(normItem.NormCondition != null && !normItem.NormCondition.MatchesForEmployee(this))
-							continue;
 						//FIXME Возможно нужно проверять если что-то подходящее уже выдавалось то пересчитывать.
 						currentItem = new EmployeeCardItem (this, normItem);
 						ObservableWorkwearItems.Add (currentItem);
-					}
-					else if(normItem.NormCondition != null && !normItem.NormCondition.MatchesForEmployee(this)) {
-						ObservableWorkwearItems.Remove(currentItem);
-						continue;
 					}
 
 					if(processed.Contains (currentItem))
