@@ -505,7 +505,6 @@ namespace workwear.Domain.Company
 						continue;
 
 					var currentItem = WorkwearItems.FirstOrDefault (i => i.ProtectionTools == normItem.ProtectionTools);
-					}
 
 					if (currentItem == null)
 					{
