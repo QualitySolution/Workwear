@@ -67,6 +67,12 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			get => growth;
 			set => SetField(ref growth, value);
 		}
+
+		private bool collapseCollectiveIssue;
+		public bool CollapseCollectiveIssue {
+			get => collapseCollectiveIssue;
+			set => SetField(ref collapseCollectiveIssue, value);
+		}
 		#endregion
 
 		public string StockPositionTitle => StockPosition?.Title;

@@ -30,6 +30,8 @@ namespace workwear.Journal.Filter.Views.Stock
 
 		private global::Gamma.GtkWidgets.yLabel labelWarehouse;
 
+		private global::Gamma.GtkWidgets.yCheckButton ycheckCollapseCollectiveIssue;
+
 		private global::Gamma.GtkWidgets.yLabel ylabel1;
 
 		protected virtual void Build()
@@ -172,16 +174,31 @@ namespace workwear.Journal.Filter.Views.Stock
 			w12.XOptions = ((global::Gtk.AttachOptions)(4));
 			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
+			this.ycheckCollapseCollectiveIssue = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckCollapseCollectiveIssue.CanFocus = true;
+			this.ycheckCollapseCollectiveIssue.Name = "ycheckCollapseCollectiveIssue";
+			this.ycheckCollapseCollectiveIssue.Label = global::Mono.Unix.Catalog.GetString("объединить коллективную выдачи");
+			this.ycheckCollapseCollectiveIssue.DrawIndicator = true;
+			this.ycheckCollapseCollectiveIssue.UseUnderline = true;
+			this.table1.Add(this.ycheckCollapseCollectiveIssue);
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckCollapseCollectiveIssue]));
+			w13.TopAttach = ((uint)(2));
+			w13.BottomAttach = ((uint)(3));
+			w13.LeftAttach = ((uint)(3));
+			w13.RightAttach = ((uint)(4));
+			w13.XOptions = ((global::Gtk.AttachOptions)(4));
+			w13.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
 			this.ylabel1.Xalign = 1F;
 			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатура:");
 			this.table1.Add(this.ylabel1);
-			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel1]));
-			w13.TopAttach = ((uint)(1));
-			w13.BottomAttach = ((uint)(2));
-			w13.XOptions = ((global::Gtk.AttachOptions)(4));
-			w13.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel1]));
+			w14.TopAttach = ((uint)(1));
+			w14.BottomAttach = ((uint)(2));
+			w14.XOptions = ((global::Gtk.AttachOptions)(4));
+			w14.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.table1);
 			if ((this.Child != null))
 			{
