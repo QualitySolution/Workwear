@@ -114,6 +114,7 @@ namespace workwear.Journal.ViewModels.Tools
 					() => employeeAlias.LastName,
 					() => employeeAlias.FirstName,
 					() => employeeAlias.Patronymic,
+					() => employeeAlias.PhoneNumber,
 					() => postAlias.Name,
 					() => subdivisionAlias.Name
  					))
@@ -125,8 +126,9 @@ namespace workwear.Journal.ViewModels.Tools
 					.Select(x => x.PersonnelNumber).WithAlias(() => resultAlias.PersonnelNumber)
 					.Select(x => x.FirstName).WithAlias(() => resultAlias.FirstName)
 					.Select(x => x.LastName).WithAlias(() => resultAlias.LastName)
-					.Select(() => employeeAlias.DismissDate).WithAlias(() => resultAlias.DismissDate)
 					.Select(x => x.Patronymic).WithAlias(() => resultAlias.Patronymic)
+					.Select(x => x.DismissDate).WithAlias(() => resultAlias.DismissDate)
+					.Select(x => x.PhoneNumber).WithAlias(() => resultAlias.Phone)
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
 					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 					)
@@ -223,6 +225,10 @@ namespace workwear.Journal.ViewModels.Tools
 				return String.Join(" ", LastName, FirstName, Patronymic);
 			}
 		}
+		
+		[SearchHighlight]
+		public string Phone { get; set; }
+		
 		[SearchHighlight]
 		public string Post { get; set; }
 		[SearchHighlight]

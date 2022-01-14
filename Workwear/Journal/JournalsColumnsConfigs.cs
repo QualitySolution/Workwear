@@ -234,6 +234,7 @@ namespace workwear.Journal
 					.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
 					.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
 					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
+					.AddColumn("Телефон").AddTextRenderer(node => node.Phone)
 					.AddColumn("Должность").AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
 					.AddColumn("Состояние личного кабинета").AddTextRenderer(node => node.PersonalAccountStatus)
