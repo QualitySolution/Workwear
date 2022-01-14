@@ -28,7 +28,7 @@ namespace workwear.Views.Tools
 
 		protected void OnButtonSend(object sender, System.EventArgs e)
 		{
-			ViewModel.SendMessange();
+			ViewModel.SendMessage();
 		}
 	}
 }

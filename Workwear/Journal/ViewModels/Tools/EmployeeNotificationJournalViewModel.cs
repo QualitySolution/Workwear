@@ -8,6 +8,7 @@ using NHibernate;
 using NHibernate.Transform;
 using NHibernate.Util;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
@@ -147,6 +148,13 @@ namespace workwear.Journal.ViewModels.Tools
 					(selected) => LoadAll()
 					);
 			NodeActionsList.Add(loadAllAction);
+			
+			var sendMessange = new JournalAction("Отправить сообщение",
+				(selected) => selected.Length > 0,
+				(selected) => true,
+				(selected) => SendMessange(selected)
+			);
+			NodeActionsList.Add(sendMessange);
 
 			var editAction = new JournalAction("Открыть сотрудника",
 					(selected) => selected.Any(),
@@ -158,14 +166,7 @@ namespace workwear.Journal.ViewModels.Tools
 
 			RowActivatedAction = editAction;
 
-			var sendMessange = new JournalAction("Отправить сообщение",
-					(selected) => SelectedList.Count !=0,
-					(selected) => true,
-					(selected) => SendMessange()
-					);
-			NodeActionsList.Add(sendMessange);
-
-			var invertSelected = new JournalAction("Выделить/Снять выделение",
+			var invertSelected = new JournalAction("Выделить всех",
 					(selected) => true,
 					(selected) => true,
 					(selected) => InvertSelected()
@@ -181,9 +182,9 @@ namespace workwear.Journal.ViewModels.Tools
 			Refresh();
 		}
 
-		void SendMessange()
+		void SendMessange(object[] nodes)
 		{
-			NavigationManager.OpenViewModel<SendMessangeViewModel>(this);
+			NavigationManager.OpenViewModel<SendMessangeViewModel, int[]>(this, nodes.GetIds().ToArray());
 		}
 
 		void InvertSelected()
