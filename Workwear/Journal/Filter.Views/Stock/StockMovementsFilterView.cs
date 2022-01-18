@@ -31,6 +31,8 @@ namespace workwear.Journal.Filter.Views.Stock
 
 			entryNomenclature.ViewModel = ViewModel.EntryNomenclature;
 			entityWarehouse.ViewModel = ViewModel.WarehouseEntry;
+
+			ycheckCollapse.Binding.AddBinding(viewModel, v => v.CollapseOperationItems, w => w.Active).InitializeFromSource();
 		}
 	}
 }
