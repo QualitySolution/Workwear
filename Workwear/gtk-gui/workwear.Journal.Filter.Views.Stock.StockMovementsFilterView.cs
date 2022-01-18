@@ -30,7 +30,7 @@ namespace workwear.Journal.Filter.Views.Stock
 
 		private global::Gamma.GtkWidgets.yLabel labelWarehouse;
 
-		private global::Gamma.GtkWidgets.yCheckButton ycheckCollapseCollectiveIssue;
+		private global::Gamma.GtkWidgets.yCheckButton ycheckCollapse;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel1;
 
@@ -174,14 +174,14 @@ namespace workwear.Journal.Filter.Views.Stock
 			w12.XOptions = ((global::Gtk.AttachOptions)(4));
 			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.ycheckCollapseCollectiveIssue = new global::Gamma.GtkWidgets.yCheckButton();
-			this.ycheckCollapseCollectiveIssue.CanFocus = true;
-			this.ycheckCollapseCollectiveIssue.Name = "ycheckCollapseCollectiveIssue";
-			this.ycheckCollapseCollectiveIssue.Label = global::Mono.Unix.Catalog.GetString("объединить коллективную выдачи");
-			this.ycheckCollapseCollectiveIssue.DrawIndicator = true;
-			this.ycheckCollapseCollectiveIssue.UseUnderline = true;
-			this.table1.Add(this.ycheckCollapseCollectiveIssue);
-			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckCollapseCollectiveIssue]));
+			this.ycheckCollapse = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckCollapse.CanFocus = true;
+			this.ycheckCollapse.Name = "ycheckCollapseCollectiveIssue";
+			this.ycheckCollapse.Label = global::Mono.Unix.Catalog.GetString("объединить коллективную выдачи");
+			this.ycheckCollapse.DrawIndicator = true;
+			this.ycheckCollapse.UseUnderline = true;
+			this.table1.Add(this.ycheckCollapse);
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckCollapse]));
 			w13.TopAttach = ((uint)(2));
 			w13.BottomAttach = ((uint)(3));
 			w13.LeftAttach = ((uint)(3));
