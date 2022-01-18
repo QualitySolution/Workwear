@@ -124,7 +124,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinEntityAlias(() => transferItemAlias, () => transferItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin);
 
-			if(Filter.CollapseCollectiveIssue) {
+			if(Filter.CollapseOperationItems) {
 				queryStock.SelectList(list => list
 					.SelectGroup(() => warehouseOperationAlias.Nomenclature.Id)
 					.Select(() => warehouseOperationAlias.OperationTime).WithAlias(() => resultAlias.OperationTime)

@@ -69,7 +69,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		}
 
 		private bool collapseCollectiveIssue;
-		public bool CollapseCollectiveIssue {
+		public bool CollapseOperationItems {
 			get => collapseCollectiveIssue;
 			set => SetField(ref collapseCollectiveIssue, value);
 		}
