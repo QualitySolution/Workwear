@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Autofac;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -90,6 +91,12 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		#region ComboValues
 		public string[] Sizes => sizeService.GetSizesForNomeclature(Nomenclature?.SizeStd);
 		public string[] Growths => sizeService.GetGrowthForNomenclature();
+
+		private DirectionOfOperation direction;
+		public DirectionOfOperation Direction {
+			get => direction;
+			set => SetField(ref direction, value);
+		}
 		#endregion
 
 		public EntityEntryViewModel<Nomenclature> EntryNomenclature;
@@ -114,5 +121,14 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			WarehouseEntry = builder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 			EntryNomenclature = builder.ForProperty(x => x.Nomenclature).MakeByType().Finish();
 		}
+	}
+
+	public enum DirectionOfOperation {
+		[Display(Name = "поступление и расход")]
+		all,
+		[Display(Name = "только поступление")]
+		toWarehouse,
+		[Display(Name = "только расход")]
+		fromWarehouse
 	}
 }
