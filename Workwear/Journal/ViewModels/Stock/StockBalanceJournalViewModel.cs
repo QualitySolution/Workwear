@@ -66,7 +66,7 @@ namespace workwear.Journal.ViewModels.Stock
 				&& (warehouseExpenseOperationAlias.Growth == warehouseOperationAlias.Growth ||
 				(warehouseExpenseOperationAlias.Growth == null && warehouseOperationAlias.Growth == null))
 				&& warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
-				.Where(e => e.OperationTime < DateTime.Now);
+				.Where(e => e.OperationTime < Filter.Date.AddDays(1));
 
 			if(Filter.Warehouse == null)
 				expensequery.Where(x => x.ExpenseWarehouse != null);
@@ -82,7 +82,7 @@ namespace workwear.Journal.ViewModels.Stock
 				&& (warehouseIncomeOperationAlias.Growth == warehouseOperationAlias.Growth ||
 				(warehouseIncomeOperationAlias.Growth == null && warehouseOperationAlias.Growth == null))
 				&& (warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent))
-				.Where(e => e.OperationTime < DateTime.Now);
+				.Where(e => e.OperationTime < Filter.Date.AddDays(1));
 			if(Filter.Warehouse == null)
 				incomeSubQuery.Where(x => x.ReceiptWarehouse != null);
 			else
