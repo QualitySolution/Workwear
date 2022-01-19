@@ -1,12 +1,11 @@
 ﻿using QS.Views;
-using workwear.Domain.Stock;
-using workwear.Journal.Filter.ViewModels.Tools;
+using workwear.Journal.Filter.ViewModels.Communications;
 
-namespace workwear.Journal.Filter.Views.Tools
+namespace workwear.Journal.Filter.Views.Communications
 {
-	public partial class NotificationFilterView : ViewBase<NotificationFilterViewModel>
+	public partial class EmployeeNotificationFilterView : ViewBase<EmployeeNotificationFilterViewModel>
 	{
-		public NotificationFilterView(NotificationFilterViewModel viewModel): base(viewModel)
+		public EmployeeNotificationFilterView(EmployeeNotificationFilterViewModel viewModel): base(viewModel)
 		{
 			this.Build();
 			checkShowOnlyWork.Binding.AddBinding(ViewModel, vm => vm.ShowOnlyWork, w => w.Active).InitializeFromSource();

@@ -8,10 +8,10 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
+using workwear.Domain.Communications;
 using workwear.Domain.Company;
-using workwear.Domain.Tools;
 
-namespace workwear.ViewModels.Tools
+namespace workwear.ViewModels.Communications
 {
 	public class SendMessangeViewModel: WindowDialogViewModelBase
 	{

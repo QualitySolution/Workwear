@@ -1,10 +1,9 @@
 ﻿using System;
-using QS.DomainModel.UoW;
 using QS.Views.Dialog;
-using workwear.Domain.Tools;
-using workwear.ViewModels.Tools;
+using workwear.Domain.Communications;
+using workwear.ViewModels.Communications;
 
-namespace workwear.Views.Tools
+namespace workwear.Views.Communications
 {
 	public partial class MessageTemplateView : EntityDialogViewBase<MessageTemplateViewModel, MessageTemplate>
 	{

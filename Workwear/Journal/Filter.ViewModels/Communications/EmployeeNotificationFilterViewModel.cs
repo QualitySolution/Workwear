@@ -7,9 +7,9 @@ using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
 using workwear.Domain.Company;
 
-namespace workwear.Journal.Filter.ViewModels.Tools
+namespace workwear.Journal.Filter.ViewModels.Communications
 {
-	public class NotificationFilterViewModel : JournalFilterViewModelBase<NotificationFilterViewModel>
+	public class EmployeeNotificationFilterViewModel : JournalFilterViewModelBase<EmployeeNotificationFilterViewModel>
 	{
 		#region Ограничения
 		private bool showOnlyWork = true;
@@ -57,9 +57,9 @@ namespace workwear.Journal.Filter.ViewModels.Tools
 
 		#endregion
 
-		public NotificationFilterViewModel(JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, IUnitOfWorkFactory unitOfWorkFactory = null) : base(journal, unitOfWorkFactory)
+		public EmployeeNotificationFilterViewModel(JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, IUnitOfWorkFactory unitOfWorkFactory = null) : base(journal, unitOfWorkFactory)
 		{
-			var builder = new CommonEEVMBuilderFactory<NotificationFilterViewModel>(journal, this, UoW, navigation, autofacScope);
+			var builder = new CommonEEVMBuilderFactory<EmployeeNotificationFilterViewModel>(journal, this, UoW, navigation, autofacScope);
 
 			SubdivisionEntry = builder.ForProperty(x => x.Subdivision)
 				.MakeByType()

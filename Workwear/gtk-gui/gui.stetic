@@ -16836,7 +16836,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Tools.SendMessangeView" design-size="300 300">
+  <widget class="Gtk.Bin" id="workwear.Views.Communications.SendMessangeView" design-size="400 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -16873,6 +16873,7 @@
         <child>
           <widget class="Gamma.GtkWidgets.yEntry" id="yentryTitle">
             <property name="MemberName" />
+            <property name="WidthRequest">400</property>
             <property name="CanFocus">True</property>
             <property name="IsEditable">True</property>
             <property name="MaxLength">200</property>
@@ -16888,6 +16889,7 @@
         <child>
           <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
             <property name="MemberName" />
+            <property name="HeightRequest">100</property>
             <property name="ShadowType">In</property>
             <child>
               <widget class="Gamma.GtkWidgets.yTextView" id="ytextTemplate">
@@ -16954,7 +16956,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Tools.MessageTemplateView" design-size="300 300">
+  <widget class="Gtk.Bin" id="workwear.Views.Communications.MessageTemplateView" design-size="480 225">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -17039,6 +17041,7 @@
             <child>
               <widget class="Gamma.GtkWidgets.yEntry" id="entryName">
                 <property name="MemberName" />
+                <property name="WidthRequest">400</property>
                 <property name="CanFocus">True</property>
                 <property name="IsEditable">True</property>
                 <property name="MaxLength">100</property>
@@ -17060,6 +17063,7 @@
             <child>
               <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
                 <property name="MemberName" />
+                <property name="HeightRequest">100</property>
                 <property name="ShadowType">In</property>
                 <child>
                   <widget class="Gamma.GtkWidgets.yTextView" id="ytextText">
@@ -17110,7 +17114,7 @@
             <child>
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabel8">
                 <property name="MemberName" />
-                <property name="Yalign">0</property>
+                <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Название:</property>
               </widget>
               <packing>
@@ -17129,7 +17133,6 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabel9">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="Yalign">0</property>
                 <property name="LabelProp" translatable="yes">Заголовок:</property>
               </widget>
               <packing>
@@ -17157,7 +17160,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Journal.Filter.Views.Tools.NotificationFilterView" design-size="601 132">
+  <widget class="Gtk.Bin" id="workwear.Journal.Filter.Views.Communications.EmployeeNotificationFilterView" design-size="601 148">
     <property name="MemberName" />
     <child>
       <widget class="Gamma.GtkWidgets.yTable" id="ytable1">

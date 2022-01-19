@@ -4,6 +4,7 @@ using System.Reflection;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using QS.Journal.GtkUI;
+using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
@@ -17,8 +18,34 @@ namespace workwear.Journal
 	{
 		public static void RegisterColumns()
 		{
-			#region Company
+			#region Communications
+			TreeViewColumnsConfigFactory.Register<EmployeeNotificationJournalViewModel>(
+				() => FluentColumnsConfig<EmployeeNotificationJournalNode>.Create()
+					.AddColumn("☑").AddToggleRenderer(node => node.Selected)
+						.AddSetter((c, n) => c.Activatable = n.CanSelect)
+					.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
+					.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
+					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
+					.AddColumn("Телефон").AddTextRenderer(node => node.Phone)
+					.AddColumn("Должность").AddTextRenderer(node => node.Post)
+					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
+					.AddColumn("Состояние личного кабинета").AddTextRenderer(node => node.PersonalAccountStatus)
+					.AddColumn("Последний раз заходил в ЛК").AddTextRenderer(node => node.LastVisit)
+					.AddColumn("Результат").AddTextRenderer(node => node.Result)
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Dismiss ? "gray" : null)
+					.Finish()
+			);
 
+			TreeViewColumnsConfigFactory.Register<MessageTemplateJournalViewModel>(
+				() => FluentColumnsConfig<NotificationTemplateJournalNode>.Create()
+					.AddColumn("Имя").AddTextRenderer(node => node.Name)
+					.AddColumn("Заголовок").AddTextRenderer(node => node.MessageTitle)
+					.AddColumn("Текст").AddTextRenderer(node => node.MessageText)
+					.Finish()
+			);
+			#endregion
+
+			#region Company
 			TreeViewColumnsConfigFactory.Register<DepartmentJournalViewModel>(
 				() => FluentColumnsConfig<DepartmentJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
@@ -224,31 +251,6 @@ namespace workwear.Journal
 					.AddColumn("Должность").AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Background = x.Dismiss ? "White Smoke" : null)
-					.Finish()
-			);
-
-			TreeViewColumnsConfigFactory.Register<EmployeeNotificationJournalViewModel>(
-				() => FluentColumnsConfig<EmployeeNotificationJournalNode>.Create()
-					.AddColumn("☑").AddToggleRenderer(node => node.Selected)
-						.AddSetter((c, n) => c.Activatable = n.CanSelect)
-					.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
-					.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
-					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
-					.AddColumn("Телефон").AddTextRenderer(node => node.Phone)
-					.AddColumn("Должность").AddTextRenderer(node => node.Post)
-					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
-					.AddColumn("Состояние личного кабинета").AddTextRenderer(node => node.PersonalAccountStatus)
-					.AddColumn("Последний раз заходил в ЛК").AddTextRenderer(node => node.LastVisit)
-					.AddColumn("Результат").AddTextRenderer(node => node.Result)
-					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Dismiss ? "gray" : null)
-					.Finish()
-			);
-
-			TreeViewColumnsConfigFactory.Register<MessageTemplateJournalViewModel>(
-				() => FluentColumnsConfig<NotificationTemplateJournalNode>.Create()
-					.AddColumn("Имя").AddTextRenderer(node => node.Name)
-					.AddColumn("Заголовок").AddTextRenderer(node => node.MessageTitle)
-					.AddColumn("Текст").AddTextRenderer(node => node.MessageText)
 					.Finish()
 			);
 			#endregion

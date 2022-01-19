@@ -3,9 +3,9 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Tools;
+using workwear.Domain.Communications;
 
-namespace workwear.ViewModels.Tools
+namespace workwear.ViewModels.Communications
 {
 	public class MessageTemplateViewModel : EntityDialogViewModelBase<MessageTemplate>
 	{

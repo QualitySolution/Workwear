@@ -21,13 +21,13 @@ using QS.ViewModels.Resolve;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.Journal.Filter.ViewModels.Tools;
+using workwear.Journal.Filter.ViewModels.Communications;
 using workwear.Repository.Regulations;
 using workwear.Tools;
+using workwear.ViewModels.Communications;
 using workwear.ViewModels.Company;
-using workwear.ViewModels.Tools;
 
-namespace workwear.Journal.ViewModels.Tools
+namespace workwear.Journal.ViewModels.Communications
 {
 	[DontUseAsDefaultViewModel]
 	public class EmployeeNotificationJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeNotificationJournalNode>
@@ -36,7 +36,7 @@ namespace workwear.Journal.ViewModels.Tools
 		private readonly BaseParameters baseParameters;
 		private readonly IDataBaseInfo dataBaseInfo;
 
-		public NotificationFilterViewModel Filter { get; private set; }
+		public EmployeeNotificationFilterViewModel Filter { get; private set; }
 
 		public EmployeeNotificationJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager,
 			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope,
@@ -50,7 +50,7 @@ namespace workwear.Journal.ViewModels.Tools
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.dataBaseInfo = dataBaseInfo ?? throw new ArgumentNullException(nameof(dataBaseInfo));
 			AutofacScope = autofacScope;
-			JournalFilter = Filter = AutofacScope.Resolve<NotificationFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			JournalFilter = Filter = AutofacScope.Resolve<EmployeeNotificationFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
 			(DataLoader as ThreadDataLoader<EmployeeNotificationJournalNode>).PostLoadProcessingFunc = delegate(IList items, uint addedSince) {
 				foreach(EmployeeNotificationJournalNode item in items)

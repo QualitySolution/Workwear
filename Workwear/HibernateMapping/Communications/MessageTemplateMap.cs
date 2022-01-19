@@ -1,7 +1,7 @@
 ﻿using FluentNHibernate.Mapping;
-using workwear.Domain.Tools;
+using workwear.Domain.Communications;
 
-namespace workwear.HibernateMapping.Tools
+namespace workwear.HibernateMapping.Communications
 {
 	public class MessageTemplateMap: ClassMap<MessageTemplate>
 	{

@@ -6,10 +6,10 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
-using workwear.Domain.Tools;
-using workwear.ViewModels.Tools;
+using workwear.Domain.Communications;
+using workwear.ViewModels.Communications;
 
-namespace workwear.Journal.ViewModels.Tools
+namespace workwear.Journal.ViewModels.Communications
 {
 	public class MessageTemplateJournalViewModel: EntityJournalViewModelBase<MessageTemplate, MessageTemplateViewModel, NotificationTemplateJournalNode>
 	{

@@ -123,7 +123,6 @@
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="HibernateMapping\MappingParams.cs" />
-    <Compile Include="Journal\ViewModels\Tools\EmployeeNotificationJournalViewModel.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
     <Compile Include="Program.cs" />
@@ -474,18 +473,19 @@
     <Compile Include="ViewModels\Tools\ReplaceEntityViewModel.cs" />
     <Compile Include="Views\Tools\ReplaceEntityView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Tools.ReplaceEntityView.cs" />
-    <Compile Include="ViewModels\Tools\SendMessangeViewModel.cs" />
-    <Compile Include="Views\Tools\SendMessangeView.cs" />
-    <Compile Include="gtk-gui\workwear.Views.Tools.SendMessangeView.cs" />
-    <Compile Include="Domain\Tools\MessageTemplate.cs" />
-    <Compile Include="HibernateMapping\Tools\MessageTemplateMap.cs" />
-    <Compile Include="Journal\ViewModels\Tools\MessageTemplateJournalViewModel.cs" />
-    <Compile Include="ViewModels\Tools\MessageTemplateViewModel.cs" />
-    <Compile Include="Views\Tools\MessageTemplateView.cs" />
-    <Compile Include="gtk-gui\workwear.Views.Tools.MessageTemplateView.cs" />
-    <Compile Include="Journal\Filter.ViewModels\Tools\NotificationFilterViewModel.cs" />
-    <Compile Include="Journal\Filter.Views\Tools\NotificationFilterView.cs" />
-    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Tools.NotificationFilterView.cs" />
+    <Compile Include="HibernateMapping\Communications\MessageTemplateMap.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Communications\EmployeeNotificationFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Communications\EmployeeNotificationFilterView.cs" />
+    <Compile Include="Domain\Communications\MessageTemplate.cs" />
+    <Compile Include="ViewModels\Communications\MessageTemplateViewModel.cs" />
+    <Compile Include="ViewModels\Communications\SendMessangeViewModel.cs" />
+    <Compile Include="Views\Communications\MessageTemplateView.cs" />
+    <Compile Include="Views\Communications\SendMessangeView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Communications.SendMessangeView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Communications.MessageTemplateView.cs" />
+    <Compile Include="Journal\ViewModels\Communications\MessageTemplateJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Communications\EmployeeNotificationJournalViewModel.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Communications.EmployeeNotificationFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -706,9 +706,13 @@
     <Folder Include="Journal\Filter.ViewModels\Statements\" />
     <Folder Include="Models\Operations\" />
     <Folder Include="Domain\Tools\" />
-    <Folder Include="HibernateMapping\Tools\" />
-    <Folder Include="Journal\Filter.ViewModels\Tools\" />
-    <Folder Include="Journal\Filter.Views\Tools\" />
+    <Folder Include="HibernateMapping\Communications\" />
+    <Folder Include="Journal\Filter.ViewModels\Communications\" />
+    <Folder Include="Journal\Filter.Views\Communications\" />
+    <Folder Include="Domain\Communications\" />
+    <Folder Include="ViewModels\Communications\" />
+    <Folder Include="Views\Communications\" />
+    <Folder Include="Journal\ViewModels\Communications\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
