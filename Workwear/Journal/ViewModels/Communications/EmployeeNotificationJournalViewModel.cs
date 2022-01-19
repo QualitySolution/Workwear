@@ -106,7 +106,6 @@ namespace workwear.Journal.ViewModels.Communications
 					break;
 			}
 
-
 			return employees
 				.Where(GetSearchCriterion(
 					() => employeeAlias.Id,

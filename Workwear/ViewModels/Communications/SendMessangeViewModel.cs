@@ -7,6 +7,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Utilities;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Communications;
 using workwear.Domain.Company;
@@ -25,6 +26,7 @@ namespace workwear.ViewModels.Communications
 		{
 			this.notificationManager = notificationManager ?? throw new ArgumentNullException(nameof(notificationManager));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			Title = "Отправка уведомлений " + NumberToTextRus.FormatCase(employeeIds.Length, "{0} сотруднику", "{0} сотрудникам", "{0} сотрудникам");
 
 			uow = unitOfWorkFactory.CreateWithoutRoot();
 
