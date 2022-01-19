@@ -127,8 +127,8 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		[Display(Name = "поступление и расход")]
 		all,
 		[Display(Name = "только поступление")]
-		toWarehouse,
+		receipt,
 		[Display(Name = "только расход")]
-		fromWarehouse
+		expense
 	}
 }
