@@ -81,6 +81,11 @@
         <property name="Image">resource:workwear.icon.toolbar.store-movements.png</property>
       </source>
     </icon-set>
+    <icon-set id="mail">
+      <source>
+        <property name="Image">resource:workwear.icon.toolbar.mail.png</property>
+      </source>
+    </icon-set>
   </icon-factory>
   <widget class="Gtk.Bin" id="workwear.Views.Stock.ItemTypeView" design-size="483 520">
     <property name="MemberName" />
@@ -5976,17 +5981,18 @@
         <property name="StockId">store-movements</property>
         <signal name="Activated" handler="OnActionStockMovementsActivated" />
       </action>
-      <action id="ActionNotificationEmployee">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Уведомление сотрудников</property>
-        <property name="ShortLabel" translatable="yes">Уведомление сотрудников</property>
-        <signal name="Activated" handler="OnActionSetNotificationActivated" />
-      </action>
       <action id="Action39">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Шаблоны уведомлений</property>
         <property name="ShortLabel" translatable="yes">Шаблоны уведомлений</property>
         <signal name="Activated" handler="OnActionEditNotificationTemplateActivated" />
+      </action>
+      <action id="ActionConversatoins">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Уведомление</property>
+        <property name="ShortLabel" translatable="yes">Уведомление</property>
+        <property name="StockId">mail</property>
+        <signal name="Activated" handler="OnActionConversatoinsActivated" />
       </action>
     </action-group>
     <property name="MemberName" />
@@ -6014,7 +6020,6 @@
                 </node>
                 <node type="Menu" action="ActionBatchProcessing">
                   <node type="Menuitem" action="ActionProcessingEmployee" />
-                  <node type="Menuitem" action="ActionNotificationEmployee" />
                   <node type="Menuitem" action="ActionReplaceEntity" />
                 </node>
                 <node type="Separator" />
@@ -6134,6 +6139,7 @@
                 <node name="toolbarMain" type="Toolbar">
                   <node type="Toolitem" action="ActionBarObjects" />
                   <node type="Toolitem" action="ActionBarEmployees" />
+                  <node type="Toolitem" action="ActionConversatoins" />
                   <node type="Toolitem" action="ActionCardIssuee" />
                   <node type="Toolitem" action="ActionBarStore" />
                   <node type="Toolitem" action="ActionBarStoreBalance" />

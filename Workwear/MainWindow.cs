@@ -184,6 +184,7 @@ public partial class MainWindow : Gtk.Window
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
+		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 	}
 	#endregion
 
@@ -696,11 +697,6 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager.OpenViewModel<EmployeeProcessingJournalViewModel>(null);
 	}
 
-	protected void OnActionSetNotificationActivated(object sender, EventArgs e)
-	{
-		NavigationManager.OpenViewModel<EmployeeNotificationJournalViewModel>(null);
-	}
-
 	protected void OnActionEditNotificationTemplateActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<MessageTemplateJournalViewModel>(null);
@@ -739,5 +735,10 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionStockMovementsActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(null);
+	}
+
+	protected void OnActionConversatoinsActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<EmployeeNotificationJournalViewModel>(null);
 	}
 }
