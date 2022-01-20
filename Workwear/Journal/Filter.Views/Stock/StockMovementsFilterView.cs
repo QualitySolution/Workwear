@@ -15,7 +15,6 @@ namespace workwear.Journal.Filter.Views.Stock
 				.AddBinding(v => v.EndDate, w => w.EndDateOrNull)
 				.InitializeFromSource();
 
-			//labelStockPosition.Binding.AddFuncBinding(ViewModel, v => v.StockPositionTitle, w => w.LabelProp).InitializeFromSource();
 			entityWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
 			labelWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
 			comboSize.Binding.AddSource(ViewModel)

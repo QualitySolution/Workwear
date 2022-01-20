@@ -124,11 +124,11 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 	}
 
 	public enum DirectionOfOperation {
-		[Display(Name = "поступление и расход")]
+		[Display(Name = "Поступление и расход")]
 		all,
-		[Display(Name = "только поступление")]
+		[Display(Name = "Только поступление")]
 		receipt,
-		[Display(Name = "только расход")]
+		[Display(Name = "Только расход")]
 		expense
 	}
 }
