@@ -242,7 +242,8 @@ namespace WorkwearTest.Integration.Stock
 				var stock2 = stockRepository.StockBalances(uow, Warehouse,
 											new List<Nomenclature> { Nomenclature1, Nomenclature2 },
 											new DateTime(2017, 1, 2));
-				Assert.That(stock1.Count(), Is.EqualTo(1));
+
+				Assert.That(stock2.Count(), Is.EqualTo(1));
 			}
 		}
 
