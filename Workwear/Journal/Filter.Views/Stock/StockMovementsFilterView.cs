@@ -15,7 +15,6 @@ namespace workwear.Journal.Filter.Views.Stock
 				.AddBinding(v => v.EndDate, w => w.EndDateOrNull)
 				.InitializeFromSource();
 
-			labelStockPosition.Binding.AddFuncBinding(ViewModel, v => v.StockPositionTitle, w => w.LabelProp).InitializeFromSource();
 			entityWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
 			labelWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
 			comboSize.Binding.AddSource(ViewModel)
@@ -33,6 +32,9 @@ namespace workwear.Journal.Filter.Views.Stock
 			entityWarehouse.ViewModel = ViewModel.WarehouseEntry;
 
 			ycheckCollapse.Binding.AddBinding(viewModel, v => v.CollapseOperationItems, w => w.Active).InitializeFromSource();
+			
+			yenumShowDirectionOperation.ItemsEnum = typeof(DirectionOfOperation);
+			yenumShowDirectionOperation.Binding.AddBinding(viewModel, v => v.Direction, w => w.SelectedItem).InitializeFromSource();
 		}
 	}
 }

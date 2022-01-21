@@ -99,7 +99,16 @@ namespace workwear.Journal.ViewModels.Stock
 					Restrictions.Eq(Projections.Property<WarehouseOperation>(x => x.ExpenseWarehouse.Id), Filter.Warehouse.Id),
 					Projections.Constant(true),
 					Projections.Constant(false)
-				); 
+				);
+
+				switch(Filter.Direction) {
+					case DirectionOfOperation.expense:
+						queryStock.Where(x => x.ExpenseWarehouse.Id == Filter.Warehouse.Id);
+						break;
+					case DirectionOfOperation.receipt:
+						queryStock.Where(x => x.ReceiptWarehouse.Id == Filter.Warehouse.Id);
+						break;
+				}
 			}
 			else {
 				receptProjection = Projections.Conditional(
@@ -112,6 +121,15 @@ namespace workwear.Journal.ViewModels.Stock
 					Projections.Constant(true),
 					Projections.Constant(false)
 				);
+
+				switch(Filter.Direction) {
+					case DirectionOfOperation.expense:
+						queryStock.Where(x => x.ReceiptWarehouse == null);
+						break;
+					case DirectionOfOperation.receipt:
+						queryStock.Where(x => x.ExpenseWarehouse == null);
+						break;
+				}
 			}
 
 			queryStock

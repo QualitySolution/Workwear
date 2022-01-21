@@ -26,11 +26,11 @@ namespace workwear.Journal.Filter.Views.Stock
 
 		private global::Gtk.Label label4;
 
-		private global::Gamma.GtkWidgets.yLabel labelStockPosition;
-
 		private global::Gamma.GtkWidgets.yLabel labelWarehouse;
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckCollapse;
+
+		private global::Gamma.Widgets.yEnumComboBox yenumShowDirectionOperation;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel1;
 
@@ -135,7 +135,7 @@ namespace workwear.Journal.Filter.Views.Stock
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
 			this.label1.Xalign = 1F;
-			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Складская позиция:");
+			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Показывать:");
 			this.table1.Add(this.label1);
 			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -152,40 +152,42 @@ namespace workwear.Journal.Filter.Views.Stock
 			w10.XOptions = ((global::Gtk.AttachOptions)(4));
 			w10.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.labelStockPosition = new global::Gamma.GtkWidgets.yLabel();
-			this.labelStockPosition.Name = "labelStockPosition";
-			this.labelStockPosition.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel1");
-			this.labelStockPosition.Wrap = true;
-			this.table1.Add(this.labelStockPosition);
-			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1[this.labelStockPosition]));
-			w11.LeftAttach = ((uint)(1));
-			w11.RightAttach = ((uint)(2));
-			w11.XOptions = ((global::Gtk.AttachOptions)(4));
-			w11.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table1.Gtk.Table+TableChild
 			this.labelWarehouse = new global::Gamma.GtkWidgets.yLabel();
 			this.labelWarehouse.Name = "labelWarehouse";
 			this.labelWarehouse.Xalign = 1F;
 			this.labelWarehouse.LabelProp = global::Mono.Unix.Catalog.GetString("Склад:");
 			this.table1.Add(this.labelWarehouse);
-			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1[this.labelWarehouse]));
-			w12.TopAttach = ((uint)(2));
-			w12.BottomAttach = ((uint)(3));
-			w12.XOptions = ((global::Gtk.AttachOptions)(4));
-			w12.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1[this.labelWarehouse]));
+			w11.TopAttach = ((uint)(2));
+			w11.BottomAttach = ((uint)(3));
+			w11.XOptions = ((global::Gtk.AttachOptions)(4));
+			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ycheckCollapse = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckCollapse.CanFocus = true;
-			this.ycheckCollapse.Name = "ycheckCollapseCollectiveIssue";
-			this.ycheckCollapse.Label = global::Mono.Unix.Catalog.GetString("объединить коллективную выдачи");
+			this.ycheckCollapse.Name = "ycheckCollapse";
+			this.ycheckCollapse.Label = global::Mono.Unix.Catalog.GetString("объединять строки документа");
 			this.ycheckCollapse.DrawIndicator = true;
 			this.ycheckCollapse.UseUnderline = true;
 			this.table1.Add(this.ycheckCollapse);
-			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckCollapse]));
-			w13.TopAttach = ((uint)(2));
-			w13.BottomAttach = ((uint)(3));
-			w13.LeftAttach = ((uint)(3));
-			w13.RightAttach = ((uint)(4));
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckCollapse]));
+			w12.TopAttach = ((uint)(2));
+			w12.BottomAttach = ((uint)(3));
+			w12.LeftAttach = ((uint)(3));
+			w12.RightAttach = ((uint)(4));
+			w12.XOptions = ((global::Gtk.AttachOptions)(4));
+			w12.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.yenumShowDirectionOperation = new global::Gamma.Widgets.yEnumComboBox();
+			this.yenumShowDirectionOperation.Name = "yenumShowDirectionOperation";
+			this.yenumShowDirectionOperation.ShowSpecialStateAll = false;
+			this.yenumShowDirectionOperation.ShowSpecialStateNot = false;
+			this.yenumShowDirectionOperation.UseShortTitle = false;
+			this.yenumShowDirectionOperation.DefaultFirst = false;
+			this.table1.Add(this.yenumShowDirectionOperation);
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.yenumShowDirectionOperation]));
+			w13.LeftAttach = ((uint)(1));
+			w13.RightAttach = ((uint)(2));
 			w13.XOptions = ((global::Gtk.AttachOptions)(4));
 			w13.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
