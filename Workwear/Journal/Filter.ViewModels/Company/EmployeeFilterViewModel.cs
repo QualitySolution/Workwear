@@ -30,7 +30,7 @@ namespace workwear.Journal.Filter.ViewModels.Company
 			get => department;
 			set {
 				if(SetField(ref department, value))
-					if(!DomainHelper.EqualDomainObjects(Subdivision, department.Subdivision))
+					if(!DomainHelper.EqualDomainObjects(Subdivision, department?.Subdivision))
 						Subdivision = null;
 			}
 		}

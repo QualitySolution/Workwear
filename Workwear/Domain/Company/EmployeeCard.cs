@@ -406,6 +406,16 @@ namespace workwear.Domain.Company
 			var phoneValidator = new PhoneValidator(PhoneFormat.RussiaOnlyHyphenated);
 			if(!phoneValidator.Validate(PhoneNumber, true))
 				yield return new ValidationResult($"Телефон должен быть задан в формате {PhoneFormat.RussiaOnlyHyphenated.GetEnumTitle()}", new[] { nameof(PhoneNumber) });
+
+			if(!String.IsNullOrEmpty(PersonnelNumber)) {
+
+				var result = UoW.Session.QueryOver<EmployeeCard>()
+					.Where(x => x.PersonnelNumber == PersonnelNumber && x.DismissDate == DismissDate);
+				if(Id > 0)
+					result.WhereNot(x => x.Id == Id);
+				if(result.RowCount()>0)
+					yield return new ValidationResult("Табельный номер должен быть уникальным", new[] { this.GetPropertyName(o => o.PersonnelNumber) });
+			}
 		}
 
 		#endregion

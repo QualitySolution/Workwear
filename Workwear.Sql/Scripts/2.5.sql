@@ -7,7 +7,7 @@ ALTER SCHEMA DEFAULT CHARACTER SET utf8mb4  DEFAULT COLLATE utf8mb4_general_ci ;
 
 -- Удаляем дубликаты Табельных номеров, в новой версии поле должно быть уникально
 UPDATE wear_cards SET wear_cards.personnel_number = NULL WHERE 
-EXISTS(SELECT 1 FROM wear_cards sub WHERE sub.personnel_number = wear_cards.personnel_number AND sub.id > wear_cards.id);
+EXISTS(SELECT 1 FROM wear_cards sub WHERE sub.personnel_number = wear_cards.personnel_number AND sub.dismiss_date <=> wear_cards.dismiss_date AND sub.id > wear_cards.id);
 
 -- Удаляем дубликаты номеров карточек, в новой версии поле должно быть уникально
 UPDATE wear_cards SET wear_cards.card_number = NULL WHERE
@@ -67,7 +67,7 @@ ADD COLUMN `department_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `object_id`,
 ADD COLUMN `size_mittens` VARCHAR(10) NULL DEFAULT NULL AFTER `size_gloves_std`,
 ADD INDEX `fk_wear_cards_department_idx` (`department_id` ASC),
 ADD UNIQUE INDEX `card_key_UNIQUE` (`card_key` ASC),
-ADD UNIQUE INDEX `personnel_number_UNIQUE` (`personnel_number` ASC),
+ADD UNIQUE INDEX `personnel_number_UNIQUE` (`personnel_number` ASC, `dismiss_date` ASC),
 ADD UNIQUE INDEX `card_number_UNIQUE` (`card_number` ASC);
 
 ALTER TABLE `stock_expense` 
