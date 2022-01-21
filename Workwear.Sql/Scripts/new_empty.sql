@@ -244,7 +244,7 @@ CREATE TABLE IF NOT EXISTS `wear_cards` (
   INDEX `fk_wear_cards_user_idx` (`user_id` ASC),
   INDEX `fk_wear_cards_department_idx` (`department_id` ASC),
   UNIQUE INDEX `card_key_UNIQUE` (`card_key` ASC),
-  UNIQUE INDEX `personnel_number_UNIQUE` (`personnel_number` ASC),
+  UNIQUE INDEX `personnel_number_UNIQUE` (`personnel_number` ASC, `dismiss_date` ASC),
   UNIQUE INDEX `card_number_UNIQUE` (`card_number` ASC),
   CONSTRAINT `fk_wear_cards_object`
     FOREIGN KEY (`object_id`)

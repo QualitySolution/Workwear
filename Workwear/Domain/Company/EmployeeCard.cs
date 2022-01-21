@@ -378,6 +378,16 @@ namespace workwear.Domain.Company
 				yield return new ValidationResult("UID карты должен быть задан в шестнадцатиричном виде, то есть может содержать только сиволы 0-9 и A-F.", new[] { nameof(CardKey) });
 			if(!String.IsNullOrEmpty(CardKey) && (CardKey.Length % 2 != 0))
 				yield return new ValidationResult("UID карты должен быть задан в шестнадцатиричном виде, число символов должно быть кратно двум.", new[] { nameof(CardKey) });
+
+			if(!String.IsNullOrEmpty(PersonnelNumber)) {
+
+				var result = UoW.Session.QueryOver<EmployeeCard>()
+					.Where(x => x.PersonnelNumber == PersonnelNumber && x.DismissDate == DismissDate);
+				if(Id > 0)
+					result.WhereNot(x => x.Id == Id);
+				if(result.RowCount()>0)
+					yield return new ValidationResult("Табельный номер должен быть уникальным", new[] { this.GetPropertyName(o => o.PersonnelNumber) });
+			}
 		}
 
 		#endregion
