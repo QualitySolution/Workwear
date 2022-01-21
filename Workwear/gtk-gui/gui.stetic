@@ -5981,7 +5981,7 @@
         <property name="StockId">store-movements</property>
         <signal name="Activated" handler="OnActionStockMovementsActivated" />
       </action>
-      <action id="Action39">
+      <action id="ActionNotificationTemplates">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Шаблоны уведомлений</property>
         <property name="ShortLabel" translatable="yes">Шаблоны уведомлений</property>
@@ -6062,7 +6062,7 @@
                 <node type="Menuitem" action="ActionWarehouse" />
                 <node type="Separator" />
                 <node type="Menuitem" action="Action7" />
-                <node type="Menuitem" action="Action39" />
+                <node type="Menuitem" action="ActionNotificationTemplates" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionProfession" />
                 <node type="Menuitem" action="Action8" />

@@ -185,6 +185,7 @@ public partial class MainWindow : Gtk.Window
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
+		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 	}
 	#endregion
 
