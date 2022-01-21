@@ -201,6 +201,51 @@ namespace WorkwearTest.Integration.Stock
 			}
 		}
 
+		[Test(Description = "Проверяем что при удалении строки из приходной накладной изменяются остатки на складе.")]
+		[Category("Integrated")]
+		public void UpdateIncomeTest()
+		{
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+
+				var Warehouse = new Warehouse() { Name = "TestWarehouse" };
+				uow.Save(Warehouse);
+
+				var Income = new Income();
+				Income.Warehouse = Warehouse;
+				Income.Date = new DateTime(2017, 1, 1);
+				Income.Operation = IncomeOperations.Enter;
+				var Nomenclature1 = new Nomenclature() { Name = "TestNomenclature1" };
+				uow.Save(Nomenclature1);
+				var Nomenclature2 = new Nomenclature() { Name = "TestNomenclature2" };
+				uow.Save(Nomenclature2);
+				var item1 = Income.AddItem(Nomenclature1);
+				var item2 = Income.AddItem(Nomenclature2);
+
+				Income.UpdateOperations(uow, ask);
+				uow.Save(Income);
+
+				var stockRepository = new StockRepository();
+				var stock1 = stockRepository.StockBalances(uow, Warehouse, 
+											new List<Nomenclature> { Nomenclature1, Nomenclature2}, 
+											new DateTime(2017, 1,2));
+				Assert.That(stock1.Count(), Is.EqualTo(2));
+
+				Income.ObservableItems.Remove(item1);
+				Income.UpdateOperations(uow, ask);
+				uow.Save(Income);
+
+				var stock2 = stockRepository.StockBalances(uow, Warehouse,
+											new List<Nomenclature> { Nomenclature1, Nomenclature2 },
+											new DateTime(2017, 1, 2));
+				Assert.That(stock1.Count(), Is.EqualTo(1));
+
+			}
+		}
+
+
 		#endregion
 	}
 }
