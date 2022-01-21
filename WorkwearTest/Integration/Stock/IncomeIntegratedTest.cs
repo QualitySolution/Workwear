@@ -226,6 +226,7 @@ namespace WorkwearTest.Integration.Stock
 
 				Income.UpdateOperations(uow, ask);
 				uow.Save(Income);
+				uow.Commit();
 
 				var stockRepository = new StockRepository();
 				var stock1 = stockRepository.StockBalances(uow, Warehouse, 
@@ -236,12 +237,12 @@ namespace WorkwearTest.Integration.Stock
 				Income.RemoveItem(item1);
 				Income.UpdateOperations(uow, ask);
 				uow.Save(Income);
+				uow.Commit();
 
 				var stock2 = stockRepository.StockBalances(uow, Warehouse,
 											new List<Nomenclature> { Nomenclature1, Nomenclature2 },
 											new DateTime(2017, 1, 2));
 				Assert.That(stock1.Count(), Is.EqualTo(1));
-
 			}
 		}
 
