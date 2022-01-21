@@ -225,6 +225,17 @@ namespace workwear.Domain.Stock
 
 		public virtual void RemoveItem(IncomeItem item)
 		{
+			if(item.WarehouseOperation?.Id > 0)
+				UoW.Delete(item.WarehouseOperation);
+			if(item.IssuedEmployeeOnOperation?.Id > 0)
+				UoW.Delete(item.IssuedEmployeeOnOperation);
+			if(item.ReturnFromEmployeeOperation?.Id > 0)
+				UoW.Delete(item.ReturnFromEmployeeOperation);
+			if(item.IssuedSubdivisionOnOperation?.Id > 0)
+				UoW.Delete(item.IssuedSubdivisionOnOperation);
+			if(item.ReturnFromSubdivisionOperation?.Id > 0)
+				UoW.Delete(item.ReturnFromSubdivisionOperation);
+
 			ObservableItems.Remove (item);
 		}
 
