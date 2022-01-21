@@ -336,7 +336,7 @@ namespace WorkwearTest.Integration.Stock
 											new DateTime(2017, 1,2));
 				Assert.That(stock1.Count(), Is.EqualTo(2));
 
-				Income.ObservableItems.Remove(item1);
+				Income.RemoveItem(item1);
 				Income.UpdateOperations(uow, ask);
 				uow.Save(Income);
 
