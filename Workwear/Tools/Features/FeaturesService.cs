@@ -77,6 +77,7 @@ namespace workwear.Tools.Features
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.BatchProcessing:
 					return ProductEdition == 2 || ProductEdition == 3;
+				case WorkwearFeature.Communications:
 				case WorkwearFeature.EmployeeLk:
 					if(ProductEdition != 2 && ProductEdition != 3)
 						return false;
@@ -110,5 +111,7 @@ namespace workwear.Tools.Features
 		BatchProcessing,
 		[Display(Name = "Мобильный кабинет сотрудника")]
 		EmployeeLk,
+		[Display(Name = "Комуникация с сотрудниками")]
+		Communications,
 	}
 }

@@ -119,6 +119,7 @@
     <EmbeddedResource Include="icon\toolbar\store-movements.png" />
     <EmbeddedResource Include="icon\buttons\menu.png" />
     <EmbeddedResource Include="icon\buttons\arrows.png" />
+    <EmbeddedResource Include="icon\toolbar\mail.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -479,6 +480,19 @@
     <Compile Include="Views\Regulations\NormConditionView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Regulations.NormConditionView.cs" />
     <Compile Include="Journal\ViewModels\Regulations\NormConditionJournalViewModel.cs" />
+    <Compile Include="HibernateMapping\Communications\MessageTemplateMap.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Communications\EmployeeNotificationFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Communications\EmployeeNotificationFilterView.cs" />
+    <Compile Include="Domain\Communications\MessageTemplate.cs" />
+    <Compile Include="ViewModels\Communications\MessageTemplateViewModel.cs" />
+    <Compile Include="ViewModels\Communications\SendMessangeViewModel.cs" />
+    <Compile Include="Views\Communications\MessageTemplateView.cs" />
+    <Compile Include="Views\Communications\SendMessangeView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Communications.SendMessangeView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Communications.MessageTemplateView.cs" />
+    <Compile Include="Journal\ViewModels\Communications\MessageTemplateJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Communications\EmployeeNotificationJournalViewModel.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Communications.EmployeeNotificationFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -698,6 +712,14 @@
     <Folder Include="Journal\Filter.Views\Statements\" />
     <Folder Include="Journal\Filter.ViewModels\Statements\" />
     <Folder Include="Models\Operations\" />
+    <Folder Include="Domain\Tools\" />
+    <Folder Include="HibernateMapping\Communications\" />
+    <Folder Include="Journal\Filter.ViewModels\Communications\" />
+    <Folder Include="Journal\Filter.Views\Communications\" />
+    <Folder Include="Domain\Communications\" />
+    <Folder Include="ViewModels\Communications\" />
+    <Folder Include="Views\Communications\" />
+    <Folder Include="Journal\ViewModels\Communications\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

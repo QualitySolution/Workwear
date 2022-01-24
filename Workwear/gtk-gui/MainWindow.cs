@@ -143,7 +143,7 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionBatchProcessing;
 
-	private global::Gtk.Action ActionProcessEmployees;
+	private global::Gtk.Action ActionProcessingEmployee;
 
 	private global::Gtk.Action ActionImportWorkwearItems;
 
@@ -158,6 +158,10 @@ public partial class MainWindow
 	private global::Gtk.Action ActionStockMovements;
 
 	private global::Gtk.Action ActionConditionNorm;
+
+	private global::Gtk.Action ActionNotificationTemplates;
+
+	private global::Gtk.Action ActionConversatoins;
 
 	private global::Gtk.VBox vbox1;
 
@@ -410,9 +414,9 @@ public partial class MainWindow
 		this.ActionBatchProcessing = new global::Gtk.Action("ActionBatchProcessing", global::Mono.Unix.Catalog.GetString("Обработка"), null, "gtk-execute");
 		this.ActionBatchProcessing.ShortLabel = global::Mono.Unix.Catalog.GetString("Обработка");
 		w1.Add(this.ActionBatchProcessing, null);
-		this.ActionProcessEmployees = new global::Gtk.Action("ActionProcessEmployees", global::Mono.Unix.Catalog.GetString("Корректировка сотрудников"), null, null);
-		this.ActionProcessEmployees.ShortLabel = global::Mono.Unix.Catalog.GetString("Корректировка сотрудников");
-		w1.Add(this.ActionProcessEmployees, null);
+		this.ActionProcessingEmployee = new global::Gtk.Action("ActionProcessingEmployee", global::Mono.Unix.Catalog.GetString("Корректировка сотрудников"), null, null);
+		this.ActionProcessingEmployee.ShortLabel = global::Mono.Unix.Catalog.GetString("Корректировка сотрудников");
+		w1.Add(this.ActionProcessingEmployee, null);
 		this.ActionImportWorkwearItems = new global::Gtk.Action("ActionImportWorkwearItems", global::Mono.Unix.Catalog.GetString("Выдачи"), null, null);
 		this.ActionImportWorkwearItems.ShortLabel = global::Mono.Unix.Catalog.GetString("Выдачи");
 		w1.Add(this.ActionImportWorkwearItems, null);
@@ -434,6 +438,12 @@ public partial class MainWindow
 		this.ActionConditionNorm = new global::Gtk.Action("ActionConditionNorm", global::Mono.Unix.Catalog.GetString("Условия нормы"), null, null);
 		this.ActionConditionNorm.ShortLabel = global::Mono.Unix.Catalog.GetString("Условия нормы");
 		w1.Add(this.ActionConditionNorm, null);
+		this.ActionNotificationTemplates = new global::Gtk.Action("ActionNotificationTemplates", global::Mono.Unix.Catalog.GetString("Шаблоны уведомлений"), null, null);
+		this.ActionNotificationTemplates.ShortLabel = global::Mono.Unix.Catalog.GetString("Шаблоны уведомлений");
+		w1.Add(this.ActionNotificationTemplates, null);
+		this.ActionConversatoins = new global::Gtk.Action("ActionConversatoins", global::Mono.Unix.Catalog.GetString("Уведомление"), null, "mail");
+		this.ActionConversatoins.ShortLabel = global::Mono.Unix.Catalog.GetString("Уведомление");
+		w1.Add(this.ActionConversatoins, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -521,7 +531,7 @@ public partial class MainWindow
 		this.hbox1.Name = "hbox1";
 		this.hbox1.Spacing = 6;
 		// Container child hbox1.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString(@"<ui><toolbar name='toolbarMain'><toolitem name='ActionBarObjects' action='ActionBarObjects'/><toolitem name='ActionBarEmployees' action='ActionBarEmployees'/><toolitem name='ActionCardIssuee' action='ActionCardIssuee'/><toolitem name='ActionBarStore' action='ActionBarStore'/><toolitem name='ActionBarStoreBalance' action='ActionBarStoreBalance'/><toolitem/></toolbar></ui>");
+		this.UIManager.AddUiFromString(@"<ui><toolbar name='toolbarMain'><toolitem name='ActionBarObjects' action='ActionBarObjects'/><toolitem name='ActionBarEmployees' action='ActionBarEmployees'/><toolitem name='ActionConversatoins' action='ActionConversatoins'/><toolitem name='ActionCardIssuee' action='ActionCardIssuee'/><toolitem name='ActionBarStore' action='ActionBarStore'/><toolitem name='ActionBarStoreBalance' action='ActionBarStoreBalance'/><toolitem/></toolbar></ui>");
 		this.toolbarMain = ((global::Gtk.Toolbar)(this.UIManager.GetWidget("/toolbarMain")));
 		this.toolbarMain.Name = "toolbarMain";
 		this.toolbarMain.ShowArrow = false;
@@ -702,7 +712,7 @@ public partial class MainWindow
 		this.ActionEmployeeLoad.Activated += new global::System.EventHandler(this.OnActionEmployeeLoadActivated);
 		this.ActionMaxizizeOnStart.Toggled += new global::System.EventHandler(this.OnActionMaxizizeOnStartToggled);
 		this.ActionNormsLoad.Activated += new global::System.EventHandler(this.OnActionNormsLoadActivated);
-		this.ActionProcessEmployees.Activated += new global::System.EventHandler(this.OnActionSetNormsActivated);
+		this.ActionProcessingEmployee.Activated += new global::System.EventHandler(this.OnActionSetNormsActivated);
 		this.ActionImportWorkwearItems.Activated += new global::System.EventHandler(this.OnActionImportWorkwearItemsActivated);
 		this.ActionNotIssuedSheetDetail.Activated += new global::System.EventHandler(this.OnActionNotIssuedSheetDetailActivated);
 		this.ActionNotIssuedSheetSummary.Activated += new global::System.EventHandler(this.OnActionNotIssuedSheetSummaryActivated);
@@ -710,5 +720,7 @@ public partial class MainWindow
 		this.ActionReplaceEntity.Activated += new global::System.EventHandler(this.OnActionReplaceEntityActivated);
 		this.ActionStockMovements.Activated += new global::System.EventHandler(this.OnActionStockMovementsActivated);
 		this.ActionConditionNorm.Activated += new global::System.EventHandler(this.OnActionConditionNormsActivated);
+		this.ActionNotificationTemplates.Activated += new global::System.EventHandler(this.OnActionEditNotificationTemplateActivated);
+		this.ActionConversatoins.Activated += new global::System.EventHandler(this.OnActionConversatoinsActivated);
 	}
 }

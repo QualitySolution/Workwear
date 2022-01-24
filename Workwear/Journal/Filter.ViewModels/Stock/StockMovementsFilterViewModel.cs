@@ -79,7 +79,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		public string StockPositionTitle => StockPosition?.Title;
 
 		#region Visible
-		public bool VisibleWarehouse => FeaturesService.Available(Tools.Features.WorkwearFeature.Warehouses);
+		public bool VisibleWarehouse => FeaturesService.Available(WorkwearFeature.Warehouses);
 		#endregion
 
 		#region Sensitive

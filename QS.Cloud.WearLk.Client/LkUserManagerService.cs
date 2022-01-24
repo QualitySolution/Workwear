@@ -1,34 +1,13 @@
 using System;
-using Grpc.Core;
 
 namespace QS.Cloud.WearLk.Client
 {
-    public class LkUserManagerService: IDisposable
+    public class LkUserManagerService : WearLkServiceBase
     {
-        public static readonly string ServiceAddress = "lk.wear.cloud.qsolution.ru";
-        public static readonly int ServicePort = 4201;
-
-        private readonly string sessionId;
-
-        private readonly Metadata headers;
-        
-        public LkUserManagerService(string sessionId)
+        public LkUserManagerService(string sessionId) : base(sessionId)
         {
-            this.sessionId = sessionId;
-            headers = new Metadata {{"Authorization", $"Bearer {sessionId}"}};
         }
-
-        private Channel channel;
-        private Channel Channel {
-            get {
-                if(channel == null || channel.State == ChannelState.Shutdown)
-                    channel = new Channel(ServiceAddress, ServicePort, ChannelCredentials.Insecure);
-                if (channel.State == ChannelState.TransientFailure)
-                    channel.ConnectAsync();
-                return channel;
-            }
-        }
-
+        
         #region Запросы
         public string GetPassword(string phone)
         {
@@ -40,7 +19,7 @@ namespace QS.Cloud.WearLk.Client
             {
                  Phone = phone
             };
-            return client.GetPassword(request, headers).Password;
+            return client.GetPassword(request, Headers).Password;
         }
         
         public void SetPassword(string phone, string password)
@@ -58,7 +37,7 @@ namespace QS.Cloud.WearLk.Client
                 Password = password
             };
             
-            client.SetPassword(request, headers);
+            client.SetPassword(request, Headers);
         }
         
         public void ReplacePhone(string oldPhone, string newPhone)
@@ -73,7 +52,7 @@ namespace QS.Cloud.WearLk.Client
                 NewPhone = newPhone
             };
             
-            client.ReplacePhone(request, headers);
+            client.ReplacePhone(request, Headers);
         }
         
         public void RemovePhone(string phone)
@@ -87,14 +66,9 @@ namespace QS.Cloud.WearLk.Client
                 Phone = phone,
             };
             
-            client.RemovePhone(request, headers);
+            client.RemovePhone(request, Headers);
         }
         
         #endregion
-
-        public void Dispose()
-        {
-            channel?.ShutdownAsync();
-        }
     }
 }

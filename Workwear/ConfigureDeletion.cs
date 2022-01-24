@@ -1,6 +1,7 @@
 using QS.BusinessCommon.Domain;
 using QS.Deletion;
 using QS.Project.Domain;
+using workwear.Domain.Communications;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
@@ -17,6 +18,10 @@ namespace workwear
 		public static void ConfigureDeletion ()
 		{
 			logger.Info ("Настройка параметров удаления...");
+
+			#region Связь
+			DeleteConfig.AddHibernateDeleteInfo<MessageTemplate>();
+			#endregion
 
 			#region Организация
 
