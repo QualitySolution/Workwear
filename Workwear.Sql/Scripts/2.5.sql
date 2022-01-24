@@ -118,6 +118,12 @@ DROP INDEX IF EXISTS `fk_operation_issued_by_employee_6_idx`;
 ALTER TABLE `operation_issued_by_employee`
 ADD INDEX `fk_operation_issued_by_employee_6_idx` (`operation_write_off_id` ASC);
 
+ALTER TABLE `operation_issued_in_subdivision` 
+DROP FOREIGN KEY `fk_operation_issued_in_subdivision_4`;
+
+ALTER TABLE `operation_issued_in_subdivision` 
+CHANGE COLUMN `warehouse_operation_id` `warehouse_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL ;
+
 ALTER TABLE `vacation_type` 
 CHARACTER SET = utf8mb4 , COLLATE = utf8mb4_general_ci ;
 
@@ -509,6 +515,12 @@ ADD CONSTRAINT `fk_operation_issued_by_employee_6`
   REFERENCES `operation_issued_by_employee` (`id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
+  
+ALTER TABLE `operation_issued_in_subdivision` 
+ADD CONSTRAINT `fk_operation_issued_in_subdivision_4`
+  FOREIGN KEY (`warehouse_operation_id`)
+  REFERENCES `operation_warehouse` (`id`)
+  ON UPDATE CASCADE;
 
 ALTER TABLE `issuance_sheet` 
 ADD CONSTRAINT `fk_issuance_sheet_5`
