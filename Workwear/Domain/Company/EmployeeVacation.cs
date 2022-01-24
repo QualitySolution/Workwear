@@ -76,14 +76,19 @@ namespace workwear.Domain.Company
 
 		#endregion
 
+		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
 		{
 			if(BeginDate > EndDate)
 				yield return new ValidationResult("Дата окончания отпуска не может быть меньше даты начала отпуска.", new[] { nameof(BeginDate), nameof(EndDate) });
+			if(VacationType == null)
+				yield return new ValidationResult("Вид отпуска должен быть указан", new[] { nameof(VacationType) });
 		}
+		#endregion
 
 		public EmployeeVacation()
 		{
 		}
+
 	}
 }
