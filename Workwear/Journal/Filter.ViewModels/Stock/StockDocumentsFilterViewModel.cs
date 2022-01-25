@@ -24,6 +24,15 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			set => SetField(ref stokDocumentType, value);
 		}
 
+		private object[] hidenStokDocumentTypeList = { Enum.Parse(typeof(StokDocumentType), "MassExpense") };
+		public object[] HidenStokDocumentTypeList {
+			get {
+				if(FeaturesService.Available(WorkwearFeature.MassExpense))
+					return new object[0];
+				return hidenStokDocumentTypeList; }
+			set => SetField(ref hidenStokDocumentTypeList, value);
+		}
+
 		private DateTime? startDate;
 		public virtual DateTime? StartDate {
 			get => startDate;
