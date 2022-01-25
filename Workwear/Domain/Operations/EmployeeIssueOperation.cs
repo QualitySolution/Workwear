@@ -292,6 +292,8 @@ namespace workwear.Domain.Operations
 			IssuedOperation = null;
 			BuhDocument = item.BuhDocument;
 			WarehouseOperation = item.WarehouseOperation;
+			ProtectionTools = item.ProtectionTools;
+
 
 			if(!String.IsNullOrEmpty(signCardUid)) {
 				SignCardKey = signCardUid;
