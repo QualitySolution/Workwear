@@ -144,6 +144,11 @@ namespace workwear.Domain.Regulations
 			if (Items.Count == 0)
 				yield return new ValidationResult ("Норма должна содержать хотя бы одну номенклатуру.", 
 					new[] { this.GetPropertyName (o => o.Items) });
+			foreach(var item in items) {
+				if(item.PeriodCount <= 0)
+					yield return new ValidationResult("Период эксплуатации должен быть больше нуля.",
+					new[] { nameof(item.PeriodCount) });
+			}
 		}
 
 		#endregion
