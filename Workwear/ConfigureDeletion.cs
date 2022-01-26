@@ -109,7 +109,7 @@ namespace workwear
 						.AddDeleteDependence<RegulationDocAnnex>(x => x.Document);
 
 			DeleteConfig.AddHibernateDeleteInfo<RegulationDocAnnex>()
-			            .AddDeleteDependence<Norm>(x => x.Annex);
+				.AddClearDependence<Norm>(x => x.Annex);
 
 			#endregion
 			#region Склад

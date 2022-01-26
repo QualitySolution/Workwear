@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Autofac;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -22,6 +23,15 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		public virtual StokDocumentType? StokDocumentType {
 			get => stokDocumentType;
 			set => SetField(ref stokDocumentType, value);
+		}
+
+		public IEnumerable<object> HidenStokDocumentTypeList {
+			get {
+				if(!FeaturesService.Available(WorkwearFeature.MassExpense))
+					yield return Domain.Stock.StokDocumentType.MassExpense;
+				if(!FeaturesService.Available(WorkwearFeature.Warehouses))
+					yield return Domain.Stock.StokDocumentType.TransferDoc;
+			}
 		}
 
 		private DateTime? startDate;
