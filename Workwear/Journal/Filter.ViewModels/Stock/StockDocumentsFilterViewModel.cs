@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Autofac;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -24,13 +25,13 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			set => SetField(ref stokDocumentType, value);
 		}
 
-		private object[] hidenStokDocumentTypeList = { Enum.Parse(typeof(StokDocumentType), "MassExpense") };
-		public object[] HidenStokDocumentTypeList {
+		public IEnumerable<object> HidenStokDocumentTypeList {
 			get {
-				if(FeaturesService.Available(WorkwearFeature.MassExpense))
-					return new object[0];
-				return hidenStokDocumentTypeList; }
-			set => SetField(ref hidenStokDocumentTypeList, value);
+				if(!FeaturesService.Available(WorkwearFeature.MassExpense))
+					yield return Domain.Stock.StokDocumentType.MassExpense;
+				if(!FeaturesService.Available(WorkwearFeature.Warehouses))
+					yield return Domain.Stock.StokDocumentType.TransferDoc;
+			}
 		}
 
 		private DateTime? startDate;
