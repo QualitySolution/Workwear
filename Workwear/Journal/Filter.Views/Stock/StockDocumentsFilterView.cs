@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Linq;
 using QS.Views;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
@@ -12,6 +12,7 @@ namespace workwear.Journal.Filter.Views.Stock
 			this.Build();
 			enumcomboDocumentType.ItemsEnum = typeof(StokDocumentType);
 			enumcomboDocumentType.Binding.AddBinding(ViewModel, v => v.StokDocumentType, w => w.SelectedItemOrNull).InitializeFromSource();
+			enumcomboDocumentType.AddEnumToHideList(viewModel.HidenStokDocumentTypeList.ToArray());
 			dateperiodDocs.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.StartDate, w => w.StartDateOrNull)
 				.AddBinding(v => v.EndDate, w => w.EndDateOrNull)
