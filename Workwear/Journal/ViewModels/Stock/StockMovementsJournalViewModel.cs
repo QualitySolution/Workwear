@@ -70,7 +70,7 @@ namespace workwear.Journal.ViewModels.Stock
 			if(Filter.Warehouse != null)
 				queryStock.Where(x => x.ReceiptWarehouse == Filter.Warehouse || x.ExpenseWarehouse == Filter.Warehouse);
 
-			if (Filter.StartDate.HasValue) 
+			if(Filter.StartDate.HasValue)
 				queryStock.Where(x => x.OperationTime >= Filter.StartDate.Value);
 
 			if(Filter.EndDate.HasValue)
@@ -146,7 +146,12 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinEntityAlias(() => transferItemAlias, () => transferItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => employeeIssueOperationAlias, () => employeeIssueOperationAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
-				.JoinEntityAlias(() => employeeCardAlias, () => employeeIssueOperationAlias.Employee.Id == employeeCardAlias.Id, JoinType.LeftOuterJoin);
+				.JoinEntityAlias(() => employeeCardAlias, () => employeeIssueOperationAlias.Employee.Id == employeeCardAlias.Id, JoinType.LeftOuterJoin)
+				.Where(GetSearchCriterion(
+					() => employeeCardAlias.FirstName,
+					() => employeeCardAlias.LastName,
+					() => employeeCardAlias.Patronymic
+					));
 
 			if(Filter.CollapseOperationItems) {
 				queryStock.SelectList(list => list
@@ -157,10 +162,14 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(expenseProjection).WithAlias(() => resultAlias.Expense)
 					.SelectSum(() => warehouseOperationAlias.Amount).WithAlias(() => resultAlias.Amount)
 					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
-			
+					.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
+					.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
+					.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
+
 					//Ссылки
 					.SelectGroup(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenceId)
 					.SelectGroup(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
+					.SelectCount(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.numberOfCollapsedRows)
 					.SelectGroup(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
 					.SelectGroup(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferItemId)
 					.SelectGroup(() => writeoffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
@@ -253,7 +262,14 @@ namespace workwear.Journal.ViewModels.Stock
 		public string EmployeeSurname { get; set; }
 		public string EmployeeName { get; set; }
 		public string EmployeePatronymic { get; set; }
+		public int numberOfCollapsedRows { get; set; }
 
-		public string Employee => PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
+		public string Employee {
+			get {
+				if(numberOfCollapsedRows > 1)
+					return String.Empty;
+				else return PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
+			}
+		}
 	}
 }
