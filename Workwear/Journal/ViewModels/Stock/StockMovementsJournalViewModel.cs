@@ -11,6 +11,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
+using QS.Utilities;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
@@ -169,7 +170,7 @@ namespace workwear.Journal.ViewModels.Stock
 					//Ссылки
 					.SelectGroup(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenceId)
 					.SelectGroup(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
-					.SelectCount(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.numberOfCollapsedRows)
+					.SelectCount(() => employeeCardAlias.Id).WithAlias(() => resultAlias.numberOfCollapsedRows)
 					.SelectGroup(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
 					.SelectGroup(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferItemId)
 					.SelectGroup(() => writeoffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
@@ -265,9 +266,10 @@ namespace workwear.Journal.ViewModels.Stock
 		public int numberOfCollapsedRows { get; set; }
 
 		public string Employee {
-			get {
-				if(numberOfCollapsedRows > 0)
-					return String.Empty;
+			get
+			{
+				if (numberOfCollapsedRows > 1)
+					return NumberToTextRus.FormatCase(numberOfCollapsedRows, "{0} сотрудник", "{0} сотрудника", "{0} сотрудников");
 				else return PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
 			}
 		}
