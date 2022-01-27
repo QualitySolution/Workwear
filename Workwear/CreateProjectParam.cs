@@ -61,6 +61,7 @@ using workwear.Views.Company;
 using Workwear.Measurements;
 using workwear.Models.Stock;
 using Workwear.Sql;
+using QS.HistoryLog.Dialogs;
 
 namespace workwear
 {
@@ -177,6 +178,9 @@ namespace workwear
 			#region Старые диалоги
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(IncomeDocDlg)))
 				.Where(t => t.IsAssignableTo<ITdiTab>() && t.Name.EndsWith("Dlg"))
+				.AsSelf();
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(HistoryView)))
+				.Where(t => t.IsAssignableTo<ITdiTab>() && t.Name.EndsWith("View"))
 				.AsSelf();
 			#endregion
 
