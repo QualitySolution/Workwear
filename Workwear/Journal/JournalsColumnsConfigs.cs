@@ -229,6 +229,7 @@ namespace workwear.Journal
 					.AddColumn("Дата").AddTextRenderer(node => node.OperationTimeText)
 					.AddColumn("Документ").AddTextRenderer(node => node.DocumentText)
 					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
+					.AddColumn("Сотрудник").AddTextRenderer(e => e.Employee).SearchHighlight()
 					.AddColumn("Размер").AddTextRenderer(e => e.Size).SearchHighlight()
 					.AddColumn("Рост").AddTextRenderer(e => e.Growth).SearchHighlight()
 					.AddColumn("Процент износа").AddTextRenderer(e => e.WearPercentText)

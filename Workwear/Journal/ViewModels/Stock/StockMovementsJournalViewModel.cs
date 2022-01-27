@@ -11,6 +11,9 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
+using QS.Utilities;
+using QS.Utilities.Text;
+using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
@@ -56,6 +59,8 @@ namespace workwear.Journal.ViewModels.Stock
 			TransferItem transferItemAlias = null;
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
 			WriteoffItem writeoffItemAlias = null;
+			EmployeeCard employeeCardAlias = null;
+			EmployeeIssueOperation employeeIssueOperationAlias = null;
 
 			Nomenclature nomenclatureAlias = null;
 			ItemsType itemtypesAlias = null;
@@ -66,7 +71,7 @@ namespace workwear.Journal.ViewModels.Stock
 			if(Filter.Warehouse != null)
 				queryStock.Where(x => x.ReceiptWarehouse == Filter.Warehouse || x.ExpenseWarehouse == Filter.Warehouse);
 
-			if (Filter.StartDate.HasValue) 
+			if(Filter.StartDate.HasValue)
 				queryStock.Where(x => x.OperationTime >= Filter.StartDate.Value);
 
 			if(Filter.EndDate.HasValue)
@@ -140,7 +145,14 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => transferItemAlias, () => transferItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
-				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin);
+				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => employeeIssueOperationAlias, () => employeeIssueOperationAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => employeeCardAlias, () => employeeIssueOperationAlias.Employee.Id == employeeCardAlias.Id, JoinType.LeftOuterJoin)
+				.Where(GetSearchCriterion(
+					() => employeeCardAlias.FirstName,
+					() => employeeCardAlias.LastName,
+					() => employeeCardAlias.Patronymic
+					));
 
 			if(Filter.CollapseOperationItems) {
 				queryStock.SelectList(list => list
@@ -151,10 +163,14 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(expenseProjection).WithAlias(() => resultAlias.Expense)
 					.SelectSum(() => warehouseOperationAlias.Amount).WithAlias(() => resultAlias.Amount)
 					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
-			
+					.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
+					.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
+					.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
+
 					//Ссылки
 					.SelectGroup(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenceId)
 					.SelectGroup(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
+					.SelectCount(() => employeeCardAlias.Id).WithAlias(() => resultAlias.numberOfCollapsedRows)
 					.SelectGroup(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
 					.SelectGroup(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferItemId)
 					.SelectGroup(() => writeoffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
@@ -187,6 +203,9 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferItemId)
 					.Select(() => writeoffItemAlias.Id).WithAlias(() => resultAlias.WriteoffItemId)
 					.Select(() => writeoffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
+					.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
+					.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
+					.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
 				);
 			}
 
@@ -239,6 +258,19 @@ namespace workwear.Journal.ViewModels.Stock
 				if(Expense)
 					return "<span foreground=\"Red\" weight=\"ultrabold\">-</span>";
 				return "<span foreground=\"Fuchsia\" weight=\"ultrabold\">?</span>";
+			}
+		}
+		public string EmployeeSurname { get; set; }
+		public string EmployeeName { get; set; }
+		public string EmployeePatronymic { get; set; }
+		public int numberOfCollapsedRows { get; set; }
+
+		public string Employee {
+			get
+			{
+				if (numberOfCollapsedRows > 1)
+					return NumberToTextRus.FormatCase(numberOfCollapsedRows, "{0} сотрудник", "{0} сотрудника", "{0} сотрудников");
+				else return PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
 			}
 		}
 	}
