@@ -167,10 +167,7 @@ namespace WorkwearTest.Integration.Stock
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				uow.Save(nomenclatureType);
-
-				//Поднимаем id номеклатуры до 2.
-				//uow.Save(new Nomenclature());
-
+				
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
 				nomenclature.Name = "Тестовая номенклатура";
