@@ -45,7 +45,8 @@ namespace workwear.Journal.ViewModels.Regulations
 				.Where(GetSearchCriterion(
 					() => normAlias.Name,
 					() => postAlias.Name,
-					() => subdivisionAlias.Name
+					() => subdivisionAlias.Name,
+					() => normAlias.Id
 					))
 				.SelectList(list => list
 				   .SelectGroup(() => normAlias.Id).WithAlias(() => resultAlias.Id)
