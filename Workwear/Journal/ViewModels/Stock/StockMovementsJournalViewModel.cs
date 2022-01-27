@@ -266,7 +266,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 		public string Employee {
 			get {
-				if(numberOfCollapsedRows > 1)
+				if(numberOfCollapsedRows > 0)
 					return String.Empty;
 				else return PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
 			}
