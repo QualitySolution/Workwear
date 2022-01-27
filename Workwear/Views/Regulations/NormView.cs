@@ -44,10 +44,10 @@ namespace workwear.Views.Regulations
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<NormItem>.Create ()
 				.AddColumn ("Наименование").AddTextRenderer (p => p.ProtectionTools != null ? p.ProtectionTools.Name : null)
 				.AddColumn ("Количество")
-				.AddNumericRenderer (i => i.Amount).WidthChars (9).Editing ().Adjustment (new Gtk.Adjustment(1, 0, 1000000, 1, 10, 10))
+				.AddNumericRenderer (i => i.Amount).WidthChars (9).Editing ().Adjustment (new Gtk.Adjustment(1, 1, 1000000, 1, 10, 10))
 				.AddTextRenderer (i => i.ProtectionTools != null && i.ProtectionTools.Type.Units != null ? i.ProtectionTools.Type.Units.Name : String.Empty)
 				.AddColumn ("Период")
-				.AddNumericRenderer (i => i.PeriodCount).WidthChars(6).Editing ().Adjustment (new Gtk.Adjustment(1, 0, 100, 1, 10, 10))
+				.AddNumericRenderer (i => i.PeriodCount).WidthChars(6).Editing ().Adjustment (new Gtk.Adjustment(1, 1, 100, 1, 10, 10))
 				.AddEnumRenderer (i => i.NormPeriod).Editing ()
 				.AddColumn(String.Empty)
 				.Finish ();
