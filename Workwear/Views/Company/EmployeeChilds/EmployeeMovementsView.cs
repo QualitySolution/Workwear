@@ -73,6 +73,7 @@ namespace workwear.Views.Company.EmployeeChilds
 				//Заголовок колонки используется в методе YtreeviewMovements_RowActivated
 				.AddColumn("Документ").AddTextRenderer(e => e.DocumentTitle)
 				.AddColumn("Номенклатура").AddTextRenderer(e => e.NomenclatureName)
+				.AddColumn("Номенклатура нормы").AddTextRenderer(e => e.ProtectionTools)
 				.AddColumn("% износа").AddTextRenderer(e => e.WearPercentText)
 				.AddColumn("Стоимость").AddTextRenderer(e => e.CostText)
 				.AddColumn("Получено").AddTextRenderer(e => e.AmountReceivedText)
@@ -84,7 +85,6 @@ namespace workwear.Views.Company.EmployeeChilds
 				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
 					.AddPixbufRenderer(x => x.IsSigned ? cardIcon : null)
 					.AddTextRenderer(x => x.SingText)
-				.AddColumn("")
 				.Finish();
 
 			ytreeviewMovements.RowActivated += YtreeviewMovements_RowActivated;

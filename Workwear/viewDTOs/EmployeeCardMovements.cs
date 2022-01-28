@@ -68,5 +68,10 @@ namespace workwear.DTO
 				return String.Empty;
 			}
 		}
+		public string ProtectionTools {
+			get {
+				return Operation?.ProtectionTools?.Name ?? String.Empty;
+			}
+		}
 	}
 }
