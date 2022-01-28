@@ -42,7 +42,7 @@ namespace workwear.Models.Stock
 		public virtual void EditDocumentDialog(DialogViewModelBase master, OperationToDocumentReference reference)
 		{
 			var page = EditDocumentDialog(master, reference.DocumentType.Value, reference.DocumentId.Value);
-			if(page.ViewModel is ISelectItem select)
+			if(page.ViewModel is ISelectItem select && reference.ItemId.HasValue)
 				select.SelectItem(reference.ItemId.Value);
 		}
 

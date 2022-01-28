@@ -36,6 +36,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
+using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
@@ -183,6 +184,8 @@ public partial class MainWindow : Gtk.Window
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
+		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
+		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 	}
 	#endregion
 
@@ -700,6 +703,11 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager.OpenViewModel<EmployeeProcessingJournalViewModel>(null);
 	}
 
+	protected void OnActionEditNotificationTemplateActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<MessageTemplateJournalViewModel>(null);
+	}
+
 	protected void OnActionImportWorkwearItemsActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<ExcelImportViewModel>(null,
@@ -733,5 +741,10 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionStockMovementsActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(null);
+	}
+
+	protected void OnActionConversatoinsActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<EmployeeNotificationJournalViewModel>(null);
 	}
 }

@@ -167,19 +167,13 @@ namespace WorkwearTest.Integration.Stock
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				uow.Save(nomenclatureType);
-
-				//Поднимаем id номеклатуры до 2.
-				uow.Save(new Nomenclature());
-
+				
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
+				nomenclature.Name = "Тестовая номенклатура";
 				uow.Save(nomenclature);
 
-				var position1 = new StockPosition(nomenclature, null, null, 0);
-
-				//Поднимаем id сиза до 3.
-				uow.Save(new ProtectionTools { Name = "Id = 1" });
-				uow.Save(new ProtectionTools { Name = "Id = 2" });
+				//var position1 = new StockPosition(nomenclature, null, null, 0);
 
 				var protectionTools = new ProtectionTools();
 				protectionTools.Name = "СИЗ для тестирования";
@@ -207,16 +201,20 @@ namespace WorkwearTest.Integration.Stock
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
 
+				var baseParameters = Substitute.For<BaseParameters>();
+				baseParameters.ColDayAheadOfShedule.Returns(0);
+				
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2018, 10, 22));
+				
 				var expense = new Expense();
 				expense.Operation = ExpenseOperations.Employee;
 				expense.Warehouse = warehouse;
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 10, 22);
-				expense.AddItem(position1, 1);
-
-				var baseParameters = Substitute.For<BaseParameters>();
-				baseParameters.ColDayAheadOfShedule.Returns(0);
-
+				var itemExpense = expense.AddItem(employee.WorkwearItems.First(), baseParameters);
+				itemExpense.Nomenclature = nomenclature;
+				itemExpense.Amount = 1;
+				
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
 				uow.Save(expense);
@@ -307,6 +305,53 @@ namespace WorkwearTest.Integration.Stock
 				Assert.That(stock2.Sum(x => x.Amount), Is.EqualTo(7));
 			}
 		}
+
+		[Test(Description = "Проверяем что при удалении строки из приходной накладной изменяются остатки на складе.")]
+		[Category("Integrated")]
+		public void UpdateIncomeTest()
+		{
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+
+				var Warehouse = new Warehouse() { Name = "TestWarehouse" };
+				uow.Save(Warehouse);
+
+				var Income = new Income();
+				Income.Warehouse = Warehouse;
+				Income.Date = new DateTime(2017, 1, 1);
+				Income.Operation = IncomeOperations.Enter;
+				var Nomenclature1 = new Nomenclature() { Name = "TestNomenclature1" };
+				uow.Save(Nomenclature1);
+				var Nomenclature2 = new Nomenclature() { Name = "TestNomenclature2" };
+				uow.Save(Nomenclature2);
+				var item1 = Income.AddItem(Nomenclature1);
+				var item2 = Income.AddItem(Nomenclature2);
+
+				Income.UpdateOperations(uow, ask);
+				uow.Save(Income);
+				uow.Commit();
+
+				var stockRepository = new StockRepository();
+				var stock1 = stockRepository.StockBalances(uow, Warehouse, 
+											new List<Nomenclature> { Nomenclature1, Nomenclature2}, 
+											new DateTime(2017, 1,2));
+				Assert.That(stock1.Count(), Is.EqualTo(2));
+
+				Income.RemoveItem(item1);
+				Income.UpdateOperations(uow, ask);
+				uow.Save(Income);
+				uow.Commit();
+
+				var stock2 = stockRepository.StockBalances(uow, Warehouse,
+											new List<Nomenclature> { Nomenclature1, Nomenclature2 },
+											new DateTime(2017, 1, 2));
+
+				Assert.That(stock2.Count(), Is.EqualTo(1));
+			}
+		}
+
 
 		#endregion
 	}

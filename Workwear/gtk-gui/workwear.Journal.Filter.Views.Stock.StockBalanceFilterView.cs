@@ -12,6 +12,12 @@ namespace workwear.Journal.Filter.Views.Stock
 
 		private global::Gamma.GtkWidgets.yLabel labelWarehouse;
 
+		private global::Gamma.GtkWidgets.yHBox yhbox1;
+
+		private global::Gamma.GtkWidgets.yLabel ylabel1;
+
+		private global::Gamma.Widgets.yDatePicker ydateDate;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -19,7 +25,7 @@ namespace workwear.Journal.Filter.Views.Stock
 			global::Stetic.BinContainer.Attach(this);
 			this.Name = "workwear.Journal.Filter.Views.Stock.StockBalanceFilterView";
 			// Container child workwear.Journal.Filter.Views.Stock.StockBalanceFilterView.Gtk.Container+ContainerChild
-			this.table1 = new global::Gtk.Table(((uint)(1)), ((uint)(3)), false);
+			this.table1 = new global::Gtk.Table(((uint)(2)), ((uint)(3)), false);
 			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
@@ -54,6 +60,39 @@ namespace workwear.Journal.Filter.Views.Stock
 			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.labelWarehouse]));
 			w3.XOptions = ((global::Gtk.AttachOptions)(4));
 			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox1.Name = "yhbox1";
+			this.yhbox1.Spacing = 6;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel1.Name = "ylabel1";
+			this.ylabel1.Xalign = 1F;
+			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Дата:");
+			this.yhbox1.Add(this.ylabel1);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ylabel1]));
+			w4.Position = 0;
+			w4.Expand = false;
+			w4.Fill = false;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.ydateDate = new global::Gamma.Widgets.yDatePicker();
+			this.ydateDate.Events = ((global::Gdk.EventMask)(256));
+			this.ydateDate.Name = "ydateDate";
+			this.ydateDate.WithTime = false;
+			this.ydateDate.Date = new global::System.DateTime(0);
+			this.ydateDate.IsEditable = true;
+			this.ydateDate.AutoSeparation = true;
+			this.yhbox1.Add(this.ydateDate);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ydateDate]));
+			w5.Position = 1;
+			this.table1.Add(this.yhbox1);
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.yhbox1]));
+			w6.TopAttach = ((uint)(1));
+			w6.BottomAttach = ((uint)(2));
+			w6.LeftAttach = ((uint)(2));
+			w6.RightAttach = ((uint)(3));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.table1);
 			if ((this.Child != null))
 			{

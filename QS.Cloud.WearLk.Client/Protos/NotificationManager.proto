@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package QS.Cloud.WearLk.Manage;
+
+service NotificationManager {
+    rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
+}
+
+message SendMessageRequest {
+    repeated OutgoingMessage messages = 1;
+}
+
+message OutgoingMessage {
+    string phone = 1;
+    string title = 2;
+    string text = 3;
+}
+
+message SendMessageResponse {
+    string results = 1;
+}

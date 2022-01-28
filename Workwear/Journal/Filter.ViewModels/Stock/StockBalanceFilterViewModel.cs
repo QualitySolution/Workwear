@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
@@ -38,13 +39,19 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			get => protectionTools;
 			set => SetField(ref protectionTools, value);
 		}
+
+		private DateTime date;
+		public virtual DateTime Date {
+			get => date;
+			set => SetField(ref date, value);
+		}
 		#endregion
 
 		public readonly FeaturesService FeaturesService;
 
 		#region Visible
 
-		public bool VisibleWarehouse => FeaturesService.Available(Tools.Features.WorkwearFeature.Warehouses);
+		public bool VisibleWarehouse => FeaturesService.Available(WorkwearFeature.Warehouses);
 
 		#endregion
 
@@ -52,6 +59,8 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 
 		public StockBalanceFilterViewModel(IUnitOfWorkFactory unitOfWorkFactory, JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, FeaturesService featuresService): base(journal, unitOfWorkFactory)
 		{
+			date = DateTime.Today;
+
 			var builder = new CommonEEVMBuilderFactory<StockBalanceFilterViewModel>(journal, this, UoW, navigation, autofacScope);
 
 			FeaturesService = featuresService;

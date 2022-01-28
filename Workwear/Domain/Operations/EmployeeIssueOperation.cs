@@ -298,6 +298,8 @@ namespace workwear.Domain.Operations
 			IssuedOperation = null;
 			BuhDocument = item.BuhDocument;
 			WarehouseOperation = item.WarehouseOperation;
+			ProtectionTools = item.ProtectionTools;
+
 
 			if(!String.IsNullOrEmpty(signCardUid)) {
 				SignCardKey = signCardUid;
@@ -456,6 +458,7 @@ namespace workwear.Domain.Operations
 			Returned = item.Amount;
 			WarehouseOperation = item.WarehouseOperation;
 			IssuedOperation = item.IssuedEmployeeOnOperation;
+			protectionTools = item.IssuedEmployeeOnOperation?.ProtectionTools;
 			BuhDocument = item.BuhDocument;
 			NormItem = null;
 			ExpiryByNorm = null;

@@ -7,7 +7,7 @@ ALTER SCHEMA DEFAULT CHARACTER SET utf8mb4  DEFAULT COLLATE utf8mb4_general_ci ;
 
 -- Удаляем дубликаты Табельных номеров, в новой версии поле должно быть уникально
 UPDATE wear_cards SET wear_cards.personnel_number = NULL WHERE 
-EXISTS(SELECT 1 FROM wear_cards sub WHERE sub.personnel_number = wear_cards.personnel_number AND sub.id > wear_cards.id);
+EXISTS(SELECT 1 FROM wear_cards sub WHERE sub.personnel_number = wear_cards.personnel_number AND sub.dismiss_date <=> wear_cards.dismiss_date AND sub.id > wear_cards.id);
 
 -- Удаляем дубликаты номеров карточек, в новой версии поле должно быть уникально
 UPDATE wear_cards SET wear_cards.card_number = NULL WHERE
@@ -67,7 +67,7 @@ ADD COLUMN `department_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `object_id`,
 ADD COLUMN `size_mittens` VARCHAR(10) NULL DEFAULT NULL AFTER `size_gloves_std`,
 ADD INDEX `fk_wear_cards_department_idx` (`department_id` ASC),
 ADD UNIQUE INDEX `card_key_UNIQUE` (`card_key` ASC),
-ADD UNIQUE INDEX `personnel_number_UNIQUE` (`personnel_number` ASC),
+ADD UNIQUE INDEX `personnel_number_UNIQUE` (`personnel_number` ASC, `dismiss_date` ASC),
 ADD UNIQUE INDEX `card_number_UNIQUE` (`card_number` ASC);
 
 ALTER TABLE `stock_expense` 
@@ -117,6 +117,12 @@ DROP INDEX IF EXISTS `fk_operation_issued_by_employee_6_idx`;
 
 ALTER TABLE `operation_issued_by_employee`
 ADD INDEX `fk_operation_issued_by_employee_6_idx` (`operation_write_off_id` ASC);
+
+ALTER TABLE `operation_issued_in_subdivision` 
+DROP FOREIGN KEY `fk_operation_issued_in_subdivision_4`;
+
+ALTER TABLE `operation_issued_in_subdivision` 
+CHANGE COLUMN `warehouse_operation_id` `warehouse_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL ;
 
 ALTER TABLE `vacation_type` 
 CHARACTER SET = utf8mb4 , COLLATE = utf8mb4_general_ci ;
@@ -509,6 +515,12 @@ ADD CONSTRAINT `fk_operation_issued_by_employee_6`
   REFERENCES `operation_issued_by_employee` (`id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
+  
+ALTER TABLE `operation_issued_in_subdivision` 
+ADD CONSTRAINT `fk_operation_issued_in_subdivision_4`
+  FOREIGN KEY (`warehouse_operation_id`)
+  REFERENCES `operation_warehouse` (`id`)
+  ON UPDATE CASCADE;
 
 ALTER TABLE `issuance_sheet` 
 ADD CONSTRAINT `fk_issuance_sheet_5`

@@ -172,7 +172,7 @@ CREATE TABLE IF NOT EXISTS `wear_cards` (
   INDEX `fk_wear_cards_user_idx` (`user_id` ASC),
   INDEX `fk_wear_cards_department_idx` (`department_id` ASC),
   UNIQUE INDEX `card_key_UNIQUE` (`card_key` ASC),
-  UNIQUE INDEX `personnel_number_UNIQUE` (`personnel_number` ASC),
+  UNIQUE INDEX `personnel_number_UNIQUE` (`personnel_number` ASC, `dismiss_date` ASC),
   UNIQUE INDEX `card_number_UNIQUE` (`card_number` ASC),
   CONSTRAINT `fk_wear_cards_object`
     FOREIGN KEY (`object_id`)
@@ -581,7 +581,7 @@ CREATE TABLE IF NOT EXISTS `operation_issued_in_subdivision` (
   `start_of_use` DATE NULL DEFAULT NULL,
   `expiry_on` DATE NULL DEFAULT NULL,
   `issued_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
-  `warehouse_operation_id` INT(10) UNSIGNED NOT NULL,
+  `warehouse_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `operation_issued_by_employee_date` (`operation_time` ASC),
   INDEX `index8` (`size` ASC),
