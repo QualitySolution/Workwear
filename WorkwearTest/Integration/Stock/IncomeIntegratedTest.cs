@@ -167,19 +167,13 @@ namespace WorkwearTest.Integration.Stock
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				uow.Save(nomenclatureType);
-
-				//Поднимаем id номеклатуры до 2.
-				uow.Save(new Nomenclature());
-
+				
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
+				nomenclature.Name = "Тестовая номенклатура";
 				uow.Save(nomenclature);
 
-				var position1 = new StockPosition(nomenclature, null, null, 0);
-
-				//Поднимаем id сиза до 3.
-				uow.Save(new ProtectionTools { Name = "Id = 1" });
-				uow.Save(new ProtectionTools { Name = "Id = 2" });
+				//var position1 = new StockPosition(nomenclature, null, null, 0);
 
 				var protectionTools = new ProtectionTools();
 				protectionTools.Name = "СИЗ для тестирования";
@@ -207,16 +201,20 @@ namespace WorkwearTest.Integration.Stock
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
 
+				var baseParameters = Substitute.For<BaseParameters>();
+				baseParameters.ColDayAheadOfShedule.Returns(0);
+				
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2018, 10, 22));
+				
 				var expense = new Expense();
 				expense.Operation = ExpenseOperations.Employee;
 				expense.Warehouse = warehouse;
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 10, 22);
-				expense.AddItem(position1, 1);
-
-				var baseParameters = Substitute.For<BaseParameters>();
-				baseParameters.ColDayAheadOfShedule.Returns(0);
-
+				var itemExpense = expense.AddItem(employee.WorkwearItems.First(), baseParameters);
+				itemExpense.Nomenclature = nomenclature;
+				itemExpense.Amount = 1;
+				
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
 				uow.Save(expense);
