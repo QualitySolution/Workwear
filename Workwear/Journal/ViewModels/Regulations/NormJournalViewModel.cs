@@ -70,7 +70,8 @@ namespace workwear.Journal.ViewModels.Regulations
 				.Where(GetSearchCriterion(
 					() => normAlias.Name,
 					() => postAlias.Name,
-					() => subdivisionAlias.Name
+					() => subdivisionAlias.Name,
+					() => normAlias.Id
 					));
 			if(Filter.Post != null)
 				norms.Where(x => x.Id == Filter.Post.Id);
