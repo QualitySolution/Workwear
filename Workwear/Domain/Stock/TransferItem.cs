@@ -2,13 +2,17 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using workwear.Domain.Operations;
 
 namespace workwear.Domain.Stock
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
-	NominativePlural = "строки перемещения",
-	Nominative = "строка перемещения")]
+		NominativePlural = "строки перемещения",
+		Nominative = "строка перемещения",
+		Genitive = "строки перемещения"
+		)]
+	[HistoryTrace]
 	public class TransferItem : PropertyChangedBase, IDomainObject
 	{
 

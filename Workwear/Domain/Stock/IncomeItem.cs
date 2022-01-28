@@ -3,13 +3,17 @@ using System.ComponentModel.DataAnnotations;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using workwear.Domain.Operations;
 
 namespace workwear.Domain.Stock
 {
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки прихода",
-		Nominative = "строка прихода")]
+		Nominative = "строка прихода",
+		Genitive = "строки прихода"
+		)]
+	[HistoryTrace]
 	public class IncomeItem : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства

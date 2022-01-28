@@ -4,13 +4,17 @@ using System.Data.Bindings.Collections.Generic;
 using Gamma.Utilities;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using Workwear.Measurements;
 
 namespace workwear.Domain.Stock
 {
 	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "типы номенклатуры",
-		Nominative = "тип номенклатуры")]
+		Nominative = "тип номенклатуры",
+		Genitive = "типа номенклатуры"
+		)]
+	[HistoryTrace]
 	public class ItemsType : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства

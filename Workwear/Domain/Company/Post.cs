@@ -1,13 +1,17 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using workwear.Domain.Regulations;
 
 namespace workwear.Domain.Company
 {
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "должности",
-		Nominative = "должность")]
+		Nominative = "должность",
+		Genitive ="должности"
+		)]
+	[HistoryTrace]
 	public class Post : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства

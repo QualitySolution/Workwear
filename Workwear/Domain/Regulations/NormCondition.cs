@@ -1,12 +1,16 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using workwear.Domain.Company;
 
 namespace workwear.Domain.Regulations
 {
 	[Appellative(Gender = GrammaticalGender.Neuter,
 		NominativePlural = "условия нормы",
-		Nominative = "условие нормы")]
+		Nominative = "условие нормы",
+		Genitive = "условий нормы"
+		)]
+	[HistoryTrace]
 	public class NormCondition : PropertyChangedBase, IDomainObject
 	{
 		public virtual int Id { get; set; }

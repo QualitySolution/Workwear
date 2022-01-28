@@ -62,6 +62,7 @@ using Workwear.Measurements;
 using workwear.Models.Stock;
 using Workwear.Sql;
 using QS.HistoryLog.Dialogs;
+using QS.HistoryLog;
 
 namespace workwear
 {
@@ -83,6 +84,8 @@ namespace workwear
 				System.Reflection.Assembly.GetAssembly (typeof(MainClass)),
 				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),
 				System.Reflection.Assembly.GetAssembly (typeof(UserBase)),
+				System.Reflection.Assembly.GetAssembly (typeof(HistoryMain)),
+
 			});
 
 			#if DEBUG

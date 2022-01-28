@@ -6,13 +6,17 @@ using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using workwear.Domain.Operations;
 
 namespace workwear.Domain.Stock
 {
 	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "акты списания",
-		Nominative = "акт списания")]
+		Nominative = "акт списания",
+		Genitive = "акта списания"
+		)]
+	[HistoryTrace]
 	public class Writeoff : StockDocument, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();

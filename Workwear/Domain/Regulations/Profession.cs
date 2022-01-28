@@ -1,12 +1,16 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 
 namespace workwear.Domain.Regulations
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "профессии",
-		Nominative = "профессия")]
+		Nominative = "профессия",
+		Genitive ="профессий"
+		)]
+	[HistoryTrace]
 	public class Profession : PropertyChangedBase, IDomainObject
 	{
 		public Profession()

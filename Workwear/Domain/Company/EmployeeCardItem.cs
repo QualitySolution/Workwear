@@ -15,12 +15,16 @@ using Workwear.Measurements;
 using workwear.Repository.Stock;
 using workwear.Tools;
 using workwear.Domain.Operations;
+using QS.HistoryLog;
 
 namespace workwear.Domain.Company
 {
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки нормы карточки",
-		Nominative = "строка нормы карточки")]
+		Nominative = "строка нормы карточки",
+		Genitive = "строки нормы карточки"
+		)]
+	[HistoryTrace]
 	public class EmployeeCardItem : PropertyChangedBase, IDomainObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();

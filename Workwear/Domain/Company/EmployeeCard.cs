@@ -10,6 +10,7 @@ using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using QS.Project.Domain;
 using QS.Utilities.Numeric;
 using QS.Utilities.Text;
@@ -30,8 +31,10 @@ namespace workwear.Domain.Company
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "карточки сотрудников",
 		Nominative = "карточка сотрудника",
-		PrepositionalPlural = "карточках сотрудников"
+		PrepositionalPlural = "карточках сотрудников",
+		Genitive = "карточки сотрудника"
 	)]
+	[HistoryTrace]
 	public class EmployeeCard: BusinessObjectBase<EmployeeCard>, IDomainObject, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();

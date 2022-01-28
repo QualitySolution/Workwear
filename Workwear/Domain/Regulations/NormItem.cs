@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using QS.Utilities;
 using Workwear.Domain.Regulations;
 
@@ -8,7 +9,10 @@ namespace workwear.Domain.Regulations
 {
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки нормы",
-		Nominative = "строка нормы")]
+		Nominative = "строка нормы",
+		Genitive = "строк нормы"
+		)]
+	[HistoryTrace]
 	public class NormItem : PropertyChangedBase, IDomainObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();

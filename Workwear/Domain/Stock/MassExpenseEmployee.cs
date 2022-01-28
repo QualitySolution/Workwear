@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Measurements;
@@ -13,7 +14,10 @@ namespace workwear.Domain.Stock
 {
 	[Appellative(Gender = GrammaticalGender.Masculine,
 	NominativePlural = "сотрудники выдачи списком",
-	Nominative = "сотрудник выдачи списком")]
+	Nominative = "сотрудник выдачи списком",
+		Genitive = "сотрудника выдачи списком"
+		)]
+	[HistoryTrace]
 	public class MassExpenseEmployee : PropertyChangedBase, IDomainObject
 	{
 		public MassExpenseEmployee()

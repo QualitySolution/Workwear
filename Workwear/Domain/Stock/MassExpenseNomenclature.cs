@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
 
@@ -8,7 +9,10 @@ namespace workwear.Domain.Stock
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 	NominativePlural = "номеклатуры выдачи списком",
-	Nominative = "номеклатура выдачи списком")]
+	Nominative = "номеклатура выдачи списком",
+		Genitive = "номенклатуры выдачи списком"
+		)]
+	[HistoryTrace]
 	public class MassExpenseNomenclature : PropertyChangedBase, IDomainObject
 	{
 

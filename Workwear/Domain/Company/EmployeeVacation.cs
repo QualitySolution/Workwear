@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using workwear.Repository.Operations;
 using workwear.Tools;
 
@@ -11,7 +12,10 @@ namespace workwear.Domain.Company
 {
 	[Appellative(Gender = GrammaticalGender.Masculine,
 		NominativePlural = "отпуска сотрудника",
-		Nominative = "отпуск сотрудника")]
+		Nominative = "отпуск сотрудника",
+		Genitive = "отпуска сотрудника"
+		)]
+	[HistoryTrace]
 	public class EmployeeVacation : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства
