@@ -61,7 +61,7 @@ using workwear.Views.Company;
 using Workwear.Measurements;
 using workwear.Models.Stock;
 using Workwear.Sql;
-using QS.HistoryLog.Dialogs;
+using QS.HistoryLog.Views;
 using QS.HistoryLog;
 
 namespace workwear

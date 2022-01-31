@@ -13,7 +13,7 @@ using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
-using QS.HistoryLog.Dialogs;
+using QS.HistoryLog.Views;
 using QS.Navigation;
 using QS.NewsFeed;
 using QS.NewsFeed.Views;
