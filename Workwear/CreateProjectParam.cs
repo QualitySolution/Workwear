@@ -61,8 +61,9 @@ using workwear.Views.Company;
 using Workwear.Measurements;
 using workwear.Models.Stock;
 using Workwear.Sql;
-using QS.HistoryLog.Dialogs;
+using QS.HistoryLog.Views;
 using QS.HistoryLog;
+using QS.HistoryLog.ViewModels;
 
 namespace workwear
 {
@@ -165,7 +166,8 @@ namespace workwear
 				typeof(OrganizationView), 
 				typeof(DeletionView), 
 				typeof(UpdateProcessView),
-				typeof(SerialNumberView)
+				typeof(SerialNumberView),
+				typeof(HistoryView)
 			)).As<IGtkViewResolver>();
 			#endregion
 
@@ -181,9 +183,6 @@ namespace workwear
 			#region Старые диалоги
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(IncomeDocDlg)))
 				.Where(t => t.IsAssignableTo<ITdiTab>() && t.Name.EndsWith("Dlg"))
-				.AsSelf();
-			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(HistoryView)))
-				.Where(t => t.IsAssignableTo<ITdiTab>() && t.Name.EndsWith("View"))
 				.AsSelf();
 			#endregion
 
@@ -211,6 +210,9 @@ namespace workwear
 				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
 				.AsSelf();
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(ProgressWindowViewModel)))
+				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
+				.AsSelf();
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(HistoryViewModel)))
 				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
 				.AsSelf();
 			#endregion

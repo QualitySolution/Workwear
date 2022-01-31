@@ -13,7 +13,7 @@ using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
-using QS.HistoryLog.Dialogs;
+using QS.HistoryLog.ViewModels;
 using QS.Navigation;
 using QS.NewsFeed;
 using QS.NewsFeed.Views;
@@ -754,6 +754,6 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnShowHistoryLogActivated(object sender, EventArgs e)
 	{
-		NavigationManager.OpenTdiTab<HistoryView>(null);
+		NavigationManager.OpenViewModel<HistoryViewModel>(null);
 	}
 }
