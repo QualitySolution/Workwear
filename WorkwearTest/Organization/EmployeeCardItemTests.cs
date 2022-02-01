@@ -140,11 +140,13 @@ namespace WorkwearTest.Organization
 			var uow = Substitute.For<IUnitOfWork>();
 			var graph = Substitute.For<IssueGraph>();
 			var employee = Substitute.For<EmployeeCard>();
+			var normItem = Substitute.For<NormItem>();
 
 			var item = new EmployeeCardItemTested();
 			item.EmployeeCard = employee;
 			item.GetIssueGraphForItemFunc = () => graph;
 			item.Created = new DateTime(2018, 1, 15);
+			item.ActiveNormItem = normItem;
 
 			item.UpdateNextIssue(uow);
 			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2018, 1, 15)));
