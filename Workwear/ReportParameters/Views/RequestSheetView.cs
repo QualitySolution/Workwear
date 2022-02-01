@@ -1,5 +1,6 @@
 ﻿using System;
 using QS.Views;
+using workwear.Domain.Stock;
 using workwear.ReportParameters.ViewModels;
 
 namespace workwear.ReportParameters.Views
@@ -16,6 +17,8 @@ namespace workwear.ReportParameters.Views
 				.AddBinding(v => v.SelectedPeriod, w => w.SelectedItem)
 				.InitializeFromSource();
 			ViewModel.PeriodType = PeriodType.Month;
+			yenumIssueType.ItemsEnum = typeof(IssueType);
+			yenumIssueType.Binding.AddBinding(ViewModel, v => v.IssueTypeOptions, w => w.SelectedItemOrNull).InitializeFromSource();
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)
