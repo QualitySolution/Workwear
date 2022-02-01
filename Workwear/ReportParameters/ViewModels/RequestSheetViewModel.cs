@@ -7,6 +7,7 @@ using QS.Navigation;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using workwear.Domain.Company;
+using workwear.Domain.Stock;
 
 namespace workwear.ReportParameters.ViewModels
 {
@@ -96,6 +97,12 @@ namespace workwear.ReportParameters.ViewModels
 			set => SetField(ref selectedPeriod, value);
 		}
 
+		private IssueType? issueTypeOptions;
+		public IssueType? IssueTypeOptions {
+			get => issueTypeOptions;
+			set => SetField(ref issueTypeOptions, value);
+		}
+
 		#endregion
 
 		public IMonthAndYear Period => SelectedPeriod as IMonthAndYear;
@@ -106,6 +113,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"end_month", Period?.EndMonth},
 					{"end_year", Period?.EndYear},
 					{"subdivision", EntrySubdivisionViewModel.Entity?.Id ?? -1 },
+					{"issue_type", IssueTypeOptions?.ToString() },
 				 };
 
 		public void Dispose()
