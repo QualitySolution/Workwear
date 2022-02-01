@@ -47,6 +47,12 @@ namespace workwear.ReportParameters.ViewModels
 			set => SetField(ref issueType, value);
 		}
 
+		private bool excludeInVacation;
+		public virtual bool ExcludeInVacation {
+			get => excludeInVacation;
+			set => SetField(ref excludeInVacation, value);
+		}
+
 		public bool ShowSex { get; set; }
 		#endregion
 		#region Свойства

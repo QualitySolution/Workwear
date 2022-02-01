@@ -52,6 +52,12 @@ namespace workwear.ReportParameters.ViewModels
 			get => issueType;
 			set => SetField(ref issueType, value);
 		}
+
+		private bool excludeInVacation;
+		public virtual bool ExcludeInVacation {
+			get => excludeInVacation;
+			set => SetField(ref excludeInVacation, value);
+		}
 		#endregion
 		#region Свойства
 		public bool SensetiveLoad => ReportDate != null;

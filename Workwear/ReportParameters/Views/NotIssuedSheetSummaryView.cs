@@ -19,6 +19,8 @@ namespace workwear.ReportParameters.Views
 
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 
+			ycheckExcludeInVacation.Binding.AddBinding(viewModel, w => w.ExcludeInVacation, v => v.Active);
+
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
 		}
 
