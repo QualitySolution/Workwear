@@ -15,6 +15,7 @@ using Workwear.Measurements;
 using workwear.Repository.Stock;
 using workwear.Tools;
 using workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 
 namespace workwear.Domain.Company
 {
@@ -297,6 +298,9 @@ namespace workwear.Domain.Company
 				NextIssue = wantIssue;
 				uow.Save (this);
 			}
+
+			if(NextIssue < ActiveNormItem.Norm.DateFrom && ActiveNormItem.NormPeriod != NormPeriodType.Wearout)
+				NextIssue = ActiveNormItem.Norm.DateFrom;
 		}
 		#endregion
 		
