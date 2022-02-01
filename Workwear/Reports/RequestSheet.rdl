@@ -770,7 +770,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     protection_tools.name AS type_name,
@@ -803,6 +803,7 @@ WHERE
     (@subdivision = -1 OR wear_cards.object_id = @subdivision) 
     AND wear_cards.dismiss_date IS NULL 
     AND wear_cards_item.next_issue &lt; DATE_ADD(CONCAT(@end_year, '-', @end_month, '-01'), INTERVAL 1 MONTH)
+    AND( @issue_type = "" OR item_types.issue_type = @issue_type )
 GROUP BY
     protection_tools.id,
     size,
@@ -828,9 +829,12 @@ ORDER BY
           <QueryParameter Name="end_year">
             <Value>={?end_year}</Value>
           </QueryParameter>
+          <QueryParameter Name="@issue_type">
+            <Value>={?issue_type}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="type_name">
           <DataField>type_name</DataField>
           <TypeName>System.String</TypeName>
@@ -892,7 +896,7 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="subdivision">
       <DataType>Integer</DataType>
       <DefaultValue>
@@ -944,6 +948,14 @@ ORDER BY
       <DataType>Integer</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="issue_type">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt>
       </Prompt>
