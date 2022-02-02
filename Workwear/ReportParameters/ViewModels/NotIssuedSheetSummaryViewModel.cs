@@ -31,6 +31,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"subdivision_id", SubdivisionEntry.Entity == null ? -1 : SubdivisionEntry.Entity.Id },
 					{"issue_type", IssueType?.ToString() },
 					{"show_sex", ShowSex },
+					{"exclude_in_vacation", excludeInVacation }
 				 };
 
 		#region Параметры
