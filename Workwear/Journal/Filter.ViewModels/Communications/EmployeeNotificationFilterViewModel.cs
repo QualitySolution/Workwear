@@ -18,6 +18,12 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 			set => SetField(ref showOnlyWork, value);
 		}
 
+		private bool showOnlyLk = true;
+		public virtual bool ShowOnlyLk {
+			get => showOnlyLk;
+			set => SetField(ref showOnlyLk, value);
+		}
+
 		private bool showOverdue = true;
 		public virtual bool ShowOverdue {
 			get => showOverdue;

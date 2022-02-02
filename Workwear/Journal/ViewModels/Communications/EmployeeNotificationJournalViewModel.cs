@@ -84,6 +84,8 @@ namespace workwear.Journal.ViewModels.Communications
 
 			if(Filter.ShowOnlyWork)
 				employees.Where(() => employeeAlias.DismissDate == null);
+			if(Filter.ShowOnlyLk)
+				employees.Where(() => employeeAlias.LkRegistered);
 			if(Filter.Subdivision != null)
 				employees.Where(() => employeeAlias.Subdivision.Id == Filter.Subdivision.Id);
 

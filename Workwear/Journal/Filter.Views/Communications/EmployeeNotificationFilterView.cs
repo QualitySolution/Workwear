@@ -9,6 +9,7 @@ namespace workwear.Journal.Filter.Views.Communications
 		{
 			this.Build();
 			checkShowOnlyWork.Binding.AddBinding(ViewModel, vm => vm.ShowOnlyWork, w => w.Active).InitializeFromSource();
+			checkLkEnabled.Binding.AddBinding(ViewModel, vm => vm.ShowOnlyLk, w => w.Active).InitializeFromSource();
 			yIssueType.ItemsEnum = typeof(AskIssueType);
 			yIssueType.Binding.AddBinding(ViewModel, v => v.IsueType, w => w.SelectedItem).InitializeFromSource();
 			ycheckShowOverdue.Binding.AddBinding(ViewModel, vm => vm.ShowOverdue, w => w.Active).InitializeFromSource();
