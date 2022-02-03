@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workwear", "Workwear\Workwear.csproj", "{63B06122-016A-42D4-B621-8E0F9FA8E738}"
@@ -91,11 +91,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamma.Utilities.Gtk", "..\Q
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workwear.Core", "Workwear.Core\Workwear.Core.csproj", "{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.HistoryLog", "..\QSProjects\QS.HistoryLog\QS.HistoryLog.csproj", "{3D3D6700-C625-46C5-9702-5F010A8DD035}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.HistoryLog.Gtk", "..\QSProjects\QS.HistoryLog.Gtk\QS.HistoryLog.Gtk.csproj", "{1C3B49FC-372C-46F7-995F-EEB44474E2DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.HistoryLog.Destop", "..\QSProjects\QS.HistoryLog.Destop\QS.HistoryLog.Destop.csproj", "{8730FBE6-065A-47EC-9C1B-70AA3503F140}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.HistoryLog.Desktop", "..\QSProjects\QS.HistoryLog.Desktop\QS.HistoryLog.Desktop.csproj", "{8730FBE6-065A-47EC-9C1B-70AA3503F140}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.HistoryLog", "..\QSProjects\QS.HistoryLog\QS.HistoryLog.csproj", "{83BAE8A5-C4A2-478D-81FE-CE8394D24DFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -140,14 +140,6 @@ Global
 		{63B06122-016A-42D4-B621-8E0F9FA8E738}.Release|x86.Build.0 = Release|x86
 		{63B06122-016A-42D4-B621-8E0F9FA8E738}.ReleaseWin|x86.ActiveCfg = ReleaseWin|x86
 		{63B06122-016A-42D4-B621-8E0F9FA8E738}.ReleaseWin|x86.Build.0 = ReleaseWin|x86
-		{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}.Debug|x86.Build.0 = Debug|Any CPU
-		{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}.Release|x86.ActiveCfg = Release|Any CPU
-		{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}.Release|x86.Build.0 = Release|Any CPU
-		{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}.ReleaseWin|x86.ActiveCfg = Release|Any CPU
-		{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}.ReleaseWin|x86.Build.0 = Release|Any CPU
-		{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}.ReleaseWinEnterprise|x86.ActiveCfg = Release|Any CPU
-		{9DF71899-3CE4-48F4-B3C3-0B21B15037B1}.ReleaseWinEnterprise|x86.Build.0 = Release|Any CPU
 		{769710D2-BF98-4120-9E07-67BD740CFA1D}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{769710D2-BF98-4120-9E07-67BD740CFA1D}.Debug|x86.Build.0 = Debug|Any CPU
 		{769710D2-BF98-4120-9E07-67BD740CFA1D}.Release|x86.ActiveCfg = Release|Any CPU
@@ -514,24 +506,6 @@ Global
 		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.ReleaseWin|x86.Build.0 = Debug|Any CPU
 		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.ReleaseWinEnterprise|x86.ActiveCfg = Debug|Any CPU
 		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.ReleaseWinEnterprise|x86.Build.0 = Debug|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.Debug|x86.Build.0 = Debug|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.Release|x86.ActiveCfg = Release|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.Release|x86.Build.0 = Release|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.Debug|x64.Build.0 = Debug|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.Release|x64.ActiveCfg = Release|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.Release|x64.Build.0 = Release|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.BundleLinux|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.BundleLinux|Any CPU.Build.0 = Debug|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.BundleLinux|x86.ActiveCfg = Debug|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.BundleLinux|x86.Build.0 = Debug|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.BundleLinux|x64.ActiveCfg = Debug|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.BundleLinux|x64.Build.0 = Debug|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.ReleaseWin|x86.ActiveCfg = Release|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.ReleaseWin|x86.Build.0 = Release|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.ReleaseWinEnterprise|x86.ActiveCfg = Debug|Any CPU
-		{3D3D6700-C625-46C5-9702-5F010A8DD035}.ReleaseWinEnterprise|x86.Build.0 = Debug|Any CPU
 		{1C3B49FC-372C-46F7-995F-EEB44474E2DE}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{1C3B49FC-372C-46F7-995F-EEB44474E2DE}.Debug|x86.Build.0 = Debug|Any CPU
 		{1C3B49FC-372C-46F7-995F-EEB44474E2DE}.Release|x86.ActiveCfg = Release|Any CPU
@@ -568,6 +542,8 @@ Global
 		{8730FBE6-065A-47EC-9C1B-70AA3503F140}.ReleaseWin|x86.Build.0 = Release|Any CPU
 		{8730FBE6-065A-47EC-9C1B-70AA3503F140}.ReleaseWinEnterprise|x86.ActiveCfg = Debug|Any CPU
 		{8730FBE6-065A-47EC-9C1B-70AA3503F140}.ReleaseWinEnterprise|x86.Build.0 = Debug|Any CPU
+		{83BAE8A5-C4A2-478D-81FE-CE8394D24DFB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{83BAE8A5-C4A2-478D-81FE-CE8394D24DFB}.Debug|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A6C1914F-7732-49F5-BABA-8BBBA521FAAB} = {792D3656-91FD-45AA-A40B-A0D63306A113}
@@ -610,6 +586,7 @@ Global
 		{3D3D6700-C625-46C5-9702-5F010A8DD035} = {792D3656-91FD-45AA-A40B-A0D63306A113}
 		{1C3B49FC-372C-46F7-995F-EEB44474E2DE} = {792D3656-91FD-45AA-A40B-A0D63306A113}
 		{8730FBE6-065A-47EC-9C1B-70AA3503F140} = {792D3656-91FD-45AA-A40B-A0D63306A113}
+		{83BAE8A5-C4A2-478D-81FE-CE8394D24DFB} = {792D3656-91FD-45AA-A40B-A0D63306A113}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

@@ -636,9 +636,9 @@
       <Project>{BC159BA7-EF22-4800-AC34-DE4B2B386AAE}</Project>
       <Name>QS.Updater.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.HistoryLog.Destop\QS.HistoryLog.Destop.csproj">
-      <Project>{8730FBE6-065A-47EC-9C1B-70AA3503F140}</Project>
-      <Name>QS.HistoryLog.Destop</Name>
+    <ProjectReference Include="..\..\QSProjects\QS.HistoryLog.Desktop\QS.HistoryLog.Desktop.csproj">
+      <Project>{8730fbe6-065a-47ec-9c1b-70aa3503f140}</Project>
+      <Name>QS.HistoryLog.Desktop</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
