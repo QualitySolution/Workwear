@@ -22,6 +22,17 @@ namespace QS.Cloud.WearLk.Client
             request.Messages.Add(messages);
             return client.SendMessage(request, Headers).Results;
         }
-        #endregion
-    }
+
+		public IList<UserStatusInfo> GetStatuses(IEnumerable<string> phones)
+		{
+			if(!phones.Any())
+				return new List<UserStatusInfo>();
+
+			var client = new NotificationManager.NotificationManagerClient(Channel);
+			var request = new GetUsersStatusRequest();
+			request.Phones.Add(phones);
+			return client.GetUsersStatus(request, Headers).Statuses;
+		}
+		#endregion
+	}
 }

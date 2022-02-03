@@ -496,7 +496,7 @@
                             <BorderWidth />
                             <TextAlign>Center</TextAlign>
                             <VerticalAlign>Top</VerticalAlign>
-                            <Format >0.00</Format>
+                            <Format>0.00</Format>
                           </Style>
                         </Textbox>
                       </ReportItems>
@@ -818,8 +818,10 @@ JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
 LEFT JOIN departments ON wear_cards.department_id = departments.id
 LEFT JOIN posts ON wear_cards.post_id = posts.id
 LEFT JOIN objects ON wear_cards.object_id = objects.id OR wear_cards.object_id IS NULL AND posts.subdivision_id = objects.id
+LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
 WHERE
     wear_cards.dismiss_date IS NULL 
+    AND (@exclude_in_vacation = false OR (@report_date NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
     AND wear_cards_item.next_issue &lt; @report_date
@@ -842,6 +844,9 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="@exclude_before">
             <Value>={?exclude_before}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@exclude_in_vacation">
+            <Value>={?exclude_in_vacation}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -994,6 +999,14 @@ ORDER BY
       <DataType>String</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="exclude_in_vacation">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt>
       </Prompt>
