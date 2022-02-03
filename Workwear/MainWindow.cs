@@ -9,7 +9,6 @@ using MySql.Data.MySqlClient;
 using NLog;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
-using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -363,17 +362,6 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionConditionNormsActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<NormConditionJournalViewModel>(null);
-	}
-
-	protected void OnAction13Activated(object sender, EventArgs e)
-	{
-		MainTelemetry.AddCount("ReportMonthIssueSheet");
-		MessageDialogHelper.RunInfoDialog("Это устаревший способ сформировать ведомость на выдачу. Используйте ведомости в меню Склад -> Ведомости на выдачу.", "Новые ведомости");
-		var widget = new OnIssueStatement();
-		tdiMain.OpenTab(
-			QSReport.ReportViewDlg.GenerateHashName(widget),
-			() => new QSReport.ReportViewDlg(widget)
-		);
 	}
 
 	protected void OnActionNotIssuedSheetDetailActivated(object sender, EventArgs e)

@@ -1,11 +1,38 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 package QS.Cloud.WearLk.Manage;
 
 service NotificationManager {
     rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
+    rpc GetUsersStatus (GetUsersStatusRequest) returns (GetUsersStatusResponse);
+}
+//Суммарно
+message GetUsersStatusRequest{
+    repeated string phones = 1;
+}
+        
+message GetUsersStatusResponse{
+    repeated UserStatusInfo statuses = 1;   
 }
 
+message UserStatusInfo{
+    string phone = 1;
+    LkStatus status = 2;
+    google.protobuf.Timestamp last_visit = 3;
+    string last_app_version = 4;
+    int32 notifiable_devices = 5;
+    int32 unread_messages = 6;
+}
+
+enum LkStatus{
+    LK_STATUS_MISSING = 0;
+    LK_STATUS_REGISTERED = 1;
+    LK_STATUS_HAS_TOKENS = 2;
+}
+
+// Отправка
 message SendMessageRequest {
     repeated OutgoingMessage messages = 1;
 }
