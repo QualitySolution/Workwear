@@ -27,12 +27,12 @@ namespace workwear.Journal
 					.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
 					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
 					.AddColumn("Телефон").AddTextRenderer(node => node.Phone)
+					.AddColumn("Состояние личного кабинета").AddTextRenderer(node => node.StatusText)
+					.AddColumn("Последний визит").AddTextRenderer(node => node.LastVisit)
+					.AddColumn("Не прочитанно").AddTextRenderer(node => node.UnreadMessagesText)
 					.AddColumn("Должность").AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
-					.AddColumn("Состояние личного кабинета").AddTextRenderer(node => node.PersonalAccountStatus)
-					.AddColumn("Последний раз заходил в ЛК").AddTextRenderer(node => node.LastVisit)
-					.AddColumn("Результат").AddTextRenderer(node => node.Result)
-					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Dismiss ? "gray" : null)
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.StatusColor)
 					.Finish()
 			);
 

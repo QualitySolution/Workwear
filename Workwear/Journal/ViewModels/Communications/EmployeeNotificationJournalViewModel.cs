@@ -7,6 +7,8 @@ using Gamma.ColumnConfig;
 using NHibernate;
 using NHibernate.Transform;
 using NHibernate.Util;
+using QS.Cloud.WearLk.Client;
+using QS.Cloud.WearLk.Manage;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -16,6 +18,7 @@ using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
 using QS.Project.Versioning;
 using QS.Services;
+using QS.Utilities;
 using QS.Utilities.Text;
 using QS.ViewModels.Resolve;
 using workwear.Domain.Company;
@@ -33,13 +36,14 @@ namespace workwear.Journal.ViewModels.Communications
 	public class EmployeeNotificationJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeNotificationJournalNode>
 	{
 		private readonly IInteractiveService interactive;
+		private readonly NotificationManagerService notificationManager;
 		private readonly BaseParameters baseParameters;
 		private readonly IDataBaseInfo dataBaseInfo;
 
 		public EmployeeNotificationFilterViewModel Filter { get; private set; }
 
 		public EmployeeNotificationJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager,
-			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope,
+			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, NotificationManagerService notificationManager,
 			NormRepository normRepository, BaseParameters baseParameters, IDataBaseInfo dataBaseInfo,
 			ICurrentPermissionService currentPermissionService = null)
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
@@ -47,21 +51,33 @@ namespace workwear.Journal.ViewModels.Communications
 			UseSlider = false;
 			Title = "Уведомление сотрудников";
 			this.interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
+			this.notificationManager = notificationManager ?? throw new ArgumentNullException(nameof(notificationManager));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.dataBaseInfo = dataBaseInfo ?? throw new ArgumentNullException(nameof(dataBaseInfo));
 			AutofacScope = autofacScope;
 			JournalFilter = Filter = AutofacScope.Resolve<EmployeeNotificationFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
-			(DataLoader as ThreadDataLoader<EmployeeNotificationJournalNode>).PostLoadProcessingFunc = delegate(IList items, uint addedSince) {
-				foreach(EmployeeNotificationJournalNode item in items)
-					item.ViewModel = this;
-			};
+			(DataLoader as ThreadDataLoader<EmployeeNotificationJournalNode>).PostLoadProcessingFunc = HandlePostLoadProcessing;
 
 			//Обход проблемы с тем что SelectionMode одновременно управляет и выбором в журнале, и самим режмиом журнала.
 			//То есть создает действие выбора. Удалить после того как появится рефакторинг действий журнала. 
 			SelectionMode = JournalSelectionMode.Multiple;
 			NodeActionsList.Clear();
 			CreateActions();
+		}
+
+		void HandlePostLoadProcessing(IList items, uint addedSince)
+		{
+			var newItems = items.Cast<EmployeeNotificationJournalNode>().Skip((int)addedSince).ToList();
+			foreach(EmployeeNotificationJournalNode item in items) 
+				item.ViewModel = this;
+
+			var statuses = notificationManager.GetStatuses(newItems.Where(x => x.LkRegistered).Select(x => x.Phone));
+			foreach (var status in statuses)
+			{
+				var item = newItems.First(x => x.Phone == status.Phone);
+				item.StatusInfo = status;
+			}
 		}
 
 		protected override IQueryOver<EmployeeCard> ItemsQuery(IUnitOfWork uow)
@@ -131,6 +147,7 @@ namespace workwear.Journal.ViewModels.Communications
 					.Select(x => x.Patronymic).WithAlias(() => resultAlias.Patronymic)
 					.Select(x => x.DismissDate).WithAlias(() => resultAlias.DismissDate)
 					.Select(x => x.PhoneNumber).WithAlias(() => resultAlias.Phone)
+					.Select(x => x.LkRegistered).WithAlias(() => resultAlias.LkRegistered)
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
 					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 					)
@@ -252,19 +269,57 @@ namespace workwear.Journal.ViewModels.Communications
 					ViewModel.SelectedList.Remove(Id);
 			}
 		}
-		//true это затычка пока не готова серверная часть
-		public bool CanSelect { get; set; } = true;
 
-		public string Result { get; set; }
+		public bool LkRegistered { get; set; }
 
-		public string PersonalAccountStatus { get; set; }
+		public bool CanSelect => LkRegistered;
 
-		public DateTime? DateLastVisit { get; set; }
+		#region От сервиса уведомлений
+		public UserStatusInfo StatusInfo;
 
-		public string LastVisit {
+		public string UnreadMessagesText => StatusInfo?.UnreadMessages > 0 ? StatusInfo.UnreadMessages.ToString() : String.Empty;
+		public string LastVisit => StatusInfo?.LastVisit?.ToDateTime().ToString("g");
+		
+		public string StatusText {
 			get {
-				return DateLastVisit == null ? "" : DateLastVisit.Value.ToString("g");
+				if (StatusInfo == null)
+					return null;
+				
+				if (StatusInfo.Status == LkStatus.Missing)
+					return "ЛК не создан";
+				
+				if (StatusInfo.Status == LkStatus.Registered)
+					return "Нет устройств принимающих уведомления";
+
+				if (StatusInfo.Status == LkStatus.HasTokens && StatusInfo.NotifiableDevices > 1)
+					return NumberToTextRus.FormatCase(StatusInfo.NotifiableDevices,
+						"{0} устройство может принять уведомление", 
+						"{0} устройства может принять уведомление",
+						"{0} устройств может принять уведомление");
+				if (StatusInfo.Status == LkStatus.HasTokens && StatusInfo.NotifiableDevices == 1)
+					return "Может принимать уведомления";
+				
+				return null;
 			}
 		}
+
+		public string StatusColor {
+			get {
+				if(Dismiss)
+					return "gray";
+
+				if (StatusInfo == null)
+					return null;
+
+				switch (StatusInfo.Status)
+				{
+					case LkStatus.Missing: return "red";
+					case LkStatus.Registered: return "blue";
+					case LkStatus.HasTokens: return "green";
+					default: return null;
+				}
+			}
+		}
+		#endregion
 	}
 }
