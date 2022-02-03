@@ -672,7 +672,6 @@ public partial class MainWindow
 		this.ActionUpdate.Activated += new global::System.EventHandler(this.OnActionUpdateActivated);
 		this.ActionSN.Activated += new global::System.EventHandler(this.OnActionSNActivated);
 		this.ActionNorms.Activated += new global::System.EventHandler(this.OnActionNormsActivated);
-		this.Action13.Activated += new global::System.EventHandler(this.OnAction13Activated);
 		this.ActionRequestSheet.Activated += new global::System.EventHandler(this.OnActionRequestSheetActivated);
 		this.ActionAverageAnnualNeed.Activated += new global::System.EventHandler(this.OnActionYearRequestSheetActivated);
 		this.ActionStockDocs.Activated += new global::System.EventHandler(this.OnActionStockDocsActivated);
