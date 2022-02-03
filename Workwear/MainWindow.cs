@@ -9,7 +9,6 @@ using MySql.Data.MySqlClient;
 using NLog;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
-using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
