@@ -494,24 +494,23 @@ public partial class MainWindow
 				"item name=\'ActionLeaders\' action=\'ActionLeaders\'/></menu><menu name=\'ActionRepor" +
 				"ts\' action=\'ActionReports\'><menuitem name=\'Action10\' action=\'Action10\'/><menuite" +
 				"m name=\'Action11\' action=\'Action11\'/><separator/><menuitem name=\'Action12\' actio" +
-				"n=\'Action12\'/><separator/><menuitem name=\'Action13\' action=\'Action13\'/><menuitem" +
-				" name=\'ActionRequestSheet\' action=\'ActionRequestSheet\'/><menuitem name=\'ActionAv" +
-				"erageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><separator/><menu name=\'Actio" +
-				"n\' action=\'Action\'><menuitem name=\'ActionNotIssuedSheetDetail\' action=\'ActionNot" +
-				"IssuedSheetDetail\'/><menuitem name=\'ActionNotIssuedSheetSummary\' action=\'ActionN" +
-				"otIssuedSheetSummary\'/></menu><menuitem name=\'ActionAmountEmployeeGetWear\' actio" +
-				"n=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear\' action=" +
-				"\'ActionAmountIssuedWear\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><me" +
-				"nuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' act" +
-				"ion=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separ" +
-				"ator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpe" +
-				"nReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'>" +
-				"<menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\'" +
-				" action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitt" +
-				"er\'/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><" +
-				"menuitem name=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'" +
-				"ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu" +
-				"></menubar></ui>");
+				"n=\'Action12\'/><separator/><menuitem name=\'ActionRequestSheet\' action=\'ActionRequ" +
+				"estSheet\'/><menuitem name=\'ActionAverageAnnualNeed\' action=\'ActionAverageAnnualN" +
+				"eed\'/><separator/><menu name=\'Action\' action=\'Action\'><menuitem name=\'ActionNotI" +
+				"ssuedSheetDetail\' action=\'ActionNotIssuedSheetDetail\'/><menuitem name=\'ActionNot" +
+				"IssuedSheetSummary\' action=\'ActionNotIssuedSheetSummary\'/></menu><menuitem name=" +
+				"\'ActionAmountEmployeeGetWear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem na" +
+				"me=\'ActionAmountIssuedWear\' action=\'ActionAmountIssuedWear\'/></menu><menu name=\'" +
+				"ActionHelp\' action=\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/" +
+				"><menuitem name=\'ActionHistory\' action=\'ActionHistory\'/><menuitem name=\'ActionUp" +
+				"date\' action=\'ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'Act" +
+				"ionSite\'/><menuitem name=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu" +
+				" name=\'Action38\' action=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/>" +
+				"<menuitem name=\'ActionOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=" +
+				"\'ActionTwitter\' action=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'A" +
+				"ctionYouTube\'/></menu><separator/><menuitem name=\'ActionPay\' action=\'ActionPay\'/" +
+				"><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutA" +
+				"ction\' action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -672,7 +671,6 @@ public partial class MainWindow
 		this.ActionUpdate.Activated += new global::System.EventHandler(this.OnActionUpdateActivated);
 		this.ActionSN.Activated += new global::System.EventHandler(this.OnActionSNActivated);
 		this.ActionNorms.Activated += new global::System.EventHandler(this.OnActionNormsActivated);
-		this.Action13.Activated += new global::System.EventHandler(this.OnAction13Activated);
 		this.ActionRequestSheet.Activated += new global::System.EventHandler(this.OnActionRequestSheetActivated);
 		this.ActionAverageAnnualNeed.Activated += new global::System.EventHandler(this.OnActionYearRequestSheetActivated);
 		this.ActionStockDocs.Activated += new global::System.EventHandler(this.OnActionStockDocsActivated);
