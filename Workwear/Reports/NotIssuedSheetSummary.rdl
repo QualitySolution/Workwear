@@ -522,7 +522,7 @@
             </Sorting>
           </TableGroup>
         </TableGroups>
-        <Footer >
+        <Footer>
           <TableRows>
             <TableRow>
               <Height>.2in</Height>
@@ -666,7 +666,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <Timeout>300</Timeout>
         <CommandText>SELECT
@@ -720,9 +720,11 @@ JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
 JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
 LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
 LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
 JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
 WHERE
-    wear_cards.dismiss_date IS NULL 
+    wear_cards.dismiss_date IS NULL
+    AND (@exclude_in_vacation = false OR (@report_date NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
     AND wear_cards_item.next_issue &lt; @report_date
@@ -750,9 +752,12 @@ ORDER BY
           <QueryParameter Name="@show_sex">
             <Value>={?show_sex}</Value>
           </QueryParameter>
+          <QueryParameter Name="@exclude_in_vacation">
+            <Value>={?exclude_in_vacation}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
@@ -813,7 +818,7 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
@@ -849,6 +854,14 @@ ORDER BY
       </Prompt>
     </ReportParameter>
     <ReportParameter Name="show_sex">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="exclude_in_vacation">
       <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>

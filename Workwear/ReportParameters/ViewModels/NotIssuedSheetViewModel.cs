@@ -31,6 +31,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"subdivision_id", SubdivisionEntry.Entity == null ? -1 : SubdivisionEntry.Entity.Id },
 					{"issue_type", IssueType?.ToString() },
 					{"exclude_before", ExcludeBefore },
+					{"exclude_in_vacation", excludeInVacation }
 				 };
 
 		#region Параметры
@@ -51,6 +52,12 @@ namespace workwear.ReportParameters.ViewModels
 		public virtual IssueType? IssueType {
 			get => issueType;
 			set => SetField(ref issueType, value);
+		}
+
+		private bool excludeInVacation;
+		public virtual bool ExcludeInVacation {
+			get => excludeInVacation;
+			set => SetField(ref excludeInVacation, value);
 		}
 		#endregion
 		#region Свойства
