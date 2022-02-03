@@ -434,17 +434,6 @@ namespace workwear.Journal.ViewModels.Stock
 			}
 		}
 
-		public string Operation {
-			get {
-				switch(DocTypeEnum) {
-					case StokDocumentType.IncomeDoc:
-						return IncomeOperation.GetEnumTitle();
-					default:
-						return null;
-				}
-			}
-		}
-
 		public string Description {
 			get {
 				string text = String.Empty;
@@ -452,6 +441,8 @@ namespace workwear.Journal.ViewModels.Stock
 					text += $"Сотрудник: {Employee} ";
 				if(!String.IsNullOrWhiteSpace(Subdivision))
 					text += $"Объект: {Subdivision} ";
+				if(DocTypeEnum == StokDocumentType.IncomeDoc)
+					text += $"Операция: {IncomeOperation.GetEnumTitle()}";
 				return text;
 			}
 		}
