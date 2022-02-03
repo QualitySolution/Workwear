@@ -30,6 +30,7 @@ namespace workwear.Journal
 					.AddColumn("Состояние личного кабинета").AddTextRenderer(node => node.StatusText)
 					.AddColumn("Последний визит").AddTextRenderer(node => node.LastVisit)
 					.AddColumn("Не прочитанно").AddTextRenderer(node => node.UnreadMessagesText)
+					.AddColumn("К выдаче").AddTextRenderer(n => n.IssueCount.ToString())
 					.AddColumn("Должность").AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.StatusColor)

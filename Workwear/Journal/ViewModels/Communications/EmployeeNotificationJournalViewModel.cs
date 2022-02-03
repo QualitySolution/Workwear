@@ -148,6 +148,7 @@ namespace workwear.Journal.ViewModels.Communications
 					.Select(x => x.DismissDate).WithAlias(() => resultAlias.DismissDate)
 					.Select(x => x.PhoneNumber).WithAlias(() => resultAlias.Phone)
 					.Select(x => x.LkRegistered).WithAlias(() => resultAlias.LkRegistered)
+					.SelectCount(() => itemAlias.Id).WithAlias(() => resultAlias.IssueCount)
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
 					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 					)
@@ -273,6 +274,8 @@ namespace workwear.Journal.ViewModels.Communications
 		public bool LkRegistered { get; set; }
 
 		public bool CanSelect => LkRegistered;
+
+		public int IssueCount { get; set; }
 
 		#region От сервиса уведомлений
 		public UserStatusInfo StatusInfo;
