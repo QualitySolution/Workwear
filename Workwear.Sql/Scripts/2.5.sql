@@ -6,12 +6,23 @@ UPDATE base_parameters SET str_value = 'general' WHERE name = 'edition';
 ALTER SCHEMA DEFAULT CHARACTER SET utf8mb4  DEFAULT COLLATE utf8mb4_general_ci ;
 
 -- Удаляем дубликаты Табельных номеров, в новой версии поле должно быть уникально
-UPDATE wear_cards SET wear_cards.personnel_number = NULL WHERE 
-EXISTS(SELECT 1 FROM wear_cards sub WHERE sub.personnel_number = wear_cards.personnel_number AND sub.dismiss_date <=> wear_cards.dismiss_date AND sub.id > wear_cards.id);
+UPDATE wear_cards 
+SET personnel_number = NULL
+WHERE wear_cards.id IN 
+(SELECT * FROM
+	(SELECT sub.id FROM wear_cards sub
+		JOIN wear_cards sub2 ON sub.personnel_number = sub2.personnel_number
+			AND sub.dismiss_date <=> sub2.dismiss_date
+            AND sub.id < sub2.id) t);
 
 -- Удаляем дубликаты номеров карточек, в новой версии поле должно быть уникально
-UPDATE wear_cards SET wear_cards.card_number = NULL WHERE
-    EXISTS(SELECT 1 FROM wear_cards sub WHERE sub.card_number = wear_cards.card_number AND sub.id > wear_cards.id);
+UPDATE wear_cards 
+SET card_number = NULL
+WHERE wear_cards.id IN 
+(SELECT * FROM
+	(SELECT sub.id FROM wear_cards sub
+		JOIN wear_cards sub2 ON sub.card_number = sub2.card_number
+            AND sub.id < sub2.id) t);
 
 -- Удаляем обновляемые ключи
 ALTER TABLE `stock_expense` 
