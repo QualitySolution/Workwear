@@ -122,9 +122,8 @@ ADD COLUMN `protection_tools_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `auto_
 ADD COLUMN `operation_write_off_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `buh_document`,
 ADD COLUMN `sign_key` VARCHAR(16) NULL DEFAULT NULL AFTER `operation_write_off_id`,
 ADD COLUMN `sign_timestamp` DATETIME NULL DEFAULT NULL AFTER `sign_key`,
-ADD INDEX IF NOT EXISTS `fk_operation_issued_by_employee_4_idx` (`warehouse_operation_id` ASC),
-ADD INDEX `fk_operation_issued_by_employee_protection_tools_idx` (`protection_tools_id` ASC),
-DROP INDEX IF EXISTS `fk_operation_issued_by_employee_6_idx`;
+ADD INDEX `fk_operation_issued_by_employee_4_idx` (`warehouse_operation_id` ASC),
+ADD INDEX `fk_operation_issued_by_employee_protection_tools_idx` (`protection_tools_id` ASC);
 
 ALTER TABLE `operation_issued_by_employee`
 ADD INDEX `fk_operation_issued_by_employee_6_idx` (`operation_write_off_id` ASC);

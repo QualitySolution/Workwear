@@ -1,4 +1,5 @@
 using System;
+using System.Data.Common;
 using System.Reflection;
 using QS.DBScripts.Models;
 using QS.Updater.DB;
@@ -91,9 +92,25 @@ namespace Workwear.Sql
 			configuration.AddUpdate(
 				new Version(2, 4, 3),
 				new Version(2, 5),
-				"Workwear.Sql.Scripts.2.5.sql");
+				"Workwear.Sql.Scripts.2.5.sql",
+				//Необходимо только потому что MySQL не поддерживает синтаксис ADD INDEX IF NOT EXISTS
+				delegate (DbConnection connection) {
+					DropIndexIfExist(connection, "operation_issued_by_employee", "fk_operation_issued_by_employee_4_idx");
+					DropIndexIfExist(connection, "operation_issued_by_employee", "fk_operation_issued_by_employee_6_idx");
+				});
 
 			return configuration;
+		}
+
+		private static void DropIndexIfExist(DbConnection connection, string tableName, string indexName)
+		{
+			try {
+				string sql = $"ALTER TABLE `{tableName}` DROP INDEX `{indexName}`;";
+				var cmd = connection.CreateCommand();
+				cmd.CommandText = sql;
+				cmd.ExecuteNonQuery();
+			}
+			catch(MySql.Data.MySqlClient.MySqlException) { }//При отсутсвии индекса будет ошибка
 		}
 	}
 }
