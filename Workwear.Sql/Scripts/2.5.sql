@@ -520,6 +520,11 @@ ADD CONSTRAINT `fk_operation_issued_by_employee_protection_tools`
   REFERENCES `protection_tools` (`id`)
   ON DELETE SET NULL
   ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_operation_issued_by_employee_4`
+  FOREIGN KEY (`warehouse_operation_id`)
+  REFERENCES `operation_warehouse` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE,    
 ADD CONSTRAINT `fk_operation_issued_by_employee_6`
   FOREIGN KEY (`operation_write_off_id`)
   REFERENCES `operation_issued_by_employee` (`id`)

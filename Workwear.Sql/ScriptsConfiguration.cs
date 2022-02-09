@@ -95,6 +95,7 @@ namespace Workwear.Sql
 				"Workwear.Sql.Scripts.2.5.sql",
 				//Необходимо только потому что MySQL не поддерживает синтаксис ADD INDEX IF NOT EXISTS
 				delegate (DbConnection connection) {
+					DropForeignKeyIfExist(connection, "operation_issued_by_employee", "fk_operation_issued_by_employee_4"); 
 					DropIndexIfExist(connection, "operation_issued_by_employee", "fk_operation_issued_by_employee_4_idx");
 					DropIndexIfExist(connection, "operation_issued_by_employee", "fk_operation_issued_by_employee_6_idx");
 				});
@@ -110,7 +111,20 @@ namespace Workwear.Sql
 				cmd.CommandText = sql;
 				cmd.ExecuteNonQuery();
 			}
-			catch(MySql.Data.MySqlClient.MySqlException) { }//При отсутсвии индекса будет ошибка
+			//При отсутсвии индекса будет ошибка. Мы на это расчитываем.
+			catch(MySql.Data.MySqlClient.MySqlException ex) when(ex.Number == 1091) { }
+		}
+		
+		private static void DropForeignKeyIfExist(DbConnection connection, string tableName, string indexName)
+		{
+			try {
+				string sql = $"ALTER TABLE `{tableName}` DROP FOREIGN KEY `{indexName}`;";
+				var cmd = connection.CreateCommand();
+				cmd.CommandText = sql;
+				cmd.ExecuteNonQuery();
+			}
+			//При отсутсвии индекса будет ошибка. Мы на это расчитываем.
+			catch(MySql.Data.MySqlClient.MySqlException ex) when(ex.Number == 1091) {}
 		}
 	}
 }
