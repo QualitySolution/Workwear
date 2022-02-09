@@ -689,21 +689,15 @@ namespace workwear.Domain.Company
 			var operations = employeeIssueRepository.GetOperationsTouchDates(uow, new[] {this}, begin, end,
 				q => q.Fetch(SelectMode.Fetch, o => o.ProtectionTools)
 			);
-			foreach (var typeGroup in operations.GroupBy(o => o.ProtectionTools))
-			{
-				foreach (var operation in typeGroup.OrderBy(o => o.OperationTime.Date).ThenBy(o => o.StartOfUse))
-				{
+			foreach (var typeGroup in operations.GroupBy(o => o.ProtectionTools)) {
+				foreach (var operation in typeGroup.OrderBy(o => o.OperationTime.Date).ThenBy(o => o.StartOfUse)) {
 					var graph = IssueGraph.MakeIssueGraph(uow, this, typeGroup.Key);
 					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 					uow.Save(operation);
 
 				}
 			}
-
-			foreach (var item in workwearItems)
-			{
-				item.UpdateNextIssue(uow);
-			}
+			UpdateNextIssueAll();
 		}
 	}
 }
