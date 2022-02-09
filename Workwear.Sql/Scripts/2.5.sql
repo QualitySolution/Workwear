@@ -6,12 +6,23 @@ UPDATE base_parameters SET str_value = 'general' WHERE name = 'edition';
 ALTER SCHEMA DEFAULT CHARACTER SET utf8mb4  DEFAULT COLLATE utf8mb4_general_ci ;
 
 -- Удаляем дубликаты Табельных номеров, в новой версии поле должно быть уникально
-UPDATE wear_cards SET wear_cards.personnel_number = NULL WHERE 
-EXISTS(SELECT 1 FROM wear_cards sub WHERE sub.personnel_number = wear_cards.personnel_number AND sub.dismiss_date <=> wear_cards.dismiss_date AND sub.id > wear_cards.id);
+UPDATE wear_cards 
+SET personnel_number = NULL
+WHERE wear_cards.id IN 
+(SELECT * FROM
+	(SELECT sub.id FROM wear_cards sub
+		JOIN wear_cards sub2 ON sub.personnel_number = sub2.personnel_number
+			AND sub.dismiss_date <=> sub2.dismiss_date
+            AND sub.id < sub2.id) t);
 
 -- Удаляем дубликаты номеров карточек, в новой версии поле должно быть уникально
-UPDATE wear_cards SET wear_cards.card_number = NULL WHERE
-    EXISTS(SELECT 1 FROM wear_cards sub WHERE sub.card_number = wear_cards.card_number AND sub.id > wear_cards.id);
+UPDATE wear_cards 
+SET card_number = NULL
+WHERE wear_cards.id IN 
+(SELECT * FROM
+	(SELECT sub.id FROM wear_cards sub
+		JOIN wear_cards sub2 ON sub.card_number = sub2.card_number
+            AND sub.id < sub2.id) t);
 
 -- Удаляем обновляемые ключи
 ALTER TABLE `stock_expense` 
@@ -111,9 +122,8 @@ ADD COLUMN `protection_tools_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `auto_
 ADD COLUMN `operation_write_off_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `buh_document`,
 ADD COLUMN `sign_key` VARCHAR(16) NULL DEFAULT NULL AFTER `operation_write_off_id`,
 ADD COLUMN `sign_timestamp` DATETIME NULL DEFAULT NULL AFTER `sign_key`,
-ADD INDEX IF NOT EXISTS `fk_operation_issued_by_employee_4_idx` (`warehouse_operation_id` ASC),
-ADD INDEX `fk_operation_issued_by_employee_protection_tools_idx` (`protection_tools_id` ASC),
-DROP INDEX IF EXISTS `fk_operation_issued_by_employee_6_idx`;
+ADD INDEX `fk_operation_issued_by_employee_4_idx` (`warehouse_operation_id` ASC),
+ADD INDEX `fk_operation_issued_by_employee_protection_tools_idx` (`protection_tools_id` ASC);
 
 ALTER TABLE `operation_issued_by_employee`
 ADD INDEX `fk_operation_issued_by_employee_6_idx` (`operation_write_off_id` ASC);
@@ -510,6 +520,11 @@ ADD CONSTRAINT `fk_operation_issued_by_employee_protection_tools`
   REFERENCES `protection_tools` (`id`)
   ON DELETE SET NULL
   ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_operation_issued_by_employee_4`
+  FOREIGN KEY (`warehouse_operation_id`)
+  REFERENCES `operation_warehouse` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE,    
 ADD CONSTRAINT `fk_operation_issued_by_employee_6`
   FOREIGN KEY (`operation_write_off_id`)
   REFERENCES `operation_issued_by_employee` (`id`)

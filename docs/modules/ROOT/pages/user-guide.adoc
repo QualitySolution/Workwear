@@ -38,6 +38,8 @@ include::settings.adoc[]
 
 include::manipulation.adoc[]
 
+include::import.adoc[]
+
 include::technical.adoc[]
 
 :leveloffset: 0
