@@ -36,6 +36,8 @@ include::stock-documents.adoc[]
 
 include::settings.adoc[]
 
+include::import.adoc[]
+
 include::technical.adoc[]
 
 :leveloffset: 0
