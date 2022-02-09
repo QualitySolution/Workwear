@@ -24,6 +24,8 @@ namespace workwear.ReportParameters.ViewModels
 
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
 			SubdivisionEntry = builder.ForEntity<Subdivision>().MakeByType().Finish();
+
+			excludeInVacation = true;
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
