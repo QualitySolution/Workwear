@@ -36,6 +36,8 @@ include::employees.adoc[]
 
 include::stock-documents.adoc[]
 
+include::reports.adoc[]
+
 include::settings.adoc[]
 
 include::import.adoc[]
