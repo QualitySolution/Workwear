@@ -1,6 +1,6 @@
 :title-separator: {sp}|
 = QS: Спецодежда и имущество | Руководство пользователя
-Quality Solution 2021
+Quality Solution 2022
 версия 2.6
 :organization: Quality Solution
 :doctype: book
@@ -30,9 +30,13 @@ include::organization.adoc[]
 
 include::nomenclature.adoc[]
 
+include::regulations.adoc[]
+
 include::employees.adoc[]
 
 include::stock-documents.adoc[]
+
+include::reports.adoc[]
 
 include::settings.adoc[]
 
