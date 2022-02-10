@@ -11,7 +11,7 @@ namespace workwear.Domain.Operations
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "складские операции",
 		Nominative = "складская операция",
-		Genitive = "складских операций"
+		Genitive = "складской операции"
 	)]
 	[HistoryTrace]
 	public class WarehouseOperation : PropertyChangedBase, IDomainObject

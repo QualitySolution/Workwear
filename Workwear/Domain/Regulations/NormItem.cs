@@ -10,7 +10,7 @@ namespace workwear.Domain.Regulations
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки нормы",
 		Nominative = "строка нормы",
-		Genitive = "строк нормы"
+		Genitive = "строки нормы"
 		)]
 	[HistoryTrace]
 	public class NormItem : PropertyChangedBase, IDomainObject

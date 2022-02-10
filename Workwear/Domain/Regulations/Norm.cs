@@ -15,7 +15,7 @@ namespace workwear.Domain.Regulations
 		NominativePlural = "нормы выдачи",
 		Nominative = "норма выдачи",
 		PrepositionalPlural = "нормах выдачи",
-		Genitive = "норм выдачи"
+		Genitive = "нормы выдачи"
 	)]
 	[HistoryTrace]
 	public class Norm : PropertyChangedBase, IDomainObject, IValidatableObject

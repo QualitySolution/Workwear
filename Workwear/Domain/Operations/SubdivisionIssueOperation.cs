@@ -15,7 +15,7 @@ namespace workwear.Domain.Operations
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "операции выдачи на подразделение",
 		Nominative = "операция выдачи на подразделение",
-		Genitive ="операций выдачи на подразделений"
+		Genitive ="операции выдачи на подразделений"
 	)]
 	[HistoryTrace]
 	public class SubdivisionIssueOperation : PropertyChangedBase, IDomainObject

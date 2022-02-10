@@ -9,7 +9,7 @@ namespace workwear.Domain.Stock
 	[Appellative( Gender = GrammaticalGender.Feminine,
 		Nominative = "проводка выдачи списком",
 		NominativePlural = "проводки выдачи списком",
-		Genitive = "продки выдачи списком"
+		Genitive = "проводки выдачи списком"
 		)]
 	[HistoryTrace]
 	public class MassExpenseOperation : PropertyChangedBase, IDomainObject

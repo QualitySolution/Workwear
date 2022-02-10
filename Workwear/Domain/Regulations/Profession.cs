@@ -8,7 +8,7 @@ namespace workwear.Domain.Regulations
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "профессии",
 		Nominative = "профессия",
-		Genitive ="профессий"
+		Genitive ="профессии"
 		)]
 	[HistoryTrace]
 	public class Profession : PropertyChangedBase, IDomainObject

@@ -12,7 +12,7 @@ namespace workwear.Domain.Regulations
 	[Appellative(Gender = GrammaticalGender.Masculine,
 		NominativePlural = "нормативные документы",
 		Nominative = "нормативный документ",
-		Genitive = "нормативных документов"
+		Genitive = "нормативного документа"
 	)]
 	[HistoryTrace]
 	public class RegulationDoc : PropertyChangedBase, IDomainObject, IValidatableObject

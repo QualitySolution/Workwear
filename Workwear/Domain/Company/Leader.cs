@@ -8,7 +8,7 @@ namespace workwear.Domain.Company
 	[Appellative (Gender = GrammaticalGender.Neuter,
 		NominativePlural = "должностные лица",
 		Nominative = "должностное лицо",
-		Genitive ="должностных лиц"
+		Genitive ="должностного лица"
 		)]
 	[HistoryTrace]
 	public class Leader : PropertyChangedBase, IDomainObject
@@ -19,7 +19,7 @@ namespace workwear.Domain.Company
 
 		private string surname;
 
-		[Display(Name = "Фимилия")]
+		[Display(Name = "Фамилия")]
 		[StringLength(50)]
 		public virtual string Surname {
 			get { return surname; }
