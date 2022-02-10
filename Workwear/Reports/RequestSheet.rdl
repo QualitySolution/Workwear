@@ -804,6 +804,7 @@ WHERE
     AND wear_cards.dismiss_date IS NULL 
     AND wear_cards_item.next_issue &lt; DATE_ADD(CONCAT(@end_year, '-', @end_month, '-01'), INTERVAL 1 MONTH)
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
+    AND ('-1' IN (@protectionTools) OR protection_tools.id IN (@protectionTools))
 GROUP BY
     protection_tools.id,
     size,
@@ -831,6 +832,9 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="@issue_type">
             <Value>={?issue_type}</Value>
+          </QueryParameter>
+          <QueryParameter Name="protectionTools">
+            <Value>={?protectionTools}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -957,6 +961,14 @@ ORDER BY
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="protectionTools">
+      <DataType>Integer</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
       <Prompt>
       </Prompt>
     </ReportParameter>

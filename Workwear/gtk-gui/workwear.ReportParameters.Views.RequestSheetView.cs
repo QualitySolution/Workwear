@@ -30,7 +30,13 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yLabel ylabel1;
 
+		private global::Gamma.GtkWidgets.yButton ycheckbuttonAllNomenclature;
+
 		private global::Gtk.Button buttonRun;
+
+		private global::Gtk.ScrolledWindow scrolledwindow1;
+
+		private global::Gamma.GtkWidgets.yTreeView ytreeNomenclature;
 
 		protected virtual void Build()
 		{
@@ -44,7 +50,6 @@ namespace workwear.ReportParameters.Views
 			this.dialog1_VBox.BorderWidth = ((uint)(2));
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.table1 = new global::Gtk.Table(((uint)(4)), ((uint)(2)), false);
-			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild
@@ -176,16 +181,42 @@ namespace workwear.ReportParameters.Views
 			w12.Expand = false;
 			w12.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.ycheckbuttonAllNomenclature = new global::Gamma.GtkWidgets.yButton();
+			this.ycheckbuttonAllNomenclature.CanFocus = true;
+			this.ycheckbuttonAllNomenclature.Name = "ycheckbuttonAllNomenclature";
+			this.ycheckbuttonAllNomenclature.UseUnderline = true;
+			this.ycheckbuttonAllNomenclature.Label = global::Mono.Unix.Catalog.GetString("Выделить/снять выделение");
+			this.dialog1_VBox.Add(this.ycheckbuttonAllNomenclature);
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ycheckbuttonAllNomenclature]));
+			w13.Position = 1;
+			w13.Expand = false;
+			w13.Fill = false;
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gtk.Button();
 			this.buttonRun.CanFocus = true;
 			this.buttonRun.Name = "buttonRun";
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.dialog1_VBox.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
-			w13.Position = 1;
-			w13.Expand = false;
-			w13.Fill = false;
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
+			w14.PackType = ((global::Gtk.PackType)(1));
+			w14.Position = 2;
+			w14.Expand = false;
+			w14.Fill = false;
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.scrolledwindow1 = new global::Gtk.ScrolledWindow();
+			this.scrolledwindow1.CanFocus = true;
+			this.scrolledwindow1.Name = "scrolledwindow1";
+			this.scrolledwindow1.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child scrolledwindow1.Gtk.Container+ContainerChild
+			this.ytreeNomenclature = new global::Gamma.GtkWidgets.yTreeView();
+			this.ytreeNomenclature.CanFocus = true;
+			this.ytreeNomenclature.Name = "ytreeNomenclature";
+			this.scrolledwindow1.Add(this.ytreeNomenclature);
+			this.dialog1_VBox.Add(this.scrolledwindow1);
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.scrolledwindow1]));
+			w16.PackType = ((global::Gtk.PackType)(1));
+			w16.Position = 3;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
@@ -195,6 +226,7 @@ namespace workwear.ReportParameters.Views
 			this.radioMonth.Toggled += new global::System.EventHandler(this.OnRadioMonthToggled);
 			this.radioQuarter.Toggled += new global::System.EventHandler(this.OnRadioQuarterToggled);
 			this.radioYear.Toggled += new global::System.EventHandler(this.OnRadioYearToggled);
+			this.ycheckbuttonAllNomenclature.Clicked += new global::System.EventHandler(this.SelectAll);
 			this.buttonRun.Clicked += new global::System.EventHandler(this.OnButtonRunClicked);
 		}
 	}
