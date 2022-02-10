@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Autofac;
+using NHibernate.Transform;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using workwear.Domain.Company;
+using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
 namespace workwear.ReportParameters.ViewModels
@@ -103,6 +107,28 @@ namespace workwear.ReportParameters.ViewModels
 			set => SetField(ref issueTypeOptions, value);
 		}
 
+		private IList<SelectedProtectionTools> protectionTools;
+		public IList<SelectedProtectionTools> ProtectionTools {
+			get {
+				if(protectionTools == null)
+					FillProtectionTools();
+				return protectionTools;
+			}
+		}
+
+		void FillProtectionTools(){
+			SelectedProtectionTools resultAlias = null;
+
+			protectionTools = uow.Session.QueryOver<ProtectionTools>()
+				.SelectList(list => list
+					   .Select(x => x.Id).WithAlias(() => resultAlias.Id)
+					   .Select(x => x.Name).WithAlias(() => resultAlias.Name)
+					   .Select(() => true).WithAlias(() => resultAlias.Select)
+				)
+				.TransformUsing(Transformers.AliasToBean<SelectedProtectionTools>())
+				.List<SelectedProtectionTools>();
+		}
+
 		#endregion
 
 		public IMonthAndYear Period => SelectedPeriod as IMonthAndYear;
@@ -114,11 +140,20 @@ namespace workwear.ReportParameters.ViewModels
 					{"end_year", Period?.EndYear},
 					{"subdivision", EntrySubdivisionViewModel.Entity?.Id ?? -1 },
 					{"issue_type", IssueTypeOptions?.ToString() },
-				 };
+					{"protectionTools", selectedProtectionTools() } 
+					};
 
 		public void Dispose()
 		{
 			uow.Dispose();
+		}
+		private int[] selectedProtectionTools()
+		{
+			if(ProtectionTools.All(x => x.Select))
+				return new int[] { -1 };
+			if(ProtectionTools.All(x => !x.Select))
+				return new int[] { -2 };
+			return ProtectionTools.Where(x => x.Select).Select(x => x.Id).ToArray();
 		}
 	}
 
@@ -218,5 +253,16 @@ namespace workwear.ReportParameters.ViewModels
 		int BeginYear { get; }
 		int EndMonth { get; }
 		int EndYear { get; }
+	}
+	public class SelectedProtectionTools : PropertyChangedBase
+	{
+		private bool select;
+		public virtual bool Select {
+			get => select;
+			set => SetField(ref select, value);
+		}
+
+		public int Id { get; set; }
+		public string Name { get; set; }
 	}
 }
