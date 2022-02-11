@@ -129,6 +129,7 @@ namespace workwear.ReportParameters.Views
 			this.ycheckExcludeInVacation.CanFocus = true;
 			this.ycheckExcludeInVacation.Name = "ycheckExcludeInVacation";
 			this.ycheckExcludeInVacation.Label = "";
+			this.ycheckExcludeInVacation.Active = true;
 			this.ycheckExcludeInVacation.DrawIndicator = true;
 			this.ycheckExcludeInVacation.UseUnderline = true;
 			this.table1.Add(this.ycheckExcludeInVacation);

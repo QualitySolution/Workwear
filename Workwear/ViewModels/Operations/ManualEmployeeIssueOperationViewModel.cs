@@ -42,6 +42,7 @@ namespace workwear.ViewModels.Operations
 		public bool IsModal => true;
 		public bool EnableMinimizeMaximize => false;
 		public bool Resizable => true;
+		public bool Deletable => true;
 		public WindowGravity WindowPosition => WindowGravity.Center;
 		#endregion
 
