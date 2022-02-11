@@ -24,6 +24,8 @@ include::install.adoc[]
 
 include::users.adoc[]
 
+include::cloud.adoc[]
+
 include::interface.adoc[]
 
 include::organization.adoc[]
