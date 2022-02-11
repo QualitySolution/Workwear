@@ -15,5 +15,5 @@
 * xref:install.adoc[Установка]
 * xref:update.adoc[Обновление]
 * xref:users.adoc[Работа с пользователями]
-* xref:technical.adoc[Технические подробности]
 * xref:cloud.adoc[Облачные сервисы]
+* xref:technical.adoc[Технические подробности]
