@@ -18,4 +18,4 @@
 * xref:cloud.adoc[Облачные сервисы]
 * xref:transfer_base.adoc[Перенос базы на другой компьютер]
 * xref:technical.adoc[Технические подробности]
-* xref:cloud.adoc[Облачные сервисы]
+* xref:problems.adoc[Решение проблем]

@@ -2,7 +2,7 @@
 :experimental:
 
 Для переноса базы данных с одного компьютера на другой нам понадобится установить MySQL WorkBench.
-Скачиваем его с сайта Oracle https://dev.mysql.com/downloads/workbench/
+Скачиваем его с сайта Oracle _https://dev.mysql.com/downloads/workbench/_
 
 == Выгрузка базы с текущего сервера
 Запускаем WorkBench и подключаемся к старому серверу. Если программа установлена на тот же компьютер, 
