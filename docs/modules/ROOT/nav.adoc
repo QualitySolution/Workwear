@@ -8,7 +8,7 @@
 * xref:stock-documents.adoc[Складские документы]
 * xref:reports.adoc[Отчеты]
 * xref:settings.adoc[Настройки программы]
-* xref:index.adoc[Старая документация]
+* xref:import.adoc[Импорт данных]
 
 .Руководство администратора
 * xref:requirements.adoc[Системные требования]
