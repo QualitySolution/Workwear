@@ -9,11 +9,12 @@
 * xref:reports.adoc[Отчеты]
 * xref:settings.adoc[Настройки программы]
 * xref:manipulation.adoc[Обработка]
-* xref:index.adoc[Старая документация]
+* xref:import.adoc[Импорт данных]
 
 .Руководство администратора
 * xref:requirements.adoc[Системные требования]
 * xref:install.adoc[Установка]
 * xref:update.adoc[Обновление]
 * xref:users.adoc[Работа с пользователями]
+* xref:cloud.adoc[Облачные сервисы]
 * xref:technical.adoc[Технические подробности]

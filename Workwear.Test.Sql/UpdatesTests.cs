@@ -62,6 +62,10 @@ namespace Workwear.Test.Sql
 		//Но это усложнит и так не простой код, может здесь вручную выполнять обновления даже лучше.
 		void RunOneUpdate(MySqlConnection connection, UpdateHop updateScript)
 		{
+			if(updateScript.ExcuteBefore != null) {
+				updateScript.ExcuteBefore(connection);
+			}
+			
 			string sql;
 			using (Stream stream = updateScript.Assembly.GetManifestResourceStream(updateScript.Resource)) {
 				if (stream == null)

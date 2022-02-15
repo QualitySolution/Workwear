@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data.Bindings.Collections.Generic;
+using System.Linq;
 using QS.Views;
 using workwear.Domain.Stock;
 using workwear.ReportParameters.ViewModels;
@@ -19,6 +21,12 @@ namespace workwear.ReportParameters.Views
 			ViewModel.PeriodType = PeriodType.Month;
 			yenumIssueType.ItemsEnum = typeof(IssueType);
 			yenumIssueType.Binding.AddBinding(ViewModel, v => v.IssueTypeOptions, w => w.SelectedItemOrNull).InitializeFromSource();
+
+			ytreeNomenclature.CreateFluentColumnsConfig<SelectedProtectionTools>()
+				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
+				.AddColumn("Номенклатура нормы").AddTextRenderer(x => x.Name)
+				.Finish();
+			ytreeNomenclature.ItemsDataSource = new GenericObservableList<SelectedProtectionTools>(viewModel.ProtectionTools);
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)
@@ -42,6 +50,14 @@ namespace workwear.ReportParameters.Views
 		{
 			if (radioYear.Active)
 				ViewModel.PeriodType = PeriodType.Year;
+		}
+
+		protected void SelectAll(object sender, EventArgs e)
+		{
+			var antiSelect = !ViewModel.ProtectionTools.FirstOrDefault().Select;
+			foreach(var item in ViewModel.ProtectionTools) {
+			 item.Select = antiSelect; 
+			 }
 		}
 	}
 }
