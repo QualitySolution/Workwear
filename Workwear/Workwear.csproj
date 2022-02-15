@@ -120,6 +120,7 @@
     <EmbeddedResource Include="icon\buttons\menu.png" />
     <EmbeddedResource Include="icon\buttons\arrows.png" />
     <EmbeddedResource Include="icon\toolbar\mail.png" />
+    <EmbeddedResource Include="icon\menu\logs.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -511,7 +512,7 @@
       <Name>QS.HistoryLog.Gtk</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QS.HistoryLog\QS.HistoryLog.csproj">
-      <Project>{3d3d6700-c625-46c5-9702-5f010a8dd035}</Project>
+      <Project>{83BAE8A5-C4A2-478D-81FE-CE8394D24DFB}</Project>
       <Name>QS.HistoryLog</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QS.Project.Desktop\QS.Project.Desktop.csproj">

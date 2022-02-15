@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -85,6 +85,11 @@
     <icon-set id="mail">
       <source>
         <property name="Image">resource:workwear.icon.toolbar.mail.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="logs">
+      <source>
+        <property name="Image">resource:workwear.icon.menu.logs.png</property>
       </source>
     </icon-set>
   </icon-factory>
@@ -6001,10 +6006,11 @@
         <property name="StockId">mail</property>
         <signal name="Activated" handler="OnActionConversatoinsActivated" />
       </action>
-      <action id="HistoryLog">
+      <action id="ActionHistoryLog">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">История изменений</property>
         <property name="ShortLabel" translatable="yes">История изменений</property>
+        <property name="StockId">logs</property>
         <signal name="Activated" handler="OnShowHistoryLogActivated" />
       </action>
     </action-group>
@@ -6035,7 +6041,7 @@
                   <node type="Menuitem" action="ActionProcessingEmployee" />
                   <node type="Menuitem" action="ActionReplaceEntity" />
                 </node>
-                <node type="Menuitem" action="HistoryLog" />
+                <node type="Menuitem" action="ActionHistoryLog" />
                 <node type="Separator" />
                 <node type="Menuitem" action="quitAction" />
               </node>
