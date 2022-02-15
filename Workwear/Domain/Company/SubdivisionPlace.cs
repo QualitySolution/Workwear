@@ -1,12 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 
 namespace workwear.Domain.Company
 {
 	[Appellative (Gender = GrammaticalGender.Neuter,
 		NominativePlural = "размещения в подразделении",
-		Nominative = "размещение в подразделении")]
-	
+		Nominative = "размещение в подразделении",
+		Genitive = "размещения в подразделении"
+		)]
+	[HistoryTrace]
 	public class SubdivisionPlace : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства

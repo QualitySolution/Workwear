@@ -1,11 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 
 namespace workwear.Domain.Stock
 {
 	[Appellative(Gender = GrammaticalGender.Masculine,
 		NominativePlural = "склады",
-		Nominative = "склад")]
+		Nominative = "склад",
+		Genitive = "склада"
+		)]
+	[HistoryTrace]
 	public class Warehouse: PropertyChangedBase, IDomainObject
 	{
 		public virtual int Id { get; set; }

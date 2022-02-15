@@ -1,12 +1,16 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 
 namespace workwear.Domain.Company
 {
 	[Appellative(Gender = GrammaticalGender.Masculine,
 		NominativePlural = "отделы",
-		Nominative = "отдел")]
+		Nominative = "отдел",
+		Genitive = "отдела"
+		)]
+	[HistoryTrace]
 	public class Department : PropertyChangedBase, IDomainObject
 	{
 		public Department()

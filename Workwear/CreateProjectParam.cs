@@ -61,6 +61,9 @@ using workwear.Views.Company;
 using Workwear.Measurements;
 using workwear.Models.Stock;
 using Workwear.Sql;
+using QS.HistoryLog.Views;
+using QS.HistoryLog;
+using QS.HistoryLog.ViewModels;
 
 namespace workwear
 {
@@ -82,6 +85,8 @@ namespace workwear
 				System.Reflection.Assembly.GetAssembly (typeof(MainClass)),
 				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),
 				System.Reflection.Assembly.GetAssembly (typeof(UserBase)),
+				System.Reflection.Assembly.GetAssembly (typeof(HistoryMain)),
+
 			});
 
 			#if DEBUG
@@ -161,7 +166,8 @@ namespace workwear
 				typeof(OrganizationView), 
 				typeof(DeletionView), 
 				typeof(UpdateProcessView),
-				typeof(SerialNumberView)
+				typeof(SerialNumberView),
+				typeof(HistoryView)
 			)).As<IGtkViewResolver>();
 			#endregion
 
@@ -204,6 +210,9 @@ namespace workwear
 				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
 				.AsSelf();
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(ProgressWindowViewModel)))
+				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
+				.AsSelf();
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(HistoryViewModel)))
 				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
 				.AsSelf();
 			#endregion

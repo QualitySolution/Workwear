@@ -1,12 +1,16 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 
 namespace workwear.Domain.Company
 {
 	[Appellative(Gender = GrammaticalGender.Masculine,
 		NominativePlural = "виды отпусков",
-		Nominative = "вид отпуска")]
+		Nominative = "вид отпуска",
+		Genitive = "вида отпуска"
+		)]
+	[HistoryTrace]
 	public class VacationType : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства

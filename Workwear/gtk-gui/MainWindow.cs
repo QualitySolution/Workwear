@@ -163,6 +163,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionConversatoins;
 
+	private global::Gtk.Action HistoryLog;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -444,6 +446,9 @@ public partial class MainWindow
 		this.ActionConversatoins = new global::Gtk.Action("ActionConversatoins", global::Mono.Unix.Catalog.GetString("Уведомление"), null, "mail");
 		this.ActionConversatoins.ShortLabel = global::Mono.Unix.Catalog.GetString("Уведомление");
 		w1.Add(this.ActionConversatoins, null);
+		this.HistoryLog = new global::Gtk.Action("HistoryLog", global::Mono.Unix.Catalog.GetString("История изменений"), null, null);
+		this.HistoryLog.ShortLabel = global::Mono.Unix.Catalog.GetString("История изменений");
+		w1.Add(this.HistoryLog, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -721,5 +726,6 @@ public partial class MainWindow
 		this.ActionConditionNorm.Activated += new global::System.EventHandler(this.OnActionConditionNormsActivated);
 		this.ActionNotificationTemplates.Activated += new global::System.EventHandler(this.OnActionEditNotificationTemplateActivated);
 		this.ActionConversatoins.Activated += new global::System.EventHandler(this.OnActionConversatoinsActivated);
+		this.HistoryLog.Activated += new global::System.EventHandler(this.OnShowHistoryLogActivated);
 	}
 }

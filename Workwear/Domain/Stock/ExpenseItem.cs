@@ -4,6 +4,7 @@ using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Operations.Graph;
@@ -16,7 +17,10 @@ namespace workwear.Domain.Stock
 {
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки выдачи",
-		Nominative = "строка выдачи")]
+		Nominative = "строка выдачи",
+		Genitive = "строки выдачи"
+		)]
+	[HistoryTrace]
 	public class ExpenseItem : PropertyChangedBase, IDomainObject
 	{
 		#region Сохраняемые свойства

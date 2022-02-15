@@ -11,6 +11,8 @@ using QS.BusinessCommon.Domain;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
+using QS.HistoryLog.ViewModels;
 using QS.Navigation;
 using QS.NewsFeed;
 using QS.NewsFeed.Views;
@@ -161,6 +163,8 @@ public partial class MainWindow : Gtk.Window
 
 		FeaturesService = AutofacScope.Resolve<FeaturesService>();
 		DisableFeatures();
+
+		HistoryMain.Enable();
 	}
 
 	private void CreateDefaultWarehouse()
@@ -734,5 +738,10 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionConversatoinsActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<EmployeeNotificationJournalViewModel>(null);
+	}
+
+	protected void OnShowHistoryLogActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<HistoryViewModel>(null);
 	}
 }

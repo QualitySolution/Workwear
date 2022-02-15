@@ -1,12 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using QS.Utilities.Text;
 
 namespace workwear.Domain.Company
 {
 	[Appellative (Gender = GrammaticalGender.Neuter,
 		NominativePlural = "должностные лица",
-		Nominative = "должносное лицо")]
+		Nominative = "должностное лицо",
+		Genitive ="должностного лица"
+		)]
+	[HistoryTrace]
 	public class Leader : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства
@@ -15,7 +19,7 @@ namespace workwear.Domain.Company
 
 		private string surname;
 
-		[Display(Name = "Фимилия")]
+		[Display(Name = "Фамилия")]
 		[StringLength(50)]
 		public virtual string Surname {
 			get { return surname; }

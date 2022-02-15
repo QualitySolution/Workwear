@@ -7,6 +7,7 @@
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../../../QSProjects/Binding/Gamma.Binding/bin/Debug/GammaBinding.dll" />
+    <widget-library name="../../../QSProjects/QS.HistoryLog.Gtk/bin/Debug/QS.HistoryLog.Gtk.dll" />
     <widget-library name="../../../QSProjects/QSProjectsLib/bin/Debug/QSProjectsLib.dll" />
     <widget-library name="../../../QSProjects/QSWidgetLib/bin/Debug/QSWidgetLib.dll" />
     <widget-library name="../../../QSProjects/QSOrmProject/bin/Debug/QSOrmProject.dll" />
@@ -6000,6 +6001,12 @@
         <property name="StockId">mail</property>
         <signal name="Activated" handler="OnActionConversatoinsActivated" />
       </action>
+      <action id="HistoryLog">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">История изменений</property>
+        <property name="ShortLabel" translatable="yes">История изменений</property>
+        <signal name="Activated" handler="OnShowHistoryLogActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -6028,6 +6035,7 @@
                   <node type="Menuitem" action="ActionProcessingEmployee" />
                   <node type="Menuitem" action="ActionReplaceEntity" />
                 </node>
+                <node type="Menuitem" action="HistoryLog" />
                 <node type="Separator" />
                 <node type="Menuitem" action="quitAction" />
               </node>
@@ -6918,6 +6926,24 @@
               </widget>
               <packing>
                 <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonShowHistory">
+                <property name="MemberName" />
+                <property name="Sensitive">False</property>
+                <property name="Tooltip" translatable="yes" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">Показать историю</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="PackType">End</property>
+                <property name="Position">3</property>
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>

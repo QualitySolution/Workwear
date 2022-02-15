@@ -2,13 +2,17 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using workwear.Domain.Operations;
 
 namespace workwear.Domain.Stock
 {
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки списания",
-		Nominative = "строка списания")]
+		Nominative = "строка списания",
+		Genitive = "строки списания"
+		)]
+	[HistoryTrace]
 	public class WriteoffItem : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства

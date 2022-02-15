@@ -1,14 +1,17 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using workwear.Domain.Operations;
 
 namespace workwear.Domain.Stock
 {
 	[Appellative( Gender = GrammaticalGender.Feminine,
 		Nominative = "проводка выдачи списком",
-		NominativePlural = "проводки выдачи списком"
+		NominativePlural = "проводки выдачи списком",
+		Genitive = "проводки выдачи списком"
 		)]
+	[HistoryTrace]
 	public class MassExpenseOperation : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства

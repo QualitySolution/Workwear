@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
@@ -14,7 +15,10 @@ namespace workwear.Domain.Stock
 {
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки коллективной выдачи",
-		Nominative = "строка коллективной выдачи")]
+		Nominative = "строка коллективной выдачи",
+		Genitive = "строки коллективной выдачи"
+		)]
+	[HistoryTrace]
 	public class CollectiveExpenseItem : PropertyChangedBase, IDomainObject
 	{
 		#region Сохраняемые свойства

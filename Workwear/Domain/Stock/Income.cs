@@ -7,6 +7,7 @@ using Gamma.Utilities;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using QS.Utilities;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
@@ -16,7 +17,10 @@ namespace workwear.Domain.Stock
 {
 	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "приходные документы",
-		Nominative = "приходный документ")]
+		Nominative = "приходный документ",
+		Genitive = "приходного документа"
+		)]
+	[HistoryTrace]
 	public class Income : StockDocument, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();

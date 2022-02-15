@@ -5,13 +5,16 @@ using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 
 namespace workwear.Domain.Regulations
 {
 	[Appellative(Gender = GrammaticalGender.Masculine,
 		NominativePlural = "нормативные документы",
-		Nominative = "нормативный документ"
+		Nominative = "нормативный документ",
+		Genitive = "нормативного документа"
 	)]
+	[HistoryTrace]
 	public class RegulationDoc : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства
