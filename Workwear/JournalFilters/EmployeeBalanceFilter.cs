@@ -33,6 +33,7 @@ namespace workwear
 			set {
 				yentryEmployee.ViewModel.Entity = value;
 				yentryEmployee.Sensitive = false;
+				OnRefiltered();
 			}
 		}
 
