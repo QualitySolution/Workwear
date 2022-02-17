@@ -187,6 +187,7 @@ namespace workwear.Domain.Stock
 			document = writeOff;
 			employeeWriteoffOperation = new EmployeeIssueOperation {
 				Employee = issueOperation.Employee,
+				ProtectionTools = issueOperation.ProtectionTools,
 				Returned = amount,
 				IssuedOperation = issueOperation,
 				OperationTime = document.Date,
