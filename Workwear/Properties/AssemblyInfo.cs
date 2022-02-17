@@ -27,7 +27,7 @@ using QS.Project.Versioning;
 [assembly: AssemblyAuthor("Ганьков Андрей <gav@qsolution.ru>")]
 [assembly: AssemblyAuthor("Горячев Иван <space@qsolution.ru>")]
 [assembly: AssemblyAuthor("Мингалимов Ильяс <mi@qsolution.ru>")]
-[assembly: AssemblyAuthor("Солдаткина Алина 2020 <alina@qsolution.ru>")]
+[assembly: AssemblyAuthor("Солдаткина Алина 2020")]
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
