@@ -10,6 +10,7 @@ using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
+using workwear.Domain.Stock;
 
 namespace workwear.Repository.Company
 {
@@ -72,6 +73,7 @@ namespace workwear.Repository.Company
 				   .SelectGroup(() => employeeIssueOperationAlias.NormItem.Id).WithAlias(() => resultAlias.NormRowId)
 				   .Select(projectionIssueDate).WithAlias(() => resultAlias.LastReceive)
 				   .Select(projection).WithAlias(() => resultAlias.Amount)
+				   .Select(() => employeeIssueOperationAlias.Nomenclature.Id).WithAlias(()=> resultAlias.NomenclatureId)
 				)
 				.TransformUsing(Transformers.AliasToBean<EmployeeRecivedInfo>())
 				.List<EmployeeRecivedInfo>();
@@ -135,6 +137,8 @@ namespace workwear.Repository.Company
 		public int? NormRowId { get; set; }
 
 		public int? ProtectionToolsId { get; set;}
+		
+		public  int? NomenclatureId { get; set; }
 
 		public DateTime LastReceive { get; set;}
 
