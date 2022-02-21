@@ -187,23 +187,20 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		public void RecalculateLastIssue(EmployeeCardItem row)
 		{
 			var operation = row.LastIssueOperation;
-			var graph = IssueGraph.MakeIssueGraph(UoW, row.EmployeeCard, operation.ProtectionTools);
-			if (row.EmployeeCard.WorkwearItems.Any(x => x.ActiveNormItem.Id == operation.NormItem.Id)) {
-				operation.RecalculateDatesOfIssueOperation(graph, BaseParameters, interactive);
-				row.UpdateNextIssue(UoW);
-			}
 			//Если строку нормы по которой выдавали удалили, пытаемся переподвязать к имеющиейся совпадающей по СИЗ 
-			else if(row.EmployeeCard.WorkwearItems.Any(x => x.ProtectionTools.Id == operation.ProtectionTools.Id)) {
-				var norm = row.EmployeeCard.WorkwearItems
-					.Where(x => x.ProtectionTools.Id == operation.ProtectionTools.Id)
-					.Select(x => x.ActiveNormItem)
-					.FirstOrDefault();
-				if (norm != null) {
-					operation.NormItem = norm;
-					operation.RecalculateDatesOfIssueOperation(graph,BaseParameters, interactive);
-					row.UpdateNextIssue(UoW);
+			if (!(row.EmployeeCard.WorkwearItems.Any(x => x.ActiveNormItem.Id == operation.NormItem.Id))) {
+				if (row.EmployeeCard.WorkwearItems.Any(x => x.ProtectionTools.Id == operation.ProtectionTools.Id)) {
+					var norm = row.EmployeeCard.WorkwearItems
+						.Where(x => x.ProtectionTools.Id == operation.ProtectionTools.Id)
+						.Select(x => x.ActiveNormItem)
+						.FirstOrDefault();
+					if (norm != null)
+						operation.NormItem = norm;
 				}
 			}
+			var graph = IssueGraph.MakeIssueGraph(UoW, row.EmployeeCard, operation.ProtectionTools);
+			operation.RecalculateDatesOfIssueOperation(graph, BaseParameters, interactive);
+				row.UpdateNextIssue(UoW);
 		}
 
 		#endregion
