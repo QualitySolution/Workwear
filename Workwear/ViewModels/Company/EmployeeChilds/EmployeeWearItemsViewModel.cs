@@ -187,9 +187,20 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		public void RecalculateLastIssue(EmployeeCardItem row)
 		{
 			var operation = row.LastIssueOperation;
+			//Если строку нормы по которой выдавали удалили, пытаемся переподвязать к имеющиейся совпадающей по СИЗ 
+			if (!(row.EmployeeCard.WorkwearItems.Any(x => x.ActiveNormItem.Id == operation.NormItem.Id))) {
+				if (row.EmployeeCard.WorkwearItems.Any(x => x.ProtectionTools.Id == operation.ProtectionTools.Id)) {
+					var norm = row.EmployeeCard.WorkwearItems
+						.Where(x => x.ProtectionTools.Id == operation.ProtectionTools.Id)
+						.Select(x => x.ActiveNormItem)
+						.FirstOrDefault();
+					if (norm != null)
+						operation.NormItem = norm;
+				}
+			}
 			var graph = IssueGraph.MakeIssueGraph(UoW, row.EmployeeCard, operation.ProtectionTools);
 			operation.RecalculateDatesOfIssueOperation(graph, BaseParameters, interactive);
-			row.UpdateNextIssue(UoW);
+				row.UpdateNextIssue(UoW);
 		}
 
 		#endregion
