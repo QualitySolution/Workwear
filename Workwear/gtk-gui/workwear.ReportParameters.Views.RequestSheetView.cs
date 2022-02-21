@@ -224,6 +224,7 @@ namespace workwear.ReportParameters.Views
 			this.ytreeNomenclature = new global::Gamma.GtkWidgets.yTreeView();
 			this.ytreeNomenclature.CanFocus = true;
 			this.ytreeNomenclature.Name = "ytreeNomenclature";
+			this.ytreeNomenclature.HeadersVisible = false;
 			this.scrolledwindow1.Add(this.ytreeNomenclature);
 			this.dialog1_VBox.Add(this.scrolledwindow1);
 			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.scrolledwindow1]));

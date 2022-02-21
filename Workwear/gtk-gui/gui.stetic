@@ -8065,6 +8065,7 @@
               <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeNomenclature">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
+                <property name="HeadersVisible">False</property>
               </widget>
             </child>
           </widget>
