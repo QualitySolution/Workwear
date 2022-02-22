@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -8012,6 +8012,18 @@
           </packing>
         </child>
         <child>
+          <widget class="Gamma.GtkWidgets.yLabel" id="ylabel2">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Номенклатура нормы</property>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <widget class="Gamma.GtkWidgets.yButton" id="ycheckbuttonAllNomenclature">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
@@ -8021,7 +8033,7 @@
             <signal name="Clicked" handler="SelectAll" />
           </widget>
           <packing>
-            <property name="Position">1</property>
+            <property name="Position">2</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -8038,7 +8050,7 @@
           </widget>
           <packing>
             <property name="PackType">End</property>
-            <property name="Position">2</property>
+            <property name="Position">3</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -8053,12 +8065,13 @@
               <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeNomenclature">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
+                <property name="HeadersVisible">False</property>
               </widget>
             </child>
           </widget>
           <packing>
             <property name="PackType">End</property>
-            <property name="Position">3</property>
+            <property name="Position">4</property>
             <property name="AutoSize">True</property>
           </packing>
         </child>

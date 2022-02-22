@@ -124,7 +124,7 @@ namespace workwear.ReportParameters.ViewModels
 					   .Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					   .Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					   .Select(() => true).WithAlias(() => resultAlias.Select)
-				)
+				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<SelectedProtectionTools>())
 				.List<SelectedProtectionTools>();
 		}

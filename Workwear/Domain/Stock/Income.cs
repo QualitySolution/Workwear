@@ -126,6 +126,18 @@ namespace workwear.Domain.Stock
 			if (Items.Any(i => i.Certificate != null && i.Certificate.Length > 40))
 				yield return new ValidationResult("Длина номера сертификата не может быть больше 40 символов.",
 					new[] { this.GetPropertyName(o => o.Items) });
+			
+			if(Operation == IncomeOperations.Return && EmployeeCard != null)
+				foreach (var item in items) {
+					if(item.IssuedEmployeeOnOperation == null || item.IssuedEmployeeOnOperation.Employee != EmployeeCard)
+						yield return new ValidationResult($"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным сотрудником", new[] { nameof(Items) });
+				}
+			
+			if(Operation == IncomeOperations.Object && Subdivision != null)
+				foreach (var item in items) {
+					if(item.IssuedSubdivisionOnOperation == null || item.IssuedSubdivisionOnOperation.Subdivision != Subdivision)
+						yield return new ValidationResult($"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным подразделением", new[] { nameof(Items) });
+				}
 
 			foreach(var duplicate in Items.GroupBy(x => x.StockPosition).Where(x => x.Count() > 1)) {
 				var caseCountText = NumberToTextRus.FormatCase(duplicate.Count(), "{0} раз", "{0} раза", "{0} раз");
