@@ -16,6 +16,8 @@ namespace workwear.HibernateMapping.Regulations
 
 			Map(x => x.Name).Column("name");
 			Map(x => x.SexNormCondition).Column("sex");
+			Map(x => x.IssuanceStart).Column("issuance_start");
+			Map(x => x.IssuanceEnd).Column("issuance_end");
 		}
 	}
 }

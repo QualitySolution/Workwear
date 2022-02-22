@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
@@ -27,6 +28,19 @@ namespace workwear.Domain.Regulations
 			get => sex;
 			set => SetField(ref sex, value);
 		}
+
+		private DateTime? issuanceStart;
+		public virtual DateTime? IssuanceStart {
+			get => issuanceStart;
+			set => SetField(ref issuanceStart, value);
+		}
+
+		private DateTime? issuanceEnd;
+		public virtual DateTime? IssuanceEnd {
+			get => issuanceEnd;
+			set => SetField(ref issuanceEnd, value);
+		}
+
 
 		#region Методы 
 

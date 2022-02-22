@@ -19,6 +19,9 @@ namespace workwear.Views.Regulations
 			yenumSex.Binding.AddBinding(Entity, e => e.SexNormCondition, w => w.SelectedItem).InitializeFromSource();
 
 			yentryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
+
+			ydateperiodpicker.Binding.AddBinding(Entity, e => e.IssuanceStart, v => v.StartDateOrNull).InitializeFromSource();
+			ydateperiodpicker.Binding.AddBinding(Entity, e => e.IssuanceEnd, v => v.EndDateOrNull).InitializeFromSource();
 		}
 	}
 }
