@@ -24,7 +24,7 @@ namespace workwear.ReportParameters.Views
 
 			ytreeNomenclature.CreateFluentColumnsConfig<SelectedProtectionTools>()
 				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
-				.AddColumn("Номенклатура нормы").AddTextRenderer(x => x.Name)
+				.AddColumn("Название").AddTextRenderer(x => x.Name)
 				.Finish();
 			ytreeNomenclature.ItemsDataSource = new GenericObservableList<SelectedProtectionTools>(viewModel.ProtectionTools);
 		}

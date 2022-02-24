@@ -195,6 +195,7 @@ namespace workwear.Domain.Stock
 			document = writeOff;
 			employeeWriteoffOperation = new EmployeeIssueOperation {
 				Employee = issueOperation.Employee,
+				ProtectionTools = issueOperation.ProtectionTools,
 				Returned = amount,
 				IssuedOperation = issueOperation,
 				OperationTime = document.Date,
@@ -203,7 +204,7 @@ namespace workwear.Domain.Stock
 				WearGrowth = issueOperation.WearGrowth,
 				WearPercent = issueOperation.CalculatePercentWear(document.Date)
 			};
-			this.nomenclature = issueOperation.Nomenclature;
+			this.nomenclature = issueOperation.Nomenclature ?? throw new ArgumentException("Списывать можно только номенклатуру");
 			this.size = issueOperation.Size;
 			this.wearGrowth = issueOperation.WearGrowth;
 			this.amount = amount;
