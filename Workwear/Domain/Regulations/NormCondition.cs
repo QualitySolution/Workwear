@@ -58,16 +58,17 @@ namespace workwear.Domain.Regulations
 			}
 		}
 
-		 public DateRange CalculateDatesNextPeriod() {
+		 public virtual DateRange CalculateCurrentPeriod(DateTime dateFrom) {
 		 	if (IssuanceStart is null || IssuanceEnd is null)
-		 		throw new ArgumentException("Даты периода не заданы");
-		 	var today = DateTime.Today;
-		    var start = new DateTime(today.Year, IssuanceStart.Value.Month, IssuanceStart.Value.Day);
-		    if (today > start)
-			    start = start.AddYears(1);
-		    var end = new DateTime(start.Year, IssuanceEnd.Value.Month, IssuanceEnd.Value.Day);
-		    if (start > end)
+		 		throw new ArgumentException("В условиях нормы не заданы даты");
+		    
+		    var wantYear = dateFrom > DateTime.Today ? dateFrom : DateTime.Today;
+		    var end = new DateTime(wantYear.Year, IssuanceEnd.Value.Month, IssuanceEnd.Value.Day);
+		    if (end < wantYear)
 			    end = end.AddYears(1);
+		    var start = new DateTime(end.Year, IssuanceStart.Value.Month, IssuanceStart.Value.Day);
+		    if (start > end)
+			      start = start.AddYears(-1);
 		    return new DateRange(start, end);
 		 }
 		#endregion

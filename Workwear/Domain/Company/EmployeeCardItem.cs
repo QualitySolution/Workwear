@@ -281,14 +281,10 @@ namespace workwear.Domain.Company
 					}
 				}
 			}
-
+			if(wantIssue is null) return;
 			if(wantIssue == default(DateTime))
 			{
 				wantIssue = Created.Date;
-			}
-
-			if (ActiveNormItem.NormCondition.IssuanceStart != null && ActiveNormItem.NormCondition.IssuanceEnd != null) {
-					
 			}
 
 			//Сдвигаем дату следующего получения на конец отпуска
@@ -299,6 +295,12 @@ namespace workwear.Domain.Company
 				var moveTo = wearTime.FindEndOfExclusion(wantIssue.Value);
 				if(moveTo != null)
 					wantIssue = moveTo.Value.AddDays(1);
+			}
+			
+			if (ActiveNormItem?.NormCondition?.IssuanceStart != null && ActiveNormItem?.NormCondition?.IssuanceEnd != null) {
+				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(wantIssue.Value);
+				if (wantIssue < nextPeriod.Begin)
+					wantIssue = nextPeriod.Begin;
 			}
 
 			if(NextIssue != wantIssue)
