@@ -23,6 +23,7 @@ namespace workwear.Domain.Stock
 		private Transfer document;
 
 		[Display(Name = "Документ")]
+		[IgnoreHistoryTrace]
 		public virtual Transfer Document {
 			get { return document; }
 			set { SetField(ref document, value); }
@@ -47,6 +48,7 @@ namespace workwear.Domain.Stock
 
 		private WarehouseOperation warehouseOperation = new WarehouseOperation();
 		[Display(Name = "Операция на складе")]
+		[IgnoreHistoryTrace]
 		public virtual WarehouseOperation WarehouseOperation {
 			get { return warehouseOperation; }
 			set { SetField(ref warehouseOperation, value); }

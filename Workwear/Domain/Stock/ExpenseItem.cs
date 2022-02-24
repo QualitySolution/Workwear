@@ -30,6 +30,7 @@ namespace workwear.Domain.Stock
 		Expense expenseDoc;
 
 		[Display (Name = "Документ")]
+		[IgnoreHistoryTrace]
 		public virtual Expense ExpenseDoc {
 			get { return expenseDoc; }
 			set { SetField (ref expenseDoc, value, () => ExpenseDoc); }
@@ -77,6 +78,7 @@ namespace workwear.Domain.Stock
 		private EmployeeIssueOperation employeeIssueOperation;
 
 		[Display(Name = "Операция выдачи сотруднику")]
+		[IgnoreHistoryTrace]
 		public virtual EmployeeIssueOperation EmployeeIssueOperation
 		{
 			get { return employeeIssueOperation; }
@@ -86,6 +88,7 @@ namespace workwear.Domain.Stock
 		private SubdivisionIssueOperation subdivisionIssueOperation;
 
 		[Display(Name = "Операция выдачи на подразделение")]
+		[IgnoreHistoryTrace]
 		public virtual SubdivisionIssueOperation SubdivisionIssueOperation {
 			get { return subdivisionIssueOperation; }
 			set { SetField(ref subdivisionIssueOperation, value); }
@@ -93,6 +96,7 @@ namespace workwear.Domain.Stock
 
 		private WarehouseOperation warehouseOperation = new WarehouseOperation();
 		[Display(Name = "Операция на складе")]
+		[IgnoreHistoryTrace]
 		public virtual WarehouseOperation WarehouseOperation {
 			get { return warehouseOperation; }
 			set { SetField(ref warehouseOperation, value);}

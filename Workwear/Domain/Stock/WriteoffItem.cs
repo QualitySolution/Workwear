@@ -22,6 +22,7 @@ namespace workwear.Domain.Stock
 		private Writeoff document;
 
 		[Display(Name = "Документ списания")]
+		[IgnoreHistoryTrace]
 		public virtual Writeoff Document {
 			get { return document; }
 			set { SetField(ref document, value); }
@@ -46,6 +47,7 @@ namespace workwear.Domain.Stock
 		private EmployeeIssueOperation employeeWriteoffOperation;
 
 		[Display(Name = "Операция списания с сотрудника")]
+		[IgnoreHistoryTrace]
 		public virtual EmployeeIssueOperation EmployeeWriteoffOperation
 		{
 			get { return employeeWriteoffOperation; }
@@ -55,6 +57,7 @@ namespace workwear.Domain.Stock
 		private SubdivisionIssueOperation subdivisionWriteoffOperation;
 
 		[Display(Name = "Операция возврата от сотрудника")]
+		[IgnoreHistoryTrace]
 		public virtual SubdivisionIssueOperation SubdivisionWriteoffOperation {
 			get { return subdivisionWriteoffOperation; }
 			set { SetField(ref subdivisionWriteoffOperation, value); }
@@ -72,6 +75,7 @@ namespace workwear.Domain.Stock
 
 		private WarehouseOperation warehouseOperation;
 		[Display(Name = "Операция на складе")]
+		[IgnoreHistoryTrace]
 		public virtual WarehouseOperation WarehouseOperation {
 			get { return warehouseOperation; }
 			set { SetField(ref warehouseOperation, value); }
