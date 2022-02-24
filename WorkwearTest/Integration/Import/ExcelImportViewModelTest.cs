@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
@@ -74,6 +76,8 @@ namespace WorkwearTest.Integration.Import
 		[Test(Description = "Проверяем что без проблем можем загрузить файл формата со ОСМиБТ")]
 		public void EmployeesLoad_Vostok1c()
 		{
+			//В файле дата хранится в виде строки, поэтому для прохождения теста, нужна русская культура
+			Thread.CurrentThread.CurrentCulture =  CultureInfo.CreateSpecificCulture("ru-RU");
 			var navigation = Substitute.For<INavigationManager>();
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
