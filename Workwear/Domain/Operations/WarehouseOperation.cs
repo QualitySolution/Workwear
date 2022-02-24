@@ -20,6 +20,7 @@ namespace workwear.Domain.Operations
 		public virtual int Id { get; set; }
 
 		DateTime operationTime;
+		[Display(Name = "Время операции")]
 		public virtual DateTime OperationTime {
 			get { return operationTime; }
 			set { SetField(ref operationTime, value); }

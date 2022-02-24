@@ -26,6 +26,7 @@ namespace workwear.Domain.Operations
 
 		DateTime operationTime = DateTime.Now;
 
+		[Display(Name = "Время операции")]
 		public virtual DateTime OperationTime
 		{
 			get { return operationTime; }
