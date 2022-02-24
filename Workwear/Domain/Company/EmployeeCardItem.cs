@@ -287,6 +287,10 @@ namespace workwear.Domain.Company
 				wantIssue = Created.Date;
 			}
 
+			if (ActiveNormItem.NormCondition.IssuanceStart != null && ActiveNormItem.NormCondition.IssuanceEnd != null) {
+					
+			}
+
 			//Сдвигаем дату следующего получения на конец отпуска
 			if(EmployeeCard.Vacations.Any(v => v.BeginDate <= wantIssue && v.EndDate >= wantIssue)) {
 				var ranges = EmployeeCard.Vacations.Select(v => new DateRange(v.BeginDate, v.EndDate));

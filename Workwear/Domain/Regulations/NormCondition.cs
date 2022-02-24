@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
+using QS.Utilities.Dates;
 using workwear.Domain.Company;
 
 namespace workwear.Domain.Regulations
@@ -57,6 +58,18 @@ namespace workwear.Domain.Regulations
 			}
 		}
 
+		 public DateRange CalculateDatesNextPeriod() {
+		 	if (IssuanceStart is null || IssuanceEnd is null)
+		 		throw new ArgumentException("Даты периода не заданы");
+		 	var today = DateTime.Today;
+		    var start = new DateTime(today.Year, IssuanceStart.Value.Month, IssuanceStart.Value.Day);
+		    if (today > start)
+			    start = start.AddYears(1);
+		    var end = new DateTime(start.Year, IssuanceEnd.Value.Month, IssuanceEnd.Value.Day);
+		    if (start > end)
+			    end = end.AddYears(1);
+		    return new DateRange(start, end);
+		 }
 		#endregion
 	}
 
