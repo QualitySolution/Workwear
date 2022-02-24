@@ -281,7 +281,6 @@ namespace workwear.Domain.Company
 					}
 				}
 			}
-			if(wantIssue is null) return;
 			if(wantIssue == default(DateTime))
 			{
 				wantIssue = Created.Date;
