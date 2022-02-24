@@ -13,7 +13,7 @@ node {
       ])
    }
    stage('QSProjects') {
-      checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'QSProjects']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/QSProjects.git']]])
+      checkout([$class: 'GitSCM', branches: [[name: '*/release/1.6']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'QSProjects']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/QSProjects.git']]])
       sh 'nuget restore QSProjects/QSProjectsLib.sln'
    }
    stage('Gtk.DataBindings') {
