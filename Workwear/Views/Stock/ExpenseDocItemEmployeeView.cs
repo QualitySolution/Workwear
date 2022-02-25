@@ -122,7 +122,7 @@ namespace workwear.Views.Stock
 		private string GetRowColor(ExpenseItem item)
 		{
 			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(ViewModel.BaseParameters);
-			if(item.ProtectionTools?.Type.IssueType == IssueType.Сollective) 
+			if(item.ProtectionTools?.Type.IssueType == IssueType.Collective) 
 				return item.Amount > 0 ? "#7B3F00" : "Burlywood";
 			if(requiredIssue > 0 && item.Nomenclature == null)
 				return item.Amount == 0 ? "red" : "Dark red";

@@ -147,7 +147,7 @@ namespace workwear.Domain.Stock
 		[Display(Name = "Персональная")]
 		Personal,
 		[Display(Name = "Коллективная")]
-		Сollective
+		Collective
 	}
 
 	public class IssueTypeEnumType : NHibernate.Type.EnumStringType
