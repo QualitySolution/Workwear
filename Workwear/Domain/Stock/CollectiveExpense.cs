@@ -115,7 +115,7 @@ namespace workwear.Domain.Stock
 		public virtual void AddItems(EmployeeCard employee, BaseParameters baseParameters)
 		{
 			foreach(var item in employee.WorkwearItems) {
-				if(item.ProtectionTools?.Type.IssueType != IssueType.Сollective)
+				if(item.ProtectionTools?.Type.IssueType != IssueType.Collective)
 					continue;
 				AddItem(item, baseParameters);
 			}
