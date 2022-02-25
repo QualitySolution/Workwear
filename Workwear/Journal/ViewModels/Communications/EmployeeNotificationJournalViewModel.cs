@@ -120,7 +120,7 @@ namespace workwear.Journal.ViewModels.Communications
 					employees
 						.JoinAlias(() => itemAlias.ProtectionTools, () => toolsAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 						.JoinAlias(() => toolsAlias.Type, () => typesAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-						.Where(() => typesAlias.IssueType == IssueType.Сollective);
+						.Where(() => typesAlias.IssueType == IssueType.Collective);
 					break;
 			}
 
