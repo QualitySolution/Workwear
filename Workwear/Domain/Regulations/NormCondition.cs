@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
@@ -13,7 +14,7 @@ namespace workwear.Domain.Regulations
 		Genitive = "условия нормы"
 		)]
 	[HistoryTrace]
-	public class NormCondition : PropertyChangedBase, IDomainObject
+	public class NormCondition : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		public virtual int Id { get; set; }
 
@@ -71,6 +72,15 @@ namespace workwear.Domain.Regulations
 			      start = start.AddYears(-1);
 		    return new DateRange(start, end);
 		 }
+		#endregion
+		#region IValidatableObject implementation
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+		{
+			if(IssuanceStart != null && IssuanceEnd is null)
+				yield return new ValidationResult ("Если указана дата начала периода, то должна быть указана и дата окончания");
+			if(IssuanceStart is null && IssuanceEnd != null)
+				yield return new ValidationResult ("Если указана дата окончания периода, то должна быть указана и дата начала");
+		}
 		#endregion
 	}
 
