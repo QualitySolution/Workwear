@@ -24,7 +24,7 @@ namespace workwear.HMap
 			HasManyToMany<ProtectionTools>(x => x.ProtectionTools)
 				.Table("protection_tools_nomenclature")
 				.ParentKeyColumn("nomenclature_id")
-				.ChildKeyColumn("protection_tools_id").Cascade.All();
+				.ChildKeyColumn("protection_tools_id");
 		}
 	}
 }
