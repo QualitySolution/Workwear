@@ -307,7 +307,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnHelpActionActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("OpenDocumentation");
+		MainTelemetry.AddCount("OpenUserGuide");
 		try {
 			System.Diagnostics.Process.Start("user-guide.pdf");
 		}
@@ -695,5 +695,18 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionRequestSheetActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(RequestSheetViewModel));
+	}
+
+	protected void OnActionAdminGuideActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount("OpenAdminGuide");
+		try {
+			System.Diagnostics.Process.Start("admin-guide.pdf");
+		}
+		catch(System.ComponentModel.Win32Exception ex) {
+			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
+			$"При открытии PDF файла с документацией произошла ошибка:\n{ex.Message}\n" +
+				"Возможно на компьютере не установлена или неисправна программа для открыти PDF");
+		}
 	}
 }

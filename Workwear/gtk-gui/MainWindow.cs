@@ -139,6 +139,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionPay;
 
+	private global::Gtk.Action ActionAdminGuide;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -223,7 +225,7 @@ public partial class MainWindow
 		this.Action12 = new global::Gtk.Action("Action12", global::Mono.Unix.Catalog.GetString("Список по размерам"), null, null);
 		this.Action12.ShortLabel = global::Mono.Unix.Catalog.GetString("Список по размерам");
 		w1.Add(this.Action12, null);
-		this.helpAction = new global::Gtk.Action("helpAction", global::Mono.Unix.Catalog.GetString("Документация"), null, "gtk-help");
+		this.helpAction = new global::Gtk.Action("helpAction", global::Mono.Unix.Catalog.GetString("Руководство пользователя"), null, "gtk-help");
 		this.helpAction.ShortLabel = global::Mono.Unix.Catalog.GetString("Документация");
 		w1.Add(this.helpAction, null);
 		this.ActionHistory = new global::Gtk.Action("ActionHistory", global::Mono.Unix.Catalog.GetString("История версий"), null, "gtk-file");
@@ -384,6 +386,9 @@ public partial class MainWindow
 		this.ActionPay = new global::Gtk.Action("ActionPay", global::Mono.Unix.Catalog.GetString("Купить программу"), null, null);
 		this.ActionPay.ShortLabel = global::Mono.Unix.Catalog.GetString("Купить программу");
 		w1.Add(this.ActionPay, null);
+		this.ActionAdminGuide = new global::Gtk.Action("ActionAdminGuide", global::Mono.Unix.Catalog.GetString("Руководство администратора"), global::Mono.Unix.Catalog.GetString("Руководство системного администратора"), "gtk-index");
+		this.ActionAdminGuide.ShortLabel = global::Mono.Unix.Catalog.GetString("Руководство администратора");
+		w1.Add(this.ActionAdminGuide, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -432,16 +437,17 @@ public partial class MainWindow
 				"tion22\' action=\'Action22\'/><menuitem name=\'ActionAmountEmployeeGetWear\' action=\'" +
 				"ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear\' action=\'Ac" +
 				"tionAmountIssuedWear\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menui" +
-				"tem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionHistory\' action" +
-				"=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separato" +
-				"r/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenRe" +
-				"formal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><me" +
-				"nuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' ac" +
-				"tion=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'" +
-				"/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><men" +
-				"uitem name=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'Act" +
-				"ionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></" +
-				"menubar></ui>");
+				"tem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionAdminGuide\' act" +
+				"ion=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHistory\' action=\'Actio" +
+				"nHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><men" +
+				"uitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReformal\'" +
+				" action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuitem " +
+				"name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=\'A" +
+				"ctionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><menu" +
+				"item name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><menuitem n" +
+				"ame=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'ActionSN\'/" +
+				"><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar" +
+				"></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -451,7 +457,6 @@ public partial class MainWindow
 		w2.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.hbuttonbox1 = new global::Gtk.HButtonBox();
-		this.hbuttonbox1.Name = "hbuttonbox1";
 		this.vbox1.Add(this.hbuttonbox1);
 		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbuttonbox1]));
 		w3.Position = 1;
@@ -644,5 +649,6 @@ public partial class MainWindow
 		this.ActionEmployeeLoad.Activated += new global::System.EventHandler(this.OnActionEmployeeLoadActivated);
 		this.ActionMaxizizeOnStart.Toggled += new global::System.EventHandler(this.OnActionMaxizizeOnStartToggled);
 		this.ActionPay.Activated += new global::System.EventHandler(this.OnActionPayActivated);
+		this.ActionAdminGuide.Activated += new global::System.EventHandler(this.OnActionAdminGuideActivated);
 	}
 }

@@ -5010,7 +5010,7 @@
       </action>
       <action id="helpAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Документация</property>
+        <property name="Label" translatable="yes">Руководство пользователя</property>
         <property name="ShortLabel" translatable="yes">Документация</property>
         <property name="StockId">gtk-help</property>
         <signal name="Activated" handler="OnHelpActionActivated" />
@@ -5363,6 +5363,14 @@
         <property name="ShortLabel" translatable="yes">Купить программу</property>
         <signal name="Activated" handler="OnActionPayActivated" />
       </action>
+      <action id="ActionAdminGuide">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Руководство администратора</property>
+        <property name="ShortLabel" translatable="yes">Руководство администратора</property>
+        <property name="StockId">gtk-index</property>
+        <property name="Tooltip" translatable="yes">Руководство системного администратора</property>
+        <signal name="Activated" handler="OnActionAdminGuideActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -5444,6 +5452,8 @@
               </node>
               <node type="Menu" action="ActionHelp">
                 <node type="Menuitem" action="helpAction" />
+                <node type="Menuitem" action="ActionAdminGuide" />
+                <node type="Separator" />
                 <node type="Menuitem" action="ActionHistory" />
                 <node type="Menuitem" action="ActionUpdate" />
                 <node type="Separator" />
