@@ -281,7 +281,6 @@ namespace workwear.Domain.Company
 					}
 				}
 			}
-
 			if(wantIssue == default(DateTime))
 			{
 				wantIssue = Created.Date;
@@ -295,6 +294,12 @@ namespace workwear.Domain.Company
 				var moveTo = wearTime.FindEndOfExclusion(wantIssue.Value);
 				if(moveTo != null)
 					wantIssue = moveTo.Value.AddDays(1);
+			}
+			
+			if (ActiveNormItem?.NormCondition?.IssuanceStart != null && ActiveNormItem?.NormCondition?.IssuanceEnd != null) {
+				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(wantIssue.Value);
+				if (wantIssue < nextPeriod.Begin)
+					wantIssue = nextPeriod.Begin;
 			}
 
 			if(NextIssue != wantIssue)

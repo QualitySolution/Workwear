@@ -1,4 +1,6 @@
-﻿using Autofac;
+﻿using System;
+using System.Globalization;
+using Autofac;
 using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
@@ -33,16 +35,33 @@ namespace workwear.Journal.ViewModels.Regulations
 				   .Select(() => normConditionAlias.Id).WithAlias(() => resultAlias.Id)
 				   .Select(() => normConditionAlias.Name).WithAlias(() => resultAlias.Name)
 				   .Select(() => normConditionAlias.SexNormCondition).WithAlias(() => resultAlias.Sex)
+				   .Select(() => normConditionAlias.IssuanceStart).WithAlias(() => resultAlias.DateStart)
+				   .Select(() => normConditionAlias.IssuanceEnd).WithAlias(() => resultAlias.DateEnd)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<NormConditionJournalNode>());
 		}
 	}
 }
-	public class NormConditionJournalNode
-	{
-		public int Id { get; set; }
+public class NormConditionJournalNode
+{
+	static CultureInfo culture = CultureInfo.GetCultureInfo("ru-RU");
 
-		public string Name { get; set; }
+	public int Id { get; set; }
 
-		public SexNormCondition Sex { get; set; }
+	public string Name { get; set; }
+
+	public SexNormCondition Sex { get; set; }
+
+	public DateTime? DateStart { get; set; }
+
+	public string DateStringStart {
+		get => DateStart is null ? "" : DateStart.Value.ToString("m", culture); 
 	}
+
+	public string DateStringEnd {
+		get => DateEnd is null ? "" : DateEnd.Value.ToString("m", culture);
+	}
+
+	public DateTime? DateEnd { get; set; }
+
+}

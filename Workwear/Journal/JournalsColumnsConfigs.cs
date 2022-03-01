@@ -133,6 +133,8 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<NormConditionJournalNode>.Create()
 				.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 				.AddColumn("Ограничение по полу").AddTextRenderer(node => node.Sex.GetEnumTitle())
+				.AddColumn("Дата начала периода").AddTextRenderer(node => node.DateStringStart)
+				.AddColumn("Дата окончания периода").AddTextRenderer(node => node.DateStringEnd)
 				.Finish()
 			);
 
