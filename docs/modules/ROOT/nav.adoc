@@ -13,9 +13,9 @@
 .Руководство администратора
 * xref:requirements.adoc[Системные требования]
 * xref:install.adoc[Установка]
-* xref:update.adoc[Обновление]
-* xref:users.adoc[Работа с пользователями]
 * xref:cloud.adoc[Облачные сервисы]
-* xref:transfer_base.adoc[Перенос базы на другой компьютер]
+* xref:users.adoc[Работа с пользователями]
+* xref:update.adoc[Обновление]
 * xref:technical.adoc[Технические подробности]
+* xref:transfer_base.adoc[Перенос базы на другой компьютер]
 * xref:problems.adoc[Решение проблем]

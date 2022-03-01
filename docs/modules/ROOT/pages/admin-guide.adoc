@@ -1,0 +1,35 @@
+:title-separator: {sp}|
+= QS: Спецодежда и имущество | Руководство системного администратора
+Quality Solution 2022
+версия 2.5
+:organization: Quality Solution
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:chapter-label:
+:toc-title: Содержание
+:toclevels: 3
+:imagesdir: ../images
+
+:sectnums:
+
+:leveloffset: 1
+
+include::requirements.adoc[]
+
+include::install.adoc[]
+
+include::cloud.adoc[]
+
+include::users.adoc[]
+
+include::update.adoc[]
+
+include::technical.adoc[]
+
+include::transfer_base.adoc[]
+
+include::problems.adoc[]
+
+:leveloffset: 0
