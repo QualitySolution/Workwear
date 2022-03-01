@@ -55,7 +55,7 @@ image::setup-components.png[]
 ====
 
 Инструкция по установке MySQL <<MySQL,ниже>>.
-
+[#MariaDB]
 === Установка сервера MariaDB
 
 Скачать дистрибутивы MariaDB можно с http://workwear.qsolution.ru/skachat-programmu/[нашего сайта] или с https://mariadb.com/downloads/[официального сайта].
