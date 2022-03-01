@@ -22,11 +22,11 @@ image::setup-components.png[]
 
 [%autowidth, cols=">,<"]
 |===
-|Сервер:|demo.qsolution.ru
+|Сервер|demo.qsolution.ru
 
-|Логин:|demo
+|Логин|demo
 
-|Пароль:|demo
+|Пароль|demo
 |===
 
 [#QS-Cloude]
