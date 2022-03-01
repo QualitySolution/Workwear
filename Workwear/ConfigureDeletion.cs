@@ -85,8 +85,6 @@ namespace workwear
 				.AddClearDependence<Post>(x => x.Profession);
 
 			DeleteConfig.AddHibernateDeleteInfo<ProtectionTools>()
-				.AddRemoveFromDependence<ProtectionTools>(x => x.Analogs)
-				.AddRemoveFromDependence<Nomenclature>(x => x.ProtectionTools)
 				.AddDeleteDependence<EmployeeCardItem>(x => x.ProtectionTools)
 				.AddDeleteDependence<NormItem>(x => x.ProtectionTools)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.ProtectionTools)
@@ -119,7 +117,6 @@ namespace workwear
 				.AddClearDependence<ItemsType>(x => x.Units);
 
 			DeleteConfig.AddHibernateDeleteInfo<Nomenclature> ()
-				.AddRemoveFromDependence<ProtectionTools>(x => x.Nomenclatures)
 				.AddDeleteDependence<ExpenseItem> (x => x.Nomenclature)
 				.AddDeleteDependence<IncomeItem> (x => x.Nomenclature)
 				.AddDeleteDependence<WriteoffItem> (x => x.Nomenclature)
