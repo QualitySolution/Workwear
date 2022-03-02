@@ -513,15 +513,16 @@ public partial class MainWindow
 				"eeGetWear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionAmountIss" +
 				"uedWear\' action=\'ActionAmountIssuedWear\'/></menu><menu name=\'ActionHelp\' action=" +
 				"\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'Ac" +
-				"tionHistory\' action=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'Actio" +
-				"nUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem" +
-				" name=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' ac" +
-				"tion=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'Act" +
-				"ionOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' act" +
-				"ion=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></me" +
-				"nu><separator/><menuitem name=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'Ac" +
-				"tionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'abou" +
-				"tAction\'/></menu></menubar></ui>");
+				"tionAdminGuide\' action=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHis" +
+				"tory\' action=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate" +
+				"\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'" +
+				"ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'A" +
+				"ction38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdno" +
+				"klasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'Ac" +
+				"tionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><sep" +
+				"arator/><menuitem name=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\'" +
+				" action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction" +
+				"\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
