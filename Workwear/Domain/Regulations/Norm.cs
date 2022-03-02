@@ -5,6 +5,7 @@ using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 
@@ -13,8 +14,10 @@ namespace workwear.Domain.Regulations
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "нормы выдачи",
 		Nominative = "норма выдачи",
-		PrepositionalPlural = "нормах выдачи"
+		PrepositionalPlural = "нормах выдачи",
+		Genitive = "нормы выдачи"
 	)]
+	[HistoryTrace]
 	public class Norm : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();

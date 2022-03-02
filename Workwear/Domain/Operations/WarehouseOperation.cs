@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using QS.Utilities.Numeric;
 using workwear.Domain.Stock;
 
@@ -9,14 +10,17 @@ namespace workwear.Domain.Operations
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "складские операции",
-		Nominative = "складская операция"
+		Nominative = "складская операция",
+		Genitive = "складской операции"
 	)]
+	[HistoryTrace]
 	public class WarehouseOperation : PropertyChangedBase, IDomainObject
 	{
 
 		public virtual int Id { get; set; }
 
 		DateTime operationTime;
+		[Display(Name = "Время операции")]
 		public virtual DateTime OperationTime {
 			get { return operationTime; }
 			set { SetField(ref operationTime, value); }

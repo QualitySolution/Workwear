@@ -84,6 +84,10 @@
       <Project>{c01ae5a4-3cff-4c7b-884d-45b07acde761}</Project>
       <Name>QS.Project.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Project.Desktop\QS.Project.Desktop.csproj">
+      <Project>{5ef2a7da-3886-4809-95df-880bd783a211}</Project>
+      <Name>QS.Project.Desktop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QS.Testing\QS.Testing.csproj">
       <Project>{BA8E8ACF-ECB0-4617-9E09-D1BE93992D0E}</Project>
       <Name>QS.Testing</Name>

@@ -1,7 +1,7 @@
 :title-separator: {sp}|
 = QS: Спецодежда и имущество | Руководство пользователя
 Quality Solution 2022
-версия 2.6
+версия 2.7
 :organization: Quality Solution
 :doctype: book
 :sectnums:
@@ -17,14 +17,6 @@ Quality Solution 2022
 :leveloffset: 1
 
 include::introduction.adoc[]
-
-include::requirements.adoc[]
-
-include::install.adoc[]
-
-include::users.adoc[]
-
-include::cloud.adoc[]
 
 include::interface.adoc[]
 
@@ -45,7 +37,5 @@ include::settings.adoc[]
 include::manipulation.adoc[]
 
 include::import.adoc[]
-
-include::technical.adoc[]
 
 :leveloffset: 0

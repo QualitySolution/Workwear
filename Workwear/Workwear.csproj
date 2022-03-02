@@ -120,6 +120,7 @@
     <EmbeddedResource Include="icon\buttons\menu.png" />
     <EmbeddedResource Include="icon\buttons\arrows.png" />
     <EmbeddedResource Include="icon\toolbar\mail.png" />
+    <EmbeddedResource Include="icon\menu\logs.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -506,6 +507,14 @@
       <Project>{1bf2a638-420d-456c-96a7-36873a0fb894}</Project>
       <Name>Gamma.Utilities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.HistoryLog.Gtk\QS.HistoryLog.Gtk.csproj">
+      <Project>{1c3b49fc-372c-46f7-995f-eeb44474e2de}</Project>
+      <Name>QS.HistoryLog.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.HistoryLog\QS.HistoryLog.csproj">
+      <Project>{3d3d6700-c625-46c5-9702-5f010a8dd035}</Project>
+      <Name>QS.HistoryLog</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QS.Project.Desktop\QS.Project.Desktop.csproj">
       <Project>{5ef2a7da-3886-4809-95df-880bd783a211}</Project>
       <Name>QS.Project.Desktop</Name>
@@ -625,6 +634,10 @@
     <ProjectReference Include="..\..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj">
       <Project>{BC159BA7-EF22-4800-AC34-DE4B2B386AAE}</Project>
       <Name>QS.Updater.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.HistoryLog.Desktop\QS.HistoryLog.Desktop.csproj">
+      <Project>{8730fbe6-065a-47ec-9c1b-70aa3503f140}</Project>
+      <Name>QS.HistoryLog.Desktop</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,13 +1,20 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
+using QS.Utilities.Dates;
 using workwear.Domain.Company;
 
 namespace workwear.Domain.Regulations
 {
 	[Appellative(Gender = GrammaticalGender.Neuter,
 		NominativePlural = "условия нормы",
-		Nominative = "условие нормы")]
-	public class NormCondition : PropertyChangedBase, IDomainObject
+		Nominative = "условие нормы",
+		Genitive = "условия нормы"
+		)]
+	[HistoryTrace]
+	public class NormCondition : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		public virtual int Id { get; set; }
 
@@ -24,6 +31,19 @@ namespace workwear.Domain.Regulations
 			set => SetField(ref sex, value);
 		}
 
+		private DateTime? issuanceStart;
+		public virtual DateTime? IssuanceStart {
+			get => issuanceStart;
+			set => SetField(ref issuanceStart, value);
+		}
+
+		private DateTime? issuanceEnd;
+		public virtual DateTime? IssuanceEnd {
+			get => issuanceEnd;
+			set => SetField(ref issuanceEnd, value);
+		}
+
+
 		#region Методы 
 
 		public virtual bool MatchesForEmployee(EmployeeCard employee)
@@ -39,6 +59,28 @@ namespace workwear.Domain.Regulations
 			}
 		}
 
+		 public virtual DateRange CalculateCurrentPeriod(DateTime dateFrom) {
+		 	if (IssuanceStart is null || IssuanceEnd is null)
+		 		throw new ArgumentException("В условиях нормы не заданы даты");
+		    
+		    var wantYear = dateFrom > DateTime.Today ? dateFrom : DateTime.Today;
+		    var end = new DateTime(wantYear.Year, IssuanceEnd.Value.Month, IssuanceEnd.Value.Day);
+		    if (end < wantYear)
+			    end = end.AddYears(1);
+		    var start = new DateTime(end.Year, IssuanceStart.Value.Month, IssuanceStart.Value.Day);
+		    if (start > end)
+			      start = start.AddYears(-1);
+		    return new DateRange(start, end);
+		 }
+		#endregion
+		#region IValidatableObject implementation
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+		{
+			if(IssuanceStart != null && IssuanceEnd is null)
+				yield return new ValidationResult ("Если указана дата начала периода, то должна быть указана и дата окончания");
+			if(IssuanceStart is null && IssuanceEnd != null)
+				yield return new ValidationResult ("Если указана дата окончания периода, то должна быть указана и дата начала");
+		}
 		#endregion
 	}
 

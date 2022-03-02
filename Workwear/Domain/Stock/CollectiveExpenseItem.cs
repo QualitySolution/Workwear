@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
@@ -14,7 +15,10 @@ namespace workwear.Domain.Stock
 {
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки коллективной выдачи",
-		Nominative = "строка коллективной выдачи")]
+		Nominative = "строка коллективной выдачи",
+		Genitive = "строки коллективной выдачи"
+		)]
+	[HistoryTrace]
 	public class CollectiveExpenseItem : PropertyChangedBase, IDomainObject
 	{
 		#region Сохраняемые свойства
@@ -24,6 +28,7 @@ namespace workwear.Domain.Stock
 		CollectiveExpense document;
 
 		[Display (Name = "Документ")]
+		[IgnoreHistoryTrace]
 		public virtual CollectiveExpense Document {
 			get { return document; }
 			set { SetField (ref document, value, () => Document); }
@@ -71,6 +76,7 @@ namespace workwear.Domain.Stock
 		private EmployeeIssueOperation employeeIssueOperation;
 
 		[Display(Name = "Операция выдачи сотруднику")]
+		[IgnoreHistoryTrace]
 		public virtual EmployeeIssueOperation EmployeeIssueOperation
 		{
 			get { return employeeIssueOperation; }
@@ -79,6 +85,7 @@ namespace workwear.Domain.Stock
 
 		private WarehouseOperation warehouseOperation = new WarehouseOperation();
 		[Display(Name = "Операция на складе")]
+		[IgnoreHistoryTrace]
 		public virtual WarehouseOperation WarehouseOperation {
 			get { return warehouseOperation; }
 			set { SetField(ref warehouseOperation, value);}

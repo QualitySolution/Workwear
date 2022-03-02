@@ -99,6 +99,10 @@ namespace Workwear.Sql
 					DropIndexIfExist(connection, "operation_issued_by_employee", "fk_operation_issued_by_employee_4_idx");
 					DropIndexIfExist(connection, "operation_issued_by_employee", "fk_operation_issued_by_employee_6_idx");
 				});
+			configuration.AddMicroUpdate(
+				new Version(2, 5),
+				new Version(2, 5, 1),
+				"Workwear.Sql.Scripts.2.5.1.sql");
 
 			return configuration;
 		}

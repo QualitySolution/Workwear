@@ -25,12 +25,12 @@ namespace workwear.HibernateMapping.Regulations
 			HasManyToMany<ProtectionTools>(x => x.Analogs)
 			.Table("protection_tools_replacement")
 			.ParentKeyColumn("protection_tools_id")
-			.ChildKeyColumn("protection_tools_analog_id").Cascade.All();
+			.ChildKeyColumn("protection_tools_analog_id");
 
 			HasManyToMany<Nomenclature>(x => x.Nomenclatures)
 			.Table("protection_tools_nomenclature")
 			.ParentKeyColumn("protection_tools_id")
-			.ChildKeyColumn("nomenclature_id").Cascade.All();
+			.ChildKeyColumn("nomenclature_id");
 		}
 	}
 }

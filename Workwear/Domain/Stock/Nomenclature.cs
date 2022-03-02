@@ -8,12 +8,16 @@ using Workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Measurements;
 using Workwear.Measurements;
+using QS.HistoryLog;
 
 namespace workwear.Domain.Stock
 {
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "номенклатура",
-		Nominative = "номенклатура")]
+		Nominative = "номенклатура",
+		Genitive = "номенклатуры"
+		)]
+	[HistoryTrace]
 	public class Nomenclature: PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства

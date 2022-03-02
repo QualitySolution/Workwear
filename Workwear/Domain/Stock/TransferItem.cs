@@ -2,13 +2,17 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using workwear.Domain.Operations;
 
 namespace workwear.Domain.Stock
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
-	NominativePlural = "строки перемещения",
-	Nominative = "строка перемещения")]
+		NominativePlural = "строки перемещения",
+		Nominative = "строка перемещения",
+		Genitive = "строки перемещения"
+		)]
+	[HistoryTrace]
 	public class TransferItem : PropertyChangedBase, IDomainObject
 	{
 
@@ -19,6 +23,7 @@ namespace workwear.Domain.Stock
 		private Transfer document;
 
 		[Display(Name = "Документ")]
+		[IgnoreHistoryTrace]
 		public virtual Transfer Document {
 			get { return document; }
 			set { SetField(ref document, value); }
@@ -43,6 +48,7 @@ namespace workwear.Domain.Stock
 
 		private WarehouseOperation warehouseOperation = new WarehouseOperation();
 		[Display(Name = "Операция на складе")]
+		[IgnoreHistoryTrace]
 		public virtual WarehouseOperation WarehouseOperation {
 			get { return warehouseOperation; }
 			set { SetField(ref warehouseOperation, value); }

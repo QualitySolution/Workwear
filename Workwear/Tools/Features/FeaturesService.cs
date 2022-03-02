@@ -89,6 +89,8 @@ namespace workwear.Tools.Features
 					}
 					var functionLists = cloudClientService.GetAvailableFeatures(dataBaseInfo.BaseGuid.Value.ToString());
 					return functionLists.Any(x => x.Name == "wear_lk");
+				case WorkwearFeature.HistoryLog:
+					return ProductEdition == 2 || ProductEdition == 3;
 				default:
 					return false;
 			}
@@ -113,5 +115,7 @@ namespace workwear.Tools.Features
 		EmployeeLk,
 		[Display(Name = "Комуникация с сотрудниками")]
 		Communications,
+		[Display(Name = "История изменений")]
+		HistoryLog
 	}
 }

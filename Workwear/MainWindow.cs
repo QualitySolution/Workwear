@@ -11,6 +11,8 @@ using QS.BusinessCommon.Domain;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
+using QS.HistoryLog.ViewModels;
 using QS.Navigation;
 using QS.NewsFeed;
 using QS.NewsFeed.Views;
@@ -161,6 +163,8 @@ public partial class MainWindow : Gtk.Window
 
 		FeaturesService = AutofacScope.Resolve<FeaturesService>();
 		DisableFeatures();
+
+		HistoryMain.Enable();
 	}
 
 	private void CreateDefaultWarehouse()
@@ -185,6 +189,7 @@ public partial class MainWindow : Gtk.Window
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
+		ActionHistory.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
 	}
 	#endregion
 
@@ -322,7 +327,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnHelpActionActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("OpenDocumentation");
+		MainTelemetry.AddCount("OpenUserGuide");
 		try {
 			System.Diagnostics.Process.Start("user-guide.pdf");
 		}
@@ -721,6 +726,19 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(RequestSheetViewModel));
 	}
 
+	protected void OnActionAdminGuideActivated(object sender, EventArgs e)
+	{
+		MainTelemetry.AddCount("OpenAdminGuide");
+		try {
+			System.Diagnostics.Process.Start("admin-guide.pdf");
+		}
+		catch(System.ComponentModel.Win32Exception ex) {
+			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
+			$"При открытии PDF файла с документацией произошла ошибка:\n{ex.Message}\n" +
+				"Возможно на компьютере не установлена или неисправна программа для открыти PDF");
+		}
+	}
+
 	protected void OnActionReplaceEntityActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<ReplaceEntityViewModel>(null);
@@ -734,5 +752,10 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionConversatoinsActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<EmployeeNotificationJournalViewModel>(null);
+	}
+
+	protected void OnShowHistoryLogActivated(object sender, EventArgs e)
+	{
+		NavigationManager.OpenViewModel<HistoryViewModel>(null);
 	}
 }

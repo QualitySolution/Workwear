@@ -4,13 +4,17 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using workwear.Domain.Stock;
 
 namespace workwear.Domain.Regulations
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "номенклатуры нормы",
-		Nominative = "номеклатура нормы")]
+		Nominative = "номеклатура нормы",
+		Genitive = "номенклатуры нормы"
+		)]
+	[HistoryTrace]
 	public class ProtectionTools : PropertyChangedBase, IDomainObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();

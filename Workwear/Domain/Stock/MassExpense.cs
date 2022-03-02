@@ -7,6 +7,7 @@ using Gamma.Utilities;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Statements;
@@ -19,9 +20,12 @@ using Workwear.Measurements;
 namespace workwear.Domain.Stock
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
-	NominativePlural = "выдачи списком",
-	Nominative = "выдача списком",
-	PrepositionalPlural = "выдаче списком")]
+		NominativePlural = "выдачи списком",
+		Nominative = "выдача списком",
+		PrepositionalPlural = "выдаче списком",
+		Genitive ="выдачи списком"
+		)]
+	[HistoryTrace]
 	public class MassExpense : StockDocument, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();

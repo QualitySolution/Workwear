@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using QS.Utilities.Dates;
 using QSReport;
 using workwear.Domain.Company;
@@ -14,7 +15,10 @@ namespace workwear.Domain.Statements
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "ведомости на выдачу",
-		Nominative = "ведомость на выдачу")]
+		Nominative = "ведомость на выдачу",
+		Genitive = "ведомости на выдачу"
+		)]
+	[HistoryTrace]
 	public class IssuanceSheet : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства

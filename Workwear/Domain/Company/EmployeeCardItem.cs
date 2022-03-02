@@ -16,12 +16,16 @@ using workwear.Repository.Stock;
 using workwear.Tools;
 using workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using QS.HistoryLog;
 
 namespace workwear.Domain.Company
 {
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки нормы карточки",
-		Nominative = "строка нормы карточки")]
+		Nominative = "строка нормы карточки",
+		Genitive = "строки нормы карточки"
+		)]
+	[HistoryTrace]
 	public class EmployeeCardItem : PropertyChangedBase, IDomainObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
@@ -277,7 +281,6 @@ namespace workwear.Domain.Company
 					}
 				}
 			}
-
 			if(wantIssue == default(DateTime))
 			{
 				wantIssue = Created.Date;
@@ -291,6 +294,12 @@ namespace workwear.Domain.Company
 				var moveTo = wearTime.FindEndOfExclusion(wantIssue.Value);
 				if(moveTo != null)
 					wantIssue = moveTo.Value.AddDays(1);
+			}
+			
+			if (ActiveNormItem?.NormCondition?.IssuanceStart != null && ActiveNormItem?.NormCondition?.IssuanceEnd != null) {
+				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(wantIssue.Value);
+				if (wantIssue < nextPeriod.Begin)
+					wantIssue = nextPeriod.Begin;
 			}
 
 			if(NextIssue != wantIssue)

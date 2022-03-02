@@ -4,6 +4,7 @@ using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using QS.Utilities.Dates;
 using QS.Utilities.Numeric;
 using workwear.Domain.Company;
@@ -16,8 +17,10 @@ namespace workwear.Domain.Operations
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "операции выдачи сотруднику",
-		Nominative = "операция выдачи сотруднику"
+		Nominative = "операция выдачи сотруднику",
+		Genitive ="операции выдачи сотруднику"
 	)]
+	[HistoryTrace]
 	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -26,6 +29,7 @@ namespace workwear.Domain.Operations
 
 		DateTime operationTime = DateTime.Now;
 
+		[Display(Name = "Время операции")]
 		public virtual DateTime OperationTime
 		{
 			get { return operationTime; }
