@@ -416,6 +416,16 @@ namespace workwear.Domain.Company
 				if(result.RowCount()>0)
 					yield return new ValidationResult("Табельный номер должен быть уникальным", new[] { this.GetPropertyName(o => o.PersonnelNumber) });
 			}
+
+			if(!String.IsNullOrEmpty(CardNumber)) {
+
+				var result = UoW.Session.QueryOver<EmployeeCard>()
+					.Where(x => x.CardNumber == CardNumber);
+				if(Id > 0)
+					result.WhereNot(x => x.Id == Id);
+				if(result.RowCount() > 0)
+					yield return new ValidationResult($"Номер карточки {CardNumber} должен быть уникальным", new[] { this.GetPropertyName(o => o.CardNumber) });
+			}
 		}
 
 		#endregion

@@ -153,6 +153,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionPay;
 
+	private global::Gtk.Action ActionAdminGuide;
+
 	private global::Gtk.Action ActionReplaceEntity;
 
 	private global::Gtk.Action ActionStockMovements;
@@ -247,7 +249,7 @@ public partial class MainWindow
 		this.Action12 = new global::Gtk.Action("Action12", global::Mono.Unix.Catalog.GetString("Список по размерам"), null, null);
 		this.Action12.ShortLabel = global::Mono.Unix.Catalog.GetString("Список по размерам");
 		w1.Add(this.Action12, null);
-		this.helpAction = new global::Gtk.Action("helpAction", global::Mono.Unix.Catalog.GetString("Документация"), null, "gtk-help");
+		this.helpAction = new global::Gtk.Action("helpAction", global::Mono.Unix.Catalog.GetString("Руководство пользователя"), null, "gtk-help");
 		this.helpAction.ShortLabel = global::Mono.Unix.Catalog.GetString("Документация");
 		w1.Add(this.helpAction, null);
 		this.ActionHistory = new global::Gtk.Action("ActionHistory", global::Mono.Unix.Catalog.GetString("История версий"), null, "gtk-file");
@@ -429,6 +431,9 @@ public partial class MainWindow
 		this.ActionPay = new global::Gtk.Action("ActionPay", global::Mono.Unix.Catalog.GetString("Купить программу"), null, null);
 		this.ActionPay.ShortLabel = global::Mono.Unix.Catalog.GetString("Купить программу");
 		w1.Add(this.ActionPay, null);
+		this.ActionAdminGuide = new global::Gtk.Action("ActionAdminGuide", global::Mono.Unix.Catalog.GetString("Руководство администратора"), global::Mono.Unix.Catalog.GetString("Руководство системного администратора"), "gtk-index");
+		this.ActionAdminGuide.ShortLabel = global::Mono.Unix.Catalog.GetString("Руководство администратора");
+		w1.Add(this.ActionAdminGuide, null);
 		this.ActionReplaceEntity = new global::Gtk.Action("ActionReplaceEntity", global::Mono.Unix.Catalog.GetString("Замена ссылок"), null, null);
 		this.ActionReplaceEntity.ShortLabel = global::Mono.Unix.Catalog.GetString("Замена ссылок");
 		w1.Add(this.ActionReplaceEntity, null);
@@ -520,7 +525,6 @@ public partial class MainWindow
 		w2.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.hbuttonbox1 = new global::Gtk.HButtonBox();
-		this.hbuttonbox1.Name = "hbuttonbox1";
 		this.vbox1.Add(this.hbuttonbox1);
 		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbuttonbox1]));
 		w3.Position = 1;
@@ -716,6 +720,7 @@ public partial class MainWindow
 		this.ActionNotIssuedSheetDetail.Activated += new global::System.EventHandler(this.OnActionNotIssuedSheetDetailActivated);
 		this.ActionNotIssuedSheetSummary.Activated += new global::System.EventHandler(this.OnActionNotIssuedSheetSummaryActivated);
 		this.ActionPay.Activated += new global::System.EventHandler(this.OnActionPayActivated);
+		this.ActionAdminGuide.Activated += new global::System.EventHandler(this.OnActionAdminGuideActivated);
 		this.ActionReplaceEntity.Activated += new global::System.EventHandler(this.OnActionReplaceEntityActivated);
 		this.ActionStockMovements.Activated += new global::System.EventHandler(this.OnActionStockMovementsActivated);
 		this.ActionConditionNorm.Activated += new global::System.EventHandler(this.OnActionConditionNormsActivated);

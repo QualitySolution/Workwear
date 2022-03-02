@@ -6,7 +6,7 @@ namespace workwear.Domain.Company
 {
 	[Appellative (Gender = GrammaticalGender.Neuter,
 		NominativePlural = "должностные лица",
-		Nominative = "должносное лицо")]
+		Nominative = "должностное лицо")]
 	public class Leader : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства

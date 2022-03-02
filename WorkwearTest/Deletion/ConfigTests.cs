@@ -7,7 +7,9 @@ using QS.DomainModel.Entity.EntityPermissions.EntityExtendedPermission;
 using QS.Project.Domain;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
+using workwear.Domain.Regulations;
 using workwear.Domain.Statements;
+using workwear.Domain.Stock;
 
 namespace WorkwearTest.Deletion
 {
@@ -33,6 +35,10 @@ namespace WorkwearTest.Deletion
 			AddIgnoredProperty<SubdivisionIssueOperation>(x => x.WarehouseOperation, "Является лиш дополнительной сылкой на операцию. И скорей всего и так вместе будет удалятся за счет других ссылок.");
 			AddIgnoredProperty<EmployeeCardItem>(x => x.ActiveNormItem, "Должно удалятся более сложным способом, а именно через обновление потребностей.");
 			AddIgnoredProperty<IssuanceSheetItem>(x => x.IssueOperation, "Является дополнительной ссылкой на операцию, а не основной, поэтому не должно удалять операцию.");
+			
+			AddIgnoredCollection<ProtectionTools>(x => x.Nomenclatures, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
+			AddIgnoredCollection<ProtectionTools>(x => x.Analogs, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
+			AddIgnoredCollection<Nomenclature>(x => x.ProtectionTools, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
 		}
 
 		public new static IEnumerable AllDeleteItems => DeleteConfigTestBase.AllDeleteItems;

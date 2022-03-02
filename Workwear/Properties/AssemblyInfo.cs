@@ -8,7 +8,7 @@ using QS.Project.Versioning;
 #if DEBUG
 [assembly: AssemblyBetaBuild]
 #endif
-[assembly: AssemblyDescription("Программа позволяет вести учет внутреннего склада спецодежды и имущества выдаваемого сотрудникам.")]
+[assembly: AssemblyDescription("Программа позволяет вести учет спецодежды выдаваемого сотрудникам предприятия.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]
 [assembly: AssemblyProductCode(2)]
