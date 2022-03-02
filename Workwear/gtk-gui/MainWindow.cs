@@ -507,15 +507,16 @@ public partial class MainWindow
 				"\'ActionAmountEmployeeGetWear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem na" +
 				"me=\'ActionAmountIssuedWear\' action=\'ActionAmountIssuedWear\'/></menu><menu name=\'" +
 				"ActionHelp\' action=\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/" +
-				"><menuitem name=\'ActionHistory\' action=\'ActionHistory\'/><menuitem name=\'ActionUp" +
-				"date\' action=\'ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'Act" +
-				"ionSite\'/><menuitem name=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu" +
-				" name=\'Action38\' action=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/>" +
-				"<menuitem name=\'ActionOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=" +
-				"\'ActionTwitter\' action=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'A" +
-				"ctionYouTube\'/></menu><separator/><menuitem name=\'ActionPay\' action=\'ActionPay\'/" +
-				"><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutA" +
-				"ction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"><menuitem name=\'ActionAdminGuide\' action=\'ActionAdminGuide\'/><separator/><menui" +
+				"tem name=\'ActionHistory\' action=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' a" +
+				"ction=\'ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite" +
+				"\'/><menuitem name=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu name=\'" +
+				"Action38\' action=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuit" +
+				"em name=\'ActionOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'Action" +
+				"Twitter\' action=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYo" +
+				"uTube\'/></menu><separator/><menuitem name=\'ActionPay\' action=\'ActionPay\'/><menui" +
+				"tem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' " +
+				"action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -525,6 +526,7 @@ public partial class MainWindow
 		w2.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.hbuttonbox1 = new global::Gtk.HButtonBox();
+		this.hbuttonbox1.Name = "hbuttonbox1";
 		this.vbox1.Add(this.hbuttonbox1);
 		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbuttonbox1]));
 		w3.Position = 1;
