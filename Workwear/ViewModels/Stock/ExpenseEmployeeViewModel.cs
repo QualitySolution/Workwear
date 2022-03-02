@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -110,6 +110,9 @@ namespace workwear.ViewModels.Stock
 		private void FillUnderreceived()
 		{
 			Entity.ObservableItems.Clear();
+
+			if(Entity.Employee == null)
+				return;
 
 			Entity.Employee.FillWearInStockInfo(UoW, baseParameters, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
 

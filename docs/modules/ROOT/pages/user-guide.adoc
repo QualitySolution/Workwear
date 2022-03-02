@@ -18,14 +18,6 @@ Quality Solution 2022
 
 include::introduction.adoc[]
 
-include::requirements.adoc[]
-
-include::install.adoc[]
-
-include::users.adoc[]
-
-include::cloud.adoc[]
-
 include::interface.adoc[]
 
 include::organization.adoc[]
@@ -45,7 +37,5 @@ include::settings.adoc[]
 include::manipulation.adoc[]
 
 include::import.adoc[]
-
-include::technical.adoc[]
 
 :leveloffset: 0
