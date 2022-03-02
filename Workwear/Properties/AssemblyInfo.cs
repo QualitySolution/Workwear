@@ -8,7 +8,7 @@ using QS.Project.Versioning;
 #if DEBUG
 [assembly: AssemblyBetaBuild]
 #endif
-[assembly: AssemblyDescription("Программа позволяет вести учет внутреннего склада спецодежды и имущества выдаваемого сотрудникам.")]
+[assembly: AssemblyDescription("Программа позволяет вести учет спецодежды выдаваемого сотрудникам предприятия.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]
 [assembly: AssemblyProductCode(2)]
@@ -30,7 +30,7 @@ using QS.Project.Versioning;
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
-[assembly: AssemblyVersion("2.5")]
+[assembly: AssemblyVersion("2.5.1")]
 // The following attributes are used to specify the signing key for the assembly, 
 // if desired. See the Mono documentation for more information about signing.
 //[assembly: AssemblyDelaySign(false)]
