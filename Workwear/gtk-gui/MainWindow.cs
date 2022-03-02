@@ -27,7 +27,7 @@ public partial class MainWindow
 
 	private global::Gtk.Action Action8;
 
-	private global::Gtk.Action Action9;
+	private global::Gtk.Action ActionLeaders;
 
 	private global::Gtk.Action aboutAction;
 
@@ -210,9 +210,9 @@ public partial class MainWindow
 		this.Action8 = new global::Gtk.Action("Action8", global::Mono.Unix.Catalog.GetString("Должности"), null, null);
 		this.Action8.ShortLabel = global::Mono.Unix.Catalog.GetString("Должности");
 		w1.Add(this.Action8, null);
-		this.Action9 = new global::Gtk.Action("Action9", global::Mono.Unix.Catalog.GetString("Руководители"), null, null);
-		this.Action9.ShortLabel = global::Mono.Unix.Catalog.GetString("Руководители");
-		w1.Add(this.Action9, null);
+		this.ActionLeaders = new global::Gtk.Action("ActionLeaders", global::Mono.Unix.Catalog.GetString("Должностные лица"), null, null);
+		this.ActionLeaders.ShortLabel = global::Mono.Unix.Catalog.GetString("Должностные лица");
+		w1.Add(this.ActionLeaders, null);
 		this.aboutAction = new global::Gtk.Action("aboutAction", global::Mono.Unix.Catalog.GetString("_О программе"), null, "gtk-about");
 		this.aboutAction.ShortLabel = global::Mono.Unix.Catalog.GetString("_О программе");
 		w1.Add(this.aboutAction, null);
@@ -428,26 +428,26 @@ public partial class MainWindow
 				"house\'/><separator/><menuitem name=\'Action7\' action=\'Action7\'/><separator/><menu" +
 				"item name=\'ActionProfession\' action=\'ActionProfession\'/><menuitem name=\'Action8\'" +
 				" action=\'Action8\'/><menuitem name=\'ActionVacationTypes\' action=\'ActionVacationTy" +
-				"pes\'/><menuitem name=\'Action9\' action=\'Action9\'/></menu><menu name=\'ActionReport" +
-				"s\' action=\'ActionReports\'><menuitem name=\'Action10\' action=\'Action10\'/><menuitem" +
-				" name=\'Action11\' action=\'Action11\'/><separator/><menuitem name=\'Action12\' action" +
-				"=\'Action12\'/><separator/><menuitem name=\'Action13\' action=\'Action13\'/><menuitem " +
-				"name=\'ActionRequestSheet\' action=\'ActionRequestSheet\'/><menuitem name=\'ActionAve" +
-				"rageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><separator/><menuitem name=\'Ac" +
-				"tion22\' action=\'Action22\'/><menuitem name=\'ActionAmountEmployeeGetWear\' action=\'" +
-				"ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear\' action=\'Ac" +
-				"tionAmountIssuedWear\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menui" +
-				"tem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionAdminGuide\' act" +
-				"ion=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHistory\' action=\'Actio" +
-				"nHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><men" +
-				"uitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReformal\'" +
-				" action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuitem " +
-				"name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=\'A" +
-				"ctionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><menu" +
-				"item name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><menuitem n" +
-				"ame=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'ActionSN\'/" +
-				"><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar" +
-				"></ui>");
+				"pes\'/><menuitem name=\'ActionLeaders\' action=\'ActionLeaders\'/></menu><menu name=\'" +
+				"ActionReports\' action=\'ActionReports\'><menuitem name=\'Action10\' action=\'Action10" +
+				"\'/><menuitem name=\'Action11\' action=\'Action11\'/><separator/><menuitem name=\'Acti" +
+				"on12\' action=\'Action12\'/><separator/><menuitem name=\'Action13\' action=\'Action13\'" +
+				"/><menuitem name=\'ActionRequestSheet\' action=\'ActionRequestSheet\'/><menuitem nam" +
+				"e=\'ActionAverageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><separator/><menui" +
+				"tem name=\'Action22\' action=\'Action22\'/><menuitem name=\'ActionAmountEmployeeGetWe" +
+				"ar\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear" +
+				"\' action=\'ActionAmountIssuedWear\'/></menu><menu name=\'ActionHelp\' action=\'Action" +
+				"Help\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionAdm" +
+				"inGuide\' action=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHistory\' a" +
+				"ction=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><sep" +
+				"arator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionO" +
+				"penReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38" +
+				"\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasnik" +
+				"i\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwi" +
+				"tter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/" +
+				"><menuitem name=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action" +
+				"=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></me" +
+				"nu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -597,7 +597,7 @@ public partial class MainWindow
 		this.Action6.Activated += new global::System.EventHandler(this.OnAction6Activated);
 		this.Action7.Activated += new global::System.EventHandler(this.OnAction7Activated);
 		this.Action8.Activated += new global::System.EventHandler(this.OnAction8Activated);
-		this.Action9.Activated += new global::System.EventHandler(this.OnAction9Activated);
+		this.ActionLeaders.Activated += new global::System.EventHandler(this.OnAction9Activated);
 		this.aboutAction.Activated += new global::System.EventHandler(this.OnAboutActionActivated);
 		this.Action10.Activated += new global::System.EventHandler(this.OnAction10Activated);
 		this.Action11.Activated += new global::System.EventHandler(this.OnAction11Activated);
