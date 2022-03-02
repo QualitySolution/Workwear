@@ -72,6 +72,9 @@ namespace workwear
 				return false;
 			
 			Entity.UpdateOperations(UoW);
+			if (Entity.Id == 0)
+				Entity.CreationDate = DateTime.Now;
+			
 			UoWGeneric.Save ();
 			if(Entity.Items.Any (w => w.WriteoffFrom == WriteoffFrom.Employye))
 			{

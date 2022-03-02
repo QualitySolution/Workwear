@@ -130,6 +130,8 @@ namespace workwear.ViewModels.Stock
 		{
 			if(!Validate())
 				return false;
+			if(Entity.Id == 0)
+				Entity.CreationDate = DateTime.Now;
 
 			logger.Info("Запись документа...");
 
