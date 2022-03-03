@@ -476,7 +476,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 		private DateTime? creationDate;
 		public DateTime? CreationDate {
-			get => creationDate ?? DateTime.Today;
+			get => creationDate ?? DateTime.MinValue;
 			set => creationDate = value;
 		}
 		public string CreationDateString => creationDate?.ToString("g") ?? String.Empty;
