@@ -47,6 +47,8 @@ namespace workwear.Views.Stock
 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
+			ycheckArchival.Binding.AddBinding(Entity, e => e.Archival, w => w.Active).InitializeFromSource();
+
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
 			MakeMenu();
 		}
@@ -63,4 +65,3 @@ namespace workwear.Views.Stock
 		}
 	}
 }
-

@@ -76,6 +76,13 @@ namespace workwear.Domain.Stock
 			set { SetField(ref number, value); }
 		}
 
+		private bool archival;
+		[Display(Name ="Архивная")]
+		public virtual bool Archival {
+			get => archival;
+			set => SetField(ref archival, value);
+		}
+
 		#endregion
 
 		#region Рассчетные
