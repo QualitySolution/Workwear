@@ -58,7 +58,8 @@ namespace workwear.Journal.ViewModels.Stock
 			dataLoader.AddQuery(QueryWriteoffDoc);
 			dataLoader.AddQuery(QueryMassExpenseDoc);
 			dataLoader.AddQuery(QueryTransferDoc);
-			dataLoader.MergeInOrderBy(x => new DateTime(x.Date.Year, x.Date.Month, x.Date.Day, x.CreationDate.Hour, x.CreationDate.Minute, x.CreationDate.Second), true);
+			dataLoader.MergeInOrderBy(x => x.Date, true);
+			dataLoader.MergeInOrderBy(x => x.CreationDate.Value, true);
 			DataLoader = dataLoader;
 
 			CreateNodeActions();
@@ -474,9 +475,10 @@ namespace workwear.Journal.ViewModels.Stock
 		public int? IssueSheetId { get; set; }
 
 		private DateTime? creationDate;
-		public DateTime CreationDate {
+		public DateTime? CreationDate {
 			get => creationDate ?? DateTime.Today;
 			set => creationDate = value;
 		}
+		public string CreationDateString => creationDate?.ToString("g") ?? String.Empty;
 	}
 }
