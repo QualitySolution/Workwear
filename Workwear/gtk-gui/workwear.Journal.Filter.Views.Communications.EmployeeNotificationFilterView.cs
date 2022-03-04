@@ -49,8 +49,8 @@ namespace workwear.Journal.Filter.Views.Communications
 			this.checkLkEnabled.UseUnderline = true;
 			this.ytable1.Add(this.checkLkEnabled);
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable1[this.checkLkEnabled]));
-			w1.TopAttach = ((uint)(1));
-			w1.BottomAttach = ((uint)(2));
+			w1.TopAttach = ((uint)(2));
+			w1.BottomAttach = ((uint)(3));
 			w1.XOptions = ((global::Gtk.AttachOptions)(4));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
@@ -73,8 +73,8 @@ namespace workwear.Journal.Filter.Views.Communications
 			this.datePeriodIssue.EndDate = new global::System.DateTime(0);
 			this.ytable1.Add(this.datePeriodIssue);
 			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable1[this.datePeriodIssue]));
-			w3.TopAttach = ((uint)(1));
-			w3.BottomAttach = ((uint)(2));
+			w3.TopAttach = ((uint)(2));
+			w3.BottomAttach = ((uint)(3));
 			w3.LeftAttach = ((uint)(2));
 			w3.RightAttach = ((uint)(3));
 			w3.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -93,14 +93,13 @@ namespace workwear.Journal.Filter.Views.Communications
 			this.ycheckOffPeriod = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckOffPeriod.CanFocus = true;
 			this.ycheckOffPeriod.Name = "ycheckOffPeriod";
-			this.ycheckOffPeriod.Label = global::Mono.Unix.Catalog.GetString("Не учитывать период");
-			this.ycheckOffPeriod.Active = true;
+			this.ycheckOffPeriod.Label = global::Mono.Unix.Catalog.GetString("Поиск по периоду получения");
 			this.ycheckOffPeriod.DrawIndicator = true;
 			this.ycheckOffPeriod.UseUnderline = true;
 			this.ytable1.Add(this.ycheckOffPeriod);
 			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ycheckOffPeriod]));
-			w5.TopAttach = ((uint)(2));
-			w5.BottomAttach = ((uint)(3));
+			w5.TopAttach = ((uint)(1));
+			w5.BottomAttach = ((uint)(2));
 			w5.LeftAttach = ((uint)(2));
 			w5.RightAttach = ((uint)(3));
 			w5.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -153,8 +152,8 @@ namespace workwear.Journal.Filter.Views.Communications
 			this.ylabel4.LabelProp = global::Mono.Unix.Catalog.GetString("Период получения:");
 			this.ytable1.Add(this.ylabel4);
 			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel4]));
-			w9.TopAttach = ((uint)(1));
-			w9.BottomAttach = ((uint)(2));
+			w9.TopAttach = ((uint)(2));
+			w9.BottomAttach = ((uint)(3));
 			w9.LeftAttach = ((uint)(1));
 			w9.RightAttach = ((uint)(2));
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
