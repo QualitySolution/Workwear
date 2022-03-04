@@ -57,14 +57,14 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 			set => SetField(ref endDateIssue, value);
 		}
 
-		private bool offPeriod;
+		private bool containsPeriod;
 		[PropertyChangedAlso(nameof(PeriodSensitive))]
-		public bool OffPeriod {
-			get => offPeriod;
-			set => SetField(ref offPeriod, value);
+		public bool ContainsPeriod {
+			get => containsPeriod;
+			set => SetField(ref containsPeriod, value);
 		}
 
-		public bool PeriodSensitive => !OffPeriod;
+		public bool PeriodSensitive => ContainsPeriod;
 
 		#endregion
 
@@ -83,7 +83,6 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 				.Finish();
 			startDateIssue = DateTime.Today;
 			endDateIssue = startDateIssue.AddDays(14);
-			offPeriod = true;
 		}
 	}
 	public enum AskIssueType

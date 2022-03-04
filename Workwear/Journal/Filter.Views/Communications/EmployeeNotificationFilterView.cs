@@ -24,7 +24,7 @@ namespace workwear.Journal.Filter.Views.Communications
 				.AddBinding(v => v.EndDateIssue, w => w.EndDateOrNull)
 				.AddBinding(vm => vm.PeriodSensitive, v => v.Sensitive)
 				.InitializeFromSource();
-			ycheckOffPeriod.Binding.AddBinding(ViewModel, vm => vm.OffPeriod, v => v.Active).InitializeFromSource();
+			ycheckOffPeriod.Binding.AddBinding(ViewModel, vm => vm.ContainsPeriod, v => v.Active).InitializeFromSource();
 		}
 	}
 }
