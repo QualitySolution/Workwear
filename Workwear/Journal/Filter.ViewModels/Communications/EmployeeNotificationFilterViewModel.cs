@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Autofac;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
@@ -55,6 +56,16 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 			get => endDateIssue;
 			set => SetField(ref endDateIssue, value);
 		}
+
+		private bool containsPeriod;
+		[PropertyChangedAlso(nameof(PeriodSensitive))]
+		public bool ContainsPeriod {
+			get => containsPeriod;
+			set => SetField(ref containsPeriod, value);
+		}
+
+		public bool PeriodSensitive => ContainsPeriod;
+
 		#endregion
 
 		#region EntityModels
