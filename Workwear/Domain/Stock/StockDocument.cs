@@ -12,8 +12,7 @@ namespace workwear.Domain.Stock
 		DateTime date = DateTime.Now;
 
 		[Display(Name = "Дата")]
-		public virtual DateTime Date
-		{
+		public virtual DateTime Date {
 			get { return date; }
 			set { SetField(ref date, value, () => Date); }
 		}
@@ -21,8 +20,7 @@ namespace workwear.Domain.Stock
 		UserBase createdbyUser;
 
 		[Display(Name = "Документ создал")]
-		public virtual UserBase CreatedbyUser
-		{
+		public virtual UserBase CreatedbyUser {
 			get { return createdbyUser; }
 			set { SetField(ref createdbyUser, value, () => CreatedbyUser); }
 		}
@@ -30,14 +28,20 @@ namespace workwear.Domain.Stock
 		private string comment;
 
 		[Display(Name = "Комментарий")]
-		public virtual string Comment
-		{
+		public virtual string Comment {
 			get { return comment; }
 			set { SetField(ref comment, value, () => Comment); }
 		}
 
 		public StockDocument()
 		{
+		}
+
+		private DateTime? creationDate;
+		[Display(Name = "Дата создания")]
+		public virtual DateTime? CreationDate {
+			get => creationDate;
+			set => SetField(ref creationDate, value);
 		}
 
 		public static Type GetDocClass(StokDocumentType docType)
