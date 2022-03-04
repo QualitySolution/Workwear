@@ -126,6 +126,7 @@ namespace workwear.Journal.ViewModels.Stock
 			            .Select(() => incomeAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					)
 			.OrderBy(() => incomeAlias.Date).Desc
+			.ThenBy(() => incomeAlias.CreationDate).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
 
 			return incomeQuery;
@@ -181,6 +182,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => expenseAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					   )
 			.OrderBy(() => expenseAlias.Date).Desc
+			.ThenBy(() => expenseAlias.CreationDate).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
 
 			return expenseQuery;
@@ -222,6 +224,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => collectiveExpenseAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					   )
 			.OrderBy(() => collectiveExpenseAlias.Date).Desc
+			.ThenBy(() => collectiveExpenseAlias.CreationDate).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
 
 			return collectiveExpenseQuery;
@@ -263,6 +266,7 @@ namespace workwear.Journal.ViewModels.Stock
 			            .Select(() => massExpenseAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 						)
 			.OrderBy(() => massExpenseAlias.Date).Desc
+			.ThenBy(() => massExpenseAlias.CreationDate).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
 
 			return massExpenseQuery;
@@ -303,6 +307,7 @@ namespace workwear.Journal.ViewModels.Stock
 			            .Select(() => transferAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					   )
 			.OrderBy(() => transferAlias.Date).Desc
+			.ThenBy(() => transferAlias.CreationDate).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
 
 			return transferQuery;
@@ -353,6 +358,7 @@ namespace workwear.Journal.ViewModels.Stock
 			            .Select(() => writeoffAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					   )
 			.OrderBy(() => writeoffAlias.Date).Desc
+			.ThenBy(() => writeoffAlias.CreationDate).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
 
 			return writeoffQuery;
