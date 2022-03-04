@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
+using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -13,14 +14,18 @@ using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Measurements;
 using Workwear.Measurements;
+using workwear.Repository.Stock;
+using workwear.Tools;
 
 namespace workwear.ViewModels.Stock
 {
 	public class NomenclatureViewModel : EntityDialogViewModelBase<Nomenclature>
 	{
 		private readonly ILifetimeScope autofacScope;
+		private readonly BaseParameters baseParameters;
+		private readonly IInteractiveService interactiveService;
 
-		public NomenclatureViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, ILifetimeScope autofacScope, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+		public NomenclatureViewModel(BaseParameters baseParameters, IInteractiveService interactiveService, IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, ILifetimeScope autofacScope, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			var entryBuilder = new CommonEEVMBuilderFactory<Nomenclature>(this, Entity, UoW, navigation, autofacScope);
@@ -28,6 +33,8 @@ namespace workwear.ViewModels.Stock
 			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
 				.MakeByType()
 				.Finish();
+			this.baseParameters = baseParameters;
+			this.interactiveService = interactiveService;
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 		}
@@ -104,6 +111,18 @@ namespace workwear.ViewModels.Stock
 				OnPropertyChanged(nameof(SensitiveSizeStd));
 				OnPropertyChanged(nameof(SizeStdEnum));
 			}
+		}
+		public override bool Save() {
+			if (!Entity.Archival) return true;
+			if (!baseParameters.CheckBalances) return true;
+			var repository = new StockRepository();
+			var nomenclatures = new List<Nomenclature>() {Entity};
+			var inStocks = new List<StockBalanceDTO>();
+			var warehouses = UoW.Query<Warehouse>().List();
+			foreach (var warehouse in warehouses) { inStocks.AddRange(repository.StockBalances(UoW, warehouse, nomenclatures, DateTime.Now)); }
+			if (!inStocks.Any(x => x.Amount > 0)) return true;
+			interactiveService.ShowMessage(ImportanceLevel.Error, "Архивная номенклатура не должна иметь остатков на складе");
+			return false;
 		}
 	}
 }
