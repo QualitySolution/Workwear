@@ -35,6 +35,8 @@ namespace workwear.Journal.ViewModels.Stock
 			var query = uow.Session.QueryOver<Nomenclature>(() => nomenclatureAlias);
 			if(Filter.ItemType != null)
 				query.Where(x => x.Type.Id == Filter.ItemType.Id);
+			if (!Filter.ShowArchival)
+				query.Where(x => !x.Archival);
 
 			return query
 				.Left.JoinAlias(n => n.Type, () => itemsTypeAlias)
@@ -42,13 +44,15 @@ namespace workwear.Journal.ViewModels.Stock
 					() => nomenclatureAlias.Id,
 					() => nomenclatureAlias.Name,
 					() => nomenclatureAlias.Number,
-					() => itemsTypeAlias.Name
+					() => itemsTypeAlias.Name,
+					() => nomenclatureAlias.Archival
 					))
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(x => x.Number).WithAlias(() => resultAlias.Number)
 					.Select(() => itemsTypeAlias.Name).WithAlias(() => resultAlias.ItemType)
+					.Select(() => nomenclatureAlias.Archival).WithAlias(() => resultAlias.Archival)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<NomenclatureJournalNode>());
 		}
@@ -82,5 +86,7 @@ namespace workwear.Journal.ViewModels.Stock
 		public uint? Number { get; set; }
 		[SearchHighlight]
 		public string ItemType { get; set; }
+		
+		public bool Archival { get; set; }
 	}
 }
