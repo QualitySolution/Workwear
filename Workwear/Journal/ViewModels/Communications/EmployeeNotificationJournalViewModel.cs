@@ -106,8 +106,10 @@ namespace workwear.Journal.ViewModels.Communications
 				employees.Where(() => employeeAlias.Subdivision.Id == Filter.Subdivision.Id);
 
 			employees
-				.JoinAlias(() => employeeAlias.WorkwearItems, () => itemAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-					.Where(() => itemAlias.NextIssue >= startTime && itemAlias.NextIssue <= Filter.EndDateIssue);
+				.JoinAlias(() => employeeAlias.WorkwearItems, () => itemAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin);
+			
+				if(Filter.ContainsPeriod)
+					employees = employees.Where(() => itemAlias.NextIssue >= startTime && itemAlias.NextIssue <= Filter.EndDateIssue);
 
 			switch(Filter.IsueType) {
 				case (AskIssueType.Personal):
