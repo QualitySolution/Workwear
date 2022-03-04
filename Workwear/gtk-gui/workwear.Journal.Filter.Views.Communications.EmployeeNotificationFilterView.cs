@@ -93,7 +93,7 @@ namespace workwear.Journal.Filter.Views.Communications
 			this.ycheckOffPeriod = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckOffPeriod.CanFocus = true;
 			this.ycheckOffPeriod.Name = "ycheckOffPeriod";
-			this.ycheckOffPeriod.Label = global::Mono.Unix.Catalog.GetString("Поиск по периоду получения");
+			this.ycheckOffPeriod.Label = global::Mono.Unix.Catalog.GetString("Следующее получение в период");
 			this.ycheckOffPeriod.DrawIndicator = true;
 			this.ycheckOffPeriod.UseUnderline = true;
 			this.ytable1.Add(this.ycheckOffPeriod);
