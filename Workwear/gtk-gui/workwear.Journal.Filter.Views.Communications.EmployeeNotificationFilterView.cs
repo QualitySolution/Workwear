@@ -94,6 +94,7 @@ namespace workwear.Journal.Filter.Views.Communications
 			this.ycheckOffPeriod.CanFocus = true;
 			this.ycheckOffPeriod.Name = "ycheckOffPeriod";
 			this.ycheckOffPeriod.Label = global::Mono.Unix.Catalog.GetString("Не учитывать период");
+			this.ycheckOffPeriod.Active = true;
 			this.ycheckOffPeriod.DrawIndicator = true;
 			this.ycheckOffPeriod.UseUnderline = true;
 			this.ytable1.Add(this.ycheckOffPeriod);

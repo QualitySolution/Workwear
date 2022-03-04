@@ -57,11 +57,11 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 			set => SetField(ref endDateIssue, value);
 		}
 
-		private bool offOffPeriod;
+		private bool offPeriod;
 		[PropertyChangedAlso(nameof(PeriodSensitive))]
 		public bool OffPeriod {
-			get => offOffPeriod;
-			set => SetField(ref offOffPeriod, value);
+			get => offPeriod;
+			set => SetField(ref offPeriod, value);
 		}
 
 		public bool PeriodSensitive => !OffPeriod;
@@ -83,6 +83,7 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 				.Finish();
 			startDateIssue = DateTime.Today;
 			endDateIssue = startDateIssue.AddDays(14);
+			offPeriod = true;
 		}
 	}
 	public enum AskIssueType
