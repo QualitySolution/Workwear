@@ -112,6 +112,8 @@ namespace workwear
 
 			var ask = new GtkQuestionDialogsInteractive();
 			Entity.UpdateOperations(UoW, ask);
+			if(Entity.Id == 0)
+				Entity.CreationDate = DateTime.Now;
 			UoWGeneric.Save ();
 			if(Entity.Operation == IncomeOperations.Return)
 			{

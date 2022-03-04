@@ -59,6 +59,7 @@ namespace workwear.Journal.ViewModels.Stock
 			dataLoader.AddQuery(QueryMassExpenseDoc);
 			dataLoader.AddQuery(QueryTransferDoc);
 			dataLoader.MergeInOrderBy(x => x.Date, true);
+			dataLoader.MergeInOrderBy(x => x.CreationDate.Value, true);
 			DataLoader = dataLoader;
 
 			CreateNodeActions();
@@ -122,6 +123,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
 						.Select(() => incomeAlias.Comment).WithAlias(() => resultAlias.Comment)
 			            .Select(() => StokDocumentType.IncomeDoc).WithAlias(() => resultAlias.DocTypeEnum)
+			            .Select(() => incomeAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					)
 			.OrderBy(() => incomeAlias.Date).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
@@ -176,6 +178,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
 						.Select(() => expenseAlias.Comment).WithAlias(() => resultAlias.Comment)
+						.Select(() => expenseAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					   )
 			.OrderBy(() => expenseAlias.Date).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
@@ -216,6 +219,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
 						.Select(() => collectiveExpenseAlias.Comment).WithAlias(() => resultAlias.Comment)
 						.Select(() => StokDocumentType.CollectiveExpense).WithAlias(() => resultAlias.DocTypeEnum)
+						.Select(() => collectiveExpenseAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					   )
 			.OrderBy(() => collectiveExpenseAlias.Date).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
@@ -256,6 +260,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 			            .Select(() => massExpenseAlias.Comment).WithAlias(() => resultAlias.Comment)
 						.Select(() => StokDocumentType.MassExpense).WithAlias(() => resultAlias.DocTypeEnum)
+			            .Select(() => massExpenseAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 						)
 			.OrderBy(() => massExpenseAlias.Date).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
@@ -295,6 +300,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
 			            .Select(() => transferAlias.Comment).WithAlias(() => resultAlias.Comment)
 						.Select(() => StokDocumentType.TransferDoc).WithAlias(() => resultAlias.DocTypeEnum)
+			            .Select(() => transferAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					   )
 			.OrderBy(() => transferAlias.Date).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
@@ -344,6 +350,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(concatProjection).WithAlias(() => resultAlias.ExpenseWarehouse)
 						.Select(() => StokDocumentType.WriteoffDoc).WithAlias(() => resultAlias.DocTypeEnum)
 			            .Select(() => writeoffAlias.Comment).WithAlias(() => resultAlias.Comment)
+			            .Select(() => writeoffAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					   )
 			.OrderBy(() => writeoffAlias.Date).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
@@ -466,5 +473,12 @@ namespace workwear.Journal.ViewModels.Stock
 		public string Comment { get; set; }
 
 		public int? IssueSheetId { get; set; }
+
+		private DateTime? creationDate;
+		public DateTime? CreationDate {
+			get => creationDate ?? DateTime.MinValue;
+			set => creationDate = value;
+		}
+		public string CreationDateString => creationDate?.ToString("g") ?? String.Empty;
 	}
 }

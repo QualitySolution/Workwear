@@ -222,6 +222,7 @@ namespace workwear.Journal
 					.AddColumn("Склад").Visible(jvm.FeaturesService.Available(WorkwearFeature.Warehouses)).AddTextRenderer(x => x.Warehouse)
 					.AddColumn("Автор").AddTextRenderer(node => node.Author).SearchHighlight()
 					.AddColumn("Детали").AddTextRenderer(node => node.Description).SearchHighlight()
+					.AddColumn("Дата создания").AddTextRenderer(x => x.CreationDateString)
 					.AddColumn("Комментарий").AddTextRenderer(x => x.Comment)
 					.Finish()
 			);

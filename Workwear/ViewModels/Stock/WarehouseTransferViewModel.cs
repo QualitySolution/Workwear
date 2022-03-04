@@ -119,6 +119,8 @@ namespace workwear.ViewModels.Stock
 
 		public override bool Save()
 		{
+			if(Entity.Id == 0)
+				Entity.CreationDate = DateTime.Now;
 			Entity.UpdateOperations(UoW, null); 
 			return base.Save();
 		}
