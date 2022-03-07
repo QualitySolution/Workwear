@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
@@ -14,7 +15,6 @@ using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Measurements;
 using Workwear.Measurements;
-using workwear.Repository.Stock;
 using workwear.Tools;
 
 namespace workwear.ViewModels.Stock
@@ -35,6 +35,8 @@ namespace workwear.ViewModels.Stock
 				.Finish();
 			this.baseParameters = baseParameters;
 			this.interactiveService = interactiveService;
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters }, {nameof(IUnitOfWork), UoW} })));
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 		}
@@ -111,18 +113,6 @@ namespace workwear.ViewModels.Stock
 				OnPropertyChanged(nameof(SensitiveSizeStd));
 				OnPropertyChanged(nameof(SizeStdEnum));
 			}
-		}
-		public override bool Save() {
-			if (!Entity.Archival) return true;
-			if (!baseParameters.CheckBalances) return true;
-			var repository = new StockRepository();
-			var nomenclatures = new List<Nomenclature>() {Entity};
-			var inStocks = new List<StockBalanceDTO>();
-			var warehouses = UoW.Query<Warehouse>().List();
-			foreach (var warehouse in warehouses) { inStocks.AddRange(repository.StockBalances(UoW, warehouse, nomenclatures, DateTime.Now)); }
-			if (!inStocks.Any(x => x.Amount > 0)) return true;
-			interactiveService.ShowMessage(ImportanceLevel.Error, "Архивная номенклатура не должна иметь остатков на складе");
-			return false;
 		}
 	}
 }
