@@ -72,7 +72,7 @@ namespace workwear.Domain.Stock
     )]
     [HistoryTrace]
     public class CompletionSourceItem: CompletionItem {
-    
+        public CompletionSourceItem(){}
     }
     [Appellative(Gender = GrammaticalGender.Feminine,
         NominativePlural = "строки комплектации",
@@ -80,8 +80,8 @@ namespace workwear.Domain.Stock
         Genitive = "строку комплектации"
     )]
     [HistoryTrace]
-    public class ComplectionResultItem: CompletionItem {
-    
+    public class CompletionResultItem: CompletionItem {
+        public CompletionResultItem(){}
     }
     
 }

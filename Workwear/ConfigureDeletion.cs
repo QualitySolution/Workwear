@@ -202,11 +202,11 @@ namespace workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<Completion>()
 				.AddDeleteDependence<CompletionSourceItem>(x => x.Completion)
-				.AddDeleteDependence<ComplectionResultItem>(x => x.Completion);
+				.AddDeleteDependence<CompletionResultItem>(x => x.Completion);
 			
 			DeleteConfig.AddHibernateDeleteInfo<CompletionSourceItem>()
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
-			DeleteConfig.AddHibernateDeleteInfo<ComplectionResultItem>()
+			DeleteConfig.AddHibernateDeleteInfo<CompletionResultItem>()
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 			#endregion
 

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
+using workwear.Domain.Operations;
 
 namespace workwear.Domain.Stock
 {
@@ -49,18 +50,18 @@ namespace workwear.Domain.Stock
                 return observableSourceItems;
             }
         }
-        private IList<ComplectionResultItem> resultItems = new List<ComplectionResultItem>();
+        private IList<CompletionResultItem> resultItems = new List<CompletionResultItem>();
         [Display (Name = "расходная номенклатура")]
-        public virtual IList<ComplectionResultItem> ResultItems {
+        public virtual IList<CompletionResultItem> ResultItems {
             get { return resultItems; }
             set { SetField (ref resultItems, value, () => ResultItems); }
         }
-        private System.Data.Bindings.Collections.Generic.GenericObservableList<ComplectionResultItem> observableResultItems;
+        private System.Data.Bindings.Collections.Generic.GenericObservableList<CompletionResultItem> observableResultItems;
         //FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-        public virtual System.Data.Bindings.Collections.Generic.GenericObservableList<ComplectionResultItem> ObservableResultItems {
+        public virtual System.Data.Bindings.Collections.Generic.GenericObservableList<CompletionResultItem> ObservableResultItems {
             get {
                 if (observableResultItems == null)
-                    observableResultItems = new System.Data.Bindings.Collections.Generic.GenericObservableList<ComplectionResultItem> (ResultItems);
+                    observableResultItems = new System.Data.Bindings.Collections.Generic.GenericObservableList<CompletionResultItem> (ResultItems);
                 return observableResultItems;
             }
         }
@@ -88,11 +89,27 @@ namespace workwear.Domain.Stock
         #endregion
 
         #region Items
-        public virtual void AddSourceItem(StockPosition position, Warehouse warehouse, int count)
-        {
+        public virtual void AddSourceItem(StockPosition position, Warehouse warehouse, int count) {
+            var item = new CompletionSourceItem();
+            item.Completion = this;
+            item.WarehouseOperation = new WarehouseOperation() {
+                Nomenclature = position.Nomenclature,
+                OperationTime = Date,
+                ExpenseWarehouse = SourceWarehouse ?? (SourceWarehouse = warehouse),
+                Size = position.Size,
+                Growth = position.Growth,
+                Amount = count,
+                WearPercent = position.WearPercent
+            };
+            ObservableSourceItems.Add(item);
         }
-        public virtual void AddResultItem(Nomenclature nomenclature)
-        {;
+        public virtual void AddResultItem(Nomenclature nomenclature) {
+            var item = new CompletionResultItem();
+            item.Completion = this;
+            item.WarehouseOperation = new WarehouseOperation() {
+                Nomenclature = nomenclature
+            };
+            ObservableResultItems.Add(item);
         }
         #endregion
     }

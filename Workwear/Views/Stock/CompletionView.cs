@@ -53,7 +53,7 @@ namespace workwear.Views.Stock
 				 .Finish ();
 			 ytreeExpenseItems.ItemsDataSource = Entity.ObservableSourceItems;
 			 
-			 ytreeReceiptItems.ColumnsConfig = ColumnsConfigFactory.Create<ComplectionResultItem>()
+			 ytreeReceiptItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionResultItem>()
 				 .AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
 				 .AddColumn("Размер").MinWidth(60)
 				 .AddComboRenderer(x => x.Size)
@@ -80,7 +80,7 @@ namespace workwear.Views.Stock
 			Entity.ObservableSourceItems.Remove(ytreeExpenseItems.GetSelectedObject<CompletionSourceItem> ());
 		}
 		void DelResultItems(object sender, EventArgs eventArgs) {
-			Entity.ObservableResultItems.Remove(ytreeReceiptItems.GetSelectedObject<ComplectionResultItem> ());
+			Entity.ObservableResultItems.Remove(ytreeReceiptItems.GetSelectedObject<CompletionResultItem> ());
 		}
 	}
 }

@@ -3,7 +3,7 @@ using workwear.Domain.Stock;
 
 namespace workwear.HibernateMapping.Stock
 {
-    public class ComplectionResultItemMap : ClassMap<ComplectionResultItem>
+    public class ComplectionResultItemMap : ClassMap<CompletionResultItem>
     {
         public ComplectionResultItemMap()
         {
