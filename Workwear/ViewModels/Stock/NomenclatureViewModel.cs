@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
+using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -13,14 +15,17 @@ using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Measurements;
 using Workwear.Measurements;
+using workwear.Tools;
 
 namespace workwear.ViewModels.Stock
 {
 	public class NomenclatureViewModel : EntityDialogViewModelBase<Nomenclature>
 	{
 		private readonly ILifetimeScope autofacScope;
+		private readonly BaseParameters baseParameters;
+		private readonly IInteractiveService interactiveService;
 
-		public NomenclatureViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, ILifetimeScope autofacScope, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+		public NomenclatureViewModel(BaseParameters baseParameters, IInteractiveService interactiveService, IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, ILifetimeScope autofacScope, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			var entryBuilder = new CommonEEVMBuilderFactory<Nomenclature>(this, Entity, UoW, navigation, autofacScope);
@@ -28,6 +33,10 @@ namespace workwear.ViewModels.Stock
 			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
 				.MakeByType()
 				.Finish();
+			this.baseParameters = baseParameters;
+			this.interactiveService = interactiveService;
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters }, {nameof(IUnitOfWork), UoW} })));
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 		}

@@ -186,9 +186,10 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<NomenclatureJournalViewModel>(
 				() => FluentColumnsConfig<NomenclatureJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
-					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name + (node.Archival? "(архивная)": String.Empty)).SearchHighlight()
 					.AddColumn("Номер").AddTextRenderer(node => $"{node.Number}").SearchHighlight()
 					.AddColumn("Тип").AddTextRenderer(node => node.ItemType)
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
 

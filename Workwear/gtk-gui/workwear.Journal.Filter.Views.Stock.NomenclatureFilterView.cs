@@ -8,7 +8,11 @@ namespace workwear.Journal.Filter.Views.Stock
 
 		private global::QS.Views.Control.EntityEntry entityItemsType;
 
+		private global::Gamma.GtkWidgets.yHBox yhbox1;
+
 		private global::Gamma.GtkWidgets.yLabel ylabel1;
+
+		private global::Gamma.GtkWidgets.yCheckButton yShowArchival;
 
 		protected virtual void Build()
 		{
@@ -31,13 +35,39 @@ namespace workwear.Journal.Filter.Views.Stock
 			w1.RightAttach = ((uint)(2));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
+			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox1.Name = "yhbox1";
+			this.yhbox1.Spacing = 6;
+			this.table1.Add(this.yhbox1);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.yhbox1]));
+			w2.TopAttach = ((uint)(1));
+			w2.BottomAttach = ((uint)(2));
+			w2.LeftAttach = ((uint)(1));
+			w2.RightAttach = ((uint)(2));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
 			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Тип номеклатуры:");
 			this.table1.Add(this.ylabel1);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel1]));
-			w2.XOptions = ((global::Gtk.AttachOptions)(4));
-			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel1]));
+			w3.XOptions = ((global::Gtk.AttachOptions)(4));
+			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.yShowArchival = new global::Gamma.GtkWidgets.yCheckButton();
+			this.yShowArchival.CanFocus = true;
+			this.yShowArchival.Name = "yShowArchival";
+			this.yShowArchival.Label = global::Mono.Unix.Catalog.GetString("Показать архивные");
+			this.yShowArchival.DrawIndicator = true;
+			this.yShowArchival.UseUnderline = true;
+			this.table1.Add(this.yShowArchival);
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.table1[this.yShowArchival]));
+			w4.TopAttach = ((uint)(1));
+			w4.BottomAttach = ((uint)(2));
+			w4.LeftAttach = ((uint)(2));
+			w4.RightAttach = ((uint)(3));
+			w4.XOptions = ((global::Gtk.AttachOptions)(4));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.table1);
 			if ((this.Child != null))
 			{
