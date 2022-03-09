@@ -58,6 +58,7 @@ namespace workwear.Journal.ViewModels.Stock
 			dataLoader.AddQuery(QueryWriteoffDoc);
 			dataLoader.AddQuery(QueryMassExpenseDoc);
 			dataLoader.AddQuery(QueryTransferDoc);
+			dataLoader.AddQuery(QueryCompletionDoc);
 			dataLoader.MergeInOrderBy(x => x.Date, true);
 			dataLoader.MergeInOrderBy(x => x.CreationDate.Value, true);
 			DataLoader = dataLoader;
@@ -362,6 +363,44 @@ namespace workwear.Journal.ViewModels.Stock
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
 
 			return writeoffQuery;
+		}
+		protected IQueryOver<Completion> QueryCompletionDoc(IUnitOfWork uow)
+		{
+			if(Filter.StokDocumentType != null && Filter.StokDocumentType != StokDocumentType.Completion)
+				return null;
+
+			Completion completionAlias = null;
+
+			var completionQuery = uow.Session.QueryOver<Completion>(() => completionAlias);
+			if(Filter.StartDate.HasValue)
+				completionQuery.Where(o => o.Date >= Filter.StartDate.Value);
+			if(Filter.EndDate.HasValue)
+				completionQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
+			if(Filter.Warehouse != null)
+				completionQuery.Where(x => x.SourceWarehouse == Filter.Warehouse || x.ReceiptWarehouse == Filter.Warehouse);
+
+			completionQuery.Where(GetSearchCriterion(
+				() => completionAlias.Id,
+				() => authorAlias.Name
+			));
+
+			completionQuery
+				.JoinAlias(() => completionAlias.ReceiptWarehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => completionAlias.SourceWarehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+			.SelectList(list => list
+			   			.Select(() => completionAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => completionAlias.Date).WithAlias(() => resultAlias.Date)
+			            .Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
+			            .Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+						.Select(() => completionAlias.Comment).WithAlias(() => resultAlias.Comment)
+			            .Select(() => StokDocumentType.Completion).WithAlias(() => resultAlias.DocTypeEnum)
+			            .Select(() => completionAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
+					)
+			.OrderBy(() => completionAlias.Date).Desc
+			.ThenBy(() => completionAlias.CreationDate).Desc
+			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
+
+			return completionQuery;
 		}
 		#endregion
 		#region Действия
