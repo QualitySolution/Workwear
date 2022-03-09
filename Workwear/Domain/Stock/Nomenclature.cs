@@ -150,7 +150,7 @@ namespace workwear.Domain.Stock
 						.Where(x => x.Amount > 0);
 					foreach (var position in anyBalance) {
 						yield return new ValidationResult("Архивная номенклатура не должна иметь остатков на складе"+
-						                                  $" склад {warehouse.Name} содержит {Name} в кол-ве {position.Amount} шт.");
+						                                  $" склад {warehouse.Name} содержит {position.StockPosition.Title} в кол-ве {position.Amount} шт.");
 					}
 				}
 			}
