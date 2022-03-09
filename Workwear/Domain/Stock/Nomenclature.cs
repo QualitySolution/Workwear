@@ -146,10 +146,12 @@ namespace workwear.Domain.Stock
 				var uow = (IUnitOfWork)validationContext.Items[nameof(IUnitOfWork)];
 				var warehouses = uow.Query<Warehouse>().List();
 				foreach (var warehouse in warehouses) {
-					var amount = repository.StockBalances(uow, warehouse, nomenclatures, DateTime.Now).FirstOrDefault()?.Amount ?? 0;
-					if (amount > 0)
-					 	yield return new ValidationResult("Архивная номенклатура не должна иметь остатков на складе"+
-					                                      $" склад {warehouse.Name} содержит {Name} в кол-ве {amount} шт.");
+					var anyBalance = repository.StockBalances(uow, warehouse, nomenclatures, DateTime.Now)
+						.Where(x => x.Amount > 0);
+					foreach (var position in anyBalance) {
+						yield return new ValidationResult("Архивная номенклатура не должна иметь остатков на складе"+
+						                                  $" склад {warehouse.Name} содержит {Name} в кол-ве {position.Amount} шт.");
+					}
 				}
 			}
 		}
