@@ -2,6 +2,7 @@
 using Autofac;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Journal;

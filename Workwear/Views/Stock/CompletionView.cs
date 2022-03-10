@@ -69,6 +69,9 @@ namespace workwear.Views.Stock
 				 .AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				 .Finish ();
 			 ytreeReceiptItems.ItemsDataSource = Entity.ObservableResultItems;
+
+			 buttonDelExpenseNomenclature.Sensitive = Entity.ObservableSourceItems.Count > 0;
+			 buttonDelReceiptNomenclature.Sensitive = Entity.ObservableResultItems.Count > 0;
 		}
 		void AddSourceItems(object sender, EventArgs eventArgs) {
 			ViewModel.AddSourceItems();
