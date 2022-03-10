@@ -411,19 +411,25 @@ namespace workwear.Journal.ViewModels.Stock
 					);
 			NodeActionsList.Add(addAction);
 			foreach(StokDocumentType docType in Enum.GetValues(typeof(StokDocumentType))) {
-				if(docType is StokDocumentType.MassExpense && !FeaturesService.Available(WorkwearFeature.MassExpense))
-					continue;
-				if(docType is StokDocumentType.CollectiveExpense && !FeaturesService.Available(WorkwearFeature.CollectiveExpense))
-					continue;
-				if(docType is StokDocumentType.TransferDoc && !FeaturesService.Available(WorkwearFeature.Warehouses))
-					continue;
-				var insertDocAction = new JournalAction(
-					docType.GetEnumTitle(),
-					(selected) => true,
-					(selected) => true,
-					(selected) => openStockDocumentsModel.CreateDocumentDialog(this, docType)
-				);
-				addAction.ChildActionsList.Add(insertDocAction);
+				switch (docType)
+				{
+					case StokDocumentType.MassExpense when !FeaturesService.Available(WorkwearFeature.MassExpense):
+					case StokDocumentType.CollectiveExpense when !FeaturesService.Available(WorkwearFeature.CollectiveExpense):
+					case StokDocumentType.TransferDoc when !FeaturesService.Available(WorkwearFeature.Warehouses):
+					case StokDocumentType.Completion when !FeaturesService.Available(WorkwearFeature.Completion):
+						continue;
+					default:
+					{
+						var insertDocAction = new JournalAction(
+							docType.GetEnumTitle(),
+							(selected) => true,
+							(selected) => true,
+							(selected) => openStockDocumentsModel.CreateDocumentDialog(this, docType)
+						);
+						addAction.ChildActionsList.Add(insertDocAction);
+						break;
+					}
+				}
 			}
 
 			var editAction = new JournalAction("Изменить",
