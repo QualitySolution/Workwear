@@ -27,6 +27,7 @@ namespace workwear.Domain.Stock
             }
         }
         [Display(Name = "Складская операция")]
+        [IgnoreHistoryTrace]
         public virtual WarehouseOperation WarehouseOperation { get; set; }
         [Display(Name = "Размер")]
         public virtual string Size {

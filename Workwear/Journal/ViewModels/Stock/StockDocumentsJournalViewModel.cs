@@ -381,6 +381,7 @@ namespace workwear.Journal.ViewModels.Stock
 			completionQuery.Where(GetSearchCriterion(
 				() => completionAlias.Id, () => authorAlias.Name));
 			completionQuery
+				.JoinAlias(() => completionAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => completionAlias.ResultWarehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => completionAlias.SourceWarehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
@@ -391,6 +392,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => completionAlias.Comment).WithAlias(() => resultAlias.Comment)
 			            .Select(() => StokDocumentType.Completion).WithAlias(() => resultAlias.DocTypeEnum)
 			            .Select(() => completionAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
+			            .Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 					)
 			.OrderBy(() => completionAlias.Date).Desc
 			.ThenBy(() => completionAlias.CreationDate).Desc

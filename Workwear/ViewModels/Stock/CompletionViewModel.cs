@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
@@ -82,6 +83,8 @@ namespace workwear.ViewModels.Stock
 				.ToList().ForEach(n => Entity.AddResultItem(n));
 		}
 		public override bool Save() {
+			if(Entity.Id == 0)
+				Entity.CreationDate = DateTime.Now;
 			Entity.UpdateItems();
 			return base.Save();
 		}
