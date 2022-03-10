@@ -16,7 +16,7 @@ namespace workwear.Domain.Stock
     [Appellative (Gender = GrammaticalGender.Feminine,
         NominativePlural = "комплектации номенклатуры",
         Nominative = "комплектация номенклатуры",
-        Genitive = "комплектацию номенклатуры")]
+        Genitive = "комплектации номенклатуры")]
     [HistoryTrace]
     public class Completion: StockDocument, IValidatableObject
     {
@@ -97,7 +97,9 @@ namespace workwear.Domain.Stock
                 foreach (var item in SourceItems) {
                     var nomenclatures = new List<Nomenclature>() {item.Nomenclature};
                     var balance = repository
-                        .StockBalances(uow, SourceWarehouse, nomenclatures, DateTime.Now).Where(s => Equals(s.StockPosition, item.StockPosition)).ToList();
+                        .StockBalances(uow, SourceWarehouse, nomenclatures, DateTime.Now, new List<WarehouseOperation>(){item.WarehouseOperation})
+                        .Where(s => Equals(s.StockPosition, item.StockPosition))
+                        .ToList();
                     if (!balance.Any()) {yield return new ValidationResult(
                             $"Для разукомплектации {item.StockPosition.Title} не хватает кол-ва на складе" +
                             $" склад {SourceWarehouse?.Name} содержит {balance} {item.Nomenclature.Type.Units.Name}");

@@ -26,6 +26,7 @@ namespace workwear.Domain.Stock
                 WarehouseOperation.Amount = value;
             }
         }
+        [Display(Name = "Складская операция")]
         public virtual WarehouseOperation WarehouseOperation { get; set; }
         [Display(Name = "Размер")]
         public virtual string Size {
@@ -65,12 +66,19 @@ namespace workwear.Domain.Stock
         Genitive = "строку разукомплектации"
     )]
     [HistoryTrace]
-    public class CompletionSourceItem: CompletionItem { public CompletionSourceItem(){} }
+    public class CompletionSourceItem: CompletionItem { 
+        public CompletionSourceItem(){}
+        public virtual string Title { get; set; } = "строка разукомплектации";
+    }
+
     [Appellative(Gender = GrammaticalGender.Feminine,
         NominativePlural = "строки комплектации",
         Nominative = "строка комплектации",
         Genitive = "строку комплектации"
     )]
     [HistoryTrace]
-    public class CompletionResultItem: CompletionItem { public CompletionResultItem(){} }
+    public class CompletionResultItem : CompletionItem {
+        public CompletionResultItem(){} 
+        public virtual string Title { get; set; } = "строка комплектации";
+    }
 }
