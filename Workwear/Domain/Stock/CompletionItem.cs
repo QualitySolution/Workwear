@@ -7,7 +7,7 @@ namespace workwear.Domain.Stock
 {
     public class CompletionItem : PropertyChangedBase, IDomainObject
     {
-        #region Property
+        #region Свойства
         public virtual int Id { get; }
         [IgnoreHistoryTrace]
         public virtual Completion Completion { get; set; }
@@ -18,15 +18,15 @@ namespace workwear.Domain.Stock
                 WarehouseOperation.Nomenclature = value;
             }
         }
+        [Display(Name = "Кол-во")]
         public virtual int Amount {
             get => WarehouseOperation?.Amount ?? 0;
             set {
                 if (WarehouseOperation == null) return;
-                WarehouseOperation.WearPercent = value;
+                WarehouseOperation.Amount = value;
             }
         }
         public virtual WarehouseOperation WarehouseOperation { get; set; }
-
         [Display(Name = "Размер")]
         public virtual string Size {
             get => WarehouseOperation?.Size;
@@ -35,7 +35,6 @@ namespace workwear.Domain.Stock
                 WarehouseOperation.Size = value;
             }
         }
-
         [Display(Name = "Рост одежды")]
         public virtual string Growth {
             get => WarehouseOperation?.Growth;
@@ -44,7 +43,6 @@ namespace workwear.Domain.Stock
                 WarehouseOperation.Growth = value;
             }
         }
-
         [Display(Name = "Процент износа")]
         public virtual decimal WearPercent {
             get => WarehouseOperation?.WearPercent ?? 0;
@@ -53,16 +51,12 @@ namespace workwear.Domain.Stock
                 WarehouseOperation.WearPercent = value;
             }
         }
-
         #endregion
-
         #region Constructors
         public CompletionItem(){}
         #endregion
-
         #region Calculate
         public virtual StockPosition StockPosition => new StockPosition(Nomenclature, Size, Growth, WearPercent);
-
         #endregion
     }
     [Appellative(Gender = GrammaticalGender.Feminine,
@@ -71,17 +65,12 @@ namespace workwear.Domain.Stock
         Genitive = "строку разукомплектации"
     )]
     [HistoryTrace]
-    public class CompletionSourceItem: CompletionItem {
-        public CompletionSourceItem(){}
-    }
+    public class CompletionSourceItem: CompletionItem { public CompletionSourceItem(){} }
     [Appellative(Gender = GrammaticalGender.Feminine,
         NominativePlural = "строки комплектации",
         Nominative = "строка комплектации",
         Genitive = "строку комплектации"
     )]
     [HistoryTrace]
-    public class CompletionResultItem: CompletionItem {
-        public CompletionResultItem(){}
-    }
-    
+    public class CompletionResultItem: CompletionItem { public CompletionResultItem(){} }
 }

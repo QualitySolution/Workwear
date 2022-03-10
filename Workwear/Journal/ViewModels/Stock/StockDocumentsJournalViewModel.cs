@@ -60,7 +60,7 @@ namespace workwear.Journal.ViewModels.Stock
 			dataLoader.AddQuery(QueryTransferDoc);
 			dataLoader.AddQuery(QueryCompletionDoc);
 			dataLoader.MergeInOrderBy(x => x.Date, true);
-			dataLoader.MergeInOrderBy(x => x.CreationDate.Value, true);
+			dataLoader.MergeInOrderBy(x => x.CreationDate, true);
 			DataLoader = dataLoader;
 
 			CreateNodeActions();
@@ -368,24 +368,20 @@ namespace workwear.Journal.ViewModels.Stock
 		{
 			if(Filter.StokDocumentType != null && Filter.StokDocumentType != StokDocumentType.Completion)
 				return null;
-
 			Completion completionAlias = null;
-
+			
 			var completionQuery = uow.Session.QueryOver<Completion>(() => completionAlias);
 			if(Filter.StartDate.HasValue)
 				completionQuery.Where(o => o.Date >= Filter.StartDate.Value);
 			if(Filter.EndDate.HasValue)
 				completionQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
 			if(Filter.Warehouse != null)
-				completionQuery.Where(x => x.SourceWarehouse == Filter.Warehouse || x.ReceiptWarehouse == Filter.Warehouse);
+				completionQuery.Where(x => x.SourceWarehouse == Filter.Warehouse || x.ResultWarehouse == Filter.Warehouse);
 
 			completionQuery.Where(GetSearchCriterion(
-				() => completionAlias.Id,
-				() => authorAlias.Name
-			));
-
+				() => completionAlias.Id, () => authorAlias.Name));
 			completionQuery
-				.JoinAlias(() => completionAlias.ReceiptWarehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => completionAlias.ResultWarehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => completionAlias.SourceWarehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => completionAlias.Id).WithAlias(() => resultAlias.Id)
@@ -399,7 +395,6 @@ namespace workwear.Journal.ViewModels.Stock
 			.OrderBy(() => completionAlias.Date).Desc
 			.ThenBy(() => completionAlias.CreationDate).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
-
 			return completionQuery;
 		}
 		#endregion

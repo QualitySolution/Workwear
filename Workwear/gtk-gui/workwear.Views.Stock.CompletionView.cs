@@ -62,7 +62,7 @@ namespace workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yButton buttonAddExpenseNomenclature;
 
-		private global::QS.Widgets.MenuButton buttonDelExpenseNomenclature;
+		private global::Gamma.GtkWidgets.yButton buttonDelExpenseNomenclature;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel1;
 
@@ -80,7 +80,7 @@ namespace workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yButton buttonAddReceiptNomenclature;
 
-		private global::QS.Widgets.MenuButton buttonDelReceiptNomenclature;
+		private global::Gamma.GtkWidgets.yButton buttonDelReceiptNomenclature;
 
 		protected virtual void Build()
 		{
@@ -363,38 +363,36 @@ namespace workwear.Views.Stock
 			this.hbox7.Add(this.buttonAddExpenseNomenclature);
 			global::Gtk.Box.BoxChild w28 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.buttonAddExpenseNomenclature]));
 			w28.Position = 0;
+			w28.Expand = false;
 			// Container child hbox7.Gtk.Box+BoxChild
-			this.buttonDelExpenseNomenclature = new global::QS.Widgets.MenuButton();
-			this.buttonDelExpenseNomenclature.Sensitive = false;
+			this.buttonDelExpenseNomenclature = new global::Gamma.GtkWidgets.yButton();
 			this.buttonDelExpenseNomenclature.CanFocus = true;
 			this.buttonDelExpenseNomenclature.Name = "buttonDelExpenseNomenclature";
-			this.buttonDelExpenseNomenclature.UseMarkup = false;
-			this.buttonDelExpenseNomenclature.LabelXAlign = 0F;
+			this.buttonDelExpenseNomenclature.UseUnderline = true;
 			this.buttonDelExpenseNomenclature.Label = global::Mono.Unix.Catalog.GetString("Удалить");
-			global::Gtk.Image w29 = new global::Gtk.Image();
-			w29.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.buttonDelExpenseNomenclature.Image = w29;
 			this.hbox7.Add(this.buttonDelExpenseNomenclature);
-			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.buttonDelExpenseNomenclature]));
-			w30.Position = 1;
+			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.buttonDelExpenseNomenclature]));
+			w29.Position = 1;
+			w29.Expand = false;
+			w29.Fill = false;
 			this.vbox2.Add(this.hbox7);
-			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox7]));
-			w31.Position = 2;
-			w31.Expand = false;
-			w31.Fill = false;
+			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox7]));
+			w30.Position = 2;
+			w30.Expand = false;
+			w30.Fill = false;
 			this.yhbox1.Add(this.vbox2);
-			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.vbox2]));
-			w32.Position = 0;
+			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.vbox2]));
+			w31.Position = 0;
 			// Container child yhbox1.Gtk.Box+BoxChild
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Sensitive = false;
 			this.ylabel1.Name = "ylabel1";
 			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString(">");
 			this.yhbox1.Add(this.ylabel1);
-			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ylabel1]));
-			w33.Position = 1;
-			w33.Expand = false;
-			w33.Fill = false;
+			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ylabel1]));
+			w32.Position = 1;
+			w32.Expand = false;
+			w32.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
 			this.vbox3 = new global::Gtk.VBox();
 			this.vbox3.Name = "vbox3";
@@ -409,15 +407,15 @@ namespace workwear.Views.Stock
 			this.label2.Xalign = 0F;
 			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Скомплектовать");
 			this.hbox8.Add(this.label2);
-			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.label2]));
+			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.label2]));
+			w33.Position = 0;
+			w33.Expand = false;
+			w33.Fill = false;
+			this.vbox3.Add(this.hbox8);
+			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.hbox8]));
 			w34.Position = 0;
 			w34.Expand = false;
 			w34.Fill = false;
-			this.vbox3.Add(this.hbox8);
-			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.hbox8]));
-			w35.Position = 0;
-			w35.Expand = false;
-			w35.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
 			this.GtkScrolledWindow1 = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow1.Name = "GtkScrolledWindow1";
@@ -428,8 +426,8 @@ namespace workwear.Views.Stock
 			this.ytreeReceiptItems.Name = "ytreeReceiptItems";
 			this.GtkScrolledWindow1.Add(this.ytreeReceiptItems);
 			this.vbox3.Add(this.GtkScrolledWindow1);
-			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.GtkScrolledWindow1]));
-			w37.Position = 1;
+			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.GtkScrolledWindow1]));
+			w36.Position = 1;
 			// Container child vbox3.Gtk.Box+BoxChild
 			this.hbox9 = new global::Gtk.HBox();
 			this.hbox9.Name = "hbox9";
@@ -440,37 +438,35 @@ namespace workwear.Views.Stock
 			this.buttonAddReceiptNomenclature.Name = "buttonAddReceiptNomenclature";
 			this.buttonAddReceiptNomenclature.UseUnderline = true;
 			this.buttonAddReceiptNomenclature.Label = global::Mono.Unix.Catalog.GetString("Добавить номенклатуру");
-			global::Gtk.Image w38 = new global::Gtk.Image();
-			w38.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonAddReceiptNomenclature.Image = w38;
+			global::Gtk.Image w37 = new global::Gtk.Image();
+			w37.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.buttonAddReceiptNomenclature.Image = w37;
 			this.hbox9.Add(this.buttonAddReceiptNomenclature);
-			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonAddReceiptNomenclature]));
-			w39.Position = 0;
+			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonAddReceiptNomenclature]));
+			w38.Position = 0;
+			w38.Expand = false;
 			// Container child hbox9.Gtk.Box+BoxChild
-			this.buttonDelReceiptNomenclature = new global::QS.Widgets.MenuButton();
-			this.buttonDelReceiptNomenclature.Sensitive = false;
+			this.buttonDelReceiptNomenclature = new global::Gamma.GtkWidgets.yButton();
 			this.buttonDelReceiptNomenclature.CanFocus = true;
 			this.buttonDelReceiptNomenclature.Name = "buttonDelReceiptNomenclature";
-			this.buttonDelReceiptNomenclature.UseMarkup = false;
-			this.buttonDelReceiptNomenclature.LabelXAlign = 0F;
+			this.buttonDelReceiptNomenclature.UseUnderline = true;
 			this.buttonDelReceiptNomenclature.Label = global::Mono.Unix.Catalog.GetString("Удалить");
-			global::Gtk.Image w40 = new global::Gtk.Image();
-			w40.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.buttonDelReceiptNomenclature.Image = w40;
 			this.hbox9.Add(this.buttonDelReceiptNomenclature);
-			global::Gtk.Box.BoxChild w41 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonDelReceiptNomenclature]));
-			w41.Position = 1;
+			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonDelReceiptNomenclature]));
+			w39.Position = 1;
+			w39.Expand = false;
+			w39.Fill = false;
 			this.vbox3.Add(this.hbox9);
-			global::Gtk.Box.BoxChild w42 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.hbox9]));
-			w42.Position = 2;
-			w42.Expand = false;
-			w42.Fill = false;
+			global::Gtk.Box.BoxChild w40 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.hbox9]));
+			w40.Position = 2;
+			w40.Expand = false;
+			w40.Fill = false;
 			this.yhbox1.Add(this.vbox3);
-			global::Gtk.Box.BoxChild w43 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.vbox3]));
-			w43.Position = 2;
+			global::Gtk.Box.BoxChild w41 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.vbox3]));
+			w41.Position = 2;
 			this.yvbox1.Add(this.yhbox1);
-			global::Gtk.Box.BoxChild w44 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
-			w44.Position = 2;
+			global::Gtk.Box.BoxChild w42 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
+			w42.Position = 2;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{
