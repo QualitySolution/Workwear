@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using workwear.Domain.Operations;
+using workwear.Repository.Stock;
+using workwear.Tools;
 using BindingsObservableSourceList =  System.Data.Bindings.Collections.Generic.GenericObservableList<workwear.Domain.Stock.CompletionSourceItem>;
 using BindingsObservableResultList =  System.Data.Bindings.Collections.Generic.GenericObservableList<workwear.Domain.Stock.CompletionResultItem>;
 
@@ -56,6 +60,7 @@ namespace workwear.Domain.Stock
         public virtual string Title => String.Format("Комплектация №{0} от {1:d}" ,Id, Date);
         #endregion
         #region IValidatableObject implementation
+
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (Date < new DateTime(2008, 1, 1))
@@ -66,6 +71,12 @@ namespace workwear.Domain.Stock
                     new[] {nameof(SourceWarehouse)});
             if (ResultWarehouse is null)
                 yield return new ValidationResult("Склад комплектации должен быть указан",
+                    new[] {nameof(ResultWarehouse)});
+            if (SourceItems.Count == 0)
+                yield return new ValidationResult("Разукомплектация должна содержать хотя бы одну позицию",
+                    new[] {nameof(SourceWarehouse)});
+            if (ResultItems.Count == 0)
+                yield return new ValidationResult("Комплектация должна содержать хотя бы одну позицию",
                     new[] {nameof(ResultWarehouse)});
             foreach (var item in SourceItems) {
                 if (item.Amount == 0)
@@ -79,7 +90,28 @@ namespace workwear.Domain.Stock
                         $"{item.StockPosition.Title}: строка комплектации должна содержать кол-во",
                         new[] {nameof(SourceItems)});
             }
+            var baseParameters = (BaseParameters) validationContext.Items[nameof(BaseParameters)];
+            if (!baseParameters.CheckBalances) yield break; {
+                var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
+                var repository = new StockRepository();
+                foreach (var item in SourceItems) {
+                    var nomenclatures = new List<Nomenclature>() {item.Nomenclature};
+                    var balance = repository
+                        .StockBalances(uow, SourceWarehouse, nomenclatures, DateTime.Now).Where(s => Equals(s.StockPosition, item.StockPosition)).ToList();
+                    if (!balance.Any()) {yield return new ValidationResult(
+                            $"Для разукомплектации {item.StockPosition.Title} не хватает кол-ва на складе" +
+                            $" склад {SourceWarehouse?.Name} содержит {balance} {item.Nomenclature.Type.Units.Name}");
+                    }
+                    else 
+                        foreach (var balanceItem in balance.Where(balanceItem => balanceItem.Amount < item.Amount)) {
+                            yield return new ValidationResult(
+                                $"Для разукомплектации {item.StockPosition.Title} не хватает кол-ва на складе" +
+                                $" склад {SourceWarehouse?.Name} содержит {balanceItem.Amount} {item.Nomenclature.Type.Units.Name}");
+                        }
+                }
+            }
         }
+
         #endregion
         #region Items
         public virtual void AddSourceItem(StockPosition position, Warehouse warehouse, int count) {

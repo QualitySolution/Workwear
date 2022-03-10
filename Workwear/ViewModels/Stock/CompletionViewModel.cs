@@ -1,8 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Autofac;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QS.HistoryLog;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Journal;
@@ -13,6 +14,7 @@ using QS.ViewModels.Dialog;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository.Stock;
+using workwear.Tools;
 using workwear.Tools.Features;
 
 namespace workwear.ViewModels.Stock
@@ -26,6 +28,7 @@ namespace workwear.ViewModels.Stock
 			StockRepository stockRepository,
 			FeaturesService featuresService,
 			ILifetimeScope autofacScope,
+			BaseParameters baseParameters,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			var entryBuilder = new CommonEEVMBuilderFactory<Completion>(this, Entity, UoW, navigation, autofacScope);
@@ -44,6 +47,10 @@ namespace workwear.ViewModels.Stock
 					(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			WarehouseReceiptEntryViewModel = entryBuilder.ForProperty(x => x.ResultWarehouse).MakeByType().Finish();
+			
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(Entity, 
+				new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters }, {nameof(IUnitOfWork), UoW} })));
 		}
 		#region EntityViewModels
 		public EntityEntryViewModel<Warehouse> WarehouseExpenseEntryViewModel;
