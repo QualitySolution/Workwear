@@ -123,7 +123,9 @@ namespace workwear
 				.AddDeleteDependence<WarehouseOperation>(x => x.ReceiptWarehouse)
 				.AddDeleteDependence<WarehouseOperation>(x => x.ExpenseWarehouse)
 				.AddClearDependence<Subdivision>(x => x.Warehouse)
-				.AddClearDependence<UserSettings>(x => x.DefaultWarehouse);
+				.AddClearDependence<UserSettings>(x => x.DefaultWarehouse)
+				.AddDeleteDependence<Completion>(x => x.ResultWarehouse)
+				.AddDeleteDependence<Completion>(x => x.SourceWarehouse);
 
 			DeleteConfig.AddHibernateDeleteInfo<MeasurementUnits>()
 				.AddClearDependence<ItemsType>(x => x.Units);
@@ -249,21 +251,24 @@ namespace workwear
 				.AddDeleteDependence<TransferItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<MassExpenseOperation>(x => x.WarehouseOperationExpense)
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.WarehouseOperation)
-				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.WarehouseOperation);
+				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.WarehouseOperation)
+				.AddDeleteDependence<CompletionResultItem>(x => x.WarehouseOperation)
+				.AddDeleteDependence<CompletionSourceItem>(x => x.WarehouseOperation);
 
 			#endregion
 
 			#region Пользователь
 
-			DeleteConfig.AddHibernateDeleteInfo<UserBase> ()
+			DeleteConfig.AddHibernateDeleteInfo<UserBase>()
 				.AddDeleteDependence<UserSettings>(x => x.User)
-				.AddClearDependence<EmployeeCard> (x => x.CreatedbyUser)
-				.AddClearDependence<Writeoff> (x => x.CreatedbyUser)
-				.AddClearDependence<Expense> (x => x.CreatedbyUser)
-				.AddClearDependence<CollectiveExpense> (x => x.CreatedbyUser)
-				.AddClearDependence<Income> (x => x.CreatedbyUser)
+				.AddClearDependence<EmployeeCard>(x => x.CreatedbyUser)
+				.AddClearDependence<Writeoff>(x => x.CreatedbyUser)
+				.AddClearDependence<Expense>(x => x.CreatedbyUser)
+				.AddClearDependence<CollectiveExpense>(x => x.CreatedbyUser)
+				.AddClearDependence<Income>(x => x.CreatedbyUser)
 				.AddClearDependence<MassExpense>(x => x.CreatedbyUser)
-				.AddClearDependence<Transfer>(x => x.CreatedbyUser);
+				.AddClearDependence<Transfer>(x => x.CreatedbyUser)
+				.AddClearDependence<Completion>(x => x.CreatedbyUser);
 
 			DeleteConfig.AddHibernateDeleteInfo<UserSettings>();
 
