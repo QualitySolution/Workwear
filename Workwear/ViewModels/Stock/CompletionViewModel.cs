@@ -24,6 +24,7 @@ namespace workwear.ViewModels.Stock
 	public class CompletionViewModel: EntityDialogViewModelBase<Completion>
 	{
 		private readonly IInteractiveQuestion interactive;
+		private FeaturesService featuresService;
 		Warehouse lastWarehouse;
 		public CompletionViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
@@ -38,6 +39,7 @@ namespace workwear.ViewModels.Stock
 		{
 			var entryBuilder = new CommonEEVMBuilderFactory<Completion>(this, Entity, UoW, navigation, autofacScope);
 			this.interactive = interactive;
+			this.featuresService = featuresService;
 			
 			if(UoW.IsNew) 
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
@@ -70,6 +72,7 @@ namespace workwear.ViewModels.Stock
 		#region View
 		public bool CanDelItemSource => Entity.ObservableSourceItems.Count > 0;
 		public bool CanDelItemResult => Entity.ObservableResultItems.Count > 0;
+		public bool ShowWarehouses => featuresService.Available(WorkwearFeature.Warehouses);
 		#endregion
 		#region EntityViewModels
 		public EntityEntryViewModel<Warehouse> WarehouseExpenseEntryViewModel;

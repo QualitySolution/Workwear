@@ -22,9 +22,9 @@ namespace workwear.Views.Stock
 
 		private global::QS.Views.Control.EntityEntry entityWarehouseReceipt;
 
-		private global::Gtk.Label label3;
+		private global::Gtk.Label labelResult;
 
-		private global::Gtk.Label label7;
+		private global::Gtk.Label labelSource;
 
 		private global::Gtk.Table table3;
 
@@ -168,25 +168,25 @@ namespace workwear.Views.Stock
 			w8.RightAttach = ((uint)(2));
 			w8.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
-			this.label3 = new global::Gtk.Label();
-			this.label3.Name = "label3";
-			this.label3.Xalign = 1F;
-			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Склад комплектующих<span foreground=\"red\">*</span>:");
-			this.label3.UseMarkup = true;
-			this.table2.Add(this.label3);
-			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table2[this.label3]));
+			this.labelResult = new global::Gtk.Label();
+			this.labelResult.Name = "labelResult";
+			this.labelResult.Xalign = 1F;
+			this.labelResult.LabelProp = global::Mono.Unix.Catalog.GetString("Склад получения результа<span foreground=\"red\">*</span>:");
+			this.labelResult.UseMarkup = true;
+			this.table2.Add(this.labelResult);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table2[this.labelResult]));
+			w9.TopAttach = ((uint)(1));
+			w9.BottomAttach = ((uint)(2));
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
 			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
-			this.label7 = new global::Gtk.Label();
-			this.label7.Name = "label7";
-			this.label7.Xalign = 1F;
-			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString("Склад получения результа<span foreground=\"red\">*</span>:");
-			this.label7.UseMarkup = true;
-			this.table2.Add(this.label7);
-			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table2[this.label7]));
-			w10.TopAttach = ((uint)(1));
-			w10.BottomAttach = ((uint)(2));
+			this.labelSource = new global::Gtk.Label();
+			this.labelSource.Name = "labelSource";
+			this.labelSource.Xalign = 1F;
+			this.labelSource.LabelProp = global::Mono.Unix.Catalog.GetString("Склад комплектующих<span foreground=\"red\">*</span>:");
+			this.labelSource.UseMarkup = true;
+			this.table2.Add(this.labelSource);
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table2[this.labelSource]));
 			w10.XOptions = ((global::Gtk.AttachOptions)(4));
 			w10.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.hbox1.Add(this.table2);

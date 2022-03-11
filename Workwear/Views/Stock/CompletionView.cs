@@ -39,8 +39,11 @@ namespace workwear.Views.Stock
 			 	.InitializeFromSource();
 			 ydateDoc.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
 			 ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+			 
 			 entityWarehouseExpense.ViewModel = ViewModel.WarehouseExpenseEntryViewModel;
 			 entityWarehouseReceipt.ViewModel = ViewModel.WarehouseReceiptEntryViewModel;
+
+			 entityWarehouseExpense.Visible = entityWarehouseReceipt.Visible = labelResult.Visible = labelSource.Visible = ViewModel.ShowWarehouses;
 			 #region TreeSource
 			 ytreeExpenseItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionSourceItem>()
 				 .AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
