@@ -91,6 +91,8 @@ namespace workwear.Tools.Features
 					return functionLists.Any(x => x.Name == "wear_lk");
 				case WorkwearFeature.HistoryLog:
 					return ProductEdition == 2 || ProductEdition == 3;
+				case WorkwearFeature.Completion:
+					return ProductEdition == 2 || ProductEdition == 3;
 				default:
 					return false;
 			}
@@ -116,6 +118,8 @@ namespace workwear.Tools.Features
 		[Display(Name = "Комуникация с сотрудниками")]
 		Communications,
 		[Display(Name = "История изменений")]
-		HistoryLog
+		HistoryLog,
+		[Display(Name = "Комплектация")]
+		Completion
 	}
 }

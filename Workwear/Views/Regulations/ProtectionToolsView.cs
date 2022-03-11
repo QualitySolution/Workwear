@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Gamma.Binding.Converters;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
@@ -40,8 +41,9 @@ namespace workwear.Views.Regulations
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
 			.AddColumn("Тип").AddTextRenderer(p => p.TypeName)
 			.AddColumn("Номер").AddTextRenderer(n => $"{n.Number}")
-			.AddColumn("Наименование").AddTextRenderer(p => p.Name)
+			.AddColumn("Наименование").AddTextRenderer(p => p.Name + (p.Archival? "(архивная)" : String.Empty))
 			.AddColumn("Пол").AddTextRenderer(p => p.Sex != null ? p.Sex.GetEnumTitle() : String.Empty)
+			.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 			.Finish();
 			ytreeItems.ItemsDataSource = Entity.ObservableNomenclatures;
 			ytreeItems.Selection.Changed += Nomenclature_Selection_Changed;

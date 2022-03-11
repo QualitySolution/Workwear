@@ -58,8 +58,9 @@ namespace workwear.Journal.ViewModels.Stock
 			dataLoader.AddQuery(QueryWriteoffDoc);
 			dataLoader.AddQuery(QueryMassExpenseDoc);
 			dataLoader.AddQuery(QueryTransferDoc);
+			dataLoader.AddQuery(QueryCompletionDoc);
 			dataLoader.MergeInOrderBy(x => x.Date, true);
-			dataLoader.MergeInOrderBy(x => x.CreationDate.Value, true);
+			dataLoader.MergeInOrderBy(x => x.CreationDate, true);
 			DataLoader = dataLoader;
 
 			CreateNodeActions();
@@ -363,6 +364,41 @@ namespace workwear.Journal.ViewModels.Stock
 
 			return writeoffQuery;
 		}
+		protected IQueryOver<Completion> QueryCompletionDoc(IUnitOfWork uow)
+		{
+			if(Filter.StokDocumentType != null && Filter.StokDocumentType != StokDocumentType.Completion)
+				return null;
+			Completion completionAlias = null;
+			
+			var completionQuery = uow.Session.QueryOver<Completion>(() => completionAlias);
+			if(Filter.StartDate.HasValue)
+				completionQuery.Where(o => o.Date >= Filter.StartDate.Value);
+			if(Filter.EndDate.HasValue)
+				completionQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
+			if(Filter.Warehouse != null)
+				completionQuery.Where(x => x.SourceWarehouse == Filter.Warehouse || x.ResultWarehouse == Filter.Warehouse);
+
+			completionQuery.Where(GetSearchCriterion(
+				() => completionAlias.Id, () => authorAlias.Name));
+			completionQuery
+				.JoinAlias(() => completionAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => completionAlias.ResultWarehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => completionAlias.SourceWarehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+			.SelectList(list => list
+			   			.Select(() => completionAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => completionAlias.Date).WithAlias(() => resultAlias.Date)
+			            .Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
+			            .Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+						.Select(() => completionAlias.Comment).WithAlias(() => resultAlias.Comment)
+			            .Select(() => StokDocumentType.Completion).WithAlias(() => resultAlias.DocTypeEnum)
+			            .Select(() => completionAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
+			            .Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
+					)
+			.OrderBy(() => completionAlias.Date).Desc
+			.ThenBy(() => completionAlias.CreationDate).Desc
+			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
+			return completionQuery;
+		}
 		#endregion
 		#region Действия
 		void CreateDocumentsActions()
@@ -375,19 +411,25 @@ namespace workwear.Journal.ViewModels.Stock
 					);
 			NodeActionsList.Add(addAction);
 			foreach(StokDocumentType docType in Enum.GetValues(typeof(StokDocumentType))) {
-				if(docType is StokDocumentType.MassExpense && !FeaturesService.Available(WorkwearFeature.MassExpense))
-					continue;
-				if(docType is StokDocumentType.CollectiveExpense && !FeaturesService.Available(WorkwearFeature.CollectiveExpense))
-					continue;
-				if(docType is StokDocumentType.TransferDoc && !FeaturesService.Available(WorkwearFeature.Warehouses))
-					continue;
-				var insertDocAction = new JournalAction(
-					docType.GetEnumTitle(),
-					(selected) => true,
-					(selected) => true,
-					(selected) => openStockDocumentsModel.CreateDocumentDialog(this, docType)
-				);
-				addAction.ChildActionsList.Add(insertDocAction);
+				switch (docType)
+				{
+					case StokDocumentType.MassExpense when !FeaturesService.Available(WorkwearFeature.MassExpense):
+					case StokDocumentType.CollectiveExpense when !FeaturesService.Available(WorkwearFeature.CollectiveExpense):
+					case StokDocumentType.TransferDoc when !FeaturesService.Available(WorkwearFeature.Warehouses):
+					case StokDocumentType.Completion when !FeaturesService.Available(WorkwearFeature.Completion):
+						continue;
+					default:
+					{
+						var insertDocAction = new JournalAction(
+							docType.GetEnumTitle(),
+							(selected) => true,
+							(selected) => true,
+							(selected) => openStockDocumentsModel.CreateDocumentDialog(this, docType)
+						);
+						addAction.ChildActionsList.Add(insertDocAction);
+						break;
+					}
+				}
 			}
 
 			var editAction = new JournalAction("Изменить",

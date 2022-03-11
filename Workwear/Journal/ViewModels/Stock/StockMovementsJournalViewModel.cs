@@ -30,12 +30,16 @@ namespace workwear.Journal.ViewModels.Stock
 
 		public StockMovementsFilterViewModel Filter { get; private set; }
 
-		public StockMovmentsJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigation, ILifetimeScope autofacScope, FeaturesService featuresService, OpenStockDocumentsModel openDocuments) : base(unitOfWorkFactory, interactiveService, navigation)
+		public StockMovmentsJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, 
+			IInteractiveService interactiveService, INavigationManager navigation, 
+			ILifetimeScope autofacScope, FeaturesService featuresService, 
+			OpenStockDocumentsModel openDocuments) : base(unitOfWorkFactory, interactiveService, navigation)
 		{
 			AutofacScope = autofacScope;
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.openDocuments = openDocuments ?? throw new ArgumentNullException(nameof(openDocuments));
-			JournalFilter = Filter = AutofacScope.Resolve<StockMovementsFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			JournalFilter = Filter = AutofacScope.Resolve<StockMovementsFilterViewModel>
+				(new TypedParameter(typeof(JournalViewModelBase), this));
 
 			var dataLoader = new ThreadDataLoader<StockMovmentsJournalNode>(unitOfWorkFactory);
 			dataLoader.AddQuery(ItemsQuery);
@@ -61,6 +65,8 @@ namespace workwear.Journal.ViewModels.Stock
 			WriteoffItem writeoffItemAlias = null;
 			EmployeeCard employeeCardAlias = null;
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
+			CompletionResultItem completionResultItemAlias = null;
+			CompletionSourceItem completionSourceItemAlias = null;
 
 			Nomenclature nomenclatureAlias = null;
 			ItemsType itemtypesAlias = null;
@@ -148,6 +154,8 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => employeeIssueOperationAlias, () => employeeIssueOperationAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => employeeCardAlias, () => employeeIssueOperationAlias.Employee.Id == employeeCardAlias.Id, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => completionResultItemAlias, () => completionResultItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => completionSourceItemAlias, () => completionSourceItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.Where(GetSearchCriterion(
 					() => employeeCardAlias.FirstName,
 					() => employeeCardAlias.LastName,
@@ -174,6 +182,8 @@ namespace workwear.Journal.ViewModels.Stock
 					.SelectGroup(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
 					.SelectGroup(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferItemId)
 					.SelectGroup(() => writeoffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
+					.SelectGroup(() => completionResultItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromResultId)
+					.SelectGroup(() => completionSourceItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromSourceId)
 
 					.SelectGroup(() => warehouseOperationAlias.Size).WithAlias(() => resultAlias.Size)
 					.SelectGroup(() => warehouseOperationAlias.Growth).WithAlias(() => resultAlias.Growth)
@@ -206,6 +216,10 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
 					.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 					.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
+					.Select(() => completionResultItemAlias.Id).WithAlias(() => resultAlias.CompletionResultItemId)
+					.Select(() => completionSourceItemAlias.Id).WithAlias(() => resultAlias.CompletionSourceItemId)
+					.Select(() => completionSourceItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromSourceId)
+					.Select(() => completionResultItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromResultId)
 				);
 			}
 

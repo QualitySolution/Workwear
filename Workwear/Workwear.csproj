@@ -123,8 +123,13 @@
     <EmbeddedResource Include="icon\menu\logs.png" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Stock\Completion.cs" />
+    <Compile Include="Domain\Stock\CompletionItem.cs" />
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="HibernateMapping\MappingParams.cs" />
+    <Compile Include="HibernateMapping\Stock\CompletionResultItemMap.cs" />
+    <Compile Include="HibernateMapping\Stock\CompletionSourceItemMap.cs" />
+    <Compile Include="HibernateMapping\Stock\CompletionMap.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
     <Compile Include="Program.cs" />
@@ -492,6 +497,9 @@
     <Compile Include="Journal\ViewModels\Communications\MessageTemplateJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Communications\EmployeeNotificationJournalViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Communications.EmployeeNotificationFilterView.cs" />
+    <Compile Include="ViewModels\Stock\CompletionViewModel.cs" />
+    <Compile Include="Views\Stock\CompletionView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.CompletionView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -506,6 +514,10 @@
     <ProjectReference Include="..\..\QSProjects\Binding\Gamma.Utilities\Gamma.Utilities.csproj">
       <Project>{1bf2a638-420d-456c-96a7-36873a0fb894}</Project>
       <Name>Gamma.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.BaseParameters\QS.BaseParameters.csproj">
+      <Project>{a869ec36-67d2-4a36-95e9-0b1e7350928f}</Project>
+      <Name>QS.BaseParameters</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QS.HistoryLog.Gtk\QS.HistoryLog.Gtk.csproj">
       <Project>{1c3b49fc-372c-46f7-995f-eeb44474e2de}</Project>
@@ -723,7 +735,6 @@
     <Folder Include="Journal\Filter.Views\Statements\" />
     <Folder Include="Journal\Filter.ViewModels\Statements\" />
     <Folder Include="Models\Operations\" />
-    <Folder Include="Domain\Tools\" />
     <Folder Include="HibernateMapping\Communications\" />
     <Folder Include="Journal\Filter.ViewModels\Communications\" />
     <Folder Include="Journal\Filter.Views\Communications\" />

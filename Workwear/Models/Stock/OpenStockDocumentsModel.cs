@@ -35,6 +35,8 @@ namespace workwear.Models.Stock
 				navigation.OpenTdiTab<IncomeDocDlg>(master);
 			else if (documentType == StokDocumentType.WriteoffDoc)
 				navigation.OpenTdiTab<WriteOffDocDlg>(master);
+			else if (documentType == StokDocumentType.Completion)
+				navigation.OpenViewModel<CompletionViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
 			else
 				throw new NotSupportedException($"Тип документа {documentType} не поддерживается.");
 		}
@@ -72,6 +74,8 @@ namespace workwear.Models.Stock
 					return navigation.OpenViewModel<WarehouseTransferViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
 				case StokDocumentType.MassExpense:
 					return navigation.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
+				case StokDocumentType.Completion:
+					return navigation.OpenViewModel<CompletionViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
 				default:
 					throw new NotSupportedException($"Тип документа {documentType} не поддерживается.");
 			}

@@ -25,6 +25,14 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			get => itemType;
 			set => SetField(ref itemType, value);
 		}
+
+		private bool showArchival;
+
+		public bool ShowArchival {
+			get => showArchival;
+			set => SetField(ref showArchival, value);
+		}
+
 		#endregion
 	}
 }
