@@ -22,21 +22,19 @@ namespace workwear.Domain.Stock
     {
         #region Свойства
         private Warehouse sourceWarehouse;
-        [Display(Name = "Склад разукомплектации")]
-        [Required(ErrorMessage = "Склад разукомплектации должен быть указан")]
+        [Display(Name = "Склад комплектующих")]
         public virtual Warehouse SourceWarehouse {
             get => sourceWarehouse;
             set => SetField(ref sourceWarehouse, value);
         }
         private Warehouse resultWarehouse;
-        [Display(Name = "Склад комплектации")]
-        [Required(ErrorMessage = "Склад комплектации должен быть указан")]
+        [Display(Name = "Склад получения результата")]
         public virtual Warehouse ResultWarehouse {
             get => resultWarehouse;
             set => SetField(ref resultWarehouse, value);
         }
         private IList<CompletionSourceItem> sourceCompletionItems = new List<CompletionSourceItem>();
-        [Display (Name = "позиция разукомплектации")]
+        [Display (Name = "Комплектующие")]
         public virtual IList<CompletionSourceItem> SourceItems {
             get => sourceCompletionItems;
             set => SetField (ref sourceCompletionItems, value);
@@ -46,7 +44,7 @@ namespace workwear.Domain.Stock
         public virtual BindingsObservableSourceList ObservableSourceItems => 
             observableSourceItems ?? (observableSourceItems = new BindingsObservableSourceList(SourceItems));
         private IList<CompletionResultItem> resultItems = new List<CompletionResultItem>();
-        [Display (Name = "позиция комплектации")]
+        [Display (Name = "Результат комплектации")]
         public virtual IList<CompletionResultItem> ResultItems {
             get => resultItems;
             set => SetField (ref resultItems, value);
@@ -67,27 +65,27 @@ namespace workwear.Domain.Stock
                 yield return new ValidationResult("Дата должны указана (не ранее 2008-го)",
                     new[] {nameof(Date)});
             if (SourceWarehouse is null)
-                yield return new ValidationResult("Склад разукомплектации должен быть указан",
+                yield return new ValidationResult("Склад комплектующих должен быть указан",
                     new[] {nameof(SourceWarehouse)});
             if (ResultWarehouse is null)
-                yield return new ValidationResult("Склад комплектации должен быть указан",
+                yield return new ValidationResult("Склад получения результата должен быть указан",
                     new[] {nameof(ResultWarehouse)});
             if (SourceItems.Count == 0)
-                yield return new ValidationResult("Разукомплектация должна содержать хотя бы одну позицию",
+                yield return new ValidationResult("Не указаны комплектующие",
                     new[] {nameof(SourceWarehouse)});
             if (ResultItems.Count == 0)
-                yield return new ValidationResult("Комплектация должна содержать хотя бы одну позицию",
+                yield return new ValidationResult("Результат комплектации должен содержать хотя бы одну позицию",
                     new[] {nameof(ResultWarehouse)});
             foreach (var item in SourceItems) {
                 if (item.Amount == 0)
                     yield return new ValidationResult(
-                        $"{item.StockPosition.Title}: строка разукомплектации должна содержать кол-во",
+                        $"{item.StockPosition.Title}: строка комплектующих должна содержать кол-во",
                         new[] {nameof(SourceItems)});
             }
             foreach (var item in ResultItems) {
                 if (item.Amount == 0)
                     yield return new ValidationResult(
-                        $"{item.StockPosition.Title}: строка комплектации должна содержать кол-во",
+                        $"{item.StockPosition.Title}: строка результата комплектации должна содержать кол-во",
                         new[] {nameof(SourceItems)});
             }
             var baseParameters = (BaseParameters) validationContext.Items[nameof(BaseParameters)];
@@ -101,13 +99,13 @@ namespace workwear.Domain.Stock
                         .Where(s => Equals(s.StockPosition, item.StockPosition))
                         .ToList();
                     if (!balance.Any()) {yield return new ValidationResult(
-                            $"Для разукомплектации {item.StockPosition.Title} не хватает кол-ва на складе" +
-                            $" склад {SourceWarehouse?.Name} содержит {balance} {item.Nomenclature.Type.Units.Name}");
+                            $"Для комплектации не хватает комплектующих на складе" +
+                            $" склад {SourceWarehouse?.Name} не содержит содержит {item.StockPosition.Title}");
                     }
                     else 
                         foreach (var balanceItem in balance.Where(balanceItem => balanceItem.Amount < item.Amount)) {
                             yield return new ValidationResult(
-                                $"Для разукомплектации {item.StockPosition.Title} не хватает кол-ва на складе" +
+                                $"Для комплектации {item.StockPosition.Title} не хватает комплектующих на складе" +
                                 $" склад {SourceWarehouse?.Name} содержит {balanceItem.Amount} {item.Nomenclature.Type.Units.Name}");
                         }
                 }

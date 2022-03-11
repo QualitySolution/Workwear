@@ -171,7 +171,7 @@ namespace workwear.Views.Stock
 			this.label3 = new global::Gtk.Label();
 			this.label3.Name = "label3";
 			this.label3.Xalign = 1F;
-			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Склад расхода<span foreground=\"red\">*</span>:");
+			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Склад комплектующих<span foreground=\"red\">*</span>:");
 			this.label3.UseMarkup = true;
 			this.table2.Add(this.label3);
 			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table2[this.label3]));
@@ -181,7 +181,7 @@ namespace workwear.Views.Stock
 			this.label7 = new global::Gtk.Label();
 			this.label7.Name = "label7";
 			this.label7.Xalign = 1F;
-			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString("Склад комплектации<span foreground=\"red\">*</span>:");
+			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString("Склад получения результа<span foreground=\"red\">*</span>:");
 			this.label7.UseMarkup = true;
 			this.table2.Add(this.label7);
 			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table2[this.label7]));
@@ -324,7 +324,7 @@ namespace workwear.Views.Stock
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
 			this.label1.Xalign = 0F;
-			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Разукомплектовать");
+			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Комплектующие");
 			this.hbox6.Add(this.label1);
 			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.label1]));
 			w23.Position = 0;
@@ -405,7 +405,7 @@ namespace workwear.Views.Stock
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
 			this.label2.Xalign = 0F;
-			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Скомплектовать");
+			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Результат");
 			this.hbox8.Add(this.label2);
 			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.label2]));
 			w33.Position = 0;

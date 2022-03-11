@@ -26,6 +26,12 @@ namespace workwear.Views.Stock
 			buttonAddReceiptNomenclature.Clicked += AddResultItems;
 			buttonDelExpenseNomenclature.Clicked += DelSourceItems;
 			buttonDelReceiptNomenclature.Clicked += DelResultItems;
+			buttonDelExpenseNomenclature.Binding
+				.AddBinding(ViewModel, vm => vm.CanDelItemSource, b => b.Sensitive)
+				.InitializeFromSource();
+			buttonDelReceiptNomenclature.Binding
+				.AddBinding(ViewModel, vm => vm.CanDelItemResult, b => b.Sensitive)
+				.InitializeFromSource();
 
 			ylabelId.Binding.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
 			 	.InitializeFromSource();
@@ -35,7 +41,7 @@ namespace workwear.Views.Stock
 			 ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 			 entityWarehouseExpense.ViewModel = ViewModel.WarehouseExpenseEntryViewModel;
 			 entityWarehouseReceipt.ViewModel = ViewModel.WarehouseReceiptEntryViewModel;
-
+			 #region TreeSource
 			 ytreeExpenseItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionSourceItem>()
 				 .AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
 				 .AddColumn("Размер").MinWidth(60)
@@ -52,7 +58,8 @@ namespace workwear.Views.Stock
 				 .AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				 .Finish ();
 			 ytreeExpenseItems.ItemsDataSource = Entity.ObservableSourceItems;
-			 
+			 #endregion
+			 #region TreeResult
 			 ytreeReceiptItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionResultItem>()
 				 .AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
 				 .AddColumn("Размер").MinWidth(60)
@@ -69,6 +76,7 @@ namespace workwear.Views.Stock
 				 .AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				 .Finish ();
 			 ytreeReceiptItems.ItemsDataSource = Entity.ObservableResultItems;
+			 #endregion
 		}
 		void AddSourceItems(object sender, EventArgs eventArgs) {
 			ViewModel.AddSourceItems();
@@ -77,10 +85,10 @@ namespace workwear.Views.Stock
 			ViewModel.AddResultItems();
 		}
 		void DelSourceItems(object sender, EventArgs eventArgs) {
-			Entity.ObservableSourceItems.Remove(ytreeExpenseItems.GetSelectedObject<CompletionSourceItem> ());
+			ViewModel.DelSourceItems(ytreeExpenseItems.GetSelectedObject<CompletionSourceItem> ());
 		}
 		void DelResultItems(object sender, EventArgs eventArgs) {
-			Entity.ObservableResultItems.Remove(ytreeReceiptItems.GetSelectedObject<CompletionResultItem> ());
+			ViewModel.DelResultItems(ytreeReceiptItems.GetSelectedObject<CompletionResultItem> ());
 		}
 	}
 }

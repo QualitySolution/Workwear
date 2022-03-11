@@ -17901,7 +17901,7 @@
                   <widget class="Gtk.Label" id="label3">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Склад расхода&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
+                    <property name="LabelProp" translatable="yes">Склад комплектующих&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
                     <property name="UseMarkup">True</property>
                   </widget>
                   <packing>
@@ -17920,7 +17920,7 @@
                   <widget class="Gtk.Label" id="label7">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Склад комплектации&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
+                    <property name="LabelProp" translatable="yes">Склад получения результа&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
                     <property name="UseMarkup">True</property>
                   </widget>
                   <packing>
@@ -18158,7 +18158,7 @@
                       <widget class="Gtk.Label" id="label1">
                         <property name="MemberName" />
                         <property name="Xalign">0</property>
-                        <property name="LabelProp" translatable="yes">Разукомплектовать</property>
+                        <property name="LabelProp" translatable="yes">Комплектующие</property>
                       </widget>
                       <packing>
                         <property name="Position">0</property>
@@ -18265,7 +18265,7 @@
                       <widget class="Gtk.Label" id="label2">
                         <property name="MemberName" />
                         <property name="Xalign">0</property>
-                        <property name="LabelProp" translatable="yes">Скомплектовать</property>
+                        <property name="LabelProp" translatable="yes">Результат</property>
                       </widget>
                       <packing>
                         <property name="Position">0</property>
