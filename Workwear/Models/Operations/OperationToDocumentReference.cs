@@ -20,6 +20,11 @@ namespace workwear.Models.Operations
 		public int? WriteoffItemId;
 		public int? MassExpenseId;
 		public int? MassOperationItemItemId;
+		public int? CompletionFromSourceId;
+		public int? CompletionFromResultId;
+		public int? CompletionSourceItemId;
+		public int? CompletionResultItemId;
+		public int? CompletionId => CompletionFromSourceId ?? CompletionFromResultId;
 
 		public StokDocumentType? DocumentType {
 			get {
@@ -33,15 +38,19 @@ namespace workwear.Models.Operations
 					return StokDocumentType.TransferDoc;
 				if(WriteoffId.HasValue)
 					return StokDocumentType.WriteoffDoc;
+				if (CompletionId.HasValue)
+					return StokDocumentType.Completion;
 
 				return null;
 			}
 		}
 		//Внимание здесь последовательность получения ID желательно сохранять такую же как у типа документа.
 		//Так как в случае ошибочной связи операции с двумя документами возьмется первый надейнных в обоих случаях, иначе будет тип одного, а id от другого.
-		public int? DocumentId => ExpenceId ?? CollectiveExpenseId ?? IncomeId ?? TransferId ?? WriteoffId;
+		public int? DocumentId =>
+			ExpenceId ?? CollectiveExpenseId ?? IncomeId ?? TransferId ?? WriteoffId ?? CompletionId;
 
-		public int? ItemId => ExpenceItemId ?? CollectiveExpenseItemId ?? IncomeItemId ?? TransferItemId ?? WriteoffItemId;
+		public int? ItemId => ExpenceItemId ?? CollectiveExpenseItemId ??
+			IncomeItemId ?? TransferItemId ?? WriteoffItemId ?? CompletionSourceItemId ?? CompletionResultItemId;
 
 		public string DocumentTitle => $"{DocumentType?.GetEnumTitle()} №{DocumentId}";
 	}
