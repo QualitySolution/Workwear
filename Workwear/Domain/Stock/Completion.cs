@@ -130,7 +130,7 @@ namespace workwear.Domain.Stock
             };
             ObservableSourceItems.Add(item);
         }
-        public virtual void AddResultItem(Nomenclature nomenclature) {
+        public virtual CompletionResultItem AddResultItem(Nomenclature nomenclature) {
             var item = new CompletionResultItem {
                 Completion = this,
                 WarehouseOperation = new WarehouseOperation() {
@@ -140,6 +140,7 @@ namespace workwear.Domain.Stock
                 }
             };
             ObservableResultItems.Add(item);
+            return item;
         }
         public virtual void UpdateItems() {
             foreach (var item in SourceItems) {
