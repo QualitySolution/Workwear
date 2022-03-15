@@ -698,3 +698,43 @@ UPDATE stock_write_off_detail SET height_id = (SELECT DISTINCT sizes.id
         AND sizes.name = stock_write_off_detail.growth
 )
 WHERE growth IS NOT NULL;
+
+-- Удаляем старые поля из документов
+
+ALTER TABLE `stock_income_detail` 
+DROP COLUMN `growth`,
+DROP COLUMN `size`;
+
+ALTER TABLE `stock_expense_detail` 
+DROP COLUMN `growth`,
+DROP COLUMN `size`;
+
+ALTER TABLE `stock_write_off_detail` 
+DROP COLUMN `growth`,
+DROP COLUMN `size`;
+
+ALTER TABLE `operation_issued_by_employee` 
+DROP COLUMN `growth`,
+DROP COLUMN `size`,
+DROP INDEX `index9` ,
+DROP INDEX `index8` ;
+
+ALTER TABLE `issuance_sheet_items` 
+DROP COLUMN `growth`,
+DROP COLUMN `size`;
+
+ALTER TABLE `operation_issued_in_subdivision` 
+DROP COLUMN `growth`,
+DROP COLUMN `size`,
+DROP INDEX `index9` ,
+DROP INDEX `index8` ;
+
+ALTER TABLE `operation_warehouse` 
+DROP COLUMN `growth`,
+DROP COLUMN `size`,
+DROP INDEX `index5` ,
+DROP INDEX `index4` ;
+
+ALTER TABLE `stock_collective_expense_detail` 
+DROP COLUMN `growth`,
+DROP COLUMN `size`;
