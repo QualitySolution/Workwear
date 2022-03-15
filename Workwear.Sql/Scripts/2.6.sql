@@ -214,33 +214,3 @@ UPDATE `operation_issued_by_employee` AS operation
     LEFT JOIN `operation_issued_by_employee` AS issued ON issued.id = operation.issued_operation_id
     SET operation.protection_tools_id = issued.protection_tools_id
 WHERE issued.id IS NOT NULL AND operation.protection_tools_id IS NULL;
-
-DROP function IF EXISTS `count_issue`;
-
-DELIMITER $$
-CREATE FUNCTION `count_issue`(`amount` INT UNSIGNED, `norm_period` INT UNSIGNED, `next_month` INT UNSIGNED, `next_year` INT UNSIGNED, `begin_month` INT UNSIGNED, `begin_year` INT UNSIGNED, `end_month` INT UNSIGNED, `end_year` INT UNSIGNED) RETURNS int(10) unsigned
-    NO SQL
-    DETERMINISTIC
-    COMMENT 'Функция рассчитывает количество необходимое к выдачи.'
-BEGIN
-DECLARE issue_count, total_month_next, total_month_begin, total_month_end INT;
-
-IF norm_period <= 0 THEN RETURN 0; END IF;
-IF next_month IS NULL OR next_year IS NULL THEN RETURN 0; END IF;
-
-SET total_month_begin = begin_month + begin_year * 12;
-SET total_month_end = end_month + end_year * 12;
-
-SET issue_count = 0;
-SET total_month_next = next_month + next_year * 12;
-
-WHILE total_month_next <= total_month_end DO
-    IF total_month_next >= total_month_begin THEN 
-    	SET issue_count = issue_count + amount;
-    END IF;
-  SET total_month_next = total_month_next + norm_period;  
-  END WHILE;
-RETURN issue_count;
-END$$
-
-DELIMITER ;
