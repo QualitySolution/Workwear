@@ -321,3 +321,208 @@ INSERT INTO wear_cards_sizes (employee_id, size_type_id, size_id)
 SELECT wear_cards.id, 8, sizes.id 
 FROM wear_cards
 JOIN sizes ON sizes.size_type_id = 8 AND sizes.name = wear_cards.size_mittens;
+
+-- Добавляем новые колонки в документы
+
+ALTER TABLE `nomenclature` 
+DROP COLUMN `size_std`;
+
+ALTER TABLE `wear_cards` 
+DROP COLUMN `size_mittens`,
+DROP COLUMN `size_gloves_std`,
+DROP COLUMN `size_gloves`,
+DROP COLUMN `size_headdress_std`,
+DROP COLUMN `size_headdress`,
+DROP COLUMN `size_winter_shoes_std`,
+DROP COLUMN `size_winter_shoes`,
+DROP COLUMN `size_shoes_std`,
+DROP COLUMN `size_shoes`,
+DROP COLUMN `size_wear_std`,
+DROP COLUMN `size_wear`,
+DROP COLUMN `wear_growth`;
+
+ALTER TABLE `stock_income_detail` 
+ADD COLUMN `size_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `growth`,
+ADD COLUMN `height_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `size_id`,
+ADD INDEX `fk_stock_income_detail_4_idx` (`size_id` ASC),
+ADD INDEX `fk_stock_income_detail_5_idx` (`height_id` ASC);
+
+ALTER TABLE `stock_expense_detail` 
+ADD COLUMN `size_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `protection_tools_id`,
+ADD COLUMN `height_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `size_id`,
+ADD INDEX `fk_stock_expense_detail_5_idx` (`size_id` ASC),
+ADD INDEX `fk_stock_expense_detail_6_idx` (`height_id` ASC);
+
+ALTER TABLE `stock_write_off_detail` 
+ADD COLUMN `size_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `growth`,
+ADD COLUMN `height_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `size_id`,
+ADD INDEX `fk_stock_write_off_detail_5_idx` (`size_id` ASC),
+ADD INDEX `fk_stock_write_off_detail_6_idx` (`height_id` ASC);
+
+ALTER TABLE `operation_issued_by_employee` 
+ADD COLUMN `size_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `growth`,
+ADD COLUMN `height_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `size_id`,
+ADD INDEX `fk_operation_issued_by_employee_7_idx` (`size_id` ASC),
+ADD INDEX `fk_operation_issued_by_employee_8_idx` (`height_id` ASC);
+
+ALTER TABLE `issuance_sheet_items` 
+ADD COLUMN `size_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `growth`,
+ADD COLUMN `height_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `size_id`,
+ADD INDEX `fk_issuance_sheet_items_9_idx` (`height_id` ASC),
+ADD INDEX `fk_issuance_sheet_items_8_idx` (`size_id` ASC);
+
+ALTER TABLE `operation_issued_in_subdivision` 
+ADD COLUMN `size_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `growth`,
+ADD COLUMN `height_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `size_id`,
+ADD INDEX `fk_operation_issued_in_subdivision_6_idx` (`size_id` ASC),
+ADD INDEX `fk_operation_issued_in_subdivision_7_idx` (`height_id` ASC);
+
+ALTER TABLE `operation_warehouse` 
+ADD COLUMN `size_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `growth`,
+ADD COLUMN `height_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `size_id`,
+ADD INDEX `fk_operation_warehouse_4_idx` (`size_id` ASC),
+ADD INDEX `fk_operation_warehouse_5_idx` (`height_id` ASC);
+
+ALTER TABLE `stock_collective_expense_detail` 
+ADD COLUMN `size_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `growth`,
+ADD COLUMN `height_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `size_id`,
+ADD INDEX `fk_stock_collective_expense_detail_7_idx` (`size_id` ASC),
+ADD INDEX `fk_stock_collective_expense_detail_8_idx` (`height_id` ASC);
+
+ALTER TABLE `stock_income_detail` 
+ADD CONSTRAINT `fk_stock_income_detail_4`
+  FOREIGN KEY (`size_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_stock_income_detail_5`
+  FOREIGN KEY (`height_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE;
+
+ALTER TABLE `stock_expense_detail` 
+ADD CONSTRAINT `fk_stock_expense_detail_5`
+  FOREIGN KEY (`size_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_stock_expense_detail_6`
+  FOREIGN KEY (`height_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE;
+
+ALTER TABLE `stock_write_off_detail` 
+ADD CONSTRAINT `fk_stock_write_off_detail_5`
+  FOREIGN KEY (`size_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_stock_write_off_detail_6`
+  FOREIGN KEY (`height_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE;
+
+ALTER TABLE `operation_issued_by_employee` 
+ADD CONSTRAINT `fk_operation_issued_by_employee_7`
+  FOREIGN KEY (`size_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_operation_issued_by_employee_8`
+  FOREIGN KEY (`height_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE;
+
+ALTER TABLE `issuance_sheet_items` 
+ADD CONSTRAINT `fk_issuance_sheet_items_8`
+  FOREIGN KEY (`size_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_issuance_sheet_items_9`
+  FOREIGN KEY (`height_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE;
+
+ALTER TABLE `operation_issued_in_subdivision` 
+ADD CONSTRAINT `fk_operation_issued_in_subdivision_6`
+  FOREIGN KEY (`size_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_operation_issued_in_subdivision_7`
+  FOREIGN KEY (`height_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE;
+
+ALTER TABLE `operation_warehouse` 
+ADD CONSTRAINT `fk_operation_warehouse_4`
+  FOREIGN KEY (`size_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_operation_warehouse_5`
+  FOREIGN KEY (`height_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE;
+
+ALTER TABLE `stock_collective_expense_detail` 
+ADD CONSTRAINT `fk_stock_collective_expense_detail_7`
+  FOREIGN KEY (`size_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_stock_collective_expense_detail_8`
+  FOREIGN KEY (`height_id`)
+  REFERENCES `sizes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE;
+
+-- Добавляем типы размеров в типы номеклатуры
+
+ALTER TABLE `item_types` 
+ADD COLUMN `size_type_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `comment`,
+ADD COLUMN `height_type_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `size_type_id`,
+ADD INDEX `fk_item_types_2_idx` (`size_type_id` ASC),
+ADD INDEX `fk_item_types_3_idx` (`height_type_id` ASC);
+
+ALTER TABLE `item_types` 
+ADD CONSTRAINT `fk_item_types_2`
+  FOREIGN KEY (`size_type_id`)
+  REFERENCES `size_types` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_item_types_3`
+  FOREIGN KEY (`height_type_id`)
+  REFERENCES `size_types` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE;
+
+UPDATE `item_types` SET 
+`size_type_id`=
+	CASE wear_category
+    WHEN 'Wear' THEN 2
+    WHEN 'Shoes' THEN 4
+    WHEN 'WinterShoes' THEN 5
+    WHEN 'Headgear' THEN 6
+    WHEN 'Gloves' THEN 7
+    WHEN 'Mittens' THEN 8
+    END;
+
+UPDATE `item_types` SET 
+height_type_id=
+	CASE wear_category
+    WHEN 'Wear' THEN 1
+    END;
+
+-- Переносим размеры со старых полей на новые
+
+
+
