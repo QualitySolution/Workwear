@@ -1,13 +1,10 @@
-ALTER TABLE `stock_income_detail` 
-DROP FOREIGN KEY `fk_stock_income_detail_1`;
-
 ALTER TABLE `user_settings` 
 DROP FOREIGN KEY `fk_user_settings_organization_id`,
 DROP FOREIGN KEY `fk_user_settings_responsible_person_id`;
 
 ALTER TABLE `leaders` 
 ADD COLUMN `employee_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `position`,
-ADD INDEX `fk_leaders_1_idx` (`employee_id` ASC) VISIBLE;
+ADD INDEX `fk_leaders_1_idx` (`employee_id` ASC);
 ;
 
 #Стандарт роста, больше не используем
@@ -25,7 +22,7 @@ ADD COLUMN `lk_registered` TINYINT(1) NOT NULL DEFAULT 0 AFTER `phone_number`;
 ALTER TABLE `norms_item` 
 ADD COLUMN `condition_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `period_count`,
 CHANGE COLUMN `period_type` `period_type` ENUM('Year', 'Month', 'Shift', 'Wearout') NOT NULL DEFAULT 'Year' ,
-ADD INDEX `fk_norms_item_3_idx` (`condition_id` ASC) VISIBLE;
+ADD INDEX `fk_norms_item_3_idx` (`condition_id` ASC);
 ;
 
 ALTER TABLE `operation_issued_by_employee` 
@@ -34,13 +31,13 @@ CHANGE COLUMN `nomenclature_id` `nomenclature_id` INT(10) UNSIGNED NULL DEFAULT 
 
 ALTER TABLE `issuance_sheet` 
 ADD COLUMN `stock_collective_expense_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `stock_mass_expense_id`,
-ADD INDEX `fk_issuance_sheet_6_idx` (`stock_mass_expense_id` ASC) VISIBLE,
-ADD INDEX `fk_issuance_sheet_7_idx` (`stock_collective_expense_id` ASC) VISIBLE;
+ADD INDEX `fk_issuance_sheet_6_idx` (`stock_mass_expense_id` ASC),
+ADD INDEX `fk_issuance_sheet_7_idx` (`stock_collective_expense_id` ASC);
 ;
 
 ALTER TABLE `issuance_sheet_items` 
 ADD COLUMN `stock_collective_expense_item_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `stock_expense_detail_id`,
-ADD INDEX `fk_issuance_sheet_items_7_idx` (`stock_collective_expense_item_id` ASC) VISIBLE;
+ADD INDEX `fk_issuance_sheet_items_7_idx` (`stock_collective_expense_item_id` ASC);
 ;
 
 ALTER TABLE `protection_tools` 
@@ -53,8 +50,8 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
   `user_id` INT(10) UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_stock_expense_user_idx` (`user_id` ASC) VISIBLE,
-  INDEX `fk_stock_expense_1_idx` (`warehouse_id` ASC) VISIBLE,
+  INDEX `fk_stock_expense_user_idx` (`user_id` ASC),
+  INDEX `fk_stock_expense_1_idx` (`warehouse_id` ASC),
   CONSTRAINT `fk_stock_collective_expense_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
@@ -81,12 +78,12 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense_detail` (
   `size` VARCHAR(10) NULL DEFAULT NULL,
   `growth` VARCHAR(10) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_stock_expense_detail_nomenclature_idx` (`nomenclature_id` ASC) VISIBLE,
-  INDEX `fk_stock_expense_detail_1_idx` (`employee_issue_operation_id` ASC) VISIBLE,
-  INDEX `fk_stock_expense_detail_2_idx` (`warehouse_operation_id` ASC) VISIBLE,
-  INDEX `fk_stock_expense_detail_4_idx` (`protection_tools_id` ASC) VISIBLE,
-  INDEX `fk_stock_collective_expense_detail_4_idx` (`stock_collective_expense_id` ASC) VISIBLE,
-  INDEX `fk_stock_collective_expense_detail_6_idx` (`employee_id` ASC) VISIBLE,
+  INDEX `fk_stock_expense_detail_nomenclature_idx` (`nomenclature_id` ASC),
+  INDEX `fk_stock_expense_detail_1_idx` (`employee_issue_operation_id` ASC),
+  INDEX `fk_stock_expense_detail_2_idx` (`warehouse_operation_id` ASC),
+  INDEX `fk_stock_expense_detail_4_idx` (`protection_tools_id` ASC),
+  INDEX `fk_stock_collective_expense_detail_4_idx` (`stock_collective_expense_id` ASC),
+  INDEX `fk_stock_collective_expense_detail_6_idx` (`employee_id` ASC),
   CONSTRAINT `fk_stock_collective_expense_detail_1`
     FOREIGN KEY (`employee_issue_operation_id`)
     REFERENCES `operation_issued_by_employee` (`id`)
@@ -142,13 +139,6 @@ ALTER TABLE `leaders`
 ADD CONSTRAINT `fk_leaders_1`
   FOREIGN KEY (`employee_id`)
   REFERENCES `wear_cards` (`id`)
-  ON DELETE NO ACTION
-  ON UPDATE CASCADE;
-
-ALTER TABLE `stock_income_detail` 
-ADD CONSTRAINT `fk_stock_income_detail_1`
-  FOREIGN KEY (`employee_issue_operation_id`)
-  REFERENCES `operation_issued_by_employee` (`id`)
   ON DELETE NO ACTION
   ON UPDATE CASCADE;
 
