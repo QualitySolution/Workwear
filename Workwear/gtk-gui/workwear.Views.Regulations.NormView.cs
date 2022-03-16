@@ -243,7 +243,8 @@ namespace workwear.Views.Regulations
 			// Container child table1.Gtk.Table+TableChild
 			this.label6 = new global::Gtk.Label();
 			this.label6.Name = "label6";
-			this.label6.LabelProp = global::Mono.Unix.Catalog.GetString("Дата начала действия");
+			this.label6.Xalign = 1F;
+			this.label6.LabelProp = global::Mono.Unix.Catalog.GetString("Дата начала действия:");
 			this.table1.Add(this.label6);
 			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table1[this.label6]));
 			w15.TopAttach = ((uint)(5));
@@ -253,7 +254,8 @@ namespace workwear.Views.Regulations
 			// Container child table1.Gtk.Table+TableChild
 			this.label7 = new global::Gtk.Label();
 			this.label7.Name = "label7";
-			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString("Дата окончания действия");
+			this.label7.Xalign = 1F;
+			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString("Дата окончания действия:");
 			this.table1.Add(this.label7);
 			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.table1[this.label7]));
 			w16.TopAttach = ((uint)(6));
