@@ -19,9 +19,9 @@ namespace WorkwearTest.ViewModels
 		public new static IEnumerable AllEntityViewModels => EntityViewModelsTestsBase.AllEntityViewModels;
 
 		[Test, TestCaseSource(nameof(AllEntityViewModels))]
-		public override void ViewModelForValidateblyEntityHasValidatorDependenceTest(Type type)
+		public override void ViewModelForValidatableEntityHasValidatorDependenceTest(Type type)
 		{
-			base.ViewModelForValidateblyEntityHasValidatorDependenceTest(type);
+			base.ViewModelForValidatableEntityHasValidatorDependenceTest(type);
 		}
 	}
 }
