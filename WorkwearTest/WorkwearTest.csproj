@@ -61,6 +61,7 @@
     <Compile Include="Regulations\NormItemTest.cs" />
     <Compile Include="Operations\EmployeeIssueOperationTest.cs" />
     <Compile Include="Organization\EmployeeCardItemTests.cs" />
+    <Compile Include="Sql\ScriptsConfigurationTest.cs" />
     <Compile Include="Stock\ExpenseTest.cs" />
     <Compile Include="Organization\EmployeeVacationTests.cs" />
     <Compile Include="Integration\ReportExportTest.cs" />
@@ -97,9 +98,17 @@
       <Project>{28A78143-42E3-40E7-86F5-DD7E1679BE86}</Project>
       <Name>QS.Project</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj">
+      <Project>{bc159ba7-ef22-4800-ac34-de4b2b386aae}</Project>
+      <Name>QS.Updater.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Workwear.Core\Workwear.Core.csproj">
       <Project>{8c8e9ac8-13c1-4b54-b4f4-9f8cd62a5744}</Project>
       <Name>Workwear.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Workwear.Sql\Workwear.Sql.csproj">
+      <Project>{cd86b5da-6d84-4406-b7a8-0a35e87772aa}</Project>
+      <Name>Workwear.Sql</Name>
     </ProjectReference>
     <ProjectReference Include="..\Workwear\Workwear.csproj">
       <Project>{63B06122-016A-42D4-B621-8E0F9FA8E738}</Project>

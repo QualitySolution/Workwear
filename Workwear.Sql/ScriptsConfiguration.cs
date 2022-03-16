@@ -30,7 +30,7 @@ namespace Workwear.Sql
 				new Version (1, 0, 5),
 				"Workwear.Sql.Scripts.1.0.5.sql");
 			configuration.AddUpdate (
-				new Version (1, 0),
+				new Version (1, 0, 5),
 				new Version (1, 1),
 				"Workwear.Sql.Scripts.1.1.sql");
 			configuration.AddUpdate (
@@ -50,7 +50,7 @@ namespace Workwear.Sql
 				new Version (1, 2, 4),
 				"Workwear.Sql.Scripts.1.2.4.sql");
 			configuration.AddUpdate (
-				new Version (1, 2),
+				new Version (1, 2, 4),
 				new Version (2, 0),
 				"Workwear.Sql.Scripts.2.0.sql");
 			configuration.AddUpdate(
@@ -58,7 +58,7 @@ namespace Workwear.Sql
 				new Version(2, 0, 2),
 				"Workwear.Sql.Scripts.2.0.2.sql");
 			configuration.AddUpdate(
-				new Version(2, 0),
+				new Version(2, 0, 2),
 				new Version(2, 1),
 				"Workwear.Sql.Scripts.2.1.sql");
 			configuration.AddUpdate(
@@ -66,7 +66,7 @@ namespace Workwear.Sql
 				new Version(2, 1, 1),
 				"Workwear.Sql.Scripts.2.1.1.sql");
 			configuration.AddUpdate(
-				new Version(2, 1),
+				new Version(2, 1, 1),
 				new Version(2, 2),
 				"Workwear.Sql.Scripts.2.2.sql");
 			configuration.AddUpdate(
@@ -78,7 +78,7 @@ namespace Workwear.Sql
 				new Version(2, 3, 3),
 				"Workwear.Sql.Scripts.2.3.3.sql");
 			configuration.AddUpdate(
-				new Version(2, 3),
+				new Version(2, 3, 3),
 				new Version(2, 4),
 				"Workwear.Sql.Scripts.2.4.sql");
 			configuration.AddUpdate(
