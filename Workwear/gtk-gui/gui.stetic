@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -5926,7 +5926,8 @@
                 <child>
                   <widget class="Gtk.Label" id="label6">
                     <property name="MemberName" />
-                    <property name="LabelProp" translatable="yes">Дата начала действия</property>
+                    <property name="Xalign">1</property>
+                    <property name="LabelProp" translatable="yes">Дата начала действия:</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">5</property>
@@ -5945,7 +5946,8 @@
                 <child>
                   <widget class="Gtk.Label" id="label7">
                     <property name="MemberName" />
-                    <property name="LabelProp" translatable="yes">Дата окончания действия</property>
+                    <property name="Xalign">1</property>
+                    <property name="LabelProp" translatable="yes">Дата окончания действия:</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">6</property>
