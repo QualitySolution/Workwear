@@ -383,8 +383,8 @@ AUTO_INCREMENT = 1000;
 CREATE TABLE IF NOT EXISTS `regulations_annex` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `regulations_id` INT UNSIGNED NOT NULL,
-  `number` VARCHAR(255) NOT NULL,
-  `name` TINYTEXT NULL DEFAULT NULL,
+  `number` TINYINT(4) NOT NULL,
+  `name` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_regulations_appendix_1_idx` (`regulations_id` ASC),
   CONSTRAINT `fk_regulations_appendix_1`
