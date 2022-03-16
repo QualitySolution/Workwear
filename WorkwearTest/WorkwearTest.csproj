@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="ConfigureOneTime.cs" />
     <Compile Include="Deletion\ConfigTests.cs" />
+    <Compile Include="HistoryLog\DomainModelTest.cs" />
     <Compile Include="Integration\Import\ExcelImportViewModelTest.cs" />
     <Compile Include="Operations\Graph\IssueGraphTest.cs" />
     <Compile Include="Operations\Graph\GraphItemTest.cs" />
