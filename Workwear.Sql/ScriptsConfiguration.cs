@@ -21,11 +21,11 @@ namespace Workwear.Sql
 		{
 			var configuration = new UpdateConfiguration();
 
-			configuration.AddMicroUpdate (
+			configuration.AddUpdate (
 				new Version (1, 0),
 				new Version (1, 0, 4),
 				"Workwear.Sql.Scripts.1.0.4.sql");
-			configuration.AddMicroUpdate (
+			configuration.AddUpdate (
 				new Version (1, 0, 4),
 				new Version (1, 0, 5),
 				"Workwear.Sql.Scripts.1.0.5.sql");
@@ -37,15 +37,15 @@ namespace Workwear.Sql
 				new Version (1, 1),
 				new Version (1, 2),
 				"Workwear.Sql.Scripts.1.2.sql");
-			configuration.AddMicroUpdate (
+			configuration.AddUpdate (
 				new Version (1, 2),
 				new Version (1, 2, 1),
 				"Workwear.Sql.Scripts.1.2.1.sql");
-			configuration.AddMicroUpdate (
+			configuration.AddUpdate (
 				new Version (1, 2, 1),
 				new Version (1, 2, 2),
 				"Workwear.Sql.Scripts.1.2.2.sql");
-			configuration.AddMicroUpdate (
+			configuration.AddUpdate (
 				new Version (1, 2, 2),
 				new Version (1, 2, 4),
 				"Workwear.Sql.Scripts.1.2.4.sql");
@@ -53,7 +53,7 @@ namespace Workwear.Sql
 				new Version (1, 2),
 				new Version (2, 0),
 				"Workwear.Sql.Scripts.2.0.sql");
-			configuration.AddMicroUpdate(
+			configuration.AddUpdate(
 				new Version(2, 0),
 				new Version(2, 0, 2),
 				"Workwear.Sql.Scripts.2.0.2.sql");
@@ -61,7 +61,7 @@ namespace Workwear.Sql
 				new Version(2, 0),
 				new Version(2, 1),
 				"Workwear.Sql.Scripts.2.1.sql");
-			configuration.AddMicroUpdate(
+			configuration.AddUpdate(
 				new Version(2, 1),
 				new Version(2, 1, 1),
 				"Workwear.Sql.Scripts.2.1.1.sql");
@@ -73,7 +73,7 @@ namespace Workwear.Sql
 				new Version(2, 2),
 				new Version(2, 3),
 				"Workwear.Sql.Scripts.2.3.sql");
-			configuration.AddMicroUpdate(
+			configuration.AddUpdate(
 				new Version(2, 3),
 				new Version(2, 3, 3),
 				"Workwear.Sql.Scripts.2.3.3.sql");
@@ -81,11 +81,11 @@ namespace Workwear.Sql
 				new Version(2, 3),
 				new Version(2, 4),
 				"Workwear.Sql.Scripts.2.4.sql");
-			configuration.AddMicroUpdate(
+			configuration.AddUpdate(
 				new Version(2, 4),
 				new Version(2, 4, 1),
 				"Workwear.Sql.Scripts.2.4.1.sql");
-			configuration.AddMicroUpdate(
+			configuration.AddUpdate(
 				new Version(2, 4, 1),
 				new Version(2, 4, 3),
 				"Workwear.Sql.Scripts.2.4.3.sql");
@@ -99,7 +99,7 @@ namespace Workwear.Sql
 					DropIndexIfExist(connection, "operation_issued_by_employee", "fk_operation_issued_by_employee_4_idx");
 					DropIndexIfExist(connection, "operation_issued_by_employee", "fk_operation_issued_by_employee_6_idx");
 				});
-			configuration.AddMicroUpdate(
+			configuration.AddUpdate(
 				new Version(2, 5),
 				new Version(2, 5, 1),
 				"Workwear.Sql.Scripts.2.5.1.sql");
