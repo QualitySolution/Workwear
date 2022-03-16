@@ -23,6 +23,7 @@ using workwear.Repository.Regulations;
 using workwear.Repository.Stock;
 using workwear.Tools;
 using Workwear.Domain.Company;
+using workwear.Domain.Sizes;
 using Workwear.Measurements;
 
 namespace workwear.Domain.Company
@@ -297,7 +298,22 @@ namespace workwear.Domain.Company
 			get { return mittensSize; }
 			set { SetField(ref mittensSize, value); }
 		}
+		
+		private IList<Size> sizes = new List<Size>();
 
+		[Display (Name = "Размеры")]
+		public virtual IList< Size> Sizes {
+			get => sizes;
+			set => SetField (ref sizes, value);
+		}
+		
+		GenericObservableList<Size> observableSizes;
+		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		public virtual GenericObservableList<Size> ObservableSizes
+			=> observableSizes ?? (observableSizes = new GenericObservableList<Size>(Sizes));
+		#endregion
+
+		#region Norms
 		private IList<Norm> usedNorms = new List<Norm>();
 
 		[Display (Name = "Примененные нормы")]
@@ -308,14 +324,12 @@ namespace workwear.Domain.Company
 
 		GenericObservableList<Norm> observableUsedNorms;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<Norm> ObservableUsedNorms {
-			get {
-				if (observableUsedNorms == null)
-					observableUsedNorms = new GenericObservableList<Norm> (UsedNorms);
-				return observableUsedNorms;
-			}
-		}
+		public virtual GenericObservableList<Norm> ObservableUsedNorms 
+			=> observableUsedNorms ?? (observableUsedNorms = new GenericObservableList<Norm>(UsedNorms));
 
+		#endregion
+
+		#region Items
 		private IList<EmployeeCardItem> workwearItems = new List<EmployeeCardItem>();
 
 		[Display (Name = "Спецодежда")]
@@ -333,7 +347,8 @@ namespace workwear.Domain.Company
 				return observableWorkwearItems;
 			}
 		}
-
+		#endregion
+		#region Vacation
 		private IList<EmployeeVacation> vacations = new List<EmployeeVacation>();
 
 		[Display(Name = "Отпуска")]
@@ -351,7 +366,6 @@ namespace workwear.Domain.Company
 				return observableVacations;
 			}
 		}
-
 		#endregion
 
 		#region Расчетные

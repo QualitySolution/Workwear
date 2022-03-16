@@ -5,6 +5,7 @@ using Gamma.Utilities;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
+using workwear.Domain.Sizes;
 using Workwear.Measurements;
 
 namespace workwear.Domain.Stock
@@ -106,7 +107,8 @@ namespace workwear.Domain.Stock
 				return observableNomenclatures;
 			}
 		}
-
+		public virtual SizeType SizeType { get; set; }
+		public virtual SizeType HeightType { get; set; }
 		#endregion
 
 

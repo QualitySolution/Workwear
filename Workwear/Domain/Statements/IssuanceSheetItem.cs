@@ -6,6 +6,7 @@ using QS.Utilities.Numeric;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
+using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 
 namespace workwear.Domain.Statements
@@ -114,6 +115,9 @@ namespace workwear.Domain.Statements
 			get { return wearGrowth; }
 			set { SetField(ref wearGrowth, value, () => WearGrowth); }
 		}
+		
+		public virtual Size SizeType { get; set; }
+		public virtual Size Height { get; set; }
 
 		#endregion
 

@@ -27,6 +27,8 @@ namespace workwear.HibernateMapping.Statements
 			References(x => x.IssueOperation).Column("issued_operation_id");
 			References(x => x.ExpenseItem).Column("stock_expense_detail_id");
 			References(x => x.CollectiveExpenseItem).Column("stock_collective_expense_item_id");
+			References(x => x.SizeType).Column("size_id");
+			References(x => x.Height).Column("height_id");
 		}
 	}
 }

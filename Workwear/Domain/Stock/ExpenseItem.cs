@@ -9,6 +9,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
+using workwear.Domain.Sizes;
 using workwear.Domain.Statements;
 using workwear.Repository.Stock;
 using workwear.Tools;
@@ -117,6 +118,9 @@ namespace workwear.Domain.Stock
 			get { return wearGrowth; }
 			set { SetField(ref wearGrowth, value, () => WearGrowth); }
 		}
+		
+		public virtual Size SizeType { get; set; }
+		public virtual Size Height { get; set; }
 
 		#endregion
 

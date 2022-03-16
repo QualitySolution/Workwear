@@ -4,6 +4,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using QS.Utilities.Numeric;
+using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 
 namespace workwear.Domain.Operations
@@ -91,6 +92,9 @@ namespace workwear.Domain.Operations
 			get { return cost; }
 			set { SetField(ref cost, value, () => Cost); }
 		}
+		
+		public virtual Size SizeType { get; set; }
+		public virtual Size Height { get; set; }
 
 		#region Расчетные
 

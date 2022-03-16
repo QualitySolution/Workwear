@@ -23,6 +23,8 @@ namespace workwear.HMap
 			Map(x => x.Comment).Column("comment");
 
 			References (x => x.Units).Column ("units_id");
+			References(x => x.SizeType).Column("size_type_id");
+			References(x => x.HeightType).Column("height_type_id");
 
 			HasMany(x => x.Nomenclatures).KeyColumn("type_id").Inverse().LazyLoad();
 

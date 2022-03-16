@@ -7,6 +7,7 @@ using QS.HistoryLog;
 using QS.Utilities.Dates;
 using QS.Utilities.Numeric;
 using workwear.Domain.Company;
+using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Tools;
 
@@ -76,6 +77,9 @@ namespace workwear.Domain.Operations
 		}
 
 		private decimal wearPercent;
+		
+		public virtual Size SizeType { get; set; }
+		public virtual Size Height { get; set; }
 
 		/// <summary>
 		/// Процент износа не может быть меньше нуля.

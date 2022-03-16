@@ -17,8 +17,7 @@ namespace workwear.HMap
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			Map (x => x.Name).Column ("name");
-			Map (x => x.Sex).Column ("sex").CustomType<ClothesSexType> ();
-			Map (x => x.SizeStd).Column ("size_std");
+			Map (x => x.Sex).Column ("sex").CustomType<ClothesSexType>();
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.Number).Column("number");
 			Map(x => x.Archival).Column("archival");

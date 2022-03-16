@@ -4,6 +4,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using workwear.Domain.Operations;
+using workwear.Domain.Sizes;
 
 namespace workwear.Domain.Stock
 {
@@ -105,6 +106,9 @@ namespace workwear.Domain.Stock
 			get { return aktNumber; }
 			set { SetField(ref aktNumber, value); }
 		}
+		
+		public virtual Size SizeType { get; set; }
+		public virtual Size Height { get; set; }
 
 		#endregion
 

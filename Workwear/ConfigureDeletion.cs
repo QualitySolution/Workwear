@@ -5,6 +5,7 @@ using workwear.Domain.Communications;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
+using workwear.Domain.Sizes;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
@@ -272,6 +273,14 @@ namespace workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<UserSettings>();
 
+			#endregion
+
+			#region Размеры
+
+			DeleteConfig.AddHibernateDeleteInfo<Size>();
+
+			DeleteConfig.AddHibernateDeleteInfo<SizeType>()
+				.AddClearDependence<Size>(x => x.SizeType);
 			#endregion
 
 			logger.Info ("Ок");
