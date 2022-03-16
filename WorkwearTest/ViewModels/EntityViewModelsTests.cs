@@ -23,5 +23,11 @@ namespace WorkwearTest.ViewModels
 		{
 			base.ViewModelForValidatableEntityHasValidatorDependenceTest(type);
 		}
+		
+		[Test, TestCaseSource(nameof(AllEntityViewModels))]
+		public override void ViewModelForHistoryLogEntityHasNamesTest(Type type)
+		{
+			base.ViewModelForHistoryLogEntityHasNamesTest(type);
+		}
 	}
 }
