@@ -123,8 +123,6 @@
     <EmbeddedResource Include="icon\menu\logs.png" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain\Sizes\Size.cs" />
-    <Compile Include="Domain\Sizes\SizeType.cs" />
     <Compile Include="Domain\Stock\Completion.cs" />
     <Compile Include="Domain\Stock\CompletionItem.cs" />
     <Compile Include="gtk-gui\generated.cs" />
@@ -144,9 +142,6 @@
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="CreateProjectParam.cs" />
     <Compile Include="Repository\UserRepository.cs" />
-    <Compile Include="Measurements\SizeStandardConverter.cs" />
-    <Compile Include="Measurements\SizeStandart.cs" />
-    <Compile Include="Measurements\SizeHelper.cs" />
     <Compile Include="Domain\Stock\Expense.cs" />
     <Compile Include="HibernateMapping\Stock\ExpenseMap.cs" />
     <Compile Include="Domain\Stock\ExpenseItem.cs" />
@@ -201,7 +196,6 @@
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.RegulationDocDlg.cs" />
     <Compile Include="Domain\Operations\EmployeeIssueOperation.cs" />
     <Compile Include="HibernateMapping\Operations\EmployeeIssueOperationMap.cs" />
-    <Compile Include="Tools\BaseParameters.cs" />
     <Compile Include="Domain\Operations\Graph\IssueGraph.cs" />
     <Compile Include="Repository\Stock\NomenclatureRepository.cs" />
     <Compile Include="Dialogs\Issuance\EmployeeIssueGraphDlg.cs" />
@@ -397,7 +391,6 @@
     <Compile Include="Views\Company\EmployeeChilds\EmployeePhotoView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeePhotoView.cs" />
     <Compile Include="ViewModels\Company\EmployeeChilds\EmployeePhotoViewModel.cs" />
-    <Compile Include="Measurements\BaseSizeSettings.cs" />
     <Compile Include="Repository\Company\PostRepository.cs" />
     <Compile Include="Models\Import\DataParserEmployee.cs" />
     <Compile Include="Models\Import\DataParserNorm.cs" />

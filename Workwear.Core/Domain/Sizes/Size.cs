@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using QS.DomainModel.Entity;
-using workwear.Domain.Regulations;
 
 namespace workwear.Domain.Sizes
 {
