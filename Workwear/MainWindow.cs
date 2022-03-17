@@ -175,6 +175,7 @@ public partial class MainWindow : Gtk.Window
 
 	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e)
 	{
+		MainTelemetry.AddCount("SearchEmployeeToolBar");
 		var id = DomainHelper.GetId(e.Entity);
 		DialogViewModelBase after = null;
 		if(cnbOpenInWindow.Active) {
