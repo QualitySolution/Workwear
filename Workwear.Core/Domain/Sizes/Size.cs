@@ -2,9 +2,16 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 
 namespace workwear.Domain.Sizes
 {
+    [Appellative (Gender = GrammaticalGender.Feminine,
+        NominativePlural = "размеры",
+        Nominative = "размер",
+        Genitive = "размера"
+    )]
+    [HistoryTrace]
     public class Size: PropertyChangedBase, IDomainObject
     {
         public virtual int Id { get; }

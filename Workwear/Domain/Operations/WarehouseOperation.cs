@@ -52,7 +52,7 @@ namespace workwear.Domain.Operations
 		}
 
 		string size;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display(Name ="Размер")]
 		public virtual string Size {
 			get { return String.IsNullOrWhiteSpace(size) ? null : size; }
@@ -60,7 +60,7 @@ namespace workwear.Domain.Operations
 		}
 
 		string growth;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display(Name = "Рост")]
 		public virtual string Growth {
 			get { return String.IsNullOrWhiteSpace(growth) ? null : growth; }
@@ -92,8 +92,9 @@ namespace workwear.Domain.Operations
 			get { return cost; }
 			set { SetField(ref cost, value, () => Cost); }
 		}
-		
+		[Display(Name ="Размер")]
 		public virtual Size SizeType { get; set; }
+		[Display(Name = "Рост")]
 		public virtual Size Height { get; set; }
 
 		#region Расчетные

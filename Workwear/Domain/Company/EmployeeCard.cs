@@ -196,114 +196,111 @@ namespace workwear.Domain.Company
 		}
 
 		#endregion
-
 		#region Размеры одежды
-
-		string wearGrowth;
-
-		[Display (Name = "Рост одежды")]
-		public virtual string WearGrowth { 
-			get { return wearGrowth; } 
-			set	{ SetField (ref wearGrowth, value, () => WearGrowth); }
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")] 
+		[Display(Name = "Рост одежды")]
+		private string wearGrowth;
+		public virtual string WearGrowth {
+			get => wearGrowth;
+			set => SetField(ref wearGrowth, value);
 		}
 
 		string wearSizeStd;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Стандарт размера одежды")]
 		public virtual string WearSizeStd {
-			get { return wearSizeStd; }
-			set { SetField (ref wearSizeStd, value, () => WearSizeStd); }
+			get => wearSizeStd;
+			set => SetField (ref wearSizeStd, value, () => WearSizeStd);
 		}
 
 		string wearSize;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Размер одежды")]
 		public virtual string WearSize { 
-			get { return wearSize; } 
-			set	{ SetField (ref wearSize, value, () => WearSize); }
+			get => wearSize;
+			set => SetField (ref wearSize, value, () => WearSize);
 		}
 
 		string shoesSizeStd;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Стандарт размера обуви")]
 		public virtual string ShoesSizeStd {
-			get { return shoesSizeStd; }
-			set { SetField (ref shoesSizeStd, value, () => ShoesSizeStd); }
+			get => shoesSizeStd;
+			set => SetField (ref shoesSizeStd, value, () => ShoesSizeStd);
 		}
 
 		string shoesSize;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Размер обуви")]
 		public virtual string ShoesSize { 
-			get { return shoesSize; } 
-			set	{ SetField (ref shoesSize, value, () => ShoesSize); }
+			get => shoesSize;
+			set => SetField (ref shoesSize, value, () => ShoesSize);
 		}
 
 		string winterShoesSizeStd;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display(Name = "Стандарт размера зимней обуви")]
 		public virtual string WinterShoesSizeStd
 		{
-			get { return winterShoesSizeStd; }
-			set { SetField(ref winterShoesSizeStd, value, () => WinterShoesSizeStd); }
+			get => winterShoesSizeStd;
+			set => SetField(ref winterShoesSizeStd, value, () => WinterShoesSizeStd);
 		}
 
 		string winterShoesSize;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display(Name = "Размер зимней обуви")]
 		public virtual string WinterShoesSize
 		{
-			get { return winterShoesSize; }
-			set { SetField(ref winterShoesSize, value, () => WinterShoesSize); }
+			get => winterShoesSize;
+			set => SetField(ref winterShoesSize, value, () => WinterShoesSize);
 		}
 
 		string headdressSizeStd;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Стандарт размера головного убора")]
 		public virtual string HeaddressSizeStd {
-			get { return headdressSizeStd; }
-			set { SetField (ref headdressSizeStd, value, () => HeaddressSizeStd); }
+			get => headdressSizeStd;
+			set => SetField (ref headdressSizeStd, value, () => HeaddressSizeStd);
 		}
 
 		string headdressSize;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Размер головного убора")]
 		public virtual string HeaddressSize { 
-			get { return headdressSize; } 
-			set	{ SetField (ref headdressSize, value, () => HeaddressSize); }
+			get => headdressSize;
+			set => SetField (ref headdressSize, value, () => HeaddressSize);
 		}
 
 		string glovesSizeStd;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Стандарт размера перчаток")]
 		public virtual string GlovesSizeStd {
-			get { return glovesSizeStd; }
-			set { SetField (ref glovesSizeStd, value, () => GlovesSizeStd); }
+			get => glovesSizeStd;
+			set => SetField (ref glovesSizeStd, value, () => GlovesSizeStd);
 		}
 
 		string glovesSize;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Размер перчаток")]
 		public virtual string GlovesSize { 
-			get { return glovesSize; } 
-			set	{ SetField (ref glovesSize, value, () => GlovesSize); }
+			get => glovesSize;
+			set => SetField (ref glovesSize, value, () => GlovesSize);
 		}
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		public virtual string MittensSizeStd => SizeHelper.GetSizeStdCode(SizeStandartMittens.Rus);
 
 		string mittensSize;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display(Name = "Размер рукавиц")]
 		public virtual string MittensSize {
-			get { return mittensSize; }
-			set { SetField(ref mittensSize, value); }
+			get => mittensSize;
+			set => SetField(ref mittensSize, value);
 		}
 		
 		private IList<Size> sizes = new List<Size>();
-
 		[Display (Name = "Размеры")]
 		public virtual IList< Size> Sizes {
-			get => sizes;
+			get => sizes ?? new List<Size>();
 			set => SetField (ref sizes, value);
 		}
 		

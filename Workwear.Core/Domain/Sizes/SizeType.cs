@@ -1,7 +1,14 @@
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 
 namespace workwear.Domain.Sizes
 {
+    [Appellative (Gender = GrammaticalGender.Feminine,
+        NominativePlural = "типы размеров",
+        Nominative = "тип размеров",
+        Genitive = "типа размеров"
+    )]
+    [HistoryTrace]
     public class SizeType: PropertyChangedBase, IDomainObject
     {
         public virtual int Id { get; }

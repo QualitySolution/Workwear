@@ -153,8 +153,8 @@ namespace workwear
 				.AddDeleteCascadeDependence(x => x.SubdivisionIssueOperation)
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 
-			DeleteConfig.AddHibernateDeleteInfo<CollectiveExpense> ()
-				.AddDeleteDependence<CollectiveExpenseItem> (x => x.Document)
+			DeleteConfig.AddHibernateDeleteInfo<CollectiveExpense>()
+				.AddDeleteDependence<CollectiveExpenseItem>(x => x.Document)
 				.AddDeleteDependence<IssuanceSheet>(x => x.CollectiveExpense);
 
 			DeleteConfig.AddHibernateDeleteInfo<CollectiveExpenseItem> ()
@@ -277,10 +277,29 @@ namespace workwear
 
 			#region Размеры
 
-			DeleteConfig.AddHibernateDeleteInfo<Size>();
+			DeleteConfig.AddHibernateDeleteInfo<Size>()
+				.AddClearDependence<CollectiveExpenseItem>(x => x.Height)
+				.AddClearDependence<CollectiveExpenseItem>(x => x.SizeType)
+				.AddClearDependence<EmployeeIssueOperation>(x => x.Height)
+				.AddClearDependence<EmployeeIssueOperation>(x => x.SizeType)
+				.AddClearDependence<ExpenseItem>(x => x.Height)
+				.AddClearDependence<ExpenseItem>(x => x.SizeType)
+				.AddClearDependence<IncomeItem>(x => x.Height)
+				.AddClearDependence<IncomeItem>(x => x.SizeType)
+				.AddClearDependence<IssuanceSheetItem>(x => x.Height)
+				.AddClearDependence<IssuanceSheetItem>(x => x.SizeType)
+				.AddClearDependence<SubdivisionIssueOperation>(x => x.Height)
+				.AddClearDependence<SubdivisionIssueOperation>(x => x.SizeType)
+				.AddClearDependence<WarehouseOperation>(x => x.Height)
+				.AddClearDependence<WarehouseOperation>(x => x.SizeType)
+				.AddClearDependence<WriteoffItem>(x => x.Height)
+				.AddClearDependence<WriteoffItem>(x => x.SizeType);
+
 
 			DeleteConfig.AddHibernateDeleteInfo<SizeType>()
-				.AddClearDependence<Size>(x => x.SizeType);
+				.AddClearDependence<Size>(x => x.SizeType)
+				.AddClearDependence<ItemsType>(x => x.SizeType)
+				.AddClearDependence<ItemsType>(x => x.HeightType);
 			#endregion
 
 			logger.Info ("Ок");

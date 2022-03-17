@@ -63,7 +63,7 @@ namespace workwear.Domain.Operations
 		}
 
 		string size;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")] 
 		[Display(Name = "Размер")]
 		public virtual string Size {
 			get { return String.IsNullOrWhiteSpace(size) ? null : size; }
@@ -71,18 +71,18 @@ namespace workwear.Domain.Operations
 		}
 
 		string wearGrowth;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")] 
 		[Display(Name = "Рост одежды")]
 		public virtual string WearGrowth {
 			get { return String.IsNullOrWhiteSpace(wearGrowth) ? null : wearGrowth; }
 			set { SetField(ref wearGrowth, value, () => WearGrowth); }
 		}
-
-		private decimal wearPercent;
-		
+		[Display(Name = "Размер")]
 		public virtual Size SizeType { get; set; }
+		[Display(Name = "Рост одежды")]
 		public virtual Size Height { get; set; }
-
+		
+		private decimal wearPercent;
 		/// <summary>
 		/// Процент износа не может быть меньше нуля.
 		/// Новый СИЗ имеет 0%, далее нарастает при использовании.

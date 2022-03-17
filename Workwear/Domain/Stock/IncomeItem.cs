@@ -93,7 +93,7 @@ namespace workwear.Domain.Stock
 		}
 
 		string size;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display(Name = "Размер")]
 		public virtual string Size {
 			get { return size; }
@@ -101,14 +101,15 @@ namespace workwear.Domain.Stock
 		}
 
 		string wearGrowth;
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display(Name = "Рост одежды")]
 		public virtual string WearGrowth {
 			get { return wearGrowth; }
 			set { SetField(ref wearGrowth, value, () => WearGrowth); }
 		}
-		
+		[Display(Name = "Размер")]
 		public virtual Size SizeType { get; set; }
+		[Display(Name = "Рост одежды")]
 		public virtual Size Height { get; set; }
 		#endregion
 
