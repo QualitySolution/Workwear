@@ -39,7 +39,8 @@ namespace workwear
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.Employee)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Employee)
 				.AddDeleteDependence<MassExpenseEmployee>(x => x.EmployeeCard)
-				.AddClearDependence<Leader>(x => x.Employee);
+				.AddClearDependence<Leader>(x => x.Employee)
+				.AddDeleteDependence<EmployeeSize>(x => x.Employee);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCardItem>();
 
@@ -293,13 +294,17 @@ namespace workwear
 				.AddClearDependence<WarehouseOperation>(x => x.Height)
 				.AddClearDependence<WarehouseOperation>(x => x.SizeType)
 				.AddClearDependence<WriteoffItem>(x => x.Height)
-				.AddClearDependence<WriteoffItem>(x => x.SizeType);
+				.AddClearDependence<WriteoffItem>(x => x.SizeType)
+				.AddDeleteDependence<EmployeeSize>(x => x.Size);
 
 
 			DeleteConfig.AddHibernateDeleteInfo<SizeType>()
 				.AddClearDependence<Size>(x => x.SizeType)
 				.AddClearDependence<ItemsType>(x => x.SizeType)
-				.AddClearDependence<ItemsType>(x => x.HeightType);
+				.AddClearDependence<ItemsType>(x => x.HeightType)
+				.AddDeleteDependence<EmployeeSize>(x => x.SizeType);
+
+			DeleteConfig.AddHibernateDeleteInfo<EmployeeSize>();
 			#endregion
 
 			logger.Info ("Ок");

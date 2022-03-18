@@ -123,9 +123,11 @@
     <EmbeddedResource Include="icon\menu\logs.png" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Company\EmployeeSize.cs" />
     <Compile Include="Domain\Stock\Completion.cs" />
     <Compile Include="Domain\Stock\CompletionItem.cs" />
     <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="HibernateMapping\Company\EmployeeSizeMap.cs" />
     <Compile Include="HibernateMapping\MappingParams.cs" />
     <Compile Include="HibernateMapping\Sizes\SizeMap.cs" />
     <Compile Include="HibernateMapping\Sizes\SizeTypeMap.cs" />

@@ -297,17 +297,17 @@ namespace workwear.Domain.Company
 			set => SetField(ref mittensSize, value);
 		}
 		
-		private IList<Size> sizes = new List<Size>();
+		private IList<EmployeeSize> sizes = new List<EmployeeSize>();
 		[Display (Name = "Размеры")]
-		public virtual IList< Size> Sizes {
-			get => sizes ?? new List<Size>();
+		public virtual IList<EmployeeSize> Sizes {
+			get => sizes;
 			set => SetField (ref sizes, value);
 		}
 		
-		GenericObservableList<Size> observableSizes;
+		GenericObservableList<EmployeeSize> observableSizes;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<Size> ObservableSizes
-			=> observableSizes ?? (observableSizes = new GenericObservableList<Size>(Sizes));
+		public virtual GenericObservableList<EmployeeSize> ObservableSizes
+			=> observableSizes ?? (observableSizes = new GenericObservableList<EmployeeSize>(Sizes));
 		#endregion
 
 		#region Norms
