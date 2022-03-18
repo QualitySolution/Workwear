@@ -1,3 +1,4 @@
+using System;
 using QS.DomainModel.Entity;
 using workwear.Domain.Sizes;
 
@@ -15,10 +16,15 @@ namespace workwear.Domain.Company
         public virtual int Id { get; }
         public virtual EmployeeCard Employee { get; set; }
         public virtual Size Size { get; set; }
-        public virtual SizeType SizeType { get; set; }
+        
+        private SizeType sizeType;
+        public virtual SizeType SizeType {
+            get => sizeType;
+            set => SetField(ref sizeType, value);
+        }
         #endregion
         #region Расчётные
-        public virtual string Title => $"{SizeType.Name} - ${Size.Name} сотрудника: ${Employee.Title} №{Id}";
+        public virtual string Title => $"{SizeType.Name} - ${Size.Name} сотрудника: ${Employee.Title}";
         #endregion
     }
 }

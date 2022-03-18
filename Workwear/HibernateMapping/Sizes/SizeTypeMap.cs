@@ -7,6 +7,8 @@ namespace workwear.HibernateMapping.Sizes
     {
         public SizeTypeMap()
         {
+            Table("size_types");
+            
             if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
                 Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
             else 
@@ -14,7 +16,7 @@ namespace workwear.HibernateMapping.Sizes
 
             Map(x => x.Name).Column("name");
             Map(x => x.UseInEmployee).Column("use_in_employee");
-            Map(x => x.Category).Column("category").CustomType<Category>();
+            Map(x => x.Category).Column("category");
             Map(x => x.Position).Column("position");
         }
     }

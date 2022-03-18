@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using Gamma.Binding.Converters;
 using Gtk;
@@ -31,6 +32,7 @@ namespace workwear.Views.Company
 
 		private void ConfigureDlg()
 		{
+			SizeBuild();
 			employeenormsview1.ViewModel = ViewModel.NormsViewModel;
 			employeewearitemsview1.ViewModel = ViewModel.WearItemsViewModel;
 			employeecardlisteditemsview.ViewModel = ViewModel.ListedItemsViewModel;
@@ -47,28 +49,8 @@ namespace workwear.Views.Company
 
 			buttonColorsLegend.Binding.AddBinding(ViewModel, v => v.VisibleColorsLegend, w => w.Visible).InitializeFromSource();
 
-			comboSex.ItemsEnum = typeof(Sex);
-			comboSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItem).InitializeFromSource ();
-
-			var stdConverter = new SizeStandardCodeConverter ();
-
-			ycomboWearStd.Binding.AddBinding (Entity, e => e.WearSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
-			ycomboShoesStd.Binding.AddBinding (Entity, e => e.ShoesSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
-			ycomboWinterShoesStd.Binding.AddBinding(Entity, e => e.WinterShoesSizeStd, w => w.SelectedItemOrNull, stdConverter).InitializeFromSource();
-			ycomboHeaddressStd.ItemsEnum = typeof(SizeStandartHeaddress);
-			ycomboHeaddressStd.Binding.AddBinding (Entity, e => e.HeaddressSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
-			ycomboGlovesStd.ItemsEnum = typeof(SizeStandartGloves);
-			ycomboGlovesStd.Binding.AddBinding (Entity, e => e.GlovesSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
-
-			FillSizeCombo(ycomboWearGrowth, ViewModel.GetGrowths());
-			ycomboWearGrowth.Binding.AddBinding (Entity, e => e.WearGrowth, w => w.ActiveText).InitializeFromSource ();
-			ycomboWearSize.Binding.AddBinding (Entity, e => e.WearSize, w => w.ActiveText).InitializeFromSource ();
-			ycomboShoesSize.Binding.AddBinding (Entity, e => e.ShoesSize, w => w.ActiveText).InitializeFromSource ();
-			ycomboWinterShoesSize.Binding.AddBinding(Entity, e => e.WinterShoesSize, w => w.ActiveText).InitializeFromSource();
-			ycomboHeaddressSize.Binding.AddBinding (Entity, e => e.HeaddressSize, w => w.ActiveText).InitializeFromSource ();
-			ycomboGlovesSize.Binding.AddBinding (Entity, e => e.GlovesSize, w => w.ActiveText).InitializeFromSource ();
-			FillSizeCombo(ycomboMittensSize, ViewModel.GetSizes(SizeStandartMittens.Rus));
-			ycomboMittensSize.Binding.AddBinding(Entity, e => e.MittensSize, w => w.ActiveText).InitializeFromSource();
+			yenumcomboSex.ItemsEnum = typeof(Sex);
+			yenumcomboSex.Binding.AddBinding(Entity, e => e.Sex, w => w.SelectedItem).InitializeFromSource();
 
 			entryFirstName.Binding.AddBinding (Entity, e => e.FirstName, w => w.Text).InitializeFromSource ();
 			entryLastName.Binding.AddBinding (Entity, e => e.LastName, w => w.Text).InitializeFromSource ();
@@ -121,13 +103,6 @@ namespace workwear.Views.Company
 				entitySubdivision, entityDepartment, entityPost, entityLeader,   
 				GtkScrolledWindowComments,
 			};
-			table2.FocusChain = new Widget[] {comboSex, ycomboWearGrowth,
-				ycomboWearStd, ycomboWearSize,
-				ycomboShoesStd, ycomboShoesSize,
-				ycomboWinterShoesStd, ycomboWinterShoesSize,
-				ycomboHeaddressStd, ycomboHeaddressSize,
-				ycomboGlovesStd, ycomboGlovesSize, ycomboMittensSize
-			};
 
 			enumPrint.ItemsEnum = typeof(EmployeeViewModel.PersonalCardPrint);
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -138,65 +113,6 @@ namespace workwear.Views.Company
 		protected void OnNotebook1SwitchPage(object o, SwitchPageArgs args)
 		{
 			ViewModel.SwitchOn((int)args.PageNum);
-		}
-
-		protected void OnComboSexChanged(object sender, EventArgs e)
-		{
-			if(Entity.Sex == Sex.M) {
-				ycomboWearStd.ItemsEnum = typeof(SizeStandartMenWear);
-				ycomboShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
-				ycomboWinterShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
-			}
-			else if(Entity.Sex == Sex.F) {
-				ycomboWearStd.ItemsEnum = typeof(SizeStandartWomenWear);
-				ycomboShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
-				ycomboWinterShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
-			}
-			else {
-				ycomboWearStd.ItemsEnum = null;
-				ycomboShoesStd.ItemsEnum = null;
-				ycomboWinterShoesStd.ItemsEnum = null;
-			}
-		}
-
-		protected void OnYcomboHeaddressChanged(object sender, EventArgs e)
-		{
-			if(ycomboHeaddressStd.SelectedItemOrNull != null)
-				FillSizeCombo(ycomboHeaddressSize, ViewModel.GetSizes((Enum)ycomboHeaddressStd.SelectedItem));
-			else
-				ycomboHeaddressSize.Clear();
-		}
-
-		protected void OnYcomboWearStdChanged(object sender, EventArgs e)
-		{
-			if(ycomboWearStd.SelectedItemOrNull != null)
-				FillSizeCombo(ycomboWearSize, ViewModel.GetSizes((Enum)ycomboWearStd.SelectedItem));
-			else
-				ycomboWearSize.Clear();
-		}
-
-		protected void OnYcomboShoesStdChanged(object sender, EventArgs e)
-		{
-			if(ycomboShoesStd.SelectedItemOrNull != null)
-				FillSizeCombo(ycomboShoesSize, ViewModel.GetSizes((Enum)ycomboShoesStd.SelectedItem));
-			else
-				ycomboShoesSize.Clear();
-		}
-
-		protected void OnYcomboWinterShoesStdChanged(object sender, EventArgs e)
-		{
-			if(ycomboWinterShoesStd.SelectedItemOrNull != null)
-				FillSizeCombo(ycomboWinterShoesSize, ViewModel.GetSizes((Enum)ycomboWinterShoesStd.SelectedItem));
-			else
-				ycomboWinterShoesSize.Clear();
-		}
-
-		protected void OnYcomboGlovesStdChanged(object sender, EventArgs e)
-		{
-			if(ycomboGlovesStd.SelectedItemOrNull != null)
-				FillSizeCombo(ycomboGlovesSize, ViewModel.GetSizes((Enum)ycomboGlovesStd.SelectedItem));
-			else
-				ycomboGlovesSize.Clear();
 		}
 
 		#endregion
@@ -239,18 +155,14 @@ namespace workwear.Views.Company
 		}
 		#endregion
 
-		void FillSizeCombo(ComboBox combo, string[] sizes)
-		{
-			combo.Clear();
-			var list = new ListStore(typeof(string));
-			list.AppendValues(String.Empty);
-			foreach(var size in sizes)
-				list.AppendValues(size);
-			combo.Model = list;
-			CellRendererText text = new CellRendererText();
-			combo.PackStart(text, true);
-			combo.AddAttribute(text, "text", 0);
+		#region Sizes
+		private void SizeBuild() {
+			var sizes = SizeService.GetSize(ViewModel.UoW);
+			foreach(var size in Entity.Sizes) {
+			}
+			SizeContainer.ShowAll();
 		}
+		#endregion
 
 		protected void OnButtonReadUidClicked(object sender, EventArgs e)
 		{

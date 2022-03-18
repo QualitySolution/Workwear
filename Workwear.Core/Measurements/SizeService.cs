@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
+using QS.DomainModel.UoW;
+using workwear.Domain.Sizes;
 
 namespace Workwear.Measurements
 {
@@ -61,7 +63,6 @@ namespace Workwear.Measurements
 		#endregion
 
 		#region Работа с кодами стандартов
-
 		public string GetSizeStdCode(object standartEnum)
 		{
 			Enum value = standartEnum as Enum;
@@ -245,6 +246,14 @@ namespace Workwear.Measurements
 				return LookupSizes.Mittens;
 
 			return null;
+		}
+		#endregion
+
+		#region Новые размеры
+		public static IList<Size> GetSize(IUnitOfWork UoW, SizeType sizeType = null) {
+			var sizes = UoW.Session.QueryOver<Size>();
+			return sizeType is null ? 
+				sizes.List() : sizes.Where(x => x.SizeType == sizeType).List();
 		}
 		#endregion
 	}
