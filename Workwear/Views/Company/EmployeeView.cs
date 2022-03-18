@@ -2,10 +2,12 @@
 using System.Linq;
 using System.Reflection;
 using Gamma.Binding.Converters;
+using Gamma.GtkWidgets;
 using Gtk;
 using NLog;
 using QS.Dialog.GtkUI;
 using QS.Views.Dialog;
+using QS.Widgets.GtkUI;
 using QSOrmProject;
 using workwear.Domain.Company;
 using workwear.Measurements;
@@ -32,6 +34,7 @@ namespace workwear.Views.Company
 
 		private void ConfigureDlg()
 		{
+
 			SizeBuild();
 			employeenormsview1.ViewModel = ViewModel.NormsViewModel;
 			employeewearitemsview1.ViewModel = ViewModel.WearItemsViewModel;
@@ -156,9 +159,26 @@ namespace workwear.Views.Company
 		#endregion
 
 		#region Sizes
-		private void SizeBuild() {
+		private void SizeBuild()
+		{
+			SizeContainer.Homogeneous = false;
 			var sizes = SizeService.GetSize(ViewModel.UoW);
-			foreach(var size in Entity.Sizes) {
+			var sizeTypes = SizeService.GetSizeType(ViewModel.UoW);
+			foreach(var sizeType in sizeTypes) {
+				var employeeSize = Entity.Sizes.FirstOrDefault(x => x.SizeType.Id == sizeType.Id);
+				var box = new yHBox(){};
+				box.Homogeneous = false;
+				var label = new yLabel() {LabelProp = sizeType.Name};
+				label.Xalign = 1;
+				label.Direction = TextDirection.Ltr;
+				var list = new SpecialListComboBox()
+					{ItemsList = sizes.Where(x => x.SizeType.Id == sizeType.Id)};
+				list.ShowSpecialStateNot = true;
+				if (employeeSize != null)
+					list.SelectedItem = employeeSize.Size;
+				box.Add(label);
+				box.Add(list);
+				SizeContainer.Add(box);
 			}
 			SizeContainer.ShowAll();
 		}

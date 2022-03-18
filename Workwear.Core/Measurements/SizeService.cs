@@ -256,5 +256,8 @@ namespace Workwear.Measurements
 				sizes.List() : sizes.Where(x => x.SizeType == sizeType).List();
 		}
 		#endregion
+
+		public static IList<SizeType> GetSizeType(IUnitOfWork UoW) 
+			=> UoW.Session.QueryOver<SizeType>().List();
 	}
 }
