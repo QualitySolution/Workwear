@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using QS.Testing.Updater.Testing;
-using QS.Updater.DB;
 using Workwear.Sql;
 
 namespace WorkwearTest.Sql

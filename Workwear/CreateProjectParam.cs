@@ -93,7 +93,7 @@ namespace workwear
 			NLog.LogManager.Configuration.RemoveRuleByName("HideNhibernate");
 			#endif
 
-			//Настраиваем классы сущьностей
+			//Настраиваем классы сущностей
 			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
 			//Спецодежда
 			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
