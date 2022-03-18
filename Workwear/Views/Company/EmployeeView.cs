@@ -168,18 +168,18 @@ namespace workwear.Views.Company
 				var employeeSize = Entity.Sizes.FirstOrDefault(x => x.SizeType.Id == sizeType.Id);
 				var box = new yHBox(){};
 				box.Homogeneous = false;
-				var label = new yLabel() {LabelProp = sizeType.Name};
-				label.Xalign = 1;
-				label.Direction = TextDirection.Ltr;
+				var label = new yLabel() {LabelProp = sizeType.Name + ":"};
+				label.Xalign = 0;
 				var list = new SpecialListComboBox()
 					{ItemsList = sizes.Where(x => x.SizeType.Id == sizeType.Id)};
 				list.ShowSpecialStateNot = true;
 				if (employeeSize != null)
 					list.SelectedItem = employeeSize.Size;
-				box.Add(label);
-				box.Add(list);
-				SizeContainer.Add(box);
+				box.PackStart(label, false, true, 0);
+				box.PackStart(list, false,false, 0);
+				SizeContainer.PackStart(box, false, false,0);
 			}
+			SizeContainer.PackEnd(new VBox(), true, true, 0);
 			SizeContainer.ShowAll();
 		}
 		#endregion
