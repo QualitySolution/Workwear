@@ -14,6 +14,7 @@ using QSProjectsLib;
 using workwear.Domain.Operations;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 
 namespace workwear.Representations.Organization
@@ -60,6 +61,8 @@ namespace workwear.Representations.Organization
 			MeasurementUnits unitsAlias = null;
 			EmployeeIssueOperation removeOperationAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
+			Size sizeAlias = null;
+			Size heightAlias = null;
 
 			var query = UoW.Session.QueryOver<EmployeeIssueOperation>(() => expenseOperationAlias)
 				.Where(e => e.Employee == Employee);
@@ -70,6 +73,8 @@ namespace workwear.Representations.Organization
 
 			var expenseList = query
 				.JoinAlias (() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias)
+				.JoinAlias(()=> expenseOperationAlias.SizeType, () => sizeAlias)
+				.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias)
 				.JoinAlias (() => nomenclatureAlias.Type, () => itemtypesAlias)
 				.JoinAlias (() => itemtypesAlias.Units, () => unitsAlias)
 				.JoinAlias (() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
@@ -78,8 +83,8 @@ namespace workwear.Representations.Organization
 					.SelectGroup (() => expenseOperationAlias.Id).WithAlias (() => resultAlias.Id)
 					.Select (() => nomenclatureAlias.Name).WithAlias (() => resultAlias.NomenclatureName)
 					.Select (() => unitsAlias.Name).WithAlias (() => resultAlias.UnitsName)
-					.Select (() => expenseOperationAlias.Size).WithAlias (() => resultAlias.Size)
-					.Select (() => expenseOperationAlias.WearGrowth).WithAlias (() => resultAlias.Growth)
+					.Select (() => expenseOperationAlias.SizeType).WithAlias (() => resultAlias.SizeType)
+					.Select (() => expenseOperationAlias.Height).WithAlias (() => resultAlias.Height)
 					.Select (() => warehouseOperationAlias.Cost).WithAlias (() => resultAlias.AvgCost)
 					.Select (() => expenseOperationAlias.WearPercent).WithAlias (() => resultAlias.WearPercent)
 					.Select (() => expenseOperationAlias.Issued).WithAlias (() => resultAlias.Added)
@@ -96,8 +101,8 @@ namespace workwear.Representations.Organization
 
 		IColumnsConfig treeViewConfig = ColumnsConfigFactory.Create<EmployeeBalanceVMNode> ()
 			.AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName)
-			.AddColumn ("Размер").AddTextRenderer (e => e.Size)
-			.AddColumn ("Рост").AddTextRenderer (e => e.Growth)
+			.AddColumn ("Размер").AddTextRenderer (e => e.SizeType.Name)
+			.AddColumn ("Рост").AddTextRenderer (e => e.Height.Name)
 			.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
 			.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
 			.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
@@ -138,8 +143,13 @@ namespace workwear.Representations.Organization
 		[UseForSearch]
 		public string NomenclatureName { get; set;}
 		public string UnitsName { get; set;}
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		public string Size { get; set;}
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		public string Growth { get; set;}
+		
+		public Size SizeType { get; set; }
+		public Size Height { get; set; }
 		public decimal AvgCost { get; set;}
 		public decimal WearPercent { get; set;}
 

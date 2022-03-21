@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Workwear.Measurements
 {
+	[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 	public enum СlothesType
 	{
 		[Display(Name = "Одежда")]
