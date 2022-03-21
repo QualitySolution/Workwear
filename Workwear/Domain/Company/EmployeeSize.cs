@@ -1,5 +1,5 @@
-using System;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using workwear.Domain.Sizes;
 
 namespace workwear.Domain.Company
@@ -10,6 +10,7 @@ namespace workwear.Domain.Company
         PrepositionalPlural = "размерах сотрудников",
         Genitive = "размера сотрудника"
     )]
+    [HistoryTrace]
     public class EmployeeSize: PropertyChangedBase, IDomainObject
     {
         #region Свойства
@@ -24,7 +25,7 @@ namespace workwear.Domain.Company
         }
         #endregion
         #region Расчётные
-        public virtual string Title => $"{SizeType.Name} - ${Size.Name} сотрудника: ${Employee.Title}";
+        public virtual string Title => $"{SizeType.Name} - {Size.Name} сотрудника: {Employee.Title}";
         #endregion
     }
 }

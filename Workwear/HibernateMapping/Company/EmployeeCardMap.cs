@@ -46,7 +46,8 @@ namespace workwear.HibernateMapping.Company
 
 			HasMany(x => x.Sizes)
 				.KeyColumn("employee_id").Not.KeyNullable()
-				.Cascade.AllDeleteOrphan().Inverse();
+				.Cascade.All()
+				.Inverse();
 
 			HasManyToMany(x => x.UsedNorms).Table("wear_cards_norms")
 				.ParentKeyColumn("wear_card_id")

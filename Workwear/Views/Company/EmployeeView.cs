@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Gamma.Binding.Converters;
@@ -10,10 +11,10 @@ using QS.Views.Dialog;
 using QS.Widgets.GtkUI;
 using QSOrmProject;
 using workwear.Domain.Company;
-using workwear.Measurements;
 using workwear.ViewModels.Company;
 using workwear.Views.Company.EmployeeChilds;
 using Workwear.Domain.Company;
+using workwear.Domain.Sizes;
 using Workwear.Measurements;
 
 namespace workwear.Views.Company
@@ -24,6 +25,7 @@ namespace workwear.Views.Company
 
 		private readonly Image eyeIcon = new Image(Assembly.GetExecutingAssembly(), "workwear.icon.buttons.eye.png");
 		private readonly Image crossedEyeIcon = new Image(Assembly.GetExecutingAssembly(), "workwear.icon.buttons.eye-crossed.png");
+		private readonly List<SpecialListComboBox> listSizes = new List<SpecialListComboBox>();
 
 		public EmployeeView(EmployeeViewModel viewModel) : base(viewModel)
 		{
@@ -36,6 +38,7 @@ namespace workwear.Views.Company
 		{
 
 			SizeBuild();
+			buttonSave.Clicked += SetSizesViewModel;
 			employeenormsview1.ViewModel = ViewModel.NormsViewModel;
 			employeewearitemsview1.ViewModel = ViewModel.WearItemsViewModel;
 			employeecardlisteditemsview.ViewModel = ViewModel.ListedItemsViewModel;
@@ -157,33 +160,66 @@ namespace workwear.Views.Company
 				notebook1.GetNthPage(5).Visible = ViewModel.VisibleHistory;
 		}
 		#endregion
-
 		#region Sizes
-		private void SizeBuild()
-		{
-			SizeContainer.Homogeneous = false;
+		private void SizeBuild() {
 			var sizes = SizeService.GetSize(ViewModel.UoW);
 			var sizeTypes = SizeService.GetSizeType(ViewModel.UoW);
-			foreach(var sizeType in sizeTypes) {
+			
+			var table = new yTable((uint) sizeTypes.Count, 2, false);
+			
+			for (var index = 0; index < sizeTypes.Count; index++) {
+				var sizeType = sizeTypes[index];
 				var employeeSize = Entity.Sizes.FirstOrDefault(x => x.SizeType.Id == sizeType.Id);
-				var box = new yHBox(){};
-				box.Homogeneous = false;
+				
 				var label = new yLabel() {LabelProp = sizeType.Name + ":"};
-				label.Xalign = 0;
-				var list = new SpecialListComboBox()
+				 label.Xalign = 0;
+				 
+				 if(sizes.All(x => x.SizeType.Id != sizeType.Id))
+					 continue;
+				 var list = new SpecialListComboBox()
 					{ItemsList = sizes.Where(x => x.SizeType.Id == sizeType.Id)};
 				list.ShowSpecialStateNot = true;
+				list.SelectedItemStrictTyped = true;
+				listSizes.Add(list);
 				if (employeeSize != null)
 					list.SelectedItem = employeeSize.Size;
-				box.PackStart(label, false, true, 0);
-				box.PackStart(list, false,false, 0);
-				SizeContainer.PackStart(box, false, false,0);
+				
+				table.Attach(label, 0, 1, (uint) index, (uint) (index + 1), 
+					AttachOptions.Fill, AttachOptions.Fill | AttachOptions.Expand, 0, 0);
+				table.Attach(list, 1, 2, (uint) index, (uint) (index + 1), 
+					AttachOptions.Fill, AttachOptions.Fill | AttachOptions.Expand, 0, 0);
 			}
-			SizeContainer.PackEnd(new VBox(), true, true, 0);
+			
+			SizeContainer.PackStart(table, false, false, 0);
+			SizeContainer.PackEnd(new HBox(), true, true, 0);
+			SizeContainer.Homogeneous = false;
 			SizeContainer.ShowAll();
 		}
-		#endregion
 
+		private void SetSizesViewModel(object sender, EventArgs eventArgs) {
+			foreach (var list in listSizes) {
+				if (list.SelectedItem is null) {
+					if(Entity.Sizes.Any(x => x.SizeType == list.ItemsList.OfType<Size>().First().SizeType))
+						Entity.Sizes.Remove(
+						Entity.Sizes.First(x => x.SizeType == list.ItemsList.OfType<Size>().First().SizeType));
+					continue;
+				}
+				var employeeSize =
+					Entity.Sizes.FirstOrDefault(x => x.SizeType.Id == ((Size)list.SelectedItem).SizeType.Id);
+				if (employeeSize is null) {
+					var newEmployeeSize = new EmployeeSize()
+						{Size = (Size) list.SelectedItem, SizeType = ((Size) list.SelectedItem)?.SizeType, Employee = Entity};
+					Entity.Sizes.Add(newEmployeeSize);
+				}
+				else {
+					if(employeeSize.Size != (Size)list.SelectedItem)
+						employeeSize.Size = (Size) list.SelectedItem;
+				}
+			}
+		}
+
+		#endregion
+		#region ButtonEvent
 		protected void OnButtonReadUidClicked(object sender, EventArgs e)
 		{
 			ViewModel.ReadUid();
@@ -198,5 +234,6 @@ namespace workwear.Views.Company
 		{
 			ViewModel.CreateLkPassword();
 		}
+		#endregion
 	}
 }

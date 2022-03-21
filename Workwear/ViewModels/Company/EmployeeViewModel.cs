@@ -194,14 +194,6 @@ namespace workwear.ViewModels.Company
 
 		#endregion
 
-		#region Size
-
-		public string[] GetSizes(string code) => sizeService.GetSizesForEmployee(code);
-		public string[] GetSizes(Enum std) => sizeService.GetSizesForEmployee(std);
-		public string[] GetGrowths() => sizeService.GetGrowthForEmployee();
-
-		#endregion
-
 		#region Личный кабинет
 
 		const int lkPasswordLength = 6;

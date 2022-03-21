@@ -2431,7 +2431,19 @@
                           </widget>
                           <packing>
                             <property name="Position">0</property>
-                            <property name="AutoSize">True</property>
+                            <property name="AutoSize">False</property>
+                            <property name="Expand">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="Gamma.GtkWidgets.yLabel" id="ylabel2">
+                            <property name="MemberName" />
+                            <property name="Xalign">0</property>
+                            <property name="LabelProp" translatable="yes">Размеры сотрудника</property>
+                          </widget>
+                          <packing>
+                            <property name="Position">1</property>
+                            <property name="AutoSize">False</property>
                             <property name="Expand">False</property>
                             <property name="Fill">False</property>
                           </packing>
