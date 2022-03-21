@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using workwear.Domain.Sizes;
 
 namespace workwear.Domain.Stock
 {
@@ -11,27 +12,40 @@ namespace workwear.Domain.Stock
 	/// </summary>
 	public class StockPosition
 	{
-		public Nomenclature Nomenclature { get; private set; }
+		public Nomenclature Nomenclature { get; }
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		public string Size { get; private set; }
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		public string Growth { get; private set; }
 		public decimal WearPercent { get; private set; }
+		
+		public Size SizeType { get; set; }
+		public Size Height { get; set; }
 
-		public StockPosition(Nomenclature nomenclature, string size, string growth, decimal wearPercent)
+		public StockPosition(Nomenclature nomenclature, string size, string growth, decimal wearPercent, Size sizeType = null, Size height = null)
 		{
 			Nomenclature = nomenclature ?? throw new ArgumentNullException(nameof(nomenclature));
 			Size = size;
 			Growth = growth;
 			WearPercent = wearPercent;
+			SizeType = sizeType;
+			Height = height;
 		}
 
 		public string Title {
 			get {
 				var parameters = new List<string>();
-				if(!String.IsNullOrWhiteSpace(Size))
-					parameters.Add("Размер:" + Size);
+				if(!string.IsNullOrWhiteSpace(Size))
+					parameters.Add("Устаревший размер:" + Size);
 
-				if(!String.IsNullOrWhiteSpace(Growth))
-					parameters.Add("Рост:" + Growth);
+				if(!string.IsNullOrWhiteSpace(Growth))
+					parameters.Add("Устаревший рост:" + Growth);
+				
+				if(SizeType != null)
+					parameters.Add("Размер:" + SizeType.Name);
+				
+				if(Height != null)
+					parameters.Add("Рост:" + Height.Name);
 
 				if(WearPercent > 0)
 					parameters.Add("Износ:" + WearPercent.ToString("P"));
@@ -39,7 +53,7 @@ namespace workwear.Domain.Stock
 				var text = Nomenclature.Name;
 
 				if(parameters.Any())
-					text += String.Format(" ({0})", String.Join("; ", parameters));
+					text += $" ({string.Join("; ", parameters)})";
 
 				return text;
 			}
@@ -53,15 +67,15 @@ namespace workwear.Domain.Stock
 
 			return
 				anotherPos.Nomenclature.Id == Nomenclature.Id &&
-				anotherPos.Size == Size &&
-				anotherPos.Growth == Growth &&
+				anotherPos.SizeType == SizeType &&
+				anotherPos.Height == Height &&
 				anotherPos.WearPercent == WearPercent
 			;
 		}
 
 		public override int GetHashCode()
 		{
-			return (Nomenclature.Id, Size, Growth, WearPercent).GetHashCode();
+			return (Nomenclature.Id, SizeType, Height, WearPercent).GetHashCode();
 		}
 
 		#endregion
