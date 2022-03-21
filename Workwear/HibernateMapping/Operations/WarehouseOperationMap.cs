@@ -15,8 +15,6 @@ namespace workwear.HibernateMapping.Stock
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			Map(x => x.OperationTime).Column("operation_time");
-			Map(x => x.Size).Column("size");
-			Map(x => x.Growth).Column("growth");
 			Map(x => x.Amount).Column("amount");
 			Map(x => x.WearPercent).Column("wear_percent");
 			Map(x => x.Cost).Column("cost");
