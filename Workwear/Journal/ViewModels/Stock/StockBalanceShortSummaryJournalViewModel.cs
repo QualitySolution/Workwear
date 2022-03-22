@@ -12,6 +12,7 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using workwear.Domain.Operations;
+using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Measurements;
@@ -27,10 +28,15 @@ namespace workwear.Journal.ViewModels.Stock
 
 		public StockBalanceFilterViewModel Filter { get; private set; }
 
-		public StockBalanceShortSummaryJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope) : base(unitOfWorkFactory, interactiveService, navigationManager)
+		public StockBalanceShortSummaryJournalViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory, 
+			IInteractiveService interactiveService, 
+			INavigationManager navigationManager, 
+			ILifetimeScope autofacScope) : base(unitOfWorkFactory, interactiveService, navigationManager)
 		{
 			AutofacScope = autofacScope;
-			JournalFilter = Filter = AutofacScope.Resolve<StockBalanceFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			JournalFilter = Filter = AutofacScope.Resolve<StockBalanceFilterViewModel>(
+				new TypedParameter(typeof(JournalViewModelBase), this));
 
 			var dataLoader = new ThreadDataLoader<StockBalanceShortSummaryJournalNode>(unitOfWorkFactory);
 			dataLoader.AddQuery(ItemsQuery);
@@ -41,7 +47,8 @@ namespace workwear.Journal.ViewModels.Stock
 			UpdateOnChanges(typeof(WarehouseOperation), typeof(Nomenclature));
 			TabName = "Остатки по складу" + Filter.Warehouse?.Name;
 
-			Filter.PropertyChanged += (sender, e) => TabName = "Остатки по складу " + Filter.Warehouse?.Name;
+			Filter.PropertyChanged += (sender, e) => 
+				TabName = "Остатки по складу " + Filter.Warehouse?.Name;
 		}
 
 		protected IQueryOver<WarehouseOperation> ItemsQuery(IUnitOfWork uow)
@@ -53,61 +60,65 @@ namespace workwear.Journal.ViewModels.Stock
 			WarehouseOperation warehouseOperationAlias = null;
 
 			Nomenclature nomenclatureAlias = null;
-			ItemsType itemtypesAlias = null;
+			ItemsType itemTypesAlias = null;
 			MeasurementUnits unitsAlias = null;
+			Size sizeAlias = null;
+			Size heightAlias = null;
 
 			// null == null => null              null <=> null => true
-			var expensequery = QueryOver.Of<WarehouseOperation>(() => warehouseExpenseOperationAlias)
+			var expenseQuery = QueryOver.Of<WarehouseOperation>(() => warehouseExpenseOperationAlias)
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
-				&& (warehouseExpenseOperationAlias.Size == warehouseOperationAlias.Size ||
-				(warehouseOperationAlias.Size == null && warehouseExpenseOperationAlias.Size == null))
-				&& (warehouseExpenseOperationAlias.Growth == warehouseOperationAlias.Growth ||
-				(warehouseExpenseOperationAlias.Growth == null && warehouseOperationAlias.Growth == null))
-				&& warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
+				             && (warehouseExpenseOperationAlias.WearSize == warehouseOperationAlias.WearSize ||
+				                 (warehouseOperationAlias.WearSize == null && warehouseExpenseOperationAlias.WearSize == null))
+				             && (warehouseExpenseOperationAlias.Height == warehouseOperationAlias.Height ||
+				                 (warehouseExpenseOperationAlias.Height == null && warehouseOperationAlias.Height == null))
+				             && warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
 				.Where(e => e.OperationTime < DateTime.Now);
 
 			if(Filter.Warehouse == null)
-				expensequery.Where(x => x.ExpenseWarehouse != null);
+				expenseQuery.Where(x => x.ExpenseWarehouse != null);
 			else
-				expensequery.Where(x => x.ExpenseWarehouse == Filter.Warehouse);
+				expenseQuery.Where(x => x.ExpenseWarehouse == Filter.Warehouse);
 
-			expensequery.Select(Projections.Sum(Projections.Property(() => warehouseExpenseOperationAlias.Amount)));
+			expenseQuery.Select(Projections
+								.Sum(Projections
+									.Property(() => warehouseExpenseOperationAlias.Amount)));
 
 			var incomeSubQuery = QueryOver.Of<WarehouseOperation>(() => warehouseIncomeOperationAlias)
 				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
-				&& (warehouseIncomeOperationAlias.Size == warehouseOperationAlias.Size
-				|| (warehouseOperationAlias.Size == null && warehouseIncomeOperationAlias.Size == null))
-				&& (warehouseIncomeOperationAlias.Growth == warehouseOperationAlias.Growth ||
-				(warehouseIncomeOperationAlias.Growth == null && warehouseOperationAlias.Growth == null))
-				&& (warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent))
+				             && (warehouseIncomeOperationAlias.WearSize == warehouseOperationAlias.WearSize
+				                 || (warehouseOperationAlias.WearSize == null && warehouseIncomeOperationAlias.WearSize == null))
+				             && (warehouseIncomeOperationAlias.Height == warehouseOperationAlias.Height ||
+				                 (warehouseIncomeOperationAlias.Height == null && warehouseOperationAlias.Height == null))
+				             && (warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent))
 				.Where(e => e.OperationTime < DateTime.Now);
 			if(Filter.Warehouse == null)
 				incomeSubQuery.Where(x => x.ReceiptWarehouse != null);
 			else
 				incomeSubQuery.Where(x => x.ReceiptWarehouse == Filter.Warehouse);
 
-			incomeSubQuery.Select(Projections.Sum(Projections.Property(() => warehouseIncomeOperationAlias.Amount)));
+			incomeSubQuery.Select(Projections
+								.Sum(Projections
+									.Property(() => warehouseIncomeOperationAlias.Amount)));
 
-			IProjection projection = Projections.SqlFunction(
+			var projection = Projections.SqlFunction(
 				new SQLFunctionTemplate(NHibernateUtil.Int32, "( IFNULL(?1, 0) - IFNULL(?2, 0) )"),
 				NHibernateUtil.Int32,
 				Projections.SubQuery(incomeSubQuery),
-				Projections.SubQuery(expensequery)
+				Projections.SubQuery(expenseQuery)
 			);
 
-			var queryStock = uow.Session.QueryOver<WarehouseOperation>(() => warehouseOperationAlias);
+			var queryStock = uow.Session.QueryOver(() => warehouseOperationAlias);
 
-			if(Filter.ShowNegativeBalance) {
-				queryStock.Where(Restrictions.Not(Restrictions.Eq(projection, 0)));
-			}
-			else {
-				queryStock.Where(Restrictions.Gt(projection, 0));
-			}
+			queryStock.Where(Filter.ShowNegativeBalance
+				? Restrictions.Not(Restrictions.Eq(projection, 0))
+				: Restrictions.Gt(projection, 0));
 
 			if(Filter.ItemTypeCategory != null)
-				queryStock.Where(() => itemtypesAlias.Category == Filter.ItemTypeCategory);
+				queryStock.Where(() => itemTypesAlias.Category == Filter.ItemTypeCategory);
 
-			//Если у нас выключена способность показывать общие по всем складам остатки. Но не указан склад мы должны показывать пустую таблицу. Это заведомо ложное условие.
+			//Если у нас выключена способность показывать общие по всем складам остатки.
+			//Но не указан склад мы должны показывать пустую таблицу. Это заведомо ложное условие.
 			if(ShowSummary == false && Filter.Warehouse == null)
 				queryStock.Where(x => x.Id == -1);
 
@@ -117,12 +128,15 @@ namespace workwear.Journal.ViewModels.Stock
 
 			return queryStock
 				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
-				.JoinAlias(() => nomenclatureAlias.Type, () => itemtypesAlias)
-				.JoinAlias(() => itemtypesAlias.Units, () => unitsAlias)
+				.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias)
+				.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias)
+				.JoinAlias(() => warehouseOperationAlias.WearSize, () => sizeAlias)
+				.JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias)
 				.Where(GetSearchCriterion(
 					() => nomenclatureAlias.Number,
 					() => nomenclatureAlias.Name,
-					() => warehouseOperationAlias.Size))
+					() => sizeAlias.Name,
+					() => heightAlias.Name))
 
 				.SelectList(list => list
 			   .SelectGroup(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.Id)
@@ -135,11 +149,10 @@ namespace workwear.Journal.ViewModels.Stock
 							  .Select(Projections.SqlFunction(
 					   new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT(distinct ?1 SEPARATOR ?2)"),
 					   NHibernateUtil.String,
-					   Projections.Property(() => warehouseOperationAlias.Size),
+					   Projections.Property(() => sizeAlias.Name),
 					   Projections.Constant(", "))
 				   ).WithAlias(() => resultAlias.Size)
 				)
-
 				.OrderBy(() => nomenclatureAlias.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<StockBalanceShortSummaryJournalNode>());
 		}
@@ -147,17 +160,14 @@ namespace workwear.Journal.ViewModels.Stock
 	public class StockBalanceShortSummaryJournalNode
 	{
 		public int Id { get; set; }
-
 		public string NomenclatureName { get; set; }
 		public uint? NomenclatureNumber { get; set; }
 		public string UnitsName { get; set; }
 		public int Amount { get; set; }
 		public string Size { get; set; }
 		public ClothesSex? Sex { get; set; }
-
-		public string BalanceText => Amount > 0 ? String.Format("{0} {1}", Amount, UnitsName) : String.Format("<span foreground=\"red\">{0}</span> {1}", Amount, UnitsName);
-
-
+		public string BalanceText => 
+			Amount > 0 ? $"{Amount} {UnitsName}" : $"<span foreground=\"red\">{Amount}</span> {UnitsName}";
 	}
 }
 
