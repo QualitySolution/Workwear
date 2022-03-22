@@ -34,7 +34,7 @@ namespace workwear.HMap
 			References(x => x.IssuedOperation).Column("issued_operation_id");
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id");
 			References(x => x.EmployeeOperationIssueOnWriteOff).Column("operation_write_off_id");
-			References(x => x.SizeType).Column("size_id");
+			References(x => x.WearSize).Column("size_id");
 			References(x => x.Height).Column("height_id");
 		}
 	}

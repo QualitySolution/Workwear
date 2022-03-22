@@ -73,7 +73,7 @@ namespace workwear.Representations.Organization
 
 			var expenseList = query
 				.JoinAlias (() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias)
-				.JoinAlias(()=> expenseOperationAlias.SizeType, () => sizeAlias)
+				.JoinAlias(()=> expenseOperationAlias.WearSize, () => sizeAlias)
 				.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias)
 				.JoinAlias (() => nomenclatureAlias.Type, () => itemtypesAlias)
 				.JoinAlias (() => itemtypesAlias.Units, () => unitsAlias)
@@ -83,7 +83,7 @@ namespace workwear.Representations.Organization
 					.SelectGroup (() => expenseOperationAlias.Id).WithAlias (() => resultAlias.Id)
 					.Select (() => nomenclatureAlias.Name).WithAlias (() => resultAlias.NomenclatureName)
 					.Select (() => unitsAlias.Name).WithAlias (() => resultAlias.UnitsName)
-					.Select (() => expenseOperationAlias.SizeType).WithAlias (() => resultAlias.SizeType)
+					.Select (() => expenseOperationAlias.WearSize).WithAlias (() => resultAlias.WearSize)
 					.Select (() => expenseOperationAlias.Height).WithAlias (() => resultAlias.Height)
 					.Select (() => warehouseOperationAlias.Cost).WithAlias (() => resultAlias.AvgCost)
 					.Select (() => expenseOperationAlias.WearPercent).WithAlias (() => resultAlias.WearPercent)
@@ -101,7 +101,7 @@ namespace workwear.Representations.Organization
 
 		IColumnsConfig treeViewConfig = ColumnsConfigFactory.Create<EmployeeBalanceVMNode> ()
 			.AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName)
-			.AddColumn ("Размер").AddTextRenderer (e => e.SizeType.Name)
+			.AddColumn ("Размер").AddTextRenderer (e => e.WearSize.Name)
 			.AddColumn ("Рост").AddTextRenderer (e => e.Height.Name)
 			.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
 			.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
@@ -148,7 +148,7 @@ namespace workwear.Representations.Organization
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		public string Growth { get; set;}
 		
-		public Size SizeType { get; set; }
+		public Size WearSize { get; set; }
 		public Size Height { get; set; }
 		public decimal AvgCost { get; set;}
 		public decimal WearPercent { get; set;}

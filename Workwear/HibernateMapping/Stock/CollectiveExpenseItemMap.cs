@@ -22,7 +22,7 @@ namespace workwear.HMap
 			References(x => x.Nomenclature).Column ("nomenclature_id").Not.Nullable ();
 			References(x => x.EmployeeIssueOperation).Column("employee_issue_operation_id").Cascade.All();
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Not.Nullable().Cascade.All();
-			References(x => x.SizeType).Column("size_id");
+			References(x => x.WearSize).Column("size_id");
 			References(x => x.Height).Column("height_id");
 
 			HasOne(x => x.IssuanceSheetItem)

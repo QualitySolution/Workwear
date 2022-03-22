@@ -19,16 +19,16 @@ namespace workwear.Domain.Stock
 		public string Growth { get; private set; }
 		public decimal WearPercent { get; private set; }
 		
-		public Size SizeType { get; set; }
+		public Size WearSize { get; set; }
 		public Size Height { get; set; }
 
-		public StockPosition(Nomenclature nomenclature, string size, string growth, decimal wearPercent, Size sizeType = null, Size height = null)
+		public StockPosition(Nomenclature nomenclature, string size, string growth, decimal wearPercent, Size wearSize = null, Size height = null)
 		{
 			Nomenclature = nomenclature ?? throw new ArgumentNullException(nameof(nomenclature));
 			Size = size;
 			Growth = growth;
 			WearPercent = wearPercent;
-			SizeType = sizeType;
+			WearSize = wearSize;
 			Height = height;
 		}
 
@@ -41,8 +41,8 @@ namespace workwear.Domain.Stock
 				if(!string.IsNullOrWhiteSpace(Growth))
 					parameters.Add("Устаревший рост:" + Growth);
 				
-				if(SizeType != null)
-					parameters.Add("Размер:" + SizeType.Name);
+				if(WearSize != null)
+					parameters.Add("Размер:" + WearSize.Name);
 				
 				if(Height != null)
 					parameters.Add("Рост:" + Height.Name);
@@ -67,7 +67,7 @@ namespace workwear.Domain.Stock
 
 			return
 				anotherPos.Nomenclature.Id == Nomenclature.Id &&
-				anotherPos.SizeType == SizeType &&
+				anotherPos.WearSize == WearSize &&
 				anotherPos.Height == Height &&
 				anotherPos.WearPercent == WearPercent
 			;
@@ -75,7 +75,7 @@ namespace workwear.Domain.Stock
 
 		public override int GetHashCode()
 		{
-			return (Nomenclature.Id, SizeType, Height, WearPercent).GetHashCode();
+			return (Nomenclature.Id, SizeType: WearSize, Height, WearPercent).GetHashCode();
 		}
 
 		#endregion

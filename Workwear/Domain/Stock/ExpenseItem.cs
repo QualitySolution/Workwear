@@ -119,7 +119,7 @@ namespace workwear.Domain.Stock
 			set { SetField(ref wearGrowth, value, () => WearGrowth); }
 		}
 		[Display(Name = "Размер")]
-		public virtual Size SizeType { get; set; }
+		public virtual Size WearSize { get; set; }
 		[Display(Name = "Рост одежды")]
 		public virtual Size Height { get; set; }
 

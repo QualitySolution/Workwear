@@ -26,7 +26,7 @@ namespace workwear.HMap
 			References(x => x.ProtectionTools).Column("protection_tools_id");
 			HasOne(x => x.IssuanceSheetItem)
 				.PropertyRef(x => x.ExpenseItem);
-			References(x => x.SizeType).Column("size_id");
+			References(x => x.WearSize).Column("size_id");
 			References(x => x.Height).Column("height_id");
 		}
 	}

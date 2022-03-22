@@ -53,8 +53,8 @@ namespace workwear.Repository.Stock
 			// null == null => null              null <=> null => true
 			var expensequery = QueryOver.Of<WarehouseOperation>(() => warehouseExpenseOperationAlias)
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
-				&& (warehouseExpenseOperationAlias.SizeType == warehouseOperationAlias.SizeType ||
-				(warehouseOperationAlias.SizeType == null && warehouseExpenseOperationAlias.SizeType == null))
+				&& (warehouseExpenseOperationAlias.WearSize == warehouseOperationAlias.WearSize ||
+				(warehouseOperationAlias.WearSize == null && warehouseExpenseOperationAlias.WearSize == null))
 				&& (warehouseExpenseOperationAlias.Height == warehouseOperationAlias.Height ||
 				(warehouseExpenseOperationAlias.Height == null && warehouseOperationAlias.Height == null))
 				&& warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
@@ -72,8 +72,8 @@ namespace workwear.Repository.Stock
 
 			var incomeSubQuery = QueryOver.Of<WarehouseOperation>(() => warehouseIncomeOperationAlias)
 				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
-				&& (warehouseIncomeOperationAlias.SizeType == warehouseOperationAlias.SizeType
-				|| (warehouseOperationAlias.SizeType == null && warehouseIncomeOperationAlias.SizeType == null))
+				&& (warehouseIncomeOperationAlias.WearSize == warehouseOperationAlias.WearSize
+				|| (warehouseOperationAlias.WearSize == null && warehouseIncomeOperationAlias.WearSize == null))
 				&& (warehouseIncomeOperationAlias.Height == warehouseOperationAlias.Height ||
 				(warehouseIncomeOperationAlias.Height == null && warehouseOperationAlias.Height == null))
 				&& (warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent))
@@ -104,7 +104,7 @@ namespace workwear.Repository.Stock
 				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
 				.SelectList(list => list
 			   .SelectGroup(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomenclatureId)
-			   .SelectGroup(() => warehouseOperationAlias.SizeType).WithAlias(() => resultAlias.SizeType)
+			   .SelectGroup(() => warehouseOperationAlias.WearSize).WithAlias(() => resultAlias.WearSize)
 			   .SelectGroup(() => warehouseOperationAlias.Height).WithAlias(() => resultAlias.Height)
 			   .SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
 			   .Select(projection).WithAlias(() => resultAlias.Amount)
@@ -122,7 +122,7 @@ namespace workwear.Repository.Stock
 	{
 		public Nomenclature Nomenclature { get; set; }
 		public int NomenclatureId { get; set; }
-		public Size SizeType { get; set; }
+		public Size WearSize { get; set; }
 		public Size Height { get; set; }
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		public string Growth { get; set; }	

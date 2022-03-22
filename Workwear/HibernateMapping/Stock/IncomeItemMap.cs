@@ -23,7 +23,7 @@ namespace workwear.HMap
 			References(x => x.ReturnFromEmployeeOperation).Column("employee_issue_operation_id").Cascade.All();
 			References(x => x.ReturnFromSubdivisionOperation).Column("subdivision_issue_operation_id").Cascade.All();
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Cascade.All().Not.Nullable();
-			References(x => x.SizeType).Column("size_id");
+			References(x => x.WearSize).Column("size_id");
 			References(x => x.Height).Column("height_id");
 		}
 	}

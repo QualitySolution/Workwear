@@ -78,7 +78,7 @@ namespace workwear.Domain.Operations
 		
 		
 		[Display(Name = "Размер")]
-		public virtual Size SizeType { get; set; }
+		public virtual Size WearSize { get; set; }
 		[Display(Name = "Рост одежды")]
 		public virtual Size Height { get; set; }
 		
