@@ -476,7 +476,7 @@ namespace workwear.Views.Regulations
 			this.buttonReplaceNomeclature.CanFocus = true;
 			this.buttonReplaceNomeclature.Name = "buttonReplaceNomeclature";
 			this.buttonReplaceNomeclature.UseUnderline = true;
-			this.buttonReplaceNomeclature.Label = global::Mono.Unix.Catalog.GetString("Заменить номеклатуру");
+			this.buttonReplaceNomeclature.Label = global::Mono.Unix.Catalog.GetString("Заменить номенклатуру");
 			global::Gtk.Image w42 = new global::Gtk.Image();
 			w42.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.arrows.png");
 			this.buttonReplaceNomeclature.Image = w42;

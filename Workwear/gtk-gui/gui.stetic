@@ -6924,7 +6924,7 @@
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">resource:workwear.icon.buttons.arrows.png</property>
-                <property name="Label" translatable="yes">Заменить номеклатуру</property>
+                <property name="Label" translatable="yes">Заменить номенклатуру</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonReplaceNomeclatureClicked" />
               </widget>
