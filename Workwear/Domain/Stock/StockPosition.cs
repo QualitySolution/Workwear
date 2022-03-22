@@ -21,15 +21,20 @@ namespace workwear.Domain.Stock
 		
 		public Size WearSize { get; set; }
 		public Size Height { get; set; }
-
-		public StockPosition(Nomenclature nomenclature, string size, string growth, decimal wearPercent, Size wearSize = null, Size height = null)
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService, используйте конструктор с этими классами")]
+		public StockPosition(Nomenclature nomenclature, string size, string growth, decimal wearPercent)
 		{
 			Nomenclature = nomenclature ?? throw new ArgumentNullException(nameof(nomenclature));
 			Size = size;
 			Growth = growth;
 			WearPercent = wearPercent;
-			WearSize = wearSize;
-			Height = height;
+		}
+		public StockPosition(Nomenclature nomenclature, decimal wearPercent, Size wearSize, Size height)
+		{
+			Nomenclature = nomenclature ?? throw new ArgumentNullException(nameof(nomenclature));
+			WearPercent = wearPercent;
+			WearSize = wearSize ?? throw new ArgumentNullException(nameof(wearSize));
+			Height = height ?? throw new ArgumentNullException(nameof(height));
 		}
 
 		public string Title {
