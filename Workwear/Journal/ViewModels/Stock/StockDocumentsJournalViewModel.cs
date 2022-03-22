@@ -48,8 +48,9 @@ namespace workwear.Journal.ViewModels.Stock
 			CurrentPermissionService = currentPermissionService;
 			DeleteEntityService = deleteEntityService;
 			this.openStockDocumentsModel = openStockDocumentsModel ?? throw new ArgumentNullException(nameof(openStockDocumentsModel));
-			this.FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-			JournalFilter = Filter = AutofacScope.Resolve<StockDocumentsFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			JournalFilter = Filter = AutofacScope.Resolve<StockDocumentsFilterViewModel>(
+				new TypedParameter(typeof(JournalViewModelBase), this));
 
 			var dataLoader = new ThreadDataLoader<StockDocumentsJournalNode>(unitOfWorkFactory);
 			dataLoader.AddQuery(QueryIncomeDoc);
@@ -66,7 +67,8 @@ namespace workwear.Journal.ViewModels.Stock
 			CreateNodeActions();
 			CreateDocumentsActions();
 
-			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), typeof(Writeoff), typeof(MassExpense), typeof(Transfer));
+			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), typeof(Writeoff), 
+				typeof(MassExpense), typeof(Transfer));
 		}
 
 		#region Опциональные зависимости
@@ -411,8 +413,7 @@ namespace workwear.Journal.ViewModels.Stock
 					);
 			NodeActionsList.Add(addAction);
 			foreach(StokDocumentType docType in Enum.GetValues(typeof(StokDocumentType))) {
-				switch (docType)
-				{
+				switch (docType) {
 					case StokDocumentType.MassExpense when !FeaturesService.Available(WorkwearFeature.MassExpense):
 					case StokDocumentType.CollectiveExpense when !FeaturesService.Available(WorkwearFeature.CollectiveExpense):
 					case StokDocumentType.TransferDoc when !FeaturesService.Available(WorkwearFeature.Warehouses):
