@@ -57,7 +57,6 @@ namespace workwear.Journal.ViewModels.Stock
 			dataLoader.AddQuery(QueryExpenseDoc);
 			dataLoader.AddQuery(QueryCollectiveExpenseDoc);
 			dataLoader.AddQuery(QueryWriteoffDoc);
-			dataLoader.AddQuery(QueryMassExpenseDoc);
 			dataLoader.AddQuery(QueryTransferDoc);
 			dataLoader.AddQuery(QueryCompletionDoc);
 			dataLoader.MergeInOrderBy(x => x.Date, true);
@@ -67,8 +66,8 @@ namespace workwear.Journal.ViewModels.Stock
 			CreateNodeActions();
 			CreateDocumentsActions();
 
-			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), typeof(Writeoff), 
-				typeof(MassExpense), typeof(Transfer));
+			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), 
+				typeof(Income), typeof(Writeoff), typeof(Transfer));
 		}
 
 		#region Опциональные зависимости
@@ -232,49 +231,6 @@ namespace workwear.Journal.ViewModels.Stock
 
 			return collectiveExpenseQuery;
 		}
-
-		protected IQueryOver<MassExpense> QueryMassExpenseDoc(IUnitOfWork uow)
-		{
-			if(Filter.StokDocumentType != null && Filter.StokDocumentType != StokDocumentType.MassExpense)
-				return null;
-
-			MassExpense massExpenseAlias = null;
-
-			var massExpenseQuery = uow.Session.QueryOver<MassExpense>(() => massExpenseAlias);
-			if(Filter.StartDate.HasValue)
-				massExpenseQuery.Where(o => o.Date >= Filter.StartDate.Value);
-			if(Filter.EndDate.HasValue)
-				massExpenseQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
-			if(Filter.Warehouse != null)
-				massExpenseQuery.Where(x => x.WarehouseFrom == Filter.Warehouse);
-
-			massExpenseQuery.Where(GetSearchCriterion(
-				() => massExpenseAlias.Id,
-				() => authorAlias.Name,
-				() => issuanceSheetAlias.Id
-			));
-
-			massExpenseQuery
-				.JoinAlias(() => massExpenseAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(() => massExpenseAlias.WarehouseFrom, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.Left.JoinAlias(() => massExpenseAlias.IssuanceSheet, () => issuanceSheetAlias)
-			.SelectList(list => list
-			   			.Select(() => massExpenseAlias.Id).WithAlias(() => resultAlias.Id)
-						.Select(() => massExpenseAlias.Date).WithAlias(() => resultAlias.Date)
-						.Select(() => issuanceSheetAlias.Id).WithAlias(() => resultAlias.IssueSheetId)
-						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
-						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
-			            .Select(() => massExpenseAlias.Comment).WithAlias(() => resultAlias.Comment)
-						.Select(() => StokDocumentType.MassExpense).WithAlias(() => resultAlias.DocTypeEnum)
-			            .Select(() => massExpenseAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
-						)
-			.OrderBy(() => massExpenseAlias.Date).Desc
-			.ThenBy(() => massExpenseAlias.CreationDate).Desc
-			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
-
-			return massExpenseQuery;
-		}
-
 		protected IQueryOver<Transfer> QueryTransferDoc(IUnitOfWork uow)
 		{
 			if(Filter.StokDocumentType != null && Filter.StokDocumentType != StokDocumentType.TransferDoc)
@@ -414,7 +370,6 @@ namespace workwear.Journal.ViewModels.Stock
 			NodeActionsList.Add(addAction);
 			foreach(StokDocumentType docType in Enum.GetValues(typeof(StokDocumentType))) {
 				switch (docType) {
-					case StokDocumentType.MassExpense when !FeaturesService.Available(WorkwearFeature.MassExpense):
 					case StokDocumentType.CollectiveExpense when !FeaturesService.Available(WorkwearFeature.CollectiveExpense):
 					case StokDocumentType.TransferDoc when !FeaturesService.Available(WorkwearFeature.Warehouses):
 					case StokDocumentType.Completion when !FeaturesService.Available(WorkwearFeature.Completion):

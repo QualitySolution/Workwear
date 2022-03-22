@@ -376,61 +376,6 @@ namespace WorkwearTest.Integration.Operations
 				Assert.That(result.First().ItemId, Is.EqualTo(writeoffItem.Id));
 			}
 		}
-		
-		[Test(Description = "Проверяем получение ссылки на докумен массовой выдачи")]
-		[Ignore("Пока не реализовано полноценно. Есть вопросы с самому документу надо обсуждать.")]
-		[Category("Integrated")]
-		public void GetReferencedDocuments_MassExpenseTest()
-		{
-			var interactive = Substitute.For<IInteractiveMessage>();
-
-			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
-
-				var warehouse = new Warehouse();
-				uow.Save(warehouse);
-
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Тестовый тип номенклатуры";
-				uow.Save(nomenclatureType);
-
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
-				uow.Save(nomenclature);
-
-				var employee = new EmployeeCard();
-				uow.Save(employee);
-				
-				var employee2 = new EmployeeCard();
-				uow.Save(employee2);
-
-				var expense = new MassExpense {
-					Date = new DateTime(2021, 9, 10),
-					WarehouseFrom = warehouse,
-				};
-				
-				expense.AddEmployee(employee, interactive);
-				expense.AddEmployee(employee2, interactive);
-				
-				var item = expense.AddItemNomenclature(nomenclature, interactive, uow);
-				item.Amount = 1;
-
-				expense.UpdateOperations(uow, s => true);
-				uow.Save(expense);
-				uow.Commit();
-
-				var repository = new EmployeeIssueRepository(uow);
-				var results = repository.GetReferencedDocuments(expense.MassExpenseOperations.Select(x => x.EmployeeIssueOperation.Id).ToArray());
-				Assert.That(results.Count, Is.EqualTo(2));
-				var result1 = results.First(x => x.OperationId == expense.MassExpenseOperations[0].EmployeeIssueOperation.Id);
-				Assert.That(result1.DocumentType, Is.EqualTo(StokDocumentType.MassExpense));
-				Assert.That(result1.DocumentId, Is.EqualTo(expense.Id));
-				Assert.That(result1.ItemId, Is.EqualTo(expense.MassExpenseOperations[0].Id));
-				var result2 = results.First(x => x.OperationId == expense.MassExpenseOperations[1].EmployeeIssueOperation.Id);
-				Assert.That(result2.DocumentType, Is.EqualTo(StokDocumentType.MassExpense));
-				Assert.That(result2.DocumentId, Is.EqualTo(expense.Id));
-				Assert.That(result2.ItemId, Is.EqualTo(expense.MassExpenseOperations[1].Id));
-			}
-		}
 		#endregion
 		
 		#region GetLastOperationsForEmployee

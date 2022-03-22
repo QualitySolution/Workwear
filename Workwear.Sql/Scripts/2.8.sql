@@ -882,3 +882,13 @@ DROP INDEX `index4` ;
 ALTER TABLE `stock_collective_expense_detail` 
 DROP COLUMN `growth`,
 DROP COLUMN `size`;
+
+-- Удаляем выдачу списком
+
+DROP TABLE IF EXISTS `stock_mass_expense_operation` ;
+
+DROP TABLE IF EXISTS `stock_mass_expense_nomenclatures` ;
+
+DROP TABLE IF EXISTS `stock_mass_expense_employee` ;
+
+DROP TABLE IF EXISTS `stock_mass_expense` ;

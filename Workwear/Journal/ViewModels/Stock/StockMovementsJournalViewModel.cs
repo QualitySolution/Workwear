@@ -59,7 +59,6 @@ namespace workwear.Journal.ViewModels.Stock
 
 			ExpenseItem expenseItemAlias = null;
 			IncomeItem incomeItemAlias = null;
-			MassExpenseOperation massExpenseOperationAlias = null; //FIXME Не реализовано
 			TransferItem transferItemAlias = null;
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
 			WriteoffItem writeoffItemAlias = null;
@@ -102,12 +101,14 @@ namespace workwear.Journal.ViewModels.Stock
 			IProjection receptProjection, expenseProjection;
 			if(Filter.Warehouse != null) {
 				receptProjection = Projections.Conditional(
-						Restrictions.Eq(Projections.Property<WarehouseOperation>(x => x.ReceiptWarehouse.Id), Filter.Warehouse.Id),
+						Restrictions.Eq(Projections
+							.Property<WarehouseOperation>(x => x.ReceiptWarehouse.Id), Filter.Warehouse.Id),
 						Projections.Constant(true),
 						Projections.Constant(false)
 					);
 				expenseProjection = Projections.Conditional(
-					Restrictions.Eq(Projections.Property<WarehouseOperation>(x => x.ExpenseWarehouse.Id), Filter.Warehouse.Id),
+					Restrictions.Eq(Projections
+						.Property<WarehouseOperation>(x => x.ExpenseWarehouse.Id), Filter.Warehouse.Id),
 					Projections.Constant(true),
 					Projections.Constant(false)
 				);
@@ -123,12 +124,14 @@ namespace workwear.Journal.ViewModels.Stock
 			}
 			else {
 				receptProjection = Projections.Conditional(
-						Restrictions.IsNotNull(Projections.Property<WarehouseOperation>(x => x.ReceiptWarehouse.Id)),
+						Restrictions.IsNotNull(Projections
+							.Property<WarehouseOperation>(x => x.ReceiptWarehouse.Id)),
 						Projections.Constant(true),
 						Projections.Constant(false)
 					);
 				expenseProjection = Projections.Conditional(
-					Restrictions.IsNotNull(Projections.Property<WarehouseOperation>(x => x.ExpenseWarehouse.Id)),
+					Restrictions.IsNotNull(Projections
+						.Property<WarehouseOperation>(x => x.ExpenseWarehouse.Id)),
 					Projections.Constant(true),
 					Projections.Constant(false)
 				);
@@ -279,13 +282,10 @@ namespace workwear.Journal.ViewModels.Stock
 		public string EmployeePatronymic { get; set; }
 		public int numberOfCollapsedRows { get; set; }
 
-		public string Employee {
-			get
-			{
-				if (numberOfCollapsedRows > 1)
-					return NumberToTextRus.FormatCase(numberOfCollapsedRows, "{0} сотрудник", "{0} сотрудника", "{0} сотрудников");
-				else return PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
-			}
-		}
+		public string Employee =>
+			numberOfCollapsedRows > 1 ? 
+				NumberToTextRus.FormatCase(numberOfCollapsedRows, 
+					"{0} сотрудник", "{0} сотрудника", "{0} сотрудников") 
+				: PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
 	}
 }

@@ -55,14 +55,6 @@ namespace workwear.Domain.Statements
 			get => expense;
 			set => SetField(ref expense, value);
 		}
-
-		private MassExpense massExpense;
-		[Display (Name = "Документ выдачи списком")]
-		public virtual MassExpense MassExpense {
-			get => massExpense;
-			set => SetField(ref massExpense, value);
-		}
-
 		private CollectiveExpense collectiveExpense;
 		[Display(Name = "Документ коллективной выдачи")]
 		public virtual CollectiveExpense CollectiveExpense {
@@ -138,24 +130,6 @@ namespace workwear.Domain.Statements
 			item.UpdateFromCollectiveExpense();
 			return item;
 		}
-
-		public virtual IssuanceSheetItem AddItem(MassExpenseEmployee massExpenseEmployee,
-			   MassExpenseNomenclature massExpenseNomenclature,
-			EmployeeIssueOperation employeeIssueOperation)
-		{
-			var item = new IssuanceSheetItem {
-				IssuanceSheet = this,
-				Employee = massExpenseEmployee.EmployeeCard,
-				Nomenclature = massExpenseNomenclature.Nomenclature,
-				Amount = (uint)massExpenseNomenclature.Amount,
-				IssueOperation = employeeIssueOperation
-			};
-
-			ObservableItems.Add(item);
-			item.UpdateFromMassExpense(employeeIssueOperation);
-			return item;
-		}
-
 		public virtual void CleanObservableItems()
 		{
 			observableItems = null;

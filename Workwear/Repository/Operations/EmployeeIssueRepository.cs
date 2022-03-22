@@ -26,7 +26,9 @@ namespace workwear.Repository.Operations
 		/// Получаем все операции выдачи сотруднику отсортированные в порядке убывания.
 		/// </summary>
 		/// <returns></returns>
-		public IList<EmployeeIssueOperation> AllOperationsForEmployee(EmployeeCard employee, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null)
+		public IList<EmployeeIssueOperation> AllOperationsForEmployee(
+			EmployeeCard employee, 
+			Action<IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null)
 		{
 			var query = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.Employee == employee);
@@ -39,17 +41,19 @@ namespace workwear.Repository.Operations
 		/// <summary>
 		/// Получаем операции выдачи выполненые в определенные даты.
 		/// </summary>
-		public IList<EmployeeIssueOperation> GetOperationsByDates(EmployeeCard[] employees, DateTime begin, DateTime end, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null)
+		public IList<EmployeeIssueOperation> GetOperationsByDates(
+			EmployeeCard[] employees, 
+			DateTime begin, DateTime end, 
+			Action<IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null)
 		{
 			var employeeIds = employees.Select(x => x.Id).Distinct().ToArray();
-
 			var query = RepoUow.Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.Employee.Id.IsIn(employeeIds))
-				//Проверяем попадает ли операция в диапазон, обратным стравлением условий. Проверяем 2 даты и начала и конца, так как по сути для наса важны StartOfUse и ExpiryByNorm но они могут быть null.
+				//Проверяем попадает ли операция в диапазон, обратным стравлением условий.
+				//Проверяем 2 даты и начала и конца,
+				//так как по сути для наса важны StartOfUse и ExpiryByNorm но они могут быть null.
 				.Where(o => (o.OperationTime < end.Date.AddDays(1)) && (o.OperationTime >= begin));
-
 			makeEager?.Invoke(query);
-
 			return query.OrderBy(x => x.OperationTime).Asc.List();
 		}
 
@@ -62,15 +66,21 @@ namespace workwear.Repository.Operations
 
 			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.Employee.Id.IsIn(employeeIds))
-				//Проверяем попадает ли операция в диапазон, обратным стравлением условий. Проверяем 2 даты и начала и конца, так как по сути для наса важны StartOfUse и ExpiryByNorm но они могут быть null.
-				.Where(o => (o.OperationTime <= end || o.StartOfUse <= end) && (o.ExpiryByNorm >= begin || o.AutoWriteoffDate >= begin));
+				//Проверяем попадает ли операция в диапазон, обратным стравлением условий.
+				//Проверяем 2 даты и начала и конца,
+				//так как по сути для наса важны StartOfUse и ExpiryByNorm но они могут быть null.
+				.Where(o => (o.OperationTime <= end || o.StartOfUse <= end) 
+				            && (o.ExpiryByNorm >= begin || o.AutoWriteoffDate >= begin));
 
 			makeEager?.Invoke(query);
 
 			return query.OrderBy(x => x.OperationTime).Asc.List();
 		}
 
-		public IList<EmployeeIssueOperation> GetOperationsForEmployee(IUnitOfWork uow, EmployeeCard employee, ProtectionTools protectionTools, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null)
+		public IList<EmployeeIssueOperation> GetOperationsForEmployee(
+			IUnitOfWork uow, EmployeeCard employee, 
+			ProtectionTools protectionTools, 
+			Action<IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null)
 		{
 			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.Employee == employee)
@@ -81,7 +91,10 @@ namespace workwear.Repository.Operations
 			return query.OrderBy(x => x.OperationTime).Asc.List();
 		}
 
-		public IList<EmployeeIssueOperation> GetLastIssueOperationsForEmployee(EmployeeCard[] employees, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null)
+		public IList<EmployeeIssueOperation> GetLastIssueOperationsForEmployee(
+			IEnumerable<EmployeeCard> employees, 
+			Action<IQueryOver<EmployeeIssueOperation, 
+				EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null)
 		{
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			EmployeeIssueOperation employeeIssueOperation2Alias = null;
@@ -106,23 +119,21 @@ namespace workwear.Repository.Operations
 		/// Получаем все операции выдачи выданные по указанной строке нормы.
 		/// </summary>
 		/// <returns></returns>
-		public IList<EmployeeIssueOperation> GetOperationsForNormItem(NormItem normItem, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null)
+		public IList<EmployeeIssueOperation> GetOperationsForNormItem(
+			NormItem normItem, Action<IQueryOver<EmployeeIssueOperation, 
+				EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null)
 		{
 			var query = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.NormItem == normItem);
-
 			makeEager?.Invoke(query);
-
 			return query.List();
 		}
-
 		public IList<OperationToDocumentReference> GetReferencedDocuments(params int[] operationsIds)
 		{
 			OperationToDocumentReference docAlias = null;
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			ExpenseItem expenseItemAlias = null;
 			IncomeItem incomeItemAlias = null;
-			MassExpenseOperation massExpenseOperationAlias = null; //FIXME не реализовано
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
 			WriteoffItem writeoffItemAlias = null;
 			

@@ -59,8 +59,6 @@ namespace workwear.Domain.Stock
 					return typeof(Writeoff);
 				case StokDocumentType.TransferDoc:
 					return typeof(Transfer);
-				case StokDocumentType.MassExpense:
-					return typeof(MassExpense);
 				case StokDocumentType.Completion:
 					return typeof(Completion);
 			}
@@ -76,8 +74,6 @@ namespace workwear.Domain.Stock
 		ExpenseEmployeeDoc,
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,
-		[Display(Name = "Выдача списком")]
-		MassExpense,
 		[Display(Name = "Выдача на подразделение")]
 		ExpenseObjectDoc,
 		[Display(Name = "Перемещение")]

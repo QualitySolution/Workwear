@@ -25,9 +25,6 @@ namespace workwear.Models.Stock
 				case StokDocumentType.TransferDoc:
 					navigation.OpenViewModel<WarehouseTransferViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
 					break;
-				case StokDocumentType.MassExpense:
-					navigation.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
-					break;
 				case StokDocumentType.CollectiveExpense:
 					navigation.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
 					break;
@@ -82,8 +79,6 @@ namespace workwear.Models.Stock
 					return navigation.OpenTdiTab<WriteOffDocDlg, int>(master, id);
 				case StokDocumentType.TransferDoc:
 					return navigation.OpenViewModel<WarehouseTransferViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
-				case StokDocumentType.MassExpense:
-					return navigation.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
 				case StokDocumentType.Completion:
 					return navigation.OpenViewModel<CompletionViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
 				default:
