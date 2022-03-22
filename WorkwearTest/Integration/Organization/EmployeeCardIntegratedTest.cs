@@ -10,6 +10,7 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using workwear.Domain.Sizes;
 using Workwear.Measurements;
 using workwear.Repository.Operations;
 using workwear.Tools;
@@ -210,45 +211,50 @@ namespace WorkwearTest.Integration.Organization
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Обувь";
-				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = СlothesType.Shoes;
+				var shoes = new SizeType() {Name = "Обувь"};
+				uow.Save(shoes);
+				var winterShoes = new SizeType() {Name = "Зимняя обувь"};
+				uow.Save(winterShoes);
+
+				var nomenclatureType = new ItemsType {
+					Name = "Обувь",
+					Category = ItemTypeCategory.wear,
+					SizeType = shoes
+				};
 				uow.Save(nomenclatureType);
 
-				var nomenclatureType2 = new ItemsType();
-				nomenclatureType2.Name = "Зимняя обувь";
-				nomenclatureType2.Category = ItemTypeCategory.wear;
-				nomenclatureType2.WearCategory = СlothesType.WinterShoes;
+				var nomenclatureType2 = new ItemsType {
+					Name = "Зимняя обувь",
+					Category = ItemTypeCategory.wear,
+					SizeType = winterShoes
+				};
 				uow.Save(nomenclatureType2);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
-				nomenclature.Sex = ClothesSex.Men;
-				nomenclature.SizeStd = "MenShoesRus";
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType,
+					Sex = ClothesSex.Men
+				};
 				uow.Save(nomenclature);
 
-				var nomenclature2 = new Nomenclature();
-				nomenclature2.Type = nomenclatureType2;
-				nomenclature2.Sex = ClothesSex.Men;
-				nomenclature2.SizeStd = "MenShoesRus";
+				var nomenclature2 = new Nomenclature {
+					Type = nomenclatureType2,
+					Sex = ClothesSex.Men
+				};
 				uow.Save(nomenclature2);
 
-				var nomenclature3 = new Nomenclature();
-				nomenclature3.Type = nomenclatureType;
-				nomenclature3.Sex = ClothesSex.Men;
-				nomenclature3.SizeStd = "MenShoesRus";
+				var nomenclature3 = new Nomenclature {
+					Type = nomenclatureType,
+					Sex = ClothesSex.Men
+				};
 				uow.Save(nomenclature3);
 
-				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номеклатура нормы";
+				var protectionTools = new ProtectionTools {Name = "Номеклатура нормы"};
 				protectionTools.AddNomeclature(nomenclature);
 				protectionTools.AddNomeclature(nomenclature3);
 
 				uow.Save(protectionTools);
 
-				var protectionTools2 = new ProtectionTools();
-				protectionTools2.Name = "Номенклатура нормы_2";
+				var protectionTools2 = new ProtectionTools {Name = "Номенклатура нормы_2"};
 				protectionTools2.AddNomeclature(nomenclature2);
 				uow.Save(protectionTools2);
 
@@ -264,36 +270,42 @@ namespace WorkwearTest.Integration.Organization
 				normItem2.PeriodCount = 1;
 				uow.Save(norm);
 
+				var shoesSize = new Size() {SizeType = shoes, Name = "42"};
+				var winterShoesSize = new Size() {SizeType = winterShoes, Name = "43"};
+				uow.Save(shoesSize);
+				uow.Save(winterShoesSize);
+
 				var employee = new EmployeeCard();
 				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
-				employee.WearSizeStd = "MenWearRus";
-				employee.ShoesSizeStd = "MenShoesRus";
-				employee.WinterShoesSizeStd = "MenShoesRus";
-				employee.ShoesSize = "42";
-				employee.WinterShoesSize = "43";
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
 				uow.Commit();
+				
+				var employeeShoesSize = new EmployeeSize() 
+					{Size = shoesSize, SizeType = shoes, Employee = employee};
+				var employeeWinterShoesSize = new EmployeeSize()
+					{Size = winterShoesSize, SizeType = winterShoes, Employee = employee};
+				uow.Save(employeeShoesSize);
+				uow.Save(employeeWinterShoesSize);
 
-				var income = new Income();
-				income.Warehouse = warehouse;
-				income.Date = new DateTime(2020, 07, 20);
-
-				income.Operation = IncomeOperations.Enter;
+				var income = new Income {
+					Warehouse = warehouse,
+					Date = new DateTime(2020, 07, 20),
+					Operation = IncomeOperations.Enter
+				};
 
 				var incomeItem1 = income.AddItem(nomenclature);
-
 				incomeItem1.Amount = 1;
-				incomeItem1.Size = "42";
+				incomeItem1.WearSize = shoesSize;
 
 				var incomeItem2 = income.AddItem(nomenclature2);
 				incomeItem2.Amount = 2;
-				incomeItem2.Size = "43";
+				incomeItem2.WearSize = winterShoesSize;
 
 				var incomeItem3 = income.AddItem(nomenclature3);
 				incomeItem3.Amount = 3;
-				incomeItem3.Size = "42";
+				incomeItem3.WearSize = shoesSize;
 
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);

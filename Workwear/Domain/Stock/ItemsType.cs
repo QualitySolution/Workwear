@@ -23,48 +23,42 @@ namespace workwear.Domain.Stock
 
 		public virtual int Id { get; set; }
 
-		string name;
-
+		private string name;
 		[Display (Name = "Название")]
 		[Required(ErrorMessage = "Имя типа номенклатуры не должно быть пустым.")]
 		[StringLength(240)]
 		public virtual string Name {
-			get { return name; }
-			set { SetField (ref name, value?.Trim()); }
+			get => name;
+			set => SetField (ref name, value?.Trim());
 		}
 
-		MeasurementUnits units;
-
+		private MeasurementUnits units;
 		[Display (Name = "Единица измерения")]
 		[Required(ErrorMessage = "Единица измерения должна быть указана.")]
 		public virtual MeasurementUnits Units {
-			get { return units; }
-			set { SetField (ref units, value, () => Units); }
+			get => units;
+			set => SetField (ref units, value);
 		}
 
-		ItemTypeCategory category;
-
+		private ItemTypeCategory category;
 		[Display (Name = "Категория")]
 		public virtual ItemTypeCategory Category {
-			get { return category; }
-			set { if(SetField (ref category, value, () => Category))
-				{
-					if (Category != ItemTypeCategory.wear)
-						WearCategory = null;
-					if (Category != ItemTypeCategory.property)
-						LifeMonths = null;
-				}
+			get => category;
+			set {
+				if (!SetField(ref category, value, () => Category)) return;
+				if (Category != ItemTypeCategory.wear)
+					WearCategory = null;
+				if (Category != ItemTypeCategory.property)
+					LifeMonths = null;
 			}
 		}
 
-		СlothesType? wearCategory;
-
+		private СlothesType? wearCategory;
 		[Display (Name = "Вид одежды")]
 		public virtual СlothesType? WearCategory {
-			get { return wearCategory; }
-			set { SetField (ref wearCategory, value, () => WearCategory); }
+			get => wearCategory;
+			set => SetField (ref wearCategory, value);
 		}
-
 		private IssueType issueType;
 		[Display(Name = "Тип выдачи")]
 		public virtual IssueType IssueType {
@@ -72,51 +66,38 @@ namespace workwear.Domain.Stock
 			set => SetField(ref issueType, value);
 		}
 
-
-		int? lifeMonths;
-
+		private int? lifeMonths;
 		[Display (Name = "Срок службы")]
 		public virtual int? LifeMonths {
-			get { return lifeMonths; }
-			set { SetField (ref lifeMonths, value, () => LifeMonths); }
+			get => lifeMonths;
+			set => SetField (ref lifeMonths, value);
 		}
-
 		private string comment;
-
 		[Display(Name = "Комментарий")]
 		public virtual string Comment
 		{
-			get { return comment; }
-			set { SetField(ref comment, value, () => Comment); }
+			get => comment;
+			set => SetField(ref comment, value);
 		}
-
 		private IList<Nomenclature> nomenclatures = new List<Nomenclature>();
-
 		[Display(Name = "Номенклатура")]
 		public virtual IList<Nomenclature> Nomenclatures {
-			get { return nomenclatures; }
-			set { SetField(ref nomenclatures, value, () => Nomenclatures); }
+			get => nomenclatures;
+			set => SetField(ref nomenclatures, value);
 		}
-
 		GenericObservableList<Nomenclature> observableNomenclatures;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<Nomenclature> ObservableNomenclatures {
-			get {
-				if(observableNomenclatures == null)
-					observableNomenclatures = new GenericObservableList<Nomenclature>(Nomenclatures);
-				return observableNomenclatures;
-			}
-		}
+		public virtual GenericObservableList<Nomenclature> ObservableNomenclatures =>
+			observableNomenclatures ??
+			(observableNomenclatures = new GenericObservableList<Nomenclature>(Nomenclatures));
+
 		public virtual SizeType SizeType { get; set; }
 		public virtual SizeType HeightType { get; set; }
 		#endregion
-
-
-
+		
 		public ItemsType ()
 		{
 		}
-
 		#region IValidatableObject implementation
 
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
@@ -125,11 +106,8 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult ("Вид одежды должен быть указан.", 
 					new[] { this.GetPropertyName (o => o.WearCategory)});
 		}
-
 		#endregion
-
 	}
-
 	public enum ItemTypeCategory{
 		[Display(Name = "Спецодежда")]
 		wear,
@@ -143,7 +121,6 @@ namespace workwear.Domain.Stock
 		{
 		}
 	}
-
 	public enum IssueType
 	{
 		[Display(Name = "Персональная")]
@@ -151,12 +128,10 @@ namespace workwear.Domain.Stock
 		[Display(Name = "Коллективная")]
 		Collective
 	}
-
-	public class IssueTypeEnumType : NHibernate.Type.EnumStringType
-	{
-		public IssueTypeEnumType() : base(typeof(IssueType))
-		{
-		}
+	public class IssueTypeEnumType : NHibernate.Type.EnumStringType {
+		public IssueTypeEnumType() : base(typeof(IssueType)) { }
 	}
 }
+
+
 

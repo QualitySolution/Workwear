@@ -25,110 +25,76 @@ namespace workwear.Domain.Stock
 	public class Nomenclature: PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства
-
 		public virtual int Id { get; set; }
 
-		string name;
-
+		private string name;
 		[Display (Name = "Название")]
 		[Required (ErrorMessage = "Название номенклатуры должно быть заполнено.")]
 		[StringLength(240)]
 		public virtual string Name {
-			get { return name; }
-			set { SetField (ref name, value?.Trim()); }
+			get => name;
+			set => SetField (ref name, value?.Trim());
 		}
 
-		ItemsType type;
-
+		private ItemsType type;
 		[Display (Name = "Группа номенклатур")]
 		[Required (ErrorMessage = "Номенклатурная группа должна быть указана.")]
 		public virtual ItemsType Type {
-			get { return type; }
-			set { SetField (ref type, value, () => Type); }
+			get => type;
+			set => SetField (ref type, value);
 		}
-
-		ClothesSex? sex;
-
+		private ClothesSex? sex;
 		[Display (Name = "Пол одежды")]
 		public virtual ClothesSex? Sex {
-			get { return sex; }
-			set { SetField (ref sex, value, () => Sex); }
+			get => sex;
+			set => SetField (ref sex, value);
 		}
-
-		string sizeStd;
-
+		private string sizeStd;
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Стандарт размера")]
 		public virtual string SizeStd {
-			get { return sizeStd; }
-			set { SetField (ref sizeStd, value, () => SizeStd); }
+			get => sizeStd;
+			set => SetField (ref sizeStd, value);
 		}
-
 		private string comment;
-
 		[Display(Name = "Комментарий")]
-		public virtual string Comment
-		{
-			get { return comment; }
-			set { SetField(ref comment, value, () => Comment); }
+		public virtual string Comment {
+			get => comment;
+			set => SetField(ref comment, value);
 		}
-
 		private uint? number;
-
 		[Display(Name = "Номенклатурный номер")]
 		public virtual uint? Number {
-			get { return number; }
-			set { SetField(ref number, value); }
+			get => number;
+			set => SetField(ref number, value);
 		}
-
 		private bool archival;
 		[Display(Name ="Архивная")]
 		public virtual bool Archival {
 			get => archival;
 			set => SetField(ref archival, value);
 		}
-
 		#endregion
-
 		#region Рассчетные
-
 		public virtual string TypeName => Type.Name;
-
-		public virtual string GetAmountAndUnitsText(int amount)
-		{
-			return this.Type?.Units?.MakeAmountShortStr(amount) ?? amount.ToString();
-		}
-
+		public virtual string GetAmountAndUnitsText(int amount) => 
+			Type?.Units?.MakeAmountShortStr(amount) ?? amount.ToString();
 		#endregion
-
 		#region Средства защиты
-
 		private IList<ProtectionTools> protectionTools = new List<ProtectionTools>();
-
 		[Display(Name = "Номенаклатуры нормы")]
 		public virtual IList<ProtectionTools> ProtectionTools {
-			get { return protectionTools; }
-			set { SetField(ref protectionTools, value, () => ProtectionTools); }
+			get => protectionTools;
+			set => SetField(ref protectionTools, value);
 		}
-
-		GenericObservableList<ProtectionTools> observableProtectionTools;
+		private GenericObservableList<ProtectionTools> observableProtectionTools;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<ProtectionTools> ObservableProtectionTools {
-			get {
-				if(observableProtectionTools == null)
-					observableProtectionTools = new GenericObservableList<ProtectionTools>(ProtectionTools);
-				return observableProtectionTools;
-			}
-		}
-
+		public virtual GenericObservableList<ProtectionTools> ObservableProtectionTools =>
+			observableProtectionTools ?? (observableProtectionTools =
+				new GenericObservableList<ProtectionTools>(ProtectionTools));
 		#endregion
-
-		public Nomenclature ()
-		{
-			
-		}
-
+		public Nomenclature () { }
 		#region IValidatableObject implementation
-
 		public virtual System.Collections.Generic.IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
 			if (Type != null && Type.WearCategory != null && Sex.HasValue 
 				&& Sex == ClothesSex.Universal && SizeHelper.HasСlothesSizeStd(Type.WearCategory.Value) && !SizeHelper.IsUniversalСlothes (Type.WearCategory.Value))
@@ -156,7 +122,6 @@ namespace workwear.Domain.Stock
 			}
 		}
 		#endregion
-
 		#region Функции
 		public virtual bool MatchingEmployeeSex(Sex employeeSex)
 		{
