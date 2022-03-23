@@ -638,13 +638,21 @@ namespace workwear.Domain.Company
 			}
 		}
 
-		public virtual void FillWearInStockInfo(IUnitOfWork uow, BaseParameters baseParameters, Warehouse warehouse, DateTime onTime, bool onlyUnderreceived = false)
+		public virtual void FillWearInStockInfo(
+			IUnitOfWork uow, 
+			BaseParameters baseParameters, 
+			Warehouse warehouse, 
+			DateTime onTime, 
+			bool onlyUnderreceived = false)
 		{
 			var actualItems = onlyUnderreceived ? GetUnderreceivedItems(baseParameters) : WorkwearItems;
-			FillWearInStockInfo(uow, baseParameters, warehouse, onTime, actualItems);
+			FillWearInStockInfo(uow, warehouse, onTime, actualItems);
 		}
 
-		public static void FillWearInStockInfo(IUnitOfWork uow, BaseParameters baseParameters, Warehouse warehouse, DateTime onTime, IEnumerable<EmployeeCardItem> items)
+		public static void FillWearInStockInfo(IUnitOfWork uow,
+			Warehouse warehouse, 
+			DateTime onTime, 
+			IEnumerable<EmployeeCardItem> items)
 		{
 			FetchEntitiesInWearItems(uow, items);
 			var allNomenclatures = items.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();

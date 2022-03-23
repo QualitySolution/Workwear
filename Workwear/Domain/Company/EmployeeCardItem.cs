@@ -17,6 +17,7 @@ using workwear.Tools;
 using workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using QS.HistoryLog;
+using workwear.Domain.Sizes;
 
 namespace workwear.Domain.Company
 {
@@ -184,41 +185,26 @@ namespace workwear.Domain.Company
 		{
 			if(NextIssue.HasValue && NextIssue.Value.AddDays(-parameters.ColDayAheadOfShedule) <= DateTime.Today)
 				return ActiveNormItem.Amount;
-			else 
-				return ActiveNormItem.Amount - Amount;
+			return ActiveNormItem.Amount - Amount;
 		}
-		public virtual bool MatcheStockPosition(StockPosition stockPosition)
+		public virtual bool MatcheStockPosition(StockPosition stockPosition) 
 		{
 			if(ProtectionTools.MatchedNomenclatures.All(n => n.Id != stockPosition.Nomenclature.Id))
 				return false;
-
-			var wearCategory = stockPosition.Nomenclature.Type.WearCategory;
-
-			if(wearCategory == null)
-				return true;
-			
-			var sexMatching = stockPosition.Nomenclature.MatchingEmployeeSex(EmployeeCard.Sex);
-			if (!SizeHelper.HasСlothesSizeStd(wearCategory.Value) || sexMatching == false)
-				return sexMatching;
-
-			var employeeSize = EmployeeCard.GetSize(wearCategory.Value);
-			if(employeeSize == null || String.IsNullOrEmpty(employeeSize.Size) || String.IsNullOrEmpty(employeeSize.StandardCode)) {
+			if (stockPosition.Nomenclature.MatchingEmployeeSex(EmployeeCard.Sex) == false) 
+				return false;
+			var employeeSize = EmployeeCard.Sizes.Select(x => x.Size)
+				.FirstOrDefault(x => x.SizeType == stockPosition.WearSize.SizeType);
+			if(employeeSize is null) {
 				logger.Warn("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", ProtectionTools.Name);
 				return false;
 			}
-
-			var validSizes = SizeHelper.MatchSize(employeeSize, SizeUsePlace.Сlothes);
-			if(!validSizes.Any(s => s.StandardCode == stockPosition.Nomenclature.SizeStd && s.Size == stockPosition.Size))
-				return false;
-
-			if (String.IsNullOrEmpty(stockPosition.Growth) ||
-			    !SizeHelper.HasGrowthStandart(wearCategory.Value)) return true;
-			{
-				var validGrowths = SizeHelper.MatchGrow(EmployeeCard.WearGrowth, SizeUsePlace.Сlothes);
-				if(!validGrowths.Any(s => s.Size == stockPosition.Growth))
-					return false;
-			}
-			return true;
+			var suitableEmployeeSizes = employeeSize.SuitableSizes;
+			if (stockPosition.WearSize != employeeSize) 
+				if (!suitableEmployeeSizes.Contains(stockPosition.WearSize)) return false;
+			var employeeHeight = employeeCard.Sizes.FirstOrDefault(x => x.SizeType.Category == Category.Height)?.Size;
+			if (employeeHeight is null || stockPosition.Height is null) return true;
+			return employeeHeight == stockPosition.Height;
 		}
 		public virtual void UpdateNextIssue(IUnitOfWork uow)
 		{

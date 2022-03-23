@@ -199,7 +199,7 @@ namespace workwear.Domain.Stock
 		public virtual void PrepareItems(IUnitOfWork uow, BaseParameters baseParameters)
 		{
 			var cardItems = Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
-			EmployeeCard.FillWearInStockInfo(uow, baseParameters, Warehouse, Date, cardItems);
+			EmployeeCard.FillWearInStockInfo(uow, Warehouse, Date, cardItems);
 			foreach(var docItem in Items) {
 				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
 			}
@@ -217,7 +217,6 @@ namespace workwear.Domain.Stock
 			}
 		}
 		#endregion
-
 		#region Ведомость
 		public virtual void CreateIssuanceSheet(UserSettings userSettings)
 		{

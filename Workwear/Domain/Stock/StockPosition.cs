@@ -17,10 +17,10 @@ namespace workwear.Domain.Stock
 		public string Size { get; private set; }
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		public string Growth { get; private set; }
-		public decimal WearPercent { get; private set; }
+		public decimal WearPercent { get; }
 		
-		public Size WearSize { get; set; }
-		public Size Height { get; set; }
+		public Size WearSize { get; }
+		public Size Height { get; }
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService, используйте конструктор с этими классами")]
 		public StockPosition(Nomenclature nomenclature, string size, string growth, decimal wearPercent)
 		{
