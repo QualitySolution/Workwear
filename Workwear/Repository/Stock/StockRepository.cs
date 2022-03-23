@@ -50,6 +50,8 @@ namespace workwear.Repository.Stock
 			WarehouseOperation warehouseIncomeOperationAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
 			Nomenclature nomenclatureAlias = null;
+			Size sizeAlias = null;
+			Size heightAlias = null;
 
 			var excludeIds = excludeOperations?.Select(x => x.Id).ToList();
 
@@ -107,6 +109,8 @@ namespace workwear.Repository.Stock
 
 			var result = queryStock
 				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
+				.JoinAlias(() => warehouseOperationAlias.WearSize, () => sizeAlias)
+				.JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias)
 				.SelectList(list => list
 			   .SelectGroup(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomenclatureId)
 			   .SelectGroup(() => warehouseOperationAlias.WearSize).WithAlias(() => resultAlias.WearSize)

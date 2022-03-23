@@ -7,6 +7,7 @@ using Workwear.Measurements;
 
 namespace workwear.Measurements
 {
+	[Obsolete("Используйте SizeService")]
 	public static class SizeHelper
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();

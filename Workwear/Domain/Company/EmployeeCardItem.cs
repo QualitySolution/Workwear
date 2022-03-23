@@ -31,111 +31,90 @@ namespace workwear.Domain.Company
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
 		#region Свойства
-
 		public virtual int Id { get; set; }
 
-		EmployeeCard employeeCard;
-
+		private EmployeeCard employeeCard;
 		[Display (Name = "Сотрудник")]
 		public virtual EmployeeCard EmployeeCard {
-			get { return employeeCard; }
-			set { SetField (ref employeeCard, value, () => EmployeeCard); }
+			get => employeeCard;
+			set => SetField (ref employeeCard, value);
 		}
 
-		ProtectionTools protectionTools;
-
+		private ProtectionTools protectionTools;
 		[Display (Name = "Позиция")]
 		public virtual ProtectionTools ProtectionTools {
-			get { return protectionTools; }
-			set { SetField (ref protectionTools, value, () => ProtectionTools); }
+			get => protectionTools;
+			set => SetField (ref protectionTools, value);
 		}
 
-		NormItem activeNormItem;
-
+		private NormItem activeNormItem;
 		[Display (Name = "Используемая строка нормы")]
 		public virtual NormItem ActiveNormItem {
-			get { return activeNormItem; }
-			set { SetField (ref activeNormItem, value, () => ActiveNormItem); }
+			get => activeNormItem;
+			set => SetField (ref activeNormItem, value);
 		}
 
-		DateTime created;
-
+		private DateTime created;
 		[Display (Name = "Создана")]
 		public virtual DateTime Created {
-			get { return created; }
-			set { SetField (ref created, value, () => Created); }
+			get => created;
+			set => SetField (ref created, value);
 		}
 
-		int amount;
-
+		private int amount;
 		[Display (Name = "Выданное количество")]
 		public virtual int Amount {
-			get { return amount; }
-			set { SetField (ref amount, value, () => Amount); }
+			get => amount;
+			set => SetField (ref amount, value);
 		}
 
-		DateTime? lastIssue;
-
+		private DateTime? lastIssue;
 		[Display (Name = "Последняя выдача")]
 		public virtual DateTime? LastIssue {
-			get { return lastIssue; }
-			set { SetField (ref lastIssue, value, () => LastIssue); }
+			get => lastIssue;
+			set => SetField (ref lastIssue, value);
 		}
 
-		DateTime? nextIssue;
-
+		private DateTime? nextIssue;
 		[Display (Name = "Следующая выдача")]
 		public virtual DateTime? NextIssue {
-			get { return nextIssue; }
-			set { SetField (ref nextIssue, value, () => NextIssue); }
+			get => nextIssue;
+			set => SetField (ref nextIssue, value);
 		}
-
 		#endregion
-
 		#region Не хранимое в базе значение
-
-
-		IList<StockBalanceDTO> inStock;
-
+		private IList<StockBalanceDTO> inStock;
 		[Display (Name = "На складе")]
 		public virtual IList<StockBalanceDTO> InStock {
-			get { return inStock; }
-			set { SetField (ref inStock, value, () => InStock); }
+			get => inStock;
+			set => SetField (ref inStock, value);
 		}
-
 		public virtual EmployeeIssueOperation LastIssueOperation { get; set; }
-
 		#endregion
-
 		#region Расчетное
-
 		public virtual string AmountColor {
-			get{
+			get
+			{
 				if(ActiveNormItem == null)
 					return "Indigo";
-				else if (ActiveNormItem.Amount == Amount)
+				if (ActiveNormItem.Amount == Amount)
 					return "darkgreen";
-				else if (ActiveNormItem.Amount < Amount)
+				if (ActiveNormItem.Amount < Amount)
 					return "blue";
-				else if (Amount == 0)
-					return "red";
-				else
-					return "orange";
+				return Amount == 0 ? "red" : "orange";
 			}
 		}
-		
 		public virtual string NextIssueColor(BaseParameters parameters) {
 			if(DateTime.Today > NextIssue)
 					return "red";
-			if (DateTime.Today.AddDays(parameters.ColDayAheadOfShedule) > NextIssue)
-				return "darkgreen";
-			return "black";
+			return DateTime.Today.AddDays(parameters.ColDayAheadOfShedule) > NextIssue ? "darkgreen" : "black";
 		}
-
-		public virtual string Title{
-			get{ return String.Format ("Потребность сотрудника {3} в {0} - {1} на {2}", ProtectionTools.Name, ProtectionTools.GetAmountAndUnitsText(ActiveNormItem.Amount), ActiveNormItem.LifeText, EmployeeCard.ShortName);
-			}
-		}
+		public virtual string Title => 
+			String.Format ("Потребность сотрудника {3} в {0} - {1} на {2}", 
+				ProtectionTools.Name, 
+				ProtectionTools.GetAmountAndUnitsText(ActiveNormItem.Amount), 
+				ActiveNormItem.LifeText, 
+				EmployeeCard.ShortName);
 
 		public virtual StockStateInfo InStockState {
 			get {
@@ -154,14 +133,12 @@ namespace workwear.Domain.Company
 				return StockStateInfo.NotEnough;
 			}
 		}
-
 		public virtual IEnumerable<StockBalanceDTO> BestChoiceInStock => InStock
-			.OrderBy(x => ProtectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(x.Nomenclature)).Count())
+			.OrderBy(x => 
+				ProtectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(x.Nomenclature)).Count())
 			.ThenBy(x => x.WearPercent)
 			.ThenByDescending(x => x.Amount);
-
 		#endregion
-
 		public virtual string MatchedNomenclatureShortText {
 			get {
 				if(InStockState == StockStateInfo.UnknownNomenclature)
@@ -171,28 +148,25 @@ namespace workwear.Domain.Company
 					return String.Empty;
 
 				var first = BestChoiceInStock.First();
-				var text = first.StockPosition.Title + " - " + ProtectionTools?.Type?.Units?.MakeAmountShortStr(first.Amount) ?? first.Amount.ToString();
+				var text = first.StockPosition.Title + " - " + 
+				           (ProtectionTools?.Type?.Units?.MakeAmountShortStr(first.Amount) ?? first.Amount.ToString());
 				if(InStock.Count > 1)
-					text += NumberToTextRus.FormatCase(InStock.Count - 1, " (еще {0} вариант)", " (еще {0} варианта)", " (еще {0} вариантов)");
+					text += NumberToTextRus.FormatCase(
+						InStock.Count - 1, " (еще {0} вариант)", " (еще {0} варианта)", " (еще {0} вариантов)");
 				return text;
 			}
 		}
-
-
 		#region Расчетное для View
-
-		public virtual string AmountByNormText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(ActiveNormItem?.Amount ?? 0) ?? ActiveNormItem?.Amount.ToString();
-		public virtual string InStockText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(InStock?.Sum(x => x.Amount) ?? 0) ?? InStock?.Sum(x => x.Amount).ToString();
+		public virtual string AmountByNormText => 
+			ProtectionTools?.Type?.Units?.MakeAmountShortStr(ActiveNormItem?.Amount ?? 0) ?? ActiveNormItem?.Amount.ToString();
+		public virtual string InStockText => 
+			ProtectionTools?.Type?.Units?.MakeAmountShortStr(InStock?.Sum(x => x.Amount) ?? 0) ?? 
+			InStock?.Sum(x => x.Amount).ToString();
 		public virtual string AmountText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(Amount) ?? Amount.ToString();
 		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;
-
 		#endregion
-
-		public EmployeeCardItem ()
-		{
-		}
-
+		public EmployeeCardItem () { }
 		public EmployeeCardItem (EmployeeCard employee, NormItem normItem)
 		{
 			EmployeeCard = employee;
@@ -202,7 +176,6 @@ namespace workwear.Domain.Company
 		}
 
 		#region Methods
-
 		/// <summary>
 		/// Необходимое к выдачи количество.
 		/// Внимание! Не корректно считает сложные ситуации, с неполной выдачей.
@@ -214,10 +187,9 @@ namespace workwear.Domain.Company
 			else 
 				return ActiveNormItem.Amount - Amount;
 		}
-
 		public virtual bool MatcheStockPosition(StockPosition stockPosition)
 		{
-			if(!ProtectionTools.MatchedNomenclatures.Any(n => n.Id == stockPosition.Nomenclature.Id))
+			if(ProtectionTools.MatchedNomenclatures.All(n => n.Id != stockPosition.Nomenclature.Id))
 				return false;
 
 			var wearCategory = stockPosition.Nomenclature.Type.WearCategory;
@@ -239,14 +211,15 @@ namespace workwear.Domain.Company
 			if(!validSizes.Any(s => s.StandardCode == stockPosition.Nomenclature.SizeStd && s.Size == stockPosition.Size))
 				return false;
 
-			if(!String.IsNullOrEmpty(stockPosition.Growth) && SizeHelper.HasGrowthStandart(wearCategory.Value)) {
+			if (String.IsNullOrEmpty(stockPosition.Growth) ||
+			    !SizeHelper.HasGrowthStandart(wearCategory.Value)) return true;
+			{
 				var validGrowths = SizeHelper.MatchGrow(EmployeeCard.WearGrowth, SizeUsePlace.Сlothes);
 				if(!validGrowths.Any(s => s.Size == stockPosition.Growth))
 					return false;
 			}
 			return true;
 		}
-
 		public virtual void UpdateNextIssue(IUnitOfWork uow)
 		{
 			IssueGraph graph = null;
@@ -312,9 +285,7 @@ namespace workwear.Domain.Company
 				NextIssue = ActiveNormItem.Norm.DateFrom;
 		}
 		#endregion
-		
 		#region Зазоры для тестирования
-
 		protected internal virtual IssueGraph GetIssueGraphForItem(IUnitOfWork uow)
 		{
 			return IssueGraph.MakeIssueGraph(uow, EmployeeCard, ProtectionTools);
