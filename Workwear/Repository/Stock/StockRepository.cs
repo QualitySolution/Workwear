@@ -38,20 +38,23 @@ namespace workwear.Repository.Stock
 			return warehouses.Count == 1 ? warehouses.First() : null; 
 		}
 
-		public virtual IList<StockBalanceDTO> StockBalances(IUnitOfWork uow, Warehouse warehouse, IList<Nomenclature> nomenclatures, DateTime onTime, IList<WarehouseOperation> excludeOperations = null)
+		public virtual IList<StockBalanceDTO> StockBalances(
+			IUnitOfWork uow, 
+			Warehouse warehouse, 
+			IList<Nomenclature> nomenclatures, 
+			DateTime onTime, 
+			IEnumerable<WarehouseOperation> excludeOperations = null)
 		{
 			StockBalanceDTO resultAlias = null;
-
 			WarehouseOperation warehouseExpenseOperationAlias = null;
 			WarehouseOperation warehouseIncomeOperationAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
-
 			Nomenclature nomenclatureAlias = null;
 
-			List<int> excludeIds = excludeOperations?.Select(x => x.Id).ToList();
+			var excludeIds = excludeOperations?.Select(x => x.Id).ToList();
 
 			// null == null => null              null <=> null => true
-			var expensequery = QueryOver.Of<WarehouseOperation>(() => warehouseExpenseOperationAlias)
+			var expenseQuery = QueryOver.Of<WarehouseOperation>(() => warehouseExpenseOperationAlias)
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
 				&& (warehouseExpenseOperationAlias.WearSize == warehouseOperationAlias.WearSize ||
 				(warehouseOperationAlias.WearSize == null && warehouseExpenseOperationAlias.WearSize == null))
@@ -61,14 +64,14 @@ namespace workwear.Repository.Stock
 				.Where(e => e.OperationTime <= onTime);
 
 			if(warehouse == null)
-				expensequery.Where(x => x.ExpenseWarehouse != null);
+				expenseQuery.Where(x => x.ExpenseWarehouse != null);
 			else
-				expensequery.Where(x => x.ExpenseWarehouse == warehouse);
+				expenseQuery.Where(x => x.ExpenseWarehouse == warehouse);
 
 			if(excludeIds != null && excludeIds.Count > 0)
-				expensequery.WhereNot(x => x.Id.IsIn(excludeIds));
+				expenseQuery.WhereNot(x => x.Id.IsIn(excludeIds));
 
-			expensequery.Select(Projections.Sum(Projections.Property(() => warehouseExpenseOperationAlias.Amount)));
+			expenseQuery.Select(Projections.Sum(Projections.Property(() => warehouseExpenseOperationAlias.Amount)));
 
 			var incomeSubQuery = QueryOver.Of<WarehouseOperation>(() => warehouseIncomeOperationAlias)
 				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
@@ -87,16 +90,18 @@ namespace workwear.Repository.Stock
 			if(excludeIds != null && excludeIds.Count > 0)
 				incomeSubQuery.WhereNot(x => x.Id.IsIn(excludeIds));
 
-			incomeSubQuery.Select(Projections.Sum(Projections.Property(() => warehouseIncomeOperationAlias.Amount)));
+			incomeSubQuery.Select(Projections
+								.Sum(Projections
+									.Property(() => warehouseIncomeOperationAlias.Amount)));
 
-			IProjection projection = Projections.SqlFunction(
+			var projection = Projections.SqlFunction(
 				new SQLFunctionTemplate(NHibernateUtil.Int32, "( IFNULL(?1, 0) - IFNULL(?2, 0) )"),
 				NHibernateUtil.Int32,
 				Projections.SubQuery(incomeSubQuery),
-				Projections.SubQuery(expensequery)
+				Projections.SubQuery(expenseQuery)
 			);
 
-			var queryStock = uow.Session.QueryOver<WarehouseOperation>(() => warehouseOperationAlias);
+			var queryStock = uow.Session.QueryOver(() => warehouseOperationAlias);
 			queryStock.Where(Restrictions.Not(Restrictions.Eq(projection, 0)));
 			queryStock.Where(() => warehouseOperationAlias.Nomenclature.IsIn(nomenclatures.ToArray()));
 
@@ -113,7 +118,8 @@ namespace workwear.Repository.Stock
 				.List<StockBalanceDTO>();
 
 			//Проставляем номенклатуру.
-			result.ToList().ForEach(item => item.Nomenclature = nomenclatures.First(n => n.Id == item.NomenclatureId));
+			result.ToList().ForEach(item => 
+				item.Nomenclature = nomenclatures.First(n => n.Id == item.NomenclatureId));
 			return result;
 		}
 	}
@@ -130,6 +136,6 @@ namespace workwear.Repository.Stock
 		public string Size { get; set; }
 		public decimal WearPercent { get; set; }
 		public int Amount { get; set; }
-		public StockPosition StockPosition => new StockPosition(Nomenclature, Size, Growth, WearPercent);
+		public StockPosition StockPosition => new StockPosition(Nomenclature, WearPercent, WearSize, Height);
 	}
 }
