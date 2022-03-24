@@ -138,7 +138,7 @@ namespace workwear.Domain.Stock
 				newItem.Nomenclature = position.Nomenclature;
 				newItem.Size = position.Size;
 				newItem.WearGrowth = position.Growth;
-				}
+			}
 
 			ObservableItems.Add(newItem);
 			return newItem;
