@@ -146,7 +146,7 @@ namespace workwear.Views.Import
 				var selected = treeviewRows.GetSelectedObject<ISheetRow>();
 				var item = new MenuItemId<ISheetRow>(selected.UserSkiped ? "Загружать" : "Не загружать");
 				item.ID = selected;
-					item.Activated += Item_Activated;;
+				item.Activated += Item_Activated;
 				menu.Add(item);
 				menu.ShowAll();
 				menu.Popup();
@@ -156,7 +156,7 @@ namespace workwear.Views.Import
 		void Item_Activated(object sender, EventArgs e)
 		{
 			var item = (MenuItemId<ISheetRow>)sender;
-			item.ID.UserSkiped = !item.ID.UserSkiped;
+			item.ID.UserSkipped = !item.ID.UserSkipped;
 		}
 
 		#endregion

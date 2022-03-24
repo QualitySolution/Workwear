@@ -34,7 +34,7 @@ namespace workwear.Models.Import
 
 		public List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
-			var rows = UsedRows.Where(x => !x.Skiped && x.ChangedColumns.Any()).ToList();
+			var rows = UsedRows.Where(x => !x.Skipped && x.ChangedColumns.Any()).ToList();
 			progress.Start(maxValue: rows.Count, text: "Подготовка");
 
 			List<object> toSave = new List<object>();
@@ -55,11 +55,11 @@ namespace workwear.Models.Import
 			dataParser.FindChanges(UsedRows, Columns.Where(x => x.DataType != DataTypeNorm.Unknown).ToArray());
 			OnPropertyChanged(nameof(DisplayRows));
 
-			counters.SetCount(CountersNorm.SkipRows, UsedRows.Count(x => x.Skiped));
+			counters.SetCount(CountersNorm.SkipRows, UsedRows.Count(x => x.Skipped));
 			counters.SetCount(CountersNorm.AmbiguousNorms, dataParser.MatchPairs.Count(x => x.Norms.Count > 1));
 			counters.SetCount(CountersNorm.NewNorms, dataParser.UsedNorms.Count(x => x.Id == 0));
-			counters.SetCount(CountersNorm.NewNormItems, UsedRows.Count(x => !x.Skiped && x.NormItem.Id == 0 && x.ChangedColumns.Any()));
-			counters.SetCount(CountersNorm.ChangedNormItems, UsedRows.Count(x => !x.Skiped && x.NormItem.Id > 0 && x.ChangedColumns.Any()));	
+			counters.SetCount(CountersNorm.NewNormItems, UsedRows.Count(x => !x.Skipped && x.NormItem.Id == 0 && x.ChangedColumns.Any()));
+			counters.SetCount(CountersNorm.ChangedNormItems, UsedRows.Count(x => !x.Skipped && x.NormItem.Id > 0 && x.ChangedColumns.Any()));	
 
 			counters.SetCount(CountersNorm.NewPosts, dataParser.UsedPosts.Count(x => x.Id == 0));
 			counters.SetCount(CountersNorm.NewSubdivisions, dataParser.UsedSubdivisions.Count(x => x.Id == 0));

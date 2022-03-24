@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NPOI.SS.UserModel;
@@ -96,10 +96,10 @@ namespace workwear.Models.Import
 						throw new NotImplementedException("Не известный тип изменения");
 				}
 			}
-			return Skiped ? ExcelImportViewModel.ColorOfSkiped : null;
+			return Skipped ? ExcelImportViewModel.ColorOfSkiped : null;
 		}
 
-		public bool Skiped => ProgramSkiped || UserSkiped;
+		public bool Skipped => ProgramSkipped || UserSkipped;
 
 		#region Работа с изменениями
 
@@ -121,11 +121,11 @@ namespace workwear.Models.Import
 			return null;
 		}
 
-		public bool HasChanges => !Skiped && ChangedColumns.Any(x => x.Value.ChangeType == ChangeType.ChangeValue || x.Value.ChangeType == ChangeType.NewEntity);
+		public bool HasChanges => !Skipped && ChangedColumns.Any(x => x.Value.ChangeType == ChangeType.ChangeValue || x.Value.ChangeType == ChangeType.NewEntity);
 
-		public bool ProgramSkiped { get; set; }
+		public bool ProgramSkipped { get; set; }
 
-		public bool UserSkiped { get; set ; }
+		public bool UserSkipped { get; set ; }
 
 		#endregion
 	}
@@ -136,7 +136,7 @@ namespace workwear.Models.Import
 		string CellTooltip(int col);
 		string CellBackgroundColor(int col);
 
-		bool UserSkiped { get; set; }
+		bool UserSkipped { get; set; }
 	}
 
 	public class ChangeState

@@ -41,7 +41,7 @@ namespace workwear.Models.Import
 		public List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
 			var countColumn = Columns.First(x => x.DataType == DataTypeWorkwearItems.Count);
-			var rows = UsedRows.Where(x => !x.Skiped && x.ChangedColumns.Any()).ToList();
+			var rows = UsedRows.Where(x => !x.Skipped && x.ChangedColumns.Any()).ToList();
 			var grouped = UsedRows.Where(x => x.Operation != null)
 				.GroupBy(x => x.Employee);
 			logger.Debug($"В обработке {grouped.Count()} сотрудников.");
@@ -72,7 +72,7 @@ namespace workwear.Models.Import
 			dataParser.MatchChanges(progress, settingsWorkwearItemsViewModel, counters, uow, UsedRows, Columns);
 			OnPropertyChanged(nameof(DisplayRows));
 
-			counters.SetCount(CountersWorkwearItems.SkipRows, UsedRows.Count(x => x.Skiped));
+			counters.SetCount(CountersWorkwearItems.SkipRows, UsedRows.Count(x => x.Skipped));
 			counters.SetCount(CountersWorkwearItems.UsedEmployees, UsedRows.Select(x => x.Employee).Distinct().Count(x => x!= null));
 			counters.SetCount(CountersWorkwearItems.NewOperations, UsedRows.Count(x => x.Operation != null && x.Operation.Id == 0));
 			counters.SetCount(CountersWorkwearItems.WorkwearItemNotFound, UsedRows.Count(x => x.Employee != null && x.WorkwearItem == null));
