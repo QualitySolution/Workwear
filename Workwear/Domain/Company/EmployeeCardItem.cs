@@ -195,7 +195,7 @@ namespace workwear.Domain.Company
 				return false;
 			
 			var employeeSize = EmployeeCard.Sizes.Select(x => x.Size)
-				.FirstOrDefault(x => x.SizeType == stockPosition.WearSize.SizeType);
+				.FirstOrDefault(x => x.SizeType == stockPosition.WearSize?.SizeType);
 			
 			if(employeeSize is null && stockPosition.WearSize != null) {
 				logger.Warn("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", ProtectionTools.Name);
