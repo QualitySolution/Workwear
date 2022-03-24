@@ -1,12 +1,13 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NPOI.SS.UserModel;
+using QS.DomainModel.Entity;
 using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import
 {
-	public abstract class SheetRowBase<TDataTypeEnum> : ISheetRow
+	public abstract class SheetRowBase<TDataTypeEnum> : PropertyChangedBase, ISheetRow
 		where TDataTypeEnum : System.Enum
 	{
 		private readonly IRow cells;
@@ -84,7 +85,7 @@ namespace workwear.Models.Import
 		public string CellBackgroundColor(int col)
 		{
 			if (UserSkipped)
-				return ExcelImportViewModel.ColorOfSkiped;
+				return ExcelImportViewModel.ColorOfSkipped;
 			
 			var column = ChangedColumns.Keys.FirstOrDefault(x => x.Index == col);
 
@@ -99,7 +100,7 @@ namespace workwear.Models.Import
 						throw new NotImplementedException("Не известный тип изменения");
 				}
 			}
-			return ProgramSkipped ? ExcelImportViewModel.ColorOfSkiped : null;
+			return ProgramSkipped ? ExcelImportViewModel.ColorOfSkipped : null;
 		}
 
 		public bool Skipped => ProgramSkipped || UserSkipped;
@@ -128,8 +129,12 @@ namespace workwear.Models.Import
 
 		public bool ProgramSkipped { get; set; }
 
-		public bool UserSkipped { get; set ; }
+		private bool userSkipped;
 
+		public virtual bool UserSkipped {
+			get => userSkipped;
+			set => SetField(ref userSkipped, value);
+		}
 		#endregion
 	}
 

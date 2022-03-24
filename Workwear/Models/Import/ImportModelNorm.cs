@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -11,7 +12,7 @@ namespace workwear.Models.Import
 	{
 		private readonly DataParserNorm dataParser;
 
-		public ImportModelNorm(DataParserNorm dataParser) : base(dataParser)
+		public ImportModelNorm(DataParserNorm dataParser) : base(dataParser, typeof(CountersNorm))
 		{
 			this.dataParser = dataParser ?? throw new ArgumentNullException(nameof(dataParser));
 		}
@@ -19,9 +20,7 @@ namespace workwear.Models.Import
 		#region Параметры
 		public string ImportName => "Загрузка норм";
 
-		public string DataColunmsRecomendations => "Установите номер строки с заголовком данных, таким образом чтобы название колонок было корректно. Если в таблице заголовки отутствуют укажите 0.\nДалее для каждой значимой колонки проставьте тип данных которые находится в таблице.\nПри загрузки листа программа автоматически пытается найти залоговок таблицы и выбрать тип данных.\nОбязательными данными являются Должность, Номенклатура нормы, Количество и период";
-
-		public Type CountersEnum => typeof(CountersNorm);
+		public string DataColumnsRecommendations => "Установите номер строки с заголовком данных, таким образом чтобы название колонок было корректно. Если в таблице заголовки отсутствуют укажите 0.\nДалее для каждой значимой колонки проставьте тип данных которые находится в таблице.\nПри загрузки листа программа автоматически пытается найти заголовок таблицы и выбрать тип данных.\nОбязательными данными являются Должность, Номенклатура нормы, Количество и период";
 
 		#endregion
 
@@ -49,30 +48,40 @@ namespace workwear.Models.Import
 			return toSave;
 		}
 
-		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow, CountersViewModel counters)
+		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
 			dataParser.MatchWithExist(uow, UsedRows, Columns);
 			dataParser.FindChanges(UsedRows, Columns.Where(x => x.DataType != DataTypeNorm.Unknown).ToArray());
 			OnPropertyChanged(nameof(DisplayRows));
 
-			counters.SetCount(CountersNorm.SkipRows, UsedRows.Count(x => x.Skipped));
-			counters.SetCount(CountersNorm.AmbiguousNorms, dataParser.MatchPairs.Count(x => x.Norms.Count > 1));
-			counters.SetCount(CountersNorm.NewNorms, dataParser.UsedNorms.Count(x => x.Id == 0));
-			counters.SetCount(CountersNorm.NewNormItems, UsedRows.Count(x => !x.Skipped && x.NormItem.Id == 0 && x.ChangedColumns.Any()));
-			counters.SetCount(CountersNorm.ChangedNormItems, UsedRows.Count(x => !x.Skipped && x.NormItem.Id > 0 && x.ChangedColumns.Any()));	
-
-			counters.SetCount(CountersNorm.NewPosts, dataParser.UsedPosts.Count(x => x.Id == 0));
-			counters.SetCount(CountersNorm.NewSubdivisions, dataParser.UsedSubdivisions.Count(x => x.Id == 0));
-			counters.SetCount(CountersNorm.NewProtectionTools, dataParser.UsedProtectionTools.Count(x => x.Id == 0));
-			counters.SetCount(CountersNorm.NewItemTypes, dataParser.UsedItemTypes.Count(x => x.Id == 0));
-			counters.SetCount(CountersNorm.UndefinedItemTypes, dataParser.UndefinedProtectionNames.Count);
-
-			CanSave = counters.GetCount(CountersNorm.ChangedNormItems) > 0
-				|| counters.GetCount(CountersNorm.NewNormItems) > 0
-				|| counters.GetCount(CountersNorm.NewNorms) > 0
-				|| counters.GetCount(CountersNorm.NewPosts) > 0
-				|| counters.GetCount(CountersNorm.NewSubdivisions) > 0
-				|| counters.GetCount(CountersNorm.NewProtectionTools) > 0;
+			RecalculateCounters();
+			CanSave = CountersViewModel.GetCount(CountersNorm.ChangedNormItems) > 0
+			          || CountersViewModel.GetCount(CountersNorm.NewNormItems) > 0
+			          || CountersViewModel.GetCount(CountersNorm.NewNorms) > 0
+			          || CountersViewModel.GetCount(CountersNorm.NewPosts) > 0
+			          || CountersViewModel.GetCount(CountersNorm.NewSubdivisions) > 0
+			          || CountersViewModel.GetCount(CountersNorm.NewProtectionTools) > 0;
 		}
+		
+		protected override void RowOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+        	base.RowOnPropertyChanged(sender, e);
+        	RecalculateCounters();
+        }
+        
+        private void RecalculateCounters()
+        {
+	        CountersViewModel.SetCount(CountersNorm.SkipRows, UsedRows.Count(x => x.Skipped));
+	        CountersViewModel.SetCount(CountersNorm.AmbiguousNorms, dataParser.MatchPairs.Count(x => x.Norms.Count > 1));
+	        CountersViewModel.SetCount(CountersNorm.NewNorms, dataParser.UsedNorms.Count(x => x.Id == 0));
+	        CountersViewModel.SetCount(CountersNorm.NewNormItems, UsedRows.Count(x => !x.Skipped && x.NormItem.Id == 0 && x.ChangedColumns.Any()));
+	        CountersViewModel.SetCount(CountersNorm.ChangedNormItems, UsedRows.Count(x => !x.Skipped && x.NormItem.Id > 0 && x.ChangedColumns.Any()));	
+
+	        CountersViewModel.SetCount(CountersNorm.NewPosts, dataParser.UsedPosts.Count(x => x.Id == 0));
+	        CountersViewModel.SetCount(CountersNorm.NewSubdivisions, dataParser.UsedSubdivisions.Count(x => x.Id == 0));
+	        CountersViewModel.SetCount(CountersNorm.NewProtectionTools, dataParser.UsedProtectionTools.Count(x => x.Id == 0));
+	        CountersViewModel.SetCount(CountersNorm.NewItemTypes, dataParser.UsedItemTypes.Count(x => x.Id == 0));
+	        CountersViewModel.SetCount(CountersNorm.UndefinedItemTypes, dataParser.UndefinedProtectionNames.Count);
+        }
 	}
 }
