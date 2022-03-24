@@ -144,7 +144,7 @@ namespace workwear.Views.Import
 			if(args.Event.Button == 3 && ViewModel.CurrentStep == 2) {
 				var menu = new Menu();
 				var selected = treeviewRows.GetSelectedObject<ISheetRow>();
-				var item = new MenuItemId<ISheetRow>(selected.UserSkiped ? "Загружать" : "Не загружать");
+				var item = new MenuItemId<ISheetRow>(selected.UserSkipped ? "Загружать" : "Не загружать");
 				item.ID = selected;
 				item.Activated += Item_Activated;
 				menu.Add(item);
