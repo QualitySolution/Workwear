@@ -11,6 +11,7 @@ using workwear.Domain.Stock;
 using workwear.Repository.Stock;
 using workwear.Tools;
 using Workwear.Domain.Regulations;
+using workwear.Domain.Sizes;
 
 namespace WorkwearTest.Integration.Stock
 {
@@ -45,31 +46,39 @@ namespace WorkwearTest.Integration.Stock
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				var sizeType = new SizeType();
+				uow.Save(sizeType);
+
+				var nomenclatureType = new ItemsType {Name = "Тестовый тип номенклатуры", SizeType = sizeType};
 				uow.Save(nomenclatureType);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
+				var nomenclature = new Nomenclature {Type = nomenclatureType};
 				uow.Save(nomenclature);
 
-				var income = new Income();
-				income.Warehouse = warehouse;
-				income.Date = new DateTime(2017, 1, 1);
-				income.Operation = IncomeOperations.Enter;
+				var sizeX = new Size() {Name = "X", SizeType = sizeType};
+				var sizeXl = new Size() {Name = "XL", SizeType = sizeType};
+				uow.Save(sizeX);
+				uow.Save(sizeXl);
+
+				var income = new Income {
+					Warehouse = warehouse,
+					Date = new DateTime(2017, 1, 1),
+					Operation = IncomeOperations.Enter
+				};
 				var incomeItem1 = income.AddItem(nomenclature);
-				incomeItem1.Size = "X";
+				incomeItem1.WearSize = sizeX;
 				incomeItem1.Amount = 10;
 				var incomeItem2 = income.AddItem(nomenclature);
-				incomeItem2.Size = "XL";
+				incomeItem2.WearSize = sizeXl;
 				incomeItem2.Amount = 5;
 				income.UpdateOperations(uow, ask);
-				var valadator = new QS.Validation.ObjectValidator();
-				Assert.That(valadator.Validate(income), Is.True);
+				var validator = new QS.Validation.ObjectValidator();
+				Assert.That(validator.Validate(income), Is.True);
 				uow.Save(income);
 				uow.Commit();
 
-				var stock = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature> { nomenclature }, DateTime.Now);
+				var stock = new StockRepository()
+					.StockBalances(uow, warehouse, new List<Nomenclature> { nomenclature }, new DateTime(2017, 1,2));
 				Assert.That(stock.Count, Is.EqualTo(2));
 			}
 		}

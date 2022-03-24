@@ -4,6 +4,7 @@ using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
+using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
@@ -25,7 +26,6 @@ namespace workwear.Journal.ViewModels.Stock
 	public class StockBalanceJournalViewModel : JournalViewModelBase
 	{
 		public bool ShowSummary;
-		private readonly FeaturesService featuresService;
 
 		public StockBalanceFilterViewModel Filter { get; private set; }
 
@@ -37,7 +37,6 @@ namespace workwear.Journal.ViewModels.Stock
 			FeaturesService featuresService) : base(unitOfWorkFactory, interactiveService, navigation)
 		{
 			AutofacScope = autofacScope;
-			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			JournalFilter = Filter = AutofacScope.Resolve<StockBalanceFilterViewModel>(
 				new TypedParameter(typeof(JournalViewModelBase), this));
 
@@ -73,10 +72,10 @@ namespace workwear.Journal.ViewModels.Stock
 			// null == null => null              null <=> null => true
 			var expenseQuery = QueryOver.Of(() => warehouseExpenseOperationAlias)
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
-				             && (warehouseExpenseOperationAlias.WearSize == warehouseOperationAlias.WearSize ||
-				                 (warehouseOperationAlias.WearSize == null && warehouseExpenseOperationAlias.WearSize == null))
-				             && (warehouseExpenseOperationAlias.Height == warehouseOperationAlias.Height ||
-				                 (warehouseExpenseOperationAlias.Height == null && warehouseOperationAlias.Height == null))
+				             && (warehouseExpenseOperationAlias.WearSize.Id == sizeAlias.Id
+				                 || warehouseOperationAlias.WearSize == null && sizeAlias == null)
+				             && (warehouseExpenseOperationAlias.Height.Id == heightAlias.Id
+				                 || warehouseOperationAlias.Height == null && heightAlias == null)
 				             && warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
 				.Where(e => e.OperationTime < Filter.Date.AddDays(1));
 
@@ -90,12 +89,12 @@ namespace workwear.Journal.ViewModels.Stock
 									.Property(() => warehouseExpenseOperationAlias.Amount)));
 
 			var incomeSubQuery = QueryOver.Of(() => warehouseIncomeOperationAlias)
-				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
-				             && (warehouseIncomeOperationAlias.WearSize == warehouseOperationAlias.WearSize
-				                 || (warehouseOperationAlias.WearSize == null && warehouseIncomeOperationAlias.WearSize == null))
-				             && (warehouseIncomeOperationAlias.Height == warehouseOperationAlias.Height ||
-				                 (warehouseIncomeOperationAlias.Height == null && warehouseOperationAlias.Height == null))
-				             && (warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent))
+				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id 
+				             && (warehouseIncomeOperationAlias.WearSize.Id == sizeAlias.Id
+				                 || warehouseOperationAlias.WearSize == null && sizeAlias == null)
+				             && (warehouseIncomeOperationAlias.Height.Id == heightAlias.Id
+				                 || warehouseOperationAlias.Height == null && heightAlias == null)
+				             && warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
 				.Where(e => e.OperationTime < Filter.Date.AddDays(1));
 			if(Filter.Warehouse == null)
 				incomeSubQuery.Where(x => x.ReceiptWarehouse != null);
@@ -137,8 +136,8 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
 				.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias)
 				.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias)
-				.JoinAlias(() => warehouseOperationAlias.WearSize, () => sizeAlias)
-				.JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias)
+				.JoinAlias(() => warehouseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
 				.Where(GetSearchCriterion(
 					() => nomenclatureAlias.Number,
 					() => nomenclatureAlias.Name,
@@ -150,8 +149,8 @@ namespace workwear.Journal.ViewModels.Stock
 			   .Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
 			   .Select(() => nomenclatureAlias.Number).WithAlias(() => resultAlias.NomenclatureNumber)
 			   .Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
-			   .Select(() => sizeAlias.Name).WithAlias(() => resultAlias.SizeName)
-			   .Select(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
+			   .SelectGroup(() => sizeAlias.Name).WithAlias(() => resultAlias.SizeName)
+			   .SelectGroup(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
 			   .SelectGroup(() => sizeAlias.Id).WithAlias(() => resultAlias.SizeId)
 			   .SelectGroup(() => heightAlias.Id).WithAlias(() => resultAlias.HeightId)
 			   .SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)

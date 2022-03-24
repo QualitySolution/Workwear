@@ -116,8 +116,8 @@ namespace workwear.Repository.Stock
 				 .JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
 				.SelectList(list => list
 			   .SelectGroup(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomenclatureId)
-			   .SelectGroup(() => sizeAlias).WithAlias(() => resultAlias.WearSize)
-			   .SelectGroup(() => heightAlias).WithAlias(() => resultAlias.Height)
+			   .SelectGroup(() => warehouseOperationAlias.WearSize).WithAlias(() => resultAlias.WearSize)
+			   .SelectGroup(() => warehouseOperationAlias.Height).WithAlias(() => resultAlias.Height)
 			   .SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
 			   .Select(projection).WithAlias(() => resultAlias.Amount)
 				)

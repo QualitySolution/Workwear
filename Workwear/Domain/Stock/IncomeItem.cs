@@ -124,8 +124,7 @@ namespace workwear.Domain.Stock
 		}
 
 		public virtual decimal Total => Cost * Amount;
-
-		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, Size, WearGrowth, WarehouseOperation.WearPercent);
+		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height);
 
 		#endregion
 
