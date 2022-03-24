@@ -189,20 +189,31 @@ namespace workwear.Domain.Company
 		}
 		public virtual bool MatcheStockPosition(StockPosition stockPosition) 
 		{
-			if(ProtectionTools.MatchedNomenclatures.All(n => n.Id != stockPosition.Nomenclature.Id))
+			if(ProtectionTools.MatchedNomenclatures.All(n => n.Id != stockPosition.Nomenclature.Id)) 
 				return false;
 			if (stockPosition.Nomenclature.MatchingEmployeeSex(EmployeeCard.Sex) == false) 
 				return false;
+			
 			var employeeSize = EmployeeCard.Sizes.Select(x => x.Size)
 				.FirstOrDefault(x => x.SizeType == stockPosition.WearSize.SizeType);
-			if(employeeSize is null) {
+			
+			if(employeeSize is null && stockPosition.WearSize != null) {
 				logger.Warn("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", ProtectionTools.Name);
 				return false;
 			}
-			var suitableEmployeeSizes = employeeSize.SuitableSizes;
-			if (stockPosition.WearSize != employeeSize) 
-				if (!suitableEmployeeSizes.Contains(stockPosition.WearSize)) return false;
+			if (employeeSize != null && stockPosition.WearSize != null) {
+				var suitableEmployeeSizes = employeeSize.SuitableSizes;
+				var suitableStockPositionSize = stockPosition.WearSize.SuitableSizes;
+
+				if (!suitableEmployeeSizes.Intersect(suitableStockPositionSize).Any()
+				    && employeeSize != stockPosition.WearSize)
+					return false;
+			}
 			var employeeHeight = employeeCard.Sizes.FirstOrDefault(x => x.SizeType.Category == Category.Height)?.Size;
+			if(employeeHeight is null && stockPosition.Height != null) {
+				logger.Warn("В карточке сотрудника не указан рост");
+				return false;
+			}
 			if (employeeHeight is null || stockPosition.Height is null) return true;
 			return employeeHeight == stockPosition.Height;
 		}

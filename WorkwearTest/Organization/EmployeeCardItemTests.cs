@@ -538,7 +538,8 @@ namespace WorkwearTest.Organization
 			return employeeItem.MatcheStockPosition(stockPosition);
 		}
 		
-		[Test(Description = "Проверяем что при поиске соответствия обрабатываем установленный пол для номенклатуры c размерами без деления на мужской и женский стандарты.")]
+		[Test(Description = "Проверяем что при поиске соответствия обрабатываем установленный пол " +
+		                    "для номенклатуры c размерами без деления на мужской и женский стандарты.")]
 		[TestCase(Sex.M, null, ExpectedResult = true)]
 		[TestCase(Sex.M, ClothesSex.Men, ExpectedResult = true)]
 		[TestCase(Sex.M, ClothesSex.Women, ExpectedResult = false)]
@@ -548,28 +549,26 @@ namespace WorkwearTest.Organization
 		[TestCase(Sex.F, ClothesSex.Women, ExpectedResult = true)]
 		[TestCase(Sex.F, ClothesSex.Universal, ExpectedResult = true)]
 		[TestCase(Sex.None, null, ExpectedResult = true)]
-		public bool MatcheStockPosition_ClothesSex_GlovesCase(Sex employeeSex, ClothesSex? clothesSex)
+		public bool MatcheStockPosition_ClothesSex_GlovesCase(Sex employeeSex, ClothesSex? clothesSex) 
 		{
-			var employee = new EmployeeCard();
-			employee.Sex = employeeSex;
-			employee.GlovesSizeStd = SizeHelper.GetSizeStdCode(SizeStandartGloves.Rus);
-			employee.GlovesSize = "9";
+			var employee = new EmployeeCard {
+				Sex = employeeSex
+			};
 
 			var itemType = Substitute.For<ItemsType>();
 			itemType.Category.Returns(ItemTypeCategory.wear);
-			itemType.WearCategory.Returns(СlothesType.Gloves);
-			var nomenclature = new Nomenclature();
-			nomenclature.Id = 25;
-			nomenclature.Type = itemType;
-			nomenclature.Sex = clothesSex;
-			nomenclature.SizeStd = SizeHelper.GetSizeStdCode(SizeStandartGloves.Rus);
+			var nomenclature = new Nomenclature {
+				Id = 25,
+				Type = itemType,
+				Sex = clothesSex,
+			};
 			var protectionTools = Substitute.For<ProtectionTools>();
 			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
 			var normItem = Substitute.For<NormItem>();
 			normItem.ProtectionTools.Returns(protectionTools);
 
 			var employeeItem = new EmployeeCardItem(employee, normItem);
-			var stockPosition = new StockPosition(nomenclature, "9", null, 0);
+			var stockPosition = new StockPosition(nomenclature, 0, null, null);
 			return employeeItem.MatcheStockPosition(stockPosition);
 		}
 		#endregion

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
@@ -45,23 +45,21 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = СlothesType.PPE;
 				uow.Save(nomenclatureType);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType
+				};
 				uow.Save(nomenclature);
 
-				var position1 = new StockPosition(nomenclature, null, null, 0);
-
-				var nomenclature2 = new Nomenclature();
-				nomenclature2.Type = nomenclatureType;
+				var nomenclature2 = new Nomenclature {
+					Type = nomenclatureType
+				};
 				uow.Save(nomenclature2);
 
-				var position2 = new StockPosition(nomenclature2, null, null, 0);
-
-				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номенклатура нормы";
+				var protectionTools = new ProtectionTools {
+					Name = "Номенклатура нормы"
+				};
 				protectionTools.AddNomeclature(nomenclature);
 				protectionTools.AddNomeclature(nomenclature2);
 				uow.Save(protectionTools);
@@ -79,10 +77,11 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(employee);
 				uow.Commit();
 
-				var income = new Income();
-				income.Warehouse = warehouse;
-				income.Date = new DateTime(2020, 07, 20);
-				income.Operation = IncomeOperations.Enter;
+				var income = new Income {
+					Warehouse = warehouse,
+					Date = new DateTime(2020, 07, 20),
+					Operation = IncomeOperations.Enter
+				};
 				var incomeItem1 = income.AddItem(nomenclature);
 				incomeItem1.Amount = 10;
 				var incomeItem2 = income.AddItem(nomenclature2);
@@ -93,9 +92,7 @@ namespace WorkwearTest.Integration.Organization
 				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
 
-				var operationTime = uow.GetAll<WarehouseOperation>().Select(x => x.OperationTime).ToList();
-				
-				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22), false);
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22));
 				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.GreaterThan(0));
 				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters).First();
 				Assert.That(employeeCardItem.BestChoiceInStock.Count(), Is.GreaterThan(0));

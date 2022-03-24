@@ -4,6 +4,7 @@ using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
+using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
 using workwear.Domain.Operations;
@@ -56,13 +57,11 @@ namespace workwear.Repository.Stock
 			var excludeIds = excludeOperations?.Select(x => x.Id).ToList();
 
 			// null == null => null              null <=> null => true
-			var expenseQuery = QueryOver.Of<WarehouseOperation>(() => warehouseExpenseOperationAlias)
+			var expenseQuery = QueryOver.Of(() => warehouseExpenseOperationAlias)
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
-				&& (warehouseExpenseOperationAlias.WearSize == warehouseOperationAlias.WearSize ||
-				(warehouseOperationAlias.WearSize == null && warehouseExpenseOperationAlias.WearSize == null))
-				&& (warehouseExpenseOperationAlias.Height == warehouseOperationAlias.Height ||
-				(warehouseExpenseOperationAlias.Height == null && warehouseOperationAlias.Height == null))
-				&& warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
+				             && warehouseExpenseOperationAlias.WearSize == sizeAlias
+				             && warehouseExpenseOperationAlias.Height == heightAlias
+				             && warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
 				.Where(e => e.OperationTime <= onTime);
 
 			if(warehouse == null)
@@ -73,16 +72,16 @@ namespace workwear.Repository.Stock
 			if(excludeIds != null && excludeIds.Count > 0)
 				expenseQuery.WhereNot(x => x.Id.IsIn(excludeIds));
 
-			expenseQuery.Select(Projections.Sum(Projections.Property(() => warehouseExpenseOperationAlias.Amount)));
+			expenseQuery.Select(Projections
+								.Sum(Projections
+									.Property(() => warehouseExpenseOperationAlias.Amount)));
 
-			var incomeSubQuery = QueryOver.Of<WarehouseOperation>(() => warehouseIncomeOperationAlias)
-				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
-				&& (warehouseIncomeOperationAlias.WearSize == warehouseOperationAlias.WearSize
-				|| (warehouseOperationAlias.WearSize == null && warehouseIncomeOperationAlias.WearSize == null))
-				&& (warehouseIncomeOperationAlias.Height == warehouseOperationAlias.Height ||
-				(warehouseIncomeOperationAlias.Height == null && warehouseOperationAlias.Height == null))
-				&& (warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent))
-				.Where(e => e.OperationTime < DateTime.Now);
+			var incomeSubQuery = QueryOver.Of(() => warehouseIncomeOperationAlias)
+				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id 
+				             && warehouseIncomeOperationAlias.WearSize == sizeAlias
+				             && warehouseIncomeOperationAlias.Height == heightAlias
+				             && warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
+				.Where(e => e.OperationTime < onTime);
 
 			if(warehouse == null)
 				incomeSubQuery.Where(x => x.ReceiptWarehouse != null);
@@ -109,12 +108,12 @@ namespace workwear.Repository.Stock
 
 			var result = queryStock
 				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
-				.JoinAlias(() => warehouseOperationAlias.WearSize, () => sizeAlias)
-				.JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias)
+				 .JoinAlias(() => warehouseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
+				 .JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
 				.SelectList(list => list
 			   .SelectGroup(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomenclatureId)
-			   .SelectGroup(() => warehouseOperationAlias.WearSize).WithAlias(() => resultAlias.WearSize)
-			   .SelectGroup(() => warehouseOperationAlias.Height).WithAlias(() => resultAlias.Height)
+			   .SelectGroup(() => sizeAlias).WithAlias(() => resultAlias.WearSize)
+			   .SelectGroup(() => heightAlias).WithAlias(() => resultAlias.Height)
 			   .SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
 			   .Select(projection).WithAlias(() => resultAlias.Amount)
 				)
