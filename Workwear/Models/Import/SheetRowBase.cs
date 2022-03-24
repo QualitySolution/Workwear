@@ -83,6 +83,9 @@ namespace workwear.Models.Import
 		
 		public string CellBackgroundColor(int col)
 		{
+			if (UserSkipped)
+				return ExcelImportViewModel.ColorOfSkiped;
+			
 			var column = ChangedColumns.Keys.FirstOrDefault(x => x.Index == col);
 
 			if(column != null) {
@@ -96,7 +99,7 @@ namespace workwear.Models.Import
 						throw new NotImplementedException("Не известный тип изменения");
 				}
 			}
-			return Skipped ? ExcelImportViewModel.ColorOfSkiped : null;
+			return ProgramSkipped ? ExcelImportViewModel.ColorOfSkiped : null;
 		}
 
 		public bool Skipped => ProgramSkipped || UserSkipped;
