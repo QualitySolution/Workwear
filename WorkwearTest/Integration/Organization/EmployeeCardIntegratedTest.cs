@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
@@ -309,13 +309,12 @@ namespace WorkwearTest.Integration.Organization
 				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(3));
 
-				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22), false);
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22));
 				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.GreaterThan(0));
 
 				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.EqualTo(2));
 
 				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters).First();
-
 				Assert.That(employeeCardItem.InStock.Count(), Is.GreaterThan(0));
 
 				var bestChoiceInStock = employeeCardItem.BestChoiceInStock;

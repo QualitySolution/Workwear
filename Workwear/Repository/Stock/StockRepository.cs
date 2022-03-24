@@ -59,8 +59,10 @@ namespace workwear.Repository.Stock
 			// null == null => null              null <=> null => true
 			var expenseQuery = QueryOver.Of(() => warehouseExpenseOperationAlias)
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
-				             && warehouseExpenseOperationAlias.WearSize == sizeAlias
-				             && warehouseExpenseOperationAlias.Height == heightAlias
+				             && (warehouseExpenseOperationAlias.WearSize.Id == sizeAlias.Id
+				                 || warehouseOperationAlias.WearSize == null && sizeAlias == null)
+				             && (warehouseExpenseOperationAlias.Height.Id == heightAlias.Id
+				                 || warehouseOperationAlias.Height == null && heightAlias == null)
 				             && warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
 				.Where(e => e.OperationTime <= onTime);
 
@@ -78,8 +80,10 @@ namespace workwear.Repository.Stock
 
 			var incomeSubQuery = QueryOver.Of(() => warehouseIncomeOperationAlias)
 				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id 
-				             && warehouseIncomeOperationAlias.WearSize == sizeAlias
-				             && warehouseIncomeOperationAlias.Height == heightAlias
+				             && (warehouseIncomeOperationAlias.WearSize.Id == sizeAlias.Id
+				                 || warehouseOperationAlias.WearSize == null && sizeAlias == null)
+				             && (warehouseIncomeOperationAlias.Height.Id == heightAlias.Id
+				                 || warehouseOperationAlias.Height == null && heightAlias == null)
 				             && warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
 				.Where(e => e.OperationTime < onTime);
 
