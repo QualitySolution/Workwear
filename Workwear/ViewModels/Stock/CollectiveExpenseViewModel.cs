@@ -6,7 +6,6 @@ using Autofac;
 using Gamma.Utilities;
 using NLog;
 using QS.Dialog;
-using QS.Dialog.GtkUI;
 using QS.Dialog.ViewModels;
 using QS.DomainModel.UoW;
 using QS.Navigation;

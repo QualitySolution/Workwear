@@ -33,8 +33,8 @@ namespace workwear.Domain.Stock
 		{
 			Nomenclature = nomenclature ?? throw new ArgumentNullException(nameof(nomenclature));
 			WearPercent = wearPercent;
-			WearSize = wearSize ?? throw new ArgumentNullException(nameof(wearSize));
-			Height = height ?? throw new ArgumentNullException(nameof(height));
+			WearSize = wearSize;
+			Height = height;
 		}
 
 		public string Title {
