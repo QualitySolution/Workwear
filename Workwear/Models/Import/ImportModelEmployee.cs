@@ -73,15 +73,14 @@ namespace workwear.Models.Import
 		private void RecalculateCounters()
 		{
 			CountersViewModel.SetCount(CountersEmployee.SkipRows, UsedRows.Count(x => x.Skipped));
-			CountersViewModel.SetCount(CountersEmployee.MultiMatch, UsedRows.Count(x => x.Employees.Count > 1));
+			CountersViewModel.SetCount(CountersEmployee.MultiMatch, UsedRows.Count(x => !x.Skipped && x.Employees.Count > 1));
 			CountersViewModel.SetCount(CountersEmployee.NewEmployee, UsedRows.Count(x => !x.Skipped && x.EditingEmployee.Id == 0));
-			CountersViewModel.SetCount(CountersEmployee.NotChangedEmployee, UsedRows.Count(x => !x.HasChanges));
-			CountersViewModel.SetCount(CountersEmployee.ChangedEmployee, UsedRows.Count(x => x.HasChanges && x.EditingEmployee.Id > 0));
+			CountersViewModel.SetCount(CountersEmployee.NotChangedEmployee, UsedRows.Count(x => !x.Skipped && !x.HasChanges));
+			CountersViewModel.SetCount(CountersEmployee.ChangedEmployee, UsedRows.Count(x => !x.Skipped && x.HasChanges && x.EditingEmployee.Id > 0));
 
 			CountersViewModel.SetCount(CountersEmployee.NewPosts, dataParser.UsedPosts.Count(x => x.Id == 0));
 			CountersViewModel.SetCount(CountersEmployee.NewDepartments, dataParser.UsedDepartment.Count(x => x.Id == 0));
 			CountersViewModel.SetCount(CountersEmployee.NewSubdivisions, dataParser.UsedSubdivisions.Count(x => x.Id == 0));
-
 		}
 	}
 }
