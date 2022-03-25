@@ -168,27 +168,24 @@ namespace workwear.Domain.Stock
 		}
 
 		public virtual StockPosition StockPosition {
-			get {
-				return new StockPosition(Nomenclature, Size, WearGrowth, WearPercent);
-			}
+			get => new StockPosition(Nomenclature, WearPercent, WearSize, Height);
 			set {
 				Nomenclature = value.Nomenclature;
-				Size = value.Size;
-				WearGrowth = value.Growth;
+				WearSize = value.WearSize;
+				Height = value.Height;
 				WearPercent = value.WearPercent;
 			}
 		}
 
 		StockBalanceDTO stockBalanceSetter;
 		public virtual StockBalanceDTO StockBalanceSetter {
-			get {
-				return stockBalanceSetter ?? new StockBalanceDTO {Nomenclature = Nomenclature, Growth = WearGrowth, Size = Size, WearPercent = WearPercent } ;
-			}
+			get => stockBalanceSetter ?? 
+			       new StockBalanceDTO {Nomenclature = Nomenclature, Height = Height, WearSize = WearSize, WearPercent = WearPercent };
 			set {
 				stockBalanceSetter = value;
 				Nomenclature = value.Nomenclature;
-				Size = value.Size;
-				WearGrowth = value.Growth;
+				WearSize = value.WearSize;
+				Height = value.Height;
 				WearPercent = value.WearPercent;
 			}
 		}

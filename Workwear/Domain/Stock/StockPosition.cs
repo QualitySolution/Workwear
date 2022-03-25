@@ -40,12 +40,6 @@ namespace workwear.Domain.Stock
 		public string Title {
 			get {
 				var parameters = new List<string>();
-				if(!string.IsNullOrWhiteSpace(Size))
-					parameters.Add("Устаревший размер:" + Size);
-
-				if(!string.IsNullOrWhiteSpace(Growth))
-					parameters.Add("Устаревший рост:" + Growth);
-				
 				if(WearSize != null)
 					parameters.Add("Размер:" + WearSize.Name);
 				

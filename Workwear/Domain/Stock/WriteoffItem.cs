@@ -158,7 +158,7 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, Size, WearGrowth, WearPercent);
+		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WearPercent, WearSize, Height);
 
 		public virtual WriteoffFrom WriteoffFrom {
 			get {
@@ -205,13 +205,13 @@ namespace workwear.Domain.Stock
 				IssuedOperation = issueOperation,
 				OperationTime = document.Date,
 				Nomenclature = issueOperation.Nomenclature,
-				Size = issueOperation.Size,
-				WearGrowth = issueOperation.WearGrowth,
+				WearSize = issueOperation.WearSize,
+				Height = issueOperation.Height,
 				WearPercent = issueOperation.CalculatePercentWear(document.Date)
 			};
-			this.nomenclature = issueOperation.Nomenclature ?? throw new ArgumentException("Списывать можно только номенклатуру");
-			this.size = issueOperation.Size;
-			this.wearGrowth = issueOperation.WearGrowth;
+			nomenclature = issueOperation.Nomenclature ?? throw new ArgumentException("Списывать можно только номенклатуру");
+			WearSize = issueOperation.WearSize;
+			Height = issueOperation.Height;
 			this.amount = amount;
 		}
 
@@ -224,13 +224,13 @@ namespace workwear.Domain.Stock
 				IssuedOperation = issueOperation,
 				OperationTime = document.Date,
 				Nomenclature = issueOperation.Nomenclature,
-				Size = issueOperation.Size,
-				WearGrowth = issueOperation.WearGrowth,
+				WearSize = issueOperation.WearSize,
+				Height = issueOperation.Height,
 				WearPercent = issueOperation.CalculatePercentWear(document.Date),
 			};
-			this.nomenclature = issueOperation.Nomenclature;
-			this.size = issueOperation.Size;
-			this.wearGrowth = issueOperation.WearGrowth;
+			nomenclature = issueOperation.Nomenclature;
+			WearSize = issueOperation.WearSize;
+			Height = issueOperation.Height;
 			this.amount = amount;
 		}
 
@@ -238,14 +238,14 @@ namespace workwear.Domain.Stock
 		{
 			document = writeOff;
 			this.amount = amount;
-			this.nomenclature = position.Nomenclature;
-			this.size = position.Size;
-			this.wearGrowth = position.Growth;
+			nomenclature = position.Nomenclature;
+			WearSize = position.WearSize;
+			Height = position.Height;
 			this.warehouse = warehouse;
-			this.warehouseOperation = new WarehouseOperation() {
+			warehouseOperation = new WarehouseOperation() {
 				Amount = amount,
-				Size = position.Size,
-				Growth = position.Growth,
+				WearSize = position.WearSize,
+				Height = position.Height,
 				Nomenclature = position.Nomenclature,
 				OperationTime = document.Date,
 				WearPercent = position.WearPercent,

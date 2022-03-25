@@ -153,8 +153,8 @@ namespace workwear.Domain.Statements
 			Employee = ExpenseItem.ExpenseDoc.Employee;
 			Nomenclature = ExpenseItem.Nomenclature;
 			Amount = (uint)ExpenseItem.Amount;
-			Size = ExpenseItem.Size;
-			WearGrowth = ExpenseItem.WearGrowth;
+			WearSize = ExpenseItem.WearSize;
+			Height = ExpenseItem.Height;
 			StartOfUse = ExpenseItem.EmployeeIssueOperation?.StartOfUse ?? IssuanceSheet.Date;
 			Lifetime = ExpenseItem.EmployeeIssueOperation?.LifetimeMonth ?? 0;
 			IssueOperation = ExpenseItem.EmployeeIssueOperation;
@@ -168,21 +168,11 @@ namespace workwear.Domain.Statements
 			Employee = CollectiveExpenseItem.Employee;
 			Nomenclature = CollectiveExpenseItem.Nomenclature;
 			Amount = (uint)CollectiveExpenseItem.Amount;
-			Size = CollectiveExpenseItem.Size;
-			WearGrowth = CollectiveExpenseItem.WearGrowth;
+			WearSize = CollectiveExpenseItem.WearSize;
+			Height = CollectiveExpenseItem.Height;
 			StartOfUse = CollectiveExpenseItem.EmployeeIssueOperation?.StartOfUse ?? IssuanceSheet.Date;
 			Lifetime = CollectiveExpenseItem.EmployeeIssueOperation?.LifetimeMonth ?? 0;
 			IssueOperation = CollectiveExpenseItem.EmployeeIssueOperation;
-		}
-
-		public virtual void UpdateFromMassExpense(EmployeeIssueOperation employeeIssueOperation)
-		{
-			IssueOperation = employeeIssueOperation;
-			Amount = (uint)IssueOperation.Issued;
-			Size = IssueOperation.WarehouseOperation.Size;
-			WearGrowth = IssueOperation.WarehouseOperation.Growth;
-			StartOfUse = IssueOperation?.StartOfUse ?? IssuanceSheet.Date;
-			Lifetime = IssueOperation?.LifetimeMonth ?? 0;
 		}
 		#endregion
 

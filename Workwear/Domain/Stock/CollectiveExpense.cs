@@ -136,8 +136,8 @@ namespace workwear.Domain.Stock
 			};
 			if(position != null) {
 				newItem.Nomenclature = position.Nomenclature;
-				newItem.Size = position.Size;
-				newItem.WearGrowth = position.Growth;
+				newItem.WearSize = position.WearSize;
+				newItem.Height = position.Height;
 			}
 
 			ObservableItems.Add(newItem);
@@ -152,17 +152,17 @@ namespace workwear.Domain.Stock
 			if(Items.Any(x => employeeCardItem.IsSame(x.EmployeeCardItem)))
 				return null;
 
-			int NeedPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
-			if(employeeCardItem.BestChoiceInStock.Any()) {
-				foreach(var position in employeeCardItem.BestChoiceInStock) {
-					int ExpancePositionAmount = position.Amount;  //Есть на складе
-					foreach(var item in Items) //Считаем сколько осталось на складе c учётом этого документа
-						if(item.Nomenclature == position.Nomenclature && item.Size == position.Size && item.WearGrowth == position.Growth) 
-							ExpancePositionAmount -= item.Amount; 
+			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
+			if (!employeeCardItem.BestChoiceInStock.Any()) return AddItem(employeeCardItem);
+			foreach(var position in employeeCardItem.BestChoiceInStock) {
+				var expancePositionAmount = 
+					Items.Where(item => item.Nomenclature == position.Nomenclature 
+					                    && item.WearSize.Id == position.WearSize.Id 
+					                    && item.Height.Id == position.Height.Id)
+						.Aggregate(position.Amount, (current, item) => current - item.Amount);  //Есть на складе
 
-					if(ExpancePositionAmount >= NeedPositionAmount && position.WearPercent == 0)
-						return AddItem(employeeCardItem, position.StockPosition, NeedPositionAmount);
-				}
+				if(expancePositionAmount >= needPositionAmount && position.WearPercent == 0)
+					return AddItem(employeeCardItem, position.StockPosition, needPositionAmount);
 			}
 			return AddItem(employeeCardItem);
 		}

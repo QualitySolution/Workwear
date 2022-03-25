@@ -122,8 +122,8 @@ namespace workwear.Domain.Stock
                     Nomenclature = position.Nomenclature,
                     OperationTime = Date,
                     ExpenseWarehouse = SourceWarehouse,
-                    Size = position.Size,
-                    Growth = position.Growth,
+                    WearSize = position.WearSize,
+                    Height = position.Height,
                     Amount = count,
                     WearPercent = position.WearPercent
                 }

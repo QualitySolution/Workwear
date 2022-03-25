@@ -1,7 +1,9 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using workwear.Domain.Operations;
+using workwear.Domain.Sizes;
 
 namespace workwear.Domain.Stock
 {
@@ -30,6 +32,7 @@ namespace workwear.Domain.Stock
         [IgnoreHistoryTrace]
         public virtual WarehouseOperation WarehouseOperation { get; set; }
         [Display(Name = "Размер")]
+        [Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
         public virtual string Size {
             get => WarehouseOperation?.Size;
             set {
@@ -38,6 +41,7 @@ namespace workwear.Domain.Stock
             }
         }
         [Display(Name = "Рост одежды")]
+        [Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
         public virtual string Growth {
             get => WarehouseOperation?.Growth;
             set {
@@ -53,12 +57,16 @@ namespace workwear.Domain.Stock
                 WarehouseOperation.WearPercent = value;
             }
         }
+        [Display(Name = "Размер")]
+        public virtual Size WearSize { get; set; }
+        [Display(Name = "Рост одежды")]
+        public virtual Size Height { get; set; }
         #endregion
         #region Constructors
         public CompletionItem(){}
         #endregion
         #region Calculate
-        public virtual StockPosition StockPosition => new StockPosition(Nomenclature, Size, Growth, WearPercent);
+        public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WearPercent, WearSize, Height);
         #endregion
     }
     [Appellative(Gender = GrammaticalGender.Feminine,

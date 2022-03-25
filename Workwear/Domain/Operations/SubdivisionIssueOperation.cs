@@ -254,8 +254,8 @@ namespace workwear.Domain.Operations
 			Subdivision = item.ExpenseDoc.Subdivision;
 			SubdivisionPlace = item.SubdivisionPlace;
 			Nomenclature = item.Nomenclature;
-			Size = item.Size;
-			WearGrowth = item.WearGrowth;
+			WearSize = item.WearSize;
+			Height = item.Height;
 			WearPercent = item.WarehouseOperation.WearPercent;
 			Issued = item.Amount;
 			Returned = 0;
@@ -271,8 +271,8 @@ namespace workwear.Domain.Operations
 
 			Subdivision = item.Document.Subdivision;
 			Nomenclature = item.Nomenclature;
-			Size = item.Size;
-			WearGrowth = item.WearGrowth;
+			WearSize = item.WearSize;
+			Height = item.Height;
 			WearPercent = item.WearPercent;
 			Issued = 0;
 			Returned = item.Amount;

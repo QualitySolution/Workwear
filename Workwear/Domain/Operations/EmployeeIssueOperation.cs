@@ -298,8 +298,8 @@ namespace workwear.Domain.Operations
 
 			Employee = item.ExpenseDoc.Employee;
 			Nomenclature = item.Nomenclature;
-			Size = item.Size;
-			WearGrowth = item.WearGrowth;
+			WearSize = item.WearSize;
+			Height = item.Height;
 			WearPercent = item.WarehouseOperation.WearPercent;
 			Issued = item.Amount;
 			Returned = 0;
@@ -345,8 +345,8 @@ namespace workwear.Domain.Operations
 
 			Employee = item.Employee;
 			Nomenclature = item.Nomenclature;
-			Size = item.Size;
-			WearGrowth = item.WearGrowth;
+			WearSize = item.WearSize;
+			Height = item.Height;
 			WearPercent = item.WarehouseOperation.WearPercent;
 			Issued = item.Amount;
 			Returned = 0;
@@ -459,8 +459,8 @@ namespace workwear.Domain.Operations
 
 			Employee = item.Document.EmployeeCard;
 			Nomenclature = item.Nomenclature;
-			Size = item.Size;
-			WearGrowth = item.WearGrowth;
+			WearSize = item.WearSize;
+			Height = item.Height;
 			WearPercent = item.WearPercent;
 			Issued = 0;
 			Returned = item.Amount;

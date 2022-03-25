@@ -197,9 +197,9 @@ namespace workwear.Domain.Company
 
 		#endregion
 		#region Размеры одежды
+		private string wearGrowth;
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")] 
 		[Display(Name = "Рост одежды")]
-		private string wearGrowth;
 		public virtual string WearGrowth {
 			get => wearGrowth;
 			set => SetField(ref wearGrowth, value);
@@ -445,6 +445,7 @@ namespace workwear.Domain.Company
 		#endregion
 
 		#region Работа с размерами
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		public virtual SizePair GetSize(СlothesType wearCategory)
 		{
 			switch (wearCategory)
@@ -465,7 +466,7 @@ namespace workwear.Domain.Company
 					return null;
 			}
 		}
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		public virtual void SetSize(СlothesType wearCategory, SizePair size)
 		{
 			switch(wearCategory) {
