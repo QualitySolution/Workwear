@@ -8,6 +8,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
+using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Repository.Operations;
 using workwear.Tools;
@@ -18,8 +19,7 @@ namespace WorkwearTest.Integration.Operations
 	public class EmployeeIssueRepositoryTest : InMemoryDBGlobalConfigTestFixtureBase
 	{
 		[OneTimeSetUp]
-		public void Init()
-		{
+		public void Init() {
 			ConfigureOneTime.ConfigureNh();
 			InitialiseUowFactory();
 		}
@@ -31,16 +31,19 @@ namespace WorkwearTest.Integration.Operations
 		{
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				var nomenclatureType = new ItemsType {
+					Name = "Тестовый тип номенклатуры"
+				};
 				uow.Save(nomenclatureType);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType
+				};
 				uow.Save(nomenclature);
 
-				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "СИЗ для тестирования";
+				var protectionTools = new ProtectionTools {
+					Name = "СИЗ для тестирования"
+				};
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
@@ -48,37 +51,40 @@ namespace WorkwearTest.Integration.Operations
 				uow.Save(employee);
 
 				//Операция без номеклатуры
-				var opBefore = new EmployeeIssueOperation();
-				opBefore.OperationTime = new DateTime(2018, 1, 1, 14, 0, 0);
-				opBefore.AutoWriteoffDate = new DateTime(2020, 1, 1);
-				opBefore.Employee = employee;
-				opBefore.Nomenclature = nomenclature;
-				opBefore.ProtectionTools = protectionTools;
-				opBefore.Issued = 1;
+				var opBefore = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2018, 1, 1, 14, 0, 0),
+					AutoWriteoffDate = new DateTime(2020, 1, 1),
+					Employee = employee,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools,
+					Issued = 1
+				};
 				uow.Save(opBefore);
 
-				var opInRange = new EmployeeIssueOperation();
-				opInRange.OperationTime = new DateTime(2019, 1, 1, 13, 0, 0);
-				opInRange.AutoWriteoffDate = new DateTime(2021, 1, 1);
-				opInRange.Employee = employee;
-				opInRange.Nomenclature = nomenclature;
-				opInRange.ProtectionTools = protectionTools;
-				opInRange.Issued = 1;
+				var opInRange = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2019, 1, 1, 13, 0, 0),
+					AutoWriteoffDate = new DateTime(2021, 1, 1),
+					Employee = employee,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools,
+					Issued = 1
+				};
 				uow.Save(opInRange);
 
-				var opAfter = new EmployeeIssueOperation();
-				opAfter.OperationTime = new DateTime(2021, 1, 1, 13, 0, 0);
-				opAfter.AutoWriteoffDate = new DateTime(2021, 5, 1);
-				opAfter.Employee = employee;
-				opAfter.Nomenclature = nomenclature;
-				opAfter.ProtectionTools = protectionTools;
-				opAfter.Issued = 1;
+				var opAfter = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2021, 1, 1, 13, 0, 0),
+					AutoWriteoffDate = new DateTime(2021, 5, 1),
+					Employee = employee,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools,
+					Issued = 1
+				};
 				uow.Save(opAfter);
 
 				uow.Commit();
 
 				var repository = new EmployeeIssueRepository(uow);
-				var result = repository.GetOperationsByDates(new EmployeeCard[] { employee }, new DateTime(2018, 12, 30), new DateTime(2020, 1, 1));
+				var result = repository.GetOperationsByDates(new[] { employee }, new DateTime(2018, 12, 30), new DateTime(2020, 1, 1));
 				Assert.That(result.Count, Is.EqualTo(1));
 				Assert.That(result.First().OperationTime, Is.EqualTo(new DateTime(2019, 1, 1, 13, 0, 0)));
 			}
@@ -91,62 +97,72 @@ namespace WorkwearTest.Integration.Operations
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				var nomenclatureType = new ItemsType
+				{
+					Name = "Тестовый тип номенклатуры"
+				};
 				uow.Save(nomenclatureType);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType
+				};
 				uow.Save(nomenclature);
 
-				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "СИЗ для тестирования";
+				var protectionTools = new ProtectionTools {
+					Name = "СИЗ для тестирования"
+				};
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var employee = new EmployeeCard();
 				uow.Save(employee);
 				
-				var opBefore = new EmployeeIssueOperation();
-				opBefore.OperationTime = new DateTime(2018, 12, 31, 14, 0, 0);
-				opBefore.AutoWriteoffDate = new DateTime(2020, 1, 1);
-				opBefore.Employee = employee;
-				opBefore.Nomenclature = nomenclature;
-				opBefore.ProtectionTools = protectionTools;
-				opBefore.Issued = 1;
+				var opBefore = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2018, 12, 31, 14, 0, 0),
+					AutoWriteoffDate = new DateTime(2020, 1, 1),
+					Employee = employee,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools,
+					Issued = 1
+				};
 				uow.Save(opBefore);
 
-				var opInRange = new EmployeeIssueOperation();
-				opInRange.OperationTime = new DateTime(2019, 1, 1, 0, 0, 0);
-				opInRange.AutoWriteoffDate = new DateTime(2021, 1, 1);
-				opInRange.Employee = employee;
-				opInRange.Nomenclature = nomenclature;
-				opInRange.ProtectionTools = protectionTools;
-				opInRange.Issued = 1;
+				var opInRange = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2019, 1, 1, 0, 0, 0),
+					AutoWriteoffDate = new DateTime(2021, 1, 1),
+					Employee = employee,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools,
+					Issued = 1
+				};
 				uow.Save(opInRange);
 
-				var opInRange2 = new EmployeeIssueOperation();
-				opInRange2.OperationTime = new DateTime(2019, 1, 1, 13, 0, 0);
-				opInRange2.AutoWriteoffDate = new DateTime(2021, 2, 1);
-				opInRange2.Employee = employee;
-				opInRange2.Nomenclature = nomenclature;
-				opInRange2.ProtectionTools = protectionTools;
-				opInRange2.Issued = 2;
+				var opInRange2 = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2019, 1, 1, 13, 0, 0),
+					AutoWriteoffDate = new DateTime(2021, 2, 1),
+					Employee = employee,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools,
+					Issued = 2
+				};
 				uow.Save(opInRange2);
 				
-				var opAfter = new EmployeeIssueOperation();
-				opAfter.OperationTime = new DateTime(2019, 1, 2, 13, 0, 0);
-				opAfter.AutoWriteoffDate = new DateTime(2021, 5, 1);
-				opAfter.Employee = employee;
-				opAfter.Nomenclature = nomenclature;
-				opAfter.ProtectionTools = protectionTools;
-				opAfter.Issued = 1;
+				var opAfter = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2019, 1, 2, 13, 0, 0),
+					AutoWriteoffDate = new DateTime(2021, 5, 1),
+					Employee = employee,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools,
+					Issued = 1
+				};
 				uow.Save(opAfter);
 
 				uow.Commit();
 
 				var repository = new EmployeeIssueRepository(uow);
-				var result = repository.GetOperationsByDates(new EmployeeCard[] { employee }, new DateTime(2019, 1, 1), new DateTime(2019, 1, 1));
+				var result = 
+					repository.GetOperationsByDates(
+						new[] { employee }, new DateTime(2019, 1, 1), new DateTime(2019, 1, 1));
 				Assert.That(result.Any(x => x.OperationTime == new DateTime(2019, 1, 1, 0, 0, 0)), Is.True);
 				Assert.That(result.Any(x => x.OperationTime == new DateTime(2019, 1, 1, 13, 0, 0)), Is.True);
 				Assert.That(result.Count, Is.EqualTo(2));
@@ -167,12 +183,14 @@ namespace WorkwearTest.Integration.Operations
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				var nomenclatureType = new ItemsType {
+					Name = "Тестовый тип номенклатуры"
+				};
 				uow.Save(nomenclatureType);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType
+				};
 				uow.Save(nomenclature);
 
 				var employee = new EmployeeCard();
@@ -185,7 +203,12 @@ namespace WorkwearTest.Integration.Operations
 					Warehouse = warehouse,
 				};
 
-				var stockPosition = new StockPosition(nomenclature, null, null, 0);
+				var size = new Size();
+				var height = new Size();
+				uow.Save(size);
+				uow.Save(height);
+
+				var stockPosition = new StockPosition(nomenclature, 0, size, height);
 				var item = expense.AddItem(stockPosition, 1);
 
 				expense.UpdateOperations(uow, baseParameters, interactive);
@@ -213,16 +236,19 @@ namespace WorkwearTest.Integration.Operations
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
-				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Тестовая курточка";
+				var protectionTools = new ProtectionTools {
+					Name = "Тестовая курточка"
+				};
 				uow.Save(protectionTools);
 
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				var nomenclatureType = new ItemsType {
+					Name = "Тестовый тип номенклатуры"
+				};
 				uow.Save(nomenclatureType);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType
+				};
 				nomenclature.ProtectionTools.Add(protectionTools);
 				uow.Save(nomenclature);
 
@@ -242,8 +268,13 @@ namespace WorkwearTest.Integration.Operations
 					Date = new DateTime(2021, 9, 10),
 					Warehouse = warehouse,
 				};
+				
+				var size = new Size();
+				var height = new Size();
+				uow.Save(size);
+				uow.Save(height);
 
-				var stockPosition = new StockPosition(nomenclature, null, null, 0);
+				var stockPosition = new StockPosition(nomenclature, 0, size, height);
 				var item = expense.AddItem(employee.WorkwearItems.FirstOrDefault(), stockPosition, 1);
 				var item2 = expense.AddItem(employee2.WorkwearItems.FirstOrDefault(), stockPosition, 10);
 
@@ -252,7 +283,8 @@ namespace WorkwearTest.Integration.Operations
 				uow.Commit();
 
 				var repository = new EmployeeIssueRepository(uow);
-				var results = repository.GetReferencedDocuments(item.EmployeeIssueOperation.Id, item2.EmployeeIssueOperation.Id);
+				var results = repository
+					.GetReferencedDocuments(item.EmployeeIssueOperation.Id, item2.EmployeeIssueOperation.Id);
 				var result1 = results.First(x => x.OperationId == item.EmployeeIssueOperation.Id);
 				Assert.That(result1.DocumentType, Is.EqualTo(StokDocumentType.CollectiveExpense));
 				Assert.That(result1.DocumentId, Is.EqualTo(expense.Id));
@@ -277,12 +309,14 @@ namespace WorkwearTest.Integration.Operations
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				var nomenclatureType = new ItemsType {
+					Name = "Тестовый тип номенклатуры"
+				};
 				uow.Save(nomenclatureType);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType
+				};
 				uow.Save(nomenclature);
 
 				var employee = new EmployeeCard();
@@ -294,8 +328,13 @@ namespace WorkwearTest.Integration.Operations
 					Operation = ExpenseOperations.Employee,
 					Warehouse = warehouse,
 				};
+				
+				var size = new Size();
+				var height = new Size();
+				uow.Save(size);
+				uow.Save(height);
 
-				var stockPosition = new StockPosition(nomenclature, null, null, 0);
+				var stockPosition = new StockPosition(nomenclature, 0, size, height);
 				var item = expense.AddItem(stockPosition, 10);
 
 				expense.UpdateOperations(uow, baseParameters, interactive);
@@ -335,12 +374,14 @@ namespace WorkwearTest.Integration.Operations
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				var nomenclatureType = new ItemsType {
+					Name = "Тестовый тип номенклатуры"
+				};
 				uow.Save(nomenclatureType);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType
+				};
 				uow.Save(nomenclature);
 
 				var employee = new EmployeeCard();
@@ -352,8 +393,13 @@ namespace WorkwearTest.Integration.Operations
 					Operation = ExpenseOperations.Employee,
 					Warehouse = warehouse,
 				};
+				
+				var size = new Size();
+				var height = new Size();
+				uow.Save(size);
+				uow.Save(height);
 
-				var stockPosition = new StockPosition(nomenclature, null, null, 0);
+				var stockPosition = new StockPosition(nomenclature, 0, size, height);
 				var item = expense.AddItem(stockPosition, 10);
 
 				expense.UpdateOperations(uow, baseParameters, interactive);
@@ -385,21 +431,25 @@ namespace WorkwearTest.Integration.Operations
 		{
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				var nomenclatureType = new ItemsType {
+					Name = "Тестовый тип номенклатуры"
+				};
 				uow.Save(nomenclatureType);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType
+				};
 				uow.Save(nomenclature);
 
-				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "СИЗ для тестирования";
+				var protectionTools = new ProtectionTools {
+					Name = "СИЗ для тестирования"
+				};
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 				
-				var protectionTools2 = new ProtectionTools();
-				protectionTools2.Name = "СИЗ для тестирования 2";
+				var protectionTools2 = new ProtectionTools {
+					Name = "СИЗ для тестирования 2"
+				};
 				protectionTools2.AddNomeclature(nomenclature);
 				uow.Save(protectionTools2);
 
@@ -414,66 +464,72 @@ namespace WorkwearTest.Integration.Operations
 				uow.Save(employee3);
 
 				//Операция employee1 СИЗ 1
-				var opE1P1 = new EmployeeIssueOperation();
-				opE1P1.OperationTime = new DateTime(2018, 1, 1, 14, 0, 0);
-				opE1P1.AutoWriteoffDate = new DateTime(2020, 1, 1);
-				opE1P1.Employee = employee;
-				opE1P1.Nomenclature = nomenclature;
-				opE1P1.ProtectionTools = protectionTools;
-				opE1P1.Issued = 1;
+				var opE1P1 = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2018, 1, 1, 14, 0, 0),
+					AutoWriteoffDate = new DateTime(2020, 1, 1),
+					Employee = employee,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools,
+					Issued = 1
+				};
 				uow.Save(opE1P1);
 
-				var op2E1P1 = new EmployeeIssueOperation();
-				op2E1P1.OperationTime = new DateTime(2019, 1, 1, 13, 0, 0);
-				op2E1P1.AutoWriteoffDate = new DateTime(2021, 1, 1);
-				op2E1P1.Employee = employee;
-				op2E1P1.Nomenclature = nomenclature;
-				op2E1P1.ProtectionTools = protectionTools;
-				op2E1P1.Issued = 1;
+				var op2E1P1 = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2019, 1, 1, 13, 0, 0),
+					AutoWriteoffDate = new DateTime(2021, 1, 1),
+					Employee = employee,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools,
+					Issued = 1
+				};
 				uow.Save(op2E1P1);
 
-				var opE1P2 = new EmployeeIssueOperation();
-				opE1P2.OperationTime = new DateTime(2021, 1, 1, 13, 0, 0);
-				opE1P2.AutoWriteoffDate = new DateTime(2021, 5, 1);
-				opE1P2.Employee = employee;
-				opE1P2.Nomenclature = nomenclature;
-				opE1P2.ProtectionTools = protectionTools2;
-				opE1P2.Issued = 1;
+				var opE1P2 = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2021, 1, 1, 13, 0, 0),
+					AutoWriteoffDate = new DateTime(2021, 5, 1),
+					Employee = employee,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools2,
+					Issued = 1
+				};
 				uow.Save(opE1P2);
 				
-				var opE1P2Return = new EmployeeIssueOperation();
-				opE1P2Return.OperationTime = new DateTime(2021, 2, 1, 13, 0, 0);
-				opE1P2Return.AutoWriteoffDate = new DateTime(2021, 5, 1);
-				opE1P2Return.Employee = employee;
-				opE1P2Return.Nomenclature = nomenclature;
-				opE1P2Return.ProtectionTools = protectionTools2;
-				opE1P2Return.Issued = 0;
-				opE1P2Return.Returned = 1;
+				var opE1P2Return = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2021, 2, 1, 13, 0, 0),
+					AutoWriteoffDate = new DateTime(2021, 5, 1),
+					Employee = employee,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools2,
+					Issued = 0,
+					Returned = 1
+				};
 				uow.Save(opE1P2Return);
 				
-				var opE2P2 = new EmployeeIssueOperation();
-				opE2P2.OperationTime = new DateTime(2021, 2, 1, 14, 0, 0);
-				opE2P2.AutoWriteoffDate = new DateTime(2021, 5, 1);
-				opE2P2.Employee = employee2;
-				opE2P2.Nomenclature = nomenclature;
-				opE2P2.ProtectionTools = protectionTools2;
-				opE2P2.Issued = 1;
+				var opE2P2 = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2021, 2, 1, 14, 0, 0),
+					AutoWriteoffDate = new DateTime(2021, 5, 1),
+					Employee = employee2,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools2,
+					Issued = 1
+				};
 				uow.Save(opE2P2);
 
 				//Не хотим видеть в выборке от сотрудника 3
-				var opE3P2 = new EmployeeIssueOperation();
-				opE3P2.OperationTime = new DateTime(2021, 2, 1, 14, 0, 0);
-				opE3P2.AutoWriteoffDate = new DateTime(2021, 5, 1);
-				opE3P2.Employee = employee3;
-				opE3P2.Nomenclature = nomenclature;
-				opE3P2.ProtectionTools = protectionTools2;
-				opE3P2.Issued = 1;
+				var opE3P2 = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2021, 2, 1, 14, 0, 0),
+					AutoWriteoffDate = new DateTime(2021, 5, 1),
+					Employee = employee3,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools2,
+					Issued = 1
+				};
 				uow.Save(opE3P2);
 				
 				uow.Commit();
 
 				var repository = new EmployeeIssueRepository(uow);
-				var result = repository.GetLastIssueOperationsForEmployee(new EmployeeCard[] { employee, employee2 });
+				var result = repository.GetLastIssueOperationsForEmployee(new[] { employee, employee2 });
 				
 				Assert.That(result, Has.No.Member(opE1P1));
 				Assert.That(result, Has.Member(op2E1P1));
