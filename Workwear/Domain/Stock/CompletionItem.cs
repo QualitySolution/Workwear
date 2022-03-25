@@ -57,10 +57,20 @@ namespace workwear.Domain.Stock
                 WarehouseOperation.WearPercent = value;
             }
         }
+
+        private Size wearSize;
+
         [Display(Name = "Размер")]
-        public virtual Size WearSize { get; set; }
+        public virtual Size WearSize {
+            get => wearSize;
+            set => SetField(ref wearSize, value);
+        }
+        private Size height;
         [Display(Name = "Рост одежды")]
-        public virtual Size Height { get; set; }
+        public virtual Size Height {
+            get => height;
+            set => SetField(ref height, value);
+        }
         #endregion
         #region Constructors
         public CompletionItem(){}

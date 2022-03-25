@@ -9,7 +9,7 @@ namespace workwear.HibernateMapping.Sizes
         {
             Table("sizes");
             
-            if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+            if(MappingParams.UseIdsForTest)
                 Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
             else 
                 Id (x => x.Id).Column ("id").GeneratedBy.Native();
@@ -19,7 +19,7 @@ namespace workwear.HibernateMapping.Sizes
             Map(x => x.UseInNomenclature).Column("use_in_nomenclature");
             References(x => x.SizeType).Column("size_type_id");
 
-            HasManyToMany<Size>(x => x.SuitableSizes)
+            HasManyToMany(x => x.SuitableSizes)
                 .Table("size_suitable")
                 .ParentKeyColumn("size_id")
                 .ChildKeyColumn("size_suitable_id")

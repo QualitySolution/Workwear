@@ -8,14 +8,16 @@ namespace workwear.HibernateMapping.Stock
         public ComplectionResultItemMap()
         {
             Table ("stock_completion_result_item");
-            if(workwear.HibernateMapping.MappingParams.UseIdsForTest)
+            if(MappingParams.UseIdsForTest)
                 Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
             else 
                 Id (x => x.Id).Column ("id").GeneratedBy.Native();
             
             References (x => x.Completion).Column ("stock_completion_id");
             References(x => x.WarehouseOperation).Column("warehouse_operation_id")
-                .Cascade.All();
+                .Not.Nullable().Cascade.All();
+            References(x => x.WearSize).Column("size_id");
+            References(x => x.Height).Column("height_id");
         }
     }
 }

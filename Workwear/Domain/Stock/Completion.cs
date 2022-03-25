@@ -93,9 +93,9 @@ namespace workwear.Domain.Stock
                 var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
                 var repository = new StockRepository();
                 foreach (var item in SourceItems) {
-                    var nomenclatures = new List<Nomenclature>() {item.Nomenclature};
+                    var nomenclatures = new List<Nomenclature> {item.Nomenclature};
                     var balance = repository
-                        .StockBalances(uow, SourceWarehouse, nomenclatures, DateTime.Now, new List<WarehouseOperation>(){item.WarehouseOperation})
+                        .StockBalances(uow, SourceWarehouse, nomenclatures, DateTime.Now, new List<WarehouseOperation> {item.WarehouseOperation})
                         .Where(s => Equals(s.StockPosition, item.StockPosition))
                         .ToList();
                     if (!balance.Any()) {yield return new ValidationResult(
@@ -118,7 +118,7 @@ namespace workwear.Domain.Stock
             if (SourceWarehouse is null) SourceWarehouse = warehouse;
             var item = new CompletionSourceItem {
                 Completion = this,
-                WarehouseOperation = new WarehouseOperation() {
+                WarehouseOperation = new WarehouseOperation {
                     Nomenclature = position.Nomenclature,
                     OperationTime = Date,
                     ExpenseWarehouse = SourceWarehouse,
@@ -133,7 +133,8 @@ namespace workwear.Domain.Stock
         public virtual CompletionResultItem AddResultItem(Nomenclature nomenclature) {
             var item = new CompletionResultItem {
                 Completion = this,
-                WarehouseOperation = new WarehouseOperation() {
+                WarehouseOperation = new WarehouseOperation
+                {
                     Nomenclature = nomenclature,
                     OperationTime = Date,
                     ReceiptWarehouse = ResultWarehouse
@@ -150,6 +151,8 @@ namespace workwear.Domain.Stock
             foreach (var item in ResultItems) {
                 item.WarehouseOperation.ReceiptWarehouse = ResultWarehouse;
                 item.WarehouseOperation.OperationTime = Date;
+                item.WarehouseOperation.WearSize = item.WearSize;
+                item.WarehouseOperation.Height = item.Height;
             }
         }
         #endregion
