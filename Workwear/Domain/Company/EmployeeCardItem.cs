@@ -187,36 +187,47 @@ namespace workwear.Domain.Company
 				return ActiveNormItem.Amount;
 			return ActiveNormItem.Amount - Amount;
 		}
-		public virtual bool MatcheStockPosition(StockPosition stockPosition) 
-		{
-			if(ProtectionTools.MatchedNomenclatures.All(n => n.Id != stockPosition.Nomenclature.Id)) 
+
+		public virtual bool MatcheStockPosition(StockPosition stockPosition) {
+			if (ProtectionTools.MatchedNomenclatures.All(n => n.Id != stockPosition.Nomenclature.Id))
 				return false;
-			if (stockPosition.Nomenclature.MatchingEmployeeSex(EmployeeCard.Sex) == false) 
+			if (stockPosition.Nomenclature.MatchingEmployeeSex(EmployeeCard.Sex) == false)
 				return false;
-			
+
 			var employeeSize = EmployeeCard.Sizes.Select(x => x.Size)
 				.FirstOrDefault(x => x.SizeType == stockPosition.WearSize?.SizeType);
-			
-			if(employeeSize is null && stockPosition.WearSize != null) {
+
+			if (employeeSize is null && stockPosition.WearSize != null) {
 				logger.Warn("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", ProtectionTools.Name);
 				return false;
 			}
+
 			if (employeeSize != null && stockPosition.WearSize != null) {
 				var suitableEmployeeSizes = employeeSize.SuitableSizes;
 				var suitableStockPositionSize = stockPosition.WearSize.SuitableSizes;
+				suitableEmployeeSizes.Add(employeeSize);
+				suitableStockPositionSize.Add(stockPosition.WearSize);
 
-				if (!suitableEmployeeSizes.Intersect(suitableStockPositionSize).Any()
-				    && employeeSize != stockPosition.WearSize)
-					return false;
+				if (!suitableEmployeeSizes.Intersect(suitableStockPositionSize).Any()) return false;
 			}
-			var employeeHeight = employeeCard.Sizes.FirstOrDefault(x => x.SizeType.Category == Category.Height)?.Size;
-			if(employeeHeight is null && stockPosition.Height != null) {
+
+			var employeeHeight = employeeCard.Sizes
+				.FirstOrDefault(x => x.SizeType.Category == Category.Height)?.Size;
+			if (employeeHeight is null && stockPosition.Height != null) {
 				logger.Warn("В карточке сотрудника не указан рост");
 				return false;
 			}
+
 			if (employeeHeight is null || stockPosition.Height is null) return true;
-			return employeeHeight == stockPosition.Height;
+
+			var suitableEmployeeHeights = employeeHeight.SuitableSizes;
+			var suitableStockPositionHeights = stockPosition.Height.SuitableSizes;
+			suitableEmployeeHeights.Add(employeeHeight);
+			suitableStockPositionHeights.Add(stockPosition.Height);
+			
+			return suitableEmployeeHeights.Intersect(suitableStockPositionHeights).Any();
 		}
+
 		public virtual void UpdateNextIssue(IUnitOfWork uow)
 		{
 			IssueGraph graph = null;
