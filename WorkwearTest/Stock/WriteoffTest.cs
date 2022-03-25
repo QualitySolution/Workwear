@@ -5,6 +5,7 @@ using QS.Dialog;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
+using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 
 namespace WorkwearTest.Stock
@@ -21,10 +22,11 @@ namespace WorkwearTest.Stock
 
 			var warehouse = Substitute.For<Warehouse>();
 
-			var position = new StockPosition(nomeclature, null, null, 0.2m);
+			var position = new StockPosition(nomeclature, 0.2m, new Size(), new Size());
 
-			var writeoff = new Writeoff();
-			writeoff.Date = new DateTime(2019, 1, 15);
+			var writeoff = new Writeoff {
+				Date = new DateTime(2019, 1, 15)
+			};
 			writeoff.AddItem(position, warehouse, 2);
 
 			Assert.That(writeoff.Items[0].WearPercent, Is.EqualTo(0.2m));
@@ -56,8 +58,9 @@ namespace WorkwearTest.Stock
 				Subdivision = subdivision
 			};
 
-			var writeoff = new Writeoff();
-			writeoff.Date = new DateTime(2019, 1, 15);
+			var writeoff = new Writeoff {
+				Date = new DateTime(2019, 1, 15)
+			};
 			writeoff.AddItem(issueOperation, 2);
 
 			Assert.That(writeoff.Items[0].WearPercent, Is.EqualTo(1));
@@ -89,8 +92,9 @@ namespace WorkwearTest.Stock
 				Employee = employee
 			};
 
-			var writeoff = new Writeoff();
-			writeoff.Date = new DateTime(2019, 1, 15);
+			var writeoff = new Writeoff {
+				Date = new DateTime(2019, 1, 15)
+			};
 			writeoff.AddItem(issueOperation, 2);
 
 			Assert.That(writeoff.Items[0].WearPercent, Is.EqualTo(1));
