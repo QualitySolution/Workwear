@@ -301,6 +301,9 @@ namespace WorkwearTest.Integration.Organization
 					{Size = winterShoesSize, SizeType = winterShoes, Employee = employee};
 				uow.Save(employeeShoesSize);
 				uow.Save(employeeWinterShoesSize);
+				
+				employee.Sizes.Add(employeeShoesSize);
+				employee.Sizes.Add(employeeWinterShoesSize);
 
 				var income = new Income {
 					Warehouse = warehouse,
