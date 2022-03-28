@@ -24,8 +24,8 @@ namespace workwear.ViewModels.Stock
 	public class CompletionViewModel: EntityDialogViewModelBase<Completion>
 	{
 		private readonly IInteractiveQuestion interactive;
-		private FeaturesService featuresService;
-		Warehouse lastWarehouse;
+		private readonly FeaturesService featuresService;
+		private Warehouse lastWarehouse;
 		public CompletionViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,

@@ -17201,11 +17201,10 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Button" id="buttonFillBuhDoc">
+                  <widget class="Gamma.GtkWidgets.yButton" id="buttonFillBuhDoc">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
                     <property name="Type">TextAndIcon</property>
-                    <property name="Icon">stock:gtk-copy Menu</property>
                     <property name="Label" translatable="yes">Заменить бух. документ</property>
                     <property name="UseUnderline">True</property>
                   </widget>
