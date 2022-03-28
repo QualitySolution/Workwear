@@ -121,7 +121,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void ReturnWear()
 		{
-			navigation.OpenTdiTab<IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
+			navigation.OpenViewModel<IncomeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
 		public void OpenTimeLine(EmployeeCardItem item)
