@@ -104,7 +104,7 @@ namespace workwear.Journal.Filter.Views.Communications
 			this.ycheckShowOverdue = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckShowOverdue.CanFocus = true;
 			this.ycheckShowOverdue.Name = "ycheckShowOverdue";
-			this.ycheckShowOverdue.Label = global::Mono.Unix.Catalog.GetString("Просроченный");
+			this.ycheckShowOverdue.Label = global::Mono.Unix.Catalog.GetString("В том числе не получившие");
 			this.ycheckShowOverdue.DrawIndicator = true;
 			this.ycheckShowOverdue.UseUnderline = true;
 			this.ytable1.Add(this.ycheckShowOverdue);

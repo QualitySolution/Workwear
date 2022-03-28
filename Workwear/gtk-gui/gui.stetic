@@ -17487,7 +17487,7 @@
           <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckShowOverdue">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Просроченный</property>
+            <property name="Label" translatable="yes">В том числе не получившие</property>
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
