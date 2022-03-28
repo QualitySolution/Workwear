@@ -12,13 +12,7 @@ namespace Workwear.Measurements
 		[SizeStandarts(typeof(SizeStandartMenWear), ClothesSex.Men)]
 		[SizeStandarts(typeof(SizeStandartUnisexWear), ClothesSex.Universal, SizeUse.СlothesOnly)]
 		Wear,
-/*		[Display(Name = "Брюки, юбки, шорты")]
-		[OnlyWoman]
-		WomanPants,
-		[Display(Name = "Женские джинсы")]
-		[OnlyWoman]
-		WomanJeans,
-*/		[Display(Name = "Обувь")]
+		[Display(Name = "Обувь")]
 		[SizeStandarts(typeof(SizeStandartWomenShoes), ClothesSex.Women)]
 		[SizeStandarts(typeof(SizeStandartMenShoes), ClothesSex.Men)]
 		[SizeStandarts(typeof(SizeStandartUnisexShoes), ClothesSex.Universal, SizeUse.СlothesOnly)]
@@ -28,41 +22,11 @@ namespace Workwear.Measurements
 		[SizeStandarts(typeof(SizeStandartMenShoes), ClothesSex.Men)]
 		[SizeStandarts(typeof(SizeStandartUnisexShoes), ClothesSex.Universal, SizeUse.СlothesOnly)]
 		WinterShoes,
-/*		[Display(Name = "Женские колготки и чулки")]
-		[OnlyWoman]
-		WomanTights,
-		[Display(Name = "Женские носки")]
-		[OnlyWoman]
-		WomanSocks,
-		[Display(Name = "Бюстгальтеры")]
-		[OnlyWoman]
-		WomanBras,
-		[Display(Name = "Женское нижнее белье")]
-		[OnlyWoman]
-		WomanUnderwear,
-*/		
-/*		[Display(Name = "Сорочки")]
-		[OnlyMen]
-		MenShirts,
-		[Display(Name = "Мужские Брюки, шорты")]
-		[OnlyMen]
-		MenPants,
-		[Display(Name = "Мужские джинсы")]
-		[OnlyMen]
-		MenJeans,
-		[Display(Name = "Мужское нижнее бельё")]
-		[OnlyMen]
-		MenUnderwear,
-		[Display(Name = "Мужские носки")]
-		[OnlyMen]
-		MenSocks,
-*/
+
 		[Display(Name = "Головные уборы")]
 		[SizeStandarts(typeof(SizeStandartHeaddress))]
 		Headgear,
-/*		[Display(Name = "Ремни")]
-		Belts,
-*/		[Display(Name = "Перчатки")]
+		[Display(Name = "Перчатки")]
 		[SizeStandarts(typeof(SizeStandartGloves))]
 		Gloves,
 		[Display(Name = "Рукавицы")]
@@ -71,14 +35,7 @@ namespace Workwear.Measurements
 		[Display(Name = "СИЗ")]
 		PPE,
 	}
-
-	public class СlothesTypeType : NHibernate.Type.EnumStringType
-	{
-		public СlothesTypeType () : base (typeof(СlothesType))
-		{
-		}
-	}
-
+	
 	public enum ClothesSex
 	{
 		[Display(Name = "Женская")]
@@ -100,18 +57,7 @@ namespace Workwear.Measurements
 		{
 		}
 	}
-
-	[AttributeUsage(AttributeTargets.Field)]
-	public class OnlyWomanAttribute : Attribute 
-	{
-
-	}
-
-	[AttributeUsage(AttributeTargets.Field)]
-	public class OnlyMenAttribute : Attribute 
-	{
-
-	}
+	
 
 	[AttributeUsage(AttributeTargets.Field)]
 	public class NeedGrowthAttribute : Attribute 

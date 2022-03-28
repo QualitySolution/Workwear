@@ -84,7 +84,10 @@ namespace workwear.Models.Import
 			AddType("Неизвестный тип", sht, new string[] { });
 		}
 
-		private void AddType(string name, СlothesType category, MeasurementUnits units, string[] keyWords, СlothesType? category2 = null, string[] keywords2 = null)
+		private void AddType(
+			string name, СlothesType category, 
+			MeasurementUnits units, string[] keyWords, 
+			СlothesType? category2 = null, string[] keywords2 = null)
 		{
 			var type = ItemsTypes.FirstOrDefault(x => x.Name == name);
 			if(type == null) {
