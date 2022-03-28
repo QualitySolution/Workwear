@@ -38,4 +38,6 @@ include::manipulation.adoc[]
 
 include::import.adoc[]
 
+include::mobile-app.adoc[]
+
 :leveloffset: 0

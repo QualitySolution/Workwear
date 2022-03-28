@@ -10,6 +10,7 @@
 * xref:settings.adoc[Настройки программы]
 * xref:manipulation.adoc[Обработка]
 * xref:import.adoc[Импорт данных]
+* xref:mobile-app.adoc[Кабинет сотрудника]
 
 .Руководство администратора
 * xref:requirements.adoc[Системные требования]
