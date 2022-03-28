@@ -26,23 +26,25 @@ namespace workwear.Domain.Regulations
 		}
 
 		private SexNormCondition sex;
+		[Display(Name = "Ограничение по полу")]
 		public virtual SexNormCondition SexNormCondition {
 			get => sex;
 			set => SetField(ref sex, value);
 		}
 
 		private DateTime? issuanceStart;
+		[Display(Name = "Начало выдачи")]
 		public virtual DateTime? IssuanceStart {
 			get => issuanceStart;
 			set => SetField(ref issuanceStart, value);
 		}
 
 		private DateTime? issuanceEnd;
+		[Display(Name = "Окончание выдачи")]
 		public virtual DateTime? IssuanceEnd {
 			get => issuanceEnd;
 			set => SetField(ref issuanceEnd, value);
 		}
-
 
 		#region Методы 
 

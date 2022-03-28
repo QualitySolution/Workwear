@@ -245,7 +245,7 @@ CREATE TABLE IF NOT EXISTS `item_types` (
   `name` VARCHAR(240) NOT NULL,
   `category` ENUM('wear', 'property') NULL DEFAULT 'wear',
   `wear_category` ENUM('Wear', 'Shoes', 'WinterShoes', 'Headgear', 'Gloves', 'Mittens', 'PPE') NULL DEFAULT NULL,
-  `issue_type` ENUM('Personal', 'Сollective') NOT NULL DEFAULT 'Personal',
+  `issue_type` ENUM('Personal', 'Collective') NOT NULL DEFAULT 'Personal',
   `units_id` INT UNSIGNED NULL DEFAULT NULL,
   `norm_life` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
@@ -383,8 +383,8 @@ AUTO_INCREMENT = 1000;
 CREATE TABLE IF NOT EXISTS `regulations_annex` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `regulations_id` INT UNSIGNED NOT NULL,
-  `number` VARCHAR(255) NOT NULL,
-  `name` TINYTEXT NULL DEFAULT NULL,
+  `number` TINYINT(4) NOT NULL,
+  `name` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_regulations_appendix_1_idx` (`regulations_id` ASC),
   CONSTRAINT `fk_regulations_appendix_1`
@@ -431,6 +431,7 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(240) NOT NULL,
   `item_types_id` INT UNSIGNED NOT NULL DEFAULT 1,
+  `assessed_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   `comments` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_protection_tools_1_idx` (`item_types_id` ASC),
@@ -439,6 +440,17 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
     REFERENCES `item_types` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `norm_conditions`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `norm_conditions` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `sex` ENUM('ForAll', 'OnlyMen', 'OnlyWomen') NOT NULL DEFAULT 'ForAll',
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
@@ -452,9 +464,11 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
   `amount` SMALLINT UNSIGNED NOT NULL DEFAULT 1,
   `period_type` ENUM('Year', 'Month', 'Shift', 'Wearout') NOT NULL DEFAULT 'Year',
   `period_count` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `condition_id` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_norms_item_1_idx` (`norm_id` ASC),
   INDEX `fk_norms_item_2_idx` (`protection_tools_id` ASC),
+  INDEX `fk_norms_item_3_idx` (`condition_id` ASC),
   CONSTRAINT `fk_norms_item_1`
     FOREIGN KEY (`norm_id`)
     REFERENCES `norms` (`id`)
@@ -464,6 +478,11 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
     FOREIGN KEY (`protection_tools_id`)
     REFERENCES `protection_tools` (`id`)
     ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_norms_item_3`
+    FOREIGN KEY (`condition_id`)
+    REFERENCES `norm_conditions` (`id`)
+    ON DELETE SET NULL
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
@@ -996,23 +1015,23 @@ CREATE TABLE IF NOT EXISTS `user_settings` (
   CONSTRAINT `fk_user_settings_warehouse_id`
     FOREIGN KEY (`default_warehouse_id`)
     REFERENCES `warehouse` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_user_settings_organization_id`
     FOREIGN KEY (`default_organization_id`)
     REFERENCES `organizations` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_user_settings_responsible_person_id`
     FOREIGN KEY (`default_responsible_person_id`)
-    REFERENCES `wear_cards` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    REFERENCES `leaders` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_user_settings_leader_id`
     FOREIGN KEY (`default_leader_id`)
     REFERENCES `leaders` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -1477,6 +1496,18 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `message_templates`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `message_templates` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `message_title` VARCHAR(200) NOT NULL,
+  `message_text` VARCHAR(400) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- function count_issue
 -- -----------------------------------------------------
 
@@ -1575,4 +1606,3 @@ START TRANSACTION;
 INSERT INTO `vacation_type` (`id`, `name`, `exclude_from_wearing`, `comment`) VALUES (1, 'Основной', 0, NULL);
 
 COMMIT;
-

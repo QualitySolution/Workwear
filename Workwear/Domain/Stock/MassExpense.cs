@@ -76,6 +76,7 @@ namespace workwear.Domain.Stock
 		}
 
 		IList<MassExpenseOperation> massExpenseOperations = new List<MassExpenseOperation>();
+		[IgnoreHistoryTrace]
 		public virtual IList< MassExpenseOperation> MassExpenseOperations {
 			get { return massExpenseOperations; }
 			set { SetField(ref massExpenseOperations, value, () => MassExpenseOperations); }

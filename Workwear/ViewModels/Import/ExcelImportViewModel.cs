@@ -23,7 +23,7 @@ namespace workwear.ViewModels.Import
 		public static readonly string ColorOfChanged = "Pale Green";
 		public static readonly string ColorOfError = "Pink";
 		public static readonly string ColorOfNotFound = "Yellow";
-		public static readonly string ColorOfSkiped = "Orchid";
+		public static readonly string ColorOfSkipped = "Orchid";
 
 		public ExcelImportViewModel(IImportModel importModel, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IInteractiveMessage interactiveMessage, ProgressInterceptor progressInterceptor, IValidator validator = null) : base(unitOfWorkFactory, navigation, validator)
 		{
@@ -31,7 +31,6 @@ namespace workwear.ViewModels.Import
 			this.interactiveMessage = interactiveMessage ?? throw new ArgumentNullException(nameof(interactiveMessage));
 			this.progressInterceptor = progressInterceptor;
 			Title = importModel.ImportName;
-			CountersViewModel = new CountersViewModel(importModel.CountersEnum);
 			importModel.PropertyChanged += ImportModel_PropertyChanged;
 		}
 
@@ -100,12 +99,12 @@ namespace workwear.ViewModels.Import
 		public void ThirdStep()
 		{
 			CurrentStep = 2;
-			ImportModel.MatchAndChanged(ProgressStep, UoW, CountersViewModel);
+			ImportModel.MatchAndChanged(ProgressStep, UoW);
 			SensitiveSaveButton = ImportModel.CanSave;
 		}
 
 		#region Статистика
-		public CountersViewModel CountersViewModel;
+		public CountersViewModel CountersViewModel => ImportModel.CountersViewModel;
 		#endregion
 
 		#region Свойства View

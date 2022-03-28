@@ -55,12 +55,11 @@ namespace workwear.Domain.Company
 		}
 
 		Warehouse warehouse;
-
+		[Display(Name = "Склад подразделения")]
 		public virtual Warehouse Warehouse {
 			get { return warehouse; }
 			set { SetField(ref warehouse, value); }
 		}
-
 
 		#endregion
 

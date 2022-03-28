@@ -153,7 +153,7 @@ namespace workwear.Views.Regulations
 			this.label10 = new global::Gtk.Label();
 			this.label10.Name = "label10";
 			this.label10.Xalign = 1F;
-			this.label10.LabelProp = global::Mono.Unix.Catalog.GetString("Оценочная стоимость<span foreground=\"red\">*</span>:");
+			this.label10.LabelProp = global::Mono.Unix.Catalog.GetString("Оценочная стоимость:");
 			this.label10.UseMarkup = true;
 			this.table1.Add(this.label10);
 			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1[this.label10]));
