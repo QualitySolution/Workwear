@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using NPOI.SS.UserModel;
+using QS.DomainModel.Entity;
 using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import
 {
-	public abstract class SheetRowBase<TDataTypeEnum> : ISheetRow
+	public abstract class SheetRowBase<TDataTypeEnum> : PropertyChangedBase, ISheetRow
 		where TDataTypeEnum : System.Enum
 	{
 		private readonly IRow cells;
@@ -83,6 +84,9 @@ namespace workwear.Models.Import
 		
 		public string CellBackgroundColor(int col)
 		{
+			if (UserSkipped)
+				return ExcelImportViewModel.ColorOfSkipped;
+			
 			var column = ChangedColumns.Keys.FirstOrDefault(x => x.Index == col);
 
 			if(column != null) {
@@ -96,10 +100,10 @@ namespace workwear.Models.Import
 						throw new NotImplementedException("Не известный тип изменения");
 				}
 			}
-			return Skiped ? ExcelImportViewModel.ColorOfSkiped : null;
+			return ProgramSkipped ? ExcelImportViewModel.ColorOfSkipped : null;
 		}
 
-		public bool Skiped => ProgramSkiped || UserSkiped;
+		public bool Skipped => ProgramSkipped || UserSkipped;
 
 		#region Работа с изменениями
 
@@ -121,12 +125,16 @@ namespace workwear.Models.Import
 			return null;
 		}
 
-		public bool HasChanges => !Skiped && ChangedColumns.Any(x => x.Value.ChangeType == ChangeType.ChangeValue || x.Value.ChangeType == ChangeType.NewEntity);
+		public bool HasChanges => !Skipped && ChangedColumns.Any(x => x.Value.ChangeType == ChangeType.ChangeValue || x.Value.ChangeType == ChangeType.NewEntity);
 
-		public bool ProgramSkiped { get; set; }
+		public bool ProgramSkipped { get; set; }
 
-		public bool UserSkiped { get; set ; }
+		private bool userSkipped;
 
+		public virtual bool UserSkipped {
+			get => userSkipped;
+			set => SetField(ref userSkipped, value);
+		}
 		#endregion
 	}
 
@@ -136,7 +144,7 @@ namespace workwear.Models.Import
 		string CellTooltip(int col);
 		string CellBackgroundColor(int col);
 
-		bool UserSkiped { get; set; }
+		bool UserSkipped { get; set; }
 	}
 
 	public class ChangeState

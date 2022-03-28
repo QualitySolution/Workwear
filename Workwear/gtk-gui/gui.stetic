@@ -6619,7 +6619,8 @@
                 <child>
                   <widget class="Gtk.Label" id="label6">
                     <property name="MemberName" />
-                    <property name="LabelProp" translatable="yes">Дата начала действия</property>
+                    <property name="Xalign">1</property>
+                    <property name="LabelProp" translatable="yes">Дата начала действия:</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">5</property>
@@ -6638,7 +6639,8 @@
                 <child>
                   <widget class="Gtk.Label" id="label7">
                     <property name="MemberName" />
-                    <property name="LabelProp" translatable="yes">Дата окончания действия</property>
+                    <property name="Xalign">1</property>
+                    <property name="LabelProp" translatable="yes">Дата окончания действия:</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">6</property>
@@ -6964,7 +6966,7 @@
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">resource:workwear.icon.buttons.arrows.png</property>
-                <property name="Label" translatable="yes">Заменить номеклатуру</property>
+                <property name="Label" translatable="yes">Заменить номенклатуру</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonReplaceNomeclatureClicked" />
               </widget>
@@ -13213,7 +13215,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Regulations.ProtectionToolsView" design-size="639 432">
+  <widget class="Gtk.Bin" id="workwear.Views.Regulations.ProtectionToolsView" design-size="670 432">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -13327,7 +13329,7 @@
                   <widget class="Gtk.Label" id="label10">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Оценочная стоимость&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
+                    <property name="LabelProp" translatable="yes">Оценочная стоимость:</property>
                     <property name="UseMarkup">True</property>
                   </widget>
                   <packing>
