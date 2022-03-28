@@ -124,7 +124,7 @@ namespace workwear.Models.Import
 			progress.Start(list.Count(), text: "Поиск изменений");
 			foreach(var row in list) {
 				progress.Add();
-				if(row.Skiped)
+				if(row.Skipped)
 					continue;
 
 				var employee = row.Employees.FirstOrDefault();
@@ -340,11 +340,11 @@ namespace workwear.Models.Import
 			var groups = list.GroupBy(x => GetFIO(x, columns).GetHash());
 			foreach(var group in groups) {
 				if(String.IsNullOrWhiteSpace(group.Key)) {
-					group.First().ProgramSkiped = true;
+					group.First().ProgramSkipped = true;
 				}
 
 				foreach(var item in group.Skip(1)) {
-					item.ProgramSkiped = true;
+					item.ProgramSkipped = true;
 				}
 			}
 			progress.Close();
@@ -385,7 +385,7 @@ namespace workwear.Models.Import
 				}
 
 				foreach(var item in group.Skip(1)) {
-					item.ProgramSkiped = true;
+					item.ProgramSkipped = true;
 				}
 			}
 			progress.Close();

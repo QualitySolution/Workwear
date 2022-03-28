@@ -107,13 +107,13 @@ namespace workwear.Models.Import
 				progress.Add(text: "Сопоставление");
 				row.Date = ParseDateOrNull(row.CellStringValue(issuedateColumn.Index));
 				if(row.Date == null) {
-					row.ProgramSkiped = true;
+					row.ProgramSkipped = true;
 					row.AddColumnChange(issuedateColumn, ChangeType.ParseError);
 					continue;
 				}
 
 				if(row.CellIntValue(countColumn.Index) == null) {
-					row.ProgramSkiped = true;
+					row.ProgramSkipped = true;
 					row.AddColumnChange(countColumn, ChangeType.ParseError);
 					continue;
 				}
@@ -121,7 +121,7 @@ namespace workwear.Models.Import
 				row.Employee = employees.FirstOrDefault(x => x.PersonnelNumber == GetPersonalNumber(settings, row, personnelNumberColumn.Index));
 				if(row.Employee == null) {
 					logger.Warn($"Не найден сотрудник в табельным номером [{GetPersonalNumber(settings, row, personnelNumberColumn.Index)}]. Пропускаем.");
-					row.ProgramSkiped = true;
+					row.ProgramSkipped = true;
 					row.AddColumnChange(personnelNumberColumn, ChangeType.NotFound);
 					counters.AddCount(CountersWorkwearItems.EmployeeNotFound);
 					continue;
@@ -138,7 +138,7 @@ namespace workwear.Models.Import
 						counters.AddCount(CountersWorkwearItems.EmployeesAddNorm);
 				}
 				if(row.WorkwearItem == null) {
-					row.ProgramSkiped = true;
+					row.ProgramSkipped = true;
 					row.AddColumnChange(protectionToolsColumn, ChangeType.NotFound);
 					continue;
 				}
@@ -167,7 +167,7 @@ namespace workwear.Models.Import
 
 			foreach(var row in list) {
 				progress.Add(text: "Обработка операций выдачи");
-				if(row.Skiped)
+				if(row.Skipped)
 					continue;
 				var nomeclatureName = row.CellStringValue(nomenclatureColumn.Index);
 				if(String.IsNullOrWhiteSpace(nomeclatureName)) {

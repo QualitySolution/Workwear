@@ -10,6 +10,7 @@
 * xref:settings.adoc[Настройки программы]
 * xref:manipulation.adoc[Обработка]
 * xref:import.adoc[Импорт данных]
+* xref:mobile-app.adoc[Кабинет сотрудника]
 
 .Руководство администратора
 * xref:requirements.adoc[Системные требования]
@@ -18,5 +19,5 @@
 * xref:users.adoc[Работа с пользователями]
 * xref:update.adoc[Обновление]
 * xref:technical.adoc[Технические подробности]
-* xref:transfer_base.adoc[Перенос базы на другой компьютер]
+* xref:transfer_base.adoc[Перенос базы данных]
 * xref:problems.adoc[Решение проблем]

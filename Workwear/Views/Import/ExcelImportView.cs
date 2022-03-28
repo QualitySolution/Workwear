@@ -51,7 +51,7 @@ namespace workwear.Views.Import
 			#region Шаг 2
 			spinTitleRow.Binding.AddBinding(viewModel.ImportModel, v => v.HeaderRow, w => w.ValueAsInt).InitializeFromSource();
 			buttonReadEmployees.Binding.AddBinding(viewModel, v => v.SensitiveThirdStepButton, w => w.Sensitive).InitializeFromSource();
-			labelColumnRecomendations.LabelProp = ViewModel.ImportModel.DataColunmsRecomendations;
+			labelColumnRecomendations.LabelProp = ViewModel.ImportModel.DataColumnsRecommendations;
 			if(viewModel.ImportModel.MatchSettingsViewModel != null) {
 				var settingsView = viewResolver.Resolve(viewModel.ImportModel.MatchSettingsViewModel);
 				tableMatchSettings.Attach(settingsView, 0, 2, 1, 2);
@@ -67,7 +67,7 @@ namespace workwear.Views.Import
 			eventboxLegendaChanged.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfChanged));
 			eventboxLegendaNotFound.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfNotFound));
 			eventboxLegendaError.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfError));
-			eventboxLegendaSkipRows.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfSkiped));
+			eventboxLegendaSkipRows.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfSkipped));
 
 			buttonSave.Binding.AddBinding(ViewModel, v => v.SensitiveSaveButton, w => w.Sensitive).InitializeFromSource();
 			ViewModel.ProgressStep = progressTotal;
@@ -144,9 +144,9 @@ namespace workwear.Views.Import
 			if(args.Event.Button == 3 && ViewModel.CurrentStep == 2) {
 				var menu = new Menu();
 				var selected = treeviewRows.GetSelectedObject<ISheetRow>();
-				var item = new MenuItemId<ISheetRow>(selected.UserSkiped ? "Загружать" : "Не загружать");
+				var item = new MenuItemId<ISheetRow>(selected.UserSkipped ? "Загружать" : "Не загружать");
 				item.ID = selected;
-					item.Activated += Item_Activated;;
+				item.Activated += Item_Activated;
 				menu.Add(item);
 				menu.ShowAll();
 				menu.Popup();
@@ -156,7 +156,7 @@ namespace workwear.Views.Import
 		void Item_Activated(object sender, EventArgs e)
 		{
 			var item = (MenuItemId<ISheetRow>)sender;
-			item.ID.UserSkiped = !item.ID.UserSkiped;
+			item.ID.UserSkipped = !item.ID.UserSkipped;
 		}
 
 		#endregion

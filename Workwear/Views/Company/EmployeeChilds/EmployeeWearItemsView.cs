@@ -113,19 +113,19 @@ namespace workwear.Views.Company.EmployeeChilds
 				var menu = new Menu();
 				var selected = ytreeWorkwear.GetSelectedObject<EmployeeCardItem>();
 
-				var itemOpenProtectionTools = new MenuItemId<EmployeeCardItem>("Открыть номеклатуру нормы");
+				var itemOpenProtectionTools = new MenuItemId<EmployeeCardItem>("Открыть номенклатуру нормы");
 				itemOpenProtectionTools.ID = selected;
 				itemOpenProtectionTools.Sensitive = selected?.ProtectionTools != null;
 				itemOpenProtectionTools.Activated += (sender, e) => viewModel.OpenProtectionTools(((MenuItemId<EmployeeCardItem>)sender).ID);
 				menu.Add(itemOpenProtectionTools);
-
-				menu.Add(new SeparatorMenuItem());
 
 				var itemOpenLastIssue = new MenuItemId<EmployeeCardItem>("Открыть документ с последней выдачей");
 				itemOpenLastIssue.ID = selected;
 				itemOpenLastIssue.Sensitive = selected?.LastIssueOperation != null;
 				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenLastIssue(((MenuItemId<EmployeeCardItem>)sender).ID);
 				menu.Add(itemOpenLastIssue);
+
+				menu.Add(new SeparatorMenuItem());
 
 				var itemRecalculateLastIssue = new MenuItemId<EmployeeCardItem>("Пересчитать сроки носки последней выдаче");
 				itemRecalculateLastIssue.ID = selected;

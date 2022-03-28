@@ -86,7 +86,7 @@ namespace workwear.Domain.Company
 
 		private string cardKey;
 		[Display(Name = "UID карты доступа")]
-		[StringLength(16, ErrorMessage = "Максимальная длинна UID карты 16 символов или 8 байт в шестнадцатиричном виде")]
+		[StringLength(16, ErrorMessage = "Максимальная длинна UID карты 16 символов или 8 байт в шестнадцатеричном виде")]
 		public virtual string CardKey {
 			get => cardKey;
 			set => SetField(ref cardKey, value?.ToUpper());
@@ -101,6 +101,7 @@ namespace workwear.Domain.Company
 		}
 
 		private bool lkRegistered;
+		[Display(Name = "Зарегистрирован мобильный кабинет?")]
 		public virtual bool LkRegistered {
 			get => lkRegistered;
 			set => SetField(ref lkRegistered, value);

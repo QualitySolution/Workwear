@@ -31,9 +31,9 @@ namespace WorkwearTest.Deletion
 			AddIgnoredClass<TypeOfEntity>("Класс не используется в проекте");
 			
 			AddIgnoredProperty<EmployeeIssueOperation>(x => x.IssuedOperation, "Потому что если мы удаляем операцию списания, мы не должны при этом удалять операцию выдачи.");
-			AddIgnoredProperty<EmployeeIssueOperation>(x => x.WarehouseOperation, "Является лиш дополнительной сылкой на операцию. И скорей всего и так вместе будет удалятся за счет других ссылок.");
+			AddIgnoredProperty<EmployeeIssueOperation>(x => x.WarehouseOperation, "Является лиш дополнительной ссылкой на операцию. И скорей всего и так вместе будет удалятся за счет других ссылок.");
 			AddIgnoredProperty<SubdivisionIssueOperation>(x => x.IssuedOperation, "Потому что если мы удаляем операцию списания, мы не должны при этом удалять операцию выдачи.");
-			AddIgnoredProperty<SubdivisionIssueOperation>(x => x.WarehouseOperation, "Является лиш дополнительной сылкой на операцию. И скорей всего и так вместе будет удалятся за счет других ссылок.");
+			AddIgnoredProperty<SubdivisionIssueOperation>(x => x.WarehouseOperation, "Является лиш дополнительной ссылкой на операцию. И скорей всего и так вместе будет удалятся за счет других ссылок.");
 			AddIgnoredProperty<EmployeeCardItem>(x => x.ActiveNormItem, "Должно удалятся более сложным способом, а именно через обновление потребностей.");
 			AddIgnoredProperty<IssuanceSheetItem>(x => x.IssueOperation, "Является дополнительной ссылкой на операцию, а не основной, поэтому не должно удалять операцию.");
 			
@@ -62,33 +62,33 @@ namespace WorkwearTest.Deletion
 		public new static IEnumerable NhibernateMappedClasses => DeleteConfigTestBase.NhibernateMappedClasses;
 
 		[Test, TestCaseSource(nameof(NhibernateMappedClasses))]
-		public override void DeleteRuleExisitForNHMappedClasssTest(NHibernate.Mapping.PersistentClass mapping)
+		public override void DeleteRuleExistForNhMappedClassTest(NHibernate.Mapping.PersistentClass mapping)
 		{
-			base.DeleteRuleExisitForNHMappedClasssTest(mapping);
+			base.DeleteRuleExistForNhMappedClassTest(mapping);
 		}
 
 		public new static IEnumerable NhibernateMappedEntityRelation => DeleteConfigTestBase.NhibernateMappedEntityRelation;
 
 		[Test, TestCaseSource(nameof(NhibernateMappedEntityRelation))]
-		public override void DeleteRuleExisitForNHMappedEntityRelationTest(PersistentClass mapping, Property property)
+		public override void DeleteRuleExistForNhMappedEntityRelationTest(PersistentClass mapping, Property property)
 		{
-			base.DeleteRuleExisitForNHMappedEntityRelationTest(mapping, property);
+			base.DeleteRuleExistForNhMappedEntityRelationTest(mapping, property);
 		}
 
 		public new static IEnumerable NhibernateMappedEntityRelationWithExistRule => DeleteConfigTestBase.NhibernateMappedEntityRelationWithExistRule;
 
 		[Test, TestCaseSource(nameof(NhibernateMappedEntityRelationWithExistRule))]
-		public override void DependenceRuleExisitForNHMappedEntityRelationTest(PersistentClass mapping, Property property, IDeleteRule related)
+		public override void DependenceRuleExistForNhMappedEntityRelationTest(PersistentClass mapping, Property property, IDeleteRule related)
 		{
-			base.DependenceRuleExisitForNHMappedEntityRelationTest(mapping, property, related);
+			base.DependenceRuleExistForNhMappedEntityRelationTest(mapping, property, related);
 		}
 
 		public new static IEnumerable NhibernateMappedEntityRelationWithExistRuleCascadeRelated => DeleteConfigTestBase.NhibernateMappedEntityRelationWithExistRuleCascadeRelated;
 
 		[Test, TestCaseSource(nameof(NhibernateMappedEntityRelationWithExistRuleCascadeRelated))]
-		public override void CascadeDependenceRuleExisitForNHMappedEntityRelationTest(PersistentClass mapping, Property property, IDeleteRule related)
+		public override void CascadeDependenceRuleExistForNhMappedEntityRelationTest(PersistentClass mapping, Property property, IDeleteRule related)
 		{
-			base.CascadeDependenceRuleExisitForNHMappedEntityRelationTest(mapping, property, related);
+			base.CascadeDependenceRuleExistForNhMappedEntityRelationTest(mapping, property, related);
 		}
 
 		public new static IEnumerable NhibernateMappedCollection => DeleteConfigTestBase.NhibernateMappedCollection;
