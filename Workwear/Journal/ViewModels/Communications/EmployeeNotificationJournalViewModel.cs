@@ -213,9 +213,9 @@ namespace workwear.Journal.ViewModels.Communications
 			if (Items.Count == 0)
 				return;
 			
-			bool setValue = !(Items[0] as EmployeeNotificationJournalNode).Selected;
+			bool setValue = !Items.Cast<EmployeeNotificationJournalNode>().FirstOrDefault(x => x.CanSelect).Selected;
 			foreach (EmployeeNotificationJournalNode node in Items)
-				node.Selected = setValue;
+				node.Selected = node.CanSelect && setValue;
 			Refresh();
 		}
 		#endregion
