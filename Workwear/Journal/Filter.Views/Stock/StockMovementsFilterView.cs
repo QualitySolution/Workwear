@@ -1,5 +1,5 @@
-﻿using System;
-using QS.Views;
+﻿using QS.Views;
+using workwear.Domain.Sizes;
 using workwear.Journal.Filter.ViewModels.Stock;
 
 namespace workwear.Journal.Filter.Views.Stock
@@ -15,26 +15,36 @@ namespace workwear.Journal.Filter.Views.Stock
 				.AddBinding(v => v.EndDate, w => w.EndDateOrNull)
 				.InitializeFromSource();
 
-			entityWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
-			labelWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
-			comboSize.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.SensitiveSize, w => w.Sensitive)
-				.AddBinding(v => v.Size, w => w.ActiveText)
-				.AddBinding(v => v.Sizes, w => w.ItemsList)
+			entityWarehouse.Binding
+				.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible)
 				.InitializeFromSource();
+			labelWarehouse.Binding
+				.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible)
+				.InitializeFromSource();
+			comboSize.SetRenderTextFunc<Size>(x => x.Name);
+			comboSize.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.Size, w => w.SelectedItem)
+				.AddBinding(v => v.Sizes, w => w.ItemsList)
+				.AddBinding(v => v.SensitiveSize, w => w.Sensitive)
+				.InitializeFromSource();
+			comboGrowth.SetRenderTextFunc<Size>(x => x.Name);
 			comboGrowth.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.SensitiveGrowth, w => w.Sensitive)
-				.AddBinding(v => v.Growth, w => w.ActiveText)
+				.AddBinding(v => v.Height, w => w.SelectedItem)
 				.AddBinding(v => v.Growths, w => w.ItemsList)
+				.AddBinding(v => v.SensitiveGrowth, w => w.Sensitive)
 				.InitializeFromSource();
 
 			entryNomenclature.ViewModel = ViewModel.EntryNomenclature;
 			entityWarehouse.ViewModel = ViewModel.WarehouseEntry;
 
-			ycheckCollapse.Binding.AddBinding(viewModel, v => v.CollapseOperationItems, w => w.Active).InitializeFromSource();
+			ycheckCollapse.Binding
+				.AddBinding(viewModel, v => v.CollapseOperationItems, w => w.Active)
+				.InitializeFromSource();
 			
 			yenumShowDirectionOperation.ItemsEnum = typeof(DirectionOfOperation);
-			yenumShowDirectionOperation.Binding.AddBinding(viewModel, v => v.Direction, w => w.SelectedItem).InitializeFromSource();
+			yenumShowDirectionOperation.Binding
+				.AddBinding(viewModel, v => v.Direction, w => w.SelectedItem)
+				.InitializeFromSource();
 		}
 	}
 }

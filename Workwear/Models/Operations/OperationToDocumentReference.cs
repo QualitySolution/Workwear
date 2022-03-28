@@ -18,8 +18,6 @@ namespace workwear.Models.Operations
 		public int? TransferItemId;
 		public int? WriteoffId;
 		public int? WriteoffItemId;
-		public int? MassExpenseId;
-		public int? MassOperationItemItemId;
 		public int? CompletionFromSourceId;
 		public int? CompletionFromResultId;
 		public int? CompletionSourceItemId;
