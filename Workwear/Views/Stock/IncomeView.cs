@@ -58,7 +58,8 @@ namespace workwear.Views.Stock
 				.AddColumn ("Стоимость").AddNumericRenderer (e => e.Cost)
 				.Editing(new Adjustment(0,0,100000000,100,1000,0)).Digits (2).WidthChars(12)
 				.AddColumn("Сумма").AddNumericRenderer(x => x.Total).Digits(2)
-				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument).Editable()
+				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc)
+				.AddTextRenderer(e => e.BuhDocument).Editable()
 				.Finish ();
 			ytreeItems.ItemsDataSource = Entity.ObservableItems;
 		}

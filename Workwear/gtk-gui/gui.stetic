@@ -17174,7 +17174,7 @@
                   <widget class="Gamma.GtkWidgets.yButton" id="buttonFillBuhDoc">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
-                    <property name="Type">TextAndIcon</property>
+                    <property name="Type">TextOnly</property>
                     <property name="Label" translatable="yes">Заменить бух. документ</property>
                     <property name="UseUnderline">True</property>
                   </widget>
