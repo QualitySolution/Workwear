@@ -35,7 +35,7 @@ namespace workwear.Models.Stock
 					navigation.OpenViewModel<ExpenseObjectViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
 					break;
 				case StokDocumentType.IncomeDoc:
-					navigation.OpenViewModel<IncomeViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
+					navigation.OpenTdiTab<IncomeDocDlg>(master);
 					break;
 				case StokDocumentType.WriteoffDoc:
 					navigation.OpenTdiTab<WriteOffDocDlg>(master);
@@ -68,7 +68,7 @@ namespace workwear.Models.Stock
 			switch (documentType)
 			{
 				case StokDocumentType.IncomeDoc:
-					return navigation.OpenViewModel<IncomeViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
+					return navigation.OpenTdiTab<IncomeDocDlg, int>(master, id);
 				case StokDocumentType.ExpenseEmployeeDoc:
 					return navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
 				case StokDocumentType.ExpenseObjectDoc:

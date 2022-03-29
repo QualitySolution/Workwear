@@ -154,6 +154,10 @@
     <Compile Include="HibernateMapping\Stock\IncomeMap.cs" />
     <Compile Include="HibernateMapping\Stock\ExpenseItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\IncomeItemMap.cs" />
+    <Compile Include="Dialogs\Stock\IncomeDocDlg.cs" />
+    <Compile Include="Dialogs\Stock\IncomeDocItemsView.cs" />
+    <Compile Include="gtk-gui\workwear.IncomeDocDlg.cs" />
+    <Compile Include="gtk-gui\workwear.IncomeDocItemsView.cs" />
     <Compile Include="Dialogs\Stock\WriteOffItemsView.cs" />
     <Compile Include="gtk-gui\workwear.WriteOffItemsView.cs" />
     <Compile Include="Dialogs\Stock\WriteOffDocDlg.cs" />
@@ -257,6 +261,9 @@
     <Compile Include="Repository\Stock\StockRepository.cs" />
     <Compile Include="ReportsDlg\StockAllWearDlg.cs" />
     <Compile Include="gtk-gui\workwear.ReportsDlg.StockAllWearDlg.cs" />
+    <Compile Include="ViewModels\Stock\Widgets\SizeWidgetViewModel.cs" />
+    <Compile Include="Views\Stock\Widgets\SizeWidgetView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.Widgets.SizeWidgetView.cs" />
     <Compile Include="Tools\Features\FeaturesService.cs" />
     <Compile Include="Views\Tools\DataBaseSettingsView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Tools.DataBaseSettingsView.cs" />
@@ -481,9 +488,6 @@
     <Compile Include="ViewModels\Stock\CompletionViewModel.cs" />
     <Compile Include="Views\Stock\CompletionView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.CompletionView.cs" />
-    <Compile Include="ViewModels\Stock\IncomeViewModel.cs" />
-    <Compile Include="Views\Stock\IncomeView.cs" />
-    <Compile Include="gtk-gui\workwear.Views.Stock.IncomeView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -681,6 +685,8 @@
     <Folder Include="Journal\Filter.ViewModels\Stock\" />
     <Folder Include="Journal\ViewModels\Stock\" />
     <Folder Include="Journal\Filter.Views\Stock\" />
+    <Folder Include="ViewModels\Stock\Widgets\" />
+    <Folder Include="Views\Stock\Widgets\" />
     <Folder Include="Tools\Features\" />
     <Folder Include="ViewModels\Tools\" />
     <Folder Include="Views\Tools\" />

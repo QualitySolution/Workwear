@@ -220,6 +220,29 @@ namespace workwear.Domain.Stock
 			ObservableItems.Add (newItem);
 			return newItem;
 		}
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")] 
+		public virtual IncomeItem AddItem(Nomenclature nomenclature, string growth, string size, int amount = 0, string certificate = null, decimal price = 0m)
+		{
+			if(Operation != IncomeOperations.Enter)
+				throw new InvalidOperationException("Добавление номенклатуры возможно только во входящую накладную. " +
+				                                    "Возвраты должны добавляться с указанием строки выдачи.");
+			var item = ObservableItems.FirstOrDefault(i => i.Nomenclature.Id == nomenclature.Id && i.WearGrowth == growth && i.Size == size);
+			if(item == null) {
+				item = new IncomeItem(this) {
+					Amount = amount,
+					Nomenclature = nomenclature,
+					WearGrowth = growth,
+					Size = size,
+					Cost = price,
+					Certificate = certificate,
+				};
+				ObservableItems.Add(item);
+			}
+			else {
+				item.Amount+= amount;
+			}
+			return item;
+		}
 		public virtual IncomeItem AddItem(
 			Nomenclature nomenclature, 
 			Size size, Size height, int amount = 0, 
