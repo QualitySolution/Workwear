@@ -23,7 +23,9 @@ namespace workwear.Views.Import
 
 			#region Общее
 			notebookSteps.ShowTabs = false;
-			notebookSteps.Binding.AddBinding(viewModel, v => v.CurrentStep, w => w.CurrentPage).InitializeFromSource();
+			notebookSteps.Binding
+				.AddBinding(viewModel, v => v.CurrentStep, w => w.CurrentPage)
+				.InitializeFromSource();
 
 			treeviewRows.EnableGridLines = TreeViewGridLines.Both;
 			treeviewRows.Binding.AddBinding(viewModel.ImportModel, v => v.DisplayRows, w => w.ItemsDataSource);

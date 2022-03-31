@@ -14,7 +14,6 @@ using QS.Utilities.Text;
 using workwear.Domain.Company;
 using workwear.Measurements;
 using workwear.Models.Company;
-using workwear.Repository.Company;
 using workwear.ViewModels.Import;
 using Workwear.Domain.Company;
 using Workwear.Measurements;

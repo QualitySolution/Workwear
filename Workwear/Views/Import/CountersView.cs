@@ -1,5 +1,4 @@
-﻿using System;
-using Gamma.Binding.Converters;
+﻿using Gamma.Binding.Converters;
 using Gamma.GtkWidgets;
 using Gtk;
 using QS.Views;
