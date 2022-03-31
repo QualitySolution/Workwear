@@ -26,19 +26,20 @@ namespace workwear.Views.Company
 		private readonly Image eyeIcon = new Image(Assembly.GetExecutingAssembly(), "workwear.icon.buttons.eye.png");
 		private readonly Image crossedEyeIcon = new Image(Assembly.GetExecutingAssembly(), "workwear.icon.buttons.eye-crossed.png");
 		private readonly List<SpecialListComboBox> listSizes = new List<SpecialListComboBox>();
+		private readonly EmployeeViewModel viewModel;
 
 		public EmployeeView(EmployeeViewModel viewModel) : base(viewModel)
 		{
 			this.Build ();
 			ConfigureDlg ();
 			CommonButtonSubscription();
+			this.viewModel = viewModel;
 		}
 
 		private void ConfigureDlg()
 		{
 
 			SizeBuild();
-			buttonSave.Clicked += SetSizesViewModel;
 			employeenormsview1.ViewModel = ViewModel.NormsViewModel;
 			employeewearitemsview1.ViewModel = ViewModel.WearItemsViewModel;
 			employeecardlisteditemsview.ViewModel = ViewModel.ListedItemsViewModel;
@@ -171,18 +172,18 @@ namespace workwear.Views.Company
 				var sizeType = sizeTypes[index];
 				var employeeSize = Entity.Sizes.FirstOrDefault(x => x.SizeType.Id == sizeType.Id);
 				
-				var label = new yLabel() {LabelProp = sizeType.Name + ":"};
+				var label = new yLabel {LabelProp = sizeType.Name + ":"};
 				 label.Xalign = 0;
 				 
 				 if(sizes.All(x => x.SizeType.Id != sizeType.Id))
 					 continue;
-				 var list = new SpecialListComboBox()
-					{ItemsList = sizes.Where(x => x.SizeType.Id == sizeType.Id)};
+				 var list = new SpecialListComboBox {ItemsList = sizes.Where(x => x.SizeType.Id == sizeType.Id)};
 				list.ShowSpecialStateNot = true;
 				list.SelectedItemStrictTyped = true;
 				listSizes.Add(list);
 				if (employeeSize != null)
 					list.SelectedItem = employeeSize.Size;
+				list.Changed += SetSizes;
 				
 				table.Attach(label, 0, 1, (uint) index, (uint) (index + 1), 
 					AttachOptions.Fill, AttachOptions.Fill | AttachOptions.Expand, 0, 0);
@@ -196,26 +197,10 @@ namespace workwear.Views.Company
 			SizeContainer.ShowAll();
 		}
 
-		private void SetSizesViewModel(object sender, EventArgs eventArgs) {
-			foreach (var list in listSizes) {
-				if (list.SelectedItem is null) {
-					if(Entity.Sizes.Any(x => x.SizeType == list.ItemsList.OfType<Size>().First().SizeType))
-						Entity.Sizes.Remove(
-						Entity.Sizes.First(x => x.SizeType == list.ItemsList.OfType<Size>().First().SizeType));
-					continue;
-				}
-				var employeeSize =
-					Entity.Sizes.FirstOrDefault(x => x.SizeType.Id == ((Size)list.SelectedItem).SizeType.Id);
-				if (employeeSize is null) {
-					var newEmployeeSize = new EmployeeSize()
-						{Size = (Size) list.SelectedItem, SizeType = ((Size) list.SelectedItem)?.SizeType, Employee = Entity};
-					Entity.Sizes.Add(newEmployeeSize);
-				}
-				else {
-					if(employeeSize.Size != (Size)list.SelectedItem)
-						employeeSize.Size = (Size) list.SelectedItem;
-				}
-			}
+		private void SetSizes(object sender, EventArgs eventArgs) {
+			var list = (SpecialListComboBox)sender;
+			var sizeType = list.ItemsList.OfType<Size>().First().SizeType;
+			viewModel.SetSizes((Size)list.SelectedItem, sizeType);
 		}
 
 		#endregion

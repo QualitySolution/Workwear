@@ -44,40 +44,35 @@ namespace workwear.Domain.Company
 
 		public virtual int Id { get; set; }
 
-		string cardNumber;
-
+		private string cardNumber;
 		[Display (Name = "Номер карточки")]
 		public virtual string CardNumber {
-			get { return cardNumber; }
+			get => cardNumber;
 			set { SetField (ref cardNumber, value, () => CardNumber); }
 		}
 
-		string personnelNumber;
-
+		private string personnelNumber;
 		[Display (Name = "Табельный номер")]
 		public virtual string PersonnelNumber {
-			get { return personnelNumber; }
-			set { SetField (ref personnelNumber, value?.Trim()); }
+			get => personnelNumber;
+			set => SetField (ref personnelNumber, value?.Trim());
 		}
 
-		string name;
-
+		private string name;
 		[Display (Name = "Имя")]
 		public virtual string FirstName {
 			get => name;
 			set => SetField(ref name, ToTitleCase(value));
 		}
 
-		string lastName;
-
+		private string lastName;
 		[Display (Name = "Фамилия")]
 		public virtual string LastName {
 			get =>lastName; 
 			set => SetField(ref lastName, ToTitleCase(value));
 		}
 
-		string patronymic;
-
+		private string patronymic;
 		[Display (Name = "Отчество")]
 		public virtual string Patronymic {
 			get => patronymic;
@@ -107,68 +102,61 @@ namespace workwear.Domain.Company
 			set => SetField(ref lkRegistered, value);
 		}
 
-		Post post;
-
+		private Post post;
 		[Display (Name = "Должность")]
 		public virtual Post Post {
-			get { return post; }
+			get => post;
 			set { SetField (ref post, value, () => Post); }
 		}
 
-		Leader leader;
-
+		private Leader leader;
 		[Display (Name = "Руководитель")]
 		public virtual Leader Leader {
-			get { return leader; }
+			get => leader;
 			set { SetField (ref leader, value, () => Leader); }
 		}
 
-		DateTime? hireDate;
-
+		private DateTime? hireDate;
 		[Display (Name = "Дата поступления")]
 		public virtual DateTime? HireDate {
-			get { return hireDate; }
+			get => hireDate;
 			set { SetField (ref hireDate, value, () => HireDate); }
 		}
 
 		private DateTime? changeOfPositionDate;
-
 		[Display(Name = "Дата изменения должности или перевода")]
 		public virtual DateTime? ChangeOfPositionDate
 		{
-			get { return changeOfPositionDate; }
+			get => changeOfPositionDate;
 			set { SetField(ref changeOfPositionDate, value, () => ChangeOfPositionDate); }
 		}
 
-		DateTime? dismissDate;
-
+		private DateTime? dismissDate;
 		[Display (Name = "Дата увольнения")]
 		public virtual DateTime? DismissDate {
-			get { return dismissDate; }
+			get => dismissDate;
 			set { SetField (ref dismissDate, value, () => DismissDate); }
 		}
 
-		Sex sex;
-
+		private Sex sex;
 		[Display (Name = "Пол")]
 		public virtual Sex Sex {
-			get { return sex; }
+			get => sex;
 			set { SetField (ref sex, value, () => Sex); }
 		}
 
-		UserBase createdbyUser;
-
+		private UserBase createdbyUser;
 		[Display (Name = "Карточку создал")]
 		public virtual UserBase CreatedbyUser {
-			get { return createdbyUser; }
-			set { SetField (ref createdbyUser, value, () => CreatedbyUser); }
+			get => createdbyUser;
+			set => SetField(ref createdbyUser, value);
 		}
-			
-		Subdivision subdivision;
+
+		private Subdivision subdivision;
 
 		[Display (Name = "Подразделение")]
 		public virtual Subdivision Subdivision {
-			get { return subdivision; }
+			get => subdivision;
 			set { SetField (ref subdivision, value, () => Subdivision); }
 		}
 
@@ -179,11 +167,11 @@ namespace workwear.Domain.Company
 			set => SetField(ref department, value);
 		}
 
-		byte[] photo;
+		private byte[] photo;
 
 		[Display (Name = "Фотография")]
 		public virtual byte[] Photo {
-			get { return photo; }
+			get => photo;
 			set { SetField (ref photo, value, () => Photo); }
 		}
 
@@ -192,7 +180,7 @@ namespace workwear.Domain.Company
 		[Display(Name = "Комментарий")]
 		public virtual string Comment
 		{
-			get { return comment; }
+			get => comment;
 			set { SetField(ref comment, value, () => Comment); }
 		}
 
@@ -206,7 +194,7 @@ namespace workwear.Domain.Company
 			set => SetField(ref wearGrowth, value);
 		}
 
-		string wearSizeStd;
+		private string wearSizeStd;
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Стандарт размера одежды")]
 		public virtual string WearSizeStd {
@@ -214,7 +202,7 @@ namespace workwear.Domain.Company
 			set => SetField (ref wearSizeStd, value, () => WearSizeStd);
 		}
 
-		string wearSize;
+		private string wearSize;
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Размер одежды")]
 		public virtual string WearSize { 
@@ -222,7 +210,7 @@ namespace workwear.Domain.Company
 			set => SetField (ref wearSize, value, () => WearSize);
 		}
 
-		string shoesSizeStd;
+		private string shoesSizeStd;
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Стандарт размера обуви")]
 		public virtual string ShoesSizeStd {
@@ -230,7 +218,7 @@ namespace workwear.Domain.Company
 			set => SetField (ref shoesSizeStd, value, () => ShoesSizeStd);
 		}
 
-		string shoesSize;
+		private string shoesSize;
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Размер обуви")]
 		public virtual string ShoesSize { 
@@ -238,7 +226,7 @@ namespace workwear.Domain.Company
 			set => SetField (ref shoesSize, value, () => ShoesSize);
 		}
 
-		string winterShoesSizeStd;
+		private string winterShoesSizeStd;
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display(Name = "Стандарт размера зимней обуви")]
 		public virtual string WinterShoesSizeStd
@@ -247,7 +235,7 @@ namespace workwear.Domain.Company
 			set => SetField(ref winterShoesSizeStd, value, () => WinterShoesSizeStd);
 		}
 
-		string winterShoesSize;
+		private string winterShoesSize;
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display(Name = "Размер зимней обуви")]
 		public virtual string WinterShoesSize
@@ -256,7 +244,7 @@ namespace workwear.Domain.Company
 			set => SetField(ref winterShoesSize, value, () => WinterShoesSize);
 		}
 
-		string headdressSizeStd;
+		private string headdressSizeStd;
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Стандарт размера головного убора")]
 		public virtual string HeaddressSizeStd {
@@ -264,7 +252,7 @@ namespace workwear.Domain.Company
 			set => SetField (ref headdressSizeStd, value, () => HeaddressSizeStd);
 		}
 
-		string headdressSize;
+		private string headdressSize;
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Размер головного убора")]
 		public virtual string HeaddressSize { 
@@ -272,7 +260,7 @@ namespace workwear.Domain.Company
 			set => SetField (ref headdressSize, value, () => HeaddressSize);
 		}
 
-		string glovesSizeStd;
+		private string glovesSizeStd;
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Стандарт размера перчаток")]
 		public virtual string GlovesSizeStd {
@@ -280,17 +268,15 @@ namespace workwear.Domain.Company
 			set => SetField (ref glovesSizeStd, value, () => GlovesSizeStd);
 		}
 
-		string glovesSize;
+		private string glovesSize;
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display (Name = "Размер перчаток")]
 		public virtual string GlovesSize { 
 			get => glovesSize;
 			set => SetField (ref glovesSize, value, () => GlovesSize);
 		}
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		public virtual string MittensSizeStd => SizeHelper.GetSizeStdCode(SizeStandartMittens.Rus);
-
-		string mittensSize;
+		
+		private string mittensSize;
 		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		[Display(Name = "Размер рукавиц")]
 		public virtual string MittensSize {
@@ -304,8 +290,8 @@ namespace workwear.Domain.Company
 			get => sizes;
 			set => SetField (ref sizes, value);
 		}
-		
-		GenericObservableList<EmployeeSize> observableSizes;
+
+		private GenericObservableList<EmployeeSize> observableSizes;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<EmployeeSize> ObservableSizes
 			=> observableSizes ?? (observableSizes = new GenericObservableList<EmployeeSize>(Sizes));
@@ -316,11 +302,11 @@ namespace workwear.Domain.Company
 
 		[Display (Name = "Примененные нормы")]
 		public virtual IList<Norm> UsedNorms {
-			get { return usedNorms; }
+			get => usedNorms;
 			set { SetField (ref usedNorms, value, () => UsedNorms); }
 		}
 
-		GenericObservableList<Norm> observableUsedNorms;
+		private GenericObservableList<Norm> observableUsedNorms;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<Norm> ObservableUsedNorms 
 			=> observableUsedNorms ?? (observableUsedNorms = new GenericObservableList<Norm>(UsedNorms));
@@ -332,54 +318,41 @@ namespace workwear.Domain.Company
 
 		[Display (Name = "Спецодежда")]
 		public virtual IList<EmployeeCardItem> WorkwearItems {
-			get { return workwearItems; }
+			get => workwearItems;
 			set { SetField (ref workwearItems, value, () => WorkwearItems); }
 		}
 
-		GenericObservableList<EmployeeCardItem> observableWorkwearItems;
+		private GenericObservableList<EmployeeCardItem> observableWorkwearItems;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<EmployeeCardItem> ObservableWorkwearItems {
-			get {
-				if (observableWorkwearItems == null)
-					observableWorkwearItems = new GenericObservableList<EmployeeCardItem> (WorkwearItems);
-				return observableWorkwearItems;
-			}
-		}
+		public virtual GenericObservableList<EmployeeCardItem> ObservableWorkwearItems =>
+			observableWorkwearItems ??
+			(observableWorkwearItems = new GenericObservableList<EmployeeCardItem>(WorkwearItems));
+
 		#endregion
 		#region Vacation
 		private IList<EmployeeVacation> vacations = new List<EmployeeVacation>();
 
 		[Display(Name = "Отпуска")]
 		public virtual IList<EmployeeVacation> Vacations {
-			get { return vacations; }
+			get => vacations;
 			set { SetField(ref vacations, value, () => Vacations); }
 		}
 
-		GenericObservableList<EmployeeVacation> observableVacations;
+		private GenericObservableList<EmployeeVacation> observableVacations;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<EmployeeVacation> ObservableVacations {
-			get {
-				if(observableVacations == null)
-					observableVacations = new GenericObservableList<EmployeeVacation>(Vacations);
-				return observableVacations;
-			}
-		}
+		public virtual GenericObservableList<EmployeeVacation> ObservableVacations =>
+			observableVacations ??
+			(observableVacations = new GenericObservableList<EmployeeVacation>(Vacations));
+
 		#endregion
 
 		#region Расчетные
 
-		public virtual string Title {
-			get{ return PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
-			}
-		}
+		public virtual string Title => PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
 
-		public virtual string FullName {
-			get { return String.Format ("{0} {1} {2}", LastName, FirstName, Patronymic).Trim (); }
-		}
+		public virtual string FullName => String.Format ("{0} {1} {2}", LastName, FirstName, Patronymic).Trim ();
 
-		public virtual string ShortName {
-			get { return PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic); }
-		}
+		public virtual string ShortName => PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
 
 		private string ToTitleCase(string str){
 			if(!string.IsNullOrWhiteSpace(str)) {
@@ -393,7 +366,8 @@ namespace workwear.Domain.Company
 
 		#region Фильтрованные коллекции
 
-		public virtual IEnumerable<EmployeeCardItem> GetUnderreceivedItems(BaseParameters baseParameters) => WorkwearItems.Where(x => x.CalculateRequiredIssue(baseParameters) > 0);
+		public virtual IEnumerable<EmployeeCardItem> GetUnderreceivedItems(BaseParameters baseParameters) => 
+			WorkwearItems.Where(x => x.CalculateRequiredIssue(baseParameters) > 0);
 
 		#endregion
 

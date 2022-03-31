@@ -44,9 +44,8 @@ namespace workwear.HibernateMapping.Company
 				.Cascade.AllDeleteOrphan().Inverse()
 				.LazyLoad();
 
-			HasMany(x => x.Sizes)
+			HasMany(x => x.Sizes).Table("wear_cards_sizes")
 				.KeyColumn("employee_id").Not.KeyNullable()
-				.Cascade.All()
 				.Inverse();
 
 			HasManyToMany(x => x.UsedNorms).Table("wear_cards_norms")
