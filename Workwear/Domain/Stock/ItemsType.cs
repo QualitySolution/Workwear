@@ -94,15 +94,10 @@ namespace workwear.Domain.Stock
 		public virtual SizeType SizeType { get; set; }
 		public virtual SizeType HeightType { get; set; }
 		#endregion
-		
-		public ItemsType ()
-		{
-		}
+		public ItemsType () { }
 		#region IValidatableObject implementation
-
-		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
-		{
-			if (Category == ItemTypeCategory.wear && WearCategory == null)
+		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
+			if (Category == ItemTypeCategory.wear && SizeType is null)
 				yield return new ValidationResult ("Вид одежды должен быть указан.", 
 					new[] { this.GetPropertyName (o => o.WearCategory)});
 		}
@@ -115,14 +110,10 @@ namespace workwear.Domain.Stock
 		property
 	}
 
-	public class ItemTypeCategoryType : NHibernate.Type.EnumStringType
-	{
-		public ItemTypeCategoryType () : base (typeof(ItemTypeCategory))
-		{
-		}
+	public class ItemTypeCategoryType : NHibernate.Type.EnumStringType {
+		public ItemTypeCategoryType () : base (typeof(ItemTypeCategory)) { }
 	}
-	public enum IssueType
-	{
+	public enum IssueType {
 		[Display(Name = "Персональная")]
 		Personal,
 		[Display(Name = "Коллективная")]

@@ -7,6 +7,7 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
@@ -35,7 +36,6 @@ namespace workwear.Journal.ViewModels.Stock
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
-					.Select(x => x.WearCategory).WithAlias(() => resultAlias.WearCategory)
 					.Select(x => x.IssueType).WithAlias(() => resultAlias.IssueType)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<ItemsTypeJournalNode>());
@@ -46,10 +46,7 @@ namespace workwear.Journal.ViewModels.Stock
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
-		public СlothesType? WearCategory { get; set; }
 		public IssueType IssueType { get; set; }
-
-		public string WearCategoryText => WearCategory?.GetEnumTitle();
 		public string IssueTypeText => IssueType.GetEnumTitle();
 	}
 }

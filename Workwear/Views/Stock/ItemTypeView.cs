@@ -5,6 +5,7 @@ using Gamma.Utilities;
 using NLog;
 using QS.BusinessCommon.Repository;
 using QS.Views.Dialog;
+using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using Workwear.Measurements;
 using workwear.ViewModels.Stock;
@@ -24,15 +25,25 @@ namespace workwear.Views.Stock
 
 		private void ConfigureDlg()
 		{
-			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource ();
+			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
+				.InitializeFromSource ();
 
 			yentryName.Binding.AddBinding (Entity, e => e.Name, w => w.Text).InitializeFromSource ();
 
 			ycomboCategory.ItemsEnum = typeof(ItemTypeCategory);
-			ycomboCategory.Binding.AddBinding (Entity, e => e.Category, w => w.SelectedItemOrNull).InitializeFromSource ();
+			ycomboCategory.Binding.AddBinding (Entity, e => e.Category, w => w.SelectedItemOrNull)
+				.InitializeFromSource ();
 
-			ycomboWearCategory.ItemsEnum = typeof(СlothesType);
-			ycomboWearCategory.Binding.AddBinding (Entity, e => e.WearCategory, w => w.SelectedItemOrNull).InitializeFromSource ();
+			ycomboWearCategory.ItemsList = SizeService.GetSizeTypeByCategory(ViewModel.UoW, Category.Size);
+			ycomboWearCategory.Binding.AddBinding (Entity, e => e.SizeType, w => w.SelectedItem)
+				.InitializeFromSource();
+			ycomboWearCategory.SetRenderTextFunc<SizeType>(x => x.Name);
+			
+			ycomboHeightCategory.ItemsList = SizeService.GetSizeTypeByCategory(ViewModel.UoW, Category.Height);
+			ycomboWearCategory.Binding.AddBinding (Entity, e => e.SizeType, w => w.SelectedItem)
+				.InitializeFromSource();
+			ycomboWearCategory.SetRenderTextFunc<SizeType>(x => x.Name);
+
 
 			ycomboUnits.ItemsList = MeasurementUnitsRepository.GetActiveUnits (ViewModel.UoW);
 			ycomboUnits.Binding.AddBinding (Entity, e => e.Units, w => w.SelectedItem).InitializeFromSource ();
@@ -42,7 +53,9 @@ namespace workwear.Views.Stock
 
 			comboIssueType.Visible = labelIssueType.Visible = ViewModel.VisibleIssueType;
 
-			yspinMonths.Binding.AddBinding(Entity, e => e.LifeMonths, w => w.ValueAsInt, new NullToZeroConverter()).InitializeFromSource();
+			yspinMonths.Binding
+				.AddBinding(Entity, e => e.LifeMonths, w => w.ValueAsInt, new NullToZeroConverter())
+				.InitializeFromSource();
 			ycheckLife.Active = Entity.LifeMonths.HasValue;
 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
@@ -58,6 +71,7 @@ namespace workwear.Views.Stock
 		protected void OnYcomboCategoryChanged (object sender, EventArgs e)
 		{
 			ycomboWearCategory.Sensitive = Entity.Category == ItemTypeCategory.wear;
+			ycomboHeightCategory.Sensitive = Entity.Category == ItemTypeCategory.wear;
 			hboxLife.Visible = labelLife.Visible = Entity.Category == ItemTypeCategory.property;
 		}
 

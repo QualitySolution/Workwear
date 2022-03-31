@@ -181,9 +181,11 @@ namespace Workwear.Measurements
 		}
 		public static IList<SizeType> GetSizeType(IUnitOfWork UoW) 
 			=> UoW.Session.QueryOver<SizeType>().List();
+		public static IList<SizeType> GetSizeTypeByCategory(IUnitOfWork UoW, Category category) 
+			=> UoW.Session.QueryOver<SizeType>()
+				.Where(x => x.Category == category).List();
 
-		public static IEnumerable<Size> GetSizeByCategory(IUnitOfWork UoW, Category category)
-		{
+		public static IEnumerable<Size> GetSizeByCategory(IUnitOfWork UoW, Category category) {
 			SizeType sizeTypeAlias = null;
 			var query = UoW.Session.QueryOver<Size>()
 				.JoinAlias(x => x.SizeType, () => sizeTypeAlias)
