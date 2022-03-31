@@ -42,7 +42,7 @@ namespace workwear.ViewModels.Stock
 		private readonly IChangeableConfiguration configuration;
 		private readonly ICardReaderService cardReaderService;
 		private TextSpinner textSpinner = new TextSpinner(new SpinnerTemplateAestheticScrolling());
-		private readonly IUnitOfWork UowOfDialog;
+		public readonly IUnitOfWork UowOfDialog;
 
 		public IssueByIdentifierViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory,

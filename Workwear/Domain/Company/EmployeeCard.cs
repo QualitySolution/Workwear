@@ -283,7 +283,7 @@ namespace workwear.Domain.Company
 			get => mittensSize;
 			set => SetField(ref mittensSize, value);
 		}
-		
+
 		private IList<EmployeeSize> sizes = new List<EmployeeSize>();
 		[Display (Name = "Размеры")]
 		public virtual IList<EmployeeSize> Sizes {
