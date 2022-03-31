@@ -37,7 +37,9 @@ namespace workwear.Views.Stock
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 			ytreeItems.Binding.AddBinding(viewModel, v => v.SelectedItem, w => w.SelectedRow);
 
-			labelSum.Binding.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp).InitializeFromSource();
+			labelSum.Binding
+				.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp)
+				.InitializeFromSource();
 
 			buttonAdd.Sensitive = ViewModel.Warehouse != null;
 
@@ -51,30 +53,35 @@ namespace workwear.Views.Stock
 		{
 			var cardIcon = new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "workwear.icon.buttons.smart-card.png");
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseItem>()
-				.AddColumn("Номенаклатуры нормы").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
+				.AddColumn("Номенаклатуры нормы")
+					.AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
 				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
 				.SetDisplayFunc(x => x.Nomenclature?.Name)
 					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))
 					.DynamicFillListFunc(x => x.EmployeeCardItem.BestChoiceInStock.ToList())
 					.AddSetter((c, n) => c.Editable = n.EmployeeCardItem != null)
 				.AddColumn("Размер")
-					.AddComboRenderer(x => x.Size)
-					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.SizeStd, SizeUse.HumanOnly))
-					.AddSetter((c, n) => c.Editable = n.Nomenclature?.SizeStd != null && n.EmployeeCardItem == null)
+					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => SizeService.GetSize(viewModel.expenseEmployeeViewModel.UoW, x.Nomenclature?.Type?.SizeType))
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
 				.AddColumn("Рост")
-					.AddComboRenderer(x => x.WearGrowth)
-					.FillItems(ViewModel.SizeService.GetGrowthForNomenclature())
-					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.WearCategory != null &&  SizeHelper.HasGrowthStandart(n.Nomenclature.Type.WearCategory.Value))
+					.AddComboRenderer(x => x.Height)
+					.DynamicFillListFunc(x => SizeService.GetSize(viewModel.expenseEmployeeViewModel.UoW, x.Nomenclature?.Type?.HeightType))
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
 				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
-					.AddTextRenderer(e => e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
+					.AddTextRenderer(e => 
+					e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
 				.AddColumn("Списание").AddToggleRenderer(e => e.IsWriteOff).Editing()
 				.AddSetter((c, e) => c.Visible = e.IsEnableWriteOff)
 				.AddColumn("Номер акта").AddTextRenderer(e => e.AktNumber).Editable().AddSetter((c, e) => c.Visible = e.IsWriteOff)
 				.AddColumn("Бухгалтерский документ").AddTextRenderer(e => e.BuhDocument).Editable()
 				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
-						.AddPixbufRenderer(x => x.EmployeeIssueOperation == null || String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? null : cardIcon)
-						.AddTextRenderer(x => x.EmployeeIssueOperation != null && !String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? x.EmployeeIssueOperation.SignCardKey + " " + x.EmployeeIssueOperation.SignTimestamp.Value.ToString("dd.MM.yyyy HH:mm:ss") : null)
+						.AddPixbufRenderer(x => x.EmployeeIssueOperation == null || 
+						                        String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? null : cardIcon)
+						.AddTextRenderer(x => x.EmployeeIssueOperation != null && 
+						                      !String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? 
+					x.EmployeeIssueOperation.SignCardKey + " " + x.EmployeeIssueOperation.SignTimestamp.Value.ToString("dd.MM.yyyy HH:mm:ss") : null)
 				.AddColumn("")
 				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 				.Finish();
@@ -83,27 +90,23 @@ namespace workwear.Views.Stock
 		#region PopupMenu
 		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
 		{
-			if(args.Event.Button == 3) {
-				var menu = new Menu();
-				var selected = ytreeItems.GetSelectedObject<ExpenseItem>();
+			if (args.Event.Button != 3) return;
+			var menu = new Menu();
+			var selected = ytreeItems.GetSelectedObject<ExpenseItem>();
 
-				var itemOpenProtection = new MenuItemId<ExpenseItem>("Открыть номеклатуру нормы");
-				itemOpenProtection.ID = selected;
-				itemOpenProtection.Sensitive = selected.ProtectionTools != null && selected != null;
-				itemOpenProtection.Activated += ItemOpenProtection_Activated;;
-				menu.Add(itemOpenProtection);
+			var itemOpenProtection = new MenuItemId<ExpenseItem>("Открыть номеклатуру нормы");
+			itemOpenProtection.ID = selected;
+			itemOpenProtection.Sensitive = selected.ProtectionTools != null;
+			itemOpenProtection.Activated += ItemOpenProtection_Activated;;
+			menu.Add(itemOpenProtection);
 
-				var itemNomenclature = new MenuItemId<ExpenseItem>("Открыть номеклатуру");
-				itemNomenclature.ID = selected;
-				itemNomenclature.Sensitive = selected.Nomenclature != null;
-				if(selected == null)
-					itemNomenclature.Sensitive = false;
-				else
-					itemNomenclature.Activated += Item_Activated;
-				menu.Add(itemNomenclature);
-				menu.ShowAll();
-				menu.Popup();
-			}
+			var itemNomenclature = new MenuItemId<ExpenseItem>("Открыть номеклатуру");
+			itemNomenclature.ID = selected;
+			itemNomenclature.Sensitive = selected.Nomenclature != null;
+			itemNomenclature.Activated += Item_Activated;
+			menu.Add(itemNomenclature);
+			menu.ShowAll();
+			menu.Popup();
 		}
 
 		void ItemOpenProtection_Activated(object sender, EventArgs e)

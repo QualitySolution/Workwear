@@ -26,7 +26,13 @@ namespace workwear.ViewModels.Stock
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
-		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, BaseParameters baseParameters)
+		public ExpenseDocItemsEmployeeViewModel(
+			ExpenseEmployeeViewModel expenseEmployeeViewModel, 
+			FeaturesService featuresService, 
+			INavigationManager navigation, 
+			SizeService sizeService, 
+			IDeleteEntityService deleteService, 
+			BaseParameters baseParameters)
 		{
 			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
