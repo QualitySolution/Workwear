@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Autofac;
 using Gamma.Binding.Converters;
 using NLog;
@@ -27,39 +26,35 @@ namespace workwear
 		ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 
 		private FeaturesService featuresService;
-		public FeaturesService FeaturesService { get => FeaturesService; private set => featuresService = value; }
 
 		public IncomeDocDlg()
 		{
-			this.Build();
+			Build();
 			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Income> ();
 			featuresService = AutofacScope.Resolve<FeaturesService>();
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW,featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+				Entity.Warehouse = new StockRepository()
+					.GetDefaultWarehouse(UoW,featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
 
 			ConfigureDlg ();
 		}
 
-		public IncomeDocDlg (EmployeeCard employee) : this () 
-		{
+		public IncomeDocDlg(EmployeeCard employee) : this () {
 			Entity.Operation = IncomeOperations.Return;
 			Entity.EmployeeCard = UoW.GetById<EmployeeCard>(employee.Id);
 		}
 
-		public IncomeDocDlg (Subdivision subdivision) : this () 
-		{
+		public IncomeDocDlg(Subdivision subdivision) : this () {
 			Entity.Operation = IncomeOperations.Object;
 			Entity.Subdivision = UoW.GetById<Subdivision>(subdivision.Id);
 		}
 
 		public IncomeDocDlg (Income item) : this (item.Id) {}
-
-		public IncomeDocDlg (int id)
-		{
-			this.Build ();
+		public IncomeDocDlg (int id) {
+			Build ();
 			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Income> (id);
 			featuresService = AutofacScope.Resolve<FeaturesService>();
@@ -68,18 +63,29 @@ namespace workwear
 
 		private void ConfigureDlg()
 		{
-			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource ();
+			ylabelId.Binding
+				.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
+				.InitializeFromSource ();
+			ylabelCreatedBy.Binding
+				.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp)
+				.InitializeFromSource ();
 
-			ylabelCreatedBy.Binding.AddFuncBinding (Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource ();
+			ydateDoc.Binding
+				.AddBinding(Entity, e => e.Date, w => w.Date)
+				.InitializeFromSource ();
 
-			ydateDoc.Binding.AddBinding (Entity, e => e.Date, w => w.Date).InitializeFromSource ();
-
-			yentryNumber.Binding.AddBinding (Entity, e => e.Number, w => w.Text).InitializeFromSource ();
+			yentryNumber.Binding
+				.AddBinding(Entity, e => e.Number, w => w.Text)
+				.InitializeFromSource();
 
 			ycomboOperation.ItemsEnum = typeof(IncomeOperations);
-			ycomboOperation.Binding.AddBinding (Entity, e => e.Operation, w => w.SelectedItemOrNull).InitializeFromSource ();
+			ycomboOperation.Binding
+				.AddBinding(Entity, e => e.Operation, w => w.SelectedItemOrNull)
+				.InitializeFromSource ();
 
-			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+			ytextComment.Binding
+				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text)
+				.InitializeFromSource();
 
 			ItemsTable.IncomeDoc = Entity;
 
@@ -103,11 +109,10 @@ namespace workwear
 			DisableFeatures();
 		}
 
-		public override bool Save()
-		{
+		public override bool Save() {
 			logger.Info ("Запись документа...");
 			var valid = new QSValidator<Income> (UoWGeneric.Root);
-			if (valid.RunDlgIfNotValid ((Gtk.Window)this.Toplevel))
+			if (valid.RunDlgIfNotValid ((Gtk.Window)Toplevel))
 				return false;
 
 			var ask = new GtkQuestionDialogsInteractive();
@@ -115,8 +120,7 @@ namespace workwear
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
 			UoWGeneric.Save ();
-			if(Entity.Operation == IncomeOperations.Return)
-			{
+			if(Entity.Operation == IncomeOperations.Return) {
 				logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
 				Entity.UpdateEmployeeWearItems();
 				UoWGeneric.Commit ();
@@ -126,8 +130,7 @@ namespace workwear
 			return true;
 		}
 
-		protected void OnYcomboOperationChanged (object sender, EventArgs e)
-		{
+		private void OnYcomboOperationChanged (object sender, EventArgs e) {
 			labelTTN.Visible = yentryNumber.Visible = Entity.Operation == IncomeOperations.Enter;
 			labelWorker.Visible = yentryEmployee.Visible = Entity.Operation == IncomeOperations.Return;
 			labelObject.Visible = entrySubdivision.Visible = Entity.Operation == IncomeOperations.Object;
@@ -135,8 +138,7 @@ namespace workwear
 			if (!UoWGeneric.IsNew)
 				return;
 			
-			switch (Entity.Operation)
-			{
+			switch (Entity.Operation) {
 			case IncomeOperations.Enter:
 					TabName = "Новая приходная накладная";
 				break;
@@ -149,22 +151,19 @@ namespace workwear
 			}
 
 		}
-
-		public override void Destroy()
-		{
+		public override void Destroy() {
 			base.Destroy();
 			AutofacScope.Dispose();
 		}
 
 		#region Workwear featrures
-		private void DisableFeatures()
-		{
-			if(!featuresService.Available(WorkwearFeature.Warehouses)) {
-				label3.Visible = false;
-				entityWarehouseIncome.Visible = false;
-				if(Entity.Warehouse == null)
-					entityWarehouseIncome.ViewModel.Entity = Entity.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
-			}
+		private void DisableFeatures() {
+			if (featuresService.Available(WorkwearFeature.Warehouses)) return;
+			label3.Visible = false;
+			entityWarehouseIncome.Visible = false;
+			if(Entity.Warehouse == null)
+				entityWarehouseIncome.ViewModel.Entity = Entity.Warehouse = new StockRepository()
+					.GetDefaultWarehouse(UoW, featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
 		}
 		#endregion
 	}
