@@ -96,38 +96,27 @@ namespace workwear.Domain.Stock
 		public Nomenclature () { }
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
-			if (Type != null && Type.WearCategory != null && Sex.HasValue 
-				&& Sex == ClothesSex.Universal && SizeHelper.HasСlothesSizeStd(Type.WearCategory.Value) && !SizeHelper.IsUniversalСlothes (Type.WearCategory.Value))
-				yield return new ValidationResult ("Данный вид одежды не имеет универсальных размеров.", 
-					new[] { this.GetPropertyName (o => o.Sex) });
-
-			if(Type != null && Type.WearCategory != null && Type.WearCategory != СlothesType.PPE && String.IsNullOrWhiteSpace(SizeStd))
-				yield return new ValidationResult("Необходимо указать стандарт размера спецодежды.",
-					new[] { this.GetPropertyName(o => o.SizeStd) });
-			
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
-			if (Archival && baseParameters.CheckBalances) {
-				var repository = new StockRepository();
-				var nomenclatures = new List<Nomenclature>() {this};
-				var uow = (IUnitOfWork)validationContext.Items[nameof(IUnitOfWork)];
-				var warehouses = uow.Query<Warehouse>().List();
-				foreach (var warehouse in warehouses) {
-					var anyBalance = repository.StockBalances(uow, warehouse, nomenclatures, DateTime.Now)
-						.Where(x => x.Amount > 0);
-					foreach (var position in anyBalance) {
-						yield return new ValidationResult("Архивная номенклатура не должна иметь остатков на складе"+
-						                                  $" склад {warehouse.Name} содержит {position.StockPosition.Title} в кол-ве {position.Amount} шт.");
-					}
+			if (!Archival || !baseParameters.CheckBalances) yield break;
+			var repository = new StockRepository();
+			var nomenclatures = new List<Nomenclature>() {this};
+			var uow = (IUnitOfWork)validationContext.Items[nameof(IUnitOfWork)];
+			var warehouses = uow.Query<Warehouse>().List();
+			foreach (var warehouse in warehouses) {
+				var anyBalance = repository.StockBalances(uow, warehouse, nomenclatures, DateTime.Now)
+					.Where(x => x.Amount > 0);
+				foreach (var position in anyBalance) {
+					yield return new ValidationResult(
+						"Архивная номенклатура не должна иметь остатков на складе"+
+						$" склад {warehouse.Name} содержит {position.StockPosition.Title} в кол-ве {position.Amount} шт.");
 				}
 			}
 		}
 		#endregion
 		#region Функции
-		public virtual bool MatchingEmployeeSex(Sex employeeSex)
-		{
+		public virtual bool MatchingEmployeeSex(Sex employeeSex) {
 			if(Sex == null)
 				return true;
-
 			switch(employeeSex) {
 				case Workwear.Domain.Company.Sex.F:
 					return Sex == ClothesSex.Women || Sex == ClothesSex.Universal;
