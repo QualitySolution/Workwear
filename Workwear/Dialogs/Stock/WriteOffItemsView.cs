@@ -68,13 +68,13 @@ namespace workwear
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<WriteoffItem> ()
 				.AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
 				.AddColumn("Размер").MinWidth(60)
-					.AddComboRenderer(x => x.Size)
-					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.SizeStd, SizeUse.HumanOnly))
-					.AddSetter((c, n) => c.Editable = n.Nomenclature.SizeStd != null)
+					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature?.Type?.SizeType))
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
 				.AddColumn("Рост").MinWidth(70)
-					.AddComboRenderer(x => x.WearGrowth)
-					.FillItems(SizeHelper.GetGrowthList(SizeUse.HumanOnly))
-					.AddSetter((c, n) => c.Editable = n.Nomenclature.Type.WearCategory.HasValue && SizeHelper.HasGrowthStandart(n.Nomenclature.Type.WearCategory.Value))
+					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature?.Type?.HeightType))
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
 				.AddColumn ("Процент износа").AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter()).Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
 				.AddTextRenderer(e => "%", expand: false)
 				.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
@@ -88,27 +88,25 @@ namespace workwear
 		}
 
 		#region PopupMenu
-		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
-		{
-			if(args.Event.Button == 3) {
-				var menu = new Menu();
-				var selected = ytreeItems.GetSelectedObject<WriteoffItem>();
-				var item = new MenuItemId<WriteoffItem>("Открыть номеклатуру");
-				item.ID = selected;
-				if(selected == null)
-					item.Sensitive = false;
-				else
-					item.Activated += Item_Activated;
-				menu.Add(item);
-				menu.ShowAll();
-				menu.Popup();
-			}
+		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
+			if (args.Event.Button != 3) return;
+			var menu = new Menu();
+			var selected = ytreeItems.GetSelectedObject<WriteoffItem>();
+			var item = new MenuItemId<WriteoffItem>("Открыть номеклатуру");
+			item.ID = selected;
+			if(selected == null)
+				item.Sensitive = false;
+			else
+				item.Activated += Item_Activated;
+			menu.Add(item);
+			menu.ShowAll();
+			menu.Popup();
 		}
 
-		void Item_Activated(object sender, EventArgs e)
-		{
+		void Item_Activated(object sender, EventArgs e) {
 			var item = (sender as MenuItemId<WriteoffItem>).ID;
-			MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<NomenclatureViewModel, IEntityUoWBuilder>(MyTdiDialog, EntityUoWBuilder.ForOpen(item.Nomenclature.Id));
+			MainClass.MainWin.NavigationManager.
+				OpenViewModelOnTdi<NomenclatureViewModel, IEntityUoWBuilder>(MyTdiDialog, EntityUoWBuilder.ForOpen(item.Nomenclature.Id));
 		}
 
 		#endregion
