@@ -33,19 +33,17 @@ namespace workwear.Views.Stock
 			ycomboCategory.ItemsEnum = typeof(ItemTypeCategory);
 			ycomboCategory.Binding.AddBinding (Entity, e => e.Category, w => w.SelectedItemOrNull)
 				.InitializeFromSource ();
-
-			ycomboWearCategory.ItemsList = SizeService.GetSizeTypeByCategory(ViewModel.UoW, Category.Size);
-			ycomboWearCategory.Binding.AddBinding (Entity, e => e.SizeType, w => w.SelectedItem)
-				.InitializeFromSource();
-			ycomboWearCategory.SetRenderTextFunc<SizeType>(x => x.Name);
 			
+			ycomboWearCategory.ItemsList = SizeService.GetSizeTypeByCategory(ViewModel.UoW, Category.Size);
+			ycomboWearCategory.Binding
+				.AddBinding (Entity, e => e.SizeType, w => w.SelectedItem).InitializeFromSource();
+
 			ycomboHeightCategory.ItemsList = SizeService.GetSizeTypeByCategory(ViewModel.UoW, Category.Height);
-			ycomboWearCategory.Binding.AddBinding (Entity, e => e.SizeType, w => w.SelectedItem)
-				.InitializeFromSource();
-			ycomboWearCategory.SetRenderTextFunc<SizeType>(x => x.Name);
+			ycomboHeightCategory.Binding
+				.AddBinding (Entity, e => e.HeightType, w => w.SelectedItem).InitializeFromSource();
 
 
-			ycomboUnits.ItemsList = MeasurementUnitsRepository.GetActiveUnits (ViewModel.UoW);
+			ycomboUnits.ItemsList = MeasurementUnitsRepository.GetActiveUnits(ViewModel.UoW);
 			ycomboUnits.Binding.AddBinding (Entity, e => e.Units, w => w.SelectedItem).InitializeFromSource ();
 
 			comboIssueType.ItemsEnum = typeof(IssueType);

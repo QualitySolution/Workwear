@@ -488,7 +488,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="QS.Widgets.GtkUI.SpecialListComboBox" id="ycomboHeightCategory">
+                  <widget class="Gamma.Widgets.ySpecComboBox" id="ycomboHeightCategory">
                     <property name="MemberName" />
                     <property name="IsTextCombo">False</property>
                     <property name="Items" translatable="yes" />
@@ -540,7 +540,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="QS.Widgets.GtkUI.SpecialListComboBox" id="ycomboWearCategory">
+                  <widget class="Gamma.Widgets.ySpecComboBox" id="ycomboWearCategory">
                     <property name="MemberName" />
                     <property name="IsTextCombo">False</property>
                     <property name="Items" translatable="yes" />

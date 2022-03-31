@@ -50,11 +50,11 @@ namespace workwear.Views.Stock
 
 		private global::Gamma.Widgets.yEnumComboBox ycomboCategory;
 
-		private global::QS.Widgets.GtkUI.SpecialListComboBox ycomboHeightCategory;
+		private global::Gamma.Widgets.ySpecComboBox ycomboHeightCategory;
 
 		private global::Gamma.Widgets.ySpecComboBox ycomboUnits;
 
-		private global::QS.Widgets.GtkUI.SpecialListComboBox ycomboWearCategory;
+		private global::Gamma.Widgets.ySpecComboBox ycomboWearCategory;
 
 		private global::Gamma.GtkWidgets.yEntry yentryName;
 
@@ -319,7 +319,7 @@ namespace workwear.Views.Stock
 			w22.XOptions = ((global::Gtk.AttachOptions)(4));
 			w22.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.ycomboHeightCategory = new global::QS.Widgets.GtkUI.SpecialListComboBox();
+			this.ycomboHeightCategory = new global::Gamma.Widgets.ySpecComboBox();
 			this.ycomboHeightCategory.Name = "ycomboHeightCategory";
 			this.ycomboHeightCategory.AddIfNotExist = false;
 			this.ycomboHeightCategory.DefaultFirst = false;
@@ -349,7 +349,7 @@ namespace workwear.Views.Stock
 			w24.XOptions = ((global::Gtk.AttachOptions)(4));
 			w24.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.ycomboWearCategory = new global::QS.Widgets.GtkUI.SpecialListComboBox();
+			this.ycomboWearCategory = new global::Gamma.Widgets.ySpecComboBox();
 			this.ycomboWearCategory.Name = "ycomboWearCategory";
 			this.ycomboWearCategory.AddIfNotExist = false;
 			this.ycomboWearCategory.DefaultFirst = false;

@@ -91,8 +91,18 @@ namespace workwear.Domain.Stock
 			observableNomenclatures ??
 			(observableNomenclatures = new GenericObservableList<Nomenclature>(Nomenclatures));
 
-		public virtual SizeType SizeType { get; set; }
-		public virtual SizeType HeightType { get; set; }
+		private SizeType sizeType;
+		[Display(Name = "Тип размера")]
+		public virtual SizeType SizeType {
+			get => sizeType;
+			set => SetField(ref sizeType, value);
+		}
+		private SizeType heightType;
+		[Display(Name = "Тип роста")]
+		public virtual SizeType HeightType {
+			get => heightType;
+			set => SetField(ref heightType, value);
+		}
 		#endregion
 		public ItemsType () { }
 		#region IValidatableObject implementation
