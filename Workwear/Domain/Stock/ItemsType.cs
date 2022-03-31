@@ -46,8 +46,10 @@ namespace workwear.Domain.Stock
 			get => category;
 			set {
 				if (!SetField(ref category, value, () => Category)) return;
-				if (Category != ItemTypeCategory.wear)
-					WearCategory = null;
+				if (Category != ItemTypeCategory.wear) {
+					SizeType = null;
+					HeightType = null;
+				}
 				if (Category != ItemTypeCategory.property)
 					LifeMonths = null;
 			}
@@ -108,8 +110,8 @@ namespace workwear.Domain.Stock
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
 			if (Category == ItemTypeCategory.wear && SizeType is null)
-				yield return new ValidationResult ("Вид одежды должен быть указан.", 
-					new[] { this.GetPropertyName (o => o.WearCategory)});
+				yield return new ValidationResult ("Вид размера одежды должен быть указан.", 
+					new[] { this.GetPropertyName (o => o.SizeType)});
 		}
 		#endregion
 	}

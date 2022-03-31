@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
@@ -24,6 +25,7 @@ namespace workwear.Models.Import
 		}
 
 		#region Создание типов
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		private void makeTypes(IUnitOfWork uow)
 		{
 			var units = uow.GetAll<MeasurementUnits>();
@@ -83,7 +85,7 @@ namespace workwear.Models.Import
 			AddType("Инструмент", sht, new string[] { "НОЖ", "НОЖНИЦЫ", "СИГНАЛЬНЫЙ", "МАНОМЕТР", "Щетка" });
 			AddType("Неизвестный тип", sht, new string[] { });
 		}
-
+		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		private void AddType(
 			string name, СlothesType category, 
 			MeasurementUnits units, string[] keyWords, 
