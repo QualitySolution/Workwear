@@ -25,7 +25,13 @@ namespace workwear.ViewModels.Import
 		public static readonly string ColorOfNotFound = "Yellow";
 		public static readonly string ColorOfSkipped = "Orchid";
 
-		public ExcelImportViewModel(IImportModel importModel, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IInteractiveMessage interactiveMessage, ProgressInterceptor progressInterceptor, IValidator validator = null) : base(unitOfWorkFactory, navigation, validator)
+		public ExcelImportViewModel(
+			IImportModel importModel, 
+			IUnitOfWorkFactory unitOfWorkFactory, 
+			INavigationManager navigation, 
+			IInteractiveMessage interactiveMessage, 
+			ProgressInterceptor progressInterceptor, 
+			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator)
 		{
 			ImportModel = importModel ?? throw new ArgumentNullException(nameof(importModel));
 			this.interactiveMessage = interactiveMessage ?? throw new ArgumentNullException(nameof(interactiveMessage));
@@ -80,8 +86,7 @@ namespace workwear.ViewModels.Import
 			set => SetField(ref selectedSheet, value);
 		}
 
-		public void SecondStep()
-		{
+		public void SecondStep() {
 			CurrentStep = 1;
 			LoadSheet();
 			ImportModel.AutoSetupColumns();
@@ -96,8 +101,7 @@ namespace workwear.ViewModels.Import
 
 		#region Шаг 3
 
-		public void ThirdStep()
-		{
+		public void ThirdStep() {
 			CurrentStep = 2;
 			ImportModel.MatchAndChanged(ProgressStep, UoW);
 			SensitiveSaveButton = ImportModel.CanSave;
@@ -116,12 +120,9 @@ namespace workwear.ViewModels.Import
 			set => SetField(ref sensitiveSaveButton, value);
 		}
 		#endregion
-
 		#endregion
-
 		#region Сохранение
-		public new void Save()
-		{
+		public new void Save() {
 			sensitiveSaveButton = false;
 			progressInterceptor.PrepareStatement += (sender, e) => ProgressStep.Add();
 			var toSave = ImportModel.MakeToSave(ProgressStep, UoW);
@@ -135,11 +136,9 @@ namespace workwear.ViewModels.Import
 			Close(false, CloseSource.Save);
 		}
 		#endregion
-
 		#region private Methods
 
-		private void LoadFile()
-		{
+		private void LoadFile() {
 			try {
 				using(var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read)) {
 					if(FileName.EndsWith(".xls", StringComparison.InvariantCultureIgnoreCase))
@@ -149,11 +148,12 @@ namespace workwear.ViewModels.Import
 				}
 			}
 			catch(IOException ex) when(ex.HResult == -2147024864) {
-				interactiveMessage.ShowMessage(ImportanceLevel.Error, "Указанный файл уже открыт в другом приложении. Оно заблокировало доступ к файлу.");
+				interactiveMessage.ShowMessage(ImportanceLevel.Error, 
+					"Указанный файл уже открыт в другом приложении. Оно заблокировало доступ к файлу.");
 				return;
 			}
 
-			for(int s = 0; s < wb.NumberOfSheets; s++) {
+			for(var s = 0; s < wb.NumberOfSheets; s++) {
 				var sheet = new ImportedSheet {
 					Number = s,
 					Title = wb.GetSheetName(s)
@@ -163,13 +163,12 @@ namespace workwear.ViewModels.Import
 			OnPropertyChanged(nameof(Sheets));
 		}
 
-		private void LoadSheet()
-		{
+		private void LoadSheet() {
 			sh = wb.GetSheet(SelectedSheet.Title);
 			ProgressStep.Start(sh.LastRowNum, text: "Читаем лист...");
 
-			int maxColumns = 0;
-			for(int i = 0; i <= sh.LastRowNum; i++) {
+			var maxColumns = 0;
+			for(var i = 0; i <= sh.LastRowNum; i++) {
 				ProgressStep.Add();
 				if(sh.GetRow(i) == null)
 					continue;

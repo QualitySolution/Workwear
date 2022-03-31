@@ -10,7 +10,9 @@ namespace workwear.Views.Import
 		public SettingsMatchEmployeesView(SettingsMatchEmployeesViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
-			checkConvertPersonnelNumber.Binding.AddBinding(ViewModel, v => v.ConvertPersonnelNumber, w => w.Active).InitializeFromSource();
+			checkConvertPersonnelNumber.Binding
+				.AddBinding(ViewModel, v => v.ConvertPersonnelNumber, w => w.Active)
+				.InitializeFromSource();
 		}
 	}
 }
