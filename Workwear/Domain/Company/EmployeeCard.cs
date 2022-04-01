@@ -17,14 +17,11 @@ using QS.Utilities.Text;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.Measurements;
 using workwear.Repository.Operations;
 using workwear.Repository.Regulations;
 using workwear.Repository.Stock;
 using workwear.Tools;
 using Workwear.Domain.Company;
-using workwear.Domain.Sizes;
-using Workwear.Measurements;
 
 namespace workwear.Domain.Company
 {
@@ -41,7 +38,6 @@ namespace workwear.Domain.Company
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
 		#region Свойства
-
 		public virtual int Id { get; set; }
 
 		private string cardNumber;
@@ -186,104 +182,6 @@ namespace workwear.Domain.Company
 
 		#endregion
 		#region Размеры одежды
-		private string wearGrowth;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")] 
-		[Display(Name = "Рост одежды")]
-		public virtual string WearGrowth {
-			get => wearGrowth;
-			set => SetField(ref wearGrowth, value);
-		}
-
-		private string wearSizeStd;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display (Name = "Стандарт размера одежды")]
-		public virtual string WearSizeStd {
-			get => wearSizeStd;
-			set => SetField (ref wearSizeStd, value, () => WearSizeStd);
-		}
-
-		private string wearSize;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display (Name = "Размер одежды")]
-		public virtual string WearSize { 
-			get => wearSize;
-			set => SetField (ref wearSize, value, () => WearSize);
-		}
-
-		private string shoesSizeStd;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display (Name = "Стандарт размера обуви")]
-		public virtual string ShoesSizeStd {
-			get => shoesSizeStd;
-			set => SetField (ref shoesSizeStd, value, () => ShoesSizeStd);
-		}
-
-		private string shoesSize;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display (Name = "Размер обуви")]
-		public virtual string ShoesSize { 
-			get => shoesSize;
-			set => SetField (ref shoesSize, value, () => ShoesSize);
-		}
-
-		private string winterShoesSizeStd;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display(Name = "Стандарт размера зимней обуви")]
-		public virtual string WinterShoesSizeStd
-		{
-			get => winterShoesSizeStd;
-			set => SetField(ref winterShoesSizeStd, value, () => WinterShoesSizeStd);
-		}
-
-		private string winterShoesSize;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display(Name = "Размер зимней обуви")]
-		public virtual string WinterShoesSize
-		{
-			get => winterShoesSize;
-			set => SetField(ref winterShoesSize, value, () => WinterShoesSize);
-		}
-
-		private string headdressSizeStd;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display (Name = "Стандарт размера головного убора")]
-		public virtual string HeaddressSizeStd {
-			get => headdressSizeStd;
-			set => SetField (ref headdressSizeStd, value, () => HeaddressSizeStd);
-		}
-
-		private string headdressSize;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display (Name = "Размер головного убора")]
-		public virtual string HeaddressSize { 
-			get => headdressSize;
-			set => SetField (ref headdressSize, value, () => HeaddressSize);
-		}
-
-		private string glovesSizeStd;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display (Name = "Стандарт размера перчаток")]
-		public virtual string GlovesSizeStd {
-			get => glovesSizeStd;
-			set => SetField (ref glovesSizeStd, value, () => GlovesSizeStd);
-		}
-
-		private string glovesSize;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display (Name = "Размер перчаток")]
-		public virtual string GlovesSize { 
-			get => glovesSize;
-			set => SetField (ref glovesSize, value, () => GlovesSize);
-		}
-		
-		private string mittensSize;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display(Name = "Размер рукавиц")]
-		public virtual string MittensSize {
-			get => mittensSize;
-			set => SetField(ref mittensSize, value);
-		}
-
 		private IList<EmployeeSize> sizes = new List<EmployeeSize>();
 		[Display (Name = "Размеры")]
 		public virtual IList<EmployeeSize> Sizes {
@@ -343,58 +241,52 @@ namespace workwear.Domain.Company
 		public virtual GenericObservableList<EmployeeVacation> ObservableVacations =>
 			observableVacations ??
 			(observableVacations = new GenericObservableList<EmployeeVacation>(Vacations));
-
 		#endregion
-
 		#region Расчетные
-
 		public virtual string Title => PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
-
 		public virtual string FullName => String.Format ("{0} {1} {2}", LastName, FirstName, Patronymic).Trim ();
-
 		public virtual string ShortName => PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
 
 		private string ToTitleCase(string str){
-			if(!string.IsNullOrWhiteSpace(str)) {
-				TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
-				return ti.ToTitleCase(str.Trim().ToLower());
-			}
-			return string.Empty;
+			if (string.IsNullOrWhiteSpace(str)) return string.Empty;
+			var ti = CultureInfo.CurrentCulture.TextInfo;
+			return ti.ToTitleCase(str.Trim().ToLower());
 		}
 
 		#endregion
-
 		#region Фильтрованные коллекции
-
 		public virtual IEnumerable<EmployeeCardItem> GetUnderreceivedItems(BaseParameters baseParameters) => 
 			WorkwearItems.Where(x => x.CalculateRequiredIssue(baseParameters) > 0);
-
 		#endregion
-
-		public EmployeeCard ()
-		{
-		}
-
+		public EmployeeCard () { }
 		#region IValidatableObject implementation
-
-		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
-		{
+		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
 			if (String.IsNullOrEmpty (FirstName) && String.IsNullOrEmpty (LastName) && String.IsNullOrEmpty (Patronymic))
-				yield return new ValidationResult ("Должно быть заполнено хотя бы одно из следующих полей: " +
-					"Фамилия, Имя, Отчество)", 
-					new[] { this.GetPropertyName (o => o.FirstName), this.GetPropertyName (o => o.LastName), this.GetPropertyName (o => o.Patronymic) });
+				yield return new ValidationResult (
+					"Должно быть заполнено хотя бы одно из следующих полей: Фамилия, Имя, Отчество)", 
+					new[] { this.GetPropertyName (o => o.FirstName),
+						this.GetPropertyName (o => o.LastName),
+						this.GetPropertyName (o => o.Patronymic) });
 
 			if (Sex == Sex.None)
-				yield return new ValidationResult ("Пол должен быть указан.", new[] { this.GetPropertyName (o => o.Sex) });
+				yield return new ValidationResult (
+					"Пол должен быть указан.", 
+					new[] { this.GetPropertyName (o => o.Sex) });
 
 			if(!String.IsNullOrEmpty(CardKey) && !System.Text.RegularExpressions.Regex.IsMatch(CardKey, @"\A\b[0-9A-F]+\b\Z"))
-				yield return new ValidationResult("UID карты должен быть задан в шестнадцатиричном виде, то есть может содержать только сиволы 0-9 и A-F.", new[] { nameof(CardKey) });
+				yield return new ValidationResult(
+					"UID карты должен быть задан в шестнадцатиричном виде, то есть может содержать только сиволы 0-9 и A-F.",
+					new[] { nameof(CardKey) });
 			if(!String.IsNullOrEmpty(CardKey) && (CardKey.Length % 2 != 0))
-				yield return new ValidationResult("UID карты должен быть задан в шестнадцатиричном виде, число символов должно быть кратно двум.", new[] { nameof(CardKey) });
+				yield return new ValidationResult(
+					"UID карты должен быть задан в шестнадцатиричном виде, число символов должно быть кратно двум.", 
+					new[] { nameof(CardKey) });
 
 			var phoneValidator = new PhoneValidator(PhoneFormat.RussiaOnlyHyphenated);
 			if(!phoneValidator.Validate(PhoneNumber, true))
-				yield return new ValidationResult($"Телефон должен быть задан в формате {PhoneFormat.RussiaOnlyHyphenated.GetEnumTitle()}", new[] { nameof(PhoneNumber) });
+				yield return new ValidationResult(
+					$"Телефон должен быть задан в формате {PhoneFormat.RussiaOnlyHyphenated.GetEnumTitle()}",
+					new[] { nameof(PhoneNumber) });
 
 			if(!String.IsNullOrEmpty(PersonnelNumber)) {
 
@@ -403,7 +295,9 @@ namespace workwear.Domain.Company
 				if(Id > 0)
 					result.WhereNot(x => x.Id == Id);
 				if(result.RowCount()>0)
-					yield return new ValidationResult("Табельный номер должен быть уникальным", new[] { this.GetPropertyName(o => o.PersonnelNumber) });
+					yield return new ValidationResult(
+						"Табельный номер должен быть уникальным", 
+						new[] { this.GetPropertyName(o => o.PersonnelNumber) });
 			}
 
 			if(!String.IsNullOrEmpty(CardNumber)) {
@@ -413,76 +307,16 @@ namespace workwear.Domain.Company
 				if(Id > 0)
 					result.WhereNot(x => x.Id == Id);
 				if(result.RowCount() > 0)
-					yield return new ValidationResult($"Номер карточки {CardNumber} должен быть уникальным", new[] { this.GetPropertyName(o => o.CardNumber) });
+					yield return new ValidationResult(
+						$"Номер карточки {CardNumber} должен быть уникальным",
+						new[] { this.GetPropertyName(o => o.CardNumber) });
 			}
 		}
 
 		#endregion
-
-		#region Работа с размерами
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		public virtual SizePair GetSize(СlothesType wearCategory)
-		{
-			switch (wearCategory)
-			{
-				case СlothesType.Wear:
-					return new SizePair(WearSizeStd, WearSize);
-				case СlothesType.Shoes:
-					return new SizePair(ShoesSizeStd, ShoesSize);
-				case СlothesType.WinterShoes:
-					return new SizePair(WinterShoesSizeStd, WinterShoesSize);
-				case СlothesType.Gloves:
-					return new SizePair(GlovesSizeStd, GlovesSize);
-				case СlothesType.Mittens:
-					return new SizePair(SizeHelper.GetSizeStdCode(SizeStandartMittens.Rus), MittensSize);
-				case СlothesType.Headgear:
-					return new SizePair(HeaddressSizeStd, HeaddressSize);
-				default:
-					return null;
-			}
-		}
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		public virtual void SetSize(СlothesType wearCategory, SizePair size)
-		{
-			switch(wearCategory) {
-				case СlothesType.Wear:
-					WearSizeStd = size.StandardCode;
-					WearSize = size.Size;
-					break;
-				case СlothesType.Shoes:
-					ShoesSizeStd = size.StandardCode;
-					ShoesSize = size.Size;
-					break;
-				case СlothesType.WinterShoes:
-					WinterShoesSizeStd = size.StandardCode;
-					WinterShoesSize = size.Size;
-					break;
-				case СlothesType.Gloves:
-					GlovesSizeStd = size.StandardCode;
-					GlovesSize = size.Size;
-					break;
-				case СlothesType.Mittens:
-					if(size.StandardCode != SizeHelper.GetSizeStdCode(SizeStandartMittens.Rus))
-						throw new NotImplementedException("Другие стандарты не реализованы");
-					MittensSize = size.Size;
-					break;
-				case СlothesType.Headgear:
-					HeaddressSizeStd = size.StandardCode;
-					HeaddressSize = size.Size;
-					break;
-				default:
-					throw new NotImplementedException($"Работам с типом одежды {wearCategory} пока не реализована");
-			}
-		}
-
-		#endregion
-
 		#region Функции для работы с коллекцией норм
-
-		public virtual void AddUsedNorm(Norm norm)
-		{
-			if(UsedNorms.Any (p => DomainHelper.EqualDomainObjects (p, norm)))
-			{
+		public virtual void AddUsedNorm(Norm norm) {
+			if(UsedNorms.Any (p => DomainHelper.EqualDomainObjects (p, norm))) {
 				logger.Warn ("Такая норма уже добавлена. Пропускаем...");
 				return;
 			}
@@ -490,55 +324,44 @@ namespace workwear.Domain.Company
 			UpdateWorkwearItems ();
 		}
 
-		public virtual void RemoveUsedNorm(Norm norm)
-		{
+		public virtual void RemoveUsedNorm(Norm norm) {
 			ObservableUsedNorms.Remove (norm);
 			UpdateWorkwearItems ();
 		}
 
-		public virtual void NormFromPost(IUnitOfWork uow, NormRepository normRepository)
-		{
+		public virtual void NormFromPost(IUnitOfWork uow, NormRepository normRepository) {
 			var norms = normRepository.GetNormsForPost(UoW, Post);
 			foreach(var norm in norms)
 				AddUsedNorm(norm);
 		}
 
 		#endregion
-
 		#region Функции для работы с коллекцией потребностей
-
 		/// <summary>
 		/// Для работы функции необходимо иметь заполненый UoW.
 		/// </summary>
-		public virtual void UpdateWorkwearItems()
-		{
+		public virtual void UpdateWorkwearItems() {
 			logger.Info("Пересчитываем требования по спецодежде для сотрудника");
 			//Проверяем нужно ли добавлять
 			var processed = new List<EmployeeCardItem>();
-			foreach(var norm in UsedNorms)
-			{
-				foreach (var normItem in norm.Items)
-				{
-
+			foreach(var norm in UsedNorms) {
+				foreach (var normItem in norm.Items) {
 					if(!normItem.NormCondition?.MatchesForEmployee(this) ?? false) 
 						continue;
 
 					var currentItem = WorkwearItems.FirstOrDefault (i => i.ProtectionTools == normItem.ProtectionTools);
 
-					if (currentItem == null)
-					{
+					if (currentItem == null) {
 						//FIXME Возможно нужно проверять если что-то подходящее уже выдавалось то пересчитывать.
 						currentItem = new EmployeeCardItem (this, normItem);
 						ObservableWorkwearItems.Add (currentItem);
 					}
 
-					if(processed.Contains (currentItem))
-					{
+					if(processed.Contains (currentItem)) {
 						if (normItem.AmountPerYear > currentItem.ActiveNormItem.AmountPerYear)
 							currentItem.ActiveNormItem = normItem;
 					}
-					else
-					{
+					else {
 						processed.Add (currentItem);
 						currentItem.ActiveNormItem = normItem;
 					}
@@ -549,15 +372,13 @@ namespace workwear.Domain.Company
 
 			needRemove.ToList ().ForEach (i => ObservableWorkwearItems.Remove (i));
 			//Обновляем срок следующей выдачи
-			foreach(var item in processed)
-			{
+			foreach(var item in processed) {
 				item.UpdateNextIssue(UoW);
 			}
 			logger.Info("Ok");
 		}
 
-		public virtual void UpdateNextIssue(params ProtectionTools[] protectionTools)
-		{
+		public virtual void UpdateNextIssue(params ProtectionTools[] protectionTools) {
 			var ids = new HashSet<int>(protectionTools.Select(x => x.Id));
 			foreach(var wearItem in WorkwearItems) {
 				if(wearItem.ProtectionTools.MatchedProtectionTools.Any(x => ids.Contains(x.Id)))
@@ -565,15 +386,13 @@ namespace workwear.Domain.Company
 			}
 		}
 
-		public virtual void UpdateNextIssueAll()
-		{
+		public virtual void UpdateNextIssueAll() {
 			foreach(var wearItem in WorkwearItems) {
 				wearItem.UpdateNextIssue(UoW);
 			}
 		}
 
-		public virtual void FillWearRecivedInfo(EmployeeIssueRepository issueRepository)
-		{
+		public virtual void FillWearRecivedInfo(EmployeeIssueRepository issueRepository) {
 			if (Id == 0) // Не надо проверять выдачи, так как сотрудник еще не сохранен.
 				return; 
 			foreach(var item in WorkwearItems) {
@@ -581,8 +400,15 @@ namespace workwear.Domain.Company
 				item.LastIssue = null;
 			}
 
-			var receiveds = issueRepository.AllOperationsForEmployee(this).Where(x => x.Issued > 0);
-			var protectionGroups = receiveds.Where(x => x.ProtectionTools != null).GroupBy(x => x.ProtectionTools?.Id).ToDictionary(g => g.Key, g => g);
+			var receiveds = 
+				issueRepository
+					.AllOperationsForEmployee(this)
+					.Where(x => x.Issued > 0);
+			var protectionGroups = 
+				receiveds
+					.Where(x => x.ProtectionTools != null)
+					.GroupBy(x => x.ProtectionTools?.Id)
+					.ToDictionary(g => g.Key, g => g);
 
 			//Основное заполнение выдачи
 			foreach (var item in WorkwearItems)
@@ -590,8 +416,12 @@ namespace workwear.Domain.Company
 				if(!protectionGroups.ContainsKey(item.ProtectionTools.Id))
 					continue;
 				var operations = protectionGroups[item.ProtectionTools.Id];
-				//В сортировке OverrideBefore, чтобы в ситуации когда на одну дату есть несколько операция, чтобы выводилась именно ручная.
-				var lastOperation = operations.OrderByDescending(x => x.OperationTime.Date).ThenByDescending(x => x.OverrideBefore).First();
+				//В сортировке OverrideBefore, чтобы в ситуации когда на одну дату есть несколько операция,
+				//чтобы выводилась именно ручная.
+				var lastOperation = 
+					operations
+						.OrderByDescending(x => x.OperationTime.Date)
+						.ThenByDescending(x => x.OverrideBefore).First();
 				item.Amount = lastOperation.Issued;
 				item.LastIssue = lastOperation.OperationTime;
 				item.LastIssueOperation = lastOperation;
@@ -601,12 +431,18 @@ namespace workwear.Domain.Company
 			//Дополнительно ищем по аналогам.
 			foreach (var item in WorkwearItems)
 			{
-			 	var matched = item.ProtectionTools.MatchedProtectionTools.FirstOrDefault(x => protectionGroups.ContainsKey(x.Id));
+			 	var matched = 
+				    item.ProtectionTools.MatchedProtectionTools
+					    .FirstOrDefault(x => protectionGroups.ContainsKey(x.Id));
 				if(matched == null)
 					continue;
 				var operations = protectionGroups[matched.Id];
-				//В сортировке OverrideBefore, чтобы в ситуации когда на одну дату есть несколько операция, чтобы выводилась именно ручная.
-				var lastOperation = operations.OrderByDescending(x => x.OperationTime).ThenByDescending(x => x.OverrideBefore).First();
+				//В сортировке OverrideBefore, чтобы в ситуации когда на одну дату есть несколько операция,
+				//чтобы выводилась именно ручная.
+				var lastOperation = 
+					operations
+						.OrderByDescending(x => x.OperationTime)
+						.ThenByDescending(x => x.OverrideBefore).First();
 				item.Amount = lastOperation.Issued;
 				item.LastIssue = lastOperation.OperationTime;
 				item.LastIssueOperation = lastOperation;
