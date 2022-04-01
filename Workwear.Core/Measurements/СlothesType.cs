@@ -36,8 +36,7 @@ namespace Workwear.Measurements
 		PPE,
 	}
 	
-	public enum ClothesSex
-	{
+	public enum ClothesSex {
 		[Display(Name = "Женская")]
 		Women,
 		[Display(Name = "Мужская")]

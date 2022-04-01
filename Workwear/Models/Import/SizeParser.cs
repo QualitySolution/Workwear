@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using QS.DomainModel.UoW;
+using workwear.Domain.Sizes;
+using Workwear.Measurements;
 
 namespace workwear.Models.Import
 {
 	public static class SizeParser
 	{
-		public static SizeAndGrowth ParseSizeAndGrowth(string value)
+		public static SizeAndGrowth ParseSizeAndGrowth(string value, IUnitOfWork uow)
 		{
 			var result = new SizeAndGrowth();
 
-			string[] parts = value.Split(' ');
-			string onlySize = parts[0];
+			var parts = value.Split(' ');
+			var onlySize = parts[0];
 			string size1 = "", size2 = "", growth1 = "", growth2 = "", number = "";
 			bool isHyphen1 = false, isHyphen2 = false, isSeparator = false, isFloat= false;
 
-			List<string> sizeWear = new List<string>() { "M", "L", "XL", "XXL", "XXXL", "4XL", "5XL" };
+			var sizeWear = new List<string> { "M", "L", "XL", "XXL", "XXXL", "4XL", "5XL" };
 
-			if(onlySize.Where(x => x == 'L').Count() == 1) {
+			if(onlySize.Count(x => x == 'L') == 1) {
 				onlySize = onlySize.Replace('2', 'X');
 				onlySize = onlySize.Replace("3", "XX");
 			}
@@ -53,40 +56,33 @@ namespace workwear.Models.Import
 				}
 				else { number = ""; break; }
 
-				if(number.Count() > 0 && !isHyphen1 && !isHyphen2 && !isSeparator)
+				if(number.Length > 0 && !isHyphen1 && !isHyphen2 && !isSeparator)
 					size1 = !isFloat && int.Parse(number) > 70 ? (int.Parse(number) / 2).ToString() : number;
-				else if(number.Count() > 0 && isHyphen1 && !isHyphen2 && !isSeparator)
+				else if(number.Length > 0 && isHyphen1 && !isHyphen2 && !isSeparator)
 					size2 = !isFloat && int.Parse(number) > 70 ? (int.Parse(number) / 2).ToString() : number;
-				else if(number.Count() > 0 && !isHyphen1 && !isHyphen2 && isSeparator)
+				else if(number.Length > 0 && !isHyphen1 && !isHyphen2 && isSeparator)
 					growth1 = number;
-				else if(number.Count() > 0 && isHyphen1 && !isHyphen2 && isSeparator)
+				else if(number.Length > 0 && isHyphen1 && !isHyphen2 && isSeparator)
 					growth1 = number;
-				else if(number.Count() > 0 && isHyphen1 && isHyphen2 && isSeparator)
+				else if(number.Length > 0 && isHyphen1 && isHyphen2 && isSeparator)
 					growth2 = number;
-				else if(number.Count() > 0 && !isHyphen1 && isHyphen2 && isSeparator)
+				else if(number.Length > 0 && !isHyphen1 && isHyphen2 && isSeparator)
 					growth2 = number;
 			}
 
-			result.Size = size2.Length > 0 ? size1 + "-" + size2 : size1;
-			result.Growth = growth2.Length > 0 ? growth1 + "-" + growth2 : growth1;
+			result.Size = ParseSize(uow, size2.Length > 0 ? size1 + "-" + size2 : size1,Category.Size);
+			result.Growth = ParseSize(uow, growth2.Length > 0 ? growth1 + "-" + growth2 : growth1, Category.Height);
 
 			return result;
 		}
 
-		public static string ParseSize(string value)
+		public static Size ParseSize(IUnitOfWork uow, string value, Category category)
 		{
-			return value;
-		}
-
-		public static string ParseGrowth(string value)
-		{
-			return value;
+			return SizeService.GetSizeByCategory(uow, category).FirstOrDefault(x => x.Name == value);
 		}
 	}
-
-	public struct SizeAndGrowth
-	{
-		public string Size;
-		public string Growth;
+	public struct SizeAndGrowth {
+		public Size Size;
+		public Size Growth;
 	}
 }

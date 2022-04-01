@@ -6,7 +6,6 @@ using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using workwear.Domain.Sizes;
-using Workwear.Measurements;
 
 namespace workwear.Domain.Stock
 {
@@ -54,13 +53,7 @@ namespace workwear.Domain.Stock
 					LifeMonths = null;
 			}
 		}
-
-		private СlothesType? wearCategory;
-		[Display (Name = "Вид одежды")]
-		public virtual СlothesType? WearCategory {
-			get => wearCategory;
-			set => SetField (ref wearCategory, value);
-		}
+		
 		private IssueType issueType;
 		[Display(Name = "Тип выдачи")]
 		public virtual IssueType IssueType {

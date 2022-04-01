@@ -16,6 +16,7 @@ using workwear.Measurements;
 using workwear.Models.Company;
 using workwear.ViewModels.Import;
 using Workwear.Domain.Company;
+using workwear.Domain.Sizes;
 using Workwear.Measurements;
 
 namespace workwear.Models.Import
@@ -138,7 +139,7 @@ namespace workwear.Models.Import
 				}
 
 				foreach(var column in meaningfulColumns) {
-					MakeChange(settings, employee, row, column, rowChange);
+					MakeChange(settings, employee, row, column, rowChange, uow);
 				}
 			}
 			progress.Close();
@@ -149,7 +150,8 @@ namespace workwear.Models.Import
 			EmployeeCard employee, 
 			SheetRowEmployee row, 
 			ImportedColumn<DataTypeEmployee> column, 
-			ChangeType rowChange)
+			ChangeType rowChange,
+			IUnitOfWork uow)
 		{
 			var value = row.CellStringValue(column.Index);
 			var dataType = column.DataType;
@@ -261,17 +263,23 @@ namespace workwear.Models.Import
 					row.AddColumnChange(column, post.Id == 0 ? ChangeType.NewEntity : rowChange, employee.Post?.Name);
 					employee.Post = post;
 					break;
-				case DataTypeEmployee.Growth:
-					row.ChangedColumns.Add(column, CompareString(employee.WearGrowth,
-						row.CellStringValue(column.Index), rowChange));
+				case DataTypeEmployee.Growth: {
+					var height = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), Category.Height);
+					var employeeHeight = employee.Sizes.FirstOrDefault(x => x.SizeType == height.SizeType)?.Size;
+					row.ChangedColumns.Add(column, CompareSize(employeeHeight, height, rowChange, uow));
+				}
 					break;
-				case DataTypeEmployee.WearSize:
-					row.ChangedColumns.Add(column, CompareSize(employee.WearSize, 
-						row.CellStringValue(column.Index), СlothesType.Wear, employee.Sex, rowChange));
+				case DataTypeEmployee.WearSize: {
+					var size = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), Category.Size);
+					var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType)?.Size;
+					row.ChangedColumns.Add(column, CompareSize(employeeSize, size, rowChange, uow));
+				}
 					break;
-				case DataTypeEmployee.ShoesSize:
-					row.ChangedColumns.Add(column, CompareSize(employee.ShoesSize, 
-						row.CellStringValue(column.Index), СlothesType.Shoes, employee.Sex, rowChange));
+				case DataTypeEmployee.ShoesSize: {
+					var size = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), Category.Size);
+					var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType)?.Size;
+					row.ChangedColumns.Add(column, CompareSize(employeeSize, size, rowChange, uow));
+				}
 					break;
 
 				default:
@@ -294,19 +302,15 @@ namespace workwear.Models.Import
 			return new ChangeState(changeType);
 		}
 
-		private ChangeState CompareSize(string fieldValue, string newValue, СlothesType сlothesType, Sex sex, ChangeType rowChange) {
-			var changeType = String.Equals(fieldValue, newValue, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
+		private ChangeState CompareSize(Size fieldValue, Size newValue, ChangeType rowChange, IUnitOfWork uow) {
+			var changeType = fieldValue == newValue ? ChangeType.NotChanged : rowChange;
 			if (changeType == ChangeType.NotChanged)
-				return changeType == ChangeType.ChangeValue
-					? new ChangeState(changeType, fieldValue)
-					: new ChangeState(changeType);
-			var standarts = SizeHelper.GetSizeStandartsEnum(сlothesType, sex);
-			var sizes = sizeService.GetAllSizesForEmployee(standarts);
-			if(!sizes.Any(x => String.Equals(x.Size, newValue, StringComparison.InvariantCultureIgnoreCase)))
+				return new ChangeState(changeType);
+			var sizes = SizeService.GetSize(uow);
+			if(sizes.All(x => x != newValue))
 				changeType = ChangeType.ParseError;
 
-			return changeType == ChangeType.ChangeValue ? 
-				new ChangeState(changeType, fieldValue) : new ChangeState(changeType);
+			return new ChangeState(changeType, newValue.Name);
 		}
 		#endregion
 		#region Сопоставление
@@ -322,12 +326,12 @@ namespace workwear.Models.Import
 				.Select(fio => (fio.LastName + "|" + fio.FirstName).ToUpper())
 				.Distinct().ToArray();
 			
-			Console.WriteLine((uow.Session.SessionFactory as ISessionFactoryImplementor).Dialect);
+			Console.WriteLine(((ISessionFactoryImplementor) uow.Session.SessionFactory).Dialect);
 			var exists = uow.Session.QueryOver<EmployeeCard>()
 				.Where(Restrictions.In(
 				Projections.SqlFunction(
 							  "upper", NHibernateUtil.String,
-							  (uow.Session.SessionFactory as ISessionFactoryImplementor).Dialect is SQLiteDialect //Данный диалект используется в тестах.
+							  ((ISessionFactoryImplementor) uow.Session.SessionFactory).Dialect is SQLiteDialect //Данный диалект используется в тестах.
 								  ? 
 								  Projections.SqlFunction(new SQLFunctionTemplate(NHibernateUtil.String, "( ?1 || '|' || ?2)"),
 									  NHibernateUtil.String,
@@ -532,21 +536,42 @@ namespace workwear.Models.Import
 					break;
 
 				case DataTypeEmployee.Growth:
-					employee.WearGrowth = value;
+					var height = SizeParser.ParseSize(uow, value, Category.Height);
+					if (height is null) break;
+					var employeeHeight = employee.Sizes.FirstOrDefault(x => x.SizeType == height.SizeType);
+					if (employeeHeight is null) {
+						employeeHeight = new EmployeeSize
+							{Size = height, SizeType = height.SizeType, Employee = employee};
+						employee.Sizes.Add(employeeHeight);
+					}
+					else
+						employeeHeight.Size = height;
 					break;
 				case DataTypeEmployee.WearSize:
-					var standartsWear = SizeHelper.GetSizeStandartsEnum(СlothesType.Wear, employee.Sex);
-					var sizesWear = sizeService.GetAllSizesForEmployee(standartsWear);
-					var pairWear = sizesWear.First(x => String.Equals(x.Size, value, StringComparison.InvariantCultureIgnoreCase));
-					employee.WearSize = pairWear.Size;
-					employee.WearSizeStd = pairWear.StandardCode;
+					var size = SizeParser.ParseSize(uow, value, Category.Height);
+					if (size is null) break;
+					var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType);
+					if (employeeSize is null) {
+						employeeSize = new EmployeeSize
+							{Size = size, SizeType = size.SizeType, Employee = employee};
+						employee.Sizes.Add(employeeSize);
+					}
+					else
+						employeeSize.Size = size;
 					break;
 				case DataTypeEmployee.ShoesSize:
-					var standartsShoes = SizeHelper.GetSizeStandartsEnum(СlothesType.Shoes, employee.Sex);
-					var sizesShoes = sizeService.GetAllSizesForEmployee(standartsShoes);
-					var pairShoes = sizesShoes.First(x => String.Equals(x.Size, value, StringComparison.InvariantCultureIgnoreCase));
-					employee.ShoesSize = pairShoes.Size;
-					employee.ShoesSizeStd = pairShoes.StandardCode;
+				{
+					var shoesSize = SizeParser.ParseSize(uow, value, Category.Height);
+					if (shoesSize is null) break;
+					var employeeShoesSize = employee.Sizes.FirstOrDefault(x => x.SizeType == shoesSize.SizeType);
+					if (employeeShoesSize is null) {
+						employeeShoesSize = new EmployeeSize
+							{Size = shoesSize, SizeType = shoesSize.SizeType, Employee = employee};
+						employee.Sizes.Add(employeeShoesSize);
+					}
+					else
+						employeeShoesSize.Size = shoesSize;
+				}
 					break;
 
 				default:

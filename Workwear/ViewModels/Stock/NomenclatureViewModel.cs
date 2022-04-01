@@ -57,14 +57,15 @@ namespace workwear.ViewModels.Stock
 		public EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
 		#endregion
 		#region Visible
-		public bool VisibleClothesSex => 
-			Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear && Entity.Type.WearCategory.HasValue;
+
+		public bool VisibleClothesSex =>
+			Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear;
 		#endregion
 		#region Sensitive
 		public bool SensitiveOpenMovements => Entity.Id > 0;
 		#endregion
 		#region Data
-		public string ClothesSexLabel => Entity.Type?.WearCategory?.GetEnumTitle() + ":";
+		public string ClothesSexLabel => "Одежда: ";
 		#endregion
 		#region Actions
 		public void OpenMovements() {
