@@ -99,26 +99,18 @@ namespace workwear.Domain.Statements
 			get { return lifetime; }
 			set { SetField(ref lifetime, value.Clamp(0m, 999.99m)); }
 		}
-
-		string size;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
+		private Size wearSize;
 		[Display(Name = "Размер")]
-		public virtual string Size {
-			get { return size; }
-			set { SetField(ref size, value, () => Size); }
+		public virtual Size WearSize {
+			get => wearSize;
+			set => SetField(ref wearSize, value);
 		}
-
-		string wearGrowth;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
+		private Size height;
 		[Display(Name = "Рост одежды")]
-		public virtual string WearGrowth {
-			get { return wearGrowth; }
-			set { SetField(ref wearGrowth, value, () => WearGrowth); }
+		public virtual Size Height {
+			get => height;
+			set => SetField(ref height, value);
 		}
-		[Display(Name = "Размер")]
-		public virtual Size WearSize { get; set; }
-		[Display(Name = "Рост одежды")]
-		public virtual Size Height { get; set; }
 
 		#endregion
 

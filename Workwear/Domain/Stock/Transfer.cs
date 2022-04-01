@@ -22,9 +22,7 @@ namespace workwear.Domain.Stock
 		public Transfer() { }
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		#region Свойства
-
 		private Warehouse warehouseFrom;
-
 		[Display(Name = "Склад отправитель")]
 		[Required(ErrorMessage = "Склад отправитель должен быть указан.")]
 		public virtual Warehouse WarehouseFrom {
@@ -48,7 +46,6 @@ namespace workwear.Domain.Stock
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<TransferItem> ObservableItems => 
 			observableItems ?? (observableItems = new GenericObservableList<TransferItem>(Items));
-
 		#endregion
 		#region Расчетные
 		public virtual string Title => $"Перемещение №{Id} от {Date:d}";

@@ -81,34 +81,42 @@ namespace workwear.Domain.Stock
 					new[] { nameof(Items)});
 
 			if(Items.Any (i => i.Amount > 0 && i.Nomenclature == null))
-				yield return new ValidationResult ("Документ не должен содержать строки без выбранной номенклатуры и с указанным количеством.", 
+				yield return new ValidationResult (
+					"Документ не должен содержать строки без выбранной номенклатуры и с указанным количеством.", 
 					new[] { nameof(Items)});
 
 			//Проверка наличия на складе
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
-			if(UoW != null && baseParameters.CheckBalances) {
-				var repository = new StockRepository();
-				var nomenclatures = Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
-				var excludeOperations = Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
-				var balance = repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
+			if (UoW == null || !baseParameters.CheckBalances) yield break;
+			var repository = new StockRepository();
+			var nomenclatures = 
+				Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
+			var excludeOperations = 
+				Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
+			var balance = 
+				repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
 
-				var positionGroups = Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
-				foreach(var position in positionGroups) {
-					var amount = position.Sum(x => x.Amount);
-					if(amount == 0)
-						continue;
+			var positionGroups = 
+				Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
+			foreach(var position in positionGroups) {
+				var amount = position.Sum(x => x.Amount);
+				if(amount == 0)
+					continue;
 
-					var stockExist = balance.FirstOrDefault(x => x.StockPosition.Equals(position.Key));
+				var stockExist = 
+					balance.FirstOrDefault(x => x.StockPosition.Equals(position.Key));
 
-					if(stockExist == null) {
-						yield return new ValidationResult($"На складе отсутствует - {position.Key.Title}", new[] { nameof(Items) });
-						continue;
-					}
+				if(stockExist == null) {
+					yield return new ValidationResult($"На складе отсутствует - {position.Key.Title}", 
+						new[] { nameof(Items) });
+					continue;
+				}
 
-					if(stockExist.Amount < amount) {
-						yield return new ValidationResult($"Недостаточное количество - {position.Key.Title}, Необходимо: {amount} На складе: {stockExist.Amount}", new[] { nameof(Items) });
-						continue;
-					}
+				if(stockExist.Amount < amount) {
+					yield return new ValidationResult(
+						$"Недостаточное количество - {position.Key.Title}, Необходимо: {amount} На складе: " +
+						$"{stockExist.Amount}", new[] { nameof(Items) });
+					continue;
 				}
 			}
 		}

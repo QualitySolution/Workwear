@@ -13,24 +13,10 @@ namespace workwear.Domain.Stock
 	public class StockPosition
 	{
 		public Nomenclature Nomenclature { get; }
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		public string Size { get; private set; }
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		public string Growth { get; private set; }
 		public decimal WearPercent { get; }
-		
 		public Size WearSize { get; }
 		public Size Height { get; }
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService, используйте конструктор с этими классами")]
-		public StockPosition(Nomenclature nomenclature, string size, string growth, decimal wearPercent)
-		{
-			Nomenclature = nomenclature ?? throw new ArgumentNullException(nameof(nomenclature));
-			Size = size;
-			Growth = growth;
-			WearPercent = wearPercent;
-		}
-		public StockPosition(Nomenclature nomenclature, decimal wearPercent, Size wearSize, Size height)
-		{
+		public StockPosition(Nomenclature nomenclature, decimal wearPercent, Size wearSize, Size height) {
 			Nomenclature = nomenclature ?? throw new ArgumentNullException(nameof(nomenclature));
 			WearPercent = wearPercent;
 			WearSize = wearSize;
@@ -59,7 +45,6 @@ namespace workwear.Domain.Stock
 		}
 
 		#region Сравнение
-
 		public override bool Equals(object obj)
 		{
 			var anotherPos = obj as StockPosition;

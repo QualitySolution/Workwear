@@ -31,24 +31,6 @@ namespace workwear.Domain.Stock
         [Display(Name = "Складская операция")]
         [IgnoreHistoryTrace]
         public virtual WarehouseOperation WarehouseOperation { get; set; }
-        [Display(Name = "Размер")]
-        [Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-        public virtual string Size {
-            get => WarehouseOperation?.Size;
-            set {
-                if (WarehouseOperation == null) return;
-                WarehouseOperation.Size = value;
-            }
-        }
-        [Display(Name = "Рост одежды")]
-        [Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-        public virtual string Growth {
-            get => WarehouseOperation?.Growth;
-            set {
-                if (WarehouseOperation == null) return;
-                WarehouseOperation.Growth = value;
-            }
-        }
         [Display(Name = "Процент износа")]
         public virtual decimal WearPercent {
             get => WarehouseOperation?.WearPercent ?? 0;
@@ -59,7 +41,6 @@ namespace workwear.Domain.Stock
         }
 
         private Size wearSize;
-
         [Display(Name = "Размер")]
         public virtual Size WearSize {
             get => wearSize;

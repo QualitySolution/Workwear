@@ -21,56 +21,50 @@ namespace workwear.Domain.Stock
 		public virtual int Id { get; set; }
 
 		private Writeoff document;
-
 		[Display(Name = "Документ списания")]
 		[IgnoreHistoryTrace]
 		public virtual Writeoff Document {
-			get { return document; }
-			set { SetField(ref document, value); }
+			get => document;
+			set => SetField(ref document, value);
 		}
 
 		Nomenclature nomenclature;
-
 		[Display (Name = "Номеклатура")]
 		public virtual Nomenclature Nomenclature {
-			get { return nomenclature; }
+			get => nomenclature;
 			set { SetField (ref nomenclature, value, () => Nomenclature); }
 		}
 
 		int amount;
-
 		[Display (Name = "Количество")]
 		public virtual int Amount {
-			get { return amount; }
+			get => amount;
 			set { SetField (ref amount, value, () => Amount); }
 		}
 
 		private EmployeeIssueOperation employeeWriteoffOperation;
-
 		[Display(Name = "Операция списания с сотрудника")]
 		[IgnoreHistoryTrace]
 		public virtual EmployeeIssueOperation EmployeeWriteoffOperation
 		{
-			get { return employeeWriteoffOperation; }
-			set { SetField(ref employeeWriteoffOperation, value); }
+			get => employeeWriteoffOperation;
+			set => SetField(ref employeeWriteoffOperation, value);
 		}
 
 		private SubdivisionIssueOperation subdivisionWriteoffOperation;
-
 		[Display(Name = "Операция возврата от сотрудника")]
 		[IgnoreHistoryTrace]
 		public virtual SubdivisionIssueOperation SubdivisionWriteoffOperation {
-			get { return subdivisionWriteoffOperation; }
-			set { SetField(ref subdivisionWriteoffOperation, value); }
+			get => subdivisionWriteoffOperation;
+			set => SetField(ref subdivisionWriteoffOperation, value);
 		}
 
 		#region Списание со склада
 
 		private Warehouse warehouse;
-
 		[Display(Name = "Склад")]
 		public virtual Warehouse Warehouse {
-			get { return warehouse; }
+			get => warehouse;
 			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
 
@@ -78,43 +72,33 @@ namespace workwear.Domain.Stock
 		[Display(Name = "Операция на складе")]
 		[IgnoreHistoryTrace]
 		public virtual WarehouseOperation WarehouseOperation {
-			get { return warehouseOperation; }
-			set { SetField(ref warehouseOperation, value); }
+			get => warehouseOperation;
+			set => SetField(ref warehouseOperation, value);
 		}
 
 		#endregion
-
-		string size;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display(Name = "Размер")]
-		public virtual string Size {
-			get { return size; }
-			set { SetField(ref size, value, () => Size); }
-		}
-
-		string wearGrowth;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display(Name = "Рост одежды")]
-		public virtual string WearGrowth {
-			get { return wearGrowth; }
-			set { SetField(ref wearGrowth, value, () => WearGrowth); }
-		}
 
 		string aktNumber;
 		[Display(Name = "Номер акта")]
 		public virtual string AktNumber {
-			get { return aktNumber; }
-			set { SetField(ref aktNumber, value); }
+			get => aktNumber;
+			set => SetField(ref aktNumber, value);
 		}
+		private Size wearSize;
 		[Display(Name = "Размер")]
-		public virtual Size WearSize { get; set; }
+		public virtual Size WearSize {
+			get => wearSize;
+			set => SetField(ref wearSize, value);
+		}
+		private Size height;
 		[Display(Name = "Рост одежды")]
-		public virtual Size Height { get; set; }
+		public virtual Size Height {
+			get => height;
+			set => SetField(ref height, value);
+		}
 
 		#endregion
-
 		#region Вычисляемые
-
 		public virtual string LastOwnText{
 			get{
 				if (Warehouse != null)
@@ -128,13 +112,12 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public virtual string Title {
-			get { return String.Format ("Списание {0} в количестве {1} {2}",
+		public virtual string Title =>
+			String.Format ("Списание {0} в количестве {1} {2}",
 				Nomenclature.Name,
 				Amount,
 				Nomenclature.Type.Units.Name
-			);}
-		}
+			);
 
 		[Display(Name = "Процент износа")]
 		public virtual decimal WearPercent {
@@ -146,7 +129,9 @@ namespace workwear.Domain.Stock
 				if(SubdivisionWriteoffOperation != null)
 					return SubdivisionWriteoffOperation.WearPercent;
 
-				throw new InvalidOperationException("Строка документа списания находится в поломанном состоянии. Должна быть заполнена хотя бы одна операция.");
+				throw new InvalidOperationException(
+					"Строка документа списания находится в поломанном состоянии. " +
+					"Должна быть заполнена хотя бы одна операция.");
 			}
 			set {
 				if(WarehouseOperation != null)
@@ -171,32 +156,26 @@ namespace workwear.Domain.Stock
 				if(EmployeeWriteoffOperation == null && WarehouseOperation != null && SubdivisionWriteoffOperation == null)
 					return WriteoffFrom.Warehouse;
 
-				throw new InvalidOperationException("Строка документа списания находится в поломанном состоянии. Должна быть заполнена хотя бы одна операция.");
+				throw new InvalidOperationException(
+					"Строка документа списания находится в поломанном состоянии. " +
+					"Должна быть заполнена хотя бы одна операция.");
 			}
 		}
 
 		#endregion
-
 		#region Не сохраняемые в базу свойства
-
 		private string buhDocument;
-
 		[Display(Name = "Документ бухгалтерского учета")]
 		//В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
-		public virtual string BuhDocument
-		{
-			get { return buhDocument ?? EmployeeWriteoffOperation?.BuhDocument; }
-			set { SetField(ref buhDocument, value); }
+		public virtual string BuhDocument {
+			get => buhDocument ?? EmployeeWriteoffOperation?.BuhDocument;
+			set => SetField(ref buhDocument, value);
 		}
 
 		#endregion
-
 		#region Конструкторы
-
 		protected WriteoffItem (){}
-
-		public WriteoffItem(Writeoff writeOff, EmployeeIssueOperation issueOperation, int amount)
-		{
+		public WriteoffItem(Writeoff writeOff, EmployeeIssueOperation issueOperation, int amount) {
 			document = writeOff;
 			employeeWriteoffOperation = new EmployeeIssueOperation {
 				Employee = issueOperation.Employee,
@@ -215,8 +194,7 @@ namespace workwear.Domain.Stock
 			this.amount = amount;
 		}
 
-		public WriteoffItem(Writeoff writeOff, SubdivisionIssueOperation issueOperation, int amount)
-		{
+		public WriteoffItem(Writeoff writeOff, SubdivisionIssueOperation issueOperation, int amount) {
 			document = writeOff;
 			subdivisionWriteoffOperation = new SubdivisionIssueOperation {
 				Subdivision = issueOperation.Subdivision,
@@ -233,9 +211,7 @@ namespace workwear.Domain.Stock
 			Height = issueOperation.Height;
 			this.amount = amount;
 		}
-
-		public WriteoffItem(Writeoff writeOff, StockPosition position, Warehouse warehouse, int amount)
-		{
+		public WriteoffItem(Writeoff writeOff, StockPosition position, Warehouse warehouse, int amount) {
 			document = writeOff;
 			this.amount = amount;
 			nomenclature = position.Nomenclature;
@@ -252,13 +228,9 @@ namespace workwear.Domain.Stock
 				ExpenseWarehouse = warehouse
 			};
 		}
-
 		#endregion
-
 		#region Методы
-
-		public virtual void UpdateOperations(IUnitOfWork uow)
-		{
+		public virtual void UpdateOperations(IUnitOfWork uow) {
 			switch(WriteoffFrom) {
 				case WriteoffFrom.Employye:
 					EmployeeWriteoffOperation.Update(uow, this);
@@ -273,12 +245,9 @@ namespace workwear.Domain.Stock
 					throw new NotImplementedException();
 			}
 		}
-
 		#endregion
 	}
-
-	public enum WriteoffFrom
-	{
+	public enum WriteoffFrom {
 		Employye,
 		Subdivision,
 		Warehouse

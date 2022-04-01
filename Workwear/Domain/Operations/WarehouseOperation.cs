@@ -43,20 +43,6 @@ namespace workwear.Domain.Operations
 			get => nomenclature;
 			set => SetField(ref nomenclature, value);
 		}
-		private string size;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display(Name ="Размер")]
-		public virtual string Size {
-			get => String.IsNullOrWhiteSpace(size) ? null : size;
-			set => SetField(ref size, value);
-		}
-		private string growth;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display(Name = "Рост")]
-		public virtual string Growth {
-			get => String.IsNullOrWhiteSpace(growth) ? null : growth;
-			set => SetField(ref growth, value);
-		}
 		private int amount;
 		[Display(Name = "Количество")]
 		[PropertyChangedAlso("Total")]
@@ -71,19 +57,27 @@ namespace workwear.Domain.Operations
 			set => SetField(ref wearPercent, value.Clamp(0m, 9.99m));
 		}
 		private decimal cost;
+
 		[Display(Name = "Цена")]
 		[PropertyChangedAlso("Total")]
 		public virtual decimal Cost {
 			get => cost;
 			set => SetField(ref cost, value);
 		}
-		[Display(Name ="Размер")]
-		public virtual Size WearSize { get; set; }
+		private Size wearSize;
+		[Display(Name = "Размер")]
+		public virtual Size WearSize {
+			get => wearSize;
+			set => SetField(ref wearSize, value);
+		}
+		private Size height;
 		[Display(Name = "Рост")]
-		public virtual Size Height { get; set; }
+		public virtual Size Height {
+			get => height;
+			set => SetField(ref height, value);
+		}
 
 		#region Расчетные
-
 		public virtual decimal Total => Cost * Amount;
 
 		public virtual string Title => ReceiptWarehouse != null && ExpenseWarehouse != null
@@ -93,11 +87,8 @@ namespace workwear.Domain.Operations
 				: ExpenseWarehouse != null 
 					? $"Списание {Amount} х {Nomenclature?.Name} из {ExpenseWarehouse.Name}"
 					: $"Перемещение {Amount} х {Nomenclature?.Name} из пустого в порожнее(оба склада не указаны)";
-
 		#endregion
-
 		#region Методы обновления операций
-
 		public virtual void Update(IUnitOfWork uow, ExpenseItem item)
 		{
 			//Внимание здесь сравниваются даты без времени.

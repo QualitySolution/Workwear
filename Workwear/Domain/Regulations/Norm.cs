@@ -21,9 +21,7 @@ namespace workwear.Domain.Regulations
 	public class Norm : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
-
 		#region Свойства
-
 		public virtual int Id { get; set; }
 
 		private RegulationDoc document;
@@ -122,9 +120,7 @@ namespace workwear.Domain.Regulations
 		}
 
 		#endregion
-
 		#region Генерируемые
-
 		public virtual string ProfessionsText {
 			get{ return String.Join ("; ", Posts.Select (p => p.Name));
 			}
@@ -141,12 +137,9 @@ namespace workwear.Domain.Regulations
 
 		# endregion
 
-		public Norm ()
-		{
-		}
+		public Norm () { }
 
 		#region IValidatableObject implementation
-
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
 		{
 			if (Items.Count == 0)
@@ -165,8 +158,6 @@ namespace workwear.Domain.Regulations
 		}
 
 		#endregion
-
-
 		public virtual void AddPost(Post prof)
 		{
 			if(Posts.Any (p => DomainHelper.EqualDomainObjects (p, prof)))

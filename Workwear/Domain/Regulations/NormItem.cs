@@ -162,13 +162,12 @@ namespace workwear.Domain.Regulations
 		}
 
 		public virtual string Title{
-			get{ return String.Format ("{0} в количестве {1} на {2}", ProtectionTools?.Name, ProtectionTools?.Type?.Units?.MakeAmountShortStr (Amount), LifeText);
+			get{ return String.Format ("{0} в количестве {1} на {2}", 
+				ProtectionTools?.Name, ProtectionTools?.Type?.Units?.MakeAmountShortStr (Amount), LifeText);
 			}
 		}
 
-		public NormItem ()
-		{
-		}
+		public NormItem () { }
 
 		/// <summary>
 		/// Возвращает копию текущего объекта без привязки к норме

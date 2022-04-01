@@ -30,8 +30,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Время операции")]
 		public virtual DateTime OperationTime
 		{
-			get { return operationTime; }
-			set { SetField(ref operationTime, value); }
+			get => operationTime;
+			set => SetField(ref operationTime, value);
 		}
 
 		private Subdivision subdivision;
@@ -39,15 +39,15 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Подразделение")]
 		public virtual Subdivision Subdivision
 		{
-			get { return subdivision; }
-			set { SetField(ref subdivision, value); }
+			get => subdivision;
+			set => SetField(ref subdivision, value);
 		}
 
 		SubdivisionPlace subdivisionPlace;
 
 		[Display(Name = "Размещение в подразделении")]
 		public virtual SubdivisionPlace SubdivisionPlace {
-			get { return subdivisionPlace; }
+			get => subdivisionPlace;
 			set { SetField(ref subdivisionPlace, value, () => SubdivisionPlace); }
 		}
 
@@ -56,32 +56,22 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Номенклатура")]
 		public virtual Nomenclature Nomenclature
 		{
-			get { return nomenclature; }
-			set { SetField(ref nomenclature, value); }
+			get => nomenclature;
+			set => SetField(ref nomenclature, value);
+		}
+		private Size wearSize;
+		[Display(Name = "Размер")]
+		public virtual Size WearSize {
+			get => wearSize;
+			set => SetField(ref wearSize, value);
+		}
+		private Size height;
+		[Display(Name = "Рост одежды")]
+		public virtual Size Height {
+			get => height;
+			set => SetField(ref height, value);
 		}
 
-		string size;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")] 
-		[Display(Name = "Размер")]
-		public virtual string Size {
-			get { return size; }
-			set { SetField(ref size, value, () => Size); }
-		}
-
-		string wearGrowth;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")] 
-		[Display(Name = "Рост одежды")]
-		public virtual string WearGrowth {
-			get { return wearGrowth; }
-			set { SetField(ref wearGrowth, value, () => WearGrowth); }
-		}
-		
-		
-		[Display(Name = "Размер")]
-		public virtual Size WearSize { get; set; }
-		[Display(Name = "Рост одежды")]
-		public virtual Size Height { get; set; }
-		
 		private decimal wearPercent;
 
 		/// <summary>
@@ -94,8 +84,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Процент износа")]
 		public virtual decimal WearPercent
 		{
-			get { return wearPercent; }
-			set { SetField(ref wearPercent, value.Clamp(0m, 9.99m)); }
+			get => wearPercent;
+			set => SetField(ref wearPercent, value.Clamp(0m, 9.99m));
 		}
 
 		private int issued;
@@ -103,8 +93,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Выдано")]
 		public virtual int Issued
 		{
-			get { return issued; }
-			set { SetField(ref issued, value); }
+			get => issued;
+			set => SetField(ref issued, value);
 		}
 
 		private int returned;
@@ -112,8 +102,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Возвращено")]
 		public virtual int Returned
 		{
-			get { return returned; }
-			set { SetField(ref returned, value); }
+			get => returned;
+			set => SetField(ref returned, value);
 		}
 
 		private bool useAutoWriteoff = true;
@@ -121,7 +111,7 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Использовать автосписание")]
 		public virtual bool UseAutoWriteoff
 		{
-			get { return useAutoWriteoff; }
+			get => useAutoWriteoff;
 			set { 
 				if(SetField(ref useAutoWriteoff, value)) {
 					if(value)
@@ -136,8 +126,8 @@ namespace workwear.Domain.Operations
 
 		[Display(Name = "Начало использования")]
 		public virtual DateTime? StartOfUse {
-			get { return startOfUse; }
-			set { SetField(ref startOfUse, value); }
+			get => startOfUse;
+			set => SetField(ref startOfUse, value);
 		}
 
 		private DateTime? expiryOn;
@@ -145,8 +135,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Износ по норме")]
 		public virtual DateTime? ExpiryOn
 		{
-			get { return expiryOn; }
-			set { SetField(ref expiryOn, value); }
+			get => expiryOn;
+			set => SetField(ref expiryOn, value);
 		}
 
 		private DateTime? autoWriteoffDate;
@@ -154,8 +144,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Дата автосписания")]
 		public virtual DateTime? AutoWriteoffDate
 		{
-			get { return autoWriteoffDate; }
-			set { SetField(ref autoWriteoffDate, value); }
+			get => autoWriteoffDate;
+			set => SetField(ref autoWriteoffDate, value);
 		}
 
 		private SubdivisionIssueOperation issuedOperation;
@@ -163,11 +153,12 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Операция выдачи")]
 		public virtual SubdivisionIssueOperation IssuedOperation
 		{
-			get { return issuedOperation; }
-			set { SetField(ref issuedOperation, value); }
+			get => issuedOperation;
+			set => SetField(ref issuedOperation, value);
 		}
 
 		private WarehouseOperation warehouseOperation;
+
 		[Display(Name = "Сопутствующая складская операция")]
 		public virtual WarehouseOperation WarehouseOperation {
 			get => warehouseOperation;

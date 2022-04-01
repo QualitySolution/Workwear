@@ -33,8 +33,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Время операции")]
 		public virtual DateTime OperationTime
 		{
-			get { return operationTime; }
-			set { SetField(ref operationTime, value); }
+			get => operationTime;
+			set => SetField(ref operationTime, value);
 		}
 
 		private EmployeeCard employee;
@@ -42,8 +42,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Сотрудник")]
 		public virtual EmployeeCard Employee
 		{
-			get { return employee; }
-			set { SetField(ref employee, value); }
+			get => employee;
+			set => SetField(ref employee, value);
 		}
 
 		private ProtectionTools protectionTools;
@@ -58,30 +58,22 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Номенклатура")]
 		public virtual Nomenclature Nomenclature
 		{
-			get { return nomenclature; }
-			set { SetField(ref nomenclature, value); }
+			get => nomenclature;
+			set => SetField(ref nomenclature, value);
+		}
+		private Size wearSize;
+		[Display(Name = "Размер")]
+		public virtual Size WearSize {
+			get => wearSize;
+			set => SetField(ref wearSize, value);
+		}
+		private Size height;
+		[Display(Name = "Рост одежды")]
+		public virtual Size Height {
+			get => height;
+			set => SetField(ref height, value);
 		}
 
-		string size;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")] 
-		[Display(Name = "Размер")]
-		public virtual string Size {
-			get { return String.IsNullOrWhiteSpace(size) ? null : size; }
-			set { SetField(ref size, value, () => Size); }
-		}
-
-		string wearGrowth;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")] 
-		[Display(Name = "Рост одежды")]
-		public virtual string WearGrowth {
-			get { return String.IsNullOrWhiteSpace(wearGrowth) ? null : wearGrowth; }
-			set { SetField(ref wearGrowth, value, () => WearGrowth); }
-		}
-		[Display(Name = "Размер")]
-		public virtual Size WearSize { get; set; }
-		[Display(Name = "Рост одежды")]
-		public virtual Size Height { get; set; }
-		
 		private decimal wearPercent;
 		/// <summary>
 		/// Процент износа не может быть меньше нуля.
@@ -93,8 +85,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Процент износа")]
 		public virtual decimal WearPercent
 		{
-			get { return wearPercent; }
-			set { SetField(ref wearPercent, value.Clamp(0m, 9.99m)); }
+			get => wearPercent;
+			set => SetField(ref wearPercent, value.Clamp(0m, 9.99m));
 		}
 
 		private int issued;
@@ -102,8 +94,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Выдано")]
 		public virtual int Issued
 		{
-			get { return issued; }
-			set { SetField(ref issued, value); }
+			get => issued;
+			set => SetField(ref issued, value);
 		}
 
 		private int returned;
@@ -111,8 +103,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Возвращено")]
 		public virtual int Returned
 		{
-			get { return returned; }
-			set { SetField(ref returned, value); }
+			get => returned;
+			set => SetField(ref returned, value);
 		}
 
 		private bool useAutoWriteoff = true;
@@ -120,7 +112,7 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Использовать автосписание")]
 		public virtual bool UseAutoWriteoff
 		{
-			get { return useAutoWriteoff; }
+			get => useAutoWriteoff;
 			set { 
 				if(SetField(ref useAutoWriteoff, value)) {
 					if(value)
@@ -135,8 +127,8 @@ namespace workwear.Domain.Operations
 
 		[Display(Name = "Начало использования")]
 		public virtual DateTime? StartOfUse {
-			get { return startOfUse; }
-			set { SetField(ref startOfUse, value); }
+			get => startOfUse;
+			set => SetField(ref startOfUse, value);
 		}
 
 		private DateTime? expiryByNorm;
@@ -144,8 +136,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Износ по норме")]
 		public virtual DateTime? ExpiryByNorm
 		{
-			get { return expiryByNorm; }
-			set { SetField(ref expiryByNorm, value); }
+			get => expiryByNorm;
+			set => SetField(ref expiryByNorm, value);
 		}
 
 		private DateTime? autoWriteoffDate;
@@ -153,8 +145,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Дата автосписания")]
 		public virtual DateTime? AutoWriteoffDate
 		{
-			get { return autoWriteoffDate; }
-			set { SetField(ref autoWriteoffDate, value); }
+			get => autoWriteoffDate;
+			set => SetField(ref autoWriteoffDate, value);
 		}
 
 		private EmployeeIssueOperation issuedOperation;
@@ -162,8 +154,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Операция выдачи")]
 		public virtual EmployeeIssueOperation IssuedOperation
 		{
-			get { return issuedOperation; }
-			set { SetField(ref issuedOperation, value); }
+			get => issuedOperation;
+			set => SetField(ref issuedOperation, value);
 		}
 
 		private WarehouseOperation warehouseOperation;
@@ -178,8 +170,8 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Строка нормы")]
 		public virtual NormItem NormItem
 		{
-			get { return normItem; }
-			set { SetField(ref normItem, value); }
+			get => normItem;
+			set => SetField(ref normItem, value);
 		}
 
 		private string buhDocument;
@@ -187,16 +179,16 @@ namespace workwear.Domain.Operations
 		[Display(Name = "Документ бухгалтерского учета")]
 		public virtual string BuhDocument
 		{
-			get { return buhDocument; }
-			set { SetField(ref buhDocument, value); }
+			get => buhDocument;
+			set => SetField(ref buhDocument, value);
 		}
 
 		private EmployeeIssueOperation employeeOperationIssueOnWriteOff;
 
 		[Display(Name = "Операция списания при выдачи по списанию")]
 		public virtual EmployeeIssueOperation EmployeeOperationIssueOnWriteOff {
-			get { return employeeOperationIssueOnWriteOff; }
-			set { SetField(ref employeeOperationIssueOnWriteOff, value); }
+			get => employeeOperationIssueOnWriteOff;
+			set => SetField(ref employeeOperationIssueOnWriteOff, value);
 		}
 
 		private string signCardKey;
@@ -214,6 +206,7 @@ namespace workwear.Domain.Operations
 		}
 
 		private bool overrideBefore;
+
 		[Display(Name = "Сбрасывает предыдущие движения")]
 		public virtual bool OverrideBefore {
 			get => overrideBefore;
@@ -315,10 +308,14 @@ namespace workwear.Domain.Operations
 			}
 
 			if (NormItem == null)
-				NormItem = Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.MatchedNomenclatures.Contains(Nomenclature))?.ActiveNormItem;
+				NormItem = Employee.WorkwearItems
+					.FirstOrDefault(x => x.ProtectionTools.MatchedNomenclatures
+						.Contains(Nomenclature))?.ActiveNormItem;
 
 			if(NormItem == null) {
-				logger.Warn($"В операции выдачи {Nomenclature.Name} не указана ссылка на норму, перерасчет сроков выдачи невозможен.");
+				logger.Warn(
+					$"В операции выдачи {Nomenclature.Name} " +
+					$"не указана ссылка на норму, перерасчет сроков выдачи невозможен.");
 				return;
 			}
 
@@ -331,7 +328,8 @@ namespace workwear.Domain.Operations
 			}
 
 			var anotherRows =
-				item.ExpenseDoc.Items.Where(x => x.EmployeeIssueOperation != null && DomainHelper.EqualDomainObjects(x.ProtectionTools, ProtectionTools))
+				item.ExpenseDoc.Items
+					.Where(x => x.EmployeeIssueOperation != null && DomainHelper.EqualDomainObjects(x.ProtectionTools, ProtectionTools))
 					.Select(x => x.EmployeeIssueOperation).ToArray();
 			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools, anotherRows);
 			RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
@@ -371,7 +369,9 @@ namespace workwear.Domain.Operations
 		public virtual void RecalculateDatesOfIssueOperation(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser)
 		{
 			if(ProtectionTools == null) {
-				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} не указана 'Номеклатура нормы' поэтому прерасчет даты выдачи и использования не возможен.");
+				logger.Error(
+					$"Для операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} не указана " +
+					$"'Номеклатура нормы' поэтому прерасчет даты выдачи и использования не возможен.");
 				return;
 			}
 
@@ -382,7 +382,9 @@ namespace workwear.Domain.Operations
 			}
 
 			if (NormItem == null){
-				logger.Error($"Для операциия id:{Id} выдачи {Nomenclature?.Name ?? ProtectionTools?.Name} от {OperationTime} не установлена норма поэтому прерасчет даты выдачи и использования не возможен.");
+				logger.Error(
+					$"Для операциия id:{Id} выдачи {Nomenclature?.Name ?? ProtectionTools?.Name} " +
+					$"от {OperationTime} не установлена норма поэтому прерасчет даты выдачи и использования не возможен.");
 				return;
 			}
 			StartOfUse = operationTime;
@@ -400,7 +402,10 @@ namespace workwear.Domain.Operations
 				{
 					switch(baseParameters.ShiftExpluatacion) {
 						case AnswerOptions.Ask:
-							if(askUser.Question($"На {operationTime:d} за {Employee.ShortName} уже числится {amountAtEndDay} x {ProtectionTools.Name}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. Передвинуть начало экспуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?"))
+							if(askUser.Question(
+								$"На {operationTime:d} за {Employee.ShortName} уже числится {amountAtEndDay} " +
+								$"x {ProtectionTools.Name}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. " +
+								$"Передвинуть начало экспуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?"))
 								startOfUse = firstLessNorm.StartDate;
 							break;
 						case AnswerOptions.Yes:
@@ -421,7 +426,10 @@ namespace workwear.Domain.Operations
 			{
 				switch(baseParameters.ExtendPeriod) {
 					case AnswerOptions.Ask:
-						if(askUser.Question($"Сотруднику {Employee.ShortName} за раз выдается {Issued} x {ProtectionTools.Name} это больше чем положено по норме {amountByNorm}. Увеличить период эксплуатации выданного пропорционально количеству?")) {
+						if(askUser.Question(
+							$"Сотруднику {Employee.ShortName} за раз выдается {Issued} x {ProtectionTools.Name} " +
+							$"это больше чем положено по норме {amountByNorm}. " +
+							$"Увеличить период эксплуатации выданного пропорционально количеству?")) {
 							ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
 						}
 						break;
@@ -437,7 +445,9 @@ namespace workwear.Domain.Operations
 
 			//Обрабатываем отпуска
 			if(Employee.Vacations.Any(v => v.BeginDate <= ExpiryByNorm && v.EndDate >= StartOfUse && v.VacationType.ExcludeFromWearing)) {
-				var ranges = Employee.Vacations.Where(v => v.VacationType.ExcludeFromWearing).Select(v => new DateRange(v.BeginDate, v.EndDate));
+				var ranges = Employee.Vacations
+					.Where(v => v.VacationType.ExcludeFromWearing)
+					.Select(v => new DateRange(v.BeginDate, v.EndDate));
 				var wearTime = new DateRange(StartOfUse.Value, DateTime.MaxValue);
 				wearTime.ExcludedRanges.AddRange(ranges);
 				var endWearDate = wearTime.FillIntervals((ExpiryByNorm - StartOfUse.Value).Value.Days);
@@ -488,7 +498,6 @@ namespace workwear.Domain.Operations
 			ExpiryByNorm = null;
 			AutoWriteoffDate = null;
 		}
-
 		#endregion
 	}
 }

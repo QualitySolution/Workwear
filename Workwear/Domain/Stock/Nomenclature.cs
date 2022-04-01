@@ -49,13 +49,6 @@ namespace workwear.Domain.Stock
 			get => sex;
 			set => SetField (ref sex, value);
 		}
-		private string sizeStd;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display (Name = "Стандарт размера")]
-		public virtual string SizeStd {
-			get => sizeStd;
-			set => SetField (ref sizeStd, value);
-		}
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {

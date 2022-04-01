@@ -18,7 +18,6 @@ namespace workwear.Domain.Regulations
 		}
 
 		#region Свойства
-
 		public virtual int Id { get; set; }
 
 		string name;
