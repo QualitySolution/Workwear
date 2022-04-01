@@ -23,7 +23,6 @@ namespace workwear.Domain.Stock
 	public class CollectiveExpenseItem : PropertyChangedBase, IDomainObject
 	{
 		#region Сохраняемые свойства
-
 		public virtual int Id { get; set; }
 
 		private CollectiveExpense document;
@@ -122,6 +121,22 @@ namespace workwear.Domain.Stock
 		}
 
 		private StockBalanceDTO stockBalanceSetter;
+
+		public virtual StockBalanceDTO StockBalanceSetter
+		{
+			get => stockBalanceSetter ??
+			       new StockBalanceDTO
+				       {Nomenclature = Nomenclature, WearPercent = WearPercent, WearSize = WearSize, Height = Height};
+			set
+			{
+				stockBalanceSetter = value;
+				Nomenclature = value.Nomenclature;
+				WearSize = value.WearSize;
+				Height = value.Height;
+				WearPercent = value.WearPercent;
+			}
+		}
+
 		#endregion
 		#region Расчетные свойства
 		public virtual string Title =>
