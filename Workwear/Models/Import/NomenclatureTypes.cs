@@ -22,7 +22,6 @@ namespace workwear.Models.Import
 		}
 
 		#region Создание типов
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
 		private void makeTypes(IUnitOfWork uow) {
 			var units = uow.GetAll<MeasurementUnits>();
 			var sht = units.First(x => x.OKEI == "796");
