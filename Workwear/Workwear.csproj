@@ -134,6 +134,8 @@
     <Compile Include="HibernateMapping\Stock\CompletionResultItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\CompletionSourceItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\CompletionMap.cs" />
+    <Compile Include="Journal\ViewModels\Stock\SizeJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Stock\SizeTypeJournalViewModel.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
     <Compile Include="Program.cs" />
@@ -488,6 +490,12 @@
     <Compile Include="ViewModels\Stock\CompletionViewModel.cs" />
     <Compile Include="Views\Stock\CompletionView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.CompletionView.cs" />
+    <Compile Include="Views\Stock\SizeView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.SizeView.cs" />
+    <Compile Include="ViewModels\Stock\SizeViewModel.cs" />
+    <Compile Include="Views\Stock\SizeTypeView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.SizeTypeView.cs" />
+    <Compile Include="ViewModels\Stock\SizeTypeViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
