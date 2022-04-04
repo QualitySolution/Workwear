@@ -177,7 +177,6 @@ namespace workwear
 
 			#region Размеры
 			builder.RegisterType<SizeService>().AsSelf();
-			builder.RegisterType<BaseSizeSettings>().As<ISizeSettings>();
 			#endregion
 
 			#region Старые диалоги

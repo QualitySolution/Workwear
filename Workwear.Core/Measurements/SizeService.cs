@@ -12,9 +12,7 @@ namespace Workwear.Measurements
 	/// </summary>
 	public class SizeService
 	{
-		public SizeService(ISizeSettings settings)
-		{
-		}
+		public SizeService() { }
 		#region Новые размеры
 		public static IList<Size> GetSize(IUnitOfWork UoW, SizeType sizeType = null) {
 			var sizes = UoW.Session.QueryOver<Size>();

@@ -12,7 +12,6 @@ using QS.DomainModel.UoW;
 using QS.Services;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
-using workwear.Measurements;
 using workwear.Models.Company;
 using workwear.ViewModels.Import;
 using Workwear.Domain.Company;
@@ -24,7 +23,6 @@ namespace workwear.Models.Import
 	public class DataParserEmployee : DataParserBase<DataTypeEmployee>
 	{
 		private readonly PersonNames personNames;
-		private readonly SizeService sizeService;
 		private readonly IUserService userService;
 
 		public DataParserEmployee(
@@ -102,7 +100,6 @@ namespace workwear.Models.Import
 				"Одежда"
 				);
 			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
-			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.userService = userService;
 		}
 

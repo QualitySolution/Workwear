@@ -2,13 +2,10 @@
 using System.Linq;
 using Gtk;
 using QS.Views.Dialog;
-using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
-using workwear.Measurements;
 using workwear.Tools.IdentityCards;
 using workwear.ViewModels.Stock;
 using Workwear.Measurements;
-using workwear.ViewModels.Company;
 
 namespace workwear.Views.Stock
 {

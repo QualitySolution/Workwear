@@ -10,8 +10,6 @@ using QS.Utilities.Dates;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.Measurements;
-using Workwear.Measurements;
 using workwear.Repository.Stock;
 using workwear.Tools;
 using workwear.Domain.Operations;

@@ -5,7 +5,6 @@ using Gtk;
 using QS.Dialog.GtkUI;
 using QSWidgetLib;
 using workwear.Domain.Stock;
-using workwear.Measurements;
 using workwear.ViewModels.Stock;
 using Workwear.Measurements;
 

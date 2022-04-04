@@ -3,7 +3,6 @@ using System.Linq;
 using Gtk;
 using QSWidgetLib;
 using workwear.Domain.Stock;
-using workwear.Measurements;
 using Workwear.Measurements;
 using workwear.ViewModels.Stock;
 

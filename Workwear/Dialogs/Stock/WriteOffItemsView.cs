@@ -10,7 +10,6 @@ using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
-using workwear.Measurements;
 using workwear.Representations.Organization;
 using workwear.ViewModels.Stock;
 using Workwear.Measurements;

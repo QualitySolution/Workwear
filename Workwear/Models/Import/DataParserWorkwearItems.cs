@@ -9,7 +9,6 @@ using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
-using workwear.Measurements;
 using workwear.Repository.Company;
 using workwear.Repository.Regulations;
 using workwear.Repository.Stock;
@@ -25,7 +24,6 @@ namespace workwear.Models.Import
 		private readonly NomenclatureRepository nomenclatureRepository;
 		private readonly PostRepository postRepository;
 		private readonly NormRepository normRepository;
-		private readonly SizeService sizeService;
 
 		public DataParserWorkwearItems(
 			NomenclatureRepository nomenclatureRepository,
@@ -69,7 +67,6 @@ namespace workwear.Models.Import
 			this.nomenclatureRepository = nomenclatureRepository ?? throw new ArgumentNullException(nameof(nomenclatureRepository));
 			this.postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
-			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 		}
 
 		private void AddColumnName(DataTypeWorkwearItems type, params string[] names)

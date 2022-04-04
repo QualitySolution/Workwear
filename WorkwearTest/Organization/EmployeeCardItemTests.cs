@@ -8,8 +8,6 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.Measurements;
-using Workwear.Measurements;
 using Workwear.Domain.Company;
 using workwear.Domain.Sizes;
 using workwear.Tools;

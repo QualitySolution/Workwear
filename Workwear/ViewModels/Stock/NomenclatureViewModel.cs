@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using Autofac;
-using Gamma.Utilities;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -13,8 +11,6 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
-using workwear.Measurements;
-using Workwear.Measurements;
 using workwear.Tools;
 
 namespace workwear.ViewModels.Stock
