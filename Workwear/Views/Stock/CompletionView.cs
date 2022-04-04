@@ -5,7 +5,6 @@ using workwear.ViewModels.Stock;
 using Gamma.GtkWidgets;
 using Gtk;
 using QSOrmProject;
-using workwear.Measurements;
 using Workwear.Measurements;
 using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 

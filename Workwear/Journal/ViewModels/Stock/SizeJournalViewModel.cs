@@ -23,7 +23,8 @@ namespace workwear.Journal.ViewModels.Stock
             ICurrentPermissionService currentPermissionService = null
             ) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
         {
-        }
+			UseSlider = true;
+		}
 
         protected override IQueryOver<Size> ItemsQuery(IUnitOfWork uow)
         {
