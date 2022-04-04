@@ -22,7 +22,7 @@ namespace workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yLabel labelId;
 
-		private global::QS.Widgets.GtkUI.SpecialListComboBox specllistcomCategory;
+		private global::Gamma.Widgets.yEnumComboBox specllistcomCategory;
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonUseInEmployee;
 
@@ -30,7 +30,7 @@ namespace workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yLabel ylabel3;
 
-		private global::Gamma.GtkWidgets.ySpinButton yspinbutton1;
+		private global::Gamma.GtkWidgets.ySpinButton yspinPosition;
 
 		private global::Gamma.GtkWidgets.yVBox yvbox1;
 
@@ -139,12 +139,12 @@ namespace workwear.Views.Stock
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
 			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
-			this.specllistcomCategory = new global::QS.Widgets.GtkUI.SpecialListComboBox();
+			this.specllistcomCategory = new global::Gamma.Widgets.yEnumComboBox();
 			this.specllistcomCategory.Name = "specllistcomCategory";
-			this.specllistcomCategory.AddIfNotExist = false;
-			this.specllistcomCategory.DefaultFirst = false;
 			this.specllistcomCategory.ShowSpecialStateAll = false;
 			this.specllistcomCategory.ShowSpecialStateNot = false;
+			this.specllistcomCategory.UseShortTitle = false;
+			this.specllistcomCategory.DefaultFirst = false;
 			this.table2.Add(this.specllistcomCategory);
 			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table2[this.specllistcomCategory]));
 			w10.TopAttach = ((uint)(2));
@@ -190,16 +190,16 @@ namespace workwear.Views.Stock
 			w13.XOptions = ((global::Gtk.AttachOptions)(4));
 			w13.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
-			this.yspinbutton1 = new global::Gamma.GtkWidgets.ySpinButton(0D, 100D, 1D);
-			this.yspinbutton1.CanFocus = true;
-			this.yspinbutton1.Name = "yspinbutton1";
-			this.yspinbutton1.Adjustment.PageIncrement = 10D;
-			this.yspinbutton1.ClimbRate = 1D;
-			this.yspinbutton1.Numeric = true;
-			this.yspinbutton1.ValueAsDecimal = 0m;
-			this.yspinbutton1.ValueAsInt = 0;
-			this.table2.Add(this.yspinbutton1);
-			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table2[this.yspinbutton1]));
+			this.yspinPosition = new global::Gamma.GtkWidgets.ySpinButton(0D, 100D, 1D);
+			this.yspinPosition.CanFocus = true;
+			this.yspinPosition.Name = "yspinPosition";
+			this.yspinPosition.Adjustment.PageIncrement = 10D;
+			this.yspinPosition.ClimbRate = 1D;
+			this.yspinPosition.Numeric = true;
+			this.yspinPosition.ValueAsDecimal = 0m;
+			this.yspinPosition.ValueAsInt = 0;
+			this.table2.Add(this.yspinPosition);
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table2[this.yspinPosition]));
 			w14.TopAttach = ((uint)(3));
 			w14.BottomAttach = ((uint)(4));
 			w14.LeftAttach = ((uint)(1));

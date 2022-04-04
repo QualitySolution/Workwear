@@ -142,7 +142,7 @@ namespace workwear.Views.Stock
 			this.specllistcomSizeType.AddIfNotExist = false;
 			this.specllistcomSizeType.DefaultFirst = false;
 			this.specllistcomSizeType.ShowSpecialStateAll = false;
-			this.specllistcomSizeType.ShowSpecialStateNot = false;
+			this.specllistcomSizeType.ShowSpecialStateNot = true;
 			this.table2.Add(this.specllistcomSizeType);
 			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table2[this.specllistcomSizeType]));
 			w10.TopAttach = ((uint)(2));

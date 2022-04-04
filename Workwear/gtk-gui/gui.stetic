@@ -17679,7 +17679,7 @@
                 <property name="AddIfNotExist">False</property>
                 <property name="DefaultFirst">False</property>
                 <property name="ShowSpecialStateAll">False</property>
-                <property name="ShowSpecialStateNot">False</property>
+                <property name="ShowSpecialStateNot">True</property>
               </widget>
               <packing>
                 <property name="TopAttach">2</property>
@@ -17989,14 +17989,14 @@
               </packing>
             </child>
             <child>
-              <widget class="QS.Widgets.GtkUI.SpecialListComboBox" id="specllistcomCategory">
+              <widget class="Gamma.Widgets.yEnumComboBox" id="specllistcomCategory">
                 <property name="MemberName" />
                 <property name="IsTextCombo">False</property>
                 <property name="Items" translatable="yes" />
-                <property name="AddIfNotExist">False</property>
-                <property name="DefaultFirst">False</property>
                 <property name="ShowSpecialStateAll">False</property>
                 <property name="ShowSpecialStateNot">False</property>
+                <property name="UseShortTitle">False</property>
+                <property name="DefaultFirst">False</property>
               </widget>
               <packing>
                 <property name="TopAttach">2</property>
@@ -18079,7 +18079,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.ySpinButton" id="yspinbutton1">
+              <widget class="Gamma.GtkWidgets.ySpinButton" id="yspinPosition">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Upper">100</property>
