@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Utilities", "..\QSProjec
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gamma", "Gamma", "{845E119F-7C74-4386-8E4D-FC0014D86D34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamma.Utilities", "..\GammaBinding\Gamma.Utilities\Gamma.Utilities.csproj", "{1BF2A638-420D-456C-96A7-36873A0FB894}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamma.Utilities", "..\QSProjects\Binding\Gamma.Utilities\Gamma.Utilities.csproj", "{1BF2A638-420D-456C-96A7-36873A0FB894}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
