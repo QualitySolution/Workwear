@@ -9,6 +9,7 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using Remotion.Linq.Parsing.Structure.IntermediateModel;
 using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
@@ -45,13 +46,16 @@ namespace workwear.Journal.ViewModels.Stock
             return query
                 .Where(GetSearchCriterion(
                     () => sizeAlias.Id,
-                    () => sizeAlias.Name
+                    () => sizeAlias.Name,
+                    () => sizeTypeAlias.Name
                 ))
                 .SelectList(list => list
                     .Select(x => x.Id).WithAlias(() => resultAlias.Id)
                     .Select(x => x.Name).WithAlias(() => resultAlias.Name)
                     .Select(() => sizeTypeAlias.Name).WithAlias(() => resultAlias.SizeTypeName)
-                ).OrderBy(x => x.Name).Asc
+                )
+                .OrderBy(x => x.SizeType).Asc
+                .ThenBy(x => x.Name).Asc
                 .TransformUsing(Transformers.AliasToBean<SizeJournalNode>());
         }
     }

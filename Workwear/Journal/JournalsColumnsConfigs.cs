@@ -252,7 +252,7 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<SizeJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Значение").AddTextRenderer(node => node.Name).SearchHighlight()
-					.AddColumn("Тип размера").AddTextRenderer(node => node.SizeTypeName)
+					.AddColumn("Тип размера").AddTextRenderer(node => node.SizeTypeName).SearchHighlight()
 					.Finish()
 			);
 			
