@@ -36,7 +36,6 @@ namespace workwear.Domain.Company
 	public class EmployeeCard: BusinessObjectBase<EmployeeCard>, IDomainObject, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
-
 		#region Свойства
 		public virtual int Id { get; set; }
 
@@ -194,7 +193,6 @@ namespace workwear.Domain.Company
 		public virtual GenericObservableList<EmployeeSize> ObservableSizes
 			=> observableSizes ?? (observableSizes = new GenericObservableList<EmployeeSize>(Sizes));
 		#endregion
-
 		#region Norms
 		private IList<Norm> usedNorms = new List<Norm>();
 
@@ -210,7 +208,6 @@ namespace workwear.Domain.Company
 			=> observableUsedNorms ?? (observableUsedNorms = new GenericObservableList<Norm>(UsedNorms));
 
 		#endregion
-
 		#region Items
 		private IList<EmployeeCardItem> workwearItems = new List<EmployeeCardItem>();
 
@@ -515,7 +512,6 @@ namespace workwear.Domain.Company
 		}
 
 		#endregion
-
 		#region Функции работы с отпусками
 
 		public virtual void AddVacation(EmployeeVacation vacation)
@@ -525,7 +521,6 @@ namespace workwear.Domain.Company
 		}
 
 		#endregion
-
 		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow,
 			EmployeeIssueRepository employeeIssueRepository, BaseParameters baseParameters,
 			IInteractiveQuestion askUser, DateTime begin, DateTime end)
