@@ -1,3 +1,4 @@
+using Autofac;
 using Gamma.ColumnConfig;
 using NHibernate;
 using NHibernate.SqlCommand;
@@ -10,21 +11,25 @@ using QS.Project.Services;
 using QS.Services;
 using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock
 {
     public class SizeJournalViewModel: EntityJournalViewModelBase<Size, SizeViewModel, SizeJournalNode>
     {
+        public SizeFilterViewModel Filter { get;}
         public SizeJournalViewModel(
             IUnitOfWorkFactory unitOfWorkFactory, 
             IInteractiveService interactiveService, 
-            INavigationManager navigationManager, 
+            INavigationManager navigationManager,
+            ILifetimeScope autofacScope,
             IDeleteEntityService deleteEntityService = null, 
             ICurrentPermissionService currentPermissionService = null
             ) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
         {
 			UseSlider = true;
+            JournalFilter = Filter = autofacScope.Resolve<SizeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 		}
 
         protected override IQueryOver<Size> ItemsQuery(IUnitOfWork uow)
@@ -34,7 +39,8 @@ namespace workwear.Journal.ViewModels.Stock
             SizeType sizeTypeAlias = null;
             var query = uow.Session.QueryOver(() => sizeAlias)
                 .JoinAlias(() => sizeAlias.SizeType, () => sizeTypeAlias, JoinType.LeftOuterJoin);
-                
+            if (Filter.SizeType != null)
+                query.Where(x => x.SizeType.Id == Filter.SizeType.Id);
 
             return query
                 .Where(GetSearchCriterion(

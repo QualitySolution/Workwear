@@ -32,5 +32,9 @@ namespace workwear.Domain.Sizes
         public virtual GenericObservableList<Size> ObservableSuitableSizes => 
             observableSuitableSizes ?? (observableSuitableSizes = new GenericObservableList<Size>(SuitableSizes));
         #endregion
+
+        #region Расчётные
+        public virtual string Title => $"{SizeType.Name}: {Name}";
+        #endregion
     }
 }

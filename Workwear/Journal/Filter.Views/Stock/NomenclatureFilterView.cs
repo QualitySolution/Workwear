@@ -12,7 +12,9 @@ namespace workwear.Journal.Filter.Views.Stock
 			this.Build();
 
 			entityItemsType.ViewModel = viewModel.EntryItemsType;
-			yShowArchival.Binding.AddBinding(viewModel, vm => vm.ShowArchival, w => w.Active).InitializeFromSource();
+			yShowArchival.Binding
+				.AddBinding(viewModel, vm => vm.ShowArchival, w => w.Active)
+				.InitializeFromSource();
 		}
 	}
 }

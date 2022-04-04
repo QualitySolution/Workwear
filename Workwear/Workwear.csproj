@@ -496,6 +496,12 @@
     <Compile Include="Views\Stock\SizeTypeView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.SizeTypeView.cs" />
     <Compile Include="ViewModels\Stock\SizeTypeViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Stock\SizeFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.SizeFilterView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Stock\SizeFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Stock\SizeTypeFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.SizeTypeFilterView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Stock\SizeTypeFilterViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
