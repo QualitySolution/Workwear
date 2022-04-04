@@ -759,4 +759,12 @@ public partial class MainWindow : Gtk.Window
 	{
 		NavigationManager.OpenViewModel<HistoryViewModel>(null);
 	}
+
+	protected void OnActionSizeActivated(object sender, EventArgs e)
+	{
+	}
+
+	protected void OnActionSizeTypeActivated(object sender, EventArgs e)
+	{
+	}
 }

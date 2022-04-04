@@ -19,7 +19,6 @@
     <widget-library name="../../../QSProjects/QS.NewsFeed.Gtk/bin/Debug/QS.NewsFeed.Gtk.dll" />
     <widget-library name="../../../QSProjects/QS.Updater.Gtk/bin/Debug/QSUpdater.dll" />
     <widget-library name="../../../QSProjects/QS.Features.Gtk/bin/Debug/QS.Features.Gtk.dll" />
-    <widget-library name="../../Workwear.Core/bin/Debug/netstandard2.0/Workwear.Core.dll" />
     <widget-library name="../bin/Debug/workwear.exe" internal="true" />
   </import>
   <icon-factory>
@@ -5657,6 +5656,20 @@
         <property name="StockId">logs</property>
         <signal name="Activated" handler="OnShowHistoryLogActivated" />
       </action>
+      <action id="ActionSize">
+        <property name="Type">Action</property>
+        <property name="HideIfEmpty">False</property>
+        <property name="Label" translatable="yes">Размеры</property>
+        <property name="ShortLabel" translatable="yes">Размеры</property>
+        <signal name="Activated" handler="OnActionSizeActivated" />
+      </action>
+      <action id="ActionSizeType">
+        <property name="Type">Action</property>
+        <property name="HideIfEmpty">False</property>
+        <property name="Label" translatable="yes">Типы размеров</property>
+        <property name="ShortLabel" translatable="yes">Типы размеров</property>
+        <signal name="Activated" handler="OnActionSizeTypeActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -5724,6 +5737,8 @@
                 <node type="Separator" />
                 <node type="Menuitem" action="Action5" />
                 <node type="Menuitem" action="Action6" />
+                <node type="Menuitem" action="ActionSize" />
+                <node type="Menuitem" action="ActionSizeType" />
                 <node type="Menuitem" action="ActionWarehouse" />
                 <node type="Separator" />
                 <node type="Menuitem" action="Action7" />
