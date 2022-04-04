@@ -13,7 +13,9 @@ namespace workwear.Models.Import
 		private readonly DataParserEmployee dataParser;
 		readonly SettingsMatchEmployeesViewModel matchSettingsViewModel;
 
-		public ImportModelEmployee(DataParserEmployee dataParser, SettingsMatchEmployeesViewModel matchSettingsViewModel) : base(dataParser, typeof(CountersEmployee), matchSettingsViewModel)
+		public ImportModelEmployee(
+			DataParserEmployee dataParser, 
+			SettingsMatchEmployeesViewModel matchSettingsViewModel) : base(dataParser, typeof(CountersEmployee), matchSettingsViewModel)
 		{
 			this.matchSettingsViewModel = matchSettingsViewModel ?? throw new ArgumentNullException(nameof(matchSettingsViewModel));
 			this.dataParser = dataParser ?? throw new ArgumentNullException(nameof(dataParser));
@@ -22,11 +24,18 @@ namespace workwear.Models.Import
 		#region Параметры
 		public string ImportName => "Загрузка сотрудников";
 
-		public string DataColumnsRecommendations => "Установите номер строки с заголовком данных, таким образом чтобы название колонок было корректно. Если в таблице заголовки отсутствуют укажите 0.\nДалее для каждой значимой колонки проставьте тип данных которых находится в таблице.\nПри загрузки листа программа автоматически пытается найти заголовок таблицы и выбрать тип данных.\nОбязательными данными являются Фамилия и Имя или ФИО.";
+		public string DataColumnsRecommendations => "Установите номер строки с заголовком данных, таким образом " +
+		                                            "чтобы название колонок было корректно. Если в таблице заголовки " +
+		                                            "отсутствуют укажите 0.\nДалее для каждой значимой колонки " +
+		                                            "проставьте тип данных которых находится в таблице." +
+		                                            "\nПри загрузки листа программа автоматически пытается найти " +
+		                                            "заголовок таблицы и выбрать тип данных.\nОбязательными данными " +
+		                                            "являются Фамилия и Имя или ФИО.";
 		#endregion
 
 		public override bool CanMatch => Columns.Any(x => x.DataType == DataTypeEmployee.Fio)
-			|| (Columns.Any(x => x.DataType == DataTypeEmployee.LastName) && Columns.Any(x => x.DataType == DataTypeEmployee.FirstName));
+			|| Columns.Any(x => x.DataType == DataTypeEmployee.LastName) && 
+			Columns.Any(x => x.DataType == DataTypeEmployee.FirstName);
 
 		public bool CanSave { get; private set; }
 
@@ -53,7 +62,15 @@ namespace workwear.Models.Import
 				dataParser.MatchByName(uow, UsedRows, Columns, progress);
 
 			dataParser.FillExistEntities(uow, UsedRows, Columns, progress);
-			dataParser.FindChanges(uow, UsedRows, Columns.Where(x => x.DataType != DataTypeEmployee.Unknown).OrderBy(x => x.DataType).ToArray(), progress, matchSettingsViewModel);
+			dataParser.FindChanges(
+				uow, 
+				UsedRows, 
+				Columns
+					.Where(x => x.DataType != DataTypeEmployee.Unknown)
+					.OrderBy(x => x.DataType)
+					.ToArray(), 
+				progress, 
+				matchSettingsViewModel);
 			OnPropertyChanged(nameof(DisplayRows));
 			
 			RecalculateCounters();
