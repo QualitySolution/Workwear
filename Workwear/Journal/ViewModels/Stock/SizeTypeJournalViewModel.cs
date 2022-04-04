@@ -40,7 +40,9 @@ namespace workwear.Journal.ViewModels.Stock
                 .SelectList(list => list
                     .Select(x => x.Id).WithAlias(() => resultAlias.Id)
                     .Select(x => x.Name).WithAlias(() => resultAlias.Name)
-                ).OrderBy(x => x.Name).Asc
+                    .Select(x => x.Category).WithAlias(() => resultAlias.Category)
+                    .Select(x => x.Position).WithAlias(() => resultAlias.Position)
+                ).OrderBy(x => x.Position).Asc
                 .TransformUsing(Transformers.AliasToBean<SizeTypeJournalNode>());
         }
     }
@@ -51,5 +53,7 @@ namespace workwear.Journal.ViewModels.Stock
         public int Id { get; set; }
         [SearchHighlight]
         public string Name { get; set; }
+        public Category Category { get; set; }
+        public int Position { get; set; }
     }
 }

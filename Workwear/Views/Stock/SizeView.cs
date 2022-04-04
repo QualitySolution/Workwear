@@ -1,6 +1,7 @@
 ﻿using Gamma.Binding.Converters;
 using QS.Views.Dialog;
 using workwear.Domain.Sizes;
+using Workwear.Measurements;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock
@@ -22,6 +23,8 @@ namespace workwear.Views.Stock
 			labelId.Binding
 				.AddBinding(Entity, e => e.Id, w => w.Text, new IdToStringConverter())
 				.InitializeFromSource();
+			specllistcomSizeType.SetRenderTextFunc<SizeType>(x => x.Name);
+			specllistcomSizeType.ItemsList = SizeService.GetSizeType(ViewModel.UoW);
 			specllistcomSizeType.Binding
 				.AddBinding(Entity, e => e.SizeType, w => w.SelectedItem)
 				.InitializeFromSource();

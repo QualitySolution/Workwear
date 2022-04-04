@@ -249,16 +249,19 @@ namespace workwear.Journal
 			);
 			
 			TreeViewColumnsConfigFactory.Register<SizeJournalViewModel>(
-				(jvm) => FluentColumnsConfig<SizeJournalNode>.Create()
+				() => FluentColumnsConfig<SizeJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
-					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Значение").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Тип размера").AddTextRenderer(node => node.SizeTypeName)
 					.Finish()
 			);
 			
 			TreeViewColumnsConfigFactory.Register<SizeTypeJournalViewModel>(
-				(jvm) => FluentColumnsConfig<SizeTypeJournalNode>.Create()
+				() => FluentColumnsConfig<SizeTypeJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Категория").AddTextRenderer(node => node.Category.GetEnumTitle()).SearchHighlight()
+					.AddColumn("Позиция").AddNumericRenderer(node => node.Position)
 					.Finish()
 			);
 

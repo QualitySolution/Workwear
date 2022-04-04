@@ -1,5 +1,6 @@
 using Gamma.ColumnConfig;
 using NHibernate;
+using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -30,7 +31,10 @@ namespace workwear.Journal.ViewModels.Stock
         {
             SizeJournalNode resultAlias = null;
             Size sizeAlias = null;
-            var query = uow.Session.QueryOver(() => sizeAlias);
+            SizeType sizeTypeAlias = null;
+            var query = uow.Session.QueryOver(() => sizeAlias)
+                .JoinAlias(() => sizeAlias.SizeType, () => sizeTypeAlias, JoinType.LeftOuterJoin);
+                
 
             return query
                 .Where(GetSearchCriterion(
@@ -40,6 +44,7 @@ namespace workwear.Journal.ViewModels.Stock
                 .SelectList(list => list
                     .Select(x => x.Id).WithAlias(() => resultAlias.Id)
                     .Select(x => x.Name).WithAlias(() => resultAlias.Name)
+                    .Select(() => sizeTypeAlias.Name).WithAlias(() => resultAlias.SizeTypeName)
                 ).OrderBy(x => x.Name).Asc
                 .TransformUsing(Transformers.AliasToBean<SizeJournalNode>());
         }
@@ -51,5 +56,6 @@ namespace workwear.Journal.ViewModels.Stock
         public int Id { get; set; }
         [SearchHighlight]
         public string Name { get; set; }
+        public string SizeTypeName { get; set; }
     }
 }
