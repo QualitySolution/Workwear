@@ -23,7 +23,6 @@ namespace workwear
 			#region Связь
 			DeleteConfig.AddHibernateDeleteInfo<MessageTemplate>();
 			#endregion
-
 			#region Организация
 
 			DeleteConfig.AddHibernateDeleteInfo<Department>()
@@ -196,7 +195,6 @@ namespace workwear
 			DeleteConfig.AddHibernateDeleteInfo<CompletionResultItem>()
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 			#endregion
-
 			#region Statements
 
 			DeleteConfig.AddHibernateDeleteInfo<IssuanceSheet>()
@@ -205,7 +203,6 @@ namespace workwear
 			DeleteConfig.AddHibernateDeleteInfo<IssuanceSheetItem>();
 
 			#endregion
-
 			#region Операции
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeIssueOperation>()
@@ -239,7 +236,6 @@ namespace workwear
 				.AddDeleteDependence<CompletionSourceItem>(x => x.WarehouseOperation);
 
 			#endregion
-
 			#region Пользователь
 
 			DeleteConfig.AddHibernateDeleteInfo<UserBase>()
@@ -255,7 +251,6 @@ namespace workwear
 			DeleteConfig.AddHibernateDeleteInfo<UserSettings>();
 
 			#endregion
-
 			#region Размеры
 
 			DeleteConfig.AddHibernateDeleteInfo<Size>()
@@ -286,7 +281,6 @@ namespace workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeSize>();
 			#endregion
-
 			logger.Info ("Ок");
 		}
 	}

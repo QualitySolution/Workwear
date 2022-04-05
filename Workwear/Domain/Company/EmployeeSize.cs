@@ -16,8 +16,13 @@ namespace workwear.Domain.Company
         #region Свойства
         public virtual int Id { get; }
         public virtual EmployeeCard Employee { get; set; }
-        public virtual Size Size { get; set; }
-        
+
+        private Size size;
+        public virtual Size Size {
+            get => size;
+            set => SetField(ref size, value);
+        }
+
         private SizeType sizeType;
         public virtual SizeType SizeType {
             get => sizeType;

@@ -19,11 +19,10 @@ namespace workwear.HibernateMapping.Sizes
             Map(x => x.UseInNomenclature).Column("use_in_nomenclature");
             References(x => x.SizeType).Column("size_type_id");
 
-            HasManyToMany(x => x.SuitableSizes).Table("size_suitable")
+            HasManyToMany(x => x.SuitableSizes)
+                .Table("size_suitable")
                 .ParentKeyColumn("size_id")
-                .ChildKeyColumn("size_suitable_id")
-                .Cascade.AllDeleteOrphan()
-                .LazyLoad();
+                .ChildKeyColumn("size_suitable_id");
         }
     }
 }

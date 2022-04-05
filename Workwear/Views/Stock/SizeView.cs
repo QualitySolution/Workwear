@@ -1,4 +1,6 @@
-﻿using Gamma.Binding.Converters;
+﻿using System;
+using Gamma.Binding.Converters;
+using Gamma.GtkWidgets;
 using QS.Views.Dialog;
 using workwear.Domain.Sizes;
 using Workwear.Measurements;
@@ -17,6 +19,7 @@ namespace workwear.Views.Stock
 
 		private void ConfigureDlg()
 		{
+			CreateSuitableTable();
 			entityname.Binding
 				.AddBinding(Entity, e => e.Name, w => w.Text)
 				.InitializeFromSource();
@@ -34,6 +37,27 @@ namespace workwear.Views.Stock
 			ycheckbuttonUseInNomenclature.Binding
 				.AddBinding(Entity, e => e.UseInNomenclature, w => w.Active)
 				.InitializeFromSource();
+
+			ybuttonAddSuitable.Clicked += AddAnalog;
+			ybuttonRemoveSuitable.Clicked += RemoveAnalog;
+			ytreeviewSuitableSizes.Selection.Changed += SelectionOnChanged;
 		}
+
+		private void CreateSuitableTable() {
+			ytreeviewSuitableSizes.ColumnsConfig = ColumnsConfigFactory.Create<Size>()
+				.AddColumn("Название").AddTextRenderer(x => x.Title)
+				.Finish();
+			ytreeviewSuitableSizes.Binding
+				.AddSource(Entity)
+				.AddBinding(e => e.ObservableSuitableSizes, w => w.ItemsDataSource)
+				.InitializeFromSource();
+		}
+		private void AddAnalog(object sender, EventArgs eventArgs) => ViewModel.AddAnalog();
+		private void RemoveAnalog(object sender, EventArgs eventArgs) {
+			var analog = ytreeviewSuitableSizes.GetSelectedObject<Size>();
+			ViewModel.RemoveAnalog(analog);
+		}
+		void SelectionOnChanged(object sender, EventArgs e) => 
+			ybuttonRemoveSuitable.Sensitive = ytreeviewSuitableSizes.Selection.CountSelectedRows() > 0;
 	}
 }

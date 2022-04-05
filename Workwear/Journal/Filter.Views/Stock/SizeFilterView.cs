@@ -16,7 +16,9 @@ namespace workwear.Journal.Filter.Views.Stock
 		{
 			speciallistSizeType.ItemsList = SizeService.GetSizeType(ViewModel.UoW);
 			speciallistSizeType.Binding
-			.AddBinding(ViewModel, vm => vm.SizeType, v => v.SelectedItem)
+				.AddSource(ViewModel)
+			.AddBinding(vm => vm.SizeType, v => v.SelectedItem)
+			.AddBinding(vm => vm.Sensitive, v => v.Sensitive)
 				.InitializeFromSource();
 		}
 	}
