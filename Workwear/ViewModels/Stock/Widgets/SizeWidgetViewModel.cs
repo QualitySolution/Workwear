@@ -31,16 +31,15 @@ namespace workwear.ViewModels.Stock.Widgets
 		}
 
 		/// <summary>
-		/// Конфигурирует списки ростов и размеров по полу и по типу одежды
+		/// Конфигурирует списки ростов и размеров
 		/// </summary>
-		/// <param name="sex">Тип одежды по полу.</param>
-		/// <param name="clothesType">Тип одежды.</param>
 		private void ConfigureSizes() {
 			if (nomenclature.Type.HeightType != null) {
-				WearGrowths = SizeService.GetSize(uoW, nomenclature.Type.HeightType);
+				WearGrowths = SizeService.GetSize(uoW, nomenclature.Type.HeightType, true);
 				IsUseGrowth = true;
 			}
-			WearSizes = SizeService.GetSize(uoW, nomenclature.Type.SizeType);
+			WearSizes = nomenclature?.Type?.SizeType != null ? 
+				SizeService.GetSize(uoW, nomenclature.Type.SizeType, true) : new List<Size>();
 		}
 
 		/// <summary>
@@ -48,7 +47,7 @@ namespace workwear.ViewModels.Stock.Widgets
 		/// </summary>
 		/// <param name="currentGrowth">Выбранный рост.</param>
 		/// <param name="sizes"> Словарь размеров, где ключ - размер , значение - количество .</param>
-		public void AddSizes(Size currentGrowth,Dictionary<Size, int> sizes) {
+		public void AddSizes(Size currentGrowth, Dictionary<Size, int> sizes) {
 			var args = new AddedSizesEventArgs(nomenclature,currentGrowth,sizes);
 			AddedSizes(this, args);
 			Close(false, CloseSource.Self);

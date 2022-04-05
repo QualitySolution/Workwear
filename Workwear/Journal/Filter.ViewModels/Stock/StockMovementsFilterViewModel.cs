@@ -88,11 +88,17 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		public bool SensitiveGrowth => StockPosition == null;
 		#endregion
 		#region ComboValues
-
-		public Size[] Sizes => nomenclature is null ? SizeService.GetSizeByCategory(UoW, Category.Size).ToArray() 
-			: nomenclature.Type?.SizeType is null ? new Size[]{} : SizeService.GetSize(UoW, nomenclature?.Type?.SizeType).ToArray();
-		public Size[] Growths => nomenclature is null ? SizeService.GetSizeByCategory(UoW, Category.Height).ToArray() 
-			: nomenclature.Type?.HeightType is null ? new Size[]{} : SizeService.GetSize(UoW, nomenclature?.Type?.HeightType).ToArray();
+		public Size[] Sizes => 
+			nomenclature is null ? 
+				SizeService.GetSizeByCategory(UoW, Category.Size, true, true).ToArray() : 
+				nomenclature.Type?.SizeType is null ? new Size[]{} : 
+					SizeService.GetSize(UoW, nomenclature?.Type?.SizeType, true, true)
+						.ToArray();
+		public Size[] Growths => 
+			nomenclature is null ? 
+				SizeService.GetSizeByCategory(UoW, Category.Height, true, true).ToArray() : 
+				nomenclature.Type?.HeightType is null ? new Size[]{} : 
+					SizeService.GetSize(UoW, nomenclature?.Type?.HeightType, true, true).ToArray();
 
 		private DirectionOfOperation direction;
 		public DirectionOfOperation Direction {

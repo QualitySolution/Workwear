@@ -19,7 +19,7 @@ namespace workwear.Models.Import
 {
 	public class DataParserWorkwearItems : DataParserBase<DataTypeWorkwearItems>
 	{
-		static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		private readonly NomenclatureRepository nomenclatureRepository;
 		private readonly PostRepository postRepository;
@@ -69,14 +69,11 @@ namespace workwear.Models.Import
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 		}
 
-		private void AddColumnName(DataTypeWorkwearItems type, params string[] names)
-		{
+		private void AddColumnName(DataTypeWorkwearItems type, params string[] names) {
 			foreach(var name in names)
 				ColumnNames.Add(name.ToLower(), type);
 		}
-
 		#region Сопоставление данных
-
 		public void MatchChanges(
 			IProgressBarDisplayable progress, 
 			SettingsWorkwearItemsViewModel settings, 
@@ -190,8 +187,7 @@ namespace workwear.Models.Import
 							Type = row.WorkwearItem.ProtectionTools.Type,
 							Comment = "Создана при импорте выдачи из Excel",
 						};
-						if(nomenclature.Type.Category == ItemTypeCategory.wear)
-							nomenclature.Sex = nomenclatureTypes.ParseSex(nomenclature.Name) ?? ClothesSex.Universal;
+						nomenclature.Sex = nomenclatureTypes.ParseSex(nomenclature.Name) ?? ClothesSex.Universal;
 						row.WorkwearItem.ProtectionTools.AddNomeclature(nomenclature);
 					}
 					UsedNomeclature.Add(nomenclature);
@@ -294,7 +290,7 @@ namespace workwear.Models.Import
 		public readonly List<Nomenclature> UsedNomeclature = new List<Nomenclature>();
 		public readonly HashSet<EmployeeCard> ChangedEmployees = new HashSet<EmployeeCard>();
 		#region Helpers
-		DateTime? ParseDateOrNull(string value) {
+		private DateTime? ParseDateOrNull(string value) {
 			if(DateTime.TryParse(value, out var date))
 				return date;
 			return null;

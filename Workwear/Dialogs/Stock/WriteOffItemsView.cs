@@ -1,9 +1,11 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using Gtk;
 using NLog;
 using QS.Dialog.Gtk;
 using QS.Project.Domain;
+using QS.Project.Journal;
 using QSOrmProject;
 using QSWidgetLib;
 using workwear.Domain.Company;
@@ -16,41 +18,31 @@ using Workwear.Measurements;
 
 namespace workwear
 {
-	[System.ComponentModel.ToolboxItem(true)]
+	[ToolboxItem(true)]
 	public partial class WriteOffItemsView : WidgetOnDialogBase
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
-		private enum ColumnTags
-		{
-			BuhDoc
-		}
-
-		private Writeoff writeoffDoc;
-
-		public Writeoff WriteoffDoc {
-			get {return writeoffDoc;}
-			set {
-				if (writeoffDoc == value)
+		private enum ColumnTags { BuhDoc }
+		private Writeoff writeOffDoc;
+		public Writeoff WriteOffDoc {
+			get => writeOffDoc;
+			set { if (writeOffDoc == value)
 					return;
-				writeoffDoc = value;
-				ytreeItems.ItemsDataSource = writeoffDoc.ObservableItems;
-				writeoffDoc.ObservableItems.ListContentChanged += WriteoffDoc_ObservableItems_ListContentChanged;
+				writeOffDoc = value;
+				ytreeItems.ItemsDataSource = writeOffDoc.ObservableItems;
+				writeOffDoc.ObservableItems.ListContentChanged += WriteoffDoc_ObservableItems_ListContentChanged;
 				CalculateTotal();
-
-				WriteoffDoc.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
+				WriteOffDoc.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 			}
 		}
 
-		void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(e.PropertyName == nameof(WriteoffItem.BuhDocument)) {
-				(MyEntityDialog as EntityDialogBase<Writeoff>).HasChanges = true;
-			}
+		private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if(e.PropertyName == nameof(WriteoffItem.BuhDocument))
+				((EntityDialogBase<Writeoff>) MyEntityDialog).HasChanges = true;
 		}
 
-		void WriteoffDoc_ObservableItems_ListContentChanged (object sender, EventArgs e)
-		{
+		private void WriteoffDoc_ObservableItems_ListContentChanged (object sender, EventArgs e) {
 			CalculateTotal();
 		}
 
@@ -62,32 +54,33 @@ namespace workwear
 
 		public WriteOffItemsView()
 		{
-			this.Build();
+			Build();
 
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<WriteoffItem> ()
 				.AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
 				.AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
-					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature?.Type?.SizeType))
+					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature?.Type?.SizeType, true, true))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
 				.AddColumn("Рост").MinWidth(70)
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
-					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature?.Type?.HeightType))
+					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature?.Type?.HeightType, true, true))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
-				.AddColumn ("Процент износа").AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter()).Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
-				.AddTextRenderer(e => "%", expand: false)
+				.AddColumn ("Процент износа").AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter())
+					.Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
+					.AddTextRenderer(e => "%", expand: false)
 				.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
-				.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
+					.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument)
-				.AddSetter((c, e) => c.Editable = e.WriteoffFrom == WriteoffFrom.Employye)
+					.AddSetter((c, e) => c.Editable = e.WriteoffFrom == WriteoffFrom.Employee)
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 		}
-
 		#region PopupMenu
-		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
+
+		private void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
 			if (args.Event.Button != 3) return;
 			var menu = new Menu();
 			var selected = ytreeItems.GetSelectedObject<WriteoffItem>();
@@ -102,22 +95,21 @@ namespace workwear
 			menu.Popup();
 		}
 
-		void Item_Activated(object sender, EventArgs e) {
+		private void Item_Activated(object sender, EventArgs e) {
 			var item = (sender as MenuItemId<WriteoffItem>).ID;
 			MainClass.MainWin.NavigationManager.
 				OpenViewModelOnTdi<NomenclatureViewModel, IEntityUoWBuilder>(MyTdiDialog, EntityUoWBuilder.ForOpen(item.Nomenclature.Id));
 		}
 
 		#endregion
-
-		void YtreeItems_Selection_Changed (object sender, EventArgs e)
-		{
+		private void YtreeItems_Selection_Changed (object sender, EventArgs e) {
 			buttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
 		}
 
-		protected void OnButtonAddStoreClicked (object sender, EventArgs e)
-		{
-			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModelOnTdi<StockBalanceJournalViewModel>(MyTdiDialog, QS.Navigation.OpenPageOptions.AsSlave);
+		protected void OnButtonAddStoreClicked (object sender, EventArgs e) {
+			var selectJournal = 
+				MainClass.MainWin.NavigationManager
+					.OpenViewModelOnTdi<StockBalanceJournalViewModel>(MyTdiDialog, QS.Navigation.OpenPageOptions.AsSlave);
 
 			if(CurWarehouse != null) {
 				selectJournal.ViewModel.Filter.Warehouse = CurWarehouse;
@@ -127,27 +119,23 @@ namespace workwear
 			selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;
 		}
 
-		void SelectFromStock_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
-		{
+		private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			var selectVM = sender as StockBalanceJournalViewModel;
-
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
-				WriteoffDoc.AddItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.Amount);
+				WriteOffDoc.AddItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.Amount);
 			}
 			CalculateTotal();
 		}
 
-		protected void OnButtonDelClicked (object sender, EventArgs e)
-		{
-			WriteoffDoc.RemoveItem (ytreeItems.GetSelectedObject<WriteoffItem> ());
+		private void OnButtonDelClicked (object sender, EventArgs e) {
+			WriteOffDoc.RemoveItem (ytreeItems.GetSelectedObject<WriteoffItem> ());
 			CalculateTotal();
 		}
 
-		protected void OnButtonAddWorkerClicked(object sender, EventArgs e)
-		{
+		private void OnButtonAddWorkerClicked(object sender, EventArgs e) {
 			var filter = new EmployeeBalanceFilter (MyOrmDialog.UoW);
-			var selectFromEmployeeDlg = new ReferenceRepresentation (new EmployeeBalanceVM (filter),
-			                                                        "Выданное сотрудникам");
+			var selectFromEmployeeDlg = 
+				new ReferenceRepresentation (new EmployeeBalanceVM (filter), "Выданное сотрудникам");
 			filter.parrentTab = selectFromEmployeeDlg;
 
 			if(CurWorker != null)
@@ -156,59 +144,49 @@ namespace workwear
 			selectFromEmployeeDlg.ShowFilter = CurWorker == null;
 			selectFromEmployeeDlg.Mode = OrmReferenceMode.MultiSelect;
 			selectFromEmployeeDlg.ObjectSelected += SelectFromEmployeeDlg_ObjectSelected;
-
 			OpenSlaveTab(selectFromEmployeeDlg);
 		}
 
-		protected void OnButtonAddObjectClicked(object sender, EventArgs e)
-		{
+		private void OnButtonAddObjectClicked(object sender, EventArgs e) {
 			var filter = new ObjectBalanceFilter (MyOrmDialog.UoW);
 			if (CurObject != null)
 				filter.RestrictObject = CurObject;
 
-			var selectFromObjectDlg = new ReferenceRepresentation (new ViewModel.ObjectBalanceVM (filter),
-			                                                      "Выданное на объекты");
+			var selectFromObjectDlg = 
+				new ReferenceRepresentation (new ViewModel.ObjectBalanceVM (filter), "Выданное на объекты");
 			selectFromObjectDlg.ShowFilter = CurObject == null;
 			selectFromObjectDlg.Mode = OrmReferenceMode.MultiSelect;
 			selectFromObjectDlg.ObjectSelected += SelectFromObjectDlg_ObjectSelected;;
-
 			OpenSlaveTab(selectFromObjectDlg);
 		}
 
-		void SelectFromObjectDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)
-		{
-			foreach(var node in e.GetNodes<ViewModel.ObjectBalanceVMNode> ())
-			{
-				WriteoffDoc.AddItem (MyOrmDialog.UoW.GetById<SubdivisionIssueOperation> (node.Id), node.Added - node.Removed);
+		private void SelectFromObjectDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e) {
+			foreach(var node in e.GetNodes<ViewModel.ObjectBalanceVMNode> ()) {
+				WriteOffDoc.AddItem(MyOrmDialog.UoW.GetById<SubdivisionIssueOperation> (node.Id), node.Added - node.Removed);
 			}
 			CalculateTotal();
 		}
 
-		void SelectFromEmployeeDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e)
-		{
-			foreach(var node in e.GetNodes<EmployeeBalanceVMNode> ())
-			{
-				WriteoffDoc.AddItem (MyOrmDialog.UoW.GetById<EmployeeIssueOperation> (node.Id), node.Added - node.Removed);
+		private void SelectFromEmployeeDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e) {
+			foreach(var node in e.GetNodes<EmployeeBalanceVMNode> ()) {
+				WriteOffDoc.AddItem(MyOrmDialog.UoW.GetById<EmployeeIssueOperation> (node.Id), node.Added - node.Removed);
 			}
 			CalculateTotal();
 		}
 
-		private void CalculateTotal()
-		{
+		private void CalculateTotal() {
 			labelSum.Markup = String.Format ("Позиций в документе: <u>{0}</u>  Количество единиц: <u>{1}</u>",
-				WriteoffDoc.Items.Count,
-				WriteoffDoc.Items.Sum(x => x.Amount)
+				WriteOffDoc.Items.Count,
+				WriteOffDoc.Items.Sum(x => x.Amount)
 			);
-			buttonFillBuhDoc.Sensitive = WriteoffDoc.Items.Count > 0;
+			buttonFillBuhDoc.Sensitive = WriteOffDoc.Items.Count > 0;
 		}
 
-		protected void OnButtonFillBuhDocClicked(object sender, EventArgs e)
-		{
-			using (var dlg = new Dialog("Введите бухгалтерский документ", MainClass.MainWin, DialogFlags.Modal))
-			{
+		private void OnButtonFillBuhDocClicked(object sender, EventArgs e) {
+			using (var dlg = new Dialog("Введите бухгалтерский документ", MainClass.MainWin, DialogFlags.Modal)) {
 				var docEntry = new Entry(80);
-				if (writeoffDoc.Items.Any(x => x.WriteoffFrom == WriteoffFrom.Employye))
-					docEntry.Text = writeoffDoc.Items.First(x => x.WriteoffFrom == WriteoffFrom.Employye).BuhDocument;
+				if (writeOffDoc.Items.Any(x => x.WriteoffFrom == WriteoffFrom.Employee))
+					docEntry.Text = writeOffDoc.Items.First(x => x.WriteoffFrom == WriteoffFrom.Employee).BuhDocument;
 				docEntry.TooltipText = "Бухгалтерский документ по которому было произведено списание. Отобразится вместо подписи сотрудника в карточке.";
 				docEntry.ActivatesDefault = true;
 				dlg.VBox.Add(docEntry);
@@ -216,10 +194,9 @@ namespace workwear
 				dlg.AddButton("Отмена", ResponseType.Cancel);
 				dlg.DefaultResponse = ResponseType.Ok;
 				dlg.ShowAll();
-				if (dlg.Run() == (int)ResponseType.Ok)
-				{
-					writeoffDoc.ObservableItems
-						.Where(x => x.WriteoffFrom == WriteoffFrom.Employye)
+				if (dlg.Run() == (int)ResponseType.Ok) {
+					writeOffDoc.ObservableItems
+						.Where(x => x.WriteoffFrom == WriteoffFrom.Employee)
 						.ToList().ForEach(x => x.BuhDocument = docEntry.Text);
 				}
 				dlg.Destroy();

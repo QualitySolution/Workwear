@@ -9,7 +9,7 @@ using Workwear.Measurements;
 
 namespace workwear.Domain.Sizes
 {
-    [Appellative (Gender = GrammaticalGender.Feminine,
+    [Appellative (Gender = GrammaticalGender.Masculine,
         NominativePlural = "типы размеров",
         Nominative = "тип размеров",
         Genitive = "типа размеров"
@@ -19,25 +19,29 @@ namespace workwear.Domain.Sizes
     {
         #region Свойства
         public virtual int Id { get; }
-
         private string name;
         public virtual string Name {
             get => name;
             set => SetField(ref name, value);
         }
-        public virtual bool UseInEmployee { get; set; }
-
+        private bool useInEmployee;
+        public virtual bool UseInEmployee {
+            get => useInEmployee;
+            set => SetField(ref useInEmployee, value);
+        }
         private Category category;
         public virtual Category Category {
             get => category;
             set => SetField(ref category, value);
         }
-        public virtual int Position { get; set; }
+        private int position;
+        public virtual int Position {
+            get => position;
+            set => SetField(ref position, value);
+        }
         #endregion
-        
         #region IValidatableObject implementation
-        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
+        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
             if(Position == 0)
                 yield return new ValidationResult (
                 "Позиция должна быть больше нуля", 
@@ -47,22 +51,24 @@ namespace workwear.Domain.Sizes
                     "Имя должно быть указано", 
                     new[] { this.GetPropertyName(s => s.Name)});
             var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
-            var dubblePos = SizeService.GetSizeType(uow).FirstOrDefault(x => x.Position == Position && x.Id != Id);
-            if(dubblePos != null)
+            var doublePos = 
+                SizeService.GetSizeType(uow, true)
+                    .FirstOrDefault(x => x.Position == Position && x.Id != Id);
+            if(doublePos != null)
                 yield return new ValidationResult (
                     $"Позиция:{Position} уже занята", 
-                    new[] { dubblePos.GetPropertyName(s => s.Name)});
-            var dubbleName = SizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == Name && x.Id != Id);
-            if(dubbleName != null)
+                    new[] { doublePos.GetPropertyName(s => s.Name)});
+            var doubleName = 
+                SizeService.GetSizeType(uow, true)
+                    .FirstOrDefault(x => x.Name == Name && x.Id != Id);
+            if(doubleName != null)
                 yield return new ValidationResult (
                     $"Имя:{Name} уже занята", 
-                    new[] { dubbleName.GetPropertyName(s => s.Name)});
+                    new[] { doubleName.GetPropertyName(s => s.Name)});
         }
         #endregion
     }
-
-    public enum Category
-    {
+    public enum Category {
         [Display(Name = "Размер")]
         Size,
         [Display(Name = "Рост")]

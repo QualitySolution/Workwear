@@ -4,7 +4,7 @@ using workwear.Domain.Sizes;
 
 namespace workwear.Domain.Company
 {
-    [Appellative (Gender = GrammaticalGender.Feminine,
+    [Appellative (Gender = GrammaticalGender.Masculine,
         NominativePlural = "размеры сотрудников",
         Nominative = "размер сотрудника",
         PrepositionalPlural = "размерах сотрудников",
@@ -15,7 +15,11 @@ namespace workwear.Domain.Company
     {
         #region Свойства
         public virtual int Id { get; }
-        public virtual EmployeeCard Employee { get; set; }
+        private EmployeeCard employee;
+        public virtual EmployeeCard Employee {
+            get => employee;
+            set => SetField(ref employee, value);
+        }
 
         private Size size;
         public virtual Size Size {

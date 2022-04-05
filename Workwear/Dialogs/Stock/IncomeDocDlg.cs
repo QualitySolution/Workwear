@@ -5,6 +5,7 @@ using NLog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
+using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using workwear.Domain.Company;
@@ -12,13 +13,12 @@ using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository;
-using workwear.ViewModels.Company;
 using workwear.Repository.Stock;
 using workwear.Tools.Features;
+using workwear.ViewModels.Company;
 using workwear.ViewModels.Stock;
-using QS.Services;
 
-namespace workwear
+namespace workwear.Dialogs.Stock
 {
 	public partial class IncomeDocDlg : EntityDialogBase<Income>
 	{
@@ -29,7 +29,7 @@ namespace workwear
 
 		public IncomeDocDlg()
 		{
-			Build();
+			this.Build();
 			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Income> ();
 			featuresService = AutofacScope.Resolve<FeaturesService>();
@@ -41,17 +41,17 @@ namespace workwear
 
 			ConfigureDlg ();
 		}
-
+		//Конструктор используется при возврате от сотрудника
 		public IncomeDocDlg(EmployeeCard employee) : this () {
 			Entity.Operation = IncomeOperations.Return;
 			Entity.EmployeeCard = UoW.GetById<EmployeeCard>(employee.Id);
 		}
-
+		//Конструктор используется при возврате С поздразделения
 		public IncomeDocDlg(Subdivision subdivision) : this () {
 			Entity.Operation = IncomeOperations.Object;
 			Entity.Subdivision = UoW.GetById<Subdivision>(subdivision.Id);
 		}
-
+		//Конструктор используется в журнале документов
 		public IncomeDocDlg (Income item) : this (item.Id) {}
 		public IncomeDocDlg (int id) {
 			Build ();
@@ -61,8 +61,7 @@ namespace workwear
 			ConfigureDlg ();
 		}
 
-		private void ConfigureDlg()
-		{
+		private void ConfigureDlg() {
 			ylabelId.Binding
 				.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
 				.InitializeFromSource ();
@@ -137,7 +136,6 @@ namespace workwear
 
 			if (!UoWGeneric.IsNew)
 				return;
-			
 			switch (Entity.Operation) {
 			case IncomeOperations.Enter:
 					TabName = "Новая приходная накладная";
@@ -155,7 +153,6 @@ namespace workwear
 			base.Destroy();
 			AutofacScope.Dispose();
 		}
-
 		#region Workwear featrures
 		private void DisableFeatures() {
 			if (featuresService.Available(WorkwearFeature.Warehouses)) return;

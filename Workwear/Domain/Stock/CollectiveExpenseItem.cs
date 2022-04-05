@@ -121,14 +121,12 @@ namespace workwear.Domain.Stock
 		}
 
 		private StockBalanceDTO stockBalanceSetter;
-
 		public virtual StockBalanceDTO StockBalanceSetter
 		{
 			get => stockBalanceSetter ??
 			       new StockBalanceDTO
 				       {Nomenclature = Nomenclature, WearPercent = WearPercent, WearSize = WearSize, Height = Height};
-			set
-			{
+			set {
 				stockBalanceSetter = value;
 				Nomenclature = value.Nomenclature;
 				WearSize = value.WearSize;
@@ -140,12 +138,7 @@ namespace workwear.Domain.Stock
 		#endregion
 		#region Расчетные свойства
 		public virtual string Title =>
-			String.Format ("Выдача со склада {0} в количестве {1} {2}",
-				Nomenclature.Name,
-				Amount,
-				Nomenclature.Type.Units?.Name
-			).TrimEnd();
-
+			$"Выдача со склада {Nomenclature.Name} в количестве {Amount} {Nomenclature.Type.Units?.Name}".TrimEnd();
 		#endregion
 		#region Функции
 		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser) {

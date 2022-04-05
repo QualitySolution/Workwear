@@ -22,32 +22,41 @@ namespace workwear.Views.Stock
 			ConfigureDlg();
 			CommonButtonSubscription();
 		}
-
-		private void ConfigureDlg()
-		{
-			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
+		private void ConfigureDlg() {
+			ylabelId.Binding
+				.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
 				.InitializeFromSource ();
 
-			yentryName.Binding.AddBinding (Entity, e => e.Name, w => w.Text).InitializeFromSource ();
+			yentryName.Binding
+				.AddBinding(Entity, e => e.Name, w => w.Text)
+				.InitializeFromSource ();
 
 			ycomboCategory.ItemsEnum = typeof(ItemTypeCategory);
-			ycomboCategory.Binding.AddBinding (Entity, e => e.Category, w => w.SelectedItemOrNull)
+			ycomboCategory.Binding
+				.AddBinding(Entity, e => e.Category, w => w.SelectedItemOrNull)
 				.InitializeFromSource ();
 			
-			ycomboWearCategory.ItemsList = SizeService.GetSizeTypeByCategory(ViewModel.UoW, Category.Size);
+			ycomboWearCategory.ItemsList = SizeService.GetSizeTypeByCategory(ViewModel.UoW, Category.Size, true);
 			ycomboWearCategory.Binding
-				.AddBinding (Entity, e => e.SizeType, w => w.SelectedItem).InitializeFromSource();
+				.AddBinding(Entity, e => e.SizeType, w => w.SelectedItem)
+				.InitializeFromSource();
 
-			ycomboHeightCategory.ItemsList = SizeService.GetSizeTypeByCategory(ViewModel.UoW, Category.Height);
+			ycomboHeightCategory.ItemsList = 
+				SizeService.GetSizeTypeByCategory(ViewModel.UoW, Category.Height, true);
 			ycomboHeightCategory.Binding
-				.AddBinding (Entity, e => e.HeightType, w => w.SelectedItem).InitializeFromSource();
+				.AddBinding (Entity, e => e.HeightType, w => w.SelectedItem)
+				.InitializeFromSource();
 
 
 			ycomboUnits.ItemsList = MeasurementUnitsRepository.GetActiveUnits(ViewModel.UoW);
-			ycomboUnits.Binding.AddBinding (Entity, e => e.Units, w => w.SelectedItem).InitializeFromSource ();
+			ycomboUnits.Binding
+				.AddBinding (Entity, e => e.Units, w => w.SelectedItem)
+				.InitializeFromSource ();
 
 			comboIssueType.ItemsEnum = typeof(IssueType);
-			comboIssueType.Binding.AddBinding(Entity, e => e.IssueType, w => w.SelectedItem).InitializeFromSource();
+			comboIssueType.Binding
+				.AddBinding(Entity, e => e.IssueType, w => w.SelectedItem)
+				.InitializeFromSource();
 
 			comboIssueType.Visible = labelIssueType.Visible = ViewModel.VisibleIssueType;
 
@@ -56,30 +65,29 @@ namespace workwear.Views.Stock
 				.InitializeFromSource();
 			ycheckLife.Active = Entity.LifeMonths.HasValue;
 
-			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+			ytextComment.Binding
+				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text)
+				.InitializeFromSource();
 
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
 			.AddColumn("Тип").AddTextRenderer(p => p.TypeName)
 			.AddColumn("Наименование").AddTextRenderer(p => p.Name)
-			.AddColumn("Пол").AddTextRenderer(p => p.Sex != null ? p.Sex.GetEnumTitle() : String.Empty)
+			.AddColumn("Пол")
+				.AddTextRenderer(p => p.Sex != null ? p.Sex.GetEnumTitle() : String.Empty)
 			.Finish();
 			ytreeItems.ItemsDataSource = Entity.ObservableNomenclatures;
 		}
 
-		protected void OnYcomboCategoryChanged (object sender, EventArgs e)
-		{
+		private void OnYcomboCategoryChanged (object sender, EventArgs e) {
 			ycomboWearCategory.Sensitive = Entity.Category == ItemTypeCategory.wear;
 			ycomboHeightCategory.Sensitive = Entity.Category == ItemTypeCategory.wear;
 			hboxLife.Visible = labelLife.Visible = Entity.Category == ItemTypeCategory.property;
 		}
 
-		protected void OnYcheckLifeToggled(object sender, EventArgs e)
-		{
+		private void OnYcheckLifeToggled(object sender, EventArgs e) {
 			yspinMonths.Sensitive = ycheckLife.Active;
-			if(!ycheckLife.Active)
-			{
+			if(!ycheckLife.Active) 
 				Entity.LifeMonths = null;
-			}
 		}
 	}
 }

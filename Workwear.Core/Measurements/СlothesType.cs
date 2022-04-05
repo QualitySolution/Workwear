@@ -3,18 +3,12 @@
 namespace Workwear.Measurements
 {
 	public enum ClothesSex {
-		[Display(Name = "Женская")]
+		[Display(Name = "Женский")]
 		Women,
-		[Display(Name = "Мужская")]
+		[Display(Name = "Мужской")]
 		Men,
-		[Display(Name = "Универсальная")]
+		[Display(Name = "Универсальный")]
 		Universal,
 	}
-
-	public class ClothesSexType : NHibernate.Type.EnumStringType
-	{
-		public ClothesSexType() : base(typeof(ClothesSex)) { }
-	}
-
 }
 

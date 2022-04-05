@@ -131,16 +131,11 @@ namespace workwear.Repository.Stock
 		}
 	}
 
-	public class StockBalanceDTO
-	{
+	public class StockBalanceDTO {
 		public Nomenclature Nomenclature { get; set; }
 		public int NomenclatureId { get; set; }
 		public Size WearSize { get; set; }
 		public Size Height { get; set; }
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		public string Growth { get; set; }	
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		public string Size { get; set; }
 		public decimal WearPercent { get; set; }
 		public int Amount { get; set; }
 		public StockPosition StockPosition => new StockPosition(Nomenclature, WearPercent, WearSize, Height);

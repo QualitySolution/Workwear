@@ -28,40 +28,28 @@ namespace workwear.Domain.Stock
 				var parameters = new List<string>();
 				if(WearSize != null)
 					parameters.Add("Размер:" + WearSize.Name);
-				
 				if(Height != null)
 					parameters.Add("Рост:" + Height.Name);
-
 				if(WearPercent > 0)
 					parameters.Add("Износ:" + WearPercent.ToString("P"));
-
 				var text = Nomenclature.Name;
-
 				if(parameters.Any())
 					text += $" ({string.Join("; ", parameters)})";
-
 				return text;
 			}
 		}
-
 		#region Сравнение
-		public override bool Equals(object obj)
-		{
+		public override bool Equals(object obj) {
 			var anotherPos = obj as StockPosition;
-
 			return
-				anotherPos.Nomenclature.Id == Nomenclature.Id &&
+				anotherPos?.Nomenclature.Id == Nomenclature.Id &&
 				anotherPos.WearSize == WearSize &&
 				anotherPos.Height == Height &&
-				anotherPos.WearPercent == WearPercent
-			;
+				anotherPos.WearPercent == WearPercent;
 		}
-
-		public override int GetHashCode()
-		{
+		public override int GetHashCode() {
 			return (Nomenclature.Id, SizeType: WearSize, Height, WearPercent).GetHashCode();
 		}
-
 		#endregion
 	}
 }

@@ -1,46 +1,49 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using Gamma.Utilities;
 using Gtk;
 using QS.Dialog.Gtk;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Navigation;
 using QS.Project.Domain;
+using QS.Project.Journal;
 using QSOrmProject;
 using QSWidgetLib;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Measurements;
 using workwear.Representations.Organization;
+using workwear.ViewModel;
 using workwear.ViewModels.Stock;
 using workwear.ViewModels.Stock.Widgets;
-using Workwear.Measurements;
 
-namespace workwear
+namespace workwear.Dialogs.Stock
 {
-	[System.ComponentModel.ToolboxItem(true)]
+	[ToolboxItem(true)]
 	public partial class IncomeDocItemsView : WidgetOnDialogBase
 	{
 		private enum ColumnTags { BuhDoc }
 		private Income incomeDoc;
 		public Income IncomeDoc {
 			get => incomeDoc;
-			set {
-				if (incomeDoc == value)
+			set { if (incomeDoc == value)
 					return;
 				incomeDoc = value;
 				ytreeItems.ItemsDataSource = incomeDoc.ObservableItems;
 				incomeDoc.ObservableItems.ListContentChanged += IncomeDoc_ObservableItems_ListContentChanged;
 				IncomeDoc.PropertyChanged += IncomeDoc_PropertyChanged;
 				IncomeDoc_PropertyChanged(null,
-					new System.ComponentModel.PropertyChangedEventArgs(IncomeDoc.GetPropertyName(d => d.Operation)));
+					new PropertyChangedEventArgs(IncomeDoc.GetPropertyName(d => d.Operation)));
 				CalculateTotal();
 				IncomeDoc.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 				if(incomeDoc.Operation != IncomeOperations.Enter) buttonAddSizes.Visible = false;
 			}
 		}
 
-		private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+		private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(e.PropertyName == nameof(IncomeItem.BuhDocument)) {
 				((EntityDialogBase<Income>) MyEntityDialog).HasChanges = true;
 			}
@@ -50,7 +53,7 @@ namespace workwear
 			CalculateTotal();
 		}
 
-		private void IncomeDoc_PropertyChanged (object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+		private void IncomeDoc_PropertyChanged (object sender, PropertyChangedEventArgs e) {
 			if(e.PropertyName == IncomeDoc.GetPropertyName (d => d.Operation) 
 				|| e.PropertyName == IncomeDoc.GetPropertyName (d => d.EmployeeCard)
 				|| e.PropertyName == IncomeDoc.GetPropertyName (d => d.Subdivision))
@@ -60,9 +63,8 @@ namespace workwear
 					|| IncomeDoc.Operation == IncomeOperations.Enter;
 			}
 
-			if(e.PropertyName == nameof(IncomeDoc.Operation)) {
+			if(e.PropertyName == nameof(IncomeDoc.Operation))
 				buttonAddSizes.Visible = IncomeDoc.Operation == IncomeOperations.Enter;
-			}
 
 			if (e.PropertyName != IncomeDoc.GetPropertyName(x => x.Operation)) return;
 			var buhDocColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.BuhDoc).First();
@@ -77,12 +79,12 @@ namespace workwear
 				.AddColumn("Сертификат").AddTextRenderer(e => e.Certificate).Editable()
 				.AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
-					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.SizeType))
+					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.SizeType, true))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.Type.SizeType != null 
 					                                  && incomeDoc.Operation == IncomeOperations.Enter)
 				.AddColumn("Рост").MinWidth(70)
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
-					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.HeightType))
+					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.HeightType, true))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.Type.HeightType != null 
 					                                  && incomeDoc.Operation == IncomeOperations.Enter)
 				.AddColumn ("Процент износа")
@@ -103,7 +105,6 @@ namespace workwear
 		}
 
 		#region PopupMenu
-
 		private void YtreeItemsButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
 			if (args.Event.Button != 3) return;
 			var menu = new Menu();
@@ -122,12 +123,11 @@ namespace workwear
 		private void Item_Activated(object sender, EventArgs e) {
 			var item = ((MenuItemId<IncomeItem>) sender).ID;
 			MainClass.MainWin.NavigationManager
-				.OpenViewModelOnTdi<NomenclatureViewModel, IEntityUoWBuilder>(MyTdiDialog, EntityUoWBuilder.ForOpen(item.Nomenclature.Id));
+				.OpenViewModelOnTdi<NomenclatureViewModel, IEntityUoWBuilder>
+					(MyTdiDialog, EntityUoWBuilder.ForOpen(item.Nomenclature.Id));
 		}
-
 		#endregion
-
-		private void YtreeItems_Selection_Changed (object sender, EventArgs e) {
+		private void YtreeItems_Selection_Changed(object sender, EventArgs e) {
 			buttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
 			if(ytreeItems.GetSelectedObject<IncomeItem>() != null) {
 				var obj = ytreeItems.GetSelectedObject<IncomeItem>();
@@ -151,36 +151,33 @@ namespace workwear
 				var selectFromEmployeeDlg = new ReferenceRepresentation (vm, $"Выданное {IncomeDoc.EmployeeCard.ShortName}");
 				selectFromEmployeeDlg.Mode = OrmReferenceMode.MultiSelect;
 				selectFromEmployeeDlg.ObjectSelected += SelectFromEmployeeDlg_ObjectSelected;
-
 				OpenSlaveTab(selectFromEmployeeDlg);
 			}
 
-			if(IncomeDoc.Operation == IncomeOperations.Object)
-			{
+			if(IncomeDoc.Operation == IncomeOperations.Object) {
 				var selectFromObjectDlg = new ReferenceRepresentation (new ViewModel.ObjectBalanceVM (IncomeDoc.Subdivision),
 				                                                       $"Выданное на {IncomeDoc.Subdivision.Name}");
 				selectFromObjectDlg.Mode = OrmReferenceMode.MultiSelect;
 				selectFromObjectDlg.ObjectSelected += SelectFromObjectDlg_ObjectSelected;;
-
 				OpenSlaveTab(selectFromObjectDlg);
 			}
 
 			if (IncomeDoc.Operation != IncomeOperations.Enter) return;
 			var selectJournal = 
 				MainClass.MainWin.NavigationManager
-					.OpenViewModelOnTdi<NomenclatureJournalViewModel>(MyTdiDialog, QS.Navigation.OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+					.OpenViewModelOnTdi<NomenclatureJournalViewModel>(MyTdiDialog, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += AddNomenclature_OnSelectResult;
 		}
 
-		private void AddNomenclature_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
+		private void AddNomenclature_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			UoW.GetById<Nomenclature>(e.SelectedObjects.Select(x => x.GetId()))
 				.ToList().ForEach(n => IncomeDoc.AddItem(n));
 			CalculateTotal();
 		}
 
 		private void SelectFromObjectDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e) {
-			foreach(var node in e.GetNodes<ViewModel.ObjectBalanceVMNode> ()) {
+			foreach(var node in e.GetNodes<ObjectBalanceVMNode> ()) {
 				IncomeDoc.AddItem(MyOrmDialog.UoW.GetById<SubdivisionIssueOperation>(node.Id), node.Added - node.Removed);
 			}
 			CalculateTotal();
@@ -188,13 +185,13 @@ namespace workwear
 
 		private void SelectFromEmployeeDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e) {
 			foreach(var node in e.GetNodes<EmployeeBalanceVMNode> ()) {
-				IncomeDoc.AddItem (MyOrmDialog.UoW.GetById<EmployeeIssueOperation> (node.Id), node.Added - node.Removed);
+				IncomeDoc.AddItem(MyOrmDialog.UoW.GetById<EmployeeIssueOperation>(node.Id), node.Added - node.Removed);
 			}
 			CalculateTotal();
 		}
 
 		private void OnButtonDelClicked (object sender, EventArgs e) {
-			IncomeDoc.RemoveItem (ytreeItems.GetSelectedObject<IncomeItem> ());
+			IncomeDoc.RemoveItem(ytreeItems.GetSelectedObject<IncomeItem> ());
 			buttonAddSizes.Sensitive = false;
 			CalculateTotal();
 		}
@@ -234,12 +231,9 @@ namespace workwear
 			var page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, Nomenclature, IUnitOfWork>
 				(null, item.Nomenclature, UoW);
 			page.ViewModel.AddedSizes += SelectWearSize_SizeSelected;
-
 		}
 		private void SelectWearSize_SizeSelected(object sender , AddedSizesEventArgs e) {
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
-			if(item.WearSize != null)
-				IncomeDoc.RemoveItem(item);
 			e.SizesWithAmount.ToList()
 				.ForEach(i => IncomeDoc
 					.AddItem(e.Source, e.Height, i.Key, i.Value, item.Certificate, item.Cost));

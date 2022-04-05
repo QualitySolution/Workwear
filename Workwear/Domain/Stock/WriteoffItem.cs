@@ -148,7 +148,7 @@ namespace workwear.Domain.Stock
 		public virtual WriteoffFrom WriteoffFrom {
 			get {
 				if(EmployeeWriteoffOperation != null && WarehouseOperation == null && SubdivisionWriteoffOperation == null)
-					return WriteoffFrom.Employye;
+					return WriteoffFrom.Employee;
 
 				if(EmployeeWriteoffOperation == null && WarehouseOperation == null && SubdivisionWriteoffOperation != null)
 					return WriteoffFrom.Subdivision;
@@ -232,7 +232,7 @@ namespace workwear.Domain.Stock
 		#region Методы
 		public virtual void UpdateOperations(IUnitOfWork uow) {
 			switch(WriteoffFrom) {
-				case WriteoffFrom.Employye:
+				case WriteoffFrom.Employee:
 					EmployeeWriteoffOperation.Update(uow, this);
 					break;
 				case WriteoffFrom.Subdivision:
@@ -248,7 +248,7 @@ namespace workwear.Domain.Stock
 		#endregion
 	}
 	public enum WriteoffFrom {
-		Employye,
+		Employee,
 		Subdivision,
 		Warehouse
 	}

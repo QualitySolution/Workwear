@@ -35,8 +35,6 @@ namespace workwear.ViewModels.Company
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-		private readonly IUserService userService;
-
 		public ILifetimeScope AutofacScope;
 		public NormRepository NormRepository { get; }
 		
@@ -64,7 +62,6 @@ namespace workwear.ViewModels.Company
 			BaseParameters baseParameters,
 			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
-			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
@@ -376,17 +373,12 @@ namespace workwear.ViewModels.Company
 			return true;
 		}
 
-		public override bool Save()
-		{	
-			UoW.Save(Entity);
+		public override bool Save() {
 			var result = base.Save();
-
 			OnPropertyChanged(nameof(VisibleHistory));
 			OnPropertyChanged(nameof(VisibleListedItem));
-
 			return result;
 		}
-
 		IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
 		{
 			if (String.IsNullOrEmpty(LkPassword)) yield break;
@@ -405,9 +397,7 @@ namespace workwear.ViewModels.Company
 					"Длинна пароля от личного кабинета должна быть не более 32-х символов.", 
 					new[] { nameof(LkPassword) });
 		}
-
 		#endregion
-
 		#region Печать
 
 		public enum PersonalCardPrint
@@ -437,7 +427,6 @@ namespace workwear.ViewModels.Company
 		}
 
 		#endregion
-
 		#region Дата изменения должности
 
 		Subdivision lastSubdivision;
@@ -458,7 +447,6 @@ namespace workwear.ViewModels.Company
 			}
 		}
 		#endregion
-
 		#region Uid
 
 		public void ReadUid()
@@ -475,13 +463,13 @@ namespace workwear.ViewModels.Company
 		public void SetSizes(Size size, SizeType sizeType) {
 			CheckSizeChanged();
 			if (size is null) {
-				if(Entity.Sizes.Any(x => x.SizeType == sizeType))
-					Entity.Sizes.Remove(
-						Entity.Sizes.First(x => x.SizeType == sizeType));
+				if(Entity.ObservableSizes.Any(x => x.SizeType == sizeType))
+					Entity.ObservableSizes.Remove(
+						Entity.ObservableSizes.First(x => x.SizeType == sizeType));
 			}
 			else {
 				var employeeSize =
-					Entity.Sizes.FirstOrDefault(x => x.SizeType.Id == sizeType.Id);
+					Entity.ObservableSizes.FirstOrDefault(x => x.SizeType.Id == sizeType.Id);
 				if (employeeSize is null) {
 					var newEmployeeSize = 
 						new EmployeeSize {Size = size, SizeType = sizeType, Employee = Entity};

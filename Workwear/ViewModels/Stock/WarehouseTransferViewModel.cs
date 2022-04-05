@@ -61,7 +61,8 @@ namespace workwear.ViewModels.Stock
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, 
 					new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 		}
-		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+
+		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
 			if (e.PropertyName != nameof(Entity.WarehouseFrom) || Entity.WarehouseFrom == lastWarehouse) return;
 			if(Entity.Items.Any()) {
 				if(interactive.Question("При изменении склада отправителя строки документа будут очищены. Продолжить?")) {
@@ -85,7 +86,8 @@ namespace workwear.ViewModels.Stock
 			selectPage.ViewModel.Filter.WarehouseEntry.IsEditable = false;
 			selectPage.ViewModel.OnSelectResult += ViewModel_OnSelectResult;
 		}
-		void ViewModel_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
+
+		private void ViewModel_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			foreach(var stockBalance in e.GetSelectedObjects<StockBalanceJournalNode>()) {
 				Entity.AddItem(stockBalance.GetStockPosition(UoW), stockBalance.Amount);
 			}

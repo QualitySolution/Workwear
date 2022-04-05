@@ -42,8 +42,6 @@ namespace WorkwearTest.Integration.Import
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
-			var sizeSettings = Substitute.For<ISizeSettings>();
-			sizeSettings.EmployeeSizeRanges.Returns(false);
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService());
 			var setting = new SettingsMatchEmployeesViewModel();
 			var model = new ImportModelEmployee(dataparser, setting);
@@ -80,8 +78,6 @@ namespace WorkwearTest.Integration.Import
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
-			var sizeSettings = Substitute.For<ISizeSettings>();
-			sizeSettings.EmployeeSizeRanges.Returns(false);
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService());
 			var setting = new SettingsMatchEmployeesViewModel();
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
@@ -138,8 +134,6 @@ namespace WorkwearTest.Integration.Import
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
-			var sizeSettings = Substitute.For<ISizeSettings>();
-			sizeSettings.EmployeeSizeRanges.Returns(false);
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService());
 			var setting = new SettingsMatchEmployeesViewModel();
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
@@ -199,8 +193,6 @@ namespace WorkwearTest.Integration.Import
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
-			var sizeSettings = Substitute.For<ISizeSettings>();
-			sizeSettings.EmployeeSizeRanges.Returns(false);
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService());
 			var setting = new SettingsMatchEmployeesViewModel();
 			var model = new ImportModelEmployee(dataparser, setting);
@@ -243,8 +235,6 @@ namespace WorkwearTest.Integration.Import
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
-			var sizeSettings = Substitute.For<ISizeSettings>();
-			sizeSettings.EmployeeSizeRanges.Returns(true);
 			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService());
 			var setting = new SettingsMatchEmployeesViewModel();
 			var model = new ImportModelEmployee(dataParser, setting);

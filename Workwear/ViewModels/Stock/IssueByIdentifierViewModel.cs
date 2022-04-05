@@ -101,14 +101,15 @@ namespace workwear.ViewModels.Stock
 
 		#region Считыватель
 		#region События
-		void CardFamilies_ListChanged(object sender, ListChangedEventArgs e)
+
+		private void CardFamilies_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			UpdateState();
 			TryStartPoll();
 			SetCardFamiliesConfig();
 		}
 
-		void RusGuardService_СardStatusRead(object sender, CardStateEventArgs e)
+		private void RusGuardService_СardStatusRead(object sender, CardStateEventArgs e)
 		{
 			guiDispatcher.RunInGuiTread(delegate {
 				CardUid = e.CardUid;
@@ -190,7 +191,8 @@ namespace workwear.ViewModels.Stock
 		#endregion
 
 		#region Внутренние методы
-		void UpdateState()
+
+		private void UpdateState()
 		{
 			if(cardReaderService == null) {
 				CurrentState = "Библиотека RusGuard не загружена";
@@ -235,7 +237,7 @@ namespace workwear.ViewModels.Stock
 			CurrentStateColor = "Lime Green";
 		}
 
-		void TryStartPoll()
+		private void TryStartPoll()
 		{
 			if(cardReaderService == null)
 				return;

@@ -27,7 +27,7 @@ namespace workwear.ViewModels.Stock
 		private readonly ILifetimeScope autofacScope;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public ExpenseDocItemsObjectViewModel DocItemsObjectViewModel;
-		IInteractiveQuestion interactive;
+		private IInteractiveQuestion interactive;
 		private readonly StockRepository stockRepository;
 		private readonly BaseParameters baseParameters;
 		private readonly CommonMessages commonMessages;

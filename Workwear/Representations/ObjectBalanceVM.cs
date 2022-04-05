@@ -72,52 +72,36 @@ namespace workwear.ViewModel
 			SetItemsSource (expenseList.ToList ());
 		}
 
-		public override IColumnsConfig ColumnsConfig { get; } = ColumnsConfigFactory.Create<ObjectBalanceVMNode> ()
+		public override IColumnsConfig ColumnsConfig { get; } = ColumnsConfigFactory.Create<ObjectBalanceVMNode>()
 			.AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName)
 			.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
 			.AddColumn ("Срок службы").AddProgressRenderer (e => (int)(100 - (e.Percentage * 100)))
-			.AddSetter ((w, e) => w.Text = e.ExpiryDate.HasValue ? 
+				.AddSetter ((w, e) => w.Text = e.ExpiryDate.HasValue ? 
 				$"до {e.ExpiryDate.Value:d}" : string.Empty)
 			.Finish ();
 
 		#endregion
-
 		#region implemented abstract members of RepresentationModelEntityBase
-
-		protected override bool NeedUpdateFunc (object updatedSubject)
-		{
-			return true;
-		}
-
+		protected override bool NeedUpdateFunc (object updatedSubject) => true;
 		#endregion
-
-		public ObjectBalanceVM (ObjectBalanceFilter filter) : this(filter.UoW)
-		{
+		public ObjectBalanceVM (ObjectBalanceFilter filter) : this(filter.UoW) => 
 			Filter = filter;
-		}
 
-		public ObjectBalanceVM (Subdivision facility) : this(UnitOfWorkFactory.CreateWithoutRoot ())
-		{
-			Subdivision = facility;
-		}
+		public ObjectBalanceVM (Subdivision facility) : 
+			this(UnitOfWorkFactory.CreateWithoutRoot ()) => Subdivision = facility;
 
-		public ObjectBalanceVM (IUnitOfWork uow) : base (typeof(Expense), typeof(Income), typeof(Writeoff))
-		{
-			UoW = uow;
-		}
+		public ObjectBalanceVM (IUnitOfWork uow) : 
+			base (typeof(Expense), typeof(Income), typeof(Writeoff)) => UoW = uow;
 	}
 
-	public class ObjectBalanceVMNode
-	{
+	public class ObjectBalanceVMNode {
 		public int Id { get; set; }
-
 		[UseForSearch]
 		public string NomenclatureName { get; set;}
 		public string UnitsName { get; set;}
 		public decimal WearPercent { get; set;}
 		public DateTime IssuedDate { get; set;}
 		public DateTime? ExpiryDate { get; set;}
-
 		public double Percentage {
 			get{
 				if (ExpiryDate == null)
@@ -130,4 +114,3 @@ namespace workwear.ViewModel
 		public string BalanceText => $"{Added - Removed} {UnitsName}";
 	}
 }
-

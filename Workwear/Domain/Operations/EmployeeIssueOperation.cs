@@ -29,19 +29,15 @@ namespace workwear.Domain.Operations
 		public virtual int Id { get; set; }
 
 		DateTime operationTime = DateTime.Now;
-
 		[Display(Name = "Время операции")]
-		public virtual DateTime OperationTime
-		{
+		public virtual DateTime OperationTime {
 			get => operationTime;
 			set => SetField(ref operationTime, value);
 		}
 
 		private EmployeeCard employee;
-
 		[Display(Name = "Сотрудник")]
-		public virtual EmployeeCard Employee
-		{
+		public virtual EmployeeCard Employee {
 			get => employee;
 			set => SetField(ref employee, value);
 		}
@@ -54,19 +50,19 @@ namespace workwear.Domain.Operations
 		}
 
 		private Nomenclature nomenclature;
-
 		[Display(Name = "Номенклатура")]
-		public virtual Nomenclature Nomenclature
-		{
+		public virtual Nomenclature Nomenclature {
 			get => nomenclature;
 			set => SetField(ref nomenclature, value);
 		}
+		
 		private Size wearSize;
 		[Display(Name = "Размер")]
 		public virtual Size WearSize {
 			get => wearSize;
 			set => SetField(ref wearSize, value);
 		}
+		
 		private Size height;
 		[Display(Name = "Рост одежды")]
 		public virtual Size Height {
@@ -83,48 +79,36 @@ namespace workwear.Domain.Operations
 		/// </summary>
 		/// <value>The wear percent.</value>
 		[Display(Name = "Процент износа")]
-		public virtual decimal WearPercent
-		{
+		public virtual decimal WearPercent {
 			get => wearPercent;
 			set => SetField(ref wearPercent, value.Clamp(0m, 9.99m));
 		}
 
 		private int issued;
-
 		[Display(Name = "Выдано")]
-		public virtual int Issued
-		{
+		public virtual int Issued {
 			get => issued;
 			set => SetField(ref issued, value);
 		}
 
 		private int returned;
-
 		[Display(Name = "Возвращено")]
-		public virtual int Returned
-		{
+		public virtual int Returned {
 			get => returned;
 			set => SetField(ref returned, value);
 		}
 
 		private bool useAutoWriteoff = true;
-
 		[Display(Name = "Использовать автосписание")]
-		public virtual bool UseAutoWriteoff
-		{
+		public virtual bool UseAutoWriteoff {
 			get => useAutoWriteoff;
-			set { 
-				if(SetField(ref useAutoWriteoff, value)) {
-					if(value)
-						AutoWriteoffDate = ExpiryByNorm;
-					else
-						AutoWriteoffDate = null;
-				}
+			set {
+				if (!SetField(ref useAutoWriteoff, value)) return;
+				AutoWriteoffDate = value ? ExpiryByNorm : null;
 			}
 		}
 
 		private DateTime? startOfUse;
-
 		[Display(Name = "Начало использования")]
 		public virtual DateTime? StartOfUse {
 			get => startOfUse;
@@ -132,28 +116,22 @@ namespace workwear.Domain.Operations
 		}
 
 		private DateTime? expiryByNorm;
-
 		[Display(Name = "Износ по норме")]
-		public virtual DateTime? ExpiryByNorm
-		{
+		public virtual DateTime? ExpiryByNorm {
 			get => expiryByNorm;
 			set => SetField(ref expiryByNorm, value);
 		}
 
 		private DateTime? autoWriteoffDate;
-
 		[Display(Name = "Дата автосписания")]
-		public virtual DateTime? AutoWriteoffDate
-		{
+		public virtual DateTime? AutoWriteoffDate {
 			get => autoWriteoffDate;
 			set => SetField(ref autoWriteoffDate, value);
 		}
 
 		private EmployeeIssueOperation issuedOperation;
-
 		[Display(Name = "Операция выдачи")]
-		public virtual EmployeeIssueOperation IssuedOperation
-		{
+		public virtual EmployeeIssueOperation IssuedOperation {
 			get => issuedOperation;
 			set => SetField(ref issuedOperation, value);
 		}
@@ -166,25 +144,20 @@ namespace workwear.Domain.Operations
 		}
 
 		private NormItem normItem;
-
 		[Display(Name = "Строка нормы")]
-		public virtual NormItem NormItem
-		{
+		public virtual NormItem NormItem {
 			get => normItem;
 			set => SetField(ref normItem, value);
 		}
 
 		private string buhDocument;
-
 		[Display(Name = "Документ бухгалтерского учета")]
-		public virtual string BuhDocument
-		{
+		public virtual string BuhDocument {
 			get => buhDocument;
 			set => SetField(ref buhDocument, value);
 		}
 
 		private EmployeeIssueOperation employeeOperationIssueOnWriteOff;
-
 		[Display(Name = "Операция списания при выдачи по списанию")]
 		public virtual EmployeeIssueOperation EmployeeOperationIssueOnWriteOff {
 			get => employeeOperationIssueOnWriteOff;
@@ -206,7 +179,6 @@ namespace workwear.Domain.Operations
 		}
 
 		private bool overrideBefore;
-
 		[Display(Name = "Сбрасывает предыдущие движения")]
 		public virtual bool OverrideBefore {
 			get => overrideBefore;
@@ -216,17 +188,11 @@ namespace workwear.Domain.Operations
 		/// <summary>
 		/// Для создания операций выдачи надо использвать конструктор с BaseParameters
 		/// </summary>
-		public EmployeeIssueOperation()
-		{
-		}
-
-		public EmployeeIssueOperation(BaseParameters baseParameters)
-		{
+		public EmployeeIssueOperation() { }
+		public EmployeeIssueOperation(BaseParameters baseParameters) {
 			useAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 		}
-
 		#region Расчетные
-
 		public virtual string Title => Issued > Returned
 			? $"Выдача {Employee.ShortName} <= {Issued} х {Nomenclature?.Name ?? ProtectionTools.Name}"
 			: $"Списание {Employee.ShortName} => {Returned} х {Nomenclature?.Name ?? ProtectionTools.Name}";
@@ -240,18 +206,12 @@ namespace workwear.Domain.Operations
 				return range.Months;
 			}
 		}
-
 		#endregion
-
 		#region Методы
+		public virtual decimal CalculatePercentWear(DateTime atDate) => 
+			CalculatePercentWear(atDate, StartOfUse, ExpiryByNorm, WearPercent);
 
-		public virtual decimal CalculatePercentWear(DateTime atDate)
-		{
-			return CalculatePercentWear(atDate, StartOfUse, ExpiryByNorm, WearPercent);
-		}
-
-		public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent)
-		{
+		public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent) {
 			if(startOfUse == null || expiryByNorm == null)
 				return 0;
 
@@ -262,13 +222,10 @@ namespace workwear.Domain.Operations
 			return beginWearPercent + (decimal)addPercent;
 		}
 
-		public virtual decimal CalculateDepreciationCost(DateTime atDate)
-		{
-			return CalculateDepreciationCost(atDate, StartOfUse, ExpiryByNorm, WarehouseOperation.Cost);
-		}
+		public virtual decimal CalculateDepreciationCost(DateTime atDate) => 
+			CalculateDepreciationCost(atDate, StartOfUse, ExpiryByNorm, WarehouseOperation.Cost);
 
-		public static decimal CalculateDepreciationCost(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginCost)
-		{
+		public static decimal CalculateDepreciationCost(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginCost) {
 			if(startOfUse == null || expiryByNorm == null)
 				return 0;
 
@@ -278,12 +235,14 @@ namespace workwear.Domain.Operations
 
 			return (beginCost - beginCost * (decimal)removePercent).Clamp(0, decimal.MaxValue);
 		}
-
 		#endregion
-
 		#region Методы обновленя операций
-
-		public virtual void Update(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, ExpenseItem item, string signCardUid = null)
+		public virtual void Update(
+			IUnitOfWork uow, 
+			BaseParameters baseParameters, 
+			IInteractiveQuestion askUser, 
+			ExpenseItem item, 
+			string signCardUid = null)
 		{
 			//Внимание здесь сравниваются даты без времени.
 			if (item.ExpenseDoc.Date.Date != OperationTime.Date)
@@ -355,7 +314,8 @@ namespace workwear.Domain.Operations
 				NormItem = item.EmployeeCardItem.ActiveNormItem;
 
 			if(NormItem == null) {
-				logger.Warn($"В операции выдачи {Nomenclature.Name} не указана ссылка на норму, перерасчет сроков выдачи невозможен.");
+				logger.Warn($"В операции выдачи {Nomenclature.Name} не указана ссылка на норму, " +
+				            $"перерасчет сроков выдачи невозможен.");
 				return;
 			}
 
@@ -391,15 +351,13 @@ namespace workwear.Domain.Operations
 
 			var amountAtEndDay = graph.UsedAmountAtEndOfDay(OperationTime.Date, this);
 			var amountByNorm = NormItem.Amount;
-			if (amountAtEndDay >= amountByNorm)
-			{
+			if (amountAtEndDay >= amountByNorm) {
 				//Ищем первый интервал где числящееся меньше нормы.
 				var firstLessNorm = graph.Intervals
 					.Where(x => x.StartDate.Date >= OperationTime.Date)
 					.OrderBy(x => x.StartDate)
 					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
-				if (firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.ColDayAheadOfShedule) > OperationTime.Date)
-				{
+				if (firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.ColDayAheadOfShedule) > OperationTime.Date) {
 					switch(baseParameters.ShiftExpluatacion) {
 						case AnswerOptions.Ask:
 							if(askUser.Question(
@@ -415,13 +373,12 @@ namespace workwear.Domain.Operations
 							break;
 						default:
 							throw new NotImplementedException();
-
 					}
 				}
 			}
 
 			ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value);
-
+			
 			if(Issued > amountByNorm && amountByNorm > 0)
 			{
 				switch(baseParameters.ExtendPeriod) {
@@ -454,15 +411,9 @@ namespace workwear.Domain.Operations
 				ExpiryByNorm = endWearDate;
 			}
 
-			if(UseAutoWriteoff)
-				AutoWriteoffDate = ExpiryByNorm;
-			else
-				AutoWriteoffDate = null;
+			AutoWriteoffDate = UseAutoWriteoff ? ExpiryByNorm : null;
 		}
-
-
-		public virtual void Update(IUnitOfWork uow, IInteractiveQuestion askUser, IncomeItem item)
-		{
+		public virtual void Update(IUnitOfWork uow, IInteractiveQuestion askUser, IncomeItem item) {
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
@@ -483,8 +434,7 @@ namespace workwear.Domain.Operations
 			AutoWriteoffDate = null;
 		}
 
-		public virtual void Update(IUnitOfWork uow, WriteoffItem item)
-		{
+		public virtual void Update(IUnitOfWork uow, WriteoffItem item) {
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
@@ -497,6 +447,8 @@ namespace workwear.Domain.Operations
 			NormItem = null;
 			ExpiryByNorm = null;
 			AutoWriteoffDate = null;
+			WearSize = item.WearSize;
+			Height = item.Height;
 		}
 		#endregion
 	}

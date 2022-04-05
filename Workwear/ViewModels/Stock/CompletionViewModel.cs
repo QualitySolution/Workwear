@@ -77,8 +77,8 @@ namespace workwear.ViewModels.Stock
 		#region EntityViewModels
 		public EntityEntryViewModel<Warehouse> WarehouseExpenseEntryViewModel;
 		public EntityEntryViewModel<Warehouse> WarehouseReceiptEntryViewModel;
-		
-		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+
+		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName != nameof(Entity.SourceWarehouse) || Entity.SourceWarehouse == lastWarehouse || Entity.SourceItems is null) return;
 			if(Entity.SourceItems.Any()) {
@@ -106,7 +106,8 @@ namespace workwear.ViewModels.Stock
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;
 		}
-		void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
+
+		private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			var selectVM = sender as StockBalanceJournalViewModel;
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
 				Entity.AddSourceItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.Amount);
@@ -118,7 +119,8 @@ namespace workwear.ViewModels.Stock
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += AddNomenclature_OnSelectResult;
 		}
-		void AddNomenclature_OnSelectResult(object sender, JournalSelectedEventArgs e) {
+
+		private void AddNomenclature_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			UoW.GetById<Nomenclature>(e.SelectedObjects.Select(x => x.GetId()))
 				.ToList().ForEach(n => Entity.AddResultItem(n));
 		}

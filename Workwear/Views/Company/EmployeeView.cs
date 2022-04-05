@@ -163,7 +163,8 @@ namespace workwear.Views.Company
 		#endregion
 		#region Sizes
 		private void SizeBuild() {
-			var sizes = SizeService.GetSize(ViewModel.UoW);
+			var sizes = SizeService
+				.GetSize(ViewModel.UoW, null, false, true);
 			var sizeTypes = SizeService.GetSizeType(ViewModel.UoW);
 			
 			var table = new yTable((uint) sizeTypes.Count, 2, false);
@@ -196,13 +197,11 @@ namespace workwear.Views.Company
 			SizeContainer.Homogeneous = false;
 			SizeContainer.ShowAll();
 		}
-
 		private void SetSizes(object sender, EventArgs eventArgs) {
 			var list = (SpecialListComboBox)sender;
 			var sizeType = list.ItemsList.OfType<Size>().First().SizeType;
 			viewModel.SetSizes((Size)list.SelectedItem, sizeType);
 		}
-
 		#endregion
 		#region ButtonEvent
 		protected void OnButtonReadUidClicked(object sender, EventArgs e)

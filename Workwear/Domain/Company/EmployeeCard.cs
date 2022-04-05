@@ -43,7 +43,7 @@ namespace workwear.Domain.Company
 		[Display (Name = "Номер карточки")]
 		public virtual string CardNumber {
 			get => cardNumber;
-			set { SetField (ref cardNumber, value, () => CardNumber); }
+			set => SetField (ref cardNumber, value);
 		}
 
 		private string personnelNumber;
@@ -101,21 +101,21 @@ namespace workwear.Domain.Company
 		[Display (Name = "Должность")]
 		public virtual Post Post {
 			get => post;
-			set { SetField (ref post, value, () => Post); }
+			set => SetField(ref post, value);
 		}
 
 		private Leader leader;
 		[Display (Name = "Руководитель")]
 		public virtual Leader Leader {
 			get => leader;
-			set { SetField (ref leader, value, () => Leader); }
+			set => SetField(ref leader, value);
 		}
 
 		private DateTime? hireDate;
 		[Display (Name = "Дата поступления")]
 		public virtual DateTime? HireDate {
 			get => hireDate;
-			set { SetField (ref hireDate, value, () => HireDate); }
+			set => SetField(ref hireDate, value);
 		}
 
 		private DateTime? changeOfPositionDate;
@@ -123,21 +123,21 @@ namespace workwear.Domain.Company
 		public virtual DateTime? ChangeOfPositionDate
 		{
 			get => changeOfPositionDate;
-			set { SetField(ref changeOfPositionDate, value, () => ChangeOfPositionDate); }
+			set => SetField(ref changeOfPositionDate, value);
 		}
 
 		private DateTime? dismissDate;
 		[Display (Name = "Дата увольнения")]
 		public virtual DateTime? DismissDate {
 			get => dismissDate;
-			set { SetField (ref dismissDate, value, () => DismissDate); }
+			set => SetField(ref dismissDate, value);
 		}
 
 		private Sex sex;
 		[Display (Name = "Пол")]
 		public virtual Sex Sex {
 			get => sex;
-			set { SetField (ref sex, value, () => Sex); }
+			set => SetField(ref sex, value);
 		}
 
 		private UserBase createdbyUser;
@@ -148,11 +148,10 @@ namespace workwear.Domain.Company
 		}
 
 		private Subdivision subdivision;
-
 		[Display (Name = "Подразделение")]
 		public virtual Subdivision Subdivision {
 			get => subdivision;
-			set { SetField (ref subdivision, value, () => Subdivision); }
+			set => SetField(ref subdivision, value);
 		}
 
 		private Department department;
@@ -163,20 +162,18 @@ namespace workwear.Domain.Company
 		}
 
 		private byte[] photo;
-
 		[Display (Name = "Фотография")]
 		public virtual byte[] Photo {
 			get => photo;
-			set { SetField (ref photo, value, () => Photo); }
+			set => SetField (ref photo, value);
 		}
 
 		private string comment;
-
 		[Display(Name = "Комментарий")]
 		public virtual string Comment
 		{
 			get => comment;
-			set { SetField(ref comment, value, () => Comment); }
+			set => SetField(ref comment, value);
 		}
 
 		#endregion
@@ -185,7 +182,7 @@ namespace workwear.Domain.Company
 		[Display (Name = "Размеры")]
 		public virtual IList<EmployeeSize> Sizes {
 			get => sizes;
-			set => SetField (ref sizes, value);
+			set => SetField(ref sizes, value);
 		}
 
 		private GenericObservableList<EmployeeSize> observableSizes;
@@ -195,26 +192,23 @@ namespace workwear.Domain.Company
 		#endregion
 		#region Norms
 		private IList<Norm> usedNorms = new List<Norm>();
-
 		[Display (Name = "Примененные нормы")]
 		public virtual IList<Norm> UsedNorms {
 			get => usedNorms;
-			set { SetField (ref usedNorms, value, () => UsedNorms); }
+			set => SetField(ref usedNorms, value);
 		}
 
 		private GenericObservableList<Norm> observableUsedNorms;
 		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<Norm> ObservableUsedNorms 
 			=> observableUsedNorms ?? (observableUsedNorms = new GenericObservableList<Norm>(UsedNorms));
-
 		#endregion
 		#region Items
 		private IList<EmployeeCardItem> workwearItems = new List<EmployeeCardItem>();
-
 		[Display (Name = "Спецодежда")]
 		public virtual IList<EmployeeCardItem> WorkwearItems {
 			get => workwearItems;
-			set { SetField (ref workwearItems, value, () => WorkwearItems); }
+			set => SetField(ref workwearItems, value);
 		}
 
 		private GenericObservableList<EmployeeCardItem> observableWorkwearItems;
@@ -226,11 +220,10 @@ namespace workwear.Domain.Company
 		#endregion
 		#region Vacation
 		private IList<EmployeeVacation> vacations = new List<EmployeeVacation>();
-
 		[Display(Name = "Отпуска")]
 		public virtual IList<EmployeeVacation> Vacations {
 			get => vacations;
-			set { SetField(ref vacations, value, () => Vacations); }
+			set => SetField(ref vacations, value);
 		}
 
 		private GenericObservableList<EmployeeVacation> observableVacations;
@@ -241,7 +234,7 @@ namespace workwear.Domain.Company
 		#endregion
 		#region Расчетные
 		public virtual string Title => PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
-		public virtual string FullName => String.Format ("{0} {1} {2}", LastName, FirstName, Patronymic).Trim ();
+		public virtual string FullName => $"{LastName} {FirstName} {Patronymic}".Trim();
 		public virtual string ShortName => PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
 
 		private string ToTitleCase(string str){
@@ -258,7 +251,7 @@ namespace workwear.Domain.Company
 		public EmployeeCard () { }
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
-			if (String.IsNullOrEmpty (FirstName) && String.IsNullOrEmpty (LastName) && String.IsNullOrEmpty (Patronymic))
+			if (String.IsNullOrEmpty(FirstName) && String.IsNullOrEmpty(LastName) && String.IsNullOrEmpty(Patronymic))
 				yield return new ValidationResult (
 					"Должно быть заполнено хотя бы одно из следующих полей: Фамилия, Имя, Отчество)", 
 					new[] { this.GetPropertyName (o => o.FirstName),
@@ -331,7 +324,6 @@ namespace workwear.Domain.Company
 			foreach(var norm in norms)
 				AddUsedNorm(norm);
 		}
-
 		#endregion
 		#region Функции для работы с коллекцией потребностей
 		/// <summary>
@@ -345,15 +337,12 @@ namespace workwear.Domain.Company
 				foreach (var normItem in norm.Items) {
 					if(!normItem.NormCondition?.MatchesForEmployee(this) ?? false) 
 						continue;
-
 					var currentItem = WorkwearItems.FirstOrDefault (i => i.ProtectionTools == normItem.ProtectionTools);
-
 					if (currentItem == null) {
 						//FIXME Возможно нужно проверять если что-то подходящее уже выдавалось то пересчитывать.
 						currentItem = new EmployeeCardItem (this, normItem);
 						ObservableWorkwearItems.Add (currentItem);
 					}
-
 					if(processed.Contains (currentItem)) {
 						if (normItem.AmountPerYear > currentItem.ActiveNormItem.AmountPerYear)
 							currentItem.ActiveNormItem = normItem;
@@ -366,7 +355,6 @@ namespace workwear.Domain.Company
 			}
 			// Удаляем больше ненужные
 			var needRemove = WorkwearItems.Where (i => !processed.Contains (i));
-
 			needRemove.ToList ().ForEach (i => ObservableWorkwearItems.Remove (i));
 			//Обновляем срок следующей выдачи
 			foreach(var item in processed) {
@@ -408,8 +396,7 @@ namespace workwear.Domain.Company
 					.ToDictionary(g => g.Key, g => g);
 
 			//Основное заполнение выдачи
-			foreach (var item in WorkwearItems)
-			{
+			foreach (var item in WorkwearItems) {
 				if(!protectionGroups.ContainsKey(item.ProtectionTools.Id))
 					continue;
 				var operations = protectionGroups[item.ProtectionTools.Id];
@@ -426,8 +413,7 @@ namespace workwear.Domain.Company
 			}
 			
 			//Дополнительно ищем по аналогам.
-			foreach (var item in WorkwearItems)
-			{
+			foreach (var item in WorkwearItems) {
 			 	var matched = 
 				    item.ProtectionTools.MatchedProtectionTools
 					    .FirstOrDefault(x => protectionGroups.ContainsKey(x.Id));
@@ -464,7 +450,8 @@ namespace workwear.Domain.Company
 			IEnumerable<EmployeeCardItem> items)
 		{
 			FetchEntitiesInWearItems(uow, items);
-			var allNomenclatures = items.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
+			var allNomenclatures = 
+				items.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
 			var stockRepo = new StockRepository();
 			var stock = stockRepo.StockBalances(uow, warehouse, allNomenclatures, onTime);
 			foreach(var item in items) {
@@ -472,8 +459,7 @@ namespace workwear.Domain.Company
 			}
 		}
 
-		public static void FetchEntitiesInWearItems(IUnitOfWork uow, IEnumerable<EmployeeCardItem> cardItems)
-		{
+		public static void FetchEntitiesInWearItems(IUnitOfWork uow, IEnumerable<EmployeeCardItem> cardItems) {
 			var protectionToolsIds = cardItems.Select(x => x.ProtectionTools.Id).ToArray();
 
 			var query = uow.Session.QueryOver<ProtectionTools>()
@@ -510,12 +496,9 @@ namespace workwear.Domain.Company
 
 			query.ToList();
 		}
-
 		#endregion
 		#region Функции работы с отпусками
-
-		public virtual void AddVacation(EmployeeVacation vacation)
-		{
+		public virtual void AddVacation(EmployeeVacation vacation) {
 			vacation.Employee = this;
 			ObservableVacations.Add(vacation);
 		}

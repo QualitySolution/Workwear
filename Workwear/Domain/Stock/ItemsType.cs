@@ -115,17 +115,11 @@ namespace workwear.Domain.Stock
 		property
 	}
 
-	public class ItemTypeCategoryType : NHibernate.Type.EnumStringType {
-		public ItemTypeCategoryType () : base (typeof(ItemTypeCategory)) { }
-	}
 	public enum IssueType {
 		[Display(Name = "Персональная")]
 		Personal,
 		[Display(Name = "Коллективная")]
 		Collective
-	}
-	public class IssueTypeEnumType : NHibernate.Type.EnumStringType {
-		public IssueTypeEnumType() : base(typeof(IssueType)) { }
 	}
 }
 

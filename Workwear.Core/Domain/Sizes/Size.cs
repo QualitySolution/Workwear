@@ -10,7 +10,7 @@ using Workwear.Measurements;
 
 namespace workwear.Domain.Sizes
 {
-    [Appellative (Gender = GrammaticalGender.Feminine,
+    [Appellative (Gender = GrammaticalGender.Masculine,
         NominativePlural = "размеры",
         Nominative = "размер",
         Genitive = "размера"
@@ -20,10 +20,26 @@ namespace workwear.Domain.Sizes
     {
         #region Свойства
         public virtual int Id { get; }
-        public virtual string Name { get; set; }
-        public virtual SizeType SizeType { get; set; }
-        public virtual bool UseInEmployee { get; set; }
-        public virtual bool UseInNomenclature { get; set; }
+        private string name;
+        public virtual string Name {
+            get => name;
+            set => SetField(ref name, value);
+        }
+        private SizeType sizeType;
+        public virtual SizeType SizeType {
+            get => sizeType;
+            set => sizeType = value;
+        }
+        private bool useInEmployee;
+        public virtual bool UseInEmployee {
+            get => useInEmployee;
+            set => useInEmployee = value;
+        }
+        private bool useInNomenclature;
+        public virtual bool UseInNomenclature {
+            get => useInNomenclature;
+            set => useInNomenclature = value;
+        }
         #endregion
         #region Suitable
         private IList<Size> suitableSizes  = new List<Size>();
@@ -41,8 +57,7 @@ namespace workwear.Domain.Sizes
         public virtual string Title => $"{SizeType.Name}: {Name}";
         #endregion
         #region IValidatableObject implementation
-        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
+        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
             if (SizeType is null)
                 yield return new ValidationResult (
                     "Тип размера должен быть указан", 
@@ -56,8 +71,11 @@ namespace workwear.Domain.Sizes
                     "Размер не может быть своим аналогом", 
                     new[] { this.GetPropertyName(s => s.Title)});
             var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
-            var dubbleSize = SizeService.GetSize(uow, SizeType).FirstOrDefault(x => x.Name == Name && x.Id != Id);
-            if(dubbleSize != null)
+            var doubleSize = 
+                    SizeService
+                        .GetSize(uow, SizeType, true, true)
+                        .FirstOrDefault(x => x.Name == Name && x.Id != Id);
+            if(doubleSize != null)
                 yield return new ValidationResult (
                     "Такой размер уже существует", 
                     new[] { this.GetPropertyName(s => s.Title)});

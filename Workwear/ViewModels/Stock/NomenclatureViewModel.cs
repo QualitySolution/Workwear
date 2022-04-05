@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Autofac;
-using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -17,28 +17,20 @@ namespace workwear.ViewModels.Stock
 {
 	public class NomenclatureViewModel : EntityDialogViewModelBase<Nomenclature>
 	{
-		private readonly ILifetimeScope autofacScope;
-		private readonly BaseParameters baseParameters;
-		private readonly IInteractiveService interactiveService;
-
 		public NomenclatureViewModel(
-			BaseParameters baseParameters, 
-			IInteractiveService interactiveService, 
+			BaseParameters baseParameters,
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation, 
 			ILifetimeScope autofacScope, 
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
-			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			var entryBuilder = 
 				new CommonEEVMBuilderFactory<Nomenclature>(this, Entity, UoW, navigation, autofacScope);
 
 			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
 				.MakeByType()
 				.Finish();
-			this.baseParameters = baseParameters;
-			this.interactiveService = interactiveService;
 			Validations.Clear();
 			Validations.Add(
 				new ValidationRequest(Entity, 
@@ -48,12 +40,10 @@ namespace workwear.ViewModels.Stock
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 		}
-
 		#region EntityViewModels
 		public EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
 		#endregion
 		#region Visible
-
 		public bool VisibleClothesSex =>
 			Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear;
 		#endregion
@@ -61,7 +51,7 @@ namespace workwear.ViewModels.Stock
 		public bool SensitiveOpenMovements => Entity.Id > 0;
 		#endregion
 		#region Data
-		public string ClothesSexLabel => "Одежда: ";
+		public string ClothesSexLabel => "Пол: ";
 		#endregion
 		#region Actions
 		public void OpenMovements() {
@@ -69,8 +59,7 @@ namespace workwear.ViewModels.Stock
 					addingRegistrations: builder => builder.RegisterInstance(Entity));
 		}
 		#endregion
-
-		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+		private void Entity_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName != nameof(Entity.Type)) return;
 			if (Entity.Type != null && String.IsNullOrWhiteSpace(Entity.Name))
 				Entity.Name = Entity.Type.Name;

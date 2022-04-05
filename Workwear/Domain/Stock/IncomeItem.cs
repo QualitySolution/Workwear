@@ -26,118 +26,92 @@ namespace workwear.Domain.Stock
 		[Display(Name = "Документ")]
 		[IgnoreHistoryTrace]
 		public virtual Income Document {
-			get { return document; }
-			set { SetField(ref document, value); }
+			get => document;
+			set => SetField(ref document, value);
 		}
 
-		Nomenclature nomenclature;
-
+		private Nomenclature nomenclature;
 		[Display (Name = "Номеклатура")]
 		public virtual Nomenclature Nomenclature {
-			get { return nomenclature; }
+			get => nomenclature;
 			set { SetField (ref nomenclature, value, () => Nomenclature); }
 		}
 
-		int amount;
-
+		private int amount;
 		[Display (Name = "Количество")]
 		[PropertyChangedAlso("Total")]
 		public virtual int Amount {
-			get { return amount; }
+			get => amount;
 			set { SetField (ref amount, value, () => Amount); }
 		}
 
-		decimal cost;
-
+		private decimal cost;
 		[Display (Name = "Цена")]
 		[PropertyChangedAlso("Total")]
 		public virtual decimal Cost {
-			get { return cost; }
+			get => cost;
 			set { SetField (ref cost, value, () => Cost); }
 		}
 
 		private string certificate;
-
 		[Display(Name = "№ сертификата")]
-		public virtual string Certificate
-		{
-			get { return certificate; }
+		public virtual string Certificate {
+			get => certificate;
 			set { SetField(ref certificate, value, () => Certificate); }
 		}
 
 		private EmployeeIssueOperation returnFromEmployeeOperation;
-
 		[Display(Name = "Операция возврата от сотрудника")]
 		[IgnoreHistoryTrace]
-		public virtual EmployeeIssueOperation ReturnFromEmployeeOperation
-		{
-			get { return returnFromEmployeeOperation; }
-			set { SetField(ref returnFromEmployeeOperation, value); }
+		public virtual EmployeeIssueOperation ReturnFromEmployeeOperation {
+			get => returnFromEmployeeOperation;
+			set => SetField(ref returnFromEmployeeOperation, value);
 		}
 
 		private SubdivisionIssueOperation returnFromSubdivisionOperation;
-
 		[Display(Name = "Операция возврата из подразделения")]
 		[IgnoreHistoryTrace]
 		public virtual SubdivisionIssueOperation ReturnFromSubdivisionOperation {
-			get { return returnFromSubdivisionOperation; }
-			set { SetField(ref returnFromSubdivisionOperation, value); }
+			get => returnFromSubdivisionOperation;
+			set => SetField(ref returnFromSubdivisionOperation, value);
 		}
 
 		private WarehouseOperation warehouseOperation = new WarehouseOperation();
 		[Display(Name = "Операция на складе")]
 		[IgnoreHistoryTrace]
 		public virtual WarehouseOperation WarehouseOperation {
-			get { return warehouseOperation; }
-			set { SetField(ref warehouseOperation, value); }
+			get => warehouseOperation;
+			set => SetField(ref warehouseOperation, value);
+		}
+		private Size wearSize;
+		[Display(Name = "Размер")]
+		public virtual Size WearSize {
+			get => wearSize;
+			set => wearSize = value;
+		}
+		private Size height;
+		[Display(Name = "Рост одежды")]
+		public virtual Size Height {
+			get => height;
+			set => height = value;
 		}
 
-		string size;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display(Name = "Размер")]
-		public virtual string Size {
-			get { return size; }
-			set { SetField(ref size, value, () => Size); }
-		}
-
-		string wearGrowth;
-		[Obsolete("Работа с размерами перенесена в классы Size, SizeType и SizeService")]
-		[Display(Name = "Рост одежды")]
-		public virtual string WearGrowth {
-			get { return wearGrowth; }
-			set { SetField(ref wearGrowth, value, () => WearGrowth); }
-		}
-		[Display(Name = "Размер")]
-		public virtual Size WearSize { get; set; }
-		[Display(Name = "Рост одежды")]
-		public virtual Size Height { get; set; }
 		#endregion
-
 		#region Расчетные
-
-		public virtual string Title {
-			get { return String.Format ("Поступление на склад {0} в количестве {1} {2}",
-				Nomenclature?.Name,
-				Amount,
-				Nomenclature?.Type?.Units?.Name
-			);}
-		}
+		public virtual string Title =>
+			$"Поступление на склад {Nomenclature?.Name} в количестве {Amount} {Nomenclature?.Type?.Units?.Name}";
 
 		public virtual decimal Total => Cost * Amount;
-		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height);
-
+		public virtual StockPosition StockPosition => 
+			new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height);
 		#endregion
-
 		#region Не сохраняемые в базу свойства
-
 		private string buhDocument;
-
 		[Display(Name = "Документ бухгалтерского учета")]
 		//В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
-		public virtual string BuhDocument
-		{
-			get { return buhDocument ?? ReturnFromEmployeeOperation?.BuhDocument; }
-			set { SetField(ref buhDocument, value); }
+		public virtual string BuhDocument {
+			get => buhDocument ?? ReturnFromEmployeeOperation?.BuhDocument;
+			set => SetField(ref buhDocument, value);
 		}
 
 		[Display(Name = "Процент износа")]
@@ -147,7 +121,6 @@ namespace workwear.Domain.Stock
 		}
 
 		private EmployeeIssueOperation issuedEmployeeOnOperation;
-
 		/// <summary>
 		/// Это ссылка на операцию выдачи по которой был выдан сотруднику поступивший от него СИЗ
 		/// В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
@@ -159,7 +132,6 @@ namespace workwear.Domain.Stock
 		}
 
 		private SubdivisionIssueOperation issuedSubdivisionOnOperation;
-
 		/// <summary>
 		/// Это ссылка на операцию выдачи по которой был выдан на подразделение поступивший от него СИЗ
 		/// В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
@@ -171,20 +143,13 @@ namespace workwear.Domain.Stock
 		}
 
 		#endregion
-
-		protected IncomeItem ()
-		{
-		}
-
-		public IncomeItem(Income income)
-		{
+		protected IncomeItem () { }
+		public IncomeItem(Income income) {
 			document = income;
 		}
 
 		#region Функции
-
-		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
-		{
+		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser) {
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
 
@@ -210,9 +175,7 @@ namespace workwear.Domain.Stock
 				ReturnFromSubdivisionOperation = null;
 			}
 		}
-
 		#endregion
-
 	}
 }
 

@@ -78,7 +78,9 @@ namespace workwear.Models.Import
 
 		public static Size ParseSize(IUnitOfWork uow, string value, Category category)
 		{
-			return SizeService.GetSizeByCategory(uow, category).FirstOrDefault(x => x.Name == value);
+			return SizeService
+				.GetSizeByCategory(uow, category, true, true)
+				.FirstOrDefault(x => x.Name == value);
 		}
 	}
 	public struct SizeAndGrowth {

@@ -104,7 +104,7 @@ namespace workwear
 			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
 			OrmMain.AddObjectDescription<UserSettings>();
 			//Склад
-			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
+			OrmMain.AddObjectDescription<Income>().Dialog<Dialogs.Stock.IncomeDocDlg>();
 			OrmMain.AddObjectDescription<Writeoff>().Dialog<WriteOffDocDlg>();
 
 			NotifyConfiguration.Enable();
@@ -180,7 +180,7 @@ namespace workwear
 			#endregion
 
 			#region Старые диалоги
-			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(IncomeDocDlg)))
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(Dialogs.Stock.IncomeDocDlg)))
 				.Where(t => t.IsAssignableTo<ITdiTab>() && t.Name.EndsWith("Dlg"))
 				.AsSelf();
 			#endregion

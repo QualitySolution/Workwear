@@ -93,15 +93,4 @@ namespace workwear.Domain.Users
 		Middle,
 		Large
 	}
-	public class ToolBarIconsSizeStringType : NHibernate.Type.EnumStringType {
-		public ToolBarIconsSizeStringType () : base (typeof(IconsSize))
-		{
-		}
-	}
-	public class ToolbarStyleStringType : NHibernate.Type.EnumStringType {
-		public ToolbarStyleStringType () : base (typeof(ToolbarStyle))
-		{
-		}
-	}
 }
-

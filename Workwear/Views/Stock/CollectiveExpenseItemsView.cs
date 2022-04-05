@@ -57,11 +57,13 @@ namespace workwear.Views.Stock
 					.AddSetter((c, n) => c.Editable = n.EmployeeCardItem != null)
 				.AddColumn("Размер")
 					.AddComboRenderer(x => x.WearSize)
-					.DynamicFillListFunc(x => SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.SizeType))
+					.DynamicFillListFunc(x => 
+						SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.SizeType))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType == null)
 				.AddColumn("Рост")
 					.AddComboRenderer(x => x.Height)
-					.DynamicFillListFunc(x => SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.HeightType))
+					.DynamicFillListFunc(x => 
+						SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.HeightType))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
 				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))

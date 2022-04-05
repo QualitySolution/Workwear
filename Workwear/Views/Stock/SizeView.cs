@@ -27,7 +27,7 @@ namespace workwear.Views.Stock
 				.AddBinding(Entity, e => e.Id, w => w.Text, new IdToStringConverter())
 				.InitializeFromSource();
 			specllistcomSizeType.SetRenderTextFunc<SizeType>(x => x.Name);
-			specllistcomSizeType.ItemsList = SizeService.GetSizeType(ViewModel.UoW);
+			specllistcomSizeType.ItemsList = SizeService.GetSizeType(ViewModel.UoW, true);
 			specllistcomSizeType.Binding
 				.AddBinding(Entity, e => e.SizeType, w => w.SelectedItem)
 				.InitializeFromSource();

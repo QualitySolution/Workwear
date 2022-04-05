@@ -21,13 +21,13 @@ namespace workwear.Journal.Filter.Views.Stock
 			labelWarehouse.Binding
 				.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible)
 				.InitializeFromSource();
-			comboSize.SetRenderTextFunc<Size>(x => x.Name);
+			comboSize.SetRenderTextFunc<Size>(x => x.Title);
 			comboSize.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.Size, w => w.SelectedItem)
 				.AddBinding(v => v.Sizes, w => w.ItemsList)
 				.AddBinding(v => v.SensitiveSize, w => w.Sensitive)
 				.InitializeFromSource();
-			comboGrowth.SetRenderTextFunc<Size>(x => x.Name);
+			comboGrowth.SetRenderTextFunc<Size>(x => x.Title);
 			comboGrowth.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.Height, w => w.SelectedItem)
 				.AddBinding(v => v.Growths, w => w.ItemsList)

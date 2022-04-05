@@ -303,7 +303,7 @@ namespace workwear.Models.Import
 			var changeType = fieldValue == newValue ? ChangeType.NotChanged : rowChange;
 			if (changeType == ChangeType.NotChanged)
 				return new ChangeState(changeType);
-			var sizes = SizeService.GetSize(uow);
+			var sizes = SizeService.GetSize(uow, null, true, true);
 			if(sizes.All(x => x != newValue))
 				changeType = ChangeType.ParseError;
 
@@ -382,7 +382,8 @@ namespace workwear.Models.Import
 			IProgressBarDisplayable progress)
 		{
 			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
-			var numberColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.PersonnelNumber);
+			var numberColumn = 
+				columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.PersonnelNumber);
 			var numbers = list.Select(x => GetPersonalNumber(settings, x, numberColumn.Index))
 							.Where(x => !String.IsNullOrWhiteSpace(x))
 							.Distinct().ToArray();

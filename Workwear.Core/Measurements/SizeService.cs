@@ -1,37 +1,66 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Gamma.Utilities;
+﻿using System.Collections.Generic;
 using QS.DomainModel.UoW;
 using workwear.Domain.Sizes;
 
 namespace Workwear.Measurements
 {
 	/// <summary>
-	/// Предоставляет различную информацию о работе с размерами.
+	/// Предоставляет доступ к списку размеров
 	/// </summary>
 	public class SizeService
 	{
-		public SizeService() { }
-		#region Новые размеры
-		public static IList<Size> GetSize(IUnitOfWork UoW, SizeType sizeType = null) {
-			var sizes = UoW.Session.QueryOver<Size>();
-			return sizeType is null ? 
-				sizes.List() : sizes.Where(x => x.SizeType == sizeType).List();
+		public static IList<Size> GetSize(
+			IUnitOfWork uow, 
+			SizeType sizeType = null, 
+			bool unusedInEmployee = false, 
+			bool unusedInNomenclature = false)
+		{
+			var sizes = uow.Session.QueryOver<Size>();
+			if (sizeType != null)
+				sizes = sizes.Where(x => x.SizeType == sizeType);
+			if (!unusedInEmployee)
+				sizes = sizes.Where(x => x.UseInEmployee);
+			if (!unusedInNomenclature)
+				sizes = sizes.Where(x => x.UseInNomenclature);
+			return sizes.List();
 		}
-		public static IList<SizeType> GetSizeType(IUnitOfWork UoW) 
-			=> UoW.Session.QueryOver<SizeType>().List();
-		public static IList<SizeType> GetSizeTypeByCategory(IUnitOfWork UoW, Category category) 
-			=> UoW.Session.QueryOver<SizeType>()
-				.Where(x => x.Category == category).List();
+		
+		public static IList<SizeType> GetSizeType(
+			IUnitOfWork uow, 
+			bool unusedInEmployee = false) 
+		{
+			var sizeTypes = uow.Session.QueryOver<SizeType>();
+			if (!unusedInEmployee)
+				sizeTypes = sizeTypes.Where(x => x.UseInEmployee);
+			return sizeTypes.List();
+		}
 
-		public static IEnumerable<Size> GetSizeByCategory(IUnitOfWork UoW, Category category) {
-			SizeType sizeTypeAlias = null;
-			var query = UoW.Session.QueryOver<Size>()
-				.JoinAlias(x => x.SizeType, () => sizeTypeAlias)
-				.Where(x => sizeTypeAlias.Category == category).List();
-			return query;
+		public static IEnumerable<SizeType> GetSizeTypeByCategory(
+			IUnitOfWork uow,
+			Category category,
+			bool unusedInEmployee = false)
+		{
+			var sizeTypes = 
+				uow.Session.QueryOver<SizeType>().Where(x => x.Category == category);
+			if (!unusedInEmployee)
+				sizeTypes = sizeTypes.Where(x => x.UseInEmployee);
+			return sizeTypes.List();
 		}
-		#endregion
+
+		public static IEnumerable<Size> GetSizeByCategory(
+			IUnitOfWork uow, 
+			Category category, 
+			bool unusedInEmployee = false, 
+			bool unusedInNomenclature = false) {
+			SizeType sizeTypeAlias = null;
+			var sizes = uow.Session.QueryOver<Size>()
+				.JoinAlias(x => x.SizeType, () => sizeTypeAlias)
+				.Where(x => sizeTypeAlias.Category == category);
+			if (!unusedInEmployee)
+				sizes = sizes.Where(x => x.UseInEmployee);
+			if (!unusedInNomenclature)
+				sizes = sizes.Where(x => x.UseInNomenclature);
+			return sizes.List();
+		}
 	}
 }

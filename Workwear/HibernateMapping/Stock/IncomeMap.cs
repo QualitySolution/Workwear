@@ -13,8 +13,8 @@ namespace workwear.HMap
 				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
 			else 
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
-			
-			Map (x => x.Operation).Column ("operation").CustomType<IncomeOperationsType> ();
+
+			Map(x => x.Operation).Column("operation");
 			Map (x => x.Date).Column ("date");
 			Map (x => x.Number).Column ("number");
 			Map(x => x.Comment).Column("comment");

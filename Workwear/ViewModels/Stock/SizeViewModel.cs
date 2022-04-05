@@ -36,7 +36,7 @@ namespace workwear.ViewModels.Stock
 			selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;
 		}
 
-		void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
+		private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			var selectVM = sender as SizeJournalViewModel;
 			foreach (var node in e.GetSelectedObjects<SizeJournalNode>()) {
 				var analog = UoW.GetById<Size>(node.Id);

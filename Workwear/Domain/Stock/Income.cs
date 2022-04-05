@@ -25,13 +25,12 @@ namespace workwear.Domain.Stock
 	public class Income : StockDocument, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
-
 		#region Свойства
 
 		private IncomeOperations operation;
 		[Display (Name = "Тип операции")]
 		public virtual IncomeOperations Operation {
-			get { return operation; }
+			get => operation;
 			set { SetField (ref operation, value, () => Operation); }
 		}
 
@@ -39,35 +38,35 @@ namespace workwear.Domain.Stock
 		[Display(Name = "Склад")]
 		[Required(ErrorMessage = "Склад должен быть указан.")]
 		public virtual Warehouse Warehouse {
-			get { return warehouse; }
+			get => warehouse;
 			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
 
 		private string number;
 		[Display (Name = "Вх. номер")]
 		public virtual string Number {
-			get { return number; }
+			get => number;
 			set { SetField (ref number, value, () => Number); }
 		}
 
 		private EmployeeCard employeeCard;
 		[Display (Name = "Сотрудник")]
 		public virtual EmployeeCard EmployeeCard {
-			get { return employeeCard; }
+			get => employeeCard;
 			set { SetField (ref employeeCard, value, () => EmployeeCard); }
 		}
 
 		private Subdivision subdivision;
 		[Display (Name = "Подразделение")]
 		public virtual Subdivision Subdivision {
-			get { return subdivision; }
+			get => subdivision;
 			set { SetField (ref subdivision, value, () => Subdivision); }
 		}
 
 		private IList<IncomeItem> items = new List<IncomeItem>();
 		[Display (Name = "Строки документа")]
 		public virtual IList<IncomeItem> Items {
-			get { return items; }
+			get => items;
 			set { SetField (ref items, value, () => Items); }
 		}
 
@@ -77,26 +76,22 @@ namespace workwear.Domain.Stock
 			observableItems ?? (observableItems = new GenericObservableList<IncomeItem>(Items));
 
 		#endregion
-
 		public virtual string Title{
 			get{
 				switch (Operation) {
 				case IncomeOperations.Enter:
-					return String.Format ("Приходная накладная №{0} от {1:d}", Id, Date);
+					return $"Приходная накладная №{Id} от {Date:d}";
 				case IncomeOperations.Return:
-					return String.Format ("Возврат от работника №{0} от {1:d}", Id, Date);
+					return $"Возврат от работника №{Id} от {Date:d}";
 				case IncomeOperations.Object:
-					return String.Format ("Возврат c объекта №{0} от {1:d}", Id, Date);
+					return $"Возврат c объекта №{Id} от {Date:d}";
 				default:
 					return null;
 				}
 			}
 		}
-
 		#region IValidatableObject implementation
-
-		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
-		{
+		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
 			if (Date < new DateTime(2008, 1, 1))
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
 					new[] { this.GetPropertyName (o => o.Date)});
@@ -225,8 +220,6 @@ namespace workwear.Domain.Stock
 			}
 			return item;
 		}
-
-
 		public virtual void RemoveItem(IncomeItem item) {
 			ObservableItems.Remove (item);
 		}
@@ -259,12 +252,6 @@ namespace workwear.Domain.Stock
 		/// </summary>
 		[Display(Name = "Возврат с объекта")]
 		Object
-	}
-
-	public class IncomeOperationsType : NHibernate.Type.EnumStringType {
-		public IncomeOperationsType () : base (typeof(IncomeOperations))
-		{
-		}
 	}
 }
 

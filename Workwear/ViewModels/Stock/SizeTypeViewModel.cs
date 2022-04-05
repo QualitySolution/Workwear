@@ -28,7 +28,7 @@ namespace workwear.ViewModels.Stock
 			else
 				Sizes = new GenericObservableList<Size>(SizeService.GetSize(UoW, Entity).ToList());
 		}
-		public bool IsNew { get; set; }
+		public bool IsNew { get; }
 		private GenericObservableList<Size> sizes;
 		public GenericObservableList<Size> Sizes {
 			get => sizes;

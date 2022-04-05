@@ -15,7 +15,6 @@ using workwear.Tools;
 using workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using QS.HistoryLog;
-using workwear.Domain.Sizes;
 
 namespace workwear.Domain.Company
 {
@@ -92,8 +91,7 @@ namespace workwear.Domain.Company
 		#endregion
 		#region Расчетное
 		public virtual string AmountColor {
-			get
-			{
+			get {
 				if(ActiveNormItem == null)
 					return "Indigo";
 				if (ActiveNormItem.Amount == Amount)
@@ -108,12 +106,9 @@ namespace workwear.Domain.Company
 					return "red";
 			return DateTime.Today.AddDays(parameters.ColDayAheadOfShedule) > NextIssue ? "darkgreen" : "black";
 		}
-		public virtual string Title => 
-			String.Format ("Потребность сотрудника {3} в {0} - {1} на {2}", 
-				ProtectionTools.Name, 
-				ProtectionTools.GetAmountAndUnitsText(ActiveNormItem.Amount), 
-				ActiveNormItem.LifeText, 
-				EmployeeCard.ShortName);
+		public virtual string Title =>
+			$"Потребность сотрудника {EmployeeCard.ShortName} в {ProtectionTools.Name} - " +
+			$"{ProtectionTools.GetAmountAndUnitsText(ActiveNormItem.Amount)} на {ActiveNormItem.LifeText}";
 
 		public virtual StockStateInfo InStockState {
 			get {
@@ -179,8 +174,7 @@ namespace workwear.Domain.Company
 		/// Необходимое к выдачи количество.
 		/// Внимание! Не корректно считает сложные ситуации, с неполной выдачей.
 		/// </summary>
-		public virtual int CalculateRequiredIssue(BaseParameters parameters)
-		{
+		public virtual int CalculateRequiredIssue(BaseParameters parameters) {
 			if(NextIssue.HasValue && NextIssue.Value.AddDays(-parameters.ColDayAheadOfShedule) <= DateTime.Today)
 				return ActiveNormItem.Amount;
 			return ActiveNormItem.Amount - Amount;
@@ -201,58 +195,52 @@ namespace workwear.Domain.Company
 			}
 
 			if (employeeSize != null && stockPosition.WearSize != null) {
-				var suitableEmployeeSizes = employeeSize.SuitableSizes;
-				var suitableStockPositionSize = stockPosition.WearSize.SuitableSizes;
+				var suitableEmployeeSizes = employeeSize.SuitableSizes.Where(x => x.UseInEmployee).ToList();
+				var suitableStockPositionSize = stockPosition.WearSize.SuitableSizes.Where(x => x.UseInEmployee).ToList();
 				suitableEmployeeSizes.Add(employeeSize);
 				suitableStockPositionSize.Add(stockPosition.WearSize);
 
 				if (!suitableEmployeeSizes.Intersect(suitableStockPositionSize).Any()) return false;
 			}
-
+			
+			if(stockPosition.Height is null) return true;
+			
 			var employeeHeight = employeeCard.Sizes
-				.FirstOrDefault(x => x.SizeType.Category == Category.Height)?.Size;
-			if (employeeHeight is null && stockPosition.Height != null) {
+				.FirstOrDefault(x => x.SizeType == stockPosition.Height.SizeType)?.Size;
+			if (employeeHeight is null) {
 				logger.Warn("В карточке сотрудника не указан рост");
 				return false;
 			}
 
-			if (employeeHeight is null || stockPosition.Height is null) return true;
-
-			var suitableEmployeeHeights = employeeHeight.SuitableSizes;
-			var suitableStockPositionHeights = stockPosition.Height.SuitableSizes;
+			var suitableEmployeeHeights = employeeHeight.SuitableSizes.Where(x => x.UseInEmployee).ToList();
+			var suitableStockPositionHeights = stockPosition.Height.SuitableSizes.Where(x => x.UseInEmployee).ToList();
 			suitableEmployeeHeights.Add(employeeHeight);
 			suitableStockPositionHeights.Add(stockPosition.Height);
-			
 			return suitableEmployeeHeights.Intersect(suitableStockPositionHeights).Any();
 		}
 
-		public virtual void UpdateNextIssue(IUnitOfWork uow)
-		{
+		public virtual void UpdateNextIssue(IUnitOfWork uow) {
 			IssueGraph graph = null;
 
-			if(EmployeeCard.Id > 0) //Если карточка еще не разу не сохранялась. То и нечего запрашивать выдачи.
-			{
+			if(EmployeeCard.Id > 0){ //Если карточка еще не разу не сохранялась. То и нечего запрашивать выдачи.
 				graph = GetIssueGraphForItem(uow);
 			}
 
 			DateTime? wantIssue = new DateTime();
-			if(graph != null && graph.Intervals.Any())
-			{
+			if(graph != null && graph.Intervals.Any()) {
 				var listReverse = graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
 				var lastInterval = listReverse.First();
-				if(lastInterval.CurrentCount >= ActiveNormItem.Amount)
-				{//Нет автосписания, следующая выдача чисто информативно проставляется по сроку носки
+				if(lastInterval.CurrentCount >= ActiveNormItem.Amount) {
+					//Нет автосписания, следующая выдача чисто информативно проставляется по сроку носки
 					var expiredByNorm = lastInterval.ActiveItems.Where(x => x.IssueOperation.ExpiryByNorm != null);
 					if(expiredByNorm.Any())
 						wantIssue = expiredByNorm.Max(x => x.IssueOperation.ExpiryByNorm.Value);
 					else
 						wantIssue = null;
 				}
-				else
-				{
+				else {
 					//Ищем первый с конца интервал где не хватает выданного до нормы.
-					foreach(var interval in listReverse)
-					{
+					foreach(var interval in listReverse) {
 						if (interval.CurrentCount < ActiveNormItem.Amount)
 							wantIssue = interval.StartDate;
 						else
@@ -260,8 +248,7 @@ namespace workwear.Domain.Company
 					}
 				}
 			}
-			if(wantIssue == default(DateTime))
-			{
+			if(wantIssue == default(DateTime)) {
 				wantIssue = Created.Date;
 			}
 
@@ -281,8 +268,7 @@ namespace workwear.Domain.Company
 					wantIssue = nextPeriod.Begin;
 			}
 
-			if(NextIssue != wantIssue)
-			{
+			if(NextIssue != wantIssue) {
 				NextIssue = wantIssue;
 				uow.Save (this);
 			}
@@ -292,11 +278,9 @@ namespace workwear.Domain.Company
 		}
 		#endregion
 		#region Зазоры для тестирования
-		protected internal virtual IssueGraph GetIssueGraphForItem(IUnitOfWork uow)
-		{
+		protected virtual IssueGraph GetIssueGraphForItem(IUnitOfWork uow) {
 			return IssueGraph.MakeIssueGraph(uow, EmployeeCard, ProtectionTools);
 		}
-
 		#endregion
 	}
 

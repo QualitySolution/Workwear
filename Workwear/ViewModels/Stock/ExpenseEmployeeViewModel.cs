@@ -33,11 +33,11 @@ namespace workwear.ViewModels.Stock
 {
 	public class ExpenseEmployeeViewModel : EntityDialogViewModelBase<Expense>, ISelectItem
 	{
-		ILifetimeScope autofacScope;
+		private ILifetimeScope autofacScope;
 		private readonly UserRepository userRepository;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public ExpenseDocItemsEmployeeViewModel DocItemsEmployeeViewModel;
-		IInteractiveQuestion interactive;
+		private IInteractiveQuestion interactive;
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;
