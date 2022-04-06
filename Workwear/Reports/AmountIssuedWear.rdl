@@ -437,20 +437,22 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>select if(@summary, NULL, objects.id) as subdivision_id, objects.name as object, nomenclature.name as nomen, sum(issued) as sum, nomenclature.number, operation_issued_by_employee.size, operation_issued_by_employee.growth, objects.code 
+        <CommandText>select if(@summary, NULL, objects.id) as subdivision_id, objects.name as object, nomenclature.name as nomen, sum(issued) as sum, nomenclature.number, sizeAlias.name as size, heightAlias.name as growth, objects.code 
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
 LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
 LEFT JOIN item_types ON item_types.id = nomenclature.type_id
+LEFT JOIN sizes as sizeAlias ON (sizeAlias.id = operation_issued_by_employee.size_id)
+LEFT JOIN sizes AS heightAlias ON (heightAlias.id = operation_issued_by_employee.height_id)
 WHERE operation_issued_by_employee.operation_time &gt;= @dateStart and operation_issued_by_employee.operation_time &lt;= @dateEnd
 AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
 AND (@issue_type = "" OR item_types.issue_type = @issue_type)
 and operation_issued_by_employee.returned = 0 AND (@summary OR (@withoutsub AND objects.id IS NULL) OR objects.id IN (@subdivisions))
 and (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
 and (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
-GROUP BY IF(@summary, NULL, objects.id), nomenclature_id, IF(@bysize, operation_issued_by_employee.size, NULL), IF(@bysize, operation_issued_by_employee.growth, NULL)
-ORDER BY CAST(objects.code AS UNSIGNED), nomen, operation_issued_by_employee.size, operation_issued_by_employee.growth;</CommandText>
+GROUP BY IF(@summary, NULL, objects.id), nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL)
+ORDER BY CAST(objects.code AS UNSIGNED), nomen, size, growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
             <Value>=Format({?dateStart}, "yyyy-MM-dd")</Value>
@@ -526,7 +528,7 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen, operation_issued_by_employee.siz
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="dateStart">
       <DataType>DateTime</DataType>
       <Nullable>false</Nullable>
