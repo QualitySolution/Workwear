@@ -1,8 +1,10 @@
+using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
 using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
@@ -28,6 +30,7 @@ namespace workwear.Journal.ViewModels.Stock
         {
 			UseSlider = true;
             JournalFilter = Filter = autofacScope.Resolve<SizeTypeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+            OverrideDeleteAction();
 		}
 
         protected override IQueryOver<SizeType> ItemsQuery(IUnitOfWork uow)
@@ -51,6 +54,16 @@ namespace workwear.Journal.ViewModels.Stock
                     .Select(x => x.Position).WithAlias(() => resultAlias.Position)
                 ).OrderBy(x => x.Position).Asc
                 .TransformUsing(Transformers.AliasToBean<SizeTypeJournalNode>());
+        }
+        private void OverrideDeleteAction() {
+            NodeActionsList.RemoveAll(x => x.Title == "Удалить");
+            var deleteAction = new JournalAction("Удалить",
+                (selected) => selected.Length == 1 && selected.First().GetId() >= 100,
+                (selected) => VisibleDeleteAction,
+                (selected) => DeleteEntities((SizeTypeJournalNode[]) selected.ToArray()),
+                "Delete"
+            );
+            NodeActionsList.Add(deleteAction);
         }
     }
 
