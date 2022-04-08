@@ -78,7 +78,7 @@ namespace workwear
 			"\n" +
 			"Для установки собственного сервера обратитесь к документации.";
 			Login.CreateDBHelpTooltip = "Инструкция по установке сервера MySQL";
-			Login.CreateDBHelpUrl = "http://doc.qsolution.ru/workwear/2.6/install.html#InstallDBServer";
+			Login.CreateDBHelpUrl = "http://doc.qsolution.ru/workwear/" + UnhandledExceptionHandler.ApplicationInfo.Version.ToString(2) +"/install.html#InstallDBServer";
 			LoginDialog.GetDBCreator = scopeLoginTime.Resolve<IDBCreator>;
 
 			LoginDialog.UpdateFromGConf ();
