@@ -10,7 +10,6 @@ using NHibernate.Util;
 using QS.Cloud.WearLk.Client;
 using QS.Cloud.WearLk.Manage;
 using QS.Dialog;
-using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
@@ -169,9 +168,29 @@ namespace workwear.Journal.ViewModels.Communications
 					(selected) => LoadAll()
 					);
 			NodeActionsList.Add(loadAllAction);
-			
+
+			var chooseAction = new JournalAction("Отметить",
+					(selected) => true,
+					(selected) => true
+				);
+			NodeActionsList.Add(chooseAction);
+
+			var chooseSelectedAction = new JournalAction("Отметить выделенных",
+					(selected) => selected.Length > 0,
+					(selected) => true,
+					ChooseSelected
+				);
+			chooseAction.ChildActionsList.Add(chooseSelectedAction);
+
+			var chooseAllAction = new JournalAction("Отметить всех",
+				(selected) => true,
+				(selected) => true,
+				(selected) => ChooseAll()
+			);
+			chooseAction.ChildActionsList.Add(chooseAllAction);
+
 			var sendMessange = new JournalAction("Отправить сообщение",
-				(selected) => selected.Length > 0,
+				(selected) => Items?.Cast<EmployeeNotificationJournalNode>().Any(x => x.Selected) ?? false,
 				(selected) => true,
 				(selected) => SendMessange(selected)
 			);
@@ -186,13 +205,6 @@ namespace workwear.Journal.ViewModels.Communications
 			NodeActionsList.Add(editAction);
 
 			RowActivatedAction = editAction;
-
-			var invertSelected = new JournalAction("Выделить всех",
-					(selected) => true,
-					(selected) => true,
-					(selected) => InvertSelected()
-				);
-			NodeActionsList.Add(invertSelected);
 		}
 
 		public readonly HashSet<int> SelectedList = new HashSet<int>();
@@ -205,17 +217,29 @@ namespace workwear.Journal.ViewModels.Communications
 
 		void SendMessange(object[] nodes)
 		{
-			NavigationManager.OpenViewModel<SendMessangeViewModel, int[]>(this, nodes.GetIds().ToArray());
+			var ids = Items.Cast<EmployeeNotificationJournalNode>().Where(x => x.Selected).Select(x => x.Id).ToArray();
+			NavigationManager.OpenViewModel<SendMessangeViewModel, int[]>(this, ids);
 		}
 
-		void InvertSelected()
+		void ChooseAll()
 		{
 			if (Items.Count == 0)
 				return;
 			
-			bool setValue = !(Items[0] as EmployeeNotificationJournalNode).Selected;
+			bool setValue = !Items.Cast<EmployeeNotificationJournalNode>().Where(x => x.CanSelect).All(x => x.Selected);
 			foreach (EmployeeNotificationJournalNode node in Items)
-				node.Selected = setValue;
+				node.Selected = node.CanSelect && setValue;
+			Refresh();
+		}
+
+		void ChooseSelected(object[] nodes)
+		{
+			if(Items.Count == 0)
+				return;
+
+			bool setValue = !nodes.Cast<EmployeeNotificationJournalNode>().Where(x => x.CanSelect).All(x => x.Selected);
+			foreach(EmployeeNotificationJournalNode node in nodes)
+				node.Selected = node.CanSelect && setValue;
 			Refresh();
 		}
 		#endregion

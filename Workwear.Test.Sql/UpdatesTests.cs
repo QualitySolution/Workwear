@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
@@ -15,6 +17,10 @@ namespace Workwear.Test.Sql
 {
 	public class UpdatesTests
 	{
+		private static readonly string currentDdName = "workwear_sqltest_current";
+		private int showDiffLinesBefore = 30;
+		private int showDiffLinesAfter = 5;
+		
 		public static IEnumerable<DbSample> DbSamples {
 			get {
 				var configuration = TestsConfiguration.Configuration;
@@ -55,6 +61,7 @@ namespace Workwear.Test.Sql
 					TestContext.Progress.WriteLine($"Выполняем скрипт {hop.Source.VersionToShortString()} → {hop.Destination.VersionToShortString()}");
 					RunOneUpdate(connection, hop);
 				}
+				ComparisonSchema(connection, currentDdName, sample.DbName);
 			}
 		}
 		
@@ -62,8 +69,8 @@ namespace Workwear.Test.Sql
 		//Но это усложнит и так не простой код, может здесь вручную выполнять обновления даже лучше.
 		void RunOneUpdate(MySqlConnection connection, UpdateHop updateScript)
 		{
-			if(updateScript.ExcuteBefore != null) {
-				updateScript.ExcuteBefore(connection);
+			if(updateScript.ExecuteBefore != null) {
+				updateScript.ExecuteBefore(connection);
 			}
 			
 			string sql;
@@ -84,6 +91,7 @@ namespace Workwear.Test.Sql
 		}
 
 		[Test(Description = "Проверяем что можно создать базу из текущего скрипта создания.")]
+		[Order(1)] //Тесты с указанным порядком выполняются раннее других. Нужно для сравнения обновленных баз с чистой установкой.
 		public void CreateCurrentNewBaseTest()
 		{
 			//Создаем чистую базу
@@ -94,8 +102,62 @@ namespace Workwear.Test.Sql
 				server.GetValue<string>("Login"),
 				server.GetValue<string>("Password")
 			);
-			var success = creator.StartCreation(ScriptsConfiguration.MakeCreationScript(), "workwear_sqltest_current");
+			var success = creator.StartCreation(ScriptsConfiguration.MakeCreationScript(), currentDdName);
 			Assert.That(success, Is.True);
 		}
+
+		#region Compare DB
+		private void ComparisonSchema(MySqlConnection connection, string db1, string db2) {
+			TestContext.Progress.WriteLine($"Сравниваем схемы базы {db1} и {db2}.");
+			string schema1 = GetSchema(connection, db1);
+			string schema2 = GetSchema(connection, db2);
+
+			if (schema1 != schema2) {
+				var diff = InlineDiffBuilder.Diff(schema1, schema2);
+				
+				for (int i = 0; i < diff.Lines.Count; i++)
+				{
+					bool showLine = false;
+					for (int x = Math.Max(0, i - showDiffLinesAfter); x < Math.Min(diff.Lines.Count, i + showDiffLinesBefore); x++)
+						if (diff.Lines[x].Type == ChangeType.Inserted || diff.Lines[x].Type == ChangeType.Deleted) {
+							showLine = true;
+							break;
+						}
+					
+					if(!showLine)
+						continue;
+
+					var line = diff.Lines[i];
+					switch (line.Type)
+					{
+						case ChangeType.Inserted:
+							Console.Write("+ ");
+							break;
+						case ChangeType.Deleted:
+							Console.Write("- ");
+							break;
+						default:
+							Console.Write("  ");
+							break;
+					}
+					Console.WriteLine(line.Text);
+				}
+			}
+			
+			Assert.That(schema1, Is.EqualTo(schema2));
+		}
+
+		private string GetSchema(MySqlConnection connection, string db)
+		{
+			TestContext.Progress.WriteLine($"Чтение схемы {db}...");
+			connection.ChangeDatabase(db);
+			using MySqlBackup mb = new MySqlBackup(connection.CreateCommand());
+			mb.ExportInfo.ExportRows = false;
+			mb.ExportInfo.RecordDumpTime = false;
+			mb.ExportInfo.ResetAutoIncrement = true;
+			var result = mb.ExportToString();
+			return result.Replace("  ", " "); //Особенности MySqlBackup в месте где удаляется AutoIncrement образуется двойной пробел.
+		}
+		#endregion
 	}
 }

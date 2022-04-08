@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -14,7 +15,7 @@ namespace workwear.Models.Import
 		private readonly DataParserWorkwearItems dataParser;
 		private readonly SettingsWorkwearItemsViewModel settingsWorkwearItemsViewModel;
 
-		public ImportModelWorkwearItems(DataParserWorkwearItems dataParser, SettingsWorkwearItemsViewModel settingsWorkwearItemsViewModel) : base(dataParser, settingsWorkwearItemsViewModel)
+		public ImportModelWorkwearItems(DataParserWorkwearItems dataParser, SettingsWorkwearItemsViewModel settingsWorkwearItemsViewModel) : base(dataParser, typeof(CountersWorkwearItems), settingsWorkwearItemsViewModel)
 		{
 			this.dataParser = dataParser ?? throw new ArgumentNullException(nameof(dataParser));
 			this.settingsWorkwearItemsViewModel = settingsWorkwearItemsViewModel ?? throw new ArgumentNullException(nameof(settingsWorkwearItemsViewModel));
@@ -23,9 +24,7 @@ namespace workwear.Models.Import
 		#region Параметры
 		public string ImportName => "Загрузка выдачи";
 
-		public string DataColunmsRecomendations => "Установите номер строки с заголовком данных, таким образом чтобы название колонок было корректно. Если в таблице заголовки отутствуют укажите 0.\nДалее для каждой значимой колонки проставьте тип данных которые находится в таблице.\nОбязательными данными являются Табельный номер, Номенклатура нормы и выдачи, Дата и количество выдачи";
-
-		public Type CountersEnum => typeof(CountersWorkwearItems);
+		public string DataColumnsRecommendations => "Установите номер строки с заголовком данных, таким образом чтобы название колонок было корректно. Если в таблице заголовки отсутствуют укажите 0.\nДалее для каждой значимой колонки проставьте тип данных которые находится в таблице.\nОбязательными данными являются Табельный номер, Номенклатура нормы и выдачи, Дата и количество выдачи";
 
 		#endregion
 
@@ -41,7 +40,7 @@ namespace workwear.Models.Import
 		public List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
 			var countColumn = Columns.First(x => x.DataType == DataTypeWorkwearItems.Count);
-			var rows = UsedRows.Where(x => !x.Skiped && x.ChangedColumns.Any()).ToList();
+			var rows = UsedRows.Where(x => !x.Skipped && x.ChangedColumns.Any()).ToList();
 			var grouped = UsedRows.Where(x => x.Operation != null)
 				.GroupBy(x => x.Employee);
 			logger.Debug($"В обработке {grouped.Count()} сотрудников.");
@@ -67,18 +66,28 @@ namespace workwear.Models.Import
 			return toSave;
 		}
 
-		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow, CountersViewModel counters)
+		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
-			dataParser.MatchChanges(progress, settingsWorkwearItemsViewModel, counters, uow, UsedRows, Columns);
+			dataParser.MatchChanges(progress, settingsWorkwearItemsViewModel, CountersViewModel, uow, UsedRows, Columns);
 			OnPropertyChanged(nameof(DisplayRows));
 
-			counters.SetCount(CountersWorkwearItems.SkipRows, UsedRows.Count(x => x.Skiped));
-			counters.SetCount(CountersWorkwearItems.UsedEmployees, UsedRows.Select(x => x.Employee).Distinct().Count(x => x!= null));
-			counters.SetCount(CountersWorkwearItems.NewOperations, UsedRows.Count(x => x.Operation != null && x.Operation.Id == 0));
-			counters.SetCount(CountersWorkwearItems.WorkwearItemNotFound, UsedRows.Count(x => x.Employee != null && x.WorkwearItem == null));
-			counters.SetCount(CountersWorkwearItems.NewNomenclatures, dataParser.UsedNomeclature.Count(x => x.Id == 0));
+			RecalculateCounters();
+			CanSave = CountersViewModel.GetCount(CountersWorkwearItems.NewOperations) > 0;
+		}
+		
+		protected override void RowOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			base.RowOnPropertyChanged(sender, e);
+			RecalculateCounters();
+		}
 
-			CanSave = counters.GetCount(CountersWorkwearItems.NewOperations) > 0;
+		private void RecalculateCounters()
+		{
+			CountersViewModel.SetCount(CountersWorkwearItems.SkipRows, UsedRows.Count(x => x.Skipped));
+			CountersViewModel.SetCount(CountersWorkwearItems.UsedEmployees, UsedRows.Select(x => x.Employee).Distinct().Count(x => x!= null));
+			CountersViewModel.SetCount(CountersWorkwearItems.NewOperations, UsedRows.Count(x => x.Operation != null && x.Operation.Id == 0));
+			CountersViewModel.SetCount(CountersWorkwearItems.WorkwearItemNotFound, UsedRows.Count(x => x.Employee != null && x.WorkwearItem == null));
+			CountersViewModel.SetCount(CountersWorkwearItems.NewNomenclatures, dataParser.UsedNomeclature.Count(x => x.Id == 0));
 		}
 	}
 }

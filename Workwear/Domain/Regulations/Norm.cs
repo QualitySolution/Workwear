@@ -107,6 +107,7 @@ namespace workwear.Domain.Regulations
 		}
 
 		DateTime? dateFrom;
+		[Display(Name = "Начало действия")]
 		public virtual DateTime? DateFrom 
 		{
 			get { return dateFrom; }
@@ -114,6 +115,7 @@ namespace workwear.Domain.Regulations
 		}
 
 		DateTime? dateTo;
+		[Display(Name = "Окончание действия")]
 		public virtual DateTime? DateTo {
 			get { return dateTo; }
 			set { SetField(ref dateTo, value); }

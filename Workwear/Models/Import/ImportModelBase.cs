@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using QS.DomainModel.Entity;
 using QS.ViewModels;
+using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import
 {
@@ -20,13 +22,16 @@ namespace workwear.Models.Import
 
 		private readonly IDataParser<TDataTypeEnum> dataParser;
 
-		protected ImportModelBase(IDataParser<TDataTypeEnum> dataParser, ViewModelBase matchSettingsViewModel = null)
+		protected ImportModelBase(IDataParser<TDataTypeEnum> dataParser, Type countersEnum, ViewModelBase matchSettingsViewModel = null)
 		{
 			this.dataParser = dataParser;
 			this.MatchSettingsViewModel = matchSettingsViewModel;
+			CountersViewModel = new CountersViewModel(countersEnum);
 		}
 
 		public ViewModelBase MatchSettingsViewModel { get; }
+		
+		public CountersViewModel CountersViewModel { get; }
 
 		#region Колонки
 		public List<ImportedColumn<TDataTypeEnum>> Columns = new List<ImportedColumn<TDataTypeEnum>>();
@@ -42,7 +47,7 @@ namespace workwear.Models.Import
 
 		private int maxSourceColumns;
 		/// <summary>
-		/// При установке зачения будут пересозданы колонки
+		/// При установке значения будут пересозданы колонки
 		/// </summary>
 		public virtual int MaxSourceColumns {
 			get => maxSourceColumns;
@@ -141,7 +146,13 @@ namespace workwear.Models.Import
 		public void AddRow(IRow cells)
 		{
 			TSheetRow row = (TSheetRow)Activator.CreateInstance(typeof(TSheetRow), new object[] {cells });
+			row.PropertyChanged += RowOnPropertyChanged;
 			XlsRows.Add(row);
+		}
+
+		protected virtual void RowOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			
 		}
 
 		#endregion

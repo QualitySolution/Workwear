@@ -59,16 +59,16 @@ namespace workwear.Models.Import
 		public void FindChanges(IEnumerable<SheetRowNorm> list, ImportedColumn<DataTypeNorm>[] meaningfulColumns)
 		{
 			foreach(var row in list) {
-				if(row.Skiped)
+				if(row.Skipped)
 					continue;
 
 				foreach(var column in meaningfulColumns) {
 					row.AddColumnChange(column, CalculateChange(row, column.DataType, row.CellStringValue(column.Index)));
 				}
 				if(!row.ChangedColumns.Any(x => x.Key.DataType == DataTypeNorm.PeriodAndCount))
-					row.ProgramSkiped = true;
+					row.ProgramSkipped = true;
 				else if(row.ChangedColumns.First(x => x.Key.DataType == DataTypeNorm.PeriodAndCount).Value.ChangeType == ChangeType.ParseError)
-					row.ProgramSkiped = true;
+					row.ProgramSkipped = true;
 			}
 		}
 
@@ -111,7 +111,7 @@ namespace workwear.Models.Import
 				var subdivisionName = subdivisionColumn != null ? row.CellStringValue(subdivisionColumn.Index) : null;
 
 				if(String.IsNullOrWhiteSpace(postName)) {
-					row.ProgramSkiped = true;
+					row.ProgramSkipped = true;
 					continue;
 				}
 
@@ -163,15 +163,15 @@ namespace workwear.Models.Import
 			var nomenclatureTypes = new NomenclatureTypes(uow, true);
 			var protectionNames = list.Select(x => x.CellStringValue(protectionToolsColumn.Index)).Where(x => x != null).Distinct().ToArray();
 			var protections = protectionToolsRepository.GetProtectionToolsByName(uow, protectionNames);
-			foreach(var row in list.Where(x => !x.Skiped)) {
+			foreach(var row in list.Where(x => !x.Skipped)) {
 				if(row.SubdivisionPostPair.Norms.Count > 1) {
-					row.ProgramSkiped = true;
+					row.ProgramSkipped = true;
 					continue;
 				}
 
 				var protectionName = row.CellStringValue(protectionToolsColumn.Index);
 				if(String.IsNullOrWhiteSpace(protectionName)) {
-					row.ProgramSkiped = true;
+					row.ProgramSkipped = true;
 					continue;
 				}
 

@@ -12,9 +12,10 @@ namespace workwear.Models.Import
 	public interface IImportModel : INotifyPropertyChanged
 	{
 		string ImportName { get; }
-		string DataColunmsRecomendations { get; }
-		Type CountersEnum { get; }
+		string DataColumnsRecommendations { get; }
 		Type DataTypeEnum { get; }
+		
+		CountersViewModel CountersViewModel { get; }
 
 		#region Колонки
 		IList<IDataColumn> DisplayColumns {get;}
@@ -31,7 +32,7 @@ namespace workwear.Models.Import
 		#region Сопоставление
 		ViewModelBase MatchSettingsViewModel { get; }
 		bool CanMatch { get; }
-		void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow, CountersViewModel counters);
+		void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow);
 		#endregion
 
 		#region Сохранение
