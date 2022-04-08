@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using Gamma.Binding.Converters;
 using Gamma.GtkWidgets;
 using QS.Views.Dialog;
@@ -20,13 +19,14 @@ namespace workwear.Views.Stock
 		private void ConfigureDlg()
 		{
 			ybuttonAddSize.Sensitive = !ViewModel.IsNew;
-			ybuttonRemoveSize.Sensitive = !ViewModel.IsNew;
+			ybuttonRemoveSize.Sensitive = false;
 			ybuttonAddSize.Clicked += AddSize;
-			ybuttonRemoveSize.Visible = false;
-			ViewModel.Sizes.PropertyOfElementChanged += CreateSizeTable;
+			ybuttonRemoveSize.Clicked += RemoveSize;
+			ViewModel.Sizes.ListContentChanged += CreateSizeTable;
 			CreateSizeTable(null, null);
 			entityname.Binding
 				.AddBinding(Entity, e => e.Name, w => w.Text)
+				.AddBinding(ViewModel, vm => vm.CanEdit, v => v.Sensitive)
 				.InitializeFromSource();
 			labelId.Binding
 				.AddBinding(Entity, e => e.Id, w => w.Text, new IdToStringConverter())
@@ -34,6 +34,7 @@ namespace workwear.Views.Stock
 			specllistcomCategory.ItemsEnum = typeof(Category);
 			specllistcomCategory.Binding
 				.AddBinding(Entity, e => e.Category, w => w.SelectedItem)
+				.AddBinding(ViewModel, vm => vm.IsNew, v => v.Sensitive)
 				.InitializeFromSource();
 			yspinPosition.Binding
 			.AddBinding(Entity, e => e.Position, w => w.ValueAsInt)
@@ -41,11 +42,19 @@ namespace workwear.Views.Stock
 			ytreeviewSizes.Selection.Changed += SelectionOnChanged;
 		}
 
-		void SelectionOnChanged(object sender, EventArgs e) {
-			ybuttonRemoveSize.Sensitive = ytreeviewSizes.Selection.CountSelectedRows() > 0;
+		private void RemoveSize(object sender, EventArgs e) {
+			ViewModel.RemoveSize(ytreeviewSizes.GetSelectedObject<Size>());
 		}
-		private void AddSize(object sender, EventArgs e) => ViewModel.AddSize();
-		private void CreateSizeTable(object sender, PropertyChangedEventArgs propertyChangedEventArgs) {
+
+		void SelectionOnChanged(object sender, EventArgs e) {
+			var sizeId = ytreeviewSizes.GetSelectedObject<Size>()?.Id;
+			ybuttonRemoveSize.Sensitive = sizeId >= 1000;
+		}
+
+		private void AddSize(object sender, EventArgs e) {
+			ViewModel.AddSize();
+		} 
+		private void CreateSizeTable(object aList, EventArgs eventArgs) {
 			ytreeviewSizes.ColumnsConfig = ColumnsConfigFactory.Create<Size>()
 				.AddColumn("Название").AddTextRenderer(x => x.Title)
 				.Finish();

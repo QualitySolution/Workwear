@@ -22,6 +22,7 @@ namespace workwear.Views.Stock
 			CreateSuitableTable();
 			entityname.Binding
 				.AddBinding(Entity, e => e.Name, w => w.Text)
+				.AddBinding(ViewModel, vm => vm.CanEdit, v => v.Sensitive)
 				.InitializeFromSource();
 			labelId.Binding
 				.AddBinding(Entity, e => e.Id, w => w.Text, new IdToStringConverter())
@@ -30,6 +31,7 @@ namespace workwear.Views.Stock
 			specllistcomSizeType.ItemsList = SizeService.GetSizeType(ViewModel.UoW, true);
 			specllistcomSizeType.Binding
 				.AddBinding(Entity, e => e.SizeType, w => w.SelectedItem)
+				.AddBinding(ViewModel, vm => vm.CanEdit, v => v.Sensitive)
 				.InitializeFromSource();
 			ycheckbuttonUseInEmployee.Binding
 				.AddBinding(Entity, e => e.UseInEmployee, w => w.Active)
