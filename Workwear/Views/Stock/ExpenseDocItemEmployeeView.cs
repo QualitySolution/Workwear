@@ -64,7 +64,7 @@ namespace workwear.Views.Stock
 					.DynamicFillListFunc(x => SizeService.GetSize(viewModel.expenseEmployeeViewModel.UoW, x.Nomenclature?.Type?.SizeType, true))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
 				.AddColumn("Рост")
-					.AddComboRenderer(x => x.Height)
+					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => SizeService.GetSize(viewModel.expenseEmployeeViewModel.UoW, x.Nomenclature?.Type?.HeightType, true))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
 				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
