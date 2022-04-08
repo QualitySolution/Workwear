@@ -40,14 +40,14 @@ namespace workwear
 				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlException1366IncorrectStringValue);
 				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.NHibernateFlushAfterException);
 			}
-			catch (Exception falalEx)
+			catch (Exception fallEx)
 			{
 				if (WindowStartupFix.IsWindows)
-					WindowStartupFix.DisplayWindowsOkMessage(falalEx.ToString(), "Критическая ошибка");
+					WindowStartupFix.DisplayWindowsOkMessage(fallEx.ToString(), "Критическая ошибка");
 				else
-					Console.WriteLine(falalEx);
+					Console.WriteLine(fallEx);
 
-				logger.Fatal(falalEx);
+				logger.Fatal(fallEx);
 				return;
 			}
 			
@@ -55,7 +55,7 @@ namespace workwear
 				AutofacClassConfig();
 			}catch(MissingMethodException ex) when (ex.Message.Contains("System.String System.String.Format"))
 			{
-				WindowStartupFix.DisplayWindowsOkMessage("Версия .Net Framework должна быть не ниже 4.6.1. Установите боллее новую платформу.", "Старая версия .Net");
+				WindowStartupFix.DisplayWindowsOkMessage("Версия .Net Framework должна быть не ниже 4.6.1. Установите более новую платформу.", "Старая версия .Net");
 			}
 			ILifetimeScope scopeLoginTime = null;
 			scopeLoginTime = AppDIContainer.BeginLifetimeScope(builder => {
@@ -70,7 +70,7 @@ namespace workwear
 			LoginDialog.DefaultServer = "demo.qsolution.ru";
 			LoginDialog.DefaultConnection = "Демонстрационная база";
             Login.ApplicationDemoServer = "demo.qsolution.ru";
-			LoginDialog.DemoMessage = "Для подключения к демострационному серверу используйте следующие настройки:\n" +
+			LoginDialog.DemoMessage = "Для подключения к демонстрационному серверу используйте следующие настройки:\n" +
 			"\n" +
 			"<b>Сервер:</b> demo.qsolution.ru\n" +
 			"<b>Пользователь:</b> demo\n" +
@@ -78,7 +78,7 @@ namespace workwear
 			"\n" +
 			"Для установки собственного сервера обратитесь к документации.";
 			Login.CreateDBHelpTooltip = "Инструкция по установке сервера MySQL";
-			Login.CreateDBHelpUrl = "http://doc.qsolution.ru/workwear/" + UnhandledExceptionHandler.ApplicationInfo.Version.ToString(2) +"/install.html#InstallDBServer";
+			Login.CreateDBHelpUrl = "http://doc.qsolution.ru/workwear/" + new ApplicationVersionInfo().Version.ToString(2) +"/install.html#InstallDBServer";
 			LoginDialog.GetDBCreator = scopeLoginTime.Resolve<IDBCreator>;
 
 			LoginDialog.UpdateFromGConf ();
@@ -104,10 +104,10 @@ namespace workwear
 				UnhandledExceptionHandler.User = UserRepository.GetCurrentUser(uow);
 			}
 
-			//Настрока удаления
+			//Настройка удаления
 			Configure.ConfigureDeletion();
 #if !DEBUG
-			//Иницициализируем телеметрию
+			//Инициализируем телеметрию
 			var applicationInfo = new ApplicationVersionInfo();
 			MainTelemetry.Product = applicationInfo.ProductName;
             MainTelemetry.Edition = applicationInfo.Modification;
