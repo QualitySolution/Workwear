@@ -119,7 +119,7 @@ namespace Workwear.Sql
 				cmd.CommandText = sql;
 				cmd.ExecuteNonQuery();
 			}
-			//При отсутсвии индекса будет ошибка. Мы на это расчитываем.
+			//При отсутствии индекса будет ошибка. Мы на это рассчитываем.
 			catch(MySql.Data.MySqlClient.MySqlException ex) when(ex.Number == 1091) { }
 		}
 		
@@ -131,7 +131,7 @@ namespace Workwear.Sql
 				cmd.CommandText = sql;
 				cmd.ExecuteNonQuery();
 			}
-			//При отсутсвии индекса будет ошибка. Мы на это расчитываем.
+			//При отсутствии индекса будет ошибка. Мы на это рассчитываем.
 			catch(MySql.Data.MySqlClient.MySqlException ex) when(ex.Number == 1091) {}
 		}
 	}
