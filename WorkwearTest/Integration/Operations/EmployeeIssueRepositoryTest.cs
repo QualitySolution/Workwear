@@ -97,10 +97,8 @@ namespace WorkwearTest.Integration.Operations
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 
-				var nomenclatureType = new ItemsType
-				{
-					Name = "Тестовый тип номенклатуры"
-				};
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature {

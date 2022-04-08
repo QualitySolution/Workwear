@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -42,11 +43,11 @@ namespace workwear.Domain.Sizes
         #endregion
         #region IValidatableObject implementation
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
-            if(Position == 0)
+            if(Position <= 0)
                 yield return new ValidationResult (
                 "Позиция должна быть больше нуля", 
                 new[] { this.GetPropertyName(s => s.Name)});
-            if (Name is null)
+            if (String.IsNullOrEmpty(Name))
                 yield return new ValidationResult (
                     "Имя должно быть указано", 
                     new[] { this.GetPropertyName(s => s.Name)});

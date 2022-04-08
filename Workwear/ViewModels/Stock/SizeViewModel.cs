@@ -25,14 +25,16 @@ namespace workwear.ViewModels.Stock
 				new ValidationContext(Entity, new Dictionary<object, object> {{nameof(IUnitOfWork), UoW} })));
 			if (UoW.IsNew) {
 				Entity.SizeType = sizeType;
-				CanEdit = true;
+				IsNew = true;
 			}
 			else {
-				if (Entity.Id >= 1000) CanEdit = true;
+				if (Entity.Id <= 1000) IsStandart = true;
 			}
 		}
 		
-		public bool CanEdit { get; }
+		public bool IsStandart { get; }
+		public bool IsNew {get;}
+		public bool CanEdit => IsNew || !IsStandart;
 
 		public void AddAnalog() {
 			var selectJournal = MainClass.MainWin.NavigationManager.

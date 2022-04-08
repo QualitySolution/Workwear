@@ -25,17 +25,17 @@ namespace workwear.ViewModels.Stock
 				new ValidationContext(Entity, new Dictionary<object, object> {{nameof(IUnitOfWork), UoW} })));
 			if (UoW.IsNew) {
 				IsNew = true;
-				isStandartSize = true;
+				Sizes = new GenericObservableList<Size>();
 			}
 			else {
 				Sizes = new GenericObservableList<Size>(SizeService.GetSize(UoW, Entity).ToList());
-				if (Entity.Id < 100) isStandartSize = true;
+				if (Entity.Id < 100) IsStandartType = true;
 			}
 		}
 
 		public bool IsNew { get; }
-		private readonly bool isStandartSize;
-		public bool CanEdit => !IsNew && !isStandartSize;
+		public bool IsStandartType { get; }
+		public bool CanEdit => IsNew || !IsStandartType;
 		private GenericObservableList<Size> sizes;
 		public GenericObservableList<Size> Sizes {
 			get => sizes;

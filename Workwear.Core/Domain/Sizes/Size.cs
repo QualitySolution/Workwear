@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
@@ -28,17 +29,17 @@ namespace workwear.Domain.Sizes
         private SizeType sizeType;
         public virtual SizeType SizeType {
             get => sizeType;
-            set => sizeType = value;
+            set => SetField(ref sizeType, value);
         }
         private bool useInEmployee;
         public virtual bool UseInEmployee {
             get => useInEmployee;
-            set => useInEmployee = value;
+            set => SetField(ref useInEmployee, value);
         }
         private bool useInNomenclature;
         public virtual bool UseInNomenclature {
             get => useInNomenclature;
-            set => useInNomenclature = value;
+            set => SetField(ref useInNomenclature, value);
         }
         #endregion
         #region Suitable
@@ -62,7 +63,7 @@ namespace workwear.Domain.Sizes
                 yield return new ValidationResult (
                     "Тип размера должен быть указан", 
                     new[] { this.GetPropertyName(s => s.Title)});
-            if (Name is null)
+            if (String.IsNullOrEmpty(Name))
                 yield return new ValidationResult (
                     "Значение должно быть указано", 
                     new[] { this.GetPropertyName(s => s.Title)});

@@ -31,7 +31,7 @@ namespace workwear.Views.Stock
 			specllistcomSizeType.ItemsList = SizeService.GetSizeType(ViewModel.UoW);
 			specllistcomSizeType.Binding
 				.AddBinding(Entity, e => e.SizeType, w => w.SelectedItem)
-				.AddBinding(ViewModel, vm => vm.CanEdit, v => v.Sensitive)
+				.AddBinding(ViewModel, vm => vm.IsNew, v => v.Sensitive)
 				.InitializeFromSource();
 			ycheckbuttonUseInEmployee.Binding
 				.AddBinding(Entity, e => e.UseInEmployee, w => w.Active)

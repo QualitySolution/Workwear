@@ -4,7 +4,6 @@ using Gamma.Binding.Converters;
 using Gamma.GtkWidgets;
 using Gtk;
 using QS.DomainModel.Entity;
-using QS.Project.Domain;
 using QS.Views.Dialog;
 using workwear.Domain.Sizes;
 using workwear.ViewModels.Stock;
@@ -63,7 +62,7 @@ namespace workwear.Views.Stock
 				.AddColumn("Открыты для сотрудника").AddTextRenderer(x => x.UseInEmployee ? "☑" : "☒")
 				.AddColumn("Открыты для номенклатуры").AddTextRenderer(x => x.UseInNomenclature ? "☑" : "☒")
 				.AddColumn("Аналоги").AddTextRenderer(x => 
-					String.Join(" ,", x.SuitableSizes.Select(z => z.Name)))
+					String.Join(", ", x.SuitableSizes.Select(z => z.Name)))
 				.Finish();
 			ytreeviewSizes.Binding
 				.AddSource(ViewModel)
