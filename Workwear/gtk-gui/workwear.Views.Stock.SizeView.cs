@@ -30,6 +30,8 @@ namespace workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yLabel ylabel3;
 
+		private global::Gamma.GtkWidgets.yLabel ylabel1;
+
 		private global::Gamma.GtkWidgets.yVBox yvbox1;
 
 		private global::Gtk.ScrolledWindow scrolledwindow1;
@@ -200,6 +202,16 @@ namespace workwear.Views.Stock
 			w14.Expand = false;
 			w14.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
+			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel1.Name = "ylabel1";
+			this.ylabel1.Xalign = 0F;
+			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Аналоги");
+			this.vbox3.Add(this.ylabel1);
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.ylabel1]));
+			w15.Position = 2;
+			w15.Expand = false;
+			w15.Fill = false;
+			// Container child vbox3.Gtk.Box+BoxChild
 			this.yvbox1 = new global::Gamma.GtkWidgets.yVBox();
 			this.yvbox1.Name = "yvbox1";
 			this.yvbox1.Spacing = 6;
@@ -214,8 +226,8 @@ namespace workwear.Views.Stock
 			this.ytreeviewSuitableSizes.Name = "ytreeviewSuitableSizes";
 			this.scrolledwindow1.Add(this.ytreeviewSuitableSizes);
 			this.yvbox1.Add(this.scrolledwindow1);
-			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.scrolledwindow1]));
-			w16.Position = 0;
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.scrolledwindow1]));
+			w17.Position = 0;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
 			this.yhbox1.Name = "yhbox1";
@@ -227,10 +239,10 @@ namespace workwear.Views.Stock
 			this.ybuttonAddSuitable.UseUnderline = true;
 			this.ybuttonAddSuitable.Label = global::Mono.Unix.Catalog.GetString("Добавить аналог");
 			this.yhbox1.Add(this.ybuttonAddSuitable);
-			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonAddSuitable]));
-			w17.Position = 0;
-			w17.Expand = false;
-			w17.Fill = false;
+			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonAddSuitable]));
+			w18.Position = 0;
+			w18.Expand = false;
+			w18.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
 			this.ybuttonRemoveSuitable = new global::Gamma.GtkWidgets.yButton();
 			this.ybuttonRemoveSuitable.CanFocus = true;
@@ -238,18 +250,18 @@ namespace workwear.Views.Stock
 			this.ybuttonRemoveSuitable.UseUnderline = true;
 			this.ybuttonRemoveSuitable.Label = global::Mono.Unix.Catalog.GetString("Удалить аналог");
 			this.yhbox1.Add(this.ybuttonRemoveSuitable);
-			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonRemoveSuitable]));
-			w18.Position = 1;
-			w18.Expand = false;
-			w18.Fill = false;
-			this.yvbox1.Add(this.yhbox1);
-			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonRemoveSuitable]));
 			w19.Position = 1;
 			w19.Expand = false;
 			w19.Fill = false;
+			this.yvbox1.Add(this.yhbox1);
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
+			w20.Position = 1;
+			w20.Expand = false;
+			w20.Fill = false;
 			this.vbox3.Add(this.yvbox1);
-			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.yvbox1]));
-			w20.Position = 2;
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.yvbox1]));
+			w21.Position = 3;
 			this.Add(this.vbox3);
 			if ((this.Child != null))
 			{

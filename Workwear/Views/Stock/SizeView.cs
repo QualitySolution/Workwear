@@ -28,7 +28,7 @@ namespace workwear.Views.Stock
 				.AddBinding(Entity, e => e.Id, w => w.Text, new IdToStringConverter())
 				.InitializeFromSource();
 			specllistcomSizeType.SetRenderTextFunc<SizeType>(x => x.Name);
-			specllistcomSizeType.ItemsList = SizeService.GetSizeType(ViewModel.UoW, true);
+			specllistcomSizeType.ItemsList = SizeService.GetSizeType(ViewModel.UoW);
 			specllistcomSizeType.Binding
 				.AddBinding(Entity, e => e.SizeType, w => w.SelectedItem)
 				.AddBinding(ViewModel, vm => vm.CanEdit, v => v.Sensitive)
@@ -47,8 +47,9 @@ namespace workwear.Views.Stock
 
 		private void CreateSuitableTable() {
 			ytreeviewSuitableSizes.ColumnsConfig = ColumnsConfigFactory.Create<Size>()
-				.AddColumn("Название").AddTextRenderer(x => x.Title)
+				.AddColumn("Значение").AddTextRenderer(x => x.Name)
 				.Finish();
+			ytreeviewSuitableSizes.HeadersVisible = false;
 			ytreeviewSuitableSizes.Binding
 				.AddSource(Entity)
 				.AddBinding(e => e.ObservableSuitableSizes, w => w.ItemsDataSource)

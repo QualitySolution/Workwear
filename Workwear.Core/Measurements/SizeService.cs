@@ -12,25 +12,25 @@ namespace Workwear.Measurements
 		public static IList<Size> GetSize(
 			IUnitOfWork uow, 
 			SizeType sizeType = null, 
-			bool unusedInEmployee = false, 
-			bool unusedInNomenclature = false)
+			bool onlyUseInEmployee = false, 
+			bool onlyUseInNomenclature = false)
 		{
 			var sizes = uow.Session.QueryOver<Size>();
 			if (sizeType != null)
 				sizes = sizes.Where(x => x.SizeType == sizeType);
-			if (!unusedInEmployee)
+			if (onlyUseInEmployee)
 				sizes = sizes.Where(x => x.UseInEmployee);
-			if (!unusedInNomenclature)
+			if (onlyUseInNomenclature)
 				sizes = sizes.Where(x => x.UseInNomenclature);
 			return sizes.List();
 		}
 		
 		public static IList<SizeType> GetSizeType(
 			IUnitOfWork uow, 
-			bool unusedInEmployee = false) 
+			bool onlyUseInEmployee = false) 
 		{
 			var sizeTypes = uow.Session.QueryOver<SizeType>();
-			if (!unusedInEmployee)
+			if (onlyUseInEmployee)
 				sizeTypes = sizeTypes.Where(x => x.UseInEmployee);
 			return sizeTypes.List();
 		}
@@ -38,11 +38,11 @@ namespace Workwear.Measurements
 		public static IEnumerable<SizeType> GetSizeTypeByCategory(
 			IUnitOfWork uow,
 			Category category,
-			bool unusedInEmployee = false)
+			bool onlyUseInEmployee = false)
 		{
 			var sizeTypes = 
 				uow.Session.QueryOver<SizeType>().Where(x => x.Category == category);
-			if (!unusedInEmployee)
+			if (onlyUseInEmployee)
 				sizeTypes = sizeTypes.Where(x => x.UseInEmployee);
 			return sizeTypes.List();
 		}
@@ -50,15 +50,15 @@ namespace Workwear.Measurements
 		public static IEnumerable<Size> GetSizeByCategory(
 			IUnitOfWork uow, 
 			Category category, 
-			bool unusedInEmployee = false, 
-			bool unusedInNomenclature = false) {
+			bool onlyUseInEmployee = false, 
+			bool onlyUseInNomenclature = false) {
 			SizeType sizeTypeAlias = null;
 			var sizes = uow.Session.QueryOver<Size>()
 				.JoinAlias(x => x.SizeType, () => sizeTypeAlias)
 				.Where(x => sizeTypeAlias.Category == category);
-			if (!unusedInEmployee)
+			if (onlyUseInEmployee)
 				sizes = sizes.Where(x => x.UseInEmployee);
-			if (!unusedInNomenclature)
+			if (onlyUseInNomenclature)
 				sizes = sizes.Where(x => x.UseInNomenclature);
 			return sizes.List();
 		}

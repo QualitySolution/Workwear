@@ -35,11 +35,11 @@ namespace workwear.ViewModels.Stock.Widgets
 		/// </summary>
 		private void ConfigureSizes() {
 			if (nomenclature.Type.HeightType != null) {
-				WearGrowths = SizeService.GetSize(uoW, nomenclature.Type.HeightType, true);
+				WearGrowths = SizeService.GetSize(uoW, nomenclature.Type.HeightType,false, true);
 				IsUseGrowth = true;
 			}
 			WearSizes = nomenclature?.Type?.SizeType != null ? 
-				SizeService.GetSize(uoW, nomenclature.Type.SizeType, true) : new List<Size>();
+				SizeService.GetSize(uoW, nomenclature.Type.SizeType,false, true) : new List<Size>();
 		}
 
 		/// <summary>

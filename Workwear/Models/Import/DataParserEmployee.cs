@@ -303,7 +303,7 @@ namespace workwear.Models.Import
 			var changeType = fieldValue == newValue ? ChangeType.NotChanged : rowChange;
 			if (changeType == ChangeType.NotChanged)
 				return new ChangeState(changeType);
-			var sizes = SizeService.GetSize(uow, null, true, true);
+			var sizes = SizeService.GetSize(uow, null, true, false);
 			if(sizes.All(x => x != newValue))
 				changeType = ChangeType.ParseError;
 

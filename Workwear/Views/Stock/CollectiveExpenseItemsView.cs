@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Gamma.GtkWidgets;
 using Gtk;
 using QSWidgetLib;
 using workwear.Domain.Stock;
@@ -47,23 +48,23 @@ namespace workwear.Views.Stock
 
 		void CreateTable()
 		{
-			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<CollectiveExpenseItem>()
+			ytreeItems.ColumnsConfig = ColumnsConfigFactory.Create<CollectiveExpenseItem>()
 				.AddColumn("Сотрудник").AddTextRenderer(x => x.Employee.ShortName)
 				.AddColumn("Номенаклатуры нормы").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
 				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
-				.SetDisplayFunc(x => x.Nomenclature?.Name)
+					.SetDisplayFunc(x => x.Nomenclature?.Name)
 					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))
 					.DynamicFillListFunc(x => x.EmployeeCardItem.BestChoiceInStock.ToList())
 					.AddSetter((c, n) => c.Editable = n.EmployeeCardItem != null)
 				.AddColumn("Размер")
 					.AddComboRenderer(x => x.WearSize)
 					.DynamicFillListFunc(x => 
-						SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.SizeType))
+						SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.SizeType, true, true))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType == null)
 				.AddColumn("Рост")
 					.AddComboRenderer(x => x.Height)
 					.DynamicFillListFunc(x => 
-						SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.HeightType))
+						SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.HeightType, true, true))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
 				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))

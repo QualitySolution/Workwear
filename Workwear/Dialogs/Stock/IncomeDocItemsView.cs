@@ -79,12 +79,12 @@ namespace workwear.Dialogs.Stock
 				.AddColumn("Сертификат").AddTextRenderer(e => e.Certificate).Editable()
 				.AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
-					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.SizeType, true))
+					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.SizeType, false, true))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.Type.SizeType != null 
 					                                  && incomeDoc.Operation == IncomeOperations.Enter)
 				.AddColumn("Рост").MinWidth(70)
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
-					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.HeightType, true))
+					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.HeightType,false, true))
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.Type.HeightType != null 
 					                                  && incomeDoc.Operation == IncomeOperations.Enter)
 				.AddColumn ("Процент износа")

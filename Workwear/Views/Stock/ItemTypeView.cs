@@ -36,13 +36,13 @@ namespace workwear.Views.Stock
 				.AddBinding(Entity, e => e.Category, w => w.SelectedItemOrNull)
 				.InitializeFromSource ();
 			
-			ycomboWearCategory.ItemsList = SizeService.GetSizeTypeByCategory(ViewModel.UoW, Category.Size, true);
+			ycomboWearCategory.ItemsList = SizeService.GetSizeTypeByCategory(ViewModel.UoW, Category.Size);
 			ycomboWearCategory.Binding
 				.AddBinding(Entity, e => e.SizeType, w => w.SelectedItem)
 				.InitializeFromSource();
 
 			ycomboHeightCategory.ItemsList = 
-				SizeService.GetSizeTypeByCategory(ViewModel.UoW, Category.Height, true);
+				SizeService.GetSizeTypeByCategory(ViewModel.UoW, Category.Height);
 			ycomboHeightCategory.Binding
 				.AddBinding (Entity, e => e.HeightType, w => w.SelectedItem)
 				.InitializeFromSource();

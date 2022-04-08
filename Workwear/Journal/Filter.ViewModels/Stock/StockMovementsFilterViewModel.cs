@@ -90,15 +90,15 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		#region ComboValues
 		public Size[] Sizes => 
 			nomenclature is null ? 
-				SizeService.GetSizeByCategory(UoW, Category.Size, true, true).ToArray() : 
+				SizeService.GetSizeByCategory(UoW, Category.Size, false, true).ToArray() : 
 				nomenclature.Type?.SizeType is null ? new Size[]{} : 
-					SizeService.GetSize(UoW, nomenclature?.Type?.SizeType, true, true)
+					SizeService.GetSize(UoW, nomenclature?.Type?.SizeType, false, true)
 						.ToArray();
 		public Size[] Growths => 
 			nomenclature is null ? 
-				SizeService.GetSizeByCategory(UoW, Category.Height, true, true).ToArray() : 
+				SizeService.GetSizeByCategory(UoW, Category.Height, false, true).ToArray() : 
 				nomenclature.Type?.HeightType is null ? new Size[]{} : 
-					SizeService.GetSize(UoW, nomenclature?.Type?.HeightType, true, true).ToArray();
+					SizeService.GetSize(UoW, nomenclature?.Type?.HeightType, false, true).ToArray();
 
 		private DirectionOfOperation direction;
 		public DirectionOfOperation Direction {

@@ -28,7 +28,7 @@ namespace workwear.ViewModels.Stock
 				isStandartSize = true;
 			}
 			else {
-				Sizes = new GenericObservableList<Size>(SizeService.GetSize(UoW, Entity, true, true).ToList());
+				Sizes = new GenericObservableList<Size>(SizeService.GetSize(UoW, Entity).ToList());
 				if (Entity.Id < 100) isStandartSize = true;
 			}
 		}
@@ -46,12 +46,15 @@ namespace workwear.ViewModels.Stock
 				.OpenViewModel<SizeViewModel, IEntityUoWBuilder, SizeType>(
 					this, EntityUoWBuilder.ForCreate(), Entity);
 			page.PageClosed += (sender, args) => 
-				Sizes = new GenericObservableList<Size>(SizeService.GetSize(UoW, Entity, true, true).ToList());
+				Sizes = new GenericObservableList<Size>(SizeService.GetSize(UoW, Entity).ToList());
 		}
 
 		public void RemoveSize(Size size) {
 			UoW.Delete(size);
 			Sizes.Remove(size);
 		}
+		public void OpenSize(int sizeId) =>
+			NavigationManager.OpenViewModel<SizeViewModel, IEntityUoWBuilder, SizeType>(
+				this, EntityUoWBuilder.ForOpen(sizeId), Entity);
 	}
 }

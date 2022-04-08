@@ -52,14 +52,14 @@ namespace workwear.Domain.Sizes
                     new[] { this.GetPropertyName(s => s.Name)});
             var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
             var doublePos = 
-                SizeService.GetSizeType(uow, true)
+                SizeService.GetSizeType(uow)
                     .FirstOrDefault(x => x.Position == Position && x.Id != Id);
             if(doublePos != null)
                 yield return new ValidationResult (
                     $"Позиция:{Position} уже занята", 
                     new[] { doublePos.GetPropertyName(s => s.Name)});
             var doubleName = 
-                SizeService.GetSizeType(uow, true)
+                SizeService.GetSizeType(uow)
                     .FirstOrDefault(x => x.Name == Name && x.Id != Id);
             if(doubleName != null)
                 yield return new ValidationResult (

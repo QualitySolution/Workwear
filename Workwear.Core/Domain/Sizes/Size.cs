@@ -73,7 +73,7 @@ namespace workwear.Domain.Sizes
             var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
             var doubleSize = 
                     SizeService
-                        .GetSize(uow, SizeType, true, true)
+                        .GetSize(uow, SizeType)
                         .FirstOrDefault(x => x.Name == Name && x.Id != Id);
             if(doubleSize != null)
                 yield return new ValidationResult (

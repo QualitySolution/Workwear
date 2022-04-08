@@ -164,8 +164,9 @@ namespace workwear.Views.Company
 		#region Sizes
 		private void SizeBuild() {
 			var sizes = SizeService
-				.GetSize(ViewModel.UoW, null, false, true);
-			var sizeTypes = SizeService.GetSizeType(ViewModel.UoW);
+				.GetSize(ViewModel.UoW, null, true);
+			var sizeTypes = 
+				SizeService.GetSizeType(ViewModel.UoW, true).OrderBy(x => x.Position).ToList();
 			
 			var table = new yTable((uint) sizeTypes.Count, 2, false);
 			
@@ -179,6 +180,7 @@ namespace workwear.Views.Company
 				 if(sizes.All(x => x.SizeType.Id != sizeType.Id))
 					 continue;
 				 var list = new SpecialListComboBox {ItemsList = sizes.Where(x => x.SizeType.Id == sizeType.Id)};
+				list.SetRenderTextFunc<Size>(x => x.Name);
 				list.ShowSpecialStateNot = true;
 				list.SelectedItemStrictTyped = true;
 				listSizes.Add(list);

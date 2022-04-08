@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Linq;
 using Gamma.Binding.Converters;
 using Gamma.GtkWidgets;
+using Gtk;
+using QS.DomainModel.Entity;
+using QS.Project.Domain;
 using QS.Views.Dialog;
 using workwear.Domain.Sizes;
 using workwear.ViewModels.Stock;
@@ -39,24 +43,27 @@ namespace workwear.Views.Stock
 			yspinPosition.Binding
 			.AddBinding(Entity, e => e.Position, w => w.ValueAsInt)
 				.InitializeFromSource();
+			ycheckbuttonUseInEmployee.Binding
+				.AddBinding(Entity, e => e.UseInEmployee, v => v.Active)
+				.InitializeFromSource();
 			ytreeviewSizes.Selection.Changed += SelectionOnChanged;
+			ytreeviewSizes.RowActivated += OpenSize;
 		}
 
-		private void RemoveSize(object sender, EventArgs e) {
+		private void OpenSize(object o, RowActivatedArgs args) => 
+			ViewModel.OpenSize(ytreeviewSizes.SelectedRow.GetId());
+		private void RemoveSize(object sender, EventArgs e) => 
 			ViewModel.RemoveSize(ytreeviewSizes.GetSelectedObject<Size>());
-		}
-
-		void SelectionOnChanged(object sender, EventArgs e) {
-			var sizeId = ytreeviewSizes.GetSelectedObject<Size>()?.Id;
-			ybuttonRemoveSize.Sensitive = sizeId >= 1000;
-		}
-
-		private void AddSize(object sender, EventArgs e) {
-			ViewModel.AddSize();
-		} 
+		private void SelectionOnChanged(object sender, EventArgs e) => 
+			ybuttonRemoveSize.Sensitive = ytreeviewSizes.GetSelectedObject<Size>()?.Id >= 1000;
+		private void AddSize(object sender, EventArgs e) => ViewModel.AddSize();
 		private void CreateSizeTable(object aList, EventArgs eventArgs) {
 			ytreeviewSizes.ColumnsConfig = ColumnsConfigFactory.Create<Size>()
-				.AddColumn("Название").AddTextRenderer(x => x.Title)
+				.AddColumn("Значение").AddTextRenderer(x => x.Name)
+				.AddColumn("Открыты для сотрудника").AddTextRenderer(x => x.UseInEmployee ? "☑" : "☒")
+				.AddColumn("Открыты для номенклатуры").AddTextRenderer(x => x.UseInNomenclature ? "☑" : "☒")
+				.AddColumn("Аналоги").AddTextRenderer(x => 
+					String.Join(" ,", x.SuitableSizes.Select(z => z.Name)))
 				.Finish();
 			ytreeviewSizes.Binding
 				.AddSource(ViewModel)
