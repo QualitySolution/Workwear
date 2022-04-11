@@ -34,7 +34,7 @@ namespace WorkwearTest.Integration.Stock
 		[Test(Description = "Корректно обрабатываем выдачу одной номенклатуры несколько раз за день. Реальный баг.")]
 		[Category("real case")]
 		[Category("Integrated")]
-		public void UpdateOperations_IssuingMultipleRows_TwoNomeclatureSameNeedsTest()
+		public void UpdateOperations_IssuingMultipleRows_TwoNomenclatureSameNeedsTest()
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
@@ -208,7 +208,7 @@ namespace WorkwearTest.Integration.Stock
 			}
 		}
 
-		[Test(Description = "Убеждаемся что корректно рассчитываем дату следущей выдачи при норме в 1 месяц. При разных id. Реальный баг был втом что проверялись id не тех сущьностей, но вы тестах id одинаковые, поэтому тесты работали..")]
+		[Test(Description = "Убеждаемся что корректно рассчитываем дату следующей выдачи при норме в 1 месяц. При разных id. Реальный баг был в том что проверялись id не тех сущностей, но в тестах id одинаковые, поэтому тесты работали..")]
 		[Category("real case")]
 		[Category("Integrated")]
 		public void UpdateEmployeeWearItems_NextIssueDiffIdsTest()
@@ -225,7 +225,7 @@ namespace WorkwearTest.Integration.Stock
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				uow.Save(nomenclatureType);
 
-				//Поднимаем id номеклатуры до 2.
+				//Поднимаем id номенклатуры до 2.
 				uow.Save(new Nomenclature());
 
 				var nomenclature = new Nomenclature();
