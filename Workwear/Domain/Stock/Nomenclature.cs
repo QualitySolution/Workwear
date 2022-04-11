@@ -88,18 +88,19 @@ namespace workwear.Domain.Stock
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
-			if (!Archival || !baseParameters.CheckBalances) yield break;
-			var repository = new StockRepository();
-			var nomenclatures = new List<Nomenclature>() {this};
-			var uow = (IUnitOfWork)validationContext.Items[nameof(IUnitOfWork)];
-			var warehouses = uow.Query<Warehouse>().List();
-			foreach (var warehouse in warehouses) {
-				var anyBalance = repository.StockBalances(uow, warehouse, nomenclatures, DateTime.Now)
-					.Where(x => x.Amount > 0);
-				foreach (var position in anyBalance) {
-					yield return new ValidationResult(
-						"Архивная номенклатура не должна иметь остатков на складе"+
-						$" склад {warehouse.Name} содержит {position.StockPosition.Title} в кол-ве {position.Amount} шт.");
+			if (Archival && baseParameters.CheckBalances) {
+				var repository = new StockRepository();
+				var nomenclatures = new List<Nomenclature>() {this};
+				var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
+				var warehouses = uow.Query<Warehouse>().List();
+				foreach (var warehouse in warehouses) {
+					var anyBalance = repository.StockBalances(uow, warehouse, nomenclatures, DateTime.Now)
+						.Where(x => x.Amount > 0);
+					foreach (var position in anyBalance) {
+						yield return new ValidationResult(
+							"Архивная номенклатура не должна иметь остатков на складе" +
+							$" склад {warehouse.Name} содержит {position.StockPosition.Title} в кол-ве {position.Amount} шт.");
+					}
 				}
 			}
 		}

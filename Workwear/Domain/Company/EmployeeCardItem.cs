@@ -98,13 +98,20 @@ namespace workwear.Domain.Company
 					return "darkgreen";
 				if (ActiveNormItem.Amount < Amount)
 					return "blue";
-				return Amount == 0 ? "red" : "orange";
+				if (Amount == 0)
+					return "red";
+				else
+					return "orange";
 			}
 		}
-		public virtual string NextIssueColor(BaseParameters parameters) {
+		public virtual string NextIssueColor(BaseParameters parameters)
+		{
 			if(DateTime.Today > NextIssue)
 					return "red";
-			return DateTime.Today.AddDays(parameters.ColDayAheadOfShedule) > NextIssue ? "darkgreen" : "black";
+			if (DateTime.Today.AddDays(parameters.ColDayAheadOfShedule) > NextIssue)
+				return "darkgreen";
+			else
+				return "black";
 		}
 		public virtual string Title =>
 			$"Потребность сотрудника {EmployeeCard.ShortName} в {ProtectionTools.Name} - " +
@@ -208,7 +215,7 @@ namespace workwear.Domain.Company
 			var employeeHeight = employeeCard.Sizes
 				.FirstOrDefault(x => x.SizeType == stockPosition.Height.SizeType)?.Size;
 			if (employeeHeight is null) {
-				logger.Warn("В карточке сотрудника не указан рост");
+				logger.Warn($"В карточке сотрудника не указан {stockPosition.Height.Name}");
 				return false;
 			}
 
@@ -278,7 +285,7 @@ namespace workwear.Domain.Company
 		}
 		#endregion
 		#region Зазоры для тестирования
-		protected virtual IssueGraph GetIssueGraphForItem(IUnitOfWork uow) {
+		protected internal virtual IssueGraph GetIssueGraphForItem(IUnitOfWork uow) {
 			return IssueGraph.MakeIssueGraph(uow, EmployeeCard, ProtectionTools);
 		}
 		#endregion

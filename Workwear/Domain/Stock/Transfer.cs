@@ -71,13 +71,15 @@ namespace workwear.Domain.Stock
 				yield return new ValidationResult("Склад добавления должен отличаться от склада списания",
 				new[] { nameof(Items) });
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
-			if (!baseParameters.CheckBalances) yield break;
-			var strNom = items
-				.Where(transferItem => transferItem.Amount > transferItem.AmountInStock)
-				.Aggregate("", (current, transferItem) => current + $"\"{transferItem.Nomenclature.Name}\"\n");
-			if(strNom.Length > 0)
-				yield return new ValidationResult($"Количество у номенклатур:\n{strNom}больше, чем доступно на складе",
-					new[] { nameof(Items) });
+			if (baseParameters.CheckBalances) {
+				var strNom = items
+					.Where(transferItem => transferItem.Amount > transferItem.AmountInStock)
+					.Aggregate("", (current, transferItem) => current + $"\"{transferItem.Nomenclature.Name}\"\n");
+				if (strNom.Length > 0)
+					yield return new ValidationResult(
+						$"Количество у номенклатур:\n{strNom}больше, чем доступно на складе",
+						new[] {nameof(Items)});
+			}
 		}
 		#endregion
 		public virtual TransferItem AddItem(StockPosition position, int amount) {

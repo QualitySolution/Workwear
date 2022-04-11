@@ -274,10 +274,10 @@ namespace workwear
 
 
 			DeleteConfig.AddHibernateDeleteInfo<SizeType>()
-				.AddClearDependence<Size>(x => x.SizeType)
+				.AddDeleteDependence<Size>(x => x.SizeType)
+				.AddDeleteDependence<EmployeeSize>(x => x.SizeType)
 				.AddClearDependence<ItemsType>(x => x.SizeType)
-				.AddClearDependence<ItemsType>(x => x.HeightType)
-				.AddDeleteDependence<EmployeeSize>(x => x.SizeType);
+				.AddClearDependence<ItemsType>(x => x.HeightType);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeSize>();
 			#endregion

@@ -98,8 +98,11 @@ namespace workwear.Domain.Operations
 		public virtual bool UseAutoWriteoff {
 			get => useAutoWriteoff;
 			set {
-				if (!SetField(ref useAutoWriteoff, value)) return;
-				AutoWriteoffDate = value ? ExpiryOn : null;
+				if (SetField(ref useAutoWriteoff, value))
+					if (value)
+						AutoWriteoffDate = ExpiryOn;
+					else
+						AutoWriteoffDate = null;
 			}
 		}
 

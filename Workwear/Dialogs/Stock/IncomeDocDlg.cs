@@ -134,20 +134,19 @@ namespace workwear.Dialogs.Stock
 			labelWorker.Visible = yentryEmployee.Visible = Entity.Operation == IncomeOperations.Return;
 			labelObject.Visible = entrySubdivision.Visible = Entity.Operation == IncomeOperations.Object;
 
-			if (!UoWGeneric.IsNew)
-				return;
-			switch (Entity.Operation) {
-			case IncomeOperations.Enter:
-					TabName = "Новая приходная накладная";
-				break;
-			case IncomeOperations.Return:
-					TabName = "Новый возврат от работника";
-				break;
-			case IncomeOperations.Object:
-					TabName = "Новый возврат c объекта";
-				break;
-			}
-
+			if (UoWGeneric.IsNew)
+				switch (Entity.Operation)
+				{
+					case IncomeOperations.Enter:
+						TabName = "Новая приходная накладная";
+						break;
+					case IncomeOperations.Return:
+						TabName = "Новый возврат от работника";
+						break;
+					case IncomeOperations.Object:
+						TabName = "Новый возврат c объекта";
+						break;
+				}
 		}
 		public override void Destroy() {
 			base.Destroy();
@@ -155,12 +154,14 @@ namespace workwear.Dialogs.Stock
 		}
 		#region Workwear featrures
 		private void DisableFeatures() {
-			if (featuresService.Available(WorkwearFeature.Warehouses)) return;
-			label3.Visible = false;
-			entityWarehouseIncome.Visible = false;
-			if(Entity.Warehouse == null)
-				entityWarehouseIncome.ViewModel.Entity = Entity.Warehouse = new StockRepository()
-					.GetDefaultWarehouse(UoW, featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+			if (!featuresService.Available(WorkwearFeature.Warehouses))
+			{
+				label3.Visible = false;
+				entityWarehouseIncome.Visible = false;
+				if (Entity.Warehouse == null)
+					entityWarehouseIncome.ViewModel.Entity = Entity.Warehouse = new StockRepository()
+						.GetDefaultWarehouse(UoW, featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+			}
 		}
 		#endregion
 	}

@@ -162,12 +162,13 @@ namespace workwear.Dialogs.Stock
 				OpenSlaveTab(selectFromObjectDlg);
 			}
 
-			if (IncomeDoc.Operation != IncomeOperations.Enter) return;
-			var selectJournal = 
-				MainClass.MainWin.NavigationManager
-					.OpenViewModelOnTdi<NomenclatureJournalViewModel>(MyTdiDialog, OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
-			selectJournal.ViewModel.OnSelectResult += AddNomenclature_OnSelectResult;
+			if (IncomeDoc.Operation == IncomeOperations.Enter) {
+				var selectJournal =
+					MainClass.MainWin.NavigationManager
+						.OpenViewModelOnTdi<NomenclatureJournalViewModel>(MyTdiDialog, OpenPageOptions.AsSlave);
+				selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+				selectJournal.ViewModel.OnSelectResult += AddNomenclature_OnSelectResult;
+			}
 		}
 
 		private void AddNomenclature_OnSelectResult(object sender, JournalSelectedEventArgs e) {

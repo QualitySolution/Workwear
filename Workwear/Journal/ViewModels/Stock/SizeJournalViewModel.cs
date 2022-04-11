@@ -43,8 +43,8 @@ namespace workwear.Journal.ViewModels.Stock
             SizeType sizeTypeAlias = null;
             var query = uow.Session.QueryOver(() => sizeAlias)
                 .JoinAlias(() => sizeAlias.SizeType, () => sizeTypeAlias, JoinType.LeftOuterJoin);
-            if (Filter.SizeType != null)
-                query.Where(x => x.SizeType.Id == Filter.SizeType.Id);
+            if (Filter.SelectedSizeType != null)
+                query.Where(x => x.SizeType.Id == Filter.SelectedSizeType.Id);
 
             return query
                 .Where(GetSearchCriterion(

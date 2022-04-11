@@ -40,7 +40,7 @@ namespace workwear.ViewModels.Stock
 		public void AddAnalog() {
 			var selectJournal = MainClass.MainWin.NavigationManager.
 				OpenViewModel<SizeJournalViewModel>(this, OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.Filter.SizeType = Entity.SizeType;
+			selectJournal.ViewModel.Filter.SelectedSizeType = Entity.SizeType;
 			selectJournal.ViewModel.Filter.Sensitive = false;
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;

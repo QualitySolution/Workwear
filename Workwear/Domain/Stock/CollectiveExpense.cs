@@ -87,36 +87,41 @@ namespace workwear.Domain.Stock
 
 			//Проверка наличия на складе
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
-			if (UoW == null || !baseParameters.CheckBalances) yield break;
-			var repository = new StockRepository();
-			var nomenclatures = 
-				Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
-			var excludeOperations = 
-				Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
-			var balance = 
-				repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
+			if (UoW != null && baseParameters.CheckBalances)
+			{
+				var repository = new StockRepository();
+				var nomenclatures =
+					Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
+				var excludeOperations =
+					Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
+				var balance =
+					repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
 
-			var positionGroups = 
-				Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
-			foreach(var position in positionGroups) {
-				var amount = position.Sum(x => x.Amount);
-				if(amount == 0)
-					continue;
+				var positionGroups =
+					Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
+				foreach (var position in positionGroups)
+				{
+					var amount = position.Sum(x => x.Amount);
+					if (amount == 0)
+						continue;
 
-				var stockExist = 
-					balance.FirstOrDefault(x => x.StockPosition.Equals(position.Key));
+					var stockExist =
+						balance.FirstOrDefault(x => x.StockPosition.Equals(position.Key));
 
-				if(stockExist == null) {
-					yield return new ValidationResult($"На складе отсутствует - {position.Key.Title}", 
-						new[] { nameof(Items) });
-					continue;
-				}
+					if (stockExist == null)
+					{
+						yield return new ValidationResult($"На складе отсутствует - {position.Key.Title}",
+							new[] {nameof(Items)});
+						continue;
+					}
 
-				if(stockExist.Amount < amount) {
-					yield return new ValidationResult(
-						$"Недостаточное количество - {position.Key.Title}, Необходимо: {amount} На складе: " +
-						$"{stockExist.Amount}", new[] { nameof(Items) });
-					continue;
+					if (stockExist.Amount < amount)
+					{
+						yield return new ValidationResult(
+							$"Недостаточное количество - {position.Key.Title}, Необходимо: {amount} На складе: " +
+							$"{stockExist.Amount}", new[] {nameof(Items)});
+						continue;
+					}
 				}
 			}
 		}
@@ -161,17 +166,21 @@ namespace workwear.Domain.Stock
 				return null;
 
 			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
-			if (!employeeCardItem.BestChoiceInStock.Any()) return AddItem(employeeCardItem);
-			foreach(var position in employeeCardItem.BestChoiceInStock) {
-				var expancePositionAmount = 
-					Items.Where(item => item.Nomenclature == position.Nomenclature 
-					                    && item.WearSize.Id == position.WearSize.Id 
-					                    && item.Height.Id == position.Height.Id)
-						.Aggregate(position.Amount, (current, item) => current - item.Amount);  //Есть на складе
+			if (employeeCardItem.BestChoiceInStock.Any()) {
+				foreach (var position in employeeCardItem.BestChoiceInStock) {
+					var expancePositionAmount =
+						Items.Where(item => item.Nomenclature == position.Nomenclature
+						                    && item.WearSize.Id == position.WearSize.Id
+						                    && item.Height.Id == position.Height.Id)
+							.Aggregate(position.Amount, (current, item) => current - item.Amount); //Есть на складе
 
-				if(expancePositionAmount >= needPositionAmount && position.WearPercent == 0)
-					return AddItem(employeeCardItem, position.StockPosition, needPositionAmount);
+					if (expancePositionAmount >= needPositionAmount && position.WearPercent == 0)
+						return AddItem(employeeCardItem, position.StockPosition, needPositionAmount);
+				}
+
+				return AddItem(employeeCardItem);
 			}
+
 			return AddItem(employeeCardItem);
 		}
 

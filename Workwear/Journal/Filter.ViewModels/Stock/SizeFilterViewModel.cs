@@ -14,10 +14,10 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			Sensitive = true;
 		}
 		#region Ограничения
-		private SizeType sizeType;
-		public SizeType SizeType {
-			get => sizeType;
-			set => SetField(ref sizeType, value);
+		private SizeType selectedSizeType;
+		public SizeType SelectedSizeType {
+			get => selectedSizeType;
+			set => SetField(ref selectedSizeType, value);
 		}
 
 		private bool sensitive;
