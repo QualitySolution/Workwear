@@ -11,9 +11,9 @@ namespace Workwear.Measurements
 	/// </summary>
 	public class SizeService
 	{
-		private static IEnumerable<Size> sizes;
-		private static IEnumerable<SizeType> types;
-		public static IEnumerable<Size> GetSize(
+		private static List<Size> sizes;
+		private static List<SizeType> types;
+		public static List<Size> GetSize(
 			IUnitOfWork uow, 
 			SizeType sizeType = null, 
 			bool onlyUseInEmployee = false, 
@@ -21,40 +21,42 @@ namespace Workwear.Measurements
 		{
 			if(sizes is null)
 				sizes = SizeRepository.GetSize(uow);
+			var filterSizes = sizes;
 			if (sizeType != null)
-				sizes = sizes.Where(x => x.SizeType == sizeType);
+				filterSizes = filterSizes.Where(x => x.SizeType == sizeType).ToList();
 			if (onlyUseInEmployee)
-				sizes = sizes.Where(x => x.UseInEmployee);
+				filterSizes = filterSizes.Where(x => x.UseInEmployee).ToList();
 			if (onlyUseInNomenclature)
-				sizes = sizes.Where(x => x.UseInNomenclature);
-			return sizes;
+				filterSizes = filterSizes.Where(x => x.UseInNomenclature).ToList();
+			return filterSizes.ToList();
 		}
 		
-		public static IEnumerable<SizeType> GetSizeType(
+		public static List<SizeType> GetSizeType(
 			IUnitOfWork uow, 
 			bool onlyUseInEmployee = false)
 		{
 			if (types is null)
 				types = SizeRepository.GetSizeType(uow);
+			var filterTypes = types;
 			if (onlyUseInEmployee)
-				types = types.Where(x => x.UseInEmployee);
-			return types;
+				filterTypes = filterTypes.Where(x => x.UseInEmployee).ToList();
+			return filterTypes;
 		}
 
-		public static IEnumerable<SizeType> GetSizeTypeByCategory(
+		public static List<SizeType> GetSizeTypeByCategory(
 			IUnitOfWork uow,
 			CategorySizeType categorySizeType,
 			bool onlyUseInEmployee = false) =>
 				GetSizeType(uow, onlyUseInEmployee)
-				.Where(x => x.CategorySizeType == categorySizeType);
+				.Where(x => x.CategorySizeType == categorySizeType).ToList();
 
-		public static IEnumerable<Size> GetSizeByCategory(
+		public static List<Size> GetSizeByCategory(
 			IUnitOfWork uow, 
 			CategorySizeType categorySizeType, 
 			bool onlyUseInEmployee = false, 
 			bool onlyUseInNomenclature = false) =>
 				GetSize(uow, null, onlyUseInEmployee, onlyUseInNomenclature)
-				.Where(x => x.SizeType.CategorySizeType == categorySizeType);
+				.Where(x => x.SizeType.CategorySizeType == categorySizeType).ToList();
 
 		public void RefreshSizes(IUnitOfWork uow) => 
 			sizes = SizeRepository.GetSize(uow);
