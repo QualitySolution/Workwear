@@ -86,11 +86,8 @@ namespace workwear.Views.Stock
 				var selected = ytreeItems.GetSelectedObject<ExpenseItem>();
 				var item = new MenuItemId<ExpenseItem>("Открыть номеклатуру");
 				item.ID = selected;
-				item.Sensitive = selected.Nomenclature != null;
-				if(selected == null)
-					item.Sensitive = false;
-				else
-					item.Activated += Item_Activated;
+				item.Sensitive = selected?.Nomenclature != null;
+				item.Activated += Item_Activated;
 				menu.Add(item);
 				menu.ShowAll();
 				menu.Popup();
