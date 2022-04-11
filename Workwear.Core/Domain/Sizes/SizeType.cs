@@ -21,21 +21,25 @@ namespace workwear.Domain.Sizes
         #region Свойства
         public virtual int Id { get; }
         private string name;
+        [Display(Name = "НАзвание")]
         public virtual string Name {
             get => name;
             set => SetField(ref name, value);
         }
         private bool useInEmployee;
+        [Display(Name = "Отображается в сотруднике")]
         public virtual bool UseInEmployee {
             get => useInEmployee;
             set => SetField(ref useInEmployee, value);
         }
         private CategorySizeType categorySizeType;
+        [Display(Name = "Категория")]
         public virtual CategorySizeType CategorySizeType {
             get => categorySizeType;
             set => SetField(ref categorySizeType, value);
         }
         private int position;
+        [Display(Name = "Позиция в карточке сотрудника")]
         public virtual int Position {
             get => position;
             set => SetField(ref position, value);

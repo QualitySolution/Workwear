@@ -65,9 +65,9 @@ namespace workwear.Journal.ViewModels.Stock
         private void OverrideDeleteAction() {
             NodeActionsList.RemoveAll(x => x.Title == "Удалить");
             var deleteAction = new JournalAction("Удалить",
-                (selected) => selected.Length == 1 && selected.First().GetId() >= 1000,
-                (selected) => VisibleDeleteAction,
-                (selected) => DeleteEntities(selected.ToArray() as SizeJournalNode[]),
+                selected => selected.Length == 1 && selected.First().GetId() >= 1000,
+                selected => VisibleDeleteAction,
+                selected => DeleteEntities(selected.Cast<SizeJournalNode>().ToArray()),
                 "Delete"
             );
             NodeActionsList.Add(deleteAction);

@@ -22,21 +22,25 @@ namespace workwear.Domain.Sizes
         #region Свойства
         public virtual int Id { get; }
         private string name;
+        [Display (Name = "Значение")]
         public virtual string Name {
             get => name;
             set => SetField(ref name, value);
         }
         private SizeType sizeType;
+        [Display (Name = "Тип размера")]
         public virtual SizeType SizeType {
             get => sizeType;
             set => SetField(ref sizeType, value);
         }
         private bool useInEmployee;
+        [Display (Name = "Отображается в сотруднике")]
         public virtual bool UseInEmployee {
             get => useInEmployee;
             set => SetField(ref useInEmployee, value);
         }
         private bool useInNomenclature;
+        [Display (Name = "Отображается в номенклатуре")]
         public virtual bool UseInNomenclature {
             get => useInNomenclature;
             set => SetField(ref useInNomenclature, value);
@@ -51,6 +55,7 @@ namespace workwear.Domain.Sizes
         }
         private GenericObservableList<Size> observableSuitableSizes;
         //FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+        [Display(Name = "Подходящие размеры")]
         public virtual GenericObservableList<Size> ObservableSuitableSizes => 
             observableSuitableSizes ?? (observableSuitableSizes = new GenericObservableList<Size>(SuitableSizes));
         #endregion
