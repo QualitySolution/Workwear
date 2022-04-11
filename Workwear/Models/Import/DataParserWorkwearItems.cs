@@ -311,9 +311,9 @@ namespace workwear.Models.Import
 					sizeAndGrowth = SizeParser.ParseSizeAndGrowth(sizeAndGrowthValue, uow);
 			};
 			if(sizeColumn != null && sizeAndGrowth.Size != null)
-				sizeAndGrowth.Size = SizeParser.ParseSize(uow, row.CellStringValue(sizeColumn.Index), Category.Size);
+				sizeAndGrowth.Size = SizeParser.ParseSize(uow, row.CellStringValue(sizeColumn.Index), CategorySizeType.Size);
 			if(growthColumn != null && sizeAndGrowth.Growth != null)
-				sizeAndGrowth.Growth = SizeParser.ParseSize(uow, row.CellStringValue(growthColumn.Index), Category.Height);
+				sizeAndGrowth.Growth = SizeParser.ParseSize(uow, row.CellStringValue(growthColumn.Index), CategorySizeType.Height);
 			return sizeAndGrowth.Size != null || sizeAndGrowth.Growth != null;
 		}
 		public string GetPersonalNumber(SettingsWorkwearItemsViewModel settings, SheetRowWorkwearItems row, int columnIndex) {

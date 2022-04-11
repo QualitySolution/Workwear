@@ -260,7 +260,7 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<SizeTypeJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
-					.AddColumn("Категория").AddTextRenderer(node => node.Category.GetEnumTitle()).SearchHighlight()
+					.AddColumn("Категория").AddTextRenderer(node => node.CategorySizeType.GetEnumTitle()).SearchHighlight()
 					.AddColumn("Позиция").AddNumericRenderer(node => node.Position)
 					.Finish()
 			);

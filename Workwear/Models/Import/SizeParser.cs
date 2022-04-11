@@ -70,14 +70,14 @@ namespace workwear.Models.Import
 					growth2 = number;
 			}
 
-			result.Size = ParseSize(uow, size2.Length > 0 ? size1 + "-" + size2 : size1,Category.Size);
-			result.Growth = ParseSize(uow, growth2.Length > 0 ? growth1 + "-" + growth2 : growth1, Category.Height);
+			result.Size = ParseSize(uow, size2.Length > 0 ? size1 + "-" + size2 : size1,CategorySizeType.Size);
+			result.Growth = ParseSize(uow, growth2.Length > 0 ? growth1 + "-" + growth2 : growth1, CategorySizeType.Height);
 
 			return result;
 		}
 
-		public static Size ParseSize(IUnitOfWork uow, string value, Category category) =>
-			SizeService.GetSizeByCategory(uow, category)
+		public static Size ParseSize(IUnitOfWork uow, string value, CategorySizeType categorySizeType) =>
+			SizeService.GetSizeByCategory(uow, categorySizeType)
 				.FirstOrDefault(x => x.Name == value);
 	}
 	public struct SizeAndGrowth {

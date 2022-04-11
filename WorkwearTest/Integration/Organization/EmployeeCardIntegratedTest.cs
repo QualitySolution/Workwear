@@ -116,8 +116,8 @@ namespace WorkwearTest.Integration.Organization
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
-				var sizeType = new SizeType {Name = "Тестовый тип", Category = Category.Size};
-				var heightType = new SizeType {Name = "Тестовый рост", Category = Category.Height};
+				var sizeType = new SizeType {Name = "Тестовый тип", CategorySizeType = CategorySizeType.Size};
+				var heightType = new SizeType {Name = "Тестовый рост", CategorySizeType = CategorySizeType.Height};
 				uow.Save(sizeType);
 				uow.Save(heightType);
 

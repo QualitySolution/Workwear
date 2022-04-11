@@ -261,19 +261,19 @@ namespace workwear.Models.Import
 					employee.Post = post;
 					break;
 				case DataTypeEmployee.Growth: {
-					var height = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), Category.Height);
+					var height = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), CategorySizeType.Height);
 					var employeeHeight = employee.Sizes.FirstOrDefault(x => x.SizeType == height.SizeType)?.Size;
 					row.ChangedColumns.Add(column, CompareSize(employeeHeight, height, rowChange, uow));
 				}
 					break;
 				case DataTypeEmployee.WearSize: {
-					var size = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), Category.Size);
+					var size = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), CategorySizeType.Size);
 					var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType)?.Size;
 					row.ChangedColumns.Add(column, CompareSize(employeeSize, size, rowChange, uow));
 				}
 					break;
 				case DataTypeEmployee.ShoesSize: {
-					var size = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), Category.Size);
+					var size = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), CategorySizeType.Size);
 					var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType)?.Size;
 					row.ChangedColumns.Add(column, CompareSize(employeeSize, size, rowChange, uow));
 				}
@@ -534,7 +534,7 @@ namespace workwear.Models.Import
 					break;
 
 				case DataTypeEmployee.Growth:
-					var height = SizeParser.ParseSize(uow, value, Category.Height);
+					var height = SizeParser.ParseSize(uow, value, CategorySizeType.Height);
 					if (height is null) break;
 					var employeeHeight = employee.Sizes.FirstOrDefault(x => x.SizeType == height.SizeType);
 					if (employeeHeight is null) {
@@ -546,7 +546,7 @@ namespace workwear.Models.Import
 						employeeHeight.Size = height;
 					break;
 				case DataTypeEmployee.WearSize:
-					var size = SizeParser.ParseSize(uow, value, Category.Size);
+					var size = SizeParser.ParseSize(uow, value, CategorySizeType.Size);
 					if (size is null) break;
 					var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType);
 					if (employeeSize is null) {
@@ -559,7 +559,7 @@ namespace workwear.Models.Import
 					break;
 				case DataTypeEmployee.ShoesSize:
 				{
-					var shoesSize = SizeParser.ParseSize(uow, value, Category.Size);
+					var shoesSize = SizeParser.ParseSize(uow, value, CategorySizeType.Size);
 					if (shoesSize is null) break;
 					var employeeShoesSize = employee.Sizes.FirstOrDefault(x => x.SizeType == shoesSize.SizeType);
 					if (employeeShoesSize is null) {

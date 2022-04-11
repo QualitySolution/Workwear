@@ -16,7 +16,7 @@ namespace workwear.HibernateMapping.Sizes
 
             Map(x => x.Name).Column("name");
             Map(x => x.UseInEmployee).Column("use_in_employee");
-            Map(x => x.Category).Column("category");
+            Map(x => x.CategorySizeType).Column("category");
             Map(x => x.Position).Column("position");
         }
     }

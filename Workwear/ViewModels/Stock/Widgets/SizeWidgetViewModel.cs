@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
@@ -35,11 +36,11 @@ namespace workwear.ViewModels.Stock.Widgets
 		/// </summary>
 		private void ConfigureSizes() {
 			if (nomenclature.Type.HeightType != null) {
-				WearGrowths = SizeService.GetSize(uoW, nomenclature.Type.HeightType,false, true);
+				WearGrowths = SizeService.GetSize(uoW, nomenclature.Type.HeightType,false, true).ToList();
 				IsUseGrowth = true;
 			}
 			WearSizes = nomenclature?.Type?.SizeType != null ? 
-				SizeService.GetSize(uoW, nomenclature.Type.SizeType,false, true) : new List<Size>();
+				SizeService.GetSize(uoW, nomenclature.Type.SizeType,false, true).ToList() : new List<Size>();
 		}
 
 		/// <summary>

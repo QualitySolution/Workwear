@@ -34,9 +34,9 @@ namespace workwear.Views.Stock
 			labelId.Binding
 				.AddBinding(Entity, e => e.Id, w => w.Text, new IdToStringConverter())
 				.InitializeFromSource();
-			specllistcomCategory.ItemsEnum = typeof(Category);
+			specllistcomCategory.ItemsEnum = typeof(CategorySizeType);
 			specllistcomCategory.Binding
-				.AddBinding(Entity, e => e.Category, w => w.SelectedItem)
+				.AddBinding(Entity, e => e.CategorySizeType, w => w.SelectedItem)
 				.AddBinding(ViewModel, vm => vm.IsNew, v => v.Sensitive)
 				.InitializeFromSource();
 			yspinPosition.Binding

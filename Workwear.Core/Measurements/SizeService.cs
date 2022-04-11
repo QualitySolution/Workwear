@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using QS.DomainModel.UoW;
 using workwear.Domain.Sizes;
+using workwear.Repository.Sizes;
 
 namespace Workwear.Measurements
 {
@@ -9,58 +11,56 @@ namespace Workwear.Measurements
 	/// </summary>
 	public class SizeService
 	{
-		public static IList<Size> GetSize(
+		private static IEnumerable<Size> sizes;
+		private static IEnumerable<SizeType> types;
+		public static IEnumerable<Size> GetSize(
 			IUnitOfWork uow, 
 			SizeType sizeType = null, 
 			bool onlyUseInEmployee = false, 
 			bool onlyUseInNomenclature = false)
 		{
-			var sizes = uow.Session.QueryOver<Size>();
+			if(sizes is null)
+				sizes = SizeRepository.GetSize(uow);
 			if (sizeType != null)
 				sizes = sizes.Where(x => x.SizeType == sizeType);
 			if (onlyUseInEmployee)
 				sizes = sizes.Where(x => x.UseInEmployee);
 			if (onlyUseInNomenclature)
 				sizes = sizes.Where(x => x.UseInNomenclature);
-			return sizes.List();
+			return sizes;
 		}
 		
-		public static IList<SizeType> GetSizeType(
+		public static IEnumerable<SizeType> GetSizeType(
 			IUnitOfWork uow, 
-			bool onlyUseInEmployee = false) 
+			bool onlyUseInEmployee = false)
 		{
-			var sizeTypes = uow.Session.QueryOver<SizeType>();
+			if (types is null)
+				types = SizeRepository.GetSizeType(uow);
 			if (onlyUseInEmployee)
-				sizeTypes = sizeTypes.Where(x => x.UseInEmployee);
-			return sizeTypes.List();
+				types = types.Where(x => x.UseInEmployee);
+			return types;
 		}
 
 		public static IEnumerable<SizeType> GetSizeTypeByCategory(
 			IUnitOfWork uow,
-			Category category,
-			bool onlyUseInEmployee = false)
-		{
-			var sizeTypes = 
-				uow.Session.QueryOver<SizeType>().Where(x => x.Category == category);
-			if (onlyUseInEmployee)
-				sizeTypes = sizeTypes.Where(x => x.UseInEmployee);
-			return sizeTypes.List();
-		}
+			CategorySizeType categorySizeType,
+			bool onlyUseInEmployee = false) =>
+				GetSizeType(uow, onlyUseInEmployee)
+				.Where(x => x.CategorySizeType == categorySizeType);
 
 		public static IEnumerable<Size> GetSizeByCategory(
 			IUnitOfWork uow, 
-			Category category, 
+			CategorySizeType categorySizeType, 
 			bool onlyUseInEmployee = false, 
-			bool onlyUseInNomenclature = false) {
-			SizeType sizeTypeAlias = null;
-			var sizes = uow.Session.QueryOver<Size>()
-				.JoinAlias(x => x.SizeType, () => sizeTypeAlias)
-				.Where(x => sizeTypeAlias.Category == category);
-			if (onlyUseInEmployee)
-				sizes = sizes.Where(x => x.UseInEmployee);
-			if (onlyUseInNomenclature)
-				sizes = sizes.Where(x => x.UseInNomenclature);
-			return sizes.List();
-		}
+			bool onlyUseInNomenclature = false) =>
+				GetSize(uow, null, onlyUseInEmployee, onlyUseInNomenclature)
+				.Where(x => x.SizeType.CategorySizeType == categorySizeType);
+
+		public void RefreshSizes(IUnitOfWork uow) => 
+			sizes = SizeRepository.GetSize(uow);
+		public void RefreshSizesType(IUnitOfWork uow) => 
+			types = SizeRepository.GetSizeType(uow);
+		public void ClearSizes() => sizes = null;
+		public void ClearTypes() => types = null;
 	}
 }

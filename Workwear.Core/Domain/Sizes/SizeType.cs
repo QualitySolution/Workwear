@@ -30,10 +30,10 @@ namespace workwear.Domain.Sizes
             get => useInEmployee;
             set => SetField(ref useInEmployee, value);
         }
-        private Category category;
-        public virtual Category Category {
-            get => category;
-            set => SetField(ref category, value);
+        private CategorySizeType categorySizeType;
+        public virtual CategorySizeType CategorySizeType {
+            get => categorySizeType;
+            set => SetField(ref categorySizeType, value);
         }
         private int position;
         public virtual int Position {
@@ -45,31 +45,27 @@ namespace workwear.Domain.Sizes
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
             if(Position <= 0)
                 yield return new ValidationResult (
-                "Позиция должна быть больше нуля", 
-                new[] { this.GetPropertyName(s => s.Name)});
+                "Позиция должна быть больше нуля");
             if (String.IsNullOrEmpty(Name))
                 yield return new ValidationResult (
-                    "Имя должно быть указано", 
-                    new[] { this.GetPropertyName(s => s.Name)});
+                    "Имя должно быть указано");
             var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
             var doublePos = 
                 SizeService.GetSizeType(uow)
                     .FirstOrDefault(x => x.Position == Position && x.Id != Id);
             if(doublePos != null)
                 yield return new ValidationResult (
-                    $"Позиция:{Position} уже занята", 
-                    new[] { doublePos.GetPropertyName(s => s.Name)});
+                    $"Позиция:{Position} уже занята");
             var doubleName = 
                 SizeService.GetSizeType(uow)
                     .FirstOrDefault(x => x.Name == Name && x.Id != Id);
             if(doubleName != null)
                 yield return new ValidationResult (
-                    $"Имя:{Name} уже занята", 
-                    new[] { doubleName.GetPropertyName(s => s.Name)});
+                    $"Имя:{Name} уже занято");
         }
         #endregion
     }
-    public enum Category {
+    public enum CategorySizeType {
         [Display(Name = "Размер")]
         Size,
         [Display(Name = "Рост")]

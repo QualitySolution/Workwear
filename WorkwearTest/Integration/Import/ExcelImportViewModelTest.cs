@@ -242,13 +242,13 @@ namespace WorkwearTest.Integration.Import
 			{
 				var uow = employeesLoad.UoW;
 				var heightType = new SizeType
-					{Name = "РостТип", Position = 1, UseInEmployee = true, Category = Category.Height};
+					{Name = "РостТип", Position = 1, UseInEmployee = true, CategorySizeType = CategorySizeType.Height};
 					uow.Save(heightType);
 				var sizeType = new SizeType 
-					{Name = "РазмерТип", Position = 2, Category = Category.Size, UseInEmployee = true};
+					{Name = "РазмерТип", Position = 2, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
 				uow.Save(sizeType);
 				var shoesType = new SizeType 
-					{Name = "ОбувьТип", Position = 3, Category = Category.Size, UseInEmployee = true};
+					{Name = "ОбувьТип", Position = 3, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
 				uow.Save(shoesType);
 				var height = new Size {Name = "170-176", SizeType = heightType};
 				uow.Save(height);

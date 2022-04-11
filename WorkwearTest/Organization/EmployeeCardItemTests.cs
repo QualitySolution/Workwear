@@ -367,8 +367,8 @@ namespace WorkwearTest.Organization
 		                    "значит эта номенклатура без роста и не надо сравнивать ее по росту с сотрудником.")]
 		public void MatcheStockPosition_WithoutGrowthCase()
 		{
-			var heightType = new SizeType {Category = Category.Height};
-			var sizeType = new SizeType {Category = Category.Size};
+			var heightType = new SizeType {CategorySizeType = CategorySizeType.Height};
+			var sizeType = new SizeType {CategorySizeType = CategorySizeType.Size};
 			var size = new Size {Name = "52", SizeType = sizeType};
 			var itemType = Substitute.For<ItemsType>();
 			var nomenclature = Substitute.For<Nomenclature>();
@@ -396,7 +396,7 @@ namespace WorkwearTest.Organization
 		{
 			var employee = new EmployeeCard();
 			employee.Sex = Sex.M;
-			var sizeType = new SizeType {Category = Category.Size};
+			var sizeType = new SizeType {CategorySizeType = CategorySizeType.Size};
 			var size = new Size {Name = "52", SizeType = sizeType};
 			employee.Sizes.Add(new EmployeeSize{Size = size, SizeType = sizeType, Employee = employee});
 
@@ -422,7 +422,7 @@ namespace WorkwearTest.Organization
 		public void MatcheStockPosition_RangeSizeInEmployeeSize()
 		{
 			var employee = new EmployeeCard {Sex = Sex.M,};
-			var sizeType = new SizeType {Category = Category.Size};
+			var sizeType = new SizeType {CategorySizeType = CategorySizeType.Size};
 			var size52 = new Size {Name = "52", SizeType = sizeType};
 			var size54 = new Size {Name = "54", SizeType = sizeType};
 			var size52And54 = new Size
@@ -453,8 +453,8 @@ namespace WorkwearTest.Organization
 			var employee = new EmployeeCard {
 				Sex = Sex.M
 			};
-			var sizeType = new SizeType {Category = Category.Size};
-			var heightType = new SizeType {Category = Category.Height};
+			var sizeType = new SizeType {CategorySizeType = CategorySizeType.Size};
+			var heightType = new SizeType {CategorySizeType = CategorySizeType.Height};
 			var size52 = new Size {Name = "52", SizeType = sizeType};
 			var height170 = new Size {Name = "170", SizeType = heightType};
 			var height176 = new Size {Name = "176", SizeType = heightType};

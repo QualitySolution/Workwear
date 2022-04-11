@@ -13,7 +13,7 @@ namespace workwear.Journal.Filter.Views.Stock
 		}
 		private void ConfigureDlg()
 		{
-			yenumcomboCategory.ItemsEnum = typeof(Category);
+			yenumcomboCategory.ItemsEnum = typeof(CategorySizeType);
 			yenumcomboCategory.Binding
 			.AddBinding(ViewModel, vm => vm.Category, v => v.SelectedItemOrNull)
 				.InitializeFromSource();

@@ -40,7 +40,7 @@ namespace workwear.Journal.ViewModels.Stock
             var query = uow.Session.QueryOver(() => sizeTypeAlias);
 
             if (Filter.Category != null)
-                query.Where(x => x.Category == Filter.Category);
+                query.Where(x => x.CategorySizeType == Filter.Category);
 
             return query
                 .Where(GetSearchCriterion(
@@ -50,7 +50,7 @@ namespace workwear.Journal.ViewModels.Stock
                 .SelectList(list => list
                     .Select(x => x.Id).WithAlias(() => resultAlias.Id)
                     .Select(x => x.Name).WithAlias(() => resultAlias.Name)
-                    .Select(x => x.Category).WithAlias(() => resultAlias.Category)
+                    .Select(x => x.CategorySizeType).WithAlias(() => resultAlias.CategorySizeType)
                     .Select(x => x.Position).WithAlias(() => resultAlias.Position)
                 ).OrderBy(x => x.Position).Asc
                 .TransformUsing(Transformers.AliasToBean<SizeTypeJournalNode>());
@@ -74,7 +74,7 @@ namespace workwear.Journal.ViewModels.Stock
         [SearchHighlight]
         public string Name { get; set; }
         [SearchHighlight]
-        public Category Category { get; set; }
+        public CategorySizeType CategorySizeType { get; set; }
         public int Position { get; set; }
     }
 }

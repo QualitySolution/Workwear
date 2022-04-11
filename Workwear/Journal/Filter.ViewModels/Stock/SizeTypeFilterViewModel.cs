@@ -14,8 +14,8 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		{
 		}
 			#region Ограничения
-			private Category? category;
-			public Category? Category{
+			private CategorySizeType? category;
+			public CategorySizeType? Category{
 				get => category;
 				set => SetField(ref category, value);
 			}
