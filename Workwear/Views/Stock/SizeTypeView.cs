@@ -6,6 +6,7 @@ using Gtk;
 using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using workwear.Domain.Sizes;
+using Workwear.Measurements;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock
@@ -54,7 +55,7 @@ namespace workwear.Views.Stock
 		private void RemoveSize(object sender, EventArgs e) => 
 			ViewModel.RemoveSize(ytreeviewSizes.GetSelectedObject<Size>());
 		private void SelectionOnChanged(object sender, EventArgs e) => 
-			ybuttonRemoveSize.Sensitive = ytreeviewSizes.GetSelectedObject<Size>()?.Id >= 1000;
+			ybuttonRemoveSize.Sensitive = ytreeviewSizes.GetSelectedObject<Size>()?.Id > SizeService.MaxStandartSizeId;
 		private void AddSize(object sender, EventArgs e) => ViewModel.AddSize();
 		private void CreateSizeTable(object aList, EventArgs eventArgs) {
 			ytreeviewSizes.ColumnsConfig = ColumnsConfigFactory.Create<Size>()

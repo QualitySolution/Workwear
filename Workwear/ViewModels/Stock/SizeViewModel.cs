@@ -8,6 +8,7 @@ using QS.Validation;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Measurements;
 
 namespace workwear.ViewModels.Stock
 {
@@ -28,7 +29,7 @@ namespace workwear.ViewModels.Stock
 				IsNew = true;
 			}
 			else {
-				if (Entity.Id <= 1000) IsStandart = true;
+				if (Entity.Id <= SizeService.MaxStandartSizeId) IsStandart = true;
 			}
 		}
 		

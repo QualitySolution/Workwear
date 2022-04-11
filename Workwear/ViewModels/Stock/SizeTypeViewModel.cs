@@ -29,7 +29,7 @@ namespace workwear.ViewModels.Stock
 			}
 			else {
 				Sizes = new GenericObservableList<Size>(SizeService.GetSize(UoW, Entity).ToList());
-				if (Entity.Id < 100) IsStandartType = true;
+				if (Entity.Id <= SizeService.MaxStandartSizeTypeId) IsStandartType = true;
 			}
 		}
 

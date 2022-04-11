@@ -64,5 +64,7 @@ namespace Workwear.Measurements
 			types = SizeRepository.GetSizeType(uow);
 		public void ClearSizes() => sizes = null;
 		public void ClearTypes() => types = null;
+
+		public const int MaxStandartSizeId = 1000, MaxStandartSizeTypeId = 100;
 	}
 }
