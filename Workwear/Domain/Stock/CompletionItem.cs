@@ -21,6 +21,7 @@ namespace workwear.Domain.Stock
             }
         }
         [Display(Name = "Кол-во")]
+        [PropertyChangedAlso(nameof(WarehouseOperation))]
         public virtual int Amount {
             get => WarehouseOperation?.Amount ?? 0;
             set {
@@ -28,9 +29,14 @@ namespace workwear.Domain.Stock
                 WarehouseOperation.Amount = value;
             }
         }
+        private WarehouseOperation warehouseOperation;
         [Display(Name = "Складская операция")]
         [IgnoreHistoryTrace]
-        public virtual WarehouseOperation WarehouseOperation { get; set; }
+        public virtual WarehouseOperation WarehouseOperation {
+            get => warehouseOperation;
+            set => SetField(ref warehouseOperation, value);
+        }
+
         [Display(Name = "Процент износа")]
         public virtual decimal WearPercent {
             get => WarehouseOperation?.WearPercent ?? 0;
@@ -39,25 +45,23 @@ namespace workwear.Domain.Stock
                 WarehouseOperation.WearPercent = value;
             }
         }
-
-        private Size wearSize;
         [Display(Name = "Размер")]
         public virtual Size WearSize {
-            get => wearSize;
-            set => SetField(ref wearSize, value);
+            get => WarehouseOperation.WearSize;
+            set =>  WarehouseOperation.WearSize = value;
         }
-        private Size height;
         [Display(Name = "Рост одежды")]
         public virtual Size Height {
-            get => height;
-            set => SetField(ref height, value);
+            get => WarehouseOperation.Height;
+            set => WarehouseOperation.Height = value;
         }
         #endregion
         #region Constructors
         public CompletionItem(){}
         #endregion
         #region Calculate
-        public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WearPercent, WearSize, Height);
+        public virtual StockPosition StockPosition => 
+            new StockPosition(Nomenclature, WearPercent, WarehouseOperation.WearSize, WarehouseOperation.Height);
         #endregion
     }
     [Appellative(Gender = GrammaticalGender.Feminine,

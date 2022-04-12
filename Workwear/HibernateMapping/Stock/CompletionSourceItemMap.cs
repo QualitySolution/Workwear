@@ -16,8 +16,6 @@ namespace workwear.HibernateMapping.Stock
             References (x => x.Completion).Column ("stock_completion_id");
             References(x => x.WarehouseOperation).Column("warehouse_operation_id")
                 .Not.Nullable().Cascade.All();
-            References(x => x.WearSize).Column("size_id");
-            References(x => x.Height).Column("height_id");
         }
     }
 }

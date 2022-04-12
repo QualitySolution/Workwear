@@ -117,8 +117,6 @@ namespace workwear.Domain.Stock
         public virtual void AddSourceItem(StockPosition position, Warehouse warehouse, int count) {
             if (SourceWarehouse is null) SourceWarehouse = warehouse;
             var item = new CompletionSourceItem {
-                WearSize = position.WearSize,
-                Height = position.Height,
                 Completion = this,
                 WarehouseOperation = new WarehouseOperation {
                     Nomenclature = position.Nomenclature,
@@ -149,14 +147,10 @@ namespace workwear.Domain.Stock
             foreach (var item in SourceItems) {
                 item.WarehouseOperation.ExpenseWarehouse = SourceWarehouse;
                 item.WarehouseOperation.OperationTime = Date;
-                item.WarehouseOperation.WearSize = item.WearSize;
-                item.WarehouseOperation.Height = item.Height;
             }
             foreach (var item in ResultItems) {
                 item.WarehouseOperation.ReceiptWarehouse = ResultWarehouse;
                 item.WarehouseOperation.OperationTime = Date;
-                item.WarehouseOperation.WearSize = item.WearSize;
-                item.WarehouseOperation.Height = item.Height;
             }
         }
         #endregion

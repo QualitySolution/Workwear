@@ -54,7 +54,7 @@ namespace workwear.Views.Stock
 				 .AddColumn("Рост").MinWidth(70)
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.HeightType, onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
 				 .AddColumn ("Процент износа")
 					.AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter())
 				 .Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
