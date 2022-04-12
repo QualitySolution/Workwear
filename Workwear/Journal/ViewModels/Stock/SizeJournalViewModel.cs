@@ -15,6 +15,7 @@ using Remotion.Linq.Parsing.Structure.IntermediateModel;
 using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
+using Workwear.Measurements;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock
@@ -65,7 +66,7 @@ namespace workwear.Journal.ViewModels.Stock
         private void OverrideDeleteAction() {
             NodeActionsList.RemoveAll(x => x.Title == "Удалить");
             var deleteAction = new JournalAction("Удалить",
-                selected => selected.Length == 1 && selected.First().GetId() >= 1000,
+                selected => selected.Length == 1 && selected.First().GetId() >= SizeService.MaxStandartSizeId,
                 selected => VisibleDeleteAction,
                 selected => DeleteEntities(selected.Cast<SizeJournalNode>().ToArray()),
                 "Delete"

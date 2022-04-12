@@ -12,6 +12,7 @@ using QS.Project.Services;
 using QS.Services;
 using workwear.Domain.Sizes;
 using workwear.Journal.Filter.ViewModels.Stock;
+using Workwear.Measurements;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock
@@ -58,7 +59,7 @@ namespace workwear.Journal.ViewModels.Stock
         private void OverrideDeleteAction() {
             NodeActionsList.RemoveAll(x => x.Title == "Удалить");
             var deleteAction = new JournalAction("Удалить",
-                (selected) => selected.Length == 1 && selected.First().GetId() >= 100,
+                (selected) => selected.Length == 1 && selected.First().GetId() >= SizeService.MaxStandartSizeTypeId,
                 (selected) => VisibleDeleteAction,
                 (selected) => DeleteEntities((SizeTypeJournalNode[]) selected.ToArray()),
                 "Delete"
