@@ -487,7 +487,7 @@ namespace WorkwearTest.Organization
 	{
 		public Func<IssueGraph> GetIssueGraphForItemFunc;
 
-		protected override IssueGraph GetIssueGraphForItem(IUnitOfWork uow)
+		protected internal override IssueGraph GetIssueGraphForItem(IUnitOfWork uow)
 		{
 			return GetIssueGraphForItemFunc();
 		}
