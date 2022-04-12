@@ -31,7 +31,6 @@ namespace WorkwearTest.ViewModels.Stock
 			var uowFactory = Substitute.For<IUnitOfWorkFactory>();
 			var navigation = Substitute.For<INavigationManager>();
 			var guiDispatcher = new GuiDispatcherForTests();
-			var resolver = Substitute.For<IViewModelResolver>();
 			var stockRepository = Substitute.For<StockRepository>();
 			var employeeRepository = Substitute.For<EmployeeRepository>();
 			employeeRepository.GetEmployeeByCardkey(Arg.Any<IUnitOfWork>(), Arg.Any<string>()).Returns((EmployeeCard)null);

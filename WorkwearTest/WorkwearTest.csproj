@@ -71,6 +71,7 @@
     <Compile Include="Stock\WriteoffTest.cs" />
     <Compile Include="Integration\Organization\EmployeeCardIntegratedTest.cs" />
     <Compile Include="Integration\Stock\WriteoffEmployeeIntegratedTest.cs" />
+    <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
     <Compile Include="Integration\Tools\EmployeesLoadViewModelTest.cs" />
     <Compile Include="Integration\Tools\DeletionEntitiesTest.cs" />
