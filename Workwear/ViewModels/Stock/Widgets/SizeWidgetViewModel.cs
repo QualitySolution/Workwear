@@ -16,18 +16,22 @@ namespace workwear.ViewModels.Stock.Widgets
 		public IList<Size> WearSizes { get;private set; }
 		public bool IsUseGrowth { get; set; }
 
+		public IList<IncomeItem> ExistItems { get; set; }
+
 		private readonly Nomenclature nomenclature;
 		private readonly IUnitOfWork uoW;
 		public Action<object, AddedSizesEventArgs> AddedSizes { get; set; } = (s,e) => { };
 		public SizeWidgetViewModel(
 			Nomenclature nomenclature,
 			INavigationManager navigationManager,
-			IUnitOfWork uoW) : base(navigationManager)
+			IUnitOfWork uoW,
+			IList<IncomeItem> existItems = null) : base(navigationManager)
 		{
 			IsModal = true;
 			Title = "Добавить размеры:";
 			this.nomenclature = nomenclature;
 			this.uoW = uoW;
+			ExistItems = existItems;
 			ConfigureSizes();
 		}
 

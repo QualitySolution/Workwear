@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Gamma.Utilities;
@@ -229,15 +230,16 @@ namespace workwear.Dialogs.Stock
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
 			if(item.Nomenclature == null)
 				return;
-			var page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, Nomenclature, IUnitOfWork>
-				(null, item.Nomenclature, UoW);
+
+			var page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, Nomenclature, IUnitOfWork, IList<IncomeItem>>
+				(null, item.Nomenclature, UoW, ytreeItems.ItemsDataSource as IList<IncomeItem>);
 			page.ViewModel.AddedSizes += SelectWearSize_SizeSelected;
 		}
 		private void SelectWearSize_SizeSelected(object sender , AddedSizesEventArgs e) {
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
 			e.SizesWithAmount.ToList()
 				.ForEach(i => IncomeDoc
-					.AddItem(e.Source, e.Height, i.Key, i.Value, item.Certificate, item.Cost));
+					.AddItem(e.Source,  i.Key, e.Height, i.Value, item.Certificate, item.Cost));
 			CalculateTotal();
 		}
 	}

@@ -66,6 +66,11 @@ namespace workwear.Views.Stock.Widgets
 
 				var spin = new SpinButton(0,int.MaxValue,1);
 				spin.Sensitive = false;
+				var currentAmount = ViewModel.ExistItems
+					.Where(x => x.Height == currentGrowth && x.WearSize == sizes[(int) i - 1])
+					.Select(x => x.Amount)
+					.FirstOrDefault();
+				spin.Value = currentAmount;
 				CheckBoxPlace.Attach(spin, 3, 4, i, i + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 
 				var checkBoxItem = new CheckBoxItem(label, sizes[(int)i-1], check,spin);
