@@ -250,11 +250,11 @@ namespace WorkwearTest.Integration.Import
 				var shoesType = new SizeType 
 					{Name = "ОбувьТип", Position = 3, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
 				uow.Save(shoesType);
-				var height = new Size {Name = "170-176", SizeType = heightType};
+				var height = new Size {Name = "170-176", SizeType = heightType, UseInEmployee = true};
 				uow.Save(height);
-				var size = new Size {Name = "48-50", SizeType = sizeType};
+				var size = new Size {Name = "48-50", SizeType = sizeType, UseInEmployee = true};
 				uow.Save(size);
-				var shoes = new Size {Name = "38", SizeType = shoesType};
+				var shoes = new Size {Name = "38", SizeType = shoesType, UseInEmployee = true};
 				uow.Save(shoes);
 				uow.Commit();
 

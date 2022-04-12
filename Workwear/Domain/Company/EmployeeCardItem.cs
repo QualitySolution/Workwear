@@ -193,8 +193,7 @@ namespace workwear.Domain.Company
 			if (stockPosition.Nomenclature.MatchingEmployeeSex(EmployeeCard.Sex) == false)
 				return false;
 
-			var employeeSize = EmployeeCard.Sizes.Select(x => x.Size)
-				.FirstOrDefault(x => x.SizeType == stockPosition.WearSize?.SizeType);
+			var employeeSize = EmployeeCard.Sizes.FirstOrDefault(x => x.SizeType == stockPosition.WearSize?.SizeType)?.Size;
 
 			if (employeeSize is null && stockPosition.WearSize != null) {
 				logger.Warn("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", ProtectionTools.Name);
@@ -202,12 +201,10 @@ namespace workwear.Domain.Company
 			}
 
 			if (employeeSize != null && stockPosition.WearSize != null) {
-				var suitableEmployeeSizes = employeeSize.SuitableSizes.Where(x => x.UseInEmployee).ToList();
 				var suitableStockPositionSize = stockPosition.WearSize.SuitableSizes.Where(x => x.UseInEmployee).ToList();
-				suitableEmployeeSizes.Add(employeeSize);
 				suitableStockPositionSize.Add(stockPosition.WearSize);
 
-				if (!suitableEmployeeSizes.Intersect(suitableStockPositionSize).Any()) return false;
+				if (!suitableStockPositionSize.Contains(employeeSize)) return false;
 			}
 			
 			if(stockPosition.Height is null) return true;
@@ -218,12 +215,10 @@ namespace workwear.Domain.Company
 				logger.Warn($"В карточке сотрудника не указан {stockPosition.Height.Name}");
 				return false;
 			}
-
-			var suitableEmployeeHeights = employeeHeight.SuitableSizes.Where(x => x.UseInEmployee).ToList();
+			
 			var suitableStockPositionHeights = stockPosition.Height.SuitableSizes.Where(x => x.UseInEmployee).ToList();
-			suitableEmployeeHeights.Add(employeeHeight);
 			suitableStockPositionHeights.Add(stockPosition.Height);
-			return suitableEmployeeHeights.Intersect(suitableStockPositionHeights).Any();
+			return suitableStockPositionHeights.Contains(employeeHeight);
 		}
 
 		public virtual void UpdateNextIssue(IUnitOfWork uow) {

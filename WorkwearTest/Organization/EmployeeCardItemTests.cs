@@ -10,6 +10,7 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using Workwear.Domain.Company;
 using workwear.Domain.Sizes;
+using Workwear.Measurements;
 using workwear.Tools;
 
 namespace WorkwearTest.Organization
@@ -423,10 +424,14 @@ namespace WorkwearTest.Organization
 		{
 			var employee = new EmployeeCard {Sex = Sex.M,};
 			var sizeType = new SizeType {CategorySizeType = CategorySizeType.Size};
-			var size52 = new Size {Name = "52", SizeType = sizeType};
-			var size54 = new Size {Name = "54", SizeType = sizeType};
 			var size52And54 = new Size
-				{Name = "52-54", SizeType = sizeType, SuitableSizes = new List<Size> {size52, size54}};
+				{Name = "52-54", SizeType = sizeType, UseInEmployee = true};
+			var size52 = new Size {
+				Name = "52", 
+				SizeType = sizeType, 
+				UseInEmployee = true, 
+				SuitableSizes = new List<Size> {size52And54}
+			};
 			employee.Sizes.Add(new EmployeeSize{Size = size52And54, SizeType = sizeType});
 
 			var itemType = Substitute.For<ItemsType>();
@@ -455,11 +460,15 @@ namespace WorkwearTest.Organization
 			};
 			var sizeType = new SizeType {CategorySizeType = CategorySizeType.Size};
 			var heightType = new SizeType {CategorySizeType = CategorySizeType.Height};
-			var size52 = new Size {Name = "52", SizeType = sizeType};
-			var height170 = new Size {Name = "170", SizeType = heightType};
-			var height176 = new Size {Name = "176", SizeType = heightType};
+			var size52 = new Size {Name = "52", SizeType = sizeType, UseInEmployee = true};
 			var height170And176 = new Size
-				{Name = "170-176", SizeType = heightType, SuitableSizes = new List<Size> {height170, height176}};
+				{Name = "170-176", SizeType = heightType, UseInEmployee = true};
+			var height170 = new Size {
+				Name = "170", 
+				SizeType = heightType, 
+				UseInEmployee = true, 
+				SuitableSizes = new List<Size> {height170And176}
+			};
 			employee.Sizes.Add(new EmployeeSize{Size = height170And176, SizeType = heightType});
 			employee.Sizes.Add(new EmployeeSize{Size = size52, SizeType = sizeType});
 
@@ -479,6 +488,36 @@ namespace WorkwearTest.Organization
 			var stockPosition = new StockPosition(nomenclature, 0, size52, height170);
 			var result = employeeItem.MatcheStockPosition(stockPosition);
 			Assert.That(result, Is.True);
+		}
+
+		[Test(Description = "Проверяем что при поиске соответствия обрабатываем установленный пол для номенклатуры.")]
+		[TestCase(Sex.M, null, ExpectedResult = true)]
+		[TestCase(Sex.M, ClothesSex.Men, ExpectedResult = true)]
+		[TestCase(Sex.M, ClothesSex.Women, ExpectedResult = false)]
+		[TestCase(Sex.M, ClothesSex.Universal, ExpectedResult = true)]
+		[TestCase(Sex.F, null, ExpectedResult = true)]
+		[TestCase(Sex.F, ClothesSex.Men, ExpectedResult = false)]
+		[TestCase(Sex.F, ClothesSex.Women, ExpectedResult = true)]
+		[TestCase(Sex.F, ClothesSex.Universal, ExpectedResult = true)]
+		[TestCase(Sex.None, null, ExpectedResult = true)]
+		public bool MatcheStockPosition_ClothesSex(Sex employeeSex, ClothesSex? clothesSex)
+		{
+			var employee = new EmployeeCard();
+			employee.Sex = employeeSex;
+
+			var itemType = Substitute.For<ItemsType>();
+			var nomenclature = new Nomenclature {
+				Id = 25,
+				Type = itemType,
+				Sex = clothesSex
+			};
+			var protectionTools = Substitute.For<ProtectionTools>();
+			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
+			var normItem = Substitute.For<NormItem>();
+			normItem.ProtectionTools.Returns(protectionTools);
+			var employeeItem = new EmployeeCardItem(employee, normItem);
+
+			return employeeItem.MatcheStockPosition(new StockPosition(nomenclature, 0, null, null));
 		}
 		#endregion
 	}
