@@ -434,7 +434,7 @@ namespace workwear.ViewModels.Tools
 			var patronymicColumn = GetColumn(DataType.Patronymic);
 			var fioColumn = GetColumn(DataType.Fio);
 			if(fioColumn != null)
-				row.CellValue(fioColumn.Index).SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
+				row.CellValue(fioColumn.Index)?.SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
 			if(lastnameColumn != null)
 				fio.LastName = row.CellValue(lastnameColumn.Index);
 			if(firstNameColumn != null)
