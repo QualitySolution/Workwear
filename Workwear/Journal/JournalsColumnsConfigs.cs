@@ -110,6 +110,7 @@ namespace workwear.Journal
 					.AddColumn("Код").AddTextRenderer(node => node.Code).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
+					.AddColumn("Головное подразделение").AddTextRenderer(node => node.ParentName)
 					.Finish()
 			);
 

@@ -11,6 +11,7 @@ using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository.Company;
 using workwear.Tools.Features;
@@ -42,6 +43,10 @@ namespace workwear.ViewModels.Company
 									.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 									.UseViewModelDialog<WarehouseViewModel>()
 									.Finish();
+			EntrySubdivisionViewModel = builder.ForProperty(x => x.ParentSubdivision)
+				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
+				.UseViewModelDialog<SubdivisionViewModel>()
+				.Finish();
 
 			NotifyConfiguration.Instance.BatchSubscribe(SubdivisionOperationChanged)
 				.IfEntity<SubdivisionIssueOperation>()
@@ -61,6 +66,7 @@ namespace workwear.ViewModels.Company
 		#region Controls
 
 		public EntityEntryViewModel<Warehouse> EntryWarehouse;
+		public EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
 
 		#endregion
 

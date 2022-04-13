@@ -1,5 +1,7 @@
 ﻿using System;
 using NHibernate;
+using NHibernate.Mapping;
+using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -21,19 +23,25 @@ namespace workwear.Journal.ViewModels.Company
 		protected override IQueryOver<Subdivision> ItemsQuery(IUnitOfWork uow)
 		{
 			SubdivisionJournalNode resultAlias = null;
-			return uow.Session.QueryOver<Subdivision>()
+			Subdivision parentSubdivisionAlias = null;
+			Subdivision subdivisionAlias = null;
+			
+			return uow.Session.QueryOver(() => subdivisionAlias)
 				.Where(GetSearchCriterion<Subdivision>(
 					x => x.Code,
 					x => x.Name,
 					x => x.Address
 					))
+				.JoinAlias(() => subdivisionAlias.ParentSubdivision, () => parentSubdivisionAlias, JoinType.LeftOuterJoin)
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Code).WithAlias(() => resultAlias.Code)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(x => x.Address).WithAlias(() => resultAlias.Address)
+					.Select(() => parentSubdivisionAlias.Name).WithAlias(() => resultAlias.ParentName)
 				)
-				.OrderBy(x => x.Name).Asc
+				.OrderBy(x => x.ParentSubdivision).Desc
+				.ThenBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<SubdivisionJournalNode>());
 		}
 	}
@@ -44,5 +52,7 @@ namespace workwear.Journal.ViewModels.Company
 		public string Code { get; set; }
 		public string Name { get; set; }
 		public string Address { get; set; }
+		
+		public string ParentName { get; set; }
 	}
 }
