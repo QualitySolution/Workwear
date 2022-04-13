@@ -40,7 +40,7 @@
     <ReportItems>
       <Table Name="Table1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <DataSetName>Data</DataSetName>
-        <NoRows>По указанному объекту нет данных.</NoRows>
+        <NoRows>По указанному подразделению нет данных.</NoRows>
         <Style>
           <BorderStyle>
             <Default>Solid</Default>

@@ -60,7 +60,7 @@ namespace workwear.ViewModels.Stock
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 			}
 			if(Entity.Operation != ExpenseOperations.Object)
-				throw new InvalidOperationException("Диалог предназначен только для операций выдачи на объект.");
+				throw new InvalidOperationException("Диалог предназначен только для операций выдачи на подразделение.");
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featutesService, autofacScope.Resolve<IUserService>().CurrentUserId);
