@@ -19,6 +19,7 @@ namespace workwear.Domain.Company
 
 		private string name;
 		[Display(Name = "Название")]
+		[Required(ErrorMessage = "Название должно быть заполнено")]
 		public virtual string Name {
 			get => name;
 			set => SetField(ref name, value);

@@ -89,17 +89,14 @@ namespace workwear.Views.Stock
 
 				var itemOpenProtection = new MenuItemId<ExpenseItem>("Открыть номеклатуру нормы");
 				itemOpenProtection.ID = selected;
-				itemOpenProtection.Sensitive = selected.ProtectionTools != null && selected != null;
+				itemOpenProtection.Sensitive = selected?.ProtectionTools != null;
 				itemOpenProtection.Activated += ItemOpenProtection_Activated;;
 				menu.Add(itemOpenProtection);
 
 				var itemNomenclature = new MenuItemId<ExpenseItem>("Открыть номеклатуру");
 				itemNomenclature.ID = selected;
-				itemNomenclature.Sensitive = selected.Nomenclature != null;
-				if(selected == null)
-					itemNomenclature.Sensitive = false;
-				else
-					itemNomenclature.Activated += Item_Activated;
+				itemNomenclature.Sensitive = selected?.Nomenclature != null;
+				itemNomenclature.Activated += Item_Activated;
 				menu.Add(itemNomenclature);
 				menu.ShowAll();
 				menu.Popup();

@@ -142,7 +142,7 @@ namespace workwear
 					TabName = "Новый возврат от работника";
 				break;
 			case IncomeOperations.Object:
-					TabName = "Новый возврат c объекта";
+					TabName = "Новый возврат c подразделения";
 				break;
 			}
 

@@ -110,12 +110,12 @@ namespace workwear.Domain.Stock
 					new[] { nameof(Date)});
 
 			if(Operation == ExpenseOperations.Object && Subdivision == null)
-				yield return new ValidationResult ("Объект должен быть указан", 
-					new[] { nameof(Date)});
+				yield return new ValidationResult ("Подразделение должно быть указано", 
+					new[] { this.GetPropertyName (o => o.Subdivision)});
 
 			if(Operation == ExpenseOperations.Employee && Employee == null)
 				yield return new ValidationResult ("Сотрудник должен быть указан", 
-					new[] { nameof (Date)});
+					new[] { this.GetPropertyName (o => o.Employee)});
 
 			if(Items.All(i => i.Amount <= 0))
 				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку с количеством больше 0.", 
@@ -215,7 +215,10 @@ namespace workwear.Domain.Stock
 		public virtual void CleanupItemsWriteOff()
 		{
 			if(this.WriteOffDoc == null) return;
-			foreach(var item in this.WriteOffDoc.Items.Where(y => Items.FirstOrDefault(x => x.EmployeeIssueOperation == y.EmployeeWriteoffOperation) == null).ToList()) {
+
+			var toRemove = WriteOffDoc.Items
+				.Where(writeoffItem => !Items.Any(expenseItem => DomainHelper.EqualDomainObjects(writeoffItem.EmployeeWriteoffOperation, expenseItem.EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff))).ToList();
+			foreach(var item in toRemove) {
 				this.WriteOffDoc.RemoveItem(item);
 			}
 		}
@@ -310,7 +313,7 @@ namespace workwear.Domain.Stock
 	public enum ExpenseOperations {
 		[Display(Name = "Выдача сотруднику")]
 		Employee,
-		[Display(Name = "Выдача на объект")]
+		[Display(Name = "Выдача на подразделение")]
 		Object
 	}
 

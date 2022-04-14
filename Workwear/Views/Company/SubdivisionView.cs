@@ -48,7 +48,7 @@ namespace workwear.Views.Company
 			WinPlacement.ParentId = Entity.Id;
 			WinPlacement.SqlSelect = "SELECT id, name FROM @tablename WHERE object_id = " + Entity.Id.ToString();
 			WinPlacement.SetMode(true, false, true, true, true);
-			WinPlacement.FillList("object_places", "размещение", "Размещения объекта");
+			WinPlacement.FillList("object_places", "размещение", "Размещения в подразделении");
 			WinPlacement.Show();
 			WinPlacement.Run();
 			WinPlacement.Destroy();

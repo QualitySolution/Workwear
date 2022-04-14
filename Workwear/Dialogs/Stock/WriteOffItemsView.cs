@@ -170,7 +170,7 @@ namespace workwear
 				filter.RestrictObject = CurObject;
 
 			var selectFromObjectDlg = new ReferenceRepresentation (new ViewModel.ObjectBalanceVM (filter),
-			                                                      "Выданное на объекты");
+			                                                      "Выданное на подразделения");
 			selectFromObjectDlg.ShowFilter = CurObject == null;
 			selectFromObjectDlg.Mode = OrmReferenceMode.MultiSelect;
 			selectFromObjectDlg.ObjectSelected += SelectFromObjectDlg_ObjectSelected;;
