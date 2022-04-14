@@ -1,6 +1,4 @@
-﻿using System;
-using NHibernate;
-using NHibernate.Mapping;
+﻿using NHibernate;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.Dialog;
@@ -52,7 +50,6 @@ namespace workwear.Journal.ViewModels.Company
 		public string Code { get; set; }
 		public string Name { get; set; }
 		public string Address { get; set; }
-		
 		public string ParentName { get; set; }
 	}
 }
