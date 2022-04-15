@@ -146,7 +146,8 @@ namespace workwear.ReportParameters.ViewModels
 					{"end_year", Period?.EndYear},
 					{"subdivisions", SelectSubdivisions() },
 					{"issue_type", IssueTypeOptions?.ToString() },
-					{"protectionTools", SelectedProtectionTools() } 
+					{"protectionTools", SelectedProtectionTools() },
+					{"headSubdivision", EntrySubdivisionViewModel.Entity?.Id ?? -1}
 					};
 
 		public void Dispose()
