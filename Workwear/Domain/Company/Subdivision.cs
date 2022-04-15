@@ -82,41 +82,13 @@ namespace workwear.Domain.Company
 
 		#endregion
 		#region Методы
-		public virtual List<Subdivision> AggregateAllGenerationsSubdivisions(int depthOfIterations) {
-			var subdivisions = new List<Subdivision>(ChildSubdivisions);
-			var count = 0;
-			AggregateAllGenerations(subdivisions, ChildSubdivisions.ToList(), depthOfIterations,ref count);
-			subdivisions.Add(this);
-			return subdivisions;
-		}
-		
-		public static List<Subdivision> AggregateAllGenerationsSubdivisions(
-			IEnumerable<Subdivision> parents, 
-			int depthOfIterations) 
-		{
-			var subdivisions = new List<Subdivision>(parents);
-			var count = 0;
-			AggregateAllGenerations(subdivisions, new List<Subdivision>(subdivisions), depthOfIterations, ref count);
-			return subdivisions;
-		}
-
-		private static void AggregateAllGenerations(
-			List<Subdivision> aggregateList, 
-			List<Subdivision> subdivisions, 
-			int depthOfIterations, ref int count) 
-		{
-			if(count > depthOfIterations) return;
-			var isFirst = true;
-			foreach (var sub in subdivisions) {
-				if (isFirst) { 
-					count++;
-					isFirst = false;
-				}
-				AggregateAllGenerations(aggregateList, sub.ChildSubdivisions.ToList(), depthOfIterations, ref count);
-				aggregateList.AddRange(sub.ChildSubdivisions);
+		public virtual IEnumerable<Subdivision> AllGenerationsSubdivisions {
+			get {
+				yield return this;
+				foreach (var child in ChildSubdivisions.SelectMany(x => x.AllGenerationsSubdivisions))
+					yield return child;
 			}
 		}
-
 		#endregion
 		public Subdivision () { }
 	}

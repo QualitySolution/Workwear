@@ -169,7 +169,7 @@ namespace workwear.ReportParameters.ViewModels
 			if (!AddChildSubdivisions)
 				return new[] {EntrySubdivisionViewModel.Entity.Id}; 
 			return EntrySubdivisionViewModel.Entity
-				.AggregateAllGenerationsSubdivisions(10)
+				.AllGenerationsSubdivisions.Take(500)
 				.Select(x => x.Id)
 				.Distinct()
 				.ToArray();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NHibernate.Criterion;
 using NHibernate.Proxy;
 using NHibernate.Transform;
 using QS.DomainModel.Entity;
@@ -139,17 +140,19 @@ namespace workwear.ReportParameters.ViewModels
 			if (Summary) return new[] {-1};
 			
 			var selectedId = Subdivisons
-				.Where(x => x.Select).Select(x => x.Id);
+				.Where(x => x.Select).Select(x => x.Id).ToList();
 			
 			if (!AddChildSubdivisions) return selectedId.ToArray();
-			
-			var parents = unitOfWork.Session.QueryOver<Subdivision>()
-				.List()
-				.Where(x => selectedId.Contains(x.Id));
 
-			return Subdivision
-				.AggregateAllGenerationsSubdivisions(parents, 10)
-				.Select(x => x.Id).ToArray();
+			var parents = unitOfWork.Session.QueryOver<Subdivision>()
+				.WhereRestrictionOn(c => c.Id).IsIn(selectedId)
+				.List();
+
+			return parents
+				.SelectMany(x => x.AllGenerationsSubdivisions).Take(500)
+				.Select(x => x.Id)
+				.Distinct()
+				.ToArray();
 		}
 	}
 
