@@ -43,6 +43,7 @@ namespace workwear.ViewModels.Company
 									.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 									.UseViewModelDialog<WarehouseViewModel>()
 									.Finish();
+			
 			EntrySubdivisionViewModel = builder.ForProperty(x => x.ParentSubdivision)
 				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
 				.UseViewModelDialog<SubdivisionViewModel>()
