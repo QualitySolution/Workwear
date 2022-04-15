@@ -14,8 +14,10 @@ using QS.Validation.Testing;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
+using Workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.Measurements;
+using Workwear.Measurements;
+using workwear.Repository;
 using workwear.Repository.Stock;
 using workwear.Tools;
 using workwear.Tools.Features;
@@ -42,11 +44,12 @@ namespace WorkwearTest.ViewModels.Stock
 			var navigation = Substitute.For<INavigationManager>();
 			var validator = new ValidatorForTests();
 			var userService = Substitute.For<IUserService>();
+			var userRepository = Substitute.For<UserRepository>();
 			var interactive = Substitute.For<IInteractiveService>();
 			var commonMessages = Substitute.For<CommonMessages>(interactive);
 			var featuresService = Substitute.For<FeaturesService>();
 			var baseParameters = Substitute.For<BaseParameters>();
-			var sizeService = Substitute.For<SizeService>(baseParameters);
+			var sizeService = Substitute.For<SizeService>(new BaseSizeSettings(baseParameters));
 			var deleteService = Substitute.For<IDeleteEntityService>();
 			
 			var stockRepository = new StockRepository();
@@ -108,7 +111,19 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Commit();
 				
 				//Создаем предыдущую выдачу которая должна быть списана.
-				using (var vmCreateLastIssue = new ExpenseEmployeeViewModel(EntityUoWBuilder.ForCreate(), UnitOfWorkFactory, navigation, container.BeginLifetimeScope(), validator, userService, interactive, stockRepository, commonMessages, featuresService, baseParameters))
+				using (var vmCreateLastIssue = new ExpenseEmployeeViewModel(
+					       EntityUoWBuilder.ForCreate(),
+					       UnitOfWorkFactory,
+					       navigation,
+					       container.BeginLifetimeScope(),
+					       validator,
+					       userService,
+					       userRepository,
+					       interactive,
+					       stockRepository,
+					       commonMessages,
+					       featuresService,
+					       baseParameters))
 				{
 					vmCreateLastIssue.Entity.Date = new DateTime(2022, 04, 1);
 					vmCreateLastIssue.Entity.Warehouse = vmCreateLastIssue.UoW.GetById<Warehouse>(warehouse.Id);
@@ -124,7 +139,7 @@ namespace WorkwearTest.ViewModels.Stock
 
 				//Создаем выдачу в место выданного ранее.
 				int expenseIdForResave;
-				using (var vmCreate = new ExpenseEmployeeViewModel(EntityUoWBuilder.ForCreate(), UnitOfWorkFactory, navigation, container.BeginLifetimeScope(), validator, userService, interactive, stockRepository, commonMessages, featuresService, baseParameters, employee))
+				using (var vmCreate = new ExpenseEmployeeViewModel(EntityUoWBuilder.ForCreate(), UnitOfWorkFactory, navigation, container.BeginLifetimeScope(), validator, userService, userRepository, interactive, stockRepository, commonMessages, featuresService, baseParameters, employee))
 				{
 					vmCreate.Entity.Date = new DateTime(2022, 04, 12);
 					vmCreate.Entity.Warehouse = vmCreate.UoW.GetById<Warehouse>(warehouse.Id);
@@ -141,7 +156,7 @@ namespace WorkwearTest.ViewModels.Stock
 				}
 				
 				//Пересохраняем для проверки что это работает
-				using (var vmResave = new ExpenseEmployeeViewModel(EntityUoWBuilder.ForOpen(expenseIdForResave), UnitOfWorkFactory, navigation, container.BeginLifetimeScope(), validator, userService, interactive, stockRepository, commonMessages, featuresService, baseParameters))
+				using (var vmResave = new ExpenseEmployeeViewModel(EntityUoWBuilder.ForOpen(expenseIdForResave), UnitOfWorkFactory, navigation, container.BeginLifetimeScope(), validator, userService, userRepository, interactive, stockRepository, commonMessages, featuresService, baseParameters))
 				{
 					Assert.That(vmResave.Save(), Is.True);
 				}
