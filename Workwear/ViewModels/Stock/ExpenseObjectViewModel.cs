@@ -28,7 +28,6 @@ namespace workwear.ViewModels.Stock
 		IInteractiveQuestion interactive;
 		private readonly StockRepository stockRepository;
 		private readonly BaseParameters baseParameters;
-		private readonly CommonMessages commonMessages;
 
 		public ExpenseObjectViewModel(IEntityUoWBuilder uowBuilder,
 									  IUnitOfWorkFactory unitOfWorkFactory,
@@ -40,7 +39,6 @@ namespace workwear.ViewModels.Stock
 									  StockRepository stockRepository,
 									  FeaturesService featutesService,
 									  BaseParameters baseParameters,
-									  CommonMessages commonMessages,
 									  Subdivision subdivision = null
 									  )
 		: base(uowBuilder, unitOfWorkFactory, navigation, validator)
@@ -49,7 +47,6 @@ namespace workwear.ViewModels.Stock
 			this.interactive = interactive;
 			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			if(subdivision != null) {
 				Entity.Subdivision = subdivision;
 				Entity.Warehouse = subdivision.Warehouse;
