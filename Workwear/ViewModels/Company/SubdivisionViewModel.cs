@@ -79,7 +79,7 @@ namespace workwear.ViewModels.Company
 		{
 			if(UoW.IsNew && !Save())
 				return;
-			navigation.OpenViewModel<ExpenseObjectViewModel, Subdivision>(this, Entity);
+			navigation.OpenViewModel<ExpenseObjectViewModel, IEntityUoWBuilder, Subdivision>(this, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
 		public void ReturnItem()

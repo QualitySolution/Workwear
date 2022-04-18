@@ -495,7 +495,7 @@ namespace workwear.Journal.ViewModels.Stock
 				if(!String.IsNullOrWhiteSpace(Employee))
 					text += $"Сотрудник: {Employee} ";
 				if(!String.IsNullOrWhiteSpace(Subdivision))
-					text += $"Объект: {Subdivision} ";
+					text += $"Подразделение: {Subdivision} ";
 				if(DocTypeEnum == StokDocumentType.IncomeDoc)
 					text += $"Операция: {IncomeOperation.GetEnumTitle()}";
 				return text;
