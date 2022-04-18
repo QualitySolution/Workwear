@@ -106,5 +106,10 @@ namespace workwear.ViewModels.Company
 			NotifyConfiguration.Instance.UnsubscribeAll(this);
 			base.Dispose();
 		}
+
+		public override bool Save() {
+			if (!Validate()) return false;
+			return base.Save();
+		}
 	}
 }

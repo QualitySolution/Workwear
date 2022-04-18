@@ -4,7 +4,6 @@ using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
-using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 
 namespace workwear.Domain.Company
@@ -15,7 +14,7 @@ namespace workwear.Domain.Company
 		Genitive ="подразделения"
 		)]
 	[HistoryTrace]
-	public class Subdivision : PropertyChangedBase, IDomainObject
+	public class Subdivision : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства
 
@@ -88,6 +87,13 @@ namespace workwear.Domain.Company
 				foreach (var child in ChildSubdivisions.SelectMany(x => x.AllGenerationsSubdivisions))
 					yield return child;
 			}
+		}
+		#endregion
+		#region IValidatableObject implementation
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
+			if (AllGenerationsSubdivisions.Take(500).Contains(ParentSubdivision))
+				yield return new ValidationResult($"Родительское подразделение: " +
+				                                  $"{ParentSubdivision.Name} уже значится в дочерних!");
 		}
 		#endregion
 		public Subdivision () { }

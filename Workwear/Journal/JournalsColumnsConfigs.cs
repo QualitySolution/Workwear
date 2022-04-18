@@ -108,7 +108,7 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<SubdivisionJournalViewModel>(
 				() => FluentColumnsConfig<SubdivisionJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Code).SearchHighlight()
-					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.IndentedName).SearchHighlight()
 					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
 					.AddColumn("Головное подразделение").AddTextRenderer(node => node.ParentName)
 					.Finish()
