@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package QS.Cloud.WearLk.Manage;
+
+service Messages {
+    rpc GetMessages (GetMessagesRequest) returns (GetMessagesResponse);
+}
+
+// GetMessages
+message GetMessagesRequest {
+    string phone = 1;
+}
+
+message GetMessagesResponse {
+    repeated MessageItem messages = 1;
+}
+
+message MessageItem{
+    int32 id = 1;
+    string title = 2;
+    string text = 3;
+    google.protobuf.Timestamp send_time = 4;
+    string sender_name = 5;
+    bool read = 6;
+}
