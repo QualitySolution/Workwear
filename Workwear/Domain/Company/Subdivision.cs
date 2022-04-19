@@ -88,12 +88,19 @@ namespace workwear.Domain.Company
 					yield return child;
 			}
 		}
+		public virtual IEnumerable<Subdivision> AllParents {
+			get {
+				yield return ParentSubdivision;
+				foreach (var parent in ParentSubdivision.AllParents)
+					yield return parent;
+			}
+		}
 		#endregion
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
-			if (AllGenerationsSubdivisions.Take(500).Contains(ParentSubdivision))
+			if (ParentSubdivision.AllParents.Take(500).Contains(this))
 				yield return new ValidationResult($"Родительское подразделение: " +
-				                                  $"{ParentSubdivision.Name} уже значится в дочерних!");
+				                                  $"{ParentSubdivision.Name} уже значится дочерней к текущему!");
 		}
 		#endregion
 		public Subdivision () { }

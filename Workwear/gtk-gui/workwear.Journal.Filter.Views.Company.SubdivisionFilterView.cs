@@ -25,7 +25,7 @@ namespace workwear.Journal.Filter.Views.Company
 			this.ycheckSortByParent = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckSortByParent.CanFocus = true;
 			this.ycheckSortByParent.Name = "ycheckSortByParent";
-			this.ycheckSortByParent.Label = global::Mono.Unix.Catalog.GetString("Сортировать по головным подразделениям");
+			this.ycheckSortByParent.Label = global::Mono.Unix.Catalog.GetString("Отобразить структуру поздразделений");
 			this.ycheckSortByParent.DrawIndicator = true;
 			this.ycheckSortByParent.UseUnderline = true;
 			this.ytable1.Add(this.ycheckSortByParent);
