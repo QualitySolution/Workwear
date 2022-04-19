@@ -6,10 +6,10 @@ using workwear.Domain.Sizes;
 namespace workwear.Repository.Sizes
 {
     public class SizeRepository {
-        public static List<Size> GetSize(IUnitOfWork uow) => 
-            uow.Session.QueryOver<Size>().List().ToList();
+        public static IList<Size> GetSize(IUnitOfWork uow) => 
+            uow.Session.QueryOver<Size>().List();
 
-        public static List<SizeType> GetSizeType(IUnitOfWork uow) => 
-            uow.Session.QueryOver<SizeType>().List().ToList();
+        public static IList<SizeType> GetSizeType(IUnitOfWork uow) => 
+            uow.Session.QueryOver<SizeType>().List();
     }
 }

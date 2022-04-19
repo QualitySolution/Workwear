@@ -11,8 +11,8 @@ namespace Workwear.Measurements
 	/// </summary>
 	public class SizeService
 	{
-		private List<Size> sizes;
-		private List<SizeType> types;
+		private IList<Size> sizes;
+		private IList<SizeType> types;
 		public List<Size> GetSize(
 			IUnitOfWork uow, 
 			SizeType sizeType = null, 
@@ -21,17 +21,17 @@ namespace Workwear.Measurements
 		{
 			if(sizes is null)
 				sizes = SizeRepository.GetSize(uow);
-			var filterSizes = sizes;
+			var filterSizes = (IEnumerable<Size>)sizes;
 			if (sizeType != null)
-				filterSizes = filterSizes.Where(x => x.SizeType == sizeType).ToList();
+				filterSizes = filterSizes.Where(x => x.SizeType == sizeType);
 			if (onlyUseInEmployee)
-				filterSizes = filterSizes.Where(x => x.UseInEmployee).ToList();
+				filterSizes = filterSizes.Where(x => x.UseInEmployee);
 			if (onlyUseInNomenclature)
-				filterSizes = filterSizes.Where(x => x.UseInNomenclature).ToList();
+				filterSizes = filterSizes.Where(x => x.UseInNomenclature);
 			return filterSizes.ToList();
 		}
 		
-		public List<SizeType> GetSizeType(
+		public IList<SizeType> GetSizeType(
 			IUnitOfWork uow, 
 			bool onlyUseInEmployee = false)
 		{
@@ -39,7 +39,7 @@ namespace Workwear.Measurements
 				types = SizeRepository.GetSizeType(uow);
 			var filterTypes = types;
 			if (onlyUseInEmployee)
-				filterTypes = filterTypes.Where(x => x.UseInEmployee).ToList();
+				return filterTypes.Where(x => x.UseInEmployee).ToList();
 			return filterTypes;
 		}
 
