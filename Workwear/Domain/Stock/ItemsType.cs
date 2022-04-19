@@ -54,6 +54,13 @@ namespace workwear.Domain.Stock
 			}
 		}
 		
+		СlothesType? wearCategory;
+		[Display (Name = "Вид одежды")]
+		public virtual СlothesType? WearCategory {
+			get { return wearCategory; }
+			set { SetField (ref wearCategory, value, () => WearCategory); }
+		}
+		
 		private IssueType issueType;
 		[Display(Name = "Тип выдачи")]
 		public virtual IssueType IssueType {
@@ -120,6 +127,60 @@ namespace workwear.Domain.Stock
 		Personal,
 		[Display(Name = "Коллективная")]
 		Collective
+	}
+	public enum СlothesType
+	{
+		[Display(Name = "Одежда")]
+		Wear,
+/*		[Display(Name = "Брюки, юбки, шорты")]
+		[OnlyWoman]
+		WomanPants,
+		[Display(Name = "Женские джинсы")]
+		[OnlyWoman]
+		WomanJeans,
+*/		[Display(Name = "Обувь")]
+		Shoes,
+		[Display(Name = "Зимняя обувь")]
+		WinterShoes,
+/*		[Display(Name = "Женские колготки и чулки")]
+		[OnlyWoman]
+		WomanTights,
+		[Display(Name = "Женские носки")]
+		[OnlyWoman]
+		WomanSocks,
+		[Display(Name = "Бюстгальтеры")]
+		[OnlyWoman]
+		WomanBras,
+		[Display(Name = "Женское нижнее белье")]
+		[OnlyWoman]
+		WomanUnderwear,
+*/		
+/*		[Display(Name = "Сорочки")]
+		[OnlyMen]
+		MenShirts,
+		[Display(Name = "Мужские Брюки, шорты")]
+		[OnlyMen]
+		MenPants,
+		[Display(Name = "Мужские джинсы")]
+		[OnlyMen]
+		MenJeans,
+		[Display(Name = "Мужское нижнее бельё")]
+		[OnlyMen]
+		MenUnderwear,
+		[Display(Name = "Мужские носки")]
+		[OnlyMen]
+		MenSocks,
+*/
+		[Display(Name = "Головные уборы")]
+		Headgear,
+/*		[Display(Name = "Ремни")]
+		Belts,
+*/		[Display(Name = "Перчатки")]
+		Gloves,
+		[Display(Name = "Рукавицы")]
+		Mittens,
+		[Display(Name = "СИЗ")]
+		PPE
 	}
 }
 

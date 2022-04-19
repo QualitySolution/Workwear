@@ -1,6 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
 using workwear.Domain.Stock;
-using Workwear.Measurements;
 
 namespace workwear.HMap
 {
@@ -20,6 +19,7 @@ namespace workwear.HMap
 			Map(x => x.IssueType).Column("issue_type");
 			Map (x => x.LifeMonths).Column ("norm_life");
 			Map(x => x.Comment).Column("comment");
+			Map(x => x.WearCategory).Column("wear_category");
 
 			References (x => x.Units).Column ("units_id");
 			References(x => x.SizeType).Column("size_type_id");

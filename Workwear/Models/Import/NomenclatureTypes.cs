@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
@@ -27,64 +26,90 @@ namespace workwear.Models.Import
 			var sht = units.First(x => x.OKEI == "796");
 			var pair = units.First(x => x.OKEI == "715");
 
-			AddType("Халаты", sht, new[] { "ХАЛАТ" });
-			AddType("Костюмы", sht, new[] { "КОСТЮМ", "ГИДРОКОСТЮМ" });
-			AddType("Куртки", sht, new[] { "КУРТКА" });
-			AddType("Брюки", sht, new[] { "БРЮКИ" });
-			AddType("Жилеты", sht, new[] { "ЖИЛЕТ" });
-			AddType("Футболки", sht, new[] { "ФУТБОЛКА" });
-			AddType("Блузки", sht, new[] { "БЛУЗКА" });
-			AddType("Плащи",  sht, new[] { "ПЛАЩ" });
-			AddType("Белье",  sht, new[] { "БЕЛЬЕ", "КАЛЬСОНЫ" });
-			AddType("Рубашки",  sht, new[] { "СОРОЧКА", "Рубашка" });
-			AddType("Фуфайки",  sht, new[] { "Фуфайка" });
-			AddType("Свитеры",  sht, new[] { "СВИТЕР" });
-			AddType("Комбинезоны",  sht, new[] { "КОМБИНЕЗОН", "ПОЛУКОМБИНЕЗОН", "ГИДРОКОМБИНЕЗОН" });
-			AddType("Комплекты",  sht, new[] { "КОМПЛЕКТ" });
-			AddType("Подшлемники",  sht, new[] { "ПОДШЛЕМНИК" });
-			AddType("Головные уборы",  sht, new[] 
-				{ "ШАПКА", "Кепка", "ФЕСКА", "ШЛЯПА", "ФУРАЖКА", "БЕЙСБОЛКА", "БЕРЕТ", "КОЛПАК", "КЕПИ", "ПИЛОТКА", "Головной" });
-			AddType("Каски",  sht, new[] { "КАСКА",  });
-			AddType("Полуботинки",  pair, new[] { "ПОЛУБОТИНКИ" });
-			AddType("Сапоги",  pair, new[] { "САПОГИ", "ПОЛУСАПОГИ" });
-			AddType("Ботинки",  pair, new[] { "БОТИНКИ", "ЧУВЯКИ", "боты" });
-			AddType("Туфли",  pair, new[] { "Туфли" });
-			AddType("Тапочки", pair, new[] { "Тапки,", "Тапочки" });
-			AddType("Сандалии", pair, new[] { "Сабо", "Сандалии", "Сандали" });
-			AddType("Валенки",  pair, new[] { "ВАЛЕНКИ" });
-			AddType("Галоши", pair, new[] { "ГАЛОШИ" });
-			AddType("Перчатки", pair, new[] { "ПЕРЧАТКИ", "КРАГИ" });
-			AddType("Рукавицы", pair, new[] { "РУКАВИЦЫ", "Вачеги" });
-			AddType("Аксесуары", sht, new[] 
-				{ "ШАРФ", "ГАЛСТУК", "ШЕВРОН", "РЕМЕНЬ", "ЗНАЧОК", "Кокарда", "БЕЙДЖ", "ПОЯС", "Наколка" });
-			AddType("Водолазный инвентарь", sht, new[] 
-				{ "ВОДОЛАЗНАЯ", "ПОДВОДНАЯ", "ГРУЗ", "ВОДОЛАЗНЫЙ", "ШЛАНГ", "СПИНКА", "БАЛЛОН" });
-			AddType("Носки", pair, new[] { "НОСКИ" });
-			AddType("Чулки", pair, new[] { "ЧУЛКИ" });
-			AddType("Портянки", pair, new[] { "ПОРТЯНКИ" });
-			AddType("Фартуки", sht, new[] { "ФАРТУК" });
-			AddType("Косынки", sht, new[] { "КОСЫНКА" });
-			AddType("Повязка", sht, new[] { "ПОВЯЗКА" });
-			AddType("Привязи", sht, new[] { "привязь" });
-			AddType("Полотенца", sht, new[] { "Полотенце" });
-			AddType("Щитки", sht, new[] { "ЩИТОК" });
-			AddType("СИЗОД",  sht, new[] 
-				{ "СИЗОД", "Респиратор", "РЕСПИРАТОРЫ", "РЕСПИРАТОРА", "ПАТРОН", "ПРЕДФИЛЬТР", "КОРОБКА", "Капюшон" });
-			AddType("Беруши",  pair, new[] { "Беруши", "противошумные" });
-			AddType("Очки", sht, new[] { "ОЧКИ" });
-			AddType("Наушники", sht, new[] { "НАУШНИКИ" });
-			AddType("Маски", sht, new[] { "МАСКА", "ШЛЕМ", "МАСКЕ", "СТЕКЛА", "Полумаска" });
-			AddType("Аптечки",sht, new[] { "АПТЕЧКА" });
-			AddType("Моющее средства", sht, new[] { "Моющее", "очищающая" });
-			AddType("Крема",  sht, new[] { "крем", "МАЗЬ", "Паста" });
-			AddType("Защита", pair, new[] { "НАРУКАВНИКИ", "Наколенники" });
-			AddType("Имущество", sht, new[] 
-			{ "ФИЛЬТР", "ЗНАК", "ФИЛЬТРДЛЯ", "ЭТИКЕТКА", "РЕДУКТОР", "УТЕПЛИТЕЛЬ", "ЛЕНТА", "ШТОРЫ", 
+			AddType("Халаты", СlothesType.Wear, sht, new[] { "ХАЛАТ" });
+			AddType("Костюмы", СlothesType.Wear, sht, new[] { "КОСТЮМ", "ГИДРОКОСТЮМ" });
+			AddType("Куртки", СlothesType.Wear, sht, new[] { "КУРТКА" });
+			AddType("Брюки", СlothesType.Wear, sht, new[] { "БРЮКИ" });
+			AddType("Жилеты", СlothesType.Wear, sht, new[] { "ЖИЛЕТ" });
+			AddType("Футболки", СlothesType.Wear, sht, new[] { "ФУТБОЛКА" });
+			AddType("Блузки", СlothesType.Wear, sht, new[] { "БЛУЗКА" });
+			AddType("Плащи", СlothesType.Wear, sht, new[] { "ПЛАЩ" });
+			AddType("Белье", СlothesType.Wear, sht, new[] { "БЕЛЬЕ", "КАЛЬСОНЫ" });
+			AddType("Рубашки", СlothesType.Wear, sht, new[] { "СОРОЧКА", "Рубашка" });
+			AddType("Фуфайки", СlothesType.Wear, sht, new[] { "Фуфайка" });
+			AddType("Свитеры", СlothesType.Wear, sht, new[] { "СВИТЕР" });
+			AddType("Комбинезоны", СlothesType.Wear, sht, new[] { "КОМБИНЕЗОН", "ПОЛУКОМБИНЕЗОН", "ГИДРОКОМБИНЕЗОН" });
+			AddType("Комплекты", СlothesType.Wear, sht, new[] { "КОМПЛЕКТ" });
+			AddType("Подшлемники", СlothesType.Headgear, sht, new[] { "ПОДШЛЕМНИК" });
+			AddType("Головные уборы", СlothesType.Headgear, sht, new[] { "ШАПКА", "Кепка", "ФЕСКА", "ШЛЯПА", "ФУРАЖКА", "БЕЙСБОЛКА", "БЕРЕТ", "КОЛПАК", "КЕПИ", "ПИЛОТКА", "Головной" });
+			AddType("Каски", СlothesType.Headgear, sht, new[] { "КАСКА",  });
+			AddType("Полуботинки", СlothesType.Shoes, pair, new[] { "ПОЛУБОТИНКИ" });
+			AddType("Сапоги", СlothesType.Shoes, pair, new[] { "САПОГИ", "ПОЛУСАПОГИ" });
+			AddType("Ботинки", СlothesType.Shoes, pair, new[] { "БОТИНКИ", "ЧУВЯКИ", "боты" });
+			AddType("Туфли", СlothesType.Shoes, pair, new[] { "Туфли" });
+			AddType("Тапочки", СlothesType.Shoes, pair, new[] { "Тапки,", "Тапочки" });
+			AddType("Сандалии", СlothesType.Shoes, pair, new[] { "Сабо", "Сандалии", "Сандали" });
+			AddType("Валенки", СlothesType.WinterShoes, pair, new[] { "ВАЛЕНКИ" });
+			AddType("Галоши", СlothesType.WinterShoes, pair, new[] { "ГАЛОШИ" });
+			AddType("Перчатки", СlothesType.Gloves, pair, new[] { "ПЕРЧАТКИ", "КРАГИ" });
+			AddType("Рукавицы", СlothesType.Mittens, pair, new[] { "РУКАВИЦЫ", "Вачеги" });
+			AddType("Аксесуары", СlothesType.PPE, sht, new[] { "ШАРФ", "ГАЛСТУК", "ШЕВРОН", "РЕМЕНЬ", "ЗНАЧОК", "Кокарда", "БЕЙДЖ", "ПОЯС", "Наколка" });
+			AddType("Водолазный инвентарь", СlothesType.PPE, sht, new[] { "ВОДОЛАЗНАЯ", "ПОДВОДНАЯ", "ГРУЗ", "ВОДОЛАЗНЫЙ", "ШЛАНГ", "СПИНКА", "БАЛЛОН" });
+			AddType("Носки", СlothesType.PPE, pair, new[] { "НОСКИ" });
+			AddType("Чулки", СlothesType.PPE, pair, new[] { "ЧУЛКИ" });
+			AddType("Портянки", СlothesType.PPE, pair, new[] { "ПОРТЯНКИ" });
+			AddType("Фартуки", СlothesType.PPE, sht, new[] { "ФАРТУК" });
+			AddType("Косынки", СlothesType.PPE, sht, new[] { "КОСЫНКА" });
+			AddType("Повязка", СlothesType.PPE, sht, new[] { "ПОВЯЗКА" });
+			AddType("Привязи", СlothesType.PPE, sht, new[] { "привязь" });
+			AddType("Полотенца", СlothesType.PPE, sht, new[] { "Полотенце" });
+			AddType("Щитки", СlothesType.PPE, sht, new[] { "ЩИТОК" });
+			AddType("СИЗОД", СlothesType.PPE, sht, new[] { "СИЗОД", "Респиратор", "РЕСПИРАТОРЫ", "РЕСПИРАТОРА", "ПАТРОН", "ПРЕДФИЛЬТР", "КОРОБКА", "Капюшон" });
+			AddType("Беруши", СlothesType.PPE, pair, new[] { "Беруши", "противошумные" });
+			AddType("Очки", СlothesType.PPE, sht, new[] { "ОЧКИ" });
+			AddType("Наушники", СlothesType.PPE, sht, new[] { "НАУШНИКИ" });
+			AddType("Маски", СlothesType.PPE, sht, new[] { "МАСКА", "ШЛЕМ", "МАСКЕ", "СТЕКЛА", "Полумаска" });
+			AddType("Аптечки", СlothesType.PPE, sht, new[] { "АПТЕЧКА" });
+			AddType("Моющее средства", СlothesType.PPE, sht, new[] { "Моющее", "очищающая" });
+			AddType("Крема", СlothesType.PPE, sht, new[] { "крем", "МАЗЬ", "Паста" });
+			AddType("Защита", СlothesType.PPE, pair, new[] { "НАРУКАВНИКИ", "Наколенники" });
+			AddType("Имущество", sht, new[] { "ФИЛЬТР", "ЗНАК", "ФИЛЬТРДЛЯ", "ЭТИКЕТКА", "РЕДУКТОР", "УТЕПЛИТЕЛЬ", "ЛЕНТА", "ШТОРЫ", 
 				"ФЛАГ", "ЧЕХОЛ", "РУКАВ", "ПЛОМБА", "КОЖА", "ПОЛОГ", "СУКНО" });
 			AddType("Инструмент", sht, new[] { "НОЖ", "НОЖНИЦЫ", "СИГНАЛЬНЫЙ", "МАНОМЕТР", "Щетка" });
 			AddType("Неизвестный тип", sht, new string[] { });
 		}
-		private void AddType(string name, MeasurementUnits units, string[] keyWords) {
+		private void AddType(string name, СlothesType category, MeasurementUnits units, string[] keyWords, СlothesType? category2 = null, string[] keywords2 = null)
+		{
+			var type = ItemsTypes.FirstOrDefault(x => x.Name == name);
+			if(type == null) {
+				type = new ItemsType {
+					Name = name,
+					Category = ItemTypeCategory.wear,
+					WearCategory = category,
+					Units = units
+				};
+				ItemsTypes.Add(type);
+			}
+			TypeDescription desc;
+			if(category2 != null) {
+				var type2 = new ItemsType {
+					Name = name,
+					Category = ItemTypeCategory.wear,
+					WearCategory = category2.Value,
+					Units = units
+				};
+				desc = new TypeDescription(type, type2, keywords2.Select(x => x.ToLower()).ToArray());
+			}
+			else
+				desc = new TypeDescription(type); 
+
+			foreach(var word in keyWords) {
+				KeyWords.Add(word.ToLower(), desc);
+			}
+		}
+
+		private void AddType(string name, MeasurementUnits units, string[] keyWords)
+		{
 			var type = ItemsTypes.FirstOrDefault(x => x.Name == name);
 			if(type == null) {
 				type = new ItemsType {
@@ -94,7 +119,7 @@ namespace workwear.Models.Import
 				};
 				ItemsTypes.Add(type);
 			}
-			var desc = new TypeDescription(type);
+			TypeDescription desc = new TypeDescription(type);
 
 			foreach(var word in keyWords) {
 				KeyWords.Add(word.ToLower(), desc);
@@ -143,12 +168,23 @@ namespace workwear.Models.Import
 		#endregion
 	}
 
-	public class TypeDescription {
+	
+	public class TypeDescription
+	{
 		public ItemsType ItemsType;
+
 		public ItemsType ItemsType2;
 		public string[] keyWords2;
-		public TypeDescription(ItemsType itemsType) {
+
+		public TypeDescription(ItemsType itemsType)
+		{
 			ItemsType = itemsType;
+		}
+
+		public TypeDescription(ItemsType itemsType, ItemsType itemsType2, string[] keyWords2) : this(itemsType)
+		{
+			ItemsType2 = itemsType2;
+			this.keyWords2 = keyWords2;
 		}
 	}
 }

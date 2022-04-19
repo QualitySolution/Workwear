@@ -35,7 +35,12 @@ namespace workwear.Views.Stock
 			ycomboCategory.Binding
 				.AddBinding(Entity, e => e.Category, w => w.SelectedItemOrNull)
 				.InitializeFromSource ();
-			
+
+			ycomboClothesType.ItemsEnum = typeof(СlothesType);
+			ycomboClothesType.Binding
+				.AddBinding(Entity, e => e.WearCategory, w => w.SelectedItemOrNull)
+				.InitializeFromSource();
+
 			ycomboWearCategory.ItemsList = ViewModel.SizeService.GetSizeTypeByCategory(ViewModel.UoW, CategorySizeType.Size);
 			ycomboWearCategory.Binding
 				.AddBinding(Entity, e => e.SizeType, w => w.SelectedItem)
@@ -81,6 +86,7 @@ namespace workwear.Views.Stock
 		private void OnYcomboCategoryChanged (object sender, EventArgs e) {
 			ycomboWearCategory.Sensitive = Entity.Category == ItemTypeCategory.wear;
 			ycomboHeightCategory.Sensitive = Entity.Category == ItemTypeCategory.wear;
+			ycomboClothesType.Sensitive = Entity.Category == ItemTypeCategory.wear;
 			hboxLife.Visible = labelLife.Visible = Entity.Category == ItemTypeCategory.property;
 		}
 
