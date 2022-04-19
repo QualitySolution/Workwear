@@ -100,16 +100,10 @@ namespace workwear.ViewModels.Company
 		}
 
 		#endregion
-
 		public override void Dispose()
 		{
 			NotifyConfiguration.Instance.UnsubscribeAll(this);
 			base.Dispose();
-		}
-
-		public override bool Save() {
-			if (!Validate()) return false;
-			return base.Save();
 		}
 	}
 }
