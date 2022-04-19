@@ -33,7 +33,7 @@ namespace workwear.Views.Stock.Widgets
 
 			//Выбираем первый элемент из ViewModel.WearGrowths, если рост используется
 			if(ViewModel.IsUseGrowth)
-				GrowthBox.SelectedItem = ViewModel.WearGrowths.First();
+				GrowthBox.SelectedItem = ViewModel.selectItemHeigt ?? ViewModel.WearGrowths.First();
 		}
 		/// <summary>
 		/// Заполняет CheckBoxPlace таблицу на основе модели

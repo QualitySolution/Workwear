@@ -13,6 +13,7 @@ using QS.Project.Journal;
 using QSOrmProject;
 using QSWidgetLib;
 using workwear.Domain.Operations;
+using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
@@ -231,8 +232,8 @@ namespace workwear.Dialogs.Stock
 			if(item.Nomenclature == null)
 				return;
 
-			var page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, Nomenclature, IUnitOfWork, IList<IncomeItem>>
-				(null, item.Nomenclature, UoW, ytreeItems.ItemsDataSource as IList<IncomeItem>);
+			var page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, IncomeItem, IUnitOfWork, IList<IncomeItem>>
+				(null, item, UoW, ytreeItems.ItemsDataSource as IList<IncomeItem>);
 			page.ViewModel.AddedSizes += SelectWearSize_SizeSelected;
 		}
 		private void SelectWearSize_SizeSelected(object sender , AddedSizesEventArgs e) {
