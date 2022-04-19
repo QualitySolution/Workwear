@@ -26,8 +26,6 @@ namespace workwear.Views.Stock
 			ybuttonRemoveSize.Sensitive = false;
 			ybuttonAddSize.Clicked += AddSize;
 			ybuttonRemoveSize.Clicked += RemoveSize;
-			ViewModel.Sizes.ListContentChanged += CreateSizeTable;
-			CreateSizeTable(null, null);
 			entityname.Binding
 				.AddBinding(Entity, e => e.Name, w => w.Text)
 				.AddBinding(ViewModel, vm => vm.CanEdit, v => v.Sensitive)
@@ -46,6 +44,18 @@ namespace workwear.Views.Stock
 			ycheckbuttonUseInEmployee.Binding
 				.AddBinding(Entity, e => e.UseInEmployee, v => v.Active)
 				.InitializeFromSource();
+			ytreeviewSizes.ColumnsConfig = ColumnsConfigFactory.Create<Size>()
+				.AddColumn("Значение").AddTextRenderer(x => x.Name)
+				.AddColumn("Открыты для сотрудника").AddTextRenderer(x => x.UseInEmployee ? "☑" : "☒")
+				.AddColumn("Открыты для номенклатуры").AddTextRenderer(x => x.UseInNomenclature ? "☑" : "☒")
+				.AddColumn("Аналоги").AddTextRenderer(x => 
+					String.Join(", ", x.SuitableSizes.Select(z => z.Name)))
+				.Finish();
+			ytreeviewSizes.Binding.CleanSources();
+			ytreeviewSizes.Binding
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.Sizes, w => w.ItemsDataSource)
+				.InitializeFromSource();
 			ytreeviewSizes.Selection.Changed += SelectionOnChanged;
 			ytreeviewSizes.RowActivated += OpenSize;
 		}
@@ -57,18 +67,5 @@ namespace workwear.Views.Stock
 		private void SelectionOnChanged(object sender, EventArgs e) => 
 			ybuttonRemoveSize.Sensitive = ytreeviewSizes.GetSelectedObject<Size>()?.Id > SizeService.MaxStandartSizeId;
 		private void AddSize(object sender, EventArgs e) => ViewModel.AddSize();
-		private void CreateSizeTable(object aList, EventArgs eventArgs) {
-			ytreeviewSizes.ColumnsConfig = ColumnsConfigFactory.Create<Size>()
-				.AddColumn("Значение").AddTextRenderer(x => x.Name)
-				.AddColumn("Открыты для сотрудника").AddTextRenderer(x => x.UseInEmployee ? "☑" : "☒")
-				.AddColumn("Открыты для номенклатуры").AddTextRenderer(x => x.UseInNomenclature ? "☑" : "☒")
-				.AddColumn("Аналоги").AddTextRenderer(x => 
-					String.Join(", ", x.SuitableSizes.Select(z => z.Name)))
-				.Finish();
-			ytreeviewSizes.Binding
-				.AddSource(ViewModel)
-				.AddBinding(vm => vm.Sizes, w => w.ItemsDataSource)
-				.InitializeFromSource();
-		}
 	}
 }

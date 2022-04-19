@@ -12,8 +12,8 @@ namespace workwear.Models.Import
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-		private List<ItemsType> ItemsTypes = new List<ItemsType>();
-		private Dictionary<string, TypeDescription> KeyWords = new Dictionary<string, TypeDescription>();
+		public List<ItemsType> ItemsTypes = new List<ItemsType>();
+		public Dictionary<string, TypeDescription> KeyWords = new Dictionary<string, TypeDescription>();
 
 		public NomenclatureTypes(IUnitOfWork uow, bool tryLoad = false) {
 			if(tryLoad)

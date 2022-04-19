@@ -25,7 +25,6 @@ namespace workwear.Views.Company
 
 		private readonly Image eyeIcon = new Image(Assembly.GetExecutingAssembly(), "workwear.icon.buttons.eye.png");
 		private readonly Image crossedEyeIcon = new Image(Assembly.GetExecutingAssembly(), "workwear.icon.buttons.eye-crossed.png");
-		private readonly List<SpecialListComboBox> listSizes = new List<SpecialListComboBox>();
 		private readonly EmployeeViewModel viewModel;
 
 		public EmployeeView(EmployeeViewModel viewModel) : base(viewModel)
@@ -183,7 +182,6 @@ namespace workwear.Views.Company
 				list.SetRenderTextFunc<Size>(x => x.Name);
 				list.ShowSpecialStateNot = true;
 				list.SelectedItemStrictTyped = true;
-				listSizes.Add(list);
 				if (employeeSize != null)
 					list.SelectedItem = employeeSize.Size;
 				list.Changed += SetSizes;

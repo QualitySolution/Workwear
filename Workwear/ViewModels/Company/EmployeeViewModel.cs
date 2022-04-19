@@ -466,14 +466,12 @@ namespace workwear.ViewModels.Company
 		#endregion
 		public void SetSizes(Size size, SizeType sizeType) {
 			CheckSizeChanged();
+			var employeeSize = Entity.ObservableSizes.FirstOrDefault(x => x.SizeType == sizeType);
 			if (size is null) {
-				if(Entity.ObservableSizes.Any(x => x.SizeType == sizeType))
-					Entity.ObservableSizes.Remove(
-						Entity.ObservableSizes.First(x => x.SizeType == sizeType));
+				if(employeeSize != null)
+					Entity.ObservableSizes.Remove(employeeSize);
 			}
 			else {
-				var employeeSize =
-					Entity.ObservableSizes.FirstOrDefault(x => x.SizeType.Id == sizeType.Id);
 				if (employeeSize is null) {
 					var newEmployeeSize = 
 						new EmployeeSize {Size = size, SizeType = sizeType, Employee = Entity};

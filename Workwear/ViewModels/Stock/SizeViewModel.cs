@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -50,9 +51,9 @@ namespace workwear.ViewModels.Stock
 		}
 
 		private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
-			var selectVM = sender as SizeJournalViewModel;
-			foreach (var node in e.GetSelectedObjects<SizeJournalNode>()) {
-				var analog = UoW.GetById<Size>(node.Id);
+			var selects = e.GetSelectedObjects<SizeJournalNode>();
+			var analogs = UoW.GetById<Size>(selects.Select(x => x.Id));
+			foreach (var analog in analogs) {
 				Entity.ObservableSuitableSizes.Add(analog);
 			}
 		}

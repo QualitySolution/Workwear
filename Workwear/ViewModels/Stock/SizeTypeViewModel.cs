@@ -48,8 +48,10 @@ namespace workwear.ViewModels.Stock
 			var page = NavigationManager
 				.OpenViewModel<SizeViewModel, IEntityUoWBuilder, SizeType>(
 					this, EntityUoWBuilder.ForCreate(), Entity);
-			page.PageClosed += (sender, args) => 
+			page.PageClosed += (sender, args) => {
+				sizeService.RefreshSizes(UoW);
 				Sizes = new GenericObservableList<Size>(sizeService.GetSize(UoW, Entity).ToList());
+			};
 		}
 
 		public void RemoveSize(Size size) {
