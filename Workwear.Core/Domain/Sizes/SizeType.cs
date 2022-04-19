@@ -54,14 +54,15 @@ namespace workwear.Domain.Sizes
                 yield return new ValidationResult (
                     "Имя должно быть указано");
             var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
+            var sizeService = new SizeService();
             var doublePos = 
-                SizeService.GetSizeType(uow)
+                sizeService.GetSizeType(uow)
                     .FirstOrDefault(x => x.Position == Position && x.Id != Id);
             if(doublePos != null)
                 yield return new ValidationResult (
                     $"Позиция:{Position} уже занята");
             var doubleName = 
-                SizeService.GetSizeType(uow)
+                sizeService.GetSizeType(uow)
                     .FirstOrDefault(x => x.Name == Name && x.Id != Id);
             if(doubleName != null)
                 yield return new ValidationResult (

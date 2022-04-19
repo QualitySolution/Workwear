@@ -9,7 +9,7 @@ namespace workwear.Models.Import
 {
 	public static class SizeParser
 	{
-		public static SizeAndGrowth ParseSizeAndGrowth(string value, IUnitOfWork uow)
+		public static SizeAndGrowth ParseSizeAndGrowth(string value, IUnitOfWork uow, SizeService sizeService)
 		{
 			var result = new SizeAndGrowth();
 
@@ -70,14 +70,14 @@ namespace workwear.Models.Import
 					growth2 = number;
 			}
 
-			result.Size = ParseSize(uow, size2.Length > 0 ? size1 + "-" + size2 : size1,CategorySizeType.Size);
-			result.Growth = ParseSize(uow, growth2.Length > 0 ? growth1 + "-" + growth2 : growth1, CategorySizeType.Height);
+			result.Size = ParseSize(uow, size2.Length > 0 ? size1 + "-" + size2 : size1, sizeService, CategorySizeType.Size);
+			result.Growth = ParseSize(uow, growth2.Length > 0 ? growth1 + "-" + growth2 : growth1, sizeService, CategorySizeType.Height);
 
 			return result;
 		}
 
-		public static Size ParseSize(IUnitOfWork uow, string value, CategorySizeType categorySizeType) =>
-			SizeService.GetSizeByCategory(uow, categorySizeType)
+		public static Size ParseSize(IUnitOfWork uow, string value, SizeService sizeService, CategorySizeType categorySizeType) =>
+			sizeService.GetSizeByCategory(uow, categorySizeType)
 				.FirstOrDefault(x => x.Name == value);
 	}
 	public struct SizeAndGrowth {

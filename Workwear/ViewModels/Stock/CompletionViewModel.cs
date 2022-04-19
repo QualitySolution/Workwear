@@ -15,6 +15,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Measurements;
 using workwear.Repository.Stock;
 using workwear.Tools;
 using workwear.Tools.Features;
@@ -26,6 +27,7 @@ namespace workwear.ViewModels.Stock
 		private readonly IInteractiveQuestion interactive;
 		private readonly FeaturesService featuresService;
 		private Warehouse lastWarehouse;
+		public SizeService SizeService { get; }
 		public CompletionViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
@@ -35,11 +37,13 @@ namespace workwear.ViewModels.Stock
 			ILifetimeScope autofacScope,
 			BaseParameters baseParameters,
 			IInteractiveQuestion interactive,
+			SizeService sizeService,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			var entryBuilder = new CommonEEVMBuilderFactory<Completion>(this, Entity, UoW, navigation, autofacScope);
 			this.interactive = interactive;
 			this.featuresService = featuresService;
+			SizeService = sizeService;
 			
 			if(UoW.IsNew) 
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);

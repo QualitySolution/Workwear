@@ -14,7 +14,7 @@ namespace workwear.Journal.Filter.Views.Stock
 		}
 		private void ConfigureDlg()
 		{
-			speciallistSizeType.ItemsList = SizeService.GetSizeType(ViewModel.UoW);
+			speciallistSizeType.ItemsList = ViewModel.SizeService.GetSizeType(ViewModel.UoW);
 			speciallistSizeType.Binding
 				.AddSource(ViewModel)
 			.AddBinding(vm => vm.SelectedSizeType, v => v.SelectedItem)

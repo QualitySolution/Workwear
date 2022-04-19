@@ -25,6 +25,7 @@ namespace workwear
 
 		private enum ColumnTags { BuhDoc }
 		private Writeoff writeOffDoc;
+		public SizeService SizeService { get; set; }
 		public Writeoff WriteOffDoc {
 			get => writeOffDoc;
 			set { if (writeOffDoc == value)

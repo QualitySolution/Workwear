@@ -14,13 +14,16 @@ namespace workwear.ViewModels.Stock
 {
 	public class SizeViewModel: EntityDialogViewModelBase<Size>
 	{
+		public SizeService SizeService { get; }
 		public SizeViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
+			SizeService sizeService,
 			SizeType sizeType = null,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
+			SizeService = sizeService;
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, 
 				new ValidationContext(Entity, new Dictionary<object, object> {{nameof(IUnitOfWork), UoW} })));

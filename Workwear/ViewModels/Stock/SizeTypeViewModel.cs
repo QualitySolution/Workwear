@@ -14,12 +14,15 @@ namespace workwear.ViewModels.Stock
 {
 	public class SizeTypeViewModel : EntityDialogViewModelBase<SizeType>
 	{
+		private readonly SizeService sizeService;
 		public SizeTypeViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
+			SizeService sizeService,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
+			this.sizeService = sizeService;
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, 
 				new ValidationContext(Entity, new Dictionary<object, object> {{nameof(IUnitOfWork), UoW} })));
@@ -28,7 +31,7 @@ namespace workwear.ViewModels.Stock
 				Sizes = new GenericObservableList<Size>();
 			}
 			else {
-				Sizes = new GenericObservableList<Size>(SizeService.GetSize(UoW, Entity).ToList());
+				Sizes = new GenericObservableList<Size>(sizeService.GetSize(UoW, Entity).ToList());
 				if (Entity.Id <= SizeService.MaxStandartSizeTypeId) IsStandartType = true;
 			}
 		}
@@ -46,7 +49,7 @@ namespace workwear.ViewModels.Stock
 				.OpenViewModel<SizeViewModel, IEntityUoWBuilder, SizeType>(
 					this, EntityUoWBuilder.ForCreate(), Entity);
 			page.PageClosed += (sender, args) => 
-				Sizes = new GenericObservableList<Size>(SizeService.GetSize(UoW, Entity).ToList());
+				Sizes = new GenericObservableList<Size>(sizeService.GetSize(UoW, Entity).ToList());
 		}
 
 		public void RemoveSize(Size size) {

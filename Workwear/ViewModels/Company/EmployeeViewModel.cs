@@ -21,6 +21,7 @@ using QSReport;
 using workwear.Domain.Company;
 using workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Company;
+using Workwear.Measurements;
 using workwear.Models.Company;
 using workwear.Repository.Company;
 using workwear.Repository.Regulations;
@@ -45,6 +46,7 @@ namespace workwear.ViewModels.Company
 		private readonly LkUserManagerService lkUserManagerService;
 		private readonly BaseParameters baseParameters;
 		private readonly CommonMessages messages;
+		public SizeService SizeService { get; }
 
 		public EmployeeViewModel(
 			IEntityUoWBuilder uowBuilder,
@@ -60,6 +62,7 @@ namespace workwear.ViewModels.Company
 			NormRepository normRepository,
 			LkUserManagerService lkUserManagerService,
 			BaseParameters baseParameters,
+			SizeService sizeService,
 			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -72,6 +75,7 @@ namespace workwear.ViewModels.Company
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
+			SizeService = sizeService;
 
 			EntryLeaderViewModel = builder.ForProperty(x => x.Leader)
 				.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()

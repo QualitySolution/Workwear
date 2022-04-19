@@ -13,7 +13,6 @@ using QS.Project.Journal;
 using QSOrmProject;
 using QSWidgetLib;
 using workwear.Domain.Operations;
-using workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
@@ -29,6 +28,7 @@ namespace workwear.Dialogs.Stock
 	{
 		private enum ColumnTags { BuhDoc }
 		private Income incomeDoc;
+		public SizeService SizeService { get; set; }
 		public Income IncomeDoc {
 			get => incomeDoc;
 			set { if (incomeDoc == value)

@@ -163,10 +163,10 @@ namespace workwear.Views.Company
 		#endregion
 		#region Sizes
 		private void SizeBuild() {
-			var sizes = SizeService
+			var sizes = ViewModel.SizeService
 				.GetSize(ViewModel.UoW, null, true);
 			var sizeTypes = 
-				SizeService.GetSizeType(ViewModel.UoW, true).OrderBy(x => x.Position).ToList();
+				ViewModel.SizeService.GetSizeType(ViewModel.UoW, true).OrderBy(x => x.Position).ToList();
 			
 			var table = new yTable((uint) sizeTypes.Count, 2, false);
 			

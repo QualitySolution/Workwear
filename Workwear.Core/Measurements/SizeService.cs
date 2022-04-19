@@ -11,9 +11,9 @@ namespace Workwear.Measurements
 	/// </summary>
 	public class SizeService
 	{
-		private static List<Size> sizes;
-		private static List<SizeType> types;
-		public static List<Size> GetSize(
+		private List<Size> sizes;
+		private List<SizeType> types;
+		public List<Size> GetSize(
 			IUnitOfWork uow, 
 			SizeType sizeType = null, 
 			bool onlyUseInEmployee = false, 
@@ -31,7 +31,7 @@ namespace Workwear.Measurements
 			return filterSizes.ToList();
 		}
 		
-		public static List<SizeType> GetSizeType(
+		public List<SizeType> GetSizeType(
 			IUnitOfWork uow, 
 			bool onlyUseInEmployee = false)
 		{
@@ -43,14 +43,14 @@ namespace Workwear.Measurements
 			return filterTypes;
 		}
 
-		public static List<SizeType> GetSizeTypeByCategory(
+		public List<SizeType> GetSizeTypeByCategory(
 			IUnitOfWork uow,
 			CategorySizeType categorySizeType,
 			bool onlyUseInEmployee = false) =>
 				GetSizeType(uow, onlyUseInEmployee)
 				.Where(x => x.CategorySizeType == categorySizeType).ToList();
 
-		public static List<Size> GetSizeByCategory(
+		public List<Size> GetSizeByCategory(
 			IUnitOfWork uow, 
 			CategorySizeType categorySizeType, 
 			bool onlyUseInEmployee = false, 

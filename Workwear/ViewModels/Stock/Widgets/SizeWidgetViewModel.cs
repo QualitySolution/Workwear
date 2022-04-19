@@ -17,6 +17,7 @@ namespace workwear.ViewModels.Stock.Widgets
 		public bool IsUseGrowth { get; set; }
 		public IList<IncomeItem> ExistItems { get; set; }
 		public Size selectItemHeigt { get; set; }
+		private readonly SizeService sizeService;
 
 		private readonly Nomenclature nomenclature;
 		private readonly IUnitOfWork uoW;
@@ -25,8 +26,10 @@ namespace workwear.ViewModels.Stock.Widgets
 			IncomeItem selectItem,
 			INavigationManager navigationManager,
 			IUnitOfWork uoW,
+			SizeService sizeService,
 			IList<IncomeItem> existItems = null) : base(navigationManager)
 		{
+			this.sizeService = sizeService;
 			IsModal = true;
 			Title = "Добавить размеры:";
 			nomenclature = selectItem.Nomenclature;
@@ -41,11 +44,11 @@ namespace workwear.ViewModels.Stock.Widgets
 		/// </summary>
 		private void ConfigureSizes() {
 			if (nomenclature.Type.HeightType != null) {
-				WearGrowths = SizeService.GetSize(uoW, nomenclature.Type.HeightType,false, true).ToList();
+				WearGrowths = sizeService.GetSize(uoW, nomenclature.Type.HeightType,false, true).ToList();
 				IsUseGrowth = true;
 			}
 			WearSizes = nomenclature?.Type?.SizeType != null ? 
-				SizeService.GetSize(uoW, nomenclature.Type.SizeType,false, true).ToList() : new List<Size>();
+				sizeService.GetSize(uoW, nomenclature.Type.SizeType,false, true).ToList() : new List<Size>();
 		}
 
 		/// <summary>

@@ -24,6 +24,7 @@ namespace workwear.Models.Import
 		private readonly NomenclatureRepository nomenclatureRepository;
 		private readonly PostRepository postRepository;
 		private readonly NormRepository normRepository;
+		private readonly SizeService sizeService;
 
 		public DataParserWorkwearItems(
 			NomenclatureRepository nomenclatureRepository,
@@ -67,6 +68,7 @@ namespace workwear.Models.Import
 			this.nomenclatureRepository = nomenclatureRepository ?? throw new ArgumentNullException(nameof(nomenclatureRepository));
 			this.postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 		}
 
 		private void AddColumnName(DataTypeWorkwearItems type, params string[] names) {
@@ -308,12 +310,12 @@ namespace workwear.Models.Import
 			if(sizeAndGrowthColumn != null) {
 				var sizeAndGrowthValue = row.CellStringValue(sizeAndGrowthColumn.Index);
 				if(!String.IsNullOrEmpty(sizeAndGrowthValue))
-					sizeAndGrowth = SizeParser.ParseSizeAndGrowth(sizeAndGrowthValue, uow);
+					sizeAndGrowth = SizeParser.ParseSizeAndGrowth(sizeAndGrowthValue, uow, sizeService);
 			};
 			if(sizeColumn != null && sizeAndGrowth.Size != null)
-				sizeAndGrowth.Size = SizeParser.ParseSize(uow, row.CellStringValue(sizeColumn.Index), CategorySizeType.Size);
+				sizeAndGrowth.Size = SizeParser.ParseSize(uow, row.CellStringValue(sizeColumn.Index), sizeService, CategorySizeType.Size);
 			if(growthColumn != null && sizeAndGrowth.Growth != null)
-				sizeAndGrowth.Growth = SizeParser.ParseSize(uow, row.CellStringValue(growthColumn.Index), CategorySizeType.Height);
+				sizeAndGrowth.Growth = SizeParser.ParseSize(uow, row.CellStringValue(growthColumn.Index), sizeService, CategorySizeType.Height);
 			return sizeAndGrowth.Size != null || sizeAndGrowth.Growth != null;
 		}
 		public string GetPersonalNumber(SettingsWorkwearItemsViewModel settings, SheetRowWorkwearItems row, int columnIndex) {

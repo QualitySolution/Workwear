@@ -77,8 +77,9 @@ namespace workwear.Domain.Sizes
                     "Размер не может быть своим аналогом", 
                     new[] { this.GetPropertyName(s => s.Title)});
             var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
+            var sizeService = new SizeService();
             var doubleSize = 
-                    SizeService
+                    sizeService
                         .GetSize(uow, SizeType)
                         .FirstOrDefault(x => x.Name == Name && x.Id != Id);
             if(doubleSize != null)

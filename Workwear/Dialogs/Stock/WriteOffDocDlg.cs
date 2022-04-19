@@ -9,6 +9,7 @@ using QS.DomainModel.UoW;
 using QS.Validation;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
+using Workwear.Measurements;
 using workwear.Repository;
 using workwear.Repository.Stock;
 using workwear.Tools.Features;
@@ -30,6 +31,7 @@ namespace workwear
 				new StockRepository()
 					.GetDefaultWarehouse(UoW, autofacScope
 						.Resolve<FeaturesService>(), Entity.CreatedbyUser.Id);
+			ItemsTable.SizeService = autofacScope.Resolve<SizeService>();
 			ConfigureDlg ();
 		}
 
@@ -47,6 +49,7 @@ namespace workwear
 			Build ();
 			autofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Writeoff> (id);
+			ItemsTable.SizeService = autofacScope.Resolve<SizeService>();
 			ConfigureDlg ();
 		}
 

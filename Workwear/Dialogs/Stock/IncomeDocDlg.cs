@@ -12,6 +12,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Measurements;
 using workwear.Repository;
 using workwear.Repository.Stock;
 using workwear.Tools.Features;
@@ -24,6 +25,7 @@ namespace workwear.Dialogs.Stock
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+		private readonly SizeService sizeService;
 
 		private FeaturesService featuresService;
 
@@ -33,6 +35,8 @@ namespace workwear.Dialogs.Stock
 			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Income> ();
 			featuresService = AutofacScope.Resolve<FeaturesService>();
+			sizeService = AutofacScope.Resolve<SizeService>();
+			
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
 			if(Entity.Warehouse == null)
@@ -58,6 +62,7 @@ namespace workwear.Dialogs.Stock
 			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Income> (id);
 			featuresService = AutofacScope.Resolve<FeaturesService>();
+			sizeService = AutofacScope.Resolve<SizeService>();
 			ConfigureDlg ();
 		}
 
@@ -87,6 +92,7 @@ namespace workwear.Dialogs.Stock
 				.InitializeFromSource();
 
 			ItemsTable.IncomeDoc = Entity;
+			ItemsTable.SizeService = sizeService;
 
 			var builder = new LegacyEEVMBuilderFactory<Income>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
 

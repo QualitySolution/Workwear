@@ -17,6 +17,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 	public class StockMovementsFilterViewModel : JournalFilterViewModelBase<StockMovementsFilterViewModel>
 	{
 		private readonly FeaturesService featuresService;
+		private readonly SizeService sizeService;
 
 		#region Ограничения
 		private Warehouse warehouse;
@@ -90,15 +91,15 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		#region ComboValues
 		public Size[] Sizes => 
 			nomenclature is null ? 
-				SizeService.GetSizeByCategory(UoW, CategorySizeType.Size, false, true).ToArray() : 
+				sizeService.GetSizeByCategory(UoW, CategorySizeType.Size, false, true).ToArray() : 
 				nomenclature.Type?.SizeType is null ? new Size[]{} : 
-					SizeService.GetSize(UoW, nomenclature?.Type?.SizeType, false, true)
+					sizeService.GetSize(UoW, nomenclature?.Type?.SizeType, false, true)
 						.ToArray();
 		public Size[] Growths => 
 			nomenclature is null ? 
-				SizeService.GetSizeByCategory(UoW, CategorySizeType.Height, false, true).ToArray() : 
+				sizeService.GetSizeByCategory(UoW, CategorySizeType.Height, false, true).ToArray() : 
 				nomenclature.Type?.HeightType is null ? new Size[]{} : 
-					SizeService.GetSize(UoW, nomenclature?.Type?.HeightType, false, true).ToArray();
+					sizeService.GetSize(UoW, nomenclature?.Type?.HeightType, false, true).ToArray();
 
 		private DirectionOfOperation direction;
 		public DirectionOfOperation Direction {
@@ -115,9 +116,11 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			JournalViewModelBase journal,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
-			FeaturesService featuresService, 
+			FeaturesService featuresService,
+			SizeService sizeService,
 			Nomenclature nomenclature = null): base(journal, unitOfWorkFactory)
 		{
+			this.sizeService = sizeService;
 			var builder = new CommonEEVMBuilderFactory<StockMovementsFilterViewModel>(journal, this, UoW, navigation, autofacScope);
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
