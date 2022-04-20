@@ -10,7 +10,7 @@ namespace workwear.Models.Import
 		Subdivision,
 		[Display(Name = "Должность")]
 		Post,
-		[Display(Name = "Номеклатура нормы")]
+		[Display(Name = "Номенклатура нормы")]
 		ProtectionTools,
 		[Display(Name = "Количество и период")]
 		PeriodAndCount,

@@ -10,7 +10,7 @@ namespace workwear.Domain.Regulations
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "номенклатуры нормы",
-		Nominative = "номеклатура нормы")]
+		Nominative = "номенклатура нормы")]
 	public class ProtectionTools : PropertyChangedBase, IDomainObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -62,7 +62,7 @@ namespace workwear.Domain.Regulations
 		}
 
 		GenericObservableList<ProtectionTools> observableAnalogs;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<ProtectionTools> ObservableAnalog {
 			get {
 				if(observableAnalogs == null)
@@ -113,7 +113,7 @@ namespace workwear.Domain.Regulations
 		}
 
 		GenericObservableList<Nomenclature> observableNomenclatures;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<Nomenclature> ObservableNomenclatures {
 			get {
 				if(observableNomenclatures == null)

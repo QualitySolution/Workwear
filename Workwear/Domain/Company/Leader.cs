@@ -15,7 +15,7 @@ namespace workwear.Domain.Company
 
 		private string surname;
 
-		[Display(Name = "Фимилия")]
+		[Display(Name = "Фамилия")]
 		[StringLength(50)]
 		public virtual string Surname {
 			get { return surname; }

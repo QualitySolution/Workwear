@@ -93,7 +93,7 @@ namespace workwear
 			if(args.Event.Button == 3) {
 				var menu = new Menu();
 				var selected = ytreeItems.GetSelectedObject<WriteoffItem>();
-				var item = new MenuItemId<WriteoffItem>("Открыть номеклатуру");
+				var item = new MenuItemId<WriteoffItem>("Открыть номенклатуру");
 				item.ID = selected;
 				if(selected == null)
 					item.Sensitive = false;

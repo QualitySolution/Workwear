@@ -86,7 +86,7 @@ public partial class MainWindow : Gtk.Window
 		var user = userService.GetCurrentUser(UoW);
 		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
 
-		//Пока такая реализация чтобы не плодить сущьностей.
+		//Пока такая реализация чтобы не плодить сущностей.
 		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
 		if(connectionBuilder.UserID == "root") {
 			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
@@ -148,7 +148,7 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
 
 		#region Проверки и исправления базы
-		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользовтель его создать не сможет.
+		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользователь его создать не сможет.
 		if(UoW.GetAll<Warehouse>().Count() == 0)
 			CreateDefaultWarehouse();
 		//Если у базы еще нет Guid создаем его.
@@ -330,7 +330,7 @@ public partial class MainWindow : Gtk.Window
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
 			$"При открытии PDF файла с документацией произошла ошибка:\n{ex.Message}\n" +
-				"Возможно на компьютере не установлена или неисправна программа для открыти PDF");
+				"Возможно на компьютере не установлена или неисправна программа для открытия PDF");
 		}
 	}
 
@@ -731,7 +731,7 @@ public partial class MainWindow : Gtk.Window
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
 			$"При открытии PDF файла с документацией произошла ошибка:\n{ex.Message}\n" +
-				"Возможно на компьютере не установлена или неисправна программа для открыти PDF");
+				"Возможно на компьютере не установлена или неисправна программа для открытия PDF");
 		}
 	}
 

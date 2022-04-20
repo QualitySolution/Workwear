@@ -82,7 +82,7 @@ namespace workwear.Domain.Company
 
 		private string cardKey;
 		[Display(Name = "UID карты доступа")]
-		[StringLength(16, ErrorMessage = "Максимальная длинна UID карты 16 символов или 8 байт в шестнадцатиричном виде")]
+		[StringLength(16, ErrorMessage = "Максимальная длинна UID карты 16 символов или 8 байт в шестнадцатеричном виде")]
 		public virtual string CardKey {
 			get => cardKey;
 			set => SetField(ref cardKey, value?.ToUpper());
@@ -304,7 +304,7 @@ namespace workwear.Domain.Company
 		}
 
 		GenericObservableList<Norm> observableUsedNorms;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<Norm> ObservableUsedNorms {
 			get {
 				if (observableUsedNorms == null)
@@ -322,7 +322,7 @@ namespace workwear.Domain.Company
 		}
 
 		GenericObservableList<EmployeeCardItem> observableWorkwearItems;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<EmployeeCardItem> ObservableWorkwearItems {
 			get {
 				if (observableWorkwearItems == null)
@@ -340,7 +340,7 @@ namespace workwear.Domain.Company
 		}
 
 		GenericObservableList<EmployeeVacation> observableVacations;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<EmployeeVacation> ObservableVacations {
 			get {
 				if(observableVacations == null)
@@ -399,9 +399,9 @@ namespace workwear.Domain.Company
 				yield return new ValidationResult ("Пол должен быть указан.", new[] { this.GetPropertyName (o => o.Sex) });
 
 			if(!String.IsNullOrEmpty(CardKey) && !System.Text.RegularExpressions.Regex.IsMatch(CardKey, @"\A\b[0-9A-F]+\b\Z"))
-				yield return new ValidationResult("UID карты должен быть задан в шестнадцатиричном виде, то есть может содержать только сиволы 0-9 и A-F.", new[] { nameof(CardKey) });
+				yield return new ValidationResult("UID карты должен быть задан в шестнадцатеричном виде, то есть может содержать только символы 0-9 и A-F.", new[] { nameof(CardKey) });
 			if(!String.IsNullOrEmpty(CardKey) && (CardKey.Length % 2 != 0))
-				yield return new ValidationResult("UID карты должен быть задан в шестнадцатиричном виде, число символов должно быть кратно двум.", new[] { nameof(CardKey) });
+				yield return new ValidationResult("UID карты должен быть задан в шестнадцатеричном виде, число символов должно быть кратно двум.", new[] { nameof(CardKey) });
 
 			var phoneValidator = new PhoneValidator(PhoneFormat.RussiaOnlyHyphenated);
 			if(!phoneValidator.Validate(PhoneNumber, true))
@@ -518,7 +518,7 @@ namespace workwear.Domain.Company
 		#region Функции для работы с коллекцией потребностей
 
 		/// <summary>
-		/// Для работы функции необходимо иметь заполненый UoW.
+		/// Для работы функции необходимо иметь заполненный UoW.
 		/// </summary>
 		public virtual void UpdateWorkwearItems()
 		{

@@ -48,7 +48,7 @@ namespace workwear.Domain.Stock
 		}
 
 		GenericObservableList<TransferItem> observableItems;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<TransferItem> ObservableItems {
 			get {
 				if(observableItems == null)

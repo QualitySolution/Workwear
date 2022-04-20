@@ -7,7 +7,7 @@ namespace workwear.Models.Import
 	{
 		[Display(Name = "Новых сотрудников")]
 		NewEmployee,
-		[Display(Name = "Измененых сотрудников")]
+		[Display(Name = "Измененных сотрудников")]
 		ChangedEmployee,
 		[Display(Name = "Сотрудников без изменений")]
 		NotChangedEmployee,

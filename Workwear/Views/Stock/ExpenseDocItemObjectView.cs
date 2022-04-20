@@ -64,7 +64,7 @@ namespace workwear.Views.Stock
 			if(args.Event.Button == 3) {
 				var menu = new Menu();
 				var selected = ytreeItems.GetSelectedObject<ExpenseItem>();
-				var item = new MenuItemId<ExpenseItem>("Открыть номеклатуру");
+				var item = new MenuItemId<ExpenseItem>("Открыть номенклатуру");
 				item.ID = selected;
 				item.Sensitive = selected.Nomenclature != null;
 				if(selected == null)

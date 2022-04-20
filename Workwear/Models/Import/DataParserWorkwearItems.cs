@@ -144,7 +144,7 @@ namespace workwear.Models.Import
 				}
 			}
 
-			progress.Add(text: "Загрузка номеклатуры");
+			progress.Add(text: "Загрузка номенклатуры");
 			var nomenclatureTypes = new NomenclatureTypes(uow, true);
 			var nomenclatureNames = list.Select(x => x.CellStringValue(nomenclatureColumn.Index)).Where(x => x != null).Distinct().ToArray();
 			var nomenclatures = nomenclatureRepository.GetNomenclatureByName(uow, nomenclatureNames);
@@ -169,18 +169,18 @@ namespace workwear.Models.Import
 				progress.Add(text: "Обработка операций выдачи");
 				if(row.Skipped)
 					continue;
-				var nomeclatureName = row.CellStringValue(nomenclatureColumn.Index);
-				if(String.IsNullOrWhiteSpace(nomeclatureName)) {
+				var nomenclatureName = row.CellStringValue(nomenclatureColumn.Index);
+				if(String.IsNullOrWhiteSpace(nomenclatureName)) {
 					row.AddColumnChange(nomenclatureColumn, ChangeType.NotFound);
 					continue;
 				}
 
-				var nomenclature = UsedNomeclature.FirstOrDefault(x => String.Equals(x.Name, nomeclatureName, StringComparison.CurrentCultureIgnoreCase));
+				var nomenclature = UsedNomeclature.FirstOrDefault(x => String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
 				if(nomenclature == null) {
-					nomenclature = nomenclatures.FirstOrDefault(x => String.Equals(x.Name, nomeclatureName, StringComparison.CurrentCultureIgnoreCase));
+					nomenclature = nomenclatures.FirstOrDefault(x => String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
 					if(nomenclature == null) {
 						nomenclature = new Nomenclature {
-							Name = nomeclatureName,
+							Name = nomenclatureName,
 							Type = row.WorkwearItem.ProtectionTools.Type,
 							Comment = "Создана при импорте выдачи из Excel",
 						};
@@ -220,7 +220,7 @@ namespace workwear.Models.Import
 					if(TryParseSizeAndGrowth(row, columns, out SizeAndGrowth sizeAndGrowth)) {
 						row.Operation.Size = sizeAndGrowth.Size;
 						row.Operation.WearGrowth = sizeAndGrowth.Growth;
-						//Если стандарт размера не заполнен для номеклатуры, проставляем его, по обнаруженному размеру.
+						//Если стандарт размера не заполнен для номенклатуры, проставляем его, по обнаруженному размеру.
 						if(!String.IsNullOrEmpty(sizeAndGrowth.Size) 
 							&& SizeHelper.HasСlothesSizeStd(nomenclature.Type.WearCategory.Value)
 							&& String.IsNullOrEmpty(nomenclature.SizeStd)) {
