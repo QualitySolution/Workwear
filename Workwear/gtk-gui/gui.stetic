@@ -5605,12 +5605,6 @@
         <property name="ShortLabel" translatable="yes">Нормы выдачи</property>
         <signal name="Activated" handler="OnActionNormsActivated" />
       </action>
-      <action id="Action13">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Ведомость на выдачу</property>
-        <property name="ShortLabel" translatable="yes">Ведомость на выдачу</property>
-        <signal name="Activated" handler="OnAction13Activated" />
-      </action>
       <action id="ActionRequestSheet">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Заявка на спецодежду</property>

@@ -47,8 +47,6 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionNorms;
 
-	private global::Gtk.Action Action13;
-
 	private global::Gtk.Action ActionRequestSheet;
 
 	private global::Gtk.Action ActionAverageAnnualNeed;
@@ -264,9 +262,6 @@ public partial class MainWindow
 		this.ActionNorms = new global::Gtk.Action("ActionNorms", global::Mono.Unix.Catalog.GetString("Нормы выдачи"), null, null);
 		this.ActionNorms.ShortLabel = global::Mono.Unix.Catalog.GetString("Нормы выдачи");
 		w1.Add(this.ActionNorms, null);
-		this.Action13 = new global::Gtk.Action("Action13", global::Mono.Unix.Catalog.GetString("Ведомость на выдачу"), null, null);
-		this.Action13.ShortLabel = global::Mono.Unix.Catalog.GetString("Ведомость на выдачу");
-		w1.Add(this.Action13, null);
 		this.ActionRequestSheet = new global::Gtk.Action("ActionRequestSheet", global::Mono.Unix.Catalog.GetString("Заявка на спецодежду"), null, null);
 		this.ActionRequestSheet.ShortLabel = global::Mono.Unix.Catalog.GetString("Месячная заявка");
 		w1.Add(this.ActionRequestSheet, null);
