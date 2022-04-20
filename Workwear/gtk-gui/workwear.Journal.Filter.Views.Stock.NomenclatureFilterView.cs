@@ -33,7 +33,7 @@ namespace workwear.Journal.Filter.Views.Stock
 			// Container child table1.Gtk.Table+TableChild
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
-			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Тип номеклатуры:");
+			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Тип номенклатуры:");
 			this.table1.Add(this.ylabel1);
 			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel1]));
 			w2.XOptions = ((global::Gtk.AttachOptions)(4));

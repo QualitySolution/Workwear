@@ -189,7 +189,7 @@ namespace workwear.Views.Regulations
 			this.label9 = new global::Gtk.Label();
 			this.label9.Name = "label9";
 			this.label9.Xalign = 1F;
-			this.label9.LabelProp = global::Mono.Unix.Catalog.GetString("Тип номеклатуры<span foreground=\"red\">*</span>:");
+			this.label9.LabelProp = global::Mono.Unix.Catalog.GetString("Тип номенклатуры<span foreground=\"red\">*</span>:");
 			this.label9.UseMarkup = true;
 			this.table1.Add(this.label9);
 			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1[this.label9]));
@@ -349,11 +349,11 @@ namespace workwear.Views.Regulations
 			w30.Fill = false;
 			// Container child hbox7.Gtk.Box+BoxChild
 			this.buttonCreateNomenclature = new global::Gamma.GtkWidgets.yButton();
-			this.buttonCreateNomenclature.TooltipMarkup = "Создать складскую номеклатуру с тем же названием.";
+			this.buttonCreateNomenclature.TooltipMarkup = "Создать складскую номенклатуру с тем же названием.";
 			this.buttonCreateNomenclature.CanFocus = true;
 			this.buttonCreateNomenclature.Name = "buttonCreateNomenclature";
 			this.buttonCreateNomenclature.UseUnderline = true;
-			this.buttonCreateNomenclature.Label = global::Mono.Unix.Catalog.GetString("Создать идентичную номеклатуру");
+			this.buttonCreateNomenclature.Label = global::Mono.Unix.Catalog.GetString("Создать идентичную номенклатуру");
 			this.hbox7.Add(this.buttonCreateNomenclature);
 			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.buttonCreateNomenclature]));
 			w31.PackType = ((global::Gtk.PackType)(1));

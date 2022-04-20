@@ -218,7 +218,7 @@ namespace workwear.Views.Statements
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
 			this.label2.Xalign = 1F;
-			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Материально ответсвенное лицо:");
+			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Материально ответственное лицо:");
 			this.table1.Add(this.label2);
 			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
 			w15.TopAttach = ((uint)(1));
