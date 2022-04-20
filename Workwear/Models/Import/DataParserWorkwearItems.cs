@@ -147,7 +147,7 @@ namespace workwear.Models.Import
 			}
 
 			progress.Add(text: "Загрузка номеклатуры");
-			var nomenclatureTypes = new NomenclatureTypes(uow, true);
+			var nomenclatureTypes = new NomenclatureTypes(uow, sizeService, true);
 			var nomenclatureNames = 
 				list.Select(x => x.CellStringValue(nomenclatureColumn.Index)).Where(x => x != null).Distinct().ToArray();
 			var nomenclatures = nomenclatureRepository.GetNomenclatureByName(uow, nomenclatureNames);

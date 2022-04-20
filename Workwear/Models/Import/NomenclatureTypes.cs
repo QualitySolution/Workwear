@@ -13,11 +13,15 @@ namespace workwear.Models.Import
 
 		public List<ItemsType> ItemsTypes = new List<ItemsType>();
 		public Dictionary<string, TypeDescription> KeyWords = new Dictionary<string, TypeDescription>();
+		private readonly SizeService sizeService;
+		private readonly IUnitOfWork uow;
 
-		public NomenclatureTypes(IUnitOfWork uow, bool tryLoad = false) {
+		public NomenclatureTypes(IUnitOfWork uow, SizeService sizeService, bool tryLoad = false) {
 			if(tryLoad)
 				ItemsTypes = uow.GetAll<ItemsType>().ToList();
 			makeTypes(uow);
+			this.sizeService = sizeService;
+			this.uow = uow;
 		}
 
 		#region Создание типов
@@ -86,8 +90,29 @@ namespace workwear.Models.Import
 					Name = name,
 					Category = ItemTypeCategory.wear,
 					WearCategory = category,
-					Units = units
+					Units = units,
 				};
+				switch (category) {
+					case СlothesType.Wear:
+						type.SizeType = sizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == "Размер одежды");
+						type.HeightType = sizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == "Рост");
+						break;
+					case СlothesType.Shoes:
+						type.SizeType = sizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == "Размер обуви");
+						break;
+					case СlothesType.WinterShoes:
+						type.SizeType = sizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == "Размер зимней обуви");
+						break;
+					case СlothesType.Headgear:
+						type.SizeType = sizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == "Размер головного убора");
+						break;
+					case СlothesType.Gloves:
+						type.SizeType = sizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == "Размер перчаток");
+						break;
+					case СlothesType.Mittens:
+						type.SizeType = sizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == "Размер рукавиц");
+						break;
+				}
 				ItemsTypes.Add(type);
 			}
 			TypeDescription desc;
@@ -98,6 +123,27 @@ namespace workwear.Models.Import
 					WearCategory = category2.Value,
 					Units = units
 				};
+				switch (category) {
+					case СlothesType.Wear:
+						type2.SizeType = sizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == "Размер одежды");
+						type2.HeightType = sizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == "Рост");
+						break;
+					case СlothesType.Shoes:
+						type2.SizeType = sizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == "Размер обуви");
+						break;
+					case СlothesType.WinterShoes:
+						type2.SizeType = sizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == "Размер зимней обуви");
+						break;
+					case СlothesType.Headgear:
+						type2.SizeType = sizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == "Размер головного убора");
+						break;
+					case СlothesType.Gloves:
+						type2.SizeType = sizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == "Размер перчаток");
+						break;
+					case СlothesType.Mittens:
+						type2.SizeType = sizeService.GetSizeType(uow).FirstOrDefault(x => x.Name == "Размер рукавиц");
+						break;
+				}
 				desc = new TypeDescription(type, type2, keywords2.Select(x => x.ToLower()).ToArray());
 			}
 			else
