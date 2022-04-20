@@ -51,7 +51,7 @@ namespace workwear.Views.Stock
 		{
 			var cardIcon = new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "workwear.icon.buttons.smart-card.png");
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseItem>()
-				.AddColumn("Номенаклатуры нормы").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
+				.AddColumn("Номенклатура нормы").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
 				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
 				.SetDisplayFunc(x => x.Nomenclature?.Name)
 					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))
@@ -87,13 +87,13 @@ namespace workwear.Views.Stock
 				var menu = new Menu();
 				var selected = ytreeItems.GetSelectedObject<ExpenseItem>();
 
-				var itemOpenProtection = new MenuItemId<ExpenseItem>("Открыть номеклатуру нормы");
+				var itemOpenProtection = new MenuItemId<ExpenseItem>("Открыть номенклатуру нормы");
 				itemOpenProtection.ID = selected;
 				itemOpenProtection.Sensitive = selected?.ProtectionTools != null;
 				itemOpenProtection.Activated += ItemOpenProtection_Activated;;
 				menu.Add(itemOpenProtection);
 
-				var itemNomenclature = new MenuItemId<ExpenseItem>("Открыть номеклатуру");
+				var itemNomenclature = new MenuItemId<ExpenseItem>("Открыть номенклатуру");
 				itemNomenclature.ID = selected;
 				itemNomenclature.Sensitive = selected?.Nomenclature != null;
 				itemNomenclature.Activated += Item_Activated;
@@ -188,10 +188,10 @@ namespace workwear.Views.Stock
 				"<span color='gray'>●</span> — выдача не требуется\n" +
 				"<span color='blue'>●</span> — выдаваемого количества не достаточно\n" +
 				"<span color='Purple'>●</span> — выдается больше необходимого\n" +
-				"<span color='red'>●</span> — отсутсвует номеклатура\n" +
+				"<span color='red'>●</span> — отсутствует номенклатура\n" +
 				"<span color='Dark red'>●</span> — указано количество без номенклатуры\n" +
 				"<span color='Burlywood'>●</span> — позиция выдается коллективно\n" +
-				"<span color='#7B3F00'>●</span> — выдача коллективной номеклатуры"
+				"<span color='#7B3F00'>●</span> — выдача коллективной номенклатуры"
 			);
 		}
 		#endregion
