@@ -48,25 +48,21 @@ namespace workwear.Domain.Sizes
         #region IValidatableObject implementation
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
             if(Position <= 0)
-                yield return new ValidationResult (
-                "Позиция должна быть больше нуля");
+                yield return new ValidationResult ("Позиция должна быть больше нуля");
             if (String.IsNullOrEmpty(Name))
-                yield return new ValidationResult (
-                    "Имя должно быть указано");
+                yield return new ValidationResult ("Имя должно быть указано");
             var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
             var sizeService = new SizeService();
             var doublePos = 
                 sizeService.GetSizeType(uow)
                     .FirstOrDefault(x => x.Position == Position && x.Id != Id);
             if(doublePos != null)
-                yield return new ValidationResult (
-                    $"Позиция:{Position} уже занята");
+                yield return new ValidationResult ($"Позиция:{Position} уже занята");
             var doubleName = 
                 sizeService.GetSizeType(uow)
                     .FirstOrDefault(x => x.Name == Name && x.Id != Id);
             if(doubleName != null)
-                yield return new ValidationResult (
-                    $"Имя:{Name} уже занято");
+                yield return new ValidationResult ($"Имя:{Name} уже занято");
         }
         #endregion
     }

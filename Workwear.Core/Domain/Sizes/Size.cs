@@ -65,17 +65,11 @@ namespace workwear.Domain.Sizes
         #region IValidatableObject implementation
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
             if (SizeType is null)
-                yield return new ValidationResult (
-                    "Тип размера должен быть указан", 
-                    new[] { this.GetPropertyName(s => s.Title)});
+                yield return new ValidationResult ("Тип размера должен быть указан");
             if (String.IsNullOrEmpty(Name))
-                yield return new ValidationResult (
-                    "Значение должно быть указано", 
-                    new[] { this.GetPropertyName(s => s.Title)});
+                yield return new ValidationResult ("Значение должно быть указано");
             if(SuitableSizes.Contains(this))
-                yield return new ValidationResult (
-                    "Размер не может быть своим аналогом", 
-                    new[] { this.GetPropertyName(s => s.Title)});
+                yield return new ValidationResult ("Размер не может быть своим аналогом");
             var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
             var sizeService = new SizeService();
             var doubleSize = 
@@ -83,9 +77,7 @@ namespace workwear.Domain.Sizes
                         .GetSize(uow, SizeType)
                         .FirstOrDefault(x => x.Name == Name && x.Id != Id);
             if(doubleSize != null)
-                yield return new ValidationResult (
-                    "Такой размер уже существует", 
-                    new[] { this.GetPropertyName(s => s.Title)});
+                yield return new ValidationResult ("Такой размер уже существует");
         }
         #endregion
     }
