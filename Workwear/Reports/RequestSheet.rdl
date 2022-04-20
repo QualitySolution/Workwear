@@ -741,7 +741,7 @@
           <TextAlign>Center</TextAlign>
         </Style>
         <Visibility>
-          <Hidden>={?subdivision} = -1</Hidden>
+          <Hidden>={?headSubdivision} = -1</Hidden>
         </Visibility>
       </Textbox>
       <Textbox Name="Textbox15">
@@ -800,13 +800,14 @@ LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
 LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
 LEFT JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
 WHERE
-    (@subdivision = -1 OR wear_cards.object_id = @subdivision) 
+    (-1 IN (@subdivisions) OR wear_cards.object_id IN (@subdivisions)) 
     AND wear_cards.dismiss_date IS NULL 
     AND wear_cards_item.next_issue &lt; DATE_ADD(CONCAT(@end_year, '-', @end_month, '-01'), INTERVAL 1 MONTH)
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
     AND ('-1' IN (@protectionTools) OR protection_tools.id IN (@protectionTools))
 GROUP BY
     protection_tools.id,
+    wear_cards.object_id,
     size,
     growth
 HAVING amount_sum &gt; 0
@@ -821,8 +822,8 @@ ORDER BY
           <QueryParameter Name="begin_month">
             <Value>={?begin_month}</Value>
           </QueryParameter>
-          <QueryParameter Name="subdivision">
-            <Value>={?subdivision}</Value>
+          <QueryParameter Name="subdivisions">
+            <Value>={?subdivisions}</Value>
           </QueryParameter>
           <QueryParameter Name="end_month">
             <Value>={?end_month}</Value>
@@ -874,16 +875,16 @@ ORDER BY
       </Fields>
     </DataSet>
     <DataSet Name="Facility">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT objects.name FROM objects WHERE objects.id = @facility</CommandText>
         <QueryParameters>
           <QueryParameter Name="@facility">
-            <Value>={?subdivision}</Value>
+            <Value>={?headSubdivision}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="name">
           <DataField>name</DataField>
           <TypeName>System.String</TypeName>
@@ -901,16 +902,16 @@ ORDER BY
     </DataSource>
   </DataSources>
   <ReportParameters >
-    <ReportParameter Name="subdivision">
+    <ReportParameter Name="subdivisions">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
           <Value>-1</Value>
         </Values>
       </DefaultValue>
-      <Nullable>false</Nullable>
+      <Nullable>true</Nullable>
       <AllowBlank>false</AllowBlank>
-      <MultiValue>false</MultiValue>
+      <MultiValue>true</MultiValue>
       <Prompt>
       </Prompt>
     </ReportParameter>
@@ -971,6 +972,13 @@ ORDER BY
       <MultiValue>true</MultiValue>
       <Prompt>
       </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="headSubdivision">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>

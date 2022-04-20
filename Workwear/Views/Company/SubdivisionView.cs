@@ -36,6 +36,7 @@ namespace workwear.Views.Company
 			textviewAddress.Binding.AddBinding(Entity, e => e.Address, w => w.Buffer.Text).InitializeFromSource();
 
 			entitywarehouse.ViewModel = ViewModel.EntryWarehouse;
+			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
 
 			lbWarehouse.Visible = entitywarehouse.Visible = ViewModel.VisibleWarehouse;
 			buttonPlacement.Sensitive = buttonGive.Sensitive = buttonReturn.Sensitive = buttonWriteOff.Sensitive = !ViewModel.UoW.IsNew;

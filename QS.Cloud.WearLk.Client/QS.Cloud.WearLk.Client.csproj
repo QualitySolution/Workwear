@@ -18,6 +18,8 @@
       <Protobuf Include="Protos\LkUserManager.proto" />
       <None Remove="Protos\NotificationManager.proto" />
       <Protobuf Include="Protos\NotificationManager.proto" />
+      <None Remove="Protos\Messages.proto" />
+      <Protobuf Include="Protos\Messages.proto" />
     </ItemGroup>
 
 </Project>

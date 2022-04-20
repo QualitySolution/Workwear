@@ -30,6 +30,8 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckAll;
 
+		private global::Gamma.GtkWidgets.yCheckButton ycheckChild;
+
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 
 		private global::Gamma.GtkWidgets.yTreeView ytreeSubdivisions;
@@ -191,6 +193,18 @@ namespace workwear.ReportParameters.Views
 			w12.Expand = false;
 			w12.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
+			this.ycheckChild = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckChild.CanFocus = true;
+			this.ycheckChild.Name = "ycheckChild";
+			this.ycheckChild.Label = global::Mono.Unix.Catalog.GetString("Учитывать дочерние");
+			this.ycheckChild.DrawIndicator = true;
+			this.ycheckChild.UseUnderline = true;
+			this.vbox2.Add(this.ycheckChild);
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ycheckChild]));
+			w13.Position = 4;
+			w13.Expand = false;
+			w13.Fill = false;
+			// Container child vbox2.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
@@ -200,8 +214,8 @@ namespace workwear.ReportParameters.Views
 			this.ytreeSubdivisions.Name = "ytreeSubdivisions";
 			this.GtkScrolledWindow.Add(this.ytreeSubdivisions);
 			this.vbox2.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.GtkScrolledWindow]));
-			w14.Position = 4;
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.GtkScrolledWindow]));
+			w15.Position = 5;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.buttonPrintReport = new global::Gamma.GtkWidgets.yButton();
 			this.buttonPrintReport.Sensitive = false;
@@ -210,10 +224,10 @@ namespace workwear.ReportParameters.Views
 			this.buttonPrintReport.UseUnderline = true;
 			this.buttonPrintReport.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.vbox2.Add(this.buttonPrintReport);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.buttonPrintReport]));
-			w15.Position = 5;
-			w15.Expand = false;
-			w15.Fill = false;
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.buttonPrintReport]));
+			w16.Position = 6;
+			w16.Expand = false;
+			w16.Fill = false;
 			this.Add(this.vbox2);
 			if ((this.Child != null))
 			{

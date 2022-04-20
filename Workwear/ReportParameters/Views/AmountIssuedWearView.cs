@@ -39,6 +39,12 @@ namespace workwear.ReportParameters.Views
 			yentryMatch.Binding.AddBinding(viewModel, v => v.MatchString, w => w.Text).InitializeFromSource();
 
 			yentryNoMatch.Binding.AddBinding(viewModel, v => v.NoMatchString, w => w.Text).InitializeFromSource();
+			
+			ycheckChild.Binding
+				.AddSource(viewModel)
+				.AddBinding(vm => vm.AddChildSubdivisions, w => w.Active)
+				.AddBinding(vm => vm.VisibleAddChild, w => w.Visible)
+				.InitializeFromSource();
 		}
 
 		protected void OnButtonPrintReportClicked(object sender, EventArgs e)
