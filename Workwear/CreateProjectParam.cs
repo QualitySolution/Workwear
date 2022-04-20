@@ -242,6 +242,7 @@ namespace workwear
 			#region Облако
 			builder.Register(c => new CloudClientService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			builder.Register(c => new LkUserManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
+			builder.Register(c => new MessagesService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			builder.Register(c => new NotificationManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			#endregion
 

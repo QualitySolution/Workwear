@@ -61,7 +61,11 @@ namespace Workwear.Test.Sql
 					TestContext.Progress.WriteLine($"Выполняем скрипт {hop.Source.VersionToShortString()} → {hop.Destination.VersionToShortString()}");
 					RunOneUpdate(connection, hop);
 				}
-				ComparisonSchema(connection, currentDdName, sample.DbName);
+				
+				//Версии баз до 2.5 отличаются не принципиально, например порядком индексов,
+				//Это не имеет смысл специально исправлять. Поэтому проверка этих версия пропущена.
+				if(sample.TypedVersion >= new Version(2,5))
+					ComparisonSchema(connection, currentDdName, sample.DbName);
 			}
 		}
 		

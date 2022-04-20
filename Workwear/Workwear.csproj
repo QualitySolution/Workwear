@@ -130,6 +130,7 @@
     <Compile Include="HibernateMapping\Stock\CompletionResultItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\CompletionSourceItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\CompletionMap.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionFilterViewModel.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
     <Compile Include="Program.cs" />
@@ -500,6 +501,8 @@
     <Compile Include="ViewModels\Stock\CompletionViewModel.cs" />
     <Compile Include="Views\Stock\CompletionView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.CompletionView.cs" />
+    <Compile Include="Journal\Filter.Views\Company\SubdivisionFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.SubdivisionFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
