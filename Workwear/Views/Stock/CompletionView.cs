@@ -26,6 +26,8 @@ namespace workwear.Views.Stock
 			buttonAddReceiptNomenclature.Clicked += AddResultItems;
 			buttonDelExpenseNomenclature.Clicked += DelSourceItems;
 			buttonDelReceiptNomenclature.Clicked += DelResultItems;
+			ytreeExpenseItems.Selection.Changed += ytreeExpenseItems_Selection_Changed;
+			ytreeReceiptItems.Selection.Changed += ytreeReceiptItems_Selection_Changed;
 			buttonDelExpenseNomenclature.Binding
 				.AddBinding(ViewModel, vm => vm.CanDelItemSource, b => b.Sensitive)
 				.InitializeFromSource();
@@ -83,6 +85,16 @@ namespace workwear.Views.Stock
 				 .Finish ();
 			 ytreeReceiptItems.ItemsDataSource = Entity.ObservableResultItems;
 			 #endregion
+		}
+		
+		void ytreeExpenseItems_Selection_Changed(object sender, EventArgs e)
+		{
+			buttonDelExpenseNomenclature.Sensitive = ytreeExpenseItems.Selection.CountSelectedRows() > 0;
+		}
+		
+		void ytreeReceiptItems_Selection_Changed(object sender, EventArgs e)
+		{
+			buttonDelReceiptNomenclature.Sensitive = ytreeReceiptItems.Selection.CountSelectedRows() > 0;
 		}
 		void AddSourceItems(object sender, EventArgs eventArgs) {
 			ViewModel.AddSourceItems();

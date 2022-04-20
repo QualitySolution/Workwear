@@ -59,15 +59,16 @@ namespace workwear
 				.AddRemoveFromDependence<Norm>(x => x.Posts)
 				.AddClearDependence<EmployeeCard>(x => x.Post);
 
-			DeleteConfig.AddHibernateDeleteInfo<Subdivision> ()
-				.AddDeleteDependence<Department>(x => x.Subdivision) 
+			DeleteConfig.AddHibernateDeleteInfo<Subdivision>()
+				.AddDeleteDependence<Department>(x => x.Subdivision)
 				.AddDeleteDependence<SubdivisionPlace>(x => x.Subdivision)
-				.AddDeleteDependence<Expense> (x => x.Subdivision)
-				.AddDeleteDependence<Income> (x => x.Subdivision)
+				.AddDeleteDependence<Expense>(x => x.Subdivision)
+				.AddDeleteDependence<Income>(x => x.Subdivision)
 				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.Subdivision)
-				.AddClearDependence<EmployeeCard> (x => x.Subdivision)
+				.AddClearDependence<EmployeeCard>(x => x.Subdivision)
 				.AddClearDependence<Post>(x => x.Subdivision)
-				.AddClearDependence<IssuanceSheet>(x => x.Subdivision);
+				.AddClearDependence<IssuanceSheet>(x => x.Subdivision)
+				.AddClearDependence<Subdivision>(x => x.ParentSubdivision);
 
 			DeleteConfig.AddHibernateDeleteInfo<SubdivisionPlace>()
 				.AddClearDependence<ExpenseItem>(x => x.SubdivisionPlace)

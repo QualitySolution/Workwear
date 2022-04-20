@@ -36,6 +36,7 @@ namespace workwear.Views.Company
 			textviewAddress.Binding.AddBinding(Entity, e => e.Address, w => w.Buffer.Text).InitializeFromSource();
 
 			entitywarehouse.ViewModel = ViewModel.EntryWarehouse;
+			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
 
 			lbWarehouse.Visible = entitywarehouse.Visible = ViewModel.VisibleWarehouse;
 			buttonPlacement.Sensitive = buttonGive.Sensitive = buttonReturn.Sensitive = buttonWriteOff.Sensitive = !ViewModel.UoW.IsNew;
@@ -48,7 +49,7 @@ namespace workwear.Views.Company
 			WinPlacement.ParentId = Entity.Id;
 			WinPlacement.SqlSelect = "SELECT id, name FROM @tablename WHERE object_id = " + Entity.Id.ToString();
 			WinPlacement.SetMode(true, false, true, true, true);
-			WinPlacement.FillList("object_places", "размещение", "Размещения объекта");
+			WinPlacement.FillList("object_places", "размещение", "Размещения в подразделении");
 			WinPlacement.Show();
 			WinPlacement.Run();
 			WinPlacement.Destroy();

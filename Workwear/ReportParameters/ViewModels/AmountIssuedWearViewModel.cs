@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NHibernate.Criterion;
+using NHibernate.Proxy;
 using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
+using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository.Company;
 
@@ -12,7 +15,11 @@ namespace workwear.ReportParameters.ViewModels
 {
 	public class AmountIssuedWearViewModel : ReportParametersViewModelBase
 	{
-		public AmountIssuedWearViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, SubdivisionRepository subdivisionRepository) : base(rdlViewerViewModel)
+		private readonly IUnitOfWork unitOfWork;
+		public AmountIssuedWearViewModel(
+			RdlViewerViewModel rdlViewerViewModel, 
+			IUnitOfWorkFactory uowFactory, 
+			SubdivisionRepository subdivisionRepository) : base(rdlViewerViewModel)
 		{
 			Title = "Справка о выданной спецодежде";
 			Identifier = "AmountIssuedWear";
@@ -34,6 +41,7 @@ namespace workwear.ReportParameters.ViewModels
 			foreach(var item in Subdivisons) {
 				item.PropertyChanged += (sender, e) => OnPropertyChanged(nameof(SensetiveLoad));
 			}
+			unitOfWork = uowFactory.CreateWithoutRoot();
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
@@ -41,8 +49,8 @@ namespace workwear.ReportParameters.ViewModels
 					{"dateEnd", EndDate},
 					{"summary", Summary},
 					{"bySize", BySize},
-					{"withoutsub", Summary ? false : Subdivisons.First().Select },
-					{"subdivisions", Summary ? new int[] {-1} : Subdivisons.Where(x => x.Select).Select(x => x.Id).ToArray() },
+					{"withoutsub", !Summary && Subdivisons.First().Select },
+					{"subdivisions", SelectSubdivisons() },
 					{"issue_type", IssueType?.ToString() },
 					{"matchString", MatchString},
 					{"noMatchString", NoMatchString}
@@ -72,6 +80,7 @@ namespace workwear.ReportParameters.ViewModels
 		private bool summary = true;
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		[PropertyChangedAlso(nameof(SensetiveSubdivisions))]
+		[PropertyChangedAlso(nameof(VisibleAddChild))]
 		public virtual bool Summary {
 			get => summary;
 			set => SetField(ref summary, value);
@@ -82,10 +91,16 @@ namespace workwear.ReportParameters.ViewModels
 			get => bySize;
 			set => SetField(ref bySize, value);
 		}
-
+		
+		private bool addChildSubdivisions;
+		public bool AddChildSubdivisions {
+			get => addChildSubdivisions;
+			set => SetField(ref addChildSubdivisions, value);
+		}
+		public bool VisibleAddChild => !Summary;
 		#endregion
+		
 		#region Свойства
-
 		private bool selectAll;
 		public virtual bool SelectAll {
 			get => selectAll;
@@ -119,8 +134,27 @@ namespace workwear.ReportParameters.ViewModels
 				SetField(ref noMatchString, value);
 			}
 		}
-			#endregion
+		#endregion
+
+		private int[] SelectSubdivisons() {
+			if (Summary) return new[] {-1};
+			
+			var selectedId = Subdivisons
+				.Where(x => x.Select).Select(x => x.Id).ToList();
+			
+			if (!AddChildSubdivisions) return selectedId.ToArray();
+
+			var parents = unitOfWork.Session.QueryOver<Subdivision>()
+				.WhereRestrictionOn(c => c.Id).IsIn(selectedId)
+				.List();
+
+			return parents
+				.SelectMany(x => x.AllGenerationsSubdivisions).Take(500)
+				.Select(x => x.Id)
+				.Distinct()
+				.ToArray();
 		}
+	}
 
 	public class SelectedSubdivison : PropertyChangedBase
 	{

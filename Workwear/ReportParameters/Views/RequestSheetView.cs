@@ -27,6 +27,10 @@ namespace workwear.ReportParameters.Views
 				.AddColumn("Название").AddTextRenderer(x => x.Name)
 				.Finish();
 			ytreeNomenclature.ItemsDataSource = new GenericObservableList<SelectedProtectionTools>(viewModel.ProtectionTools);
+			
+			ycheckChild.Binding
+				.AddBinding(viewModel, vm => vm.AddChildSubdivisions, w => w.Active)
+				.InitializeFromSource();
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)

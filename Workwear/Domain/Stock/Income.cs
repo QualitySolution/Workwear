@@ -84,7 +84,7 @@ namespace workwear.Domain.Stock
 				case IncomeOperations.Return:
 					return $"Возврат от работника №{Id} от {Date:d}";
 				case IncomeOperations.Object:
-					return $"Возврат c объекта №{Id} от {Date:d}";
+					return $"Возврат c подразделения №{Id} от {Date:d}";
 				default:
 					return null;
 				}
@@ -97,12 +97,12 @@ namespace workwear.Domain.Stock
 					new[] { this.GetPropertyName (o => o.Date)});
 
 			if(Operation == IncomeOperations.Object && Subdivision == null)
-				yield return new ValidationResult ("Объект должен быть указан", 
-					new[] { this.GetPropertyName (o => o.Date)});
+				yield return new ValidationResult ("Подразделение должно быть указано", 
+					new[] { this.GetPropertyName (o => o.Subdivision)});
 
 			if(Operation == IncomeOperations.Return && EmployeeCard == null)
 				yield return new ValidationResult ("Сотрудник должен быть указан", 
-					new[] { this.GetPropertyName (o => o.Date)});
+					new[] { this.GetPropertyName (o => o.EmployeeCard)});
 
 			if(Items.Count == 0)
 				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку.", 
@@ -248,9 +248,9 @@ namespace workwear.Domain.Stock
 		[Display(Name = "Возврат от работника")]
 		Return,
 		/// <summary>
-		/// Возврат с объекта
+		/// Возврат с подразделения
 		/// </summary>
-		[Display(Name = "Возврат с объекта")]
+		[Display(Name = "Возврат с подразделения")]
 		Object
 	}
 }

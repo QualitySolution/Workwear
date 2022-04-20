@@ -17,7 +17,7 @@ namespace workwear.HMap
 			Map (x => x.Amount).Column ("quantity");
 			Map(x => x.AktNumber).Column("akt_number");
 
-			References(x => x.Document).Column("stock_write_off_id").Cascade.All();
+			References(x => x.Document).Column("stock_write_off_id");
 			References(x => x.Nomenclature).Column ("nomenclature_id");
 			References(x => x.EmployeeWriteoffOperation).Column("employee_issue_operation_id").Cascade.All();
 			References(x => x.SubdivisionWriteoffOperation).Column ("subdivision_issue_operation_id").Cascade.All();

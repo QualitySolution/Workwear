@@ -152,7 +152,7 @@ WHERE wear_cards.object_id = @id</CommandText>
     <ReportItems>
       <Table Name="Table1">
         <DataSetName>Data</DataSetName>
-        <NoRows>По указанному объекту нет данных.</NoRows>
+        <NoRows>По указанному подразделению нет данных.</NoRows>
         <Style>
           <BorderStyle>
             <Default>Solid</Default>

@@ -107,6 +107,12 @@ namespace workwear.ReportParameters.ViewModels
 			set => SetField(ref issueTypeOptions, value);
 		}
 
+		private bool addChildSubdivisions;
+		public bool AddChildSubdivisions {
+			get => addChildSubdivisions;
+			set => SetField(ref addChildSubdivisions, value);
+		}
+
 		private IList<SelectedProtectionTools> protectionTools;
 		public IList<SelectedProtectionTools> ProtectionTools {
 			get {
@@ -138,22 +144,35 @@ namespace workwear.ReportParameters.ViewModels
 					{"begin_year", Period?.BeginYear},
 					{"end_month", Period?.EndMonth},
 					{"end_year", Period?.EndYear},
-					{"subdivision", EntrySubdivisionViewModel.Entity?.Id ?? -1 },
+					{"subdivisions", SelectSubdivisions() },
 					{"issue_type", IssueTypeOptions?.ToString() },
-					{"protectionTools", selectedProtectionTools() } 
+					{"protectionTools", SelectedProtectionTools() },
+					{"headSubdivision", EntrySubdivisionViewModel.Entity?.Id ?? -1}
 					};
 
 		public void Dispose()
 		{
 			uow.Dispose();
 		}
-		private int[] selectedProtectionTools()
+		private int[] SelectedProtectionTools()
 		{
 			if(ProtectionTools.All(x => x.Select))
 				return new int[] { -1 };
 			if(ProtectionTools.All(x => !x.Select))
 				return new int[] { -2 };
-			return ProtectionTools.Where(x => x.Select).Select(x => x.Id).ToArray();
+			return ProtectionTools.Where(x => x.Select).Select(x => x.Id).Distinct().ToArray();
+		}
+
+		private int[] SelectSubdivisions() {
+			if(EntrySubdivisionViewModel.Entity is null) 
+				return new[] {-1};
+			if (!AddChildSubdivisions)
+				return new[] {EntrySubdivisionViewModel.Entity.Id}; 
+			return EntrySubdivisionViewModel.Entity
+				.AllGenerationsSubdivisions.Take(500)
+				.Select(x => x.Id)
+				.Distinct()
+				.ToArray();
 		}
 	}
 

@@ -30,7 +30,6 @@ namespace workwear.ViewModels.Stock
 		private IInteractiveQuestion interactive;
 		private readonly StockRepository stockRepository;
 		private readonly BaseParameters baseParameters;
-		private readonly CommonMessages commonMessages;
 
 		public ExpenseObjectViewModel(IEntityUoWBuilder uowBuilder,
 									  IUnitOfWorkFactory unitOfWorkFactory,
@@ -42,7 +41,6 @@ namespace workwear.ViewModels.Stock
 									  StockRepository stockRepository,
 									  FeaturesService featutesService,
 									  BaseParameters baseParameters,
-									  CommonMessages commonMessages,
 									  Subdivision subdivision = null
 									  )
 		: base(uowBuilder, unitOfWorkFactory, navigation, validator)
@@ -51,7 +49,6 @@ namespace workwear.ViewModels.Stock
 			this.interactive = interactive;
 			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			if(subdivision != null) {
 				Entity.Subdivision = subdivision;
 				Entity.Warehouse = subdivision.Warehouse;
@@ -62,7 +59,7 @@ namespace workwear.ViewModels.Stock
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 			}
 			if(Entity.Operation != ExpenseOperations.Object)
-				throw new InvalidOperationException("Диалог предназначен только для операций выдачи на объект.");
+				throw new InvalidOperationException("Диалог предназначен только для операций выдачи на подразделение.");
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featutesService, autofacScope.Resolve<IUserService>().CurrentUserId);

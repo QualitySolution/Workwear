@@ -269,7 +269,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(nomenclatureType);
 				
 
-				//Поднимаем id номеклатуры до 2.
+				//Поднимаем id номенклатуры до 2.
 				uow.Save(new Nomenclature());
 
 				var nomenclature = new Nomenclature {
