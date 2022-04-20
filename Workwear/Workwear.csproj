@@ -491,6 +491,9 @@
     <Compile Include="Journal\ViewModels\Communications\MessageTemplateJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Communications\EmployeeNotificationJournalViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Communications.EmployeeNotificationFilterView.cs" />
+    <Compile Include="ViewModels\Communications\HistoryNotificationViewModel.cs" />
+    <Compile Include="Views\Communications\HistoryNotificationView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Communications.HistoryNotificationView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
