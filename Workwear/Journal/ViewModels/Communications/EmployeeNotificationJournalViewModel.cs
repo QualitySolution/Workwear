@@ -206,7 +206,7 @@ namespace workwear.Journal.ViewModels.Communications
 
 			RowActivatedAction = editAction;
 			
-			var showHistoryNotificationAction = new JournalAction("Посмотреть историю уведомлений",
+			var showHistoryNotificationAction = new JournalAction("Показать сообщения",
 				(selected) => selected.Any(),
 				(selected) => VisibleEditAction,
 				(selected) => ShowHistoryNotificationAction(selected)
@@ -223,14 +223,14 @@ namespace workwear.Journal.ViewModels.Communications
 			Refresh();
 		}
 
-		void SendMessange()
+		void SendMessange(object[] nodes)
 		{
 			var ids = Items.Cast<EmployeeNotificationJournalNode>().Where(x => x.Selected).Select(x => x.Id).ToArray();
 			NavigationManager.OpenViewModel<SendMessangeViewModel, int[]>(this, ids);
 		}
-		void ShowHistoryNotificationAction()
+		void ShowHistoryNotificationAction(object[] nodes)
 		{
-			var ids = Items.Cast<EmployeeNotificationJournalNode>().Where(x => x.Selected).Select(x => x.Id).ToArray();
+			var ids = nodes.Cast<EmployeeNotificationJournalNode>().Select(x => x.Id);
 			foreach(var id in ids) {
 				NavigationManager.OpenViewModel<HistoryNotificationViewModel, int>(this, id);
 			}
