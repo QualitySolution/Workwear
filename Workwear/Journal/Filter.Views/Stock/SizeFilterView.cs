@@ -18,7 +18,7 @@ namespace workwear.Journal.Filter.Views.Stock
 			speciallistSizeType.Binding
 				.AddSource(ViewModel)
 			.AddBinding(vm => vm.SelectedSizeType, v => v.SelectedItem)
-			.AddBinding(vm => vm.Sensitive, v => v.Sensitive)
+			.AddBinding(vm => vm.SensitiveSizeType, v => v.Sensitive)
 				.InitializeFromSource();
 		}
 	}

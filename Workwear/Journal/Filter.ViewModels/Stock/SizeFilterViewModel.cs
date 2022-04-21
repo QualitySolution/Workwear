@@ -14,7 +14,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			IUnitOfWorkFactory unitOfWorkFactory = null
 			) : base(journalViewModel, unitOfWorkFactory)
 		{
-			Sensitive = true;
+			SensitiveSizeType = true;
 			SizeService = sizeService;
 		}
 		#region Ограничения
@@ -24,10 +24,10 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			set => SetField(ref selectedSizeType, value);
 		}
 
-		private bool sensitive;
-		public bool Sensitive {
-			get => sensitive;
-			set => SetField(ref sensitive, value);
+		private bool sensitiveSizeTypeSizeType;
+		public bool SensitiveSizeType {
+			get => sensitiveSizeTypeSizeType;
+			set => SetField(ref sensitiveSizeTypeSizeType, value);
 		}
 		#endregion
 	}
