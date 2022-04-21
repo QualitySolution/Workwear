@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 
 namespace workwear.Domain.Stock
 {

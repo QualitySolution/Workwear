@@ -6,7 +6,7 @@ using QS.Dialog;
 using QS.Testing.DB;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Repository;
 using workwear.Tools;

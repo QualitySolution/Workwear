@@ -6,7 +6,7 @@ using QS.Utilities.Numeric;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 
 namespace workwear.Domain.Statements

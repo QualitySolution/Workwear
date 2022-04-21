@@ -6,7 +6,7 @@ using QS.Testing.DB;
 using workwear.Domain.Stock;
 using NSubstitute;
 using QS.Dialog;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Repository.Stock;
 
 namespace WorkwearTest.Integration.Stock

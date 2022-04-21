@@ -1,6 +1,6 @@
 ﻿using QS.DomainModel.UoW;
 using QS.Project.Journal;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 
 namespace workwear.Journal.Filter.ViewModels.Stock

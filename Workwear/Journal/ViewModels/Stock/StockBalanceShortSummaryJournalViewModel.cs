@@ -13,7 +13,7 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using workwear.Domain.Operations;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Measurements;

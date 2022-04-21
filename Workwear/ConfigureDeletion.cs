@@ -5,7 +5,7 @@ using workwear.Domain.Communications;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;

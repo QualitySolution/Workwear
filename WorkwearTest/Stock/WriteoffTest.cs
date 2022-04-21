@@ -5,7 +5,7 @@ using QS.Dialog;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 
 namespace WorkwearTest.Stock

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using workwear.Domain.Operations;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 
 namespace workwear.Domain.Stock
 {

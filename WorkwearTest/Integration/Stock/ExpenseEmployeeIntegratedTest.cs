@@ -9,7 +9,7 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Tools;
 using Workwear.Domain.Regulations;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 
 namespace WorkwearTest.Integration.Stock
 {

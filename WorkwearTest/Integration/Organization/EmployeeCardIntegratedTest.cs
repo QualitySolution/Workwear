@@ -10,7 +10,7 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 using workwear.Repository.Operations;
 using workwear.Tools;

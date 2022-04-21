@@ -11,7 +11,7 @@ using QS.HistoryLog;
 using QS.Utilities;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Repository.Operations;
 
 namespace workwear.Domain.Stock

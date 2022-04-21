@@ -9,7 +9,7 @@ using QS.Navigation;
 using QS.Testing.DB;
 using workwear.Domain.Company;
 using Workwear.Domain.Company;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Models.Company;
 using workwear.Models.Import;
 using workwear.Tools.Nhibernate;

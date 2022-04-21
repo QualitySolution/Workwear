@@ -15,7 +15,7 @@ using QS.Utilities;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Models.Operations;

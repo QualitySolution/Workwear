@@ -14,7 +14,7 @@ using QSOrmProject.RepresentationModel;
 using QSProjectsLib;
 using workwear.Domain.Operations;
 using workwear.Domain.Company;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 
 namespace workwear.Representations.Organization

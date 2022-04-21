@@ -14,7 +14,7 @@ using workwear.Domain.Company;
 using workwear.ViewModels.Company;
 using workwear.Views.Company.EmployeeChilds;
 using Workwear.Domain.Company;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 
 namespace workwear.Views.Company

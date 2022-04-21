@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.UoW;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 
 namespace workwear.Models.Import

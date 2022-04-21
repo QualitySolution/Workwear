@@ -1,5 +1,5 @@
 using FluentNHibernate.Mapping;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 
 namespace workwear.HibernateMapping.Sizes
 {

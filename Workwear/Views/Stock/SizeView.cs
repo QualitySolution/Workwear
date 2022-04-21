@@ -2,7 +2,7 @@
 using Gamma.Binding.Converters;
 using Gamma.GtkWidgets;
 using QS.Views.Dialog;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 using workwear.ViewModels.Stock;
 

@@ -7,7 +7,7 @@ using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Validation;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 

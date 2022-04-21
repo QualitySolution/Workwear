@@ -4,7 +4,7 @@ using System.Reflection;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using QS.Journal.GtkUI;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;

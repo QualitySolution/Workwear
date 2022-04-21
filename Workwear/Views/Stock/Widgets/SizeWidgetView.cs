@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Gtk;
 using QS.Views.Dialog;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.ViewModels.Stock.Widgets;
 
 namespace workwear.Views.Stock.Widgets

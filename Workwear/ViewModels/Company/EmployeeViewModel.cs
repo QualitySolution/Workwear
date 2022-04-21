@@ -19,7 +19,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QSReport;
 using workwear.Domain.Company;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Measurements;
 using workwear.Models.Company;

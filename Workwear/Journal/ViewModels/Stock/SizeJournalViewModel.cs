@@ -12,7 +12,7 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using Remotion.Linq.Parsing.Structure.IntermediateModel;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Measurements;

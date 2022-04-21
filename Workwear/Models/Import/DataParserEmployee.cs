@@ -15,7 +15,7 @@ using workwear.Domain.Company;
 using workwear.Models.Company;
 using workwear.ViewModels.Import;
 using Workwear.Domain.Company;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 
 namespace workwear.Models.Import

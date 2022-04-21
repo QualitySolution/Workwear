@@ -5,7 +5,7 @@ using Gamma.Utilities;
 using NLog;
 using QS.BusinessCommon.Repository;
 using QS.Views.Dialog;
-using workwear.Domain.Sizes;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using Workwear.Measurements;
 using workwear.ViewModels.Stock;

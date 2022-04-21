@@ -9,7 +9,7 @@ using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using Workwear.Measurements;
 
-namespace workwear.Domain.Sizes
+namespace Workwear.Domain.Sizes
 {
     [Appellative (Gender = GrammaticalGender.Masculine,
         NominativePlural = "размеры",
