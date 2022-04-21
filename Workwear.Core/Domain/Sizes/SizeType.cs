@@ -21,7 +21,7 @@ namespace workwear.Domain.Sizes
         #region Свойства
         public virtual int Id { get; }
         private string name;
-        [Display(Name = "НАзвание")]
+        [Display(Name = "Название")]
         public virtual string Name {
             get => name;
             set => SetField(ref name, value);
