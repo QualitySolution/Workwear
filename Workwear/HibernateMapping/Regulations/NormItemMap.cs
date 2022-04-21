@@ -16,7 +16,7 @@ namespace workwear.HMap
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			Map (x => x.Amount).Column ("amount");
-			Map (x => x.NormPeriod).Column ("period_type").CustomType<NormPeriodTypeType> ();
+			Map (x => x.NormPeriod).Column ("period_type");
 			Map (x => x.PeriodCount).Column ("period_count");
 
 			References (x => x.Norm).Column ("norm_id").Not.Nullable ();
