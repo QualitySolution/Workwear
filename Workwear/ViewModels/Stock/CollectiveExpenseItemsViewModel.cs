@@ -204,12 +204,12 @@ namespace workwear.ViewModels.Stock
 		}
 		#endregion
 
-		void ExpenceDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
+		private void ExpenceDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
 			OnPropertyChanged(nameof(Sum));
 		}
 
-		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if(nameof(Entity.Warehouse) == e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveAddButton));

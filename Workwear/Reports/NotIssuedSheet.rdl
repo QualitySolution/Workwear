@@ -767,14 +767,8 @@
     posts.name as post_name,
     departments.id as department_id,
     departments.name as department_name,
-    (
-        CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.size_wear WHEN item_types.wear_category = 'Shoes' THEN wear_cards.size_shoes WHEN item_types.wear_category = 'Gloves' THEN wear_cards.size_gloves WHEN item_types.wear_category = 'Headgear' THEN wear_cards.size_headdress WHEN item_types.wear_category = 'WinterShoes' THEN wear_cards.size_winter_shoes WHEN item_types.wear_category = 'Mittens' THEN wear_cards.size_mittens ELSE NULL
-    END
-) AS size,
-(
-    CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.wear_growth ELSE NULL
-END
-) AS growth,
+    sizeAlias.name AS size,
+	heightAlias.name AS growth,
 measurement_units.name AS unit,
 norms_item.amount AS amount_by_norm,
 wear_cards_item.amount AS received,
@@ -819,6 +813,12 @@ LEFT JOIN departments ON wear_cards.department_id = departments.id
 LEFT JOIN posts ON wear_cards.post_id = posts.id
 LEFT JOIN objects ON wear_cards.object_id = objects.id OR wear_cards.object_id IS NULL AND posts.subdivision_id = objects.id
 LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
+LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
+LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
+LEFT JOIN wear_cards_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)
+LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
+LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
+LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
 WHERE
     wear_cards.dismiss_date IS NULL 
     AND (@exclude_in_vacation = false OR (@report_date NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))

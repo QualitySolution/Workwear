@@ -183,13 +183,13 @@ namespace workwear.ViewModels.Statements
 
 		#region Sensetive
 
-		public bool CanEditItems => Entity.Expense == null && Entity.MassExpense == null && Entity.CollectiveExpense == null;
+		public bool CanEditItems => Entity.Expense == null && Entity.CollectiveExpense == null;
 
 		#endregion
 
 		#region Visible
 
-		public bool VisibleExpense => Entity.Expense != null || Entity.MassExpense != null || Entity.CollectiveExpense != null;
+		public bool VisibleExpense => Entity.Expense != null || Entity.CollectiveExpense != null;
 		public bool VisibleFillBy => CanEditItems;
 		public bool VisibleCloseFillBy => FillByViewModel != null;
 
@@ -224,11 +224,11 @@ namespace workwear.ViewModels.Statements
 		public void OpenExpense()
 		{
 			if(Entity.Expense != null)
-				NavigationManager.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.Expense.Id));
-			else if(Entity.MassExpense != null)
-				NavigationManager.OpenViewModel<MassExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.MassExpense.Id));
+				NavigationManager.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(
+					this, EntityUoWBuilder.ForOpen(Entity.Expense.Id));
 			else if(Entity.CollectiveExpense != null)
-				NavigationManager.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.CollectiveExpense.Id));
+				NavigationManager.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(
+					this, EntityUoWBuilder.ForOpen(Entity.CollectiveExpense.Id));
 			else
 				throw new NotSupportedException();
 

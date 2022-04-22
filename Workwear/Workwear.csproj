@@ -123,13 +123,21 @@
     <EmbeddedResource Include="icon\menu\logs.png" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Company\EmployeeSize.cs" />
     <Compile Include="Domain\Stock\Completion.cs" />
     <Compile Include="Domain\Stock\CompletionItem.cs" />
     <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="HibernateMapping\Company\EmployeeSizeMap.cs" />
     <Compile Include="HibernateMapping\MappingParams.cs" />
+    <Compile Include="HibernateMapping\Sizes\SizeMap.cs" />
+    <Compile Include="HibernateMapping\Sizes\SizeTypeMap.cs" />
     <Compile Include="HibernateMapping\Stock\CompletionResultItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\CompletionSourceItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\CompletionMap.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Sizes\SizeFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Sizes\SizeTypeFilterViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Stock\SizeJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Stock\SizeTypeJournalViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionFilterViewModel.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
@@ -141,9 +149,6 @@
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="CreateProjectParam.cs" />
     <Compile Include="Repository\UserRepository.cs" />
-    <Compile Include="Measurements\SizeStandardConverter.cs" />
-    <Compile Include="Measurements\SizeStandart.cs" />
-    <Compile Include="Measurements\SizeHelper.cs" />
     <Compile Include="Domain\Stock\Expense.cs" />
     <Compile Include="HibernateMapping\Stock\ExpenseMap.cs" />
     <Compile Include="Domain\Stock\ExpenseItem.cs" />
@@ -198,7 +203,6 @@
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.RegulationDocDlg.cs" />
     <Compile Include="Domain\Operations\EmployeeIssueOperation.cs" />
     <Compile Include="HibernateMapping\Operations\EmployeeIssueOperationMap.cs" />
-    <Compile Include="Tools\BaseParameters.cs" />
     <Compile Include="Domain\Operations\Graph\IssueGraph.cs" />
     <Compile Include="Repository\Stock\NomenclatureRepository.cs" />
     <Compile Include="Dialogs\Issuance\EmployeeIssueGraphDlg.cs" />
@@ -220,6 +224,8 @@
     <Compile Include="Domain\Company\Organization.cs" />
     <Compile Include="HibernateMapping\Company\OrganizatonMap.cs" />
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
+    <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
+    <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
     <Compile Include="Views\Company\OrganizationView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.OrganizationView.cs" />
     <Compile Include="Domain\Statements\IssuanceSheet.cs" />
@@ -258,16 +264,6 @@
     <Compile Include="HibernateMapping\Operations\WarehouseOperationMap.cs" />
     <Compile Include="Domain\Operations\SubdivisionIssueOperation.cs" />
     <Compile Include="HibernateMapping\Operations\SubdivisionIssueOperationMap.cs" />
-    <Compile Include="ViewModels\Stock\MassExpenseViewModel.cs" />
-    <Compile Include="Views\Stock\MassExpenseView.cs" />
-    <Compile Include="Domain\Stock\MassExpense.cs" />
-    <Compile Include="HibernateMapping\Stock\MassExpenseMap.cs" />
-    <Compile Include="Domain\Stock\MassExpenseNomenclature.cs" />
-    <Compile Include="Domain\Stock\MassExpenseOperation.cs" />
-    <Compile Include="Domain\Stock\MassExpenseEmployee.cs" />
-    <Compile Include="HibernateMapping\Stock\MassExpenseNomenclaturesMap.cs" />
-    <Compile Include="HibernateMapping\Stock\MassExpenseOperationMap.cs" />
-    <Compile Include="HibernateMapping\Stock\MassExpenseEmployeeMap.cs" />
     <Compile Include="Journal\JournalsColumnsConfigs.cs" />
     <Compile Include="Repository\Stock\StockRepository.cs" />
     <Compile Include="ReportsDlg\StockAllWearDlg.cs" />
@@ -368,7 +364,6 @@
     <Compile Include="ReportParameters\ViewModels\AmountIssuedWearViewModel.cs" />
     <Compile Include="ReportParameters\Views\AmountIssuedWearView.cs" />
     <Compile Include="gtk-gui\workwear.ReportParameters.Views.AmountIssuedWearView.cs" />
-    <Compile Include="gtk-gui\workwear.Views.Stock.MassExpenseView.cs" />
     <Compile Include="Journal\Filter.ViewModels\Stock\NomenclatureFilterViewModel.cs" />
     <Compile Include="Journal\Filter.Views\Stock\NomenclatureFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.NomenclatureFilterView.cs" />
@@ -394,7 +389,6 @@
     <Compile Include="Views\Company\EmployeeChilds\EmployeePhotoView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeePhotoView.cs" />
     <Compile Include="ViewModels\Company\EmployeeChilds\EmployeePhotoViewModel.cs" />
-    <Compile Include="Measurements\BaseSizeSettings.cs" />
     <Compile Include="Repository\Company\PostRepository.cs" />
     <Compile Include="Models\Import\DataParserEmployee.cs" />
     <Compile Include="Models\Import\DataParserNorm.cs" />
@@ -503,6 +497,14 @@
     <Compile Include="gtk-gui\workwear.Views.Stock.CompletionView.cs" />
     <Compile Include="Journal\Filter.Views\Company\SubdivisionFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.SubdivisionFilterView.cs" />
+    <Compile Include="Views\Sizes\SizeView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Sizes.SizeView.cs" />
+    <Compile Include="Views\Sizes\SizeTypeView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Sizes.SizeTypeView.cs" />
+    <Compile Include="Journal\Filter.Views\Sizes\SizeFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Sizes.SizeFilterView.cs" />
+    <Compile Include="Journal\Filter.Views\Sizes\SizeTypeFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Sizes.SizeTypeFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -745,6 +747,8 @@
     <Folder Include="ViewModels\Communications\" />
     <Folder Include="Views\Communications\" />
     <Folder Include="Journal\ViewModels\Communications\" />
+    <Folder Include="Views\Sizes\" />
+    <Folder Include="Journal\Filter.Views\Sizes\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

@@ -167,8 +167,8 @@ namespace workwear.Domain.Stock
 				ExpenseDoc = this,
 				Amount = amount,
 				Nomenclature = position.Nomenclature,
-				Size = position.Size,
-				WearGrowth = position.Growth,
+				WearSize = position.WearSize,
+				Height = position.Height,
 				WearPercent = position.WearPercent
 			};
 

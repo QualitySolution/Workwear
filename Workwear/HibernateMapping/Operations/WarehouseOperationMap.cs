@@ -15,8 +15,6 @@ namespace workwear.HibernateMapping.Stock
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			Map(x => x.OperationTime).Column("operation_time");
-			Map(x => x.Size).Column("size");
-			Map(x => x.Growth).Column("growth");
 			Map(x => x.Amount).Column("amount");
 			Map(x => x.WearPercent).Column("wear_percent");
 			Map(x => x.Cost).Column("cost");
@@ -24,6 +22,8 @@ namespace workwear.HibernateMapping.Stock
 			References(x => x.ReceiptWarehouse).Column("warehouse_receipt_id");
 			References(x => x.ExpenseWarehouse).Column("warehouse_expense_id");
 			References(x => x.Nomenclature).Column("nomenclature_id").Not.Nullable();
+			References(x => x.WearSize).Column("size_id");
+			References(x => x.Height).Column("height_id");
 		}
 	}
 }

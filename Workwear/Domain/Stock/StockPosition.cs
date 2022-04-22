@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Workwear.Domain.Sizes;
 
 namespace workwear.Domain.Stock
 {
@@ -11,59 +12,44 @@ namespace workwear.Domain.Stock
 	/// </summary>
 	public class StockPosition
 	{
-		public Nomenclature Nomenclature { get; private set; }
-		public string Size { get; private set; }
-		public string Growth { get; private set; }
-		public decimal WearPercent { get; private set; }
-
-		public StockPosition(Nomenclature nomenclature, string size, string growth, decimal wearPercent)
-		{
+		public Nomenclature Nomenclature { get; }
+		public decimal WearPercent { get; }
+		public Size WearSize { get; }
+		public Size Height { get; }
+		public StockPosition(Nomenclature nomenclature, decimal wearPercent, Size wearSize, Size height) {
 			Nomenclature = nomenclature ?? throw new ArgumentNullException(nameof(nomenclature));
-			Size = size;
-			Growth = growth;
 			WearPercent = wearPercent;
+			WearSize = wearSize;
+			Height = height;
 		}
 
 		public string Title {
 			get {
 				var parameters = new List<string>();
-				if(!String.IsNullOrWhiteSpace(Size))
-					parameters.Add("Размер:" + Size);
-
-				if(!String.IsNullOrWhiteSpace(Growth))
-					parameters.Add("Рост:" + Growth);
-
+				if(WearSize != null)
+					parameters.Add("Размер:" + WearSize.Name);
+				if(Height != null)
+					parameters.Add("Рост:" + Height.Name);
 				if(WearPercent > 0)
 					parameters.Add("Износ:" + WearPercent.ToString("P"));
-
 				var text = Nomenclature.Name;
-
 				if(parameters.Any())
-					text += String.Format(" ({0})", String.Join("; ", parameters));
-
+					text += $" ({string.Join("; ", parameters)})";
 				return text;
 			}
 		}
-
 		#region Сравнение
-
-		public override bool Equals(object obj)
-		{
+		public override bool Equals(object obj) {
 			var anotherPos = obj as StockPosition;
-
 			return
-				anotherPos.Nomenclature.Id == Nomenclature.Id &&
-				anotherPos.Size == Size &&
-				anotherPos.Growth == Growth &&
-				anotherPos.WearPercent == WearPercent
-			;
+				anotherPos?.Nomenclature.Id == Nomenclature.Id &&
+				anotherPos.WearSize == WearSize &&
+				anotherPos.Height == Height &&
+				anotherPos.WearPercent == WearPercent;
 		}
-
-		public override int GetHashCode()
-		{
-			return (Nomenclature.Id, Size, Growth, WearPercent).GetHashCode();
+		public override int GetHashCode() {
+			return (Nomenclature.Id, SizeType: WearSize, Height, WearPercent).GetHashCode();
 		}
-
 		#endregion
 	}
 }

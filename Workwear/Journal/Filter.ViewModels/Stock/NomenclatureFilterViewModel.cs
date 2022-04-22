@@ -1,5 +1,4 @@
-﻿using System;
-using Autofac;
+﻿using Autofac;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
@@ -12,7 +11,12 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 	{
 		public EntityEntryViewModel<ItemsType> EntryItemsType;
 
-		public NomenclatureFilterViewModel(JournalViewModelBase journalViewModel, INavigationManager navigation, ILifetimeScope autofacScope, IUnitOfWorkFactory unitOfWorkFactory = null) : base(journalViewModel, unitOfWorkFactory)
+		public NomenclatureFilterViewModel(
+			JournalViewModelBase journalViewModel, 
+			INavigationManager navigation, 
+			ILifetimeScope autofacScope, 
+			IUnitOfWorkFactory unitOfWorkFactory = null
+			) : base(journalViewModel, unitOfWorkFactory)
 		{
 			var builder = new CommonEEVMBuilderFactory<NomenclatureFilterViewModel>(journalViewModel, this, UoW, navigation, autofacScope);
 

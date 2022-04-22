@@ -62,9 +62,6 @@ namespace workwear.Tools.Features
 
 		virtual public bool Available(WorkwearFeature feature)
 		{
-			if(feature == WorkwearFeature.MassExpense)
-				return false; //TODO Документ временно отключен совсем. Пока не будет принято решение чиним его или удаляем за не надобностью. Так как в 2.6 добавлен вполне рабочий документ колективной выдачи, который во многом повторяет задачу этого документа.
-
 			if(ProductEdition == 0)
 				return true; //В демо редакции доступны все возможности.
 
@@ -72,7 +69,6 @@ namespace workwear.Tools.Features
 				case WorkwearFeature.Warehouses:
 				case WorkwearFeature.IdentityCards:
 					return ProductEdition == 3;
-				case WorkwearFeature.MassExpense:
 				case WorkwearFeature.CollectiveExpense:
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.BatchProcessing:
@@ -105,8 +101,6 @@ namespace workwear.Tools.Features
 		Warehouses,
 		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,
-		[Display(Name = "Выдача списком")]
-		MassExpense,
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,
 		[Display(Name = "Загрузка из Excel")]

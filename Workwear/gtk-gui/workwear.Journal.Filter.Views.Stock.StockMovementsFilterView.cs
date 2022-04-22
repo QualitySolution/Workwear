@@ -16,11 +16,11 @@ namespace workwear.Journal.Filter.Views.Stock
 
 		private global::Gamma.GtkWidgets.yLabel ylabel2;
 
-		private global::Gamma.Widgets.yListComboBox comboSize;
+		private global::QS.Widgets.GtkUI.SpecialListComboBox comboSize;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel3;
 
-		private global::Gamma.Widgets.yListComboBox comboGrowth;
+		private global::QS.Widgets.GtkUI.SpecialListComboBox comboGrowth;
 
 		private global::Gtk.Label label1;
 
@@ -95,10 +95,12 @@ namespace workwear.Journal.Filter.Views.Stock
 			w4.Expand = false;
 			w4.Fill = false;
 			// Container child hbox3.Gtk.Box+BoxChild
-			this.comboSize = new global::Gamma.Widgets.yListComboBox();
+			this.comboSize = new global::QS.Widgets.GtkUI.SpecialListComboBox();
 			this.comboSize.Name = "comboSize";
 			this.comboSize.AddIfNotExist = false;
 			this.comboSize.DefaultFirst = false;
+			this.comboSize.ShowSpecialStateAll = false;
+			this.comboSize.ShowSpecialStateNot = true;
 			this.hbox3.Add(this.comboSize);
 			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.comboSize]));
 			w5.Position = 1;
@@ -114,10 +116,12 @@ namespace workwear.Journal.Filter.Views.Stock
 			w6.Expand = false;
 			w6.Fill = false;
 			// Container child hbox3.Gtk.Box+BoxChild
-			this.comboGrowth = new global::Gamma.Widgets.yListComboBox();
+			this.comboGrowth = new global::QS.Widgets.GtkUI.SpecialListComboBox();
 			this.comboGrowth.Name = "comboGrowth";
 			this.comboGrowth.AddIfNotExist = false;
 			this.comboGrowth.DefaultFirst = false;
+			this.comboGrowth.ShowSpecialStateAll = false;
+			this.comboGrowth.ShowSpecialStateNot = true;
 			this.hbox3.Add(this.comboGrowth);
 			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.comboGrowth]));
 			w7.Position = 3;

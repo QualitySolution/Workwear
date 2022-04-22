@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Linq;
 using QS.Views.Dialog;
 using workwear.Domain.Stock;
 using workwear.ViewModels.Stock;
 using Gamma.GtkWidgets;
 using Gtk;
 using QSOrmProject;
-using workwear.Measurements;
 using Workwear.Measurements;
 using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
@@ -50,17 +50,20 @@ namespace workwear.Views.Stock
 			 ytreeExpenseItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionSourceItem>()
 				 .AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
 				 .AddColumn("Размер").MinWidth(60)
-				 .AddComboRenderer(x => x.Size)
-				 .DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.SizeStd, SizeUse.HumanOnly))
-				 .AddSetter((c, n) => c.Editable = n.Nomenclature.SizeStd != null)
+					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.SizeType, onlyUseInNomenclature:true).ToList())
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
 				 .AddColumn("Рост").MinWidth(70)
-				 .AddComboRenderer(x => x.Growth)
-				 .FillItems(SizeHelper.GetGrowthList(SizeUse.HumanOnly))
-				 .AddSetter((c, n) => c.Editable = n.Nomenclature.Type.WearCategory.HasValue && SizeHelper.HasGrowthStandart(n.Nomenclature.Type.WearCategory.Value))
-				 .AddColumn ("Процент износа").AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter()).Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
-				 .AddTextRenderer(e => "%", expand: false)
-				 .AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
-				 .AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
+					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.HeightType, onlyUseInNomenclature:true).ToList())
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
+				 .AddColumn ("Процент износа")
+					.AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter())
+				 .Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
+					.AddTextRenderer(e => "%", expand: false)
+				 .AddColumn ("Количество").AddNumericRenderer (e => e.Amount)
+				 .Editing(new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
+					.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				 .Finish ();
 			 ytreeExpenseItems.ItemsDataSource = Entity.ObservableSourceItems;
 			 #endregion
@@ -68,13 +71,13 @@ namespace workwear.Views.Stock
 			 ytreeReceiptItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionResultItem>()
 				 .AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
 				 .AddColumn("Размер").MinWidth(60)
-				 .AddComboRenderer(x => x.Size)
-				 .DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature.SizeStd, SizeUse.HumanOnly))
-				 .AddSetter((c, n) => c.Editable = n.Nomenclature.SizeStd != null)
+					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.SizeType, onlyUseInNomenclature:true).ToList())
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
 				 .AddColumn("Рост").MinWidth(70)
-				 .AddComboRenderer(x => x.Growth)
-				 .FillItems(SizeHelper.GetGrowthList(SizeUse.HumanOnly))
-				 .AddSetter((c, n) => c.Editable = n.Nomenclature.Type.WearCategory.HasValue && SizeHelper.HasGrowthStandart(n.Nomenclature.Type.WearCategory.Value))
+				 .AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.HeightType, onlyUseInNomenclature:true).ToList())
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
 				 .AddColumn ("Процент износа").AddNumericRenderer (e => e.WearPercent, new MultiplierToPercentConverter()).Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)
 				 .AddTextRenderer (e => "%", expand: false)
 				 .AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(8)

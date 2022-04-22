@@ -674,14 +674,8 @@
     protection_tools.assessed_cost * SUM(norms_item.amount) AS protection_tools_assessed_cost,
     wear_cards_item.protection_tools_id,
     wear_cards.sex,
-    (
-        CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.size_wear WHEN item_types.wear_category = 'Shoes' THEN wear_cards.size_shoes WHEN item_types.wear_category = 'Gloves' THEN wear_cards.size_gloves WHEN item_types.wear_category = 'Headgear' THEN wear_cards.size_headdress WHEN item_types.wear_category = 'WinterShoes' THEN wear_cards.size_winter_shoes WHEN item_types.wear_category = 'Mittens' THEN wear_cards.size_mittens ELSE NULL
-    END
-) AS size,
-(
-    CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.wear_growth ELSE NULL
-END
-) AS growth,
+    sizeAlias.name AS size,
+	heightAlias.name AS growth,
 measurement_units.name AS unit,
 SUM(norms_item.amount) AS amount,
 (
@@ -721,6 +715,12 @@ JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_
 LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
 LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
 LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
+LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id 
+LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id 
+LEFT JOIN wear_cards_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id) 
+LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id 
+LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id) 
+LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
 JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
 WHERE
     wear_cards.dismiss_date IS NULL
@@ -731,9 +731,8 @@ WHERE
 GROUP BY
     wear_cards_item.protection_tools_id,
     IF(@show_sex, wear_cards.sex, NULL),
-    CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.size_wear WHEN item_types.wear_category = 'Shoes' THEN wear_cards.size_shoes WHEN item_types.wear_category = 'Gloves' THEN wear_cards.size_gloves WHEN item_types.wear_category = 'Headgear' THEN wear_cards.size_headdress WHEN item_types.wear_category = 'WinterShoes' THEN wear_cards.size_winter_shoes WHEN item_types.wear_category = 'Mittens' THEN wear_cards.size_mittens ELSE NULL END,
-    CASE WHEN item_types.wear_category = 'Wear' THEN wear_cards.wear_growth ELSE NULL
-END
+    size,
+    growth
 ORDER BY
     protection_tools_name,
     IF(@show_sex, wear_cards.sex, NULL),

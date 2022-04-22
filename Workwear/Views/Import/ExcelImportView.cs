@@ -19,11 +19,13 @@ namespace workwear.Views.Import
 
 		public ExcelImportView(ExcelImportViewModel viewModel, IGtkViewResolver viewResolver) : base(viewModel)
 		{
-			this.Build();
+			Build();
 
 			#region Общее
 			notebookSteps.ShowTabs = false;
-			notebookSteps.Binding.AddBinding(viewModel, v => v.CurrentStep, w => w.CurrentPage).InitializeFromSource();
+			notebookSteps.Binding
+				.AddBinding(viewModel, v => v.CurrentStep, w => w.CurrentPage)
+				.InitializeFromSource();
 
 			treeviewRows.EnableGridLines = TreeViewGridLines.Both;
 			treeviewRows.Binding.AddBinding(viewModel.ImportModel, v => v.DisplayRows, w => w.ItemsDataSource);
@@ -35,7 +37,7 @@ namespace workwear.Views.Import
 			#region Шаг 1
 			filechooser.Binding.AddBinding(viewModel, v => v.FileName, w => w.Filename);
 
-			FileFilter Filter = new FileFilter();
+			var Filter = new FileFilter();
 			Filter.AddPattern("*.xls");
 			Filter.AddPattern("*.xlsx");
 			Filter.Name = "Excel";
@@ -46,11 +48,17 @@ namespace workwear.Views.Import
 				.AddBinding(v => v.Sheets, w => w.ItemsList)
 				.AddBinding(v => v.SelectedSheet, w => w.SelectedItem);
 
-			buttonLoad.Binding.AddBinding(viewModel, v => v.SensitiveSecondStepButton, w => w.Sensitive).InitializeFromSource();
+			buttonLoad.Binding
+				.AddBinding(viewModel, v => v.SensitiveSecondStepButton, w => w.Sensitive)
+				.InitializeFromSource();
 			#endregion
 			#region Шаг 2
-			spinTitleRow.Binding.AddBinding(viewModel.ImportModel, v => v.HeaderRow, w => w.ValueAsInt).InitializeFromSource();
-			buttonReadEmployees.Binding.AddBinding(viewModel, v => v.SensitiveThirdStepButton, w => w.Sensitive).InitializeFromSource();
+			spinTitleRow.Binding
+				.AddBinding(viewModel.ImportModel, v => v.HeaderRow, w => w.ValueAsInt)
+				.InitializeFromSource();
+			buttonReadEmployees.Binding
+				.AddBinding(viewModel, v => v.SensitiveThirdStepButton, w => w.Sensitive)
+				.InitializeFromSource();
 			labelColumnRecomendations.LabelProp = ViewModel.ImportModel.DataColumnsRecommendations;
 			if(viewModel.ImportModel.MatchSettingsViewModel != null) {
 				var settingsView = viewResolver.Resolve(viewModel.ImportModel.MatchSettingsViewModel);
@@ -69,29 +77,32 @@ namespace workwear.Views.Import
 			eventboxLegendaError.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfError));
 			eventboxLegendaSkipRows.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfSkipped));
 
-			buttonSave.Binding.AddBinding(ViewModel, v => v.SensitiveSaveButton, w => w.Sensitive).InitializeFromSource();
+			buttonSave.Binding
+				.AddBinding(ViewModel, v => v.SensitiveSaveButton, w => w.Sensitive)
+				.InitializeFromSource();
 			ViewModel.ProgressStep = progressTotal;
 			#endregion
 		}
 
-		void IImportModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(e.PropertyName == nameof(IImportModel.DisplayColumns))
-				RefreshTableColumns();
-			if(e.PropertyName == nameof(IImportModel.MaxSourceColumns))
-				RefreshColumnsWidgets();
+		void IImportModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+			switch (e.PropertyName) {
+				case nameof(IImportModel.DisplayColumns):
+					RefreshTableColumns();
+					break;
+				case nameof(IImportModel.MaxSourceColumns):
+					RefreshColumnsWidgets();
+					break;
+			}
 		}
 
-		protected void OnButtonLoadClicked(object sender, System.EventArgs e)
-		{
+		protected void OnButtonLoadClicked(object sender, EventArgs e) {
 			ViewModel.SecondStep();
 		}
 
-		private void RefreshTableColumns()
-		{
+		private void RefreshTableColumns() {
 			var config = ColumnsConfigFactory.Create<ISheetRow>();
-			for(int i = 0; i < ViewModel.ImportModel.DisplayColumns.Count; i++) {
-				int col = i;
+			for(var i = 0; i < ViewModel.ImportModel.DisplayColumns.Count; i++) {
+				var col = i;
 				config.AddColumn(ViewModel.ImportModel.DisplayColumns[i].Title).HeaderAlignment(0.5f).Resizable()
 					.ToolTipText(x => x.CellTooltip(col))
 					.AddTextRenderer(x => x.CellValue(col))
@@ -102,8 +113,7 @@ namespace workwear.Views.Import
 			treeviewRows.ColumnsConfig = config.Finish();
 		}
 
-		public void RefreshColumnsWidgets()
-		{
+		public void RefreshColumnsWidgets() {
 			foreach(var label in columnsLabels) 
 				tableColumns.Remove(label);
 			foreach(var combo in columnsTypeCombos)
@@ -111,50 +121,53 @@ namespace workwear.Views.Import
 			tableColumns.NRows = (uint)ViewModel.ImportModel.MaxSourceColumns;
 			columnsLabels.Clear();
 			columnsTypeCombos.Clear();
-			uint nrow = 0;
+			uint nRow = 0;
 			foreach(var column in ViewModel.ImportModel.DisplayColumns) {
 				var label = new yLabel();
 				label.Xalign = 1;
-				label.Binding.AddBinding(column, nameof(IDataColumn.Title), w => w.LabelProp).InitializeFromSource();
+				label.Binding
+					.AddBinding(column, nameof(IDataColumn.Title), w => w.LabelProp)
+					.InitializeFromSource();
 				columnsLabels.Add(label);
-				tableColumns.Attach(label, 0, 1, nrow, nrow + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+				tableColumns
+					.Attach(label, 0, 1, nRow, nRow + 1, 
+						AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 				var combo = new yEnumComboBox();
 				combo.ItemsEnum = ViewModel.ImportModel.DataTypeEnum;
-				combo.Binding.AddBinding(column, nameof(IDataColumn.DataType), w => w.SelectedItem).InitializeFromSource();
+				combo.Binding
+					.AddBinding(column, nameof(IDataColumn.DataType), w => w.SelectedItem)
+					.InitializeFromSource();
 				columnsTypeCombos.Add(combo);
-				tableColumns.Attach(combo, 1, 2, nrow, nrow + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
-				nrow++;
+				tableColumns
+					.Attach(combo, 1, 2, nRow, nRow + 1, 
+						AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+				nRow++;
 			}
 			tableColumns.ShowAll();
 		}
 
-		protected void OnButtonReadEmployeesClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonReadEmployeesClicked(object sender, EventArgs e) {
 			ViewModel.ThirdStep();
 		}
 
-		protected void OnButtonSaveClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonSaveClicked(object sender, EventArgs e) {
 			ViewModel.Save();
 		}
 
 		#region PopupMenu
-		void TreeviewRows_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
-		{
-			if(args.Event.Button == 3 && ViewModel.CurrentStep == 2) {
-				var menu = new Menu();
-				var selected = treeviewRows.GetSelectedObject<ISheetRow>();
-				var item = new MenuItemId<ISheetRow>(selected.UserSkipped ? "Загружать" : "Не загружать");
-				item.ID = selected;
-				item.Activated += Item_Activated;
-				menu.Add(item);
-				menu.ShowAll();
-				menu.Popup();
-			}
+		void TreeviewRows_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
+			if (args.Event.Button != 3 || ViewModel.CurrentStep != 2) return;
+			var menu = new Menu();
+			var selected = treeviewRows.GetSelectedObject<ISheetRow>();
+			var item = new MenuItemId<ISheetRow>(selected.UserSkipped ? "Загружать" : "Не загружать");
+			item.ID = selected;
+			item.Activated += Item_Activated;
+			menu.Add(item);
+			menu.ShowAll();
+			menu.Popup();
 		}
 
-		void Item_Activated(object sender, EventArgs e)
-		{
+		void Item_Activated(object sender, EventArgs e) {
 			var item = (MenuItemId<ISheetRow>)sender;
 			item.ID.UserSkipped = !item.ID.UserSkipped;
 		}

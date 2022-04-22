@@ -10,7 +10,6 @@ namespace workwear.Domain.Stock
 		public virtual int Id { get; set; }
 
 		DateTime date = DateTime.Now;
-
 		[Display(Name = "Дата")]
 		public virtual DateTime Date {
 			get { return date; }
@@ -18,7 +17,6 @@ namespace workwear.Domain.Stock
 		}
 
 		UserBase createdbyUser;
-
 		[Display(Name = "Документ создал")]
 		public virtual UserBase CreatedbyUser {
 			get { return createdbyUser; }
@@ -26,16 +24,12 @@ namespace workwear.Domain.Stock
 		}
 
 		private string comment;
-
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {
 			get { return comment; }
 			set { SetField(ref comment, value, () => Comment); }
 		}
-
-		public StockDocument()
-		{
-		}
+		public StockDocument() { }
 
 		private DateTime? creationDate;
 		[Display(Name = "Дата создания")]
@@ -59,8 +53,6 @@ namespace workwear.Domain.Stock
 					return typeof(Writeoff);
 				case StokDocumentType.TransferDoc:
 					return typeof(Transfer);
-				case StokDocumentType.MassExpense:
-					return typeof(MassExpense);
 				case StokDocumentType.Completion:
 					return typeof(Completion);
 			}
@@ -76,8 +68,6 @@ namespace workwear.Domain.Stock
 		ExpenseEmployeeDoc,
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,
-		[Display(Name = "Выдача списком")]
-		MassExpense,
 		[Display(Name = "Выдача на подразделение")]
 		ExpenseObjectDoc,
 		[Display(Name = "Перемещение")]

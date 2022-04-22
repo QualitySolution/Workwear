@@ -1,7 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-#if !NETSTANDARD
-using NHibernate.Engine;
-#endif
 
 namespace Workwear.Domain.Regulations
 {
@@ -15,12 +12,6 @@ namespace Workwear.Domain.Regulations
 		Shift,
 		[Display(Name = "До износа")]
 		Wearout,
-	}
-	public class NormPeriodTypeType : NHibernate.Type.EnumStringType
-	{
-		public NormPeriodTypeType() : base(typeof(NormPeriodType))
-		{
-		}
 	}
 }
 

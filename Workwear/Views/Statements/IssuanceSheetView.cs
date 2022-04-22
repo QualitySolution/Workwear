@@ -6,7 +6,6 @@ using QS.Views.Dialog;
 using QS.Views.Resolve;
 using QSWidgetLib;
 using workwear.Domain.Statements;
-using workwear.Measurements;
 using workwear.ViewModels.Statements;
 using Workwear.Measurements;
 
@@ -44,19 +43,24 @@ namespace workwear.Views.Statements
 				.AddColumn("Ф.И.О.").Tag("IsFIOColumn").AddTextRenderer(x => x.Employee != null ? x.Employee.ShortName : String.Empty)
 				.AddColumn("Спецодежда").Tag("IsNomenclatureColumn").AddTextRenderer(x => x.ItemName)
 				.AddColumn("Размер")
-					.AddComboRenderer(x => x.Size)
-					.DynamicFillListFunc(x => SizeHelper.GetSizesListByStdCode(x.Nomenclature?.SizeStd, SizeUse.HumanOnly))
-					.AddSetter((c, n) => c.Editable = n.Nomenclature?.SizeStd != null)
+					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature?.Type?.SizeType, onlyUseInNomenclature:true).ToList())
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
 				.AddColumn("Рост")
-					.AddComboRenderer(x => x.WearGrowth)
-					.FillItems(ViewModel.SizeService.GetGrowthForNomenclature())
-					.AddSetter((c, n) => c.Editable = (n.Nomenclature?.Type?.WearCategory != null && SizeHelper.HasGrowthStandart(n.Nomenclature.Type.WearCategory.Value)))
+					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
+				.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
+				.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
 				.AddColumn("Количество")
-					.AddNumericRenderer(x => x.Amount).Editing(ViewModel.CanEditItems).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
-					.AddTextRenderer(x => x.Nomenclature != null && x.Nomenclature.Type.Units != null ? x.Nomenclature.Type.Units.Name : String.Empty)
-				.AddColumn("Начало эксплуатации").AddTextRenderer(x => x.StartOfUse != default(DateTime) ? x.StartOfUse.ToShortDateString() : String.Empty)
+					.AddNumericRenderer(x => x.Amount)
+					.Editing(ViewModel.CanEditItems).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10))
+					.WidthChars(8)
+					.AddTextRenderer(x => x.Nomenclature != null && x.Nomenclature.Type.Units != null ? 
+						x.Nomenclature.Type.Units.Name : String.Empty)
+					.AddColumn("Начало эксплуатации").AddTextRenderer(x => x.StartOfUse != default ? 
+						x.StartOfUse.ToShortDateString() : String.Empty)
 				.AddColumn("Срок службы")
-					.AddNumericRenderer(x => x.Lifetime).Editing(ViewModel.CanEditItems).Adjustment(new Adjustment(1, 0, 999, 1, 12, 10))
+					.AddNumericRenderer(x => x.Lifetime).Editing(ViewModel.CanEditItems)
+					.Adjustment(new Adjustment(1, 0, 999, 1, 12, 10))
 				.Finish();
 
 			ytreeviewItems.Selection.Changed += Selection_Changed;
@@ -72,53 +76,47 @@ namespace workwear.Views.Statements
 		#region PopupMenu
 		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
 		{
-			if(args.Event.Button == 3) {
-				var menu = new Menu();
-				var selected = ytreeviewItems.GetSelectedObjects<IssuanceSheetItem>();
-				var item = new MenuItemId<IssuanceSheetItem[]>("Открыть номеклатуру");
-				item.ID = selected;
-				if(selected == null)
-					item.Sensitive = false;
-				else
-					item.Activated += Item_Activated;
-				menu.Add(item);
-				menu.ShowAll();
-				menu.Popup();
-			}
+			if (args.Event.Button != 3) return;
+			var menu = new Menu();
+			var selected = ytreeviewItems.GetSelectedObjects<IssuanceSheetItem>();
+			var item = new MenuItemId<IssuanceSheetItem[]>("Открыть номеклатуру");
+			item.ID = selected;
+			if(selected == null)
+				item.Sensitive = false;
+			else
+				item.Activated += Item_Activated;
+			menu.Add(item);
+			menu.ShowAll();
+			menu.Popup();
 		}
 
-		void Item_Activated(object sender, EventArgs e)
-		{
-			var items = (sender as MenuItemId<IssuanceSheetItem[]>).ID;
+		void Item_Activated(object sender, EventArgs e) {
+			var items = ((MenuItemId<IssuanceSheetItem[]>) sender).ID;
 			foreach(var item in items) 
 				ViewModel.OpenNomenclature(item.Nomenclature);
 		}
 		#endregion
 
-		protected void OnButtonAddClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonAddClicked(object sender, EventArgs e) {
 			ViewModel.AddItems();
 		}
 
-		void Selection_Changed(object sender, EventArgs e)
-		{
-			buttonDel.Sensitive = buttonSetEmployee.Sensitive = ytreeviewItems.Selection.CountSelectedRows() > 0 && ViewModel.CanEditItems;
+		void Selection_Changed(object sender, EventArgs e) {
+			buttonDel.Sensitive = buttonSetEmployee.Sensitive = 
+				ytreeviewItems.Selection.CountSelectedRows() > 0 && ViewModel.CanEditItems;
 		}
 
-		protected void OnButtonDelClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonDelClicked(object sender, EventArgs e) {
 			var items = ytreeviewItems.GetSelectedObjects<IssuanceSheetItem>();
 			ViewModel.RemoveItems(items);
 		}
 
-		protected void OnButtonSetEmployeeClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonSetEmployeeClicked(object sender, EventArgs e) {
 			var items = ytreeviewItems.GetSelectedObjects<IssuanceSheetItem>();
 			ViewModel.SetEmployee(items);
 		}
 
-		protected void OnYtreeviewItemsRowActivated(object o, RowActivatedArgs args)
-		{
+		protected void OnYtreeviewItemsRowActivated(object o, RowActivatedArgs args) {
 			if(!ViewModel.CanEditItems)
 				return;
 
@@ -131,19 +129,16 @@ namespace workwear.Views.Statements
 			}
 		}
 
-		protected void OnButtonExpenseOpenClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonExpenseOpenClicked(object sender, EventArgs e) {
 			ViewModel.OpenExpense();
 		}
 
-		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
+		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
 			if(e.PropertyName == nameof(Entity.ObservableItems))
 				ytreeviewItems.ItemsDataSource = Entity.ObservableItems;
 		}
 
-		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
+		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
 			switch(e.PropertyName) {
 				case nameof(ViewModel.FillByViewModel):
 					if(fillWidget != null) {

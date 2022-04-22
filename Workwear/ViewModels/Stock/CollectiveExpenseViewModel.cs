@@ -6,7 +6,6 @@ using Autofac;
 using Gamma.Utilities;
 using NLog;
 using QS.Dialog;
-using QS.Dialog.GtkUI;
 using QS.Dialog.ViewModels;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -30,11 +29,11 @@ namespace workwear.ViewModels.Stock
 {
 	public class CollectiveExpenseViewModel : EntityDialogViewModelBase<CollectiveExpense>, ISelectItem
 	{
-		ILifetimeScope autofacScope;
+		private ILifetimeScope autofacScope;
 		private readonly UserRepository userRepository;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public CollectiveExpenseItemsViewModel CollectiveExpenseItemsViewModel;
-		IInteractiveQuestion interactive;
+		private IInteractiveQuestion interactive;
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;

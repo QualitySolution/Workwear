@@ -26,7 +26,13 @@ namespace workwear.ViewModels.Stock
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
-		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, BaseParameters baseParameters)
+		public ExpenseDocItemsEmployeeViewModel(
+			ExpenseEmployeeViewModel expenseEmployeeViewModel, 
+			FeaturesService featuresService, 
+			INavigationManager navigation, 
+			SizeService sizeService, 
+			IDeleteEntityService deleteService, 
+			BaseParameters baseParameters)
 		{
 			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
@@ -163,12 +169,12 @@ namespace workwear.ViewModels.Stock
 			);
 		}
 
-		void ExpenceDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
+		private void ExpenceDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
 			CalculateTotal();
 		}
 
-		void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{ 
 			if(e.PropertyName == nameof(ExpenseItem.BuhDocument)) {
 				expenseEmployeeViewModel.HasChanges = true;

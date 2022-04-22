@@ -8,9 +8,9 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.Measurements;
-using Workwear.Measurements;
 using Workwear.Domain.Company;
+using Workwear.Domain.Sizes;
+using Workwear.Measurements;
 using workwear.Tools;
 
 namespace WorkwearTest.Organization
@@ -28,7 +28,7 @@ namespace WorkwearTest.Organization
 			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 2, 1));
 			operation1.Issued.Returns(10);
 
-			var list = new List<EmployeeIssueOperation>() { operation1 };
+			var list = new List<EmployeeIssueOperation> { operation1 };
 			var graph = new IssueGraph(list);
 
 			var uow = Substitute.For<IUnitOfWork>();
@@ -47,7 +47,8 @@ namespace WorkwearTest.Organization
 			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2018, 2, 1)));
 		}
 
-		[Test(Description = "Проверяем проставляет ли расчет следующей выдачи дату износа по норме в том случае если авто списание последней выдачи отключено.")]
+		[Test(Description = "Проверяем проставляет ли расчет следующей выдачи дату износа по норме " +
+		                    "в том случае если авто списание последней выдачи отключено.")]
 		public void UpdateNextIssue_NotWriteoffCase()
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
@@ -55,7 +56,7 @@ namespace WorkwearTest.Organization
 			operation1.ExpiryByNorm.Returns(new DateTime(2018, 3, 1));
 			operation1.Issued.Returns(10);
 
-			var list = new List<EmployeeIssueOperation>() { operation1 };
+			var list = new List<EmployeeIssueOperation> { operation1 };
 			var graph = new IssueGraph(list);
 
 			var uow = Substitute.For<IUnitOfWork>();
@@ -83,7 +84,7 @@ namespace WorkwearTest.Organization
 			operation1.ExpiryByNorm.Returns(x => null);
 			operation1.Issued.Returns(10);
 
-			var list = new List<EmployeeIssueOperation>() { operation1 };
+			var list = new List<EmployeeIssueOperation> { operation1 };
 			var graph = new IssueGraph(list);
 
 			var uow = Substitute.For<IUnitOfWork>();
@@ -102,7 +103,9 @@ namespace WorkwearTest.Organization
 			Assert.That(item.NextIssue, Is.Null);
 		}
 
-		[Test(Description = "Тест проверяет корректную установку следующей выдачи в случает когда по норме положено 10, выдали 10, потом списали 2. Следующая выдача должна быть первой датой когда стало меньше нормы, то есть в день списания.")]
+		[Test(Description = "Тест проверяет корректную установку следующей выдачи в случает когда по норме положено 10, " +
+		                    "выдали 10, потом списали 2. " +
+		                    "Следующая выдача должна быть первой датой когда стало меньше нормы, то есть в день списания.")]
 		public void UpdateNextIssue_FirstNotEnoughCase()
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
@@ -115,7 +118,7 @@ namespace WorkwearTest.Organization
 			operation2.OperationTime.Returns(new DateTime(2018, 1, 15));
 			operation2.Returned.Returns(2);
 
-			var list = new List<EmployeeIssueOperation>() { operation1, operation2 };
+			var list = new List<EmployeeIssueOperation> { operation1, operation2 };
 			var graph = new IssueGraph(list);
 
 			var uow = Substitute.For<IUnitOfWork>();
@@ -134,7 +137,8 @@ namespace WorkwearTest.Organization
 			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2018, 1, 15)));
 		}
 
-		[Test(Description = "Если выдачи этого типа сиз еще не было, дату следующей выдачи должны устанавливать датой создания потребности.")]
+		[Test(Description = "Если выдачи этого типа сиз еще не было, " +
+		                    "дату следующей выдачи должны устанавливать датой создания потребности.")]
 		public void UpdateNextIssue_WithoutIssuesNextDateEqualCreateItemDate()
 		{
 			var uow = Substitute.For<IUnitOfWork>();
@@ -152,7 +156,9 @@ namespace WorkwearTest.Organization
 			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2018, 1, 15)));
 		}
 
-		[Test(Description = "Проверяем что если дата создания строки с нормой, допустим удалили норму и добавили, после даты износа выданного, то следующая выдача не перескочит на дату создания новой строки.")]
+		[Test(Description = "Проверяем что если дата создания строки с нормой, " +
+		                    "допустим удалили норму и добавили, после даты износа выданного, " +
+		                    "то следующая выдача не перескочит на дату создания новой строки.")]
 		public void UpdateNextIssue_NotBreakNextIssueDateAfterRecreateItem()
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
@@ -161,7 +167,7 @@ namespace WorkwearTest.Organization
 			operation1.Issued.Returns(10);
 
 			var uow = Substitute.For<IUnitOfWork>();
-			var list = new List<EmployeeIssueOperation>() { operation1 };
+			var list = new List<EmployeeIssueOperation> { operation1 };
 			var graph = new IssueGraph(list);
 			var employee = Substitute.For<EmployeeCard>();
 			employee.Id.Returns(777); //Необходимо чтобы было более 0, для запроса имеющихся операций.
@@ -187,7 +193,7 @@ namespace WorkwearTest.Organization
 			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 2, 1));
 			operation1.Issued.Returns(10);
 
-			var list = new List<EmployeeIssueOperation>() { operation1 };
+			var list = new List<EmployeeIssueOperation> { operation1 };
 			var graph = new IssueGraph(list);
 
 			var uow = Substitute.For<IUnitOfWork>();
@@ -211,7 +217,8 @@ namespace WorkwearTest.Organization
 			Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2018, 2, 16)));
 		}
 
-		[Test(Description = "Проверяем что при сдвиге на конец отпуска, обращаем внимание на случаи когда отпуск еще не начался.")]
+		[Test(Description = "Проверяем что при сдвиге на конец отпуска, " +
+		                    "обращаем внимание на случаи когда отпуск еще не начался.")]
 		public void UpdateNextIssue_NotMoveDateWhenLeaveNotBeginCase()
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
@@ -219,7 +226,7 @@ namespace WorkwearTest.Organization
 			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 2, 1));
 			operation1.Issued.Returns(10);
 
-			var list = new List<EmployeeIssueOperation>() { operation1 };
+			var list = new List<EmployeeIssueOperation> { operation1 };
 			var graph = new IssueGraph(list);
 
 			var uow = Substitute.For<IUnitOfWork>();
@@ -357,32 +364,31 @@ namespace WorkwearTest.Organization
 		#endregion
 		#region MatcheStockPosition
 
-		[Test(Description = "Проверяем случай при котором у складской позиции отсутствует рост, значит эта номенклатура без роста и не надо сравнивать ее по росту с сотрудником.")]
-		[TestCase("")]
-		[TestCase(null)]
-		[TestCase("182")]
-		[TestCase("182-188")]
-		public void MatcheStockPosition_WithoutGrowthCase(string growth)
+		[Test(Description = "Проверяем случай при котором у складской позиции отсутствует рост, " +
+		                    "значит эта номенклатура без роста и не надо сравнивать ее по росту с сотрудником.")]
+		public void MatcheStockPosition_WithoutGrowthCase()
 		{
+			var heightType = new SizeType {CategorySizeType = CategorySizeType.Height};
+			var sizeType = new SizeType {CategorySizeType = CategorySizeType.Size};
+			var size = new Size {Name = "52", SizeType = sizeType};
 			var itemType = Substitute.For<ItemsType>();
-			itemType.WearCategory.Returns(СlothesType.Wear);
-			var sizeStd = SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus);
 			var nomenclature = Substitute.For<Nomenclature>();
 			nomenclature.Type.Returns(itemType);
-			nomenclature.SizeStd.Returns(sizeStd);
 			nomenclature.MatchingEmployeeSex(Sex.M).Returns(true);
 			var protectionTools = Substitute.For<ProtectionTools>();
 			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
 			var employee = Substitute.For<EmployeeCard>();
 			employee.Sex.Returns(Sex.M);
-			employee.GetSize(СlothesType.Wear).Returns(new SizePair(sizeStd, "52"));
-			employee.WearGrowth.Returns("182");
+			var sizes = new List<EmployeeSize>();
+			employee.Sizes.Returns(sizes);
+			employee.Sizes.Add(new EmployeeSize{Size = new Size {Name = "182"}, SizeType = heightType, Employee = employee});
+			employee.Sizes.Add(new EmployeeSize{Size = size, SizeType = sizeType, Employee = employee});
 			var normItem = Substitute.For<NormItem>();
 			normItem.ProtectionTools.Returns(protectionTools);
 
-			EmployeeCardItem employeeCardItem = new EmployeeCardItem(employee, normItem);
+			var employeeCardItem = new EmployeeCardItem(employee, normItem);
 
-			StockPosition stockPosition = new StockPosition(nomenclature, "52", growth, 0);
+			var stockPosition = new StockPosition(nomenclature, 0, size,null);
 			Assert.That(employeeCardItem.MatcheStockPosition(stockPosition)); 
 		}
 
@@ -391,17 +397,15 @@ namespace WorkwearTest.Organization
 		{
 			var employee = new EmployeeCard();
 			employee.Sex = Sex.M;
-			employee.WearSizeStd = SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus);
-			employee.WearSize = "52";
-			employee.WearGrowth = "170";
+			var sizeType = new SizeType {CategorySizeType = CategorySizeType.Size};
+			var size = new Size {Name = "52", SizeType = sizeType};
+			employee.Sizes.Add(new EmployeeSize{Size = size, SizeType = sizeType, Employee = employee});
 
 			var itemType = Substitute.For<ItemsType>();
-			itemType.Category.Returns(ItemTypeCategory.wear);
-			itemType.WearCategory.Returns(СlothesType.Wear);
+			itemType.SizeType.Returns(sizeType);
 			var nomenclature = Substitute.For<Nomenclature>();
 			nomenclature.Id.Returns(25);
 			nomenclature.Type.Returns(itemType);
-			nomenclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
 			nomenclature.MatchingEmployeeSex(Sex.M).Returns(true);
 			var protectionTools = Substitute.For<ProtectionTools>();
 			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
@@ -410,7 +414,7 @@ namespace WorkwearTest.Organization
 
 			var employeeItem = new EmployeeCardItem(employee, normItem);
 
-			var stockPosition = new StockPosition(nomenclature, "52", "170", 0);
+			var stockPosition = new StockPosition(nomenclature, 0, size,null);
 			var result = employeeItem.MatcheStockPosition(stockPosition);
 			Assert.That(result, Is.True);
 		}
@@ -418,19 +422,23 @@ namespace WorkwearTest.Organization
 		[Test(Description = "Проверяем что находим соответствия размеров когда в сотруднике установлен диапазон размера.")]
 		public void MatcheStockPosition_RangeSizeInEmployeeSize()
 		{
-			var employee = new EmployeeCard();
-			employee.Sex = Sex.M;
-			employee.WearSizeStd = SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus);
-			employee.WearSize = "52-54";
-			employee.WearGrowth = "170";
+			var employee = new EmployeeCard {Sex = Sex.M,};
+			var sizeType = new SizeType {CategorySizeType = CategorySizeType.Size};
+			var size52And54 = new Size
+				{Name = "52-54", SizeType = sizeType, UseInEmployee = true};
+			var size52 = new Size {
+				Name = "52", 
+				SizeType = sizeType, 
+				UseInEmployee = true, 
+				SuitableSizes = new List<Size> {size52And54}
+			};
+			employee.Sizes.Add(new EmployeeSize{Size = size52And54, SizeType = sizeType});
 
 			var itemType = Substitute.For<ItemsType>();
 			itemType.Category.Returns(ItemTypeCategory.wear);
-			itemType.WearCategory.Returns(СlothesType.Wear);
 			var nomenclature = Substitute.For<Nomenclature>();
 			nomenclature.Id.Returns(25);
 			nomenclature.Type.Returns(itemType);
-			nomenclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
 			nomenclature.MatchingEmployeeSex(Sex.M).Returns(true);
 
 			var protectionTools = Substitute.For<ProtectionTools>();
@@ -439,7 +447,7 @@ namespace WorkwearTest.Organization
 			normItem.ProtectionTools.Returns(protectionTools);
 
 			var employeeItem = new EmployeeCardItem(employee, normItem);
-			var stockPosition = new StockPosition(nomenclature, "52", "170", 0);
+			var stockPosition = new StockPosition(nomenclature, 0, size52,null);
 			var result = employeeItem.MatcheStockPosition(stockPosition);
 			Assert.That(result, Is.True);
 		}
@@ -447,19 +455,28 @@ namespace WorkwearTest.Organization
 		[Test(Description = "Проверяем что находим соответствия размеров когда в сотруднике установлен диапазон роста.")]
 		public void MatcheStockPosition_RangeGrowthInEmployeeSize()
 		{
-			var employee = new EmployeeCard();
-			employee.Sex = Sex.M;
-			employee.WearSizeStd = SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus);
-			employee.WearSize = "52";
-			employee.WearGrowth = "170-176";
+			var employee = new EmployeeCard {
+				Sex = Sex.M
+			};
+			var sizeType = new SizeType {CategorySizeType = CategorySizeType.Size};
+			var heightType = new SizeType {CategorySizeType = CategorySizeType.Height};
+			var size52 = new Size {Name = "52", SizeType = sizeType, UseInEmployee = true};
+			var height170And176 = new Size
+				{Name = "170-176", SizeType = heightType, UseInEmployee = true};
+			var height170 = new Size {
+				Name = "170", 
+				SizeType = heightType, 
+				UseInEmployee = true, 
+				SuitableSizes = new List<Size> {height170And176}
+			};
+			employee.Sizes.Add(new EmployeeSize{Size = height170And176, SizeType = heightType});
+			employee.Sizes.Add(new EmployeeSize{Size = size52, SizeType = sizeType});
 
 			var itemType = Substitute.For<ItemsType>();
 			itemType.Category.Returns(ItemTypeCategory.wear);
-			itemType.WearCategory.Returns(СlothesType.Wear);
 			var nomenclature = Substitute.For<Nomenclature>();
 			nomenclature.Id.Returns(25);
 			nomenclature.Type.Returns(itemType);
-			nomenclature.SizeStd.Returns(SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus));
 			nomenclature.MatchingEmployeeSex(Sex.M).Returns(true);
 			var protectionTools = Substitute.For<ProtectionTools>();
 			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
@@ -468,45 +485,12 @@ namespace WorkwearTest.Organization
 
 			var employeeItem = new EmployeeCardItem(employee, normItem);
 
-			var stockPosition = new StockPosition(nomenclature, "52", "170", 0);
+			var stockPosition = new StockPosition(nomenclature, 0, size52, height170);
 			var result = employeeItem.MatcheStockPosition(stockPosition);
 			Assert.That(result, Is.True);
 		}
-		
-		[Test(Description = "Проверяем что при поиске соответствия обрабатываем установленный пол для номенклатуры с размером и ростом.")]
-		[TestCase(Sex.M, ClothesSex.Men, ExpectedResult = true)]
-		[TestCase(Sex.M, ClothesSex.Women, ExpectedResult = false)]
-		[TestCase(Sex.M, ClothesSex.Universal, ExpectedResult = true)]
-		[TestCase(Sex.F, ClothesSex.Men, ExpectedResult = false)]
-		[TestCase(Sex.F, ClothesSex.Women, ExpectedResult = true)]
-		[TestCase(Sex.F, ClothesSex.Universal, ExpectedResult = true)]
-		public bool MatcheStockPosition_ClothesSex_WearCase(Sex employeeSex, ClothesSex? clothesSex)
-		{
-			var employee = new EmployeeCard();
-			employee.Sex = employeeSex;
-			employee.WearSizeStd = SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus);
-			employee.WearSize = "52";
-			employee.WearGrowth = "170-176";
 
-			var itemType = Substitute.For<ItemsType>();
-			itemType.Category.Returns(ItemTypeCategory.wear);
-			itemType.WearCategory.Returns(СlothesType.Wear);
-			var nomenclature = new Nomenclature();
-			nomenclature.Id = 25;
-			nomenclature.Type = itemType;
-			nomenclature.Sex = clothesSex;
-			nomenclature.SizeStd = SizeHelper.GetSizeStdCode(SizeStandartMenWear.Rus);
-			var protectionTools = Substitute.For<ProtectionTools>();
-			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
-			var normItem = Substitute.For<NormItem>();
-			normItem.ProtectionTools.Returns(protectionTools);
-
-			var employeeItem = new EmployeeCardItem(employee, normItem);
-			var stockPosition = new StockPosition(nomenclature, "52", "170", 0);
-			return employeeItem.MatcheStockPosition(stockPosition);
-		}
-
-		[Test(Description = "Проверяем что при поиске соответствия обрабатываем установленный пол для номенклатуры без размеров.")]
+		[Test(Description = "Проверяем что при поиске соответствия обрабатываем установленный пол для номенклатуры.")]
 		[TestCase(Sex.M, null, ExpectedResult = true)]
 		[TestCase(Sex.M, ClothesSex.Men, ExpectedResult = true)]
 		[TestCase(Sex.M, ClothesSex.Women, ExpectedResult = false)]
@@ -516,61 +500,24 @@ namespace WorkwearTest.Organization
 		[TestCase(Sex.F, ClothesSex.Women, ExpectedResult = true)]
 		[TestCase(Sex.F, ClothesSex.Universal, ExpectedResult = true)]
 		[TestCase(Sex.None, null, ExpectedResult = true)]
-		public bool MatcheStockPosition_ClothesSex_PPECase(Sex employeeSex, ClothesSex? clothesSex)
+		public bool MatcheStockPosition_ClothesSex(Sex employeeSex, ClothesSex? clothesSex)
 		{
 			var employee = new EmployeeCard();
 			employee.Sex = employeeSex;
 
 			var itemType = Substitute.For<ItemsType>();
-			itemType.Category.Returns(ItemTypeCategory.wear);
-			itemType.WearCategory.Returns(СlothesType.PPE);
-			var nomenclature = new Nomenclature();
-			nomenclature.Id = 25;
-			nomenclature.Type = itemType;
-			nomenclature.Sex = clothesSex;
+			var nomenclature = new Nomenclature {
+				Id = 25,
+				Type = itemType,
+				Sex = clothesSex
+			};
 			var protectionTools = Substitute.For<ProtectionTools>();
 			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
 			var normItem = Substitute.For<NormItem>();
 			normItem.ProtectionTools.Returns(protectionTools);
-
 			var employeeItem = new EmployeeCardItem(employee, normItem);
-			var stockPosition = new StockPosition(nomenclature, null, null, 0);
-			return employeeItem.MatcheStockPosition(stockPosition);
-		}
-		
-		[Test(Description = "Проверяем что при поиске соответствия обрабатываем установленный пол для номенклатуры c размерами без деления на мужской и женский стандарты.")]
-		[TestCase(Sex.M, null, ExpectedResult = true)]
-		[TestCase(Sex.M, ClothesSex.Men, ExpectedResult = true)]
-		[TestCase(Sex.M, ClothesSex.Women, ExpectedResult = false)]
-		[TestCase(Sex.M, ClothesSex.Universal, ExpectedResult = true)]
-		[TestCase(Sex.F, null, ExpectedResult = true)]
-		[TestCase(Sex.F, ClothesSex.Men, ExpectedResult = false)]
-		[TestCase(Sex.F, ClothesSex.Women, ExpectedResult = true)]
-		[TestCase(Sex.F, ClothesSex.Universal, ExpectedResult = true)]
-		[TestCase(Sex.None, null, ExpectedResult = true)]
-		public bool MatcheStockPosition_ClothesSex_GlovesCase(Sex employeeSex, ClothesSex? clothesSex)
-		{
-			var employee = new EmployeeCard();
-			employee.Sex = employeeSex;
-			employee.GlovesSizeStd = SizeHelper.GetSizeStdCode(SizeStandartGloves.Rus);
-			employee.GlovesSize = "9";
 
-			var itemType = Substitute.For<ItemsType>();
-			itemType.Category.Returns(ItemTypeCategory.wear);
-			itemType.WearCategory.Returns(СlothesType.Gloves);
-			var nomenclature = new Nomenclature();
-			nomenclature.Id = 25;
-			nomenclature.Type = itemType;
-			nomenclature.Sex = clothesSex;
-			nomenclature.SizeStd = SizeHelper.GetSizeStdCode(SizeStandartGloves.Rus);
-			var protectionTools = Substitute.For<ProtectionTools>();
-			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
-			var normItem = Substitute.For<NormItem>();
-			normItem.ProtectionTools.Returns(protectionTools);
-
-			var employeeItem = new EmployeeCardItem(employee, normItem);
-			var stockPosition = new StockPosition(nomenclature, "9", null, 0);
-			return employeeItem.MatcheStockPosition(stockPosition);
+			return employeeItem.MatcheStockPosition(new StockPosition(nomenclature, 0, null, null));
 		}
 		#endregion
 	}

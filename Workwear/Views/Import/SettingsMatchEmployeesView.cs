@@ -1,6 +1,4 @@
-﻿using System;
-using QS.ViewModels;
-using QS.Views;
+﻿using QS.Views;
 using workwear.ViewModels.Import;
 
 namespace workwear.Views.Import
@@ -10,7 +8,9 @@ namespace workwear.Views.Import
 		public SettingsMatchEmployeesView(SettingsMatchEmployeesViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
-			checkConvertPersonnelNumber.Binding.AddBinding(ViewModel, v => v.ConvertPersonnelNumber, w => w.Active).InitializeFromSource();
+			checkConvertPersonnelNumber.Binding
+				.AddBinding(ViewModel, v => v.ConvertPersonnelNumber, w => w.Active)
+				.InitializeFromSource();
 		}
 	}
 }

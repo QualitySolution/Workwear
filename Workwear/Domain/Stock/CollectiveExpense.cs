@@ -81,32 +81,45 @@ namespace workwear.Domain.Stock
 					new[] { nameof(Items)});
 
 			if(Items.Any (i => i.Amount > 0 && i.Nomenclature == null))
-				yield return new ValidationResult ("Документ не должен содержать строки без выбранной номенклатуры и с указанным количеством.", 
+				yield return new ValidationResult (
+					"Документ не должен содержать строки без выбранной номенклатуры и с указанным количеством.", 
 					new[] { nameof(Items)});
 
 			//Проверка наличия на складе
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
-			if(UoW != null && baseParameters.CheckBalances) {
+			if (UoW != null && baseParameters.CheckBalances)
+			{
 				var repository = new StockRepository();
-				var nomenclatures = Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
-				var excludeOperations = Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
-				var balance = repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
+				var nomenclatures =
+					Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
+				var excludeOperations =
+					Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
+				var balance =
+					repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
 
-				var positionGroups = Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
-				foreach(var position in positionGroups) {
+				var positionGroups =
+					Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
+				foreach (var position in positionGroups)
+				{
 					var amount = position.Sum(x => x.Amount);
-					if(amount == 0)
+					if (amount == 0)
 						continue;
 
-					var stockExist = balance.FirstOrDefault(x => x.StockPosition.Equals(position.Key));
+					var stockExist =
+						balance.FirstOrDefault(x => x.StockPosition.Equals(position.Key));
 
-					if(stockExist == null) {
-						yield return new ValidationResult($"На складе отсутствует - {position.Key.Title}", new[] { nameof(Items) });
+					if (stockExist == null)
+					{
+						yield return new ValidationResult($"На складе отсутствует - {position.Key.Title}",
+							new[] {nameof(Items)});
 						continue;
 					}
 
-					if(stockExist.Amount < amount) {
-						yield return new ValidationResult($"Недостаточное количество - {position.Key.Title}, Необходимо: {amount} На складе: {stockExist.Amount}", new[] { nameof(Items) });
+					if (stockExist.Amount < amount)
+					{
+						yield return new ValidationResult(
+							$"Недостаточное количество - {position.Key.Title}, Необходимо: {amount} На складе: " +
+							$"{stockExist.Amount}", new[] {nameof(Items)});
 						continue;
 					}
 				}
@@ -136,9 +149,9 @@ namespace workwear.Domain.Stock
 			};
 			if(position != null) {
 				newItem.Nomenclature = position.Nomenclature;
-				newItem.Size = position.Size;
-				newItem.WearGrowth = position.Growth;
-				}
+				newItem.WearSize = position.WearSize;
+				newItem.Height = position.Height;
+			}
 
 			ObservableItems.Add(newItem);
 			return newItem;
@@ -152,18 +165,22 @@ namespace workwear.Domain.Stock
 			if(Items.Any(x => employeeCardItem.IsSame(x.EmployeeCardItem)))
 				return null;
 
-			int NeedPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
-			if(employeeCardItem.BestChoiceInStock.Any()) {
-				foreach(var position in employeeCardItem.BestChoiceInStock) {
-					int ExpancePositionAmount = position.Amount;  //Есть на складе
-					foreach(var item in Items) //Считаем сколько осталось на складе c учётом этого документа
-						if(item.Nomenclature == position.Nomenclature && item.Size == position.Size && item.WearGrowth == position.Growth) 
-							ExpancePositionAmount -= item.Amount; 
+			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
+			if (employeeCardItem.BestChoiceInStock.Any()) {
+				foreach (var position in employeeCardItem.BestChoiceInStock) {
+					var expancePositionAmount =
+						Items.Where(item => item.Nomenclature == position.Nomenclature
+						                    && item.WearSize.Id == position.WearSize.Id
+						                    && item.Height.Id == position.Height.Id)
+							.Aggregate(position.Amount, (current, item) => current - item.Amount); //Есть на складе
 
-					if(ExpancePositionAmount >= NeedPositionAmount && position.WearPercent == 0)
-						return AddItem(employeeCardItem, position.StockPosition, NeedPositionAmount);
+					if (expancePositionAmount >= needPositionAmount && position.WearPercent == 0)
+						return AddItem(employeeCardItem, position.StockPosition, needPositionAmount);
 				}
+
+				return AddItem(employeeCardItem);
 			}
+
 			return AddItem(employeeCardItem);
 		}
 
@@ -199,7 +216,7 @@ namespace workwear.Domain.Stock
 		public virtual void PrepareItems(IUnitOfWork uow, BaseParameters baseParameters)
 		{
 			var cardItems = Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
-			EmployeeCard.FillWearInStockInfo(uow, baseParameters, Warehouse, Date, cardItems);
+			EmployeeCard.FillWearInStockInfo(uow, Warehouse, Date, cardItems);
 			foreach(var docItem in Items) {
 				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
 			}
@@ -217,7 +234,6 @@ namespace workwear.Domain.Stock
 			}
 		}
 		#endregion
-
 		#region Ведомость
 		public virtual void CreateIssuanceSheet(UserSettings userSettings)
 		{

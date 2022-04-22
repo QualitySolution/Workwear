@@ -18,7 +18,14 @@ namespace workwear.Journal.ViewModels.Stock
 	{
 		public NomenclatureFilterViewModel Filter { get; private set; }
 
-		public NomenclatureJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		public NomenclatureJournalViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory, 
+			IInteractiveService interactiveService, 
+			INavigationManager navigationManager, 
+			ILifetimeScope autofacScope, 
+			IDeleteEntityService deleteEntityService = null, 
+			ICurrentPermissionService currentPermissionService = null
+			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
 

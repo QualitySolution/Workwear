@@ -776,10 +776,8 @@
     protection_tools.name AS type_name,
     protection_tools.assessed_cost AS assessed_cost,
     protection_tools.id AS type_id,
-    CASE item_types.wear_category WHEN 'Wear' THEN wear_cards.wear_growth ELSE NULL
-END AS growth,
-CASE item_types.wear_category WHEN 'Wear' THEN wear_cards.size_wear WHEN 'Shoes' THEN wear_cards.size_shoes WHEN 'WinterShoes' THEN wear_cards.size_winter_shoes WHEN 'Headgear' THEN wear_cards.size_headdress WHEN 'Gloves' THEN wear_cards.size_gloves ELSE NULL
-END AS size,
+    heightAlias.name AS growth,
+ 	sizeAlias.name AS size,
 measurement_units.name AS unit,
 measurement_units.okei AS okei,
 SUM( count_issue(
@@ -799,6 +797,12 @@ LEFT JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_t
 LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
 LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
 LEFT JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
+LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id  
+LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id  
+LEFT JOIN wear_cards_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)  
+LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id  
+LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)  
+LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id 
 WHERE
     (-1 IN (@subdivisions) OR wear_cards.object_id IN (@subdivisions)) 
     AND wear_cards.dismiss_date IS NULL 
