@@ -230,9 +230,10 @@ namespace workwear.Journal.ViewModels.Communications
 		}
 		void ShowHistoryNotificationAction(object[] nodes)
 		{
-			var ids = nodes.Cast<EmployeeNotificationJournalNode>().Select(x => x.Id);
-			foreach(var id in ids) {
-				NavigationManager.OpenViewModel<HistoryNotificationViewModel, int>(this, id);
+			var employeeNodes = nodes.Cast<EmployeeNotificationJournalNode>();
+			foreach(var node in employeeNodes) {
+				if(node.LkRegistered)
+					NavigationManager.OpenViewModel<HistoryNotificationViewModel, int>(this, node.Id);
 			}
 		}
 
