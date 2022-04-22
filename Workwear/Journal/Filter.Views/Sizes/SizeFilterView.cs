@@ -1,13 +1,12 @@
-﻿
-using QS.Views;
+﻿using QS.Views;
+using workwear.Journal.Filter.ViewModels.Sizes;
 using workwear.Journal.Filter.ViewModels.Stock;
-using Workwear.Measurements;
 
-namespace workwear.Journal.Filter.Views.Stock
+namespace workwear.Journal.Filter.Views.Sizes
 {
 	public partial class SizeFilterView : ViewBase<SizeFilterViewModel>
 	{
-		public SizeFilterView(SizeFilterViewModel viewModel): base(viewModel)
+		public SizeFilterView(SizeFilterViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
 			ConfigureDlg();

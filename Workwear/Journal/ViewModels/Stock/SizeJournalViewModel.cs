@@ -14,8 +14,10 @@ using QS.Services;
 using Remotion.Linq.Parsing.Structure.IntermediateModel;
 using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
+using workwear.Journal.Filter.ViewModels.Sizes;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Measurements;
+using workwear.ViewModels.Sizes;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock

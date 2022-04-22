@@ -1,9 +1,8 @@
-﻿
-using QS.DomainModel.UoW;
+﻿using QS.DomainModel.UoW;
 using QS.Project.Journal;
 using Workwear.Domain.Sizes;
 
-namespace workwear.Journal.Filter.ViewModels.Stock
+namespace workwear.Journal.Filter.ViewModels.Sizes
 {
 	public class SizeTypeFilterViewModel: JournalFilterViewModelBase<SizeTypeFilterViewModel>
 	{

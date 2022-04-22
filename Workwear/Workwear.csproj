@@ -134,6 +134,8 @@
     <Compile Include="HibernateMapping\Stock\CompletionResultItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\CompletionSourceItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\CompletionMap.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Sizes\SizeFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Sizes\SizeTypeFilterViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\SizeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\SizeTypeJournalViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionFilterViewModel.cs" />
@@ -222,6 +224,8 @@
     <Compile Include="Domain\Company\Organization.cs" />
     <Compile Include="HibernateMapping\Company\OrganizatonMap.cs" />
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
+    <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
+    <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
     <Compile Include="Views\Company\OrganizationView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.OrganizationView.cs" />
     <Compile Include="Domain\Statements\IssuanceSheet.cs" />
@@ -493,18 +497,14 @@
     <Compile Include="gtk-gui\workwear.Views.Stock.CompletionView.cs" />
     <Compile Include="Journal\Filter.Views\Company\SubdivisionFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.SubdivisionFilterView.cs" />
-    <Compile Include="Views\Stock\SizeView.cs" />
-    <Compile Include="gtk-gui\workwear.Views.Stock.SizeView.cs" />
-    <Compile Include="ViewModels\Stock\SizeViewModel.cs" />
-    <Compile Include="Views\Stock\SizeTypeView.cs" />
-    <Compile Include="gtk-gui\workwear.Views.Stock.SizeTypeView.cs" />
-    <Compile Include="ViewModels\Stock\SizeTypeViewModel.cs" />
-    <Compile Include="Journal\Filter.Views\Stock\SizeFilterView.cs" />
-    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.SizeFilterView.cs" />
-    <Compile Include="Journal\Filter.ViewModels\Stock\SizeFilterViewModel.cs" />
-    <Compile Include="Journal\Filter.Views\Stock\SizeTypeFilterView.cs" />
-    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.SizeTypeFilterView.cs" />
-    <Compile Include="Journal\Filter.ViewModels\Stock\SizeTypeFilterViewModel.cs" />
+    <Compile Include="Views\Sizes\SizeView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Sizes.SizeView.cs" />
+    <Compile Include="Views\Sizes\SizeTypeView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Sizes.SizeTypeView.cs" />
+    <Compile Include="Journal\Filter.Views\Sizes\SizeFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Sizes.SizeFilterView.cs" />
+    <Compile Include="Journal\Filter.Views\Sizes\SizeTypeFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Sizes.SizeTypeFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -747,6 +747,8 @@
     <Folder Include="ViewModels\Communications\" />
     <Folder Include="Views\Communications\" />
     <Folder Include="Journal\ViewModels\Communications\" />
+    <Folder Include="Views\Sizes\" />
+    <Folder Include="Journal\Filter.Views\Sizes\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

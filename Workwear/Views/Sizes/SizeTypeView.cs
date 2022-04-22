@@ -7,9 +7,10 @@ using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
+using workwear.ViewModels.Sizes;
 using workwear.ViewModels.Stock;
 
-namespace workwear.Views.Stock
+namespace workwear.Views.Sizes
 {
 	public partial class SizeTypeView : EntityDialogViewBase<SizeTypeViewModel, SizeType>
 	{
@@ -48,7 +49,7 @@ namespace workwear.Views.Stock
 				.AddColumn("Значение").AddTextRenderer(x => x.Name)
 				.AddColumn("Открыты для сотрудника").AddTextRenderer(x => x.UseInEmployee ? "☑" : "☒")
 				.AddColumn("Открыты для номенклатуры").AddTextRenderer(x => x.UseInNomenclature ? "☑" : "☒")
-				.AddColumn("Аналоги").AddTextRenderer(x => 
+				.AddColumn("Аналоги").AddTextRenderer(x =>
 					String.Join(", ", x.SuitableSizes.Select(z => z.Name)))
 				.Finish();
 			ytreeviewSizes.Binding.CleanSources();
@@ -60,11 +61,11 @@ namespace workwear.Views.Stock
 			ytreeviewSizes.RowActivated += OpenSize;
 		}
 
-		private void OpenSize(object o, RowActivatedArgs args) => 
+		private void OpenSize(object o, RowActivatedArgs args) =>
 			ViewModel.OpenSize(ytreeviewSizes.SelectedRow.GetId());
-		private void RemoveSize(object sender, EventArgs e) => 
+		private void RemoveSize(object sender, EventArgs e) =>
 			ViewModel.RemoveSize(ytreeviewSizes.GetSelectedObject<Size>());
-		private void SelectionOnChanged(object sender, EventArgs e) => 
+		private void SelectionOnChanged(object sender, EventArgs e) =>
 			ybuttonRemoveSize.Sensitive = ytreeviewSizes.GetSelectedObject<Size>()?.Id > SizeService.MaxStandartSizeId;
 		private void AddSize(object sender, EventArgs e) => ViewModel.AddSize();
 	}

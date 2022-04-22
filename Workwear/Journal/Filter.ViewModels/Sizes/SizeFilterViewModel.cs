@@ -3,7 +3,7 @@ using QS.Project.Journal;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 
-namespace workwear.Journal.Filter.ViewModels.Stock
+namespace workwear.Journal.Filter.ViewModels.Sizes
 {
 	public class SizeFilterViewModel: JournalFilterViewModelBase<SizeFilterViewModel>
 	{

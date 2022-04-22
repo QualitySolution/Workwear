@@ -3,10 +3,10 @@ using Gamma.Binding.Converters;
 using Gamma.GtkWidgets;
 using QS.Views.Dialog;
 using Workwear.Domain.Sizes;
-using Workwear.Measurements;
+using workwear.ViewModels.Sizes;
 using workwear.ViewModels.Stock;
 
-namespace workwear.Views.Stock
+namespace workwear.Views.Sizes
 {
 	public partial class SizeView : EntityDialogViewBase<SizeViewModel, Size>
 	{
@@ -45,7 +45,8 @@ namespace workwear.Views.Stock
 			ytreeviewSuitableSizes.Selection.Changed += SelectionOnChanged;
 		}
 
-		private void CreateSuitableTable() {
+		private void CreateSuitableTable()
+		{
 			ytreeviewSuitableSizes.ColumnsConfig = ColumnsConfigFactory.Create<Size>()
 				.AddColumn("Значение").AddTextRenderer(x => x.Name)
 				.Finish();
@@ -56,11 +57,12 @@ namespace workwear.Views.Stock
 				.InitializeFromSource();
 		}
 		private void AddAnalog(object sender, EventArgs eventArgs) => ViewModel.AddAnalog();
-		private void RemoveAnalog(object sender, EventArgs eventArgs) {
+		private void RemoveAnalog(object sender, EventArgs eventArgs)
+		{
 			var analog = ytreeviewSuitableSizes.GetSelectedObject<Size>();
 			ViewModel.RemoveAnalog(analog);
 		}
-		void SelectionOnChanged(object sender, EventArgs e) => 
+		void SelectionOnChanged(object sender, EventArgs e) =>
 			ybuttonRemoveSuitable.Sensitive = ytreeviewSuitableSizes.Selection.CountSelectedRows() > 0;
 	}
 }
