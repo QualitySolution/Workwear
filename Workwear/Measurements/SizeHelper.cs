@@ -34,7 +34,7 @@ namespace workwear.Measurements
 		{
 			Enum value = standartEnum as Enum;
 			if (value == null)
-				throw new InvalidCastException ("standartEnum должент быть перечислением.");
+				throw new InvalidCastException ("standartEnum должен быть перечислением.");
 			
 			var att = value.GetAttribute<StdCodeAttribute> ();
 			return att == null ? null : att.Code;
@@ -168,7 +168,7 @@ namespace workwear.Measurements
 
 		#region Размеры
 
-		[Obsolete("Желательно не использовать напряму, а использовать специальные методы из SizeService")]
+		[Obsolete("Желательно не использовать напрямую, а использовать специальные методы из SizeService")]
 		public static string[] GetSizesListByStdCode(string stdCode, params SizeUse[] excludeUse)
 		{
 			if(stdCode == null) return new string[] { " "};

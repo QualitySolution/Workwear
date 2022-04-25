@@ -104,14 +104,14 @@ namespace workwear.Domain.Stock
 
 		private IList<ProtectionTools> protectionTools = new List<ProtectionTools>();
 
-		[Display(Name = "Номенаклатуры нормы")]
+		[Display(Name = "Номенклатура нормы")]
 		public virtual IList<ProtectionTools> ProtectionTools {
 			get { return protectionTools; }
 			set { SetField(ref protectionTools, value, () => ProtectionTools); }
 		}
 
 		GenericObservableList<ProtectionTools> observableProtectionTools;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<ProtectionTools> ObservableProtectionTools {
 			get {
 				if(observableProtectionTools == null)

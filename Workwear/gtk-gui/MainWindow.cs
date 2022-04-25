@@ -47,8 +47,6 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionNorms;
 
-	private global::Gtk.Action Action13;
-
 	private global::Gtk.Action ActionRequestSheet;
 
 	private global::Gtk.Action ActionAverageAnnualNeed;
@@ -266,9 +264,6 @@ public partial class MainWindow
 		this.ActionNorms = new global::Gtk.Action("ActionNorms", global::Mono.Unix.Catalog.GetString("Нормы выдачи"), null, null);
 		this.ActionNorms.ShortLabel = global::Mono.Unix.Catalog.GetString("Нормы выдачи");
 		w1.Add(this.ActionNorms, null);
-		this.Action13 = new global::Gtk.Action("Action13", global::Mono.Unix.Catalog.GetString("Ведомость на выдачу"), null, null);
-		this.Action13.ShortLabel = global::Mono.Unix.Catalog.GetString("Ведомость на выдачу");
-		w1.Add(this.Action13, null);
 		this.ActionRequestSheet = new global::Gtk.Action("ActionRequestSheet", global::Mono.Unix.Catalog.GetString("Заявка на спецодежду"), null, null);
 		this.ActionRequestSheet.ShortLabel = global::Mono.Unix.Catalog.GetString("Месячная заявка");
 		w1.Add(this.ActionRequestSheet, null);
@@ -355,8 +350,8 @@ public partial class MainWindow
 		this.ActionVK = new global::Gtk.Action("ActionVK", global::Mono.Unix.Catalog.GetString("Вконтакте"), null, "vk");
 		this.ActionVK.ShortLabel = global::Mono.Unix.Catalog.GetString("Вконтакте");
 		w1.Add(this.ActionVK, null);
-		this.ActionOdnoklasniki = new global::Gtk.Action("ActionOdnoklasniki", global::Mono.Unix.Catalog.GetString("Однокласники"), null, "odnoklasniki");
-		this.ActionOdnoklasniki.ShortLabel = global::Mono.Unix.Catalog.GetString("Однокласники");
+		this.ActionOdnoklasniki = new global::Gtk.Action("ActionOdnoklasniki", global::Mono.Unix.Catalog.GetString("Одноклассники"), null, "odnoklasniki");
+		this.ActionOdnoklasniki.ShortLabel = global::Mono.Unix.Catalog.GetString("Одноклассники");
 		w1.Add(this.ActionOdnoklasniki, null);
 		this.ActionTwitter = new global::Gtk.Action("ActionTwitter", global::Mono.Unix.Catalog.GetString("Twitter"), null, "twitter");
 		this.ActionTwitter.ShortLabel = global::Mono.Unix.Catalog.GetString("Twitter");

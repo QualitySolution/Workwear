@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Autofac;
 using Gtk;
@@ -75,7 +75,7 @@ namespace workwear.Views.Statements
 			if(args.Event.Button == 3) {
 				var menu = new Menu();
 				var selected = ytreeviewItems.GetSelectedObjects<IssuanceSheetItem>();
-				var item = new MenuItemId<IssuanceSheetItem[]>("Открыть номеклатуру");
+				var item = new MenuItemId<IssuanceSheetItem[]>("Открыть номенклатуру");
 				item.ID = selected;
 				if(selected == null)
 					item.Sensitive = false;

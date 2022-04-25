@@ -49,7 +49,7 @@ namespace workwear.Views.Stock
 		{
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<CollectiveExpenseItem>()
 				.AddColumn("Сотрудник").AddTextRenderer(x => x.Employee.ShortName)
-				.AddColumn("Номенаклатуры нормы").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
+				.AddColumn("Номенклатура нормы").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
 				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
 				.SetDisplayFunc(x => x.Nomenclature?.Name)
 					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))
@@ -97,13 +97,13 @@ namespace workwear.Views.Stock
 				itemOpenEmployee.Activated += ItemOpenEmployee_Activated;
 				menu.Add(itemOpenEmployee);
 
-				var itemOpenProtection = new MenuItemId<CollectiveExpenseItem>("Открыть номеклатуру нормы");
+				var itemOpenProtection = new MenuItemId<CollectiveExpenseItem>("Открыть номенклатуру нормы");
 				itemOpenProtection.ID = selected;
 				itemOpenProtection.Sensitive = selected.ProtectionTools != null && selected != null;
 				itemOpenProtection.Activated += ItemOpenProtection_Activated;
 				menu.Add(itemOpenProtection);
 
-				var itemOpenNomenclature = new MenuItemId<CollectiveExpenseItem>("Открыть номеклатуру");
+				var itemOpenNomenclature = new MenuItemId<CollectiveExpenseItem>("Открыть номенклатуру");
 				itemOpenNomenclature.ID = selected;
 				itemOpenNomenclature.Sensitive = selected.Nomenclature != null && selected != null;
 				itemOpenNomenclature.Activated += Item_Activated;

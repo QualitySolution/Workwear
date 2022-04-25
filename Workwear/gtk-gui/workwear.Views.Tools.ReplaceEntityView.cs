@@ -109,12 +109,12 @@ namespace workwear.Views.Tools
 			this.ylabel2 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel2.Name = "ylabel2";
 			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Внимание данная процедура необратима!! Рекомендуем сделать резервную копию БД.\nПр" +
-					"оцедура заменить все ссылки на с одной номеклатуры нормы на другую. Тем самым по" +
-					"зволяя объединять дублированные объекты.");
+					"оцедура заменить все ссылки на с одной номенклатуры нормы на другую. Тем самым п" +
+					"озволяя объединять дублированные объекты.");
 			this.ylabel2.Justify = ((global::Gtk.Justification)(2));
 			this.ytable2.Add(this.ylabel2);
 			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabel2]));
-			w6.RightAttach = ((uint)(2));
+			w6.RightAttach = ((uint)(3));
 			w6.XOptions = ((global::Gtk.AttachOptions)(4));
 			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild

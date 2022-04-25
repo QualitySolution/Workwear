@@ -58,7 +58,7 @@ namespace workwear.Journal.ViewModels.Communications
 
 			(DataLoader as ThreadDataLoader<EmployeeNotificationJournalNode>).PostLoadProcessingFunc = HandlePostLoadProcessing;
 
-			//Обход проблемы с тем что SelectionMode одновременно управляет и выбором в журнале, и самим режмиом журнала.
+			//Обход проблемы с тем что SelectionMode одновременно управляет и выбором в журнале, и самим режимом журнала.
 			//То есть создает действие выбора. Удалить после того как появится рефакторинг действий журнала. 
 			SelectionMode = JournalSelectionMode.Multiple;
 			NodeActionsList.Clear();
@@ -205,6 +205,14 @@ namespace workwear.Journal.ViewModels.Communications
 			NodeActionsList.Add(editAction);
 
 			RowActivatedAction = editAction;
+			
+			var showHistoryNotificationAction = new JournalAction("Показать сообщения",
+				(selected) => selected.Any(x => ((EmployeeNotificationJournalNode) x).LkRegistered),
+				(selected) => VisibleEditAction,
+				(selected) => ShowHistoryNotificationAction(selected)
+			);
+
+			NodeActionsList.Add(showHistoryNotificationAction);
 		}
 
 		public readonly HashSet<int> SelectedList = new HashSet<int>();
@@ -219,6 +227,14 @@ namespace workwear.Journal.ViewModels.Communications
 		{
 			var ids = Items.Cast<EmployeeNotificationJournalNode>().Where(x => x.Selected).Select(x => x.Id).ToArray();
 			NavigationManager.OpenViewModel<SendMessangeViewModel, int[]>(this, ids);
+		}
+		void ShowHistoryNotificationAction(object[] nodes)
+		{
+			var employeeNodes = nodes.Cast<EmployeeNotificationJournalNode>();
+			foreach(var node in employeeNodes) {
+				if(node.LkRegistered)
+					NavigationManager.OpenViewModel<HistoryNotificationViewModel, int>(this, node.Id);
+			}
 		}
 
 		void ChooseAll()

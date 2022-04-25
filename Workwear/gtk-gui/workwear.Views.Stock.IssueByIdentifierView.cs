@@ -233,7 +233,7 @@ namespace workwear.Views.Stock
 			this.labelWarehouse = new global::Gamma.GtkWidgets.yLabel();
 			this.labelWarehouse.Name = "labelWarehouse";
 			this.labelWarehouse.Xalign = 1F;
-			this.labelWarehouse.LabelProp = global::Mono.Unix.Catalog.GetString("Скалад выдачи:");
+			this.labelWarehouse.LabelProp = global::Mono.Unix.Catalog.GetString("Склад выдачи:");
 			this.tableSettings.Add(this.labelWarehouse);
 			global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.tableSettings[this.labelWarehouse]));
 			w20.TopAttach = ((uint)(2));

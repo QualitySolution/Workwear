@@ -469,9 +469,9 @@ namespace workwear.Views.Regulations
 			w41.Fill = false;
 			// Container child hbox6.Gtk.Box+BoxChild
 			this.buttonReplaceNomeclature = new global::Gamma.GtkWidgets.yButton();
-			this.buttonReplaceNomeclature.TooltipMarkup = "Заменяет номеклатуру в норме на другую, при этом так же заменяя номеклатуру в вы " +
-				"выдачах и потребностях сотрудников в которых использовалась данная строка нормы." +
-				"";
+			this.buttonReplaceNomeclature.TooltipMarkup = "Заменяет одну номенклатуру в норме на другую, при этом так же заменяя номенклатур" +
+				"у в выдачах и потребностях сотрудников в которых использовалась данная строка но" +
+				"рмы.";
 			this.buttonReplaceNomeclature.Sensitive = false;
 			this.buttonReplaceNomeclature.CanFocus = true;
 			this.buttonReplaceNomeclature.Name = "buttonReplaceNomeclature";

@@ -58,7 +58,7 @@ namespace workwear.Journal.Filter.Views.Regulations
 			this.ylabel4 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel4.Name = "ylabel4";
 			this.ylabel4.Xalign = 1F;
-			this.ylabel4.LabelProp = global::Mono.Unix.Catalog.GetString("Номеклатура нормы:");
+			this.ylabel4.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатура нормы:");
 			this.table1.Add(this.ylabel4);
 			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel4]));
 			w4.TopAttach = ((uint)(1));
