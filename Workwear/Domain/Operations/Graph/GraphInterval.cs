@@ -9,7 +9,7 @@ namespace workwear.Domain.Operations.Graph
 		public DateTime StartDate;
 		
 		/// <summary>
-		/// Интервал содержит операцию переопределяющую все предыдущие выдачи. То есть если до этого чтото было не списано, то после этой выдачи оно обнуляется
+		/// Интервал содержит операцию переопределяющую все предыдущие выдачи. То есть если до этого что-то было не списано, то после этой выдачи оно обнулятся
 		/// </summary>
 		public bool Reset = false;
 		public List<GraphItem> ActiveItems = new List<GraphItem>();

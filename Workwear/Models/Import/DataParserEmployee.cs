@@ -100,7 +100,7 @@ namespace workwear.Models.Import
 			AddColumnName(DataTypeEmployee.ShoesSize,
 				"Обувь"
 				);
-			//Разместил былиже к концу чтобы слово "размер", срабатывало только в том случае если другого не нашли.
+			//Разместил ближе к концу чтобы слово "размер", срабатывало только в том случае если другого не нашли.
 			AddColumnName(DataTypeEmployee.WearSize,
 				"Размер",
 				"Одежда"
@@ -259,7 +259,7 @@ namespace workwear.Models.Import
 					break;
 
 				default:
-					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
+					throw new NotSupportedException($"Тип данных {dataType} не поддерживается.");
 			}
 		}
 
@@ -331,7 +331,7 @@ namespace workwear.Models.Import
 			foreach(var employee in exists) {
 				var found = list.Where(x => СompareFio(x, employee, columns)).ToArray();
 				if(!found.Any())
-					continue; //Так как из базе ищем без отчества, могуть быть лишние.
+					continue; //Так как в базе ищем без отчества, могут быть лишние.
 				found.First().Employees.Add(employee);
 			}
 
@@ -434,7 +434,7 @@ namespace workwear.Models.Import
 		{
 			var employee = row.Employees.FirstOrDefault() ?? new EmployeeCard();
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
-			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученой из общего поля ФИО.
+			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученной из общего поля ФИО.
 			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType)) {
 				if(row.ChangedColumns[column].ChangeType == ChangeType.NewEntity || row.ChangedColumns[column].ChangeType == ChangeType.ChangeValue)
 					SetValue(settings, uow, employee, row, column);
@@ -521,7 +521,7 @@ namespace workwear.Models.Import
 					break;
 
 				default:
-					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
+					throw new NotSupportedException($"Тип данных {dataType} не поддерживается.");
 			}
 		}
 		#endregion

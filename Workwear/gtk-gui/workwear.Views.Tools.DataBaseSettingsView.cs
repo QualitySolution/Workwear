@@ -123,7 +123,7 @@ namespace workwear.Views.Tools
 			// Container child table1.Gtk.Table+TableChild
 			this.checkEmployeeSizeRanges = new global::Gamma.GtkWidgets.yCheckButton();
 			this.checkEmployeeSizeRanges.TooltipMarkup = "Политика позволяет указывать в сотруднике не конкретный размер, диапазон размеров" +
-				", для выдачи в подборе одежды только указанного дипазона.";
+				", для выдачи в подборе одежды только указанного диапазона.";
 			this.checkEmployeeSizeRanges.CanFocus = true;
 			this.checkEmployeeSizeRanges.Name = "checkEmployeeSizeRanges";
 			this.checkEmployeeSizeRanges.Label = global::Mono.Unix.Catalog.GetString("Включено");

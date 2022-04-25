@@ -45,7 +45,7 @@ namespace workwear.Tools.Features
 			serialNumberEncoder.Number = serialNumberService.SerialNumber;
 			if(serialNumberEncoder.IsValid) {
 				if(serialNumberEncoder.CodeVersion == 1)
-					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к професиональной редации.
+					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к профессиональной редакции.
 				else if(serialNumberEncoder.CodeVersion == 2 
 						&& serialNumberEncoder.EditionId >= 1
 						&& serialNumberEncoder.EditionId <= 3) 
@@ -63,7 +63,7 @@ namespace workwear.Tools.Features
 		virtual public bool Available(WorkwearFeature feature)
 		{
 			if(feature == WorkwearFeature.MassExpense)
-				return false; //TODO Документ временно отключен совсем. Пока не будет принято решение чиним его или удаляем за не надобностью. Так как в 2.6 добавлен вполне рабочий документ колективной выдачи, который во многом повторяет задачу этого документа.
+				return false; //TODO Документ временно отключен совсем. Пока не будет принято решение чиним его или удаляем за не надобностью. Так как в 2.6 добавлен вполне рабочий документ коллективной выдачи, который во многом повторяет задачу этого документа.
 
 			if(ProductEdition == 0)
 				return true; //В демо редакции доступны все возможности.
@@ -111,7 +111,7 @@ namespace workwear.Tools.Features
 		BatchProcessing,
 		[Display(Name = "Мобильный кабинет сотрудника")]
 		EmployeeLk,
-		[Display(Name = "Комуникация с сотрудниками")]
+		[Display(Name = "Коммуникация с сотрудниками")]
 		Communications,
 	}
 }

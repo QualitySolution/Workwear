@@ -93,7 +93,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 				return; //Не чего не делаем если это наше собственное изменение.
 			if(changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Delete).Select(e => e.Entity).OfType<EmployeeCardItem>().Any(x => x.EmployeeCard.IsSame(Entity))) {
 				//Если сделано удаление строк, просто закрываем диалог, так как заставить корректно сохранить сотрудника все равно не поучится.
-				//Не работаел следующий сценарий: Открываем диалог сотрудника, строка добавленая по норме есть в списке, открываем норму, удаляем одну из строк, сохраняем норму. После этого пытаемся сохранить сотрудника.
+				//Не работал следующий сценарий: Открываем диалог сотрудника, строка добавленная по норме есть в списке, открываем норму, удаляем одну из строк, сохраняем норму. После этого пытаемся сохранить сотрудника.
 				var page = navigation.FindPage(employeeViewModel);
 				navigation.ForceClosePage(page, CloseSource.Self);
 				return;
@@ -145,7 +145,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
 			else if(operations.First().OverrideBefore)
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(operations.First().Id), OpenPageOptions.AsSlave);
-			else if(interactive.Question($"Для «{row.ProtectionTools.Name}» уже выполнялись полоноценные выдачи внесение ручных изменений может привести к нежелательным результатам. Продолжить?"))
+			else if(interactive.Question($"Для «{row.ProtectionTools.Name}» уже выполнялись полноценные выдачи, внесение ручных изменений может привести к нежелательным результатам. Продолжить?"))
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
 			else
 				return;
@@ -187,7 +187,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		public void RecalculateLastIssue(EmployeeCardItem row)
 		{
 			var operation = row.LastIssueOperation;
-			//Если строку нормы по которой выдавали удалили, пытаемся переподвязать к имеющиейся совпадающей по СИЗ 
+			//Если строку нормы по которой выдавали удалили, пытаемся пере-подвязать к имеющийся совпадающей по СИЗ 
 			if (!(row.EmployeeCard.WorkwearItems.Any(x => x.ActiveNormItem.Id == operation.NormItem.Id))) {
 				if (row.EmployeeCard.WorkwearItems.Any(x => x.ProtectionTools.Id == operation.ProtectionTools.Id)) {
 					var norm = row.EmployeeCard.WorkwearItems

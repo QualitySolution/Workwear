@@ -270,7 +270,7 @@ namespace workwear.ViewModels.Company
 
 		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			//Так как склад подбора мог поменятся при смене подразделения.
+			//Так как склад подбора мог поменяться при смене подразделения.
 			if(e.PropertyName == nameof(Entity.Subdivision)) {
 				Entity.FillWearInStockInfo(UoW, baseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
 				OnPropertyChanged(nameof(SubdivisionAddress));

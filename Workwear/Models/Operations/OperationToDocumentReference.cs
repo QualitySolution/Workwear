@@ -38,7 +38,7 @@ namespace workwear.Models.Operations
 			}
 		}
 		//Внимание здесь последовательность получения ID желательно сохранять такую же как у типа документа.
-		//Так как в случае ошибочной связи операции с двумя документами возьмется первый надейнных в обоих случаях, иначе будет тип одного, а id от другого.
+		//Так как в случае ошибочной связи операции с двумя документами возьмется первый найденный в обоих случаях, иначе будет тип одного, а id от другого.
 		public int? DocumentId => ExpenceId ?? CollectiveExpenseId ?? IncomeId ?? TransferId ?? WriteoffId;
 
 		public int? ItemId => ExpenceItemId ?? CollectiveExpenseItemId ?? IncomeItemId ?? TransferItemId ?? WriteoffItemId;

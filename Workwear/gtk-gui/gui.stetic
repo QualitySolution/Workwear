@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -818,7 +818,7 @@
               <widget class="Gtk.Label" id="label9">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Тип номеклатуры&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
+                <property name="LabelProp" translatable="yes">Тип номенклатуры&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
                 <property name="UseMarkup">True</property>
               </widget>
               <packing>
@@ -5605,12 +5605,6 @@
         <property name="ShortLabel" translatable="yes">Нормы выдачи</property>
         <signal name="Activated" handler="OnActionNormsActivated" />
       </action>
-      <action id="Action13">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Ведомость на выдачу</property>
-        <property name="ShortLabel" translatable="yes">Ведомость на выдачу</property>
-        <signal name="Activated" handler="OnAction13Activated" />
-      </action>
       <action id="ActionRequestSheet">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Заявка на спецодежду</property>
@@ -5805,8 +5799,8 @@
       </action>
       <action id="ActionOdnoklasniki">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Однокласники</property>
-        <property name="ShortLabel" translatable="yes">Однокласники</property>
+        <property name="Label" translatable="yes">Одноклассники</property>
+        <property name="ShortLabel" translatable="yes">Одноклассники</property>
         <property name="StockId">odnoklasniki</property>
         <signal name="Activated" handler="OnActionOdnoklasnikiActivated" />
       </action>
@@ -6920,7 +6914,7 @@
               <widget class="Gamma.GtkWidgets.yButton" id="buttonReplaceNomeclature">
                 <property name="MemberName" />
                 <property name="Sensitive">False</property>
-                <property name="Tooltip" translatable="yes">Заменяет номеклатуру в норме на другую, при этом так же заменяя номеклатуру в вы выдачах и потребностях сотрудников в которых использовалась данная строка нормы.</property>
+                <property name="Tooltip" translatable="yes">Заменяет одну номенклатуру в норме на другую, при этом так же заменяя номенклатуру в выдачах и потребностях сотрудников в которых использовалась данная строка нормы.</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">resource:workwear.icon.buttons.arrows.png</property>
@@ -7041,7 +7035,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.NotIssuedSheetView" design-size="513 328">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.NotIssuedSheetView" design-size="533 311">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -7148,8 +7142,8 @@
             <child>
               <widget class="Gtk.Label" id="label2">
                 <property name="MemberName" />
-                <property name="WidthRequest">250</property>
-                <property name="LabelProp" translatable="yes">&lt;i&gt;Обратите внимание:&lt;/i&gt; Отчет показывает недополученное по текущим потребностям. То есть при значительном удалении даты отчет от сегодняшнего дня, данные будут некорретны.</property>
+                <property name="WidthRequest">400</property>
+                <property name="LabelProp" translatable="yes">&lt;i&gt;Обратите внимание:&lt;/i&gt; Отчет показывает недополученное по текущим потребностям. То есть при значительном удалении даты отчет от сегодняшнего дня, данные будут некорректны.</property>
                 <property name="UseMarkup">True</property>
                 <property name="Wrap">True</property>
                 <property name="Justify">Fill</property>
@@ -8514,7 +8508,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Tools.DataBaseSettingsView" design-size="651 410">
+  <widget class="Gtk.Bin" id="workwear.Views.Tools.DataBaseSettingsView" design-size="774 400">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -8612,7 +8606,7 @@
                     <child>
                       <widget class="Gamma.GtkWidgets.yCheckButton" id="checkEmployeeSizeRanges">
                         <property name="MemberName" />
-                        <property name="Tooltip" translatable="yes">Политика позволяет указывать в сотруднике не конкретный размер, диапазон размеров, для выдачи в подборе одежды только указанного дипазона.</property>
+                        <property name="Tooltip" translatable="yes">Политика позволяет указывать в сотруднике не конкретный размер, диапазон размеров, для выдачи в подборе одежды только указанного диапазона.</property>
                         <property name="CanFocus">True</property>
                         <property name="Label" translatable="yes">Включено</property>
                         <property name="DrawIndicator">True</property>
@@ -9850,7 +9844,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Statements.IssuanceSheetView" design-size="958 475">
+  <widget class="Gtk.Bin" id="workwear.Views.Statements.IssuanceSheetView" design-size="961 475">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -10070,7 +10064,7 @@
               <widget class="Gtk.Label" id="label2">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Материально ответсвенное лицо:</property>
+                <property name="LabelProp" translatable="yes">Материально ответственное лицо:</property>
               </widget>
               <packing>
                 <property name="TopAttach">1</property>
@@ -13332,7 +13326,7 @@
                   <widget class="Gtk.Label" id="label9">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Тип номеклатуры&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
+                    <property name="LabelProp" translatable="yes">Тип номенклатуры&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
                     <property name="UseMarkup">True</property>
                   </widget>
                   <packing>
@@ -13569,10 +13563,10 @@
             <child>
               <widget class="Gamma.GtkWidgets.yButton" id="buttonCreateNomenclature">
                 <property name="MemberName" />
-                <property name="Tooltip" translatable="yes">Создать складскую номеклатуру с тем же названием.</property>
+                <property name="Tooltip" translatable="yes">Создать складскую номенклатуру с тем же названием.</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
-                <property name="Label" translatable="yes">Создать идентичную номеклатуру</property>
+                <property name="Label" translatable="yes">Создать идентичную номенклатуру</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonCreateNomenclatureClicked" />
               </widget>
@@ -14150,7 +14144,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="393 369">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="394 369">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -14346,7 +14340,7 @@
           <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckSummry">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Суммарно по организаци</property>
+            <property name="Label" translatable="yes">Суммарно по организации</property>
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
@@ -14816,7 +14810,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Journal.Filter.Views.Stock.NomenclatureFilterView" design-size="434 300">
+  <widget class="Gtk.Bin" id="workwear.Journal.Filter.Views.Stock.NomenclatureFilterView" design-size="442 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -14868,7 +14862,7 @@
         <child>
           <widget class="Gamma.GtkWidgets.yLabel" id="ylabel1">
             <property name="MemberName" />
-            <property name="LabelProp" translatable="yes">Тип номеклатуры:</property>
+            <property name="LabelProp" translatable="yes">Тип номенклатуры:</property>
           </widget>
           <packing>
             <property name="AutoSize">True</property>
@@ -15126,7 +15120,7 @@
                   <widget class="Gamma.GtkWidgets.yLabel" id="labelWarehouse">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Скалад выдачи:</property>
+                    <property name="LabelProp" translatable="yes">Склад выдачи:</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">2</property>
@@ -15456,9 +15450,9 @@
                             <child>
                               <widget class="Gtk.Label" id="labelColumnRecomendations">
                                 <property name="MemberName" />
-                                <property name="LabelProp" translatable="yes">Установите номер строки с заголовком данных, таким образом чтобы название колонок было корретно. Если в таблице заголовки отутствуют укажите 0.
+                                <property name="LabelProp" translatable="yes">Установите номер строки с заголовком данных, таким образом чтобы название колонок было корректно. Если в таблице заголовки отсутствуют укажите 0.
 Далее для каждой значимой колонки проставьте тип данных которых находится в таблице.
-При загрузки листа программа автоматически пытается найти залоговок таблицы и выбрать тип данных.
+При загрузки листа программа автоматически пытается найти заголовок таблицы и выбрать тип данных.
 Обязательными данными являются Фамилия и Имя или ФИО.</property>
                                 <property name="Wrap">True</property>
                                 <property name="Justify">Fill</property>
@@ -15582,7 +15576,7 @@
                                     <child>
                                       <widget class="Gamma.GtkWidgets.yLabel" id="labelCountChangedEmployees">
                                         <property name="MemberName" />
-                                        <property name="LabelProp" translatable="yes">Измененые</property>
+                                        <property name="LabelProp" translatable="yes">Измененные</property>
                                       </widget>
                                     </child>
                                   </widget>
@@ -16026,7 +16020,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Journal.Filter.Views.Regulations.NormFilterView" design-size="439 300">
+  <widget class="Gtk.Bin" id="workwear.Journal.Filter.Views.Regulations.NormFilterView" design-size="447 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -16102,7 +16096,7 @@
           <widget class="Gamma.GtkWidgets.yLabel" id="ylabel4">
             <property name="MemberName" />
             <property name="Xalign">1</property>
-            <property name="LabelProp" translatable="yes">Номеклатура нормы:</property>
+            <property name="LabelProp" translatable="yes">Номенклатура нормы:</property>
           </widget>
           <packing>
             <property name="TopAttach">1</property>
@@ -16663,7 +16657,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Tools.ReplaceEntityView" design-size="967 300">
+  <widget class="Gtk.Bin" id="workwear.Views.Tools.ReplaceEntityView" design-size="902 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -16677,9 +16671,6 @@
             <property name="NColumns">3</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
-            <child>
-              <placeholder />
-            </child>
             <child>
               <placeholder />
             </child>
@@ -16801,11 +16792,11 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabel2">
                 <property name="MemberName" />
                 <property name="LabelProp" translatable="yes">Внимание данная процедура необратима!! Рекомендуем сделать резервную копию БД.
-Процедура заменить все ссылки на с одной номеклатуры нормы на другую. Тем самым позволяя объединять дублированные объекты.</property>
+Процедура заменить все ссылки на с одной номенклатуры нормы на другую. Тем самым позволяя объединять дублированные объекты.</property>
                 <property name="Justify">Center</property>
               </widget>
               <packing>
-                <property name="RightAttach">2</property>
+                <property name="RightAttach">3</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>

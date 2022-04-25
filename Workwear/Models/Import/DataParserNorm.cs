@@ -93,7 +93,7 @@ namespace workwear.Models.Import
 					else
 						return ChangeType.ParseError;
 				default:
-					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
+					throw new NotSupportedException($"Тип данных {dataType} не поддерживается.");
 			}
 		}
 		#endregion
@@ -247,7 +247,7 @@ namespace workwear.Models.Import
 		public IEnumerable<object> PrepareToSave(IUnitOfWork uow, SheetRowNorm row)
 		{
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
-			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученой из общего поля ФИО.
+			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученной из общего поля ФИО.
 			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType)) {
 				SetValue(uow, row.NormItem, column.DataType, row.CellStringValue(column.Index));
 			}
@@ -274,7 +274,7 @@ namespace workwear.Models.Import
 					}
 					break;
 				default:
-					throw new NotSupportedException($"Тип данных {dataType} не подерживатся.");
+					throw new NotSupportedException($"Тип данных {dataType} не поддерживается.");
 			}
 		}
 		#endregion

@@ -142,9 +142,7 @@ namespace workwear
 			builder.Register(x => DeleteConfig.Main).AsSelf().ExternallyOwned();
 			builder.RegisterType<ReplaceEntity>().AsSelf();
  			#endregion
-			//FIXME Нужно в конечном итоге попытаться избавится от CommonService вообще.
-			builder.RegisterType<CommonServices>().As<ICommonServices>();
-			builder.RegisterType<UserService>().As<IUserService>();
+      builder.RegisterType<UserService>().As<IUserService>();
 			builder.RegisterType<ObjectValidator>().As<IValidator>();
 			//FIXME Реализовать везде возможность отсутствия сервиса прав, чтобы не приходилось создавать то что не используется
 			builder.RegisterType<DefaultAllowedPermissionService>().As<IPermissionService>();
