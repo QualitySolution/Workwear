@@ -42,7 +42,7 @@ namespace workwear.ViewModels.Stock
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
-			//Предварительная загрузка элементов для более быстрого открыти документа
+			//Предварительная загрузка элементов для более быстрого открытия документа
 			globalProgress.Start(2);
 			var query = UoW.Session.QueryOver<CollectiveExpenseItem>()
 				.Where(x => x.Document.Id == Entity.Id)

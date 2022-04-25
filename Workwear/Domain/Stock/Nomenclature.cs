@@ -73,13 +73,13 @@ namespace workwear.Domain.Stock
 		#endregion
 		#region Средства защиты
 		private IList<ProtectionTools> protectionTools = new List<ProtectionTools>();
-		[Display(Name = "Номенаклатуры нормы")]
+		[Display(Name = "Номенклатура нормы")]
 		public virtual IList<ProtectionTools> ProtectionTools {
 			get => protectionTools;
 			set => SetField(ref protectionTools, value);
 		}
 		private GenericObservableList<ProtectionTools> observableProtectionTools;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<ProtectionTools> ObservableProtectionTools =>
 			observableProtectionTools ?? (observableProtectionTools =
 				new GenericObservableList<ProtectionTools>(ProtectionTools));

@@ -63,7 +63,7 @@ namespace workwear.Domain.Regulations
 		}
 
 		GenericObservableList<Post> observablePosts;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<Post> ObservablePosts => 
 			observablePosts ?? (observablePosts = new GenericObservableList<Post>(Posts));
 
@@ -75,7 +75,7 @@ namespace workwear.Domain.Regulations
 		}
 
 		GenericObservableList<NormItem> observableItems;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<NormItem> ObservableItems => 
 			observableItems ?? (observableItems = new GenericObservableList<NormItem>(Items));
 
@@ -128,7 +128,7 @@ namespace workwear.Domain.Regulations
 				}
 				if(item.Amount <= 0) {
 					yield return new ValidationResult(
-						$"Колличество у номенклатуры {item.ProtectionTools.Name} должно быть больше нуля.",
+						$"Количество у номенклатуры {item.ProtectionTools.Name} должно быть больше нуля.",
 					new[] { nameof(item.PeriodCount) });
 				}
 			}

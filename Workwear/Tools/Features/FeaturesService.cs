@@ -45,7 +45,7 @@ namespace workwear.Tools.Features
 			serialNumberEncoder.Number = serialNumberService.SerialNumber;
 			if(serialNumberEncoder.IsValid) {
 				if(serialNumberEncoder.CodeVersion == 1)
-					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к професиональной редации.
+					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к профессиональной редакции.
 				else if(serialNumberEncoder.CodeVersion == 2 
 						&& serialNumberEncoder.EditionId >= 1
 						&& serialNumberEncoder.EditionId <= 3) 
@@ -109,7 +109,7 @@ namespace workwear.Tools.Features
 		BatchProcessing,
 		[Display(Name = "Мобильный кабинет сотрудника")]
 		EmployeeLk,
-		[Display(Name = "Комуникация с сотрудниками")]
+		[Display(Name = "Коммуникация с сотрудниками")]
 		Communications,
 		[Display(Name = "История изменений")]
 		HistoryLog,

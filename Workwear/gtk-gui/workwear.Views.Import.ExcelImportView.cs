@@ -241,9 +241,9 @@ namespace workwear.Views.Import
 			// Container child GtkAlignment.Gtk.Container+ContainerChild
 			this.labelColumnRecomendations = new global::Gtk.Label();
 			this.labelColumnRecomendations.Name = "labelColumnRecomendations";
-			this.labelColumnRecomendations.LabelProp = global::Mono.Unix.Catalog.GetString(@"Установите номер строки с заголовком данных, таким образом чтобы название колонок было корретно. Если в таблице заголовки отутствуют укажите 0.
+			this.labelColumnRecomendations.LabelProp = global::Mono.Unix.Catalog.GetString(@"Установите номер строки с заголовком данных, таким образом чтобы название колонок было корректно. Если в таблице заголовки отсутствуют укажите 0.
 Далее для каждой значимой колонки проставьте тип данных которых находится в таблице.
-При загрузки листа программа автоматически пытается найти залоговок таблицы и выбрать тип данных.
+При загрузки листа программа автоматически пытается найти заголовок таблицы и выбрать тип данных.
 Обязательными данными являются Фамилия и Имя или ФИО.");
 			this.labelColumnRecomendations.Wrap = true;
 			this.labelColumnRecomendations.Justify = ((global::Gtk.Justification)(3));
@@ -335,7 +335,7 @@ namespace workwear.Views.Import
 			// Container child eventboxLegendaChanged.Gtk.Container+ContainerChild
 			this.labelCountChangedEmployees = new global::Gamma.GtkWidgets.yLabel();
 			this.labelCountChangedEmployees.Name = "labelCountChangedEmployees";
-			this.labelCountChangedEmployees.LabelProp = global::Mono.Unix.Catalog.GetString("Измененые");
+			this.labelCountChangedEmployees.LabelProp = global::Mono.Unix.Catalog.GetString("Измененные");
 			this.eventboxLegendaChanged.Add(this.labelCountChangedEmployees);
 			this.table2.Add(this.eventboxLegendaChanged);
 			global::Gtk.Table.TableChild w24 = ((global::Gtk.Table.TableChild)(this.table2[this.eventboxLegendaChanged]));

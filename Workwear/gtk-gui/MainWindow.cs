@@ -47,8 +47,6 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionNorms;
 
-	private global::Gtk.Action Action13;
-
 	private global::Gtk.Action ActionRequestSheet;
 
 	private global::Gtk.Action ActionAverageAnnualNeed;
@@ -356,8 +354,8 @@ public partial class MainWindow
 		this.ActionVK = new global::Gtk.Action("ActionVK", global::Mono.Unix.Catalog.GetString("Вконтакте"), null, "vk");
 		this.ActionVK.ShortLabel = global::Mono.Unix.Catalog.GetString("Вконтакте");
 		w1.Add(this.ActionVK, null);
-		this.ActionOdnoklasniki = new global::Gtk.Action("ActionOdnoklasniki", global::Mono.Unix.Catalog.GetString("Однокласники"), null, "odnoklasniki");
-		this.ActionOdnoklasniki.ShortLabel = global::Mono.Unix.Catalog.GetString("Однокласники");
+		this.ActionOdnoklasniki = new global::Gtk.Action("ActionOdnoklasniki", global::Mono.Unix.Catalog.GetString("Одноклассники"), null, "odnoklasniki");
+		this.ActionOdnoklasniki.ShortLabel = global::Mono.Unix.Catalog.GetString("Одноклассники");
 		w1.Add(this.ActionOdnoklasniki, null);
 		this.ActionTwitter = new global::Gtk.Action("ActionTwitter", global::Mono.Unix.Catalog.GetString("Twitter"), null, "twitter");
 		this.ActionTwitter.ShortLabel = global::Mono.Unix.Catalog.GetString("Twitter");

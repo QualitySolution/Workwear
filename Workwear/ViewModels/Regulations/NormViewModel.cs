@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -140,7 +140,7 @@ namespace workwear.ViewModels.Regulations
 						bool canSwitch = emp.UsedNorms.SelectMany(x => x.Items)
 							.Any(i => i.Id != toRemove.Id && i.ProtectionTools.Id == toRemove.ProtectionTools.Id);
 						if(canSwitch)
-							operations.Add(String.Format("* У сотрудника {0} требование спецодежды будет пререключено на другую норму.", emp.ShortName));
+							operations.Add(String.Format("* У сотрудника {0} требование спецодежды будет переключено на другую норму.", emp.ShortName));
 						else
 							operations.Add(String.Format("* У сотрудника {0} будет удалено требование выдачи спецодежды.", emp.ShortName));
 					}

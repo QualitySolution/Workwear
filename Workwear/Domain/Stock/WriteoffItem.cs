@@ -29,7 +29,7 @@ namespace workwear.Domain.Stock
 		}
 
 		Nomenclature nomenclature;
-		[Display (Name = "Номеклатура")]
+		[Display (Name = "Номенклатура")]
 		public virtual Nomenclature Nomenclature {
 			get => nomenclature;
 			set { SetField (ref nomenclature, value, () => Nomenclature); }

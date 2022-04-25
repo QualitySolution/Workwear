@@ -53,7 +53,7 @@ namespace workwear.Views.Stock
 			if (args.Event.Button != 3) return;
 			var menu = new Menu();
 			var selected = table.GetSelectedObjects<TransferItem>().First();
-			var item = new MenuItemId<TransferItem>("Открыть номеклатуру");
+			var item = new MenuItemId<TransferItem>("Открыть номенклатуру");
 			item.ID = selected;
 			item.Sensitive = selected.Nomenclature != null;
 			item.Activated += Item_Activated;

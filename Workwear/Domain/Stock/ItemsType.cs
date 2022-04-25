@@ -88,7 +88,7 @@ namespace workwear.Domain.Stock
 			set => SetField(ref nomenclatures, value);
 		}
 		GenericObservableList<Nomenclature> observableNomenclatures;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<Nomenclature> ObservableNomenclatures =>
 			observableNomenclatures ??
 			(observableNomenclatures = new GenericObservableList<Nomenclature>(Nomenclatures));

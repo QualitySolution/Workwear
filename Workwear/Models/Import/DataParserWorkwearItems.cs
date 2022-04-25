@@ -146,7 +146,7 @@ namespace workwear.Models.Import
 				row.AddColumnChange(protectionToolsColumn, ChangeType.NotFound);
 			}
 
-			progress.Add(text: "Загрузка номеклатуры");
+			progress.Add(text: "Загрузка номенклатуры");
 			var nomenclatureTypes = new NomenclatureTypes(uow, sizeService, true);
 			var nomenclatureNames = 
 				list.Select(x => x.CellStringValue(nomenclatureColumn.Index)).Where(x => x != null).Distinct().ToArray();
@@ -172,8 +172,8 @@ namespace workwear.Models.Import
 				progress.Add(text: "Обработка операций выдачи");
 				if(row.Skipped)
 					continue;
-				var nomeclatureName = row.CellStringValue(nomenclatureColumn.Index);
-				if(String.IsNullOrWhiteSpace(nomeclatureName)) {
+				var nomenclatureName = row.CellStringValue(nomenclatureColumn.Index);
+				if(String.IsNullOrWhiteSpace(nomenclatureName)) {
 					row.AddColumnChange(nomenclatureColumn, ChangeType.NotFound);
 					continue;
 				}
@@ -185,7 +185,7 @@ namespace workwear.Models.Import
 						nomenclatures.FirstOrDefault(x => String.Equals(x.Name, nomeclatureName, StringComparison.CurrentCultureIgnoreCase));
 					if(nomenclature == null) {
 						nomenclature = new Nomenclature {
-							Name = nomeclatureName,
+							Name = nomenclatureName,
 							Type = row.WorkwearItem.ProtectionTools.Type,
 							Comment = "Создана при импорте выдачи из Excel",
 						};

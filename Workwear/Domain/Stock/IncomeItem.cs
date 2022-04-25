@@ -30,8 +30,8 @@ namespace workwear.Domain.Stock
 			set => SetField(ref document, value);
 		}
 
-		private Nomenclature nomenclature;
-		[Display (Name = "Номеклатура")]
+		Nomenclature nomenclature;
+		[Display (Name = "Номенклатура")]
 		public virtual Nomenclature Nomenclature {
 			get => nomenclature;
 			set { SetField (ref nomenclature, value, () => Nomenclature); }

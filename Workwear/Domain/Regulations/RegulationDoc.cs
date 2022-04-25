@@ -59,7 +59,7 @@ namespace workwear.Domain.Regulations
 		}
 
 		GenericObservableList<RegulationDocAnnex> observableAnnexes;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<RegulationDocAnnex> ObservableAnnexes
 		{
 			get

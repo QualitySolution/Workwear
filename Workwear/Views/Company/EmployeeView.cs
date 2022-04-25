@@ -143,7 +143,7 @@ namespace workwear.Views.Company
 				"<span color='red'>●</span> — получение просрочено\n" +
 				"<span color='darkgreen'>●</span> — возможна выдача раньше срока\n" +
 				"\n<b>Колонка «На складе»:</b>\n" +
-				"<span color='orange'>●</span> — подходящей номеклатуры не найдено\n" +
+				"<span color='orange'>●</span> — подходящей номенклатуры не найдено\n" +
 				"<span color='red'>●</span> — номенклатура на складе отсутствует\n" +
 				"<span color='blue'>●</span> — на складе не достаточное количество\n" +
 				"<span color='green'>●</span> — на складе достаточное количество"

@@ -71,7 +71,7 @@ namespace workwear.Domain.Stock
 		}
 
 		private GenericObservableList<IncomeItem> observableItems;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<IncomeItem> ObservableItems => 
 			observableItems ?? (observableItems = new GenericObservableList<IncomeItem>(Items));
 

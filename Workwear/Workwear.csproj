@@ -145,6 +145,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
+    <Compile Include="Tools\Navigation\AdditionalIdHashGenerator.cs" />
     <Compile Include="viewDTOs\EmployeeCardMovements.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="CreateProjectParam.cs" />
@@ -492,6 +493,9 @@
     <Compile Include="Journal\ViewModels\Communications\MessageTemplateJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Communications\EmployeeNotificationJournalViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Communications.EmployeeNotificationFilterView.cs" />
+    <Compile Include="ViewModels\Communications\HistoryNotificationViewModel.cs" />
+    <Compile Include="Views\Communications\HistoryNotificationView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Communications.HistoryNotificationView.cs" />
     <Compile Include="ViewModels\Stock\CompletionViewModel.cs" />
     <Compile Include="Views\Stock\CompletionView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.CompletionView.cs" />

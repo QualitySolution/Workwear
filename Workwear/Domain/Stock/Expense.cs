@@ -71,7 +71,7 @@ namespace workwear.Domain.Stock
 		}
 
 		System.Data.Bindings.Collections.Generic.GenericObservableList<ExpenseItem> observableItems;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual System.Data.Bindings.Collections.Generic.GenericObservableList<ExpenseItem> ObservableItems {
 			get {
 				if (observableItems == null)

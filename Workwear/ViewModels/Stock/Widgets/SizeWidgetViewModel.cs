@@ -63,7 +63,7 @@ namespace workwear.ViewModels.Stock.Widgets
 		}
 	}
 	/// <summary>
-	/// Класс содержащий объекты номеклатуры, с добавленными размерами
+	/// Класс содержащий объекты номенклатуры, с добавленными размерами
 	/// </summary>
 	public class AddedSizesEventArgs : EventArgs {
 		public readonly Nomenclature Source;

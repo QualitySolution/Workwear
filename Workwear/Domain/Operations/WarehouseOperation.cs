@@ -37,8 +37,9 @@ namespace workwear.Domain.Operations
 			get => expenseWarehouse;
 			set => SetField(ref expenseWarehouse, value);
 		}
-		private Nomenclature nomenclature;
-		[Display(Name = "Номеклатура")]
+
+		Nomenclature nomenclature;
+		[Display(Name = "Номенклатура")]
 		public virtual Nomenclature Nomenclature {
 			get => nomenclature;
 			set => SetField(ref nomenclature, value);

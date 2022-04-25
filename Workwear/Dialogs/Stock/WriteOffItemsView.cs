@@ -81,11 +81,12 @@ namespace workwear
 		}
 		#region PopupMenu
 
+
 		private void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
 			if (args.Event.Button != 3) return;
 			var menu = new Menu();
 			var selected = ytreeItems.GetSelectedObject<WriteoffItem>();
-			var item = new MenuItemId<WriteoffItem>("Открыть номеклатуру");
+			var item = new MenuItemId<WriteoffItem>("Открыть номенклатуру");
 			item.ID = selected;
 			if(selected == null)
 				item.Sensitive = false;

@@ -69,7 +69,7 @@ namespace workwear.Domain.Operations
 		/// <summary>
 		/// Процент износа не может быть меньше нуля.
 		/// Новый СИЗ имеет 0%, далее нарастает при использовании.
-		/// Процент хранится в виде коэфициента, то есть значение 1 = 100%
+		/// Процент хранится в виде коэффициента, то есть значение 1 = 100%
 		/// И в базе ограничение на 3 хранимых символа поэтому максимальное значение 9.99
 		/// </summary>
 		/// <value>The wear percent.</value>
@@ -142,7 +142,7 @@ namespace workwear.Domain.Operations
 		}
 
 		/// <summary>
-		/// Для создания операций выдачи надо использвать конструктор с BaseParameters
+		/// Для создания операций выдачи надо использовать конструктор с BaseParameters
 		/// </summary>
 		public SubdivisionIssueOperation() { }
 		public SubdivisionIssueOperation(BaseParameters baseParameters) {

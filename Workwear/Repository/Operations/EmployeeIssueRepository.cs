@@ -39,7 +39,7 @@ namespace workwear.Repository.Operations
 		}
 
 		/// <summary>
-		/// Получаем операции выдачи выполненые в определенные даты.
+		/// Получаем операции выдачи выполненные в определенные даты.
 		/// </summary>
 		public IList<EmployeeIssueOperation> GetOperationsByDates(
 			EmployeeCard[] employees, 
@@ -58,7 +58,7 @@ namespace workwear.Repository.Operations
 		}
 
 		/// <summary>
-		/// Получаем операции числящееся по сотрудникам которых затрагивает опеределенны диапазон дат.
+		/// Получаем операции числящееся по сотрудникам которых затрагивает определенный диапазон дат.
 		/// </summary>
 		public virtual IList<EmployeeIssueOperation> GetOperationsTouchDates(IUnitOfWork uow, EmployeeCard[] employees, DateTime begin, DateTime end, Action<NHibernate.IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null) { 
 

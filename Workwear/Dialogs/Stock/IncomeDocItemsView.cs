@@ -111,7 +111,7 @@ namespace workwear.Dialogs.Stock
 			if (args.Event.Button != 3) return;
 			var menu = new Menu();
 			var selected = ytreeItems.GetSelectedObject<IncomeItem>();
-			var item = new MenuItemId<IncomeItem>("Открыть номеклатуру");
+			var item = new MenuItemId<IncomeItem>("Открыть номенклатуру");
 			item.ID = selected;
 			if(selected == null)
 				item.Sensitive = false;
