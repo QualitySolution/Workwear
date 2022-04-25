@@ -39,6 +39,7 @@ namespace workwear.Views.Company.EmployeeChilds
 		void ytreeWorkwear_Selection_Changed(object sender, EventArgs e)
 		{
 			buttonTimeLine.Sensitive = ytreeWorkwear.Selection.CountSelectedRows() > 0;
+			buttonManualIssueDate.Sensitive = ytreeWorkwear.Selection.CountSelectedRows() > 0;
 		}
 
 		#region private
