@@ -179,10 +179,10 @@ namespace workwear.Models.Import
 				}
 
 				var nomenclature = 
-					UsedNomeclature.FirstOrDefault(x => String.Equals(x.Name, nomeclatureName, StringComparison.CurrentCultureIgnoreCase));
+					UsedNomeclature.FirstOrDefault(x => String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
 				if(nomenclature == null) {
 					nomenclature = 
-						nomenclatures.FirstOrDefault(x => String.Equals(x.Name, nomeclatureName, StringComparison.CurrentCultureIgnoreCase));
+						nomenclatures.FirstOrDefault(x => String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
 					if(nomenclature == null) {
 						nomenclature = new Nomenclature {
 							Name = nomenclatureName,
