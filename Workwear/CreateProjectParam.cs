@@ -61,6 +61,8 @@ using workwear.Views.Company;
 using Workwear.Measurements;
 using workwear.Models.Stock;
 using Workwear.Sql;
+using workwear.Tools.Navigation;
+using workwear.ViewModels.Communications;
 
 namespace workwear
 {
@@ -140,7 +142,7 @@ namespace workwear
 			builder.Register(x => DeleteConfig.Main).AsSelf().ExternallyOwned();
 			builder.RegisterType<ReplaceEntity>().AsSelf();
  			#endregion
-			//FIXME Нужно в конечнои итоге попытаться избавится от CommonServce вообще.
+			//FIXME Нужно в конечном итоге попытаться избавится от CommonService вообще.
 			builder.RegisterType<CommonServices>().As<ICommonServices>();
 			builder.RegisterType<UserService>().As<IUserService>();
 			builder.RegisterType<ObjectValidator>().As<IValidator>();
@@ -150,7 +152,9 @@ namespace workwear
 			#endregion
 
 			#region Навигация
-			builder.Register(ctx => new ClassNamesHashGenerator(new[] {new RDLReportsHashGenerator() })).As<IPageHashGenerator>();
+			builder.Register(ctx => new ClassNamesHashGenerator(new IExtraPageHashGenerator[] {new RDLReportsHashGenerator(), new AdditionalIdHashGenerator(
+				 new [] {typeof(HistoryNotificationViewModel)}
+				) })).As<IPageHashGenerator>();
 			builder.Register((ctx) => new AutofacViewModelsTdiPageFactory(AppDIContainer)).As<IViewModelsPageFactory>();
 			builder.Register((ctx) => new AutofacTdiPageFactory(AppDIContainer)).As<ITdiPageFactory>();
 			builder.Register((ctx) => new AutofacViewModelsGtkPageFactory(AppDIContainer)).AsSelf();
