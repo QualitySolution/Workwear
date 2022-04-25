@@ -207,7 +207,7 @@ namespace workwear.Journal.ViewModels.Communications
 			RowActivatedAction = editAction;
 			
 			var showHistoryNotificationAction = new JournalAction("Показать сообщения",
-				(selected) => selected.Any(),
+				(selected) => selected.Any(x => ((EmployeeNotificationJournalNode) x).LkRegistered),
 				(selected) => VisibleEditAction,
 				(selected) => ShowHistoryNotificationAction(selected)
 			);
