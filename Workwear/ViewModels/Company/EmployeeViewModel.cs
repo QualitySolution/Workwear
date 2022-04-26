@@ -330,7 +330,17 @@ namespace workwear.ViewModels.Company
 			switch(tab) {
 				case 2: NormsViewModel.OnShow();
 					break;
-				case 3: WearItemsViewModel.OnShow();
+				case 3:
+					if (UoW.IsNew)
+						if (interactive.Question("Перед работой с имуществом сотрудника необходимо сохранить карточку. Сохранить?",
+							    "Сохранить сотрудника?") && Save())
+						{
+							WearItemsViewModel.OnShow();
+						}
+						else
+							CurrentTab = lastTab;
+					else
+						WearItemsViewModel.OnShow();;
 					break;
 				case 4: ListedItemsViewModel.OnShow();
 					break;
