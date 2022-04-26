@@ -4,6 +4,16 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <RootNamespace>Workwear</RootNamespace>
         <Company>Quality Solution</Company>
+        <Configurations>Debug;Release;DebugDesktop;ReleaseDesktop</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'DebugDesktop' ">
+      <DefineConstants>TRACE;DESKTOP</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'ReleaseDesktop' ">
+      <DefineConstants>TRACE;DESKTOP</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>

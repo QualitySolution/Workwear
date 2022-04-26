@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
-using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using Workwear.Measurements;
+
+#if DESKTOP
+using System.Data.Bindings.Collections.Generic;
+#endif
 
 namespace Workwear.Domain.Sizes
 {
@@ -53,11 +55,13 @@ namespace Workwear.Domain.Sizes
             get => suitableSizes;
             set => SetField(ref suitableSizes, value);
         }
+#if DESKTOP
         private GenericObservableList<Size> observableSuitableSizes;
-        //FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+        //FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
         [Display(Name = "Подходящие размеры")]
         public virtual GenericObservableList<Size> ObservableSuitableSizes => 
             observableSuitableSizes ?? (observableSuitableSizes = new GenericObservableList<Size>(SuitableSizes));
+#endif
         #endregion
         #region Расчётные
         public virtual string Title => $"{SizeType.Name}: {Name}";
