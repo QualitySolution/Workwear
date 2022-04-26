@@ -26,7 +26,7 @@ namespace workwear.Dialogs.Organization
 
 		private global::QS.Widgets.GtkUI.DateRangePicker ydateperiodVacation;
 
-		private global::Gamma.Widgets.yEntryReference yentryVacationType;
+		private global::QS.Widgets.GtkUI.SpecialListComboBox yentryVacationType;
 
 		protected virtual void Build()
 		{
@@ -142,9 +142,12 @@ namespace workwear.Dialogs.Organization
 			w11.XOptions = ((global::Gtk.AttachOptions)(4));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.yentryVacationType = new global::Gamma.Widgets.yEntryReference();
-			this.yentryVacationType.Events = ((global::Gdk.EventMask)(256));
+			this.yentryVacationType = new global::QS.Widgets.GtkUI.SpecialListComboBox();
 			this.yentryVacationType.Name = "yentryVacationType";
+			this.yentryVacationType.AddIfNotExist = false;
+			this.yentryVacationType.DefaultFirst = false;
+			this.yentryVacationType.ShowSpecialStateAll = false;
+			this.yentryVacationType.ShowSpecialStateNot = true;
 			this.table1.Add(this.yentryVacationType);
 			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1[this.yentryVacationType]));
 			w12.LeftAttach = ((uint)(1));

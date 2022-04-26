@@ -24,8 +24,8 @@ namespace workwear.Views.Regulations
 			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new Gamma.Binding.Converters.IdToStringConverter()).InitializeFromSource ();
 
 			ycomboAnnex.SetRenderTextFunc<RegulationDocAnnex>(x => x.Title);
-			yentryRegulationDoc.SubjectType = typeof(RegulationDoc);
-			yentryRegulationDoc.Binding.AddBinding(Entity, e => e.Document, w => w.Subject).InitializeFromSource();
+			yentryRegulationDoc.ItemsList = ViewModel.UoW.GetAll<RegulationDoc>();
+			yentryRegulationDoc.Binding.AddBinding(Entity, e => e.Document, w => w.SelectedItem).InitializeFromSource();
 			ycomboAnnex.Binding.AddBinding(Entity, e => e.Annex, w => w.SelectedItem).InitializeFromSource();
 			datefrom.Binding.AddBinding(Entity, e => e.DateFrom, w => w.DateOrNull).InitializeFromSource();
 			dateto.Binding.AddBinding(Entity, e => e.DateTo, w => w.DateOrNull).InitializeFromSource();
