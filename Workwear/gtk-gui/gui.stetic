@@ -12,7 +12,6 @@
     <widget-library name="../../../QSProjects/QSWidgetLib/bin/Debug/QSWidgetLib.dll" />
     <widget-library name="../../../QSProjects/QSOrmProject/bin/Debug/QSOrmProject.dll" />
     <widget-library name="../../../QSProjects/Modules/QSBusinessCommon/bin/Debug/QSBusinessCommon.dll" />
-    <widget-library name="../../../QSProjects/QSExtraGammaWidgets/bin/Debug/QSExtraGammaWidgets.dll" />
     <widget-library name="../../../QSProjects/QSReport/bin/Debug/QSReport.dll" />
     <widget-library name="../../../QSProjects/QS.Project.Gtk/bin/Debug/QS.Project.Gtk.dll" />
     <widget-library name="../../../QSProjects/QS.Report.Gtk/bin/Debug/QS.Report.Gtk.dll" />
@@ -7017,22 +7016,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yButton" id="buttonShowHistory">
-                <property name="MemberName" />
-                <property name="Sensitive">False</property>
-                <property name="Tooltip" translatable="yes" />
-                <property name="CanFocus">True</property>
-                <property name="Type">TextOnly</property>
-                <property name="Label" translatable="yes">Показать историю</property>
-                <property name="UseUnderline">True</property>
-              </widget>
-              <packing>
-                <property name="PackType">End</property>
-                <property name="Position">3</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-              </packing>
+              <placeholder />
             </child>
           </widget>
           <packing>

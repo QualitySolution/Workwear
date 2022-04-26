@@ -78,8 +78,6 @@ namespace workwear.Views.Regulations
 
 		private global::Gamma.GtkWidgets.yButton buttonReplaceNomeclature;
 
-		private global::Gamma.GtkWidgets.yButton buttonShowHistory;
-
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -490,24 +488,11 @@ namespace workwear.Views.Regulations
 			w43.Position = 2;
 			w43.Expand = false;
 			w43.Fill = false;
-			// Container child hbox6.Gtk.Box+BoxChild
-			this.buttonShowHistory = new global::Gamma.GtkWidgets.yButton();
-			this.buttonShowHistory.Sensitive = false;
-			this.buttonShowHistory.CanFocus = true;
-			this.buttonShowHistory.Name = "buttonShowHistory";
-			this.buttonShowHistory.UseUnderline = true;
-			this.buttonShowHistory.Label = global::Mono.Unix.Catalog.GetString("Показать историю");
-			this.hbox6.Add(this.buttonShowHistory);
-			global::Gtk.Box.BoxChild w44 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.buttonShowHistory]));
-			w44.PackType = ((global::Gtk.PackType)(1));
-			w44.Position = 3;
+			this.dialog1_VBox.Add(this.hbox6);
+			global::Gtk.Box.BoxChild w44 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox6]));
+			w44.Position = 4;
 			w44.Expand = false;
 			w44.Fill = false;
-			this.dialog1_VBox.Add(this.hbox6);
-			global::Gtk.Box.BoxChild w45 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox6]));
-			w45.Position = 4;
-			w45.Expand = false;
-			w45.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
