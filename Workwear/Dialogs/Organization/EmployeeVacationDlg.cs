@@ -33,8 +33,6 @@ namespace workwear.Dialogs.Organization
 		private void ConfigureDlg()
 		{
 			yentryVacationType.ItemsList = UoW.GetAll<VacationType>().ToList();
-			foreach(var item in yentryVacationType.ItemsList) {
-			}
 			yentryVacationType.Binding.AddBinding(Entity, e => e.VacationType, w => w.SelectedItem).InitializeFromSource();
 
 			ydateperiodVacation.Binding.AddSource(Entity)

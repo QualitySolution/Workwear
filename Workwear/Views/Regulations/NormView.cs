@@ -26,6 +26,7 @@ namespace workwear.Views.Regulations
 			ycomboAnnex.SetRenderTextFunc<RegulationDocAnnex>(x => x.Title);
 			yentryRegulationDoc.ItemsList = ViewModel.UoW.GetAll<RegulationDoc>();
 			yentryRegulationDoc.Binding.AddBinding(Entity, e => e.Document, w => w.SelectedItem).InitializeFromSource();
+			yentryRegulationDoc.Changed += OnYentryRegulationDocChanged;
 			ycomboAnnex.Binding.AddBinding(Entity, e => e.Annex, w => w.SelectedItem).InitializeFromSource();
 			datefrom.Binding.AddBinding(Entity, e => e.DateFrom, w => w.DateOrNull).InitializeFromSource();
 			dateto.Binding.AddBinding(Entity, e => e.DateTo, w => w.DateOrNull).InitializeFromSource();
@@ -113,6 +114,7 @@ namespace workwear.Views.Regulations
 		protected void OnYentryRegulationDocChanged(object sender, EventArgs e)
 		{
 			ycomboAnnex.ItemsList = Entity.Document?.Annexess;
+			ycomboAnnex.Sensitive = Entity.Document?.Annexess.Count > 0;
 		}
 	}
 }
