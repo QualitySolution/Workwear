@@ -47,6 +47,12 @@ namespace Workwear.Domain.Sizes
             get => useInNomenclature;
             set => SetField(ref useInNomenclature, value);
         }
+        private string alternativeName;
+        [Display(Name = "Альтернативное значение")]
+        public virtual string AlternativeName {
+            get => alternativeName;
+            set => SetField(ref alternativeName, value);
+        }
         #endregion
         #region Suitable
         private IList<Size> suitableSizes  = new List<Size>();
