@@ -17,6 +17,7 @@ namespace workwear.HibernateMapping.Sizes
             Map(x => x.Name).Column("name");
             Map(x => x.UseInEmployee).Column("use_in_employee");
             Map(x => x.UseInNomenclature).Column("use_in_nomenclature");
+            Map(x => x.AlternativeName).Column("alternative_name");
             References(x => x.SizeType).Column("size_type_id");
 
             HasManyToMany(x => x.SuitableSizes)

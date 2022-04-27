@@ -4,7 +4,6 @@ using Gamma.GtkWidgets;
 using QS.Views.Dialog;
 using Workwear.Domain.Sizes;
 using workwear.ViewModels.Sizes;
-using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Sizes
 {
@@ -38,6 +37,9 @@ namespace workwear.Views.Sizes
 				.InitializeFromSource();
 			ycheckbuttonUseInNomenclature.Binding
 				.AddBinding(Entity, e => e.UseInNomenclature, w => w.Active)
+				.InitializeFromSource();
+			entityAlterName.Binding
+				.AddBinding(Entity, e => e.AlternativeName, w => w.Text)
 				.InitializeFromSource();
 
 			ybuttonAddSuitable.Clicked += AddAnalog;
