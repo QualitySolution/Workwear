@@ -45,6 +45,11 @@ namespace workwear.ReportParameters.Views
 				.AddBinding(vm => vm.AddChildSubdivisions, w => w.Active)
 				.AddBinding(vm => vm.VisibleAddChild, w => w.Visible)
 				.InitializeFromSource();
+			checkUseAlterName.Binding
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.UseAlternativeName, w => w.Active)
+				.AddBinding(vm => vm.VisibleUseAlternative, w => w.Visible)
+				.InitializeFromSource();
 		}
 
 		protected void OnButtonPrintReportClicked(object sender, EventArgs e)

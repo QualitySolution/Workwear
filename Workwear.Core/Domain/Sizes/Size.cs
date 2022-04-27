@@ -25,6 +25,7 @@ namespace Workwear.Domain.Sizes
         public virtual int Id { get; }
         private string name;
         [Display (Name = "Значение")]
+        [StringLength(10, ErrorMessage = "Максимальный размер значения 10 символов")]
         public virtual string Name {
             get => name;
             set => SetField(ref name, value);
@@ -49,6 +50,7 @@ namespace Workwear.Domain.Sizes
         }
         private string alternativeName;
         [Display(Name = "Альтернативное значение")]
+        [StringLength(10, ErrorMessage = "Максимальный размер альтернативного значения 10 символов")]
         public virtual string AlternativeName {
             get => alternativeName;
             set => SetField(ref alternativeName, value);

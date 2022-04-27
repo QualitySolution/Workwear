@@ -13375,7 +13375,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="393 371">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="393 399">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -13600,6 +13600,22 @@
           </packing>
         </child>
         <child>
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkUseAlterName">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">Применить альтернативные размеры</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+            <property name="UseUnderline">True</property>
+          </widget>
+          <packing>
+            <property name="Position">3</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckAll">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
@@ -13609,7 +13625,7 @@
             <property name="UseUnderline">True</property>
           </widget>
           <packing>
-            <property name="Position">3</property>
+            <property name="Position">4</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -13625,7 +13641,7 @@
             <property name="UseUnderline">True</property>
           </widget>
           <packing>
-            <property name="Position">4</property>
+            <property name="Position">5</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -13644,7 +13660,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">5</property>
+            <property name="Position">6</property>
             <property name="AutoSize">True</property>
           </packing>
         </child>
@@ -13659,7 +13675,7 @@
             <signal name="Clicked" handler="OnButtonPrintReportClicked" />
           </widget>
           <packing>
-            <property name="Position">6</property>
+            <property name="Position">7</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
