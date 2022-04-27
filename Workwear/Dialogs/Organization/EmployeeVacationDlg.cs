@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
@@ -31,8 +32,8 @@ namespace workwear.Dialogs.Organization
 
 		private void ConfigureDlg()
 		{
-			yentryVacationType.SubjectType = typeof(VacationType);
-			yentryVacationType.Binding.AddBinding(Entity, e => e.VacationType, w => w.Subject).InitializeFromSource();
+			yentryVacationType.ItemsList = UoW.GetAll<VacationType>().ToList();
+			yentryVacationType.Binding.AddBinding(Entity, e => e.VacationType, w => w.SelectedItem).InitializeFromSource();
 
 			ydateperiodVacation.Binding.AddSource(Entity)
 				.AddBinding(e => e.BeginDate, w => w.StartDate)
