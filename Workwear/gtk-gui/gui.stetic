@@ -5819,9 +5819,10 @@
                 <node type="Separator" />
                 <node type="Menuitem" action="Action5" />
                 <node type="Menuitem" action="Action6" />
-                <node type="Menuitem" action="ActionSize" />
-                <node type="Menuitem" action="ActionSizeType" />
                 <node type="Menuitem" action="ActionWarehouse" />
+                <node type="Separator" />
+                <node type="Menuitem" action="ActionSizeType" />
+                <node type="Menuitem" action="ActionSize" />
                 <node type="Separator" />
                 <node type="Menuitem" action="Action7" />
                 <node type="Menuitem" action="ActionNotificationTemplates" />
