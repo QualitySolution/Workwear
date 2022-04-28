@@ -89,7 +89,13 @@ namespace workwear.Domain.Company
 			get { return nextIssue; }
 			set { SetField (ref nextIssue, value, () => NextIssue); }
 		}
-
+		
+		private string nextIssueAnnotation;
+		[Display (Name = "Обьяснение расчёта следующей выдачи")]
+		public virtual string NextIssueAnnotation {
+			get => nextIssueAnnotation;
+			set => SetField (ref nextIssueAnnotation, value);
+		}
 		#endregion
 
 		#region Не хранимое в базе значение
@@ -292,14 +298,18 @@ namespace workwear.Domain.Company
 				var wearTime = new DateRange(DateTime.MinValue, DateTime.MaxValue);
 				wearTime.ExcludedRanges.AddRange(ranges);
 				var moveTo = wearTime.FindEndOfExclusion(wantIssue.Value);
-				if(moveTo != null)
+				if(moveTo != null){
 					wantIssue = moveTo.Value.AddDays(1);
+					NextIssueAnnotation = "Дата выдачи перенесена на конец отпуска";
+				}
 			}
 			
 			if (ActiveNormItem?.NormCondition?.IssuanceStart != null && ActiveNormItem?.NormCondition?.IssuanceEnd != null) {
 				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(wantIssue.Value);
-				if (wantIssue < nextPeriod.Begin)
+				if (wantIssue < nextPeriod.Begin){
 					wantIssue = nextPeriod.Begin;
+					NextIssueAnnotation = $"Дата перенесена по условию нормы: {ActiveNormItem.NormCondition.Name}";
+				}
 			}
 
 			if(NextIssue != wantIssue)
@@ -308,8 +318,11 @@ namespace workwear.Domain.Company
 				uow.Save (this);
 			}
 
-			if(NextIssue < ActiveNormItem.Norm.DateFrom && ActiveNormItem.NormPeriod != NormPeriodType.Wearout)
+			if(NextIssue < ActiveNormItem.Norm.DateFrom && ActiveNormItem.NormPeriod != NormPeriodType.Wearout){
 				NextIssue = ActiveNormItem.Norm.DateFrom;
+			}
+			if(ActiveNormItem.NormPeriod == NormPeriodType.Wearout)
+				NextIssueAnnotation = $"У строки нормы указан период - до износа";
 		}
 		#endregion
 		
