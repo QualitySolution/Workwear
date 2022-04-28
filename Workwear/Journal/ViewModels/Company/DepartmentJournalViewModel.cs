@@ -1,5 +1,4 @@
-﻿using System;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -15,9 +14,18 @@ namespace workwear.Journal.ViewModels.Company
 
 	public class DepartmentJournalViewModel : EntityJournalViewModelBase<Department, DepartmentViewModel, DepartmentJournalNode>
 	{
-		public DepartmentJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		private int? ParentSubdivisionId { get; }
+		public DepartmentJournalViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory, 
+			IInteractiveService interactiveService, 
+			INavigationManager navigationManager, 
+			int? parentSubdivisionId = null,
+			IDeleteEntityService deleteEntityService = null, 
+			ICurrentPermissionService currentPermissionService = null
+			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
+			ParentSubdivisionId = parentSubdivisionId;
 		}
 
 		protected override IQueryOver<Department> ItemsQuery(IUnitOfWork uow)
@@ -26,10 +34,14 @@ namespace workwear.Journal.ViewModels.Company
 
 			Department departmentAlias = null;
 			Subdivision subdivisionAlias = null;
+			
 
-			return uow.Session.QueryOver<Department>(() => departmentAlias)
-				.Left.JoinAlias(x => x.Subdivision, () => subdivisionAlias)
-				.Where(GetSearchCriterion(
+			var query = uow.Session.QueryOver(() => departmentAlias)
+				.Left.JoinAlias(x => x.Subdivision, () => subdivisionAlias);
+			if (ParentSubdivisionId != null)
+				query.Where(() => subdivisionAlias.Id == ParentSubdivisionId);
+			
+			query.Where(GetSearchCriterion(
 					() => departmentAlias.Name,
 					() => subdivisionAlias.Name
 					))
@@ -40,6 +52,7 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<DepartmentJournalNode>());
+			return query;
 		}
 	}
 

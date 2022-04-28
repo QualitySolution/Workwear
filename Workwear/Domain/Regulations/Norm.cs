@@ -121,7 +121,7 @@ namespace workwear.Domain.Regulations
 				yield return new ValidationResult ("Норма должна содержать хотя бы одну номенклатуру.", 
 					new[] { this.GetPropertyName (o => o.Items) });
 			foreach(var item in items) {
-				if(item.PeriodCount <= 0){
+				if(item.PeriodCount <= 0 && item.NormPeriod != NormPeriodType.Wearout){
 					yield return new ValidationResult(
 						$"Период эксплуатации номенклатуры {item.ProtectionTools.Name} должен быть больше нуля.",
 					new[] { nameof(item.PeriodCount) });

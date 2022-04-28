@@ -115,6 +115,7 @@
     <EmbeddedResource Include="icon\buttons\eye-crossed.png" />
     <EmbeddedResource Include="icon\buttons\legend.png" />
     <EmbeddedResource Include="icon\rows\нand.png" />
+    <EmbeddedResource Include="icon\rows\info.png" />
     <EmbeddedResource Include="icon\buttons\dice.png" />
     <EmbeddedResource Include="icon\toolbar\store-movements.png" />
     <EmbeddedResource Include="icon\buttons\menu.png" />
@@ -563,10 +564,6 @@
     <ProjectReference Include="..\..\QSProjects\Modules\QSBusinessCommon\QSBusinessCommon.csproj">
       <Project>{AD329D59-938D-42AC-ABE2-B0F14FDBB7C6}</Project>
       <Name>QSBusinessCommon</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSExtraGammaWidgets\QSExtraGammaWidgets.csproj">
-      <Project>{3DCDD84A-20D0-4939-BE25-58B19F3961F2}</Project>
-      <Name>QSExtraGammaWidgets</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QSTelemetry\QSTelemetry.csproj">
       <Project>{EB4F19F8-2CC9-4712-9949-760A441A56FE}</Project>

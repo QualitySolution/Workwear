@@ -44,7 +44,7 @@ namespace workwear.Views.Regulations
 
 		private global::Gamma.GtkWidgets.yEntry yentryName;
 
-		private global::Gamma.Widgets.yEntryReference yentryRegulationDoc;
+		private global::QS.Widgets.GtkUI.SpecialListComboBox yentryRegulationDoc;
 
 		private global::Gamma.GtkWidgets.yEntry yentryTonParagraph;
 
@@ -302,9 +302,12 @@ namespace workwear.Views.Regulations
 			w19.XOptions = ((global::Gtk.AttachOptions)(4));
 			w19.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.yentryRegulationDoc = new global::Gamma.Widgets.yEntryReference();
-			this.yentryRegulationDoc.Events = ((global::Gdk.EventMask)(256));
+			this.yentryRegulationDoc = new global::QS.Widgets.GtkUI.SpecialListComboBox();
 			this.yentryRegulationDoc.Name = "yentryRegulationDoc";
+			this.yentryRegulationDoc.AddIfNotExist = false;
+			this.yentryRegulationDoc.DefaultFirst = false;
+			this.yentryRegulationDoc.ShowSpecialStateAll = false;
+			this.yentryRegulationDoc.ShowSpecialStateNot = true;
 			this.table1.Add(this.yentryRegulationDoc);
 			global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.table1[this.yentryRegulationDoc]));
 			w20.TopAttach = ((uint)(1));
@@ -496,7 +499,6 @@ namespace workwear.Views.Regulations
 				this.Child.ShowAll();
 			}
 			this.Show();
-			this.yentryRegulationDoc.Changed += new global::System.EventHandler(this.OnYentryRegulationDocChanged);
 			this.buttonNewProfession.Clicked += new global::System.EventHandler(this.OnButtonNewProfessionClicked);
 			this.buttonAddProfession.Clicked += new global::System.EventHandler(this.OnButtonAddProfessionClicked);
 			this.buttonRemoveProfession.Clicked += new global::System.EventHandler(this.OnButtonRemoveProfessionClicked);

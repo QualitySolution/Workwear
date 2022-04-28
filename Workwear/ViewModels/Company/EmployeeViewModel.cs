@@ -1,16 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Autofac;
 using Gamma.Utilities;
+using NLog;
 using QS.Cloud.WearLk.Client;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Project.Journal;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
@@ -19,7 +23,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QSReport;
 using workwear.Domain.Company;
-using Workwear.Domain.Sizes;
+using Workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Measurements;
 using workwear.Models.Company;
@@ -34,7 +38,7 @@ namespace workwear.ViewModels.Company
 {
 	public class EmployeeViewModel : EntityDialogViewModelBase<EmployeeCard>, IValidatableObject
 	{
-		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		private static Logger logger = LogManager.GetCurrentClassLogger();
 
 		public ILifetimeScope AutofacScope;
 		public NormRepository NormRepository { get; }
@@ -88,9 +92,11 @@ namespace workwear.ViewModels.Company
 				.Finish();
 
 			EntryDepartmentViewModel = builder.ForProperty(x => x.Department)
-				.UseViewModelJournalAndAutocompleter<DepartmentJournalViewModel>()
 				.UseViewModelDialog<DepartmentViewModel>()
 				.Finish();
+
+			EntryDepartmentViewModel.EntitySelector = new DepartmentJournalViewModelSelector(
+				this, NavigationManager, EntrySubdivisionViewModel);
 
 			EntryPostViewModel = builder.ForProperty(x => x.Post)
 				.UseViewModelJournalAndAutocompleter<PostJournalViewModel>()
@@ -259,22 +265,17 @@ namespace workwear.ViewModels.Company
 
 		#region Обработка событий
 
-		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		void Entity_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			switch (e.PropertyName)
-			{
-				//Так как склад подбора мог поменятся при смене подразделения.
-				case nameof(Entity.Subdivision):
-					Entity.FillWearInStockInfo(UoW, baseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
-					OnPropertyChanged(nameof(SubdivisionAddress));
-					break;
-				case nameof(Entity.FirstName):
-				{
-					var sex = personNames.GetSexByName(Entity.FirstName);
-					if(sex != Workwear.Domain.Company.Sex.None)
-						Entity.Sex = sex;
-					break;
-				}
+			//Так как склад подбора мог поменяться при смене подразделения.
+			if(e.PropertyName == nameof(Entity.Subdivision)) {
+				Entity.FillWearInStockInfo(UoW, baseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
+				OnPropertyChanged(nameof(SubdivisionAddress));
+			}
+			if(e.PropertyName == nameof(Entity.FirstName)) {
+				var sex = personNames.GetSexByName(Entity.FirstName);
+				if(sex != Sex.None)
+					Entity.Sex = sex;
 			}
 			Console.WriteLine();
 		}
@@ -436,7 +437,7 @@ namespace workwear.ViewModels.Company
 		Subdivision lastSubdivision;
 		Post lastPost;
 
-		void PostChangedCheck(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		void PostChangedCheck(object sender, PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == nameof(Entity.Post) && lastPost != null && interactive.Question(
 				"Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?")) {
@@ -462,7 +463,6 @@ namespace workwear.ViewModels.Company
 				CardUid = page.ViewModel.CardUid.Replace("-", "");
 			};
 		}
-
 		#endregion
 		public void SetSizes(Size size, SizeType sizeType) {
 			CheckSizeChanged();
@@ -482,6 +482,36 @@ namespace workwear.ViewModels.Company
 						employeeSize.Size = size;
 				}
 			}
+		}
+	}
+	public class DepartmentJournalViewModelSelector : IEntitySelector {
+		private INavigationManager NavigationManager { get; }
+		private DialogViewModelBase Parent { get; }
+		private EntityEntryViewModel<Subdivision> EntityEntryViewModel { get; }
+		public event EventHandler<EntitySelectedEventArgs> EntitySelected;
+
+		public DepartmentJournalViewModelSelector(
+			DialogViewModelBase parentViewModel,
+			INavigationManager navigationManagerManager,
+			EntityEntryViewModel<Subdivision> entityEntityEntryViewModel) 
+		{
+			NavigationManager = navigationManagerManager;
+			Parent = parentViewModel;
+			EntityEntryViewModel = entityEntityEntryViewModel;
+		}
+		public void OpenSelector(string dialogTitle = null) {
+			var page = NavigationManager.OpenViewModel<DepartmentJournalViewModel, int?>(
+				Parent,
+				EntityEntryViewModel.Entity?.Id, 
+				OpenPageOptions.AsSlave);
+			page.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			if (!String.IsNullOrEmpty(dialogTitle)) 
+				page.ViewModel.TabName = dialogTitle;
+			//Сначала на всякий случай отписываемся от события, вдруг это повторное открытие не не
+			page.ViewModel.OnSelectResult -= ViewModelOnSelectResult;
+			page.ViewModel.OnSelectResult += ViewModelOnSelectResult;
+			void ViewModelOnSelectResult(object sender, JournalSelectedEventArgs e) => 
+				EntitySelected?.Invoke(this, new EntitySelectedEventArgs(e.SelectedObjects.First()));
 		}
 	}
 }
