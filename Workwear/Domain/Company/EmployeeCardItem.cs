@@ -92,7 +92,7 @@ namespace workwear.Domain.Company
 		
 		private string nextIssueAnnotation;
 		[IgnoreHistoryTrace]
-		[Display (Name = "Обьяснение расчёта следующей выдачи")]
+		[Display (Name = "Объяснение расчёта следующей выдачи")]
 		public virtual string NextIssueAnnotation {
 			get => nextIssueAnnotation;
 			set => SetField (ref nextIssueAnnotation, value);
