@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NSubstitute;
@@ -28,7 +28,7 @@ namespace WorkwearTest.Integration.Stock
 		[TearDown]
 		public void TestTearDown() { }
 
-		[Test(Description = "Проверяем что можем приходовать на склад 2 позиции разных размеров одной номеклатуры.")]
+		[Test(Description = "Проверяем что можем приходовать на склад 2 позиции разных размеров одной номенклатуры.")]
 		[Category("Integrated")]
 		public void CanAddMultiRowWithSameNomenclatureTest()
 		{
@@ -77,7 +77,7 @@ namespace WorkwearTest.Integration.Stock
 		}
 
 		[Test(Description = "Проверяем что не считаем документ валидным " +
-		                    "если в нем несколько раз приходуется одинаковая складская позинция.")]
+		                    "если в нем несколько раз приходуется одинаковая складская позиция.")]
 		[Category("Integrated")]
 		public void NotValidMultiRowWithSameStockPositionTest()
 		{
@@ -175,8 +175,8 @@ namespace WorkwearTest.Integration.Stock
 
 		#region Возврат от сотрудника
 
-		[Test(Description = "Убеждаемся что корректно рассчитываем дату следущей выдачи при возврате выданного на склад. " +
-		                    "При разных id. Реальный баг был втом что проверялись id не тех сущьностей, " +
+		[Test(Description = "Убеждаемся что корректно рассчитываем дату следующей выдачи при возврате выданного на склад. " +
+		                    "При разных id. Реальный баг был в том что проверялись id не тех сущностей, " +
 		                    "но вы тестах id одинаковые, поэтому тесты работали..")]
 		[Category("real case")]
 		[Category("Integrated")]
