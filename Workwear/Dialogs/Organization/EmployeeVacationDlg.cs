@@ -3,7 +3,7 @@ using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace workwear.Dialogs.Organization
 {

@@ -5,7 +5,6 @@ using QS.Views.Dialog;
 using workwear.Domain.Stock;
 using workwear.Tools.IdentityCards;
 using workwear.ViewModels.Stock;
-using Workwear.Measurements;
 
 namespace workwear.Views.Stock
 {

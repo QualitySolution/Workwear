@@ -10,7 +10,7 @@ using workwear.Domain.Regulations;
 using Workwear.Measurements;
 using QS.HistoryLog;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace workwear.Domain.Stock
 {

@@ -11,7 +11,7 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using QS.HistoryLog;

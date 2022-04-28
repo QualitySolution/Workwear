@@ -19,7 +19,7 @@ using workwear.Domain.Stock;
 using Workwear.Measurements;
 using workwear.Repository;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
 

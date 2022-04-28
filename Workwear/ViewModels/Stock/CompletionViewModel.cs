@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -17,7 +17,7 @@ using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.Tools.Features;
 
 namespace workwear.ViewModels.Stock

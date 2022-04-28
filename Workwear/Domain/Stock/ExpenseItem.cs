@@ -12,7 +12,7 @@ using workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using workwear.Domain.Statements;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace workwear.Domain.Stock
 {

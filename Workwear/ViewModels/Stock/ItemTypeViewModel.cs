@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
-using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using Workwear.Measurements;
 using workwear.Tools.Features;

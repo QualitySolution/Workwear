@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Gamma.Utilities;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -12,7 +11,7 @@ using workwear.Domain.Statements;
 using workwear.Domain.Users;
 using workwear.Repository.Operations;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace workwear.Domain.Stock
 {

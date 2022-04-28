@@ -2,7 +2,7 @@
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace workwear.ViewModels.Tools
 {

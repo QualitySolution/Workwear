@@ -20,7 +20,7 @@ using workwear.Domain.Stock;
 using workwear.Repository.Operations;
 using workwear.Repository.Regulations;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 using Workwear.Domain.Company;
 
 namespace workwear.Domain.Company

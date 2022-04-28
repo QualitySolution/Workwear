@@ -9,7 +9,7 @@ using QS.Utilities.Numeric;
 using workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace workwear.Domain.Operations
 {

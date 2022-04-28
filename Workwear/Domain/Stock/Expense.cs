@@ -13,7 +13,7 @@ using workwear.Domain.Users;
 using workwear.Repository.Company;
 using workwear.Repository.Operations;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace workwear.Domain.Stock
 {

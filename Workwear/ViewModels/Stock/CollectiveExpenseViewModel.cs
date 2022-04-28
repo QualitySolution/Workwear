@@ -21,7 +21,7 @@ using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 using workwear.Repository;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Statements;
 

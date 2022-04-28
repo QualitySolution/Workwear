@@ -28,7 +28,7 @@ using workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Repository.Operations;
 using workwear.Repository.Regulations;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Tools

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Bindings.Collections.Generic;
@@ -20,7 +20,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository.Company;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
 using Workwear.Domain.Company;

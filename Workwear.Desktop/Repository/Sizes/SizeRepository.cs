@@ -3,7 +3,7 @@ using System.Linq;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Sizes;
 
-namespace workwear.Repository.Sizes
+namespace Workwear.Repository.Sizes
 {
     public class SizeRepository {
         public static IList<Size> GetSize(IUnitOfWork uow) => 

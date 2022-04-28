@@ -1,5 +1,5 @@
 ﻿using QS.Views.Dialog;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.ViewModels.Tools;
 
 namespace workwear.Views.Tools

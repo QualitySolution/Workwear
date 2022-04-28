@@ -12,7 +12,7 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace workwear.Domain.Operations
 {

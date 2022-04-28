@@ -11,7 +11,7 @@ using workwear.Domain.Stock;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace WorkwearTest.Organization
 {

@@ -4,7 +4,6 @@ using Autofac;
 using Gamma.Binding.Converters;
 using NLog;
 using QS.Dialog.Gtk;
-using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Validation;
 using workwear.Domain.Company;

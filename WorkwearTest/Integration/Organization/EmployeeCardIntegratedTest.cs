@@ -13,7 +13,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 using workwear.Repository.Operations;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace WorkwearTest.Integration.Organization
 {

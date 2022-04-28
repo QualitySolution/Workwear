@@ -11,7 +11,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace workwear.ViewModels.Stock
 {

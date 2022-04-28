@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using NSubstitute;
@@ -15,7 +15,7 @@ using RglibInterop;
 using workwear.Domain.Company;
 using workwear.Repository.Company;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
 using workwear.ViewModels.Stock;

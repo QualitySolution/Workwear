@@ -2,7 +2,7 @@
 using System.Data.Common;
 using QS.BaseParameters;
 
-namespace workwear.Tools
+namespace Workwear.Tools
 {
 	public class  BaseParameters : ParametersService
 	{

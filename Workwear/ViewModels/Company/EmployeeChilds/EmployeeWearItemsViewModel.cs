@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -17,7 +17,7 @@ using workwear.Models.Stock;
 using workwear.Repository.Operations;
 using workwear.ViewModels.Operations;
 using workwear.ViewModels.Regulations;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.ViewModels.Stock;
 using workwear.Tools.Features;
 using workwear.Domain.Operations.Graph;

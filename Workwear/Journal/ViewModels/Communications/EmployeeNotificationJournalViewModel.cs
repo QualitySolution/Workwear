@@ -6,7 +6,6 @@ using Autofac;
 using Gamma.ColumnConfig;
 using NHibernate;
 using NHibernate.Transform;
-using NHibernate.Util;
 using QS.Cloud.WearLk.Client;
 using QS.Cloud.WearLk.Manage;
 using QS.Dialog;
@@ -25,7 +24,7 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Communications;
 using workwear.Repository.Regulations;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.ViewModels.Communications;
 using workwear.ViewModels.Company;
 
