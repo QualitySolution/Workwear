@@ -27,11 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\QSProjects\Binding\Gamma.Binding\Gamma.Binding.csproj" />
-      <ProjectReference Include="..\..\QSProjects\Binding\Gamma.Utilities\Gamma.Utilities.csproj" />
       <ProjectReference Include="..\..\QSProjects\QS.BaseParameters\QS.BaseParameters.csproj" />
-      <ProjectReference Include="..\..\QSProjects\QS.HistoryLog\QS.HistoryLog.csproj" />
-      <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj" />
     </ItemGroup>
 
 </Project>

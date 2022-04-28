@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using Workwear.Measurements;
 
 namespace Workwear.Domain.Sizes
@@ -14,9 +14,7 @@ namespace Workwear.Domain.Sizes
         Nominative = "тип размеров",
         Genitive = "типа размеров"
     )]
-#if DESKTOP
-    [QS.HistoryLog.HistoryTrace]
-#endif
+    [HistoryTrace]
     public class SizeType: PropertyChangedBase, IDomainObject, IValidatableObject
     {
         #region Свойства

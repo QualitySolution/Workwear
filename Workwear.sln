@@ -103,6 +103,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.ErrorReporting.Client", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updater.Desktop", "..\QSProjects\QS.Updater.Desktop\QS.Updater.Desktop.csproj", "{9ED68A8A-25EE-4B6A-A483-A386BFC2F12B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workwear.Desktop", "Workwear.Desktop\Workwear.Desktop.csproj", "{45B650C2-CF4D-4E34-9385-44E7C40A66C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -374,6 +376,12 @@ Global
 		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.Release|x86.Build.0 = ReleaseDesktop|Any CPU
 		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.ReleaseWin|x86.ActiveCfg = ReleaseDesktop|Any CPU
 		{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}.ReleaseWin|x86.Build.0 = ReleaseDesktop|Any CPU
+		{45B650C2-CF4D-4E34-9385-44E7C40A66C4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{45B650C2-CF4D-4E34-9385-44E7C40A66C4}.Debug|x86.Build.0 = Debug|Any CPU
+		{45B650C2-CF4D-4E34-9385-44E7C40A66C4}.Release|x86.ActiveCfg = Release|Any CPU
+		{45B650C2-CF4D-4E34-9385-44E7C40A66C4}.Release|x86.Build.0 = Release|Any CPU
+		{45B650C2-CF4D-4E34-9385-44E7C40A66C4}.ReleaseWin|x86.ActiveCfg = Debug|Any CPU
+		{45B650C2-CF4D-4E34-9385-44E7C40A66C4}.ReleaseWin|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A6C1914F-7732-49F5-BABA-8BBBA521FAAB} = {792D3656-91FD-45AA-A40B-A0D63306A113}

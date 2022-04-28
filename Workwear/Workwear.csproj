@@ -648,6 +648,10 @@
       <Project>{8c8e9ac8-13c1-4b54-b4f4-9f8cd62a5744}</Project>
       <Name>Workwear.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Workwear.Desktop\Workwear.Desktop.csproj">
+      <Project>{45b650c2-cf4d-4e34-9385-44e7c40a66c4}</Project>
+      <Name>Workwear.Desktop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Workwear.Sql\Workwear.Sql.csproj">
       <Project>{CD86B5DA-6D84-4406-B7A8-0A35E87772AA}</Project>
       <Name>Workwear.Sql</Name>

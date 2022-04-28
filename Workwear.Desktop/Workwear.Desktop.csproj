@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <RootNamespace>Workwear</RootNamespace>
+        <Company>Quality Solution</Company>
+        <ProjectGuid>{45B650C2-CF4D-4E34-9385-44E7C40A66C4}</ProjectGuid>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Gtk.DataBindings\System.Data.Bindings\System.Data.Bindings.csproj" />
+      <ProjectReference Include="..\..\QSProjects\QS.HistoryLog\QS.HistoryLog.csproj" />
+      <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj" />
+      <ProjectReference Include="..\Workwear.Core\Workwear.Core.csproj" />
+    </ItemGroup>
+    
+</Project>
