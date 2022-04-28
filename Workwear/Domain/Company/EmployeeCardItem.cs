@@ -91,6 +91,7 @@ namespace workwear.Domain.Company
 		}
 		
 		private string nextIssueAnnotation;
+		[IgnoreHistoryTrace]
 		[Display (Name = "Обьяснение расчёта следующей выдачи")]
 		public virtual string NextIssueAnnotation {
 			get => nextIssueAnnotation;
