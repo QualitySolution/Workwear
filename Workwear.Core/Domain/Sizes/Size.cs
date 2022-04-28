@@ -4,10 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QS.HistoryLog;
 using Workwear.Measurements;
 
 #if DESKTOP
+using QS.HistoryLog;
 using System.Data.Bindings.Collections.Generic;
 #endif
 
@@ -18,7 +18,9 @@ namespace Workwear.Domain.Sizes
         Nominative = "размер",
         Genitive = "размера"
     )]
+#if DESKTOP
     [HistoryTrace]
+#endif
     public class Size: PropertyChangedBase, IDomainObject, IValidatableObject
     {
         #region Свойства
