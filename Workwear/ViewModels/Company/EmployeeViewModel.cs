@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Autofac;
 using Gamma.Utilities;
+using Grpc.Core;
 using QS.Cloud.WearLk.Client;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -241,23 +242,30 @@ namespace workwear.ViewModels.Company
 			LkPassword = password.ToString();
 		}
 
-		public void SyncLkPassword()
+		public bool SyncLkPassword()
 		{
-			if(String.IsNullOrWhiteSpace(LkPassword) || String.IsNullOrWhiteSpace(Entity.PhoneNumber)) {
-				if(Entity.LkRegistered) {
-					lkUserManagerService.RemovePhone(lkLastPhone);
-					Entity.LkRegistered = false;
+			try {
+				if(String.IsNullOrWhiteSpace(LkPassword) || String.IsNullOrWhiteSpace(Entity.PhoneNumber)) {
+					if(Entity.LkRegistered) {
+						lkUserManagerService.RemovePhone(lkLastPhone);
+						Entity.LkRegistered = false;
+					}
+					return true;
 				}
-				return;
+				if(lkLastPhone != Entity.PhoneNumber && Entity.LkRegistered)
+					lkUserManagerService.ReplacePhone(lkLastPhone, Entity.PhoneNumber);
+
+				if(LkPasswordNotChanged)
+					return true;
+
+				lkUserManagerService.SetPassword(Entity.PhoneNumber, LkPassword);
+				Entity.LkRegistered = true;
+				return true;
+			} catch (RpcException e) when(e.Status.StatusCode == StatusCode.InvalidArgument || e.Status.StatusCode == StatusCode.AlreadyExists)
+			{
+				interactive.ShowMessage(ImportanceLevel.Error, e.Status.Detail);
+				return false;
 			}
-			if(lkLastPhone != Entity.PhoneNumber && Entity.LkRegistered)
-				lkUserManagerService.ReplacePhone(lkLastPhone, Entity.PhoneNumber);
-
-			if(LkPasswordNotChanged)
-				return;
-
-			lkUserManagerService.SetPassword(Entity.PhoneNumber, LkPassword);
-			Entity.LkRegistered = true;
 		}
 
 		//Пароль не менялся, проверяем не полное вхождение на случай случайного удаления части символов.
@@ -404,9 +412,8 @@ namespace workwear.ViewModels.Company
 						return false;
 				}
 			}
-
-			SyncLkPassword();
-			return true;
+			
+			return SyncLkPassword();
 		}
 
 		public override bool Save()
