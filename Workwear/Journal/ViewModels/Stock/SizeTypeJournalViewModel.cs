@@ -55,6 +55,7 @@ namespace workwear.Journal.ViewModels.Stock
                     .Select(x => x.Name).WithAlias(() => resultAlias.Name)
                     .Select(x => x.CategorySizeType).WithAlias(() => resultAlias.CategorySizeType)
                     .Select(x => x.Position).WithAlias(() => resultAlias.Position)
+                    .Select(x => x.UseInEmployee).WithAlias(() => resultAlias.UseInEmployee)
                 ).OrderBy(x => x.Position).Asc
                 .TransformUsing(Transformers.AliasToBean<SizeTypeJournalNode>());
         }
@@ -79,5 +80,6 @@ namespace workwear.Journal.ViewModels.Stock
         [SearchHighlight]
         public CategorySizeType CategorySizeType { get; set; }
         public int Position { get; set; }
+        public bool UseInEmployee { get; set; }
     }
 }
