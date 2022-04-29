@@ -81,7 +81,8 @@ namespace workwear.Domain.Company
 		}
 		
 		private string nextIssueAnnotation;
-		[Display (Name = "Обьяснение расчёта следующей выдачи")]
+		[IgnoreHistoryTrace]
+		[Display (Name = "Объяснение расчёта следующей выдачи")]
 		public virtual string NextIssueAnnotation {
 			get => nextIssueAnnotation;
 			set => SetField (ref nextIssueAnnotation, value);
