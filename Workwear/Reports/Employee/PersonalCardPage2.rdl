@@ -786,7 +786,7 @@
         stock_income_detail
     LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id
     WHERE
-        stock_income.date &lt;= operation_issued_by_employee.operation_time AND operation_issued_by_employee.nomenclature_id = stock_income_detail.nomenclature_id AND operation_issued_by_employee.size = stock_income_detail.size AND operation_issued_by_employee.growth = stock_income_detail.growth AND stock_income_detail.certificate IS NOT NULL AND operation_warehouse.warehouse_expense_id = stock_income.warehouse_id
+        stock_income.date &lt;= operation_issued_by_employee.operation_time AND operation_issued_by_employee.nomenclature_id = stock_income_detail.nomenclature_id AND operation_issued_by_employee.size_id = stock_income_detail.size_id AND operation_issued_by_employee.height_id = stock_income_detail.height_id AND stock_income_detail.certificate IS NOT NULL AND operation_warehouse.warehouse_expense_id = stock_income.warehouse_id
     ORDER BY
         stock_income.date
     DESC
