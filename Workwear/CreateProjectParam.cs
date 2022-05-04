@@ -48,7 +48,6 @@ using QSOrmProject;
 using Workwear.Measurements;
 using Workwear.Sql;
 using Workwear.Tools;
-using workwear.Dialogs.Organization;
 using workwear.Dialogs.Regulations;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
@@ -100,8 +99,6 @@ namespace workwear
 			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
 			//Спецодежда
 			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
-			//Организация
-			OrmMain.AddObjectDescription<EmployeeVacation>().Dialog<EmployeeVacationDlg>();
 			//Общее
 			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
 			OrmMain.AddObjectDescription<UserSettings>();

@@ -1,10 +1,10 @@
 ﻿using System;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.Project.Services;
 using QS.ViewModels;
 using QSOrmProject;
-using workwear.Dialogs.Organization;
 using workwear.Domain.Company;
 using workwear.Representations.Organization;
 
@@ -68,12 +68,12 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 				else
 					return;
 			}
-			navigation.OpenTdiTab<EmployeeVacationDlg, EmployeeCard>(employeeViewModel, Entity);
+			navigation.OpenViewModel<EmployeeVacationViewModel, EmployeeCard, IEntityUoWBuilder>(employeeViewModel, Entity, EntityUoWBuilder.ForCreate());
 		}
 
 		public void EditItem(int id)
 		{
-			navigation.OpenTdiTab<EmployeeVacationDlg, int>(employeeViewModel, id);
+			navigation.OpenViewModel<EmployeeVacationViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(id));
 		}
 
 		public void DeleteItem(int id)

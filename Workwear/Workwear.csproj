@@ -217,17 +217,18 @@
     <Compile Include="HibernateMapping\Company\EmployeeVacationMap.cs" />
     <Compile Include="Representations\Organization\EmployeeVacationsVM.cs" />
     <Compile Include="Representations\Organization\EmployeeBalanceVM.cs" />
-    <Compile Include="Dialogs\Organization\EmployeeVacationDlg.cs" />
-    <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeVacationDlg.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Company.EmployeeVacationView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.VacationTypeView.cs" />
     <Compile Include="Tools\BuisnessLogicGlobalEventHandler.cs" />
     <Compile Include="Domain\Company\Organization.cs" />
     <Compile Include="HibernateMapping\Company\OrganizatonMap.cs" />
+    <Compile Include="ViewModels\Company\EmployeeVacationViewModel.cs" />
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\Company\VacationTypeViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
     <Compile Include="ViewModels\Stock\EmployeeIssueGraphViewModel.cs" />
+    <Compile Include="Views\Company\EmployeeVacationView.cs" />
     <Compile Include="Views\Company\OrganizationView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.OrganizationView.cs" />
     <Compile Include="Domain\Statements\IssuanceSheet.cs" />
@@ -666,6 +667,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Dialogs\Organization" />
     <Folder Include="ReportsDlg\" />
     <Folder Include="Reports\" />
     <Folder Include="viewDTOs\" />
