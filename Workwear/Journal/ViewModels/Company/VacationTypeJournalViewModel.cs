@@ -1,6 +1,5 @@
 using NHibernate;
 using NHibernate.Transform;
-using NPOI.SS.Formula.Functions;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -8,9 +7,9 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using workwear.Domain.Company;
-using workwear.ViewModels.Regulations;
+using workwear.ViewModels.Company;
 
-namespace workwear.Journal.ViewModels.Regulations
+namespace workwear.Journal.ViewModels.Company
 {
     public class VacationTypeJournalViewModel : EntityJournalViewModelBase<VacationType, VacationTypeViewModel, VacationTypeJournalNode>
     {

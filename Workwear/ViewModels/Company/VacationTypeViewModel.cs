@@ -5,7 +5,7 @@ using QS.Validation;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
 
-namespace workwear.ViewModels.Regulations
+namespace workwear.ViewModels.Company
 {
     public class VacationTypeViewModel: EntityDialogViewModelBase<VacationType>
     {

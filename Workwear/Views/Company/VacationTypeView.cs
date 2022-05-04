@@ -1,8 +1,8 @@
 ﻿using QS.Views.Dialog;
 using workwear.Domain.Company;
-using workwear.ViewModels.Regulations;
+using workwear.ViewModels.Company;
 
-namespace workwear.Views.Regulations
+namespace workwear.Views.Company
 {
 	public partial class VacationTypeView : EntityDialogViewBase<VacationTypeViewModel,VacationType>
 	{

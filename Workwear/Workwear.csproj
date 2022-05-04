@@ -137,7 +137,7 @@
     <Compile Include="HibernateMapping\Stock\CompletionMap.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeTypeFilterViewModel.cs" />
-    <Compile Include="Journal\ViewModels\Regulations\VacationTypeJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Company\VacationTypeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\SizeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\SizeTypeJournalViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionFilterViewModel.cs" />
@@ -219,12 +219,12 @@
     <Compile Include="Representations\Organization\EmployeeBalanceVM.cs" />
     <Compile Include="Dialogs\Organization\EmployeeVacationDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Organization.EmployeeVacationDlg.cs" />
-    <Compile Include="gtk-gui\workwear.Views.Regulations.VacationTypeView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Company.VacationTypeView.cs" />
     <Compile Include="Tools\BuisnessLogicGlobalEventHandler.cs" />
     <Compile Include="Domain\Company\Organization.cs" />
     <Compile Include="HibernateMapping\Company\OrganizatonMap.cs" />
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
-    <Compile Include="ViewModels\Regulations\VacationTypeViewModel.cs" />
+    <Compile Include="ViewModels\Company\VacationTypeViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
     <Compile Include="ViewModels\Stock\EmployeeIssueGraphViewModel.cs" />
@@ -235,7 +235,7 @@
     <Compile Include="HibernateMapping\Statements\IssuanceSheetItemMap.cs" />
     <Compile Include="HibernateMapping\Statements\IssuanceSheetMap.cs" />
     <Compile Include="ViewModels\Statements\IssuanceSheetViewModel.cs" />
-    <Compile Include="Views\Regulations\VacationTypeView.cs" />
+    <Compile Include="Views\Company\VacationTypeView.cs" />
     <Compile Include="Views\Statements\IssuanceSheetView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Statements.IssuanceSheetView.cs" />
     <Compile Include="Views\Statements\IssuanceSheetFillByView.cs" />
