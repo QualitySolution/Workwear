@@ -154,6 +154,13 @@ namespace workwear.Journal
 					.AddColumn("Тип номенклатуры").AddTextRenderer(node => node.TypeName)
 					.Finish()
 			);
+			TreeViewColumnsConfigFactory.Register<VacationTypeJournalViewModel>(
+				() => FluentColumnsConfig<VacationTypeJournalNode>.Create()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Исключать из носки").AddTextRenderer(node => node.ExcludeFromWearing ? "Да" : "Нет")
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comments)
+					.Finish()
+				);
 
 			#endregion
 
