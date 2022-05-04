@@ -1,5 +1,6 @@
 using NHibernate;
 using NHibernate.Transform;
+using NPOI.SS.Formula.Functions;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -32,6 +33,7 @@ namespace workwear.Journal.ViewModels.Regulations
                     x => x.Name
                 ))
                 .SelectList((list) => list
+                    .Select(x => x.Id).WithAlias(() => resultAlias.Id)
                     .Select(x => x.Name).WithAlias(() => resultAlias.Name)
                     .Select(x => x.ExcludeFromWearing).WithAlias(() => resultAlias.ExcludeFromWearing)
                     .Select(x => x.Comments).WithAlias(() => resultAlias.Comments)
@@ -42,6 +44,7 @@ namespace workwear.Journal.ViewModels.Regulations
 
     public class VacationTypeJournalNode
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public bool ExcludeFromWearing { get; set; }
         public string Comments { get; set; }
