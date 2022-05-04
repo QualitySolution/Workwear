@@ -248,7 +248,8 @@ namespace workwear.Journal
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.Finish()
 			);
-			
+			#endregion
+			#region Sizes
 			TreeViewColumnsConfigFactory.Register<SizeJournalViewModel>(
 				() => FluentColumnsConfig<SizeJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
@@ -263,9 +264,9 @@ namespace workwear.Journal
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Категория").AddTextRenderer(node => node.CategorySizeType.GetEnumTitle()).SearchHighlight()
 					.AddColumn("Позиция").AddNumericRenderer(node => node.Position)
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.UseInEmployee ? null : "gray")
 					.Finish()
 			);
-
 			#endregion
 
 			#region Tools
