@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Gamma.Binding.Converters;
@@ -16,7 +15,6 @@ using workwear.ViewModels.Company;
 using workwear.Views.Company.EmployeeChilds;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
-using Workwear.Measurements;
 
 namespace workwear.Views.Company
 {
@@ -175,23 +173,26 @@ namespace workwear.Views.Company
 		private void SizeBuild() {
 			var sizes = ViewModel.SizeService
 				.GetSize(ViewModel.UoW, null, true);
+			var excludeSizes = Entity.Sizes
+				.Where(s => s.Size.UseInEmployee == false)
+				.Select(x => x.Size);
+			//добавляем исключенные размеры если они уже привязаны к сотруднику, чтобы они не проподали при пересохранении
+			sizes.AddRange(excludeSizes);
 			var sizeTypes = 
 				ViewModel.SizeService.GetSizeType(ViewModel.UoW, true).OrderBy(x => x.Position).ToList();
 			
-			var table = new yTable((uint) sizeTypes.Count, 2, false);
-			
-			for (var index = 0; index < sizeTypes.Count; index++) {
-				var sizeType = sizeTypes[index];
+			for (var index = 1; index < sizeTypes.Count + 1; index++) {
+				var sizeType = sizeTypes[index - 1];
 				var employeeSize = Entity.Sizes.FirstOrDefault(x => x.SizeType.Id == sizeType.Id);
 				
 				var label = new yLabel {LabelProp = sizeType.Name + ":"};
-				 label.Xalign = 0;
+				 label.Xalign = 1;
 				 
 				 if(sizes.All(x => x.SizeType.Id != sizeType.Id))
 					 continue;
 				 var list = new SpecialListComboBox {ItemsList = sizes.Where(x => x.SizeType.Id == sizeType.Id)};
-				list.SetRenderTextFunc<Size>(x => x.Name);
-				list.ShowSpecialStateNot = true;
+				 list.SetRenderTextFunc<Size>(x => x.Name);
+				 list.ShowSpecialStateNot = true;
 				list.SelectedItemStrictTyped = true;
 				if (employeeSize != null)
 					list.SelectedItem = employeeSize.Size;
@@ -202,9 +203,6 @@ namespace workwear.Views.Company
 				table.Attach(list, 1, 2, (uint) index, (uint) (index + 1), 
 					AttachOptions.Fill, AttachOptions.Fill | AttachOptions.Expand, 0, 0);
 			}
-			
-			SizeContainer.PackStart(table, false, false, 0);
-			SizeContainer.PackEnd(new HBox(), true, true, 0);
 			SizeContainer.Homogeneous = false;
 			SizeContainer.ShowAll();
 		}
