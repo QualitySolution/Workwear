@@ -9,7 +9,6 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels;
-using workwear.Dialogs.Issuance;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
@@ -126,7 +125,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void OpenTimeLine(EmployeeCardItem item)
 		{
-			navigation.OpenTdiTab<EmployeeIssueGraphDlg, EmployeeCard, ProtectionTools>(employeeViewModel, Entity, item.ProtectionTools);
+			navigation.OpenViewModel<EmployeeIssueGraphViewModel, EmployeeCard, ProtectionTools>(employeeViewModel, Entity, item.ProtectionTools);
 		}
 
 		public void WriteOffWear()

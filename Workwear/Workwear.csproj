@@ -207,8 +207,6 @@
     <Compile Include="HibernateMapping\Operations\EmployeeIssueOperationMap.cs" />
     <Compile Include="Domain\Operations\Graph\IssueGraph.cs" />
     <Compile Include="Repository\Stock\NomenclatureRepository.cs" />
-    <Compile Include="Dialogs\Issuance\EmployeeIssueGraphDlg.cs" />
-    <Compile Include="gtk-gui\workwear.Dialogs.Issuance.EmployeeIssueGraphDlg.cs" />
     <Compile Include="Domain\Operations\Graph\GraphItem.cs" />
     <Compile Include="Domain\Operations\Graph\GraphInterval.cs" />
     <Compile Include="Repository\Operations\EmployeeIssueRepository.cs" />
@@ -228,6 +226,7 @@
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
+    <Compile Include="ViewModels\Stock\EmployeeIssueGraphViewModel.cs" />
     <Compile Include="Views\Company\OrganizationView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.OrganizationView.cs" />
     <Compile Include="Domain\Statements\IssuanceSheet.cs" />
@@ -247,6 +246,7 @@
     <Compile Include="Domain\Stock\Warehouse.cs" />
     <Compile Include="HibernateMapping\Stock\WarehouseMap.cs" />
     <Compile Include="ViewModels\Stock\WarehouseTransferViewModel.cs" />
+    <Compile Include="Views\Stock\EmployeeIssueGraphView.cs" />
     <Compile Include="Views\Stock\WarehouseView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseView.cs" />
     <Compile Include="ViewModels\Stock\WarehouseViewModel.cs" />
@@ -510,6 +510,7 @@
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Sizes.SizeFilterView.cs" />
     <Compile Include="Journal\Filter.Views\Sizes\SizeTypeFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Sizes.SizeTypeFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.EmployeeIssueGraphView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -687,7 +688,6 @@
     <Folder Include="HibernateMapping\Operations\" />
     <Folder Include="Domain\Operations\Graph\" />
     <Folder Include="Repository\Stock\" />
-    <Folder Include="Dialogs\Issuance\" />
     <Folder Include="Repository\Operations\" />
     <Folder Include="Representations\Organization\" />
     <Folder Include="Views\" />
