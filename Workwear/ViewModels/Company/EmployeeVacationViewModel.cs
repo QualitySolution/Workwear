@@ -5,26 +5,39 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
+using workwear.Repository.Operations;
 using Workwear.Tools;
 
 namespace workwear.ViewModels.Company
 {
     public class EmployeeVacationViewModel : EntityDialogViewModelBase<EmployeeVacation>
     {
+        private readonly BaseParameters baseParameters;
+        public EmployeeVacationViewModel(
+            int employeeId, 
+            IEntityUoWBuilder uowBuilder, 
+            IUnitOfWorkFactory unitOfWorkFactory, 
+            INavigationManager navigation, 
+            BaseParameters baseParameters, 
+            IValidator validator = null) : this(uowBuilder, unitOfWorkFactory, navigation, baseParameters)
+        {
+            Entity.Employee = UoW.GetById<EmployeeCard>(employeeId);
+        }
         public EmployeeVacationViewModel(
             IEntityUoWBuilder uowBuilder, 
             IUnitOfWorkFactory unitOfWorkFactory, 
             INavigationManager navigation,
-            EmployeeCard employee = null,
+            BaseParameters baseParameters,
             IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
         {
-            Entity.Employee = employee;
+            this.baseParameters = baseParameters;
         }
 
-        public override bool Save()
-        {
-            var baseParameters = new BaseParameters(UoW.Session.Connection);
-            Entity.UpdateRelatedOperations(UoW, new Repository.Operations.EmployeeIssueRepository(), baseParameters, new GtkQuestionDialogsInteractive());
+        public override bool Save() {
+            if (UoW.IsNew) {
+                Entity.Employee.AddVacation(Entity);
+            }
+            Entity.UpdateRelatedOperations(UoW, new EmployeeIssueRepository(), baseParameters, new GtkQuestionDialogsInteractive());
             UoW.Save(Entity.Employee);
             return base.Save();
         }
