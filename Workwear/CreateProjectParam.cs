@@ -49,7 +49,6 @@ using Workwear.Measurements;
 using Workwear.Sql;
 using Workwear.Tools;
 using workwear.Dialogs.Regulations;
-using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
@@ -104,7 +103,6 @@ namespace workwear
 			OrmMain.AddObjectDescription<UserSettings>();
 			//Склад
 			OrmMain.AddObjectDescription<Income>().Dialog<Dialogs.Stock.IncomeDocDlg>();
-			OrmMain.AddObjectDescription<Writeoff>().Dialog<WriteOffDocDlg>();
 
 			NotifyConfiguration.Enable();
 			BuisnessLogicGlobalEventHandler.Init(new GtkQuestionDialogsInteractive());

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -130,7 +131,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void WriteOffWear()
 		{
-			navigation.OpenTdiTab<WriteOffDocDlg, EmployeeCard>(employeeViewModel, Entity);
+			navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, Dictionary<Type, int>>(employeeViewModel, EntityUoWBuilder.ForCreate(), new Dictionary<Type, int>{ {typeof(EmployeeCard), Entity.Id }});
 		}
 
 		public void UpdateWorkwearItems()

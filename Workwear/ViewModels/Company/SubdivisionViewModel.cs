@@ -96,7 +96,7 @@ namespace workwear.ViewModels.Company
 
 		public void WriteOffItem()
 		{
-			navigation.OpenTdiTab<WriteOffDocDlg, Subdivision>(this, Entity);
+			navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, Dictionary<Type, int>>(this, EntityUoWBuilder.ForCreate(), new Dictionary<Type, int>{ {typeof(Subdivision), Entity.Id }});
 		}
 
 		#endregion

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -74,7 +75,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void WriteOffWear()
 		{
-			navigation.OpenTdiTab<WriteOffDocDlg, EmployeeCard>(employeeViewModel, Entity);
+			navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, Dictionary<Type, int>>(employeeViewModel, EntityUoWBuilder.ForCreate(), new Dictionary<Type, int>{ {typeof(EmployeeCard), Entity.Id }});
 		}
 
 		#endregion
