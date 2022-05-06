@@ -29,7 +29,7 @@ namespace workwear.Journal
 					.AddColumn("Телефон").AddTextRenderer(node => node.Phone)
 					.AddColumn("Состояние личного кабинета").AddTextRenderer(node => node.StatusText)
 					.AddColumn("Последний визит").AddTextRenderer(node => node.LastVisit)
-					.AddColumn("Не прочитанно").AddTextRenderer(node => node.UnreadMessagesText)
+					.AddColumn("Не прочитано").AddTextRenderer(node => node.UnreadMessagesText)
 					.AddColumn("К выдаче").AddTextRenderer(n => n.IssueCount.ToString())
 					.AddColumn("Должность").AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
@@ -150,7 +150,7 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<ProtectionToolsJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
-					.AddColumn("Тип номеклатуры").AddTextRenderer(node => node.TypeName)
+					.AddColumn("Тип номенклатуры").AddTextRenderer(node => node.TypeName)
 					.Finish()
 			);
 

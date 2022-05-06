@@ -4,6 +4,7 @@ using Gtk;
 using NLog;
 using QS.DBScripts.Controllers;
 using QS.Dialog;
+using QS.Dialog.GtkUI;
 using QS.ErrorReporting;
 using QS.Navigation;
 using QS.Project.DB;
@@ -35,6 +36,7 @@ namespace workwear
 				UnhandledExceptionHandler.SubscribeToUnhadledExceptions(errorSettings);
 				GtkGuiDispatcher.GuiThread = System.Threading.Thread.CurrentThread;
 				UnhandledExceptionHandler.ApplicationInfo = new ApplicationVersionInfo();
+				UnhandledExceptionHandler.InteractiveMessage = new GtkMessageDialogsInteractive();
 				//Настройка обычных обработчиков ошибок.
 				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlException1055OnlyFullGroupBy);
 				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlException1366IncorrectStringValue);

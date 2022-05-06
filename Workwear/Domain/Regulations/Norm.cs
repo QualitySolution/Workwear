@@ -70,7 +70,7 @@ namespace workwear.Domain.Regulations
 		}
 
 		GenericObservableList<Post> observablePosts;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<Post> ObservablePosts {
 			get {
 				if (observablePosts == null)
@@ -88,7 +88,7 @@ namespace workwear.Domain.Regulations
 		}
 
 		GenericObservableList<NormItem> observableItems;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
 		public virtual GenericObservableList<NormItem> ObservableItems {
 			get {
 				if (observableItems == null)
@@ -153,12 +153,13 @@ namespace workwear.Domain.Regulations
 				yield return new ValidationResult ("Норма должна содержать хотя бы одну номенклатуру.", 
 					new[] { this.GetPropertyName (o => o.Items) });
 			foreach(var item in items) {
-				if(item.PeriodCount <= 0){
-					yield return new ValidationResult($"Период эксплуатации номенклатуры {item.ProtectionTools.Name} должен быть больше нуля.",
+				if(item.PeriodCount <= 0 && item.NormPeriod != NormPeriodType.Wearout){
+					yield return new ValidationResult(
+						$"Период эксплуатации номенклатуры {item.ProtectionTools.Name} должен быть больше нуля.",
 					new[] { nameof(item.PeriodCount) });
 				}
 				if(item.Amount <= 0) {
-					yield return new ValidationResult($"Колличество у номенклатуры {item.ProtectionTools.Name} должно быть больше нуля.",
+					yield return new ValidationResult($"Количество у номенклатуры {item.ProtectionTools.Name} должно быть больше нуля.",
 					new[] { nameof(item.PeriodCount) });
 				}
 			}

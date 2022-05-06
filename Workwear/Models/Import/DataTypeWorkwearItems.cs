@@ -8,9 +8,9 @@ namespace workwear.Models.Import
 		Unknown,
 		[Display(Name = "Табельный номер")]
 		PersonnelNumber,
-		[Display(Name = "Номеклатура нормы")]
+		[Display(Name = "Номенклатура нормы")]
 		ProtectionTools,
-		[Display(Name = "Номеклатура выдачи")]
+		[Display(Name = "Номенклатура выдачи")]
 		Nomenclature,
 		[Display(Name = "Подразделение")]
 		Subdivision,

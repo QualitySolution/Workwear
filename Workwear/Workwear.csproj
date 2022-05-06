@@ -115,6 +115,7 @@
     <EmbeddedResource Include="icon\buttons\eye-crossed.png" />
     <EmbeddedResource Include="icon\buttons\legend.png" />
     <EmbeddedResource Include="icon\rows\нand.png" />
+    <EmbeddedResource Include="icon\rows\info.png" />
     <EmbeddedResource Include="icon\buttons\dice.png" />
     <EmbeddedResource Include="icon\toolbar\store-movements.png" />
     <EmbeddedResource Include="icon\buttons\menu.png" />
@@ -137,6 +138,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
+    <Compile Include="Tools\Navigation\AdditionalIdHashGenerator.cs" />
     <Compile Include="viewDTOs\EmployeeCardMovements.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="CreateProjectParam.cs" />
@@ -498,6 +500,9 @@
     <Compile Include="Journal\ViewModels\Communications\MessageTemplateJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Communications\EmployeeNotificationJournalViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Communications.EmployeeNotificationFilterView.cs" />
+    <Compile Include="ViewModels\Communications\HistoryNotificationViewModel.cs" />
+    <Compile Include="Views\Communications\HistoryNotificationView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Communications.HistoryNotificationView.cs" />
     <Compile Include="ViewModels\Stock\CompletionViewModel.cs" />
     <Compile Include="Views\Stock\CompletionView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.CompletionView.cs" />
@@ -557,10 +562,6 @@
     <ProjectReference Include="..\..\QSProjects\Modules\QSBusinessCommon\QSBusinessCommon.csproj">
       <Project>{AD329D59-938D-42AC-ABE2-B0F14FDBB7C6}</Project>
       <Name>QSBusinessCommon</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSExtraGammaWidgets\QSExtraGammaWidgets.csproj">
-      <Project>{3DCDD84A-20D0-4939-BE25-58B19F3961F2}</Project>
-      <Name>QSExtraGammaWidgets</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QSTelemetry\QSTelemetry.csproj">
       <Project>{EB4F19F8-2CC9-4712-9949-760A441A56FE}</Project>
@@ -802,11 +803,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="App.config" />
-    <None Condition=" '$(TargetOS)' == 'Linux' " Include="$(Home)\.nuget\packages\grpc.core\2.37.1\runtimes\linux-x64\native\libgrpc_csharp_ext.x64.so">
+    <None Condition=" '$(TargetOS)' == 'Linux' " Include="$(Home)\.nuget\packages\grpc.core\2.44.0\runtimes\linux-x64\native\libgrpc_csharp_ext.x64.so">
       <Link>libgrpc_csharp_ext.x64.so</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Condition=" '$(TargetOS)' == 'Win' " Include="$(Home)\.nuget\packages\grpc.core\2.37.1\runtimes\win-x86\native\grpc_csharp_ext.x86.dll">
+    <None Condition=" '$(TargetOS)' == 'Win' " Include="$(Home)\.nuget\packages\grpc.core\2.44.0\runtimes\win-x86\native\grpc_csharp_ext.x86.dll">
       <Link>grpc_csharp_ext.x86.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

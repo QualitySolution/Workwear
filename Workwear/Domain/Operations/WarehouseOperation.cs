@@ -44,7 +44,7 @@ namespace workwear.Domain.Operations
 
 		Nomenclature nomenclature;
 
-		[Display(Name = "Номеклатура")]
+		[Display(Name = "Номенклатура")]
 		public virtual Nomenclature Nomenclature {
 			get { return nomenclature; }
 			set { SetField(ref nomenclature, value); }

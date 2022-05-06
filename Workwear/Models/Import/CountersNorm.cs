@@ -9,7 +9,7 @@ namespace workwear.Models.Import
 		NewNorms,
 		[Display(Name = "Новых строк нормы")]
 		NewNormItems,
-		[Display(Name = "Измененых строк нормы")]
+		[Display(Name = "Измененных строк нормы")]
 		ChangedNormItems,
 		[Display(Name = "Строк нормы без изменений")]
 		NotChangedNormItems,

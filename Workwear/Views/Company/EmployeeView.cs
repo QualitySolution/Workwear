@@ -4,6 +4,7 @@ using Gamma.Binding.Converters;
 using Gtk;
 using NLog;
 using QS.Dialog.GtkUI;
+using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using QSOrmProject;
 using workwear.Domain.Company;
@@ -93,6 +94,8 @@ namespace workwear.Views.Company
 			entityLeader.ViewModel = ViewModel.EntryLeaderViewModel;
 			entityPost.ViewModel = ViewModel.EntryPostViewModel;
 
+			entitySubdivision.ViewModel.Changed += ChangedSubdivision;
+
 			hboxCardUid.Binding.AddBinding(ViewModel, v => v.VisibleCardUid, w => w.Visible).InitializeFromSource();
 			ylabelCardUid.Binding.AddBinding(ViewModel, v => v.VisibleCardUid, w => w.Visible).InitializeFromSource();
 			entryCardUid.Binding.AddSource(ViewModel)
@@ -131,6 +134,14 @@ namespace workwear.Views.Company
 
 			enumPrint.ItemsEnum = typeof(EmployeeViewModel.PersonalCardPrint);
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+		}
+		
+
+		private void ChangedSubdivision(object o, EventArgs eventArgs) 
+		{
+			if(entitySubdivision.ViewModel.Entity != null)
+				if(entityDepartment.ViewModel.GetEntity<Department>()?.Subdivision?.Id != entitySubdivision.ViewModel.Entity?.GetId())
+					entityDepartment.ViewModel.CleanEntity();
 		}
 
 		#region События контролов
@@ -221,7 +232,7 @@ namespace workwear.Views.Company
 				"<span color='red'>●</span> — получение просрочено\n" +
 				"<span color='darkgreen'>●</span> — возможна выдача раньше срока\n" +
 				"\n<b>Колонка «На складе»:</b>\n" +
-				"<span color='orange'>●</span> — подходящей номеклатуры не найдено\n" +
+				"<span color='orange'>●</span> — подходящей номенклатуры не найдено\n" +
 				"<span color='red'>●</span> — номенклатура на складе отсутствует\n" +
 				"<span color='blue'>●</span> — на складе не достаточное количество\n" +
 				"<span color='green'>●</span> — на складе достаточное количество"

@@ -39,10 +39,12 @@ namespace workwear.Views.Company.EmployeeChilds
 		void ytreeWorkwear_Selection_Changed(object sender, EventArgs e)
 		{
 			buttonTimeLine.Sensitive = ytreeWorkwear.Selection.CountSelectedRows() > 0;
+			buttonManualIssueDate.Sensitive = ytreeWorkwear.Selection.CountSelectedRows() > 0;
 		}
 
 		#region private
 		Pixbuf handIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "workwear.icon.rows.нand.png");
+		Pixbuf infoIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "workwear.icon.rows.info.png");
 
 		void ConfigureTable()
 		{
@@ -54,12 +56,15 @@ namespace workwear.Views.Company.EmployeeChilds
 				.AddColumn("По норме").AddTextRenderer(node => node.AmountByNormText)
 				.AddColumn("Срок службы").AddTextRenderer(node => node.NormLifeText)
 				.AddColumn("Дата получения")
-					.AddPixbufRenderer(node => node.LastIssueOperation != null && node.LastIssueOperation.OverrideBefore ? handIcon : null) //FIXME пока так определеяем ручную операцию. Когда будут типы операций надо переделать.
+					.AddPixbufRenderer(node => node.LastIssueOperation != null && node.LastIssueOperation.OverrideBefore ? handIcon : null) //FIXME пока так определяем ручную операцию. Когда будут типы операций надо переделать.
 					.AddTextRenderer(node => String.Format("{0:d}", node.LastIssue))
 				.AddColumn("Получено").AddTextRenderer(node => node.AmountText)
 					.AddSetter((w, node) => w.Foreground = node.AmountColor)
-				.AddColumn("След. получение").AddTextRenderer(node => String.Format("{0:d}", node.NextIssue))
+				.AddColumn("След. получение")
+					.ToolTipText(node => node.NextIssueAnnotation)
+					.AddTextRenderer(node => String.Format("{0:d}", node.NextIssue))
 					.AddSetter((w, node) => w.Foreground = node.NextIssueColor(ViewModel.BaseParameters))
+					.AddPixbufRenderer(node => String.IsNullOrEmpty(node.NextIssueAnnotation) ? null : infoIcon)
 				.AddColumn("Просрочка").AddTextRenderer(
 					node => node.NextIssue.HasValue && node.NextIssue.Value < DateTime.Today
 					? NumberToTextRus.FormatCase((int)(DateTime.Today - node.NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней")
