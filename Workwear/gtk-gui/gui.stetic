@@ -4974,13 +4974,12 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Button" id="buttonFillBuhDoc">
+                  <widget class="Gamma.GtkWidgets.yButton" id="buttonFillBuhDoc">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
                     <property name="Type">TextAndIcon</property>
-                    <property name="Icon">stock:gtk-copy Menu</property>
+                    <property name="Icon">stock:stock_copy Menu</property>
                     <property name="Label" translatable="yes">Заменить бух. документ</property>
-                    <property name="UseUnderline">True</property>
                   </widget>
                   <packing>
                     <property name="PackType">End</property>
@@ -5071,9 +5070,10 @@
                   <widget class="Gamma.GtkWidgets.yButton" id="buttonDel">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
-                    <property name="Type">TextAndIcon</property>
-                    <property name="Label" translatable="yes">Удалить</property>
-                    <property name="UseUnderline">True</property>
+                    <property name="UseStock">True</property>
+                    <property name="Type">StockItem</property>
+                    <property name="StockId">gtk-remove</property>
+                    <property name="label">gtk-remove</property>
                   </widget>
                   <packing>
                     <property name="Position">3</property>

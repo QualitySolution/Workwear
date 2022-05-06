@@ -42,7 +42,7 @@ namespace workwear.Views.Stock
 
 		private global::Gtk.Label label1;
 
-		private global::Gtk.Button buttonFillBuhDoc;
+		private global::Gamma.GtkWidgets.yButton buttonFillBuhDoc;
 
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 
@@ -248,13 +248,12 @@ namespace workwear.Views.Stock
 			w18.Expand = false;
 			w18.Fill = false;
 			// Container child hbox3.Gtk.Box+BoxChild
-			this.buttonFillBuhDoc = new global::Gtk.Button();
+			this.buttonFillBuhDoc = new global::Gamma.GtkWidgets.yButton();
 			this.buttonFillBuhDoc.CanFocus = true;
 			this.buttonFillBuhDoc.Name = "buttonFillBuhDoc";
-			this.buttonFillBuhDoc.UseUnderline = true;
 			this.buttonFillBuhDoc.Label = global::Mono.Unix.Catalog.GetString("Заменить бух. документ");
 			global::Gtk.Image w19 = new global::Gtk.Image();
-			w19.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-copy", global::Gtk.IconSize.Menu);
+			w19.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "stock_copy", global::Gtk.IconSize.Menu);
 			this.buttonFillBuhDoc.Image = w19;
 			this.hbox3.Add(this.buttonFillBuhDoc);
 			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.buttonFillBuhDoc]));
@@ -329,8 +328,9 @@ namespace workwear.Views.Stock
 			this.buttonDel = new global::Gamma.GtkWidgets.yButton();
 			this.buttonDel.CanFocus = true;
 			this.buttonDel.Name = "buttonDel";
+			this.buttonDel.UseStock = true;
 			this.buttonDel.UseUnderline = true;
-			this.buttonDel.Label = global::Mono.Unix.Catalog.GetString("ybutton");
+			this.buttonDel.Label = "gtk-remove";
 			this.hbox5.Add(this.buttonDel);
 			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.buttonDel]));
 			w30.Position = 3;

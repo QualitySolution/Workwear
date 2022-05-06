@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using Gtk;
 using NLog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Project.Journal;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 
 namespace workwear.ViewModels.Stock
@@ -17,9 +21,8 @@ namespace workwear.ViewModels.Stock
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public SizeService SizeService { get; }
-        public INavigationManager NavigationManager { get; }
-        public EmployeeCard CurWorker { get;}
-        public Subdivision CurObject { get;}
+        public EmployeeCard Employee { get;}
+        public Subdivision Subdivision { get;}
         public Warehouse CurWarehouse { get; set; }
 
         public WriteOffViewModel(
@@ -31,6 +34,8 @@ namespace workwear.ViewModels.Stock
         {
             SizeService = sizeService;
             NavigationManager = navigation;
+            Entity.ObservableItems.PropertyChanged += CalculateTotal;
+            CalculateTotal(null, null);
         }
 
         public WriteOffViewModel(
@@ -42,17 +47,86 @@ namespace workwear.ViewModels.Stock
             IValidator validator = null) : this(uowBuilder, unitOfWorkFactory, navigation, sizeService)
         {
             if(obkDictionary.ContainsKey(typeof(EmployeeCard)))
-                CurWorker = UoW.GetById<EmployeeCard>(obkDictionary[typeof(EmployeeCard)]);
+                Employee = UoW.GetById<EmployeeCard>(obkDictionary[typeof(EmployeeCard)]);
             if (obkDictionary.ContainsKey(typeof(Subdivision)))
-                CurObject = UoW.GetById<Subdivision>(obkDictionary[typeof(Subdivision)]);
+                Subdivision = UoW.GetById<Subdivision>(obkDictionary[typeof(Subdivision)]);
         }
 
         #region ViewProperty
-        public string Total => $"Позиций в документе: {Entity.Items.Count}  " +
-                               $"Количество единиц: {Entity.Items.Sum(x => x.Amount)}";
-        public bool DelSensitive { get; set; }
-        
+        private string total;
+        public string Total {
+            get => total;
+            set => SetField(ref total, value);
+        }
+        private bool delSensitive;
+        public bool DelSensitive {
+            get => delSensitive;
+            set => SetField(ref delSensitive, value);
+        }
+        private bool fillBuhDocSensitive;
+        public bool FillBuhDocSensitive {
+            get => fillBuhDocSensitive;
+            set => SetField(ref fillBuhDocSensitive, value);
+        }
+
         #endregion
+
+        private void CalculateTotal(object sender, PropertyChangedEventArgs propertyChangedEventArgs) {
+            Total = $"Позиций в документе: {Entity.Items.Count}  " +
+                    $"Количество единиц: {Entity.Items.Sum(x => x.Amount)}";
+            FillBuhDocSensitive = Entity.Items.Count > 0;
+        }
+
+        #region Items
+        public void AddFromStock() {
+            var selectJournal = 
+                NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave);
+            if(CurWarehouse != null) {
+                selectJournal.ViewModel.Filter.Warehouse = CurWarehouse;
+            }
+            selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+            selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;
+        }
+        private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
+            var selectVM = sender as StockBalanceJournalViewModel;
+            foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
+                Entity.AddItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.Amount);
+                CalculateTotal(null, null);
+            }
+        }
+        public void AddFromEmployee() { }
+        private void SelectFromEmployee_ObjectSelected(object sender, JournalSelectedEventArgs e) {
+            CalculateTotal(null, null);
+        }
+        public void AddFromObject() { }
+        private void SelectFromobject_ObjectSelected(object sender, JournalSelectedEventArgs e) {
+            CalculateTotal(null, null);
+        }
+        public void DeleteItem(WriteoffItem item) {
+            Entity.RemoveItem(item);
+            CalculateTotal(null, null);
+        }
+        #endregion
+        public void FillBuhDoc() {
+        	using (var dlg = new Dialog("Введите бухгалтерский документ", MainClass.MainWin, DialogFlags.Modal)) {
+        		var docEntry = new Entry(80);
+        		if (Entity.Items.Any(x => x.WriteoffFrom == WriteoffFrom.Employee))
+        			docEntry.Text = Entity.Items.First(x => x.WriteoffFrom == WriteoffFrom.Employee).BuhDocument;
+        		docEntry.TooltipText = "Бухгалтерский документ по которому было произведено списание. Отобразится вместо подписи сотрудника в карточке.";
+        		docEntry.ActivatesDefault = true;
+        		dlg.VBox.Add(docEntry);
+        		dlg.AddButton("Заменить", ResponseType.Ok);
+        		dlg.AddButton("Отмена", ResponseType.Cancel);
+        		dlg.DefaultResponse = ResponseType.Ok;
+        		dlg.ShowAll();
+        		if (dlg.Run() == (int)ResponseType.Ok) {
+        			Entity.ObservableItems
+        				.Where(x => x.WriteoffFrom == WriteoffFrom.Employee)
+        				.ToList().ForEach(x => x.BuhDocument = docEntry.Text);
+        		}
+        		dlg.Destroy();
+        	}
+        }
         #region Save
         public override bool Save() {
             Logger.Info ("Запись документа...");
