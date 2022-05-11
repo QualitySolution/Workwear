@@ -91,10 +91,9 @@ namespace workwear.ViewModels.Stock
         }
         private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
             var selectVM = sender as StockBalanceJournalViewModel;
-            foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
+            foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>())
                 Entity.AddItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.Amount);
-                CalculateTotal(null, null);
-            }
+            CalculateTotal(null, null);
         }
 
         public void AddFromEmployee() {
@@ -111,9 +110,8 @@ namespace workwear.ViewModels.Stock
             var operations = 
                 UoW.GetById<EmployeeIssueOperation>(e.GetSelectedObjects<EmployeeBalanceJournalNode>()
                 .Select(x => x.Id));
-            foreach (var operation in operations) {
+            foreach (var operation in operations) 
                 Entity.AddItem(operation, 0);
-            }
             CalculateTotal(null, null);
         }
 
@@ -130,9 +128,8 @@ namespace workwear.ViewModels.Stock
             var operations = 
                 UoW.GetById<SubdivisionIssueOperation>(e.GetSelectedObjects<SubdivisionBalanceJournalNode>()
                     .Select(x => x.Id));
-            foreach (var operation in operations) {
+            foreach (var operation in operations) 
                 Entity.AddItem(operation, 0);
-            }
             CalculateTotal(null, null);
         }
         public void DeleteItem(WriteoffItem item) {
