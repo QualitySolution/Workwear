@@ -1,4 +1,5 @@
 using System;
+using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
@@ -15,27 +16,28 @@ using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
+using workwear.Journal.Filter.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {
-    public class EmployeeBalanceJournalViewModel : JournalViewModelBase
-    {
-	    public EmployeeCard Employee { get;}
-	    public DateTime OnDate { get; }
-	    
-        public EmployeeBalanceJournalViewModel(
+	public class EmployeeBalanceJournalViewModel : JournalViewModelBase
+	{
+		public EmployeeBalanceFilterViewModel Filter { get; set; }
+		public EmployeeBalanceJournalViewModel(
             IUnitOfWorkFactory unitOfWorkFactory, 
             IInteractiveService interactiveService, 
             INavigationManager navigation,
-            EmployeeCard employee,
-            DateTime onDate) : base(unitOfWorkFactory, interactiveService, navigation)
+            ILifetimeScope autofacScope) : base(unitOfWorkFactory, interactiveService, navigation)
         {
-	        Employee = employee;
-	        OnDate = onDate;
 	        var dataLoader = new ThreadDataLoader<EmployeeBalanceJournalNode>(unitOfWorkFactory);
 	        dataLoader.AddQuery(ItemsQuery);
 	        DataLoader = dataLoader;
-	        Title = $"Числится за сотрудником - {Employee.Title}";
+	        AutofacScope = autofacScope;
+	        JournalFilter = Filter = AutofacScope.Resolve<EmployeeBalanceFilterViewModel>(
+		        new TypedParameter(typeof(JournalViewModelBase), this));
+	        Title = Filter.Employee != null 
+		        ? $"Числится за сотрудником - {Filter.Employee.Title}" 
+		        : "Остатки по сотрудникам";
         }
 
         #region Query
@@ -50,9 +52,12 @@ namespace workwear.Journal.ViewModels.Company
 			WarehouseOperation warehouseOperationAlias = null;
 			Size sizeAlias = null;
 			Size heightAlias = null;
+			EmployeeCard employeeCardAlias = null;
 
-			var query = unitOfWork.Session.QueryOver(() => expenseOperationAlias)
-				.Where(e => e.Employee == Employee);
+			var query = unitOfWork.Session.QueryOver(() => expenseOperationAlias);
+
+			if (Filter.Employee != null)
+				query.Where(e => e.Employee == Filter.Employee);
 
 			var subQueryRemove = QueryOver.Of(() => removeOperationAlias)
 				.Where(() => removeOperationAlias.IssuedOperation.Id == expenseOperationAlias.Id)
@@ -64,30 +69,65 @@ namespace workwear.Journal.ViewModels.Company
 				Projections.Property(() => expenseOperationAlias.Issued),
 				Projections.SubQuery(subQueryRemove)
 			);
-
-			return query
-				.JoinAlias (() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias)
-				.JoinAlias(()=> expenseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
-				.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
-				.JoinAlias (() => nomenclatureAlias.Type, () => itemTypesAlias)
-				.JoinAlias (() => itemTypesAlias.Units, () => unitsAlias)
-				.JoinAlias (() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
-				.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > OnDate)
-				.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
-				.SelectList (list => list
-					.SelectGroup (() => expenseOperationAlias.Id).WithAlias (() => resultAlias.Id)
-					.Select (() => nomenclatureAlias.Name).WithAlias (() => resultAlias.NomenclatureName)
-					.Select (() => unitsAlias.Name).WithAlias (() => resultAlias.UnitsName)
-					.Select (() => sizeAlias.Name).WithAlias (() => resultAlias.WearSize)
-					.Select (() => heightAlias.Name).WithAlias (() => resultAlias.Height)
-					.Select (() => warehouseOperationAlias.Cost).WithAlias (() => resultAlias.AvgCost)
-					.Select (() => expenseOperationAlias.WearPercent).WithAlias (() => resultAlias.WearPercent)
-					.Select (() => expenseOperationAlias.OperationTime).WithAlias (() => resultAlias.IssuedDate)
-					.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
-					.Select (() => expenseOperationAlias.ExpiryByNorm).WithAlias (() => resultAlias.ExpiryDate)
-					.Select(balance).WithAlias(() => resultAlias.Balance)
-				)
-				.TransformUsing(Transformers.AliasToBean<EmployeeBalanceJournalNode>());
+			if (Filter.Employee != null)
+				query
+					.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias)
+					.JoinAlias(() => expenseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias)
+					.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias)
+					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias,
+						JoinType.LeftOuterJoin)
+					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
+					.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > Filter.Date)
+					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
+					.SelectList(list => list
+						.SelectGroup(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
+						.Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
+						.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSize)
+						.Select(() => heightAlias.Name).WithAlias(() => resultAlias.Height)
+						.Select(() => warehouseOperationAlias.Cost).WithAlias(() => resultAlias.AvgCost)
+						.Select(() => expenseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
+						.Select(() => expenseOperationAlias.OperationTime).WithAlias(() => resultAlias.IssuedDate)
+						.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
+						.Select(() => expenseOperationAlias.ExpiryByNorm).WithAlias(() => resultAlias.ExpiryDate)
+						.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.FirstName)
+						.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.LastName)
+						.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
+						.Select(balance).WithAlias(() => resultAlias.Balance));
+			else {
+				query
+					.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias)
+					.JoinAlias(() => expenseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias)
+					.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias)
+					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias,
+						JoinType.LeftOuterJoin)
+					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
+					.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > Filter.Date)
+					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
+					.SelectList(list => list
+						.Select(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
+						.Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
+						.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSize)
+						.Select(() => heightAlias.Name).WithAlias(() => resultAlias.Height)
+						.Select(() => warehouseOperationAlias.Cost).WithAlias(() => resultAlias.AvgCost)
+						.Select(() => expenseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
+						.Select(() => expenseOperationAlias.OperationTime).WithAlias(() => resultAlias.IssuedDate)
+						.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
+						.Select(() => expenseOperationAlias.ExpiryByNorm).WithAlias(() => resultAlias.ExpiryDate)
+						.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.FirstName)
+						.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.LastName)
+						.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
+						.Select(balance).WithAlias(() => resultAlias.Balance));
+				query = query.OrderBy(() => employeeCardAlias.LastName).Asc
+					.ThenBy(() => employeeCardAlias.FirstName).Asc
+					.ThenBy(() => employeeCardAlias.Patronymic).Asc;
+			}
+			return query.TransformUsing(Transformers.AliasToBean<EmployeeBalanceJournalNode>());
         }
         #endregion
     }
@@ -109,5 +149,9 @@ namespace workwear.Journal.ViewModels.Company
 	    public int Balance { get; set;}
 	    public string BalanceText => $"{Balance} {UnitsName}";
 	    public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString (AvgCost) : String.Empty;
+	    public string EmployeeName => String.Join(" ", LastName, FirstName, Patronymic);
+	    public string LastName { get; set; }
+	    public string FirstName { get; set; }
+	    public string Patronymic { get; set; }
     }
 }

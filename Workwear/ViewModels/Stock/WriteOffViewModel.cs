@@ -98,10 +98,12 @@ namespace workwear.ViewModels.Stock
 
         public void AddFromEmployee() {
             var selectJournal = 
-                NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel, EmployeeCard, DateTime>(
-                    this, Employee, 
-                    Entity.Date.Date.AddDays(1), 
+                NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel>(
+                    this,
                     OpenPageOptions.AsSlave);
+            if(Employee != null)
+                selectJournal.ViewModel.Filter.Employee = Employee;
+            selectJournal.ViewModel.Filter.Date = Entity.Date;
             selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
             selectJournal.ViewModel.OnSelectResult += SelectFromEmployee_Selected;
         }
@@ -117,10 +119,12 @@ namespace workwear.ViewModels.Stock
 
         public void AddFromObject() {
             var selectJournal =
-                NavigationManager.OpenViewModel<SubdivisionBalanceJournalViewModel, Subdivision, DateTime>(
-                    this, Subdivision,
-                    Entity.Date.Date.AddDays(1),
+                NavigationManager.OpenViewModel<SubdivisionBalanceJournalViewModel>(
+                    this,
                     OpenPageOptions.AsSlave);
+            if(Employee != null)
+                selectJournal.ViewModel.Filter.Subdivision = Subdivision;
+            selectJournal.ViewModel.Filter.Date = Entity.Date;
             selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
             selectJournal.ViewModel.OnSelectResult += SelectFromobject_ObjectSelected;
         }

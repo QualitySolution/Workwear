@@ -1,4 +1,5 @@
 using System;
+using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
@@ -12,27 +13,29 @@ using QS.Project.Journal.DataLoader;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Stock;
+using workwear.Journal.Filter.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {
     public class SubdivisionBalanceJournalViewModel: JournalViewModelBase
     {
-	    public Subdivision Subdivision {get;}
-	    public DateTime OnDate { get; }
-	    
-        public SubdivisionBalanceJournalViewModel(
+	    public SubdivisionBalanceFilterViewModel Filter { get; set; }
+
+	    public SubdivisionBalanceJournalViewModel(
             IUnitOfWorkFactory unitOfWorkFactory, 
             IInteractiveService interactiveService, 
             INavigationManager navigation,
-            Subdivision subdivision,
-            DateTime onDate) : base(unitOfWorkFactory, interactiveService, navigation)
+            ILifetimeScope autofacScope) : base(unitOfWorkFactory, interactiveService, navigation)
         {
-	        Subdivision = subdivision;
-	        OnDate = onDate;
 	        var dataLoader = new ThreadDataLoader<EmployeeBalanceJournalNode>(unitOfWorkFactory);
 	        dataLoader.AddQuery(ItemsQuery);
 	        DataLoader = dataLoader;
-	        Title = $"Числится за подразделением - {Subdivision.Name}";
+	        AutofacScope = autofacScope;
+	        JournalFilter = Filter = AutofacScope.Resolve<SubdivisionBalanceFilterViewModel>(
+		        new TypedParameter(typeof(JournalViewModelBase), this));
+	        Title = Filter.Subdivision != null 
+		        ? $"Числится за подразделением - {Filter.Subdivision.Name}" 
+		        : "Остатки по подразделениям";
         }
 
         #region Query
@@ -45,9 +48,12 @@ namespace workwear.Journal.ViewModels.Company
 			MeasurementUnits unitsAlias = null;
 			SubdivisionIssueOperation removeIssueOperationAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
+			Subdivision subdivisionAlias = null;
 
-			var expense = unitOfWork.Session.QueryOver(() => issueOperationAlias)
-				.Where(e => e.Subdivision == Subdivision);
+			var expense = unitOfWork.Session.QueryOver(() => issueOperationAlias);
+	        
+			if(Filter.Subdivision != null)
+				expense.Where(e => e.Subdivision == Filter.Subdivision);
 
 			var subQueryRemove = QueryOver.Of(() => removeIssueOperationAlias)
 				.Where(() => removeIssueOperationAlias.IssuedOperation == issueOperationAlias)
@@ -58,24 +64,45 @@ namespace workwear.Journal.ViewModels.Company
 				NHibernateUtil.Int32,
 				Projections.Property(() => issueOperationAlias.Issued),
 				Projections.SubQuery(subQueryRemove));
-
-			return expense
-				.JoinAlias(() => issueOperationAlias.Nomenclature, () => nomenclatureAlias)
-				.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias)
-				.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias)
-				.JoinAlias(() => issueOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
-				.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > DateTime.Today)
-				.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
-				.SelectList(list => list
-					.SelectGroup(() => issueOperationAlias.Id).WithAlias(() => resultAlias.Id)
-					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
-					.Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
-					.Select(() => issueOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
-					.Select(() => issueOperationAlias.OperationTime).WithAlias(() => resultAlias.IssuedDate)
-					.Select(() => issueOperationAlias.ExpiryOn).WithAlias(() => resultAlias.ExpiryDate)
-					.Select(balance).WithAlias(() => resultAlias.Balance)
-				)
-				.TransformUsing(Transformers.AliasToBean<SubdivisionBalanceJournalNode>());
+			if(Filter.Subdivision != null)
+				expense
+					.JoinAlias(() => issueOperationAlias.Nomenclature, () => nomenclatureAlias)
+					.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias)
+					.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias)
+					.JoinAlias(() => issueOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
+					.JoinAlias(() => issueOperationAlias.Subdivision, () => subdivisionAlias)
+					.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > Filter.Date)
+					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
+					.SelectList(list => list
+						.SelectGroup(() => issueOperationAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
+						.Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
+						.Select(() => issueOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
+						.Select(() => issueOperationAlias.OperationTime).WithAlias(() => resultAlias.IssuedDate)
+						.Select(() => issueOperationAlias.ExpiryOn).WithAlias(() => resultAlias.ExpiryDate)
+						.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.SubdivisionName)
+						.Select(balance).WithAlias(() => resultAlias.Balance));
+			else {
+				expense
+					.JoinAlias(() => issueOperationAlias.Nomenclature, () => nomenclatureAlias)
+					.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias)
+					.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias)
+					.JoinAlias(() => issueOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
+					.JoinAlias(() => issueOperationAlias.Subdivision, () => subdivisionAlias)
+					.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > Filter.Date)
+					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
+					.SelectList(list => list
+						.Select(() => issueOperationAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
+						.Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
+						.Select(() => issueOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
+						.Select(() => issueOperationAlias.OperationTime).WithAlias(() => resultAlias.IssuedDate)
+						.Select(() => issueOperationAlias.ExpiryOn).WithAlias(() => resultAlias.ExpiryDate)
+						.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.SubdivisionName)
+						.Select(balance).WithAlias(() => resultAlias.Balance));
+				expense = expense.OrderBy(() => subdivisionAlias.Name).Asc;
+			}
+			return expense.TransformUsing(Transformers.AliasToBean<SubdivisionBalanceJournalNode>());
         }
         #endregion
     }
@@ -95,5 +122,6 @@ namespace workwear.Journal.ViewModels.Company
 
 	    public int Balance { get; set;}
 	    public string BalanceText => $"{Balance} {UnitsName}";
+	    public string SubdivisionName { get; set; }
     }
 }

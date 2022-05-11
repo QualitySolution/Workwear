@@ -5,7 +5,6 @@ using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using QS.Journal.GtkUI;
 using QS.Utilities.Numeric;
-using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
@@ -117,8 +116,10 @@ namespace workwear.Journal
 			);
 
 			TreeViewColumnsConfigFactory.Register<EmployeeBalanceJournalViewModel>(
-				() => FluentColumnsConfig<EmployeeBalanceJournalNode>.Create()
-					.AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName)
+				(jwm) => FluentColumnsConfig<EmployeeBalanceJournalNode>.Create()
+					.AddColumn("Сотрудник").AddTextRenderer(e => e.EmployeeName)
+					.AddColumn ("Наименование")
+					.AddTextRenderer(e => e.NomenclatureName)
 					.AddColumn ("Размер").AddTextRenderer (e => e.WearSize)
 					.AddColumn ("Рост").AddTextRenderer (e => e.Height)
 					.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
@@ -129,7 +130,9 @@ namespace workwear.Journal
 			);
 
 			TreeViewColumnsConfigFactory.Register<SubdivisionBalanceJournalViewModel>(
-				() => FluentColumnsConfig<SubdivisionBalanceJournalNode>.Create()
+				(jwm) => FluentColumnsConfig<SubdivisionBalanceJournalNode>.Create()
+					.AddColumn("Подразделение")
+					.AddTextRenderer(e => e.SubdivisionName)
 					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName)
 					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText)
 					.AddColumn("Срок службы").AddProgressRenderer(e => (int) (100 - e.Percentage * 100))

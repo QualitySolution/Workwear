@@ -135,6 +135,8 @@
     <Compile Include="HibernateMapping\Stock\CompletionResultItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\CompletionSourceItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\CompletionMap.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Company\EmployeeBalanceFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionBalanceFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeTypeFilterViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\EmployeeBalanceJournalViewModel.cs" />
@@ -515,6 +517,10 @@
     <Compile Include="Journal\Filter.Views\Sizes\SizeTypeFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Sizes.SizeTypeFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.EmployeeIssueGraphView.cs" />
+    <Compile Include="Journal\Filter.Views\Company\EmployeeBalanceFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.EmployeeBalanceFilterView.cs" />
+    <Compile Include="Journal\Filter.Views\Company\SubdivisionBalanceFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.SubdivisionBalanceFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
