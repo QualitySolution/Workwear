@@ -33,6 +33,11 @@ namespace workwear.Journal.Filter.ViewModels.Company
             get => subdivision;
             set => SetField(ref subdivision, value);
         }
+        private bool visible;
+        public bool Visible {
+            get => visible;
+            set => SetField(ref visible, value);
+        }
         public EntityEntryViewModel<Subdivision> SubdivisionEntry;
     }
 }

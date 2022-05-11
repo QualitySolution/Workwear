@@ -46,6 +46,9 @@ namespace workwear.Views.Stock
 				buttonFillBuhDoc.Binding
 					.AddBinding(ViewModel, vm => vm.FillBuhDocSensitive, m => m.Sensitive)
 					.InitializeFromSource();
+				buttonAddObject.Sensitive = ViewModel.Employee is null;
+				buttonAddWorker.Sensitive = ViewModel.Subdivision is null;
+				buttonAddStore.Sensitive = ViewModel.Subdivision is null && ViewModel.Employee is null;
 				buttonAddStore.Clicked += OnButtonAddStoreClicked;
 				buttonAddWorker.Clicked += OnButtonAddFromEmployeeClicked;
 				buttonAddObject.Clicked += OnButtonAddFromObjectClicked;

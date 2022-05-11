@@ -103,6 +103,7 @@ namespace workwear.ViewModels.Stock
                     OpenPageOptions.AsSlave);
             if(Employee != null)
                 selectJournal.ViewModel.Filter.Employee = Employee;
+            selectJournal.ViewModel.Filter.Visible = Employee == null;
             selectJournal.ViewModel.Filter.Date = Entity.Date;
             selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
             selectJournal.ViewModel.OnSelectResult += SelectFromEmployee_Selected;
@@ -124,6 +125,7 @@ namespace workwear.ViewModels.Stock
                     OpenPageOptions.AsSlave);
             if(Employee != null)
                 selectJournal.ViewModel.Filter.Subdivision = Subdivision;
+            selectJournal.ViewModel.Filter.Visible = Subdivision == null;
             selectJournal.ViewModel.Filter.Date = Entity.Date;
             selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
             selectJournal.ViewModel.OnSelectResult += SelectFromobject_ObjectSelected;

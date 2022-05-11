@@ -15,6 +15,9 @@ namespace workwear.Journal.Filter.Views.Company
 			datepicker.Binding
 				.AddBinding(ViewModel, vm => vm.Date, w => w.Date)
 				.InitializeFromSource();
+			ytable1.Binding
+				.AddBinding(ViewModel, vm => vm.Visible, w => w.Visible)
+				.InitializeFromSource();
 			yentryEmployee.ViewModel = ViewModel.EmployeeEntry;
 		}	
 	}
