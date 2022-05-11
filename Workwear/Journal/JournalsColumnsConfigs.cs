@@ -124,8 +124,17 @@ namespace workwear.Journal
 					.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
 					.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
 					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
-					.AddSetter ((w, e) => w.Text = e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : string.Empty)
+					.AddSetter ((w, e) => w.Text = e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : String.Empty)
 					.Finish ()
+			);
+
+			TreeViewColumnsConfigFactory.Register<SubdivisionBalanceJournalViewModel>(
+				() => FluentColumnsConfig<SubdivisionBalanceJournalNode>.Create()
+					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName)
+					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText)
+					.AddColumn("Срок службы").AddProgressRenderer(e => (int) (100 - e.Percentage * 100))
+					.AddSetter((w, e) => w.Text = e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : String.Empty)
+					.Finish()
 			);
 
 			#endregion

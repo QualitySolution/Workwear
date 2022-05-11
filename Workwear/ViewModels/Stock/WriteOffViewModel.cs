@@ -113,11 +113,26 @@ namespace workwear.ViewModels.Stock
                 .Select(x => x.Id));
             foreach (var operation in operations) {
                 Entity.AddItem(operation, 0);
-                CalculateTotal(null, null);
             }
+            CalculateTotal(null, null);
         }
-        public void AddFromObject() { }
+
+        public void AddFromObject() {
+            var selectJournal =
+                NavigationManager.OpenViewModel<SubdivisionBalanceJournalViewModel, Subdivision, DateTime>(
+                    this, Subdivision,
+                    Entity.Date.Date.AddDays(1),
+                    OpenPageOptions.AsSlave);
+            selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+            selectJournal.ViewModel.OnSelectResult += SelectFromobject_ObjectSelected;
+        }
         private void SelectFromobject_ObjectSelected(object sender, JournalSelectedEventArgs e) {
+            var operations = 
+                UoW.GetById<SubdivisionIssueOperation>(e.GetSelectedObjects<SubdivisionBalanceJournalNode>()
+                    .Select(x => x.Id));
+            foreach (var operation in operations) {
+                Entity.AddItem(operation, 0);
+            }
             CalculateTotal(null, null);
         }
         public void DeleteItem(WriteoffItem item) {
