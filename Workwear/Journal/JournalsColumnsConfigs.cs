@@ -4,6 +4,7 @@ using System.Reflection;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using QS.Journal.GtkUI;
+using QS.Utilities.Numeric;
 using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
@@ -113,6 +114,18 @@ namespace workwear.Journal
 					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
 					.AddColumn("Головное подразделение").AddTextRenderer(node => node.ParentName)
 					.Finish()
+			);
+
+			TreeViewColumnsConfigFactory.Register<EmployeeBalanceJournalViewModel>(
+				() => FluentColumnsConfig<EmployeeBalanceJournalNode>.Create()
+					.AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName)
+					.AddColumn ("Размер").AddTextRenderer (e => e.WearSize)
+					.AddColumn ("Рост").AddTextRenderer (e => e.Height)
+					.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
+					.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
+					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
+					.AddSetter ((w, e) => w.Text = e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : string.Empty)
+					.Finish ()
 			);
 
 			#endregion

@@ -11,7 +11,9 @@ using QS.Project.Journal;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
+using workwear.Domain.Operations;
 using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 
@@ -94,9 +96,25 @@ namespace workwear.ViewModels.Stock
                 CalculateTotal(null, null);
             }
         }
-        public void AddFromEmployee() { }
-        private void SelectFromEmployee_ObjectSelected(object sender, JournalSelectedEventArgs e) {
-            CalculateTotal(null, null);
+
+        public void AddFromEmployee() {
+            var selectJournal = 
+                NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel, EmployeeCard, DateTime>(
+                    this, Employee, 
+                    Entity.Date.Date.AddDays(1), 
+                    OpenPageOptions.AsSlave);
+            selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+            selectJournal.ViewModel.OnSelectResult += SelectFromEmployee_Selected;
+        }
+        private void SelectFromEmployee_Selected(object sender, JournalSelectedEventArgs e)
+        {
+            var operations = 
+                UoW.GetById<EmployeeIssueOperation>(e.GetSelectedObjects<EmployeeBalanceJournalNode>()
+                .Select(x => x.Id));
+            foreach (var operation in operations) {
+                Entity.AddItem(operation, 0);
+                CalculateTotal(null, null);
+            }
         }
         public void AddFromObject() { }
         private void SelectFromobject_ObjectSelected(object sender, JournalSelectedEventArgs e) {
