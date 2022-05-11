@@ -131,7 +131,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void WriteOffWear()
 		{
-			navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, Dictionary<Type, int>>(employeeViewModel, EntityUoWBuilder.ForCreate(), new Dictionary<Type, int>{ {typeof(EmployeeCard), Entity.Id }});
+			navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
 		public void UpdateWorkwearItems()

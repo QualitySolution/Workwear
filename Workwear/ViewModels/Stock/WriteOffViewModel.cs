@@ -32,28 +32,20 @@ namespace workwear.ViewModels.Stock
             IUnitOfWorkFactory unitOfWorkFactory, 
             INavigationManager navigation,
             SizeService sizeService,
+            EmployeeCard employee = null,
+            Subdivision subdivision = null,
             IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
         {
             SizeService = sizeService;
             NavigationManager = navigation;
             Entity.ObservableItems.PropertyChanged += CalculateTotal;
             CalculateTotal(null, null);
+            if (employee != null)
+                Employee = UoW.GetById<EmployeeCard>(employee.Id);
+            else if (subdivision != null)
+                Subdivision = UoW.GetById<Subdivision>(subdivision.Id);
         }
-
-        public WriteOffViewModel(
-            Dictionary<Type, int> obkDictionary,
-            IEntityUoWBuilder uowBuilder,
-            IUnitOfWorkFactory unitOfWorkFactory,
-            INavigationManager navigation,
-            SizeService sizeService,
-            IValidator validator = null) : this(uowBuilder, unitOfWorkFactory, navigation, sizeService)
-        {
-            if(obkDictionary.ContainsKey(typeof(EmployeeCard)))
-                Employee = UoW.GetById<EmployeeCard>(obkDictionary[typeof(EmployeeCard)]);
-            if (obkDictionary.ContainsKey(typeof(Subdivision)))
-                Subdivision = UoW.GetById<Subdivision>(obkDictionary[typeof(Subdivision)]);
-        }
-
+        
         #region ViewProperty
         private string total;
         public string Total {
@@ -70,7 +62,6 @@ namespace workwear.ViewModels.Stock
             get => fillBuhDocSensitive;
             set => SetField(ref fillBuhDocSensitive, value);
         }
-
         #endregion
 
         private void CalculateTotal(object sender, PropertyChangedEventArgs propertyChangedEventArgs) {
