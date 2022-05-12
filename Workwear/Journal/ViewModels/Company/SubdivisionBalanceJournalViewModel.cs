@@ -25,7 +25,8 @@ namespace workwear.Journal.ViewModels.Company
             IUnitOfWorkFactory unitOfWorkFactory, 
             IInteractiveService interactiveService, 
             INavigationManager navigation,
-            ILifetimeScope autofacScope) : base(unitOfWorkFactory, interactiveService, navigation)
+            ILifetimeScope autofacScope,
+            Subdivision subdivision = null) : base(unitOfWorkFactory, interactiveService, navigation)
         {
 	        var dataLoader = new ThreadDataLoader<EmployeeBalanceJournalNode>(unitOfWorkFactory);
 	        dataLoader.AddQuery(ItemsQuery);
@@ -33,7 +34,8 @@ namespace workwear.Journal.ViewModels.Company
 	        AutofacScope = autofacScope;
 	        JournalFilter = Filter = AutofacScope.Resolve<SubdivisionBalanceFilterViewModel>(
 		        new TypedParameter(typeof(JournalViewModelBase), this));
-	        Title = Filter.Subdivision != null 
+	        Filter.Subdivision = subdivision;
+	        Title = subdivision != null 
 		        ? $"Числится за подразделением - {Filter.Subdivision.Name}" 
 		        : "Остатки по подразделениям";
         }

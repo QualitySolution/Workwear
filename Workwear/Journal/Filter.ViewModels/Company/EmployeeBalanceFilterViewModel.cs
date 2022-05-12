@@ -33,12 +33,16 @@ namespace workwear.Journal.Filter.ViewModels.Company
             get => date;
             set => SetField(ref date, value);
         }
-        private bool visible;
-        public bool Visible {
-            get => visible;
-            set => SetField(ref visible, value);
+        private bool dateSensitive;
+        public bool DateSensitive {
+            get => dateSensitive;
+            set => SetField(ref dateSensitive, value);
         }
-
+        private bool employeeSensitive;
+        public bool EmployeeSensitive {
+            get => employeeSensitive;
+            set => SetField(ref employeeSensitive, value);
+        }
         public EntityEntryViewModel<EmployeeCard> EmployeeEntry;
     }
 }

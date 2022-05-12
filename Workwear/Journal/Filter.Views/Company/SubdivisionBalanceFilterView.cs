@@ -13,10 +13,13 @@ namespace workwear.Journal.Filter.Views.Company
 		private void ConfigureDlg()
 		{
 			datepicker.Binding
-				.AddBinding(ViewModel, vm => vm.Date, w => w.Date)
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.Date, w => w.Date)
+				.AddBinding(vm => vm.SubdivisionSensitive, w => w.Sensitive)
 				.InitializeFromSource();
-			ytable2.Binding
-				.AddBinding(ViewModel, vm => vm.Visible, w => w.Visible)
+			
+			entitySubdivision.Binding
+				.AddBinding(ViewModel, vm => vm.SubdivisionSensitive, w=> w.Sensitive)
 				.InitializeFromSource();
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
 		}

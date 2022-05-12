@@ -117,7 +117,8 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<EmployeeBalanceJournalViewModel>(
 				(jwm) => FluentColumnsConfig<EmployeeBalanceJournalNode>.Create()
-					.AddColumn("Сотрудник").AddTextRenderer(e => e.EmployeeName)
+					.AddColumn("Сотрудник")
+					.Visible(jwm.Filter.Employee is null).AddTextRenderer(e => e.EmployeeName)
 					.AddColumn ("Наименование")
 					.AddTextRenderer(e => e.NomenclatureName)
 					.AddColumn ("Размер").AddTextRenderer (e => e.WearSize)
@@ -133,7 +134,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<SubdivisionBalanceJournalViewModel>(
 				(jwm) => FluentColumnsConfig<SubdivisionBalanceJournalNode>.Create()
-					.AddColumn("Подразделение")
+					.AddColumn("Подразделение").Visible(jwm.Filter.Subdivision is null)
 					.AddTextRenderer(e => e.SubdivisionName)
 					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName)
 					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText)
