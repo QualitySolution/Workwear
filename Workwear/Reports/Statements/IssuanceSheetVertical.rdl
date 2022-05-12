@@ -1898,8 +1898,8 @@
     wear_cards.patronymic_name,
     wear_cards.personnel_number,
     IFNULL(nomenclature.name, protection_tools.name) as nomenclature,
-    issuance_sheet_items.size,
-    issuance_sheet_items.growth,
+    sizeAlias.name as size,
+    heightAlias.name as growth,
     case when operation_issued_by_employee.operation_write_off_id is null then nomenclature.number else concat(nomenclature.number, 'a')  end as nomenclature_number,
     measurement_units.name as units,
     measurement_units.okei,
@@ -1914,6 +1914,8 @@ FROM
     LEFT JOIN protection_tools ON protection_tools.id = issuance_sheet_items.protection_tools_id
     LEFT JOIN item_types ON (nomenclature.type_id = item_types.id OR protection_tools.item_types_id = item_types.id)
     LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+    LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = issuance_sheet_items.size_id
+	LEFT JOIN sizes AS heightAlias ON heightAlias.id = issuance_sheet_items.height_id
 WHERE
     issuance_sheet_items.issuance_sheet_id = @id
     ORDER BY wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name</CommandText>
