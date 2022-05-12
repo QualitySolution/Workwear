@@ -8,11 +8,11 @@ using workwear.Domain.Regulations;
 
 namespace workwear.ViewModels.Stock
 {
-	public class EmployeeIssueGraphViewModel : WindowDialogViewModelBase
+	public class EmployeeIssueGraphViewModel : DialogViewModelBase
     {
         public IList<GraphInterval> Intervals { get; }
         public EmployeeIssueGraphViewModel(
-            INavigationManager navigation, 
+            INavigationManager navigation,
             IUnitOfWorkFactory factory, 
             EmployeeCard employee, 
             ProtectionTools protectionTools) : base(navigation)
@@ -20,7 +20,6 @@ namespace workwear.ViewModels.Stock
             var unitOfWork = factory.CreateWithoutRoot();
             Intervals = IssueGraph.MakeIssueGraph(unitOfWork, employee, protectionTools).Intervals;
 			Title = $"Хронология {employee.ShortName} - {protectionTools.Name}";
-
-		}
+        }
     }
 }
