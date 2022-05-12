@@ -17,9 +17,9 @@ namespace workwear.ViewModels.Stock
             EmployeeCard employee, 
             ProtectionTools protectionTools) : base(navigation)
         {
-            var unitOfWork = factory.CreateWithoutRoot();
-            Intervals = IssueGraph.MakeIssueGraph(unitOfWork, employee, protectionTools).Intervals;
-			Title = $"Хронология {employee.ShortName} - {protectionTools.Name}";
+            using (var unitOfWork = factory.CreateWithoutRoot())
+                Intervals = IssueGraph.MakeIssueGraph(unitOfWork, employee, protectionTools).Intervals;
+            Title = $"Хронология {employee.ShortName} - {protectionTools.Name}";
         }
     }
 }

@@ -16,6 +16,7 @@ using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
+using workwear.ViewModels.Stock.Widgets;
 
 namespace workwear.ViewModels.Stock
 {
@@ -135,25 +136,17 @@ namespace workwear.ViewModels.Stock
         }
         #endregion
         public void FillBuhDoc() {
-        	using (var dlg = new Dialog("Введите бухгалтерский документ", MainClass.MainWin, DialogFlags.Modal)) {
-        		var docEntry = new Entry(80);
-        		if (Entity.Items.Any(x => x.WriteoffFrom == WriteoffFrom.Employee))
-        			docEntry.Text = Entity.Items.First(x => x.WriteoffFrom == WriteoffFrom.Employee).BuhDocument;
-        		docEntry.TooltipText = "Бухгалтерский документ по которому было произведено списание. Отобразится вместо подписи сотрудника в карточке.";
-        		docEntry.ActivatesDefault = true;
-        		dlg.VBox.Add(docEntry);
-        		dlg.AddButton("Заменить", ResponseType.Ok);
-        		dlg.AddButton("Отмена", ResponseType.Cancel);
-        		dlg.DefaultResponse = ResponseType.Ok;
-        		dlg.ShowAll();
-        		if (dlg.Run() == (int)ResponseType.Ok) {
-        			Entity.ObservableItems
-        				.Where(x => x.WriteoffFrom == WriteoffFrom.Employee)
-        				.ToList().ForEach(x => x.BuhDocument = docEntry.Text);
-        		}
-        		dlg.Destroy();
-        	}
+            var docText = String.Empty;
+            if (Entity.Items.Any(x => x.WriteoffFrom == WriteoffFrom.Employee)) 
+                docText = Entity.Items.First(x => x.WriteoffFrom == WriteoffFrom.Employee).BuhDocument;
+            var dlg = NavigationManager.OpenViewModel<BuhDocumentViewModel, String>(this, docText);
+            dlg.ViewModel.SetChangeAndCloseEvent += SetBuhDoc;
         }
+        private void SetBuhDoc(object sender, BuhDocEventArgs args) =>
+            Entity.ObservableItems
+                .Where(x => x.WriteoffFrom == WriteoffFrom.Employee)
+                .ToList().ForEach(x => x.BuhDocument = args.Value);
+
         #region Save
         public override bool Save() {
             Logger.Info ("Запись документа...");

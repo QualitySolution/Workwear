@@ -27,7 +27,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <Optimize>true</Optimize>
@@ -521,6 +521,9 @@
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.EmployeeBalanceFilterView.cs" />
     <Compile Include="Journal\Filter.Views\Company\SubdivisionBalanceFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.SubdivisionBalanceFilterView.cs" />
+    <Compile Include="Views\Stock\Widgets\BuhDocumentView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Stock.Widgets.BuhDocumentView.cs" />
+    <Compile Include="ViewModels\Stock\Widgets\BuhDocumentViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
