@@ -148,7 +148,7 @@ namespace workwear.Domain.Company
 		}
 		
 		DateTime? birthDate;
-		[Display (Name = "Дата увольнения")]
+		[Display (Name = "Дата рождения")]
 		public virtual DateTime? BirthDate {
 			get => birthDate;
 			set => SetField (ref birthDate, value);
