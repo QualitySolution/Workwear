@@ -169,8 +169,8 @@ namespace workwear.Domain.Stock
 				foreach (var position in employeeCardItem.BestChoiceInStock) {
 					var expancePositionAmount =
 						Items.Where(item => item.Nomenclature == position.Nomenclature
-						                    && item.WearSize.Id == position.WearSize.Id
-						                    && item.Height.Id == position.Height.Id)
+						                    && item.WearSize?.Id == position.WearSize?.Id
+						                    && item.Height?.Id == position.Height?.Id)
 							.Aggregate(position.Amount, (current, item) => current - item.Amount); //Есть на складе
 
 					if (expancePositionAmount >= needPositionAmount && position.WearPercent == 0)
