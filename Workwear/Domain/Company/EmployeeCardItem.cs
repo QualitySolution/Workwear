@@ -192,7 +192,7 @@ namespace workwear.Domain.Company
 		public virtual int CalculateRequiredIssue(BaseParameters parameters) {
 			if(NextIssue.HasValue && NextIssue.Value.AddDays(-parameters.ColDayAheadOfShedule) <= DateTime.Today)
 				return ActiveNormItem.Amount;
-			return ActiveNormItem.Amount - Amount;
+			return ActiveNormItem.Amount <= Amount ? 0 : ActiveNormItem.Amount - Amount;
 		}
 
 		public virtual bool MatcheStockPosition(StockPosition stockPosition) {
