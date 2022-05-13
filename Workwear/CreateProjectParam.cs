@@ -133,7 +133,8 @@ namespace workwear
 			#endregion
 
 			#region ErrorReporting
-
+			containerBuilder.RegisterType<DesktopErrorReporter>().As<IErrorReporter>();
+			containerBuilder.RegisterType<LogService>().As<ILogService>();
 			#if DEBUG
 			containerBuilder.Register(c => new ErrorReportingSettings(false, true, false, 300)).As<IErrorReportingSettings>();
 			#else
@@ -143,6 +144,7 @@ namespace workwear
 			containerBuilder.RegisterType<MySqlException1055OnlyFullGroupBy>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlException1366IncorrectStringValue>().As<IErrorHandler>();
 			containerBuilder.RegisterType<NHibernateFlushAfterException>().As<IErrorHandler>();
+			containerBuilder.RegisterType<ConnectionIsLost>().As<IErrorHandler>();
 			#endregion
 			
 			#region Обновления и версии
@@ -171,6 +173,14 @@ namespace workwear
 			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
 			#endregion
 
+			#region Ошибки
+			using (var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var user = new UserService().GetCurrentUser(uow);
+				builder.RegisterType<DesktopErrorReporter>().As<IErrorReporter>()
+					.WithParameter(new TypedParameter(typeof(UserBase), user));
+			}
+			#endregion
+			
 			#region Сервисы
 			#region GtkUI
 			builder.RegisterType<GtkValidationViewFactory>().As<IValidationViewFactory>();
@@ -265,9 +275,7 @@ namespace workwear
 			#region News
 			builder.RegisterType<FeedReader>().AsSelf();
 			#endregion
-
-
-
+			
 			#region Облако
 			builder.Register(c => new CloudClientService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			builder.Register(c => new LkUserManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
