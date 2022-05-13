@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -9,7 +10,6 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels;
-using workwear.Dialogs.Issuance;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
@@ -126,12 +126,12 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void OpenTimeLine(EmployeeCardItem item)
 		{
-			navigation.OpenTdiTab<EmployeeIssueGraphDlg, EmployeeCard, ProtectionTools>(employeeViewModel, Entity, item.ProtectionTools);
+			navigation.OpenViewModel<EmployeeIssueGraphViewModel, EmployeeCard, ProtectionTools>(employeeViewModel, Entity, item.ProtectionTools);
 		}
 
 		public void WriteOffWear()
 		{
-			navigation.OpenTdiTab<WriteOffDocDlg, EmployeeCard>(employeeViewModel, Entity);
+			navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
 		public void UpdateWorkwearItems()

@@ -48,9 +48,7 @@ using QSOrmProject;
 using Workwear.Measurements;
 using Workwear.Sql;
 using Workwear.Tools;
-using workwear.Dialogs.Organization;
 using workwear.Dialogs.Regulations;
-using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
@@ -100,15 +98,11 @@ namespace workwear
 			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
 			//Спецодежда
 			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
-			//Организация
-			OrmMain.AddObjectDescription<EmployeeVacation>().Dialog<EmployeeVacationDlg>();
-			OrmMain.AddObjectDescription<VacationType>().Dialog<VacationTypeDlg>().DefaultTableView().SearchColumn("Название", e => e.Name).Column("Исключать из носки", e => e.ExcludeFromWearing ? "Да" : "Нет").SearchColumn("Комментарий", e => e.Comments).End();
 			//Общее
 			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
 			OrmMain.AddObjectDescription<UserSettings>();
 			//Склад
 			OrmMain.AddObjectDescription<Income>().Dialog<Dialogs.Stock.IncomeDocDlg>();
-			OrmMain.AddObjectDescription<Writeoff>().Dialog<WriteOffDocDlg>();
 
 			NotifyConfiguration.Enable();
 			BuisnessLogicGlobalEventHandler.Init(new GtkQuestionDialogsInteractive());

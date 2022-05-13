@@ -4,7 +4,7 @@ using System.Reflection;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using QS.Journal.GtkUI;
-using Workwear.Domain.Sizes;
+using QS.Utilities.Numeric;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
@@ -115,6 +115,36 @@ namespace workwear.Journal
 					.Finish()
 			);
 
+			TreeViewColumnsConfigFactory.Register<EmployeeBalanceJournalViewModel>(
+				(jwm) => FluentColumnsConfig<EmployeeBalanceJournalNode>.Create()
+					.AddColumn("Сотрудник")
+					.Visible(jwm.Filter.Employee is null).AddTextRenderer(e => e.EmployeeName)
+					.AddColumn ("Наименование")
+					.AddTextRenderer(e => e.NomenclatureName)
+					.AddColumn ("Размер").AddTextRenderer (e => e.WearSize)
+					.AddColumn ("Рост").AddTextRenderer (e => e.Height)
+					.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
+					.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
+					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => 
+						((int)(e.Percentage * 100)).Clamp(0, 100))
+					.AddSetter ((w, e) => 
+						w.Text = e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : String.Empty)
+					.Finish ()
+			);
+
+			TreeViewColumnsConfigFactory.Register<SubdivisionBalanceJournalViewModel>(
+				(jwm) => FluentColumnsConfig<SubdivisionBalanceJournalNode>.Create()
+					.AddColumn("Подразделение").Visible(jwm.Filter.Subdivision is null)
+					.AddTextRenderer(e => e.SubdivisionName)
+					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName)
+					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText)
+					.AddColumn("Срок службы").AddProgressRenderer(e => 
+						(int) (100 - e.Percentage * 100))
+					.AddSetter((w, e) => 
+						w.Text = e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : String.Empty)
+					.Finish()
+			);
+
 			#endregion
 
 			#region Regulations
@@ -154,6 +184,13 @@ namespace workwear.Journal
 					.AddColumn("Тип номенклатуры").AddTextRenderer(node => node.TypeName)
 					.Finish()
 			);
+			TreeViewColumnsConfigFactory.Register<VacationTypeJournalViewModel>(
+				() => FluentColumnsConfig<VacationTypeJournalNode>.Create()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Исключать из носки").AddTextRenderer(node => node.ExcludeFromWearing ? "Да" : "Нет")
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comments)
+					.Finish()
+				);
 
 			#endregion
 

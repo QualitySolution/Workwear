@@ -613,8 +613,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionVacationTypesActivated(object sender, EventArgs e)
 	{
-		MainTelemetry.AddCount("VacationType");
-		tdiMain.OpenTab<OrmReference, Type>(typeof(VacationType));
+		NavigationManager.OpenViewModel<VacationTypeJournalViewModel>(null);
 	}
 
 	protected void OnActionOrganizationsActivated(object sender, EventArgs e)
