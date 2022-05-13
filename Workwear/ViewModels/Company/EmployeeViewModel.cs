@@ -113,6 +113,7 @@ namespace workwear.ViewModels.Company
 
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
+				logger.Info("Создание карточки для нового сотрудника");
 			}
 			else {
 				AutoCardNumber = String.IsNullOrWhiteSpace(Entity.CardNumber);
@@ -426,6 +427,7 @@ namespace workwear.ViewModels.Company
 
 		public override bool Save()
 		{
+			logger.Info("Сохранение карточки сотрудника");
 			var result = base.Save();
 
 			OnPropertyChanged(nameof(VisibleHistory));
