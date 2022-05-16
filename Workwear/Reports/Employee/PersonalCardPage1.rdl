@@ -421,6 +421,8 @@ LIMIT 10</CommandText>
               <FontSize>11pt</FontSize>
               <TextAlign>Center</TextAlign>
             </Style>
+            <CanShrink >true</CanShrink>
+            <CanGrow >true</CanGrow>
           </Textbox>
           <Textbox Name="Textbox15">
             <Height>12.75pt</Height>
@@ -467,6 +469,8 @@ LIMIT 10</CommandText>
               <FontSize>11pt</FontSize>
               <TextAlign>Center</TextAlign>
             </Style>
+            <CanGrow >true</CanGrow>
+            <CanShrink >true</CanShrink>
           </Textbox>
           <Textbox Name="Textbox18">
             <Height>12.75pt</Height>
