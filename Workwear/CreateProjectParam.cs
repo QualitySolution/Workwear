@@ -15,10 +15,11 @@ using QS.Dialog.GtkUI;
 using QS.Dialog.ViewModels;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
+using QS.ErrorReporting;
+using QS.ErrorReporting.Handlers;
 using QS.Features;
 using QS.Navigation;
 using QS.NewsFeed;
-using QS.Permissions;
 using QS.Project.DB;
 using QS.Project.Dialogs.GtkUI.ServiceDlg;
 using QS.Project.Domain;
@@ -69,7 +70,7 @@ using QS.HistoryLog.ViewModels;
 
 namespace workwear
 {
-	partial class MainClass
+	static partial class MainClass
 	{
 		static void CreateBaseConfig ()
 		{
@@ -113,13 +114,53 @@ namespace workwear
 			BuisnessLogicGlobalEventHandler.Init(new GtkQuestionDialogsInteractive());
 			JournalsColumnsConfigs.RegisterColumns();
 		}
-
-		public static Autofac.IContainer AppDIContainer;
-
-		static void AutofacClassConfig()
+		
+		public static ILifetimeScope AppDIContainer;
+		static IContainer startupContainer;
+		
+		static void AutofacStartupConfig(ContainerBuilder containerBuilder)
 		{
-			var builder = new ContainerBuilder();
+			#region GtkUI
+			containerBuilder.RegisterType<GtkMessageDialogsInteractive>().As<IInteractiveMessage>();
+			containerBuilder.RegisterType<GtkQuestionDialogsInteractive>().As<IInteractiveQuestion>();
+			containerBuilder.RegisterType<GtkInteractiveService>().As<IInteractiveService>();
+			containerBuilder.RegisterType<GtkGuiDispatcher>().As<IGuiDispatcher>();
+			containerBuilder.RegisterType<GtkRunOperationService>().As<IRunOperationService>();
+			#endregion GtkUI
 
+			#region Versioning
+			containerBuilder.RegisterType<ApplicationVersionInfo>().As<IApplicationInfo>();
+			#endregion
+
+			#region ErrorReporting
+			containerBuilder.RegisterType<DesktopErrorReporter>().As<IErrorReporter>();
+			containerBuilder.RegisterType<LogService>().As<ILogService>();
+			#if DEBUG
+			containerBuilder.Register(c => new ErrorReportingSettings(false, true, false, 300)).As<IErrorReportingSettings>();
+			#else
+			containerBuilder.Register(c => new  ErrorReportingSettings(true, false, true, 300)).As<IErrorReportingSettings>();
+			#endif
+
+			containerBuilder.RegisterType<MySqlException1055OnlyFullGroupBy>().As<IErrorHandler>();
+			containerBuilder.RegisterType<MySqlException1366IncorrectStringValue>().As<IErrorHandler>();
+			containerBuilder.RegisterType<NHibernateFlushAfterException>().As<IErrorHandler>();
+			containerBuilder.RegisterType<ConnectionIsLost>().As<IErrorHandler>();
+			#endregion
+			
+			#region Обновления и версии
+			containerBuilder.RegisterModule(new UpdaterAutofacModule());
+			containerBuilder.Register(c => ScriptsConfiguration.MakeUpdateConfiguration()).AsSelf();
+			containerBuilder.Register(c => ScriptsConfiguration.MakeCreationScript()).AsSelf();
+			#endregion
+
+			#region Временные будут переопределены
+			containerBuilder.RegisterType<GtkWindowsNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
+			containerBuilder.Register((ctx) => new AutofacViewModelsGtkPageFactory(startupContainer)).As<IViewModelsPageFactory>();
+			#endregion
+		}
+		
+		static void AutofacClassConfig(ContainerBuilder builder)
+		{
 			#region База
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
 			builder.RegisterType<ProgressInterceptor>().AsSelf().InstancePerLifetimeScope();
@@ -132,14 +173,17 @@ namespace workwear
 			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
 			#endregion
 
+			#region Ошибки
+			using (var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var user = new UserService().GetCurrentUser(uow);
+				builder.RegisterType<DesktopErrorReporter>().As<IErrorReporter>()
+					.WithParameter(new TypedParameter(typeof(UserBase), user));
+			}
+			#endregion
+			
 			#region Сервисы
 			#region GtkUI
-			builder.RegisterType<GtkMessageDialogsInteractive>().As<IInteractiveMessage>();
-			builder.RegisterType<GtkQuestionDialogsInteractive>().As<IInteractiveQuestion>();
-			builder.RegisterType<GtkInteractiveService>().As<IInteractiveService>();
 			builder.RegisterType<GtkValidationViewFactory>().As<IValidationViewFactory>();
-			builder.RegisterType<GtkGuiDispatcher>().As<IGuiDispatcher>();
-			builder.RegisterType<GtkRunOperationService>().As<IRunOperationService>();
 			#endregion GtkUI
 			#region Удаление
 			builder.RegisterModule(new DeletionAutofacModule());
@@ -147,10 +191,8 @@ namespace workwear
 			builder.Register(x => DeleteConfig.Main).AsSelf().ExternallyOwned();
 			builder.RegisterType<ReplaceEntity>().AsSelf();
  			#endregion
-      builder.RegisterType<UserService>().As<IUserService>();
+			builder.RegisterType<UserService>().As<IUserService>();
 			builder.RegisterType<ObjectValidator>().As<IValidator>();
-			//FIXME Реализовать везде возможность отсутствия сервиса прав, чтобы не приходилось создавать то что не используется
-			builder.RegisterType<DefaultAllowedPermissionService>().As<IPermissionService>();
 			builder.RegisterType<CommonMessages>().AsSelf();
 			#endregion
 
@@ -233,14 +275,7 @@ namespace workwear
 			#region News
 			builder.RegisterType<FeedReader>().AsSelf();
 			#endregion
-
-			#region Обновления и версии
-			builder.RegisterType<ApplicationVersionInfo>().As<IApplicationInfo>();
-			builder.RegisterModule(new UpdaterAutofacModule());
-			builder.Register(c => ScriptsConfiguration.MakeUpdateConfiguration()).AsSelf();
-			builder.Register(c => ScriptsConfiguration.MakeCreationScript()).AsSelf();
-			#endregion
-
+			
 			#region Облако
 			builder.Register(c => new CloudClientService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			builder.Register(c => new LkUserManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
@@ -271,7 +306,6 @@ namespace workwear
 			builder.RegisterType<DataParserNorm>().AsSelf();
 			builder.RegisterType<DataParserWorkwearItems>().AsSelf();
 			#endregion
-			AppDIContainer = builder.Build();
 		}
 	}
 }
