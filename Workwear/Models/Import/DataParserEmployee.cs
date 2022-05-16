@@ -40,6 +40,7 @@ namespace workwear.Models.Import
 				"ФИО",
 				"Ф.И.О.",
 				"Фамилия Имя Отчество",
+				"Сотрудник",
 				"Наименование"//Встречается при выгрузке из 1C
 				);
 			AddColumnName(DataTypeEmployee.CardKey,
