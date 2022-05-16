@@ -99,7 +99,8 @@ namespace workwear.ViewModels.Statements
 			var emploeesToAdd = issuanceSheetViewModel.UoW.GetById<EmployeeCard>(e.SelectedObjects.Select(DomainHelper.GetId));
 
 			foreach(var employee in emploeesToAdd) {
-				ObservableEmployees.Add(employee);
+				if(!ObservableEmployees.Contains(employee))
+					ObservableEmployees.Add(employee);
 			}
 			OnPropertyChanged(nameof(SensetiveFillButton));
 		}
