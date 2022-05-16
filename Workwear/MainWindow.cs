@@ -43,6 +43,7 @@ using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Tools;
+using Workwear.Measurements;
 using workwear.Models.Import;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
@@ -316,12 +317,22 @@ public partial class MainWindow : Gtk.Window
 	protected void OnAction12Activated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ReportListBySize");
-		var reportInfo = new ReportInfo {
+		var ids = new SizeService().GetSizeType(UoW, onlyUseInEmployee: true).Select(x => x.Id).Take(6).ToArray();
+		var sizeNames = new SizeService().GetSizeType(UoW, onlyUseInEmployee: true).Select(x => x.Name).Take(6).ToArray();
+		var parameters = new Dictionary<string, object>();
+		for(var count = 0; count < ids.Length; count++) 
+			parameters.Add($"type_id_{count}", ids[count]);
+		for(var count = 0; count < sizeNames.Length; count++) 
+			parameters.Add($"type_name_{count}", sizeNames[count]);
+
+		var reportInfo = new ReportInfo
+		{
 			Title = "Список по размерам",
 			Identifier = "ListBySize",
+			Parameters = parameters
 		};
 
-		tdiMain.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
+			tdiMain.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
 						  () => new QSReport.ReportViewDlg(reportInfo)
 						 );
 
