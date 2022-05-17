@@ -16,11 +16,13 @@ namespace workwear.ReportParameters.ViewModels
 		protected override Dictionary<string, object> Parameters => SetParameters();
 		private Dictionary<string, object> SetParameters() {
 			var parameters = new Dictionary<string, object>();
-			using var unitOfWork = UnitOfWorkFactory.CreateWithoutRoot();
-			var sizes = new SizeService().GetSizeType(unitOfWork, onlyUseInEmployee: true).Take(6).ToList();
-			for (var count = 0; count < sizes.Count; count++) {
-				parameters.Add($"type_id_{count}", sizes[count].Id);
-				parameters.Add($"type_name_{count}", sizes[count].Name);
+			using (var unitOfWork = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var sizes = new SizeService().GetSizeType(unitOfWork, onlyUseInEmployee: true).Take(6).ToList();
+				for (var count = 0; count < sizes.Count; count++)
+				{
+					parameters.Add($"type_id_{count}", sizes[count].Id);
+					parameters.Add($"type_name_{count}", sizes[count].Name);
+				}
 			}
 			return parameters;
 		}
