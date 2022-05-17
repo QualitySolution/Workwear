@@ -524,6 +524,9 @@
     <Compile Include="Views\Stock\Widgets\BuhDocumentView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.Widgets.BuhDocumentView.cs" />
     <Compile Include="ViewModels\Stock\Widgets\BuhDocumentViewModel.cs" />
+    <Compile Include="ReportParameters\Views\ListBySizeView.cs" />
+    <Compile Include="gtk-gui\workwear.ReportParameters.Views.ListBySizeView.cs" />
+    <Compile Include="ReportParameters\ViewModels\ListBySizeViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
