@@ -43,6 +43,7 @@ using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Tools;
+using Workwear.Measurements;
 using workwear.Models.Import;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
@@ -313,19 +314,8 @@ public partial class MainWindow : Gtk.Window
 		);
 	}
 
-	protected void OnAction12Activated(object sender, EventArgs e)
-	{
-		MainTelemetry.AddCount("ReportListBySize");
-		var reportInfo = new ReportInfo {
-			Title = "Список по размерам",
-			Identifier = "ListBySize",
-		};
-
-		tdiMain.OpenTab(QSReport.ReportViewDlg.GenerateHashName(reportInfo),
-						  () => new QSReport.ReportViewDlg(reportInfo)
-						 );
-
-	}
+	protected void OnAction12Activated(object sender, EventArgs e) => 
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(ListBySizeViewModel));
 
 	protected void OnHelpActionActivated(object sender, EventArgs e)
 	{
