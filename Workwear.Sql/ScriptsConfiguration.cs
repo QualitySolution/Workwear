@@ -107,7 +107,7 @@ namespace Workwear.Sql
 				new Version(2,5, 1),
 				new Version(2,6),
 				"Workwear.Sql.Scripts.2.6.sql");
-			configuration.AddMicroUpdate(
+			configuration.AddUpdate(
 				new Version(2, 6),
 				new Version(2, 6, 1),
 				"Workwear.Sql.Scripts.2.6.1.sql");
