@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Autofac;
 using QS.DomainModel.UoW;
@@ -29,8 +29,6 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			get {
 				if(!FeaturesService.Available(WorkwearFeature.CollectiveExpense))
 					yield return Domain.Stock.StokDocumentType.CollectiveExpense;
-				if(!FeaturesService.Available(WorkwearFeature.MassExpense))
-					yield return Domain.Stock.StokDocumentType.MassExpense;
 				if(!FeaturesService.Available(WorkwearFeature.Warehouses))
 					yield return Domain.Stock.StokDocumentType.TransferDoc;
 			}

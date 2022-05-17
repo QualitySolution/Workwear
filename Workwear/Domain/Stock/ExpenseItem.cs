@@ -9,9 +9,10 @@ using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Statements;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace workwear.Domain.Stock
 {
@@ -27,28 +28,26 @@ namespace workwear.Domain.Stock
 
 		public virtual int Id { get; set; }
 
-		Expense expenseDoc;
-
+		private Expense expenseDoc;
 		[Display (Name = "Документ")]
 		[IgnoreHistoryTrace]
 		public virtual Expense ExpenseDoc {
-			get { return expenseDoc; }
+			get => expenseDoc;
 			set { SetField (ref expenseDoc, value, () => ExpenseDoc); }
 		}
 
-		ProtectionTools protectionTools;
-
+		private ProtectionTools protectionTools;
 		[Display(Name = "Номенклатура нормы")]
 		public virtual ProtectionTools ProtectionTools {
-			get { return protectionTools ?? EmployeeIssueOperation?.ProtectionTools; }
+			get => protectionTools ?? EmployeeIssueOperation?.ProtectionTools;
 			set { SetField(ref protectionTools, value, () => ProtectionTools); }
 		}
 
-		Nomenclature nomenclature;
+		private Nomenclature nomenclature;
 
 		[Display (Name = "Номенклатура")]
 		public virtual Nomenclature Nomenclature {
-			get { return nomenclature; }
+			get => nomenclature;
 			set { SetField (ref nomenclature, value, () => Nomenclature); }
 		}
 
@@ -59,65 +58,56 @@ namespace workwear.Domain.Stock
 			set => SetField(ref issuanceSheetItem, value);
 		}
 
-		int amount;
-
+		private int amount;
 		[Display (Name = "Количество")]
 		public virtual int Amount {
-			get { return amount; }
+			get => amount;
 			set { SetField (ref amount, value, () => Amount); }
 		}
 
-		SubdivisionPlace subdivisionPlace;
-
+		private SubdivisionPlace subdivisionPlace;
 		[Display (Name = "Размещение в подразделении")]
 		public virtual SubdivisionPlace SubdivisionPlace {
-			get { return subdivisionPlace; }
+			get => subdivisionPlace;
 			set { SetField (ref subdivisionPlace, value, () => SubdivisionPlace); }
 		}
 
 		private EmployeeIssueOperation employeeIssueOperation;
-
 		[Display(Name = "Операция выдачи сотруднику")]
 		[IgnoreHistoryTrace]
 		public virtual EmployeeIssueOperation EmployeeIssueOperation
 		{
-			get { return employeeIssueOperation; }
-			set { SetField(ref employeeIssueOperation, value); }
+			get => employeeIssueOperation;
+			set => SetField(ref employeeIssueOperation, value);
 		}
 
 		private SubdivisionIssueOperation subdivisionIssueOperation;
-
 		[Display(Name = "Операция выдачи на подразделение")]
 		[IgnoreHistoryTrace]
 		public virtual SubdivisionIssueOperation SubdivisionIssueOperation {
-			get { return subdivisionIssueOperation; }
-			set { SetField(ref subdivisionIssueOperation, value); }
+			get => subdivisionIssueOperation;
+			set => SetField(ref subdivisionIssueOperation, value);
 		}
 
 		private WarehouseOperation warehouseOperation = new WarehouseOperation();
 		[Display(Name = "Операция на складе")]
 		[IgnoreHistoryTrace]
 		public virtual WarehouseOperation WarehouseOperation {
-			get { return warehouseOperation; }
-			set { SetField(ref warehouseOperation, value);}
+			get => warehouseOperation;
+			set => SetField(ref warehouseOperation, value);
 		}
-
-		string size;
-
+		private Size wearSize;
 		[Display(Name = "Размер")]
-		public virtual string Size {
-			get { return size; }
-			set { SetField(ref size, value, () => Size); }
+		public virtual Size WearSize {
+			get => wearSize;
+			set => SetField(ref wearSize, value);
 		}
-
-		string wearGrowth;
-
+		private Size height;
 		[Display(Name = "Рост одежды")]
-		public virtual string WearGrowth {
-			get { return wearGrowth; }
-			set { SetField(ref wearGrowth, value, () => WearGrowth); }
+		public virtual Size Height {
+			get => height;
+			set => SetField(ref height, value);
 		}
-
 		#endregion
 
 		#region Не сохраняемые в базу свойства
@@ -129,7 +119,7 @@ namespace workwear.Domain.Stock
 			set => isWriteOff = value;
 		}
 
-		string aktNumber;
+		private string aktNumber;
 		[Display(Name = "Номер акта")]
 		public virtual string AktNumber {
 			get => IsWriteOff ? aktNumber : null;
@@ -144,8 +134,8 @@ namespace workwear.Domain.Stock
 		//В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
 		public virtual string BuhDocument
 		{
-			get { return buhDocument ?? EmployeeIssueOperation?.BuhDocument; }
-			set { SetField(ref buhDocument, value); }
+			get => buhDocument ?? EmployeeIssueOperation?.BuhDocument;
+			set => SetField(ref buhDocument, value);
 		}
 
 		[Display(Name = "Процент износа")]
@@ -163,40 +153,36 @@ namespace workwear.Domain.Stock
 		}
 
 		public virtual StockPosition StockPosition {
-			get {
-				return new StockPosition(Nomenclature, Size, WearGrowth, WearPercent);
-			}
+			get => new StockPosition(Nomenclature, WearPercent, WearSize, Height);
 			set {
 				Nomenclature = value.Nomenclature;
-				Size = value.Size;
-				WearGrowth = value.Growth;
+				WearSize = value.WearSize;
+				Height = value.Height;
 				WearPercent = value.WearPercent;
 			}
 		}
 
-		StockBalanceDTO stockBalanceSetter;
+		private StockBalanceDTO stockBalanceSetter;
 		public virtual StockBalanceDTO StockBalanceSetter {
-			get {
-				return stockBalanceSetter ?? new StockBalanceDTO {Nomenclature = Nomenclature, Growth = WearGrowth, Size = Size, WearPercent = WearPercent } ;
-			}
+			get => stockBalanceSetter ?? 
+			       new StockBalanceDTO {Nomenclature = Nomenclature, Height = Height, WearSize = WearSize, WearPercent = WearPercent };
 			set {
 				stockBalanceSetter = value;
 				Nomenclature = value.Nomenclature;
-				Size = value.Size;
-				WearGrowth = value.Growth;
+				WearSize = value.WearSize;
+				Height = value.Height;
 				WearPercent = value.WearPercent;
 			}
 		}
 		#endregion
 
 		#region Расчетные свойства
-		public virtual string Title {
-			get { return String.Format ("Выдача со склада {0} в количестве {1} {2}",
+		public virtual string Title =>
+			String.Format ("Выдача со склада {0} в количестве {1} {2}",
 				Nomenclature.Name,
 				Amount,
 				Nomenclature.Type.Units?.Name
-			).TrimEnd();}
-		}
+			).TrimEnd();
 
 		#endregion
 

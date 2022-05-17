@@ -15,28 +15,28 @@ using QS.Utilities;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Models.Operations;
 using workwear.Models.Stock;
-using workwear.Tools.Features;
 
 namespace workwear.Journal.ViewModels.Stock
 {
 	public class StockMovmentsJournalViewModel : JournalViewModelBase
 	{
-		private readonly FeaturesService featuresService;
 		private readonly OpenStockDocumentsModel openDocuments;
 
 		public StockMovementsFilterViewModel Filter { get; private set; }
 
-		public StockMovmentsJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, 
-			IInteractiveService interactiveService, INavigationManager navigation, 
-			ILifetimeScope autofacScope, FeaturesService featuresService, 
+		public StockMovmentsJournalViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory, 
+			IInteractiveService interactiveService, 
+			INavigationManager navigation, 
+			ILifetimeScope autofacScope, 
 			OpenStockDocumentsModel openDocuments) : base(unitOfWorkFactory, interactiveService, navigation)
 		{
 			AutofacScope = autofacScope;
-			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.openDocuments = openDocuments ?? throw new ArgumentNullException(nameof(openDocuments));
 			JournalFilter = Filter = AutofacScope.Resolve<StockMovementsFilterViewModel>
 				(new TypedParameter(typeof(JournalViewModelBase), this));
@@ -59,20 +59,23 @@ namespace workwear.Journal.ViewModels.Stock
 
 			ExpenseItem expenseItemAlias = null;
 			IncomeItem incomeItemAlias = null;
-			MassExpenseOperation massExpenseOperationAlias = null; //FIXME Не реализовано
 			TransferItem transferItemAlias = null;
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
-			WriteoffItem writeoffItemAlias = null;
+			WriteoffItem writeOffItemAlias = null;
 			EmployeeCard employeeCardAlias = null;
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			CompletionResultItem completionResultItemAlias = null;
 			CompletionSourceItem completionSourceItemAlias = null;
 
 			Nomenclature nomenclatureAlias = null;
-			ItemsType itemtypesAlias = null;
+			ItemsType itemTypesAlias = null;
 			MeasurementUnits unitsAlias = null;
+			Size sizeAlias = null;
+			Size heightAlias = null;
 
-			var queryStock = uow.Session.QueryOver<WarehouseOperation>(() => warehouseOperationAlias);
+			var queryStock = uow.Session.QueryOver(() => warehouseOperationAlias)
+				.JoinAlias(() => warehouseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin);
 
 			if(Filter.Warehouse != null)
 				queryStock.Where(x => x.ReceiptWarehouse == Filter.Warehouse || x.ExpenseWarehouse == Filter.Warehouse);
@@ -85,29 +88,31 @@ namespace workwear.Journal.ViewModels.Stock
 
 			if(Filter.StockPosition != null) {
 				queryStock.Where(x => x.Nomenclature == Filter.StockPosition.Nomenclature);
-				queryStock.Where(x => x.Size == Filter.StockPosition.Size);
-				queryStock.Where(x => x.Growth == Filter.StockPosition.Growth);
+				queryStock.Where(x => x.WearSize == Filter.StockPosition.WearSize);
+				queryStock.Where(x => x.Height == Filter.StockPosition.Height);
 				queryStock.Where(x => x.WearPercent == Filter.StockPosition.WearPercent);
 			}
 
 			if(Filter.Nomenclature != null)
 				queryStock.Where(x => x.Nomenclature == Filter.Nomenclature);
 
-			if(!String.IsNullOrWhiteSpace(Filter.Size))
-				queryStock.Where(x => x.Size == Filter.Size);
+			if(Filter.Size != null)
+				queryStock.Where(x => x.WearSize.Id == Filter.Size.Id);
 
-			if(!String.IsNullOrWhiteSpace(Filter.Growth))
-				queryStock.Where(x => x.Growth == Filter.Growth);
+			if(Filter.Height != null)
+				queryStock.Where(x => x.Height.Id == Filter.Height.Id);
 
-			IProjection receptProjection, expenseProjection;
+			IProjection receiptProjection, expenseProjection;
 			if(Filter.Warehouse != null) {
-				receptProjection = Projections.Conditional(
-						Restrictions.Eq(Projections.Property<WarehouseOperation>(x => x.ReceiptWarehouse.Id), Filter.Warehouse.Id),
+				receiptProjection = Projections.Conditional(
+						Restrictions.Eq(Projections
+							.Property<WarehouseOperation>(x => x.ReceiptWarehouse.Id), Filter.Warehouse.Id),
 						Projections.Constant(true),
 						Projections.Constant(false)
 					);
 				expenseProjection = Projections.Conditional(
-					Restrictions.Eq(Projections.Property<WarehouseOperation>(x => x.ExpenseWarehouse.Id), Filter.Warehouse.Id),
+					Restrictions.Eq(Projections
+						.Property<WarehouseOperation>(x => x.ExpenseWarehouse.Id), Filter.Warehouse.Id),
 					Projections.Constant(true),
 					Projections.Constant(false)
 				);
@@ -122,13 +127,15 @@ namespace workwear.Journal.ViewModels.Stock
 				}
 			}
 			else {
-				receptProjection = Projections.Conditional(
-						Restrictions.IsNotNull(Projections.Property<WarehouseOperation>(x => x.ReceiptWarehouse.Id)),
+				receiptProjection = Projections.Conditional(
+						Restrictions.IsNotNull(Projections
+							.Property<WarehouseOperation>(x => x.ReceiptWarehouse.Id)),
 						Projections.Constant(true),
 						Projections.Constant(false)
 					);
 				expenseProjection = Projections.Conditional(
-					Restrictions.IsNotNull(Projections.Property<WarehouseOperation>(x => x.ExpenseWarehouse.Id)),
+					Restrictions.IsNotNull(Projections
+						.Property<WarehouseOperation>(x => x.ExpenseWarehouse.Id)),
 					Projections.Constant(true),
 					Projections.Constant(false)
 				);
@@ -145,13 +152,13 @@ namespace workwear.Journal.ViewModels.Stock
 
 			queryStock
 				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
-				.JoinAlias(() => nomenclatureAlias.Type, () => itemtypesAlias)
-				.JoinAlias(() => itemtypesAlias.Units, () => unitsAlias)
+				.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias)
+				.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias)
 				.JoinEntityAlias(() => expenseItemAlias, () => expenseItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => transferItemAlias, () => transferItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
-				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => writeOffItemAlias, () => writeOffItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => employeeIssueOperationAlias, () => employeeIssueOperationAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => employeeCardAlias, () => employeeIssueOperationAlias.Employee.Id == employeeCardAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => completionResultItemAlias, () => completionResultItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
@@ -167,7 +174,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.SelectGroup(() => warehouseOperationAlias.Nomenclature.Id)
 					.Select(() => warehouseOperationAlias.OperationTime).WithAlias(() => resultAlias.OperationTime)
 					.Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
-					.Select(receptProjection).WithAlias(() => resultAlias.Receipt)
+					.Select(receiptProjection).WithAlias(() => resultAlias.Receipt)
 					.Select(expenseProjection).WithAlias(() => resultAlias.Expense)
 					.SelectSum(() => warehouseOperationAlias.Amount).WithAlias(() => resultAlias.Amount)
 					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
@@ -178,15 +185,15 @@ namespace workwear.Journal.ViewModels.Stock
 					//Ссылки
 					.SelectGroup(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenceId)
 					.SelectGroup(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
-					.SelectCount(() => employeeCardAlias.Id).WithAlias(() => resultAlias.numberOfCollapsedRows)
+					.SelectCount(() => employeeCardAlias.Id).WithAlias(() => resultAlias.NumberOfCollapsedRows)
 					.SelectGroup(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
 					.SelectGroup(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferItemId)
-					.SelectGroup(() => writeoffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
+					.SelectGroup(() => writeOffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
 					.SelectGroup(() => completionResultItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromResultId)
 					.SelectGroup(() => completionSourceItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromSourceId)
 
-					.SelectGroup(() => warehouseOperationAlias.Size).WithAlias(() => resultAlias.Size)
-					.SelectGroup(() => warehouseOperationAlias.Growth).WithAlias(() => resultAlias.Growth)
+					.SelectGroup(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSizeName)
+					.SelectGroup(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
 					.SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
 				);
 			}
@@ -195,12 +202,12 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => warehouseOperationAlias.Id).WithAlias(() => resultAlias.Id)
 					.Select(() => warehouseOperationAlias.OperationTime).WithAlias(() => resultAlias.OperationTime)
 					.Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
-					.Select(receptProjection).WithAlias(() => resultAlias.Receipt)
+					.Select(receiptProjection).WithAlias(() => resultAlias.Receipt)
 					.Select(expenseProjection).WithAlias(() => resultAlias.Expense)
 					.Select(() => warehouseOperationAlias.Amount).WithAlias(() => resultAlias.Amount)
 					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
-					.Select(() => warehouseOperationAlias.Size).WithAlias(() => resultAlias.Size)
-					.Select(() => warehouseOperationAlias.Growth).WithAlias(() => resultAlias.Growth)
+					.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSizeName)
+					.Select(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
 					.Select(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
 					//Ссылки
 					.Select(() => expenseItemAlias.Id).WithAlias(() => resultAlias.ExpenceItemId)
@@ -211,8 +218,8 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
 					.Select(() => transferItemAlias.Id).WithAlias(() => resultAlias.TransferId)
 					.Select(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferItemId)
-					.Select(() => writeoffItemAlias.Id).WithAlias(() => resultAlias.WriteoffItemId)
-					.Select(() => writeoffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
+					.Select(() => writeOffItemAlias.Id).WithAlias(() => resultAlias.WriteoffItemId)
+					.Select(() => writeOffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
 					.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
 					.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 					.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
@@ -240,7 +247,7 @@ namespace workwear.Journal.ViewModels.Stock
 			NodeActionsList.Add(updateStatusAction);
 		}
 
-		void OpenDocument(StockMovmentsJournalNode[] nodes)
+		private void OpenDocument(StockMovmentsJournalNode[] nodes)
 		{
 			foreach(var node in nodes.Where(x => x.DocumentId.HasValue))
 				openDocuments.EditDocumentDialog(this, node);
@@ -254,10 +261,10 @@ namespace workwear.Journal.ViewModels.Stock
 		public string UnitsName { get; set; }
 		public bool Receipt { get; set; }
 		public bool Expense { get; set; }
-		public string Size { get; set; }
-		public string Growth { get; set; }
 		public decimal WearPercent { get; set; }
 		public int Amount { get; set; }
+		public string WearSizeName { get; set; }
+		public string HeightName { get; set; }
 		public string NomenclatureName { get; set; }
 		public string AmountText => $"{Direction} {Amount} {UnitsName}";
 		public string OperationTimeText => OperationTime.ToString("g");
@@ -277,15 +284,12 @@ namespace workwear.Journal.ViewModels.Stock
 		public string EmployeeSurname { get; set; }
 		public string EmployeeName { get; set; }
 		public string EmployeePatronymic { get; set; }
-		public int numberOfCollapsedRows { get; set; }
+		public int NumberOfCollapsedRows { get; set; }
 
-		public string Employee {
-			get
-			{
-				if (numberOfCollapsedRows > 1)
-					return NumberToTextRus.FormatCase(numberOfCollapsedRows, "{0} сотрудник", "{0} сотрудника", "{0} сотрудников");
-				else return PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
-			}
-		}
+		public string Employee =>
+			NumberOfCollapsedRows > 1 ? 
+				NumberToTextRus.FormatCase(NumberOfCollapsedRows, 
+					"{0} сотрудник", "{0} сотрудника", "{0} сотрудников") 
+				: PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
 	}
 }

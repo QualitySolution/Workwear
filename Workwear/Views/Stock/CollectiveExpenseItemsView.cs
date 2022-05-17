@@ -1,9 +1,10 @@
 using System;
 using System.Linq;
+using Gamma.GtkWidgets;
 using Gtk;
 using QSWidgetLib;
 using workwear.Domain.Stock;
-using workwear.Measurements;
+using Workwear.Measurements;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock
@@ -47,32 +48,34 @@ namespace workwear.Views.Stock
 
 		void CreateTable()
 		{
-			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<CollectiveExpenseItem>()
+			ytreeItems.ColumnsConfig = ColumnsConfigFactory.Create<CollectiveExpenseItem>()
 				.AddColumn("Сотрудник").AddTextRenderer(x => x.Employee.ShortName)
 				.AddColumn("Номенклатура нормы").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
 				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
-				.SetDisplayFunc(x => x.Nomenclature?.Name)
+					.SetDisplayFunc(x => x.Nomenclature?.Name)
 					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))
 					.DynamicFillListFunc(x => x.EmployeeCardItem.BestChoiceInStock.ToList())
 					.AddSetter((c, n) => c.Editable = n.EmployeeCardItem != null)
 				.AddColumn("Размер")
-					.AddComboRenderer(x => x.Size)
-					.DynamicFillListFunc(x => ViewModel.SizeService.GetSizesForNomeclature(x.Nomenclature.SizeStd))
-					.AddSetter((c, n) => c.Editable = n.Nomenclature?.SizeStd != null && n.EmployeeCardItem == null)
+					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => 
+					ViewModel.SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.SizeType, onlyUseInNomenclature:true).ToList())
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType == null)
 				.AddColumn("Рост")
-					.AddComboRenderer(x => x.WearGrowth)
-					.FillItems(ViewModel.SizeService.GetGrowthForNomenclature())
-					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.WearCategory != null &&  SizeHelper.HasGrowthStandart(n.Nomenclature.Type.WearCategory.Value))
+					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => 
+					ViewModel.SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
 				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
-					.AddTextRenderer(e => e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
+					.AddTextRenderer(e => e.Nomenclature != null && e.Nomenclature.Type != null && 
+					                      e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
 				.AddColumn("")
 				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 				.Finish();
 		}
 
-		void MakeMenu()
-		{
+		void MakeMenu() {
 			var menu = new Menu();
 			var item = new MenuItem("Удалить строку");
 			item.Activated += (sender, e) => ViewModel.Delete(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
@@ -85,55 +88,52 @@ namespace workwear.Views.Stock
 		}
 
 		#region PopupMenu
-		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
-		{
-			if(args.Event.Button == 3) {
-				var menu = new Menu();
-				var selected = ytreeItems.GetSelectedObject<CollectiveExpenseItem>();
+		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
+			if (args.Event.Button != 3) return;
+			var menu = new Menu();
+			var selected = ytreeItems.GetSelectedObject<CollectiveExpenseItem>();
 
-				var itemOpenEmployee = new MenuItemId<CollectiveExpenseItem>("Открыть сотрудника");
-				itemOpenEmployee.ID = selected;
-				itemOpenEmployee.Sensitive = selected.Employee != null && selected != null;
-				itemOpenEmployee.Activated += ItemOpenEmployee_Activated;
-				menu.Add(itemOpenEmployee);
+			var itemOpenEmployee = new MenuItemId<CollectiveExpenseItem>("Открыть сотрудника");
+			itemOpenEmployee.ID = selected;
+			itemOpenEmployee.Sensitive = selected.Employee != null;
+			itemOpenEmployee.Activated += ItemOpenEmployee_Activated;
+			menu.Add(itemOpenEmployee);
 
-				var itemOpenProtection = new MenuItemId<CollectiveExpenseItem>("Открыть номенклатуру нормы");
-				itemOpenProtection.ID = selected;
-				itemOpenProtection.Sensitive = selected.ProtectionTools != null && selected != null;
-				itemOpenProtection.Activated += ItemOpenProtection_Activated;
-				menu.Add(itemOpenProtection);
+			var itemOpenProtection = new MenuItemId<CollectiveExpenseItem>("Открыть номенклатуру нормы");
+			itemOpenProtection.ID = selected;
+			itemOpenProtection.Sensitive = selected.ProtectionTools != null;
+			itemOpenProtection.Activated += ItemOpenProtection_Activated;
+			menu.Add(itemOpenProtection);
 
-				var itemOpenNomenclature = new MenuItemId<CollectiveExpenseItem>("Открыть номенклатуру");
-				itemOpenNomenclature.ID = selected;
-				itemOpenNomenclature.Sensitive = selected.Nomenclature != null && selected != null;
-				itemOpenNomenclature.Activated += Item_Activated;
-				menu.Add(itemOpenNomenclature);
+			var itemOpenNomenclature = new MenuItemId<CollectiveExpenseItem>("Открыть номенклатуру");
+			itemOpenNomenclature.ID = selected;
+			itemOpenNomenclature.Sensitive = selected.Nomenclature != null;
+			itemOpenNomenclature.Activated += Item_Activated;
+			menu.Add(itemOpenNomenclature);
 
-				menu.ShowAll();
-				menu.Popup();
-			}
+			menu.ShowAll();
+			menu.Popup();
 		}
 
 		void ItemOpenEmployee_Activated(object sender, EventArgs e)
 		{
-			viewModel.OpenEmployee((sender as MenuItemId<CollectiveExpenseItem>).ID);
+			viewModel.OpenEmployee(((MenuItemId<CollectiveExpenseItem>) sender).ID);
 		}	
 
 		void Item_Activated(object sender, EventArgs e)
 		{
-			viewModel.OpenNomenclature((sender as MenuItemId<CollectiveExpenseItem>).ID);
+			viewModel.OpenNomenclature(((MenuItemId<CollectiveExpenseItem>) sender).ID);
 		}
 
 		void ItemOpenProtection_Activated(object sender, EventArgs e)
 		{
-			viewModel.OpenProtectionTools((sender as MenuItemId<CollectiveExpenseItem>).ID);
+			viewModel.OpenProtectionTools(((MenuItemId<CollectiveExpenseItem>) sender).ID);
 		}
 		#endregion
 
 		#region private
 
-		private string GetRowColor(CollectiveExpenseItem item)
-		{
+		private string GetRowColor(CollectiveExpenseItem item) {
 			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(ViewModel.BaseParameters);
 			if(requiredIssue > 0 && item.Nomenclature == null)
 				return item.Amount == 0 ? "red" : "Dark red";
@@ -147,7 +147,8 @@ namespace workwear.Views.Stock
 		#endregion
 
 		#region Кнопки
-		protected void OnButtonDelClicked(object sender, EventArgs e)
+
+		private void OnButtonDelClicked(object sender, EventArgs e)
 		{
 			viewModel.Delete(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 		}
@@ -181,11 +182,10 @@ namespace workwear.Views.Stock
 		#region События
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if(e.PropertyName == nameof(ViewModel.SelectedItem) && ViewModel.SelectedItem != null) {
-				var iter = ytreeItems.YTreeModel.IterFromNode(ViewModel.SelectedItem);
-				var path = ytreeItems.YTreeModel.GetPath(iter);
-				ytreeItems.ScrollToCell(path, ytreeItems.Columns.First(), false, 0.5f, 0);
-			}
+			if (e.PropertyName != nameof(ViewModel.SelectedItem) || ViewModel.SelectedItem == null) return;
+			var iter = ytreeItems.YTreeModel.IterFromNode(ViewModel.SelectedItem);
+			var path = ytreeItems.YTreeModel.GetPath(iter);
+			ytreeItems.ScrollToCell(path, ytreeItems.Columns.First(), false, 0.5f, 0);
 		}
 		#endregion
 	}

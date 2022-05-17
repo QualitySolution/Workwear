@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -69,12 +70,12 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void ReturnWear()
 		{
-			navigation.OpenTdiTab<IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
+			navigation.OpenTdiTab<Dialogs.Stock.IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
 		}
 
 		public void WriteOffWear()
 		{
-			navigation.OpenTdiTab<WriteOffDocDlg, EmployeeCard>(employeeViewModel, Entity);
+			navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
 		#endregion

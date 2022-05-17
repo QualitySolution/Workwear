@@ -24,12 +24,6 @@
     wear_cards.hire_date,
     wear_cards.change_of_position_date,
     wear_cards.sex,
-    wear_cards.wear_growth,
-    wear_cards.size_wear,
-    wear_cards.size_shoes,
-    wear_cards.size_headdress,
-    wear_cards.size_gloves,
-    wear_cards.size_mittens,
     posts.name AS post,
     CONCAT_WS('',
             CONCAT(leaders.surname, ' '),
@@ -104,26 +98,6 @@ WHERE
           <DataField>sex</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="wear_growth">
-          <DataField>wear_growth</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="size_wear">
-          <DataField>size_wear</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="size_shoes">
-          <DataField>size_shoes</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="size_headdress">
-          <DataField>size_headdress</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="size_gloves">
-          <DataField>size_gloves</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
         <Field Name="post">
           <DataField>post</DataField>
           <TypeName>System.String</TypeName>
@@ -140,14 +114,10 @@ WHERE
           <DataField>regulations</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="size_mittens">
-          <DataField>size_mittens</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="Norms">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     protection_tools.name AS type_name,
@@ -190,6 +160,36 @@ WHERE
         </Field>
         <Field Name="count_by_year">
           <DataField>count_by_year</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="Sizes">
+      <Query >
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT 
+size_types.name AS sizeName,
+sizes.name AS sizeValue
+FROM `wear_cards_sizes` 
+LEFT JOIN sizes ON size_id = sizes.id
+LEFT JOIN size_types ON wear_cards_sizes.size_type_id = size_types.id
+WHERE size_types.use_in_employee = true
+AND `employee_id` = @id
+ORDER BY size_types.position
+LIMIT 10</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="id">
+            <Value>={?id}</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields >
+        <Field Name="sizeName">
+          <DataField>sizeName</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="sizeValue">
+          <DataField>sizeValue</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -583,276 +583,6 @@ WHERE
               <TextAlign>Center</TextAlign>
             </Style>
           </Textbox>
-          <Textbox Name="Textbox25">
-            <Height>12.75pt</Height>
-            <Width>71.52pt</Width>
-            <Value>Рост</Value>
-            <ZIndex>1</ZIndex>
-            <Left>395.9pt</Left>
-            <Top>18.5pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>11pt</FontSize>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox26">
-            <Height>12.00pt</Height>
-            <Width>133.02pt</Width>
-            <Value>=Iif(Fields!wear_growth.IsMissing, '—', {wear_growth})</Value>
-            <ZIndex>1</ZIndex>
-            <Left>424.20pt</Left>
-            <Top>19.20pt</Top>
-            <Style>
-              <BorderStyle>
-                <Bottom>Solid</Bottom>
-              </BorderStyle>
-              <BorderColor />
-              <BorderWidth />
-              <FontStyle>Italic</FontStyle>
-              <FontSize>11pt</FontSize>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox27">
-            <Height>12.75pt</Height>
-            <Width>71.52pt</Width>
-            <Value>Размер:</Value>
-            <ZIndex>1</ZIndex>
-            <Left>395.4pt</Left>
-            <Top>34.2pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>11pt</FontSize>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox28">
-            <Height>12.00pt</Height>
-            <Width>118.02pt</Width>
-            <Value>=Iif(Fields!size_wear.IsMissing, '—',{size_wear})</Value>
-            <ZIndex>1</ZIndex>
-            <Left>440.00pt</Left>
-            <Top>49.50pt</Top>
-            <Style>
-              <BorderStyle>
-                <Bottom>Solid</Bottom>
-              </BorderStyle>
-              <BorderColor />
-              <BorderWidth />
-              <FontStyle>Italic</FontStyle>
-              <FontSize>11pt</FontSize>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox29">
-            <Height>12.75pt</Height>
-            <Width>71.52pt</Width>
-            <Value>одежды</Value>
-            <ZIndex>1</ZIndex>
-            <Left>395.7pt</Left>
-            <Top>48.8pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>11pt</FontSize>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox30">
-            <Height>12.75pt</Height>
-            <Width>71.52pt</Width>
-            <Value>обуви</Value>
-            <ZIndex>1</ZIndex>
-            <Left>395.6pt</Left>
-            <Top>64.6pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>11pt</FontSize>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox31">
-            <Height>12.00pt</Height>
-            <Width>128.52pt</Width>
-            <Value>=Iif(Fields!size_shoes.IsMissing, '—', {size_shoes})</Value>
-            <ZIndex>1</ZIndex>
-            <Left>429.50pt</Left>
-            <Top>65.30pt</Top>
-            <Style>
-              <BorderStyle>
-                <Bottom>Solid</Bottom>
-              </BorderStyle>
-              <BorderColor />
-              <BorderWidth />
-              <FontStyle>Italic</FontStyle>
-              <FontSize>11pt</FontSize>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox4">
-            <Height>12.75pt</Height>
-            <Width>95.52pt</Width>
-            <Value>головного убора</Value>
-            <ZIndex>1</ZIndex>
-            <Left>395.70pt</Left>
-            <Top>79.30pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>11pt</FontSize>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox32">
-            <Height>12.00pt</Height>
-            <Width>73.77pt</Width>
-            <Value>=Iif(Fields!size_headdress.IsMissing, '—',  {size_headdress})</Value>
-            <ZIndex>1</ZIndex>
-            <Left>484.00pt</Left>
-            <Top>80.00pt</Top>
-            <Style>
-              <BorderStyle>
-                <Bottom>Solid</Bottom>
-              </BorderStyle>
-              <BorderColor />
-              <BorderWidth />
-              <FontStyle>Italic</FontStyle>
-              <FontSize>11pt</FontSize>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox33" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>12.75pt</Height>
-            <Width>95.52pt</Width>
-            <Value>противогаза</Value>
-            <ZIndex>1</ZIndex>
-            <Left>395.7pt</Left>
-            <Top>94.2pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>11pt</FontSize>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox34" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>12.00pt</Height>
-            <Width>93.27pt</Width>
-            <Value>—</Value>
-            <ZIndex>1</ZIndex>
-            <Left>464.80pt</Left>
-            <Top>94.90pt</Top>
-            <Style>
-              <BorderStyle>
-                <Bottom>Solid</Bottom>
-              </BorderStyle>
-              <BorderColor />
-              <BorderWidth />
-              <FontStyle>Italic</FontStyle>
-              <FontSize>11pt</FontSize>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox35" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>12.75pt</Height>
-            <Width>95.52pt</Width>
-            <Value>респиратора</Value>
-            <ZIndex>1</ZIndex>
-            <Left>395.8pt</Left>
-            <Top>110.5pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>11pt</FontSize>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox36" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>12.00pt</Height>
-            <Width>94.02pt</Width>
-            <Value>—</Value>
-            <ZIndex>1</ZIndex>
-            <Left>464.10pt</Left>
-            <Top>111.20pt</Top>
-            <Style>
-              <BorderStyle>
-                <Bottom>Solid</Bottom>
-              </BorderStyle>
-              <BorderColor />
-              <BorderWidth />
-              <FontStyle>Italic</FontStyle>
-              <FontSize>11pt</FontSize>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox37" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>12.75pt</Height>
-            <Width>71.52pt</Width>
-            <Value>рукавиц</Value>
-            <ZIndex>1</ZIndex>
-            <Left>395.7pt</Left>
-            <Top>126.0pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>11pt</FontSize>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox38" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>12.00pt</Height>
-            <Width>117.27pt</Width>
-            <Value>=Iif(Fields!size_mittens.IsMissing, '—', {size_mittens})</Value>
-            <ZIndex>1</ZIndex>
-            <Left>440.80pt</Left>
-            <Top>126.70pt</Top>
-            <Style>
-              <BorderStyle>
-                <Bottom>Solid</Bottom>
-              </BorderStyle>
-              <BorderColor />
-              <BorderWidth />
-              <FontStyle>Italic</FontStyle>
-              <FontSize>11pt</FontSize>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox39" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>12.75pt</Height>
-            <Width>95.52pt</Width>
-            <Value>перчаток</Value>
-            <ZIndex>1</ZIndex>
-            <Left>395.7pt</Left>
-            <Top>142.0pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>11pt</FontSize>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox40" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>12.00pt</Height>
-            <Width>109.77pt</Width>
-            <Value>=Iif(Fields!size_gloves.IsMissing, '—', {size_gloves})</Value>
-            <ZIndex>1</ZIndex>
-            <Left>447.20pt</Left>
-            <Top>142.70pt</Top>
-            <Style>
-              <BorderStyle>
-                <Bottom>Solid</Bottom>
-              </BorderStyle>
-              <BorderColor />
-              <BorderWidth />
-              <FontStyle>Italic</FontStyle>
-              <FontSize>11pt</FontSize>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Textbox>
           <Textbox Name="Textbox41">
             <Height>12.00pt</Height>
             <Width>130.77pt</Width>
@@ -917,6 +647,8 @@ WHERE
           <BorderStyle>
             <Default>Solid</Default>
           </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
         </Style>
         <TableColumns>
           <TableColumn>
@@ -1147,6 +879,77 @@ WHERE
           <TextAlign>Center</TextAlign>
         </Style>
       </Textbox>
+      <Table Name="Table2">
+        <DataSetName>Sizes</DataSetName>
+        <NoRows>Query returned no rows!</NoRows>
+        <Style>
+          <BorderStyle>
+            <Default>Solid</Default>
+          </BorderStyle>
+          <BorderColor  />
+          <BorderWidth  />
+        </Style>
+        <TableColumns>
+          <TableColumn>
+            <Width>104.4pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>63.0pt</Width>
+          </TableColumn>
+        </TableColumns>
+        <Details>
+          <TableRows>
+            <TableRow>
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox26">
+                      <Value>=Fields!sizeName.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                          <Top >None</Top>
+                          <Bottom >None</Bottom>
+                        </BorderStyle>
+                        <BorderColor  />
+                        <BorderWidth  />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox27">
+                      <Value>=Fields!sizeValue.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                          <Top >None</Top>
+                          <Bottom >None</Bottom>
+                        </BorderStyle>
+                        <BorderColor  />
+                        <BorderWidth >
+                        </BorderWidth>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+        </Details>
+        <Left>396.3pt</Left>
+        <Top>176.6pt</Top>
+        <Width>150pt</Width>
+        <ZIndex>1</ZIndex>
+      </Table>
     </ReportItems>
     <Height>457.5pt</Height>
     <Columns>1</Columns>

@@ -6,7 +6,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using workwear.Repository.Operations;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace workwear.Domain.Company
 {

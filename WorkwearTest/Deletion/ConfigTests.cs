@@ -8,6 +8,7 @@ using QS.Project.Domain;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Statements;
 using workwear.Domain.Stock;
 
@@ -39,6 +40,7 @@ namespace WorkwearTest.Deletion
 			AddIgnoredCollection<ProtectionTools>(x => x.Nomenclatures, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
 			AddIgnoredCollection<ProtectionTools>(x => x.Analogs, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
 			AddIgnoredCollection<Nomenclature>(x => x.ProtectionTools, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
+			AddIgnoredCollection<Size>(x => x.SuitableSizes, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
 		}
 
 		public new static IEnumerable AllDeleteItems => DeleteConfigTestBase.AllDeleteItems;

@@ -116,49 +116,15 @@ namespace workwear.Views.Company
 
 		private global::Gtk.Label label13;
 
-		private global::Gtk.Table table2;
+		private global::Gtk.ScrolledWindow employeeSizesview;
 
-		private global::Gamma.Widgets.yEnumComboBox comboSex;
+		private global::Gtk.VBox SizeContainer;
 
-		private global::Gtk.Label label15;
+		private global::Gamma.GtkWidgets.yTable table;
 
-		private global::Gtk.Label label31;
+		private global::Gamma.Widgets.yEnumComboBox yenumcomboSex;
 
-		private global::Gtk.Label label32;
-
-		private global::Gtk.Label label39;
-
-		private global::Gtk.Label label40;
-
-		private global::Gtk.Label label42;
-
-		private global::Gtk.Label label44;
-
-		private global::Gtk.Label label45;
-
-		private global::Gamma.GtkWidgets.yComboBox ycomboGlovesSize;
-
-		private global::Gamma.Widgets.yEnumComboBox ycomboGlovesStd;
-
-		private global::Gamma.GtkWidgets.yComboBox ycomboHeaddressSize;
-
-		private global::Gamma.Widgets.yEnumComboBox ycomboHeaddressStd;
-
-		private global::Gamma.GtkWidgets.yComboBox ycomboMittensSize;
-
-		private global::Gamma.GtkWidgets.yComboBox ycomboShoesSize;
-
-		private global::Gamma.Widgets.yEnumComboBox ycomboShoesStd;
-
-		private global::Gamma.GtkWidgets.yComboBox ycomboWearGrowth;
-
-		private global::Gamma.GtkWidgets.yComboBox ycomboWearSize;
-
-		private global::Gamma.Widgets.yEnumComboBox ycomboWearStd;
-
-		private global::Gamma.GtkWidgets.yComboBox ycomboWinterShoesSize;
-
-		private global::Gamma.Widgets.yEnumComboBox ycomboWinterShoesStd;
+		private global::Gamma.GtkWidgets.yLabel ylabel3;
 
 		private global::Gtk.Label label16;
 
@@ -276,7 +242,7 @@ namespace workwear.Views.Company
 			this.notebook1 = new global::Gamma.GtkWidgets.yNotebook();
 			this.notebook1.CanFocus = true;
 			this.notebook1.Name = "notebook1";
-			this.notebook1.CurrentPage = 0;
+			this.notebook1.CurrentPage = 1;
 			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.hbox1 = new global::Gtk.HBox();
 			this.hbox1.Name = "hbox1";
@@ -857,277 +823,68 @@ namespace workwear.Views.Company
 			this.notebook1.SetTabLabel(this.hbox1, this.label13);
 			this.label13.ShowAll();
 			// Container child notebook1.Gtk.Notebook+NotebookChild
-			this.table2 = new global::Gtk.Table(((uint)(8)), ((uint)(3)), false);
-			this.table2.Name = "table2";
-			this.table2.RowSpacing = ((uint)(6));
-			this.table2.ColumnSpacing = ((uint)(6));
-			// Container child table2.Gtk.Table+TableChild
-			this.comboSex = new global::Gamma.Widgets.yEnumComboBox();
-			this.comboSex.Name = "comboSex";
-			this.comboSex.ShowSpecialStateAll = false;
-			this.comboSex.ShowSpecialStateNot = false;
-			this.comboSex.UseShortTitle = false;
-			this.comboSex.DefaultFirst = false;
-			this.table2.Add(this.comboSex);
-			global::Gtk.Table.TableChild w61 = ((global::Gtk.Table.TableChild)(this.table2[this.comboSex]));
-			w61.LeftAttach = ((uint)(1));
-			w61.RightAttach = ((uint)(3));
-			w61.XOptions = ((global::Gtk.AttachOptions)(4));
-			w61.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.label15 = new global::Gtk.Label();
-			this.label15.Name = "label15";
-			this.label15.Xalign = 1F;
-			this.label15.LabelProp = global::Mono.Unix.Catalog.GetString("Размер одежды:");
-			this.table2.Add(this.label15);
-			global::Gtk.Table.TableChild w62 = ((global::Gtk.Table.TableChild)(this.table2[this.label15]));
-			w62.TopAttach = ((uint)(2));
-			w62.BottomAttach = ((uint)(3));
+			this.employeeSizesview = new global::Gtk.ScrolledWindow();
+			this.employeeSizesview.CanFocus = true;
+			this.employeeSizesview.Name = "employeeSizesview";
+			this.employeeSizesview.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child employeeSizesview.Gtk.Container+ContainerChild
+			global::Gtk.Viewport w61 = new global::Gtk.Viewport();
+			w61.ShadowType = ((global::Gtk.ShadowType)(0));
+			// Container child GtkViewport.Gtk.Container+ContainerChild
+			this.SizeContainer = new global::Gtk.VBox();
+			this.SizeContainer.Name = "SizeContainer";
+			this.SizeContainer.Spacing = 6;
+			// Container child SizeContainer.Gtk.Box+BoxChild
+			this.table = new global::Gamma.GtkWidgets.yTable();
+			this.table.Name = "table";
+			this.table.NColumns = ((uint)(2));
+			this.table.RowSpacing = ((uint)(6));
+			this.table.ColumnSpacing = ((uint)(6));
+			// Container child table.Gtk.Table+TableChild
+			this.yenumcomboSex = new global::Gamma.Widgets.yEnumComboBox();
+			this.yenumcomboSex.Name = "yenumcomboSex";
+			this.yenumcomboSex.ShowSpecialStateAll = false;
+			this.yenumcomboSex.ShowSpecialStateNot = false;
+			this.yenumcomboSex.UseShortTitle = false;
+			this.yenumcomboSex.DefaultFirst = false;
+			this.table.Add(this.yenumcomboSex);
+			global::Gtk.Table.TableChild w62 = ((global::Gtk.Table.TableChild)(this.table[this.yenumcomboSex]));
+			w62.LeftAttach = ((uint)(1));
+			w62.RightAttach = ((uint)(2));
 			w62.XOptions = ((global::Gtk.AttachOptions)(4));
 			w62.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.label31 = new global::Gtk.Label();
-			this.label31.Name = "label31";
-			this.label31.Xalign = 1F;
-			this.label31.LabelProp = global::Mono.Unix.Catalog.GetString("Рост:");
-			this.table2.Add(this.label31);
-			global::Gtk.Table.TableChild w63 = ((global::Gtk.Table.TableChild)(this.table2[this.label31]));
-			w63.TopAttach = ((uint)(1));
-			w63.BottomAttach = ((uint)(2));
+			// Container child table.Gtk.Table+TableChild
+			this.ylabel3 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel3.Name = "ylabel3";
+			this.ylabel3.Xalign = 1F;
+			this.ylabel3.LabelProp = global::Mono.Unix.Catalog.GetString("Пол:");
+			this.table.Add(this.ylabel3);
+			global::Gtk.Table.TableChild w63 = ((global::Gtk.Table.TableChild)(this.table[this.ylabel3]));
 			w63.XOptions = ((global::Gtk.AttachOptions)(4));
 			w63.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.label32 = new global::Gtk.Label();
-			this.label32.Name = "label32";
-			this.label32.Xalign = 1F;
-			this.label32.LabelProp = global::Mono.Unix.Catalog.GetString("Пол:");
-			this.table2.Add(this.label32);
-			global::Gtk.Table.TableChild w64 = ((global::Gtk.Table.TableChild)(this.table2[this.label32]));
-			w64.XOptions = ((global::Gtk.AttachOptions)(4));
-			w64.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.label39 = new global::Gtk.Label();
-			this.label39.Name = "label39";
-			this.label39.Xalign = 1F;
-			this.label39.LabelProp = global::Mono.Unix.Catalog.GetString("Размер рукавиц:");
-			this.table2.Add(this.label39);
-			global::Gtk.Table.TableChild w65 = ((global::Gtk.Table.TableChild)(this.table2[this.label39]));
-			w65.TopAttach = ((uint)(7));
-			w65.BottomAttach = ((uint)(8));
-			w65.XOptions = ((global::Gtk.AttachOptions)(4));
-			w65.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.label40 = new global::Gtk.Label();
-			this.label40.Name = "label40";
-			this.label40.Xalign = 1F;
-			this.label40.LabelProp = global::Mono.Unix.Catalog.GetString("Размер зимней обуви:");
-			this.table2.Add(this.label40);
-			global::Gtk.Table.TableChild w66 = ((global::Gtk.Table.TableChild)(this.table2[this.label40]));
-			w66.TopAttach = ((uint)(4));
-			w66.BottomAttach = ((uint)(5));
-			w66.XOptions = ((global::Gtk.AttachOptions)(4));
-			w66.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.label42 = new global::Gtk.Label();
-			this.label42.Name = "label42";
-			this.label42.Xalign = 1F;
-			this.label42.LabelProp = global::Mono.Unix.Catalog.GetString("Размер перчаток:");
-			this.table2.Add(this.label42);
-			global::Gtk.Table.TableChild w67 = ((global::Gtk.Table.TableChild)(this.table2[this.label42]));
-			w67.TopAttach = ((uint)(6));
-			w67.BottomAttach = ((uint)(7));
-			w67.XOptions = ((global::Gtk.AttachOptions)(4));
-			w67.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.label44 = new global::Gtk.Label();
-			this.label44.Name = "label44";
-			this.label44.Xalign = 1F;
-			this.label44.LabelProp = global::Mono.Unix.Catalog.GetString("Размер головного убора:");
-			this.table2.Add(this.label44);
-			global::Gtk.Table.TableChild w68 = ((global::Gtk.Table.TableChild)(this.table2[this.label44]));
-			w68.TopAttach = ((uint)(5));
-			w68.BottomAttach = ((uint)(6));
-			w68.XOptions = ((global::Gtk.AttachOptions)(4));
-			w68.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.label45 = new global::Gtk.Label();
-			this.label45.Name = "label45";
-			this.label45.Xalign = 1F;
-			this.label45.LabelProp = global::Mono.Unix.Catalog.GetString("Размер обуви:");
-			this.table2.Add(this.label45);
-			global::Gtk.Table.TableChild w69 = ((global::Gtk.Table.TableChild)(this.table2[this.label45]));
-			w69.TopAttach = ((uint)(3));
-			w69.BottomAttach = ((uint)(4));
-			w69.XOptions = ((global::Gtk.AttachOptions)(4));
-			w69.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.ycomboGlovesSize = new global::Gamma.GtkWidgets.yComboBox();
-			this.ycomboGlovesSize.Name = "ycomboGlovesSize";
-			this.table2.Add(this.ycomboGlovesSize);
-			global::Gtk.Table.TableChild w70 = ((global::Gtk.Table.TableChild)(this.table2[this.ycomboGlovesSize]));
-			w70.TopAttach = ((uint)(6));
-			w70.BottomAttach = ((uint)(7));
-			w70.LeftAttach = ((uint)(2));
-			w70.RightAttach = ((uint)(3));
-			w70.XOptions = ((global::Gtk.AttachOptions)(4));
-			w70.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.ycomboGlovesStd = new global::Gamma.Widgets.yEnumComboBox();
-			this.ycomboGlovesStd.Name = "ycomboGlovesStd";
-			this.ycomboGlovesStd.ShowSpecialStateAll = false;
-			this.ycomboGlovesStd.ShowSpecialStateNot = false;
-			this.ycomboGlovesStd.UseShortTitle = true;
-			this.ycomboGlovesStd.DefaultFirst = false;
-			this.table2.Add(this.ycomboGlovesStd);
-			global::Gtk.Table.TableChild w71 = ((global::Gtk.Table.TableChild)(this.table2[this.ycomboGlovesStd]));
-			w71.TopAttach = ((uint)(6));
-			w71.BottomAttach = ((uint)(7));
-			w71.LeftAttach = ((uint)(1));
-			w71.RightAttach = ((uint)(2));
-			w71.XOptions = ((global::Gtk.AttachOptions)(4));
-			w71.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.ycomboHeaddressSize = new global::Gamma.GtkWidgets.yComboBox();
-			this.ycomboHeaddressSize.Name = "ycomboHeaddressSize";
-			this.table2.Add(this.ycomboHeaddressSize);
-			global::Gtk.Table.TableChild w72 = ((global::Gtk.Table.TableChild)(this.table2[this.ycomboHeaddressSize]));
-			w72.TopAttach = ((uint)(5));
-			w72.BottomAttach = ((uint)(6));
-			w72.LeftAttach = ((uint)(2));
-			w72.RightAttach = ((uint)(3));
-			w72.XOptions = ((global::Gtk.AttachOptions)(4));
-			w72.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.ycomboHeaddressStd = new global::Gamma.Widgets.yEnumComboBox();
-			this.ycomboHeaddressStd.Name = "ycomboHeaddressStd";
-			this.ycomboHeaddressStd.ShowSpecialStateAll = false;
-			this.ycomboHeaddressStd.ShowSpecialStateNot = false;
-			this.ycomboHeaddressStd.UseShortTitle = true;
-			this.ycomboHeaddressStd.DefaultFirst = false;
-			this.table2.Add(this.ycomboHeaddressStd);
-			global::Gtk.Table.TableChild w73 = ((global::Gtk.Table.TableChild)(this.table2[this.ycomboHeaddressStd]));
-			w73.TopAttach = ((uint)(5));
-			w73.BottomAttach = ((uint)(6));
-			w73.LeftAttach = ((uint)(1));
-			w73.RightAttach = ((uint)(2));
-			w73.XOptions = ((global::Gtk.AttachOptions)(4));
-			w73.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.ycomboMittensSize = new global::Gamma.GtkWidgets.yComboBox();
-			this.ycomboMittensSize.Name = "ycomboMittensSize";
-			this.table2.Add(this.ycomboMittensSize);
-			global::Gtk.Table.TableChild w74 = ((global::Gtk.Table.TableChild)(this.table2[this.ycomboMittensSize]));
-			w74.TopAttach = ((uint)(7));
-			w74.BottomAttach = ((uint)(8));
-			w74.LeftAttach = ((uint)(2));
-			w74.RightAttach = ((uint)(3));
-			w74.XOptions = ((global::Gtk.AttachOptions)(4));
-			w74.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.ycomboShoesSize = new global::Gamma.GtkWidgets.yComboBox();
-			this.ycomboShoesSize.Name = "ycomboShoesSize";
-			this.table2.Add(this.ycomboShoesSize);
-			global::Gtk.Table.TableChild w75 = ((global::Gtk.Table.TableChild)(this.table2[this.ycomboShoesSize]));
-			w75.TopAttach = ((uint)(3));
-			w75.BottomAttach = ((uint)(4));
-			w75.LeftAttach = ((uint)(2));
-			w75.RightAttach = ((uint)(3));
-			w75.XOptions = ((global::Gtk.AttachOptions)(4));
-			w75.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.ycomboShoesStd = new global::Gamma.Widgets.yEnumComboBox();
-			this.ycomboShoesStd.Name = "ycomboShoesStd";
-			this.ycomboShoesStd.ShowSpecialStateAll = false;
-			this.ycomboShoesStd.ShowSpecialStateNot = false;
-			this.ycomboShoesStd.UseShortTitle = true;
-			this.ycomboShoesStd.DefaultFirst = false;
-			this.table2.Add(this.ycomboShoesStd);
-			global::Gtk.Table.TableChild w76 = ((global::Gtk.Table.TableChild)(this.table2[this.ycomboShoesStd]));
-			w76.TopAttach = ((uint)(3));
-			w76.BottomAttach = ((uint)(4));
-			w76.LeftAttach = ((uint)(1));
-			w76.RightAttach = ((uint)(2));
-			w76.XOptions = ((global::Gtk.AttachOptions)(4));
-			w76.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.ycomboWearGrowth = new global::Gamma.GtkWidgets.yComboBox();
-			this.ycomboWearGrowth.Name = "ycomboWearGrowth";
-			this.table2.Add(this.ycomboWearGrowth);
-			global::Gtk.Table.TableChild w77 = ((global::Gtk.Table.TableChild)(this.table2[this.ycomboWearGrowth]));
-			w77.TopAttach = ((uint)(1));
-			w77.BottomAttach = ((uint)(2));
-			w77.LeftAttach = ((uint)(1));
-			w77.RightAttach = ((uint)(3));
-			w77.XOptions = ((global::Gtk.AttachOptions)(4));
-			w77.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.ycomboWearSize = new global::Gamma.GtkWidgets.yComboBox();
-			this.ycomboWearSize.Name = "ycomboWearSize";
-			this.table2.Add(this.ycomboWearSize);
-			global::Gtk.Table.TableChild w78 = ((global::Gtk.Table.TableChild)(this.table2[this.ycomboWearSize]));
-			w78.TopAttach = ((uint)(2));
-			w78.BottomAttach = ((uint)(3));
-			w78.LeftAttach = ((uint)(2));
-			w78.RightAttach = ((uint)(3));
-			w78.XOptions = ((global::Gtk.AttachOptions)(4));
-			w78.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.ycomboWearStd = new global::Gamma.Widgets.yEnumComboBox();
-			this.ycomboWearStd.Name = "ycomboWearStd";
-			this.ycomboWearStd.ShowSpecialStateAll = false;
-			this.ycomboWearStd.ShowSpecialStateNot = false;
-			this.ycomboWearStd.UseShortTitle = true;
-			this.ycomboWearStd.DefaultFirst = false;
-			this.table2.Add(this.ycomboWearStd);
-			global::Gtk.Table.TableChild w79 = ((global::Gtk.Table.TableChild)(this.table2[this.ycomboWearStd]));
-			w79.TopAttach = ((uint)(2));
-			w79.BottomAttach = ((uint)(3));
-			w79.LeftAttach = ((uint)(1));
-			w79.RightAttach = ((uint)(2));
-			w79.XOptions = ((global::Gtk.AttachOptions)(4));
-			w79.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.ycomboWinterShoesSize = new global::Gamma.GtkWidgets.yComboBox();
-			this.ycomboWinterShoesSize.Name = "ycomboWinterShoesSize";
-			this.table2.Add(this.ycomboWinterShoesSize);
-			global::Gtk.Table.TableChild w80 = ((global::Gtk.Table.TableChild)(this.table2[this.ycomboWinterShoesSize]));
-			w80.TopAttach = ((uint)(4));
-			w80.BottomAttach = ((uint)(5));
-			w80.LeftAttach = ((uint)(2));
-			w80.RightAttach = ((uint)(3));
-			w80.XOptions = ((global::Gtk.AttachOptions)(4));
-			w80.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.ycomboWinterShoesStd = new global::Gamma.Widgets.yEnumComboBox();
-			this.ycomboWinterShoesStd.Name = "ycomboWinterShoesStd";
-			this.ycomboWinterShoesStd.ShowSpecialStateAll = false;
-			this.ycomboWinterShoesStd.ShowSpecialStateNot = false;
-			this.ycomboWinterShoesStd.UseShortTitle = true;
-			this.ycomboWinterShoesStd.DefaultFirst = false;
-			this.table2.Add(this.ycomboWinterShoesStd);
-			global::Gtk.Table.TableChild w81 = ((global::Gtk.Table.TableChild)(this.table2[this.ycomboWinterShoesStd]));
-			w81.TopAttach = ((uint)(4));
-			w81.BottomAttach = ((uint)(5));
-			w81.LeftAttach = ((uint)(1));
-			w81.RightAttach = ((uint)(2));
-			w81.XOptions = ((global::Gtk.AttachOptions)(4));
-			w81.YOptions = ((global::Gtk.AttachOptions)(4));
-			this.notebook1.Add(this.table2);
-			global::Gtk.Notebook.NotebookChild w82 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.table2]));
-			w82.Position = 1;
+			this.SizeContainer.Add(this.table);
+			global::Gtk.Box.BoxChild w64 = ((global::Gtk.Box.BoxChild)(this.SizeContainer[this.table]));
+			w64.Position = 1;
+			w64.Expand = false;
+			w64.Fill = false;
+			w61.Add(this.SizeContainer);
+			this.employeeSizesview.Add(w61);
+			this.notebook1.Add(this.employeeSizesview);
+			global::Gtk.Notebook.NotebookChild w67 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeeSizesview]));
+			w67.Position = 1;
 			// Notebook tab
 			this.label16 = new global::Gtk.Label();
 			this.label16.Name = "label16";
 			this.label16.LabelProp = global::Mono.Unix.Catalog.GetString("Размеры");
-			this.notebook1.SetTabLabel(this.table2, this.label16);
+			this.notebook1.SetTabLabel(this.employeeSizesview, this.label16);
 			this.label16.ShowAll();
 			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.employeenormsview1 = new global::workwear.Views.Company.EmployeeChilds.EmployeeNormsView();
 			this.employeenormsview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeenormsview1.Name = "employeenormsview1";
 			this.notebook1.Add(this.employeenormsview1);
-			global::Gtk.Notebook.NotebookChild w83 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeenormsview1]));
-			w83.Position = 2;
+			global::Gtk.Notebook.NotebookChild w68 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeenormsview1]));
+			w68.Position = 2;
 			// Notebook tab
 			this.label21 = new global::Gtk.Label();
 			this.label21.Name = "label21";
@@ -1139,8 +896,8 @@ namespace workwear.Views.Company
 			this.employeewearitemsview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeewearitemsview1.Name = "employeewearitemsview1";
 			this.notebook1.Add(this.employeewearitemsview1);
-			global::Gtk.Notebook.NotebookChild w84 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeewearitemsview1]));
-			w84.Position = 3;
+			global::Gtk.Notebook.NotebookChild w69 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeewearitemsview1]));
+			w69.Position = 3;
 			// Notebook tab
 			this.label22 = new global::Gtk.Label();
 			this.label22.Name = "label22";
@@ -1156,11 +913,11 @@ namespace workwear.Views.Company
 			this.employeecardlisteditemsview.Events = ((global::Gdk.EventMask)(256));
 			this.employeecardlisteditemsview.Name = "employeecardlisteditemsview";
 			this.vbox5.Add(this.employeecardlisteditemsview);
-			global::Gtk.Box.BoxChild w85 = ((global::Gtk.Box.BoxChild)(this.vbox5[this.employeecardlisteditemsview]));
-			w85.Position = 0;
+			global::Gtk.Box.BoxChild w70 = ((global::Gtk.Box.BoxChild)(this.vbox5[this.employeecardlisteditemsview]));
+			w70.Position = 0;
 			this.notebook1.Add(this.vbox5);
-			global::Gtk.Notebook.NotebookChild w86 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox5]));
-			w86.Position = 4;
+			global::Gtk.Notebook.NotebookChild w71 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox5]));
+			w71.Position = 4;
 			// Notebook tab
 			this.label28 = new global::Gtk.Label();
 			this.label28.Name = "label28";
@@ -1176,11 +933,11 @@ namespace workwear.Views.Company
 			this.employeemovementsview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeemovementsview1.Name = "employeemovementsview1";
 			this.vbox3.Add(this.employeemovementsview1);
-			global::Gtk.Box.BoxChild w87 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.employeemovementsview1]));
-			w87.Position = 0;
+			global::Gtk.Box.BoxChild w72 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.employeemovementsview1]));
+			w72.Position = 0;
 			this.notebook1.Add(this.vbox3);
-			global::Gtk.Notebook.NotebookChild w88 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox3]));
-			w88.Position = 5;
+			global::Gtk.Notebook.NotebookChild w73 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox3]));
+			w73.Position = 5;
 			// Notebook tab
 			this.label29 = new global::Gtk.Label();
 			this.label29.Name = "label29";
@@ -1192,8 +949,8 @@ namespace workwear.Views.Company
 			this.employeevacationsview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeevacationsview1.Name = "employeevacationsview1";
 			this.notebook1.Add(this.employeevacationsview1);
-			global::Gtk.Notebook.NotebookChild w89 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeevacationsview1]));
-			w89.Position = 6;
+			global::Gtk.Notebook.NotebookChild w74 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeevacationsview1]));
+			w74.Position = 6;
 			// Notebook tab
 			this.label30 = new global::Gtk.Label();
 			this.label30.Name = "label30";
@@ -1201,8 +958,8 @@ namespace workwear.Views.Company
 			this.notebook1.SetTabLabel(this.employeevacationsview1, this.label30);
 			this.label30.ShowAll();
 			this.dialog1_VBox.Add(this.notebook1);
-			global::Gtk.Box.BoxChild w90 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.notebook1]));
-			w90.Position = 1;
+			global::Gtk.Box.BoxChild w75 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.notebook1]));
+			w75.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
@@ -1215,12 +972,6 @@ namespace workwear.Views.Company
 			this.buttonShowPassword.Clicked += new global::System.EventHandler(this.OnButtonShowPasswordClicked);
 			this.buttonGeneratePassword.Clicked += new global::System.EventHandler(this.OnButtonGeneratePasswordClicked);
 			this.buttonReadUid.Clicked += new global::System.EventHandler(this.OnButtonReadUidClicked);
-			this.ycomboWinterShoesStd.Changed += new global::System.EventHandler(this.OnYcomboWinterShoesStdChanged);
-			this.ycomboWearStd.Changed += new global::System.EventHandler(this.OnYcomboWearStdChanged);
-			this.ycomboShoesStd.Changed += new global::System.EventHandler(this.OnYcomboShoesStdChanged);
-			this.ycomboHeaddressStd.Changed += new global::System.EventHandler(this.OnYcomboHeaddressChanged);
-			this.ycomboGlovesStd.Changed += new global::System.EventHandler(this.OnYcomboGlovesStdChanged);
-			this.comboSex.Changed += new global::System.EventHandler(this.OnComboSexChanged);
 		}
 	}
 }

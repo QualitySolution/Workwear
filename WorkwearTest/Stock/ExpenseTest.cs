@@ -9,7 +9,7 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace WorkwearTest.Integration.EmployeeIssue
 {

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using Autofac;
-using Gamma.Utilities;
-using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -13,106 +11,61 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
-using workwear.Measurements;
-using Workwear.Measurements;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace workwear.ViewModels.Stock
 {
 	public class NomenclatureViewModel : EntityDialogViewModelBase<Nomenclature>
 	{
-		private readonly ILifetimeScope autofacScope;
-		private readonly BaseParameters baseParameters;
-		private readonly IInteractiveService interactiveService;
-
-		public NomenclatureViewModel(BaseParameters baseParameters, IInteractiveService interactiveService, IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, ILifetimeScope autofacScope, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+		public NomenclatureViewModel(
+			BaseParameters baseParameters,
+			IEntityUoWBuilder uowBuilder, 
+			IUnitOfWorkFactory unitOfWorkFactory, 
+			INavigationManager navigation, 
+			ILifetimeScope autofacScope, 
+			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
-			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
-			var entryBuilder = new CommonEEVMBuilderFactory<Nomenclature>(this, Entity, UoW, navigation, autofacScope);
+			var entryBuilder = 
+				new CommonEEVMBuilderFactory<Nomenclature>(this, Entity, UoW, navigation, autofacScope);
 
 			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
 				.MakeByType()
 				.Finish();
-			this.baseParameters = baseParameters;
-			this.interactiveService = interactiveService;
 			Validations.Clear();
-			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters }, {nameof(IUnitOfWork), UoW} })));
+			Validations.Add(
+				new ValidationRequest(Entity, 
+					new ValidationContext(Entity, 
+						new Dictionary<object, object> { { nameof(BaseParameters), baseParameters }, 
+							{nameof(IUnitOfWork), UoW} })));
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 		}
-
 		#region EntityViewModels
 		public EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
 		#endregion
-
 		#region Visible
-		public bool VisibleClothesSex => Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear && Entity.Type.WearCategory.HasValue;
-		public bool VisibleSizeStd => Entity.Type?.WearCategory != null && SizeHelper.HasСlothesSizeStd(Entity.Type.WearCategory.Value);
+		public bool VisibleClothesSex =>
+			Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear;
 		#endregion
-
 		#region Sensitive
-		public bool SensitiveSizeStd => Entity.Type != null 
-			&& Entity.Type.Category == ItemTypeCategory.wear 
-			&& Entity.Type.WearCategory.HasValue
-			&& SizeStdEnum != null;
 		public bool SensitiveOpenMovements => Entity.Id > 0;
 		#endregion
-
 		#region Data
-		public string ClothesSexLabel => Entity.Type?.WearCategory?.GetEnumTitle() + ":";
-
-		public object[] DisableClothesSex {
-			get {
-				var standarts = SizeHelper.GetStandartsForСlothes(Entity.Type.WearCategory.Value);
-				var toHide = new List<object>();
-				foreach(var sexInfo in typeof(ClothesSex).GetFields()) {
-					if(sexInfo.Name.Equals("value__"))
-						continue;
-
-					var sexEnum = (ClothesSex)sexInfo.GetValue(null);
-					if(!standarts.Any(x => x.Sex == sexEnum && x.Use != SizeUse.HumanOnly))
-						toHide.Add(sexEnum);
-				}
-				return toHide.ToArray();
-			}
-		}
-
-		public Type SizeStdEnum => Entity.Type?.WearCategory != null && Entity.Sex != null 
-			? SizeHelper.GetSizeStandartsEnum(Entity.Type.WearCategory.Value, Entity.Sex.Value)
-			: null;
-
+		public string ClothesSexLabel => "Пол: ";
 		#endregion
-
 		#region Actions
-		public void OpenMovements()
-		{
+		public void OpenMovements() {
 			NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(this,
 					addingRegistrations: builder => builder.RegisterInstance(Entity));
 		}
 		#endregion
+		private void Entity_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if (e.PropertyName != nameof(Entity.Type)) return;
+			if (Entity.Type != null && String.IsNullOrWhiteSpace(Entity.Name))
+				Entity.Name = Entity.Type.Name;
 
-		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(e.PropertyName == nameof(Entity.Type)) {
-				if(Entity.Type != null && String.IsNullOrWhiteSpace(Entity.Name))
-					Entity.Name = Entity.Type.Name;
-
-				OnPropertyChanged(nameof(VisibleClothesSex));
-				OnPropertyChanged(nameof(ClothesSexLabel));
-				OnPropertyChanged(nameof(VisibleSizeStd));
-				OnPropertyChanged(nameof(SensitiveSizeStd));
-				OnPropertyChanged(nameof(DisableClothesSex));
-
-				if(Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear && Entity.Type.WearCategory.HasValue) {
-					if(!SizeHelper.HasСlothesSizeStd(Entity.Type.WearCategory.Value)) {
-						Entity.SizeStd = null;
-					}
-				}
-			}
-			if(e.PropertyName == nameof(Entity.Sex)) {
-				OnPropertyChanged(nameof(SensitiveSizeStd));
-				OnPropertyChanged(nameof(SizeStdEnum));
-			}
+			OnPropertyChanged(nameof(VisibleClothesSex));
+			OnPropertyChanged(nameof(ClothesSexLabel));
 		}
 	}
 }

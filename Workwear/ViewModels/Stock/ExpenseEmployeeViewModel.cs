@@ -24,7 +24,7 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Repository;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Statements;
@@ -33,11 +33,11 @@ namespace workwear.ViewModels.Stock
 {
 	public class ExpenseEmployeeViewModel : EntityDialogViewModelBase<Expense>, ISelectItem
 	{
-		ILifetimeScope autofacScope;
+		private ILifetimeScope autofacScope;
 		private readonly UserRepository userRepository;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public ExpenseDocItemsEmployeeViewModel DocItemsEmployeeViewModel;
-		IInteractiveQuestion interactive;
+		private IInteractiveQuestion interactive;
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;

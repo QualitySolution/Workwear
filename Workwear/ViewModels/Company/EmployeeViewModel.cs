@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using Autofac;
 using Gamma.Utilities;
 using Grpc.Core;
@@ -25,12 +24,13 @@ using QS.ViewModels.Dialog;
 using QSReport;
 using workwear.Domain.Company;
 using Workwear.Domain.Company;
+using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Measurements;
 using workwear.Models.Company;
 using workwear.Repository.Company;
 using workwear.Repository.Regulations;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Company.EmployeeChilds;
 using workwear.ViewModels.IdentityCards;
@@ -41,12 +41,9 @@ namespace workwear.ViewModels.Company
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
-		private readonly IUserService userService;
-
 		public ILifetimeScope AutofacScope;
 		public NormRepository NormRepository { get; }
-
-		private readonly SizeService sizeService;
+		
 		private readonly PersonNames personNames;
 		private readonly IInteractiveService interactive;
 		private readonly FeaturesService featuresService;
@@ -54,6 +51,7 @@ namespace workwear.ViewModels.Company
 		private readonly LkUserManagerService lkUserManagerService;
 		private readonly BaseParameters baseParameters;
 		private readonly CommonMessages messages;
+		public SizeService SizeService { get; }
 
 		public EmployeeViewModel(
 			IEntityUoWBuilder uowBuilder,
@@ -62,7 +60,6 @@ namespace workwear.ViewModels.Company
 			IValidator validator,
 			IUserService userService,
 			ILifetimeScope autofacScope,
-			SizeService sizeService,
 			PersonNames personNames,
 			IInteractiveService interactive,
 			FeaturesService featuresService,
@@ -70,11 +67,10 @@ namespace workwear.ViewModels.Company
 			NormRepository normRepository,
 			LkUserManagerService lkUserManagerService,
 			BaseParameters baseParameters,
+			SizeService sizeService,
 			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
-			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
-			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
@@ -84,6 +80,7 @@ namespace workwear.ViewModels.Company
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
+			SizeService = sizeService;
 
 			EntryLeaderViewModel = builder.ForProperty(x => x.Leader)
 				.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
@@ -106,8 +103,7 @@ namespace workwear.ViewModels.Company
 				.UseViewModelJournalAndAutocompleter<PostJournalViewModel>()
 				.UseViewModelDialog<PostViewModel>()
 				.Finish();
-
-			Entity.PropertyChanged += CheckSizeChanged;
+			
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.PropertyChanged += PostChangedCheck;
 
@@ -198,17 +194,10 @@ namespace workwear.ViewModels.Company
 			}
 		}
 
-		public string CardUidEntryColor => (String.IsNullOrEmpty(CardUid) || Regex.IsMatch(CardUid, @"\A\b[0-9a-fA-F]+\b\Z")) ? "black" : "red";
+		public string CardUidEntryColor => 
+			String.IsNullOrEmpty(CardUid) || System.Text.RegularExpressions.Regex.IsMatch(CardUid, @"\A\b[0-9a-fA-F]+\b\Z") ? "black" : "red";
 
 		#endregion
-
-		#endregion
-
-		#region Size
-
-		public string[] GetSizes(string code) => sizeService.GetSizesForEmployee(code);
-		public string[] GetSizes(Enum std) => sizeService.GetSizesForEmployee(std);
-		public string[] GetGrowths() => sizeService.GetGrowthForEmployee();
 
 		#endregion
 
@@ -299,30 +288,10 @@ namespace workwear.ViewModels.Company
 			}
 			Console.WriteLine();
 		}
-
-		void CheckSizeChanged(object sender, PropertyChangedEventArgs e)
-		{
-			СlothesType category;
-			if(e.PropertyName == nameof(Entity.GlovesSize))
-				category = СlothesType.Gloves;
-			else if(e.PropertyName == nameof(Entity.MittensSize))
-				category = СlothesType.Mittens;
-			else if(e.PropertyName == nameof(Entity.WearSize))
-				category = СlothesType.Wear;
-			else if(e.PropertyName == nameof(Entity.ShoesSize))
-				category = СlothesType.Shoes;
-			else if(e.PropertyName == nameof(Entity.HeaddressSize))
-				category = СlothesType.Headgear;
-			else if(e.PropertyName == nameof(Entity.WinterShoesSize))
-				category = СlothesType.WinterShoes;
-			else if(e.PropertyName == nameof(Entity.WearGrowth))
-				category = СlothesType.Wear;
-			else return;
-
-			//Обновляем подобранную номенклатуру
+		private void CheckSizeChanged() {
 			Entity.FillWearInStockInfo(UoW, baseParameters, Entity?.Subdivision?.Warehouse, DateTime.Now);
+			//Обновляем подобранную номенклатуру
 		}
-
 		#endregion
 
 		#region Вкладки
@@ -392,7 +361,8 @@ namespace workwear.ViewModels.Company
 			if(!String.IsNullOrWhiteSpace(Entity.CardKey)) {
 				var employeeSameUid = employeeRepository.GetEmployeeByCardkey(UoW, Entity.CardKey);
 				if(employeeSameUid != null && !employeeSameUid.IsSame(Entity)) {
-					if(interactive.Question($"UID карты уже привязан к сотруднику {employeeSameUid.ShortName}, удалить у него UID карты? Чтобы сохранить {Entity.ShortName}.")) {
+					if(interactive.Question($"UID карты уже привязан к сотруднику {employeeSameUid.ShortName}, " +
+					                        $"удалить у него UID карты? Чтобы сохранить {Entity.ShortName}.")) {
 						//Здесь сохраняем удаляем UID через отдельный uow чтобы избежать ошибки базы по уникальному значению поля.
 						using(var uow2 = UnitOfWorkFactory.CreateForRoot<EmployeeCard>(employeeSameUid.Id)) {
 							uow2.Root.CardKey = null;
@@ -407,7 +377,8 @@ namespace workwear.ViewModels.Company
 			if(!String.IsNullOrWhiteSpace(Entity.PhoneNumber)) {
 				var employeeSamePhone = employeeRepository.GetEmployeeByPhone(UoW, Entity.PhoneNumber);
 				if(employeeSamePhone != null && !employeeSamePhone.IsSame(Entity)) {
-					if(interactive.Question($"Телефон {Entity.PhoneNumber} уже привязан к сотруднику {employeeSamePhone.ShortName}. Удалить у него телефон? Чтобы сохранить {Entity.ShortName}?")) {
+					if(interactive.Question($"Телефон {Entity.PhoneNumber} уже привязан к сотруднику {employeeSamePhone.ShortName}. " +
+					                        $"Удалить у него телефон? Чтобы сохранить {Entity.ShortName}?")) {
 						//Здесь сохраняем удаляем телефон через отдельный uow чтобы избежать ошибки базы по уникальному значению поля.
 						using(var uow2 = UnitOfWorkFactory.CreateForRoot<EmployeeCard>(employeeSamePhone.Id)) {
 							if(uow2.Root.LkRegistered)
@@ -425,33 +396,32 @@ namespace workwear.ViewModels.Company
 			return SyncLkPassword();
 		}
 
-		public override bool Save()
-		{
+		public override bool Save() {
 			logger.Info("Сохранение карточки сотрудника");
 			var result = base.Save();
-
 			OnPropertyChanged(nameof(VisibleHistory));
 			OnPropertyChanged(nameof(VisibleListedItem));
-
 			return result;
 		}
-
 		IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
 		{
-			if(!String.IsNullOrEmpty(LkPassword)) {
-			 	if(String.IsNullOrEmpty(Entity.PhoneNumber))
-					yield return new ValidationResult("Для установки пароля от личного кабинета сотрудника необходимо так же указать его телефон.", new[] { nameof(LkPassword) });
+			if (String.IsNullOrEmpty(LkPassword)) yield break;
+			if(String.IsNullOrEmpty(Entity.PhoneNumber))
+				yield return new ValidationResult(
+					"Для установки пароля от личного кабинета сотрудника необходимо так же указать его телефон.",
+					new[] { nameof(LkPassword) });
 
-				if(LkPassword.Length < 3)
-					yield return new ValidationResult("Длинна пароля от личного кабинета должна быть не менее 3-х символов.", new[] { nameof(LkPassword) });
+			if(LkPassword.Length < 3)
+				yield return new ValidationResult(
+					"Длинна пароля от личного кабинета должна быть не менее 3-х символов.", 
+					new[] { nameof(LkPassword) });
 
-				if(LkPassword.Length > 32)
-					yield return new ValidationResult("Длинна пароля от личного кабинета должна быть не более 32-х символов.", new[] { nameof(LkPassword) });
-			}
+			if(LkPassword.Length > 32)
+				yield return new ValidationResult(
+					"Длинна пароля от личного кабинета должна быть не более 32-х символов.", 
+					new[] { nameof(LkPassword) });
 		}
-
 		#endregion
-
 		#region Печать
 
 		public enum PersonalCardPrint
@@ -481,7 +451,6 @@ namespace workwear.ViewModels.Company
 		}
 
 		#endregion
-
 		#region Дата изменения должности
 
 		Subdivision lastSubdivision;
@@ -489,10 +458,12 @@ namespace workwear.ViewModels.Company
 
 		void PostChangedCheck(object sender, PropertyChangedEventArgs e)
 		{
-			if(e.PropertyName == nameof(Entity.Post) && lastPost != null && interactive.Question("Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?")) {
+			if(e.PropertyName == nameof(Entity.Post) && lastPost != null && interactive.Question(
+				"Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?")) {
 				Entity.ChangeOfPositionDate = DateTime.Today;
 			}
-			if(e.PropertyName == nameof(Entity.Subdivision) && lastSubdivision != null && interactive.Question("Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?")) {
+			if(e.PropertyName == nameof(Entity.Subdivision) && lastSubdivision != null && interactive.Question(
+				"Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?")) {
 				Entity.ChangeOfPositionDate = DateTime.Today;
 			}
 			if(e.PropertyName == nameof(Entity.Post) && Entity.UsedNorms.Count == 0 && interactive.Question("Установить норму по должности?")) {
@@ -500,7 +471,6 @@ namespace workwear.ViewModels.Company
 			}
 		}
 		#endregion
-
 		#region Uid
 
 		public void ReadUid()
@@ -513,6 +483,25 @@ namespace workwear.ViewModels.Company
 			};
 		}
 		#endregion
+		public void SetSizes(Size size, SizeType sizeType) {
+			CheckSizeChanged();
+			var employeeSize = Entity.ObservableSizes.FirstOrDefault(x => x.SizeType == sizeType);
+			if (size is null) {
+				if(employeeSize != null)
+					Entity.ObservableSizes.Remove(employeeSize);
+			}
+			else {
+				if (employeeSize is null) {
+					var newEmployeeSize = 
+						new EmployeeSize {Size = size, SizeType = sizeType, Employee = Entity};
+					Entity.ObservableSizes.Add(newEmployeeSize);
+				}
+				else {
+					if (employeeSize.Size != size)
+						employeeSize.Size = size;
+				}
+			}
+		}
 	}
 	public class DepartmentJournalViewModelSelector : IEntitySelector {
 		private INavigationManager NavigationManager { get; }

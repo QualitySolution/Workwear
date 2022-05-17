@@ -53,7 +53,8 @@ namespace workwear.ReportParameters.ViewModels
 					{"subdivisions", SelectSubdivisons() },
 					{"issue_type", IssueType?.ToString() },
 					{"matchString", MatchString},
-					{"noMatchString", NoMatchString}
+					{"noMatchString", NoMatchString},
+					{"alternativeName", UseAlternativeName}
 				 };
 
 		#region Параметры
@@ -87,6 +88,7 @@ namespace workwear.ReportParameters.ViewModels
 		}
 
 		private bool bySize;
+		[PropertyChangedAlso(nameof(VisibleUseAlternative))]
 		public virtual bool BySize {
 			get => bySize;
 			set => SetField(ref bySize, value);
@@ -97,7 +99,15 @@ namespace workwear.ReportParameters.ViewModels
 			get => addChildSubdivisions;
 			set => SetField(ref addChildSubdivisions, value);
 		}
+
+		private bool useAlternativeName;
+
+		public bool UseAlternativeName {
+			get => useAlternativeName;
+			set => SetField(ref useAlternativeName, value);
+		}
 		public bool VisibleAddChild => !Summary;
+		public bool VisibleUseAlternative => BySize;
 		#endregion
 		
 		#region Свойства

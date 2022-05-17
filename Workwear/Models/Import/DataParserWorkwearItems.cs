@@ -1,27 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using NHibernate;
 using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
-using workwear.Measurements;
 using workwear.Repository.Company;
 using workwear.Repository.Regulations;
 using workwear.Repository.Stock;
 using workwear.ViewModels.Import;
-using Workwear.Domain.Regulations;
 using Workwear.Measurements;
 
 namespace workwear.Models.Import
 {
 	public class DataParserWorkwearItems : DataParserBase<DataTypeWorkwearItems>
 	{
-		static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		private readonly NomenclatureRepository nomenclatureRepository;
 		private readonly PostRepository postRepository;
@@ -73,20 +71,23 @@ namespace workwear.Models.Import
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 		}
 
-		private void AddColumnName(DataTypeWorkwearItems type, params string[] names)
-		{
+		private void AddColumnName(DataTypeWorkwearItems type, params string[] names) {
 			foreach(var name in names)
 				ColumnNames.Add(name.ToLower(), type);
 		}
-
 		#region Сопоставление данных
-
-		public void MatchChanges(IProgressBarDisplayable progress, SettingsWorkwearItemsViewModel settings, CountersViewModel counters, IUnitOfWork uow, IEnumerable<SheetRowWorkwearItems> list, List<ImportedColumn<DataTypeWorkwearItems>> columns)
+		public void MatchChanges(
+			IProgressBarDisplayable progress, 
+			SettingsWorkwearItemsViewModel settings, 
+			CountersViewModel counters, 
+			IUnitOfWork uow, 
+			IEnumerable<SheetRowWorkwearItems> list, 
+			List<ImportedColumn<DataTypeWorkwearItems>> columns)
 		{
 			var personnelNumberColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.PersonnelNumber);
 			var protectionToolsColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.ProtectionTools);
 			var nomenclatureColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Nomenclature);
-			var issuedateColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.IssueDate);
+			var issueDateColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.IssueDate);
 			var countColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Count);
 			var postColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Post);
 			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Subdivision);
@@ -105,10 +106,10 @@ namespace workwear.Models.Import
 
 			foreach(var row in list) {
 				progress.Add(text: "Сопоставление");
-				row.Date = ParseDateOrNull(row.CellStringValue(issuedateColumn.Index));
+				row.Date = ParseDateOrNull(row.CellStringValue(issueDateColumn.Index));
 				if(row.Date == null) {
 					row.ProgramSkipped = true;
-					row.AddColumnChange(issuedateColumn, ChangeType.ParseError);
+					row.AddColumnChange(issueDateColumn, ChangeType.ParseError);
 					continue;
 				}
 
@@ -120,7 +121,8 @@ namespace workwear.Models.Import
 
 				row.Employee = employees.FirstOrDefault(x => x.PersonnelNumber == GetPersonalNumber(settings, row, personnelNumberColumn.Index));
 				if(row.Employee == null) {
-					logger.Warn($"Не найден сотрудник в табельным номером [{GetPersonalNumber(settings, row, personnelNumberColumn.Index)}]. Пропускаем.");
+					logger.Warn(
+						$"Не найден сотрудник в табельным номером [{GetPersonalNumber(settings, row, personnelNumberColumn.Index)}]. Пропускаем.");
 					row.ProgramSkipped = true;
 					row.AddColumnChange(personnelNumberColumn, ChangeType.NotFound);
 					counters.AddCount(CountersWorkwearItems.EmployeeNotFound);
@@ -130,23 +132,24 @@ namespace workwear.Models.Import
 				var protectionToolName = row.CellStringValue(protectionToolsColumn.Index);
 				row.WorkwearItem = row.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.Name == protectionToolName);
 				if(row.WorkwearItem == null && postColumn != null && subdivisionColumn != null) {
-					if(!TryAddNorm(uow, row.CellStringValue(postColumn.Index), row.CellStringValue(subdivisionColumn.Index), row.Employee)) {
+					if(!TryAddNorm(uow, row.CellStringValue(postColumn.Index), 
+						row.CellStringValue(subdivisionColumn.Index), row.Employee)) {
 						row.AddColumnChange(postColumn, ChangeType.NotFound);
 						row.AddColumnChange(subdivisionColumn, ChangeType.NotFound);
 					}
 					else
 						counters.AddCount(CountersWorkwearItems.EmployeesAddNorm);
 				}
-				if(row.WorkwearItem == null) {
-					row.ProgramSkipped = true;
-					row.AddColumnChange(protectionToolsColumn, ChangeType.NotFound);
-					continue;
-				}
+
+				if (row.WorkwearItem != null) continue;
+				row.ProgramSkipped = true;
+				row.AddColumnChange(protectionToolsColumn, ChangeType.NotFound);
 			}
 
 			progress.Add(text: "Загрузка номенклатуры");
-			var nomenclatureTypes = new NomenclatureTypes(uow, true);
-			var nomenclatureNames = list.Select(x => x.CellStringValue(nomenclatureColumn.Index)).Where(x => x != null).Distinct().ToArray();
+			var nomenclatureTypes = new NomenclatureTypes(uow, sizeService, true);
+			var nomenclatureNames = 
+				list.Select(x => x.CellStringValue(nomenclatureColumn.Index)).Where(x => x != null).Distinct().ToArray();
 			var nomenclatures = nomenclatureRepository.GetNomenclatureByName(uow, nomenclatureNames);
 
 			progress.Add(text: "Загрузка операций выдачи");
@@ -175,18 +178,18 @@ namespace workwear.Models.Import
 					continue;
 				}
 
-				var nomenclature = UsedNomeclature.FirstOrDefault(x => String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
+				var nomenclature = 
+					UsedNomeclature.FirstOrDefault(x => String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
 				if(nomenclature == null) {
-					nomenclature = nomenclatures.FirstOrDefault(x => String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
+					nomenclature = 
+						nomenclatures.FirstOrDefault(x => String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
 					if(nomenclature == null) {
 						nomenclature = new Nomenclature {
 							Name = nomenclatureName,
 							Type = row.WorkwearItem.ProtectionTools.Type,
 							Comment = "Создана при импорте выдачи из Excel",
 						};
-						if(nomenclature.Type.WearCategory != null && SizeHelper.HasClothesSex(nomenclature.Type.WearCategory.Value)) {
-							nomenclature.Sex = nomenclatureTypes.ParseSex(nomenclature.Name) ?? ClothesSex.Universal;
-						}
+						nomenclature.Sex = nomenclatureTypes.ParseSex(nomenclature.Name) ?? ClothesSex.Universal;
 						row.WorkwearItem.ProtectionTools.AddNomeclature(nomenclature);
 					}
 					UsedNomeclature.Add(nomenclature);
@@ -200,7 +203,8 @@ namespace workwear.Models.Import
 					continue;
 				}
 
-				if(row.Operation == null) {
+				if (row.Operation != null) continue; 
+				{
 					var count = row.CellIntValue(countColumn.Index).Value;
 					var expenseDate = row.WorkwearItem.ActiveNormItem.CalculateExpireDate(row.Date.Value, count);
 					row.Operation = new EmployeeIssueOperation {
@@ -217,22 +221,11 @@ namespace workwear.Models.Import
 						UseAutoWriteoff = expenseDate != null,
 					};
 					//Обрабатываем размер.
-					if(TryParseSizeAndGrowth(row, columns, out SizeAndGrowth sizeAndGrowth)) {
-						row.Operation.Size = sizeAndGrowth.Size;
-						row.Operation.WearGrowth = sizeAndGrowth.Growth;
-						//Если стандарт размера не заполнен для номенклатуры, проставляем его, по обнаруженному размеру.
-						if(!String.IsNullOrEmpty(sizeAndGrowth.Size) 
-							&& SizeHelper.HasСlothesSizeStd(nomenclature.Type.WearCategory.Value)
-							&& String.IsNullOrEmpty(nomenclature.SizeStd)) {
-							var standarts = SizeHelper.GetSizeStandartsEnum(nomenclature.Type.WearCategory.Value, nomenclature.Sex);
-								nomenclature.SizeStd = sizeService.GetAllSizesForNomeclature(standarts).FirstOrDefault(x => x.Size == sizeAndGrowth.Size)?.StandardCode;
-						}
-
-						bool sizeOk = !SizeHelper.HasСlothesSizeStd(nomenclature.Type.WearCategory.Value)
-									|| sizeService.GetSizesForNomeclature(nomenclature.SizeStd).Contains(sizeAndGrowth.Size);
-						bool growthOk = !SizeHelper.HasGrowthStandart(nomenclature.Type.WearCategory.Value)
-							|| (nomenclature.SizeStd?.EndsWith("Intl", StringComparison.InvariantCulture) ?? false)
-							|| sizeService.GetGrowthForNomenclature().Contains(sizeAndGrowth.Growth);
+					if(TryParseSizeAndGrowth(uow, row, columns, out var sizeAndGrowth)) {
+						row.Operation.WearSize = sizeAndGrowth.Size;
+						row.Operation.Height = sizeAndGrowth.Growth;
+						var sizeOk = nomenclature.Type.SizeType == sizeAndGrowth.Size.SizeType;
+						var growthOk = nomenclature.Type.HeightType == sizeAndGrowth.Growth.SizeType;
 						if(sizeAndGrowthColumn != null)
 							row.ChangedColumns.Add(sizeAndGrowthColumn, new ChangeState( sizeOk && growthOk ? ChangeType.NewEntity : ChangeType.ParseError));
 						if(sizeColumn != null)
@@ -241,26 +234,38 @@ namespace workwear.Models.Import
 							row.ChangedColumns.Add(growthColumn, new ChangeState(growthOk ? ChangeType.NewEntity : ChangeType.ParseError));
 					}
 					//Проставляем размер в сотрудника.
-					if(!String.IsNullOrEmpty(row.Operation.WearGrowth) && String.IsNullOrEmpty(row.Employee.WearGrowth)) {
-						row.Employee.WearGrowth = row.Operation.WearGrowth;
+					if(row.Operation.Height != null) {
+						var employeeSize = row.Employee.Sizes.FirstOrDefault(x => x.SizeType == row.Operation.Height.SizeType);
+						if (employeeSize is null) {
+							employeeSize = new EmployeeSize
+								{Size = row.Operation.Height, SizeType = row.Operation.Height.SizeType, Employee = row.Employee};
+							row.Employee.Sizes.Add(employeeSize);
+						}
+						else {
+							employeeSize.Size = row.Operation.Height;
+						}
 						ChangedEmployees.Add(row.Employee);
 						counters.AddCount(CountersWorkwearItems.EmployeesSetSize);
 					}
-					if(!String.IsNullOrEmpty(row.Operation.Size)) {
-						var employeeSize = row.Employee.GetSize(nomenclature.Type.WearCategory.Value);
-						if(employeeSize != null && String.IsNullOrEmpty(employeeSize.Size)) {
-							var newSize = new SizePair(nomenclature.SizeStd, row.Operation.Size);
-							row.Employee.SetSize(nomenclature.Type.WearCategory.Value, newSize);
-							ChangedEmployees.Add(row.Employee);
-							counters.AddCount(CountersWorkwearItems.EmployeesSetSize);
+					if(row.Operation.WearSize != null) {
+						var employeeSize = row.Employee.Sizes.FirstOrDefault(x => x.SizeType == row.Operation.WearSize.SizeType);
+						if (employeeSize is null) {
+							employeeSize = new EmployeeSize
+								{Size = row.Operation.WearSize, SizeType = row.Operation.WearSize.SizeType, Employee = row.Employee};
+							row.Employee.Sizes.Add(employeeSize);
 						}
+						else {
+							employeeSize.Size = row.Operation.WearSize;
+						}
+						ChangedEmployees.Add(row.Employee);
+						counters.AddCount(CountersWorkwearItems.EmployeesSetSize);
 					}
 					var toSetChangeColumns = columns.Where(
 						x => x.DataType != DataTypeWorkwearItems.Unknown 
-						  && x.DataType != DataTypeWorkwearItems.SizeAndGrowth
-						  && x.DataType != DataTypeWorkwearItems.Size
-						  && x.DataType != DataTypeWorkwearItems.Growth
-						);
+						     && x.DataType != DataTypeWorkwearItems.SizeAndGrowth
+						     && x.DataType != DataTypeWorkwearItems.Size
+						     && x.DataType != DataTypeWorkwearItems.Growth
+					);
 					foreach(var column in toSetChangeColumns) {
 						if(!row.ChangedColumns.ContainsKey(column))
 							row.ChangedColumns.Add(column, new ChangeState(ChangeType.NewEntity));
@@ -269,10 +274,7 @@ namespace workwear.Models.Import
 			}
 			progress.Close();
 		}
-
-
-		private bool TryAddNorm(IUnitOfWork uow, string postName, string subdivisionName, EmployeeCard employee)
-		{
+		private bool TryAddNorm(IUnitOfWork uow, string postName, string subdivisionName, EmployeeCard employee) {
 			var post = postRepository.GetPostByName(uow, postName, subdivisionName);
 			if(post == null)
 				return false;
@@ -287,43 +289,19 @@ namespace workwear.Models.Import
 			return true;
 		}
 		#endregion
-
 		public readonly List<Nomenclature> UsedNomeclature = new List<Nomenclature>();
 		public readonly HashSet<EmployeeCard> ChangedEmployees = new HashSet<EmployeeCard>();
-		
 		#region Helpers
-		DateTime? ParseDateOrNull(string value)
-		{
-			if(DateTime.TryParse(value, out DateTime date))
+		private DateTime? ParseDateOrNull(string value) {
+			if(DateTime.TryParse(value, out var date))
 				return date;
-			else
-				return null;
+			return null;
 		}
-		
-		private bool TryParsePeriodAndCount(string value, out int amount, out int periods, out NormPeriodType periodType)
-		{
-			amount = 0;
-			periods = 0;
-			if(value.ToLower().Contains("до износа")) {
-				amount = 1;
-				periodType = NormPeriodType.Wearout;
-				return true;
-			}
-
-			var regexp = new Regex(@"\((\d+) в (\d+) (месяц|месяца|месяцев)\)");
-			periodType = NormPeriodType.Month;
-			var matches = regexp.Matches(value);
-			if(matches.Count == 0)
-				return false;
-			var parts = matches[0].Groups;
-			if(parts.Count != 4)
-				return false;
-			amount = int.Parse(parts[1].Value);
-			periods = int.Parse(parts[2].Value);
-			return true;
-		}
-
-		private bool TryParseSizeAndGrowth(SheetRowWorkwearItems row, List<ImportedColumn<DataTypeWorkwearItems>> columns, out SizeAndGrowth sizeAndGrowth)
+		private bool TryParseSizeAndGrowth(
+			IUnitOfWork uow,
+			SheetRowWorkwearItems row, 
+			List<ImportedColumn<DataTypeWorkwearItems>> columns, 
+			out SizeAndGrowth sizeAndGrowth) 
 		{
 			sizeAndGrowth = new SizeAndGrowth();
 			var sizeAndGrowthColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.SizeAndGrowth);
@@ -332,21 +310,19 @@ namespace workwear.Models.Import
 			if(sizeAndGrowthColumn != null) {
 				var sizeAndGrowthValue = row.CellStringValue(sizeAndGrowthColumn.Index);
 				if(!String.IsNullOrEmpty(sizeAndGrowthValue))
-					sizeAndGrowth = SizeParser.ParseSizeAndGrowth(sizeAndGrowthValue);
+					sizeAndGrowth = SizeParser.ParseSizeAndGrowth(sizeAndGrowthValue, uow, sizeService);
 			};
-			if(sizeColumn != null && String.IsNullOrEmpty(sizeAndGrowth.Size))
-				sizeAndGrowth.Size = SizeParser.ParseSize(row.CellStringValue(sizeColumn.Index));
-			if(growthColumn != null && String.IsNullOrEmpty(sizeAndGrowth.Growth))
-				sizeAndGrowth.Growth = SizeParser.ParseSize(row.CellStringValue(sizeColumn.Index));
-			return !String.IsNullOrEmpty(sizeAndGrowth.Size) || !String.IsNullOrEmpty(sizeAndGrowth.Growth);
+			if(sizeColumn != null && sizeAndGrowth.Size != null)
+				sizeAndGrowth.Size = SizeParser.ParseSize(uow, row.CellStringValue(sizeColumn.Index), sizeService, CategorySizeType.Size);
+			if(growthColumn != null && sizeAndGrowth.Growth != null)
+				sizeAndGrowth.Growth = SizeParser.ParseSize(uow, row.CellStringValue(growthColumn.Index), sizeService, CategorySizeType.Height);
+			return sizeAndGrowth.Size != null || sizeAndGrowth.Growth != null;
 		}
-
-		public string GetPersonalNumber(SettingsWorkwearItemsViewModel settings, SheetRowWorkwearItems row, int columnIndex)
-		{
-			var original = settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(row.CellStringValue(columnIndex)) : row.CellStringValue(columnIndex);
+		public string GetPersonalNumber(SettingsWorkwearItemsViewModel settings, SheetRowWorkwearItems row, int columnIndex) {
+			var original = settings.ConvertPersonnelNumber ? 
+				EmployeeParse.ConvertPersonnelNumber(row.CellStringValue(columnIndex)) : row.CellStringValue(columnIndex);
 			return original?.Trim();
 		}
-
 		#endregion
 	}
 }

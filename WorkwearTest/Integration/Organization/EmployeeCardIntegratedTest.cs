@@ -10,9 +10,10 @@ using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 using workwear.Repository.Operations;
-using workwear.Tools;
+using Workwear.Tools;
 
 namespace WorkwearTest.Integration.Organization
 {
@@ -44,23 +45,21 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = СlothesType.PPE;
 				uow.Save(nomenclatureType);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType
+				};
 				uow.Save(nomenclature);
 
-				var position1 = new StockPosition(nomenclature, null, null, 0);
-
-				var nomenclature2 = new Nomenclature();
-				nomenclature2.Type = nomenclatureType;
+				var nomenclature2 = new Nomenclature {
+					Type = nomenclatureType
+				};
 				uow.Save(nomenclature2);
 
-				var position2 = new StockPosition(nomenclature2, null, null, 0);
-
-				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номенклатура нормы";
+				var protectionTools = new ProtectionTools {
+					Name = "Номенклатура нормы"
+				};
 				protectionTools.AddNomeclature(nomenclature);
 				protectionTools.AddNomeclature(nomenclature2);
 				uow.Save(protectionTools);
@@ -78,10 +77,11 @@ namespace WorkwearTest.Integration.Organization
 				uow.Save(employee);
 				uow.Commit();
 
-				var income = new Income();
-				income.Warehouse = warehouse;
-				income.Date = new DateTime(2020, 07, 20);
-				income.Operation = IncomeOperations.Enter;
+				var income = new Income {
+					Warehouse = warehouse,
+					Date = new DateTime(2020, 07, 20),
+					Operation = IncomeOperations.Enter
+				};
 				var incomeItem1 = income.AddItem(nomenclature);
 				incomeItem1.Amount = 10;
 				var incomeItem2 = income.AddItem(nomenclature2);
@@ -92,9 +92,7 @@ namespace WorkwearTest.Integration.Organization
 				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
 
-				var operationTime = uow.GetAll<WarehouseOperation>().Select(x => x.OperationTime).ToList();
-				
-				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22), false);
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22));
 				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.GreaterThan(0));
 				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters).First();
 				Assert.That(employeeCardItem.BestChoiceInStock.Count(), Is.GreaterThan(0));
@@ -118,26 +116,34 @@ namespace WorkwearTest.Integration.Organization
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Тестовый тип номенклатуры";
-				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = СlothesType.Wear;
+				var sizeType = new SizeType {Name = "Тестовый тип", CategorySizeType = CategorySizeType.Size};
+				var heightType = new SizeType {Name = "Тестовый рост", CategorySizeType = CategorySizeType.Height};
+				uow.Save(sizeType);
+				uow.Save(heightType);
+
+				var nomenclatureType = new ItemsType {
+					Name = "Тестовый тип номенклатуры",
+					Category = ItemTypeCategory.wear,
+					SizeType = sizeType,
+					HeightType = heightType
+				};
 				uow.Save(nomenclatureType);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
-				nomenclature.Sex = ClothesSex.Men;
-				nomenclature.SizeStd = "UnisexWearRus";
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType,
+					Sex = ClothesSex.Men,
+				};
 				uow.Save(nomenclature);
 
-				var nomenclature2 = new Nomenclature();
-				nomenclature2.Type = nomenclatureType;
-				nomenclature2.Sex = ClothesSex.Men;
-				nomenclature2.SizeStd = "UnisexWearRus";
+				var nomenclature2 = new Nomenclature {
+					Type = nomenclatureType,
+					Sex = ClothesSex.Men,
+				};
 				uow.Save(nomenclature2);
 
-				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номенклатура нормы";
+				var protectionTools = new ProtectionTools {
+					Name = "Номенклатура нормы"
+				};
 				protectionTools.AddNomeclature(nomenclature);
 				protectionTools.AddNomeclature(nomenclature2);
 				uow.Save(protectionTools);
@@ -149,45 +155,53 @@ namespace WorkwearTest.Integration.Organization
 				normItem.PeriodCount = 1;
 				uow.Save(norm);
 
+				var size = new Size {Name = "50", SizeType = sizeType};
+				var height = new Size {Name = "176", SizeType = heightType};
+				uow.Save(size);
+				uow.Save(height);
+
 				var employee = new EmployeeCard();
 				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
-				employee.WearSizeStd = "MenWearRus";
-				employee.WearSize = "50";
-				employee.WearGrowth = "176";
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
+				var employeeSize = new EmployeeSize {Size = size, SizeType = sizeType, Employee = employee};
+				var employeeHeight = new EmployeeSize {Size = height, SizeType = heightType, Employee = employee};
+				uow.Save(employeeSize);
+				uow.Save(employeeHeight);
+				employee.Sizes.Add(employeeSize);
+				employee.Sizes.Add(employeeHeight);
 				uow.Commit();
 
-				var income = new Income();
-				income.Warehouse = warehouse;
-				income.Date = new DateTime(2020, 07, 20);
-
-				income.Operation = IncomeOperations.Enter;
+				var income = new Income {
+					Warehouse = warehouse,
+					Date = new DateTime(2020, 07, 20),
+					Operation = IncomeOperations.Enter
+				};
 
 				var incomeItem1 = income.AddItem(nomenclature);
 
 				incomeItem1.Amount = 10;
-				incomeItem1.Size = "50";
-				incomeItem1.WearGrowth = "176";
+				incomeItem1.WearSize = size;
+				incomeItem1.Height = height;
 				var incomeItem2 = income.AddItem(nomenclature2);
 				incomeItem2.Amount = 5;
-				incomeItem2.Size = "50";
-				incomeItem2.WearGrowth = "176";
+				incomeItem2.WearSize = size;
+				incomeItem2.Height = height;
 
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
 				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
 
-				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22), false);
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22));
 				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.GreaterThan(0));
 				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters).First();
 				var employeeCardItemCount = employee.GetUnderreceivedItems(baseParameters).Count();
 
 				var inStock = employeeCardItem.InStock;
 
-				Assert.That(employeeCardItem.InStock.Count(), Is.GreaterThan(0));
+				Assert.That(employeeCardItem.InStock.Count, Is.GreaterThan(0));
 				var bestChoiceCount = employeeCardItem.BestChoiceInStock.Count();
 				Assert.That(employeeCardItem.BestChoiceInStock.Count(), Is.GreaterThan(0));
 
@@ -210,45 +224,50 @@ namespace WorkwearTest.Integration.Organization
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Обувь";
-				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = СlothesType.Shoes;
+				var shoes = new SizeType {Name = "Обувь"};
+				uow.Save(shoes);
+				var winterShoes = new SizeType {Name = "Зимняя обувь"};
+				uow.Save(winterShoes);
+
+				var nomenclatureType = new ItemsType {
+					Name = "Обувь",
+					Category = ItemTypeCategory.wear,
+					SizeType = shoes
+				};
 				uow.Save(nomenclatureType);
 
-				var nomenclatureType2 = new ItemsType();
-				nomenclatureType2.Name = "Зимняя обувь";
-				nomenclatureType2.Category = ItemTypeCategory.wear;
-				nomenclatureType2.WearCategory = СlothesType.WinterShoes;
+				var nomenclatureType2 = new ItemsType {
+					Name = "Зимняя обувь",
+					Category = ItemTypeCategory.wear,
+					SizeType = winterShoes
+				};
 				uow.Save(nomenclatureType2);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
-				nomenclature.Sex = ClothesSex.Men;
-				nomenclature.SizeStd = "MenShoesRus";
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType,
+					Sex = ClothesSex.Men
+				};
 				uow.Save(nomenclature);
 
-				var nomenclature2 = new Nomenclature();
-				nomenclature2.Type = nomenclatureType2;
-				nomenclature2.Sex = ClothesSex.Men;
-				nomenclature2.SizeStd = "MenShoesRus";
+				var nomenclature2 = new Nomenclature {
+					Type = nomenclatureType2,
+					Sex = ClothesSex.Men
+				};
 				uow.Save(nomenclature2);
 
-				var nomenclature3 = new Nomenclature();
-				nomenclature3.Type = nomenclatureType;
-				nomenclature3.Sex = ClothesSex.Men;
-				nomenclature3.SizeStd = "MenShoesRus";
+				var nomenclature3 = new Nomenclature {
+					Type = nomenclatureType,
+					Sex = ClothesSex.Men
+				};
 				uow.Save(nomenclature3);
 
-				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номеклатура нормы";
+				var protectionTools = new ProtectionTools {Name = "Номеклатура нормы"};
 				protectionTools.AddNomeclature(nomenclature);
 				protectionTools.AddNomeclature(nomenclature3);
 
 				uow.Save(protectionTools);
 
-				var protectionTools2 = new ProtectionTools();
-				protectionTools2.Name = "Номенклатура нормы_2";
+				var protectionTools2 = new ProtectionTools {Name = "Номенклатура нормы_2"};
 				protectionTools2.AddNomeclature(nomenclature2);
 				uow.Save(protectionTools2);
 
@@ -264,49 +283,55 @@ namespace WorkwearTest.Integration.Organization
 				normItem2.PeriodCount = 1;
 				uow.Save(norm);
 
+				var shoesSize = new Size {SizeType = shoes, Name = "42"};
+				var winterShoesSize = new Size {SizeType = winterShoes, Name = "43"};
+				uow.Save(shoesSize);
+				uow.Save(winterShoesSize);
+
 				var employee = new EmployeeCard();
 				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
-				employee.WearSizeStd = "MenWearRus";
-				employee.ShoesSizeStd = "MenShoesRus";
-				employee.WinterShoesSizeStd = "MenShoesRus";
-				employee.ShoesSize = "42";
-				employee.WinterShoesSize = "43";
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
 				uow.Commit();
+				
+				var employeeShoesSize = new EmployeeSize {Size = shoesSize, SizeType = shoes, Employee = employee};
+				var employeeWinterShoesSize = new EmployeeSize {Size = winterShoesSize, SizeType = winterShoes, Employee = employee};
+				uow.Save(employeeShoesSize);
+				uow.Save(employeeWinterShoesSize);
+				
+				employee.Sizes.Add(employeeShoesSize);
+				employee.Sizes.Add(employeeWinterShoesSize);
 
-				var income = new Income();
-				income.Warehouse = warehouse;
-				income.Date = new DateTime(2020, 07, 20);
-
-				income.Operation = IncomeOperations.Enter;
+				var income = new Income {
+					Warehouse = warehouse,
+					Date = new DateTime(2020, 07, 20),
+					Operation = IncomeOperations.Enter
+				};
 
 				var incomeItem1 = income.AddItem(nomenclature);
-
 				incomeItem1.Amount = 1;
-				incomeItem1.Size = "42";
+				incomeItem1.WearSize = shoesSize;
 
 				var incomeItem2 = income.AddItem(nomenclature2);
 				incomeItem2.Amount = 2;
-				incomeItem2.Size = "43";
+				incomeItem2.WearSize = winterShoesSize;
 
 				var incomeItem3 = income.AddItem(nomenclature3);
 				incomeItem3.Amount = 3;
-				incomeItem3.Size = "42";
+				incomeItem3.WearSize = shoesSize;
 
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
 				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(3));
 
-				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22), false);
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22));
 				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.GreaterThan(0));
 
 				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.EqualTo(2));
 
 				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters).First();
-
 				Assert.That(employeeCardItem.InStock.Count(), Is.GreaterThan(0));
 
 				var bestChoiceInStock = employeeCardItem.BestChoiceInStock;
@@ -330,30 +355,32 @@ namespace WorkwearTest.Integration.Organization
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Обувь";
-				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = СlothesType.Shoes;
+				var sizeType = new SizeType();
+				uow.Save(sizeType);
+
+				var nomenclatureType = new ItemsType {
+					Name = "Обувь",
+					Category = ItemTypeCategory.wear,
+					SizeType = sizeType
+				};
 				uow.Save(nomenclatureType);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
-				nomenclature.Sex = ClothesSex.Men;
-				nomenclature.SizeStd = "MenShoesRus";
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType,
+					Sex = ClothesSex.Men,
+				};
 				uow.Save(nomenclature);
 
-				var nomenclature2 = new Nomenclature();
-				nomenclature2.Type = nomenclatureType;
-				nomenclature2.Sex = ClothesSex.Men;
-				nomenclature2.SizeStd = "MenShoesRus";
+				var nomenclature2 = new Nomenclature {
+					Type = nomenclatureType,
+					Sex = ClothesSex.Men,
+				};
 				uow.Save(nomenclature2);
 
-				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "Номенклатура нормы";
+				var protectionTools = new ProtectionTools {Name = "Номенклатура нормы"};
 				protectionTools.AddNomeclature(nomenclature);
 
-				var protectionTools2 = new ProtectionTools();
-				protectionTools2.Name = "Номенклатура нормы_2";
+				var protectionTools2 = new ProtectionTools {Name = "Номенклатура нормы_2"};
 				protectionTools2.AddNomeclature(nomenclature2);
 
 				protectionTools.AddAnalog(protectionTools2);
@@ -376,26 +403,30 @@ namespace WorkwearTest.Integration.Organization
 				var employee = new EmployeeCard();
 				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
-				employee.ShoesSizeStd = "MenShoesRus";
-				employee.ShoesSize = "42";
 				Assert.That(employee.WorkwearItems.Count, Is.EqualTo(2));
 				uow.Save(employee);
 				uow.Commit();
 
-				var income = new Income();
-				income.Warehouse = warehouse;
-				income.Date = new DateTime(2020, 07, 20);
+				var size = new Size {SizeType = sizeType};
+				uow.Save(size);
+				var employeeSize = new EmployeeSize {SizeType = sizeType, Size = size, Employee = employee};
+				uow.Save(employeeSize);
+				employee.Sizes.Add(employeeSize);
 
-				income.Operation = IncomeOperations.Enter;
+				var income = new Income {
+					Warehouse = warehouse,
+					Date = new DateTime(2020, 07, 20),
+					Operation = IncomeOperations.Enter
+				};
 
 				var incomeItem1 = income.AddItem(nomenclature);
 
 				incomeItem1.Amount = 1;
-				incomeItem1.Size = "42";
+				incomeItem1.WearSize = size;
 
 				var incomeItem2 = income.AddItem(nomenclature2);
 				incomeItem2.Amount = 2;
-				incomeItem2.Size = "42";
+				incomeItem2.WearSize = size;
 
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
@@ -425,13 +456,11 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = СlothesType.Wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
 				nomenclature.Sex = ClothesSex.Men;
-				nomenclature.SizeStd = "UnisexWearRus";
 				uow.Save(nomenclature);
 
 				var protectionToolsAnalog = new ProtectionTools();
@@ -454,9 +483,6 @@ namespace WorkwearTest.Integration.Organization
 				var employee = new EmployeeCard();
 				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
-				employee.WearSizeStd = "MenWearRus";
-				employee.WearSize = "50";
-				employee.WearGrowth = "176";
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
 				uow.Commit();
@@ -497,13 +523,11 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = СlothesType.Wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
 				nomenclature.Sex = ClothesSex.Men;
-				nomenclature.SizeStd = "UnisexWearRus";
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
@@ -521,9 +545,6 @@ namespace WorkwearTest.Integration.Organization
 				var employee = new EmployeeCard();
 				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
-				employee.WearSizeStd = "MenWearRus";
-				employee.WearSize = "50";
-				employee.WearGrowth = "176";
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
 				uow.Commit();
@@ -585,13 +606,11 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = СlothesType.Wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
 				nomenclature.Sex = ClothesSex.Men;
-				nomenclature.SizeStd = "UnisexWearRus";
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
@@ -609,9 +628,6 @@ namespace WorkwearTest.Integration.Organization
 				var employee = new EmployeeCard();
 				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
-				employee.WearSizeStd = "MenWearRus";
-				employee.WearSize = "50";
-				employee.WearGrowth = "176";
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
 				uow.Commit();
@@ -691,13 +707,11 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = СlothesType.Wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
 				nomenclature.Sex = ClothesSex.Men;
-				nomenclature.SizeStd = "UnisexWearRus";
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
@@ -715,9 +729,6 @@ namespace WorkwearTest.Integration.Organization
 				var employee = new EmployeeCard();
 				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
-				employee.WearSizeStd = "MenWearRus";
-				employee.WearSize = "50";
-				employee.WearGrowth = "176";
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
 				uow.Commit();
@@ -769,7 +780,8 @@ namespace WorkwearTest.Integration.Organization
 			}
 		}
 
-		[Test(Description = "Проверяем что при заполнении выданной спецодежды дата последней выдачи и количество отображается, даже если СИЗ уже изношен.")]
+		[Test(Description = "Проверяем что при заполнении выданной спецодежды дата последней выдачи " +
+		                    "и количество отображается, даже если СИЗ уже изношен.")]
 		[Category("Integrated")]
 		public void FillWearRecivedInfo_LastIssueDateExistAfterAutoWriteoffDateTest()
 		{
@@ -777,13 +789,11 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = СlothesType.Wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
 				nomenclature.Sex = ClothesSex.Men;
-				nomenclature.SizeStd = "UnisexWearRus";
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools();
@@ -801,9 +811,6 @@ namespace WorkwearTest.Integration.Organization
 				var employee = new EmployeeCard();
 				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
-				employee.WearSizeStd = "MenWearRus";
-				employee.WearSize = "50";
-				employee.WearGrowth = "176";
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
 				uow.Commit();
@@ -839,7 +846,8 @@ namespace WorkwearTest.Integration.Organization
 			}
 		}
 
-		[Test(Description = "Проверяем что при заполнении выданной спецодежды выданное для разных строк нормы, но при этом СИЗ-ы настроенные как аналоги не сливаются в одну строку. Реальная проблема в НЛМК.")]
+		[Test(Description = "Проверяем что при заполнении выданной спецодежды выданное для разных строк нормы, " +
+		                    "но при этом СИЗ-ы настроенные как аналоги не сливаются в одну строку. Реальная проблема в НЛМК.")]
 		[Category("Integrated")]
 		public void FillWearRecivedInfo_NotMergeAnalogTest()
 		{
@@ -847,13 +855,11 @@ namespace WorkwearTest.Integration.Organization
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
 				nomenclatureType.Category = ItemTypeCategory.wear;
-				nomenclatureType.WearCategory = СlothesType.Wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
 				nomenclature.Type = nomenclatureType;
 				nomenclature.Sex = ClothesSex.Men;
-				nomenclature.SizeStd = "UnisexWearRus";
 				uow.Save(nomenclature);
 
 				var protectionToolsAnalog = new ProtectionTools();
@@ -882,9 +888,6 @@ namespace WorkwearTest.Integration.Organization
 				var employee = new EmployeeCard();
 				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
-				employee.WearSizeStd = "MenWearRus";
-				employee.WearSize = "50";
-				employee.WearGrowth = "176";
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
 				uow.Commit();

@@ -1,18 +1,20 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using Gamma.Binding.Converters;
+using Gamma.GtkWidgets;
 using Gtk;
 using NLog;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.Views.Dialog;
+using QS.Widgets.GtkUI;
 using QSOrmProject;
 using workwear.Domain.Company;
-using workwear.Measurements;
 using workwear.ViewModels.Company;
 using workwear.Views.Company.EmployeeChilds;
 using Workwear.Domain.Company;
-using Workwear.Measurements;
+using Workwear.Domain.Sizes;
 
 namespace workwear.Views.Company
 {
@@ -22,16 +24,20 @@ namespace workwear.Views.Company
 
 		private readonly Image eyeIcon = new Image(Assembly.GetExecutingAssembly(), "workwear.icon.buttons.eye.png");
 		private readonly Image crossedEyeIcon = new Image(Assembly.GetExecutingAssembly(), "workwear.icon.buttons.eye-crossed.png");
+		private readonly EmployeeViewModel viewModel;
 
 		public EmployeeView(EmployeeViewModel viewModel) : base(viewModel)
 		{
 			this.Build ();
 			ConfigureDlg ();
 			CommonButtonSubscription();
+			this.viewModel = viewModel;
 		}
 
 		private void ConfigureDlg()
 		{
+
+			SizeBuild();
 			employeenormsview1.ViewModel = ViewModel.NormsViewModel;
 			employeewearitemsview1.ViewModel = ViewModel.WearItemsViewModel;
 			employeecardlisteditemsview.ViewModel = ViewModel.ListedItemsViewModel;
@@ -48,28 +54,8 @@ namespace workwear.Views.Company
 
 			buttonColorsLegend.Binding.AddBinding(ViewModel, v => v.VisibleColorsLegend, w => w.Visible).InitializeFromSource();
 
-			comboSex.ItemsEnum = typeof(Sex);
-			comboSex.Binding.AddBinding (Entity, e => e.Sex, w => w.SelectedItem).InitializeFromSource ();
-
-			var stdConverter = new SizeStandardCodeConverter ();
-
-			ycomboWearStd.Binding.AddBinding (Entity, e => e.WearSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
-			ycomboShoesStd.Binding.AddBinding (Entity, e => e.ShoesSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
-			ycomboWinterShoesStd.Binding.AddBinding(Entity, e => e.WinterShoesSizeStd, w => w.SelectedItemOrNull, stdConverter).InitializeFromSource();
-			ycomboHeaddressStd.ItemsEnum = typeof(SizeStandartHeaddress);
-			ycomboHeaddressStd.Binding.AddBinding (Entity, e => e.HeaddressSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
-			ycomboGlovesStd.ItemsEnum = typeof(SizeStandartGloves);
-			ycomboGlovesStd.Binding.AddBinding (Entity, e => e.GlovesSizeStd, w => w.SelectedItemOrNull, stdConverter ).InitializeFromSource ();
-
-			FillSizeCombo(ycomboWearGrowth, ViewModel.GetGrowths());
-			ycomboWearGrowth.Binding.AddBinding (Entity, e => e.WearGrowth, w => w.ActiveText).InitializeFromSource ();
-			ycomboWearSize.Binding.AddBinding (Entity, e => e.WearSize, w => w.ActiveText).InitializeFromSource ();
-			ycomboShoesSize.Binding.AddBinding (Entity, e => e.ShoesSize, w => w.ActiveText).InitializeFromSource ();
-			ycomboWinterShoesSize.Binding.AddBinding(Entity, e => e.WinterShoesSize, w => w.ActiveText).InitializeFromSource();
-			ycomboHeaddressSize.Binding.AddBinding (Entity, e => e.HeaddressSize, w => w.ActiveText).InitializeFromSource ();
-			ycomboGlovesSize.Binding.AddBinding (Entity, e => e.GlovesSize, w => w.ActiveText).InitializeFromSource ();
-			FillSizeCombo(ycomboMittensSize, ViewModel.GetSizes(SizeStandartMittens.Rus));
-			ycomboMittensSize.Binding.AddBinding(Entity, e => e.MittensSize, w => w.ActiveText).InitializeFromSource();
+			yenumcomboSex.ItemsEnum = typeof(Sex);
+			yenumcomboSex.Binding.AddBinding(Entity, e => e.Sex, w => w.SelectedItem).InitializeFromSource();
 
 			entryFirstName.Binding.AddBinding (Entity, e => e.FirstName, w => w.Text).InitializeFromSource ();
 			entryLastName.Binding.AddBinding (Entity, e => e.LastName, w => w.Text).InitializeFromSource ();
@@ -125,13 +111,6 @@ namespace workwear.Views.Company
 				entitySubdivision, entityDepartment, entityPost, entityLeader,   
 				GtkScrolledWindowComments,
 			};
-			table2.FocusChain = new Widget[] {comboSex, ycomboWearGrowth,
-				ycomboWearStd, ycomboWearSize,
-				ycomboShoesStd, ycomboShoesSize,
-				ycomboWinterShoesStd, ycomboWinterShoesSize,
-				ycomboHeaddressStd, ycomboHeaddressSize,
-				ycomboGlovesStd, ycomboGlovesSize, ycomboMittensSize
-			};
 
 			enumPrint.ItemsEnum = typeof(EmployeeViewModel.PersonalCardPrint);
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -150,65 +129,6 @@ namespace workwear.Views.Company
 		protected void OnNotebook1SwitchPage(object o, SwitchPageArgs args)
 		{
 			ViewModel.SwitchOn((int)args.PageNum);
-		}
-
-		protected void OnComboSexChanged(object sender, EventArgs e)
-		{
-			if(Entity.Sex == Sex.M) {
-				ycomboWearStd.ItemsEnum = typeof(SizeStandartMenWear);
-				ycomboShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
-				ycomboWinterShoesStd.ItemsEnum = typeof(SizeStandartMenShoes);
-			}
-			else if(Entity.Sex == Sex.F) {
-				ycomboWearStd.ItemsEnum = typeof(SizeStandartWomenWear);
-				ycomboShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
-				ycomboWinterShoesStd.ItemsEnum = typeof(SizeStandartWomenShoes);
-			}
-			else {
-				ycomboWearStd.ItemsEnum = null;
-				ycomboShoesStd.ItemsEnum = null;
-				ycomboWinterShoesStd.ItemsEnum = null;
-			}
-		}
-
-		protected void OnYcomboHeaddressChanged(object sender, EventArgs e)
-		{
-			if(ycomboHeaddressStd.SelectedItemOrNull != null)
-				FillSizeCombo(ycomboHeaddressSize, ViewModel.GetSizes((Enum)ycomboHeaddressStd.SelectedItem));
-			else
-				ycomboHeaddressSize.Clear();
-		}
-
-		protected void OnYcomboWearStdChanged(object sender, EventArgs e)
-		{
-			if(ycomboWearStd.SelectedItemOrNull != null)
-				FillSizeCombo(ycomboWearSize, ViewModel.GetSizes((Enum)ycomboWearStd.SelectedItem));
-			else
-				ycomboWearSize.Clear();
-		}
-
-		protected void OnYcomboShoesStdChanged(object sender, EventArgs e)
-		{
-			if(ycomboShoesStd.SelectedItemOrNull != null)
-				FillSizeCombo(ycomboShoesSize, ViewModel.GetSizes((Enum)ycomboShoesStd.SelectedItem));
-			else
-				ycomboShoesSize.Clear();
-		}
-
-		protected void OnYcomboWinterShoesStdChanged(object sender, EventArgs e)
-		{
-			if(ycomboWinterShoesStd.SelectedItemOrNull != null)
-				FillSizeCombo(ycomboWinterShoesSize, ViewModel.GetSizes((Enum)ycomboWinterShoesStd.SelectedItem));
-			else
-				ycomboWinterShoesSize.Clear();
-		}
-
-		protected void OnYcomboGlovesStdChanged(object sender, EventArgs e)
-		{
-			if(ycomboGlovesStd.SelectedItemOrNull != null)
-				FillSizeCombo(ycomboGlovesSize, ViewModel.GetSizes((Enum)ycomboGlovesStd.SelectedItem));
-			else
-				ycomboGlovesSize.Clear();
 		}
 
 		#endregion
@@ -250,20 +170,50 @@ namespace workwear.Views.Company
 				notebook1.GetNthPage(5).Visible = ViewModel.VisibleHistory;
 		}
 		#endregion
-
-		void FillSizeCombo(ComboBox combo, string[] sizes)
-		{
-			combo.Clear();
-			var list = new ListStore(typeof(string));
-			list.AppendValues(String.Empty);
-			foreach(var size in sizes)
-				list.AppendValues(size);
-			combo.Model = list;
-			CellRendererText text = new CellRendererText();
-			combo.PackStart(text, true);
-			combo.AddAttribute(text, "text", 0);
+		#region Sizes
+		private void SizeBuild() {
+			var sizes = ViewModel.SizeService
+				.GetSize(ViewModel.UoW, null, true);
+			var excludeSizes = Entity.Sizes
+				.Where(s => s.Size.UseInEmployee == false)
+				.Select(x => x.Size);
+			//добавляем исключенные размеры если они уже привязаны к сотруднику, чтобы они не проподали при пересохранении
+			sizes.AddRange(excludeSizes);
+			var sizeTypes = 
+				ViewModel.SizeService.GetSizeType(ViewModel.UoW, true).OrderBy(x => x.Position).ToList();
+			
+			for (var index = 1; index < sizeTypes.Count + 1; index++) {
+				var sizeType = sizeTypes[index - 1];
+				var employeeSize = Entity.Sizes.FirstOrDefault(x => x.SizeType.Id == sizeType.Id);
+				
+				var label = new yLabel {LabelProp = sizeType.Name + ":"};
+				 label.Xalign = 1;
+				 
+				 if(sizes.All(x => x.SizeType.Id != sizeType.Id))
+					 continue;
+				 var list = new SpecialListComboBox {ItemsList = sizes.Where(x => x.SizeType.Id == sizeType.Id)};
+				 list.SetRenderTextFunc<Size>(x => x.Name);
+				 list.ShowSpecialStateNot = true;
+				list.SelectedItemStrictTyped = true;
+				if (employeeSize != null)
+					list.SelectedItem = employeeSize.Size;
+				list.Changed += SetSizes;
+				
+				table.Attach(label, 0, 1, (uint) index, (uint) (index + 1), 
+					AttachOptions.Fill, AttachOptions.Fill | AttachOptions.Expand, 0, 0);
+				table.Attach(list, 1, 2, (uint) index, (uint) (index + 1), 
+					AttachOptions.Fill, AttachOptions.Fill | AttachOptions.Expand, 0, 0);
+			}
+			SizeContainer.Homogeneous = false;
+			SizeContainer.ShowAll();
 		}
-
+		private void SetSizes(object sender, EventArgs eventArgs) {
+			var list = (SpecialListComboBox)sender;
+			var sizeType = list.ItemsList.OfType<Size>().First().SizeType;
+			viewModel.SetSizes((Size)list.SelectedItem, sizeType);
+		}
+		#endregion
+		#region ButtonEvent
 		protected void OnButtonReadUidClicked(object sender, EventArgs e)
 		{
 			ViewModel.ReadUid();
@@ -278,5 +228,6 @@ namespace workwear.Views.Company
 		{
 			ViewModel.CreateLkPassword();
 		}
+		#endregion
 	}
 }

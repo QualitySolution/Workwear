@@ -3,10 +3,22 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <RootNamespace>Workwear</RootNamespace>
+        <Company>Quality Solution</Company>
+        <Configurations>Debug;Release;DebugDesktop;ReleaseDesktop</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'DebugDesktop' ">
+      <DefineConstants>TRACE;DESKTOP</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'ReleaseDesktop' ">
+      <DefineConstants>TRACE;DESKTOP</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="NHibernate" Version="5.3.11" />
+      <PackageReference Include="NLog" Version="4.7.14" />
       <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     </ItemGroup>
 
@@ -15,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\QSProjects\Binding\Gamma.Utilities\Gamma.Utilities.csproj" />
+      <ProjectReference Include="..\..\QSProjects\QS.BaseParameters\QS.BaseParameters.csproj" />
     </ItemGroup>
 
 </Project>

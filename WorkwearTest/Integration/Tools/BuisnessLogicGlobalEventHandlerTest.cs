@@ -14,6 +14,7 @@ using workwear.Domain.Operations;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using Workwear.Tools;
 using workwear.Tools;
 using Workwear.Domain.Regulations;
 using workwear.Repository.Operations;
@@ -118,7 +119,8 @@ namespace WorkwearTest.Integration.Tools
 			}
 		}
 
-		[Test(Description = "Проверяем что после удаления пересчитываем правильно даты с двумя одинаковыми выдачами за день, расположенными в неправильном порядке.")]
+		[Test(Description = "Проверяем что после удаления пересчитываем правильно даты с двумя одинаковыми выдачами за день, " +
+		                    "расположенными в неправильном порядке.")]
 		[Category("Real case")]
 		public void HandleDeleteEmployeeVacation_RecalculateWithTwoIssuePerDayTest()
 		{
@@ -245,7 +247,7 @@ namespace WorkwearTest.Integration.Tools
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
-				var position1 = new StockPosition(nomenclature, null, null, 0);
+				var position1 = new StockPosition(nomenclature, 0, null, null);
 
 				var nomenclatureType2 = new ItemsType();
 				nomenclatureType2.Name = "Тестовый тип номенклатуры2";
@@ -265,7 +267,7 @@ namespace WorkwearTest.Integration.Tools
 				protectionTools2.AddNomeclature(nomenclature2);
 				uow.Save(protectionTools2);
 
-				var position2 = new StockPosition(nomenclature2, null, null, 0);
+				var position2 = new StockPosition(nomenclature2, 0, null, null);
 
 				var norm = new Norm();
 				var normItem = norm.AddItem(protectionTools1);

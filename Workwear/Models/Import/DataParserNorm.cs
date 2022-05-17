@@ -12,6 +12,7 @@ using workwear.Domain.Stock;
 using workwear.Repository.Company;
 using workwear.Repository.Regulations;
 using Workwear.Domain.Regulations;
+using Workwear.Measurements;
 
 namespace workwear.Models.Import
 {
@@ -23,12 +24,14 @@ namespace workwear.Models.Import
 		private readonly ProtectionToolsRepository protectionToolsRepository;
 		private readonly SubdivisionRepository subdivisionRepository;
 		private readonly PostRepository postRepository;
+		private readonly SizeService sizeService;
 
 		public DataParserNorm(
 			NormRepository normRepository, 
 			ProtectionToolsRepository protectionToolsRepository, 
 			SubdivisionRepository subdivisionRepository, 
-			PostRepository postRepository)
+			PostRepository postRepository,
+			SizeService sizeService)
 		{
 			AddColumnName(DataTypeNorm.ProtectionTools,
 				"номенклатура"
@@ -47,6 +50,7 @@ namespace workwear.Models.Import
 			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
 			this.subdivisionRepository = subdivisionRepository;
 			this.postRepository = postRepository;
+			this.sizeService = sizeService;
 		}
 
 		private void AddColumnName(DataTypeNorm type, params string[] names)
@@ -160,7 +164,7 @@ namespace workwear.Models.Import
 			}
 
 			//Заполняем строки
-			var nomenclatureTypes = new NomenclatureTypes(uow, true);
+			var nomenclatureTypes = new NomenclatureTypes(uow, sizeService, true);
 			var protectionNames = list.Select(x => x.CellStringValue(protectionToolsColumn.Index)).Where(x => x != null).Distinct().ToArray();
 			var protections = protectionToolsRepository.GetProtectionToolsByName(uow, protectionNames);
 			foreach(var row in list.Where(x => !x.Skipped)) {

@@ -91,12 +91,12 @@ namespace workwear.ViewModels.Company
 
 		public void ReturnItem()
 		{
-			navigation.OpenTdiTab<IncomeDocDlg, Subdivision>(this, Entity);
+			navigation.OpenTdiTab<Dialogs.Stock.IncomeDocDlg, Subdivision>(this, Entity);
 		}
 
 		public void WriteOffItem()
 		{
-			navigation.OpenTdiTab<WriteOffDocDlg, Subdivision>(this, Entity);
+			navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, Subdivision>(this, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
 		#endregion

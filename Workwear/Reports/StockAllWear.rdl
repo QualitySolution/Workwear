@@ -42,8 +42,8 @@
     nomenclature.name as nomenclature,
     wear_percent as life_percent,
     item_types.name  as type,
-    size,
-    growth,
+    sizeAlias.name AS size,
+    heightAlias.name growth,
     measurement_units.name as unit
 	FROM 
 	operation_warehouse
@@ -53,6 +53,10 @@
     item_types ON nomenclature.type_id = item_types.id
     LEFT JOIN
     measurement_units ON measurement_units.id = item_types.units_id
+    LEFT JOIN
+    sizes AS sizeAlias ON sizeAlias.id = operation_warehouse.size_id
+    LEFT JOIN
+    sizes AS heightAlias ON heightAlias.id = operation_warehouse.height_id
     WHERE operation_warehouse.warehouse_receipt_id = @id or operation_warehouse.warehouse_expense_id = @id
 	GROUP BY nomenclature_id, size, growth, wear_percent</CommandText>
         <QueryParameters>

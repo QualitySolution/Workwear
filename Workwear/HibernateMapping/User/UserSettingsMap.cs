@@ -10,8 +10,8 @@ namespace workwear.HibernateMapping.User
 			Table ("user_settings");
 
 			Id (x => x.Id).Column ("id").GeneratedBy.Native ();
-			Map (x => x.ToolbarStyle).Column ("toolbar_style").CustomType<ToolbarStyleStringType>();
-			Map (x => x.ToolBarIconsSize).Column ("toolbar_icons_size").CustomType<ToolBarIconsSizeStringType>();
+			Map(x => x.ToolbarStyle).Column("toolbar_style");
+			Map(x => x.ToolBarIconsSize).Column("toolbar_icons_size");
 			Map(x => x.ShowToolbar).Column("toolbar_show");
 			Map(x => x.MaximizeOnStart).Column("maximize_on_start");
 

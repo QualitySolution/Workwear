@@ -827,7 +827,7 @@ DEFAULT CHARACTER SET = utf8;
 CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `stock_write_off_id` INT UNSIGNED NOT NULL,
-  `nomenclature_id` INT UNSIGNED NOT NULL,
+  `nomenclature_id` INT UNSIGNED NULL DEFAULT NULL,
   `quantity` INT UNSIGNED NOT NULL,
   `employee_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `subdivision_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
@@ -1074,31 +1074,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `stock_mass_expense`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `stock_mass_expense` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `date` DATETIME NOT NULL,
-  `warehouse_id` INT UNSIGNED NOT NULL DEFAULT 1,
-  `user_id` INT UNSIGNED NOT NULL,
-  `comment` TEXT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_stock_mass_sending_document_1_idx` (`user_id` ASC),
-  INDEX `fk_stock_mass_expense_warehouse_idx` (`warehouse_id` ASC),
-  CONSTRAINT `fk_stock_mass_sending_document_1`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_stock_mass_expense_warehouse`
-    FOREIGN KEY (`warehouse_id`)
-    REFERENCES `warehouse` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `stock_collective_expense`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
@@ -1302,92 +1277,6 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `stock_mass_expense_employee`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `stock_mass_expense_employee` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `employee_id` INT UNSIGNED NOT NULL,
-  `stock_mass_expense_id` INT UNSIGNED NOT NULL,
-  `sex` ENUM('None', 'F', 'M') NULL DEFAULT NULL,
-  `wear_growth` VARCHAR(10) NULL DEFAULT NULL,
-  `size_wear` VARCHAR(10) NULL DEFAULT NULL,
-  `size_wear_std` VARCHAR(20) NULL DEFAULT NULL,
-  `size_shoes` VARCHAR(10) NULL DEFAULT NULL,
-  `size_shoes_std` VARCHAR(20) NULL DEFAULT NULL,
-  `size_winter_shoes` VARCHAR(10) NULL DEFAULT NULL,
-  `size_winter_shoes_std` VARCHAR(20) NULL DEFAULT NULL,
-  `size_headdress` VARCHAR(10) NULL DEFAULT NULL,
-  `size_headdress_std` VARCHAR(20) NULL DEFAULT NULL,
-  `size_gloves` VARCHAR(10) NULL DEFAULT NULL,
-  `size_gloves_std` VARCHAR(20) NULL DEFAULT NULL,
-  `size_mittens` VARCHAR(10) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_stock_mass_sending_document_employee_1_idx` (`employee_id` ASC),
-  INDEX `fk_stock_mass_expense_employee_1_idx` (`stock_mass_expense_id` ASC),
-  CONSTRAINT `fk_stock_mass_sending_document_employee_1`
-    FOREIGN KEY (`employee_id`)
-    REFERENCES `wear_cards` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_stock_mass_expense_employee_1`
-    FOREIGN KEY (`stock_mass_expense_id`)
-    REFERENCES `stock_mass_expense` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `stock_mass_expense_nomenclatures`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `stock_mass_expense_nomenclatures` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `nomenclature_id` INT UNSIGNED NOT NULL,
-  `quantity` INT UNSIGNED NOT NULL,
-  `stock_mass_expense_id` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_stock_mass_expense_nomenclatures_1_idx` (`nomenclature_id` ASC),
-  INDEX `fk_stock_mass_expense_nomenclatures_2_idx` (`stock_mass_expense_id` ASC),
-  CONSTRAINT `fk_stock_mass_expense_nomenclatures_1`
-    FOREIGN KEY (`nomenclature_id`)
-    REFERENCES `nomenclature` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_stock_mass_expense_nomenclatures_2`
-    FOREIGN KEY (`stock_mass_expense_id`)
-    REFERENCES `stock_mass_expense` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `stock_mass_expense_operation`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `stock_mass_expense_operation` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `operation_warehouse_id` INT UNSIGNED NOT NULL,
-  `operation_issued_by_employee` INT UNSIGNED NOT NULL,
-  `stock_mass_expense_id` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_stock_mass_expense_operation_1_idx` (`operation_warehouse_id` ASC),
-  INDEX `fk_stock_mass_expense_operation_3_idx` (`stock_mass_expense_id` ASC),
-  INDEX `fk_stock_mass_expense_operation_2_idx` (`operation_issued_by_employee` ASC),
-  CONSTRAINT `fk_stock_mass_expense_operation_2`
-    FOREIGN KEY (`operation_issued_by_employee`)
-    REFERENCES `operation_issued_by_employee` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_stock_mass_expense_operation_3`
-    FOREIGN KEY (`stock_mass_expense_id`)
-    REFERENCES `stock_mass_expense` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
 -- -----------------------------------------------------
 -- Table `stock_transfer`
 -- -----------------------------------------------------
@@ -1548,7 +1437,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.6');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.6.1');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

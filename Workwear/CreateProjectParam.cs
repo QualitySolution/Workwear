@@ -3,70 +3,69 @@ using System.Data.Common;
 using System.IO;
 using Autofac;
 using QS.BaseParameters;
-using QS.BusinessCommon;
 using QS.BusinessCommon.Domain;
+using QS.BusinessCommon;
 using QS.Cloud.Client;
 using QS.Cloud.WearLk.Client;
 using QS.Configuration;
-using QS.Deletion;
 using QS.Deletion.Views;
-using QS.Dialog;
+using QS.Deletion;
 using QS.Dialog.GtkUI;
 using QS.Dialog.ViewModels;
+using QS.Dialog;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.ErrorReporting;
 using QS.ErrorReporting.Handlers;
 using QS.Features;
+using QS.HistoryLog.ViewModels;
+using QS.HistoryLog.Views;
+using QS.HistoryLog;
 using QS.Navigation;
 using QS.NewsFeed;
 using QS.Project.DB;
 using QS.Project.Dialogs.GtkUI.ServiceDlg;
 using QS.Project.Domain;
 using QS.Project.Search.GtkUI;
-using QS.Project.Services;
 using QS.Project.Services.GtkUI;
-using QS.Project.Versioning;
+using QS.Project.Services;
 using QS.Project.Versioning.Product;
+using QS.Project.Versioning;
 using QS.Project.ViewModels;
 using QS.Project.Views;
-using QS.Report;
 using QS.Report.ViewModels;
 using QS.Report.Views;
+using QS.Report;
 using QS.Serial.Views;
 using QS.Services;
 using QS.Tdi;
-using QS.Updater;
 using QS.Updater.DB.Views;
+using QS.Updater;
 using QS.Validation;
-using QS.ViewModels;
 using QS.ViewModels.Resolve;
+using QS.ViewModels;
 using QS.Views.Resolve;
 using QSOrmProject;
-using workwear.Dialogs.Organization;
+using Workwear.Measurements;
+using Workwear.Sql;
+using Workwear.Tools;
 using workwear.Dialogs.Regulations;
-using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Domain.Users;
 using workwear.Journal;
 using workwear.Models.Company;
 using workwear.Models.Import;
+using workwear.Models.Stock;
 using workwear.Repository.Operations;
-using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
+using workwear.Tools.Navigation;
 using workwear.Tools.Nhibernate;
+using workwear.Tools;
+using workwear.ViewModels.Communications;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
-using Workwear.Measurements;
-using workwear.Models.Stock;
-using Workwear.Sql;
-using workwear.Tools.Navigation;
-using workwear.ViewModels.Communications;
-using QS.HistoryLog.Views;
-using QS.HistoryLog;
-using QS.HistoryLog.ViewModels;
 
 namespace workwear
 {
@@ -100,15 +99,11 @@ namespace workwear
 			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
 			//Спецодежда
 			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
-			//Организация
-			OrmMain.AddObjectDescription<EmployeeVacation>().Dialog<EmployeeVacationDlg>();
-			OrmMain.AddObjectDescription<VacationType>().Dialog<VacationTypeDlg>().DefaultTableView().SearchColumn("Название", e => e.Name).Column("Исключать из носки", e => e.ExcludeFromWearing ? "Да" : "Нет").SearchColumn("Комментарий", e => e.Comments).End();
 			//Общее
 			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
 			OrmMain.AddObjectDescription<UserSettings>();
 			//Склад
-			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
-			OrmMain.AddObjectDescription<Writeoff>().Dialog<WriteOffDocDlg>();
+			OrmMain.AddObjectDescription<Income>().Dialog<Dialogs.Stock.IncomeDocDlg>();
 
 			NotifyConfiguration.Enable();
 			BuisnessLogicGlobalEventHandler.Init(new GtkQuestionDialogsInteractive());
@@ -221,11 +216,10 @@ namespace workwear
 
 			#region Размеры
 			builder.RegisterType<SizeService>().AsSelf();
-			builder.RegisterType<BaseSizeSettings>().As<ISizeSettings>();
 			#endregion
 
 			#region Старые диалоги
-			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(IncomeDocDlg)))
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(Dialogs.Stock.IncomeDocDlg)))
 				.Where(t => t.IsAssignableTo<ITdiTab>() && t.Name.EndsWith("Dlg"))
 				.AsSelf();
 			#endregion

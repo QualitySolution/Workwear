@@ -13,28 +13,78 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     CONCAT_WS(' ',
             wear_cards.last_name,
             wear_cards.first_name,
             wear_cards.patronymic_name) AS employee,
+            IF(top1.id IS NULL, "-", size1.name) AS size_name_1,
+            IF(top2.id IS NULL, "-", size2.name) AS size_name_2,
+            IF(top3.id IS NULL, "-", size3.name) AS size_name_3,
+            IF(top4.id IS NULL, "-", size4.name) AS size_name_4,
+            IF(top5.id IS NULL, "-", size5.name) AS size_name_5,
+            IF(top6.id IS NULL, "-", size6.name) AS size_name_6,
     personnel_number,
-    sex,
-    wear_growth,
-    size_wear,
-    size_shoes,
-    size_winter_shoes,
-    size_headdress,
-    size_gloves
+    sex
 FROM
     wear_cards
+LEFT JOIN wear_cards_sizes AS top1 ON wear_cards.id = top1.employee_id AND top1.size_type_id = @type_id_0
+LEFT JOIN sizes AS size1 ON top1.size_id = size1.id
+LEFT JOIN wear_cards_sizes AS top2 ON wear_cards.id = top2.employee_id AND top2.size_type_id = @type_id_1
+LEFT JOIN sizes AS size2 ON top2.size_id = size2.id
+LEFT JOIN wear_cards_sizes AS top3 ON wear_cards.id = top3.employee_id AND top3.size_type_id = @type_id_2
+LEFT JOIN sizes AS size3 ON top3.size_id = size3.id
+LEFT JOIN wear_cards_sizes AS top4 ON wear_cards.id = top4.employee_id AND top4.size_type_id = @type_id_3
+LEFT JOIN sizes AS size4 ON top4.size_id = size4.id
+LEFT JOIN wear_cards_sizes AS top5 ON wear_cards.id = top5.employee_id AND top5.size_type_id = @type_id_4
+LEFT JOIN sizes AS size5 ON top5.size_id = size5.id
+LEFT JOIN wear_cards_sizes AS top6 ON wear_cards.id = top6.employee_id AND top6.size_type_id = @type_id_5
+LEFT JOIN sizes AS size6 ON top6.size_id = size6.id
 WHERE
     dismiss_date IS NULL
 ORDER BY last_name , first_name , patronymic_name</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@type_id_0">
+            <Value>={?type_id_0}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@type_id_1">
+            <Value>={?type_id_1}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@type_id_2">
+            <Value>={?type_id_2}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@type_id_3">
+            <Value>={?type_id_3}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@type_id_4">
+            <Value>={?type_id_4}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@type_id_5">
+            <Value>={?type_id_5}</Value>
+          </QueryParameter>
+          <QueryParameter Name="type_name_0">
+            <Value>={?type_name_0}</Value>
+          </QueryParameter>
+          <QueryParameter Name="type_name_1">
+            <Value>={?type_name_1}</Value>
+          </QueryParameter>
+          <QueryParameter Name="type_name_2">
+            <Value>={?type_name_2}</Value>
+          </QueryParameter>
+          <QueryParameter Name="type_name_3">
+            <Value>={?type_name_3}</Value>
+          </QueryParameter>
+          <QueryParameter Name="type_name_4">
+            <Value>={?type_name_4}</Value>
+          </QueryParameter>
+          <QueryParameter Name="type_name_5">
+            <Value>={?type_name_5}</Value>
+          </QueryParameter>
+        </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="employee">
           <DataField>employee</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -47,28 +97,28 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
           <DataField>sex</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="wear_growth">
-          <DataField>wear_growth</DataField>
+        <Field Name="size_name_1">
+          <DataField>size_name_1</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size_wear">
-          <DataField>size_wear</DataField>
+        <Field Name="size_name_2">
+          <DataField>size_name_2</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size_shoes">
-          <DataField>size_shoes</DataField>
+        <Field Name="size_name_3">
+          <DataField>size_name_3</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size_winter_shoes">
-          <DataField>size_winter_shoes</DataField>
+        <Field Name="size_name_4">
+          <DataField>size_name_5</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size_headdress">
-          <DataField>size_headdress</DataField>
+        <Field Name="size_name_5">
+          <DataField>size_name_5</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size_gloves">
-          <DataField>size_gloves</DataField>
+        <Field Name="size_name_6">
+          <DataField>size_name_6</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -107,16 +157,16 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
             <Width>34.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>193.5pt</Width>
+            <Width>189.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>56.7pt</Width>
+            <Width>49.0pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>39.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>34.8pt</Width>
+            <Width>49.9pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>43.7pt</Width>
@@ -124,112 +174,18 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
           <TableColumn>
             <Width>38.1pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>43.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>38.3pt</Width>
+            <Width>41.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>35.5pt</Width>
+            <Width>49.2pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
           <TableRows>
-            <TableRow>
-              <Height>12pt</Height>
-              <TableCells>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox9">
-                      <Value>
-                      </Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox10">
-                      <Value>
-                      </Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox11">
-                      <Value>
-                      </Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox12">
-                      <Value>
-                      </Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox13">
-                      <Value>Размеры</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                  <ColSpan>6</ColSpan>
-                </TableCell>
-              </TableCells>
-            </TableRow>
             <TableRow>
               <Height>25.2pt</Height>
               <TableCells>
@@ -241,7 +197,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Top>None</Top>
+                          <Top>Solid</Top>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -258,7 +214,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Top>None</Top>
+                          <Top>Solid</Top>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -275,7 +231,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Top>None</Top>
+                          <Top>Solid</Top>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -292,7 +248,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Top>None</Top>
+                          <Top>Solid</Top>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -304,7 +260,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox6">
-                      <Value>Рост</Value>
+                      <Value>={?type_name_0}</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -313,15 +269,18 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <FontSize >10pt</FontSize>
                       </Style>
+                      <CanGrow >true</CanGrow>
+                      <CanShrink >true</CanShrink>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox7">
-                      <Value>Одежда</Value>
+                      <Value>={?type_name_1}</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -330,15 +289,18 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <FontSize >10pt</FontSize>
                       </Style>
+                      <CanGrow >true</CanGrow>
+                      <CanShrink >true</CanShrink>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox22">
-                      <Value>Обувь</Value>
+                      <Value>={?type_name_2}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -347,15 +309,18 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <FontSize >10pt</FontSize>
                       </Style>
+                      <CanGrow >true</CanGrow>
+                      <CanShrink >true</CanShrink>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox14">
-                      <Value>Зимняя Обувь</Value>
+                      <Value>={?type_name_3}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -364,15 +329,18 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <FontSize >10pt</FontSize>
                       </Style>
+                      <CanGrow >true</CanGrow>
+                      <CanShrink >true</CanShrink>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox19">
-                      <Value>Шапка</Value>
+                      <Value>={?type_name_4}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -381,15 +349,18 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <FontSize >10pt</FontSize>
                       </Style>
+                      <CanGrow >true</CanGrow>
+                      <CanShrink >true</CanShrink>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox16">
-                      <Value>Пер- чатки</Value>
+                      <Value>={?type_name_5}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -398,8 +369,11 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <FontSize >10pt</FontSize>
                       </Style>
+                      <CanGrow >true</CanGrow>
+                      <CanShrink >true</CanShrink>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -483,7 +457,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="wear_size">
-                      <Value>={wear_growth}</Value>
+                      <Value>={size_name_1}</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -500,7 +474,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="growth">
-                      <Value>={size_wear}</Value>
+                      <Value>={size_name_2}</Value>
                       <CanGrow>false</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -517,7 +491,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox23">
-                      <Value>={size_shoes}</Value>
+                      <Value>={size_name_3}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -530,10 +504,10 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox15">
-                      <Value>={size_winter_shoes}</Value>
+                      <Value>={size_name_4}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -549,7 +523,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox20">
-                      <Value>={size_headdress}</Value>
+                      <Value>={size_name_5}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -565,7 +539,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox17">
-                      <Value>={size_gloves}</Value>
+                      <Value>={size_name_6}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -618,4 +592,101 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
+  <ReportParameters >
+    <ReportParameter Name="type_id_0">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="type_id_1">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="type_id_2">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="type_id_3">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="type_id_4">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="type_id_5">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="type_name_0">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="type_name_1">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="type_name_3">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="type_name_4">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="type_name_5">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="type_name_2">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
+    </ReportParameter>
+  </ReportParameters>
 </Report>

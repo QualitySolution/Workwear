@@ -30,7 +30,8 @@ namespace workwear.Journal.ViewModels.Statements
 			ICurrentPermissionService currentPermissionService = null
 		) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
-			JournalFilter = Filter = autofacScope.Resolve<IssuanceSheetFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			JournalFilter = Filter = autofacScope
+				.Resolve<IssuanceSheetFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 		}
 
 		protected override IQueryOver<IssuanceSheet> ItemsQuery(IUnitOfWork uow)
@@ -46,7 +47,9 @@ namespace workwear.Journal.ViewModels.Statements
 			var employeesSubquery = QueryOver.Of<IssuanceSheetItem>(() => issuanceSheetItemAlias)
 				.Where(() => issuanceSheetItemAlias.IssuanceSheet.Id == issuanceSheetAlias.Id)
 				.JoinQueryOver(x => x.Employee, () => employeeCardAlias)
-				.Select(CustomProjections.GroupConcat(Projections.Property(() => employeeCardAlias.LastName), useDistinct: true, separator: ", "));
+				.Select(CustomProjections
+					.GroupConcat(Projections
+						.Property(() => employeeCardAlias.LastName), useDistinct: true, separator: ", "));
 
 			var query = uow.Session.QueryOver<IssuanceSheet>(() => issuanceSheetAlias);
 
@@ -59,7 +62,6 @@ namespace workwear.Journal.ViewModels.Statements
 				.Where(GetSearchCriterion(
 					() => issuanceSheetAlias.Id,
 					() => issuanceSheetAlias.Expense.Id,
-					() => issuanceSheetAlias.MassExpense.Id,
 					() => issuanceSheetAlias.CollectiveExpense.Id,
 					() => organizationAlias.Name,
 					() => subdivisionAlias.Name,
@@ -74,7 +76,6 @@ namespace workwear.Journal.ViewModels.Statements
 					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 					.Select(() => subdivisionAlias.Code).WithAlias(() => resultAlias.SubdivisionCode)
 					.Select(x => x.Expense.Id).WithAlias(() => resultAlias.DocExpenseId)
-					.Select(x => x.MassExpense.Id).WithAlias(() => resultAlias.DocMassExpenseId)
 					.Select(x => x.CollectiveExpense.Id).WithAlias(() => resultAlias.DocCollectiveExpenseId)
 					.SelectSubQuery(employeesSubquery).WithAlias(() => resultAlias.Employees)
 				)

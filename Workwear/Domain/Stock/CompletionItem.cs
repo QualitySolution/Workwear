@@ -1,7 +1,9 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using workwear.Domain.Operations;
+using Workwear.Domain.Sizes;
 
 namespace workwear.Domain.Stock
 {
@@ -19,6 +21,7 @@ namespace workwear.Domain.Stock
             }
         }
         [Display(Name = "Кол-во")]
+        [PropertyChangedAlso(nameof(WarehouseOperation))]
         public virtual int Amount {
             get => WarehouseOperation?.Amount ?? 0;
             set {
@@ -26,25 +29,14 @@ namespace workwear.Domain.Stock
                 WarehouseOperation.Amount = value;
             }
         }
+        private WarehouseOperation warehouseOperation;
         [Display(Name = "Складская операция")]
         [IgnoreHistoryTrace]
-        public virtual WarehouseOperation WarehouseOperation { get; set; }
-        [Display(Name = "Размер")]
-        public virtual string Size {
-            get => WarehouseOperation?.Size;
-            set {
-                if (WarehouseOperation == null) return;
-                WarehouseOperation.Size = value;
-            }
+        public virtual WarehouseOperation WarehouseOperation {
+            get => warehouseOperation;
+            set => SetField(ref warehouseOperation, value);
         }
-        [Display(Name = "Рост одежды")]
-        public virtual string Growth {
-            get => WarehouseOperation?.Growth;
-            set {
-                if (WarehouseOperation == null) return;
-                WarehouseOperation.Growth = value;
-            }
-        }
+
         [Display(Name = "Процент износа")]
         public virtual decimal WearPercent {
             get => WarehouseOperation?.WearPercent ?? 0;
@@ -53,12 +45,23 @@ namespace workwear.Domain.Stock
                 WarehouseOperation.WearPercent = value;
             }
         }
+        [Display(Name = "Размер")]
+        public virtual Size WearSize {
+            get => WarehouseOperation.WearSize;
+            set =>  WarehouseOperation.WearSize = value;
+        }
+        [Display(Name = "Рост одежды")]
+        public virtual Size Height {
+            get => WarehouseOperation.Height;
+            set => WarehouseOperation.Height = value;
+        }
         #endregion
         #region Constructors
         public CompletionItem(){}
         #endregion
         #region Calculate
-        public virtual StockPosition StockPosition => new StockPosition(Nomenclature, Size, Growth, WearPercent);
+        public virtual StockPosition StockPosition => 
+            new StockPosition(Nomenclature, WearPercent, WarehouseOperation.WearSize, WarehouseOperation.Height);
         #endregion
     }
     [Appellative(Gender = GrammaticalGender.Feminine,

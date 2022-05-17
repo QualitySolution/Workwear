@@ -8,7 +8,7 @@ using workwear.Domain.Operations;
 using workwear.Domain.Operations.Graph;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 using Workwear.Domain.Regulations;
 
 namespace WorkwearTest.Operations

@@ -12,11 +12,10 @@ using QS.DomainModel.UoW;
 using QS.Services;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
-using workwear.Measurements;
 using workwear.Models.Company;
-using workwear.Repository.Company;
 using workwear.ViewModels.Import;
 using Workwear.Domain.Company;
+using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 
 namespace workwear.Models.Import
@@ -24,22 +23,19 @@ namespace workwear.Models.Import
 	public class DataParserEmployee : DataParserBase<DataTypeEmployee>
 	{
 		private readonly PersonNames personNames;
-		private readonly SizeService sizeService;
-		private readonly SubdivisionRepository subdivisionRepository;
-		private readonly PostRepository postRepository;
 		private readonly IUserService userService;
+		private readonly SizeService sizeService;
 
 		public DataParserEmployee(
 			PersonNames personNames,
 			SizeService sizeService,
-			SubdivisionRepository subdivisionRepository = null,
-			PostRepository postRepository = null,
 			IUserService userService = null)
 		{
 			AddColumnName(DataTypeEmployee.Fio,
 				"ФИО",
 				"Ф.И.О.",
 				"Фамилия Имя Отчество",
+				"Сотрудник",
 				"Наименование"//Встречается при выгрузке из 1C
 				);
 			AddColumnName(DataTypeEmployee.CardKey,
@@ -111,10 +107,8 @@ namespace workwear.Models.Import
 				"Одежда"
 				);
 			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
-			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
-			this.subdivisionRepository = subdivisionRepository;
-			this.postRepository = postRepository;
 			this.userService = userService;
+			this.sizeService = sizeService;
 		}
 
 		private void AddColumnName(DataTypeEmployee type, params string[] names)
@@ -124,7 +118,12 @@ namespace workwear.Models.Import
 		}
 
 		#region Обработка изменений
-		public void FindChanges(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, ImportedColumn<DataTypeEmployee>[] meaningfulColumns, IProgressBarDisplayable progress, SettingsMatchEmployeesViewModel settings)
+		public void FindChanges(
+			IUnitOfWork uow, 
+			IEnumerable<SheetRowEmployee> list, 
+			ImportedColumn<DataTypeEmployee>[] meaningfulColumns, 
+			IProgressBarDisplayable progress, 
+			SettingsMatchEmployeesViewModel settings)
 		{
 			progress.Start(list.Count(), text: "Поиск изменений");
 			foreach(var row in list) {
@@ -136,23 +135,30 @@ namespace workwear.Models.Import
 				var rowChange = ChangeType.ChangeValue;
 
 				if(employee == null) {
-					employee = new EmployeeCard();
-					employee.Comment = "Импортирован из Excel";
-					employee.CreatedbyUser = userService?.GetCurrentUser(uow);
+					employee = new EmployeeCard {
+						Comment = "Импортирован из Excel",
+						CreatedbyUser = userService?.GetCurrentUser(uow)
+					};
 					row.Employees.Add(employee);
 					rowChange = ChangeType.NewEntity;
 				}
 
 				foreach(var column in meaningfulColumns) {
-					MakeChange(settings, employee, row, column, rowChange);
+					MakeChange(settings, employee, row, column, rowChange, uow);
 				}
 			}
 			progress.Close();
 		}
 
-		public void MakeChange(SettingsMatchEmployeesViewModel settings, EmployeeCard employee, SheetRowEmployee row, ImportedColumn<DataTypeEmployee> column, ChangeType rowChange)
+		public void MakeChange(
+			SettingsMatchEmployeesViewModel settings, 
+			EmployeeCard employee, 
+			SheetRowEmployee row, 
+			ImportedColumn<DataTypeEmployee> column, 
+			ChangeType rowChange,
+			IUnitOfWork uow)
 		{
-			string value = row.CellStringValue(column.Index);
+			var value = row.CellStringValue(column.Index);
 			var dataType = column.DataType;
 			if(String.IsNullOrWhiteSpace(value)) {
 				row.AddColumnChange(column, ChangeType.NotChanged);
@@ -164,7 +170,8 @@ namespace workwear.Models.Import
 					row.ChangedColumns.Add(column, CompareString(employee.CardKey, value, rowChange));
 					break;
 				case DataTypeEmployee.PersonnelNumber:
-					row.ChangedColumns.Add(column, CompareString(employee.PersonnelNumber, (settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(value) : value)?.Trim(), rowChange));
+					row.ChangedColumns.Add(column, CompareString(employee.PersonnelNumber, 
+						(settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(value) : value)?.Trim(), rowChange));
 					break;
 				case DataTypeEmployee.LastName:
 					row.ChangedColumns.Add(column, CompareString(employee.LastName, value, rowChange));
@@ -177,22 +184,28 @@ namespace workwear.Models.Import
 					break;
 				case DataTypeEmployee.Sex:
 					//Первая М английская, вторая русская.
-					if(value.StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("М", StringComparison.CurrentCultureIgnoreCase)) {
+					if(value.StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || 
+					   value.StartsWith("М", StringComparison.CurrentCultureIgnoreCase)) {
 						row.AddColumnChange(column, employee.Sex == Sex.M ? ChangeType.NotChanged : rowChange);
 						break;
 					}
-					if(value.StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase)) {
+					if(value.StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || 
+					   value.StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase)) {
 						row.AddColumnChange(column, employee.Sex == Sex.F ? ChangeType.NotChanged : rowChange);
 						break;
 					}
 					row.AddColumnChange(column, ChangeType.ParseError);
 					break;
 				case DataTypeEmployee.Fio:
-					value.SplitFullName(out string lastName, out string firstName, out string patronymic);
-					bool lastDiff = !String.IsNullOrEmpty(lastName) && !String.Equals(employee.LastName, lastName, StringComparison.CurrentCultureIgnoreCase);
-					bool firstDiff = !String.IsNullOrEmpty(firstName) && !String.Equals(employee.FirstName, firstName, StringComparison.CurrentCultureIgnoreCase);
-					bool patronymicDiff = !String.IsNullOrEmpty(patronymic) && !String.Equals(employee.Patronymic, patronymic, StringComparison.CurrentCultureIgnoreCase);
-					row.AddColumnChange(column, (lastDiff || firstDiff || patronymicDiff) ? rowChange : ChangeType.NotChanged);
+					value.SplitFullName(out var lastName, out var firstName, out var patronymic);
+					var lastDiff = !String.IsNullOrEmpty(lastName) && 
+					               !String.Equals(employee.LastName, lastName, StringComparison.CurrentCultureIgnoreCase);
+					var firstDiff = !String.IsNullOrEmpty(firstName) && 
+					                !String.Equals(employee.FirstName, firstName, StringComparison.CurrentCultureIgnoreCase);
+					var patronymicDiff = !String.IsNullOrEmpty(patronymic) && 
+					                     !String.Equals(employee.Patronymic, patronymic, StringComparison.CurrentCultureIgnoreCase);
+					string oldValue = (lastDiff || firstDiff || patronymicDiff) ? employee.FullName : null;
+					row.AddColumnChange(column, (lastDiff || firstDiff || patronymicDiff) ? rowChange : ChangeType.NotChanged, oldValue);
 					break;
 				case DataTypeEmployee.HireDate:
 					row.ChangedColumns.Add(column, CompareDate(employee.HireDate, row.CellDateTimeValue(column.Index), rowChange));
@@ -209,7 +222,7 @@ namespace workwear.Models.Import
 						break;
 					}
 
-					Subdivision subdivision = UsedSubdivisions.FirstOrDefault(x =>
+					var subdivision = UsedSubdivisions.FirstOrDefault(x =>
 						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase));
 					if(subdivision == null) {
 						subdivision = new Subdivision { Name = value };
@@ -223,9 +236,10 @@ namespace workwear.Models.Import
 						row.AddColumnChange(column, ChangeType.NotChanged);
 						break;
 					}
-					Department department = UsedDepartment.FirstOrDefault(x =>
+					var department = UsedDepartment.FirstOrDefault(x =>
 						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase)
-						&& ((employee.Subdivision == null && x.Subdivision == null) || DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision)));
+						&& (employee.Subdivision == null && x.Subdivision == null || 
+						    DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision)));
 					if(department == null) {
 						department = new Department {
 							Name = value,
@@ -242,9 +256,10 @@ namespace workwear.Models.Import
 						row.AddColumnChange(column, ChangeType.NotChanged);
 						break;
 					}
-					Post post = UsedPosts.FirstOrDefault(x =>
+					var post = UsedPosts.FirstOrDefault(x =>
 						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase)
-						&&((employee.Subdivision == null && x.Subdivision == null) || DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision)));
+						&&(employee.Subdivision == null && x.Subdivision == null || 
+						   DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision)));
 					if(post == null) {
 						post = new Post { 
 							Name = value, 
@@ -256,14 +271,23 @@ namespace workwear.Models.Import
 					row.AddColumnChange(column, post.Id == 0 ? ChangeType.NewEntity : rowChange, employee.Post?.Name);
 					employee.Post = post;
 					break;
-				case DataTypeEmployee.Growth:
-					row.ChangedColumns.Add(column, CompareString(employee.WearGrowth, row.CellStringValue(column.Index), rowChange));
+				case DataTypeEmployee.Growth: {
+					var height = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), sizeService, CategorySizeType.Height);
+					var employeeHeight = employee.Sizes.FirstOrDefault(x => x.SizeType == height.SizeType)?.Size;
+					row.ChangedColumns.Add(column, CompareSize(employeeHeight, height, rowChange, uow));
+				}
 					break;
-				case DataTypeEmployee.WearSize:
-					row.ChangedColumns.Add(column, CompareSize(employee.WearSize, row.CellStringValue(column.Index), СlothesType.Wear, employee.Sex, rowChange));
+				case DataTypeEmployee.WearSize: {
+					var size = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), sizeService, CategorySizeType.Size);
+					var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType)?.Size;
+					row.ChangedColumns.Add(column, CompareSize(employeeSize, size, rowChange, uow));
+				}
 					break;
-				case DataTypeEmployee.ShoesSize:
-					row.ChangedColumns.Add(column, CompareSize(employee.ShoesSize, row.CellStringValue(column.Index), СlothesType.Shoes, employee.Sex, rowChange));
+				case DataTypeEmployee.ShoesSize: {
+					var size = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), sizeService, CategorySizeType.Size);
+					var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType)?.Size;
+					row.ChangedColumns.Add(column, CompareSize(employeeSize, size, rowChange, uow));
+				}
 					break;
 
 				default:
@@ -271,12 +295,11 @@ namespace workwear.Models.Import
 			}
 		}
 
-		private ChangeState CompareString(string fieldValue, string newValue, ChangeType rowChange)
-		{
-			var changeType = String.Equals(fieldValue, newValue, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
-			if(changeType == ChangeType.ChangeValue)
-				return new ChangeState(changeType, fieldValue);
-			return new ChangeState(changeType);
+		private ChangeState CompareString(string fieldValue, string newValue, ChangeType rowChange) {
+			var changeType = String.Equals(fieldValue, newValue, StringComparison.InvariantCultureIgnoreCase) ? 
+				ChangeType.NotChanged : rowChange;
+			return changeType == ChangeType.ChangeValue ? 
+				new ChangeState(changeType, fieldValue) : new ChangeState(changeType);
 		}
 
 		private ChangeState CompareDate(DateTime? fieldValue, DateTime? newValue, ChangeType rowChange)
@@ -287,25 +310,23 @@ namespace workwear.Models.Import
 			return new ChangeState(changeType);
 		}
 
-		private ChangeState CompareSize(string fieldValue, string newValue, СlothesType сlothesType, Sex sex, ChangeType rowChange)
-		{
-			var changeType = String.Equals(fieldValue, newValue, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
-			if(changeType != ChangeType.NotChanged) {
-				var standarts = SizeHelper.GetSizeStandartsEnum(сlothesType, sex);
-				var sizes = sizeService.GetAllSizesForEmployee(standarts);
-				if(!sizes.Any(x => String.Equals(x.Size, newValue, StringComparison.InvariantCultureIgnoreCase)))
-					changeType = ChangeType.ParseError;
-			}
+		private ChangeState CompareSize(Size fieldValue, Size newValue, ChangeType rowChange, IUnitOfWork uow) {
+			var changeType = fieldValue == newValue ? ChangeType.NotChanged : rowChange;
+			if (changeType == ChangeType.NotChanged)
+				return new ChangeState(changeType);
+			var sizes = sizeService.GetSize(uow, null, true, false);
+			if(sizes.All(x => x != newValue))
+				changeType = ChangeType.ParseError;
 
-			if(changeType == ChangeType.ChangeValue)
-				return new ChangeState(changeType, fieldValue);
-			return new ChangeState(changeType);
+			return new ChangeState(changeType, newValue.Name);
 		}
-
 		#endregion
-
 		#region Сопоставление
-		public void MatchByName(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns, IProgressBarDisplayable progress)
+		public void MatchByName(
+			IUnitOfWork uow, 
+			IEnumerable<SheetRowEmployee> list, 
+			List<ImportedColumn<DataTypeEmployee>> columns, 
+			IProgressBarDisplayable progress)
 		{
 			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
 			var searchValues = list.Select(x => GetFIO(x, columns))
@@ -313,12 +334,12 @@ namespace workwear.Models.Import
 				.Select(fio => (fio.LastName + "|" + fio.FirstName).ToUpper())
 				.Distinct().ToArray();
 			
-			Console.WriteLine((uow.Session.SessionFactory as ISessionFactoryImplementor).Dialect);
+			Console.WriteLine(((ISessionFactoryImplementor) uow.Session.SessionFactory).Dialect);
 			var exists = uow.Session.QueryOver<EmployeeCard>()
 				.Where(Restrictions.In(
 				Projections.SqlFunction(
 							  "upper", NHibernateUtil.String,
-							  (uow.Session.SessionFactory as ISessionFactoryImplementor).Dialect is SQLiteDialect //Данный диалект используется в тестах.
+							  ((ISessionFactoryImplementor) uow.Session.SessionFactory).Dialect is SQLiteDialect //Данный диалект используется в тестах.
 								  ? 
 								  Projections.SqlFunction(new SQLFunctionTemplate(NHibernateUtil.String, "( ?1 || '|' || ?2)"),
 									  NHibernateUtil.String,
@@ -331,10 +352,8 @@ namespace workwear.Models.Import
 								Projections.Property<EmployeeCard>(x => x.LastName),
 								Projections.Constant("|"),
 								Projections.Property<EmployeeCard>(x => x.FirstName)
-							   )),
-						   searchValues))
-				.List();
-
+							    )),
+						   searchValues)).List();
 			progress.Add();
 			foreach(var employee in exists) {
 				var found = list.Where(x => СompareFio(x, employee, columns)).ToArray();
@@ -366,10 +385,16 @@ namespace workwear.Models.Import
 				&& (fio.Patronymic == null || String.Equals(fio.Patronymic, employee.Patronymic, StringComparison.CurrentCultureIgnoreCase));
 		}
 
-		public void MatchByNumber(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns, SettingsMatchEmployeesViewModel settings, IProgressBarDisplayable progress)
+		public void MatchByNumber(
+			IUnitOfWork uow, 
+			IEnumerable<SheetRowEmployee> list, 
+			List<ImportedColumn<DataTypeEmployee>> columns, 
+			SettingsMatchEmployeesViewModel settings, 
+			IProgressBarDisplayable progress)
 		{
 			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
-			var numberColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.PersonnelNumber);
+			var numberColumn = 
+				columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.PersonnelNumber);
 			var numbers = list.Select(x => GetPersonalNumber(settings, x, numberColumn.Index))
 							.Where(x => !String.IsNullOrWhiteSpace(x))
 							.Distinct().ToArray();
@@ -379,7 +404,8 @@ namespace workwear.Models.Import
 
 			progress.Add();
 			foreach(var employee in exists) {
-				var found = list.Where(x => GetPersonalNumber(settings, x, numberColumn.Index) == employee.PersonnelNumber).ToArray();
+				var found = list.Where(x => 
+					GetPersonalNumber(settings, x, numberColumn.Index) == employee.PersonnelNumber).ToArray();
 				found.First().Employees.Add(employee);
 			}
 
@@ -399,14 +425,16 @@ namespace workwear.Models.Import
 			progress.Close();
 		}
 		#endregion
-
 		#region Создание объектов
-
 		public readonly List<Subdivision> UsedSubdivisions = new List<Subdivision>();
 		public readonly List<Post> UsedPosts = new List<Post>();
 		public readonly List<Department> UsedDepartment = new List<Department>();
 
-		public void FillExistEntities(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns, IProgressBarDisplayable progress)
+		public void FillExistEntities(
+			IUnitOfWork uow, 
+			IEnumerable<SheetRowEmployee> list, 
+			List<ImportedColumn<DataTypeEmployee>> columns, 
+			IProgressBarDisplayable progress)
 		{
 			progress.Start(3, text: "Загружаем подразделения");
 			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Subdivision);
@@ -434,12 +462,9 @@ namespace workwear.Models.Import
 			}
 			progress.Close();
 		}
-
 		#endregion
 		#region Сохранение данных
-
-		public IEnumerable<object> PrepareToSave(IUnitOfWork uow, SettingsMatchEmployeesViewModel settings, SheetRowEmployee row)
-		{
+		public IEnumerable<object> PrepareToSave(IUnitOfWork uow, SettingsMatchEmployeesViewModel settings, SheetRowEmployee row) {
 			var employee = row.Employees.FirstOrDefault() ?? new EmployeeCard();
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
 			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученной из общего поля ФИО.
@@ -450,9 +475,14 @@ namespace workwear.Models.Import
 			yield return employee;
 		}
 
-		private void SetValue(SettingsMatchEmployeesViewModel settings, IUnitOfWork uow, EmployeeCard employee, SheetRowEmployee row, ImportedColumn<DataTypeEmployee> column)
+		private void SetValue(
+			SettingsMatchEmployeesViewModel settings, 
+			IUnitOfWork uow, 
+			EmployeeCard employee, 
+			SheetRowEmployee row, 
+			ImportedColumn<DataTypeEmployee> column)
 		{
-			string value = row.CellStringValue(column.Index);
+			var value = row.CellStringValue(column.Index);
 			var dataType = column.DataType;
 			if(String.IsNullOrWhiteSpace(value))
 				return;
@@ -462,7 +492,8 @@ namespace workwear.Models.Import
 					employee.CardKey = value;
 					break;
 				case DataTypeEmployee.PersonnelNumber:
-					employee.PersonnelNumber = (settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(value) : value)?.Trim();
+					employee.PersonnelNumber = (settings.ConvertPersonnelNumber ? 
+						EmployeeParse.ConvertPersonnelNumber(value) : value)?.Trim();
 					break;
 				case DataTypeEmployee.LastName:
 					employee.LastName = value;
@@ -477,13 +508,15 @@ namespace workwear.Models.Import
 					break;
 				case DataTypeEmployee.Sex:
 					//Первая М английская, вторая русская.
-					if(value.StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("М", StringComparison.CurrentCultureIgnoreCase))
+					if(value.StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || 
+					   value.StartsWith("М", StringComparison.CurrentCultureIgnoreCase))
 						employee.Sex = Sex.M;
-					if(value.StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || value.StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase))
+					if(value.StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || 
+					   value.StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase))
 						employee.Sex = Sex.F;
 					break;
 				case DataTypeEmployee.Fio:
-					value.SplitFullName(out string lastName, out string firstName, out string patronymic);
+					value.SplitFullName(out var lastName, out var firstName, out var patronymic);
 					if(!String.IsNullOrEmpty(lastName) && !String.Equals(employee.LastName, value, StringComparison.CurrentCultureIgnoreCase))
 						employee.LastName = lastName;
 					if(!String.IsNullOrEmpty(firstName) && !String.Equals(employee.FirstName, value, StringComparison.CurrentCultureIgnoreCase))
@@ -516,21 +549,42 @@ namespace workwear.Models.Import
 					break;
 
 				case DataTypeEmployee.Growth:
-					employee.WearGrowth = value;
+					var height = SizeParser.ParseSize(uow, value, sizeService, CategorySizeType.Height);
+					if (height is null) break;
+					var employeeHeight = employee.Sizes.FirstOrDefault(x => x.SizeType == height.SizeType);
+					if (employeeHeight is null) {
+						employeeHeight = new EmployeeSize
+							{Size = height, SizeType = height.SizeType, Employee = employee};
+						employee.Sizes.Add(employeeHeight);
+					}
+					else
+						employeeHeight.Size = height;
 					break;
 				case DataTypeEmployee.WearSize:
-					var standartsWear = SizeHelper.GetSizeStandartsEnum(СlothesType.Wear, employee.Sex);
-					var sizesWear = sizeService.GetAllSizesForEmployee(standartsWear);
-					var pairWear = sizesWear.First(x => String.Equals(x.Size, value, StringComparison.InvariantCultureIgnoreCase));
-					employee.WearSize = pairWear.Size;
-					employee.WearSizeStd = pairWear.StandardCode;
+					var size = SizeParser.ParseSize(uow, value, sizeService, CategorySizeType.Size);
+					if (size is null) break;
+					var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType);
+					if (employeeSize is null) {
+						employeeSize = new EmployeeSize
+							{Size = size, SizeType = size.SizeType, Employee = employee};
+						employee.Sizes.Add(employeeSize);
+					}
+					else
+						employeeSize.Size = size;
 					break;
 				case DataTypeEmployee.ShoesSize:
-					var standartsShoes = SizeHelper.GetSizeStandartsEnum(СlothesType.Shoes, employee.Sex);
-					var sizesShoes = sizeService.GetAllSizesForEmployee(standartsShoes);
-					var pairShoes = sizesShoes.First(x => String.Equals(x.Size, value, StringComparison.InvariantCultureIgnoreCase));
-					employee.ShoesSize = pairShoes.Size;
-					employee.ShoesSizeStd = pairShoes.StandardCode;
+				{
+					var shoesSize = SizeParser.ParseSize(uow, value, sizeService, CategorySizeType.Size);
+					if (shoesSize is null) break;
+					var employeeShoesSize = employee.Sizes.FirstOrDefault(x => x.SizeType == shoesSize.SizeType);
+					if (employeeShoesSize is null) {
+						employeeShoesSize = new EmployeeSize
+							{Size = shoesSize, SizeType = shoesSize.SizeType, Employee = employee};
+						employee.Sizes.Add(employeeShoesSize);
+					}
+					else
+						employeeShoesSize.Size = shoesSize;
+				}
 					break;
 
 				default:
@@ -538,11 +592,8 @@ namespace workwear.Models.Import
 			}
 		}
 		#endregion
-
 		#region Helpers
-
-		public FIO GetFIO(SheetRowEmployee row, List<ImportedColumn<DataTypeEmployee>> columns)
-		{
+		public FIO GetFIO(SheetRowEmployee row, List<ImportedColumn<DataTypeEmployee>> columns) {
 			var fio = new FIO();
 			var lastnameColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.LastName);
 			var firstNameColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.FirstName);
@@ -558,10 +609,9 @@ namespace workwear.Models.Import
 				fio.Patronymic = row.CellStringValue(patronymicColumn.Index);
 			return fio;
 		}
-
-		public string GetPersonalNumber(SettingsMatchEmployeesViewModel settings, SheetRowEmployee row, int columnIndex)
-		{
-			var original = settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(row.CellStringValue(columnIndex)) : row.CellStringValue(columnIndex);
+		public string GetPersonalNumber(SettingsMatchEmployeesViewModel settings, SheetRowEmployee row, int columnIndex) {
+			var original = settings.ConvertPersonnelNumber ? 
+				EmployeeParse.ConvertPersonnelNumber(row.CellStringValue(columnIndex)) : row.CellStringValue(columnIndex);
 			return original?.Trim();
 		}
 		#endregion

@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -9,7 +10,6 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels;
-using workwear.Dialogs.Issuance;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
@@ -17,7 +17,7 @@ using workwear.Models.Stock;
 using workwear.Repository.Operations;
 using workwear.ViewModels.Operations;
 using workwear.ViewModels.Regulations;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.ViewModels.Stock;
 using workwear.Tools.Features;
 using workwear.Domain.Operations.Graph;
@@ -66,12 +66,11 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void OnShow()
 		{
-			if(!isConfigured) {
-				isConfigured = true;
-				Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
-				Entity.FillWearRecivedInfo(employeeIssueRepository);
-				OnPropertyChanged(nameof(ObservableWorkwearItems));
-			}
+			if (isConfigured) return;
+			isConfigured = true;
+			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
+			Entity.FillWearRecivedInfo(employeeIssueRepository);
+			OnPropertyChanged(nameof(ObservableWorkwearItems));
 		}
 
 		#endregion
@@ -91,9 +90,14 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 				return;
 			if(changeEvents.First().Session == UoW.Session)
 				return; //Не чего не делаем если это наше собственное изменение.
-			if(changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Delete).Select(e => e.Entity).OfType<EmployeeCardItem>().Any(x => x.EmployeeCard.IsSame(Entity))) {
-				//Если сделано удаление строк, просто закрываем диалог, так как заставить корректно сохранить сотрудника все равно не поучится.
-				//Не работал следующий сценарий: Открываем диалог сотрудника, строка добавленная по норме есть в списке, открываем норму, удаляем одну из строк, сохраняем норму. После этого пытаемся сохранить сотрудника.
+			if(changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Delete)
+				.Select(e => e.Entity).OfType<EmployeeCardItem>()
+				.Any(x => x.EmployeeCard.IsSame(Entity))) {
+				//Если сделано удаление строк, просто закрываем диалог,
+				//так как заставить корректно сохранить сотрудника все равно не поучится.
+				//Не работал следующий сценарий: Открываем диалог сотрудника,
+				//строка добавленная по норме есть в списке, открываем норму, удаляем одну из строк, сохраняем норму.
+				//После этого пытаемся сохранить сотрудника.
 				var page = navigation.FindPage(employeeViewModel);
 				navigation.ForceClosePage(page, CloseSource.Self);
 				return;
@@ -117,17 +121,17 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void ReturnWear()
 		{
-			navigation.OpenTdiTab<IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
+			navigation.OpenTdiTab<Dialogs.Stock.IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
 		}
 
 		public void OpenTimeLine(EmployeeCardItem item)
 		{
-			navigation.OpenTdiTab<EmployeeIssueGraphDlg, EmployeeCard, ProtectionTools>(employeeViewModel, Entity, item.ProtectionTools);
+			navigation.OpenViewModel<EmployeeIssueGraphViewModel, EmployeeCard, ProtectionTools>(employeeViewModel, Entity, item.ProtectionTools);
 		}
 
 		public void WriteOffWear()
 		{
-			navigation.OpenTdiTab<WriteOffDocDlg, EmployeeCard>(employeeViewModel, Entity);
+			navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
 		public void UpdateWorkwearItems()

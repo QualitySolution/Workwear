@@ -1,11 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Autofac;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Tools.Features;
 using Workwear.Measurements;
@@ -14,7 +16,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 {
 	public class StockMovementsFilterViewModel : JournalFilterViewModelBase<StockMovementsFilterViewModel>
 	{
-		public readonly FeaturesService FeaturesService;
+		private readonly FeaturesService featuresService;
 		private readonly SizeService sizeService;
 
 		#region Ограничения
@@ -39,6 +41,8 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		private StockPosition stockPosition;
 		[PropertyChangedAlso(nameof(StockPositionTitle))]
 		[PropertyChangedAlso(nameof(SensitiveNomeclature))]
+		[PropertyChangedAlso(nameof(SensitiveSize))]
+		[PropertyChangedAlso(nameof(SensitiveGrowth))]
 		public virtual StockPosition StockPosition {
 			get => stockPosition;
 			set {
@@ -48,25 +52,25 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		}
 
 		private Nomenclature nomenclature;
-		[PropertyChangedAlso(nameof(SensitiveSize))]
-		[PropertyChangedAlso(nameof(SensitiveGrowth))]
 		[PropertyChangedAlso(nameof(Sizes))]
 		[PropertyChangedAlso(nameof(Growths))]
+		[PropertyChangedAlso(nameof(SensitiveSize))]
+		[PropertyChangedAlso(nameof(SensitiveGrowth))]
 		public virtual Nomenclature Nomenclature {
 			get => nomenclature;
 			set => SetField(ref nomenclature, value);
 		}
 
-		private string size;
-		public virtual string Size {
-			get => size;
+		private Size size;
+		public virtual Size Size {
+			get => StockPosition is null ? size : StockPosition.WearSize;
 			set => SetField(ref size, value);
 		}
 
-		private string growth;
-		public virtual string Growth {
-			get => growth;
-			set => SetField(ref growth, value);
+		private Size height;
+		public virtual Size Height {
+			get => StockPosition == null ? height : StockPosition.Height;
+			set => SetField(ref height, value);
 		}
 
 		private bool collapseCollectiveIssue;
@@ -75,22 +79,27 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			set => SetField(ref collapseCollectiveIssue, value);
 		}
 		#endregion
-
 		public string StockPositionTitle => StockPosition?.Title;
-
 		#region Visible
-		public bool VisibleWarehouse => FeaturesService.Available(WorkwearFeature.Warehouses);
+		public bool VisibleWarehouse => featuresService.Available(WorkwearFeature.Warehouses);
 		#endregion
-
 		#region Sensitive
 		public bool SensitiveNomeclature => StockPosition == null;
-		public bool SensitiveSize => sizeService.HasSize(Nomenclature?.Type?.WearCategory);
-		public bool SensitiveGrowth => sizeService.HasGrowth(Nomenclature?.Type?.WearCategory);
+		public bool SensitiveSize => StockPosition == null;
+		public bool SensitiveGrowth => StockPosition == null;
 		#endregion
-
 		#region ComboValues
-		public string[] Sizes => sizeService.GetSizesForNomeclature(Nomenclature?.SizeStd);
-		public string[] Growths => sizeService.GetGrowthForNomenclature();
+		public Size[] Sizes => 
+			nomenclature is null ? 
+				sizeService.GetSizeByCategory(UoW, CategorySizeType.Size, false, true).ToArray() : 
+				nomenclature.Type?.SizeType is null ? new Size[]{} : 
+					sizeService.GetSize(UoW, nomenclature?.Type?.SizeType, false, true)
+						.ToArray();
+		public Size[] Growths => 
+			nomenclature is null ? 
+				sizeService.GetSizeByCategory(UoW, CategorySizeType.Height, false, true).ToArray() : 
+				nomenclature.Type?.HeightType is null ? new Size[]{} : 
+					sizeService.GetSize(UoW, nomenclature?.Type?.HeightType, false, true).ToArray();
 
 		private DirectionOfOperation direction;
 		public DirectionOfOperation Direction {
@@ -107,13 +116,13 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			JournalViewModelBase journal,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
+			FeaturesService featuresService,
 			SizeService sizeService,
-			FeaturesService featuresService, 
 			Nomenclature nomenclature = null): base(journal, unitOfWorkFactory)
 		{
+			this.sizeService = sizeService;
 			var builder = new CommonEEVMBuilderFactory<StockMovementsFilterViewModel>(journal, this, UoW, navigation, autofacScope);
-			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
-			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
 			if(nomenclature != null)
 				this.nomenclature = UoW.GetById<Nomenclature>(nomenclature.Id);
@@ -122,7 +131,6 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			EntryNomenclature = builder.ForProperty(x => x.Nomenclature).MakeByType().Finish();
 		}
 	}
-
 	public enum DirectionOfOperation {
 		[Display(Name = "Поступление и расход")]
 		all,

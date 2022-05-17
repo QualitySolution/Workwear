@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
@@ -6,7 +6,7 @@ using QS.Testing.DB;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 using Workwear.Domain.Regulations;
 
 namespace WorkwearTest.Integration.Organization
@@ -56,7 +56,7 @@ namespace WorkwearTest.Integration.Organization
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
-				var position1 = new StockPosition(nomenclature, null, null, 0);
+				var position1 = new StockPosition(nomenclature, 0, null, null);
 
 				var nomenclature2 = new Nomenclature();
 				nomenclature2.Type = nomenclatureType;
@@ -68,7 +68,7 @@ namespace WorkwearTest.Integration.Organization
 				protectionTools.Name = "СИЗ для тестирования";
 				uow.Save(protectionTools);
 
-				var position2 = new StockPosition(nomenclature2, null, null, 0);
+				var position2 = new StockPosition(nomenclature2, 0, null, null);
 
 				var norm = new Norm();
 				var normItem = norm.AddItem(protectionTools);

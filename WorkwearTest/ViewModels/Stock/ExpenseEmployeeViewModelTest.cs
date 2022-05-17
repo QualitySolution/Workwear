@@ -19,7 +19,7 @@ using workwear.Domain.Stock;
 using Workwear.Measurements;
 using workwear.Repository;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
 
@@ -49,7 +49,7 @@ namespace WorkwearTest.ViewModels.Stock
 			var commonMessages = Substitute.For<CommonMessages>(interactive);
 			var featuresService = Substitute.For<FeaturesService>();
 			var baseParameters = Substitute.For<BaseParameters>();
-			var sizeService = Substitute.For<SizeService>(new BaseSizeSettings(baseParameters));
+			var sizeService = Substitute.For<SizeService>();
 			var deleteService = Substitute.For<IDeleteEntityService>();
 			
 			var stockRepository = new StockRepository();

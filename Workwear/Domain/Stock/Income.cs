@@ -11,6 +11,7 @@ using QS.HistoryLog;
 using QS.Utilities;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
+using Workwear.Domain.Sizes;
 using workwear.Repository.Operations;
 
 namespace workwear.Domain.Stock
@@ -24,89 +25,73 @@ namespace workwear.Domain.Stock
 	public class Income : StockDocument, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
-
 		#region Свойства
 
-		IncomeOperations operation;
-
+		private IncomeOperations operation;
 		[Display (Name = "Тип операции")]
 		public virtual IncomeOperations Operation {
-			get { return operation; }
+			get => operation;
 			set { SetField (ref operation, value, () => Operation); }
 		}
 
 		private Warehouse warehouse;
-
 		[Display(Name = "Склад")]
 		[Required(ErrorMessage = "Склад должен быть указан.")]
 		public virtual Warehouse Warehouse {
-			get { return warehouse; }
+			get => warehouse;
 			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
 
-		string number;
-
+		private string number;
 		[Display (Name = "Вх. номер")]
 		public virtual string Number {
-			get { return number; }
+			get => number;
 			set { SetField (ref number, value, () => Number); }
 		}
 
-		EmployeeCard employeeCard;
-
+		private EmployeeCard employeeCard;
 		[Display (Name = "Сотрудник")]
 		public virtual EmployeeCard EmployeeCard {
-			get { return employeeCard; }
+			get => employeeCard;
 			set { SetField (ref employeeCard, value, () => EmployeeCard); }
 		}
 
-		Subdivision subdivision;
-
+		private Subdivision subdivision;
 		[Display (Name = "Подразделение")]
 		public virtual Subdivision Subdivision {
-			get { return subdivision; }
+			get => subdivision;
 			set { SetField (ref subdivision, value, () => Subdivision); }
 		}
 
 		private IList<IncomeItem> items = new List<IncomeItem>();
-
 		[Display (Name = "Строки документа")]
 		public virtual IList<IncomeItem> Items {
-			get { return items; }
+			get => items;
 			set { SetField (ref items, value, () => Items); }
 		}
 
-		GenericObservableList<IncomeItem> observableItems;
+		private GenericObservableList<IncomeItem> observableItems;
 		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<IncomeItem> ObservableItems {
-			get {
-				if (observableItems == null)
-					observableItems = new GenericObservableList<IncomeItem> (Items);
-				return observableItems;
-			}
-		}
-			
-		#endregion
+		public virtual GenericObservableList<IncomeItem> ObservableItems => 
+			observableItems ?? (observableItems = new GenericObservableList<IncomeItem>(Items));
 
+		#endregion
 		public virtual string Title{
 			get{
 				switch (Operation) {
 				case IncomeOperations.Enter:
-					return String.Format ("Приходная накладная №{0} от {1:d}", Id, Date);
+					return $"Приходная накладная №{Id} от {Date:d}";
 				case IncomeOperations.Return:
-					return String.Format ("Возврат от работника №{0} от {1:d}", Id, Date);
+					return $"Возврат от работника №{Id} от {Date:d}";
 				case IncomeOperations.Object:
-					return String.Format ("Возврат c подразделения №{0} от {1:d}", Id, Date);
+					return $"Возврат c подразделения №{Id} от {Date:d}";
 				default:
 					return null;
 				}
 			}
 		}
-
 		#region IValidatableObject implementation
-
-		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
-		{
+		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
 			if (Date < new DateTime(2008, 1, 1))
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
 					new[] { this.GetPropertyName (o => o.Date)});
@@ -134,16 +119,21 @@ namespace workwear.Domain.Stock
 			if(Operation == IncomeOperations.Return && EmployeeCard != null)
 				foreach (var item in items) {
 					if(item.IssuedEmployeeOnOperation == null || item.IssuedEmployeeOnOperation.Employee != EmployeeCard)
-						yield return new ValidationResult($"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным сотрудником", new[] { nameof(Items) });
+						yield return new ValidationResult(
+							$"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным сотрудником", 
+							new[] { nameof(Items) });
 				}
 			
 			if(Operation == IncomeOperations.Object && Subdivision != null)
 				foreach (var item in items) {
 					if(item.IssuedSubdivisionOnOperation == null || item.IssuedSubdivisionOnOperation.Subdivision != Subdivision)
-						yield return new ValidationResult($"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным подразделением", new[] { nameof(Items) });
+						yield return new ValidationResult(
+							$"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным подразделением", 
+							new[] { nameof(Items) });
 				}
 
-			foreach(var duplicate in Items.GroupBy(x => x.StockPosition).Where(x => x.Count() > 1)) {
+			foreach(var duplicate in Items.GroupBy(x => x.StockPosition)
+				.Where(x => x.Count() > 1)) {
 				var caseCountText = NumberToTextRus.FormatCase(duplicate.Count(), "{0} раз", "{0} раза", "{0} раз");
 				yield return new ValidationResult($"Складская позиция {duplicate.First().Title} указана в документе {caseCountText}.",
 					new[] { this.GetPropertyName(o => o.Items) });
@@ -151,37 +141,26 @@ namespace workwear.Domain.Stock
 		}
 
 		#endregion
-
-
-		public Income ()
-		{
-		}
-
-		public virtual void AddItem(SubdivisionIssueOperation issuedOperation, int count)
-		{
+		public Income () { }
+		public virtual void AddItem(SubdivisionIssueOperation issuedOperation, int count) {
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
-			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IssuedSubdivisionOnOperation, issuedOperation)))
-			{
+			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IssuedSubdivisionOnOperation, issuedOperation))) {
 				logger.Warn ("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return;
 			}
 
-			var newItem = new IncomeItem(this)
-			{
+			var newItem = new IncomeItem(this) {
 				Amount = count,
 				Nomenclature = issuedOperation.Nomenclature,
 				IssuedSubdivisionOnOperation= issuedOperation,
 				Cost = issuedOperation.CalculatePercentWear(Date),
 				WearPercent = issuedOperation.CalculateDepreciationCost(Date)
 			};
-
 			ObservableItems.Add (newItem);
 		}
-
-		public virtual IncomeItem AddItem(EmployeeIssueOperation issuedOperation, int count)
-		{
+		public virtual IncomeItem AddItem(EmployeeIssueOperation issuedOperation, int count) {
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
@@ -189,12 +168,11 @@ namespace workwear.Domain.Stock
 				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return null;
 			}
-
 			var newItem = new IncomeItem(this) {
 				Amount = count,
 				Nomenclature = issuedOperation.Nomenclature,
-				Size = issuedOperation.Size,
-				WearGrowth = issuedOperation.WearGrowth,
+				WearSize = issuedOperation.WearSize,
+				Height = issuedOperation.Height,
 				IssuedEmployeeOnOperation = issuedOperation,
 				Cost = issuedOperation.CalculateDepreciationCost(Date),
 				WearPercent = issuedOperation.CalculatePercentWear(Date),
@@ -203,12 +181,10 @@ namespace workwear.Domain.Stock
 			ObservableItems.Add(newItem);
 			return newItem;
 		}
-
-		public virtual IncomeItem AddItem(Nomenclature nomenclature)
-		{
+		public virtual IncomeItem AddItem(Nomenclature nomenclature) {
 			if (Operation != IncomeOperations.Enter)
-				throw new InvalidOperationException ("Добавление номенклатуры возможно только во входящую накладную. Возвраты должны добавляться с указанием строки выдачи.");
-				
+				throw new InvalidOperationException ("Добавление номенклатуры возможно только во входящую накладную. " +
+				                                     "Возвраты должны добавляться с указанием строки выдачи.");
 			var newItem = new IncomeItem (this) {
 				Amount = 1,
 				Nomenclature = nomenclature,
@@ -218,18 +194,22 @@ namespace workwear.Domain.Stock
 			ObservableItems.Add (newItem);
 			return newItem;
 		}
-
-		public virtual IncomeItem AddItem(Nomenclature nomenclature, string growth, string size, int amount = 0, string certificate = null, decimal price = 0m)
+		public virtual IncomeItem AddItem(
+			Nomenclature nomenclature, 
+			Size size, Size height, int amount = 0, 
+			string certificate = null, decimal price = 0m)
 		{
 			if(Operation != IncomeOperations.Enter)
-				throw new InvalidOperationException("Добавление номенклатуры возможно только во входящую накладную. Возвраты должны добавляться с указанием строки выдачи.");
-			var item = ObservableItems.FirstOrDefault(i => i.Nomenclature.Id == nomenclature.Id && i.WearGrowth == growth && i.Size == size);
+				throw new InvalidOperationException("Добавление номенклатуры возможно только во входящую накладную. " +
+				                                    "Возвраты должны добавляться с указанием строки выдачи.");
+			var item = ObservableItems
+				.FirstOrDefault(i => i.Nomenclature.Id == nomenclature.Id && i.Height == height && i.WearSize == size);
 			if(item == null) {
 				item = new IncomeItem(this) {
 					Amount = amount,
 					Nomenclature = nomenclature,
-					WearGrowth = growth,
-					Size = size,
+					WearSize = size,
+					Height = height,
 					Cost = price,
 					Certificate = certificate,
 				};
@@ -240,26 +220,22 @@ namespace workwear.Domain.Stock
 			}
 			return item;
 		}
-
-
-		public virtual void RemoveItem(IncomeItem item)
-		{
+		public virtual void RemoveItem(IncomeItem item) {
 			ObservableItems.Remove (item);
 		}
 
-		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser)
-		{
+		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser) {
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
 		}
 
-		public virtual void UpdateEmployeeWearItems()
-		{
-			EmployeeCard.UpdateNextIssue(Items.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools).Where(x => x != null).Distinct().ToArray());
+		public virtual void UpdateEmployeeWearItems() {
+			EmployeeCard.UpdateNextIssue(Items
+				.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
+				.Where(x => x != null).Distinct().ToArray());
 			EmployeeCard.FillWearRecivedInfo(new EmployeeIssueRepository(UoW));
 			UoW.Save(EmployeeCard);
 		}
 	}
-
 	public enum IncomeOperations {
 		/// <summary>
 		/// Приходная накладная
@@ -276,13 +252,6 @@ namespace workwear.Domain.Stock
 		/// </summary>
 		[Display(Name = "Возврат с подразделения")]
 		Object
-	}
-
-	public class IncomeOperationsType : NHibernate.Type.EnumStringType
-	{
-		public IncomeOperationsType () : base (typeof(IncomeOperations))
-		{
-		}
 	}
 }
 

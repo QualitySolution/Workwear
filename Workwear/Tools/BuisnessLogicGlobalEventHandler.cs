@@ -5,6 +5,7 @@ using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
+using Workwear.Tools;
 
 namespace workwear.Tools
 {

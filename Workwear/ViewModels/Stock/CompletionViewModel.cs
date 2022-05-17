@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,8 +15,9 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Measurements;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.Tools.Features;
 
 namespace workwear.ViewModels.Stock
@@ -24,8 +25,9 @@ namespace workwear.ViewModels.Stock
 	public class CompletionViewModel: EntityDialogViewModelBase<Completion>
 	{
 		private readonly IInteractiveQuestion interactive;
-		private FeaturesService featuresService;
-		Warehouse lastWarehouse;
+		private readonly FeaturesService featuresService;
+		private Warehouse lastWarehouse;
+		public SizeService SizeService { get; }
 		public CompletionViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
@@ -35,11 +37,13 @@ namespace workwear.ViewModels.Stock
 			ILifetimeScope autofacScope,
 			BaseParameters baseParameters,
 			IInteractiveQuestion interactive,
+			SizeService sizeService,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			var entryBuilder = new CommonEEVMBuilderFactory<Completion>(this, Entity, UoW, navigation, autofacScope);
 			this.interactive = interactive;
 			this.featuresService = featuresService;
+			SizeService = sizeService;
 			
 			if(UoW.IsNew) 
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
@@ -77,8 +81,8 @@ namespace workwear.ViewModels.Stock
 		#region EntityViewModels
 		public EntityEntryViewModel<Warehouse> WarehouseExpenseEntryViewModel;
 		public EntityEntryViewModel<Warehouse> WarehouseReceiptEntryViewModel;
-		
-		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+
+		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName != nameof(Entity.SourceWarehouse) || Entity.SourceWarehouse == lastWarehouse || Entity.SourceItems is null) return;
 			if(Entity.SourceItems.Any()) {
@@ -106,7 +110,8 @@ namespace workwear.ViewModels.Stock
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;
 		}
-		void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
+
+		private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			var selectVM = sender as StockBalanceJournalViewModel;
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
 				Entity.AddSourceItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.Amount);
@@ -118,7 +123,8 @@ namespace workwear.ViewModels.Stock
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += AddNomenclature_OnSelectResult;
 		}
-		void AddNomenclature_OnSelectResult(object sender, JournalSelectedEventArgs e) {
+
+		private void AddNomenclature_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			UoW.GetById<Nomenclature>(e.SelectedObjects.Select(x => x.GetId()))
 				.ToList().ForEach(n => Entity.AddResultItem(n));
 		}

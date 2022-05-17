@@ -10,7 +10,7 @@ using QS.Testing.DB;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 using Workwear.Domain.Regulations;
 
 namespace WorkwearTest.Integration.Tools
@@ -40,29 +40,34 @@ namespace WorkwearTest.Integration.Tools
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				var nomenclatureType = new ItemsType {
+					Name = "Тестовый тип номенклатуры"
+				};
 				uow.Save(nomenclatureType);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Type = nomenclatureType;
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType
+				};
 				uow.Save(nomenclature);
 
-				var position1 = new StockPosition(nomenclature, null, null, 0);
+				var position1 = new StockPosition(nomenclature, 0, null, null);
 
-				var nomenclature2 = new Nomenclature();
-				nomenclature2.Type = nomenclatureType;
+				var nomenclature2 = new Nomenclature {
+					Type = nomenclatureType
+				};
 				uow.Save(nomenclature2);
 
-				var position2 = new StockPosition(nomenclature2, null, null, 0);
+				var position2 = new StockPosition(nomenclature2, 0, null, null);
 
-				var protectionTools = new ProtectionTools();
-				protectionTools.Name = "СИЗ для тестирования";
+				var protectionTools = new ProtectionTools {
+					Name = "СИЗ для тестирования"
+				};
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
-				var protectionTools2 = new ProtectionTools();
-				protectionTools2.Name = "СИЗ для тестирования 2";
+				var protectionTools2 = new ProtectionTools {
+					Name = "СИЗ для тестирования 2"
+				};
 				protectionTools2.AddNomeclature(nomenclature2);
 				uow.Save(protectionTools2);
 
@@ -82,10 +87,11 @@ namespace WorkwearTest.Integration.Tools
 				uow.Save(employee);
 				uow.Commit();
 
-				var income = new Income();
-				income.Warehouse = warehouse;
-				income.Date = new DateTime(2017, 1, 1);
-				income.Operation = IncomeOperations.Enter;
+				var income = new Income {
+					Warehouse = warehouse,
+					Date = new DateTime(2017, 1, 1),
+					Operation = IncomeOperations.Enter
+				};
 				var incomeItem1 = income.AddItem(nomenclature);
 				incomeItem1.Amount = 10;
 				var incomeItem2 = income.AddItem(nomenclature2);
@@ -93,11 +99,12 @@ namespace WorkwearTest.Integration.Tools
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
 
-				var expense = new Expense();
-				expense.Operation = ExpenseOperations.Employee;
-				expense.Warehouse = warehouse;
-				expense.Employee = employee;
-				expense.Date = new DateTime(2018, 10, 22);
+				var expense = new Expense {
+					Operation = ExpenseOperations.Employee,
+					Warehouse = warehouse,
+					Employee = employee,
+					Date = new DateTime(2018, 10, 22)
+				};
 				expense.AddItem(position1, 1);
 				expense.AddItem(position2, 1);
 

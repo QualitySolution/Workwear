@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using NSubstitute;
@@ -15,7 +15,7 @@ using RglibInterop;
 using workwear.Domain.Company;
 using workwear.Repository.Company;
 using workwear.Repository.Stock;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
 using workwear.ViewModels.Stock;
@@ -41,8 +41,7 @@ namespace WorkwearTest.ViewModels.Stock
 			var baseParameters = Substitute.For<BaseParameters>();
 			var interactive = Substitute.For<IInteractiveQuestion>();
 			var configuration = Substitute.For<IChangeableConfiguration>();
-			var sizeSettings = Substitute.For<ISizeSettings>();
-			var sizeService = Substitute.For<SizeService>(sizeSettings);
+			var sizeService = Substitute.For<SizeService>();
 			var device = Substitute.For<DeviceInfo>(new RG_ENDPOINT_INFO(), new RG_DEVICE_INFO_SHORT());
 			var cardReaderService = Substitute.For<ICardReaderService>();
 			cardReaderService.Devices.Returns(new List<DeviceInfo> { device });

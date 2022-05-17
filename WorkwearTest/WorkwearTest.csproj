@@ -55,6 +55,7 @@
     <Compile Include="Deletion\ConfigTests.cs" />
     <Compile Include="HistoryLog\DomainModelTest.cs" />
     <Compile Include="Integration\Import\ExcelImportViewModelTest.cs" />
+    <Compile Include="Integration\Stock\CompletionIntegratedTest.cs" />
     <Compile Include="Operations\Graph\IssueGraphTest.cs" />
     <Compile Include="Operations\Graph\GraphItemTest.cs" />
     <Compile Include="Organization\EmployeeCardTests.cs" />
@@ -83,6 +84,10 @@
     <Compile Include="Integration\Operations\EmployeeIssueRepositoryTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\QSProjects\QS.BaseParameters\QS.BaseParameters.csproj">
+      <Project>{a869ec36-67d2-4a36-95e9-0b1e7350928f}</Project>
+      <Name>QS.BaseParameters</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj">
       <Project>{c01ae5a4-3cff-4c7b-884d-45b07acde761}</Project>
       <Name>QS.Project.Core</Name>
@@ -106,6 +111,10 @@
     <ProjectReference Include="..\Workwear.Core\Workwear.Core.csproj">
       <Project>{8c8e9ac8-13c1-4b54-b4f4-9f8cd62a5744}</Project>
       <Name>Workwear.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Workwear.Desktop\Workwear.Desktop.csproj">
+      <Project>{45b650c2-cf4d-4e34-9385-44e7c40a66c4}</Project>
+      <Name>Workwear.Desktop</Name>
     </ProjectReference>
     <ProjectReference Include="..\Workwear.Sql\Workwear.Sql.csproj">
       <Project>{cd86b5da-6d84-4406-b7a8-0a35e87772aa}</Project>

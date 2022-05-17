@@ -6,9 +6,10 @@ using QS.Dialog;
 using QS.Testing.DB;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Repository;
-using workwear.Tools;
+using Workwear.Tools;
 using workwear.Repository.Company;
 
 namespace WorkwearTest.Integration.Stock
@@ -36,40 +37,55 @@ namespace WorkwearTest.Integration.Stock
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
-				var nomenclatureType = new ItemsType();
-				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				var sizeType = new SizeType();
+				uow.Save(sizeType);
+
+				var nomenclatureType = new ItemsType {
+					Name = "Тестовый тип номенклатуры",
+					SizeType = sizeType
+				};
 				uow.Save(nomenclatureType);
 
-				var nomenclature = new Nomenclature();
-				nomenclature.Name = "Тестовая номеклатура";
-				nomenclature.Type = nomenclatureType;
+				var nomenclature = new Nomenclature {
+					Name = "Тестовая номеклатура",
+					Type = nomenclatureType
+				};
 				uow.Save(nomenclature);
 
-				var position1 = new StockPosition(nomenclature, null, null, 0);
+				var size = new Size {SizeType = sizeType};
+				var height = new Size();
+				uow.Save(size);
+				uow.Save(height);
 
-				var subdivision = new Subdivision();
-				subdivision.Name = "Тестовое подразделение";
+				var position1 = new StockPosition(nomenclature, 0, size, height);
+
+				var subdivision = new Subdivision {
+					Name = "Тестовое подразделение"
+				};
 				uow.Save(subdivision);
 
-				var place = new SubdivisionPlace();
-				place.Name = "Тестовое место";
-				place.Subdivision = subdivision;
+				var place = new SubdivisionPlace {
+					Name = "Тестовое место",
+					Subdivision = subdivision
+				};
 				uow.Save(place);
 
-				var income = new Income();
-				income.Warehouse = warehouse;
-				income.Date = new DateTime(2017, 1, 1);
-				income.Operation = IncomeOperations.Enter;
+				var income = new Income {
+					Warehouse = warehouse,
+					Date = new DateTime(2017, 1, 1),
+					Operation = IncomeOperations.Enter
+				};
 				var incomeItem1 = income.AddItem(nomenclature);
 				incomeItem1.Amount = 10;
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
 
-				var expense = new Expense();
-				expense.Operation = ExpenseOperations.Object;
-				expense.Warehouse = warehouse;
-				expense.Subdivision = subdivision;
-				expense.Date = new DateTime(2018, 10, 22);
+				var expense = new Expense {
+					Operation = ExpenseOperations.Object,
+					Warehouse = warehouse,
+					Subdivision = subdivision,
+					Date = new DateTime(2018, 10, 22)
+				};
 				var item1 = expense.AddItem(position1, 1);
 				item1.SubdivisionPlace = place;
 

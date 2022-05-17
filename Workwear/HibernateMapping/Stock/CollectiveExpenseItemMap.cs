@@ -15,8 +15,6 @@ namespace workwear.HMap
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			Map (x => x.Amount).Column ("quantity");
-			Map(x => x.Size).Column("size");
-			Map(x => x.WearGrowth).Column("growth");
 
 			References (x => x.Document).Column ("stock_collective_expense_id").Not.Nullable ();
 			References (x => x.Employee).Column ("employee_id");
@@ -24,6 +22,8 @@ namespace workwear.HMap
 			References(x => x.Nomenclature).Column ("nomenclature_id").Not.Nullable ();
 			References(x => x.EmployeeIssueOperation).Column("employee_issue_operation_id").Cascade.All();
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Not.Nullable().Cascade.All();
+			References(x => x.WearSize).Column("size_id");
+			References(x => x.Height).Column("height_id");
 
 			HasOne(x => x.IssuanceSheetItem)
 				.PropertyRef(x => x.CollectiveExpenseItem);
