@@ -630,7 +630,7 @@ ADD CONSTRAINT `fk_stock_collective_expense_detail_8`
   ON DELETE NO ACTION
   ON UPDATE CASCADE;
 
--- Добавляем типы размеров в типы номеклатуры
+-- Добавляем типы размеров в типы номенклатуры
 
 ALTER TABLE `item_types` 
 ADD COLUMN `size_type_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `comment`,
@@ -668,6 +668,7 @@ height_type_id=
     END;
 
 -- Переносим размеры со старых полей на новые
+-- Ведомости
 
 UPDATE issuance_sheet_items SET size_id = (SELECT DISTINCT sizes.id 
         FROM issuance_sheet_items items
@@ -691,7 +692,7 @@ UPDATE issuance_sheet_items SET height_id = (SELECT DISTINCT sizes.id
 )
 WHERE growth IS NOT NULL;
 
-----
+-- Операции выдачи сотруднику
 UPDATE operation_issued_by_employee SET size_id = (SELECT DISTINCT sizes.id 
         FROM operation_issued_by_employee items
         LEFT JOIN nomenclature ON items.nomenclature_id = nomenclature.id
@@ -714,7 +715,7 @@ UPDATE operation_issued_by_employee SET height_id = (SELECT DISTINCT sizes.id
 )
 WHERE growth IS NOT NULL;
 
-----
+-- Операции выдачи на подразделения
 UPDATE operation_issued_in_subdivision SET size_id = (SELECT sizes.id 
         FROM operation_issued_in_subdivision items
         JOIN nomenclature ON items.nomenclature_id = nomenclature.id
@@ -735,7 +736,7 @@ UPDATE operation_issued_in_subdivision SET height_id = (SELECT DISTINCT sizes.id
 )
 WHERE growth IS NOT NULL;
 
-----
+-- Складские операции
 UPDATE operation_warehouse SET size_id = (SELECT sizes.id 
         FROM operation_warehouse items
         JOIN nomenclature ON items.nomenclature_id = nomenclature.id
@@ -756,7 +757,7 @@ UPDATE operation_warehouse SET height_id = (SELECT DISTINCT sizes.id
 )
 WHERE growth IS NOT NULL;
 
-----
+-- Коллективная выдача
 UPDATE stock_collective_expense_detail SET size_id = (SELECT DISTINCT sizes.id 
         FROM stock_collective_expense_detail items
         LEFT JOIN nomenclature ON items.nomenclature_id = nomenclature.id
@@ -779,7 +780,7 @@ UPDATE stock_collective_expense_detail SET height_id = (SELECT DISTINCT sizes.id
 )
 WHERE growth IS NOT NULL;
 
-----
+-- Документ выдачи 
 UPDATE stock_expense_detail SET size_id = (SELECT DISTINCT sizes.id 
         FROM stock_expense_detail items
         LEFT JOIN nomenclature ON items.nomenclature_id = nomenclature.id
@@ -802,7 +803,7 @@ UPDATE stock_expense_detail SET height_id = (SELECT DISTINCT sizes.id
 )
 WHERE growth IS NOT NULL;
 
-----
+-- Документ поступления
 UPDATE stock_income_detail SET size_id = (SELECT sizes.id 
         FROM stock_income_detail items
         JOIN nomenclature ON items.nomenclature_id = nomenclature.id
@@ -823,7 +824,7 @@ UPDATE stock_income_detail SET height_id = (SELECT DISTINCT sizes.id
 )
 WHERE growth IS NOT NULL;
 
-----
+-- Документ списания
 UPDATE stock_write_off_detail SET size_id = (SELECT sizes.id 
         FROM stock_write_off_detail items
         JOIN nomenclature ON items.nomenclature_id = nomenclature.id
@@ -891,5 +892,9 @@ DROP TABLE IF EXISTS `stock_mass_expense_operation` ;
 DROP TABLE IF EXISTS `stock_mass_expense_nomenclatures` ;
 
 DROP TABLE IF EXISTS `stock_mass_expense_employee` ;
+
+ALTER TABLE `issuance_sheet`
+DROP FOREIGN KEY `fk_issuance_sheet_6`,
+DROP COLUMN `stock_mass_expense_id`;
 
 DROP TABLE IF EXISTS `stock_mass_expense` ;
