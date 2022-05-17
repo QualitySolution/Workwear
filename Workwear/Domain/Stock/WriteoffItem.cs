@@ -204,7 +204,7 @@ namespace workwear.Domain.Stock
 				WearGrowth = issueOperation.WearGrowth,
 				WearPercent = issueOperation.CalculatePercentWear(document.Date)
 			};
-			this.nomenclature = issueOperation.Nomenclature ?? throw new ArgumentException("Списывать можно только номенклатуру");
+			this.nomenclature = issueOperation.Nomenclature;
 			this.size = issueOperation.Size;
 			this.wearGrowth = issueOperation.WearGrowth;
 			this.amount = amount;

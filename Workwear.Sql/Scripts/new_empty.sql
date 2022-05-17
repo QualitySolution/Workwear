@@ -827,7 +827,7 @@ DEFAULT CHARACTER SET = utf8;
 CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `stock_write_off_id` INT UNSIGNED NOT NULL,
-  `nomenclature_id` INT UNSIGNED NOT NULL,
+  `nomenclature_id` INT UNSIGNED NULL DEFAULT NULL,
   `quantity` INT UNSIGNED NOT NULL,
   `employee_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `subdivision_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
@@ -1548,7 +1548,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.6');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.6.1');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;
