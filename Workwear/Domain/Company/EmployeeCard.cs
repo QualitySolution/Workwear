@@ -132,6 +132,13 @@ namespace workwear.Domain.Company
 			get => dismissDate;
 			set => SetField(ref dismissDate, value);
 		}
+		
+		DateTime? birthDate;
+		[Display (Name = "Дата рождения")]
+		public virtual DateTime? BirthDate {
+			get => birthDate;
+			set => SetField (ref birthDate, value);
+		}
 
 		private Sex sex;
 		[Display (Name = "Пол")]

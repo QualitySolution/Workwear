@@ -188,7 +188,7 @@ namespace workwear.Domain.Stock
 				Height = issueOperation.Height,
 				WearPercent = issueOperation.CalculatePercentWear(document.Date)
 			};
-			nomenclature = issueOperation.Nomenclature ?? throw new ArgumentException("Списывать можно только номенклатуру");
+			this.nomenclature = issueOperation.Nomenclature;
 			WearSize = issueOperation.WearSize;
 			Height = issueOperation.Height;
 			this.amount = amount;

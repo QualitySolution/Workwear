@@ -25,6 +25,7 @@ namespace workwear.HibernateMapping.Company
 			Map(x => x.HireDate).Column("hire_date");
 			Map(x => x.ChangeOfPositionDate).Column("change_of_position_date");
 			Map(x => x.DismissDate).Column("dismiss_date");
+			Map(x => x.BirthDate).Column("birth_date");
 			Map(x => x.Comment).Column("comment");
 
 			Map(x => x.PhoneNumber).Column("phone_number");

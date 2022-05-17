@@ -177,6 +177,7 @@ namespace workwear
 				.AddClearDependence<Expense>(x => x.WriteOffDoc);
 
 			DeleteConfig.AddHibernateDeleteInfo<WriteoffItem> ()
+				.AddRemoveFromDependence<Writeoff>(x => x.Items)//Необходимо иначе будут исключения при удалении строк выдачи которые создают списание. 
 				.AddDeleteCascadeDependence(x => x.EmployeeWriteoffOperation)
 				.AddDeleteCascadeDependence(x => x.SubdivisionWriteoffOperation)
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);

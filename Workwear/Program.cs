@@ -5,16 +5,13 @@ using NLog;
 using QS.DBScripts.Controllers;
 using QS.Dialog;
 using QS.ErrorReporting;
-using QS.Navigation;
-using QS.Project.DB;
-using QS.Project.Repositories;
 using QS.Project.Versioning;
 using QSProjectsLib;
 using QSTelemetry;
 
 namespace workwear
 {
-	partial class MainClass
+	static partial class MainClass
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
 		public static MainWindow MainWin;
@@ -22,26 +19,26 @@ namespace workwear
 		[STAThread]
 		public static void Main (string[] args)
 		{
+			UnhandledExceptionHandler unhandledExceptionHandler = new UnhandledExceptionHandler();
+			
 			try
 			{
 				WindowStartupFix.WindowsCheck();
 				Application.Init();
 				QSMain.GuiThread = System.Threading.Thread.CurrentThread;
-				#if DEBUG
-				var errorSettings = new ErrorReportingSettings(false, true, false, null);
-				#else
-				var errorSettings = new ErrorReportingSettings(true, false, true, 300);
-				#endif
-				UnhandledExceptionHandler.SubscribeToUnhadledExceptions(errorSettings);
 				GtkGuiDispatcher.GuiThread = System.Threading.Thread.CurrentThread;
-				UnhandledExceptionHandler.ApplicationInfo = new ApplicationVersionInfo();
-				//Настройка обычных обработчиков ошибок.
-				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlException1055OnlyFullGroupBy);
-				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.MySqlException1366IncorrectStringValue);
-				UnhandledExceptionHandler.CustomErrorHandlers.Add(CommonErrorHandlers.NHibernateFlushAfterException);
+				
+				var builder = new ContainerBuilder();
+				AutofacStartupConfig(builder);
+				startupContainer = builder.Build();
+				unhandledExceptionHandler.UpdateDependencies(startupContainer);
+				unhandledExceptionHandler.SubscribeToUnhandledExceptions();
+
+			} catch(MissingMethodException ex) when (ex.Message.Contains("System.String System.String.Format")) {
+				WindowStartupFix.DisplayWindowsOkMessage("Версия .Net Framework должна быть не ниже 4.6.1. Установите более новую платформу.", "Старая версия .Net");
+				return;
 			}
-			catch (Exception fallEx)
-			{
+			catch (Exception fallEx) {
 				if (WindowStartupFix.IsWindows)
 					WindowStartupFix.DisplayWindowsOkMessage(fallEx.ToString(), "Критическая ошибка");
 				else
@@ -51,17 +48,7 @@ namespace workwear
 				return;
 			}
 			
-			try {
-				AutofacClassConfig();
-			}catch(MissingMethodException ex) when (ex.Message.Contains("System.String System.String.Format"))
-			{
-				WindowStartupFix.DisplayWindowsOkMessage("Версия .Net Framework должна быть не ниже 4.6.1. Установите более новую платформу.", "Старая версия .Net");
-			}
-			ILifetimeScope scopeLoginTime = null;
-			scopeLoginTime = AppDIContainer.BeginLifetimeScope(builder => {
-				builder.RegisterType<GtkWindowsNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
-				builder.Register((ctx) => new AutofacViewModelsGtkPageFactory(scopeLoginTime)).As<IViewModelsPageFactory>();
-			});
+			ILifetimeScope scopeLoginTime = startupContainer.BeginLifetimeScope();
 			// Создаем окно входа
 			Login LoginDialog = new Login ();
 			LoginDialog.Logo = Gdk.Pixbuf.LoadFromResource ("workwear.icon.logo.png");
@@ -96,13 +83,10 @@ namespace workwear
 			//Прописываем системную валюту
 			CurrencyWorks.CurrencyShortFomat = "{0:C}";
 			CurrencyWorks.CurrencyShortName = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
-
-			//Настройка базы
-			CreateBaseConfig ();
-			UnhandledExceptionHandler.DataBaseInfo = new NhDataBaseInfo();
-			using(var uow = QS.DomainModel.UoW.UnitOfWorkFactory.CreateWithoutRoot()) {
-				UnhandledExceptionHandler.User = UserRepository.GetCurrentUser(uow);
-			}
+			
+			CreateBaseConfig (); //Настройка базы
+			AppDIContainer = startupContainer.BeginLifetimeScope(AutofacClassConfig); //Создаем постоянный контейнер
+			unhandledExceptionHandler.UpdateDependencies(AppDIContainer);
 
 			//Настройка удаления
 			Configure.ConfigureDeletion();
@@ -135,7 +119,8 @@ namespace workwear
 				MainTelemetry.SendTelemetry();
 			}
 			QSSaaS.Session.StopSessionRefresh ();
-			MainClass.AppDIContainer.Dispose();
+			AppDIContainer.Dispose();
+			startupContainer.Dispose();
 		}
 	}
 }

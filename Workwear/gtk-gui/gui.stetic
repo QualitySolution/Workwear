@@ -1597,10 +1597,42 @@
                 <child>
                   <widget class="Gtk.Table" id="table1">
                     <property name="MemberName" />
-                    <property name="NRows">9</property>
+                    <property name="NRows">10</property>
                     <property name="NColumns">4</property>
                     <property name="RowSpacing">6</property>
                     <property name="ColumnSpacing">6</property>
+                    <child>
+                      <placeholder />
+                    </child>
+                    <child>
+                      <placeholder />
+                    </child>
+                    <child>
+                      <widget class="QS.Widgets.GtkUI.DatePicker" id="dateBirth">
+                        <property name="MemberName" />
+                        <property name="Events">ButtonPressMask</property>
+                        <property name="WithTime">False</property>
+                        <property name="HideCalendarButton">False</property>
+                        <property name="Date">0</property>
+                        <property name="IsEditable">True</property>
+                        <property name="AutoSeparation">True</property>
+                      </widget>
+                      <packing>
+                        <property name="TopAttach">4</property>
+                        <property name="BottomAttach">5</property>
+                        <property name="LeftAttach">3</property>
+                        <property name="RightAttach">4</property>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
                     <child>
                       <widget class="QS.Widgets.GtkUI.DatePicker" id="dateChangePosition">
                         <property name="MemberName" />
@@ -1686,8 +1718,8 @@
                         <property name="Events">ButtonPressMask</property>
                       </widget>
                       <packing>
-                        <property name="TopAttach">5</property>
-                        <property name="BottomAttach">6</property>
+                        <property name="TopAttach">6</property>
+                        <property name="BottomAttach">7</property>
                         <property name="LeftAttach">3</property>
                         <property name="RightAttach">4</property>
                         <property name="AutoSize">False</property>
@@ -1702,6 +1734,27 @@
                     </child>
                     <child>
                       <widget class="QS.Views.Control.EntityEntry" id="entityLeader">
+                        <property name="MemberName" />
+                        <property name="Events">ButtonPressMask</property>
+                      </widget>
+                      <packing>
+                        <property name="TopAttach">8</property>
+                        <property name="BottomAttach">9</property>
+                        <property name="LeftAttach">3</property>
+                        <property name="RightAttach">4</property>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="QS.Views.Control.EntityEntry" id="entityPost">
                         <property name="MemberName" />
                         <property name="Events">ButtonPressMask</property>
                       </widget>
@@ -1722,34 +1775,13 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="QS.Views.Control.EntityEntry" id="entityPost">
-                        <property name="MemberName" />
-                        <property name="Events">ButtonPressMask</property>
-                      </widget>
-                      <packing>
-                        <property name="TopAttach">6</property>
-                        <property name="BottomAttach">7</property>
-                        <property name="LeftAttach">3</property>
-                        <property name="RightAttach">4</property>
-                        <property name="AutoSize">True</property>
-                        <property name="XOptions">Fill</property>
-                        <property name="YOptions">Fill</property>
-                        <property name="XExpand">False</property>
-                        <property name="XFill">True</property>
-                        <property name="XShrink">False</property>
-                        <property name="YExpand">False</property>
-                        <property name="YFill">True</property>
-                        <property name="YShrink">False</property>
-                      </packing>
-                    </child>
-                    <child>
                       <widget class="QS.Views.Control.EntityEntry" id="entitySubdivision">
                         <property name="MemberName" />
                         <property name="Events">ButtonPressMask</property>
                       </widget>
                       <packing>
-                        <property name="TopAttach">4</property>
-                        <property name="BottomAttach">5</property>
+                        <property name="TopAttach">5</property>
+                        <property name="BottomAttach">6</property>
                         <property name="LeftAttach">3</property>
                         <property name="RightAttach">4</property>
                         <property name="AutoSize">False</property>
@@ -1870,8 +1902,8 @@
                         </child>
                       </widget>
                       <packing>
-                        <property name="TopAttach">8</property>
-                        <property name="BottomAttach">9</property>
+                        <property name="TopAttach">9</property>
+                        <property name="BottomAttach">10</property>
                         <property name="LeftAttach">1</property>
                         <property name="RightAttach">4</property>
                         <property name="AutoSize">False</property>
@@ -2082,8 +2114,8 @@
                         <property name="LabelProp" translatable="yes">Должность:</property>
                       </widget>
                       <packing>
-                        <property name="TopAttach">6</property>
-                        <property name="BottomAttach">7</property>
+                        <property name="TopAttach">7</property>
+                        <property name="BottomAttach">8</property>
                         <property name="LeftAttach">2</property>
                         <property name="RightAttach">3</property>
                         <property name="AutoSize">True</property>
@@ -2104,8 +2136,8 @@
                         <property name="LabelProp" translatable="yes">Руководитель:</property>
                       </widget>
                       <packing>
-                        <property name="TopAttach">7</property>
-                        <property name="BottomAttach">8</property>
+                        <property name="TopAttach">8</property>
+                        <property name="BottomAttach">9</property>
                         <property name="LeftAttach">2</property>
                         <property name="RightAttach">3</property>
                         <property name="AutoSize">True</property>
@@ -2126,8 +2158,8 @@
                         <property name="LabelProp" translatable="yes">Подразделение:</property>
                       </widget>
                       <packing>
-                        <property name="TopAttach">4</property>
-                        <property name="BottomAttach">5</property>
+                        <property name="TopAttach">5</property>
+                        <property name="BottomAttach">6</property>
                         <property name="LeftAttach">2</property>
                         <property name="RightAttach">3</property>
                         <property name="AutoSize">True</property>
@@ -2148,8 +2180,8 @@
                         <property name="LabelProp" translatable="yes">Отдел:</property>
                       </widget>
                       <packing>
-                        <property name="TopAttach">5</property>
-                        <property name="BottomAttach">6</property>
+                        <property name="TopAttach">6</property>
+                        <property name="BottomAttach">7</property>
                         <property name="LeftAttach">2</property>
                         <property name="RightAttach">3</property>
                         <property name="AutoSize">True</property>
@@ -2231,8 +2263,8 @@
                         <property name="LabelProp" translatable="yes">Комментарий:</property>
                       </widget>
                       <packing>
-                        <property name="TopAttach">8</property>
-                        <property name="BottomAttach">9</property>
+                        <property name="TopAttach">9</property>
+                        <property name="BottomAttach">10</property>
                         <property name="AutoSize">True</property>
                         <property name="XOptions">Fill</property>
                         <property name="YOptions">Fill</property>
@@ -2336,6 +2368,28 @@
                       <packing>
                         <property name="TopAttach">3</property>
                         <property name="BottomAttach">4</property>
+                        <property name="LeftAttach">2</property>
+                        <property name="RightAttach">3</property>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Label" id="label7">
+                        <property name="MemberName" />
+                        <property name="Xalign">1</property>
+                        <property name="LabelProp" translatable="yes">Дата рождения:</property>
+                      </widget>
+                      <packing>
+                        <property name="TopAttach">4</property>
+                        <property name="BottomAttach">5</property>
                         <property name="LeftAttach">2</property>
                         <property name="RightAttach">3</property>
                         <property name="AutoSize">True</property>

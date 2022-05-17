@@ -35,6 +35,7 @@ namespace workwear.Models.Import
 				"ФИО",
 				"Ф.И.О.",
 				"Фамилия Имя Отчество",
+				"Сотрудник",
 				"Наименование"//Встречается при выгрузке из 1C
 				);
 			AddColumnName(DataTypeEmployee.CardKey,
@@ -77,6 +78,11 @@ namespace workwear.Models.Import
 			AddColumnName(DataTypeEmployee.DismissDate,
 				"Дата увольнения",
 				"Уволен"
+			);
+			AddColumnName(DataTypeEmployee.BirthDate,
+				"Дата рождения",
+				"День рождения",
+				"BirthDay"
 			);
 			AddColumnName(DataTypeEmployee.Subdivision,
 				"Подразделение"
@@ -198,14 +204,17 @@ namespace workwear.Models.Import
 					                !String.Equals(employee.FirstName, firstName, StringComparison.CurrentCultureIgnoreCase);
 					var patronymicDiff = !String.IsNullOrEmpty(patronymic) && 
 					                     !String.Equals(employee.Patronymic, patronymic, StringComparison.CurrentCultureIgnoreCase);
-					row.AddColumnChange(column, lastDiff || firstDiff || patronymicDiff ? 
-						rowChange : ChangeType.NotChanged);
+					string oldValue = (lastDiff || firstDiff || patronymicDiff) ? employee.FullName : null;
+					row.AddColumnChange(column, (lastDiff || firstDiff || patronymicDiff) ? rowChange : ChangeType.NotChanged, oldValue);
 					break;
 				case DataTypeEmployee.HireDate:
 					row.ChangedColumns.Add(column, CompareDate(employee.HireDate, row.CellDateTimeValue(column.Index), rowChange));
 					break;
 				case DataTypeEmployee.DismissDate:
 					row.ChangedColumns.Add(column, CompareDate(employee.DismissDate, row.CellDateTimeValue(column.Index), rowChange));
+					break;
+				case DataTypeEmployee.BirthDate:
+					row.ChangedColumns.Add(column, CompareDate(employee.BirthDate, row.CellDateTimeValue(column.Index), rowChange));
 					break;
 				case DataTypeEmployee.Subdivision:
 					if(String.Equals(employee.Subdivision?.Name, value, StringComparison.CurrentCultureIgnoreCase)) {
@@ -526,6 +535,11 @@ namespace workwear.Models.Import
 					var dismissDate = row.CellDateTimeValue(column.Index);
 					if(dismissDate != null)
 						employee.DismissDate = dismissDate;
+					break;
+				case DataTypeEmployee.BirthDate:
+					var birthDate = row.CellDateTimeValue(column.Index);
+					if(birthDate != null)
+						employee.BirthDate = birthDate;
 					break;
 
 				case DataTypeEmployee.Subdivision:

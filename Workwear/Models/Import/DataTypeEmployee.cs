@@ -24,6 +24,8 @@ namespace workwear.Models.Import
 		HireDate,
 		[Display(Name = "Дата увольнения")]
 		DismissDate,
+		[Display(Name = "Дата рождения")]
+		BirthDate,
 		[Display(Name = "Подразделение")]
 		Subdivision,
 		[Display(Name = "Отдел")]
