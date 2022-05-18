@@ -228,10 +228,7 @@ namespace workwear.Domain.Stock
 			var itemsBalance = EmployeeRepository.ItemsBalance(uow, Employee, Date);
 			foreach(var item in Items) {
 				item.IsWriteOff = item.EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff != null;
-				item.IsEnableWriteOff = itemsBalance.Where(x => x.ProtectionToolsId == item.ProtectionTools?.Id).Any(x => x.NomenclatureId != null);
-				if(item.IsEnableWriteOff)
-					item.IsEnableWriteOff = item.IsWriteOff || 
-				                        itemsBalance.Where(x => x.ProtectionToolsId == item.ProtectionTools?.Id).Sum(x => x.Amount) > 0;
+				item.IsEnableWriteOff = itemsBalance.Where(x => x.ProtectionToolsId == item.ProtectionTools?.Id).Sum(x => x.Amount) > 0;
 				if(WriteOffDoc != null) {
 					var relatedWriteoffItem = WriteOffDoc.Items
 					.FirstOrDefault(x => item.EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff.IsSame(x.EmployeeWriteoffOperation));
