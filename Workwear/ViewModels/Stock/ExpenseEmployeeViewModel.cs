@@ -162,12 +162,6 @@ namespace workwear.ViewModels.Stock
 			return true;
 		}
 
-		private void IssuanceSheetOpen()
-		{
-			Save();
-			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
-		}
-
 		public void OpenIssuenceSheet()
 		{
 			if(UoW.HasChanges) {
