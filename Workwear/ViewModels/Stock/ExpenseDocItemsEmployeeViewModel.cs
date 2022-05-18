@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using Gtk;
 using QS.DomainModel.UoW;
@@ -36,6 +37,7 @@ namespace workwear.ViewModels.Stock
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
+			Entity.PropertyChanged += EntityOnPropertyChanged;
 			Entity.FillCanWriteoffInfo(UoW);
 		}
 
@@ -163,6 +165,7 @@ namespace workwear.ViewModels.Stock
 			);
 		}
 
+		#region События
 		void ExpenceDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
 			CalculateTotal();
@@ -175,5 +178,11 @@ namespace workwear.ViewModels.Stock
 			}
 		}
 
+		private void EntityOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(Entity.Date))
+				Entity.FillCanWriteoffInfo(UoW);
+		}
+		#endregion
 	}
 }
