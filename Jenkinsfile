@@ -30,7 +30,6 @@ node {
    	    sh 'nuget restore Workwear/Workwear.sln'
         sh 'rm -f Workwear/WinInstall/workwear-*.exe'
         sh 'Workwear/WinInstall/makeWinInstall.sh'
-        recordIssues enabledForFailure: true, tool: msBuild()
         archiveArtifacts artifacts: 'Workwear/WinInstall/workwear-*.exe', onlyIfSuccessful: true
    }
    stage('Test'){
