@@ -151,6 +151,9 @@ namespace workwear
 			#region Временные будут переопределены
 			containerBuilder.RegisterType<GtkWindowsNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
 			containerBuilder.Register((ctx) => new AutofacViewModelsGtkPageFactory(startupContainer)).As<IViewModelsPageFactory>();
+			containerBuilder.Register(cc => new ClassNamesBaseGtkViewResolver(
+				typeof(UpdateProcessView)
+			)).As<IGtkViewResolver>();
 			#endregion
 		}
 		
