@@ -48,9 +48,7 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 			get => startDateIssue;
 			set => SetField(ref startDateIssue, value);
 		}
-
-
-
+		
 		private DateTime endDateIssue;
 		public DateTime EndDateIssue {
 			get => endDateIssue;
@@ -61,17 +59,42 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 		[PropertyChangedAlso(nameof(PeriodSensitive))]
 		public bool ContainsPeriod {
 			get => containsPeriod;
-			set => SetField(ref containsPeriod, value);
+			set {
+				if (value) ContainsDateBirthPeriod = false;
+				SetField(ref containsPeriod, value);
+			}
 		}
 
 		public bool PeriodSensitive => ContainsPeriod;
+		public bool SensitiveDateBirth => ContainsDateBirthPeriod;
+		
+		private bool containsDateBirthPeriod;
+		[PropertyChangedAlso(nameof(SensitiveDateBirth))]
+		public bool ContainsDateBirthPeriod {
+			get => containsDateBirthPeriod;
+			set {
+				if (value) ContainsPeriod = false;
+				SetField(ref containsDateBirthPeriod, value);
+			}
+		}
+
+		private DateTime startDateBirth;
+		public DateTime StartDateBirth {
+			get => startDateBirth;
+			set => SetField(ref startDateBirth, value);
+		}
+		
+		private DateTime endDateBirth;
+		public DateTime EndDateBirth {
+			get => endDateBirth;
+			set => SetField(ref endDateBirth, value);
+		}
 
 		#endregion
 
 		#region EntityModels
 
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
-
 		#endregion
 
 		public EmployeeNotificationFilterViewModel(JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, IUnitOfWorkFactory unitOfWorkFactory = null) : base(journal, unitOfWorkFactory)
@@ -81,8 +104,8 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 			SubdivisionEntry = builder.ForProperty(x => x.Subdivision)
 				.MakeByType()
 				.Finish();
-			startDateIssue = DateTime.Today;
-			endDateIssue = startDateIssue.AddDays(14);
+			startDateIssue = startDateBirth = DateTime.Today;
+			endDateIssue = endDateBirth = startDateIssue.AddDays(14);
 		}
 	}
 	public enum AskIssueType
