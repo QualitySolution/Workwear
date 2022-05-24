@@ -32,7 +32,6 @@ namespace workwear
 		public IncomeDocDlg()
 		{
 			this.Build();
-			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Income> ();
 			featuresService = AutofacScope.Resolve<FeaturesService>();
 			Entity.Date = DateTime.Today;
@@ -60,7 +59,6 @@ namespace workwear
 		public IncomeDocDlg (int id)
 		{
 			this.Build ();
-			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Income> (id);
 			featuresService = AutofacScope.Resolve<FeaturesService>();
 			ConfigureDlg ();
