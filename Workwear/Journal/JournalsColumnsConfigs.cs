@@ -33,6 +33,7 @@ namespace workwear.Journal
 					.AddColumn("К выдаче").AddTextRenderer(n => n.IssueCount.ToString())
 					.AddColumn("Должность").AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
+					.AddColumn("День рождения").AddTextRenderer(node => node.BirthDate != null ? node.BirthDate.Value.ToShortDateString() : null)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.StatusColor)
 					.Finish()
 			);

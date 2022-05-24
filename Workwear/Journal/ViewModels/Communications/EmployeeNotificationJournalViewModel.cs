@@ -4,7 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
+using Gtk;
 using NHibernate;
+using NHibernate.Criterion;
+using NHibernate.Dialect.Function;
 using NHibernate.Transform;
 using NHibernate.Util;
 using QS.Cloud.WearLk.Client;
@@ -109,6 +112,18 @@ namespace workwear.Journal.ViewModels.Communications
 			
 				if(Filter.ContainsPeriod)
 					employees = employees.Where(() => itemAlias.NextIssue >= startTime && itemAlias.NextIssue <= Filter.EndDateIssue);
+				
+				if(Filter.ContainsDateBirthPeriod) {
+					var projection = Projections.SqlFunction(
+						new SQLFunctionTemplate(NHibernateUtil.DateTime, 
+							"(DATE_FORMAT(?1,'%m%d%h%i') between DATE_FORMAT(?2,'%m%d%h%i') and DATE_FORMAT(?3,'%m%d%h%i'))"),
+						NHibernateUtil.DateTime,
+						Projections.Property(() => employeeAlias.BirthDate),
+						Projections.Constant(Filter.StartDateBirth),
+						Projections.Constant(Filter.EndDateBirth)
+					);
+					employees.Where(x => x.BirthDate != null).And(Restrictions.Eq(projection, true));
+				}
 
 			switch(Filter.IsueType) {
 				case (AskIssueType.Personal):
@@ -152,6 +167,7 @@ namespace workwear.Journal.ViewModels.Communications
 					.SelectCount(() => itemAlias.Id).WithAlias(() => resultAlias.IssueCount)
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
 					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
+					.Select(x => x.BirthDate).WithAlias(() => resultAlias.BirthDate)
 					)
 				.OrderBy(() => employeeAlias.LastName).Asc
 				.ThenBy(() => employeeAlias.FirstName).Asc
@@ -213,6 +229,15 @@ namespace workwear.Journal.ViewModels.Communications
 			);
 
 			NodeActionsList.Add(showHistoryNotificationAction);
+
+			var copyNumbers = new JournalAction("Скопировать номера выделенных сотрудников",
+				(selected) => selected
+					.Cast<EmployeeNotificationJournalNode>()
+					.Any(x => !String.IsNullOrEmpty(x.Phone)),
+				(selected) => true,
+				(selected) => CopyNumbers(selected)
+			);
+			NodeActionsList.Add(copyNumbers);
 		}
 
 		public readonly HashSet<int> SelectedList = new HashSet<int>();
@@ -258,6 +283,15 @@ namespace workwear.Journal.ViewModels.Communications
 				node.Selected = node.CanSelect && setValue;
 			Refresh();
 		}
+		
+		public void CopyNumbers(object[] nodes) {
+			var clipboard = Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", false));
+			var numbers = nodes.Cast<EmployeeNotificationJournalNode>()
+				.Select(x => x.Phone).ToArray();
+			var numbersText = String.Join("\n", numbers);
+			clipboard.Text = numbersText;
+			clipboard.Store();
+		}
 		#endregion
 	}
 
@@ -299,6 +333,7 @@ namespace workwear.Journal.ViewModels.Communications
 		public bool Dismiss { get { return DismissDate.HasValue; } }
 
 		public DateTime? DismissDate { get; set; }
+		public DateTime? BirthDate { get; set; }
 
 		public string Title => PersonHelper.PersonNameWithInitials(LastName, FirstName, Patronymic);
 
