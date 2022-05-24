@@ -485,7 +485,7 @@ namespace workwear.ViewModels.Company
 			if(e.PropertyName == nameof(Entity.Subdivision) && lastSubdivision != null && interactive.Question("Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?")) {
 				Entity.ChangeOfPositionDate = DateTime.Today;
 			}
-			if(e.PropertyName == nameof(Entity.Post) && Entity.UsedNorms.Count == 0 && interactive.Question("Установить норму по должности?")) {
+			if(e.PropertyName == nameof(Entity.Post) && Entity.Post != null && Entity.UsedNorms.Count == 0 && interactive.Question("Установить норму по должности?")) {
 				Entity.NormFromPost(UoW, NormRepository);
 			}
 		}
