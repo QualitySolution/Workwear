@@ -4,7 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
+using Gtk;
 using NHibernate;
+using NHibernate.Criterion;
+using NHibernate.Dialect.Function;
 using NHibernate.Transform;
 using QS.Cloud.WearLk.Client;
 using QS.Cloud.WearLk.Manage;
@@ -105,9 +108,36 @@ namespace workwear.Journal.ViewModels.Communications
 
 			employees
 				.JoinAlias(() => employeeAlias.WorkwearItems, () => itemAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin);
-			
-				if(Filter.ContainsPeriod)
-					employees = employees.Where(() => itemAlias.NextIssue >= startTime && itemAlias.NextIssue <= Filter.EndDateIssue);
+			if(Filter.ContainsPeriod)
+				employees = employees.Where(() => itemAlias.NextIssue >= startTime && itemAlias.NextIssue <= Filter.EndDateIssue);
+
+			if(Filter.ContainsDateBirthPeriod)
+				if (Filter.StartDateBirth.Month <= Filter.EndDateBirth.Month) {
+					var projection = Projections.SqlFunction(
+						new SQLFunctionTemplate(NHibernateUtil.DateTime,
+							"(DATE_FORMAT(?1,'%m%d%h%i') between DATE_FORMAT(?2,'%m%d%h%i') and DATE_FORMAT(?3,'%m%d%h%i'))"),
+						NHibernateUtil.DateTime,
+						Projections.Property(() => employeeAlias.BirthDate),
+						Projections.Constant(Filter.StartDateBirth),
+						Projections.Constant(Filter.EndDateBirth)
+					);
+					employees.Where(x => x.BirthDate != null).And(Restrictions.Eq(projection, true));
+				}
+				else {
+					//когда в период попадает переход между годами
+					var projection = Projections.SqlFunction(
+						new SQLFunctionTemplate(NHibernateUtil.DateTime,
+							"(DATE_FORMAT(?1,'%m%d%h%i') between DATE_FORMAT(?2,'%m%d%h%i') and DATE_FORMAT(?4,'%m%d%h%i') " +
+							"OR DATE_FORMAT(?1,'%m%d%h%i') between DATE_FORMAT(?5,'%m%d%h%i') and DATE_FORMAT(?3,'%m%d%h%i'))"),
+						NHibernateUtil.DateTime,
+						Projections.Property(() => employeeAlias.BirthDate),
+						Projections.Constant(Filter.StartDateBirth),
+						Projections.Constant(Filter.EndDateBirth),
+						Projections.Constant(new DateTime(1, 12, 31)),
+						Projections.Constant(new DateTime(1, 1, 1))
+					);
+					employees.Where(x => x.BirthDate != null).And(Restrictions.Eq(projection, true));
+				}
 
 			switch(Filter.IsueType) {
 				case (AskIssueType.Personal):
@@ -124,7 +154,7 @@ namespace workwear.Journal.ViewModels.Communications
 					break;
 			}
 
-			return employees
+			employees
 				.Where(GetSearchCriterion(
 					() => employeeAlias.Id,
 					() => employeeAlias.CardNumber,
@@ -135,10 +165,10 @@ namespace workwear.Journal.ViewModels.Communications
 					() => employeeAlias.PhoneNumber,
 					() => postAlias.Name,
 					() => subdivisionAlias.Name
- 					))
+				))
 				.JoinAlias(() => employeeAlias.Post, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => employeeAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.SelectList((list) => list
+				.SelectList(list => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.CardNumber).WithAlias(() => resultAlias.CardNumber)
 					.Select(x => x.PersonnelNumber).WithAlias(() => resultAlias.PersonnelNumber)
@@ -151,11 +181,27 @@ namespace workwear.Journal.ViewModels.Communications
 					.SelectCount(() => itemAlias.Id).WithAlias(() => resultAlias.IssueCount)
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
 					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
-					)
-				.OrderBy(() => employeeAlias.LastName).Asc
-				.ThenBy(() => employeeAlias.FirstName).Asc
-				.ThenBy(() => employeeAlias.Patronymic).Asc
-				.TransformUsing(Transformers.AliasToBean<EmployeeNotificationJournalNode>());
+					.Select(x => x.BirthDate).WithAlias(() => resultAlias.BirthDate)
+				);
+			if (Filter.ContainsDateBirthPeriod) {
+				if (Filter.StartDateBirth.Month <= Filter.EndDateBirth.Month)
+					employees = employees
+						.OrderBy(() => employeeAlias.BirthDate.Value.Month).Asc;
+				else
+					employees = employees
+						.OrderBy(() => employeeAlias.BirthDate.Value.Month).Desc;
+				employees = employees
+					.ThenBy(() => employeeAlias.BirthDate.Value.Day).Asc
+					.ThenBy(() => employeeAlias.LastName).Asc
+					.ThenBy(() => employeeAlias.FirstName).Asc
+					.ThenBy(() => employeeAlias.Patronymic).Asc;
+			}
+			else
+				employees = employees.OrderBy(() => employeeAlias.LastName).Asc
+					.ThenBy(() => employeeAlias.FirstName).Asc
+					.ThenBy(() => employeeAlias.Patronymic).Asc;
+
+			return employees.TransformUsing(Transformers.AliasToBean<EmployeeNotificationJournalNode>());
 		}
 
 		#region Действия
@@ -212,6 +258,15 @@ namespace workwear.Journal.ViewModels.Communications
 			);
 
 			NodeActionsList.Add(showHistoryNotificationAction);
+
+			var copyNumbers = new JournalAction("Скопировать телефоны",
+				(selected) => selected
+					.Cast<EmployeeNotificationJournalNode>()
+					.Any(x => !String.IsNullOrEmpty(x.Phone)),
+				(selected) => true,
+				(selected) => CopyNumbers(selected)
+			);
+			NodeActionsList.Add(copyNumbers);
 		}
 
 		public readonly HashSet<int> SelectedList = new HashSet<int>();
@@ -257,6 +312,15 @@ namespace workwear.Journal.ViewModels.Communications
 				node.Selected = node.CanSelect && setValue;
 			Refresh();
 		}
+		
+		public void CopyNumbers(object[] nodes) {
+			var clipboard = Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", false));
+			var numbers = nodes.Cast<EmployeeNotificationJournalNode>()
+				.Select(x => x.Phone).ToArray();
+			var numbersText = String.Join("\n", numbers);
+			clipboard.Text = numbersText;
+			clipboard.Store();
+		}
 		#endregion
 	}
 
@@ -298,6 +362,7 @@ namespace workwear.Journal.ViewModels.Communications
 		public bool Dismiss { get { return DismissDate.HasValue; } }
 
 		public DateTime? DismissDate { get; set; }
+		public DateTime? BirthDate { get; set; }
 
 		public string Title => PersonHelper.PersonNameWithInitials(LastName, FirstName, Patronymic);
 

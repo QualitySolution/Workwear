@@ -1,4 +1,5 @@
-﻿using QS.Views;
+﻿using System;
+using QS.Views;
 using workwear.Journal.Filter.ViewModels.Communications;
 
 namespace workwear.Journal.Filter.Views.Communications
@@ -24,7 +25,17 @@ namespace workwear.Journal.Filter.Views.Communications
 				.AddBinding(v => v.EndDateIssue, w => w.EndDateOrNull)
 				.AddBinding(vm => vm.PeriodSensitive, v => v.Sensitive)
 				.InitializeFromSource();
-			ycheckOffPeriod.Binding.AddBinding(ViewModel, vm => vm.ContainsPeriod, v => v.Active).InitializeFromSource();
+			ycheckOffPeriod.Binding
+				.AddBinding(ViewModel, vm => vm.ContainsPeriod, v => v.Active)
+				.InitializeFromSource();
+			ycheckBirthday.Binding
+				.AddBinding(ViewModel, vm => vm.ContainsDateBirthPeriod, w=> w.Active)
+				.InitializeFromSource();
+			datePeriodBirth.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.StartDateBirth, w => w.StartDateOrNull)
+				.AddBinding(v => v.EndDateBirth, w => w.EndDateOrNull)
+				.AddBinding(vm => vm.SensitiveDateBirth, v => v.Sensitive)
+				.InitializeFromSource();
 		}
 	}
 }
