@@ -260,7 +260,7 @@ namespace workwear.Journal.ViewModels.Communications
 
 			NodeActionsList.Add(showHistoryNotificationAction);
 
-			var copyNumbers = new JournalAction("Скопировать номера выделенных сотрудников",
+			var copyNumbers = new JournalAction("Скопировать телефоны",
 				(selected) => selected
 					.Cast<EmployeeNotificationJournalNode>()
 					.Any(x => !String.IsNullOrEmpty(x.Phone)),
