@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -137,6 +137,9 @@ namespace workwear.ViewModels.Statements
 
 		public void SetEmployee(IssuanceSheetItem[] items)
 		{
+			if(items == null || items.Length == 0)
+				return;
+			 
 			var selectPage = NavigationManager.OpenViewModel<EmployeeJournalViewModel>(
 				this,
 				OpenPageOptions.AsSlave);
@@ -149,8 +152,8 @@ namespace workwear.ViewModels.Statements
 
 		void SelectDialog_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			var items = (sender as EmployeeJournalViewModel).Tag as IssuanceSheetItem[];
-			var employee = UoW.GetById<EmployeeCard>(DomainHelper.GetId(e.SelectedObjects.First()));
+			var items = (IssuanceSheetItem[])((EmployeeJournalViewModel)sender).Tag;
+			var employee = UoW.GetById<EmployeeCard>(e.SelectedObjects.First().GetId());
 			foreach(var item in items) {
 				item.Employee = employee;
 			}
