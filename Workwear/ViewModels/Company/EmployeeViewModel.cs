@@ -261,7 +261,7 @@ namespace workwear.ViewModels.Company
 				lkUserManagerService.SetPassword(Entity.PhoneNumber, LkPassword);
 				Entity.LkRegistered = true;
 				return true;
-			} catch (RpcException e) when(e.Status.StatusCode == StatusCode.InvalidArgument || e.Status.StatusCode == StatusCode.AlreadyExists)
+			} catch (RpcException e) when(e.Status.StatusCode == StatusCode.InvalidArgument || e.Status.StatusCode == StatusCode.AlreadyExists || e.Status.StatusCode == StatusCode.ResourceExhausted)
 			{
 				interactive.ShowMessage(ImportanceLevel.Error, e.Status.Detail);
 				return false;
