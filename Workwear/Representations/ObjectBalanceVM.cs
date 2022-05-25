@@ -19,14 +19,10 @@ namespace workwear.ViewModel
 		private Subdivision subdivision;
 
 		private Subdivision Subdivision {
-			get => Filter != null ? Filter.RestrictObject : subdivision;
+			get => subdivision;
 			set => subdivision = value;
 		}
-
-		public ObjectBalanceFilter Filter {
-			get => RepresentationFilter as ObjectBalanceFilter;
-			set => RepresentationFilter = value;
-		}
+		
 		#region IRepresentationModel implementation
 		public override void UpdateNodes () {
 			if(Subdivision == null) {
@@ -84,9 +80,6 @@ namespace workwear.ViewModel
 		#region implemented abstract members of RepresentationModelEntityBase
 		protected override bool NeedUpdateFunc (object updatedSubject) => true;
 		#endregion
-		public ObjectBalanceVM (ObjectBalanceFilter filter) : this(filter.UoW) => 
-			Filter = filter;
-
 		public ObjectBalanceVM (Subdivision facility) : 
 			this(UnitOfWorkFactory.CreateWithoutRoot ()) => Subdivision = facility;
 

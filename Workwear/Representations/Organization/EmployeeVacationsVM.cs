@@ -15,25 +15,8 @@ namespace workwear.Representations.Organization
 		EmployeeCard employee;
 
 		public EmployeeCard Employee {
-			get {
-				if(Filter != null)
-					return Filter.RestrictEmployee;
-				else
-					return employee;
-			}
-			set {
-				employee = value;
-			}
-		}
-
-		//Нигде не используется можно заменить на другой.
-		public EmployeeBalanceFilter Filter {
-			get {
-				return RepresentationFilter as EmployeeBalanceFilter;
-			}
-			set {
-				RepresentationFilter = value as IRepresentationFilter;
-			}
+			get => employee;
+			set => employee = value;
 		}
 
 		#region IRepresentationModel implementation
