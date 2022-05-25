@@ -53,8 +53,11 @@ namespace workwear.Views.Stock
 		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
 		{
 			if(args.Event.Button == 3) {
+				var selected = table.GetSelectedObjects<TransferItem>().FirstOrDefault();
+				if(selected == null)
+					return;
+				
 				var menu = new Menu();
-				var selected = table.GetSelectedObjects<TransferItem>().First();
 				var item = new MenuItemId<TransferItem>("Открыть номенклатуру");
 				item.ID = selected;
 				item.Sensitive = selected.Nomenclature != null;
