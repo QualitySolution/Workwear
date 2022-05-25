@@ -175,8 +175,6 @@
     <Compile Include="Domain\Stock\WriteoffItem.cs" />
     <Compile Include="HibernateMapping\Stock\WriteoffMap.cs" />
     <Compile Include="HibernateMapping\Stock\WriteoffItemMap.cs" />
-    <Compile Include="JournalFilters\EmployeeBalanceFilter.cs" />
-    <Compile Include="gtk-gui\workwear.EmployeeBalanceFilter.cs" />
     <Compile Include="ConfigureDeletion.cs" />
     <Compile Include="Representations\ObjectBalanceVM.cs" />
     <Compile Include="JournalFilters\ObjectBalanceFilter.cs" />
