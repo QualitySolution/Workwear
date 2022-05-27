@@ -20,7 +20,7 @@ node {
       checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'Gtk.DataBindings']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/Gtk.DataBindings.git']]]
    }
    stage('My-FyiReporting') {
-      checkout changelog: false, scm: [$class: 'GitSCM', branches: [[name: '*/QSBuild']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'My-FyiReporting']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/My-FyiReporting.git']]]
+      checkout changelog: false, scm: [$class: 'GitSCM', branches: [[name: '*/release/1.7']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'My-FyiReporting']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/My-FyiReporting.git']]]
       sh 'nuget restore My-FyiReporting/MajorsilenceReporting-Linux-GtkViewer.sln'
    }
    stage('RusGuard') {
@@ -37,8 +37,8 @@ node {
             def PACKAGES_LOCATION = "${JENKINS_HOME}/.nuget/packages"
             sh """
                 cd Workwear/WorkwearTest/bin/ReleaseWin
-                cp -r ${PACKAGES_LOCATION}/nunit.consolerunner/3.12.0/tools/* .
-                mono nunit3-console.exe WorkwearTest.dll
+                cp -r ${PACKAGES_LOCATION}/nunit.consolerunner/3.15.0/tools/* .
+                mono nunit3-console.exe WorkwearTest.dll --framework=mono-4.0
             """
        } catch (e) {}
        finally{
