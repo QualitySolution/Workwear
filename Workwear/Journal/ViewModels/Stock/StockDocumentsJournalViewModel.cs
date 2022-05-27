@@ -67,7 +67,7 @@ namespace workwear.Journal.ViewModels.Stock
 			CreateDocumentsActions();
 
 			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), 
-				typeof(Income), typeof(Writeoff), typeof(Transfer));
+				typeof(Income), typeof(Writeoff), typeof(Transfer), typeof(Completion));
 		}
 
 		#region Опциональные зависимости

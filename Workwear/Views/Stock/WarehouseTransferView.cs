@@ -49,17 +49,22 @@ namespace workwear.Views.Stock
 			buttonAddItem.Sensitive = ViewModel.CanAddItem;
 		}
 		#region PopupMenu
-		private void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
-			if (args.Event.Button != 3) return;
-			var menu = new Menu();
-			var selected = table.GetSelectedObjects<TransferItem>().First();
-			var item = new MenuItemId<TransferItem>("Открыть номенклатуру");
-			item.ID = selected;
-			item.Sensitive = selected.Nomenclature != null;
-			item.Activated += Item_Activated;
-			menu.Add(item);
-			menu.ShowAll();
-			menu.Popup();
+		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
+		{
+			if(args.Event.Button == 3) {
+				var selected = table.GetSelectedObjects<TransferItem>().FirstOrDefault();
+				if(selected == null)
+					return;
+				
+				var menu = new Menu();
+				var item = new MenuItemId<TransferItem>("Открыть номенклатуру");
+				item.ID = selected;
+				item.Sensitive = selected.Nomenclature != null;
+				item.Activated += Item_Activated;
+				menu.Add(item);
+				menu.ShowAll();
+				menu.Popup();
+			}
 		}
 		private void Item_Activated(object sender, EventArgs e) {
 			var item = (sender as MenuItemId<TransferItem>)?.ID;

@@ -17,8 +17,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="NHibernate" Version="5.3.11" />
-      <PackageReference Include="NLog" Version="4.7.14" />
+      <PackageReference Include="NHibernate" Version="5.3.12" />
       <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     </ItemGroup>
 
