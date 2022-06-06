@@ -30,6 +30,9 @@ namespace Workwear.Test.Sql
 				List<DbSample> samples = configuration.GetSection("Samples").Get<List<DbSample>>();
 				foreach (var server in servers) {
 					foreach (var dbSample in samples) {
+						if(!String.IsNullOrEmpty(dbSample.ForServerGroup) && !dbSample.ForServerGroup.Equals(server.Group))
+							continue;
+							
 						yield return new object[] { server, dbSample };
 					}
 				}

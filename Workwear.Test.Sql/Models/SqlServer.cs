@@ -12,6 +12,7 @@ namespace QS.DBScripts.Models
 		public string Password { get; set; }
 		public string CommandStart { get; set; }
 		public string CommandStop { get; set; }
+		public string Group { get; set; }
 		
 		public string AddressAndPort => $"{Address}:{Port}";
 		
@@ -51,5 +52,7 @@ namespace QS.DBScripts.Models
 
 			return false;
 		}
+
+		public override string ToString() => Name;
 	}
 }
