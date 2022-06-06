@@ -21,16 +21,23 @@ namespace Workwear.Test.Sql
 		private int showDiffLinesBefore = 30;
 		private int showDiffLinesAfter = 5;
 		
-		public static IEnumerable<DbSample> DbSamples {
+		private SqlServer RunningServer { get; set; }
+		
+		public static IEnumerable<object[]> DbSamples {
 			get {
 				var configuration = TestsConfiguration.Configuration;
+				List<SqlServer> servers = configuration.GetSection("SQLServers").Get<List<SqlServer>>();
 				List<DbSample> samples = configuration.GetSection("Samples").Get<List<DbSample>>();
-				return samples;
+				foreach (var server in servers) {
+					foreach (var dbSample in samples) {
+						yield return new object[] { server, dbSample };
+					}
+				}
 			}
 		}
 
 		[TestCaseSource(nameof(DbSamples))]
-		public void ApplyUpdatesTest(DbSample sample)
+		public void ApplyUpdatesTest(SqlServer server, DbSample sample)
 		{
 			var updateConfiguration = ScriptsConfiguration.MakeUpdateConfiguration();
 			//Проверяем нужно ли обновлять 
@@ -38,20 +45,11 @@ namespace Workwear.Test.Sql
 				Assert.Ignore($"Образец базы {sample} версии пропущен. Так как версию базы {sample.Version} невозможно обновить.");
 			
 			//Создаем чистую базу
-			var configuration = TestsConfiguration.Configuration;
-			var server = configuration.GetSection("SQLServer");
-			var creator = new TestingCreateDbController(
-				server.GetValue<string>("Address"),
-				server.GetValue<string>("Login"),
-				server.GetValue<string>("Password")
-			);
+			var creator = new TestingCreateDbController(server);
 			var success = creator.StartCreation(sample);
 			Assert.That(success, Is.True);
 			//Выполняем обновление
-			var builder = new MySqlConnectionStringBuilder();
-			builder.Server = server.GetValue<string>("Address");
-			builder.UserID = server.GetValue<string>("Login");
-			builder.Password = server.GetValue<string>("Password");
+			var builder = server.ConnectionStringBuilder;
 			builder.Database = sample.DbName;
 			var connectionstring = builder.GetConnectionString(true);
 			using (var connection = new MySqlConnection(connectionstring))
@@ -94,22 +92,45 @@ namespace Workwear.Test.Sql
 			command.ExecuteNonQuery();
 		}
 
+		public static IEnumerable<SqlServer> SqlServers {
+			get {
+				var configuration = TestsConfiguration.Configuration;
+				return configuration.GetSection("SQLServers").Get<List<SqlServer>>();
+			}
+		}
+		
 		[Test(Description = "Проверяем что можно создать базу из текущего скрипта создания.")]
+		[TestCaseSource(nameof(SqlServers))]
 		[Order(1)] //Тесты с указанным порядком выполняются раннее других. Нужно для сравнения обновленных баз с чистой установкой.
-		public void CreateCurrentNewBaseTest()
+		public void CreateCurrentNewBaseTest(SqlServer server)
 		{
+			StartSqlServer(server);
 			//Создаем чистую базу
-			var configuration = TestsConfiguration.Configuration;
-			var server = configuration.GetSection("SQLServer");
-			var creator = new TestingCreateDbController(
-				server.GetValue<string>("Address"),
-				server.GetValue<string>("Login"),
-				server.GetValue<string>("Password")
-			);
+			var creator = new TestingCreateDbController(server);
 			var success = creator.StartCreation(ScriptsConfiguration.MakeCreationScript(), currentDdName);
 			Assert.That(success, Is.True);
 		}
 
+		#region SQL Servers
+
+		void StartSqlServer(SqlServer server) 
+		{
+			if(server.Equals(RunningServer))
+				return;
+			if(RunningServer != null)
+				RunningServer.Stop();
+			server.Start();
+			RunningServer = server;
+		}
+
+		[OneTimeTearDown]
+		public void StopSqlServer()
+		{
+			if(RunningServer != null)
+				RunningServer.Stop();
+		}
+		
+		#endregion
 		#region Compare DB
 		private void ComparisonSchema(MySqlConnection connection, string db1, string db2) {
 			TestContext.Progress.WriteLine($"Сравниваем схемы базы {db1} и {db2}.");

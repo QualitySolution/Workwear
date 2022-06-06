@@ -7,16 +7,12 @@ namespace QS.DBScripts.Controllers
 {
 	public class TestingCreateDbController : IDbCreateController
 	{
-		private readonly string server;
-		private readonly string login;
-		private readonly string password;
+		private readonly SqlServer server;
 		static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-		public TestingCreateDbController(string server, string login, string password)
+		public TestingCreateDbController(SqlServer server)
 		{
 			this.server = server;
-			this.login = login;
-			this.password = password;
 			Progress = NSubstitute.Substitute.For<IProgressBarDisplayable>();
 		}
 
@@ -24,13 +20,13 @@ namespace QS.DBScripts.Controllers
 		{
 			var creationScript = new CreationScript(TestsConfiguration.MakeSQLScriptPath(sample.SqlFile), sample.TypedVersion);
 			var createModel = new MySqlDbCreateModel(this, creationScript);
-			return createModel.RunCreation(server, sample.DbName, login, password);
+			return createModel.RunCreation(server.AddressAndPort, sample.DbName, server.Login, server.Password);
 		}
 		
 		public bool StartCreation(CreationScript script, string dbname)
 		{
 			var createModel = new MySqlDbCreateModel(this, script);
-			return createModel.RunCreation(server, dbname, login, password);
+			return createModel.RunCreation(server.AddressAndPort, dbname, server.Login, server.Password);
 		}
 
 		#region Взаимодействие с моделью
