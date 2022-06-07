@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -35,6 +35,9 @@ namespace workwear.ViewModels.Operations
 			}
 			if(!Entity.OverrideBefore)
 				throw new NotSupportedException("Этот диалог предназначен только для ручных операций");
+			//Исправляем ситуацию когда у операции пропала ссылка на норму, это может произойти в случает обновления нормы.
+			if (Entity.NormItem == null && employeeCardItem != null)
+				Entity.NormItem = employeeCardItem.ActiveNormItem;
 			IssueDate = Entity.OperationTime;
 		}
 
