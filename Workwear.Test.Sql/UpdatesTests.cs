@@ -48,6 +48,7 @@ namespace Workwear.Test.Sql
 				Assert.Ignore($"Образец базы {sample} версии пропущен. Так как версию базы {sample.Version} невозможно обновить.");
 			
 			//Создаем чистую базу
+			StartSqlServer(server);
 			var creator = new TestingCreateDbController(server);
 			var success = creator.StartCreation(sample);
 			Assert.That(success, Is.True);
