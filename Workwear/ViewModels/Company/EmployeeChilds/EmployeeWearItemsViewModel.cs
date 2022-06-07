@@ -188,7 +188,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		{
 			var operation = row.LastIssueOperation;
 			//Если строку нормы по которой выдавали удалили, пытаемся пере-подвязать к имеющийся совпадающей по СИЗ 
-			if (!(row.EmployeeCard.WorkwearItems.Any(x => x.ActiveNormItem.Id == operation.NormItem.Id))) {
+			if (!row.EmployeeCard.WorkwearItems.Any(x => x.ActiveNormItem.IsSame(operation.NormItem))) {
 				if (row.EmployeeCard.WorkwearItems.Any(x => x.ProtectionTools.Id == operation.ProtectionTools.Id)) {
 					var norm = row.EmployeeCard.WorkwearItems
 						.Where(x => x.ProtectionTools.Id == operation.ProtectionTools.Id)
