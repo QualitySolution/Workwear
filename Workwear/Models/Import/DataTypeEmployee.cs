@@ -20,6 +20,8 @@ namespace workwear.Models.Import
 		PersonnelNumber,
 		[Display(Name = "UID карты")]
 		CardKey,
+		[Display(Name = "Номер телефона")]
+		Phone,
 		[Display(Name = "Дата приёма на работу")]
 		HireDate,
 		[Display(Name = "Дата увольнения")]
