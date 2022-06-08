@@ -144,7 +144,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 			if(!operations.Any() || operations.First().ExpiryByNorm < DateTime.Today)
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
 			else if(operations.First().OverrideBefore)
-				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(operations.First().Id), OpenPageOptions.AsSlave);
+				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForOpen(operations.First().Id), row, OpenPageOptions.AsSlave);
 			else if(interactive.Question($"Для «{row.ProtectionTools.Name}» уже выполнялись полноценные выдачи, внесение ручных изменений может привести к нежелательным результатам. Продолжить?"))
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
 			else
@@ -188,7 +188,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		{
 			var operation = row.LastIssueOperation;
 			//Если строку нормы по которой выдавали удалили, пытаемся пере-подвязать к имеющийся совпадающей по СИЗ 
-			if (!(row.EmployeeCard.WorkwearItems.Any(x => x.ActiveNormItem.Id == operation.NormItem.Id))) {
+			if (!row.EmployeeCard.WorkwearItems.Any(x => x.ActiveNormItem.IsSame(operation.NormItem))) {
 				if (row.EmployeeCard.WorkwearItems.Any(x => x.ProtectionTools.Id == operation.ProtectionTools.Id)) {
 					var norm = row.EmployeeCard.WorkwearItems
 						.Where(x => x.ProtectionTools.Id == operation.ProtectionTools.Id)
