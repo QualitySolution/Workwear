@@ -107,7 +107,7 @@ namespace workwear.Models.Import
 					var value = row.CellStringValue(i)?.ToLower() ?? String.Empty;
 					types[i] = dataParser.DetectDataType(value);
 				}
-				if(bestColumns < types.Count(x => !default(TDataTypeEnum).Equals(x))) {
+				if(bestColumns < types.Where(x => !default(TDataTypeEnum).Equals(x)).Distinct().Count()) {
 					bestMath = types;
 					bestRow = row;
 					bestColumns = types.Count(x => !default(TDataTypeEnum).Equals(x));
