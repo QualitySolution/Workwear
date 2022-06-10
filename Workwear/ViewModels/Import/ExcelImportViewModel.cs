@@ -89,7 +89,7 @@ namespace workwear.ViewModels.Import
 		public void SecondStep() {
 			CurrentStep = 1;
 			LoadSheet();
-			ImportModel.AutoSetupColumns();
+			ImportModel.AutoSetupColumns(ProgressStep);
 		}
 
 		#endregion

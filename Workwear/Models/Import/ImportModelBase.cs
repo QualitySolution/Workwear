@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.ViewModels;
 using workwear.ViewModels.Import;
@@ -89,16 +90,17 @@ namespace workwear.Models.Import
 			OnPropertyChanged(nameof(DisplayColumns));
 		}
 
-		public void AutoSetupColumns()
+		public void AutoSetupColumns(IProgressBarDisplayable progress)
 		{
 			logger.Info("Ищем заголовочную строку...");
-
+			progress.Start(XlsRows.Count, text:"Определение типов данных...");
 			var bestMath = new TDataTypeEnum[MaxSourceColumns];
 			int bestColumns = 0;
 			int bestHeaderRow = 0;
 			SheetRowBase<TDataTypeEnum> bestRow = null;
 			int rowNum = 0;
 			foreach(var row in XlsRows) {
+				progress.Add();
 				var types = new TDataTypeEnum[MaxSourceColumns];
 				rowNum++;
 				for(int i = 0; i < MaxSourceColumns; i++) {
@@ -115,6 +117,7 @@ namespace workwear.Models.Import
 					break;
 			}
 
+			progress.Add();
 			for(int i = 0; i < MaxSourceColumns; i++)
 				Columns[i].DataType = bestMath[i];
 
