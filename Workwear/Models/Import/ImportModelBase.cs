@@ -19,7 +19,14 @@ namespace workwear.Models.Import
 
 		public Type DataTypeEnum => typeof(TDataTypeEnum);
 
-		public abstract bool CanMatch { get; }
+		#region Типы данных
+		public virtual bool CanMatch => HasRequiredDataTypes(Columns.Select(x => x.DataType));
+
+		protected bool HasRequiredDataTypes(IEnumerable<TDataTypeEnum> dataTypes) => RequiredDataTypes.All(dataTypes.Contains);
+
+		protected abstract TDataTypeEnum[] RequiredDataTypes { get; }
+		#endregion
+
 
 		private readonly IDataParser<TDataTypeEnum> dataParser;
 
@@ -112,9 +119,9 @@ namespace workwear.Models.Import
 					bestRow = row;
 					bestColumns = types.Count(x => !default(TDataTypeEnum).Equals(x));
 					bestHeaderRow = rowNum;
+					if(HasRequiredDataTypes(bestMath))
+						break;	
 				}
-				if(bestColumns >= 3)
-					break;
 			}
 
 			progress.Add();

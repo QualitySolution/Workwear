@@ -24,10 +24,8 @@ namespace workwear.Models.Import
 
 		#endregion
 
-		public override bool CanMatch => (Columns.Any(x => x.DataType == DataTypeNorm.Post)
-			&& Columns.Any(x => x.DataType == DataTypeNorm.ProtectionTools)
-			&& Columns.Any(x => x.DataType == DataTypeNorm.PeriodAndCount)
-		);
+		protected override DataTypeNorm[] RequiredDataTypes => new[]
+			{ DataTypeNorm.Post, DataTypeNorm.ProtectionTools, DataTypeNorm.PeriodAndCount };
 
 		public bool CanSave { get; private set; }
 
