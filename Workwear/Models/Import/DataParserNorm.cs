@@ -43,7 +43,10 @@ namespace workwear.Models.Import
 				"Подразделение"
 				);
 			AddColumnName(DataTypeNorm.Post,
-				"Должность"
+				"Должность",
+				"Должности",
+				"профессия",
+				"профессии"
 				);
 
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
