@@ -161,5 +161,16 @@ namespace workwear.Models.Import
 		}
 
 		#endregion
+		
+		private ICell[,] mergedCells;
+		public ICell[,] MergedCells {
+			get => mergedCells;
+			set {
+				mergedCells = value;
+				foreach (var row in XlsRows) {
+					row.MergedCells = value;
+				}
+			}
+		}
 	}
 }

@@ -166,7 +166,7 @@ namespace workwear.ViewModels.Import
 
 		private void LoadSheet() {
 			sh = wb.GetSheet(SelectedSheet.Title);
-			ProgressStep.Start(sh.LastRowNum, text: "Читаем лист...");
+			ProgressStep.Start(sh.LastRowNum + sh.NumMergedRegions, text: "Читаем лист...");
 
 			var maxColumns = 0;
 			for(var i = 0; i <= sh.LastRowNum; i++) {
@@ -178,6 +178,23 @@ namespace workwear.ViewModels.Import
 			}
 			ImportModel.MaxSourceColumns = maxColumns;
 			OnPropertyChanged(nameof(RowsCount));
+			ProgressStep.Update("Обработка объединенных ячеек...");
+			var merged = new ICell[RowsCount, maxColumns];
+			// Loop through all merge regions in this sheet.
+			for (int i = 0; i < sh.NumMergedRegions; i++)
+			{
+				ProgressStep.Add();
+				var mergeRegion = sh.GetMergedRegion(i);
+				// Find the top-most and left-most cell in this region.
+				var firstRegionCell = sh.GetRow(mergeRegion.FirstRow).GetCell(mergeRegion.FirstColumn);
+				for (int row = mergeRegion.FirstRow; row <= mergeRegion.LastRow; row++) {
+					for (int col = mergeRegion.FirstColumn; col <= mergeRegion.LastColumn; col++) {
+						merged[row, col] = firstRegionCell;
+					}
+				}
+			}
+			ProgressStep.Add();
+			ImportModel.MergedCells = merged;
 			ProgressStep.Close();
 			logger.Info($"Прочитано {maxColumns} колонок и {sh.LastRowNum} строк");
 		}

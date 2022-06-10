@@ -11,6 +11,8 @@ namespace workwear.Models.Import
 		where TDataTypeEnum : System.Enum
 	{
 		private readonly IRow cells;
+		
+		public ICell[,] MergedCells;
 
 		public SheetRowBase(IRow cells)
 		{
@@ -29,7 +31,7 @@ namespace workwear.Models.Import
 				return changedValues[col];
 
 			string value;
-			var cell = GetCell(col);
+			var cell = GetCellForValue(col);
 			if(cell?.CellType == CellType.Blank)
 				value = null;
 			if(cell?.CellType == CellType.Error && cell.ErrorCellValue == 0)
@@ -41,7 +43,7 @@ namespace workwear.Models.Import
 
 		public string CellStringValue(int col)
 		{
-			var cell = GetCell(col);
+			var cell = GetCellForValue(col);
 
 			if(cell != null) {
 				// TODO: you can add more cell types capatibility, e. g. formula
@@ -57,7 +59,7 @@ namespace workwear.Models.Import
 
 		public int? CellIntValue(int col)
 		{
-			var cell = GetCell(col);
+			var cell = GetCellForValue(col);
 
 			if(cell != null) {
 				switch(cell.CellType) {
@@ -75,7 +77,7 @@ namespace workwear.Models.Import
 
 		public DateTime? CellDateTimeValue(int col)
 		{
-			var cell = GetCell(col);
+			var cell = GetCellForValue(col);
 
 			if(cell != null) {
 				switch(cell.CellType) {
@@ -91,40 +93,14 @@ namespace workwear.Models.Import
 			return null;
 		}
 		
-		private ICell GetCell(int col)
+		private ICell GetCellForValue(int col)
 		{
 			var cell = cells.GetCell(col);
 			if (cell != null && cell.IsMergedCell)
-				cell = GetMergedCell(cell);
+				cell = MergedCells[cell.RowIndex, cell.ColumnIndex];
 			return cell;
 		}
-		private ICell GetMergedCell(ICell cell)
-		{
-			var start = DateTime.Now;
-			// Get current sheet.
-			var currentSheet = cell.Sheet;
-
-			// Loop through all merge regions in this sheet.
-			for (int i = 0; i < currentSheet.NumMergedRegions; i++)
-			{
-				var mergeRegion = currentSheet.GetMergedRegion(i);
-
-				// If this merged region contains this cell.
-				if (mergeRegion.FirstRow <= cell.RowIndex && cell.RowIndex <= mergeRegion.LastRow &&
-				    mergeRegion.FirstColumn <= cell.ColumnIndex && cell.ColumnIndex <= mergeRegion.LastColumn)
-				{
-					// Find the top-most and left-most cell in this region.
-					var firstRegionCell = currentSheet.GetRow(mergeRegion.FirstRow)
-						.GetCell(mergeRegion.FirstColumn);
-
-					Console.WriteLine($"GetMergedCell: {(DateTime.Now - start).TotalMilliseconds}");
-					// And return its value.
-					return firstRegionCell;
-				}
-			}
-			// This should never happen.
-			throw new Exception("Cannot find this cell in any merged region");
-		}
+		
 		#endregion
 		
 		public string CellBackgroundColor(int col)

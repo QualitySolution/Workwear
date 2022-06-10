@@ -29,6 +29,7 @@ namespace workwear.Models.Import
 		void AddRow(IRow cells);
 		List<ISheetRow> DisplayRows { get; }
 		#endregion
+		ICell[,] MergedCells { get; set; }
 
 		#region Сопоставление
 		ViewModelBase MatchSettingsViewModel { get; }
