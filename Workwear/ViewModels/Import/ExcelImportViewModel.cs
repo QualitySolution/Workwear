@@ -97,6 +97,7 @@ namespace workwear.ViewModels.Import
 		#region Шаг 2
 
 		public bool SensitiveThirdStepButton => ImportModel.CanMatch;
+		public int RowsCount => ImportModel.SheetRowCount;
 		#endregion
 
 		#region Шаг 3
@@ -176,6 +177,7 @@ namespace workwear.ViewModels.Import
 				maxColumns = Math.Max(sh.GetRow(i).Cells.Count, maxColumns);
 			}
 			ImportModel.MaxSourceColumns = maxColumns;
+			OnPropertyChanged(nameof(RowsCount));
 			ProgressStep.Close();
 			logger.Info($"Прочитано {maxColumns} колонок и {sh.LastRowNum} строк");
 		}

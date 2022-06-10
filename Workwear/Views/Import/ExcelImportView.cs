@@ -54,7 +54,8 @@ namespace workwear.Views.Import
 			#endregion
 			#region Шаг 2
 			spinTitleRow.Binding
-				.AddBinding(viewModel.ImportModel, v => v.HeaderRow, w => w.ValueAsInt)
+				.AddBinding(ViewModel.ImportModel, v => v.HeaderRow, w => w.ValueAsInt)
+				.AddBinding(ViewModel, v => v.RowsCount, w => w.Adjustment.Upper)
 				.InitializeFromSource();
 			buttonReadEmployees.Binding
 				.AddBinding(viewModel, v => v.SensitiveThirdStepButton, w => w.Sensitive)

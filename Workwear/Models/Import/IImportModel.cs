@@ -25,6 +25,7 @@ namespace workwear.Models.Import
 
 		#region Строки
 		int HeaderRow { get; set; }
+		int SheetRowCount { get; }
 		void AddRow(IRow cells);
 		List<ISheetRow> DisplayRows { get; }
 		#endregion
