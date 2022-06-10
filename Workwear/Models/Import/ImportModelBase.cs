@@ -137,6 +137,8 @@ namespace workwear.Models.Import
 			}
 		}
 
+		public int SheetRowCount => XlsRows.Count;
+
 		public List<TSheetRow> XlsRows = new List<TSheetRow>();
 
 		public IEnumerable<TSheetRow> UsedRows => XlsRows.Skip(HeaderRow);

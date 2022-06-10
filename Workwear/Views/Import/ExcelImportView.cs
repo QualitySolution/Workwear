@@ -49,7 +49,10 @@ namespace workwear.Views.Import
 			buttonLoad.Binding.AddBinding(viewModel, v => v.SensitiveSecondStepButton, w => w.Sensitive).InitializeFromSource();
 			#endregion
 			#region Шаг 2
-			spinTitleRow.Binding.AddBinding(viewModel.ImportModel, v => v.HeaderRow, w => w.ValueAsInt).InitializeFromSource();
+			spinTitleRow.Binding
+				.AddBinding(ViewModel.ImportModel, v => v.HeaderRow, w => w.ValueAsInt)
+				.AddBinding(ViewModel, v => v.RowsCount, w => w.Adjustment.Upper)
+				.InitializeFromSource();
 			buttonReadEmployees.Binding.AddBinding(viewModel, v => v.SensitiveThirdStepButton, w => w.Sensitive).InitializeFromSource();
 			labelColumnRecomendations.LabelProp = ViewModel.ImportModel.DataColumnsRecommendations;
 			if(viewModel.ImportModel.MatchSettingsViewModel != null) {
