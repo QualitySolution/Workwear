@@ -123,6 +123,7 @@ namespace workwear.Models.Import
 
 			logger.Debug($"Найдено соответсвие в {bestColumns} заголовков в строке {bestHeaderRow}");
 			HeaderRow = bestHeaderRow;
+			progress.Close();
 			logger.Info("Ок");
 		}
 		#endregion
