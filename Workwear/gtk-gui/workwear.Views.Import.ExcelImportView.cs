@@ -199,7 +199,7 @@ namespace workwear.Views.Import
 			this.tableMatchSettings.RowSpacing = ((uint)(6));
 			this.tableMatchSettings.ColumnSpacing = ((uint)(6));
 			// Container child tableMatchSettings.Gtk.Table+TableChild
-			this.spinTitleRow = new global::Gamma.GtkWidgets.ySpinButton(0D, 100D, 1D);
+			this.spinTitleRow = new global::Gamma.GtkWidgets.ySpinButton(0D, 100000D, 1D);
 			this.spinTitleRow.CanFocus = true;
 			this.spinTitleRow.Name = "spinTitleRow";
 			this.spinTitleRow.Adjustment.PageIncrement = 10D;
