@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
@@ -17,11 +18,11 @@ namespace workwear.Models.Import
 		private readonly IUnitOfWork uow;
 
 		public NomenclatureTypes(IUnitOfWork uow, SizeService sizeService, bool tryLoad = false) {
+			this.uow = uow ?? throw new ArgumentNullException(nameof(uow));
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			if(tryLoad)
 				ItemsTypes = uow.GetAll<ItemsType>().ToList();
 			makeTypes(uow);
-			this.sizeService = sizeService;
-			this.uow = uow;
 		}
 
 		#region Создание типов
