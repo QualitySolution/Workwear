@@ -22,15 +22,11 @@ namespace workwear.Models.Import
 
 		private readonly NormRepository normRepository;
 		private readonly ProtectionToolsRepository protectionToolsRepository;
-		private readonly SubdivisionRepository subdivisionRepository;
-		private readonly PostRepository postRepository;
 		private readonly SizeService sizeService;
 
 		public DataParserNorm(
 			NormRepository normRepository, 
-			ProtectionToolsRepository protectionToolsRepository, 
-			SubdivisionRepository subdivisionRepository, 
-			PostRepository postRepository,
+			ProtectionToolsRepository protectionToolsRepository,
 			SizeService sizeService)
 		{
 			AddColumnName(DataTypeNorm.ProtectionTools,
@@ -51,8 +47,6 @@ namespace workwear.Models.Import
 
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
-			this.subdivisionRepository = subdivisionRepository;
-			this.postRepository = postRepository;
 			this.sizeService = sizeService;
 		}
 

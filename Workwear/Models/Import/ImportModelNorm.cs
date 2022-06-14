@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
-using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import
 {
