@@ -10,7 +10,6 @@ using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
-using workwear.Repository.Company;
 using workwear.Repository.Regulations;
 using Workwear.Domain.Regulations;
 using Workwear.Measurements;
@@ -82,9 +81,9 @@ namespace workwear.Models.Import
 				
 			switch(dataType) {
 				case DataTypeNorm.Subdivision:
-					return row.SubdivisionPostPair.Post.Subdivision?.Id == 0 ? ChangeType.NewEntity : ChangeType.NotChanged;
+					return row.SubdivisionPostCombination.Posts.Any(p => p.Subdivision?.Id == 0) ? ChangeType.NewEntity : ChangeType.NotChanged;
 				case DataTypeNorm.Post:
-					return row.SubdivisionPostPair.Post.Id == 0 ? ChangeType.NewEntity : ChangeType.NotChanged;
+					return row.SubdivisionPostCombination.Posts.Any(p => p.Id == 0) ? ChangeType.NewEntity : ChangeType.NotChanged;
 				case DataTypeNorm.ProtectionTools:
 					return row.NormItem.ProtectionTools.Id == 0 ? ChangeType.NewEntity : ChangeType.NotChanged;
 				case DataTypeNorm.PeriodAndCount:
@@ -110,26 +109,26 @@ namespace workwear.Models.Import
 			var protectionToolsColumn = columns.FirstOrDefault(x => x.DataType == DataTypeNorm.ProtectionTools);
 
 			foreach(var row in list) {
-				var postName = row.CellStringValue(postColumn.Index);
+				var postValue = row.CellStringValue(postColumn.Index);
 				var subdivisionName = subdivisionColumn != null ? row.CellStringValue(subdivisionColumn.Index) : null;
 
-				if(String.IsNullOrWhiteSpace(postName)) {
+				if(String.IsNullOrWhiteSpace(postValue)) {
 					row.ProgramSkipped = true;
 					continue;
 				}
 
-				var pair = MatchPairs.FirstOrDefault(x => x.PostName == postName && x.SubdivisionName == subdivisionName);
+				var pair = MatchPairs.FirstOrDefault(x => x.PostValue == postValue && x.SubdivisionName == subdivisionName);
 				if(pair == null) {
-					pair = new SubdivisionPostPair(postName, subdivisionName);
+					pair = new SubdivisionPostCombination(postValue, subdivisionName);
 					MatchPairs.Add(pair);
 				}
-				row.SubdivisionPostPair = pair;
+				row.SubdivisionPostCombination = pair;
 			}
 			progress.Add();
 
-			var postNames = MatchPairs.Select(x => x.PostName).Distinct().ToArray();
+			var allPostNames = MatchPairs.SelectMany(x => x.PostNames).Distinct().ToArray();
 			var posts = uow.Session.QueryOver<Post>()
-				.Where(x => x.Name.IsIn(postNames))
+				.Where(x => x.Name.IsIn(allPostNames))
 				.Fetch(SelectMode.Fetch, x => x.Subdivision)
 				.List();
 			progress.Add();
@@ -149,7 +148,7 @@ namespace workwear.Models.Import
 			var norms = normRepository.GetNormsForPost(uow, UsedPosts.Where(x => x.Id > 0).ToArray());
 			foreach(var norm in norms) {
 				foreach(var normPost in norm.Posts) {
-					var pair = MatchPairs.FirstOrDefault(x => normPost.IsSame(x.Post));
+					var pair = MatchPairs.FirstOrDefault(x => x.Posts.Any(p => p.IsSame(normPost)));
 					if(pair != null)
 						pair.Norms.Add(norm);
 				}
@@ -163,7 +162,9 @@ namespace workwear.Models.Import
 				var norm = new Norm {
 					Comment = "Импортирована из Excel"
 				};
-				norm.AddPost(pair.Post);
+				foreach(var post in pair.Posts) {
+					norm.AddPost(post);
+				}
 				pair.Norms.Add(norm);
 			}
 			progress.Add();
@@ -176,7 +177,7 @@ namespace workwear.Models.Import
 			var protections = protectionToolsRepository.GetProtectionToolsByName(uow, protectionNames);
 			progress.Add();
 			foreach(var row in list.Where(x => !x.Skipped)) {
-				if(row.SubdivisionPostPair.Norms.Count > 1) {
+				if(row.SubdivisionPostCombination.Norms.Count > 1) {
 					row.ProgramSkipped = true;
 					continue;
 				}
@@ -201,7 +202,7 @@ namespace workwear.Models.Import
 					UsedProtectionTools.Add(protection);
 				}
 
-				var norm = row.SubdivisionPostPair.Norms[0];
+				var norm = row.SubdivisionPostCombination.Norms[0];
 				row.NormItem = norm.Items.FirstOrDefault(x => protection.IsSame(x.ProtectionTools));
 				if(row.NormItem == null) {
 					row.NormItem = norm.AddItem(protection);
@@ -211,45 +212,48 @@ namespace workwear.Models.Import
 			progress.Close();
 		}
 
-		void SetOrMakePost(SubdivisionPostPair pair, IList<Post> posts, IList<Subdivision> subdivisions)
+		void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts, IList<Subdivision> subdivisions)
 		{
-			var post = UsedPosts.FirstOrDefault(x =>
-							String.Equals(x.Name, pair.PostName, StringComparison.CurrentCultureIgnoreCase)
-							&& String.Equals(x.Subdivision?.Name, pair.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
-			if(post == null) {
-				post = posts.FirstOrDefault(x => String.Equals(x.Name, pair.PostName, StringComparison.CurrentCultureIgnoreCase)
-					&& String.Equals(x.Subdivision?.Name, pair.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
-
+			foreach (var postName in combination.PostNames)
+			{
+				var post = UsedPosts.FirstOrDefault(x =>
+							String.Equals(x.Name, postName, StringComparison.CurrentCultureIgnoreCase)
+							&& String.Equals(x.Subdivision?.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
 				if(post == null) {
-					post = new Post { 
-						Name = pair.PostName,
-						Comments = "Создана при импорте норм из Excel", 
-					};
-					if(!String.IsNullOrEmpty(pair.SubdivisionName)) {
-						var subdivision = UsedSubdivisions.FirstOrDefault(x =>
-							String.Equals(x.Name, pair.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
+					post = posts.FirstOrDefault(x => String.Equals(x.Name, postName, StringComparison.CurrentCultureIgnoreCase)
+						&& String.Equals(x.Subdivision?.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
 
-						if(subdivision == null) {
-							subdivision = subdivisions.FirstOrDefault(x =>
-									String.Equals(x.Name, pair.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
+					if(post == null) {
+						post = new Post { 
+							Name = postName,
+							Comments = "Создана при импорте норм из Excel", 
+						};
+						if(!String.IsNullOrEmpty(combination.SubdivisionName)) {
+							var subdivision = UsedSubdivisions.FirstOrDefault(x =>
+								String.Equals(x.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
 
 							if(subdivision == null) {
-								subdivision = new Subdivision { Name = pair.SubdivisionName };
+								subdivision = subdivisions.FirstOrDefault(x =>
+										String.Equals(x.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
+
+								if(subdivision == null) {
+									subdivision = new Subdivision { Name = combination.SubdivisionName };
+								}
+								UsedSubdivisions.Add(subdivision);
 							}
-							UsedSubdivisions.Add(subdivision);
+							post.Subdivision = subdivision;
 						}
-						post.Subdivision = subdivision;
 					}
+					UsedPosts.Add(post);
 				}
-				UsedPosts.Add(post);
+				combination.Posts.Add(post);
 			}
-			pair.Post = post;
 		}
 
 		#endregion
 
 		#region Сохранение данных
-		public readonly List<SubdivisionPostPair> MatchPairs = new List<SubdivisionPostPair>();
+		public readonly List<SubdivisionPostCombination> MatchPairs = new List<SubdivisionPostCombination>();
 		public IEnumerable<Norm> UsedNorms => MatchPairs.Where(x => x.Norms.Count == 1).Select(x => x.Norms[0]);
 		public readonly List<Subdivision> UsedSubdivisions = new List<Subdivision>();
 		public readonly List<Post> UsedPosts = new List<Post>();

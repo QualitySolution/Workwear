@@ -13,22 +13,24 @@ namespace workwear.Models.Import
 		}
 
 		#region Найденные соответствия
-		public SubdivisionPostPair SubdivisionPostPair;
+		public SubdivisionPostCombination SubdivisionPostCombination;
 		public NormItem NormItem;
 		#endregion
 	}
 
-	public class SubdivisionPostPair
+	public class SubdivisionPostCombination
 	{
-		public readonly string PostName;
+		public readonly string[] PostNames;
+		public readonly string PostValue;
 		public readonly string SubdivisionName;
 
-		public Post Post;
-		public List<Norm> Norms = new List<Norm>();
+		public readonly List<Post> Posts = new List<Post>();
+		public readonly List<Norm> Norms = new List<Norm>();
 
-		public SubdivisionPostPair(string postName, string subdivisionName)
+		public SubdivisionPostCombination(string postNames, string subdivisionName)
 		{
-			PostName = postName ?? throw new ArgumentNullException(nameof(postName));
+			PostValue = postNames ?? throw new ArgumentNullException(nameof(postNames));
+			PostNames = PostValue.Split(new[] { ',', ';', '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
 			SubdivisionName = subdivisionName;
 		}
 	}
