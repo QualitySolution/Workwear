@@ -194,6 +194,7 @@ namespace workwear.Models.Import
 				row.NormItem = norm.Items.FirstOrDefault(x => protection.IsSame(x.ProtectionTools));
 				if(row.NormItem == null) {
 					row.NormItem = norm.AddItem(protection);
+					row.NormItem.Amount = 0;
 				}
 			}
 		}
