@@ -280,27 +280,50 @@ namespace workwear.Models.Import
 		}
 		#endregion
 		#region Helpers
-		private bool TryParsePeriodAndCount(string value, out int amount, out int periods, out NormPeriodType periodType)
+		internal static bool TryParsePeriodAndCount(string value, out int amount, out int periods, out NormPeriodType periodType)
 		{
 			amount = 0;
 			periods = 0;
+			periodType = NormPeriodType.Wearout;
 			if(value.ToLower().Contains("до износа")) {
 				amount = 1;
 				periodType = NormPeriodType.Wearout;
 				return true;
 			}
 
-			var regexp = new Regex(@"\((\d+) в (\d+) (месяц|месяца|месяцев)\)");
-			periodType = NormPeriodType.Month;
-			var matches = regexp.Matches(value);
-			if(matches.Count == 0)
-				return false;
-			var parts = matches[0].Groups;
-			if(parts.Count != 4)
-				return false;
-			amount = int.Parse(parts[1].Value);
-			periods = int.Parse(parts[2].Value);
-			return true;
+			var regexp = new Regex(@"(\d+) в (\d+) (месяц|месяца|месяцев)");
+			var match = regexp.Match(value);
+			if(match.Success)
+			{
+				periodType = NormPeriodType.Month;
+				amount = int.Parse(match.Groups[1].Value);
+				periods = int.Parse(match.Groups[2].Value);
+				return true;
+			}
+			regexp = new Regex(@"(\d+).* (\d+)([,\.]5)? *(год|года|лет)");
+			match = regexp.Match(value);
+			if (match.Success)
+			{
+				periodType = NormPeriodType.Year;
+				amount = int.Parse(match.Groups[1].Value);
+				periods = int.Parse(match.Groups[2].Value);
+				if (match.Groups[3].Value.EndsWith(",5") || match.Groups[3].Value.EndsWith(".5")) {
+                	periods = periods * 12 + 6;
+					periodType = NormPeriodType.Month;
+				}
+
+				return true;
+			}
+			regexp = new Regex(@"^(\d+) ?(пар|пара|пары|шт\.?|комплекта?)?$");
+			match = regexp.Match(value);
+			if (match.Success)
+			{
+				periodType = NormPeriodType.Year;
+				amount = int.Parse(match.Groups[1].Value);
+				periods = 1;
+				return true;
+			}
+			return false;
 		}
 
 		#endregion
