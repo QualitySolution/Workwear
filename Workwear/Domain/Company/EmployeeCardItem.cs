@@ -287,11 +287,13 @@ namespace workwear.Domain.Company
 				uow.Save (this);
 			}
 
-			if(NextIssue < ActiveNormItem.Norm.DateFrom && ActiveNormItem.NormPeriod != NormPeriodType.Wearout){
+			if(NextIssue < ActiveNormItem.Norm.DateFrom && ActiveNormItem.NormPeriod != NormPeriodType.Wearout && ActiveNormItem.NormPeriod != NormPeriodType.Duty){
 				NextIssue = ActiveNormItem.Norm.DateFrom;
 			}
 			if(ActiveNormItem.NormPeriod == NormPeriodType.Wearout)
 				NextIssueAnnotation = $"У строки нормы указан период - до износа";
+			if(ActiveNormItem.NormPeriod == NormPeriodType.Duty)
+				NextIssueAnnotation = $"У строки нормы указан период - дежурный";
 		}
 		#endregion
 		#region Зазоры для тестирования

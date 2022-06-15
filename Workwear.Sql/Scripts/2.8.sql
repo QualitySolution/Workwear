@@ -898,3 +898,7 @@ DROP FOREIGN KEY `fk_issuance_sheet_6`,
 DROP COLUMN `stock_mass_expense_id`;
 
 DROP TABLE IF EXISTS `stock_mass_expense` ;
+
+-- Добавляем дежурные сиз в нормы
+ALTER TABLE norms_item
+    CHANGE COLUMN `period_type` `period_type` ENUM('Year', 'Month', 'Shift', 'Wearout', 'Duty') NOT NULL DEFAULT 'Year'; 

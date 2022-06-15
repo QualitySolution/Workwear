@@ -462,7 +462,7 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
   `norm_id` INT UNSIGNED NOT NULL,
   `protection_tools_id` INT UNSIGNED NOT NULL,
   `amount` SMALLINT UNSIGNED NOT NULL DEFAULT 1,
-  `period_type` ENUM('Year', 'Month', 'Shift', 'Wearout') NOT NULL DEFAULT 'Year',
+  `period_type` ENUM('Year', 'Month', 'Shift', 'Wearout', 'Duty') NOT NULL DEFAULT 'Year',
   `period_count` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `condition_id` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
