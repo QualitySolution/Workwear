@@ -142,7 +142,10 @@ namespace workwear.Models.Import
 				}
 
 				foreach(var column in meaningfulColumns) {
-					MakeChange(settings, employee, row, column, rowChange, uow);
+					if(column.DataType != DataTypeEmployee.Unknown)
+						MakeChange(settings, employee, row, column, rowChange, uow);
+					else if(column.EntityField.Data is SizeType)
+						MakeSizeChange(settings, employee, row, column, rowChange, uow);
 				}
 			}
 			progress.Close();
@@ -275,6 +278,31 @@ namespace workwear.Models.Import
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не поддерживается.");
 			}
+		}
+
+		private void MakeSizeChange(
+			SettingsMatchEmployeesViewModel settings, 
+			EmployeeCard employee, 
+			SheetRowEmployee row, 
+			ImportedColumn<DataTypeEmployee> column, 
+			ChangeType rowChange,
+			IUnitOfWork uow)
+		{
+			var value = row.CellStringValue(column.Index);
+			var sizeType = (SizeType)column.EntityField.Data;
+			if(String.IsNullOrWhiteSpace(value)) {
+				row.AddColumnChange(column, ChangeType.NotChanged);
+				return;
+			}
+
+			var size = sizeService
+				.GetSize(uow, sizeType, true, true)
+				.FirstOrDefault(x => 
+					x.Name.Trim().ToLower().Equals(value.Trim().ToLower())
+					|| x.Title.Trim().ToLower().Equals(value.Trim().ToLower()));
+			var employeeSize = employee.Sizes
+				.FirstOrDefault(x => x.SizeType == size?.SizeType)?.Size;
+			row.ChangedColumns.Add(column, CompareSize(employeeSize, size, rowChange, uow));
 		}
 
 		private ChangeState CompareString(string fieldValue, string newValue, ChangeType rowChange) {
@@ -463,14 +491,42 @@ namespace workwear.Models.Import
 			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученной из общего поля ФИО.
 			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType)) {
 				if(row.ChangedColumns[column].ChangeType == ChangeType.NewEntity || row.ChangedColumns[column].ChangeType == ChangeType.ChangeValue)
-					SetValue(settings, uow, employee, row, column);
+				{
+					if(column.EntityField.Data is DataTypeEmployee)
+						SetValue(settings, employee, row, column);
+					else if (column.EntityField.Data is SizeType)
+						SetSizeValue(uow, employee, row, column);
+						
+				}
 			}
 			yield return employee;
 		}
 
-		private void SetValue(
-			SettingsMatchEmployeesViewModel settings, 
+		private void SetSizeValue(
 			IUnitOfWork uow, 
+			EmployeeCard employee, 
+			SheetRowEmployee row, 
+			ImportedColumn<DataTypeEmployee> column)
+		{
+			var value = row.CellStringValue(column.Index);
+			var size = sizeService
+				.GetSize(uow, (SizeType)column.EntityField.Data, onlyUseInEmployee:true)
+				.FirstOrDefault(x => 
+					x.Name.Trim().ToLower().Equals(value.Trim().ToLower())
+					|| x.Title.Trim().ToLower().Equals(value.Trim().ToLower()));
+			if(size is null) return;
+			var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType);
+			if (employeeSize is null) {
+					employeeSize = new EmployeeSize
+						{Size = size, SizeType = size.SizeType, Employee = employee};
+					employee.Sizes.Add(employeeSize);
+			}
+			else
+				employeeSize.Size = size;
+		}
+
+		private void SetValue(
+			SettingsMatchEmployeesViewModel settings,
 			EmployeeCard employee, 
 			SheetRowEmployee row, 
 			ImportedColumn<DataTypeEmployee> column)

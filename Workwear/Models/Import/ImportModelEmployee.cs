@@ -113,7 +113,7 @@ namespace workwear.Models.Import
 				uow, 
 				UsedRows, 
 				Columns
-					.Where(x => x.DataType != DataTypeEmployee.Unknown)
+					.Where(x => x.EntityField != null || x.DataType != DataTypeEmployee.Unknown)
 					.OrderBy(x => x.DataType)
 					.ToArray(), 
 				progress, 
