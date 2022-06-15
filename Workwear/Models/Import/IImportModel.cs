@@ -30,7 +30,7 @@ namespace workwear.Models.Import
 		List<ISheetRow> DisplayRows { get; }
 		#endregion
 		ICell[,] MergedCells { get; set; }
-		IEnumerable<EntityField> EntityFields { get; }
+		IList<EntityField> EntityFields { get; }
 
 		#region Сопоставление
 		ViewModelBase MatchSettingsViewModel { get; }

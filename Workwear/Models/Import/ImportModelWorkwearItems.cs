@@ -65,10 +65,10 @@ namespace workwear.Models.Import
 				.Cast<DataTypeWorkwearItems>()
 				.Select(x => new EntityField{ Data = x});
 		
-		private IEnumerable<EntityField> entityFields;
-		public IEnumerable<EntityField> EntityFields => 
-			entityFields ??= GetEntityFields();
-		public override IEnumerable<EntityField> BaseEntityFields() => 
+		private IList<EntityField> entityFields;
+		public IList<EntityField> EntityFields => 
+			entityFields ??= GetEntityFields().ToList();
+		public override IList<EntityField> BaseEntityFields() => 
 			((IImportModel)this).EntityFields;
 
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow)

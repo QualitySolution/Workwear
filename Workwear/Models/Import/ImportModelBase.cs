@@ -45,7 +45,7 @@ namespace workwear.Models.Import
 		public List<ImportedColumn<TDataTypeEnum>> Columns = new List<ImportedColumn<TDataTypeEnum>>();
 
 		public IList<IDataColumn> DisplayColumns => Columns.Cast<IDataColumn>().ToList();
-		public abstract IEnumerable<EntityField> BaseEntityFields();
+		public abstract IList<EntityField> BaseEntityFields();
 
 		public IDataColumn AddColumn(int index)
 		{

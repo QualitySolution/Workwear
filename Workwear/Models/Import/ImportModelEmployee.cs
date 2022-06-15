@@ -20,13 +20,14 @@ namespace workwear.Models.Import
 		public ImportModelEmployee(
 			DataParserEmployee dataParser, 
 			SettingsMatchEmployeesViewModel matchSettingsViewModel,
-			SizeService sizeService
+			SizeService sizeService,
+			IUnitOfWorkFactory unitOfWorkFactory
 		) : base(dataParser, typeof(CountersEmployee), matchSettingsViewModel)
 		{
 			this.matchSettingsViewModel = matchSettingsViewModel ?? throw new ArgumentNullException(nameof(matchSettingsViewModel));
 			this.dataParser = dataParser ?? throw new ArgumentNullException(nameof(dataParser));
 			this.sizeService = sizeService;
-			unitOfWork = UnitOfWorkFactory.CreateWithoutRoot();
+			unitOfWork = unitOfWorkFactory.CreateWithoutRoot();
 		}
 
 		#region Параметры
@@ -45,7 +46,7 @@ namespace workwear.Models.Import
 			|| (dataTypes.Contains(DataTypeEmployee.FirstName) && dataTypes.Contains(DataTypeEmployee.LastName));
 
 		protected override DataTypeEmployee[] RequiredDataTypes => new []{DataTypeEmployee.Fio, DataTypeEmployee.LastName, DataTypeEmployee.FirstName};
-		public override IEnumerable<EntityField> BaseEntityFields() => 
+		public override IList<EntityField> BaseEntityFields() => 
 			((IImportModel)this).EntityFields;
 		public bool CanSave { get; private set; }
 
@@ -73,10 +74,9 @@ namespace workwear.Models.Import
 				yield return new EntityField { Data = sizeType };
 		}
 		
-		private IEnumerable<EntityField> entityFields;
-
-		IEnumerable<EntityField> IImportModel.EntityFields => 
-			entityFields ??= GetEntityFields();
+		private IList<EntityField> entityFields;
+		IList<EntityField> IImportModel.EntityFields => 
+			entityFields ??= GetEntityFields().ToList();
 
 		public override void AutoSetupColumns(IProgressBarDisplayable progress) {
 			base.AutoSetupColumns(progress);
@@ -90,7 +90,7 @@ namespace workwear.Models.Import
 				progress.Add();
 				var mathSize = BaseEntityFields()
 					.FirstOrDefault(x => x.Title.Trim().ToLower()
-							.Equals(column.Title.Trim().ToLower()));
+							.Equals(column.Title?.Trim().ToLower()));
 				if (mathSize != null) {
 					column.EntityField = mathSize;
 					count++;

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Gamma.GtkWidgets;
 using Gamma.Utilities;
-using Gamma.Widgets;
 using Gtk;
 using QS.Views.Dialog;
 using QS.Views.Resolve;
