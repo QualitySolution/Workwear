@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NHibernate;
 using NHibernate.Criterion;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
@@ -101,8 +102,9 @@ namespace workwear.Models.Import
 
 		#region Сопоставление данных
 
-		public void MatchWithExist(IUnitOfWork uow, IEnumerable<SheetRowNorm> list, List<ImportedColumn<DataTypeNorm>> columns)
+		public void MatchWithExist(IUnitOfWork uow, IEnumerable<SheetRowNorm> list, List<ImportedColumn<DataTypeNorm>> columns, IProgressBarDisplayable progress)
 		{
+			progress.Start(10, text: "Сопоставление с существующими данными");
 			var postColumn = columns.FirstOrDefault(x => x.DataType == DataTypeNorm.Post);
 			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeNorm.Subdivision);
 			var protectionToolsColumn = columns.FirstOrDefault(x => x.DataType == DataTypeNorm.ProtectionTools);
@@ -123,21 +125,25 @@ namespace workwear.Models.Import
 				}
 				row.SubdivisionPostPair = pair;
 			}
+			progress.Add();
 
 			var postNames = MatchPairs.Select(x => x.PostName).Distinct().ToArray();
 			var posts = uow.Session.QueryOver<Post>()
 				.Where(x => x.Name.IsIn(postNames))
 				.Fetch(SelectMode.Fetch, x => x.Subdivision)
 				.List();
+			progress.Add();
 
 			var subdivisionNames = MatchPairs.Select(x => x.SubdivisionName).Distinct().ToArray();
 			var subdivisions = uow.Session.QueryOver<Subdivision>()
 				.Where(x => x.Name.IsIn(subdivisionNames))
 				.List();
+			progress.Add();
 
 			//Заполняем и создаем отсутствующие должности
 			foreach(var pair in MatchPairs)
 				SetOrMakePost(pair, posts, subdivisions);
+			progress.Add();
 
 			//Заполняем существующие нормы
 			var norms = normRepository.GetNormsForPost(uow, UsedPosts.Where(x => x.Id > 0).ToArray());
@@ -148,6 +154,7 @@ namespace workwear.Models.Import
 						pair.Norms.Add(norm);
 				}
 			}
+			progress.Add();
 			//Создаем отсутствующие нормы
 			foreach(var pair in MatchPairs) {
 				if(pair.Norms.Any())
@@ -159,11 +166,15 @@ namespace workwear.Models.Import
 				norm.AddPost(pair.Post);
 				pair.Norms.Add(norm);
 			}
+			progress.Add();
 
 			//Заполняем строки
 			var nomenclatureTypes = new NomenclatureTypes(uow, sizeService, true);
+			progress.Add();
 			var protectionNames = list.Select(x => x.CellStringValue(protectionToolsColumn.Index)).Where(x => x != null).Distinct().ToArray();
+			progress.Add();
 			var protections = protectionToolsRepository.GetProtectionToolsByName(uow, protectionNames);
+			progress.Add();
 			foreach(var row in list.Where(x => !x.Skipped)) {
 				if(row.SubdivisionPostPair.Norms.Count > 1) {
 					row.ProgramSkipped = true;
@@ -197,6 +208,7 @@ namespace workwear.Models.Import
 					row.NormItem.Amount = 0;
 				}
 			}
+			progress.Close();
 		}
 
 		void SetOrMakePost(SubdivisionPostPair pair, IList<Post> posts, IList<Subdivision> subdivisions)
