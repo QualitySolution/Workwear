@@ -51,7 +51,7 @@ namespace workwear.Models.Import
 					case NPOI.SS.UserModel.CellType.Numeric:
 						return cell.NumericCellValue.ToString();
 					case NPOI.SS.UserModel.CellType.String:
-						return cell.StringCellValue;
+						return cell.StringCellValue?.Trim();
 				}
 			}
 			return null;

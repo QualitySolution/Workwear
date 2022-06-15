@@ -58,7 +58,7 @@ namespace workwear.Models.Import
 
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
-			dataParser.MatchWithExist(uow, UsedRows, Columns);
+			dataParser.MatchWithExist(uow, UsedRows, Columns, progress);
 			dataParser.FindChanges(UsedRows, Columns.Where(x => x.DataType != DataTypeNorm.Unknown).ToArray());
 			OnPropertyChanged(nameof(DisplayRows));
 

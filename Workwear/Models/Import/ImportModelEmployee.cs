@@ -40,12 +40,10 @@ namespace workwear.Models.Import
 		                                            "являются Фамилия и Имя или ФИО.";
 		#endregion
 
-		protected override DataTypeEmployee[] RequiredDataTypes => new []
-		{
-			DataTypeEmployee.Fio, 
-			//DataTypeEmployee.LastName, не совсем понял, тут наверное нужно "или"
-			//DataTypeEmployee.FirstName
-		};
+		protected override bool HasRequiredDataTypes(IEnumerable<DataTypeEmployee> dataTypes) => dataTypes.Contains(DataTypeEmployee.Fio) 
+			|| (dataTypes.Contains(DataTypeEmployee.FirstName) && dataTypes.Contains(DataTypeEmployee.LastName));
+
+		protected override DataTypeEmployee[] RequiredDataTypes => new []{DataTypeEmployee.Fio, DataTypeEmployee.LastName, DataTypeEmployee.FirstName};
 		public override IEnumerable<EntityField> BaseEntityFields() => 
 			((IImportModel)this).EntityFields;
 		public bool CanSave { get; private set; }

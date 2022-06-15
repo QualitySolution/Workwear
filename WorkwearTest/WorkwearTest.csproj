@@ -56,6 +56,7 @@
     <Compile Include="HistoryLog\DomainModelTest.cs" />
     <Compile Include="Integration\Import\ExcelImportViewModelTest.cs" />
     <Compile Include="Integration\Stock\CompletionIntegratedTest.cs" />
+    <Compile Include="Models\Import\DataParserNormTest.cs" />
     <Compile Include="Operations\Graph\IssueGraphTest.cs" />
     <Compile Include="Operations\Graph\GraphItemTest.cs" />
     <Compile Include="Organization\EmployeeCardTests.cs" />
