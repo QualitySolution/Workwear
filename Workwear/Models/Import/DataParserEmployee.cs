@@ -103,17 +103,6 @@ namespace workwear.Models.Import
 			AddColumnName(DataTypeEmployee.Post,
 				"Должность"
 				);
-			AddColumnName(DataTypeEmployee.Growth,
-				"Рост"
-				);
-			AddColumnName(DataTypeEmployee.ShoesSize,
-				"Обувь"
-				);
-			//Разместил ближе к концу чтобы слово "размер", срабатывало только в том случае если другого не нашли.
-			AddColumnName(DataTypeEmployee.WearSize,
-				"Размер",
-				"Одежда"
-				);
 			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
 			this.phoneFormatter = phoneFormatter ?? throw new ArgumentException(nameof(phoneFormatter));
 			this.userService = userService;
@@ -283,25 +272,6 @@ namespace workwear.Models.Import
 					row.AddColumnChange(column, post.Id == 0 ? ChangeType.NewEntity : rowChange, employee.Post?.Name);
 					employee.Post = post;
 					break;
-				case DataTypeEmployee.Growth: {
-					var height = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), sizeService, CategorySizeType.Height);
-					var employeeHeight = employee.Sizes.FirstOrDefault(x => x.SizeType == height.SizeType)?.Size;
-					row.ChangedColumns.Add(column, CompareSize(employeeHeight, height, rowChange, uow));
-				}
-					break;
-				case DataTypeEmployee.WearSize: {
-					var size = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), sizeService, CategorySizeType.Size);
-					var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType)?.Size;
-					row.ChangedColumns.Add(column, CompareSize(employeeSize, size, rowChange, uow));
-				}
-					break;
-				case DataTypeEmployee.ShoesSize: {
-					var size = SizeParser.ParseSize(uow, row.CellStringValue(column.Index), sizeService, CategorySizeType.Size);
-					var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType)?.Size;
-					row.ChangedColumns.Add(column, CompareSize(employeeSize, size, rowChange, uow));
-				}
-					break;
-
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не поддерживается.");
 			}
@@ -573,46 +543,6 @@ namespace workwear.Models.Import
 				case DataTypeEmployee.Post:
 					//Устанавливаем в MakeChange;
 					break;
-
-				case DataTypeEmployee.Growth:
-					var height = SizeParser.ParseSize(uow, value, sizeService, CategorySizeType.Height);
-					if (height is null) break;
-					var employeeHeight = employee.Sizes.FirstOrDefault(x => x.SizeType == height.SizeType);
-					if (employeeHeight is null) {
-						employeeHeight = new EmployeeSize
-							{Size = height, SizeType = height.SizeType, Employee = employee};
-						employee.Sizes.Add(employeeHeight);
-					}
-					else
-						employeeHeight.Size = height;
-					break;
-				case DataTypeEmployee.WearSize:
-					var size = SizeParser.ParseSize(uow, value, sizeService, CategorySizeType.Size);
-					if (size is null) break;
-					var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType);
-					if (employeeSize is null) {
-						employeeSize = new EmployeeSize
-							{Size = size, SizeType = size.SizeType, Employee = employee};
-						employee.Sizes.Add(employeeSize);
-					}
-					else
-						employeeSize.Size = size;
-					break;
-				case DataTypeEmployee.ShoesSize:
-				{
-					var shoesSize = SizeParser.ParseSize(uow, value, sizeService, CategorySizeType.Size);
-					if (shoesSize is null) break;
-					var employeeShoesSize = employee.Sizes.FirstOrDefault(x => x.SizeType == shoesSize.SizeType);
-					if (employeeShoesSize is null) {
-						employeeShoesSize = new EmployeeSize
-							{Size = shoesSize, SizeType = shoesSize.SizeType, Employee = employee};
-						employee.Sizes.Add(employeeShoesSize);
-					}
-					else
-						employeeShoesSize.Size = shoesSize;
-				}
-					break;
-
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не поддерживается.");
 			}

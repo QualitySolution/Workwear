@@ -15,6 +15,7 @@ namespace workwear.Models.Import
 		readonly SettingsMatchEmployeesViewModel matchSettingsViewModel;
 		private readonly SizeService sizeService;
 		private readonly IUnitOfWork unitOfWork;
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		public ImportModelEmployee(
 			DataParserEmployee dataParser, 
@@ -76,6 +77,29 @@ namespace workwear.Models.Import
 
 		IEnumerable<EntityField> IImportModel.EntityFields => 
 			entityFields ??= GetEntityFields();
+
+		public override void AutoSetupColumns(IProgressBarDisplayable progress) {
+			base.AutoSetupColumns(progress);
+			logger.Info("Подбираем типы размеров...");
+			var unknownColumns = Columns
+				.Where(x => x.DataType == DataTypeEmployee.Unknown)
+				.ToList();
+			progress.Start(unknownColumns.Count, text:"Подбираем типы размеров...");
+			var count = 0;
+			foreach(var column in unknownColumns) {
+				progress.Add();
+				var mathSize = BaseEntityFields()
+					.FirstOrDefault(x => x.Title.Trim().ToLower()
+							.Equals(column.Title.Trim().ToLower()));
+				if (mathSize != null) {
+					column.EntityField = mathSize;
+					count++;
+				}
+			}
+			logger.Debug($"Подобрано {count} размеров");
+			progress.Close();
+			logger.Info("Ок");
+		}
 
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
