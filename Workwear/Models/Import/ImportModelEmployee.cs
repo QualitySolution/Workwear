@@ -33,6 +33,9 @@ namespace workwear.Models.Import
 		                                            "являются Фамилия и Имя или ФИО.";
 		#endregion
 
+		protected override bool HasRequiredDataTypes(IEnumerable<DataTypeEmployee> dataTypes) => dataTypes.Contains(DataTypeEmployee.Fio) 
+			|| (dataTypes.Contains(DataTypeEmployee.FirstName) && dataTypes.Contains(DataTypeEmployee.LastName));
+
 		protected override DataTypeEmployee[] RequiredDataTypes => new []{DataTypeEmployee.Fio, DataTypeEmployee.LastName, DataTypeEmployee.FirstName};
 		public bool CanSave { get; private set; }
 

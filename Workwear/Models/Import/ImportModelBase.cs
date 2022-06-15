@@ -22,7 +22,7 @@ namespace workwear.Models.Import
 		#region Типы данных
 		public virtual bool CanMatch => HasRequiredDataTypes(Columns.Select(x => x.DataType));
 
-		protected bool HasRequiredDataTypes(IEnumerable<TDataTypeEnum> dataTypes) => RequiredDataTypes.All(dataTypes.Contains);
+		protected virtual bool HasRequiredDataTypes(IEnumerable<TDataTypeEnum> dataTypes) => RequiredDataTypes.All(dataTypes.Contains);
 
 		protected abstract TDataTypeEnum[] RequiredDataTypes { get; }
 		#endregion
