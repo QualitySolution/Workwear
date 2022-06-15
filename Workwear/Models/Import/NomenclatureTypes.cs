@@ -69,15 +69,16 @@ namespace workwear.Models.Import
 			AddType("Привязи", СlothesType.PPE, sht, new[] { "привязь" });
 			AddType("Полотенца", СlothesType.PPE, sht, new[] { "Полотенце" });
 			AddType("Щитки", СlothesType.PPE, sht, new[] { "ЩИТОК" });
-			AddType("СИЗОД", СlothesType.PPE, sht, new[] { "СИЗОД", "Респиратор", "РЕСПИРАТОРЫ", "РЕСПИРАТОРА", "ПАТРОН", "ПРЕДФИЛЬТР", "КОРОБКА", "Капюшон" });
+			AddType("СИЗОД", СlothesType.PPE, sht, new[] { "СИЗОД", "Респиратор", "РЕСПИРАТОРЫ", "РЕСПИРАТОРА", "ПАТРОН", "ПРЕДФИЛЬТР", "КОРОБКА", "Капюшон", "дыхания", "Противогаз" });
 			AddType("Беруши", СlothesType.PPE, pair, new[] { "Беруши", "противошумные" });
 			AddType("Очки", СlothesType.PPE, sht, new[] { "ОЧКИ" });
 			AddType("Наушники", СlothesType.PPE, sht, new[] { "НАУШНИКИ" });
-			AddType("Маски", СlothesType.PPE, sht, new[] { "МАСКА", "ШЛЕМ", "МАСКЕ", "СТЕКЛА", "Полумаска" });
+			AddType("Маски", СlothesType.PPE, sht, new[] { "МАСКА", "ШЛЕМ", "МАСКЕ", "СТЕКЛА", "Полумаска", "накомарник" });
 			AddType("Аптечки", СlothesType.PPE, sht, new[] { "АПТЕЧКА" });
 			AddType("Моющее средства", СlothesType.PPE, sht, new[] { "Моющее", "очищающая" });
 			AddType("Крема", СlothesType.PPE, sht, new[] { "крем", "МАЗЬ", "Паста" });
 			AddType("Защита", СlothesType.PPE, pair, new[] { "НАРУКАВНИКИ", "Наколенники" });
+			AddType("Защита от поражения электрическим током", СlothesType.PPE, pair, new[] { "Диэлектрический" });
 			AddType("Имущество", sht, new[] { "ФИЛЬТР", "ЗНАК", "ФИЛЬТРДЛЯ", "ЭТИКЕТКА", "РЕДУКТОР", "УТЕПЛИТЕЛЬ", "ЛЕНТА", "ШТОРЫ", 
 				"ФЛАГ", "ЧЕХОЛ", "РУКАВ", "ПЛОМБА", "КОЖА", "ПОЛОГ", "СУКНО" });
 			AddType("Инструмент", sht, new[] { "НОЖ", "НОЖНИЦЫ", "СИГНАЛЬНЫЙ", "МАНОМЕТР", "Щетка" });
