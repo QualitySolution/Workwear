@@ -13,14 +13,6 @@ namespace workwear.Models.Import
                 return Data.GetTitle();
             }
         }
-
         public object Data { get; set; }
-
-        public override bool Equals(object obj) {
-            if (obj is null)
-                return false;
-            return obj.GetType() == typeof(EntityField) 
-                   && Data.Equals((obj as EntityField)?.Data);
-        }
     }
 }
