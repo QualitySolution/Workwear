@@ -307,6 +307,11 @@ namespace workwear.Models.Import
 				periodType = NormPeriodType.Wearout;
 				return true;
 			}
+			if(value.ToLower().Contains("дежурны")) {
+				amount = 1;
+				periodType = NormPeriodType.Duty;
+				return true;
+			}
 
 			var regexp = new Regex(@"(\d+) в (\d+) (месяц|месяца|месяцев)");
 			var match = regexp.Match(value);

@@ -18,6 +18,8 @@ namespace WorkwearTest.Models.Import
 		[TestCase("1 шт на 2 года", 1, 2, NormPeriodType.Year, true)]
 		[TestCase("1 пара на 1,5 года", 1, 18, NormPeriodType.Month, true)]//FIXME: исправить после реализации дробного периода
 		[TestCase("до износа", 1, 0, NormPeriodType.Wearout, true)]
+		[TestCase("дежурные", 1, 0, NormPeriodType.Duty, true)]
+		[TestCase("дежурный", 1, 0, NormPeriodType.Duty, true)]
 		[TestCase("1", 1, 1, NormPeriodType.Year, true)]
 		[TestCase("6 пар", 6, 1, NormPeriodType.Year, true)]
 		[TestCase("4 пары", 4, 1, NormPeriodType.Year, true)]

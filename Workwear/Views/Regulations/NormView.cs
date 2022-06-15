@@ -50,7 +50,7 @@ namespace workwear.Views.Regulations
 				.AddTextRenderer(i => i.ProtectionTools != null && i.ProtectionTools.Type.Units != null ? i.ProtectionTools.Type.Units.Name : String.Empty)
 				.AddColumn("Период")
 				.AddNumericRenderer(i => i.PeriodCount).WidthChars(6).Editing().Adjustment(new Gtk.Adjustment(1, 1, 100, 1, 10, 10))
-					.AddSetter((c, n) => c.Visible = n.NormPeriod != NormPeriodType.Wearout)
+					.AddSetter((c, n) => c.Visible = n.NormPeriod != NormPeriodType.Wearout && n.NormPeriod != NormPeriodType.Duty)
 				.AddEnumRenderer(i => i.NormPeriod).Editing()
 				.AddColumn("Условие нормы")
 					.AddComboRenderer(i => i.NormCondition)
