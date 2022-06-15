@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -45,7 +45,7 @@ namespace WorkwearTest.Integration.Import
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
-			var model = new ImportModelEmployee(dataparser, setting);
+			var model = new ImportModelEmployee(dataparser, setting, new SizeService(), UnitOfWorkFactory);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/cardkey_list.xlsx";
@@ -83,7 +83,7 @@ namespace WorkwearTest.Integration.Import
 			var setting = new SettingsMatchEmployeesViewModel();
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
-			var model = new ImportModelEmployee(dataparser, setting);
+			var model = new ImportModelEmployee(dataparser, setting, new SizeService(), UnitOfWorkFactory);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/vostok_1c_employee.xls";
@@ -139,7 +139,7 @@ namespace WorkwearTest.Integration.Import
 			var setting = new SettingsMatchEmployeesViewModel();
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
-			var model = new ImportModelEmployee(dataparser, setting);
+			var model = new ImportModelEmployee(dataparser, setting, new SizeService(), UnitOfWorkFactory);
 			
 			using (var rootUow = UnitOfWorkFactory.CreateWithoutRoot())
 			{
@@ -196,7 +196,7 @@ namespace WorkwearTest.Integration.Import
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
-			var model = new ImportModelEmployee(dataparser, setting);
+			var model = new ImportModelEmployee(dataparser, setting, new SizeService(), UnitOfWorkFactory);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				var importModel = employeesLoad.ImportModel as ImportModelEmployee;
 				employeesLoad.ProgressStep = progressStep;
@@ -238,18 +238,18 @@ namespace WorkwearTest.Integration.Import
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
-			var model = new ImportModelEmployee(dataParser, setting);
+			var model = new ImportModelEmployee(dataParser, setting, new SizeService(), UnitOfWorkFactory);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor))
 			{
 				var uow = employeesLoad.UoW;
 				var heightType = new SizeType
-					{Name = "РостТип", Position = 1, UseInEmployee = true, CategorySizeType = CategorySizeType.Height};
+					{Name = "Рост", Position = 1, UseInEmployee = true, CategorySizeType = CategorySizeType.Height};
 					uow.Save(heightType);
 				var sizeType = new SizeType 
-					{Name = "РазмерТип", Position = 2, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
+					{Name = "Размер", Position = 2, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
 				uow.Save(sizeType);
 				var shoesType = new SizeType 
-					{Name = "ОбувьТип", Position = 3, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
+					{Name = "Обувь", Position = 3, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
 				uow.Save(shoesType);
 				var height = new Size {Name = "170-176", SizeType = heightType, UseInEmployee = true};
 				uow.Save(height);

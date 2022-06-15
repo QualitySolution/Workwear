@@ -60,6 +60,17 @@ namespace workwear.Models.Import
 			return toSave;
 		}
 
+		private IEnumerable<EntityField> GetEntityFields() => 
+			Enum.GetValues(typeof(DataTypeWorkwearItems))
+				.Cast<DataTypeWorkwearItems>()
+				.Select(x => new EntityField{ Data = x});
+		
+		private IList<EntityField> entityFields;
+		public IList<EntityField> EntityFields => 
+			entityFields ??= GetEntityFields().ToList();
+		public override IList<EntityField> BaseEntityFields() => 
+			((IImportModel)this).EntityFields;
+
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
 			dataParser.MatchChanges(progress, settingsWorkwearItemsViewModel, CountersViewModel, uow, UsedRows, Columns);

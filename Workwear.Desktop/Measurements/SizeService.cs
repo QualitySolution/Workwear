@@ -23,7 +23,7 @@ namespace Workwear.Measurements
 				sizes = SizeRepository.GetSize(uow);
 			var filterSizes = (IEnumerable<Size>)sizes;
 			if (sizeType != null)
-				filterSizes = filterSizes.Where(x => x.SizeType == sizeType);
+				filterSizes = filterSizes.Where(x => x.SizeType.Id == sizeType.Id);
 			if (onlyUseInEmployee)
 				filterSizes = filterSizes.Where(x => x.UseInEmployee);
 			if (onlyUseInNomenclature)
