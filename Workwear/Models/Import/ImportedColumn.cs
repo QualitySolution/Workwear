@@ -1,11 +1,12 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
+using Gamma.Utilities;
 using QS.DomainModel.Entity;
 
 namespace workwear.Models.Import
 {
 	public class ImportedColumn<TDataTypeEnum> : PropertyChangedBase, IDataColumn
-		where TDataTypeEnum : System.Enum
+		where TDataTypeEnum : Enum
 	{
 		public readonly int Index;
 
@@ -19,9 +20,17 @@ namespace workwear.Models.Import
 		public virtual TDataTypeEnum DataType {
 			get => dataType;
 			set => SetField(ref dataType, value);
-		}
+	}
 
-		Enum IDataColumn.DataType => dataType;
+		private EntityField entityField;
+		public EntityField EntityField {
+			get => entityField;
+			set {
+				if (value.Data is TDataTypeEnum dataTypeEnum)
+					DataType = dataTypeEnum;
+				SetField(ref entityField, value);
+			}
+		}
 
 		public ImportedColumn(int index)
 		{
@@ -29,9 +38,9 @@ namespace workwear.Models.Import
 		}
 	}
 
-	public interface IDataColumn
+	public interface IDataColumn : INotifyPropertyChanged
 	{
 		string Title { get; }
-		Enum DataType { get; }
+		EntityField EntityField { get; set; }
 	}
 }

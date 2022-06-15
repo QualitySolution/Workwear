@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
-using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import
 {
@@ -45,6 +44,17 @@ namespace workwear.Models.Import
 			}
 			return toSave;
 		}
+
+		private IEnumerable<EntityField> GetEntityFields() => 
+			Enum.GetValues(typeof(DataTypeNorm))
+				.Cast<DataTypeNorm>()
+				.Select(x => new EntityField{ Data = x});
+		
+		private IEnumerable<EntityField> entityFields;
+		public IEnumerable<EntityField> EntityFields => 
+			entityFields ??= GetEntityFields();
+		public override IEnumerable<EntityField> BaseEntityFields() => 
+			((IImportModel)this).EntityFields;
 
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{

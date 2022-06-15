@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Gamma.Utilities;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using QS.Dialog;
@@ -45,6 +46,7 @@ namespace workwear.Models.Import
 		public List<ImportedColumn<TDataTypeEnum>> Columns = new List<ImportedColumn<TDataTypeEnum>>();
 
 		public IList<IDataColumn> DisplayColumns => Columns.Cast<IDataColumn>().ToList();
+		public abstract IEnumerable<EntityField> BaseEntityFields();
 
 		public IDataColumn AddColumn(int index)
 		{
@@ -97,7 +99,7 @@ namespace workwear.Models.Import
 			OnPropertyChanged(nameof(DisplayColumns));
 		}
 
-		public void AutoSetupColumns(IProgressBarDisplayable progress)
+		public virtual void AutoSetupColumns(IProgressBarDisplayable progress)
 		{
 			logger.Info("Ищем заголовочную строку...");
 			progress.Start(XlsRows.Count, text:"Определение типов данных...");
@@ -125,8 +127,11 @@ namespace workwear.Models.Import
 			}
 
 			progress.Add();
-			for(int i = 0; i < MaxSourceColumns; i++)
-				Columns[i].DataType = bestMath[i];
+			for (int i = 0; i < MaxSourceColumns; i++) {
+				var field = BaseEntityFields()
+					.FirstOrDefault(x => bestMath[i].Equals(x.Data));
+				Columns[i].EntityField = field;
+			}
 
 			logger.Debug($"Найдено соответсвие в {bestColumns} заголовков в строке {bestHeaderRow}");
 			HeaderRow = bestHeaderRow;

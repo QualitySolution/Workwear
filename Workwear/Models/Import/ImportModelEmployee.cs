@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
+using Workwear.Measurements;
 using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import
@@ -12,13 +13,19 @@ namespace workwear.Models.Import
 	{
 		private readonly DataParserEmployee dataParser;
 		readonly SettingsMatchEmployeesViewModel matchSettingsViewModel;
+		private readonly SizeService sizeService;
+		private readonly IUnitOfWork unitOfWork;
 
 		public ImportModelEmployee(
 			DataParserEmployee dataParser, 
-			SettingsMatchEmployeesViewModel matchSettingsViewModel) : base(dataParser, typeof(CountersEmployee), matchSettingsViewModel)
+			SettingsMatchEmployeesViewModel matchSettingsViewModel,
+			SizeService sizeService
+		) : base(dataParser, typeof(CountersEmployee), matchSettingsViewModel)
 		{
 			this.matchSettingsViewModel = matchSettingsViewModel ?? throw new ArgumentNullException(nameof(matchSettingsViewModel));
 			this.dataParser = dataParser ?? throw new ArgumentNullException(nameof(dataParser));
+			this.sizeService = sizeService;
+			unitOfWork = UnitOfWorkFactory.CreateWithoutRoot();
 		}
 
 		#region Параметры
@@ -33,7 +40,14 @@ namespace workwear.Models.Import
 		                                            "являются Фамилия и Имя или ФИО.";
 		#endregion
 
-		protected override DataTypeEmployee[] RequiredDataTypes => new []{DataTypeEmployee.Fio, DataTypeEmployee.LastName, DataTypeEmployee.FirstName};
+		protected override DataTypeEmployee[] RequiredDataTypes => new []
+		{
+			DataTypeEmployee.Fio, 
+			//DataTypeEmployee.LastName, не совсем понял, тут наверное нужно "или"
+			//DataTypeEmployee.FirstName
+		};
+		public override IEnumerable<EntityField> BaseEntityFields() => 
+			((IImportModel)this).EntityFields;
 		public bool CanSave { get; private set; }
 
 		public List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow)
@@ -50,6 +64,20 @@ namespace workwear.Models.Import
 			}
 			return toSave;
 		}
+
+		private IEnumerable<EntityField> GetEntityFields() {
+			foreach (var entityField in Enum.GetValues(typeof(DataTypeEmployee))
+				         .Cast<DataTypeEmployee>()
+				         .Select(x => new EntityField { Data = x}))
+				yield return entityField;
+			foreach (var sizeType in sizeService.GetSizeType(unitOfWork, true))
+				yield return new EntityField { Data = sizeType };
+		}
+		
+		private IEnumerable<EntityField> entityFields;
+
+		IEnumerable<EntityField> IImportModel.EntityFields => 
+			entityFields ??= GetEntityFields();
 
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
