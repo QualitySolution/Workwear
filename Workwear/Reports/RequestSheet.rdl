@@ -788,7 +788,9 @@ SUM( count_issue(
     @begin_month,
     @begin_year,
     @end_month,
-    @end_year)
+    @end_year,
+    MONTH(conditions.issuance_start),
+    MONTH(conditions.issuance_end))
 ) AS amount_sum
 FROM
     wear_cards_item
@@ -802,7 +804,8 @@ LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.heigh
 LEFT JOIN wear_cards_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)  
 LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id  
 LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)  
-LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id 
+LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
+LEFT JOIN norm_conditions AS conditions ON conditions.id = norms_item.condition_id 
 WHERE
     (-1 IN (@subdivisions) OR wear_cards.object_id IN (@subdivisions)) 
     AND wear_cards.dismiss_date IS NULL 
