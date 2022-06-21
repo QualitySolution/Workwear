@@ -80,12 +80,12 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (1,'Рост',1,'Height',1);
 INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (2,'Размер одежды',1,'Size',2);
+INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (3,'Размер зимней одежды',0,'Size',3);
 INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (4,'Размер обуви',1,'Size',4);
 INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (5,'Размер зимней обуви',1,'Size',5);
 INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (6,'Размер головного убора',1,'Size',6);
 INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (7,'Размер перчаток',1,'Size',7);
 INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (8,'Размер рукавиц',1,'Size',8);
-INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (3,'Размер зимней одежды',0,'Size',3);
 INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (9,'Размер носков',0,'Size',9);
 
 -- Преднастроенные размеры
@@ -293,7 +293,7 @@ INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_no
 INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (305, '27', 9, 1, 1, NULL);
 INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (306, '29', 9, 1, 1, NULL);
 INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (307, '31', 9, 1, 1, NULL);
-INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (308, '23', 9, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (308, '33', 9, 1, 1, NULL);
 
 DELETE FROM `base_parameters` WHERE `base_parameters`.`name` = 'EmployeeSizeRanges';
 
@@ -479,37 +479,50 @@ JOIN sizes ON sizes.size_type_id = 8 AND sizes.name = wear_cards.size_mittens;
 CREATE TABLE IF NOT EXISTS `size_shoes_to_sock_size` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `shoes_size_id` INT(10) UNSIGNED NOT NULL,
-  `sock_name` VARCHAR(10) NOT NULL,
+  `shoes_name` VARCHAR(10) NOT NULL,
   `sock_size_id` INT(10) UNSIGNED NOT NULL,
   `sock_name` VARCHAR(10) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  INDEX `size_shoes_to_sock_size_1_idx` (`shoes_size_id` ASC),
+  INDEX `size_shoes_to_sock_size_2_idx` (`sock_size_id` ASC),
+  CONSTRAINT `fk_size_shoes_to_sock_size_1`
+    FOREIGN KEY (`shoes_size_id`)
+    REFERENCES `sizes` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_size_shoes_to_sock_size_2`
+    FOREIGN KEY (`sock_size_id`)
+    REFERENCES `sizes` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+  )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
-INSERT INTO `size_shoes_to_sock_size` () VALUES (150, '34');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (151, '34-35');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (152, '35');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (153, '36');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (154, '36-37');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (155, '37');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (156, '38');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (157, '38-39');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (158, '39');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (159, '40');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (160, '40-41');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (161, '41');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (162, '42');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (163, '42-43');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (164, '43');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (165, '44');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (166, '44-45');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (167, '45');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (168, '46');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (169, '46-47');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (170, '47');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (171, '48');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (172, '49');
-INSERT INTO `size_shoes_to_sock_size` () VALUES (173, '50');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (150, '34', 303, '23');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (151, '34-35', 303, '23');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (152, '35', 303, '23');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (153, '36', 303, '23');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (154, '36-37', 303, '23');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (155, '37', 303, '23');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (156, '38', 304, '25');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (157, '38-39', 304, '25');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (158, '39', 304, '25');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (159, '40', 304, '25');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (160, '40-41', 305, '27');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (161, '41', 305, '27');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (162, '42', 305, '27');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (163, '42-43', 305, '27');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (164, '43', 305, '27');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (165, '44', 306, '29');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (166, '44-45', 306, '29');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (167, '45', 306, '29');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (168, '46', 306, '29');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (169, '46-47', 307, '31');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (170, '47', 307, '31');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (171, '48', 307, '31');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (172, '49', 308, '33');
+INSERT INTO `size_shoes_to_sock_size` (`shoes_size_id`, `shoes_name`, `sock_size_id`, `sock_name`) VALUES (173, '50', 308, '33');
 
 INSERT INTO wear_cards_sizes (employee_id, size_type_id, size_id)
 SELECT wear_cards.id, 9, size_shoes_to_sock_size.sock_size_id
