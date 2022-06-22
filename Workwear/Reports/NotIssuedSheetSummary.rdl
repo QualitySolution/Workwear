@@ -728,6 +728,7 @@ WHERE
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
     AND wear_cards_item.next_issue &lt; @report_date
+    AND (@exclude_before = "" OR @exclude_before &lt; wear_cards_item.next_issue)
 GROUP BY
     wear_cards_item.protection_tools_id,
     IF(@show_sex, wear_cards.sex, NULL),
@@ -753,6 +754,9 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="@exclude_in_vacation">
             <Value>={?exclude_in_vacation}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@exclude_before">
+            <Value>={?exclude_before}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -867,6 +871,13 @@ ORDER BY
       <MultiValue>false</MultiValue>
       <Prompt>
       </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="exclude_before">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>
