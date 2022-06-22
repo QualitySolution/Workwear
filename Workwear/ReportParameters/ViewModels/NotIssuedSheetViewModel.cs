@@ -74,5 +74,7 @@ namespace workwear.ReportParameters.ViewModels
 		{
 			UoW.Dispose();
 		}
+		
+		public void ClearExcludeBefore() => ExcludeBefore = null;
 	}
 }
