@@ -23,12 +23,7 @@ namespace workwear.ReportParameters.Views
 			ycheckExcludeInVacation.Binding.AddBinding(viewModel, w => w.ExcludeInVacation, v => v.Active).InitializeFromSource();
 
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
-
-			yClearBefore.Clicked += ClickClearBefore;
 		}
-		
-		private void ClickClearBefore(object sender, EventArgs e) 
-			=> ViewModel.ClearExcludeBefore();
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)
 		{
