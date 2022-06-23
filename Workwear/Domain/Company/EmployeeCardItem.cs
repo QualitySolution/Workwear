@@ -214,8 +214,12 @@ namespace workwear.Domain.Company
 		/// Необходимое к выдачи количество.
 		/// Внимание! Не корректно считает сложные ситуации, с неполной выдачей.
 		/// </summary>
-		public virtual int CalculateRequiredIssue(BaseParameters parameters)
-		{
+		public virtual int CalculateRequiredIssue(BaseParameters parameters) {
+			if (ActiveNormItem?.NormCondition is { IssuanceStart: { }, IssuanceEnd: { } }) {
+				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(DateTime.Today);
+				if (DateTime.Today < nextPeriod.Begin)
+					return 0;
+			}
 			if(NextIssue.HasValue && NextIssue.Value.AddDays(-parameters.ColDayAheadOfShedule) <= DateTime.Today)
 				return ActiveNormItem.Amount;
 			else 
