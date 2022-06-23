@@ -7,12 +7,14 @@ using Gamma.Utilities;
 using NLog;
 using QS.Dialog;
 using QS.Dialog.ViewModels;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
+using QS.Tools;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
@@ -37,6 +39,7 @@ namespace workwear.ViewModels.Stock
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;
+		private readonly IChangeMonitor changeMonitor;
 
 		public CollectiveExpenseViewModel(IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -49,7 +52,8 @@ namespace workwear.ViewModels.Stock
 			StockRepository stockRepository,
 			CommonMessages commonMessages,
 			FeaturesService featuresService,
-			BaseParameters baseParameters
+			BaseParameters baseParameters,
+			IChangeMonitor changeMonitor
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -59,9 +63,12 @@ namespace workwear.ViewModels.Stock
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			var entryBuilder = new CommonEEVMBuilderFactory<CollectiveExpense>(this, Entity, UoW, navigation, autofacScope);
-			if(UoW.IsNew) {
+			this.changeMonitor = changeMonitor ?? throw new ArgumentNullException(nameof(changeMonitor));
+			if (UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 			}
+			changeMonitor.SubscribeAllChange<CollectiveExpenseItem>(
+					x => DomainHelper.EqualDomainObjects(x.Document, Entity), UoW);
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
@@ -102,7 +109,7 @@ namespace workwear.ViewModels.Stock
 
 			UoWGeneric.Save();
 			logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
-			Entity.UpdateEmployeeWearItems(progress);
+			Entity.UpdateEmployeeWearItems(progress, changeMonitor.EntityIds.ToList());
 			progress.Add(text: "Сохранение в базу данных...");
 			UoWGeneric.Commit();
 			progress.Close();
