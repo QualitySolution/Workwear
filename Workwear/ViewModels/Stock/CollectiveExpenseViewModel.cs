@@ -68,7 +68,8 @@ namespace workwear.ViewModels.Stock
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 			}
 			changeMonitor.SubscribeAllChange<CollectiveExpenseItem>(
-					x => DomainHelper.EqualDomainObjects(x.Document, Entity), UoW);
+					x => DomainHelper.EqualDomainObjects(x.Document, Entity), UoW)
+				.TargetField(x => x.Employee);
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);

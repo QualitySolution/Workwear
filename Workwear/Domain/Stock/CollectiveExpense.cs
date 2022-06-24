@@ -225,7 +225,7 @@ namespace workwear.Domain.Stock
 		{
 			var groups = itemIds is null ? 
 				Items.GroupBy(x => x.Employee) : 
-				Items.Where(x => itemIds.Contains(x.Id))
+				Items.Where(x => itemIds.Contains(x.Employee.Id))
 					.GroupBy(x => x.Employee);
 			
 			foreach(var employeeGroup in groups) {
