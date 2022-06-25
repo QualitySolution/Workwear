@@ -215,7 +215,7 @@ namespace workwear.Domain.Company
 		/// Внимание! Не корректно считает сложные ситуации, с неполной выдачей.
 		/// </summary>
 		public virtual int CalculateRequiredIssue(BaseParameters parameters) {
-			if (ActiveNormItem?.NormCondition.IssuanceStart != null && ActiveNormItem?.NormCondition.IssuanceEnd != null) {
+			if (ActiveNormItem?.NormCondition?.IssuanceStart != null && ActiveNormItem?.NormCondition?.IssuanceEnd != null) {
 				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(DateTime.Today);
 				if (DateTime.Today < nextPeriod.Begin)
 					return 0;
