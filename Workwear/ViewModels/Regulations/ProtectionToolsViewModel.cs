@@ -31,7 +31,7 @@ namespace workwear.ViewModels.Regulations
 			.MakeByType()
 			.Finish();
 
-			Entity.ObservableNomenclatures.ListChanged += (aList) => OnPropertyChanged(nameof(SensetiveCreateNomenclature));
+			Entity.ObservableNomenclatures.ListContentChanged += (sender, args) => OnPropertyChanged(nameof(SensetiveCreateNomenclature));
 		}
 
 		#region EntityViewModels

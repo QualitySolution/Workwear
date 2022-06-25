@@ -11,28 +11,39 @@ namespace workwear.Models.Import
 		where TDataTypeEnum : System.Enum
 	{
 		private readonly IRow cells;
+		
+		public ICell[,] MergedCells;
 
 		public SheetRowBase(IRow cells)
 		{
 			this.cells = cells;
 		}
 
+		#region Получение значений ячейки
+		readonly Dictionary<int, string> changedValues = new Dictionary<int, string>();
 		/// <summary>
 		/// Получает значение ячейки видимое пользователю.
 		/// </summary>
 		public string CellValue(int col)
 		{
-			var cell = cells.GetCell(col);
+			//Используем кешированные значения, так как графика для отрисовки очень часто дергает этот метод.
+			if(changedValues.ContainsKey(col))
+				return changedValues[col];
+
+			string value;
+			var cell = GetCellForValue(col);
 			if(cell?.CellType == CellType.Blank)
-				return null;
+				value = null;
 			if(cell?.CellType == CellType.Error && cell.ErrorCellValue == 0)
-				return null;
-			return cell?.ToString();
+				value = null;
+			value = cell?.ToString();
+			changedValues[col] = value;
+			return value;
 		}
 
 		public string CellStringValue(int col)
 		{
-			var cell = cells.GetCell(col);
+			var cell = GetCellForValue(col);
 
 			if(cell != null) {
 				// TODO: you can add more cell types capatibility, e. g. formula
@@ -40,7 +51,7 @@ namespace workwear.Models.Import
 					case NPOI.SS.UserModel.CellType.Numeric:
 						return cell.NumericCellValue.ToString();
 					case NPOI.SS.UserModel.CellType.String:
-						return cell.StringCellValue;
+						return cell.StringCellValue?.Trim();
 				}
 			}
 			return null;
@@ -48,7 +59,7 @@ namespace workwear.Models.Import
 
 		public int? CellIntValue(int col)
 		{
-			var cell = cells.GetCell(col);
+			var cell = GetCellForValue(col);
 
 			if(cell != null) {
 				switch(cell.CellType) {
@@ -66,7 +77,7 @@ namespace workwear.Models.Import
 
 		public DateTime? CellDateTimeValue(int col)
 		{
-			var cell = cells.GetCell(col);
+			var cell = GetCellForValue(col);
 
 			if(cell != null) {
 				switch(cell.CellType) {
@@ -81,6 +92,16 @@ namespace workwear.Models.Import
 			}
 			return null;
 		}
+		
+		private ICell GetCellForValue(int col)
+		{
+			var cell = cells.GetCell(col);
+			if (cell != null && cell.IsMergedCell)
+				cell = MergedCells[cell.RowIndex, cell.ColumnIndex];
+			return cell;
+		}
+		
+		#endregion
 		
 		public string CellBackgroundColor(int col)
 		{

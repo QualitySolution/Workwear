@@ -27,13 +27,7 @@ namespace workwear.Models.Import
 		public string DataColumnsRecommendations => "Установите номер строки с заголовком данных, таким образом чтобы название колонок было корректно. Если в таблице заголовки отсутствуют укажите 0.\nДалее для каждой значимой колонки проставьте тип данных которые находится в таблице.\nОбязательными данными являются Табельный номер, Номенклатура нормы и выдачи, Дата и количество выдачи";
 
 		#endregion
-
-		public override bool CanMatch => (Columns.Any(x => x.DataType == DataTypeWorkwearItems.PersonnelNumber)
-			&& Columns.Any(x => x.DataType == DataTypeWorkwearItems.ProtectionTools)
-			&& Columns.Any(x => x.DataType == DataTypeWorkwearItems.Nomenclature)
-			&& Columns.Any(x => x.DataType == DataTypeWorkwearItems.Count)
-			&& Columns.Any(x => x.DataType == DataTypeWorkwearItems.IssueDate)
-		);
+		protected override DataTypeWorkwearItems[] RequiredDataTypes => new []{DataTypeWorkwearItems.PersonnelNumber, DataTypeWorkwearItems.ProtectionTools, DataTypeWorkwearItems.Nomenclature, DataTypeWorkwearItems.Count, DataTypeWorkwearItems.IssueDate};
 
 		public bool CanSave { get; private set; }
 

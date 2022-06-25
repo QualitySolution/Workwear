@@ -12,6 +12,8 @@ namespace Workwear.Domain.Regulations
 		Shift,
 		[Display(Name = "До износа")]
 		Wearout,
+		[Display(Name = "Дежурный")]
+		Duty
 	}
 }
 

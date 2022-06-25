@@ -190,6 +190,11 @@ namespace workwear.Domain.Company
 		/// Внимание! Не корректно считает сложные ситуации, с неполной выдачей.
 		/// </summary>
 		public virtual int CalculateRequiredIssue(BaseParameters parameters) {
+			if (ActiveNormItem?.NormCondition.IssuanceStart != null && ActiveNormItem?.NormCondition.IssuanceEnd != null) {
+				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(DateTime.Today);
+				if (DateTime.Today < nextPeriod.Begin)
+					return 0;
+			}
 			if(NextIssue.HasValue && NextIssue.Value.AddDays(-parameters.ColDayAheadOfShedule) <= DateTime.Today)
 				return ActiveNormItem.Amount;
 			return ActiveNormItem.Amount <= Amount ? 0 : ActiveNormItem.Amount - Amount;
@@ -287,11 +292,13 @@ namespace workwear.Domain.Company
 				uow.Save (this);
 			}
 
-			if(NextIssue < ActiveNormItem.Norm.DateFrom && ActiveNormItem.NormPeriod != NormPeriodType.Wearout){
+			if(NextIssue < ActiveNormItem.Norm.DateFrom && ActiveNormItem.NormPeriod != NormPeriodType.Wearout && ActiveNormItem.NormPeriod != NormPeriodType.Duty){
 				NextIssue = ActiveNormItem.Norm.DateFrom;
 			}
 			if(ActiveNormItem.NormPeriod == NormPeriodType.Wearout)
 				NextIssueAnnotation = $"У строки нормы указан период - до износа";
+			if(ActiveNormItem.NormPeriod == NormPeriodType.Duty)
+				NextIssueAnnotation = $"У строки нормы указан период - дежурный";
 		}
 		#endregion
 		#region Зазоры для тестирования

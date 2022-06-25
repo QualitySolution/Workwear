@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -81,12 +81,12 @@ namespace workwear.ViewModels.Statements
 			if (Entity.Id == 0 )
 				GetDefualtSetting();
 
-			Entity.ObservableItems.ListChanged += (aList) => OnPropertyChanged(nameof(Sum));
+			Entity.ObservableItems.ListContentChanged += (sender, args) => OnPropertyChanged(nameof(Sum));
 		}
 
 		#region Поля View
 		public string Sum => $"Строк в документе: <u>{Entity.Items.Count}</u>" +
-			$" Сотрудников: <u>{Entity.Items.Select(x => x.Employee.Id).Distinct().Count()}</u>" +
+			$" Сотрудников: <u>{Entity.Items.Where(x => x.Employee != null).Select(x => x.Employee.Id).Distinct().Count()}</u>" +
 			$" Единиц продукции: <u>{Entity.Items.Sum(x => x.Amount)}</u>";
 		#endregion
 
@@ -137,6 +137,9 @@ namespace workwear.ViewModels.Statements
 
 		public void SetEmployee(IssuanceSheetItem[] items)
 		{
+			if(items == null || items.Length == 0)
+				return;
+			 
 			var selectPage = NavigationManager.OpenViewModel<EmployeeJournalViewModel>(
 				this,
 				OpenPageOptions.AsSlave);
@@ -149,8 +152,8 @@ namespace workwear.ViewModels.Statements
 
 		void SelectDialog_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			var items = (sender as EmployeeJournalViewModel).Tag as IssuanceSheetItem[];
-			var employee = UoW.GetById<EmployeeCard>(DomainHelper.GetId(e.SelectedObjects.First()));
+			var items = (IssuanceSheetItem[])((EmployeeJournalViewModel)sender).Tag;
+			var employee = UoW.GetById<EmployeeCard>(e.SelectedObjects.First().GetId());
 			foreach(var item in items) {
 				item.Employee = employee;
 			}

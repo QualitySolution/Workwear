@@ -32,7 +32,6 @@ namespace workwear.Dialogs.Stock
 		public IncomeDocDlg()
 		{
 			this.Build();
-			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Income> ();
 			featuresService = AutofacScope.Resolve<FeaturesService>();
 			sizeService = AutofacScope.Resolve<SizeService>();

@@ -41,6 +41,7 @@ using QS.Services;
 using QS.Tdi;
 using QS.Updater.DB.Views;
 using QS.Updater;
+using QS.Utilities.Numeric;
 using QS.Validation;
 using QS.ViewModels.Resolve;
 using QS.ViewModels;
@@ -261,6 +262,7 @@ namespace workwear
 			#region Common Models
 			builder.RegisterType<PersonNames>().AsSelf();
 			builder.RegisterType<OpenStockDocumentsModel>().AsSelf();
+			builder.Register(c => new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated)).AsSelf();
 			#endregion
 
 			#region Repository

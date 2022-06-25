@@ -37,8 +37,8 @@ node {
             def PACKAGES_LOCATION = "${JENKINS_HOME}/.nuget/packages"
             sh """
                 cd Workwear/WorkwearTest/bin/ReleaseWin
-                cp -r ${PACKAGES_LOCATION}/nunit.consolerunner/3.12.0/tools/* .
-                mono nunit3-console.exe WorkwearTest.dll
+                cp -r ${PACKAGES_LOCATION}/nunit.consolerunner/3.15.0/tools/* .
+                mono nunit3-console.exe WorkwearTest.dll --framework=mono-4.0
             """
        } catch (e) {}
        finally{

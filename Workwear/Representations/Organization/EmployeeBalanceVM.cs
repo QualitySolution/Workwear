@@ -24,14 +24,10 @@ namespace workwear.Representations.Organization
 		private EmployeeCard employee;
 
 		public EmployeeCard Employee {
-			get => Filter != null ? Filter.RestrictEmployee : employee;
+			get => employee;
 			set => employee = value;
 		}
-
-		public EmployeeBalanceFilter Filter {
-			get => RepresentationFilter as EmployeeBalanceFilter;
-			set => RepresentationFilter = value;
-		}
+		
 		#region IRepresentationModel implementation
 		public override void UpdateNodes () {
 			if(Employee == null) {
@@ -100,7 +96,6 @@ namespace workwear.Representations.Organization
 		}
 
 		#endregion
-		public EmployeeBalanceVM (EmployeeBalanceFilter filter) : this(filter.UoW) => Filter = filter;
 		public EmployeeBalanceVM (IUnitOfWork uow) : base (typeof(EmployeeIssueOperation)) => 
 			UoW = uow;
 	}

@@ -7,7 +7,7 @@ namespace WorkwearTest.Models.Company
 	[TestFixture(TestOf = typeof(PersonNames))]
 	public class PersonNamesTest
 	{
-		[Test(Description = "В данных отсутствую одинаковые имена, неоходимое условие для работы механизма выставление пола в карточке сотрудника. Иначе будут ложные переключения.")]
+		[Test(Description = "В данных отсутствую одинаковые имена, необходимое условие для работы механизма выставление пола в карточке сотрудника. Иначе будут ложные переключения.")]
 		public void NamesAreUnique()
 		{
 			var personNames = new PersonNames();

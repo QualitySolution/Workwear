@@ -20,14 +20,16 @@ namespace workwear.Models.Import
 		#region Колонки
 		IList<IDataColumn> DisplayColumns {get;}
 		int MaxSourceColumns { get; set; }
-		void AutoSetupColumns();
+		void AutoSetupColumns(IProgressBarDisplayable progress);
 		#endregion
 
 		#region Строки
 		int HeaderRow { get; set; }
+		int SheetRowCount { get; }
 		void AddRow(IRow cells);
 		List<ISheetRow> DisplayRows { get; }
 		#endregion
+		ICell[,] MergedCells { get; set; }
 
 		#region Сопоставление
 		ViewModelBase MatchSettingsViewModel { get; }

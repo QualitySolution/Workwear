@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
-using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import
 {
@@ -24,10 +23,8 @@ namespace workwear.Models.Import
 
 		#endregion
 
-		public override bool CanMatch => (Columns.Any(x => x.DataType == DataTypeNorm.Post)
-			&& Columns.Any(x => x.DataType == DataTypeNorm.ProtectionTools)
-			&& Columns.Any(x => x.DataType == DataTypeNorm.PeriodAndCount)
-		);
+		protected override DataTypeNorm[] RequiredDataTypes => new[]
+			{ DataTypeNorm.Post, DataTypeNorm.ProtectionTools, DataTypeNorm.PeriodAndCount };
 
 		public bool CanSave { get; private set; }
 
@@ -50,7 +47,7 @@ namespace workwear.Models.Import
 
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
-			dataParser.MatchWithExist(uow, UsedRows, Columns);
+			dataParser.MatchWithExist(uow, UsedRows, Columns, progress);
 			dataParser.FindChanges(UsedRows, Columns.Where(x => x.DataType != DataTypeNorm.Unknown).ToArray());
 			OnPropertyChanged(nameof(DisplayRows));
 

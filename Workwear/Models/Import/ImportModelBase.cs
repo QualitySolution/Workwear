@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.ViewModels;
 using workwear.ViewModels.Import;
@@ -18,7 +19,14 @@ namespace workwear.Models.Import
 
 		public Type DataTypeEnum => typeof(TDataTypeEnum);
 
-		public abstract bool CanMatch { get; }
+		#region Типы данных
+		public virtual bool CanMatch => HasRequiredDataTypes(Columns.Select(x => x.DataType));
+
+		protected virtual bool HasRequiredDataTypes(IEnumerable<TDataTypeEnum> dataTypes) => RequiredDataTypes.All(dataTypes.Contains);
+
+		protected abstract TDataTypeEnum[] RequiredDataTypes { get; }
+		#endregion
+
 
 		private readonly IDataParser<TDataTypeEnum> dataParser;
 
@@ -89,37 +97,40 @@ namespace workwear.Models.Import
 			OnPropertyChanged(nameof(DisplayColumns));
 		}
 
-		public void AutoSetupColumns()
+		public void AutoSetupColumns(IProgressBarDisplayable progress)
 		{
 			logger.Info("Ищем заголовочную строку...");
-
+			progress.Start(XlsRows.Count, text:"Определение типов данных...");
 			var bestMath = new TDataTypeEnum[MaxSourceColumns];
 			int bestColumns = 0;
 			int bestHeaderRow = 0;
 			SheetRowBase<TDataTypeEnum> bestRow = null;
 			int rowNum = 0;
 			foreach(var row in XlsRows) {
+				progress.Add();
 				var types = new TDataTypeEnum[MaxSourceColumns];
 				rowNum++;
 				for(int i = 0; i < MaxSourceColumns; i++) {
 					var value = row.CellStringValue(i)?.ToLower() ?? String.Empty;
 					types[i] = dataParser.DetectDataType(value);
 				}
-				if(bestColumns < types.Count(x => !default(TDataTypeEnum).Equals(x))) {
+				if(bestColumns < types.Where(x => !default(TDataTypeEnum).Equals(x)).Distinct().Count()) {
 					bestMath = types;
 					bestRow = row;
 					bestColumns = types.Count(x => !default(TDataTypeEnum).Equals(x));
 					bestHeaderRow = rowNum;
+					if(HasRequiredDataTypes(bestMath))
+						break;	
 				}
-				if(bestColumns >= 3)
-					break;
 			}
 
+			progress.Add();
 			for(int i = 0; i < MaxSourceColumns; i++)
 				Columns[i].DataType = bestMath[i];
 
 			logger.Debug($"Найдено соответсвие в {bestColumns} заголовков в строке {bestHeaderRow}");
 			HeaderRow = bestHeaderRow;
+			progress.Close();
 			logger.Info("Ок");
 		}
 		#endregion
@@ -136,6 +147,8 @@ namespace workwear.Models.Import
 				}
 			}
 		}
+
+		public int SheetRowCount => XlsRows.Count;
 
 		public List<TSheetRow> XlsRows = new List<TSheetRow>();
 
@@ -156,5 +169,16 @@ namespace workwear.Models.Import
 		}
 
 		#endregion
+		
+		private ICell[,] mergedCells;
+		public ICell[,] MergedCells {
+			get => mergedCells;
+			set {
+				mergedCells = value;
+				foreach (var row in XlsRows) {
+					row.MergedCells = value;
+				}
+			}
+		}
 	}
 }

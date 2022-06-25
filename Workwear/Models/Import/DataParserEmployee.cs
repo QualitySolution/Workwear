@@ -10,6 +10,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Services;
+using QS.Utilities.Numeric;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
 using workwear.Models.Company;
@@ -25,10 +26,12 @@ namespace workwear.Models.Import
 		private readonly PersonNames personNames;
 		private readonly IUserService userService;
 		private readonly SizeService sizeService;
+		private readonly PhoneFormatter phoneFormatter;
 
 		public DataParserEmployee(
 			PersonNames personNames,
 			SizeService sizeService,
+			PhoneFormatter phoneFormatter, 
 			IUserService userService = null)
 		{
 			AddColumnName(DataTypeEmployee.Fio,
@@ -70,6 +73,11 @@ namespace workwear.Models.Import
 				"Таб. №",
 				"Таб."//Если такой вариант будет пересекаться с другими полями его можно удалить.
 				);
+			AddColumnName(DataTypeEmployee.Phone,
+				"Телефон",
+				"Номер телефона",
+				"Тел"
+			);
 			AddColumnName(DataTypeEmployee.HireDate,
 				"Дата приема",
 				"Дата приёма",
@@ -107,6 +115,7 @@ namespace workwear.Models.Import
 				"Одежда"
 				);
 			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
+			this.phoneFormatter = phoneFormatter ?? throw new ArgumentException(nameof(phoneFormatter));
 			this.userService = userService;
 			this.sizeService = sizeService;
 		}
@@ -172,6 +181,9 @@ namespace workwear.Models.Import
 				case DataTypeEmployee.PersonnelNumber:
 					row.ChangedColumns.Add(column, CompareString(employee.PersonnelNumber, 
 						(settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(value) : value)?.Trim(), rowChange));
+					break;
+				case DataTypeEmployee.Phone:
+					row.ChangedColumns.Add(column, ComparePhone(employee.PhoneNumber, value, rowChange));
 					break;
 				case DataTypeEmployee.LastName:
 					row.ChangedColumns.Add(column, CompareString(employee.LastName, value, rowChange));
@@ -319,6 +331,17 @@ namespace workwear.Models.Import
 				changeType = ChangeType.ParseError;
 
 			return new ChangeState(changeType, newValue.Name);
+		}
+		
+		private ChangeState ComparePhone(string fieldValue, string newValue, ChangeType rowChange)
+		{
+			newValue = phoneFormatter.FormatString(newValue);
+			var changeType = String.Equals(fieldValue, newValue, StringComparison.InvariantCultureIgnoreCase) ? 
+				ChangeType.NotChanged : rowChange;
+			if(newValue.Length != phoneFormatter.MaxStringLength)
+				changeType = ChangeType.ParseError;
+			return changeType == ChangeType.ChangeValue ? 
+				new ChangeState(changeType, fieldValue) : new ChangeState(changeType);
 		}
 		#endregion
 		#region Сопоставление
@@ -494,6 +517,9 @@ namespace workwear.Models.Import
 				case DataTypeEmployee.PersonnelNumber:
 					employee.PersonnelNumber = (settings.ConvertPersonnelNumber ? 
 						EmployeeParse.ConvertPersonnelNumber(value) : value)?.Trim();
+					break;
+				case DataTypeEmployee.Phone:
+					employee.PhoneNumber = phoneFormatter.FormatString(value);
 					break;
 				case DataTypeEmployee.LastName:
 					employee.LastName = value;

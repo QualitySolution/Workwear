@@ -7,6 +7,7 @@ using NUnit.Framework;
 using QS.Dialog;
 using QS.Navigation;
 using QS.Testing.DB;
+using QS.Utilities.Numeric;
 using workwear.Domain.Company;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
@@ -42,7 +43,7 @@ namespace WorkwearTest.Integration.Import
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
-			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService());
+			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
 			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
@@ -78,7 +79,7 @@ namespace WorkwearTest.Integration.Import
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
-			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService());
+			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
@@ -134,7 +135,7 @@ namespace WorkwearTest.Integration.Import
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
-			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService());
+			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
@@ -193,7 +194,7 @@ namespace WorkwearTest.Integration.Import
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
-			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService());
+			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
 			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
@@ -235,7 +236,7 @@ namespace WorkwearTest.Integration.Import
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
-			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService());
+			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
 			var model = new ImportModelEmployee(dataParser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor))
