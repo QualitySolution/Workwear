@@ -194,7 +194,7 @@ namespace workwear
 			builder.RegisterType<UserService>().As<IUserService>();
 			builder.RegisterType<ObjectValidator>().As<IValidator>();
 			builder.RegisterType<CommonMessages>().AsSelf();
-			builder.RegisterType<NHibernateChangeMonitor>().As<IChangeMonitor>();
+			builder.RegisterGeneric(typeof(NHibernateChangeMonitor<>)).As(typeof(IChangeMonitor<>));
 			#endregion
 
 			#region Навигация

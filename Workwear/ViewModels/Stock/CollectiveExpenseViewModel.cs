@@ -39,7 +39,7 @@ namespace workwear.ViewModels.Stock
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;
-		private readonly IChangeMonitor changeMonitor;
+		private readonly IChangeMonitor<CollectiveExpenseItem> changeMonitor;
 
 		public CollectiveExpenseViewModel(IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -53,7 +53,7 @@ namespace workwear.ViewModels.Stock
 			CommonMessages commonMessages,
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
-			IChangeMonitor changeMonitor
+			IChangeMonitor<CollectiveExpenseItem> changeMonitor
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -67,9 +67,10 @@ namespace workwear.ViewModels.Stock
 			if (UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 			}
-			changeMonitor.SubscribeAllChange<CollectiveExpenseItem>(
-					x => DomainHelper.EqualDomainObjects(x.Document, Entity), UoW)
+			changeMonitor.SubscribeAllChange(
+					x => DomainHelper.EqualDomainObjects(x.Document, Entity))
 				.TargetField(x => x.Employee);
+			changeMonitor.SetTargetUnitOfWorks(UoW);
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
