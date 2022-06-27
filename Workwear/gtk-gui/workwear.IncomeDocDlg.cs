@@ -225,7 +225,7 @@ namespace workwear.Dialogs.Stock
 			this.yentryNumber.CanFocus = true;
 			this.yentryNumber.Name = "yentryNumber";
 			this.yentryNumber.IsEditable = true;
-			this.yentryNumber.MaxLength = 8;
+			this.yentryNumber.MaxLength = 15;
 			this.yentryNumber.InvisibleChar = '●';
 			this.table2.Add(this.yentryNumber);
 			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table2[this.yentryNumber]));
