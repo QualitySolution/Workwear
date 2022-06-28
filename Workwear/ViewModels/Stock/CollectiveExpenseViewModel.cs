@@ -70,7 +70,7 @@ namespace workwear.ViewModels.Stock
 			changeMonitor.SubscribeAllChange(
 					x => DomainHelper.EqualDomainObjects(x.Document, Entity))
 				.TargetField(x => x.Employee);
-			changeMonitor.SetTargetUnitOfWorks(UoW);
+			changeMonitor.AddSetTargetUnitOfWorks(UoW);
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
