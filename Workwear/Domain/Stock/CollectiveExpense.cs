@@ -221,9 +221,13 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public virtual void UpdateEmployeeWearItems(IProgressBarDisplayable progress)
+		public virtual void UpdateEmployeeWearItems(IProgressBarDisplayable progress, IList<int> itemIds = null)
 		{
-			var groups = Items.GroupBy(x => x.Employee);
+			var groups = itemIds is null ? 
+				Items.GroupBy(x => x.Employee) : 
+				Items.Where(x => itemIds.Contains(x.Employee.Id))
+					.GroupBy(x => x.Employee);
+			
 			foreach(var employeeGroup in groups) {
 				progress.Add(text: $"Обновляем потребности {employeeGroup.Key.ShortName}");
 				employeeGroup.Key.UpdateNextIssue(employeeGroup.Select(x => x.ProtectionTools).ToArray());
