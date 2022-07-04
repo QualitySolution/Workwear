@@ -7,7 +7,7 @@
 
 image:mobile-app_google-ru.svg[width=210,link=https://play.google.com/store/apps/details?id=ru.qsolution.cloud.wear.lk] image:mobile-app_apple-ru.svg[width=210,link=https://apps.apple.com/ru/app/qs-%D1%81%D0%BF%D0%B5%D1%86%D0%BE%D0%B4%D0%B5%D0%B6%D0%B4%D0%B0/id1577920801] image:mobile-app_huawei-ru.svg[width=210,link=https://appgallery.huawei.com/app/C105803933]
 
-Можно распечатать xref:{attachmentsdir}/LK-workwear.pdf[объявление] с qr-кодами для сотрудников:
+Можно распечатать http://files.qsolution.ru/share/LK-workwear.pdf[объявление] с qr-кодами на скачивание для сотрудников:
 
 Установив приложение на свой телефон сотрудники смогут:
 
