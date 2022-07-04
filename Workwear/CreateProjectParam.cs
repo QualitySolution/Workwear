@@ -39,6 +39,7 @@ using QS.Report;
 using QS.Serial.Views;
 using QS.Services;
 using QS.Tdi;
+using QS.Tools;
 using QS.Updater.DB.Views;
 using QS.Updater;
 using QS.Utilities.Numeric;
@@ -193,6 +194,7 @@ namespace workwear
 			builder.RegisterType<UserService>().As<IUserService>();
 			builder.RegisterType<ObjectValidator>().As<IValidator>();
 			builder.RegisterType<CommonMessages>().AsSelf();
+			builder.RegisterGeneric(typeof(NHibernateChangeMonitor<>)).As(typeof(IChangeMonitor<>));
 			#endregion
 
 			#region Навигация
