@@ -154,7 +154,8 @@ namespace workwear.ViewModels.Import
 				return;
 			}
 
-			for(int s = 0; s < wb.NumberOfSheets; s++) {
+			Sheets = new List<ImportedSheet>();
+			for(var s = 0; s < wb.NumberOfSheets; s++) {
 				var sheet = new ImportedSheet {
 					Number = s,
 					Title = wb.GetSheetName(s)
