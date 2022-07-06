@@ -100,7 +100,7 @@ namespace workwear.Models.Import
 		public void AutoSetupColumns(IProgressBarDisplayable progress)
 		{
 			logger.Info("Ищем заголовочную строку...");
-			progress.Start(XlsRows.Count, text:"Определение типов данных...");
+			progress.Start(Math.Min(100, XlsRows.Count), text:"Определение типов данных...");
 			var bestMath = new TDataTypeEnum[MaxSourceColumns];
 			int bestColumns = 0;
 			int bestHeaderRow = 0;
@@ -119,9 +119,12 @@ namespace workwear.Models.Import
 					bestRow = row;
 					bestColumns = types.Where(x => !default(TDataTypeEnum).Equals(x)).Distinct().Count();
 					bestHeaderRow = rowNum;
-					if(HasRequiredDataTypes(bestMath))
-						break;	
 				}
+				//Мало вероятно что в нормальном файле заголовочная строка располагаться ниже 100-ой строки.
+				//Поэтому прерываем проверку, так как если не нашли все подходящие поля, на больших файлах будем проверять очень долго.
+				//Пользователь быстрее в ручную укажет типы данных.
+				if(rowNum > 100)
+					break;
 			}
 
 			progress.Add();
