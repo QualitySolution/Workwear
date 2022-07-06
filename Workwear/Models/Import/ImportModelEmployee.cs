@@ -75,8 +75,13 @@ namespace workwear.Models.Import
 		}
 		
 		private IList<EntityField> entityFields;
-		IList<EntityField> IImportModel.EntityFields => 
-			entityFields ??= GetEntityFields().ToList();
+		IList<EntityField> IImportModel.EntityFields {
+			get {
+				if(entityFields == null)
+					entityFields = GetEntityFields().ToList();
+				return entityFields;
+			}
+		}
 
 		public override void AutoSetupColumns(IProgressBarDisplayable progress) {
 			base.AutoSetupColumns(progress);

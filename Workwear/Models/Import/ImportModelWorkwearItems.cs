@@ -66,8 +66,14 @@ namespace workwear.Models.Import
 				.Select(x => new EntityField{ Data = x});
 		
 		private IList<EntityField> entityFields;
-		public IList<EntityField> EntityFields => 
-			entityFields ??= GetEntityFields().ToList();
+		IList<EntityField> IImportModel.EntityFields {
+			get {
+				if(entityFields == null)
+					entityFields = GetEntityFields().ToList();
+				return entityFields;
+			}
+		}
+		
 		public override IList<EntityField> BaseEntityFields() => 
 			((IImportModel)this).EntityFields;
 
