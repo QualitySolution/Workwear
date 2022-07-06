@@ -117,7 +117,7 @@ namespace workwear.Models.Import
 				if(bestColumns < types.Where(x => !default(TDataTypeEnum).Equals(x)).Distinct().Count()) {
 					bestMath = types;
 					bestRow = row;
-					bestColumns = types.Count(x => !default(TDataTypeEnum).Equals(x));
+					bestColumns = types.Where(x => !default(TDataTypeEnum).Equals(x)).Distinct().Count();
 					bestHeaderRow = rowNum;
 					if(HasRequiredDataTypes(bestMath))
 						break;	
