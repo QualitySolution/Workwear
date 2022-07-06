@@ -86,15 +86,26 @@ namespace workwear.ViewModels.Import
 			set => SetField(ref selectedSheet, value);
 		}
 
-		public void SecondStep() {
-			CurrentStep = 1;
-			LoadSheet();
-			ImportModel.AutoSetupColumns(ProgressStep);
+		public void BackToFirstStep()
+		{
+			CurrentStep = 0;
 		}
 
 		#endregion
 
 		#region Шаг 2
+
+		public void SecondStep()
+		{
+			CurrentStep = 1;
+			LoadSheet();
+			ImportModel.AutoSetupColumns(ProgressStep);
+		}
+
+		public void BackToSecondStep()
+		{
+			CurrentStep = 1;
+		}
 
 		public bool SensitiveThirdStepButton => ImportModel.CanMatch;
 		public int RowsCount => ImportModel.SheetRowCount;

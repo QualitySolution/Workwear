@@ -14457,7 +14457,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Import.ExcelImportView" design-size="1164 354">
+  <widget class="Gtk.Bin" id="workwear.Views.Import.ExcelImportView" design-size="1188 362">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -14547,7 +14547,7 @@
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
                     <property name="Type">TextOnly</property>
-                    <property name="Label" translatable="yes">Разбор листа ⇨</property>
+                    <property name="Label" translatable="yes">Разбор листа ⇒</property>
                     <property name="UseUnderline">True</property>
                     <signal name="Clicked" handler="OnButtonLoadClicked" />
                   </widget>
@@ -14722,13 +14722,37 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="Gamma.GtkWidgets.yButton" id="buttonReadEmployees">
+                      <widget class="Gtk.HBox" id="hbox3">
                         <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextOnly</property>
-                        <property name="Label" translatable="yes">Сопоставление данных ⇨</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonReadEmployeesClicked" />
+                        <property name="Spacing">6</property>
+                        <child>
+                          <widget class="Gamma.GtkWidgets.yButton" id="buttonBackToSelectSheet">
+                            <property name="MemberName" />
+                            <property name="CanFocus">True</property>
+                            <property name="Type">TextOnly</property>
+                            <property name="Label" translatable="yes">⇐ Вернутся к выбору листа</property>
+                            <property name="UseUnderline">True</property>
+                            <signal name="Clicked" handler="OnButtonBackToSelectSheetClicked" />
+                          </widget>
+                          <packing>
+                            <property name="Position">0</property>
+                            <property name="AutoSize">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="Gamma.GtkWidgets.yButton" id="buttonReadEmployees">
+                            <property name="MemberName" />
+                            <property name="CanFocus">True</property>
+                            <property name="Type">TextOnly</property>
+                            <property name="Label" translatable="yes">Сопоставление данных ⇒</property>
+                            <property name="UseUnderline">True</property>
+                            <signal name="Clicked" handler="OnButtonReadEmployeesClicked" />
+                          </widget>
+                          <packing>
+                            <property name="Position">1</property>
+                            <property name="AutoSize">False</property>
+                          </packing>
+                        </child>
                       </widget>
                       <packing>
                         <property name="Position">1</property>
@@ -14768,14 +14792,42 @@
                     <property name="MemberName" />
                     <property name="Spacing">6</property>
                     <child>
-                      <widget class="Gamma.GtkWidgets.yButton" id="buttonSave">
+                      <widget class="Gamma.GtkWidgets.yHBox" id="yhbox1">
                         <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-save Menu</property>
-                        <property name="Label" translatable="yes">Сохранить</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonSaveClicked" />
+                        <property name="Spacing">6</property>
+                        <child>
+                          <widget class="Gamma.GtkWidgets.yButton" id="buttonBackToDataTypes">
+                            <property name="MemberName" />
+                            <property name="CanFocus">True</property>
+                            <property name="Type">TextOnly</property>
+                            <property name="Label" translatable="yes">⇐ Вернутся к типам данных</property>
+                            <property name="UseUnderline">True</property>
+                            <signal name="Clicked" handler="OnButtonBackToDataTypesClicked" />
+                          </widget>
+                          <packing>
+                            <property name="Position">0</property>
+                            <property name="AutoSize">True</property>
+                            <property name="Expand">False</property>
+                            <property name="Fill">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="Gamma.GtkWidgets.yButton" id="buttonSave">
+                            <property name="MemberName" />
+                            <property name="CanFocus">True</property>
+                            <property name="Type">TextAndIcon</property>
+                            <property name="Icon">stock:gtk-save Menu</property>
+                            <property name="Label" translatable="yes">Сохранить</property>
+                            <property name="UseUnderline">True</property>
+                            <signal name="Clicked" handler="OnButtonSaveClicked" />
+                          </widget>
+                          <packing>
+                            <property name="Position">1</property>
+                            <property name="AutoSize">True</property>
+                            <property name="Expand">False</property>
+                            <property name="Fill">False</property>
+                          </packing>
+                        </child>
                       </widget>
                       <packing>
                         <property name="PackType">End</property>
