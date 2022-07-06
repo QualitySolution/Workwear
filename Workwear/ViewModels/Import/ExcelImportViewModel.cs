@@ -105,6 +105,8 @@ namespace workwear.ViewModels.Import
 		public void BackToSecondStep()
 		{
 			CurrentStep = 1;
+			ImportModel.DisplayRows.ForEach(x => x.ProgramSkipped = false);
+			ImportModel.CleanMatch();
 		}
 
 		public bool SensitiveThirdStepButton => ImportModel.CanMatch;
