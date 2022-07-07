@@ -73,8 +73,8 @@ namespace workwear.Journal.ViewModels.Regulations
 					() => subdivisionAlias.Name,
 					() => normAlias.Id
 					));
-			if(Filter.Post != null)
-				norms.Where(x => x.Id == Filter.Post.Id);
+			if (Filter.Post != null)
+				norms.Where(() => postAlias.Id == Filter.Post.Id);
 
 			if(Filter.ProtectionTools != null)
 				norms.JoinAlias(n => n.Items, () => normItemAlias)
