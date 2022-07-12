@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using Gamma.Utilities;
@@ -15,7 +15,7 @@ namespace workwear.Domain.Stock
 		Genitive = "типа номенклатуры"
 		)]
 	[HistoryTrace]
-	public class ItemsType : PropertyChangedBase, IDomainObject, IValidatableObject
+	public class ItemsType : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -107,13 +107,6 @@ namespace workwear.Domain.Stock
 		}
 		#endregion
 		public ItemsType () { }
-		#region IValidatableObject implementation
-		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
-			if (Category == ItemTypeCategory.wear && SizeType is null)
-				yield return new ValidationResult ("Вид размера одежды должен быть указан.", 
-					new[] { this.GetPropertyName (o => o.SizeType)});
-		}
-		#endregion
 	}
 	public enum ItemTypeCategory{
 		[Display(Name = "Спецодежда")]
