@@ -296,7 +296,7 @@ namespace workwear.Models.Import
 			}
 
 			var size = sizeService
-				.GetSize(uow, sizeType, true, true)
+				.GetSize(uow, sizeType)
 				.FirstOrDefault(x => 
 					x.Name.Trim().ToLower().Equals(value.Trim().ToLower())
 					|| x.Title.Trim().ToLower().Equals(value.Trim().ToLower()));
@@ -324,7 +324,7 @@ namespace workwear.Models.Import
 			var changeType = fieldValue == newValue ? ChangeType.NotChanged : rowChange;
 			if (changeType == ChangeType.NotChanged)
 				return new ChangeState(changeType);
-			var sizes = sizeService.GetSize(uow, null, true, false);
+			var sizes = sizeService.GetSize(uow);
 			if(sizes.All(x => x != newValue))
 				changeType = ChangeType.ParseError;
 
