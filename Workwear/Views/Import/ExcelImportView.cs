@@ -96,10 +96,6 @@ namespace workwear.Views.Import
 			}
 		}
 
-		protected void OnButtonLoadClicked(object sender, EventArgs e) {
-			ViewModel.SecondStep();
-		}
-
 		private void RefreshTableColumns() {
 			var config = ColumnsConfigFactory.Create<ISheetRow>();
 			for(var i = 0; i < ViewModel.ImportModel.DisplayColumns.Count; i++) {
@@ -147,14 +143,30 @@ namespace workwear.Views.Import
 			tableColumns.ShowAll();
 		}
 
+		#region StepButtons
+		protected void OnButtonLoadClicked(object sender, EventArgs e)
+		{
+			ViewModel.SecondStep();
+		}
+
+		protected void OnButtonBackToSelectSheetClicked(object sender, EventArgs e)
+		{
+			ViewModel.BackToFirstStep();
+		}
+
 		protected void OnButtonReadEmployeesClicked(object sender, EventArgs e) {
 			ViewModel.ThirdStep();
+		}
+
+		protected void OnButtonBackToDataTypesClicked(object sender, EventArgs e)
+		{
+			ViewModel.BackToSecondStep();
 		}
 
 		protected void OnButtonSaveClicked(object sender, EventArgs e) {
 			ViewModel.Save();
 		}
-
+		#endregion
 		#region PopupMenu
 		void TreeviewRows_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
 			if (args.Event.Button != 3 || ViewModel.CurrentStep != 2) return;
@@ -172,7 +184,6 @@ namespace workwear.Views.Import
 			var item = (MenuItemId<ISheetRow>)sender;
 			item.ID.UserSkipped = !item.ID.UserSkipped;
 		}
-
 		#endregion
 	}
 }

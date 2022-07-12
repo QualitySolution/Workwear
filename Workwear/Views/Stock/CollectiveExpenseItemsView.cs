@@ -4,7 +4,6 @@ using Gamma.GtkWidgets;
 using Gtk;
 using QSWidgetLib;
 using workwear.Domain.Stock;
-using Workwear.Measurements;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock

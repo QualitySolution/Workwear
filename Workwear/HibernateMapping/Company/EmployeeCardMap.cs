@@ -1,7 +1,6 @@
 ﻿using FluentNHibernate.Mapping;
 using workwear.Domain.Company;
 using Workwear.Domain.Company;
-using Workwear.Domain.Sizes;
 
 namespace workwear.HibernateMapping.Company
 {

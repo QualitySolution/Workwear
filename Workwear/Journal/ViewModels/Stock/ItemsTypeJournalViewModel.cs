@@ -7,11 +7,9 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
-using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
-using Workwear.Measurements;
 
 namespace workwear.Journal.ViewModels.Stock
 {

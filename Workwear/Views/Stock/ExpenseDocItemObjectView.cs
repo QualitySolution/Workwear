@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Data.Bindings.Utilities;
 using Gtk;
 using QS.DomainModel.Entity;
 using QSWidgetLib;
 using workwear.Domain.Stock;
 using workwear.ViewModels.Stock;
-using Workwear.Measurements;
 
 namespace workwear.Views.Stock
 {

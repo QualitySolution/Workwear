@@ -1,5 +1,4 @@
 ﻿using FluentNHibernate.Mapping;
-using NPOI.SS.Formula.Functions;
 using workwear.Domain.Stock;
 
 namespace workwear.HMap

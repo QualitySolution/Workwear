@@ -2,7 +2,6 @@
 using QS.Views;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
-using workwear.Tools.Features;
 
 namespace workwear.Journal.Filter.Views.Stock
 {
