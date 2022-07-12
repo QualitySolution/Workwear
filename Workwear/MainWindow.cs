@@ -165,8 +165,8 @@ public partial class MainWindow : Gtk.Window
 
 		FeaturesService = AutofacScope.Resolve<FeaturesService>();
 		DisableFeatures();
-
-		HistoryMain.Enable();
+		
+		HistoryMain.Enable(connectionBuilder);
 	}
 
 	private void CreateDefaultWarehouse()
