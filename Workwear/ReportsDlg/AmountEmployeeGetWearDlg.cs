@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using QS.Report;
-using QSProjectsLib;
 using QSReport;
 
 namespace workwear.ReportsDlg

@@ -8,7 +8,6 @@ using QS.Views.Dialog;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 using workwear.ViewModels.Sizes;
-using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Sizes
 {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Gamma.Binding.Converters;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
