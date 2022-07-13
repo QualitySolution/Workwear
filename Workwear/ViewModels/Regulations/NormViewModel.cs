@@ -246,6 +246,40 @@ namespace workwear.ViewModels.Regulations
 		}
 		#endregion
 		#endregion
+
+		public void ReSaveLastIssue(NormItem normItem) 
+		{
+			logger.Info("Пересчитываем последнии выдачи сотрудников");
+			
+			var operations = employeeIssueRepository.GetOperationsForNormItem(
+				normItem, 
+				q => q.Fetch(
+					SelectMode.Fetch, 
+					x => x.Employee)
+				);
+
+			operations = operations
+				.GroupBy(x => x.Employee)
+				.Select(o => 
+					o.OrderByDescending(d => d.OperationTime).First())
+				.ToList();
+
+			foreach (var operation in operations)
+			{
+				var dateStart = operation.StartOfUse ?? operation.OperationTime;
+				var dateExpiryByNorm = normItem.CalculateExpireDate(dateStart, operation.Issued);
+				operation.ExpiryByNorm = dateExpiryByNorm;
+				if (operation.UseAutoWriteoff)
+					operation.AutoWriteoffDate = dateExpiryByNorm;
+
+				var cardItem = operation.Employee.WorkwearItems
+						.FirstOrDefault(x => 
+							DomainHelper.EqualDomainObjects(x.ProtectionTools, normItem.ProtectionTools));
+
+				cardItem?.UpdateNextIssue(UoW);
+			}
+		}
+		
 		#region Сохранение
 		public override bool Save() 
 		{
@@ -256,6 +290,8 @@ namespace workwear.ViewModels.Regulations
 				if(!interactive.Question(
 					    "Для сохранения требуется обновить потребности сотрудников. \n Продолжить ?"))
 					return false;
+				
+				logger.Info("Пересчитываем сотрудников");
 				
 				var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
 				var progress = progressPage.ViewModel.Progress;
@@ -270,6 +306,7 @@ namespace workwear.ViewModels.Regulations
 					progress.Add(text: "Завершаем...");
 					UoW.Commit();
 					NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+					logger.Info("Ok");
 				}
 			}
 			return true;

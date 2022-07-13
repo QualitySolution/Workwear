@@ -1,6 +1,8 @@
 ﻿using System;
 using Gamma.ColumnConfig;
+using Gtk;
 using QS.Views.Dialog;
+using QSWidgetLib;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.ViewModels.Regulations;
@@ -61,6 +63,7 @@ namespace workwear.Views.Regulations
 				.Finish ();
 			ytreeItems.ItemsDataSource = Entity.ObservableItems;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
+			ytreeItems.ButtonReleaseEvent += TreeItems_ButtonReleaseEvent;
 
 			buttonSave.Binding.AddBinding(ViewModel, v => v.SaveSensitive, w => w.Sensitive).InitializeFromSource();
 			buttonCancel.Binding.AddBinding(ViewModel, v => v.CancelSensitive, w => w.Sensitive).InitializeFromSource();
@@ -116,6 +119,24 @@ namespace workwear.Views.Regulations
 			ycomboAnnex.ItemsList = Entity.Document?.Annexess;
 			ycomboAnnex.Sensitive = Entity.Document?.Annexess.Count > 0;
 		}
+		
+		#region PopupMenu
+
+		private void TreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
+		{
+			if(args.Event.Button == 3) {
+				var menu = new Menu();
+				var selected = ytreeItems.GetSelectedObject<NormItem>();
+				var menuItem = 
+					new MenuItemId<NormItem>("пересчитать сроки носки в документах выдачи");
+				menuItem.ID = selected;
+				menuItem.Activated += (sender, e) => ViewModel.ReSaveLastIssue(((MenuItemId<NormItem>)sender).ID);
+				menu.Add(menuItem);
+				menu.ShowAll();
+				menu.Popup();
+			}
+		}
+		#endregion
 	}
 }
 
