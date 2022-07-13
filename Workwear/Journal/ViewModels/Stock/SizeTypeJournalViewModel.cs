@@ -12,10 +12,8 @@ using QS.Project.Services;
 using QS.Services;
 using Workwear.Domain.Sizes;
 using workwear.Journal.Filter.ViewModels.Sizes;
-using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Measurements;
 using workwear.ViewModels.Sizes;
-using workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock
 {

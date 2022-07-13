@@ -19,7 +19,6 @@ using QS.NewsFeed.Views;
 using QS.Project.Domain;
 using QS.Project.Versioning;
 using QS.Project.Views;
-using QS.Report;
 using QS.Report.ViewModels;
 using QS.Serial.ViewModels;
 using QS.Services;
@@ -43,7 +42,6 @@ using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Tools;
-using Workwear.Measurements;
 using workwear.Models.Import;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
@@ -165,8 +163,8 @@ public partial class MainWindow : Gtk.Window
 
 		FeaturesService = AutofacScope.Resolve<FeaturesService>();
 		DisableFeatures();
-
-		HistoryMain.Enable();
+		
+		HistoryMain.Enable(connectionBuilder);
 	}
 
 	private void CreateDefaultWarehouse()

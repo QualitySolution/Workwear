@@ -75,7 +75,15 @@ namespace workwear.Models.Import
 			          || CountersViewModel.GetCount(CountersNorm.NewSubdivisions) > 0
 			          || CountersViewModel.GetCount(CountersNorm.NewProtectionTools) > 0;
 		}
-		
+
+		public void CleanMatch()
+		{
+			foreach(var row in UsedRows) {
+				row.ChangedColumns.Clear();
+				//FIXME Возможно нужно очищать строку, но нужно проверять, на реальных данных
+			}
+		}
+
 		protected override void RowOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
         	base.RowOnPropertyChanged(sender, e);

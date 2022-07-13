@@ -36,6 +36,10 @@ namespace workwear.Models.Import
 		ViewModelBase MatchSettingsViewModel { get; }
 		bool CanMatch { get; }
 		void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow);
+		/// <summary>
+		/// Вызывается при шаге назад, для очистки заполненых данных
+		/// </summary>
+		void CleanMatch();
 		#endregion
 
 		#region Сохранение

@@ -85,7 +85,15 @@ namespace workwear.Models.Import
 			RecalculateCounters();
 			CanSave = CountersViewModel.GetCount(CountersWorkwearItems.NewOperations) > 0;
 		}
-		
+
+		public void CleanMatch()
+		{
+			foreach(var row in UsedRows) {
+				row.ChangedColumns.Clear();
+				//FIXME Возможно надо чистить сотрудника и поерацию, но нужно проверять.
+			}
+		}
+
 		protected override void RowOnPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			base.RowOnPropertyChanged(sender, e);

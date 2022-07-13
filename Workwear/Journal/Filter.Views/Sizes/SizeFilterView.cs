@@ -1,6 +1,5 @@
 ﻿using QS.Views;
 using workwear.Journal.Filter.ViewModels.Sizes;
-using workwear.Journal.Filter.ViewModels.Stock;
 
 namespace workwear.Journal.Filter.Views.Sizes
 {

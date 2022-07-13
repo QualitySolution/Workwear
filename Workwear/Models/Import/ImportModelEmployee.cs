@@ -133,6 +133,14 @@ namespace workwear.Models.Import
 				|| CountersViewModel.GetCount(CountersEmployee.NewSubdivisions) > 0;
 		}
 
+		public void CleanMatch()
+		{
+			foreach(var row in UsedRows) {
+				row.ChangedColumns.Clear();
+				row.Employees.Clear();
+			}
+		}
+
 		protected override void RowOnPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			base.RowOnPropertyChanged(sender, e);

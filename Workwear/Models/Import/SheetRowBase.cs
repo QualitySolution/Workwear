@@ -132,7 +132,7 @@ namespace workwear.Models.Import
 
 		public void AddColumnChange(ImportedColumn<TDataTypeEnum> column, ChangeType changeType, string oldValue = null)
 		{
-			ChangedColumns.Add(column, new ChangeState(changeType, oldValue));
+			ChangedColumns[column] = new ChangeState(changeType, oldValue);
 		}
 
 		public string CellTooltip(int col)
@@ -165,6 +165,7 @@ namespace workwear.Models.Import
 		string CellTooltip(int col);
 		string CellBackgroundColor(int col);
 
+		bool ProgramSkipped { get; set; }
 		bool UserSkipped { get; set; }
 	}
 

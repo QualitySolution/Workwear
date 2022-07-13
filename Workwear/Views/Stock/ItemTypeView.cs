@@ -7,7 +7,6 @@ using QS.BusinessCommon.Repository;
 using QS.Views.Dialog;
 using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
-using Workwear.Measurements;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock

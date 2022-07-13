@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
-using Gamma.Utilities;
 using QS.DomainModel.Entity;
 
 namespace workwear.Models.Import

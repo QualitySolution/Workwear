@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;

@@ -86,15 +86,28 @@ namespace workwear.ViewModels.Import
 			set => SetField(ref selectedSheet, value);
 		}
 
-		public void SecondStep() {
-			CurrentStep = 1;
-			LoadSheet();
-			ImportModel.AutoSetupColumns(ProgressStep);
+		public void BackToFirstStep()
+		{
+			CurrentStep = 0;
 		}
 
 		#endregion
 
 		#region Шаг 2
+
+		public void SecondStep()
+		{
+			CurrentStep = 1;
+			LoadSheet();
+			ImportModel.AutoSetupColumns(ProgressStep);
+		}
+
+		public void BackToSecondStep()
+		{
+			CurrentStep = 1;
+			ImportModel.DisplayRows.ForEach(x => x.ProgramSkipped = false);
+			ImportModel.CleanMatch();
+		}
 
 		public bool SensitiveThirdStepButton => ImportModel.CanMatch;
 		public int RowsCount => ImportModel.SheetRowCount;
@@ -124,6 +137,7 @@ namespace workwear.ViewModels.Import
 		#endregion
 		#region Сохранение
 		public new void Save() {
+			var start = DateTime.Now;
 			sensitiveSaveButton = false;
 			progressInterceptor.PrepareStatement += (sender, e) => ProgressStep.Add();
 			var toSave = ImportModel.MakeToSave(ProgressStep, UoW);
@@ -132,7 +146,7 @@ namespace workwear.ViewModels.Import
 				UoW.TrySave(item);
 			}
 			UoW.Commit();
-			logger.Debug($"Объектов сохранено: {toSave.Count} Шагов сохранения: {ProgressStep.Value}");
+			logger.Debug($"Объектов сохранено: {toSave.Count} Шагов сохранения: {ProgressStep.Value} Время: {(DateTime.Now-start).TotalSeconds} сек.");
 			ProgressStep.Close();
 			Close(false, CloseSource.Save);
 		}
@@ -154,6 +168,7 @@ namespace workwear.ViewModels.Import
 				return;
 			}
 
+			Sheets = new List<ImportedSheet>();
 			for(var s = 0; s < wb.NumberOfSheets; s++) {
 				var sheet = new ImportedSheet {
 					Number = s,

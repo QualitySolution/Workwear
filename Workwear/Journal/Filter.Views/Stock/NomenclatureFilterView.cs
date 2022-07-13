@@ -1,5 +1,4 @@
-﻿using System;
-using QS.ViewModels.Control.EEVM;
+using System;
 using QS.Views;
 using workwear.Journal.Filter.ViewModels.Stock;
 
