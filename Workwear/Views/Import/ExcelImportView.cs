@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using Gamma.GtkWidgets;
 using Gamma.Utilities;
-using Gamma.Widgets;
 using Gtk;
 using QS.Views.Dialog;
 using QS.Views.Resolve;
+using QS.Widgets.GtkUI;
 using QSWidgetLib;
 using workwear.Models.Import;
 using workwear.ViewModels.Import;
@@ -15,7 +15,7 @@ namespace workwear.Views.Import
 	public partial class ExcelImportView : DialogViewBase<ExcelImportViewModel>
 	{
 		List<yLabel> columnsLabels = new List<yLabel>();
-		List<yEnumComboBox> columnsTypeCombos = new List<yEnumComboBox>();
+		List<SpecialListComboBox> columnsTypeCombos = new List<SpecialListComboBox>();
 
 		public ExcelImportView(ExcelImportViewModel viewModel, IGtkViewResolver viewResolver) : base(viewModel)
 		{
@@ -129,10 +129,10 @@ namespace workwear.Views.Import
 				tableColumns
 					.Attach(label, 0, 1, nRow, nRow + 1, 
 						AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
-				var combo = new yEnumComboBox();
-				combo.ItemsEnum = ViewModel.ImportModel.DataTypeEnum;
+				var combo = new SpecialListComboBox {ItemsList = ViewModel.ImportModel.EntityFields};
+				combo.SetRenderTextFunc<EntityField>(x => x.Title);
 				combo.Binding
-					.AddBinding(column, nameof(IDataColumn.DataType), w => w.SelectedItem)
+					.AddBinding(column, c => c.EntityField, w => w.SelectedItem)
 					.InitializeFromSource();
 				columnsTypeCombos.Add(combo);
 				tableColumns

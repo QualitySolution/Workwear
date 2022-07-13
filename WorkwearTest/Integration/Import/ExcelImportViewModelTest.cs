@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
+using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Testing.DB;
 using QS.Utilities.Numeric;
@@ -45,7 +46,7 @@ namespace WorkwearTest.Integration.Import
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
-			var model = new ImportModelEmployee(dataparser, setting);
+			var model = new ImportModelEmployee(dataparser, setting, new SizeService(), UnitOfWorkFactory);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/cardkey_list.xlsx";
@@ -83,7 +84,7 @@ namespace WorkwearTest.Integration.Import
 			var setting = new SettingsMatchEmployeesViewModel();
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
-			var model = new ImportModelEmployee(dataparser, setting);
+			var model = new ImportModelEmployee(dataparser, setting, new SizeService(), UnitOfWorkFactory);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/vostok_1c_employee.xls";
@@ -139,7 +140,7 @@ namespace WorkwearTest.Integration.Import
 			var setting = new SettingsMatchEmployeesViewModel();
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
-			var model = new ImportModelEmployee(dataparser, setting);
+			var model = new ImportModelEmployee(dataparser, setting, new SizeService(), UnitOfWorkFactory);
 			
 			using (var rootUow = UnitOfWorkFactory.CreateWithoutRoot())
 			{
@@ -196,7 +197,7 @@ namespace WorkwearTest.Integration.Import
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
-			var model = new ImportModelEmployee(dataparser, setting);
+			var model = new ImportModelEmployee(dataparser, setting, new SizeService(), UnitOfWorkFactory);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				var importModel = employeesLoad.ImportModel as ImportModelEmployee;
 				employeesLoad.ProgressStep = progressStep;
@@ -232,33 +233,36 @@ namespace WorkwearTest.Integration.Import
 		[Test(Description = "Проверяем что нормально работаем с файлами имеющими пустые строки + размеры сотрудника")]
 		public void EmployeesLoad_EmptyRows_Sizes_A2Case()
 		{
+			NewSessionWithSameDB();
+				
+			var uowSaveSize = UnitOfWorkFactory.CreateWithNewRoot<SizeType>();
+			var heightType = new SizeType
+				{Name = "Рост", Position = 1, UseInEmployee = true, CategorySizeType = CategorySizeType.Height};
+			uowSaveSize.Save(heightType);
+			var sizeType = new SizeType 
+				{Name = "Размер", Position = 2, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
+			uowSaveSize.Save(sizeType);
+			var shoesType = new SizeType 
+				{Name = "Обувь", Position = 3, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
+			uowSaveSize.Save(shoesType);
+			var height = new Size {Name = "170-176", SizeType = heightType, UseInEmployee = true};
+			uowSaveSize.Save(height);
+			var size = new Size {Name = "48-50", SizeType = sizeType, UseInEmployee = true};
+			uowSaveSize.Save(size);
+			var shoes = new Size {Name = "38", SizeType = shoesType, UseInEmployee = true};
+			uowSaveSize.Save(shoes);
+			uowSaveSize.Commit();
+
 			var navigation = Substitute.For<INavigationManager>();
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
-			var model = new ImportModelEmployee(dataParser, setting);
+			var model = new ImportModelEmployee(dataParser, setting, new SizeService(), UnitOfWorkFactory);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor))
 			{
 				var uow = employeesLoad.UoW;
-				var heightType = new SizeType
-					{Name = "РостТип", Position = 1, UseInEmployee = true, CategorySizeType = CategorySizeType.Height};
-					uow.Save(heightType);
-				var sizeType = new SizeType 
-					{Name = "РазмерТип", Position = 2, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
-				uow.Save(sizeType);
-				var shoesType = new SizeType 
-					{Name = "ОбувьТип", Position = 3, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
-				uow.Save(shoesType);
-				var height = new Size {Name = "170-176", SizeType = heightType, UseInEmployee = true};
-				uow.Save(height);
-				var size = new Size {Name = "48-50", SizeType = sizeType, UseInEmployee = true};
-				uow.Save(size);
-				var shoes = new Size {Name = "38", SizeType = shoesType, UseInEmployee = true};
-				uow.Save(shoes);
-				uow.Commit();
-
 				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/empty_first_row_a2.xls";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
@@ -275,9 +279,9 @@ namespace WorkwearTest.Integration.Import
 
 				Assert.That(employees.Count, Is.EqualTo(5));
 				var nikolay = employees.First(x => x.FirstName == "Николай");
-				Assert.That(nikolay.Sizes.FirstOrDefault(x => x.SizeType == heightType)?.Size?.Id, Is.EqualTo(height.Id));
-				Assert.That(nikolay.Sizes.FirstOrDefault(x => x.SizeType == sizeType)?.Size?.Id, Is.EqualTo(size.Id));
-				Assert.That(nikolay.Sizes.FirstOrDefault(x => x.SizeType == shoesType)?.Size?.Id, Is.EqualTo(shoes.Id));
+				Assert.That(nikolay.Sizes.FirstOrDefault(x => x.SizeType.Id == heightType.Id)?.Size?.Id, Is.EqualTo(height.Id));
+				Assert.That(nikolay.Sizes.FirstOrDefault(x => x.SizeType.Id == sizeType.Id)?.Size?.Id, Is.EqualTo(size.Id));
+				Assert.That(nikolay.Sizes.FirstOrDefault(x => x.SizeType.Id == shoesType.Id)?.Size?.Id, Is.EqualTo(shoes.Id));
 				
 				//Проверяем что должности не задублировались
 				var posts = uow.GetAll<Post>();
