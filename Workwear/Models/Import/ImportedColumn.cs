@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using QS.DomainModel.Entity;
 
 namespace workwear.Models.Import
