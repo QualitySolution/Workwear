@@ -83,9 +83,13 @@ INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) V
 INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (4,'Размер обуви',1,'Size',4);
 INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (5,'Размер зимней обуви',1,'Size',5);
 INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (6,'Размер головного убора',1,'Size',6);
-INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (7,'Размер перчаток',1,'Size',7);
-INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (8,'Размер рукавиц',1,'Size',8);
+INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (7,'Размер перчаток',1,'Size',8);
+INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (8,'Размер рукавиц',1,'Size',9);
 INSERT INTO `size_types` (`id`,`name`,`use_in_employee`,`category`,`position`) VALUES (3,'Размер зимней одежды',0,'Size',3);
+INSERT INTO `size_types` (`id`, `name`, `use_in_employee`, `category`, `position`) VALUES (9, 'Размер зимнего головного убора', 1, 'Size', 7);
+INSERT INTO `size_types` (`id`, `name`, `use_in_employee`, `category`, `position`) VALUES (10, 'Размер противогаза', 1, 'Size', 10);
+INSERT INTO `size_types` (`id`, `name`, `use_in_employee`, `category`, `position`) VALUES (11, 'Размер респиратора', 1, 'Size', 11);
+INSERT INTO `size_types` (`id`, `name`, `use_in_employee`, `category`, `position`) VALUES (12, 'Размер носков', 1, 'Size', 12);
 
 -- Преднастроенные размеры
 SELECT IF(str_value = 'True', 1, 0) INTO @range FROM `base_parameters` WHERE name = 'EmployeeSizeRanges';
@@ -287,6 +291,37 @@ INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_no
 INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (300, '1', 8, 1, 1, NULL);
 INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (301, '2', 8, 1, 1, NULL);
 INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (302, '3', 8, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (310, '54', 9, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (311, '55', 9, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (312, '56', 9, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (313, '57', 9, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (314, '58', 9, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (315, '58-60', 9, @range, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (316, '59', 9, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (317, '59-60', 9, @range, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (318, '60', 9, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (319, '61', 9, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (320, '62', 9, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (321, '63', 9, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (322, '64', 9, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (323, '65', 9, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (330, '1', 10, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (331, '2', 10, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (332, '3', 10, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (333, '4', 10, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (340, '1', 11, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (341, '2', 11, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (342, '3', 11, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (343, '4', 11, 1, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (350, '23', 12, 1, 0, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (351, '23-25', 12, @range, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (352, '25', 12, 1, 0, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (353, '27', 12, 1, 0, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (354, '27-29', 12, @range, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (355, '29', 12, 1, 0, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (356, '31', 12, 1, 0, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (357, '31-33', 12, @range, 1, NULL);
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (358, '33', 12, 1, 0, NULL);
 
 DELETE FROM `base_parameters` WHERE `base_parameters`.`name` = 'EmployeeSizeRanges';
 
@@ -425,10 +460,22 @@ INSERT INTO size_suitable (`size_id`,`size_suitable_id`) VALUES (209,208);
 INSERT INTO size_suitable (`size_id`,`size_suitable_id`) VALUES (209,210);
 INSERT INTO size_suitable (`size_id`,`size_suitable_id`) VALUES (235,234);
 INSERT INTO size_suitable (`size_id`,`size_suitable_id`) VALUES (235,236);
+INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (235, 238);
 INSERT INTO size_suitable (`size_id`,`size_suitable_id`) VALUES (237,236);
 INSERT INTO size_suitable (`size_id`,`size_suitable_id`) VALUES (237,238);
 INSERT INTO size_suitable (`size_id`,`size_suitable_id`) VALUES (276,275);
 INSERT INTO size_suitable (`size_id`,`size_suitable_id`) VALUES (276,277);
+INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (315, 314);
+INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (315, 316);
+INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (315, 318);
+INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (317, 316);
+INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (317, 318);
+INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (351, 350);
+INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (351, 352);
+INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (354, 353);
+INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (354, 355);
+INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (357, 356);
+INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (357, 358);
 
 -- Выносим данные из полей карточек сотрудника
 
