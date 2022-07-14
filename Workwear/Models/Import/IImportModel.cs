@@ -11,10 +11,10 @@ namespace workwear.Models.Import
 {
 	public interface IImportModel : INotifyPropertyChanged
 	{
+		void Init(IUnitOfWork uow);
 		string ImportName { get; }
 		string DataColumnsRecommendations { get; }
-		Type DataTypeEnum { get; }
-		
+
 		CountersViewModel CountersViewModel { get; }
 
 		#region Колонки
@@ -30,14 +30,14 @@ namespace workwear.Models.Import
 		List<ISheetRow> DisplayRows { get; }
 		#endregion
 		ICell[,] MergedCells { get; set; }
-		IList<EntityField> EntityFields { get; }
+		IEnumerable<DataType> DataTypes { get; }
 
 		#region Сопоставление
 		ViewModelBase MatchSettingsViewModel { get; }
 		bool CanMatch { get; }
 		void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow);
 		/// <summary>
-		/// Вызывается при шаге назад, для очистки заполненых данных
+		/// Вызывается при шаге назад, для очистки заполненных данных
 		/// </summary>
 		void CleanMatch();
 		#endregion

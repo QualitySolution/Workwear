@@ -129,10 +129,10 @@ namespace workwear.Views.Import
 				tableColumns
 					.Attach(label, 0, 1, nRow, nRow + 1, 
 						AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
-				var combo = new SpecialListComboBox {ItemsList = ViewModel.ImportModel.EntityFields};
-				combo.SetRenderTextFunc<EntityField>(x => x.Title);
+				var combo = new SpecialListComboBox {ItemsList = ViewModel.ImportModel.DataTypes};
+				combo.SetRenderTextFunc<DataType>(x => x.Title);
 				combo.Binding
-					.AddBinding(column, c => c.EntityField, w => w.SelectedItem)
+					.AddBinding(column, c => c.DataType, w => w.SelectedItem)
 					.InitializeFromSource();
 				columnsTypeCombos.Add(combo);
 				tableColumns

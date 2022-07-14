@@ -21,7 +21,7 @@ using Workwear.Measurements;
 
 namespace workwear.Models.Import
 {
-	public class DataParserEmployee : DataParserBase<DataTypeEmployee>
+	public class DataParserEmployee : DataParserBase
 	{
 		private readonly PersonNames personNames;
 		private readonly IUserService userService;
@@ -34,6 +34,11 @@ namespace workwear.Models.Import
 			PhoneFormatter phoneFormatter, 
 			IUserService userService = null)
 		{
+			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
+			this.phoneFormatter = phoneFormatter ?? throw new ArgumentException(nameof(phoneFormatter));
+			this.userService = userService;
+			this.sizeService = sizeService;
+			
 			AddColumnName(DataTypeEmployee.Fio,
 				"ФИО",
 				"Ф.И.О.",
@@ -64,9 +69,8 @@ namespace workwear.Models.Import
 				);
 			AddColumnName(DataTypeEmployee.Sex,
 				"Sex",
-				"Gender",
-				"Пол"
-				);
+				"Gender"
+			).ColumnNameRegExp = @"(?<=^|\s)пол(?=$|\s)";
 			AddColumnName(DataTypeEmployee.PersonnelNumber,
 				"TN",
 				"Табельный",
@@ -75,9 +79,8 @@ namespace workwear.Models.Import
 				);
 			AddColumnName(DataTypeEmployee.Phone,
 				"Телефон",
-				"Номер телефона",
-				"Тел"
-			);
+				"Номер телефона"
+			).ColumnNameRegExp = @"(?<=^|\s)тел(?=$|\s|\.)";
 			AddColumnName(DataTypeEmployee.HireDate,
 				"Дата приема",
 				"Дата приёма",
@@ -103,17 +106,46 @@ namespace workwear.Models.Import
 			AddColumnName(DataTypeEmployee.Post,
 				"Должность"
 				);
-			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
-			this.phoneFormatter = phoneFormatter ?? throw new ArgumentException(nameof(phoneFormatter));
-			this.userService = userService;
-			this.sizeService = sizeService;
 		}
 
-		private void AddColumnName(DataTypeEmployee type, params string[] names)
-		{
-			foreach(var name in names)
-				ColumnNames.Add(name.ToLower(), type);
+		#region Размеры
+		public void CreateSizeDatatypes(IUnitOfWork uow) {
+			var sizeTypes = sizeService.GetSizeType(uow, true);
+			foreach (var sizeType in sizeTypes)
+			{
+				var datatype = AddColumnName(sizeType, sizeType.Name);
+				if (sizeType.Id == 2)
+					datatype.ColumnNameRegExp = "(одежда|одежды)";
+				if (sizeType.Id == 3) {
+					datatype.ColumnNameRegExp = "зим.+(одежда|одежды)";
+					datatype.ColumnNameDetectPriority = 5; //Повышенный приоритет для того чтобы сначала срабатывало привило с зимним вариантом
+				}
+				if (sizeType.Id == 4)
+					datatype.ColumnNameRegExp = "(обувь|обуви)";
+				if (sizeType.Id == 5) {
+					datatype.ColumnNameRegExp = "зим.+(обувь|обуви)";
+					datatype.ColumnNameDetectPriority = 5;
+				}
+				if (sizeType.Id == 6)
+					datatype.ColumnNameRegExp = "(головного|головной)";
+				if (sizeType.Id == 9) {
+					datatype.ColumnNameRegExp = "зим.+(головного|головной)";
+					datatype.ColumnNameDetectPriority = 5; //Повышенный приоритет для того чтобы сначала срабатывало привило с зимним вариантом
+				}
+				if (sizeType.Id == 7)
+					datatype.ColumnNameRegExp = "(перчаток|перчатки)";
+				if (sizeType.Id == 8)
+					datatype.ColumnNameRegExp = "(рукавиц|рукавицы)";
+				if (sizeType.Id == 10)
+					datatype.ColumnNameRegExp = "противогаза?";
+				if (sizeType.Id == 11)
+					datatype.ColumnNameRegExp = "респиратора?";
+				if (sizeType.Id == 12)
+					datatype.ColumnNameRegExp = "носк(и|ов)";
+			}
 		}
+		
+		#endregion
 
 		#region Обработка изменений
 		public void FindChanges(
@@ -142,9 +174,9 @@ namespace workwear.Models.Import
 				}
 
 				foreach(var column in meaningfulColumns) {
-					if(column.DataType != DataTypeEmployee.Unknown)
+					if(column.DataTypeEnum != DataTypeEmployee.Unknown)
 						MakeChange(settings, employee, row, column, rowChange, uow);
-					else if(column.EntityField.Data is SizeType)
+					else if(column.DataType.Data is SizeType)
 						MakeSizeChange(settings, employee, row, column, rowChange, uow);
 				}
 			}
@@ -160,7 +192,7 @@ namespace workwear.Models.Import
 			IUnitOfWork uow)
 		{
 			var value = row.CellStringValue(column.Index);
-			var dataType = column.DataType;
+			var dataType = column.DataTypeEnum;
 			if(String.IsNullOrWhiteSpace(value)) {
 				row.AddColumnChange(column, ChangeType.NotChanged);
 				return;
@@ -289,7 +321,7 @@ namespace workwear.Models.Import
 			IUnitOfWork uow)
 		{
 			var value = row.CellStringValue(column.Index);
-			var sizeType = (SizeType)column.EntityField.Data;
+			var sizeType = (SizeType)column.DataType.Data;
 			if(String.IsNullOrWhiteSpace(value)) {
 				row.AddColumnChange(column, ChangeType.NotChanged);
 				return;
@@ -412,7 +444,7 @@ namespace workwear.Models.Import
 		{
 			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
 			var numberColumn = 
-				columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.PersonnelNumber);
+				columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.PersonnelNumber);
 			var numbers = list.Select(x => GetPersonalNumber(settings, x, numberColumn.Index))
 							.Where(x => !String.IsNullOrWhiteSpace(x))
 							.Distinct().ToArray();
@@ -455,7 +487,7 @@ namespace workwear.Models.Import
 			IProgressBarDisplayable progress)
 		{
 			progress.Start(3, text: "Загружаем подразделения");
-			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Subdivision);
+			var subdivisionColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.Subdivision);
 			if(subdivisionColumn != null) {
 				var subdivisionNames = list.Select(x => x.CellStringValue(subdivisionColumn.Index)).Distinct().ToArray();
 				UsedSubdivisions.AddRange(uow.Session.QueryOver<Subdivision>()
@@ -463,7 +495,7 @@ namespace workwear.Models.Import
 					.List());
 			}
 			progress.Add(text: "Загружаем отделы");
-			var departmentColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Department);
+			var departmentColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.Department);
 			if(departmentColumn != null) {
 				var departmentNames = list.Select(x => x.CellStringValue(departmentColumn.Index)).Distinct().ToArray();
 				UsedDepartment.AddRange(uow.Session.QueryOver<Department>()
@@ -471,7 +503,7 @@ namespace workwear.Models.Import
 					.List());
 			}
 			progress.Add(text: "Загружаем должности");
-			var postColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Post);
+			var postColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.Post);
 			if(postColumn != null) {
 				var postNames = list.Select(x => x.CellStringValue(postColumn.Index)).Distinct().ToArray();
 				UsedPosts.AddRange( uow.Session.QueryOver<Post>()
@@ -486,12 +518,12 @@ namespace workwear.Models.Import
 			var employee = row.Employees.FirstOrDefault() ?? new EmployeeCard();
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
 			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученной из общего поля ФИО.
-			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType)) {
+			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataTypeEnum)) {
 				if(row.ChangedColumns[column].ChangeType == ChangeType.NewEntity || row.ChangedColumns[column].ChangeType == ChangeType.ChangeValue)
 				{
-					if(column.EntityField.Data is DataTypeEmployee)
+					if(column.DataType.Data is DataTypeEmployee)
 						SetValue(settings, employee, row, column);
-					else if (column.EntityField.Data is SizeType)
+					else if (column.DataType.Data is SizeType)
 						SetSizeValue(uow, employee, row, column);
 						
 				}
@@ -507,7 +539,7 @@ namespace workwear.Models.Import
 		{
 			var value = row.CellStringValue(column.Index);
 			var size = sizeService
-				.GetSize(uow, (SizeType)column.EntityField.Data, onlyUseInEmployee:true)
+				.GetSize(uow, (SizeType)column.DataType.Data, onlyUseInEmployee:true)
 				.FirstOrDefault(x => 
 					x.Name.Trim().ToLower().Equals(value.Trim().ToLower())
 					|| x.Title.Trim().ToLower().Equals(value.Trim().ToLower()));
@@ -529,7 +561,7 @@ namespace workwear.Models.Import
 			ImportedColumn<DataTypeEmployee> column)
 		{
 			var value = row.CellStringValue(column.Index);
-			var dataType = column.DataType;
+			var dataType = column.DataTypeEnum;
 			if(String.IsNullOrWhiteSpace(value))
 				return;
 
@@ -604,10 +636,10 @@ namespace workwear.Models.Import
 		#region Helpers
 		public FIO GetFIO(SheetRowEmployee row, List<ImportedColumn<DataTypeEmployee>> columns) {
 			var fio = new FIO();
-			var lastnameColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.LastName);
-			var firstNameColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.FirstName);
-			var patronymicColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Patronymic);
-			var fioColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Fio);
+			var lastnameColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.LastName);
+			var firstNameColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.FirstName);
+			var patronymicColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.Patronymic);
+			var fioColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.Fio);
 			if(fioColumn != null)
 				row.CellStringValue(fioColumn.Index)?.SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
 			if(lastnameColumn != null)

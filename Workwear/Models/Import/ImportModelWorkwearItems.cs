@@ -33,7 +33,7 @@ namespace workwear.Models.Import
 
 		public List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
-			var countColumn = Columns.First(x => x.DataType == DataTypeWorkwearItems.Count);
+			var countColumn = Columns.First(x => x.DataTypeEnum == DataTypeWorkwearItems.Count);
 			var rows = UsedRows.Where(x => !x.Skipped && x.ChangedColumns.Any()).ToList();
 			var grouped = UsedRows.Where(x => x.Operation != null)
 				.GroupBy(x => x.Employee);
@@ -59,23 +59,6 @@ namespace workwear.Models.Import
 			toSave.AddRange(UsedRows.Where(x => x.Operation != null).Select(x => x.Operation));
 			return toSave;
 		}
-
-		private IEnumerable<EntityField> GetEntityFields() => 
-			Enum.GetValues(typeof(DataTypeWorkwearItems))
-				.Cast<DataTypeWorkwearItems>()
-				.Select(x => new EntityField{ Data = x});
-		
-		private IList<EntityField> entityFields;
-		IList<EntityField> IImportModel.EntityFields {
-			get {
-				if(entityFields == null)
-					entityFields = GetEntityFields().ToList();
-				return entityFields;
-			}
-		}
-		
-		public override IList<EntityField> BaseEntityFields() => 
-			((IImportModel)this).EntityFields;
 
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{

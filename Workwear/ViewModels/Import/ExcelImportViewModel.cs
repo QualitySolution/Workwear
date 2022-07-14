@@ -34,6 +34,7 @@ namespace workwear.ViewModels.Import
 			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator)
 		{
 			ImportModel = importModel ?? throw new ArgumentNullException(nameof(importModel));
+			ImportModel.Init(UoW);
 			this.interactiveMessage = interactiveMessage ?? throw new ArgumentNullException(nameof(interactiveMessage));
 			this.progressInterceptor = progressInterceptor;
 			Title = importModel.ImportName;

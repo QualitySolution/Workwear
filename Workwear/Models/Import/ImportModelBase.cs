@@ -6,6 +6,7 @@ using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using QS.Dialog;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.ViewModels;
 using workwear.ViewModels.Import;
 
@@ -20,7 +21,7 @@ namespace workwear.Models.Import
 		public Type DataTypeEnum => typeof(TDataTypeEnum);
 
 		#region Типы данных
-		public virtual bool CanMatch => HasRequiredDataTypes(Columns.Select(x => x.DataType));
+		public virtual bool CanMatch => HasRequiredDataTypes(Columns.Select(x => x.DataTypeEnum));
 
 		protected virtual bool HasRequiredDataTypes(IEnumerable<TDataTypeEnum> dataTypes) => RequiredDataTypes.All(dataTypes.Contains);
 
@@ -28,15 +29,20 @@ namespace workwear.Models.Import
 		#endregion
 
 
-		private readonly IDataParser<TDataTypeEnum> dataParser;
+		private readonly IDataParser dataParser;
 
-		protected ImportModelBase(IDataParser<TDataTypeEnum> dataParser, Type countersEnum, ViewModelBase matchSettingsViewModel = null)
+		protected ImportModelBase(IDataParser dataParser, Type countersEnum, ViewModelBase matchSettingsViewModel = null)
 		{
 			this.dataParser = dataParser;
 			this.MatchSettingsViewModel = matchSettingsViewModel;
 			CountersViewModel = new CountersViewModel(countersEnum);
 		}
 
+		public virtual void Init(IUnitOfWork uow)
+		{
+			
+		}
+		
 		public ViewModelBase MatchSettingsViewModel { get; }
 		
 		public CountersViewModel CountersViewModel { get; }
@@ -45,14 +51,8 @@ namespace workwear.Models.Import
 		public List<ImportedColumn<TDataTypeEnum>> Columns = new List<ImportedColumn<TDataTypeEnum>>();
 
 		public IList<IDataColumn> DisplayColumns => Columns.Cast<IDataColumn>().ToList();
-		public abstract IList<EntityField> BaseEntityFields();
 
-		public IDataColumn AddColumn(int index)
-		{
-			var column = new ImportedColumn<TDataTypeEnum>(index);
-			Columns.Add(column);
-			return column;
-		}
+		public IEnumerable<DataType> DataTypes => dataParser.SupportDataTypes;
 
 		private int maxSourceColumns;
 		/// <summary>
@@ -79,7 +79,7 @@ namespace workwear.Models.Import
 
 		void Column_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if(e.PropertyName == nameof(ImportedColumn<TDataTypeEnum>.DataType))
+			if(e.PropertyName == nameof(ImportedColumn<TDataTypeEnum>.DataTypeEnum))
 				OnPropertyChanged(nameof(CanMatch));
 		}
 
@@ -102,23 +102,23 @@ namespace workwear.Models.Import
 		{
 			logger.Info("Ищем заголовочную строку...");
 			progress.Start(Math.Min(100, XlsRows.Count), text:"Определение типов данных...");
-			var bestMath = new TDataTypeEnum[MaxSourceColumns];
+			var bestMath = new DataType[MaxSourceColumns];
 			int bestColumns = 0;
 			int bestHeaderRow = 0;
 			SheetRowBase<TDataTypeEnum> bestRow = null;
 			int rowNum = 0;
 			foreach(var row in XlsRows) {
 				progress.Add();
-				var types = new TDataTypeEnum[MaxSourceColumns];
+				var types = new DataType[MaxSourceColumns];
 				rowNum++;
 				for(int i = 0; i < MaxSourceColumns; i++) {
 					var value = row.CellStringValue(i)?.ToLower() ?? String.Empty;
 					types[i] = dataParser.DetectDataType(value);
 				}
-				if(bestColumns < types.Where(x => !default(TDataTypeEnum).Equals(x)).Distinct().Count()) {
+				if(bestColumns < types.Where(x => x != null).Distinct().Count()) {
 					bestMath = types;
 					bestRow = row;
-					bestColumns = types.Where(x => !default(TDataTypeEnum).Equals(x)).Distinct().Count();
+					bestColumns = types.Where(x => x!= null).Distinct().Count();
 					bestHeaderRow = rowNum;
 				}
 				//Мало вероятно что в нормальном файле заголовочная строка располагаться ниже 100-ой строки.
@@ -130,9 +130,7 @@ namespace workwear.Models.Import
 
 			progress.Add();
 			for (int i = 0; i < MaxSourceColumns; i++) {
-				var field = BaseEntityFields()
-					.FirstOrDefault(x => bestMath[i].Equals(x.Data));
-				Columns[i].EntityField = field;
+				Columns[i].DataType = bestMath[i] != null ? bestMath[i] : DataTypes.First();
 			}
 
 			logger.Debug($"Найдено соответсвие в {bestColumns} заголовков в строке {bestHeaderRow}");

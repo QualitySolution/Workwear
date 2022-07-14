@@ -17,7 +17,7 @@ using Workwear.Measurements;
 
 namespace workwear.Models.Import
 {
-	public class DataParserWorkwearItems : DataParserBase<DataTypeWorkwearItems>
+	public class DataParserWorkwearItems : DataParserBase
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -70,11 +70,7 @@ namespace workwear.Models.Import
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 		}
-
-		private void AddColumnName(DataTypeWorkwearItems type, params string[] names) {
-			foreach(var name in names)
-				ColumnNames.Add(name.ToLower(), type);
-		}
+		
 		#region Сопоставление данных
 		public void MatchChanges(
 			IProgressBarDisplayable progress, 
@@ -84,16 +80,16 @@ namespace workwear.Models.Import
 			IEnumerable<SheetRowWorkwearItems> list, 
 			List<ImportedColumn<DataTypeWorkwearItems>> columns)
 		{
-			var personnelNumberColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.PersonnelNumber);
-			var protectionToolsColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.ProtectionTools);
-			var nomenclatureColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Nomenclature);
-			var issueDateColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.IssueDate);
-			var countColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Count);
-			var postColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Post);
-			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Subdivision);
-			var sizeAndGrowthColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.SizeAndGrowth);
-			var sizeColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Size);
-			var growthColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Growth);
+			var personnelNumberColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.PersonnelNumber);
+			var protectionToolsColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.ProtectionTools);
+			var nomenclatureColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Nomenclature);
+			var issueDateColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.IssueDate);
+			var countColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Count);
+			var postColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Post);
+			var subdivisionColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Subdivision);
+			var sizeAndGrowthColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.SizeAndGrowth);
+			var sizeColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Size);
+			var growthColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Growth);
 
 			progress.Start(list.Count() * 2 + 3, text: "Загрузка сотрудников");
 			var personnelNumbers = list.Select(x => GetPersonalNumber(settings, x, personnelNumberColumn.Index))
@@ -261,10 +257,10 @@ namespace workwear.Models.Import
 						counters.AddCount(CountersWorkwearItems.EmployeesSetSize);
 					}
 					var toSetChangeColumns = columns.Where(
-						x => x.DataType != DataTypeWorkwearItems.Unknown 
-						     && x.DataType != DataTypeWorkwearItems.SizeAndGrowth
-						     && x.DataType != DataTypeWorkwearItems.Size
-						     && x.DataType != DataTypeWorkwearItems.Growth
+						x => x.DataTypeEnum != DataTypeWorkwearItems.Unknown 
+						     && x.DataTypeEnum != DataTypeWorkwearItems.SizeAndGrowth
+						     && x.DataTypeEnum != DataTypeWorkwearItems.Size
+						     && x.DataTypeEnum != DataTypeWorkwearItems.Growth
 					);
 					foreach(var column in toSetChangeColumns) {
 						if(!row.ChangedColumns.ContainsKey(column))
@@ -304,9 +300,9 @@ namespace workwear.Models.Import
 			out SizeAndGrowth sizeAndGrowth) 
 		{
 			sizeAndGrowth = new SizeAndGrowth();
-			var sizeAndGrowthColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.SizeAndGrowth);
-			var sizeColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Size);
-			var growthColumn = columns.FirstOrDefault(x => x.DataType == DataTypeWorkwearItems.Growth);
+			var sizeAndGrowthColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.SizeAndGrowth);
+			var sizeColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Size);
+			var growthColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Growth);
 			if(sizeAndGrowthColumn != null) {
 				var sizeAndGrowthValue = row.CellStringValue(sizeAndGrowthColumn.Index);
 				if(!String.IsNullOrEmpty(sizeAndGrowthValue))

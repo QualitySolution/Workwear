@@ -15,19 +15,19 @@ namespace workwear.Models.Import
 			set => SetField(ref title, value);
 		}
 
-		private TDataTypeEnum dataType;
-		public virtual TDataTypeEnum DataType {
-			get => dataType;
-			set => SetField(ref dataType, value);
+		private TDataTypeEnum dataTypeEnum;
+		public virtual TDataTypeEnum DataTypeEnum {
+			get => dataTypeEnum;
+			set => SetField(ref dataTypeEnum, value);
 	}
 
-		private EntityField entityField;
-		public EntityField EntityField {
-			get => entityField;
+		private DataType dataType;
+		public DataType DataType {
+			get => dataType;
 			set {
 				if (value.Data is TDataTypeEnum dataTypeEnum)
-					DataType = dataTypeEnum;
-				SetField(ref entityField, value);
+					DataTypeEnum = dataTypeEnum;
+				SetField(ref dataType, value);
 			}
 		}
 
@@ -40,6 +40,6 @@ namespace workwear.Models.Import
 	public interface IDataColumn : INotifyPropertyChanged
 	{
 		string Title { get; }
-		EntityField EntityField { get; set; }
+		DataType DataType { get; set; }
 	}
 }

@@ -30,6 +30,11 @@ namespace workwear.Models.Import
 			unitOfWork = unitOfWorkFactory.CreateWithoutRoot();
 		}
 
+		public override void Init(IUnitOfWork uow)
+		{
+			dataParser.CreateSizeDatatypes(uow);
+		}
+
 		#region Параметры
 		public string ImportName => "Загрузка сотрудников";
 
@@ -46,8 +51,7 @@ namespace workwear.Models.Import
 			|| (dataTypes.Contains(DataTypeEmployee.FirstName) && dataTypes.Contains(DataTypeEmployee.LastName));
 
 		protected override DataTypeEmployee[] RequiredDataTypes => new []{DataTypeEmployee.Fio, DataTypeEmployee.LastName, DataTypeEmployee.FirstName};
-		public override IList<EntityField> BaseEntityFields() => 
-			((IImportModel)this).EntityFields;
+	
 		public bool CanSave { get; private set; }
 
 		public List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow)
@@ -65,50 +69,9 @@ namespace workwear.Models.Import
 			return toSave;
 		}
 
-		private IEnumerable<EntityField> GetEntityFields() {
-			foreach (var entityField in Enum.GetValues(typeof(DataTypeEmployee))
-				         .Cast<DataTypeEmployee>()
-				         .Select(x => new EntityField { Data = x}))
-				yield return entityField;
-			foreach (var sizeType in sizeService.GetSizeType(unitOfWork, true))
-				yield return new EntityField { Data = sizeType };
-		}
-		
-		private IList<EntityField> entityFields;
-		IList<EntityField> IImportModel.EntityFields {
-			get {
-				if(entityFields == null)
-					entityFields = GetEntityFields().ToList();
-				return entityFields;
-			}
-		}
-
-		public override void AutoSetupColumns(IProgressBarDisplayable progress) {
-			base.AutoSetupColumns(progress);
-			logger.Info("Подбираем типы размеров...");
-			var unknownColumns = Columns
-				.Where(x => x.DataType == DataTypeEmployee.Unknown)
-				.ToList();
-			progress.Start(unknownColumns.Count, text:"Подбираем типы размеров...");
-			var count = 0;
-			foreach(var column in unknownColumns) {
-				progress.Add();
-				var mathSize = BaseEntityFields()
-					.FirstOrDefault(x => x.Title.Trim().ToLower()
-							.Equals(column.Title?.Trim().ToLower()));
-				if (mathSize != null) {
-					column.EntityField = mathSize;
-					count++;
-				}
-			}
-			logger.Debug($"Подобрано {count} размеров");
-			progress.Close();
-			logger.Info("Ок");
-		}
-
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
-			if(Columns.Any(x => x.DataType == DataTypeEmployee.PersonnelNumber))
+			if(Columns.Any(x => x.DataTypeEnum == DataTypeEmployee.PersonnelNumber))
 				dataParser.MatchByNumber(uow, UsedRows, Columns, matchSettingsViewModel, progress);
 			else
 				dataParser.MatchByName(uow, UsedRows, Columns, progress);
@@ -118,8 +81,8 @@ namespace workwear.Models.Import
 				uow, 
 				UsedRows, 
 				Columns
-					.Where(x => x.EntityField != null || x.DataType != DataTypeEmployee.Unknown)
-					.OrderBy(x => x.DataType)
+					.Where(x => x.DataType != null || x.DataTypeEnum != DataTypeEmployee.Unknown)
+					.OrderBy(x => x.DataTypeEnum)
 					.ToArray(), 
 				progress, 
 				matchSettingsViewModel);

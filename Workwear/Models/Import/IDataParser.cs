@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace workwear.Models.Import
 {
-	public interface IDataParser<TDataTypeEnum>
+	public interface IDataParser
 	{
-		TDataTypeEnum DetectDataType(string columnName);
+		DataType DetectDataType(string columnName);
+		
+		List<DataType> SupportDataTypes { get; }
 	}
 }

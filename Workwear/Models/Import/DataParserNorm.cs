@@ -16,7 +16,7 @@ using Workwear.Measurements;
 
 namespace workwear.Models.Import
 {
-	public class DataParserNorm : DataParserBase<DataTypeNorm>
+	public class DataParserNorm : DataParserBase
 	{
 		static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -50,12 +50,6 @@ namespace workwear.Models.Import
 			this.sizeService = sizeService;
 		}
 
-		private void AddColumnName(DataTypeNorm type, params string[] names)
-		{
-			foreach(var name in names)
-				ColumnNames.Add(name.ToLower(), type);
-		}
-
 		#region Обработка изменений
 		public void FindChanges(IEnumerable<SheetRowNorm> list, ImportedColumn<DataTypeNorm>[] meaningfulColumns)
 		{
@@ -64,11 +58,11 @@ namespace workwear.Models.Import
 					continue;
 
 				foreach(var column in meaningfulColumns) {
-					row.AddColumnChange(column, CalculateChange(row, column.DataType, row.CellStringValue(column.Index)));
+					row.AddColumnChange(column, CalculateChange(row, column.DataTypeEnum, row.CellStringValue(column.Index)));
 				}
-				if(!row.ChangedColumns.Any(x => x.Key.DataType == DataTypeNorm.PeriodAndCount))
+				if(!row.ChangedColumns.Any(x => x.Key.DataTypeEnum == DataTypeNorm.PeriodAndCount))
 					row.ProgramSkipped = true;
-				else if(row.ChangedColumns.First(x => x.Key.DataType == DataTypeNorm.PeriodAndCount).Value.ChangeType == ChangeType.ParseError)
+				else if(row.ChangedColumns.First(x => x.Key.DataTypeEnum == DataTypeNorm.PeriodAndCount).Value.ChangeType == ChangeType.ParseError)
 					row.ProgramSkipped = true;
 			}
 		}
@@ -104,9 +98,9 @@ namespace workwear.Models.Import
 		public void MatchWithExist(IUnitOfWork uow, IEnumerable<SheetRowNorm> list, List<ImportedColumn<DataTypeNorm>> columns, IProgressBarDisplayable progress)
 		{
 			progress.Start(10, text: "Сопоставление с существующими данными");
-			var postColumn = columns.FirstOrDefault(x => x.DataType == DataTypeNorm.Post);
-			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeNorm.Subdivision);
-			var protectionToolsColumn = columns.FirstOrDefault(x => x.DataType == DataTypeNorm.ProtectionTools);
+			var postColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeNorm.Post);
+			var subdivisionColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeNorm.Subdivision);
+			var protectionToolsColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeNorm.ProtectionTools);
 
 			foreach(var row in list) {
 				var postValue = row.CellStringValue(postColumn.Index);
@@ -266,8 +260,8 @@ namespace workwear.Models.Import
 		{
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
 			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученной из общего поля ФИО.
-			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType)) {
-				SetValue(uow, row.NormItem, column.DataType, row.CellStringValue(column.Index));
+			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataTypeEnum)) {
+				SetValue(uow, row.NormItem, column.DataTypeEnum, row.CellStringValue(column.Index));
 			}
 
 			yield return row.NormItem;
