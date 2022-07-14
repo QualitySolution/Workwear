@@ -15,18 +15,14 @@ namespace workwear.Models.Import
 			set => SetField(ref title, value);
 		}
 
-		private TDataTypeEnum dataTypeEnum;
-		public virtual TDataTypeEnum DataTypeEnum {
-			get => dataTypeEnum;
-			set => SetField(ref dataTypeEnum, value);
-	}
+		public virtual TDataTypeEnum DataTypeEnum =>
+			dataType?.Data is TDataTypeEnum ? (TDataTypeEnum)dataType.Data : default;
 
 		private DataType dataType;
+		[PropertyChangedAlso(nameof(DataTypeEnum))]
 		public DataType DataType {
 			get => dataType;
 			set {
-				if (value.Data is TDataTypeEnum dataTypeEnum)
-					DataTypeEnum = dataTypeEnum;
 				SetField(ref dataType, value);
 			}
 		}

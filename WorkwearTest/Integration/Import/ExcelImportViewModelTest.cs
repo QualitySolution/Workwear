@@ -206,7 +206,7 @@ namespace WorkwearTest.Integration.Import
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
 				employeesLoad.SecondStep();
-				importModel.Columns[1].DataTypeEnum = DataTypeEmployee.DismissDate; //Вторая колонка дата увольнения.
+				importModel.Columns[1].DataType = importModel.DataTypes.First(x => DataTypeEmployee.DismissDate.Equals(x.Data)) ; //Вторая колонка дата увольнения.
 				Assert.That(employeesLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
 				employeesLoad.ThirdStep();
 				Assert.That(employeesLoad.SensitiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
