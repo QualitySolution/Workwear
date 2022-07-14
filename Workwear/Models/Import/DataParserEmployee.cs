@@ -299,7 +299,7 @@ namespace workwear.Models.Import
 				.GetSize(uow, sizeType)
 				.FirstOrDefault(x => 
 					x.Name.Trim().ToLower().Equals(value.Trim().ToLower())
-					|| x.Title.Trim().ToLower().Equals(value.Trim().ToLower()));
+					|| value.Trim().ToLower().Equals(x.AlternativeName?.Trim().ToLower()));
 			var employeeSize = employee.Sizes
 				.FirstOrDefault(x => x.SizeType == size?.SizeType)?.Size;
 			row.ChangedColumns.Add(column, CompareSize(employeeSize, size, rowChange, uow));
