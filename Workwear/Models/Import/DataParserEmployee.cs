@@ -302,7 +302,7 @@ namespace workwear.Models.Import
 					|| value.Trim().ToLower().Equals(x.AlternativeName?.Trim().ToLower()));
 			var employeeSize = employee.Sizes
 				.FirstOrDefault(x => x.SizeType == size?.SizeType)?.Size;
-			row.ChangedColumns.Add(column, CompareSize(employeeSize, size, rowChange, uow));
+			row.ChangedColumns.Add(column, CompareSize(employeeSize, size, value, rowChange, uow));
 		}
 
 		private ChangeState CompareString(string fieldValue, string newValue, ChangeType rowChange) {
@@ -320,15 +320,12 @@ namespace workwear.Models.Import
 			return new ChangeState(changeType);
 		}
 
-		private ChangeState CompareSize(Size fieldValue, Size newValue, ChangeType rowChange, IUnitOfWork uow) {
-			var changeType = fieldValue == newValue ? ChangeType.NotChanged : rowChange;
-			if (changeType == ChangeType.NotChanged)
-				return new ChangeState(changeType);
-			var sizes = sizeService.GetSize(uow);
-			if(sizes.All(x => x != newValue))
-				changeType = ChangeType.ParseError;
-
-			return new ChangeState(changeType, newValue.Name);
+		private ChangeState CompareSize(Size oldValue, Size newValue, string excelValue, ChangeType rowChange, IUnitOfWork uow) {
+			if (newValue == null && !String.IsNullOrWhiteSpace(excelValue))
+				return new ChangeState(ChangeType.ParseError, oldValue?.Name);
+			
+			var changeType = oldValue == newValue ? ChangeType.NotChanged : rowChange;
+			return new ChangeState(changeType, oldValue?.Name);
 		}
 		
 		private ChangeState ComparePhone(string fieldValue, string newValue, ChangeType rowChange)
