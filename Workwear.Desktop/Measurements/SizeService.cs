@@ -37,10 +37,9 @@ namespace Workwear.Measurements
 		{
 			if (types is null)
 				types = SizeRepository.GetSizeType(uow);
-			var filterTypes = types;
 			if (onlyUseInEmployee)
-				return filterTypes.Where(x => x.UseInEmployee).ToList();
-			return filterTypes;
+				return types.Where(x => x.UseInEmployee).ToList();
+			return types.ToList();
 		}
 
 		public List<SizeType> GetSizeTypeByCategory(

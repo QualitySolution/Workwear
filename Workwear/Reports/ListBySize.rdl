@@ -110,7 +110,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="size_name_4">
-          <DataField>size_name_5</DataField>
+          <DataField>size_name_4</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="size_name_5">
@@ -125,7 +125,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
     </DataSet>
   </DataSets>
   <PageHeader>
-    <Height>.5in</Height>
+    <Height>33.8pt</Height>
     <ReportItems>
       <Textbox Name="Textbox1">
         <Top>.1in</Top>
@@ -151,43 +151,63 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
           <BorderStyle>
             <Default>Solid</Default>
           </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
         </Style>
         <TableColumns>
           <TableColumn>
             <Width>34.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>189.6pt</Width>
+            <Width>180.2pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>49.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>39.1pt</Width>
+            <Width>33.5pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>49.9pt</Width>
+            <Visibility>
+              <Hidden>=!({?type_id_0} &gt; 0)</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>43.7pt</Width>
+            <Visibility>
+              <Hidden>=!({?type_id_1} &gt; 0)</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>38.1pt</Width>
+            <Width>43.7pt</Width>
+            <Visibility>
+              <Hidden>=!({?type_id_2} &gt; 0)</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>43.6pt</Width>
+            <Visibility>
+              <Hidden>=!({?type_id_3} &gt; 0)</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>41.3pt</Width>
+            <Width>43.7pt</Width>
+            <Visibility>
+              <Hidden>=!({?type_id_4} &gt; 0)</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>49.2pt</Width>
+            <Width>43.7pt</Width>
+            <Visibility>
+              <Hidden>=!({?type_id_5} &gt; 0)</Hidden>
+            </Visibility>
           </TableColumn>
         </TableColumns>
         <Header>
           <TableRows>
             <TableRow>
-              <Height>25.2pt</Height>
+              <Height>47.0pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -202,6 +222,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -219,6 +240,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -236,6 +258,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -253,6 +276,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -270,10 +294,10 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <FontSize >10pt</FontSize>
+                        <FontSize>10pt</FontSize>
                       </Style>
-                      <CanGrow >true</CanGrow>
-                      <CanShrink >true</CanShrink>
+                      <CanGrow>true</CanGrow>
+                      <CanShrink>true</CanShrink>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -290,10 +314,10 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <FontSize >10pt</FontSize>
+                        <FontSize>10pt</FontSize>
                       </Style>
-                      <CanGrow >true</CanGrow>
-                      <CanShrink >true</CanShrink>
+                      <CanGrow>true</CanGrow>
+                      <CanShrink>true</CanShrink>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -310,10 +334,10 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <FontSize >10pt</FontSize>
+                        <FontSize>10pt</FontSize>
                       </Style>
-                      <CanGrow >true</CanGrow>
-                      <CanShrink >true</CanShrink>
+                      <CanGrow>true</CanGrow>
+                      <CanShrink>true</CanShrink>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -330,10 +354,10 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <FontSize >10pt</FontSize>
+                        <FontSize>10pt</FontSize>
                       </Style>
-                      <CanGrow >true</CanGrow>
-                      <CanShrink >true</CanShrink>
+                      <CanGrow>true</CanGrow>
+                      <CanShrink>true</CanShrink>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -350,10 +374,10 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <FontSize >10pt</FontSize>
+                        <FontSize>10pt</FontSize>
                       </Style>
-                      <CanGrow >true</CanGrow>
-                      <CanShrink >true</CanShrink>
+                      <CanGrow>true</CanGrow>
+                      <CanShrink>true</CanShrink>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -370,10 +394,10 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <FontSize >10pt</FontSize>
+                        <FontSize>10pt</FontSize>
                       </Style>
-                      <CanGrow >true</CanGrow>
-                      <CanShrink >true</CanShrink>
+                      <CanGrow>true</CanGrow>
+                      <CanShrink>true</CanShrink>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -556,11 +580,11 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
             </TableRow>
           </TableRows>
         </Details>
-        <Left>1.6pt</Left>
+        <Left>0.0pt</Left>
         <Top>0.8pt</Top>
       </Table>
     </ReportItems>
-    <Height>60.3pt</Height>
+    <Height>64.2pt</Height>
   </Body>
   <PageFooter>
     <Height>14pt</Height>
@@ -592,7 +616,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="type_id_0">
       <DataType>Integer</DataType>
       <Nullable>false</Nullable>
