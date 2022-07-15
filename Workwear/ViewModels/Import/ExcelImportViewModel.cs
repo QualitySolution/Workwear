@@ -25,7 +25,13 @@ namespace workwear.ViewModels.Import
 		public static readonly string ColorOfNotFound = "Yellow";
 		public static readonly string ColorOfSkipped = "Orchid";
 
-		public ExcelImportViewModel(IImportModel importModel, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IInteractiveMessage interactiveMessage, ProgressInterceptor progressInterceptor, IValidator validator = null) : base(unitOfWorkFactory, navigation, validator)
+		public ExcelImportViewModel(
+			IImportModel importModel, 
+			IUnitOfWorkFactory unitOfWorkFactory, 
+			INavigationManager navigation, 
+			IInteractiveMessage interactiveMessage, 
+			ProgressInterceptor progressInterceptor, 
+			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator, importModel.ImportName)
 		{
 			ImportModel = importModel ?? throw new ArgumentNullException(nameof(importModel));
 			this.interactiveMessage = interactiveMessage ?? throw new ArgumentNullException(nameof(interactiveMessage));
