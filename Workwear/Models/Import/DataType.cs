@@ -8,9 +8,14 @@ namespace workwear.Models.Import
 {
     public class DataType
     {
-        public DataType(object data = null)
+        public DataType(object data = null, int? order = null)
         {
             Data = data;
+            if(order.HasValue)
+	            ValueSetOrder = order.Value;
+            else if(data is Enum) {
+	            ValueSetOrder = (int)data;
+            }
         }
 
         public bool IsUnknown => Data == null;
@@ -41,6 +46,12 @@ namespace workwear.Models.Import
 
             return false;
         }
+        #endregion
+
+        #region Сохранение
+
+        public int ValueSetOrder = 99;
+
         #endregion
     }
 }

@@ -260,7 +260,7 @@ namespace workwear.Models.Import
 		{
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
 			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученной из общего поля ФИО.
-			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataTypeEnum)) {
+			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType.ValueSetOrder)) {
 				SetValue(uow, row.NormItem, column.DataTypeEnum, row.CellStringValue(column.Index));
 			}
 

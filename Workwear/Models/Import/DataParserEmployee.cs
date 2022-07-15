@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -526,7 +526,7 @@ namespace workwear.Models.Import
 			var employee = row.Employees.FirstOrDefault() ?? new EmployeeCard();
 			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
 			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученной из общего поля ФИО.
-			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataTypeEnum)) {
+			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType.ValueSetOrder)) {
 				if(row.ChangedColumns[column].ChangeType == ChangeType.NewEntity || row.ChangedColumns[column].ChangeType == ChangeType.ChangeValue)
 				{
 					if(column.DataType.Data is DataTypeEmployee)
