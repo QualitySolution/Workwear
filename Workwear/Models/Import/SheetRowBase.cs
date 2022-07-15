@@ -46,7 +46,7 @@ namespace workwear.Models.Import
 			var cell = GetCellForValue(col);
 
 			if(cell != null) {
-				// TODO: you can add more cell types capatibility, e. g. formula
+				// TODO: you can add more cell types compatibility, e. g. formula
 				switch(cell.CellType) {
 					case NPOI.SS.UserModel.CellType.Numeric:
 						return cell.NumericCellValue.ToString();

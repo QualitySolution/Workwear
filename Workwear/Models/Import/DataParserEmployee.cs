@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -383,9 +383,12 @@ namespace workwear.Models.Import
 				.Where(fio => !String.IsNullOrEmpty(fio.LastName) && !String.IsNullOrEmpty(fio.FirstName))
 				.Select(fio => (fio.LastName + "|" + fio.FirstName).ToUpper())
 				.Distinct().ToArray();
-			
-			Console.WriteLine(((ISessionFactoryImplementor) uow.Session.SessionFactory).Dialect);
-			var exists = uow.Session.QueryOver<EmployeeCard>()
+
+			var sizeWillSet = columns.Any(x => x.DataType.Data is SizeType);
+			var query = uow.Session.QueryOver<EmployeeCard>();
+			if(sizeWillSet) //Если будем проставлять размеры, запрашиваем сразу имеющиеся размеры для ускорения...
+				query.Fetch(SelectMode.Fetch, x => x.Sizes);
+			var exists = query
 				.Where(Restrictions.In(
 				Projections.SqlFunction(
 							  "upper", NHibernateUtil.String,
@@ -448,7 +451,12 @@ namespace workwear.Models.Import
 			var numbers = list.Select(x => GetPersonalNumber(settings, x, numberColumn.Index))
 							.Where(x => !String.IsNullOrWhiteSpace(x))
 							.Distinct().ToArray();
-			var exists = uow.Session.QueryOver<EmployeeCard>()
+			
+			var sizeWillSet = columns.Any(x => x.DataType.Data is SizeType);
+			var query = uow.Session.QueryOver<EmployeeCard>();
+			if(sizeWillSet) //Если будем проставлять размеры, запрашиваем сразу имеющиеся размеры для ускорения...
+				query.Fetch(SelectMode.Fetch, x => x.Sizes);
+			var exists = query
 				.Where(x => x.PersonnelNumber.IsIn(numbers))
 				.List();
 
