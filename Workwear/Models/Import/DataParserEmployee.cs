@@ -545,12 +545,12 @@ namespace workwear.Models.Import
 			SheetRowEmployee row, 
 			ImportedColumn<DataTypeEmployee> column)
 		{
-			var value = row.CellStringValue(column.Index);
+			var value = row.CellStringValue(column.Index).Trim().ToLower();
 			var size = sizeService
-				.GetSize(uow, (SizeType)column.DataType.Data, onlyUseInEmployee:true)
+				.GetSize(uow, (SizeType)column.DataType.Data)
 				.FirstOrDefault(x => 
-					x.Name.Trim().ToLower().Equals(value.Trim().ToLower())
-					|| x.Title.Trim().ToLower().Equals(value.Trim().ToLower()));
+					x.Name.Trim().ToLower().Equals(value)
+					|| value.Equals(x.AlternativeName?.Trim().ToLower()));
 			if(size is null) return;
 			var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType);
 			if (employeeSize is null) {
