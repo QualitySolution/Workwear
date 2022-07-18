@@ -52,6 +52,8 @@ namespace workwear.Models.Import
 
         public int ValueSetOrder = 99;
 
+        public Func<string, string> ValueInterpreter;
+
         #endregion
     }
 }

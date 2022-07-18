@@ -113,7 +113,7 @@ namespace workwear.Models.Import
 			var sizeTypes = sizeService.GetSizeType(uow, true);
 			foreach (var sizeType in sizeTypes)
 			{
-				var datatype = AddColumnName(sizeType, sizeType.Name);
+				var datatype = new DataTypeEmployeeSize(sizeService, sizeType);
 				if (sizeType.Id == 2)
 					datatype.ColumnNameRegExp = "(одежда|одежды)";
 				if (sizeType.Id == 3) {
@@ -142,6 +142,8 @@ namespace workwear.Models.Import
 					datatype.ColumnNameRegExp = "респиратора?";
 				if (sizeType.Id == 12)
 					datatype.ColumnNameRegExp = "носк(и|ов)";
+				
+				SupportDataTypes.Add(datatype);
 			}
 		}
 		
@@ -320,18 +322,14 @@ namespace workwear.Models.Import
 			ChangeType rowChange,
 			IUnitOfWork uow)
 		{
-			var value = row.CellStringValue(column.Index);
-			var sizeType = (SizeType)column.DataType.Data;
+			var value = row.CellStringValue(column.Index)?.Trim().ToLower();
 			if(String.IsNullOrWhiteSpace(value)) {
 				row.AddColumnChange(column, ChangeType.NotChanged);
 				return;
 			}
+			var dataType = (DataTypeEmployeeSize)column.DataType;
+			var size = dataType.ParseValue(uow, value);
 
-			var size = sizeService
-				.GetSize(uow, sizeType)
-				.FirstOrDefault(x => 
-					x.Name.Trim().ToLower().Equals(value.Trim().ToLower())
-					|| value.Trim().ToLower().Equals(x.AlternativeName?.Trim().ToLower()));
 			var employeeSize = employee.Sizes
 				.FirstOrDefault(x => x.SizeType == size?.SizeType)?.Size;
 			row.ChangedColumns.Add(column, CompareSize(employeeSize, size, value, rowChange, uow));
@@ -357,7 +355,7 @@ namespace workwear.Models.Import
 				return new ChangeState(ChangeType.ParseError, oldValue?.Name);
 			
 			var changeType = oldValue == newValue ? ChangeType.NotChanged : rowChange;
-			return new ChangeState(changeType, oldValue?.Name);
+			return new ChangeState(changeType, oldValue?.Name, newValue?.Name != excelValue ? newValue?.Name : null);
 		}
 		
 		private ChangeState ComparePhone(string fieldValue, string newValue, ChangeType rowChange)
@@ -546,11 +544,8 @@ namespace workwear.Models.Import
 			ImportedColumn<DataTypeEmployee> column)
 		{
 			var value = row.CellStringValue(column.Index).Trim().ToLower();
-			var size = sizeService
-				.GetSize(uow, (SizeType)column.DataType.Data)
-				.FirstOrDefault(x => 
-					x.Name.Trim().ToLower().Equals(value)
-					|| value.Equals(x.AlternativeName?.Trim().ToLower()));
+			var dataType = (DataTypeEmployeeSize)column.DataType;
+			var size = dataType.ParseValue(uow, value);
 			if(size is null) return;
 			var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType);
 			if (employeeSize is null) {

@@ -147,6 +147,7 @@
     <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionFilterViewModel.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Models\Import\DataType.cs" />
+    <Compile Include="Models\Import\DataTypeEmployeeSize.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

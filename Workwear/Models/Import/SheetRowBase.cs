@@ -135,13 +135,16 @@ namespace workwear.Models.Import
 			ChangedColumns[column] = new ChangeState(changeType, oldValue);
 		}
 
-		public string CellTooltip(int col)
-		{
+		public string CellTooltip(int col) {
+			List<string> result = new List<string>();
 			var column = ChangedColumns.Keys.FirstOrDefault(x => x.Index == col);
 			if(column != null) {
 				var change = ChangedColumns[column];
 				if(change.OldValue != null)
-					return $"Старое значение: {change.OldValue}";
+					result.Add($"Старое значение: {change.OldValue}");
+				if(change.InterpretedValue != null)
+					result.Add($"Обработанное значение: {change.InterpretedValue}");
+				return result.Any() ? String.Join("\n", result) : null;
 			}
 			return null;
 		}
@@ -173,11 +176,13 @@ namespace workwear.Models.Import
 	{
 		public ChangeType ChangeType;
 		public string OldValue;
+		public string InterpretedValue;
 
-		public ChangeState(ChangeType changeType, string oldValue = null)
+		public ChangeState(ChangeType changeType, string oldValue = null, string interpretedValue = null)
 		{
 			ChangeType = changeType;
 			OldValue = oldValue;
+			InterpretedValue = interpretedValue;
 		}
 	}
 }

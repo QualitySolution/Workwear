@@ -79,9 +79,48 @@ namespace workwear.Models.Import
 		public static Size ParseSize(IUnitOfWork uow, string value, SizeService sizeService, CategorySizeType categorySizeType) =>
 			sizeService.GetSizeByCategory(uow, categorySizeType)
 				.FirstOrDefault(x => x.Name == value);
+
+		#region Рост
+		public static string HeightToGOST(string height) {
+			if(int.TryParse(height, out int realHeight)) {
+				var found = UniversalWearHeights.FirstOrDefault(x => realHeight >= x.Lower && realHeight < x.Upper);
+				if(found != null)
+					return found.Name;
+			}
+
+			return height;
+		}
+
+		public static readonly WearHeight[] UniversalWearHeights = new WearHeight[] {
+			new WearHeight("146", 143, 149),
+			new WearHeight("152", 149, 155),
+			new WearHeight("158", 155, 161),
+			new WearHeight("164", 161, 167),
+			new WearHeight("170", 167, 173),
+			new WearHeight("176", 173, 179),
+			new WearHeight("182", 179, 185),
+			new WearHeight("188", 185, 191),
+			new WearHeight("194", 191, 197),
+			new WearHeight("200", 197, 203),
+			new WearHeight("210", 203, 210),
+		};
+		#endregion
 	}
 	public struct SizeAndGrowth {
 		public Size Size;
 		public Size Growth;
+	}
+	
+	public class WearHeight{
+		public string Name;
+		public int Upper;
+		public int Lower;
+
+		public WearHeight(string name, int lower, int upper)
+		{
+			Name = name;
+			Upper = upper;
+			Lower = lower;
+		}
 	}
 }
