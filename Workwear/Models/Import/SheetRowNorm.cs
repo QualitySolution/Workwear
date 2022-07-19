@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NPOI.SS.UserModel;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
@@ -30,7 +31,8 @@ namespace workwear.Models.Import
 		public SubdivisionPostCombination(string postNames, string subdivisionName)
 		{
 			PostValue = postNames ?? throw new ArgumentNullException(nameof(postNames));
-			PostNames = PostValue.Split(new[] { ',', ';', '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
+			PostNames = PostValue.Split(new[] { ',', ';', '\\', '/' }, StringSplitOptions.RemoveEmptyEntries)
+				.Select(x => x.Trim()).ToArray();
 			SubdivisionName = subdivisionName;
 		}
 	}
