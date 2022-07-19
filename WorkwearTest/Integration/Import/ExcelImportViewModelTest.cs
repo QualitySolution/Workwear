@@ -291,7 +291,8 @@ namespace WorkwearTest.Integration.Import
 			}
 		}
 		
-		[Test(Description = "Проверяем что нормально работаем с файлами имеющими пустые строки + размеры сотрудника")]
+		[Test(Description = "Проверяем возможность загрузить большинство стандартных размеров. Так же загрузку телефона, установку пола по " +
+		                    "имени и автоматическое преобразование роста к стандарту ГОСТ")]
 		public void EmployeesLoad_StandardSizes_AgronomCase()
 		{
 			NewSessionWithSameDB();

@@ -55,6 +55,7 @@
     <Compile Include="Deletion\ConfigTests.cs" />
     <Compile Include="HistoryLog\DomainModelTest.cs" />
     <Compile Include="Integration\Import\ExcelImportViewModelTest.cs" />
+    <Compile Include="Integration\Import\ExcelImportViewModelNormsTest.cs" />
     <Compile Include="Integration\Stock\CompletionIntegratedTest.cs" />
     <Compile Include="Models\Import\DataParserNormTest.cs" />
     <Compile Include="Operations\Graph\IssueGraphTest.cs" />
@@ -215,6 +216,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Samples\Excel\all_sizes.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Samples\Excel\norms_agronom.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
