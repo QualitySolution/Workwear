@@ -47,8 +47,7 @@ namespace workwear.ViewModels.Regulations
 			NormConditions.Insert(0, null);
 			
 			changeMonitor.AddSetTargetUnitOfWorks(UoW);
-			changeMonitor.SubscribeToCreate(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
-			changeMonitor.SubscribeToUpdates(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
+			changeMonitor.SubscribeAllChange(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
 
 			this.changeMonitor = changeMonitor;
 			this.employeeRepository = employeeRepository;
@@ -139,52 +138,8 @@ namespace workwear.ViewModels.Regulations
 			}
 		}
 
-		public void RemoveItem(NormItem toRemove)
-		{
-			IList<EmployeeCard> worksEmployees = null;
-
-			if(toRemove.Id > 0) {
-				logger.Info("Поиск ссылок на удаляемую строку нормы...");
-				worksEmployees = EmployeeRepository.GetEmployeesDependenceOnNormItem(UoW, toRemove);
-				if(worksEmployees.Count > 0) {
-					List<string> operations = new List<string>();
-					foreach(var emp in worksEmployees) {
-						bool canSwitch = emp.UsedNorms.SelectMany(x => x.Items)
-							.Any(i => i.Id != toRemove.Id && i.ProtectionTools.Id == toRemove.ProtectionTools.Id);
-						if(canSwitch)
-							operations.Add(String.Format("* У сотрудника {0} требование спецодежды будет переключено на другую норму.", emp.ShortName));
-						else
-							operations.Add(String.Format("* У сотрудника {0} будет удалено требование выдачи спецодежды.", emp.ShortName));
-					}
-
-					var mes = "При удалении строки нормы будут выполнены следующие операции:\n";
-					mes += String.Join("\n", operations.Take(10));
-					if(operations.Count > 10)
-						mes += String.Format("\n... и еще {0}", operations.Count - 10);
-					mes += "\nОткрытые диалоги этих сотрудников будут закрыты.\nВы уверены что хотите выполнить удаление?";
-					logger.Info("Ок");
-					if(!interactive.Question(mes))
-						return;
-				}
-			}
+		public void RemoveItem(NormItem toRemove) => 
 			Entity.RemoveItem(toRemove);
-
-			if(worksEmployees != null) {
-				SaveSensitive = CancelSensitive = false;
-				var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(this); 
-				progressPage.ViewModel.Progress.Start(worksEmployees.Count, text: "Обработка сотрудников...");
-
-				foreach(var emp in worksEmployees) {
-					emp.UoW = UoW;
-					emp.UpdateWorkwearItems();
-					UoW.Save(emp);
-					progressPage.ViewModel.Progress.Add();
-				}
-
-				SaveSensitive = CancelSensitive = true;
-				NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
-			}
-		}
 
 		public void ReplaceNomenclature(NormItem item)
 		{
@@ -283,31 +238,37 @@ namespace workwear.ViewModels.Regulations
 		#region Сохранение
 		public override bool Save() 
 		{
+			logger.Info("Сохраняем норму...");
+			
 			if(!base.Save())
 				return false;
 			
-			if (changeMonitor.IdsCreateEntities.Any() || changeMonitor.IdsUpdateEntities.Any()) {
+			var employees = employeeRepository.GetEmployeesUseNorm(new []{Entity}, UoW);
+			
+			if (employees.Any() && changeMonitor.EntityIds.Any()) {
 				if(!interactive.Question(
-					    "Для сохранения требуется обновить потребности сотрудников. \n Продолжить ?"))
+					    "Для сохранения требуется обновить потребности сотрудников." +
+					    "\nОткрытые диалоги этих сотрудников будут закрыты. \n Продолжить ?")
+				   )
 					return false;
 				
 				logger.Info("Пересчитываем сотрудников");
-				
+
 				var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
 				var progress = progressPage.ViewModel.Progress;
-				var employees = employeeRepository.GetEmployeesUseNorm(new []{Entity}, UoW);
-				if (employees.Any()) {
-					progress.Start(employees.Count, text: "Обновляем потребности сотрудников");
-					foreach (var employee in employees) {
-						progress.Add(text: $"Обработка {employee.ShortName}");
-						employee.UpdateWorkwearItems();
-						UoW.Save(employee);
-					}
-					progress.Add(text: "Завершаем...");
-					UoW.Commit();
-					NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
-					logger.Info("Ok");
+				progress.Start(employees.Count, text: "Обновляем потребности сотрудников");
+				
+				foreach (var employee in employees) {
+					progress.Add(text: $"Обработка {employee.ShortName}");
+					employee.UpdateWorkwearItems();
+					UoW.Save(employee);
+					progress.Add();
 				}
+
+				progress.Add(text: "Завершаем...");
+				UoW.Commit();
+				NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+				logger.Info("Ok");
 			}
 			return true;
 		}
