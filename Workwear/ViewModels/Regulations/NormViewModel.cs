@@ -8,6 +8,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Tools;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using workwear.Domain.Company;
@@ -25,6 +26,8 @@ namespace workwear.ViewModels.Regulations
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly IInteractiveQuestion interactive;
+		private readonly IChangeMonitor<NormItem> changeMonitor;
+		private readonly EmployeeRepository employeeRepository;
 
 		public NormViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -32,6 +35,8 @@ namespace workwear.ViewModels.Regulations
 			EmployeeIssueRepository employeeIssueRepository,
 			INavigationManager navigation, 
 			IInteractiveQuestion interactive,
+			IChangeMonitor<NormItem> changeMonitor,
+			EmployeeRepository employeeRepository,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
@@ -40,6 +45,13 @@ namespace workwear.ViewModels.Regulations
 
 			NormConditions = UoW.GetAll<NormCondition>().ToList();
 			NormConditions.Insert(0, null);
+			
+			changeMonitor.AddSetTargetUnitOfWorks(UoW);
+			changeMonitor.SubscribeToCreate(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
+			changeMonitor.SubscribeToUpdates(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
+
+			this.changeMonitor = changeMonitor;
+			this.employeeRepository = employeeRepository;
 		}
 
 		/// <summary>
@@ -233,6 +245,74 @@ namespace workwear.ViewModels.Regulations
 			}
 		}
 		#endregion
+		#endregion
+
+		public void ReSaveLastIssue(NormItem normItem) 
+		{
+			logger.Info("Пересчитываем последнии выдачи сотрудников");
+			
+			var operations = employeeIssueRepository.GetOperationsForNormItem(
+				normItem, 
+				q => q.Fetch(
+					SelectMode.Fetch, 
+					x => x.Employee)
+				);
+
+			operations = operations
+				.GroupBy(x => x.Employee)
+				.Select(o => 
+					o.OrderByDescending(d => d.OperationTime).First())
+				.ToList();
+
+			foreach (var operation in operations)
+			{
+				var dateStart = operation.StartOfUse ?? operation.OperationTime;
+				var dateExpiryByNorm = normItem.CalculateExpireDate(dateStart, operation.Issued);
+				operation.ExpiryByNorm = dateExpiryByNorm;
+				if (operation.UseAutoWriteoff)
+					operation.AutoWriteoffDate = dateExpiryByNorm;
+
+				var cardItem = operation.Employee.WorkwearItems
+						.FirstOrDefault(x => 
+							DomainHelper.EqualDomainObjects(x.ProtectionTools, normItem.ProtectionTools));
+
+				cardItem?.UpdateNextIssue(UoW);
+			}
+		}
+		
+		#region Сохранение
+		public override bool Save() 
+		{
+			if(!base.Save())
+				return false;
+			
+			var employees = employeeRepository.GetEmployeesUseNorm(new []{Entity}, UoW);
+			
+			if (employees.Any() && (changeMonitor.IdsCreateEntities.Any() || changeMonitor.IdsUpdateEntities.Any())) 
+			{
+				if(!interactive.Question(
+					    "Для сохранения требуется обновить потребности сотрудников. \n Продолжить ?"))
+					return false;
+				
+				logger.Info("Пересчитываем сотрудников");
+				
+				var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
+				var progress = progressPage.ViewModel.Progress;
+				if (employees.Any()) {
+					progress.Start(employees.Count, text: "Обновляем потребности сотрудников");
+					foreach (var employee in employees) {
+						progress.Add(text: $"Обработка {employee.ShortName}");
+						employee.UpdateWorkwearItems();
+						UoW.Save(employee);
+					}
+					progress.Add(text: "Завершаем...");
+					UoW.Commit();
+					NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+					logger.Info("Ok");
+				}
+			}
+			return true;
+		}
 		#endregion
 	}
 }
