@@ -286,7 +286,10 @@ namespace workwear.ViewModels.Regulations
 			if(!base.Save())
 				return false;
 			
-			if (changeMonitor.IdsCreateEntities.Any() || changeMonitor.IdsUpdateEntities.Any()) {
+			var employees = employeeRepository.GetEmployeesUseNorm(new []{Entity}, UoW);
+			
+			if (employees.Any() && (changeMonitor.IdsCreateEntities.Any() || changeMonitor.IdsUpdateEntities.Any())) 
+			{
 				if(!interactive.Question(
 					    "Для сохранения требуется обновить потребности сотрудников. \n Продолжить ?"))
 					return false;
@@ -295,7 +298,6 @@ namespace workwear.ViewModels.Regulations
 				
 				var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
 				var progress = progressPage.ViewModel.Progress;
-				var employees = employeeRepository.GetEmployeesUseNorm(new []{Entity}, UoW);
 				if (employees.Any()) {
 					progress.Start(employees.Count, text: "Обновляем потребности сотрудников");
 					foreach (var employee in employees) {
