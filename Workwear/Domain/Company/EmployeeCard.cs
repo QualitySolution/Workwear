@@ -320,6 +320,17 @@ namespace workwear.Domain.Company
 			UpdateWorkwearItems ();
 		}
 
+		public virtual void AddUsedNorms(IEnumerable<Norm> norms) {
+			foreach(var norm in norms) {
+				if(UsedNorms.Any(usedNorm => DomainHelper.EqualDomainObjects(usedNorm, norm))) {
+					logger.Warn($"Норма {norm.Title} уже добавлена. Пропускаем...");
+					continue;
+				}
+				ObservableUsedNorms.Add(norm);
+			}
+			UpdateWorkwearItems();
+		}
+
 		public virtual void RemoveUsedNorm(Norm norm) {
 			ObservableUsedNorms.Remove (norm);
 			UpdateWorkwearItems ();
