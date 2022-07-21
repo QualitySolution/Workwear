@@ -15,17 +15,31 @@ namespace workwear.Journal.ViewModels.Regulations
 {
 	public class ProtectionToolsJournalViewModel : EntityJournalViewModelBase<ProtectionTools, ProtectionToolsViewModel, ProtectionToolsJournalNode>
 	{
-		public ProtectionToolsJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		private readonly ItemsType type;
+		public ProtectionToolsJournalViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory, 
+			IInteractiveService interactiveService, 
+			INavigationManager navigationManager, 
+			IDeleteEntityService deleteEntityService = null, 
+			ICurrentPermissionService currentPermissionService = null,
+			ItemsType type = null
+			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
+			this.type = type;
 		}
 
 		protected override IQueryOver<ProtectionTools> ItemsQuery(IUnitOfWork uow)
 		{
 			ProtectionToolsJournalNode resultAlias = null;
 			ItemsType itemsTypeAlias = null;
-			return uow.Session.QueryOver<ProtectionTools>()
-				.Left.JoinAlias(x => x.Type, () => itemsTypeAlias)
+			var query = uow.Session.QueryOver<ProtectionTools>()
+				.Left.JoinAlias(x => x.Type, () => itemsTypeAlias);
+
+			if(type != null)
+				query = query.Where(p => itemsTypeAlias.Id == type.Id);
+			
+			return query
 				.Where(GetSearchCriterion<ProtectionTools>(
 					x => x.Id,
 					x => x.Name

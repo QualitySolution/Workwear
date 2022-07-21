@@ -31,7 +31,7 @@ namespace workwear.ViewModels.Import
 			INavigationManager navigation, 
 			IInteractiveMessage interactiveMessage, 
 			ProgressInterceptor progressInterceptor, 
-			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator, importModel.ImportName)
+			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator)
 		{
 			ImportModel = importModel ?? throw new ArgumentNullException(nameof(importModel));
 			this.interactiveMessage = interactiveMessage ?? throw new ArgumentNullException(nameof(interactiveMessage));
