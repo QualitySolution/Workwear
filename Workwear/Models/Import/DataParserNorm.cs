@@ -58,7 +58,7 @@ namespace workwear.Models.Import
 					continue;
 
 				foreach(var column in meaningfulColumns) {
-					row.AddColumnChange(column, CalculateChange(row, column.DataTypeEnum, row.CellStringValue(column.Index)));
+					row.ChangedColumns[column] = CalculateChange(row, column.DataTypeEnum, row.CellStringValue(column.Index));
 				}
 				if(!row.ChangedColumns.Any(x => x.Key.DataTypeEnum == DataTypeNorm.PeriodAndCount))
 					row.ProgramSkipped = true;
@@ -67,29 +67,38 @@ namespace workwear.Models.Import
 			}
 		}
 
-		public ChangeType CalculateChange(SheetRowNorm row, DataTypeNorm dataType, string value)
+		public ChangeState CalculateChange(SheetRowNorm row, DataTypeNorm dataType, string value)
 		{
-			if(String.IsNullOrWhiteSpace(value)) {
-				return dataType == DataTypeNorm.PeriodAndCount ? ChangeType.ParseError : ChangeType.NotChanged;
-			}
-				
+			if(String.IsNullOrWhiteSpace(value)) 
+				return new ChangeState(dataType == DataTypeNorm.PeriodAndCount ? ChangeType.ParseError : ChangeType.NotChanged);
+
 			switch(dataType) {
 				case DataTypeNorm.Subdivision:
-					return row.SubdivisionPostCombination.Posts.Any(p => p.Subdivision?.Id == 0) ? ChangeType.NewEntity : ChangeType.NotChanged;
+					return new ChangeState(row.SubdivisionPostCombination.Posts.Any(p => p.Subdivision?.Id == 0)
+						? ChangeType.NewEntity
+						: ChangeType.NotChanged);
 				case DataTypeNorm.Post:
-					return row.SubdivisionPostCombination.Posts.Any(p => p.Id == 0) ? ChangeType.NewEntity : ChangeType.NotChanged;
+					return ComparePost(row);
 				case DataTypeNorm.ProtectionTools:
-					return row.NormItem.ProtectionTools.Id == 0 ? ChangeType.NewEntity : ChangeType.NotChanged;
+					return new ChangeState(row.NormItem.ProtectionTools.Id == 0 ? ChangeType.NewEntity : ChangeType.NotChanged);
 				case DataTypeNorm.PeriodAndCount:
 					if(TryParsePeriodAndCount(value, out int amount, out int periods, out NormPeriodType periodType)) {
-						return (row.NormItem.Amount == amount && row.NormItem.PeriodCount == periods && row.NormItem.NormPeriod == periodType)
-								? ChangeType.NotChanged : (row.NormItem.Id == 0 ? ChangeType.NewEntity : ChangeType.ChangeValue);
+						return new ChangeState((row.NormItem.Amount == amount && row.NormItem.PeriodCount == periods &&
+						                        row.NormItem.NormPeriod == periodType)
+							? ChangeType.NotChanged
+							: (row.NormItem.Id == 0 ? ChangeType.NewEntity : ChangeType.ChangeValue));
 					}
 					else
-						return ChangeType.ParseError;
+						return new ChangeState(ChangeType.ParseError);
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не поддерживается.");
 			}
+		}
+
+		private ChangeState ComparePost(SheetRowNorm row) {
+			var newPosts = row.SubdivisionPostCombination.Posts.Where(p => p.Id == 0).Select(x => x.Name).ToArray();
+			var state = newPosts.Any() ? ChangeType.NewEntity : ChangeType.NotChanged;
+			return new ChangeState(state, willCreatedValues: newPosts);
 		}
 		#endregion
 

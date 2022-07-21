@@ -144,6 +144,9 @@ namespace workwear.Models.Import
 					result.Add($"Старое значение: {change.OldValue}");
 				if(change.InterpretedValue != null)
 					result.Add($"Обработанное значение: {change.InterpretedValue}");
+				if(change.WillCreatedValues.Any())
+					result.Add($"Будут созданы: " + String.Join(", ", change.WillCreatedValues.Select(x => $"[{x}]")));
+				
 				return result.Any() ? String.Join("\n", result) : null;
 			}
 			return null;
@@ -177,12 +180,14 @@ namespace workwear.Models.Import
 		public ChangeType ChangeType;
 		public string OldValue;
 		public string InterpretedValue;
+		public string[] WillCreatedValues;
 
-		public ChangeState(ChangeType changeType, string oldValue = null, string interpretedValue = null)
+		public ChangeState(ChangeType changeType, string oldValue = null, string interpretedValue = null, string[] willCreatedValues = null)
 		{
 			ChangeType = changeType;
 			OldValue = oldValue;
 			InterpretedValue = interpretedValue;
+			WillCreatedValues = willCreatedValues ?? Array.Empty<string>();
 		}
 	}
 }
