@@ -174,20 +174,4 @@ namespace workwear.Models.Import
 		bool ProgramSkipped { get; set; }
 		bool UserSkipped { get; set; }
 	}
-
-	public class ChangeState
-	{
-		public ChangeType ChangeType;
-		public string OldValue;
-		public string InterpretedValue;
-		public string[] WillCreatedValues;
-
-		public ChangeState(ChangeType changeType, string oldValue = null, string interpretedValue = null, string[] willCreatedValues = null)
-		{
-			ChangeType = changeType;
-			OldValue = oldValue;
-			InterpretedValue = interpretedValue;
-			WillCreatedValues = willCreatedValues ?? Array.Empty<string>();
-		}
-	}
 }
