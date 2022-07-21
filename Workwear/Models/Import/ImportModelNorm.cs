@@ -33,7 +33,7 @@ namespace workwear.Models.Import
 
 		public List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
-			var rows = UsedRows.Where(x => !x.Skipped && x.ChangedColumns.Any()).ToList();
+			var rows = UsedRows.Where(x => x.HasChanges).ToList();
 			progress.Start(maxValue: rows.Count, text: "Подготовка");
 
 			List<object> toSave = new List<object>();
