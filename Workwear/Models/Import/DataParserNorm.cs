@@ -30,7 +30,10 @@ namespace workwear.Models.Import
 			SizeService sizeService)
 		{
 			AddColumnName(DataTypeNorm.ProtectionTools,
-				"номенклатура"
+				"номенклатура",
+				"одежды",
+				"обуви",
+				"средств"
 				);
 			AddColumnName(DataTypeNorm.PeriodAndCount,
 				"Норма выдачи"
