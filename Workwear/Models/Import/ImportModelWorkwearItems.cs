@@ -33,7 +33,7 @@ namespace workwear.Models.Import
 
 		public List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
-			var countColumn = Columns.First(x => x.DataType == DataTypeWorkwearItems.Count);
+			var countColumn = Columns.First(x => x.DataTypeEnum == DataTypeWorkwearItems.Count);
 			var grouped = UsedRows.Where(x => x.Operation != null)
 				.GroupBy(x => x.Employee);
 			logger.Debug($"В обработке {grouped.Count()} сотрудников.");
