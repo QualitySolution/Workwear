@@ -147,7 +147,7 @@ namespace workwear.Models.Import
 
 			//Заполняем и создаем отсутствующие должности
 			foreach(var pair in MatchPairs)
-				SetOrMakePost(pair, posts, subdivisions);
+				SetOrMakePost(pair, posts, subdivisions, subdivisionColumn == null);
 			progress.Add();
 
 			//Заполняем существующие нормы
@@ -218,16 +218,16 @@ namespace workwear.Models.Import
 			progress.Close();
 		}
 
-		void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts, IList<Subdivision> subdivisions)
+		void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts, IList<Subdivision> subdivisions, bool withoutSubdivision)
 		{
 			foreach (var postName in combination.PostNames)
 			{
 				var post = UsedPosts.FirstOrDefault(x =>
 							String.Equals(x.Name, postName, StringComparison.CurrentCultureIgnoreCase)
-							&& String.Equals(x.Subdivision?.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
+							&& (withoutSubdivision || String.Equals(x.Subdivision?.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase)));
 				if(post == null) {
 					post = posts.FirstOrDefault(x => String.Equals(x.Name, postName, StringComparison.CurrentCultureIgnoreCase)
-						&& String.Equals(x.Subdivision?.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
+						&& (withoutSubdivision || String.Equals(x.Subdivision?.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase)));
 
 					if(post == null) {
 						post = new Post { 
