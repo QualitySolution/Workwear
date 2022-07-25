@@ -314,9 +314,17 @@ namespace workwear.Models.Import
 			periods = 0;
 			periodType = NormPeriodType.Wearout;
 			warning = null;
+			Regex regexp;
+			Match match;
 			
 			if(value.ToLower().Contains("до износа")) {
-				amount = 1;
+				regexp = new Regex(@"^(\d+) ?(пар|пара|пары|шт\.?|комплект.?)?");
+				match = regexp.Match(value);
+				if (match.Success)
+					amount = int.Parse(match.Groups[1].Value);
+				else 
+					amount = 1;
+				periods = 0;
 				periodType = NormPeriodType.Wearout;
 				return true;
 			}
@@ -326,8 +334,8 @@ namespace workwear.Models.Import
 				return true;
 			}
 			//Количество в месяцев
-			var regexp = new Regex(@"(\d+) в (\d+) (месяц|месяца|месяцев)");
-			var match = regexp.Match(value);
+			regexp = new Regex(@"(\d+) в (\d+) (месяц|месяца|месяцев)");
+			match = regexp.Match(value);
 			if(match.Success)
 			{
 				periodType = NormPeriodType.Month;
