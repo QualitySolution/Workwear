@@ -526,6 +526,9 @@
     <Compile Include="ReportParameters\Views\ListBySizeView.cs" />
     <Compile Include="gtk-gui\workwear.ReportParameters.Views.ListBySizeView.cs" />
     <Compile Include="ReportParameters\ViewModels\ListBySizeViewModel.cs" />
+    <Compile Include="Views\Communications\ClaimsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Communications.ClaimsView.cs" />
+    <Compile Include="ViewModels\Communications\ClaimsViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
