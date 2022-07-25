@@ -24,6 +24,8 @@ namespace workwear.ViewModels.Import
 		public static readonly string ColorOfError = "Pink";
 		public static readonly string ColorOfNotFound = "Yellow";
 		public static readonly string ColorOfSkipped = "Orchid";
+		
+		public static readonly string ColorOfWarning = "Orange Red";
 
 		public ExcelImportViewModel(
 			IImportModel importModel, 

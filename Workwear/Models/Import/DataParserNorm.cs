@@ -85,11 +85,16 @@ namespace workwear.Models.Import
 				case DataTypeNorm.ProtectionTools:
 					return new ChangeState(row.NormItem.ProtectionTools.Id == 0 ? ChangeType.NewEntity : ChangeType.NotChanged);
 				case DataTypeNorm.PeriodAndCount:
-					if(TryParsePeriodAndCount(value, out int amount, out int periods, out NormPeriodType periodType)) {
-						return new ChangeState((row.NormItem.Amount == amount && row.NormItem.PeriodCount == periods &&
-						                        row.NormItem.NormPeriod == periodType)
-							? ChangeType.NotChanged
-							: (row.NormItem.Id == 0 ? ChangeType.NewEntity : ChangeType.ChangeValue));
+					if(TryParsePeriodAndCount(value, out int amount, out int periods, out NormPeriodType periodType, out string warning)) {
+						if(row.NormItem.Amount == amount && row.NormItem.PeriodCount == periods && row.NormItem.NormPeriod == periodType)
+							return new ChangeState(ChangeType.NotChanged);
+						if(row.NormItem.Id == 0)
+							return new ChangeState(ChangeType.NewEntity, warning: warning);
+						if(String.IsNullOrEmpty(warning))
+							return new ChangeState(ChangeType.ChangeValue, oldValue: row.NormItem.Title);
+						else
+							//Не меняем имеющееся значение при наличии предупреждения. Предполагаем что по поясам уже проставлено.
+							return new ChangeState(ChangeType.NotChanged, warning: warning); 
 					}
 					else
 						return new ChangeState(ChangeType.ParseError);
@@ -291,7 +296,7 @@ namespace workwear.Models.Import
 					//Ничего не делаем так как уже заполнено в момент идентификации строки.
 					break;
 				case DataTypeNorm.PeriodAndCount:
-					if(TryParsePeriodAndCount(value, out int amount, out int periods, out NormPeriodType periodType)){
+					if(TryParsePeriodAndCount(value, out int amount, out int periods, out NormPeriodType periodType, out string warning)){
 						item.Amount = amount;
 						item.PeriodCount = periods;
 						item.NormPeriod = periodType;
@@ -303,11 +308,13 @@ namespace workwear.Models.Import
 		}
 		#endregion
 		#region Helpers
-		internal static bool TryParsePeriodAndCount(string value, out int amount, out int periods, out NormPeriodType periodType)
+		internal static bool TryParsePeriodAndCount(string value, out int amount, out int periods, out NormPeriodType periodType, out string warning)
 		{
 			amount = 0;
 			periods = 0;
 			periodType = NormPeriodType.Wearout;
+			warning = null;
+			
 			if(value.ToLower().Contains("до износа")) {
 				amount = 1;
 				periodType = NormPeriodType.Wearout;
@@ -349,7 +356,14 @@ namespace workwear.Models.Import
 			if (match.Success)
 			{
 				periodType = NormPeriodType.Year;
-				amount = 1;
+				if(value.Contains("по поясам")) {
+					amount = 0;
+					warning = "Количество устанавливается по поясам. Необходимо в ручную проставить количество после импорта.";
+				}
+				else {
+					amount = 1;
+				}
+				
 				periods = int.Parse(match.Groups[1].Value);
 				if (match.Groups[2].Value.EndsWith(",5") || match.Groups[2].Value.EndsWith(".5")) {
 					periods = periods * 12 + 6;

@@ -77,6 +77,7 @@ namespace workwear.Views.Import
 			eventboxLegendaNotFound.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfNotFound));
 			eventboxLegendaError.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfError));
 			eventboxLegendaSkipRows.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfSkipped));
+			labelLegendaWarning.ModifyFg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfWarning));
 
 			buttonSave.Binding
 				.AddBinding(ViewModel, v => v.SensitiveSaveButton, w => w.Sensitive)
@@ -103,6 +104,7 @@ namespace workwear.Views.Import
 				config.AddColumn(ViewModel.ImportModel.DisplayColumns[i].Title).HeaderAlignment(0.5f).Resizable()
 					.ToolTipText(x => x.CellTooltip(col))
 					.AddTextRenderer(x => x.CellValue(col))
+					.AddSetter((c, x) => c.Foreground = x.CellForegroundColor(col))
 					.AddSetter((c, x) => c.Background = x.CellBackgroundColor(col));
 			}
 			config.AddColumn(String.Empty);

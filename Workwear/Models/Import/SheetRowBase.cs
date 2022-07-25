@@ -123,6 +123,18 @@ namespace workwear.Models.Import
 			}
 			return ProgramSkipped ? ExcelImportViewModel.ColorOfSkipped : null;
 		}
+		
+		public string CellForegroundColor(int col)
+		{
+			var column = ChangedColumns.Keys.FirstOrDefault(x => x.Index == col);
+
+			if(column != null) {
+				if(!String.IsNullOrEmpty(ChangedColumns[column].Warning) ) {
+					return ExcelImportViewModel.ColorOfWarning;
+				}
+			}
+			return null;
+		}
 
 		public bool Skipped => ProgramSkipped || UserSkipped;
 
@@ -140,6 +152,8 @@ namespace workwear.Models.Import
 			var column = ChangedColumns.Keys.FirstOrDefault(x => x.Index == col);
 			if(column != null) {
 				var change = ChangedColumns[column];
+				if(change.Warning != null)
+					result.Add($"Предупреждение: {change.Warning}");
 				if(change.OldValue != null)
 					result.Add($"Старое значение: {change.OldValue}");
 				if(change.InterpretedValue != null)
@@ -170,6 +184,7 @@ namespace workwear.Models.Import
 		string CellValue(int col);
 		string CellTooltip(int col);
 		string CellBackgroundColor(int col);
+		string CellForegroundColor(int col);
 
 		bool ProgramSkipped { get; set; }
 		bool UserSkipped { get; set; }
