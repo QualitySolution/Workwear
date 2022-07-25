@@ -318,7 +318,7 @@ namespace workwear.Models.Import
 				periodType = NormPeriodType.Duty;
 				return true;
 			}
-
+			//Количество в месяцев
 			var regexp = new Regex(@"(\d+) в (\d+) (месяц|месяца|месяцев)");
 			var match = regexp.Match(value);
 			if(match.Success)
@@ -328,6 +328,7 @@ namespace workwear.Models.Import
 				periods = int.Parse(match.Groups[2].Value);
 				return true;
 			}
+			//Указано и количество выдачи и количество лет
 			regexp = new Regex(@"(\d+).* (\d+)([,\.]5)? *(год|года|лет)");
 			match = regexp.Match(value);
 			if (match.Success)
@@ -342,7 +343,23 @@ namespace workwear.Models.Import
 
 				return true;
 			}
-			regexp = new Regex(@"^(\d+) ?(пар|пара|пары|шт\.?|комплекта?)?$");
+			//Указано только количество лет, подразумевая выдачу одной единицы.
+			regexp = new Regex(@"(\d+)([,\.]5)? *(год|года|лет)");
+			match = regexp.Match(value);
+			if (match.Success)
+			{
+				periodType = NormPeriodType.Year;
+				amount = 1;
+				periods = int.Parse(match.Groups[1].Value);
+				if (match.Groups[2].Value.EndsWith(",5") || match.Groups[2].Value.EndsWith(".5")) {
+					periods = periods * 12 + 6;
+					periodType = NormPeriodType.Month;
+				}
+
+				return true;
+			}
+			//Только количество подразумевая в 1 год.
+			regexp = new Regex(@"^(\d+) ?(пар|пара|пары|шт\.?|комплект.?)?( на год\.?)?$");
 			match = regexp.Match(value);
 			if (match.Success)
 			{

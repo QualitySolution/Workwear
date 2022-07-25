@@ -31,6 +31,13 @@ namespace WorkwearTest.Models.Import
 		[TestCase("2 комплекта", 2, 1, NormPeriodType.Year, true)]
 		[TestCase("по поясам на 2,5 года", 0, 30, NormPeriodType.Month, false)]//FIXME: когда поймем как реализовать пояса
 		[TestCase("До износа", 1, 0, NormPeriodType.Wearout, true)]
+		//Черноземье
+		[TestCase("1 комплект.", 1, 1, NormPeriodType.Year, true)]
+		[TestCase("1 комплект", 1, 1, NormPeriodType.Year, true)]
+		[TestCase("2 года", 1, 2, NormPeriodType.Year, true)]
+		[TestCase("1 пара на год.", 1, 1, NormPeriodType.Year, true)]
+		[TestCase("5 шт на год", 5, 1, NormPeriodType.Year, true)]
+		[TestCase("3 года", 1, 3, NormPeriodType.Year, true)]
 		public void TryParsePeriodAndCount_Test(string inputString, int expectedAmount, int expectedCount, NormPeriodType expectedPeriod, bool expectedResult)
 		{
 			var result = DataParserNorm.TryParsePeriodAndCount(inputString, out int actualAmount, out int actualCount, out NormPeriodType actualPeriod);
