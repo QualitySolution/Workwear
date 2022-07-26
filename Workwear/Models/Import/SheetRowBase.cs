@@ -95,9 +95,10 @@ namespace workwear.Models.Import
 		
 		private ICell GetCellForValue(int col)
 		{
-			var cell = cells.GetCell(col);
-			if (cell != null && cell.IsMergedCell)
-				cell = MergedCells[cell.RowIndex, cell.ColumnIndex];
+			var cell = MergedCells[cells.RowNum, col];
+			if(cell != null) {
+				cell = cells.GetCell(col);
+			}
 			return cell;
 		}
 		
