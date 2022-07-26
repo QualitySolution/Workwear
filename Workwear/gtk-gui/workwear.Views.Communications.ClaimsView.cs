@@ -6,6 +6,10 @@ namespace workwear.Views.Communications
 	{
 		private global::Gamma.GtkWidgets.yHBox yhbox1;
 
+		private global::Gamma.GtkWidgets.yVBox yvbox1;
+
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonShowClosed;
+
 		private global::Gtk.ScrolledWindow scrolledwindow2;
 
 		private global::Gamma.GtkWidgets.yTreeView ytreeClaims;
@@ -28,7 +32,7 @@ namespace workwear.Views.Communications
 
 		private global::Gamma.GtkWidgets.yLabel ylabelStatusClaim;
 
-		private global::Gamma.Widgets.yEnumComboBox yenumcombobox2;
+		private global::Gamma.Widgets.yEnumComboBox yenumcomboStatus;
 
 		private global::Gamma.GtkWidgets.yButton ybuttonChangeStatus;
 
@@ -43,6 +47,22 @@ namespace workwear.Views.Communications
 			this.yhbox1.Name = "yhbox1";
 			this.yhbox1.Spacing = 6;
 			// Container child yhbox1.Gtk.Box+BoxChild
+			this.yvbox1 = new global::Gamma.GtkWidgets.yVBox();
+			this.yvbox1.Name = "yvbox1";
+			this.yvbox1.Spacing = 6;
+			// Container child yvbox1.Gtk.Box+BoxChild
+			this.ycheckbuttonShowClosed = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbuttonShowClosed.CanFocus = true;
+			this.ycheckbuttonShowClosed.Name = "ycheckbuttonShowClosed";
+			this.ycheckbuttonShowClosed.Label = global::Mono.Unix.Catalog.GetString("Показывать закрытые");
+			this.ycheckbuttonShowClosed.DrawIndicator = true;
+			this.ycheckbuttonShowClosed.UseUnderline = true;
+			this.yvbox1.Add(this.ycheckbuttonShowClosed);
+			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ycheckbuttonShowClosed]));
+			w1.Position = 0;
+			w1.Expand = false;
+			w1.Fill = false;
+			// Container child yvbox1.Gtk.Box+BoxChild
 			this.scrolledwindow2 = new global::Gtk.ScrolledWindow();
 			this.scrolledwindow2.CanFocus = true;
 			this.scrolledwindow2.Name = "scrolledwindow2";
@@ -52,9 +72,14 @@ namespace workwear.Views.Communications
 			this.ytreeClaims.CanFocus = true;
 			this.ytreeClaims.Name = "ytreeClaims";
 			this.scrolledwindow2.Add(this.ytreeClaims);
-			this.yhbox1.Add(this.scrolledwindow2);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.scrolledwindow2]));
-			w2.Position = 0;
+			this.yvbox1.Add(this.scrolledwindow2);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.scrolledwindow2]));
+			w3.Position = 1;
+			this.yhbox1.Add(this.yvbox1);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.yvbox1]));
+			w4.Position = 0;
+			w4.Expand = false;
+			w4.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
 			this.yvbox2 = new global::Gamma.GtkWidgets.yVBox();
 			this.yvbox2.Name = "yvbox2";
@@ -72,8 +97,8 @@ namespace workwear.Views.Communications
 			this.ytreeClaimMessages.HeadersVisible = false;
 			this.scrolledwindow1.Add(this.ytreeClaimMessages);
 			this.yvbox2.Add(this.scrolledwindow1);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.scrolledwindow1]));
-			w4.Position = 0;
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.scrolledwindow1]));
+			w6.Position = 0;
 			// Container child yvbox2.Gtk.Box+BoxChild
 			this.yvbox3 = new global::Gamma.GtkWidgets.yVBox();
 			this.yvbox3.Name = "yvbox3";
@@ -89,27 +114,27 @@ namespace workwear.Views.Communications
 			this.yentryMessage.IsEditable = true;
 			this.yentryMessage.InvisibleChar = '•';
 			this.yhbox2.Add(this.yentryMessage);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.yentryMessage]));
-			w5.Position = 0;
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.yentryMessage]));
+			w7.Position = 0;
 			// Container child yhbox2.Gtk.Box+BoxChild
 			this.ybuttonSend = new global::Gamma.GtkWidgets.yButton();
 			this.ybuttonSend.CanFocus = true;
 			this.ybuttonSend.Name = "ybuttonSend";
 			this.ybuttonSend.UseUnderline = true;
 			this.ybuttonSend.Label = global::Mono.Unix.Catalog.GetString("Отправить");
-			global::Gtk.Image w6 = new global::Gtk.Image();
-			w6.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "stock_mail-send", global::Gtk.IconSize.Menu);
-			this.ybuttonSend.Image = w6;
+			global::Gtk.Image w8 = new global::Gtk.Image();
+			w8.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "stock_mail-send", global::Gtk.IconSize.Menu);
+			this.ybuttonSend.Image = w8;
 			this.yhbox2.Add(this.ybuttonSend);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.ybuttonSend]));
-			w7.Position = 1;
-			w7.Expand = false;
-			w7.Fill = false;
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.ybuttonSend]));
+			w9.Position = 1;
+			w9.Expand = false;
+			w9.Fill = false;
 			this.yvbox3.Add(this.yhbox2);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox2]));
-			w8.Position = 0;
-			w8.Expand = false;
-			w8.Fill = false;
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox2]));
+			w10.Position = 0;
+			w10.Expand = false;
+			w10.Fill = false;
 			// Container child yvbox3.Gtk.Box+BoxChild
 			this.yhbox3 = new global::Gamma.GtkWidgets.yHBox();
 			this.yhbox3.Name = "yhbox3";
@@ -119,22 +144,22 @@ namespace workwear.Views.Communications
 			this.ylabelStatusClaim.Name = "ylabelStatusClaim";
 			this.ylabelStatusClaim.LabelProp = global::Mono.Unix.Catalog.GetString("Статус обращения");
 			this.yhbox3.Add(this.ylabelStatusClaim);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.ylabelStatusClaim]));
-			w9.Position = 0;
-			w9.Expand = false;
-			w9.Fill = false;
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.ylabelStatusClaim]));
+			w11.Position = 0;
+			w11.Expand = false;
+			w11.Fill = false;
 			// Container child yhbox3.Gtk.Box+BoxChild
-			this.yenumcombobox2 = new global::Gamma.Widgets.yEnumComboBox();
-			this.yenumcombobox2.Name = "yenumcombobox2";
-			this.yenumcombobox2.ShowSpecialStateAll = false;
-			this.yenumcombobox2.ShowSpecialStateNot = false;
-			this.yenumcombobox2.UseShortTitle = false;
-			this.yenumcombobox2.DefaultFirst = false;
-			this.yhbox3.Add(this.yenumcombobox2);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.yenumcombobox2]));
-			w10.Position = 1;
-			w10.Expand = false;
-			w10.Fill = false;
+			this.yenumcomboStatus = new global::Gamma.Widgets.yEnumComboBox();
+			this.yenumcomboStatus.Name = "yenumcomboStatus";
+			this.yenumcomboStatus.ShowSpecialStateAll = false;
+			this.yenumcomboStatus.ShowSpecialStateNot = false;
+			this.yenumcomboStatus.UseShortTitle = false;
+			this.yenumcomboStatus.DefaultFirst = false;
+			this.yhbox3.Add(this.yenumcomboStatus);
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.yenumcomboStatus]));
+			w12.Position = 1;
+			w12.Expand = false;
+			w12.Fill = false;
 			// Container child yhbox3.Gtk.Box+BoxChild
 			this.ybuttonChangeStatus = new global::Gamma.GtkWidgets.yButton();
 			this.ybuttonChangeStatus.CanFocus = true;
@@ -142,23 +167,23 @@ namespace workwear.Views.Communications
 			this.ybuttonChangeStatus.UseUnderline = true;
 			this.ybuttonChangeStatus.Label = global::Mono.Unix.Catalog.GetString("Изменить");
 			this.yhbox3.Add(this.ybuttonChangeStatus);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.ybuttonChangeStatus]));
-			w11.Position = 2;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.ybuttonChangeStatus]));
+			w13.Position = 2;
 			this.yvbox3.Add(this.yhbox3);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox3]));
-			w12.Position = 1;
-			w12.Expand = false;
-			w12.Fill = false;
-			this.yvbox2.Add(this.yvbox3);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.yvbox3]));
-			w13.Position = 1;
-			w13.Expand = false;
-			w13.Fill = false;
-			this.yhbox1.Add(this.yvbox2);
-			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.yvbox2]));
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox3]));
 			w14.Position = 1;
 			w14.Expand = false;
 			w14.Fill = false;
+			this.yvbox2.Add(this.yvbox3);
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.yvbox3]));
+			w15.Position = 1;
+			w15.Expand = false;
+			w15.Fill = false;
+			this.yhbox1.Add(this.yvbox2);
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.yvbox2]));
+			w16.Position = 1;
+			w16.Expand = false;
+			w16.Fill = false;
 			this.Add(this.yhbox1);
 			if ((this.Child != null))
 			{

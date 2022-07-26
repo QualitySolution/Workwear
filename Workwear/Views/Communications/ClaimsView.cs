@@ -12,8 +12,8 @@ namespace workwear.Views.Communications
 		{
 			this.Build();
 
-			yenumcombobox2.ItemsEnum = typeof(ClaimState);
-			yenumcombobox2.Binding.AddBinding(
+			yenumcomboStatus.ItemsEnum = typeof(ClaimState);
+			yenumcomboStatus.Binding.AddBinding(
 				ViewModel, 
 				vm => vm.SelectClaimState,
 				v => v.SelectedItem);
