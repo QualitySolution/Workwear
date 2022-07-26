@@ -19088,7 +19088,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Communications.ClaimsView" design-size="329 300">
+  <widget class="Gtk.Bin" id="workwear.Views.Communications.ClaimsView" design-size="353 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -19156,13 +19156,13 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="Gamma.GtkWidgets.yButton" id="ybuttonSendMessage">
+                      <widget class="Gamma.GtkWidgets.yButton" id="ybuttonSend">
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
-                        <property name="UseStock">True</property>
-                        <property name="Type">StockItem</property>
-                        <property name="StockId">mail</property>
-                        <property name="label">mail</property>
+                        <property name="Type">TextAndIcon</property>
+                        <property name="Icon">stock:stock_mail-send Menu</property>
+                        <property name="Label" translatable="yes">Отправить</property>
+                        <property name="UseUnderline">True</property>
                       </widget>
                       <packing>
                         <property name="Position">1</property>
@@ -19196,7 +19196,7 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="Gamma.Widgets.yEnumComboBox" id="yenumcombobox2">
+                      <widget class="Gamma.Widgets.yEnumComboBox" id="yenumcomboStatus">
                         <property name="MemberName" />
                         <property name="IsTextCombo">False</property>
                         <property name="Items" translatable="yes" />
@@ -19222,9 +19222,7 @@
                       </widget>
                       <packing>
                         <property name="Position">2</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
+                        <property name="AutoSize">False</property>
                       </packing>
                     </child>
                   </widget>

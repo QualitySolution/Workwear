@@ -10,8 +10,8 @@ namespace workwear.ViewModels.Communications
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation, 
 			IValidator validator = null, 
-			string UoWTitle = "Обращения сотрудников") : base(unitOfWorkFactory, navigation, validator, UoWTitle) 
-		{
+			string UoWTitle = "Обращения сотрудников") : base(unitOfWorkFactory, navigation, validator, UoWTitle) {
+			Title = "Обращения сотрудников";
 		}
 	}
 }
