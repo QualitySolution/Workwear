@@ -49,6 +49,7 @@ using workwear.Repository.Stock;
 using Workwear.Tools;
 using workwear.Tools;
 using workwear.Tools.Features;
+using workwear.ViewModels.Communications;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Import;
 using workwear.ViewModels.Stock;
@@ -190,6 +191,7 @@ public partial class MainWindow : Gtk.Window
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionHistory.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
+		ybuttonClaims.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 	}
 	#endregion
 
@@ -756,5 +758,9 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionSizeTypeActivated(object sender, EventArgs e)
 	{
 		NavigationManager.OpenViewModel<SizeTypeJournalViewModel>(null);
+	}
+
+	protected void OnButtonClaimsClicked(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<ClaimsViewModel>(null);
 	}
 }
