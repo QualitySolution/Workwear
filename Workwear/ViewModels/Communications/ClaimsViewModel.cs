@@ -64,7 +64,7 @@ namespace workwear.ViewModels.Communications
 		}
 
 		public void ChangeStatusClaim(object sender, EventArgs e) {
-			throw new NotImplementedException();
+			claimsManager.SetСhanges(SelectClaim);
 		}
 
 		#endregion
