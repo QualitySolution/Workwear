@@ -14,15 +14,16 @@ namespace workwear.Views.Communications
 
 			yenumcomboStatus.ItemsEnum = typeof(ClaimState);
 			yenumcomboStatus.Binding.AddBinding(
-				ViewModel, 
-				vm => vm.SelectClaimState,
-				v => v.SelectedItem);
+				ViewModel, vm => vm.SelectClaimState, v => v.SelectedItem);
 			ytreeClaims.ColumnsConfig = ColumnsConfigFactory.Create<Claim>()
 				.AddColumn("Обращение").AddTextRenderer(c => c.Title)
 				.RowCells()
 				.AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = GetRowColor(x))
 				.Finish();
-			ytreeClaims.ItemsDataSource = ViewModel.GetClaims();
+			ViewModel.RefreshClaims();
+			ytreeClaims.Binding
+				.AddBinding(ViewModel, vm => vm.Claims, w => w.ItemsDataSource)
+				.InitializeFromSource();
 			ytreeClaimMessages.ColumnsConfig = ColumnsConfigFactory.Create<ClaimMessage>()
 				.AddColumn("Автор").AddTextRenderer(c => c.SenderName)
 				.AddColumn("Текст").AddTextRenderer(c => c.Text)
@@ -36,6 +37,13 @@ namespace workwear.Views.Communications
 			ycheckbuttonShowClosed.Binding
 				.AddBinding(ViewModel, vm => vm.ShowClosed, w => w.Active)
 				.InitializeFromSource();
+			ybuttonSend.Binding
+				.AddBinding(ViewModel, vm => vm.SensitiveSend, w => w.Sensitive)
+				.InitializeFromSource();
+			ybuttonChangeStatus.Binding
+				.AddBinding(ViewModel, vm => vm.SensitiveChangeState, w => w.Sensitive)
+				.InitializeFromSource();
+			
 			ybuttonSend.Clicked += ViewModel.Send;
 			ybuttonChangeStatus.Clicked += ViewModel.ChangeStatusClaim;
 		}
