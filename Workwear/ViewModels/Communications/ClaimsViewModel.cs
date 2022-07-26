@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using QS.Cloud.WearLk.Client;
 using QS.Cloud.WearLk.Manage;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Validation;
@@ -30,17 +30,51 @@ namespace workwear.ViewModels.Communications
 			Title = "Обращения сотрудников";
 			this.claimsManager = claimsManager;
 			this.employeeRepository = employeeRepository;
+			messagesSelectClaims = new List<ClaimMessage>();
+			Claims = new List<Claim>();
 		}
 		
 
 		#region View
+		
+		private List<Claim> claims;
+		public List<Claim> Claims {
+			get => claims;
+			set => SetField(ref claims, value);
+		}
+		
+		private Claim selectClaim;
+		[PropertyChangedAlso(nameof(SelectClaimState))]
+		[PropertyChangedAlso(nameof(SensitiveChangeState))]
+		public Claim SelectClaim {
+			get => selectClaim;
+			set { SetField(ref selectClaim, value);
+				RefreshMessage(); }
+		}
 
-		public IList<Claim> Claims { get; set; }
-		public Claim SelectClaim { get; set; }
-		public IList<ClaimMessage> MessagesSelectClaims { get; set; }
-		public ClaimState SelectClaimState { get; set; }
-		public bool ShowClosed { get; set; } 
-		public string TextMessage { get; set; }
+		private List<ClaimMessage> messagesSelectClaims;
+		public List<ClaimMessage> MessagesSelectClaims {
+			get => messagesSelectClaims;
+			set => SetField(ref messagesSelectClaims, value);
+		}
+
+		public ClaimState SelectClaimState {
+			get => SelectClaim.ClaimState;
+			set => SelectClaim.ClaimState = value;
+		}
+
+		private bool showClosed;
+		public bool ShowClosed {
+			get => showClosed;
+			set => SetField(ref showClosed, value);
+		}
+
+		private string textMessage;
+		[PropertyChangedAlso(nameof(SensitiveSend))]
+		public string TextMessage {
+			get => textMessage;
+			set => SetField(ref textMessage, value);
+		}
 
 		public bool SensitiveSend => SensitiveChangeState && String.IsNullOrEmpty(TextMessage);
 		public bool SensitiveChangeState => SelectClaim != null;
@@ -50,13 +84,12 @@ namespace workwear.ViewModels.Communications
 		#region ViewMethods
 
 		public void RefreshClaims() {
-			Claims = claimsManager.GetClaims(sizePage, 0, ShowClosed);
+			Claims.Clear();
+			Claims.AddRange(claimsManager.GetClaims(sizePage, 0, ShowClosed));
 		}
 
 		public void AddRangeClaims() {
-			Claims
-				.ToList()
-				.AddRange(claimsManager.GetClaims(sizePage, (uint)Claims.Count, ShowClosed));
+			Claims.AddRange(claimsManager.GetClaims(sizePage, (uint)Claims.Count, ShowClosed));
 		}
 
 		public void Send(object sender, EventArgs eventArgs) {
@@ -66,7 +99,12 @@ namespace workwear.ViewModels.Communications
 		public void ChangeStatusClaim(object sender, EventArgs e) {
 			claimsManager.SetСhanges(SelectClaim);
 		}
-
 		#endregion
+
+		private void RefreshMessage() {
+			MessagesSelectClaims.Clear();
+			if(SelectClaim != null)
+				MessagesSelectClaims.AddRange(claimsManager.GetMessages(SelectClaim.Id));
+		}
 	}
 }

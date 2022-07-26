@@ -22,14 +22,16 @@ namespace workwear.Views.Communications
 				.Finish();
 			ViewModel.RefreshClaims();
 			ytreeClaims.Binding
-				.AddBinding(ViewModel, vm => vm.Claims, w => w.ItemsDataSource)
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.Claims, w => w.ItemsDataSource)
+				.AddBinding(vm => vm.SelectClaim, w=> w.SelectedRow)
 				.InitializeFromSource();
 			ytreeClaimMessages.ColumnsConfig = ColumnsConfigFactory.Create<ClaimMessage>()
 				.AddColumn("Автор").AddTextRenderer(c => c.SenderName)
 				.AddColumn("Текст").AddTextRenderer(c => c.Text)
 				.AddColumn("Время").AddTextRenderer(c => c.SendTime.ToString())
 				.RowCells()
-				.AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.UserRead ? String.Empty : "gray")
+				.AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.UserRead ? null : "gray")
 				.Finish();
 			yentryMessage.Binding
 				.AddBinding(ViewModel, vm => vm.TextMessage, w => w.Text)
@@ -46,6 +48,13 @@ namespace workwear.Views.Communications
 			
 			ybuttonSend.Clicked += ViewModel.Send;
 			ybuttonChangeStatus.Clicked += ViewModel.ChangeStatusClaim;
+			ytreeClaims.Vadjustment.ValueChanged += OnScroll;
+		}
+
+		private void OnScroll(object sender, EventArgs e) {
+			var lastPos = ytreeClaims.Vadjustment.Value;
+			ViewModel.AddRangeClaims();
+			ytreeClaims.Vadjustment.Value = lastPos;
 		}
 
 		private string GetRowColor(Claim claim) {
