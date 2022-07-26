@@ -12,8 +12,8 @@ namespace workwear.Views.Communications
 		{
 			this.Build();
 
-			yenumcombobox2.ItemsEnum = typeof(ClaimState);
-			yenumcombobox2.Binding.AddBinding(
+			yenumcomboStatus.ItemsEnum = typeof(ClaimState);
+			yenumcomboStatus.Binding.AddBinding(
 				ViewModel, 
 				vm => vm.SelectClaimState,
 				v => v.SelectedItem);
@@ -32,6 +32,9 @@ namespace workwear.Views.Communications
 				.Finish();
 			yentryMessage.Binding
 				.AddBinding(ViewModel, vm => vm.TextMessage, w => w.Text)
+				.InitializeFromSource();
+			ycheckbuttonShowClosed.Binding
+				.AddBinding(ViewModel, vm => vm.ShowClosed, w => w.Active)
 				.InitializeFromSource();
 			ybuttonSend.Clicked += ViewModel.Send;
 			ybuttonChangeStatus.Clicked += ViewModel.ChangeStatusClaim;
