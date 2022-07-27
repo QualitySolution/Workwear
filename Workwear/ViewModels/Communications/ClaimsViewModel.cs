@@ -92,7 +92,6 @@ namespace workwear.ViewModels.Communications
 		#region ViewMethods
 
 		public void RefreshClaims() {
-			Claims = new List<Claim>();
 			Claims = claimsManager.GetClaims(sizePage, 0, ShowClosed).ToList();
 		}
 
@@ -108,7 +107,6 @@ namespace workwear.ViewModels.Communications
 		#endregion
 
 		private void RefreshMessage() {
-			MessagesSelectClaims = new List<ClaimMessage>();
 			if(SelectClaim != null)
 				MessagesSelectClaims = claimsManager.GetMessages(SelectClaim.Id);
 		}
