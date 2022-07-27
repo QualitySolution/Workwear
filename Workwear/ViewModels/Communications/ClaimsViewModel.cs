@@ -17,7 +17,7 @@ namespace workwear.ViewModels.Communications
 		
 		private readonly ClaimsManager claimsManager;
 		private readonly EmployeeRepository employeeRepository;
-		private readonly uint sizePage = 100;
+		private readonly uint sizePage = 20;
 
 		public ClaimsViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
@@ -38,8 +38,8 @@ namespace workwear.ViewModels.Communications
 
 		#region View
 		
-		private IList<Claim> claims;
-		public IList<Claim> Claims {
+		private List<Claim> claims;
+		public List<Claim> Claims {
 			get => claims;
 			set => SetField(ref claims, value);
 		}
@@ -93,11 +93,7 @@ namespace workwear.ViewModels.Communications
 
 		public void RefreshClaims() {
 			Claims = new List<Claim>();
-			Claims = claimsManager.GetClaims(sizePage, 0, ShowClosed);
-		}
-
-		public void AddRangeClaims() {
-			Claims.ToList().AddRange(claimsManager.GetClaims(sizePage, (uint)Claims.Count, ShowClosed));
+			Claims = claimsManager.GetClaims(sizePage, 0, ShowClosed).ToList();
 		}
 
 		public void Send(object sender, EventArgs eventArgs) {
@@ -115,6 +111,13 @@ namespace workwear.ViewModels.Communications
 			MessagesSelectClaims = new List<ClaimMessage>();
 			if(SelectClaim != null)
 				MessagesSelectClaims = claimsManager.GetMessages(SelectClaim.Id);
+		}
+
+		public bool UploadClaims() {
+			var newClaims = claimsManager.GetClaims(sizePage, (uint)Claims.Count, ShowClosed).ToList();
+			Claims.AddRange(newClaims);
+			OnPropertyChanged(nameof(Claims));
+			return newClaims.Count > 0;
 		}
 	}
 }
