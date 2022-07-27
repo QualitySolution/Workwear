@@ -71,6 +71,7 @@ namespace workwear.Views.Communications
 			this.ytreeClaims = new global::Gamma.GtkWidgets.yTreeView();
 			this.ytreeClaims.CanFocus = true;
 			this.ytreeClaims.Name = "ytreeClaims";
+			this.ytreeClaims.HeadersVisible = false;
 			this.scrolledwindow2.Add(this.ytreeClaims);
 			this.yvbox1.Add(this.scrolledwindow2);
 			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.scrolledwindow2]));

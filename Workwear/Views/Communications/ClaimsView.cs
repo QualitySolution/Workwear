@@ -14,7 +14,7 @@ namespace workwear.Views.Communications
 
 			yenumcomboStatus.ItemsEnum = typeof(ClaimState);
 			yenumcomboStatus.Binding.AddBinding(
-				ViewModel, vm => vm.SelectClaimState, v => v.SelectedItem);
+				ViewModel, vm => vm.SelectClaimState, v => v.SelectedItemOrNull);
 			ytreeClaims.ColumnsConfig = ColumnsConfigFactory.Create<Claim>()
 				.AddColumn("Обращение").AddTextRenderer(c => c.Title)
 				.RowCells()
@@ -29,10 +29,13 @@ namespace workwear.Views.Communications
 			ytreeClaimMessages.ColumnsConfig = ColumnsConfigFactory.Create<ClaimMessage>()
 				.AddColumn("Автор").AddTextRenderer(c => c.SenderName)
 				.AddColumn("Текст").AddTextRenderer(c => c.Text)
-				.AddColumn("Время").AddTextRenderer(c => c.SendTime.ToString())
+				.AddColumn("Время").AddTextRenderer(c => c.SendTime.ToDateTime().ToString("dd MMM HH:mm:ss"))
 				.RowCells()
 				.AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.UserRead ? null : "gray")
 				.Finish();
+			ytreeClaimMessages.Binding
+				.AddBinding(ViewModel, vm => vm.MessagesSelectClaims, w => w.ItemsDataSource)
+				.InitializeFromSource();
 			yentryMessage.Binding
 				.AddBinding(ViewModel, vm => vm.TextMessage, w => w.Text)
 				.InitializeFromSource();

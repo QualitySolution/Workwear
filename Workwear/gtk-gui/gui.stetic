@@ -19124,6 +19124,7 @@
                   <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeClaims">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
+                    <property name="HeadersVisible">False</property>
                   </widget>
                 </child>
               </widget>
