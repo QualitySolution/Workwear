@@ -60,7 +60,6 @@ namespace workwear.Views.Communications
 			if(!ViewModel.UploadClaims())
 				return;
 			var lastPos = ytreeClaims.Vadjustment.Upper;
-			ytreeClaims.ItemsDataSource = ViewModel.Claims;
 			ytreeClaims.Vadjustment.Value = lastPos;
 		}
 

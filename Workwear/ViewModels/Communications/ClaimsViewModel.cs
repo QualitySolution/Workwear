@@ -17,7 +17,7 @@ namespace workwear.ViewModels.Communications
 		
 		private readonly ClaimsManager claimsManager;
 		private readonly EmployeeRepository employeeRepository;
-		private readonly uint sizePage = 20;
+		private readonly uint sizePage = 300;
 
 		public ClaimsViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
