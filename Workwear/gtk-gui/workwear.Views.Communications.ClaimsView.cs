@@ -79,7 +79,6 @@ namespace workwear.Views.Communications
 			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.yvbox1]));
 			w4.Position = 0;
 			w4.Expand = false;
-			w4.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
 			this.yvbox2 = new global::Gamma.GtkWidgets.yVBox();
 			this.yvbox2.Name = "yvbox2";
@@ -169,6 +168,8 @@ namespace workwear.Views.Communications
 			this.yhbox3.Add(this.ybuttonChangeStatus);
 			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.ybuttonChangeStatus]));
 			w13.Position = 2;
+			w13.Expand = false;
+			w13.Fill = false;
 			this.yvbox3.Add(this.yhbox3);
 			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox3]));
 			w14.Position = 1;
@@ -182,8 +183,6 @@ namespace workwear.Views.Communications
 			this.yhbox1.Add(this.yvbox2);
 			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.yvbox2]));
 			w16.Position = 1;
-			w16.Expand = false;
-			w16.Fill = false;
 			this.Add(this.yhbox1);
 			if ((this.Child != null))
 			{
