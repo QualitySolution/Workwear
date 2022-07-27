@@ -175,7 +175,7 @@ namespace workwear.Models.Import
 				}
 
 				var nomenclature = 
-					UsedNomeclature.FirstOrDefault(x => String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
+					UsedNomenclatures.FirstOrDefault(x => String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
 				if(nomenclature == null) {
 					nomenclature = 
 						nomenclatures.FirstOrDefault(x => String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
@@ -188,7 +188,7 @@ namespace workwear.Models.Import
 						nomenclature.Sex = nomenclatureTypes.ParseSex(nomenclature.Name) ?? ClothesSex.Universal;
 						row.WorkwearItem.ProtectionTools.AddNomeclature(nomenclature);
 					}
-					UsedNomeclature.Add(nomenclature);
+					UsedNomenclatures.Add(nomenclature);
 				}
 
 				row.Operation = operations.FirstOrDefault(group => group.Key == row.Employee)
@@ -285,7 +285,7 @@ namespace workwear.Models.Import
 			return true;
 		}
 		#endregion
-		public readonly List<Nomenclature> UsedNomeclature = new List<Nomenclature>();
+		public readonly List<Nomenclature> UsedNomenclatures = new List<Nomenclature>();
 		public readonly HashSet<EmployeeCard> ChangedEmployees = new HashSet<EmployeeCard>();
 		#region Helpers
 		private DateTime? ParseDateOrNull(string value) {

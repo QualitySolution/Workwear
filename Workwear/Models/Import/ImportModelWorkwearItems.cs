@@ -53,7 +53,7 @@ namespace workwear.Models.Import
 			}
 
 			List<object> toSave = new List<object>();
-			toSave.AddRange(dataParser.UsedNomeclature.Where(x => x.Id == 0));
+			toSave.AddRange(dataParser.UsedNomenclatures.Where(x => x.Id == 0));
 			toSave.AddRange(dataParser.ChangedEmployees);
 			toSave.AddRange(UsedRows.Where(x => x.Operation != null).Select(x => x.Operation));
 			return toSave;
@@ -72,7 +72,7 @@ namespace workwear.Models.Import
 		{
 			foreach(var row in UsedRows) {
 				row.ChangedColumns.Clear();
-				//FIXME Возможно надо чистить сотрудника и поерацию, но нужно проверять.
+				//FIXME Возможно надо чистить сотрудника и операцию, но нужно проверять.
 			}
 		}
 
@@ -88,7 +88,7 @@ namespace workwear.Models.Import
 			CountersViewModel.SetCount(CountersWorkwearItems.UsedEmployees, UsedRows.Select(x => x.Employee).Distinct().Count(x => x!= null));
 			CountersViewModel.SetCount(CountersWorkwearItems.NewOperations, UsedRows.Count(x => x.Operation != null && x.Operation.Id == 0));
 			CountersViewModel.SetCount(CountersWorkwearItems.WorkwearItemNotFound, UsedRows.Count(x => x.Employee != null && x.WorkwearItem == null));
-			CountersViewModel.SetCount(CountersWorkwearItems.NewNomenclatures, dataParser.UsedNomeclature.Count(x => x.Id == 0));
+			CountersViewModel.SetCount(CountersWorkwearItems.NewNomenclatures, dataParser.UsedNomenclatures.Count(x => x.Id == 0));
 		}
 	}
 }
