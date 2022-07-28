@@ -12,7 +12,7 @@ namespace workwear.Models.Import
 	{
 		private readonly IRow cells;
 		
-		public ICell[,] MergedCells;
+		public IDictionary<int, ICell[]>  MergedCells;
 
 		public SheetRowBase(IRow cells)
 		{
@@ -95,7 +95,7 @@ namespace workwear.Models.Import
 		
 		private ICell GetCellForValue(int col)
 		{
-			return MergedCells[cells.RowNum, col] ?? cells.GetCell(col);
+			return MergedCells[cells.RowNum][col] ?? cells.GetCell(col);
 		}
 		
 		#endregion

@@ -197,7 +197,12 @@ namespace workwear.ViewModels.Import
 			ImportModel.MaxSourceColumns = maxColumns;
 			OnPropertyChanged(nameof(RowsCount));
 			ProgressStep.Update("Обработка объединенных ячеек...");
-			var merged = new ICell[RowsCount, maxColumns];
+			var merged = new Dictionary<int, ICell[]>();
+			for(var i = 0; i <= sh.LastRowNum; i++) {
+				if(sh.GetRow(i) == null)
+					continue;
+				merged[sh.GetRow(i).RowNum] = new ICell[maxColumns];
+			}
 			// Loop through all merge regions in this sheet.
 			for (int i = 0; i < sh.NumMergedRegions; i++)
 			{
@@ -207,7 +212,7 @@ namespace workwear.ViewModels.Import
 				var firstRegionCell = sh.GetRow(mergeRegion.FirstRow).GetCell(mergeRegion.FirstColumn);
 				for (int row = mergeRegion.FirstRow; row <= mergeRegion.LastRow; row++) {
 					for (int col = mergeRegion.FirstColumn; col <= mergeRegion.LastColumn; col++) {
-						merged[row, col] = firstRegionCell;
+						merged[row][col] = firstRegionCell;
 					}
 				}
 			}

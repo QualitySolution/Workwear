@@ -175,8 +175,8 @@ namespace workwear.Models.Import
 
 		#endregion
 		
-		private ICell[,] mergedCells;
-		public ICell[,] MergedCells {
+		private IDictionary<int, ICell[]> mergedCells;
+		public IDictionary<int, ICell[]> MergedCells {
 			get => mergedCells;
 			set {
 				mergedCells = value;
