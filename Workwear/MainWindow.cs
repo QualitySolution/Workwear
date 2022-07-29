@@ -191,7 +191,7 @@ public partial class MainWindow : Gtk.Window
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionHistory.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
-		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Communications);
+		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 	}
 	#endregion
 

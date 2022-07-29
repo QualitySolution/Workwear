@@ -89,6 +89,17 @@ namespace workwear.Tools.Features
 					return ProductEdition == 2 || ProductEdition == 3;
 				case WorkwearFeature.Completion:
 					return ProductEdition == 2 || ProductEdition == 3;
+				case WorkwearFeature.Claims:
+					if(ProductEdition != 2 && ProductEdition != 3)
+						return false;
+					if(!QSSaaS.Session.IsSaasConnection)
+						return false;
+					if(dataBaseInfo.BaseGuid == null) {
+						logger.Warn($"Функциональность мобильного кабинета не доступна: dataBaseInfo.BaseGuid = null");
+						return false;
+					}
+					functionLists = cloudClientService.GetAvailableFeatures(dataBaseInfo.BaseGuid.Value.ToString());
+					return functionLists.Any(x => x.Name == "claims_lk");
 				default:
 					return false;
 			}
@@ -114,6 +125,8 @@ namespace workwear.Tools.Features
 		[Display(Name = "История изменений")]
 		HistoryLog,
 		[Display(Name = "Комплектация")]
-		Completion
+		Completion,
+		[Display(Name = "Обращения сотрудников")]
+		Claims
 	}
 }
