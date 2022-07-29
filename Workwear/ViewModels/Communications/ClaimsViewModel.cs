@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.Cloud.WearLk.Client;
 using QS.Cloud.WearLk.Manage;
@@ -8,7 +9,6 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Validation;
 using QS.ViewModels.Dialog;
-using workwear.Repository.Company;
 
 namespace workwear.ViewModels.Communications 
 {
@@ -16,21 +16,18 @@ namespace workwear.ViewModels.Communications
 	{
 		
 		private readonly ClaimsManager claimsManager;
-		private readonly EmployeeRepository employeeRepository;
 		private readonly uint sizePage = 300;
 
 		public ClaimsViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
 			ClaimsManager claimsManager,
-			EmployeeRepository employeeRepository,
 			IValidator validator = null, 
 			string UoWTitle = "Обращения сотрудников"
 			) : base(unitOfWorkFactory, navigation, validator, UoWTitle) 
 		{
 			Title = "Обращения сотрудников";
 			this.claimsManager = claimsManager;
-			this.employeeRepository = employeeRepository;
 			messagesSelectClaims = new List<ClaimMessage>();
 			Claims = new List<Claim>();
 		}
