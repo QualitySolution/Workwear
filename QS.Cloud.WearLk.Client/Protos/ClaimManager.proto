@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package QS.Cloud.WearLk.Manage;
+
+service ClaimManager {
+	rpc GetClaims (GetClaimsRequest) returns (GetClaimsResponse);
+	rpc NeedForResponseCount (NeedForResponseCountRequest) returns (stream NeedForResponseCountResponse);
+	rpc GetClaim (GetClaimRequest) returns (GetClaimResponse);
+	rpc SendAnswer (SendAnswerRequest) returns (SendAnswerResponse);
+	rpc EditClaim (EditClaimRequest) returns (EditClaimResponse);
+}
+
+// GetClaims
+message GetClaimsRequest {
+	bool show_closed = 1;
+	//Для частичной загрузки
+	uint32 page_size = 2;
+	uint32 items_skipped = 3;
+}
+
+message GetClaimsResponse {
+	repeated Claim claims = 1;
+}
+
+message Claim{
+	int32 id = 1;
+	string title = 2;
+	ClaimState claim_state = 3;
+}
+
+enum ClaimState{
+	CLAIM_STATE_CLOSED = 0;
+	CLAIM_STATE_WAIT_SUPPORT = 1;
+	CLAIM_STATE_WAIT_USER = 2;
+}
+
+//NeedForResponseCount
+message NeedForResponseCountRequest{
+
+}
+
+message NeedForResponseCountResponse{
+	uint32 count = 1;
+}
+
+//GetClaim
+message GetClaimRequest{
+	int32 id = 1;
+}
+
+message GetClaimResponse{
+	int32 id = 1;
+	string title = 2;
+	ClaimState claim_state = 3;
+	repeated ClaimMessage messages = 4;
+}
+
+message ClaimMessage{
+	int32 id = 1;
+	google.protobuf.Timestamp send_time = 2;
+	string sender_name = 3;
+	string text = 4;
+	bool user_read = 5;
+}
+
+//SendAnswer
+message SendAnswerRequest{
+	int32 claim_id = 1;
+	string text = 2;
+}
+
+message SendAnswerResponse{
+
+}
+
+//EditClaim
+message EditClaimRequest{
+	int32 claim_id = 1;
+	string title = 2;
+	ClaimState claim_state = 3;
+}
+
+message EditClaimResponse{
+
+}

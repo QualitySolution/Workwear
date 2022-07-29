@@ -20,6 +20,8 @@
       <Protobuf Include="Protos\NotificationManager.proto" />
       <None Remove="Protos\Messages.proto" />
       <Protobuf Include="Protos\Messages.proto" />
+		<None Remove="Protos\ClaimManager.proto" />
+		<Protobuf Include="Protos\ClaimManager.proto" />
     </ItemGroup>
 
 </Project>
