@@ -191,7 +191,7 @@ public partial class MainWindow : Gtk.Window
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionHistory.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
-		ybuttonClaims.Visible = FeaturesService.Available(WorkwearFeature.Communications);
+		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 	}
 	#endregion
 
@@ -760,7 +760,7 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager.OpenViewModel<SizeTypeJournalViewModel>(null);
 	}
 
-	protected void OnButtonClaimsClicked(object sender, EventArgs e) {
+	protected void OnActionClaimsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ClaimsViewModel>(null);
 	}
 }

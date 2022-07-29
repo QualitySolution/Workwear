@@ -122,6 +122,7 @@
     <EmbeddedResource Include="icon\buttons\arrows.png" />
     <EmbeddedResource Include="icon\toolbar\mail.png" />
     <EmbeddedResource Include="icon\menu\logs.png" />
+    <EmbeddedResource Include="icon\toolbar\claims.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain\Company\EmployeeSize.cs" />

@@ -91,6 +91,11 @@
         <property name="Image">resource:workwear.icon.menu.logs.png</property>
       </source>
     </icon-set>
+    <icon-set id=" SendBox">
+      <source>
+        <property name="Image">resource:workwear.icon.toolbar.claims.png</property>
+      </source>
+    </icon-set>
   </icon-factory>
   <widget class="Gtk.Bin" id="workwear.Views.Stock.ItemTypeView" design-size="483 552">
     <property name="MemberName" />
@@ -5241,7 +5246,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Window" id="MainWindow" design-size="1022 458">
+  <widget class="Gtk.Window" id="MainWindow" design-size="1079 458">
     <action-group name="Default">
       <action id="ActionBase">
         <property name="Type">Action</property>
@@ -5789,6 +5794,13 @@
         <property name="ShortLabel" translatable="yes">Типы размеров</property>
         <signal name="Activated" handler="OnActionSizeTypeActivated" />
       </action>
+      <action id="ActionClaims">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Обращение</property>
+        <property name="ShortLabel" translatable="yes">Обращение</property>
+        <property name="StockId"> SendBox</property>
+        <signal name="Activated" handler="OnActionClaimsActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -5941,6 +5953,7 @@
                   <node type="Toolitem" action="ActionBarObjects" />
                   <node type="Toolitem" action="ActionBarEmployees" />
                   <node type="Toolitem" action="ActionConversatoins" />
+                  <node type="Toolitem" action="ActionClaims" />
                   <node type="Toolitem" action="ActionCardIssuee" />
                   <node type="Toolitem" action="ActionBarStore" />
                   <node type="Toolitem" action="ActionBarStoreBalance" />
@@ -5959,13 +5972,10 @@
                 <child>
                   <widget class="Gtk.Table" id="table1">
                     <property name="MemberName" />
-                    <property name="NRows">3</property>
+                    <property name="NRows">2</property>
                     <property name="NColumns">2</property>
                     <property name="RowSpacing">6</property>
                     <property name="ColumnSpacing">6</property>
-                    <child>
-                      <placeholder />
-                    </child>
                     <child>
                       <placeholder />
                     </child>
@@ -5980,8 +5990,8 @@
                         <property name="UseUnderline">True</property>
                       </widget>
                       <packing>
-                        <property name="TopAttach">2</property>
-                        <property name="BottomAttach">3</property>
+                        <property name="TopAttach">1</property>
+                        <property name="BottomAttach">2</property>
                         <property name="LeftAttach">1</property>
                         <property name="RightAttach">2</property>
                         <property name="AutoSize">True</property>
@@ -6020,31 +6030,6 @@
                         <property name="LabelProp" translatable="yes">Поиск сотрудника:</property>
                       </widget>
                       <packing>
-                        <property name="AutoSize">True</property>
-                        <property name="XOptions">Fill</property>
-                        <property name="YOptions">Fill</property>
-                        <property name="XExpand">False</property>
-                        <property name="XFill">True</property>
-                        <property name="XShrink">False</property>
-                        <property name="YExpand">False</property>
-                        <property name="YFill">True</property>
-                        <property name="YShrink">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gamma.GtkWidgets.yButton" id="ybuttonClaims">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextOnly</property>
-                        <property name="Label" translatable="yes"> Обращения сотрудников</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonClaimsClicked" />
-                      </widget>
-                      <packing>
-                        <property name="TopAttach">1</property>
-                        <property name="BottomAttach">2</property>
-                        <property name="LeftAttach">1</property>
-                        <property name="RightAttach">2</property>
                         <property name="AutoSize">True</property>
                         <property name="XOptions">Fill</property>
                         <property name="YOptions">Fill</property>
