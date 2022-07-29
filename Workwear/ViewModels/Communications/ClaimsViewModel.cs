@@ -57,11 +57,17 @@ namespace workwear.ViewModels.Communications
 			set => SetField(ref messagesSelectClaims, value);
 		}
 
-		public ClaimState? SelectClaimState {
-			get => SelectClaim?.ClaimState;
+		public TranslateClaimState? SelectClaimState {
+			get {
+				if(SelectClaim != null)
+					return (TranslateClaimState?)SelectClaim.ClaimState;
+				return null;
+			}
 			set {
-				if(SelectClaim != null && value != null)
-					SelectClaim.ClaimState = value.Value;
+				if(SelectClaim != null && value != null) {
+					SelectClaim.ClaimState = (ClaimState)value.Value;
+					ChangeStatusClaim();
+				}
 			}
 		}
 
@@ -98,9 +104,10 @@ namespace workwear.ViewModels.Communications
 			TextMessage = String.Empty;
 		}
 
-		public void ChangeStatusClaim(object sender, EventArgs e) {
+		private void ChangeStatusClaim() {
 			claimsManager.SetСhanges(SelectClaim);
 		}
+		
 		#endregion
 
 		private void RefreshMessage() {
@@ -113,6 +120,15 @@ namespace workwear.ViewModels.Communications
 			Claims.AddRange(newClaims);
 			OnPropertyChanged(nameof(Claims));
 			return newClaims.Count > 0;
+		}
+
+		public enum TranslateClaimState {
+			[Display(Name = "Закрыто")]
+			Closed,
+			[Display(Name = "Ожидает ответа")]
+			WaitSupport,
+			[Display(Name = "В ожидании сотрудника")]
+			WaitUser
 		}
 	}
 }

@@ -13,10 +13,10 @@ namespace workwear.Views.Communications
 		{
 			this.Build();
 
-			yComboStatus.ItemsEnum = typeof(ClaimState);
+			yComboStatus.ItemsEnum = typeof(ClaimsViewModel.TranslateClaimState);
 			yComboStatus.Binding
 				.AddSource(ViewModel)
-				.AddBinding(wm => wm.StateClaim, w => w.SelectedItemOrNull)
+				.AddBinding(wm => wm.SelectClaimState, w => w.SelectedItemOrNull)
 				.InitializeFromSource();
 			ytreeClaims.ColumnsConfig = ColumnsConfigFactory.Create<Claim>()
 				.AddColumn("Обращение").AddTextRenderer(c => c.Title)
@@ -55,7 +55,6 @@ namespace workwear.Views.Communications
 			
 			ybuttonSend.Clicked += ViewModel.Send;
 			ytreeClaims.Vadjustment.ValueChanged += OnScroll;
-			ytreeClaims.Selection.Changed += ViewModel.ChangeStatusClaim;
 		}
 		
 
