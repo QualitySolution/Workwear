@@ -24,7 +24,7 @@ namespace WorkwearTest.Integration.Import
 {
 	[TestFixture(TestOf = typeof(ExcelImportViewModel))]
 	[Category("Integrated")]
-	public class ExcelImportViewModelTest : InMemoryDBGlobalConfigTestFixtureBase
+	public class ExcelImportViewModelEmployeeTest : InMemoryDBGlobalConfigTestFixtureBase
 	{
 		[OneTimeSetUp]
 		public void Init()

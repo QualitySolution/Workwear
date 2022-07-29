@@ -54,7 +54,8 @@
     <Compile Include="ConfigureOneTime.cs" />
     <Compile Include="Deletion\ConfigTests.cs" />
     <Compile Include="HistoryLog\DomainModelTest.cs" />
-    <Compile Include="Integration\Import\ExcelImportViewModelTest.cs" />
+    <Compile Include="Integration\Import\ExcelImportViewModelItemsTest.cs" />
+    <Compile Include="Integration\Import\ExcelImportViewModelEmployeeTest.cs" />
     <Compile Include="Integration\Import\ExcelImportViewModelNormsTest.cs" />
     <Compile Include="Integration\Stock\CompletionIntegratedTest.cs" />
     <Compile Include="Models\Import\DataParserNormTest.cs" />
@@ -223,6 +224,9 @@
     <None Include="Samples\Excel\norms_agronom.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Samples\Excel\items_vostok.xls" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
