@@ -7,7 +7,6 @@ using Dapper;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
-using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Testing.DB;
 using QS.Utilities.Numeric;

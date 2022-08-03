@@ -226,7 +226,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Samples\Excel\items_vostok.xls" />
+    <None Include="Samples\Excel\items_vostok.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
