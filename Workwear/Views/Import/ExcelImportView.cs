@@ -40,6 +40,8 @@ namespace workwear.Views.Import
 			var Filter = new FileFilter();
 			Filter.AddPattern("*.xls");
 			Filter.AddPattern("*.xlsx");
+			Filter.AddMimeType("application/vnd.ms-excel");
+			Filter.AddMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 			Filter.Name = "Excel";
 			filechooser.AddFilter(Filter);
 
