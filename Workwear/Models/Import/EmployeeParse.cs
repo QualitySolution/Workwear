@@ -10,5 +10,11 @@ namespace workwear.Models.Import
 			else
 				return cellValue;
 		}
+		
+		public static string GetPersonalNumber(IMatchEmployeesSettings settings, ISheetRow row, int columnIndex) {
+			var original = settings.ConvertPersonnelNumber ? 
+				ConvertPersonnelNumber(row.CellStringValue(columnIndex)) : row.CellStringValue(columnIndex);
+			return original?.Trim();
+		}
 	}
 }

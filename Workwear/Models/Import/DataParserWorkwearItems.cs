@@ -5,6 +5,7 @@ using NHibernate;
 using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.UoW;
+using QS.Utilities.Text;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
@@ -35,6 +36,12 @@ namespace workwear.Models.Import
 			AddColumnName(DataTypeWorkwearItems.PersonnelNumber,
 				"Табельный номер"
 				);
+			AddColumnName(DataTypeWorkwearItems.Fio,
+				"ФИО",
+				"Ф.И.О.",
+				"Фамилия Имя Отчество",
+				"Сотрудник"
+			);
 			AddColumnName(DataTypeWorkwearItems.ProtectionTools,
 				"Номенклатура нормы"
 				);
@@ -81,6 +88,7 @@ namespace workwear.Models.Import
 			List<ImportedColumn<DataTypeWorkwearItems>> columns)
 		{
 			var personnelNumberColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.PersonnelNumber);
+			var fioColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Fio);
 			var protectionToolsColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.ProtectionTools);
 			var nomenclatureColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Nomenclature);
 			var issueDateColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.IssueDate);
@@ -92,14 +100,20 @@ namespace workwear.Models.Import
 			var growthColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Growth);
 
 			progress.Start(list.Count() * 2 + 3, text: "Загрузка сотрудников");
-			var personnelNumbers = list.Select(x => GetPersonalNumber(settings, x, personnelNumberColumn.Index))
-				.Where(x => !String.IsNullOrWhiteSpace(x)).Distinct().ToArray();
+			IQueryOver<EmployeeCard, EmployeeCard> employeesQuery;
+			var employeeRepository = new EmployeeRepository(uow);
+			if(personnelNumberColumn != null) {
+				var personnelNumbers = list.Select(x => EmployeeParse.GetPersonalNumber(settings, x, personnelNumberColumn.Index))
+					.Where(x => !String.IsNullOrWhiteSpace(x)).Distinct().ToArray();
+				employeesQuery = employeeRepository.GetEmployeesByPersonalNumbers(personnelNumbers);
+			}
+			else {
+				var fios = list.Select(x => GetFIO(x, columns));
+				employeesQuery = employeeRepository.GetEmployeesByFIOs(fios);
+			}
 
-			var employees = uow.Session.QueryOver<EmployeeCard>()
-				.Where(x => x.PersonnelNumber.IsIn(personnelNumbers))
-				.Fetch(SelectMode.Fetch, x => x.WorkwearItems)
-				.List();
-
+			IList<EmployeeCard> employees = employeesQuery.Fetch(SelectMode.Fetch, x => x.WorkwearItems).List();
+			
 			foreach(var row in list) {
 				progress.Add(text: "Сопоставление");
 				row.Date = ParseDateOrNull(row.CellStringValue(issueDateColumn.Index));
@@ -115,10 +129,10 @@ namespace workwear.Models.Import
 					continue;
 				}
 
-				row.Employee = employees.FirstOrDefault(x => x.PersonnelNumber == GetPersonalNumber(settings, row, personnelNumberColumn.Index));
+				row.Employee = employees.FirstOrDefault(x => x.PersonnelNumber == EmployeeParse.GetPersonalNumber(settings, row, personnelNumberColumn.Index));
 				if(row.Employee == null) {
 					logger.Warn(
-						$"Не найден сотрудник в табельным номером [{GetPersonalNumber(settings, row, personnelNumberColumn.Index)}]. Пропускаем.");
+						$"Не найден сотрудник в табельным номером [{EmployeeParse.GetPersonalNumber(settings, row, personnelNumberColumn.Index)}]. Пропускаем.");
 					row.ProgramSkipped = true;
 					row.AddColumnChange(personnelNumberColumn, ChangeType.NotFound);
 					counters.AddCount(CountersWorkwearItems.EmployeeNotFound);
@@ -314,10 +328,13 @@ namespace workwear.Models.Import
 				sizeAndGrowth.Growth = SizeParser.ParseSize(uow, row.CellStringValue(growthColumn.Index), sizeService, CategorySizeType.Height);
 			return sizeAndGrowth.Size != null || sizeAndGrowth.Growth != null;
 		}
-		public string GetPersonalNumber(SettingsWorkwearItemsViewModel settings, SheetRowWorkwearItems row, int columnIndex) {
-			var original = settings.ConvertPersonnelNumber ? 
-				EmployeeParse.ConvertPersonnelNumber(row.CellStringValue(columnIndex)) : row.CellStringValue(columnIndex);
-			return original?.Trim();
+	
+		public FIO GetFIO(SheetRowWorkwearItems row, List<ImportedColumn<DataTypeWorkwearItems>> columns) {
+			var fio = new FIO();
+			var fioColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Fio);
+			if(fioColumn != null)
+				row.CellStringValue(fioColumn.Index)?.SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
+			return fio;
 		}
 		#endregion
 	}

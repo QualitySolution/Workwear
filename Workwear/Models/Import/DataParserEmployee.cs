@@ -18,6 +18,7 @@ using workwear.ViewModels.Import;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
+using workwear.Repository.Company;
 
 namespace workwear.Models.Import
 {
@@ -377,34 +378,12 @@ namespace workwear.Models.Import
 			IProgressBarDisplayable progress)
 		{
 			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
-			var searchValues = list.Select(x => GetFIO(x, columns))
-				.Where(fio => !String.IsNullOrEmpty(fio.LastName) && !String.IsNullOrEmpty(fio.FirstName))
-				.Select(fio => (fio.LastName + "|" + fio.FirstName).ToUpper())
-				.Distinct().ToArray();
-
 			var sizeWillSet = columns.Any(x => x.DataType.Data is SizeType);
-			var query = uow.Session.QueryOver<EmployeeCard>();
+			var employeeRepository = new EmployeeRepository(uow);
+			var query = employeeRepository.GetEmployeesByFIOs(list.Select(x => GetFIO(x, columns)));
 			if(sizeWillSet) //Если будем проставлять размеры, запрашиваем сразу имеющиеся размеры для ускорения...
 				query.Fetch(SelectMode.Fetch, x => x.Sizes);
-			var exists = query
-				.Where(Restrictions.In(
-				Projections.SqlFunction(
-							  "upper", NHibernateUtil.String,
-							  ((ISessionFactoryImplementor) uow.Session.SessionFactory).Dialect is SQLiteDialect //Данный диалект используется в тестах.
-								  ? 
-								  Projections.SqlFunction(new SQLFunctionTemplate(NHibernateUtil.String, "( ?1 || '|' || ?2)"),
-									  NHibernateUtil.String,
-									  Projections.Property<EmployeeCard>(x => x.LastName),
-									  Projections.Property<EmployeeCard>(x => x.FirstName)
-								  )
-							: Projections.SqlFunction(new StandardSQLFunction("CONCAT_WS"),
-							  	NHibernateUtil.String,
-							  	Projections.Constant(""),
-								Projections.Property<EmployeeCard>(x => x.LastName),
-								Projections.Constant("|"),
-								Projections.Property<EmployeeCard>(x => x.FirstName)
-							    )),
-						   searchValues)).List();
+			var exists = query.List();
 			progress.Add();
 			foreach(var employee in exists) {
 				var found = list.Where(x => СompareFio(x, employee, columns)).ToArray();
@@ -446,7 +425,7 @@ namespace workwear.Models.Import
 			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
 			var numberColumn = 
 				columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.PersonnelNumber);
-			var numbers = list.Select(x => GetPersonalNumber(settings, x, numberColumn.Index))
+			var numbers = list.Select(x => EmployeeParse.GetPersonalNumber(settings, x, numberColumn.Index))
 							.Where(x => !String.IsNullOrWhiteSpace(x))
 							.Distinct().ToArray();
 			
@@ -461,13 +440,13 @@ namespace workwear.Models.Import
 			progress.Add();
 			foreach(var employee in exists) {
 				var found = list.Where(x => 
-					GetPersonalNumber(settings, x, numberColumn.Index) == employee.PersonnelNumber).ToArray();
+					EmployeeParse.GetPersonalNumber(settings, x, numberColumn.Index) == employee.PersonnelNumber).ToArray();
 				found.First().Employees.Add(employee);
 			}
 
 			//Пропускаем дубликаты Табельных номеров в файле
 			progress.Add();
-			var groups = list.GroupBy(x => GetPersonalNumber(settings, x, numberColumn.Index));
+			var groups = list.GroupBy(x => EmployeeParse.GetPersonalNumber(settings, x, numberColumn.Index));
 			foreach(var group in groups) {
 				if(String.IsNullOrWhiteSpace(group.Key)) {
 					//Если табельного номера нет проверяем по FIO
@@ -652,11 +631,6 @@ namespace workwear.Models.Import
 			if(patronymicColumn != null)
 				fio.Patronymic = row.CellStringValue(patronymicColumn.Index);
 			return fio;
-		}
-		public string GetPersonalNumber(SettingsMatchEmployeesViewModel settings, SheetRowEmployee row, int columnIndex) {
-			var original = settings.ConvertPersonnelNumber ? 
-				EmployeeParse.ConvertPersonnelNumber(row.CellStringValue(columnIndex)) : row.CellStringValue(columnIndex);
-			return original?.Trim();
 		}
 		#endregion
 	}

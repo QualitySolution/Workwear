@@ -8,6 +8,8 @@ namespace workwear.Models.Import
 		Unknown,
 		[Display(Name = "Табельный номер")]
 		PersonnelNumber,
+		[Display(Name = "ФИО")]
+		Fio,
 		[Display(Name = "Номенклатура нормы")]
 		ProtectionTools,
 		[Display(Name = "Номенклатура выдачи")]
