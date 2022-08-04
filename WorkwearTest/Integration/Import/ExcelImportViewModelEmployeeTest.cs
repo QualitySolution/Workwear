@@ -7,7 +7,6 @@ using Dapper;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
-using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Testing.DB;
 using QS.Utilities.Numeric;
@@ -24,7 +23,7 @@ namespace WorkwearTest.Integration.Import
 {
 	[TestFixture(TestOf = typeof(ExcelImportViewModel))]
 	[Category("Integrated")]
-	public class ExcelImportViewModelTest : InMemoryDBGlobalConfigTestFixtureBase
+	public class ExcelImportViewModelEmployeeTest : InMemoryDBGlobalConfigTestFixtureBase
 	{
 		[OneTimeSetUp]
 		public void Init()

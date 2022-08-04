@@ -78,11 +78,12 @@ namespace workwear.Repository.Operations
 		}
 
 		public IList<EmployeeIssueOperation> GetOperationsForEmployee(
-			IUnitOfWork uow, EmployeeCard employee, 
+			EmployeeCard employee, 
 			ProtectionTools protectionTools, 
+			IUnitOfWork uow = null,
 			Action<IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null)
 		{
-			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
+			var query = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.Employee == employee)
 				.Where(o => o.ProtectionTools == protectionTools);
 
