@@ -108,7 +108,7 @@ namespace workwear.Models.Import
 				employeesQuery = employeeRepository.GetEmployeesByPersonalNumbers(personnelNumbers);
 			}
 			else {
-				var fios = list.Select(x => GetFIO(x, columns));
+				var fios = list.Select(x => GetFIO(x, fioColumn.Index));
 				employeesQuery = employeeRepository.GetEmployeesByFIOs(fios);
 			}
 
@@ -129,12 +129,21 @@ namespace workwear.Models.Import
 					continue;
 				}
 
-				row.Employee = employees.FirstOrDefault(x => x.PersonnelNumber == EmployeeParse.GetPersonalNumber(settings, row, personnelNumberColumn.Index));
+				if(personnelNumberColumn != null)
+					row.Employee = employees.FirstOrDefault(x => x.PersonnelNumber == EmployeeParse.GetPersonalNumber(settings, row, personnelNumberColumn.Index));
+				else
+					row.Employee = employees.FirstOrDefault(x => EmployeeParse.CompareFio(x, GetFIO(row, fioColumn.Index)));
+
 				if(row.Employee == null) {
-					logger.Warn(
-						$"Не найден сотрудник в табельным номером [{EmployeeParse.GetPersonalNumber(settings, row, personnelNumberColumn.Index)}]. Пропускаем.");
+					if(personnelNumberColumn != null)
+						logger.Warn(
+						$"Не найден сотрудник с табельным номером [{EmployeeParse.GetPersonalNumber(settings, row, personnelNumberColumn.Index)}]. Пропускаем.");
+					else 
+						logger.Warn(
+							$"Не найден сотрудник с ФИО [{GetFIO(row, fioColumn.Index)}]. Пропускаем.");
+					
 					row.ProgramSkipped = true;
-					row.AddColumnChange(personnelNumberColumn, ChangeType.NotFound);
+					row.AddColumnChange(personnelNumberColumn ?? fioColumn, ChangeType.NotFound);
 					counters.AddCount(CountersWorkwearItems.EmployeeNotFound);
 					continue;
 				}
@@ -329,11 +338,9 @@ namespace workwear.Models.Import
 			return sizeAndGrowth.Size != null || sizeAndGrowth.Growth != null;
 		}
 	
-		public FIO GetFIO(SheetRowWorkwearItems row, List<ImportedColumn<DataTypeWorkwearItems>> columns) {
+		public FIO GetFIO(SheetRowWorkwearItems row, int fioColumn) {
 			var fio = new FIO();
-			var fioColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Fio);
-			if(fioColumn != null)
-				row.CellStringValue(fioColumn.Index)?.SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
+			row.CellStringValue(fioColumn)?.SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
 			return fio;
 		}
 		#endregion

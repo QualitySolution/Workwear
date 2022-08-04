@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
-using NHibernate.Dialect;
-using NHibernate.Dialect.Function;
-using NHibernate.Engine;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -386,7 +383,7 @@ namespace workwear.Models.Import
 			var exists = query.List();
 			progress.Add();
 			foreach(var employee in exists) {
-				var found = list.Where(x => СompareFio(x, employee, columns)).ToArray();
+				var found = list.Where(x => EmployeeParse.CompareFio(employee, GetFIO(x, columns))).ToArray();
 				if(!found.Any())
 					continue; //Так как в базе ищем без отчества, могут быть лишние.
 				found.First().Employees.Add(employee);
@@ -405,14 +402,6 @@ namespace workwear.Models.Import
 				}
 			}
 			progress.Close();
-		}
-
-		private bool СompareFio(SheetRowEmployee x, EmployeeCard employee, List<ImportedColumn<DataTypeEmployee>> columns)
-		{
-			var fio = GetFIO(x, columns);
-			return String.Equals(fio.LastName, employee.LastName, StringComparison.CurrentCultureIgnoreCase)
-				&& String.Equals(fio.FirstName, employee.FirstName, StringComparison.CurrentCultureIgnoreCase)
-				&& (fio.Patronymic == null || String.Equals(fio.Patronymic, employee.Patronymic, StringComparison.CurrentCultureIgnoreCase));
 		}
 
 		public void MatchByNumber(
