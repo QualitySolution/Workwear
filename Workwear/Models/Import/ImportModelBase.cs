@@ -111,9 +111,11 @@ namespace workwear.Models.Import
 				progress.Add();
 				var types = new DataType[MaxSourceColumns];
 				rowNum++;
+				string lastValue = null;
 				for(int i = 0; i < MaxSourceColumns; i++) {
 					var value = row.CellStringValue(i)?.ToLower() ?? String.Empty;
-					types[i] = dataParser.DetectDataType(value);
+					types[i] = value != lastValue ? dataParser.DetectDataType(value) : null;
+					lastValue = value;
 				}
 				if(bestColumns < types.Where(x => x != null).Distinct().Count()) {
 					bestMath = types;
