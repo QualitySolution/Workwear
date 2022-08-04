@@ -142,7 +142,7 @@ namespace workwear.Models.Import
 
 		#region Строки
 
-		private int headerRow;
+		private int headerRow = -1;
 		public int HeaderRow {
 			get => headerRow;
 			set {
