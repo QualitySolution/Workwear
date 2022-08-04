@@ -9,9 +9,9 @@ namespace workwear.Models.Import
 {
 	public static class SizeParser
 	{
-		public static SizeAndGrowth ParseSizeAndGrowth(string value, IUnitOfWork uow, SizeService sizeService)
+		public static SizeAndHeight ParseSizeAndGrowth(string value, IUnitOfWork uow, SizeService sizeService)
 		{
-			var result = new SizeAndGrowth();
+			var result = new SizeAndHeight();
 
 			var parts = value.Split(' ');
 			var onlySize = parts[0];
@@ -70,15 +70,15 @@ namespace workwear.Models.Import
 					growth2 = number;
 			}
 
-			result.Size = ParseSize(uow, size2.Length > 0 ? size1 + "-" + size2 : size1, sizeService, CategorySizeType.Size);
-			result.Growth = ParseSize(uow, growth2.Length > 0 ? growth1 + "-" + growth2 : growth1, sizeService, CategorySizeType.Height);
+			result.Size = size2.Length > 0 ? size1 + "-" + size2 : size1;
+			result.Height = growth2.Length > 0 ? growth1 + "-" + growth2 : growth1;
 
 			return result;
 		}
 
-		public static Size ParseSize(IUnitOfWork uow, string value, SizeService sizeService, CategorySizeType categorySizeType) =>
-			sizeService.GetSizeByCategory(uow, categorySizeType)
-				.FirstOrDefault(x => x.Name == value);
+		public static Size ParseSize(IUnitOfWork uow, string value, SizeService sizeService, SizeType sizeType) =>
+			sizeService.GetSize(uow, sizeType)
+				.FirstOrDefault(x => x.Name == value || x.AlternativeName == value);
 
 		#region Рост
 		public static string HeightToGOST(string height) {
@@ -106,9 +106,9 @@ namespace workwear.Models.Import
 		};
 		#endregion
 	}
-	public struct SizeAndGrowth {
-		public Size Size;
-		public Size Growth;
+	public struct SizeAndHeight {
+		public string Size;
+		public string Height;
 	}
 	
 	public class WearHeight{

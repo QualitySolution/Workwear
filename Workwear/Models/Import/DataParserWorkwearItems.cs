@@ -240,18 +240,8 @@ namespace workwear.Models.Import
 						UseAutoWriteoff = expenseDate != null,
 					};
 					//Обрабатываем размер.
-					if(TryParseSizeAndGrowth(uow, row, columns, out var sizeAndGrowth)) {
-						row.Operation.WearSize = sizeAndGrowth.Size;
-						row.Operation.Height = sizeAndGrowth.Growth;
-						var sizeOk = nomenclature.Type.SizeType == sizeAndGrowth.Size.SizeType;
-						var growthOk = nomenclature.Type.HeightType == sizeAndGrowth.Growth.SizeType;
-						if(sizeAndGrowthColumn != null)
-							row.ChangedColumns.Add(sizeAndGrowthColumn, new ChangeState( sizeOk && growthOk ? ChangeType.NewEntity : ChangeType.ParseError));
-						if(sizeColumn != null)
-							row.ChangedColumns.Add(sizeColumn, new ChangeState(sizeOk ? ChangeType.NewEntity : ChangeType.ParseError));
-						if(growthColumn != null)
-							row.ChangedColumns.Add(growthColumn, new ChangeState(growthOk ? ChangeType.NewEntity : ChangeType.ParseError));
-					}
+					TryParseSizeAndHeight(uow, row, columns);
+
 					//Проставляем размер в сотрудника.
 					if(row.Operation.Height != null) {
 						var employeeSize = row.Employee.Sizes.FirstOrDefault(x => x.SizeType == row.Operation.Height.SizeType);
@@ -259,9 +249,6 @@ namespace workwear.Models.Import
 							employeeSize = new EmployeeSize
 								{Size = row.Operation.Height, SizeType = row.Operation.Height.SizeType, Employee = row.Employee};
 							row.Employee.Sizes.Add(employeeSize);
-						}
-						else {
-							employeeSize.Size = row.Operation.Height;
 						}
 						ChangedEmployees.Add(row.Employee);
 						counters.AddCount(CountersWorkwearItems.EmployeesSetSize);
@@ -272,9 +259,6 @@ namespace workwear.Models.Import
 							employeeSize = new EmployeeSize
 								{Size = row.Operation.WearSize, SizeType = row.Operation.WearSize.SizeType, Employee = row.Employee};
 							row.Employee.Sizes.Add(employeeSize);
-						}
-						else {
-							employeeSize.Size = row.Operation.WearSize;
 						}
 						ChangedEmployees.Add(row.Employee);
 						counters.AddCount(CountersWorkwearItems.EmployeesSetSize);
@@ -316,26 +300,79 @@ namespace workwear.Models.Import
 				return date;
 			return null;
 		}
-		private bool TryParseSizeAndGrowth(
+		private void TryParseSizeAndHeight(
 			IUnitOfWork uow,
 			SheetRowWorkwearItems row, 
-			List<ImportedColumn<DataTypeWorkwearItems>> columns, 
-			out SizeAndGrowth sizeAndGrowth) 
+			List<ImportedColumn<DataTypeWorkwearItems>> columns
+		) 
 		{
-			sizeAndGrowth = new SizeAndGrowth();
 			var sizeAndGrowthColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.SizeAndGrowth);
 			var sizeColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Size);
-			var growthColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Growth);
+			var heightColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Growth);
 			if(sizeAndGrowthColumn != null) {
 				var sizeAndGrowthValue = row.CellStringValue(sizeAndGrowthColumn.Index);
-				if(!String.IsNullOrEmpty(sizeAndGrowthValue))
-					sizeAndGrowth = SizeParser.ParseSizeAndGrowth(sizeAndGrowthValue, uow, sizeService);
-			};
-			if(sizeColumn != null && sizeAndGrowth.Size != null)
-				sizeAndGrowth.Size = SizeParser.ParseSize(uow, row.CellStringValue(sizeColumn.Index), sizeService, CategorySizeType.Size);
-			if(growthColumn != null && sizeAndGrowth.Growth != null)
-				sizeAndGrowth.Growth = SizeParser.ParseSize(uow, row.CellStringValue(growthColumn.Index), sizeService, CategorySizeType.Height);
-			return sizeAndGrowth.Size != null || sizeAndGrowth.Growth != null;
+				if(String.IsNullOrWhiteSpace(sizeAndGrowthValue))
+					row.ChangedColumns.Add(sizeAndGrowthColumn, new ChangeState(ChangeType.NotChanged));
+				else {
+					var sizeAndHeight = SizeParser.ParseSizeAndGrowth(sizeAndGrowthValue, uow, sizeService);
+					bool sizeOk = true, heightOk = true;
+					string error = null;
+					
+					if(!String.IsNullOrEmpty(sizeAndHeight.Height)) {
+						if(row.Operation.ProtectionTools.Type.HeightType == null)
+							row.ChangedColumns.Add(sizeAndGrowthColumn, new ChangeState(ChangeType.ParseError, error: "У типа номенклатуры не указан тип роста!"));
+						else {
+							row.Operation.Height = SizeParser.ParseSize(uow, sizeAndHeight.Height, sizeService, row.Operation.ProtectionTools.Type.HeightType);
+							heightOk = row.Operation.Height != null;
+							if(!heightOk)
+								error = "Не удалось сопоставить рост.";
+						}
+					}
+					
+					if(!String.IsNullOrEmpty(sizeAndHeight.Size)) {
+						if(row.Operation.ProtectionTools.Type.SizeType == null)
+							row.ChangedColumns.Add(sizeAndGrowthColumn, new ChangeState(ChangeType.ParseError, error: "У типа номенклатуры не указан тип размера!"));
+						else {
+							row.Operation.WearSize = SizeParser.ParseSize(uow, sizeAndHeight.Size, sizeService, row.Operation.ProtectionTools.Type.SizeType);
+							sizeOk = row.Operation.WearSize != null;
+							if(!sizeOk)
+								error = "Не удалось сопоставить размер.";
+						}
+					}
+
+					row.ChangedColumns.Add(sizeAndGrowthColumn, 
+						new ChangeState(sizeOk && heightOk ? ChangeType.NewEntity : ChangeType.ParseError, error: error));
+				}
+			}
+			
+			if(sizeColumn != null && row.Operation.WearSize == null) {
+				var sizeValue = row.CellStringValue(sizeColumn.Index);
+				if(String.IsNullOrWhiteSpace(sizeValue))
+					row.ChangedColumns.Add(sizeColumn, new ChangeState(ChangeType.NotChanged));
+				else if(row.Operation.ProtectionTools.Type.SizeType == null)
+					row.ChangedColumns.Add(sizeColumn, new ChangeState(ChangeType.ParseError, error: "У типа номенклатуры не указан тип размера!"));
+				else {
+					row.Operation.WearSize = SizeParser.ParseSize(uow, sizeValue, sizeService, row.Operation.ProtectionTools.Type.SizeType);
+					row.ChangedColumns.Add(sizeColumn, 
+						new ChangeState(row.Operation.WearSize != null ? ChangeType.NewEntity : ChangeType.ParseError, 
+							interpretedValue: sizeValue != row.Operation.WearSize?.Name ? row.Operation.WearSize?.Name : null));
+				}
+			}
+
+			if(heightColumn != null && row.Operation.Height == null && row.Operation.ProtectionTools.Type.HeightType != null) {
+				var heightValue = row.CellStringValue(heightColumn.Index);
+				if(String.IsNullOrWhiteSpace(heightValue))
+					row.ChangedColumns.Add(heightColumn, new ChangeState(ChangeType.NotChanged));
+				else if(row.Operation.ProtectionTools.Type.HeightType == null)
+					row.ChangedColumns.Add(heightColumn, new ChangeState(ChangeType.ParseError, error: "У типа номенклатуры не указан тип роста!"));
+				else {
+					row.Operation.Height =
+						SizeParser.ParseSize(uow, heightValue, sizeService, row.Operation.ProtectionTools.Type.HeightType);
+					row.ChangedColumns.Add(heightColumn,
+						new ChangeState(row.Operation.Height != null ? ChangeType.NewEntity : ChangeType.ParseError,
+							interpretedValue: heightValue != row.Operation.Height?.Name ? row.Operation.Height?.Name : null));
+				}
+			}
 		}
 	
 		public FIO GetFIO(SheetRowWorkwearItems row, int fioColumn) {

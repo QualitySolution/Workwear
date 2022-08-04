@@ -149,6 +149,8 @@ namespace workwear.Models.Import
 			var column = ChangedColumns.Keys.FirstOrDefault(x => x.Index == col);
 			if(column != null) {
 				var change = ChangedColumns[column];
+				if(change.Error != null)
+					result.Add($"Ошибка: {change.Error}");
 				if(change.Warning != null)
 					result.Add($"Предупреждение: {change.Warning}");
 				if(change.OldValue != null)
