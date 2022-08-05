@@ -110,6 +110,7 @@ namespace workwear.ViewModels.Regulations
 				Type = Entity.Type,
 				Sex = ClothesSex.Universal,
 			};
+			UoW.Save(nomenclaure);
 			Entity.AddNomeclature(nomenclaure);
 		}
 
