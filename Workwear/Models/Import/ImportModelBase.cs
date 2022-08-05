@@ -63,6 +63,7 @@ namespace workwear.Models.Import
 			set {
 				maxSourceColumns = value;
 				RecreateColumns(maxSourceColumns);
+				RefreshColumnsTitle();
 				OnPropertyChanged();
 			}
 		}
@@ -85,7 +86,7 @@ namespace workwear.Models.Import
 
 		private void RefreshColumnsTitle()
 		{
-			if(HeaderRow == 0) {
+			if(HeaderRow <= 0) {
 				for(int i = 0; i < MaxSourceColumns; i++)
 					Columns[i].Title = CellReference.ConvertNumToColString(i);
 			}
