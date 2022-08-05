@@ -45,7 +45,7 @@ namespace WorkwearTest.Integration.Import
 			NewSessionWithSameDB();
 			using(var uowPrepare = UnitOfWorkFactory.CreateWithoutRoot()) {
 				MakeMeasurementUnits(uowPrepare, out MeasurementUnits sht, out MeasurementUnits pair);
-				MakeSizes(uowPrepare);
+				MakeSizes(uowPrepare, out SizeType heightType, out SizeType sizeType, out SizeType shoesType, out SizeType glovesSizeType);
 
 				var subdivision = new Subdivision {
 					Name = "500305 Мехслужба"
@@ -61,14 +61,16 @@ namespace WorkwearTest.Integration.Import
 				var glovesType = new ItemsType() {
 					Name = "Перчатки",
 					Category = ItemTypeCategory.wear,
-					Units = pair
+					Units = pair,
+					SizeType = glovesSizeType
 				};
 				uowPrepare.Save(glovesType);
 				
 				var bootsType = new ItemsType() {
 					Name = "Обувь",
 					Category = ItemTypeCategory.wear,
-					Units = pair
+					Units = pair,
+					SizeType = shoesType,
 				};
 				uowPrepare.Save(bootsType);
 				
@@ -82,7 +84,9 @@ namespace WorkwearTest.Integration.Import
 				var suitType = new ItemsType() {
 					Name = "Костюмы",
 					Category = ItemTypeCategory.wear,
-					Units = sht
+					Units = sht,
+					HeightType = heightType,
+					SizeType = sizeType
 				};
 				uowPrepare.Save(suitType);
 
@@ -189,15 +193,17 @@ namespace WorkwearTest.Integration.Import
 					Assert.That(operation3.Issued, Is.EqualTo(1));
 					Assert.That(operation3.WearSize?.Name, Is.EqualTo("52-54")); //Тут мы предполагаем что алгоритм сможет конвертировать размер из формата по госту в формат общепринятого размера.
 					Assert.That(operation3.Height?.Name, Is.EqualTo("170-176"));
+
+					var sizes = uow.GetAll<SizeType>();
 					
 					//Проверяем заполнение размеров в сотруднике по последним выдачам
-					var employeeHeight = savedEmployee.Sizes.First(x => x.SizeType.Id == 1);
+					var employeeHeight = savedEmployee.Sizes.First(x => x.SizeType.Name == "Рост");
 					Assert.That(employeeHeight.Size.Name, Is.EqualTo("170-176"));
-					var employeeWearSize = savedEmployee.Sizes.First(x => x.SizeType.Id == 2);
+					var employeeWearSize = savedEmployee.Sizes.First(x => x.SizeType.Name == "Размер одежды");
 					Assert.That(employeeWearSize.Size.Name, Is.EqualTo("52-54"));
-					var employeeShoesSize = savedEmployee.Sizes.First(x => x.SizeType.Id == 4);
+					var employeeShoesSize = savedEmployee.Sizes.First(x => x.SizeType.Name == "Размер обуви");
 					Assert.That(employeeShoesSize.Size.Name, Is.EqualTo("44").Or.EqualTo("43"));
-					var employeeGlovesSize = savedEmployee.Sizes.First(x => x.SizeType.Id == 7);
+					var employeeGlovesSize = savedEmployee.Sizes.First(x => x.SizeType.Name == "Размер перчаток");
 					Assert.That(employeeGlovesSize.Size.Name, Is.EqualTo("9").Or.EqualTo("10"));
 				}
 			}
@@ -218,28 +224,28 @@ namespace WorkwearTest.Integration.Import
 			uow.Save(pair);
 		}
 		
-		private void MakeSizes(IUnitOfWork uow) {
-			var heightType = new SizeType
+		private void MakeSizes(IUnitOfWork uow, out SizeType heightType, out SizeType sizeType, out SizeType shoesType, out SizeType glovesType) {
+			heightType = new SizeType
 				{Id  = 1, Name = "Рост", Position = 1, CategorySizeType = CategorySizeType.Height, UseInEmployee = true};
 			uow.Save(heightType, orUpdate: false);
 			
 			uow.Save(new Size {Name = "170-176", SizeType = heightType, UseInEmployee = true, UseInNomenclature = true});
 			
-			var sizeType = new SizeType 
+			sizeType = new SizeType 
 				{Id = 2, Name = "Размер одежды", Position = 2, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
 			uow.Save(sizeType, orUpdate: false);
 			
 			uow.Save(new Size {Name = "52-54", SizeType = sizeType, AlternativeName = "104-108", UseInEmployee = true, UseInNomenclature = true});
 
-			var shoesType = new SizeType 
-				{Id = 4, Name = "Обувь", Position = 3, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
+			shoesType = new SizeType 
+				{Id = 4, Name = "Размер обуви", Position = 3, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
 			uow.Save(shoesType, orUpdate: false);
 			
 			uow.Save(new Size {Name = "43", SizeType = shoesType, UseInEmployee = true, UseInNomenclature = true});
 			uow.Save(new Size {Name = "44", SizeType = shoesType, UseInEmployee = true, UseInNomenclature = true});
 			
-			var glovesType = new SizeType 
-				{Id = 7, Name = "Перчатки", Position = 8, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
+			glovesType = new SizeType 
+				{Id = 7, Name = "Размер перчаток", Position = 8, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
 			uow.Save(glovesType, orUpdate: false);
 			
 			uow.Save(new Size {Name = "9", SizeType = glovesType, UseInEmployee = true, UseInNomenclature = true});

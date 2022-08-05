@@ -8,7 +8,6 @@ using QS.DomainModel.UoW;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
-using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Repository.Company;
 using workwear.Repository.Regulations;
