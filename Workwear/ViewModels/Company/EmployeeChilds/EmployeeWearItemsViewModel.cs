@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -142,11 +142,11 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 			var operations = employeeIssueRepository.GetOperationsForEmployee(UoW, Entity, row.ProtectionTools).OrderByDescending(x => x.OperationTime).ToList();
 			IPage<ManualEmployeeIssueOperationViewModel> page;
 			if(!operations.Any() || operations.First().ExpiryByNorm < DateTime.Today)
-				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
+				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreateInChildUoW(UoW), row, OpenPageOptions.AsSlave);
 			else if(operations.First().OverrideBefore)
-				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForOpen(operations.First().Id), row, OpenPageOptions.AsSlave);
+				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForOpenInChildUoW(operations.First().Id, UoW), row, OpenPageOptions.AsSlave);
 			else if(interactive.Question($"Для «{row.ProtectionTools.Name}» уже выполнялись полноценные выдачи, внесение ручных изменений может привести к нежелательным результатам. Продолжить?"))
-				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
+				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreateInChildUoW(UoW), row, OpenPageOptions.AsSlave);
 			else
 				return;
 			page.PageClosed += SetIssueDateManual_PageClosed;
