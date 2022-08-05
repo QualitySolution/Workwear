@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace workwear.Models.Import
 {
@@ -19,6 +20,12 @@ namespace workwear.Models.Import
 			Warning = warning;
 			Error = error;
 			WillCreatedValues = willCreatedValues ?? Array.Empty<string>();
+		}
+
+		public void AddCreatedValues(string value) {
+			var list = WillCreatedValues.ToList();
+			list.Add(value);
+			WillCreatedValues = list.ToArray();
 		}
 	}
 }

@@ -8,6 +8,7 @@ using QS.DomainModel.UoW;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Repository.Company;
 using workwear.Repository.Regulations;
@@ -244,20 +245,16 @@ namespace workwear.Models.Import
 						if (employeeSize is null) {
 							employeeSize = new EmployeeSize
 								{Size = row.Operation.Height, SizeType = row.Operation.Height.SizeType, Employee = row.Employee};
-							row.Employee.Sizes.Add(employeeSize);
+							AddSetEmployeeSize(row, employeeSize, counters);
 						}
-						ChangedEmployees.Add(row.Employee);
-						counters.AddCount(CountersWorkwearItems.EmployeesSetSize);
 					}
 					if(row.Operation.WearSize != null) {
 						var employeeSize = row.Employee.Sizes.FirstOrDefault(x => x.SizeType == row.Operation.WearSize.SizeType);
 						if (employeeSize is null) {
 							employeeSize = new EmployeeSize
 								{Size = row.Operation.WearSize, SizeType = row.Operation.WearSize.SizeType, Employee = row.Employee};
-							row.Employee.Sizes.Add(employeeSize);
+							AddSetEmployeeSize(row, employeeSize, counters);
 						}
-						ChangedEmployees.Add(row.Employee);
-						counters.AddCount(CountersWorkwearItems.EmployeesSetSize);
 					}
 					var toSetChangeColumns = columns.Where(
 						x => x.DataTypeEnum != DataTypeWorkwearItems.Unknown 
@@ -273,6 +270,7 @@ namespace workwear.Models.Import
 			}
 			progress.Close();
 		}
+		
 		private bool TryAddNorm(IUnitOfWork uow, string postName, string subdivisionName, EmployeeCard employee) {
 			var post = postRepository.GetPostByName(uow, postName, subdivisionName);
 			if(post == null)
@@ -286,6 +284,31 @@ namespace workwear.Models.Import
 			employee.AddUsedNorm(norm.First());
 			ChangedEmployees.Add(employee);
 			return true;
+		}
+
+		private void AddSetEmployeeSize(SheetRowWorkwearItems row, EmployeeSize employeeSize, CountersViewModel counters) {
+			row.Employee.Sizes.Add(employeeSize);
+			ChangedEmployees.Add(row.Employee);
+			counters.AddCount(CountersWorkwearItems.EmployeesSetSize);
+
+			var stateSizeAndHeight = row.ChangedColumns.FirstOrDefault(x => x.Key.DataTypeEnum == DataTypeWorkwearItems.SizeAndGrowth);
+			if(stateSizeAndHeight.Value != null && (new [] {ChangeType.NewEntity, ChangeType.ChangeValue}.Contains(stateSizeAndHeight.Value.ChangeType))){
+				stateSizeAndHeight.Value.AddCreatedValues(employeeSize.Title);
+			}
+
+			if(employeeSize.SizeType.CategorySizeType == CategorySizeType.Height) {
+				var stateHeight = row.ChangedColumns.FirstOrDefault(x => x.Key.DataTypeEnum == DataTypeWorkwearItems.Growth);
+				if(stateHeight.Value != null && (new [] {ChangeType.NewEntity, ChangeType.ChangeValue}.Contains(stateHeight.Value.ChangeType))){
+					stateHeight.Value.AddCreatedValues(employeeSize.Title);
+				}	
+			}
+			
+			if(employeeSize.SizeType.CategorySizeType == CategorySizeType.Size) {
+				var stateSize = row.ChangedColumns.FirstOrDefault(x => x.Key.DataTypeEnum == DataTypeWorkwearItems.Size);
+				if(stateSize.Value != null && (new [] {ChangeType.NewEntity, ChangeType.ChangeValue}.Contains(stateSize.Value.ChangeType))){
+					stateSize.Value.AddCreatedValues(employeeSize.Title);
+				}	
+			}
 		}
 		#endregion
 		public readonly List<Nomenclature> UsedNomenclatures = new List<Nomenclature>();
