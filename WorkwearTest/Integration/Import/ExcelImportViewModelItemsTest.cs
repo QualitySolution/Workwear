@@ -176,19 +176,19 @@ namespace WorkwearTest.Integration.Import
 					var operation1 = operationsForBoots.First(x => x.Nomenclature.Name == "Ботинки кожаные мужские р. 44");
 					Assert.That(operation1.StartOfUse, Is.EqualTo(new DateTime(2019, 4, 4)));
 					Assert.That(operation1.Issued, Is.EqualTo(1));
-					Assert.That(operation1.WearSize.Name, Is.EqualTo("44"));
+					Assert.That(operation1.WearSize?.Name, Is.EqualTo("44"));
 					var operation2 = operationsForBoots.First(x => x.Nomenclature.Name == "Ботинки ТОФФ ТРУД МП чер. МП");
 					Assert.That(operation2.StartOfUse, Is.EqualTo(new DateTime(2020, 6, 18)));
 					Assert.That(operation2.Issued, Is.EqualTo(1));
-					Assert.That(operation2.WearSize.Name, Is.EqualTo("43"));
+					Assert.That(operation2.WearSize?.Name, Is.EqualTo("43"));
 					var operationsForSuit = issueRepository.GetOperationsForEmployee(employee, protection5);
 					Assert.That(operationsForSuit, Has.Count.EqualTo(1));
 					var operation3 = operationsForSuit.First();
-					Assert.That(operation3.Nomenclature.Name, Is.EqualTo("Костюм БАЙКАЛ-1 т-син смесовая"));
+					Assert.That(operation3.Nomenclature?.Name, Is.EqualTo("Костюм БАЙКАЛ-1 т-син смесовая"));
 					Assert.That(operation3.StartOfUse, Is.EqualTo(new DateTime(2020, 6, 18)));
 					Assert.That(operation3.Issued, Is.EqualTo(1));
-					Assert.That(operation3.WearSize.Name, Is.EqualTo("52-54")); //Тут мы предполагаем что алгоритм сможет конвертировать размер из формата по госту в формат общепринятого размера.
-					Assert.That(operation3.Height.Name, Is.EqualTo("170-176"));
+					Assert.That(operation3.WearSize?.Name, Is.EqualTo("52-54")); //Тут мы предполагаем что алгоритм сможет конвертировать размер из формата по госту в формат общепринятого размера.
+					Assert.That(operation3.Height?.Name, Is.EqualTo("170-176"));
 					
 					//Проверяем заполнение размеров в сотруднике по последним выдачам
 					var employeeHeight = savedEmployee.Sizes.First(x => x.SizeType.Id == 1);

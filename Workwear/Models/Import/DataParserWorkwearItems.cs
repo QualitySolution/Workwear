@@ -95,9 +95,6 @@ namespace workwear.Models.Import
 			var countColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Count);
 			var postColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Post);
 			var subdivisionColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Subdivision);
-			var sizeAndGrowthColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.SizeAndGrowth);
-			var sizeColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Size);
-			var growthColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Growth);
 
 			progress.Start(list.Count() * 2 + 3, text: "Загрузка сотрудников");
 			IQueryOver<EmployeeCard, EmployeeCard> employeesQuery;
@@ -311,70 +308,82 @@ namespace workwear.Models.Import
 			var heightColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeWorkwearItems.Growth);
 			if(sizeAndGrowthColumn != null) {
 				var sizeAndGrowthValue = row.CellStringValue(sizeAndGrowthColumn.Index);
-				if(String.IsNullOrWhiteSpace(sizeAndGrowthValue))
-					row.ChangedColumns.Add(sizeAndGrowthColumn, new ChangeState(ChangeType.NotChanged));
-				else {
-					var sizeAndHeight = SizeParser.ParseSizeAndGrowth(sizeAndGrowthValue, uow, sizeService);
-					bool sizeOk = true, heightOk = true;
-					string error = null;
-					
-					if(!String.IsNullOrEmpty(sizeAndHeight.Height)) {
-						if(row.Operation.ProtectionTools.Type.HeightType == null)
-							row.ChangedColumns.Add(sizeAndGrowthColumn, new ChangeState(ChangeType.ParseError, error: "У типа номенклатуры не указан тип роста!"));
-						else {
-							row.Operation.Height = SizeParser.ParseSize(uow, sizeAndHeight.Height, sizeService, row.Operation.ProtectionTools.Type.HeightType);
-							heightOk = row.Operation.Height != null;
-							if(!heightOk)
-								error = "Не удалось сопоставить рост.";
-						}
-					}
-					
-					if(!String.IsNullOrEmpty(sizeAndHeight.Size)) {
-						if(row.Operation.ProtectionTools.Type.SizeType == null)
-							row.ChangedColumns.Add(sizeAndGrowthColumn, new ChangeState(ChangeType.ParseError, error: "У типа номенклатуры не указан тип размера!"));
-						else {
-							row.Operation.WearSize = SizeParser.ParseSize(uow, sizeAndHeight.Size, sizeService, row.Operation.ProtectionTools.Type.SizeType);
-							sizeOk = row.Operation.WearSize != null;
-							if(!sizeOk)
-								error = "Не удалось сопоставить размер.";
-						}
-					}
-
-					row.ChangedColumns.Add(sizeAndGrowthColumn, 
-						new ChangeState(sizeOk && heightOk ? ChangeType.NewEntity : ChangeType.ParseError, error: error));
-				}
+				var state = GetChangeStateSizeAndHeight(sizeAndGrowthValue, uow, row);
+				row.ChangedColumns.Add(sizeAndGrowthColumn, state);
 			}
 			
 			if(sizeColumn != null && row.Operation.WearSize == null) {
 				var sizeValue = row.CellStringValue(sizeColumn.Index);
-				if(String.IsNullOrWhiteSpace(sizeValue))
-					row.ChangedColumns.Add(sizeColumn, new ChangeState(ChangeType.NotChanged));
-				else if(row.Operation.ProtectionTools.Type.SizeType == null)
-					row.ChangedColumns.Add(sizeColumn, new ChangeState(ChangeType.ParseError, error: "У типа номенклатуры не указан тип размера!"));
-				else {
-					row.Operation.WearSize = SizeParser.ParseSize(uow, sizeValue, sizeService, row.Operation.ProtectionTools.Type.SizeType);
-					row.ChangedColumns.Add(sizeColumn, 
-						new ChangeState(row.Operation.WearSize != null ? ChangeType.NewEntity : ChangeType.ParseError, 
-							interpretedValue: sizeValue != row.Operation.WearSize?.Name ? row.Operation.WearSize?.Name : null));
-				}
+				row.ChangedColumns.Add(sizeColumn, GetChangeStateSizeAndHeight(sizeValue, uow, row));
 			}
 
-			if(heightColumn != null && row.Operation.Height == null && row.Operation.ProtectionTools.Type.HeightType != null) {
+			if(heightColumn != null && row.Operation.Height == null) {
 				var heightValue = row.CellStringValue(heightColumn.Index);
-				if(String.IsNullOrWhiteSpace(heightValue))
-					row.ChangedColumns.Add(heightColumn, new ChangeState(ChangeType.NotChanged));
-				else if(row.Operation.ProtectionTools.Type.HeightType == null)
-					row.ChangedColumns.Add(heightColumn, new ChangeState(ChangeType.ParseError, error: "У типа номенклатуры не указан тип роста!"));
-				else {
-					row.Operation.Height =
-						SizeParser.ParseSize(uow, heightValue, sizeService, row.Operation.ProtectionTools.Type.HeightType);
-					row.ChangedColumns.Add(heightColumn,
-						new ChangeState(row.Operation.Height != null ? ChangeType.NewEntity : ChangeType.ParseError,
-							interpretedValue: heightValue != row.Operation.Height?.Name ? row.Operation.Height?.Name : null));
-				}
+				row.ChangedColumns.Add(heightColumn, GetChangeStateSizeAndHeight(heightValue, uow, row));
 			}
 		}
-	
+
+		#region MakeChanges
+		private ChangeState GetChangeStateSizeAndHeight(string sizeAndGrowthValue, IUnitOfWork uow, SheetRowWorkwearItems row) {
+			if(String.IsNullOrWhiteSpace(sizeAndGrowthValue))
+				return new ChangeState(ChangeType.NotChanged);
+			else {
+				var sizeAndHeight = SizeParser.ParseSizeAndGrowth(sizeAndGrowthValue, uow, sizeService);
+				bool sizeOk = true, heightOk = true;
+				string error = null;
+					
+				if(!String.IsNullOrEmpty(sizeAndHeight.Height)) {
+					if(row.Operation.ProtectionTools.Type.HeightType == null)
+						return new ChangeState(ChangeType.ParseError, error: "У типа номенклатуры не указан тип роста!");
+					else {
+						row.Operation.Height = SizeParser.ParseSize(uow, sizeAndHeight.Height, sizeService, row.Operation.ProtectionTools.Type.HeightType);
+						heightOk = row.Operation.Height != null;
+						if(!heightOk)
+							error = "Не удалось сопоставить рост.";
+					}
+				}
+					
+				if(!String.IsNullOrEmpty(sizeAndHeight.Size)) {
+					if(row.Operation.ProtectionTools.Type.SizeType == null)
+						return new ChangeState(ChangeType.ParseError, error: "У типа номенклатуры не указан тип размера!");
+					else {
+						row.Operation.WearSize = SizeParser.ParseSize(uow, sizeAndHeight.Size, sizeService, row.Operation.ProtectionTools.Type.SizeType);
+						sizeOk = row.Operation.WearSize != null;
+						if(!sizeOk)
+							error = "Не удалось сопоставить размер.";
+					}
+				}
+				
+				return new ChangeState(sizeOk && heightOk ? ChangeType.NewEntity : ChangeType.ParseError, error: error);
+			}
+		}
+
+		private ChangeState GetChangeStateSize(string sizeValue, IUnitOfWork uow, SheetRowWorkwearItems row) {
+			if(String.IsNullOrWhiteSpace(sizeValue))
+				return new ChangeState(ChangeType.NotChanged);
+			else if(row.Operation.ProtectionTools.Type.SizeType == null)
+				return new ChangeState(ChangeType.ParseError, error: "У типа номенклатуры не указан тип размера!");
+			else {
+				row.Operation.WearSize = SizeParser.ParseSize(uow, sizeValue, sizeService, row.Operation.ProtectionTools.Type.SizeType);
+				return new ChangeState(row.Operation.WearSize != null ? ChangeType.NewEntity : ChangeType.ParseError, 
+						interpretedValue: sizeValue != row.Operation.WearSize?.Name ? row.Operation.WearSize?.Name : null);
+			}
+		}
+
+		private ChangeState GetChangeStateHeight(string heightValue, IUnitOfWork uow, SheetRowWorkwearItems row) {
+			if(String.IsNullOrWhiteSpace(heightValue))
+				return new ChangeState(ChangeType.NotChanged);
+			else if(row.Operation.ProtectionTools.Type.HeightType == null)
+				return new ChangeState(ChangeType.ParseError, error: "У типа номенклатуры не указан тип роста!");
+			else {
+				row.Operation.Height =
+					SizeParser.ParseSize(uow, heightValue, sizeService, row.Operation.ProtectionTools.Type.HeightType);
+				return new ChangeState(row.Operation.Height != null ? ChangeType.NewEntity : ChangeType.ParseError,
+						interpretedValue: heightValue != row.Operation.Height?.Name ? row.Operation.Height?.Name : null);
+			}
+		}
+		#endregion
+		
 		public FIO GetFIO(SheetRowWorkwearItems row, int fioColumn) {
 			var fio = new FIO();
 			row.CellStringValue(fioColumn)?.SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
