@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -154,14 +154,14 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		void SetIssueDateManual_PageClosed(object sender, PageClosedEventArgs e)
 		{
-			if(e.CloseSource == CloseSource.Save || e.CloseSource == CloseSource.Self) {
+			if(e.CloseSource == CloseSource.Save || e.CloseSource == CloseSource.External) {
 				var page = sender as IPage<ManualEmployeeIssueOperationViewModel>;
-				var operationPair = (UoW.Session as NHibernate.Impl.SessionImpl).PersistenceContext.EntitiesByKey.SingleOrDefault(x => x.Value is EmployeeIssueOperation && (int)x.Key.Identifier == page.ViewModel.Entity.Id);
-				if(operationPair.Value != null) {
-					if(e.CloseSource == CloseSource.Self) //Self возвращается при удалении.
-						UoW.Session.Evict(operationPair.Value);
+				var operation = UoW.GetById<EmployeeIssueOperation>(page.ViewModel.Entity.Id);
+				if(operation != null) {
+					if(e.CloseSource == CloseSource.External) //External используется при удалении
+						UoW.Session.Evict(operation);
 					else
-						UoW.Session.Refresh(operationPair.Value);//Почему то не срабатывает при втором вызове. Но не смог починить.
+						UoW.Session.Refresh(operation);//Почему то не срабатывает при втором вызове. Но не смог починить.
 				}
 				Entity.FillWearRecivedInfo(employeeIssueRepository);
 				Entity.UpdateNextIssue(page.ViewModel.Entity.ProtectionTools);

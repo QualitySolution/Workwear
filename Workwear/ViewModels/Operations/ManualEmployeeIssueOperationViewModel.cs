@@ -71,11 +71,11 @@ namespace workwear.ViewModels.Operations
 		#endregion
 
 		#region Actions
-		public void Delete()
-		{
-			UoW.Delete(Entity);
-			UoW.Commit();
-			Close(false, CloseSource.Self);
+		public void Delete() {
+			// делаем отдельный UoW, т.к. при удалении Entity со своим UoW падает ошибка
+			var deleteUoW = UnitOfWorkFactory.CreateWithoutRoot();
+			deleteUoW.Delete(Entity);
+			deleteUoW.Commit();
 		}
 		#endregion
 	}
