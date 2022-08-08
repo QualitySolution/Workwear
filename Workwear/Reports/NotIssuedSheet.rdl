@@ -825,7 +825,7 @@ WHERE
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
     AND wear_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
-    AND (@exclude_before = "" OR @exclude_before &lt; wear_cards_item.next_issue)
+    AND (@exclude_before = "" OR CONVERT(@exclude_before,DATE) &lt; wear_cards_item.next_issue)
 GROUP BY
     wear_cards_item.wear_card_id,
     wear_cards_item.protection_tools_id
