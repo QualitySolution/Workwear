@@ -821,7 +821,7 @@ LEFT JOIN objects ON wear_cards.object_id = objects.id OR wear_cards.object_id I
 LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
 WHERE
     wear_cards.dismiss_date IS NULL 
-    AND (@exclude_in_vacation = false OR (@report_date NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
+    AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
     AND wear_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
