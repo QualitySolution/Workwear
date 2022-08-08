@@ -124,7 +124,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
           <TableColumn>
             <Width>38.1pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>43.6pt</Width>
           </TableColumn>
           <TableColumn>
@@ -313,7 +313,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -330,7 +330,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -347,12 +347,12 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox14">
                       <Value>Зимняя Обувь</Value>
@@ -364,7 +364,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -381,7 +381,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -398,7 +398,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -530,7 +530,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox15">
                       <Value>={size_winter_shoes}</Value>
