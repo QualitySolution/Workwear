@@ -173,17 +173,19 @@ namespace workwear.Models.Import
 				.Select(x => x.Date)
 				.Where(x => x != null)
 				.Select(x => x.Value);
-			var startDate = dates.Min();
-			var endDate = dates.Max();
-			var employeeIds = list.Where(x => x.Employee != null)
-				.Select(x => x.Employee.Id).Distinct().ToArray();
-			var operations = uow.Session.QueryOver<EmployeeIssueOperation>()
-				.Where(x => x.Employee.Id.IsIn(employeeIds))
-				.Where(x => x.OperationTime >= startDate)
-				.Where(x => x.OperationTime < endDate.AddDays(1))
-				.List()
-				.GroupBy(x => x.Employee);
-
+			IList<EmployeeIssueOperation> loadedOperations = new List<EmployeeIssueOperation>();
+			if(dates.Any()) {
+				var startDate = dates.Min();
+				var endDate = dates.Max();
+				var employeeIds = list.Where(x => x.Employee != null)
+					.Select(x => x.Employee.Id).Distinct().ToArray();
+				loadedOperations = uow.Session.QueryOver<EmployeeIssueOperation>()
+					.Where(x => x.Employee.Id.IsIn(employeeIds))
+					.Where(x => x.OperationTime >= startDate)
+					.Where(x => x.OperationTime < endDate.AddDays(1))
+					.List();
+			}
+			var operations = loadedOperations.GroupBy(x => x.Employee);
 			foreach(var row in list) {
 				progress.Add(text: "Обработка операций выдачи");
 				if(row.Skipped)
@@ -216,6 +218,7 @@ namespace workwear.Models.Import
 
 				if(row.Operation != null) {
 					//TODO Обновление операций не реализовано
+					logger.Info("Обновление операций не реализовано, пропускаем...");
 					continue;
 				}
 

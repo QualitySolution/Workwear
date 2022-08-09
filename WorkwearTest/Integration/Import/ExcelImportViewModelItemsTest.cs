@@ -234,14 +234,7 @@ namespace WorkwearTest.Integration.Import
 					SizeType = shoesType,
 				};
 				uowPrepare.Save(bootsType);
-				
-				var PPEType = new ItemsType() {
-					Name = "Сизод",
-					Category = ItemTypeCategory.wear,
-					Units = sht
-				};
-				uowPrepare.Save(PPEType);
-				
+
 				var suitType = new ItemsType() {
 					Name = "Костюмы",
 					Category = ItemTypeCategory.wear,
@@ -252,41 +245,27 @@ namespace WorkwearTest.Integration.Import
 				uowPrepare.Save(suitType);
 
 				var protection1 = new ProtectionTools {
-					Name = "Ботинки кожаные с защитным подноском",
-					Type = bootsType,
+					Name = "Костюм для защиты от общих производственных загрязнений и механических воздействий на утепляющей прокладке с черной кокеткой",
+					Type = suitType,
 				};
 				uowPrepare.Save(protection1);
 				
 				var protection2 = new ProtectionTools {
-					Name = "Перчатки с полимерным  покрытием",
-					Type = glovesType,
+					Name = "Ботинки кожаные с защитным подноском утепленные",
+					Type = bootsType,
 				};
 				uowPrepare.Save(protection2);
 				
 				var protection3 = new ProtectionTools {
-					Name = "Перчатки «Хайкрон»",
+					Name = "перчатки с полимерным покрытием",
 					Type = glovesType,
 				};
 				uowPrepare.Save(protection3);
-				
-				var protection4 = new ProtectionTools {
-					Name = "СИЗОД фильтрующее (1 класс защиты)",
-					Type = PPEType,
-				};
-				uowPrepare.Save(protection4);
-				
-				var protection5 = new ProtectionTools {
-					Name = "Костюм для защиты от общих производственных загрязнений и механических воздействий",
-					Type = suitType,
-				};
-				uowPrepare.Save(protection5);
 
 				var norm = new Norm();
 				norm.AddItem(protection1);
 				norm.AddItem(protection2);
 				norm.AddItem(protection3);
-				norm.AddItem(protection4);
-				norm.AddItem(protection5);
 				uowPrepare.Save(norm);
 
 				var employee = new EmployeeCard() {
@@ -319,8 +298,7 @@ namespace WorkwearTest.Integration.Import
 					model.Columns[9].DataType = model.DataTypes.First(x => DataTypeWorkwearItems.Count.Equals(x.Data));
 					Assert.That(itemsLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
 					itemsLoad.ThirdStep();
-					Assert.That(itemsLoad.SensitiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
-					itemsLoad.Save();
+					Assert.That(itemsLoad.SensitiveSaveButton, Is.False, "Кнопка сохранить будет не доступна, так как нет не одной даты");
 				}
 			}
 		}
