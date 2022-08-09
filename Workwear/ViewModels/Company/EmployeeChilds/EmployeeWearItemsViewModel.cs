@@ -154,15 +154,17 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		void SetIssueDateManual_PageClosed(object sender, PageClosedEventArgs e)
 		{
-			if(e.CloseSource == CloseSource.Save || e.CloseSource == CloseSource.External) {
+			if(e.CloseSource == CloseSource.Save || e.CloseSource == CloseSource.Self) {
 				var page = sender as IPage<ManualEmployeeIssueOperationViewModel>;
 				var operation = UoW.GetById<EmployeeIssueOperation>(page.ViewModel.Entity.Id);
-				if(operation != null) {
-					if(e.CloseSource == CloseSource.External) //External используется при удалении
-						UoW.Session.Evict(operation);
+				if(operation != null)
+					if(e.CloseSource == CloseSource.Self) //Self используется при удалении
+					{
+						UoW.Delete(operation);
+						UoW.Commit();
+					}
 					else
-						UoW.Session.Refresh(operation);//Почему то не срабатывает при втором вызове. Но не смог починить.
-				}
+						UoW.Session.Refresh(operation); //Почему то не срабатывает при втором вызове. Но не смог починить.
 				Entity.FillWearRecivedInfo(employeeIssueRepository);
 				Entity.UpdateNextIssue(page.ViewModel.Entity.ProtectionTools);
 			}

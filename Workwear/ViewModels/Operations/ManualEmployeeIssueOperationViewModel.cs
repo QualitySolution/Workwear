@@ -72,10 +72,7 @@ namespace workwear.ViewModels.Operations
 
 		#region Actions
 		public void Delete() {
-			// делаем отдельный UoW, т.к. при удалении Entity со своим UoW падает ошибка
-			var deleteUoW = UnitOfWorkFactory.CreateWithoutRoot();
-			deleteUoW.Delete(Entity);
-			deleteUoW.Commit();
+			Close(false, CloseSource.Self);
 		}
 		#endregion
 	}
