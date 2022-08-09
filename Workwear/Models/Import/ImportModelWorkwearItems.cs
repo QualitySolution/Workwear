@@ -94,6 +94,7 @@ namespace workwear.Models.Import
 			CountersViewModel.SetCount(CountersWorkwearItems.NewOperations, UsedRows.Count(x => x.Operation != null && x.Operation.Id == 0));
 			CountersViewModel.SetCount(CountersWorkwearItems.WorkwearItemNotFound, UsedRows.Count(x => x.Employee != null && x.WorkwearItem == null));
 			CountersViewModel.SetCount(CountersWorkwearItems.NewNomenclatures, dataParser.UsedNomenclatures.Count(x => x.Id == 0));
+			logger.Debug(String.Join("\n", CountersViewModel.CountersText));
 		}
 	}
 }
