@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -186,22 +187,26 @@ namespace workwear.ViewModels.Import
 			sh = wb.GetSheet(SelectedSheet.Title);
 			ProgressStep.Start(sh.LastRowNum + sh.NumMergedRegions, text: "Читаем лист...");
 
-			var maxColumns = 0;
+			var maxColumnsIndex = 0;
 			for(var i = 0; i <= sh.LastRowNum; i++) {
 				ProgressStep.Add();
 				if(sh.GetRow(i) == null)
 					continue;
-				ImportModel.AddRow(sh.GetRow(i));
-				maxColumns = Math.Max(sh.GetRow(i).Cells.Count, maxColumns);
+				var row = sh.GetRow(i);
+				ImportModel.AddRow(row);
+				//Здесь проверено экспериментально по всем файлам в тестах LastCellNum = количеству виртуальны ячеек(колонок).
+				//То есть последний индекс ячеки +1. Не знаю зачем так сделано. https://github.com/dotnetcore/NPOI/issues/84
+				//При отсутствии ячеек значение LastCellNum и FirstCellNum = -1
+				maxColumnsIndex = Math.Max(row.LastCellNum, maxColumnsIndex);  
 			}
-			ImportModel.MaxSourceColumns = maxColumns;
+			ImportModel.ColumnsCount = maxColumnsIndex;
 			OnPropertyChanged(nameof(RowsCount));
 			ProgressStep.Update("Обработка объединенных ячеек...");
 			var merged = new Dictionary<int, ICell[]>();
 			for(var i = 0; i <= sh.LastRowNum; i++) {
 				if(sh.GetRow(i) == null)
 					continue;
-				merged[sh.GetRow(i).RowNum] = new ICell[maxColumns];
+				merged[sh.GetRow(i).RowNum] = new ICell[maxColumnsIndex];
 			}
 			// Loop through all merge regions in this sheet.
 			for (int i = 0; i < sh.NumMergedRegions; i++)
@@ -219,7 +224,7 @@ namespace workwear.ViewModels.Import
 			ProgressStep.Add();
 			ImportModel.MergedCells = merged;
 			ProgressStep.Close();
-			logger.Info($"Прочитано {maxColumns} колонок и {sh.LastRowNum} строк");
+			logger.Info($"Прочитано {maxColumnsIndex} колонок и {sh.LastRowNum} строк");
 		}
 		#endregion
 	}

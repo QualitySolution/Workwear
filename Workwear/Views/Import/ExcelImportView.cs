@@ -93,7 +93,7 @@ namespace workwear.Views.Import
 				case nameof(IImportModel.DisplayColumns):
 					RefreshTableColumns();
 					break;
-				case nameof(IImportModel.MaxSourceColumns):
+				case nameof(IImportModel.ColumnsCount):
 					RefreshColumnsWidgets();
 					break;
 			}
@@ -119,7 +119,7 @@ namespace workwear.Views.Import
 				tableColumns.Remove(label);
 			foreach(var combo in columnsTypeCombos)
 				tableColumns.Remove(combo);
-			tableColumns.NRows = (uint)ViewModel.ImportModel.MaxSourceColumns;
+			tableColumns.NRows = (uint)ViewModel.ImportModel.ColumnsCount;
 			columnsLabels.Clear();
 			columnsTypeCombos.Clear();
 			uint nRow = 0;

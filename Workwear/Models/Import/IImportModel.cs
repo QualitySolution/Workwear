@@ -19,7 +19,7 @@ namespace workwear.Models.Import
 
 		#region Колонки
 		IList<IDataColumn> DisplayColumns {get;}
-		int MaxSourceColumns { get; set; }
+		int ColumnsCount { get; set; }
 		void AutoSetupColumns(IProgressBarDisplayable progress);
 		#endregion
 

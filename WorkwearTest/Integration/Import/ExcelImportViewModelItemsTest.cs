@@ -208,7 +208,122 @@ namespace WorkwearTest.Integration.Import
 				}
 			}
 		}
+		
+		[Test(Description = "Проверяем что не падаем в случае если в колонке с датой выдачи нет не одной валидной даты. А так же подсчет количества колонок.")]
+		[Category("real case")]
+		[Category("Integrated")]
+		public void ItemsLoad_WithoutDatesCase()
+		{
+			NewSessionWithSameDB();
+			using(var uowPrepare = UnitOfWorkFactory.CreateWithoutRoot()) {
+				MakeMeasurementUnits(uowPrepare, out MeasurementUnits sht, out MeasurementUnits pair);
+				MakeSizes(uowPrepare, out SizeType heightType, out SizeType sizeType, out SizeType shoesType, out SizeType glovesSizeType);
 
+				var glovesType = new ItemsType() {
+					Name = "Перчатки",
+					Category = ItemTypeCategory.wear,
+					Units = pair,
+					SizeType = glovesSizeType
+				};
+				uowPrepare.Save(glovesType);
+				
+				var bootsType = new ItemsType() {
+					Name = "Обувь",
+					Category = ItemTypeCategory.wear,
+					Units = pair,
+					SizeType = shoesType,
+				};
+				uowPrepare.Save(bootsType);
+				
+				var PPEType = new ItemsType() {
+					Name = "Сизод",
+					Category = ItemTypeCategory.wear,
+					Units = sht
+				};
+				uowPrepare.Save(PPEType);
+				
+				var suitType = new ItemsType() {
+					Name = "Костюмы",
+					Category = ItemTypeCategory.wear,
+					Units = sht,
+					HeightType = heightType,
+					SizeType = sizeType
+				};
+				uowPrepare.Save(suitType);
+
+				var protection1 = new ProtectionTools {
+					Name = "Ботинки кожаные с защитным подноском",
+					Type = bootsType,
+				};
+				uowPrepare.Save(protection1);
+				
+				var protection2 = new ProtectionTools {
+					Name = "Перчатки с полимерным  покрытием",
+					Type = glovesType,
+				};
+				uowPrepare.Save(protection2);
+				
+				var protection3 = new ProtectionTools {
+					Name = "Перчатки «Хайкрон»",
+					Type = glovesType,
+				};
+				uowPrepare.Save(protection3);
+				
+				var protection4 = new ProtectionTools {
+					Name = "СИЗОД фильтрующее (1 класс защиты)",
+					Type = PPEType,
+				};
+				uowPrepare.Save(protection4);
+				
+				var protection5 = new ProtectionTools {
+					Name = "Костюм для защиты от общих производственных загрязнений и механических воздействий",
+					Type = suitType,
+				};
+				uowPrepare.Save(protection5);
+
+				var norm = new Norm();
+				norm.AddItem(protection1);
+				norm.AddItem(protection2);
+				norm.AddItem(protection3);
+				norm.AddItem(protection4);
+				norm.AddItem(protection5);
+				uowPrepare.Save(norm);
+
+				var employee = new EmployeeCard() {
+					LastName = "Арсакаев",
+					FirstName = "Руслан",
+					Patronymic = "Анорбекович",
+				};
+				employee.AddUsedNorm(norm);
+				uowPrepare.Save(employee);
+				uowPrepare.Commit();
+				
+				var navigation = Substitute.For<INavigationManager>();
+				var interactive = Substitute.For<IInteractiveMessage>();
+				var progressStep = Substitute.For<IProgressBarDisplayable>();
+				var progressInterceptor = Substitute.For<ProgressInterceptor>();
+				var setting = new SettingsWorkwearItemsViewModel();
+				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), new SizeService());
+				var model = new ImportModelWorkwearItems(dataparser, setting);
+				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
+					itemsLoad.ProgressStep = progressStep;
+					itemsLoad.FileName = "Samples/Excel/items_dateCells.xlsx";
+					Assert.That(itemsLoad.Sheets.Count, Is.EqualTo(2));
+					itemsLoad.SelectedSheet = itemsLoad.Sheets.First();
+					Assert.That(itemsLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
+					itemsLoad.SecondStep();
+					Assert.That(model.Columns, Has.Count.GreaterThanOrEqualTo(10), "В файле не менее 10 колонок с данными. " 
+						+ "(Реальный кейс: В этом фале в каждой строчке по 9 колонок с данными, так как в каждой хотя бы одна ячейка пропущена. Но в разных строках это разная ячейка.)");
+					//Здесь специально выбрана некорректная колонка с отсутствующими датами, так как тест как раз это тестирует.
+					model.Columns[8].DataType = model.DataTypes.First(x => DataTypeWorkwearItems.IssueDate.Equals(x.Data));
+					model.Columns[9].DataType = model.DataTypes.First(x => DataTypeWorkwearItems.Count.Equals(x.Data));
+					Assert.That(itemsLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
+					itemsLoad.ThirdStep();
+					Assert.That(itemsLoad.SensitiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
+					itemsLoad.Save();
+				}
+			}
+		}
 		#region Helpers
 
 		private void MakeMeasurementUnits(IUnitOfWork uow, out MeasurementUnits sht, out MeasurementUnits pair) {

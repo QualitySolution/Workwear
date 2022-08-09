@@ -54,15 +54,15 @@ namespace workwear.Models.Import
 
 		public IEnumerable<DataType> DataTypes => dataParser.SupportDataTypes;
 
-		private int maxSourceColumns;
+		private int columnsCount;
 		/// <summary>
 		/// При установке значения будут пересозданы колонки
 		/// </summary>
-		public virtual int MaxSourceColumns {
-			get => maxSourceColumns;
+		public virtual int ColumnsCount {
+			get => columnsCount;
 			set {
-				maxSourceColumns = value;
-				RecreateColumns(maxSourceColumns);
+				columnsCount = value;
+				RecreateColumns(columnsCount);
 				RefreshColumnsTitle();
 				OnPropertyChanged();
 			}
@@ -87,12 +87,12 @@ namespace workwear.Models.Import
 		private void RefreshColumnsTitle()
 		{
 			if(HeaderRow <= 0) {
-				for(int i = 0; i < MaxSourceColumns; i++)
+				for(int i = 0; i < ColumnsCount; i++)
 					Columns[i].Title = CellReference.ConvertNumToColString(i);
 			}
 			else {
 				var row = XlsRows[HeaderRow - 1];
-				for(int i = 0; i < MaxSourceColumns; i++)
+				for(int i = 0; i < ColumnsCount; i++)
 					Columns[i].Title = row.CellValue(i);
 			}
 			OnPropertyChanged(nameof(Columns));
@@ -103,17 +103,17 @@ namespace workwear.Models.Import
 		{
 			logger.Info("Ищем заголовочную строку...");
 			progress.Start(Math.Min(100, XlsRows.Count), text:"Определение типов данных...");
-			var bestMath = new DataType[MaxSourceColumns];
+			var bestMath = new DataType[ColumnsCount];
 			int bestColumns = 0;
 			int bestHeaderRow = 0;
 			SheetRowBase<TDataTypeEnum> bestRow = null;
 			int rowNum = 0;
 			foreach(var row in XlsRows) {
 				progress.Add();
-				var types = new DataType[MaxSourceColumns];
+				var types = new DataType[ColumnsCount];
 				rowNum++;
 				string lastValue = null;
-				for(int i = 0; i < MaxSourceColumns; i++) {
+				for(int i = 0; i < ColumnsCount; i++) {
 					var value = row.CellStringValue(i)?.ToLower() ?? String.Empty;
 					types[i] = value != lastValue ? dataParser.DetectDataType(value) : null;
 					lastValue = value;
@@ -132,7 +132,7 @@ namespace workwear.Models.Import
 			}
 
 			progress.Add();
-			for (int i = 0; i < MaxSourceColumns; i++) {
+			for (int i = 0; i < ColumnsCount; i++) {
 				Columns[i].DataType = bestMath[i] != null ? bestMath[i] : DataTypes.First();
 			}
 
