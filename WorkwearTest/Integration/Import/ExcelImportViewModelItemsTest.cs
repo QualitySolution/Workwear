@@ -302,6 +302,117 @@ namespace WorkwearTest.Integration.Import
 				}
 			}
 		}
+		
+		[Test(Description = "Проверяем что корректно распознаем дату в колонке для которой установлен формат даты.")]
+		[Category("real case")]
+		[Category("Integrated")]
+		public void ItemsLoad_DateCellsCase()
+		{
+			NewSessionWithSameDB();
+			using(var uowPrepare = UnitOfWorkFactory.CreateWithoutRoot()) {
+				MakeMeasurementUnits(uowPrepare, out MeasurementUnits sht, out MeasurementUnits pair);
+				MakeSizes(uowPrepare, out SizeType heightType, out SizeType sizeType, out SizeType shoesType, out SizeType glovesSizeType);
+
+				var glovesType = new ItemsType() {
+					Name = "Перчатки",
+					Category = ItemTypeCategory.wear,
+					Units = pair,
+					SizeType = glovesSizeType
+				};
+				uowPrepare.Save(glovesType);
+				
+				var bootsType = new ItemsType() {
+					Name = "Обувь",
+					Category = ItemTypeCategory.wear,
+					Units = pair,
+					SizeType = shoesType,
+				};
+				uowPrepare.Save(bootsType);
+
+				var suitType = new ItemsType() {
+					Name = "Костюмы",
+					Category = ItemTypeCategory.wear,
+					Units = sht,
+					HeightType = heightType,
+					SizeType = sizeType
+				};
+				uowPrepare.Save(suitType);
+
+				var protection1 = new ProtectionTools {
+					Name = "Костюм для защиты от общих производственных загрязнений и механических воздействий на утепляющей прокладке с черной кокеткой",
+					Type = suitType,
+				};
+				uowPrepare.Save(protection1);
+				
+				var protection2 = new ProtectionTools {
+					Name = "Ботинки кожаные с защитным подноском утепленные",
+					Type = bootsType,
+				};
+				uowPrepare.Save(protection2);
+				
+				var protection3 = new ProtectionTools {
+					Name = "перчатки с полимерным покрытием",
+					Type = glovesType,
+				};
+				uowPrepare.Save(protection3);
+
+				var norm = new Norm();
+				norm.AddItem(protection1);
+				norm.AddItem(protection2);
+				norm.AddItem(protection3);
+				uowPrepare.Save(norm);
+
+				var employee = new EmployeeCard() {
+					LastName = "АРСАКАЕВ",
+					FirstName = "РУСЛАН",
+					Patronymic = "Анорбекович",
+				};
+				employee.AddUsedNorm(norm);
+				uowPrepare.Save(employee);
+				var employee2 = new EmployeeCard() {
+					LastName = "АНУРОВ",
+					FirstName = "ПАВЕЛ",
+					Patronymic = "Александрович",
+				};
+				employee2.AddUsedNorm(norm);
+				uowPrepare.Save(employee2);
+				uowPrepare.Commit();
+				
+				var navigation = Substitute.For<INavigationManager>();
+				var interactive = Substitute.For<IInteractiveMessage>();
+				var progressStep = Substitute.For<IProgressBarDisplayable>();
+				var progressInterceptor = Substitute.For<ProgressInterceptor>();
+				var setting = new SettingsWorkwearItemsViewModel();
+				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), new SizeService());
+				var model = new ImportModelWorkwearItems(dataparser, setting);
+				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
+					itemsLoad.ProgressStep = progressStep;
+					itemsLoad.FileName = "Samples/Excel/items_dateCells.xlsx";
+					Assert.That(itemsLoad.Sheets.Count, Is.EqualTo(2));
+					itemsLoad.SelectedSheet = itemsLoad.Sheets.First();
+					Assert.That(itemsLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
+					itemsLoad.SecondStep();
+					Assert.That(model.Columns, Has.Count.GreaterThanOrEqualTo(10), "В файле не менее 10 колонок с данными. " 
+						+ "(Реальный кейс: В этом фале в каждой строчке по 9 колонок с данными, так как в каждой хотя бы одна ячейка пропущена. Но в разных строках это разная ячейка.)");
+					//Здесь специально выбрана некорректная колонка с отсутствующими датами, так как тест как раз это тестирует.
+					model.Columns[3].DataType = model.DataTypes.First(x => DataTypeWorkwearItems.IssueDate.Equals(x.Data));
+					model.Columns[9].DataType = model.DataTypes.First(x => DataTypeWorkwearItems.Count.Equals(x.Data));
+					Assert.That(itemsLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
+					itemsLoad.ThirdStep();
+					var employees = uowPrepare.GetAll<EmployeeCard>();
+					Assert.That(itemsLoad.SensitiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
+					var dates = model.XlsRows
+						.Where(x => x.Date.HasValue)
+						.Select(x => x.Date.Value)
+						.ToList();
+					Assert.That(dates, Has.Count.EqualTo(3));
+					Assert.That(dates, Has.Some.EqualTo(new DateTime(2020, 11, 1)));
+					Assert.That(dates, Has.Some.EqualTo(new DateTime(2022, 5, 1)));
+					itemsLoad.Save();
+				}
+			}
+		}
+
 		#region Helpers
 
 		private void MakeMeasurementUnits(IUnitOfWork uow, out MeasurementUnits sht, out MeasurementUnits pair) {

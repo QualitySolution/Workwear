@@ -105,15 +105,18 @@ namespace workwear.Models.Import
 				employeesQuery = employeeRepository.GetEmployeesByPersonalNumbers(personnelNumbers);
 			}
 			else {
-				var fios = list.Select(x => GetFIO(x, fioColumn.Index));
+				var fios = list.Select(x => GetFIO(x, fioColumn.Index))
+					.Where(x => !x.IsEmpty).Distinct();
 				employeesQuery = employeeRepository.GetEmployeesByFIOs(fios);
 			}
 
-			IList<EmployeeCard> employees = employeesQuery.Fetch(SelectMode.Fetch, x => x.WorkwearItems).List();
+			IList<EmployeeCard> employees = employeesQuery
+				.Fetch(SelectMode.Fetch, x => x.WorkwearItems)
+				.List();
 			
 			foreach(var row in list) {
 				progress.Add(text: "Сопоставление");
-				row.Date = ParseDateOrNull(row.CellStringValue(issueDateColumn.Index));
+				row.Date = row.CellDateTimeValue(issueDateColumn.Index);
 				if(row.Date == null) {
 					row.ProgramSkipped = true;
 					row.AddColumnChange(issueDateColumn, ChangeType.ParseError);
@@ -137,7 +140,7 @@ namespace workwear.Models.Import
 						$"Не найден сотрудник с табельным номером [{EmployeeParse.GetPersonalNumber(settings, row, personnelNumberColumn.Index)}]. Пропускаем.");
 					else 
 						logger.Warn(
-							$"Не найден сотрудник с ФИО [{GetFIO(row, fioColumn.Index)}]. Пропускаем.");
+							$"Не найден сотрудник с ФИО [{GetFIO(row, fioColumn.Index).FullName}]. Пропускаем.");
 					
 					row.ProgramSkipped = true;
 					row.AddColumnChange(personnelNumberColumn ?? fioColumn, ChangeType.NotFound);
@@ -317,11 +320,6 @@ namespace workwear.Models.Import
 		public readonly List<Nomenclature> UsedNomenclatures = new List<Nomenclature>();
 		public readonly HashSet<EmployeeCard> ChangedEmployees = new HashSet<EmployeeCard>();
 		#region Helpers
-		private DateTime? ParseDateOrNull(string value) {
-			if(DateTime.TryParse(value, out var date))
-				return date;
-			return null;
-		}
 		private void TryParseSizeAndHeight(
 			IUnitOfWork uow,
 			SheetRowWorkwearItems row, 
