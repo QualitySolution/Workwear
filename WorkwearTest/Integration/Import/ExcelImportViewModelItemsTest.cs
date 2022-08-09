@@ -1,5 +1,7 @@
 using System;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using NSubstitute;
 using NUnit.Framework;
 using QS.BusinessCommon.Domain;
@@ -42,6 +44,8 @@ namespace WorkwearTest.Integration.Import
 		[Test(Description = "Проверяем загрузку норм выданного в формате выгруженном из Восток-Сервис.")]
 		public void ItemsLoad_VostokCase()
 		{
+			//В файле дата хранится в виде строки, поэтому для прохождения теста, нужна русская культура
+			Thread.CurrentThread.CurrentCulture =  CultureInfo.CreateSpecificCulture("ru-RU");
 			NewSessionWithSameDB();
 			using(var uowPrepare = UnitOfWorkFactory.CreateWithoutRoot()) {
 				MakeMeasurementUnits(uowPrepare, out MeasurementUnits sht, out MeasurementUnits pair);
