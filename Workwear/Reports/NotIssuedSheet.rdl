@@ -751,9 +751,9 @@
     wear_cards_item.next_issue,
     wear_cards_item.last_issue,
     IF(
-        wear_cards_item.next_issue &lt;= @report_date,
+        wear_cards_item.next_issue &lt;= CONVERT(@report_date, DATE),
         DATEDIFF(
-            @report_date,
+            CONVERT(@report_date, DATE),
             wear_cards_item.next_issue
         ),
         NULL
@@ -792,7 +792,7 @@ wear_cards_item.amount AS received,
 FROM
     operation_warehouse
 WHERE
-    operation_warehouse.operation_time &lt;= @report_date AND operation_warehouse.nomenclature_id IN(
+    operation_warehouse.operation_time &lt;= CONVERT(@report_date, DATE) AND operation_warehouse.nomenclature_id IN(
     SELECT
         protection_tools_nomenclature.nomenclature_id
     FROM
@@ -821,11 +821,11 @@ LEFT JOIN objects ON wear_cards.object_id = objects.id OR wear_cards.object_id I
 LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
 WHERE
     wear_cards.dismiss_date IS NULL 
-    AND (@exclude_in_vacation = false OR (@report_date NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
+    AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
-    AND wear_cards_item.next_issue &lt; @report_date
-    AND (@exclude_before = "" OR @exclude_before &lt; wear_cards_item.next_issue)
+    AND wear_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
+    AND (@exclude_before = "" OR CONVERT(@exclude_before,DATE) &lt; wear_cards_item.next_issue)
 GROUP BY
     wear_cards_item.wear_card_id,
     wear_cards_item.protection_tools_id

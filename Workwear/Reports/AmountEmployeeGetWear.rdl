@@ -295,7 +295,7 @@
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT objects.code, objects.name as obj, COUNT(*) as count_period 
 	FROM (SELECT DISTINCT employee_id	FROM operation_issued_by_employee 
- 		WHERE (operation_time &gt; @dateStart AND operation_time &lt; DATE_ADD(@dateEnd,INTERVAL 1 DAY))) AS operation 
+ 		WHERE (operation_time &gt; CONVERT(@dateStart, DATE) AND operation_time &lt; DATE_ADD(CONVERT(@dateEnd, DATE),INTERVAL 1 DAY))) AS operation 
 	JOIN wear_cards ON employee_id = wear_cards.id  
 	LEFT JOIN objects ON wear_cards.object_id = objects.id 
 	GROUP BY objects.id 

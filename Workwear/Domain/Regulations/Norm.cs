@@ -158,6 +158,11 @@ namespace workwear.Domain.Regulations
 						$"Период эксплуатации номенклатуры {item.ProtectionTools.Name} должен быть больше нуля.",
 					new[] { nameof(item.PeriodCount) });
 				}
+				if(item.PeriodCount > 255){
+					yield return new ValidationResult("Указан слишком большой период эксплуатации номенклатуры " +
+					                                  $"{item.ProtectionTools.Name}, перепроверьте введеные данные",
+						new[] { nameof(item.PeriodCount) });
+				}
 				if(item.Amount <= 0) {
 					yield return new ValidationResult($"Количество у номенклатуры {item.ProtectionTools.Name} должно быть больше нуля.",
 					new[] { nameof(item.PeriodCount) });
