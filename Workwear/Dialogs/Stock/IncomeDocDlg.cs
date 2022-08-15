@@ -2,6 +2,7 @@
 using Autofac;
 using Gamma.Binding.Converters;
 using NLog;
+using QS.Dialog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
@@ -26,6 +27,7 @@ namespace workwear
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 		private readonly SizeService sizeService;
+		private readonly IInteractiveService interactiveService;
 
 		private FeaturesService featuresService;
 
@@ -35,6 +37,8 @@ namespace workwear
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Income> ();
 			featuresService = AutofacScope.Resolve<FeaturesService>();
 			sizeService = AutofacScope.Resolve<SizeService>();
+			interactiveService = AutofacScope.Resolve<IInteractiveService>();
+			
 			
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
@@ -111,6 +115,26 @@ namespace workwear
 				.Finish();
 			//Метод отключает модули спецодежды, которые недоступны для пользователя
 			DisableFeatures();
+
+			ybuttonReadInFile.Clicked += OnReadFileClicked;
+		}
+
+		private void OnReadFileClicked(object sender, EventArgs e) {
+			var file = Open1CFile();
+			if(file.Length < 1) return;
+		}
+
+		private string Open1CFile() {
+			var param = new object[] { "Cancel", Gtk.ResponseType.Cancel, "Open", Gtk.ResponseType.Accept};
+			var fileChooserDialog = new Gtk.FileChooserDialog("Open File", null, Gtk.FileChooserAction.Open, param);
+			var nameFile = String.Empty;
+			if(fileChooserDialog.Run() == (int)Gtk.ResponseType.Accept)
+				if(fileChooserDialog.Filename.ToLower().EndsWith(".xml"))
+					nameFile = fileChooserDialog.Filename;
+				else
+					interactiveService.ShowMessage(ImportanceLevel.Error, "Формат файла не поддерживается");
+			fileChooserDialog.Destroy();
+			return nameFile;
 		}
 
 		public override bool Save() {
