@@ -5,11 +5,11 @@ using NPOI.SS.UserModel;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 
-namespace workwear.Models.Import
+namespace workwear.Models.Import.Norms
 {
-	public class SheetRowNorm : SheetRowBase<DataTypeNorm>
+	public class SheetRowNorm : SheetRowBase<SheetRowNorm>
 	{
-		public SheetRowNorm(IRow cells) : base(cells)
+		public SheetRowNorm(IRow[] cells) : base(cells)
 		{
 		}
 

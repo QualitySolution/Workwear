@@ -5,7 +5,7 @@ using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 
-namespace workwear.Models.Import
+namespace workwear.Models.Import.Norms
 {
 	public class ImportModelNorm : ImportModelBase<DataTypeNorm, SheetRowNorm>, IImportModel
 	{
@@ -40,15 +40,15 @@ namespace workwear.Models.Import
 			toSave.AddRange(dataParser.UsedProtectionTools.Where(x => x.Id == 0));
 			toSave.AddRange(dataParser.UsedNorms.Where(x => x.Id == 0));
 			foreach(var row in rows) {
-				toSave.AddRange(dataParser.PrepareToSave(uow, row));
+				toSave.AddRange(row.PrepareToSave());
 			}
 			return toSave;
 		}
 		
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
-			dataParser.MatchWithExist(uow, UsedRows, Columns, progress);
-			dataParser.FindChanges(UsedRows, Columns.Where(x => x.DataTypeEnum != DataTypeNorm.Unknown).ToArray());
+			dataParser.MatchWithExist(uow, UsedRows, this, progress);
+			dataParser.FindChanges(UsedRows, ImportedDataTypes.ToArray());
 			OnPropertyChanged(nameof(DisplayRows));
 
 			RecalculateCounters();

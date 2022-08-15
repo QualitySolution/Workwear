@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace workwear.Models.Import
+namespace workwear.Models.Import.Norms
 {
 	public enum CountersNorm
 	{
