@@ -18,19 +18,25 @@ namespace workwear.Models.Import
 		CountersViewModel CountersViewModel { get; }
 
 		#region Колонки
-		IList<IDataColumn> DisplayColumns {get;}
+		List<ExcelColumn> Columns {get;}
 		int ColumnsCount { get; set; }
+		int MaxLevels { get; set; }
 		void AutoSetupColumns(IProgressBarDisplayable progress);
 		#endregion
 
 		#region Строки
 		int HeaderRow { get; set; }
 		int SheetRowCount { get; }
-		void AddRow(IRow cells);
+		void AddRow(IRow[] cells);
 		List<ISheetRow> DisplayRows { get; }
 		#endregion
 		IDictionary<int, ICell[]> MergedCells { get; set; }
+
+		#region Типы данных
 		IEnumerable<DataType> DataTypes { get; }
+
+		ExcelValueTarget GetColumnForDataType(object data);
+		#endregion
 
 		#region Сопоставление
 		ViewModelBase MatchSettingsViewModel { get; }

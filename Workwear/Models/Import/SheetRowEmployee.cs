@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NPOI.SS.UserModel;
@@ -8,7 +8,7 @@ namespace workwear.Models.Import
 {
 	public class SheetRowEmployee : SheetRowBase<DataTypeEmployee>
 	{
-		public SheetRowEmployee(IRow cells) : base(cells)
+		public SheetRowEmployee(IRow[] cells) : base(cells)
 		{
 		}
 

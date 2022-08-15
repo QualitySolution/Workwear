@@ -151,6 +151,10 @@
     <Compile Include="Models\Import\DataType.cs" />
     <Compile Include="Models\Import\DataTypeEmployeeSize.cs" />
     <Compile Include="Models\Import\IMatchEmployeesSettings.cs" />
+    <Compile Include="Models\Import\ExcelValueTarget.cs" />
+    <Compile Include="Models\Import\ISheetRow.cs" />
+    <Compile Include="Models\Import\RowStackHelper.cs" />
+    <Compile Include="Models\Import\SetValueAction.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -404,7 +408,7 @@
     <Compile Include="Models\Import\DataTypeEmployee.cs" />
     <Compile Include="Models\Import\DataTypeNorm.cs" />
     <Compile Include="Models\Import\FIO.cs" />
-    <Compile Include="Models\Import\ImportedColumn.cs" />
+    <Compile Include="Models\Import\ExcelColumn.cs" />
     <Compile Include="Models\Import\ImportedSheet.cs" />
     <Compile Include="Models\Import\SheetRowBase.cs" />
     <Compile Include="Models\Import\IDataParser.cs" />
@@ -872,6 +876,9 @@
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Models\Import\README.md" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

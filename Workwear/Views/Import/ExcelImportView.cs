@@ -90,7 +90,7 @@ namespace workwear.Views.Import
 
 		void IImportModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {
-				case nameof(IImportModel.DisplayColumns):
+				case nameof(IImportModel.Columns):
 					RefreshTableColumns();
 					break;
 				case nameof(IImportModel.ColumnsCount):
@@ -101,9 +101,9 @@ namespace workwear.Views.Import
 
 		private void RefreshTableColumns() {
 			var config = ColumnsConfigFactory.Create<ISheetRow>();
-			for(var i = 0; i < ViewModel.ImportModel.DisplayColumns.Count; i++) {
+			for(var i = 0; i < ViewModel.ImportModel.Columns.Count; i++) {
 				var col = i;
-				config.AddColumn(ViewModel.ImportModel.DisplayColumns[i].Title).HeaderAlignment(0.5f).Resizable()
+				config.AddColumn(ViewModel.ImportModel.Columns[i].Title).HeaderAlignment(0.5f).Resizable()
 					.ToolTipText(x => x.CellTooltip(col))
 					.AddTextRenderer(x => x.CellValue(col))
 					.AddSetter((c, x) => c.Foreground = x.CellForegroundColor(col))
@@ -119,29 +119,41 @@ namespace workwear.Views.Import
 				tableColumns.Remove(label);
 			foreach(var combo in columnsTypeCombos)
 				tableColumns.Remove(combo);
-			tableColumns.NRows = (uint)ViewModel.ImportModel.ColumnsCount;
+			tableColumns.NRows = (uint)ViewModel.ImportModel.ColumnsCount + 1;
+			tableColumns.NColumns = (uint)ViewModel.ImportModel.MaxLevels + 1;
 			columnsLabels.Clear();
 			columnsTypeCombos.Clear();
-			uint nRow = 0;
-			foreach(var column in ViewModel.ImportModel.DisplayColumns) {
+			uint nRow = 1;
+			if(ViewModel.ImportModel.MaxLevels > 1) {
+				for(uint col = 1; col <= ViewModel.ImportModel.MaxLevels; col++) {
+					var label = new Label($"Уровень {col}");
+					tableColumns
+						.Attach(label, col, col + 1, 0, 1, 
+							AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+				}
+			}
+			foreach(var column in ViewModel.ImportModel.Columns) {
 				var label = new yLabel();
 				label.Xalign = 1;
 				label.Binding
-					.AddBinding(column, nameof(IDataColumn.Title), w => w.LabelProp)
+					.AddBinding(column, v => v.Title, w => w.LabelProp)
 					.InitializeFromSource();
 				columnsLabels.Add(label);
 				tableColumns
 					.Attach(label, 0, 1, nRow, nRow + 1, 
 						AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
-				var combo = new SpecialListComboBox {ItemsList = ViewModel.ImportModel.DataTypes};
-				combo.SetRenderTextFunc<DataType>(x => x.Title);
-				combo.Binding
-					.AddBinding(column, c => c.DataType, w => w.SelectedItem)
-					.InitializeFromSource();
-				columnsTypeCombos.Add(combo);
-				tableColumns
-					.Attach(combo, 1, 2, nRow, nRow + 1, 
-						AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+				for(uint col = 0; col < ViewModel.ImportModel.MaxLevels; col++) {
+					var groupLevel = column.DataTypeByLevels[col];
+					var combo = new SpecialListComboBox {ItemsList = ViewModel.ImportModel.DataTypes};
+					combo.SetRenderTextFunc<DataType>(x => x.Title);
+					combo.Binding
+						.AddBinding(groupLevel, c => c.DataType, w => w.SelectedItem)
+						.InitializeFromSource();
+					columnsTypeCombos.Add(combo);
+					tableColumns
+						.Attach(combo, col + 1, col + 2, nRow, nRow + 1, 
+							AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+				}
 				nRow++;
 			}
 			tableColumns.ShowAll();

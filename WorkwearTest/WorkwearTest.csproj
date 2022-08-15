@@ -59,6 +59,7 @@
     <Compile Include="Integration\Import\ExcelImportViewModelNormsTest.cs" />
     <Compile Include="Integration\Stock\CompletionIntegratedTest.cs" />
     <Compile Include="Models\Import\DataParserNormTest.cs" />
+    <Compile Include="Models\Import\RowStackHelperTest.cs" />
     <Compile Include="Operations\Graph\IssueGraphTest.cs" />
     <Compile Include="Operations\Graph\GraphItemTest.cs" />
     <Compile Include="Organization\EmployeeCardTests.cs" />
