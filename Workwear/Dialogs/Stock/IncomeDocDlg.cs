@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Autofac;
 using Gamma.Binding.Converters;
 using NLog;
@@ -17,6 +18,7 @@ using Workwear.Measurements;
 using workwear.Repository;
 using workwear.Repository.Stock;
 using workwear.Tools.Features;
+using workwear.Tools.Import;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Stock;
 
@@ -122,6 +124,13 @@ namespace workwear
 		private void OnReadFileClicked(object sender, EventArgs e) {
 			var file = Open1CFile();
 			if(file.Length < 1) return;
+			var reader = new ReaderDocumentFromXml1C(file);
+			if(reader.DocumentDate != null)
+				Entity.Date = reader.DocumentDate.Value;
+			if(!reader.DocumentItems.Any())
+				interactiveService.ShowMessage(ImportanceLevel.Info, "В указаном файле нет строк поступления");
+			foreach(var item in reader.DocumentItems) 
+				Entity.AddItem(item.Namenclature, item.Size, item.Height, item.Ammount);
 		}
 
 		private string Open1CFile() {
