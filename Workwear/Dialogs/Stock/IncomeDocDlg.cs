@@ -19,7 +19,7 @@ using workwear.Tools.Features;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Stock;
 
-namespace workwear.Dialogs.Stock
+namespace workwear
 {
 	public partial class IncomeDocDlg : EntityDialogBase<Income>
 	{

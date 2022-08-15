@@ -91,7 +91,7 @@ namespace workwear.ViewModels.Company
 
 		public void ReturnItem()
 		{
-			navigation.OpenTdiTab<Dialogs.Stock.IncomeDocDlg, Subdivision>(this, Entity);
+			navigation.OpenTdiTab<IncomeDocDlg, Subdivision>(this, Entity);
 		}
 
 		public void WriteOffItem()
