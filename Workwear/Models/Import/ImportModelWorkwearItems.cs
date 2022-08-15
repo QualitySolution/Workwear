@@ -38,7 +38,7 @@ namespace workwear.Models.Import
 
 		public List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
-			var countColumn = Columns.First(x => x.DataTypeEnum == DataTypeWorkwearItems.Count);
+			var countColumn = ImportedDataTypes.First(x => DataTypeWorkwearItems.Count.Equals(x.DataType.Data));
 			var grouped = UsedRows.Where(x => x.Operation != null)
 				.GroupBy(x => x.Employee);
 			logger.Debug($"В обработке {grouped.Count()} сотрудников.");
@@ -50,7 +50,7 @@ namespace workwear.Models.Import
 					var last = itemGroup.OrderByDescending(x => x.Date).First();
 					if(itemGroup.Key.LastIssue == null || itemGroup.Key.LastIssue < last.Date) {
 						itemGroup.Key.LastIssue = last.Date;
-						itemGroup.Key.Amount = last.CellIntValue(countColumn.Index).Value;
+						itemGroup.Key.Amount = last.CellIntValue(countColumn).Value;
 						itemGroup.Key.NextIssue = itemGroup.Key.ActiveNormItem.CalculateExpireDate(last.Date.Value, itemGroup.Key.Amount);
 						dataParser.ChangedEmployees.Add(employeeGroup.Key);
 					}
@@ -66,7 +66,7 @@ namespace workwear.Models.Import
 
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
-			dataParser.MatchChanges(progress, settingsWorkwearItemsViewModel, CountersViewModel, uow, UsedRows, Columns);
+			dataParser.MatchChanges(this, progress, settingsWorkwearItemsViewModel, CountersViewModel, uow, UsedRows);
 			OnPropertyChanged(nameof(DisplayRows));
 
 			RecalculateCounters();
