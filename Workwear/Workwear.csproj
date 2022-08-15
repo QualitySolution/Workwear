@@ -153,6 +153,11 @@
     <Compile Include="Models\Import\IMatchEmployeesSettings.cs" />
     <Compile Include="Models\Import\ExcelValueTarget.cs" />
     <Compile Include="Models\Import\ISheetRow.cs" />
+    <Compile Include="Models\Import\Issuance\CountersWorkwearItems.cs" />
+    <Compile Include="Models\Import\Issuance\DataParserWorkwearItems.cs" />
+    <Compile Include="Models\Import\Issuance\DataTypeWorkwearItems.cs" />
+    <Compile Include="Models\Import\Issuance\ImportModelWorkwearItems.cs" />
+    <Compile Include="Models\Import\Issuance\SheetRowWorkwearItems.cs" />
     <Compile Include="Models\Import\Norms\CountersNorm.cs" />
     <Compile Include="Models\Import\Norms\DataParserNorm.cs" />
     <Compile Include="Models\Import\Norms\DataTypeNorm.cs" />
@@ -440,11 +445,6 @@
     <Compile Include="Tools\NHibernate\ProgressInterceptor.cs" />
     <Compile Include="Models\Import\NomenclatureTypes.cs" />
     <Compile Include="Journal\ViewModels\Tools\EmployeeProcessingJournalViewModel.cs" />
-    <Compile Include="Models\Import\ImportModelWorkwearItems.cs" />
-    <Compile Include="Models\Import\DataParserWorkwearItems.cs" />
-    <Compile Include="Models\Import\DataTypeWorkwearItems.cs" />
-    <Compile Include="Models\Import\SheetRowWorkwearItems.cs" />
-    <Compile Include="Models\Import\CountersWorkwearItems.cs" />
     <Compile Include="Views\Import\SettingsMatchEmployeesView.cs" />
     <Compile Include="ViewModels\Import\SettingsMatchEmployeesViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Import.SettingsMatchEmployeesView.cs" />

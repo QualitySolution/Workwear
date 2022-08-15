@@ -10,13 +10,13 @@ using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
+using Workwear.Measurements;
 using workwear.Repository.Company;
 using workwear.Repository.Regulations;
 using workwear.Repository.Stock;
 using workwear.ViewModels.Import;
-using Workwear.Measurements;
 
-namespace workwear.Models.Import
+namespace workwear.Models.Import.Issuance
 {
 	public class DataParserWorkwearItems : DataParserBase
 	{

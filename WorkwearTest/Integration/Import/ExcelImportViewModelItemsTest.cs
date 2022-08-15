@@ -17,6 +17,7 @@ using workwear.Models.Import;
 using workwear.Tools.Nhibernate;
 using workwear.ViewModels.Import;
 using Workwear.Measurements;
+using workwear.Models.Import.Issuance;
 using workwear.Repository.Company;
 using workwear.Repository.Operations;
 using workwear.Repository.Regulations;

@@ -6,7 +6,7 @@ using QS.Dialog;
 using QS.DomainModel.UoW;
 using workwear.ViewModels.Import;
 
-namespace workwear.Models.Import
+namespace workwear.Models.Import.Issuance
 {
 	public class ImportModelWorkwearItems : ImportModelBase<DataTypeWorkwearItems, SheetRowWorkwearItems>, IImportModel
 	{

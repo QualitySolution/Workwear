@@ -43,6 +43,7 @@ using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Tools;
 using workwear.Models.Import;
+using workwear.Models.Import.Issuance;
 using workwear.Models.Import.Norms;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
