@@ -4,7 +4,7 @@ using QS.DomainModel.UoW;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 
-namespace workwear.Models.Import {
+namespace workwear.Models.Import.Employee.DataTypes {
 	public class DataTypeEmployeeSize : DataType {
 		private readonly SizeService sizeService;
 		private readonly SizeType sizeType;

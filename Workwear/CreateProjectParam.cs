@@ -58,6 +58,7 @@ using workwear.Domain.Users;
 using workwear.Journal;
 using workwear.Models.Company;
 using workwear.Models.Import;
+using workwear.Models.Import.Employee;
 using workwear.Models.Import.Issuance;
 using workwear.Models.Import.Norms;
 using workwear.Models.Stock;

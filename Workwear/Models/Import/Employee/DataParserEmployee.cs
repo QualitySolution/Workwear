@@ -10,14 +10,15 @@ using QS.Services;
 using QS.Utilities.Numeric;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
-using workwear.Models.Company;
-using workwear.ViewModels.Import;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
+using workwear.Models.Company;
+using workwear.Models.Import.Employee.DataTypes;
 using workwear.Repository.Company;
+using workwear.ViewModels.Import;
 
-namespace workwear.Models.Import
+namespace workwear.Models.Import.Employee
 {
 	public class DataParserEmployee : DataParserBase
 	{
@@ -151,7 +152,7 @@ namespace workwear.Models.Import
 		public void FindChanges(
 			IUnitOfWork uow, 
 			IEnumerable<SheetRowEmployee> list, 
-			ImportedColumn<DataTypeEmployee>[] meaningfulColumns, 
+			ExcelValueTarget[] meaningfulColumns, 
 			IProgressBarDisplayable progress, 
 			SettingsMatchEmployeesViewModel settings)
 		{
@@ -187,7 +188,7 @@ namespace workwear.Models.Import
 			SettingsMatchEmployeesViewModel settings, 
 			EmployeeCard employee, 
 			SheetRowEmployee row, 
-			ImportedColumn<DataTypeEmployee> column, 
+			ExcelColumn column, 
 			ChangeType rowChange,
 			IUnitOfWork uow)
 		{
@@ -316,7 +317,7 @@ namespace workwear.Models.Import
 			SettingsMatchEmployeesViewModel settings, 
 			EmployeeCard employee, 
 			SheetRowEmployee row, 
-			ImportedColumn<DataTypeEmployee> column, 
+			ExcelColumn column, 
 			ChangeType rowChange,
 			IUnitOfWork uow)
 		{
@@ -371,19 +372,19 @@ namespace workwear.Models.Import
 		public void MatchByName(
 			IUnitOfWork uow, 
 			IEnumerable<SheetRowEmployee> list, 
-			List<ImportedColumn<DataTypeEmployee>> columns, 
+			ImportModelEmployee model, 
 			IProgressBarDisplayable progress)
 		{
 			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
-			var sizeWillSet = columns.Any(x => x.DataType.Data is SizeType);
+			var sizeWillSet = model.ImportedDataTypes.Any(x => x.DataType.Data is SizeType);
 			var employeeRepository = new EmployeeRepository(uow);
-			var query = employeeRepository.GetEmployeesByFIOs(list.Select(x => GetFIO(x, columns)));
+			var query = employeeRepository.GetEmployeesByFIOs(list.Select(x => GetFIO(x, model)));
 			if(sizeWillSet) //Если будем проставлять размеры, запрашиваем сразу имеющиеся размеры для ускорения...
 				query.Fetch(SelectMode.Fetch, x => x.Sizes);
 			var exists = query.List();
 			progress.Add();
 			foreach(var employee in exists) {
-				var found = list.Where(x => EmployeeParse.CompareFio(employee, GetFIO(x, columns))).ToArray();
+				var found = list.Where(x => EmployeeParse.CompareFio(employee, GetFIO(x, model))).ToArray();
 				if(!found.Any())
 					continue; //Так как в базе ищем без отчества, могут быть лишние.
 				found.First().Employees.Add(employee);
@@ -391,7 +392,7 @@ namespace workwear.Models.Import
 
 			progress.Add();
 			//Пропускаем дубликаты имен в файле
-			var groups = list.GroupBy(x => GetFIO(x, columns).GetHash());
+			var groups = list.GroupBy(x => GetFIO(x, model).GetHash());
 			foreach(var group in groups) {
 				if(String.IsNullOrWhiteSpace(group.Key)) {
 					group.First().ProgramSkipped = true;
@@ -404,21 +405,28 @@ namespace workwear.Models.Import
 			progress.Close();
 		}
 
+		private bool СompareFio(SheetRowEmployee x, EmployeeCard employee, List<ExcelColumn> columns)
+		{
+			var fio = GetFIO(x, columns);
+			return String.Equals(fio.LastName, employee.LastName, StringComparison.CurrentCultureIgnoreCase)
+				&& String.Equals(fio.FirstName, employee.FirstName, StringComparison.CurrentCultureIgnoreCase)
+				&& (fio.Patronymic == null || String.Equals(fio.Patronymic, employee.Patronymic, StringComparison.CurrentCultureIgnoreCase));
+		}
+
 		public void MatchByNumber(
 			IUnitOfWork uow, 
 			IEnumerable<SheetRowEmployee> list, 
-			List<ImportedColumn<DataTypeEmployee>> columns, 
+			ImportModelEmployee model, 
 			SettingsMatchEmployeesViewModel settings, 
 			IProgressBarDisplayable progress)
 		{
 			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
-			var numberColumn = 
-				columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.PersonnelNumber);
-			var numbers = list.Select(x => EmployeeParse.GetPersonalNumber(settings, x, numberColumn.Index))
+			var numberColumn = model.GetColumnForDataType(DataTypeEmployee.PersonnelNumber);
+			var numbers = list.Select(x => EmployeeParse.GetPersonalNumber(settings, x, numberColumn))
 							.Where(x => !String.IsNullOrWhiteSpace(x))
 							.Distinct().ToArray();
 			
-			var sizeWillSet = columns.Any(x => x.DataType.Data is SizeType);
+			var sizeWillSet = model.ImportedDataTypes.Any(x => x.DataType.Data is SizeType);
 			var query = uow.Session.QueryOver<EmployeeCard>();
 			if(sizeWillSet) //Если будем проставлять размеры, запрашиваем сразу имеющиеся размеры для ускорения...
 				query.Fetch(SelectMode.Fetch, x => x.Sizes);
@@ -429,17 +437,17 @@ namespace workwear.Models.Import
 			progress.Add();
 			foreach(var employee in exists) {
 				var found = list.Where(x => 
-					EmployeeParse.GetPersonalNumber(settings, x, numberColumn.Index) == employee.PersonnelNumber).ToArray();
+					EmployeeParse.GetPersonalNumber(settings, x, numberColumn) == employee.PersonnelNumber).ToArray();
 				found.First().Employees.Add(employee);
 			}
 
 			//Пропускаем дубликаты Табельных номеров в файле
 			progress.Add();
-			var groups = list.GroupBy(x => EmployeeParse.GetPersonalNumber(settings, x, numberColumn.Index));
+			var groups = list.GroupBy(x => EmployeeParse.GetPersonalNumber(settings, x, numberColumn));
 			foreach(var group in groups) {
 				if(String.IsNullOrWhiteSpace(group.Key)) {
 					//Если табельного номера нет проверяем по FIO
-					MatchByName(uow, group, columns, progress);
+					MatchByName(uow, group, model, progress);
 				}
 
 				foreach(var item in group.Skip(1)) {
@@ -457,7 +465,7 @@ namespace workwear.Models.Import
 		public void FillExistEntities(
 			IUnitOfWork uow, 
 			IEnumerable<SheetRowEmployee> list, 
-			List<ImportedColumn<DataTypeEmployee>> columns, 
+			ImportModelEmployee model, 
 			IProgressBarDisplayable progress)
 		{
 			progress.Start(3, text: "Загружаем подразделения");
@@ -509,7 +517,7 @@ namespace workwear.Models.Import
 			IUnitOfWork uow, 
 			EmployeeCard employee, 
 			SheetRowEmployee row, 
-			ImportedColumn<DataTypeEmployee> column)
+			ExcelColumn column)
 		{
 			var value = row.CellStringValue(column.Index).Trim().ToLower();
 			var dataType = (DataTypeEmployeeSize)column.DataType;
@@ -529,7 +537,7 @@ namespace workwear.Models.Import
 			SettingsMatchEmployeesViewModel settings,
 			EmployeeCard employee, 
 			SheetRowEmployee row, 
-			ImportedColumn<DataTypeEmployee> column)
+			ExcelColumn column)
 		{
 			var value = row.CellStringValue(column.Index);
 			var dataType = column.DataTypeEnum;
@@ -605,20 +613,20 @@ namespace workwear.Models.Import
 		}
 		#endregion
 		#region Helpers
-		public FIO GetFIO(SheetRowEmployee row, List<ImportedColumn<DataTypeEmployee>> columns) {
+		public FIO GetFIO(SheetRowEmployee row, ImportModelEmployee model) {
 			var fio = new FIO();
-			var lastnameColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.LastName);
-			var firstNameColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.FirstName);
-			var patronymicColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.Patronymic);
-			var fioColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.Fio);
+			var lastnameColumn = model.GetColumnForDataType(DataTypeEmployee.LastName);
+			var firstNameColumn = model.GetColumnForDataType(DataTypeEmployee.FirstName);
+			var patronymicColumn = model.GetColumnForDataType(DataTypeEmployee.Patronymic);
+			var fioColumn = model.GetColumnForDataType(DataTypeEmployee.Fio);
 			if(fioColumn != null)
-				row.CellStringValue(fioColumn.Index)?.SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
+				row.CellStringValue(fioColumn)?.SplitFullName(out fio.LastName, out fio.FirstName, out fio.Patronymic);
 			if(lastnameColumn != null)
-				fio.LastName = row.CellStringValue(lastnameColumn.Index);
+				fio.LastName = row.CellStringValue(lastnameColumn);
 			if(firstNameColumn != null)
-				fio.FirstName = row.CellStringValue(firstNameColumn.Index);
+				fio.FirstName = row.CellStringValue(firstNameColumn);
 			if(patronymicColumn != null)
-				fio.Patronymic = row.CellStringValue(patronymicColumn.Index);
+				fio.Patronymic = row.CellStringValue(patronymicColumn);
 			return fio;
 		}
 		#endregion

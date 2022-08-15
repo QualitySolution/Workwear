@@ -7,7 +7,7 @@ using QS.DomainModel.UoW;
 using Workwear.Measurements;
 using workwear.ViewModels.Import;
 
-namespace workwear.Models.Import
+namespace workwear.Models.Import.Employee
 {
 	public class ImportModelEmployee : ImportModelBase<DataTypeEmployee, SheetRowEmployee>, IImportModel
 	{
@@ -71,19 +71,16 @@ namespace workwear.Models.Import
 
 		public void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
-			if(Columns.Any(x => x.DataTypeEnum == DataTypeEmployee.PersonnelNumber))
-				dataParser.MatchByNumber(uow, UsedRows, Columns, matchSettingsViewModel, progress);
+			if(ImportedDataTypes.Any(x => DataTypeEmployee.PersonnelNumber.Equals(x.DataType.Data)))
+				dataParser.MatchByNumber(uow, UsedRows, this, matchSettingsViewModel, progress);
 			else
-				dataParser.MatchByName(uow, UsedRows, Columns, progress);
+				dataParser.MatchByName(uow, UsedRows, this, progress);
 
-			dataParser.FillExistEntities(uow, UsedRows, Columns, progress);
+			dataParser.FillExistEntities(uow, UsedRows, this, progress);
 			dataParser.FindChanges(
 				uow, 
 				UsedRows, 
-				Columns
-					.Where(x => x.DataType != null || x.DataTypeEnum != DataTypeEmployee.Unknown)
-					.OrderBy(x => x.DataTypeEnum)
-					.ToArray(), 
+				ImportedDataTypes.ToArray(), 
 				progress, 
 				matchSettingsViewModel);
 			OnPropertyChanged(nameof(DisplayRows));

@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace workwear.Models.Import
+namespace workwear.Models.Import.Employee
 {
 	public enum CountersEmployee
 	{
