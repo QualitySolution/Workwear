@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using NHibernate;
 using NHibernate.Criterion;
 using QS.Dialog;
@@ -11,7 +10,6 @@ using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Repository.Regulations;
-using Workwear.Domain.Regulations;
 using Workwear.Measurements;
 using workwear.Models.Import.Norms.DataTypes;
 
@@ -50,21 +48,6 @@ namespace workwear.Models.Import.Norms
 				}
 				if(row.HasChanges)
 					row.ToSave.Add(row.NormItem);
-			}
-		}
-
-		public ChangeState CalculateChange(SheetRowNorm row, DataType dataType, string value) {
-			var dataTypeEnum = (DataTypeNorm)dataType.Data;
-			if(String.IsNullOrWhiteSpace(value)) {
-				return new ChangeState(ChangeType.NotChanged);
-			}
-
-			switch(dataTypeEnum) {
-				case DataTypeNorm.ProtectionTools:
-					
-
-				default:
-					throw new NotSupportedException($"Тип данных {dataTypeEnum} не поддерживается.");
 			}
 		}
 		#endregion
