@@ -17,7 +17,7 @@ using workwear.Models.Company;
 using workwear.Tools.Nhibernate;
 using workwear.ViewModels.Import;
 using Workwear.Measurements;
-using workwear.Models.Import.Employee;
+using workwear.Models.Import.Employees;
 
 namespace WorkwearTest.Integration.Import
 {

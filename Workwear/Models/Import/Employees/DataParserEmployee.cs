@@ -13,11 +13,11 @@ using workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 using workwear.Models.Company;
-using workwear.Models.Import.Employee.DataTypes;
+using workwear.Models.Import.Employees.DataTypes;
 using workwear.Repository.Company;
 using workwear.ViewModels.Import;
 
-namespace workwear.Models.Import.Employee
+namespace workwear.Models.Import.Employees
 {
 	public class DataParserEmployee : DataParserBase
 	{
@@ -110,7 +110,8 @@ namespace workwear.Models.Import.Employee
 				"Бригады"
 			);
 			AddColumnName(DataTypeEmployee.Post,
-				"Должность"
+				"Должность",
+				"Профессия"
 			);
 			
 			var sizeTypes = sizeService.GetSizeType(uow, true);

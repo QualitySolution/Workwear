@@ -5,7 +5,7 @@ using QS.Utilities.Text;
 using Workwear.Domain.Company;
 using workwear.Models.Company;
 
-namespace workwear.Models.Import.Employee.DataTypes {
+namespace workwear.Models.Import.Employees.DataTypes {
 	public class DataTypeFio : DataTypeEmployeeBase {
 		private readonly PersonNames personNames;
 
@@ -15,10 +15,10 @@ namespace workwear.Models.Import.Employee.DataTypes {
 			ColumnNameKeywords.AddRange(new []{				
 				"ФИО",
 				"Ф.И.О.",
-				"Фамилия Имя Отчество",
 				"Сотрудник",
 				"Наименование"//Встречается при выгрузке из 1C
 			});
+			ColumnNameRegExp = "фамилия.+имя.+отчество";
 			Data = DataTypeEmployee.Fio;
 		}
 

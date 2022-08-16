@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace workwear.Models.Import.Employee
+namespace workwear.Models.Import.Employees
 {
 	public enum DataTypeEmployee
 	{

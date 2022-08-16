@@ -5,7 +5,7 @@ using workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 
-namespace workwear.Models.Import.Employee.DataTypes {
+namespace workwear.Models.Import.Employees.DataTypes {
 	public class DataTypeEmployeeSize : DataTypeEmployeeBase {
 		private readonly SizeService sizeService;
 		private readonly SizeType sizeType;

@@ -6,7 +6,7 @@ using Gamma.Utilities;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 
-namespace workwear.Models.Import.Employee.DataTypes {
+namespace workwear.Models.Import.Employees.DataTypes {
 	public class DataTypeSimpleDate : DataTypeEmployeeBase {
 		private readonly PropertyInfo property;
 

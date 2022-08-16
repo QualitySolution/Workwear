@@ -1,7 +1,7 @@
 ﻿
 using QS.DomainModel.UoW;
 
-namespace workwear.Models.Import.Employee.DataTypes {
+namespace workwear.Models.Import.Employees.DataTypes {
 	public abstract class DataTypeEmployeeBase : DataType {
 		protected DataTypeEmployeeBase(object data = null, int? order = null) : base(data, order)
 		{

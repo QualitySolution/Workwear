@@ -3,7 +3,7 @@ using System.Linq;
 using NPOI.SS.UserModel;
 using workwear.Domain.Company;
 
-namespace workwear.Models.Import.Employee
+namespace workwear.Models.Import.Employees
 {
 	public class SheetRowEmployee : SheetRowBase<SheetRowEmployee>
 	{

@@ -5,7 +5,7 @@ using QS.Utilities.Text;
 using Workwear.Domain.Company;
 using workwear.Models.Company;
 
-namespace workwear.Models.Import.Employee.DataTypes {
+namespace workwear.Models.Import.Employees.DataTypes {
 	public class DataTypeSex : DataTypeEmployeeBase {
 
 		public DataTypeSex()

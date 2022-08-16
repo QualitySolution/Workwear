@@ -2,7 +2,7 @@
 using QS.Utilities.Numeric;
 using workwear.ViewModels.Import;
 
-namespace workwear.Models.Import.Employee.DataTypes {
+namespace workwear.Models.Import.Employees.DataTypes {
 	public class DataTypePhone : DataTypeSimpleString {
 		private readonly PhoneFormatter formatter;
 
