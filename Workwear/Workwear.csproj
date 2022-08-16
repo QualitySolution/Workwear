@@ -152,7 +152,15 @@
     <Compile Include="Models\Import\Employee\CountersEmployee.cs" />
     <Compile Include="Models\Import\Employee\DataParserEmployee.cs" />
     <Compile Include="Models\Import\Employee\DataTypeEmployee.cs" />
+    <Compile Include="Models\Import\Employee\DataTypes\DataTypeSimpleDate.cs" />
+    <Compile Include="Models\Import\Employee\DataTypes\DataTypeFirstName.cs" />
+    <Compile Include="Models\Import\Employee\DataTypes\DataTypePersonalNumber.cs" />
+    <Compile Include="Models\Import\Employee\DataTypes\DataTypeSimpleString.cs" />
     <Compile Include="Models\Import\Employee\DataTypes\DataTypeEmployeeSize.cs" />
+    <Compile Include="Models\Import\Employee\DataTypes\DataTypeEmployeeBase.cs" />
+    <Compile Include="Models\Import\Employee\DataTypes\DataTypeFio.cs" />
+    <Compile Include="Models\Import\Employee\DataTypes\DataTypePhone.cs" />
+    <Compile Include="Models\Import\Employee\DataTypes\DataTypeSex.cs" />
     <Compile Include="Models\Import\Employee\ImportModelEmployee.cs" />
     <Compile Include="Models\Import\Employee\SheetRowEmployee.cs" />
     <Compile Include="Models\Import\IMatchEmployeesSettings.cs" />

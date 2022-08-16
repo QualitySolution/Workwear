@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
-using Workwear.Measurements;
 using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import.Employee
@@ -13,26 +12,20 @@ namespace workwear.Models.Import.Employee
 	{
 		private readonly DataParserEmployee dataParser;
 		readonly SettingsMatchEmployeesViewModel matchSettingsViewModel;
-		private readonly SizeService sizeService;
-		private readonly IUnitOfWork unitOfWork;
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		public ImportModelEmployee(
 			DataParserEmployee dataParser, 
-			SettingsMatchEmployeesViewModel matchSettingsViewModel,
-			SizeService sizeService,
-			IUnitOfWorkFactory unitOfWorkFactory
+			SettingsMatchEmployeesViewModel matchSettingsViewModel
 		) : base(dataParser, typeof(CountersEmployee), matchSettingsViewModel)
 		{
 			this.matchSettingsViewModel = matchSettingsViewModel ?? throw new ArgumentNullException(nameof(matchSettingsViewModel));
 			this.dataParser = dataParser ?? throw new ArgumentNullException(nameof(dataParser));
-			this.sizeService = sizeService;
-			unitOfWork = unitOfWorkFactory.CreateWithoutRoot();
 		}
 
 		public override void Init(IUnitOfWork uow)
 		{
-			dataParser.CreateSizeDatatypes(uow);
+			dataParser.CreateDatatypes(uow, matchSettingsViewModel);
 		}
 
 		#region Параметры
@@ -64,7 +57,7 @@ namespace workwear.Models.Import.Employee
 			toSave.AddRange(dataParser.UsedDepartment.Where(x => x.Id == 0));
 			toSave.AddRange(dataParser.UsedPosts.Where(x => x.Id == 0));
 			foreach(var row in rows) {
-				toSave.AddRange(dataParser.PrepareToSave(uow, matchSettingsViewModel, row));
+				toSave.AddRange(row.PrepareToSave());
 			}
 			return toSave;
 		}
@@ -81,8 +74,7 @@ namespace workwear.Models.Import.Employee
 				uow, 
 				UsedRows, 
 				ImportedDataTypes.ToArray(), 
-				progress, 
-				matchSettingsViewModel);
+				progress);
 			OnPropertyChanged(nameof(DisplayRows));
 			
 			RecalculateCounters();

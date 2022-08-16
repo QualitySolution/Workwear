@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -10,7 +10,6 @@ using QS.Services;
 using QS.Utilities.Numeric;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
-using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 using workwear.Models.Company;
@@ -38,110 +37,86 @@ namespace workwear.Models.Import.Employee
 			this.userService = userService;
 			this.sizeService = sizeService;
 			
-			AddColumnName(DataTypeEmployee.Fio,
-				"ФИО",
-				"Ф.И.О.",
-				"Фамилия Имя Отчество",
-				"Сотрудник",
-				"Наименование"//Встречается при выгрузке из 1C
-				);
-			AddColumnName(DataTypeEmployee.CardKey,
-				"CARD_KEY",
-				"card",
-				"uid"
-				);
-			AddColumnName(DataTypeEmployee.FirstName,
-				"FIRST_NAME",
-				"имя",
-				"FIRST NAME"
-				);
-			AddColumnName(DataTypeEmployee.LastName,
-				"LAST_NAME",
-				"фамилия",
-				"LAST NAME"
-				);
-			AddColumnName(DataTypeEmployee.Patronymic,
-				"SECOND_NAME",
-				"SECOND NAME",
-				"Patronymic",
-				"Отчество"
-				);
-			AddColumnName(DataTypeEmployee.Sex,
-				"Sex",
-				"Gender"
-			).ColumnNameRegExp = @"(?<=^|\s)пол(?=$|\s)";
-			AddColumnName(DataTypeEmployee.PersonnelNumber,
-				"TN",
-				"Табельный",
-				"Таб. №",
-				"Таб."//Если такой вариант будет пересекаться с другими полями его можно удалить.
-				);
-			AddColumnName(DataTypeEmployee.Phone,
-				"Телефон",
-				"Номер телефона"
-			).ColumnNameRegExp = @"(?<=^|\s)тел(?=$|\s|\.)";
-			AddColumnName(DataTypeEmployee.HireDate,
-				"Дата приема",
-				"Дата приёма",
-				"Принят"
-				);
-			AddColumnName(DataTypeEmployee.DismissDate,
-				"Дата увольнения",
-				"Уволен"
-			);
-			AddColumnName(DataTypeEmployee.BirthDate,
-				"Дата рождения",
-				"День рождения",
-				"BirthDay"
-			);
+
+		}
+
+		#region Размеры
+		public void CreateDatatypes(IUnitOfWork uow, SettingsMatchEmployeesViewModel settings) {
+			SupportDataTypes.Add(new DataTypeFio(personNames));
+			SupportDataTypes.Add(new DataTypeSimpleString(
+				DataTypeEmployee.CardKey,
+				x => x.CardKey,
+				new []{
+					"CARD_KEY",
+					"card",
+					"uid"
+				}
+			));
+			SupportDataTypes.Add(new DataTypeFirstName(personNames));
+			SupportDataTypes.Add(new DataTypeSimpleString(
+				DataTypeEmployee.LastName,
+				x => x.LastName,
+				new []{
+					"LAST_NAME",
+					"фамилия",
+					"LAST NAME"
+				}
+			));
+			SupportDataTypes.Add(new DataTypeSimpleString(
+				DataTypeEmployee.Patronymic,
+				x => x.Patronymic,
+				new []{
+					"SECOND_NAME",
+					"SECOND NAME",
+					"Patronymic",
+					"Отчество"
+				}
+			));
+			SupportDataTypes.Add(new DataTypeSex());
+			SupportDataTypes.Add(new DataTypePersonalNumber(settings));
+			SupportDataTypes.Add(new DataTypePhone(phoneFormatter));
+			SupportDataTypes.Add(new DataTypeSimpleDate(
+				DataTypeEmployee.HireDate,
+				x => x.HireDate,
+				new []{
+					"Дата приема",
+					"Дата приёма",
+					"Принят"
+				}
+			));
+			SupportDataTypes.Add(new DataTypeSimpleDate(
+				DataTypeEmployee.DismissDate,
+				x => x.DismissDate,
+				new []{
+					"Дата увольнения",
+					"Уволен"
+				}
+			));
+			SupportDataTypes.Add(new DataTypeSimpleDate(
+				DataTypeEmployee.BirthDate,
+				x => x.BirthDate,
+				new []{
+					"Дата рождения",
+					"День рождения",
+					"BirthDay"
+				}
+			));
 			AddColumnName(DataTypeEmployee.Subdivision,
 				"Подразделение"
-				);
+			);
 			AddColumnName(DataTypeEmployee.Department,
 				"Отдел",
 				"Бригада",
 				"Бригады"
-				);
+			);
 			AddColumnName(DataTypeEmployee.Post,
 				"Должность"
-				);
-		}
-
-		#region Размеры
-		public void CreateSizeDatatypes(IUnitOfWork uow) {
+			);
+			
 			var sizeTypes = sizeService.GetSizeType(uow, true);
 			foreach (var sizeType in sizeTypes)
 			{
 				var datatype = new DataTypeEmployeeSize(sizeService, sizeType);
-				if (sizeType.Id == 2)
-					datatype.ColumnNameRegExp = "(одежда|одежды)";
-				if (sizeType.Id == 3) {
-					datatype.ColumnNameRegExp = "зим.+(одежда|одежды)";
-					datatype.ColumnNameDetectPriority = 5; //Повышенный приоритет для того чтобы сначала срабатывало привило с зимним вариантом
-				}
-				if (sizeType.Id == 4)
-					datatype.ColumnNameRegExp = "(обувь|обуви)";
-				if (sizeType.Id == 5) {
-					datatype.ColumnNameRegExp = "зим.+(обувь|обуви)";
-					datatype.ColumnNameDetectPriority = 5;
-				}
-				if (sizeType.Id == 6)
-					datatype.ColumnNameRegExp = "(головного|головной)";
-				if (sizeType.Id == 9) {
-					datatype.ColumnNameRegExp = "зим.+(головного|головной)";
-					datatype.ColumnNameDetectPriority = 5; //Повышенный приоритет для того чтобы сначала срабатывало привило с зимним вариантом
-				}
-				if (sizeType.Id == 7)
-					datatype.ColumnNameRegExp = "(перчаток|перчатки)";
-				if (sizeType.Id == 8)
-					datatype.ColumnNameRegExp = "(рукавиц|рукавицы)";
-				if (sizeType.Id == 10)
-					datatype.ColumnNameRegExp = "противогаза?";
-				if (sizeType.Id == 11)
-					datatype.ColumnNameRegExp = "респиратора?";
-				if (sizeType.Id == 12)
-					datatype.ColumnNameRegExp = "носк(и|ов)";
-				
 				SupportDataTypes.Add(datatype);
 			}
 		}
@@ -153,8 +128,7 @@ namespace workwear.Models.Import.Employee
 			IUnitOfWork uow, 
 			IEnumerable<SheetRowEmployee> list, 
 			ExcelValueTarget[] meaningfulColumns, 
-			IProgressBarDisplayable progress, 
-			SettingsMatchEmployeesViewModel settings)
+			IProgressBarDisplayable progress)
 		{
 			progress.Start(list.Count(), text: "Поиск изменений");
 			foreach(var row in list) {
@@ -163,7 +137,6 @@ namespace workwear.Models.Import.Employee
 					continue;
 
 				var employee = row.Employees.FirstOrDefault();
-				var rowChange = ChangeType.ChangeValue;
 
 				if(employee == null) {
 					employee = new EmployeeCard {
@@ -171,19 +144,18 @@ namespace workwear.Models.Import.Employee
 						CreatedbyUser = userService?.GetCurrentUser(uow)
 					};
 					row.Employees.Add(employee);
-					rowChange = ChangeType.NewEntity;
 				}
 
 				foreach(var column in meaningfulColumns) {
-					if(column.DataTypeEnum != DataTypeEmployee.Unknown)
-						MakeChange(settings, employee, row, column, rowChange, uow);
-					else if(column.DataType.Data is SizeType)
-						MakeSizeChange(settings, employee, row, column, rowChange, uow);
+					var datatype = (DataTypeEmployeeBase)column.DataType;
+					datatype.CalculateChange(row, column, uow);
 				}
+				if(row.HasChanges)
+					row.ToSave.Add(row.EditingEmployee);
 			}
 			progress.Close();
 		}
-
+		/*
 		public void MakeChange(
 			SettingsMatchEmployeesViewModel settings, 
 			EmployeeCard employee, 
@@ -200,59 +172,6 @@ namespace workwear.Models.Import.Employee
 			}
 
 			switch(dataType) {
-				case DataTypeEmployee.CardKey:
-					row.ChangedColumns.Add(column, CompareString(employee.CardKey, value, rowChange));
-					break;
-				case DataTypeEmployee.PersonnelNumber:
-					row.ChangedColumns.Add(column, CompareString(employee.PersonnelNumber, 
-						(settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(value) : value)?.Trim(), rowChange));
-					break;
-				case DataTypeEmployee.Phone:
-					row.ChangedColumns.Add(column, ComparePhone(employee.PhoneNumber, value, rowChange));
-					break;
-				case DataTypeEmployee.LastName:
-					row.ChangedColumns.Add(column, CompareString(employee.LastName, value, rowChange));
-					break;
-				case DataTypeEmployee.FirstName:
-					row.ChangedColumns.Add(column, CompareString(employee.FirstName, value, rowChange));
-					break;
-				case DataTypeEmployee.Patronymic:
-					row.ChangedColumns.Add(column, CompareString(employee.Patronymic, value, rowChange));
-					break;
-				case DataTypeEmployee.Sex:
-					//Первая М английская, вторая русская.
-					if(value.StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || 
-					   value.StartsWith("М", StringComparison.CurrentCultureIgnoreCase)) {
-						row.AddColumnChange(column, employee.Sex == Sex.M ? ChangeType.NotChanged : rowChange);
-						break;
-					}
-					if(value.StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || 
-					   value.StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase)) {
-						row.AddColumnChange(column, employee.Sex == Sex.F ? ChangeType.NotChanged : rowChange);
-						break;
-					}
-					row.AddColumnChange(column, ChangeType.ParseError);
-					break;
-				case DataTypeEmployee.Fio:
-					value.SplitFullName(out var lastName, out var firstName, out var patronymic);
-					var lastDiff = !String.IsNullOrEmpty(lastName) && 
-					               !String.Equals(employee.LastName, lastName, StringComparison.CurrentCultureIgnoreCase);
-					var firstDiff = !String.IsNullOrEmpty(firstName) && 
-					                !String.Equals(employee.FirstName, firstName, StringComparison.CurrentCultureIgnoreCase);
-					var patronymicDiff = !String.IsNullOrEmpty(patronymic) && 
-					                     !String.Equals(employee.Patronymic, patronymic, StringComparison.CurrentCultureIgnoreCase);
-					string oldValue = (lastDiff || firstDiff || patronymicDiff) ? employee.FullName : null;
-					row.AddColumnChange(column, (lastDiff || firstDiff || patronymicDiff) ? rowChange : ChangeType.NotChanged, oldValue);
-					break;
-				case DataTypeEmployee.HireDate:
-					row.ChangedColumns.Add(column, CompareDate(employee.HireDate, row.CellDateTimeValue(column.Index), rowChange));
-					break;
-				case DataTypeEmployee.DismissDate:
-					row.ChangedColumns.Add(column, CompareDate(employee.DismissDate, row.CellDateTimeValue(column.Index), rowChange));
-					break;
-				case DataTypeEmployee.BirthDate:
-					row.ChangedColumns.Add(column, CompareDate(employee.BirthDate, row.CellDateTimeValue(column.Index), rowChange));
-					break;
 				case DataTypeEmployee.Subdivision:
 					if(String.Equals(employee.Subdivision?.Name, value, StringComparison.CurrentCultureIgnoreCase)) {
 						row.AddColumnChange(column, ChangeType.NotChanged);
@@ -311,62 +230,7 @@ namespace workwear.Models.Import.Employee
 				default:
 					throw new NotSupportedException($"Тип данных {dataType} не поддерживается.");
 			}
-		}
-
-		private void MakeSizeChange(
-			SettingsMatchEmployeesViewModel settings, 
-			EmployeeCard employee, 
-			SheetRowEmployee row, 
-			ExcelColumn column, 
-			ChangeType rowChange,
-			IUnitOfWork uow)
-		{
-			var value = row.CellStringValue(column.Index)?.Trim().ToLower();
-			if(String.IsNullOrWhiteSpace(value)) {
-				row.AddColumnChange(column, ChangeType.NotChanged);
-				return;
-			}
-			var dataType = (DataTypeEmployeeSize)column.DataType;
-			var size = dataType.ParseValue(uow, value);
-
-			var employeeSize = employee.Sizes
-				.FirstOrDefault(x => x.SizeType == size?.SizeType)?.Size;
-			row.ChangedColumns.Add(column, CompareSize(employeeSize, size, value, rowChange, uow));
-		}
-
-		private ChangeState CompareString(string fieldValue, string newValue, ChangeType rowChange) {
-			var changeType = String.Equals(fieldValue, newValue, StringComparison.InvariantCultureIgnoreCase) ? 
-				ChangeType.NotChanged : rowChange;
-			return changeType == ChangeType.ChangeValue ? 
-				new ChangeState(changeType, fieldValue) : new ChangeState(changeType);
-		}
-
-		private ChangeState CompareDate(DateTime? fieldValue, DateTime? newValue, ChangeType rowChange)
-		{
-			var changeType = fieldValue == newValue ? ChangeType.NotChanged : rowChange;
-			if(changeType == ChangeType.ChangeValue)
-				return new ChangeState(changeType, fieldValue?.ToShortDateString());
-			return new ChangeState(changeType);
-		}
-
-		private ChangeState CompareSize(Size oldValue, Size newValue, string excelValue, ChangeType rowChange, IUnitOfWork uow) {
-			if (newValue == null && !String.IsNullOrWhiteSpace(excelValue))
-				return new ChangeState(ChangeType.ParseError, oldValue?.Name);
-			
-			var changeType = oldValue == newValue ? ChangeType.NotChanged : rowChange;
-			return new ChangeState(changeType, oldValue?.Name, newValue?.Name != excelValue ? newValue?.Name : null);
-		}
-		
-		private ChangeState ComparePhone(string fieldValue, string newValue, ChangeType rowChange)
-		{
-			newValue = phoneFormatter.FormatString(newValue);
-			var changeType = String.Equals(fieldValue, newValue, StringComparison.InvariantCultureIgnoreCase) ? 
-				ChangeType.NotChanged : rowChange;
-			if(newValue.Length != phoneFormatter.MaxStringLength)
-				changeType = ChangeType.ParseError;
-			return changeType == ChangeType.ChangeValue ? 
-				new ChangeState(changeType, fieldValue) : new ChangeState(changeType);
-		}
+		} */
 		#endregion
 		#region Сопоставление
 		public void MatchByName(
@@ -403,14 +267,6 @@ namespace workwear.Models.Import.Employee
 				}
 			}
 			progress.Close();
-		}
-
-		private bool СompareFio(SheetRowEmployee x, EmployeeCard employee, List<ExcelColumn> columns)
-		{
-			var fio = GetFIO(x, columns);
-			return String.Equals(fio.LastName, employee.LastName, StringComparison.CurrentCultureIgnoreCase)
-				&& String.Equals(fio.FirstName, employee.FirstName, StringComparison.CurrentCultureIgnoreCase)
-				&& (fio.Patronymic == null || String.Equals(fio.Patronymic, employee.Patronymic, StringComparison.CurrentCultureIgnoreCase));
 		}
 
 		public void MatchByNumber(
@@ -469,147 +325,30 @@ namespace workwear.Models.Import.Employee
 			IProgressBarDisplayable progress)
 		{
 			progress.Start(3, text: "Загружаем подразделения");
-			var subdivisionColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.Subdivision);
+			var subdivisionColumn = model.GetColumnForDataType(DataTypeEmployee.Subdivision);
 			if(subdivisionColumn != null) {
-				var subdivisionNames = list.Select(x => x.CellStringValue(subdivisionColumn.Index)).Distinct().ToArray();
+				var subdivisionNames = list.Select(x => x.CellStringValue(subdivisionColumn)).Distinct().ToArray();
 				UsedSubdivisions.AddRange(uow.Session.QueryOver<Subdivision>()
 					.Where(x => x.Name.IsIn(subdivisionNames))
 					.List());
 			}
 			progress.Add(text: "Загружаем отделы");
-			var departmentColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.Department);
+			var departmentColumn = model.GetColumnForDataType(DataTypeEmployee.Department);
 			if(departmentColumn != null) {
-				var departmentNames = list.Select(x => x.CellStringValue(departmentColumn.Index)).Distinct().ToArray();
+				var departmentNames = list.Select(x => x.CellStringValue(departmentColumn)).Distinct().ToArray();
 				UsedDepartment.AddRange(uow.Session.QueryOver<Department>()
 					.Where(x => x.Name.IsIn(departmentNames))
 					.List());
 			}
 			progress.Add(text: "Загружаем должности");
-			var postColumn = columns.FirstOrDefault(x => x.DataTypeEnum == DataTypeEmployee.Post);
+			var postColumn = model.GetColumnForDataType(DataTypeEmployee.Post);
 			if(postColumn != null) {
-				var postNames = list.Select(x => x.CellStringValue(postColumn.Index)).Distinct().ToArray();
+				var postNames = list.Select(x => x.CellStringValue(postColumn)).Distinct().ToArray();
 				UsedPosts.AddRange( uow.Session.QueryOver<Post>()
 					.Where(x => x.Name.IsIn(postNames))
 					.List());
 			}
 			progress.Close();
-		}
-		#endregion
-		#region Сохранение данных
-		public IEnumerable<object> PrepareToSave(IUnitOfWork uow, SettingsMatchEmployeesViewModel settings, SheetRowEmployee row) {
-			var employee = row.Employees.FirstOrDefault() ?? new EmployeeCard();
-			//Здесь колонки сортируются чтобы процесс обработки данных был в порядке следования описания типов в Enum
-			//Это надо для того чтобы наличие 2 полей с похожими данными заполнялись правильно. Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученной из общего поля ФИО.
-			foreach(var column in row.ChangedColumns.Keys.OrderBy(x => x.DataType.ValueSetOrder)) {
-				if(row.ChangedColumns[column].ChangeType == ChangeType.NewEntity || row.ChangedColumns[column].ChangeType == ChangeType.ChangeValue)
-				{
-					if(column.DataType.Data is DataTypeEmployee)
-						SetValue(settings, employee, row, column);
-					else if (column.DataType.Data is SizeType)
-						SetSizeValue(uow, employee, row, column);
-						
-				}
-			}
-			yield return employee;
-		}
-
-		private void SetSizeValue(
-			IUnitOfWork uow, 
-			EmployeeCard employee, 
-			SheetRowEmployee row, 
-			ExcelColumn column)
-		{
-			var value = row.CellStringValue(column.Index).Trim().ToLower();
-			var dataType = (DataTypeEmployeeSize)column.DataType;
-			var size = dataType.ParseValue(uow, value);
-			if(size is null) return;
-			var employeeSize = employee.Sizes.FirstOrDefault(x => x.SizeType == size.SizeType);
-			if (employeeSize is null) {
-					employeeSize = new EmployeeSize
-						{Size = size, SizeType = size.SizeType, Employee = employee};
-					employee.Sizes.Add(employeeSize);
-			}
-			else
-				employeeSize.Size = size;
-		}
-
-		private void SetValue(
-			SettingsMatchEmployeesViewModel settings,
-			EmployeeCard employee, 
-			SheetRowEmployee row, 
-			ExcelColumn column)
-		{
-			var value = row.CellStringValue(column.Index);
-			var dataType = column.DataTypeEnum;
-			if(String.IsNullOrWhiteSpace(value))
-				return;
-
-			switch(dataType) {
-				case DataTypeEmployee.CardKey:
-					employee.CardKey = value;
-					break;
-				case DataTypeEmployee.PersonnelNumber:
-					employee.PersonnelNumber = (settings.ConvertPersonnelNumber ? 
-						EmployeeParse.ConvertPersonnelNumber(value) : value)?.Trim();
-					break;
-				case DataTypeEmployee.Phone:
-					employee.PhoneNumber = phoneFormatter.FormatString(value);
-					break;
-				case DataTypeEmployee.LastName:
-					employee.LastName = value;
-					break;
-				case DataTypeEmployee.FirstName:
-					employee.FirstName = value;
-					if(employee.Sex == Sex.None) 
-						employee.Sex = personNames.GetSexByName(employee.FirstName);
-					break;
-				case DataTypeEmployee.Patronymic:
-					employee.Patronymic = value;
-					break;
-				case DataTypeEmployee.Sex:
-					//Первая М английская, вторая русская.
-					if(value.StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || 
-					   value.StartsWith("М", StringComparison.CurrentCultureIgnoreCase))
-						employee.Sex = Sex.M;
-					if(value.StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || 
-					   value.StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase))
-						employee.Sex = Sex.F;
-					break;
-				case DataTypeEmployee.Fio:
-					value.SplitFullName(out var lastName, out var firstName, out var patronymic);
-					if(!String.IsNullOrEmpty(lastName) && !String.Equals(employee.LastName, value, StringComparison.CurrentCultureIgnoreCase))
-						employee.LastName = lastName;
-					if(!String.IsNullOrEmpty(firstName) && !String.Equals(employee.FirstName, value, StringComparison.CurrentCultureIgnoreCase))
-						employee.FirstName = firstName;
-					if(!String.IsNullOrEmpty(patronymic) && !String.Equals(employee.Patronymic, value, StringComparison.CurrentCultureIgnoreCase))
-						employee.Patronymic = patronymic;
-					if(employee.Sex == Sex.None && !String.IsNullOrWhiteSpace(employee.FirstName)) 
-						employee.Sex = personNames.GetSexByName(employee.FirstName);
-					break;
-				case DataTypeEmployee.HireDate:
-					var hireDate = row.CellDateTimeValue(column.Index);
-					if(hireDate != null)
-					 	employee.HireDate = hireDate;
-					break;
-				case DataTypeEmployee.DismissDate:
-					var dismissDate = row.CellDateTimeValue(column.Index);
-					if(dismissDate != null)
-						employee.DismissDate = dismissDate;
-					break;
-				case DataTypeEmployee.BirthDate:
-					var birthDate = row.CellDateTimeValue(column.Index);
-					if(birthDate != null)
-						employee.BirthDate = birthDate;
-					break;
-
-				case DataTypeEmployee.Subdivision:
-				case DataTypeEmployee.Department:
-				case DataTypeEmployee.Post:
-					//Устанавливаем в MakeChange;
-					break;
-				default:
-					throw new NotSupportedException($"Тип данных {dataType} не поддерживается.");
-			}
 		}
 		#endregion
 		#region Helpers
