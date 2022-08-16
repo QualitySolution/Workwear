@@ -35,7 +35,11 @@ namespace workwear.Models.Import
         public readonly List<string> ColumnNameKeywords = new List<string>();
         public string ColumnNameRegExp;
 
-        public bool ColumnNameMatch(string columnName)
+	    /// <summary>
+	    /// Внимание, здесь предполагается что строка придет уже преобразованная к нижнему регистру.
+	    /// Это делается на более высоком уровне вложенности вызовов, для ускорения обработки.
+	    /// </summary>
+	    public bool ColumnNameMatch(string columnName)
         {
             if (!String.IsNullOrEmpty(ColumnNameRegExp) && Regex.IsMatch(columnName, ColumnNameRegExp))
                 return true;

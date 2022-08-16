@@ -9,9 +9,9 @@ namespace workwear.Models.Import.Employees.DataTypes {
 
 		public DataTypeFirstName(PersonNames personNames) : base(
 			DataTypeEmployee.FirstName, x => x.FirstName, new []{					
-				"FIRST_NAME",
+				"first_name",
 				"имя",
-				"FIRST NAME"
+				"first name"
           }) {
 			this.personNames = personNames;
 		}

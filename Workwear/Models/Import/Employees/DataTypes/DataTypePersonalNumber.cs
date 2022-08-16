@@ -7,10 +7,10 @@ namespace workwear.Models.Import.Employees.DataTypes {
 
 		public DataTypePersonalNumber(SettingsMatchEmployeesViewModel settingsMatchEmployees) : base(
 			DataTypeEmployee.PersonnelNumber, x => x.PersonnelNumber, new []{					
-				"TN",
-				"Табельный",
-				"Таб. №",
-				"Таб."//Если такой вариант будет пересекаться с другими полями его можно удалить.
+				"tn",
+				"табельный",
+				"таб. №",
+				"таб."//Если такой вариант будет пересекаться с другими полями его можно удалить.
           }) {
 			this.settings = settingsMatchEmployees ?? throw new ArgumentNullException(nameof(settingsMatchEmployees));
 		}

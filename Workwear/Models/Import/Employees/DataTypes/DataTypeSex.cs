@@ -11,8 +11,8 @@ namespace workwear.Models.Import.Employees.DataTypes {
 		public DataTypeSex()
 		{
 			ColumnNameKeywords.AddRange(new []{				
-				"Sex",
-				"Gender"
+				"sex",
+				"gender"
 			});
 			ColumnNameRegExp = @"(?<=^|\s)пол(?=$|\s)";
 			Data = DataTypeEmployee.Sex;

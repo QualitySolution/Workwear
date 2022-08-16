@@ -8,8 +8,8 @@ namespace workwear.Models.Import.Employees.DataTypes {
 
 		public DataTypePhone(PhoneFormatter formatter) : base(
 			DataTypeEmployee.Phone, x => x.PhoneNumber, new []{					
-				"Телефон",
-				"Номер телефона"
+				"телефон",
+				"номер телефона"
           }) {
 			this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
 			ColumnNameRegExp = @"(?<=^|\s)тел(?=$|\s|\.)";

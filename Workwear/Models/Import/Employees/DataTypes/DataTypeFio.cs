@@ -13,10 +13,10 @@ namespace workwear.Models.Import.Employees.DataTypes {
 		{
 			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
 			ColumnNameKeywords.AddRange(new []{				
-				"ФИО",
-				"Ф.И.О.",
-				"Сотрудник",
-				"Наименование"//Встречается при выгрузке из 1C
+				"фио",
+				"ф.и.о.",
+				"сотрудник",
+				"наименование"//Встречается при выгрузке из 1C
 			});
 			ColumnNameRegExp = "фамилия.+имя.+отчество";
 			Data = DataTypeEmployee.Fio;
