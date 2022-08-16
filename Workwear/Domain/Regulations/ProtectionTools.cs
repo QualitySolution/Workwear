@@ -25,7 +25,7 @@ namespace workwear.Domain.Regulations
 		string name;
 		[Display(Name = "Название")]
 		[Required(ErrorMessage = "Название не должно быть пустым.")]
-		[StringLength(240)]
+		[StringLength(800)]
 		public virtual string Name {
 			get { return name; }
 			set { SetField(ref name, value?.Trim()); }

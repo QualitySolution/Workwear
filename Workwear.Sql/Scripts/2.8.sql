@@ -966,4 +966,7 @@ DROP TABLE IF EXISTS `stock_mass_expense` ;
 
 -- Добавляем дежурные сиз в нормы
 ALTER TABLE norms_item
-    CHANGE COLUMN `period_type` `period_type` ENUM('Year', 'Month', 'Shift', 'Wearout', 'Duty') NOT NULL DEFAULT 'Year'; 
+    CHANGE COLUMN `period_type` `period_type` ENUM('Year', 'Month', 'Shift', 'Wearout', 'Duty') NOT NULL DEFAULT 'Year';
+-- Увеличиваем размер колоноки с названием СИЗ
+ALTER TABLE protection_tools
+	CHANGE COLUMN `name` `name` VARCHAR(800) NOT NULL ;
