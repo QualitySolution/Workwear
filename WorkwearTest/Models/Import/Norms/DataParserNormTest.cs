@@ -1,11 +1,12 @@
 using System;
 using NUnit.Framework;
 using Workwear.Domain.Regulations;
-using workwear.Models.Import;
+using workwear.Models.Import.Norms;
+using workwear.Models.Import.Norms.DataTypes;
 
-namespace WorkwearTest.Models.Import
+namespace WorkwearTest.Models.Import.Norms
 {
-	[TestFixture(TestOf = typeof(DataParserNorm))]
+	[TestFixture(TestOf = typeof(DataTypePeriodAndCount))]
 	public class DataParserNormTest
 	{
 		[Test(Description = "Проверка парсинга колонки количество и период нормы")]
@@ -42,7 +43,7 @@ namespace WorkwearTest.Models.Import
 		[TestCase("12 пар\nдо износа", 12, 0, NormPeriodType.Wearout, false, true)]
 		public void TryParsePeriodAndCount_Test(string inputString, int expectedAmount, int expectedCount, NormPeriodType expectedPeriod, bool withWarning, bool expectedResult)
 		{
-			var result = DataParserNorm.TryParsePeriodAndCount(inputString, out int actualAmount, out int actualCount, out NormPeriodType actualPeriod, out string warning);
+			var result = DataTypePeriodAndCount.TryParsePeriodAndCount(inputString, out int actualAmount, out int actualCount, out NormPeriodType actualPeriod, out string warning);
 			Assert.AreEqual(expectedResult, result);
 			if(expectedResult)
 			{

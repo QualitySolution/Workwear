@@ -299,8 +299,8 @@ namespace WorkwearTest.Integration.Import
 					Assert.That(model.Columns, Has.Count.GreaterThanOrEqualTo(10), "В файле не менее 10 колонок с данными. " 
 						+ "(Реальный кейс: В этом фале в каждой строчке по 9 колонок с данными, так как в каждой хотя бы одна ячейка пропущена. Но в разных строках это разная ячейка.)");
 					//Здесь специально выбрана некорректная колонка с отсутствующими датами, так как тест как раз это тестирует.
-					model.Columns[8].DataType = model.DataTypes.First(x => DataTypeWorkwearItems.IssueDate.Equals(x.Data));
-					model.Columns[9].DataType = model.DataTypes.First(x => DataTypeWorkwearItems.Count.Equals(x.Data));
+					model.Columns[8].DataTypeByLevels.Last().DataType = model.DataTypes.First(x => DataTypeWorkwearItems.IssueDate.Equals(x.Data));
+					model.Columns[9].DataTypeByLevels.Last().DataType = model.DataTypes.First(x => DataTypeWorkwearItems.Count.Equals(x.Data));
 					Assert.That(itemsLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
 					itemsLoad.ThirdStep();
 					Assert.That(itemsLoad.SensitiveSaveButton, Is.False, "Кнопка сохранить будет не доступна, так как нет не одной даты");
@@ -400,8 +400,8 @@ namespace WorkwearTest.Integration.Import
 					Assert.That(model.Columns, Has.Count.GreaterThanOrEqualTo(10), "В файле не менее 10 колонок с данными. " 
 						+ "(Реальный кейс: В этом фале в каждой строчке по 9 колонок с данными, так как в каждой хотя бы одна ячейка пропущена. Но в разных строках это разная ячейка.)");
 					//Здесь специально выбрана некорректная колонка с отсутствующими датами, так как тест как раз это тестирует.
-					model.Columns[3].DataType = model.DataTypes.First(x => DataTypeWorkwearItems.IssueDate.Equals(x.Data));
-					model.Columns[9].DataType = model.DataTypes.First(x => DataTypeWorkwearItems.Count.Equals(x.Data));
+					model.Columns[3].DataTypeByLevels.Last().DataType = model.DataTypes.First(x => DataTypeWorkwearItems.IssueDate.Equals(x.Data));
+					model.Columns[9].DataTypeByLevels.Last().DataType = model.DataTypes.First(x => DataTypeWorkwearItems.Count.Equals(x.Data));
 					Assert.That(itemsLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
 					itemsLoad.ThirdStep();
 					var employees = uowPrepare.GetAll<EmployeeCard>();

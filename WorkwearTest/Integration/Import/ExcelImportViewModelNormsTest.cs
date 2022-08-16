@@ -12,6 +12,7 @@ using workwear.Models.Import;
 using workwear.Tools.Nhibernate;
 using workwear.ViewModels.Import;
 using Workwear.Measurements;
+using workwear.Models.Import.Norms;
 using workwear.Repository.Regulations;
 
 namespace WorkwearTest.Integration.Import

@@ -14,7 +14,6 @@ using workwear.Domain.Company;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using workwear.Models.Company;
-using workwear.Models.Import;
 using workwear.Tools.Nhibernate;
 using workwear.ViewModels.Import;
 using Workwear.Measurements;
@@ -48,7 +47,7 @@ namespace WorkwearTest.Integration.Import
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
-			var model = new ImportModelEmployee(dataparser, setting, new SizeService(), UnitOfWorkFactory);
+			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/cardkey_list.xlsx";
@@ -86,7 +85,7 @@ namespace WorkwearTest.Integration.Import
 			var setting = new SettingsMatchEmployeesViewModel();
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
-			var model = new ImportModelEmployee(dataparser, setting, new SizeService(), UnitOfWorkFactory);
+			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/vostok_1c_employee.xls";
@@ -142,7 +141,7 @@ namespace WorkwearTest.Integration.Import
 			var setting = new SettingsMatchEmployeesViewModel();
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
-			var model = new ImportModelEmployee(dataparser, setting, new SizeService(), UnitOfWorkFactory);
+			var model = new ImportModelEmployee(dataparser, setting);
 			
 			using (var rootUow = UnitOfWorkFactory.CreateWithoutRoot())
 			{
@@ -199,7 +198,7 @@ namespace WorkwearTest.Integration.Import
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
-			var model = new ImportModelEmployee(dataparser, setting, new SizeService(), UnitOfWorkFactory);
+			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				var importModel = employeesLoad.ImportModel as ImportModelEmployee;
 				employeesLoad.ProgressStep = progressStep;
@@ -208,7 +207,7 @@ namespace WorkwearTest.Integration.Import
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
 				employeesLoad.SecondStep();
-				importModel.Columns[1].DataType = importModel.DataTypes.First(x => DataTypeEmployee.DismissDate.Equals(x.Data)) ; //Вторая колонка дата увольнения.
+				importModel.Columns[1].DataTypeByLevels[0].DataType = importModel.DataTypes.First(x => DataTypeEmployee.DismissDate.Equals(x.Data)) ; //Вторая колонка дата увольнения.
 				Assert.That(employeesLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
 				employeesLoad.ThirdStep();
 				Assert.That(employeesLoad.SensitiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
@@ -261,7 +260,7 @@ namespace WorkwearTest.Integration.Import
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
-			var model = new ImportModelEmployee(dataParser, setting, new SizeService(), UnitOfWorkFactory);
+			var model = new ImportModelEmployee(dataParser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor))
 			{
 				var uow = employeesLoad.UoW;
@@ -305,7 +304,7 @@ namespace WorkwearTest.Integration.Import
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
 			var setting = new SettingsMatchEmployeesViewModel();
-			var model = new ImportModelEmployee(dataParser, setting, new SizeService(), UnitOfWorkFactory);
+			var model = new ImportModelEmployee(dataParser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor))
 			{
 				var uow = employeesLoad.UoW;
