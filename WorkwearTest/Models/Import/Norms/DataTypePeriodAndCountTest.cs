@@ -1,13 +1,12 @@
 using System;
 using NUnit.Framework;
 using Workwear.Domain.Regulations;
-using workwear.Models.Import.Norms;
 using workwear.Models.Import.Norms.DataTypes;
 
 namespace WorkwearTest.Models.Import.Norms
 {
 	[TestFixture(TestOf = typeof(DataTypePeriodAndCount))]
-	public class DataParserNormTest
+	public class DataTypePeriodAndCountTest
 	{
 		[Test(Description = "Проверка парсинга колонки количество и период нормы")]
 		//Варианты выгрузки Восток-Сервис

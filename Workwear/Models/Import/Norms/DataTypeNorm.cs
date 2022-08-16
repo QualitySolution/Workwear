@@ -12,6 +12,10 @@ namespace workwear.Models.Import.Norms
 		Post,
 		[Display(Name = "Номенклатура нормы")]
 		ProtectionTools,
+		[Display(Name = "Количество")]
+		Amount,
+		[Display(Name = "Период")]
+		Period,
 		[Display(Name = "Количество и период")]
 		PeriodAndCount,
 	}

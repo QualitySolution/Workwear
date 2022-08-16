@@ -58,7 +58,9 @@
     <Compile Include="Integration\Import\ExcelImportViewModelEmployeeTest.cs" />
     <Compile Include="Integration\Import\ExcelImportViewModelNormsTest.cs" />
     <Compile Include="Integration\Stock\CompletionIntegratedTest.cs" />
-    <Compile Include="Models\Import\Norms\DataParserNormTest.cs" />
+    <None Include="Models\Import\NomenclatureTypesTest.cs" />
+    <Compile Include="Models\Import\Norms\DataTypePeriodAndCountTest.cs" />
+    <Compile Include="Models\Import\Norms\DataTypePeriodTest.cs" />
     <Compile Include="Models\Import\RowStackHelperTest.cs" />
     <Compile Include="Operations\Graph\IssueGraphTest.cs" />
     <Compile Include="Operations\Graph\GraphItemTest.cs" />

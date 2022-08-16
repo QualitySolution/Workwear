@@ -174,7 +174,9 @@
     <Compile Include="Models\Import\Norms\CountersNorm.cs" />
     <Compile Include="Models\Import\Norms\DataParserNorm.cs" />
     <Compile Include="Models\Import\Norms\DataTypeNorm.cs" />
+    <Compile Include="Models\Import\Norms\DataTypes\DataTypeAmount.cs" />
     <Compile Include="Models\Import\Norms\DataTypes\DataTypeNormBase.cs" />
+    <Compile Include="Models\Import\Norms\DataTypes\DataTypePeriod.cs" />
     <Compile Include="Models\Import\Norms\DataTypes\DataTypePeriodAndCount.cs" />
     <Compile Include="Models\Import\Norms\DataTypes\DataTypePost.cs" />
     <Compile Include="Models\Import\Norms\DataTypes\DataTypeProtectionTools.cs" />

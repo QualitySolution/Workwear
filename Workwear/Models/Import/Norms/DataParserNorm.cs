@@ -29,6 +29,8 @@ namespace workwear.Models.Import.Norms
 			SizeService sizeService)
 		{
 			SupportDataTypes.Add( new DataTypeProtectionTools());
+			SupportDataTypes.Add( new DataTypeAmount());
+			SupportDataTypes.Add( new DataTypePeriod());
 			SupportDataTypes.Add( new DataTypePeriodAndCount());
 			SupportDataTypes.Add( new DataTypeSubdivision());
 			SupportDataTypes.Add( new DataTypePost());
