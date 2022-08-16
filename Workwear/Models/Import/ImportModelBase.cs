@@ -53,7 +53,7 @@ namespace workwear.Models.Import
 
 		public IEnumerable<ExcelValueTarget> ImportedDataTypes => Columns
 			.SelectMany(x => x.DataTypeByLevels)
-			.Where(x => !x.DataType.IsUnknown);
+			.Where(x => x.DataType != null && !x.DataType.IsUnknown);
 		public IEnumerable<DataType> DataTypes => dataParser.SupportDataTypes;
 
 		public ExcelValueTarget GetColumnForDataType(object data) {
