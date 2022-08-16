@@ -71,7 +71,7 @@ namespace workwear.Models.Import.Norms.DataTypes {
 				return true;
 			}
 			//Количество в месяцев
-			regexp = new Regex(@"(\d+) (месяц|месяца|месяцев|мес.)");
+			regexp = new Regex(@"(\d+) ?(месяц|месяца|месяцев|мес\.?)");
 			match = regexp.Match(value);
 			if(match.Success)
 			{

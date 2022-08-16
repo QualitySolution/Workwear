@@ -15,10 +15,16 @@ namespace WorkwearTest.Models.Import.Norms
 		[TestCase("2 года", 2, NormPeriodType.Year, false, true)]
 		[TestCase("1,5 года", 18, NormPeriodType.Month, false, true)]//FIXME: исправить после реализации дробного периода
 		[TestCase("до износа", 0, NormPeriodType.Wearout, false, true)]
+		// Из загрузки Водоканал Краснодар
 		[TestCase("дежурные", 0, NormPeriodType.Duty, false, true)]
 		[TestCase("дежурный", 0, NormPeriodType.Duty, false, true)]
 		[TestCase("дежурная", 0, NormPeriodType.Duty, false, true)]
-		public void TryParsePeriodAndCount_Test(string inputString, int expectedCount, NormPeriodType expectedPeriod, bool withWarning, bool expectedResult)
+		[TestCase("Дежурные", 0, NormPeriodType.Duty, false, true)]
+		[TestCase("12 мес.", 12, NormPeriodType.Month, false, true)]
+		[TestCase("12мес", 12, NormPeriodType.Month, false, true)]
+		[TestCase("36 мес", 36, NormPeriodType.Month, false, true)]
+
+		public void TryParsePeriod_Test(string inputString, int expectedCount, NormPeriodType expectedPeriod, bool withWarning, bool expectedResult)
 		{
 			var result = DataTypePeriod.TryParsePeriod(inputString, out int actualCount, out NormPeriodType actualPeriod, out string warning);
 			Assert.AreEqual(expectedResult, result);
