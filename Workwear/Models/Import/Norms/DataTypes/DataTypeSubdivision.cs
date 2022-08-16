@@ -6,6 +6,7 @@ namespace workwear.Models.Import.Norms.DataTypes {
 		public DataTypeSubdivision()
 		{
 			ColumnNameKeywords.Add("подразделение");
+			ColumnNameKeywords.Add("подразделения");
 			Data = DataTypeNorm.Subdivision;
 		}
 
