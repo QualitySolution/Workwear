@@ -29,9 +29,9 @@ namespace workwear.Models.Import.Norms
 			SizeService sizeService)
 		{
 			SupportDataTypes.Add( new DataTypeProtectionTools());
+			SupportDataTypes.Add( new DataTypePeriodAndCount());//Должна быть выше колонки с количеством, так как у них одинаковые слова для определения. А вариант с наличием в одной колонке обоих типов данных встречается чаще.
 			SupportDataTypes.Add( new DataTypeAmount());
 			SupportDataTypes.Add( new DataTypePeriod());
-			SupportDataTypes.Add( new DataTypePeriodAndCount());
 			SupportDataTypes.Add( new DataTypeSubdivision());
 			SupportDataTypes.Add( new DataTypePost());
 

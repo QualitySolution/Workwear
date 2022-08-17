@@ -12,11 +12,12 @@ namespace workwear.Models.Import.Norms
 		Post,
 		[Display(Name = "Номенклатура нормы")]
 		ProtectionTools,
+		[Display(Name = "Количество и период")]
+		//Здесь порядок важен, он влияет на сохранение... Если есть обе колонки сначала записываем общую, а потом частные.
+		PeriodAndCount,
 		[Display(Name = "Количество")]
 		Amount,
 		[Display(Name = "Период")]
 		Period,
-		[Display(Name = "Количество и период")]
-		PeriodAndCount,
 	}
 }
