@@ -106,6 +106,8 @@ namespace workwear.Models.Import
 		}
 		
 		private ICell GetCellForValue(int col, int? level) {
+			if(level >= cells.Length)
+				return null;
 			var row = level.HasValue ? cells[level.Value] : cells.Last();
 			return MergedCells[row.RowNum][col] ?? row.GetCell(col);
 		}
