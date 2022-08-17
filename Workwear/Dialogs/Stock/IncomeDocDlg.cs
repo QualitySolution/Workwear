@@ -33,6 +33,7 @@ namespace workwear
 		private readonly SizeService sizeService;
 		private readonly IInteractiveService interactiveService;
 		private readonly INavigationManager navigationManager;
+		private readonly IProgressBarDisplayable progressBar;
 
 		private FeaturesService featuresService;
 
@@ -44,6 +45,7 @@ namespace workwear
 			sizeService = AutofacScope.Resolve<SizeService>();
 			interactiveService = AutofacScope.Resolve<IInteractiveService>();
 			navigationManager = AutofacScope.Resolve<INavigationManager>();
+			progressBar = AutofacScope.Resolve<IProgressBarDisplayable>();
 			
 			
 			Entity.Date = DateTime.Today;
@@ -127,49 +129,56 @@ namespace workwear
 
 		private void OnReadFileClicked(object sender, EventArgs e) {
 			var file = Open1CFile();
-			if(file.Length < 1) return;
-			var reader = new ReaderDocumentFromXml1C(
-				file, 
-				UoW, 
-				interactiveService.Question("Использовать альтернативные размеры"));
+			if(String.IsNullOrEmpty(file)) 
+				return;
+			var useAlternativeSize = interactiveService.Question("Использовать альтернативные значения размеров?");
+			var reader = new ReaderDocumentFromXml1C(file, UoW, progressBar, useAlternativeSize);
+			
 			if(reader.DocumentDate != null)
 				Entity.Date = reader.DocumentDate.Value;
-			if(!reader.DocumentItems.Any())
-				interactiveService.ShowMessage(ImportanceLevel.Info, "В указаном файле нет строк поступления");
-			
-			if (reader.NotFoundNomenclatureNumbers.Count > 0) {
-				var str = String.Join("\n", reader.NotFoundNomenclatureNumbers.Take(10).Select(x => " * " + x));
+
+			if (reader.NotFoundNomenclatureNumbers.Any()) {
+				var message = String.Join("\n", reader.NotFoundNomenclatureNumbers.Take(10).Select(x => " * " + x));
 				if(reader.NotFoundNomenclatureNumbers.Count > 10)
-					str += $"\n и еще {reader.NotFoundNomenclatureNumbers.Count - 10}...";
-				if(!interactiveService.Question($"Не найден Артикул у номенклатур:\n{str}\n Продолжить создание документа прихода?")) {
-					interactiveService.ShowMessage(ImportanceLevel.Warning, "Создание документа прихода невозможно.");
+					message += $"\n и еще {reader.NotFoundNomenclatureNumbers.Count - 10}...";
+				if(!interactiveService.Question($"Не найден номенклатурный номер у номенклатур:\n{message}\n " +
+				                                "Продолжить создание документа прихода?"))
 					return;
-				}
+			}
+			
+			if (reader.UnreadableArticle.Any()) {
+				var message = String.Join("\n", reader.UnreadableArticle.Take(10).Select(x => " * " + x));
+				if(reader.UnreadableArticle.Count > 10)
+					message += $"\n и еще {reader.UnreadableArticle.Count - 10}...";
+				if(!interactiveService.Question($"Не удалось определить значение у следующих номенклатурных номеров:\n{message}\n " +
+				                                "Продолжить создание документа прихода?"))
+					return;
 			}
 
 			if(reader.NotFoundNomenclatures.Count > 0) {
-				var str = String.Join("\n", reader.NotFoundNomenclatures.Take(10)
-					.Select(x => $" * [Артикул:{x.Article}]\t{x.Name}"));
+				var message = String.Join("\n", reader.NotFoundNomenclatures.Take(10)
+					.Select(x => $" * [Номенклатурный номер:{x.Article}]\t{x.Name}"));
 				if (reader.NotFoundNomenclatures.Count > 10)
-					str += $"\n и еще {reader.NotFoundNomenclatures.Count - 10}...";
-				if(interactiveService.Question($"Следующих номенклатур нет в справочнике:\n{str}\n Создать?")) {
-					foreach(var nom in reader.NotFoundNomenclatures)
-						navigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(
-							null, 
+					message += $"\n и еще {reader.NotFoundNomenclatures.Count - 10}...";
+				if(interactiveService.Question($"Следующих номенклатур нет в справочнике:\n{message}\n Создать?")) {
+					foreach(var notFoundNomenclature in reader.NotFoundNomenclatures) {
+						var page = navigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null, 
 							EntityUoWBuilder.ForCreate(), 
 							OpenPageOptions.AsSlave);
-					
-					interactiveService.ShowMessage(
-						ImportanceLevel.Info,
+						page.ViewModel.Entity.Name = notFoundNomenclature.Name;
+						page.ViewModel.Entity.Number = notFoundNomenclature.Article;
+					}
+					interactiveService.ShowMessage(ImportanceLevel.Info,
 						"Сохраните номенклатуру(ы) и повторите загрузку документа.","Загрузка документа");
 				}
-				else {
-					interactiveService.ShowMessage(ImportanceLevel.Warning,"Создание документа прихода невозможно.");
-					return;
-				}
 			}
-			foreach(var item in reader.DocumentItems) 
-				Entity.AddItem(item.Namenclature, item.Size, item.Height, item.Amount, null, item.Cost);
+
+			if(reader.DocumentItems.Any())
+				foreach(var item in reader.DocumentItems)
+					Entity.AddItem(item.Nomenclature, item.Size, item.Height, item.Amount, null, item.Cost);
+			else
+				interactiveService.ShowMessage(ImportanceLevel.Info, "Указанный файл не содержит строк поступления");
+
 		}
 
 		private string Open1CFile() {
