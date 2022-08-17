@@ -128,7 +128,10 @@ namespace workwear
 		private void OnReadFileClicked(object sender, EventArgs e) {
 			var file = Open1CFile();
 			if(file.Length < 1) return;
-			var reader = new ReaderDocumentFromXml1C(file, UoW);
+			var reader = new ReaderDocumentFromXml1C(
+				file, 
+				UoW, 
+				interactiveService.Question("Использовать альтернативные размеры"));
 			if(reader.DocumentDate != null)
 				Entity.Date = reader.DocumentDate.Value;
 			if(!reader.DocumentItems.Any())
@@ -166,7 +169,7 @@ namespace workwear
 				}
 			}
 			foreach(var item in reader.DocumentItems) 
-				Entity.AddItem(item.Namenclature, item.Size, item.Height, item.Amount);
+				Entity.AddItem(item.Namenclature, item.Size, item.Height, item.Amount, null, item.Cost);
 		}
 
 		private string Open1CFile() {
