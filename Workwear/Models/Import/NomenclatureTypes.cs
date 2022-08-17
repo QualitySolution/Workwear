@@ -176,7 +176,7 @@ namespace workwear.Models.Import
 		}
 		#endregion
 		public ItemsType ParseNomenclatureName(string name) {
-			var parts = name.ToLower().Split(' ', '-', '_', '~', '"', '(', ')', '.');
+			var parts = name.ToLower().Split(' ', '-', '_', '~', '"', '(', ')', '.', ',');
 			foreach(var word in parts) {
 				if (!KeyWords.TryGetValue(word, out var desc)) continue;
 				if (desc.keyWords2 == null) return desc.ItemsType;

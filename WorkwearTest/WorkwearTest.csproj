@@ -43,6 +43,7 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Integration\Import\NomenclatureTypesTest.cs" />
     <None Include="Integration\Reports\NoDBTestReport.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -58,7 +59,6 @@
     <Compile Include="Integration\Import\ExcelImportViewModelEmployeeTest.cs" />
     <Compile Include="Integration\Import\ExcelImportViewModelNormsTest.cs" />
     <Compile Include="Integration\Stock\CompletionIntegratedTest.cs" />
-    <None Include="Models\Import\NomenclatureTypesTest.cs" />
     <Compile Include="Models\Import\Employees\DataTypeFioTest.cs" />
     <Compile Include="Models\Import\Norms\DataTypePeriodAndCountTest.cs" />
     <Compile Include="Models\Import\Norms\DataTypePeriodTest.cs" />
