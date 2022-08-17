@@ -57,7 +57,7 @@ namespace workwear.Models.Import
 		public IEnumerable<DataType> DataTypes => dataParser.SupportDataTypes;
 
 		public ExcelValueTarget GetColumnForDataType(object data) {
-			return Columns.SelectMany(x => x.DataTypeByLevels).FirstOrDefault(x => data.Equals(x.DataType.Data));
+			return Columns.SelectMany(x => x.DataTypeByLevels).FirstOrDefault(x => data.Equals(x.DataType?.Data));
 		}
 
 		private int columnsCount;
