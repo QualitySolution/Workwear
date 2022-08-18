@@ -13,9 +13,6 @@ namespace workwear.Models.Import
             Data = data;
             if(order.HasValue)
 	            ValueSetOrder = order.Value;
-            else if(data is Enum) {
-	            ValueSetOrder = (int)data;
-            }
         }
 
         public bool IsUnknown => Data == null;
@@ -28,7 +25,15 @@ namespace workwear.Models.Import
                 return Data.GetTitle();
             }
         }
-        public object Data { get; set; }
+
+        public object Data {
+	        get => data;
+	        set {
+		        data = value; 
+		        if(data is Enum)
+			        ValueSetOrder = (int)data;
+	        }
+        }
 
         #region Имена колонок
         public int ColumnNameDetectPriority;
@@ -53,10 +58,8 @@ namespace workwear.Models.Import
         #endregion
 
         #region Сохранение
-
         public int ValueSetOrder = 99;
-
-        public Func<string, string> ValueInterpreter;
+        private object data;
 
         #endregion
     }

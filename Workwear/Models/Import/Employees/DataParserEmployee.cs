@@ -137,7 +137,7 @@ namespace workwear.Models.Import.Employees
 					row.Employees.Add(employee);
 				}
 
-				foreach(var column in meaningfulColumns) {
+				foreach(var column in meaningfulColumns.OrderBy(x => x.DataType.ValueSetOrder)) {
 					var datatype = (DataTypeEmployeeBase)column.DataType;
 					datatype.CalculateChange(row, column, uow);
 				}

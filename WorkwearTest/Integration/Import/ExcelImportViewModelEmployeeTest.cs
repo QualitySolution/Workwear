@@ -284,7 +284,7 @@ namespace WorkwearTest.Integration.Import
 				Assert.That(nikolay.Sizes.FirstOrDefault(x => x.SizeType.Id == sizeType.Id)?.Size?.Id, Is.EqualTo(size.Id));
 				Assert.That(nikolay.Sizes.FirstOrDefault(x => x.SizeType.Id == shoesType.Id)?.Size?.Id, Is.EqualTo(shoes.Id));
 				
-				//Проверяем что должности не задублировались
+				//Проверяем что должности не задублировались, внимание "Менеджер по персоналу" разные должности для разных подразделений.
 				var posts = uow.GetAll<Post>();
 				Assert.That(posts.Count, Is.EqualTo(3));
 			}
