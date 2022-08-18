@@ -56,7 +56,7 @@ namespace workwear.Models.Import.Employees.DataTypes {
 			if(firstDiff) {
 				row.AddSetValueAction(ValueSetOrder, () => employee.FirstName = firstName);
 				if(employee.Sex == Sex.None) {
-					var detectedSex = personNames.GetSexByName(employee.FirstName);
+					var detectedSex = personNames.GetSexByName(firstName);
 					if(detectedSex != Sex.None) {
 						row.AddSetValueAction(ValueSetOrder, () => employee.Sex = detectedSex);
 						state.AddCreatedValues(detectedSex.GetEnumTitle());
