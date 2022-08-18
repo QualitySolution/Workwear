@@ -17,6 +17,7 @@ using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
+using workwear.Models.Import;
 using workwear.Repository;
 using workwear.Repository.Stock;
 using workwear.Tools.Features;
@@ -161,15 +162,33 @@ namespace workwear
 				if (reader.NotFoundNomenclatures.Count > 10)
 					message += $"\n и еще {reader.NotFoundNomenclatures.Count - 10}...";
 				if(interactiveService.Question($"Следующих номенклатур нет в справочнике:\n{message}\n Создать?")) {
+					var nomenclatureTypes = new NomenclatureTypes(UoW, sizeService, true);
 					foreach(var notFoundNomenclature in reader.NotFoundNomenclatures) {
-						var page = navigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null, 
-							EntityUoWBuilder.ForCreate(), 
-							OpenPageOptions.AsSlave);
-						page.ViewModel.Entity.Name = notFoundNomenclature.Name;
-						page.ViewModel.Entity.Number = notFoundNomenclature.Article;
+						var type = nomenclatureTypes.ParseNomenclatureName(notFoundNomenclature.Name);
+						if(type is null) {
+							var page = navigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null,
+								EntityUoWBuilder.ForCreate(),
+								OpenPageOptions.AsSlave);
+							page.ViewModel.Entity.Name = notFoundNomenclature.Name;
+							page.ViewModel.Entity.Number = notFoundNomenclature.Article;
+						}
+						else {
+							if(type.Id == 0)
+								UoW.Save(type);
+							var nomenclature = new Nomenclature {
+								Name = notFoundNomenclature.Name, 
+								Number = notFoundNomenclature.Article,
+								Type = type,
+								Comment = "Созданно при загрузке поступления из файла"
+							};
+							UoW.Save(nomenclature);
+						}
 					}
+
 					interactiveService.ShowMessage(ImportanceLevel.Info,
-						"Сохраните номенклатуру(ы) и повторите загрузку документа.","Загрузка документа");
+						"Сохраните номенклатуру(ы) и повторите загрузку документа.", "Загрузка документа");
+					UoW.Commit();
+					return;
 				}
 			}
 
