@@ -16,7 +16,7 @@ namespace workwear.Models.Import.Employees.DataTypes {
 		}
 
 		protected override ChangeState GetChangeState(SheetRowEmployee row, string value, string original) {
-			var modifiedValue = formatter.FormatString(value);
+			var modifiedValue = String.IsNullOrWhiteSpace(value) ? null : formatter.FormatString(value);
 			var state = base.GetChangeState(row, modifiedValue, value);
 			if(!String.IsNullOrWhiteSpace(value) && modifiedValue.Length != formatter.MaxStringLength) {
 				state.ChangeType = ChangeType.ParseError;
