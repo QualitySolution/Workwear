@@ -12625,7 +12625,7 @@
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
                     <property name="IsEditable">True</property>
-                    <property name="MaxLength">240</property>
+                    <property name="MaxLength">800</property>
                     <property name="InvisibleChar">●</property>
                   </widget>
                   <packing>

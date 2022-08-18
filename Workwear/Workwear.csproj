@@ -149,8 +149,45 @@
     <Compile Include="MainWindow.cs" />
     <Compile Include="Models\Import\ChangeState.cs" />
     <Compile Include="Models\Import\DataType.cs" />
-    <Compile Include="Models\Import\DataTypeEmployeeSize.cs" />
+    <Compile Include="Models\Import\Employees\CountersEmployee.cs" />
+    <Compile Include="Models\Import\Employees\DataParserEmployee.cs" />
+    <Compile Include="Models\Import\Employees\DataTypeEmployee.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypeDepartment.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypePost.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypeSubdivision.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypeSimpleDate.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypeFirstName.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypePersonalNumber.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypeSimpleString.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypeEmployeeSize.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypeEmployeeBase.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypeFio.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypePhone.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypeSex.cs" />
+    <Compile Include="Models\Import\Employees\ImportModelEmployee.cs" />
+    <Compile Include="Models\Import\Employees\SheetRowEmployee.cs" />
     <Compile Include="Models\Import\IMatchEmployeesSettings.cs" />
+    <Compile Include="Models\Import\ExcelValueTarget.cs" />
+    <Compile Include="Models\Import\ISheetRow.cs" />
+    <Compile Include="Models\Import\Issuance\CountersWorkwearItems.cs" />
+    <Compile Include="Models\Import\Issuance\DataParserWorkwearItems.cs" />
+    <Compile Include="Models\Import\Issuance\DataTypeWorkwearItems.cs" />
+    <Compile Include="Models\Import\Issuance\ImportModelWorkwearItems.cs" />
+    <Compile Include="Models\Import\Issuance\SheetRowWorkwearItems.cs" />
+    <Compile Include="Models\Import\Norms\CountersNorm.cs" />
+    <Compile Include="Models\Import\Norms\DataParserNorm.cs" />
+    <Compile Include="Models\Import\Norms\DataTypeNorm.cs" />
+    <Compile Include="Models\Import\Norms\DataTypes\DataTypeAmount.cs" />
+    <Compile Include="Models\Import\Norms\DataTypes\DataTypeNormBase.cs" />
+    <Compile Include="Models\Import\Norms\DataTypes\DataTypePeriod.cs" />
+    <Compile Include="Models\Import\Norms\DataTypes\DataTypePeriodAndCount.cs" />
+    <Compile Include="Models\Import\Norms\DataTypes\DataTypePost.cs" />
+    <Compile Include="Models\Import\Norms\DataTypes\DataTypeProtectionTools.cs" />
+    <Compile Include="Models\Import\Norms\DataTypes\DataTypeSubdivision.cs" />
+    <Compile Include="Models\Import\Norms\ImportModelNorm.cs" />
+    <Compile Include="Models\Import\Norms\SheetRowNorm.cs" />
+    <Compile Include="Models\Import\RowStackHelper.cs" />
+    <Compile Include="Models\Import\SetValueAction.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -400,30 +437,20 @@
     <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeePhotoView.cs" />
     <Compile Include="ViewModels\Company\EmployeeChilds\EmployeePhotoViewModel.cs" />
     <Compile Include="Repository\Company\PostRepository.cs" />
-    <Compile Include="Models\Import\DataParserEmployee.cs" />
-    <Compile Include="Models\Import\DataParserNorm.cs" />
-    <Compile Include="Models\Import\DataTypeEmployee.cs" />
-    <Compile Include="Models\Import\DataTypeNorm.cs" />
     <Compile Include="Models\Import\FIO.cs" />
-    <Compile Include="Models\Import\ImportedColumn.cs" />
+    <Compile Include="Models\Import\ExcelColumn.cs" />
     <Compile Include="Models\Import\ImportedSheet.cs" />
     <Compile Include="Models\Import\SheetRowBase.cs" />
     <Compile Include="Models\Import\IDataParser.cs" />
     <Compile Include="Models\Import\DataParserBase.cs" />
-    <Compile Include="Models\Import\SheetRowEmployee.cs" />
-    <Compile Include="Models\Import\SheetRowNorm.cs" />
     <Compile Include="Repository\Regulations\NormRepository.cs" />
     <Compile Include="Repository\Regulations\ProtectionToolsRepository.cs" />
     <Compile Include="Models\Import\ChangeType.cs" />
     <Compile Include="ViewModels\Import\CountersViewModel.cs" />
-    <Compile Include="Models\Import\CountersNorm.cs" />
-    <Compile Include="Models\Import\CountersEmployee.cs" />
     <Compile Include="Views\Import\ExcelImportView.cs" />
     <Compile Include="Models\Import\IImportModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Import.ExcelImportView.cs" />
     <Compile Include="ViewModels\Import\ExcelImportViewModel.cs" />
-    <Compile Include="Models\Import\ImportModelEmployee.cs" />
-    <Compile Include="Models\Import\ImportModelNorm.cs" />
     <Compile Include="Views\Import\CountersView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Import.CountersView.cs" />
     <Compile Include="Models\Import\Counter.cs" />
@@ -432,11 +459,6 @@
     <Compile Include="Tools\NHibernate\ProgressInterceptor.cs" />
     <Compile Include="Models\Import\NomenclatureTypes.cs" />
     <Compile Include="Journal\ViewModels\Tools\EmployeeProcessingJournalViewModel.cs" />
-    <Compile Include="Models\Import\ImportModelWorkwearItems.cs" />
-    <Compile Include="Models\Import\DataParserWorkwearItems.cs" />
-    <Compile Include="Models\Import\DataTypeWorkwearItems.cs" />
-    <Compile Include="Models\Import\SheetRowWorkwearItems.cs" />
-    <Compile Include="Models\Import\CountersWorkwearItems.cs" />
     <Compile Include="Views\Import\SettingsMatchEmployeesView.cs" />
     <Compile Include="ViewModels\Import\SettingsMatchEmployeesViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Import.SettingsMatchEmployeesView.cs" />
@@ -873,6 +895,9 @@
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Models\Import\README.md" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -13,9 +13,6 @@ namespace workwear.Models.Import
             Data = data;
             if(order.HasValue)
 	            ValueSetOrder = order.Value;
-            else if(data is Enum) {
-	            ValueSetOrder = (int)data;
-            }
         }
 
         public bool IsUnknown => Data == null;
@@ -28,14 +25,26 @@ namespace workwear.Models.Import
                 return Data.GetTitle();
             }
         }
-        public object Data { get; set; }
+
+        public object Data {
+	        get => data;
+	        set {
+		        data = value; 
+		        if(data is Enum)
+			        ValueSetOrder = (int)data;
+	        }
+        }
 
         #region Имена колонок
         public int ColumnNameDetectPriority;
         public readonly List<string> ColumnNameKeywords = new List<string>();
         public string ColumnNameRegExp;
 
-        public bool ColumnNameMatch(string columnName)
+	    /// <summary>
+	    /// Внимание, здесь предполагается что строка придет уже преобразованная к нижнему регистру.
+	    /// Это делается на более высоком уровне вложенности вызовов, для ускорения обработки.
+	    /// </summary>
+	    public bool ColumnNameMatch(string columnName)
         {
             if (!String.IsNullOrEmpty(ColumnNameRegExp) && Regex.IsMatch(columnName, ColumnNameRegExp))
                 return true;
@@ -49,10 +58,8 @@ namespace workwear.Models.Import
         #endregion
 
         #region Сохранение
-
         public int ValueSetOrder = 99;
-
-        public Func<string, string> ValueInterpreter;
+        private object data;
 
         #endregion
     }

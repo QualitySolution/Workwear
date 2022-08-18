@@ -7,43 +7,47 @@ using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import
 {
-	public abstract class SheetRowBase<TDataTypeEnum> : PropertyChangedBase, ISheetRow
-		where TDataTypeEnum : System.Enum
+	public abstract class SheetRowBase<TRow> : PropertyChangedBase, ISheetRow
+		where TRow : SheetRowBase<TRow>
 	{
-		private readonly IRow cells;
+		private readonly IRow[] cells;
 		
 		public IDictionary<int, ICell[]>  MergedCells;
 
-		public SheetRowBase(IRow cells)
+		public SheetRowBase(IRow[] cells)
 		{
 			this.cells = cells;
 		}
 
 		#region Получение значений ячейки
-		readonly Dictionary<int, string> changedValues = new Dictionary<int, string>();
+		readonly Dictionary<int, string> cachedValues = new Dictionary<int, string>();
 		/// <summary>
 		/// Получает значение ячейки видимое пользователю.
 		/// </summary>
-		public string CellValue(int col)
+		public virtual string CellValue(int col)
 		{
 			//Используем кешированные значения, так как графика для отрисовки очень часто дергает этот метод.
-			if(changedValues.ContainsKey(col))
-				return changedValues[col];
+			if(cachedValues.ContainsKey(col))
+				return cachedValues[col];
 
 			string value;
-			var cell = GetCellForValue(col);
+			var cell = GetCellForValue(col, cells.Length - 1);
 			if(cell?.CellType == CellType.Blank)
 				value = null;
 			if(cell?.CellType == CellType.Error && cell.ErrorCellValue == 0)
 				value = null;
 			value = cell?.ToString();
-			changedValues[col] = value;
+			cachedValues[col] = value;
 			return value;
 		}
+		
+		public string CellStringValue(ExcelValueTarget valueTarget) {
+			return CellStringValue(valueTarget.Column.Index, valueTarget.Level);
+		}
 
-		public string CellStringValue(int col)
+		public virtual string CellStringValue(int col, int? level)
 		{
-			var cell = GetCellForValue(col);
+			var cell = GetCellForValue(col, level);
 
 			if(cell != null) {
 				// TODO: you can add more cell types compatibility, e. g. formula
@@ -57,9 +61,13 @@ namespace workwear.Models.Import
 			return null;
 		}
 
-		public int? CellIntValue(int col)
+		public int? CellIntValue(ExcelValueTarget valueTarget) {
+			return CellIntValue(valueTarget.Column.Index, valueTarget.Level);
+		}
+		
+		public int? CellIntValue(int col, int? level)
 		{
-			var cell = GetCellForValue(col);
+			var cell = GetCellForValue(col, level);
 
 			if(cell != null) {
 				switch(cell.CellType) {
@@ -75,9 +83,13 @@ namespace workwear.Models.Import
 			return null;
 		}
 
-		public DateTime? CellDateTimeValue(int col)
+		public DateTime? CellDateTimeValue(ExcelValueTarget valueTarget) {
+			return CellDateTimeValue(valueTarget.Column.Index, valueTarget.Level);
+		}
+		
+		public DateTime? CellDateTimeValue(int col, int? level)
 		{
-			var cell = GetCellForValue(col);
+			var cell = GetCellForValue(col, level);
 
 			if(cell != null) {
 				switch(cell.CellType) {
@@ -93,13 +105,18 @@ namespace workwear.Models.Import
 			return null;
 		}
 		
-		private ICell GetCellForValue(int col)
-		{
-			return MergedCells[cells.RowNum][col] ?? cells.GetCell(col);
+		private ICell GetCellForValue(int col, int? level) {
+			if(level >= cells.Length)
+				return null;
+			var row = level.HasValue ? cells[level.Value] : cells.Last();
+			return MergedCells[row.RowNum][col] ?? row.GetCell(col);
 		}
 		
 		#endregion
-		
+
+		public virtual int RowLevel => cells.Last().OutlineLevel;
+
+		#region Цвет ячейки
 		public string CellBackgroundColor(int col)
 		{
 			if (UserSkipped)
@@ -132,16 +149,21 @@ namespace workwear.Models.Import
 			}
 			return null;
 		}
+		#endregion
 
 		public bool Skipped => ProgramSkipped || UserSkipped;
 
 		#region Работа с изменениями
 
-		public Dictionary<ImportedColumn<TDataTypeEnum>, ChangeState> ChangedColumns = new Dictionary<ImportedColumn<TDataTypeEnum>, ChangeState>();
+		public Dictionary<ExcelColumn, ChangeState> ChangedColumns = new Dictionary<ExcelColumn, ChangeState>();
 
-		public void AddColumnChange(ImportedColumn<TDataTypeEnum> column, ChangeType changeType, string oldValue = null)
-		{
-			ChangedColumns[column] = new ChangeState(changeType, oldValue);
+		public void AddColumnChange(ExcelValueTarget column, ChangeType changeType, string oldValue = null) {
+			AddColumnChange(column, new ChangeState(changeType, oldValue));
+		}
+
+		public void AddColumnChange(ExcelValueTarget column, ChangeState state) {
+			if(column.Level + 1 == cells.Length)
+				ChangedColumns[column.Column] = state;
 		}
 
 		public string CellTooltip(int col) {
@@ -176,17 +198,27 @@ namespace workwear.Models.Import
 			set => SetField(ref userSkipped, value);
 		}
 		#endregion
-	}
 
-	public interface ISheetRow
-	{
-		string CellValue(int col);
-		string CellStringValue(int col);
-		string CellTooltip(int col);
-		string CellBackgroundColor(int col);
-		string CellForegroundColor(int col);
+		#region Сохранение
+		/// <summary>
+		/// В коллекции действия имеют порядок применения чтобы процесс обработки данных был контролируемый.
+		/// Это надо для того чтобы при наличие 2 полей с похожими данными заполнялись в правильном порядке.
+		/// Например чтобы отдельное поле с фамилией могло перезаписать значение фамилии поученной из общего поля ФИО.
+		/// </summary>
+		public List<SetValueAction> SetValueActions = new List<SetValueAction>();
 
-		bool ProgramSkipped { get; set; }
-		bool UserSkipped { get; set; }
+		public void AddSetValueAction(int order, Action action) {
+			SetValueActions.Add(new SetValueAction(order, action));
+		}
+
+		public readonly List<object> ToSave = new List<object>();
+
+		public virtual IEnumerable<object> PrepareToSave() {
+			foreach(var action in SetValueActions.OrderBy(x => x.Order)) {
+				action.Action();
+			}
+			return ToSave;
+		}
+		#endregion
 	}
 }

@@ -22,6 +22,10 @@ namespace workwear.Models.Import
 			WillCreatedValues = willCreatedValues ?? Array.Empty<string>();
 		}
 
+		#region Расчетные
+		public bool NeedSave => ChangeType == ChangeType.ChangeValue || ChangeType == ChangeType.NewEntity;
+		#endregion
+
 		public void AddCreatedValues(string value) {
 			var list = WillCreatedValues.ToList();
 			list.Add(value);

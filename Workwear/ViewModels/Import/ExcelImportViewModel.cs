@@ -188,17 +188,22 @@ namespace workwear.ViewModels.Import
 			ProgressStep.Start(sh.LastRowNum + sh.NumMergedRegions, text: "Читаем лист...");
 
 			var maxColumnsIndex = 0;
+			var maxLevels = 0;
+			var levelsStack = new Stack<IRow>();
 			for(var i = 0; i <= sh.LastRowNum; i++) {
 				ProgressStep.Add();
-				if(sh.GetRow(i) == null)
-					continue;
 				var row = sh.GetRow(i);
-				ImportModel.AddRow(row);
+				if(row == null)
+					continue;
+				maxLevels = Math.Max(row.OutlineLevel, maxLevels);
+				RowStackHelper.NewRow(levelsStack, row);
+				ImportModel.AddRow(levelsStack.ToArray());
 				//Здесь проверено экспериментально по всем файлам в тестах LastCellNum = количеству виртуальны ячеек(колонок).
 				//То есть последний индекс ячеки +1. Не знаю зачем так сделано. https://github.com/dotnetcore/NPOI/issues/84
 				//При отсутствии ячеек значение LastCellNum и FirstCellNum = -1
 				maxColumnsIndex = Math.Max(row.LastCellNum, maxColumnsIndex);  
 			}
+			ImportModel.LevelsCount = maxLevels + 1;
 			ImportModel.ColumnsCount = maxColumnsIndex;
 			OnPropertyChanged(nameof(RowsCount));
 			ProgressStep.Update("Обработка объединенных ячеек...");
@@ -225,6 +230,8 @@ namespace workwear.ViewModels.Import
 			ImportModel.MergedCells = merged;
 			ProgressStep.Close();
 			logger.Info($"Прочитано {maxColumnsIndex} колонок и {sh.LastRowNum} строк");
+			if(maxLevels > 0)
+				logger.Info($"Страница имеет группировку с {maxLevels + 1} уровнями");
 		}
 		#endregion
 	}

@@ -12,6 +12,7 @@ using workwear.Models.Import;
 using workwear.Tools.Nhibernate;
 using workwear.ViewModels.Import;
 using Workwear.Measurements;
+using workwear.Models.Import.Norms;
 using workwear.Repository.Regulations;
 
 namespace WorkwearTest.Integration.Import
@@ -53,7 +54,7 @@ namespace WorkwearTest.Integration.Import
 					normsLoad.SelectedSheet = normsLoad.Sheets.First();
 					Assert.That(normsLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
 					normsLoad.SecondStep();
-					model.Columns[2].DataType = model.DataTypes.First(x => DataTypeNorm.ProtectionTools.Equals(x.Data)) ; //Третья колонка номенклатура нормы.
+					model.Columns[2].DataTypeByLevels[0].DataType = model.DataTypes.First(x => DataTypeNorm.ProtectionTools.Equals(x.Data)) ; //Третья колонка номенклатура нормы.
 					Assert.That(normsLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
 					normsLoad.ThirdStep();
 					Assert.That(normsLoad.SensitiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");

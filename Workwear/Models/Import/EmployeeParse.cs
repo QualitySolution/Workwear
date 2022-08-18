@@ -13,9 +13,9 @@ namespace workwear.Models.Import
 				return cellValue;
 		}
 		
-		public static string GetPersonalNumber(IMatchEmployeesSettings settings, ISheetRow row, int columnIndex) {
+		public static string GetPersonalNumber(IMatchEmployeesSettings settings, ISheetRow row, ExcelValueTarget column) {
 			var original = settings.ConvertPersonnelNumber ? 
-				ConvertPersonnelNumber(row.CellStringValue(columnIndex)) : row.CellStringValue(columnIndex);
+				ConvertPersonnelNumber(row.CellStringValue(column)) : row.CellStringValue(column);
 			return original?.Trim();
 		}
 		
