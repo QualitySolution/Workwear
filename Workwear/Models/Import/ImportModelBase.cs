@@ -150,8 +150,10 @@ namespace workwear.Models.Import
 			}
 
 			progress.Add();
-			for (int i = 0; i < ColumnsCount; i++) {
-				Columns[i].DataTypeByLevels[maxLevelAfterBest].DataType = bestMath[i] != null ? bestMath[i] : DataTypes.First();
+			for(int level = 0; level < LevelsCount; level++) {
+				for (int i = 0; i < ColumnsCount; i++) {
+					Columns[i].DataTypeByLevels[level].DataType = level == maxLevelAfterBest && bestMath[i] != null ? bestMath[i] : DataTypes.First();
+				}
 			}
 
 			logger.Debug($"Найдено соответсвие в {bestColumns} заголовков в строке {bestHeaderRow}");
