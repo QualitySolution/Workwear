@@ -120,12 +120,12 @@ namespace workwear.Views.Import
 			foreach(var combo in columnsTypeCombos)
 				tableColumns.Remove(combo);
 			tableColumns.NRows = (uint)ViewModel.ImportModel.ColumnsCount + 1;
-			tableColumns.NColumns = (uint)ViewModel.ImportModel.MaxLevels + 1;
+			tableColumns.NColumns = (uint)ViewModel.ImportModel.LevelsCount + 1;
 			columnsLabels.Clear();
 			columnsTypeCombos.Clear();
 			uint nRow = 1;
-			if(ViewModel.ImportModel.MaxLevels > 1) {
-				for(uint col = 1; col <= ViewModel.ImportModel.MaxLevels; col++) {
+			if(ViewModel.ImportModel.LevelsCount > 1) {
+				for(uint col = 1; col <= ViewModel.ImportModel.LevelsCount; col++) {
 					var label = new Label($"Уровень {col}");
 					tableColumns
 						.Attach(label, col, col + 1, 0, 1, 
@@ -142,7 +142,7 @@ namespace workwear.Views.Import
 				tableColumns
 					.Attach(label, 0, 1, nRow, nRow + 1, 
 						AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
-				for(uint col = 0; col < ViewModel.ImportModel.MaxLevels; col++) {
+				for(uint col = 0; col < ViewModel.ImportModel.LevelsCount; col++) {
 					var groupLevel = column.DataTypeByLevels[col];
 					var combo = new SpecialListComboBox {ItemsList = ViewModel.ImportModel.DataTypes};
 					combo.SetRenderTextFunc<DataType>(x => x.Title);

@@ -203,7 +203,7 @@ namespace workwear.ViewModels.Import
 				//При отсутствии ячеек значение LastCellNum и FirstCellNum = -1
 				maxColumnsIndex = Math.Max(row.LastCellNum, maxColumnsIndex);  
 			}
-			ImportModel.MaxLevels = maxLevels + 1;
+			ImportModel.LevelsCount = maxLevels + 1;
 			ImportModel.ColumnsCount = maxColumnsIndex;
 			OnPropertyChanged(nameof(RowsCount));
 			ProgressStep.Update("Обработка объединенных ячеек...");

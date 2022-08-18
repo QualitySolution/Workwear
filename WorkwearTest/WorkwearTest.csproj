@@ -60,6 +60,7 @@
     <Compile Include="Integration\Import\ExcelImportViewModelNormsTest.cs" />
     <Compile Include="Integration\Stock\CompletionIntegratedTest.cs" />
     <Compile Include="Models\Import\Employees\DataTypeFioTest.cs" />
+    <Compile Include="Models\Import\ImportModelBaseTest.cs" />
     <Compile Include="Models\Import\Norms\DataTypePeriodAndCountTest.cs" />
     <Compile Include="Models\Import\Norms\DataTypePeriodTest.cs" />
     <Compile Include="Models\Import\RowStackHelperTest.cs" />

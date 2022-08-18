@@ -68,13 +68,13 @@ namespace workwear.Models.Import
 			get => columnsCount;
 			set {
 				columnsCount = value;
-				RecreateColumns(columnsCount, MaxLevels);
+				RecreateColumns(columnsCount, LevelsCount);
 				RefreshColumnsTitle();
 				OnPropertyChanged();
 			}
 		}
 		
-		public int MaxLevels { get; set; }
+		public int LevelsCount { get; set; }
 
 		private void RecreateColumns(int columnsCount, int levels)
 		{
@@ -113,6 +113,8 @@ namespace workwear.Models.Import
 			var bestMath = new DataType[ColumnsCount];
 			int bestColumns = 0;
 			int bestHeaderRow = 0;
+			int maxLevelAfterBest = 0;
+			bool maxLevelDiscovering = false;
 			TSheetRow bestRow = null;
 			int rowNum = 0;
 			foreach(var row in XlsRows) {
@@ -130,6 +132,15 @@ namespace workwear.Models.Import
 					bestRow = row;
 					bestColumns = types.Where(x => x!= null).Distinct().Count();
 					bestHeaderRow = rowNum;
+					maxLevelDiscovering = true;
+					maxLevelAfterBest = bestRow.RowLevel;
+				}
+				
+				if(maxLevelDiscovering) {
+					if(row.RowLevel <= bestRow.RowLevel && maxLevelAfterBest > bestRow.RowLevel)
+						maxLevelDiscovering = false; //Отключаем поиск, явно вышли за уровень заголовка.
+					else 
+						maxLevelAfterBest = Math.Max(row.RowLevel, maxLevelAfterBest);
 				}
 				//Мало вероятно что в нормальном файле заголовочная строка располагаться ниже 100-ой строки.
 				//Поэтому прерываем проверку, так как если не нашли все подходящие поля, на больших файлах будем проверять очень долго.
@@ -140,7 +151,7 @@ namespace workwear.Models.Import
 
 			progress.Add();
 			for (int i = 0; i < ColumnsCount; i++) {
-				Columns[i].DataTypeByLevels[MaxLevels - 1].DataType = bestMath[i] != null ? bestMath[i] : DataTypes.First();
+				Columns[i].DataTypeByLevels[maxLevelAfterBest].DataType = bestMath[i] != null ? bestMath[i] : DataTypes.First();
 			}
 
 			logger.Debug($"Найдено соответсвие в {bestColumns} заголовков в строке {bestHeaderRow}");

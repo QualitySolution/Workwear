@@ -24,7 +24,7 @@ namespace workwear.Models.Import
 		/// <summary>
 		/// Получает значение ячейки видимое пользователю.
 		/// </summary>
-		public string CellValue(int col)
+		public virtual string CellValue(int col)
 		{
 			//Используем кешированные значения, так как графика для отрисовки очень часто дергает этот метод.
 			if(cachedValues.ContainsKey(col))
@@ -45,7 +45,7 @@ namespace workwear.Models.Import
 			return CellStringValue(valueTarget.Column.Index, valueTarget.Level);
 		}
 
-		public string CellStringValue(int col, int? level)
+		public virtual string CellStringValue(int col, int? level)
 		{
 			var cell = GetCellForValue(col, level);
 
@@ -114,7 +114,7 @@ namespace workwear.Models.Import
 		
 		#endregion
 
-		public int RowLevel => cells.Last().OutlineLevel;
+		public virtual int RowLevel => cells.Last().OutlineLevel;
 
 		#region Цвет ячейки
 		public string CellBackgroundColor(int col)

@@ -20,7 +20,7 @@ namespace workwear.Models.Import
 		#region Колонки
 		List<ExcelColumn> Columns {get;}
 		int ColumnsCount { get; set; }
-		int MaxLevels { get; set; }
+		int LevelsCount { get; set; }
 		void AutoSetupColumns(IProgressBarDisplayable progress);
 		#endregion
 
