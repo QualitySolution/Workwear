@@ -109,7 +109,7 @@ namespace WorkwearTest.Integration.Import
 				Assert.That(olga.Sex, Is.EqualTo(Sex.F));
 				Assert.That(olga.Subdivision.Name, Is.EqualTo("500006 Отдел главного энергетика"));
 				Assert.That(olga.Post.Name, Is.EqualTo("Ведущий инженер"));
-				Assert.That(olga.Post.Subdivision.Name, Is.EqualTo("500006 Отдел главного энергетика"));
+				Assert.That(olga.Post.Subdivision?.Name, Is.EqualTo("500006 Отдел главного энергетика"));
 				
 				//Проверяем что должности из разных подразделений не сливаются.
 				var natalia = employees.First(x => x.PersonnelNumber == "2");

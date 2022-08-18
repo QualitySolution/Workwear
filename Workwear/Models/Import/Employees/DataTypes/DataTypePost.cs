@@ -38,7 +38,7 @@ namespace workwear.Models.Import.Employees.DataTypes {
 				};
 				dataParserEmployee.UsedPosts.Add(post);
 			}
-			row.AddSetValueAction(ValueSetOrder, () => row.EditingEmployee.Post = post);
+			row.EditingEmployee.Post = post;
 			if(post.Id == 0)
 				return new ChangeState(ChangeType.NewEntity, willCreatedValues: new[] { "Должность:" + post.Name });
 			return new ChangeState(ChangeType.ChangeValue, oldValue: row.EditingEmployee.Post?.Name);

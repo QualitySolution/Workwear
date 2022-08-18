@@ -41,7 +41,7 @@ namespace workwear.Models.Import.Employees.DataTypes {
 				};
 				dataParserEmployee.UsedDepartment.Add(department);
 			}
-			row.AddSetValueAction(ValueSetOrder, () => row.EditingEmployee.Department = department);
+			row.EditingEmployee.Department = department;
 			if(department.Id == 0)
 				return new ChangeState(ChangeType.NewEntity, willCreatedValues: new[] { "Отдел:" + department.Name });
 			return new ChangeState(ChangeType.ChangeValue, oldValue: row.EditingEmployee.Department?.Name);

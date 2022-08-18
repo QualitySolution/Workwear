@@ -31,7 +31,7 @@ namespace workwear.Models.Import.Employees.DataTypes {
 				subdivision = new Subdivision { Name = value };
 				dataParserEmployee.UsedSubdivisions.Add(subdivision);
 			}
-			row.AddSetValueAction(ValueSetOrder, () => row.EditingEmployee.Subdivision = subdivision);
+			row.EditingEmployee.Subdivision = subdivision;
 			if(subdivision.Id == 0)
 				return new ChangeState(ChangeType.NewEntity, willCreatedValues: new[] { "Подразделение:" + subdivision.Name });
 			return new ChangeState(ChangeType.ChangeValue, oldValue: row.EditingEmployee.Subdivision?.Name);
