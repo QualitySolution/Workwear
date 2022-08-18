@@ -4,7 +4,6 @@ using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
 using QS.Dialog;
-using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Services;
 using QS.Utilities.Numeric;
@@ -101,19 +100,10 @@ namespace workwear.Models.Import.Employees
 					"BirthDay"
 				}
 			));
-			AddColumnName(DataTypeEmployee.Subdivision,
-				"Подразделение"
-			);
-			AddColumnName(DataTypeEmployee.Department,
-				"Отдел",
-				"Бригада",
-				"Бригады"
-			);
-			AddColumnName(DataTypeEmployee.Post,
-				"Должность",
-				"Профессия"
-			);
-			
+			SupportDataTypes.Add(new DataTypeSubdivision(this));
+			SupportDataTypes.Add(new DataTypeDepartment(this));
+			SupportDataTypes.Add(new DataTypePost(this));
+
 			var sizeTypes = sizeService.GetSizeType(uow, true);
 			foreach (var sizeType in sizeTypes)
 			{
@@ -156,82 +146,6 @@ namespace workwear.Models.Import.Employees
 			}
 			progress.Close();
 		}
-		/*
-		public void MakeChange(
-			SettingsMatchEmployeesViewModel settings, 
-			EmployeeCard employee, 
-			SheetRowEmployee row, 
-			ExcelColumn column, 
-			ChangeType rowChange,
-			IUnitOfWork uow)
-		{
-			var value = row.CellStringValue(column.Index);
-			var dataType = column.DataTypeEnum;
-			if(String.IsNullOrWhiteSpace(value)) {
-				row.AddColumnChange(column, ChangeType.NotChanged);
-				return;
-			}
-
-			switch(dataType) {
-				case DataTypeEmployee.Subdivision:
-					if(String.Equals(employee.Subdivision?.Name, value, StringComparison.CurrentCultureIgnoreCase)) {
-						row.AddColumnChange(column, ChangeType.NotChanged);
-						break;
-					}
-
-					var subdivision = UsedSubdivisions.FirstOrDefault(x =>
-						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase));
-					if(subdivision == null) {
-						subdivision = new Subdivision { Name = value };
-						UsedSubdivisions.Add(subdivision);
-					}
-					row.AddColumnChange(column, subdivision.Id == 0 ? ChangeType.NewEntity : rowChange, employee.Subdivision?.Name);
-					employee.Subdivision = subdivision;
-					break;
-				case DataTypeEmployee.Department:
-					if(String.Equals(employee.Department?.Name, value, StringComparison.CurrentCultureIgnoreCase)) {
-						row.AddColumnChange(column, ChangeType.NotChanged);
-						break;
-					}
-					var department = UsedDepartment.FirstOrDefault(x =>
-						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase)
-						&& (employee.Subdivision == null && x.Subdivision == null || 
-						    DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision)));
-					if(department == null) {
-						department = new Department {
-							Name = value,
-							Subdivision = employee.Subdivision,
-							Comments = "Создан при импорте сотрудников из Excel"
-						};
-						UsedDepartment.Add(department);
-					}
-					row.AddColumnChange(column, department.Id == 0 ? ChangeType.NewEntity : rowChange, employee.Department?.Name);
-					employee.Department = department;
-					break;
-				case DataTypeEmployee.Post:
-					if(String.Equals(employee.Post?.Name, value, StringComparison.CurrentCultureIgnoreCase)) {
-						row.AddColumnChange(column, ChangeType.NotChanged);
-						break;
-					}
-					var post = UsedPosts.FirstOrDefault(x =>
-						String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase)
-						&&(employee.Subdivision == null && x.Subdivision == null || 
-						   DomainHelper.EqualDomainObjects(x.Subdivision, employee.Subdivision)));
-					if(post == null) {
-						post = new Post { 
-							Name = value, 
-							Subdivision = employee.Subdivision,
-							Comments = "Создана при импорте сотрудников из Excel"
-						};
-						UsedPosts.Add(post);
-					}
-					row.AddColumnChange(column, post.Id == 0 ? ChangeType.NewEntity : rowChange, employee.Post?.Name);
-					employee.Post = post;
-					break;
-				default:
-					throw new NotSupportedException($"Тип данных {dataType} не поддерживается.");
-			}
-		} */
 		#endregion
 		#region Сопоставление
 		public void MatchByName(
