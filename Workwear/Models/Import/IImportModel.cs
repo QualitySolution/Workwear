@@ -11,32 +11,39 @@ namespace workwear.Models.Import
 {
 	public interface IImportModel : INotifyPropertyChanged
 	{
+		void Init(IUnitOfWork uow);
 		string ImportName { get; }
 		string DataColumnsRecommendations { get; }
-		Type DataTypeEnum { get; }
-		
+
 		CountersViewModel CountersViewModel { get; }
 
 		#region Колонки
-		IList<IDataColumn> DisplayColumns {get;}
-		int MaxSourceColumns { get; set; }
+		List<ExcelColumn> Columns {get;}
+		int ColumnsCount { get; set; }
+		int LevelsCount { get; set; }
 		void AutoSetupColumns(IProgressBarDisplayable progress);
 		#endregion
 
 		#region Строки
 		int HeaderRow { get; set; }
 		int SheetRowCount { get; }
-		void AddRow(IRow cells);
+		void AddRow(IRow[] cells);
 		List<ISheetRow> DisplayRows { get; }
 		#endregion
-		ICell[,] MergedCells { get; set; }
+		IDictionary<int, ICell[]> MergedCells { get; set; }
+
+		#region Типы данных
+		IEnumerable<DataType> DataTypes { get; }
+
+		ExcelValueTarget GetColumnForDataType(object data);
+		#endregion
 
 		#region Сопоставление
 		ViewModelBase MatchSettingsViewModel { get; }
 		bool CanMatch { get; }
 		void MatchAndChanged(IProgressBarDisplayable progress, IUnitOfWork uow);
 		/// <summary>
-		/// Вызывается при шаге назад, для очистки заполненых данных
+		/// Вызывается при шаге назад, для очистки заполненных данных
 		/// </summary>
 		void CleanMatch();
 		#endregion

@@ -40,6 +40,8 @@ namespace Stetic
 				w1.Add("mail", w14);
 				global::Gtk.IconSet w15 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("workwear.icon.menu.logs.png"));
 				w1.Add("logs", w15);
+				global::Gtk.IconSet w16 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("workwear.icon.toolbar.claims.png"));
+				w1.Add(" SendBox", w16);
 				w1.AddDefault();
 			}
 		}

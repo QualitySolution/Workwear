@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gamma.Utilities;
 using QS.ViewModels;
 using workwear.Models.Import;
@@ -34,5 +35,8 @@ namespace workwear.ViewModels.Import
 		{
 			Counters[counter.ToString()].Count += value;
 		}
+
+		public IEnumerable<string> CountersText => Counters
+			.Select(x => $"{x.Value.Title}:{x.Value.Count}");
 	}
 }

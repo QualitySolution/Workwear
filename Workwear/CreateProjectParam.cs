@@ -58,6 +58,9 @@ using workwear.Domain.Users;
 using workwear.Journal;
 using workwear.Models.Company;
 using workwear.Models.Import;
+using workwear.Models.Import.Employees;
+using workwear.Models.Import.Issuance;
+using workwear.Models.Import.Norms;
 using workwear.Models.Stock;
 using workwear.Repository.Operations;
 using workwear.Tools.Features;
@@ -105,7 +108,7 @@ namespace workwear
 			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
 			OrmMain.AddObjectDescription<UserSettings>();
 			//Склад
-			OrmMain.AddObjectDescription<Income>().Dialog<Dialogs.Stock.IncomeDocDlg>();
+			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
 
 			NotifyConfiguration.Enable();
 			BuisnessLogicGlobalEventHandler.Init(new GtkQuestionDialogsInteractive());
@@ -225,7 +228,7 @@ namespace workwear
 			#endregion
 
 			#region Старые диалоги
-			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(Dialogs.Stock.IncomeDocDlg)))
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(IncomeDocDlg)))
 				.Where(t => t.IsAssignableTo<ITdiTab>() && t.Name.EndsWith("Dlg"))
 				.AsSelf();
 			#endregion
@@ -282,6 +285,7 @@ namespace workwear
 			builder.Register(c => new LkUserManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			builder.Register(c => new MessagesService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			builder.Register(c => new NotificationManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
+			builder.Register(c => new ClaimsManager(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			#endregion
 
 			#region Разделение версий

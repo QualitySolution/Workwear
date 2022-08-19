@@ -17,7 +17,7 @@
     <PrintOnLastPage>false</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>95.0pt</Height>
+    <Height>108.2pt</Height>
     <Columns>1</Columns>
     <ReportItems>
       <Table Name="Table1">
@@ -762,7 +762,7 @@ SUM(norms_item.amount) AS amount,
 FROM
     operation_warehouse
 WHERE
-    operation_warehouse.operation_time &lt;= @report_date AND operation_warehouse.nomenclature_id IN(
+    operation_warehouse.operation_time &lt;= CONVERT(@report_date, DATE) AND operation_warehouse.nomenclature_id IN(
     SELECT
         protection_tools_nomenclature.nomenclature_id
     FROM
@@ -794,11 +794,11 @@ LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
 JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
 WHERE
     wear_cards.dismiss_date IS NULL
-    AND (@exclude_in_vacation = false OR (@report_date NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
+    AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
-    AND wear_cards_item.next_issue &lt; @report_date
-    AND (@exclude_before = "" OR @exclude_before &lt; wear_cards_item.next_issue)
+    AND wear_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
+    AND (@exclude_before = "" OR CONVERT(@exclude_before, DATE) &lt; wear_cards_item.next_issue)
 GROUP BY
     wear_cards_item.protection_tools_id,
     IF(@show_sex, wear_cards.sex, NULL),
@@ -891,7 +891,7 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>

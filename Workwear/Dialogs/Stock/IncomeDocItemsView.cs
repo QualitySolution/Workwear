@@ -21,7 +21,7 @@ using workwear.ViewModel;
 using workwear.ViewModels.Stock;
 using workwear.ViewModels.Stock.Widgets;
 
-namespace workwear.Dialogs.Stock
+namespace workwear
 {
 	[ToolboxItem(true)]
 	public partial class IncomeDocItemsView : WidgetOnDialogBase

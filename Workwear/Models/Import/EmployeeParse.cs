@@ -1,4 +1,6 @@
 ﻿using System;
+using workwear.Domain.Company;
+
 namespace workwear.Models.Import
 {
 	public static class EmployeeParse
@@ -9,6 +11,19 @@ namespace workwear.Models.Import
 				return number.ToString();
 			else
 				return cellValue;
+		}
+		
+		public static string GetPersonalNumber(IMatchEmployeesSettings settings, ISheetRow row, ExcelValueTarget column) {
+			var original = settings.ConvertPersonnelNumber ? 
+				ConvertPersonnelNumber(row.CellStringValue(column)) : row.CellStringValue(column);
+			return original?.Trim();
+		}
+		
+		public static bool CompareFio(EmployeeCard employee, FIO fio)
+		{
+			return String.Equals(fio.LastName, employee.LastName, StringComparison.CurrentCultureIgnoreCase)
+			       && String.Equals(fio.FirstName, employee.FirstName, StringComparison.CurrentCultureIgnoreCase)
+			       && (fio.Patronymic == null || String.Equals(fio.Patronymic, employee.Patronymic, StringComparison.CurrentCultureIgnoreCase));
 		}
 	}
 }

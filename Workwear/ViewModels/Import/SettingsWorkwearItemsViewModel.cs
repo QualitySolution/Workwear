@@ -1,8 +1,9 @@
 ﻿using QS.ViewModels;
+using workwear.Models.Import;
 
 namespace workwear.ViewModels.Import
 {
-	public class SettingsWorkwearItemsViewModel : ViewModelBase
+	public class SettingsWorkwearItemsViewModel : ViewModelBase, IMatchEmployeesSettings
 	{
 		public SettingsWorkwearItemsViewModel()
 		{

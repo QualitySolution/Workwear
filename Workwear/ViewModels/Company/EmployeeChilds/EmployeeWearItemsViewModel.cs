@@ -120,7 +120,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void ReturnWear()
 		{
-			navigation.OpenTdiTab<Dialogs.Stock.IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
+			navigation.OpenTdiTab<IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
 		}
 
 		public void OpenTimeLine(EmployeeCardItem item)
@@ -142,7 +142,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void SetIssueDateManual(EmployeeCardItem row)
 		{
-			var operations = employeeIssueRepository.GetOperationsForEmployee(UoW, Entity, row.ProtectionTools).OrderByDescending(x => x.OperationTime).ToList();
+			var operations = employeeIssueRepository.GetOperationsForEmployee(Entity, row.ProtectionTools, UoW).OrderByDescending(x => x.OperationTime).ToList();
 			IPage<ManualEmployeeIssueOperationViewModel> page;
 			if(!operations.Any() || operations.First().ExpiryByNorm < DateTime.Today)
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
@@ -159,13 +159,9 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		{
 			if(e.CloseSource == CloseSource.Save || e.CloseSource == CloseSource.Self) {
 				var page = sender as IPage<ManualEmployeeIssueOperationViewModel>;
-				var operationPair = (UoW.Session as NHibernate.Impl.SessionImpl).PersistenceContext.EntitiesByKey.SingleOrDefault(x => x.Value is EmployeeIssueOperation && (int)x.Key.Identifier == page.ViewModel.Entity.Id);
-				if(operationPair.Value != null) {
-					if(e.CloseSource == CloseSource.Self) //Self возвращается при удалении.
-						UoW.Session.Evict(operationPair.Value);
-					else
-						UoW.Session.Refresh(operationPair.Value);//Почему то не срабатывает при втором вызове. Но не смог починить.
-				}
+				if(e.CloseSource == CloseSource.Self)
+					UoW.Delete(UoW.GetById<EmployeeIssueOperation>(page.ViewModel.Entity.Id));
+				UoW.Commit();
 				Entity.FillWearRecivedInfo(employeeIssueRepository);
 				Entity.UpdateNextIssue(page.ViewModel.Entity.ProtectionTools);
 			}

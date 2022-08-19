@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Linq;
 using Autofac;
 using Gamma.Binding.Converters;
 using NLog;
+using QS.Dialog;
 using QS.Dialog.Gtk;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
+using QS.Navigation;
+using QS.Project.Domain;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
@@ -13,19 +17,24 @@ using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
+using workwear.Models.Import;
 using workwear.Repository;
 using workwear.Repository.Stock;
 using workwear.Tools.Features;
+using workwear.Tools.Import;
 using workwear.ViewModels.Company;
 using workwear.ViewModels.Stock;
 
-namespace workwear.Dialogs.Stock
+namespace workwear
 {
 	public partial class IncomeDocDlg : EntityDialogBase<Income>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 		private readonly SizeService sizeService;
+		private readonly IInteractiveService interactiveService;
+		private readonly INavigationManager navigationManager;
+		private readonly IProgressBarDisplayable progressBar;
 
 		private FeaturesService featuresService;
 
@@ -35,6 +44,10 @@ namespace workwear.Dialogs.Stock
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Income> ();
 			featuresService = AutofacScope.Resolve<FeaturesService>();
 			sizeService = AutofacScope.Resolve<SizeService>();
+			interactiveService = AutofacScope.Resolve<IInteractiveService>();
+			navigationManager = AutofacScope.Resolve<INavigationManager>();
+			progressBar = AutofacScope.Resolve<IProgressBarDisplayable>();
+			
 			
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
@@ -111,6 +124,93 @@ namespace workwear.Dialogs.Stock
 				.Finish();
 			//Метод отключает модули спецодежды, которые недоступны для пользователя
 			DisableFeatures();
+
+			ybuttonReadInFile.Clicked += OnReadFileClicked;
+		}
+
+		private void OnReadFileClicked(object sender, EventArgs e) {
+			var file = Open1CFile();
+			if(String.IsNullOrEmpty(file)) 
+				return;
+			var useAlternativeSize = interactiveService.Question("Использовать альтернативные значения размеров?");
+			var reader = new ReaderDocumentFromXml1C(file, UoW, progressBar, useAlternativeSize);
+			
+			if(reader.DocumentDate != null)
+				Entity.Date = reader.DocumentDate.Value;
+
+			if (reader.NotFoundNomenclatureNumbers.Any()) {
+				var message = String.Join("\n", reader.NotFoundNomenclatureNumbers.Take(10).Select(x => " * " + x));
+				if(reader.NotFoundNomenclatureNumbers.Count > 10)
+					message += $"\n и еще {reader.NotFoundNomenclatureNumbers.Count - 10}...";
+				if(!interactiveService.Question($"Не найден номенклатурный номер у номенклатур:\n{message}\n " +
+				                                "Продолжить создание документа прихода?"))
+					return;
+			}
+			
+			if (reader.UnreadableArticle.Any()) {
+				var message = String.Join("\n", reader.UnreadableArticle.Take(10).Select(x => " * " + x));
+				if(reader.UnreadableArticle.Count > 10)
+					message += $"\n и еще {reader.UnreadableArticle.Count - 10}...";
+				if(!interactiveService.Question($"Не удалось определить значение у следующих номенклатурных номеров:\n{message}\n " +
+				                                "Продолжить создание документа прихода?"))
+					return;
+			}
+
+			if(reader.NotFoundNomenclatures.Count > 0) {
+				var message = String.Join("\n", reader.NotFoundNomenclatures.Take(10)
+					.Select(x => $" * [Номенклатурный номер:{x.Article}]\t{x.Name}"));
+				if (reader.NotFoundNomenclatures.Count > 10)
+					message += $"\n и еще {reader.NotFoundNomenclatures.Count - 10}...";
+				if(interactiveService.Question($"Следующих номенклатур нет в справочнике:\n{message}\n Создать?")) {
+					var nomenclatureTypes = new NomenclatureTypes(UoW, sizeService, true);
+					foreach(var notFoundNomenclature in reader.NotFoundNomenclatures) {
+						var type = nomenclatureTypes.ParseNomenclatureName(notFoundNomenclature.Name);
+						if(type is null) {
+							var page = navigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null,
+								EntityUoWBuilder.ForCreate(),
+								OpenPageOptions.AsSlave);
+							page.ViewModel.Entity.Name = notFoundNomenclature.Name;
+							page.ViewModel.Entity.Number = notFoundNomenclature.Article;
+						}
+						else {
+							if(type.Id == 0)
+								UoW.Save(type);
+							var nomenclature = new Nomenclature {
+								Name = notFoundNomenclature.Name, 
+								Number = notFoundNomenclature.Article,
+								Type = type,
+								Comment = "Созданно при загрузке поступления из файла"
+							};
+							UoW.Save(nomenclature);
+						}
+					}
+
+					interactiveService.ShowMessage(ImportanceLevel.Info,
+						"Сохраните номенклатуру(ы) и повторите загрузку документа.", "Загрузка документа");
+					UoW.Commit();
+					return;
+				}
+			}
+
+			if(reader.DocumentItems.Any())
+				foreach(var item in reader.DocumentItems)
+					Entity.AddItem(item.Nomenclature, item.Size, item.Height, item.Amount, null, item.Cost);
+			else
+				interactiveService.ShowMessage(ImportanceLevel.Info, "Указанный файл не содержит строк поступления");
+
+		}
+
+		private string Open1CFile() {
+			var param = new object[] { "Cancel", Gtk.ResponseType.Cancel, "Open", Gtk.ResponseType.Accept};
+			var fileChooserDialog = new Gtk.FileChooserDialog("Open File", null, Gtk.FileChooserAction.Open, param);
+			var nameFile = String.Empty;
+			if(fileChooserDialog.Run() == (int)Gtk.ResponseType.Accept)
+				if(fileChooserDialog.Filename.ToLower().EndsWith(".xml"))
+					nameFile = fileChooserDialog.Filename;
+				else
+					interactiveService.ShowMessage(ImportanceLevel.Error, "Формат файла не поддерживается");
+			fileChooserDialog.Destroy();
+			return nameFile;
 		}
 
 		public override bool Save() {

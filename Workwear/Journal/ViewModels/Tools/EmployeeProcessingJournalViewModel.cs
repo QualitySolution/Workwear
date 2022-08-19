@@ -145,11 +145,24 @@ namespace workwear.Journal.ViewModels.Tools
 			RowActivatedAction = editAction;
 
 			var updateStatusAction = new JournalAction("Установить по должности",
-					(selected) => selected.Any(),
-					(selected) => true,
-					(selected) => UpdateNorms(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
-					);
+				(selected) => selected.Any(),
+				(selected) => true
+			);
 			NodeActionsList.Add(updateStatusAction);
+
+			var updateOnlyFirstNorm = new JournalAction("Только первую норму",
+				selected => selected.Any(),
+				selected => true,
+				selected => UpdateNorms(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+			);
+			updateStatusAction.ChildActionsList.Add(updateOnlyFirstNorm);
+
+			var updateAllNorms = new JournalAction("Все нормы для должности",
+				selected => selected.Any(),
+				selected => true,
+				selected => UpdateAllNorms(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+			);
+			updateStatusAction.ChildActionsList.Add(updateAllNorms);
 
 			var RecalculateAction = new JournalAction("Пересчитать",
 					(selected) => selected.Any(),
@@ -213,6 +226,49 @@ namespace workwear.Journal.ViewModels.Tools
 					Results[employee.Id] = "Подходящая норма не найдена";
 				}
 			}
+			progress.Add(text: "Готово");
+			UoW.Commit();
+			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+			Refresh();
+		}
+
+		private void UpdateAllNorms(EmployeeProcessingJournalNode[] nodes) {
+			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
+			var progress = progressPage.ViewModel.Progress;
+
+			progress.Start(nodes.Length + 2, text: "Загружаем сотрудников");
+			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id));
+			progress.Add(text: "Загружаем нормы");
+			var norms = normRepository.GetNormsForPost(UoW, employees.Select(x => x.Post)
+				.Where(x => x != null)
+				.Distinct()
+				.ToArray());
+
+			var step = 0;
+
+			foreach(var employee in employees) {
+				progress.Add(text: $"Обработка {employee.ShortName}");
+				if(employee.Post == null) {
+					Results[employee.Id] = "Отсутствует должность";
+					continue;
+				}
+
+				var normsForEmployee = norms
+					.Where(x => x.IsActive && x.Posts.Contains(employee.Post))
+					.ToList();
+				if(normsForEmployee.Any()) {
+					step++;
+					employee.UsedNorms.Clear();
+					employee.AddUsedNorms(normsForEmployee);
+					UoW.Save(employee);
+					Results[employee.Id] = $"ОК({normsForEmployee.Count})";
+					if(step % 10 == 0)
+						UoW.Commit();
+				}
+				else
+					Results[employee.Id] = "Подходящая норма не найдена";
+			}
+
 			progress.Add(text: "Готово");
 			UoW.Commit();
 			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);

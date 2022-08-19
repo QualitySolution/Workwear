@@ -10,6 +10,8 @@ namespace Workwear.Repository.Sizes
             uow.Session.QueryOver<Size>().List();
 
         public static IList<SizeType> GetSizeType(IUnitOfWork uow) => 
-            uow.Session.QueryOver<SizeType>().List();
+            uow.Session.QueryOver<SizeType>()
+                .OrderBy(x => x.Position).Asc
+                .List();
     }
 }

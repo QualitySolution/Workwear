@@ -43,6 +43,7 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Integration\Import\NomenclatureTypesTest.cs" />
     <None Include="Integration\Reports\NoDBTestReport.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -54,9 +55,16 @@
     <Compile Include="ConfigureOneTime.cs" />
     <Compile Include="Deletion\ConfigTests.cs" />
     <Compile Include="HistoryLog\DomainModelTest.cs" />
-    <Compile Include="Integration\Import\ExcelImportViewModelTest.cs" />
+    <Compile Include="Integration\Import\ExcelImportViewModelItemsTest.cs" />
+    <Compile Include="Integration\Import\ExcelImportViewModelEmployeeTest.cs" />
+    <Compile Include="Integration\Import\ExcelImportViewModelNormsTest.cs" />
     <Compile Include="Integration\Stock\CompletionIntegratedTest.cs" />
-    <Compile Include="Models\Import\DataParserNormTest.cs" />
+    <Compile Include="Models\Import\Employees\DataTypeBustTest.cs" />
+    <Compile Include="Models\Import\Employees\DataTypeFioTest.cs" />
+    <Compile Include="Models\Import\ImportModelBaseTest.cs" />
+    <Compile Include="Models\Import\Norms\DataTypePeriodAndCountTest.cs" />
+    <Compile Include="Models\Import\Norms\DataTypePeriodTest.cs" />
+    <Compile Include="Models\Import\RowStackHelperTest.cs" />
     <Compile Include="Operations\Graph\IssueGraphTest.cs" />
     <Compile Include="Operations\Graph\GraphItemTest.cs" />
     <Compile Include="Organization\EmployeeCardTests.cs" />
@@ -212,6 +220,26 @@
     <None Include="Samples\Excel\empty_first_row_a2.xls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Samples\Excel\all_sizes.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Samples\Excel\norms_agronom.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Samples\Excel\items_vostok.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Samples\Excel\items_dateCells.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

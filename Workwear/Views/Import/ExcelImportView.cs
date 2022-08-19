@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using Gamma.GtkWidgets;
 using Gamma.Utilities;
-using Gamma.Widgets;
 using Gtk;
 using QS.Views.Dialog;
 using QS.Views.Resolve;
+using QS.Widgets.GtkUI;
 using QSWidgetLib;
 using workwear.Models.Import;
 using workwear.ViewModels.Import;
@@ -15,7 +15,7 @@ namespace workwear.Views.Import
 	public partial class ExcelImportView : DialogViewBase<ExcelImportViewModel>
 	{
 		List<yLabel> columnsLabels = new List<yLabel>();
-		List<yEnumComboBox> columnsTypeCombos = new List<yEnumComboBox>();
+		List<SpecialListComboBox> columnsTypeCombos = new List<SpecialListComboBox>();
 
 		public ExcelImportView(ExcelImportViewModel viewModel, IGtkViewResolver viewResolver) : base(viewModel)
 		{
@@ -40,6 +40,8 @@ namespace workwear.Views.Import
 			var Filter = new FileFilter();
 			Filter.AddPattern("*.xls");
 			Filter.AddPattern("*.xlsx");
+			Filter.AddMimeType("application/vnd.ms-excel");
+			Filter.AddMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 			Filter.Name = "Excel";
 			filechooser.AddFilter(Filter);
 
@@ -77,6 +79,7 @@ namespace workwear.Views.Import
 			eventboxLegendaNotFound.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfNotFound));
 			eventboxLegendaError.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfError));
 			eventboxLegendaSkipRows.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfSkipped));
+			labelLegendaWarning.ModifyFg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfWarning));
 
 			buttonSave.Binding
 				.AddBinding(ViewModel, v => v.SensitiveSaveButton, w => w.Sensitive)
@@ -87,10 +90,10 @@ namespace workwear.Views.Import
 
 		void IImportModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {
-				case nameof(IImportModel.DisplayColumns):
+				case nameof(IImportModel.Columns):
 					RefreshTableColumns();
 					break;
-				case nameof(IImportModel.MaxSourceColumns):
+				case nameof(IImportModel.ColumnsCount):
 					RefreshColumnsWidgets();
 					break;
 			}
@@ -98,11 +101,12 @@ namespace workwear.Views.Import
 
 		private void RefreshTableColumns() {
 			var config = ColumnsConfigFactory.Create<ISheetRow>();
-			for(var i = 0; i < ViewModel.ImportModel.DisplayColumns.Count; i++) {
+			for(var i = 0; i < ViewModel.ImportModel.Columns.Count; i++) {
 				var col = i;
-				config.AddColumn(ViewModel.ImportModel.DisplayColumns[i].Title).HeaderAlignment(0.5f).Resizable()
+				config.AddColumn(ViewModel.ImportModel.Columns[i].Title).HeaderAlignment(0.5f).Resizable()
 					.ToolTipText(x => x.CellTooltip(col))
 					.AddTextRenderer(x => x.CellValue(col))
+					.AddSetter((c, x) => c.Foreground = x.CellForegroundColor(col))
 					.AddSetter((c, x) => c.Background = x.CellBackgroundColor(col));
 			}
 			config.AddColumn(String.Empty);
@@ -115,29 +119,41 @@ namespace workwear.Views.Import
 				tableColumns.Remove(label);
 			foreach(var combo in columnsTypeCombos)
 				tableColumns.Remove(combo);
-			tableColumns.NRows = (uint)ViewModel.ImportModel.MaxSourceColumns;
+			tableColumns.NRows = (uint)ViewModel.ImportModel.ColumnsCount + 1;
+			tableColumns.NColumns = (uint)ViewModel.ImportModel.LevelsCount + 1;
 			columnsLabels.Clear();
 			columnsTypeCombos.Clear();
-			uint nRow = 0;
-			foreach(var column in ViewModel.ImportModel.DisplayColumns) {
+			uint nRow = 1;
+			if(ViewModel.ImportModel.LevelsCount > 1) {
+				for(uint col = 1; col <= ViewModel.ImportModel.LevelsCount; col++) {
+					var label = new Label($"Уровень {col}");
+					tableColumns
+						.Attach(label, col, col + 1, 0, 1, 
+							AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+				}
+			}
+			foreach(var column in ViewModel.ImportModel.Columns) {
 				var label = new yLabel();
 				label.Xalign = 1;
 				label.Binding
-					.AddBinding(column, nameof(IDataColumn.Title), w => w.LabelProp)
+					.AddBinding(column, v => v.Title, w => w.LabelProp)
 					.InitializeFromSource();
 				columnsLabels.Add(label);
 				tableColumns
 					.Attach(label, 0, 1, nRow, nRow + 1, 
 						AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
-				var combo = new yEnumComboBox();
-				combo.ItemsEnum = ViewModel.ImportModel.DataTypeEnum;
-				combo.Binding
-					.AddBinding(column, nameof(IDataColumn.DataType), w => w.SelectedItem)
-					.InitializeFromSource();
-				columnsTypeCombos.Add(combo);
-				tableColumns
-					.Attach(combo, 1, 2, nRow, nRow + 1, 
-						AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+				for(uint col = 0; col < ViewModel.ImportModel.LevelsCount; col++) {
+					var groupLevel = column.DataTypeByLevels[col];
+					var combo = new SpecialListComboBox {ItemsList = ViewModel.ImportModel.DataTypes};
+					combo.SetRenderTextFunc<DataType>(x => x.Title);
+					combo.Binding
+						.AddBinding(groupLevel, c => c.DataType, w => w.SelectedItem)
+						.InitializeFromSource();
+					columnsTypeCombos.Add(combo);
+					tableColumns
+						.Attach(combo, col + 1, col + 2, nRow, nRow + 1, 
+							AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+				}
 				nRow++;
 			}
 			tableColumns.ShowAll();

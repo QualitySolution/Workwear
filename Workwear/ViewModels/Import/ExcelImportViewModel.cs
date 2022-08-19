@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -24,6 +25,8 @@ namespace workwear.ViewModels.Import
 		public static readonly string ColorOfError = "Pink";
 		public static readonly string ColorOfNotFound = "Yellow";
 		public static readonly string ColorOfSkipped = "Orchid";
+		
+		public static readonly string ColorOfWarning = "Orange Red";
 
 		public ExcelImportViewModel(
 			IImportModel importModel, 
@@ -31,9 +34,10 @@ namespace workwear.ViewModels.Import
 			INavigationManager navigation, 
 			IInteractiveMessage interactiveMessage, 
 			ProgressInterceptor progressInterceptor, 
-			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator)
+			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator, importModel.ImportName)
 		{
 			ImportModel = importModel ?? throw new ArgumentNullException(nameof(importModel));
+			ImportModel.Init(UoW);
 			this.interactiveMessage = interactiveMessage ?? throw new ArgumentNullException(nameof(interactiveMessage));
 			this.progressInterceptor = progressInterceptor;
 			Title = importModel.ImportName;
@@ -183,18 +187,32 @@ namespace workwear.ViewModels.Import
 			sh = wb.GetSheet(SelectedSheet.Title);
 			ProgressStep.Start(sh.LastRowNum + sh.NumMergedRegions, text: "Читаем лист...");
 
-			var maxColumns = 0;
+			var maxColumnsIndex = 0;
+			var maxLevels = 0;
+			var levelsStack = new Stack<IRow>();
 			for(var i = 0; i <= sh.LastRowNum; i++) {
 				ProgressStep.Add();
-				if(sh.GetRow(i) == null)
+				var row = sh.GetRow(i);
+				if(row == null)
 					continue;
-				ImportModel.AddRow(sh.GetRow(i));
-				maxColumns = Math.Max(sh.GetRow(i).Cells.Count, maxColumns);
+				maxLevels = Math.Max(row.OutlineLevel, maxLevels);
+				RowStackHelper.NewRow(levelsStack, row);
+				ImportModel.AddRow(levelsStack.ToArray());
+				//Здесь проверено экспериментально по всем файлам в тестах LastCellNum = количеству виртуальны ячеек(колонок).
+				//То есть последний индекс ячеки +1. Не знаю зачем так сделано. https://github.com/dotnetcore/NPOI/issues/84
+				//При отсутствии ячеек значение LastCellNum и FirstCellNum = -1
+				maxColumnsIndex = Math.Max(row.LastCellNum, maxColumnsIndex);  
 			}
-			ImportModel.MaxSourceColumns = maxColumns;
+			ImportModel.LevelsCount = maxLevels + 1;
+			ImportModel.ColumnsCount = maxColumnsIndex;
 			OnPropertyChanged(nameof(RowsCount));
 			ProgressStep.Update("Обработка объединенных ячеек...");
-			var merged = new ICell[RowsCount, maxColumns];
+			var merged = new Dictionary<int, ICell[]>();
+			for(var i = 0; i <= sh.LastRowNum; i++) {
+				if(sh.GetRow(i) == null)
+					continue;
+				merged[sh.GetRow(i).RowNum] = new ICell[maxColumnsIndex];
+			}
 			// Loop through all merge regions in this sheet.
 			for (int i = 0; i < sh.NumMergedRegions; i++)
 			{
@@ -204,14 +222,16 @@ namespace workwear.ViewModels.Import
 				var firstRegionCell = sh.GetRow(mergeRegion.FirstRow).GetCell(mergeRegion.FirstColumn);
 				for (int row = mergeRegion.FirstRow; row <= mergeRegion.LastRow; row++) {
 					for (int col = mergeRegion.FirstColumn; col <= mergeRegion.LastColumn; col++) {
-						merged[row, col] = firstRegionCell;
+						merged[row][col] = firstRegionCell;
 					}
 				}
 			}
 			ProgressStep.Add();
 			ImportModel.MergedCells = merged;
 			ProgressStep.Close();
-			logger.Info($"Прочитано {maxColumns} колонок и {sh.LastRowNum} строк");
+			logger.Info($"Прочитано {maxColumnsIndex} колонок и {sh.LastRowNum} строк");
+			if(maxLevels > 0)
+				logger.Info($"Страница имеет группировку с {maxLevels + 1} уровнями");
 		}
 		#endregion
 	}

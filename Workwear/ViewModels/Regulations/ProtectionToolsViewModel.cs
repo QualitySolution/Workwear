@@ -46,7 +46,9 @@ namespace workwear.ViewModels.Regulations
 				interactiveService.ShowMessage(ImportanceLevel.Error, "Не указан тип номенклатуры!");
 				return;
 			}
-			var page = NavigationManager.OpenViewModel<ProtectionToolsJournalViewModel>(this, OpenPageOptions.AsSlave);
+			var page = NavigationManager.OpenViewModel<ProtectionToolsJournalViewModel, ItemsType>(
+				this, Entity.Type, 
+				OpenPageOptions.AsSlave);
 			page.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			page.ViewModel.OnSelectResult += Analog_OnSelectResult;
 		}
@@ -108,6 +110,7 @@ namespace workwear.ViewModels.Regulations
 				Type = Entity.Type,
 				Sex = ClothesSex.Universal,
 			};
+			UoW.Save(nomenclaure);
 			Entity.AddNomeclature(nomenclaure);
 		}
 

@@ -9,9 +9,9 @@ namespace workwear.Models.Import
 {
 	public static class SizeParser
 	{
-		public static SizeAndGrowth ParseSizeAndGrowth(string value, IUnitOfWork uow, SizeService sizeService)
+		public static SizeAndHeight ParseSizeAndGrowth(string value, IUnitOfWork uow, SizeService sizeService)
 		{
-			var result = new SizeAndGrowth();
+			var result = new SizeAndHeight();
 
 			var parts = value.Split(' ');
 			var onlySize = parts[0];
@@ -70,18 +70,85 @@ namespace workwear.Models.Import
 					growth2 = number;
 			}
 
-			result.Size = ParseSize(uow, size2.Length > 0 ? size1 + "-" + size2 : size1, sizeService, CategorySizeType.Size);
-			result.Growth = ParseSize(uow, growth2.Length > 0 ? growth1 + "-" + growth2 : growth1, sizeService, CategorySizeType.Height);
+			result.Size = size2.Length > 0 ? size1 + "-" + size2 : size1;
+			result.Height = growth2.Length > 0 ? growth1 + "-" + growth2 : growth1;
 
 			return result;
 		}
 
-		public static Size ParseSize(IUnitOfWork uow, string value, SizeService sizeService, CategorySizeType categorySizeType) =>
-			sizeService.GetSizeByCategory(uow, categorySizeType)
-				.FirstOrDefault(x => x.Name == value);
+		public static Size ParseSize(IUnitOfWork uow, string value, SizeService sizeService, SizeType sizeType) =>
+			sizeService.GetSize(uow, sizeType)
+				.FirstOrDefault(x => x.Name == value || x.AlternativeName == value);
+
+		#region Рост
+		public static string HeightToGOST(string height) {
+			if(int.TryParse(height, out int realHeight)) {
+				var found = UniversalWearHeights.FirstOrDefault(x => realHeight >= x.Lower && realHeight < x.Upper);
+				if(found != null)
+					return found.Name;
+			}
+
+			return height;
+		}
+
+		public static readonly MappingValue[] UniversalWearHeights = new MappingValue[] {
+			new MappingValue("146", 143, 149),
+			new MappingValue("152", 149, 155),
+			new MappingValue("158", 155, 161),
+			new MappingValue("164", 161, 167),
+			new MappingValue("170", 167, 173),
+			new MappingValue("176", 173, 179),
+			new MappingValue("182", 179, 185),
+			new MappingValue("188", 185, 191),
+			new MappingValue("194", 191, 197),
+			new MappingValue("200", 197, 203),
+			new MappingValue("210", 203, 210),
+		};
+		#endregion
+
+		#region Обхват груди
+
+		public static string BustToSize(string bust) {
+			if(int.TryParse(bust, out int realBust)) {
+				var found = BustMappingValues.FirstOrDefault(x => realBust >= x.Lower && realBust < x.Upper);
+				if(found != null)
+					return found.Name;
+			}
+			return null;
+		}
+
+		public static readonly MappingValue[] BustMappingValues = new MappingValue[] {
+			new MappingValue("42", 83, 86),
+			new MappingValue("44", 87, 90),
+			new MappingValue("46", 91, 94),
+			new MappingValue("48", 95, 98),
+			new MappingValue("50", 99, 102),
+			new MappingValue("52", 103, 106),
+			new MappingValue("54", 107, 110),
+			new MappingValue("56", 111, 114),
+			new MappingValue("58", 115, 118),
+			new MappingValue("60", 119, 122),
+			new MappingValue("62", 123, 126),
+			new MappingValue("64", 127, 130),
+		};
+
+		#endregion
 	}
-	public struct SizeAndGrowth {
-		public Size Size;
-		public Size Growth;
+	public struct SizeAndHeight {
+		public string Size;
+		public string Height;
+	}
+	
+	public class MappingValue{
+		public string Name;
+		public int Upper;
+		public int Lower;
+
+		public MappingValue(string name, int lower, int upper)
+		{
+			Name = name;
+			Upper = upper;
+			Lower = lower;
+		}
 	}
 }

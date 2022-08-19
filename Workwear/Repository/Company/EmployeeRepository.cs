@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
+using NHibernate.Dialect;
 using NHibernate.Dialect.Function;
+using NHibernate.Engine;
 using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Utilities.Text;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;
+using workwear.Models.Import;
 
 namespace workwear.Repository.Company
 {
@@ -129,6 +133,55 @@ namespace workwear.Repository.Company
 				.Take(1)
 				.SingleOrDefault();
 		}
+
+		#region GetEmployes
+
+		public IQueryOver<EmployeeCard,EmployeeCard> GetEmployeesByPersonalNumbers(string[] personalNumbers) {
+			return RepoUow.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.PersonnelNumber.IsIn(personalNumbers));
+		}
+
+		public IQueryOver<EmployeeCard,EmployeeCard> GetEmployeesByFIOs(IEnumerable<FIO> fios) { 
+			//Данный диалект используется в тестах.
+			if(((ISessionFactoryImplementor) RepoUow.Session.SessionFactory).Dialect is SQLiteDialect) {
+				//По сути отдельная реализация метода для тестов на SQLite, так как во первых:
+				//SQLite не поддерживает функцию CONCAT_WS
+				//Во вторых: на SQLite метод upper работает только для ASCII символов, что не позволяет его использовать для русского языка.
+				// https://www.sqlitetutorial.net/sqlite-functions/sqlite-upper/
+				// для SQLite мы используем TitleCase так как при сохранении в базу наша программа приводит имена к формату первой заглавной буквы.
+				var searchValues = fios
+					.Where(fio => !String.IsNullOrEmpty(fio.LastName) && !String.IsNullOrEmpty(fio.FirstName))
+					.Select(fio => fio.LastName.StringToTitleCase() + "|" + fio.FirstName.StringToTitleCase())
+					.Distinct().ToArray();
+				return RepoUow.Session.QueryOver<EmployeeCard>()
+					.Where(Restrictions.In(
+							Projections.SqlFunction(new SQLFunctionTemplate(NHibernateUtil.String, "( ?1 || '|' || ?2)"),
+									NHibernateUtil.String,
+									Projections.Property<EmployeeCard>(x => x.LastName),
+									Projections.Property<EmployeeCard>(x => x.FirstName)
+									),
+						searchValues));
+		    }
+			else {
+				var searchValues = fios
+					.Where(fio => !String.IsNullOrEmpty(fio.LastName) && !String.IsNullOrEmpty(fio.FirstName))
+					.Select(fio => (fio.LastName + "|" + fio.FirstName).ToUpper())
+					.Distinct().ToArray();
+				return RepoUow.Session.QueryOver<EmployeeCard>()
+					.Where(Restrictions.In(
+							Projections.SqlFunction(
+								"upper", NHibernateUtil.String,
+								Projections.SqlFunction(new StandardSQLFunction("CONCAT_WS"),
+									NHibernateUtil.String,
+									Projections.Constant(""),
+									Projections.Property<EmployeeCard>(x => x.LastName),
+									Projections.Constant("|"),
+									Projections.Property<EmployeeCard>(x => x.FirstName)
+								)),
+						searchValues));
+			}
+		}
+		#endregion
 	}
 
 	public class EmployeeRecivedInfo

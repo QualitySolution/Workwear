@@ -54,9 +54,10 @@ namespace workwear.Models.Import
 			AddType("Туфли", СlothesType.Shoes, pair, new[] { "Туфли" });
 			AddType("Тапочки", СlothesType.Shoes, pair, new[] { "Тапки,", "Тапочки" });
 			AddType("Сандалии", СlothesType.Shoes, pair, new[] { "Сабо", "Сандалии", "Сандали" });
+			AddType("Обувь", СlothesType.Shoes, pair, new[] { "Обувь" });
 			AddType("Валенки", СlothesType.WinterShoes, pair, new[] { "ВАЛЕНКИ" });
 			AddType("Галоши", СlothesType.WinterShoes, pair, new[] { "ГАЛОШИ" });
-			AddType("Перчатки", СlothesType.Gloves, pair, new[] { "ПЕРЧАТКИ", "КРАГИ" });
+			AddType("Перчатки", СlothesType.Gloves, pair, new[] { "ПЕРЧАТКИ", "КРАГИ", "перчаточные" });
 			AddType("Рукавицы", СlothesType.Mittens, pair, new[] { "РУКАВИЦЫ", "Вачеги" });
 			AddType("Аксесуары", СlothesType.PPE, sht, new[] { "ШАРФ", "ГАЛСТУК", "ШЕВРОН", "РЕМЕНЬ", "ЗНАЧОК", "Кокарда", "БЕЙДЖ", "ПОЯС", "Наколка" });
 			AddType("Водолазный инвентарь", СlothesType.PPE, sht, new[] { "ВОДОЛАЗНАЯ", "ПОДВОДНАЯ", "ГРУЗ", "ВОДОЛАЗНЫЙ", "ШЛАНГ", "СПИНКА", "БАЛЛОН" });
@@ -79,7 +80,7 @@ namespace workwear.Models.Import
 			AddType("Крема", СlothesType.PPE, sht, new[] { "крем", "МАЗЬ", "Паста" });
 			AddType("Защита", СlothesType.PPE, pair, new[] { "НАРУКАВНИКИ", "Наколенники" });
 			AddType("Защита от поражения электрическим током", СlothesType.PPE, sht, new[] { "Диэлектрический" });
-			AddType("Имущество", sht, new[] { "ФИЛЬТР", "ЗНАК", "ФИЛЬТРДЛЯ", "ЭТИКЕТКА", "РЕДУКТОР", "УТЕПЛИТЕЛЬ", "ЛЕНТА", "ШТОРЫ", 
+			AddType("Имущество", sht, new[] { "ФИЛЬТР", "Фильтра", "ЗНАК", "ЭТИКЕТКА", "РЕДУКТОР", "УТЕПЛИТЕЛЬ", "ЛЕНТА", "ШТОРЫ", 
 				"ФЛАГ", "ЧЕХОЛ", "РУКАВ", "ПЛОМБА", "КОЖА", "ПОЛОГ", "СУКНО" });
 			AddType("Инструмент", sht, new[] { "НОЖ", "НОЖНИЦЫ", "СИГНАЛЬНЫЙ", "МАНОМЕТР", "Щетка" });
 			AddType("Неизвестный тип", sht, new string[] { });
@@ -175,7 +176,7 @@ namespace workwear.Models.Import
 		}
 		#endregion
 		public ItemsType ParseNomenclatureName(string name) {
-			var parts = name.ToLower().Split(' ', '-', '_', '~', '"', '(', ')');
+			var parts = name.ToLower().Split(' ', '-', '_', '~', '"', '(', ')', '.', ',');
 			foreach(var word in parts) {
 				if (!KeyWords.TryGetValue(word, out var desc)) continue;
 				if (desc.keyWords2 == null) return desc.ItemsType;

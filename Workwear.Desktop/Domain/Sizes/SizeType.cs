@@ -18,7 +18,7 @@ namespace Workwear.Domain.Sizes
     public class SizeType: PropertyChangedBase, IDomainObject, IValidatableObject
     {
         #region Свойства
-        public virtual int Id { get; }
+        public virtual int Id { get; set; }
         private string name;
         [Display(Name = "Название")]
         public virtual string Name {

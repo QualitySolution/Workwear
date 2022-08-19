@@ -71,10 +71,7 @@ namespace workwear.ViewModels.Operations
 		#endregion
 
 		#region Actions
-		public void Delete()
-		{
-			UoW.Delete(Entity);
-			UoW.Commit();
+		public void Delete() {
 			Close(false, CloseSource.Self);
 		}
 		#endregion

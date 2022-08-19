@@ -6,6 +6,7 @@ using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using QS.Dialog;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.ViewModels;
 using workwear.ViewModels.Import;
 
@@ -13,14 +14,14 @@ namespace workwear.Models.Import
 {
 	public abstract class ImportModelBase<TDataTypeEnum, TSheetRow> : PropertyChangedBase
 		where TDataTypeEnum : Enum
-		where TSheetRow : SheetRowBase<TDataTypeEnum>
+		where TSheetRow : SheetRowBase<TSheetRow>
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		public Type DataTypeEnum => typeof(TDataTypeEnum);
 
 		#region Типы данных
-		public virtual bool CanMatch => HasRequiredDataTypes(Columns.Select(x => x.DataType));
+		public virtual bool CanMatch => HasRequiredDataTypes(ImportedDataTypes.Select(x => x.DataType.Data).OfType<TDataTypeEnum>());
 
 		protected virtual bool HasRequiredDataTypes(IEnumerable<TDataTypeEnum> dataTypes) => RequiredDataTypes.All(dataTypes.Contains);
 
@@ -28,49 +29,58 @@ namespace workwear.Models.Import
 		#endregion
 
 
-		private readonly IDataParser<TDataTypeEnum> dataParser;
+		private readonly IDataParser dataParser;
 
-		protected ImportModelBase(IDataParser<TDataTypeEnum> dataParser, Type countersEnum, ViewModelBase matchSettingsViewModel = null)
+		protected ImportModelBase(IDataParser dataParser, Type countersEnum, ViewModelBase matchSettingsViewModel = null)
 		{
 			this.dataParser = dataParser;
 			this.MatchSettingsViewModel = matchSettingsViewModel;
 			CountersViewModel = new CountersViewModel(countersEnum);
 		}
 
+		public virtual void Init(IUnitOfWork uow)
+		{
+			
+		}
+		
 		public ViewModelBase MatchSettingsViewModel { get; }
 		
 		public CountersViewModel CountersViewModel { get; }
 
 		#region Колонки
-		public List<ImportedColumn<TDataTypeEnum>> Columns = new List<ImportedColumn<TDataTypeEnum>>();
 
-		public IList<IDataColumn> DisplayColumns => Columns.Cast<IDataColumn>().ToList();
+		public List<ExcelColumn> Columns { get; } = new List<ExcelColumn>();
 
-		public IDataColumn AddColumn(int index)
-		{
-			var column = new ImportedColumn<TDataTypeEnum>(index);
-			Columns.Add(column);
-			return column;
+		public IEnumerable<ExcelValueTarget> ImportedDataTypes => Columns
+			.SelectMany(x => x.DataTypeByLevels)
+			.Where(x => x.DataType != null && !x.DataType.IsUnknown);
+		public IEnumerable<DataType> DataTypes => dataParser.SupportDataTypes;
+
+		public ExcelValueTarget GetColumnForDataType(object data) {
+			return Columns.SelectMany(x => x.DataTypeByLevels).FirstOrDefault(x => data.Equals(x.DataType?.Data));
 		}
 
-		private int maxSourceColumns;
+		private int columnsCount;
 		/// <summary>
 		/// При установке значения будут пересозданы колонки
 		/// </summary>
-		public virtual int MaxSourceColumns {
-			get => maxSourceColumns;
+		public virtual int ColumnsCount {
+			get => columnsCount;
 			set {
-				maxSourceColumns = value;
-				RecreateColumns(maxSourceColumns);
+				columnsCount = value;
+				RecreateColumns(columnsCount, LevelsCount);
+				RefreshColumnsTitle();
 				OnPropertyChanged();
 			}
 		}
+		
+		public int LevelsCount { get; set; }
 
-		private void RecreateColumns(int columnsCount)
+		private void RecreateColumns(int columnsCount, int levels)
 		{
 			Columns.Clear();
 			for(int icol = 0; icol < columnsCount; icol++) {
-				var column = new ImportedColumn<TDataTypeEnum>(icol);
+				var column = new ExcelColumn(icol, levels);
 				column.PropertyChanged += Column_PropertyChanged;
 				Columns.Add(column);
 			}
@@ -78,47 +88,59 @@ namespace workwear.Models.Import
 
 		void Column_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if(e.PropertyName == nameof(ImportedColumn<TDataTypeEnum>.DataType))
+			if(e.PropertyName == nameof(ExcelColumn.DataTypeByLevels))
 				OnPropertyChanged(nameof(CanMatch));
 		}
 
 		private void RefreshColumnsTitle()
 		{
-			if(HeaderRow == 0) {
-				for(int i = 0; i < MaxSourceColumns; i++)
+			if(HeaderRow <= 0) {
+				for(int i = 0; i < ColumnsCount; i++)
 					Columns[i].Title = CellReference.ConvertNumToColString(i);
 			}
 			else {
 				var row = XlsRows[HeaderRow - 1];
-				for(int i = 0; i < MaxSourceColumns; i++)
+				for(int i = 0; i < ColumnsCount; i++)
 					Columns[i].Title = row.CellValue(i);
 			}
 			OnPropertyChanged(nameof(Columns));
-			OnPropertyChanged(nameof(DisplayColumns));
 		}
 
-		public void AutoSetupColumns(IProgressBarDisplayable progress)
+		public virtual void AutoSetupColumns(IProgressBarDisplayable progress)
 		{
 			logger.Info("Ищем заголовочную строку...");
 			progress.Start(Math.Min(100, XlsRows.Count), text:"Определение типов данных...");
-			var bestMath = new TDataTypeEnum[MaxSourceColumns];
+			var bestMath = new DataType[ColumnsCount];
 			int bestColumns = 0;
 			int bestHeaderRow = 0;
-			SheetRowBase<TDataTypeEnum> bestRow = null;
+			int maxLevelAfterBest = 0;
+			bool maxLevelDiscovering = false;
+			TSheetRow bestRow = null;
 			int rowNum = 0;
 			foreach(var row in XlsRows) {
 				progress.Add();
-				var types = new TDataTypeEnum[MaxSourceColumns];
+				var types = new DataType[ColumnsCount];
 				rowNum++;
-				for(int i = 0; i < MaxSourceColumns; i++) {
-					var value = row.CellStringValue(i)?.ToLower() ?? String.Empty;
-					types[i] = dataParser.DetectDataType(value);
+				string lastValue = null;
+				for(int i = 0; i < ColumnsCount; i++) {
+					var value = row.CellStringValue(i, null)?.ToLower() ?? String.Empty;
+					types[i] = value != lastValue ? dataParser.DetectDataType(value) : null;
+					lastValue = value;
 				}
-				if(bestColumns < types.Where(x => !default(TDataTypeEnum).Equals(x)).Distinct().Count()) {
+				if(bestColumns < types.Where(x => x != null).Distinct().Count()) {
 					bestMath = types;
 					bestRow = row;
-					bestColumns = types.Where(x => !default(TDataTypeEnum).Equals(x)).Distinct().Count();
+					bestColumns = types.Where(x => x!= null).Distinct().Count();
 					bestHeaderRow = rowNum;
+					maxLevelDiscovering = true;
+					maxLevelAfterBest = bestRow.RowLevel;
+				}
+				
+				if(maxLevelDiscovering) {
+					if(row.RowLevel <= bestRow.RowLevel && maxLevelAfterBest > bestRow.RowLevel)
+						maxLevelDiscovering = false; //Отключаем поиск, явно вышли за уровень заголовка.
+					else 
+						maxLevelAfterBest = Math.Max(row.RowLevel, maxLevelAfterBest);
 				}
 				//Мало вероятно что в нормальном файле заголовочная строка располагаться ниже 100-ой строки.
 				//Поэтому прерываем проверку, так как если не нашли все подходящие поля, на больших файлах будем проверять очень долго.
@@ -128,8 +150,11 @@ namespace workwear.Models.Import
 			}
 
 			progress.Add();
-			for(int i = 0; i < MaxSourceColumns; i++)
-				Columns[i].DataType = bestMath[i];
+			for(int level = 0; level < LevelsCount; level++) {
+				for (int i = 0; i < ColumnsCount; i++) {
+					Columns[i].DataTypeByLevels[level].DataType = level == maxLevelAfterBest && bestMath[i] != null ? bestMath[i] : DataTypes.First();
+				}
+			}
 
 			logger.Debug($"Найдено соответсвие в {bestColumns} заголовков в строке {bestHeaderRow}");
 			HeaderRow = bestHeaderRow;
@@ -140,7 +165,7 @@ namespace workwear.Models.Import
 
 		#region Строки
 
-		private int headerRow;
+		private int headerRow = -1;
 		public int HeaderRow {
 			get => headerRow;
 			set {
@@ -159,7 +184,7 @@ namespace workwear.Models.Import
 
 		public List<ISheetRow> DisplayRows => UsedRows.Cast<ISheetRow>().ToList();
 
-		public void AddRow(IRow cells)
+		public void AddRow(IRow[] cells)
 		{
 			TSheetRow row = (TSheetRow)Activator.CreateInstance(typeof(TSheetRow), new object[] {cells });
 			row.PropertyChanged += RowOnPropertyChanged;
@@ -173,8 +198,8 @@ namespace workwear.Models.Import
 
 		#endregion
 		
-		private ICell[,] mergedCells;
-		public ICell[,] MergedCells {
+		private IDictionary<int, ICell[]> mergedCells;
+		public IDictionary<int, ICell[]> MergedCells {
 			get => mergedCells;
 			set {
 				mergedCells = value;
