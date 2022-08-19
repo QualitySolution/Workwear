@@ -15,6 +15,7 @@ namespace WorkwearTest.Models.Import.Employees {
 		[TestCase("104", "52")] // Простое соответствие доступному размеру
 		[TestCase("112", "56-58")] // 56 недоступен для карточки, поэтому выбран должен быть диапазон
 		[TestCase("120", "60")] // Все варианты отключены поэтому выбирается точное соотвествие
+		[TestCase("106", "52")] // Реальный баг, не находили размер по верхней границе
 		public void ParseValue_Cases(string value, string resultName) {
 			var uow = Substitute.For<IUnitOfWork>();
 			var sizeType = new SizeType() {

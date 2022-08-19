@@ -111,7 +111,7 @@ namespace workwear.Models.Import
 
 		public static string BustToSize(string bust) {
 			if(int.TryParse(bust, out int realBust)) {
-				var found = BustMappingValues.FirstOrDefault(x => realBust >= x.Lower && realBust < x.Upper);
+				var found = BustMappingValues.FirstOrDefault(x => realBust >= x.Lower && realBust <= x.Upper);
 				if(found != null)
 					return found.Name;
 			}
