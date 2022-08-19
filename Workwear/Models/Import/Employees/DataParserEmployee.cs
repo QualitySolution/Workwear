@@ -35,8 +35,6 @@ namespace workwear.Models.Import.Employees
 			this.phoneFormatter = phoneFormatter ?? throw new ArgumentException(nameof(phoneFormatter));
 			this.userService = userService;
 			this.sizeService = sizeService;
-			
-
 		}
 
 		#region Размеры
@@ -109,6 +107,8 @@ namespace workwear.Models.Import.Employees
 			{
 				var datatype = new DataTypeEmployeeSize(sizeService, sizeType);
 				SupportDataTypes.Add(datatype);
+				if(sizeType.Id == 2)
+					SupportDataTypes.Add(new DataTypeBust(sizeService, sizeType));
 			}
 		}
 		

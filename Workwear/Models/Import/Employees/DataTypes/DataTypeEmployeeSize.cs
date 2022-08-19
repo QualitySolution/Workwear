@@ -7,8 +7,8 @@ using Workwear.Measurements;
 
 namespace workwear.Models.Import.Employees.DataTypes {
 	public class DataTypeEmployeeSize : DataTypeEmployeeBase {
-		private readonly SizeService sizeService;
-		private readonly SizeType sizeType;
+		protected readonly SizeService sizeService;
+		protected readonly SizeType sizeType;
 
 		public DataTypeEmployeeSize(SizeService sizeService, SizeType sizeType) : base(sizeType) {
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
@@ -57,7 +57,8 @@ namespace workwear.Models.Import.Employees.DataTypes {
 		}
 		
 		#region Helpers
-		public Size ParseValue(IUnitOfWork uow, string value) {
+
+		internal virtual Size ParseValue(IUnitOfWork uow, string value) {
 			var size = sizeService
 				.GetSize(uow, sizeType)
 				.FirstOrDefault(x => 

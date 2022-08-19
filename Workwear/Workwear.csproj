@@ -152,6 +152,7 @@
     <Compile Include="Models\Import\Employees\CountersEmployee.cs" />
     <Compile Include="Models\Import\Employees\DataParserEmployee.cs" />
     <Compile Include="Models\Import\Employees\DataTypeEmployee.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypeBust.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeDepartment.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypePost.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeSubdivision.cs" />

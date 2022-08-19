@@ -91,19 +91,47 @@ namespace workwear.Models.Import
 			return height;
 		}
 
-		public static readonly WearHeight[] UniversalWearHeights = new WearHeight[] {
-			new WearHeight("146", 143, 149),
-			new WearHeight("152", 149, 155),
-			new WearHeight("158", 155, 161),
-			new WearHeight("164", 161, 167),
-			new WearHeight("170", 167, 173),
-			new WearHeight("176", 173, 179),
-			new WearHeight("182", 179, 185),
-			new WearHeight("188", 185, 191),
-			new WearHeight("194", 191, 197),
-			new WearHeight("200", 197, 203),
-			new WearHeight("210", 203, 210),
+		public static readonly MappingValue[] UniversalWearHeights = new MappingValue[] {
+			new MappingValue("146", 143, 149),
+			new MappingValue("152", 149, 155),
+			new MappingValue("158", 155, 161),
+			new MappingValue("164", 161, 167),
+			new MappingValue("170", 167, 173),
+			new MappingValue("176", 173, 179),
+			new MappingValue("182", 179, 185),
+			new MappingValue("188", 185, 191),
+			new MappingValue("194", 191, 197),
+			new MappingValue("200", 197, 203),
+			new MappingValue("210", 203, 210),
 		};
+		#endregion
+
+		#region Обхват груди
+
+		public static string BustToSize(string bust) {
+			if(int.TryParse(bust, out int realBust)) {
+				var found = BustMappingValues.FirstOrDefault(x => realBust >= x.Lower && realBust < x.Upper);
+				if(found != null)
+					return found.Name;
+			}
+			return null;
+		}
+
+		public static readonly MappingValue[] BustMappingValues = new MappingValue[] {
+			new MappingValue("42", 83, 86),
+			new MappingValue("44", 87, 90),
+			new MappingValue("46", 91, 94),
+			new MappingValue("48", 95, 98),
+			new MappingValue("50", 99, 102),
+			new MappingValue("52", 103, 106),
+			new MappingValue("54", 107, 110),
+			new MappingValue("56", 111, 114),
+			new MappingValue("58", 115, 118),
+			new MappingValue("60", 119, 122),
+			new MappingValue("62", 123, 126),
+			new MappingValue("64", 127, 130),
+		};
+
 		#endregion
 	}
 	public struct SizeAndHeight {
@@ -111,12 +139,12 @@ namespace workwear.Models.Import
 		public string Height;
 	}
 	
-	public class WearHeight{
+	public class MappingValue{
 		public string Name;
 		public int Upper;
 		public int Lower;
 
-		public WearHeight(string name, int lower, int upper)
+		public MappingValue(string name, int lower, int upper)
 		{
 			Name = name;
 			Upper = upper;

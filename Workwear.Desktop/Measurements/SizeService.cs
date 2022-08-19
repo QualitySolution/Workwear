@@ -13,7 +13,7 @@ namespace Workwear.Measurements
 	{
 		private IList<Size> sizes;
 		private IList<SizeType> types;
-		public List<Size> GetSize(
+		public virtual List<Size> GetSize(
 			IUnitOfWork uow, 
 			SizeType sizeType = null, 
 			bool onlyUseInEmployee = false, 

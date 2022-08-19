@@ -16,7 +16,7 @@ namespace workwear.Models.Import
         }
 
         public bool IsUnknown => Data == null;
-        public string Title {
+        public virtual string Title {
             get {
                 if (IsUnknown)
                     return "Пропустить";
