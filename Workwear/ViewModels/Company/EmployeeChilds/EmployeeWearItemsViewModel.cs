@@ -156,15 +156,9 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		{
 			if(e.CloseSource == CloseSource.Save || e.CloseSource == CloseSource.Self) {
 				var page = sender as IPage<ManualEmployeeIssueOperationViewModel>;
-				var operation = UoW.GetById<EmployeeIssueOperation>(page.ViewModel.Entity.Id);
-				if(operation != null)
-					if(e.CloseSource == CloseSource.Self) //Self используется при удалении
-					{
-						UoW.Delete(operation);
-						UoW.Commit();
-					}
-					else
-						UoW.Session.Refresh(operation); //Почему то не срабатывает при втором вызове. Но не смог починить.
+				if(e.CloseSource == CloseSource.Self)
+					UoW.Delete(UoW.GetById<EmployeeIssueOperation>(page.ViewModel.Entity.Id));
+				UoW.Commit();
 				Entity.FillWearRecivedInfo(employeeIssueRepository);
 				Entity.UpdateNextIssue(page.ViewModel.Entity.ProtectionTools);
 			}
