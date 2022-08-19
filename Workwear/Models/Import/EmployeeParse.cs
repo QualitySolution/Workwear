@@ -27,7 +27,7 @@ namespace workwear.Models.Import
 			       && (fio.Patronymic == null || CompareString(fio.Patronymic, employee.Patronymic));
 		}
 
-		private static bool CompareString(string text1, string text2) {
+		public static bool CompareString(string text1, string text2) {
 			return String.Equals(ReplaceYo(text1), ReplaceYo(text2), StringComparison.CurrentCultureIgnoreCase);
 		}
 		private static string ReplaceYo(string value) {

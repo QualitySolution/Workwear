@@ -35,12 +35,9 @@ namespace workwear.Models.Import.Employees.DataTypes {
 			var employee = row.EditingEmployee;
 
 			value.SplitFullName(out var lastName, out var firstName, out var patronymic);
-			var lastDiff = !String.IsNullOrEmpty(lastName) && 
-			               !String.Equals(employee.LastName, lastName, StringComparison.CurrentCultureIgnoreCase);
-			var firstDiff = !String.IsNullOrEmpty(firstName) && 
-			                !String.Equals(employee.FirstName, firstName, StringComparison.CurrentCultureIgnoreCase);
-			var patronymicDiff = !String.IsNullOrEmpty(patronymic) && 
-			                     !String.Equals(employee.Patronymic, patronymic, StringComparison.CurrentCultureIgnoreCase);
+			var lastDiff = !String.IsNullOrEmpty(lastName) && !EmployeeParse.CompareString(employee.LastName, lastName);
+			var firstDiff = !String.IsNullOrEmpty(firstName) && !EmployeeParse.CompareString(employee.FirstName, firstName);
+			var patronymicDiff = !String.IsNullOrEmpty(patronymic) && !EmployeeParse.CompareString(employee.Patronymic, patronymic);
 			string oldValue = (lastDiff || firstDiff || patronymicDiff) ? employee.FullName : null;
 			if(!lastDiff && !firstDiff && !patronymicDiff)
 				return new ChangeState(ChangeType.NotChanged);

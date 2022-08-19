@@ -27,7 +27,7 @@ namespace workwear.Models.Import.Employees.DataTypes {
 			}
 			var fieldValue = (string)property.GetValue(row.EditingEmployee);
 			var interpretedValue = value != originalValue ? value : null; 
-			if(String.Equals(fieldValue, value, StringComparison.InvariantCultureIgnoreCase))
+			if(EmployeeParse.CompareString(fieldValue, value))
 				return new ChangeState(ChangeType.NotChanged, interpretedValue: interpretedValue);
 			
 			row.AddSetValueAction(ValueSetOrder, () => property.SetValue(row.EditingEmployee, value));

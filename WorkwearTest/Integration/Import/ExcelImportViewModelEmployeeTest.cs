@@ -400,6 +400,10 @@ namespace WorkwearTest.Integration.Import
 				var employee2 = employees.First(x => x.FirstName == "Алексей");
 				Assert.That(employee2.Sizes.FirstOrDefault(x => x.SizeType.Id == 1)?.Size?.Name, Is.EqualTo("182"));
 				Assert.That(employee2.Sizes.FirstOrDefault(x => x.SizeType.Id == 2)?.Size?.Name, Is.EqualTo("68"));
+				
+				//Проверяем что не обновляем значения полей если отличие в букве ё. То есть лучше оставить вариант который в базе чем вариант из файла.
+				Assert.That(employee1.LastName, Is.EqualTo("Боровлев"));
+				Assert.That(employee2.LastName, Is.EqualTo("Пономарёв"));
 			}
 		}
 
