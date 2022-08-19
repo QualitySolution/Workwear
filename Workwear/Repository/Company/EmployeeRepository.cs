@@ -152,20 +152,21 @@ namespace workwear.Repository.Company
 				var searchValues = fios
 					.Where(fio => !String.IsNullOrEmpty(fio.LastName) && !String.IsNullOrEmpty(fio.FirstName))
 					.Select(fio => fio.LastName.StringToTitleCase() + "|" + fio.FirstName.StringToTitleCase())
+					.Select(fio => fio.Replace('ё', 'е').Replace('Ё', 'Е'))
 					.Distinct().ToArray();
 				return RepoUow.Session.QueryOver<EmployeeCard>()
 					.Where(Restrictions.In(
 							Projections.SqlFunction(new SQLFunctionTemplate(NHibernateUtil.String, "( ?1 || '|' || ?2)"),
 									NHibernateUtil.String,
-									Projections.Property<EmployeeCard>(x => x.LastName),
-									Projections.Property<EmployeeCard>(x => x.FirstName)
+									replaceYoProjection(Projections.Property<EmployeeCard>(x => x.LastName)),
+									replaceYoProjection(Projections.Property<EmployeeCard>(x => x.FirstName))
 									),
 						searchValues));
 		    }
 			else {
 				var searchValues = fios
 					.Where(fio => !String.IsNullOrEmpty(fio.LastName) && !String.IsNullOrEmpty(fio.FirstName))
-					.Select(fio => (fio.LastName + "|" + fio.FirstName).ToUpper())
+					.Select(fio => (fio.LastName + "|" + fio.FirstName).ToUpper().Replace('Ё', 'Е'))
 					.Distinct().ToArray();
 				return RepoUow.Session.QueryOver<EmployeeCard>()
 					.Where(Restrictions.In(
@@ -174,12 +175,18 @@ namespace workwear.Repository.Company
 								Projections.SqlFunction(new StandardSQLFunction("CONCAT_WS"),
 									NHibernateUtil.String,
 									Projections.Constant(""),
-									Projections.Property<EmployeeCard>(x => x.LastName),
+									replaceYoProjection(Projections.Property<EmployeeCard>(x => x.LastName)),
 									Projections.Constant("|"),
-									Projections.Property<EmployeeCard>(x => x.FirstName)
+									replaceYoProjection(Projections.Property<EmployeeCard>(x => x.FirstName))
 								)),
 						searchValues));
 			}
+		}
+		
+		static IProjection replaceYoProjection(IProjection property) {
+			return Projections.SqlFunction("replace", NHibernateUtil.String, 
+					Projections.SqlFunction("replace", NHibernateUtil.String, property, Projections.Constant("ё"), Projections.Constant("е"))
+				, Projections.Constant("Ё"), Projections.Constant("Е"));
 		}
 		#endregion
 	}
