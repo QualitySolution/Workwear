@@ -50,7 +50,7 @@ namespace WorkwearTest.Integration.Import
 			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
-				employeesLoad.FileName = "Samples/Excel/cardkey_list.xlsx";
+				employeesLoad.FileName = "Samples/Excel/Employees/cardkey_list.xlsx";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
@@ -88,7 +88,7 @@ namespace WorkwearTest.Integration.Import
 			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
-				employeesLoad.FileName = "Samples/Excel/vostok_1c_employee.xls";
+				employeesLoad.FileName = "Samples/Excel/Employees/vostok_1c_employee.xls";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
@@ -161,7 +161,7 @@ namespace WorkwearTest.Integration.Import
 					Assert.That(employeesold.Count, Is.EqualTo(1));
 					
 					employeesLoad.ProgressStep = progressStep;
-					employeesLoad.FileName = "Samples/Excel/osmbt.xls";
+					employeesLoad.FileName = "Samples/Excel/Employees/osmbt.xls";
 					Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 					employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 					Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
@@ -202,7 +202,7 @@ namespace WorkwearTest.Integration.Import
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				var importModel = employeesLoad.ImportModel as ImportModelEmployee;
 				employeesLoad.ProgressStep = progressStep;
-				employeesLoad.FileName = "Samples/Excel/dismissed_employees.xls";
+				employeesLoad.FileName = "Samples/Excel/Employees/dismissed_employees.xls";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
@@ -265,7 +265,7 @@ namespace WorkwearTest.Integration.Import
 			{
 				var uow = employeesLoad.UoW;
 				employeesLoad.ProgressStep = progressStep;
-				employeesLoad.FileName = "Samples/Excel/empty_first_row_a2.xls";
+				employeesLoad.FileName = "Samples/Excel/Employees/empty_first_row_a2.xls";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
@@ -309,7 +309,7 @@ namespace WorkwearTest.Integration.Import
 			{
 				var uow = employeesLoad.UoW;
 				employeesLoad.ProgressStep = progressStep;
-				employeesLoad.FileName = "Samples/Excel/all_sizes.xlsx";
+				employeesLoad.FileName = "Samples/Excel/Employees/all_sizes.xlsx";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
