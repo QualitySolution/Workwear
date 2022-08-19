@@ -445,7 +445,7 @@ LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomencl
 LEFT JOIN item_types ON item_types.id = nomenclature.type_id
 LEFT JOIN sizes as sizeAlias ON (sizeAlias.id = operation_issued_by_employee.size_id)
 LEFT JOIN sizes AS heightAlias ON (heightAlias.id = operation_issued_by_employee.height_id)
-WHERE operation_issued_by_employee.operation_time &gt;= @dateStart and operation_issued_by_employee.operation_time &lt;= @dateEnd
+WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE) and operation_issued_by_employee.operation_time &lt;= CONVERT(@dateEnd, DATE)
 AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
 AND (@issue_type = "" OR item_types.issue_type = @issue_type)
 and operation_issued_by_employee.returned = 0 AND (@summary OR (@withoutsub AND objects.id IS NULL) OR objects.id IN (@subdivisions))

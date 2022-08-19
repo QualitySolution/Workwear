@@ -159,13 +159,9 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		{
 			if(e.CloseSource == CloseSource.Save || e.CloseSource == CloseSource.Self) {
 				var page = sender as IPage<ManualEmployeeIssueOperationViewModel>;
-				var operationPair = (UoW.Session as NHibernate.Impl.SessionImpl).PersistenceContext.EntitiesByKey.SingleOrDefault(x => x.Value is EmployeeIssueOperation && (int)x.Key.Identifier == page.ViewModel.Entity.Id);
-				if(operationPair.Value != null) {
-					if(e.CloseSource == CloseSource.Self) //Self возвращается при удалении.
-						UoW.Session.Evict(operationPair.Value);
-					else
-						UoW.Session.Refresh(operationPair.Value);//Почему то не срабатывает при втором вызове. Но не смог починить.
-				}
+				if(e.CloseSource == CloseSource.Self)
+					UoW.Delete(UoW.GetById<EmployeeIssueOperation>(page.ViewModel.Entity.Id));
+				UoW.Commit();
 				Entity.FillWearRecivedInfo(employeeIssueRepository);
 				Entity.UpdateNextIssue(page.ViewModel.Entity.ProtectionTools);
 			}
