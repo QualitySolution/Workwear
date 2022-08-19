@@ -84,7 +84,7 @@ namespace workwear.Models.Import.Employees.DataTypes {
 				return new ChangeState(ChangeType.ParseError, employeeSize?.Size?.Name);
 			if(employeeSize?.Size == newValue)
 				return new ChangeState(ChangeType.NotChanged);
-			
+			string oldValue = employeeSize?.Size?.Name;
 			if (employeeSize is null) {
 				employeeSize = new EmployeeSize
 					{Size = newValue, SizeType = sizeType, Employee = row.EditingEmployee};
@@ -93,7 +93,7 @@ namespace workwear.Models.Import.Employees.DataTypes {
 			else
 				row.AddSetValueAction(ValueSetOrder, () => employeeSize.Size = newValue);
 			
-			return new ChangeState(rowChange, employeeSize?.Size?.Name, newValue?.Name != excelValue ? newValue?.Name : null);
+			return new ChangeState(rowChange, oldValue: oldValue, newValue?.Name != excelValue ? newValue?.Name : null);
 		}
 		#endregion
 	}
