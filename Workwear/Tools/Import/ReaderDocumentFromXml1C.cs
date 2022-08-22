@@ -25,6 +25,7 @@ namespace workwear.Tools.Import
 		public IList<NotFoundNomenclature> NotFoundNomenclatures { get; } = new List<NotFoundNomenclature>();
 		public IList<string> NotFoundNomenclatureNumbers { get; } = new List<string>();
 		public IList<string> UnreadableArticle { get; } = new List<string>();
+		public IList<string> UnreadableSizes { get; } = new List<string>();
 
 		public ReaderDocumentFromXml1C(
 			string fileName, 
@@ -98,7 +99,7 @@ namespace workwear.Tools.Import
 			var description = parametersNomenclature
 				.FirstOrDefault(x => x.Element(nsV8 + "Ref")?.Value == catalogReference)?
 				.Element(nsV8 + "Description")?.Value.Trim();
-			if(String.IsNullOrEmpty(description) || description == "б/р")
+			if(String.IsNullOrEmpty(description) || description == "б/р" || description == "Б/Р")
 				return (null, null);
 			
 			Size size = null;
@@ -114,6 +115,11 @@ namespace workwear.Tools.Import
 				else
 					sizeQuery.Where(s => s.Name == sizeAndHeightNames.Item1);
 				size = sizeQuery.SingleOrDefault();
+				if(size is null) {
+					var unreadable = $"размер {sizeAndHeightNames.Item1} для номенклатуры {nomenclature.Name}";
+					if(!UnreadableSizes.Contains(unreadable))
+						UnreadableSizes.Add(unreadable);
+				}
 			}
 			if(!String.IsNullOrEmpty(sizeAndHeightNames.Item2) && nomenclature.Type.HeightType != null){
 				var heightQuery = unitOfWork.Query<Size>().Where(h => h.SizeType == nomenclature.Type.HeightType);
@@ -123,6 +129,11 @@ namespace workwear.Tools.Import
 				else 
 					heightQuery.And(h => h.Name == sizeAndHeightNames.Item2);
 				height = heightQuery.SingleOrDefault();
+				if(height is null && sizeAndHeightNames.Item1 != sizeAndHeightNames.Item2) {
+					var unreadable = $"рост {sizeAndHeightNames.Item2} для номенклатуры {nomenclature.Name}";
+					if(!UnreadableSizes.Contains(unreadable))
+						UnreadableSizes.Add(unreadable);
+				}
 			}
 			return (size, height);
 		}
@@ -130,18 +141,41 @@ namespace workwear.Tools.Import
 		private (string, string) ParseSizeAndHeightDescription(string description) {
 			var sizeAndHeightRegex = new Regex(@"^[0-9]{1,3}-[0-9]{1,3}/[0-9]{1,3}-[0-9]{1,3}$", 
 				RegexOptions.Compiled);
+			var sizeAndHeightImportRegex = new Regex(@"^\S+\({1}[0-9]{1,3}-[0-9]{1,3}/[0-9]{1,3}-[0-9]{1,3}\){1}$", 
+				RegexOptions.Compiled);
 			var sizeWithAnnotationRegex = new Regex(@"\w*размер\w*", RegexOptions.Compiled);
+			var gloveSizeRegex = new Regex(@"^[0-9]{1,3}(?:[.,][0-9])?-[0-9]{1,3}(?:[.,][0-9])?/\S+$", RegexOptions.Compiled);
+			var multipleXRegex = new Regex(@"^\d{1}X{1}\S$", RegexOptions.Compiled);
 
 			if(sizeAndHeightRegex.IsMatch(description)) {
 				var sizeAndHeight = description.Split('/');
 				return (sizeAndHeight[0], sizeAndHeight[1]);
 			}
+			
+			if(sizeAndHeightImportRegex.IsMatch(description)) {
+				var cutDescription = description.Remove(0, description.IndexOf('(') + 1).TrimEnd(')');
+				var sizeAndHeight = cutDescription.Split('/');
+				return (sizeAndHeight[0], sizeAndHeight[1]);
+			}
+			
+			if(gloveSizeRegex.IsMatch(description)) {
+				var startRemove = description.IndexOf('/');
+				var cutDescription = description.Remove(startRemove, description.Length - startRemove);
+				return (cutDescription, null);
+			}
 
 			if(sizeWithAnnotationRegex.IsMatch(description)) {
 				var replaceRegex = new Regex(@"/D", RegexOptions.Compiled);
 				var sizeName = replaceRegex.Replace(description, String.Empty).Trim();
-				return (sizeName, sizeName);
+				return (sizeName, null);
 			}
+
+			if(multipleXRegex.IsMatch(description)) {
+				var multiplier = Int32.Parse($"{description.First()}");
+				var sizeName = new string('X', multiplier) + description.Remove(0, 2);
+				return (sizeName, null);
+			}
+			
 			return (description, description);
 		}
 

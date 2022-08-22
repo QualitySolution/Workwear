@@ -137,6 +137,13 @@ namespace workwear
 			
 			if(reader.DocumentDate != null)
 				Entity.Date = reader.DocumentDate.Value;
+			
+			if (reader.UnreadableSizes.Any()) {
+				var message = String.Join("\n", reader.UnreadableSizes.Select(x => " * " + x));
+				if(!interactiveService.Question("Не удалось определить значение следующих размеров из описания номенклатуры " +
+				                                $":\n{message}\n Продолжить создание документа прихода?"))
+					return;
+			}
 
 			if (reader.NotFoundNomenclatureNumbers.Any()) {
 				var message = String.Join("\n", reader.NotFoundNomenclatureNumbers.Take(10).Select(x => " * " + x));
