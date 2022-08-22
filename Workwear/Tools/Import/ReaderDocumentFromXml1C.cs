@@ -116,7 +116,7 @@ namespace workwear.Tools.Import
 					sizeQuery.Where(s => s.Name == sizeAndHeightNames.Item1);
 				size = sizeQuery.SingleOrDefault();
 				if(size is null) {
-					var unreadable = $"размер {sizeAndHeightNames.Item1} для номенклатуры {nomenclature.Name}";
+					var unreadable = $"размер {description} для номенклатуры {nomenclature.Name}";
 					if(!UnreadableSizes.Contains(unreadable))
 						UnreadableSizes.Add(unreadable);
 				}
@@ -130,7 +130,7 @@ namespace workwear.Tools.Import
 					heightQuery.And(h => h.Name == sizeAndHeightNames.Item2);
 				height = heightQuery.SingleOrDefault();
 				if(height is null && sizeAndHeightNames.Item1 != sizeAndHeightNames.Item2) {
-					var unreadable = $"рост {sizeAndHeightNames.Item2} для номенклатуры {nomenclature.Name}";
+					var unreadable = $"рост {description} для номенклатуры {nomenclature.Name}";
 					if(!UnreadableSizes.Contains(unreadable))
 						UnreadableSizes.Add(unreadable);
 				}
