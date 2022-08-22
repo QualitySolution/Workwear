@@ -23,9 +23,9 @@ namespace workwear.Tools.Import
 		public DateTime? DocumentDate{ get; private set; }
 		public IList<Xml1CDocumentItem> DocumentItems { get; } = new List<Xml1CDocumentItem>();
 		public IList<NotFoundNomenclature> NotFoundNomenclatures { get; } = new List<NotFoundNomenclature>();
-		public IList<string> NotFoundNomenclatureNumbers { get; } = new List<string>();
-		public IList<string> UnreadableArticle { get; } = new List<string>();
-		public IList<string> UnreadableSizes { get; } = new List<string>();
+		public HashSet<string> NotFoundNomenclatureNumbers { get; } = new HashSet<string>();
+		public HashSet<string> UnreadableArticle { get; } = new HashSet<string>();
+		public HashSet<string> UnreadableSizes { get; } = new HashSet<string>();
 
 		public ReaderDocumentFromXml1C(
 			string fileName, 
@@ -117,8 +117,7 @@ namespace workwear.Tools.Import
 				size = sizeQuery.SingleOrDefault();
 				if(size is null) {
 					var unreadable = $"размер {description} для номенклатуры {nomenclature.Name}";
-					if(!UnreadableSizes.Contains(unreadable))
-						UnreadableSizes.Add(unreadable);
+					UnreadableSizes.Add(unreadable);
 				}
 			}
 			if(!String.IsNullOrEmpty(sizeAndHeightNames.Item2) && nomenclature.Type.HeightType != null){
@@ -131,8 +130,7 @@ namespace workwear.Tools.Import
 				height = heightQuery.SingleOrDefault();
 				if(height is null && sizeAndHeightNames.Item1 != sizeAndHeightNames.Item2) {
 					var unreadable = $"рост {description} для номенклатуры {nomenclature.Name}";
-					if(!UnreadableSizes.Contains(unreadable))
-						UnreadableSizes.Add(unreadable);
+					UnreadableSizes.Add(unreadable);
 				}
 			}
 			return (size, height);
@@ -172,7 +170,13 @@ namespace workwear.Tools.Import
 
 			if(multipleXRegex.IsMatch(description)) {
 				var multiplier = Int32.Parse($"{description.First()}");
-				var sizeName = new string('X', multiplier) + description.Remove(0, 2);
+				string sizeName;
+				if(multiplier > 3) {
+					sizeName = new string('X', multiplier) + description.Remove(0, 2);
+				}
+				else { //Если больше 3X то в базе храним с числом 
+					sizeName = description;
+				}
 				return (sizeName, null);
 			}
 			
@@ -193,8 +197,7 @@ namespace workwear.Tools.Import
 			var nomenclatureName = catalogNomenclature?.Element(nsV8 + "НаименованиеПолное")?.Value;
 			if(String.IsNullOrEmpty(article)) {
 				if(!String.IsNullOrEmpty(nomenclatureName))
-					if(!NotFoundNomenclatureNumbers.Contains(nomenclatureName))
-						NotFoundNomenclatureNumbers.Add(nomenclatureName);
+					NotFoundNomenclatureNumbers.Add(nomenclatureName);
 				return null;
 			}
 
@@ -205,8 +208,7 @@ namespace workwear.Tools.Import
 					NotFoundNomenclatures.Add(new NotFoundNomenclature { Name = nomenclatureName, Article = number });
 				return null;
 			}
-			if(!UnreadableArticle.Contains(article))
-				UnreadableArticle.Add(article);
+			UnreadableArticle.Add(article);
 			return null;
 		}
 	}
