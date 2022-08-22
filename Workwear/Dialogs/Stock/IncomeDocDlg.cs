@@ -169,6 +169,7 @@ namespace workwear
 				if (reader.NotFoundNomenclatures.Count > 10)
 					message += $"\n и еще {reader.NotFoundNomenclatures.Count - 10}...";
 				if(interactiveService.Question($"Следующих номенклатур нет в справочнике:\n{message}\n Создать?")) {
+					var openNomenclatureDialog = false;
 					var nomenclatureTypes = new NomenclatureTypes(UoW, sizeService, true);
 					foreach(var notFoundNomenclature in reader.NotFoundNomenclatures) {
 						var type = nomenclatureTypes.ParseNomenclatureName(notFoundNomenclature.Name);
@@ -178,6 +179,7 @@ namespace workwear
 								OpenPageOptions.AsSlave);
 							page.ViewModel.Entity.Name = notFoundNomenclature.Name;
 							page.ViewModel.Entity.Number = notFoundNomenclature.Article;
+							openNomenclatureDialog = true;
 						}
 						else {
 							if(type.Id == 0)
@@ -193,7 +195,9 @@ namespace workwear
 					}
 
 					interactiveService.ShowMessage(ImportanceLevel.Info,
-						"Сохраните номенклатуру(ы) и повторите загрузку документа.", "Загрузка документа");
+						openNomenclatureDialog
+							? "Сохраните номенклатуру(ы) и повторите загрузку документа."
+							: "Созданы новые номенклатуры, повторите загрузку документа.", "Загрузка документа");
 					UoW.Commit();
 					return;
 				}
