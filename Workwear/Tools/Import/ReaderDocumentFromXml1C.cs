@@ -171,7 +171,7 @@ namespace workwear.Tools.Import
 			if(multipleXRegex.IsMatch(description)) {
 				var multiplier = Int32.Parse($"{description.First()}");
 				string sizeName;
-				if(multiplier > 3) {
+				if(multiplier <= 3) {
 					sizeName = new string('X', multiplier) + description.Remove(0, 2);
 				}
 				else { //Если больше 3X то в базе храним с числом 
