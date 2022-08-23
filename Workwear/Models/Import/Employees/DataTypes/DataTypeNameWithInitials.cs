@@ -23,6 +23,11 @@ namespace workwear.Models.Import.Employees.DataTypes {
 		private ChangeState GetChangeState(SheetRowEmployee row, string value) {
 			if(String.IsNullOrWhiteSpace(value))
 				return new ChangeState(ChangeType.NotChanged);
+
+			if(row.Employees.Count > 1) {
+				return new ChangeState(ChangeType.Ambiguous, error: "Несколько сотрудников подходят под условия отбора: " + 
+				String.Join(", ", row.Employees.Select(x => x.FullName)));
+			}
 			
 			var employee = row.EditingEmployee;
 

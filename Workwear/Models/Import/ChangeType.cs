@@ -14,6 +14,8 @@ namespace workwear.Models.Import
 		[Display(Name = "Не найдено")]
 		NotFound,
 		[Display(Name = "Ошибка разбора")]
-		ParseError
+		ParseError,
+		[Display(Name = "Неоднозначное соответствие")]
+		Ambiguous
 	}
 }
