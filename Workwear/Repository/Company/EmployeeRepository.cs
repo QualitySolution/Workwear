@@ -26,19 +26,19 @@ namespace workwear.Repository.Company
 			RepoUow = uow;
 		}
 
-		public static QueryOver<EmployeeCard> ActiveEmployeesQuery ()
+		public QueryOver<EmployeeCard> ActiveEmployeesQuery ()
 		{
 			return QueryOver.Of<EmployeeCard> ().Where (e => e.DismissDate == null);
 		}
 
-		public static IList<EmployeeCard> GetActiveEmployeesFromSubdivision(IUnitOfWork uow, Subdivision subdivision)
+		public IList<EmployeeCard> GetActiveEmployeesFromSubdivision(IUnitOfWork uow, Subdivision subdivision)
 		{
 			return ActiveEmployeesQuery().GetExecutableQueryOver(uow.Session)
 				.Where(x => x.Subdivision == subdivision)
 				.List();
 		}
 
-		public static IList<EmployeeCard> GetActiveEmployeesFromSubdivision(IUnitOfWork uow, int subdivisionId)
+		public IList<EmployeeCard> GetActiveEmployeesFromSubdivision(IUnitOfWork uow, int subdivisionId)
 		{
 			return ActiveEmployeesQuery().GetExecutableQueryOver(uow.Session)
 				.Where(x => x.Subdivision.Id == subdivisionId)

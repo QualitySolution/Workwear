@@ -39,6 +39,7 @@ namespace workwear.Models.Import.Employees
 
 		#region Размеры
 		public void CreateDatatypes(IUnitOfWork uow, SettingsMatchEmployeesViewModel settings) {
+			SupportDataTypes.Add(new DataTypeNameWithInitials());
 			SupportDataTypes.Add(new DataTypeFio(personNames));
 			SupportDataTypes.Add(new DataTypeSimpleString(
 				DataTypeEmployee.CardKey,
@@ -172,6 +173,43 @@ namespace workwear.Models.Import.Employees
 			progress.Add();
 			//Пропускаем дубликаты имен в файле
 			var groups = list.GroupBy(x => GetFIO(x, model).GetHash());
+			foreach(var group in groups) {
+				if(String.IsNullOrWhiteSpace(group.Key)) {
+					group.First().ProgramSkipped = true;
+				}
+
+				foreach(var item in group.Skip(1)) {
+					item.ProgramSkipped = true;
+				}
+			}
+			progress.Close();
+		}
+		
+		public void MatchByNameWithInitials(
+			IUnitOfWork uow, 
+			IEnumerable<SheetRowEmployee> list, 
+			ImportModelEmployee model, 
+			IProgressBarDisplayable progress)
+		{
+			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
+			var nameWithInitialsColumn = model.GetColumnForDataType(DataTypeEmployee.NameWithInitials);
+			var sizeWillSet = model.ImportedDataTypes.Any(x => x.DataType.Data is SizeType);
+			var employeeRepository = new EmployeeRepository(uow);
+			var query = employeeRepository.ActiveEmployeesQuery().GetExecutableQueryOver(uow.Session);
+			if(sizeWillSet) //Если будем проставлять размеры, запрашиваем сразу имеющиеся размеры для ускорения...
+				query.Fetch(SelectMode.Fetch, x => x.Sizes);
+			var exists = query.List();
+			progress.Add();
+			foreach(var employee in exists) {
+				var found = list.Where(x => EmployeeParse.CompareNameWithInitials(employee, x.CellStringValue(nameWithInitialsColumn))).ToArray();
+				if(!found.Any())
+					continue;
+				found.First().Employees.Add(employee);
+			}
+
+			progress.Add();
+			//Пропускаем дубликаты имен в файле
+			var groups = list.GroupBy(x => x.CellStringValue(nameWithInitialsColumn));
 			foreach(var group in groups) {
 				if(String.IsNullOrWhiteSpace(group.Key)) {
 					group.First().ProgramSkipped = true;

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using NPOI.SS.Formula.Functions;
+using QS.Utilities.Text;
 using workwear.Domain.Company;
 
 namespace workwear.Models.Import
@@ -25,6 +27,15 @@ namespace workwear.Models.Import
 			return CompareString(fio.LastName, employee.LastName)
 			       && CompareString(fio.FirstName, employee.FirstName)
 			       && (fio.Patronymic == null || CompareString(fio.Patronymic, employee.Patronymic));
+		}
+		
+		public static bool CompareNameWithInitials(EmployeeCard employee, string nameWithInitials) {
+			if(String.IsNullOrWhiteSpace(nameWithInitials))
+				return false;
+			nameWithInitials.SplitNameWithInitials(out var lastName, out var firstName, out var patronymic);
+			return CompareString(lastName, employee.LastName)
+			       && CompareString(firstName, employee.FirstName.FirstOrDefault().ToString())
+			       && CompareString(patronymic, employee.Patronymic.FirstOrDefault().ToString());
 		}
 
 		public static bool CompareString(string text1, string text2) {
