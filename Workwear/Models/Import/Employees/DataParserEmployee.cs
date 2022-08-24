@@ -156,11 +156,8 @@ namespace workwear.Models.Import.Employees
 			IProgressBarDisplayable progress)
 		{
 			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
-			var sizeWillSet = model.ImportedDataTypes.Any(x => x.DataType.Data is SizeType);
 			var employeeRepository = new EmployeeRepository(uow);
 			var query = employeeRepository.GetEmployeesByFIOs(list.Select(x => GetFIO(x, model)));
-			if(sizeWillSet) //Если будем проставлять размеры, запрашиваем сразу имеющиеся размеры для ускорения...
-				query.Fetch(SelectMode.Fetch, x => x.Sizes);
 			var exists = query.List();
 			progress.Add();
 			foreach(var employee in exists) {
@@ -193,12 +190,8 @@ namespace workwear.Models.Import.Employees
 		{
 			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
 			var nameWithInitialsColumn = model.GetColumnForDataType(DataTypeEmployee.NameWithInitials);
-			var sizeWillSet = model.ImportedDataTypes.Any(x => x.DataType.Data is SizeType);
 			var employeeRepository = new EmployeeRepository(uow);
-			var query = employeeRepository.ActiveEmployeesQuery().GetExecutableQueryOver(uow.Session);
-			if(sizeWillSet) //Если будем проставлять размеры, запрашиваем сразу имеющиеся размеры для ускорения...
-				query.Fetch(SelectMode.Fetch, x => x.Sizes);
-			var exists = query.List();
+			var exists = employeeRepository.ActiveEmployeesQuery().List();
 			progress.Add();
 			foreach(var employee in exists) {
 				var found = list.Where(x => EmployeeParse.CompareNameWithInitials(employee, x.CellStringValue(nameWithInitialsColumn))).ToArray();
@@ -235,10 +228,7 @@ namespace workwear.Models.Import.Employees
 							.Where(x => !String.IsNullOrWhiteSpace(x))
 							.Distinct().ToArray();
 			
-			var sizeWillSet = model.ImportedDataTypes.Any(x => x.DataType.Data is SizeType);
 			var query = uow.Session.QueryOver<EmployeeCard>();
-			if(sizeWillSet) //Если будем проставлять размеры, запрашиваем сразу имеющиеся размеры для ускорения...
-				query.Fetch(SelectMode.Fetch, x => x.Sizes);
 			var exists = query
 				.Where(x => x.PersonnelNumber.IsIn(numbers))
 				.List();
