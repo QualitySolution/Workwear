@@ -171,6 +171,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionClaims;
 
+	private global::Gtk.Action ActionIncomeLoad;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -466,6 +468,9 @@ public partial class MainWindow
 		this.ActionClaims = new global::Gtk.Action("ActionClaims", global::Mono.Unix.Catalog.GetString("Обращение"), null, " SendBox");
 		this.ActionClaims.ShortLabel = global::Mono.Unix.Catalog.GetString("Обращение");
 		w1.Add(this.ActionClaims, null);
+		this.ActionIncomeLoad = new global::Gtk.Action("ActionIncomeLoad", global::Mono.Unix.Catalog.GetString("Поступление"), null, null);
+		this.ActionIncomeLoad.ShortLabel = global::Mono.Unix.Catalog.GetString("Поступление");
+		w1.Add(this.ActionIncomeLoad, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -751,5 +756,6 @@ public partial class MainWindow
 		this.ActionSize.Activated += new global::System.EventHandler(this.OnActionSizeActivated);
 		this.ActionSizeType.Activated += new global::System.EventHandler(this.OnActionSizeTypeActivated);
 		this.ActionClaims.Activated += new global::System.EventHandler(this.OnActionClaimsActivated);
+		this.ActionIncomeLoad.Activated += new global::System.EventHandler(this.OnActionIncomeLoadActivated);
 	}
 }

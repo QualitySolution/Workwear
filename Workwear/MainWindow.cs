@@ -758,12 +758,14 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager.OpenViewModel<SizeJournalViewModel>(null);
 	}
 
-	protected void OnActionSizeTypeActivated(object sender, EventArgs e)
-	{
+	protected void OnActionSizeTypeActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<SizeTypeJournalViewModel>(null);
 	}
 
 	protected void OnActionClaimsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ClaimsViewModel>(null);
 	}
+
+	protected void OnActionIncomeLoadActivated(object sender, EventArgs e) => 
+		NavigationManager.OpenViewModel<IncomeImportViewModel>(null);
 }

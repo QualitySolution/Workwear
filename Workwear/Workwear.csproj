@@ -267,6 +267,7 @@
     <Compile Include="ViewModels\Company\EmployeeVacationViewModel.cs" />
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\Company\VacationTypeViewModel.cs" />
+    <Compile Include="ViewModels\Import\IncomeImportViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
     <Compile Include="ViewModels\Stock\EmployeeIssueGraphViewModel.cs" />
@@ -556,6 +557,8 @@
     <Compile Include="Views\Communications\ClaimsView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Communications.ClaimsView.cs" />
     <Compile Include="ViewModels\Communications\ClaimsViewModel.cs" />
+    <Compile Include="Views\Import\IncomeImportView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Import.IncomeImportView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
