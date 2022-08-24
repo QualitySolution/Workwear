@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Workwear.Domain.Company;
 
 namespace workwear.Models.Company
 {
 	public class PersonNames
 	{
+		//Имена в списке специально без буквы Ё чтобы не дублировать 2 варианта написания.
+		//При проверке все имена приводятся к написанию через E
 		public HashSet<string> MaleNames = new HashSet<string>
 		{
 			"АБДУЛАШИМ",
@@ -504,6 +505,7 @@ namespace workwear.Models.Company
 			"АЗА",
 			"АЗАЛИЯ",
 			"АЗИЗА",
+			"АЙВАЗ",
 			"АЙГУЛЬ",
 			"АЙЛИН",
 			"АЙНАГУЛЬ",
@@ -948,11 +950,11 @@ namespace workwear.Models.Company
 			"ЯСМИНА"
 		};
 
-		public Sex GetSexByName(string name)
-		{
-			if(MaleNames.Contains(name.ToUpper()))
+		public Sex GetSexByName(string name) {
+			name = name.ToUpper().Replace("Ё", "Е");
+			if(MaleNames.Contains(name))
 				return Sex.M;
-			if(FemaleNames.Contains(name.ToUpper()))
+			if(FemaleNames.Contains(name))
 				return Sex.F;
 			return Sex.None;
 		}
