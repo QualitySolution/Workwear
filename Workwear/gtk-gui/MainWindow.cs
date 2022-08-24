@@ -488,59 +488,60 @@ public partial class MainWindow
 				"ion=\'ActionBaseSettings\'/><menu name=\'ActionImport\' action=\'ActionImport\'><menui" +
 				"tem name=\'ActionEmployeeLoad\' action=\'ActionEmployeeLoad\'/><menuitem name=\'Actio" +
 				"nNormsLoad\' action=\'ActionNormsLoad\'/><menuitem name=\'ActionImportWorkwearItems\'" +
-				" action=\'ActionImportWorkwearItems\'/></menu><menu name=\'ActionBatchProcessing\' a" +
-				"ction=\'ActionBatchProcessing\'><menuitem name=\'ActionProcessingEmployee\' action=\'" +
-				"ActionProcessingEmployee\'/><menuitem name=\'ActionReplaceEntity\' action=\'ActionRe" +
-				"placeEntity\'/></menu><menuitem name=\'ActionHistoryLog\' action=\'ActionHistoryLog\'" +
-				"/><separator/><menuitem name=\'quitAction\' action=\'quitAction\'/></menu><menu name" +
-				"=\'Action33\' action=\'Action33\'><menu name=\'Action24\' action=\'Action24\'><menuitem " +
-				"name=\'ActionShowBar\' action=\'ActionShowBar\'/><separator/><menuitem name=\'ActionT" +
-				"oolBarTextOnly\' action=\'ActionToolBarTextOnly\'/><menuitem name=\'ActionToolBarIco" +
-				"nOnly\' action=\'ActionToolBarIconOnly\'/><menuitem name=\'ActionToolBarTextAndIcon\'" +
-				" action=\'ActionToolBarTextAndIcon\'/><separator/><menuitem name=\'ActionIconsExtra" +
-				"Small\' action=\'ActionIconsExtraSmall\'/><menuitem name=\'ActionIconsSmall\' action=" +
-				"\'ActionIconsSmall\'/><menuitem name=\'ActionIconsMiddle\' action=\'ActionIconsMiddle" +
-				"\'/><menuitem name=\'ActionIconsLarge\' action=\'ActionIconsLarge\'/></menu><menuitem" +
-				" name=\'ActionMaxizizeOnStart\' action=\'ActionMaxizizeOnStart\'/></menu><menu name=" +
-				"\'Action21\' action=\'Action21\'><menuitem name=\'ActionStockDocs\' action=\'ActionStoc" +
-				"kDocs\'/><menuitem name=\'ActionStockBalance\' action=\'ActionStockBalance\'/><menuit" +
-				"em name=\'ActionStockMovements\' action=\'ActionStockMovements\'/><separator/><menui" +
-				"tem name=\'ActionIssuanceSheets\' action=\'ActionIssuanceSheets\'/></menu><menu name" +
-				"=\'Action1\' action=\'Action1\'><menuitem name=\'ActionOrganizations\' action=\'ActionO" +
-				"rganizations\'/><menuitem name=\'ActionObjects\' action=\'ActionObjects\'/><menuitem " +
-				"name=\'ActionDepartment\' action=\'ActionDepartment\'/><menuitem name=\'ActionEmploye" +
-				"es\' action=\'ActionEmployees\'/><separator/><menuitem name=\'ActionRegulationDoc\' a" +
-				"ction=\'ActionRegulationDoc\'/><menuitem name=\'ActionProtectionTools\' action=\'Acti" +
-				"onProtectionTools\'/><menuitem name=\'ActionNorms\' action=\'ActionNorms\'/><menuitem" +
-				" name=\'ActionConditionNorm\' action=\'ActionConditionNorm\'/><separator/><menuitem " +
-				"name=\'Action5\' action=\'Action5\'/><menuitem name=\'Action6\' action=\'Action6\'/><men" +
-				"uitem name=\'ActionWarehouse\' action=\'ActionWarehouse\'/><separator/><menuitem nam" +
-				"e=\'ActionSizeType\' action=\'ActionSizeType\'/><menuitem name=\'ActionSize\' action=\'" +
-				"ActionSize\'/><separator/><menuitem name=\'Action7\' action=\'Action7\'/><menuitem na" +
-				"me=\'ActionNotificationTemplates\' action=\'ActionNotificationTemplates\'/><separato" +
-				"r/><menuitem name=\'ActionProfession\' action=\'ActionProfession\'/><menuitem name=\'" +
-				"Action8\' action=\'Action8\'/><menuitem name=\'ActionVacationTypes\' action=\'ActionVa" +
-				"cationTypes\'/><menuitem name=\'ActionLeaders\' action=\'ActionLeaders\'/></menu><men" +
-				"u name=\'ActionReports\' action=\'ActionReports\'><menuitem name=\'Action10\' action=\'" +
-				"Action10\'/><menuitem name=\'Action11\' action=\'Action11\'/><separator/><menuitem na" +
-				"me=\'Action12\' action=\'Action12\'/><separator/><menuitem name=\'ActionRequestSheet\'" +
-				" action=\'ActionRequestSheet\'/><menuitem name=\'ActionAverageAnnualNeed\' action=\'A" +
-				"ctionAverageAnnualNeed\'/><separator/><menu name=\'Action\' action=\'Action\'><menuit" +
-				"em name=\'ActionNotIssuedSheetDetail\' action=\'ActionNotIssuedSheetDetail\'/><menui" +
-				"tem name=\'ActionNotIssuedSheetSummary\' action=\'ActionNotIssuedSheetSummary\'/></m" +
-				"enu><menuitem name=\'ActionAmountEmployeeGetWear\' action=\'ActionAmountEmployeeGet" +
-				"Wear\'/><menuitem name=\'ActionAmountIssuedWear\' action=\'ActionAmountIssuedWear\'/>" +
-				"</menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuitem name=\'helpAction\' a" +
-				"ction=\'helpAction\'/><menuitem name=\'ActionAdminGuide\' action=\'ActionAdminGuide\'/" +
-				"><separator/><menuitem name=\'ActionHistory\' action=\'ActionHistory\'/><menuitem na" +
-				"me=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuitem name=\'ActionSite\'" +
-				" action=\'ActionSite\'/><menuitem name=\'ActionOpenReformal\' action=\'ActionOpenRefo" +
-				"rmal\'/><menu name=\'Action38\' action=\'Action38\'><menuitem name=\'ActionVK\' action=" +
-				"\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=\'ActionOdnoklasniki\'/><me" +
-				"nuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><menuitem name=\'ActionYouTub" +
-				"e\' action=\'ActionYouTube\'/></menu><separator/><menuitem name=\'ActionPay\' action=" +
-				"\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem " +
-				"name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				" action=\'ActionImportWorkwearItems\'/><menuitem name=\'ActionIncomeLoad\' action=\'A" +
+				"ctionIncomeLoad\'/></menu><menu name=\'ActionBatchProcessing\' action=\'ActionBatchP" +
+				"rocessing\'><menuitem name=\'ActionProcessingEmployee\' action=\'ActionProcessingEmp" +
+				"loyee\'/><menuitem name=\'ActionReplaceEntity\' action=\'ActionReplaceEntity\'/></men" +
+				"u><menuitem name=\'ActionHistoryLog\' action=\'ActionHistoryLog\'/><separator/><menu" +
+				"item name=\'quitAction\' action=\'quitAction\'/></menu><menu name=\'Action33\' action=" +
+				"\'Action33\'><menu name=\'Action24\' action=\'Action24\'><menuitem name=\'ActionShowBar" +
+				"\' action=\'ActionShowBar\'/><separator/><menuitem name=\'ActionToolBarTextOnly\' act" +
+				"ion=\'ActionToolBarTextOnly\'/><menuitem name=\'ActionToolBarIconOnly\' action=\'Acti" +
+				"onToolBarIconOnly\'/><menuitem name=\'ActionToolBarTextAndIcon\' action=\'ActionTool" +
+				"BarTextAndIcon\'/><separator/><menuitem name=\'ActionIconsExtraSmall\' action=\'Acti" +
+				"onIconsExtraSmall\'/><menuitem name=\'ActionIconsSmall\' action=\'ActionIconsSmall\'/" +
+				"><menuitem name=\'ActionIconsMiddle\' action=\'ActionIconsMiddle\'/><menuitem name=\'" +
+				"ActionIconsLarge\' action=\'ActionIconsLarge\'/></menu><menuitem name=\'ActionMaxizi" +
+				"zeOnStart\' action=\'ActionMaxizizeOnStart\'/></menu><menu name=\'Action21\' action=\'" +
+				"Action21\'><menuitem name=\'ActionStockDocs\' action=\'ActionStockDocs\'/><menuitem n" +
+				"ame=\'ActionStockBalance\' action=\'ActionStockBalance\'/><menuitem name=\'ActionStoc" +
+				"kMovements\' action=\'ActionStockMovements\'/><separator/><menuitem name=\'ActionIss" +
+				"uanceSheets\' action=\'ActionIssuanceSheets\'/></menu><menu name=\'Action1\' action=\'" +
+				"Action1\'><menuitem name=\'ActionOrganizations\' action=\'ActionOrganizations\'/><men" +
+				"uitem name=\'ActionObjects\' action=\'ActionObjects\'/><menuitem name=\'ActionDepartm" +
+				"ent\' action=\'ActionDepartment\'/><menuitem name=\'ActionEmployees\' action=\'ActionE" +
+				"mployees\'/><separator/><menuitem name=\'ActionRegulationDoc\' action=\'ActionRegula" +
+				"tionDoc\'/><menuitem name=\'ActionProtectionTools\' action=\'ActionProtectionTools\'/" +
+				"><menuitem name=\'ActionNorms\' action=\'ActionNorms\'/><menuitem name=\'ActionCondit" +
+				"ionNorm\' action=\'ActionConditionNorm\'/><separator/><menuitem name=\'Action5\' acti" +
+				"on=\'Action5\'/><menuitem name=\'Action6\' action=\'Action6\'/><menuitem name=\'ActionW" +
+				"arehouse\' action=\'ActionWarehouse\'/><separator/><menuitem name=\'ActionSizeType\' " +
+				"action=\'ActionSizeType\'/><menuitem name=\'ActionSize\' action=\'ActionSize\'/><separ" +
+				"ator/><menuitem name=\'Action7\' action=\'Action7\'/><menuitem name=\'ActionNotificat" +
+				"ionTemplates\' action=\'ActionNotificationTemplates\'/><separator/><menuitem name=\'" +
+				"ActionProfession\' action=\'ActionProfession\'/><menuitem name=\'Action8\' action=\'Ac" +
+				"tion8\'/><menuitem name=\'ActionVacationTypes\' action=\'ActionVacationTypes\'/><menu" +
+				"item name=\'ActionLeaders\' action=\'ActionLeaders\'/></menu><menu name=\'ActionRepor" +
+				"ts\' action=\'ActionReports\'><menuitem name=\'Action10\' action=\'Action10\'/><menuite" +
+				"m name=\'Action11\' action=\'Action11\'/><separator/><menuitem name=\'Action12\' actio" +
+				"n=\'Action12\'/><separator/><menuitem name=\'ActionRequestSheet\' action=\'ActionRequ" +
+				"estSheet\'/><menuitem name=\'ActionAverageAnnualNeed\' action=\'ActionAverageAnnualN" +
+				"eed\'/><separator/><menu name=\'Action\' action=\'Action\'><menuitem name=\'ActionNotI" +
+				"ssuedSheetDetail\' action=\'ActionNotIssuedSheetDetail\'/><menuitem name=\'ActionNot" +
+				"IssuedSheetSummary\' action=\'ActionNotIssuedSheetSummary\'/></menu><menuitem name=" +
+				"\'ActionAmountEmployeeGetWear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem na" +
+				"me=\'ActionAmountIssuedWear\' action=\'ActionAmountIssuedWear\'/></menu><menu name=\'" +
+				"ActionHelp\' action=\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/" +
+				"><menuitem name=\'ActionAdminGuide\' action=\'ActionAdminGuide\'/><separator/><menui" +
+				"tem name=\'ActionHistory\' action=\'ActionHistory\'/><menuitem name=\'ActionUpdate\' a" +
+				"ction=\'ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite" +
+				"\'/><menuitem name=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu name=\'" +
+				"Action38\' action=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuit" +
+				"em name=\'ActionOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'Action" +
+				"Twitter\' action=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYo" +
+				"uTube\'/></menu><separator/><menuitem name=\'ActionPay\' action=\'ActionPay\'/><menui" +
+				"tem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' " +
+				"action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
