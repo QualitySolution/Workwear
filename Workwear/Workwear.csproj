@@ -196,6 +196,9 @@
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
     <Compile Include="Tools\Import\ReaderDocumentFromXml1C.cs" />
+    <Compile Include="Tools\Import\Xml1CDocument.cs" />
+    <Compile Include="Tools\Import\Xml1CDocumentItem.cs" />
+    <Compile Include="Tools\Import\Xml1CDocumentParser.cs" />
     <Compile Include="Tools\Navigation\AdditionalIdHashGenerator.cs" />
     <Compile Include="viewDTOs\EmployeeCardMovements.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />

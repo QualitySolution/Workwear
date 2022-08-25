@@ -21,7 +21,7 @@ namespace workwear.Tools.Import
 		private readonly bool useAlternativeSize;
 		private readonly IProgressBarDisplayable progressBar;
 		public DateTime? DocumentDate{ get; private set; }
-		public IList<Xml1CDocumentItem> DocumentItems { get; } = new List<Xml1CDocumentItem>();
+		public IList<Xml1CDocumentItem2> DocumentItems { get; } = new List<Xml1CDocumentItem2>();
 		public IList<NotFoundNomenclature> NotFoundNomenclatures { get; } = new List<NotFoundNomenclature>();
 		public HashSet<string> NotFoundNomenclatureNumbers { get; } = new HashSet<string>();
 		public HashSet<string> UnreadableArticle { get; } = new HashSet<string>();
@@ -69,7 +69,7 @@ namespace workwear.Tools.Import
 				var nomenclature = ParseNomenclature(item.Element(nsV8 + "Номенклатура")?.Value);
 				if(nomenclature != null) {
 					var sizeAndHeight = ParseSizeAndHeight(item.Element(nsV8 + "Характеристика")?.Value, nomenclature);
-					var documentItem = new Xml1CDocumentItem {
+					var documentItem = new Xml1CDocumentItem2 {
 						Nomenclature = nomenclature,
 						Size = sizeAndHeight.Item1,
 						Height = sizeAndHeight.Item2,
@@ -83,7 +83,7 @@ namespace workwear.Tools.Import
 			progressBar.Close();
 		}
 
-		private void AddDocumentItems(Xml1CDocumentItem documentItem) {
+		private void AddDocumentItems(Xml1CDocumentItem2 documentItem) {
 			var item = DocumentItems.FirstOrDefault(x =>
 				x.Nomenclature == documentItem.Nomenclature
 				&& x.Cost == documentItem.Cost
@@ -213,7 +213,7 @@ namespace workwear.Tools.Import
 		}
 	}
 
-	public class Xml1CDocumentItem 
+	public class Xml1CDocumentItem2 
 	{
 		public Nomenclature Nomenclature { get; set; }
 		public Size Size { get; set; }

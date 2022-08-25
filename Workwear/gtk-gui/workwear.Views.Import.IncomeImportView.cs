@@ -14,7 +14,7 @@ namespace workwear.Views.Import
 
 		private global::Gamma.GtkWidgets.yButton ybuttonLoad;
 
-		private global::Gamma.GtkWidgets.yVBox yvboxSelectDocumentArea;
+		private global::Gamma.Widgets.yListComboBox ylistcomboboxDocuments;
 
 		private global::Gamma.GtkWidgets.yButton ybuttonParse;
 
@@ -73,12 +73,15 @@ namespace workwear.Views.Import
 			w3.Expand = false;
 			w3.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
-			this.yvboxSelectDocumentArea = new global::Gamma.GtkWidgets.yVBox();
-			this.yvboxSelectDocumentArea.Name = "yvboxSelectDocumentArea";
-			this.yvboxSelectDocumentArea.Spacing = 6;
-			this.yhbox1.Add(this.yvboxSelectDocumentArea);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.yvboxSelectDocumentArea]));
+			this.ylistcomboboxDocuments = new global::Gamma.Widgets.yListComboBox();
+			this.ylistcomboboxDocuments.Name = "ylistcomboboxDocuments";
+			this.ylistcomboboxDocuments.AddIfNotExist = false;
+			this.ylistcomboboxDocuments.DefaultFirst = false;
+			this.yhbox1.Add(this.ylistcomboboxDocuments);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ylistcomboboxDocuments]));
 			w4.Position = 1;
+			w4.Expand = false;
+			w4.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
 			this.ybuttonParse = new global::Gamma.GtkWidgets.yButton();
 			this.ybuttonParse.CanFocus = true;

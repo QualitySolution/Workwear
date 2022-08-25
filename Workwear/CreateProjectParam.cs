@@ -68,6 +68,7 @@ using workwear.Tools.IdentityCards;
 using workwear.Tools.Navigation;
 using workwear.Tools.Nhibernate;
 using workwear.Tools;
+using workwear.Tools.Import;
 using workwear.ViewModels.Communications;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
@@ -310,6 +311,7 @@ namespace workwear
 			builder.RegisterType<DataParserEmployee>().AsSelf();
 			builder.RegisterType<DataParserNorm>().AsSelf();
 			builder.RegisterType<DataParserWorkwearItems>().AsSelf();
+			builder.RegisterType<Xml1CDocumentParser>().AsSelf();
 			#endregion
 		}
 	}
