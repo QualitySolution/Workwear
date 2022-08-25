@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -18161,7 +18161,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonUseInEmployee">
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonShowInEmployee">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Label" translatable="yes">Отображать в сотруднике</property>
@@ -18187,7 +18187,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonUseInNomenclature">
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonShowInNomenclature">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Label" translatable="yes">Отображать в номенклатуре</property>

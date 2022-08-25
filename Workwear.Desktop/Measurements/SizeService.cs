@@ -25,9 +25,9 @@ namespace Workwear.Measurements
 			if (sizeType != null)
 				filterSizes = filterSizes.Where(x => x.SizeType.Id == sizeType.Id);
 			if (onlyUseInEmployee)
-				filterSizes = filterSizes.Where(x => x.UseInEmployee);
+				filterSizes = filterSizes.Where(x => x.ShowInEmployee);
 			if (onlyUseInNomenclature)
-				filterSizes = filterSizes.Where(x => x.UseInNomenclature);
+				filterSizes = filterSizes.Where(x => x.ShowInNomenclature);
 			return filterSizes.ToList();
 		}
 		

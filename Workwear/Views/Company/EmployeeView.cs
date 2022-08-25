@@ -175,7 +175,7 @@ namespace workwear.Views.Company
 			var sizes = ViewModel.SizeService
 				.GetSize(ViewModel.UoW, null, true);
 			var excludeSizes = Entity.Sizes
-				.Where(s => s.Size.UseInEmployee == false)
+				.Where(s => s.Size.ShowInEmployee == false)
 				.Select(x => x.Size);
 			//добавляем исключенные размеры если они уже привязаны к сотруднику, чтобы они не проподали при пересохранении
 			sizes.AddRange(excludeSizes);

@@ -438,27 +438,27 @@ namespace WorkwearTest.Integration.Import
 				{Id  = 1, Name = "Рост", Position = 1, CategorySizeType = CategorySizeType.Height, UseInEmployee = true};
 			uow.Save(heightType, orUpdate: false);
 			
-			uow.Save(new Size {Name = "170-176", SizeType = heightType, UseInEmployee = true, UseInNomenclature = true});
+			uow.Save(new Size {Name = "170-176", SizeType = heightType, ShowInEmployee = true, ShowInNomenclature = true});
 			
 			sizeType = new SizeType 
 				{Id = 2, Name = "Размер одежды", Position = 2, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
 			uow.Save(sizeType, orUpdate: false);
 			
-			uow.Save(new Size {Name = "52-54", SizeType = sizeType, AlternativeName = "104-108", UseInEmployee = true, UseInNomenclature = true});
+			uow.Save(new Size {Name = "52-54", SizeType = sizeType, AlternativeName = "104-108", ShowInEmployee = true, ShowInNomenclature = true});
 
 			shoesType = new SizeType 
 				{Id = 4, Name = "Размер обуви", Position = 3, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
 			uow.Save(shoesType, orUpdate: false);
 			
-			uow.Save(new Size {Name = "43", SizeType = shoesType, UseInEmployee = true, UseInNomenclature = true});
-			uow.Save(new Size {Name = "44", SizeType = shoesType, UseInEmployee = true, UseInNomenclature = true});
+			uow.Save(new Size {Name = "43", SizeType = shoesType, ShowInEmployee = true, ShowInNomenclature = true});
+			uow.Save(new Size {Name = "44", SizeType = shoesType, ShowInEmployee = true, ShowInNomenclature = true});
 			
 			glovesType = new SizeType 
 				{Id = 7, Name = "Размер перчаток", Position = 8, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
 			uow.Save(glovesType, orUpdate: false);
 			
-			uow.Save(new Size {Name = "9", SizeType = glovesType, UseInEmployee = true, UseInNomenclature = true});
-			uow.Save(new Size {Name = "10", SizeType = glovesType, UseInEmployee = true, UseInNomenclature = true});
+			uow.Save(new Size {Name = "9", SizeType = glovesType, ShowInEmployee = true, ShowInNomenclature = true});
+			uow.Save(new Size {Name = "10", SizeType = glovesType, ShowInEmployee = true, ShowInNomenclature = true});
 			
 			uow.Commit();
 		}
