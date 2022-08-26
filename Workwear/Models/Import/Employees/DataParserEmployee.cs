@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NHibernate;
 using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -9,7 +8,6 @@ using QS.Services;
 using QS.Utilities.Numeric;
 using QS.Utilities.Text;
 using workwear.Domain.Company;
-using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 using workwear.Models.Company;
 using workwear.Models.Import.Employees.DataTypes;
@@ -99,7 +97,7 @@ namespace workwear.Models.Import.Employees
 					"BirthDay"
 				}
 			));
-			SupportDataTypes.Add(new DataTypeSubdivision(this));
+			SupportDataTypes.Add(new DataTypeSubdivision(this, settings));
 			SupportDataTypes.Add(new DataTypeDepartment(this));
 			SupportDataTypes.Add(new DataTypePost(this));
 
@@ -270,10 +268,7 @@ namespace workwear.Models.Import.Employees
 			progress.Start(3, text: "Загружаем подразделения");
 			var subdivisionColumn = model.GetColumnForDataType(DataTypeEmployee.Subdivision);
 			if(subdivisionColumn != null) {
-				var subdivisionNames = list.Select(x => x.CellStringValue(subdivisionColumn)).Distinct().ToArray();
-				UsedSubdivisions.AddRange(uow.Session.QueryOver<Subdivision>()
-					.Where(x => x.Name.IsIn(subdivisionNames))
-					.List());
+				UsedSubdivisions.AddRange(uow.GetAll<Subdivision>());
 			}
 			progress.Add(text: "Загружаем отделы");
 			var departmentColumn = model.GetColumnForDataType(DataTypeEmployee.Department);
