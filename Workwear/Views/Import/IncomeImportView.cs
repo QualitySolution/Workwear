@@ -55,13 +55,13 @@ namespace workwear.Views.Import
 			ytreeview1.ColumnsConfig = ColumnsConfigFactory.Create<DocumentItemViewModel>()
 				.AddColumn("Номенклатура").AddTextRenderer(i => i.Nomenclature)
 				.AddSetter(
-					(c, n) => c.Foreground = ColorState(n.NomenclatureNotSelected))
+					(c, n) => c.Foreground = ColorState(n.NomenclatureSelected))
 				.AddColumn("Размер").AddTextRenderer(i => i.Size)
 					.AddSetter(
-						(c, n) => c.Foreground = ColorState(n.SizeNotSelected))
+						(c, n) => c.Foreground = ColorState(n.SizeSelected))
 				.AddColumn("Рост").AddTextRenderer(i => i.Height)
 					.AddSetter(
-						(c, n) => c.Foreground = ColorState(n.HeightNotSelected))
+						(c, n) => c.Foreground = ColorState(n.HeightSelected))
 				.AddColumn("Количество").AddNumericRenderer(i => i.Amount)
 				.AddColumn("Стоимость").AddNumericRenderer(i => i.Cost)
 				.Finish();

@@ -27,7 +27,9 @@ namespace workwear.Tools.Import
 		public int Amount => Int32.TryParse(AmountFromCatalog, out var parseResult) ? parseResult : 0;
 		public decimal Cost => Decimal.TryParse(CostFromCatalog, out var costParseResult) ? costParseResult : 0;
 		public string NomenclatureFromCatalog { get; set; }
-		public string CharacteristicFromCatalog { get; set; }
+		public string NomenclatureArticle { get; set; }
+		public string SizeName { get; set; }
+		public string HeightName { get; set; }
 		public string AmountFromCatalog => root.Element(xNamespace + "Количество")?.Value;
 		public string CostFromCatalog => root.Element(xNamespace + "Цена")?.Value;
 

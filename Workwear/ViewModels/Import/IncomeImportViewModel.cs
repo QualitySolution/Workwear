@@ -19,7 +19,6 @@ namespace workwear.ViewModels.Import
 		{
 			this.interactiveService = interactiveService;
 			this.parser = parser;
-			parser.UnitOfWork = UoW;
 			SelectFileVisible = true;
 			Title = "Загрузка поступлений";
 		}
@@ -77,7 +76,7 @@ namespace workwear.ViewModels.Import
 
 		public void LoadDocument(string filePatch) {
 			if(filePatch.ToLower().EndsWith(".xml")) {
-				parser.SetDocument(filePatch);
+				parser.SetData(filePatch, UoW);
 				foreach(var xml1CDocument in parser.ParseDocuments())
 					DocumentsViewModels.Add(new DocumentViewModel(this) { document = xml1CDocument });
 				if(DocumentsViewModels.Any())
@@ -96,9 +95,11 @@ namespace workwear.ViewModels.Import
 			SelectFileVisible = false;
 			SelectDocumentVisible = true;
 
+			var useAlternativeSize = interactiveService.Question("Использовать альтернативные значения размеров?");
+
 			foreach(var documentViewModel in DocumentsViewModels) {
 				documentViewModel.ItemViewModels = new List<DocumentItemViewModel>();
-				foreach(var documentItem in parser.ParseDocumentItems(documentViewModel.document))
+				foreach(var documentItem in parser.ParseDocumentItems(documentViewModel.document, useAlternativeSize))
 					documentViewModel.ItemViewModels.Add(new DocumentItemViewModel { Item = documentItem });
 			}
 
@@ -135,12 +136,12 @@ namespace workwear.ViewModels.Import
 	{
 		public Xml1CDocumentItem Item { get; set; }
 		public string Nomenclature => Item.Nomenclature?.Name ?? Item.NomenclatureFromCatalog;
-		public string Size => Item.Size?.Name ?? Item.CharacteristicFromCatalog;
-		public string Height => Item.Height?.Name ?? Item.CharacteristicFromCatalog;
+		public string Size => Item.Size?.Name ?? Item.SizeName;
+		public string Height => Item.Height?.Name ?? Item.HeightName;
 		public int Amount => Item.Amount;
 		public decimal Cost => Item.Cost;
-		public bool NomenclatureNotSelected => Nomenclature is null;
-		public bool SizeNotSelected => Size is null;
-		public bool HeightNotSelected => Height is null;
+		public bool NomenclatureSelected => Item.Nomenclature != null;
+		public bool SizeSelected => Item.Size != null;
+		public bool HeightSelected => Item.Height != null;
 	}
 }
