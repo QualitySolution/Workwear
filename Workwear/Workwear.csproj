@@ -191,6 +191,7 @@
     <Compile Include="Models\Import\RowStackHelper.cs" />
     <Compile Include="Models\Import\SetValueAction.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
+    <Compile Include="Models\WearLk\UnansweredClaimsCounter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
@@ -556,7 +557,6 @@
     <Compile Include="Views\Communications\ClaimsView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Communications.ClaimsView.cs" />
     <Compile Include="ViewModels\Communications\ClaimsViewModel.cs" />
-    <Compile Include="Models\WearLk\ClaimsNoAnsweredCounter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

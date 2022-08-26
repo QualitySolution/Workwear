@@ -1,19 +1,36 @@
 ﻿using System;
 using System.Linq;
 using Gtk;
+using QS.Cloud.WearLk.Client;
 
 namespace workwear.Models.WearLk {
 	public class UnansweredClaimsCounter {
-		public UnansweredClaimsCounter(ToolButton button) {
+		public UnansweredClaimsCounter(ToolButton button, ClaimsManagerService claimsService) {
+			this.claimsService = claimsService ?? throw new ArgumentNullException(nameof(claimsService));
 			PangoText = new Pango.Layout(button.PangoContext);
-			button.ExposeEvent += Button_ExposeEvent;
 			this.button = button;
+			button.ExposeEvent += Button_ExposeEvent;
+			
+			Connect();
 		}
 
+		#region Подписка на данные
+
+		public void Connect()
+		{
+			claimsService.NeedForResponseCountChanged += ClaimsServiceOnNeedForResponseCountChanged;
+			claimsService.SubscribeNeedForResponseCount();
+		}
+
+		private void ClaimsServiceOnNeedForResponseCountChanged(object sender, ReceiveNeedForResponseCountEventArgs e) {
+			Application.Invoke( (s, arg) => UnansweredCount = e.Count);
+		}
+
+		#endregion
 
 		#region Отрисовка
-		private int unansweredCount;
-		public int UnansweredCount {
+		private uint unansweredCount;
+		public uint UnansweredCount {
 			get => unansweredCount; set {
 				unansweredCount = value;
 				PangoText.SetMarkup($"<span foreground=\"red\"><b>{unansweredCount}</b></span>");
@@ -22,6 +39,7 @@ namespace workwear.Models.WearLk {
 
 		private Pango.Layout PangoText;
 		private readonly ToolButton button;
+		private readonly ClaimsManagerService claimsService;
 
 		void Button_ExposeEvent(object o, ExposeEventArgs args) {
 			int shift = 5;
