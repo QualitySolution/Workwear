@@ -42,10 +42,11 @@ namespace workwear.Tools.Import
 				var nomenclature = ParseNomenclature(item.NomenclatureReference);
 				item.Nomenclature = nomenclature.nomenclature;
 				item.NomenclatureFromCatalog = nomenclature.nomenclatureName;
-				var sizeAndHeight = ParseSizeAndHeight(item.CharacteristicFromCatalog);
+				var sizeAndHeight = ParseSizeAndHeight(item.CharacteristicReference);
 				item.Size = sizeAndHeight.size;
 				item.Height = sizeAndHeight.height;
 				item.CharacteristicFromCatalog = sizeAndHeight.characteristic;
+				documentItems.Add(item);
 			}
 			return documentItems;
 		}

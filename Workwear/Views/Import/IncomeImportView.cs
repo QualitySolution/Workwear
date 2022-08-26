@@ -54,8 +54,14 @@ namespace workwear.Views.Import
 		{
 			ytreeview1.ColumnsConfig = ColumnsConfigFactory.Create<DocumentItemViewModel>()
 				.AddColumn("Номенклатура").AddTextRenderer(i => i.Nomenclature)
+				.AddSetter(
+					(c, n) => c.Foreground = ColorState(n.NomenclatureNotSelected))
 				.AddColumn("Размер").AddTextRenderer(i => i.Size)
+					.AddSetter(
+						(c, n) => c.Foreground = ColorState(n.SizeNotSelected))
 				.AddColumn("Рост").AddTextRenderer(i => i.Height)
+					.AddSetter(
+						(c, n) => c.Foreground = ColorState(n.HeightNotSelected))
 				.AddColumn("Количество").AddNumericRenderer(i => i.Amount)
 				.AddColumn("Стоимость").AddNumericRenderer(i => i.Cost)
 				.Finish();
@@ -103,6 +109,8 @@ namespace workwear.Views.Import
 			}
 			fileChooserDialog.Destroy();
 		}
+
+		private string ColorState(bool state) => state ? String.Empty : "red";
 
 		#endregion
 	}

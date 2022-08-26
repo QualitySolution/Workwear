@@ -134,10 +134,13 @@ namespace workwear.ViewModels.Import
 	public class DocumentItemViewModel
 	{
 		public Xml1CDocumentItem Item { get; set; }
-		public string Nomenclature => Item?.Nomenclature.Name ?? Item?.NomenclatureFromCatalog;
-		public string Size => Item?.Size.Name ?? Item?.CharacteristicFromCatalog;
-		public string Height => Item?.Height.Name ?? Item?.CharacteristicFromCatalog;
+		public string Nomenclature => Item.Nomenclature?.Name ?? Item.NomenclatureFromCatalog;
+		public string Size => Item.Size?.Name ?? Item.CharacteristicFromCatalog;
+		public string Height => Item.Height?.Name ?? Item.CharacteristicFromCatalog;
 		public int Amount => Item.Amount;
 		public decimal Cost => Item.Cost;
+		public bool NomenclatureNotSelected => Nomenclature is null;
+		public bool SizeNotSelected => Size is null;
+		public bool HeightNotSelected => Height is null;
 	}
 }
