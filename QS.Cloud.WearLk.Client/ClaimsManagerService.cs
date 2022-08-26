@@ -3,9 +3,9 @@ using QS.Cloud.WearLk.Manage;
 
 namespace QS.Cloud.WearLk.Client 
 {
-	public class ClaimsManager : WearLkServiceBase
+	public class ClaimsManagerService : WearLkServiceBase
 	{
-		public ClaimsManager(string sessionId) : base(sessionId)
+		public ClaimsManagerService(string sessionId) : base(sessionId)
 		{
 		}
 
@@ -23,7 +23,7 @@ namespace QS.Cloud.WearLk.Client
 			return client.GetClaim(request, Headers).Messages;
 		}
 
-		public void SetСhanges(Claim claim) {
+		public void SetChanges(Claim claim) {
 			var client = new ClaimManager.ClaimManagerClient(Channel);
 			var request = new EditClaimRequest { ClaimId = claim.Id, ClaimState = claim.ClaimState, Title = claim.Title };
 			client.EditClaim(request, Headers);

@@ -15,13 +15,13 @@ namespace workwear.ViewModels.Communications
 	public class ClaimsViewModel : UowDialogViewModelBase 
 	{
 		
-		private readonly ClaimsManager claimsManager;
+		private readonly ClaimsManagerService claimsManager;
 		private readonly uint sizePage = 300;
 
 		public ClaimsViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
-			ClaimsManager claimsManager,
+			ClaimsManagerService claimsManager,
 			IValidator validator = null, 
 			string UoWTitle = "Обращения сотрудников"
 			) : base(unitOfWorkFactory, navigation, validator, UoWTitle) 
@@ -105,7 +105,7 @@ namespace workwear.ViewModels.Communications
 		}
 
 		private void ChangeStatusClaim() {
-			claimsManager.SetСhanges(SelectClaim);
+			claimsManager.SetChanges(SelectClaim);
 		}
 		
 		#endregion
