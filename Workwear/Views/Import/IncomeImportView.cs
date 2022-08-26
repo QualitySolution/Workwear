@@ -39,7 +39,8 @@ namespace workwear.Views.Import
 				.Finish();
 			
 			ytreeview1.Binding
-				.AddBinding(ViewModel, vm => vm.Documents, w=> w.ItemsDataSource)
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.DocumentsViewModels, w=> w.ItemsDataSource)
 				.InitializeFromSource();
 
 			ylistcomboboxDocuments.Binding
@@ -52,7 +53,11 @@ namespace workwear.Views.Import
 		private void TreeViewDocumentItemsBuild() 
 		{
 			ytreeview1.ColumnsConfig = ColumnsConfigFactory.Create<DocumentItemViewModel>()
-				.AddColumn("Документ").AddTextRenderer(c => c.Title)
+				.AddColumn("Номенклатура").AddTextRenderer(i => i.Nomenclature)
+				.AddColumn("Размер").AddTextRenderer(i => i.Size)
+				.AddColumn("Рост").AddTextRenderer(i => i.Height)
+				.AddColumn("Количество").AddNumericRenderer(i => i.Amount)
+				.AddColumn("Стоимость").AddNumericRenderer(i => i.Cost)
 				.Finish();
 			
 			ytreeview1.Binding
@@ -74,7 +79,7 @@ namespace workwear.Views.Import
 			
 			ylistcomboboxDocuments.Binding
 				.AddSource(ViewModel)
-				.AddBinding(vm => vm.Documents, w => w.ItemsList)
+				.AddBinding(vm => vm.DocumentsViewModels, w => w.ItemsList)
 				.AddBinding(vm => vm.SelectDocument, w => w.SelectedItem)
 				.InitializeFromSource();
 		}

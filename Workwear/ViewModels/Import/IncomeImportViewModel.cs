@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using QS.Dialog;
-using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
@@ -28,7 +27,6 @@ namespace workwear.ViewModels.Import
 		#region Events
 
 		public event Action DocumentLoaded;
-		public event Action DocumentParsed;
 
 		#endregion
 
@@ -40,7 +38,7 @@ namespace workwear.ViewModels.Import
 		#endregion
 
 		#region public Property
-		public List<DocumentViewModel> Documents { get; } = new List<DocumentViewModel>();
+		public List<DocumentViewModel> DocumentsViewModels { get; } = new List<DocumentViewModel>();
 
 		private bool selectFileVisible;
 		public bool SelectFileVisible {
@@ -54,16 +52,24 @@ namespace workwear.ViewModels.Import
 			private set => SetField(ref selectDocumentVisible, value);
 		}
 
-		public bool DocumentDownloadSensitive => Documents.Any(d => d.WantDownload);
+		public bool DocumentDownloadSensitive => DocumentsViewModels.Any(d => d.WantDownload);
 
 		private DocumentViewModel selectDocument;
-		[PropertyChangedAlso(nameof(SelectDocumentItems))]
+		
 		public DocumentViewModel SelectDocument {
 			get => selectDocument;
-			private set => SetField(ref selectDocument, value);
+			private set {
+				if(SetField(ref selectDocument, value)) {
+					SelectDocumentItems = selectDocument.ItemViewModels;
+				} 
+			}
 		}
 
-		public List<DocumentItemViewModel> SelectDocumentItems => selectDocument.ItemViewModels;
+		private List<DocumentItemViewModel> selectDocumentItems;
+		public List<DocumentItemViewModel> SelectDocumentItems {
+			get => selectDocumentItems;
+			set => SetField(ref selectDocumentItems, value);
+		}
 
 		#endregion
 
@@ -71,9 +77,10 @@ namespace workwear.ViewModels.Import
 
 		public void LoadDocument(string filePatch) {
 			if(filePatch.ToLower().EndsWith(".xml")) {
-				foreach(var xml1CDocument in parser.ParseDocuments(filePatch))
-					Documents.Add(new DocumentViewModel(this) { document = xml1CDocument });
-				if(Documents.Any())
+				parser.SetDocument(filePatch);
+				foreach(var xml1CDocument in parser.ParseDocuments())
+					DocumentsViewModels.Add(new DocumentViewModel(this) { document = xml1CDocument });
+				if(DocumentsViewModels.Any())
 					DocumentLoaded?.Invoke();
 				else
 					interactiveService.ShowMessage(ImportanceLevel.Warning, "В загруженом файле не обнаружены документы поступления");
@@ -83,19 +90,19 @@ namespace workwear.ViewModels.Import
 		}
 
 		public void ParseDocuments() {
-			if(!Documents.Any(x => x.WantDownload))
+			if(!DocumentsViewModels.Any(x => x.WantDownload))
 				interactiveService.ShowMessage(ImportanceLevel.Warning, "Не выбран ни один из документов");
-			Documents.RemoveAll(x => !x.WantDownload);
+			DocumentsViewModels.RemoveAll(x => !x.WantDownload);
 			SelectFileVisible = false;
 			SelectDocumentVisible = true;
 
-			foreach(var document in Documents) {
-				document.ItemViewModels = new List<DocumentItemViewModel>();
-				foreach(var documentItem in parser.ParseDocumentItems(document.document))
-					document.ItemViewModels.Add(new DocumentItemViewModel { Item = documentItem });
+			foreach(var documentViewModel in DocumentsViewModels) {
+				documentViewModel.ItemViewModels = new List<DocumentItemViewModel>();
+				foreach(var documentItem in parser.ParseDocumentItems(documentViewModel.document))
+					documentViewModel.ItemViewModels.Add(new DocumentItemViewModel { Item = documentItem });
 			}
 
-			SelectDocument = Documents.First();
+			SelectDocument = DocumentsViewModels.First();
 		}
 		
 		public void Cancel() => Close(true, CloseSource.Cancel);
@@ -127,6 +134,10 @@ namespace workwear.ViewModels.Import
 	public class DocumentItemViewModel
 	{
 		public Xml1CDocumentItem Item { get; set; }
-		public string Title { get; set; } = "2";
+		public string Nomenclature => Item?.Nomenclature.Name ?? Item?.NomenclatureFromCatalog;
+		public string Size => Item?.Size.Name ?? Item?.CharacteristicFromCatalog;
+		public string Height => Item?.Height.Name ?? Item?.CharacteristicFromCatalog;
+		public int Amount => Item.Amount;
+		public decimal Cost => Item.Cost;
 	}
 }
