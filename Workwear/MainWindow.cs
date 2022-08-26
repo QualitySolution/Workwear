@@ -58,6 +58,7 @@ using workwear.ViewModels.Import;
 using workwear.ViewModels.Stock;
 using workwear.ViewModels.Tools;
 using workwear.ViewModels.User;
+using workwear.Models.WearLk;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -167,7 +168,11 @@ public partial class MainWindow : Gtk.Window
 
 		FeaturesService = AutofacScope.Resolve<FeaturesService>();
 		DisableFeatures();
-		
+		if(FeaturesService.Available(WorkwearFeature.Claims)) {
+			var button = toolbarMain.Children.FirstOrDefault(x => x.Action == ActionClaims);
+			var counter = AutofacScope.Resolve<UnansweredClaimsCounter>(new TypedParameter(typeof(Gtk.ToolButton), button));
+		}
+
 		HistoryMain.Enable(connectionBuilder);
 	}
 

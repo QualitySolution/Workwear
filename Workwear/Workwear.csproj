@@ -556,6 +556,7 @@
     <Compile Include="Views\Communications\ClaimsView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Communications.ClaimsView.cs" />
     <Compile Include="ViewModels\Communications\ClaimsViewModel.cs" />
+    <Compile Include="Models\WearLk\ClaimsNoAnsweredCounter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -797,6 +798,7 @@
     <Folder Include="Journal\ViewModels\Communications\" />
     <Folder Include="Views\Sizes\" />
     <Folder Include="Journal\Filter.Views\Sizes\" />
+    <Folder Include="Models\WearLk\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">
