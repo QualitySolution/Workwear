@@ -22,16 +22,17 @@ namespace workwear.ViewModels.Import
 			this.parser = parser;
 			parser.UnitOfWork = UoW;
 			SelectFileVisible = true;
+			Title = "Загрузка поступлений";
 		}
 
 		#region Events
 
-		public event Action documentLoaded;
-		public event Action documentParsed;
+		public event Action DocumentLoaded;
+		public event Action DocumentParsed;
 
 		#endregion
 
-		#region Private fields
+		#region services
 
 		private readonly IInteractiveService interactiveService;
 		private readonly Xml1CDocumentParser parser;
@@ -39,31 +40,27 @@ namespace workwear.ViewModels.Import
 		#endregion
 
 		#region public Property
+		public List<DocumentViewModel> Documents { get; } = new List<DocumentViewModel>();
 
-		private List<DocumentViewModel> documents = new List<DocumentViewModel>();
-		public List<DocumentViewModel> Documents {
-			get => documents;
-			private set {
-				if(SetField(ref documents, value)) 
-					OnPropertyChanged(nameof(DocumentListVisible));
-			}
-		}
-		
 		private bool selectFileVisible;
 		public bool SelectFileVisible {
 			get => selectFileVisible;
-			set => SetField(ref selectFileVisible, value);
+			private set => SetField(ref selectFileVisible, value);
 		}
 		
-		public bool DocumentListVisible => Documents.Any();
+		private bool selectDocumentVisible;
+		public bool SelectDocumentVisible {
+			get => selectDocumentVisible;
+			private set => SetField(ref selectDocumentVisible, value);
+		}
+
+		public bool DocumentDownloadSensitive => Documents.Any(d => d.WantDownload);
 
 		private DocumentViewModel selectDocument;
+		[PropertyChangedAlso(nameof(SelectDocumentItems))]
 		public DocumentViewModel SelectDocument {
 			get => selectDocument;
-			set {
-				if(SetField(ref selectDocument, value));
-					OnPropertyChanged(nameof(SelectDocumentItems));
-			}
+			private set => SetField(ref selectDocument, value);
 		}
 
 		public List<DocumentItemViewModel> SelectDocumentItems => selectDocument.ItemViewModels;
@@ -75,9 +72,9 @@ namespace workwear.ViewModels.Import
 		public void LoadDocument(string filePatch) {
 			if(filePatch.ToLower().EndsWith(".xml")) {
 				foreach(var xml1CDocument in parser.ParseDocuments(filePatch))
-					Documents.Add(new DocumentViewModel { document = xml1CDocument });
+					Documents.Add(new DocumentViewModel(this) { document = xml1CDocument });
 				if(Documents.Any())
-					documentLoaded?.Invoke();
+					DocumentLoaded?.Invoke();
 				else
 					interactiveService.ShowMessage(ImportanceLevel.Warning, "В загруженом файле не обнаружены документы поступления");
 			}
@@ -90,6 +87,7 @@ namespace workwear.ViewModels.Import
 				interactiveService.ShowMessage(ImportanceLevel.Warning, "Не выбран ни один из документов");
 			Documents.RemoveAll(x => !x.WantDownload);
 			SelectFileVisible = false;
+			SelectDocumentVisible = true;
 
 			foreach(var document in Documents) {
 				document.ItemViewModels = new List<DocumentItemViewModel>();
@@ -99,25 +97,34 @@ namespace workwear.ViewModels.Import
 
 			SelectDocument = Documents.First();
 		}
+		
+		public void Cancel() => Close(true, CloseSource.Cancel);
+		public void WandDownloadPropertyChange() => OnPropertyChanged(nameof(DocumentDownloadSensitive));
 
 		#endregion
 	}
 
-	public class DocumentViewModel : PropertyChangedBase
+	public class DocumentViewModel
 	{
+		private readonly IncomeImportViewModel master;
+		public DocumentViewModel(IncomeImportViewModel masterViewModel) => master = masterViewModel;
 		public Xml1CDocument document { get; set; }
-		public string Title => document.DocumentType;
+		public string Title => document.DocumentType + " №:" + document.DocumentNumber;
+		public string DocumentType => document.DocumentType;
 		public uint Number => document.DocumentNumber;
 		private bool wantDownload;
 		public bool WantDownload {
 			get => wantDownload;
-			set => SetField(ref wantDownload, value);
+			set {
+				wantDownload = value;
+				master.WandDownloadPropertyChange();
+			}
 		}
-		
+
 		public List<DocumentItemViewModel> ItemViewModels { get; set; }
 	}
 
-	public class DocumentItemViewModel : PropertyChangedBase 
+	public class DocumentItemViewModel
 	{
 		public Xml1CDocumentItem Item { get; set; }
 		public string Title { get; set; } = "2";

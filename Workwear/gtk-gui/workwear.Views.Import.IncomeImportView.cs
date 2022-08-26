@@ -12,11 +12,11 @@ namespace workwear.Views.Import
 
 		private global::Gamma.GtkWidgets.yHBox yhbox1;
 
-		private global::Gamma.GtkWidgets.yButton ybuttonLoad;
+		private global::Gamma.GtkWidgets.yButton ybuttonFileChoose;
 
 		private global::Gamma.Widgets.yListComboBox ylistcomboboxDocuments;
 
-		private global::Gamma.GtkWidgets.yButton ybuttonParse;
+		private global::Gamma.GtkWidgets.yButton ybuttonDownload;
 
 		private global::Gamma.GtkWidgets.yHBox yhbox2;
 
@@ -62,13 +62,13 @@ namespace workwear.Views.Import
 			this.yhbox1.Name = "yhbox1";
 			this.yhbox1.Spacing = 6;
 			// Container child yhbox1.Gtk.Box+BoxChild
-			this.ybuttonLoad = new global::Gamma.GtkWidgets.yButton();
-			this.ybuttonLoad.CanFocus = true;
-			this.ybuttonLoad.Name = "ybuttonLoad";
-			this.ybuttonLoad.UseUnderline = true;
-			this.ybuttonLoad.Label = global::Mono.Unix.Catalog.GetString("Выбрать файл");
-			this.yhbox1.Add(this.ybuttonLoad);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonLoad]));
+			this.ybuttonFileChoose = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonFileChoose.CanFocus = true;
+			this.ybuttonFileChoose.Name = "ybuttonFileChoose";
+			this.ybuttonFileChoose.UseUnderline = true;
+			this.ybuttonFileChoose.Label = global::Mono.Unix.Catalog.GetString("Выбрать файл");
+			this.yhbox1.Add(this.ybuttonFileChoose);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonFileChoose]));
 			w3.Position = 0;
 			w3.Expand = false;
 			w3.Fill = false;
@@ -83,13 +83,13 @@ namespace workwear.Views.Import
 			w4.Expand = false;
 			w4.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
-			this.ybuttonParse = new global::Gamma.GtkWidgets.yButton();
-			this.ybuttonParse.CanFocus = true;
-			this.ybuttonParse.Name = "ybuttonParse";
-			this.ybuttonParse.UseUnderline = true;
-			this.ybuttonParse.Label = global::Mono.Unix.Catalog.GetString("Загрузить");
-			this.yhbox1.Add(this.ybuttonParse);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonParse]));
+			this.ybuttonDownload = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonDownload.CanFocus = true;
+			this.ybuttonDownload.Name = "ybuttonDownload";
+			this.ybuttonDownload.UseUnderline = true;
+			this.ybuttonDownload.Label = global::Mono.Unix.Catalog.GetString("Загрузить");
+			this.yhbox1.Add(this.ybuttonDownload);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonDownload]));
 			w5.Position = 2;
 			w5.Expand = false;
 			w5.Fill = false;

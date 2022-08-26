@@ -19419,7 +19419,7 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gamma.GtkWidgets.yButton" id="ybuttonLoad">
+              <widget class="Gamma.GtkWidgets.yButton" id="ybuttonFileChoose">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
@@ -19449,7 +19449,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yButton" id="ybuttonParse">
+              <widget class="Gamma.GtkWidgets.yButton" id="ybuttonDownload">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
