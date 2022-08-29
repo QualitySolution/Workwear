@@ -113,7 +113,7 @@ namespace workwear.Tools.Import
 				var nomenclature = UnitOfWork.Query<Nomenclature>()
 					.Where(x => x.Number == parseResult).List()
 					.FirstOrDefault();
-				return (nomenclature, nomenclatureName, article);
+				return (nomenclature, nomenclatureName, parseResult.ToString());
 			}
 			return (null, nomenclatureName, $"не удалось получить значение: {article}");
 		}

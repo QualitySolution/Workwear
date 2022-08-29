@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
-using FluentNHibernate.Data;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.Services;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Measurements;
+using workwear.Models.Import;
 using workwear.Repository.Stock;
 using workwear.Tools.Features;
 using workwear.Tools.Import;
@@ -29,7 +30,8 @@ namespace workwear.ViewModels.Import
 			StockRepository stockRepository,
 			FeaturesService featuresService,
 			IUserService userService,
-			ILifetimeScope autofacScope) : base(unitOfWorkFactory, navigation) 
+			ILifetimeScope autofacScope,
+			SizeService sizeService) : base(unitOfWorkFactory, navigation) 
 		{
 			this.interactiveService = interactiveService;
 			this.parser = parser;
@@ -37,11 +39,11 @@ namespace workwear.ViewModels.Import
 			Title = "Загрузка поступлений";
 			TargetWarehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
 			this.featuresService = featuresService;
+			this.sizeService = sizeService;
 			
 			var builder = new CommonEEVMBuilderFactory<IncomeImportViewModel>(
 				this, this, UoW, NavigationManager, autofacScope);
-			
-			entryWarehouseViewModel = builder.ForProperty(x => x.TargetWarehouse)
+			EntryWarehouseViewModel = builder.ForProperty(x => x.TargetWarehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
@@ -58,6 +60,7 @@ namespace workwear.ViewModels.Import
 		private readonly IInteractiveService interactiveService;
 		private readonly Xml1CDocumentParser parser;
 		private readonly FeaturesService featuresService;
+		private readonly SizeService sizeService;
 
 		#endregion
 
@@ -158,12 +161,55 @@ namespace workwear.ViewModels.Import
 				(NavigationManager as ITdiCompatibilityNavigation)?.OpenTdiTab<IncomeDocDlg, int>(null, income.Id);
 			}
 		}
+		
+		public void CreateNomenclature() {
+			var openNomenclatureDialog = false;
+				var nomenclatureTypes = new NomenclatureTypes(UoW, sizeService, true);
+				var documentItemsWithoutNomenclature = DocumentsViewModels
+					.SelectMany(d => d.ItemViewModels.Where(i => !i.NomenclatureSelected));
+				foreach(var notFoundNomenclature in documentItemsWithoutNomenclature) {
+					var type = nomenclatureTypes.ParseNomenclatureName(notFoundNomenclature.Nomenclature);
+					Nomenclature nomenclature;
+					if(type is null) {
+						var page = NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null,
+							EntityUoWBuilder.ForCreate(),
+							OpenPageOptions.AsSlave);
+						page.ViewModel.Entity.Name = notFoundNomenclature.Nomenclature;
+						page.ViewModel.Entity.Number = UInt32.TryParse(notFoundNomenclature.Article, out var result) ? result : 0;
+						openNomenclatureDialog = true;
+						nomenclature = page.ViewModel.Entity;
+					}
+					else {
+						if(type.Id == 0)
+							UoW.Save(type);
+						nomenclature = new Nomenclature {
+							Name = notFoundNomenclature.Nomenclature, 
+							Number = UInt32.TryParse(notFoundNomenclature.Article, out var result) ? result : 0,
+							Type = type,
+							Comment = "Созданно при загрузке поступления из файла"
+						};
+						UoW.Save(nomenclature);
+					}
+
+					notFoundNomenclature.Item.Nomenclature = nomenclature;
+				}
+
+				interactiveService.ShowMessage(ImportanceLevel.Info,
+					openNomenclatureDialog
+						? "Сохраните номенклатуру(ы) и повторите загрузку документа."
+						: "Созданы новые номенклатуры, повторите загрузку документа.", "Загрузка документа");
+				UoW.Commit();
+		}
+		
+		public void CreateSize() {
+			throw new NotImplementedException();
+		}
 
 		#endregion
 
 		#region EntryViewModel
 
-		public EntityEntryViewModel<Warehouse> entryWarehouseViewModel;
+		public readonly EntityEntryViewModel<Warehouse> EntryWarehouseViewModel;
 
 		#endregion
 	}
