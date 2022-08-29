@@ -28,8 +28,6 @@ namespace workwear.Views.Import
 
 		private global::Gamma.GtkWidgets.yButton ybuttonCreateNomenclature;
 
-		private global::Gamma.GtkWidgets.yButton ybuttonCreateSize;
-
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -145,25 +143,14 @@ namespace workwear.Views.Import
 			w10.Position = 0;
 			w10.Expand = false;
 			w10.Fill = false;
-			// Container child yvbox1.Gtk.Box+BoxChild
-			this.ybuttonCreateSize = new global::Gamma.GtkWidgets.yButton();
-			this.ybuttonCreateSize.CanFocus = true;
-			this.ybuttonCreateSize.Name = "ybuttonCreateSize";
-			this.ybuttonCreateSize.UseUnderline = true;
-			this.ybuttonCreateSize.Label = global::Mono.Unix.Catalog.GetString("Создать размеры");
-			this.yvbox1.Add(this.ybuttonCreateSize);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ybuttonCreateSize]));
-			w11.Position = 1;
-			w11.Expand = false;
-			w11.Fill = false;
 			this.ytable1.Add(this.yvbox1);
-			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yvbox1]));
-			w12.TopAttach = ((uint)(1));
-			w12.BottomAttach = ((uint)(2));
-			w12.LeftAttach = ((uint)(1));
-			w12.RightAttach = ((uint)(2));
-			w12.XOptions = ((global::Gtk.AttachOptions)(4));
-			w12.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yvbox1]));
+			w11.TopAttach = ((uint)(1));
+			w11.BottomAttach = ((uint)(2));
+			w11.LeftAttach = ((uint)(1));
+			w11.RightAttach = ((uint)(2));
+			w11.XOptions = ((global::Gtk.AttachOptions)(4));
+			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.ytable1);
 			if ((this.Child != null))
 			{

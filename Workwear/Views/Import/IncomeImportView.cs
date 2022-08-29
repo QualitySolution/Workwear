@@ -20,7 +20,6 @@ namespace workwear.Views.Import
 			ybuttonCancel.Clicked += YButtonCancelOnClicked;
 			ybuttonCreateIncome.Clicked += YButtonSaveOnClicked;
 			ybuttonCreateNomenclature.Clicked += YButtonCreateNomenclatureOnClicked;
-			ybuttonCreateSize.Clicked += YButtonCreateSizeOnClicked;
 
 			#endregion
 
@@ -54,10 +53,6 @@ namespace workwear.Views.Import
 				.InitializeFromSource();
 			
 			ybuttonCreateNomenclature.Binding
-				.AddBinding(ViewModel, vm => vm.DocumentHasBeenUploaded, w => w.Visible)
-				.InitializeFromSource();
-			
-			ybuttonCreateSize.Binding
 				.AddBinding(ViewModel, vm => vm.DocumentHasBeenUploaded, w => w.Visible)
 				.InitializeFromSource();
 			
@@ -119,7 +114,6 @@ namespace workwear.Views.Import
 		private void YButtonCancelOnClicked(object sender, EventArgs e) => ViewModel.Cancel();
 		private void YButtonSaveOnClicked(object sender, EventArgs e) => ViewModel.CreateIncome();
 		private void YButtonCreateNomenclatureOnClicked(object sender, EventArgs e) => ViewModel.CreateNomenclature();
-		private void YButtonCreateSizeOnClicked(object sender, EventArgs e) => ViewModel.CreateSize();
 
 		#endregion
 

@@ -200,10 +200,6 @@ namespace workwear.ViewModels.Import
 						: "Созданы новые номенклатуры, повторите загрузку документа.", "Загрузка документа");
 				UoW.Commit();
 		}
-		
-		public void CreateSize() {
-			throw new NotImplementedException();
-		}
 
 		#endregion
 
