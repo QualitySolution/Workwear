@@ -214,7 +214,7 @@ namespace workwear.Domain.Company
 			}
 
 			if (employeeSize != null && stockPosition.WearSize != null) {
-				var suitableStockPositionSize = stockPosition.WearSize.SuitableSizes.Where(x => x.UseInEmployee).ToList();
+				var suitableStockPositionSize = stockPosition.WearSize.SuitableSizes.ToList();
 				suitableStockPositionSize.Add(stockPosition.WearSize);
 
 				if (!suitableStockPositionSize.Contains(employeeSize)) return false;
@@ -229,7 +229,7 @@ namespace workwear.Domain.Company
 				return false;
 			}
 			
-			var suitableStockPositionHeights = stockPosition.Height.SuitableSizes.Where(x => x.UseInEmployee).ToList();
+			var suitableStockPositionHeights = stockPosition.Height.SuitableSizes.ToList();
 			suitableStockPositionHeights.Add(stockPosition.Height);
 			return suitableStockPositionHeights.Contains(employeeHeight);
 		}

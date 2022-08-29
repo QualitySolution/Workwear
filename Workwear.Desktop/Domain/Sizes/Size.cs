@@ -33,17 +33,17 @@ namespace Workwear.Domain.Sizes
             get => sizeType;
             set => SetField(ref sizeType, value);
         }
-        private bool useInEmployee;
+        private bool showInEmployee;
         [Display (Name = "Отображается в сотруднике")]
-        public virtual bool UseInEmployee {
-            get => useInEmployee;
-            set => SetField(ref useInEmployee, value);
+        public virtual bool ShowInEmployee {
+            get => showInEmployee;
+            set => SetField(ref showInEmployee, value);
         }
-        private bool useInNomenclature;
+        private bool showInNomenclature;
         [Display (Name = "Отображается в номенклатуре")]
-        public virtual bool UseInNomenclature {
-            get => useInNomenclature;
-            set => SetField(ref useInNomenclature, value);
+        public virtual bool ShowInNomenclature {
+            get => showInNomenclature;
+            set => SetField(ref showInNomenclature, value);
         }
         private string alternativeName;
         [Display(Name = "Альтернативное значение")]

@@ -6,6 +6,8 @@ namespace workwear.Models.Import.Employees
 	{
 		[Display(Name = "Пропустить")]
 		Unknown,
+		[Display(Name = "Фамилия с инициалами")]
+		NameWithInitials,
 		[Display(Name = "ФИО")]
 		Fio,
 		[Display(Name = "Фамилия")]

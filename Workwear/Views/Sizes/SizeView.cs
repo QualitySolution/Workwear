@@ -32,11 +32,11 @@ namespace workwear.Views.Sizes
 				.AddBinding(Entity, e => e.SizeType, w => w.SelectedItem)
 				.AddBinding(ViewModel, vm => vm.IsNew, v => v.Sensitive)
 				.InitializeFromSource();
-			ycheckbuttonUseInEmployee.Binding
-				.AddBinding(Entity, e => e.UseInEmployee, w => w.Active)
+			ycheckbuttonShowInEmployee.Binding
+				.AddBinding(Entity, e => e.ShowInEmployee, w => w.Active)
 				.InitializeFromSource();
-			ycheckbuttonUseInNomenclature.Binding
-				.AddBinding(Entity, e => e.UseInNomenclature, w => w.Active)
+			ycheckbuttonShowInNomenclature.Binding
+				.AddBinding(Entity, e => e.ShowInNomenclature, w => w.Active)
 				.InitializeFromSource();
 			entityAlterName.Binding
 				.AddBinding(Entity, e => e.AlternativeName, w => w.Text)

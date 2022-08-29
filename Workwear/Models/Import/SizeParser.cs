@@ -102,7 +102,8 @@ namespace workwear.Models.Import
 			new MappingValue("188", 185, 191),
 			new MappingValue("194", 191, 197),
 			new MappingValue("200", 197, 203),
-			new MappingValue("210", 203, 210),
+			new MappingValue("206", 203, 209),
+			new MappingValue("212", 209, 215),
 		};
 		#endregion
 
@@ -110,7 +111,7 @@ namespace workwear.Models.Import
 
 		public static string BustToSize(string bust) {
 			if(int.TryParse(bust, out int realBust)) {
-				var found = BustMappingValues.FirstOrDefault(x => realBust >= x.Lower && realBust < x.Upper);
+				var found = BustMappingValues.FirstOrDefault(x => realBust >= x.Lower && realBust <= x.Upper);
 				if(found != null)
 					return found.Name;
 			}
@@ -118,6 +119,8 @@ namespace workwear.Models.Import
 		}
 
 		public static readonly MappingValue[] BustMappingValues = new MappingValue[] {
+			new MappingValue("38", 75, 78),
+			new MappingValue("40", 79, 82),
 			new MappingValue("42", 83, 86),
 			new MappingValue("44", 87, 90),
 			new MappingValue("46", 91, 94),
@@ -130,6 +133,15 @@ namespace workwear.Models.Import
 			new MappingValue("60", 119, 122),
 			new MappingValue("62", 123, 126),
 			new MappingValue("64", 127, 130),
+			new MappingValue("66", 131, 134),
+			new MappingValue("68", 135, 138),
+			new MappingValue("70", 139, 142),
+			new MappingValue("72", 143, 146),
+			new MappingValue("74", 147, 150),
+			new MappingValue("76", 151, 154),
+			new MappingValue("78", 155, 158),
+			new MappingValue("80", 159, 162),
+			new MappingValue("82", 163, 166),
 		};
 
 		#endregion

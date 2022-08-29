@@ -40,7 +40,9 @@ namespace workwear.Models.Import.Employees
 		                                            "являются Фамилия и Имя или ФИО.";
 		#endregion
 
-		protected override bool HasRequiredDataTypes(IEnumerable<DataTypeEmployee> dataTypes) => dataTypes.Contains(DataTypeEmployee.Fio) 
+		protected override bool HasRequiredDataTypes(IEnumerable<DataTypeEmployee> dataTypes) => 
+			dataTypes.Contains(DataTypeEmployee.Fio) 
+			|| dataTypes.Contains(DataTypeEmployee.NameWithInitials)
 			|| (dataTypes.Contains(DataTypeEmployee.FirstName) && dataTypes.Contains(DataTypeEmployee.LastName));
 
 		protected override DataTypeEmployee[] RequiredDataTypes => new []{DataTypeEmployee.Fio, DataTypeEmployee.LastName, DataTypeEmployee.FirstName};
@@ -66,6 +68,8 @@ namespace workwear.Models.Import.Employees
 		{
 			if(ImportedDataTypes.Any(x => DataTypeEmployee.PersonnelNumber.Equals(x.DataType.Data)))
 				dataParser.MatchByNumber(uow, UsedRows, this, matchSettingsViewModel, progress);
+			else if (ImportedDataTypes.Any(x => DataTypeEmployee.NameWithInitials.Equals(x.DataType.Data)))
+				dataParser.MatchByNameWithInitials(uow, UsedRows, this, progress);
 			else
 				dataParser.MatchByName(uow, UsedRows, this, progress);
 

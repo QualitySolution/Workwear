@@ -44,6 +44,8 @@ namespace workwear.Models.Import.Norms
 		public void FindChanges(IEnumerable<SheetRowNorm> list, ExcelValueTarget[] meaningfulColumns)
 		{
 			foreach(var row in list) {
+				if(row.ProgramSkipped)
+					continue;
 				foreach(var column in meaningfulColumns.OrderBy(x => x.DataType.ValueSetOrder)) {
 					var datatype = (DataTypeNormBase)column.DataType;
 					datatype.CalculateChange(row, column);

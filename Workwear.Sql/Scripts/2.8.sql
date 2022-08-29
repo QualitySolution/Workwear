@@ -970,3 +970,8 @@ ALTER TABLE norms_item
 -- Увеличиваем размер колоноки с названием СИЗ
 ALTER TABLE protection_tools
 	CHANGE COLUMN `name` `name` VARCHAR(800) NOT NULL ;
+	
+-- Увеличиваем размеры полей с параметрами
+ALTER TABLE `base_parameters` 
+CHANGE COLUMN `name` `name` VARCHAR(80) NOT NULL ,
+CHANGE COLUMN `str_value` `str_value` VARCHAR(500) NULL DEFAULT NULL;

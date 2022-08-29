@@ -23,6 +23,7 @@ namespace workwear.ViewModels.Import
 		public static readonly string ColorOfNew = "Pale Turquoise";
 		public static readonly string ColorOfChanged = "Pale Green";
 		public static readonly string ColorOfError = "Pink";
+		public static readonly string ColorOfAmbiguous = "Khaki";
 		public static readonly string ColorOfNotFound = "Yellow";
 		public static readonly string ColorOfSkipped = "Orchid";
 		

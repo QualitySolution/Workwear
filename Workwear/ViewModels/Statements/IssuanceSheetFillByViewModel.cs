@@ -19,6 +19,7 @@ namespace workwear.ViewModels.Statements
 	{
 		readonly IssuanceSheetViewModel issuanceSheetViewModel;
 		readonly EmployeeIssueRepository employeeIssueRepository;
+		private readonly EmployeeRepository employeeRepository;
 		readonly IInteractiveQuestion question;
 
 		#region Notify
@@ -65,10 +66,11 @@ namespace workwear.ViewModels.Statements
 			}
 		}
 
-		public IssuanceSheetFillByViewModel(IssuanceSheetViewModel issuanceSheetViewModel, EmployeeIssueRepository employeeIssueRepository, IInteractiveQuestion question)
+		public IssuanceSheetFillByViewModel(IssuanceSheetViewModel issuanceSheetViewModel, EmployeeIssueRepository employeeIssueRepository, EmployeeRepository employeeRepository, IInteractiveQuestion question)
 		{
 			this.issuanceSheetViewModel = issuanceSheetViewModel ?? throw new ArgumentNullException(nameof(issuanceSheetViewModel));
 			this.employeeIssueRepository = employeeIssueRepository;
+			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.question = question;
 
 			employeeIssueRepository.RepoUow = UoW;
@@ -122,7 +124,7 @@ namespace workwear.ViewModels.Statements
 			foreach(var subdivisionNode in e.GetSelectedObjects<SubdivisionJournalNode>()) {
 				if(issuanceSheetViewModel.Entity.Subdivision == null)
 					issuanceSheetViewModel.Entity.Subdivision = issuanceSheetViewModel.UoW.GetById<Subdivision>(subdivisionNode.Id);
-				var inSubdivision = EmployeeRepository.GetActiveEmployeesFromSubdivision(issuanceSheetViewModel.UoW, subdivisionNode.Id);
+				var inSubdivision = employeeRepository.GetActiveEmployeesFromSubdivision(issuanceSheetViewModel.UoW, subdivisionNode.Id);
 				foreach(var employee in inSubdivision) {
 					if(employees.All(x => x.Id != employee.Id))
 						observableEmployees.Add(employee);

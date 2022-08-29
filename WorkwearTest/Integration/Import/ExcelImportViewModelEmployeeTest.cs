@@ -46,11 +46,11 @@ namespace WorkwearTest.Integration.Import
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
-			var setting = new SettingsMatchEmployeesViewModel();
+			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
-				employeesLoad.FileName = "Samples/Excel/cardkey_list.xlsx";
+				employeesLoad.FileName = "Samples/Excel/Employees/cardkey_list.xlsx";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
@@ -82,13 +82,13 @@ namespace WorkwearTest.Integration.Import
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
-			var setting = new SettingsMatchEmployeesViewModel();
+			var setting = new SettingsMatchEmployeesViewModel(null);
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
 			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
-				employeesLoad.FileName = "Samples/Excel/vostok_1c_employee.xls";
+				employeesLoad.FileName = "Samples/Excel/Employees/vostok_1c_employee.xls";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
@@ -138,7 +138,7 @@ namespace WorkwearTest.Integration.Import
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
-			var setting = new SettingsMatchEmployeesViewModel();
+			var setting = new SettingsMatchEmployeesViewModel(null);
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
 			var model = new ImportModelEmployee(dataparser, setting);
@@ -161,7 +161,7 @@ namespace WorkwearTest.Integration.Import
 					Assert.That(employeesold.Count, Is.EqualTo(1));
 					
 					employeesLoad.ProgressStep = progressStep;
-					employeesLoad.FileName = "Samples/Excel/osmbt.xls";
+					employeesLoad.FileName = "Samples/Excel/Employees/osmbt.xls";
 					Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 					employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 					Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
@@ -197,12 +197,12 @@ namespace WorkwearTest.Integration.Import
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
-			var setting = new SettingsMatchEmployeesViewModel();
+			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				var importModel = employeesLoad.ImportModel as ImportModelEmployee;
 				employeesLoad.ProgressStep = progressStep;
-				employeesLoad.FileName = "Samples/Excel/dismissed_employees.xls";
+				employeesLoad.FileName = "Samples/Excel/Employees/dismissed_employees.xls";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
@@ -246,11 +246,11 @@ namespace WorkwearTest.Integration.Import
 			var shoesType = new SizeType 
 				{Name = "Обувь", Position = 3, CategorySizeType = CategorySizeType.Size, UseInEmployee = true};
 			uowSaveSize.Save(shoesType);
-			var height = new Size {Name = "170-176", SizeType = heightType, UseInEmployee = true};
+			var height = new Size {Name = "170-176", SizeType = heightType, ShowInEmployee = true};
 			uowSaveSize.Save(height);
-			var size = new Size {Name = "48-50", SizeType = sizeType, UseInEmployee = true};
+			var size = new Size {Name = "48-50", SizeType = sizeType, ShowInEmployee = true};
 			uowSaveSize.Save(size);
-			var shoes = new Size {Name = "38", SizeType = shoesType, UseInEmployee = true};
+			var shoes = new Size {Name = "38", SizeType = shoesType, ShowInEmployee = true};
 			uowSaveSize.Save(shoes);
 			uowSaveSize.Commit();
 
@@ -259,13 +259,13 @@ namespace WorkwearTest.Integration.Import
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
-			var setting = new SettingsMatchEmployeesViewModel();
+			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataParser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor))
 			{
 				var uow = employeesLoad.UoW;
 				employeesLoad.ProgressStep = progressStep;
-				employeesLoad.FileName = "Samples/Excel/empty_first_row_a2.xls";
+				employeesLoad.FileName = "Samples/Excel/Employees/empty_first_row_a2.xls";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
@@ -303,13 +303,13 @@ namespace WorkwearTest.Integration.Import
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
-			var setting = new SettingsMatchEmployeesViewModel();
+			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataParser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor))
 			{
 				var uow = employeesLoad.UoW;
 				employeesLoad.ProgressStep = progressStep;
-				employeesLoad.FileName = "Samples/Excel/all_sizes.xlsx";
+				employeesLoad.FileName = "Samples/Excel/Employees/all_sizes.xlsx";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
 				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
 				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
@@ -343,6 +343,67 @@ namespace WorkwearTest.Integration.Import
 				Assert.That(employee3.Sizes.FirstOrDefault(x => x.SizeType.Id == 1)?.Size?.Name, Is.EqualTo("170-176"));
 				Assert.That(employee3.Sizes.FirstOrDefault(x => x.SizeType.Id == 4)?.Size?.Name, Is.EqualTo("39"));
 				Assert.That(employee3.Sizes.FirstOrDefault(x => x.SizeType.Id == 7)?.Size?.Name, Is.EqualTo("9"));
+			}
+		}
+		
+		[Test(Description = "Проверяем что можем сопоставить буквы Ё и Е при сопоставлении с имеющимися сотрудниками. " +
+		                    "Бонусом проверяем работу обхвата груди.")]
+		public void EmployeesLoad_YoInNameCase()
+		{
+			NewSessionWithSameDB();
+			var uowSaveSize = UnitOfWorkFactory.CreateWithoutRoot();
+			InsertStandardSizes(uowSaveSize.Session.Connection);
+			var roman = new EmployeeCard() {
+				LastName = "Боровлев", // Важно для теста! В файле через букву "ё"
+				FirstName = "Роман",
+				Patronymic = "Алексеевич"
+			};
+			uowSaveSize.Save(roman);
+			
+			var alex = new EmployeeCard() {
+				LastName = "Пономарёв", // Важно для теста! В файле "е" вместо "ё"
+				FirstName = "Алексей",
+				Patronymic = "Сергеевич"
+			};
+			uowSaveSize.Save(alex);
+			uowSaveSize.Commit();
+
+			var navigation = Substitute.For<INavigationManager>();
+			var interactive = Substitute.For<IInteractiveMessage>();
+			var progressStep = Substitute.For<IProgressBarDisplayable>();
+			var progressInterceptor = Substitute.For<ProgressInterceptor>();
+			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
+			var setting = new SettingsMatchEmployeesViewModel(null);
+			var model = new ImportModelEmployee(dataParser, setting);
+			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor))
+			{
+				var uow = employeesLoad.UoW;
+				employeesLoad.ProgressStep = progressStep;
+				employeesLoad.FileName = "Samples/Excel/Employees/employees_yo_in_name.xlsx";
+				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
+				employeesLoad.SelectedSheet = employeesLoad.Sheets.First();
+				Assert.That(employeesLoad.SensitiveSecondStepButton, Is.True, "Кнопка второго шага должна быть доступна");
+				employeesLoad.SecondStep();
+				Assert.That(employeesLoad.SensitiveThirdStepButton, Is.True, "Кнопка третьего шага должна быть доступна");
+				employeesLoad.ThirdStep();
+				Assert.That(employeesLoad.SensitiveSaveButton, Is.True, "Кнопка сохранить должна быть доступна");
+				employeesLoad.Save();
+				uow.Commit();
+				
+				var employees = uow.GetAll<EmployeeCard>().ToList();
+
+				Assert.That(employees.Count, Is.EqualTo(2));
+				var employee1 = employees.First(x => x.FirstName == "Роман");
+				Assert.That(employee1.Sizes.FirstOrDefault(x => x.SizeType.Id == 1)?.Size?.Name, Is.EqualTo("164"));
+				Assert.That(employee1.Sizes.FirstOrDefault(x => x.SizeType.Id == 2)?.Size?.Name, Is.EqualTo("50"));
+
+				var employee2 = employees.First(x => x.FirstName == "Алексей");
+				Assert.That(employee2.Sizes.FirstOrDefault(x => x.SizeType.Id == 1)?.Size?.Name, Is.EqualTo("182"));
+				Assert.That(employee2.Sizes.FirstOrDefault(x => x.SizeType.Id == 2)?.Size?.Name, Is.EqualTo("68"));
+				
+				//Проверяем что не обновляем значения полей если отличие в букве ё. То есть лучше оставить вариант который в базе чем вариант из файла.
+				Assert.That(employee1.LastName, Is.EqualTo("Боровлев"));
+				Assert.That(employee2.LastName, Is.EqualTo("Пономарёв"));
 			}
 		}
 

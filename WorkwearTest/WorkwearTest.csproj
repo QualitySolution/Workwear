@@ -47,9 +47,6 @@
     <None Include="Integration\Reports\NoDBTestReport.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Samples\Excel\cardkey_list.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigureOneTime.cs" />
@@ -61,6 +58,7 @@
     <Compile Include="Integration\Stock\CompletionIntegratedTest.cs" />
     <Compile Include="Models\Import\Employees\DataTypeBustTest.cs" />
     <Compile Include="Models\Import\Employees\DataTypeFioTest.cs" />
+    <Compile Include="Models\Import\Employees\DataTypeSubdivisionTest.cs" />
     <Compile Include="Models\Import\ImportModelBaseTest.cs" />
     <Compile Include="Models\Import\Norms\DataTypePeriodAndCountTest.cs" />
     <Compile Include="Models\Import\Norms\DataTypePeriodTest.cs" />
@@ -202,27 +200,24 @@
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Samples\Excel\vostok_1c_employee.xls">
+    <None Include="Samples\Excel\Employees\all_sizes.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Excel\Employees\cardkey_list.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Samples\Excel\dismissed_employees.xls">
+    <None Include="Samples\Excel\Employees\dismissed_employees.xls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Samples\Excel\osmbt.xls">
+    <None Include="Samples\Excel\Employees\empty_first_row_a2.xls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Samples\Excel\empty_first_row_a2.xls">
+    <None Include="Samples\Excel\Employees\osmbt.xls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Samples\Excel\all_sizes.xlsx">
+    <None Include="Samples\Excel\Employees\vostok_1c_employee.xls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -237,6 +232,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Samples\Excel\Employees\employees_yo_in_name.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="Samples\Excel\items_dateCells.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

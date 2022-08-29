@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.UoW;
 using QS.Utilities.Text;
@@ -6,20 +7,11 @@ using Workwear.Domain.Company;
 using workwear.Models.Company;
 
 namespace workwear.Models.Import.Employees.DataTypes {
-	public class DataTypeFio : DataTypeEmployeeBase {
-		private readonly PersonNames personNames;
-
-		public DataTypeFio(PersonNames personNames)
+	public class DataTypeNameWithInitials : DataTypeEmployeeBase {
+		public DataTypeNameWithInitials()
 		{
-			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
-			ColumnNameKeywords.AddRange(new []{				
-				"фио",
-				"ф.и.о.",
-				"сотрудник",
-				"наименование"//Встречается при выгрузке из 1C
-			});
-			ColumnNameRegExp = "фамилия.+имя.+отчество";
-			Data = DataTypeEmployee.Fio;
+			// ColumnNameKeywords.AddRange(new []{ });
+			Data = DataTypeEmployee.NameWithInitials;
 		}
 
 		public override void CalculateChange(SheetRowEmployee row, ExcelValueTarget target, IUnitOfWork uow) {
@@ -31,13 +23,18 @@ namespace workwear.Models.Import.Employees.DataTypes {
 		private ChangeState GetChangeState(SheetRowEmployee row, string value) {
 			if(String.IsNullOrWhiteSpace(value))
 				return new ChangeState(ChangeType.NotChanged);
+
+			if(row.Employees.Count > 1) {
+				return new ChangeState(ChangeType.Ambiguous, error: "Несколько сотрудников подходят под условия отбора: " + 
+				String.Join(", ", row.Employees.Select(x => x.FullName)));
+			}
 			
 			var employee = row.EditingEmployee;
 
-			value.SplitFullName(out var lastName, out var firstName, out var patronymic);
+			value.SplitNameWithInitials(out var lastName, out var firstName, out var patronymic);
 			var lastDiff = !String.IsNullOrEmpty(lastName) && !EmployeeParse.CompareString(employee.LastName, lastName);
-			var firstDiff = !String.IsNullOrEmpty(firstName) && !EmployeeParse.CompareString(employee.FirstName, firstName);
-			var patronymicDiff = !String.IsNullOrEmpty(patronymic) && !EmployeeParse.CompareString(employee.Patronymic, patronymic);
+			var firstDiff = !String.IsNullOrEmpty(firstName) && !EmployeeParse.CompareString(employee.FirstName?.FirstOrDefault().ToString(), firstName);
+			var patronymicDiff = !String.IsNullOrEmpty(patronymic) && !EmployeeParse.CompareString(employee.Patronymic?.FirstOrDefault().ToString(), patronymic);
 			string oldValue = (lastDiff || firstDiff || patronymicDiff) ? employee.FullName : null;
 			if(!lastDiff && !firstDiff && !patronymicDiff)
 				return new ChangeState(ChangeType.NotChanged);
@@ -50,16 +47,8 @@ namespace workwear.Models.Import.Employees.DataTypes {
 			
 			if(lastDiff)
 				row.AddSetValueAction(ValueSetOrder, () => employee.LastName = lastName);
-			if(firstDiff) {
+			if(firstDiff) 
 				row.AddSetValueAction(ValueSetOrder, () => employee.FirstName = firstName);
-				if(employee.Sex == Sex.None) {
-					var detectedSex = personNames.GetSexByName(firstName);
-					if(detectedSex != Sex.None) {
-						row.AddSetValueAction(ValueSetOrder, () => employee.Sex = detectedSex);
-						state.AddCreatedValues(detectedSex.GetEnumTitle());
-					}
-				}
-			}
 			if(patronymicDiff)
 				row.AddSetValueAction(ValueSetOrder, () => employee.Patronymic = patronymic);
 

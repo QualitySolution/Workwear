@@ -20,10 +20,10 @@ namespace workwear.Models.Import.Employees.DataTypes {
 
 			var sizes = sizeService.GetSize(uow, sizeType);
 			//Сначала ищем среди возможных для использования в сотруднике, точный размер.
-			var size = sizes.Where(x => x.UseInEmployee).FirstOrDefault(x => x.Name.Equals(sizeName));
+			var size = sizes.Where(x => x.ShowInEmployee).FirstOrDefault(x => x.Name.Equals(sizeName));
 			//Если не нашли пробует найти доступные но включая диапазоны
 			if(size == null)
-				size = sizes.Where(x => x.UseInEmployee).FirstOrDefault(x => x.Name.Contains(sizeName));
+				size = sizes.Where(x => x.ShowInEmployee).FirstOrDefault(x => x.Name.Contains(sizeName));
 			//Если тоже не получилось ищем в отключенных
 			if(size == null)
 				size = sizes.FirstOrDefault(x => x.Name.Equals(sizeName));
