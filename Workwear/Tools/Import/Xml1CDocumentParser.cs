@@ -43,7 +43,7 @@ namespace workwear.Tools.Import
 		}
 
 		public List<Xml1CDocumentItem> ParseDocumentItems(Xml1CDocument document, bool useAlternativeSize) {
-			var elements = document.Root.Elements(XNamespace + "Товары").ToList();
+			var elements = document.Root.Elements(XNamespace + "Товары");
 			var documentItems = new List<Xml1CDocumentItem>();
 			foreach(var element in elements) {
 				var item = new Xml1CDocumentItem(element, XNamespace);
@@ -164,5 +164,8 @@ namespace workwear.Tools.Import
 			
 			return (description, description);
 		}
+
+		public int GetDocumentItemsCount(IEnumerable<Xml1CDocument> documents) => 
+			documents.SelectMany(x => x.Root.Elements(XNamespace + "Товары")).Count();
 	}
 }

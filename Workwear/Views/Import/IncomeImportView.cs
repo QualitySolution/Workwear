@@ -70,17 +70,17 @@ namespace workwear.Views.Import
 			ytreeview1.ColumnsConfig = ColumnsConfigFactory.Create<DocumentItemViewModel>()
 				.AddColumn("Номенклатура").AddTextRenderer(i => i.Nomenclature)
 				.AddSetter(
-					(c, n) => c.Foreground = ColorState(n.NomenclatureSelected))
+					(c, n) => c.Foreground = ColorState(n.NomenclatureWarning))
 				.AddColumn("Номенклатурный номер").AddTextRenderer(i => i.Article)
 				.AddColumn("Размер").AddTextRenderer(i => i.Size)
 					.AddSetter(
-						(c, n) => c.Foreground = ColorState(n.SizeSelected))
+						(c, n) => c.Foreground = ColorState(n.SizeWarning))
 				.AddColumn("Рост").AddTextRenderer(i => i.Height)
 					.AddSetter(
-						(c, n) => c.Foreground = ColorState(n.HeightSelected))
+						(c, n) => c.Foreground = ColorState(n.HeightWarning))
 				.AddColumn("Количество").AddNumericRenderer(i => i.Amount)
 				.AddColumn("Стоимость").AddNumericRenderer(i => i.Cost)
-					.AddSetter((c, n) => c.Foreground = ColorState(n.CostIsZero))
+					.AddSetter((c, n) => c.Foreground = ColorState(n.CostWarning))
 				.Finish();
 			
 			ytreeview1.Binding
@@ -128,7 +128,7 @@ namespace workwear.Views.Import
 			fileChooserDialog.Destroy();
 		}
 
-		private string ColorState(bool state) => state ? String.Empty : "red";
+		private static string ColorState(bool state) => state ? "red" : null;
 
 		#endregion
 	}

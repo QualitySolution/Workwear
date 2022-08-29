@@ -31,7 +31,8 @@ namespace workwear.ViewModels.Import
 			FeaturesService featuresService,
 			IUserService userService,
 			ILifetimeScope autofacScope,
-			SizeService sizeService) : base(unitOfWorkFactory, navigation) 
+			SizeService sizeService,
+			IProgressBarDisplayable progressBar) : base(unitOfWorkFactory, navigation) 
 		{
 			this.interactiveService = interactiveService;
 			this.parser = parser;
@@ -40,6 +41,7 @@ namespace workwear.ViewModels.Import
 			TargetWarehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
 			this.featuresService = featuresService;
 			this.sizeService = sizeService;
+			this.progressBar = progressBar;
 			
 			var builder = new CommonEEVMBuilderFactory<IncomeImportViewModel>(
 				this, this, UoW, NavigationManager, autofacScope);
@@ -61,6 +63,7 @@ namespace workwear.ViewModels.Import
 		private readonly Xml1CDocumentParser parser;
 		private readonly FeaturesService featuresService;
 		private readonly SizeService sizeService;
+		private readonly IProgressBarDisplayable progressBar;
 
 		#endregion
 
@@ -95,7 +98,7 @@ namespace workwear.ViewModels.Import
 		private List<DocumentItemViewModel> selectDocumentItems;
 		public List<DocumentItemViewModel> SelectDocumentItems {
 			get => selectDocumentItems;
-			set => SetField(ref selectDocumentItems, value);
+			private set => SetField(ref selectDocumentItems, value);
 		}
 
 		private Warehouse targetWarehouse;
@@ -132,12 +135,17 @@ namespace workwear.ViewModels.Import
 			DocumentHasBeenUploaded = true;
 
 			var useAlternativeSize = interactiveService.Question("Использовать альтернативные значения размеров?");
-
+			
+			var count = parser.GetDocumentItemsCount(DocumentsViewModels.Select(x => x.Document));
+			progressBar.Start(count,0, $"Загружаем {(DocumentsViewModels.Count == 1 ? "документ" : "документы")}");
 			foreach(var documentViewModel in DocumentsViewModels) {
 				documentViewModel.ItemViewModels = new List<DocumentItemViewModel>();
-				foreach(var documentItem in parser.ParseDocumentItems(documentViewModel.Document, useAlternativeSize))
+				foreach(var documentItem in parser.ParseDocumentItems(documentViewModel.Document, useAlternativeSize)) {
+					progressBar.Add();
 					documentViewModel.ItemViewModels.Add(new DocumentItemViewModel { Item = documentItem });
+				}
 			}
+			progressBar.Close();
 
 			SelectDocument = DocumentsViewModels.First();
 		}
@@ -166,7 +174,7 @@ namespace workwear.ViewModels.Import
 			var openNomenclatureDialog = false;
 				var nomenclatureTypes = new NomenclatureTypes(UoW, sizeService, true);
 				var documentItemsWithoutNomenclature = DocumentsViewModels
-					.SelectMany(d => d.ItemViewModels.Where(i => !i.NomenclatureSelected));
+					.SelectMany(d => d.ItemViewModels.Where(i => !i.NomenclatureWarning));
 				foreach(var notFoundNomenclature in documentItemsWithoutNomenclature) {
 					var type = nomenclatureTypes.ParseNomenclatureName(notFoundNomenclature.Nomenclature);
 					Nomenclature nomenclature;
@@ -238,10 +246,10 @@ namespace workwear.ViewModels.Import
 		public string Height => Item.Height?.Name ?? Item.HeightName;
 		public int Amount => Item.Amount;
 		public decimal Cost => Item.Cost;
-		public bool NomenclatureSelected => Item.Nomenclature != null;
-		public bool SizeSelected => Item.Size != null;
-		public bool HeightSelected => Item.Height != null;
+		public bool NomenclatureWarning => Item.Nomenclature == null;
+		public bool SizeWarning => Nomenclature != null && Item.Size == null;
+		public bool HeightWarning => Nomenclature != null && Item.Height == null;
 		public string Article => Item.NomenclatureArticle;
-		public bool CostIsZero => Item.Cost == 0;
+		public bool CostWarning => Item.Cost == 0;
 	}
 }
