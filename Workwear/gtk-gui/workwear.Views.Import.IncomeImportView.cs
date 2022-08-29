@@ -10,6 +10,10 @@ namespace workwear.Views.Import
 
 		private global::Gamma.GtkWidgets.yTreeView ytreeview1;
 
+		private global::Gamma.GtkWidgets.yButton ybuttonCancel;
+
+		private global::Gamma.GtkWidgets.yButton ybuttonCreateIncome;
+
 		private global::Gamma.GtkWidgets.yHBox yhbox1;
 
 		private global::Gamma.GtkWidgets.yButton ybuttonFileChoose;
@@ -18,11 +22,7 @@ namespace workwear.Views.Import
 
 		private global::Gamma.GtkWidgets.yButton ybuttonDownload;
 
-		private global::Gamma.GtkWidgets.yHBox yhbox2;
-
-		private global::Gamma.GtkWidgets.yButton ybuttonSave;
-
-		private global::Gamma.GtkWidgets.yButton ybuttonCancel;
+		private global::QS.Views.Control.EntityEntry entityWarehouseIncome;
 
 		private global::Gamma.GtkWidgets.yVBox yvbox1;
 
@@ -58,6 +58,32 @@ namespace workwear.Views.Import
 			w2.TopAttach = ((uint)(1));
 			w2.BottomAttach = ((uint)(2));
 			// Container child ytable1.Gtk.Table+TableChild
+			this.ybuttonCancel = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonCancel.CanFocus = true;
+			this.ybuttonCancel.Name = "ybuttonCancel";
+			this.ybuttonCancel.UseUnderline = true;
+			this.ybuttonCancel.Label = global::Mono.Unix.Catalog.GetString("Отменить");
+			this.ytable1.Add(this.ybuttonCancel);
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ybuttonCancel]));
+			w3.TopAttach = ((uint)(2));
+			w3.BottomAttach = ((uint)(3));
+			w3.LeftAttach = ((uint)(1));
+			w3.RightAttach = ((uint)(2));
+			w3.XOptions = ((global::Gtk.AttachOptions)(4));
+			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.ybuttonCreateIncome = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonCreateIncome.CanFocus = true;
+			this.ybuttonCreateIncome.Name = "ybuttonCreateIncome";
+			this.ybuttonCreateIncome.UseUnderline = true;
+			this.ybuttonCreateIncome.Label = global::Mono.Unix.Catalog.GetString("Создать поступление");
+			this.ytable1.Add(this.ybuttonCreateIncome);
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ybuttonCreateIncome]));
+			w4.LeftAttach = ((uint)(1));
+			w4.RightAttach = ((uint)(2));
+			w4.XOptions = ((global::Gtk.AttachOptions)(4));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
 			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
 			this.yhbox1.Name = "yhbox1";
 			this.yhbox1.Spacing = 6;
@@ -68,20 +94,20 @@ namespace workwear.Views.Import
 			this.ybuttonFileChoose.UseUnderline = true;
 			this.ybuttonFileChoose.Label = global::Mono.Unix.Catalog.GetString("Выбрать файл");
 			this.yhbox1.Add(this.ybuttonFileChoose);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonFileChoose]));
-			w3.Position = 0;
-			w3.Expand = false;
-			w3.Fill = false;
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonFileChoose]));
+			w5.Position = 0;
+			w5.Expand = false;
+			w5.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
 			this.ylistcomboboxDocuments = new global::Gamma.Widgets.yListComboBox();
 			this.ylistcomboboxDocuments.Name = "ylistcomboboxDocuments";
 			this.ylistcomboboxDocuments.AddIfNotExist = false;
 			this.ylistcomboboxDocuments.DefaultFirst = false;
 			this.yhbox1.Add(this.ylistcomboboxDocuments);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ylistcomboboxDocuments]));
-			w4.Position = 1;
-			w4.Expand = false;
-			w4.Fill = false;
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ylistcomboboxDocuments]));
+			w6.Position = 1;
+			w6.Expand = false;
+			w6.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
 			this.ybuttonDownload = new global::Gamma.GtkWidgets.yButton();
 			this.ybuttonDownload.CanFocus = true;
@@ -89,44 +115,19 @@ namespace workwear.Views.Import
 			this.ybuttonDownload.UseUnderline = true;
 			this.ybuttonDownload.Label = global::Mono.Unix.Catalog.GetString("Загрузить");
 			this.yhbox1.Add(this.ybuttonDownload);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonDownload]));
-			w5.Position = 2;
-			w5.Expand = false;
-			w5.Fill = false;
-			this.ytable1.Add(this.yhbox1);
-			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yhbox1]));
-			w6.XOptions = ((global::Gtk.AttachOptions)(4));
-			w6.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child ytable1.Gtk.Table+TableChild
-			this.yhbox2 = new global::Gamma.GtkWidgets.yHBox();
-			this.yhbox2.Name = "yhbox2";
-			this.yhbox2.Spacing = 6;
-			// Container child yhbox2.Gtk.Box+BoxChild
-			this.ybuttonSave = new global::Gamma.GtkWidgets.yButton();
-			this.ybuttonSave.CanFocus = true;
-			this.ybuttonSave.Name = "ybuttonSave";
-			this.ybuttonSave.UseUnderline = true;
-			this.ybuttonSave.Label = global::Mono.Unix.Catalog.GetString("Сохранить");
-			this.yhbox2.Add(this.ybuttonSave);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.ybuttonSave]));
-			w7.Position = 0;
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonDownload]));
+			w7.Position = 2;
 			w7.Expand = false;
 			w7.Fill = false;
-			// Container child yhbox2.Gtk.Box+BoxChild
-			this.ybuttonCancel = new global::Gamma.GtkWidgets.yButton();
-			this.ybuttonCancel.CanFocus = true;
-			this.ybuttonCancel.Name = "ybuttonCancel";
-			this.ybuttonCancel.UseUnderline = true;
-			this.ybuttonCancel.Label = global::Mono.Unix.Catalog.GetString("Отменить");
-			this.yhbox2.Add(this.ybuttonCancel);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.ybuttonCancel]));
-			w8.Position = 1;
-			w8.Expand = false;
-			w8.Fill = false;
-			this.ytable1.Add(this.yhbox2);
-			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yhbox2]));
-			w9.TopAttach = ((uint)(2));
-			w9.BottomAttach = ((uint)(3));
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.entityWarehouseIncome = new global::QS.Views.Control.EntityEntry();
+			this.entityWarehouseIncome.Events = ((global::Gdk.EventMask)(256));
+			this.entityWarehouseIncome.Name = "entityWarehouseIncome";
+			this.yhbox1.Add(this.entityWarehouseIncome);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.entityWarehouseIncome]));
+			w8.Position = 3;
+			this.ytable1.Add(this.yhbox1);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yhbox1]));
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
 			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild

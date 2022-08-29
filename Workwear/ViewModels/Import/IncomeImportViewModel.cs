@@ -1,11 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
+using FluentNHibernate.Data;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Services;
+using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using workwear.Domain.Company;
+using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Stock;
+using workwear.Repository.Stock;
+using workwear.Tools.Features;
 using workwear.Tools.Import;
+using workwear.ViewModels.Stock;
 
 namespace workwear.ViewModels.Import 
 {
@@ -15,12 +25,26 @@ namespace workwear.ViewModels.Import
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
 			IInteractiveService interactiveService,
-			Xml1CDocumentParser parser) : base(unitOfWorkFactory, navigation) 
+			Xml1CDocumentParser parser,
+			StockRepository stockRepository,
+			FeaturesService featuresService,
+			IUserService userService,
+			ILifetimeScope autofacScope) : base(unitOfWorkFactory, navigation) 
 		{
 			this.interactiveService = interactiveService;
 			this.parser = parser;
 			SelectFileVisible = true;
 			Title = "Загрузка поступлений";
+			TargetWarehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
+			this.featuresService = featuresService;
+			
+			var builder = new CommonEEVMBuilderFactory<IncomeImportViewModel>(
+				this, this, UoW, NavigationManager, autofacScope);
+			
+			entryWarehouseViewModel = builder.ForProperty(x => x.TargetWarehouse)
+				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
+				.UseViewModelDialog<WarehouseViewModel>()
+				.Finish();
 		}
 
 		#region Events
@@ -33,6 +57,7 @@ namespace workwear.ViewModels.Import
 
 		private readonly IInteractiveService interactiveService;
 		private readonly Xml1CDocumentParser parser;
+		private readonly FeaturesService featuresService;
 
 		#endregion
 
@@ -45,10 +70,10 @@ namespace workwear.ViewModels.Import
 			private set => SetField(ref selectFileVisible, value);
 		}
 		
-		private bool selectDocumentVisible;
-		public bool SelectDocumentVisible {
-			get => selectDocumentVisible;
-			private set => SetField(ref selectDocumentVisible, value);
+		private bool documentHasBeenUploaded;
+		public bool DocumentHasBeenUploaded {
+			get => documentHasBeenUploaded;
+			private set => SetField(ref documentHasBeenUploaded, value);
 		}
 
 		public bool DocumentDownloadSensitive => DocumentsViewModels.Any(d => d.WantDownload);
@@ -70,6 +95,14 @@ namespace workwear.ViewModels.Import
 			set => SetField(ref selectDocumentItems, value);
 		}
 
+		private Warehouse targetWarehouse;
+		public Warehouse TargetWarehouse {
+			get => targetWarehouse;
+			set => SetField(ref targetWarehouse, value);
+		}
+
+		public bool WarehouseSelectVisible => featuresService.Available(WorkwearFeature.Warehouses);
+
 		#endregion
 
 		#region Methods
@@ -78,7 +111,7 @@ namespace workwear.ViewModels.Import
 			if(filePatch.ToLower().EndsWith(".xml")) {
 				parser.SetData(filePatch, UoW);
 				foreach(var xml1CDocument in parser.ParseDocuments())
-					DocumentsViewModels.Add(new DocumentViewModel(this) { document = xml1CDocument });
+					DocumentsViewModels.Add(new DocumentViewModel(this) { Document = xml1CDocument });
 				if(DocumentsViewModels.Any())
 					DocumentLoaded?.Invoke();
 				else
@@ -93,13 +126,13 @@ namespace workwear.ViewModels.Import
 				interactiveService.ShowMessage(ImportanceLevel.Warning, "Не выбран ни один из документов");
 			DocumentsViewModels.RemoveAll(x => !x.WantDownload);
 			SelectFileVisible = false;
-			SelectDocumentVisible = true;
+			DocumentHasBeenUploaded = true;
 
 			var useAlternativeSize = interactiveService.Question("Использовать альтернативные значения размеров?");
 
 			foreach(var documentViewModel in DocumentsViewModels) {
 				documentViewModel.ItemViewModels = new List<DocumentItemViewModel>();
-				foreach(var documentItem in parser.ParseDocumentItems(documentViewModel.document, useAlternativeSize))
+				foreach(var documentItem in parser.ParseDocumentItems(documentViewModel.Document, useAlternativeSize))
 					documentViewModel.ItemViewModels.Add(new DocumentItemViewModel { Item = documentItem });
 			}
 
@@ -108,6 +141,29 @@ namespace workwear.ViewModels.Import
 		
 		public void Cancel() => Close(true, CloseSource.Cancel);
 		public void WandDownloadPropertyChange() => OnPropertyChanged(nameof(DocumentDownloadSensitive));
+		
+		public void CreateIncome() {
+			foreach(var document in DocumentsViewModels) {
+				var income = new Income {
+					Warehouse = TargetWarehouse
+				};
+				foreach(var item in document.ItemViewModels.Select(x => x.Item)) {
+					if(item.Nomenclature is null)
+						continue;
+					income.AddItem(item.Nomenclature, item.Size, item.Height, item.Amount, null, item.Cost);
+				}
+				income.UpdateOperations(UoW, interactiveService);
+				UoW.Save(income);
+				UoW.Commit(); 
+				(NavigationManager as ITdiCompatibilityNavigation)?.OpenTdiTab<IncomeDocDlg, int>(null, income.Id);
+			}
+		}
+
+		#endregion
+
+		#region EntryViewModel
+
+		public EntityEntryViewModel<Warehouse> entryWarehouseViewModel;
 
 		#endregion
 	}
@@ -116,10 +172,10 @@ namespace workwear.ViewModels.Import
 	{
 		private readonly IncomeImportViewModel master;
 		public DocumentViewModel(IncomeImportViewModel masterViewModel) => master = masterViewModel;
-		public Xml1CDocument document { get; set; }
-		public string Title => document.DocumentType + " №:" + document.DocumentNumber;
-		public string DocumentType => document.DocumentType;
-		public uint Number => document.DocumentNumber;
+		public Xml1CDocument Document { get; set; }
+		public string Title => Document.DocumentType + " №:" + Document.DocumentNumber;
+		public string DocumentType => Document.DocumentType;
+		public uint Number => Document.DocumentNumber;
 		private bool wantDownload;
 		public bool WantDownload {
 			get => wantDownload;
@@ -143,5 +199,7 @@ namespace workwear.ViewModels.Import
 		public bool NomenclatureSelected => Item.Nomenclature != null;
 		public bool SizeSelected => Item.Size != null;
 		public bool HeightSelected => Item.Height != null;
+		public string Article => Item.NomenclatureArticle;
+		public bool CostIsZero => Item.Cost == 0;
 	}
 }

@@ -18,7 +18,7 @@ namespace workwear.Views.Import
 			ViewModel.DocumentLoaded += ViewModelOnDocumentLoaded;
 			ybuttonDownload.Clicked += OnDownloadClicked;
 			ybuttonCancel.Clicked += YButtonCancelOnClicked;
-			ybuttonSave.Clicked += YButtonSaveOnClicked;
+			ybuttonCreateIncome.Clicked += YButtonSaveOnClicked;
 
 			#endregion
 
@@ -44,8 +44,26 @@ namespace workwear.Views.Import
 				.InitializeFromSource();
 
 			ylistcomboboxDocuments.Binding
-				.AddBinding(ViewModel, vm => vm.SelectDocumentVisible, w=> w.Visible)
+				.AddBinding(ViewModel, vm => vm.DocumentHasBeenUploaded, w=> w.Visible)
 				.InitializeFromSource();
+			
+			ybuttonCreateIncome.Binding
+				.AddBinding(ViewModel, vm => vm.DocumentHasBeenUploaded, w => w.Visible)
+				.InitializeFromSource();
+			
+			ybuttonCreateNomenclature.Binding
+				.AddBinding(ViewModel, vm => vm.DocumentHasBeenUploaded, w => w.Visible)
+				.InitializeFromSource();
+			
+			ybuttonCreateSize.Binding
+				.AddBinding(ViewModel, vm => vm.DocumentHasBeenUploaded, w => w.Visible)
+				.InitializeFromSource();
+			
+			entityWarehouseIncome.Binding
+				.AddBinding(ViewModel, wm => wm.WarehouseSelectVisible, w => w.Visible)
+				.InitializeFromSource();
+
+			entityWarehouseIncome.ViewModel = ViewModel.entryWarehouseViewModel;
 		}
 
 		#region TreeViewBuild
@@ -56,6 +74,7 @@ namespace workwear.Views.Import
 				.AddColumn("Номенклатура").AddTextRenderer(i => i.Nomenclature)
 				.AddSetter(
 					(c, n) => c.Foreground = ColorState(n.NomenclatureSelected))
+				.AddColumn("Номенклатурный номер").AddTextRenderer(i => i.Article)
 				.AddColumn("Размер").AddTextRenderer(i => i.Size)
 					.AddSetter(
 						(c, n) => c.Foreground = ColorState(n.SizeSelected))
@@ -64,6 +83,7 @@ namespace workwear.Views.Import
 						(c, n) => c.Foreground = ColorState(n.HeightSelected))
 				.AddColumn("Количество").AddNumericRenderer(i => i.Amount)
 				.AddColumn("Стоимость").AddNumericRenderer(i => i.Cost)
+					.AddSetter((c, n) => c.Foreground = ColorState(n.CostIsZero))
 				.Finish();
 			
 			ytreeview1.Binding
@@ -95,7 +115,7 @@ namespace workwear.Views.Import
 		}
 		
 		private void YButtonCancelOnClicked(object sender, EventArgs e) => ViewModel.Cancel();
-		private void YButtonSaveOnClicked(object sender, EventArgs e) => ViewModel.Save();
+		private void YButtonSaveOnClicked(object sender, EventArgs e) => ViewModel.CreateIncome();
 
 		#endregion
 
