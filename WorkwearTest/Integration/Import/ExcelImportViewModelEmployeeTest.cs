@@ -46,7 +46,7 @@ namespace WorkwearTest.Integration.Import
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
-			var setting = new SettingsMatchEmployeesViewModel();
+			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
@@ -82,7 +82,7 @@ namespace WorkwearTest.Integration.Import
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
-			var setting = new SettingsMatchEmployeesViewModel();
+			var setting = new SettingsMatchEmployeesViewModel(null);
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
 			var model = new ImportModelEmployee(dataparser, setting);
@@ -138,7 +138,7 @@ namespace WorkwearTest.Integration.Import
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
-			var setting = new SettingsMatchEmployeesViewModel();
+			var setting = new SettingsMatchEmployeesViewModel(null);
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
 			var model = new ImportModelEmployee(dataparser, setting);
@@ -197,7 +197,7 @@ namespace WorkwearTest.Integration.Import
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
-			var setting = new SettingsMatchEmployeesViewModel();
+			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataparser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				var importModel = employeesLoad.ImportModel as ImportModelEmployee;
@@ -259,7 +259,7 @@ namespace WorkwearTest.Integration.Import
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
-			var setting = new SettingsMatchEmployeesViewModel();
+			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataParser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor))
 			{
@@ -303,7 +303,7 @@ namespace WorkwearTest.Integration.Import
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
-			var setting = new SettingsMatchEmployeesViewModel();
+			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataParser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor))
 			{
@@ -373,7 +373,7 @@ namespace WorkwearTest.Integration.Import
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated));
-			var setting = new SettingsMatchEmployeesViewModel();
+			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataParser, setting);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor))
 			{
