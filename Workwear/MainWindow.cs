@@ -758,7 +758,8 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager.OpenViewModel<SizeJournalViewModel>(null);
 	}
 
-	protected void OnActionSizeTypeActivated(object sender, EventArgs e) {
+	protected void OnActionSizeTypeActivated(object sender, EventArgs e) 
+	{
 		NavigationManager.OpenViewModel<SizeTypeJournalViewModel>(null);
 	}
 
