@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
+using workwear.Domain.Stock;
 using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import.Issuance
@@ -58,7 +59,7 @@ namespace workwear.Models.Import.Issuance
 			}
 
 			List<object> toSave = new List<object>();
-			toSave.AddRange(dataParser.UsedNomenclatures.Where(x => x.Id == 0));
+			toSave.AddRange(SavedNomenclatures);
 			toSave.AddRange(dataParser.ChangedEmployees);
 			toSave.AddRange(UsedRows.Where(x => x.Operation != null).Select(x => x.Operation));
 			return toSave;
@@ -93,8 +94,17 @@ namespace workwear.Models.Import.Issuance
 			CountersViewModel.SetCount(CountersWorkwearItems.UsedEmployees, UsedRows.Select(x => x.Employee).Distinct().Count(x => x!= null));
 			CountersViewModel.SetCount(CountersWorkwearItems.NewOperations, UsedRows.Count(x => x.Operation != null && x.Operation.Id == 0));
 			CountersViewModel.SetCount(CountersWorkwearItems.WorkwearItemNotFound, UsedRows.Count(x => x.Employee != null && x.WorkwearItem == null));
-			CountersViewModel.SetCount(CountersWorkwearItems.NewNomenclatures, dataParser.UsedNomenclatures.Count(x => x.Id == 0));
+			CountersViewModel.SetCount(CountersWorkwearItems.NewNomenclatures, SavedNomenclatures.Count());
 			logger.Debug(String.Join("\n", CountersViewModel.CountersText));
 		}
+
+		#region Справочники
+
+		private IEnumerable<Nomenclature> SavedNomenclatures => UsedRows
+			.Where(x => !x.Skipped && x.Operation?.Nomenclature?.Id == 0)
+			.Select(x => x.Operation.Nomenclature)
+			.Distinct();
+
+		#endregion
 	}
 }
