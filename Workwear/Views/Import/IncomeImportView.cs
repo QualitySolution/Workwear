@@ -85,7 +85,7 @@ namespace workwear.Views.Import
 			
 			ytreeview1.Binding
 				.AddSource(ViewModel)
-				.AddBinding(wm => wm.SelectDocumentItems, w => w.ItemsDataSource)
+				.AddBinding(wm => wm.SelectDocumentItemViewModels, w => w.ItemsDataSource)
 				.InitializeFromSource();
 			ytreeview1.YTreeModel.EmitModelChanged();
 		}
@@ -99,11 +99,10 @@ namespace workwear.Views.Import
 			TreeViewDocumentItemsBuild();
 			
 			ylistcomboboxDocuments.SetRenderTextFunc<DocumentViewModel>(vm => vm.Title);
-			
 			ylistcomboboxDocuments.Binding
 				.AddSource(ViewModel)
 				.AddBinding(vm => vm.DocumentsViewModels, w => w.ItemsList)
-				.AddBinding(vm => vm.SelectDocument, w => w.SelectedItem)
+				.AddBinding(vm => vm.SelectDocumentViewModel, w => w.SelectedItem)
 				.InitializeFromSource();
 		}
 
@@ -120,14 +119,12 @@ namespace workwear.Views.Import
 		#region FileChooserDialog
 
 		private void OnFileChooseClick(object sender, EventArgs e) {
-			var param = new object[] { "Cancel", ResponseType.Cancel, "Open", ResponseType.Accept };
-			var fileChooserDialog = new FileChooserDialog("Open File", null, FileChooserAction.Open, param);
-			if(fileChooserDialog.Run() == (int)ResponseType.Accept) {
+			var fileChooserDialog = new FileChooserDialog("Open File", null, FileChooserAction.Open, 
+				"Cancel", ResponseType.Cancel, "Open", ResponseType.Accept);
+			if(fileChooserDialog.Run() == (int)ResponseType.Accept) 
 				ViewModel.LoadDocument(fileChooserDialog.Filename);
-			}
 			fileChooserDialog.Destroy();
 		}
-
 		private static string ColorState(bool state) => state ? "red" : null;
 
 		#endregion

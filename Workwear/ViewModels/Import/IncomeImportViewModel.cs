@@ -38,21 +38,21 @@ namespace workwear.ViewModels.Import
 			this.parser = parser;
 			SelectFileVisible = true;
 			Title = "Загрузка поступлений";
-			TargetWarehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
+			Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
 			this.featuresService = featuresService;
 			this.sizeService = sizeService;
 			this.progressBar = progressBar;
 			
 			var builder = new CommonEEVMBuilderFactory<IncomeImportViewModel>(
 				this, this, UoW, NavigationManager, autofacScope);
-			EntryWarehouseViewModel = builder.ForProperty(x => x.TargetWarehouse)
+			EntryWarehouseViewModel = builder.ForProperty(x => x.Warehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
 		}
 
 		#region Events
-
+		
 		public event Action DocumentLoaded;
 
 		#endregion
@@ -84,29 +84,28 @@ namespace workwear.ViewModels.Import
 
 		public bool DocumentDownloadSensitive => DocumentsViewModels.Any(d => d.WantDownload);
 
-		private DocumentViewModel selectDocument;
-		
-		public DocumentViewModel SelectDocument {
-			get => selectDocument;
+		private DocumentViewModel selectDocumentViewModel;
+		public DocumentViewModel SelectDocumentViewModel {
+			get => selectDocumentViewModel;
 			private set {
-				if(SetField(ref selectDocument, value)) {
-					SelectDocumentItems = selectDocument.ItemViewModels;
+				if(SetField(ref selectDocumentViewModel, value)) {
+					SelectDocumentItemViewModels = selectDocumentViewModel.ItemViewModels;
 				} 
 			}
 		}
 
-		private List<DocumentItemViewModel> selectDocumentItems;
-		public List<DocumentItemViewModel> SelectDocumentItems {
-			get => selectDocumentItems;
-			private set => SetField(ref selectDocumentItems, value);
+		private List<DocumentItemViewModel> selectDocumentItemViewModels;
+		public List<DocumentItemViewModel> SelectDocumentItemViewModels {
+			get => selectDocumentItemViewModels;
+			private set => SetField(ref selectDocumentItemViewModels, value);
 		}
 
-		private Warehouse targetWarehouse;
-		public Warehouse TargetWarehouse {
-			get => targetWarehouse;
-			set => SetField(ref targetWarehouse, value);
-		}
+		private Warehouse warehouse;
 
+		private Warehouse Warehouse {
+			get => warehouse;
+			set => SetField(ref warehouse, value);
+		}
 		public bool WarehouseSelectVisible => featuresService.Available(WorkwearFeature.Warehouses);
 
 		#endregion
@@ -116,8 +115,15 @@ namespace workwear.ViewModels.Import
 		public void LoadDocument(string filePatch) {
 			if(filePatch.ToLower().EndsWith(".xml")) {
 				parser.SetData(filePatch, UoW);
-				foreach(var xml1CDocument in parser.ParseDocuments())
+				foreach(var xml1CDocument in parser.ParseDocuments()) {
+					if(DocumentsViewModels.Any(x => x.Document.DocumentNumber == xml1CDocument.DocumentNumber)) {
+						interactiveService.ShowMessage(
+							ImportanceLevel.Info,
+							$"Документ с номером {xml1CDocument.DocumentNumber} уже загружен");
+						continue;
+					}
 					DocumentsViewModels.Add(new DocumentViewModel(this) { Document = xml1CDocument });
+				}
 				if(DocumentsViewModels.Any())
 					DocumentLoaded?.Invoke();
 				else
@@ -135,8 +141,8 @@ namespace workwear.ViewModels.Import
 			DocumentHasBeenUploaded = true;
 
 			var useAlternativeSize = interactiveService.Question("Использовать альтернативные значения размеров?");
-			
 			var count = parser.GetDocumentItemsCount(DocumentsViewModels.Select(x => x.Document));
+			
 			progressBar.Start(count,0, $"Загружаем {(DocumentsViewModels.Count == 1 ? "документ" : "документы")}");
 			foreach(var documentViewModel in DocumentsViewModels) {
 				documentViewModel.ItemViewModels = new List<DocumentItemViewModel>();
@@ -146,17 +152,22 @@ namespace workwear.ViewModels.Import
 				}
 			}
 			progressBar.Close();
-
-			SelectDocument = DocumentsViewModels.First();
+			SelectDocumentViewModel = DocumentsViewModels.First();
 		}
 		
 		public void Cancel() => Close(true, CloseSource.Cancel);
 		public void WandDownloadPropertyChange() => OnPropertyChanged(nameof(DocumentDownloadSensitive));
 		
 		public void CreateIncome() {
+			progressBar.Start(DocumentsViewModels.Count, 0, "Создаём поступление");
 			foreach(var document in DocumentsViewModels) {
+				progressBar.Add();
 				var income = new Income {
-					Warehouse = TargetWarehouse
+					Operation = IncomeOperations.Enter,
+					Warehouse = Warehouse,
+					Comment = document.Title,
+					CreationDate = DateTime.Today,
+					Date = document.Date ?? DateTime.Today
 				};
 				foreach(var item in document.ItemViewModels.Select(x => x.Item)) {
 					if(item.Nomenclature is null)
@@ -168,16 +179,19 @@ namespace workwear.ViewModels.Import
 				UoW.Commit(); 
 				(NavigationManager as ITdiCompatibilityNavigation)?.OpenTdiTab<IncomeDocDlg, int>(null, income.Id);
 			}
+			progressBar.Close();
 		}
 		
 		public void CreateNomenclature() {
 			var openNomenclatureDialog = false;
 				var nomenclatureTypes = new NomenclatureTypes(UoW, sizeService, true);
 				var documentItemsWithoutNomenclature = DocumentsViewModels
-					.SelectMany(d => d.ItemViewModels.Where(i => !i.NomenclatureWarning));
+					.SelectMany(d => d.ItemViewModels.Where(i => !i.NomenclatureWarning))
+					.ToList();
+				progressBar.Start(documentItemsWithoutNomenclature.Count, 0,"Создаём номенклатуру");
 				foreach(var notFoundNomenclature in documentItemsWithoutNomenclature) {
+					progressBar.Add();
 					var type = nomenclatureTypes.ParseNomenclatureName(notFoundNomenclature.Nomenclature);
-					Nomenclature nomenclature;
 					if(type is null) {
 						var page = NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null,
 							EntityUoWBuilder.ForCreate(),
@@ -185,12 +199,11 @@ namespace workwear.ViewModels.Import
 						page.ViewModel.Entity.Name = notFoundNomenclature.Nomenclature;
 						page.ViewModel.Entity.Number = UInt32.TryParse(notFoundNomenclature.Article, out var result) ? result : 0;
 						openNomenclatureDialog = true;
-						nomenclature = page.ViewModel.Entity;
 					}
 					else {
 						if(type.Id == 0)
 							UoW.Save(type);
-						nomenclature = new Nomenclature {
+						var nomenclature = new Nomenclature {
 							Name = notFoundNomenclature.Nomenclature, 
 							Number = UInt32.TryParse(notFoundNomenclature.Article, out var result) ? result : 0,
 							Type = type,
@@ -198,9 +211,8 @@ namespace workwear.ViewModels.Import
 						};
 						UoW.Save(nomenclature);
 					}
-
-					notFoundNomenclature.Item.Nomenclature = nomenclature;
 				}
+				progressBar.Close();
 
 				interactiveService.ShowMessage(ImportanceLevel.Info,
 					openNomenclatureDialog
@@ -226,6 +238,7 @@ namespace workwear.ViewModels.Import
 		public string Title => Document.DocumentType + " №:" + Document.DocumentNumber;
 		public string DocumentType => Document.DocumentType;
 		public uint Number => Document.DocumentNumber;
+		public DateTime? Date => Document.Date;
 		private bool wantDownload;
 		public bool WantDownload {
 			get => wantDownload;
@@ -234,7 +247,6 @@ namespace workwear.ViewModels.Import
 				master.WandDownloadPropertyChange();
 			}
 		}
-
 		public List<DocumentItemViewModel> ItemViewModels { get; set; }
 	}
 

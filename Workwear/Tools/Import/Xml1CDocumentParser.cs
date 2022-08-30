@@ -18,15 +18,12 @@ namespace workwear.Tools.Import
 		private IEnumerable<XElement> CatalogNomenclatures => _1CV8DtUD
 			.Descendants(XNamespace + "CatalogObject.Номенклатура")
 			.Where(x => (bool)x.Element(XNamespace + "IsFolder") == false);
-
 		private IEnumerable<XElement> CatalogParametersNomenclature => _1CV8DtUD
 			.Descendants(XNamespace + "CatalogObject.ХарактеристикиНоменклатуры");
-
-
-		public void SetData(string filePatch, IUnitOfWork unitOfWork) 
-		{
+		
+		public void SetData(string filePatch, IUnitOfWork unitOfWork) {
 			Document = XDocument.Load(filePatch);
-			this.UnitOfWork = unitOfWork;
+			UnitOfWork = unitOfWork;
 		}
 		public List<Xml1CDocument> ParseDocuments() {
 			var documents = _1CV8DtUD
@@ -38,7 +35,6 @@ namespace workwear.Tools.Import
 				.AddRange(_1CV8DtUD
 					.Descendants(XNamespace + "DocumentObject.ПеремещениеТоваров")
 					.Select(eDescendant => new Xml1CDocument(eDescendant, XNamespace)));
-
 			return documents;
 		}
 
@@ -73,8 +69,8 @@ namespace workwear.Tools.Import
 				.FirstOrDefault(x => x.Element(XNamespace + "Ref")?.Value == characteristicReference)?
 				.Element(XNamespace + "Description")?.Value.Trim();
 			
-			if(nomenclature is null || String.IsNullOrEmpty(description) || description == "б/р" || description == "Б/Р")
-				return (null, null, description, description);
+			if(nomenclature is null || String.IsNullOrEmpty(description) || description.ToLower() == "б/р")
+				return (null, null, description, String.Empty);
 			
 			Size size = null;
 			Size height = null;
@@ -99,12 +95,14 @@ namespace workwear.Tools.Import
 					heightQuery.And(h => h.Name == sizeAndHeightNames.Item2);
 				height = heightQuery.SingleOrDefault();
 			}
-			return (size, height, sizeAndHeightNames.Item1, sizeAndHeightNames.Item2);
+			return (size, height, 
+				nomenclature.Type.SizeType is null ? String.Empty : sizeAndHeightNames.Item1, 
+				nomenclature.Type.HeightType is null ? String.Empty : sizeAndHeightNames.Item2);
 		}
 
 		private (Nomenclature nomenclature, string nomenclatureName, string article) ParseNomenclature(string nomenclatureReference) {
 			if(nomenclatureReference is null)
-				throw new NullReferenceException();
+				throw new ArgumentNullException();
 			var catalogNomenclature = CatalogNomenclatures
 				.FirstOrDefault(x => x.Element(XNamespace + "Ref")?.Value == nomenclatureReference);
 			var article = catalogNomenclature?.Element(XNamespace + "Артикул")?.Value;
@@ -153,15 +151,14 @@ namespace workwear.Tools.Import
 			if(multipleXRegex.IsMatch(description)) {
 				var multiplier = Int32.Parse($"{description.First()}");
 				string sizeName;
-				if(multiplier <= 3) {
+				if(multiplier <= 3)
 					sizeName = new string('X', multiplier) + description.Remove(0, 2);
-				}
-				else { //Если больше 3X то в базе храним с числом 
+				else
+					//Если больше 3X то в базе храним с числом 
 					sizeName = description;
-				}
+
 				return (sizeName, null);
 			}
-			
 			return (description, description);
 		}
 
