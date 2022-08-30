@@ -109,6 +109,11 @@ namespace workwear.Models.Import.Employees
 				if(sizeType.Id == 2)
 					SupportDataTypes.Add(new DataTypeBust(sizeService, sizeType));
 			}
+
+			var heightSize = sizeTypes.FirstOrDefault(x => x.Id == 1);
+			var wearSize = sizeTypes.FirstOrDefault(x => x.Id == 2);
+			if(wearSize != null && heightSize != null)
+				SupportDataTypes.Add(new DataTypeSizeAndHeight(sizeService, wearSize, heightSize));
 		}
 		
 		#endregion

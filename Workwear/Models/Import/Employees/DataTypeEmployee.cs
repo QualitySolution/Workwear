@@ -35,6 +35,8 @@ namespace workwear.Models.Import.Employees
 		[Display(Name = "Отдел")]
 		Department,
 		[Display(Name = "Должность")]
-		Post
+		Post,
+		[Display(Name = "Размер/Рост")]
+		SizeAndHeight
 	}
 }

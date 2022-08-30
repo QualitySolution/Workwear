@@ -156,6 +156,7 @@
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeDepartment.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeNameWithInitials.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypePost.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypeSizeAndHeight.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeSubdivision.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeSimpleDate.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeFirstName.cs" />
