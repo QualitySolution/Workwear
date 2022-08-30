@@ -31,6 +31,7 @@ namespace workwear.ReportParameters.Views
 			ycheckChild.Binding
 				.AddBinding(viewModel, vm => vm.AddChildSubdivisions, w => w.Active)
 				.InitializeFromSource();
+			checkShowSex.Binding.AddBinding(ViewModel, v => v.ShowSex, w => w.Active).InitializeFromSource();
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)
