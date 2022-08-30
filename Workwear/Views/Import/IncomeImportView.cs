@@ -20,6 +20,7 @@ namespace workwear.Views.Import
 			ybuttonCancel.Clicked += YButtonCancelOnClicked;
 			ybuttonCreateIncome.Clicked += YButtonSaveOnClicked;
 			ybuttonCreateNomenclature.Clicked += YButtonCreateNomenclatureOnClicked;
+			ybuttonSelectAll.Clicked += YButtonSelectAllOnClicked;
 
 			#endregion
 
@@ -61,6 +62,10 @@ namespace workwear.Views.Import
 				.InitializeFromSource();
 
 			entityWarehouseIncome.ViewModel = ViewModel.EntryWarehouseViewModel;
+			
+			ybuttonSelectAll.Binding
+				.AddBinding(ViewModel, vm => vm.SelectFileVisible, w=> w.Visible)
+				.InitializeFromSource();
 		}
 
 		#region TreeViewBuild
@@ -106,13 +111,14 @@ namespace workwear.Views.Import
 				.InitializeFromSource();
 		}
 
-		private void ViewModelOnDocumentLoaded() {
-			ytreeview1.YTreeModel.EmitModelChanged();
-		}
-		
+		private void ViewModelOnDocumentLoaded() => ytreeview1.YTreeModel.EmitModelChanged();
 		private void YButtonCancelOnClicked(object sender, EventArgs e) => ViewModel.Cancel();
 		private void YButtonSaveOnClicked(object sender, EventArgs e) => ViewModel.CreateIncome();
 		private void YButtonCreateNomenclatureOnClicked(object sender, EventArgs e) => ViewModel.CreateNomenclature();
+		private void YButtonSelectAllOnClicked(object sender, EventArgs e) {
+			ViewModel.SelectAll();
+			ytreeview1.YTreeModel.EmitModelChanged();
+		}
 
 		#endregion
 

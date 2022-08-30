@@ -81,7 +81,6 @@ namespace workwear.ViewModels.Import
 			get => documentHasBeenUploaded;
 			private set => SetField(ref documentHasBeenUploaded, value);
 		}
-
 		public bool DocumentDownloadSensitive => DocumentsViewModels.Any(d => d.WantDownload);
 
 		private DocumentViewModel selectDocumentViewModel;
@@ -162,22 +161,18 @@ namespace workwear.ViewModels.Import
 			progressBar.Start(DocumentsViewModels.Count, 0, "Создаём поступление");
 			foreach(var document in DocumentsViewModels) {
 				progressBar.Add();
-				var income = new Income {
-					Operation = IncomeOperations.Enter,
-					Warehouse = Warehouse,
-					Comment = document.Title,
-					CreationDate = DateTime.Today,
-					Date = document.Date ?? DateTime.Today
-				};
+				var page = (NavigationManager as ITdiCompatibilityNavigation)?.OpenTdiTab<IncomeDocDlg>(null, OpenPageOptions.IgnoreHash);
+				var income = (page.TdiTab as IncomeDocDlg).Entity;
+				income.Operation = IncomeOperations.Enter;
+				income.Warehouse = Warehouse;
+				income.Comment = document.Title;
+				income.CreationDate = DateTime.Today;
+				income.Date = document.Date ?? DateTime.Today;
 				foreach(var item in document.ItemViewModels.Select(x => x.Item)) {
 					if(item.Nomenclature is null)
 						continue;
 					income.AddItem(item.Nomenclature, item.Size, item.Height, item.Amount, null, item.Cost);
 				}
-				income.UpdateOperations(UoW, interactiveService);
-				UoW.Save(income);
-				UoW.Commit(); 
-				(NavigationManager as ITdiCompatibilityNavigation)?.OpenTdiTab<IncomeDocDlg, int>(null, income.Id);
 			}
 			progressBar.Close();
 		}
@@ -186,30 +181,33 @@ namespace workwear.ViewModels.Import
 			var openNomenclatureDialog = false;
 				var nomenclatureTypes = new NomenclatureTypes(UoW, sizeService, true);
 				var documentItemsWithoutNomenclature = DocumentsViewModels
-					.SelectMany(d => d.ItemViewModels.Where(i => !i.NomenclatureWarning))
+					.SelectMany(d => d.ItemViewModels.Where(i => i.NomenclatureWarning))
+					.GroupBy(x => x.Nomenclature)
+					.Select(g => g.First())
 					.ToList();
 				progressBar.Start(documentItemsWithoutNomenclature.Count, 0,"Создаём номенклатуру");
 				foreach(var notFoundNomenclature in documentItemsWithoutNomenclature) {
 					progressBar.Add();
 					var type = nomenclatureTypes.ParseNomenclatureName(notFoundNomenclature.Nomenclature);
-					if(type is null) {
-						var page = NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null,
-							EntityUoWBuilder.ForCreate(),
-							OpenPageOptions.AsSlave);
-						page.ViewModel.Entity.Name = notFoundNomenclature.Nomenclature;
-						page.ViewModel.Entity.Number = UInt32.TryParse(notFoundNomenclature.Article, out var result) ? result : 0;
-						openNomenclatureDialog = true;
-					}
-					else {
-						if(type.Id == 0)
-							UoW.Save(type);
-						var nomenclature = new Nomenclature {
-							Name = notFoundNomenclature.Nomenclature, 
-							Number = UInt32.TryParse(notFoundNomenclature.Article, out var result) ? result : 0,
-							Type = type,
-							Comment = "Созданно при загрузке поступления из файла"
-						};
-						UoW.Save(nomenclature);
+					if(UInt32.TryParse(notFoundNomenclature.Article, out var result)) {
+						if(type is null) {
+							var page = NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null,
+								EntityUoWBuilder.ForCreate());
+							page.ViewModel.Entity.Name = notFoundNomenclature.Nomenclature;
+							page.ViewModel.Entity.Number = result;
+							openNomenclatureDialog = true;
+						}
+						else {
+							if(type.Id == 0)
+									UoW.Save(type);
+							var nomenclature = new Nomenclature {
+								Name = notFoundNomenclature.Nomenclature,
+								Number = result,
+								Type = type,
+								Comment = "Созданно при загрузке поступления из файла"
+							};
+							UoW.Save(nomenclature);
+						}
 					}
 				}
 				progressBar.Close();
@@ -219,6 +217,16 @@ namespace workwear.ViewModels.Import
 						? "Сохраните номенклатуру(ы) и повторите загрузку документа."
 						: "Созданы новые номенклатуры, повторите загрузку документа.", "Загрузка документа");
 				UoW.Commit();
+				Close(false, CloseSource.Self);
+		}
+
+		public void SelectAll() {
+			if(DocumentsViewModels.Any() && DocumentsViewModels.Select(x => x.WantDownload).First())
+				foreach(var document in DocumentsViewModels)
+					document.WantDownload = false;
+			else
+				foreach(var document in DocumentsViewModels)
+					document.WantDownload = true;
 		}
 
 		#endregion

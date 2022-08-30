@@ -22,6 +22,8 @@ namespace workwear.Views.Import
 
 		private global::Gamma.GtkWidgets.yButton ybuttonDownload;
 
+		private global::Gamma.GtkWidgets.yButton ybuttonSelectAll;
+
 		private global::QS.Views.Control.EntityEntry entityWarehouseIncome;
 
 		private global::Gamma.GtkWidgets.yVBox yvbox1;
@@ -118,16 +120,27 @@ namespace workwear.Views.Import
 			w7.Expand = false;
 			w7.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
+			this.ybuttonSelectAll = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonSelectAll.CanFocus = true;
+			this.ybuttonSelectAll.Name = "ybuttonSelectAll";
+			this.ybuttonSelectAll.UseUnderline = true;
+			this.ybuttonSelectAll.Label = global::Mono.Unix.Catalog.GetString("Выделить всё/Снять выделения");
+			this.yhbox1.Add(this.ybuttonSelectAll);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonSelectAll]));
+			w8.Position = 3;
+			w8.Expand = false;
+			w8.Fill = false;
+			// Container child yhbox1.Gtk.Box+BoxChild
 			this.entityWarehouseIncome = new global::QS.Views.Control.EntityEntry();
 			this.entityWarehouseIncome.Events = ((global::Gdk.EventMask)(256));
 			this.entityWarehouseIncome.Name = "entityWarehouseIncome";
 			this.yhbox1.Add(this.entityWarehouseIncome);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.entityWarehouseIncome]));
-			w8.Position = 3;
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.entityWarehouseIncome]));
+			w9.Position = 4;
 			this.ytable1.Add(this.yhbox1);
-			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yhbox1]));
-			w9.XOptions = ((global::Gtk.AttachOptions)(4));
-			w9.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yhbox1]));
+			w10.XOptions = ((global::Gtk.AttachOptions)(4));
+			w10.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.yvbox1 = new global::Gamma.GtkWidgets.yVBox();
 			this.yvbox1.Name = "yvbox1";
@@ -139,18 +152,18 @@ namespace workwear.Views.Import
 			this.ybuttonCreateNomenclature.UseUnderline = true;
 			this.ybuttonCreateNomenclature.Label = global::Mono.Unix.Catalog.GetString("Создать номенклатуры");
 			this.yvbox1.Add(this.ybuttonCreateNomenclature);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ybuttonCreateNomenclature]));
-			w10.Position = 0;
-			w10.Expand = false;
-			w10.Fill = false;
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ybuttonCreateNomenclature]));
+			w11.Position = 0;
+			w11.Expand = false;
+			w11.Fill = false;
 			this.ytable1.Add(this.yvbox1);
-			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yvbox1]));
-			w11.TopAttach = ((uint)(1));
-			w11.BottomAttach = ((uint)(2));
-			w11.LeftAttach = ((uint)(1));
-			w11.RightAttach = ((uint)(2));
-			w11.XOptions = ((global::Gtk.AttachOptions)(4));
-			w11.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yvbox1]));
+			w12.TopAttach = ((uint)(1));
+			w12.BottomAttach = ((uint)(2));
+			w12.LeftAttach = ((uint)(1));
+			w12.RightAttach = ((uint)(2));
+			w12.XOptions = ((global::Gtk.AttachOptions)(4));
+			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.ytable1);
 			if ((this.Child != null))
 			{
