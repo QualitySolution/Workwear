@@ -121,6 +121,12 @@ namespace workwear.ReportParameters.ViewModels
 				return protectionTools;
 			}
 		}
+		
+		private bool showSex;
+		public bool ShowSex {
+			get => showSex;
+			set => SetField(ref showSex, value);
+		}
 
 		void FillProtectionTools(){
 			SelectedProtectionTools resultAlias = null;
@@ -147,7 +153,8 @@ namespace workwear.ReportParameters.ViewModels
 					{"subdivisions", SelectSubdivisions() },
 					{"issue_type", IssueTypeOptions?.ToString() },
 					{"protectionTools", SelectedProtectionTools() },
-					{"headSubdivision", EntrySubdivisionViewModel.Entity?.Id ?? -1}
+					{"headSubdivision", EntrySubdivisionViewModel.Entity?.Id ?? -1},
+					{"show_sex", ShowSex }
 					};
 
 		public void Dispose()
