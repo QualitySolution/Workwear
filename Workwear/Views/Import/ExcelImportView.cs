@@ -10,8 +10,7 @@ using QSWidgetLib;
 using workwear.Models.Import;
 using workwear.ViewModels.Import;
 
-namespace workwear.Views.Import
-{
+namespace workwear.Views.Import {
 	public partial class ExcelImportView : DialogViewBase<ExcelImportViewModel>
 	{
 		List<yLabel> columnsLabels = new List<yLabel>();
@@ -28,6 +27,8 @@ namespace workwear.Views.Import
 				.InitializeFromSource();
 
 			treeviewRows.EnableGridLines = TreeViewGridLines.Both;
+			treeviewRows.Selection.Mode = SelectionMode.Multiple;
+			treeviewRows.Selection.Changed += Selection_Changed;
 			treeviewRows.Binding.AddBinding(viewModel.ImportModel, v => v.DisplayRows, w => w.ItemsDataSource);
 			treeviewRows.ButtonReleaseEvent += TreeviewRows_ButtonReleaseEvent;
 
@@ -84,6 +85,14 @@ namespace workwear.Views.Import
 
 			buttonSave.Binding
 				.AddBinding(ViewModel, v => v.SensitiveSaveButton, w => w.Sensitive)
+				.InitializeFromSource();
+
+			hboxRowActions.Binding.AddBinding(ViewModel, v => v.RowActionsShow, w => w.Visible).InitializeFromSource();
+
+			buttonIgnore.Binding
+				.AddSource(ViewModel)
+				.AddBinding(v => v.ButtonIgnoreSensitive, w => w.Sensitive)
+				.AddBinding(v => v.ButtonIgnoreTitle, w => w.Label)
 				.InitializeFromSource();
 			ViewModel.ProgressStep = progressTotal;
 			#endregion
@@ -160,6 +169,14 @@ namespace workwear.Views.Import
 			tableColumns.ShowAll();
 		}
 
+		void Selection_Changed(object sender, EventArgs e) {
+			ViewModel.SelectionChanged(treeviewRows.GetSelectedObjects<ISheetRow>());
+		}
+
+		protected void OnButtonIgnoreClicked(object sender, EventArgs e) {
+			ViewModel.ToggleIgnoreRows(treeviewRows.GetSelectedObjects<ISheetRow>());
+		}
+
 		#region StepButtons
 		protected void OnButtonLoadClicked(object sender, EventArgs e)
 		{
@@ -188,18 +205,19 @@ namespace workwear.Views.Import
 		void TreeviewRows_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
 			if (args.Event.Button != 3 || ViewModel.CurrentStep != 2) return;
 			var menu = new Menu();
-			var selected = treeviewRows.GetSelectedObject<ISheetRow>();
-			var item = new MenuItemId<ISheetRow>(selected.UserSkipped ? "Загружать" : "Не загружать");
+			var selected = treeviewRows.GetSelectedObjects<ISheetRow>();
+			var item = new MenuItemId<ISheetRow[]>(ViewModel.ButtonIgnoreTitle);
 			item.ID = selected;
 			item.Activated += Item_Activated;
 			menu.Add(item);
 			menu.ShowAll();
 			menu.Popup();
+			args.RetVal = true;
 		}
 
 		void Item_Activated(object sender, EventArgs e) {
-			var item = (MenuItemId<ISheetRow>)sender;
-			item.ID.UserSkipped = !item.ID.UserSkipped;
+			var item = (MenuItemId<ISheetRow[]>)sender;
+			ViewModel.ToggleIgnoreRows(item.ID);
 		}
 		#endregion
 	}

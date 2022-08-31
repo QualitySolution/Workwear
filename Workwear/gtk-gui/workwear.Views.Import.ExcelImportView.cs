@@ -98,7 +98,7 @@ namespace workwear.Views.Import
 
 		private global::Gamma.GtkWidgets.yLabel labelLegendaWarning;
 
-		private global::Gtk.Label GtkLabel7;
+		private global::Gtk.Label GtkLabel8;
 
 		private global::Gtk.Label label4;
 
@@ -108,6 +108,10 @@ namespace workwear.Views.Import
 
 		private global::Gamma.GtkWidgets.yTreeView treeviewRows;
 
+		private global::Gamma.GtkWidgets.yHBox hboxRowActions;
+
+		private global::Gamma.GtkWidgets.yButton buttonIgnore;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -116,6 +120,7 @@ namespace workwear.Views.Import
 			this.Name = "workwear.Views.Import.ExcelImportView";
 			// Container child workwear.Views.Import.ExcelImportView.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox();
+			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.notebookSteps = new global::Gamma.GtkWidgets.yNotebook();
@@ -486,11 +491,11 @@ namespace workwear.Views.Import
 			w40.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.GtkAlignment2.Add(this.table2);
 			this.frame2.Add(this.GtkAlignment2);
-			this.GtkLabel7 = new global::Gtk.Label();
-			this.GtkLabel7.Name = "GtkLabel7";
-			this.GtkLabel7.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Легенда</b>");
-			this.GtkLabel7.UseMarkup = true;
-			this.frame2.LabelWidget = this.GtkLabel7;
+			this.GtkLabel8 = new global::Gtk.Label();
+			this.GtkLabel8.Name = "GtkLabel8";
+			this.GtkLabel8.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Легенда</b>");
+			this.GtkLabel8.UseMarkup = true;
+			this.frame2.LabelWidget = this.GtkLabel8;
 			this.vbox5.Add(this.frame2);
 			global::Gtk.Box.BoxChild w43 = ((global::Gtk.Box.BoxChild)(this.vbox5[this.frame2]));
 			w43.Position = 0;
@@ -535,6 +540,26 @@ namespace workwear.Views.Import
 			this.vbox1.Add(this.GtkScrolledWindow);
 			global::Gtk.Box.BoxChild w49 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
 			w49.Position = 2;
+			// Container child vbox1.Gtk.Box+BoxChild
+			this.hboxRowActions = new global::Gamma.GtkWidgets.yHBox();
+			this.hboxRowActions.Name = "hboxRowActions";
+			this.hboxRowActions.Spacing = 6;
+			// Container child hboxRowActions.Gtk.Box+BoxChild
+			this.buttonIgnore = new global::Gamma.GtkWidgets.yButton();
+			this.buttonIgnore.CanFocus = true;
+			this.buttonIgnore.Name = "buttonIgnore";
+			this.buttonIgnore.UseUnderline = true;
+			this.buttonIgnore.Label = global::Mono.Unix.Catalog.GetString("Не загружать");
+			this.hboxRowActions.Add(this.buttonIgnore);
+			global::Gtk.Box.BoxChild w50 = ((global::Gtk.Box.BoxChild)(this.hboxRowActions[this.buttonIgnore]));
+			w50.Position = 0;
+			w50.Expand = false;
+			w50.Fill = false;
+			this.vbox1.Add(this.hboxRowActions);
+			global::Gtk.Box.BoxChild w51 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hboxRowActions]));
+			w51.Position = 3;
+			w51.Expand = false;
+			w51.Fill = false;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{
@@ -547,6 +572,7 @@ namespace workwear.Views.Import
 			this.buttonReadEmployees.Clicked += new global::System.EventHandler(this.OnButtonReadEmployeesClicked);
 			this.buttonBackToDataTypes.Clicked += new global::System.EventHandler(this.OnButtonBackToDataTypesClicked);
 			this.buttonSave.Clicked += new global::System.EventHandler(this.OnButtonSaveClicked);
+			this.buttonIgnore.Clicked += new global::System.EventHandler(this.OnButtonIgnoreClicked);
 		}
 	}
 }
