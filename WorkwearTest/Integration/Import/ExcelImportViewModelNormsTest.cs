@@ -78,6 +78,13 @@ namespace WorkwearTest.Integration.Import
 					Assert.That(operatorsNorm.Posts.Any(x => x.Name == "Оператор 4 разряда"), Is.True);
 					var gloves = operatorsNorm.Items.First(x => x.ProtectionTools.Name.ToLower() == "перчатки с полимерным покрытием");
 					Assert.That(gloves.Amount, Is.EqualTo(12));
+					
+					//Проверяем что не создаем ненужных номенклатур нормы, предполагается что они будут в пропущенных строках. Если это уже не так, тест нужно переделать.
+					var protectionTools = uow.GetAll<ProtectionTools>();
+					var wrong1 = protectionTools.FirstOrDefault(x => x.Name == "На наружных работах зимой дополнительно");
+					Assert.That(wrong1, Is.Null);
+					var wrong2 = protectionTools.FirstOrDefault(x => x.Name == "При работе на высоте дополнительно:");
+					Assert.That(wrong2, Is.Null);
 				}
 			}
 		}

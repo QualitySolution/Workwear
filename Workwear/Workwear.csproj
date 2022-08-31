@@ -189,6 +189,7 @@
     <Compile Include="Models\Import\Norms\DataTypes\DataTypeSubdivision.cs" />
     <Compile Include="Models\Import\Norms\ImportModelNorm.cs" />
     <Compile Include="Models\Import\Norms\SheetRowNorm.cs" />
+    <Compile Include="Models\Import\Norms\SubdivisionPostCombination.cs" />
     <Compile Include="Models\Import\RowStackHelper.cs" />
     <Compile Include="Models\Import\SetValueAction.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
