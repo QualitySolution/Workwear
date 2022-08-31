@@ -38,15 +38,15 @@ namespace workwear.Views.Regulations
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			ytreeProfessions.ColumnsConfig = FluentColumnsConfig<Post>.Create ()
-				.AddColumn ("Должность").AddTextRenderer (p => p.Name)
-				.AddColumn("Подразделение").AddTextRenderer(p => p.Subdivision != null ? p.Subdivision.Name : null)
+				.AddColumn("Должность").AddTextRenderer (p => p.Name).WrapWidth(300)
+				.AddColumn("Подразделение").AddTextRenderer(p => p.Subdivision != null ? p.Subdivision.Name : null).WrapWidth(300)
 				.Finish ();
 			ytreeProfessions.Selection.Mode = Gtk.SelectionMode.Multiple;
 			ytreeProfessions.ItemsDataSource = Entity.ObservablePosts;
 			ytreeProfessions.Selection.Changed += YtreeProfessions_Selection_Changed;
 
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<NormItem>.Create()
-				.AddColumn("Наименование").AddTextRenderer(p => p.ProtectionTools != null ? p.ProtectionTools.Name : null)
+				.AddColumn("Наименование").AddTextRenderer(p => p.ProtectionTools != null ? p.ProtectionTools.Name : null).WrapWidth(700)
 				.AddColumn("Количество")
 				.AddNumericRenderer(i => i.Amount).WidthChars(9).Editing().Adjustment(new Gtk.Adjustment(1, 1, 1000000, 1, 10, 10))
 				.AddTextRenderer(i => i.ProtectionTools != null && i.ProtectionTools.Type.Units != null ? i.ProtectionTools.Type.Units.Name : String.Empty)
