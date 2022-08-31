@@ -16,6 +16,7 @@ namespace workwear.Journal.Filter.ViewModels.Regulations
 
 			EntryPost = builder.ForProperty(x => x.Post).MakeByType().Finish();
 			EntryProtectionTools = builder.ForProperty(x => x.ProtectionTools).MakeByType().Finish();
+			EntrySubdivision = builder.ForProperty(x => x.Subdivision).MakeByType().Finish();
 		}
 
 		#region Ограничения
@@ -30,10 +31,18 @@ namespace workwear.Journal.Filter.ViewModels.Regulations
 			get => protectionTools;
 			set => SetField(ref protectionTools, value);
 		}
+
+		private Subdivision subdivision;
+		public Subdivision Subdivision {
+			get => subdivision;
+			set => SetField(ref subdivision, value);
+		}
+
 		#endregion
 		#region EntityModels
 		public EntityEntryViewModel<Post> EntryPost;
 		public EntityEntryViewModel<ProtectionTools> EntryProtectionTools;
+		public EntityEntryViewModel<Subdivision> EntrySubdivision;
 		#endregion
 	}
 }
