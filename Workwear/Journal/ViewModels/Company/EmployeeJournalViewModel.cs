@@ -3,6 +3,7 @@ using Autofac;
 using Gamma.ColumnConfig;
 using NHibernate;
 using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -58,6 +59,7 @@ namespace workwear.Journal.ViewModels.Company
 			Subdivision subdivisionAlias = null;
 			EmployeeCard employeeAlias = null;
 			Norm normAlias = null;
+			Department departmentAlias = null;
 
 			var vacationSubquery = QueryOver.Of<EmployeeVacation>()
 				.Where(ev => ev.Employee.Id == employeeAlias.Id)
@@ -91,8 +93,9 @@ namespace workwear.Journal.ViewModels.Company
 					() => employeeAlias.Comment
  					))
 
-				.JoinAlias(() => employeeAlias.Post, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(() => employeeAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => employeeAlias.Post, () => postAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => employeeAlias.Subdivision, () => subdivisionAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => employeeAlias.Department, () => departmentAlias, JoinType.LeftOuterJoin)
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.CardNumber).WithAlias(() => resultAlias.CardNumber)
@@ -105,6 +108,7 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
 	   				.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
+					.Select(() => departmentAlias.Name).WithAlias(() => resultAlias.Department)
 					.SelectSubQuery(vacationSubquery).WithAlias(() => resultAlias.VacationId)
  					)
 				.OrderBy(() => employeeAlias.LastName).Asc
@@ -158,5 +162,6 @@ namespace workwear.Journal.ViewModels.Company
 		public string Comment { get; set; }
 
 		public string Title => PersonHelper.PersonNameWithInitials(LastName, FirstName, Patronymic);
+		public string Department { get; set; }
 	}
 }
