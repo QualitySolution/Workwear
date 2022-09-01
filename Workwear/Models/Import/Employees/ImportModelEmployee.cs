@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
+using workwear.Domain.Company;
 using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import.Employees
@@ -55,9 +56,9 @@ namespace workwear.Models.Import.Employees
 			progress.Start(maxValue: rows.Count, text: "Подготовка");
 
 			List<object> toSave = new List<object>();
-			toSave.AddRange(dataParser.UsedSubdivisions.Where(x => x.Id == 0));
-			toSave.AddRange(dataParser.UsedDepartment.Where(x => x.Id == 0));
-			toSave.AddRange(dataParser.UsedPosts.Where(x => x.Id == 0));
+			toSave.AddRange(SavedSubdivisions);
+			toSave.AddRange(SavedDepartments);
+			toSave.AddRange(SavedPosts);
 			foreach(var row in rows) {
 				toSave.AddRange(row.PrepareToSave());
 			}
@@ -103,6 +104,30 @@ namespace workwear.Models.Import.Employees
 			RecalculateCounters();
 		}
 
+		#region Справочники
+		private IEnumerable<Post> SavedPosts => UsedRows
+			.Where(x => !x.Skipped && x.EditingEmployee.Post?.Id == 0)
+			.Select(x => x.EditingEmployee.Post)
+			.Distinct();
+
+		private IEnumerable<Department> SavedDepartments => UsedRows
+			.Where(x => !x.Skipped)
+			.Select(x => x.EditingEmployee)
+			.SelectMany(x => new[] {x.Department, x.Post?.Department })
+			.Where(x => x?.Id == 0)
+			.Distinct();
+
+		private IEnumerable<Subdivision> SavedSubdivisions => UsedRows
+			.Where(x => !x.Skipped)
+			.Select(x => x.EditingEmployee)
+			.SelectMany(x => new[] {x.Subdivision, x.Post?.Subdivision, x.Department?.Subdivision })
+			.Where(x => x != null)
+			.SelectMany(x => x.AllParents.Union(new []{x}))
+			.Where(x => x?.Id == 0)
+			.Distinct();
+		
+		#endregion
+		
 		private void RecalculateCounters()
 		{
 			CountersViewModel.SetCount(CountersEmployee.SkipRows, UsedRows.Count(x => x.Skipped));
@@ -111,9 +136,9 @@ namespace workwear.Models.Import.Employees
 			CountersViewModel.SetCount(CountersEmployee.NotChangedEmployee, UsedRows.Count(x => !x.Skipped && !x.HasChanges));
 			CountersViewModel.SetCount(CountersEmployee.ChangedEmployee, UsedRows.Count(x => !x.Skipped && x.HasChanges && x.EditingEmployee.Id > 0));
 
-			CountersViewModel.SetCount(CountersEmployee.NewPosts, dataParser.UsedPosts.Count(x => x.Id == 0));
-			CountersViewModel.SetCount(CountersEmployee.NewDepartments, dataParser.UsedDepartment.Count(x => x.Id == 0));
-			CountersViewModel.SetCount(CountersEmployee.NewSubdivisions, dataParser.UsedSubdivisions.Count(x => x.Id == 0));
+			CountersViewModel.SetCount(CountersEmployee.NewPosts, SavedPosts.Count());
+			CountersViewModel.SetCount(CountersEmployee.NewDepartments,  SavedDepartments.Count());
+			CountersViewModel.SetCount(CountersEmployee.NewSubdivisions, SavedSubdivisions.Count());
 		}
 	}
 }

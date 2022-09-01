@@ -29,7 +29,7 @@ namespace workwear.Journal.ViewModels.Regulations
 
 		public NormJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null, bool useMultiSelect = false) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
-			UseSlider = true;
+			UseSlider = false;
 			AutofacScope = autofacScope;
 			JournalFilter = Filter = AutofacScope.Resolve<NormFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			CreatePopupActions();
@@ -79,6 +79,9 @@ namespace workwear.Journal.ViewModels.Regulations
 			if(Filter.ProtectionTools != null)
 				norms.JoinAlias(n => n.Items, () => normItemAlias)
 					.Where(() => normItemAlias.ProtectionTools.Id == Filter.ProtectionTools.Id);
+
+			if(Filter.Subdivision != null)
+				norms.Where(() => subdivisionAlias.Id == Filter.Subdivision.Id);
 
 			return norms
 				.SelectList(list => list

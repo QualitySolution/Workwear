@@ -8,7 +8,6 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
-using workwear.Domain.Stock;
 using workwear.Repository.Regulations;
 using Workwear.Measurements;
 using workwear.Models.Import.Norms.DataTypes;
@@ -71,6 +70,7 @@ namespace workwear.Models.Import.Norms
 
 				if(String.IsNullOrWhiteSpace(postValue)) {
 					row.ProgramSkipped = true;
+					row.ProgramSkippedReason = "Должность отсутствует. Не возможности отличить к какой норме относится строка.";
 					continue;
 				}
 
@@ -136,12 +136,14 @@ namespace workwear.Models.Import.Norms
 			foreach(var row in list.Where(x => !x.Skipped)) {
 				if(row.SubdivisionPostCombination.Norms.Count > 1) {
 					row.ProgramSkipped = true;
+					row.ProgramSkippedReason = "Найдено более одной нормы. Не определить какую обновлять.";
 					continue;
 				}
 
 				var protectionName = row.CellStringValue(protectionToolsColumn);
 				if(String.IsNullOrWhiteSpace(protectionName)) {
 					row.ProgramSkipped = true;
+					row.ProgramSkippedReason = "Номенклатура нормы пустая. Не определить какую стоку нормы создавать.";
 					continue;
 				}
 
@@ -159,11 +161,22 @@ namespace workwear.Models.Import.Norms
 					UsedProtectionTools.Add(protection);
 				}
 
-				var norm = row.SubdivisionPostCombination.Norms[0];
+				var norm = row.SubdivisionPostCombination.EditingNorm;
 				row.NormItem = norm.Items.FirstOrDefault(x => protection.IsSame(x.ProtectionTools));
 				if(row.NormItem == null) {
-					row.NormItem = norm.AddItem(protection);
-					row.NormItem.Amount = 0;
+					if(row.SubdivisionPostCombination.WillAddedProtectionTools.Contains(protection)) {
+						row.ProgramSkipped = true;
+						row.ProgramSkippedReason = "Номенклатура нормы уже добавлена другой строкой.";
+						continue;
+					}
+					row.SubdivisionPostCombination.WillAddedProtectionTools.Add(protection);
+
+					var normItem = new NormItem() {
+						Norm = norm,
+						ProtectionTools = protection,
+					};
+					row.NormItem = normItem;
+					row.AddSetValueAction(0, () => norm.Items.Add(normItem));
 				}
 			}
 			progress.Close();
@@ -211,11 +224,11 @@ namespace workwear.Models.Import.Norms
 
 		#region Сохранение данных
 		public readonly List<SubdivisionPostCombination> MatchPairs = new List<SubdivisionPostCombination>();
-		public IEnumerable<Norm> UsedNorms => MatchPairs.Where(x => x.Norms.Count == 1).Select(x => x.Norms[0]);
+		
 		public readonly List<Subdivision> UsedSubdivisions = new List<Subdivision>();
 		public readonly List<Post> UsedPosts = new List<Post>();
 		public readonly List<ProtectionTools> UsedProtectionTools = new List<ProtectionTools>();
-		public IEnumerable<ItemsType> UsedItemTypes => UsedProtectionTools.Select(x => x.Type).Distinct();
+		
 		public readonly List<string> UndefinedProtectionNames = new List<string>();
 		#endregion
 

@@ -156,6 +156,7 @@
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeDepartment.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeNameWithInitials.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypePost.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypeSizeAndHeight.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeSubdivision.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeSimpleDate.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeFirstName.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="Models\Import\Norms\DataTypes\DataTypeSubdivision.cs" />
     <Compile Include="Models\Import\Norms\ImportModelNorm.cs" />
     <Compile Include="Models\Import\Norms\SheetRowNorm.cs" />
+    <Compile Include="Models\Import\Norms\SubdivisionPostCombination.cs" />
     <Compile Include="Models\Import\RowStackHelper.cs" />
     <Compile Include="Models\Import\SetValueAction.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
@@ -557,6 +559,9 @@
     <Compile Include="Views\Communications\ClaimsView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Communications.ClaimsView.cs" />
     <Compile Include="ViewModels\Communications\ClaimsViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Company\PostFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.PostFilterView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Company\PostFilterViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

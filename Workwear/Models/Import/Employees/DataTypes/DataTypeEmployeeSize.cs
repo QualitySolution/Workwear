@@ -78,7 +78,6 @@ namespace workwear.Models.Import.Employees.DataTypes {
 		
 		private ChangeState CompareSize(SheetRowEmployee row, Size newValue, string excelValue) {
 			var employeeSize = row.EditingEmployee.Sizes.FirstOrDefault(x => x.SizeType == sizeType);
-			var rowChange = row.EditingEmployee.Id == 0 ? ChangeType.NewEntity : ChangeType.ChangeValue;
 
 			if (newValue == null && !String.IsNullOrWhiteSpace(excelValue))
 				return new ChangeState(ChangeType.ParseError, employeeSize?.Size?.Name);
@@ -93,7 +92,9 @@ namespace workwear.Models.Import.Employees.DataTypes {
 			else
 				row.AddSetValueAction(ValueSetOrder, () => employeeSize.Size = newValue);
 			
-			return new ChangeState(rowChange, oldValue: oldValue, newValue?.Name != excelValue ? newValue?.Name : null);
+			return new ChangeState(employeeSize.Id == 0 ? ChangeType.NewEntity : ChangeType.ChangeValue,
+				oldValue: oldValue,
+				interpretedValue: newValue?.Name != excelValue ? newValue?.Name : null);
 		}
 		#endregion
 	}

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Autofac;
 using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
@@ -9,15 +9,27 @@ using QS.Project.Services;
 using QS.Services;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
+using workwear.Journal.Filter.ViewModels.Company;
 using workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {
-	public class PostJournalViewModel : EntityJournalViewModelBase<Post, PostViewModel, PostJournalNode>
+	public class PostJournalViewModel : EntityJournalViewModelBase<Post, PostViewModel, PostJournalNode> 
 	{
-		public PostJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		private PostFilterViewModel Filter;
+		public PostJournalViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory, 
+			IInteractiveService interactiveService, 
+			INavigationManager navigationManager,
+			ILifetimeScope autofacScope,
+			IDeleteEntityService deleteEntityService = null, 
+			ICurrentPermissionService currentPermissionService = null
+			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
+			AutofacScope = autofacScope;
+			JournalFilter = Filter = AutofacScope
+				.Resolve<PostFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 		}
 
 		protected override IQueryOver<Post> ItemsQuery(IUnitOfWork uow)
@@ -29,7 +41,7 @@ namespace workwear.Journal.ViewModels.Company
 			Subdivision subdivisionAlias = null;
 			Profession professionAlias = null;
 			 
-			return uow.Session.QueryOver<Post>(() => postAlias)
+			var query = uow.Session.QueryOver<Post>(() => postAlias)
 				.Left.JoinAlias(x => x.Subdivision, () => subdivisionAlias)
 				.Left.JoinAlias(x => x.Profession, () => professionAlias)
 				.Left.JoinAlias(x => x.Department, () => departmentAlias)
@@ -38,8 +50,12 @@ namespace workwear.Journal.ViewModels.Company
 					() => departmentAlias.Name,
 					() => subdivisionAlias.Name,
 					() => professionAlias.Name
-					))
-				.SelectList((list) => list
+					));
+
+			if(Filter.Subdivision != null)
+				query.Where(() => subdivisionAlias.Id == Filter.Subdivision.Id);
+
+			query.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(() => professionAlias.Name).WithAlias(() => resultAlias.Profession)
@@ -48,6 +64,8 @@ namespace workwear.Journal.ViewModels.Company
 				)
 				.OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<PostJournalNode>());
+
+			return query;
 		}
 	}
 
