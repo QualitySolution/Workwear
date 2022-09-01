@@ -142,7 +142,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void SetIssueDateManual(EmployeeCardItem row)
 		{
-			var operations = employeeIssueRepository.GetOperationsForEmployee(Entity, row.ProtectionTools, UoW).OrderByDescending(x => x.OperationTime).ToList();
+			/*var operations = employeeIssueRepository.GetOperationsForEmployee(Entity, row.ProtectionTools, UoW).OrderByDescending(x => x.OperationTime).ToList();
 			IPage<ManualEmployeeIssueOperationViewModel> page;
 			if(!operations.Any() || operations.First().ExpiryByNorm < DateTime.Today)
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
@@ -152,7 +152,8 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
 			else
 				return;
-			page.PageClosed += SetIssueDateManual_PageClosed;
+			page.PageClosed += SetIssueDateManual_PageClosed;*/
+			navigation.OpenViewModel<ManualEmployeeIssueOperationsViewModel>(employeeViewModel, OpenPageOptions.AsSlave);
 		}
 
 		void SetIssueDateManual_PageClosed(object sender, PageClosedEventArgs e)

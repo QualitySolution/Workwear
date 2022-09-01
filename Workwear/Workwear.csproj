@@ -562,6 +562,9 @@
     <Compile Include="Journal\Filter.Views\Company\PostFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.PostFilterView.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\PostFilterViewModel.cs" />
+    <Compile Include="Views\Operations\ManualEmployeeIssueOperationsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Operations.ManualEmployeeIssueOperationsView.cs" />
+    <Compile Include="ViewModels\Operations\ManualEmployeeIssueOperationsViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
