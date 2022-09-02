@@ -61,7 +61,7 @@ namespace workwear.Models.Import.Employees.DataTypes {
 			if (employeeHeight is null) {
 				employeeHeight = new EmployeeSize
 					{Size = height, SizeType = heightType, Employee = row.EditingEmployee};
-				row.AddSetValueAction(ValueSetOrder, () => row.EditingEmployee.Sizes.Add(employeeSize));
+				row.AddSetValueAction(ValueSetOrder, () => row.EditingEmployee.Sizes.Add(employeeHeight));
 			}
 			else
 				row.AddSetValueAction(ValueSetOrder, () => employeeHeight.Size = height);
