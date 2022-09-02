@@ -112,7 +112,7 @@ namespace workwear.Views.Company.EmployeeChilds
 			this.buttonManualIssueDate.CanFocus = true;
 			this.buttonManualIssueDate.Name = "buttonManualIssueDate";
 			this.buttonManualIssueDate.UseUnderline = true;
-			this.buttonManualIssueDate.Label = global::Mono.Unix.Catalog.GetString("Установить дату выдачи");
+			this.buttonManualIssueDate.Label = global::Mono.Unix.Catalog.GetString("Ручные операции выдачи");
 			this.hbox11.Add(this.buttonManualIssueDate);
 			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonManualIssueDate]));
 			w11.Position = 4;

@@ -32,7 +32,7 @@ namespace workwear.Views.Operations
 
 			ydatepicker.Binding
 				.AddSource(ViewModel)
-				.AddBinding(wm => wm.DateTime, w => w.DateOrNull)
+				.AddBinding(wm => wm.DateTime, w => w.Date)
 				.AddBinding(wm => wm.CanEditOperation, w => w.Sensitive)
 				.InitializeFromSource();
 			
