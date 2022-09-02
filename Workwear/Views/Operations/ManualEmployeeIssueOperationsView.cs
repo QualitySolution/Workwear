@@ -27,8 +27,9 @@ namespace workwear.Views.Operations
 			ytreeviewOperations.Binding
 				.AddSource(ViewModel)
 				.AddBinding(vm => vm.Operations, w => w.ItemsDataSource)
+				.AddBinding(vm => vm.SelectOperation, w => w.SelectedRow)
 				.InitializeFromSource();
-			
+
 			ydatepicker.Binding
 				.AddSource(ViewModel)
 				.AddBinding(wm => wm.DateTime, w => w.DateOrNull)
@@ -51,8 +52,8 @@ namespace workwear.Views.Operations
 				.AddBinding(vm => vm.CanAddOperation, w => w.Sensitive)
 				.InitializeFromSource();
 		}
-
-		private void ButtonDeleteOnClicked(object sender, EventArgs e) => ViewModel.DeleteOnClicked();
+		private void ButtonDeleteOnClicked(object sender, EventArgs e) => ViewModel.DeleteOnClicked(
+			ytreeviewOperations.GetSelectedObject<EmployeeIssueOperation>());
 		private void ButtonAddOnClicked(object sender, EventArgs e) => ViewModel.AddOnClicked();
 		private void ButtonSaveOnClicked(object sender, EventArgs e) => ViewModel.SaveOnClicked();
 		private void ButtonCancelOnClicked(object sender, EventArgs e) => ViewModel.CancelOnClicked();

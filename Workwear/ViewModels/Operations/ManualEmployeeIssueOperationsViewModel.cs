@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -34,7 +34,11 @@ namespace workwear.ViewModels.Operations
 			Resizable = true;
 			if(cardItem != null)
 				EmployeeCardItem = UoW.GetById<EmployeeCardItem>(cardItem.Id);
-			Operations = repository.GetAllManualIssue(UoW, EmployeeCardItem.EmployeeCard, EmployeeCardItem.ProtectionTools).ToList();
+			Operations = new GenericObservableList<EmployeeIssueOperation>(
+				repository.GetAllManualIssue(UoW, EmployeeCardItem.EmployeeCard, EmployeeCardItem.ProtectionTools)
+					.OrderBy(x => x.OperationTime)
+					.ToList());
+			
 			SelectOperation = selectOperation != null 
 				? Operations.First(x => x.Id == selectOperation.Id) 
 				: Operations.FirstOrDefault();
@@ -47,17 +51,17 @@ namespace workwear.ViewModels.Operations
 
 		#region PublicProperty
 
-		private List<EmployeeIssueOperation> operations;
-		public List<EmployeeIssueOperation> Operations {
+		private GenericObservableList<EmployeeIssueOperation> operations;
+		public GenericObservableList<EmployeeIssueOperation> Operations {
 			get => operations;
-			set => SetField(ref operations, value);
+			private set => SetField(ref operations, value);
 		}
 
 		private EmployeeCardItem employeeCardItem;
 		[PropertyChangedAlso(nameof(CanAddOperation))]
 		public EmployeeCardItem EmployeeCardItem {
 			get => employeeCardItem;
-			set => SetField(ref employeeCardItem, value);
+			private set => SetField(ref employeeCardItem, value);
 		}
 
 		private EmployeeIssueOperation selectOperation;
@@ -67,8 +71,14 @@ namespace workwear.ViewModels.Operations
 		public EmployeeIssueOperation SelectOperation {
 			get => selectOperation;
 			set {
-				if(SetField(ref selectOperation, value)) 
-					DateTime = value.OperationTime;
+				if(SetField(ref selectOperation, value)) {
+					if(value != null) {
+						DateTime = value.OperationTime;
+						Issued = value.Issued;
+					}
+					else
+						Issued = 0;
+				}
 			}
 		}
 
@@ -85,14 +95,20 @@ namespace workwear.ViewModels.Operations
 			}
 		}
 
-		public int Issued => SelectOperation.Issued;
+		private int issued;
+		public int Issued {
+			get => issued;
+			set {
+				if(SetField(ref issued, value)) 
+					SelectOperation.Issued = value;
+			}
+		}
 		public bool CanEditOperation => SelectOperation != null;
 		public bool CanAddOperation => EmployeeCardItem != null;
 
 		#endregion
 
 		public void CancelOnClicked() => Close(false, CloseSource.Cancel);
-
 		public void SaveOnClicked() {
 			foreach(var operation in Operations) 
 				UoW.Save(operation);
@@ -102,30 +118,26 @@ namespace workwear.ViewModels.Operations
 		}
 
 		public void AddOnClicked() {
-			
 			if(EmployeeCardItem == null)
 				throw new ArgumentNullException(nameof(EmployeeCardItem));
-			
 			var issue = new EmployeeIssueOperation {
-				Employee = employeeCardItem.EmployeeCard,
-				Issued = employeeCardItem.ActiveNormItem?.Amount ?? 1,
+				Employee = EmployeeCardItem.EmployeeCard,
+				Issued = EmployeeCardItem.ActiveNormItem?.Amount ?? 1,
 				OverrideBefore = true,
-				NormItem = employeeCardItem.ActiveNormItem,
-				ProtectionTools = employeeCardItem.ProtectionTools,
+				NormItem = EmployeeCardItem.ActiveNormItem,
+				ProtectionTools = EmployeeCardItem.ProtectionTools,
 				Returned = 0,
 				WearPercent = 0m,
 				UseAutoWriteoff = true,
-				OperationTime = employeeCardItem.NextIssue ?? DateTime.Today
+				OperationTime = EmployeeCardItem.NextIssue ?? DateTime.Today 
 			};
-			UoW.Save(issue);
+			issue.ExpiryByNorm = issue.NormItem?.CalculateExpireDate(DateTime.Today);
 			Operations.Add(issue);
-			SelectOperation = issue;
 		}
 
-		public void DeleteOnClicked() {
-			UoW.Delete(SelectOperation);
-			Operations.Remove(SelectOperation);
-			SelectOperation = Operations.FirstOrDefault();
+		public void DeleteOnClicked(EmployeeIssueOperation deleteOperation) {
+			Operations.Remove(deleteOperation);
+			UoW.Delete(deleteOperation);
 		}
 		
 		#region Windows Settings
