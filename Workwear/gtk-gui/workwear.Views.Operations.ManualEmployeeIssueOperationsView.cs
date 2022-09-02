@@ -149,8 +149,8 @@ namespace workwear.Views.Operations
 			this.ydatepicker.Name = "ydatepicker";
 			this.ydatepicker.WithTime = false;
 			this.ydatepicker.Date = new global::System.DateTime(0);
-			this.ydatepicker.IsEditable = false;
-			this.ydatepicker.AutoSeparation = false;
+			this.ydatepicker.IsEditable = true;
+			this.ydatepicker.AutoSeparation = true;
 			this.ytable2.Add(this.ydatepicker);
 			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ydatepicker]));
 			w12.LeftAttach = ((uint)(1));

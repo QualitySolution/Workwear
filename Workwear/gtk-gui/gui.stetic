@@ -19802,8 +19802,8 @@
                 <property name="Events">ButtonPressMask</property>
                 <property name="WithTime">False</property>
                 <property name="Date">0</property>
-                <property name="IsEditable">False</property>
-                <property name="AutoSeparation">False</property>
+                <property name="IsEditable">True</property>
+                <property name="AutoSeparation">True</property>
               </widget>
               <packing>
                 <property name="LeftAttach">1</property>

@@ -142,29 +142,31 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void SetIssueDateManual(EmployeeCardItem row)
 		{
-			/*var operations = employeeIssueRepository.GetOperationsForEmployee(Entity, row.ProtectionTools, UoW).OrderByDescending(x => x.OperationTime).ToList();
-			IPage<ManualEmployeeIssueOperationViewModel> page;
+			var operations = employeeIssueRepository
+				.GetOperationsForEmployee(Entity, row.ProtectionTools, UoW)
+				.OrderByDescending(x => x.OperationTime)
+				.ToList();
+			IPage<ManualEmployeeIssueOperationsViewModel> page;
 			if(!operations.Any() || operations.First().ExpiryByNorm < DateTime.Today)
-				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
+				page = navigation.OpenViewModel<ManualEmployeeIssueOperationsViewModel, EmployeeCardItem>(
+					employeeViewModel, row, OpenPageOptions.AsSlave);
 			else if(operations.First().OverrideBefore)
-				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForOpen(operations.First().Id), row, OpenPageOptions.AsSlave);
-			else if(interactive.Question($"Для «{row.ProtectionTools.Name}» уже выполнялись полноценные выдачи, внесение ручных изменений может привести к нежелательным результатам. Продолжить?"))
-				page = navigation.OpenViewModel<ManualEmployeeIssueOperationViewModel, IEntityUoWBuilder, EmployeeCardItem>(employeeViewModel, EntityUoWBuilder.ForCreate(), row, OpenPageOptions.AsSlave);
+				page = navigation.OpenViewModel<ManualEmployeeIssueOperationsViewModel, EmployeeCardItem, EmployeeIssueOperation>(
+					employeeViewModel, row, operations.First(), OpenPageOptions.AsSlave);
+			else if(interactive.Question($"Для «{row.ProtectionTools.Name}» уже выполнялись полноценные выдачи, " +
+			                             $"внесение ручных изменений может привести к нежелательным результатам. Продолжить?"))
+				page = navigation.OpenViewModel<ManualEmployeeIssueOperationsViewModel, EmployeeCardItem>(
+					employeeViewModel, row, OpenPageOptions.AsSlave);
 			else
 				return;
-			page.PageClosed += SetIssueDateManual_PageClosed;*/
-			navigation.OpenViewModel<ManualEmployeeIssueOperationsViewModel>(employeeViewModel, OpenPageOptions.AsSlave);
+			page.PageClosed += SetIssueDateManual_PageClosed;
 		}
 
 		void SetIssueDateManual_PageClosed(object sender, PageClosedEventArgs e)
 		{
-			if(e.CloseSource == CloseSource.Save || e.CloseSource == CloseSource.Self) {
-				var page = sender as IPage<ManualEmployeeIssueOperationViewModel>;
-				if(e.CloseSource == CloseSource.Self)
-					UoW.Delete(UoW.GetById<EmployeeIssueOperation>(page.ViewModel.Entity.Id));
-				UoW.Commit();
-				Entity.FillWearRecivedInfo(employeeIssueRepository);
-				Entity.UpdateNextIssue(page.ViewModel.Entity.ProtectionTools);
+			if(e.CloseSource == CloseSource.Save) {
+				var page = sender as IPage<ManualEmployeeIssueOperationsViewModel>;
+				var changedOperations = page.ViewModel.Operations;
 			}
 		}
 		#endregion
