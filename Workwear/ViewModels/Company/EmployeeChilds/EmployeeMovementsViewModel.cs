@@ -14,6 +14,7 @@ using workwear.DTO;
 using workwear.Models.Stock;
 using workwear.Repository.Operations;
 using workwear.Tools.Features;
+using workwear.ViewModels.Operations;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
 {
@@ -65,8 +66,12 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		}
 		#endregion
 		#region Контекстное меню
-		public void OpenDoc(EmployeeCardMovements item)
-		{
+		public void OpenDoc(EmployeeCardMovements item) {
+			var cardItem = Entity.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == item.Operation.ProtectionTools);
+			if(item.Operation.OverrideBefore)
+				navigation.OpenViewModel<ManualEmployeeIssueOperationsViewModel, EmployeeCardItem, EmployeeIssueOperation>(
+					employeeViewModel, cardItem, item.Operation, OpenPageOptions.AsSlave);
+			
 			if(item.EmployeeIssueReference?.DocumentType == null)
 				return;
 

@@ -32,13 +32,21 @@ namespace workwear.ViewModels.Operations
 				Title = selectOperation.ProtectionTools.Name;
 			}
 			Resizable = true;
-			if(cardItem != null)
+			if(cardItem != null) {
 				EmployeeCardItem = UoW.GetById<EmployeeCardItem>(cardItem.Id);
-			Operations = new GenericObservableList<EmployeeIssueOperation>(
-				repository.GetAllManualIssue(UoW, EmployeeCardItem.EmployeeCard, EmployeeCardItem.ProtectionTools)
-					.OrderBy(x => x.OperationTime)
-					.ToList());
-			
+				Operations = new GenericObservableList<EmployeeIssueOperation>(
+					repository.GetAllManualIssue(UoW, EmployeeCardItem.EmployeeCard, EmployeeCardItem.ProtectionTools)
+						.OrderBy(x => x.OperationTime)
+						.ToList());
+			}
+			else if(selectOperation != null)
+				Operations = new GenericObservableList<EmployeeIssueOperation>(
+					repository.GetAllManualIssue(UoW, selectOperation.Employee, selectOperation.ProtectionTools)
+						.OrderBy(x => x.OperationTime)
+						.ToList());
+			else
+				throw new ArgumentNullException(nameof(selectOperation) + nameof(cardItem));
+
 			SelectOperation = selectOperation != null 
 				? Operations.First(x => x.Id == selectOperation.Id) 
 				: Operations.FirstOrDefault();
@@ -99,8 +107,9 @@ namespace workwear.ViewModels.Operations
 		public int Issued {
 			get => issued;
 			set {
-				if(SetField(ref issued, value)) 
-					SelectOperation.Issued = value;
+				if(SetField(ref issued, value))
+					if(SelectOperation != null)
+						SelectOperation.Issued = value;
 			}
 		}
 		public bool CanEditOperation => SelectOperation != null;
