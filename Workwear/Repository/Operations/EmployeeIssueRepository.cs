@@ -163,5 +163,20 @@ namespace workwear.Repository.Operations
 
 			return result;
 		}
+
+		public IList<EmployeeIssueOperation> GetAllManualIssue(
+			IUnitOfWork uoW, 
+			EmployeeCard employee, 
+			ProtectionTools protectionTools, 
+			Action<IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null) {
+			var query = (uoW ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>()
+				.Where(o => o.Employee == employee)
+				.Where(o => o.ProtectionTools == protectionTools)
+				.Where(o => o.OverrideBefore == true);
+
+			makeEager?.Invoke(query);
+
+			return query.OrderBy(x => x.OperationTime).Asc.List();
+		}
 	}
 }
