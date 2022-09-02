@@ -10,6 +10,7 @@ using QS.Navigation;
 using QS.ViewModels;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
+using workwear.Domain.Regulations;
 using workwear.DTO;
 using workwear.Models.Stock;
 using workwear.Repository.Operations;
@@ -68,9 +69,11 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		#region Контекстное меню
 		public void OpenDoc(EmployeeCardMovements item) {
 			var cardItem = Entity.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == item.Operation.ProtectionTools);
-			if(item.Operation.OverrideBefore)
-				navigation.OpenViewModel<ManualEmployeeIssueOperationsViewModel, EmployeeCardItem, EmployeeIssueOperation>(
+			if(item.Operation.OverrideBefore) {
+				var page = navigation.OpenViewModel<ManualEmployeeIssueOperationsViewModel, EmployeeCardItem, EmployeeIssueOperation>(
 					employeeViewModel, cardItem, item.Operation, OpenPageOptions.AsSlave);
+				page.ViewModel.SaveChanged += SetIssueDateManual_PageClosed;
+			}
 			
 			if(item.EmployeeIssueReference?.DocumentType == null)
 				return;
@@ -86,6 +89,12 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 			UoW.Delete(item.Operation);
 			UpdateMovements();
 			employeeViewModel.Save();
+		}
+		
+		void SetIssueDateManual_PageClosed(ProtectionTools protectionTools) {
+			UoW.Commit();
+			Entity.FillWearRecivedInfo(employeeIssueRepository);
+			Entity.UpdateNextIssue(protectionTools);
 		}
 
 		#endregion

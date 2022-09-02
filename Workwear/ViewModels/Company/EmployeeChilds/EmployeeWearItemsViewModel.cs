@@ -159,15 +159,14 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 					employeeViewModel, row, OpenPageOptions.AsSlave);
 			else
 				return;
-			page.PageClosed += SetIssueDateManual_PageClosed;
+			page.ViewModel.SaveChanged += SetIssueDateManual_PageClosed;
 		}
 
-		void SetIssueDateManual_PageClosed(object sender, PageClosedEventArgs e)
+		void SetIssueDateManual_PageClosed(ProtectionTools protectionTools)
 		{
-			if(e.CloseSource == CloseSource.Save) {
-				var page = sender as IPage<ManualEmployeeIssueOperationsViewModel>;
-				var changedOperations = page.ViewModel.Operations;
-			}
+			UoW.Commit();
+			Entity.FillWearRecivedInfo(employeeIssueRepository);
+			Entity.UpdateNextIssue(protectionTools);
 		}
 		#endregion
 		#region Контекстное меню

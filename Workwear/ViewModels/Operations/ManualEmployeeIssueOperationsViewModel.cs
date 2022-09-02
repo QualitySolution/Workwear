@@ -10,12 +10,14 @@ using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
+using workwear.Domain.Regulations;
 using workwear.Repository.Operations;
 
 namespace workwear.ViewModels.Operations 
 {
 	public class ManualEmployeeIssueOperationsViewModel : UowDialogViewModelBase, IWindowDialogSettings 
 	{
+		private readonly ProtectionTools protectionTools;
 		public ManualEmployeeIssueOperationsViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
@@ -25,25 +27,24 @@ namespace workwear.ViewModels.Operations
 			IValidator validator = null, 
 			string UoWTitle = null) : base(unitOfWorkFactory, navigation, validator, UoWTitle) 
 		{
-			if(cardItem != null) {
-				Title = cardItem.ProtectionTools.Name;
-			}
-			else if(selectOperation != null) {
-				Title = selectOperation.ProtectionTools.Name;
-			}
 			Resizable = true;
 			if(cardItem != null) {
+				Title = cardItem.ProtectionTools.Name;
+				protectionTools = cardItem.ProtectionTools;
 				EmployeeCardItem = UoW.GetById<EmployeeCardItem>(cardItem.Id);
 				Operations = new GenericObservableList<EmployeeIssueOperation>(
 					repository.GetAllManualIssue(UoW, EmployeeCardItem.EmployeeCard, EmployeeCardItem.ProtectionTools)
 						.OrderBy(x => x.OperationTime)
 						.ToList());
 			}
-			else if(selectOperation != null)
+			else if(selectOperation != null) {
+				Title = selectOperation.ProtectionTools.Name;
+				protectionTools = selectOperation.ProtectionTools;
 				Operations = new GenericObservableList<EmployeeIssueOperation>(
 					repository.GetAllManualIssue(UoW, selectOperation.Employee, selectOperation.ProtectionTools)
 						.OrderBy(x => x.OperationTime)
 						.ToList());
+			}
 			else
 				throw new ArgumentNullException(nameof(selectOperation) + nameof(cardItem));
 
@@ -115,14 +116,16 @@ namespace workwear.ViewModels.Operations
 		public bool CanEditOperation => SelectOperation != null;
 		public bool CanAddOperation => EmployeeCardItem != null;
 
+		public event Action<ProtectionTools> SaveChanged; 
+
 		#endregion
 
 		public void CancelOnClicked() => Close(false, CloseSource.Cancel);
 		public void SaveOnClicked() {
-			foreach(var operation in Operations) 
+			foreach(var operation in Operations)
 				UoW.Save(operation);
 			UoW.Commit();
-			SaveAndClose();
+			SaveChanged?.Invoke(protectionTools);
 			Close(false, CloseSource.Save);
 		}
 
