@@ -24,6 +24,11 @@ namespace workwear.HibernateMapping.Sizes
                 .Table("size_suitable")
                 .ParentKeyColumn("size_id")
                 .ChildKeyColumn("size_suitable_id");
+            
+            HasManyToMany(x => x.SizesWhereIsThisSizeAsSuitable)
+	            .Table("size_suitable")
+	            .ParentKeyColumn("size_suitable_id")
+	            .ChildKeyColumn("size_id");
         }
     }
 }

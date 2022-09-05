@@ -49,7 +49,7 @@ namespace workwear.Views.Sizes
 				.AddColumn("Открыты для сотрудника").AddTextRenderer(x => x.ShowInEmployee ? "☑" : "☒")
 				.AddColumn("Открыты для номенклатуры").AddTextRenderer(x => x.ShowInNomenclature ? "☑" : "☒")
 				.AddColumn("Аналоги").AddTextRenderer(x =>
-					String.Join(", ", x.SuitableSizes.Select(z => z.Name)))
+					String.Join(", ", x.SuitableSizes.Union(x.SizesWhereIsThisSizeAsSuitable).Select(z => z.Name)))
 				.Finish();
 			ytreeviewSizes.Binding.CleanSources();
 			ytreeviewSizes.Binding
