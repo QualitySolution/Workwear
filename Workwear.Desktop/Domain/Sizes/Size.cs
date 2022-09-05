@@ -68,7 +68,7 @@ namespace Workwear.Domain.Sizes
             observableSuitableSizes ?? (observableSuitableSizes = new GenericObservableList<Size>(SuitableSizes));
         
         [Display(Name = "Размеры в которых этот размер указан как подходящий")]
-        public virtual IList<Size> SizesWhereIsThisSizeAsSuitable { get; }
+        public virtual IList<Size> SizesWhereIsThisSizeAsSuitable { get; } = new List<Size>();
 
         #endregion
         #region Расчётные
