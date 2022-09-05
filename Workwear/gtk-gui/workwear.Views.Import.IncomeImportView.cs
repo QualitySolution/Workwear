@@ -30,6 +30,10 @@ namespace workwear.Views.Import
 
 		private global::Gamma.GtkWidgets.yButton ybuttonCreateNomenclature;
 
+		private global::Gtk.HSeparator hseparator1;
+
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonOpenAfterSave;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -156,14 +160,34 @@ namespace workwear.Views.Import
 			w11.Position = 0;
 			w11.Expand = false;
 			w11.Fill = false;
+			// Container child yvbox1.Gtk.Box+BoxChild
+			this.hseparator1 = new global::Gtk.HSeparator();
+			this.hseparator1.Name = "hseparator1";
+			this.yvbox1.Add(this.hseparator1);
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.hseparator1]));
+			w12.Position = 1;
+			w12.Expand = false;
+			w12.Fill = false;
+			// Container child yvbox1.Gtk.Box+BoxChild
+			this.ycheckbuttonOpenAfterSave = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbuttonOpenAfterSave.CanFocus = true;
+			this.ycheckbuttonOpenAfterSave.Name = "ycheckbuttonOpenAfterSave";
+			this.ycheckbuttonOpenAfterSave.Label = global::Mono.Unix.Catalog.GetString("Открывать документ перед сохранением");
+			this.ycheckbuttonOpenAfterSave.DrawIndicator = true;
+			this.ycheckbuttonOpenAfterSave.UseUnderline = true;
+			this.yvbox1.Add(this.ycheckbuttonOpenAfterSave);
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ycheckbuttonOpenAfterSave]));
+			w13.Position = 2;
+			w13.Expand = false;
+			w13.Fill = false;
 			this.ytable1.Add(this.yvbox1);
-			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yvbox1]));
-			w12.TopAttach = ((uint)(1));
-			w12.BottomAttach = ((uint)(2));
-			w12.LeftAttach = ((uint)(1));
-			w12.RightAttach = ((uint)(2));
-			w12.XOptions = ((global::Gtk.AttachOptions)(4));
-			w12.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yvbox1]));
+			w14.TopAttach = ((uint)(1));
+			w14.BottomAttach = ((uint)(2));
+			w14.LeftAttach = ((uint)(1));
+			w14.RightAttach = ((uint)(2));
+			w14.XOptions = ((global::Gtk.AttachOptions)(4));
+			w14.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.ytable1);
 			if ((this.Child != null))
 			{

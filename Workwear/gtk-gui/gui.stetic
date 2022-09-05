@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -5854,6 +5854,7 @@
                   <node type="Menuitem" action="ActionEmployeeLoad" />
                   <node type="Menuitem" action="ActionNormsLoad" />
                   <node type="Menuitem" action="ActionImportWorkwearItems" />
+                  <node type="Separator" />
                   <node type="Menuitem" action="ActionIncomeLoad" />
                 </node>
                 <node type="Menu" action="ActionBatchProcessing">
@@ -19374,7 +19375,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Import.IncomeImportView" design-size="979 300">
+  <widget class="Gtk.Bin" id="workwear.Views.Import.IncomeImportView" design-size="1114 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -19564,7 +19565,31 @@
               </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gtk.HSeparator" id="hseparator1">
+                <property name="MemberName" />
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonOpenAfterSave">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes">Открывать документ перед сохранением</property>
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
             </child>
             <child>
               <placeholder />

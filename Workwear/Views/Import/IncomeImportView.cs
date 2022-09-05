@@ -64,7 +64,14 @@ namespace workwear.Views.Import
 			entityWarehouseIncome.ViewModel = ViewModel.EntryWarehouseViewModel;
 			
 			ybuttonSelectAll.Binding
-				.AddBinding(ViewModel, vm => vm.SelectFileVisible, w=> w.Visible)
+				.AddSource(ViewModel)
+				.AddBinding( vm => vm.SelectAllVisible, w=> w.Visible)
+				.InitializeFromSource();
+			
+			ycheckbuttonOpenAfterSave.Binding
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.OpenSelectDocumentAfterSave, w => w.Active)
+				.AddBinding(vm => vm.DocumentHasBeenUploaded, w => w.Visible)
 				.InitializeFromSource();
 		}
 

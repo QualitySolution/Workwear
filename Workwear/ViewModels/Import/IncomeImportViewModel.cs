@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -71,6 +72,7 @@ namespace workwear.ViewModels.Import
 		public List<DocumentViewModel> DocumentsViewModels { get; } = new List<DocumentViewModel>();
 
 		private bool selectFileVisible;
+		[PropertyChangedAlso(nameof(SelectAllVisible))]
 		public bool SelectFileVisible {
 			get => selectFileVisible;
 			private set => SetField(ref selectFileVisible, value);
@@ -84,12 +86,21 @@ namespace workwear.ViewModels.Import
 		public bool DocumentDownloadSensitive => DocumentsViewModels.Any(d => d.WantDownload);
 
 		private DocumentViewModel selectDocumentViewModel;
+		[PropertyChangedAlso(nameof(OpenSelectDocumentAfterSave))]
 		public DocumentViewModel SelectDocumentViewModel {
 			get => selectDocumentViewModel;
 			private set {
 				if(SetField(ref selectDocumentViewModel, value)) {
 					SelectDocumentItemViewModels = selectDocumentViewModel.ItemViewModels;
 				} 
+			}
+		}
+
+		public bool OpenSelectDocumentAfterSave {
+			get => SelectDocumentViewModel?.OpenAfterSave ?? false;
+			set {
+				if(SelectDocumentViewModel != null)
+					SelectDocumentViewModel.OpenAfterSave = value;
 			}
 		}
 
@@ -106,6 +117,7 @@ namespace workwear.ViewModels.Import
 			set => SetField(ref warehouse, value);
 		}
 		public bool WarehouseSelectVisible => featuresService.Available(WorkwearFeature.Warehouses);
+		public object SelectAllVisible => SelectFileVisible && DocumentsViewModels.Any();
 
 		#endregion
 
@@ -123,8 +135,10 @@ namespace workwear.ViewModels.Import
 					}
 					DocumentsViewModels.Add(new DocumentViewModel(this) { Document = xml1CDocument });
 				}
-				if(DocumentsViewModels.Any())
+				if(DocumentsViewModels.Any()) {
 					DocumentLoaded?.Invoke();
+					OnPropertyChanged(nameof(SelectAllVisible));
+				}
 				else
 					interactiveService.ShowMessage(ImportanceLevel.Warning, "В загруженом файле не обнаружены документы поступления");
 			}
@@ -155,7 +169,7 @@ namespace workwear.ViewModels.Import
 		}
 		
 		public void Cancel() => Close(true, CloseSource.Cancel);
-		public void WandDownloadPropertyChange() => OnPropertyChanged(nameof(DocumentDownloadSensitive));
+		public void DocumentPropertyChange(string masterPropertyName) => OnPropertyChanged(masterPropertyName);
 		
 		public void CreateIncome() {
 			progressBar.Start(DocumentsViewModels.Count, 0, "Создаём поступление");
@@ -165,7 +179,7 @@ namespace workwear.ViewModels.Import
 				var income = (page.TdiTab as IncomeDocDlg).Entity;
 				income.Operation = IncomeOperations.Enter;
 				income.Warehouse = Warehouse;
-				income.Comment = document.Title;
+				income.Number = document.Number.ToString();
 				income.CreationDate = DateTime.Today;
 				income.Date = document.Date ?? DateTime.Today;
 				foreach(var item in document.ItemViewModels.Select(x => x.Item)) {
@@ -173,6 +187,8 @@ namespace workwear.ViewModels.Import
 						continue;
 					income.AddItem(item.Nomenclature, item.Size, item.Height, item.Amount, null, item.Cost);
 				}
+				if(document.OpenAfterSave is false)
+					(page.TdiTab as IncomeDocDlg)?.SaveAndClose();
 			}
 			progressBar.Close();
 		}
@@ -252,9 +268,19 @@ namespace workwear.ViewModels.Import
 			get => wantDownload;
 			set {
 				wantDownload = value;
-				master.WandDownloadPropertyChange();
+				master.DocumentPropertyChange(nameof(master.DocumentDownloadSensitive));
 			}
 		}
+		
+		private bool openAfterSave;
+		public bool OpenAfterSave {
+			get => openAfterSave;
+			set {
+				openAfterSave = value;
+				master.DocumentPropertyChange(nameof(master.OpenSelectDocumentAfterSave));
+			}
+		}
+		
 		public List<DocumentItemViewModel> ItemViewModels { get; set; }
 	}
 
