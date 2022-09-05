@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.DomainModel.UoW;
@@ -35,8 +36,13 @@ namespace workwear.ViewModels.Sizes
 			else {
 				if (Entity.Id <= SizeService.MaxStandartSizeId) IsStandart = true;
 			}
+			
+			Entity.ObservableSuitableSizes.ListContentChanged += ObservableSuitableSizesOnListContentChanged;
 		}
-		
+
+		private void ObservableSuitableSizesOnListContentChanged(object sender, EventArgs e) => OnPropertyChanged(nameof(AllSuitable));
+		public IList<Size> AllSuitable => Entity.SuitableSizes.Union(Entity.SizesWhereIsThisSizeAsSuitable).ToList();
+
 		public bool IsStandart { get; }
 		public bool IsNew {get;}
 		public bool CanEdit => IsNew || !IsStandart;
