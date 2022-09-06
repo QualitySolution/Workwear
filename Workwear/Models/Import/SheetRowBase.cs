@@ -152,7 +152,21 @@ namespace workwear.Models.Import
 		}
 		#endregion
 
+		#region Skipping
 		public bool Skipped => ProgramSkipped || UserSkipped;
+
+		public bool ProgramSkipped { get; set; }
+		
+		//TODO: Сделать отображение в интерфейсе
+		public string ProgramSkippedReason { get; set; }
+
+		private bool userSkipped;
+		public virtual bool UserSkipped {
+			get => userSkipped;
+			set => SetField(ref userSkipped, value);
+		}
+
+		#endregion
 
 		#region Работа с изменениями
 
@@ -189,15 +203,6 @@ namespace workwear.Models.Import
 		}
 
 		public bool HasChanges => !Skipped && ChangedColumns.Any(x => x.Value.ChangeType == ChangeType.ChangeValue || x.Value.ChangeType == ChangeType.NewEntity);
-
-		public bool ProgramSkipped { get; set; }
-
-		private bool userSkipped;
-
-		public virtual bool UserSkipped {
-			get => userSkipped;
-			set => SetField(ref userSkipped, value);
-		}
 		#endregion
 
 		#region Сохранение

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Gamma.Binding.Converters;
 using Gamma.GtkWidgets;
 using QS.Views.Dialog;
@@ -14,6 +15,7 @@ namespace workwear.Views.Sizes
 			this.Build();
 			ConfigureDlg();
 			CommonButtonSubscription();
+			Entity.ObservableSuitableSizes.PropertyOfElementChanged += ObservableSuitableSizesOnPropertyOfElementChanged;
 		}
 
 		private void ConfigureDlg()
@@ -32,11 +34,11 @@ namespace workwear.Views.Sizes
 				.AddBinding(Entity, e => e.SizeType, w => w.SelectedItem)
 				.AddBinding(ViewModel, vm => vm.IsNew, v => v.Sensitive)
 				.InitializeFromSource();
-			ycheckbuttonUseInEmployee.Binding
-				.AddBinding(Entity, e => e.UseInEmployee, w => w.Active)
+			ycheckbuttonShowInEmployee.Binding
+				.AddBinding(Entity, e => e.ShowInEmployee, w => w.Active)
 				.InitializeFromSource();
-			ycheckbuttonUseInNomenclature.Binding
-				.AddBinding(Entity, e => e.UseInNomenclature, w => w.Active)
+			ycheckbuttonShowInNomenclature.Binding
+				.AddBinding(Entity, e => e.ShowInNomenclature, w => w.Active)
 				.InitializeFromSource();
 			entityAlterName.Binding
 				.AddBinding(Entity, e => e.AlternativeName, w => w.Text)
@@ -54,8 +56,8 @@ namespace workwear.Views.Sizes
 				.Finish();
 			ytreeviewSuitableSizes.HeadersVisible = false;
 			ytreeviewSuitableSizes.Binding
-				.AddSource(Entity)
-				.AddBinding(e => e.ObservableSuitableSizes, w => w.ItemsDataSource)
+				.AddSource(ViewModel)
+				.AddBinding(e => e.AllSuitable, w => w.ItemsDataSource)
 				.InitializeFromSource();
 		}
 		private void AddAnalog(object sender, EventArgs eventArgs) => ViewModel.AddAnalog();
@@ -66,5 +68,7 @@ namespace workwear.Views.Sizes
 		}
 		void SelectionOnChanged(object sender, EventArgs e) =>
 			ybuttonRemoveSuitable.Sensitive = ytreeviewSuitableSizes.Selection.CountSelectedRows() > 0;
+		private void ObservableSuitableSizesOnPropertyOfElementChanged(object sender, PropertyChangedEventArgs e) => 
+			ytreeviewSuitableSizes.YTreeModel.EmitModelChanged();
 	}
 }

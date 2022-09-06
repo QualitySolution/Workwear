@@ -58,6 +58,7 @@
     <Compile Include="Integration\Stock\CompletionIntegratedTest.cs" />
     <Compile Include="Models\Import\Employees\DataTypeBustTest.cs" />
     <Compile Include="Models\Import\Employees\DataTypeFioTest.cs" />
+    <Compile Include="Models\Import\Employees\DataTypeSubdivisionTest.cs" />
     <Compile Include="Models\Import\ImportModelBaseTest.cs" />
     <Compile Include="Models\Import\Norms\DataTypePeriodAndCountTest.cs" />
     <Compile Include="Models\Import\Norms\DataTypePeriodTest.cs" />
@@ -232,6 +233,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Samples\Excel\Employees\employees_yo_in_name.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Excel\Employees\name_with_initials.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Samples\Excel\items_dateCells.xlsx">

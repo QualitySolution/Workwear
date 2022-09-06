@@ -425,11 +425,11 @@ namespace WorkwearTest.Organization
 			var employee = new EmployeeCard {Sex = Sex.M,};
 			var sizeType = new SizeType {CategorySizeType = CategorySizeType.Size};
 			var size52And54 = new Size
-				{Name = "52-54", SizeType = sizeType, UseInEmployee = true};
+				{Name = "52-54", SizeType = sizeType, ShowInEmployee = true};
 			var size52 = new Size {
 				Name = "52", 
 				SizeType = sizeType, 
-				UseInEmployee = true, 
+				ShowInEmployee = true, 
 				SuitableSizes = new List<Size> {size52And54}
 			};
 			employee.Sizes.Add(new EmployeeSize{Size = size52And54, SizeType = sizeType});
@@ -460,13 +460,13 @@ namespace WorkwearTest.Organization
 			};
 			var sizeType = new SizeType {CategorySizeType = CategorySizeType.Size};
 			var heightType = new SizeType {CategorySizeType = CategorySizeType.Height};
-			var size52 = new Size {Name = "52", SizeType = sizeType, UseInEmployee = true};
+			var size52 = new Size {Name = "52", SizeType = sizeType, ShowInEmployee = true};
 			var height170And176 = new Size
-				{Name = "170-176", SizeType = heightType, UseInEmployee = true};
+				{Name = "170-176", SizeType = heightType, ShowInEmployee = true};
 			var height170 = new Size {
 				Name = "170", 
 				SizeType = heightType, 
-				UseInEmployee = true, 
+				ShowInEmployee = true, 
 				SuitableSizes = new List<Size> {height170And176}
 			};
 			employee.Sizes.Add(new EmployeeSize{Size = height170And176, SizeType = heightType});

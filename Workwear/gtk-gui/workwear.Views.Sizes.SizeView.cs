@@ -28,9 +28,9 @@ namespace workwear.Views.Sizes
 
 		private global::QS.Widgets.GtkUI.SpecialListComboBox specllistcomSizeType;
 
-		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonUseInEmployee;
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonShowInEmployee;
 
-		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonUseInNomenclature;
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonShowInNomenclature;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel3;
 
@@ -183,15 +183,15 @@ namespace workwear.Views.Sizes
 			w12.XOptions = ((global::Gtk.AttachOptions)(4));
 			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
-			this.ycheckbuttonUseInEmployee = new global::Gamma.GtkWidgets.yCheckButton();
-			this.ycheckbuttonUseInEmployee.CanFocus = true;
-			this.ycheckbuttonUseInEmployee.Name = "ycheckbuttonUseInEmployee";
-			this.ycheckbuttonUseInEmployee.Label = global::Mono.Unix.Catalog.GetString("Отображать в сотруднике");
-			this.ycheckbuttonUseInEmployee.Active = true;
-			this.ycheckbuttonUseInEmployee.DrawIndicator = true;
-			this.ycheckbuttonUseInEmployee.UseUnderline = true;
-			this.table2.Add(this.ycheckbuttonUseInEmployee);
-			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table2[this.ycheckbuttonUseInEmployee]));
+			this.ycheckbuttonShowInEmployee = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbuttonShowInEmployee.CanFocus = true;
+			this.ycheckbuttonShowInEmployee.Name = "ycheckbuttonShowInEmployee";
+			this.ycheckbuttonShowInEmployee.Label = global::Mono.Unix.Catalog.GetString("Отображать в сотруднике");
+			this.ycheckbuttonShowInEmployee.Active = true;
+			this.ycheckbuttonShowInEmployee.DrawIndicator = true;
+			this.ycheckbuttonShowInEmployee.UseUnderline = true;
+			this.table2.Add(this.ycheckbuttonShowInEmployee);
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table2[this.ycheckbuttonShowInEmployee]));
 			w13.TopAttach = ((uint)(4));
 			w13.BottomAttach = ((uint)(5));
 			w13.LeftAttach = ((uint)(1));
@@ -199,15 +199,15 @@ namespace workwear.Views.Sizes
 			w13.XOptions = ((global::Gtk.AttachOptions)(4));
 			w13.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
-			this.ycheckbuttonUseInNomenclature = new global::Gamma.GtkWidgets.yCheckButton();
-			this.ycheckbuttonUseInNomenclature.CanFocus = true;
-			this.ycheckbuttonUseInNomenclature.Name = "ycheckbuttonUseInNomenclature";
-			this.ycheckbuttonUseInNomenclature.Label = global::Mono.Unix.Catalog.GetString("Отображать в номенклатуре");
-			this.ycheckbuttonUseInNomenclature.Active = true;
-			this.ycheckbuttonUseInNomenclature.DrawIndicator = true;
-			this.ycheckbuttonUseInNomenclature.UseUnderline = true;
-			this.table2.Add(this.ycheckbuttonUseInNomenclature);
-			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table2[this.ycheckbuttonUseInNomenclature]));
+			this.ycheckbuttonShowInNomenclature = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbuttonShowInNomenclature.CanFocus = true;
+			this.ycheckbuttonShowInNomenclature.Name = "ycheckbuttonShowInNomenclature";
+			this.ycheckbuttonShowInNomenclature.Label = global::Mono.Unix.Catalog.GetString("Отображать в номенклатуре");
+			this.ycheckbuttonShowInNomenclature.Active = true;
+			this.ycheckbuttonShowInNomenclature.DrawIndicator = true;
+			this.ycheckbuttonShowInNomenclature.UseUnderline = true;
+			this.table2.Add(this.ycheckbuttonShowInNomenclature);
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table2[this.ycheckbuttonShowInNomenclature]));
 			w14.TopAttach = ((uint)(5));
 			w14.BottomAttach = ((uint)(6));
 			w14.LeftAttach = ((uint)(1));

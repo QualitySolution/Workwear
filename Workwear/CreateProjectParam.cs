@@ -72,6 +72,7 @@ using workwear.Tools.Import;
 using workwear.ViewModels.Communications;
 using workwear.ViewModels.Company;
 using workwear.Views.Company;
+using workwear.Models.WearLk;
 
 namespace workwear
 {
@@ -281,12 +282,16 @@ namespace workwear
 			builder.RegisterType<FeedReader>().AsSelf();
 			#endregion
 			
-			#region Облако
+			#region Облачные сервисы
 			builder.Register(c => new CloudClientService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			builder.Register(c => new LkUserManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			builder.Register(c => new MessagesService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			builder.Register(c => new NotificationManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
-			builder.Register(c => new ClaimsManager(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
+			builder.Register(c => new ClaimsManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
+			#endregion
+
+			#region Облако модели
+			builder.RegisterType<UnansweredClaimsCounter>().AsSelf();
 			#endregion
 
 			#region Разделение версий

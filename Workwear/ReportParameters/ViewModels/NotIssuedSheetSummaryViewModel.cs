@@ -63,7 +63,11 @@ namespace workwear.ReportParameters.ViewModels
 			set => SetField(ref excludeInVacation, value);
 		}
 
-		public bool ShowSex { get; set; }
+		private bool showSex;
+		public bool ShowSex {
+			get => showSex;
+			set => SetField(ref showSex, value);
+		}
 		#endregion
 		#region Свойства
 		public bool SensetiveLoad => ReportDate != null;

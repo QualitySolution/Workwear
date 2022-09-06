@@ -37,34 +37,34 @@ namespace WorkwearTest.Models.Import.Employees {
 			var size0 = new Size {
 				Name = "52-54",
 				SizeType = sizeType,
-				UseInEmployee = true
+				ShowInEmployee = true
 			};
 			var size1 = new Size {
 				Name = "52",
 				SizeType = sizeType,
-				UseInEmployee = true
+				ShowInEmployee = true
 			};
 			
 			var size2 = new Size {
 				Name = "56",
 				SizeType = sizeType,
-				UseInEmployee = false
+				ShowInEmployee = false
 			};
 			var size3 = new Size {
 				Name = "56-58",
 				SizeType = sizeType,
-				UseInEmployee = true
+				ShowInEmployee = true
 			};
 			
 			var size4 = new Size {
 				Name = "60-62",
 				SizeType = sizeType,
-				UseInEmployee = false
+				ShowInEmployee = false
 			};
 			var size5 = new Size {
 				Name = "60",
 				SizeType = sizeType,
-				UseInEmployee = false
+				ShowInEmployee = false
 			};
 			return new List<Size> { size0, size1, size2, size3, size4, size5 };
 		}

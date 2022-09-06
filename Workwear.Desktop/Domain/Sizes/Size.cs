@@ -33,17 +33,17 @@ namespace Workwear.Domain.Sizes
             get => sizeType;
             set => SetField(ref sizeType, value);
         }
-        private bool useInEmployee;
+        private bool showInEmployee;
         [Display (Name = "Отображается в сотруднике")]
-        public virtual bool UseInEmployee {
-            get => useInEmployee;
-            set => SetField(ref useInEmployee, value);
+        public virtual bool ShowInEmployee {
+            get => showInEmployee;
+            set => SetField(ref showInEmployee, value);
         }
-        private bool useInNomenclature;
+        private bool showInNomenclature;
         [Display (Name = "Отображается в номенклатуре")]
-        public virtual bool UseInNomenclature {
-            get => useInNomenclature;
-            set => SetField(ref useInNomenclature, value);
+        public virtual bool ShowInNomenclature {
+            get => showInNomenclature;
+            set => SetField(ref showInNomenclature, value);
         }
         private string alternativeName;
         [Display(Name = "Альтернативное значение")]
@@ -66,6 +66,10 @@ namespace Workwear.Domain.Sizes
         [Display(Name = "Подходящие размеры")]
         public virtual GenericObservableList<Size> ObservableSuitableSizes => 
             observableSuitableSizes ?? (observableSuitableSizes = new GenericObservableList<Size>(SuitableSizes));
+        
+        [Display(Name = "Размеры в которых этот размер указан как подходящий")]
+        public virtual IList<Size> SizesWhereIsThisSizeAsSuitable { get; } = new List<Size>();
+
         #endregion
         #region Расчётные
         public virtual string Title => $"{SizeType.Name}: {Name}";

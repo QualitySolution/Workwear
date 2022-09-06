@@ -32,13 +32,19 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>46.9pt</Width>
+            <Width>49.2pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>153.5pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>59.1pt</Width>
+          </TableColumn>
+          <TableColumn >
+            <Width>24.5pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_sex}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>41.2pt</Width>
@@ -47,16 +53,16 @@
             <Width>46.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>46.9pt</Width>
+            <Width>42.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>57.4pt</Width>
+            <Width>52.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>60.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>53.3pt</Width>
+            <Width>45.0pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -98,6 +104,25 @@
                     </Textbox>
                   </ReportItems>
                   <ColSpan>2</ColSpan>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox31">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Bottom</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
@@ -249,6 +274,24 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox35" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                      <Value>Пол</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>None</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Top</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox9">
@@ -392,6 +435,23 @@
                   <ReportItems>
                     <Textbox Name="Textbox23">
                       <Value>5</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox33">
+                      <Value>
+                      </Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -556,6 +616,22 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox39" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                      <Value>=Switch({sex} = 'F', 'Ж', {sex} = 'M', 'М', true, '')</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox10">
@@ -673,7 +749,7 @@
                       <Value>Итого:</Value>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan>7</ColSpan>
+                  <ColSpan>8</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
@@ -776,6 +852,7 @@
     protection_tools.name AS type_name,
     protection_tools.assessed_cost AS assessed_cost,
     protection_tools.id AS type_id,
+    wear_cards.sex,
     heightAlias.name AS growth,
  	sizeAlias.name AS size,
 measurement_units.name AS unit,
@@ -814,12 +891,13 @@ WHERE
     AND ('-1' IN (@protectionTools) OR protection_tools.id IN (@protectionTools))
 GROUP BY
     protection_tools.id,
-    wear_cards.object_id,
+    IF(@show_sex, wear_cards.sex, NULL),
     size,
     growth
 HAVING amount_sum &gt; 0
 ORDER BY
     type_name,
+    IF(@show_sex, wear_cards.sex, NULL),
     size,
     growth</CommandText>
         <QueryParameters>
@@ -843,6 +921,9 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="protectionTools">
             <Value>={?protectionTools}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@show_sex">
+            <Value>={?show_sex}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -878,6 +959,10 @@ ORDER BY
         <Field Name="assessed_cost">
           <DataField>assessed_cost</DataField>
           <TypeName>System.Decimal</TypeName>
+        </Field>
+        <Field Name="sex">
+          <DataField>sex</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -982,6 +1067,14 @@ ORDER BY
     </ReportParameter>
     <ReportParameter Name="headSubdivision">
       <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_sex">
+      <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>

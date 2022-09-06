@@ -156,6 +156,7 @@
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeDepartment.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeNameWithInitials.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypePost.cs" />
+    <Compile Include="Models\Import\Employees\DataTypes\DataTypeSizeAndHeight.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeSubdivision.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeSimpleDate.cs" />
     <Compile Include="Models\Import\Employees\DataTypes\DataTypeFirstName.cs" />
@@ -188,9 +189,11 @@
     <Compile Include="Models\Import\Norms\DataTypes\DataTypeSubdivision.cs" />
     <Compile Include="Models\Import\Norms\ImportModelNorm.cs" />
     <Compile Include="Models\Import\Norms\SheetRowNorm.cs" />
+    <Compile Include="Models\Import\Norms\SubdivisionPostCombination.cs" />
     <Compile Include="Models\Import\RowStackHelper.cs" />
     <Compile Include="Models\Import\SetValueAction.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
+    <Compile Include="Models\WearLk\UnansweredClaimsCounter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
@@ -473,9 +476,6 @@
     <Compile Include="Journal\Filter.Views\Regulations\NormFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Regulations.NormFilterView.cs" />
     <Compile Include="Models\Company\PersonNames.cs" />
-    <Compile Include="ViewModels\Operations\ManualEmployeeIssueOperationViewModel.cs" />
-    <Compile Include="Views\Operations\ManualEmployeeIssueOperationView.cs" />
-    <Compile Include="gtk-gui\workwear.Views.Operations.ManualEmployeeIssueOperationView.cs" />
     <Compile Include="Domain\Stock\CollectiveExpense.cs" />
     <Compile Include="Domain\Stock\CollectiveExpenseItem.cs" />
     <Compile Include="HibernateMapping\Stock\CollectiveExpenseItemMap.cs" />
@@ -562,6 +562,12 @@
     <Compile Include="ViewModels\Communications\ClaimsViewModel.cs" />
     <Compile Include="Views\Import\IncomeImportView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Import.IncomeImportView.cs" />
+    <Compile Include="Journal\Filter.Views\Company\PostFilterView.cs" />
+    <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.PostFilterView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Company\PostFilterViewModel.cs" />
+    <Compile Include="Views\Operations\ManualEmployeeIssueOperationsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Operations.ManualEmployeeIssueOperationsView.cs" />
+    <Compile Include="ViewModels\Operations\ManualEmployeeIssueOperationsViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -803,6 +809,7 @@
     <Folder Include="Journal\ViewModels\Communications\" />
     <Folder Include="Views\Sizes\" />
     <Folder Include="Journal\Filter.Views\Sizes\" />
+    <Folder Include="Models\WearLk\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ListBySize.rdl">

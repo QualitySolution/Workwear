@@ -59,6 +59,11 @@ namespace workwear.ViewModels.Import
 			if(e.PropertyName == nameof(ImportModel.CanMatch))
 				OnPropertyChanged(nameof(SensitiveThirdStepButton));
 		}
+
+		public void SelectionChanged(ISheetRow[] rows) {
+			ButtonIgnoreSensitive = rows.Length > 0;
+			ButtonIgnoreTitle = AreMostIgnored(rows) ? "Загружать строку" : "Не загружать строку";
+		}
 		#endregion
 
 		#region private
@@ -112,6 +117,7 @@ namespace workwear.ViewModels.Import
 			CurrentStep = 1;
 			ImportModel.DisplayRows.ForEach(x => x.ProgramSkipped = false);
 			ImportModel.CleanMatch();
+			RowActionsShow = false;
 		}
 
 		public bool SensitiveThirdStepButton => ImportModel.CanMatch;
@@ -124,6 +130,18 @@ namespace workwear.ViewModels.Import
 			CurrentStep = 2;
 			ImportModel.MatchAndChanged(ProgressStep, UoW);
 			SensitiveSaveButton = ImportModel.CanSave;
+			RowActionsShow = true;
+		}
+
+		public void ToggleIgnoreRows(ISheetRow[] rows) {
+			var lastValue = AreMostIgnored(rows);
+			foreach(var row in rows)
+				row.UserSkipped = !lastValue;
+			SelectionChanged(rows);
+		}
+
+		public bool AreMostIgnored(ISheetRow[] rows) {
+			return rows.Count(x => x.UserSkipped) > rows.Length / 2;
 		}
 
 		#region Статистика
@@ -137,6 +155,24 @@ namespace workwear.ViewModels.Import
 		public virtual bool SensitiveSaveButton {
 			get => sensitiveSaveButton;
 			set => SetField(ref sensitiveSaveButton, value);
+		}
+
+		private bool rowActionsShow;
+		public virtual bool RowActionsShow {
+			get => rowActionsShow;
+			set => SetField(ref rowActionsShow, value);
+		}
+
+		private string buttonIgnoreTitle;
+		public virtual string ButtonIgnoreTitle {
+			get => buttonIgnoreTitle;
+			set => SetField(ref buttonIgnoreTitle, value);
+		}
+
+		private bool buttonIgnoreSensitive;
+		public virtual bool ButtonIgnoreSensitive {
+			get => buttonIgnoreSensitive;
+			set => SetField(ref buttonIgnoreSensitive, value);
 		}
 		#endregion
 		#endregion

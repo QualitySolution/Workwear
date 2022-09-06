@@ -214,7 +214,10 @@ namespace workwear.Domain.Company
 			}
 
 			if (employeeSize != null && stockPosition.WearSize != null) {
-				var suitableStockPositionSize = stockPosition.WearSize.SuitableSizes.Where(x => x.UseInEmployee).ToList();
+				var suitableStockPositionSize = stockPosition.WearSize.SuitableSizes
+					.Union(stockPosition.WearSize.SizesWhereIsThisSizeAsSuitable)
+					.ToList();
+				
 				suitableStockPositionSize.Add(stockPosition.WearSize);
 
 				if (!suitableStockPositionSize.Contains(employeeSize)) return false;
@@ -228,8 +231,11 @@ namespace workwear.Domain.Company
 				logger.Warn($"В карточке сотрудника не указан {stockPosition.Height.Name}");
 				return false;
 			}
+
+			var suitableStockPositionHeights = stockPosition.Height.SuitableSizes
+					.Union(stockPosition.Height.SizesWhereIsThisSizeAsSuitable)
+					.ToList();
 			
-			var suitableStockPositionHeights = stockPosition.Height.SuitableSizes.Where(x => x.UseInEmployee).ToList();
 			suitableStockPositionHeights.Add(stockPosition.Height);
 			return suitableStockPositionHeights.Contains(employeeHeight);
 		}

@@ -1,9 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
+using workwear.Domain.Company;
+using workwear.Domain.Regulations;
+using workwear.Domain.Stock;
 
 namespace workwear.Models.Import.Norms
 {
@@ -40,11 +43,11 @@ namespace workwear.Models.Import.Norms
 			progress.Start(maxValue: rows.Count, text: "Подготовка");
 
 			List<object> toSave = new List<object>();
-			toSave.AddRange(dataParser.UsedSubdivisions.Where(x => x.Id == 0));
-			toSave.AddRange(dataParser.UsedPosts.Where(x => x.Id == 0));
-			toSave.AddRange(dataParser.UsedItemTypes.Where(x => x.Id == 0));
-			toSave.AddRange(dataParser.UsedProtectionTools.Where(x => x.Id == 0));
-			toSave.AddRange(dataParser.UsedNorms.Where(x => x.Id == 0));
+			toSave.AddRange(SavedSubdivisions);
+			toSave.AddRange(SavedPosts);
+			toSave.AddRange(SavedItemsTypes);
+			toSave.AddRange(SavedProtectionTools);
+			toSave.AddRange(SavedNorms);
 			foreach(var row in rows) {
 				toSave.AddRange(row.PrepareToSave());
 			}
@@ -84,15 +87,56 @@ namespace workwear.Models.Import.Norms
         {
 	        CountersViewModel.SetCount(CountersNorm.SkipRows, UsedRows.Count(x => x.Skipped));
 	        CountersViewModel.SetCount(CountersNorm.AmbiguousNorms, dataParser.MatchPairs.Count(x => x.Norms.Count > 1));
-	        CountersViewModel.SetCount(CountersNorm.NewNorms, dataParser.UsedNorms.Count(x => x.Id == 0));
-	        CountersViewModel.SetCount(CountersNorm.NewNormItems, UsedRows.Count(x => !x.Skipped && x.NormItem.Id == 0 && x.ChangedColumns.Any()));
-	        CountersViewModel.SetCount(CountersNorm.ChangedNormItems, UsedRows.Count(x => !x.Skipped && x.NormItem.Id > 0 && x.ChangedColumns.Any()));	
+	        CountersViewModel.SetCount(CountersNorm.NewNorms, SavedNorms.Count());
+	        CountersViewModel.SetCount(CountersNorm.NewNormItems, UsedRows.Count(x => x.HasChanges && x.NormItem.Id == 0));
+	        CountersViewModel.SetCount(CountersNorm.ChangedNormItems, UsedRows.Count(x => x.HasChanges && x.NormItem.Id > 0));	
 
-	        CountersViewModel.SetCount(CountersNorm.NewPosts, dataParser.UsedPosts.Count(x => x.Id == 0));
-	        CountersViewModel.SetCount(CountersNorm.NewSubdivisions, dataParser.UsedSubdivisions.Count(x => x.Id == 0));
-	        CountersViewModel.SetCount(CountersNorm.NewProtectionTools, dataParser.UsedProtectionTools.Count(x => x.Id == 0));
-	        CountersViewModel.SetCount(CountersNorm.NewItemTypes, dataParser.UsedItemTypes.Count(x => x.Id == 0));
+	        CountersViewModel.SetCount(CountersNorm.NewPosts, SavedPosts.Count());
+	        CountersViewModel.SetCount(CountersNorm.NewSubdivisions, SavedSubdivisions.Count());
+	        CountersViewModel.SetCount(CountersNorm.NewProtectionTools, SavedProtectionTools.Count());
+	        CountersViewModel.SetCount(CountersNorm.NewItemTypes, SavedItemsTypes.Count());
 	        CountersViewModel.SetCount(CountersNorm.UndefinedItemTypes, dataParser.UndefinedProtectionNames.Count);
         }
+        
+        #region Справочники
+
+        private IEnumerable<Norm> SavedNorms => UsedRows
+	        .Where(x => x.HasChanges)
+	        .Select(x => x.NormItem.Norm)
+	        .Distinct()
+	        .Where(x => x.Id == 0);
+        
+        private IEnumerable<Post> SavedPosts => UsedRows
+	        .Where(x => !x.Skipped)
+	        .Select(x => x.NormItem.Norm)
+	        .Distinct()
+	        .SelectMany(x => x.Posts)
+	        .Where(x => x.Id == 0)
+	        .Distinct();
+        
+        private IEnumerable<Subdivision> SavedSubdivisions => UsedRows
+	        .Where(x => !x.Skipped)
+	        .Select(x => x.NormItem.Norm)
+	        .Distinct()
+	        .SelectMany(x => x.Posts)
+	        .Distinct()
+	        .Select(x => x.Subdivision)
+	        .SelectMany(x => x.AllParents.Union(new []{x}))
+	        .Where(x => x?.Id == 0)
+	        .Distinct();
+
+        private IEnumerable<ProtectionTools> SavedProtectionTools => UsedRows
+	        .Where(x => !x.Skipped)
+	        .Select(x => x.NormItem.ProtectionTools)
+	        .Where(x => x?.Id == 0)
+	        .Distinct();
+
+        private IEnumerable<ItemsType> SavedItemsTypes => UsedRows
+	        .Where(x => !x.Skipped)
+	        .Select(x => x.NormItem.ProtectionTools?.Type)
+	        .Where(x => x?.Id == 0)
+	        .Distinct();
+		
+        #endregion
 	}
 }
