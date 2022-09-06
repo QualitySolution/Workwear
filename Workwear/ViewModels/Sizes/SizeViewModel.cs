@@ -63,7 +63,13 @@ namespace workwear.ViewModels.Sizes
 				Entity.ObservableSuitableSizes.Add(analog);
 			}
 		}
-		public void RemoveAnalog(Size analog) => 
-			Entity.ObservableSuitableSizes.Remove(analog);
+		public void RemoveAnalog(Size analog) {
+			if(Entity.ObservableSuitableSizes.Contains(analog))
+				Entity.ObservableSuitableSizes.Remove(analog);
+			else {
+				Entity.SizesWhereIsThisSizeAsSuitable.Remove(analog);
+				ObservableSuitableSizesOnListContentChanged(this, null);
+			}
+		}
 	}
 }
