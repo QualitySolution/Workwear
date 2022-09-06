@@ -1,4 +1,7 @@
-﻿using Autofac;
+﻿using System.Collections.Generic;
+using Autofac;
+using QS.Cloud.WearLk.Client;
+using QS.Cloud.WearLk.Manage;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Validation;
@@ -12,13 +15,16 @@ namespace workwear.ViewModels.Communications
 {
 	public class RatingsViewModel : UowDialogViewModelBase 
 	{
+		private readonly RatingManagerService ratingManagerService;
 		public RatingsViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
-			ILifetimeScope autofacScope, 
+			ILifetimeScope autofacScope,
+			RatingManagerService ratingManagerService,
 			IValidator validator = null, 
-			string UoWTitle = null) : base(unitOfWorkFactory, navigation, validator, UoWTitle)
+			string UoWTitle = null) : base(unitOfWorkFactory, navigation, validator, UoWTitle) 
 		{
+			this.ratingManagerService = ratingManagerService;
 			var builder = new CommonEEVMBuilderFactory<RatingsViewModel>(
 				this, this, UoW, NavigationManager, autofacScope);
 
@@ -33,7 +39,21 @@ namespace workwear.ViewModels.Communications
 		private Nomenclature selectNomenclature;
 		public Nomenclature SelectNomenclature {
 			get => selectNomenclature;
-			set => SetField(ref selectNomenclature, value);
+			set {
+				if(SetField(ref selectNomenclature, value))
+					if(selectNomenclature is null)
+						Ratings = new List<Rating>();
+					else {
+						Ratings = ratingManagerService.GetRatings(value.Id);
+					}
+			}
+		}
+
+		private IList<Rating> ratings;
+
+		public IList<Rating> Ratings {
+			get => ratings;
+			set => SetField(ref ratings, value);
 		}
 
 		#endregion

@@ -1,4 +1,6 @@
-﻿using QS.Views.Dialog;
+﻿using Gamma.GtkWidgets;
+using QS.Cloud.WearLk.Manage;
+using QS.Views.Dialog;
 using workwear.ViewModels.Communications;
 
 namespace workwear.Views.Communications 
@@ -10,6 +12,16 @@ namespace workwear.Views.Communications
 			this.Build();
 
 			entityNomenclature.ViewModel = viewModel.EntryNomenclature;
+
+			ytreeviewRatings.ColumnsConfig = ColumnsConfigFactory.Create<Rating>()
+				.AddColumn("Отправитель").AddTextRenderer(node => node.UserPhone)
+				.AddColumn("Оценка").AddNumericRenderer(node => node.Rating_)
+				.AddColumn("Описание").AddTextRenderer(node => node.Description)
+				.Finish();
+			
+			ytreeviewRatings.Binding
+				.AddBinding(ViewModel, vm => vm.Ratings, w => w.ItemsDataSource)
+				.InitializeFromSource();
 		}
 	}
 }

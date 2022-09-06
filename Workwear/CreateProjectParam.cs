@@ -287,6 +287,7 @@ namespace workwear
 			builder.Register(c => new MessagesService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			builder.Register(c => new NotificationManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			builder.Register(c => new ClaimsManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
+			builder.Register(c => new RatingManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
 			#endregion
 
 			#region Облако модели
