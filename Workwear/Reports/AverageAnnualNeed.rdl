@@ -487,7 +487,8 @@ FROM
 	sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
 WHERE wear_cards.dismiss_date IS NULL
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
-    AND( @issue_type = "" OR item_types.issue_type = @issue_type ) 
+    AND( @issue_type = "" OR item_types.issue_type = @issue_type )
+    AND( norms_item.period_type = 'Year' OR norms_item.period_type = 'Month') 
 GROUP BY protection_tools.id , sex, size, growth
 ORDER BY type_name, size, growth, sex</CommandText>
         <QueryParameters>
