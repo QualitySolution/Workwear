@@ -1,5 +1,4 @@
-﻿using System;
-using QS.Views.Dialog;
+﻿using QS.Views.Dialog;
 using workwear.ViewModels.Communications;
 
 namespace workwear.Views.Communications 
@@ -9,6 +8,8 @@ namespace workwear.Views.Communications
 		public RatingsView(RatingsViewModel viewModel) : base(viewModel) 
 		{
 			this.Build();
+
+			entityNomenclature.ViewModel = viewModel.EntryNomenclature;
 		}
 	}
 }
