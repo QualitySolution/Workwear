@@ -21,6 +21,7 @@ namespace workwear.ViewModels.Communications
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			RatingManagerService ratingManagerService,
+			Nomenclature nomenclature = null,
 			IValidator validator = null, 
 			string UoWTitle = null) : base(unitOfWorkFactory, navigation, validator, UoWTitle) 
 		{
@@ -32,6 +33,8 @@ namespace workwear.ViewModels.Communications
 				.UseViewModelJournalAndAutocompleter<NomenclatureJournalViewModel>()
 				.UseViewModelDialog<NomenclatureViewModel>()
 				.Finish();
+
+			Title = nomenclature is null ? "Рейтинг номеклатуры" : "Рейтинг для" + nomenclature.Name;
 		}
 
 		#region Свойства
