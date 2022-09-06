@@ -25,6 +25,7 @@ namespace workwear.ViewModels.Communications
 			IValidator validator = null, 
 			string UoWTitle = null) : base(unitOfWorkFactory, navigation, validator, UoWTitle) 
 		{
+			EntryNomenclatureVisible = true;
 			this.ratingManagerService = ratingManagerService;
 			var builder = new CommonEEVMBuilderFactory<RatingsViewModel>(
 				this, this, UoW, NavigationManager, autofacScope);
@@ -38,7 +39,7 @@ namespace workwear.ViewModels.Communications
 				Title = "Рейтинг номеклатуры";
 			}
 			else {
-				Title = "Рейтинг для" + nomenclature.Name;
+				Title = "Рейтинг для номенклатуры: " + nomenclature.Name;
 				SelectNomenclature = UoW.GetById<Nomenclature>(nomenclature.Id);
 			}
 		}

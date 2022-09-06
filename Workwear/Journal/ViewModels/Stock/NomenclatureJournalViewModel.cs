@@ -44,6 +44,8 @@ namespace workwear.Journal.ViewModels.Stock
 				query.Where(x => x.Type.Id == Filter.ItemType.Id);
 			if (!Filter.ShowArchival)
 				query.Where(x => !x.Archival);
+			if(Filter.OnlyWithRating)
+				query.Where(x => x.Rating != null);
 
 			return query
 				.Left.JoinAlias(n => n.Type, () => itemsTypeAlias)

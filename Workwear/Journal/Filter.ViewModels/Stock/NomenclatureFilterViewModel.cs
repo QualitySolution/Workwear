@@ -37,6 +37,13 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			set => SetField(ref showArchival, value);
 		}
 
+		private bool onlyWithRating;
+
+		public bool OnlyWithRating {
+			get => onlyWithRating;
+			set => SetField(ref onlyWithRating, value);
+		}
+
 		#endregion
 	}
 }
