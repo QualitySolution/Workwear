@@ -13,7 +13,7 @@ using workwear.ViewModels.Stock;
 
 namespace workwear.ViewModels.Communications 
 {
-	public class RatingsViewModel : UowDialogViewModelBase 
+	public class RatingsViewModel : UowDialogViewModelBase
 	{
 		private readonly RatingManagerService ratingManagerService;
 		public RatingsViewModel(
@@ -34,7 +34,13 @@ namespace workwear.ViewModels.Communications
 				.UseViewModelDialog<NomenclatureViewModel>()
 				.Finish();
 
-			Title = nomenclature is null ? "Рейтинг номеклатуры" : "Рейтинг для" + nomenclature.Name;
+			if(nomenclature is null) {
+				Title = "Рейтинг номеклатуры";
+			}
+			else {
+				Title = "Рейтинг для" + nomenclature.Name;
+				SelectNomenclature = UoW.GetById<Nomenclature>(nomenclature.Id);
+			}
 		}
 
 		#region Свойства
@@ -57,6 +63,12 @@ namespace workwear.ViewModels.Communications
 		public IList<Rating> Ratings {
 			get => ratings;
 			set => SetField(ref ratings, value);
+		}
+
+		private bool entryNomenclatureVisible;
+		public bool EntryNomenclatureVisible {
+			get => entryNomenclatureVisible;
+			set => SetField(ref entryNomenclatureVisible, value);
 		}
 
 		#endregion
