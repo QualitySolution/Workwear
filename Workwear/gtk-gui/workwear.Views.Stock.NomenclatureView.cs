@@ -40,6 +40,14 @@ namespace workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yEntry yentryNumber;
 
+		private global::Gamma.GtkWidgets.yHBox yhbox1;
+
+		private global::Gamma.GtkWidgets.yLabel ylabelAvgRating;
+
+		private global::Gamma.GtkWidgets.yButton ybuttonratingDetails;
+
+		private global::Gamma.GtkWidgets.yLabel ylabel1;
+
 		private global::Gamma.GtkWidgets.yLabel ylabelClothesSex;
 
 		protected virtual void Build()
@@ -105,7 +113,7 @@ namespace workwear.Views.Stock
 			w7.Expand = false;
 			w7.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.table2 = new global::Gtk.Table(((uint)(7)), ((uint)(2)), false);
+			this.table2 = new global::Gtk.Table(((uint)(8)), ((uint)(2)), false);
 			this.table2.Name = "table2";
 			this.table2.RowSpacing = ((uint)(6));
 			this.table2.ColumnSpacing = ((uint)(6));
@@ -121,8 +129,8 @@ namespace workwear.Views.Stock
 			this.GtkScrolledWindow.Add(this.ytextComment);
 			this.table2.Add(this.GtkScrolledWindow);
 			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table2[this.GtkScrolledWindow]));
-			w9.TopAttach = ((uint)(6));
-			w9.BottomAttach = ((uint)(7));
+			w9.TopAttach = ((uint)(7));
+			w9.BottomAttach = ((uint)(8));
 			w9.LeftAttach = ((uint)(1));
 			w9.RightAttach = ((uint)(2));
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -146,8 +154,8 @@ namespace workwear.Views.Stock
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Комментарий:");
 			this.table2.Add(this.label1);
 			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table2[this.label1]));
-			w11.TopAttach = ((uint)(6));
-			w11.BottomAttach = ((uint)(7));
+			w11.TopAttach = ((uint)(7));
+			w11.BottomAttach = ((uint)(8));
 			w11.XOptions = ((global::Gtk.AttachOptions)(4));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
@@ -253,19 +261,62 @@ namespace workwear.Views.Stock
 			w19.XOptions = ((global::Gtk.AttachOptions)(4));
 			w19.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
+			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox1.Name = "yhbox1";
+			this.yhbox1.Spacing = 6;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.ylabelAvgRating = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelAvgRating.Name = "ylabelAvgRating";
+			this.ylabelAvgRating.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel2");
+			this.yhbox1.Add(this.ylabelAvgRating);
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ylabelAvgRating]));
+			w20.Position = 0;
+			w20.Expand = false;
+			w20.Fill = false;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.ybuttonratingDetails = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonratingDetails.CanFocus = true;
+			this.ybuttonratingDetails.Name = "ybuttonratingDetails";
+			this.ybuttonratingDetails.UseUnderline = true;
+			this.ybuttonratingDetails.Label = global::Mono.Unix.Catalog.GetString("Подробнее");
+			this.yhbox1.Add(this.ybuttonratingDetails);
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonratingDetails]));
+			w21.Position = 1;
+			w21.Expand = false;
+			w21.Fill = false;
+			this.table2.Add(this.yhbox1);
+			global::Gtk.Table.TableChild w22 = ((global::Gtk.Table.TableChild)(this.table2[this.yhbox1]));
+			w22.TopAttach = ((uint)(6));
+			w22.BottomAttach = ((uint)(7));
+			w22.LeftAttach = ((uint)(1));
+			w22.RightAttach = ((uint)(2));
+			w22.XOptions = ((global::Gtk.AttachOptions)(4));
+			w22.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table2.Gtk.Table+TableChild
+			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel1.Name = "ylabel1";
+			this.ylabel1.Xalign = 1F;
+			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Средняя оценка:");
+			this.table2.Add(this.ylabel1);
+			global::Gtk.Table.TableChild w23 = ((global::Gtk.Table.TableChild)(this.table2[this.ylabel1]));
+			w23.TopAttach = ((uint)(6));
+			w23.BottomAttach = ((uint)(7));
+			w23.XOptions = ((global::Gtk.AttachOptions)(4));
+			w23.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table2.Gtk.Table+TableChild
 			this.ylabelClothesSex = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelClothesSex.Name = "ylabelClothesSex";
 			this.ylabelClothesSex.Xalign = 1F;
 			this.ylabelClothesSex.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel1");
 			this.table2.Add(this.ylabelClothesSex);
-			global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.table2[this.ylabelClothesSex]));
-			w20.TopAttach = ((uint)(3));
-			w20.BottomAttach = ((uint)(4));
-			w20.XOptions = ((global::Gtk.AttachOptions)(4));
-			w20.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w24 = ((global::Gtk.Table.TableChild)(this.table2[this.ylabelClothesSex]));
+			w24.TopAttach = ((uint)(3));
+			w24.BottomAttach = ((uint)(4));
+			w24.XOptions = ((global::Gtk.AttachOptions)(4));
+			w24.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.dialog1_VBox.Add(this.table2);
-			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table2]));
-			w21.Position = 1;
+			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table2]));
+			w25.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
