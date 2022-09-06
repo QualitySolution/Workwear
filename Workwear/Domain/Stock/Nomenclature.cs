@@ -65,6 +65,14 @@ namespace workwear.Domain.Stock
 			get => archival;
 			set => SetField(ref archival, value);
 		}
+		
+		private float? rating;
+		[Display(Name ="Средняя оценка")]
+		public virtual float? Rating {
+			get => rating;
+			set => SetField(ref rating, value);
+		}
+		
 		#endregion
 		#region Рассчетные
 		public virtual string TypeName => Type.Name;
