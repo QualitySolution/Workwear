@@ -21,8 +21,8 @@ using workwear.ViewModels.Stock;
 
 namespace workwear.ViewModels.Import 
 {
-	public class IncomeImportViewModel : UowDialogViewModelBase 
-	{
+	public class IncomeImportViewModel : UowDialogViewModelBase {
+		private readonly IUserService userService;
 		public IncomeImportViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
@@ -33,8 +33,8 @@ namespace workwear.ViewModels.Import
 			IUserService userService,
 			ILifetimeScope autofacScope,
 			SizeService sizeService,
-			IProgressBarDisplayable progressBar) : base(unitOfWorkFactory, navigation) 
-		{
+			IProgressBarDisplayable progressBar) : base(unitOfWorkFactory, navigation) {
+			this.userService = userService;
 			this.interactiveService = interactiveService;
 			this.parser = parser;
 			SelectFileVisible = true;
@@ -163,6 +163,10 @@ namespace workwear.ViewModels.Import
 					progressBar.Add();
 					documentViewModel.ItemViewModels.Add(new DocumentItemViewModel { Item = documentItem });
 				}
+
+				if(documentViewModel.ItemViewModels
+				   .Any(x => x.CostWarning || x.HeightWarning || x.NomenclatureWarning || x.SizeWarning))
+					documentViewModel.OpenAfterSave = true;
 			}
 			progressBar.Close();
 			SelectDocumentViewModel = DocumentsViewModels.First();
@@ -175,8 +179,14 @@ namespace workwear.ViewModels.Import
 			progressBar.Start(DocumentsViewModels.Count, 0, "Создаём поступление");
 			foreach(var document in DocumentsViewModels) {
 				progressBar.Add();
-				var page = (NavigationManager as ITdiCompatibilityNavigation)?.OpenTdiTab<IncomeDocDlg>(null, OpenPageOptions.IgnoreHash);
-				var income = (page.TdiTab as IncomeDocDlg).Entity;
+				Income income;
+				if(document.OpenAfterSave) {
+					var page = (NavigationManager as ITdiCompatibilityNavigation)?.OpenTdiTab<IncomeDocDlg>(null, OpenPageOptions.IgnoreHash);
+					income = (page.TdiTab as IncomeDocDlg).Entity;
+				}
+				else
+					income = new Income();
+
 				income.Operation = IncomeOperations.Enter;
 				income.Warehouse = Warehouse;
 				income.Number = document.Number.ToString();
@@ -187,9 +197,14 @@ namespace workwear.ViewModels.Import
 						continue;
 					income.AddItem(item.Nomenclature, item.Size, item.Height, item.Amount, null, item.Cost);
 				}
-				if(document.OpenAfterSave is false)
-					(page.TdiTab as IncomeDocDlg)?.SaveAndClose();
+
+				if(document.OpenAfterSave is false) {
+					income.CreatedbyUser = userService.GetCurrentUser(UoW);
+					income.UpdateOperations(UoW, interactiveService);
+					UoW.Save(income);
+				}
 			}
+			UoW.Commit();
 			progressBar.Close();
 		}
 		
