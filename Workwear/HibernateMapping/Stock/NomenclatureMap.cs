@@ -21,6 +21,7 @@ namespace workwear.HMap
 			Map(x => x.Number).Column("number");
 			Map(x => x.Archival).Column("archival");
 			Map(x => x.Rating).Column("rating");
+			Map(x => x.RatingCount).Column("rating_count");
 
 			References (x => x.Type).Column ("type_id");
 

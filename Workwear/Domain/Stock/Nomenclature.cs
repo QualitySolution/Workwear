@@ -72,7 +72,14 @@ namespace workwear.Domain.Stock
 			get => rating;
 			set => SetField(ref rating, value);
 		}
-		
+
+		private int? ratingCount;
+
+		[Display(Name = "Количество оценок")]
+		public virtual int? RatingCount {
+			get => ratingCount;
+			set => SetField(ref ratingCount, value);
+		}
 		#endregion
 		#region Рассчетные
 		public virtual string TypeName => Type.Name;
