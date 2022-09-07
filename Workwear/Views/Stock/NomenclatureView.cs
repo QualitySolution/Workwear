@@ -1,4 +1,5 @@
-﻿using Gamma.Binding.Converters;
+using System;
+using Gamma.Binding.Converters;
 using NLog;
 using QS.Views.Dialog;
 using workwear.Domain.Stock;
@@ -17,6 +18,7 @@ namespace workwear.Views.Stock
 			this.Build();
 			ConfigureDlg();
 			CommonButtonSubscription();
+			ybuttonratingDetails.Clicked += ButtonRatingDetailsOnClicked;
 		}
 
 		private void ConfigureDlg()
@@ -51,6 +53,22 @@ namespace workwear.Views.Stock
 			ycheckArchival.Binding
 				.AddBinding(Entity, e => e.Archival, w => w.Active)
 				.InitializeFromSource();
+			
+			ybuttonratingDetails.Binding
+				.AddSource(ViewModel)
+					.AddBinding(vm => vm.VisibleRating, w => w.Visible)
+					.AddBinding(vm => vm.RatingButtonLabel, w => w.Label)
+				.InitializeFromSource();
+			
+			ylabel1.Binding
+				.AddBinding(ViewModel, vm => vm.VisibleRating, w => w.Visible)
+				.InitializeFromSource();
+			
+			ylabelAvgRating.Binding
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.VisibleRating, w => w.Visible)
+				.AddBinding(wm => wm.RatingLabel, w => w.Text)
+				.InitializeFromSource();
 
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
 			MakeMenu();
@@ -66,5 +84,7 @@ namespace workwear.Views.Stock
 			menuInternal.Menu = menu;
 			menu.ShowAll();
 		}
+		
+		private void ButtonRatingDetailsOnClicked(object sender, EventArgs e) => ViewModel.OpenRating();
 	}
 }

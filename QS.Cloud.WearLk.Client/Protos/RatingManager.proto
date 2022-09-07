@@ -1,0 +1,24 @@
+﻿syntax = "proto3";
+
+package QS.Cloud.WearLk.Manage;
+
+service RatingManager {
+	rpc GetRatings (GetRatingsRequest) returns (GetRatingsResponse);
+}
+
+// GetMessages
+message GetRatingsRequest {
+	int32 nomenclature_id = 1;
+}
+
+message GetRatingsResponse {
+	repeated Rating ratings = 1;
+}
+
+message Rating{
+	int32 id = 1;
+	string user_phone = 2;
+	int32 rating = 3;
+	string description = 4;
+	int32 issue_operation_id = 5;
+}

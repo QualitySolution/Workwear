@@ -267,6 +267,7 @@
     <Compile Include="Tools\BuisnessLogicGlobalEventHandler.cs" />
     <Compile Include="Domain\Company\Organization.cs" />
     <Compile Include="HibernateMapping\Company\OrganizatonMap.cs" />
+    <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeVacationViewModel.cs" />
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\Company\VacationTypeViewModel.cs" />
@@ -472,9 +473,6 @@
     <Compile Include="Journal\Filter.Views\Regulations\NormFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Regulations.NormFilterView.cs" />
     <Compile Include="Models\Company\PersonNames.cs" />
-    <Compile Include="ViewModels\Operations\ManualEmployeeIssueOperationViewModel.cs" />
-    <Compile Include="Views\Operations\ManualEmployeeIssueOperationView.cs" />
-    <Compile Include="gtk-gui\workwear.Views.Operations.ManualEmployeeIssueOperationView.cs" />
     <Compile Include="Domain\Stock\CollectiveExpense.cs" />
     <Compile Include="Domain\Stock\CollectiveExpenseItem.cs" />
     <Compile Include="HibernateMapping\Stock\CollectiveExpenseItemMap.cs" />
@@ -562,6 +560,11 @@
     <Compile Include="Journal\Filter.Views\Company\PostFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.PostFilterView.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\PostFilterViewModel.cs" />
+    <Compile Include="Views\Operations\ManualEmployeeIssueOperationsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Operations.ManualEmployeeIssueOperationsView.cs" />
+    <Compile Include="ViewModels\Operations\ManualEmployeeIssueOperationsViewModel.cs" />
+    <Compile Include="Views\Communications\RatingsView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Communications.RatingsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

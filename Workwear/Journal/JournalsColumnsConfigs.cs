@@ -229,6 +229,7 @@ namespace workwear.Journal
 					.AddColumn("Название").AddTextRenderer(node => node.Name + (node.Archival? "(архивная)": String.Empty)).SearchHighlight()
 					.AddColumn("Номер").AddTextRenderer(node => $"{node.Number}").SearchHighlight()
 					.AddColumn("Тип").AddTextRenderer(node => node.ItemType)
+					.AddColumn("Средняя оценка").AddTextRenderer(node => node.RatingText)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);

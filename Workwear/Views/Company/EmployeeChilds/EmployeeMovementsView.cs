@@ -47,9 +47,11 @@ namespace workwear.Views.Company.EmployeeChilds
 				var menu = new Menu();
 				var selected = ytreeviewMovements.GetSelectedObject<EmployeeCardMovements>();
 
-				var itemOpenLastIssue = new MenuItemId<EmployeeCardMovements>("Открыть документ");
+				var itemOpenLastIssue = new MenuItemId<EmployeeCardMovements>("Редактировать");
 				itemOpenLastIssue.ID = selected;
-				itemOpenLastIssue.Sensitive = selected?.EmployeeIssueReference?.DocumentType != null;
+				itemOpenLastIssue.Sensitive = selected?.EmployeeIssueReference?.DocumentType != null 
+				                              || selected?.Operation.OverrideBefore == true;
+				
 				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenDoc(((MenuItemId<EmployeeCardMovements>)sender).ID);
 				menu.Add(itemOpenLastIssue);
 

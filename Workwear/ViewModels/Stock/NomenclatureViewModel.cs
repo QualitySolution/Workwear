@@ -12,17 +12,21 @@ using QS.ViewModels.Dialog;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
+using workwear.Tools.Features;
+using workwear.ViewModels.Communications;
+using QS.Utilities;
 
 namespace workwear.ViewModels.Stock
 {
-	public class NomenclatureViewModel : EntityDialogViewModelBase<Nomenclature>
-	{
+	public class NomenclatureViewModel : EntityDialogViewModelBase<Nomenclature> {
+		private readonly FeaturesService featuresService;
 		public NomenclatureViewModel(
 			BaseParameters baseParameters,
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation, 
-			ILifetimeScope autofacScope, 
+			ILifetimeScope autofacScope,
+			FeaturesService featuresService,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			var entryBuilder = 
@@ -39,6 +43,8 @@ namespace workwear.ViewModels.Stock
 							{nameof(IUnitOfWork), UoW} })));
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
+
+			this.featuresService = featuresService;
 		}
 		#region EntityViewModels
 		public EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
@@ -46,17 +52,26 @@ namespace workwear.ViewModels.Stock
 		#region Visible
 		public bool VisibleClothesSex =>
 			Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear;
+
+		public bool VisibleRating => Entity.Rating != null && featuresService.Available(WorkwearFeature.Claims);
 		#endregion
 		#region Sensitive
 		public bool SensitiveOpenMovements => Entity.Id > 0;
 		#endregion
 		#region Data
 		public string ClothesSexLabel => "Пол: ";
+		public string RatingLabel => Entity.Rating?.ToString("F1");
+		public string RatingButtonLabel => Entity.RatingCount != null ? NumberToTextRus.FormatCase(Entity.RatingCount.Value, "Посмотреть {0} отзыв", "Посмотреть {0} отзыва", "Посмотреть {0} отзывов") : String.Empty;
 		#endregion
 		#region Actions
 		public void OpenMovements() {
 			NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(this,
 					addingRegistrations: builder => builder.RegisterInstance(Entity));
+		}
+
+		public void OpenRating() {
+			var page = NavigationManager.OpenViewModel<RatingsViewModel, Nomenclature>(this, Entity, OpenPageOptions.AsSlave);
+			page.ViewModel.EntryNomenclatureVisible = false;
 		}
 		#endregion
 		private void Entity_PropertyChanged(object sender, PropertyChangedEventArgs e) {

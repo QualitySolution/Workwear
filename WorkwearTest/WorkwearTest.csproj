@@ -235,6 +235,9 @@
     <None Include="Samples\Excel\Employees\employees_yo_in_name.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Samples\Excel\Employees\name_with_initials.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="Samples\Excel\items_dateCells.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
