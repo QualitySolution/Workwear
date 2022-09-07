@@ -14,6 +14,7 @@ using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Communications;
+using QS.Utilities;
 
 namespace workwear.ViewModels.Stock
 {
@@ -59,8 +60,8 @@ namespace workwear.ViewModels.Stock
 		#endregion
 		#region Data
 		public string ClothesSexLabel => "Пол: ";
-		public string RatingLabel => Entity.Rating != null ? Entity.Rating.Value.ToString("F") : String.Empty;
-
+		public string RatingLabel => Entity.Rating?.ToString("F1");
+		public string RatingButtonLabel => Entity.RatingCount != null ? NumberToTextRus.FormatCase(Entity.RatingCount.Value, "Посмотреть {0} отзыв", "Посмотреть {0} отзыва", "Посмотреть {0} отзывов") : String.Empty;
 		#endregion
 		#region Actions
 		public void OpenMovements() {

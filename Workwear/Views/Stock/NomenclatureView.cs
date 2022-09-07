@@ -55,7 +55,9 @@ namespace workwear.Views.Stock
 				.InitializeFromSource();
 			
 			ybuttonratingDetails.Binding
-				.AddBinding(ViewModel, vm => vm.VisibleRating, w => w.Visible)
+				.AddSource(ViewModel)
+					.AddBinding(vm => vm.VisibleRating, w => w.Visible)
+					.AddBinding(vm => vm.RatingButtonLabel, w => w.Label)
 				.InitializeFromSource();
 			
 			ylabel1.Binding
