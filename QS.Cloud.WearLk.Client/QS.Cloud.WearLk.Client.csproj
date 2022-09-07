@@ -23,6 +23,8 @@
       <Protobuf Include="Protos\Messages.proto" />
 		<None Remove="Protos\ClaimManager.proto" />
 		<Protobuf Include="Protos\ClaimManager.proto" />
+		<None Remove="Protos\RatingManager.proto" />
+		<Protobuf Include="Protos\RatingManager.proto" />
     </ItemGroup>
 
 </Project>

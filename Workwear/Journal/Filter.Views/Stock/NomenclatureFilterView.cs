@@ -14,6 +14,10 @@ namespace workwear.Journal.Filter.Views.Stock
 			yShowArchival.Binding
 				.AddBinding(viewModel, vm => vm.ShowArchival, w => w.Active)
 				.InitializeFromSource();
+			
+			ycheckbuttonOnlyWithRating.Binding
+				.AddBinding(ViewModel, wm => wm.OnlyWithRating, w => w.Active)
+				.InitializeFromSource();
 		}
 	}
 }
