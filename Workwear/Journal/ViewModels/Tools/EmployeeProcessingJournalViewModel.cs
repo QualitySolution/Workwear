@@ -197,6 +197,7 @@ namespace workwear.Journal.ViewModels.Tools
 		void UpdateNorms(EmployeeProcessingJournalNode[] nodes)
 		{
 			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
+			progressPage.PageClosed += ProgressPageOnPageClosed;
 			var progress = progressPage.ViewModel.Progress;
 
 			progress.Start(nodes.Length + 2, text: "Загружаем сотрудников");
@@ -207,6 +208,10 @@ namespace workwear.Journal.ViewModels.Tools
 			int step = 0;
 
 			foreach(var employee in employees) {
+				if(cancelUpdate) {
+					cancelUpdate = false;
+					break;
+				}
 				progress.Add(text: $"Обработка {employee.ShortName}");
 				if(employee.Post == null) {
 					Results[employee.Id] = "Отсутствует должность";
@@ -234,6 +239,7 @@ namespace workwear.Journal.ViewModels.Tools
 
 		private void UpdateAllNorms(EmployeeProcessingJournalNode[] nodes) {
 			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
+			progressPage.PageClosed += ProgressPageOnPageClosed;
 			var progress = progressPage.ViewModel.Progress;
 
 			progress.Start(nodes.Length + 2, text: "Загружаем сотрудников");
@@ -247,6 +253,10 @@ namespace workwear.Journal.ViewModels.Tools
 			var step = 0;
 
 			foreach(var employee in employees) {
+				if(cancelUpdate) {
+					cancelUpdate = false;
+					break;
+				}
 				progress.Add(text: $"Обработка {employee.ShortName}");
 				if(employee.Post == null) {
 					Results[employee.Id] = "Отсутствует должность";
@@ -255,6 +265,7 @@ namespace workwear.Journal.ViewModels.Tools
 
 				var normsForEmployee = norms
 					.Where(x => x.IsActive && x.Posts.Contains(employee.Post))
+					.Distinct()
 					.ToList();
 				if(normsForEmployee.Any()) {
 					step++;
@@ -275,9 +286,16 @@ namespace workwear.Journal.ViewModels.Tools
 			Refresh();
 		}
 
+		private bool cancelUpdate;
+		private void ProgressPageOnPageClosed(object sender, PageClosedEventArgs e) {
+			if(e.CloseSource == CloseSource.ClosePage) 
+				cancelUpdate = true;
+		}
+
 		void UpdateNextIssue(EmployeeProcessingJournalNode[] nodes)
 		{
 			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
+			progressPage.PageClosed += ProgressPageOnPageClosed;
 			var progress = progressPage.ViewModel.Progress;
 			loggerProcessing.Info($"Пересчет даты следующией выдачи для {nodes.Length} сотрудников");
 			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
@@ -287,6 +305,10 @@ namespace workwear.Journal.ViewModels.Tools
 
 			int step = 0;
 			foreach(var employee in employees) {
+				if(cancelUpdate) {
+						cancelUpdate = false;
+						break;
+				}
 				progress.Add(text: $"Обработка {employee.ShortName}");
 				step++;
 				var oldDates = employee.WorkwearItems.Select(x => x.NextIssue).ToArray();
@@ -313,6 +335,7 @@ namespace workwear.Journal.ViewModels.Tools
 		void UpdateLastIssue(EmployeeProcessingJournalNode[] nodes)
 		{
 			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
+			progressPage.PageClosed += ProgressPageOnPageClosed;
 			var progress = progressPage.ViewModel.Progress;
 			loggerProcessing.Info($"Пересчет сроков носки получного для {nodes.Length} сотрудников");
 			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
@@ -324,6 +347,10 @@ namespace workwear.Journal.ViewModels.Tools
 			var operations = employeeIssueRepository.GetLastIssueOperationsForEmployee(employees);
 			int step = 0;
 			foreach(var employee in employees) {
+				if(cancelUpdate) {
+					cancelUpdate = false;
+					break;
+				}
 				progress.Add(text: $"Обработка {employee.ShortName}");
 				step++;
 				var employeeOperations = operations.Where(x => x.Employee.IsSame(employee)).ToList();
