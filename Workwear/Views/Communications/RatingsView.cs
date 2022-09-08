@@ -13,8 +13,6 @@ namespace workwear.Views.Communications
 
 			entityNomenclature.ViewModel = viewModel.EntryNomenclature;
 
-			entityNomenclature.Visible = viewModel.EntryNomenclatureVisible;
-
 			ytreeviewRatings.ColumnsConfig = ColumnsConfigFactory.Create<Rating>()
 				.AddColumn("Отправитель").AddTextRenderer(node => node.UserPhone)
 				.AddColumn("Оценка").AddNumericRenderer(node => node.Rating_)

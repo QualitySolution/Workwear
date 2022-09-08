@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -71,7 +71,6 @@ namespace workwear.ViewModels.Stock
 
 		public void OpenRating() {
 			var page = NavigationManager.OpenViewModel<RatingsViewModel, Nomenclature>(this, Entity);
-			page.ViewModel.EntryNomenclatureVisible = false;
 		}
 		#endregion
 		private void Entity_PropertyChanged(object sender, PropertyChangedEventArgs e) {

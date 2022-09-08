@@ -24,7 +24,6 @@ namespace workwear.ViewModels.Communications
 			Nomenclature nomenclature = null,
 			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator) 
 		{
-			EntryNomenclatureVisible = true;
 			this.ratingManagerService = ratingManagerService;
 			var builder = new CommonEEVMBuilderFactory<RatingsViewModel>(
 				this, this, UoW, NavigationManager, autofacScope);
@@ -55,13 +54,6 @@ namespace workwear.ViewModels.Communications
 			get => ratings;
 			set => SetField(ref ratings, value);
 		}
-
-		private bool entryNomenclatureVisible;
-		public bool EntryNomenclatureVisible {
-			get => entryNomenclatureVisible;
-			set => SetField(ref entryNomenclatureVisible, value);
-		}
-
 		#endregion
 
 		#region Entry
