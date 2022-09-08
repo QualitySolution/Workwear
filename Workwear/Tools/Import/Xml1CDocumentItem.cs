@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Xml;
 using System.Xml.Linq;
 using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
@@ -38,17 +39,8 @@ namespace workwear.Tools.Import
 		private decimal? cost;
 		public decimal Cost {
 			get {
-				if(cost is null) {
-					if(Decimal.TryParse(
-						   CostFromCatalog, NumberStyles.Number, CultureInfo.CurrentCulture, out var costParseResult))
-						cost = costParseResult;
-					else { //Для компьютеров с неправильно настроенной культурой
-						cost = Decimal.TryParse(
-							CostFromCatalog, NumberStyles.Number, CultureInfo.InvariantCulture, out var invariantParseResult)
-							? invariantParseResult
-							: 0;
-					}
-				}
+				if(cost is null) 
+					cost = XmlConvert.ToDecimal(CostFromCatalog);
 				return cost.Value;
 			}
 			set => cost = value;
