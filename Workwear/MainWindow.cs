@@ -763,7 +763,7 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager.OpenViewModel<SizeJournalViewModel>(null);
 	}
 
-	protected void OnActionSizeTypeActivated(object sender, EventArgs e)
+	protected void OnActionSizeTypeActivated(object sender, EventArgs e) 
 	{
 		NavigationManager.OpenViewModel<SizeTypeJournalViewModel>(null);
 	}
@@ -774,4 +774,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnRatingNomenclatureActivated(object sender, EventArgs e) => 
 		NavigationManager.OpenViewModel<RatingsViewModel>(null);
+
+	protected void OnActionIncomeLoadActivated(object sender, EventArgs e) => 
+		NavigationManager.OpenViewModel<IncomeImportViewModel>(null);
 }
