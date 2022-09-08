@@ -22,8 +22,7 @@ namespace workwear.ViewModels.Communications
 			ILifetimeScope autofacScope,
 			RatingManagerService ratingManagerService,
 			Nomenclature nomenclature = null,
-			IValidator validator = null, 
-			string UoWTitle = null) : base(unitOfWorkFactory, navigation, validator, UoWTitle) 
+			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator) 
 		{
 			EntryNomenclatureVisible = true;
 			this.ratingManagerService = ratingManagerService;
@@ -34,14 +33,8 @@ namespace workwear.ViewModels.Communications
 				.UseViewModelJournalAndAutocompleter<NomenclatureJournalViewModel>()
 				.UseViewModelDialog<NomenclatureViewModel>()
 				.Finish();
-
-			if(nomenclature is null) {
-				Title = "Рейтинг номеклатуры";
-			}
-			else {
-				Title = "Рейтинг для номенклатуры: " + nomenclature.Name;
-				SelectNomenclature = UoW.GetById<Nomenclature>(nomenclature.Id);
-			}
+			
+			SelectNomenclature = nomenclature == null ? null : UoW.GetById<Nomenclature>(nomenclature.Id);
 		}
 
 		#region Свойства
@@ -50,12 +43,9 @@ namespace workwear.ViewModels.Communications
 		public Nomenclature SelectNomenclature {
 			get => selectNomenclature;
 			set {
-				if(SetField(ref selectNomenclature, value))
-					if(selectNomenclature is null)
-						Ratings = new List<Rating>();
-					else {
-						Ratings = ratingManagerService.GetRatings(value.Id);
-					}
+				SetField(ref selectNomenclature, value);
+				Title = selectNomenclature == null ? "Отзывы на выданное" : "Отзывы для: " + selectNomenclature.Name; 
+				Ratings = ratingManagerService.GetRatings(value?.Id ?? -1);
 			}
 		}
 
