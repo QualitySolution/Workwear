@@ -2,6 +2,7 @@
 using Gamma.GtkWidgets;
 using Gtk;
 using QS.Views.Dialog;
+using QSWidgetLib;
 using workwear.ViewModels.Import;
 
 namespace workwear.Views.Import 
@@ -80,7 +81,7 @@ namespace workwear.Views.Import
 		private void TreeViewDocumentItemsBuild() 
 		{
 			ytreeview1.ColumnsConfig = ColumnsConfigFactory.Create<DocumentItemViewModel>()
-				.AddColumn("Номенклатура").AddTextRenderer(i => i.Nomenclature)
+				.AddColumn("Номенклатура").AddTextRenderer(i => i.NomenclatureName)
 				.AddSetter(
 					(c, n) => c.Foreground = ColorState(n.NomenclatureWarning))
 				.AddColumn("Номенклатурный номер").AddTextRenderer(i => i.Article)
@@ -91,7 +92,9 @@ namespace workwear.Views.Import
 					.AddSetter(
 						(c, n) => c.Foreground = ColorState(n.HeightWarning))
 				.AddColumn("Количество").AddNumericRenderer(i => i.Amount)
+					.Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(8)
 				.AddColumn("Стоимость").AddNumericRenderer(i => i.Cost)
+					.Editing (new Adjustment(0,0,100000000,100,1000,0)).Digits (2).WidthChars(12)
 					.AddSetter((c, n) => c.Foreground = ColorState(n.CostWarning))
 				.Finish();
 			
@@ -100,8 +103,9 @@ namespace workwear.Views.Import
 				.AddBinding(wm => wm.SelectDocumentItemViewModels, w => w.ItemsDataSource)
 				.InitializeFromSource();
 			ytreeview1.YTreeModel.EmitModelChanged();
+			ytreeview1.ButtonReleaseEvent += TreeView1OnButtonReleaseEvent;
 		}
-		
+
 		#endregion
 
 		#region ViewEvents
@@ -139,6 +143,34 @@ namespace workwear.Views.Import
 			fileChooserDialog.Destroy();
 		}
 		private static string ColorState(bool state) => state ? "red" : null;
+
+		#endregion
+
+		#region Popup Menu
+
+		private void TreeView1OnButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
+			if(args.Event.Button == 3) {
+				var menu = new Menu();
+				var selected = ytreeview1.GetSelectedObject<DocumentItemViewModel>();
+				
+				var itemSetSize = new MenuItemId<DocumentItemViewModel>("Поставить размер");
+				itemSetSize.ID = selected;
+				itemSetSize.Sensitive = selected?.Item.Nomenclature?.Type.SizeType != null;
+				itemSetSize.Activated += (sender, e) => 
+					ViewModel.AddSize(((MenuItemId<DocumentItemViewModel>)sender).ID);
+				menu.Add(itemSetSize);
+				
+				var itemSetHeight = new MenuItemId<DocumentItemViewModel>("Поставить рост");
+				itemSetHeight.ID = selected;
+				itemSetHeight.Sensitive = selected?.Item.Nomenclature?.Type.HeightType != null;
+				itemSetHeight.Activated += (sender, e) => 
+					ViewModel.AddHeight(((MenuItemId<DocumentItemViewModel>)sender).ID);
+				menu.Add(itemSetHeight);
+				
+				menu.ShowAll();
+				menu.Popup();
+			}
+		}
 
 		#endregion
 	}

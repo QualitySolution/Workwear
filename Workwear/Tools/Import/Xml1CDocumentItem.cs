@@ -24,8 +24,26 @@ namespace workwear.Tools.Import
 		public Nomenclature Nomenclature { get; set; }
 		public Size Size { get; set; }
 		public Size Height { get; set; }
-		public int Amount => Int32.TryParse(AmountFromCatalog, out var parseResult) ? parseResult : 0;
-		public decimal Cost => Decimal.TryParse(CostFromCatalog, out var costParseResult) ? costParseResult : 0;
+		private int? amount;
+		public int Amount {
+			get {
+				if(amount is null)
+					amount = Int32.TryParse(AmountFromCatalog, out var parseResult) ? parseResult : 0;
+				return amount.Value;
+			}
+			set => amount = value;
+		}
+
+		private decimal? cost;
+		public decimal Cost {
+			get {
+				if(cost is null)
+					cost = Decimal.TryParse(CostFromCatalog, out var costParseResult) ? costParseResult : 0;
+				return cost.Value;
+			}
+			set => cost = value;
+		}
+
 		public string NomenclatureFromCatalog { get; set; }
 		public string NomenclatureArticle { get; set; }
 		public string SizeName { get; set; }

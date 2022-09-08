@@ -7,9 +7,11 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Project.Journal;
 using QS.Services;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using Workwear.Domain.Sizes;
 using workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
@@ -213,18 +215,18 @@ namespace workwear.ViewModels.Import
 				var nomenclatureTypes = new NomenclatureTypes(UoW, sizeService, true);
 				var documentItemsWithoutNomenclature = DocumentsViewModels
 					.SelectMany(d => d.ItemViewModels.Where(i => i.NomenclatureWarning))
-					.GroupBy(x => x.Nomenclature)
+					.GroupBy(x => x.NomenclatureName)
 					.Select(g => g.First())
 					.ToList();
 				progressBar.Start(documentItemsWithoutNomenclature.Count, 0,"Создаём номенклатуру");
 				foreach(var notFoundNomenclature in documentItemsWithoutNomenclature) {
 					progressBar.Add();
-					var type = nomenclatureTypes.ParseNomenclatureName(notFoundNomenclature.Nomenclature);
+					var type = nomenclatureTypes.ParseNomenclatureName(notFoundNomenclature.NomenclatureName);
 					if(UInt32.TryParse(notFoundNomenclature.Article, out var result)) {
 						if(type is null) {
 							var page = NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null,
 								EntityUoWBuilder.ForCreate());
-							page.ViewModel.Entity.Name = notFoundNomenclature.Nomenclature;
+							page.ViewModel.Entity.Name = notFoundNomenclature.NomenclatureName;
 							page.ViewModel.Entity.Number = result;
 							openNomenclatureDialog = true;
 						}
@@ -232,7 +234,7 @@ namespace workwear.ViewModels.Import
 							if(type.Id == 0)
 									UoW.Save(type);
 							var nomenclature = new Nomenclature {
-								Name = notFoundNomenclature.Nomenclature,
+								Name = notFoundNomenclature.NomenclatureName,
 								Number = result,
 								Type = type,
 								Comment = "Созданно при загрузке поступления из файла"
@@ -259,6 +261,38 @@ namespace workwear.ViewModels.Import
 				foreach(var document in DocumentsViewModels)
 					document.WantDownload = true;
 		}
+		
+		public void AddSize(DocumentItemViewModel documentItemViewModel)
+		{
+			forSetSize = documentItemViewModel;
+			var page = NavigationManager.OpenViewModel<SizeJournalViewModel>(this, OpenPageOptions.AsSlave);
+			page.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			page.ViewModel.Filter.SelectedSizeType = documentItemViewModel.Item.Nomenclature.Type.SizeType;
+			page.ViewModel.Filter.IsShow = false;
+			page.ViewModel.OnSelectResult += Size_OnSelectResult;
+			page.ViewModel.TabClosed += (sender, args) => forSetSize = null;
+		}
+
+		private void Size_OnSelectResult(object sender, JournalSelectedEventArgs e) => 
+			forSetSize.Item.Size = UoW.GetById<Size>(((SizeJournalNode)e.SelectedObjects.First()).Id);
+
+
+		public void AddHeight(DocumentItemViewModel documentItemViewModel)
+		{
+			forSetSize = documentItemViewModel;
+			var page = NavigationManager.OpenViewModel<SizeJournalViewModel>(this, OpenPageOptions.AsSlave);
+			page.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			page.ViewModel.Filter.SelectedSizeType = documentItemViewModel.Item.Nomenclature.Type.HeightType;
+			page.ViewModel.Filter.IsShow = false;
+			page.ViewModel.OnSelectResult += Height_OnSelectResult;
+			page.ViewModel.TabClosed += (sender, args) => forSetSize = null;
+		}
+
+		private void Height_OnSelectResult(object sender, JournalSelectedEventArgs e) => 
+			forSetSize.Item.Height = UoW.GetById<Size>(((SizeJournalNode)e.SelectedObjects.First()).Id);
+
+		private DocumentItemViewModel forSetSize;
+
 
 		#endregion
 
@@ -302,14 +336,22 @@ namespace workwear.ViewModels.Import
 	public class DocumentItemViewModel
 	{
 		public Xml1CDocumentItem Item { get; set; }
-		public string Nomenclature => Item.Nomenclature?.Name ?? Item.NomenclatureFromCatalog;
+		public string NomenclatureName => Item.Nomenclature?.Name ?? Item.NomenclatureFromCatalog;
 		public string Size => Item.Size?.Name ?? Item.SizeName;
 		public string Height => Item.Height?.Name ?? Item.HeightName;
-		public int Amount => Item.Amount;
-		public decimal Cost => Item.Cost;
+		public int Amount {
+			get => Item.Amount;
+			set => Item.Amount = value;
+		}
+
+		public decimal Cost {
+			get => Item.Cost;
+			set => Item.Cost = value;
+		}
+
 		public bool NomenclatureWarning => Item.Nomenclature == null;
-		public bool SizeWarning => Nomenclature != null && Item.Size == null;
-		public bool HeightWarning => Nomenclature != null && Item.Height == null;
+		public bool SizeWarning => NomenclatureName != null && Item.Size == null;
+		public bool HeightWarning => NomenclatureName != null && Item.Height == null;
 		public string Article => Item.NomenclatureArticle;
 		public bool CostWarning => Item.Cost == 0;
 	}
