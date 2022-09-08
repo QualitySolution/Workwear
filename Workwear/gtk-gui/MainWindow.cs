@@ -173,6 +173,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionIncomeLoad;
 
+	private global::Gtk.Action ActionNomenclaturerating;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -468,6 +470,9 @@ public partial class MainWindow
 		this.ActionClaims = new global::Gtk.Action("ActionClaims", global::Mono.Unix.Catalog.GetString("Обращение"), null, " SendBox");
 		this.ActionClaims.ShortLabel = global::Mono.Unix.Catalog.GetString("Обращение");
 		w1.Add(this.ActionClaims, null);
+		this.ActionNomenclaturerating = new global::Gtk.Action("ActionNomenclaturerating", global::Mono.Unix.Catalog.GetString("Рейтинг номенклатур"), null, null);
+		this.ActionNomenclaturerating.ShortLabel = global::Mono.Unix.Catalog.GetString("Рейтинг номенклатур");
+		w1.Add(this.ActionNomenclaturerating, null);
 		this.ActionIncomeLoad = new global::Gtk.Action("ActionIncomeLoad", global::Mono.Unix.Catalog.GetString("Поступление"), null, null);
 		this.ActionIncomeLoad.ShortLabel = global::Mono.Unix.Catalog.GetString("Поступление");
 		w1.Add(this.ActionIncomeLoad, null);
@@ -757,6 +762,7 @@ public partial class MainWindow
 		this.ActionSize.Activated += new global::System.EventHandler(this.OnActionSizeActivated);
 		this.ActionSizeType.Activated += new global::System.EventHandler(this.OnActionSizeTypeActivated);
 		this.ActionClaims.Activated += new global::System.EventHandler(this.OnActionClaimsActivated);
+		this.ActionNomenclaturerating.Activated += new global::System.EventHandler(this.OnRatingNomenclatureActivated);
 		this.ActionIncomeLoad.Activated += new global::System.EventHandler(this.OnActionIncomeLoadActivated);
 	}
 }

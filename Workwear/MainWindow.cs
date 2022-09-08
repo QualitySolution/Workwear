@@ -772,6 +772,9 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager.OpenViewModel<ClaimsViewModel>(null);
 	}
 
+	protected void OnRatingNomenclatureActivated(object sender, EventArgs e) => 
+		NavigationManager.OpenViewModel<RatingsViewModel>(null);
+
 	protected void OnActionIncomeLoadActivated(object sender, EventArgs e) => 
 		NavigationManager.OpenViewModel<IncomeImportViewModel>(null);
 }
