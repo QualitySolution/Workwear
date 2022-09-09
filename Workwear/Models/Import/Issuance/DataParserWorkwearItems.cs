@@ -241,6 +241,7 @@ namespace workwear.Models.Import.Issuance
 						Returned = 0,
 						StartOfUse = row.Date,
 						UseAutoWriteoff = expenseDate != null,
+						ManualOperation = true, //Загруженные из Excel операции будут выглядеть как ручные.
 					};
 					//Обрабатываем размер.
 					TryParseSizeAndHeight(uow, row, importModel);
