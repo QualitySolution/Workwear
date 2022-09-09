@@ -185,6 +185,14 @@ namespace workwear.Domain.Operations
 			set => SetField(ref overrideBefore, value);
 		}
 
+		private bool manualOperation;
+
+		[Display(Name = "Признак ручной операции")]
+		public virtual bool ManualOperation {
+			get => manualOperation;
+			set => SetField(ref manualOperation, value);
+		}
+
 		/// <summary>
 		/// Для создания операций выдачи надо использовать конструктор с BaseParameters
 		/// </summary>
