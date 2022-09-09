@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Autofac;
 using QS.Cloud.WearLk.Client;
 using QS.Cloud.WearLk.Manage;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Validation;
@@ -39,14 +41,19 @@ namespace workwear.ViewModels.Communications
 		#region Свойства
 
 		private Nomenclature selectNomenclature;
+		[PropertyChangedAlso(nameof(NomenclatureColumnVisible))]
 		public Nomenclature SelectNomenclature {
 			get => selectNomenclature;
 			set {
 				SetField(ref selectNomenclature, value);
 				Title = selectNomenclature == null ? "Отзывы на выданное" : "Отзывы для: " + selectNomenclature.Name; 
 				Ratings = ratingManagerService.GetRatings(value?.Id ?? -1);
+				if(ratings.Any())
+					RefreshNomenclatureNames(Ratings.Select(x => x.NomenclatureId).ToArray());
 			}
 		}
+		
+		public virtual bool NomenclatureColumnVisible => SelectNomenclature == null;
 
 		private IList<Rating> ratings;
 
@@ -56,10 +63,22 @@ namespace workwear.ViewModels.Communications
 		}
 		#endregion
 
+		#region Названия номеклатуры
+
+		private Dictionary<int, string> nomenclatureNames = new Dictionary<int, string>();
+		public string GetNomenclatureName(Rating rating) {
+			if(nomenclatureNames.TryGetValue(rating.NomenclatureId, out string name))
+				return name;
+			return null;
+		}
+
+		void RefreshNomenclatureNames(int[] ids) {
+			nomenclatureNames = UoW.GetById<Nomenclature>(ids).ToDictionary(x => x.Id, x => x.Name);
+		}
+		#endregion
+		
 		#region Entry
-
 		public EntityEntryViewModel<Nomenclature> EntryNomenclature;
-
 		#endregion
 	}
 }
