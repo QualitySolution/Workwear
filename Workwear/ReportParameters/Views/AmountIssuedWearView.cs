@@ -25,16 +25,15 @@ namespace workwear.ReportParameters.Views
 			ycheckSummry.Binding.AddBinding(viewModel, v => v.Summary, w => w.Active).InitializeFromSource();
 			ycheckAll.Binding.AddSource(viewModel)
 				.AddBinding(v => v.SelectAll, w => w.Active)
-				.AddBinding(v => v.SensetiveSubdivisions, w => w.Sensitive).InitializeFromSource();
-
-			ytreeSubdivisions.Binding.AddBinding(viewModel, v => v.SensetiveSubdivisions, w => w.Sensitive).InitializeFromSource();
+				.InitializeFromSource();
+			
 			ytreeSubdivisions.CreateFluentColumnsConfig<SelectedSubdivison>()
 				.AddColumn("Показ").AddToggleRenderer(x => x.Select).Editing()
 				.AddColumn("Подразделение").AddTextRenderer(x => x.Name)
 				.Finish();
-			ytreeSubdivisions.ItemsDataSource = new GenericObservableList<SelectedSubdivison>(viewModel.Subdivisons);
+			ytreeSubdivisions.ItemsDataSource = new GenericObservableList<SelectedSubdivison>(viewModel.Subdivisions);
 
-			buttonPrintReport.Binding.AddBinding(viewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
+			buttonPrintReport.Binding.AddBinding(viewModel, v => v.SensitiveLoad, w => w.Sensitive).InitializeFromSource();
 
 			yentryMatch.Binding.AddBinding(viewModel, v => v.MatchString, w => w.Text).InitializeFromSource();
 
@@ -43,7 +42,6 @@ namespace workwear.ReportParameters.Views
 			ycheckChild.Binding
 				.AddSource(viewModel)
 				.AddBinding(vm => vm.AddChildSubdivisions, w => w.Active)
-				.AddBinding(vm => vm.VisibleAddChild, w => w.Visible)
 				.InitializeFromSource();
 			checkUseAlterName.Binding
 				.AddSource(ViewModel)

@@ -23,7 +23,7 @@ namespace workwear.ReportParameters.ViewModels
 			Identifier = "AmountIssuedWear";
 			using(var uow = uowFactory.CreateWithoutRoot()) {
 				SelectedSubdivison resultAlias = null;
-				Subdivisons = subdivisionRepository.ActiveQuery(uow)
+				Subdivisions = subdivisionRepository.ActiveQuery(uow)
 					.SelectList(list => list
 					   .Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					   .Select(x => x.Name).WithAlias(() => resultAlias.Name)
@@ -31,13 +31,13 @@ namespace workwear.ReportParameters.ViewModels
 				.TransformUsing(Transformers.AliasToBean<SelectedSubdivison>())
 				.List<SelectedSubdivison>();
 			}
-			Subdivisons.Insert(0, 
+			Subdivisions.Insert(0, 
 				new SelectedSubdivison {
 					Id = -1,
 					Name = "Без подразделения" 
 			});
-			foreach(var item in Subdivisons) {
-				item.PropertyChanged += (sender, e) => OnPropertyChanged(nameof(SensetiveLoad));
+			foreach(var item in Subdivisions) {
+				item.PropertyChanged += (sender, e) => OnPropertyChanged(nameof(SensitiveLoad));
 			}
 			unitOfWork = uowFactory.CreateWithoutRoot();
 		}
@@ -47,7 +47,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"dateEnd", EndDate},
 					{"summary", Summary},
 					{"bySize", BySize},
-					{"withoutsub", !Summary && Subdivisons.First().Select },
+					{"withoutsub", Subdivisions.First(x =>x.Id == -1).Select },
 					{"subdivisions", SelectSubdivisons() },
 					{"issue_type", IssueType?.ToString() },
 					{"matchString", MatchString},
@@ -57,14 +57,14 @@ namespace workwear.ReportParameters.ViewModels
 
 		#region Параметры
 		private DateTime? startDate;
-		[PropertyChangedAlso(nameof(SensetiveLoad))]
+		[PropertyChangedAlso(nameof(SensitiveLoad))]
 		public virtual DateTime? StartDate {
 			get => startDate;
 			set => SetField(ref startDate, value);
 		}
 
 		private DateTime? endDate;
-		[PropertyChangedAlso(nameof(SensetiveLoad))]
+		[PropertyChangedAlso(nameof(SensitiveLoad))]
 		public virtual DateTime? EndDate {
 			get => endDate;
 			set => SetField(ref endDate, value);
@@ -77,9 +77,6 @@ namespace workwear.ReportParameters.ViewModels
 		}
 
 		private bool summary = true;
-		[PropertyChangedAlso(nameof(SensetiveLoad))]
-		[PropertyChangedAlso(nameof(SensetiveSubdivisions))]
-		[PropertyChangedAlso(nameof(VisibleAddChild))]
 		public virtual bool Summary {
 			get => summary;
 			set => SetField(ref summary, value);
@@ -104,28 +101,27 @@ namespace workwear.ReportParameters.ViewModels
 			get => useAlternativeName;
 			set => SetField(ref useAlternativeName, value);
 		}
-		public bool VisibleAddChild => !Summary;
 		public bool VisibleUseAlternative => BySize;
 		#endregion
 		
 		#region Свойства
-		private bool selectAll;
+
+		private bool selectAll = true;
 		public virtual bool SelectAll {
 			get => selectAll;
 			set {
 				SetField(ref selectAll, value);
 				{
-					foreach(var item in Subdivisons) {
+					foreach(var item in Subdivisions) {
 						item.Select = value;
 					}
 				}
 			}
 		}
 
-		public IList<SelectedSubdivison> Subdivisons;
+		public IList<SelectedSubdivison> Subdivisions;
 
-		public bool SensetiveLoad => StartDate != null && EndDate != null && (Summary || Subdivisons.Any(x => x.Select));
-		public bool SensetiveSubdivisions => !Summary;
+		public bool SensitiveLoad => StartDate != null && EndDate != null && Subdivisions.Any(x => x.Select);
 
 		private string matchString;
 		public string MatchString {
@@ -145,9 +141,7 @@ namespace workwear.ReportParameters.ViewModels
 		#endregion
 
 		private int[] SelectSubdivisons() {
-			if (Summary) return new[] {-1};
-			
-			var selectedId = Subdivisons
+			var selectedId = Subdivisions
 				.Where(x => x.Select).Select(x => x.Id).ToList();
 			
 			if (!AddChildSubdivisions) return selectedId.ToArray();
