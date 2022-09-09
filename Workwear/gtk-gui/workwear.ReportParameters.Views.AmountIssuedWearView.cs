@@ -162,7 +162,7 @@ namespace workwear.ReportParameters.Views
 			this.ycheckSummry = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckSummry.CanFocus = true;
 			this.ycheckSummry.Name = "ycheckSummry";
-			this.ycheckSummry.Label = global::Mono.Unix.Catalog.GetString("Суммарно по организации");
+			this.ycheckSummry.Label = global::Mono.Unix.Catalog.GetString("Суммировать результат");
 			this.ycheckSummry.DrawIndicator = true;
 			this.ycheckSummry.UseUnderline = true;
 			this.vbox2.Add(this.ycheckSummry);
