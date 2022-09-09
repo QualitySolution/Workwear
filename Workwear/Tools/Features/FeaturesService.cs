@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Gamma.Utilities;
 using QS.Cloud.Client;
+using QS.Cloud.Core;
 using QS.Project.Versioning;
 using QS.Project.Versioning.Product;
 using QS.Serial;
@@ -26,6 +29,18 @@ namespace workwear.Tools.Features
 		public byte ProductEdition { get; }
 
 		public string EditionName => SupportEditions.First(x => x.Number == ProductEdition).Name;
+
+		private HashSet<string> availableCloudFeatures;
+		private HashSet<string> AvailableCloudFeatures {
+			get {
+				if(availableCloudFeatures == null) {
+					availableCloudFeatures = new HashSet<string>(
+						cloudClientService.GetAvailableFeatures(dataBaseInfo.BaseGuid.Value.ToString())
+						.Select(x => x.Name));
+				}
+				return availableCloudFeatures;
+			}
+		}
 
 		public FeaturesService(ISerialNumberService serialNumberService, SerialNumberEncoder serialNumberEncoder, CloudClientService cloudClientService = null, IDataBaseInfo dataBaseInfo = null)
 		{
@@ -65,6 +80,32 @@ namespace workwear.Tools.Features
 			if(ProductEdition == 0) //В демо редакции доступны все возможности кроме облачных
 				return (feature != WorkwearFeature.Communications && feature != WorkwearFeature.EmployeeLk);
 
+			if(feature.GetAttribute<IsCloudFeatureAttribute>() != null) {
+				if(!QSSaaS.Session.IsSaasConnection)
+					return false;
+				if(dataBaseInfo.BaseGuid == null) {
+					logger.Warn($"Облачная функциональность не доступна: dataBaseInfo.BaseGuid = null");
+					return false;
+				}
+
+				switch(feature) {
+					case WorkwearFeature.Communications:
+					case WorkwearFeature.EmployeeLk:
+						if(ProductEdition != 2 && ProductEdition != 3)
+							return false;
+						
+						return AvailableCloudFeatures.Contains("wear_lk");
+					case WorkwearFeature.Claims:
+						if(ProductEdition != 2 && ProductEdition != 3)
+							return false;
+						return AvailableCloudFeatures.Contains("claims_lk");
+					case WorkwearFeature.Ratings:
+						if(ProductEdition != 2 && ProductEdition != 3)
+							return false;
+						return AvailableCloudFeatures.Contains("ratings");
+				}
+			}
+
 			switch(feature) {
 				case WorkwearFeature.Warehouses:
 				case WorkwearFeature.IdentityCards:
@@ -73,33 +114,10 @@ namespace workwear.Tools.Features
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.BatchProcessing:
 					return ProductEdition == 2 || ProductEdition == 3;
-				case WorkwearFeature.Communications:
-				case WorkwearFeature.EmployeeLk:
-					if(ProductEdition != 2 && ProductEdition != 3)
-						return false;
-					if(!QSSaaS.Session.IsSaasConnection)
-						return false;
-					if(dataBaseInfo.BaseGuid == null) {
-						logger.Warn($"Функциональность мобильного кабинета не доступна: dataBaseInfo.BaseGuid = null");
-						return false;
-					}
-					var functionLists = cloudClientService.GetAvailableFeatures(dataBaseInfo.BaseGuid.Value.ToString());
-					return functionLists.Any(x => x.Name == "wear_lk");
 				case WorkwearFeature.HistoryLog:
 					return ProductEdition == 2 || ProductEdition == 3;
 				case WorkwearFeature.Completion:
 					return ProductEdition == 2 || ProductEdition == 3;
-				case WorkwearFeature.Claims:
-					if(ProductEdition != 2 && ProductEdition != 3)
-						return false;
-					if(!QSSaaS.Session.IsSaasConnection)
-						return false;
-					if(dataBaseInfo.BaseGuid == null) {
-						logger.Warn($"Функциональность мобильного кабинета не доступна: dataBaseInfo.BaseGuid = null");
-						return false;
-					}
-					functionLists = cloudClientService.GetAvailableFeatures(dataBaseInfo.BaseGuid.Value.ToString());
-					return functionLists.Any(x => x.Name == "claims_lk");
 				default:
 					return false;
 			}
@@ -118,15 +136,24 @@ namespace workwear.Tools.Features
 		LoadExcel,
 		[Display(Name = "Групповая обработка")]
 		BatchProcessing,
+		[IsCloudFeature]
 		[Display(Name = "Мобильный кабинет сотрудника")]
 		EmployeeLk,
+		[IsCloudFeature]
 		[Display(Name = "Коммуникация с сотрудниками")]
 		Communications,
 		[Display(Name = "История изменений")]
 		HistoryLog,
 		[Display(Name = "Комплектация")]
 		Completion,
+		[IsCloudFeature]
 		[Display(Name = "Обращения сотрудников")]
-		Claims
+		Claims,
+		[IsCloudFeature]
+		[Display(Name = "Отзывы")]
+		Ratings
 	}
+	
+	[AttributeUsage(AttributeTargets.Field)]
+	public class IsCloudFeatureAttribute : Attribute{ } 
 }

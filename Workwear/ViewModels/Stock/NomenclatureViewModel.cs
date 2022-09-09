@@ -53,7 +53,7 @@ namespace workwear.ViewModels.Stock
 		public bool VisibleClothesSex =>
 			Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear;
 
-		public bool VisibleRating => Entity.Rating != null && featuresService.Available(WorkwearFeature.Claims);
+		public bool VisibleRating => Entity.Rating != null && featuresService.Available(WorkwearFeature.Ratings);
 		#endregion
 		#region Sensitive
 		public bool SensitiveOpenMovements => Entity.Id > 0;
