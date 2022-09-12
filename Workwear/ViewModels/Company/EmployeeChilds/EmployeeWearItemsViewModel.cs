@@ -150,7 +150,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 			if(!operations.Any() || operations.First().ExpiryByNorm < DateTime.Today)
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationsViewModel, EmployeeCardItem>(
 					employeeViewModel, row, OpenPageOptions.AsSlave);
-			else if(operations.First().OverrideBefore)
+			else if(operations.First().ManualOperation)
 				page = navigation.OpenViewModel<ManualEmployeeIssueOperationsViewModel, EmployeeCardItem, EmployeeIssueOperation>(
 					employeeViewModel, row, operations.First(), OpenPageOptions.AsSlave);
 			else if(interactive.Question($"Для «{row.ProtectionTools.Name}» уже выполнялись полноценные выдачи, " +

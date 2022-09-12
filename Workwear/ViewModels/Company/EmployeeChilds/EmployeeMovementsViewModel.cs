@@ -69,7 +69,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		#region Контекстное меню
 		public void OpenDoc(EmployeeCardMovements item) {
 			var cardItem = Entity.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == item.Operation.ProtectionTools);
-			if(item.Operation.OverrideBefore) {
+			if(item.Operation.ManualOperation) {
 				var page = navigation.OpenViewModel<ManualEmployeeIssueOperationsViewModel, EmployeeCardItem, EmployeeIssueOperation>(
 					employeeViewModel, cardItem, item.Operation, OpenPageOptions.AsSlave);
 				page.ViewModel.SaveChanged += SetIssueDateManual_PageClosed;
