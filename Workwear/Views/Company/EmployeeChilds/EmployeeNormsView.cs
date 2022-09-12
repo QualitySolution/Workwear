@@ -16,7 +16,7 @@ namespace workwear.Views.Company.EmployeeChilds
 				.AddColumn("Название").AddTextRenderer(x => x.Name)
 				.AddColumn("№ ТОН").AddTextRenderer(node => node.DocumentNumberText)
 				.AddColumn("№ Приложения").AddNumericRenderer(node => node.AnnexNumberText)
-				.AddColumn("№ Пункта").SetDataProperty(node => node.TONParagraph)
+				.AddColumn("№ Пункта").AddTextRenderer(node => node.TONParagraph)
 				.AddColumn("Профессии").AddTextRenderer(node => node.ProfessionsText)
 				.Finish();
 			ytreeNorms.Selection.Changed += YtreeNorms_Selection_Changed;
