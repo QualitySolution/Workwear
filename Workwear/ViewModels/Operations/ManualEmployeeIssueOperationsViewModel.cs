@@ -28,6 +28,7 @@ namespace workwear.ViewModels.Operations
 			string UoWTitle = null) : base(unitOfWorkFactory, navigation, validator, UoWTitle) 
 		{
 			Resizable = true;
+			Deletable = true;
 			if(cardItem != null) {
 				Title = cardItem.ProtectionTools.Name;
 				protectionTools = cardItem.ProtectionTools;
@@ -74,8 +75,6 @@ namespace workwear.ViewModels.Operations
 		}
 
 		private EmployeeIssueOperation selectOperation;
-		[PropertyChangedAlso(nameof(DateTime))]
-		[PropertyChangedAlso(nameof(Issued))]
 		[PropertyChangedAlso(nameof(CanEditOperation))]
 		public EmployeeIssueOperation SelectOperation {
 			get => selectOperation;
@@ -84,6 +83,7 @@ namespace workwear.ViewModels.Operations
 					if(value != null) {
 						DateTime = value.OperationTime;
 						Issued = value.Issued;
+						OverrideBefore = value.OverrideBefore;
 					}
 					else
 						Issued = 0;
@@ -113,6 +113,16 @@ namespace workwear.ViewModels.Operations
 						SelectOperation.Issued = value;
 			}
 		}
+
+		private bool overrideBefore;
+		public bool OverrideBefore {
+			get => overrideBefore;
+			set {
+				if(SetField(ref overrideBefore, value))
+					if(SelectOperation != null)
+						SelectOperation.OverrideBefore = value;
+			}
+		}
 		public bool CanEditOperation => SelectOperation != null;
 		public bool CanAddOperation => EmployeeCardItem != null;
 
@@ -135,7 +145,7 @@ namespace workwear.ViewModels.Operations
 			var issue = new EmployeeIssueOperation {
 				Employee = EmployeeCardItem.EmployeeCard,
 				Issued = EmployeeCardItem.ActiveNormItem?.Amount ?? 1,
-				OverrideBefore = true,
+				ManualOperation = true,
 				NormItem = EmployeeCardItem.ActiveNormItem,
 				ProtectionTools = EmployeeCardItem.ProtectionTools,
 				Returned = 0,
@@ -143,6 +153,9 @@ namespace workwear.ViewModels.Operations
 				UseAutoWriteoff = true,
 				OperationTime = EmployeeCardItem.NextIssue ?? DateTime.Today 
 			};
+			if(!Operations.Any())
+				issue.OverrideBefore = true;
+			
 			issue.ExpiryByNorm = issue.NormItem?.CalculateExpireDate(DateTime.Today);
 			Operations.Add(issue);
 		}

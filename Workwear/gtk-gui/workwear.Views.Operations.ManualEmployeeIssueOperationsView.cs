@@ -26,6 +26,8 @@ namespace workwear.Views.Operations
 
 		private global::Gamma.GtkWidgets.yTable ytable2;
 
+		private global::Gamma.GtkWidgets.yCheckButton ycheckOverrideBefore;
+
 		private global::Gamma.Widgets.yDatePicker ydatepicker;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel1;
@@ -139,10 +141,25 @@ namespace workwear.Views.Operations
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ytable2 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable2.Name = "ytable2";
-			this.ytable2.NRows = ((uint)(2));
+			this.ytable2.NRows = ((uint)(3));
 			this.ytable2.NColumns = ((uint)(2));
 			this.ytable2.RowSpacing = ((uint)(6));
 			this.ytable2.ColumnSpacing = ((uint)(6));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.ycheckOverrideBefore = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckOverrideBefore.CanFocus = true;
+			this.ycheckOverrideBefore.Name = "ycheckOverrideBefore";
+			this.ycheckOverrideBefore.Label = global::Mono.Unix.Catalog.GetString("Сбрасывает предыдущие движения");
+			this.ycheckOverrideBefore.DrawIndicator = true;
+			this.ycheckOverrideBefore.UseUnderline = true;
+			this.ytable2.Add(this.ycheckOverrideBefore);
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ycheckOverrideBefore]));
+			w12.TopAttach = ((uint)(2));
+			w12.BottomAttach = ((uint)(3));
+			w12.LeftAttach = ((uint)(1));
+			w12.RightAttach = ((uint)(2));
+			w12.XOptions = ((global::Gtk.AttachOptions)(4));
+			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
 			this.ydatepicker = new global::Gamma.Widgets.yDatePicker();
 			this.ydatepicker.Events = ((global::Gdk.EventMask)(256));
@@ -152,31 +169,31 @@ namespace workwear.Views.Operations
 			this.ydatepicker.IsEditable = true;
 			this.ydatepicker.AutoSeparation = true;
 			this.ytable2.Add(this.ydatepicker);
-			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ydatepicker]));
-			w12.LeftAttach = ((uint)(1));
-			w12.RightAttach = ((uint)(2));
-			w12.XOptions = ((global::Gtk.AttachOptions)(4));
-			w12.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ydatepicker]));
+			w13.LeftAttach = ((uint)(1));
+			w13.RightAttach = ((uint)(2));
+			w13.XOptions = ((global::Gtk.AttachOptions)(4));
+			w13.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
 			this.ylabel1.Xalign = 1F;
 			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString(" Дата:");
 			this.ytable2.Add(this.ylabel1);
-			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabel1]));
-			w13.XOptions = ((global::Gtk.AttachOptions)(4));
-			w13.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabel1]));
+			w14.XOptions = ((global::Gtk.AttachOptions)(4));
+			w14.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
 			this.ylabel2 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel2.Name = "ylabel2";
 			this.ylabel2.Xalign = 1F;
 			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.ytable2.Add(this.ylabel2);
-			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabel2]));
-			w14.TopAttach = ((uint)(1));
-			w14.BottomAttach = ((uint)(2));
-			w14.XOptions = ((global::Gtk.AttachOptions)(4));
-			w14.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabel2]));
+			w15.TopAttach = ((uint)(1));
+			w15.BottomAttach = ((uint)(2));
+			w15.XOptions = ((global::Gtk.AttachOptions)(4));
+			w15.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
 			this.yspinbuttonAmmount = new global::Gamma.GtkWidgets.ySpinButton(0D, 100D, 1D);
 			this.yspinbuttonAmmount.CanFocus = true;
@@ -187,21 +204,21 @@ namespace workwear.Views.Operations
 			this.yspinbuttonAmmount.ValueAsDecimal = 0m;
 			this.yspinbuttonAmmount.ValueAsInt = 0;
 			this.ytable2.Add(this.yspinbuttonAmmount);
-			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yspinbuttonAmmount]));
-			w15.TopAttach = ((uint)(1));
-			w15.BottomAttach = ((uint)(2));
-			w15.LeftAttach = ((uint)(1));
-			w15.RightAttach = ((uint)(2));
-			w15.XOptions = ((global::Gtk.AttachOptions)(4));
-			w15.YOptions = ((global::Gtk.AttachOptions)(4));
-			this.ytable1.Add(this.ytable2);
-			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ytable2]));
+			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yspinbuttonAmmount]));
 			w16.TopAttach = ((uint)(1));
 			w16.BottomAttach = ((uint)(2));
 			w16.LeftAttach = ((uint)(1));
 			w16.RightAttach = ((uint)(2));
 			w16.XOptions = ((global::Gtk.AttachOptions)(4));
 			w16.YOptions = ((global::Gtk.AttachOptions)(4));
+			this.ytable1.Add(this.ytable2);
+			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ytable2]));
+			w17.TopAttach = ((uint)(1));
+			w17.BottomAttach = ((uint)(2));
+			w17.LeftAttach = ((uint)(1));
+			w17.RightAttach = ((uint)(2));
+			w17.XOptions = ((global::Gtk.AttachOptions)(4));
+			w17.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.ytable1);
 			if ((this.Child != null))
 			{

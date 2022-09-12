@@ -172,7 +172,7 @@ namespace workwear.Repository.Operations
 			var query = (uoW ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.Employee == employee)
 				.Where(o => o.ProtectionTools == protectionTools)
-				.Where(o => o.OverrideBefore == true);
+				.Where(o => o.ManualOperation == true);
 
 			makeEager?.Invoke(query);
 
