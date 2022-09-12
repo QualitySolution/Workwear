@@ -124,7 +124,7 @@ namespace workwear.Models.Import.Issuance
 					continue;
 				}
 
-				if(row.CellIntValue(countColumn) == null) {
+				if(countColumn != null && row.CellIntValue(countColumn) == null) {
 					row.ProgramSkipped = true;
 					row.AddColumnChange(countColumn, ChangeType.ParseError);
 					continue;
@@ -237,7 +237,7 @@ namespace workwear.Models.Import.Issuance
 					continue;
 				}
 				
-				var count = row.CellIntValue(countColumn).Value;
+				var count = countColumn != null ? row.CellIntValue(countColumn).Value : row.WorkwearItem.ActiveNormItem.Amount;
 				var expenseDate = row.WorkwearItem.ActiveNormItem.CalculateExpireDate(row.Date.Value, count);
 				row.Operation = new EmployeeIssueOperation {
 					OperationTime = row.Date.Value,
@@ -273,7 +273,7 @@ namespace workwear.Models.Import.Issuance
 						AddSetEmployeeSize(row, employeeSize, counters);
 					}
 				}
-				// Пока не знаю что делать с этим кодом, возможно нужно все сильно перефигачить чтобы этого кода здесь не было.
+				//FIXME Пока не знаю что делать с этим кодом, возможно нужно все сильно перефигачить чтобы этого кода здесь не было.
 				// var toSetChangeColumns = columns.Where(
 				// 	x => x.DataTypeEnum != DataTypeWorkwearItems.Unknown 
 				// 	     && x.DataTypeEnum != DataTypeWorkwearItems.SizeAndGrowth
