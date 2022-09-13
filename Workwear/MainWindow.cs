@@ -197,14 +197,17 @@ public partial class MainWindow : Gtk.Window
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
+		ActionMenuNotification.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionHistory.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
 		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
+		ActionMenuClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
+		ActionMenuRatings.Visible = FeaturesService.Available(WorkwearFeature.Ratings);
+		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications) || FeaturesService.Available(WorkwearFeature.Claims) || FeaturesService.Available(WorkwearFeature.Ratings);
 	}
 	#endregion
 
-	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e)
-	{
+	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e) {
 		MainTelemetry.AddCount("SearchEmployeeToolBar");
 		var id = DomainHelper.GetId(e.Entity);
 		DialogViewModelBase after = null;
@@ -772,9 +775,18 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager.OpenViewModel<ClaimsViewModel>(null);
 	}
 
-	protected void OnRatingNomenclatureActivated(object sender, EventArgs e) => 
-		NavigationManager.OpenViewModel<RatingsViewModel>(null);
-
-	protected void OnActionIncomeLoadActivated(object sender, EventArgs e) => 
+	protected void OnActionIncomeLoadActivated(object sender, EventArgs e) =>
 		NavigationManager.OpenViewModel<IncomeImportViewModel>(null);
+
+	protected void OnActionMenuNotificationActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<EmployeeNotificationJournalViewModel>(null);
+	}
+
+	protected void OnActionMenuClaimsActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<ClaimsViewModel>(null);
+	}
+
+	protected void OnActionMenuRatingsActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RatingsViewModel>(null);
+	}
 }
