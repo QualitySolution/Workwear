@@ -53,7 +53,7 @@ namespace workwear.ViewModels.Stock
 		public bool VisibleClothesSex =>
 			Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear;
 
-		public bool VisibleRating => Entity.Rating != null && featuresService.Available(WorkwearFeature.Claims);
+		public bool VisibleRating => Entity.Rating != null && featuresService.Available(WorkwearFeature.Ratings);
 		#endregion
 		#region Sensitive
 		public bool SensitiveOpenMovements => Entity.Id > 0;
@@ -70,8 +70,7 @@ namespace workwear.ViewModels.Stock
 		}
 
 		public void OpenRating() {
-			var page = NavigationManager.OpenViewModel<RatingsViewModel, Nomenclature>(this, Entity, OpenPageOptions.AsSlave);
-			page.ViewModel.EntryNomenclatureVisible = false;
+			var page = NavigationManager.OpenViewModel<RatingsViewModel, Nomenclature>(this, Entity);
 		}
 		#endregion
 		private void Entity_PropertyChanged(object sender, PropertyChangedEventArgs e) {

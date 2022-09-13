@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Gamma.ColumnConfig;
 using NHibernate;
 using NHibernate.Transform;
@@ -10,26 +11,30 @@ using QS.Project.Services;
 using QS.Services;
 using workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
+using workwear.Tools.Features;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock
 {
 	public class NomenclatureJournalViewModel : EntityJournalViewModelBase<Nomenclature, NomenclatureViewModel, NomenclatureJournalNode>
 	{
+		public FeaturesService FeaturesService { get; }
 		public NomenclatureFilterViewModel Filter { get; private set; }
 
 		public NomenclatureJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
-			INavigationManager navigationManager, 
+			INavigationManager navigationManager,
 			ILifetimeScope autofacScope, 
+			FeaturesService featuresService,
 			IDeleteEntityService deleteEntityService = null, 
 			ICurrentPermissionService currentPermissionService = null
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
+			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			UseSlider = true;
 
-			JournalFilter = Filter = autofacScope.Resolve<NomenclatureFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			JournalFilter = Filter = autofacScope.Resolve<NomenclatureFilterViewModel>(new TypedParameter(typeof(NomenclatureJournalViewModel), this));
 			MakePopup();
 		}
 

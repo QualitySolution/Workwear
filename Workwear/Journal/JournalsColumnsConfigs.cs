@@ -224,12 +224,12 @@ namespace workwear.Journal
 			);
 
 			TreeViewColumnsConfigFactory.Register<NomenclatureJournalViewModel>(
-				() => FluentColumnsConfig<NomenclatureJournalNode>.Create()
+				(jvm) => FluentColumnsConfig<NomenclatureJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name + (node.Archival? "(архивная)": String.Empty)).SearchHighlight()
 					.AddColumn("Номер").AddTextRenderer(node => $"{node.Number}").SearchHighlight()
 					.AddColumn("Тип").AddTextRenderer(node => node.ItemType)
-					.AddColumn("Средняя оценка").AddTextRenderer(node => node.RatingText)
+					.AddColumn("Средняя оценка").Visible(jvm.FeaturesService.Available(WorkwearFeature.Ratings)).AddTextRenderer(node => node.RatingText)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);

@@ -1,28 +1,36 @@
-﻿using Autofac;
+using Autofac;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
 using workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Stock;
+using workwear.Tools.Features;
 
 namespace workwear.Journal.Filter.ViewModels.Stock
 {
 	public class NomenclatureFilterViewModel : JournalFilterViewModelBase<NomenclatureFilterViewModel>
 	{
 		public EntityEntryViewModel<ItemsType> EntryItemsType;
+		private NomenclatureJournalViewModel NomenclatureJournalViewModel { get; }
 
 		public NomenclatureFilterViewModel(
-			JournalViewModelBase journalViewModel, 
+			NomenclatureJournalViewModel nomenclatureJournalViewModel, 
 			INavigationManager navigation, 
 			ILifetimeScope autofacScope, 
 			IUnitOfWorkFactory unitOfWorkFactory = null
-			) : base(journalViewModel, unitOfWorkFactory)
+			) : base(nomenclatureJournalViewModel, unitOfWorkFactory)
 		{
-			var builder = new CommonEEVMBuilderFactory<NomenclatureFilterViewModel>(journalViewModel, this, UoW, navigation, autofacScope);
+			NomenclatureJournalViewModel = nomenclatureJournalViewModel;
+			var builder = new CommonEEVMBuilderFactory<NomenclatureFilterViewModel>(nomenclatureJournalViewModel, this, UoW, navigation, autofacScope);
 
 			EntryItemsType = builder.ForProperty(x => x.ItemType).MakeByType().Finish();
 		}
 
+		#region Visible
+		public bool OnlyWithRatingVisible => NomenclatureJournalViewModel.FeaturesService.Available(WorkwearFeature.Ratings);
+		#endregion
+		
 		#region Ограничения
 		private ItemsType itemType;
 		public virtual ItemsType ItemType {

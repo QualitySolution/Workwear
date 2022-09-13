@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Autofac;
 using QS.Cloud.WearLk.Client;
 using QS.Cloud.WearLk.Manage;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Validation;
@@ -22,10 +24,8 @@ namespace workwear.ViewModels.Communications
 			ILifetimeScope autofacScope,
 			RatingManagerService ratingManagerService,
 			Nomenclature nomenclature = null,
-			IValidator validator = null, 
-			string UoWTitle = null) : base(unitOfWorkFactory, navigation, validator, UoWTitle) 
+			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator) 
 		{
-			EntryNomenclatureVisible = true;
 			this.ratingManagerService = ratingManagerService;
 			var builder = new CommonEEVMBuilderFactory<RatingsViewModel>(
 				this, this, UoW, NavigationManager, autofacScope);
@@ -34,30 +34,26 @@ namespace workwear.ViewModels.Communications
 				.UseViewModelJournalAndAutocompleter<NomenclatureJournalViewModel>()
 				.UseViewModelDialog<NomenclatureViewModel>()
 				.Finish();
-
-			if(nomenclature is null) {
-				Title = "Рейтинг номеклатуры";
-			}
-			else {
-				Title = "Рейтинг для номенклатуры: " + nomenclature.Name;
-				SelectNomenclature = UoW.GetById<Nomenclature>(nomenclature.Id);
-			}
+			
+			SelectNomenclature = nomenclature == null ? null : UoW.GetById<Nomenclature>(nomenclature.Id);
 		}
 
 		#region Свойства
 
 		private Nomenclature selectNomenclature;
+		[PropertyChangedAlso(nameof(NomenclatureColumnVisible))]
 		public Nomenclature SelectNomenclature {
 			get => selectNomenclature;
 			set {
-				if(SetField(ref selectNomenclature, value))
-					if(selectNomenclature is null)
-						Ratings = new List<Rating>();
-					else {
-						Ratings = ratingManagerService.GetRatings(value.Id);
-					}
+				SetField(ref selectNomenclature, value);
+				Title = selectNomenclature == null ? "Отзывы на выданное" : "Отзывы для: " + selectNomenclature.Name; 
+				Ratings = ratingManagerService.GetRatings(value?.Id ?? -1);
+				if(ratings.Any())
+					RefreshNomenclatureNames(Ratings.Select(x => x.NomenclatureId).ToArray());
 			}
 		}
+		
+		public virtual bool NomenclatureColumnVisible => SelectNomenclature == null;
 
 		private IList<Rating> ratings;
 
@@ -65,19 +61,24 @@ namespace workwear.ViewModels.Communications
 			get => ratings;
 			set => SetField(ref ratings, value);
 		}
-
-		private bool entryNomenclatureVisible;
-		public bool EntryNomenclatureVisible {
-			get => entryNomenclatureVisible;
-			set => SetField(ref entryNomenclatureVisible, value);
-		}
-
 		#endregion
 
+		#region Названия номеклатуры
+
+		private Dictionary<int, string> nomenclatureNames = new Dictionary<int, string>();
+		public string GetNomenclatureName(Rating rating) {
+			if(nomenclatureNames.TryGetValue(rating.NomenclatureId, out string name))
+				return name;
+			return null;
+		}
+
+		void RefreshNomenclatureNames(int[] ids) {
+			nomenclatureNames = UoW.GetById<Nomenclature>(ids).ToDictionary(x => x.Id, x => x.Name);
+		}
+		#endregion
+		
 		#region Entry
-
 		public EntityEntryViewModel<Nomenclature> EntryNomenclature;
-
 		#endregion
 	}
 }

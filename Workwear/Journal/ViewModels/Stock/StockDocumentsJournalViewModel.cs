@@ -126,6 +126,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => incomeAlias.Comment).WithAlias(() => resultAlias.Comment)
 			            .Select(() => StokDocumentType.IncomeDoc).WithAlias(() => resultAlias.DocTypeEnum)
 			            .Select(() => incomeAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
+			            .Select(() => incomeAlias.Number).WithAlias(() => resultAlias.IncomeDocNubber)
 					)
 			.OrderBy(() => incomeAlias.Date).Desc
 			.ThenBy(() => incomeAlias.CreationDate).Desc
@@ -454,6 +455,8 @@ namespace workwear.Journal.ViewModels.Stock
 					text += $"Подразделение: {Subdivision} ";
 				if(DocTypeEnum == StokDocumentType.IncomeDoc)
 					text += $"Операция: {IncomeOperation.GetEnumTitle()}";
+				if(!String.IsNullOrWhiteSpace(IncomeDocNubber))
+					text += $" TН №: {IncomeDocNubber} ";
 				return text;
 			}
 		}
@@ -474,6 +477,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 		public string Employee => PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
 
+		public string IncomeDocNubber { get; set; }
 		public string Comment { get; set; }
 
 		public int? IssueSheetId { get; set; }

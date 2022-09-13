@@ -25,10 +25,10 @@ namespace workwear.Models.Import.Issuance
 		#region Параметры
 		public string ImportName => "Загрузка выдачи";
 
-		public string DataColumnsRecommendations => "Установите номер строки с заголовком данных, таким образом чтобы название колонок было корректно. Если в таблице заголовки отсутствуют укажите 0.\nДалее для каждой значимой колонки проставьте тип данных которые находится в таблице.\nОбязательными данными являются Табельный номер, Номенклатура нормы и выдачи, Дата и количество выдачи";
+		public string DataColumnsRecommendations => "Для каждой значимой колонки проставьте тип данных которые находится в таблице.\nОбязательными данными являются Табельный номер или ФИО, Номенклатура нормы и Дата выдачи. Если колонка с количеством отсутствует, количество будет взято из нормы.";
 
 		#endregion
-		protected override DataTypeWorkwearItems[] RequiredDataTypes => new []{DataTypeWorkwearItems.ProtectionTools, DataTypeWorkwearItems.Nomenclature, DataTypeWorkwearItems.Count, DataTypeWorkwearItems.IssueDate};
+		protected override DataTypeWorkwearItems[] RequiredDataTypes => new []{DataTypeWorkwearItems.ProtectionTools, DataTypeWorkwearItems.IssueDate};
 
 		protected override bool HasRequiredDataTypes(IEnumerable<DataTypeWorkwearItems> dataTypes) {
 			return (dataTypes.Contains(DataTypeWorkwearItems.PersonnelNumber) ||dataTypes.Contains(DataTypeWorkwearItems.Fio)) 

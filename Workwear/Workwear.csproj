@@ -105,7 +105,6 @@
     <EmbeddedResource Include="icon\menu\youtube.png" />
     <EmbeddedResource Include="icon\menu\vk.png" />
     <EmbeddedResource Include="icon\menu\twitter.png" />
-    <EmbeddedResource Include="icon\menu\google-plus.png" />
     <EmbeddedResource Include="icon\menu\odnoklasniki.png" />
     <EmbeddedResource Include="icon\buttons\timeline_marker.png" />
     <EmbeddedResource Include="icon\toolbar\smart-card.png" />
@@ -199,6 +198,9 @@
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
     <Compile Include="Tools\Import\ReaderDocumentFromXml1C.cs" />
+    <Compile Include="Tools\Import\Xml1CDocument.cs" />
+    <Compile Include="Tools\Import\Xml1CDocumentItem.cs" />
+    <Compile Include="Tools\Import\Xml1CDocumentParser.cs" />
     <Compile Include="Tools\Navigation\AdditionalIdHashGenerator.cs" />
     <Compile Include="viewDTOs\EmployeeCardMovements.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
@@ -271,6 +273,7 @@
     <Compile Include="ViewModels\Company\EmployeeVacationViewModel.cs" />
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\Company\VacationTypeViewModel.cs" />
+    <Compile Include="ViewModels\Import\IncomeImportViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
     <Compile Include="ViewModels\Stock\EmployeeIssueGraphViewModel.cs" />
@@ -557,6 +560,8 @@
     <Compile Include="Views\Communications\ClaimsView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Communications.ClaimsView.cs" />
     <Compile Include="ViewModels\Communications\ClaimsViewModel.cs" />
+    <Compile Include="Views\Import\IncomeImportView.cs" />
+    <Compile Include="gtk-gui\workwear.Views.Import.IncomeImportView.cs" />
     <Compile Include="Journal\Filter.Views\Company\PostFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.PostFilterView.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\PostFilterViewModel.cs" />

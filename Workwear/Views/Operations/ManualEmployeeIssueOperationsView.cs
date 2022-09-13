@@ -42,6 +42,12 @@ namespace workwear.Views.Operations
 				.AddBinding(wm => wm.CanEditOperation, w => w.Sensitive)
 				.InitializeFromSource();
 			
+			ycheckOverrideBefore.Binding
+				.AddSource(ViewModel)
+				.AddBinding(wm => wm.OverrideBefore, w => w.Active)
+				.AddBinding(wm => wm.CanEditOperation, w => w.Sensitive)
+				.InitializeFromSource();
+			
 			ybuttonDelete.Binding
 				.AddSource(ViewModel)
 				.AddBinding(vm => vm.CanEditOperation, w => w.Sensitive)

@@ -65,7 +65,8 @@ namespace workwear.Models.Import.Issuance
 				"Характеристика"
 				);
 			AddColumnName(DataTypeWorkwearItems.IssueDate,
-				"Дата выдачи"
+				"Дата выдачи",
+				"дата получения"
 				);
 			AddColumnName(DataTypeWorkwearItems.Count,
 				"Количество",
@@ -123,7 +124,7 @@ namespace workwear.Models.Import.Issuance
 					continue;
 				}
 
-				if(row.CellIntValue(countColumn) == null) {
+				if(countColumn != null && row.CellIntValue(countColumn) == null) {
 					row.ProgramSkipped = true;
 					row.AddColumnChange(countColumn, ChangeType.ParseError);
 					continue;
@@ -167,9 +168,12 @@ namespace workwear.Models.Import.Issuance
 
 			progress.Add(text: "Загрузка номенклатуры");
 			var nomenclatureTypes = new NomenclatureTypes(uow, sizeService, true);
-			var nomenclatureNames = 
-				list.Select(x => x.CellStringValue(nomenclatureColumn)).Where(x => x != null).Distinct().ToArray();
-			var nomenclatures = nomenclatureRepository.GetNomenclatureByName(uow, nomenclatureNames);
+			IList<Nomenclature> nomenclatures = new List<Nomenclature>();
+			if(nomenclatureColumn != null) {
+				var nomenclatureNames = 
+					list.Select(x => x.CellStringValue(nomenclatureColumn)).Where(x => x != null).Distinct().ToArray();
+				nomenclatures = nomenclatureRepository.GetNomenclatureByName(uow, nomenclatureNames);
+			}
 
 			progress.Add(text: "Загрузка операций выдачи");
 			var dates = list
@@ -186,6 +190,7 @@ namespace workwear.Models.Import.Issuance
 					.Where(x => x.Employee.Id.IsIn(employeeIds))
 					.Where(x => x.OperationTime >= startDate)
 					.Where(x => x.OperationTime < endDate.AddDays(1))
+					.Where(x => x.ManualOperation)
 					.List();
 			}
 			var operations = loadedOperations.GroupBy(x => x.Employee);
@@ -193,87 +198,98 @@ namespace workwear.Models.Import.Issuance
 				progress.Add(text: "Обработка операций выдачи");
 				if(row.Skipped)
 					continue;
-				var nomenclatureName = row.CellStringValue(nomenclatureColumn);
-				if(String.IsNullOrWhiteSpace(nomenclatureName)) {
-					row.AddColumnChange(nomenclatureColumn, ChangeType.NotFound);
-					continue;
-				}
 
-				var nomenclature = 
-					UsedNomenclatures.FirstOrDefault(x => String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
-				if(nomenclature == null) {
-					nomenclature = 
-						nomenclatures.FirstOrDefault(x => String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
-					if(nomenclature == null) {
-						nomenclature = new Nomenclature {
-							Name = nomenclatureName,
-							Type = row.WorkwearItem.ProtectionTools.Type,
-							Comment = "Создана при импорте выдачи из Excel",
-						};
-						nomenclature.Sex = nomenclatureTypes.ParseSex(nomenclature.Name) ?? ClothesSex.Universal;
-						row.WorkwearItem.ProtectionTools.AddNomeclature(nomenclature);
+				Nomenclature nomenclature = null;
+				if(nomenclatureColumn != null) {
+					var nomenclatureName = row.CellStringValue(nomenclatureColumn);
+					if(String.IsNullOrWhiteSpace(nomenclatureName)) {
+						row.AddColumnChange(nomenclatureColumn, ChangeType.NotFound);
+						continue;
 					}
-					UsedNomenclatures.Add(nomenclature);
-				}
 
-				row.Operation = operations.FirstOrDefault(group => group.Key == row.Employee)
-					?.FirstOrDefault(x => x.OperationTime.Date == row.Date && x.Nomenclature == nomenclature);
+					nomenclature =
+						UsedNomenclatures.FirstOrDefault(x =>
+							String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
+					if(nomenclature == null) {
+						nomenclature =
+							nomenclatures.FirstOrDefault(x =>
+								String.Equals(x.Name, nomenclatureName, StringComparison.CurrentCultureIgnoreCase));
+						if(nomenclature == null) {
+							nomenclature = new Nomenclature {
+								Name = nomenclatureName,
+								Type = row.WorkwearItem.ProtectionTools.Type,
+								Comment = "Создана при импорте выдачи из Excel",
+							};
+							nomenclature.Sex = nomenclatureTypes.ParseSex(nomenclature.Name) ?? ClothesSex.Universal;
+							row.WorkwearItem.ProtectionTools.AddNomeclature(nomenclature);
+						}
+
+						UsedNomenclatures.Add(nomenclature);
+					}
+					
+					row.Operation = operations.FirstOrDefault(group => group.Key == row.Employee)
+						?.FirstOrDefault(x => x.OperationTime.Date == row.Date && x.Nomenclature == nomenclature);
+				}
+				else {
+					row.Operation = operations.FirstOrDefault(group => group.Key == row.Employee)
+						?.FirstOrDefault(x => x.OperationTime.Date == row.Date && x.ProtectionTools == row.WorkwearItem.ProtectionTools);
+				}
 
 				if(row.Operation != null) {
 					//TODO Обновление операций не реализовано
+					row.ProgramSkipped = true;
+					row.ProgramSkippedReason = "Обновление операций не реализовано";
 					logger.Info("Обновление операций не реализовано, пропускаем...");
 					continue;
 				}
+				
+				var count = countColumn != null ? row.CellIntValue(countColumn).Value : row.WorkwearItem.ActiveNormItem.Amount;
+				var expenseDate = row.WorkwearItem.ActiveNormItem.CalculateExpireDate(row.Date.Value, count);
+				row.Operation = new EmployeeIssueOperation {
+					OperationTime = row.Date.Value,
+					Employee = row.Employee,
+					Issued = count,
+					Nomenclature = nomenclature,
+					AutoWriteoffDate = expenseDate,
+					ExpiryByNorm = expenseDate,
+					NormItem = row.WorkwearItem.ActiveNormItem,
+					ProtectionTools = row.WorkwearItem.ProtectionTools,
+					Returned = 0,
+					StartOfUse = row.Date,
+					UseAutoWriteoff = expenseDate != null,
+					ManualOperation = true, //Загруженные из Excel операции будут выглядеть как ручные.
+				};
+				//Обрабатываем размер.
+				TryParseSizeAndHeight(uow, row, importModel);
 
-				if (row.Operation != null) continue; 
-				{
-					var count = row.CellIntValue(countColumn).Value;
-					var expenseDate = row.WorkwearItem.ActiveNormItem.CalculateExpireDate(row.Date.Value, count);
-					row.Operation = new EmployeeIssueOperation {
-						OperationTime = row.Date.Value,
-						Employee = row.Employee,
-						Issued = count,
-						Nomenclature = nomenclature,
-						AutoWriteoffDate = expenseDate,
-						ExpiryByNorm = expenseDate,
-						NormItem = row.WorkwearItem.ActiveNormItem,
-						ProtectionTools = row.WorkwearItem.ProtectionTools,
-						Returned = 0,
-						StartOfUse = row.Date,
-						UseAutoWriteoff = expenseDate != null,
-					};
-					//Обрабатываем размер.
-					TryParseSizeAndHeight(uow, row, importModel);
-
-					//Проставляем размер в сотрудника.
-					if(row.Operation.Height != null) {
-						var employeeSize = row.Employee.Sizes.FirstOrDefault(x => x.SizeType == row.Operation.Height.SizeType);
-						if (employeeSize is null) {
-							employeeSize = new EmployeeSize
-								{Size = row.Operation.Height, SizeType = row.Operation.Height.SizeType, Employee = row.Employee};
-							AddSetEmployeeSize(row, employeeSize, counters);
-						}
+				//Проставляем размер в сотрудника.
+				if(row.Operation.Height != null) {
+					var employeeSize = row.Employee.Sizes.FirstOrDefault(x => x.SizeType == row.Operation.Height.SizeType);
+					if (employeeSize is null) {
+						employeeSize = new EmployeeSize
+							{Size = row.Operation.Height, SizeType = row.Operation.Height.SizeType, Employee = row.Employee};
+						AddSetEmployeeSize(row, employeeSize, counters);
 					}
-					if(row.Operation.WearSize != null) {
-						var employeeSize = row.Employee.Sizes.FirstOrDefault(x => x.SizeType == row.Operation.WearSize.SizeType);
-						if (employeeSize is null) {
-							employeeSize = new EmployeeSize
-								{Size = row.Operation.WearSize, SizeType = row.Operation.WearSize.SizeType, Employee = row.Employee};
-							AddSetEmployeeSize(row, employeeSize, counters);
-						}
-					}
-					// Пока не знаю что делать с этим кодом, возможно нужно все сильно перефигачить чтобы этого кода здесь не было.
-					// var toSetChangeColumns = columns.Where(
-					// 	x => x.DataTypeEnum != DataTypeWorkwearItems.Unknown 
-					// 	     && x.DataTypeEnum != DataTypeWorkwearItems.SizeAndGrowth
-					// 	     && x.DataTypeEnum != DataTypeWorkwearItems.Size
-					// 	     && x.DataTypeEnum != DataTypeWorkwearItems.Growth
-					// );
-					// foreach(var column in toSetChangeColumns) {
-					// 	if(!row.ChangedColumns.ContainsKey(column))
-					// 		row.ChangedColumns.Add(column, new ChangeState(ChangeType.NewEntity));
-					// }
 				}
+				if(row.Operation.WearSize != null) {
+					var employeeSize = row.Employee.Sizes.FirstOrDefault(x => x.SizeType == row.Operation.WearSize.SizeType);
+					if (employeeSize is null) {
+						employeeSize = new EmployeeSize
+							{Size = row.Operation.WearSize, SizeType = row.Operation.WearSize.SizeType, Employee = row.Employee};
+						AddSetEmployeeSize(row, employeeSize, counters);
+					}
+				}
+				//FIXME Пока не знаю что делать с этим кодом, возможно нужно все сильно перефигачить чтобы этого кода здесь не было.
+				// var toSetChangeColumns = columns.Where(
+				// 	x => x.DataTypeEnum != DataTypeWorkwearItems.Unknown 
+				// 	     && x.DataTypeEnum != DataTypeWorkwearItems.SizeAndGrowth
+				// 	     && x.DataTypeEnum != DataTypeWorkwearItems.Size
+				// 	     && x.DataTypeEnum != DataTypeWorkwearItems.Growth
+				// );
+				// foreach(var column in toSetChangeColumns) {
+				// 	if(!row.ChangedColumns.ContainsKey(column))
+				// 		row.ChangedColumns.Add(column, new ChangeState(ChangeType.NewEntity));
+				// }
 			}
 			progress.Close();
 		}

@@ -1,5 +1,7 @@
 ﻿syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 package QS.Cloud.WearLk.Manage;
 
 service RatingManager {
@@ -21,4 +23,6 @@ message Rating{
 	int32 rating = 3;
 	string description = 4;
 	int32 issue_operation_id = 5;
+	int32 nomenclature_id = 6;
+	google.protobuf.Timestamp create_time = 7;
 }
