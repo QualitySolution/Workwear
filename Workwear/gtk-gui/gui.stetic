@@ -61,11 +61,6 @@
         <property name="Image">resource:workwear.icon.menu.twitter.png</property>
       </source>
     </icon-set>
-    <icon-set id="google-plus">
-      <source>
-        <property name="Image">resource:workwear.icon.menu.google-plus.png</property>
-      </source>
-    </icon-set>
     <icon-set id="odnoklasniki">
       <source>
         <property name="Image">resource:workwear.icon.menu.odnoklasniki.png</property>
