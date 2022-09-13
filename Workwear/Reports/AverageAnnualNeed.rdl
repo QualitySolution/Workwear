@@ -35,7 +35,7 @@
             <Width>46.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>306.4pt</Width>
+            <Width>266.6pt</Width>
           </TableColumn>
           <TableColumn >
             <Width>30.0pt</Width>
@@ -44,12 +44,15 @@
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>54.9pt</Width>
+            <Width>53.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>56.2pt</Width>
+            <Width>51.6pt</Width>
           </TableColumn>
           <TableColumn>
+            <Width>50.5pt</Width>
+          </TableColumn>
+          <TableColumn >
             <Width>64.4pt</Width>
           </TableColumn>
         </TableColumns>
@@ -149,7 +152,25 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox28">
-                      <Value>Количество</Value>
+                      <Value>Количес-тво</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox6" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                      <Value>Оценочная стоимость</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -268,6 +289,23 @@
                         <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                       <CanGrow >true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox11" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                      <Value>=IIF(Fields!assessed_cost.IsMissing, "", (Format({assessed_cost} * {amount_sum}, "0.00")))
+</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <Format>0.00</Format>
+                      </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -397,6 +435,21 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox12" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                      <Value>=Sum(IIF(Fields!assessed_cost.IsMissing, 0, ({assessed_cost} * {amount_sum})))</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <Format>0.00</Format>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -451,6 +504,7 @@
         <CommandText>SELECT 
     protection_tools.name AS type_name,
     protection_tools.id AS type_id,
+    protection_tools.assessed_cost AS assessed_cost,
     IF(@show_sex, wear_cards.sex, NULL) as sex,
     heightAlias.name AS growth,
     sizeAlias.name AS size,
@@ -534,6 +588,10 @@ ORDER BY type_name, size, growth, sex</CommandText>
         </Field>
         <Field Name="amount_sum">
           <DataField>amount_sum</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
+        <Field Name="assessed_cost">
+          <DataField>assessed_cost</DataField>
           <TypeName>System.Decimal</TypeName>
         </Field>
       </Fields>
