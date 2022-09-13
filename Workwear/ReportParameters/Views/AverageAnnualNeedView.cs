@@ -17,6 +17,10 @@ namespace workwear.ReportParameters.Views
 			checkShowSex.Binding.AddBinding(ViewModel, v => v.ShowSex, w => w.Active).InitializeFromSource();
 
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
+			
+			ycheckSummry.Binding
+				.AddBinding(viewModel, v => v.Summary, w => w.Active)
+				.InitializeFromSource();
 
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
 		}
