@@ -230,9 +230,15 @@ namespace workwear.Models.Import.Issuance
 					row.Operation = operations.FirstOrDefault(group => group.Key == row.Employee)
 						?.FirstOrDefault(x => x.OperationTime.Date == row.Date && x.Nomenclature == nomenclature);
 				}
+				else {
+					row.Operation = operations.FirstOrDefault(group => group.Key == row.Employee)
+						?.FirstOrDefault(x => x.OperationTime.Date == row.Date && x.ProtectionTools == row.WorkwearItem.ProtectionTools);
+				}
 
 				if(row.Operation != null) {
 					//TODO Обновление операций не реализовано
+					row.ProgramSkipped = true;
+					row.ProgramSkippedReason = "Обновление операций не реализовано";
 					logger.Info("Обновление операций не реализовано, пропускаем...");
 					continue;
 				}
