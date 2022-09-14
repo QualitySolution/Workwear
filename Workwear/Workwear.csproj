@@ -191,6 +191,7 @@
     <Compile Include="Models\Import\Norms\SubdivisionPostCombination.cs" />
     <Compile Include="Models\Import\RowStackHelper.cs" />
     <Compile Include="Models\Import\SetValueAction.cs" />
+    <Compile Include="Models\Import\TextParser.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
     <Compile Include="Models\WearLk\UnansweredClaimsCounter.cs" />
     <Compile Include="Program.cs" />

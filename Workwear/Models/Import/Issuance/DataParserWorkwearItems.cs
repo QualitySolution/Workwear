@@ -149,8 +149,8 @@ namespace workwear.Models.Import.Issuance
 					continue;
 				}
 
-				var protectionToolName = row.CellStringValue(protectionToolsColumn);
-				row.WorkwearItem = row.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.Name == protectionToolName);
+				var protectionToolName = TextParser.PrepareForCompare(row.CellStringValue(protectionToolsColumn));
+				row.WorkwearItem = row.Employee.WorkwearItems.FirstOrDefault(x => TextParser.PrepareForCompare(x.ProtectionTools.Name) == protectionToolName);
 				if(row.WorkwearItem == null && postColumn != null && subdivisionColumn != null) {
 					if(!TryAddNorm(uow, row.CellStringValue(postColumn), 
 						row.CellStringValue(subdivisionColumn), row.Employee)) {

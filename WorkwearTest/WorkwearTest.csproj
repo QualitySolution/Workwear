@@ -63,6 +63,7 @@
     <Compile Include="Models\Import\Norms\DataTypePeriodAndCountTest.cs" />
     <Compile Include="Models\Import\Norms\DataTypePeriodTest.cs" />
     <Compile Include="Models\Import\RowStackHelperTest.cs" />
+    <Compile Include="Models\Import\TextParserTest.cs" />
     <Compile Include="Operations\Graph\IssueGraphTest.cs" />
     <Compile Include="Operations\Graph\GraphItemTest.cs" />
     <Compile Include="Organization\EmployeeCardTests.cs" />
