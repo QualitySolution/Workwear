@@ -127,6 +127,12 @@ namespace workwear.ReportParameters.ViewModels
 			get => showSex;
 			set => SetField(ref showSex, value);
 		}
+		
+		private bool excludeInVacation;
+		public virtual bool ExcludeInVacation {
+			get => excludeInVacation;
+			set => SetField(ref excludeInVacation, value);
+		}
 
 		void FillProtectionTools(){
 			SelectedProtectionTools resultAlias = null;
@@ -154,7 +160,8 @@ namespace workwear.ReportParameters.ViewModels
 					{"issue_type", IssueTypeOptions?.ToString() },
 					{"protectionTools", SelectedProtectionTools() },
 					{"headSubdivision", EntrySubdivisionViewModel.Entity?.Id ?? -1},
-					{"show_sex", ShowSex }
+					{"show_sex", ShowSex },
+					{"exclude_in_vacation", excludeInVacation }
 					};
 
 		public void Dispose()
