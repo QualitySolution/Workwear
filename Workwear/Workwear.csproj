@@ -105,7 +105,6 @@
     <EmbeddedResource Include="icon\menu\youtube.png" />
     <EmbeddedResource Include="icon\menu\vk.png" />
     <EmbeddedResource Include="icon\menu\twitter.png" />
-    <EmbeddedResource Include="icon\menu\google-plus.png" />
     <EmbeddedResource Include="icon\menu\odnoklasniki.png" />
     <EmbeddedResource Include="icon\buttons\timeline_marker.png" />
     <EmbeddedResource Include="icon\toolbar\smart-card.png" />

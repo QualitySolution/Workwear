@@ -882,13 +882,15 @@ LEFT JOIN wear_cards_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_i
 LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id  
 LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)  
 LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
-LEFT JOIN norm_conditions AS conditions ON conditions.id = norms_item.condition_id 
+LEFT JOIN norm_conditions AS conditions ON conditions.id = norms_item.condition_id
+LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id 
 WHERE
     (-1 IN (@subdivisions) OR wear_cards.object_id IN (@subdivisions)) 
     AND wear_cards.dismiss_date IS NULL 
     AND wear_cards_item.next_issue &lt; DATE_ADD(CONCAT(@end_year, '-', @end_month, '-01'), INTERVAL 1 MONTH)
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
     AND ('-1' IN (@protectionTools) OR protection_tools.id IN (@protectionTools))
+    AND (@exclude_in_vacation = false OR (CURRENT_DATE() NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
 GROUP BY
     protection_tools.id,
     IF(@show_sex, wear_cards.sex, NULL),
@@ -924,6 +926,9 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="@show_sex">
             <Value>={?show_sex}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@exclude_in_vacation">
+            <Value>={?exclude_in_vacation}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -1074,6 +1079,14 @@ ORDER BY
       </Prompt>
     </ReportParameter>
     <ReportParameter Name="show_sex">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="exclude_in_vacation">
       <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>

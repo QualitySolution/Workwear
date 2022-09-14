@@ -61,11 +61,6 @@
         <property name="Image">resource:workwear.icon.menu.twitter.png</property>
       </source>
     </icon-set>
-    <icon-set id="google-plus">
-      <source>
-        <property name="Image">resource:workwear.icon.menu.google-plus.png</property>
-      </source>
-    </icon-set>
     <icon-set id="odnoklasniki">
       <source>
         <property name="Image">resource:workwear.icon.menu.odnoklasniki.png</property>
@@ -5899,11 +5894,31 @@
         <property name="ShortLabel" translatable="yes">Поступление</property>
         <signal name="Activated" handler="OnActionIncomeLoadActivated" />
       </action>
-      <action id="ActionNomenclaturerating">
+      <action id="ActionServices">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Рейтинг номенклатур</property>
-        <property name="ShortLabel" translatable="yes">Рейтинг номенклатур</property>
-        <signal name="Activated" handler="OnRatingNomenclatureActivated" />
+        <property name="Label" translatable="yes">Сервисы</property>
+        <property name="ShortLabel" translatable="yes">Сервисы</property>
+      </action>
+      <action id="ActionMenuNotification">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Уведомление сотрудников</property>
+        <property name="ShortLabel" translatable="yes">Уведомление сотрудников</property>
+        <property name="StockId">mail</property>
+        <signal name="Activated" handler="OnActionMenuNotificationActivated" />
+      </action>
+      <action id="ActionMenuClaims">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Обращения сотрудников</property>
+        <property name="ShortLabel" translatable="yes">Обращения</property>
+        <property name="StockId"> SendBox</property>
+        <signal name="Activated" handler="OnActionMenuClaimsActivated" />
+      </action>
+      <action id="ActionMenuRatings">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Отзывы на продукцию</property>
+        <property name="ShortLabel" translatable="yes">Отзывы</property>
+        <property name="StockId">gtk-about</property>
+        <signal name="Activated" handler="OnActionMenuRatingsActivated" />
       </action>
     </action-group>
     <property name="MemberName" />
@@ -5961,6 +5976,11 @@
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionIssuanceSheets" />
               </node>
+              <node type="Menu" action="ActionServices">
+                <node type="Menuitem" action="ActionMenuNotification" />
+                <node type="Menuitem" action="ActionMenuClaims" />
+                <node type="Menuitem" action="ActionMenuRatings" />
+              </node>
               <node type="Menu" action="Action1">
                 <node type="Menuitem" action="ActionOrganizations" />
                 <node type="Menuitem" action="ActionObjects" />
@@ -5974,7 +5994,6 @@
                 <node type="Separator" />
                 <node type="Menuitem" action="Action5" />
                 <node type="Menuitem" action="Action6" />
-                <node type="Menuitem" action="ActionNomenclaturerating" />
                 <node type="Menuitem" action="ActionWarehouse" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionSizeType" />
@@ -7477,7 +7496,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AverageAnnualNeedView" design-size="413 304">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AverageAnnualNeedView" design-size="418 304">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -7486,10 +7505,13 @@
         <child>
           <widget class="Gtk.Table" id="table1">
             <property name="MemberName" />
-            <property name="NRows">4</property>
+            <property name="NRows">5</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
+            <child>
+              <placeholder />
+            </child>
             <child>
               <placeholder />
             </child>
@@ -7585,6 +7607,31 @@
               </packing>
             </child>
             <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckSummry">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes">Суммировать результат</property>
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabel1">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
@@ -7651,7 +7698,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.RequestSheetView" design-size="418 345">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.RequestSheetView" design-size="418 374">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -7660,10 +7707,13 @@
         <child>
           <widget class="Gtk.Table" id="table1">
             <property name="MemberName" />
-            <property name="NRows">6</property>
+            <property name="NRows">7</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
+            <child>
+              <placeholder />
+            </child>
             <child>
               <placeholder />
             </child>
@@ -7876,6 +7926,31 @@
               <packing>
                 <property name="TopAttach">1</property>
                 <property name="BottomAttach">2</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckExcludeInVacation">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes">исключать сотрудников в отпуске</property>
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
