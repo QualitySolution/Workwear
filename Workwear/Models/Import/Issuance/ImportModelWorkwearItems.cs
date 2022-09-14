@@ -39,7 +39,6 @@ namespace workwear.Models.Import.Issuance
 
 		public List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow)
 		{
-			var countColumn = ImportedDataTypes.First(x => DataTypeWorkwearItems.Count.Equals(x.DataType.Data));
 			var grouped = UsedRows.Where(x => x.Operation != null)
 				.GroupBy(x => x.Employee);
 			logger.Debug($"В обработке {grouped.Count()} сотрудников.");
@@ -51,7 +50,7 @@ namespace workwear.Models.Import.Issuance
 					var last = itemGroup.OrderByDescending(x => x.Date).First();
 					if(itemGroup.Key.LastIssue == null || itemGroup.Key.LastIssue < last.Date) {
 						itemGroup.Key.LastIssue = last.Date;
-						itemGroup.Key.Amount = last.CellIntValue(countColumn).Value;
+						itemGroup.Key.Amount = last.Operation.Issued;
 						itemGroup.Key.NextIssue = itemGroup.Key.ActiveNormItem.CalculateExpireDate(last.Date.Value, itemGroup.Key.Amount);
 						dataParser.ChangedEmployees.Add(employeeGroup.Key);
 					}

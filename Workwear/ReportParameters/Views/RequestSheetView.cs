@@ -32,6 +32,10 @@ namespace workwear.ReportParameters.Views
 				.AddBinding(viewModel, vm => vm.AddChildSubdivisions, w => w.Active)
 				.InitializeFromSource();
 			checkShowSex.Binding.AddBinding(ViewModel, v => v.ShowSex, w => w.Active).InitializeFromSource();
+			
+			ycheckExcludeInVacation.Binding
+				.AddBinding(viewModel, w => w.ExcludeInVacation, v => v.Active)
+				.InitializeFromSource();
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)
