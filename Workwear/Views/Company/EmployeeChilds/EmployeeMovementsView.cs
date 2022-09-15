@@ -1,7 +1,6 @@
 using System.Reflection;
 using Gtk;
 using QSWidgetLib;
-using workwear.DTO;
 using workwear.ViewModels.Company.EmployeeChilds;
 
 namespace workwear.Views.Company.EmployeeChilds
@@ -36,7 +35,7 @@ namespace workwear.Views.Company.EmployeeChilds
 		public void YtreeviewMovements_RowActivated(object o, Gtk.RowActivatedArgs args)
 		{
 			if(args.Column.Title == "Документ") {
-				var item = ytreeviewMovements.GetSelectedObject<EmployeeCardMovements>();
+				var item = ytreeviewMovements.GetSelectedObject<EmployeeMovementItem>();
 				ViewModel.OpenDoc(item);
 			}
 		}
@@ -45,20 +44,20 @@ namespace workwear.Views.Company.EmployeeChilds
 		{
 			if(args.Event.Button == 3) {
 				var menu = new Menu();
-				var selected = ytreeviewMovements.GetSelectedObject<EmployeeCardMovements>();
+				var selected = ytreeviewMovements.GetSelectedObject<EmployeeMovementItem>();
 
-				var itemOpenLastIssue = new MenuItemId<EmployeeCardMovements>("Редактировать");
+				var itemOpenLastIssue = new MenuItemId<EmployeeMovementItem>("Редактировать");
 				itemOpenLastIssue.ID = selected;
 				itemOpenLastIssue.Sensitive = selected?.EmployeeIssueReference?.DocumentType != null 
 				                              || selected?.Operation.OverrideBefore == true;
 				
-				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenDoc(((MenuItemId<EmployeeCardMovements>)sender).ID);
+				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenDoc(((MenuItemId<EmployeeMovementItem>)sender).ID);
 				menu.Add(itemOpenLastIssue);
 
-				var itemRemoveOperation = new MenuItemId<EmployeeCardMovements>("Удалить операцию");
+				var itemRemoveOperation = new MenuItemId<EmployeeMovementItem>("Удалить операцию");
 				itemRemoveOperation.ID = selected;
 				itemRemoveOperation.Sensitive = selected?.EmployeeIssueReference?.DocumentType == null;
-				itemRemoveOperation.Activated += (sender, e) => viewModel.RemoveOperation(((MenuItemId<EmployeeCardMovements>)sender).ID);
+				itemRemoveOperation.Activated += (sender, e) => viewModel.RemoveOperation(((MenuItemId<EmployeeMovementItem>)sender).ID);
 				menu.Add(itemRemoveOperation);
 
 				menu.ShowAll();
@@ -70,7 +69,7 @@ namespace workwear.Views.Company.EmployeeChilds
 		private void CreateTable()
 		{
 			var cardIcon = new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "workwear.icon.buttons.smart-card.png");
-			ytreeviewMovements.CreateFluentColumnsConfig<EmployeeCardMovements>()
+			ytreeviewMovements.CreateFluentColumnsConfig<EmployeeMovementItem>()
 				.AddColumn("Дата").AddTextRenderer(e => e.Date.ToShortDateString())
 				//Заголовок колонки используется в методе YtreeviewMovements_RowActivated
 				.AddColumn("Документ").AddTextRenderer(e => e.DocumentTitle)

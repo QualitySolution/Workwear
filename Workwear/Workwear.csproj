@@ -193,7 +193,6 @@
     <Compile Include="Tools\Import\Xml1CDocumentItem.cs" />
     <Compile Include="Tools\Import\Xml1CDocumentParser.cs" />
     <Compile Include="Tools\Navigation\AdditionalIdHashGenerator.cs" />
-    <Compile Include="viewDTOs\EmployeeCardMovements.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="CreateProjectParam.cs" />
     <Compile Include="Repository\UserRepository.cs" />
@@ -213,6 +212,7 @@
     <Compile Include="gtk-gui\workwear.Views.Company.VacationTypeView.cs" />
     <Compile Include="Tools\BuisnessLogicGlobalEventHandler.cs" />
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChilds\EmployeeMovementItem.cs" />
     <Compile Include="ViewModels\Company\EmployeeVacationViewModel.cs" />
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\Company\VacationTypeViewModel.cs" />
@@ -630,7 +630,6 @@
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
     <Folder Include="Reports\" />
-    <Folder Include="viewDTOs\" />
     <Folder Include="Dialogs\" />
     <Folder Include="Repository\" />
     <Folder Include="Representations\" />

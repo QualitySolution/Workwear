@@ -11,7 +11,6 @@ using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
-using workwear.DTO;
 using workwear.Models.Stock;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
@@ -28,7 +27,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly FeaturesService featuresService;
 		private readonly ITdiCompatibilityNavigation navigation;
-		List<EmployeeCardMovements> movements;
+		List<EmployeeMovementItem> movements;
 
 		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, OpenStockDocumentsModel openStockDocumentsModel,  EmployeeIssueRepository employeeIssueRepository,  FeaturesService featuresService, ITdiCompatibilityNavigation navigation)
 		{
@@ -46,7 +45,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		private IUnitOfWork UoW => employeeViewModel.UoW;
 		private EmployeeCard Entity => employeeViewModel.Entity;
 
-		public List<EmployeeCardMovements> Movements {
+		public List<EmployeeMovementItem> Movements {
 			get => movements; set => SetField(ref movements, value);
 		}
 
@@ -67,7 +66,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		}
 		#endregion
 		#region Контекстное меню
-		public void OpenDoc(EmployeeCardMovements item) {
+		public void OpenDoc(EmployeeMovementItem item) {
 			var cardItem = Entity.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == item.Operation.ProtectionTools);
 			if(item.Operation.ManualOperation) {
 				var page = navigation.OpenViewModel<ManualEmployeeIssueOperationsViewModel, EmployeeCardItem, EmployeeIssueOperation>(
@@ -81,7 +80,7 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 			openStockDocumentsModel.EditDocumentDialog(employeeViewModel, item.EmployeeIssueReference);
 		}
 
-		public void RemoveOperation(EmployeeCardMovements item)
+		public void RemoveOperation(EmployeeMovementItem item)
 		{
 			if(item.EmployeeIssueReference?.DocumentType != null)
 				return;
@@ -105,12 +104,12 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 		{
 			logger.Info("Обновляем историю выдачи...");
 
-			var prepareMovements = new List<EmployeeCardMovements>();
+			var prepareMovements = new List<EmployeeMovementItem>();
 
 			var list = employeeIssueRepository.AllOperationsForEmployee(Entity, query => query.Fetch(SelectMode.Fetch, x => x.Nomenclature));
 			var docs = employeeIssueRepository.GetReferencedDocuments(list.Select(x => x.Id).ToArray());
 			foreach(var operation in list) {
-				var item = new EmployeeCardMovements();
+				var item = new EmployeeMovementItem();
 				item.Operation = operation;
 				item.EmployeeIssueReference = docs.FirstOrDefault(x => x.OperationId == operation.Id);
 				item.PropertyChanged += Item_PropertyChanged;
@@ -123,8 +122,8 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if(e.PropertyName == PropertyUtil.GetName<EmployeeCardMovements>(x => x.UseAutoWriteOff)) {
-				var item = sender as EmployeeCardMovements;
+			if(e.PropertyName == PropertyUtil.GetName<EmployeeMovementItem>(x => x.UseAutoWriteOff)) {
+				var item = sender as EmployeeMovementItem;
 				UoW.Save(item.Operation);
 			}
 		}

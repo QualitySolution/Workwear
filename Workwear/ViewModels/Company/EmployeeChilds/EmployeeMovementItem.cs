@@ -5,9 +5,9 @@ using QSProjectsLib;
 using Workwear.Domain.Operations;
 using Workwear.Models.Operations;
 
-namespace workwear.DTO
+namespace workwear.ViewModels.Company.EmployeeChilds
 {
-	public class EmployeeCardMovements : PropertyChangedBase
+	public class EmployeeMovementItem : PropertyChangedBase
 	{
 		public EmployeeIssueOperation Operation { get; set; }
 		public OperationToDocumentReference EmployeeIssueReference { get; set; }
