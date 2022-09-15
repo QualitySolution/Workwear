@@ -385,7 +385,6 @@
     <Compile Include="Journal\Filter.ViewModels\Regulations\NormFilterViewModel.cs" />
     <Compile Include="Journal\Filter.Views\Regulations\NormFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Regulations.NormFilterView.cs" />
-    <Compile Include="Models\Company\PersonNames.cs" />
     <Compile Include="ViewModels\Stock\CollectiveExpenseViewModel.cs" />
     <Compile Include="ViewModels\Stock\CollectiveExpenseItemsViewModel.cs" />
     <Compile Include="Views\Stock\CollectiveExpenseView.cs" />
@@ -680,7 +679,6 @@
     <Folder Include="Journal\ViewModels\Tools\" />
     <Folder Include="Journal\Filter.ViewModels\Regulations\" />
     <Folder Include="Journal\Filter.Views\Regulations\" />
-    <Folder Include="Models\Company\" />
     <Folder Include="ViewModels\Operations\" />
     <Folder Include="Views\Operations\" />
     <Folder Include="Journal\Filter.Views\Statements\" />

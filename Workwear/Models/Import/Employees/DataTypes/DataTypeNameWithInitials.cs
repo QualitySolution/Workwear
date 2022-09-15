@@ -4,7 +4,7 @@ using Gamma.Utilities;
 using QS.DomainModel.UoW;
 using QS.Utilities.Text;
 using Workwear.Domain.Company;
-using workwear.Models.Company;
+using Workwear.Models.Company;
 
 namespace workwear.Models.Import.Employees.DataTypes {
 	public class DataTypeNameWithInitials : DataTypeEmployeeBase {

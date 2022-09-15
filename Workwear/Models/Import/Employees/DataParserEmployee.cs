@@ -9,7 +9,7 @@ using QS.Utilities.Numeric;
 using QS.Utilities.Text;
 using Workwear.Domain.Company;
 using Workwear.Measurements;
-using workwear.Models.Company;
+using Workwear.Models.Company;
 using Workwear.Models.Import;
 using workwear.Models.Import.Employees.DataTypes;
 using Workwear.Repository.Company;

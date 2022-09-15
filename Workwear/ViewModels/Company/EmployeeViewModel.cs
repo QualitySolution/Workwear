@@ -25,7 +25,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Measurements;
-using workwear.Models.Company;
+using Workwear.Models.Company;
 using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
 using Workwear.Tools;

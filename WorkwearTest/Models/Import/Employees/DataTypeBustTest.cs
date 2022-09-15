@@ -4,7 +4,7 @@ using NUnit.Framework;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
-using workwear.Models.Company;
+using Workwear.Models.Company;
 using workwear.Models.Import.Employees.DataTypes;
 
 namespace WorkwearTest.Models.Import.Employees {

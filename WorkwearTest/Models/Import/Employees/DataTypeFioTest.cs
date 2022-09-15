@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using workwear.Models.Company;
+using Workwear.Models.Company;
 using workwear.Models.Import.Employees.DataTypes;
 
 namespace WorkwearTest.Models.Import.Employees {

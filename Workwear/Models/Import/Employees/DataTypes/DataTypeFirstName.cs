@@ -1,7 +1,7 @@
 ﻿using System;
 using Gamma.Utilities;
 using Workwear.Domain.Company;
-using workwear.Models.Company;
+using Workwear.Models.Company;
 
 namespace workwear.Models.Import.Employees.DataTypes {
 	public class DataTypeFirstName : DataTypeSimpleString {

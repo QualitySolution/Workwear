@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Workwear.Domain.Company;
 
-namespace workwear.Models.Company
+namespace Workwear.Models.Company
 {
 	public class PersonNames
 	{

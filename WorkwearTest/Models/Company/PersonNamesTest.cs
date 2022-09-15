@@ -1,6 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
-using workwear.Models.Company;
+using Workwear.Models.Company;
 
 namespace WorkwearTest.Models.Company
 {
