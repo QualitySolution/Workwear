@@ -3,7 +3,7 @@ using QS.BusinessCommon.Domain;
 using QS.Project.DB;
 using QS.Project.Domain;
 using workwear;
-using workwear.HibernateMapping;
+using Workwear.HibernateMapping;
 
 namespace WorkwearTest
 {

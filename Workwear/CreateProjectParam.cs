@@ -52,6 +52,7 @@ using Workwear.Measurements;
 using Workwear.Sql;
 using Workwear.Tools;
 using workwear.Dialogs.Regulations;
+using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
@@ -90,7 +91,7 @@ namespace workwear
 				.FormatSql ();
 
 			OrmConfig.ConfigureOrm (db, new System.Reflection.Assembly[] {
-				System.Reflection.Assembly.GetAssembly (typeof(MainClass)),
+				System.Reflection.Assembly.GetAssembly (typeof(EmployeeCard)),
 				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),
 				System.Reflection.Assembly.GetAssembly (typeof(UserBase)),
 				System.Reflection.Assembly.GetAssembly (typeof(HistoryMain)),
