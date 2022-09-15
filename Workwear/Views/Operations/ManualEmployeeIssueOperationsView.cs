@@ -1,7 +1,7 @@
 ﻿using System;
 using Gamma.GtkWidgets;
 using QS.Views.Dialog;
-using workwear.Domain.Operations;
+using Workwear.Domain.Operations;
 using workwear.ViewModels.Operations;
 
 namespace workwear.Views.Operations 

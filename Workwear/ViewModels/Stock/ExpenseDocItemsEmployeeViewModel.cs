@@ -8,10 +8,11 @@ using QS.Project.Domain;
 using QS.Project.Services;
 using QS.ViewModels;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
-using workwear.Tools.Features;
+using Workwear.Tools.Features;
 using workwear.ViewModels.Regulations;
 using Workwear.Measurements;
 

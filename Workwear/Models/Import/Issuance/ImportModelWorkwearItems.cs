@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import.Issuance

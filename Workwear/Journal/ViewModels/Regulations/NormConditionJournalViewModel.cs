@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using Autofac;
 using NHibernate;
@@ -9,7 +9,7 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Regulations;
 using workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations

@@ -124,9 +124,6 @@
     <EmbeddedResource Include="icon\toolbar\claims.png" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain\Company\EmployeeSize.cs" />
-    <Compile Include="Domain\Stock\Completion.cs" />
-    <Compile Include="Domain\Stock\CompletionItem.cs" />
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="HibernateMapping\Company\EmployeeSizeMap.cs" />
     <Compile Include="HibernateMapping\MappingParams.cs" />
@@ -207,13 +204,8 @@
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="CreateProjectParam.cs" />
     <Compile Include="Repository\UserRepository.cs" />
-    <Compile Include="Domain\Stock\Expense.cs" />
     <Compile Include="HibernateMapping\Stock\ExpenseMap.cs" />
-    <Compile Include="Domain\Stock\ExpenseItem.cs" />
-    <Compile Include="Domain\Stock\Nomenclature.cs" />
     <Compile Include="HibernateMapping\Stock\NomenclatureMap.cs" />
-    <Compile Include="Domain\Stock\IncomeItem.cs" />
-    <Compile Include="Domain\Stock\Income.cs" />
     <Compile Include="HibernateMapping\Stock\IncomeMap.cs" />
     <Compile Include="HibernateMapping\Stock\ExpenseItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\IncomeItemMap.cs" />
@@ -222,27 +214,14 @@
     <Compile Include="gtk-gui\workwear.IncomeDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.IncomeDocItemsView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.WriteOffView.cs" />
-    <Compile Include="Domain\Stock\Writeoff.cs" />
-    <Compile Include="Domain\Stock\WriteoffItem.cs" />
     <Compile Include="HibernateMapping\Stock\WriteoffMap.cs" />
     <Compile Include="HibernateMapping\Stock\WriteoffItemMap.cs" />
     <Compile Include="ConfigureDeletion.cs" />
     <Compile Include="Representations\ObjectBalanceVM.cs" />
-    <Compile Include="Domain\Stock\StockDocument.cs" />
-    <Compile Include="Domain\User\UserSettings.cs" />
     <Compile Include="HibernateMapping\User\UserSettingsMap.cs" />
     <Compile Include="Tools\CurrentUserSettings.cs" />
-    <Compile Include="Domain\Regulations\RegulationDoc.cs" />
-    <Compile Include="Domain\Regulations\RegulationDocAnnex.cs" />
     <Compile Include="HibernateMapping\Regulations\RegulationDocAnnexMap.cs" />
     <Compile Include="HibernateMapping\Regulations\RegulationDocMap.cs" />
-    <Compile Include="Domain\Company\EmployeeCard.cs" />
-    <Compile Include="Domain\Company\EmployeeCardItem.cs" />
-    <Compile Include="Domain\Company\Subdivision.cs" />
-    <Compile Include="Domain\Company\SubdivisionPlace.cs" />
-    <Compile Include="Domain\Company\Leader.cs" />
-    <Compile Include="Domain\Regulations\Norm.cs" />
-    <Compile Include="Domain\Regulations\NormItem.cs" />
     <Compile Include="HibernateMapping\Company\EmployeeCardItemMap.cs" />
     <Compile Include="HibernateMapping\Company\EmployeeCardMap.cs" />
     <Compile Include="HibernateMapping\Company\SubdivisionMap.cs" />
@@ -252,15 +231,7 @@
     <Compile Include="HibernateMapping\Regulations\NormMap.cs" />
     <Compile Include="Dialogs\Regulations\RegulationDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.RegulationDocDlg.cs" />
-    <Compile Include="Domain\Operations\EmployeeIssueOperation.cs" />
     <Compile Include="HibernateMapping\Operations\EmployeeIssueOperationMap.cs" />
-    <Compile Include="Domain\Operations\Graph\IssueGraph.cs" />
-    <Compile Include="Repository\Stock\NomenclatureRepository.cs" />
-    <Compile Include="Domain\Operations\Graph\GraphItem.cs" />
-    <Compile Include="Domain\Operations\Graph\GraphInterval.cs" />
-    <Compile Include="Repository\Operations\EmployeeIssueRepository.cs" />
-    <Compile Include="Domain\Company\VacationType.cs" />
-    <Compile Include="Domain\Company\EmployeeVacation.cs" />
     <Compile Include="HibernateMapping\Company\VacationTypeMap.cs" />
     <Compile Include="HibernateMapping\Company\EmployeeVacationMap.cs" />
     <Compile Include="Representations\Organization\EmployeeVacationsVM.cs" />
@@ -268,7 +239,6 @@
     <Compile Include="gtk-gui\workwear.Views.Company.EmployeeVacationView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.VacationTypeView.cs" />
     <Compile Include="Tools\BuisnessLogicGlobalEventHandler.cs" />
-    <Compile Include="Domain\Company\Organization.cs" />
     <Compile Include="HibernateMapping\Company\OrganizatonMap.cs" />
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeVacationViewModel.cs" />
@@ -282,8 +252,6 @@
     <Compile Include="Views\Company\EmployeeVacationView.cs" />
     <Compile Include="Views\Company\OrganizationView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.OrganizationView.cs" />
-    <Compile Include="Domain\Statements\IssuanceSheet.cs" />
-    <Compile Include="Domain\Statements\IssuanceSheetItem.cs" />
     <Compile Include="HibernateMapping\Statements\IssuanceSheetItemMap.cs" />
     <Compile Include="HibernateMapping\Statements\IssuanceSheetMap.cs" />
     <Compile Include="ViewModels\Statements\IssuanceSheetViewModel.cs" />
@@ -297,7 +265,6 @@
     <Compile Include="ViewModels\Company\LeadersViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.LeadersView.cs" />
     <Compile Include="ViewModels\Company\EmployeeViewModel.cs" />
-    <Compile Include="Domain\Stock\Warehouse.cs" />
     <Compile Include="HibernateMapping\Stock\WarehouseMap.cs" />
     <Compile Include="ViewModels\Stock\WarehouseTransferViewModel.cs" />
     <Compile Include="Views\Stock\EmployeeIssueGraphView.cs" />
@@ -306,28 +273,21 @@
     <Compile Include="ViewModels\Stock\WarehouseViewModel.cs" />
     <Compile Include="Views\Stock\WarehouseTransferView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.WarehouseTransferView.cs" />
-    <Compile Include="Domain\Stock\Transfer.cs" />
-    <Compile Include="Domain\Stock\TransferItem.cs" />
     <Compile Include="HibernateMapping\Stock\TransferMap.cs" />
     <Compile Include="HibernateMapping\Stock\TransferItemMap.cs" />
-    <Compile Include="Domain\Operations\WarehouseOperation.cs" />
     <Compile Include="ViewModels\Stock\NomenclatureViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Stock\StockBalanceFilterViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\StockBalanceJournalViewModel.cs" />
     <Compile Include="Journal\Filter.Views\Stock\StockBalanceFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.StockBalanceFilterView.cs" />
-    <Compile Include="Domain\Stock\StockPosition.cs" />
     <Compile Include="HibernateMapping\Operations\WarehouseOperationMap.cs" />
-    <Compile Include="Domain\Operations\SubdivisionIssueOperation.cs" />
     <Compile Include="HibernateMapping\Operations\SubdivisionIssueOperationMap.cs" />
     <Compile Include="Journal\JournalsColumnsConfigs.cs" />
-    <Compile Include="Repository\Stock\StockRepository.cs" />
     <Compile Include="ReportsDlg\StockAllWearDlg.cs" />
     <Compile Include="gtk-gui\workwear.ReportsDlg.StockAllWearDlg.cs" />
     <Compile Include="ViewModels\Stock\Widgets\SizeWidgetViewModel.cs" />
     <Compile Include="Views\Stock\Widgets\SizeWidgetView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Stock.Widgets.SizeWidgetView.cs" />
-    <Compile Include="Tools\Features\FeaturesService.cs" />
     <Compile Include="Views\Stock\WriteOffView.cs" />
     <Compile Include="Views\Tools\DataBaseSettingsView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Tools.DataBaseSettingsView.cs" />
@@ -340,8 +300,6 @@
     <Compile Include="Journal\Filter.Views\Company\EmployeeFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.EmployeeFilterView.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\EmployeeFilterViewModel.cs" />
-    <Compile Include="Repository\Company\EmployeeRepository.cs" />
-    <Compile Include="Repository\Company\SubdivisionRepository.cs" />
     <Compile Include="Views\Company\EmployeeView.cs" />
     <Compile Include="Views\Company\EmployeeChilds\EmployeeListedItemsView.cs" />
     <Compile Include="Views\Company\EmployeeChilds\EmployeeMovementsView.cs" />
@@ -363,15 +321,12 @@
     <Compile Include="ViewModels\Company\SubdivisionViewModel.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.SubdivisionView.cs" />
     <Compile Include="Journal\ViewModels\Company\SubdivisionJournalViewModel.cs" />
-    <Compile Include="Domain\Company\Department.cs" />
     <Compile Include="HibernateMapping\Company\DepartmentMap.cs" />
     <Compile Include="Journal\ViewModels\Company\DepartmentJournalViewModel.cs" />
     <Compile Include="ViewModels\Company\DepartmentViewModel.cs" />
     <Compile Include="Views\Company\DepartmentView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.DepartmentView.cs" />
-    <Compile Include="Domain\Regulations\Profession.cs" />
     <Compile Include="HibernateMapping\Regulations\ProfessionMap.cs" />
-    <Compile Include="Domain\Company\Post.cs" />
     <Compile Include="HibernateMapping\Company\PostMap.cs" />
     <Compile Include="Journal\ViewModels\Regulations\ProfessionJournalViewModel.cs" />
     <Compile Include="ViewModels\Regulations\ProfessionViewModel.cs" />
@@ -381,9 +336,7 @@
     <Compile Include="ViewModels\Company\PostViewModel.cs" />
     <Compile Include="Views\Company\PostView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.PostView.cs" />
-    <Compile Include="Domain\Regulations\ProtectionTools.cs" />
     <Compile Include="HibernateMapping\Regulations\ProtectionToolsMap.cs" />
-    <Compile Include="Domain\Stock\ItemsType.cs" />
     <Compile Include="HibernateMapping\Stock\ItemsTypeMap.cs" />
     <Compile Include="Views\Regulations\NormView.cs" />
     <Compile Include="ViewModels\Regulations\NormViewModel.cs" />
@@ -446,15 +399,11 @@
     <Compile Include="Views\Company\EmployeeChilds\EmployeePhotoView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Company.EmployeeChilds.EmployeePhotoView.cs" />
     <Compile Include="ViewModels\Company\EmployeeChilds\EmployeePhotoViewModel.cs" />
-    <Compile Include="Repository\Company\PostRepository.cs" />
-    <Compile Include="Models\Import\FIO.cs" />
     <Compile Include="Models\Import\ExcelColumn.cs" />
     <Compile Include="Models\Import\ImportedSheet.cs" />
     <Compile Include="Models\Import\SheetRowBase.cs" />
     <Compile Include="Models\Import\IDataParser.cs" />
     <Compile Include="Models\Import\DataParserBase.cs" />
-    <Compile Include="Repository\Regulations\NormRepository.cs" />
-    <Compile Include="Repository\Regulations\ProtectionToolsRepository.cs" />
     <Compile Include="Models\Import\ChangeType.cs" />
     <Compile Include="ViewModels\Import\CountersViewModel.cs" />
     <Compile Include="Views\Import\ExcelImportView.cs" />
@@ -477,8 +426,6 @@
     <Compile Include="Journal\Filter.Views\Regulations\NormFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Regulations.NormFilterView.cs" />
     <Compile Include="Models\Company\PersonNames.cs" />
-    <Compile Include="Domain\Stock\CollectiveExpense.cs" />
-    <Compile Include="Domain\Stock\CollectiveExpenseItem.cs" />
     <Compile Include="HibernateMapping\Stock\CollectiveExpenseItemMap.cs" />
     <Compile Include="HibernateMapping\Stock\CollectiveExpenseMap.cs" />
     <Compile Include="ViewModels\Stock\CollectiveExpenseViewModel.cs" />
@@ -508,11 +455,9 @@
     <Compile Include="Journal\Filter.ViewModels\Stock\StockMovementsFilterViewModel.cs" />
     <Compile Include="Journal\Filter.Views\Stock\StockMovementsFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.StockMovementsFilterView.cs" />
-    <Compile Include="Models\Operations\OperationToDocumentReference.cs" />
     <Compile Include="ViewModels\Tools\ReplaceEntityViewModel.cs" />
     <Compile Include="Views\Tools\ReplaceEntityView.cs" />
     <Compile Include="gtk-gui\workwear.Views.Tools.ReplaceEntityView.cs" />
-    <Compile Include="Domain\Regulations\NormCondition.cs" />
     <Compile Include="HibernateMapping\Regulations\NormConditionMap.cs" />
     <Compile Include="ViewModels\Regulations\NormConditionViewModel.cs" />
     <Compile Include="Views\Regulations\NormConditionView.cs" />
@@ -600,6 +545,10 @@
     <ProjectReference Include="..\..\QSProjects\QS.Project.Desktop\QS.Project.Desktop.csproj">
       <Project>{5ef2a7da-3886-4809-95df-880bd783a211}</Project>
       <Name>QS.Project.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Report.Core\QS.Report.Core.csproj">
+      <Project>{3e194a95-ac31-43d0-b93d-64164402a6dd}</Project>
+      <Name>QS.Report.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QSProjectsLib\QSProjectsLib.csproj">
       <Project>{A6C1914F-7732-49F5-BABA-8BBBA521FAAB}</Project>
@@ -726,32 +675,22 @@
     <Folder Include="ReportsDlg\" />
     <Folder Include="Reports\" />
     <Folder Include="viewDTOs\" />
-    <Folder Include="Domain\" />
     <Folder Include="Dialogs\" />
     <Folder Include="HibernateMapping\" />
     <Folder Include="Repository\" />
     <Folder Include="Representations\" />
     <Folder Include="Dialogs\Stock\" />
-    <Folder Include="Domain\Stock\" />
     <Folder Include="HibernateMapping\Stock\" />
-    <Folder Include="Domain\User\" />
     <Folder Include="HibernateMapping\User\" />
-    <Folder Include="Domain\Regulations\" />
     <Folder Include="HibernateMapping\Regulations\" />
-    <Folder Include="Domain\Company\" />
     <Folder Include="HibernateMapping\Company\" />
     <Folder Include="Dialogs\Regulations\" />
-    <Folder Include="Domain\Operations\" />
     <Folder Include="HibernateMapping\Operations\" />
-    <Folder Include="Domain\Operations\Graph\" />
-    <Folder Include="Repository\Stock\" />
-    <Folder Include="Repository\Operations\" />
     <Folder Include="Representations\Organization\" />
     <Folder Include="Views\" />
     <Folder Include="ViewModels\" />
     <Folder Include="ViewModels\Company\" />
     <Folder Include="Views\Company\" />
-    <Folder Include="Domain\Statements\" />
     <Folder Include="HibernateMapping\Statements\" />
     <Folder Include="ViewModels\Statements\" />
     <Folder Include="Views\Statements\" />
@@ -766,14 +705,12 @@
     <Folder Include="Journal\Filter.Views\Stock\" />
     <Folder Include="ViewModels\Stock\Widgets\" />
     <Folder Include="Views\Stock\Widgets\" />
-    <Folder Include="Tools\Features\" />
     <Folder Include="ViewModels\Tools\" />
     <Folder Include="Views\Tools\" />
     <Folder Include="Journal\ViewModels\Company\" />
     <Folder Include="Journal\ViewModels\Statements\" />
     <Folder Include="Journal\Filter.Views\Company\" />
     <Folder Include="Journal\Filter.ViewModels\Company\" />
-    <Folder Include="Repository\Company\" />
     <Folder Include="Views\Company\EmployeeChilds\" />
     <Folder Include="ViewModels\Company\EmployeeChilds\" />
     <Folder Include="Journal\ViewModels\Regulations\" />
@@ -789,7 +726,6 @@
     <Folder Include="ViewModels\IdentityCards\" />
     <Folder Include="Models\" />
     <Folder Include="Models\Import\" />
-    <Folder Include="Repository\Regulations\" />
     <Folder Include="ViewModels\Import\" />
     <Folder Include="Views\Import\" />
     <Folder Include="Tools\NHibernate\" />
@@ -801,7 +737,6 @@
     <Folder Include="Views\Operations\" />
     <Folder Include="Journal\Filter.Views\Statements\" />
     <Folder Include="Journal\Filter.ViewModels\Statements\" />
-    <Folder Include="Models\Operations\" />
     <Folder Include="HibernateMapping\Communications\" />
     <Folder Include="Journal\Filter.ViewModels\Communications\" />
     <Folder Include="Journal\Filter.Views\Communications\" />

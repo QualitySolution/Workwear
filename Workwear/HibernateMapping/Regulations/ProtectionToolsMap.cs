@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentNHibernate.Mapping;
-using workwear.Domain.Regulations;
-using workwear.Domain.Stock;
+using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
 
 namespace workwear.HibernateMapping.Regulations
 {

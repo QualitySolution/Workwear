@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentNHibernate.Testing.Values;
 using QS.DomainModel.UoW;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import.Employees.DataTypes {

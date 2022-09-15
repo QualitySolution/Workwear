@@ -11,7 +11,7 @@ using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Tools;
-using workwear.Tools.Features;
+using Workwear.Tools.Features;
 
 namespace workwear.Journal
 {

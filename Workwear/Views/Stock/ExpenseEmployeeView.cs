@@ -2,8 +2,8 @@
 using Gamma.Binding.Converters;
 using NLog;
 using QS.Views.Dialog;
-using workwear.Domain.Statements;
-using workwear.Domain.Stock;
+using Workwear.Domain.Statements;
+using Workwear.Domain.Stock.Documents;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock

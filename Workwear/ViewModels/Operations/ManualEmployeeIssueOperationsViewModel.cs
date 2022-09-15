@@ -8,10 +8,10 @@ using QS.Navigation;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
-using workwear.Domain.Regulations;
-using workwear.Repository.Operations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
+using Workwear.Repository.Operations;
 
 namespace workwear.ViewModels.Operations 
 {

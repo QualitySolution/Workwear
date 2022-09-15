@@ -8,13 +8,13 @@ using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using workwear.DTO;
 using workwear.Models.Stock;
-using workwear.Repository.Operations;
-using workwear.Tools.Features;
+using Workwear.Repository.Operations;
+using Workwear.Tools.Features;
 using workwear.ViewModels.Operations;
 
 namespace workwear.ViewModels.Company.EmployeeChilds

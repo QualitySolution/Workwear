@@ -12,12 +12,14 @@ using QS.Services;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 using workwear.Models.Import;
-using workwear.Repository.Stock;
-using workwear.Tools.Features;
+using Workwear.Repository.Stock;
+using Workwear.Repository.Stock;
+using Workwear.Tools.Features;
 using workwear.Tools.Import;
 using workwear.ViewModels.Stock;
 

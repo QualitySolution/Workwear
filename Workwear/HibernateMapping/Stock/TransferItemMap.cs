@@ -1,6 +1,5 @@
-﻿using System;
-using FluentNHibernate.Mapping;
-using workwear.Domain.Stock;
+﻿using FluentNHibernate.Mapping;
+using Workwear.Domain.Stock.Documents;
 
 namespace workwear.HibernateMapping.Stock
 {

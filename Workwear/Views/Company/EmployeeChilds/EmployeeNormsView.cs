@@ -1,6 +1,6 @@
 ﻿using System;
 using Gtk;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Regulations;
 using workwear.ViewModels.Company.EmployeeChilds;
 
 namespace workwear.Views.Company.EmployeeChilds

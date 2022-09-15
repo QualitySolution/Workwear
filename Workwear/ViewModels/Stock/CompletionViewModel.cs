@@ -13,12 +13,13 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
-using workwear.Repository.Stock;
+using Workwear.Repository.Stock;
 using Workwear.Tools;
-using workwear.Tools.Features;
+using Workwear.Tools.Features;
 
 namespace workwear.ViewModels.Stock
 {

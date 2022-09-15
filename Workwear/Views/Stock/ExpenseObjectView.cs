@@ -1,7 +1,6 @@
-﻿using System;
-using Gamma.Binding.Converters;
+﻿using Gamma.Binding.Converters;
 using QS.Views.Dialog;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock

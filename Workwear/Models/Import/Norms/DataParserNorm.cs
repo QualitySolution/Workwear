@@ -6,9 +6,9 @@ using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using workwear.Domain.Company;
-using workwear.Domain.Regulations;
-using workwear.Repository.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
+using Workwear.Repository.Regulations;
 using Workwear.Measurements;
 using workwear.Models.Import.Norms.DataTypes;
 

@@ -1,5 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Regulations;
 
 namespace workwear.HibernateMapping.Regulations
 {

@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Regulations;
 
 namespace WorkwearTest.Regulations

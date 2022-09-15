@@ -2,7 +2,7 @@
 using System.Linq;
 using Gtk;
 using QS.Views.Dialog;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Tools.IdentityCards;
 using workwear.ViewModels.Stock;
 

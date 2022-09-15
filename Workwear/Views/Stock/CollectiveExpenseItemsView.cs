@@ -3,7 +3,7 @@ using System.Linq;
 using Gamma.GtkWidgets;
 using Gtk;
 using QSWidgetLib;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock

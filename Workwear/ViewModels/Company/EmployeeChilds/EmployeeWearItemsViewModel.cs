@@ -9,17 +9,17 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using workwear.Models.Stock;
-using workwear.Repository.Operations;
+using Workwear.Repository.Operations;
 using workwear.ViewModels.Operations;
 using workwear.ViewModels.Regulations;
 using Workwear.Tools;
 using workwear.ViewModels.Stock;
-using workwear.Tools.Features;
-using workwear.Domain.Operations.Graph;
+using Workwear.Tools.Features;
+using Workwear.Domain.Operations.Graph;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
 {

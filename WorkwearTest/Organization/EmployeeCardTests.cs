@@ -3,8 +3,8 @@ using System.Linq;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using NUnit.Framework;
-using workwear.Domain.Company;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 
 namespace WorkwearTest.Organization
 {

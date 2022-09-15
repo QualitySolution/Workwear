@@ -2,7 +2,7 @@ using System;
 using Gamma.Binding.Converters;
 using NLog;
 using QS.Views.Dialog;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using Workwear.Measurements;
 using workwear.ViewModels.Stock;
 using Gtk;

@@ -9,19 +9,19 @@ using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Testing.DB;
-using workwear.Domain.Company;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using workwear.Models.Import;
 using workwear.Tools.Nhibernate;
 using workwear.ViewModels.Import;
 using Workwear.Measurements;
 using workwear.Models.Import.Issuance;
-using workwear.Repository.Company;
-using workwear.Repository.Operations;
-using workwear.Repository.Regulations;
-using workwear.Repository.Stock;
+using Workwear.Repository.Company;
+using Workwear.Repository.Operations;
+using Workwear.Repository.Regulations;
+using Workwear.Repository.Stock;
 
 namespace WorkwearTest.Integration.Import
 {

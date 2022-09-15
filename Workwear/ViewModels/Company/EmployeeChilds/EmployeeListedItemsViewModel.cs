@@ -3,7 +3,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 using workwear.Representations.Organization;
 using workwear.ViewModels.Stock;
 

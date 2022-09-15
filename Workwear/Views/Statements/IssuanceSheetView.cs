@@ -5,7 +5,7 @@ using Gtk;
 using QS.Views.Dialog;
 using QS.Views.Resolve;
 using QSWidgetLib;
-using workwear.Domain.Statements;
+using Workwear.Domain.Statements;
 using workwear.ViewModels.Statements;
 
 namespace workwear.Views.Statements

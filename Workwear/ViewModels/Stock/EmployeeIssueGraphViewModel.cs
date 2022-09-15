@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Company;
-using workwear.Domain.Operations.Graph;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations.Graph;
+using Workwear.Domain.Regulations;
 
 namespace workwear.ViewModels.Stock
 {

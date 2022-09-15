@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using Workwear.Measurements;
 
 namespace workwear.Models.Import

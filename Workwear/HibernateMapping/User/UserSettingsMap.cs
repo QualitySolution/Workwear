@@ -1,5 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
-using workwear.Domain.Users;
+using Workwear.Domain.Users;
 
 namespace workwear.HibernateMapping.User
 {

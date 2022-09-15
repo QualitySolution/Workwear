@@ -2,8 +2,8 @@ using System;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QSProjectsLib;
-using workwear.Domain.Operations;
-using workwear.Models.Operations;
+using Workwear.Domain.Operations;
+using Workwear.Models.Operations;
 
 namespace workwear.DTO
 {

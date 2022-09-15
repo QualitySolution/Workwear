@@ -2,11 +2,11 @@
 using System.Linq;
 using NUnit.Framework;
 using QS.Testing.DB;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
-using workwear.Domain.Operations.Graph;
-using workwear.Domain.Regulations;
-using workwear.Domain.Stock;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Operations.Graph;
+using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
 
 namespace WorkwearTest.Integration.Operations
 {

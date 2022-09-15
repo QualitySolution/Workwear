@@ -5,21 +5,20 @@ using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
 using QS.DomainModel.UoW;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
-using workwear.Domain.Operations.Graph;
-using workwear.Domain.Regulations;
-using workwear.Domain.Stock;
-using workwear.Repository.Operations;
-using Workwear.Tools;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
+using Workwear.Repository.Operations;
+using Workwear.Tools;
 
 namespace WorkwearTest.Organization
 {
 	[TestFixture(TestOf = typeof(EmployeeVacation))]
 	public class EmployeeVacationTests
 	{
-		[Test(Description = "Проверяем что при изменении даты отпуска срок операции персчитывается")]
+		[Test(Description = "Проверяем что при изменении даты отпуска срок операции пересчитывается")]
 		public void UpdateRelatedOperations_ChangeVacationRecalculateOperations()
 		{
 			var uow = Substitute.For<IUnitOfWork>();

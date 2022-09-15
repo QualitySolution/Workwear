@@ -9,8 +9,13 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Gtk.DataBindings\System.Data.Bindings\System.Data.Bindings.csproj" />
+      <ProjectReference Include="..\..\QSProjects\Modules\QS.BusinessCommon\QS.BusinessCommon.csproj" />
+      <ProjectReference Include="..\..\QSProjects\QS.Cloud.Client\QS.Cloud.Client.csproj" />
+      <ProjectReference Include="..\..\QSProjects\QS.Features\QS.Features.csproj" />
       <ProjectReference Include="..\..\QSProjects\QS.HistoryLog\QS.HistoryLog.csproj" />
       <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj" />
+      <ProjectReference Include="..\..\QSProjects\QS.Project.Desktop\QS.Project.Desktop.csproj" />
+      <ProjectReference Include="..\..\QSProjects\QS.Report.Core\QS.Report.Core.csproj" />
       <ProjectReference Include="..\Workwear.Core\Workwear.Core.csproj" />
     </ItemGroup>
     

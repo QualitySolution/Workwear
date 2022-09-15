@@ -14,11 +14,11 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using QS.Utilities;
-using workwear.Domain.Company;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Company;
-using workwear.Repository.Company;
+using Workwear.Repository.Company;
 using workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using QS.ViewModels;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 
 namespace workwear.ViewModels.Company.EmployeeChilds
 {

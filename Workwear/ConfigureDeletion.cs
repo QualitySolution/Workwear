@@ -2,13 +2,14 @@ using QS.BusinessCommon.Domain;
 using QS.Deletion;
 using QS.Project.Domain;
 using Workwear.Domain.Communications;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Statements;
-using workwear.Domain.Stock;
-using workwear.Domain.Users;
+using Workwear.Domain.Statements;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Users;
 
 namespace workwear
 {

@@ -4,9 +4,9 @@ using System.ComponentModel;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
-using workwear.Domain.Company;
-using workwear.Domain.Regulations;
-using workwear.Domain.Stock;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
 
 namespace workwear.Models.Import.Norms
 {

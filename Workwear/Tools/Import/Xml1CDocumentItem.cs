@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 
 namespace workwear.Tools.Import 
 {

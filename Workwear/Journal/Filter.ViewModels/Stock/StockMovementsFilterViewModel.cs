@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using Autofac;
 using QS.DomainModel.Entity;
@@ -7,8 +7,8 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
-using workwear.Tools.Features;
+using Workwear.Domain.Stock;
+using Workwear.Tools.Features;
 using Workwear.Measurements;
 
 namespace workwear.Journal.Filter.ViewModels.Stock

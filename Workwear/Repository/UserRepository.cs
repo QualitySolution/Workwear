@@ -1,6 +1,6 @@
 ﻿using QS.DomainModel.UoW;
 using QS.Project.Domain;
-using workwear.Domain.Users;
+using Workwear.Domain.Users;
 
 namespace workwear.Repository
 {

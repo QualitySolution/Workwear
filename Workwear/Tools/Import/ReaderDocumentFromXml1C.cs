@@ -6,7 +6,7 @@ using System.Xml.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 
 namespace workwear.Tools.Import 
 {

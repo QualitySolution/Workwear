@@ -4,11 +4,12 @@ using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
 using QS.Testing.DB;
-using workwear.Domain.Company;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
-using workwear.Repository.Company;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
+using Workwear.Repository.Company;
 using Workwear.Tools;
 
 namespace WorkwearTest.Integration.Stock

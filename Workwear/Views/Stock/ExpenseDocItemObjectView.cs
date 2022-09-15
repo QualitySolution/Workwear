@@ -2,7 +2,7 @@
 using Gtk;
 using QS.DomainModel.Entity;
 using QSWidgetLib;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock

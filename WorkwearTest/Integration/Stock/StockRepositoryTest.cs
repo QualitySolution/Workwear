@@ -1,10 +1,9 @@
-﻿using System;
-using NSubstitute;
+﻿using NSubstitute;
 using NUnit.Framework;
 using QS.Testing.DB;
-using workwear.Domain.Stock;
-using workwear.Repository.Stock;
-using workwear.Tools.Features;
+using Workwear.Domain.Stock;
+using Workwear.Repository.Stock;
+using Workwear.Tools.Features;
 
 namespace WorkwearTest.Integration.Stock
 {

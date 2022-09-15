@@ -4,7 +4,7 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Regulations;
 
 namespace workwear.ViewModels.Regulations
 {

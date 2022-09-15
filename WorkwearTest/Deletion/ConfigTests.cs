@@ -5,12 +5,12 @@ using QS.Deletion.Configuration;
 using QS.Deletion.Testing;
 using QS.DomainModel.Entity.EntityPermissions.EntityExtendedPermission;
 using QS.Project.Domain;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Statements;
-using workwear.Domain.Stock;
+using Workwear.Domain.Statements;
+using Workwear.Domain.Stock;
 
 namespace WorkwearTest.Deletion
 {

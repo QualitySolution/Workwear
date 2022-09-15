@@ -4,8 +4,8 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Company;
-using workwear.Repository.Operations;
+using Workwear.Domain.Company;
+using Workwear.Repository.Operations;
 using Workwear.Tools;
 
 namespace workwear.ViewModels.Company

@@ -1,5 +1,5 @@
 ﻿using NPOI.SS.UserModel;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Regulations;
 
 namespace workwear.Models.Import.Norms
 {

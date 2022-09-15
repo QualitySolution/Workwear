@@ -1,7 +1,7 @@
 ﻿using System;
 using NPOI.SS.UserModel;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 
 namespace workwear.Models.Import.Issuance
 {

@@ -9,7 +9,7 @@ using QS.Navigation;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using workwear.ViewModels.Stock;
 

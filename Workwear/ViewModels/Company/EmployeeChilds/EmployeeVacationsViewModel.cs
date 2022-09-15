@@ -5,7 +5,7 @@ using QS.Project.Domain;
 using QS.Project.Services;
 using QS.ViewModels;
 using QSOrmProject;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 using workwear.Representations.Organization;
 
 namespace workwear.ViewModels.Company.EmployeeChilds

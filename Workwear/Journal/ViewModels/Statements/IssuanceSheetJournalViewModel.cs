@@ -10,8 +10,8 @@ using QS.Project.DB;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
-using workwear.Domain.Company;
-using workwear.Domain.Statements;
+using Workwear.Domain.Company;
+using Workwear.Domain.Statements;
 using workwear.Journal.Filter.ViewModels.Statements;
 using workwear.ViewModels.Statements;
 

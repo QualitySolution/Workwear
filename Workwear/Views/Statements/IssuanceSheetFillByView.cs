@@ -1,6 +1,6 @@
 ﻿using System;
 using QS.Views;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 using workwear.ViewModels.Statements;
 
 namespace workwear.Views.Statements

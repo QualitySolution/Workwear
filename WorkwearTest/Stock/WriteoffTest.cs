@@ -1,12 +1,12 @@
 ﻿using System;
 using NSubstitute;
 using NUnit.Framework;
-using QS.Dialog;
 using QS.DomainModel.UoW;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 
 namespace WorkwearTest.Stock
 {

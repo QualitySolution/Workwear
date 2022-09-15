@@ -10,7 +10,7 @@ using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using QS.Widgets.GtkUI;
 using QSOrmProject;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 using workwear.ViewModels.Company;
 using workwear.Views.Company.EmployeeChilds;
 using Workwear.Domain.Company;

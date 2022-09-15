@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using QS.DomainModel.UoW;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 

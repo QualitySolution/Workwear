@@ -8,16 +8,16 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.Testing.DB;
-using workwear;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
-using workwear.Domain.Operations.Graph;
-using workwear.Domain.Regulations;
-using workwear.Domain.Stock;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations.Graph;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
+using Workwear.Repository.Operations;
 using Workwear.Tools;
 using workwear.Tools;
-using Workwear.Domain.Regulations;
-using workwear.Repository.Operations;
+using workwear;
+using Workwear.Domain.Stock.Documents;
 
 namespace WorkwearTest.Integration.Tools
 {

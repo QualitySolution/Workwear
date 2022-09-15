@@ -6,14 +6,15 @@ using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Utilities.Text;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using Workwear.Measurements;
-using workwear.Repository.Company;
-using workwear.Repository.Regulations;
-using workwear.Repository.Stock;
+using Workwear.Models.Import;
+using Workwear.Repository.Company;
+using Workwear.Repository.Regulations;
+using Workwear.Repository.Stock;
 using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import.Issuance

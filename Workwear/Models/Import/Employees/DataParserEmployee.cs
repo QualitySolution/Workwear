@@ -7,11 +7,12 @@ using QS.DomainModel.UoW;
 using QS.Services;
 using QS.Utilities.Numeric;
 using QS.Utilities.Text;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 using Workwear.Measurements;
 using workwear.Models.Company;
+using Workwear.Models.Import;
 using workwear.Models.Import.Employees.DataTypes;
-using workwear.Repository.Company;
+using Workwear.Repository.Company;
 using workwear.ViewModels.Import;
 
 namespace workwear.Models.Import.Employees

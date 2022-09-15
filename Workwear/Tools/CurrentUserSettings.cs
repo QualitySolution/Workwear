@@ -1,5 +1,5 @@
 ﻿using QSOrmProject.Users;
-using workwear.Domain.Users;
+using Workwear.Domain.Users;
 using workwear.Repository;
 
 namespace workwear.Tools

@@ -4,8 +4,8 @@ using Gdk;
 using Gtk;
 using QS.Utilities;
 using QSWidgetLib;
-using workwear.Domain.Company;
-using workwear.Tools.Features;
+using Workwear.Domain.Company;
+using Workwear.Tools.Features;
 using workwear.ViewModels.Company.EmployeeChilds;
 
 namespace workwear.Views.Company.EmployeeChilds

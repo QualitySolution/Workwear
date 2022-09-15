@@ -9,10 +9,10 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
-using workwear.Tools.Features;
+using Workwear.Tools.Features;
 using workwear.ViewModels.Communications;
 using QS.Utilities;
 

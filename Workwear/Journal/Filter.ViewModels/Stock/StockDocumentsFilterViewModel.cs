@@ -5,8 +5,9 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
-using workwear.Domain.Stock;
-using workwear.Tools.Features;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
+using Workwear.Tools.Features;
 
 namespace workwear.Journal.Filter.ViewModels.Stock
 {
@@ -19,18 +20,18 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			set => SetField(ref warehouse, value);
 		}
 
-		private StokDocumentType? stokDocumentType;
-		public virtual StokDocumentType? StokDocumentType {
+		private StockDocumentType? stokDocumentType;
+		public virtual StockDocumentType? StockDocumentType {
 			get => stokDocumentType;
 			set => SetField(ref stokDocumentType, value);
 		}
 
-		public IEnumerable<object> HidenStokDocumentTypeList {
+		public IEnumerable<object> HidenStockDocumentTypeList {
 			get {
 				if(!FeaturesService.Available(WorkwearFeature.CollectiveExpense))
-					yield return Domain.Stock.StokDocumentType.CollectiveExpense;
+					yield return Workwear.Domain.Stock.Documents.StockDocumentType.CollectiveExpense;
 				if(!FeaturesService.Available(WorkwearFeature.Warehouses))
-					yield return Domain.Stock.StokDocumentType.TransferDoc;
+					yield return Workwear.Domain.Stock.Documents.StockDocumentType.TransferDoc;
 			}
 		}
 

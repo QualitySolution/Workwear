@@ -5,8 +5,8 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
-using workwear.Domain.Company;
-using workwear.Domain.Stock;
+using Workwear.Domain.Company;
+using Workwear.Domain.Stock;
 
 namespace workwear.ReportParameters.ViewModels
 {

@@ -5,7 +5,7 @@ using Gtk;
 using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using QSWidgetLib;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock

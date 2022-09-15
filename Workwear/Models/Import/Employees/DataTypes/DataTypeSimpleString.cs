@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Gamma.Utilities;
 using QS.DomainModel.UoW;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 
 namespace workwear.Models.Import.Employees.DataTypes {
 	public class DataTypeSimpleString : DataTypeEmployeeBase {

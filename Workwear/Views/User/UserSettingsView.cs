@@ -1,5 +1,5 @@
 ﻿using QS.Views.Dialog;
-using workwear.Domain.Users;
+using Workwear.Domain.Users;
 using workwear.ViewModels.User;
 
 namespace workwear.Views.User

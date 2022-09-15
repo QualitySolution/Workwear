@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Autofac;
 using NSubstitute;
 using NUnit.Framework;
@@ -11,16 +10,15 @@ using QS.Project.Services;
 using QS.Services;
 using QS.Testing.DB;
 using QS.Validation.Testing;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using Workwear.Measurements;
 using workwear.Repository;
-using workwear.Repository.Stock;
+using Workwear.Repository.Stock;
 using Workwear.Tools;
-using workwear.Tools.Features;
+using Workwear.Tools.Features;
 using workwear.ViewModels.Stock;
 
 namespace WorkwearTest.ViewModels.Stock

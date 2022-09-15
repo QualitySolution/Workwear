@@ -10,7 +10,7 @@ using QS.Navigation;
 using QS.Utilities;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Communications;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 
 namespace workwear.ViewModels.Communications
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Gamma.Binding.Converters;
 using QS.Views.Dialog;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Regulations;
 using workwear.ViewModels.Regulations;
 
 namespace workwear.Views.Regulations

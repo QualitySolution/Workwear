@@ -2,8 +2,8 @@
 using NLog;
 using QS.Views.Dialog;
 using QSProjectsLib;
-using workwear.Domain.Company;
-using workwear.Repository.Company;
+using Workwear.Domain.Company;
+using Workwear.Repository.Company;
 using workwear.ViewModels.Company;
 
 namespace workwear.Views.Company

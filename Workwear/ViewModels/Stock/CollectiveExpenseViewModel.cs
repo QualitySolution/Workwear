@@ -18,13 +18,13 @@ using QS.Tools;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using QSReport;
-using workwear.Domain.Statements;
-using workwear.Domain.Stock;
+using Workwear.Domain.Statements;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Repository;
-using workwear.Repository.Stock;
+using Workwear.Repository.Stock;
 using Workwear.Tools;
-using workwear.Tools.Features;
+using Workwear.Tools.Features;
 using workwear.ViewModels.Statements;
 
 namespace workwear.ViewModels.Stock

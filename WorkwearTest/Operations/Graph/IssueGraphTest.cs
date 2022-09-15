@@ -3,8 +3,8 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using workwear.Domain.Operations;
-using workwear.Domain.Operations.Graph;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Operations.Graph;
 
 namespace WorkwearTest.Operations.Graph
 {

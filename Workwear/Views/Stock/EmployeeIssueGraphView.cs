@@ -1,6 +1,6 @@
 ﻿using System;
 using QS.Views.Dialog;
-using workwear.Domain.Operations.Graph;
+using Workwear.Domain.Operations.Graph;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock

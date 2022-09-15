@@ -10,7 +10,6 @@ using QS.Dialog;
 using QS.Navigation;
 using QS.Testing.DB;
 using QS.Utilities.Numeric;
-using workwear.Domain.Company;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using workwear.Models.Company;

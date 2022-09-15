@@ -7,8 +7,8 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
-using workwear.Domain.Stock;
-using workwear.Tools.Features;
+using Workwear.Domain.Stock;
+using Workwear.Tools.Features;
 using workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock

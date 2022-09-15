@@ -3,8 +3,8 @@ using Gamma.Binding.Converters;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using QS.Views.Dialog;
-using workwear.Domain.Regulations;
-using workwear.Domain.Stock;
+using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
 using workwear.ViewModels.Regulations;
 
 namespace workwear.Views.Regulations

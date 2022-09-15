@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using QS.Testing.DB;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using NSubstitute;
 using QS.Dialog;
 using Workwear.Domain.Sizes;
-using workwear.Repository.Stock;
+using Workwear.Domain.Stock.Documents;
+using Workwear.Repository.Stock;
 
 namespace WorkwearTest.Integration.Stock
 {

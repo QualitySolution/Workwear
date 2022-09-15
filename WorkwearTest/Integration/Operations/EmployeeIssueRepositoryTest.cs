@@ -4,13 +4,13 @@ using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
 using QS.Testing.DB;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
-using workwear.Domain.Operations.Graph;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
-using workwear.Repository.Operations;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
+using Workwear.Repository.Operations;
 using Workwear.Tools;
 
 namespace WorkwearTest.Integration.Operations
@@ -215,7 +215,7 @@ namespace WorkwearTest.Integration.Operations
 
 				var repository = new EmployeeIssueRepository(uow);
 				var result = repository.GetReferencedDocuments(item.EmployeeIssueOperation.Id);
-				Assert.That(result.First().DocumentType, Is.EqualTo(StokDocumentType.ExpenseEmployeeDoc));
+				Assert.That(result.First().DocumentType, Is.EqualTo(StockDocumentType.ExpenseEmployeeDoc));
 				Assert.That(result.First().DocumentId, Is.EqualTo(expense.Id));
 				Assert.That(result.First().ItemId, Is.EqualTo(item.Id));
 			}
@@ -284,11 +284,11 @@ namespace WorkwearTest.Integration.Operations
 				var results = repository
 					.GetReferencedDocuments(item.EmployeeIssueOperation.Id, item2.EmployeeIssueOperation.Id);
 				var result1 = results.First(x => x.OperationId == item.EmployeeIssueOperation.Id);
-				Assert.That(result1.DocumentType, Is.EqualTo(StokDocumentType.CollectiveExpense));
+				Assert.That(result1.DocumentType, Is.EqualTo(StockDocumentType.CollectiveExpense));
 				Assert.That(result1.DocumentId, Is.EqualTo(expense.Id));
 				Assert.That(result1.ItemId, Is.EqualTo(item.Id));
 				var result2 = results.First(x => x.OperationId == item2.EmployeeIssueOperation.Id);
-				Assert.That(result2.DocumentType, Is.EqualTo(StokDocumentType.CollectiveExpense));
+				Assert.That(result2.DocumentType, Is.EqualTo(StockDocumentType.CollectiveExpense));
 				Assert.That(result2.DocumentId, Is.EqualTo(expense.Id));
 				Assert.That(result2.ItemId, Is.EqualTo(item2.Id));
 			}
@@ -353,7 +353,7 @@ namespace WorkwearTest.Integration.Operations
 
 				var repository = new EmployeeIssueRepository(uow);
 				var result = repository.GetReferencedDocuments(returnItem.ReturnFromEmployeeOperation.Id);
-				Assert.That(result.First().DocumentType, Is.EqualTo(StokDocumentType.IncomeDoc));
+				Assert.That(result.First().DocumentType, Is.EqualTo(StockDocumentType.IncomeDoc));
 				Assert.That(result.First().DocumentId, Is.EqualTo(income.Id));
 				Assert.That(result.First().ItemId, Is.EqualTo(returnItem.Id));
 			}
@@ -415,7 +415,7 @@ namespace WorkwearTest.Integration.Operations
 
 				var repository = new EmployeeIssueRepository(uow);
 				var result = repository.GetReferencedDocuments(writeoffItem.EmployeeWriteoffOperation.Id);
-				Assert.That(result.First().DocumentType, Is.EqualTo(StokDocumentType.WriteoffDoc));
+				Assert.That(result.First().DocumentType, Is.EqualTo(StockDocumentType.WriteoffDoc));
 				Assert.That(result.First().DocumentId, Is.EqualTo(writeoff.Id));
 				Assert.That(result.First().ItemId, Is.EqualTo(writeoffItem.Id));
 			}

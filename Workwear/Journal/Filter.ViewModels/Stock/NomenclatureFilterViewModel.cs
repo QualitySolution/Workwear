@@ -3,9 +3,9 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
-using workwear.Tools.Features;
+using Workwear.Tools.Features;
 
 namespace workwear.Journal.Filter.ViewModels.Stock
 {
