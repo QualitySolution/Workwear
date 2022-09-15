@@ -36,6 +36,7 @@ namespace workwear.Models.Import.Issuance
 			AddColumnName(DataTypeWorkwearItems.PersonnelNumber,
 				"Табельный номер"
 				);
+			AddColumnName(DataTypeWorkwearItems.NameWithInitials);
 			AddColumnName(DataTypeWorkwearItems.Fio,
 				"ФИО",
 				"Ф.И.О.",
@@ -90,6 +91,7 @@ namespace workwear.Models.Import.Issuance
 		{
 			var personnelNumberColumn = importModel.GetColumnForDataType(DataTypeWorkwearItems.PersonnelNumber);
 			var fioColumn = importModel.GetColumnForDataType(DataTypeWorkwearItems.Fio);
+			var nameWithInitialsColumn = importModel.GetColumnForDataType(DataTypeWorkwearItems.NameWithInitials);
 			var protectionToolsColumn = importModel.GetColumnForDataType(DataTypeWorkwearItems.ProtectionTools);
 			var nomenclatureColumn = importModel.GetColumnForDataType(DataTypeWorkwearItems.Nomenclature);
 			var issueDateColumn = importModel.GetColumnForDataType(DataTypeWorkwearItems.IssueDate);
@@ -105,10 +107,13 @@ namespace workwear.Models.Import.Issuance
 					.Where(x => !String.IsNullOrWhiteSpace(x)).Distinct().ToArray();
 				employeesQuery = employeeRepository.GetEmployeesByPersonalNumbers(personnelNumbers);
 			}
-			else {
+			else if(fioColumn != null) {
 				var fios = list.Select(x => GetFIO(x, fioColumn))
 					.Where(x => !x.IsEmpty).Distinct();
 				employeesQuery = employeeRepository.GetEmployeesByFIOs(fios);
+			}
+			else {
+				employeesQuery = employeeRepository.ActiveEmployeesQuery();
 			}
 
 			IList<EmployeeCard> employees = employeesQuery
@@ -132,19 +137,22 @@ namespace workwear.Models.Import.Issuance
 
 				if(personnelNumberColumn != null)
 					row.Employee = employees.FirstOrDefault(x => x.PersonnelNumber == EmployeeParse.GetPersonalNumber(settings, row, personnelNumberColumn));
-				else
+				else if(fioColumn != null)
 					row.Employee = employees.FirstOrDefault(x => EmployeeParse.CompareFio(x, GetFIO(row, fioColumn)));
+				else 
+					row.Employee = employees.FirstOrDefault(x => EmployeeParse.CompareNameWithInitials(x, row.CellStringValue(nameWithInitialsColumn)));
 
 				if(row.Employee == null) {
 					if(personnelNumberColumn != null)
 						logger.Warn(
 						$"Не найден сотрудник с табельным номером [{EmployeeParse.GetPersonalNumber(settings, row, personnelNumberColumn)}]. Пропускаем.");
+					else if (fioColumn != null)
+						logger.Warn($"Не найден сотрудник с ФИО [{GetFIO(row, fioColumn).FullName}]. Пропускаем.");
 					else 
-						logger.Warn(
-							$"Не найден сотрудник с ФИО [{GetFIO(row, fioColumn).FullName}]. Пропускаем.");
+						logger.Warn($"Не найден сотрудник [{row.CellStringValue(nameWithInitialsColumn)}]. Пропускаем.");
 					
 					row.ProgramSkipped = true;
-					row.AddColumnChange(personnelNumberColumn ?? fioColumn, ChangeType.NotFound);
+					row.AddColumnChange(personnelNumberColumn ?? fioColumn ?? nameWithInitialsColumn, ChangeType.NotFound);
 					counters.AddCount(CountersWorkwearItems.EmployeeNotFound);
 					continue;
 				}

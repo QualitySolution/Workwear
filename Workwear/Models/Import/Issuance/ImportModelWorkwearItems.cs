@@ -31,7 +31,7 @@ namespace workwear.Models.Import.Issuance
 		protected override DataTypeWorkwearItems[] RequiredDataTypes => new []{DataTypeWorkwearItems.ProtectionTools, DataTypeWorkwearItems.IssueDate};
 
 		protected override bool HasRequiredDataTypes(IEnumerable<DataTypeWorkwearItems> dataTypes) {
-			return (dataTypes.Contains(DataTypeWorkwearItems.PersonnelNumber) ||dataTypes.Contains(DataTypeWorkwearItems.Fio)) 
+			return (dataTypes.Contains(DataTypeWorkwearItems.PersonnelNumber) || dataTypes.Contains(DataTypeWorkwearItems.Fio) || dataTypes.Contains(DataTypeWorkwearItems.NameWithInitials)) 
 			       && base.HasRequiredDataTypes(dataTypes);
 		}
 
