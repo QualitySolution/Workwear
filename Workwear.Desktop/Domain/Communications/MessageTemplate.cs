@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 
-namespace workwear.Domain.Communications
+namespace Workwear.Domain.Communications
 {
 	[Appellative(Gender = GrammaticalGender.Masculine,
 		NominativePlural = "шаблоны",

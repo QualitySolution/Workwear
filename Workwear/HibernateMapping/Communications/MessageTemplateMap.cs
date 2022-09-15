@@ -1,5 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
-using workwear.Domain.Communications;
+using Workwear.Domain.Communications;
 
 namespace workwear.HibernateMapping.Communications
 {

@@ -1,7 +1,7 @@
 using QS.BusinessCommon.Domain;
 using QS.Deletion;
 using QS.Project.Domain;
-using workwear.Domain.Communications;
+using Workwear.Domain.Communications;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
 using workwear.Domain.Regulations;

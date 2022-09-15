@@ -6,7 +6,7 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
-using workwear.Domain.Communications;
+using Workwear.Domain.Communications;
 using workwear.ViewModels.Communications;
 
 namespace workwear.Journal.ViewModels.Communications

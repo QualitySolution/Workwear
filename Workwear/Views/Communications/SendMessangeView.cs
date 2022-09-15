@@ -1,6 +1,6 @@
 ﻿using QS.Navigation;
 using QS.Views.Dialog;
-using workwear.Domain.Communications;
+using Workwear.Domain.Communications;
 using workwear.ViewModels.Communications;
 
 namespace workwear.Views.Communications

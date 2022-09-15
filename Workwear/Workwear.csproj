@@ -521,7 +521,6 @@
     <Compile Include="HibernateMapping\Communications\MessageTemplateMap.cs" />
     <Compile Include="Journal\Filter.ViewModels\Communications\EmployeeNotificationFilterViewModel.cs" />
     <Compile Include="Journal\Filter.Views\Communications\EmployeeNotificationFilterView.cs" />
-    <Compile Include="Domain\Communications\MessageTemplate.cs" />
     <Compile Include="ViewModels\Communications\MessageTemplateViewModel.cs" />
     <Compile Include="ViewModels\Communications\SendMessangeViewModel.cs" />
     <Compile Include="Views\Communications\MessageTemplateView.cs" />
@@ -806,7 +805,6 @@
     <Folder Include="HibernateMapping\Communications\" />
     <Folder Include="Journal\Filter.ViewModels\Communications\" />
     <Folder Include="Journal\Filter.Views\Communications\" />
-    <Folder Include="Domain\Communications\" />
     <Folder Include="ViewModels\Communications\" />
     <Folder Include="Views\Communications\" />
     <Folder Include="Journal\ViewModels\Communications\" />
