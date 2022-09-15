@@ -6,7 +6,7 @@ using NUnit.Framework;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 
-namespace WorkwearTest.Organization
+namespace Workwear.Test.Domain.Company
 {
 	[TestFixture(TestOf = typeof(EmployeeCard))]
 	public class EmployeeCardTests

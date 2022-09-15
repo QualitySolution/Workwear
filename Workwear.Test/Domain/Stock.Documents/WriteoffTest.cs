@@ -8,7 +8,7 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 
-namespace WorkwearTest.Stock
+namespace Workwear.Test.Domain.Stock.Documents
 {
 	[TestFixture(TestOf = typeof(Writeoff))]
 	public class WriteoffTest
@@ -18,11 +18,11 @@ namespace WorkwearTest.Stock
 		{
 			var uow = Substitute.For<IUnitOfWork>();
 
-			var nomeclature = Substitute.For<Nomenclature>();
+			var nomenclature = Substitute.For<Nomenclature>();
 
 			var warehouse = Substitute.For<Warehouse>();
 
-			var position = new StockPosition(nomeclature, 0.2m, new Size(), new Size());
+			var position = new StockPosition(nomenclature, 0.2m, new Size(), new Size());
 
 			var writeoff = new Writeoff {
 				Date = new DateTime(2019, 1, 15)
@@ -44,7 +44,7 @@ namespace WorkwearTest.Stock
 		{
 			var uow = Substitute.For<IUnitOfWork>();
 
-			var nomeclature = Substitute.For<Nomenclature>();
+			var nomenclature = Substitute.For<Nomenclature>();
 
 			var subdivision = Substitute.For<Subdivision>();
 
@@ -52,7 +52,7 @@ namespace WorkwearTest.Stock
 				OperationTime = new DateTime(2019, 1, 1),
 				StartOfUse = new DateTime(2019, 1, 1),
 				Issued = 10,
-				Nomenclature = nomeclature,
+				Nomenclature = nomenclature,
 				WearPercent = 0,
 				ExpiryOn = new DateTime(2019, 1, 15),
 				Subdivision = subdivision
@@ -78,7 +78,7 @@ namespace WorkwearTest.Stock
 		{
 			var uow = Substitute.For<IUnitOfWork>();
 
-			var nomeclature = Substitute.For<Nomenclature>();
+			var nomenclature = Substitute.For<Nomenclature>();
 
 			var employee = Substitute.For<EmployeeCard>();
 
@@ -86,7 +86,7 @@ namespace WorkwearTest.Stock
 				OperationTime = new DateTime(2019, 1, 1),
 				StartOfUse = new DateTime(2019, 1, 1),
 				Issued = 10,
-				Nomenclature = nomeclature,
+				Nomenclature = nomenclature,
 				WearPercent = 0,
 				ExpiryByNorm = new DateTime(2019, 1, 15),
 				Employee = employee

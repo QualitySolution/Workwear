@@ -1,23 +1,23 @@
-﻿using NSubstitute;
+﻿using System;
+using System.Collections.Generic;
+using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
 using QS.DomainModel.UoW;
-using System;
-using System.Collections.Generic;
+using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
-using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools;
 
-namespace WorkwearTest.Integration.EmployeeIssue
+namespace Workwear.Test.Domain.Stock.Documents
 {
 	[TestFixture(TestOf =typeof(Expense))]
 	public class ExpenseTest
 	{
-		[Test(Description = "Мы должны проигнорировать собственную операцию при рассчете и не предлагать пользователю сдвинуть дату начала использования.")]
+		[Test(Description = "Мы должны проигнорировать собственную операцию при расчете и не предлагать пользователю сдвинуть дату начала использования.")]
 		public void UpdateOperations_IgnoreSelfOperationsWhenChangeDateOfDocument()
 		{
 			var uow = Substitute.For<IUnitOfWork>();
@@ -25,7 +25,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(1);
 			var incomeOperation = Substitute.For<EmployeeIssueOperation>();
-			var nomeclature = Substitute.For<Nomenclature>();
+			var nomenclature = Substitute.For<Nomenclature>();
 
 			var operation = new EmployeeIssueOperation();
 			operation.OperationTime = new DateTime(2019, 1, 15);
@@ -35,7 +35,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<EmployeeIssueOperation>() { operation });
 
 			var expenseItem = new ExpenseItem();
-			expenseItem.Nomenclature = nomeclature;
+			expenseItem.Nomenclature = nomenclature;
 			expenseItem.EmployeeIssueOperation = operation;
 			expenseItem.Amount = 1;
 			var expense = new Expense();
@@ -52,7 +52,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			//Выполняем
 			expense.UpdateOperations(uow, baseParameters, ask);
 
-			//В данном сценарии мы не должны ничего спрашивать у пользователя. Предпологается что мы могли попросить передвинуть дату начала, если бы не проигнорировали свою же операцию.
+			//В данном сценарии мы не должны ничего спрашивать у пользователя. Предполагается что мы могли попросить передвинуть дату начала, если бы не проигнорировали свою же операцию.
 			ask.DidNotReceiveWithAnyArgs().Question(string.Empty);
 
 			Assert.That(expense.Items[0].EmployeeIssueOperation.OperationTime,
@@ -67,7 +67,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			var employee = Substitute.For<EmployeeCard>();
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(1);
-			var nomeclature = Substitute.For<Nomenclature>();
+			var nomenclature = Substitute.For<Nomenclature>();
 			var operationBeforeAndEnough = Substitute.For<EmployeeIssueOperation>();
 			operationBeforeAndEnough.OperationTime.Returns(new DateTime(2018, 10, 15));
 			operationBeforeAndEnough.Issued.Returns(2);
@@ -79,7 +79,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<EmployeeIssueOperation>() { operation, operationBeforeAndEnough });
 
 			var expenseItem = new ExpenseItem();
-			expenseItem.Nomenclature = nomeclature;
+			expenseItem.Nomenclature = nomenclature;
 			expenseItem.EmployeeIssueOperation = operation;
 			expenseItem.Amount = 1;
 			var expense = new Expense();
@@ -111,7 +111,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			var employee = Substitute.For<EmployeeCard>();
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(1);
-			var nomeclature = Substitute.For<Nomenclature>();
+			var nomenclature = Substitute.For<Nomenclature>();
 
 			var operationIssue = Substitute.For<EmployeeIssueOperation>();
 			operationIssue.Id.Returns(1);
@@ -130,7 +130,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<EmployeeIssueOperation>() { operation, operationIssue, operationWriteoff });
 
 			var expenseItem = new ExpenseItem();
-			expenseItem.Nomenclature = nomeclature;
+			expenseItem.Nomenclature = nomenclature;
 			expenseItem.EmployeeIssueOperation = operation;
 			expenseItem.Amount = 1;
 			var expense = new Expense();
@@ -147,7 +147,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			//Выполняем
 			expense.UpdateOperations(uow, baseParameters, ask);
 
-			//В данном сценарии мы не должны ничего спрашивать у пользователя. Предпологается что мы могли попросить передвинуть дату начала, на тот же день, так как списание было в этот день. реальный случай.
+			//В данном сценарии мы не должны ничего спрашивать у пользователя. Предполагается что мы могли попросить передвинуть дату начала, на тот же день, так как списание было в этот день. реальный случай.
 			ask.DidNotReceiveWithAnyArgs().Question(string.Empty);
 
 			Assert.That(expense.Items[0].EmployeeIssueOperation.OperationTime,
@@ -164,14 +164,14 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(1);
 			var incomeOperation = Substitute.For<EmployeeIssueOperation>();
-			var nomeclature = Substitute.For<Nomenclature>();
+			var nomenclature = Substitute.For<Nomenclature>();
 
 			var warehouse = Substitute.For<Warehouse>();
 
 			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<EmployeeIssueOperation>() { });
 
 			var expenseItem = new ExpenseItem();
-			expenseItem.Nomenclature = nomeclature;
+			expenseItem.Nomenclature = nomenclature;
 			expenseItem.Amount = 1;
 			var expense = new Expense();
 			expense.Employee = employee;
@@ -188,7 +188,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			//Выполняем
 			expense.UpdateOperations(uow, baseParameters, ask, "80313E3A437A04");
 
-			//В данном сценарии мы не должны ничего спрашивать у пользователя. Предпологается что мы могли попросить передвинуть дату начала, если бы не проигнорировали свою же операцию.
+			//В данном сценарии мы не должны ничего спрашивать у пользователя. Предполагается что мы могли попросить передвинуть дату начала, если бы не проигнорировали свою же операцию.
 			ask.DidNotReceiveWithAnyArgs().Question(string.Empty);
 
 			Assert.That(expense.Items[0].EmployeeIssueOperation.SignCardKey, Is.EqualTo("80313E3A437A04"));

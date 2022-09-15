@@ -64,15 +64,7 @@
     <Compile Include="Models\Import\Norms\DataTypePeriodTest.cs" />
     <Compile Include="Models\Import\RowStackHelperTest.cs" />
     <Compile Include="Models\Import\TextParserTest.cs" />
-    <Compile Include="Operations\Graph\IssueGraphTest.cs" />
-    <Compile Include="Operations\Graph\GraphItemTest.cs" />
-    <Compile Include="Organization\EmployeeCardTests.cs" />
-    <Compile Include="Regulations\NormItemTest.cs" />
-    <Compile Include="Operations\EmployeeIssueOperationTest.cs" />
-    <Compile Include="Organization\EmployeeCardItemTests.cs" />
     <Compile Include="Sql\ScriptsConfigurationTest.cs" />
-    <Compile Include="Stock\ExpenseTest.cs" />
-    <Compile Include="Organization\EmployeeVacationTests.cs" />
     <Compile Include="Integration\ReportExportTest.cs" />
     <Compile Include="Integration\Tools\BuisnessLogicGlobalEventHandlerTest.cs" />
     <Compile Include="Integration\Organization\EmployeeVacationIntegratedTest.cs" />
@@ -81,7 +73,6 @@
     <Compile Include="Integration\Stock\IncomeIntegratedTest.cs" />
     <Compile Include="Integration\Stock\ExpenseSubdivisionIntegratedTest.cs" />
     <Compile Include="Integration\Stock\StockRepositoryTest.cs" />
-    <Compile Include="Stock\WriteoffTest.cs" />
     <Compile Include="Integration\Organization\EmployeeCardIntegratedTest.cs" />
     <Compile Include="Integration\Stock\WriteoffEmployeeIntegratedTest.cs" />
     <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModelTest.cs" />
@@ -158,11 +149,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Operations\" />
-    <Folder Include="Operations\Graph\" />
-    <Folder Include="Regulations\" />
-    <Folder Include="Organization\" />
-    <Folder Include="Stock\" />
     <Folder Include="Integration\" />
     <Folder Include="Integration\Tools\" />
     <Folder Include="Integration\Organization\" />

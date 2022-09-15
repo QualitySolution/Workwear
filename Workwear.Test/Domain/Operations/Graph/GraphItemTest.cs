@@ -1,11 +1,11 @@
-﻿using NSubstitute;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using NSubstitute;
+using NUnit.Framework;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 
-namespace WorkwearTest.Operations.Graph
+namespace Workwear.Test.Domain.Operations.Graph
 {
 	[TestFixture(TestOf = typeof(GraphItem))]
 	public class GraphItemTest

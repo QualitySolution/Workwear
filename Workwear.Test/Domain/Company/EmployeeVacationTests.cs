@@ -13,7 +13,7 @@ using Workwear.Domain.Stock;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
 
-namespace WorkwearTest.Organization
+namespace Workwear.Test.Domain.Company
 {
 	[TestFixture(TestOf = typeof(EmployeeVacation))]
 	public class EmployeeVacationTests

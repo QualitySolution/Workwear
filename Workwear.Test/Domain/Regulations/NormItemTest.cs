@@ -1,9 +1,8 @@
-﻿using NUnit.Framework;
-using System;
-using Workwear.Domain.Regulations;
+﻿using System;
+using NUnit.Framework;
 using Workwear.Domain.Regulations;
 
-namespace WorkwearTest.Regulations
+namespace Workwear.Test.Domain.Regulations
 {
 	[TestFixture(TestOf = typeof(NormItem))]
 	public class NormItemTest

@@ -9,9 +9,8 @@ using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Tools;
-using Workwear.Domain.Regulations;
 
-namespace WorkwearTest.Operations
+namespace Workwear.Test.Domain.Operations
 {
 	[TestFixture(TestOf = typeof(EmployeeIssueOperation))]
 	public class EmployeeIssueOperationTest

@@ -1,19 +1,18 @@
-﻿using NSubstitute;
+﻿using System;
+using System.Collections.Generic;
+using NSubstitute;
 using NUnit.Framework;
 using QS.DomainModel.UoW;
-using System;
-using System.Collections.Generic;
+using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
-using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
-using Workwear.Domain.Stock;
-using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
+using Workwear.Domain.Stock;
 using Workwear.Measurements;
 using Workwear.Tools;
 
-namespace WorkwearTest.Organization
+namespace Workwear.Test.Domain.Company
 {
 	[TestFixture(TestOf = typeof(EmployeeCardItem))]
 	public class EmployeeCardItemTests
