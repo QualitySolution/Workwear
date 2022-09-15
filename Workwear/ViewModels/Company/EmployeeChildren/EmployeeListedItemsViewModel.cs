@@ -7,7 +7,7 @@ using Workwear.Domain.Company;
 using workwear.Representations.Organization;
 using workwear.ViewModels.Stock;
 
-namespace workwear.ViewModels.Company.EmployeeChilds
+namespace workwear.ViewModels.Company.EmployeeChildren
 {
 	public class EmployeeListedItemsViewModel : ViewModelBase
 	{

@@ -1,9 +1,9 @@
 ﻿using System;
 using Gtk;
 using QS.Views;
-using workwear.ViewModels.Company.EmployeeChilds;
+using workwear.ViewModels.Company.EmployeeChildren;
 
-namespace workwear.Views.Company.EmployeeChilds
+namespace workwear.Views.Company.EmployeeChildren
 {
 	public partial class EmployeePhotoView : ViewBase<EmployeePhotoViewModel>
 	{

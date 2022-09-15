@@ -12,7 +12,7 @@ using QS.Widgets.GtkUI;
 using QSOrmProject;
 using Workwear.Domain.Company;
 using workwear.ViewModels.Company;
-using workwear.Views.Company.EmployeeChilds;
+using workwear.Views.Company.EmployeeChildren;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 

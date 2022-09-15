@@ -3,7 +3,7 @@ using System.IO;
 using QS.ViewModels;
 using Workwear.Domain.Company;
 
-namespace workwear.ViewModels.Company.EmployeeChilds
+namespace workwear.ViewModels.Company.EmployeeChildren
 {
 	public class EmployeePhotoViewModel : ViewModelBase
 	{

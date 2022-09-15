@@ -30,7 +30,7 @@ using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
-using workwear.ViewModels.Company.EmployeeChilds;
+using workwear.ViewModels.Company.EmployeeChildren;
 using workwear.ViewModels.IdentityCards;
 
 namespace workwear.ViewModels.Company

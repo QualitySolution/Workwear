@@ -10,7 +10,7 @@ using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.ViewModels.Regulations;
 
-namespace workwear.ViewModels.Company.EmployeeChilds
+namespace workwear.ViewModels.Company.EmployeeChildren
 {
 	public class EmployeeNormsViewModel : ViewModelBase
 	{

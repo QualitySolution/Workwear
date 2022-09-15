@@ -1,7 +1,7 @@
 ﻿using System;
-using workwear.ViewModels.Company.EmployeeChilds;
+using workwear.ViewModels.Company.EmployeeChildren;
 
-namespace workwear.Views.Company.EmployeeChilds
+namespace workwear.Views.Company.EmployeeChildren
 {
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class EmployeeListedItemsView : Gtk.Bin

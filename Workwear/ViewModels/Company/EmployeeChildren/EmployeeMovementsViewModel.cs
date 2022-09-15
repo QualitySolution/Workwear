@@ -16,7 +16,7 @@ using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
 using workwear.ViewModels.Operations;
 
-namespace workwear.ViewModels.Company.EmployeeChilds
+namespace workwear.ViewModels.Company.EmployeeChildren
 {
 	public class EmployeeMovementsViewModel : ViewModelBase, IDisposable
 	{

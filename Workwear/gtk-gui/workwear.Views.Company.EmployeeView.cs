@@ -128,27 +128,27 @@ namespace workwear.Views.Company
 
 		private global::Gtk.Label label16;
 
-		private global::workwear.Views.Company.EmployeeChilds.EmployeeNormsView employeenormsview1;
+		private global::workwear.Views.Company.EmployeeChildren.EmployeeNormsView employeenormsview1;
 
 		private global::Gtk.Label label21;
 
-		private global::workwear.Views.Company.EmployeeChilds.EmployeeWearItemsView employeewearitemsview1;
+		private global::workwear.Views.Company.EmployeeChildren.EmployeeWearItemsView employeewearitemsview1;
 
 		private global::Gtk.Label label22;
 
 		private global::Gtk.VBox vbox5;
 
-		private global::workwear.Views.Company.EmployeeChilds.EmployeeListedItemsView employeecardlisteditemsview;
+		private global::workwear.Views.Company.EmployeeChildren.EmployeeListedItemsView employeecardlisteditemsview;
 
 		private global::Gtk.Label label28;
 
 		private global::Gtk.VBox vbox3;
 
-		private global::workwear.Views.Company.EmployeeChilds.EmployeeMovementsView employeemovementsview1;
+		private global::workwear.Views.Company.EmployeeChildren.EmployeeMovementsView employeemovementsview1;
 
 		private global::Gtk.Label label29;
 
-		private global::workwear.Views.Company.EmployeeChilds.EmployeeVacationsView employeevacationsview1;
+		private global::workwear.Views.Company.EmployeeChildren.EmployeeVacationsView employeevacationsview1;
 
 		private global::Gtk.Label label30;
 
@@ -879,7 +879,7 @@ namespace workwear.Views.Company
 			this.notebook1.SetTabLabel(this.employeeSizesview, this.label16);
 			this.label16.ShowAll();
 			// Container child notebook1.Gtk.Notebook+NotebookChild
-			this.employeenormsview1 = new global::workwear.Views.Company.EmployeeChilds.EmployeeNormsView();
+			this.employeenormsview1 = new global::workwear.Views.Company.EmployeeChildren.EmployeeNormsView();
 			this.employeenormsview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeenormsview1.Name = "employeenormsview1";
 			this.notebook1.Add(this.employeenormsview1);
@@ -892,7 +892,7 @@ namespace workwear.Views.Company
 			this.notebook1.SetTabLabel(this.employeenormsview1, this.label21);
 			this.label21.ShowAll();
 			// Container child notebook1.Gtk.Notebook+NotebookChild
-			this.employeewearitemsview1 = new global::workwear.Views.Company.EmployeeChilds.EmployeeWearItemsView();
+			this.employeewearitemsview1 = new global::workwear.Views.Company.EmployeeChildren.EmployeeWearItemsView();
 			this.employeewearitemsview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeewearitemsview1.Name = "employeewearitemsview1";
 			this.notebook1.Add(this.employeewearitemsview1);
@@ -909,7 +909,7 @@ namespace workwear.Views.Company
 			this.vbox5.Name = "vbox5";
 			this.vbox5.Spacing = 6;
 			// Container child vbox5.Gtk.Box+BoxChild
-			this.employeecardlisteditemsview = new global::workwear.Views.Company.EmployeeChilds.EmployeeListedItemsView();
+			this.employeecardlisteditemsview = new global::workwear.Views.Company.EmployeeChildren.EmployeeListedItemsView();
 			this.employeecardlisteditemsview.Events = ((global::Gdk.EventMask)(256));
 			this.employeecardlisteditemsview.Name = "employeecardlisteditemsview";
 			this.vbox5.Add(this.employeecardlisteditemsview);
@@ -929,7 +929,7 @@ namespace workwear.Views.Company
 			this.vbox3.Name = "vbox3";
 			this.vbox3.Spacing = 6;
 			// Container child vbox3.Gtk.Box+BoxChild
-			this.employeemovementsview1 = new global::workwear.Views.Company.EmployeeChilds.EmployeeMovementsView();
+			this.employeemovementsview1 = new global::workwear.Views.Company.EmployeeChildren.EmployeeMovementsView();
 			this.employeemovementsview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeemovementsview1.Name = "employeemovementsview1";
 			this.vbox3.Add(this.employeemovementsview1);
@@ -945,7 +945,7 @@ namespace workwear.Views.Company
 			this.notebook1.SetTabLabel(this.vbox3, this.label29);
 			this.label29.ShowAll();
 			// Container child notebook1.Gtk.Notebook+NotebookChild
-			this.employeevacationsview1 = new global::workwear.Views.Company.EmployeeChilds.EmployeeVacationsView();
+			this.employeevacationsview1 = new global::workwear.Views.Company.EmployeeChildren.EmployeeVacationsView();
 			this.employeevacationsview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeevacationsview1.Name = "employeevacationsview1";
 			this.notebook1.Add(this.employeevacationsview1);

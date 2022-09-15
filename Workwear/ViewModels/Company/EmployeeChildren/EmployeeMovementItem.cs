@@ -5,7 +5,7 @@ using QSProjectsLib;
 using Workwear.Domain.Operations;
 using Workwear.Models.Operations;
 
-namespace workwear.ViewModels.Company.EmployeeChilds
+namespace workwear.ViewModels.Company.EmployeeChildren
 {
 	public class EmployeeMovementItem : PropertyChangedBase
 	{

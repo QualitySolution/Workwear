@@ -8,7 +8,7 @@ using QSOrmProject;
 using Workwear.Domain.Company;
 using workwear.Representations.Organization;
 
-namespace workwear.ViewModels.Company.EmployeeChilds
+namespace workwear.ViewModels.Company.EmployeeChildren
 {
 	public class EmployeeVacationsViewModel : ViewModelBase
 	{

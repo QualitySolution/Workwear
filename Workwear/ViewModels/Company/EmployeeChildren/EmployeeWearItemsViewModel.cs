@@ -21,7 +21,7 @@ using workwear.ViewModels.Stock;
 using Workwear.Tools.Features;
 using Workwear.Domain.Operations.Graph;
 
-namespace workwear.ViewModels.Company.EmployeeChilds
+namespace workwear.ViewModels.Company.EmployeeChildren
 {
 	public class EmployeeWearItemsViewModel : ViewModelBase, IDisposable
 	{
