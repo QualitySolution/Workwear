@@ -3,7 +3,7 @@ using QS.Views.Dialog;
 using Workwear.Domain.Communications;
 using Workwear.ViewModels.Communications;
 
-namespace workwear.Views.Communications
+namespace Workwear.Views.Communications
 {
 	public partial class MessageTemplateView : EntityDialogViewBase<MessageTemplateViewModel, MessageTemplate>
 	{

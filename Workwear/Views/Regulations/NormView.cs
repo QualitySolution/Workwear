@@ -8,7 +8,7 @@ using Workwear.Domain.Regulations;
 using Workwear.ViewModels.Regulations;
 using Workwear.Domain.Regulations;
 
-namespace workwear.Views.Regulations
+namespace Workwear.Views.Regulations
 {
 	public partial class NormView : EntityDialogViewBase<NormViewModel, Norm>
 	{

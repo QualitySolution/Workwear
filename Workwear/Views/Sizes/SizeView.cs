@@ -6,7 +6,7 @@ using QS.Views.Dialog;
 using Workwear.Domain.Sizes;
 using Workwear.ViewModels.Sizes;
 
-namespace workwear.Views.Sizes
+namespace Workwear.Views.Sizes
 {
 	public partial class SizeView : EntityDialogViewBase<SizeViewModel, Size>
 	{

@@ -5,7 +5,7 @@ using QS.Views.Dialog;
 using QSWidgetLib;
 using Workwear.ViewModels.Import;
 
-namespace workwear.Views.Import 
+namespace Workwear.Views.Import 
 {
 	public partial class IncomeImportView : DialogViewBase<IncomeImportViewModel>
 	{

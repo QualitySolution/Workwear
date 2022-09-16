@@ -6,6 +6,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels;
+using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;

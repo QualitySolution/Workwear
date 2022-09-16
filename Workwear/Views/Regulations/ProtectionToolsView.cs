@@ -7,7 +7,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.ViewModels.Regulations;
 
-namespace workwear.Views.Regulations
+namespace Workwear.Views.Regulations
 {
 	public partial class ProtectionToolsView : EntityDialogViewBase<ProtectionToolsViewModel, ProtectionTools>
 	{

@@ -9,7 +9,7 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.ViewModels.Stock;
 
-namespace workwear.Views.Stock
+namespace Workwear.Views.Stock
 {
 	public partial class ItemTypeView : EntityDialogViewBase<ItemTypeViewModel, ItemsType>
 	{

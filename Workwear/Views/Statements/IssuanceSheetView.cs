@@ -8,7 +8,7 @@ using QSWidgetLib;
 using Workwear.Domain.Statements;
 using Workwear.ViewModels.Statements;
 
-namespace workwear.Views.Statements
+namespace Workwear.Views.Statements
 {
 	public partial class IssuanceSheetView : EntityDialogViewBase<IssuanceSheetViewModel, IssuanceSheet>
 	{

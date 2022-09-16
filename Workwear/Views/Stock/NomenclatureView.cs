@@ -7,7 +7,7 @@ using Workwear.Measurements;
 using Workwear.ViewModels.Stock;
 using Gtk;
 
-namespace workwear.Views.Stock
+namespace Workwear.Views.Stock
 {
 	public partial class NomenclatureView : EntityDialogViewBase<NomenclatureViewModel, Nomenclature>
 	{

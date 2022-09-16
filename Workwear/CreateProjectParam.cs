@@ -72,7 +72,7 @@ using workwear.Tools;
 using workwear.Tools.Import;
 using Workwear.ViewModels.Communications;
 using Workwear.ViewModels.Company;
-using workwear.Views.Company;
+using Workwear.Views.Company;
 using workwear.Models.WearLk;
 using Workwear.ViewModels.Import;
 

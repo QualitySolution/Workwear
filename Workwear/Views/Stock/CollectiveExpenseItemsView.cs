@@ -6,7 +6,7 @@ using QSWidgetLib;
 using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Stock;
 
-namespace workwear.Views.Stock
+namespace Workwear.Views.Stock
 {
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class CollectiveExpenseItemsView : Gtk.Bin

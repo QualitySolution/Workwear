@@ -13,6 +13,7 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using workwear;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;

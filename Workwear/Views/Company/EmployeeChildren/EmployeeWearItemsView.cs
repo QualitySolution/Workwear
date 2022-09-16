@@ -8,7 +8,7 @@ using Workwear.Domain.Company;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company.EmployeeChildren;
 
-namespace workwear.Views.Company.EmployeeChildren
+namespace Workwear.Views.Company.EmployeeChildren
 {
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class EmployeeWearItemsView : Gtk.Bin

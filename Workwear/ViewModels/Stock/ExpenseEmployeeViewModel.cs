@@ -16,6 +16,7 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;

@@ -2,7 +2,7 @@
 using Workwear.Domain.Users;
 using Workwear.ViewModels.User;
 
-namespace workwear.Views.User
+namespace Workwear.Views.User
 {
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class UserSettingsView : EntityDialogViewBase<UserSettingsViewModel, UserSettings>

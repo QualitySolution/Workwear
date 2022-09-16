@@ -3,7 +3,7 @@ using QS.Cloud.WearLk.Manage;
 using QS.Views.Dialog;
 using Workwear.ViewModels.Communications;
 
-namespace workwear.Views.Communications
+namespace Workwear.Views.Communications
 {
     public partial class HistoryNotificationView : DialogViewBase<HistoryNotificationViewModel> 
     {

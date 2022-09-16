@@ -3,7 +3,7 @@ using Gtk;
 using QS.Views;
 using Workwear.ViewModels.Company.EmployeeChildren;
 
-namespace workwear.Views.Company.EmployeeChildren
+namespace Workwear.Views.Company.EmployeeChildren
 {
 	public partial class EmployeePhotoView : ViewBase<EmployeePhotoViewModel>
 	{

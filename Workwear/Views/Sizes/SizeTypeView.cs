@@ -9,7 +9,7 @@ using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 using Workwear.ViewModels.Sizes;
 
-namespace workwear.Views.Sizes
+namespace Workwear.Views.Sizes
 {
 	public partial class SizeTypeView : EntityDialogViewBase<SizeTypeViewModel, SizeType>
 	{

@@ -6,7 +6,7 @@ using Workwear.Domain.Statements;
 using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Stock;
 
-namespace workwear.Views.Stock
+namespace Workwear.Views.Stock
 {
 	public partial class ExpenseEmployeeView : EntityDialogViewBase<ExpenseEmployeeViewModel, Expense>
 	{

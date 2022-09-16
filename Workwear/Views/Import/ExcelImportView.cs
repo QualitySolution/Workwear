@@ -10,7 +10,7 @@ using QSWidgetLib;
 using Workwear.Models.Import;
 using Workwear.ViewModels.Import;
 
-namespace workwear.Views.Import {
+namespace Workwear.Views.Import {
 	public partial class ExcelImportView : DialogViewBase<ExcelImportViewModel>
 	{
 		List<yLabel> columnsLabels = new List<yLabel>();

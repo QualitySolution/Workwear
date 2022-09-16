@@ -2,7 +2,7 @@
 using Workwear.Tools;
 using Workwear.ViewModels.Tools;
 
-namespace workwear.Views.Tools
+namespace Workwear.Views.Tools
 {
 	public partial class DataBaseSettingsView : SavedDialogViewBase<DataBaseSettingsViewModel>
 	{

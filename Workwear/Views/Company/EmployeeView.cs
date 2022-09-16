@@ -12,11 +12,11 @@ using QS.Widgets.GtkUI;
 using QSOrmProject;
 using Workwear.Domain.Company;
 using Workwear.ViewModels.Company;
-using workwear.Views.Company.EmployeeChildren;
+using Workwear.Views.Company.EmployeeChildren;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 
-namespace workwear.Views.Company
+namespace Workwear.Views.Company
 {
 	public partial class EmployeeView : EntityDialogViewBase<EmployeeViewModel, EmployeeCard>
 	{

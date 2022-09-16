@@ -6,7 +6,7 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Tools.IdentityCards;
 using Workwear.ViewModels.Stock;
 
-namespace workwear.Views.Stock
+namespace Workwear.Views.Stock
 {
 	public partial class IssueByIdentifierView : DialogViewBase<IssueByIdentifierViewModel>
 	{

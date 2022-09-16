@@ -2,7 +2,7 @@
 using Workwear.Domain.Company;
 using Workwear.ViewModels.Company;
 
-namespace workwear.Views.Company
+namespace Workwear.Views.Company
 {
 	public partial class LeadersView : EntityDialogViewBase<LeadersViewModel, Leader>
 	{

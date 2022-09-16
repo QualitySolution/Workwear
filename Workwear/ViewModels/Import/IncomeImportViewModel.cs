@@ -11,13 +11,13 @@ using QS.Project.Journal;
 using QS.Services;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using workwear;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 using Workwear.Models.Import;
-using Workwear.Repository.Stock;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using workwear.Tools.Import;
@@ -144,7 +144,7 @@ namespace Workwear.ViewModels.Import
 					OnPropertyChanged(nameof(SelectAllVisible));
 				}
 				else
-					interactiveService.ShowMessage(ImportanceLevel.Warning, "В загруженом файле не обнаружены документы поступления");
+					interactiveService.ShowMessage(ImportanceLevel.Warning, "В загруженном файле не обнаружены документы поступления");
 			}
 			else
 				interactiveService.ShowMessage(ImportanceLevel.Error, "Формат файла не поддерживается");

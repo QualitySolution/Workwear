@@ -9,7 +9,7 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Stock;
 using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
-namespace workwear.Views.Stock
+namespace Workwear.Views.Stock
 {
 	public partial class WriteOffView : EntityDialogViewBase<WriteOffViewModel, Writeoff>
 	{

@@ -3,7 +3,7 @@ using QS.Views;
 using Workwear.Domain.Company;
 using Workwear.ViewModels.Statements;
 
-namespace workwear.Views.Statements
+namespace Workwear.Views.Statements
 {
 
 	public partial class IssuanceSheetFillByView : ViewBase<IssuanceSheetFillByViewModel>

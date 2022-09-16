@@ -4,7 +4,7 @@ using Gtk;
 using QS.Views;
 using Workwear.ViewModels.Import;
 
-namespace workwear.Views.Import
+namespace Workwear.Views.Import
 {
 	public partial class CountersView : ViewBase<CountersViewModel>
 	{

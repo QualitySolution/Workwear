@@ -8,7 +8,7 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Stock;
 
-namespace workwear.Views.Stock
+namespace Workwear.Views.Stock
 {
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class ExpenseDocItemEmployeeView : Gtk.Bin

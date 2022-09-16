@@ -4,7 +4,7 @@ using QS.Views.Dialog;
 using Workwear.Domain.Regulations;
 using Workwear.ViewModels.Regulations;
 
-namespace workwear.Views.Regulations
+namespace Workwear.Views.Regulations
 {
 	public partial class ProfessionView : EntityDialogViewBase<ProfessionViewModel, Profession>
 	{
