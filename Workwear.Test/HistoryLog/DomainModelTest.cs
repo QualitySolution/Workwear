@@ -3,7 +3,7 @@ using NHibernate.Mapping;
 using NUnit.Framework;
 using QS.Testing.HistoryLog.Testing;
 
-namespace WorkwearTest.HistoryLog
+namespace Workwear.Test.HistoryLog
 {
 	[TestFixture]
 	[Category("Доменная модель")]
