@@ -7,10 +7,10 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Testing.DB;
 using Workwear.Domain.Regulations;
-using workwear.Tools.Nhibernate;
+using Workwear.Tools.Nhibernate;
 using workwear.ViewModels.Import;
 using Workwear.Measurements;
-using workwear.Models.Import.Norms;
+using Workwear.Models.Import.Norms;
 using Workwear.Repository.Regulations;
 
 namespace WorkwearTest.Integration.Import

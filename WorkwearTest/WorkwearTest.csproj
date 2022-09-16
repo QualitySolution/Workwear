@@ -56,14 +56,6 @@
     <Compile Include="Integration\Import\ExcelImportViewModelEmployeeTest.cs" />
     <Compile Include="Integration\Import\ExcelImportViewModelNormsTest.cs" />
     <Compile Include="Integration\Stock\CompletionIntegratedTest.cs" />
-    <Compile Include="Models\Import\Employees\DataTypeBustTest.cs" />
-    <Compile Include="Models\Import\Employees\DataTypeFioTest.cs" />
-    <Compile Include="Models\Import\Employees\DataTypeSubdivisionTest.cs" />
-    <Compile Include="Models\Import\ImportModelBaseTest.cs" />
-    <Compile Include="Models\Import\Norms\DataTypePeriodAndCountTest.cs" />
-    <Compile Include="Models\Import\Norms\DataTypePeriodTest.cs" />
-    <Compile Include="Models\Import\RowStackHelperTest.cs" />
-    <Compile Include="Models\Import\TextParserTest.cs" />
     <Compile Include="Sql\ScriptsConfigurationTest.cs" />
     <Compile Include="Integration\ReportExportTest.cs" />
     <Compile Include="Integration\Tools\BuisnessLogicGlobalEventHandlerTest.cs" />
@@ -78,7 +70,6 @@
     <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
     <Compile Include="Integration\Tools\DeletionEntitiesTest.cs" />
-    <Compile Include="Models\Company\PersonNamesTest.cs" />
     <Compile Include="Integration\Operations\IssueGraphIntegratedTest.cs" />
     <Compile Include="Integration\Operations\EmployeeIssueRepositoryTest.cs" />
   </ItemGroup>
@@ -155,8 +146,6 @@
     <Folder Include="Integration\Stock\" />
     <Folder Include="ViewModels\" />
     <Folder Include="ViewModels\Stock\" />
-    <Folder Include="Models\" />
-    <Folder Include="Models\Company\" />
     <Folder Include="Integration\Operations\" />
   </ItemGroup>
   <ItemGroup>

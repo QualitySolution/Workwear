@@ -3,7 +3,7 @@ using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
 using QS.Testing.DB;
 using Workwear.Measurements;
-using workwear.Models.Import;
+using Workwear.Models.Import;
 
 namespace WorkwearTest.Integration.Import {
 	[TestFixture(TestOf = typeof(NomenclatureTypes))]

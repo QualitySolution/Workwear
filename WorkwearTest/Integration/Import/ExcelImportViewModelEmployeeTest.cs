@@ -13,10 +13,10 @@ using QS.Utilities.Numeric;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Models.Company;
-using workwear.Tools.Nhibernate;
+using Workwear.Tools.Nhibernate;
 using workwear.ViewModels.Import;
 using Workwear.Measurements;
-using workwear.Models.Import.Employees;
+using Workwear.Models.Import.Employees;
 
 namespace WorkwearTest.Integration.Import
 {

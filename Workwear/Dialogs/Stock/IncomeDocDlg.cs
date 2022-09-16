@@ -18,7 +18,7 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
-using workwear.Models.Import;
+using Workwear.Models.Import;
 using workwear.Repository;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;

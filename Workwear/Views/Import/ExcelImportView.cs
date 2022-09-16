@@ -7,7 +7,7 @@ using QS.Views.Dialog;
 using QS.Views.Resolve;
 using QS.Widgets.GtkUI;
 using QSWidgetLib;
-using workwear.Models.Import;
+using Workwear.Models.Import;
 using workwear.ViewModels.Import;
 
 namespace workwear.Views.Import {
