@@ -4,6 +4,7 @@ using Autofac;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
+using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -31,6 +32,7 @@ namespace WorkwearTest.ViewModels.Stock
 		public void Init()
 		{
 			ConfigureOneTime.ConfigureNh();
+			NotifyConfiguration.Enable();
 			InitialiseUowFactory();
 		}
 
