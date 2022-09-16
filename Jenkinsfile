@@ -51,6 +51,20 @@ node {
       }
    }
    if (params.Publish) {
+      stage('VirusTotal'){
+         sh 'vt scan file Workwear/WinInstall/workwear-*.exe > file_hash'
+         waitUntil (initialRecurrencePeriod: 10000){
+            sh 'cut file_hash -d" " -f2 | vt analysis - > analysis'
+            return readFile('analysis').contains('status: "completed"')
+         }
+         sh 'cat analysis'
+         script {
+            def status = readFile(file: "analysis")
+            if ( !(status.contains('failure: 0') && status.contains('harmless: 0') && status.contains('malicious: 0') && status.contains('suspicious: 0'))) {
+               error('VirusTotal in not clean')
+            }        
+         }
+      }
       stage('Publish'){
          sh 'scp Workwear/WinInstall/workwear-*.exe a218160_qso@a218160.ftp.mchost.ru:subdomains/files/httpdocs/Workwear/'
       }
