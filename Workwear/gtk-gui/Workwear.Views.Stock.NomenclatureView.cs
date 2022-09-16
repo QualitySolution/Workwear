@@ -100,7 +100,7 @@ namespace Workwear.Views.Stock
 			this.menuInternal.UseMarkup = false;
 			this.menuInternal.LabelXAlign = 0F;
 			global::Gtk.Image w5 = new global::Gtk.Image();
-			w5.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.menu.png");
+			w5.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.menu.png");
 			this.menuInternal.Image = w5;
 			this.hbox4.Add(this.menuInternal);
 			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.menuInternal]));

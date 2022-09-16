@@ -63,7 +63,7 @@ namespace workwear.Journal
 					.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
 					.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
 					.AddColumn("Карта").Visible(jvm.FeaturesService.Available(WorkwearFeature.IdentityCards))
-						.AddPixbufRenderer(x => String.IsNullOrEmpty(x.CardKey) ? null : new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "workwear.icon.buttons.smart-card.png"))
+						.AddPixbufRenderer(x => String.IsNullOrEmpty(x.CardKey) ? null : new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "Workwear.icon.buttons.smart-card.png"))
 					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
 					.AddColumn("Должность").AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)

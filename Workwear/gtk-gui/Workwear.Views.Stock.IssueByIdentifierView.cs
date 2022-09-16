@@ -169,7 +169,7 @@ namespace Workwear.Views.Stock
 			// Container child hboxRecommendedActions.Gtk.Box+BoxChild
 			this.imageHand = new global::Gamma.GtkWidgets.yImage();
 			this.imageHand.Name = "imageHand";
-			this.imageHand.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.art.hand-holding-rfid.png");
+			this.imageHand.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.art.hand-holding-rfid.png");
 			this.hboxRecommendedActions.Add(this.imageHand);
 			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hboxRecommendedActions[this.imageHand]));
 			w13.Position = 0;

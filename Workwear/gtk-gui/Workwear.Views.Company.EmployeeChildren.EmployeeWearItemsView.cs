@@ -125,7 +125,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 			this.buttonTimeLine.UseUnderline = true;
 			this.buttonTimeLine.Label = global::Mono.Unix.Catalog.GetString("Хронология");
 			global::Gtk.Image w12 = new global::Gtk.Image();
-			w12.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.timeline_marker.png");
+			w12.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.timeline_marker.png");
 			this.buttonTimeLine.Image = w12;
 			this.hbox11.Add(this.buttonTimeLine);
 			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hbox11[this.buttonTimeLine]));

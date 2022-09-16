@@ -68,7 +68,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 		private void CreateTable()
 		{
-			var cardIcon = new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "workwear.icon.buttons.smart-card.png");
+			var cardIcon = new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "Workwear.icon.buttons.smart-card.png");
 			ytreeviewMovements.CreateFluentColumnsConfig<EmployeeMovementItem>()
 				.AddColumn("Дата").AddTextRenderer(e => e.Date.ToShortDateString())
 				//Заголовок колонки используется в методе YtreeviewMovements_RowActivated

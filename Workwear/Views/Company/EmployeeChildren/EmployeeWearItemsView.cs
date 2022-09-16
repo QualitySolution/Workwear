@@ -43,8 +43,8 @@ namespace Workwear.Views.Company.EmployeeChildren
 		}
 
 		#region private
-		Pixbuf handIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "workwear.icon.rows.нand.png");
-		Pixbuf infoIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "workwear.icon.rows.info.png");
+		Pixbuf handIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "Workwear.icon.rows.нand.png");
+		Pixbuf infoIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "Workwear.icon.rows.info.png");
 
 		void ConfigureTable()
 		{

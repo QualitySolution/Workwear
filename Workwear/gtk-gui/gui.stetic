@@ -23,72 +23,72 @@
   <icon-factory>
     <icon-set id="objects">
       <source>
-        <property name="Image">resource:workwear.icon.toolbar.go-home.png</property>
+        <property name="Image">resource:Workwear.icon.toolbar.go-home.png</property>
       </source>
     </icon-set>
     <icon-set id="employees">
       <source>
-        <property name="Image">resource:workwear.icon.toolbar.employees.png</property>
+        <property name="Image">resource:Workwear.icon.toolbar.employees.png</property>
       </source>
     </icon-set>
     <icon-set id="store">
       <source>
-        <property name="Image">resource:workwear.icon.toolbar.store.png</property>
+        <property name="Image">resource:Workwear.icon.toolbar.store.png</property>
       </source>
     </icon-set>
     <icon-set id="store-balance">
       <source>
-        <property name="Image">resource:workwear.icon.toolbar.store-balance.png</property>
+        <property name="Image">resource:Workwear.icon.toolbar.store-balance.png</property>
       </source>
     </icon-set>
     <icon-set id="www">
       <source>
-        <property name="Image">resource:workwear.icon.menu.www.png</property>
+        <property name="Image">resource:Workwear.icon.menu.www.png</property>
       </source>
     </icon-set>
     <icon-set id="youtube">
       <source>
-        <property name="Image">resource:workwear.icon.menu.youtube.png</property>
+        <property name="Image">resource:Workwear.icon.menu.youtube.png</property>
       </source>
     </icon-set>
     <icon-set id="vk">
       <source>
-        <property name="Image">resource:workwear.icon.menu.vk.png</property>
+        <property name="Image">resource:Workwear.icon.menu.vk.png</property>
       </source>
     </icon-set>
     <icon-set id="twitter">
       <source>
-        <property name="Image">resource:workwear.icon.menu.twitter.png</property>
+        <property name="Image">resource:Workwear.icon.menu.twitter.png</property>
       </source>
     </icon-set>
     <icon-set id="odnoklasniki">
       <source>
-        <property name="Image">resource:workwear.icon.menu.odnoklasniki.png</property>
+        <property name="Image">resource:Workwear.icon.menu.odnoklasniki.png</property>
       </source>
     </icon-set>
     <icon-set id="smart-card">
       <source>
-        <property name="Image">resource:workwear.icon.toolbar.smart-card.png</property>
+        <property name="Image">resource:Workwear.icon.toolbar.smart-card.png</property>
       </source>
     </icon-set>
     <icon-set id="store-movements">
       <source>
-        <property name="Image">resource:workwear.icon.toolbar.store-movements.png</property>
+        <property name="Image">resource:Workwear.icon.toolbar.store-movements.png</property>
       </source>
     </icon-set>
     <icon-set id="mail">
       <source>
-        <property name="Image">resource:workwear.icon.toolbar.mail.png</property>
+        <property name="Image">resource:Workwear.icon.toolbar.mail.png</property>
       </source>
     </icon-set>
     <icon-set id="logs">
       <source>
-        <property name="Image">resource:workwear.icon.menu.logs.png</property>
+        <property name="Image">resource:Workwear.icon.menu.logs.png</property>
       </source>
     </icon-set>
     <icon-set id=" SendBox">
       <source>
-        <property name="Image">resource:workwear.icon.toolbar.claims.png</property>
+        <property name="Image">resource:Workwear.icon.toolbar.claims.png</property>
       </source>
     </icon-set>
   </icon-factory>
@@ -757,7 +757,7 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
-                <property name="Icon">resource:workwear.icon.buttons.menu.png</property>
+                <property name="Icon">resource:Workwear.icon.buttons.menu.png</property>
                 <property name="Label" translatable="yes" />
                 <property name="UseUnderline">True</property>
                 <property name="UseMarkup">False</property>
@@ -1630,7 +1630,7 @@
                 <property name="Tooltip" translatable="yes">Цветовая легенда</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
-                <property name="Icon">resource:workwear.icon.buttons.legend.png</property>
+                <property name="Icon">resource:Workwear.icon.buttons.legend.png</property>
                 <property name="Label" translatable="yes" />
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonColorsLegendClicked" />
@@ -2064,7 +2064,7 @@
                             <property name="MemberName" />
                             <property name="CanFocus">True</property>
                             <property name="Type">TextAndIcon</property>
-                            <property name="Icon">resource:workwear.icon.buttons.smart-card.png</property>
+                            <property name="Icon">resource:Workwear.icon.buttons.smart-card.png</property>
                             <property name="Label" translatable="yes">Прочитать</property>
                             <property name="UseUnderline">True</property>
                             <signal name="Clicked" handler="OnButtonReadUidClicked" />
@@ -2115,7 +2115,7 @@
                             <property name="MemberName" />
                             <property name="CanFocus">True</property>
                             <property name="Type">TextAndIcon</property>
-                            <property name="Icon">resource:workwear.icon.buttons.eye.png</property>
+                            <property name="Icon">resource:Workwear.icon.buttons.eye.png</property>
                             <property name="Label" translatable="yes" />
                             <property name="UseUnderline">True</property>
                             <signal name="Clicked" handler="OnButtonShowPasswordClicked" />
@@ -2132,7 +2132,7 @@
                             <property name="MemberName" />
                             <property name="CanFocus">True</property>
                             <property name="Type">TextAndIcon</property>
-                            <property name="Icon">resource:workwear.icon.buttons.dice.png</property>
+                            <property name="Icon">resource:Workwear.icon.buttons.dice.png</property>
                             <property name="Label" translatable="yes" />
                             <property name="UseUnderline">True</property>
                             <signal name="Clicked" handler="OnButtonGeneratePasswordClicked" />
@@ -5923,7 +5923,7 @@
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
-    <property name="Icon">resource:workwear.icon.logo.ico</property>
+    <property name="Icon">resource:Workwear.icon.logo.ico</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>
       <widget class="Gtk.VBox" id="vbox1">
@@ -6853,7 +6853,7 @@
                 <property name="Tooltip" translatable="yes">Заменяет одну номенклатуру в норме на другую, при этом так же заменяя номенклатуру в выдачах и потребностях сотрудников в которых использовалась данная строка нормы.</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
-                <property name="Icon">resource:workwear.icon.buttons.arrows.png</property>
+                <property name="Icon">resource:Workwear.icon.buttons.arrows.png</property>
                 <property name="Label" translatable="yes">Заменить номенклатуру</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonReplaceNomeclatureClicked" />
@@ -9621,7 +9621,7 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
-                <property name="Icon">resource:workwear.icon.buttons.timeline_marker.png</property>
+                <property name="Icon">resource:Workwear.icon.buttons.timeline_marker.png</property>
                 <property name="Label" translatable="yes">Хронология</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonTimeLineClicked" />
@@ -13107,7 +13107,7 @@
                 <property name="Tooltip" translatable="yes">Цветовая легенда</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
-                <property name="Icon">resource:workwear.icon.buttons.legend.png</property>
+                <property name="Icon">resource:Workwear.icon.buttons.legend.png</property>
                 <property name="Label" translatable="yes" />
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonColorsLegendClicked" />
@@ -14559,7 +14559,7 @@
                     <child>
                       <widget class="Gamma.GtkWidgets.yImage" id="imageHand">
                         <property name="MemberName" />
-                        <property name="Pixbuf">resource:workwear.icon.art.hand-holding-rfid.png</property>
+                        <property name="Pixbuf">resource:Workwear.icon.art.hand-holding-rfid.png</property>
                       </widget>
                       <packing>
                         <property name="Position">0</property>

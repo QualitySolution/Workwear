@@ -59,7 +59,7 @@ namespace Workwear.Views.Stock
 			this.buttonColorsLegend.Name = "buttonColorsLegend";
 			this.buttonColorsLegend.UseUnderline = true;
 			global::Gtk.Image w2 = new global::Gtk.Image();
-			w2.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.legend.png");
+			w2.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.legend.png");
 			this.buttonColorsLegend.Image = w2;
 			this.hbox2.Add(this.buttonColorsLegend);
 			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.buttonColorsLegend]));

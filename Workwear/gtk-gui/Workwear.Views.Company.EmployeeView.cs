@@ -225,7 +225,7 @@ namespace Workwear.Views.Company
 			this.buttonColorsLegend.Name = "buttonColorsLegend";
 			this.buttonColorsLegend.UseUnderline = true;
 			global::Gtk.Image w8 = new global::Gtk.Image();
-			w8.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.legend.png");
+			w8.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.legend.png");
 			this.buttonColorsLegend.Image = w8;
 			this.hbox4.Add(this.buttonColorsLegend);
 			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.buttonColorsLegend]));
@@ -502,7 +502,7 @@ namespace Workwear.Views.Company
 			this.buttonReadUid.UseUnderline = true;
 			this.buttonReadUid.Label = global::Mono.Unix.Catalog.GetString("Прочитать");
 			global::Gtk.Image w29 = new global::Gtk.Image();
-			w29.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.smart-card.png");
+			w29.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.smart-card.png");
 			this.buttonReadUid.Image = w29;
 			this.hboxCardUid.Add(this.buttonReadUid);
 			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.hboxCardUid[this.buttonReadUid]));
@@ -537,7 +537,7 @@ namespace Workwear.Views.Company
 			this.buttonShowPassword.Name = "buttonShowPassword";
 			this.buttonShowPassword.UseUnderline = true;
 			global::Gtk.Image w33 = new global::Gtk.Image();
-			w33.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.eye.png");
+			w33.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.eye.png");
 			this.buttonShowPassword.Image = w33;
 			this.hboxLkPassword.Add(this.buttonShowPassword);
 			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.hboxLkPassword[this.buttonShowPassword]));
@@ -550,7 +550,7 @@ namespace Workwear.Views.Company
 			this.buttonGeneratePassword.Name = "buttonGeneratePassword";
 			this.buttonGeneratePassword.UseUnderline = true;
 			global::Gtk.Image w35 = new global::Gtk.Image();
-			w35.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.dice.png");
+			w35.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.dice.png");
 			this.buttonGeneratePassword.Image = w35;
 			this.hboxLkPassword.Add(this.buttonGeneratePassword);
 			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.hboxLkPassword[this.buttonGeneratePassword]));

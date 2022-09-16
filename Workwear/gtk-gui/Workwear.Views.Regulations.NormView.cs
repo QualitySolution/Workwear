@@ -481,7 +481,7 @@ namespace Workwear.Views.Regulations
 			this.buttonReplaceNomeclature.UseUnderline = true;
 			this.buttonReplaceNomeclature.Label = global::Mono.Unix.Catalog.GetString("Заменить номенклатуру");
 			global::Gtk.Image w42 = new global::Gtk.Image();
-			w42.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.arrows.png");
+			w42.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.arrows.png");
 			this.buttonReplaceNomeclature.Image = w42;
 			this.hbox6.Add(this.buttonReplaceNomeclature);
 			global::Gtk.Box.BoxChild w43 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.buttonReplaceNomeclature]));
