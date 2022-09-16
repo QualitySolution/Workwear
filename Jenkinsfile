@@ -26,6 +26,13 @@ node {
    stage('RusGuard') {
       checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'RusGuardSharp']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/RusGuardSharp.git']]]
    }
+   stage('Test dotnet')
+   {
+   	  sh 'rm -rf Workwear/Workwear.Test/TestResults'
+   	  sh 'dotnet test --logger trx --collect:"XPlat Code Coverage" Workwear/Workwear.Test/Workwear.Test.csproj'
+   	  cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/TestResults/**/coverage.cobertura.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, zoomCoverageChart: false
+   	  mstest testResultsFile:"**/*.trx", keepLongStdio: true
+   }
    stage('Build') {
    	    sh 'nuget restore Workwear/Workwear.sln'
         sh 'rm -f Workwear/WinInstall/workwear-*.exe'
