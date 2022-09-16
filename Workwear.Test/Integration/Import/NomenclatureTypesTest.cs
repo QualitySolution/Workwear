@@ -5,7 +5,7 @@ using QS.Testing.DB;
 using Workwear.Measurements;
 using Workwear.Models.Import;
 
-namespace WorkwearTest.Integration.Import {
+namespace Workwear.Test.Integration.Import {
 	[TestFixture(TestOf = typeof(NomenclatureTypes))]
 	[Category("Integrated")]
 	public class NomenclatureTypesTest : InMemoryDBGlobalConfigTestFixtureBase {

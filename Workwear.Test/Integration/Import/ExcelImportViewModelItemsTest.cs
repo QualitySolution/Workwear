@@ -13,17 +13,16 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
-using Workwear.Models.Import;
-using Workwear.Tools.Nhibernate;
-using Workwear.ViewModels.Import;
 using Workwear.Measurements;
 using Workwear.Models.Import.Issuance;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
 using Workwear.Repository.Stock;
+using Workwear.Tools.Nhibernate;
+using Workwear.ViewModels.Import;
 
-namespace WorkwearTest.Integration.Import
+namespace Workwear.Test.Integration.Import
 {
 	[TestFixture(TestOf = typeof(ExcelImportViewModel))]
 	[Category("Integrated")]

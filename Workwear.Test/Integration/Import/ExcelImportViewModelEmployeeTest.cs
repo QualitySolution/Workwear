@@ -12,13 +12,13 @@ using QS.Testing.DB;
 using QS.Utilities.Numeric;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
+using Workwear.Measurements;
 using Workwear.Models.Company;
+using Workwear.Models.Import.Employees;
 using Workwear.Tools.Nhibernate;
 using Workwear.ViewModels.Import;
-using Workwear.Measurements;
-using Workwear.Models.Import.Employees;
 
-namespace WorkwearTest.Integration.Import
+namespace Workwear.Test.Integration.Import
 {
 	[TestFixture(TestOf = typeof(ExcelImportViewModel))]
 	[Category("Integrated")]

@@ -7,13 +7,13 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Testing.DB;
 using Workwear.Domain.Regulations;
-using Workwear.Tools.Nhibernate;
-using Workwear.ViewModels.Import;
 using Workwear.Measurements;
 using Workwear.Models.Import.Norms;
 using Workwear.Repository.Regulations;
+using Workwear.Tools.Nhibernate;
+using Workwear.ViewModels.Import;
 
-namespace WorkwearTest.Integration.Import
+namespace Workwear.Test.Integration.Import
 {
 	[TestFixture(TestOf = typeof(ExcelImportViewModel))]
 	[Category("Integrated")]
