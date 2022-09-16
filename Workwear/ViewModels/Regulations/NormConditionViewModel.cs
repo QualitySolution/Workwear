@@ -8,7 +8,7 @@ using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Regulations;
 
-namespace workwear.ViewModels.Regulations
+namespace Workwear.ViewModels.Regulations
 {
 	public class NormConditionViewModel : EntityDialogViewModelBase<NormCondition>
 	{

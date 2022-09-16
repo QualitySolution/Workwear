@@ -5,7 +5,7 @@ using Gamma.Utilities;
 using QS.Views.Dialog;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using workwear.ViewModels.Regulations;
+using Workwear.ViewModels.Regulations;
 
 namespace workwear.Views.Regulations
 {

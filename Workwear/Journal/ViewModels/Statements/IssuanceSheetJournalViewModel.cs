@@ -13,7 +13,7 @@ using QS.Services;
 using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
 using workwear.Journal.Filter.ViewModels.Statements;
-using workwear.ViewModels.Statements;
+using Workwear.ViewModels.Statements;
 
 namespace workwear.Journal.ViewModels.Statements
 {

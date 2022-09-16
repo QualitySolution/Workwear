@@ -4,7 +4,7 @@ using Gamma.Binding.Converters;
 using Gamma.GtkWidgets;
 using QS.Views.Dialog;
 using Workwear.Domain.Sizes;
-using workwear.ViewModels.Sizes;
+using Workwear.ViewModels.Sizes;
 
 namespace workwear.Views.Sizes
 {

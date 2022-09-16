@@ -28,8 +28,8 @@ using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Communications;
 using Workwear.Repository.Regulations;
 using Workwear.Tools;
-using workwear.ViewModels.Communications;
-using workwear.ViewModels.Company;
+using Workwear.ViewModels.Communications;
+using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Communications
 {

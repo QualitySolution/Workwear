@@ -5,7 +5,7 @@ using QS.Views.Dialog;
 using QSWidgetLib;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
-using workwear.ViewModels.Regulations;
+using Workwear.ViewModels.Regulations;
 using Workwear.Domain.Regulations;
 
 namespace workwear.Views.Regulations

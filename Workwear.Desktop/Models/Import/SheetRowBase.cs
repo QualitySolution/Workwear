@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NPOI.SS.UserModel;
 using QS.DomainModel.Entity;
-using workwear.ViewModels.Import;
+using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import
 {

@@ -15,7 +15,7 @@ using Workwear.Models.Import;
 using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
 using Workwear.Repository.Stock;
-using workwear.ViewModels.Import;
+using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Issuance
 {

@@ -17,7 +17,7 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class WarehouseTransferViewModel : EntityDialogViewModelBase<Transfer>
 	{

@@ -18,11 +18,11 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
-using workwear.ViewModels.Company;
-using workwear.ViewModels.Regulations;
+using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Regulations;
 using Workwear.Measurements;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class CollectiveExpenseItemsViewModel : ViewModelBase
 	{

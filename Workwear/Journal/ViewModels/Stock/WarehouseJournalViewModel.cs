@@ -7,7 +7,7 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using Workwear.Domain.Stock;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock
 {

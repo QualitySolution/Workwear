@@ -13,7 +13,7 @@ using workwear.Journal.ViewModels.Company;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 
-namespace workwear.ViewModels.Statements
+namespace Workwear.ViewModels.Statements
 {
 	public class IssuanceSheetFillByViewModel : ViewModelBase
 	{

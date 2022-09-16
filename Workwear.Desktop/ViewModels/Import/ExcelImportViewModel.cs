@@ -14,7 +14,7 @@ using QS.ViewModels.Dialog;
 using Workwear.Models.Import;
 using Workwear.Tools.Nhibernate;
 
-namespace workwear.ViewModels.Import
+namespace Workwear.ViewModels.Import
 {
 	public class ExcelImportViewModel : UowDialogViewModelBase
 	{

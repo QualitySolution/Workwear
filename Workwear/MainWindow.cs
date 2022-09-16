@@ -52,12 +52,12 @@ using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear.Tools;
-using workwear.ViewModels.Communications;
-using workwear.ViewModels.Company;
-using workwear.ViewModels.Import;
-using workwear.ViewModels.Stock;
-using workwear.ViewModels.Tools;
-using workwear.ViewModels.User;
+using Workwear.ViewModels.Communications;
+using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Import;
+using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Tools;
+using Workwear.ViewModels.User;
 using workwear;
 
 public partial class MainWindow : Gtk.Window

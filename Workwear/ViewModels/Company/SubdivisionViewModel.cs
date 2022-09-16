@@ -15,9 +15,9 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Company;
 using Workwear.Tools.Features;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock;
 
-namespace workwear.ViewModels.Company
+namespace Workwear.ViewModels.Company
 {
 	public class SubdivisionViewModel : EntityDialogViewModelBase<Subdivision>
 	{

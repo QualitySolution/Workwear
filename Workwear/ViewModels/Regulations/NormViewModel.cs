@@ -17,9 +17,9 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
-using workwear.ViewModels.Company;
+using Workwear.ViewModels.Company;
 
-namespace workwear.ViewModels.Regulations
+namespace Workwear.ViewModels.Regulations
 {
 	public class NormViewModel : EntityDialogViewModelBase<Norm>
 	{

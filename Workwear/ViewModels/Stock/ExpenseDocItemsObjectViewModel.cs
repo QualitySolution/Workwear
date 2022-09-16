@@ -11,7 +11,7 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class ExpenseDocItemsObjectViewModel : ViewModelBase
 	{

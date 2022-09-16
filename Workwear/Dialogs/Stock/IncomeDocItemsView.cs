@@ -19,8 +19,8 @@ using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 using workwear.Representations.Organization;
 using workwear.ViewModel;
-using workwear.ViewModels.Stock;
-using workwear.ViewModels.Stock.Widgets;
+using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Widgets;
 
 namespace workwear
 {

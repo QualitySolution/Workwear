@@ -5,7 +5,7 @@ using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
-using workwear.ViewModels.Import;
+using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Employees
 {

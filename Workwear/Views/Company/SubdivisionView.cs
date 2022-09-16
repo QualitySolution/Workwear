@@ -4,7 +4,7 @@ using QS.Views.Dialog;
 using QSProjectsLib;
 using Workwear.Domain.Company;
 using Workwear.Repository.Company;
-using workwear.ViewModels.Company;
+using Workwear.ViewModels.Company;
 
 namespace workwear.Views.Company
 {

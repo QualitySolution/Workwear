@@ -1,5 +1,5 @@
 ﻿using System;
-using workwear.ViewModels.Import;
+using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Employees.DataTypes {
 	public class DataTypePersonalNumber : DataTypeSimpleString {

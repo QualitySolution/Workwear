@@ -1,7 +1,7 @@
 ﻿using System;
 using QS.Views.Dialog;
 using Workwear.Domain.Operations.Graph;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock
 {

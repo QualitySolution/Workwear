@@ -11,7 +11,7 @@ using QS.Views.Dialog;
 using QS.Widgets.GtkUI;
 using QSOrmProject;
 using Workwear.Domain.Company;
-using workwear.ViewModels.Company;
+using Workwear.ViewModels.Company;
 using workwear.Views.Company.EmployeeChildren;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;

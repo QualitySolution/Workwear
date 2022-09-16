@@ -13,7 +13,7 @@ using Workwear.Models.Company;
 using Workwear.Models.Import;
 using Workwear.Models.Import.Employees.DataTypes;
 using Workwear.Repository.Company;
-using workwear.ViewModels.Import;
+using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Employees
 {

@@ -13,10 +13,10 @@ using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
-using workwear.ViewModels.Communications;
+using Workwear.ViewModels.Communications;
 using QS.Utilities;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class NomenclatureViewModel : EntityDialogViewModelBase<Nomenclature> {
 		private readonly FeaturesService featuresService;

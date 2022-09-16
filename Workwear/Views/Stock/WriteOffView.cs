@@ -6,7 +6,7 @@ using QS.Views.Dialog;
 using QSOrmProject;
 using QSWidgetLib;
 using Workwear.Domain.Stock.Documents;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock;
 using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
 namespace workwear.Views.Stock

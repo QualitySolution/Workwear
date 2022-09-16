@@ -3,7 +3,7 @@ using Gamma.GtkWidgets;
 using Gtk;
 using QS.Views.Dialog;
 using QSWidgetLib;
-using workwear.ViewModels.Import;
+using Workwear.ViewModels.Import;
 
 namespace workwear.Views.Import 
 {

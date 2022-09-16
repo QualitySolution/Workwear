@@ -4,7 +4,7 @@ using QS.Project.Domain;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Models.Operations;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock;
 
 namespace workwear.Models.Stock
 {

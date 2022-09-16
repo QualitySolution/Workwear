@@ -19,7 +19,7 @@ using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Repository.Company;
-using workwear.ViewModels.Regulations;
+using Workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations
 {

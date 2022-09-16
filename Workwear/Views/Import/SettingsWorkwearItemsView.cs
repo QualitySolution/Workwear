@@ -1,5 +1,5 @@
 ﻿using QS.Views;
-using workwear.ViewModels.Import;
+using Workwear.ViewModels.Import;
 
 namespace workwear.Views.Import
 {

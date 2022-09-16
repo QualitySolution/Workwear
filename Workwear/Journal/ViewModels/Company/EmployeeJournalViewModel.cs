@@ -16,7 +16,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
 using Workwear.Tools.Features;
-using workwear.ViewModels.Company;
+using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {

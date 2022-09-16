@@ -19,7 +19,7 @@ using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.Tools;
 using workwear.Tools.IdentityCards;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock;
 
 namespace WorkwearTest.ViewModels.Stock
 {

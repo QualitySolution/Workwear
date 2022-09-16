@@ -8,7 +8,7 @@ using Workwear.Domain.Stock;
 using Workwear.Measurements;
 using Workwear.Tools.Features;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class ItemTypeViewModel : EntityDialogViewModelBase<ItemsType>
 	{

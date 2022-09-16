@@ -9,7 +9,7 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Measurements;
 
-namespace workwear.ViewModels.Stock.Widgets
+namespace Workwear.ViewModels.Stock.Widgets
 {
 	public class SizeWidgetViewModel : WindowDialogViewModelBase
 	{

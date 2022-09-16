@@ -11,7 +11,7 @@ using QS.Project.Services;
 using QS.Services;
 using Workwear.Domain.Company;
 using workwear.Journal.Filter.ViewModels.Company;
-using workwear.ViewModels.Company;
+using Workwear.ViewModels.Company;
 using QS.Project.DB;
 
 namespace workwear.Journal.ViewModels.Company

@@ -3,7 +3,7 @@ using Gtk;
 using QS.DomainModel.Entity;
 using QSWidgetLib;
 using Workwear.Domain.Stock.Documents;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock;
 
 namespace workwear.Views.Stock
 {

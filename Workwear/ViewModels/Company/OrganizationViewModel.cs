@@ -5,7 +5,7 @@ using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 
-namespace workwear.ViewModels.Company
+namespace Workwear.ViewModels.Company
 {
 	public class OrganizationViewModel : EntityDialogViewModelBase<Organization>
 	{

@@ -21,7 +21,7 @@ using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class CompletionViewModel: EntityDialogViewModelBase<Completion>
 	{

@@ -70,11 +70,11 @@ using workwear.Tools.Navigation;
 using Workwear.Tools.Nhibernate;
 using workwear.Tools;
 using workwear.Tools.Import;
-using workwear.ViewModels.Communications;
-using workwear.ViewModels.Company;
+using Workwear.ViewModels.Communications;
+using Workwear.ViewModels.Company;
 using workwear.Views.Company;
 using workwear.Models.WearLk;
-using workwear.ViewModels.Import;
+using Workwear.ViewModels.Import;
 
 namespace workwear
 {

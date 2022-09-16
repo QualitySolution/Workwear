@@ -2,7 +2,7 @@
 using System.Globalization;
 using QS.Views.Dialog;
 using Workwear.Domain.Regulations;
-using workwear.ViewModels.Regulations;
+using Workwear.ViewModels.Regulations;
 
 namespace workwear.Views.Regulations
 {

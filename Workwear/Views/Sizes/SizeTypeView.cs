@@ -7,7 +7,7 @@ using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
-using workwear.ViewModels.Sizes;
+using Workwear.ViewModels.Sizes;
 
 namespace workwear.Views.Sizes
 {

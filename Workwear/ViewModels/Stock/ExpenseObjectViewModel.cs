@@ -19,9 +19,9 @@ using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
-using workwear.ViewModels.Company;
+using Workwear.ViewModels.Company;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class ExpenseObjectViewModel : EntityDialogViewModelBase<Expense>
 	{

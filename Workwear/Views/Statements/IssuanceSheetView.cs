@@ -6,7 +6,7 @@ using QS.Views.Dialog;
 using QS.Views.Resolve;
 using QSWidgetLib;
 using Workwear.Domain.Statements;
-using workwear.ViewModels.Statements;
+using Workwear.ViewModels.Statements;
 
 namespace workwear.Views.Statements
 {

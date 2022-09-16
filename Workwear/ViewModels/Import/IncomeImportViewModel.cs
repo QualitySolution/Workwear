@@ -21,9 +21,9 @@ using Workwear.Repository.Stock;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using workwear.Tools.Import;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock;
 
-namespace workwear.ViewModels.Import 
+namespace Workwear.ViewModels.Import 
 {
 	public class IncomeImportViewModel : UowDialogViewModelBase {
 		private readonly IUserService userService;

@@ -1,6 +1,6 @@
 ﻿using QS.Views.Dialog;
 using Workwear.Tools;
-using workwear.ViewModels.Tools;
+using Workwear.ViewModels.Tools;
 
 namespace workwear.Views.Tools
 {

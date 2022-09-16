@@ -6,7 +6,7 @@ using QS.Utilities;
 using QSWidgetLib;
 using Workwear.Domain.Company;
 using Workwear.Tools.Features;
-using workwear.ViewModels.Company.EmployeeChildren;
+using Workwear.ViewModels.Company.EmployeeChildren;
 
 namespace workwear.Views.Company.EmployeeChildren
 {

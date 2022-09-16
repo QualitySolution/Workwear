@@ -26,7 +26,7 @@ using Workwear.Tools.Features;
 using Workwear.Tools;
 using workwear.Tools.IdentityCards;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class IssueByIdentifierViewModel : WindowDialogViewModelBase
 	{

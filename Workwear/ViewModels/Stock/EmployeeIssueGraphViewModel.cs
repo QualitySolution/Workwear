@@ -6,7 +6,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class EmployeeIssueGraphViewModel : DialogViewModelBase
     {

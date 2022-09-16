@@ -15,9 +15,9 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
-using workwear.ViewModels.Stock.Widgets;
+using Workwear.ViewModels.Stock.Widgets;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
     public class WriteOffViewModel : EntityDialogViewModelBase<Writeoff>
     {

@@ -2,7 +2,7 @@
 using QS.Navigation;
 using QS.ViewModels.Dialog;
 
-namespace workwear.ViewModels.Stock.Widgets
+namespace Workwear.ViewModels.Stock.Widgets
 {
 	public class BuhDocumentViewModel : WindowDialogViewModelBase
 	{

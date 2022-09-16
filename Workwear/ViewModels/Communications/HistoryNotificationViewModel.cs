@@ -7,7 +7,7 @@ using QS.Navigation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 
-namespace workwear.ViewModels.Communications
+namespace Workwear.ViewModels.Communications
 {
 	public class HistoryNotificationViewModel: UowDialogViewModelBase
 	{

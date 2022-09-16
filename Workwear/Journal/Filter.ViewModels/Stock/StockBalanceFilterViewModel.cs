@@ -8,7 +8,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools.Features;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock;
 
 namespace workwear.Journal.Filter.ViewModels.Stock
 {

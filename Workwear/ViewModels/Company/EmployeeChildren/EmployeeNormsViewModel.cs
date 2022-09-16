@@ -8,9 +8,9 @@ using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
-using workwear.ViewModels.Regulations;
+using Workwear.ViewModels.Regulations;
 
-namespace workwear.ViewModels.Company.EmployeeChildren
+namespace Workwear.ViewModels.Company.EmployeeChildren
 {
 	public class EmployeeNormsViewModel : ViewModelBase
 	{

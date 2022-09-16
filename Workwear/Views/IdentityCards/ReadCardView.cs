@@ -1,6 +1,6 @@
 ﻿using System;
 using QS.Views.Dialog;
-using workwear.ViewModels.IdentityCards;
+using Workwear.ViewModels.IdentityCards;
 
 namespace workwear.Views.IdentityCards
 {

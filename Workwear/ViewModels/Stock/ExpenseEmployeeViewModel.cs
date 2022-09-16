@@ -26,10 +26,10 @@ using workwear.Repository;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
-using workwear.ViewModels.Company;
-using workwear.ViewModels.Statements;
+using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Statements;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class ExpenseEmployeeViewModel : EntityDialogViewModelBase<Expense>, ISelectItem
 	{

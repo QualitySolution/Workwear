@@ -8,7 +8,7 @@ using QS.Views.Resolve;
 using QS.Widgets.GtkUI;
 using QSWidgetLib;
 using Workwear.Models.Import;
-using workwear.ViewModels.Import;
+using Workwear.ViewModels.Import;
 
 namespace workwear.Views.Import {
 	public partial class ExcelImportView : DialogViewBase<ExcelImportViewModel>

@@ -13,7 +13,7 @@ using QS.Services;
 using Workwear.Domain.Sizes;
 using workwear.Journal.Filter.ViewModels.Sizes;
 using Workwear.Measurements;
-using workwear.ViewModels.Sizes;
+using Workwear.ViewModels.Sizes;
 
 namespace workwear.Journal.ViewModels.Stock
 {

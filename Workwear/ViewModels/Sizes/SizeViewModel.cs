@@ -12,7 +12,7 @@ using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 
-namespace workwear.ViewModels.Sizes
+namespace Workwear.ViewModels.Sizes
 {
 	public class SizeViewModel: EntityDialogViewModelBase<Size>
 	{

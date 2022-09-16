@@ -12,10 +12,10 @@ using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools.Features;
-using workwear.ViewModels.Company;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Stock;
 
-namespace workwear.ViewModels.User
+namespace Workwear.ViewModels.User
 {
 	public class UserSettingsViewModel : EntityDialogViewModelBase<UserSettings>
 	{

@@ -5,7 +5,7 @@ using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Communications;
 
-namespace workwear.ViewModels.Communications
+namespace Workwear.ViewModels.Communications
 {
 	public class MessageTemplateViewModel : EntityDialogViewModelBase<MessageTemplate>
 	{

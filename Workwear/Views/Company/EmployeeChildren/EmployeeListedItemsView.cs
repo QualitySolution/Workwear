@@ -1,5 +1,5 @@
 ﻿using System;
-using workwear.ViewModels.Company.EmployeeChildren;
+using Workwear.ViewModels.Company.EmployeeChildren;
 
 namespace workwear.Views.Company.EmployeeChildren
 {

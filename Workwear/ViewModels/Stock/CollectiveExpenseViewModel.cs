@@ -25,9 +25,9 @@ using workwear.Repository;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
-using workwear.ViewModels.Statements;
+using Workwear.ViewModels.Statements;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class CollectiveExpenseViewModel : EntityDialogViewModelBase<CollectiveExpense>, ISelectItem
 	{

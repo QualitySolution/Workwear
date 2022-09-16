@@ -10,9 +10,9 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
-using workwear.ViewModels.Regulations;
+using Workwear.ViewModels.Regulations;
 
-namespace workwear.ViewModels.Company
+namespace Workwear.ViewModels.Company
 {
 	public class PostViewModel : EntityDialogViewModelBase<Post>
 	{

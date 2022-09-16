@@ -14,7 +14,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Models.Company;
 using Workwear.Tools.Nhibernate;
-using workwear.ViewModels.Import;
+using Workwear.ViewModels.Import;
 using Workwear.Measurements;
 using Workwear.Models.Import.Employees;
 

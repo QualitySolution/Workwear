@@ -23,8 +23,8 @@ using workwear.Repository;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using workwear.Tools.Import;
-using workwear.ViewModels.Company;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Stock;
 
 namespace workwear
 {

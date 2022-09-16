@@ -4,7 +4,7 @@ using NLog;
 using QS.Views.Dialog;
 using Workwear.Domain.Stock;
 using Workwear.Measurements;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock;
 using Gtk;
 
 namespace workwear.Views.Stock

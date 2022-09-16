@@ -13,7 +13,7 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Repository.Operations;
 
-namespace workwear.ViewModels.Operations 
+namespace Workwear.ViewModels.Operations 
 {
 	public class ManualEmployeeIssueOperationsViewModel : UowDialogViewModelBase, IWindowDialogSettings 
 	{

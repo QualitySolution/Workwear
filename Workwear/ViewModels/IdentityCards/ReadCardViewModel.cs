@@ -7,7 +7,7 @@ using QS.Utilities.Text;
 using QS.ViewModels.Dialog;
 using workwear.Tools.IdentityCards;
 
-namespace workwear.ViewModels.IdentityCards
+namespace Workwear.ViewModels.IdentityCards
 {
 	public class ReadCardViewModel : WindowDialogViewModelBase
 	{

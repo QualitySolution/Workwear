@@ -30,10 +30,10 @@ using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
-using workwear.ViewModels.Company.EmployeeChildren;
-using workwear.ViewModels.IdentityCards;
+using Workwear.ViewModels.Company.EmployeeChildren;
+using Workwear.ViewModels.IdentityCards;
 
-namespace workwear.ViewModels.Company
+namespace Workwear.ViewModels.Company
 {
 	public class EmployeeViewModel : EntityDialogViewModelBase<EmployeeCard>, IValidatableObject
 	{

@@ -1,7 +1,7 @@
 ﻿using Gamma.GtkWidgets;
 using QS.Cloud.WearLk.Manage;
 using QS.Views.Dialog;
-using workwear.ViewModels.Communications;
+using Workwear.ViewModels.Communications;
 
 namespace workwear.Views.Communications 
 {

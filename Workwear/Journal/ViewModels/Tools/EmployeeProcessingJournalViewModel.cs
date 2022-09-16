@@ -29,7 +29,7 @@ using workwear.Journal.Filter.ViewModels.Company;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
 using Workwear.Tools;
-using workwear.ViewModels.Company;
+using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Tools
 {

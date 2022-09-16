@@ -13,10 +13,10 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
-using workwear.ViewModels.Regulations;
+using Workwear.ViewModels.Regulations;
 using Workwear.Measurements;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class ExpenseDocItemsEmployeeViewModel : ViewModelBase
 	{

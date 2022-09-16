@@ -9,7 +9,7 @@ using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
 
-namespace workwear.ViewModels.Company
+namespace Workwear.ViewModels.Company
 {
 	public class DepartmentViewModel : EntityDialogViewModelBase<Department>
 	{

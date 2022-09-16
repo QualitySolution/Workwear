@@ -8,7 +8,7 @@ using Workwear.Domain.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
 
-namespace workwear.ViewModels.Company
+namespace Workwear.ViewModels.Company
 {
     public class EmployeeVacationViewModel : EntityDialogViewModelBase<EmployeeVacation>
     {

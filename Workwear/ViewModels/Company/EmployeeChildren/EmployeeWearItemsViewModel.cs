@@ -14,14 +14,14 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using workwear.Models.Stock;
 using Workwear.Repository.Operations;
-using workwear.ViewModels.Operations;
-using workwear.ViewModels.Regulations;
+using Workwear.ViewModels.Operations;
+using Workwear.ViewModels.Regulations;
 using Workwear.Tools;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock;
 using Workwear.Tools.Features;
 using Workwear.Domain.Operations.Graph;
 
-namespace workwear.ViewModels.Company.EmployeeChildren
+namespace Workwear.ViewModels.Company.EmployeeChildren
 {
 	public class EmployeeWearItemsViewModel : ViewModelBase, IDisposable
 	{

@@ -8,7 +8,7 @@ using QS.Navigation;
 using QS.Testing.DB;
 using Workwear.Domain.Regulations;
 using Workwear.Tools.Nhibernate;
-using workwear.ViewModels.Import;
+using Workwear.ViewModels.Import;
 using Workwear.Measurements;
 using Workwear.Models.Import.Norms;
 using Workwear.Repository.Regulations;

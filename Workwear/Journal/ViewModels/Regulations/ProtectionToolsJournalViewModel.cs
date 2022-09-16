@@ -9,7 +9,7 @@ using QS.Project.Services;
 using QS.Services;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using workwear.ViewModels.Regulations;
+using Workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations
 {

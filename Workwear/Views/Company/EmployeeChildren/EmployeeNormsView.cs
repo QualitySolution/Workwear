@@ -1,7 +1,7 @@
 ﻿using System;
 using Gtk;
 using Workwear.Domain.Regulations;
-using workwear.ViewModels.Company.EmployeeChildren;
+using Workwear.ViewModels.Company.EmployeeChildren;
 
 namespace workwear.Views.Company.EmployeeChildren
 {

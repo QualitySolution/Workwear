@@ -5,7 +5,7 @@ using Gamma.Utilities;
 using QS.ViewModels;
 using Workwear.Models.Import;
 
-namespace workwear.ViewModels.Import
+namespace Workwear.ViewModels.Import
 {
 	public class CountersViewModel : ViewModelBase
 	{

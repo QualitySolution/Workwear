@@ -15,7 +15,7 @@ using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 
-namespace workwear.ViewModels.Regulations
+namespace Workwear.ViewModels.Regulations
 {
 	public class ProtectionToolsViewModel : EntityDialogViewModelBase<ProtectionTools>
 	{
