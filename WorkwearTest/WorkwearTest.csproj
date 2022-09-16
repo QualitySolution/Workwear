@@ -55,11 +55,9 @@
     <Compile Include="Integration\Import\ExcelImportViewModelNormsTest.cs" />
     <Compile Include="Sql\ScriptsConfigurationTest.cs" />
     <Compile Include="Integration\ReportExportTest.cs" />
-    <Compile Include="Integration\Tools\BuisnessLogicGlobalEventHandlerTest.cs" />
     <Compile Include="ViewModels\EntityViewModelsTests.cs" />
     <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
-    <Compile Include="Integration\Tools\DeletionEntitiesTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.BaseParameters\QS.BaseParameters.csproj">
@@ -129,7 +127,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Integration\" />
-    <Folder Include="Integration\Tools\" />
     <Folder Include="ViewModels\" />
     <Folder Include="ViewModels\Stock\" />
   </ItemGroup>

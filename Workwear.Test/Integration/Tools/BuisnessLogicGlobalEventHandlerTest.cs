@@ -9,19 +9,17 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.Testing.DB;
 using Workwear.Domain.Company;
-using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
-using workwear.Tools;
-using Workwear;
-using Workwear.Domain.Stock.Documents;
 
-namespace WorkwearTest.Integration.Tools
+namespace Workwear.Test.Integration.Tools
 {
-	[TestFixture(TestOf = typeof(BuisnessLogicGlobalEventHandler))]
+	[TestFixture(TestOf = typeof(BusinessLogicGlobalEventHandler))]
 	[Category("Integrated")]
 	public class BuisnessLogicGlobalEventHandlerTest : InMemoryDBGlobalConfigTestFixtureBase
 	{
@@ -52,7 +50,7 @@ namespace WorkwearTest.Integration.Tools
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления")) {
-				BuisnessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
+				BusinessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
 
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
@@ -130,7 +128,7 @@ namespace WorkwearTest.Integration.Tools
 			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления")) {
-				BuisnessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
+				BusinessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
 
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
@@ -234,7 +232,7 @@ namespace WorkwearTest.Integration.Tools
 			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
-				BuisnessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
+				BusinessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
 
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
@@ -340,7 +338,7 @@ namespace WorkwearTest.Integration.Tools
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку удаления сотрудника")) {
-				BuisnessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
+				BusinessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
 
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";

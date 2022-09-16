@@ -9,13 +9,13 @@ using QS.Navigation;
 using QS.Testing.DB;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
-using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using Workwear.Tools;
 
-namespace WorkwearTest.Integration.Tools
+namespace Workwear.Test.Integration.Tools
 {
-	[TestFixture(Description = "Различные тесты на реальное удаление из базы различных сущьностей.")]
+	[TestFixture(Description = "Различные тесты на реальное удаление из базы различных сущностей.")]
 	[Category("Integrated")]
 	public class DeletionEntitiesTest : InMemoryDBGlobalConfigTestFixtureBase
 	{
@@ -141,7 +141,7 @@ namespace WorkwearTest.Integration.Tools
 					docs = uow.GetAll<Expense>().ToList();
 					Assert.That(docs.Count, Is.Zero);
 
-					//Проверяем что случайно не удалили СИЗ и номеклатуру.
+					//Проверяем что случайно не удалили СИЗ и номенклатуру.
 					var protections = uow.GetAll<ProtectionTools>().ToList();
 					Assert.That(protections.Count, Is.EqualTo(2));
 					var nomenclatures = uow.GetAll<Nomenclature>().ToList();

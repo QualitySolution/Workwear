@@ -163,7 +163,6 @@
     <Compile Include="Representations\Organization\EmployeeBalanceVM.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeVacationView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.VacationTypeView.cs" />
-    <Compile Include="Tools\BuisnessLogicGlobalEventHandler.cs" />
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItem.cs" />
     <Compile Include="ViewModels\Company\EmployeeVacationViewModel.cs" />

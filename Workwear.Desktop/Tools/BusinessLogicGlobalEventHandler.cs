@@ -5,11 +5,10 @@ using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
-using Workwear.Tools;
 
-namespace workwear.Tools
+namespace Workwear.Tools
 {
-	public static class BuisnessLogicGlobalEventHandler
+	public static class BusinessLogicGlobalEventHandler
 	{
 		public static IInteractiveQuestion InteractiveQuestion;
 
