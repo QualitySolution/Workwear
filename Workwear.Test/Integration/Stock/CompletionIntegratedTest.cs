@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
-using QS.Testing.DB;
-using Workwear.Domain.Stock;
 using NSubstitute;
+using NUnit.Framework;
 using QS.Dialog;
+using QS.Testing.DB;
 using Workwear.Domain.Sizes;
+using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Repository.Stock;
 
-namespace WorkwearTest.Integration.Stock
+namespace Workwear.Test.Integration.Stock
 {
     [TestFixture(TestOf = typeof(Expense), Description = "Комплектация товара")]
     public class CompletionIntegratedTest : InMemoryDBGlobalConfigTestFixtureBase
@@ -23,14 +23,14 @@ namespace WorkwearTest.Integration.Stock
         }
         [Test(Description = "Прогоняем базовый сценарий")]
         [Category("Integrated")]
-        public void ViewModelStandartScriptTest()
+        public void ViewModelStandardScriptTest()
         {
             var interactive = Substitute.For<IInteractiveQuestion>();
             interactive.Question(string.Empty).ReturnsForAnyArgs(true);
             
             using (var uow = UnitOfWorkFactory.CreateWithoutRoot())
             {
-                //Ложим на склад первоначальные остатки;
+                //Кладем на склад первоначальные остатки;
                 var warehouseSource = new Warehouse {Name = "Склад комплектующих"};
                 uow.Save(warehouseSource);
                 var warehouseResult = new Warehouse {Name = "Склад получение"};

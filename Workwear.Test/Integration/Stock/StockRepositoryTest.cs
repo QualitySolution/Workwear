@@ -5,7 +5,7 @@ using Workwear.Domain.Stock;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 
-namespace WorkwearTest.Integration.Stock
+namespace Workwear.Test.Integration.Stock
 {
 	[TestFixture(TestOf = typeof(StockRepository))]
 	public class StockRepositoryTest : InMemoryDBGlobalConfigTestFixtureBase
@@ -36,7 +36,7 @@ namespace WorkwearTest.Integration.Stock
 			}
 		}
 
-		[Test(Description = "Если в справочнике складов более одного склада, и склады не поддеживаются, мы все равно должны возврнуть склад по умолчанию.")]
+		[Test(Description = "Если в справочнике складов более одного склада и склады не поддерживаются, мы все равно должны вернуть склад по умолчанию.")]
 		[Category("Integrated")]
 		public void GetDefaultWarehouse_ManyWarehouses_WarehousesDisableTest()
 		{

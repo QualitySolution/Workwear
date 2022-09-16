@@ -7,14 +7,14 @@ using QS.Testing.DB;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
-using Workwear.Domain.Stock;
 using Workwear.Domain.Sizes;
+using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Measurements;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
 
-namespace WorkwearTest.Integration.Organization
+namespace Workwear.Test.Integration.Organization
 {
 	[TestFixture(TestOf = typeof(EmployeeCard), Description = "Карточка сотрудника")]
 	public class EmployeeCardIntegratedTest : InMemoryDBGlobalConfigTestFixtureBase
@@ -30,7 +30,7 @@ namespace WorkwearTest.Integration.Organization
 
 		[Test(Description = "Корректно и правильно выводить всю доступную подходящую номенклатуру.")]
 		[Category("Integrated")]
-		public void BestChoise_IssuingMultipleRows_TwoNomeclatureSameNeedsTest()
+		public void BestChoose_IssuingMultipleRows_TwoNomenclatureSameNeedsTest()
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
@@ -104,7 +104,7 @@ namespace WorkwearTest.Integration.Organization
 
 		[Test(Description = "Корректно и правильно выводить всю доступную подходящую номенклатуру.")]
 		[Category("Integrated")]
-		public void BestChoise_IssuingMultipleRows_TwoNomeclatureWearTypeSameNeedsTest()
+		public void BestChoose_IssuingMultipleRows_TwoNomenclatureWearTypeSameNeedsTest()
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
@@ -212,7 +212,7 @@ namespace WorkwearTest.Integration.Organization
 
 		[Test(Description = "Корректно и правильно выводить всю доступную подходящую номенклатуру.")]
 		[Category("Integrated")]
-		public void BestChoise_IssuingMultipleRows_TwoNomeclatureShoesTypeSameNeedsTest()
+		public void BestChoose_IssuingMultipleRows_TwoNomenclatureShoesTypeSameNeedsTest()
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
@@ -260,7 +260,7 @@ namespace WorkwearTest.Integration.Organization
 				};
 				uow.Save(nomenclature3);
 
-				var protectionTools = new ProtectionTools {Name = "Номеклатура нормы"};
+				var protectionTools = new ProtectionTools {Name = "Номенклатура нормы"};
 				protectionTools.AddNomeclature(nomenclature);
 				protectionTools.AddNomeclature(nomenclature3);
 
@@ -341,9 +341,9 @@ namespace WorkwearTest.Integration.Organization
 			}
 		}
 
-		[Test(Description = "В подходящей номеклатуре сначала выводим свои номеклатуры, а уже потом аналоги.")]
+		[Test(Description = "В подходящей номенклатуре сначала выводим свои номенклатуры, а уже потом аналоги.")]
 		[Category("Integrated")]
-		public void BestChoise_SelfNomenclatureFirstTest()
+		public void BestChoose_SelfNomenclatureFirstTest()
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
@@ -449,7 +449,7 @@ namespace WorkwearTest.Integration.Organization
 		[Test(Description = "Проверяем что при заполнении выданной спецодежды проверяем аналоги тоже.")]
 		[Category("real case")]
 		[Category("Integrated")]
-		public void FillWearRecivedInfo_AnalogItemsTest()
+		public void FillWearReceivedInfo_AnalogItemsTest()
 		{
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var nomenclatureType = new ItemsType();
@@ -516,7 +516,7 @@ namespace WorkwearTest.Integration.Organization
 		[Test(Description = "Проверяем что при заполнении выданной спецодежды количество считаем с учетом автосписания.")]
 		[Category("real case")]
 		[Category("Integrated")]
-		public void FillWearRecivedInfo_AutoWriteOffItemsTest()
+		public void FillWearReceivedInfo_AutoWriteOffItemsTest()
 		{
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var nomenclatureType = new ItemsType();
@@ -599,7 +599,7 @@ namespace WorkwearTest.Integration.Organization
 
 		[Test(Description = "Проверяем что при заполнении выданной спецодежды количество считаем с учетом автосписания.")]
 		[Category("Integrated")]
-		public void FillWearRecivedInfo_AutoWriteOffItemsManualWriteoffWTest()
+		public void FillWearReceivedInfo_AutoWriteOffItemsManualTest()
 		{
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var nomenclatureType = new ItemsType();
@@ -700,7 +700,7 @@ namespace WorkwearTest.Integration.Organization
 
 		[Test(Description = "Проверяем что при заполнении выданной спецодежды дата последней выдачи не выскакивает на дату списание.")]
 		[Category("Integrated")]
-		public void FillWearRecivedInfo_LastIssueDateNotReturnDateTest()
+		public void FillWearReceivedInfo_LastIssueDateNotReturnDateTest()
 		{
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var nomenclatureType = new ItemsType();
@@ -782,7 +782,7 @@ namespace WorkwearTest.Integration.Organization
 		[Test(Description = "Проверяем что при заполнении выданной спецодежды дата последней выдачи " +
 		                    "и количество отображается, даже если СИЗ уже изношен.")]
 		[Category("Integrated")]
-		public void FillWearRecivedInfo_LastIssueDateExistAfterAutoWriteoffDateTest()
+		public void FillWearReceivedInfo_LastIssueDateExistAfterAutoWriterDateTest()
 		{
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var nomenclatureType = new ItemsType();
@@ -848,7 +848,7 @@ namespace WorkwearTest.Integration.Organization
 		[Test(Description = "Проверяем что при заполнении выданной спецодежды выданное для разных строк нормы, " +
 		                    "но при этом СИЗ-ы настроенные как аналоги не сливаются в одну строку. Реальная проблема в НЛМК.")]
 		[Category("Integrated")]
-		public void FillWearRecivedInfo_NotMergeAnalogTest()
+		public void FillWearReceivedInfo_NotMergeAnalogTest()
 		{
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var nomenclatureType = new ItemsType();

@@ -7,11 +7,11 @@ using QS.Testing.DB;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
-using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using Workwear.Tools;
 
-namespace WorkwearTest.Integration.Stock
+namespace Workwear.Test.Integration.Stock
 {
 	[TestFixture(TestOf = typeof(Expense), Description = "Выдача сотруднику")]
 	public class ExpenseEmployeeIntegratedTest : InMemoryDBGlobalConfigTestFixtureBase
@@ -242,8 +242,8 @@ namespace WorkwearTest.Integration.Stock
 			}
 		}
 
-		[Test(Description = "Убеждаемся что корректно рассчитываем дату следущей выдачи при норме в 1 месяц. " +
-		                    "При разных id. Реальный баг был втом что проверялись id не тех сущьностей, " +
+		[Test(Description = "Убеждаемся что корректно рассчитываем дату следующей выдачи при норме в 1 месяц. " +
+		                    "При разных id. Реальный баг был в том что проверялись id не тех сущностей, " +
 		                    "но вы тестах id одинаковые, поэтому тесты работали..")]
 		[Category("real case")]
 		[Category("Integrated")]

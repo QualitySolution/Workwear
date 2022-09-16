@@ -5,16 +5,17 @@ using NUnit.Framework;
 using QS.Dialog;
 using QS.Testing.DB;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
-using Workwear.Tools;
 using Workwear.Repository.Company;
+using Workwear.Tools;
 
-namespace WorkwearTest.Integration.Stock
+namespace Workwear.Test.Integration.Stock
 {
-	[TestFixture(TestOf = typeof(Expense), Description = "Выдача сотруднику")]
-	public class ExpenseSubdivisionIntegratedTest : InMemoryDBGlobalConfigTestFixtureBase
+	[TestFixture(TestOf = typeof(Writeoff), Description = "Списание с сотрудника")]
+	public class WriteoffEmployeeIntegratedTest : InMemoryDBGlobalConfigTestFixtureBase
 	{
 		[OneTimeSetUp]
 		public void Init()
@@ -23,51 +24,44 @@ namespace WorkwearTest.Integration.Stock
 			InitialiseUowFactory();
 		}
 
-		[Test(Description = "Проверяем что в принцепе можем выдать номеклатуру на подразделение.")]
+		[Test(Description = "Проверяем что процесс списания в целом работает")]
 		[Category("Integrated")]
-		public void IssuingToSubdivisionTest()
+		public void WriteoffMainTest()
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
-				var sizeType = new SizeType();
-				uow.Save(sizeType);
-
 				var nomenclatureType = new ItemsType {
-					Name = "Тестовый тип номенклатуры",
-					SizeType = sizeType
+					Name = "Тестовый тип номенклатуры"
 				};
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature {
-					Name = "Тестовая номеклатура",
 					Type = nomenclatureType
 				};
 				uow.Save(nomenclature);
 
-				var size = new Size {SizeType = sizeType};
+				var size = new Size();
 				var height = new Size();
 				uow.Save(size);
 				uow.Save(height);
 
 				var position1 = new StockPosition(nomenclature, 0, size, height);
 
-				var subdivision = new Subdivision {
-					Name = "Тестовое подразделение"
+				var protectionTools = new ProtectionTools {
+					Name = "СИЗ для тестирования"
 				};
-				uow.Save(subdivision);
+				protectionTools.AddNomeclature(nomenclature);
+				uow.Save(protectionTools);
 
-				var place = new SubdivisionPlace {
-					Name = "Тестовое место",
-					Subdivision = subdivision
-				};
-				uow.Save(place);
+				var employee = new EmployeeCard();
+				uow.Save(employee);
+				uow.Commit();
 
 				var income = new Income {
 					Warehouse = warehouse,
@@ -80,25 +74,35 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(income);
 
 				var expense = new Expense {
-					Operation = ExpenseOperations.Object,
+					Operation = ExpenseOperations.Employee,
 					Warehouse = warehouse,
-					Subdivision = subdivision,
+					Employee = employee,
 					Date = new DateTime(2018, 10, 22)
 				};
-				var item1 = expense.AddItem(position1, 1);
-				item1.SubdivisionPlace = place;
+				var item = expense.AddItem(position1, 3);
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
 				uow.Save(expense);
 				uow.Commit();
 
-				var listed = SubdivisionRepository.ItemsBalance(uow, subdivision);
-				var balance = listed.First();
-				Assert.That(balance.Amount, Is.EqualTo(1));
-				Assert.That(balance.NomeclatureName, Is.EqualTo("Тестовая номеклатура"));
-				Assert.That(balance.Place, Is.EqualTo("Тестовое место"));
-				Assert.That(balance.WearPercent, Is.EqualTo(0m));
+				var balance = EmployeeRepository.ItemsBalance(uow, employee, new DateTime(2018, 10, 30));
+				Assert.That(balance.First().Amount, Is.EqualTo(3));
+
+				//Списываем
+				var writeoff = new Writeoff {
+					Date = new DateTime(2018, 10, 25)
+				};
+				writeoff.AddItem(item.EmployeeIssueOperation, 1);
+
+				//Обновление операций
+				writeoff.UpdateOperations(uow);
+				uow.Save(writeoff);
+				uow.Commit();
+
+				var balanceAfter = EmployeeRepository.ItemsBalance(uow, employee, new DateTime(2018, 10, 30));
+				Assert.That(balanceAfter.First().Amount, Is.EqualTo(2));
+
 			}
 		}
 	}

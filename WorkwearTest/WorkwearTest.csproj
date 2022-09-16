@@ -53,18 +53,10 @@
     <Compile Include="Integration\Import\ExcelImportViewModelItemsTest.cs" />
     <Compile Include="Integration\Import\ExcelImportViewModelEmployeeTest.cs" />
     <Compile Include="Integration\Import\ExcelImportViewModelNormsTest.cs" />
-    <Compile Include="Integration\Stock\CompletionIntegratedTest.cs" />
     <Compile Include="Sql\ScriptsConfigurationTest.cs" />
     <Compile Include="Integration\ReportExportTest.cs" />
     <Compile Include="Integration\Tools\BuisnessLogicGlobalEventHandlerTest.cs" />
-    <Compile Include="Integration\Organization\EmployeeVacationIntegratedTest.cs" />
-    <Compile Include="Integration\Stock\ExpenseEmployeeIntegratedTest.cs" />
     <Compile Include="ViewModels\EntityViewModelsTests.cs" />
-    <Compile Include="Integration\Stock\IncomeIntegratedTest.cs" />
-    <Compile Include="Integration\Stock\ExpenseSubdivisionIntegratedTest.cs" />
-    <Compile Include="Integration\Stock\StockRepositoryTest.cs" />
-    <Compile Include="Integration\Organization\EmployeeCardIntegratedTest.cs" />
-    <Compile Include="Integration\Stock\WriteoffEmployeeIntegratedTest.cs" />
     <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
     <Compile Include="Integration\Tools\DeletionEntitiesTest.cs" />
@@ -138,8 +130,6 @@
   <ItemGroup>
     <Folder Include="Integration\" />
     <Folder Include="Integration\Tools\" />
-    <Folder Include="Integration\Organization\" />
-    <Folder Include="Integration\Stock\" />
     <Folder Include="ViewModels\" />
     <Folder Include="ViewModels\Stock\" />
   </ItemGroup>

@@ -6,10 +6,10 @@ using QS.Testing.DB;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using Workwear.Tools;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Tools;
 
-namespace WorkwearTest.Integration.Organization
+namespace Workwear.Test.Integration.Organization
 {
 	[TestFixture(TestOf = typeof(EmployeeVacation))]
 	public class EmployeeVacationIntegratedTest : InMemoryDBGlobalConfigTestFixtureBase
@@ -36,7 +36,7 @@ namespace WorkwearTest.Integration.Organization
 		[Test(Description = "Пересчитываем правильно сроки после создания отпуска. Реальный баг.")]
 		[Category("real case")]
 		[Category("Integrated")]
-		public void UpdateOperations_RecalculeteDatesAfterCreateVacation()
+		public void UpdateOperations_RecalculateDatesAfterCreateVacation()
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);

@@ -8,12 +8,12 @@ using QS.Testing.DB;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
-using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 
-namespace WorkwearTest.Integration.Stock
+namespace Workwear.Test.Integration.Stock
 {
 	[TestFixture(TestOf = typeof(Expense))]
 	public class IncomeIntegratedTest : InMemoryDBGlobalConfigTestFixtureBase
