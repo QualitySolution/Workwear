@@ -49,7 +49,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigureOneTime.cs" />
-    <Compile Include="Sql\ScriptsConfigurationTest.cs" />
     <Compile Include="Integration\ReportExportTest.cs" />
     <Compile Include="ViewModels\EntityViewModelsTests.cs" />
     <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModelTest.cs" />

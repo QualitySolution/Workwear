@@ -2,7 +2,7 @@ using NUnit.Framework;
 using QS.Testing.Updater.Testing;
 using Workwear.Sql;
 
-namespace WorkwearTest.Sql
+namespace Workwear.Test.Sql
 {
 	[TestFixture(TestOf = typeof(ScriptsConfiguration))]
 	public class ScriptsConfigurationTest : DbConfigurationTestBase

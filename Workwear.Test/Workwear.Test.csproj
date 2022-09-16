@@ -26,6 +26,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\QSProjects\QS.Testing\QS.Testing.csproj" />
       <ProjectReference Include="..\Workwear.Desktop\Workwear.Desktop.csproj" />
+      <ProjectReference Include="..\Workwear.Sql\Workwear.Sql.csproj" />
     </ItemGroup>
 
     <ItemGroup>
