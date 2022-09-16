@@ -11,7 +11,7 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 
-namespace workwear
+namespace Workwear
 {
 	public class Configure
 	{

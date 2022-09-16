@@ -155,7 +155,6 @@
     <Compile Include="gtk-gui\workwear.IncomeDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.IncomeDocItemsView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.WriteOffView.cs" />
-    <Compile Include="ConfigureDeletion.cs" />
     <Compile Include="Representations\ObjectBalanceVM.cs" />
     <Compile Include="Tools\CurrentUserSettings.cs" />
     <Compile Include="Dialogs\Regulations\RegulationDocDlg.cs" />

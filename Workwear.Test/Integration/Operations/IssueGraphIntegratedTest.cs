@@ -8,7 +8,7 @@ using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 
-namespace WorkwearTest.Integration.Operations
+namespace Workwear.Test.Integration.Operations
 {
 	[TestFixture(TestOf = typeof(IssueGraph), Description = "Граф числящегося за сотрудником")]
 	public class IssueGraphIntegratedTest : InMemoryDBGlobalConfigTestFixtureBase
@@ -20,7 +20,7 @@ namespace WorkwearTest.Integration.Operations
 			InitialiseUowFactory();
 		}
 
-		[Test(Description = "Проверяем что графе появляются внучную созданные операции без номеклатуры.")]
+		[Test(Description = "Проверяем что в графе появляются вручную созданные операции без номенклатуры.")]
 		[Category("Integrated")]
 		public void MakeIssueGraph_UseManualOperationsTest()
 		{
@@ -43,7 +43,7 @@ namespace WorkwearTest.Integration.Operations
 				var employee = new EmployeeCard();
 				uow.Save(employee);
 
-				//Операция без номеклатуры
+				//Операция без номенклатуры
 				var manualOp = new EmployeeIssueOperation();
 				manualOp.OperationTime = new DateTime(2019, 1, 1, 14, 0, 0);
 				manualOp.AutoWriteoffDate = new DateTime(2020, 1, 1);

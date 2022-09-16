@@ -70,8 +70,6 @@
     <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
     <Compile Include="Integration\Tools\DeletionEntitiesTest.cs" />
-    <Compile Include="Integration\Operations\IssueGraphIntegratedTest.cs" />
-    <Compile Include="Integration\Operations\EmployeeIssueRepositoryTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.BaseParameters\QS.BaseParameters.csproj">
@@ -146,7 +144,6 @@
     <Folder Include="Integration\Stock\" />
     <Folder Include="ViewModels\" />
     <Folder Include="ViewModels\Stock\" />
-    <Folder Include="Integration\Operations\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Antlr3.Runtime" Version="3.5.1" />

@@ -13,7 +13,7 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
 
-namespace WorkwearTest.Integration.Operations
+namespace Workwear.Test.Integration.Operations
 {
 	[TestFixture(TestOf = typeof(EmployeeIssueRepository), Description = "Репозитория информации о выдачах сотруднику")]
 	public class EmployeeIssueRepositoryTest : InMemoryDBGlobalConfigTestFixtureBase

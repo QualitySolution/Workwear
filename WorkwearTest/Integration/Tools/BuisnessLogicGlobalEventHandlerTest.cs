@@ -16,7 +16,7 @@ using Workwear.Domain.Stock;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
 using workwear.Tools;
-using workwear;
+using Workwear;
 using Workwear.Domain.Stock.Documents;
 
 namespace WorkwearTest.Integration.Tools
