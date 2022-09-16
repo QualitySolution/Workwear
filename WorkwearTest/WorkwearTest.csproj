@@ -50,7 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigureOneTime.cs" />
-    <Compile Include="Deletion\ConfigTests.cs" />
     <Compile Include="HistoryLog\DomainModelTest.cs" />
     <Compile Include="Integration\Import\ExcelImportViewModelItemsTest.cs" />
     <Compile Include="Integration\Import\ExcelImportViewModelEmployeeTest.cs" />
