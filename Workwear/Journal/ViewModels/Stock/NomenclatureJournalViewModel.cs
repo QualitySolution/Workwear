@@ -99,7 +99,7 @@ namespace workwear.Journal.ViewModels.Stock
 		[SearchHighlight]
 		public string Name { get; set; }
 		[SearchHighlight]
-		public uint? Number { get; set; }
+		public string Number { get; set; }
 		[SearchHighlight]
 		public string ItemType { get; set; }
 		public bool Archival { get; set; }

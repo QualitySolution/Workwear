@@ -154,15 +154,6 @@ namespace workwear
 				                                "Продолжить создание документа прихода?"))
 					return;
 			}
-			
-			if (reader.UnreadableArticle.Any()) {
-				var message = String.Join("\n", reader.UnreadableArticle.Take(10).Select(x => " * " + x));
-				if(reader.UnreadableArticle.Count > 10)
-					message += $"\n и еще {reader.UnreadableArticle.Count - 10}...";
-				if(!interactiveService.Question($"Не удалось определить значение у следующих номенклатурных номеров:\n{message}\n " +
-				                                "Продолжить создание документа прихода?"))
-					return;
-			}
 
 			if(reader.NotFoundNomenclatures.Count > 0) {
 				var message = String.Join("\n", reader.NotFoundNomenclatures.Take(10)

@@ -250,7 +250,7 @@ namespace Workwear.Views.Stock
 			this.yentryNumber.CanFocus = true;
 			this.yentryNumber.Name = "yentryNumber";
 			this.yentryNumber.IsEditable = true;
-			this.yentryNumber.MaxLength = 240;
+			this.yentryNumber.MaxLength = 20;
 			this.yentryNumber.InvisibleChar = '●';
 			this.table2.Add(this.yentryNumber);
 			global::Gtk.Table.TableChild w19 = ((global::Gtk.Table.TableChild)(this.table2[this.yentryNumber]));

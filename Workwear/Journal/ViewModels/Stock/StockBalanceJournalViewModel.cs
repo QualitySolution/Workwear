@@ -200,7 +200,7 @@ namespace workwear.Journal.ViewModels.Stock
 	{
 		public int Id { get; set; }
 		public string NomenclatureName { get; set; }
-		public uint? NomenclatureNumber { get; set; }
+		public string NomenclatureNumber { get; set; }
 		public string UnitsName { get; set; }
 		public string SizeName { get; set; }
 		public int SizeId { get; set; }

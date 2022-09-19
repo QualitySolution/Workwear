@@ -224,25 +224,23 @@ namespace Workwear.ViewModels.Import
 				foreach(var notFoundNomenclature in documentItemsWithoutNomenclature) {
 					progressBar.Add();
 					var type = nomenclatureTypes.ParseNomenclatureName(notFoundNomenclature.NomenclatureName);
-					if(UInt32.TryParse(notFoundNomenclature.Article, out var result)) {
-						if(type is null) {
-							var page = NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null,
-								EntityUoWBuilder.ForCreate());
-							page.ViewModel.Entity.Name = notFoundNomenclature.NomenclatureName;
-							page.ViewModel.Entity.Number = result;
-							openNomenclatureDialog = true;
-						}
-						else {
-							if(type.Id == 0)
-									UoW.Save(type);
-							var nomenclature = new Nomenclature {
-								Name = notFoundNomenclature.NomenclatureName,
-								Number = result,
-								Type = type,
-								Comment = "Созданно при загрузке поступления из файла"
-							};
-							UoW.Save(nomenclature);
-						}
+					if(type is null) {
+						var page = NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null,
+							EntityUoWBuilder.ForCreate());
+						page.ViewModel.Entity.Name = notFoundNomenclature.NomenclatureName;
+						page.ViewModel.Entity.Number = notFoundNomenclature.Article;
+						openNomenclatureDialog = true;
+					}
+					else {
+						if(type.Id == 0)
+								UoW.Save(type);
+						var nomenclature = new Nomenclature {
+							Name = notFoundNomenclature.NomenclatureName,
+							Number = notFoundNomenclature.Article,
+							Type = type,
+							Comment = "Созданно при загрузке поступления из файла"
+						};
+						UoW.Save(nomenclature);
 					}
 				}
 				progressBar.Close();

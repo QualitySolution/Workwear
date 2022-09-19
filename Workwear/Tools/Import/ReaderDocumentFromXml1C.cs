@@ -24,7 +24,6 @@ namespace workwear.Tools.Import
 		public IList<Xml1CReaderDocumentItem> DocumentItems { get; } = new List<Xml1CReaderDocumentItem>();
 		public IList<NotFoundNomenclature> NotFoundNomenclatures { get; } = new List<NotFoundNomenclature>();
 		public HashSet<string> NotFoundNomenclatureNumbers { get; } = new HashSet<string>();
-		public HashSet<string> UnreadableArticle { get; } = new HashSet<string>();
 		public HashSet<string> UnreadableSizes { get; } = new HashSet<string>();
 
 		public ReaderDocumentFromXml1C(
@@ -201,14 +200,10 @@ namespace workwear.Tools.Import
 				return null;
 			}
 
-			if(UInt32.TryParse(article, out var number)) {
-				var nomenclature = unitOfWork.Query<Nomenclature>().Where(x => x.Number == number).List().FirstOrDefault();
-				if(nomenclature != null) return nomenclature;
-				if(!NotFoundNomenclatures.Any(x => x.Article == number && x.Name == nomenclatureName))
-					NotFoundNomenclatures.Add(new NotFoundNomenclature { Name = nomenclatureName, Article = number });
-				return null;
-			}
-			UnreadableArticle.Add(article);
+			var nomenclature = unitOfWork.Query<Nomenclature>().Where(x => x.Number == article).List().FirstOrDefault();
+			if(nomenclature != null) return nomenclature;
+			if(!NotFoundNomenclatures.Any(x => x.Article == article && x.Name == nomenclatureName))
+				NotFoundNomenclatures.Add(new NotFoundNomenclature { Name = nomenclatureName, Article = article });
 			return null;
 		}
 	}
@@ -225,6 +220,6 @@ namespace workwear.Tools.Import
 
 	public class NotFoundNomenclature {
 		public string Name { get; set; }
-		public uint Article { get; set; }
+		public string Article { get; set; }
 	}
 }

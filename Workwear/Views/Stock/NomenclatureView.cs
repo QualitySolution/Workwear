@@ -1,5 +1,4 @@
 using System;
-using Gamma.Binding.Converters;
 using NLog;
 using QS.Views.Dialog;
 using Workwear.Domain.Stock;
@@ -7,8 +6,7 @@ using Workwear.Measurements;
 using Workwear.ViewModels.Stock;
 using Gtk;
 
-namespace Workwear.Views.Stock
-{
+namespace Workwear.Views.Stock {
 	public partial class NomenclatureView : EntityDialogViewBase<NomenclatureViewModel, Nomenclature>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -24,7 +22,7 @@ namespace Workwear.Views.Stock
 		private void ConfigureDlg()
 		{
 			yentryNumber.Binding
-				.AddBinding(Entity, e => e.Number, w => w.Text, new NumbersToStringConverter())
+				.AddBinding(Entity, e => e.Number, w => w.Text)
 				.InitializeFromSource();
 
 			yentryName.Binding
@@ -45,7 +43,6 @@ namespace Workwear.Views.Stock
 				.AddBinding(vm => vm.ClothesSexLabel, w => w.LabelProp)
 				.InitializeFromSource();
 				
-
 			ytextComment.Binding
 				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text)
 				.InitializeFromSource();

@@ -5,15 +5,14 @@ using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Measurements;
-using QS.HistoryLog;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 
-namespace Workwear.Domain.Stock
-{
+namespace Workwear.Domain.Stock {
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "номенклатура",
 		Nominative = "номенклатура",
@@ -53,9 +52,10 @@ namespace Workwear.Domain.Stock
 			get => comment;
 			set => SetField(ref comment, value);
 		}
-		private uint? number;
+		private string number;
 		[Display(Name = "Номенклатурный номер")]
-		public virtual uint? Number {
+		[StringLength(20)]
+		public virtual string Number {
 			get => number;
 			set => SetField(ref number, value);
 		}
