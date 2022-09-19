@@ -8,14 +8,16 @@ using QS.Project.Domain;
 using QS.Project.Services;
 using QS.ViewModels;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Stock;
+using workwear;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
-using workwear.Tools.Features;
-using workwear.ViewModels.Regulations;
+using Workwear.Tools.Features;
+using Workwear.ViewModels.Regulations;
 using Workwear.Measurements;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class ExpenseDocItemsEmployeeViewModel : ViewModelBase
 	{

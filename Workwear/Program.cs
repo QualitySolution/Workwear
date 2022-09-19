@@ -8,6 +8,7 @@ using QS.ErrorReporting;
 using QS.Project.Versioning;
 using QSProjectsLib;
 using QSTelemetry;
+using Workwear;
 
 namespace workwear
 {
@@ -51,7 +52,7 @@ namespace workwear
 			ILifetimeScope scopeLoginTime = startupContainer.BeginLifetimeScope();
 			// Создаем окно входа
 			Login LoginDialog = new Login ();
-			LoginDialog.Logo = Gdk.Pixbuf.LoadFromResource ("workwear.icon.logo.png");
+			LoginDialog.Logo = Gdk.Pixbuf.LoadFromResource ("Workwear.icon.logo.png");
 			LoginDialog.SetDefaultNames ("workwear");
 			LoginDialog.DefaultLogin = "demo";
 			LoginDialog.DefaultServer = "demo.qsolution.ru";

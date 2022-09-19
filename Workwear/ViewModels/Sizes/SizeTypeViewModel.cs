@@ -10,7 +10,7 @@ using QS.ViewModels.Dialog;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
 
-namespace workwear.ViewModels.Sizes
+namespace Workwear.ViewModels.Sizes
 {
 	public class SizeTypeViewModel : EntityDialogViewModelBase<SizeType>
 	{

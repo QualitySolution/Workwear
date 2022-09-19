@@ -7,10 +7,10 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
-using workwear.Domain.Company;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
-using workwear.ViewModels.Company;
+using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {

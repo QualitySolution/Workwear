@@ -22,14 +22,14 @@ using QS.Services;
 using QS.Utilities;
 using QS.Utilities.Text;
 using QS.ViewModels.Resolve;
-using workwear.Domain.Company;
-using workwear.Domain.Operations.Graph;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations.Graph;
+using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
-using workwear.Repository.Operations;
-using workwear.Repository.Regulations;
+using Workwear.Repository.Operations;
+using Workwear.Repository.Regulations;
 using Workwear.Tools;
-using workwear.ViewModels.Company;
+using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Tools
 {

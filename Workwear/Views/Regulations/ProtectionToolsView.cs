@@ -3,11 +3,11 @@ using Gamma.Binding.Converters;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using QS.Views.Dialog;
-using workwear.Domain.Regulations;
-using workwear.Domain.Stock;
-using workwear.ViewModels.Regulations;
+using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
+using Workwear.ViewModels.Regulations;
 
-namespace workwear.Views.Regulations
+namespace Workwear.Views.Regulations
 {
 	public partial class ProtectionToolsView : EntityDialogViewBase<ProtectionToolsViewModel, ProtectionTools>
 	{
@@ -39,7 +39,7 @@ namespace workwear.Views.Regulations
 
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
 			.AddColumn("Тип").AddTextRenderer(p => p.TypeName)
-			.AddColumn("Номер").AddTextRenderer(n => $"{n.Number}")
+			.AddColumn("Номер").AddTextRenderer(n => n.Number)
 			.AddColumn("Наименование").AddTextRenderer(p => p.Name + (p.Archival? "(архивная)" : String.Empty))
 			.AddColumn("Пол").AddTextRenderer(p => p.Sex != null ? p.Sex.GetEnumTitle() : String.Empty)
 			.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")

@@ -12,14 +12,15 @@ using QS.Project.Domain;
 using QS.Project.Journal;
 using QSOrmProject;
 using QSWidgetLib;
-using workwear.Domain.Operations;
-using workwear.Domain.Stock;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 using workwear.Representations.Organization;
 using workwear.ViewModel;
-using workwear.ViewModels.Stock;
-using workwear.ViewModels.Stock.Widgets;
+using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Widgets;
 
 namespace workwear
 {

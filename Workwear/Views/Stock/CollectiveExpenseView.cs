@@ -2,11 +2,11 @@
 using Gamma.Binding.Converters;
 using NLog;
 using QS.Views.Dialog;
-using workwear.Domain.Statements;
-using workwear.Domain.Stock;
-using workwear.ViewModels.Stock;
+using Workwear.Domain.Statements;
+using Workwear.Domain.Stock.Documents;
+using Workwear.ViewModels.Stock;
 
-namespace workwear.Views.Stock
+namespace Workwear.Views.Stock
 {
 	public partial class CollectiveExpenseView : EntityDialogViewBase<CollectiveExpenseViewModel, CollectiveExpense>
 	{

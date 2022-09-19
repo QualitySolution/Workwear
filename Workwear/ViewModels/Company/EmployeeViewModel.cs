@@ -21,21 +21,19 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using QSReport;
-using workwear.Domain.Company;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Measurements;
-using workwear.Models.Company;
-using workwear.Repository.Company;
-using workwear.Repository.Regulations;
+using Workwear.Models.Company;
+using Workwear.Repository.Company;
+using Workwear.Repository.Regulations;
 using Workwear.Tools;
-using workwear.Tools.Features;
-using workwear.ViewModels.Company.EmployeeChilds;
-using workwear.ViewModels.IdentityCards;
+using Workwear.Tools.Features;
+using Workwear.ViewModels.Company.EmployeeChildren;
+using Workwear.ViewModels.IdentityCards;
 
-namespace workwear.ViewModels.Company
+namespace Workwear.ViewModels.Company
 {
 	public class EmployeeViewModel : EntityDialogViewModelBase<EmployeeCard>, IValidatableObject
 	{

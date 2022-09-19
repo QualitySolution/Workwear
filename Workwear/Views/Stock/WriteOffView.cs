@@ -5,11 +5,11 @@ using QS.Project.Domain;
 using QS.Views.Dialog;
 using QSOrmProject;
 using QSWidgetLib;
-using workwear.Domain.Stock;
-using workwear.ViewModels.Stock;
+using Workwear.Domain.Stock.Documents;
+using Workwear.ViewModels.Stock;
 using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
-namespace workwear.Views.Stock
+namespace Workwear.Views.Stock
 {
 	public partial class WriteOffView : EntityDialogViewBase<WriteOffViewModel, Writeoff>
 	{

@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using QS.Views;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Journal.Filter.ViewModels.Stock;
 
 namespace workwear.Journal.Filter.Views.Stock
@@ -10,9 +10,9 @@ namespace workwear.Journal.Filter.Views.Stock
 		public StockDocumentsFilterView(StockDocumentsFilterViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
-			enumcomboDocumentType.ItemsEnum = typeof(StokDocumentType);
-			enumcomboDocumentType.Binding.AddBinding(ViewModel, v => v.StokDocumentType, w => w.SelectedItemOrNull).InitializeFromSource();
-			enumcomboDocumentType.AddEnumToHideList(viewModel.HidenStokDocumentTypeList.ToArray());
+			enumcomboDocumentType.ItemsEnum = typeof(StockDocumentType);
+			enumcomboDocumentType.Binding.AddBinding(ViewModel, v => v.StockDocumentType, w => w.SelectedItemOrNull).InitializeFromSource();
+			enumcomboDocumentType.AddEnumToHideList(viewModel.HidenStockDocumentTypeList.ToArray());
 			dateperiodDocs.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.StartDate, w => w.StartDateOrNull)
 				.AddBinding(v => v.EndDate, w => w.EndDateOrNull)

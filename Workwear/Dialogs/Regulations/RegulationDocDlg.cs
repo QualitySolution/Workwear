@@ -3,7 +3,7 @@ using Gamma.ColumnConfig;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
 using QSOrmProject;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Regulations;
 
 namespace workwear.Dialogs.Regulations
 {

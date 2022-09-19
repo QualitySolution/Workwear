@@ -12,18 +12,19 @@ using QS.Project.Domain;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
-using workwear.Domain.Company;
-using workwear.Domain.Stock;
+using Workwear.Domain.Company;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
-using workwear.Models.Import;
+using Workwear.Models.Import;
 using workwear.Repository;
-using workwear.Repository.Stock;
-using workwear.Tools.Features;
+using Workwear.Repository.Stock;
+using Workwear.Tools.Features;
 using workwear.Tools.Import;
-using workwear.ViewModels.Company;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Stock;
 
 namespace workwear
 {
@@ -150,15 +151,6 @@ namespace workwear
 				if(reader.NotFoundNomenclatureNumbers.Count > 10)
 					message += $"\n и еще {reader.NotFoundNomenclatureNumbers.Count - 10}...";
 				if(!interactiveService.Question($"Не найден номенклатурный номер у номенклатур:\n{message}\n " +
-				                                "Продолжить создание документа прихода?"))
-					return;
-			}
-			
-			if (reader.UnreadableArticle.Any()) {
-				var message = String.Join("\n", reader.UnreadableArticle.Take(10).Select(x => " * " + x));
-				if(reader.UnreadableArticle.Count > 10)
-					message += $"\n и еще {reader.UnreadableArticle.Count - 10}...";
-				if(!interactiveService.Question($"Не удалось определить значение у следующих номенклатурных номеров:\n{message}\n " +
 				                                "Продолжить создание документа прихода?"))
 					return;
 			}

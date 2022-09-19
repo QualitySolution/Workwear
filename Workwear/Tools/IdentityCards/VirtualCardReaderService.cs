@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Timers;
 using QS.DomainModel.UoW;
 using RglibInterop;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 
 namespace workwear.Tools.IdentityCards
 {

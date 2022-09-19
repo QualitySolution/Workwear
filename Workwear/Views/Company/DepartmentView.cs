@@ -1,9 +1,9 @@
 ﻿using System;
 using QS.Views.Dialog;
-using workwear.Domain.Company;
-using workwear.ViewModels.Company;
+using Workwear.Domain.Company;
+using Workwear.ViewModels.Company;
 
-namespace workwear.Views.Company
+namespace Workwear.Views.Company
 {
 
 	public partial class DepartmentView : EntityDialogViewBase<DepartmentViewModel, Department>

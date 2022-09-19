@@ -52,27 +52,29 @@ using Workwear.Measurements;
 using Workwear.Sql;
 using Workwear.Tools;
 using workwear.Dialogs.Regulations;
-using workwear.Domain.Regulations;
-using workwear.Domain.Stock;
-using workwear.Domain.Users;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Users;
 using workwear.Journal;
-using workwear.Models.Company;
-using workwear.Models.Import;
-using workwear.Models.Import.Employees;
-using workwear.Models.Import.Issuance;
-using workwear.Models.Import.Norms;
+using workwear.Journal.ViewModels.Company;
+using Workwear.Models.Company;
+using Workwear.Models.Import.Employees;
+using Workwear.Models.Import.Issuance;
+using Workwear.Models.Import.Norms;
 using workwear.Models.Stock;
-using workwear.Repository.Operations;
-using workwear.Tools.Features;
+using Workwear.Repository.Operations;
+using Workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
 using workwear.Tools.Navigation;
-using workwear.Tools.Nhibernate;
+using Workwear.Tools.Nhibernate;
 using workwear.Tools;
 using workwear.Tools.Import;
-using workwear.ViewModels.Communications;
-using workwear.ViewModels.Company;
-using workwear.Views.Company;
+using Workwear.ViewModels.Communications;
+using Workwear.ViewModels.Company;
+using Workwear.Views.Company;
 using workwear.Models.WearLk;
+using Workwear.ViewModels.Import;
 
 namespace workwear
 {
@@ -91,7 +93,7 @@ namespace workwear
 				.FormatSql ();
 
 			OrmConfig.ConfigureOrm (db, new System.Reflection.Assembly[] {
-				System.Reflection.Assembly.GetAssembly (typeof(MainClass)),
+				System.Reflection.Assembly.GetAssembly (typeof(EmployeeCard)),
 				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),
 				System.Reflection.Assembly.GetAssembly (typeof(UserBase)),
 				System.Reflection.Assembly.GetAssembly (typeof(HistoryMain)),
@@ -113,7 +115,7 @@ namespace workwear
 			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
 
 			NotifyConfiguration.Enable();
-			BuisnessLogicGlobalEventHandler.Init(new GtkQuestionDialogsInteractive());
+			BusinessLogicGlobalEventHandler.Init(new GtkQuestionDialogsInteractive());
 			JournalsColumnsConfigs.RegisterColumns();
 		}
 		
@@ -255,7 +257,12 @@ namespace workwear
 
 			#region ViewModels
 			builder.Register(x => new AutofacViewModelResolver(AppDIContainer)).As<IViewModelResolver>();
-			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(OrganizationViewModel)))
+			//Основной проект с Gtk, возможно надо будет убрать если все ViewModels передут.
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(EmployeeJournalViewModel)))
+				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
+				.AsSelf();
+			//Ссылка на Workwear.Desktop
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(ExcelImportViewModel)))
 				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
 				.AsSelf();
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(ProgressWindowViewModel)))

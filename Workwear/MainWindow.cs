@@ -11,19 +11,19 @@ using QS.BusinessCommon.Domain;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QS.HistoryLog;
 using QS.HistoryLog.ViewModels;
+using QS.HistoryLog;
 using QS.Navigation;
-using QS.NewsFeed;
 using QS.NewsFeed.Views;
+using QS.NewsFeed;
 using QS.Project.Domain;
 using QS.Project.Versioning;
 using QS.Project.Views;
 using QS.Report.ViewModels;
 using QS.Serial.ViewModels;
 using QS.Services;
-using QS.Tdi;
 using QS.Tdi.Gtk;
+using QS.Tdi;
 using QS.Updater;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
@@ -31,34 +31,34 @@ using QS.ViewModels.Dialog;
 using QSOrmProject;
 using QSProjectsLib;
 using QSTelemetry;
-using workwear;
-using workwear.Domain.Company;
-using workwear.Domain.Regulations;
-using workwear.Domain.Stock;
-using workwear.Domain.Users;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Users;
+using Workwear.Repository.Stock;
+using Workwear.Tools.Features;
+using Workwear.Tools;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Tools;
-using workwear.Models.Import;
-using workwear.Models.Import.Employees;
-using workwear.Models.Import.Issuance;
-using workwear.Models.Import.Norms;
+using Workwear.Models.Import.Employees;
+using Workwear.Models.Import.Issuance;
+using Workwear.Models.Import.Norms;
+using Workwear.Models.Import;
+using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
-using workwear.Repository.Stock;
-using Workwear.Tools;
 using workwear.Tools;
-using workwear.Tools.Features;
-using workwear.ViewModels.Communications;
-using workwear.ViewModels.Company;
-using workwear.ViewModels.Import;
-using workwear.ViewModels.Stock;
-using workwear.ViewModels.Tools;
-using workwear.ViewModels.User;
-using workwear.Models.WearLk;
+using Workwear.ViewModels.Communications;
+using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Import;
+using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Tools;
+using Workwear.ViewModels.User;
+using workwear;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -415,13 +415,13 @@ public partial class MainWindow : Gtk.Window
 	void ReadUserSettings()
 	{
 		switch(CurrentUserSettings.Settings.ToolbarStyle) {
-			case ToolbarStyle.Both:
+			case ToolbarType.Both:
 				ActionToolBarTextAndIcon.Activate();
 				break;
-			case ToolbarStyle.Icons:
+			case ToolbarType.Icons:
 				ActionToolBarIconOnly.Activate();
 				break;
-			case ToolbarStyle.Text:
+			case ToolbarType.Text:
 				ActionToolBarTextOnly.Activate();
 				break;
 		}
@@ -445,15 +445,15 @@ public partial class MainWindow : Gtk.Window
 		ActionMaxizizeOnStart.Active = CurrentUserSettings.Settings.MaximizeOnStart;
 	}
 
-	private void ToolBarMode(ToolbarStyle style)
+	private void ToolBarMode(ToolbarType style)
 	{
 		if(CurrentUserSettings.Settings.ToolbarStyle != style) {
 			CurrentUserSettings.Settings.ToolbarStyle = style;
 			CurrentUserSettings.SaveSettings();
 		}
-		toolbarMain.ToolbarStyle = style;
+		toolbarMain.ToolbarStyle = (ToolbarStyle)Enum.Parse(typeof(ToolbarStyle), style.ToString()) ;
 		ActionIconsExtraSmall.Sensitive = ActionIconsSmall.Sensitive = ActionIconsMiddle.Sensitive = ActionIconsLarge.Sensitive =
-			style != ToolbarStyle.Text;
+			style != ToolbarType.Text;
 	}
 
 	private void ToolBarShow(bool show)
@@ -496,19 +496,19 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionToolBarTextOnlyToggled(object sender, EventArgs e)
 	{
 		if(ActionToolBarTextOnly.Active)
-			ToolBarMode(ToolbarStyle.Text);
+			ToolBarMode(ToolbarType.Text);
 	}
 
 	protected void OnActionToolBarIconOnlyToggled(object sender, EventArgs e)
 	{
 		if(ActionToolBarIconOnly.Active)
-			ToolBarMode(ToolbarStyle.Icons);
+			ToolBarMode(ToolbarType.Icons);
 	}
 
 	protected void OnActionToolBarTextAndIconToggled(object sender, EventArgs e)
 	{
 		if(ActionToolBarTextAndIcon.Active)
-			ToolBarMode(ToolbarStyle.Both);
+			ToolBarMode(ToolbarType.Both);
 	}
 
 	protected void OnActionIconsExtraSmallToggled(object sender, EventArgs e)

@@ -16,18 +16,18 @@ using QS.Validation;
 using QS.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using QSReport;
-using workwear.Domain.Company;
-using workwear.Domain.Statements;
-using workwear.Domain.Stock;
-using workwear.Domain.Users;
+using Workwear.Domain.Company;
+using Workwear.Domain.Statements;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
-using workwear.ViewModels.Company;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Stock;
 using Workwear.Measurements;
 
-namespace workwear.ViewModels.Statements
+namespace Workwear.ViewModels.Statements
 {
 	public class IssuanceSheetViewModel : EntityDialogViewModelBase<IssuanceSheet>
 	{

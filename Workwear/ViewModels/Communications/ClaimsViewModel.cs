@@ -10,7 +10,7 @@ using QS.Navigation;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 
-namespace workwear.ViewModels.Communications 
+namespace Workwear.ViewModels.Communications 
 {
 	public class ClaimsViewModel : UowDialogViewModelBase 
 	{

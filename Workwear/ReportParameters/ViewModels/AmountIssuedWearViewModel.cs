@@ -5,9 +5,9 @@ using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
-using workwear.Domain.Company;
-using workwear.Domain.Stock;
-using workwear.Repository.Company;
+using Workwear.Domain.Company;
+using Workwear.Domain.Stock;
+using Workwear.Repository.Company;
 
 namespace workwear.ReportParameters.ViewModels
 {

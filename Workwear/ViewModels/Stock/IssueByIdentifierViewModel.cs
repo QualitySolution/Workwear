@@ -11,22 +11,22 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Services;
-using QS.Utilities;
 using QS.Utilities.Text;
+using QS.Utilities;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Company;
-using workwear.Domain.Stock;
-using workwear.Repository.Company;
-using workwear.Repository.Stock;
-using Workwear.Tools;
-using workwear.Tools.Features;
-using workwear.Tools.IdentityCards;
 using Workwear.Domain.Company;
+using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Stock;
 using Workwear.Measurements;
+using Workwear.Repository.Company;
+using Workwear.Repository.Stock;
+using Workwear.Tools.Features;
+using Workwear.Tools;
+using workwear.Tools.IdentityCards;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class IssueByIdentifierViewModel : WindowDialogViewModelBase
 	{

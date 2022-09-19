@@ -9,10 +9,10 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Utilities;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Communications;
-using workwear.Domain.Company;
+using Workwear.Domain.Communications;
+using Workwear.Domain.Company;
 
-namespace workwear.ViewModels.Communications
+namespace Workwear.ViewModels.Communications
 {
 	public class SendMessangeViewModel: WindowDialogViewModelBase
 	{

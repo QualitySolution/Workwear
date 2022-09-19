@@ -4,7 +4,7 @@ using Autofac;
 using QS.Report;
 using QSProjectsLib;
 using QSReport;
-using workwear.Tools.Features;
+using Workwear.Tools.Features;
 
 namespace workwear.ReportsDlg
 {

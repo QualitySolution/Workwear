@@ -43,52 +43,16 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Integration\Import\NomenclatureTypesTest.cs" />
     <None Include="Integration\Reports\NoDBTestReport.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigureOneTime.cs" />
-    <Compile Include="Deletion\ConfigTests.cs" />
-    <Compile Include="HistoryLog\DomainModelTest.cs" />
-    <Compile Include="Integration\Import\ExcelImportViewModelItemsTest.cs" />
-    <Compile Include="Integration\Import\ExcelImportViewModelEmployeeTest.cs" />
-    <Compile Include="Integration\Import\ExcelImportViewModelNormsTest.cs" />
-    <Compile Include="Integration\Stock\CompletionIntegratedTest.cs" />
-    <Compile Include="Models\Import\Employees\DataTypeBustTest.cs" />
-    <Compile Include="Models\Import\Employees\DataTypeFioTest.cs" />
-    <Compile Include="Models\Import\Employees\DataTypeSubdivisionTest.cs" />
-    <Compile Include="Models\Import\ImportModelBaseTest.cs" />
-    <Compile Include="Models\Import\Norms\DataTypePeriodAndCountTest.cs" />
-    <Compile Include="Models\Import\Norms\DataTypePeriodTest.cs" />
-    <Compile Include="Models\Import\RowStackHelperTest.cs" />
-    <Compile Include="Operations\Graph\IssueGraphTest.cs" />
-    <Compile Include="Operations\Graph\GraphItemTest.cs" />
-    <Compile Include="Organization\EmployeeCardTests.cs" />
-    <Compile Include="Regulations\NormItemTest.cs" />
-    <Compile Include="Operations\EmployeeIssueOperationTest.cs" />
-    <Compile Include="Organization\EmployeeCardItemTests.cs" />
-    <Compile Include="Sql\ScriptsConfigurationTest.cs" />
-    <Compile Include="Stock\ExpenseTest.cs" />
-    <Compile Include="Organization\EmployeeVacationTests.cs" />
     <Compile Include="Integration\ReportExportTest.cs" />
-    <Compile Include="Integration\Tools\BuisnessLogicGlobalEventHandlerTest.cs" />
-    <Compile Include="Integration\Organization\EmployeeVacationIntegratedTest.cs" />
-    <Compile Include="Integration\Stock\ExpenseEmployeeIntegratedTest.cs" />
     <Compile Include="ViewModels\EntityViewModelsTests.cs" />
-    <Compile Include="Integration\Stock\IncomeIntegratedTest.cs" />
-    <Compile Include="Integration\Stock\ExpenseSubdivisionIntegratedTest.cs" />
-    <Compile Include="Integration\Stock\StockRepositoryTest.cs" />
-    <Compile Include="Stock\WriteoffTest.cs" />
-    <Compile Include="Integration\Organization\EmployeeCardIntegratedTest.cs" />
-    <Compile Include="Integration\Stock\WriteoffEmployeeIntegratedTest.cs" />
     <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
-    <Compile Include="Integration\Tools\DeletionEntitiesTest.cs" />
-    <Compile Include="Models\Company\PersonNamesTest.cs" />
-    <Compile Include="Integration\Operations\IssueGraphIntegratedTest.cs" />
-    <Compile Include="Integration\Operations\EmployeeIssueRepositoryTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.BaseParameters\QS.BaseParameters.csproj">
@@ -157,20 +121,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Operations\" />
-    <Folder Include="Operations\Graph\" />
-    <Folder Include="Regulations\" />
-    <Folder Include="Organization\" />
-    <Folder Include="Stock\" />
     <Folder Include="Integration\" />
-    <Folder Include="Integration\Tools\" />
-    <Folder Include="Integration\Organization\" />
-    <Folder Include="Integration\Stock\" />
     <Folder Include="ViewModels\" />
     <Folder Include="ViewModels\Stock\" />
-    <Folder Include="Models\" />
-    <Folder Include="Models\Company\" />
-    <Folder Include="Integration\Operations\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Antlr3.Runtime" Version="3.5.1" />
@@ -198,49 +151,6 @@
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Samples\Excel\Employees\all_sizes.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Samples\Excel\Employees\cardkey_list.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Samples\Excel\Employees\dismissed_employees.xls">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Samples\Excel\Employees\empty_first_row_a2.xls">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Samples\Excel\Employees\osmbt.xls">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Samples\Excel\Employees\vostok_1c_employee.xls">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Samples\Excel\norms_agronom.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Samples\Excel\items_vostok.xls">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Samples\Excel\Employees\employees_yo_in_name.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Samples\Excel\Employees\name_with_initials.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Include="Samples\Excel\items_dateCells.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

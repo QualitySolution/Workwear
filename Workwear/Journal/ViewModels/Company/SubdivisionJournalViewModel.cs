@@ -9,9 +9,9 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 using workwear.Journal.Filter.ViewModels.Company;
-using workwear.ViewModels.Company;
+using Workwear.ViewModels.Company;
 using QS.Project.DB;
 
 namespace workwear.Journal.ViewModels.Company

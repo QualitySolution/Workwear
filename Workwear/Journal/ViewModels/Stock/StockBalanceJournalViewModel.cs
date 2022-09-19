@@ -12,11 +12,11 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
-using workwear.Domain.Operations;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
-using workwear.Tools.Features;
+using Workwear.Tools.Features;
 
 namespace workwear.Journal.ViewModels.Stock
 {
@@ -200,7 +200,7 @@ namespace workwear.Journal.ViewModels.Stock
 	{
 		public int Id { get; set; }
 		public string NomenclatureName { get; set; }
-		public uint? NomenclatureNumber { get; set; }
+		public string NomenclatureNumber { get; set; }
 		public string UnitsName { get; set; }
 		public string SizeName { get; set; }
 		public int SizeId { get; set; }

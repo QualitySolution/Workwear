@@ -11,17 +11,18 @@ using QS.Project.Domain;
 using QS.Project.Services;
 using QS.ViewModels;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Company;
-using workwear.Domain.Stock;
+using Workwear.Domain.Company;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
-using workwear.Tools.Features;
-using workwear.ViewModels.Company;
-using workwear.ViewModels.Regulations;
+using Workwear.Tools.Features;
+using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Regulations;
 using Workwear.Measurements;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class CollectiveExpenseItemsViewModel : ViewModelBase
 	{

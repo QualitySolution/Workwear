@@ -16,12 +16,13 @@ using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
 using QS.Services;
 using QS.Utilities.Text;
-using workwear.Domain.Company;
-using workwear.Domain.Statements;
-using workwear.Domain.Stock;
+using Workwear.Domain.Company;
+using Workwear.Domain.Statements;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Models.Stock;
-using workwear.Tools.Features;
+using Workwear.Tools.Features;
 
 namespace workwear.Journal.ViewModels.Stock
 {
@@ -86,7 +87,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 		protected IQueryOver<Income> QueryIncomeDoc(IUnitOfWork uow)
 		{
-			if(Filter.StokDocumentType != null && Filter.StokDocumentType != StokDocumentType.IncomeDoc)
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.IncomeDoc)
 				return null;
 
 			Income incomeAlias = null;
@@ -124,7 +125,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
 						.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
 						.Select(() => incomeAlias.Comment).WithAlias(() => resultAlias.Comment)
-			            .Select(() => StokDocumentType.IncomeDoc).WithAlias(() => resultAlias.DocTypeEnum)
+			            .Select(() => StockDocumentType.IncomeDoc).WithAlias(() => resultAlias.DocTypeEnum)
 			            .Select(() => incomeAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 			            .Select(() => incomeAlias.Number).WithAlias(() => resultAlias.IncomeDocNubber)
 					)
@@ -137,7 +138,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 		protected IQueryOver<Expense> QueryExpenseDoc(IUnitOfWork uow)
 		{
-			if(Filter.StokDocumentType != null && Filter.StokDocumentType != StokDocumentType.ExpenseEmployeeDoc && Filter.StokDocumentType != StokDocumentType.ExpenseObjectDoc)
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.ExpenseEmployeeDoc && Filter.StockDocumentType != StockDocumentType.ExpenseObjectDoc)
 				return null;
 
 			Expense expenseAlias = null;
@@ -147,9 +148,9 @@ namespace workwear.Journal.ViewModels.Stock
 				expenseQuery.Where(o => o.Date >= Filter.StartDate.Value);
 			if(Filter.EndDate.HasValue)
 				expenseQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
-			if(Filter.StokDocumentType == StokDocumentType.ExpenseEmployeeDoc)
+			if(Filter.StockDocumentType == StockDocumentType.ExpenseEmployeeDoc)
 				expenseQuery.Where(x => x.Operation == ExpenseOperations.Employee);
-			if(Filter.StokDocumentType == StokDocumentType.ExpenseObjectDoc)
+			if(Filter.StockDocumentType == StockDocumentType.ExpenseObjectDoc)
 				expenseQuery.Where(x => x.Operation == ExpenseOperations.Object);
 			if(Filter.Warehouse != null)
 				expenseQuery.Where(x => x.Warehouse == Filter.Warehouse);
@@ -193,7 +194,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 		protected IQueryOver<CollectiveExpense> QueryCollectiveExpenseDoc(IUnitOfWork uow)
 		{
-			if(Filter.StokDocumentType != null && Filter.StokDocumentType != StokDocumentType.CollectiveExpense)
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.CollectiveExpense)
 				return null;
 
 			CollectiveExpense collectiveExpenseAlias = null;
@@ -223,7 +224,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
 						.Select(() => collectiveExpenseAlias.Comment).WithAlias(() => resultAlias.Comment)
-						.Select(() => StokDocumentType.CollectiveExpense).WithAlias(() => resultAlias.DocTypeEnum)
+						.Select(() => StockDocumentType.CollectiveExpense).WithAlias(() => resultAlias.DocTypeEnum)
 						.Select(() => collectiveExpenseAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					   )
 			.OrderBy(() => collectiveExpenseAlias.Date).Desc
@@ -234,7 +235,7 @@ namespace workwear.Journal.ViewModels.Stock
 		}
 		protected IQueryOver<Transfer> QueryTransferDoc(IUnitOfWork uow)
 		{
-			if(Filter.StokDocumentType != null && Filter.StokDocumentType != StokDocumentType.TransferDoc)
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.TransferDoc)
 				return null;
 
 			Transfer transferAlias = null;
@@ -263,7 +264,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
 			            .Select(() => transferAlias.Comment).WithAlias(() => resultAlias.Comment)
-						.Select(() => StokDocumentType.TransferDoc).WithAlias(() => resultAlias.DocTypeEnum)
+						.Select(() => StockDocumentType.TransferDoc).WithAlias(() => resultAlias.DocTypeEnum)
 			            .Select(() => transferAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					   )
 			.OrderBy(() => transferAlias.Date).Desc
@@ -275,7 +276,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 		protected IQueryOver<Writeoff> QueryWriteoffDoc(IUnitOfWork uow, bool isCounting)
 		{
-			if(Filter.StokDocumentType != null && Filter.StokDocumentType != StokDocumentType.WriteoffDoc)
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.WriteoffDoc)
 				return null;
 
 			WriteoffItem writeoffItemAlias = null;
@@ -313,7 +314,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => writeoffAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(concatProjection).WithAlias(() => resultAlias.ExpenseWarehouse)
-						.Select(() => StokDocumentType.WriteoffDoc).WithAlias(() => resultAlias.DocTypeEnum)
+						.Select(() => StockDocumentType.WriteoffDoc).WithAlias(() => resultAlias.DocTypeEnum)
 			            .Select(() => writeoffAlias.Comment).WithAlias(() => resultAlias.Comment)
 			            .Select(() => writeoffAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					   )
@@ -325,7 +326,7 @@ namespace workwear.Journal.ViewModels.Stock
 		}
 		protected IQueryOver<Completion> QueryCompletionDoc(IUnitOfWork uow)
 		{
-			if(Filter.StokDocumentType != null && Filter.StokDocumentType != StokDocumentType.Completion)
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.Completion)
 				return null;
 			Completion completionAlias = null;
 			
@@ -349,7 +350,7 @@ namespace workwear.Journal.ViewModels.Stock
 			            .Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
 			            .Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
 						.Select(() => completionAlias.Comment).WithAlias(() => resultAlias.Comment)
-			            .Select(() => StokDocumentType.Completion).WithAlias(() => resultAlias.DocTypeEnum)
+			            .Select(() => StockDocumentType.Completion).WithAlias(() => resultAlias.DocTypeEnum)
 			            .Select(() => completionAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 			            .Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 					)
@@ -369,11 +370,11 @@ namespace workwear.Journal.ViewModels.Stock
 					"Insert"
 					);
 			NodeActionsList.Add(addAction);
-			foreach(StokDocumentType docType in Enum.GetValues(typeof(StokDocumentType))) {
+			foreach(StockDocumentType docType in Enum.GetValues(typeof(StockDocumentType))) {
 				switch (docType) {
-					case StokDocumentType.CollectiveExpense when !FeaturesService.Available(WorkwearFeature.CollectiveExpense):
-					case StokDocumentType.TransferDoc when !FeaturesService.Available(WorkwearFeature.Warehouses):
-					case StokDocumentType.Completion when !FeaturesService.Available(WorkwearFeature.Completion):
+					case StockDocumentType.CollectiveExpense when !FeaturesService.Available(WorkwearFeature.CollectiveExpense):
+					case StockDocumentType.TransferDoc when !FeaturesService.Available(WorkwearFeature.Warehouses):
+					case StockDocumentType.Completion when !FeaturesService.Available(WorkwearFeature.Completion):
 						continue;
 					default:
 					{
@@ -425,7 +426,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 		public int Id { get; set; }
 
-		public StokDocumentType DocTypeEnum { get; set; }
+		public StockDocumentType DocTypeEnum { get; set; }
 
 		public string DocTypeString => DocTypeEnum.GetEnumTitle();
 
@@ -440,9 +441,9 @@ namespace workwear.Journal.ViewModels.Stock
 			set {
 				_expenseOperation = value;
 				if(ExpenseOperation == ExpenseOperations.Employee)
-					DocTypeEnum = StokDocumentType.ExpenseEmployeeDoc;
+					DocTypeEnum = StockDocumentType.ExpenseEmployeeDoc;
 				if(ExpenseOperation == ExpenseOperations.Object)
-					DocTypeEnum = StokDocumentType.ExpenseObjectDoc;
+					DocTypeEnum = StockDocumentType.ExpenseObjectDoc;
 			}
 		}
 
@@ -453,7 +454,7 @@ namespace workwear.Journal.ViewModels.Stock
 					text += $"Сотрудник: {Employee} ";
 				if(!String.IsNullOrWhiteSpace(Subdivision))
 					text += $"Подразделение: {Subdivision} ";
-				if(DocTypeEnum == StokDocumentType.IncomeDoc)
+				if(DocTypeEnum == StockDocumentType.IncomeDoc)
 					text += $"Операция: {IncomeOperation.GetEnumTitle()}";
 				if(!String.IsNullOrWhiteSpace(IncomeDocNubber))
 					text += $" TН №: {IncomeDocNubber} ";

@@ -5,10 +5,10 @@ using Gtk;
 using QS.Views.Dialog;
 using QS.Views.Resolve;
 using QSWidgetLib;
-using workwear.Domain.Statements;
-using workwear.ViewModels.Statements;
+using Workwear.Domain.Statements;
+using Workwear.ViewModels.Statements;
 
-namespace workwear.Views.Statements
+namespace Workwear.Views.Statements
 {
 	public partial class IssuanceSheetView : EntityDialogViewBase<IssuanceSheetViewModel, IssuanceSheet>
 	{

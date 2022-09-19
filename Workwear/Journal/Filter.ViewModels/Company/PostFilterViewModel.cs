@@ -3,7 +3,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 
 namespace workwear.Journal.Filter.ViewModels.Company {
 	public class PostFilterViewModel  : JournalFilterViewModelBase<PostFilterViewModel>

@@ -1,10 +1,10 @@
 ﻿using System;
 using Gamma.GtkWidgets;
 using QS.Views.Dialog;
-using workwear.Domain.Operations;
-using workwear.ViewModels.Operations;
+using Workwear.Domain.Operations;
+using Workwear.ViewModels.Operations;
 
-namespace workwear.Views.Operations 
+namespace Workwear.Views.Operations 
 {
 	public partial class ManualEmployeeIssueOperationsView : DialogViewBase<ManualEmployeeIssueOperationsViewModel> 
 	{
