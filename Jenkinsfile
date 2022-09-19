@@ -61,8 +61,8 @@ node {
          script {
             def status = readFile(file: "analysis")
             if ( !(status.contains('failure: 0') && status.contains('harmless: 0') && status.contains('malicious: 0') && status.contains('suspicious: 0'))) {
-               error('VirusTotal in not clean')
-            }        
+               unstable('VirusTotal in not clean')
+            }
          }
       }
       stage('Publish'){
