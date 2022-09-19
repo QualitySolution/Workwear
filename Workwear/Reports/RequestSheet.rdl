@@ -969,14 +969,11 @@ measurement_units.okei AS okei,
 SUM( count_issue(
     norms_item.amount, 
     CASE norms_item.period_type WHEN 'Year' THEN norms_item.period_count * 12 WHEN 'Month' THEN norms_item.period_count ELSE NULL END,
-    MONTH(wear_cards_item.next_issue),
-    YEAR(wear_cards_item.next_issue),
-    @begin_month,
-    @begin_year,
-    @end_month,
-    @end_year,
-    MONTH(conditions.issuance_start),
-    MONTH(conditions.issuance_end))
+    wear_cards_item.next_issue, 
+    CONCAT(@begin_year, '-', @begin_month, '-01'), 
+    DATE_ADD(DATE_ADD(CONCAT(@end_year, '-', @end_month, '-01'),INTERVAL 1 MONTH), INTERVAL -1 DAY), 
+    MONTH(conditions.issuance_start), 
+    MONTH(conditions.issuance_end)) 
 ) AS amount_sum
 FROM
     wear_cards_item
