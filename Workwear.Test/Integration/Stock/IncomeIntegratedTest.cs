@@ -32,7 +32,7 @@ namespace Workwear.Test.Integration.Stock
 		[Category("Integrated")]
 		public void CanAddMultiRowWithSameNomenclatureTest()
 		{
-			var ask = Substitute.For<IInteractiveQuestion>();
+			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
@@ -58,10 +58,10 @@ namespace Workwear.Test.Integration.Stock
 					Date = new DateTime(2017, 1, 1),
 					Operation = IncomeOperations.Enter
 				};
-				var incomeItem1 = income.AddItem(nomenclature);
+				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.WearSize = sizeX;
 				incomeItem1.Amount = 10;
-				var incomeItem2 = income.AddItem(nomenclature);
+				var incomeItem2 = income.AddItem(nomenclature, ask);
 				incomeItem2.WearSize = sizeXl;
 				incomeItem2.Amount = 5;
 				income.UpdateOperations(uow, ask);
@@ -81,7 +81,7 @@ namespace Workwear.Test.Integration.Stock
 		[Category("Integrated")]
 		public void NotValidMultiRowWithSameStockPositionTest()
 		{
-			var ask = Substitute.For<IInteractiveQuestion>();
+			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
@@ -110,10 +110,10 @@ namespace Workwear.Test.Integration.Stock
 					Date = new DateTime(2017, 1, 1),
 					Operation = IncomeOperations.Enter
 				};
-				var incomeItem1 = income.AddItem(nomenclature);
+				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.WearSize = sizeX;
 				incomeItem1.Amount = 10;
-				var incomeItem2 = income.AddItem(nomenclature);
+				var incomeItem2 = income.AddItem(nomenclature, ask);
 				incomeItem2.WearSize = sizeX;
 				incomeItem2.Amount = 5;
 				income.UpdateOperations(uow, ask);
@@ -126,7 +126,7 @@ namespace Workwear.Test.Integration.Stock
 		[Category("Integrated")]
 		public void Income_ItemWearPercent_SaveInStockTest()
 		{
-			var ask = Substitute.For<IInteractiveQuestion>();
+			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
@@ -155,7 +155,7 @@ namespace Workwear.Test.Integration.Stock
 					Date = new DateTime(2017, 1, 1),
 					Operation = IncomeOperations.Enter
 				};
-				var incomeItem1 = income.AddItem(nomenclature);
+				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.WearSize = sizeX;
 				incomeItem1.WearPercent = 0.8m;
 				incomeItem1.Amount = 10;
@@ -183,7 +183,7 @@ namespace Workwear.Test.Integration.Stock
 		public void UpdateEmployeeWearItems_NextIssueDiffIdsTest()
 		{
 			NewSessionWithSameDB();
-			var ask = Substitute.For<IInteractiveQuestion>();
+			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
@@ -224,7 +224,7 @@ namespace Workwear.Test.Integration.Stock
 					Date = new DateTime(2017, 1, 1),
 					Operation = IncomeOperations.Enter
 				};
-				var incomeItem1 = income.AddItem(nomenclature);
+				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.Amount = 10;
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
@@ -286,7 +286,7 @@ namespace Workwear.Test.Integration.Stock
 		[Category("Integrated")]
 		public void IncomeOnTwoWarehousesTest()
 		{
-			var ask = Substitute.For<IInteractiveQuestion>();
+			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
@@ -318,10 +318,10 @@ namespace Workwear.Test.Integration.Stock
 					Date = new DateTime(2017, 1, 1),
 					Operation = IncomeOperations.Enter
 				};
-				var incomeItem1 = income1.AddItem(nomenclature);
+				var incomeItem1 = income1.AddItem(nomenclature, ask);
 				incomeItem1.WearSize = sizeX;
 				incomeItem1.Amount = 10;
-				var incomeItem2 = income1.AddItem(nomenclature);
+				var incomeItem2 = income1.AddItem(nomenclature, ask);
 				incomeItem2.WearSize = sizeX;
 				incomeItem2.Amount = 5;
 				income1.UpdateOperations(uow, ask);
@@ -332,7 +332,7 @@ namespace Workwear.Test.Integration.Stock
 					Date = new DateTime(2017, 1, 1),
 					Operation = IncomeOperations.Enter
 				};
-				var income2Item1 = income2.AddItem(nomenclature);
+				var income2Item1 = income2.AddItem(nomenclature, ask);
 				income2Item1.WearSize = sizeX;
 				income2Item1.Amount = 7;
 				income2.UpdateOperations(uow, ask);
@@ -351,7 +351,7 @@ namespace Workwear.Test.Integration.Stock
 		[Category("Integrated")]
 		public void UpdateIncomeTest()
 		{
-			var ask = Substitute.For<IInteractiveQuestion>();
+			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
@@ -364,12 +364,14 @@ namespace Workwear.Test.Integration.Stock
 					Date = new DateTime(2017, 1, 1),
 					Operation = IncomeOperations.Enter
 				};
-				var nomenclature1 = new Nomenclature { Name = "TestNomenclature1" };
+				var itemType = new ItemsType{Name = "Тестовый тип"};
+				uow.Save(itemType);
+				var nomenclature1 = new Nomenclature { Name = "TestNomenclature1", Type = itemType};
 				uow.Save(nomenclature1);
-				var nomenclature2 = new Nomenclature { Name = "TestNomenclature2" };
+				var nomenclature2 = new Nomenclature { Name = "TestNomenclature2", Type = itemType};
 				uow.Save(nomenclature2);
-				var item1 = income.AddItem(nomenclature1);
-				var item2 = income.AddItem(nomenclature2);
+				var item1 = income.AddItem(nomenclature1, ask);
+				var item2 = income.AddItem(nomenclature2, ask);
 
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);

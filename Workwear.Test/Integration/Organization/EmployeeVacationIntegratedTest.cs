@@ -38,7 +38,7 @@ namespace Workwear.Test.Integration.Organization
 		[Category("Integrated")]
 		public void UpdateOperations_RecalculateDatesAfterCreateVacation()
 		{
-			var ask = Substitute.For<IInteractiveQuestion>();
+			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
@@ -86,9 +86,9 @@ namespace Workwear.Test.Integration.Organization
 				income.Warehouse = warehouse;
 				income.Date = new DateTime(2017, 1, 1);
 				income.Operation = IncomeOperations.Enter;
-				var incomeItem1 = income.AddItem(nomenclature);
+				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.Amount = 10;
-				var incomeItem2 = income.AddItem(nomenclature2);
+				var incomeItem2 = income.AddItem(nomenclature2, ask);
 				incomeItem2.Amount = 5;
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
