@@ -1,8 +1,8 @@
 ﻿using System;
 using QS.Views.Dialog;
-using workwear.ViewModels.Stock.Widgets;
+using Workwear.ViewModels.Stock.Widgets;
 
-namespace workwear.Views.Stock.Widgets
+namespace Workwear.Views.Stock.Widgets
 {
 	public partial class BuhDocumentView : DialogViewBase<BuhDocumentViewModel>
 	{

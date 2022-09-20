@@ -12,14 +12,14 @@ using QS.Testing.Gui;
 using QS.Validation;
 using QS.ViewModels.Resolve;
 using RglibInterop;
-using workwear.Domain.Company;
-using workwear.Repository.Company;
-using workwear.Repository.Stock;
-using Workwear.Tools;
-using workwear.Tools.Features;
-using workwear.Tools.IdentityCards;
-using workwear.ViewModels.Stock;
+using Workwear.Domain.Company;
 using Workwear.Measurements;
+using Workwear.Repository.Company;
+using Workwear.Repository.Stock;
+using Workwear.Tools.Features;
+using Workwear.Tools;
+using workwear.Tools.IdentityCards;
+using Workwear.ViewModels.Stock;
 
 namespace WorkwearTest.ViewModels.Stock
 {

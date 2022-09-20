@@ -6,7 +6,7 @@ using NHibernate.Transform;
 using QS.DomainModel.UoW;
 using QS.Utilities;
 using QSOrmProject.RepresentationModel;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 
 namespace workwear.Representations.Organization
 {

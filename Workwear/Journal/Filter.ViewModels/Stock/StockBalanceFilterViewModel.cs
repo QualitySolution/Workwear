@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using Autofac;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
-using workwear.Domain.Regulations;
-using workwear.Domain.Stock;
+using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
-using workwear.Tools.Features;
-using workwear.ViewModels.Stock;
+using Workwear.Tools.Features;
+using Workwear.ViewModels.Stock;
 
 namespace workwear.Journal.Filter.ViewModels.Stock
 {

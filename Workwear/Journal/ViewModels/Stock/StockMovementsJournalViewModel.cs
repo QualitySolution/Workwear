@@ -13,12 +13,13 @@ using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Utilities;
 using QS.Utilities.Text;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Journal.Filter.ViewModels.Stock;
-using workwear.Models.Operations;
+using Workwear.Models.Operations;
 using workwear.Models.Stock;
 
 namespace workwear.Journal.ViewModels.Stock

@@ -3,9 +3,9 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 
-namespace workwear.ViewModels.Company
+namespace Workwear.ViewModels.Company
 {
 	public class OrganizationViewModel : EntityDialogViewModelBase<Organization>
 	{

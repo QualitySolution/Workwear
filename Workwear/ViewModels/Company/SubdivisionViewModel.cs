@@ -8,16 +8,17 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
-using workwear.Domain.Stock;
+using workwear;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
-using workwear.Repository.Company;
-using workwear.Tools.Features;
-using workwear.ViewModels.Stock;
+using Workwear.Repository.Company;
+using Workwear.Tools.Features;
+using Workwear.ViewModels.Stock;
 
-namespace workwear.ViewModels.Company
+namespace Workwear.ViewModels.Company
 {
 	public class SubdivisionViewModel : EntityDialogViewModelBase<Subdivision>
 	{

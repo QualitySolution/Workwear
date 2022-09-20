@@ -107,6 +107,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workwear.Desktop", "Workwea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamma.Binding.Core", "..\QSProjects\Binding\Gamma.Binding.Core\Gamma.Binding.Core.csproj", "{4E341D0F-50B6-4FDB-B3BD-BEC2CBEC5D77}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Report.Core", "..\QSProjects\QS.Report.Core\QS.Report.Core.csproj", "{3E194A95-AC31-43D0-B93D-64164402A6DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -390,6 +392,12 @@ Global
 		{4E341D0F-50B6-4FDB-B3BD-BEC2CBEC5D77}.Release|x86.Build.0 = Release|Any CPU
 		{4E341D0F-50B6-4FDB-B3BD-BEC2CBEC5D77}.ReleaseWin|x86.ActiveCfg = Debug|Any CPU
 		{4E341D0F-50B6-4FDB-B3BD-BEC2CBEC5D77}.ReleaseWin|x86.Build.0 = Debug|Any CPU
+		{3E194A95-AC31-43D0-B93D-64164402A6DD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3E194A95-AC31-43D0-B93D-64164402A6DD}.Debug|x86.Build.0 = Debug|Any CPU
+		{3E194A95-AC31-43D0-B93D-64164402A6DD}.Release|x86.ActiveCfg = Release|Any CPU
+		{3E194A95-AC31-43D0-B93D-64164402A6DD}.Release|x86.Build.0 = Release|Any CPU
+		{3E194A95-AC31-43D0-B93D-64164402A6DD}.ReleaseWin|x86.ActiveCfg = Debug|Any CPU
+		{3E194A95-AC31-43D0-B93D-64164402A6DD}.ReleaseWin|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A6C1914F-7732-49F5-BABA-8BBBA521FAAB} = {792D3656-91FD-45AA-A40B-A0D63306A113}
@@ -436,6 +444,7 @@ Global
 		{BABA2CB7-6EFE-4B1B-9324-74CBCBACF257} = {792D3656-91FD-45AA-A40B-A0D63306A113}
 		{9ED68A8A-25EE-4B6A-A483-A386BFC2F12B} = {792D3656-91FD-45AA-A40B-A0D63306A113}
 		{4E341D0F-50B6-4FDB-B3BD-BEC2CBEC5D77} = {0033159F-9183-42E9-AF46-7DF28E41B797}
+		{3E194A95-AC31-43D0-B93D-64164402A6DD} = {792D3656-91FD-45AA-A40B-A0D63306A113}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

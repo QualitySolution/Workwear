@@ -4,9 +4,9 @@ using System.Linq;
 using Gtk;
 using QS.Views.Dialog;
 using Workwear.Domain.Sizes;
-using workwear.ViewModels.Stock.Widgets;
+using Workwear.ViewModels.Stock.Widgets;
 
-namespace workwear.Views.Stock.Widgets
+namespace Workwear.Views.Stock.Widgets
 {
 	public partial class SizeWidgetView : DialogViewBase<SizeWidgetViewModel>
 	{

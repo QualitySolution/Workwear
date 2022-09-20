@@ -3,7 +3,7 @@ using System.Collections;
 using System.Reflection;
 using NUnit.Framework;
 using QS.ViewModels;
-using workwear.ViewModels.Company;
+using Workwear.ViewModels.Company;
 
 namespace WorkwearTest.ViewModels
 {

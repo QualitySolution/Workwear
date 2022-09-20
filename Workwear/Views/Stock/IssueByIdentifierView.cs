@@ -2,11 +2,11 @@
 using System.Linq;
 using Gtk;
 using QS.Views.Dialog;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Tools.IdentityCards;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock;
 
-namespace workwear.Views.Stock
+namespace Workwear.Views.Stock
 {
 	public partial class IssueByIdentifierView : DialogViewBase<IssueByIdentifierViewModel>
 	{

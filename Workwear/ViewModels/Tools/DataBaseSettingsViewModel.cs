@@ -4,7 +4,7 @@ using QS.Navigation;
 using QS.ViewModels.Dialog;
 using Workwear.Tools;
 
-namespace workwear.ViewModels.Tools
+namespace Workwear.ViewModels.Tools
 {
 	public class DataBaseSettingsViewModel : UowDialogViewModelBase
 	{

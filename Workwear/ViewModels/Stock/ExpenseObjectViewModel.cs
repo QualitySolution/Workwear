@@ -11,16 +11,17 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Company;
-using workwear.Domain.Stock;
+using Workwear.Domain.Company;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
-using workwear.Repository.Stock;
+using Workwear.Repository.Stock;
 using Workwear.Tools;
-using workwear.Tools.Features;
-using workwear.ViewModels.Company;
+using Workwear.Tools.Features;
+using Workwear.ViewModels.Company;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class ExpenseObjectViewModel : EntityDialogViewModelBase<Expense>
 	{

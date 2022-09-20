@@ -11,7 +11,7 @@ using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Tools;
-using workwear.Tools.Features;
+using Workwear.Tools.Features;
 
 namespace workwear.Journal
 {
@@ -63,7 +63,7 @@ namespace workwear.Journal
 					.AddColumn("Номер").AddTextRenderer(node => node.CardNumberText)
 					.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
 					.AddColumn("Карта").Visible(jvm.FeaturesService.Available(WorkwearFeature.IdentityCards))
-						.AddPixbufRenderer(x => String.IsNullOrEmpty(x.CardKey) ? null : new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "workwear.icon.buttons.smart-card.png"))
+						.AddPixbufRenderer(x => String.IsNullOrEmpty(x.CardKey) ? null : new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "Workwear.icon.buttons.smart-card.png"))
 					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
 					.AddColumn("Должность").AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
@@ -227,7 +227,7 @@ namespace workwear.Journal
 				(jvm) => FluentColumnsConfig<NomenclatureJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name + (node.Archival? "(архивная)": String.Empty)).SearchHighlight()
-					.AddColumn("Номер").AddTextRenderer(node => $"{node.Number}").SearchHighlight()
+					.AddColumn("Номер").AddTextRenderer(node => node.Number).SearchHighlight()
 					.AddColumn("Тип").AddTextRenderer(node => node.ItemType)
 					.AddColumn("Средняя оценка").Visible(jvm.FeaturesService.Available(WorkwearFeature.Ratings)).AddTextRenderer(node => node.RatingText)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
@@ -236,7 +236,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
 				() => FluentColumnsConfig<StockBalanceJournalNode>.Create()
-					.AddColumn("Номер").AddTextRenderer(e => $"{e.NomenclatureNumber}").SearchHighlight()
+					.AddColumn("Номер").AddTextRenderer(e => e.NomenclatureNumber).SearchHighlight()
 					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
 					.AddColumn("Размер").AddTextRenderer(e => e.SizeName).SearchHighlight()
 					.AddColumn("Рост").AddTextRenderer(e => e.HeightName).SearchHighlight()
@@ -247,7 +247,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<StockBalanceShortSummaryJournalViewModel>(
 				() => FluentColumnsConfig<StockBalanceShortSummaryJournalNode>.Create()
-						.AddColumn("Номер").AddTextRenderer(e => $"{e.NomenclatureNumber}").SearchHighlight()
+						.AddColumn("Номер").AddTextRenderer(e => e.NomenclatureNumber).SearchHighlight()
 						.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
 						.AddColumn("Размер").AddTextRenderer(e => e.Size).SearchHighlight()
 						.AddColumn("Пол одежды").AddTextRenderer(e => e.Sex != null ? e.Sex.GetAttribute<DisplayAttribute>().Name : "").SearchHighlight()

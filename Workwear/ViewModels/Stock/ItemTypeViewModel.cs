@@ -4,11 +4,11 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using Workwear.Measurements;
-using workwear.Tools.Features;
+using Workwear.Tools.Features;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class ItemTypeViewModel : EntityDialogViewModelBase<ItemsType>
 	{

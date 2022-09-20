@@ -6,10 +6,10 @@ using NLog;
 using QS.BusinessCommon.Repository;
 using QS.Views.Dialog;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
-using workwear.ViewModels.Stock;
+using Workwear.Domain.Stock;
+using Workwear.ViewModels.Stock;
 
-namespace workwear.Views.Stock
+namespace Workwear.Views.Stock
 {
 	public partial class ItemTypeView : EntityDialogViewBase<ItemTypeViewModel, ItemsType>
 	{

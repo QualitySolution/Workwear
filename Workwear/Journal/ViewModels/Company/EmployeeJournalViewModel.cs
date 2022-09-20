@@ -12,11 +12,11 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using QS.Utilities.Text;
-using workwear.Domain.Company;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
-using workwear.Tools.Features;
-using workwear.ViewModels.Company;
+using Workwear.Tools.Features;
+using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {

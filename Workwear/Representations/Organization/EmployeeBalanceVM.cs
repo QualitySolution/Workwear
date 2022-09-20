@@ -12,10 +12,10 @@ using QS.DomainModel.UoW;
 using QS.Utilities.Numeric;
 using QSOrmProject.RepresentationModel;
 using QSProjectsLib;
-using workwear.Domain.Operations;
-using workwear.Domain.Company;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 
 namespace workwear.Representations.Organization
 {

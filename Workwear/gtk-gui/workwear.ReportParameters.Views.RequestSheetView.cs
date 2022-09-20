@@ -36,8 +36,6 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yLabel ylabel1;
 
-		private global::Gamma.GtkWidgets.yLabel ylabel3;
-
 		private global::Gamma.GtkWidgets.yLabel ylabel2;
 
 		private global::Gamma.GtkWidgets.yButton ycheckbuttonAllNomenclature;
@@ -67,7 +65,7 @@ namespace workwear.ReportParameters.Views
 			this.checkShowSex = new global::Gamma.GtkWidgets.yCheckButton();
 			this.checkShowSex.CanFocus = true;
 			this.checkShowSex.Name = "checkShowSex";
-			this.checkShowSex.Label = global::Mono.Unix.Catalog.GetString("Да");
+			this.checkShowSex.Label = global::Mono.Unix.Catalog.GetString("Учитывать пол");
 			this.checkShowSex.DrawIndicator = true;
 			this.checkShowSex.UseUnderline = true;
 			this.table1.Add(this.checkShowSex);
@@ -194,7 +192,7 @@ namespace workwear.ReportParameters.Views
 			this.ycheckExcludeInVacation = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckExcludeInVacation.CanFocus = true;
 			this.ycheckExcludeInVacation.Name = "ycheckExcludeInVacation";
-			this.ycheckExcludeInVacation.Label = global::Mono.Unix.Catalog.GetString("исключать сотрудников в отпуске");
+			this.ycheckExcludeInVacation.Label = global::Mono.Unix.Catalog.GetString("Исключать сотрудников в отпуске");
 			this.ycheckExcludeInVacation.DrawIndicator = true;
 			this.ycheckExcludeInVacation.UseUnderline = true;
 			this.table1.Add(this.ycheckExcludeInVacation);
@@ -231,31 +229,20 @@ namespace workwear.ReportParameters.Views
 			w14.BottomAttach = ((uint)(5));
 			w14.XOptions = ((global::Gtk.AttachOptions)(4));
 			w14.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table1.Gtk.Table+TableChild
-			this.ylabel3 = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabel3.Name = "ylabel3";
-			this.ylabel3.Xalign = 1F;
-			this.ylabel3.LabelProp = global::Mono.Unix.Catalog.GetString("Учитывать пол:");
-			this.table1.Add(this.ylabel3);
-			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel3]));
-			w15.TopAttach = ((uint)(5));
-			w15.BottomAttach = ((uint)(6));
-			w15.XOptions = ((global::Gtk.AttachOptions)(4));
-			w15.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.dialog1_VBox.Add(this.table1);
-			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
-			w16.Position = 0;
-			w16.Expand = false;
-			w16.Fill = false;
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
+			w15.Position = 0;
+			w15.Expand = false;
+			w15.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.ylabel2 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel2.Name = "ylabel2";
 			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатура нормы");
 			this.dialog1_VBox.Add(this.ylabel2);
-			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ylabel2]));
-			w17.Position = 1;
-			w17.Expand = false;
-			w17.Fill = false;
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ylabel2]));
+			w16.Position = 1;
+			w16.Expand = false;
+			w16.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.ycheckbuttonAllNomenclature = new global::Gamma.GtkWidgets.yButton();
 			this.ycheckbuttonAllNomenclature.CanFocus = true;
@@ -263,10 +250,10 @@ namespace workwear.ReportParameters.Views
 			this.ycheckbuttonAllNomenclature.UseUnderline = true;
 			this.ycheckbuttonAllNomenclature.Label = global::Mono.Unix.Catalog.GetString("Выделить/снять выделение");
 			this.dialog1_VBox.Add(this.ycheckbuttonAllNomenclature);
-			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ycheckbuttonAllNomenclature]));
-			w18.Position = 2;
-			w18.Expand = false;
-			w18.Fill = false;
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ycheckbuttonAllNomenclature]));
+			w17.Position = 2;
+			w17.Expand = false;
+			w17.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gtk.Button();
 			this.buttonRun.CanFocus = true;
@@ -274,11 +261,11 @@ namespace workwear.ReportParameters.Views
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.dialog1_VBox.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
-			w19.PackType = ((global::Gtk.PackType)(1));
-			w19.Position = 3;
-			w19.Expand = false;
-			w19.Fill = false;
+			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
+			w18.PackType = ((global::Gtk.PackType)(1));
+			w18.Position = 3;
+			w18.Expand = false;
+			w18.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.scrolledwindow1 = new global::Gtk.ScrolledWindow();
 			this.scrolledwindow1.CanFocus = true;
@@ -291,9 +278,9 @@ namespace workwear.ReportParameters.Views
 			this.ytreeNomenclature.HeadersVisible = false;
 			this.scrolledwindow1.Add(this.ytreeNomenclature);
 			this.dialog1_VBox.Add(this.scrolledwindow1);
-			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.scrolledwindow1]));
-			w21.PackType = ((global::Gtk.PackType)(1));
-			w21.Position = 4;
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.scrolledwindow1]));
+			w20.PackType = ((global::Gtk.PackType)(1));
+			w20.Position = 4;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

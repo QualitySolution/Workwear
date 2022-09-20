@@ -2,8 +2,8 @@
 using QS.BusinessCommon.Domain;
 using QS.Project.DB;
 using QS.Project.Domain;
-using workwear;
-using workwear.HibernateMapping;
+using Workwear;
+using Workwear.HibernateMapping;
 
 namespace WorkwearTest
 {
@@ -28,7 +28,7 @@ namespace WorkwearTest
 			Console.WriteLine("ORM");
 			// Настройка ORM
 			OrmConfig.ConfigureOrm(db_config, new System.Reflection.Assembly[] {
-				System.Reflection.Assembly.GetAssembly (typeof(workwear.Domain.Users.UserSettings)),
+				System.Reflection.Assembly.GetAssembly (typeof(Workwear.Domain.Users.UserSettings)),
 				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),
 				System.Reflection.Assembly.GetAssembly (typeof(UserBase)),
 			});

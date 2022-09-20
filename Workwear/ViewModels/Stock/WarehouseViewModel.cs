@@ -2,9 +2,9 @@
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class WarehouseViewModel : EntityDialogViewModelBase<Warehouse>
 	{

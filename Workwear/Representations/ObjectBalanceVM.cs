@@ -8,9 +8,10 @@ using NHibernate.Transform;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
 using QSOrmProject.RepresentationModel;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
-using workwear.Domain.Stock;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 
 namespace workwear.ViewModel
 {

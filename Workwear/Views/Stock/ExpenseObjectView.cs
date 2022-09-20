@@ -1,10 +1,9 @@
-﻿using System;
-using Gamma.Binding.Converters;
+﻿using Gamma.Binding.Converters;
 using QS.Views.Dialog;
-using workwear.Domain.Stock;
-using workwear.ViewModels.Stock;
+using Workwear.Domain.Stock.Documents;
+using Workwear.ViewModels.Stock;
 
-namespace workwear.Views.Stock
+namespace Workwear.Views.Stock
 {
 	public partial class ExpenseObjectView : EntityDialogViewBase<ExpenseObjectViewModel, Expense>
 	{

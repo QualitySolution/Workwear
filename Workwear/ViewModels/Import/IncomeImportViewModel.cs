@@ -11,17 +11,19 @@ using QS.Project.Journal;
 using QS.Services;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using workwear;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
-using workwear.Models.Import;
-using workwear.Repository.Stock;
-using workwear.Tools.Features;
+using Workwear.Models.Import;
+using Workwear.Repository.Stock;
+using Workwear.Tools.Features;
 using workwear.Tools.Import;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock;
 
-namespace workwear.ViewModels.Import 
+namespace Workwear.ViewModels.Import 
 {
 	public class IncomeImportViewModel : UowDialogViewModelBase {
 		private readonly IUserService userService;
@@ -142,7 +144,7 @@ namespace workwear.ViewModels.Import
 					OnPropertyChanged(nameof(SelectAllVisible));
 				}
 				else
-					interactiveService.ShowMessage(ImportanceLevel.Warning, "В загруженом файле не обнаружены документы поступления");
+					interactiveService.ShowMessage(ImportanceLevel.Warning, "В загруженном файле не обнаружены документы поступления");
 			}
 			else
 				interactiveService.ShowMessage(ImportanceLevel.Error, "Формат файла не поддерживается");
@@ -222,25 +224,23 @@ namespace workwear.ViewModels.Import
 				foreach(var notFoundNomenclature in documentItemsWithoutNomenclature) {
 					progressBar.Add();
 					var type = nomenclatureTypes.ParseNomenclatureName(notFoundNomenclature.NomenclatureName);
-					if(UInt32.TryParse(notFoundNomenclature.Article, out var result)) {
-						if(type is null) {
-							var page = NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null,
-								EntityUoWBuilder.ForCreate());
-							page.ViewModel.Entity.Name = notFoundNomenclature.NomenclatureName;
-							page.ViewModel.Entity.Number = result;
-							openNomenclatureDialog = true;
-						}
-						else {
-							if(type.Id == 0)
-									UoW.Save(type);
-							var nomenclature = new Nomenclature {
-								Name = notFoundNomenclature.NomenclatureName,
-								Number = result,
-								Type = type,
-								Comment = "Созданно при загрузке поступления из файла"
-							};
-							UoW.Save(nomenclature);
-						}
+					if(type is null) {
+						var page = NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null,
+							EntityUoWBuilder.ForCreate());
+						page.ViewModel.Entity.Name = notFoundNomenclature.NomenclatureName;
+						page.ViewModel.Entity.Number = notFoundNomenclature.Article;
+						openNomenclatureDialog = true;
+					}
+					else {
+						if(type.Id == 0)
+								UoW.Save(type);
+						var nomenclature = new Nomenclature {
+							Name = notFoundNomenclature.NomenclatureName,
+							Number = notFoundNomenclature.Article,
+							Type = type,
+							Comment = "Созданно при загрузке поступления из файла"
+						};
+						UoW.Save(nomenclature);
 					}
 				}
 				progressBar.Close();

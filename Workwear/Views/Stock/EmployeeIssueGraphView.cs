@@ -1,9 +1,9 @@
 ﻿using System;
 using QS.Views.Dialog;
-using workwear.Domain.Operations.Graph;
-using workwear.ViewModels.Stock;
+using Workwear.Domain.Operations.Graph;
+using Workwear.ViewModels.Stock;
 
-namespace workwear.Views.Stock
+namespace Workwear.Views.Stock
 {
 	public partial class EmployeeIssueGraphView : DialogViewBase<EmployeeIssueGraphViewModel>
 	{	

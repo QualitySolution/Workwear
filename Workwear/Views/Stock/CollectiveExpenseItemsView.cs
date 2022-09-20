@@ -3,10 +3,10 @@ using System.Linq;
 using Gamma.GtkWidgets;
 using Gtk;
 using QSWidgetLib;
-using workwear.Domain.Stock;
-using workwear.ViewModels.Stock;
+using Workwear.Domain.Stock.Documents;
+using Workwear.ViewModels.Stock;
 
-namespace workwear.Views.Stock
+namespace Workwear.Views.Stock
 {
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class CollectiveExpenseItemsView : Gtk.Bin

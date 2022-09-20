@@ -18,16 +18,17 @@ using QS.Tools;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using QSReport;
-using workwear.Domain.Statements;
-using workwear.Domain.Stock;
-using workwear.Repository;
-using workwear.Repository.Stock;
+using workwear;
+using Workwear.Domain.Statements;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
+using Workwear.Repository.Stock;
+using Workwear.Repository.User;
 using Workwear.Tools;
-using workwear.Tools.Features;
-using workwear.ViewModels.Statements;
+using Workwear.Tools.Features;
+using Workwear.ViewModels.Statements;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class CollectiveExpenseViewModel : EntityDialogViewModelBase<CollectiveExpense>, ISelectItem
 	{

@@ -1,9 +1,9 @@
 ﻿using System;
 using QS.Views;
-using workwear.Domain.Company;
-using workwear.ViewModels.Statements;
+using Workwear.Domain.Company;
+using Workwear.ViewModels.Statements;
 
-namespace workwear.Views.Statements
+namespace Workwear.Views.Statements
 {
 
 	public partial class IssuanceSheetFillByView : ViewBase<IssuanceSheetFillByViewModel>

@@ -11,15 +11,15 @@ using QS.Project.Domain;
 using QS.Tools;
 using QS.Validation;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Company;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
-using workwear.Repository.Company;
-using workwear.Repository.Operations;
-using workwear.ViewModels.Company;
+using Workwear.Repository.Company;
+using Workwear.Repository.Operations;
+using Workwear.ViewModels.Company;
 
-namespace workwear.ViewModels.Regulations
+namespace Workwear.ViewModels.Regulations
 {
 	public class NormViewModel : EntityDialogViewModelBase<Norm>
 	{

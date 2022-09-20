@@ -7,10 +7,10 @@
   <PageHeight>297mm</PageHeight>
   <PageWidth>210mm</PageWidth>
   <Width>.1pt</Width>
-  <TopMargin>.25in</TopMargin>
-  <LeftMargin>.25in</LeftMargin>
-  <RightMargin>.25in</RightMargin>
-  <BottomMargin>.25in</BottomMargin>
+  <TopMargin>.15in</TopMargin>
+  <LeftMargin>.15in</LeftMargin>
+  <RightMargin>.15in</RightMargin>
+  <BottomMargin>.15in</BottomMargin>
   <PageHeader>
     <Height>0.0pt</Height>
     <PrintOnFirstPage>false</PrintOnFirstPage>
@@ -32,15 +32,15 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>49.2pt</Width>
+            <Width>47.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>153.5pt</Width>
+            <Width>163.0pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>59.1pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>24.5pt</Width>
             <Visibility>
               <Hidden>=!{?show_sex}</Hidden>
@@ -53,7 +53,7 @@
             <Width>46.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>42.2pt</Width>
+            <Width>33.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>52.4pt</Width>
@@ -105,7 +105,7 @@
                   </ReportItems>
                   <ColSpan>2</ColSpan>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox31">
                       <Value>
@@ -274,7 +274,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox35" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                       <Value>Пол</Value>
@@ -447,7 +447,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox33">
                       <Value>
@@ -616,7 +616,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox39" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                       <Value>=Switch({sex} = 'F', 'Ж', {sex} = 'M', 'М', true, '')</Value>
@@ -741,15 +741,124 @@
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Right >None</Right>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Right</TextAlign>
                       </Style>
-                      <Value>Итого:</Value>
+                      <Value>
+                      </Value>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan>8</ColSpan>
+                  <ColSpan>1</ColSpan>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox51">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Right</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox48">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Right</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox47">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Right</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox45">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Right</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox41">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Right</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox34">
+                      <Value>Итого:</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Left >None</Left>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Right</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                  <ColSpan>2</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
@@ -846,7 +955,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     protection_tools.name AS type_name,
@@ -860,14 +969,11 @@ measurement_units.okei AS okei,
 SUM( count_issue(
     norms_item.amount, 
     CASE norms_item.period_type WHEN 'Year' THEN norms_item.period_count * 12 WHEN 'Month' THEN norms_item.period_count ELSE NULL END,
-    MONTH(wear_cards_item.next_issue),
-    YEAR(wear_cards_item.next_issue),
-    @begin_month,
-    @begin_year,
-    @end_month,
-    @end_year,
-    MONTH(conditions.issuance_start),
-    MONTH(conditions.issuance_end))
+    wear_cards_item.next_issue, 
+    CONCAT(@begin_year, '-', @begin_month, '-01'), 
+    DATE_ADD(DATE_ADD(CONCAT(@end_year, '-', @end_month, '-01'),INTERVAL 1 MONTH), INTERVAL -1 DAY), 
+    MONTH(conditions.issuance_start), 
+    MONTH(conditions.issuance_end)) 
 ) AS amount_sum
 FROM
     wear_cards_item
@@ -932,7 +1038,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="type_name">
           <DataField>type_name</DataField>
           <TypeName>System.String</TypeName>
@@ -972,7 +1078,7 @@ ORDER BY
       </Fields>
     </DataSet>
     <DataSet Name="Facility">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT objects.name FROM objects WHERE objects.id = @facility</CommandText>
         <QueryParameters>
@@ -981,7 +1087,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="name">
           <DataField>name</DataField>
           <TypeName>System.String</TypeName>
@@ -998,7 +1104,7 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="subdivisions">
       <DataType>Integer</DataType>
       <DefaultValue>

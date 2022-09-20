@@ -4,6 +4,7 @@ using Autofac;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
+using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -11,17 +12,16 @@ using QS.Project.Services;
 using QS.Services;
 using QS.Testing.DB;
 using QS.Validation.Testing;
-using workwear.Domain.Company;
-using workwear.Domain.Operations;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using Workwear.Measurements;
-using workwear.Repository;
-using workwear.Repository.Stock;
+using Workwear.Repository.Stock;
+using Workwear.Repository.User;
 using Workwear.Tools;
-using workwear.Tools.Features;
-using workwear.ViewModels.Stock;
+using Workwear.Tools.Features;
+using Workwear.ViewModels.Stock;
 
 namespace WorkwearTest.ViewModels.Stock
 {
@@ -32,6 +32,7 @@ namespace WorkwearTest.ViewModels.Stock
 		public void Init()
 		{
 			ConfigureOneTime.ConfigureNh();
+			NotifyConfiguration.Enable();
 			InitialiseUowFactory();
 		}
 

@@ -9,14 +9,14 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
-using workwear.Tools.Features;
-using workwear.ViewModels.Communications;
+using Workwear.Tools.Features;
+using Workwear.ViewModels.Communications;
 using QS.Utilities;
 
-namespace workwear.ViewModels.Stock
+namespace Workwear.ViewModels.Stock
 {
 	public class NomenclatureViewModel : EntityDialogViewModelBase<Nomenclature> {
 		private readonly FeaturesService featuresService;

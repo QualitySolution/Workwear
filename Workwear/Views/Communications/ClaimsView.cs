@@ -3,9 +3,9 @@ using Gamma.GtkWidgets;
 using Gtk;
 using QS.Cloud.WearLk.Manage;
 using QS.Views.Dialog;
-using workwear.ViewModels.Communications;
+using Workwear.ViewModels.Communications;
 
-namespace workwear.Views.Communications 
+namespace Workwear.Views.Communications 
 {
 	public partial class ClaimsView : DialogViewBase<ClaimsViewModel> 
 	{

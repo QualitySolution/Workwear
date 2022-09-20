@@ -16,7 +16,7 @@ using QS.Project.Versioning;
 [assembly: AssemblyCopyright("Quality Solution 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyLogoIcon("workwear.icon.logo.png")]
+[assembly: AssemblyLogoIcon("Workwear.icon.logo.png")]
 [assembly: AssemblySupport("Телефон тех. поддержки +7(812)309-71-77")]
 [assembly: AssemblyAppWebsite("http://workwear.qsolution.ru/")]
 

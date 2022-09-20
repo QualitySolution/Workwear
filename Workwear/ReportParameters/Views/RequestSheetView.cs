@@ -2,7 +2,7 @@
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.Views;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using workwear.ReportParameters.ViewModels;
 
 namespace workwear.ReportParameters.Views

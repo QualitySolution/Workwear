@@ -10,20 +10,20 @@ using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using QS.Widgets.GtkUI;
 using QSOrmProject;
-using workwear.Domain.Company;
-using workwear.ViewModels.Company;
-using workwear.Views.Company.EmployeeChilds;
+using Workwear.Domain.Company;
+using Workwear.ViewModels.Company;
+using Workwear.Views.Company.EmployeeChildren;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 
-namespace workwear.Views.Company
+namespace Workwear.Views.Company
 {
 	public partial class EmployeeView : EntityDialogViewBase<EmployeeViewModel, EmployeeCard>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();
 
-		private readonly Image eyeIcon = new Image(Assembly.GetExecutingAssembly(), "workwear.icon.buttons.eye.png");
-		private readonly Image crossedEyeIcon = new Image(Assembly.GetExecutingAssembly(), "workwear.icon.buttons.eye-crossed.png");
+		private readonly Image eyeIcon = new Image(Assembly.GetExecutingAssembly(), "Workwear.icon.buttons.eye.png");
+		private readonly Image crossedEyeIcon = new Image(Assembly.GetExecutingAssembly(), "Workwear.icon.buttons.eye-crossed.png");
 		private readonly EmployeeViewModel viewModel;
 
 		public EmployeeView(EmployeeViewModel viewModel) : base(viewModel)

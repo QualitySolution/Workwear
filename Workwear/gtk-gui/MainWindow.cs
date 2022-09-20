@@ -495,7 +495,7 @@ public partial class MainWindow
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
 		this.Title = global::Mono.Unix.Catalog.GetString("QS: Спецодежда и имущество");
-		this.Icon = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.logo.ico");
+		this.Icon = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.logo.ico");
 		// Container child MainWindow.Gtk.Container+ContainerChild
 		this.vbox1 = new global::Gtk.VBox();
 		this.vbox1.Name = "vbox1";

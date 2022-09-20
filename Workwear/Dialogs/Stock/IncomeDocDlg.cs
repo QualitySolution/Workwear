@@ -12,18 +12,19 @@ using QS.Project.Domain;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
-using workwear.Domain.Company;
-using workwear.Domain.Stock;
+using Workwear.Domain.Company;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
-using workwear.Models.Import;
-using workwear.Repository;
-using workwear.Repository.Stock;
-using workwear.Tools.Features;
+using Workwear.Models.Import;
+using Workwear.Repository.Stock;
+using Workwear.Repository.User;
+using Workwear.Tools.Features;
 using workwear.Tools.Import;
-using workwear.ViewModels.Company;
-using workwear.ViewModels.Stock;
+using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Stock;
 
 namespace workwear
 {
@@ -31,6 +32,7 @@ namespace workwear
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+		private readonly IUserService userService;
 		private readonly SizeService sizeService;
 		private readonly IInteractiveService interactiveService;
 		private readonly INavigationManager navigationManager;
@@ -43,6 +45,7 @@ namespace workwear
 			this.Build();
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Income> ();
 			featuresService = AutofacScope.Resolve<FeaturesService>();
+			userService = AutofacScope.Resolve<IUserService>();
 			sizeService = AutofacScope.Resolve<SizeService>();
 			interactiveService = AutofacScope.Resolve<IInteractiveService>();
 			navigationManager = AutofacScope.Resolve<INavigationManager>();
@@ -50,7 +53,7 @@ namespace workwear
 			
 			
 			Entity.Date = DateTime.Today;
-			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
+			Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = new StockRepository()
 					.GetDefaultWarehouse(UoW,featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
@@ -62,7 +65,7 @@ namespace workwear
 			Entity.Operation = IncomeOperations.Return;
 			Entity.EmployeeCard = UoW.GetById<EmployeeCard>(employee.Id);
 		}
-		//Конструктор используется при возврате С поздразделения
+		//Конструктор используется при возврате c подразделения
 		public IncomeDocDlg(Subdivision subdivision) : this () {
 			Entity.Operation = IncomeOperations.Object;
 			Entity.Subdivision = UoW.GetById<Subdivision>(subdivision.Id);
@@ -105,6 +108,7 @@ namespace workwear
 
 			ItemsTable.IncomeDoc = Entity;
 			ItemsTable.SizeService = sizeService;
+			ItemsTable.Interactive = interactiveService;
 
 			var builder = new LegacyEEVMBuilderFactory<Income>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
 
@@ -150,15 +154,6 @@ namespace workwear
 				if(reader.NotFoundNomenclatureNumbers.Count > 10)
 					message += $"\n и еще {reader.NotFoundNomenclatureNumbers.Count - 10}...";
 				if(!interactiveService.Question($"Не найден номенклатурный номер у номенклатур:\n{message}\n " +
-				                                "Продолжить создание документа прихода?"))
-					return;
-			}
-			
-			if (reader.UnreadableArticle.Any()) {
-				var message = String.Join("\n", reader.UnreadableArticle.Take(10).Select(x => " * " + x));
-				if(reader.UnreadableArticle.Count > 10)
-					message += $"\n и еще {reader.UnreadableArticle.Count - 10}...";
-				if(!interactiveService.Question($"Не удалось определить значение у следующих номенклатурных номеров:\n{message}\n " +
 				                                "Продолжить создание документа прихода?"))
 					return;
 			}

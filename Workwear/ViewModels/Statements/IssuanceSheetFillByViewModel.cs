@@ -8,12 +8,12 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels;
-using workwear.Domain.Company;
+using Workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
-using workwear.Repository.Company;
-using workwear.Repository.Operations;
+using Workwear.Repository.Company;
+using Workwear.Repository.Operations;
 
-namespace workwear.ViewModels.Statements
+namespace Workwear.ViewModels.Statements
 {
 	public class IssuanceSheetFillByViewModel : ViewModelBase
 	{

@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Sizes;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 
 namespace workwear.Tools.Import 
 {
@@ -107,13 +107,9 @@ namespace workwear.Tools.Import
 				.FirstOrDefault(x => x.Element(XNamespace + "Ref")?.Value == nomenclatureReference);
 			var article = catalogNomenclature?.Element(XNamespace + "Артикул")?.Value;
 			var nomenclatureName = catalogNomenclature?.Element(XNamespace + "НаименованиеПолное")?.Value;
-			if(UInt32.TryParse(article, out var parseResult)) {
-				var nomenclature = UnitOfWork.Query<Nomenclature>()
-					.Where(x => x.Number == parseResult).List()
-					.FirstOrDefault();
-				return (nomenclature, nomenclatureName, parseResult.ToString());
-			}
-			return (null, nomenclatureName, $"не удалось получить значение: {article}");
+			var nomenclature = UnitOfWork.Query<Nomenclature>()
+				.Where(x => x.Number == article).Take(1).SingleOrDefault();
+			return (nomenclature, nomenclatureName, article);
 		}
 		
 		private (string, string) ParseSizeAndHeightDescription(string description) {

@@ -1,7 +1,7 @@
 ﻿using QS.Views.Dialog;
-using workwear.ViewModels.Tools;
+using Workwear.ViewModels.Tools;
 
-namespace workwear.Views.Tools
+namespace Workwear.Views.Tools
 {
 	public partial class ReplaceEntityView : DialogViewBase<ReplaceEntityViewModel>
 	{

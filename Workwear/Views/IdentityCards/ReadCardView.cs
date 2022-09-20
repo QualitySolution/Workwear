@@ -1,8 +1,8 @@
 ﻿using System;
 using QS.Views.Dialog;
-using workwear.ViewModels.IdentityCards;
+using Workwear.ViewModels.IdentityCards;
 
-namespace workwear.Views.IdentityCards
+namespace Workwear.Views.IdentityCards
 {
 	public partial class ReadCardView : DialogViewBase<ReadCardViewModel>
 	{

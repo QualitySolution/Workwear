@@ -9,10 +9,10 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
-using workwear.Domain.Stock;
+using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
-using workwear.Tools.Features;
-using workwear.ViewModels.Stock;
+using Workwear.Tools.Features;
+using Workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock
 {
@@ -99,7 +99,7 @@ namespace workwear.Journal.ViewModels.Stock
 		[SearchHighlight]
 		public string Name { get; set; }
 		[SearchHighlight]
-		public uint? Number { get; set; }
+		public string Number { get; set; }
 		[SearchHighlight]
 		public string ItemType { get; set; }
 		public bool Archival { get; set; }

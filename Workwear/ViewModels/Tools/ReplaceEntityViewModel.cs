@@ -8,9 +8,9 @@ using QS.Navigation;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using workwear.Domain.Regulations;
+using Workwear.Domain.Regulations;
 
-namespace workwear.ViewModels.Tools
+namespace Workwear.ViewModels.Tools
 {
 	public class ReplaceEntityViewModel : UowDialogViewModelBase
 	{

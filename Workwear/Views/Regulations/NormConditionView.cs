@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Globalization;
 using QS.Views.Dialog;
-using workwear.Domain.Regulations;
-using workwear.ViewModels.Regulations;
+using Workwear.Domain.Regulations;
+using Workwear.ViewModels.Regulations;
 
-namespace workwear.Views.Regulations
+namespace Workwear.Views.Regulations
 {
 	public partial class NormConditionView : EntityDialogViewBase<NormConditionViewModel, NormCondition>
 	{

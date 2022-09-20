@@ -17,7 +17,7 @@ node {
       sh 'nuget restore QSProjects/QSProjectsLib.sln'
    }
    stage('Gtk.DataBindings') {
-      checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'Gtk.DataBindings']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/Gtk.DataBindings.git']]]
+      checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/NetStandard']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'Gtk.DataBindings']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/Gtk.DataBindings.git']]]
    }
    stage('My-FyiReporting') {
       checkout changelog: false, scm: [$class: 'GitSCM', branches: [[name: '*/QSBuild']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'My-FyiReporting']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/My-FyiReporting.git']]]
@@ -25,6 +25,13 @@ node {
    }
    stage('RusGuard') {
       checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'RusGuardSharp']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/QualitySolution/RusGuardSharp.git']]]
+   }
+   stage('Test dotnet')
+   {
+   	  sh 'rm -rf Workwear/Workwear.Test/TestResults'
+   	  sh 'dotnet test --logger trx --collect:"XPlat Code Coverage" Workwear/Workwear.Test/Workwear.Test.csproj'
+   	  cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/TestResults/**/coverage.cobertura.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, zoomCoverageChart: false
+   	  mstest testResultsFile:"**/*.trx", keepLongStdio: true
    }
    stage('Build') {
    	    sh 'nuget restore Workwear/Workwear.sln'
@@ -51,6 +58,20 @@ node {
       }
    }
    if (params.Publish) {
+      stage('VirusTotal'){
+         sh 'vt scan file Workwear/WinInstall/workwear-*.exe > file_hash'
+         waitUntil (initialRecurrencePeriod: 10000){
+            sh 'cut file_hash -d" " -f2 | vt analysis - > analysis'
+            return readFile('analysis').contains('status: "completed"')
+         }
+         sh 'cat analysis'
+         script {
+            def status = readFile(file: "analysis")
+            if ( !(status.contains('failure: 0') && status.contains('harmless: 0') && status.contains('malicious: 0') && status.contains('suspicious: 0'))) {
+               unstable('VirusTotal in not clean')
+            }
+         }
+      }
       stage('Publish'){
          sh 'scp Workwear/WinInstall/workwear-*.exe a218160_qso@a218160.ftp.mchost.ru:subdomains/files/httpdocs/Workwear/'
       }
