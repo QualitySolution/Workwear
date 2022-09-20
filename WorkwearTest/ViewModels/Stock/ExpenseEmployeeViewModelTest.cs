@@ -45,7 +45,7 @@ namespace WorkwearTest.ViewModels.Stock
 			var navigation = Substitute.For<INavigationManager>();
 			var validator = new ValidatorForTests();
 			var userService = Substitute.For<IUserService>();
-			var userRepository = Substitute.For<UserRepository>();
+			var userRepository = Substitute.For<UserRepository>(userService);
 			var interactive = Substitute.For<IInteractiveService>();
 			var commonMessages = Substitute.For<CommonMessages>(interactive);
 			var featuresService = Substitute.For<FeaturesService>();

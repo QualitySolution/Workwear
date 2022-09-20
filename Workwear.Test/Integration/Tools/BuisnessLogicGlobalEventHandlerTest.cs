@@ -226,7 +226,7 @@ namespace Workwear.Test.Integration.Tools
 		[Category("Integrated")]
 		public void UpdateOperations_DeleteRowTest()
 		{
-			var ask = Substitute.For<IInteractiveQuestion>();
+			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
@@ -288,9 +288,9 @@ namespace Workwear.Test.Integration.Tools
 				income.Warehouse = warehouse;
 				income.Date = new DateTime(2017, 1, 1);
 				income.Operation = IncomeOperations.Enter;
-				var incomeItem1 = income.AddItem(nomenclature);
+				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.Amount = 10;
-				var incomeItem2 = income.AddItem(nomenclature2);
+				var incomeItem2 = income.AddItem(nomenclature2, ask);
 				incomeItem2.Amount = 10;
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
@@ -379,7 +379,7 @@ namespace Workwear.Test.Integration.Tools
 				uow.Save(expenseOp);
 				uow.Commit();
 
-				//FIXME Временно чтобы переделака не вызвала конфликт мержа в 2.4
+				//FIXME Временно чтобы переделка не вызвала конфликт мержа в 2.4
 				Configure.ConfigureDeletion();
 				var deletion = new DeleteCore(DeleteConfig.Main, uow);
 				deletion.PrepareDeletion(typeof(EmployeeCard), employee.Id, CancellationToken.None);

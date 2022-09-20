@@ -27,7 +27,7 @@ namespace Workwear.Test.Integration.Stock
 		[Category("Integrated")]
 		public void IssuingToSubdivisionTest()
 		{
-			var ask = Substitute.For<IInteractiveQuestion>();
+			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
@@ -74,7 +74,7 @@ namespace Workwear.Test.Integration.Stock
 					Date = new DateTime(2017, 1, 1),
 					Operation = IncomeOperations.Enter
 				};
-				var incomeItem1 = income.AddItem(nomenclature);
+				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.Amount = 10;
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
