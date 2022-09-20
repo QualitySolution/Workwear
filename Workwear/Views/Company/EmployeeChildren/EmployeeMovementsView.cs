@@ -49,7 +49,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 				var itemOpenLastIssue = new MenuItemId<EmployeeMovementItem>("Редактировать");
 				itemOpenLastIssue.ID = selected;
 				itemOpenLastIssue.Sensitive = selected?.EmployeeIssueReference?.DocumentType != null 
-				                              || selected?.Operation.OverrideBefore == true;
+				                              || selected?.Operation.ManualOperation == true;
 				
 				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenDoc(((MenuItemId<EmployeeMovementItem>)sender).ID);
 				menu.Add(itemOpenLastIssue);

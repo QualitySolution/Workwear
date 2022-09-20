@@ -63,7 +63,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			get {
 				if(EmployeeIssueReference?.DocumentType != null)
 					return $"{EmployeeIssueReference.DocumentType.GetEnumTitle()} №{EmployeeIssueReference.DocumentId}";
-				if(Operation.OverrideBefore)
+				if(Operation.ManualOperation)
 					return "Ручная операция";
 				return String.Empty;
 			}

@@ -14,6 +14,7 @@ using QS.HistoryLog;
 using QS.Project.Domain;
 using QS.Utilities.Numeric;
 using QS.Utilities.Text;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
@@ -415,17 +416,7 @@ namespace Workwear.Domain.Company
 			foreach (var item in WorkwearItems) {
 				if(!protectionGroups.ContainsKey(item.ProtectionTools.Id))
 					continue;
-				var operations = protectionGroups[item.ProtectionTools.Id];
-				//В сортировке OverrideBefore, чтобы в ситуации когда на одну дату есть несколько операция,
-				//чтобы выводилась именно ручная.
-				var lastOperation = 
-					operations
-						.OrderByDescending(x => x.OperationTime.Date)
-						.ThenByDescending(x => x.OverrideBefore).First();
-				item.Amount = lastOperation.Issued;
-				item.LastIssue = lastOperation.OperationTime;
-				item.LastIssueOperation = lastOperation;
-				protectionGroups.Remove(item.ProtectionTools.Id);
+				SetLastIssue(item, item.ProtectionTools.Id, protectionGroups);
 			}
 			
 			//Дополнительно ищем по аналогам.
@@ -435,18 +426,23 @@ namespace Workwear.Domain.Company
 					    .FirstOrDefault(x => protectionGroups.ContainsKey(x.Id));
 				if(matched == null)
 					continue;
-				var operations = protectionGroups[matched.Id];
-				//В сортировке OverrideBefore, чтобы в ситуации когда на одну дату есть несколько операция,
-				//чтобы выводилась именно ручная.
-				var lastOperation = 
-					operations
-						.OrderByDescending(x => x.OperationTime)
-						.ThenByDescending(x => x.OverrideBefore).First();
-				item.Amount = lastOperation.Issued;
-				item.LastIssue = lastOperation.OperationTime;
-				item.LastIssueOperation = lastOperation;
-				protectionGroups.Remove(item.ProtectionTools.Id);
+				SetLastIssue(item, matched.Id, protectionGroups);
 			}
+		}
+
+		private void SetLastIssue(EmployeeCardItem item, int protectionToolsId,  Dictionary<int?,IGrouping<int?,EmployeeIssueOperation>> protectionGroups) {
+			var operations = protectionGroups[protectionToolsId];
+			//В сортировке ManualOperation, чтобы в ситуации когда на одну дату есть несколько операция,
+			//чтобы выводилась именно ручная.
+			var lastOperation = 
+				operations
+					.OrderByDescending(x => x.OperationTime.Date)
+					.ThenByDescending(x => x.ManualOperation).First();
+			var lastDate = lastOperation.OperationTime.Date;
+			item.Amount = operations.Where(x => x.OperationTime.Date == lastDate).Sum(x => x.Issued);
+			item.LastIssue = lastDate;
+			item.LastIssueOperation = lastOperation;
+			protectionGroups.Remove(protectionToolsId);
 		}
 
 		public virtual void FillWearInStockInfo(
