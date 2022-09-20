@@ -18,10 +18,9 @@ namespace Workwear.Views.Operations
 			ybuttonDelete.Clicked += ButtonDeleteOnClicked;
 
 			ytreeviewOperations.ColumnsConfig = ColumnsConfigFactory.Create<EmployeeIssueOperation>()
-				.AddColumn("Дата").AddTextRenderer(x => x.OperationTime.ToShortDateString())
-				.AddColumn("Дата окончания носки")
-					.AddTextRenderer(x => x.ExpiryByNorm.Value.ToShortDateString())
+				.AddColumn("Дата выдачи").AddTextRenderer(x => x.OperationTime.ToShortDateString())
 				.AddColumn("Количество").AddNumericRenderer(x => x.Issued)
+				.AddColumn("Окончание носки").AddTextRenderer(x => $"{x.ExpiryByNorm.Value:d}")
 				.Finish();
 			
 			ytreeviewOperations.Binding

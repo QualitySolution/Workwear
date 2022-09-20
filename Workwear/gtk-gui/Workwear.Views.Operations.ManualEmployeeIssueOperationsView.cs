@@ -46,12 +46,13 @@ namespace Workwear.Views.Operations
 			this.ytable1 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable1.Name = "ytable1";
 			this.ytable1.NRows = ((uint)(3));
-			this.ytable1.NColumns = ((uint)(3));
+			this.ytable1.NColumns = ((uint)(2));
 			this.ytable1.RowSpacing = ((uint)(6));
 			this.ytable1.ColumnSpacing = ((uint)(6));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
+			this.GtkScrolledWindow.HscrollbarPolicy = ((global::Gtk.PolicyType)(2));
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
 			this.ytreeviewOperations = new global::Gamma.GtkWidgets.yTreeView();
