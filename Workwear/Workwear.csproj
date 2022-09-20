@@ -149,7 +149,6 @@
     <Compile Include="Tools\Navigation\AdditionalIdHashGenerator.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="CreateProjectParam.cs" />
-    <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Dialogs\Stock\IncomeDocDlg.cs" />
     <Compile Include="Dialogs\Stock\IncomeDocItemsView.cs" />
     <Compile Include="gtk-gui\workwear.IncomeDocDlg.cs" />
@@ -564,7 +563,6 @@
     <Folder Include="ReportsDlg\" />
     <Folder Include="Reports\" />
     <Folder Include="Dialogs\" />
-    <Folder Include="Repository\" />
     <Folder Include="Representations\" />
     <Folder Include="Dialogs\Stock\" />
     <Folder Include="Dialogs\Regulations\" />

@@ -309,6 +309,7 @@ namespace workwear
 
 			#region Настройка
 			builder.Register(c => new IniFileConfiguration(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "workwear.ini"))).As<IChangeableConfiguration>().AsSelf();
+			builder.RegisterType<CurrentUserSettings>().AsSelf();
 			#endregion
 
 			#region Работа со считывателями
