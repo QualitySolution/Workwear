@@ -19,8 +19,8 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 using Workwear.Models.Import;
-using workwear.Repository;
 using Workwear.Repository.Stock;
+using Workwear.Repository.User;
 using Workwear.Tools.Features;
 using workwear.Tools.Import;
 using Workwear.ViewModels.Company;
@@ -32,6 +32,7 @@ namespace workwear
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+		private readonly IUserService userService;
 		private readonly SizeService sizeService;
 		private readonly IInteractiveService interactiveService;
 		private readonly INavigationManager navigationManager;
@@ -44,6 +45,7 @@ namespace workwear
 			this.Build();
 			UoWGeneric = UnitOfWorkFactory.CreateWithNewRoot<Income> ();
 			featuresService = AutofacScope.Resolve<FeaturesService>();
+			userService = AutofacScope.Resolve<IUserService>();
 			sizeService = AutofacScope.Resolve<SizeService>();
 			interactiveService = AutofacScope.Resolve<IInteractiveService>();
 			navigationManager = AutofacScope.Resolve<INavigationManager>();
@@ -51,7 +53,7 @@ namespace workwear
 			
 			
 			Entity.Date = DateTime.Today;
-			Entity.CreatedbyUser = UserRepository.GetMyUser (UoW);
+			Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = new StockRepository()
 					.GetDefaultWarehouse(UoW,featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
@@ -63,7 +65,7 @@ namespace workwear
 			Entity.Operation = IncomeOperations.Return;
 			Entity.EmployeeCard = UoW.GetById<EmployeeCard>(employee.Id);
 		}
-		//Конструктор используется при возврате С поздразделения
+		//Конструктор используется при возврате c подразделения
 		public IncomeDocDlg(Subdivision subdivision) : this () {
 			Entity.Operation = IncomeOperations.Object;
 			Entity.Subdivision = UoW.GetById<Subdivision>(subdivision.Id);
@@ -106,6 +108,7 @@ namespace workwear
 
 			ItemsTable.IncomeDoc = Entity;
 			ItemsTable.SizeService = sizeService;
+			ItemsTable.Interactive = interactiveService;
 
 			var builder = new LegacyEEVMBuilderFactory<Income>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
 

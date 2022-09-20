@@ -1,21 +1,21 @@
-﻿using QSOrmProject.Users;
+﻿using QS.Services;
+using QSOrmProject.Users;
 using Workwear.Domain.Users;
-using workwear.Repository;
+using Workwear.Repository.User;
 
 namespace workwear.Tools
 {
-	public static class CurrentUserSettings
+	public class CurrentUserSettings
 	{
-		static UserSettingsManager<UserSettings> manager = new UserSettingsManager<UserSettings>();
+		UserSettingsManager<UserSettings> manager = new UserSettingsManager<UserSettings>();
 
-		static CurrentUserSettings()
+		public CurrentUserSettings(IUserService userService, UserRepository userRepository)
 		{
-			var userRepository = new UserRepository();
-			manager.CreateUserSettings = uow => new UserSettings(UserRepository.GetMyUser(uow));
+			manager.CreateUserSettings = uow => new UserSettings(userService.GetCurrentUser(uow));
 			manager.LoadUserSettings = userRepository.GetCurrentUserSettings;
 		}
 
-		public static UserSettings Settings
+		public UserSettings Settings
 		{
 			get
 			{
@@ -23,7 +23,7 @@ namespace workwear.Tools
 			}
 		}
 
-		public static void SaveSettings()
+		public void SaveSettings()
 		{
 			manager.SaveSettings();
 		}

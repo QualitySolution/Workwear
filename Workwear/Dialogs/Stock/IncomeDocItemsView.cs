@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using Gamma.Utilities;
 using Gtk;
+using QS.Dialog;
 using QS.Dialog.Gtk;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -30,6 +31,7 @@ namespace workwear
 		private enum ColumnTags { BuhDoc }
 		private Income incomeDoc;
 		public SizeService SizeService { get; set; }
+		public IInteractiveMessage Interactive { get; set; }
 		public Income IncomeDoc {
 			get => incomeDoc;
 			set { if (incomeDoc == value)
@@ -176,7 +178,7 @@ namespace workwear
 
 		private void AddNomenclature_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			UoW.GetById<Nomenclature>(e.SelectedObjects.Select(x => x.GetId()))
-				.ToList().ForEach(n => IncomeDoc.AddItem(n));
+				.ToList().ForEach(n => IncomeDoc.AddItem(n, Interactive));
 			CalculateTotal();
 		}
 

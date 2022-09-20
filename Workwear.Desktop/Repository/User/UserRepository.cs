@@ -1,14 +1,16 @@
-﻿using QS.DomainModel.UoW;
-using QS.Project.Domain;
+﻿using System;
+using QS.DomainModel.UoW;
+using QS.Services;
 using Workwear.Domain.Users;
 
-namespace workwear.Repository
+namespace Workwear.Repository.User
 {
 	public class UserRepository
 	{
-		public static UserBase GetMyUser(IUnitOfWork uow)
-		{
-			return uow.GetById<UserBase> (QSProjectsLib.QSMain.User.Id);
+		private readonly IUserService userService;
+
+		public UserRepository(IUserService userService) {
+			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 		}
 
 		/// <summary>
@@ -17,7 +19,7 @@ namespace workwear.Repository
 		public UserSettings GetCurrentUserSettings(IUnitOfWork uow)
 		{
 			return uow.Session.QueryOver<UserSettings>()
-				.Where(s => s.User.Id == QSProjectsLib.QSMain.User.Id)
+				.Where(s => s.User.Id == userService.CurrentUserId)
 				.SingleOrDefault();
 		}
 

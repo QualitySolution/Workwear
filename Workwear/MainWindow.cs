@@ -68,6 +68,7 @@ public partial class MainWindow : Gtk.Window
 	public TdiNavigationManager NavigationManager;
 	public IProgressBarDisplayable ProgressBar;
 	public IUnitOfWork UoW = UnitOfWorkFactory.CreateWithoutRoot();
+	public readonly CurrentUserSettings CurrentUserSettings;
 
 	public FeaturesService FeaturesService { get; private set; }
 
@@ -92,6 +93,7 @@ public partial class MainWindow : Gtk.Window
 		var userService = AutofacScope.Resolve<IUserService>();
 		var user = userService.GetCurrentUser(UoW);
 		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
+		CurrentUserSettings = AutofacScope.Resolve<CurrentUserSettings>();
 
 		//Пока такая реализация чтобы не плодить сущностей.
 		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();

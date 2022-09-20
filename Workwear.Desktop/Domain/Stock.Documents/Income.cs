@@ -181,10 +181,14 @@ namespace Workwear.Domain.Stock.Documents
 			ObservableItems.Add(newItem);
 			return newItem;
 		}
-		public virtual IncomeItem AddItem(Nomenclature nomenclature) {
+		public virtual IncomeItem AddItem(Nomenclature nomenclature, IInteractiveMessage message) {
 			if (Operation != IncomeOperations.Enter)
 				throw new InvalidOperationException ("Добавление номенклатуры возможно только во входящую накладную. " +
 				                                     "Возвраты должны добавляться с указанием строки выдачи.");
+			
+			if(nomenclature.Type == null) //Такого в принципе быть не должно. Но бывают поломанные базы, поэтому лучше сообщить пользователю причину.
+				message.ShowMessage(ImportanceLevel.Error, "У добавляемой номенклатуры обязательно должен быть указан тип.");
+			
 			var newItem = new IncomeItem (this) {
 				Amount = 1,
 				Nomenclature = nomenclature,
