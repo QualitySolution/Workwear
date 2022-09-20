@@ -39,7 +39,7 @@ namespace Workwear.ViewModels.Operations
 						.ToList());
 			}
 			else if(selectOperation != null) {
-				Title = selectOperation.ProtectionTools.Name;
+				Title = selectOperation.ProtectionTools?.Name;
 				protectionTools = selectOperation.ProtectionTools;
 				Operations = new GenericObservableList<EmployeeIssueOperation>(
 					repository.GetAllManualIssue(UoW, selectOperation.Employee, selectOperation.ProtectionTools)
