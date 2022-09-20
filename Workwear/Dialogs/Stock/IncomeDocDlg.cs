@@ -108,6 +108,7 @@ namespace workwear
 
 			ItemsTable.IncomeDoc = Entity;
 			ItemsTable.SizeService = sizeService;
+			ItemsTable.Interactive = interactiveService;
 
 			var builder = new LegacyEEVMBuilderFactory<Income>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
 
