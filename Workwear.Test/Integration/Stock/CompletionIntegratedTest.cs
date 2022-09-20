@@ -25,7 +25,7 @@ namespace Workwear.Test.Integration.Stock
         [Category("Integrated")]
         public void ViewModelStandardScriptTest()
         {
-            var interactive = Substitute.For<IInteractiveQuestion>();
+            var interactive = Substitute.For<IInteractiveService>();
             interactive.Question(string.Empty).ReturnsForAnyArgs(true);
             
             using (var uow = UnitOfWorkFactory.CreateWithoutRoot())
@@ -55,7 +55,7 @@ namespace Workwear.Test.Integration.Stock
                     Date = new DateTime(2017, 1, 1),
                     Operation = IncomeOperations.Enter
                 };
-                var incomeItem1 = income1.AddItem(nomenclature1);
+                var incomeItem1 = income1.AddItem(nomenclature1, interactive);
                 incomeItem1.WearSize = sizeX;
                 incomeItem1.Amount = 10;
                 income1.UpdateOperations(uow, interactive);
@@ -66,7 +66,7 @@ namespace Workwear.Test.Integration.Stock
                     Date = new DateTime(2017, 1, 1),
                     Operation = IncomeOperations.Enter
                 };
-                var income2Item1 = income2.AddItem(nomenclature2);
+                var income2Item1 = income2.AddItem(nomenclature2, interactive);
                 income2Item1.WearSize = sizeXl;
                 income2Item1.Amount = 7;
                 income2.UpdateOperations(uow, interactive);

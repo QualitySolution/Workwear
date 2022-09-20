@@ -32,7 +32,7 @@ namespace Workwear.Test.Integration.Tools
 		public void Deletion_ExpenseEmployeeDocumentTest()
 		{
 			NewSessionWithSameDB();
-			var ask = Substitute.For<IInteractiveQuestion>();
+			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var navigation = Substitute.For<INavigationManager>();
 
@@ -92,9 +92,9 @@ namespace Workwear.Test.Integration.Tools
 					Date = new DateTime(2017, 1, 1),
 					Operation = IncomeOperations.Enter
 				};
-				var incomeItem1 = income.AddItem(nomenclature);
+				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.Amount = 10;
-				var incomeItem2 = income.AddItem(nomenclature2);
+				var incomeItem2 = income.AddItem(nomenclature2, ask);
 				incomeItem2.Amount = 5;
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);

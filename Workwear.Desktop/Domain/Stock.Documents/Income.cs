@@ -185,9 +185,12 @@ namespace Workwear.Domain.Stock.Documents
 			if (Operation != IncomeOperations.Enter)
 				throw new InvalidOperationException ("Добавление номенклатуры возможно только во входящую накладную. " +
 				                                     "Возвраты должны добавляться с указанием строки выдачи.");
-			
-			if(nomenclature.Type == null) //Такого в принципе быть не должно. Но бывают поломанные базы, поэтому лучше сообщить пользователю причину.
+
+			if(nomenclature.Type == null) {
+				//Такого в принципе быть не должно. Но бывают поломанные базы, поэтому лучше сообщить пользователю причину.
 				message.ShowMessage(ImportanceLevel.Error, "У добавляемой номенклатуры обязательно должен быть указан тип.");
+				return null;
+			}
 			
 			var newItem = new IncomeItem (this) {
 				Amount = 1,

@@ -32,7 +32,7 @@ namespace Workwear.Test.Integration.Organization
 		[Category("Integrated")]
 		public void BestChoose_IssuingMultipleRows_TwoNomenclatureSameNeedsTest()
 		{
-			var ask = Substitute.For<IInteractiveQuestion>();
+			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
@@ -81,9 +81,9 @@ namespace Workwear.Test.Integration.Organization
 					Date = new DateTime(2020, 07, 20),
 					Operation = IncomeOperations.Enter
 				};
-				var incomeItem1 = income.AddItem(nomenclature);
+				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.Amount = 10;
-				var incomeItem2 = income.AddItem(nomenclature2);
+				var incomeItem2 = income.AddItem(nomenclature2, ask);
 				incomeItem2.Amount = 5;
 				income.UpdateOperations(uow, ask);
 				uow.Save(income);
@@ -106,7 +106,7 @@ namespace Workwear.Test.Integration.Organization
 		[Category("Integrated")]
 		public void BestChoose_IssuingMultipleRows_TwoNomenclatureWearTypeSameNeedsTest()
 		{
-			var ask = Substitute.For<IInteractiveQuestion>();
+			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
@@ -178,12 +178,12 @@ namespace Workwear.Test.Integration.Organization
 					Operation = IncomeOperations.Enter
 				};
 
-				var incomeItem1 = income.AddItem(nomenclature);
+				var incomeItem1 = income.AddItem(nomenclature, ask);
 
 				incomeItem1.Amount = 10;
 				incomeItem1.WearSize = size;
 				incomeItem1.Height = height;
-				var incomeItem2 = income.AddItem(nomenclature2);
+				var incomeItem2 = income.AddItem(nomenclature2, ask);
 				incomeItem2.Amount = 5;
 				incomeItem2.WearSize = size;
 				incomeItem2.Height = height;
@@ -214,7 +214,7 @@ namespace Workwear.Test.Integration.Organization
 		[Category("Integrated")]
 		public void BestChoose_IssuingMultipleRows_TwoNomenclatureShoesTypeSameNeedsTest()
 		{
-			var ask = Substitute.For<IInteractiveQuestion>();
+			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
@@ -308,15 +308,15 @@ namespace Workwear.Test.Integration.Organization
 					Operation = IncomeOperations.Enter
 				};
 
-				var incomeItem1 = income.AddItem(nomenclature);
+				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.Amount = 1;
 				incomeItem1.WearSize = shoesSize;
 
-				var incomeItem2 = income.AddItem(nomenclature2);
+				var incomeItem2 = income.AddItem(nomenclature2, ask);
 				incomeItem2.Amount = 2;
 				incomeItem2.WearSize = winterShoesSize;
 
-				var incomeItem3 = income.AddItem(nomenclature3);
+				var incomeItem3 = income.AddItem(nomenclature3, ask);
 				incomeItem3.Amount = 3;
 				incomeItem3.WearSize = shoesSize;
 
@@ -345,7 +345,7 @@ namespace Workwear.Test.Integration.Organization
 		[Category("Integrated")]
 		public void BestChoose_SelfNomenclatureFirstTest()
 		{
-			var ask = Substitute.For<IInteractiveQuestion>();
+			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
@@ -418,12 +418,12 @@ namespace Workwear.Test.Integration.Organization
 					Operation = IncomeOperations.Enter
 				};
 
-				var incomeItem1 = income.AddItem(nomenclature);
+				var incomeItem1 = income.AddItem(nomenclature, ask);
 
 				incomeItem1.Amount = 1;
 				incomeItem1.WearSize = size;
 
-				var incomeItem2 = income.AddItem(nomenclature2);
+				var incomeItem2 = income.AddItem(nomenclature2, ask);
 				incomeItem2.Amount = 2;
 				incomeItem2.WearSize = size;
 

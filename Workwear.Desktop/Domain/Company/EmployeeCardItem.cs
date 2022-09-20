@@ -284,7 +284,7 @@ namespace Workwear.Domain.Company
 				}
 			}
 			
-			if (ActiveNormItem?.NormCondition?.IssuanceStart != null && ActiveNormItem?.NormCondition?.IssuanceEnd != null) {
+			if (wantIssue != null && ActiveNormItem?.NormCondition?.IssuanceStart != null && ActiveNormItem?.NormCondition?.IssuanceEnd != null) {
 				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(wantIssue.Value);
 				if (wantIssue < nextPeriod.Begin){
 					wantIssue = nextPeriod.Begin;
