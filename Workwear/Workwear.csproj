@@ -405,6 +405,8 @@
     <Compile Include="ViewModels\Operations\ManualEmployeeIssueOperationsViewModel.cs" />
     <Compile Include="Views\Communications\RatingsView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Communications.RatingsView.cs" />
+    <Compile Include="Views\Stock\OwnerView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.OwnerView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
