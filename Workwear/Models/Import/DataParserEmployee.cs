@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Gamma.Utilities;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect;
@@ -23,6 +25,7 @@ namespace workwear.Models.Import
 {
 	public class DataParserEmployee : DataParserBase<DataTypeEmployee>
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		private readonly PersonNames personNames;
 		private readonly SizeService sizeService;
 		private readonly SubdivisionRepository subdivisionRepository;
@@ -162,19 +165,19 @@ namespace workwear.Models.Import
 
 			switch(dataType) {
 				case DataTypeEmployee.CardKey:
-					row.ChangedColumns.Add(column, CompareString(employee.CardKey, value, rowChange));
+					row.ChangedColumns.Add(column, CompareString(employee.CardKey, value, rowChange, GetMaxStringLenght(nameof(employee.CardKey))));
 					break;
 				case DataTypeEmployee.PersonnelNumber:
-					row.ChangedColumns.Add(column, CompareString(employee.PersonnelNumber, (settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(value) : value)?.Trim(), rowChange));
+					row.ChangedColumns.Add(column, CompareString(employee.PersonnelNumber, (settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(value) : value)?.Trim(), rowChange, GetMaxStringLenght(nameof(employee.PersonnelNumber))));
 					break;
 				case DataTypeEmployee.LastName:
-					row.ChangedColumns.Add(column, CompareString(employee.LastName, value, rowChange));
+					row.ChangedColumns.Add(column, CompareString(employee.LastName, value, rowChange, GetMaxStringLenght(nameof(employee.LastName))));
 					break;
 				case DataTypeEmployee.FirstName:
-					row.ChangedColumns.Add(column, CompareString(employee.FirstName, value, rowChange));
+					row.ChangedColumns.Add(column, CompareString(employee.FirstName, value, rowChange, GetMaxStringLenght(nameof(employee.FirstName))));
 					break;
 				case DataTypeEmployee.Patronymic:
-					row.ChangedColumns.Add(column, CompareString(employee.Patronymic, value, rowChange));
+					row.ChangedColumns.Add(column, CompareString(employee.Patronymic, value, rowChange, GetMaxStringLenght(nameof(employee.Patronymic))));
 					break;
 				case DataTypeEmployee.Sex:
 					//Первая М английская, вторая русская.
@@ -194,7 +197,23 @@ namespace workwear.Models.Import
 					bool firstDiff = !String.IsNullOrEmpty(firstName) && !String.Equals(employee.FirstName, firstName, StringComparison.CurrentCultureIgnoreCase);
 					bool patronymicDiff = !String.IsNullOrEmpty(patronymic) && !String.Equals(employee.Patronymic, patronymic, StringComparison.CurrentCultureIgnoreCase);
 					string oldValue = (lastDiff || firstDiff || patronymicDiff) ? employee.FullName : null;
-					row.AddColumnChange(column, (lastDiff || firstDiff || patronymicDiff) ? rowChange : ChangeType.NotChanged, oldValue);
+					bool lenghtError = false;
+					if(lastDiff && lastName.Length > GetMaxStringLenght(nameof(employee.LastName))) {
+						logger.Warn($@"Длинна строки {lastName} больше максимальной {GetMaxStringLenght(nameof(employee.LastName))} для фамилии.");
+						lenghtError = true;
+					}
+					if(firstDiff && firstName.Length > GetMaxStringLenght(nameof(employee.FirstName))) {
+						logger.Warn($@"Длинна строки {firstName} больше максимальной {GetMaxStringLenght(nameof(employee.FirstName))} для имени.");
+						lenghtError = true;
+					}
+					if(patronymicDiff && patronymic.Length > GetMaxStringLenght(nameof(employee.Patronymic))) {
+						logger.Warn($@"Длинна строки {patronymic} больше максимальной {GetMaxStringLenght(nameof(employee.Patronymic))} для отчества.");
+						lenghtError = true;
+					}
+					if(lenghtError)
+						row.AddColumnChange(column, ChangeType.ParseError);
+					else 
+						row.AddColumnChange(column, (lastDiff || firstDiff || patronymicDiff) ? rowChange : ChangeType.NotChanged, oldValue);
 					break;
 				case DataTypeEmployee.HireDate:
 					row.ChangedColumns.Add(column, CompareDate(employee.HireDate, row.CellDateTimeValue(column.Index), rowChange));
@@ -259,7 +278,7 @@ namespace workwear.Models.Import
 					employee.Post = post;
 					break;
 				case DataTypeEmployee.Growth:
-					row.ChangedColumns.Add(column, CompareString(employee.WearGrowth, row.CellStringValue(column.Index), rowChange));
+					row.ChangedColumns.Add(column, CompareString(employee.WearGrowth, row.CellStringValue(column.Index), rowChange, GetMaxStringLenght(nameof(employee.WearGrowth))));
 					break;
 				case DataTypeEmployee.WearSize:
 					row.ChangedColumns.Add(column, CompareSize(employee.WearSize, row.CellStringValue(column.Index), СlothesType.Wear, employee.Sex, rowChange));
@@ -273,8 +292,12 @@ namespace workwear.Models.Import
 			}
 		}
 
-		private ChangeState CompareString(string fieldValue, string newValue, ChangeType rowChange)
+		private ChangeState CompareString(string fieldValue, string newValue, ChangeType rowChange, int maxLenght)
 		{
+			if(newValue?.Length > maxLenght) {
+				logger.Warn($@"Длинна строки {newValue} больше максимальной {maxLenght} для данного поля.");
+				return new ChangeState(ChangeType.ParseError);
+			}
 			var changeType = String.Equals(fieldValue, newValue, StringComparison.InvariantCultureIgnoreCase) ? ChangeType.NotChanged : rowChange;
 			if(changeType == ChangeType.ChangeValue)
 				return new ChangeState(changeType, fieldValue);
@@ -565,6 +588,13 @@ namespace workwear.Models.Import
 		{
 			var original = settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(row.CellStringValue(columnIndex)) : row.CellStringValue(columnIndex);
 			return original?.Trim();
+		}
+
+		private int GetMaxStringLenght(string name) {
+			var att = typeof(EmployeeCard).GetProperty(name).GetCustomAttributes(typeof(StringLengthAttribute), true);
+			if(att.Length == 0)
+				throw new InvalidOperationException($"Для свойства {name} не задан необходимый атрибут {typeof(StringLengthAttribute)}.");
+			return ((StringLengthAttribute)att[0]).MaximumLength;
 		}
 		#endregion
 	}
