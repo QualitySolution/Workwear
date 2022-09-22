@@ -23,10 +23,12 @@ namespace workwear.ReportParameters.Views
 			yenumIssueType.Binding.AddBinding(ViewModel, v => v.IssueTypeOptions, w => w.SelectedItemOrNull).InitializeFromSource();
 
 			ytreeNomenclature.CreateFluentColumnsConfig<SelectedProtectionTools>()
-				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
+				.AddColumn("🗹").AddToggleRenderer(x => x.Select).Editing()
 				.AddColumn("Название").AddTextRenderer(x => x.Name)
 				.Finish();
-			ytreeNomenclature.ItemsDataSource = new GenericObservableList<SelectedProtectionTools>(viewModel.ProtectionTools);
+			var protectionTools = new GenericObservableList<SelectedProtectionTools>(viewModel.ProtectionTools);
+			ytreeNomenclature.ItemsDataSource = protectionTools;
+			ycheckbuttonAllNomenclature.Sensitive = protectionTools.Any();
 			
 			ycheckChild.Binding
 				.AddBinding(viewModel, vm => vm.AddChildSubdivisions, w => w.Active)
@@ -59,9 +61,9 @@ namespace workwear.ReportParameters.Views
 		protected void SelectAll(object sender, EventArgs e)
 		{
 			var antiSelect = !ViewModel.ProtectionTools.FirstOrDefault().Select;
-			foreach(var item in ViewModel.ProtectionTools) {
-			 item.Select = antiSelect; 
-			 }
+			foreach(var item in ViewModel.ProtectionTools) { 
+				item.Select = antiSelect; 
+			}
 		}
 	}
 }
