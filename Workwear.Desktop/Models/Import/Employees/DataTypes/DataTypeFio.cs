@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.UoW;
 using QS.Utilities.Text;
@@ -8,6 +10,7 @@ using Workwear.Models.Company;
 namespace Workwear.Models.Import.Employees.DataTypes {
 	public class DataTypeFio : DataTypeEmployeeBase {
 		private readonly PersonNames personNames;
+		private int lenghtOfLastName, lenghtOfFirstName, lenghtOfPatronymic;
 
 		public DataTypeFio(PersonNames personNames)
 		{
@@ -20,6 +23,9 @@ namespace Workwear.Models.Import.Employees.DataTypes {
 			});
 			ColumnNameRegExp = "фамилия.+имя.+отчество";
 			Data = DataTypeEmployee.Fio;
+			lenghtOfLastName = TextParser.GetMaxStringLenght<EmployeeCard>(nameof(EmployeeCard.LastName));
+			lenghtOfFirstName = TextParser.GetMaxStringLenght<EmployeeCard>(nameof(EmployeeCard.FirstName));
+			lenghtOfPatronymic = TextParser.GetMaxStringLenght<EmployeeCard>(nameof(EmployeeCard.Patronymic));
 		}
 
 		public override void CalculateChange(SheetRowEmployee row, ExcelValueTarget target, IUnitOfWork uow) {
@@ -39,6 +45,18 @@ namespace Workwear.Models.Import.Employees.DataTypes {
 			var firstDiff = !String.IsNullOrEmpty(firstName) && !EmployeeParse.CompareString(employee.FirstName, firstName);
 			var patronymicDiff = !String.IsNullOrEmpty(patronymic) && !EmployeeParse.CompareString(employee.Patronymic, patronymic);
 			string oldValue = (lastDiff || firstDiff || patronymicDiff) ? employee.FullName : null;
+			
+			var lenghtErrors = new List<string>();
+			if(lastDiff && lastName.Length > lenghtOfLastName) 
+				lenghtErrors.Add($@"Длинна фамилии '{lastName}' больше максимальной {lenghtOfLastName}.");
+			if(firstDiff && firstName.Length > lenghtOfFirstName) 
+				lenghtErrors.Add($@"Длинна имени '{firstName}' больше максимальной {lenghtOfFirstName}.");
+			if(patronymicDiff && patronymic.Length > lenghtOfPatronymic) 
+				lenghtErrors.Add($@"Длинна отчества '{patronymic}' больше максимальной {lenghtOfPatronymic}.");
+			
+			if(lenghtErrors.Any())
+				return new ChangeState(ChangeType.ParseError, error: String.Join("\n", lenghtErrors));
+
 			if(!lastDiff && !firstDiff && !patronymicDiff)
 				return new ChangeState(ChangeType.NotChanged);
 
