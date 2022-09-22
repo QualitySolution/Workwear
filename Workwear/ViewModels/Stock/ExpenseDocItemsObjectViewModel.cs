@@ -5,6 +5,7 @@ using Gtk;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Project.Services;
 using QS.ViewModels;
 using workwear;
 using Workwear.Domain.Company;
@@ -18,11 +19,13 @@ namespace Workwear.ViewModels.Stock
 	{
 		public readonly ExpenseObjectViewModel expenseObjectViewModel;
 		private readonly INavigationManager navigation;
+		private readonly IDeleteEntityService deleteService;
 
-		public ExpenseDocItemsObjectViewModel(ExpenseObjectViewModel expenseObjectViewModel, INavigationManager navigation)
+		public ExpenseDocItemsObjectViewModel(ExpenseObjectViewModel expenseObjectViewModel, INavigationManager navigation, IDeleteEntityService deleteService)
 		{
 			this.expenseObjectViewModel = expenseObjectViewModel ?? throw new ArgumentNullException(nameof(expenseObjectViewModel));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
@@ -98,7 +101,13 @@ namespace Workwear.ViewModels.Stock
 
 		public void Delete(ExpenseItem item)
 		{
-			Entity.RemoveItem(item);
+			if(item.Id > 0) {
+				if(Entity.Items.Any(x => x.Id == 0))
+					expenseObjectViewModel.Save(); //Сохраняем документ если есть добавленные строки. Иначе получим исключение.
+				deleteService.DeleteEntity<ExpenseItem>(item.Id, UoW, () => Entity.RemoveItem(item));
+			}
+			else
+				Entity.RemoveItem(item);
 			CalculateTotal();
 		}
 
