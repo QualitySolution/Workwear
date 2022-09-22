@@ -20,7 +20,7 @@ namespace Workwear.Views.Operations
 			ytreeviewOperations.ColumnsConfig = ColumnsConfigFactory.Create<EmployeeIssueOperation>()
 				.AddColumn("Дата выдачи").AddTextRenderer(x => x.OperationTime.ToShortDateString())
 				.AddColumn("Количество").AddNumericRenderer(x => x.Issued)
-				.AddColumn("Окончание носки").AddTextRenderer(x => $"{x.ExpiryByNorm.Value:d}")
+				.AddColumn("Окончание носки").AddTextRenderer(x => $"{x.ExpiryByNorm:d}")
 				.Finish();
 			
 			ytreeviewOperations.Binding

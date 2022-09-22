@@ -19,7 +19,7 @@ namespace Workwear.ViewModels.Company
             IUnitOfWorkFactory unitOfWorkFactory, 
             INavigationManager navigation, 
             BaseParameters baseParameters, 
-            IValidator validator = null) : this(uowBuilder, unitOfWorkFactory, navigation, baseParameters)
+            IValidator validator = null) : this(uowBuilder, unitOfWorkFactory, navigation, baseParameters, validator)
         {
             Entity.Employee = UoW.GetById<EmployeeCard>(employeeId);
         }
