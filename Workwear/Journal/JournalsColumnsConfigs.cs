@@ -288,6 +288,14 @@ namespace workwear.Journal
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.Finish()
 			);
+
+			TreeViewColumnsConfigFactory.Register<OwnerJournalViewModel>(
+				() => FluentColumnsConfig<OwnerJournalNode>.Create()
+					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Описание").AddTextRenderer(node => node.ShortDescription)
+					.Finish()
+			);
 			#endregion
 			#region Sizes
 			TreeViewColumnsConfigFactory.Register<SizeJournalViewModel>(

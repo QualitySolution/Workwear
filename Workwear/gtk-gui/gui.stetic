@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -5920,6 +5920,12 @@
         <property name="StockId">gtk-about</property>
         <signal name="Activated" handler="OnActionMenuRatingsActivated" />
       </action>
+      <action id="ActionOwner">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Собственники имущества</property>
+        <property name="ShortLabel" translatable="yes">Собственники имущества</property>
+        <signal name="Activated" handler="OnActionOwnerActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -6006,6 +6012,7 @@
                 <node type="Menuitem" action="Action8" />
                 <node type="Menuitem" action="ActionVacationTypes" />
                 <node type="Menuitem" action="ActionLeaders" />
+                <node type="Menuitem" action="ActionOwner" />
               </node>
               <node type="Menu" action="ActionReports">
                 <node type="Menuitem" action="Action10" />

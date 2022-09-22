@@ -791,4 +791,8 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionMenuRatingsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RatingsViewModel>(null);
 	}
+
+	protected void OnActionOwnerActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<OwnerJournalViewModel>(null);
+	}
 }

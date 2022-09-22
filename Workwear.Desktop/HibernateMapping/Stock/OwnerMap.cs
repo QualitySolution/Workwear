@@ -7,7 +7,7 @@ namespace Workwear.HibernateMapping.Stock
 	{
 		public OwnerMap() 
 		{
-			Table ("owner");
+			Table ("owners");
 
 			if(MappingParams.UseIdsForTest)
 				Id (x => x.Id).Column("id").GeneratedBy.HiLo("0");
