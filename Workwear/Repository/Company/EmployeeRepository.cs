@@ -42,7 +42,7 @@ namespace workwear.Repository.Company
 				.List();
 		}
 
-		public static IList<EmployeeRecivedInfo> ItemsBalance(IUnitOfWork uow, EmployeeCard employee, DateTime onDate)
+		public virtual IList<EmployeeRecivedInfo> ItemsBalance(EmployeeCard employee, DateTime onDate, IUnitOfWork uow = null)
 		{
 			EmployeeRecivedInfo resultAlias = null;
 
@@ -63,7 +63,7 @@ namespace workwear.Repository.Company
 				Projections.Property<EmployeeIssueOperation>(x => x.OperationTime)
 			);
 
-			return uow.Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
+			return (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
 				.Left.JoinAlias(x => x.IssuedOperation, () => employeeIssueOperationReceivedAlias)
 				.Where(x => x.Employee == employee)
 				.Where(() => employeeIssueOperationAlias.AutoWriteoffDate == null || employeeIssueOperationAlias.AutoWriteoffDate > onDate)

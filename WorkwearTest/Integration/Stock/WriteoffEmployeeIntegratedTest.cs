@@ -74,7 +74,8 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(expense);
 				uow.Commit();
 
-				var balance = EmployeeRepository.ItemsBalance(uow, employee, new DateTime(2018, 10, 30));
+				var employeeRepository = new EmployeeRepository(uow);
+				var balance = employeeRepository.ItemsBalance(employee, new DateTime(2018, 10, 30));
 				Assert.That(balance.First().Amount, Is.EqualTo(3));
 
 				//Списываем
@@ -87,7 +88,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(writeoff);
 				uow.Commit();
 
-				var balanceAfter = EmployeeRepository.ItemsBalance(uow, employee, new DateTime(2018, 10, 30));
+				var balanceAfter = employeeRepository.ItemsBalance(employee, new DateTime(2018, 10, 30));
 				Assert.That(balanceAfter.First().Amount, Is.EqualTo(2));
 
 			}
