@@ -30,19 +30,22 @@ namespace workwear.Views.Company.EmployeeChilds
 				treeviewListedItems.RepresentationModel = viewModel.EmployeeBalanceVM;
 		}
 
-		protected void OnButtonGiveWearClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonGiveWearClicked(object sender, EventArgs e) {
+			buttonGiveWear.Sensitive = false;
 			viewModel.GiveWear();
+			buttonGiveWear.Sensitive = ViewModel.SensetiveButtonGiveWear;
 		}
 
-		protected void OnButtonReturnWearClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonReturnWearClicked(object sender, EventArgs e) {
+			buttonReturnWear.Sensitive = false;
 			ViewModel.ReturnWear();
+			buttonReturnWear.Sensitive = ViewModel.SensetiveButtonReturn;
 		}
 
-		protected void OnButtonWriteOffWearClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonWriteOffWearClicked(object sender, EventArgs e) {
+			buttonWriteOffWear.Sensitive = false;
 			ViewModel.WriteOffWear();
+			buttonWriteOffWear.Sensitive = ViewModel.SensetiveButtonWriteoff;
 		}
 	}
 }
