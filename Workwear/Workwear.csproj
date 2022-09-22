@@ -132,6 +132,7 @@
     <Compile Include="Journal\ViewModels\Company\EmployeeBalanceJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\SubdivisionBalanceJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\VacationTypeJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Stock\OwnerJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\SizeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\SizeTypeJournalViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionFilterViewModel.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
     <Compile Include="ViewModels\Stock\EmployeeIssueGraphViewModel.cs" />
+    <Compile Include="ViewModels\Stock\OwnerViewModel.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModel.cs" />
     <Compile Include="Views\Company\EmployeeVacationView.cs" />
     <Compile Include="Views\Company\OrganizationView.cs" />
