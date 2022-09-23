@@ -9,6 +9,8 @@ namespace Workwear.Views.Stock
 		public OwnerView(OwnerViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
+
+			CommonButtonSubscription();
 			
 			yentryName.Binding
 				.AddBinding(Entity, e => e.Name, w => w.Text)

@@ -93,8 +93,6 @@ namespace Workwear.Views.Stock
 			w7.BottomAttach = ((uint)(2));
 			w7.LeftAttach = ((uint)(1));
 			w7.RightAttach = ((uint)(2));
-			w7.XOptions = ((global::Gtk.AttachOptions)(4));
-			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.yentryName = new global::Gamma.GtkWidgets.yEntry();
 			this.yentryName.CanFocus = true;
@@ -105,7 +103,6 @@ namespace Workwear.Views.Stock
 			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yentryName]));
 			w8.LeftAttach = ((uint)(1));
 			w8.RightAttach = ((uint)(2));
-			w8.XOptions = ((global::Gtk.AttachOptions)(4));
 			w8.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabelComment = new global::Gamma.GtkWidgets.yLabel();
@@ -130,8 +127,6 @@ namespace Workwear.Views.Stock
 			this.yvbox1.Add(this.ytable1);
 			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ytable1]));
 			w11.Position = 1;
-			w11.Expand = false;
-			w11.Fill = false;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{
