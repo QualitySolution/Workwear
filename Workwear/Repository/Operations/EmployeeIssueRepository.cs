@@ -153,6 +153,10 @@ namespace workwear.Repository.Operations
 			return result;
 		}
 		
+		/// <summary>
+		/// Метод подсчитывает количество числящегося за сотрудником на определенную дату.
+		/// ВНИМАНИЕ!! Метод пока не учитывает ручные операции скидывающие историю. Это надо будет дорабатывать.
+		/// </summary>
 		public virtual IList<EmployeeRecivedInfo> ItemsBalance(EmployeeCard employee, DateTime onDate, IUnitOfWork uow = null)
 		{
 			EmployeeRecivedInfo resultAlias = null;
@@ -177,8 +181,15 @@ namespace workwear.Repository.Operations
 			return (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
 				.Left.JoinAlias(x => x.IssuedOperation, () => employeeIssueOperationReceivedAlias)
 				.Where(x => x.Employee == employee)
-				.Where(() => employeeIssueOperationAlias.AutoWriteoffDate == null || employeeIssueOperationAlias.AutoWriteoffDate > onDate)
-				.Where(() => employeeIssueOperationReceivedAlias.AutoWriteoffDate == null || employeeIssueOperationReceivedAlias.AutoWriteoffDate > onDate)
+				.Where(() => employeeIssueOperationAlias.OperationTime < onDate.AddDays(1))
+				.Where(Restrictions.Or(
+					Restrictions.Conjunction()
+						.Add(Restrictions.Where( () => employeeIssueOperationAlias.Issued > 0))
+						.Add(Restrictions.Where( () => employeeIssueOperationAlias.AutoWriteoffDate == null || employeeIssueOperationAlias.AutoWriteoffDate > onDate)),
+					Restrictions.Conjunction()
+						.Add(Restrictions.Where(() => employeeIssueOperationAlias.Returned > 0))
+						.Add(Restrictions.Where(() => employeeIssueOperationReceivedAlias.AutoWriteoffDate == null || employeeIssueOperationReceivedAlias.AutoWriteoffDate > onDate))
+					))
 				.SelectList(list => list
 				   .SelectGroup(() => employeeIssueOperationAlias.ProtectionTools.Id).WithAlias(() => resultAlias.ProtectionToolsId)
 				   .SelectGroup(() => employeeIssueOperationAlias.NormItem.Id).WithAlias(() => resultAlias.NormRowId)
