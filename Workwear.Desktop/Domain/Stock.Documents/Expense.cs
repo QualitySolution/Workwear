@@ -227,9 +227,9 @@ namespace Workwear.Domain.Stock.Documents
 			}
 		}
 
-		public virtual void FillCanWriteoffInfo(IUnitOfWork uow)
-		{
-			var itemsBalance = EmployeeRepository.ItemsBalance(uow, Employee, Date);
+		public virtual void FillCanWriteoffInfo(EmployeeIssueRepository employeeRepository) {
+			var operationIds = Items.Where(x => x.EmployeeIssueOperation?.Id > 0).Select(x => x.EmployeeIssueOperation.Id).ToArray();
+			var itemsBalance = employeeRepository.ItemsBalance(Employee, Date, operationIds);
 			foreach(var item in Items) {
 				item.IsWriteOff = item.EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff != null;
 				item.IsEnableWriteOff = itemsBalance.Where(x => x.ProtectionToolsId == item.ProtectionTools?.Id).Sum(x => x.Amount) > 0;
@@ -239,7 +239,6 @@ namespace Workwear.Domain.Stock.Documents
 					if(relatedWriteoffItem != null)
 						item.AktNumber = relatedWriteoffItem.AktNumber;
 				}
-
 			}
 		}
 
