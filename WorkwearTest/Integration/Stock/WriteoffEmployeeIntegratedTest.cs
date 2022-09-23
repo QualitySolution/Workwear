@@ -8,6 +8,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Repository.Company;
+using workwear.Repository.Operations;
 using workwear.Tools;
 
 namespace WorkwearTest.Integration.Stock
@@ -74,7 +75,8 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(expense);
 				uow.Commit();
 
-				var balance = EmployeeRepository.ItemsBalance(uow, employee, new DateTime(2018, 10, 30));
+				var employeeRepository = new EmployeeIssueRepository(uow);
+				var balance = employeeRepository.ItemsBalance(employee, new DateTime(2018, 10, 30));
 				Assert.That(balance.First().Amount, Is.EqualTo(3));
 
 				//Списываем
@@ -87,7 +89,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(writeoff);
 				uow.Commit();
 
-				var balanceAfter = EmployeeRepository.ItemsBalance(uow, employee, new DateTime(2018, 10, 30));
+				var balanceAfter = employeeRepository.ItemsBalance(employee, new DateTime(2018, 10, 30));
 				Assert.That(balanceAfter.First().Amount, Is.EqualTo(2));
 
 			}

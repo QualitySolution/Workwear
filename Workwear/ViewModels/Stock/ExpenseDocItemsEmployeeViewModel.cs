@@ -14,6 +14,7 @@ using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Regulations;
 using Workwear.Measurements;
+using workwear.Repository.Operations;
 
 namespace workwear.ViewModels.Stock
 {
@@ -23,22 +24,25 @@ namespace workwear.ViewModels.Stock
 		private readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly IDeleteEntityService deleteService;
+		private readonly EmployeeIssueRepository employeeRepository;
 
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
-		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, BaseParameters baseParameters)
+		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, EmployeeIssueRepository employeeRepository, BaseParameters baseParameters)
 		{
 			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
+			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			employeeRepository.RepoUow = UoW;
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 			Entity.PropertyChanged += EntityOnPropertyChanged;
-			Entity.FillCanWriteoffInfo(UoW);
+			Entity.FillCanWriteoffInfo(employeeRepository);
 		}
 
 		#region Хелперы
@@ -184,7 +188,7 @@ namespace workwear.ViewModels.Stock
 		private void EntityOnPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == nameof(Entity.Date))
-				Entity.FillCanWriteoffInfo(UoW);
+				Entity.FillCanWriteoffInfo(employeeRepository);
 		}
 		#endregion
 	}

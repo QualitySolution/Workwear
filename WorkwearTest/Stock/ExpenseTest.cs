@@ -9,6 +9,7 @@ using workwear.Domain.Operations.Graph;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Repository.Operations;
 using workwear.Tools;
 
 namespace WorkwearTest.Integration.EmployeeIssue
@@ -16,6 +17,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 	[TestFixture(TestOf =typeof(Expense))]
 	public class ExpenseTest
 	{
+		#region UpdateOperations
 		[Test(Description = "Мы должны проигнорировать собственную операцию при рассчете и не предлагать пользователю сдвинуть дату начала использования.")]
 		public void UpdateOperations_IgnoreSelfOperationsWhenChangeDateOfDocument()
 		{
@@ -162,7 +164,6 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			employee.CardKey.Returns("80313E3A437A04");
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(1);
-			var incomeOperation = Substitute.For<EmployeeIssueOperation>();
 			var nomeclature = Substitute.For<Nomenclature>();
 
 			var warehouse = Substitute.For<Warehouse>();
@@ -194,7 +195,50 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			Assert.That(expense.Items[0].EmployeeIssueOperation.SignTimestamp, Is.Not.Null);
 			Assert.That((expense.Items[0].EmployeeIssueOperation.SignTimestamp.Value - DateTime.Now).TotalMinutes, Is.LessThan(1));
 		}
+		#endregion
 
+		#region FillCanWriteoffInfo
+		[Test(Description = "Проверяем что устанавливаем IsEnableWriteOff правильно")]
+		public void FillCanWriteoffInfo_CommonCase() {
+			var uow = Substitute.For<IUnitOfWork>();
+			var employee = Substitute.For<EmployeeCard>();
+			var protectionTools = Substitute.For<ProtectionTools>();
+			protectionTools.Id.Returns(55);
+			var protectionTools2 = Substitute.For<ProtectionTools>();
+			protectionTools2.Id.Returns(77);
+
+			var repository = Substitute.For<EmployeeIssueRepository>(uow);
+			repository.ItemsBalance(employee, new DateTime(2022, 11, 11)).Returns(new List<EmployeeRecivedInfo> {
+				new EmployeeRecivedInfo {
+					Amount = 1,
+					LastReceive = new DateTime(2022, 9, 1),
+					ProtectionToolsId = 55
+				}
+			});
+			
+			var expense = new Expense {
+				Date = new DateTime(2022, 11, 11),
+				Employee = employee
+			};
+			var expenseItemCanWriteoff = new ExpenseItem {
+				ProtectionTools = protectionTools,
+				ExpenseDoc = expense,
+			};
+			expense.Items.Add(expenseItemCanWriteoff);
+			
+			var expenseItemCanNotWriteoff = new ExpenseItem {
+				ProtectionTools = protectionTools2,
+				ExpenseDoc = expense
+			};
+			expense.Items.Add(expenseItemCanNotWriteoff);
+
+			expense.FillCanWriteoffInfo(repository);
+			
+			Assert.That(expenseItemCanWriteoff.IsEnableWriteOff, Is.True);
+			Assert.That(expenseItemCanNotWriteoff.IsEnableWriteOff, Is.False);
+		}
+		#endregion
+		
 		[TearDown]
 		public void RemoveStaticGaps()
 		{

@@ -19,7 +19,7 @@
   <LeftMargin>.25in</LeftMargin>
   <RightMargin>.25in</RightMargin>
   <BottomMargin>.25in</BottomMargin>
-    <ReportParameters>
+  <ReportParameters>
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <Nullable>False</Nullable>
@@ -33,7 +33,7 @@
   </ReportParameters>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     nomenclature_id,
@@ -61,7 +61,7 @@
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="nomenclature_id">
           <DataField>nomenclature_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
@@ -128,10 +128,10 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>100.4pt</Width>
+            <Width>97.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>403.4pt</Width>
+            <Width>410.6pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>49.6pt</Width>
@@ -143,7 +143,7 @@
             <Width>66.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>69.7pt</Width>
+            <Width>67.3pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -258,7 +258,7 @@
             <Header>
               <TableRows>
                 <TableRow>
-                  <Height>21.6pt</Height>
+                  <Height>16.8pt</Height>
                   <TableCells>
                     <TableCell>
                       <ColSpan>6</ColSpan>
@@ -276,6 +276,7 @@
                             <BorderWidth />
                             <VerticalAlign>Bottom</VerticalAlign>
                           </Style>
+                          <CanGrow >true</CanGrow>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
@@ -411,7 +412,7 @@
                   <ReportItems>
                     <Textbox Name="Textbox20" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                       <Value>=Fields!nomenclature.Value</Value>
-                      <CanGrow>false</CanGrow>
+                      <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -591,60 +592,8 @@
         <Left>6.4pt</Left>
         <Top>0.0pt</Top>
       </Table>
-      <Textbox Name="Textbox5">
-        <Height>17.25pt</Height>
-        <Width>392.81pt</Width>
-        <Value>Подпись общего отдела ______________/______________</Value>
-        <ZIndex>1</ZIndex>
-        <Left>10.1pt</Left>
-        <Top>83.5pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox9">
-        <Height>17.23pt</Height>
-        <Width>456.04pt</Width>
-        <Value>Подпись начальника отдела эксплуатации ______________/______________</Value>
-        <ZIndex>1</ZIndex>
-        <Left>9.7pt</Left>
-        <Top>101.3pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox21">
-        <Height>15.75pt</Height>
-        <Width>345.37pt</Width>
-        <Value>Подпись Главного бухгалтера ______________/_______________</Value>
-        <ZIndex>1</ZIndex>
-        <Left>411.40pt</Left>
-        <Top>85.80pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox22">
-        <Height>15.00pt</Height>
-        <Width>176.88pt</Width>
-        <Value>Дата __________________</Value>
-        <ZIndex>1</ZIndex>
-        <Left>537.7pt</Left>
-        <Top>101.5pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
     </ReportItems>
-    <Height>121.4pt</Height>
+    <Height>70.6pt</Height>
   </Body>
   <PageFooter>
     <Height>14pt</Height>
