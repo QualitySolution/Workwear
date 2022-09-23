@@ -16,7 +16,7 @@ using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations;
 using Workwear.Measurements;
-using workwear.Repository.Operations;
+using Workwear.Repository.Operations;
 
 namespace Workwear.ViewModels.Stock
 {

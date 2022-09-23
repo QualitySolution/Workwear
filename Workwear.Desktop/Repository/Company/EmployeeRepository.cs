@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect;
 using NHibernate.Dialect.Function;
@@ -10,7 +11,6 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Utilities.Text;
 using Workwear.Domain.Company;
-using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Models.Import;
 
