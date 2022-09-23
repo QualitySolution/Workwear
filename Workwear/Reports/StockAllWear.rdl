@@ -33,10 +33,10 @@
   </ReportParameters>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
-    nomenclature_id,
+    IFNULL(nomenclature.number, nomenclature_id) as nomenclature_number,
     (SUM(case when operation_warehouse.warehouse_receipt_id is not null then operation_warehouse.amount else 0 end) -
 		SUM(case when operation_warehouse.warehouse_expense_id is not null then operation_warehouse.amount else 0 end)) as quantity,
     nomenclature.name as nomenclature,
@@ -65,10 +65,10 @@
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
-        <Field Name="nomenclature_id">
-          <DataField>nomenclature_id</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
+      <Fields >
+        <Field Name="nomenclature_number">
+          <DataField>nomenclature_number</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="quantity">
           <DataField>quantity</DataField>
@@ -280,7 +280,7 @@
                             <BorderWidth />
                             <VerticalAlign>Bottom</VerticalAlign>
                           </Style>
-                          <CanGrow >true</CanGrow>
+                          <CanGrow>true</CanGrow>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
@@ -398,7 +398,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="nomenclature_id">
-                      <Value>=Fields!nomenclature_id.Value</Value>
+                      <Value>=Fields!nomenclature_number.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
