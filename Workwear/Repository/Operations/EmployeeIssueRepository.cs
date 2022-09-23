@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
+using NHibernate;
 using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Operations;
@@ -157,12 +157,15 @@ namespace workwear.Repository.Operations
 		/// Метод подсчитывает количество числящегося за сотрудником на определенную дату.
 		/// ВНИМАНИЕ!! Метод пока не учитывает ручные операции скидывающие историю. Это надо будет дорабатывать.
 		/// </summary>
-		public virtual IList<EmployeeRecivedInfo> ItemsBalance(EmployeeCard employee, DateTime onDate, IUnitOfWork uow = null)
+		public virtual IList<EmployeeRecivedInfo> ItemsBalance(EmployeeCard employee, DateTime onDate, int[] excludeOperationsIds = null, IUnitOfWork uow = null)
 		{
 			EmployeeRecivedInfo resultAlias = null;
 
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			EmployeeIssueOperation employeeIssueOperationReceivedAlias = null;
+
+			if(excludeOperationsIds == null)
+				excludeOperationsIds = new int[] { };
 
 			IProjection projection = Projections.SqlFunction(
 				new SQLFunctionTemplate(NHibernateUtil.Int32, "SUM(IFNULL(?1, 0) - IFNULL(?2, 0))"),
@@ -182,6 +185,7 @@ namespace workwear.Repository.Operations
 				.Left.JoinAlias(x => x.IssuedOperation, () => employeeIssueOperationReceivedAlias)
 				.Where(x => x.Employee == employee)
 				.Where(() => employeeIssueOperationAlias.OperationTime < onDate.AddDays(1))
+				.WhereNot(() => employeeIssueOperationAlias.Id.IsIn(excludeOperationsIds))
 				.Where(Restrictions.Or(
 					Restrictions.Conjunction()
 						.Add(Restrictions.Where( () => employeeIssueOperationAlias.Issued > 0))

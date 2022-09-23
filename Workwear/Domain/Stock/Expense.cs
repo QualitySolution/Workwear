@@ -9,7 +9,6 @@ using QS.DomainModel.UoW;
 using workwear.Domain.Company;
 using workwear.Domain.Statements;
 using workwear.Domain.Users;
-using workwear.Repository.Company;
 using workwear.Repository.Operations;
 using workwear.Repository.Stock;
 using workwear.Tools;
@@ -223,9 +222,9 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public virtual void FillCanWriteoffInfo(EmployeeIssueRepository employeeRepository)
-		{
-			var itemsBalance = employeeRepository.ItemsBalance(Employee, Date);
+		public virtual void FillCanWriteoffInfo(EmployeeIssueRepository employeeRepository) {
+			var operationIds = Items.Where(x => x.EmployeeIssueOperation?.Id > 0).Select(x => x.EmployeeIssueOperation.Id).ToArray();
+			var itemsBalance = employeeRepository.ItemsBalance(Employee, Date, operationIds);
 			foreach(var item in Items) {
 				item.IsWriteOff = item.EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff != null;
 				item.IsEnableWriteOff = itemsBalance.Where(x => x.ProtectionToolsId == item.ProtectionTools?.Id).Sum(x => x.Amount) > 0;
