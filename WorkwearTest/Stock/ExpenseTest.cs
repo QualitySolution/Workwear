@@ -208,7 +208,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			protectionTools2.Id.Returns(77);
 
 			var repository = Substitute.For<EmployeeIssueRepository>(uow);
-			repository.ItemsBalance(employee, new DateTime(2022, 11, 11)).Returns(new List<EmployeeRecivedInfo> {
+			repository.ItemsBalance(employee, new DateTime(2022, 11, 11), Arg.Any<int[]>()).Returns(new List<EmployeeRecivedInfo> {
 				new EmployeeRecivedInfo {
 					Amount = 1,
 					LastReceive = new DateTime(2022, 9, 1),
