@@ -17,7 +17,7 @@ namespace Workwear.Views.Stock
 				.InitializeFromSource();
 			
 			ytextviewComment.Binding
-				.AddBinding(Entity, e => e.Description, w => w.Buffer)
+				.AddBinding(Entity, e => e.Description, w => w.Buffer.Text)
 				.InitializeFromSource();
 		}
 	}

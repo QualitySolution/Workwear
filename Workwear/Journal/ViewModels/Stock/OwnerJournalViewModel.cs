@@ -1,4 +1,5 @@
-﻿using NHibernate;
+﻿using System;
+using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -44,6 +45,14 @@ namespace workwear.Journal.ViewModels.Stock
 		public int Id { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
-		public string ShortDescription => Description;
+		public string ShortDescription {
+			get {
+				if(String.IsNullOrEmpty(Description))
+					return String.Empty;
+				if(Description.Length <= 100)
+					return Description;
+				return Description.Remove(100, Description.Length - 101) + "...";
+			}
+		}
 	}
 }
