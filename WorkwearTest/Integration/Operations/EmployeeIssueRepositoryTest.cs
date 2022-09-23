@@ -84,7 +84,7 @@ namespace WorkwearTest.Integration.Operations
 			}
 		}
 		
-		[Test(Description = "Проверяем что можем захватить операцию если период установлен одиним днем.")]
+		[Test(Description = "Проверяем что можем захватить операцию если период установлен одним днем.")]
 		[Category("Integrated")]
 		public void GetOperationsTouchDates_OneDateRangeTest()
 		{
@@ -538,6 +538,52 @@ namespace WorkwearTest.Integration.Operations
 				Assert.That(result, Has.No.Member(opE3P2));
 			}
 		}
+		#endregion
+
+		#region ItemsBalance
+
+		[Test(Description = "Проверяем запрос на баланс возвращает корректный результат(happy path).")]
+		[Category("Integrated")]
+		public void ItemsBalance_SimpleGetBalanceTest()
+		{
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				uow.Save(nomenclature);
+
+				var protectionTools = new ProtectionTools();
+				protectionTools.Name = "СИЗ для тестирования";
+				protectionTools.AddNomeclature(nomenclature);
+				uow.Save(protectionTools);
+
+				var employee = new EmployeeCard();
+				uow.Save(employee);
+
+				//Операция employee1 СИЗ 1
+				var opE1P1 = new EmployeeIssueOperation();
+				opE1P1.OperationTime = new DateTime(2018, 1, 1, 14, 0, 0);
+				opE1P1.AutoWriteoffDate = new DateTime(2020, 1, 1);
+				opE1P1.Employee = employee;
+				opE1P1.Nomenclature = nomenclature;
+				opE1P1.ProtectionTools = protectionTools;
+				opE1P1.Issued = 15;
+				uow.Save(opE1P1);
+
+				uow.Commit();
+
+				var repository = new EmployeeIssueRepository(uow);
+				var result = repository.ItemsBalance( employee, new DateTime(2019, 1, 1));
+				
+				Assert.That(result, Has.Count.EqualTo(1));
+				Assert.That(result.First().Amount, Is.EqualTo(15));
+			}
+		}
+
 		#endregion
 	}
 }

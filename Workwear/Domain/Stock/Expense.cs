@@ -223,7 +223,7 @@ namespace workwear.Domain.Stock
 			}
 		}
 
-		public virtual void FillCanWriteoffInfo(EmployeeRepository employeeRepository)
+		public virtual void FillCanWriteoffInfo(EmployeeIssueRepository employeeRepository)
 		{
 			var itemsBalance = employeeRepository.ItemsBalance(Employee, Date);
 			foreach(var item in Items) {

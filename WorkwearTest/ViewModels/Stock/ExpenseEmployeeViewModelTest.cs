@@ -4,6 +4,7 @@ using Autofac;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
+using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -18,6 +19,7 @@ using Workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using Workwear.Measurements;
 using workwear.Repository;
+using workwear.Repository.Operations;
 using workwear.Repository.Stock;
 using workwear.Tools;
 using workwear.Tools.Features;
@@ -40,6 +42,7 @@ namespace WorkwearTest.ViewModels.Stock
 		public void CreateAndResaveDocWithWriteoff()
 		{
 			NewSessionWithSameDB();
+			NotifyConfiguration.Enable();
 			
 			var navigation = Substitute.For<INavigationManager>();
 			var validator = new ValidatorForTests();
@@ -56,6 +59,7 @@ namespace WorkwearTest.ViewModels.Stock
 
 			var builder = new ContainerBuilder();
 			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
+			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
 			builder.Register(x => featuresService).As<FeaturesService>();
 			builder.Register(x => navigation).As<INavigationManager>();
 			builder.Register(x => sizeService).As<SizeService>();

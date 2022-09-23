@@ -14,7 +14,7 @@ using workwear.Tools;
 using workwear.Tools.Features;
 using workwear.ViewModels.Regulations;
 using Workwear.Measurements;
-using workwear.Repository.Company;
+using workwear.Repository.Operations;
 
 namespace workwear.ViewModels.Stock
 {
@@ -24,12 +24,12 @@ namespace workwear.ViewModels.Stock
 		private readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly IDeleteEntityService deleteService;
-		private readonly EmployeeRepository employeeRepository;
+		private readonly EmployeeIssueRepository employeeRepository;
 
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
-		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, EmployeeRepository employeeRepository, BaseParameters baseParameters)
+		public ExpenseDocItemsEmployeeViewModel(ExpenseEmployeeViewModel expenseEmployeeViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, EmployeeIssueRepository employeeRepository, BaseParameters baseParameters)
 		{
 			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));

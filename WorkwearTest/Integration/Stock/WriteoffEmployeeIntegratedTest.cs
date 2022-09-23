@@ -8,6 +8,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Repository.Company;
+using workwear.Repository.Operations;
 using workwear.Tools;
 
 namespace WorkwearTest.Integration.Stock
@@ -74,7 +75,7 @@ namespace WorkwearTest.Integration.Stock
 				uow.Save(expense);
 				uow.Commit();
 
-				var employeeRepository = new EmployeeRepository(uow);
+				var employeeRepository = new EmployeeIssueRepository(uow);
 				var balance = employeeRepository.ItemsBalance(employee, new DateTime(2018, 10, 30));
 				Assert.That(balance.First().Amount, Is.EqualTo(3));
 

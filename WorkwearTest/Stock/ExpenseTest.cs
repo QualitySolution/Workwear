@@ -10,6 +10,7 @@ using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
 using workwear.Repository.Company;
+using workwear.Repository.Operations;
 using workwear.Tools;
 
 namespace WorkwearTest.Integration.EmployeeIssue
@@ -207,7 +208,7 @@ namespace WorkwearTest.Integration.EmployeeIssue
 			var protectionTools2 = Substitute.For<ProtectionTools>();
 			protectionTools2.Id.Returns(77);
 
-			var repository = Substitute.For<EmployeeRepository>(uow);
+			var repository = Substitute.For<EmployeeIssueRepository>(uow);
 			repository.ItemsBalance(employee, new DateTime(2022, 11, 11)).Returns(new List<EmployeeRecivedInfo> {
 				new EmployeeRecivedInfo {
 					Amount = 1,

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
+using NHibernate.Dialect.Function;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.DomainModel.UoW;
@@ -151,5 +152,55 @@ namespace workwear.Repository.Operations
 
 			return result;
 		}
+		
+		public virtual IList<EmployeeRecivedInfo> ItemsBalance(EmployeeCard employee, DateTime onDate, IUnitOfWork uow = null)
+		{
+			EmployeeRecivedInfo resultAlias = null;
+
+			EmployeeIssueOperation employeeIssueOperationAlias = null;
+			EmployeeIssueOperation employeeIssueOperationReceivedAlias = null;
+
+			IProjection projection = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.Int32, "SUM(IFNULL(?1, 0) - IFNULL(?2, 0))"),
+				NHibernateUtil.Int32,
+				Projections.Property<EmployeeIssueOperation>(x => x.Issued),
+				Projections.Property<EmployeeIssueOperation>(x => x.Returned)
+			);
+
+			IProjection projectionIssueDate = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.Date, "MAX(CASE WHEN ?1 > 0 THEN ?2 END)"),
+				NHibernateUtil.Date,
+				Projections.Property<EmployeeIssueOperation>(x => x.Issued),
+				Projections.Property<EmployeeIssueOperation>(x => x.OperationTime)
+			);
+
+			return (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
+				.Left.JoinAlias(x => x.IssuedOperation, () => employeeIssueOperationReceivedAlias)
+				.Where(x => x.Employee == employee)
+				.Where(() => employeeIssueOperationAlias.AutoWriteoffDate == null || employeeIssueOperationAlias.AutoWriteoffDate > onDate)
+				.Where(() => employeeIssueOperationReceivedAlias.AutoWriteoffDate == null || employeeIssueOperationReceivedAlias.AutoWriteoffDate > onDate)
+				.SelectList(list => list
+				   .SelectGroup(() => employeeIssueOperationAlias.ProtectionTools.Id).WithAlias(() => resultAlias.ProtectionToolsId)
+				   .SelectGroup(() => employeeIssueOperationAlias.NormItem.Id).WithAlias(() => resultAlias.NormRowId)
+				   .Select(projectionIssueDate).WithAlias(() => resultAlias.LastReceive)
+				   .Select(projection).WithAlias(() => resultAlias.Amount)
+				   .Select(() => employeeIssueOperationAlias.Nomenclature.Id).WithAlias(()=> resultAlias.NomenclatureId)
+				)
+				.TransformUsing(Transformers.AliasToBean<EmployeeRecivedInfo>())
+				.List<EmployeeRecivedInfo>();
+		}
+	}
+	
+	public class EmployeeRecivedInfo
+	{
+		public int? NormRowId { get; set; }
+
+		public int? ProtectionToolsId { get; set;}
+		
+		public  int? NomenclatureId { get; set; }
+
+		public DateTime LastReceive { get; set;}
+
+		public int Amount { get; set;}
 	}
 }
