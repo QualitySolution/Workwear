@@ -108,6 +108,7 @@ namespace Workwear.Tools.Features
 			switch(feature) {
 				case WorkwearFeature.Warehouses:
 				case WorkwearFeature.IdentityCards:
+				case WorkwearFeature.Owners:
 					return ProductEdition == 3;
 				case WorkwearFeature.CollectiveExpense:
 				case WorkwearFeature.LoadExcel:
@@ -150,7 +151,9 @@ namespace Workwear.Tools.Features
 		Claims,
 		[IsCloudFeature]
 		[Display(Name = "Отзывы")]
-		Ratings
+		Ratings,
+		[Display(Name = "Собственники имущества")]
+		Owners
 	}
 	
 	[AttributeUsage(AttributeTargets.Field)]

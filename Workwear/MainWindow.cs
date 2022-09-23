@@ -205,7 +205,10 @@ public partial class MainWindow : Gtk.Window
 		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuRatings.Visible = FeaturesService.Available(WorkwearFeature.Ratings);
-		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications) || FeaturesService.Available(WorkwearFeature.Claims) || FeaturesService.Available(WorkwearFeature.Ratings);
+		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications) 
+		                         || FeaturesService.Available(WorkwearFeature.Claims) 
+		                         || FeaturesService.Available(WorkwearFeature.Ratings);
+		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
 	}
 	#endregion
 
