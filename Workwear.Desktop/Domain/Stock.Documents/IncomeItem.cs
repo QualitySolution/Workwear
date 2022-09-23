@@ -96,6 +96,16 @@ namespace Workwear.Domain.Stock.Documents
 			set => height = value;
 		}
 
+		public virtual Owner Owner {
+			get => WarehouseOperation.Owner;
+			set {
+				if(WarehouseOperation.Owner != value) {
+					WarehouseOperation.Owner = value;
+					OnPropertyChanged(nameof(Owner));
+				}
+			}
+		}
+
 		#endregion
 		#region Расчетные
 		public virtual string Title =>

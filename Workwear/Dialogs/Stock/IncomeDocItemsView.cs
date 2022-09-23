@@ -19,6 +19,7 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 using workwear.Representations.Organization;
+using Workwear.Tools.Features;
 using workwear.ViewModel;
 using Workwear.ViewModels.Stock;
 using Workwear.ViewModels.Stock.Widgets;
@@ -47,6 +48,9 @@ namespace workwear
 				if(incomeDoc.Operation != IncomeOperations.Enter) buttonAddSizes.Visible = false;
 			}
 		}
+		
+		public bool OwnersVisible;
+		public IList<Owner> Owners;
 
 		private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(e.PropertyName == nameof(IncomeItem.BuhDocument)) {
@@ -104,6 +108,10 @@ namespace workwear
 				.AddColumn("Сумма").AddNumericRenderer(x => x.Total).Digits(2)
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc)
 					.AddTextRenderer(e => e.BuhDocument).Editable()
+				.AddColumn("Собственики").MinWidth(70)
+					.AddComboRenderer(x => x.Owner).SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => Owners)
+					.AddSetter((c, n) => c.Editable = OwnersVisible)
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItemsButtonReleaseEvent;
