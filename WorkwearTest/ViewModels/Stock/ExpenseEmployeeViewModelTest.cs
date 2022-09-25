@@ -17,6 +17,7 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Measurements;
+using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Repository.User;
 using Workwear.Tools;
@@ -41,6 +42,7 @@ namespace WorkwearTest.ViewModels.Stock
 		public void CreateAndResaveDocWithWriteoff()
 		{
 			NewSessionWithSameDB();
+			NotifyConfiguration.Enable();
 			
 			var navigation = Substitute.For<INavigationManager>();
 			var validator = new ValidatorForTests();
@@ -57,6 +59,7 @@ namespace WorkwearTest.ViewModels.Stock
 
 			var builder = new ContainerBuilder();
 			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
+			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
 			builder.Register(x => featuresService).As<FeaturesService>();
 			builder.Register(x => navigation).As<INavigationManager>();
 			builder.Register(x => sizeService).As<SizeService>();

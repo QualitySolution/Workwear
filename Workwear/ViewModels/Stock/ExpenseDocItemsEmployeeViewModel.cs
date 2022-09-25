@@ -16,6 +16,7 @@ using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations;
 using Workwear.Measurements;
+using Workwear.Repository.Operations;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -25,6 +26,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly IDeleteEntityService deleteService;
+		private readonly EmployeeIssueRepository employeeRepository;
 
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
@@ -34,7 +36,8 @@ namespace Workwear.ViewModels.Stock
 			FeaturesService featuresService, 
 			INavigationManager navigation, 
 			SizeService sizeService, 
-			IDeleteEntityService deleteService, 
+			IDeleteEntityService deleteService,
+			EmployeeIssueRepository employeeRepository,
 			BaseParameters baseParameters)
 		{
 			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
@@ -42,11 +45,13 @@ namespace Workwear.ViewModels.Stock
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
+			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			employeeRepository.RepoUow = UoW;
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 			Entity.PropertyChanged += EntityOnPropertyChanged;
-			Entity.FillCanWriteoffInfo(UoW);
+			Entity.FillCanWriteoffInfo(employeeRepository);
 		}
 
 		#region Хелперы
@@ -147,8 +152,11 @@ namespace Workwear.ViewModels.Stock
 
 		public void Delete(ExpenseItem item)
 		{
-			if(item.Id > 0)
+			if(item.Id > 0) {
+				if(Entity.Items.Any(x => x.Id == 0))
+					expenseEmployeeViewModel.Save(); //Сохраняем документ если есть добавленные строки. Иначе получим исключение.
 				deleteService.DeleteEntity<ExpenseItem>(item.Id, UoW, () => Entity.RemoveItem(item));
+			}
 			else
 				Entity.RemoveItem(item);
 			CalculateTotal();
@@ -189,7 +197,7 @@ namespace Workwear.ViewModels.Stock
 		private void EntityOnPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == nameof(Entity.Date))
-				Entity.FillCanWriteoffInfo(UoW);
+				Entity.FillCanWriteoffInfo(employeeRepository);
 		}
 		#endregion
 	}

@@ -80,14 +80,16 @@ namespace Workwear.Views.Company.EmployeeChildren
 		#endregion
 
 		#region Кнопки
-		protected void OnButtonGiveWearByNormClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonGiveWearByNormClicked(object sender, EventArgs e) {
+			buttonGiveWearByNorm.Sensitive = false;
 			ViewModel.GiveWearByNorm();
+			buttonGiveWearByNorm.Sensitive = true;
 		}
 
-		protected void OnButtonReturnWearClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonReturnWearClicked(object sender, EventArgs e) {
+			buttonReturnWear1.Sensitive = false;
 			viewModel.ReturnWear();
+			buttonReturnWear1.Sensitive = true;
 		}
 
 		protected void OnButtonTimeLineClicked(object sender, EventArgs e)
@@ -95,9 +97,10 @@ namespace Workwear.Views.Company.EmployeeChildren
 			ViewModel.OpenTimeLine(ytreeWorkwear.GetSelectedObject<EmployeeCardItem>());
 		}
 
-		protected void OnButtonWriteOffWearClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonWriteOffWearClicked(object sender, EventArgs e) {
+			buttonWriteOffWear1.Sensitive = false;
 			ViewModel.WriteOffWear();
+			buttonWriteOffWear1.Sensitive = true;
 		}
 
 		protected void OnButtonRefreshWorkwearItemsClicked(object sender, EventArgs e)

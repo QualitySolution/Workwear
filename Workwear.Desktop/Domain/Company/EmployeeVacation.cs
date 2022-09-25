@@ -84,6 +84,8 @@ namespace Workwear.Domain.Company
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
 		{
+			if(BeginDate == default || EndDate == default)
+				yield return new ValidationResult("Период отпуска должен быть задан.", new[] { nameof(BeginDate), nameof(EndDate) });
 			if(BeginDate > EndDate)
 				yield return new ValidationResult("Дата окончания отпуска не может быть меньше даты начала отпуска.", new[] { nameof(BeginDate), nameof(EndDate) });
 			if(VacationType == null)
