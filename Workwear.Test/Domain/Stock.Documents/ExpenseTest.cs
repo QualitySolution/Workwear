@@ -10,6 +10,7 @@ using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Repository.Operations;
 using Workwear.Tools;
 
 namespace Workwear.Test.Domain.Stock.Documents
