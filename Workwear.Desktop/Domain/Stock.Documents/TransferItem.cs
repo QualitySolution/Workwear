@@ -55,8 +55,12 @@ namespace Workwear.Domain.Stock.Documents
 		#region Расчетные
 		public virtual string Title => 
 			$"Перемещение {StockPosition.Title} x {Amount} со склада {document.WarehouseFrom.Name} на склад {document.WarehouseTo.Name}";
-		public virtual StockPosition StockPosition => 
-			new StockPosition(Nomenclature, WarehouseOperation.WearPercent, warehouseOperation.WearSize, warehouseOperation.Height);
+		public virtual StockPosition StockPosition => new StockPosition(
+			Nomenclature, 
+			WarehouseOperation.WearPercent, 
+			warehouseOperation.WearSize, 
+			warehouseOperation.Height, 
+			warehouseOperation.Owner);
 		#endregion
 		public TransferItem() { }
 		public TransferItem(IUnitOfWork uow, Transfer transfer, StockPosition position, int amount) {

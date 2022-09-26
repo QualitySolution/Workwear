@@ -61,7 +61,7 @@ namespace Workwear.Domain.Stock.Documents
         #endregion
         #region Calculate
         public virtual StockPosition StockPosition => 
-            new StockPosition(Nomenclature, WearPercent, WarehouseOperation.WearSize, WarehouseOperation.Height);
+            new StockPosition(Nomenclature, WearPercent, WarehouseOperation.WearSize, WarehouseOperation.Height, WarehouseOperation.Owner);
         #endregion
     }
     [Appellative(Gender = GrammaticalGender.Feminine,

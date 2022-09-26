@@ -153,7 +153,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		public virtual StockPosition StockPosition {
-			get => new StockPosition(Nomenclature, WearPercent, WearSize, Height);
+			get => new StockPosition(Nomenclature, WearPercent, WearSize, Height, WarehouseOperation.Owner);
 			set {
 				Nomenclature = value.Nomenclature;
 				WearSize = value.WearSize;
