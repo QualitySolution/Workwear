@@ -151,6 +151,17 @@ namespace Workwear.Domain.Stock.Documents
 			get => employeeCardItem;
 			set => employeeCardItem = value;
 		}
+		
+		[Display(Name = "Собственник имущества")]
+		public virtual Owner Owner {
+			get => WarehouseOperation.Owner;
+			set {
+				if(WarehouseOperation.Owner != value) {
+					WarehouseOperation.Owner = value;
+					OnPropertyChanged();
+				}
+			}
+		}
 
 		public virtual StockPosition StockPosition {
 			get => new StockPosition(Nomenclature, WearPercent, WearSize, Height, WarehouseOperation.Owner);

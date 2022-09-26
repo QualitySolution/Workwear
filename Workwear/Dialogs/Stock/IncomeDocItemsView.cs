@@ -111,7 +111,6 @@ namespace workwear
 					.AddTextRenderer(e => e.BuhDocument).Editable()
 				.AddColumn("Собственики")
 					.Visible(featuresService.Available(WorkwearFeature.Owners))
-					.MinWidth(70)
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => Owners)

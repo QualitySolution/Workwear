@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Gtk;
@@ -23,7 +24,7 @@ namespace Workwear.ViewModels.Stock
 	public class ExpenseDocItemsEmployeeViewModel : ViewModelBase
 	{
 		public readonly ExpenseEmployeeViewModel expenseEmployeeViewModel;
-		private readonly FeaturesService featuresService;
+		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly IDeleteEntityService deleteService;
 		private readonly EmployeeIssueRepository employeeRepository;

@@ -6,6 +6,7 @@ using QS.Dialog.GtkUI;
 using QSWidgetLib;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.Views.Stock
@@ -80,7 +81,10 @@ namespace Workwear.Views.Stock
 						.AddTextRenderer(x => x.EmployeeIssueOperation != null && 
 						                      !String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? 
 					x.EmployeeIssueOperation.SignCardKey + " " + x.EmployeeIssueOperation.SignTimestamp.Value.ToString("dd.MM.yyyy HH:mm:ss") : null)
-				.AddColumn("")
+				.AddColumn("Собственники")
+					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
+					.AddComboRenderer(e => e.Owner)
+					.SetDisplayFunc(x => x.Name)
 				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 				.Finish();
 		}
