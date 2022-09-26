@@ -26,6 +26,7 @@ namespace workwear.Journal.ViewModels.Stock
 	public class StockBalanceJournalViewModel : JournalViewModelBase
 	{
 		public bool ShowSummary;
+		public readonly FeaturesService FeaturesService;
 
 		public StockBalanceFilterViewModel Filter { get; private set; }
 
@@ -53,6 +54,8 @@ namespace workwear.Journal.ViewModels.Stock
 			Filter.PropertyChanged += (sender, e) => 
 				TabName = "Остатки по складу " + 
 				          (featuresService.Available(WorkwearFeature.Warehouses) ? Filter.Warehouse?.Name : "");
+
+			FeaturesService = featuresService;
 		}
 
 		protected IQueryOver<WarehouseOperation> ItemsQuery(IUnitOfWork uow)

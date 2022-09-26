@@ -235,13 +235,16 @@ namespace workwear.Journal
 			);
 
 			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
-				() => FluentColumnsConfig<StockBalanceJournalNode>.Create()
+				sbjvm => FluentColumnsConfig<StockBalanceJournalNode>.Create()
 					.AddColumn("Номер").AddTextRenderer(e => e.NomenclatureNumber).SearchHighlight()
 					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
 					.AddColumn("Размер").AddTextRenderer(e => e.SizeName).SearchHighlight()
 					.AddColumn("Рост").AddTextRenderer(e => e.HeightName).SearchHighlight()
 					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText, useMarkup: true)
 					.AddColumn("Процент износа").AddTextRenderer(e => e.WearPercentText)
+					.AddColumn("Собственник имущества")
+						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Owners))
+						.AddTextRenderer(e => e.OwnerName)
 					.Finish()
 			);
 

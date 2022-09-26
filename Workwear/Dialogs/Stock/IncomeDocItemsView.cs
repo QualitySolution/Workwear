@@ -108,10 +108,11 @@ namespace workwear
 				.AddColumn("Сумма").AddNumericRenderer(x => x.Total).Digits(2)
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc)
 					.AddTextRenderer(e => e.BuhDocument).Editable()
-				.AddColumn("Собственики").MinWidth(70)
-					.AddComboRenderer(x => x.Owner).SetDisplayFunc(x => x.Name)
+				.AddColumn("Собственики").Visible(OwnersVisible)
+					.MinWidth(70)
+					.AddComboRenderer(x => x.Owner)
+					.SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => Owners)
-					.AddSetter((c, n) => c.Editable = OwnersVisible)
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItemsButtonReleaseEvent;
