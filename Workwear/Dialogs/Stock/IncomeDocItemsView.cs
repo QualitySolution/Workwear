@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Autofac;
 using Gamma.Utilities;
 using Gtk;
 using QS.Dialog;
@@ -48,8 +49,8 @@ namespace workwear
 				if(incomeDoc.Operation != IncomeOperations.Enter) buttonAddSizes.Visible = false;
 			}
 		}
-		
-		public bool OwnersVisible;
+
+		private FeaturesService featuresService = MainClass.AppDIContainer.BeginLifetimeScope().Resolve<FeaturesService>();
 		public IList<Owner> Owners;
 
 		private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -108,11 +109,13 @@ namespace workwear
 				.AddColumn("Сумма").AddNumericRenderer(x => x.Total).Digits(2)
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc)
 					.AddTextRenderer(e => e.BuhDocument).Editable()
-				.AddColumn("Собственики").Visible(OwnersVisible)
+				.AddColumn("Собственики")
+					.Visible(featuresService.Available(WorkwearFeature.Owners))
 					.MinWidth(70)
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => Owners)
+					.Editing()
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItemsButtonReleaseEvent;
