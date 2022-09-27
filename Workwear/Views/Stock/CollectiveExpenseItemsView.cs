@@ -4,6 +4,7 @@ using Gamma.GtkWidgets;
 using Gtk;
 using QSWidgetLib;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.Views.Stock
@@ -69,7 +70,10 @@ namespace Workwear.Views.Stock
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer(e => e.Nomenclature != null && e.Nomenclature.Type != null && 
 					                      e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
-				.AddColumn("")
+				.AddColumn("Собственники")
+				.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
+				.AddComboRenderer(e => e.Owner)
+				.SetDisplayFunc(x => x.Name)
 				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 				.Finish();
 		}

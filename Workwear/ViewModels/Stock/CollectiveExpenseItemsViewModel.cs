@@ -27,7 +27,7 @@ namespace Workwear.ViewModels.Stock
 	public class CollectiveExpenseItemsViewModel : ViewModelBase
 	{
 		public readonly CollectiveExpenseViewModel сollectiveExpenseViewModel;
-		private readonly FeaturesService featuresService;
+		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly IDeleteEntityService deleteService;
 

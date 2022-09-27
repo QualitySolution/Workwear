@@ -109,6 +109,17 @@ namespace Workwear.Domain.Stock.Documents
 			get => employeeCardItem;
 			set => employeeCardItem = value;
 		}
+		
+		[Display(Name = "Собственник имущества")]
+		public virtual Owner Owner {
+			get => WarehouseOperation.Owner;
+			set {
+				if(WarehouseOperation.Owner != value) {
+					WarehouseOperation.Owner = value;
+					OnPropertyChanged();
+				}
+			}
+		}
 
 		public virtual StockPosition StockPosition {
 			get => new StockPosition(Nomenclature, WearPercent, WearSize, Height, WarehouseOperation.Owner);
@@ -126,13 +137,14 @@ namespace Workwear.Domain.Stock.Documents
 		{
 			get => stockBalanceSetter ??
 			       new StockBalanceDTO
-				       {Nomenclature = Nomenclature, WearPercent = WearPercent, WearSize = WearSize, Height = Height};
+				       {Nomenclature = Nomenclature, WearPercent = WearPercent, WearSize = WearSize, Height = Height, Owner = Owner};
 			set {
 				stockBalanceSetter = value;
 				Nomenclature = value.Nomenclature;
 				WearSize = value.WearSize;
 				Height = value.Height;
 				WearPercent = value.WearPercent;
+				Owner = value.Owner;
 			}
 		}
 
