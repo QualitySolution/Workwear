@@ -5,6 +5,7 @@ using Gtk;
 using QS.Views.Dialog;
 using QSOrmProject;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
@@ -63,7 +64,11 @@ namespace Workwear.Views.Stock
 				 .AddColumn ("Количество").AddNumericRenderer (e => e.Amount)
 				 .Editing(new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
 					.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
-				 .Finish ();
+				 .AddColumn("Собственники")
+					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
+					.AddComboRenderer(e => e.Owner)
+					.SetDisplayFunc(x => x.Name)
+				 .Finish();
 			 ytreeExpenseItems.ItemsDataSource = Entity.ObservableSourceItems;
 			 #endregion
 			 #region TreeResult
@@ -81,7 +86,13 @@ namespace Workwear.Views.Stock
 				 .AddTextRenderer (e => "%", expand: false)
 				 .AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(8)
 				 .AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
-				 .Finish ();
+				 .AddColumn("Собственики")
+					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
+					.AddComboRenderer(x => x.Owner)
+					.SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => ViewModel.Owners)
+					.Editing()
+				 .Finish();
 			 ytreeReceiptItems.ItemsDataSource = Entity.ObservableResultItems;
 			 #endregion
 		}
