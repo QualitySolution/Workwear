@@ -128,7 +128,7 @@ namespace Workwear.Domain.Stock.Documents
 				WearSize = value.WearSize;
 				Height = value.Height;
 				WearPercent = value.WearPercent;
-				WarehouseOperation.Owner = value.Owner;
+				Owner = value.Owner;
 			}
 		}
 

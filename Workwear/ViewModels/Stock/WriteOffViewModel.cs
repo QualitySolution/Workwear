@@ -15,6 +15,7 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Stock
@@ -26,16 +27,18 @@ namespace Workwear.ViewModels.Stock
         public EmployeeCard Employee { get;}
         public Subdivision Subdivision { get;}
         public Warehouse CurWarehouse { get; set; }
+        public FeaturesService FeaturesService { get; }
 
         public WriteOffViewModel(
             IEntityUoWBuilder uowBuilder, 
             IUnitOfWorkFactory unitOfWorkFactory, 
             INavigationManager navigation,
             SizeService sizeService,
+            FeaturesService featuresService,
             EmployeeCard employee = null,
             Subdivision subdivision = null,
-            IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
-        {
+            IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator) {
+	        FeaturesService = featuresService;
             SizeService = sizeService;
             NavigationManager = navigation;
             Entity.ObservableItems.PropertyChanged += CalculateTotal;

@@ -6,6 +6,7 @@ using QS.Views.Dialog;
 using QSOrmProject;
 using QSWidgetLib;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
@@ -75,6 +76,10 @@ namespace Workwear.Views.Stock
 						.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 					.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument)
 						.AddSetter((c, e) => c.Editable = e.WriteoffFrom == WriteoffFrom.Employee)
+					.AddColumn("Собственники")
+						.Visible(ViewModel.FeaturesService.Available(WorkwearFeature.Owners))
+						.AddComboRenderer(e => e.Owner)
+						.SetDisplayFunc(x => x.Name)
 					.Finish ();
 			
 			ytreeItems.Binding
