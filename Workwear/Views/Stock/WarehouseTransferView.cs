@@ -6,6 +6,7 @@ using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using QSWidgetLib;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.Views.Stock
@@ -36,7 +37,10 @@ namespace Workwear.Views.Stock
 					.Editing(true).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
 				.AddTextRenderer(x => 
 				x.Nomenclature != null && x.Nomenclature.Type.Units != null ? x.Nomenclature.Type.Units.Name : String.Empty,  false)
-			.AddColumn("")
+			.AddColumn("Собственники")
+			.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
+			.AddComboRenderer(e => e.Owner)
+			.SetDisplayFunc(x => x.Name)
 			.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 			.Finish();
 

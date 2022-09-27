@@ -51,6 +51,18 @@ namespace Workwear.Domain.Stock.Documents
 			get => amountInStock;
 			set => SetField(ref amountInStock, value);
 		}
+		
+		[Display(Name = "Собственник имущества")]
+		public virtual Owner Owner {
+			get => WarehouseOperation.Owner;
+			set {
+				if(WarehouseOperation.Owner != value) {
+					WarehouseOperation.Owner = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+		
 		#endregion
 		#region Расчетные
 		public virtual string Title => 
@@ -69,6 +81,7 @@ namespace Workwear.Domain.Stock.Documents
 			warehouseOperation.WearSize = position.WearSize;
 			warehouseOperation.Height = position.Height;
 			warehouseOperation.WearPercent = position.WearPercent;
+			warehouseOperation.Owner = position.Owner;
 			warehouseOperation.Amount = this.amount = amount;
 			warehouseOperation.ExpenseWarehouse = transfer.WarehouseFrom;
 			warehouseOperation.OperationTime = transfer.Date;

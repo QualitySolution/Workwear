@@ -16,6 +16,7 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -25,6 +26,7 @@ namespace Workwear.ViewModels.Stock
 		public EntityEntryViewModel<Warehouse> WarehouseToEntryViewModel;
 		private ILifetimeScope AutofacScope;
 		private readonly IInteractiveQuestion interactive;
+		public readonly FeaturesService featuresService;
 
 		private Warehouse lastWarehouse;
 
@@ -36,7 +38,8 @@ namespace Workwear.ViewModels.Stock
 			IValidator validator, 
 			IUserService userService,
 			BaseParameters baseParameters,
-			IInteractiveQuestion interactive) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator) {
+			IInteractiveQuestion interactive,
+			FeaturesService featuresService) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator) {
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			if(UoW.IsNew)
@@ -61,6 +64,8 @@ namespace Workwear.ViewModels.Stock
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, 
 					new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
+
+			this.featuresService = featuresService;
 		}
 
 		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
