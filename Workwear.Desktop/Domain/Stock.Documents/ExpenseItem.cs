@@ -170,19 +170,27 @@ namespace Workwear.Domain.Stock.Documents
 				WearSize = value.WearSize;
 				Height = value.Height;
 				WearPercent = value.WearPercent;
+				Owner = value.Owner;
 			}
 		}
 
 		private StockBalanceDTO stockBalanceSetter;
 		public virtual StockBalanceDTO StockBalanceSetter {
 			get => stockBalanceSetter ?? 
-			       new StockBalanceDTO {Nomenclature = Nomenclature, Height = Height, WearSize = WearSize, WearPercent = WearPercent };
+			       new StockBalanceDTO {
+				       Nomenclature = Nomenclature, 
+				       Height = Height, 
+				       WearSize = WearSize, 
+				       WearPercent = WearPercent, 
+				       Owner = Owner
+			       };
 			set {
 				stockBalanceSetter = value;
 				Nomenclature = value.Nomenclature;
 				WearSize = value.WearSize;
 				Height = value.Height;
 				WearPercent = value.WearPercent;
+				Owner = value.Owner;
 			}
 		}
 		#endregion

@@ -3,6 +3,7 @@ using Gtk;
 using QS.DomainModel.Entity;
 using QSWidgetLib;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.Views.Stock
@@ -52,7 +53,10 @@ namespace Workwear.Views.Stock
 				.AddColumn("Расположение").Tag(ColumnTags.FacilityPlace).AddComboRenderer(e => e.SubdivisionPlace).Editing()
 					.DynamicFillListFunc(x => ViewModel.Places)
 					.SetDisplayFunc(x => DomainHelper.GetTitle(x))
-				.AddColumn("")
+				.AddColumn("Собственники")
+				.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
+				.AddComboRenderer(e => e.Owner)
+				.SetDisplayFunc(x => x.Name)
 				.Finish();
 		}
 
