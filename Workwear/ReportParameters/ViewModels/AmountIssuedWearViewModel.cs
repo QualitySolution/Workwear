@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Gamma.Widgets;
 using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -8,22 +9,26 @@ using QS.Report.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Repository.Company;
+using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels
 {
 	public class AmountIssuedWearViewModel : ReportParametersViewModelBase
 	{
 		private readonly IUnitOfWork unitOfWork;
+		public readonly FeaturesService FeaturesService;
 		public AmountIssuedWearViewModel(
 			RdlViewerViewModel rdlViewerViewModel, 
 			IUnitOfWorkFactory uowFactory, 
-			SubdivisionRepository subdivisionRepository) : base(rdlViewerViewModel)
+			SubdivisionRepository subdivisionRepository,
+			FeaturesService featuresService) : base(rdlViewerViewModel) 
 		{
+			FeaturesService = featuresService;
 			Title = "Справка о выданной спецодежде";
 			Identifier = "AmountIssuedWear";
 			using(var uow = uowFactory.CreateWithoutRoot()) {
 				SelectedSubdivison resultAlias = null;
-				Subdivisions = subdivisionRepository.ActiveQuery(uow)
+				Subdivisions = subdivisionRepository.ActiveQuery(uow) 
 					.SelectList(list => list
 					   .Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					   .Select(x => x.Name).WithAlias(() => resultAlias.Name)
@@ -40,6 +45,7 @@ namespace workwear.ReportParameters.ViewModels
 				item.PropertyChanged += (sender, e) => OnPropertyChanged(nameof(SensitiveLoad));
 			}
 			unitOfWork = uowFactory.CreateWithoutRoot();
+			Owners = unitOfWork.GetAll<Owner>().ToList();
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
@@ -102,6 +108,12 @@ namespace workwear.ReportParameters.ViewModels
 			set => SetField(ref useAlternativeName, value);
 		}
 		public bool VisibleUseAlternative => BySize;
+
+		private object selectOwner = SpecialComboState.All;
+		public object SelectOwner {
+			get => selectOwner;
+			set => SetField(ref selectOwner, value);
+		}
 		#endregion
 		
 		#region Свойства
@@ -120,6 +132,12 @@ namespace workwear.ReportParameters.ViewModels
 		}
 
 		public IList<SelectedSubdivison> Subdivisions;
+
+		private IList<Owner> owners;
+		public IList<Owner> Owners {
+			get => owners;
+			set => SetField(ref owners, value);
+		}
 
 		public bool SensitiveLoad => StartDate != null && EndDate != null && Subdivisions.Any(x => x.Select);
 
@@ -155,6 +173,27 @@ namespace workwear.ReportParameters.ViewModels
 				.Select(x => x.Id)
 				.Distinct()
 				.ToArray();
+		}
+
+		private int[] SelectOwners() {
+			switch (SelectOwner) {
+				case Owner owner:
+					return new[] { owner.Id };
+				case null:
+					return new[] { -1 };
+				case SpecialComboState state:
+					switch(state) {
+						case SpecialComboState.All:
+							return Owners.Select(x => x.Id).ToArray();
+						case SpecialComboState.Not:
+							return new[] { -1 };
+						case SpecialComboState.None:
+						default:
+							throw new ArgumentOutOfRangeException();
+					}
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 		}
 	}
 
