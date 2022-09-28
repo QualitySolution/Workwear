@@ -67,6 +67,12 @@ namespace Workwear.Views.Stock
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(viewModel.expenseEmployeeViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
+				.AddColumn("Собственики")
+					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
+					.AddComboRenderer(x => x.Owner)
+					.SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => ViewModel.Owners)
+					.Editing()
 				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer(e => 
@@ -81,10 +87,6 @@ namespace Workwear.Views.Stock
 						.AddTextRenderer(x => x.EmployeeIssueOperation != null && 
 						                      !String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? 
 					x.EmployeeIssueOperation.SignCardKey + " " + x.EmployeeIssueOperation.SignTimestamp.Value.ToString("dd.MM.yyyy HH:mm:ss") : null)
-				.AddColumn("Собственники")
-					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
-					.AddComboRenderer(e => e.Owner)
-					.SetDisplayFunc(x => x.Name)
 				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 				.Finish();
 		}

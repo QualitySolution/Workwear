@@ -66,14 +66,16 @@ namespace Workwear.Views.Stock
 					.DynamicFillListFunc(x => 
 					ViewModel.SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
+				.AddColumn("Собственики")
+					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
+					.AddComboRenderer(x => x.Owner)
+					.SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => ViewModel.Owners)
+					.Editing()
 				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer(e => e.Nomenclature != null && e.Nomenclature.Type != null && 
 					                      e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
-				.AddColumn("Собственники")
-				.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
-				.AddComboRenderer(e => e.Owner)
-				.SetDisplayFunc(x => x.Name)
 				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 				.Finish();
 		}

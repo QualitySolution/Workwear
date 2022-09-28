@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using NLog;
@@ -28,6 +29,7 @@ namespace Workwear.ViewModels.Stock
         public Subdivision Subdivision { get;}
         public Warehouse CurWarehouse { get; set; }
         public FeaturesService FeaturesService { get; }
+        public IList<Owner> Owners { get; }
 
         public WriteOffViewModel(
             IEntityUoWBuilder uowBuilder, 
@@ -47,6 +49,7 @@ namespace Workwear.ViewModels.Stock
                 Employee = UoW.GetById<EmployeeCard>(employee.Id);
             else if (subdivision != null)
                 Subdivision = UoW.GetById<Subdivision>(subdivision.Id);
+            Owners = UoW.GetAll<Owner>().ToList();
         }
         
         #region ViewProperty

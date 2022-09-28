@@ -97,6 +97,12 @@ namespace workwear
 					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.HeightType,onlyUseInNomenclature:true).ToList())
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.Type.HeightType != null 
 					                                  && incomeDoc.Operation == IncomeOperations.Enter)
+				.AddColumn("Собственики")
+					.Visible(featuresService.Available(WorkwearFeature.Owners))
+					.AddComboRenderer(x => x.Owner)
+					.SetDisplayFunc(x => x.Name)
+					.DynamicFillListFunc(x => Owners)
+					.Editing()
 				.AddColumn ("Процент износа")
 					.AddNumericRenderer (e => e.WearPercent, new MultiplierToPercentConverter())
 					.Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)
@@ -109,12 +115,6 @@ namespace workwear
 				.AddColumn("Сумма").AddNumericRenderer(x => x.Total).Digits(2)
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc)
 					.AddTextRenderer(e => e.BuhDocument).Editable()
-				.AddColumn("Собственики")
-					.Visible(featuresService.Available(WorkwearFeature.Owners))
-					.AddComboRenderer(x => x.Owner)
-					.SetDisplayFunc(x => x.Name)
-					.DynamicFillListFunc(x => Owners)
-					.Editing()
 				.Finish ();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItemsButtonReleaseEvent;

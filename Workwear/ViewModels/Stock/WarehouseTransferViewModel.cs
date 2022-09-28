@@ -29,6 +29,7 @@ namespace Workwear.ViewModels.Stock
 		public readonly FeaturesService featuresService;
 
 		private Warehouse lastWarehouse;
+		public IList<Owner> Owners { get; }
 
 		public WarehouseTransferViewModel(
 			IEntityUoWBuilder uowBuilder,
@@ -66,6 +67,7 @@ namespace Workwear.ViewModels.Stock
 					new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 
 			this.featuresService = featuresService;
+			Owners = UoW.GetAll<Owner>().ToList();
 		}
 
 		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {

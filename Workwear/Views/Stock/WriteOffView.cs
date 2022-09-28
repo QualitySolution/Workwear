@@ -68,6 +68,12 @@ namespace Workwear.Views.Stock
 						.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 						.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
 						.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
+					.AddColumn("Собственики")
+						.Visible(ViewModel.FeaturesService.Available(WorkwearFeature.Owners))
+						.AddComboRenderer(x => x.Owner)
+						.SetDisplayFunc(x => x.Name)
+						.DynamicFillListFunc(x => ViewModel.Owners)
+						.Editing()
 					.AddColumn ("Процент износа").AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter())
 						.Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
 						.AddTextRenderer(e => "%", expand: false)
@@ -76,10 +82,6 @@ namespace Workwear.Views.Stock
 						.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 					.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument)
 						.AddSetter((c, e) => c.Editable = e.WriteoffFrom == WriteoffFrom.Employee)
-					.AddColumn("Собственники")
-						.Visible(ViewModel.FeaturesService.Available(WorkwearFeature.Owners))
-						.AddComboRenderer(e => e.Owner)
-						.SetDisplayFunc(x => x.Name)
 					.Finish ();
 			
 			ytreeItems.Binding

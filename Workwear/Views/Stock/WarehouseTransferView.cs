@@ -31,16 +31,18 @@ namespace Workwear.Views.Stock
 			.AddColumn("Наименование").Tag("Name").AddTextRenderer(x => x.Nomenclature!= null ? x.Nomenclature.Name : String.Empty)
 			.AddColumn("Размер").AddTextRenderer(x => x.WarehouseOperation.WearSize.Name)
 			.AddColumn("Рост").AddTextRenderer(x => x.WarehouseOperation.Height.Name)
+			.AddColumn("Собственики")
+				.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
+				.AddComboRenderer(x => x.Owner)
+				.SetDisplayFunc(x => x.Name)
+				.DynamicFillListFunc(x => ViewModel.Owners)
+				.Editing()
 			.AddColumn("Процент износа").AddTextRenderer(x => x.WarehouseOperation.WearPercent.ToString("P0"))
 			.AddColumn("Количество").Tag("Count")
 				.AddNumericRenderer(x => x.Amount, false)
 					.Editing(true).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
 				.AddTextRenderer(x => 
 				x.Nomenclature != null && x.Nomenclature.Type.Units != null ? x.Nomenclature.Type.Units.Name : String.Empty,  false)
-			.AddColumn("Собственники")
-			.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
-			.AddComboRenderer(e => e.Owner)
-			.SetDisplayFunc(x => x.Name)
 			.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 			.Finish();
 
