@@ -9,6 +9,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Repository.Operations;
 using Workwear.Tools;
 
 namespace Workwear.Test.Integration.Stock
@@ -58,14 +59,14 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(size);
 				uow.Save(height);
 
-				var position1 = new StockPosition(nomenclature, 0, size, height);
+				var position1 = new StockPosition(nomenclature, 0, size, height, null);
 
 				var nomenclature2 = new Nomenclature {
 					Type = nomenclatureType
 				};
 				uow.Save(nomenclature2);
 
-				var position2 = new StockPosition(nomenclature2, 0, size, height);
+				var position2 = new StockPosition(nomenclature2, 0, size, height, null);
 
 				var protectionTools = new ProtectionTools {
 					Name = "СИЗ для тестирования"
@@ -173,8 +174,8 @@ namespace Workwear.Test.Integration.Stock
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
-				var position1 = new StockPosition(nomenclature, 0, size, height);
-				var position2 = new StockPosition(nomenclature, 0, size,height);
+				var position1 = new StockPosition(nomenclature, 0, size, height, null);
+				var position2 = new StockPosition(nomenclature, 0, size,height, null);
 
 				var norm = new Norm();
 				var normItem = norm.AddItem(protectionTools);
@@ -282,7 +283,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(size);
 				uow.Save(height);
 
-				var position1 = new StockPosition(nomenclature, 0, size, height);
+				var position1 = new StockPosition(nomenclature, 0, size, height, null);
 
 				//Поднимаем id сиза до 3.
 				uow.Save(new ProtectionTools { Name = "Id = 1" });
@@ -383,7 +384,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(size);
 				uow.Save(height);
 
-				var position1 = new StockPosition(nomenclature, 0, size, height);
+				var position1 = new StockPosition(nomenclature, 0, size, height, null);
 
 				var norm = new Norm();
 				var normItem = norm.AddItem(protectionTools);
@@ -432,5 +433,86 @@ namespace Workwear.Test.Integration.Stock
 			}
 		}
 
+		
+		[Test(Description = "Убеждаемся при установке значения IsEnableWriteOff не реагируем на собственную операцию. " +
+		                    "Реальный баг в том что сохраненные документы при повторном открытии всегда позволяли списать, получается что свою же выдачу.")]
+		[Category("Integrated")]
+		[Category("Real case")]
+		public void FillWriteoffEnableTest()
+		{
+			var ask = Substitute.For<IInteractiveService>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
+
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				uow.Save(nomenclature);
+
+				var protectionTools = new ProtectionTools();
+				protectionTools.Type = nomenclatureType;
+				protectionTools.Name = "СИЗ для тестирования";
+				protectionTools.AddNomeclature(nomenclature);
+				uow.Save(protectionTools);
+
+				var norm = new Norm();
+				var normItem = norm.AddItem(protectionTools);
+				normItem.Amount = 1;
+				normItem.NormPeriod = NormPeriodType.Year;
+				normItem.PeriodCount = 1;
+				uow.Save(norm);
+
+				var employee = new EmployeeCard();
+				employee.AddUsedNorm(norm);
+				Assert.That(employee.WorkwearItems, Has.Count.EqualTo(1));
+				uow.Save(employee);
+				uow.Commit();
+
+				var income = new Income();
+				income.Warehouse = warehouse;
+				income.Date = new DateTime(2017, 1, 1);
+				income.Operation = IncomeOperations.Enter;
+				var incomeItem1 = income.AddItem(nomenclature, ask);
+				incomeItem1.Amount = 10;
+				income.UpdateOperations(uow, ask);
+				uow.Save(income);
+				uow.Commit();
+				
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2018, 10, 22));
+
+				var expense = new Expense();
+				expense.Operation = ExpenseOperations.Employee;
+				expense.Warehouse = warehouse;
+				expense.Employee = employee;
+				expense.Date = new DateTime(2018, 10, 22);
+				var expenseItem = expense.AddItem(employee.WorkwearItems.First(), baseParameters);
+
+				//Обновление операций
+				expense.UpdateOperations(uow, baseParameters, ask);
+				expense.UpdateIssuanceSheet();
+				uow.Save(expense);
+				uow.Commit();
+				
+				Assert.That(expenseItem.EmployeeIssueOperation.Id, Is.GreaterThan(0));
+
+				var repository = new EmployeeIssueRepository(uow);
+				var balance = repository.ItemsBalance(employee, new DateTime(2018, 10, 22));
+				Assert.That(balance, Is.Not.Empty);
+				Assert.That(balance.First().Amount, Is.EqualTo(1));
+				
+				expense.FillCanWriteoffInfo(repository);
+				
+				//Здесь был реальный баг, реагировали на свою же операцию выдачи и думали что нам есть что списывать.
+				Assert.That(expenseItem.IsEnableWriteOff, Is.False); 
+			}
+		}
 	}
 }

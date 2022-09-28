@@ -96,6 +96,17 @@ namespace Workwear.Domain.Stock.Documents
 			set => height = value;
 		}
 
+		[Display(Name = "Собственник имущества")]
+		public virtual Owner Owner {
+			get => WarehouseOperation.Owner;
+			set {
+				if(WarehouseOperation.Owner != value) {
+					WarehouseOperation.Owner = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+
 		#endregion
 		#region Расчетные
 		public virtual string Title =>
@@ -103,7 +114,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual decimal Total => Cost * Amount;
 		public virtual StockPosition StockPosition => 
-			new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height);
+			new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height, Owner);
 		#endregion
 		#region Не сохраняемые в базу свойства
 		private string buhDocument;

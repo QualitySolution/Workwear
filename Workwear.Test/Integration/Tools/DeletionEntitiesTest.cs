@@ -50,14 +50,14 @@ namespace Workwear.Test.Integration.Tools
 				};
 				uow.Save(nomenclature);
 
-				var position1 = new StockPosition(nomenclature, 0, null, null);
+				var position1 = new StockPosition(nomenclature, 0, null, null, null);
 
 				var nomenclature2 = new Nomenclature {
 					Type = nomenclatureType
 				};
 				uow.Save(nomenclature2);
 
-				var position2 = new StockPosition(nomenclature2, 0, null, null);
+				var position2 = new StockPosition(nomenclature2, 0, null, null, null);
 
 				var protectionTools = new ProtectionTools {
 					Name = "СИЗ для тестирования"

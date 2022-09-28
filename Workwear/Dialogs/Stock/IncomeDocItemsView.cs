@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Autofac;
 using Gamma.Utilities;
 using Gtk;
 using QS.Dialog;
@@ -19,6 +20,7 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 using workwear.Representations.Organization;
+using Workwear.Tools.Features;
 using workwear.ViewModel;
 using Workwear.ViewModels.Stock;
 using Workwear.ViewModels.Stock.Widgets;
@@ -47,6 +49,9 @@ namespace workwear
 				if(incomeDoc.Operation != IncomeOperations.Enter) buttonAddSizes.Visible = false;
 			}
 		}
+
+		private FeaturesService featuresService = MainClass.AppDIContainer.BeginLifetimeScope().Resolve<FeaturesService>();
+		public IList<Owner> Owners = UnitOfWorkFactory.CreateWithoutRoot().GetAll<Owner>().ToList();
 
 		private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(e.PropertyName == nameof(IncomeItem.BuhDocument)) {
@@ -92,6 +97,12 @@ namespace workwear
 					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.HeightType,onlyUseInNomenclature:true).ToList())
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.Type.HeightType != null 
 					                                  && incomeDoc.Operation == IncomeOperations.Enter)
+				.AddColumn("Собственики")
+					.Visible(featuresService.Available(WorkwearFeature.Owners))
+					.AddComboRenderer(x => x.Owner)
+					.SetDisplayFunc(x => x.Name)
+					.FillItems(Owners, "Нет")
+				.Editing()
 				.AddColumn ("Процент износа")
 					.AddNumericRenderer (e => e.WearPercent, new MultiplierToPercentConverter())
 					.Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)
@@ -243,7 +254,7 @@ namespace workwear
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
 			e.SizesWithAmount.ToList()
 				.ForEach(i => IncomeDoc
-					.AddItem(e.Source,  i.Key, e.Height, i.Value, item.Certificate, item.Cost));
+					.AddItem(e.Source,  i.Key, e.Height, i.Value, item.Certificate, item.Cost, item.Owner));
 			CalculateTotal();
 		}
 	}

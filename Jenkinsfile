@@ -28,10 +28,14 @@ node {
    }
    stage('Test dotnet')
    {
-   	  sh 'rm -rf Workwear/Workwear.Test/TestResults'
+   	sh 'rm -rf Workwear/Workwear.Test/TestResults'
+   	try {  
    	  sh 'dotnet test --logger trx --collect:"XPlat Code Coverage" Workwear/Workwear.Test/Workwear.Test.csproj'
+      } catch (e) {}
+      finally{
    	  cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/TestResults/**/coverage.cobertura.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, zoomCoverageChart: false
    	  mstest testResultsFile:"**/*.trx", keepLongStdio: true
+      }
    }
    stage('Build') {
    	    sh 'nuget restore Workwear/Workwear.sln'

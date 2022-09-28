@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
@@ -27,7 +28,7 @@ namespace Workwear.ViewModels.Stock
 	public class CollectiveExpenseItemsViewModel : ViewModelBase
 	{
 		public readonly CollectiveExpenseViewModel сollectiveExpenseViewModel;
-		private readonly FeaturesService featuresService;
+		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly IDeleteEntityService deleteService;
 
@@ -70,6 +71,8 @@ namespace Workwear.ViewModels.Stock
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 			OnPropertyChanged(nameof(Sum));
 			globalProgress.Close();
+
+			Owners = UoW.GetAll<Owner>().ToList();
 		}
 
 		#region Хелперы
@@ -92,6 +95,8 @@ namespace Workwear.ViewModels.Stock
 			get => selectedItem;
 			set => SetField(ref selectedItem, value);
 		}
+		
+		public IList<Owner> Owners { get; }
 
 		#endregion
 		#region Sensetive

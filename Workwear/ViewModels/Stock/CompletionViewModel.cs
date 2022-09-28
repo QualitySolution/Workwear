@@ -27,7 +27,7 @@ namespace Workwear.ViewModels.Stock
 	public class CompletionViewModel: EntityDialogViewModelBase<Completion>
 	{
 		private readonly IInteractiveQuestion interactive;
-		private readonly FeaturesService featuresService;
+		public readonly FeaturesService featuresService;
 		private Warehouse lastWarehouse;
 		public SizeService SizeService { get; }
 		public CompletionViewModel(IEntityUoWBuilder uowBuilder, 
@@ -73,12 +73,21 @@ namespace Workwear.ViewModels.Stock
 				new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters }, {nameof(IUnitOfWork), UoW} })));
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			lastWarehouse = Entity.SourceWarehouse;
+
+			Owners = UoW.GetAll<Owner>().ToList();
 		}
 
 		#region View
 		public bool CanDelItemSource => Entity.ObservableSourceItems.Count > 0;
 		public bool CanDelItemResult => Entity.ObservableResultItems.Count > 0;
 		public bool ShowWarehouses => featuresService.Available(WorkwearFeature.Warehouses);
+
+		private IList<Owner> owners;
+		public IList<Owner> Owners {
+			get => owners;
+			set => SetField(ref owners, value);
+		}
+
 		#endregion
 		#region EntityViewModels
 		public EntityEntryViewModel<Warehouse> WarehouseExpenseEntryViewModel;

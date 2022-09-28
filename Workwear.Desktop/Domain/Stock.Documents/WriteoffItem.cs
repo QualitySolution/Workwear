@@ -58,6 +58,17 @@ namespace Workwear.Domain.Stock.Documents
 			get => subdivisionWriteoffOperation;
 			set => SetField(ref subdivisionWriteoffOperation, value);
 		}
+		
+		[Display(Name = "Собственник имущества")]
+		public virtual Owner Owner {
+			get => WarehouseOperation.Owner;
+			set {
+				if(WarehouseOperation.Owner != value) {
+					WarehouseOperation.Owner = value;
+					OnPropertyChanged();
+				}
+			}
+		}
 
 		#region Списание со склада
 
@@ -143,7 +154,12 @@ namespace Workwear.Domain.Stock.Documents
 			}
 		}
 
-		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WearPercent, WearSize, Height);
+		public virtual StockPosition StockPosition => new StockPosition(
+			Nomenclature, 
+			WearPercent, 
+			WearSize, 
+			Height,
+			Owner);
 
 		public virtual WriteoffFrom WriteoffFrom {
 			get {
@@ -188,7 +204,7 @@ namespace Workwear.Domain.Stock.Documents
 				Height = issueOperation.Height,
 				WearPercent = issueOperation.CalculatePercentWear(document.Date)
 			};
-			this.nomenclature = issueOperation.Nomenclature;
+			nomenclature = issueOperation.Nomenclature;
 			WearSize = issueOperation.WearSize;
 			Height = issueOperation.Height;
 			this.amount = amount;
@@ -227,6 +243,7 @@ namespace Workwear.Domain.Stock.Documents
 				WearPercent = position.WearPercent,
 				ExpenseWarehouse = warehouse
 			};
+			Owner = position.Owner;
 		}
 		#endregion
 		#region Методы

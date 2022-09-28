@@ -8,10 +8,12 @@ using Workwear.Models.Company;
 
 namespace Workwear.Models.Import.Employees.DataTypes {
 	public class DataTypeNameWithInitials : DataTypeEmployeeBase {
+		private int lenghtOfLastName;
 		public DataTypeNameWithInitials()
 		{
 			// ColumnNameKeywords.AddRange(new []{ });
 			Data = DataTypeEmployee.NameWithInitials;
+			lenghtOfLastName = TextParser.GetMaxStringLenght<EmployeeCard>(nameof(EmployeeCard.LastName));
 		}
 
 		public override void CalculateChange(SheetRowEmployee row, ExcelValueTarget target, IUnitOfWork uow) {
@@ -35,6 +37,10 @@ namespace Workwear.Models.Import.Employees.DataTypes {
 			var lastDiff = !String.IsNullOrEmpty(lastName) && !EmployeeParse.CompareString(employee.LastName, lastName);
 			var firstDiff = !String.IsNullOrEmpty(firstName) && !EmployeeParse.CompareString(employee.FirstName?.FirstOrDefault().ToString(), firstName);
 			var patronymicDiff = !String.IsNullOrEmpty(patronymic) && !EmployeeParse.CompareString(employee.Patronymic?.FirstOrDefault().ToString(), patronymic);
+			
+			if(lastDiff && lastName.Length > lenghtOfLastName) 
+				return new ChangeState(ChangeType.ParseError, error: $@"Длинна фамилии '{lastName}' больше максимальной {lenghtOfLastName}.");
+			
 			string oldValue = (lastDiff || firstDiff || patronymicDiff) ? employee.FullName : null;
 			if(!lastDiff && !firstDiff && !patronymicDiff)
 				return new ChangeState(ChangeType.NotChanged);

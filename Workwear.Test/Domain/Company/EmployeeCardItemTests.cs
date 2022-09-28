@@ -387,7 +387,7 @@ namespace Workwear.Test.Domain.Company
 
 			var employeeCardItem = new EmployeeCardItem(employee, normItem);
 
-			var stockPosition = new StockPosition(nomenclature, 0, size,null);
+			var stockPosition = new StockPosition(nomenclature, 0, size,null, null);
 			Assert.That(employeeCardItem.MatcheStockPosition(stockPosition)); 
 		}
 
@@ -413,7 +413,7 @@ namespace Workwear.Test.Domain.Company
 
 			var employeeItem = new EmployeeCardItem(employee, normItem);
 
-			var stockPosition = new StockPosition(nomenclature, 0, size,null);
+			var stockPosition = new StockPosition(nomenclature, 0, size,null, null);
 			var result = employeeItem.MatcheStockPosition(stockPosition);
 			Assert.That(result, Is.True);
 		}
@@ -446,7 +446,7 @@ namespace Workwear.Test.Domain.Company
 			normItem.ProtectionTools.Returns(protectionTools);
 
 			var employeeItem = new EmployeeCardItem(employee, normItem);
-			var stockPosition = new StockPosition(nomenclature, 0, size52,null);
+			var stockPosition = new StockPosition(nomenclature, 0, size52,null, null);
 			var result = employeeItem.MatcheStockPosition(stockPosition);
 			Assert.That(result, Is.True);
 		}
@@ -484,7 +484,7 @@ namespace Workwear.Test.Domain.Company
 
 			var employeeItem = new EmployeeCardItem(employee, normItem);
 
-			var stockPosition = new StockPosition(nomenclature, 0, size52, height170);
+			var stockPosition = new StockPosition(nomenclature, 0, size52, height170, null);
 			var result = employeeItem.MatcheStockPosition(stockPosition);
 			Assert.That(result, Is.True);
 		}
@@ -516,7 +516,7 @@ namespace Workwear.Test.Domain.Company
 			normItem.ProtectionTools.Returns(protectionTools);
 			var employeeItem = new EmployeeCardItem(employee, normItem);
 
-			return employeeItem.MatcheStockPosition(new StockPosition(nomenclature, 0, null, null));
+			return employeeItem.MatcheStockPosition(new StockPosition(nomenclature, 0, null, null, null));
 		}
 		#endregion
 	}

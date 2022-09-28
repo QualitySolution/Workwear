@@ -40,6 +40,7 @@ namespace Workwear.Domain.Company
 		public virtual int Id { get; set; }
 
 		private string cardNumber;
+		[StringLength(15)]
 		[Display (Name = "Номер карточки")]
 		public virtual string CardNumber {
 			get => cardNumber;
@@ -47,6 +48,7 @@ namespace Workwear.Domain.Company
 		}
 
 		private string personnelNumber;
+		[StringLength(15)]
 		[Display (Name = "Табельный номер")]
 		public virtual string PersonnelNumber {
 			get => personnelNumber;
@@ -54,6 +56,7 @@ namespace Workwear.Domain.Company
 		}
 
 		private string name;
+		[StringLength(20)]
 		[Display (Name = "Имя")]
 		public virtual string FirstName {
 			get => name;
@@ -61,6 +64,7 @@ namespace Workwear.Domain.Company
 		}
 
 		private string lastName;
+		[StringLength(20)]
 		[Display (Name = "Фамилия")]
 		public virtual string LastName {
 			get =>lastName; 
@@ -68,6 +72,7 @@ namespace Workwear.Domain.Company
 		}
 
 		private string patronymic;
+		[StringLength(20)]
 		[Display (Name = "Отчество")]
 		public virtual string Patronymic {
 			get => patronymic;

@@ -46,6 +46,7 @@ namespace workwear.ReportsDlg
 				Parameters = new Dictionary<string, object>
 				{
 					{ "id", ComboWorks.GetActiveId(comboObject) },
+					{"ownerVisible", featureService.Available(WorkwearFeature.Owners)}
 				}
 			};
 		}

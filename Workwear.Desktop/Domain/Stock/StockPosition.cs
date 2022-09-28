@@ -16,11 +16,13 @@ namespace Workwear.Domain.Stock
 		public decimal WearPercent { get; }
 		public Size WearSize { get; }
 		public Size Height { get; }
-		public StockPosition(Nomenclature nomenclature, decimal wearPercent, Size wearSize, Size height) {
+		public Owner Owner { get; }
+		public StockPosition(Nomenclature nomenclature, decimal wearPercent, Size wearSize, Size height, Owner owner) {
 			Nomenclature = nomenclature ?? throw new ArgumentNullException(nameof(nomenclature));
 			WearPercent = wearPercent;
 			WearSize = wearSize;
 			Height = height;
+			Owner = owner;
 		}
 
 		public string Title {
@@ -32,6 +34,8 @@ namespace Workwear.Domain.Stock
 					parameters.Add("Рост:" + Height.Name);
 				if(WearPercent > 0)
 					parameters.Add("Износ:" + WearPercent.ToString("P"));
+				if(Owner != null)
+					parameters.Add("Владелец:" + Owner.Name);
 				var text = Nomenclature.Name;
 				if(parameters.Any())
 					text += $" ({string.Join("; ", parameters)})";
@@ -45,10 +49,11 @@ namespace Workwear.Domain.Stock
 				anotherPos?.Nomenclature.Id == Nomenclature.Id &&
 				anotherPos.WearSize == WearSize &&
 				anotherPos.Height == Height &&
-				anotherPos.WearPercent == WearPercent;
+				anotherPos.WearPercent == WearPercent &&
+				anotherPos.Owner == Owner;
 		}
 		public override int GetHashCode() {
-			return (Nomenclature.Id, SizeType: WearSize, Height, WearPercent).GetHashCode();
+			return (Nomenclature.Id, WearSize, Height, WearPercent, Owner).GetHashCode();
 		}
 		#endregion
 	}
