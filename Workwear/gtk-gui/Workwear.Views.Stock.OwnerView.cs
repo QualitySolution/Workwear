@@ -24,6 +24,10 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yLabel ylabelName;
 
+		private global::Gamma.GtkWidgets.yLabel ylabelPriority;
+
+		private global::Gamma.GtkWidgets.ySpinButton yspinbuttonPriority;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -74,7 +78,7 @@ namespace Workwear.Views.Stock
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.ytable1 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable1.Name = "ytable1";
-			this.ytable1.NRows = ((uint)(3));
+			this.ytable1.NRows = ((uint)(4));
 			this.ytable1.NColumns = ((uint)(3));
 			this.ytable1.RowSpacing = ((uint)(6));
 			this.ytable1.ColumnSpacing = ((uint)(6));
@@ -89,8 +93,8 @@ namespace Workwear.Views.Stock
 			this.GtkScrolledWindow.Add(this.ytextviewComment);
 			this.ytable1.Add(this.GtkScrolledWindow);
 			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.ytable1[this.GtkScrolledWindow]));
-			w7.TopAttach = ((uint)(1));
-			w7.BottomAttach = ((uint)(2));
+			w7.TopAttach = ((uint)(2));
+			w7.BottomAttach = ((uint)(3));
 			w7.LeftAttach = ((uint)(1));
 			w7.RightAttach = ((uint)(2));
 			// Container child ytable1.Gtk.Table+TableChild
@@ -112,8 +116,8 @@ namespace Workwear.Views.Stock
 			this.ylabelComment.LabelProp = global::Mono.Unix.Catalog.GetString("Комментарий:");
 			this.ytable1.Add(this.ylabelComment);
 			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelComment]));
-			w9.TopAttach = ((uint)(1));
-			w9.BottomAttach = ((uint)(3));
+			w9.TopAttach = ((uint)(2));
+			w9.BottomAttach = ((uint)(4));
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabelName = new global::Gamma.GtkWidgets.yLabel();
@@ -124,9 +128,37 @@ namespace Workwear.Views.Stock
 			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelName]));
 			w10.XOptions = ((global::Gtk.AttachOptions)(4));
 			w10.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.ylabelPriority = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelPriority.Name = "ylabelPriority";
+			this.ylabelPriority.Xalign = 1F;
+			this.ylabelPriority.LabelProp = global::Mono.Unix.Catalog.GetString("Приоритет:");
+			this.ytable1.Add(this.ylabelPriority);
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelPriority]));
+			w11.TopAttach = ((uint)(1));
+			w11.BottomAttach = ((uint)(2));
+			w11.XOptions = ((global::Gtk.AttachOptions)(4));
+			w11.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.yspinbuttonPriority = new global::Gamma.GtkWidgets.ySpinButton(-100D, 100D, 1D);
+			this.yspinbuttonPriority.CanFocus = true;
+			this.yspinbuttonPriority.Name = "yspinbuttonPriority";
+			this.yspinbuttonPriority.Adjustment.PageIncrement = 10D;
+			this.yspinbuttonPriority.ClimbRate = 1D;
+			this.yspinbuttonPriority.Numeric = true;
+			this.yspinbuttonPriority.ValueAsDecimal = 0m;
+			this.yspinbuttonPriority.ValueAsInt = 0;
+			this.ytable1.Add(this.yspinbuttonPriority);
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yspinbuttonPriority]));
+			w12.TopAttach = ((uint)(1));
+			w12.BottomAttach = ((uint)(2));
+			w12.LeftAttach = ((uint)(1));
+			w12.RightAttach = ((uint)(2));
+			w12.XOptions = ((global::Gtk.AttachOptions)(4));
+			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.yvbox1.Add(this.ytable1);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ytable1]));
-			w11.Position = 1;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ytable1]));
+			w13.Position = 1;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{
