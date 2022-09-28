@@ -113,7 +113,10 @@ namespace Workwear
 
 			#endregion
 			#region Склад
-
+			DeleteConfig.AddHibernateDeleteInfo<ItemsType>()
+				.AddDeleteDependence<Nomenclature>(x => x.Type)
+				.AddDeleteDependence<ProtectionTools>(x => x.Type);
+			
 			DeleteConfig.AddHibernateDeleteInfo<Warehouse>()
 				.AddDeleteDependence<Income>(x => x.Warehouse)
 				.AddDeleteDependence<Expense>(x => x.Warehouse)
@@ -141,7 +144,8 @@ namespace Workwear
 				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.Nomenclature)
 				.AddDeleteDependence<WarehouseOperation>(x => x.Nomenclature)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Nomenclature);
-
+			#endregion
+			#region Складские документы
 			DeleteConfig.AddHibernateDeleteInfo<Expense> ()
 				.AddDeleteDependence<ExpenseItem> (x => x.ExpenseDoc)
 				.AddDeleteDependence<IssuanceSheet>(x => x.Expense);
@@ -168,10 +172,6 @@ namespace Workwear
 				.AddDeleteCascadeDependence(x => x.ReturnFromEmployeeOperation)
 				.AddDeleteCascadeDependence(x => x.ReturnFromSubdivisionOperation)
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
-
-			DeleteConfig.AddHibernateDeleteInfo<ItemsType>()
-				.AddDeleteDependence<Nomenclature>(x => x.Type)
-				.AddDeleteDependence<ProtectionTools>(x => x.Type);
 
 			DeleteConfig.AddHibernateDeleteInfo<Writeoff> ()
 				.AddDeleteDependence<WriteoffItem>(x => x.Document)
