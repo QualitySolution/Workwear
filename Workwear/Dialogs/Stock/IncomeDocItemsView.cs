@@ -254,7 +254,7 @@ namespace workwear
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
 			e.SizesWithAmount.ToList()
 				.ForEach(i => IncomeDoc
-					.AddItem(e.Source,  i.Key, e.Height, i.Value, item.Certificate, item.Cost));
+					.AddItem(e.Source,  i.Key, e.Height, i.Value, item.Certificate, item.Cost, item.Owner));
 			CalculateTotal();
 		}
 	}
