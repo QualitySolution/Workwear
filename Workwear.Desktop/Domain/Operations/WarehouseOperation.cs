@@ -80,6 +80,7 @@ namespace Workwear.Domain.Operations
 		}
 
 		private Owner owner;
+		[Display(Name = "Собственник")]
 		public virtual Owner Owner {
 			get => owner;
 			set => SetField(ref owner, value);

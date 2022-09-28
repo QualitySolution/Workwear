@@ -59,14 +59,14 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(size);
 				uow.Save(height);
 
-				var position1 = new StockPosition(nomenclature, 0, size, height);
+				var position1 = new StockPosition(nomenclature, 0, size, height, null);
 
 				var nomenclature2 = new Nomenclature {
 					Type = nomenclatureType
 				};
 				uow.Save(nomenclature2);
 
-				var position2 = new StockPosition(nomenclature2, 0, size, height);
+				var position2 = new StockPosition(nomenclature2, 0, size, height, null);
 
 				var protectionTools = new ProtectionTools {
 					Name = "СИЗ для тестирования"
@@ -174,8 +174,8 @@ namespace Workwear.Test.Integration.Stock
 				protectionTools.AddNomeclature(nomenclature);
 				uow.Save(protectionTools);
 
-				var position1 = new StockPosition(nomenclature, 0, size, height);
-				var position2 = new StockPosition(nomenclature, 0, size,height);
+				var position1 = new StockPosition(nomenclature, 0, size, height, null);
+				var position2 = new StockPosition(nomenclature, 0, size,height, null);
 
 				var norm = new Norm();
 				var normItem = norm.AddItem(protectionTools);
@@ -283,7 +283,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(size);
 				uow.Save(height);
 
-				var position1 = new StockPosition(nomenclature, 0, size, height);
+				var position1 = new StockPosition(nomenclature, 0, size, height, null);
 
 				//Поднимаем id сиза до 3.
 				uow.Save(new ProtectionTools { Name = "Id = 1" });
@@ -384,7 +384,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(size);
 				uow.Save(height);
 
-				var position1 = new StockPosition(nomenclature, 0, size, height);
+				var position1 = new StockPosition(nomenclature, 0, size, height, null);
 
 				var norm = new Norm();
 				var normItem = norm.AddItem(protectionTools);

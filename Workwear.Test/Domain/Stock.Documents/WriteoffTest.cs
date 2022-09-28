@@ -22,7 +22,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 
 			var warehouse = Substitute.For<Warehouse>();
 
-			var position = new StockPosition(nomenclature, 0.2m, new Size(), new Size());
+			var position = new StockPosition(nomenclature, 0.2m, new Size(), new Size(), null);
 
 			var writeoff = new Writeoff {
 				Date = new DateTime(2019, 1, 15)
