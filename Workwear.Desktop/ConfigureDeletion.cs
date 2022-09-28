@@ -144,6 +144,9 @@ namespace Workwear
 				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.Nomenclature)
 				.AddDeleteDependence<WarehouseOperation>(x => x.Nomenclature)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Nomenclature);
+
+			DeleteConfig.AddHibernateDeleteInfo<Owner>()
+				.AddClearDependence<WarehouseOperation>(x => x.Owner);
 			#endregion
 			#region Складские документы
 			DeleteConfig.AddHibernateDeleteInfo<Expense> ()
