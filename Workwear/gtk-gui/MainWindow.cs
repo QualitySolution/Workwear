@@ -543,14 +543,14 @@ public partial class MainWindow
 				"ion=\'ActionProtectionTools\'/><menuitem name=\'ActionNorms\' action=\'ActionNorms\'/>" +
 				"<menuitem name=\'ActionConditionNorm\' action=\'ActionConditionNorm\'/><separator/><" +
 				"menuitem name=\'Action5\' action=\'Action5\'/><menuitem name=\'Action6\' action=\'Actio" +
-				"n6\'/><menuitem name=\'ActionWarehouse\' action=\'ActionWarehouse\'/><separator/><men" +
-				"uitem name=\'ActionSizeType\' action=\'ActionSizeType\'/><menuitem name=\'ActionSize\'" +
-				" action=\'ActionSize\'/><separator/><menuitem name=\'Action7\' action=\'Action7\'/><me" +
-				"nuitem name=\'ActionNotificationTemplates\' action=\'ActionNotificationTemplates\'/>" +
-				"<separator/><menuitem name=\'ActionProfession\' action=\'ActionProfession\'/><menuit" +
-				"em name=\'Action8\' action=\'Action8\'/><menuitem name=\'ActionVacationTypes\' action=" +
-				"\'ActionVacationTypes\'/><menuitem name=\'ActionLeaders\' action=\'ActionLeaders\'/><m" +
-				"enuitem name=\'ActionOwner\' action=\'ActionOwner\'/></menu><menu name=\'ActionReport" +
+				"n6\'/><menuitem name=\'ActionWarehouse\' action=\'ActionWarehouse\'/><menuitem name=\'" +
+				"ActionOwner\' action=\'ActionOwner\'/><separator/><menuitem name=\'ActionSizeType\' a" +
+				"ction=\'ActionSizeType\'/><menuitem name=\'ActionSize\' action=\'ActionSize\'/><separa" +
+				"tor/><menuitem name=\'Action7\' action=\'Action7\'/><menuitem name=\'ActionNotificati" +
+				"onTemplates\' action=\'ActionNotificationTemplates\'/><separator/><menuitem name=\'A" +
+				"ctionProfession\' action=\'ActionProfession\'/><menuitem name=\'Action8\' action=\'Act" +
+				"ion8\'/><menuitem name=\'ActionVacationTypes\' action=\'ActionVacationTypes\'/><menui" +
+				"tem name=\'ActionLeaders\' action=\'ActionLeaders\'/></menu><menu name=\'ActionReport" +
 				"s\' action=\'ActionReports\'><menuitem name=\'Action10\' action=\'Action10\'/><menuitem" +
 				" name=\'Action11\' action=\'Action11\'/><separator/><menuitem name=\'Action12\' action" +
 				"=\'Action12\'/><separator/><menuitem name=\'ActionRequestSheet\' action=\'ActionReque" +
