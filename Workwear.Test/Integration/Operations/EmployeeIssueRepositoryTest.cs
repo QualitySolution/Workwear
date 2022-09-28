@@ -206,7 +206,7 @@ namespace Workwear.Test.Integration.Operations
 				uow.Save(size);
 				uow.Save(height);
 
-				var stockPosition = new StockPosition(nomenclature, 0, size, height);
+				var stockPosition = new StockPosition(nomenclature, 0, size, height, null);
 				var item = expense.AddItem(stockPosition, 1);
 
 				expense.UpdateOperations(uow, baseParameters, interactive);
@@ -272,7 +272,7 @@ namespace Workwear.Test.Integration.Operations
 				uow.Save(size);
 				uow.Save(height);
 
-				var stockPosition = new StockPosition(nomenclature, 0, size, height);
+				var stockPosition = new StockPosition(nomenclature, 0, size, height, null);
 				var item = expense.AddItem(employee.WorkwearItems.FirstOrDefault(), stockPosition, 1);
 				var item2 = expense.AddItem(employee2.WorkwearItems.FirstOrDefault(), stockPosition, 10);
 
@@ -332,7 +332,7 @@ namespace Workwear.Test.Integration.Operations
 				uow.Save(size);
 				uow.Save(height);
 
-				var stockPosition = new StockPosition(nomenclature, 0, size, height);
+				var stockPosition = new StockPosition(nomenclature, 0, size, height, null);
 				var item = expense.AddItem(stockPosition, 10);
 
 				expense.UpdateOperations(uow, baseParameters, interactive);
@@ -397,7 +397,7 @@ namespace Workwear.Test.Integration.Operations
 				uow.Save(size);
 				uow.Save(height);
 
-				var stockPosition = new StockPosition(nomenclature, 0, size, height);
+				var stockPosition = new StockPosition(nomenclature, 0, size, height, null);
 				var item = expense.AddItem(stockPosition, 10);
 
 				expense.UpdateOperations(uow, baseParameters, interactive);
