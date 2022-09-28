@@ -109,7 +109,6 @@ namespace workwear
 			ItemsTable.IncomeDoc = Entity;
 			ItemsTable.SizeService = sizeService;
 			ItemsTable.Interactive = interactiveService;
-			ItemsTable.Owners = UoW.GetAll<Owner>().ToList();
 
 			var builder = new LegacyEEVMBuilderFactory<Income>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
 

@@ -35,7 +35,7 @@ namespace Workwear.Views.Stock
 				.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 				.AddComboRenderer(x => x.Owner)
 				.SetDisplayFunc(x => x.Name)
-				.DynamicFillListFunc(x => ViewModel.Owners)
+				.FillItems(ViewModel.Owners, "отменить")
 				.Editing()
 			.AddColumn("Процент износа").AddTextRenderer(x => x.WarehouseOperation.WearPercent.ToString("P0"))
 			.AddColumn("Количество").Tag("Count")

@@ -72,7 +72,7 @@ namespace Workwear.Views.Stock
 						.Visible(ViewModel.FeaturesService.Available(WorkwearFeature.Owners))
 						.AddComboRenderer(x => x.Owner)
 						.SetDisplayFunc(x => x.Name)
-						.DynamicFillListFunc(x => ViewModel.Owners)
+						.FillItems(ViewModel.Owners, "отменить")
 						.Editing()
 					.AddColumn ("Процент износа").AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter())
 						.Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)

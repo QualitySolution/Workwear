@@ -51,7 +51,7 @@ namespace workwear
 		}
 
 		private FeaturesService featuresService = MainClass.AppDIContainer.BeginLifetimeScope().Resolve<FeaturesService>();
-		public IList<Owner> Owners;
+		public IList<Owner> Owners = UnitOfWorkFactory.CreateWithoutRoot().GetAll<Owner>().ToList();
 
 		private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(e.PropertyName == nameof(IncomeItem.BuhDocument)) {
@@ -101,8 +101,8 @@ namespace workwear
 					.Visible(featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
-					.DynamicFillListFunc(x => Owners)
-					.Editing()
+					.FillItems(Owners, "отменить")
+				.Editing()
 				.AddColumn ("Процент износа")
 					.AddNumericRenderer (e => e.WearPercent, new MultiplierToPercentConverter())
 					.Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)

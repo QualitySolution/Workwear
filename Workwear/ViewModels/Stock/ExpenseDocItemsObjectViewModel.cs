@@ -22,6 +22,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly INavigationManager navigation;
 		private readonly IDeleteEntityService deleteService;
 		public readonly FeaturesService featuresService;
+		public IList<Owner> Owners { get; }
 
 		public ExpenseDocItemsObjectViewModel(
 			ExpenseObjectViewModel expenseObjectViewModel, 
@@ -36,6 +37,7 @@ namespace Workwear.ViewModels.Stock
 
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
+			Owners = UoW.GetAll<Owner>().ToList();
 		}
 
 		#region Хелперы

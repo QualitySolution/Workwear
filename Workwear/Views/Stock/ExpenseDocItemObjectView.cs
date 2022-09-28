@@ -53,10 +53,12 @@ namespace Workwear.Views.Stock
 				.AddColumn("Расположение").Tag(ColumnTags.FacilityPlace).AddComboRenderer(e => e.SubdivisionPlace).Editing()
 					.DynamicFillListFunc(x => ViewModel.Places)
 					.SetDisplayFunc(x => DomainHelper.GetTitle(x))
-				.AddColumn("Собственники")
-				.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
-				.AddComboRenderer(e => e.Owner)
-				.SetDisplayFunc(x => x.Name)
+				.AddColumn("Собственики")
+					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
+					.AddComboRenderer(x => x.Owner)
+					.SetDisplayFunc(x => x.Name)
+					.FillItems(ViewModel.Owners, "отменить")
+					.Editing()
 				.Finish();
 		}
 
