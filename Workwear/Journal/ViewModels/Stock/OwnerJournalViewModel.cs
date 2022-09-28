@@ -35,6 +35,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(x => x.Description).WithAlias(() => resultAlias.Description)
+					.Select(x => x.Priority).WithAlias(() => resultAlias.Priority)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<OwnerJournalNode>());
 		}
@@ -54,5 +55,7 @@ namespace workwear.Journal.ViewModels.Stock
 				return Description.Remove(100, Description.Length - 101) + "...";
 			}
 		}
+		
+		public int Priority { get; set; }
 	}
 }

@@ -19,6 +19,10 @@ namespace Workwear.Views.Stock
 			ytextviewComment.Binding
 				.AddBinding(Entity, e => e.Description, w => w.Buffer.Text)
 				.InitializeFromSource();
+			
+			yspinbuttonPriority.Binding
+				.AddBinding(Entity, e => e.Priority, w => w.ValueAsInt)
+				.InitializeFromSource();
 		}
 	}
 }

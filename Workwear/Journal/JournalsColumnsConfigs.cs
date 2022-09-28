@@ -296,6 +296,7 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<OwnerJournalNode>.Create()
 					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Приоритет выдачи").AddNumericRenderer(node => node.Priority)
 					.AddColumn("Описание").AddTextRenderer(node => node.ShortDescription)
 					.Finish()
 			);

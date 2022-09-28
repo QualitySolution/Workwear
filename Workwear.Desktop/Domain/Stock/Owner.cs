@@ -31,6 +31,13 @@ namespace Workwear.Domain.Stock
 			set => SetField(ref description, value);
 		}
 
+		private int priority;
+		[Display(Name = "Приоритет")]
+		public virtual int Priority {
+			get => priority;
+			set => SetField(ref priority, value);
+		}
+
 		#endregion
 	}
 }
