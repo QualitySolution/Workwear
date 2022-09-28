@@ -980,6 +980,27 @@ CHANGE COLUMN `str_value` `str_value` VARCHAR(500) NULL DEFAULT NULL;
 ALTER TABLE `nomenclature`
 	CHANGE COLUMN `number` `number` VARCHAR(20) NULL DEFAULT NULL ;
 
+--Добавляем собственников на продукцию
+ALTER TABLE `operation_warehouse`
+	ADD COLUMN `owner_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `cost`,
+ADD INDEX `fk_operation_warehouse_6_idx` (`owner_id` ASC);
+
+CREATE TABLE `owners` (
+	`id` INT(10) UNSIGNED NOT NULL,
+	`name` VARCHAR(180) NOT NULL,
+	`description` TEXT NULL DEFAULT NULL,
+	`priority` INT(11) NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`))
+	ENGINE = InnoDB
+	DEFAULT CHARACTER SET = utf8mb4;
+
+ALTER TABLE `operation_warehouse`
+	ADD CONSTRAINT `fk_operation_warehouse_6`
+		FOREIGN KEY (`owner_id`)
+			REFERENCES `owners` (`id`)
+			ON DELETE SET NULL
+			ON UPDATE NO ACTION;
+
 -- Обновляем хранимую процедуру
 DROP function IF EXISTS `count_issue`;
 
