@@ -332,7 +332,11 @@ namespace Workwear.Domain.Company
 		private readonly ProtectionTools protectionTools;
 		public BestChoiceInStockComparer(ProtectionTools protectionTools) => 
 			this.protectionTools = protectionTools;
-		//Сортируем все пункты от большего к меньшему за исключением процента износа
+		//Сортируем позиции по следующим критериям
+		//Сначала берем позицию более приоритетного собственника
+		//Была выбрана номенклатура прямо указанная в номенклатуре нормы, а уже затем аналоги. (Возможно текущий код не совсем это реализует. А привязывается к порядку номенклатур, скорей всего это не логично, наверно надо будет улучшить.)
+		//Далее смотрим чтобы был меньший процент износа, то есть выдавалась новая.
+		//Далее выдаем ту которой больше на складе, чтобы оставалось больше разнообразия(решение сомнительное, но какое есть)
 		public int Compare(StockBalanceDTO x, StockBalanceDTO y) {
 			if(x is null || y is null)
 				throw new ArgumentNullException();
@@ -341,7 +345,7 @@ namespace Workwear.Domain.Company
 			var xMatchedNomenclature = protectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(x.Nomenclature)).Count();
 			var yMatchedNomenclature = protectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(y.Nomenclature)).Count();
 			if(xMatchedNomenclature != yMatchedNomenclature)
-				return yMatchedNomenclature.CompareTo(xMatchedNomenclature);
+				return xMatchedNomenclature.CompareTo(yMatchedNomenclature);
 			if(x.WearPercent != y.WearPercent)
 				return x.WearPercent.CompareTo(y.WearPercent);
 			if(x.Amount != y.Amount)
