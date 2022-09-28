@@ -101,7 +101,7 @@ namespace workwear
 					.Visible(featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
-					.FillItems(Owners, "отменить")
+					.FillItems(Owners, "Нет")
 				.Editing()
 				.AddColumn ("Процент износа")
 					.AddNumericRenderer (e => e.WearPercent, new MultiplierToPercentConverter())

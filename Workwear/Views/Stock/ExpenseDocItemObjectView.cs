@@ -57,7 +57,7 @@ namespace Workwear.Views.Stock
 					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
-					.FillItems(ViewModel.Owners, "отменить")
+					.FillItems(ViewModel.Owners, "Нет")
 					.Editing()
 				.Finish();
 		}
