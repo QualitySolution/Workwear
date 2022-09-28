@@ -151,27 +151,46 @@ namespace Workwear.Domain.Stock.Documents
 			get => employeeCardItem;
 			set => employeeCardItem = value;
 		}
+		
+		[Display(Name = "Собственник имущества")]
+		public virtual Owner Owner {
+			get => WarehouseOperation.Owner;
+			set {
+				if(WarehouseOperation.Owner != value) {
+					WarehouseOperation.Owner = value;
+					OnPropertyChanged();
+				}
+			}
+		}
 
 		public virtual StockPosition StockPosition {
-			get => new StockPosition(Nomenclature, WearPercent, WearSize, Height);
+			get => new StockPosition(Nomenclature, WearPercent, WearSize, Height, WarehouseOperation.Owner);
 			set {
 				Nomenclature = value.Nomenclature;
 				WearSize = value.WearSize;
 				Height = value.Height;
 				WearPercent = value.WearPercent;
+				Owner = value.Owner;
 			}
 		}
 
 		private StockBalanceDTO stockBalanceSetter;
 		public virtual StockBalanceDTO StockBalanceSetter {
 			get => stockBalanceSetter ?? 
-			       new StockBalanceDTO {Nomenclature = Nomenclature, Height = Height, WearSize = WearSize, WearPercent = WearPercent };
+			       new StockBalanceDTO {
+				       Nomenclature = Nomenclature, 
+				       Height = Height, 
+				       WearSize = WearSize, 
+				       WearPercent = WearPercent, 
+				       Owner = Owner
+			       };
 			set {
 				stockBalanceSetter = value;
 				Nomenclature = value.Nomenclature;
 				WearSize = value.WearSize;
 				Height = value.Height;
 				WearPercent = value.WearPercent;
+				Owner = value.Owner;
 			}
 		}
 		#endregion

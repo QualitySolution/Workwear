@@ -19,18 +19,6 @@
   <LeftMargin>.25in</LeftMargin>
   <RightMargin>.25in</RightMargin>
   <BottomMargin>.25in</BottomMargin>
-  <ReportParameters>
-    <ReportParameter Name="id">
-      <DataType>Integer</DataType>
-      <Nullable>False</Nullable>
-      <DefaultValue>
-        <Values>
-          <Value>1</Value>
-        </Values>
-      </DefaultValue>
-      <AllowBlank>False</AllowBlank>
-    </ReportParameter>
-  </ReportParameters>
   <DataSets>
     <DataSet Name="Data">
       <Query >
@@ -43,7 +31,8 @@
     wear_percent as life_percent,
     item_types.name  as type,
     sizeAlias.name AS size,
-    heightAlias.name growth,
+    heightAlias.name AS growth,
+    ownersAlias.name AS owner,
     measurement_units.name as unit
 	FROM 
 	operation_warehouse
@@ -57,8 +46,10 @@
     sizes AS sizeAlias ON sizeAlias.id = operation_warehouse.size_id
     LEFT JOIN
     sizes AS heightAlias ON heightAlias.id = operation_warehouse.height_id
+    LEFT JOIN
+    owners AS ownersAlias ON ownersAlias.id = operation_warehouse.owner_id
     WHERE operation_warehouse.warehouse_receipt_id = @id or operation_warehouse.warehouse_expense_id = @id
-	GROUP BY nomenclature_id, size, growth, wear_percent</CommandText>
+	GROUP BY nomenclature_id, size, growth, owner, wear_percent</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>=Parameters!id</Value>
@@ -98,6 +89,10 @@
           <DataField>unit</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="owner">
+          <DataField>owner</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -129,13 +124,15 @@
           <BorderStyle>
             <Default>Solid</Default>
           </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>97.2pt</Width>
+            <Width>102.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>410.6pt</Width>
+            <Width>349.1pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>49.6pt</Width>
@@ -148,6 +145,12 @@
           </TableColumn>
           <TableColumn>
             <Width>67.3pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>74.3pt</Width>
+            <Visibility>
+              <Hidden>=!{?ownerVisible}</Hidden>
+            </Visibility>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -252,6 +255,22 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox4">
+                      <Value>Собственник</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -265,14 +284,18 @@
                   <Height>16.8pt</Height>
                   <TableCells>
                     <TableCell>
-                      <ColSpan>6</ColSpan>
+                      <ColSpan>7</ColSpan>
                       <ReportItems>
                         <Textbox Name="Textbox13">
                           <Value>=Fields.type.Value</Value>
                           <Style>
                             <PaddingLeft>2pt</PaddingLeft>
                             <BorderStyle>
-                              <Default>Solid</Default>
+                              <Default>None</Default>
+                              <Left >None</Left>
+                              <Right >None</Right>
+                              <Top >None</Top>
+                              <Bottom >None</Bottom>
                             </BorderStyle>
                             <FontWeight>Bold</FontWeight>
                             <TextAlign>Center</TextAlign>
@@ -281,6 +304,7 @@
                             <VerticalAlign>Bottom</VerticalAlign>
                           </Style>
                           <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
@@ -370,6 +394,21 @@
                           <Value>=Sum(Fields!quantity.Value)</Value>
                           <CanGrow>false</CanGrow>
                           <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <PaddingRight>2pt</PaddingRight>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox9">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>Solid</Default>
                             </BorderStyle>
@@ -494,6 +533,22 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox5">
+                      <Value>=Fields!owner.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -589,6 +644,21 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox6">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -620,4 +690,26 @@
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageFooter>
+  <ReportParameters>
+    <ReportParameter Name="id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ownerVisible">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
+    </ReportParameter>
+  </ReportParameters>
 </Report>

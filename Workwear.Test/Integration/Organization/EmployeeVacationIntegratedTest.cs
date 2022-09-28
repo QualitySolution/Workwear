@@ -56,7 +56,7 @@ namespace Workwear.Test.Integration.Organization
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
-				var position1 = new StockPosition(nomenclature, 0, null, null);
+				var position1 = new StockPosition(nomenclature, 0, null, null, null);
 
 				var nomenclature2 = new Nomenclature();
 				nomenclature2.Type = nomenclatureType;
@@ -68,7 +68,7 @@ namespace Workwear.Test.Integration.Organization
 				protectionTools.Name = "СИЗ для тестирования";
 				uow.Save(protectionTools);
 
-				var position2 = new StockPosition(nomenclature2, 0, null, null);
+				var position2 = new StockPosition(nomenclature2, 0, null, null, null);
 
 				var norm = new Norm();
 				var normItem = norm.AddItem(protectionTools);

@@ -169,7 +169,8 @@ namespace Workwear.Domain.Stock.Documents
 				Nomenclature = position.Nomenclature,
 				WearSize = position.WearSize,
 				Height = position.Height,
-				WearPercent = position.WearPercent
+				WearPercent = position.WearPercent,
+				Owner = position.Owner
 			};
 
 			ObservableItems.Add(newItem);

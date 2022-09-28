@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Gtk;
@@ -23,13 +24,14 @@ namespace Workwear.ViewModels.Stock
 	public class ExpenseDocItemsEmployeeViewModel : ViewModelBase
 	{
 		public readonly ExpenseEmployeeViewModel expenseEmployeeViewModel;
-		private readonly FeaturesService featuresService;
+		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly IDeleteEntityService deleteService;
 		private readonly EmployeeIssueRepository employeeRepository;
 
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
+		public IList<Owner> Owners { get; }
 
 		public ExpenseDocItemsEmployeeViewModel(
 			ExpenseEmployeeViewModel expenseEmployeeViewModel, 
@@ -52,6 +54,7 @@ namespace Workwear.ViewModels.Stock
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 			Entity.FillCanWriteoffInfo(employeeRepository);
+			Owners = UoW.GetAll<Owner>().ToList();
 		}
 
 		#region Хелперы

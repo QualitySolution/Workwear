@@ -6,6 +6,7 @@ using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using QSWidgetLib;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.Views.Stock
@@ -30,13 +31,18 @@ namespace Workwear.Views.Stock
 			.AddColumn("Наименование").Tag("Name").AddTextRenderer(x => x.Nomenclature!= null ? x.Nomenclature.Name : String.Empty)
 			.AddColumn("Размер").AddTextRenderer(x => x.WarehouseOperation.WearSize.Name)
 			.AddColumn("Рост").AddTextRenderer(x => x.WarehouseOperation.Height.Name)
+			.AddColumn("Собственики")
+				.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
+				.AddComboRenderer(x => x.Owner)
+				.SetDisplayFunc(x => x.Name)
+				.FillItems(ViewModel.Owners, "отменить")
+				.Editing()
 			.AddColumn("Процент износа").AddTextRenderer(x => x.WarehouseOperation.WearPercent.ToString("P0"))
 			.AddColumn("Количество").Tag("Count")
 				.AddNumericRenderer(x => x.Amount, false)
 					.Editing(true).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
 				.AddTextRenderer(x => 
 				x.Nomenclature != null && x.Nomenclature.Type.Units != null ? x.Nomenclature.Type.Units.Name : String.Empty,  false)
-			.AddColumn("")
 			.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 			.Finish();
 

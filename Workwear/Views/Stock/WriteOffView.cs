@@ -6,6 +6,7 @@ using QS.Views.Dialog;
 using QSOrmProject;
 using QSWidgetLib;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
@@ -67,6 +68,12 @@ namespace Workwear.Views.Stock
 						.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 						.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
 						.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
+					.AddColumn("Собственики")
+						.Visible(ViewModel.FeaturesService.Available(WorkwearFeature.Owners))
+						.AddComboRenderer(x => x.Owner)
+						.SetDisplayFunc(x => x.Name)
+						.FillItems(ViewModel.Owners, "отменить")
+						.Editing()
 					.AddColumn ("Процент износа").AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter())
 						.Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
 						.AddTextRenderer(e => "%", expand: false)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using NLog;
@@ -15,6 +16,7 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Stock
@@ -26,16 +28,19 @@ namespace Workwear.ViewModels.Stock
         public EmployeeCard Employee { get;}
         public Subdivision Subdivision { get;}
         public Warehouse CurWarehouse { get; set; }
+        public FeaturesService FeaturesService { get; }
+        public IList<Owner> Owners { get; }
 
         public WriteOffViewModel(
             IEntityUoWBuilder uowBuilder, 
             IUnitOfWorkFactory unitOfWorkFactory, 
             INavigationManager navigation,
             SizeService sizeService,
+            FeaturesService featuresService,
             EmployeeCard employee = null,
             Subdivision subdivision = null,
-            IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
-        {
+            IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator) {
+	        FeaturesService = featuresService;
             SizeService = sizeService;
             NavigationManager = navigation;
             Entity.ObservableItems.PropertyChanged += CalculateTotal;
@@ -44,6 +49,7 @@ namespace Workwear.ViewModels.Stock
                 Employee = UoW.GetById<EmployeeCard>(employee.Id);
             else if (subdivision != null)
                 Subdivision = UoW.GetById<Subdivision>(subdivision.Id);
+            Owners = UoW.GetAll<Owner>().ToList();
         }
         
         #region ViewProperty

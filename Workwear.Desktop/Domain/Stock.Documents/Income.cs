@@ -204,13 +204,14 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual IncomeItem AddItem(
 			Nomenclature nomenclature, 
 			Size size, Size height, int amount = 0, 
-			string certificate = null, decimal price = 0m)
+			string certificate = null, decimal price = 0m, Owner owner = null)
 		{
 			if(Operation != IncomeOperations.Enter)
 				throw new InvalidOperationException("Добавление номенклатуры возможно только во входящую накладную. " +
 				                                    "Возвраты должны добавляться с указанием строки выдачи.");
 			var item = ObservableItems
-				.FirstOrDefault(i => i.Nomenclature.Id == nomenclature.Id && i.Height == height && i.WearSize == size);
+				.FirstOrDefault(i => i.Nomenclature.Id == nomenclature.Id 
+				                     && i.Height == height && i.WearSize == size && i.Owner == owner);
 			if(item == null) {
 				item = new IncomeItem(this) {
 					Amount = amount,
@@ -219,6 +220,7 @@ namespace Workwear.Domain.Stock.Documents
 					Height = height,
 					Cost = price,
 					Certificate = certificate,
+					Owner = owner
 				};
 				ObservableItems.Add(item);
 			}

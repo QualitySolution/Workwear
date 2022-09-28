@@ -56,7 +56,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(size);
 				uow.Save(height);
 
-				var position1 = new StockPosition(nomenclature, 0, size, height);
+				var position1 = new StockPosition(nomenclature, 0, size, height, null);
 
 				var subdivision = new Subdivision {
 					Name = "Тестовое подразделение"

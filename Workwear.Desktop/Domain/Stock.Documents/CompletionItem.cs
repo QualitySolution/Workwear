@@ -55,13 +55,25 @@ namespace Workwear.Domain.Stock.Documents
             get => WarehouseOperation.Height;
             set => WarehouseOperation.Height = value;
         }
+        
+        [Display(Name = "Собственник имущества")]
+        public virtual Owner Owner {
+	        get => WarehouseOperation.Owner;
+	        set {
+		        if(WarehouseOperation.Owner != value) {
+			        WarehouseOperation.Owner = value;
+			        OnPropertyChanged();
+		        }
+	        }
+        }
+
         #endregion
         #region Constructors
         public CompletionItem(){}
         #endregion
         #region Calculate
         public virtual StockPosition StockPosition => 
-            new StockPosition(Nomenclature, WearPercent, WarehouseOperation.WearSize, WarehouseOperation.Height);
+            new StockPosition(Nomenclature, WearPercent, WarehouseOperation.WearSize, WarehouseOperation.Height, WarehouseOperation.Owner);
         #endregion
     }
     [Appellative(Gender = GrammaticalGender.Feminine,

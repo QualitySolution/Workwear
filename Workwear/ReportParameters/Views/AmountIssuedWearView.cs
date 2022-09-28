@@ -3,6 +3,7 @@ using System.Data.Bindings.Collections.Generic;
 using QS.Views;
 using Workwear.Domain.Stock;
 using workwear.ReportParameters.ViewModels;
+using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.Views
 {
@@ -47,6 +48,14 @@ namespace workwear.ReportParameters.Views
 				.AddSource(ViewModel)
 				.AddBinding(vm => vm.UseAlternativeName, w => w.Active)
 				.AddBinding(vm => vm.VisibleUseAlternative, w => w.Visible)
+				.InitializeFromSource();
+
+			ylabelOwners.Visible = yspeccomboboxOwners.Visible = ViewModel.FeaturesService.Available(WorkwearFeature.Owners);
+			yspeccomboboxOwners.SelectedItemStrictTyped = false;
+			yspeccomboboxOwners.Binding
+				.AddSource(ViewModel)
+				.AddBinding(wm => wm.Owners, w => w.ItemsList)
+				.AddBinding(wm => wm.SelectOwner, w => w.SelectedItem)
 				.InitializeFromSource();
 		}
 
