@@ -54,7 +54,7 @@
             <Width>87.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>500.5pt</Width>
+            <Width>443.3pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>96.8pt</Width>
@@ -63,7 +63,13 @@
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>67.3pt</Width>
+            <Width>55.7pt</Width>
+          </TableColumn>
+          <TableColumn >
+            <Width>79.3pt</Width>
+            <Visibility>
+              <Hidden>=!{?showOwners}</Hidden>
+            </Visibility>
           </TableColumn>
         </TableColumns>
         <TableGroups>
@@ -136,6 +142,28 @@
                           <Value>=Sum({sum})</Value>
                           <CanGrow>false</CanGrow>
                           <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>Solid</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <PaddingRight>2pt</PaddingRight>
+                            <TextAlign>Right</TextAlign>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox19">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>Solid</Default>
                               <Left>None</Left>
@@ -254,6 +282,24 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox16">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
                   </TableCells>
                 </TableRow>
                 <TableRow>
@@ -313,6 +359,22 @@
                         <Textbox Name="Textbox28">
                           <Value>Количество</Value>
                           <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <BackgroundColor>#E9E9E9</BackgroundColor>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox18">
+                          <Value>Собственник</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>Solid</Default>
                             </BorderStyle>
@@ -400,6 +462,22 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox15">
+                      <Value>={owner_name}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Right</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -437,7 +515,7 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>select if(@summary, NULL, objects.id) as subdivision_id, objects.name as object, nomenclature.name as nomen, sum(issued) as sum, nomenclature.number, if(@alternativeName, IFNULL(sizeAlias.alternative_name, sizeAlias.name) , sizeAlias.name) as size, heightAlias.name as growth, objects.code 
+        <CommandText>select if(@summary, NULL, objects.id) as subdivision_id, objects.name as object, nomenclature.name as nomen, sum(issued) as sum, nomenclature.number, if(@alternativeName, IFNULL(sizeAlias.alternative_name, sizeAlias.name) , sizeAlias.name) as size, heightAlias.name as growth, objects.code, if(@showOwners, owners.name, null) as owner_name 
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
@@ -445,13 +523,16 @@ LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomencl
 LEFT JOIN item_types ON item_types.id = nomenclature.type_id
 LEFT JOIN sizes as sizeAlias ON (sizeAlias.id = operation_issued_by_employee.size_id)
 LEFT JOIN sizes AS heightAlias ON (heightAlias.id = operation_issued_by_employee.height_id)
+LEFT JOIN operation_warehouse ON warehouse_operation_id = operation_warehouse.id
+LEFT JOIN owners ON operation_warehouse.owner_id = owners.id
 WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE) and operation_issued_by_employee.operation_time &lt;= CONVERT(@dateEnd, DATE)
 AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
 AND (@issue_type = "" OR item_types.issue_type = @issue_type)
 and operation_issued_by_employee.returned = 0 AND ((@withoutsub AND objects.id IS NULL) OR objects.id IN (@subdivisions))
 and (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
 and (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
-GROUP BY subdivision_id, nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL)
+AND (@showOwners AND (@allOwners OR ((@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)))
+GROUP BY subdivision_id, operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL)
 ORDER BY CAST(objects.code AS UNSIGNED), nomen, size, growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
@@ -483,6 +564,18 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen, size, growth;</CommandText>
           </QueryParameter>
           <QueryParameter Name="alternativeName">
             <Value>={?alternativeName}</Value>
+          </QueryParameter>
+          <QueryParameter Name="showOwners">
+            <Value>={?showOwners}</Value>
+          </QueryParameter>
+          <QueryParameter Name="ownerId">
+            <Value>={?ownerId}</Value>
+          </QueryParameter>
+          <QueryParameter Name="withoutOwner">
+            <Value>={?withoutOwner}</Value>
+          </QueryParameter>
+          <QueryParameter Name="allOwners">
+            <Value>={?allOwners}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -517,6 +610,10 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen, size, growth;</CommandText>
         </Field>
         <Field Name="code">
           <DataField>code</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="owner_name">
+          <DataField>owner_name</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -605,6 +702,38 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen, size, growth;</CommandText>
       </Prompt>
     </ReportParameter>
     <ReportParameter Name="alternativeName">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="showOwners">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ownerId">
+      <DataType>Integer</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="withoutOwner">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="allOwners">
       <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>

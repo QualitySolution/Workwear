@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamma.Widgets;
@@ -58,8 +58,12 @@ namespace workwear.ReportParameters.ViewModels
 					{"issue_type", IssueType?.ToString() },
 					{"matchString", MatchString},
 					{"noMatchString", NoMatchString},
-					{"alternativeName", UseAlternativeName}
-				 };
+					{"alternativeName", UseAlternativeName},
+					{"showOwners", FeaturesService.Available(WorkwearFeature.Owners)},
+					{"allOwners", SelectOwner.Equals(SpecialComboState.All)},
+					{"withoutOwner", SelectOwner.Equals(SpecialComboState.Not)},
+					{"ownerId", (SelectOwner as Owner)?.Id ?? -1}
+		};
 
 		#region Параметры
 		private DateTime? startDate;
@@ -173,27 +177,6 @@ namespace workwear.ReportParameters.ViewModels
 				.Select(x => x.Id)
 				.Distinct()
 				.ToArray();
-		}
-
-		private int[] SelectOwners() {
-			switch (SelectOwner) {
-				case Owner owner:
-					return new[] { owner.Id };
-				case null:
-					return new[] { -1 };
-				case SpecialComboState state:
-					switch(state) {
-						case SpecialComboState.All:
-							return Owners.Select(x => x.Id).ToArray();
-						case SpecialComboState.Not:
-							return new[] { -1 };
-						case SpecialComboState.None:
-						default:
-							throw new ArgumentOutOfRangeException();
-					}
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
 		}
 	}
 
