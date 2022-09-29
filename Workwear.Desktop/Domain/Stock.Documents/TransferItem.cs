@@ -51,12 +51,28 @@ namespace Workwear.Domain.Stock.Documents
 			get => amountInStock;
 			set => SetField(ref amountInStock, value);
 		}
+		
+		[Display(Name = "Собственник имущества")]
+		public virtual Owner Owner {
+			get => WarehouseOperation.Owner;
+			set {
+				if(WarehouseOperation.Owner != value) {
+					WarehouseOperation.Owner = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+		
 		#endregion
 		#region Расчетные
 		public virtual string Title => 
 			$"Перемещение {StockPosition.Title} x {Amount} со склада {document.WarehouseFrom.Name} на склад {document.WarehouseTo.Name}";
-		public virtual StockPosition StockPosition => 
-			new StockPosition(Nomenclature, WarehouseOperation.WearPercent, warehouseOperation.WearSize, warehouseOperation.Height);
+		public virtual StockPosition StockPosition => new StockPosition(
+			Nomenclature, 
+			WarehouseOperation.WearPercent, 
+			warehouseOperation.WearSize, 
+			warehouseOperation.Height, 
+			warehouseOperation.Owner);
 		#endregion
 		public TransferItem() { }
 		public TransferItem(IUnitOfWork uow, Transfer transfer, StockPosition position, int amount) {
@@ -65,6 +81,7 @@ namespace Workwear.Domain.Stock.Documents
 			warehouseOperation.WearSize = position.WearSize;
 			warehouseOperation.Height = position.Height;
 			warehouseOperation.WearPercent = position.WearPercent;
+			warehouseOperation.Owner = position.Owner;
 			warehouseOperation.Amount = this.amount = amount;
 			warehouseOperation.ExpenseWarehouse = transfer.WarehouseFrom;
 			warehouseOperation.OperationTime = transfer.Date;

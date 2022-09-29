@@ -205,7 +205,10 @@ public partial class MainWindow : Gtk.Window
 		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuRatings.Visible = FeaturesService.Available(WorkwearFeature.Ratings);
-		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications) || FeaturesService.Available(WorkwearFeature.Claims) || FeaturesService.Available(WorkwearFeature.Ratings);
+		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications) 
+		                         || FeaturesService.Available(WorkwearFeature.Claims) 
+		                         || FeaturesService.Available(WorkwearFeature.Ratings);
+		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
 	}
 	#endregion
 
@@ -790,5 +793,9 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionMenuRatingsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RatingsViewModel>(null);
+	}
+
+	protected void OnActionOwnerActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<OwnerJournalViewModel>(null);
 	}
 }

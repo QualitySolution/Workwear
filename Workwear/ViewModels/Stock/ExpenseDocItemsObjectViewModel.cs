@@ -12,6 +12,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -20,15 +21,23 @@ namespace Workwear.ViewModels.Stock
 		public readonly ExpenseObjectViewModel expenseObjectViewModel;
 		private readonly INavigationManager navigation;
 		private readonly IDeleteEntityService deleteService;
+		public readonly FeaturesService featuresService;
+		public IList<Owner> Owners { get; }
 
-		public ExpenseDocItemsObjectViewModel(ExpenseObjectViewModel expenseObjectViewModel, INavigationManager navigation, IDeleteEntityService deleteService)
+		public ExpenseDocItemsObjectViewModel(
+			ExpenseObjectViewModel expenseObjectViewModel, 
+			INavigationManager navigation, 
+			IDeleteEntityService deleteService,
+			FeaturesService featuresService)
 		{
 			this.expenseObjectViewModel = expenseObjectViewModel ?? throw new ArgumentNullException(nameof(expenseObjectViewModel));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
+			Owners = UoW.GetAll<Owner>().ToList();
 		}
 
 		#region Хелперы

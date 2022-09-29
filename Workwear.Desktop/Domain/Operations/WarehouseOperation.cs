@@ -78,6 +78,14 @@ namespace Workwear.Domain.Operations
 			get => height;
 			set => SetField(ref height, value);
 		}
+
+		private Owner owner;
+		[Display(Name = "Собственник")]
+		public virtual Owner Owner {
+			get => owner;
+			set => SetField(ref owner, value);
+		}
+
 		#region Расчетные
 		public virtual decimal Total => Cost * Amount;
 		public virtual string Title => ReceiptWarehouse != null && ExpenseWarehouse != null

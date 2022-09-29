@@ -125,7 +125,8 @@ namespace Workwear.Domain.Stock.Documents
                     WearSize = position.WearSize,
                     Height = position.Height,
                     Amount = count,
-                    WearPercent = position.WearPercent
+                    WearPercent = position.WearPercent,
+                    Owner = position.Owner
                 }
             };
             ObservableSourceItems.Add(item);

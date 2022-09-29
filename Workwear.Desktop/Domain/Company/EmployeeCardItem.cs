@@ -141,11 +141,13 @@ namespace Workwear.Domain.Company
 				return StockStateInfo.NotEnough;
 			}
 		}
-		public virtual IEnumerable<StockBalanceDTO> BestChoiceInStock => InStock
-			.OrderBy(x => 
-				ProtectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(x.Nomenclature)).Count())
-			.ThenBy(x => x.WearPercent)
-			.ThenByDescending(x => x.Amount);
+		public virtual IEnumerable<StockBalanceDTO> BestChoiceInStock {
+			get {
+				var bestChoice = InStock.ToList();
+				bestChoice.Sort(new BestChoiceInStockComparer(ProtectionTools));
+				return bestChoice;
+			}
+		}
 		#endregion
 		public virtual string MatchedNomenclatureShortText {
 			get {
@@ -324,6 +326,32 @@ namespace Workwear.Domain.Company
 		NotEnough,
 		[ColorName("red")]
 		OutOfStock,
+	}
+
+	public class BestChoiceInStockComparer : IComparer<StockBalanceDTO> {
+		private readonly ProtectionTools protectionTools;
+		public BestChoiceInStockComparer(ProtectionTools protectionTools) => 
+			this.protectionTools = protectionTools;
+		//Сортируем позиции по следующим критериям
+		//Сначала берем позицию более приоритетного собственника
+		//Была выбрана номенклатура прямо указанная в номенклатуре нормы, а уже затем аналоги. (Возможно текущий код не совсем это реализует. А привязывается к порядку номенклатур, скорей всего это не логично, наверно надо будет улучшить.)
+		//Далее смотрим чтобы был меньший процент износа, то есть выдавалась новая.
+		//Далее выдаем ту которой больше на складе, чтобы оставалось больше разнообразия(решение сомнительное, но какое есть)
+		public int Compare(StockBalanceDTO x, StockBalanceDTO y) {
+			if(x is null || y is null)
+				throw new ArgumentNullException();
+			if(x.Owner?.Priority != y.Owner?.Priority)
+				return (y.Owner?.Priority ?? 0).CompareTo(x.Owner?.Priority ?? 0);
+			var xMatchedNomenclature = protectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(x.Nomenclature)).Count();
+			var yMatchedNomenclature = protectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(y.Nomenclature)).Count();
+			if(xMatchedNomenclature != yMatchedNomenclature)
+				return xMatchedNomenclature.CompareTo(yMatchedNomenclature);
+			if(x.WearPercent != y.WearPercent)
+				return x.WearPercent.CompareTo(y.WearPercent);
+			if(x.Amount != y.Amount)
+				return y.Amount.CompareTo(x.Amount);
+			return 0;
+		}
 	}
 }
 
