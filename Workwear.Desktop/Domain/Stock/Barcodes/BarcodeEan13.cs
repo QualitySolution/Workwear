@@ -8,6 +8,6 @@ namespace Workwear.Domain.Stock.Barcodes
 		public virtual int Id { get; }
 		public virtual string Value { get; set; }
 		public virtual string Fractional { get; set; }
-		public EmployeeIssueOperation EmployeeIssueOperation { get; set; }
+		public virtual EmployeeIssueOperation EmployeeIssueOperation { get; set; }
 	}
 }
