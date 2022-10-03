@@ -74,8 +74,10 @@ namespace workwear.Tools.Features
 					return ProductEdition == 3;
 				case WorkwearFeature.MassExpense:
 				case WorkwearFeature.CollectiveExpense:
+				case WorkwearFeature.Completion:
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.BatchProcessing:
+				case WorkwearFeature.HistoryLog:
 					return ProductEdition == 2 || ProductEdition == 3;
 				case WorkwearFeature.Communications:
 				case WorkwearFeature.EmployeeLk:
@@ -89,10 +91,6 @@ namespace workwear.Tools.Features
 					}
 					var functionLists = cloudClientService.GetAvailableFeatures(dataBaseInfo.BaseGuid.Value.ToString());
 					return functionLists.Any(x => x.Name == "wear_lk");
-				case WorkwearFeature.HistoryLog:
-					return ProductEdition == 2 || ProductEdition == 3;
-				case WorkwearFeature.Completion:
-					return ProductEdition == 2 || ProductEdition == 3;
 				default:
 					return false;
 			}
@@ -101,25 +99,31 @@ namespace workwear.Tools.Features
 
 	public enum WorkwearFeature
 	{
-		[Display(Name = "Работа с несколькими складами")]
-		Warehouses,
-		[Display(Name = "Идентификация сотрудника по карте")]
-		IdentityCards,
+		#region Профессиональная
 		[Display(Name = "Выдача списком")]
 		MassExpense,
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,
+		[Display(Name = "Комплектация")]
+		Completion,
 		[Display(Name = "Загрузка из Excel")]
 		LoadExcel,
 		[Display(Name = "Групповая обработка")]
 		BatchProcessing,
+		[Display(Name = "История изменений")]
+		HistoryLog,
+		#endregion
+		#region С облаком
 		[Display(Name = "Мобильный кабинет сотрудника")]
 		EmployeeLk,
 		[Display(Name = "Коммуникация с сотрудниками")]
 		Communications,
-		[Display(Name = "История изменений")]
-		HistoryLog,
-		[Display(Name = "Комплектация")]
-		Completion
+		#endregion
+		#region Предприятие
+		[Display(Name = "Работа с несколькими складами")]
+		Warehouses,
+		[Display(Name = "Идентификация сотрудника по карте")]
+		IdentityCards,
+		#endregion
 	}
 }
