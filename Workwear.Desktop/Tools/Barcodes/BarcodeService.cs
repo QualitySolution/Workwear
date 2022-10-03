@@ -13,7 +13,7 @@ namespace Workwear.Tools.Barcodes
 
 		#region Create
 
-		public IList<BarcodeEan13> Create(IUnitOfWork unitOfWork, int issued, EmployeeIssueOperation employeeIssueOperation) {
+		public IList<Barcode> Create(IUnitOfWork unitOfWork, int issued, EmployeeIssueOperation employeeIssueOperation) {
 			var barcodes = Create(unitOfWork, issued);
 			foreach(var barcode in barcodes) {
 				barcode.EmployeeIssueOperation = employeeIssueOperation;
@@ -22,10 +22,10 @@ namespace Workwear.Tools.Barcodes
 			return barcodes;
 		}
 		
-		public IList<BarcodeEan13> Create(IUnitOfWork unitOfWork, int amount) {
-			var barCodeList = new List<BarcodeEan13>();
+		public IList<Barcode> Create(IUnitOfWork unitOfWork, int amount) {
+			var barCodeList = new List<Barcode>();
 			for(var i = 1; i < amount + 1; i++) {
-				var newBarCode = new BarcodeEan13();
+				var newBarCode = new Barcode();
 				unitOfWork.Save(newBarCode);
 				newBarCode.Value = $"{BaseCode}{newBarCode.Id:D8}{GetCheckDigit(BaseCode, newBarCode.Id)}";
 				newBarCode.Fractional = $"{i}/{amount}";
@@ -38,8 +38,8 @@ namespace Workwear.Tools.Barcodes
 
 		#region Get
 
-		public IList<BarcodeEan13> GetByEmployeeIssueOperation(EmployeeIssueOperation employeeIssueOperation, IUnitOfWork uoW) => 
-			uoW.GetAll<BarcodeEan13>().Where(b => b.EmployeeIssueOperation.Id == employeeIssueOperation.Id).ToList();
+		public IList<Barcode> GetByEmployeeIssueOperation(EmployeeIssueOperation employeeIssueOperation, IUnitOfWork uoW) => 
+			uoW.GetAll<Barcode>().Where(b => b.EmployeeIssueOperation.Id == employeeIssueOperation.Id).ToList();
 
 		#endregion
 

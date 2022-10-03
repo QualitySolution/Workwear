@@ -3,9 +3,9 @@ using Workwear.Domain.Stock.Barcodes;
 
 namespace Workwear.HibernateMapping.Stock 
 {
-	public class BarcodeEan13Map : ClassMap<BarcodeEan13>
+	public class BarcodeMap : ClassMap<Barcode>
 	{
-		public BarcodeEan13Map() 
+		public BarcodeMap() 
 		{
 			Table("barcodes");
 

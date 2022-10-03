@@ -3,7 +3,7 @@ using Workwear.Domain.Operations;
 
 namespace Workwear.Domain.Stock.Barcodes 
 {
-	public class BarcodeEan13 : IDomainObject
+	public class Barcode : IDomainObject
 	{
 		public virtual int Id { get; }
 		public virtual string Value { get; set; }

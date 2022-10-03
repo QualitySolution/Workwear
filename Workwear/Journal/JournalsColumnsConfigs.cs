@@ -300,6 +300,13 @@ namespace workwear.Journal
 					.AddColumn("Описание").AddTextRenderer(node => node.ShortDescription)
 					.Finish()
 			);
+			
+			TreeViewColumnsConfigFactory.Register<BarcodeJournalViewModel>(
+				() => FluentColumnsConfig<BarcodeJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString())
+					.AddColumn("Значение").AddTextRenderer(node => node.Value)
+					.Finish()
+				);
 			#endregion
 			#region Sizes
 			TreeViewColumnsConfigFactory.Register<SizeJournalViewModel>(
