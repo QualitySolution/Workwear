@@ -74,8 +74,10 @@ namespace Workwear.Tools.Features
 		{
 		}
 
-		virtual public bool Available(WorkwearFeature feature)
+		public virtual bool Available(WorkwearFeature feature) 
 		{
+			if(feature == WorkwearFeature.Brcodes)
+				return true;
 			if(ProductEdition == 0) //В демо редакции доступны все возможности кроме облачных
 				return (feature != WorkwearFeature.Communications && feature != WorkwearFeature.EmployeeLk);
 
@@ -153,7 +155,9 @@ namespace Workwear.Tools.Features
 		[Display(Name = "Отзывы")]
 		Ratings,
 		[Display(Name = "Собственники имущества")]
-		Owners
+		Owners,
+		[Display(Name = "Штрих-коды")]
+		Brcodes
 	}
 	
 	[AttributeUsage(AttributeTargets.Field)]

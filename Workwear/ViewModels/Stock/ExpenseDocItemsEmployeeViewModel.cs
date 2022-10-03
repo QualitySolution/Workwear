@@ -18,6 +18,7 @@ using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations;
 using Workwear.Measurements;
 using Workwear.Repository.Operations;
+using Workwear.Tools.Barcodes;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -28,6 +29,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly INavigationManager navigation;
 		private readonly IDeleteEntityService deleteService;
 		private readonly EmployeeIssueRepository employeeRepository;
+		private readonly BarcodeService barcodeService;
 
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
@@ -40,7 +42,8 @@ namespace Workwear.ViewModels.Stock
 			SizeService sizeService, 
 			IDeleteEntityService deleteService,
 			EmployeeIssueRepository employeeRepository,
-			BaseParameters baseParameters)
+			BaseParameters baseParameters,
+			BarcodeService barcodeService)
 		{
 			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
@@ -48,6 +51,7 @@ namespace Workwear.ViewModels.Stock
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			employeeRepository.RepoUow = UoW;
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
@@ -203,5 +207,12 @@ namespace Workwear.ViewModels.Stock
 				Entity.FillCanWriteoffInfo(employeeRepository);
 		}
 		#endregion
+
+		public void ReleaseBarcode(ExpenseItem item) {
+			var barcodes = barcodeService.GetByEmployeeIssueOperation(item.EmployeeIssueOperation, UoW);
+			if(barcodes.Count == 0) 
+				barcodes = barcodeService.Create(UoW, item.EmployeeIssueOperation.Issued, item.EmployeeIssueOperation);
+			UoW.Commit();
+		}
 	}
 }

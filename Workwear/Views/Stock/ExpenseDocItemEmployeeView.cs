@@ -109,8 +109,21 @@ namespace Workwear.Views.Stock
 			itemNomenclature.Sensitive = selected?.Nomenclature != null;
 			itemNomenclature.Activated += Item_Activated;
 			menu.Add(itemNomenclature);
+			
+			var releaseBarcode  = new MenuItemId<ExpenseItem>("Выпустить штрих-код");
+			releaseBarcode.ID = selected;
+			releaseBarcode.Visible = ViewModel.featuresService.Available(WorkwearFeature.Brcodes);
+			releaseBarcode.Sensitive = selected?.EmployeeIssueOperation?.Id != null && selected.EmployeeIssueOperation?.Id != 0;
+			releaseBarcode.Activated += ReleaseBarcode_Activated;
+			menu.Add(releaseBarcode);
+			
 			menu.ShowAll();
 			menu.Popup();
+		}
+
+		private void ReleaseBarcode_Activated(object sender, EventArgs e) 
+		{
+			viewModel.ReleaseBarcode(((MenuItemId<ExpenseItem>)sender).ID);
 		}
 
 		void ItemOpenProtection_Activated(object sender, EventArgs e)
