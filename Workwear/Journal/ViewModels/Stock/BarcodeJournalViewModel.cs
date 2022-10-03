@@ -19,8 +19,9 @@ namespace workwear.Journal.ViewModels.Stock
 			INavigationManager navigationManager, 
 			IDeleteEntityService deleteEntityService = null, 
 			ICurrentPermissionService currentPermissionService = null
-			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService) 
 		{
+			UseSlider = true;
 		}
 
 		protected override IQueryOver<Barcode> ItemsQuery(IUnitOfWork uow) 

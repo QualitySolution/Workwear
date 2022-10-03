@@ -9,6 +9,20 @@ namespace Workwear.Views.Stock
 		public BarcodeView(BarcodeViewModel viewModel) : base(viewModel) 
 		{
 			this.Build();
+			
+			ylabelCodeValue.Binding
+				.AddBinding(Entity, e => e.Value, w => w.Text)
+				.InitializeFromSource();
+			
+			ylabelEmployeeIssueOperation.Binding
+				.AddBinding(ViewModel, wm => wm.EmployeeIssueVisible, w => w.Visible)
+				.InitializeFromSource();
+			
+			ylabelEmployeeIssueOperationValue.Binding
+				.AddSource(ViewModel)
+				.AddBinding(wm => wm.EmployeeIssueVisible, w => w.Visible)
+				.AddBinding(wm => wm.EmployeeIssueTitle, w => w.Text)
+				.InitializeFromSource();
 		}
 	}
 }

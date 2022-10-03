@@ -16,5 +16,11 @@ namespace Workwear.ViewModels.Stock
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 		}
+
+		#region ViewProperty
+		public bool EmployeeIssueVisible => Entity.EmployeeIssueOperation != null;
+		public string EmployeeIssueTitle => Entity.EmployeeIssueOperation.Title + " " + Entity.Fractional;
+
+		#endregion
 	}
 }
