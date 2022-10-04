@@ -1,4 +1,4 @@
-﻿using NHibernate;
+using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -22,6 +22,7 @@ namespace workwear.Journal.ViewModels.Stock
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService) 
 		{
 			UseSlider = true;
+			VisibleCreateAction = false;
 		}
 
 		protected override IQueryOver<Barcode> ItemsQuery(IUnitOfWork uow) 

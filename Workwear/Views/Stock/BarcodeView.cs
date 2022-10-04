@@ -29,6 +29,10 @@ namespace Workwear.Views.Stock
 			ybuttonDeleteEmployeeIssueOperation.Binding
 				.AddBinding(ViewModel, wm => wm.EmployeeIssueVisible, w => w.Visible)
 				.InitializeFromSource();
+			
+			ylabelOperations.Binding
+				.AddBinding(ViewModel, wm => wm.OperationsTitle, w => w.Text)
+				.InitializeFromSource();
 
 			ybuttonDeleteEmployeeIssueOperation.Clicked += YButtonDeleteEmployeeIssueOperationOnActivated;
 		}

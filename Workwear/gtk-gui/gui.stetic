@@ -20697,10 +20697,9 @@
           </packing>
         </child>
         <child>
-          <widget class="Gamma.GtkWidgets.yLabel" id="ylabel4">
+          <widget class="Gamma.GtkWidgets.yLabel" id="ylabelOperations">
             <property name="MemberName" />
-            <property name="Xalign">0</property>
-            <property name="LabelProp" translatable="yes">Сопутствующие операции:</property>
+            <property name="LabelProp" translatable="yes">Сопутствующие операции</property>
           </widget>
           <packing>
             <property name="Position">2</property>

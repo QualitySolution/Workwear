@@ -18,7 +18,7 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yLabel ylabelCodeValue;
 
-		private global::Gamma.GtkWidgets.yLabel ylabel4;
+		private global::Gamma.GtkWidgets.yLabel ylabelOperations;
 
 		private global::Gamma.GtkWidgets.yTable ytable1;
 
@@ -104,12 +104,11 @@ namespace Workwear.Views.Stock
 			w8.Expand = false;
 			w8.Fill = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
-			this.ylabel4 = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabel4.Name = "ylabel4";
-			this.ylabel4.Xalign = 0F;
-			this.ylabel4.LabelProp = global::Mono.Unix.Catalog.GetString("Сопутствующие операции:");
-			this.yvbox1.Add(this.ylabel4);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ylabel4]));
+			this.ylabelOperations = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelOperations.Name = "ylabelOperations";
+			this.ylabelOperations.LabelProp = global::Mono.Unix.Catalog.GetString("Сопутствующие операции");
+			this.yvbox1.Add(this.ylabelOperations);
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ylabelOperations]));
 			w9.Position = 2;
 			w9.Expand = false;
 			w9.Fill = false;

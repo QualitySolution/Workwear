@@ -25,6 +25,7 @@ namespace Workwear.ViewModels.Stock
 				case nameof(Entity.EmployeeIssueOperation):
 					OnPropertyChanged(nameof(EmployeeIssueVisible));
 					OnPropertyChanged(nameof(EmployeeIssueTitle));
+					OnPropertyChanged(nameof(OperationsTitle));
 					break;
 				case nameof(Entity.Fractional):
 					OnPropertyChanged(nameof(EmployeeIssueTitle));
@@ -35,6 +36,7 @@ namespace Workwear.ViewModels.Stock
 		#region ViewProperty
 		public bool EmployeeIssueVisible => Entity.EmployeeIssueOperation != null;
 		public string EmployeeIssueTitle => Entity.EmployeeIssueOperation?.Title + " " + Entity.Fractional;
+		public string OperationsTitle => Entity.EmployeeIssueOperation is null ? "Нет привязаных операций" : "Привязанные операции";
 
 		#endregion
 
