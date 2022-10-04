@@ -27,7 +27,7 @@ namespace Workwear.Tools.Barcodes
 			for(var i = 1; i < amount + 1; i++) {
 				var newBarCode = new Barcode();
 				unitOfWork.Save(newBarCode);
-				newBarCode.Value = $"{BaseCode}{newBarCode.Id:D8}{GetCheckDigit(BaseCode, newBarCode.Id)}";
+				newBarCode.Title = $"{BaseCode}{newBarCode.Id:D8}{GetCheckDigit(BaseCode, newBarCode.Id)}";
 				newBarCode.Fractional = $"{i}/{amount}";
 				barCodeList.Add(newBarCode);
 			}

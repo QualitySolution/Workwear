@@ -30,8 +30,8 @@ namespace workwear.Journal.ViewModels.Stock
 			return uow.Session.QueryOver<Barcode>()
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
-					.Select(x => x.Value).WithAlias(() => resultAlias.Value)
-				).OrderBy(x => x.Value).Asc
+					.Select(x => x.Title).WithAlias(() => resultAlias.Value)
+				).OrderBy(x => x.Title).Asc
 				.TransformUsing(Transformers.AliasToBean<BarcodeJournalNode>());
 		}
 	}
