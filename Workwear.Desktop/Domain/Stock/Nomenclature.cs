@@ -80,6 +80,14 @@ namespace Workwear.Domain.Stock {
 			get => ratingCount;
 			set => SetField(ref ratingCount, value);
 		}
+		
+		private bool useBarcode;
+		[Display(Name ="Использовать штрих-код")]
+		public virtual bool UseBarcode {
+			get => useBarcode;
+			set => SetField(ref useBarcode, value);
+		}
+		
 		#endregion
 		#region Рассчетные
 		public virtual string TypeName => Type.Name;

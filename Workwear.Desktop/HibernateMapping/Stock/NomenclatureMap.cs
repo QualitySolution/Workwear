@@ -22,6 +22,7 @@ namespace Workwear.HibernateMapping.Stock
 			Map(x => x.Archival).Column("archival");
 			Map(x => x.Rating).Column("rating");
 			Map(x => x.RatingCount).Column("rating_count");
+			Map(x => x.UseBarcode).Column("use_barcode");
 
 			References (x => x.Type).Column ("type_id");
 
