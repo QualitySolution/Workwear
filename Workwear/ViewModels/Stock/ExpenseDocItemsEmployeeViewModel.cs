@@ -7,6 +7,8 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Services;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.ViewModels;
 using QS.ViewModels.Dialog;
 using workwear;
@@ -213,6 +215,14 @@ namespace Workwear.ViewModels.Stock
 			if(barcodes.Count == 0) 
 				barcodes = barcodeService.Create(UoW, item.EmployeeIssueOperation.Issued, item.EmployeeIssueOperation);
 			UoW.Commit();
+
+			var reportInfo = new ReportInfo {
+				Title = "Штрих-коды",
+				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
+				Parameters = new Dictionary<string, object> { }
+			};
+
+			navigation.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
 		}
 	}
 }
