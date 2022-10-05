@@ -46,7 +46,7 @@
           <TableGroup>
             <Grouping Name="nomenclatureGroup">
               <GroupExpressions>
-                <GroupExpression >{nomenclature_id}=</GroupExpression>
+                <GroupExpression>{nomenclature_id}=</GroupExpression>
               </GroupExpressions>
               <PageBreakAtStart>false</PageBreakAtStart>
               <PageBreakAtEnd>false</PageBreakAtEnd>
@@ -73,7 +73,7 @@
                             <FontWeight>Bold</FontWeight>
                             <FontSize>10pt</FontSize>
                             <VerticalAlign>Bottom</VerticalAlign>
-                            <TextAlign >Right</TextAlign>
+                            <TextAlign>Right</TextAlign>
                           </Style>
                           <Visibility>
                           </Visibility>
@@ -138,8 +138,8 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
+                          <Right>None</Right>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
@@ -157,14 +157,14 @@
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Bottom >None</Bottom>
-                          <Right >None</Right>
-                          <Left >None</Left>
+                          <Bottom>None</Bottom>
+                          <Right>None</Right>
+                          <Left>None</Left>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
-                        <TextAlign >Center</TextAlign>
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -176,8 +176,8 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Left >None</Left>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <PaddingRight>2pt</PaddingRight>
                         <TextAlign>Left</TextAlign>
@@ -189,8 +189,8 @@
                 </TableCell>
               </TableCells>
             </TableRow>
-            <TableRow >
-              <Height>37.6pt</Height>
+            <TableRow>
+              <Height>63.8pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -199,15 +199,15 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Right >None</Right>
-                          <Top >None</Top>
+                          <Right>None</Right>
+                          <Top>None</Top>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Left</TextAlign>
-                        <VerticalAlign >Middle</VerticalAlign>
-                        <FontWeight >Bold</FontWeight>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <FontWeight>Bold</FontWeight>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -217,15 +217,15 @@
                     <CustomReportItem Name="CustomReportItem1">
                       <Type>BarCode EAN-13</Type>
                       <CustomProperties>
-                        <CustomProperty>
+                        <CustomProperty >
                           <Name>NumberSystem</Name>
                           <Value>00</Value>
                         </CustomProperty>
-                        <CustomProperty>
+                        <CustomProperty >
                           <Name>ManufacturerCode</Name>
                           <Value>12345</Value>
                         </CustomProperty>
-                        <CustomProperty>
+                        <CustomProperty >
                           <Name>ProductCode</Name>
                           <Value>12345</Value>
                         </CustomProperty>
@@ -247,8 +247,8 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Left >None</Left>
-                          <Top >None</Top>
+                          <Left>None</Left>
+                          <Top>None</Top>
                         </BorderStyle>
                         <PaddingRight>2pt</PaddingRight>
                         <TextAlign>Left</TextAlign>
@@ -260,7 +260,7 @@
                 </TableCell>
               </TableCells>
             </TableRow>
-            <TableRow >
+            <TableRow>
               <Height>8.5pt</Height>
               <TableCells>
                 <TableCell>
@@ -271,17 +271,17 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
-                          <Left >None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                          <Left>None</Left>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Left</TextAlign>
-                        <VerticalAlign >Middle</VerticalAlign>
-                        <FontWeight >Bold</FontWeight>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <FontWeight>Bold</FontWeight>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -294,16 +294,16 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Top >None</Top>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
+                          <Top>None</Top>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
-                        <TextAlign >Center</TextAlign>
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -316,10 +316,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Left >None</Left>
-                          <Top >None</Top>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Top>None</Top>
+                          <Right>None</Right>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <PaddingRight>2pt</PaddingRight>
                         <TextAlign>Left</TextAlign>
@@ -364,7 +364,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT `title` AS barcode, fractional,
 operation_issued_by_employee.operation_time AS operation_date,
@@ -390,7 +390,7 @@ WHERE barcodes.id IN (@barcodes)</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="barcode">
           <DataField>barcode</DataField>
           <TypeName>System.String</TypeName>
@@ -439,7 +439,7 @@ WHERE barcodes.id IN (@barcodes)</CommandText>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="barcodes">
       <DataType>Integer</DataType>
       <Nullable>false</Nullable>
