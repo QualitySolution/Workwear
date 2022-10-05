@@ -27,7 +27,7 @@ namespace Workwear.Tools.Barcodes
 			for(var i = 1; i < amount + 1; i++) {
 				var newBarCode = new Barcode();
 				unitOfWork.Save(newBarCode);
-				newBarCode.Title = $"{BaseCode}{newBarCode.Id:D8}{GetCheckDigit(BaseCode, newBarCode.Id)}";
+				newBarCode.Title = $"{BaseCode}{newBarCode.Id:D8}{CheckSum($"{BaseCode}{newBarCode.Id:D8}")}";
 				newBarCode.Fractional = $"{i}/{amount}";
 				barCodeList.Add(newBarCode);
 			}
@@ -45,16 +45,19 @@ namespace Workwear.Tools.Barcodes
 
 		#region Private Methods
 
-		private int GetCheckDigit(int baseCode, int code) {
-			var result = SumDigit(Int32.Parse(baseCode.ToString() + code));
-			while(result > 9) {
-				result = SumDigit(result);
+		static int CheckSum(string upccode)
+		{
+			var sum = 0;
+			var bOdd=false;
+			foreach (var digit in upccode.Select(c => (int) Char.GetNumericValue(c)))
+			{
+				sum += bOdd ? digit * 3 : digit;
+				bOdd = !bOdd;                       // switch every other character
 			}
-			return result;
+			var cs = 10 - sum % 10;
+			return cs == 10? 0: cs;
 		}
-
-		private int SumDigit(int digit) => digit.ToString().Sum(x => Int32.Parse(x.ToString()));
-
+		
 		#endregion
 	}
 }

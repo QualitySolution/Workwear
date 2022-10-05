@@ -16,7 +16,7 @@
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>103.4pt</Height>
+    <Height>115.1pt</Height>
     <ReportItems>
       <Table Name="Table1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <DataSetName>Data</DataSetName>
@@ -31,15 +31,15 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>219.5pt</Width>
+            <Width>303.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>351.1pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>188.8pt</Width>
+            <Width>260.7pt</Width>
             <Visibility>
             </Visibility>
+          </TableColumn>
+          <TableColumn >
+            <Width>188.8pt</Width>
           </TableColumn>
         </TableColumns>
         <TableGroups>
@@ -83,9 +83,10 @@
                     </TableCell>
                     <TableCell>
                       <ReportItems>
-                        <Textbox Name="Textbox5">
-                          <Value>={nomenclature}</Value>
-                          <Style>
+                        <Textbox Name="Textbox16">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>Solid</Default>
                               <Left>None</Left>
@@ -94,17 +95,13 @@
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
-                            <FontWeight>Bold</FontWeight>
-                            <VerticalAlign>Bottom</VerticalAlign>
                           </Style>
-                          <Visibility>
-                          </Visibility>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell>
+                    <TableCell >
                       <ReportItems>
-                        <Textbox Name="Textbox16">
+                        <Textbox Name="Textbox7">
                           <Value>
                           </Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -151,28 +148,28 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox12" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                      <Value>={subdivision}</Value>
-                      <CanGrow>true</CanGrow>
-                      <Style>
+                    <Textbox Name="Textbox15">
+                      <Value>= {nomenclature} + " " + {fractional}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Bottom>None</Bottom>
-                          <Right>None</Right>
                           <Left>None</Left>
+                          <Bottom>None</Bottom>
+                          <Right >None</Right>
                         </BorderStyle>
-                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Left</TextAlign>
                         <BorderColor />
                         <BorderWidth />
-                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell>
+                <TableCell >
                   <ReportItems>
-                    <Textbox Name="Textbox15">
-                      <Value>= {nomenclature} + " " + {fractional}</Value>
+                    <Textbox Name="Textbox3">
+                      <Value>
+                      </Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -190,12 +187,12 @@
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>63.8pt</Height>
+              <Height>67.0pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox20">
-                      <Value>={organization}</Value>
+                      <Value>={organization} + " " + {subdivision}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -206,38 +203,10 @@
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Left</TextAlign>
-                        <VerticalAlign>Middle</VerticalAlign>
-                        <FontWeight>Bold</FontWeight>
+                        <VerticalAlign>Top</VerticalAlign>
+                        <FontWeight>Normal</FontWeight>
                       </Style>
                     </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <CustomReportItem Name="CustomReportItem1">
-                      <Type>BarCode EAN-13</Type>
-                      <CustomProperties>
-                        <CustomProperty >
-                          <Name>NumberSystem</Name>
-                          <Value>00</Value>
-                        </CustomProperty>
-                        <CustomProperty >
-                          <Name>ManufacturerCode</Name>
-                          <Value>12345</Value>
-                        </CustomProperty>
-                        <CustomProperty >
-                          <Name>ProductCode</Name>
-                          <Value>12345</Value>
-                        </CustomProperty>
-                      </CustomProperties>
-                      <Style>
-                        <BorderStyle>
-                          <Bottom>Solid</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </CustomReportItem>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
@@ -256,6 +225,36 @@
                         <BorderWidth />
                       </Style>
                     </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <CustomReportItem Name="CustomReportItem2" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                      <Type>BarCode EAN-13</Type>
+                      <CustomProperties>
+                        <CustomProperty >
+                          <Name>NumberSystem</Name>
+                          <Value>={number_system}</Value>
+                        </CustomProperty>
+                        <CustomProperty >
+                          <Name>ManufacturerCode</Name>
+                          <Value>={manufacture_code}</Value>
+                        </CustomProperty>
+                        <CustomProperty >
+                          <Name>ProductCode</Name>
+                          <Value>={product_code}</Value>
+                        </CustomProperty>
+                      </CustomProperties>
+                      <Style>
+                        <BorderStyle>
+                          <Bottom>Solid</Bottom>
+                          <Right >Solid</Right>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize >12pt</FontSize>
+                      </Style>
+                    </CustomReportItem>
                   </ReportItems>
                 </TableCell>
               </TableCells>
@@ -288,29 +287,28 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox26">
+                    <Textbox Name="Textbox27">
                       <Value>
                       </Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Top>None</Top>
                           <Left>None</Left>
+                          <Top>None</Top>
                           <Right>None</Right>
                           <Bottom>None</Bottom>
                         </BorderStyle>
-                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Left</TextAlign>
                         <BorderColor />
                         <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell>
+                <TableCell >
                   <ReportItems>
-                    <Textbox Name="Textbox27">
+                    <Textbox Name="Textbox6">
                       <Value>
                       </Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -364,9 +362,13 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT `title` AS barcode, fractional,
+        <CommandText>SELECT
+LEFT(title, 2) AS number_system,
+SUBSTRING(title, 3, 5) AS manufacture_code,
+SUBSTRING(title, 8, 5) AS product_code,
+fractional,
 operation_issued_by_employee.operation_time AS operation_date,
 objects.name AS subdivision,
 organizations.name AS organization,
@@ -379,8 +381,9 @@ LEFT JOIN operation_issued_by_employee ON operation_issued_by_employee.id = empl
 LEFT JOIN wear_cards ON wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects ON objects.id = wear_cards.object_id
 LEFT JOIN nomenclature ON nomenclature.id = operation_issued_by_employee.nomenclature_id
-LEFT JOIN operation_warehouse ON operation_warehouse.id = operation_issued_by_employee.warehouse_operation_id
-LEFT JOIN users ON users.id = operation_warehouse.id
+LEFT JOIN stock_expense_detail ON stock_expense_detail.employee_issue_operation_id = operation_issued_by_employee.id
+LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id
+LEFT JOIN users ON users.id = stock_expense.user_id
 LEFT JOIN user_settings ON user_settings.user_id = users.id
 LEFT JOIN organizations ON organizations.id = user_settings.default_organization_id
 WHERE barcodes.id IN (@barcodes)</CommandText>
@@ -390,9 +393,9 @@ WHERE barcodes.id IN (@barcodes)</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
-        <Field Name="barcode">
-          <DataField>barcode</DataField>
+      <Fields >
+        <Field Name="number_system">
+          <DataField>number_system</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="fractional">
@@ -425,6 +428,14 @@ WHERE barcodes.id IN (@barcodes)</CommandText>
         </Field>
         <Field Name="operation_number">
           <DataField>operation_number</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="manufacture_code">
+          <DataField>manufacture_code</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="product_code">
+          <DataField>product_code</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
