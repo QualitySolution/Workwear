@@ -268,6 +268,7 @@ namespace workwear.Domain.Company
 			}
 
 			DateTime? wantIssue = new DateTime();
+			NextIssueAnnotation = null;
 			if(graph != null && graph.Intervals.Any())
 			{
 				var listReverse = graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
