@@ -190,7 +190,7 @@
               </TableCells>
             </TableRow>
             <TableRow >
-              <Height>33.6pt</Height>
+              <Height>37.6pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -214,22 +214,30 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox21">
-                      <Value>={barcode}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                    <CustomReportItem Name="CustomReportItem1">
+                      <Type>BarCode EAN-13</Type>
+                      <CustomProperties>
+                        <CustomProperty>
+                          <Name>NumberSystem</Name>
+                          <Value>00</Value>
+                        </CustomProperty>
+                        <CustomProperty>
+                          <Name>ManufacturerCode</Name>
+                          <Value>12345</Value>
+                        </CustomProperty>
+                        <CustomProperty>
+                          <Name>ProductCode</Name>
+                          <Value>12345</Value>
+                        </CustomProperty>
+                      </CustomProperties>
+                      <Style>
                         <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top >None</Top>
-                          <Left >None</Left>
-                          <Right >None</Right>
+                          <Bottom>Solid</Bottom>
                         </BorderStyle>
-                        <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
-                        <TextAlign >Center</TextAlign>
-                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
-                    </Textbox>
+                    </CustomReportItem>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
@@ -374,7 +382,8 @@ LEFT JOIN nomenclature ON nomenclature.id = operation_issued_by_employee.nomencl
 LEFT JOIN operation_warehouse ON operation_warehouse.id = operation_issued_by_employee.warehouse_operation_id
 LEFT JOIN users ON users.id = operation_warehouse.id
 LEFT JOIN user_settings ON user_settings.user_id = users.id
-LEFT JOIN organizations ON organizations.id = user_settings.default_organization_id</CommandText>
+LEFT JOIN organizations ON organizations.id = user_settings.default_organization_id
+WHERE barcodes.id IN (@barcodes)</CommandText>
         <QueryParameters>
           <QueryParameter Name="barcodes">
             <Value>={?barcodes}</Value>
