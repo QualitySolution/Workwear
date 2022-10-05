@@ -219,7 +219,9 @@ namespace Workwear.ViewModels.Stock
 			var reportInfo = new ReportInfo {
 				Title = "Штрих-коды",
 				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
-				Parameters = new Dictionary<string, object> { }
+				Parameters = new Dictionary<string, object> {
+					{"barcodes", barcodes.Select(x => x.Id).ToArray()}
+				}
 			};
 
 			navigation.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
