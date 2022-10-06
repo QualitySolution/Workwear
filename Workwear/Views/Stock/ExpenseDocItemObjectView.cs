@@ -47,6 +47,7 @@ namespace Workwear.Views.Stock
 		{
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseItem>()
 				.AddColumn("Наименование").AddTextRenderer(e => e.Nomenclature.Name)
+					.WrapWidth(700)
 				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer(e => e.Nomenclature.Type.Units.Name)

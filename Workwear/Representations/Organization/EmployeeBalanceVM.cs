@@ -80,7 +80,7 @@ namespace workwear.Representations.Organization
 			SetItemsSource (expenseList.ToList ());
 		}
 		private IColumnsConfig treeViewConfig = ColumnsConfigFactory.Create<EmployeeBalanceVMNode> ()
-			.AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName)
+			.AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName).WrapWidth(700)
 			.AddColumn ("Размер").AddTextRenderer (e => e.WearSize)
 			.AddColumn ("Рост").AddTextRenderer (e => e.Height)
 			.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)

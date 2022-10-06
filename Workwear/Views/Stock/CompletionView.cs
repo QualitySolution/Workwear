@@ -49,6 +49,7 @@ namespace Workwear.Views.Stock
 			 #region TreeSource
 			 ytreeExpenseItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionSourceItem>()
 				 .AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
+					.WrapWidth(700)
 				 .AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.SizeType, onlyUseInNomenclature:true).ToList())
@@ -76,6 +77,7 @@ namespace Workwear.Views.Stock
 			 #region TreeResult
 			 ytreeReceiptItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionResultItem>()
 				 .AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
+					.WrapWidth(700)
 				 .AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.SizeType, onlyUseInNomenclature:true).ToList())

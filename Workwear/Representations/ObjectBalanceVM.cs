@@ -70,7 +70,7 @@ namespace workwear.ViewModel
 		}
 
 		public override IColumnsConfig ColumnsConfig { get; } = ColumnsConfigFactory.Create<ObjectBalanceVMNode>()
-			.AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName)
+			.AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName).WrapWidth(1000)
 			.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
 			.AddColumn ("Срок службы").AddProgressRenderer (e => (int)(100 - (e.Percentage * 100)))
 				.AddSetter ((w, e) => w.Text = e.ExpiryDate.HasValue ? 

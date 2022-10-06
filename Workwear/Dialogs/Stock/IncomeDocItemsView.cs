@@ -85,7 +85,7 @@ namespace workwear
 		public IncomeDocItemsView() {
 			this.Build();
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<IncomeItem> ()
-				.AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
+				.AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name).WrapWidth(700)
 				.AddColumn("Сертификат").AddTextRenderer(e => e.Certificate).Editable()
 				.AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
