@@ -60,7 +60,7 @@ namespace Workwear.ViewModels.Stock
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-			this.interactive = interactive;
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
@@ -168,7 +168,7 @@ namespace Workwear.ViewModels.Stock
 		public void OpenIssuanceSheet()
 		{
 			if(UoW.HasChanges) {
-				if(!MessageDialogHelper.RunQuestionDialog("Сохранить документ выдачи перед открытием ведомости?") || !Save())
+				if(!interactive.Question("Сохранить документ выдачи перед открытием ведомости?") || !Save())
 					return;
 			}
 			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
