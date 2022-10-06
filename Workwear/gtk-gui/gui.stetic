@@ -9611,7 +9611,8 @@
               <widget class="Gamma.GtkWidgets.yButton" id="buttonManualIssueDate">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Type">TextOnly</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">resource:Workwear.icon.rows.нand.png</property>
                 <property name="Label" translatable="yes">Ручные операции выдачи</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonManualIssueDateClicked" />
