@@ -121,7 +121,7 @@ namespace Workwear.ViewModels.Stock
 			return true;
 		}
 
-		public void OpenIssuenceSheet()
+		public void OpenIssuanceSheet()
 		{
 			if(UoW.HasChanges) {
 				if(!interactive.Question("Сохранить документ выдачи перед открытием ведомости?") || !Save())
@@ -130,13 +130,13 @@ namespace Workwear.ViewModels.Stock
 			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
 		}
 
-		public void CreateIssuenceSheet()
+		public void CreateIssuanceSheet()
 		{
 			var userSettings = userRepository.GetCurrentUserSettings(UoW);
 			Entity.CreateIssuanceSheet(userSettings);
 		}
 
-		public void PrintIssuenceSheet(IssuedSheetPrint doc)
+		public void PrintIssuanceSheet(IssuedSheetPrint doc)
 		{
 			if(UoW.HasChanges) {
 				if(!commonMessages.SaveBeforePrint(Entity.GetType(), doc == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())
