@@ -72,14 +72,8 @@ namespace Workwear.ViewModels.Regulations
 		#region Номеклатуры
 		public void AddNomenclature()
 		{
-			if(Entity.Type == null) {
-				interactiveService.ShowMessage(ImportanceLevel.Error, "Не указан тип номенклатуры!");
-				return;
-			}
 			var selectPage = NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(this, OpenPageOptions.AsSlave);
-			selectPage.ViewModel.Filter.ItemType = Entity.Type; 
-			selectPage.ViewModel.Filter.EntryItemsType.IsEditable = false;
-			selectPage.ViewModel.JournalFilter.IsShow = false;
+			selectPage.ViewModel.Filter.ItemType = Entity.Type;
 			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectPage.ViewModel.OnSelectResult += Nomenclature_OnSelectResult;
 		}
@@ -88,8 +82,7 @@ namespace Workwear.ViewModels.Regulations
 		{
 			var nomenclatures = UoW.GetById<Nomenclature>(e.SelectedObjects.Select(x => x.GetId()));
 			foreach(var nomenclature in nomenclatures) {
-				if (nomenclature.Type == Entity?.Type)
-					Entity.AddNomeclature(nomenclature);
+				Entity.AddNomeclature(nomenclature);
 			}
 		}
 
