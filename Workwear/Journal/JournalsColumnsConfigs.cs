@@ -306,6 +306,9 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<SizeJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Значение").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Другое значение").AddTextRenderer(node => node.AlternativeName).SearchHighlight()
+					.AddColumn("Для сотрудника").AddToggleRenderer(n => n.ShowInEmployee).Editing(false)
+					.AddColumn("Для номенклатуры").AddToggleRenderer(n => n.ShowInNomenclature).Editing(false)
 					.AddColumn("Тип размера").AddTextRenderer(node => node.SizeTypeName).SearchHighlight()
 					.Finish()
 			);
