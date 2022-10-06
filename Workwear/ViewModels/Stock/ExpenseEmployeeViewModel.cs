@@ -7,6 +7,7 @@ using Gamma.Utilities;
 using NLog;
 using QS.Dialog;
 using QS.Dialog.GtkUI;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -108,6 +109,14 @@ namespace Workwear.ViewModels.Stock
 		public EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
 		#endregion
 
+		#region Свойства для View
+
+		public bool IssuanceSheetCreateVisible => Entity.IssuanceSheet == null;
+		public bool IssuanceSheetCreateSensitive => Entity.Employee != null;
+		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
+		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
+		#endregion
+		
 		private void FillUnderreceived()
 		{
 			Entity.ObservableItems.Clear();
@@ -202,6 +211,12 @@ namespace Workwear.ViewModels.Stock
 		{
 			if(e.PropertyName == nameof(Entity.Employee)) {
 				FillUnderreceived();
+				OnPropertyChanged(nameof(IssuanceSheetCreateSensitive));
+			}
+			if(e.PropertyName == nameof(Entity.IssuanceSheet)) {
+				OnPropertyChanged(nameof(IssuanceSheetCreateVisible));
+				OnPropertyChanged(nameof(IssuanceSheetOpenVisible));
+				OnPropertyChanged(nameof(IssuanceSheetPrintVisible));
 			}
 		}
 

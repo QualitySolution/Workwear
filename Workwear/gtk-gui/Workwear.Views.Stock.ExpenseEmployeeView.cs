@@ -20,11 +20,11 @@ namespace Workwear.Views.Stock
 
 		private global::Gtk.HBox hboxIssuanceSheet;
 
-		private global::Gtk.Button buttonIssuanceSheetCreate;
+		private global::Gamma.GtkWidgets.yButton buttonIssuanceSheetCreate;
 
-		private global::Gtk.Button buttonIssuanceSheetOpen;
+		private global::Gamma.GtkWidgets.yButton buttonIssuanceSheetOpen;
 
-		private global::QSOrmProject.EnumMenuButton enumPrint;
+		private global::QS.Widgets.EnumMenuButton enumPrint;
 
 		private global::Gtk.Label label2;
 
@@ -134,7 +134,7 @@ namespace Workwear.Views.Stock
 			this.hboxIssuanceSheet.Name = "hboxIssuanceSheet";
 			this.hboxIssuanceSheet.Spacing = 6;
 			// Container child hboxIssuanceSheet.Gtk.Box+BoxChild
-			this.buttonIssuanceSheetCreate = new global::Gtk.Button();
+			this.buttonIssuanceSheetCreate = new global::Gamma.GtkWidgets.yButton();
 			this.buttonIssuanceSheetCreate.CanFocus = true;
 			this.buttonIssuanceSheetCreate.Name = "buttonIssuanceSheetCreate";
 			this.buttonIssuanceSheetCreate.UseUnderline = true;
@@ -148,7 +148,7 @@ namespace Workwear.Views.Stock
 			w8.Expand = false;
 			w8.Fill = false;
 			// Container child hboxIssuanceSheet.Gtk.Box+BoxChild
-			this.buttonIssuanceSheetOpen = new global::Gtk.Button();
+			this.buttonIssuanceSheetOpen = new global::Gamma.GtkWidgets.yButton();
 			this.buttonIssuanceSheetOpen.CanFocus = true;
 			this.buttonIssuanceSheetOpen.Name = "buttonIssuanceSheetOpen";
 			this.buttonIssuanceSheetOpen.UseUnderline = true;
@@ -162,7 +162,7 @@ namespace Workwear.Views.Stock
 			w10.Expand = false;
 			w10.Fill = false;
 			// Container child hboxIssuanceSheet.Gtk.Box+BoxChild
-			this.enumPrint = new global::QSOrmProject.EnumMenuButton();
+			this.enumPrint = new global::QS.Widgets.EnumMenuButton();
 			this.enumPrint.CanFocus = true;
 			this.enumPrint.Name = "enumPrint";
 			this.enumPrint.UseUnderline = true;
@@ -222,7 +222,7 @@ namespace Workwear.Views.Stock
 			this.labelWorker = new global::Gtk.Label();
 			this.labelWorker.Name = "labelWorker";
 			this.labelWorker.Xalign = 1F;
-			this.labelWorker.LabelProp = global::Mono.Unix.Catalog.GetString("Работник<span foreground=\"red\">*</span>:");
+			this.labelWorker.LabelProp = global::Mono.Unix.Catalog.GetString("Сотрудник<span foreground=\"red\">*</span>:");
 			this.labelWorker.UseMarkup = true;
 			this.table2.Add(this.labelWorker);
 			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table2[this.labelWorker]));
@@ -334,6 +334,7 @@ namespace Workwear.Views.Stock
 			this.ydateDoc.Date = new global::System.DateTime(0);
 			this.ydateDoc.IsEditable = true;
 			this.ydateDoc.AutoSeparation = true;
+			this.ydateDoc.HideButtonClearDate = false;
 			this.table3.Add(this.ydateDoc);
 			global::Gtk.Table.TableChild w27 = ((global::Gtk.Table.TableChild)(this.table3[this.ydateDoc]));
 			w27.TopAttach = ((uint)(2));
@@ -386,7 +387,7 @@ namespace Workwear.Views.Stock
 			this.Show();
 			this.buttonIssuanceSheetCreate.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetCreateClicked);
 			this.buttonIssuanceSheetOpen.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetOpenClicked);
-			this.enumPrint.EnumItemClicked += new global::System.EventHandler<QSOrmProject.EnumItemClickedEventArgs>(this.OnEnumPrintEnumItemClicked);
+			this.enumPrint.EnumItemClicked += new global::System.EventHandler<QS.Widgets.EnumItemClickedEventArgs>(this.OnEnumPrintEnumItemClicked);
 		}
 	}
 }
