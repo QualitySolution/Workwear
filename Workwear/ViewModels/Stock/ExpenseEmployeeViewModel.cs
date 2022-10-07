@@ -43,6 +43,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;
+		private readonly IProgressBarDisplayable progress;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
@@ -56,6 +57,7 @@ namespace Workwear.ViewModels.Stock
 			CommonMessages commonMessages,
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
+			IProgressBarDisplayable progress,
 			EmployeeCard employee = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
@@ -65,6 +67,7 @@ namespace Workwear.ViewModels.Stock
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
@@ -141,36 +144,61 @@ namespace Workwear.ViewModels.Stock
 
 		public override bool Save()
 		{
-			if(!Validate())
+			progress.Start(7);
+			if(!Validate()) {
+				progress.Close();
 				return false;
+			}
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
 
-			logger.Info("Запись документа...");
-
+			//Так как сохранение достаточно сложное, рядом сохраняется еще два документа, при чтобы оно не ломалось из за зависимостей между объектами.
+			//Придерживайтесь следующего порядка:
+			// 1 - Из уже существующих документов удаляем строки которые удалены в основном.
+			// 2 - Сохраняем основной документ, без закрытия транзакции.
+			// 3 - Обрабатываем и сохраняем доп документы.
+			
+			logger.Info("Обработка строк документа выдачи...");
+			progress.Add();
+			Entity.CleanupItems();
+			Entity.CleanupItemsWriteOff();
+			progress.Add();
 			if(Entity.Items.Any(x => x.IsWriteOff) && Entity.WriteOffDoc == null) {
 				Entity.WriteOffDoc = new Writeoff();
 				Entity.WriteOffDoc.Date = Entity.Date;
 				Entity.WriteOffDoc.CreatedbyUser = Entity.CreatedbyUser;
 			}
-
-			Entity.CleanupItems();
-			Entity.CleanupItemsWriteOff();
+			if(Entity.WriteOffDoc != null) {
+				logger.Info("Предварительная запись списания...");
+				UoW.Save(Entity.WriteOffDoc);
+			}
+			progress.Add();
+			Entity.CleanupIssuanceSheetItems();
+			if(Entity.IssuanceSheet != null) {
+				logger.Info("Предварительная запись ведомости...");
+				UoW.Save(Entity.IssuanceSheet);
+			}
+			progress.Add();
+			logger.Info("Запись документа выдачи...");
 			Entity.UpdateOperations(UoW, baseParameters, interactive);
+			UoWGeneric.Session.SaveOrUpdate(Entity); //Здесь сохраняем таким способом чтобы транзакция не закрылась.
+			
+			progress.Add();
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
 
+			progress.Add();
 			Entity.UpdateIssuedWriteOffOperation();
-
 			if(Entity.WriteOffDoc != null)
 				UoW.Save(Entity.WriteOffDoc);
 
-			UoWGeneric.Save();
-			logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
+			progress.Add();
+			logger.Info("Обновляем записи о выданной одежде в карточке сотрудника...");
 			Entity.UpdateEmployeeWearItems();
 			UoWGeneric.Commit();
 			logger.Info("Ok");
+			progress.Close();
 			return true;
 		}
 
