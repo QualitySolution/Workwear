@@ -217,7 +217,7 @@ namespace Workwear.ViewModels.Stock
 			UoW.Commit();
 
 			var reportInfo = new ReportInfo {
-				Title = "Штрих-коды",
+				Title = "Штрихкоды",
 				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
 				Parameters = new Dictionary<string, object> {
 					{"barcodes", barcodes.Select(x => x.Id).ToArray()}

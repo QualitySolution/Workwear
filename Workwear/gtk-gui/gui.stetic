@@ -957,7 +957,7 @@
               <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckBarcode">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Label" translatable="yes">Использовать штрих-код</property>
+                <property name="Label" translatable="yes">Использовать штрихкод</property>
                 <property name="DrawIndicator">True</property>
                 <property name="HasLabel">True</property>
                 <property name="UseUnderline">True</property>
@@ -5862,8 +5862,8 @@
       </action>
       <action id="Action40">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Штрих-коды</property>
-        <property name="ShortLabel" translatable="yes">Штрих-коды</property>
+        <property name="Label" translatable="yes">Штрихкоды</property>
+        <property name="ShortLabel" translatable="yes">Штрихкоды</property>
         <signal name="Activated" handler="BarcodeActivated" />
       </action>
     </action-group>

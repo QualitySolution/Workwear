@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
@@ -6,9 +6,9 @@ using Workwear.Domain.Operations;
 namespace Workwear.Domain.Stock
 {
 	[Appellative (Gender = GrammaticalGender.Masculine,
-		NominativePlural = "штрих-коды",
-		Nominative = "штрих-код",
-		Genitive = "штрих-кода"
+		NominativePlural = "штрихкоды",
+		Nominative = "штрихкод",
+		Genitive = "штрихкода"
 		)]
 	[HistoryTrace]
 	public class Barcode : PropertyChangedBase, IDomainObject

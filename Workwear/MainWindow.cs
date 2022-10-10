@@ -171,7 +171,7 @@ public partial class MainWindow : Gtk.Window
 			//Если доступна возможность использовать штрих коды, а префикс штрих кодов для базы не задан, создаем его.
 			if(FeaturesService.Available(WorkwearFeature.Barcodes) && baseParam.Dynamic.BarcodePrefix == null) {
 				var prefix = FeaturesService.ClientId % 1000 + 2000; //Оставляем последние 3 цифры кода клиента и добавляем их к 2000.
-				logger.Info($"Создали префикс штрих-кодов для базы: {prefix}");
+				logger.Info($"Создали префикс штрихкодов для базы: {prefix}");
 				baseParam.Dynamic.BarcodePrefix = prefix;
 			}
 		}

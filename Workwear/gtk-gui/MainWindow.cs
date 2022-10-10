@@ -498,8 +498,8 @@ public partial class MainWindow
 		this.ActionOwner = new global::Gtk.Action("ActionOwner", global::Mono.Unix.Catalog.GetString("Собственники имущества"), null, null);
 		this.ActionOwner.ShortLabel = global::Mono.Unix.Catalog.GetString("Собственники имущества");
 		w1.Add(this.ActionOwner, null);
-		this.Action40 = new global::Gtk.Action("Action40", global::Mono.Unix.Catalog.GetString("Штрих-коды"), null, null);
-		this.Action40.ShortLabel = global::Mono.Unix.Catalog.GetString("Штрих-коды");
+		this.Action40 = new global::Gtk.Action("Action40", global::Mono.Unix.Catalog.GetString("Штрихкоды"), null, null);
+		this.Action40.ShortLabel = global::Mono.Unix.Catalog.GetString("Штрихкоды");
 		w1.Add(this.Action40, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);

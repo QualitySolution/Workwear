@@ -159,7 +159,7 @@ namespace Workwear.Tools.Features
 		Ratings,
 		[Display(Name = "Собственники имущества")]
 		Owners,
-		[Display(Name = "Штрих-коды")]
+		[Display(Name = "Штрихкоды")]
 		Barcodes
 	}
 	

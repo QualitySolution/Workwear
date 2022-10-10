@@ -112,7 +112,7 @@ namespace Workwear.Views.Stock
 			itemNomenclature.Activated += Item_Activated;
 			menu.Add(itemNomenclature);
 			
-			var releaseBarcode  = new MenuItemId<ExpenseItem>("Выпустить штрих-код");
+			var releaseBarcode  = new MenuItemId<ExpenseItem>("Выпустить штрихкод");
 			releaseBarcode.ID = selected;
 			releaseBarcode.Visible = ViewModel.featuresService.Available(WorkwearFeature.Barcodes);
 			releaseBarcode.Sensitive = BarcodeSensitive(selected);

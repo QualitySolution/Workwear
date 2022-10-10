@@ -82,7 +82,7 @@ namespace Workwear.Domain.Stock {
 		}
 		
 		private bool useBarcode;
-		[Display(Name ="Использовать штрих-код")]
+		[Display(Name ="Использовать штрихкод")]
 		public virtual bool UseBarcode {
 			get => useBarcode;
 			set => SetField(ref useBarcode, value);

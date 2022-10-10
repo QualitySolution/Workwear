@@ -212,7 +212,7 @@ namespace Workwear.Views.Stock
 			this.ycheckBarcode = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckBarcode.CanFocus = true;
 			this.ycheckBarcode.Name = "ycheckBarcode";
-			this.ycheckBarcode.Label = global::Mono.Unix.Catalog.GetString("Использовать штрих-код");
+			this.ycheckBarcode.Label = global::Mono.Unix.Catalog.GetString("Использовать штрихкод");
 			this.ycheckBarcode.DrawIndicator = true;
 			this.ycheckBarcode.UseUnderline = true;
 			this.table2.Add(this.ycheckBarcode);
