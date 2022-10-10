@@ -3,7 +3,7 @@ using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
 
-namespace Workwear.Domain.Stock.Barcodes 
+namespace Workwear.Domain.Stock
 {
 	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "штрих-коды",

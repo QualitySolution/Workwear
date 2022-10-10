@@ -4,7 +4,7 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
-using Workwear.Domain.Stock.Barcodes;
+using Workwear.Domain.Stock;
 
 namespace Workwear.ViewModels.Stock 
 {

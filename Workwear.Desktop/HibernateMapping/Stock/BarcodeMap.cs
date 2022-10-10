@@ -1,5 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
-using Workwear.Domain.Stock.Barcodes;
+using Workwear.Domain.Stock;
 
 namespace Workwear.HibernateMapping.Stock 
 {
