@@ -14,10 +14,12 @@ namespace Workwear.HibernateMapping.Stock
 			else 
 				Id(x => x.Id).Column("id").GeneratedBy.Native();
 			
+			Map(x => x.CreateDate).Column("creation_date");
 			Map(x => x.Title).Column("title");
-			Map(x => x.Fractional).Column("fractional");
 			
-			References(x => x.EmployeeIssueOperation).Column ("employee_issue_operation_id");
+			References(x => x.Nomenclature).Column ("nomenclature_id");
+			References(x => x.Size).Column ("size_id");
+			References(x => x.Height).Column ("height_id");
 		}
 	}
 }
