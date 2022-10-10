@@ -67,6 +67,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(x => x.Number).WithAlias(() => resultAlias.Number)
 					.Select(() => itemsTypeAlias.Name).WithAlias(() => resultAlias.ItemType)
 					.Select(() => nomenclatureAlias.Archival).WithAlias(() => resultAlias.Archival)
+					.Select(x => x.UseBarcode).WithAlias(() => resultAlias.UseBarcode)
 					.Select(x => x.Rating).WithAlias(() => resultAlias.Rating)
 					.Select(x => x.RatingCount).WithAlias(() => resultAlias.RatingCount)
 				).OrderBy(x => x.Name).Asc
@@ -103,10 +104,12 @@ namespace workwear.Journal.ViewModels.Stock
 		[SearchHighlight]
 		public string ItemType { get; set; }
 		public bool Archival { get; set; }
+		public bool UseBarcode { get; set; }
 		
 		public float? Rating { get; set; }
 		public int? RatingCount { get; set; }
 
 		public string RatingText => Rating == null ? null : $"{Rating:F1} ({RatingCount})";
+		public string UseBarcodeText => UseBarcode ? "Используется" : String.Empty;
 	}
 }
