@@ -16,6 +16,7 @@ using QS.HistoryLog;
 using QS.Navigation;
 using QS.NewsFeed.Views;
 using QS.NewsFeed;
+using QS.Project.DB;
 using QS.Project.Domain;
 using QS.Project.Versioning;
 using QS.Project.Views;
