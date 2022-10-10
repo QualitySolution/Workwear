@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
 using QS.Cloud.Client;
-using QS.Project.Versioning;
+using QS.Project.DB;
 using QS.Project.Versioning.Product;
 using QS.Serial;
 using QS.Serial.Encoding;
@@ -76,7 +76,7 @@ namespace Workwear.Tools.Features
 
 		public virtual bool Available(WorkwearFeature feature) 
 		{
-			if(feature == WorkwearFeature.Brcodes)
+			if(feature == WorkwearFeature.Barcodes)
 				return true;
 			if(ProductEdition == 0) //В демо редакции доступны все возможности кроме облачных
 				return (feature != WorkwearFeature.Communications && feature != WorkwearFeature.EmployeeLk);
@@ -157,7 +157,7 @@ namespace Workwear.Tools.Features
 		[Display(Name = "Собственники имущества")]
 		Owners,
 		[Display(Name = "Штрих-коды")]
-		Brcodes
+		Barcodes
 	}
 	
 	[AttributeUsage(AttributeTargets.Field)]

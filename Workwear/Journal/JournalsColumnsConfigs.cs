@@ -231,7 +231,7 @@ namespace workwear.Journal
 					.AddColumn("Тип").AddTextRenderer(node => node.ItemType)
 					.AddColumn("Средняя оценка").Visible(jvm.FeaturesService.Available(WorkwearFeature.Ratings))
 						.AddTextRenderer(node => node.RatingText)
-					.AddColumn("Штрих-код").Visible(jvm.FeaturesService.Available(WorkwearFeature.Brcodes))
+					.AddColumn("Штрих-код").Visible(jvm.FeaturesService.Available(WorkwearFeature.Barcodes))
 						.AddTextRenderer(n => n.UseBarcodeText)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
