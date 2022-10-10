@@ -26,6 +26,7 @@ namespace Workwear.Tools.Features
 		private readonly IDataBaseInfo dataBaseInfo;
 
 		public byte ProductEdition { get; }
+		public ushort ClientId { get; }
 
 		public string EditionName => SupportEditions.First(x => x.Number == ProductEdition).Name;
 
@@ -60,10 +61,12 @@ namespace Workwear.Tools.Features
 			if(serialNumberEncoder.IsValid) {
 				if(serialNumberEncoder.CodeVersion == 1)
 					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к профессиональной редакции.
-				else if(serialNumberEncoder.CodeVersion == 2 
-						&& serialNumberEncoder.EditionId >= 1
-						&& serialNumberEncoder.EditionId <= 3) 
+				else if(serialNumberEncoder.CodeVersion == 2
+				        && serialNumberEncoder.EditionId >= 1
+				        && serialNumberEncoder.EditionId <= 3) {
 					ProductEdition = serialNumberEncoder.EditionId;
+					ClientId = serialNumberEncoder.ClientId;
+				}
 			}
 		}
 

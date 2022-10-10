@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using QS.BaseParameters;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
@@ -9,6 +10,15 @@ namespace Workwear.Tools.Barcodes
 {
 	public class BarcodeService 
 	{
+		public BarcodeService(ParametersService baseParameters) {
+			BaseCode = baseParameters.Dynamic.BarcodePrefix(typeof(int?)) ?? 2000;
+		}
+
+		/// <summary>
+		/// Стартовый код для серийных номеров. Коды начинающиеся с 2 зарезервированы под внутреннее использование на предприятии по стандарту EAN-13
+		/// Мы в первые 3 цифры после 2-ки зашиваем код клиента, вернее последние 3 цифры кода клиента, для того чтобы штрих коды из разных баз отличались.
+		/// Это параметр можно поменять в настройка базы BarcodePrefix
+		/// </summary>
 		public int BaseCode { get; } = 2000; //2000-2999
 
 		#region Create
