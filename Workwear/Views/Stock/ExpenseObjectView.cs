@@ -24,10 +24,6 @@ namespace Workwear.Views.Stock
 
 			ydateDoc.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
 
-			ycomboOperation.ItemsEnum = typeof(ExpenseOperations);
-			ycomboOperation.SelectedItem = ExpenseOperations.Object;
-			ycomboOperation.Sensitive = false;
-
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			entityWarehouseExpense.ViewModel = ViewModel.WarehouseExpenceViewModel;

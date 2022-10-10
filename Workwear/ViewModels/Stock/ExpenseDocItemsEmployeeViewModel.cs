@@ -56,7 +56,7 @@ namespace Workwear.ViewModels.Stock
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			employeeRepository.RepoUow = UoW;
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
+			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 			Entity.FillCanWriteoffInfo(employeeRepository);
@@ -191,7 +191,7 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		#region События
-		private void ExpenceDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
+		private void ExpenseDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
 			CalculateTotal();
 		}

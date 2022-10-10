@@ -49,11 +49,15 @@ namespace workwear.Journal.ViewModels.Stock
                 .Where(GetSearchCriterion(
                     () => sizeAlias.Id,
                     () => sizeAlias.Name,
+                    () => sizeAlias.AlternativeName,
                     () => sizeTypeAlias.Name
                 ))
                 .SelectList(list => list
                     .Select(x => x.Id).WithAlias(() => resultAlias.Id)
                     .Select(x => x.Name).WithAlias(() => resultAlias.Name)
+                    .Select(x => x.AlternativeName).WithAlias(() => resultAlias.AlternativeName)
+                    .Select(x => x.ShowInEmployee).WithAlias(() => resultAlias.ShowInEmployee)
+                    .Select(x => x.ShowInNomenclature).WithAlias(() => resultAlias.ShowInNomenclature)
                     .Select(() => sizeTypeAlias.Name).WithAlias(() => resultAlias.SizeTypeName)
                 )
                 .OrderBy(x => x.SizeType).Asc
@@ -75,10 +79,11 @@ namespace workwear.Journal.ViewModels.Stock
 
     public class SizeJournalNode
     {
-        [SearchHighlight]
-        public int Id { get; set; }
-        [SearchHighlight]
+	    public int Id { get; set; }
         public string Name { get; set; }
+        public string AlternativeName { get; set; }
         public string SizeTypeName { get; set; }
+        public bool ShowInEmployee { get; set; }
+        public bool ShowInNomenclature { get; set; }
     }
 }

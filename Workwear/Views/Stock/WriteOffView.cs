@@ -60,6 +60,7 @@ namespace Workwear.Views.Stock
 		{
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<WriteoffItem> ()
 					.AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
+						.WrapWidth(700)
 					.AddColumn("Размер").MinWidth(60)
 						.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 						.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature?.Type?.SizeType, onlyUseInNomenclature:true).ToList())
@@ -68,7 +69,7 @@ namespace Workwear.Views.Stock
 						.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 						.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
 						.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
-					.AddColumn("Собственики")
+					.AddColumn("Собственники")
 						.Visible(ViewModel.FeaturesService.Available(WorkwearFeature.Owners))
 						.AddComboRenderer(x => x.Owner)
 						.SetDisplayFunc(x => x.Name)

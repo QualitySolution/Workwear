@@ -86,8 +86,10 @@ namespace Workwear.Views.Stock
 			treeItems.ModifyFont(fontDesc);
 			treeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseItem>()
 				.AddColumn("Номенклатуры нормы").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
+					.WrapWidth(700)
 				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
-				.SetDisplayFunc(x => x.Nomenclature?.Name)
+					.WrapWidth(700)
+					.SetDisplayFunc(x => x.Nomenclature?.Name)
 					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))
 					.DynamicFillListFunc(x => x.EmployeeCardItem.BestChoiceInStock.ToList())
 					.AddSetter((c, n) => c.Editable = n.EmployeeCardItem != null)
