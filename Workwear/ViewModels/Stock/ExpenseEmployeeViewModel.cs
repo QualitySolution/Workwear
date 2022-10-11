@@ -7,6 +7,7 @@ using Gamma.Utilities;
 using NLog;
 using QS.Dialog;
 using QS.Dialog.GtkUI;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -42,6 +43,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;
+		private readonly IProgressBarDisplayable progress;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
@@ -55,15 +57,17 @@ namespace Workwear.ViewModels.Stock
 			CommonMessages commonMessages,
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
+			IProgressBarDisplayable progress,
 			EmployeeCard employee = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-			this.interactive = interactive;
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
@@ -108,6 +112,14 @@ namespace Workwear.ViewModels.Stock
 		public EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
 		#endregion
 
+		#region Свойства для View
+
+		public bool IssuanceSheetCreateVisible => Entity.IssuanceSheet == null;
+		public bool IssuanceSheetCreateSensitive => Entity.Employee != null;
+		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
+		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
+		#endregion
+		
 		private void FillUnderreceived()
 		{
 			Entity.ObservableItems.Clear();
@@ -132,55 +144,80 @@ namespace Workwear.ViewModels.Stock
 
 		public override bool Save()
 		{
-			if(!Validate())
+			progress.Start(7);
+			if(!Validate()) {
+				progress.Close();
 				return false;
+			}
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
 
-			logger.Info("Запись документа...");
-
+			//Так как сохранение достаточно сложное, рядом сохраняется еще два документа, при чтобы оно не ломалось из за зависимостей между объектами.
+			//Придерживайтесь следующего порядка:
+			// 1 - Из уже существующих документов удаляем строки которые удалены в основном.
+			// 2 - Сохраняем основной документ, без закрытия транзакции.
+			// 3 - Обрабатываем и сохраняем доп документы.
+			
+			logger.Info("Обработка строк документа выдачи...");
+			progress.Add();
+			Entity.CleanupItems();
+			Entity.CleanupItemsWriteOff();
+			progress.Add();
 			if(Entity.Items.Any(x => x.IsWriteOff) && Entity.WriteOffDoc == null) {
 				Entity.WriteOffDoc = new Writeoff();
 				Entity.WriteOffDoc.Date = Entity.Date;
 				Entity.WriteOffDoc.CreatedbyUser = Entity.CreatedbyUser;
 			}
-
-			Entity.CleanupItems();
-			Entity.CleanupItemsWriteOff();
+			if(Entity.WriteOffDoc != null) {
+				logger.Info("Предварительная запись списания...");
+				UoW.Save(Entity.WriteOffDoc);
+			}
+			progress.Add();
+			Entity.CleanupIssuanceSheetItems();
+			if(Entity.IssuanceSheet != null) {
+				logger.Info("Предварительная запись ведомости...");
+				UoW.Save(Entity.IssuanceSheet);
+			}
+			progress.Add();
+			logger.Info("Запись документа выдачи...");
 			Entity.UpdateOperations(UoW, baseParameters, interactive);
+			UoWGeneric.Session.SaveOrUpdate(Entity); //Здесь сохраняем таким способом чтобы транзакция не закрылась.
+			
+			progress.Add();
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
 
+			progress.Add();
 			Entity.UpdateIssuedWriteOffOperation();
-
 			if(Entity.WriteOffDoc != null)
 				UoW.Save(Entity.WriteOffDoc);
 
-			UoWGeneric.Save();
-			logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
+			progress.Add();
+			logger.Info("Обновляем записи о выданной одежде в карточке сотрудника...");
 			Entity.UpdateEmployeeWearItems();
 			UoWGeneric.Commit();
 			logger.Info("Ok");
+			progress.Close();
 			return true;
 		}
 
-		public void OpenIssuenceSheet()
+		public void OpenIssuanceSheet()
 		{
 			if(UoW.HasChanges) {
-				if(!MessageDialogHelper.RunQuestionDialog("Сохранить документ выдачи перед открытием ведомости?") || !Save())
+				if(!interactive.Question("Сохранить документ выдачи перед открытием ведомости?") || !Save())
 					return;
 			}
 			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
 		}
 
-		public void CreateIssuenceSheet()
+		public void CreateIssuanceSheet()
 		{
 			var userSettings = userRepository.GetCurrentUserSettings(UoW);
 			Entity.CreateIssuanceSheet(userSettings);
 		}
 
-		public void PrintIssuenceSheet(IssuedSheetPrint doc)
+		public void PrintIssuanceSheet(IssuedSheetPrint doc)
 		{
 			if(UoW.HasChanges) {
 				if(!commonMessages.SaveBeforePrint(Entity.GetType(), doc == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())
@@ -202,6 +239,12 @@ namespace Workwear.ViewModels.Stock
 		{
 			if(e.PropertyName == nameof(Entity.Employee)) {
 				FillUnderreceived();
+				OnPropertyChanged(nameof(IssuanceSheetCreateSensitive));
+			}
+			if(e.PropertyName == nameof(Entity.IssuanceSheet)) {
+				OnPropertyChanged(nameof(IssuanceSheetCreateVisible));
+				OnPropertyChanged(nameof(IssuanceSheetOpenVisible));
+				OnPropertyChanged(nameof(IssuanceSheetPrintVisible));
 			}
 		}
 

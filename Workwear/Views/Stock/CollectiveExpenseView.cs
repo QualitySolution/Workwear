@@ -45,18 +45,18 @@ namespace Workwear.Views.Stock
 
 		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e)
 		{
-			ViewModel.CreateIssuenceSheet();
+			ViewModel.CreateIssuanceSheet();
 			IssuanceSheetSensetive();
 		}
 
 		protected void OnButtonIssuanceSheetOpenClicked(object sender, EventArgs e)
 		{
-			ViewModel.OpenIssuenceSheet();
+			ViewModel.OpenIssuanceSheet();
 		}
 
 		protected void OnEnumPrintEnumItemClicked(object sender, QSOrmProject.EnumItemClickedEventArgs e)
 		{
-			ViewModel.PrintIssuenceSheet((IssuedSheetPrint)e.ItemEnum);
+			ViewModel.PrintIssuanceSheet((IssuedSheetPrint)e.ItemEnum);
 		}
 	}
 }

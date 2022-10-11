@@ -76,6 +76,7 @@ namespace Workwear.Views.Stock
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
 			.AddColumn("Тип").AddTextRenderer(p => p.TypeName)
 			.AddColumn("Наименование").AddTextRenderer(p => p.Name)
+				.WrapWidth(700)
 			.AddColumn("Пол")
 				.AddTextRenderer(p => p.Sex != null ? p.Sex.GetEnumTitle() : String.Empty)
 			.Finish();

@@ -51,7 +51,7 @@ namespace workwear.ReportParameters.ViewModels
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"dateStart", StartDate },
 					{"dateEnd", EndDate},
-					{"summary", Summary},
+					{"summary", !BySubdivision},
 					{"bySize", BySize},
 					{"withoutsub", Subdivisions.First(x =>x.Id == -1).Select },
 					{"subdivisions", SelectSubdivisons() },
@@ -62,7 +62,8 @@ namespace workwear.ReportParameters.ViewModels
 					{"showOwners", FeaturesService.Available(WorkwearFeature.Owners)},
 					{"allOwners", SelectOwner.Equals(SpecialComboState.All)},
 					{"withoutOwner", SelectOwner.Equals(SpecialComboState.Not)},
-					{"ownerId", (SelectOwner as Owner)?.Id ?? -1}
+					{"ownerId", (SelectOwner as Owner)?.Id ?? -1},
+					{"byEmployee", ByEmployee},
 		};
 
 		#region Параметры
@@ -86,10 +87,16 @@ namespace workwear.ReportParameters.ViewModels
 			set => SetField(ref issueType, value);
 		}
 
-		private bool summary = true;
-		public virtual bool Summary {
-			get => summary;
-			set => SetField(ref summary, value);
+		private bool bySubdividion = true;
+		public virtual bool BySubdivision {
+			get => bySubdividion;
+			set => SetField(ref bySubdividion, value);
+		}
+
+		private bool byEmployee;
+		public virtual bool ByEmployee {
+			get => byEmployee;
+			set => SetField(ref byEmployee, value);
 		}
 
 		private bool bySize;

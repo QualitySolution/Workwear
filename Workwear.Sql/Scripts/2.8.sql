@@ -986,7 +986,7 @@ ALTER TABLE `operation_warehouse`
 ADD INDEX `fk_operation_warehouse_6_idx` (`owner_id` ASC);
 
 CREATE TABLE `owners` (
-	`id` INT(10) UNSIGNED NOT NULL,
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(180) NOT NULL,
 	`description` TEXT NULL DEFAULT NULL,
 	`priority` INT(11) NOT NULL DEFAULT 0,
