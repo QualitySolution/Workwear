@@ -111,8 +111,10 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Owners:
 					return ProductEdition == 3;
 				case WorkwearFeature.CollectiveExpense:
+				case WorkwearFeature.Completion:
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.BatchProcessing:
+				case WorkwearFeature.HistoryLog:
 					return ProductEdition == 2 || ProductEdition == 3;
 				case WorkwearFeature.HistoryLog:
 					return ProductEdition == 2 || ProductEdition == 3;
@@ -126,34 +128,42 @@ namespace Workwear.Tools.Features
 
 	public enum WorkwearFeature
 	{
-		[Display(Name = "Работа с несколькими складами")]
-		Warehouses,
-		[Display(Name = "Идентификация сотрудника по карте")]
-		IdentityCards,
+		#region Профессиональная
+		[Display(Name = "Выдача списком")]
+		MassExpense,
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,
+		[Display(Name = "Комплектация")]
+		Completion,
 		[Display(Name = "Загрузка из Excel")]
 		LoadExcel,
 		[Display(Name = "Групповая обработка")]
 		BatchProcessing,
+		[Display(Name = "История изменений")]
+		HistoryLog,
+		#endregion
+		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Мобильный кабинет сотрудника")]
 		EmployeeLk,
 		[IsCloudFeature]
 		[Display(Name = "Коммуникация с сотрудниками")]
 		Communications,
-		[Display(Name = "История изменений")]
-		HistoryLog,
-		[Display(Name = "Комплектация")]
-		Completion,
 		[IsCloudFeature]
 		[Display(Name = "Обращения сотрудников")]
 		Claims,
 		[IsCloudFeature]
 		[Display(Name = "Отзывы")]
 		Ratings,
+		#endregion
+		#region Предприятие
+		[Display(Name = "Работа с несколькими складами")]
+		Warehouses,
+		[Display(Name = "Идентификация сотрудника по карте")]
+		IdentityCards,
 		[Display(Name = "Собственники имущества")]
 		Owners
+		#endregion
 	}
 	
 	[AttributeUsage(AttributeTargets.Field)]
