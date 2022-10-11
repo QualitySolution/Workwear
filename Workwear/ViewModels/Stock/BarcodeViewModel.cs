@@ -16,33 +16,12 @@ namespace Workwear.ViewModels.Stock
 			INavigationManager navigation, 
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
-			Entity.PropertyChanged += EntityOnPropertyChanged;
+
 		}
 
-		private void EntityOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
-			switch (e.PropertyName)
-			{
-				case nameof(Entity.EmployeeIssueOperation):
-					OnPropertyChanged(nameof(EmployeeIssueVisible));
-					OnPropertyChanged(nameof(EmployeeIssueTitle));
-					OnPropertyChanged(nameof(OperationsTitle));
-					break;
-				case nameof(Entity.Fractional):
-					OnPropertyChanged(nameof(EmployeeIssueTitle));
-					break;
-			} 
-		}
 
 		#region ViewProperty
-		public bool EmployeeIssueVisible => Entity.EmployeeIssueOperation != null;
-		public string EmployeeIssueTitle => Entity.EmployeeIssueOperation?.Title + " " + Entity.Fractional;
-		public string OperationsTitle => Entity.EmployeeIssueOperation is null ? "Нет привязаных операций" : "Привязанные операции";
 
-		#endregion
-
-		#region Methods
-
-		public void DeleteEmployeeIssue() => Entity.EmployeeIssueOperation = null;
 
 		#endregion
 	}

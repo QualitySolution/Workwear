@@ -20,13 +20,9 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yLabel ylabelOperations;
 
-		private global::Gamma.GtkWidgets.yTable ytable1;
+		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 
-		private global::Gamma.GtkWidgets.yButton ybuttonDeleteEmployeeIssueOperation;
-
-		private global::Gamma.GtkWidgets.yLabel ylabelEmployeeIssueOperation;
-
-		private global::Gamma.GtkWidgets.yLabel ylabelEmployeeIssueOperationValue;
+		private global::Gamma.GtkWidgets.yTreeView treeviewOperations;
 
 		protected virtual void Build()
 		{
@@ -106,54 +102,24 @@ namespace Workwear.Views.Stock
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.ylabelOperations = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelOperations.Name = "ylabelOperations";
-			this.ylabelOperations.LabelProp = global::Mono.Unix.Catalog.GetString("Сопутствующие операции");
+			this.ylabelOperations.LabelProp = global::Mono.Unix.Catalog.GetString("Операции");
 			this.yvbox1.Add(this.ylabelOperations);
 			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ylabelOperations]));
 			w9.Position = 2;
 			w9.Expand = false;
 			w9.Fill = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
-			this.ytable1 = new global::Gamma.GtkWidgets.yTable();
-			this.ytable1.Name = "ytable1";
-			this.ytable1.NRows = ((uint)(3));
-			this.ytable1.NColumns = ((uint)(3));
-			this.ytable1.RowSpacing = ((uint)(6));
-			this.ytable1.ColumnSpacing = ((uint)(6));
-			// Container child ytable1.Gtk.Table+TableChild
-			this.ybuttonDeleteEmployeeIssueOperation = new global::Gamma.GtkWidgets.yButton();
-			this.ybuttonDeleteEmployeeIssueOperation.CanFocus = true;
-			this.ybuttonDeleteEmployeeIssueOperation.Name = "ybuttonDeleteEmployeeIssueOperation";
-			this.ybuttonDeleteEmployeeIssueOperation.UseStock = true;
-			this.ybuttonDeleteEmployeeIssueOperation.UseUnderline = true;
-			this.ybuttonDeleteEmployeeIssueOperation.Label = "gtk-delete";
-			this.ytable1.Add(this.ybuttonDeleteEmployeeIssueOperation);
-			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ybuttonDeleteEmployeeIssueOperation]));
-			w10.LeftAttach = ((uint)(2));
-			w10.RightAttach = ((uint)(3));
-			w10.XOptions = ((global::Gtk.AttachOptions)(4));
-			w10.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child ytable1.Gtk.Table+TableChild
-			this.ylabelEmployeeIssueOperation = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabelEmployeeIssueOperation.Name = "ylabelEmployeeIssueOperation";
-			this.ylabelEmployeeIssueOperation.Xalign = 1F;
-			this.ylabelEmployeeIssueOperation.LabelProp = global::Mono.Unix.Catalog.GetString("Выдача сотруднику:");
-			this.ytable1.Add(this.ylabelEmployeeIssueOperation);
-			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelEmployeeIssueOperation]));
-			w11.XOptions = ((global::Gtk.AttachOptions)(4));
-			w11.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child ytable1.Gtk.Table+TableChild
-			this.ylabelEmployeeIssueOperationValue = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabelEmployeeIssueOperationValue.Name = "ylabelEmployeeIssueOperationValue";
-			this.ylabelEmployeeIssueOperationValue.LabelProp = global::Mono.Unix.Catalog.GetString("ylabelEmployeeIssueOperationValue");
-			this.ytable1.Add(this.ylabelEmployeeIssueOperationValue);
-			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelEmployeeIssueOperationValue]));
-			w12.LeftAttach = ((uint)(1));
-			w12.RightAttach = ((uint)(2));
-			w12.XOptions = ((global::Gtk.AttachOptions)(4));
-			w12.YOptions = ((global::Gtk.AttachOptions)(4));
-			this.yvbox1.Add(this.ytable1);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ytable1]));
-			w13.Position = 3;
+			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
+			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
+			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
+			this.treeviewOperations = new global::Gamma.GtkWidgets.yTreeView();
+			this.treeviewOperations.CanFocus = true;
+			this.treeviewOperations.Name = "treeviewOperations";
+			this.GtkScrolledWindow.Add(this.treeviewOperations);
+			this.yvbox1.Add(this.GtkScrolledWindow);
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.GtkScrolledWindow]));
+			w11.Position = 3;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{

@@ -1,16 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Operations {
-	
+
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "операции со штрихкодами",
 		Nominative = "операция со штрихкодом"
 	)]
 	public class BarcodeOperation : PropertyChangedBase, IDomainObject
 	{
-	
+		#region Свойста
 		public virtual int Id { get; set; }
 
 		private Barcode barcode;
@@ -34,5 +35,16 @@ namespace Workwear.Domain.Operations {
 			get => warehouseOperation;
 			set => SetField(ref warehouseOperation, value);
 		}
+		#endregion
+		#region Расчетные
+		public virtual DateTime? OperationDate => EmployeeIssueOperation?.OperationTime ?? WarehouseOperation?.OperationTime;
+		public virtual string OperationTitle {
+			get {
+				if(EmployeeIssueOperation?.Issued > 0)
+					return $"Выдача сотруднику: {EmployeeIssueOperation.Employee.ShortName}";
+				return "???";
+			}
+		}
+		#endregion
 	}
 }

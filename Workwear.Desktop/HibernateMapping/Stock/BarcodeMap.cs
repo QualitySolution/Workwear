@@ -1,4 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 
 namespace Workwear.HibernateMapping.Stock 
@@ -20,6 +21,9 @@ namespace Workwear.HibernateMapping.Stock
 			References(x => x.Nomenclature).Column ("nomenclature_id");
 			References(x => x.Size).Column ("size_id");
 			References(x => x.Height).Column ("height_id");
+			
+			HasMany<BarcodeOperation>(x => x.BarcodeOperations)
+				.KeyColumn("barcode_id").Inverse().LazyLoad();
 		}
 	}
 }

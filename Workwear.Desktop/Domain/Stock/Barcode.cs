@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 
 namespace Workwear.Domain.Stock
@@ -51,5 +53,16 @@ namespace Workwear.Domain.Stock
 			get => height;
 			set => SetField(ref height, value);
 		}
+
+		#region Списки
+
+		private IList<BarcodeOperation> barcodeOperations = new List<BarcodeOperation>();
+		[Display(Name = "Операции")]
+		public virtual IList<BarcodeOperation> BarcodeOperations {
+			get => barcodeOperations;
+			set => SetField(ref barcodeOperations, value);
+		}
+
+		#endregion
 	}
 }
