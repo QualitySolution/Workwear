@@ -116,10 +116,6 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.HistoryLog:
 					return ProductEdition == 2 || ProductEdition == 3;
-				case WorkwearFeature.HistoryLog:
-					return ProductEdition == 2 || ProductEdition == 3;
-				case WorkwearFeature.Completion:
-					return ProductEdition == 2 || ProductEdition == 3;
 				default:
 					return false;
 			}
@@ -129,8 +125,6 @@ namespace Workwear.Tools.Features
 	public enum WorkwearFeature
 	{
 		#region Профессиональная
-		[Display(Name = "Выдача списком")]
-		MassExpense,
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,
 		[Display(Name = "Комплектация")]
