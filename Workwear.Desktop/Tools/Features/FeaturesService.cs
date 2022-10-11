@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
 using QS.Cloud.Client;
-using QS.Project.Versioning;
+using QS.Project.DB;
 using QS.Project.Versioning.Product;
 using QS.Serial;
 using QS.Serial.Encoding;
