@@ -419,9 +419,9 @@
                             <BorderColor />
                             <BorderWidth />
                             <FontWeight>Bold</FontWeight>
-                            <PaddingLeft>10pt</PaddingLeft>
+                            <PaddingLeft>5pt</PaddingLeft>
                           </Style>
-                          <Value>=Fields!employee.Value</Value>
+                          <Value>={personnel_number} + " " + {employee}</Value>
                           <CanGrow>true</CanGrow>
                           <Visibility>
                             <Hidden>
@@ -628,7 +628,8 @@
         <CommandText>select 
     if(@summary, NULL, objects.id) as subdivision_id, 
     if(@summary, NULL, objects.name) as object, 
-    IF(@byEmployee, CONCAT_WS(' ',wear_cards.personnel_number, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name), NULL) AS employee,
+    IF(@byEmployee, wear_cards.personnel_number, NULL) AS personnel_number,
+    IF(@byEmployee, CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name), NULL) AS employee,
     nomenclature.name as nomen, 
     sum(issued) as sum, 
     nomenclature.number, 
@@ -741,6 +742,10 @@ ORDER BY CAST(objects.code AS UNSIGNED), employee, nomen, size, growth;</Command
         </Field>
         <Field Name="employee">
           <DataField>employee</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="personnel_number">
+          <DataField>personnel_number</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
