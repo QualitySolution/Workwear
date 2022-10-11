@@ -21,9 +21,10 @@ namespace workwear.ReportParameters.Views
 			comboIssueType.ItemsEnum = typeof(IssueType);
 			comboIssueType.Binding.AddBinding(ViewModel, v => v.IssueType, w => w.SelectedItemOrNull).InitializeFromSource();
 
+			checkBySubdivision.Binding.AddBinding(viewModel, v => v.BySubdivision, w => w.Active).InitializeFromSource();
+			checkByEmployee.Binding.AddBinding(ViewModel, v => v.ByEmployee, w => w.Active).InitializeFromSource();
 			checkBySize.Binding.AddBinding(ViewModel, v => v.BySize, w => w.Active).InitializeFromSource();
 
-			ycheckSummry.Binding.AddBinding(viewModel, v => v.Summary, w => w.Active).InitializeFromSource();
 			ycheckAll.Binding.AddSource(viewModel)
 				.AddBinding(v => v.SelectAll, w => w.Active)
 				.InitializeFromSource();
@@ -37,7 +38,6 @@ namespace workwear.ReportParameters.Views
 			buttonPrintReport.Binding.AddBinding(viewModel, v => v.SensitiveLoad, w => w.Sensitive).InitializeFromSource();
 
 			yentryMatch.Binding.AddBinding(viewModel, v => v.MatchString, w => w.Text).InitializeFromSource();
-
 			yentryNoMatch.Binding.AddBinding(viewModel, v => v.NoMatchString, w => w.Text).InitializeFromSource();
 			
 			ycheckChild.Binding

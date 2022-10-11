@@ -6,18 +6,18 @@
   <PageHeight>17in</PageHeight>
   <PageWidth>11in</PageWidth>
   <Width>7.5in</Width>
-  <TopMargin>.25in</TopMargin>
-  <LeftMargin>.25in</LeftMargin>
-  <RightMargin>.25in</RightMargin>
-  <BottomMargin>.25in</BottomMargin>
+  <TopMargin>.20in</TopMargin>
+  <LeftMargin>.20in</LeftMargin>
+  <RightMargin>.20in</RightMargin>
+  <BottomMargin>.20in</BottomMargin>
   <PageHeader>
-    <Height>48.3pt</Height>
+    <Height>37.4pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
     <ReportItems>
       <Textbox Name="Textbox2" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-        <Height>35.06pt</Height>
-        <Width>748.98pt</Width>
+        <Height>25.33pt</Height>
+        <Width>761.77pt</Width>
         <Value>= "Отчет о спецодежде выданной за период c " + Format({?dateStart}, "dd/MM/yyyy")  + " г. по " +  Format({?dateEnd}, "dd/MM/yyyy") + " г."</Value>
         <ZIndex>1</ZIndex>
         <Left>1.63pt</Left>
@@ -36,7 +36,7 @@
     </ReportItems>
   </PageHeader>
   <Body>
-    <Height>79.8pt</Height>
+    <Height>87.5pt</Height>
     <ReportItems>
       <Table Name="Table1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <DataSetName>Data</DataSetName>
@@ -54,7 +54,7 @@
             <Width>87.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>443.3pt</Width>
+            <Width>440.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>96.8pt</Width>
@@ -63,9 +63,9 @@
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>55.7pt</Width>
+            <Width>60.4pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>79.3pt</Width>
             <Visibility>
               <Hidden>=!{?showOwners}</Hidden>
@@ -158,7 +158,7 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox19">
                           <Value>
@@ -225,7 +225,7 @@
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox5">
-                          <Value>= "  " +  {code} + "      " + {object}</Value>
+                          <Value>= Iif(Fields!object.IsMissing, "      Без подразделения", "  " + {code} + "      " + {object})</Value>
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
@@ -282,7 +282,7 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox16">
                           <Value>
@@ -301,6 +301,9 @@
                       </ReportItems>
                     </TableCell>
                   </TableCells>
+                  <Visibility >
+                    <Hidden>={?summary}</Hidden>
+                  </Visibility>
                 </TableRow>
                 <TableRow>
                   <Height>24.4pt</Height>
@@ -370,7 +373,7 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox18">
                           <Value>Собственник</Value>
@@ -387,6 +390,113 @@
                       </ReportItems>
                     </TableCell>
                   </TableCells>
+                </TableRow>
+              </TableRows>
+            </Header>
+          </TableGroup>
+          <TableGroup >
+            <Grouping Name="EmployeeGroup">
+              <PageBreakAtStart>false</PageBreakAtStart>
+              <PageBreakAtEnd>false</PageBreakAtEnd>
+              <GroupExpressions>
+                <GroupExpression>={employee}</GroupExpression>
+              </GroupExpressions>
+            </Grouping>
+            <Header>
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>14.1pt</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox20">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                            <PaddingLeft>10pt</PaddingLeft>
+                          </Style>
+                          <Value>=Fields!employee.Value</Value>
+                          <CanGrow>true</CanGrow>
+                          <Visibility>
+                            <Hidden>
+                            </Hidden>
+                          </Visibility>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>2</ColSpan>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox22">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                          <Visibility>
+                            <Hidden>
+                            </Hidden>
+                          </Visibility>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox24">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                          <Visibility>
+                            <Hidden>
+                            </Hidden>
+                          </Visibility>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox25">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                          <Visibility>
+                            <Hidden>
+                            </Hidden>
+                          </Visibility>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                  </TableCells>
+                  <Visibility>
+                    <Hidden>=!{?byEmployee}</Hidden>
+                  </Visibility>
                 </TableRow>
               </TableRows>
             </Header>
@@ -462,7 +572,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox15">
                       <Value>={owner_name}</Value>
@@ -471,7 +581,7 @@
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingRight>2pt</PaddingRight>
-                        <TextAlign>Right</TextAlign>
+                        <TextAlign>Center</TextAlign>
                         <BorderColor />
                         <BorderWidth />
                       </Style>
@@ -482,8 +592,8 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>5.8pt</Left>
-        <Top>3.1pt</Top>
+        <Left>1.5pt</Left>
+        <Top>0.0pt</Top>
       </Table>
     </ReportItems>
     <Columns>1</Columns>
@@ -515,7 +625,17 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>select if(@summary, NULL, objects.id) as subdivision_id, objects.name as object, nomenclature.name as nomen, sum(issued) as sum, nomenclature.number, if(@alternativeName, IFNULL(sizeAlias.alternative_name, sizeAlias.name) , sizeAlias.name) as size, heightAlias.name as growth, objects.code, if(@showOwners, owners.name, null) as owner_name 
+        <CommandText>select 
+    if(@summary, NULL, objects.id) as subdivision_id, 
+    if(@summary, NULL, objects.name) as object, 
+    IF(@byEmployee, CONCAT_WS(' ',wear_cards.personnel_number, wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name), NULL) AS employee,
+    nomenclature.name as nomen, 
+    sum(issued) as sum, 
+    nomenclature.number, 
+    if(@alternativeName, IFNULL(sizeAlias.alternative_name, sizeAlias.name), sizeAlias.name) as size, 
+    heightAlias.name as growth, 
+    objects.code, 
+    if(@showOwners, owners.name, null) as owner_name 
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
@@ -532,8 +652,8 @@ and operation_issued_by_employee.returned = 0 AND ((@withoutsub AND objects.id I
 and (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
 and (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
 AND (@showOwners AND (@allOwners OR ((@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)))
-GROUP BY subdivision_id, operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL)
-ORDER BY CAST(objects.code AS UNSIGNED), nomen, size, growth;</CommandText>
+GROUP BY subdivision_id, IF(@byEmployee, wear_cards.id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL)
+ORDER BY CAST(objects.code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
             <Value>=Format({?dateStart}, "yyyy-MM-dd")</Value>
@@ -577,6 +697,9 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen, size, growth;</CommandText>
           <QueryParameter Name="allOwners">
             <Value>={?allOwners}</Value>
           </QueryParameter>
+          <QueryParameter Name="byEmployee">
+            <Value>={?byEmployee}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields >
@@ -616,6 +739,10 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen, size, growth;</CommandText>
           <DataField>owner_name</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="employee">
+          <DataField>employee</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -628,7 +755,7 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen, size, growth;</CommandText>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="dateStart">
       <DataType>DateTime</DataType>
       <Nullable>false</Nullable>
@@ -735,6 +862,19 @@ ORDER BY CAST(objects.code AS UNSIGNED), nomen, size, growth;</CommandText>
     </ReportParameter>
     <ReportParameter Name="allOwners">
       <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="byEmployee">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>0</Value>
+        </Values>
+      </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>

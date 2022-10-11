@@ -13742,10 +13742,10 @@
           </packing>
         </child>
         <child>
-          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckSummry">
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkBySubdivision">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Суммировать результат</property>
+            <property name="Label" translatable="yes">Детализировать по подразделениям</property>
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
@@ -13758,7 +13758,20 @@
           </packing>
         </child>
         <child>
-          <placeholder />
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkByEmployee">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">Детализировать по сотрудникам</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+            <property name="UseUnderline">True</property>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
         </child>
         <child>
           <widget class="Gamma.GtkWidgets.yCheckButton" id="checkBySize">
@@ -13797,7 +13810,7 @@
         <child>
           <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckChild">
             <property name="MemberName" />
-            <property name="Tooltip" translatable="yes">Включать в отчет таже дочерние подразделения для выбранных подразделений.</property>
+            <property name="Tooltip" translatable="yes">Включать в отчет так же дочерние подразделения выбранных подразделений.</property>
             <property name="CanFocus">True</property>
             <property name="Label" translatable="yes">Включая дочерниее подразделения</property>
             <property name="DrawIndicator">True</property>
