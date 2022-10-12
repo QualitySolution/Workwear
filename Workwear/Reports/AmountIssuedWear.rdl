@@ -301,7 +301,7 @@
                       </ReportItems>
                     </TableCell>
                   </TableCells>
-                  <Visibility >
+                  <Visibility>
                     <Hidden>={?summary}</Hidden>
                   </Visibility>
                 </TableRow>
@@ -394,7 +394,7 @@
               </TableRows>
             </Header>
           </TableGroup>
-          <TableGroup >
+          <TableGroup>
             <Grouping Name="EmployeeGroup">
               <PageBreakAtStart>false</PageBreakAtStart>
               <PageBreakAtEnd>false</PageBreakAtEnd>
@@ -421,7 +421,7 @@
                             <FontWeight>Bold</FontWeight>
                             <PaddingLeft>5pt</PaddingLeft>
                           </Style>
-                          <Value>={personnel_number} + " " + {employee}</Value>
+                          <Value>={personnel_number} + " " + {employee} + " (" + {post} + ")"</Value>
                           <CanGrow>true</CanGrow>
                           <Visibility>
                             <Hidden>
@@ -429,28 +429,7 @@
                           </Visibility>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>2</ColSpan>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox22">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Left>None</Left>
-                              <Right>None</Right>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                          </Style>
-                          <Value>
-                          </Value>
-                          <Visibility>
-                            <Hidden>
-                            </Hidden>
-                          </Visibility>
-                        </Textbox>
-                      </ReportItems>
+                      <ColSpan>3</ColSpan>
                     </TableCell>
                     <TableCell>
                       <ReportItems>
@@ -630,6 +609,7 @@
     if(@summary, NULL, objects.name) as object, 
     IF(@byEmployee, wear_cards.personnel_number, NULL) AS personnel_number,
     IF(@byEmployee, CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name), NULL) AS employee,
+    IF(@byEmployee, posts.name, NULL) AS post,
     nomenclature.name as nomen, 
     sum(issued) as sum, 
     nomenclature.number, 
@@ -640,6 +620,7 @@
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
+LEFT JOIN posts ON posts.id = wear_cards.post_id
 LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
 LEFT JOIN item_types ON item_types.id = nomenclature.type_id
 LEFT JOIN sizes as sizeAlias ON (sizeAlias.id = operation_issued_by_employee.size_id)
@@ -748,6 +729,10 @@ ORDER BY CAST(objects.code AS UNSIGNED), employee, nomen, size, growth;</Command
           <DataField>personnel_number</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="post">
+          <DataField>post</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -760,7 +745,7 @@ ORDER BY CAST(objects.code AS UNSIGNED), employee, nomen, size, growth;</Command
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="dateStart">
       <DataType>DateTime</DataType>
       <Nullable>false</Nullable>
