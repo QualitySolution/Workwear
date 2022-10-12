@@ -128,7 +128,7 @@ public partial class MainWindow : Gtk.Window
 
 		//Настраиваем новости
 		var feeds = new List<NewsFeed>(){
-			new NewsFeed("workwearsite", "Новости программы", "http://workwear.qsolution.ru/?feed=atom")
+			new NewsFeed("workwearsite", "Новости программы", "https://workwear.qsolution.ru/?feed=atom")
 			};
 		var reader = AutofacScope.Resolve<FeedReader>(new TypedParameter(typeof(List<NewsFeed>), feeds));
 		reader.LoadReadFeed();
@@ -558,7 +558,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionSiteActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenSite");
-		System.Diagnostics.Process.Start("http://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
+		System.Diagnostics.Process.Start("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
 	}
 
 	protected void OnActionOpenReformalActivated(object sender, EventArgs e)
@@ -714,7 +714,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionPayActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("pay.qsolution.ru");
-		System.Diagnostics.Process.Start("http://pay.qsolution.ru/");
+		System.Diagnostics.Process.Start("https://pay.qsolution.ru/");
 	}
 
 	protected void OnActionRequestSheetActivated(object sender, EventArgs e)

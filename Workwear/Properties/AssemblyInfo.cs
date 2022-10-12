@@ -18,7 +18,7 @@ using QS.Project.Versioning;
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyLogoIcon("workwear.icon.logo.png")]
 [assembly: AssemblySupport("Телефон тех. поддержки +7(812)309-71-77")]
-[assembly: AssemblyAppWebsite("http://workwear.qsolution.ru/")]
+[assembly: AssemblyAppWebsite("https://workwear.qsolution.ru/")]
 
 [assembly: InternalsVisibleTo("WorkwearTest")]
 
