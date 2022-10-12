@@ -210,6 +210,11 @@ public partial class MainWindow : Gtk.Window
 		                         || FeaturesService.Available(WorkwearFeature.Claims) 
 		                         || FeaturesService.Available(WorkwearFeature.Ratings);
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
+
+		#region Для спецпошива
+		ActionPay.Visible = false;
+		ActionOpenReformal.Visible = false;
+		#endregion
 	}
 	#endregion
 
