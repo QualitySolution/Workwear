@@ -39,7 +39,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly UserRepository userRepository;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public ExpenseDocItemsEmployeeViewModel DocItemsEmployeeViewModel;
-		private IInteractiveQuestion interactive;
+		private IInteractiveService interactive;
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;
@@ -52,7 +52,7 @@ namespace Workwear.ViewModels.Stock
 			IValidator validator,
 			IUserService userService,
 			UserRepository userRepository,
-			IInteractiveQuestion interactive,
+			IInteractiveService interactive,
 			StockRepository stockRepository,
 			CommonMessages commonMessages,
 			FeaturesService featuresService,
@@ -142,6 +142,8 @@ namespace Workwear.ViewModels.Stock
 						i.AktNumber = item.AktNumber;
 		}
 
+		public bool SkipBarcodeCheck;
+		
 		public override bool Save()
 		{
 			progress.Start(7);
@@ -151,6 +153,11 @@ namespace Workwear.ViewModels.Stock
 			}
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
+
+			if(!SkipBarcodeCheck && DocItemsEmployeeViewModel.SensetiveCreateBarcodes) {
+				interactive.ShowMessage(ImportanceLevel.Error, "Перед окончательным сохранением необходимо обновить штрихкоды.");
+				return false;
+			}
 
 			//Так как сохранение достаточно сложное, рядом сохраняется еще два документа, при чтобы оно не ломалось из за зависимостей между объектами.
 			//Придерживайтесь следующего порядка:

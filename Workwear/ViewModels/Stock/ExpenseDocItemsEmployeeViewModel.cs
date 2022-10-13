@@ -98,7 +98,7 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 		#region Sensetive
 		public bool SensetiveFillBuhDoc => Entity.Items.Count > 0;
-		public bool SensetiveCreateBarcodes => Entity.Items.Any(x => x.Nomenclature.UseBarcode && x.Amount > 0
+		public bool SensetiveCreateBarcodes => Entity.Items.Any(x => x.Nomenclature.UseBarcode
 			&& (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) != x.Amount);
 		public bool SensetiveBarcodesPrint => Entity.Items.Any(x => x.Nomenclature.UseBarcode && x.Amount > 0);
 		#endregion
@@ -190,13 +190,22 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		#region Штрих коды
+		public string ButtonCreateOrRemoveBarcodesTitle => 
+			Entity.Items.Any(x => x.Nomenclature.UseBarcode && (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) > x.Amount)
+			? "Обновить штрихкоды" : "Создать штрихкоды";
+		
 		public void ReleaseBarcodes() {
-			if(!expenseEmployeeViewModel.Save())
+			expenseEmployeeViewModel.SkipBarcodeCheck = true;
+			var saveResult = expenseEmployeeViewModel.Save();
+			expenseEmployeeViewModel.SkipBarcodeCheck = false;
+			if(!saveResult)
 				return;
 
 			var operations = Entity.Items.Where(i => i.Nomenclature.UseBarcode).Select(x => x.EmployeeIssueOperation).ToList();
 			barcodeService.CreateOrRemove(UoW, operations);
 			UoW.Commit();
+			OnPropertyChanged(nameof(SensetiveCreateBarcodes));
+			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
 		}
 
 		public void PrintBarcodes() {
@@ -238,6 +247,15 @@ namespace Workwear.ViewModels.Stock
 		{ 
 			if(e.PropertyName == nameof(ExpenseItem.BuhDocument)) {
 				expenseEmployeeViewModel.HasChanges = true;
+			}
+			if(e.PropertyName == nameof(ExpenseItem.Amount)) {
+				OnPropertyChanged(nameof(SensetiveCreateBarcodes));
+				OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
+			}
+			if(e.PropertyName == nameof(ExpenseItem.Nomenclature)) {
+				OnPropertyChanged(nameof(SensetiveCreateBarcodes));
+				OnPropertyChanged(nameof(SensetiveBarcodesPrint));
+				OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
 			}
 		}
 

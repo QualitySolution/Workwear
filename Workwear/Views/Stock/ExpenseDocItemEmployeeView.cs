@@ -46,6 +46,7 @@ namespace Workwear.Views.Stock
 			buttonCreateOrDeleteBarcodes.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
 				.AddBinding(v => v.SensetiveCreateBarcodes, w => w.Sensitive)
+				.AddBinding(v => v.ButtonCreateOrRemoveBarcodesTitle, w => w.Label)
 				.InitializeFromSource();
 			buttonPrintBarcodes.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
