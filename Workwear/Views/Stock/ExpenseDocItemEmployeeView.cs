@@ -43,6 +43,15 @@ namespace Workwear.Views.Stock
 
 			buttonAdd.Sensitive = ViewModel.Warehouse != null;
 
+			buttonCreateOrDeleteBarcodes.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
+				.AddBinding(v => v.SensetiveCreateBarcodes, w => w.Sensitive)
+				.InitializeFromSource();
+			buttonPrintBarcodes.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
+				.AddBinding(v => v.SensetiveBarcodesPrint, w => w.Sensitive)
+				.InitializeFromSource();
+
 			ViewModel.expenseEmployeeViewModel.Entity.PropertyChanged += ExpenseDoc_PropertyChanged;
 
 			ViewModel.PropertyChanged += PropertyChanged;
@@ -75,10 +84,12 @@ namespace Workwear.Views.Stock
 					.SetDisplayFunc(x => x.Name)
 					.FillItems(ViewModel.Owners, "Нет")
 					.Editing()
-				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
+				.AddColumn("Износ").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer(e => 
 					e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
+				.AddColumn("Штрихкод").Visible(ViewModel.VisibleBarcodes)
+					.AddTextRenderer(x => x.BarcodesText).AddSetter((c,n) => c.Foreground = n.BarcodesTextColor)
 				.AddColumn("Списание").AddToggleRenderer(e => e.IsWriteOff).Editing()
 				.AddSetter((c, e) => c.Visible = e.IsEnableWriteOff)
 				.AddColumn("Номер акта").AddTextRenderer(e => e.AktNumber).Editable().AddSetter((c, e) => c.Visible = e.IsWriteOff)
@@ -112,20 +123,8 @@ namespace Workwear.Views.Stock
 			itemNomenclature.Activated += Item_Activated;
 			menu.Add(itemNomenclature);
 			
-			var releaseBarcode  = new MenuItemId<ExpenseItem>("Выпустить штрихкод");
-			releaseBarcode.ID = selected;
-			releaseBarcode.Visible = ViewModel.featuresService.Available(WorkwearFeature.Barcodes);
-			releaseBarcode.Sensitive = BarcodeSensitive(selected);
-			releaseBarcode.Activated += ReleaseBarcode_Activated;
-			menu.Add(releaseBarcode);
-			
 			menu.ShowAll();
 			menu.Popup();
-		}
-
-		private void ReleaseBarcode_Activated(object sender, EventArgs e) 
-		{
-			viewModel.ReleaseBarcode(((MenuItemId<ExpenseItem>)sender).ID);
 		}
 
 		void ItemOpenProtection_Activated(object sender, EventArgs e)
@@ -224,6 +223,14 @@ namespace Workwear.Views.Stock
 				"<span color='Burlywood'>●</span> — позиция выдается коллективно\n" +
 				"<span color='#7B3F00'>●</span> — выдача коллективной номенклатуры"
 			);
+		}
+
+		protected void OnButtonCreateOrDeleteBarcodesClicked(object sender, EventArgs e) {
+			ViewModel.ReleaseBarcodes();
+		}
+
+		protected void OnButtonPrintBarcodesClicked(object sender, EventArgs e) {
+			ViewModel.PrintBarcodes();
 		}
 		#endregion
 	}

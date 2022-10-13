@@ -13026,7 +13026,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.ExpenseDocItemEmployeeView" design-size="575 234">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.ExpenseDocItemEmployeeView" design-size="702 234">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -13082,6 +13082,42 @@
               <packing>
                 <property name="PackType">End</property>
                 <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonPrintBarcodes">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-print Menu</property>
+                <property name="Label" translatable="yes">Печать штрихкодов</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonPrintBarcodesClicked" />
+              </widget>
+              <packing>
+                <property name="PackType">End</property>
+                <property name="Position">3</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonCreateOrDeleteBarcodes">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">resource:Workwear.icon.buttons.barcode-add.png</property>
+                <property name="Label" translatable="yes">Создать штрихкоды</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonCreateOrDeleteBarcodesClicked" />
+              </widget>
+              <packing>
+                <property name="PackType">End</property>
+                <property name="Position">4</property>
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
