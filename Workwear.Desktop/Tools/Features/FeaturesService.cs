@@ -26,6 +26,7 @@ namespace Workwear.Tools.Features
 		private readonly IDataBaseInfo dataBaseInfo;
 
 		public byte ProductEdition { get; }
+		public ushort ClientId { get; }
 
 		public string EditionName => SupportEditions.First(x => x.Number == ProductEdition).Name;
 
@@ -60,10 +61,12 @@ namespace Workwear.Tools.Features
 			if(serialNumberEncoder.IsValid) {
 				if(serialNumberEncoder.CodeVersion == 1)
 					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к профессиональной редакции.
-				else if(serialNumberEncoder.CodeVersion == 2 
-						&& serialNumberEncoder.EditionId >= 1
-						&& serialNumberEncoder.EditionId <= 3) 
+				else if(serialNumberEncoder.CodeVersion == 2
+				        && serialNumberEncoder.EditionId >= 1
+				        && serialNumberEncoder.EditionId <= 3) {
 					ProductEdition = serialNumberEncoder.EditionId;
+					ClientId = serialNumberEncoder.ClientId;
+				}
 			}
 		}
 
@@ -74,8 +77,10 @@ namespace Workwear.Tools.Features
 		{
 		}
 
-		virtual public bool Available(WorkwearFeature feature)
+		public virtual bool Available(WorkwearFeature feature) 
 		{
+			if(feature == WorkwearFeature.Barcodes)
+				return true;
 			if(ProductEdition == 0) //В демо редакции доступны все возможности кроме облачных
 				return (feature != WorkwearFeature.Communications && feature != WorkwearFeature.EmployeeLk);
 
@@ -156,7 +161,9 @@ namespace Workwear.Tools.Features
 		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,
 		[Display(Name = "Собственники имущества")]
-		Owners
+		Owners,
+		[Display(Name = "Штрихкоды")]
+		Barcodes
 		#endregion
 	}
 	

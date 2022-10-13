@@ -67,6 +67,11 @@ namespace Workwear.Views.Stock {
 				.AddBinding(wm => wm.RatingLabel, w => w.Text)
 				.InitializeFromSource();
 
+			ycheckBarcode.Visible = ViewModel.VisibleBarcode;
+			ycheckBarcode.Binding
+				.AddBinding(Entity, e => e.UseBarcode, w => w.Active)
+				.InitializeFromSource();
+
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
 			MakeMenu();
 		}

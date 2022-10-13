@@ -203,6 +203,38 @@ namespace Workwear.Domain.Stock.Documents
 				Nomenclature.Type.Units?.Name
 			).TrimEnd();
 
+		public virtual string BarcodesText {
+			get {
+				if(!Nomenclature.UseBarcode)
+					return null;
+				if(Amount > 0 && (EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) == 0)
+					return "необходимо создать";
+				if((EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) == 0)
+					return null;
+				//Рассчитываем максимум на 3 строки, если штрих кода 3, отображаем их все. Если больше 3-х третью строку занимаем под надпись...
+				var willTake = EmployeeIssueOperation.BarcodeOperations.Count > 3 ? 2 : 3; 
+				var text = String.Join("\n", EmployeeIssueOperation.BarcodeOperations.Take(willTake).Select(x => x.Barcode.Title));
+				if(EmployeeIssueOperation?.BarcodeOperations.Count > 3)
+					text += $"\nещё {EmployeeIssueOperation?.BarcodeOperations.Count - 2}";
+				return text;
+			}
+		}
+
+		public virtual string BarcodesTextColor {
+			get {
+				if(!Nomenclature.UseBarcode || EmployeeIssueOperation == null)
+					return null;
+
+				if(Amount == EmployeeIssueOperation.BarcodeOperations.Count)
+					return null;
+
+				if(Amount < EmployeeIssueOperation.BarcodeOperations.Count)
+					return "blue";
+				if(Amount > EmployeeIssueOperation.BarcodeOperations.Count)
+					return "red";
+				return null;
+			}
+		}
 		#endregion
 
 		public ExpenseItem ()
