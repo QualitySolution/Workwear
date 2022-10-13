@@ -1001,6 +1001,67 @@ ALTER TABLE `operation_warehouse`
 			ON DELETE SET NULL
 			ON UPDATE NO ACTION;
 
+-- Добавляем штрихкоды
+ALTER TABLE `nomenclature`
+	ADD COLUMN `use_barcode` TINYINT(1) NOT NULL DEFAULT 0 AFTER `rating_count`;
+
+CREATE TABLE IF NOT EXISTS `barcodes` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`creation_date` DATE NOT NULL DEFAULT CURRENT_DATE(),
+	`title` VARCHAR(13) NULL DEFAULT NULL,
+	`nomenclature_id` INT(10) UNSIGNED NOT NULL,
+	`size_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+	`height_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `value_UNIQUE` (`title` ASC),
+	INDEX `fk_barcodes_1_idx` (`nomenclature_id` ASC),
+	INDEX `fk_barcodes_2_idx` (`size_id` ASC),
+	INDEX `fk_barcodes_3_idx` (`height_id` ASC),
+	CONSTRAINT `fk_barcodes_1`
+	FOREIGN KEY (`nomenclature_id`)
+	REFERENCES `nomenclature` (`id`)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
+	CONSTRAINT `fk_barcodes_2`
+	FOREIGN KEY (`size_id`)
+	REFERENCES `sizes` (`id`)
+	ON DELETE SET NULL
+	ON UPDATE CASCADE,
+	CONSTRAINT `fk_barcodes_3`
+	FOREIGN KEY (`height_id`)
+	REFERENCES `sizes` (`id`)
+	ON DELETE SET NULL
+	ON UPDATE CASCADE)
+	ENGINE = InnoDB
+	DEFAULT CHARACTER SET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `operation_barcodes` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`barcode_id` INT(10) UNSIGNED NOT NULL,
+	`employee_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+	`warehouse_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `fk_operation_barcodes_1_idx` (`barcode_id` ASC),
+	INDEX `fk_operation_barcodes_2_idx` (`employee_issue_operation_id` ASC),
+	INDEX `fk_operation_barcodes_3_idx` (`warehouse_operation_id` ASC),
+	CONSTRAINT `fk_operation_barcodes_1`
+	FOREIGN KEY (`barcode_id`)
+	REFERENCES `barcodes` (`id`)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
+	CONSTRAINT `fk_operation_barcodes_2`
+	FOREIGN KEY (`employee_issue_operation_id`)
+	REFERENCES `operation_issued_by_employee` (`id`)
+	ON DELETE RESTRICT
+	ON UPDATE CASCADE,
+	CONSTRAINT `fk_operation_barcodes_3`
+	FOREIGN KEY (`warehouse_operation_id`)
+	REFERENCES `operation_warehouse` (`id`)
+	ON DELETE RESTRICT
+	ON UPDATE CASCADE)
+	ENGINE = InnoDB
+	DEFAULT CHARACTER SET = utf8mb4;
+
 -- Обновляем хранимую процедуру
 DROP function IF EXISTS `count_issue`;
 
