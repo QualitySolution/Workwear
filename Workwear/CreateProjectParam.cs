@@ -74,6 +74,7 @@ using Workwear.ViewModels.Communications;
 using Workwear.ViewModels.Company;
 using Workwear.Views.Company;
 using workwear.Models.WearLk;
+using Workwear.Tools.Barcodes;
 using Workwear.ViewModels.Import;
 
 namespace workwear
@@ -202,6 +203,7 @@ namespace workwear
 			builder.RegisterType<ObjectValidator>().As<IValidator>();
 			builder.RegisterType<CommonMessages>().AsSelf();
 			builder.RegisterGeneric(typeof(NHibernateChangeMonitor<>)).As(typeof(IChangeMonitor<>));
+			builder.RegisterType<BarcodeService>().AsSelf();
 			#endregion
 
 			#region Навигация
