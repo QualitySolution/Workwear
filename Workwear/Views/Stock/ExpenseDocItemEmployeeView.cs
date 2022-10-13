@@ -227,10 +227,12 @@ namespace Workwear.Views.Stock
 
 		protected void OnButtonCreateOrDeleteBarcodesClicked(object sender, EventArgs e) {
 			ViewModel.ReleaseBarcodes();
+			ytreeItems.YTreeModel.EmitModelChanged();
 		}
 
 		protected void OnButtonPrintBarcodesClicked(object sender, EventArgs e) {
 			ViewModel.PrintBarcodes();
+			ytreeItems.YTreeModel.EmitModelChanged();
 		}
 		#endregion
 	}

@@ -21,6 +21,7 @@ using Workwear.ViewModels.Regulations;
 using Workwear.Measurements;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Barcodes;
+using QS.Dialog;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -29,6 +30,7 @@ namespace Workwear.ViewModels.Stock
 		public readonly ExpenseEmployeeViewModel expenseEmployeeViewModel;
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
+		private readonly IInteractiveQuestion interactive;
 		private readonly IDeleteEntityService deleteService;
 		private readonly EmployeeIssueRepository employeeRepository;
 		private readonly BarcodeService barcodeService;
@@ -40,7 +42,8 @@ namespace Workwear.ViewModels.Stock
 		public ExpenseDocItemsEmployeeViewModel(
 			ExpenseEmployeeViewModel expenseEmployeeViewModel, 
 			FeaturesService featuresService, 
-			INavigationManager navigation, 
+			INavigationManager navigation,
+			IInteractiveQuestion interactive,
 			SizeService sizeService, 
 			IDeleteEntityService deleteService,
 			EmployeeIssueRepository employeeRepository,
@@ -50,6 +53,7 @@ namespace Workwear.ViewModels.Stock
 			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
@@ -94,9 +98,13 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 		#region Sensetive
 		public bool SensetiveFillBuhDoc => Entity.Items.Count > 0;
+		public bool SensetiveCreateBarcodes => Entity.Items.Any(x => x.Nomenclature.UseBarcode && x.Amount > 0
+			&& (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) != x.Amount);
+		public bool SensetiveBarcodesPrint => Entity.Items.Any(x => x.Nomenclature.UseBarcode && x.Amount > 0);
 		#endregion
 		#region Visible
 		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
+		public bool VisibleBarcodes => featuresService.Available(WorkwearFeature.Barcodes);
 		#endregion
 		#region Действия View
 		public void FillBuhDoc()
@@ -180,6 +188,36 @@ namespace Workwear.ViewModels.Stock
 		{
 			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(expenseEmployeeViewModel, EntityUoWBuilder.ForOpen(item.ProtectionTools.Id));
 		}
+
+		#region Штрих коды
+		public void ReleaseBarcodes() {
+			if(!expenseEmployeeViewModel.Save())
+				return;
+
+			var operations = Entity.Items.Where(i => i.Nomenclature.UseBarcode).Select(x => x.EmployeeIssueOperation).ToList();
+			barcodeService.CreateOrRemove(UoW, operations);
+			UoW.Commit();
+		}
+
+		public void PrintBarcodes() {
+			if(SensetiveCreateBarcodes) {
+				if(interactive.Question("Не для всех строк документа были созданы штрих коды. Обновить штрихкоды?"))
+					ReleaseBarcodes();
+				else
+					return;
+			}
+
+			var reportInfo = new ReportInfo {
+				Title = "Штрихкоды",
+				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
+				Parameters = new Dictionary<string, object> {
+					{"operations", Entity.Items.Where(x => x.EmployeeIssueOperation.BarcodeOperations.Any()).Select(x => x.EmployeeIssueOperation.Id).ToArray()}
+				}
+			};
+
+			navigation.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
+		}
+		#endregion
 		#endregion
 
 		public void CalculateTotal()
@@ -209,22 +247,5 @@ namespace Workwear.ViewModels.Stock
 				Entity.FillCanWriteoffInfo(employeeRepository);
 		}
 		#endregion
-
-		public void ReleaseBarcode(ExpenseItem item) {
-			var barcodes = barcodeService.GetByEmployeeIssueOperation(item.EmployeeIssueOperation, UoW);
-			if(barcodes.Count == 0) 
-				barcodes = barcodeService.Create(UoW, item.EmployeeIssueOperation.Issued, item.EmployeeIssueOperation);
-			UoW.Commit();
-
-			var reportInfo = new ReportInfo {
-				Title = "Штрихкоды",
-				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
-				Parameters = new Dictionary<string, object> {
-					{"barcodes", barcodes.Select(x => x.Id).ToArray()}
-				}
-			};
-
-			navigation.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
-		}
 	}
 }

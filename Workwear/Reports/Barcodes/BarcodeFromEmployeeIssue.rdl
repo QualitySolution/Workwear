@@ -1,360 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
-  <Description>Справка о выданной спецодежде</Description>
+  <Description>Штрихкоды</Description>
   <Author>
   </Author>
-  <PageHeight>17in</PageHeight>
-  <PageWidth>11in</PageWidth>
+  <PageHeight>30mm</PageHeight>
+  <PageWidth>80mm</PageWidth>
   <Width>7.5in</Width>
-  <TopMargin>.25in</TopMargin>
-  <LeftMargin>.25in</LeftMargin>
-  <RightMargin>.25in</RightMargin>
-  <BottomMargin>.25in</BottomMargin>
+  <TopMargin>2mm</TopMargin>
+  <LeftMargin>2mm</LeftMargin>
+  <RightMargin>2mm</RightMargin>
+  <BottomMargin>2mm</BottomMargin>
   <PageHeader>
     <Height>0.0pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>115.1pt</Height>
+    <Height>136.3pt</Height>
     <ReportItems>
-      <Table Name="Table1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-        <DataSetName>Data</DataSetName>
-        <NoRows>По данному запросу нет данных</NoRows>
-        <Style>
-          <BorderStyle>
-            <Default>Solid</Default>
-            <Right>None</Right>
-          </BorderStyle>
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-        <TableColumns>
-          <TableColumn>
-            <Width>303.3pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>260.7pt</Width>
-            <Visibility>
-            </Visibility>
-          </TableColumn>
-          <TableColumn >
-            <Width>188.8pt</Width>
-          </TableColumn>
-        </TableColumns>
-        <TableGroups>
-          <TableGroup>
-            <Grouping Name="nomenclatureGroup">
-              <GroupExpressions>
-                <GroupExpression>{nomenclature_id}=</GroupExpression>
-              </GroupExpressions>
-              <PageBreakAtStart>false</PageBreakAtStart>
-              <PageBreakAtEnd>false</PageBreakAtEnd>
-            </Grouping>
-            <Header>
-              <RepeatOnNewPage>true</RepeatOnNewPage>
-              <TableRows>
-                <TableRow>
-                  <Height>22.4pt</Height>
-                  <TableCells>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox23">
-                          <Value>Позиция:</Value>
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Right>None</Right>
-                              <Top>None</Top>
-                              <Left>None</Left>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <FontWeight>Bold</FontWeight>
-                            <FontSize>10pt</FontSize>
-                            <VerticalAlign>Bottom</VerticalAlign>
-                            <TextAlign>Right</TextAlign>
-                          </Style>
-                          <Visibility>
-                          </Visibility>
-                        </Textbox>
-                      </ReportItems>
-                      <ColSpan>1</ColSpan>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox16">
-                          <Value>
-                          </Value>
-                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Left>None</Left>
-                              <Right>None</Right>
-                              <Top>None</Top>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                          </Style>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell >
-                      <ReportItems>
-                        <Textbox Name="Textbox7">
-                          <Value>
-                          </Value>
-                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Left>None</Left>
-                              <Right>None</Right>
-                              <Top>None</Top>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                          </Style>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                  </TableCells>
-                </TableRow>
-              </TableRows>
-            </Header>
-          </TableGroup>
-        </TableGroups>
-        <Details>
-          <TableRows>
-            <TableRow>
-              <Height>12pt</Height>
-              <TableCells>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox11">
-                      <Value>={employee}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Right>None</Right>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox15">
-                      <Value>= {nomenclature} + " " + {fractional}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Left>None</Left>
-                          <Bottom>None</Bottom>
-                          <Right >None</Right>
-                        </BorderStyle>
-                        <PaddingRight>2pt</PaddingRight>
-                        <TextAlign>Left</TextAlign>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell >
-                  <ReportItems>
-                    <Textbox Name="Textbox3">
-                      <Value>
-                      </Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Left>None</Left>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <PaddingRight>2pt</PaddingRight>
-                        <TextAlign>Left</TextAlign>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-              </TableCells>
-            </TableRow>
-            <TableRow>
-              <Height>67.0pt</Height>
-              <TableCells>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox20">
-                      <Value>={organization} + " " + {subdivision}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                        </BorderStyle>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Left</TextAlign>
-                        <VerticalAlign>Top</VerticalAlign>
-                        <FontWeight>Normal</FontWeight>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox25">
-                      <Value>=Format({operation_date}, "dd/MM/yyyy")</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Left>None</Left>
-                          <Top>None</Top>
-                        </BorderStyle>
-                        <PaddingRight>2pt</PaddingRight>
-                        <TextAlign>Left</TextAlign>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell >
-                  <ReportItems>
-                    <CustomReportItem Name="CustomReportItem2" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                      <Type>BarCode EAN-13</Type>
-                      <CustomProperties>
-                        <CustomProperty >
-                          <Name>NumberSystem</Name>
-                          <Value>={number_system}</Value>
-                        </CustomProperty>
-                        <CustomProperty >
-                          <Name>ManufacturerCode</Name>
-                          <Value>={manufacture_code}</Value>
-                        </CustomProperty>
-                        <CustomProperty >
-                          <Name>ProductCode</Name>
-                          <Value>={product_code}</Value>
-                        </CustomProperty>
-                      </CustomProperties>
-                      <Style>
-                        <BorderStyle>
-                          <Bottom>Solid</Bottom>
-                          <Right >Solid</Right>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <FontSize >12pt</FontSize>
-                      </Style>
-                    </CustomReportItem>
-                  </ReportItems>
-                </TableCell>
-              </TableCells>
-            </TableRow>
-            <TableRow>
-              <Height>8.5pt</Height>
-              <TableCells>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox2">
-                      <Value>
-                      </Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                          <Left>None</Left>
-                        </BorderStyle>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Left</TextAlign>
-                        <VerticalAlign>Middle</VerticalAlign>
-                        <FontWeight>Bold</FontWeight>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox27">
-                      <Value>
-                      </Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Left>None</Left>
-                          <Top>None</Top>
-                          <Right>None</Right>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <PaddingRight>2pt</PaddingRight>
-                        <TextAlign>Left</TextAlign>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell >
-                  <ReportItems>
-                    <Textbox Name="Textbox6">
-                      <Value>
-                      </Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Left>None</Left>
-                          <Top>None</Top>
-                          <Right>None</Right>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <PaddingRight>2pt</PaddingRight>
-                        <TextAlign>Left</TextAlign>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-              </TableCells>
-            </TableRow>
-          </TableRows>
-        </Details>
-        <Left>5.8pt</Left>
-        <Top>3.1pt</Top>
-      </Table>
+      <List Name="List1">
+        <Height>81.43pt</Height>
+        <Width>215.67pt</Width>
+        <Left>0.00pt</Left>
+        <Top>2.40pt</Top>
+        <ReportItems>
+          <Textbox Name="Textbox1">
+            <Height>12.77pt</Height>
+            <Width>211.14pt</Width>
+            <Value>={employee}</Value>
+            <ZIndex>2</ZIndex>
+            <Left>0.8pt</Left>
+            <Top>64.4pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>8pt</FontSize>
+              <TextAlign>Center</TextAlign>
+              <BackgroundColor>White</BackgroundColor>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox5" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+            <Value>= {nomenclature} + Iif(Fields!wear_size.IsMissing and Fields!wear_height.IsMissing, "", "(" + {wear_size} + Iif(Fields!wear_height.IsMissing, "", "/" + {wear_height} + ")"))</Value>
+            <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+              <BorderStyle>
+                <Default>None</Default>
+                <Left>None</Left>
+                <Bottom>None</Bottom>
+                <Right>None</Right>
+                <Top>None</Top>
+              </BorderStyle>
+              <PaddingRight>2pt</PaddingRight>
+              <TextAlign>Center</TextAlign>
+              <BorderColor>
+                <Default>Bisque</Default>
+                <Left>Bisque</Left>
+                <Right>Bisque</Right>
+                <Top>Bisque</Top>
+                <Bottom>Bisque</Bottom>
+              </BorderColor>
+              <BorderWidth />
+              <FontSize>8pt</FontSize>
+              <BackgroundColor>White</BackgroundColor>
+            </Style>
+            <Left>2.40pt</Left>
+            <Top>1.40pt</Top>
+            <Height>10.38pt</Height>
+            <Width>211.06pt</Width>
+            <ZIndex>1</ZIndex>
+            <CanGrow>true</CanGrow>
+          </Textbox>
+          <Textbox Name="Textbox8">
+            <Height>13.50pt</Height>
+            <Width>124.18pt</Width>
+            <Value>={operation_time}</Value>
+            <ZIndex>5</ZIndex>
+            <Left>3.9pt</Left>
+            <Top>50.2pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <Format>d</Format>
+              <TextAlign>Center</TextAlign>
+              <FontSize>8pt</FontSize>
+            </Style>
+          </Textbox>
+          <CustomReportItem Name="CustomReportItem1">
+            <Type>BarCode EAN-13</Type>
+            <Height>64.04pt</Height>
+            <Width>83.66pt</Width>
+            <CustomProperties>
+              <CustomProperty>
+                <Name>NumberSystem</Name>
+                <Value>={number_system}</Value>
+              </CustomProperty>
+              <CustomProperty>
+                <Name>ManufacturerCode</Name>
+                <Value>={manufacture_code}</Value>
+              </CustomProperty>
+              <CustomProperty>
+                <Name>ProductCode</Name>
+                <Value>={product_code}</Value>
+              </CustomProperty>
+            </CustomProperties>
+            <Left>129.50pt</Left>
+            <Top>1.80pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+            </Style>
+            <ZIndex>0</ZIndex>
+          </CustomReportItem>
+          <Textbox Name="Textbox2">
+            <Height>30.01pt</Height>
+            <Width>134.71pt</Width>
+            <Value>={subdivision}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>0.00pt</Left>
+            <Top>19.60pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>7pt</FontSize>
+              <TextAlign>Center</TextAlign>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+        </ReportItems>
+      </List>
     </ReportItems>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
-    <Height>14pt</Height>
-    <ReportItems>
-      <Textbox Name="Textbox1">
-        <Top>1pt</Top>
-        <Left>10pt</Left>
-        <Height>12pt</Height>
-        <Width>3in</Width>
-        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
-        <Style>
-          <FontSize>10pt</FontSize>
-          <FontWeight>Normal</FontWeight>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-    </ReportItems>
+    <Height>0.0pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageFooter>
@@ -362,72 +143,52 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-LEFT(title, 2) AS number_system,
-SUBSTRING(title, 3, 5) AS manufacture_code,
-SUBSTRING(title, 8, 5) AS product_code,
-fractional,
-operation_issued_by_employee.operation_time AS operation_date,
+operation_issued_by_employee.operation_time,
+LEFT(barcodes.title, 2) AS number_system,
+SUBSTRING(barcodes.title, 3, 5) AS manufacture_code,
+SUBSTRING(barcodes.title, 8, 5) AS product_code,
 objects.name AS subdivision,
-organizations.name AS organization,
 CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name) AS employee,
-nomenclature.id AS nomenclature_id,
 nomenclature.name AS nomenclature,
-operation_issued_by_employee.id AS operation_number
-FROM `barcodes`
-LEFT JOIN operation_issued_by_employee ON operation_issued_by_employee.id = employee_issue_operation_id
+wear_size.name as wear_size,
+wear_height.name as wear_height
+FROM operation_issued_by_employee
+JOIN operation_barcodes ON operation_barcodes.employee_issue_operation_id = operation_issued_by_employee.id
+JOIN barcodes ON barcodes.id = operation_barcodes.barcode_id
 LEFT JOIN wear_cards ON wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects ON objects.id = wear_cards.object_id
-LEFT JOIN nomenclature ON nomenclature.id = operation_issued_by_employee.nomenclature_id
-LEFT JOIN stock_expense_detail ON stock_expense_detail.employee_issue_operation_id = operation_issued_by_employee.id
-LEFT JOIN stock_expense ON stock_expense.id = stock_expense_detail.stock_expense_id
-LEFT JOIN users ON users.id = stock_expense.user_id
-LEFT JOIN user_settings ON user_settings.user_id = users.id
-LEFT JOIN organizations ON organizations.id = user_settings.default_organization_id
-WHERE barcodes.id IN (@barcodes)</CommandText>
+LEFT JOIN sizes as wear_size ON wear_size.id = barcodes.size_id
+LEFT JOIN sizes as wear_height ON wear_height.id = barcodes.height_id
+LEFT JOIN nomenclature ON nomenclature.id = barcodes.nomenclature_id
+WHERE operation_issued_by_employee.id IN (@operations)</CommandText>
         <QueryParameters>
-          <QueryParameter Name="barcodes">
-            <Value>={?barcodes}</Value>
+          <QueryParameter Name="operations">
+            <Value>={?operations}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="number_system">
           <DataField>number_system</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="fractional">
-          <DataField>fractional</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="operation_date">
-          <DataField>operation_date</DataField>
+        <Field Name="operation_time">
+          <DataField>operation_time</DataField>
           <TypeName>System.DateTime</TypeName>
         </Field>
         <Field Name="subdivision">
           <DataField>subdivision</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="organization">
-          <DataField>organization</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
         <Field Name="employee">
           <DataField>employee</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="nomenclature_id">
-          <DataField>nomenclature_id</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
         <Field Name="nomenclature">
           <DataField>nomenclature</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="operation_number">
-          <DataField>operation_number</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="manufacture_code">
@@ -438,25 +199,39 @@ WHERE barcodes.id IN (@barcodes)</CommandText>
           <DataField>product_code</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="wear_size">
+          <DataField>wear_size</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="wear_height">
+          <DataField>wear_height</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
-  <DataSources>
+  <ReportParameters>
+    <ReportParameter Name="operations">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>120580</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <DataSources >
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>server=10.0.2.2;user=admin;database=workwear;port=3306;password=123;</ConnectString>
+        <ConnectString>server=;user=;database=dev_cloud_osmbt_copy;port=3306;password=;</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
-    <ReportParameter Name="barcodes">
-      <DataType>Integer</DataType>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
-      <MultiValue>true</MultiValue>
-      <Prompt />
-    </ReportParameter>
-  </ReportParameters>
 </Report>
