@@ -245,7 +245,7 @@ namespace workwear.ReportParameters.Views
 			w15.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.checkShowCost = new global::Gamma.GtkWidgets.yCheckButton();
-			this.checkShowCost.TooltipMarkup = "При наличии отображать альтернативное наименование размеров";
+			this.checkShowCost.TooltipMarkup = "В отчете показывать столбец с оценочной стоимостью.";
 			this.checkShowCost.CanFocus = true;
 			this.checkShowCost.Name = "checkShowCost";
 			this.checkShowCost.Label = global::Mono.Unix.Catalog.GetString("Показывать оценочную стоимость");

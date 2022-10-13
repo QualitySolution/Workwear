@@ -13502,7 +13502,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="403 503">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="403 515">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -13810,7 +13810,7 @@
         <child>
           <widget class="Gamma.GtkWidgets.yCheckButton" id="checkShowCost">
             <property name="MemberName" />
-            <property name="Tooltip" translatable="yes">При наличии отображать альтернативное наименование размеров</property>
+            <property name="Tooltip" translatable="yes">В отчете показывать столбец с оценочной стоимостью.</property>
             <property name="CanFocus">True</property>
             <property name="Label" translatable="yes">Показывать оценочную стоимость</property>
             <property name="DrawIndicator">True</property>
