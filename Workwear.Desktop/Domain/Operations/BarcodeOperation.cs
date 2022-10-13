@@ -11,7 +11,7 @@ namespace Workwear.Domain.Operations {
 	)]
 	public class BarcodeOperation : PropertyChangedBase, IDomainObject
 	{
-		#region Свойста
+		#region Свойства
 		public virtual int Id { get; set; }
 
 		private Barcode barcode;
@@ -37,6 +37,7 @@ namespace Workwear.Domain.Operations {
 		}
 		#endregion
 		#region Расчетные
+		public virtual string Title => $"Операция со штрихкодом {Barcode.Title}";
 		public virtual DateTime? OperationDate => EmployeeIssueOperation?.OperationTime ?? WarehouseOperation?.OperationTime;
 		public virtual string OperationTitle {
 			get {

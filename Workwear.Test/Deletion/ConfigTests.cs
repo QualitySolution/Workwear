@@ -25,6 +25,8 @@ namespace Workwear.Test.Deletion
 			AddIgnoredProperty<EmployeeIssueOperation>(x => x.WarehouseOperation, "Является лиш дополнительной ссылкой на операцию. И скорей всего и так вместе будет удалятся за счет других ссылок.");
 			AddIgnoredProperty<SubdivisionIssueOperation>(x => x.IssuedOperation, "Потому что если мы удаляем операцию списания, мы не должны при этом удалять операцию выдачи.");
 			AddIgnoredProperty<SubdivisionIssueOperation>(x => x.WarehouseOperation, "Является лиш дополнительной ссылкой на операцию. И скорей всего и так вместе будет удалятся за счет других ссылок.");
+			AddIgnoredProperty<BarcodeOperation>(x => x.EmployeeIssueOperation, "Является дочерней частью операции при удалении не должна тянуть за собой операцию.");
+			AddIgnoredProperty<BarcodeOperation>(x => x.WarehouseOperation, "Является дочерней частью операции при удалении не должна тянуть за собой операцию.");
 			AddIgnoredProperty<EmployeeCardItem>(x => x.ActiveNormItem, "Должно удалятся более сложным способом, а именно через обновление потребностей.");
 			AddIgnoredProperty<IssuanceSheetItem>(x => x.IssueOperation, "Является дополнительной ссылкой на операцию, а не основной, поэтому не должно удалять операцию.");
 			
