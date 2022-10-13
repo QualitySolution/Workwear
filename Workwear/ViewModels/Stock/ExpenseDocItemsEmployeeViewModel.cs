@@ -97,10 +97,10 @@ namespace Workwear.ViewModels.Stock
 
 		#endregion
 		#region Sensetive
-		public bool SensetiveFillBuhDoc => Entity.Items.Count > 0;
-		public bool SensetiveCreateBarcodes => Entity.Items.Any(x => x.Nomenclature.UseBarcode
+		public bool SensitiveFillBuhDoc => Entity.Items.Count > 0;
+		public bool SensitiveCreateBarcodes => Entity.Items.Any(x => x.Nomenclature.UseBarcode
 			&& (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) != x.Amount);
-		public bool SensetiveBarcodesPrint => Entity.Items.Any(x => x.Nomenclature.UseBarcode && x.Amount > 0);
+		public bool SensitiveBarcodesPrint => Entity.Items.Any(x => x.Nomenclature.UseBarcode && x.Amount > 0);
 		#endregion
 		#region Visible
 		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
@@ -204,12 +204,12 @@ namespace Workwear.ViewModels.Stock
 			var operations = Entity.Items.Where(i => i.Nomenclature.UseBarcode).Select(x => x.EmployeeIssueOperation).ToList();
 			barcodeService.CreateOrRemove(UoW, operations);
 			UoW.Commit();
-			OnPropertyChanged(nameof(SensetiveCreateBarcodes));
+			OnPropertyChanged(nameof(SensitiveCreateBarcodes));
 			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
 		}
 
 		public void PrintBarcodes() {
-			if(SensetiveCreateBarcodes) {
+			if(SensitiveCreateBarcodes) {
 				if(interactive.Question("Не для всех строк документа были созданы штрих коды. Обновить штрихкоды?"))
 					ReleaseBarcodes();
 				else
@@ -249,12 +249,12 @@ namespace Workwear.ViewModels.Stock
 				expenseEmployeeViewModel.HasChanges = true;
 			}
 			if(e.PropertyName == nameof(ExpenseItem.Amount)) {
-				OnPropertyChanged(nameof(SensetiveCreateBarcodes));
+				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
 				OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
 			}
 			if(e.PropertyName == nameof(ExpenseItem.Nomenclature)) {
-				OnPropertyChanged(nameof(SensetiveCreateBarcodes));
-				OnPropertyChanged(nameof(SensetiveBarcodesPrint));
+				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
+				OnPropertyChanged(nameof(SensitiveBarcodesPrint));
 				OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
 			}
 		}

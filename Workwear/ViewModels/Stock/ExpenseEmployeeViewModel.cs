@@ -154,7 +154,7 @@ namespace Workwear.ViewModels.Stock
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
 
-			if(!SkipBarcodeCheck && DocItemsEmployeeViewModel.SensetiveCreateBarcodes) {
+			if(!SkipBarcodeCheck && DocItemsEmployeeViewModel.SensitiveCreateBarcodes) {
 				interactive.ShowMessage(ImportanceLevel.Error, "Перед окончательным сохранением необходимо обновить штрихкоды.");
 				return false;
 			}

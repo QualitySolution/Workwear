@@ -45,12 +45,12 @@ namespace Workwear.Views.Stock
 
 			buttonCreateOrDeleteBarcodes.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
-				.AddBinding(v => v.SensetiveCreateBarcodes, w => w.Sensitive)
+				.AddBinding(v => v.SensitiveCreateBarcodes, w => w.Sensitive)
 				.AddBinding(v => v.ButtonCreateOrRemoveBarcodesTitle, w => w.Label)
 				.InitializeFromSource();
 			buttonPrintBarcodes.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
-				.AddBinding(v => v.SensetiveBarcodesPrint, w => w.Sensitive)
+				.AddBinding(v => v.SensitiveBarcodesPrint, w => w.Sensitive)
 				.InitializeFromSource();
 
 			ViewModel.expenseEmployeeViewModel.Entity.PropertyChanged += ExpenseDoc_PropertyChanged;
@@ -176,7 +176,7 @@ namespace Workwear.Views.Stock
 
 		void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			buttonFillBuhDoc.Sensitive = ViewModel.SensetiveFillBuhDoc;
+			buttonFillBuhDoc.Sensitive = ViewModel.SensitiveFillBuhDoc;
 			if(e.PropertyName == nameof(ViewModel.SelectedItem) && ViewModel.SelectedItem != null) {
 				var iter = ytreeItems.YTreeModel.IterFromNode(ViewModel.SelectedItem);
 				var path = ytreeItems.YTreeModel.GetPath(iter);
