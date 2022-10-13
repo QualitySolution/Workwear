@@ -161,15 +161,22 @@ public partial class MainWindow : Gtk.Window
 		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользователь его создать не сможет.
 		if(UoW.GetAll<Warehouse>().Count() == 0)
 			CreateDefaultWarehouse();
-		//Если у базы еще нет Guid создаем его.
 		using(var localScope = MainClass.AppDIContainer.BeginLifetimeScope()) {
+			//Если у базы еще нет Guid создаем его.
 			var baseParam = localScope.Resolve<BaseParameters>();
 			if(baseParam.Dynamic.BaseGuid == null)
 				baseParam.Dynamic.BaseGuid = Guid.NewGuid();
+			
+			FeaturesService = AutofacScope.Resolve<FeaturesService>();
+			//Если доступна возможность использовать штрих коды, а префикс штрих кодов для базы не задан, создаем его.
+			if(FeaturesService.Available(WorkwearFeature.Barcodes) && baseParam.Dynamic.BarcodePrefix == null) {
+				var prefix = FeaturesService.ClientId % 1000 + 2000; //Оставляем последние 3 цифры кода клиента и добавляем их к 2000.
+				logger.Info($"Создали префикс штрихкодов для базы: {prefix}");
+				baseParam.Dynamic.BarcodePrefix = prefix;
+			}
 		}
 		#endregion
-
-		FeaturesService = AutofacScope.Resolve<FeaturesService>();
+		
 		DisableFeatures();
 		if(FeaturesService.Available(WorkwearFeature.Claims)) {
 			var button = toolbarMain.Children.FirstOrDefault(x => x.Action == ActionClaims);
@@ -804,4 +811,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionOwnerActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<OwnerJournalViewModel>(null);
 	}
+
+	protected void BarcodeActivated(object sender, EventArgs e) => 
+		NavigationManager.OpenViewModel<BarcodeJournalViewModel>(null);
 }

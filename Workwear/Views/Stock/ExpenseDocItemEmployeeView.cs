@@ -43,6 +43,16 @@ namespace Workwear.Views.Stock
 
 			buttonAdd.Sensitive = ViewModel.Warehouse != null;
 
+			buttonCreateOrDeleteBarcodes.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
+				.AddBinding(v => v.SensitiveCreateBarcodes, w => w.Sensitive)
+				.AddBinding(v => v.ButtonCreateOrRemoveBarcodesTitle, w => w.Label)
+				.InitializeFromSource();
+			buttonPrintBarcodes.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
+				.AddBinding(v => v.SensitiveBarcodesPrint, w => w.Sensitive)
+				.InitializeFromSource();
+
 			ViewModel.expenseEmployeeViewModel.Entity.PropertyChanged += ExpenseDoc_PropertyChanged;
 
 			ViewModel.PropertyChanged += PropertyChanged;
@@ -75,10 +85,12 @@ namespace Workwear.Views.Stock
 					.SetDisplayFunc(x => x.Name)
 					.FillItems(ViewModel.Owners, "Нет")
 					.Editing()
-				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
+				.AddColumn("Износ").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer(e => 
 					e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
+				.AddColumn("Штрихкод").Visible(ViewModel.VisibleBarcodes)
+					.AddTextRenderer(x => x.BarcodesText).AddSetter((c,n) => c.Foreground = n.BarcodesTextColor)
 				.AddColumn("Списание").AddToggleRenderer(e => e.IsWriteOff).Editing()
 				.AddSetter((c, e) => c.Visible = e.IsEnableWriteOff)
 				.AddColumn("Номер акта").AddTextRenderer(e => e.AktNumber).Editable().AddSetter((c, e) => c.Visible = e.IsWriteOff)
@@ -111,6 +123,7 @@ namespace Workwear.Views.Stock
 			itemNomenclature.Sensitive = selected?.Nomenclature != null;
 			itemNomenclature.Activated += Item_Activated;
 			menu.Add(itemNomenclature);
+			
 			menu.ShowAll();
 			menu.Popup();
 		}
@@ -146,6 +159,12 @@ namespace Workwear.Views.Stock
 			return null;
 		}
 
+		private bool BarcodeSensitive(ExpenseItem expenseItem) =>
+			expenseItem?.EmployeeIssueOperation?.Id != null
+			&& expenseItem.EmployeeIssueOperation?.Id != 0
+			&& expenseItem.Nomenclature != null
+			&& expenseItem.Nomenclature.UseBarcode;
+
 		#endregion
 
 		#region События
@@ -157,7 +176,7 @@ namespace Workwear.Views.Stock
 
 		void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			buttonFillBuhDoc.Sensitive = ViewModel.SensetiveFillBuhDoc;
+			buttonFillBuhDoc.Sensitive = ViewModel.SensitiveFillBuhDoc;
 			if(e.PropertyName == nameof(ViewModel.SelectedItem) && ViewModel.SelectedItem != null) {
 				var iter = ytreeItems.YTreeModel.IterFromNode(ViewModel.SelectedItem);
 				var path = ytreeItems.YTreeModel.GetPath(iter);
@@ -205,6 +224,16 @@ namespace Workwear.Views.Stock
 				"<span color='Burlywood'>●</span> — позиция выдается коллективно\n" +
 				"<span color='#7B3F00'>●</span> — выдача коллективной номенклатуры"
 			);
+		}
+
+		protected void OnButtonCreateOrDeleteBarcodesClicked(object sender, EventArgs e) {
+			ViewModel.ReleaseBarcodes();
+			ytreeItems.YTreeModel.EmitModelChanged();
+		}
+
+		protected void OnButtonPrintBarcodesClicked(object sender, EventArgs e) {
+			ViewModel.PrintBarcodes();
+			ytreeItems.YTreeModel.EmitModelChanged();
 		}
 		#endregion
 	}

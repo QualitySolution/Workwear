@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.Dialog;
@@ -192,6 +193,13 @@ namespace Workwear.Domain.Operations
 		public virtual bool ManualOperation {
 			get => manualOperation;
 			set => SetField(ref manualOperation, value);
+		}
+		
+		private IList<BarcodeOperation> barcodeOperations = new List<BarcodeOperation>();
+		[Display(Name = "Операции")]
+		public virtual IList<BarcodeOperation> BarcodeOperations {
+			get => barcodeOperations;
+			set => SetField(ref barcodeOperations, value);
 		}
 
 		/// <summary>

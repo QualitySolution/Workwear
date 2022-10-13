@@ -122,6 +122,7 @@
     <EmbeddedResource Include="icon\toolbar\mail.png" />
     <EmbeddedResource Include="icon\menu\logs.png" />
     <EmbeddedResource Include="icon\toolbar\claims.png" />
+    <EmbeddedResource Include="icon\buttons\barcode-add.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -132,6 +133,7 @@
     <Compile Include="Journal\ViewModels\Company\EmployeeBalanceJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\SubdivisionBalanceJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\VacationTypeJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Stock\BarcodeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\OwnerJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\SizeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\SizeTypeJournalViewModel.cs" />
@@ -171,6 +173,7 @@
     <Compile Include="ViewModels\Import\IncomeImportViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
+    <Compile Include="ViewModels\Stock\BarcodeViewModel.cs" />
     <Compile Include="ViewModels\Stock\EmployeeIssueGraphViewModel.cs" />
     <Compile Include="ViewModels\Stock\OwnerViewModel.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModel.cs" />
@@ -407,9 +410,15 @@
     <Compile Include="gtk-gui\Workwear.Views.Communications.RatingsView.cs" />
     <Compile Include="Views\Stock\OwnerView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.OwnerView.cs" />
+    <Compile Include="Views\Stock\BarcodeView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.BarcodeView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <ProjectReference Include="..\..\My-FyiReporting\RdlCri\RdlCri.csproj">
+      <Project>{9c9ecaca-0deb-4517-8cf1-02c3d3eb128e}</Project>
+      <Name>RdlCri</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\Binding\Gamma.Binding\Gamma.Binding.csproj">
       <Project>{190cea0d-ea23-4c91-8030-203a5afed7b7}</Project>
       <Name>Gamma.Binding</Name>
@@ -723,6 +732,11 @@
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Reports\Barcodes\BarcodeFromEmployeeIssue.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -229,7 +229,10 @@ namespace workwear.Journal
 					.AddColumn("Название").AddTextRenderer(node => node.Name + (node.Archival? "(архивная)": String.Empty)).WrapWidth(1000).SearchHighlight()
 					.AddColumn("Номер").AddTextRenderer(node => node.Number).SearchHighlight()
 					.AddColumn("Тип").AddTextRenderer(node => node.ItemType)
-					.AddColumn("Средняя оценка").Visible(jvm.FeaturesService.Available(WorkwearFeature.Ratings)).AddTextRenderer(node => node.RatingText)
+					.AddColumn("Средняя оценка").Visible(jvm.FeaturesService.Available(WorkwearFeature.Ratings))
+						.AddTextRenderer(node => node.RatingText)
+					.AddColumn("Штрихкод").Visible(jvm.FeaturesService.Available(WorkwearFeature.Barcodes))
+						.AddTextRenderer(n => n.UseBarcodeText)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
@@ -300,6 +303,13 @@ namespace workwear.Journal
 					.AddColumn("Описание").AddTextRenderer(node => node.ShortDescription)
 					.Finish()
 			);
+			
+			TreeViewColumnsConfigFactory.Register<BarcodeJournalViewModel>(
+				() => FluentColumnsConfig<BarcodeJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString())
+					.AddColumn("Значение").AddTextRenderer(node => node.Value)
+					.Finish()
+				);
 			#endregion
 			#region Sizes
 			TreeViewColumnsConfigFactory.Register<SizeJournalViewModel>(

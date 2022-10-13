@@ -57,6 +57,10 @@ namespace workwear.ReportParameters.Views
 				.AddBinding(wm => wm.Owners, w => w.ItemsList)
 				.AddBinding(wm => wm.SelectOwner, w => w.SelectedItem)
 				.InitializeFromSource();
+
+			checkShowCost.Binding
+				.AddBinding(ViewModel, wm => wm.ShowCost, w => w.Active)
+				.InitializeFromSource();
 		}
 
 		protected void OnButtonPrintReportClicked(object sender, EventArgs e)
