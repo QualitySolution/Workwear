@@ -249,7 +249,9 @@ namespace Workwear.Domain.Company
 			}
 
 			DateTime? wantIssue = new DateTime();
-			if(graph != null && graph.Intervals.Any()) {
+			NextIssueAnnotation = null;
+			if(graph != null && graph.Intervals.Any())
+			{
 				var listReverse = graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
 				var lastInterval = listReverse.First();
 				if(lastInterval.CurrentCount >= ActiveNormItem.Amount) {

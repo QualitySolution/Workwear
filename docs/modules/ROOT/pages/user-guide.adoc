@@ -36,6 +36,8 @@ include::settings.adoc[]
 
 include::manipulation.adoc[]
 
+include::history-log.adoc[]
+
 include::import.adoc[]
 
 include::mobile-app.adoc[]

@@ -690,11 +690,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="App.config" />
-    <None Condition=" '$(TargetOS)' == 'Linux' " Include="$(Home)\.nuget\packages\grpc.core\2.44.0\runtimes\linux-x64\native\libgrpc_csharp_ext.x64.so">
+    <None Condition=" '$(TargetOS)' == 'Linux' " Include="$(Home)\.nuget\packages\grpc.core\2.46.3\runtimes\linux-x64\native\libgrpc_csharp_ext.x64.so">
       <Link>libgrpc_csharp_ext.x64.so</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Condition=" '$(TargetOS)' == 'Win' " Include="$(Home)\.nuget\packages\grpc.core\2.44.0\runtimes\win-x86\native\grpc_csharp_ext.x86.dll">
+    <None Condition=" '$(TargetOS)' == 'Win' " Include="$(Home)\.nuget\packages\grpc.core\2.46.3\runtimes\win-x86\native\grpc_csharp_ext.x86.dll">
       <Link>grpc_csharp_ext.x86.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

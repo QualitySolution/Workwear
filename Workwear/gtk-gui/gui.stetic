@@ -13573,7 +13573,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="403 439">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="403 515">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -13813,10 +13813,10 @@
           </packing>
         </child>
         <child>
-          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckSummry">
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkBySubdivision">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Суммировать результат</property>
+            <property name="Label" translatable="yes">Детализировать по подразделениям</property>
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
@@ -13829,10 +13829,10 @@
           </packing>
         </child>
         <child>
-          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkBySize">
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkByEmployee">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Детализировать по размерам</property>
+            <property name="Label" translatable="yes">Детализировать по сотрудникам</property>
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
@@ -13845,8 +13845,26 @@
           </packing>
         </child>
         <child>
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkBySize">
+            <property name="MemberName" />
+            <property name="Tooltip" translatable="yes">Отображать выдачи разных размеров разными строками.</property>
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">Детализировать по размерам</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+            <property name="UseUnderline">True</property>
+          </widget>
+          <packing>
+            <property name="Position">3</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <widget class="Gamma.GtkWidgets.yCheckButton" id="checkUseAlterName">
             <property name="MemberName" />
+            <property name="Tooltip" translatable="yes">При наличии отображать альтернативное наименование размеров</property>
             <property name="CanFocus">True</property>
             <property name="Label" translatable="yes">Применить альтернативные размеры</property>
             <property name="DrawIndicator">True</property>
@@ -13854,7 +13872,41 @@
             <property name="UseUnderline">True</property>
           </widget>
           <packing>
-            <property name="Position">3</property>
+            <property name="Position">4</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkShowCost">
+            <property name="MemberName" />
+            <property name="Tooltip" translatable="yes">В отчете показывать столбец с оценочной стоимостью.</property>
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">Показывать оценочную стоимость</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+            <property name="UseUnderline">True</property>
+          </widget>
+          <packing>
+            <property name="Position">5</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckChild">
+            <property name="MemberName" />
+            <property name="Tooltip" translatable="yes">Включать в отчет так же дочерние подразделения выбранных подразделений.</property>
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">Включая дочерниее подразделения</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+            <property name="UseUnderline">True</property>
+          </widget>
+          <packing>
+            <property name="Position">6</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -13870,23 +13922,7 @@
             <property name="UseUnderline">True</property>
           </widget>
           <packing>
-            <property name="Position">4</property>
-            <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckChild">
-            <property name="MemberName" />
-            <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Учитывать дочерние</property>
-            <property name="DrawIndicator">True</property>
-            <property name="HasLabel">True</property>
-            <property name="UseUnderline">True</property>
-          </widget>
-          <packing>
-            <property name="Position">5</property>
+            <property name="Position">7</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -13905,7 +13941,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">6</property>
+            <property name="Position">8</property>
             <property name="AutoSize">True</property>
           </packing>
         </child>
@@ -13920,7 +13956,7 @@
             <signal name="Clicked" handler="OnButtonPrintReportClicked" />
           </widget>
           <packing>
-            <property name="Position">7</property>
+            <property name="Position">9</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
