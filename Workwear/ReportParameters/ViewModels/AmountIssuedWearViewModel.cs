@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamma.Widgets;
@@ -64,6 +64,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"withoutOwner", SelectOwner.Equals(SpecialComboState.Not)},
 					{"ownerId", (SelectOwner as Owner)?.Id ?? -1},
 					{"byEmployee", ByEmployee},
+					{"showCost", ShowCost}
 		};
 
 		#region Параметры
@@ -125,6 +126,13 @@ namespace workwear.ReportParameters.ViewModels
 			get => selectOwner;
 			set => SetField(ref selectOwner, value);
 		}
+
+		private bool showCost;
+		public virtual bool ShowCost {
+			get => showCost;
+			set => SetField(ref showCost, value);
+		}
+
 		#endregion
 		
 		#region Свойства

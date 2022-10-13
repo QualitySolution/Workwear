@@ -54,10 +54,10 @@
             <Width>87.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>440.4pt</Width>
+            <Width>404.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>96.8pt</Width>
+            <Width>88.0pt</Width>
             <Visibility>
               <Hidden>=!{?bySize}</Hidden>
             </Visibility>
@@ -66,9 +66,15 @@
             <Width>60.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>79.3pt</Width>
+            <Width>78.5pt</Width>
             <Visibility>
               <Hidden>=!{?showOwners}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn >
+            <Width>58.7pt</Width>
+            <Visibility>
+              <Hidden>=!{?showCost}</Hidden>
             </Visibility>
           </TableColumn>
         </TableColumns>
@@ -163,6 +169,27 @@
                         <Textbox Name="Textbox19">
                           <Value>
                           </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>Solid</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <PaddingRight>2pt</PaddingRight>
+                            <TextAlign>Right</TextAlign>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox27">
+                          <Value>=Sum({cost})</Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>Solid</Default>
@@ -300,6 +327,24 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox22">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
                   </TableCells>
                   <Visibility>
                     <Hidden>={?summary}</Hidden>
@@ -377,6 +422,22 @@
                       <ReportItems>
                         <Textbox Name="Textbox18">
                           <Value>Собственник</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <BackgroundColor>#E9E9E9</BackgroundColor>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox26">
+                          <Value>Оценочная стоимость</Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>Solid</Default>
@@ -469,6 +530,22 @@
                             <Hidden>
                             </Hidden>
                           </Visibility>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox30">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
@@ -567,6 +644,22 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox21">
+                      <Value>={cost}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -616,7 +709,8 @@
     if(@alternativeName, IFNULL(sizeAlias.alternative_name, sizeAlias.name), sizeAlias.name) as size, 
     heightAlias.name as growth, 
     objects.code, 
-    if(@showOwners, owners.name, null) as owner_name 
+    if(@showOwners, owners.name, null) as owner_name,
+    (sum(issued) * protection_tools.assessed_cost) AS cost
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
@@ -627,6 +721,7 @@ LEFT JOIN sizes as sizeAlias ON (sizeAlias.id = operation_issued_by_employee.siz
 LEFT JOIN sizes AS heightAlias ON (heightAlias.id = operation_issued_by_employee.height_id)
 LEFT JOIN operation_warehouse ON warehouse_operation_id = operation_warehouse.id
 LEFT JOIN owners ON operation_warehouse.owner_id = owners.id
+LEFT JOIN protection_tools ON protection_tools.id = operation_issued_by_employee.protection_tools_id
 WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE) and operation_issued_by_employee.operation_time &lt;= CONVERT(@dateEnd, DATE)
 AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
 AND (@issue_type = "" OR item_types.issue_type = @issue_type)
@@ -732,6 +827,10 @@ ORDER BY CAST(objects.code AS UNSIGNED), employee, nomen, size, growth;</Command
         <Field Name="post">
           <DataField>post</DataField>
           <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="cost">
+          <DataField>cost</DataField>
+          <TypeName>System.Double</TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -865,6 +964,14 @@ ORDER BY CAST(objects.code AS UNSIGNED), employee, nomen, size, growth;</Command
           <Value>0</Value>
         </Values>
       </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="showCost">
+      <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
