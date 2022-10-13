@@ -41,7 +41,7 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox5" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Value>= {nomenclature} + Iif(Fields!wear_size.IsMissing and Fields!wear_height.IsMissing, "", "(" + {wear_size} + Iif(Fields!wear_height.IsMissing, "", "/" + {wear_height} + ")"))</Value>
+            <Value>= {nomenclature} + Iif(Fields!wear_size.IsMissing and Fields!wear_height.IsMissing, "", " (" + {wear_size} + Iif(Fields!wear_height.IsMissing, "", "/" + {wear_height} + ")"))</Value>
             <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
               <BorderStyle>
                 <Default>None</Default>

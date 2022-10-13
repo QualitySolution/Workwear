@@ -215,7 +215,7 @@ namespace Workwear.Domain.Stock.Documents
 				var willTake = EmployeeIssueOperation.BarcodeOperations.Count > 3 ? 2 : 3; 
 				var text = String.Join("\n", EmployeeIssueOperation.BarcodeOperations.Take(willTake).Select(x => x.Barcode.Title));
 				if(EmployeeIssueOperation?.BarcodeOperations.Count > 3)
-					text += $"(еще {EmployeeIssueOperation?.BarcodeOperations.Count - 2})";
+					text += $"\nещё {EmployeeIssueOperation?.BarcodeOperations.Count - 2}";
 				return text;
 			}
 		}
