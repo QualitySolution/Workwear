@@ -98,9 +98,9 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 		#region Sensetive
 		public bool SensitiveFillBuhDoc => Entity.Items.Count > 0;
-		public bool SensitiveCreateBarcodes => Entity.Items.Any(x => x.Nomenclature.UseBarcode
+		public bool SensitiveCreateBarcodes => Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false)
 			&& (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) != x.Amount);
-		public bool SensitiveBarcodesPrint => Entity.Items.Any(x => x.Nomenclature.UseBarcode && x.Amount > 0);
+		public bool SensitiveBarcodesPrint => Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false) && x.Amount > 0);
 		#endregion
 		#region Visible
 		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
@@ -191,7 +191,7 @@ namespace Workwear.ViewModels.Stock
 
 		#region Штрих коды
 		public string ButtonCreateOrRemoveBarcodesTitle => 
-			Entity.Items.Any(x => x.Nomenclature.UseBarcode && (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) > x.Amount)
+			Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false) && (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) > x.Amount)
 			? "Обновить штрихкоды" : "Создать штрихкоды";
 		
 		public void ReleaseBarcodes() {
@@ -201,7 +201,7 @@ namespace Workwear.ViewModels.Stock
 			if(!saveResult)
 				return;
 
-			var operations = Entity.Items.Where(i => i.Nomenclature.UseBarcode).Select(x => x.EmployeeIssueOperation).ToList();
+			var operations = Entity.Items.Where(i => i.Nomenclature?.UseBarcode ?? false).Select(x => x.EmployeeIssueOperation).ToList();
 			barcodeService.CreateOrRemove(UoW, operations);
 			UoW.Commit();
 			OnPropertyChanged(nameof(SensitiveCreateBarcodes));

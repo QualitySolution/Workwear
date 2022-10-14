@@ -159,12 +159,6 @@ namespace Workwear.Views.Stock
 			return null;
 		}
 
-		private bool BarcodeSensitive(ExpenseItem expenseItem) =>
-			expenseItem?.EmployeeIssueOperation?.Id != null
-			&& expenseItem.EmployeeIssueOperation?.Id != 0
-			&& expenseItem.Nomenclature != null
-			&& expenseItem.Nomenclature.UseBarcode;
-
 		#endregion
 
 		#region События

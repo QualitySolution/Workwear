@@ -205,7 +205,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual string BarcodesText {
 			get {
-				if(!Nomenclature.UseBarcode)
+				if(Nomenclature == null || !Nomenclature.UseBarcode)
 					return null;
 				if(Amount > 0 && (EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) == 0)
 					return "необходимо создать";
@@ -222,7 +222,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual string BarcodesTextColor {
 			get {
-				if(!Nomenclature.UseBarcode || EmployeeIssueOperation == null)
+				if(Nomenclature == null || !Nomenclature.UseBarcode || EmployeeIssueOperation == null)
 					return null;
 
 				if(Amount == EmployeeIssueOperation.BarcodeOperations.Count)
