@@ -248,11 +248,7 @@ namespace Workwear.ViewModels.Stock
 			if(e.PropertyName == nameof(ExpenseItem.BuhDocument)) {
 				expenseEmployeeViewModel.HasChanges = true;
 			}
-			if(e.PropertyName == nameof(ExpenseItem.Amount)) {
-				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
-				OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
-			}
-			if(e.PropertyName == nameof(ExpenseItem.Nomenclature)) {
+			if(e.PropertyName == nameof(ExpenseItem.Amount) || e.PropertyName == nameof(ExpenseItem.Nomenclature)) {
 				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
 				OnPropertyChanged(nameof(SensitiveBarcodesPrint));
 				OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
