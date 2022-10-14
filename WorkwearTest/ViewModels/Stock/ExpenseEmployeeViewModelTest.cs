@@ -22,6 +22,7 @@ using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Repository.User;
 using Workwear.Tools;
+using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
@@ -62,11 +63,13 @@ namespace WorkwearTest.ViewModels.Stock
 			var builder = new ContainerBuilder();
 			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
+			builder.RegisterType<BarcodeService>().AsSelf();
 			builder.Register(x => featuresService).As<FeaturesService>();
 			builder.Register(x => navigation).As<INavigationManager>();
 			builder.Register(x => sizeService).As<SizeService>();
 			builder.Register(x => deleteService).As<IDeleteEntityService>();
 			builder.Register(x => baseParameters).As<BaseParameters>();
+			builder.Register(x => interactive).As<IInteractiveQuestion>();
 			builder.Register(x => Substitute.For<IUserService>()).As<IUserService>();
 			var container = builder.Build();
 
@@ -195,11 +198,13 @@ namespace WorkwearTest.ViewModels.Stock
 			var builder = new ContainerBuilder();
 			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
+			builder.RegisterType<BarcodeService>().AsSelf();
 			builder.Register(x => featuresService).As<FeaturesService>();
 			builder.Register(x => navigation).As<INavigationManager>();
 			builder.Register(x => sizeService).As<SizeService>();
 			builder.Register(x => deleteService).As<IDeleteEntityService>();
 			builder.Register(x => baseParameters).As<BaseParameters>();
+			builder.Register(x => interactive).As<IInteractiveQuestion>();
 			builder.Register(x => Substitute.For<IUserService>()).As<IUserService>();
 			var container = builder.Build();
 
@@ -342,11 +347,13 @@ namespace WorkwearTest.ViewModels.Stock
 			var builder = new ContainerBuilder();
 			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
+			builder.RegisterType<BarcodeService>().AsSelf();
 			builder.Register(x => featuresService).As<FeaturesService>();
 			builder.Register(x => navigation).As<INavigationManager>();
 			builder.Register(x => sizeService).As<SizeService>();
 			builder.Register(x => deleteService).As<IDeleteEntityService>();
 			builder.Register(x => baseParameters).As<BaseParameters>();
+			builder.Register(x => interactive).As<IInteractiveQuestion>();
 			builder.Register(x => Substitute.For<IUserService>()).As<IUserService>();
 			var container = builder.Build();
 

@@ -44,6 +44,14 @@ namespace Workwear.Tools
 			get => Dynamic.ExtendPeriod(typeof(AnswerOptions)) ?? AnswerOptions.Ask;
 			set => Dynamic[nameof(ExtendPeriod)] = value;
 		}
+		/// <summary>
+		/// Префикс для штрихкодов, желательно чтобы был разный для каждой базы, чтобы штрихкоды не пересекались.
+		/// По умолчанию заполняется последними цифрами кода клиента прочитанного из серийного номера. 
+		/// </summary>
+		public virtual int? BarcodePrefix {
+			get => Dynamic.BarcodePrefix(typeof(int?));
+			set => Dynamic[nameof(BarcodePrefix)] = value;
+		}
 		#endregion
 	}
 	public enum AnswerOptions {
