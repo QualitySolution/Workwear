@@ -78,14 +78,10 @@ namespace workwear.Journal.ViewModels.Stock
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
 				             && (warehouseExpenseOperationAlias.WearSize.Id == warehouseOperationAlias.WearSize.Id
 				                 || warehouseExpenseOperationAlias.WearSize == null && warehouseOperationAlias.WearSize == null)
-				             
-				             
 				             && (warehouseExpenseOperationAlias.Height.Id == warehouseOperationAlias.Height.Id
 				                 || warehouseExpenseOperationAlias.Height == null && warehouseOperationAlias.Height == null)
-				             
 				             && (warehouseExpenseOperationAlias.Owner.Id == warehouseOperationAlias.Owner.Id
-								 || warehouseExpenseOperationAlias.Owner == null && warehouseOperationAlias.Owner == null)
-				             
+				                 || warehouseExpenseOperationAlias.Owner == null && warehouseOperationAlias.Owner == null)
 				             && warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
 				.Where(e => e.OperationTime < Filter.Date.AddDays(1));
 
