@@ -61,7 +61,7 @@ namespace Workwear.Domain.Stock.Documents
 		
 		[Display(Name = "Собственник имущества")]
 		public virtual Owner Owner {
-			get => WarehouseOperation.Owner;
+			get => WarehouseOperation?.Owner;
 			set {
 				if(WarehouseOperation.Owner != value) {
 					WarehouseOperation.Owner = value;
