@@ -125,9 +125,9 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual string Title =>
 			String.Format ("Списание {0} в количестве {1} {2}",
-				Nomenclature.Name,
+				Nomenclature?.Name,
 				Amount,
-				Nomenclature.Type.Units.Name
+				Nomenclature?.Type?.Units?.Name
 			);
 
 		[Display(Name = "Процент износа")]
