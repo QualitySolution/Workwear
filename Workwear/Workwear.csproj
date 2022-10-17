@@ -281,7 +281,6 @@
     <Compile Include="gtk-gui\Workwear.Views.Stock.ExpenseDocItemObjectView.cs" />
     <Compile Include="ViewModels\Stock\ExpenseDocItemsEmployeeViewModel.cs" />
     <Compile Include="ViewModels\Stock\ExpenseDocItemsObjectViewModel.cs" />
-    <Compile Include="Journal\ViewModels\Stock\StockBalanceShortSummaryJournalViewModel.cs" />
     <Compile Include="ReportsDlg\AmountEmployeeGetWearDlg.cs" />
     <Compile Include="gtk-gui\workwear.ReportsDlg.AmountEmployeeGetWearDlg.cs" />
     <Compile Include="Views\User\UserSettingsView.cs" />
