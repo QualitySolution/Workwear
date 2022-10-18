@@ -251,16 +251,6 @@ namespace workwear.Journal
 					.Finish()
 			);
 
-			TreeViewColumnsConfigFactory.Register<StockBalanceShortSummaryJournalViewModel>(
-				() => FluentColumnsConfig<StockBalanceShortSummaryJournalNode>.Create()
-						.AddColumn("Номер").AddTextRenderer(e => e.NomenclatureNumber).SearchHighlight()
-						.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000).SearchHighlight()
-						.AddColumn("Размер").AddTextRenderer(e => e.Size).SearchHighlight()
-						.AddColumn("Пол одежды").AddTextRenderer(e => e.Sex != null ? e.Sex.GetAttribute<DisplayAttribute>().Name : "").SearchHighlight()
-						.AddColumn("Количество").AddTextRenderer(e => e.BalanceText, useMarkup: true)
-						.Finish()
-			);
-
 			TreeViewColumnsConfigFactory.Register<StockDocumentsJournalViewModel>(
 				(jvm) => FluentColumnsConfig<StockDocumentsJournalNode>.Create()
 					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight().XAlign(0.5f)
