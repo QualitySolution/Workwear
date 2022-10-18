@@ -50,7 +50,7 @@ namespace workwear.ReportParameters.Views
 				.AddBinding(vm => vm.VisibleUseAlternative, w => w.Visible)
 				.InitializeFromSource();
 
-			ylabelOwners.Visible = yspeccomboboxOwners.Visible = ViewModel.FeaturesService.Available(WorkwearFeature.Owners);
+			ylabelOwners.Visible = yspeccomboboxOwners.Visible = ViewModel.OwnersVisible;
 			yspeccomboboxOwners.SelectedItemStrictTyped = false;
 			yspeccomboboxOwners.Binding
 				.AddSource(ViewModel)

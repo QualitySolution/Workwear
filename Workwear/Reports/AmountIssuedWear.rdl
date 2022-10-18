@@ -728,8 +728,8 @@ AND (@issue_type = "" OR item_types.issue_type = @issue_type)
 and operation_issued_by_employee.returned = 0 AND ((@withoutsub AND objects.id IS NULL) OR objects.id IN (@subdivisions))
 and (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
 and (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
-AND (@showOwners AND (@allOwners OR ((@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)))
-GROUP BY subdivision_id, IF(@byEmployee, wear_cards.id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL)
+AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
+GROUP BY IF(@summary, NULL, objects.id), IF(@byEmployee, wear_cards.id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL)
 ORDER BY CAST(objects.code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">

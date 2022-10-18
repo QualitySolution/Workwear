@@ -129,6 +129,12 @@ namespace Workwear.Domain.Stock.Documents
 				yield return new ValidationResult ("Документ не должен содержать строки без выбранной номенклатуры и с указанным количеством.", 
 					new[] { nameof (Items)});
 
+			foreach(var item in Items) {
+				if(item.IsWriteOff && item.Amount == 0)
+					yield return new ValidationResult ($"В строке выдачи '{item.ProtectionTools?.Name}' установлено списание, но количество 0.", 
+						new[] { nameof (Items)});
+			}
+			
 			//Проверка наличия на складе
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
 			if(UoW != null && baseParameters.CheckBalances) {

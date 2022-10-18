@@ -130,13 +130,17 @@ namespace Workwear.ViewModels.Operations
 
 		#endregion
 
-		public void CancelOnClicked() => Close(false, CloseSource.Cancel);
-		public void SaveOnClicked() {
+		public override bool Save() {
+			Validations.Clear();
+			Validations.AddRange(Operations.Select(x => new ValidationRequest(x)));
+			if(!Validate())
+				return false;
 			foreach(var operation in Operations)
 				UoW.Save(operation);
 			UoW.Commit();
 			SaveChanged?.Invoke(protectionTools);
 			Close(false, CloseSource.Save);
+			return true;
 		}
 
 		public void AddOnClicked() {

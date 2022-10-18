@@ -46,6 +46,7 @@ namespace workwear.ReportParameters.ViewModels
 			}
 			unitOfWork = uowFactory.CreateWithoutRoot();
 			Owners = unitOfWork.GetAll<Owner>().ToList();
+			OwnersVisible = FeaturesService.Available(WorkwearFeature.Owners) && Owners.Any();
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
@@ -59,7 +60,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"matchString", MatchString},
 					{"noMatchString", NoMatchString},
 					{"alternativeName", UseAlternativeName},
-					{"showOwners", FeaturesService.Available(WorkwearFeature.Owners)},
+					{"showOwners", OwnersVisible && SelectOwner.Equals(SpecialComboState.All)}, //Подумал что не стоит показывать колонку если выбран конкретный собственник
 					{"allOwners", SelectOwner.Equals(SpecialComboState.All)},
 					{"withoutOwner", SelectOwner.Equals(SpecialComboState.Not)},
 					{"ownerId", (SelectOwner as Owner)?.Id ?? -1},
@@ -159,6 +160,10 @@ namespace workwear.ReportParameters.ViewModels
 		}
 
 		public bool SensitiveLoad => StartDate != null && EndDate != null && Subdivisions.Any(x => x.Select);
+
+		#region Visible
+		public bool OwnersVisible;
+		#endregion
 
 		private string matchString;
 		public string MatchString {
