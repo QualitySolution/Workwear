@@ -229,6 +229,8 @@ namespace workwear.Journal
 					.AddColumn("Название").AddTextRenderer(node => node.Name + (node.Archival? "(архивная)": String.Empty)).WrapWidth(1000).SearchHighlight()
 					.AddColumn("Номер").AddTextRenderer(node => node.Number).SearchHighlight()
 					.AddColumn("Тип").AddTextRenderer(node => node.ItemType)
+					.AddColumn("Стоимость продажи")
+						.AddTextRenderer(node => node.SaleCostText)
 					.AddColumn("Средняя оценка").Visible(jvm.FeaturesService.Available(WorkwearFeature.Ratings))
 						.AddTextRenderer(node => node.RatingText)
 					.AddColumn("Штрихкод").Visible(jvm.FeaturesService.Available(WorkwearFeature.Barcodes))
