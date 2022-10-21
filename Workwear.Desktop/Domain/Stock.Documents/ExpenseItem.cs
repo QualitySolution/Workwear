@@ -205,12 +205,12 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual string BarcodesText {
 			get {
-				if(Nomenclature == null || !Nomenclature.UseBarcode)
+				if((EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) == 0) {
+					if(Amount > 0 && (Nomenclature?.UseBarcode ?? false))
+						return "необходимо создать";
 					return null;
-				if(Amount > 0 && (EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) == 0)
-					return "необходимо создать";
-				if((EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) == 0)
-					return null;
+				}
+
 				//Рассчитываем максимум на 3 строки, если штрих кода 3, отображаем их все. Если больше 3-х третью строку занимаем под надпись...
 				var willTake = EmployeeIssueOperation.BarcodeOperations.Count > 3 ? 2 : 3; 
 				var text = String.Join("\n", EmployeeIssueOperation.BarcodeOperations.Take(willTake).Select(x => x.Barcode.Title));
