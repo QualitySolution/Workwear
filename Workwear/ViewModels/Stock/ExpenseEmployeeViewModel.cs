@@ -258,7 +258,7 @@ namespace Workwear.ViewModels.Stock
 		#region ISelectItem
 		public void SelectItem(int id)
 		{
-			DocItemsEmployeeViewModel.SelectedItem = Entity.Items.First(x => x.Id == id);
+			DocItemsEmployeeViewModel.SelectedItem = Entity.Items.FirstOrDefault(x => x.Id == id);
 		}
 		#endregion
 	}
