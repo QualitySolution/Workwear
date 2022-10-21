@@ -16,21 +16,21 @@
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>136.3pt</Height>
+    <Height>91.9pt</Height>
     <ReportItems>
       <List Name="List1">
         <Height>81.43pt</Height>
         <Width>215.67pt</Width>
-        <Left>0.00pt</Left>
-        <Top>2.40pt</Top>
+        <Left>0.0pt</Left>
+        <Top>0.0pt</Top>
         <ReportItems>
           <Textbox Name="Textbox1">
             <Height>12.77pt</Height>
-            <Width>211.14pt</Width>
+            <Width>213.39pt</Width>
             <Value>={employee}</Value>
-            <ZIndex>2</ZIndex>
+            <ZIndex>4</ZIndex>
             <Left>0.8pt</Left>
-            <Top>64.4pt</Top>
+            <Top>61.2pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -60,31 +60,31 @@
                 <Bottom>Bisque</Bottom>
               </BorderColor>
               <BorderWidth />
-              <FontSize>8pt</FontSize>
+              <FontSize>7pt</FontSize>
               <BackgroundColor>White</BackgroundColor>
             </Style>
-            <Left>2.40pt</Left>
-            <Top>1.40pt</Top>
-            <Height>10.38pt</Height>
+            <Left>2.4pt</Left>
+            <Top>0.0pt</Top>
+            <Height>19.38pt</Height>
             <Width>211.06pt</Width>
             <ZIndex>1</ZIndex>
             <CanGrow>true</CanGrow>
           </Textbox>
           <Textbox Name="Textbox8">
-            <Height>13.50pt</Height>
-            <Width>124.18pt</Width>
-            <Value>={operation_time}</Value>
-            <ZIndex>5</ZIndex>
+            <Height>10.50pt</Height>
+            <Width>67.93pt</Width>
+            <Value>=Format({operation_time}, "d")</Value>
+            <ZIndex>3</ZIndex>
             <Left>3.9pt</Left>
-            <Top>50.2pt</Top>
+            <Top>48pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
               <BorderWidth />
-              <Format>d</Format>
               <TextAlign>Center</TextAlign>
               <FontSize>8pt</FontSize>
             </Style>
+            <CanGrow>false</CanGrow>
           </Textbox>
           <CustomReportItem Name="CustomReportItem1">
             <Type>BarCode EAN-13</Type>
@@ -104,8 +104,8 @@
                 <Value>={product_code}</Value>
               </CustomProperty>
             </CustomProperties>
-            <Left>129.50pt</Left>
-            <Top>1.80pt</Top>
+            <Left>129.5pt</Left>
+            <Top>1.8pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -114,12 +114,12 @@
             <ZIndex>0</ZIndex>
           </CustomReportItem>
           <Textbox Name="Textbox2">
-            <Height>30.01pt</Height>
+            <Height>39.01pt</Height>
             <Width>134.71pt</Width>
             <Value>={subdivision}</Value>
-            <ZIndex>1</ZIndex>
-            <Left>0.00pt</Left>
-            <Top>19.60pt</Top>
+            <ZIndex>2</ZIndex>
+            <Left>0.0pt</Left>
+            <Top>16.4pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -127,6 +127,21 @@
               <FontSize>7pt</FontSize>
               <TextAlign>Center</TextAlign>
               <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox3">
+            <Height>11.25pt</Height>
+            <Width>53.52pt</Width>
+            <Value>={personnel_number}</Value>
+            <ZIndex>3</ZIndex>
+            <Left>75.00pt</Left>
+            <Top>48.00pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <TextAlign>Center</TextAlign>
+              <FontSize>8pt</FontSize>
             </Style>
           </Textbox>
         </ReportItems>
@@ -152,6 +167,7 @@ SUBSTRING(barcodes.title, 3, 5) AS manufacture_code,
 SUBSTRING(barcodes.title, 8, 5) AS product_code,
 objects.name AS subdivision,
 CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name) AS employee,
+wear_cards.personnel_number,
 nomenclature.name AS nomenclature,
 wear_size.name as wear_size,
 wear_height.name as wear_height
@@ -207,6 +223,10 @@ WHERE operation_issued_by_employee.id IN (@operations)</CommandText>
           <DataField>wear_height</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="personnel_number">
+          <DataField>personnel_number</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -215,7 +235,7 @@ WHERE operation_issued_by_employee.id IN (@operations)</CommandText>
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>120580</Value>
+          <Value>27167</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
