@@ -5,6 +5,7 @@ using Workwear.Domain.Stock;
 using Workwear.Measurements;
 using Workwear.ViewModels.Stock;
 using Gtk;
+using Gamma.Binding.Converters;
 
 namespace Workwear.Views.Stock {
 	public partial class NomenclatureView : EntityDialogViewBase<NomenclatureViewModel, Nomenclature>
@@ -50,7 +51,13 @@ namespace Workwear.Views.Stock {
 			ycheckArchival.Binding
 				.AddBinding(Entity, e => e.Archival, w => w.Active)
 				.InitializeFromSource();
-			
+
+			labelSaleCost.Visible = ViewModel.VisibleSaleCost;
+			yspinbuttonSaleCost.Visible = ViewModel.VisibleSaleCost;
+			yspinbuttonSaleCost.Binding
+				.AddBinding(Entity, e => e.SaleCost, w=> w.ValueAsDecimal, new NullToZeroConverter())
+				.InitializeFromSource();
+
 			ybuttonratingDetails.Binding
 				.AddSource(ViewModel)
 					.AddBinding(vm => vm.VisibleRating, w => w.Visible)

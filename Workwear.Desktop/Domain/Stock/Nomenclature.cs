@@ -66,9 +66,9 @@ namespace Workwear.Domain.Stock {
 			set => SetField(ref archival, value);
 		}
 		
-		private decimal saleCost;
+		private decimal? saleCost;
 		[Display(Name = "Цена Продажи")]
-		public virtual decimal SaleCost {
+		public virtual decimal? SaleCost {
 			get => saleCost;
 			set => SetField(ref saleCost, value);
 		}
