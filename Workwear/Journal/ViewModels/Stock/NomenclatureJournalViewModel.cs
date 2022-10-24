@@ -9,6 +9,7 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using QS.Utilities;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools.Features;
@@ -68,6 +69,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => itemsTypeAlias.Name).WithAlias(() => resultAlias.ItemType)
 					.Select(() => nomenclatureAlias.Archival).WithAlias(() => resultAlias.Archival)
 					.Select(x => x.UseBarcode).WithAlias(() => resultAlias.UseBarcode)
+					.Select(x => x.SaleCost).WithAlias(() => resultAlias.SaleCost)
 					.Select(x => x.Rating).WithAlias(() => resultAlias.Rating)
 					.Select(x => x.RatingCount).WithAlias(() => resultAlias.RatingCount)
 				).OrderBy(x => x.Name).Asc
@@ -105,7 +107,8 @@ namespace workwear.Journal.ViewModels.Stock
 		public string ItemType { get; set; }
 		public bool Archival { get; set; }
 		public bool UseBarcode { get; set; }
-		
+		public decimal SaleCost { get; set; }
+		public string SaleCostText => SaleCost > 0 ? CurrencyWorks.GetShortCurrencyString (SaleCost) : String.Empty;
 		public float? Rating { get; set; }
 		public int? RatingCount { get; set; }
 
