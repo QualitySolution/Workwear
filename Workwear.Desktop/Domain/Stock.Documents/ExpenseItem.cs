@@ -299,6 +299,7 @@ namespace Workwear.Domain.Stock.Documents
 					relatedWriteoffItem = ExpenseDoc.WriteOffDoc.AddItem(toWriteoff.IssueOperation, toWriteoff.AmountAtEndOfDay(ExpenseDoc.Date));
 					EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = relatedWriteoffItem.EmployeeWriteoffOperation;
 				}
+				relatedWriteoffItem.Amount = Amount;
 				relatedWriteoffItem.AktNumber = this.AktNumber;
 				relatedWriteoffItem.UpdateOperations(uow);
 
@@ -309,9 +310,7 @@ namespace Workwear.Domain.Stock.Documents
 					EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = null;
 			}
 		}
-
 		#endregion
-
 	}
 }
 
