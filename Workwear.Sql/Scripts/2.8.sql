@@ -1062,6 +1062,10 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
 	ENGINE = InnoDB
 	DEFAULT CHARACTER SET = utf8mb4;
 
+-- Добавляем стоимость
+ALTER TABLE `nomenclature`
+	ADD COLUMN `sale_cost` DECIMAL(7,2) UNSIGNED NULL DEFAULT NULL AFTER `rating_count`;
+
 -- Обновляем хранимую процедуру
 DROP function IF EXISTS `count_issue`;
 

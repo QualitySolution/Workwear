@@ -143,8 +143,8 @@ namespace Workwear.Domain.Stock.Documents
 				var excludeOperations = Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
 				var balance = repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
 
-				var positionGoups = Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
-				foreach(var position in positionGoups) {
+				var positionGroups = Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
+				foreach(var position in positionGroups) {
 					var amount = position.Sum(x => x.Amount);
 					if(amount == 0)
 						continue;
