@@ -116,7 +116,7 @@ namespace Workwear.Domain.Stock.Documents
 		[Display(Name = "Выдача по списанию")]
 		public virtual bool IsWriteOff {
 			get => isWriteOff;
-			set => isWriteOff = value;
+			set => SetField(ref isWriteOff, value);
 		}
 
 		private string aktNumber;
