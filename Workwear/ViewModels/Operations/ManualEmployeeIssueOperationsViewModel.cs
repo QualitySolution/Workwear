@@ -24,8 +24,7 @@ namespace Workwear.ViewModels.Operations
 			EmployeeIssueRepository repository,
 			EmployeeCardItem cardItem = null,
 			EmployeeIssueOperation selectOperation = null,
-			IValidator validator = null, 
-			string UoWTitle = null) : base(unitOfWorkFactory, navigation, validator, UoWTitle) 
+			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator, "Редактирование ручных операций") 
 		{
 			Resizable = true;
 			Deletable = true;
