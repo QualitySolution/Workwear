@@ -71,7 +71,6 @@ using Workwear.Tools.Nhibernate;
 using workwear.Tools;
 using workwear.Tools.Import;
 using Workwear.ViewModels.Communications;
-using Workwear.ViewModels.Company;
 using Workwear.Views.Company;
 using workwear.Models.WearLk;
 using Workwear.Tools.Barcodes;
@@ -146,6 +145,7 @@ namespace workwear
 			containerBuilder.Register(c => new  ErrorReportingSettings(true, false, true, 300)).As<IErrorReportingSettings>();
 			#endif
 
+			containerBuilder.RegisterType<MySqlExceptionErrorNumberLogger>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlException1055OnlyFullGroupBy>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlException1366IncorrectStringValue>().As<IErrorHandler>();
 			containerBuilder.RegisterType<NHibernateFlushAfterException>().As<IErrorHandler>();

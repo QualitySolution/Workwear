@@ -184,9 +184,9 @@ namespace Workwear.Repository.Operations
 		/// Метод подсчитывает количество числящегося за сотрудником на определенную дату.
 		/// ВНИМАНИЕ!! Метод пока не учитывает ручные операции скидывающие историю. Это надо будет дорабатывать.
 		/// </summary>
-		public virtual IList<EmployeeRecivedInfo> ItemsBalance(EmployeeCard employee, DateTime onDate, int[] excludeOperationsIds = null, IUnitOfWork uow = null)
+		public virtual IList<EmployeeReceivedInfo> ItemsBalance(EmployeeCard employee, DateTime onDate, int[] excludeOperationsIds = null, IUnitOfWork uow = null)
 		{
-			EmployeeRecivedInfo resultAlias = null;
+			EmployeeReceivedInfo resultAlias = null;
 
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			EmployeeIssueOperation employeeIssueOperationReceivedAlias = null;
@@ -228,18 +228,18 @@ namespace Workwear.Repository.Operations
 				   .Select(projection).WithAlias(() => resultAlias.Amount)
 				   .Select(() => employeeIssueOperationAlias.Nomenclature.Id).WithAlias(()=> resultAlias.NomenclatureId)
 				)
-				.TransformUsing(Transformers.AliasToBean<EmployeeRecivedInfo>())
-				.List<EmployeeRecivedInfo>();
+				.TransformUsing(Transformers.AliasToBean<EmployeeReceivedInfo>())
+				.List<EmployeeReceivedInfo>();
 		}
 	}
 	
-	public class EmployeeRecivedInfo
+	public class EmployeeReceivedInfo
 	{
 		public int? NormRowId { get; set; }
 
 		public int? ProtectionToolsId { get; set;}
 		
-		public  int? NomenclatureId { get; set; }
+		public int? NomenclatureId { get; set; }
 
 		public DateTime LastReceive { get; set;}
 

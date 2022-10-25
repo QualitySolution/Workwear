@@ -100,7 +100,8 @@ namespace Workwear.ViewModels.Stock
 		public bool SensitiveFillBuhDoc => Entity.Items.Count > 0;
 		public bool SensitiveCreateBarcodes => Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false)
 			&& (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) != x.Amount);
-		public bool SensitiveBarcodesPrint => Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false) && x.Amount > 0);
+		public bool SensitiveBarcodesPrint => Entity.Items.Any(x => x.Amount > 0 
+			&& ((x.Nomenclature?.UseBarcode ?? false) || (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) > 0));
 		#endregion
 		#region Visible
 		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);

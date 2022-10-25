@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
@@ -32,10 +33,22 @@ namespace Workwear.ViewModels.Regulations
 			.Finish();
 
 			Entity.ObservableNomenclatures.ListContentChanged += (sender, args) => OnPropertyChanged(nameof(SensitiveCreateNomenclature));
+			Entity.PropertyChanged += EntityOnPropertyChanged;
 		}
 
+		#region События
+		private void EntityOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			switch(e.PropertyName) {
+				case nameof(Entity.Name):
+				case nameof(Entity.Type):
+					OnPropertyChanged(nameof(SensitiveCreateNomenclature));
+					break;
+			}
+		}
+		#endregion
+
 		#region EntityViewModels
-		public EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
+		public readonly EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
 		#endregion
 
 		#region Действия View
@@ -93,7 +106,9 @@ namespace Workwear.ViewModels.Regulations
 			}
 		}
 
-		public bool SensitiveCreateNomenclature => !Entity.Nomenclatures.Any(x => x.Name == Entity.Name);
+		public bool SensitiveCreateNomenclature => !String.IsNullOrWhiteSpace(Entity.Name)
+			&& Entity.Type != null
+			&& Entity.Nomenclatures.All(x => x.Name != Entity.Name);
 
 		public void CreateNomenclature()
 		{

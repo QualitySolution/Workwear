@@ -155,7 +155,8 @@ namespace Workwear
 			#region Складские документы
 			DeleteConfig.AddHibernateDeleteInfo<Expense> ()
 				.AddDeleteDependence<ExpenseItem> (x => x.ExpenseDoc)
-				.AddDeleteDependence<IssuanceSheet>(x => x.Expense);
+				.AddDeleteDependence<IssuanceSheet>(x => x.Expense)
+				.AddDeleteCascadeDependence(x => x.WriteOffDoc);
 
 			DeleteConfig.AddHibernateDeleteInfo<ExpenseItem> ()
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.ExpenseItem)

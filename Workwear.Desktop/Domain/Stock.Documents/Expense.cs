@@ -143,8 +143,8 @@ namespace Workwear.Domain.Stock.Documents
 				var excludeOperations = Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
 				var balance = repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
 
-				var positionGoups = Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
-				foreach(var position in positionGoups) {
+				var positionGroups = Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
+				foreach(var position in positionGroups) {
 					var amount = position.Sum(x => x.Amount);
 					if(amount == 0)
 						continue;
@@ -224,11 +224,12 @@ namespace Workwear.Domain.Stock.Documents
 
 		#region Методы
 		public virtual void FillCanWriteoffInfo(EmployeeIssueRepository employeeRepository) {
-			var operationIds = Items.Where(x => x.EmployeeIssueOperation?.Id > 0).Select(x => x.EmployeeIssueOperation.Id).ToArray();
-			var itemsBalance = employeeRepository.ItemsBalance(Employee, Date, operationIds);
+			var operationIds = Items.Where(x => x.EmployeeIssueOperation?.Id > 0).Select(x => x.EmployeeIssueOperation.Id).ToList();
+				operationIds.AddRange(Items.Where(x => x.EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff?.Id > 0).Select(x => x.EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff.Id));
+			var itemsBalance = employeeRepository.ItemsBalance(Employee, Date, operationIds.ToArray());
 			foreach(var item in Items) {
 				item.IsWriteOff = item.EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff != null;
-				item.IsEnableWriteOff = itemsBalance.Where(x => x.ProtectionToolsId == item.ProtectionTools?.Id).Sum(x => x.Amount) > 0;
+				item.IsEnableWriteOff = item.IsWriteOff || itemsBalance.Where(x => x.ProtectionToolsId == item.ProtectionTools?.Id).Sum(x => x.Amount) > 0;
 				if(WriteOffDoc != null) {
 					var relatedWriteoffItem = WriteOffDoc.Items
 					.FirstOrDefault(x => item.EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff.IsSame(x.EmployeeWriteoffOperation));
@@ -319,9 +320,7 @@ namespace Workwear.Domain.Stock.Documents
 			if(WriteOffDoc.Items.Count < 1) {
 				UoW.Delete(WriteOffDoc);
 				WriteOffDoc = null;
-
 			}
-
 		}
 		#endregion
 		#endregion

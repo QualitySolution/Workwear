@@ -6,8 +6,6 @@ using Autofac;
 using Gamma.Utilities;
 using NLog;
 using QS.Dialog;
-using QS.Dialog.GtkUI;
-using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -31,8 +29,7 @@ using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Statements;
 
-namespace Workwear.ViewModels.Stock
-{
+namespace Workwear.ViewModels.Stock {
 	public class ExpenseEmployeeViewModel : EntityDialogViewModelBase<Expense>, ISelectItem
 	{
 		private ILifetimeScope autofacScope;
@@ -113,13 +110,14 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 
 		#region Свойства для View
-
 		public bool IssuanceSheetCreateVisible => Entity.IssuanceSheet == null;
 		public bool IssuanceSheetCreateSensitive => Entity.Employee != null;
 		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
 		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
+		public bool WriteoffOpenVisible => Entity.WriteOffDoc != null;
+		public string WriteoffDocNumber => (Entity.WriteOffDoc?.Id > 0) ? Entity.WriteOffDoc?.Id.ToString() : null;
 		#endregion
-		
+
 		private void FillUnderreceived()
 		{
 			Entity.ObservableItems.Clear();
@@ -209,6 +207,7 @@ namespace Workwear.ViewModels.Stock
 			return true;
 		}
 
+		#region Ведомость
 		public void OpenIssuanceSheet()
 		{
 			if(UoW.HasChanges) {
@@ -241,24 +240,39 @@ namespace Workwear.ViewModels.Stock
 
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
+		#endregion
+		#region Списание
+		public void OpenWriteoff() {
+			if(UoW.HasChanges) {
+				if(!interactive.Question("В документе были изменения. Сохранить документ выдачи перед открытием связанного списания?") || !Save())
+					return;
+			}
+			MainClass.MainWin.NavigationManager.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.WriteOffDoc.Id));
+		}
+		#endregion
 
 		public void EntityChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if(e.PropertyName == nameof(Entity.Employee)) {
-				FillUnderreceived();
-				OnPropertyChanged(nameof(IssuanceSheetCreateSensitive));
-			}
-			if(e.PropertyName == nameof(Entity.IssuanceSheet)) {
-				OnPropertyChanged(nameof(IssuanceSheetCreateVisible));
-				OnPropertyChanged(nameof(IssuanceSheetOpenVisible));
-				OnPropertyChanged(nameof(IssuanceSheetPrintVisible));
+			switch(e.PropertyName) {
+				case nameof(Entity.Employee):
+					FillUnderreceived();
+					OnPropertyChanged(nameof(IssuanceSheetCreateSensitive));
+					break;
+				case nameof(Entity.IssuanceSheet):
+					OnPropertyChanged(nameof(IssuanceSheetCreateVisible));
+					OnPropertyChanged(nameof(IssuanceSheetOpenVisible));
+					OnPropertyChanged(nameof(IssuanceSheetPrintVisible));
+					break;
+				case nameof(Entity.WriteOffDoc):
+					OnPropertyChanged(nameof(WriteoffOpenVisible));
+					break;
 			}
 		}
 
 		#region ISelectItem
 		public void SelectItem(int id)
 		{
-			DocItemsEmployeeViewModel.SelectedItem = Entity.Items.First(x => x.Id == id);
+			DocItemsEmployeeViewModel.SelectedItem = Entity.Items.FirstOrDefault(x => x.Id == id);
 		}
 		#endregion
 	}

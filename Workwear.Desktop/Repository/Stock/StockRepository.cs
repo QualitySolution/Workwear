@@ -60,12 +60,12 @@ namespace Workwear.Repository.Stock
 			// null == null => null              null <=> null => true
 			var expenseQuery = QueryOver.Of(() => warehouseExpenseOperationAlias)
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
-				             && (warehouseExpenseOperationAlias.WearSize.Id == sizeAlias.Id
-				                 || warehouseOperationAlias.WearSize == null && sizeAlias == null)
-				             && (warehouseExpenseOperationAlias.Height.Id == heightAlias.Id
-				                 || warehouseOperationAlias.Height == null && heightAlias == null)
-				             && (warehouseExpenseOperationAlias.Owner.Id == ownerAlias.Id
-								 || warehouseOperationAlias.Owner == null && ownerAlias == null)
+				             && (warehouseExpenseOperationAlias.WearSize.Id == warehouseOperationAlias.WearSize.Id
+				                 || (warehouseExpenseOperationAlias.WearSize == null && warehouseOperationAlias.WearSize == null))
+				             && (warehouseExpenseOperationAlias.Height.Id == warehouseOperationAlias.Height.Id
+				                 || (warehouseExpenseOperationAlias.Height == null && warehouseOperationAlias.Height == null))
+				             && (warehouseExpenseOperationAlias.Owner.Id == warehouseOperationAlias.Owner.Id
+								 || (warehouseExpenseOperationAlias.Owner == null && warehouseOperationAlias.Owner == null))
 				             && warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
 				.Where(e => e.OperationTime <= onTime);
 
@@ -83,12 +83,12 @@ namespace Workwear.Repository.Stock
 
 			var incomeSubQuery = QueryOver.Of(() => warehouseIncomeOperationAlias)
 				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id 
-				             && (warehouseIncomeOperationAlias.WearSize.Id == sizeAlias.Id
-				                 || warehouseOperationAlias.WearSize == null && sizeAlias == null)
-				             && (warehouseIncomeOperationAlias.Height.Id == heightAlias.Id
-				                 || warehouseOperationAlias.Height == null && heightAlias == null)
-				             && (warehouseIncomeOperationAlias.Owner.Id == ownerAlias.Id
-								 || warehouseOperationAlias.Owner == null && ownerAlias == null)
+				             && (warehouseIncomeOperationAlias.WearSize.Id == warehouseOperationAlias.WearSize.Id
+				                 || (warehouseIncomeOperationAlias.WearSize == null && warehouseOperationAlias.WearSize == null))
+				             && (warehouseIncomeOperationAlias.Height.Id == warehouseOperationAlias.Height.Id
+				                 || (warehouseIncomeOperationAlias.Height == null && warehouseOperationAlias.Height == null))
+				             && (warehouseIncomeOperationAlias.Owner.Id == warehouseOperationAlias.Owner.Id
+								 || (warehouseIncomeOperationAlias.Owner == null && warehouseOperationAlias.Owner == null))
 				             && warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
 				.Where(e => e.OperationTime < onTime);
 

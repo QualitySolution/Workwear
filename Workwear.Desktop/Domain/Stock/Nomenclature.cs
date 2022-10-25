@@ -66,6 +66,13 @@ namespace Workwear.Domain.Stock {
 			set => SetField(ref archival, value);
 		}
 		
+		private decimal? saleCost;
+		[Display(Name = "Цена Продажи")]
+		public virtual decimal? SaleCost {
+			get => saleCost;
+			set => SetField(ref saleCost, value);
+		}
+		
 		private float? rating;
 		[Display(Name ="Средняя оценка")]
 		public virtual float? Rating {
@@ -80,7 +87,7 @@ namespace Workwear.Domain.Stock {
 			get => ratingCount;
 			set => SetField(ref ratingCount, value);
 		}
-		
+
 		private bool useBarcode;
 		[Display(Name ="Использовать штрихкод")]
 		public virtual bool UseBarcode {
