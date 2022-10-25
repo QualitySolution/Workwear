@@ -168,6 +168,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			UoW.Commit();
 			Entity.FillWearRecivedInfo(employeeIssueRepository);
 			Entity.UpdateNextIssue(protectionTools);
+			UoW.Save();
 		}
 		#endregion
 		#region Контекстное меню

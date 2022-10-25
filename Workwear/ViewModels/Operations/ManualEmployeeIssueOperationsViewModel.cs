@@ -165,6 +165,7 @@ namespace Workwear.ViewModels.Operations
 				issue.OverrideBefore = true;
 			
 			Operations.Add(issue);
+			SelectOperation = issue;
 		}
 
 		public void DeleteOnClicked(EmployeeIssueOperation deleteOperation) {
