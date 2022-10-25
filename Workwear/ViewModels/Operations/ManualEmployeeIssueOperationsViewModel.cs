@@ -145,6 +145,8 @@ namespace Workwear.ViewModels.Operations
 		public void AddOnClicked() {
 			if(EmployeeCardItem == null)
 				throw new ArgumentNullException(nameof(EmployeeCardItem));
+			var startDate = EmployeeCardItem.NextIssue ?? DateTime.Today;
+			var endDate = EmployeeCardItem.ActiveNormItem?.CalculateExpireDate(startDate);
 			var issue = new EmployeeIssueOperation {
 				Employee = EmployeeCardItem.EmployeeCard,
 				Issued = EmployeeCardItem.ActiveNormItem?.Amount ?? 1,
@@ -154,12 +156,14 @@ namespace Workwear.ViewModels.Operations
 				Returned = 0,
 				WearPercent = 0m,
 				UseAutoWriteoff = true,
-				OperationTime = EmployeeCardItem.NextIssue ?? DateTime.Today 
+				OperationTime =  startDate,
+				StartOfUse = startDate,
+				AutoWriteoffDate = endDate,
+				ExpiryByNorm = endDate
 			};
 			if(!Operations.Any())
 				issue.OverrideBefore = true;
 			
-			issue.ExpiryByNorm = issue.NormItem?.CalculateExpireDate(DateTime.Today);
 			Operations.Add(issue);
 		}
 
@@ -170,7 +174,7 @@ namespace Workwear.ViewModels.Operations
 		
 		#region Windows Settings
 
-		public bool IsModal { get; }
+		public bool IsModal { get; } = true;
 		public bool EnableMinimizeMaximize { get; }
 		public bool Resizable { get; }
 		public bool Deletable { get; }
