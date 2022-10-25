@@ -224,8 +224,9 @@ namespace Workwear.Domain.Stock.Documents
 
 		#region Методы
 		public virtual void FillCanWriteoffInfo(EmployeeIssueRepository employeeRepository) {
-			var operationIds = Items.Where(x => x.EmployeeIssueOperation?.Id > 0).Select(x => x.EmployeeIssueOperation.Id).ToArray();
-			var itemsBalance = employeeRepository.ItemsBalance(Employee, Date, operationIds);
+			var operationIds = Items.Where(x => x.EmployeeIssueOperation?.Id > 0).Select(x => x.EmployeeIssueOperation.Id).ToList();
+				operationIds.AddRange(Items.Where(x => x.EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff?.Id > 0).Select(x => x.EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff.Id));
+			var itemsBalance = employeeRepository.ItemsBalance(Employee, Date, operationIds.ToArray());
 			foreach(var item in Items) {
 				item.IsWriteOff = item.EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff != null;
 				item.IsEnableWriteOff = item.IsWriteOff || itemsBalance.Where(x => x.ProtectionToolsId == item.ProtectionTools?.Id).Sum(x => x.Amount) > 0;
