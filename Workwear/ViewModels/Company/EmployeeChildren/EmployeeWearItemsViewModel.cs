@@ -175,6 +175,12 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(row.ProtectionTools.Id));
 		}
+		
+		public void OpenActiveNorm(EmployeeCardItem row)
+		{
+			var page = navigation.OpenViewModel<NormViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(row.ActiveNormItem.Norm.Id));
+			page.ViewModel.SelectItem(row.ActiveNormItem.Id);
+		}
 
 		public void OpenLastIssue(EmployeeCardItem row)
 		{

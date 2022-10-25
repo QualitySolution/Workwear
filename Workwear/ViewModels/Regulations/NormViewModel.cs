@@ -18,10 +18,11 @@ using workwear.Journal.ViewModels.Regulations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Regulations
 {
-	public class NormViewModel : EntityDialogViewModelBase<Norm>
+	public class NormViewModel : EntityDialogViewModelBase<Norm>, ISelectItem
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly EmployeeIssueRepository employeeIssueRepository;
@@ -81,6 +82,12 @@ namespace Workwear.ViewModels.Regulations
 
 		#region Свойства
 		public List<NormCondition> NormConditions { get; set; }
+		
+		private NormItem selectedItem;
+		public virtual NormItem SelectedItem {
+			get => selectedItem;
+			set => SetField(ref selectedItem, value);
+		}
 		#endregion
 
 		#region Действия View
@@ -314,5 +321,9 @@ namespace Workwear.ViewModels.Regulations
 			return true;
 		}
 		#endregion
+
+		public void SelectItem(int id) {
+			SelectedItem = Entity.Items.FirstOrDefault(x => x.Id == id);
+		}
 	}
 }

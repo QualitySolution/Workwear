@@ -120,6 +120,12 @@ namespace Workwear.Views.Company.EmployeeChildren
 			if(args.Event.Button == 3) {
 				var menu = new Menu();
 				var selected = ytreeWorkwear.GetSelectedObject<EmployeeCardItem>();
+				
+				var itemOpenActiveNorm = new MenuItemId<EmployeeCardItem>("Открыть активную норму");
+				itemOpenActiveNorm.ID = selected;
+				itemOpenActiveNorm.Sensitive = selected?.ActiveNormItem != null;
+				itemOpenActiveNorm.Activated += (sender, e) => viewModel.OpenActiveNorm(((MenuItemId<EmployeeCardItem>)sender).ID);
+				menu.Add(itemOpenActiveNorm);
 
 				var itemOpenProtectionTools = new MenuItemId<EmployeeCardItem>("Открыть номенклатуру нормы");
 				itemOpenProtectionTools.ID = selected;
