@@ -3,13 +3,13 @@
   <Description>Справка о выданной спецодежде</Description>
   <Author>
   </Author>
-  <PageHeight>17in</PageHeight>
+  <PageHeight>297mm</PageHeight>
   <PageWidth>11in</PageWidth>
-  <Width>7.5in</Width>
-  <TopMargin>.20in</TopMargin>
-  <LeftMargin>.20in</LeftMargin>
-  <RightMargin>.20in</RightMargin>
-  <BottomMargin>.20in</BottomMargin>
+  <Width>210mm</Width>
+  <TopMargin>.10in</TopMargin>
+  <LeftMargin>.10in</LeftMargin>
+  <RightMargin>.10in</RightMargin>
+  <BottomMargin>.10in</BottomMargin>
   <PageHeader>
     <Height>37.4pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
@@ -71,7 +71,7 @@
               <Hidden>=!{?showOwners}</Hidden>
             </Visibility>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>58.7pt</Width>
             <Visibility>
               <Hidden>=!{?showCost}</Hidden>
@@ -186,7 +186,7 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox27">
                           <Value>=Sum({cost})</Value>
@@ -327,7 +327,7 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox22">
                           <Value>
@@ -434,10 +434,10 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox26">
-                          <Value>Оценочная стоимость</Value>
+                          <Value>Cтоимость</Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>Solid</Default>
@@ -533,7 +533,7 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox30">
                           <Value>
@@ -644,7 +644,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox21">
                       <Value>={cost}</Value>
@@ -710,7 +710,7 @@
     heightAlias.name as growth, 
     objects.code, 
     if(@showOwners, owners.name, null) as owner_name,
-    (sum(issued) * protection_tools.assessed_cost) AS cost
+    (sum(issued) * nomenclature.sale_cost) AS cost
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id

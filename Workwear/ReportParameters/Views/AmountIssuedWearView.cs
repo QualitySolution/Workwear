@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Data.Bindings.Collections.Generic;
 using QS.Views;
-using Workwear.Domain.Stock;
 using workwear.ReportParameters.ViewModels;
+using Workwear.Domain.Stock;
 using Workwear.Tools.Features;
 
-namespace workwear.ReportParameters.Views
-{
+namespace workwear.ReportParameters.Views {
 	public partial class AmountIssuedWearView : ViewBase<AmountIssuedWearViewModel>
 	{
 		public AmountIssuedWearView(AmountIssuedWearViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
+
+			comboReportType.ItemsEnum = typeof(AmountIssuedWearReportType);
+			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
 
 			ydateperiodpicker.Binding.AddSource(viewModel)
 				.AddBinding(v => v.StartDate, w => w.StartDateOrNull)
@@ -58,6 +60,7 @@ namespace workwear.ReportParameters.Views
 				.AddBinding(wm => wm.SelectOwner, w => w.SelectedItem)
 				.InitializeFromSource();
 
+			checkShowCost.Visible = ViewModel.FeaturesService.Available(WorkwearFeature.Selling);
 			checkShowCost.Binding
 				.AddBinding(ViewModel, wm => wm.ShowCost, w => w.Active)
 				.InitializeFromSource();
