@@ -111,9 +111,7 @@ namespace Workwear.Tools.Features
 			}
 
 			switch(feature) {
-				#if	DEBUG //Пока доступно только в редакции спецпошива
-				case WorkwearFeature.Selling:
-				#endif
+				case WorkwearFeature.Selling: //Пока доступно только в редакции спецпошива
 				case WorkwearFeature.Warehouses:
 				case WorkwearFeature.IdentityCards:
 				case WorkwearFeature.Owners:
