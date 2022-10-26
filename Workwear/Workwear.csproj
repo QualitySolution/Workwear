@@ -634,6 +634,9 @@
     <Folder Include="Models\WearLk\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Reports\AmountIssuedWearFlat.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Reports\ListBySize.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

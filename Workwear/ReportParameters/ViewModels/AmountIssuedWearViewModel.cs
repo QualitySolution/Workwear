@@ -1,18 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Gamma.Utilities;
 using Gamma.Widgets;
 using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Report;
 using QS.Report.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Repository.Company;
 using Workwear.Tools.Features;
 
-namespace workwear.ReportParameters.ViewModels
-{
+namespace workwear.ReportParameters.ViewModels {
 	public class AmountIssuedWearViewModel : ReportParametersViewModelBase
 	{
 		private readonly IUnitOfWork unitOfWork;
@@ -25,7 +27,6 @@ namespace workwear.ReportParameters.ViewModels
 		{
 			FeaturesService = featuresService;
 			Title = "Справка о выданной спецодежде";
-			Identifier = "AmountIssuedWear";
 			using(var uow = uowFactory.CreateWithoutRoot()) {
 				SelectedSubdivison resultAlias = null;
 				Subdivisions = subdivisionRepository.ActiveQuery(uow) 
@@ -68,7 +69,18 @@ namespace workwear.ReportParameters.ViewModels
 					{"showCost", ShowCost}
 		};
 
+		public override string Identifier { 
+			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
+			set => throw new InvalidOperationException();
+		}
+
 		#region Параметры
+		private AmountIssuedWearReportType reportType;
+		public virtual AmountIssuedWearReportType ReportType {
+			get => reportType;
+			set => SetField(ref reportType, value);
+		}
+
 		private DateTime? startDate;
 		[PropertyChangedAlso(nameof(SensitiveLoad))]
 		public virtual DateTime? StartDate {
@@ -210,5 +222,14 @@ namespace workwear.ReportParameters.ViewModels
 		 
 		public int Id { get; set; }
 		public string Name { get; set; }
+	}
+
+	public enum AmountIssuedWearReportType {
+		[ReportIdentifier("AmountIssuedWear")]
+		[Display(Name = "Для печати A4 с группировкой")]
+		Common,
+		[ReportIdentifier("AmountIssuedWearFlat")]
+		[Display(Name = "Для экспорта (только данные)")]
+		Flat
 	}
 }
