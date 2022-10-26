@@ -64,6 +64,8 @@ namespace Workwear.Views.Regulations
 			ytreeItems.ItemsDataSource = Entity.ObservableItems;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += TreeItems_ButtonReleaseEvent;
+			ytreeItems.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.SelectedItem, w => w.SelectedRow);
 
 			buttonSave.Binding.AddBinding(ViewModel, v => v.SaveSensitive, w => w.Sensitive).InitializeFromSource();
 			buttonCancel.Binding.AddBinding(ViewModel, v => v.CancelSensitive, w => w.Sensitive).InitializeFromSource();

@@ -53,7 +53,7 @@ namespace Workwear.ViewModels.Stock
 		public bool VisibleClothesSex =>
 			Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear;
 
-		public bool VisibleSaleCost = false; //=> featuresService.Available(WorkwearFeature.);   i-726
+		public bool VisibleSaleCost => featuresService.Available(WorkwearFeature.Selling);
 		public bool VisibleRating => Entity.Rating != null && featuresService.Available(WorkwearFeature.Ratings);
 		public bool VisibleBarcode => featuresService.Available(WorkwearFeature.Barcodes);
 		#endregion

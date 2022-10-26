@@ -111,6 +111,9 @@ namespace Workwear.Tools.Features
 			}
 
 			switch(feature) {
+				#if	DEBUG //Пока доступно только в редакции спецпошива
+				case WorkwearFeature.Selling:
+				#endif
 				case WorkwearFeature.Warehouses:
 				case WorkwearFeature.IdentityCards:
 				case WorkwearFeature.Owners:
@@ -163,7 +166,11 @@ namespace Workwear.Tools.Features
 		[Display(Name = "Собственники имущества")]
 		Owners,
 		[Display(Name = "Штрихкоды")]
-		Barcodes
+		Barcodes,
+		#endregion
+		#region Спецредакции
+		[Display(Name = "Продажа")]
+		Selling
 		#endregion
 	}
 	
