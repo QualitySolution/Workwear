@@ -47,15 +47,15 @@ namespace Workwear.ViewModels.Operations
 			}
 			else
 				throw new ArgumentNullException(nameof(selectOperation) + nameof(cardItem));
-
-			SelectOperation = selectOperation != null 
-				? Operations.First(x => x.Id == selectOperation.Id) 
-				: Operations.FirstOrDefault();
 			
 			//Исправляем ситуацию когда у операции пропала ссылка на норму, это может произойти в случает обновления нормы.
 			if(EmployeeCardItem != null)
 				foreach (var operation in Operations.Where(operation => operation.NormItem == null))
 					operation.NormItem = EmployeeCardItem.ActiveNormItem;
+			
+			SelectOperation = selectOperation != null 
+				? Operations.First(x => x.Id == selectOperation.Id) 
+				: Operations.FirstOrDefault();
 		}
 
 		#region PublicProperty
@@ -94,10 +94,10 @@ namespace Workwear.ViewModels.Operations
 		public DateTime DateTime {
 			get => dateTime;
 			set {
-				if(SetField(ref dateTime, value)) {
+				if(SetField(ref dateTime, value) && SelectOperation.StartOfUse != value) {
 					SelectOperation.OperationTime = value;
 					SelectOperation.StartOfUse = value;
-					SelectOperation.ExpiryByNorm = SelectOperation.NormItem.CalculateExpireDate(value);
+					SelectOperation.ExpiryByNorm = SelectOperation.NormItem?.CalculateExpireDate(value);
 					SelectOperation.AutoWriteoffDate = SelectOperation.ExpiryByNorm;
 				}
 			}
