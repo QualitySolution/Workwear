@@ -714,7 +714,6 @@
     <Folder Include="Journal\Filter.Views\Statements\" />
     <Folder Include="Journal\Filter.ViewModels\Statements\" />
     <Folder Include="Models\Operations\" />
-    <Folder Include="Domain\Tools\" />
     <Folder Include="HibernateMapping\Communications\" />
     <Folder Include="Journal\Filter.ViewModels\Communications\" />
     <Folder Include="Journal\Filter.Views\Communications\" />
