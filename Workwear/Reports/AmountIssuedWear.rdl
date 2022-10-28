@@ -20,8 +20,8 @@
         <Width>761.77pt</Width>
         <Value>= "Отчет о спецодежде выданной за период c " + Format({?dateStart}, "dd/MM/yyyy")  + " г. по " +  Format({?dateEnd}, "dd/MM/yyyy") + " г."</Value>
         <ZIndex>1</ZIndex>
-        <Left>1.63pt</Left>
-        <Top>7.30pt</Top>
+        <Left>1.6pt</Left>
+        <Top>7.3pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -36,7 +36,7 @@
     </ReportItems>
   </PageHeader>
   <Body>
-    <Height>87.5pt</Height>
+    <Height>119.8pt</Height>
     <ReportItems>
       <Table Name="Table1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <DataSetName>Data</DataSetName>
@@ -44,17 +44,17 @@
         <Style>
           <BorderStyle>
             <Default>Solid</Default>
-            <Right>None</Right>
+            <Right>Solid</Right>
           </BorderStyle>
           <BorderColor />
           <BorderWidth />
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>87.3pt</Width>
+            <Width>74.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>404.9pt</Width>
+            <Width>340.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>88.0pt</Width>
@@ -62,20 +62,29 @@
               <Hidden>=!{?bySize}</Hidden>
             </Visibility>
           </TableColumn>
-          <TableColumn>
-            <Width>60.4pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>78.5pt</Width>
+          <TableColumn >
+            <Width>88.0pt</Width>
             <Visibility>
               <Hidden>=!{?showOwners}</Hidden>
             </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>60.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>58.7pt</Width>
             <Visibility>
               <Hidden>=!{?showCost}</Hidden>
             </Visibility>
+          </TableColumn>
+          <TableColumn >
+            <Width>58.7pt</Width>
+            <Visibility>
+              <Hidden>=!{?showCost}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn >
+            <Width>28.1pt</Width>
           </TableColumn>
         </TableColumns>
         <TableGroups>
@@ -142,6 +151,26 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox48">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                              <Left>None</Left>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Right</TextAlign>
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox9" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -166,7 +195,7 @@
                     </TableCell>
                     <TableCell>
                       <ReportItems>
-                        <Textbox Name="Textbox19">
+                        <Textbox Name="Textbox27" >
                           <Value>
                           </Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -186,16 +215,38 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell>
+                    <TableCell >
                       <ReportItems>
-                        <Textbox Name="Textbox27">
-                          <Value>=Sum({cost})</Value>
+                        <Textbox Name="Textbox34">
+                          <Value>=Sum({cost_sum})</Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>Solid</Default>
                               <Left>None</Left>
                               <Right>None</Right>
                               <Top>Solid</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <PaddingRight>2pt</PaddingRight>
+                            <TextAlign>Right</TextAlign>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox60">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>None</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
                               <Bottom>None</Bottom>
                             </BorderStyle>
                             <PaddingRight>2pt</PaddingRight>
@@ -228,68 +279,28 @@
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox23">
-                          <Value>Подразделение:</Value>
+                          <Value>= Iif(Fields!object.IsMissing, "      Без подразделения", "  " + {code} + "      " + {object})</Value>
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
                               <Right>None</Right>
                               <Top>None</Top>
                               <Left>None</Left>
+                              <Bottom >None</Bottom>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
                             <FontWeight>Bold</FontWeight>
                             <FontSize>10pt</FontSize>
                             <VerticalAlign>Bottom</VerticalAlign>
+                            <TextAlign >Left</TextAlign>
                           </Style>
                           <Visibility>
                             <Hidden>={?summary}</Hidden>
                           </Visibility>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>1</ColSpan>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox5">
-                          <Value>= Iif(Fields!object.IsMissing, "      Без подразделения", "  " + {code} + "      " + {object})</Value>
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Left>None</Left>
-                              <Right>None</Right>
-                              <Top>None</Top>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <FontWeight>Bold</FontWeight>
-                            <VerticalAlign>Bottom</VerticalAlign>
-                          </Style>
-                          <Visibility>
-                            <Hidden>={?summary}</Hidden>
-                          </Visibility>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox6">
-                          <Value>
-                          </Value>
-                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Left>None</Left>
-                              <Right>None</Right>
-                              <Top>None</Top>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <FontWeight>Bold</FontWeight>
-                            <VerticalAlign>Bottom</VerticalAlign>
-                          </Style>
-                        </Textbox>
-                      </ReportItems>
+                      <ColSpan>4</ColSpan>
                     </TableCell>
                     <TableCell>
                       <ReportItems>
@@ -302,24 +313,7 @@
                               <Left>None</Left>
                               <Right>None</Right>
                               <Top>None</Top>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                          </Style>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox16">
-                          <Value>
-                          </Value>
-                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Left>None</Left>
-                              <Right>None</Right>
-                              <Top>None</Top>
+                              <Bottom >None</Bottom>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -338,6 +332,45 @@
                               <Left>None</Left>
                               <Right>None</Right>
                               <Top>None</Top>
+                              <Bottom >None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox32">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
+                              <Bottom >None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox58">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>None</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
+                              <Bottom >None</Bottom>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -365,7 +398,7 @@
                             <TextAlign>Center</TextAlign>
                             <BackgroundColor>#E9E9E9</BackgroundColor>
                           </Style>
-                          <Value>Номенклат. №</Value>
+                          <Value>Артикул</Value>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>1</ColSpan>
@@ -402,11 +435,11 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell>
+                    <TableCell >
                       <ReportItems>
-                        <Textbox Name="Textbox28">
-                          <Value>Количество</Value>
-                          <Style>
+                        <Textbox Name="Textbox47">
+                          <Value>Собственник</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>Solid</Default>
                             </BorderStyle>
@@ -420,9 +453,9 @@
                     </TableCell>
                     <TableCell>
                       <ReportItems>
-                        <Textbox Name="Textbox18">
-                          <Value>Собственник</Value>
-                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <Textbox Name="Textbox28">
+                          <Value>Количество</Value>
+                          <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
                             </BorderStyle>
@@ -450,6 +483,44 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox33">
+                          <Value>Сумма</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <BackgroundColor>#E9E9E9</BackgroundColor>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox59">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>None</Default>
+                              <Left >Solid</Left>
+                              <Right >None</Right>
+                              <Top >None</Top>
+                              <Bottom >None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <BackgroundColor>
+                            </BackgroundColor>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
                   </TableCells>
                 </TableRow>
               </TableRows>
@@ -460,7 +531,7 @@
               <PageBreakAtStart>false</PageBreakAtStart>
               <PageBreakAtEnd>false</PageBreakAtEnd>
               <GroupExpressions>
-                <GroupExpression>={employee}</GroupExpression>
+                <GroupExpression >={employee}</GroupExpression>
               </GroupExpressions>
             </Grouping>
             <Header>
@@ -476,6 +547,8 @@
                             <BorderStyle>
                               <Default>Solid</Default>
                               <Right>None</Right>
+                              <Top >None</Top>
+                              <Bottom >None</Bottom>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -490,7 +563,7 @@
                           </Visibility>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>3</ColSpan>
+                      <ColSpan>4</ColSpan>
                     </TableCell>
                     <TableCell>
                       <ReportItems>
@@ -500,26 +573,8 @@
                               <Default>Solid</Default>
                               <Left>None</Left>
                               <Right>None</Right>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                          </Style>
-                          <Value>
-                          </Value>
-                          <Visibility>
-                            <Hidden>
-                            </Hidden>
-                          </Visibility>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox25">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Left>None</Left>
+                              <Top >None</Top>
+                              <Bottom >None</Bottom>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -542,9 +597,305 @@
                             <BorderStyle>
                               <Default>Solid</Default>
                               <Left>None</Left>
+                              <Right >None</Right>
+                              <Top >None</Top>
+                              <Bottom >None</Bottom>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox35">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right >None</Right>
+                              <Top >None</Top>
+                              <Bottom >None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox61">
+                          <Value>
+                          </Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>None</Default>
+                              <Left>Solid</Left>
+                              <Right >None</Right>
+                              <Top >None</Top>
+                              <Bottom >None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <BackgroundColor >
+                            </BackgroundColor>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                  </TableCells>
+                  <Visibility>
+                    <Hidden>=!{?byEmployee}</Hidden>
+                  </Visibility>
+                </TableRow>
+              </TableRows>
+            </Header>
+            <Footer >
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>12.9pt</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox15">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox16">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Right</TextAlign>
+                          </Style>
+                          <Value>Итого по сотруднику:</Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox18">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox19">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox25">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <PaddingRight>2pt</PaddingRight>
+                          </Style>
+                          <Value>=Sum({sum})</Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox36">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox37">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <PaddingRight>2pt</PaddingRight>
+                          </Style>
+                          <Value>=Sum({cost_sum})</Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox38">
+                          <Style>
+                            <BorderStyle>
+                              <Default>None</Default>
+                              <Left>Solid</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                  </TableCells>
+                  <Visibility>
+                    <Hidden>=!{?byEmployee}</Hidden>
+                  </Visibility>
+                </TableRow>
+              </TableRows>
+            </Footer>
+          </TableGroup>
+          <TableGroup >
+            <Grouping Name="issuanceSheetGroup">
+              <PageBreakAtStart>false</PageBreakAtStart>
+              <PageBreakAtEnd>false</PageBreakAtEnd>
+              <GroupExpressions>
+                <GroupExpression>={issuance_sheet}</GroupExpression>
+              </GroupExpressions>
+            </Grouping>
+            <Header>
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>12.9pt</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox49">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Left</TextAlign>
+                            <PaddingLeft>5pt</PaddingLeft>
+                          </Style>
+                          <Value>= "Ведомость №" + {issuance_sheet}</Value>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>4</ColSpan>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox53">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                              <Left>None</Left>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox54">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                              <Left>None</Left>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox55">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                              <Left>None</Left>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>
+                          </Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox62">
+                          <Value>
+                          </Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>None</Default>
+                              <Right>None</Right>
+                              <Left>Solid</Left>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <BackgroundColor>
+                            </BackgroundColor>
                           </Style>
                         </Textbox>
                       </ReportItems>
@@ -611,6 +962,22 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox45">
+                      <Value>={owner_name}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox13" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -630,22 +997,6 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox15">
-                      <Value>={owner_name}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <PaddingRight>2pt</PaddingRight>
-                        <TextAlign>Center</TextAlign>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
                     <Textbox Name="Textbox21">
                       <Value>={cost}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -653,9 +1004,48 @@
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingRight>2pt</PaddingRight>
-                        <TextAlign>Center</TextAlign>
+                        <TextAlign>Right</TextAlign>
                         <BorderColor />
                         <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox31">
+                      <Value>={cost_sum}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Right</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox57">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left >Solid</Left>
+                          <Right >None</Right>
+                          <Top >None</Top>
+                          <Bottom >None</Bottom>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Right</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                        <BackgroundColor >
+                        </BackgroundColor>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -710,7 +1100,9 @@
     heightAlias.name as growth, 
     objects.code, 
     if(@showOwners, owners.name, null) as owner_name,
-    (sum(issued) * nomenclature.sale_cost) AS cost
+    (nomenclature.sale_cost) AS cost,
+    (sum(issued) * nomenclature.sale_cost) AS cost_sum,
+    issuance_sheet_items.issuance_sheet_id as issuance_sheet
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
@@ -722,6 +1114,7 @@ LEFT JOIN sizes AS heightAlias ON (heightAlias.id = operation_issued_by_employee
 LEFT JOIN operation_warehouse ON warehouse_operation_id = operation_warehouse.id
 LEFT JOIN owners ON operation_warehouse.owner_id = owners.id
 LEFT JOIN protection_tools ON protection_tools.id = operation_issued_by_employee.protection_tools_id
+LEFT JOIN issuance_sheet_items ON issuance_sheet_items.issued_operation_id = operation_issued_by_employee.id
 WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE) and operation_issued_by_employee.operation_time &lt;= CONVERT(@dateEnd, DATE)
 AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
 AND (@issue_type = "" OR item_types.issue_type = @issue_type)
@@ -830,7 +1223,15 @@ ORDER BY CAST(objects.code AS UNSIGNED), employee, nomen, size, growth;</Command
         </Field>
         <Field Name="cost">
           <DataField>cost</DataField>
-          <TypeName>System.Double</TypeName>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
+        <Field Name="cost_sum">
+          <DataField>cost_sum</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
+        <Field Name="issuance_sheet">
+          <DataField>issuance_sheet</DataField>
+          <TypeName>System.UInt32</TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -844,7 +1245,7 @@ ORDER BY CAST(objects.code AS UNSIGNED), employee, nomen, size, growth;</Command
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="dateStart">
       <DataType>DateTime</DataType>
       <Nullable>false</Nullable>
@@ -975,7 +1376,8 @@ ORDER BY CAST(objects.code AS UNSIGNED), employee, nomen, size, growth;</Command
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt>
+      </Prompt>
     </ReportParameter>
   </ReportParameters>
 </Report>
