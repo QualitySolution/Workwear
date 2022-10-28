@@ -53,6 +53,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			WarehouseOperation warehouseOperationAlias = null;
 
+			Expense expenseAlias = null;
 			ExpenseItem expenseItemAlias = null;
 			IncomeItem incomeItemAlias = null;
 			MassExpenseOperation massExpenseOperationAlias = null; //FIXME Не реализовано
@@ -142,6 +143,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => nomenclatureAlias.Type, () => itemtypesAlias)
 				.JoinAlias(() => itemtypesAlias.Units, () => unitsAlias)
 				.JoinEntityAlias(() => expenseItemAlias, () => expenseItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseItemAlias.ExpenseDoc, () => expenseAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => transferItemAlias, () => transferItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
@@ -169,6 +171,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 					//Ссылки
 					.SelectGroup(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenceId)
+					.Select(() => expenseAlias.Operation).WithAlias(() => resultAlias.ExpenseOperation)
 					.SelectGroup(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
 					.SelectCount(() => employeeCardAlias.Id).WithAlias(() => resultAlias.numberOfCollapsedRows)
 					.SelectGroup(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
