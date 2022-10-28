@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gamma.GtkWidgets;
 using Gamma.Utilities;
 using Gamma.Widgets;
@@ -123,6 +124,8 @@ namespace workwear.Views.Import
 				tableColumns.Attach(label, 0, 1, nrow, nrow + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 				var combo = new yEnumComboBox();
 				combo.ItemsEnum = ViewModel.ImportModel.DataTypeEnum;
+				if(ViewModel.ImportModel.HidedDataTypeEnumItems != null)
+					combo.HiddenItems = ViewModel.ImportModel.HidedDataTypeEnumItems.ToArray();
 				combo.Binding.AddBinding(column, nameof(IDataColumn.DataType), w => w.SelectedItem).InitializeFromSource();
 				columnsTypeCombos.Add(combo);
 				tableColumns.Attach(combo, 1, 2, nrow, nrow + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);

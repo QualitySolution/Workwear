@@ -14,6 +14,8 @@ namespace workwear.Models.Import
 		string ImportName { get; }
 		string DataColumnsRecommendations { get; }
 		Type DataTypeEnum { get; }
+		//FIXME Временное решение для 2.6 и 2.7. В 2.8 будет другая реализация
+		IEnumerable<object> HidedDataTypeEnumItems { get; }
 		
 		CountersViewModel CountersViewModel { get; }
 

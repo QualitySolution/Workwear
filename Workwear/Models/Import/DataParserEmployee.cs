@@ -165,7 +165,13 @@ namespace workwear.Models.Import
 
 			switch(dataType) {
 				case DataTypeEmployee.CardKey:
-					row.ChangedColumns.Add(column, CompareString(employee.CardKey, value, rowChange, GetMaxStringLenght(nameof(employee.CardKey))));
+					var state = CompareString(employee.CardKey, value, rowChange, GetMaxStringLenght(nameof(employee.CardKey)));
+					if((state.ChangeType == ChangeType.NewEntity || state.ChangeType == ChangeType.ChangeValue) && UsedCardKeys.Contains(value)) {
+						logger.Warn($"Номер карты {value} уже сушествует. Нельзя сохранять дубли");
+						row.ChangedColumns.Add(column, new ChangeState(ChangeType.ParseError));
+					}
+					else 
+						row.ChangedColumns.Add(column, state);
 					break;
 				case DataTypeEmployee.PersonnelNumber:
 					row.ChangedColumns.Add(column, CompareString(employee.PersonnelNumber, (settings.ConvertPersonnelNumber ? EmployeeParse.ConvertPersonnelNumber(value) : value)?.Trim(), rowChange, GetMaxStringLenght(nameof(employee.PersonnelNumber))));
@@ -427,13 +433,14 @@ namespace workwear.Models.Import
 
 		#region Создание объектов
 
+		public HashSet<string> UsedCardKeys;
 		public readonly List<Subdivision> UsedSubdivisions = new List<Subdivision>();
 		public readonly List<Post> UsedPosts = new List<Post>();
 		public readonly List<Department> UsedDepartment = new List<Department>();
 
 		public void FillExistEntities(IUnitOfWork uow, IEnumerable<SheetRowEmployee> list, List<ImportedColumn<DataTypeEmployee>> columns, IProgressBarDisplayable progress)
 		{
-			progress.Start(3, text: "Загружаем подразделения");
+			progress.Start(4, text: "Загружаем подразделения");
 			var subdivisionColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.Subdivision);
 			if(subdivisionColumn != null) {
 				var subdivisionNames = list.Select(x => x.CellStringValue(subdivisionColumn.Index)).Distinct().ToArray();
@@ -456,6 +463,15 @@ namespace workwear.Models.Import
 				UsedPosts.AddRange( uow.Session.QueryOver<Post>()
 					.Where(x => x.Name.IsIn(postNames))
 					.List());
+			}
+			progress.Add(text: "Загружаем номера существующих карт");
+			var cardkeyColumn = columns.FirstOrDefault(x => x.DataType == DataTypeEmployee.CardKey);
+			if(cardkeyColumn != null) {
+				var keys = uow.Session.QueryOver<EmployeeCard>()
+					.Where(x => x.CardKey != null)
+					.Select(x => x.CardKey)
+					.List<string>();
+				UsedCardKeys = new HashSet<string>(keys);
 			}
 			progress.Close();
 		}

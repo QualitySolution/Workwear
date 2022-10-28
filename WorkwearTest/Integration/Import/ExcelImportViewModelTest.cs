@@ -7,14 +7,15 @@ using NUnit.Framework;
 using QS.Dialog;
 using QS.Navigation;
 using QS.Testing.DB;
-using workwear.Domain.Company;
 using Workwear.Domain.Company;
+using Workwear.Measurements;
+using workwear.Domain.Company;
 using workwear.Models.Company;
 using workwear.Models.Import;
 using workwear.Repository.Company;
+using workwear.Tools.Features;
 using workwear.Tools.Nhibernate;
 using workwear.ViewModels.Import;
-using Workwear.Measurements;
 
 namespace WorkwearTest.Integration.Import
 {
@@ -38,6 +39,7 @@ namespace WorkwearTest.Integration.Import
 		[Test(Description = "Проверяем что без проблем можем загрузить файл формата со Стойленского ГОК")]
 		public void EmployeesLoad_StolenskyGok()
 		{
+			var feature = Substitute.For<FeaturesService>();
 			var navigation = Substitute.For<INavigationManager>();
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
@@ -48,7 +50,7 @@ namespace WorkwearTest.Integration.Import
 			sizeSettings.EmployeeSizeRanges.Returns(false);
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(sizeSettings), subdivisionRepository, postRepository);
 			var setting = new SettingsMatchEmployeesViewModel();
-			var model = new ImportModelEmployee(dataparser, setting);
+			var model = new ImportModelEmployee(dataparser, setting, feature);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/cardkey_list.xlsx";
@@ -78,6 +80,7 @@ namespace WorkwearTest.Integration.Import
 		{
 			//В файле дата хранится в виде строки, поэтому для прохождения теста, нужна русская культура
 			Thread.CurrentThread.CurrentCulture =  CultureInfo.CreateSpecificCulture("ru-RU");
+			var feature = Substitute.For<FeaturesService>();
 			var navigation = Substitute.For<INavigationManager>();
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
@@ -90,7 +93,7 @@ namespace WorkwearTest.Integration.Import
 			var setting = new SettingsMatchEmployeesViewModel();
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
-			var model = new ImportModelEmployee(dataparser, setting);
+			var model = new ImportModelEmployee(dataparser, setting, feature);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/vostok_1c_employee.xls";
@@ -138,6 +141,7 @@ namespace WorkwearTest.Integration.Import
 		public void EmployeesLoad_osmbtDepartments()
 		{
 			NewSessionWithSameDB();
+			var feature = Substitute.For<FeaturesService>();
 			var navigation = Substitute.For<INavigationManager>();
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
@@ -150,7 +154,7 @@ namespace WorkwearTest.Integration.Import
 			var setting = new SettingsMatchEmployeesViewModel();
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
-			var model = new ImportModelEmployee(dataparser, setting);
+			var model = new ImportModelEmployee(dataparser, setting, feature);
 			
 			using (var rootUow = UnitOfWorkFactory.CreateWithoutRoot())
 			{
@@ -201,6 +205,7 @@ namespace WorkwearTest.Integration.Import
 		[Test(Description = "Проверяем что нормально работаем с датами при чтении даты поступления и увольнения")]
 		public void EmployeesLoad_DateWorks()
 		{
+			var feature = Substitute.For<FeaturesService>();
 			var navigation = Substitute.For<INavigationManager>();
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
@@ -211,7 +216,7 @@ namespace WorkwearTest.Integration.Import
 			sizeSettings.EmployeeSizeRanges.Returns(false);
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(sizeSettings), subdivisionRepository, postRepository);
 			var setting = new SettingsMatchEmployeesViewModel();
-			var model = new ImportModelEmployee(dataparser, setting);
+			var model = new ImportModelEmployee(dataparser, setting, feature);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				var importModel = employeesLoad.ImportModel as ImportModelEmployee;
 				employeesLoad.ProgressStep = progressStep;
@@ -247,6 +252,7 @@ namespace WorkwearTest.Integration.Import
 		[Test(Description = "Проверяем что нормально работаем с файлами имеющими пустые строки + размеры сотрудника")]
 		public void EmployeesLoad_EmptyRows_Sizes_A2Case()
 		{
+			var feature = Substitute.For<FeaturesService>();
 			var navigation = Substitute.For<INavigationManager>();
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
@@ -257,7 +263,7 @@ namespace WorkwearTest.Integration.Import
 			sizeSettings.EmployeeSizeRanges.Returns(true);
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(sizeSettings), subdivisionRepository, postRepository);
 			var setting = new SettingsMatchEmployeesViewModel();
-			var model = new ImportModelEmployee(dataparser, setting);
+			var model = new ImportModelEmployee(dataparser, setting, feature);
 			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 				var importModel = employeesLoad.ImportModel as ImportModelEmployee;
 				employeesLoad.ProgressStep = progressStep;

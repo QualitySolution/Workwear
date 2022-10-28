@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -190,6 +191,20 @@ public partial class MainWindow : Gtk.Window
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionHistory.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
+	}
+	#endregion
+
+	#region Helpers
+	void OpenUrl(string url) {
+		//Здесь пробуем исправить ошибку 35026 на нашем багтрекере.
+		//Предположил что проблема в этом https://github.com/dotnet/runtime/issues/28005
+		//Но проверить действительно ли это так негде.
+		ProcessStartInfo psi = new ProcessStartInfo
+		{
+			FileName = url,
+			UseShellExecute = true
+		};
+		Process.Start (psi);
 	}
 	#endregion
 
@@ -563,37 +578,37 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionSiteActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenSite");
-		System.Diagnostics.Process.Start("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
+		OpenUrl("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
 	}
 
 	protected void OnActionOpenReformalActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenReformal.ru");
-		System.Diagnostics.Process.Start("http://qs-workwear.reformal.ru/");
+		OpenUrl("http://qs-workwear.reformal.ru/");
 	}
 
 	protected void OnActionVKActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("vk.com");
-		System.Diagnostics.Process.Start("https://vk.com/qualitysolution");
+		OpenUrl("https://vk.com/qualitysolution");
 	}
 
 	protected void OnActionOdnoklasnikiActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ok.ru");
-		System.Diagnostics.Process.Start("https://ok.ru/qualitysolution");
+		OpenUrl("https://ok.ru/qualitysolution");
 	}
 
 	protected void OnActionTwitterActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("twitter.com");
-		System.Diagnostics.Process.Start("https://twitter.com/QSolutionRu");
+		OpenUrl("https://twitter.com/QSolutionRu");
 	}
 
 	protected void OnActionYouTubeActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("youtube.com");
-		System.Diagnostics.Process.Start("https://www.youtube.com/channel/UC4U9Rzp-yfRgWd2R0f4iIGg");
+		OpenUrl("https://www.youtube.com/channel/UC4U9Rzp-yfRgWd2R0f4iIGg");
 	}
 
 	protected void OnActionRegulationDocActivated(object sender, EventArgs e)
@@ -719,7 +734,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionPayActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("pay.qsolution.ru");
-		System.Diagnostics.Process.Start("https://pay.qsolution.ru/");
+		OpenUrl("https://pay.qsolution.ru/");
 	}
 
 	protected void OnActionRequestSheetActivated(object sender, EventArgs e)

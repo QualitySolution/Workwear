@@ -41,7 +41,7 @@ namespace workwear.Journal.ViewModels.Stock
 			JournalFilter = Filter = AutofacScope.Resolve<StockMovementsFilterViewModel>
 				(new TypedParameter(typeof(JournalViewModelBase), this));
 
-			var dataLoader = new ThreadDataLoader<StockMovmentsJournalNode>(unitOfWorkFactory);
+			var dataLoader = new ThreadDataLoader<StockMovementsJournalNode>(unitOfWorkFactory);
 			dataLoader.AddQuery(ItemsQuery);
 			DataLoader = dataLoader;
 
@@ -53,10 +53,11 @@ namespace workwear.Journal.ViewModels.Stock
 
 		protected IQueryOver<WarehouseOperation> ItemsQuery(IUnitOfWork uow)
 		{
-			StockMovmentsJournalNode resultAlias = null;
+			StockMovementsJournalNode resultAlias = null;
 
 			WarehouseOperation warehouseOperationAlias = null;
 
+			Expense expenseAlias = null;
 			ExpenseItem expenseItemAlias = null;
 			IncomeItem incomeItemAlias = null;
 			MassExpenseOperation massExpenseOperationAlias = null; //FIXME Не реализовано
@@ -148,6 +149,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => nomenclatureAlias.Type, () => itemtypesAlias)
 				.JoinAlias(() => itemtypesAlias.Units, () => unitsAlias)
 				.JoinEntityAlias(() => expenseItemAlias, () => expenseItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseItemAlias.ExpenseDoc, () => expenseAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => transferItemAlias, () => transferItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
@@ -177,6 +179,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 					//Ссылки
 					.SelectGroup(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenceId)
+					.Select(() => expenseAlias.Operation).WithAlias(() => resultAlias.ExpenseOperation)
 					.SelectGroup(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
 					.SelectCount(() => employeeCardAlias.Id).WithAlias(() => resultAlias.numberOfCollapsedRows)
 					.SelectGroup(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
@@ -226,28 +229,28 @@ namespace workwear.Journal.ViewModels.Stock
 			return queryStock
 				.OrderBy(x => x.OperationTime).Desc
 				.ThenBy(x => x.Id).Asc
-				.TransformUsing(Transformers.AliasToBean<StockMovmentsJournalNode>());
+				.TransformUsing(Transformers.AliasToBean<StockMovementsJournalNode>());
 		}
 
 		protected override void CreateNodeActions()
 		{
 			base.CreateNodeActions();
 			var updateStatusAction = new JournalAction("Открыть документ",
-					(selected) => selected.Cast<StockMovmentsJournalNode>().Any(x => x.DocumentId.HasValue),
+					(selected) => selected.Cast<StockMovementsJournalNode>().Any(x => x.DocumentId.HasValue),
 					(selected) => true,
-					(selected) => OpenDocument(selected.Cast<StockMovmentsJournalNode>().ToArray())
+					(selected) => OpenDocument(selected.Cast<StockMovementsJournalNode>().ToArray())
 					);
 			NodeActionsList.Add(updateStatusAction);
 		}
 
-		void OpenDocument(StockMovmentsJournalNode[] nodes)
+		void OpenDocument(StockMovementsJournalNode[] nodes)
 		{
 			foreach(var node in nodes.Where(x => x.DocumentId.HasValue))
 				openDocuments.EditDocumentDialog(this, node);
 		}
 	}
 
-	public class StockMovmentsJournalNode : OperationToDocumentReference
+	public class StockMovementsJournalNode : OperationToDocumentReference
 	{
 		public int Id { get; set; }
 		public DateTime OperationTime { get; set; }

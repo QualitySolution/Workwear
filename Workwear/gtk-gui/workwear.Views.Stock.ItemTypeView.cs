@@ -38,13 +38,13 @@ namespace workwear.Views.Stock
 
 		private global::Gtk.Label label2;
 
-		private global::Gtk.Label label3;
-
 		private global::Gtk.Label label4;
 
 		private global::Gamma.GtkWidgets.yLabel labelIssueType;
 
-		private global::Gtk.Label labelLife;
+		private global::Gamma.GtkWidgets.yLabel labelLife;
+
+		private global::Gamma.GtkWidgets.yLabel labelWearCategory;
 
 		private global::Gamma.Widgets.yEnumComboBox ycomboCategory;
 
@@ -244,48 +244,48 @@ namespace workwear.Views.Stock
 			w16.XOptions = ((global::Gtk.AttachOptions)(4));
 			w16.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.label3 = new global::Gtk.Label();
-			this.label3.Name = "label3";
-			this.label3.Xalign = 1F;
-			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Вид спецодежды:");
-			this.table1.Add(this.label3);
-			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table1[this.label3]));
-			w17.TopAttach = ((uint)(3));
-			w17.BottomAttach = ((uint)(4));
-			w17.XOptions = ((global::Gtk.AttachOptions)(4));
-			w17.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table1.Gtk.Table+TableChild
 			this.label4 = new global::Gtk.Label();
 			this.label4.Name = "label4";
 			this.label4.Xalign = 1F;
 			this.label4.Yalign = 0F;
 			this.label4.LabelProp = global::Mono.Unix.Catalog.GetString("Комментарий:");
 			this.table1.Add(this.label4);
-			global::Gtk.Table.TableChild w18 = ((global::Gtk.Table.TableChild)(this.table1[this.label4]));
-			w18.TopAttach = ((uint)(7));
-			w18.BottomAttach = ((uint)(8));
-			w18.XOptions = ((global::Gtk.AttachOptions)(4));
-			w18.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table1[this.label4]));
+			w17.TopAttach = ((uint)(7));
+			w17.BottomAttach = ((uint)(8));
+			w17.XOptions = ((global::Gtk.AttachOptions)(4));
+			w17.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.labelIssueType = new global::Gamma.GtkWidgets.yLabel();
 			this.labelIssueType.Name = "labelIssueType";
 			this.labelIssueType.Xalign = 1F;
 			this.labelIssueType.LabelProp = global::Mono.Unix.Catalog.GetString("Тип выдачи:");
 			this.table1.Add(this.labelIssueType);
-			global::Gtk.Table.TableChild w19 = ((global::Gtk.Table.TableChild)(this.table1[this.labelIssueType]));
-			w19.TopAttach = ((uint)(5));
-			w19.BottomAttach = ((uint)(6));
-			w19.XOptions = ((global::Gtk.AttachOptions)(4));
-			w19.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w18 = ((global::Gtk.Table.TableChild)(this.table1[this.labelIssueType]));
+			w18.TopAttach = ((uint)(5));
+			w18.BottomAttach = ((uint)(6));
+			w18.XOptions = ((global::Gtk.AttachOptions)(4));
+			w18.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.labelLife = new global::Gtk.Label();
+			this.labelLife = new global::Gamma.GtkWidgets.yLabel();
 			this.labelLife.Name = "labelLife";
 			this.labelLife.Xalign = 1F;
 			this.labelLife.LabelProp = global::Mono.Unix.Catalog.GetString("Срок службы:");
 			this.table1.Add(this.labelLife);
-			global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.table1[this.labelLife]));
-			w20.TopAttach = ((uint)(6));
-			w20.BottomAttach = ((uint)(7));
+			global::Gtk.Table.TableChild w19 = ((global::Gtk.Table.TableChild)(this.table1[this.labelLife]));
+			w19.TopAttach = ((uint)(6));
+			w19.BottomAttach = ((uint)(7));
+			w19.XOptions = ((global::Gtk.AttachOptions)(4));
+			w19.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.labelWearCategory = new global::Gamma.GtkWidgets.yLabel();
+			this.labelWearCategory.Name = "labelWearCategory";
+			this.labelWearCategory.Xalign = 1F;
+			this.labelWearCategory.LabelProp = global::Mono.Unix.Catalog.GetString("Вид спецодежды:");
+			this.table1.Add(this.labelWearCategory);
+			global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.table1[this.labelWearCategory]));
+			w20.TopAttach = ((uint)(3));
+			w20.BottomAttach = ((uint)(4));
 			w20.XOptions = ((global::Gtk.AttachOptions)(4));
 			w20.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
