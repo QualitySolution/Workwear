@@ -31,16 +31,22 @@ namespace workwear.Views.Stock
 			ycomboCategory.ItemsEnum = typeof(ItemTypeCategory);
 			ycomboCategory.Binding.AddBinding (Entity, e => e.Category, w => w.SelectedItemOrNull).InitializeFromSource ();
 
+			labelWearCategory.Binding.AddBinding(ViewModel, v => v.VisibleWearCategory, w => w.Visible).InitializeFromSource();
 			ycomboWearCategory.ItemsEnum = typeof(СlothesType);
-			ycomboWearCategory.Binding.AddBinding (Entity, e => e.WearCategory, w => w.SelectedItemOrNull).InitializeFromSource ();
+			ycomboWearCategory.Binding
+				.AddBinding (Entity, e => e.WearCategory, w => w.SelectedItemOrNull)
+				.AddBinding(ViewModel, v => v.VisibleWearCategory, w => w.Visible)
+				.InitializeFromSource ();
 
 			ycomboUnits.ItemsList = MeasurementUnitsRepository.GetActiveUnits (ViewModel.UoW);
 			ycomboUnits.Binding.AddBinding (Entity, e => e.Units, w => w.SelectedItem).InitializeFromSource ();
 
+			labelIssueType.Binding.AddBinding(ViewModel, v => v.VisibleIssueType, w => w.Visible).InitializeFromSource();
 			comboIssueType.ItemsEnum = typeof(IssueType);
-			comboIssueType.Binding.AddBinding(Entity, e => e.IssueType, w => w.SelectedItem).InitializeFromSource();
-
-			comboIssueType.Visible = labelIssueType.Visible = ViewModel.VisibleIssueType;
+			comboIssueType.Binding
+				.AddBinding(Entity, e => e.IssueType, w => w.SelectedItem)
+				.AddBinding(ViewModel, v => v.VisibleIssueType, w => w.Visible)
+				.InitializeFromSource();
 
 			yspinMonths.Binding.AddBinding(Entity, e => e.LifeMonths, w => w.ValueAsInt, new NullToZeroConverter()).InitializeFromSource();
 			ycheckLife.Active = Entity.LifeMonths.HasValue;
