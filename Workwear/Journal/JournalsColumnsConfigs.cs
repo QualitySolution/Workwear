@@ -225,7 +225,7 @@ namespace workwear.Journal
 			);
 
 			TreeViewColumnsConfigFactory.Register<StockMovmentsJournalViewModel>(
-				() => FluentColumnsConfig<StockMovmentsJournalNode>.Create()
+				() => FluentColumnsConfig<StockMovementsJournalNode>.Create()
 					.AddColumn("Дата").AddTextRenderer(node => node.OperationTimeText)
 					.AddColumn("Документ").AddTextRenderer(node => node.DocumentText)
 					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
