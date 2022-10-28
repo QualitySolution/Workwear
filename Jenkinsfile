@@ -60,7 +60,7 @@ node {
          sh 'cat analysis'
          script {
             def status = readFile(file: "analysis")
-            if ( !(status.contains('failure: 0') && status.contains('harmless: 0') && status.contains('malicious: 0') && status.contains('suspicious: 0'))) {
+            if ( !(status.contains('harmless: 0') && status.contains('malicious: 0') && status.contains('suspicious: 0'))) {
                unstable('VirusTotal in not clean')
             }
          }
