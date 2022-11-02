@@ -38,8 +38,6 @@ namespace Workwear.Views.Stock
 
 		private global::Gtk.Label label2;
 
-		private global::Gtk.Label label3;
-
 		private global::Gtk.Label label4;
 
 		private global::Gtk.Label label6;
@@ -48,7 +46,9 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yLabel labelIssueType;
 
-		private global::Gtk.Label labelLife;
+		private global::Gamma.GtkWidgets.yLabel labelLife;
+
+		private global::Gamma.GtkWidgets.yLabel labelWearCategory;
 
 		private global::Gamma.Widgets.yEnumComboBox ycomboCategory;
 

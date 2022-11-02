@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -21,6 +21,7 @@ namespace Workwear.Models.Import.Employees
 		) : base(dataParser, typeof(CountersEmployee), matchSettingsViewModel)
 		{
 			this.matchSettingsViewModel = matchSettingsViewModel ?? throw new ArgumentNullException(nameof(matchSettingsViewModel));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.dataParser = dataParser ?? throw new ArgumentNullException(nameof(dataParser));
 		}
 
@@ -39,6 +40,16 @@ namespace Workwear.Models.Import.Employees
 		                                            "\nПри загрузки листа программа автоматически пытается найти " +
 		                                            "заголовок таблицы и выбрать тип данных.\nОбязательными данными " +
 		                                            "являются Фамилия и Имя или ФИО.";
+
+		public string DataColumnsRecommendations => "Установите номер строки с заголовком данных, таким образом чтобы название колонок было корректно. Если в таблице заголовки отсутствуют укажите 0.\nДалее для каждой значимой колонки проставьте тип данных которых находится в таблице.\nПри загрузки листа программа автоматически пытается найти заголовок таблицы и выбрать тип данных.\nОбязательными данными являются Фамилия и Имя или ФИО.";
+
+		public IEnumerable<object> HidedDataTypeEnumItems {
+			get {
+				if(!featuresService.Available(WorkwearFeature.IdentityCards))
+					yield return DataTypeEmployee.CardKey;
+			}
+		}
+
 		#endregion
 
 		protected override bool HasRequiredDataTypes(IEnumerable<DataTypeEmployee> dataTypes) => 

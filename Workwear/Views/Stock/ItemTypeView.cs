@@ -38,28 +38,33 @@ namespace Workwear.Views.Stock
 			ycomboClothesType.ItemsEnum = typeof(СlothesType);
 			ycomboClothesType.Binding
 				.AddBinding(Entity, e => e.WearCategory, w => w.SelectedItemOrNull)
+				.AddBinding(ViewModel, v => v.VisibleWearCategory, w => w.Visible)
 				.InitializeFromSource();
 
 			ycomboWearCategory.ItemsList = ViewModel.SizeService.GetSizeTypeByCategory(ViewModel.UoW, CategorySizeType.Size);
 			ycomboWearCategory.Binding
 				.AddBinding(Entity, e => e.SizeType, w => w.SelectedItem)
+				.AddBinding(ViewModel, v => v.VisibleWearCategory, w => w.Visible)
 				.InitializeFromSource();
-
+			
 			ycomboHeightCategory.ItemsList = 
 				ViewModel.SizeService.GetSizeTypeByCategory(ViewModel.UoW, CategorySizeType.Height);
 			ycomboHeightCategory.Binding
 				.AddBinding (Entity, e => e.HeightType, w => w.SelectedItem)
 				.InitializeFromSource();
-
-
+			
+			labelWearCategory.Binding.AddBinding(ViewModel, v => v.VisibleWearCategory, w => w.Visible).InitializeFromSource();
+			
 			ycomboUnits.ItemsList = MeasurementUnitsRepository.GetActiveUnits(ViewModel.UoW);
 			ycomboUnits.Binding
 				.AddBinding (Entity, e => e.Units, w => w.SelectedItem)
 				.InitializeFromSource ();
 
+			labelIssueType.Binding.AddBinding(ViewModel, v => v.VisibleIssueType, w => w.Visible).InitializeFromSource();
 			comboIssueType.ItemsEnum = typeof(IssueType);
 			comboIssueType.Binding
 				.AddBinding(Entity, e => e.IssueType, w => w.SelectedItem)
+                .AddBinding(ViewModel, v => v.VisibleIssueType, w => w.Visible)
 				.InitializeFromSource();
 
 			comboIssueType.Visible = labelIssueType.Visible = ViewModel.VisibleIssueType;
