@@ -31,6 +31,7 @@ namespace Workwear.ViewModels.Stock
 		#region Visible
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense) && Entity.Category == ItemTypeCategory.wear;
 		public bool VisibleWearCategory => Entity.Category == ItemTypeCategory.wear;
+		public bool VisibleSize => Entity.Category == ItemTypeCategory.wear;
 		#endregion
 
 		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
@@ -38,6 +39,7 @@ namespace Workwear.ViewModels.Stock
 				case nameof(Entity.Category):
 					OnPropertyChanged(nameof(VisibleWearCategory));
 					OnPropertyChanged(nameof(VisibleIssueType));
+					OnPropertyChanged(nameof(VisibleSize));
 					break;
 			}
 		}

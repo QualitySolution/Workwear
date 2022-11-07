@@ -28,7 +28,7 @@ namespace Workwear.Models.Operations
 		public StockDocumentType? DocumentType {
 			get {
 				if(ExpenceId.HasValue)
-					return ExpenseOperation == ExpenseOperations.Employee ? StokDocumentType.ExpenseEmployeeDoc : StokDocumentType.ExpenseObjectDoc;
+					return ExpenseOperation == ExpenseOperations.Employee ? StockDocumentType.ExpenseEmployeeDoc : StockDocumentType.ExpenseObjectDoc;
 				if(CollectiveExpenseId.HasValue)
 					return StockDocumentType.CollectiveExpense;
 				if(IncomeId.HasValue)
