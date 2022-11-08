@@ -144,8 +144,9 @@ namespace workwear.ViewModels.Stock
 		public void Delete(ExpenseItem item)
 		{
 			if(item.Id > 0) {
-				if(Entity.Items.Any(x => x.Id == 0))
-					expenseEmployeeViewModel.Save(); //Сохраняем документ если есть добавленные строки. Иначе получим исключение.
+				if(UoW.HasChanges)
+					if(!expenseEmployeeViewModel.Save())//Сохраняем документ если есть добавленные строки или другие изменения. Иначе получим исключение.
+						return;
 				deleteService.DeleteEntity<ExpenseItem>(item.Id, UoW, () => Entity.RemoveItem(item));
 			}
 			else
