@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Bindings.Collections.Generic;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -16,11 +17,13 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 	{
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly INavigationManager navigation;
+		private readonly IInteractiveService interactive;
 
-		public EmployeeNormsViewModel(EmployeeViewModel employeeViewModel, INavigationManager navigation)
+		public EmployeeNormsViewModel(EmployeeViewModel employeeViewModel, INavigationManager navigation, IInteractiveService interactive)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 		}
@@ -57,6 +60,15 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void AddNorm()
 		{
+			if(Entity.Id == 0) {
+				if(interactive.Question("Перед добавлением нормы необходимо сохранить сотрудника. Сохраняем?")) {
+					if(!employeeViewModel.Save()) //Здесь если не сохраним нового сотрудника при установки нормы скорей всего упадем.
+						return;
+				}
+				else 
+					return;
+			}
+			
 			var selectPage = navigation.OpenViewModel<NormJournalViewModel>(
 				employeeViewModel,
 				OpenPageOptions.AsSlave
@@ -79,6 +91,10 @@ namespace workwear.ViewModels.Company.EmployeeChilds
 
 		public void NormFromPost()
 		{
+			if(Entity.Id == 0 && !employeeViewModel.Save()) { //Здесь если не сохраним нового сотрудника при установки нормы скорей всего упадем.
+				interactive.ShowMessage(ImportanceLevel.Error, "Норма не будет установлена, так как не все данные сотрудника заполнены корректно.");
+				return;
+			}
 			Entity.NormFromPost(UoW, employeeViewModel.NormRepository);
 		}
 
