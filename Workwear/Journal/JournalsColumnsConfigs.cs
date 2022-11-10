@@ -49,6 +49,14 @@ namespace workwear.Journal
 			#endregion
 
 			#region Company
+			TreeViewColumnsConfigFactory.Register<CostCenterJournalViewModel>(
+				() => FluentColumnsConfig<CostCenterJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Код ВМЗ").AddTextRenderer(node => node.Code).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<DepartmentJournalViewModel>(
 				() => FluentColumnsConfig<DepartmentJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
@@ -99,12 +107,13 @@ namespace workwear.Journal
 			);
 
 			TreeViewColumnsConfigFactory.Register<PostJournalViewModel>(
-				() => FluentColumnsConfig<PostJournalNode>.Create()
+				(jwm) => FluentColumnsConfig<PostJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Профессия").AddTextRenderer(node => node.Profession).SearchHighlight()
 					.AddColumn("Отдел").AddTextRenderer(node => node.Department).SearchHighlight()
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
+					.AddColumn("МВЗ").Visible(jwm.FeaturesService.Available(WorkwearFeature.CostCenter)).AddTextRenderer(node => node.CostCenterText).SearchHighlight()
 					.Finish()
 			);
 
@@ -268,7 +277,7 @@ namespace workwear.Journal
 			);
 
 			TreeViewColumnsConfigFactory.Register<StockMovmentsJournalViewModel>(
-				() => FluentColumnsConfig<StockMovmentsJournalNode>.Create()
+				() => FluentColumnsConfig<StockMovementsJournalNode>.Create()
 					.AddColumn("Дата").AddTextRenderer(node => node.OperationTimeText)
 					.AddColumn("Документ").AddTextRenderer(node => node.DocumentText)
 					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).WrapWidth(700).SearchHighlight()

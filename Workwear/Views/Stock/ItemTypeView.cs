@@ -38,28 +38,36 @@ namespace Workwear.Views.Stock
 			ycomboClothesType.ItemsEnum = typeof(СlothesType);
 			ycomboClothesType.Binding
 				.AddBinding(Entity, e => e.WearCategory, w => w.SelectedItemOrNull)
+				.AddBinding(ViewModel, v => v.VisibleWearCategory, w => w.Visible)
 				.InitializeFromSource();
 
-			ycomboWearCategory.ItemsList = ViewModel.SizeService.GetSizeTypeByCategory(ViewModel.UoW, CategorySizeType.Size);
-			ycomboWearCategory.Binding
+			labelSize.Binding.AddBinding(ViewModel, v => v.VisibleSize, w => w.Visible).InitializeFromSource();
+			comboSize.ItemsList = ViewModel.SizeService.GetSizeTypeByCategory(ViewModel.UoW, CategorySizeType.Size);
+			comboSize.Binding
 				.AddBinding(Entity, e => e.SizeType, w => w.SelectedItem)
+				.AddBinding(ViewModel, v => v.VisibleSize, w => w.Visible)
 				.InitializeFromSource();
 
-			ycomboHeightCategory.ItemsList = 
+			labelHeight.Binding.AddBinding(ViewModel, v => v.VisibleSize, w => w.Visible).InitializeFromSource();
+			comboHeight.ItemsList = 
 				ViewModel.SizeService.GetSizeTypeByCategory(ViewModel.UoW, CategorySizeType.Height);
-			ycomboHeightCategory.Binding
+			comboHeight.Binding
 				.AddBinding (Entity, e => e.HeightType, w => w.SelectedItem)
+				.AddBinding(ViewModel, v => v.VisibleSize, w => w.Visible)
 				.InitializeFromSource();
-
-
+			
+			labelWearCategory.Binding.AddBinding(ViewModel, v => v.VisibleWearCategory, w => w.Visible).InitializeFromSource();
+			
 			ycomboUnits.ItemsList = MeasurementUnitsRepository.GetActiveUnits(ViewModel.UoW);
 			ycomboUnits.Binding
 				.AddBinding (Entity, e => e.Units, w => w.SelectedItem)
 				.InitializeFromSource ();
 
+			labelIssueType.Binding.AddBinding(ViewModel, v => v.VisibleIssueType, w => w.Visible).InitializeFromSource();
 			comboIssueType.ItemsEnum = typeof(IssueType);
 			comboIssueType.Binding
 				.AddBinding(Entity, e => e.IssueType, w => w.SelectedItem)
+                .AddBinding(ViewModel, v => v.VisibleIssueType, w => w.Visible)
 				.InitializeFromSource();
 
 			comboIssueType.Visible = labelIssueType.Visible = ViewModel.VisibleIssueType;
@@ -84,8 +92,6 @@ namespace Workwear.Views.Stock
 		}
 
 		private void OnYcomboCategoryChanged (object sender, EventArgs e) {
-			ycomboWearCategory.Sensitive = Entity.Category == ItemTypeCategory.wear;
-			ycomboHeightCategory.Sensitive = Entity.Category == ItemTypeCategory.wear;
 			ycomboClothesType.Sensitive = Entity.Category == ItemTypeCategory.wear;
 			hboxLife.Visible = labelLife.Visible = Entity.Category == ItemTypeCategory.property;
 		}

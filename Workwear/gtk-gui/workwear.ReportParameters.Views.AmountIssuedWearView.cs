@@ -42,6 +42,8 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yCheckButton checkShowCost;
 
+		private global::Gamma.GtkWidgets.yCheckButton checkShowCostCenter;
+
 		private global::Gamma.GtkWidgets.yCheckButton ycheckChild;
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckAll;
@@ -287,6 +289,19 @@ namespace workwear.ReportParameters.Views
 			w18.Expand = false;
 			w18.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
+			this.checkShowCostCenter = new global::Gamma.GtkWidgets.yCheckButton();
+			this.checkShowCostCenter.TooltipMarkup = "Добавить в отчет группировку по месту возникновения затрат";
+			this.checkShowCostCenter.CanFocus = true;
+			this.checkShowCostCenter.Name = "checkShowCostCenter";
+			this.checkShowCostCenter.Label = global::Mono.Unix.Catalog.GetString("Группировать по МВЗ");
+			this.checkShowCostCenter.DrawIndicator = true;
+			this.checkShowCostCenter.UseUnderline = true;
+			this.vbox2.Add(this.checkShowCostCenter);
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkShowCostCenter]));
+			w19.Position = 6;
+			w19.Expand = false;
+			w19.Fill = false;
+			// Container child vbox2.Gtk.Box+BoxChild
 			this.ycheckChild = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckChild.TooltipMarkup = "Включать в отчет так же дочерние подразделения выбранных подразделений.";
 			this.ycheckChild.CanFocus = true;
@@ -295,10 +310,10 @@ namespace workwear.ReportParameters.Views
 			this.ycheckChild.DrawIndicator = true;
 			this.ycheckChild.UseUnderline = true;
 			this.vbox2.Add(this.ycheckChild);
-			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ycheckChild]));
-			w19.Position = 6;
-			w19.Expand = false;
-			w19.Fill = false;
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ycheckChild]));
+			w20.Position = 7;
+			w20.Expand = false;
+			w20.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.ycheckAll = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckAll.CanFocus = true;
@@ -307,10 +322,10 @@ namespace workwear.ReportParameters.Views
 			this.ycheckAll.DrawIndicator = true;
 			this.ycheckAll.UseUnderline = true;
 			this.vbox2.Add(this.ycheckAll);
-			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ycheckAll]));
-			w20.Position = 7;
-			w20.Expand = false;
-			w20.Fill = false;
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ycheckAll]));
+			w21.Position = 8;
+			w21.Expand = false;
+			w21.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -321,8 +336,8 @@ namespace workwear.ReportParameters.Views
 			this.ytreeSubdivisions.Name = "ytreeSubdivisions";
 			this.GtkScrolledWindow.Add(this.ytreeSubdivisions);
 			this.vbox2.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.GtkScrolledWindow]));
-			w22.Position = 8;
+			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.GtkScrolledWindow]));
+			w23.Position = 9;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.buttonPrintReport = new global::Gamma.GtkWidgets.yButton();
 			this.buttonPrintReport.Sensitive = false;
@@ -331,10 +346,10 @@ namespace workwear.ReportParameters.Views
 			this.buttonPrintReport.UseUnderline = true;
 			this.buttonPrintReport.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.vbox2.Add(this.buttonPrintReport);
-			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.buttonPrintReport]));
-			w23.Position = 9;
-			w23.Expand = false;
-			w23.Fill = false;
+			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.buttonPrintReport]));
+			w24.Position = 10;
+			w24.Expand = false;
+			w24.Fill = false;
 			this.Add(this.vbox2);
 			if ((this.Child != null))
 			{

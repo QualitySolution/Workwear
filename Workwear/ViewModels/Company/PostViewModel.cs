@@ -37,6 +37,10 @@ namespace Workwear.ViewModels.Company
 									.UseViewModelJournalAndAutocompleter<ProfessionJournalViewModel>()
 									.UseViewModelDialog<ProfessionViewModel>()
 									.Finish();
+
+			EntryCostCenter = builder.ForProperty(x => x.CostCenter)
+									.MakeByType()
+									.Finish();
 		}
 
 		#region Controls
@@ -44,6 +48,7 @@ namespace Workwear.ViewModels.Company
 		public EntityEntryViewModel<Subdivision> EntrySubdivision;
 		public EntityEntryViewModel<Department> EntryDepartment;
 		public EntityEntryViewModel<Profession> EntryProfession;
+		public EntityEntryViewModel<CostCenter> EntryCostCenter;
 
 		#endregion
 	}

@@ -25,10 +25,24 @@ namespace Workwear.ViewModels.Stock
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			SizeService = sizeService;
+			Entity.PropertyChanged += Entity_PropertyChanged;
 		}
 
 		#region Visible
-		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
+		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense) && Entity.Category == ItemTypeCategory.wear;
+		public bool VisibleWearCategory => Entity.Category == ItemTypeCategory.wear;
+		public bool VisibleSize => Entity.Category == ItemTypeCategory.wear;
 		#endregion
+
+		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+			switch(e.PropertyName) {
+				case nameof(Entity.Category):
+					OnPropertyChanged(nameof(VisibleWearCategory));
+					OnPropertyChanged(nameof(VisibleIssueType));
+					OnPropertyChanged(nameof(VisibleSize));
+					break;
+			}
+		}
+
 	}
 }

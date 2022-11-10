@@ -115,6 +115,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Warehouses:
 				case WorkwearFeature.IdentityCards:
 				case WorkwearFeature.Owners:
+				case WorkwearFeature.CostCenter:
 					return ProductEdition == 3;
 				case WorkwearFeature.CollectiveExpense:
 				case WorkwearFeature.Completion:
@@ -163,6 +164,8 @@ namespace Workwear.Tools.Features
 		IdentityCards,
 		[Display(Name = "Собственники имущества")]
 		Owners,
+		[Display(Name = "Место возникновения затрат")]
+		CostCenter,
 		[Display(Name = "Штрихкоды")]
 		Barcodes,
 		#endregion

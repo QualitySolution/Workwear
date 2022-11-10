@@ -64,6 +64,9 @@ namespace workwear.ReportParameters.Views {
 			checkShowCost.Binding
 				.AddBinding(ViewModel, wm => wm.ShowCost, w => w.Active)
 				.InitializeFromSource();
+
+			checkShowCostCenter.Visible = ViewModel.FeaturesService.Available(WorkwearFeature.CostCenter);
+			checkShowCostCenter.Binding.AddBinding(ViewModel, v => v.ShowCostCenter, w => w.Active).InitializeFromSource();
 		}
 
 		protected void OnButtonPrintReportClicked(object sender, EventArgs e)

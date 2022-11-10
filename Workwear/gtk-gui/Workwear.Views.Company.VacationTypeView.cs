@@ -31,10 +31,10 @@ namespace Workwear.Views.Company
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
-			// Widget workwear.Dialogs.Organization.VacationTypeDlg
+			// Widget Workwear.Views.Company.VacationTypeView
 			global::Stetic.BinContainer.Attach(this);
-			this.Name = "workwear.Dialogs.Organization.VacationTypeDlg";
-			// Container child workwear.Dialogs.Organization.VacationTypeDlg.Gtk.Container+ContainerChild
+			this.Name = "Workwear.Views.Company.VacationTypeView";
+			// Container child Workwear.Views.Company.VacationTypeView.Gtk.Container+ContainerChild
 			this.vbox3 = new global::Gtk.VBox();
 			this.vbox3.Name = "vbox3";
 			this.vbox3.Spacing = 6;

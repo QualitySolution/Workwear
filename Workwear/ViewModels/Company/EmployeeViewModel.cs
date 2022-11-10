@@ -465,6 +465,10 @@ namespace Workwear.ViewModels.Company
 				Entity.ChangeOfPositionDate = DateTime.Today;
 			}
 			if(e.PropertyName == nameof(Entity.Post) && Entity.Post != null && Entity.UsedNorms.Count == 0 && interactive.Question("Установить норму по должности?")) {
+				if(Entity.Id == 0 && !Save()) { //Здесь если не сохраним нового сотрудника при установки нормы скорей всего упадем.
+					interactive.ShowMessage(ImportanceLevel.Error, "Норма не установлена, так как не все данные сотрудника заполнены корректно.");
+					return;
+				} 
 				Entity.NormFromPost(UoW, NormRepository);
 			}
 		}
