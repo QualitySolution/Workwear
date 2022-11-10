@@ -1066,6 +1066,29 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
 ALTER TABLE `nomenclature`
 	ADD COLUMN `sale_cost` DECIMAL(7,2) UNSIGNED NULL DEFAULT NULL AFTER `rating_count`;
 
+-- Добавляем ВМЗ
+
+ALTER TABLE `posts`
+	ADD COLUMN `cost_center_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `profession_id`,
+	CHANGE COLUMN `name` `name` VARCHAR(180) NOT NULL ,
+	CHANGE COLUMN `comments` `comments` TEXT NULL DEFAULT NULL ,
+	ADD INDEX `fk_posts_1_idx` (`cost_center_id` ASC);
+
+CREATE TABLE IF NOT EXISTS cost_center (
+   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+   `code` VARCHAR(14) NULL DEFAULT NULL,
+   `name` VARCHAR(300) NOT NULL,
+   PRIMARY KEY (`id`))
+	ENGINE = InnoDB
+	DEFAULT CHARACTER SET = utf8mb4;
+
+ALTER TABLE `posts`
+	ADD CONSTRAINT `fk_posts_1`
+		FOREIGN KEY (`cost_center_id`)
+			REFERENCES `cost_center` (`id`)
+			ON DELETE NO ACTION
+			ON UPDATE CASCADE;
+
 -- Обновляем хранимую процедуру
 DROP function IF EXISTS `count_issue`;
 
