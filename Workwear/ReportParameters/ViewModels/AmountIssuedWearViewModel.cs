@@ -66,7 +66,8 @@ namespace workwear.ReportParameters.ViewModels {
 					{"withoutOwner", SelectOwner.Equals(SpecialComboState.Not)},
 					{"ownerId", (SelectOwner as Owner)?.Id ?? -1},
 					{"byEmployee", ByEmployee},
-					{"showCost", ShowCost}
+					{"showCost", ShowCost},
+					{"showCostCenter", ShowCostCenter}
 		};
 
 		public override string Identifier { 
@@ -146,8 +147,14 @@ namespace workwear.ReportParameters.ViewModels {
 			set => SetField(ref showCost, value);
 		}
 
+		private bool showCostCenter;
+		public virtual bool ShowCostCenter {
+			get => showCostCenter;
+			set => SetField(ref showCostCenter, value);
+		}
+
 		#endregion
-		
+
 		#region Свойства
 
 		private bool selectAll = true;
