@@ -185,6 +185,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action Action40;
 
+	private global::Gtk.Action ActionCostCenter;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -501,6 +503,9 @@ public partial class MainWindow
 		this.Action40 = new global::Gtk.Action("Action40", global::Mono.Unix.Catalog.GetString("Штрихкоды"), null, null);
 		this.Action40.ShortLabel = global::Mono.Unix.Catalog.GetString("Штрихкоды");
 		w1.Add(this.Action40, null);
+		this.ActionCostCenter = new global::Gtk.Action("ActionCostCenter", global::Mono.Unix.Catalog.GetString("Места возникновения затрат"), null, null);
+		this.ActionCostCenter.ShortLabel = global::Mono.Unix.Catalog.GetString("Места возникновения затрат");
+		w1.Add(this.ActionCostCenter, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -555,28 +560,28 @@ public partial class MainWindow
 				"ion=\'Action7\'/><menuitem name=\'ActionNotificationTemplates\' action=\'ActionNotifi" +
 				"cationTemplates\'/><separator/><menuitem name=\'ActionProfession\' action=\'ActionPr" +
 				"ofession\'/><menuitem name=\'Action8\' action=\'Action8\'/><menuitem name=\'ActionVaca" +
-				"tionTypes\' action=\'ActionVacationTypes\'/><menuitem name=\'ActionLeaders\' action=\'" +
-				"ActionLeaders\'/></menu><menu name=\'ActionReports\' action=\'ActionReports\'><menuit" +
-				"em name=\'Action10\' action=\'Action10\'/><menuitem name=\'Action11\' action=\'Action11" +
-				"\'/><separator/><menuitem name=\'Action12\' action=\'Action12\'/><separator/><menuite" +
-				"m name=\'ActionRequestSheet\' action=\'ActionRequestSheet\'/><menuitem name=\'ActionA" +
-				"verageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><separator/><menu name=\'Acti" +
-				"on\' action=\'Action\'><menuitem name=\'ActionNotIssuedSheetDetail\' action=\'ActionNo" +
-				"tIssuedSheetDetail\'/><menuitem name=\'ActionNotIssuedSheetSummary\' action=\'Action" +
-				"NotIssuedSheetSummary\'/></menu><menuitem name=\'ActionAmountEmployeeGetWear\' acti" +
-				"on=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear\' action" +
-				"=\'ActionAmountIssuedWear\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><m" +
-				"enuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionAdminGuide\'" +
-				" action=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHistory\' action=\'A" +
-				"ctionHistory\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/>" +
-				"<menuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenRefor" +
-				"mal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menui" +
-				"tem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' actio" +
-				"n=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><" +
-				"menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><menuit" +
-				"em name=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'Action" +
-				"SN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></men" +
-				"ubar></ui>");
+				"tionTypes\' action=\'ActionVacationTypes\'/><menuitem name=\'ActionCostCenter\' actio" +
+				"n=\'ActionCostCenter\'/><menuitem name=\'ActionLeaders\' action=\'ActionLeaders\'/></m" +
+				"enu><menu name=\'ActionReports\' action=\'ActionReports\'><menuitem name=\'Action10\' " +
+				"action=\'Action10\'/><menuitem name=\'Action11\' action=\'Action11\'/><separator/><men" +
+				"uitem name=\'Action12\' action=\'Action12\'/><separator/><menuitem name=\'ActionReque" +
+				"stSheet\' action=\'ActionRequestSheet\'/><menuitem name=\'ActionAverageAnnualNeed\' a" +
+				"ction=\'ActionAverageAnnualNeed\'/><separator/><menu name=\'Action\' action=\'Action\'" +
+				"><menuitem name=\'ActionNotIssuedSheetDetail\' action=\'ActionNotIssuedSheetDetail\'" +
+				"/><menuitem name=\'ActionNotIssuedSheetSummary\' action=\'ActionNotIssuedSheetSumma" +
+				"ry\'/></menu><menuitem name=\'ActionAmountEmployeeGetWear\' action=\'ActionAmountEmp" +
+				"loyeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear\' action=\'ActionAmountIssue" +
+				"dWear\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuitem name=\'helpA" +
+				"ction\' action=\'helpAction\'/><menuitem name=\'ActionAdminGuide\' action=\'ActionAdmi" +
+				"nGuide\'/><separator/><menuitem name=\'ActionHistory\' action=\'ActionHistory\'/><men" +
+				"uitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuitem name=\'Act" +
+				"ionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReformal\' action=\'Action" +
+				"OpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuitem name=\'ActionVK\'" +
+				" action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=\'ActionOdnoklasni" +
+				"ki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><menuitem name=\'Acti" +
+				"onYouTube\' action=\'ActionYouTube\'/></menu><separator/><menuitem name=\'ActionPay\'" +
+				" action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><m" +
+				"enuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -586,7 +591,6 @@ public partial class MainWindow
 		w2.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.hbuttonbox1 = new global::Gtk.HButtonBox();
-		this.hbuttonbox1.Name = "hbuttonbox1";
 		this.vbox1.Add(this.hbuttonbox1);
 		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbuttonbox1]));
 		w3.Position = 1;
@@ -798,5 +802,6 @@ public partial class MainWindow
 		this.ActionMenuRatings.Activated += new global::System.EventHandler(this.OnActionMenuRatingsActivated);
 		this.ActionOwner.Activated += new global::System.EventHandler(this.OnActionOwnerActivated);
 		this.Action40.Activated += new global::System.EventHandler(this.BarcodeActivated);
+		this.ActionCostCenter.Activated += new global::System.EventHandler(this.OnActionCostCenterActivated);
 	}
 }

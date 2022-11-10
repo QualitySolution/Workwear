@@ -49,6 +49,14 @@ namespace workwear.Journal
 			#endregion
 
 			#region Company
+			TreeViewColumnsConfigFactory.Register<CostCenterJournalViewModel>(
+				() => FluentColumnsConfig<CostCenterJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Код ВМЗ").AddTextRenderer(node => node.Code).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<DepartmentJournalViewModel>(
 				() => FluentColumnsConfig<DepartmentJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()

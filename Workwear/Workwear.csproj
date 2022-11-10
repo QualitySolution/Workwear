@@ -411,6 +411,10 @@
     <Compile Include="gtk-gui\Workwear.Views.Stock.OwnerView.cs" />
     <Compile Include="Views\Stock\BarcodeView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.BarcodeView.cs" />
+    <Compile Include="Journal\ViewModels\Company\CostCenterJournalViewModel.cs" />
+    <Compile Include="ViewModels\Company\CostCenterViewModel.cs" />
+    <Compile Include="Views\Company\CostCenterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Company.CostCenterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

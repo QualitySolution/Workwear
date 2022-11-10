@@ -825,4 +825,8 @@ public partial class MainWindow : Gtk.Window
 
 	protected void BarcodeActivated(object sender, EventArgs e) => 
 		NavigationManager.OpenViewModel<BarcodeJournalViewModel>(null);
+
+	protected void OnActionCostCenterActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<CostCenterJournalViewModel>(null);
+	}
 }
