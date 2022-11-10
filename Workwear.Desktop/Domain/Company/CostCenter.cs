@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 
@@ -10,6 +11,7 @@ namespace Workwear.Domain.Company {
 	)]
 	[HistoryTrace]
 	public class CostCenter: PropertyChangedBase, IDomainObject {
+		#region Свойства
 		public virtual int Id { get; set; }
 
 		private string code;
@@ -28,5 +30,10 @@ namespace Workwear.Domain.Company {
 			get => name;
 			set => SetField (ref name, value);
 		}
+		#endregion
+
+		#region Рассчетные
+		public virtual string Title => String.IsNullOrEmpty(Code) ? Name : $"{Code} {Name}";
+		#endregion
 	}
 }

@@ -107,12 +107,13 @@ namespace workwear.Journal
 			);
 
 			TreeViewColumnsConfigFactory.Register<PostJournalViewModel>(
-				() => FluentColumnsConfig<PostJournalNode>.Create()
+				(jwm) => FluentColumnsConfig<PostJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Профессия").AddTextRenderer(node => node.Profession).SearchHighlight()
 					.AddColumn("Отдел").AddTextRenderer(node => node.Department).SearchHighlight()
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
+					.AddColumn("МВЗ").Visible(jwm.FeaturesService.Available(WorkwearFeature.CostCenter)).AddTextRenderer(node => node.CostCenterText).SearchHighlight()
 					.Finish()
 			);
 

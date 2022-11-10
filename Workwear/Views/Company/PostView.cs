@@ -21,6 +21,7 @@ namespace Workwear.Views.Company
 			entityProfession.ViewModel = ViewModel.EntryProfession;
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivision;
 			entityDepartment.ViewModel = ViewModel.EntryDepartment;
+			entryCostCenter.ViewModel = ViewModel.EntryCostCenter;
 			ytextComments.Binding.AddBinding(Entity, e => e.Comments, w => w.Buffer.Text).InitializeFromSource();
 		}
 	}
