@@ -35,7 +35,7 @@ namespace workwear.Tools
 		private static void HandleDeleteEmployeeVacation(QS.DomainModel.NotifyChange.EntityChangeEvent[] changeEvents)
 		{
 			using(var uow = GetUnitOfWorkFactory.CreateWithoutRoot("Глобальный обработчик удаления отпусков")) {
-				var baseParameters = new BaseParameters();
+				var baseParameters = new BaseParameters(uow.Session.Connection);
 				foreach(var employeeGroup in changeEvents.GroupBy(x => (x.Entity as EmployeeVacation).Employee.Id)) {
 					var start = employeeGroup.Min(x => (DateTime)x.GetOldValue<EmployeeVacation>(e => e.BeginDate));
 					var end = employeeGroup.Max(x => (DateTime)x.GetOldValue<EmployeeVacation>(e => e.EndDate));
