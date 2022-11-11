@@ -121,6 +121,7 @@ namespace workwear.Repository.Operations
 		{
 			OperationToDocumentReference docAlias = null;
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
+			Expense expenseAlias = null;
 			ExpenseItem expenseItemAlias = null;
 			IncomeItem incomeItemAlias = null;
 			MassExpenseOperation massExpenseOperationAlias = null; //FIXME не реализовано
@@ -129,6 +130,7 @@ namespace workwear.Repository.Operations
 			
 			var result = RepoUow.Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
 				.JoinEntityAlias(() => expenseItemAlias, () => expenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
+				.Left.JoinAlias(() => expenseItemAlias.ExpenseDoc, () => expenseAlias)
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.ReturnFromEmployeeOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.EmployeeWriteoffOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
@@ -137,6 +139,7 @@ namespace workwear.Repository.Operations
 					.Select(i => i.Id).WithAlias(() => docAlias.OperationId)
 					.Select(() => expenseItemAlias.Id).WithAlias(() => docAlias.ExpenceItemId)
 					.Select(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => docAlias.ExpenceId)
+					.Select(() => expenseAlias.Operation).WithAlias(() => docAlias.ExpenseOperation)
 					.Select(() => collectiveExpenseItemAlias.Id).WithAlias(() => docAlias.CollectiveExpenseItemId)
 					.Select(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => docAlias.CollectiveExpenseId)
 					.Select(() => incomeItemAlias.Id).WithAlias(() => docAlias.IncomeItemId)
