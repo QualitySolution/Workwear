@@ -34,7 +34,7 @@ mkdir -p Files
 cp -r -v ${BinDir}/* ./Files
 
 if [ ! -f "gtk-sharp-2.12.21.msi" ]; then
-    wget https://xamarin.azureedge.net/GTKforWindows/Windows/gtk-sharp-2.12.21.msi
+    wget http://files.qsolution.ru/Common/gtk-sharp-2.12.21.msi
 fi
 
 # Сборка документации
