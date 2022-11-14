@@ -114,6 +114,7 @@ namespace workwear.Journal
 					.AddColumn("Отдел").AddTextRenderer(node => node.Department).SearchHighlight()
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
 					.AddColumn("МВЗ").Visible(jwm.FeaturesService.Available(WorkwearFeature.CostCenter)).AddTextRenderer(node => node.CostCenterText).SearchHighlight()
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comments).SearchHighlight()
 					.Finish()
 			);
 
