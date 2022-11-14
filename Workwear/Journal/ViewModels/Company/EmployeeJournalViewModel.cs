@@ -90,6 +90,7 @@ namespace workwear.Journal.ViewModels.Company
 					() => employeeAlias.Patronymic,
 					() => postAlias.Name,
 					() => subdivisionAlias.Name,
+					() => departmentAlias.Name,
 					() => employeeAlias.Comment
  					))
 

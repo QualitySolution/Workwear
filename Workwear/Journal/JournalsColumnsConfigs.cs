@@ -75,7 +75,7 @@ namespace workwear.Journal
 					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
 					.AddColumn("Должность").AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
-					.AddColumn("Отдел").AddTextRenderer(node => node.Department)
+					.AddColumn("Отдел").AddTextRenderer(node => node.Department).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = ForegroundColor(x))
 					.Finish()
