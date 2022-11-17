@@ -53,7 +53,7 @@ node {
    if (params.Publish) {
       stage('VirusTotal'){
          sh 'vt scan file Workwear/WinInstall/workwear-*.exe > file_hash'
-         waitUntil (initialRecurrencePeriod: 10000){
+         waitUntil (initialRecurrencePeriod: 20000){
             sh 'cut file_hash -d" " -f2 | vt analysis - > analysis'
             return readFile('analysis').contains('status: "completed"')
          }
