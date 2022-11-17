@@ -1,12 +1,14 @@
 using System;
 using System.Linq;
 using System.Threading;
+using Dapper;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Deletion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
+using QS.DomainModel.UoW;
 using QS.Testing.DB;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -50,6 +52,7 @@ namespace Workwear.Test.Integration.Tools
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления")) {
+				MakeBaseParametersTable(uow);
 				BusinessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
 
 				var nomenclatureType = new ItemsType();
@@ -128,6 +131,7 @@ namespace Workwear.Test.Integration.Tools
 			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления")) {
+				MakeBaseParametersTable(uow);
 				BusinessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
 
 				var nomenclatureType = new ItemsType();
@@ -386,5 +390,17 @@ namespace Workwear.Test.Integration.Tools
 				deletion.RunDeletion(CancellationToken.None);
 			}
 		}
+
+		#region Helpers
+
+		private void MakeBaseParametersTable(IUnitOfWork uow) {
+			var sql = @"CREATE TABLE IF NOT EXISTS `base_parameters` (
+				`name` VARCHAR(20) NOT NULL,
+				`str_value` VARCHAR(100) NULL DEFAULT NULL,
+				PRIMARY KEY (`name`));";
+			uow.Session.Connection.Execute(sql);
+		}
+
+		#endregion
 	}
 }
