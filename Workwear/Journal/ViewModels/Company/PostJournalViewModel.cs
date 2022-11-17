@@ -4,6 +4,7 @@ using Autofac;
 using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Transform;
+using NPOI.SS.Formula.Functions;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -50,8 +51,9 @@ namespace workwear.Journal.ViewModels.Company {
 				NodeActionsList.Add(setCostCenterAction);
 
 				var listCostCenters = UoW.GetAll<CostCenter>().OrderBy(x => x.Code).ThenBy(x => x.Name).ToList();
+				listCostCenters.Insert(0, null);
 				foreach(CostCenter costCenter in listCostCenters) {
-					var updateCostCenterAction = new JournalAction(costCenter.Title,
+					var updateCostCenterAction = new JournalAction(costCenter?.Title ?? "Очистить",
 						(selected) => selected.Any(),
 						(selected) => true,
 						(selected) => SetCostCenter(selected.Cast<PostJournalNode>().ToArray(), costCenter)
