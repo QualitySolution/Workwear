@@ -345,7 +345,7 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount("OpenUserGuide");
 		try {
-			System.Diagnostics.Process.Start("user-guide.pdf");
+			OpenUrl("user-guide.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
@@ -746,7 +746,7 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount("OpenAdminGuide");
 		try {
-			System.Diagnostics.Process.Start("admin-guide.pdf");
+			OpenUrl("admin-guide.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
