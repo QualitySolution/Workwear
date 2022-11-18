@@ -3,13 +3,14 @@ using QS.Utilities.Text;
 
 namespace Workwear.Models.Import
 {
-	public class FIO : IEquatable<FIO>
-	{
+	public class FIO : IEquatable<FIO> {
+		public object UserData;
 		public string LastName;
 		public string FirstName;
 		public string Patronymic;
 
 		public string FullName => PersonHelper.PersonFullName(LastName, FirstName, Patronymic);
+		public string ShortName => PersonHelper.PersonNameWithInitials(LastName, FirstName, Patronymic);
 		
 		public string GetHash() => LastName + FirstName + Patronymic;
 

@@ -19,9 +19,10 @@ namespace Workwear.Views.Communications
 				.AddBinding(wm => wm.SelectClaimState, w => w.SelectedItemOrNull)
 				.InitializeFromSource();
 			ytreeClaims.ColumnsConfig = ColumnsConfigFactory.Create<Claim>()
-				.AddColumn("Обращение").AddTextRenderer(c => c.Title)
+				.AddColumn("Сотрудник").AddTextRenderer(c => ViewModel.GetEmployeeName(c.UserPhone))
+				.AddColumn("Тема").AddTextRenderer(c => c.Title)
 				.RowCells()
-				.AddSetter<Gtk.CellRendererText>((c, x) => c.Weight = GetWeight(x))
+				.AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = GetClaimColor(x))
 				.Finish();
 			ViewModel.RefreshClaims();
 			ytreeClaims.Binding
@@ -67,14 +68,14 @@ namespace Workwear.Views.Communications
 			ytreeClaims.Vadjustment.Value = lastPos;
 		}
 
-		private int GetWeight(Claim claim) {
+		private string GetClaimColor(Claim claim) {
 			switch(claim.ClaimState) {
 				case ClaimState.Closed:
-					return 200;
+					return "gray";
 				case ClaimState.WaitSupport:
-					return 600;
+					return "blue";
 				case  ClaimState.WaitUser:
-					return 400;
+					return "black";
 				default:
 					throw new ArgumentException();
 			}

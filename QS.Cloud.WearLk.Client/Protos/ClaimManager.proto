@@ -28,6 +28,7 @@ message Claim{
 	int32 id = 1;
 	string title = 2;
 	ClaimState claim_state = 3;
+	string user_phone = 4;
 }
 
 enum ClaimState{

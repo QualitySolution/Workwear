@@ -19609,7 +19609,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Communications.ClaimsView" design-size="475 300">
+  <widget class="Gtk.Bin" id="Workwear.Views.Communications.ClaimsView" design-size="663 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -19639,6 +19639,7 @@
             <child>
               <widget class="Gtk.ScrolledWindow" id="scrolledwindow2">
                 <property name="MemberName" />
+                <property name="WidthRequest">400</property>
                 <property name="CanFocus">True</property>
                 <property name="ShadowType">In</property>
                 <child>

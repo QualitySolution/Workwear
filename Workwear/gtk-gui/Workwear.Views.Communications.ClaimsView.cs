@@ -66,6 +66,7 @@ namespace Workwear.Views.Communications
 			w1.Fill = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.scrolledwindow2 = new global::Gtk.ScrolledWindow();
+			this.scrolledwindow2.WidthRequest = 400;
 			this.scrolledwindow2.CanFocus = true;
 			this.scrolledwindow2.Name = "scrolledwindow2";
 			this.scrolledwindow2.ShadowType = ((global::Gtk.ShadowType)(1));
