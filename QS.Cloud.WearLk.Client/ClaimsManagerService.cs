@@ -28,16 +28,16 @@ namespace QS.Cloud.WearLk.Client
 			return client.GetClaim(request, Headers).Messages;
 		}
 
-		public void SetChanges(Claim claim) {
-			var client = new ClaimManager.ClaimManagerClient(Channel);
-			var request = new EditClaimRequest { ClaimId = claim.Id, ClaimState = claim.ClaimState, Title = claim.Title };
-			client.EditClaim(request, Headers);
-		}
-
 		public void Send(int claimId, string text) {
 			var client = new ClaimManager.ClaimManagerClient(Channel);
 			var request = new SendAnswerRequest { ClaimId = claimId, Text = text };
 			client.SendAnswer(request, Headers);
+		}
+		
+		public void CloseClaim(int claimId, string text) {
+			var client = new ClaimManager.ClaimManagerClient(Channel);
+			var request = new CloseClaimRequest { ClaimId = claimId, Text = text};
+			client.CloseClaim(request, Headers);
 		}
 		#endregion
 

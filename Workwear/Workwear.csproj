@@ -123,6 +123,7 @@
     <EmbeddedResource Include="icon\menu\logs.png" />
     <EmbeddedResource Include="icon\toolbar\claims.png" />
     <EmbeddedResource Include="icon\buttons\barcode-add.png" />
+    <EmbeddedResource Include="icon\buttons\send.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />

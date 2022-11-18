@@ -28,15 +28,11 @@ namespace Workwear.Views.Communications
 
 		private global::Gamma.GtkWidgets.yTextView yentryMessage;
 
-		private global::Gamma.GtkWidgets.yButton ybuttonSend;
+		private global::Gtk.VBox vbox2;
 
-		private global::Gamma.GtkWidgets.yHBox yhbox3;
+		private global::Gamma.GtkWidgets.yButton buttonAnswer;
 
-		private global::Gamma.GtkWidgets.yLabel ylabelStatusClaim;
-
-		private global::Gamma.Widgets.yEnumComboBox yComboStatus;
-
-		private global::Gamma.GtkWidgets.yButton ybuttonChangeStatus;
+		private global::Gamma.GtkWidgets.yButton buttonClose;
 
 		protected virtual void Build()
 		{
@@ -122,80 +118,63 @@ namespace Workwear.Views.Communications
 			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.GtkScrolledWindow]));
 			w8.Position = 0;
 			// Container child yhbox2.Gtk.Box+BoxChild
-			this.ybuttonSend = new global::Gamma.GtkWidgets.yButton();
-			this.ybuttonSend.CanFocus = true;
-			this.ybuttonSend.Name = "ybuttonSend";
-			this.ybuttonSend.UseUnderline = true;
-			this.ybuttonSend.Label = global::Mono.Unix.Catalog.GetString("Отправить");
+			this.vbox2 = new global::Gtk.VBox();
+			this.vbox2.Name = "vbox2";
+			this.vbox2.Spacing = 6;
+			// Container child vbox2.Gtk.Box+BoxChild
+			this.buttonAnswer = new global::Gamma.GtkWidgets.yButton();
+			this.buttonAnswer.CanFocus = true;
+			this.buttonAnswer.Name = "buttonAnswer";
+			this.buttonAnswer.UseUnderline = true;
+			this.buttonAnswer.Label = global::Mono.Unix.Catalog.GetString("Ответить");
 			global::Gtk.Image w9 = new global::Gtk.Image();
-			w9.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "stock_mail-send", global::Gtk.IconSize.Menu);
-			this.ybuttonSend.Image = w9;
-			this.yhbox2.Add(this.ybuttonSend);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.ybuttonSend]));
-			w10.Position = 1;
+			w9.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.send.png");
+			this.buttonAnswer.Image = w9;
+			this.vbox2.Add(this.buttonAnswer);
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.buttonAnswer]));
+			w10.Position = 0;
 			w10.Expand = false;
 			w10.Fill = false;
-			this.yvbox3.Add(this.yhbox2);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox2]));
-			w11.Position = 0;
-			w11.Expand = false;
-			w11.Fill = false;
-			// Container child yvbox3.Gtk.Box+BoxChild
-			this.yhbox3 = new global::Gamma.GtkWidgets.yHBox();
-			this.yhbox3.Name = "yhbox3";
-			this.yhbox3.Spacing = 6;
-			// Container child yhbox3.Gtk.Box+BoxChild
-			this.ylabelStatusClaim = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabelStatusClaim.Name = "ylabelStatusClaim";
-			this.ylabelStatusClaim.Xalign = 1F;
-			this.ylabelStatusClaim.LabelProp = global::Mono.Unix.Catalog.GetString("Статус обращения");
-			this.yhbox3.Add(this.ylabelStatusClaim);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.ylabelStatusClaim]));
-			w12.Position = 0;
+			// Container child vbox2.Gtk.Box+BoxChild
+			this.buttonClose = new global::Gamma.GtkWidgets.yButton();
+			this.buttonClose.CanFocus = true;
+			this.buttonClose.Name = "buttonClose";
+			this.buttonClose.UseUnderline = true;
+			this.buttonClose.Label = global::Mono.Unix.Catalog.GetString("Закрыть вопрос");
+			global::Gtk.Image w11 = new global::Gtk.Image();
+			w11.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-stop", global::Gtk.IconSize.Menu);
+			this.buttonClose.Image = w11;
+			this.vbox2.Add(this.buttonClose);
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.buttonClose]));
+			w12.Position = 1;
 			w12.Expand = false;
 			w12.Fill = false;
-			// Container child yhbox3.Gtk.Box+BoxChild
-			this.yComboStatus = new global::Gamma.Widgets.yEnumComboBox();
-			this.yComboStatus.Name = "yComboStatus";
-			this.yComboStatus.ShowSpecialStateAll = false;
-			this.yComboStatus.ShowSpecialStateNot = false;
-			this.yComboStatus.UseShortTitle = false;
-			this.yComboStatus.DefaultFirst = false;
-			this.yhbox3.Add(this.yComboStatus);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.yComboStatus]));
+			this.yhbox2.Add(this.vbox2);
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.vbox2]));
 			w13.Position = 1;
 			w13.Expand = false;
 			w13.Fill = false;
-			// Container child yhbox3.Gtk.Box+BoxChild
-			this.ybuttonChangeStatus = new global::Gamma.GtkWidgets.yButton();
-			this.ybuttonChangeStatus.CanFocus = true;
-			this.ybuttonChangeStatus.Name = "ybuttonChangeStatus";
-			this.ybuttonChangeStatus.UseUnderline = true;
-			this.ybuttonChangeStatus.Label = global::Mono.Unix.Catalog.GetString("Изменить");
-			this.yhbox3.Add(this.ybuttonChangeStatus);
-			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.ybuttonChangeStatus]));
-			w14.Position = 2;
+			this.yvbox3.Add(this.yhbox2);
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox2]));
+			w14.Position = 0;
 			w14.Expand = false;
 			w14.Fill = false;
-			this.yvbox3.Add(this.yhbox3);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox3]));
+			this.yvbox2.Add(this.yvbox3);
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.yvbox3]));
 			w15.Position = 1;
 			w15.Expand = false;
 			w15.Fill = false;
-			this.yvbox2.Add(this.yvbox3);
-			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.yvbox3]));
-			w16.Position = 1;
-			w16.Expand = false;
-			w16.Fill = false;
 			this.yhbox1.Add(this.yvbox2);
-			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.yvbox2]));
-			w17.Position = 1;
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.yvbox2]));
+			w16.Position = 1;
 			this.Add(this.yhbox1);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
 			}
 			this.Hide();
+			this.buttonAnswer.Clicked += new global::System.EventHandler(this.OnButtonAnswerClicked);
+			this.buttonClose.Clicked += new global::System.EventHandler(this.OnButtonCloseClicked);
 		}
 	}
 }

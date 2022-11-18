@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.Cloud.WearLk.Client;
 using QS.Cloud.WearLk.Manage;
@@ -49,8 +48,7 @@ namespace Workwear.ViewModels.Communications
 		}
 
 		private Claim selectClaim;
-		[PropertyChangedAlso(nameof(SelectClaimState))]
-		[PropertyChangedAlso(nameof(SensitiveChangeState))]
+		[PropertyChangedAlso(nameof(SensitiveCloseClaim))]
 		[PropertyChangedAlso(nameof(SensitiveSend))]
 		public Claim SelectClaim {
 			get => selectClaim;
@@ -62,20 +60,6 @@ namespace Workwear.ViewModels.Communications
 		public IList<ClaimMessage> MessagesSelectClaims {
 			get => messagesSelectClaims;
 			set => SetField(ref messagesSelectClaims, value);
-		}
-
-		public TranslateClaimState? SelectClaimState {
-			get {
-				if(SelectClaim != null)
-					return (TranslateClaimState?)SelectClaim.ClaimState;
-				return null;
-			}
-			set {
-				if(SelectClaim != null && value != null) {
-					SelectClaim.ClaimState = (ClaimState)value.Value;
-					ChangeStatusClaim();
-				}
-			}
 		}
 
 		private bool showClosed;
@@ -94,8 +78,8 @@ namespace Workwear.ViewModels.Communications
 			set => SetField(ref textMessage, value);
 		}
 
-		public bool SensitiveSend => SelectClaim != null && !String.IsNullOrEmpty(TextMessage);
-		public bool SensitiveChangeState => SelectClaim != null;
+		public bool SensitiveSend => SelectClaim != null && !String.IsNullOrWhiteSpace(TextMessage);
+		public bool SensitiveCloseClaim => SelectClaim != null && SelectClaim.ClaimState != ClaimState.Closed;
 
 		#endregion
 
@@ -113,18 +97,21 @@ namespace Workwear.ViewModels.Communications
 			employeeNames = employeeRepository.GetFioByPhones(claims.Select(x => x.UserPhone).Where(x => !String.IsNullOrEmpty(x)).Distinct().ToArray());
 		}
 
-		public void Send(object sender, EventArgs eventArgs) {
+		public void SendAnswer() {
 			claimsManager.Send(SelectClaim.Id, TextMessage);
 			RefreshMessage();
 			TextMessage = String.Empty;
+			RefreshClaims();
 		}
 
-		private void ChangeStatusClaim() {
-			claimsManager.SetChanges(SelectClaim);
+		public void CloseClaim() {
+			claimsManager.CloseClaim(SelectClaim.Id, TextMessage);
+			RefreshMessage();
+			TextMessage = String.Empty;
+			RefreshClaims();
 		}
-		
 		#endregion
-
+		
 		private void RefreshMessage() {
 			if(SelectClaim != null)
 				MessagesSelectClaims = claimsManager.GetMessages(SelectClaim.Id);
@@ -133,17 +120,9 @@ namespace Workwear.ViewModels.Communications
 		public bool UploadClaims() {
 			var newClaims = claimsManager.GetClaims(sizePage, (uint)Claims.Count, ShowClosed).ToList();
 			Claims.AddRange(newClaims);
+			employeeNames = employeeRepository.GetFioByPhones(claims.Select(x => x.UserPhone).Where(x => !String.IsNullOrEmpty(x)).Distinct().ToArray());
 			OnPropertyChanged(nameof(Claims));
 			return newClaims.Count > 0;
-		}
-
-		public enum TranslateClaimState {
-			[Display(Name = "Закрыто")]
-			Closed,
-			[Display(Name = "Ожидает ответа")]
-			WaitSupport,
-			[Display(Name = "В ожидании сотрудника")]
-			WaitUser
 		}
 	}
 }

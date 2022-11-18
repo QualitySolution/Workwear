@@ -12,12 +12,7 @@ namespace Workwear.Views.Communications
 		public ClaimsView(ClaimsViewModel viewModel) : base(viewModel) 
 		{
 			this.Build();
-
-			yComboStatus.ItemsEnum = typeof(ClaimsViewModel.TranslateClaimState);
-			yComboStatus.Binding
-				.AddSource(ViewModel)
-				.AddBinding(wm => wm.SelectClaimState, w => w.SelectedItemOrNull)
-				.InitializeFromSource();
+			
 			ytreeClaims.ColumnsConfig = ColumnsConfigFactory.Create<Claim>()
 				.AddColumn("Сотрудник").AddTextRenderer(c => ViewModel.GetEmployeeName(c.UserPhone))
 				.AddColumn("Тема").AddTextRenderer(c => c.Title)
@@ -31,7 +26,7 @@ namespace Workwear.Views.Communications
 				.AddBinding(vm => vm.SelectClaim, w=> w.SelectedRow)
 				.InitializeFromSource();
 			ytreeClaimMessages.ColumnsConfig = ColumnsConfigFactory.Create<ClaimMessage>()
-				.AddColumn("Время").AddTextRenderer(c => c.SendTime.ToDateTime().ToLocalTime().ToString("dd MMM yy HH:mm:ss"))
+				.AddColumn("Время").AddTextRenderer(c => c.SendTime.ToDateTime().ToLocalTime().ToString("dd MMM HH:mm:ss"))
 				.AddColumn("Автор").AddTextRenderer(c => c.SenderName)
 				.AddColumn("Текст").AddTextRenderer(c => c.Text)
 				.RowCells()
@@ -47,14 +42,13 @@ namespace Workwear.Views.Communications
 			ycheckbuttonShowClosed.Binding
 				.AddBinding(ViewModel, vm => vm.ShowClosed, w => w.Active)
 				.InitializeFromSource();
-			ybuttonSend.Binding
+			buttonAnswer.Binding
 				.AddBinding(ViewModel, vm => vm.SensitiveSend, w => w.Sensitive)
 				.InitializeFromSource();
-			ybuttonChangeStatus.Binding
-				.AddBinding(ViewModel, vm => vm.SensitiveChangeState, w => w.Sensitive)
+			buttonClose.Binding
+				.AddBinding(ViewModel, vm => vm.SensitiveCloseClaim, w => w.Sensitive)
 				.InitializeFromSource();
-			
-			ybuttonSend.Clicked += ViewModel.Send;
+
 			ytreeClaims.Vadjustment.ValueChanged += OnScroll;
 		}
 		
@@ -79,6 +73,14 @@ namespace Workwear.Views.Communications
 				default:
 					throw new ArgumentException();
 			}
+		}
+
+		protected void OnButtonAnswerClicked(object sender, EventArgs e) {
+			ViewModel.SendAnswer();
+		}
+
+		protected void OnButtonCloseClicked(object sender, EventArgs e) {
+			ViewModel.CloseClaim();
 		}
 	}
 }
