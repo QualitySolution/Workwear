@@ -117,6 +117,7 @@
                             <BorderWidth  />
                             <FontSize >12pt</FontSize>
                             <VerticalAlign >Bottom</VerticalAlign>
+                            <FontWeight >Bold</FontWeight>
                           </Style>
                           <Value>=Iif(String.IsNullOrEmpty({cost_center_name}), "Без МВЗ", {cost_center_name})</Value>
                         </Textbox>
