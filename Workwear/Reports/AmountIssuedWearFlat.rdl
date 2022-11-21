@@ -591,7 +591,7 @@ LEFT JOIN owners ON operation_warehouse.owner_id = owners.id
 LEFT JOIN protection_tools ON protection_tools.id = operation_issued_by_employee.protection_tools_id
 LEFT JOIN norms_item ON norms_item.id = operation_issued_by_employee.norm_item_id
 LEFT JOIN issuance_sheet_items ON issuance_sheet_items.issued_operation_id = operation_issued_by_employee.id
-WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE) and operation_issued_by_employee.operation_time &lt;= CONVERT(@dateEnd, DATE)
+WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE) and operation_issued_by_employee.operation_time &lt; DATE_ADD(CONVERT(@dateEnd, DATE), INTERVAL 1 DAY)
 AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
 AND (@issue_type = "" OR item_types.issue_type = @issue_type)
 and operation_issued_by_employee.returned = 0 AND ((@withoutsub AND objects.id IS NULL) OR objects.id IN (@subdivisions))
