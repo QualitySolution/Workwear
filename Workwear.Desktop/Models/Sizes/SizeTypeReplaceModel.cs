@@ -64,7 +64,7 @@ namespace Workwear.Models.Sizes {
 				text += "размеров: " + String.Join(", ", usedSizes.Select(x => x.Name));
 			if(usedHeights.Any())
 				text += " и ростов: " + String.Join(", ", usedHeights.Select(x => x.Name));
-			text += ". Продолжить?";
+			text += " складских операциях. Продолжить?";
 			if(interactive.Question(text)) {
 				progress.Start(usedSizesAll.Count * 7);
 				ReplaceSize(uow, progress, usedSizes, nomenclatures, newSizeType);
