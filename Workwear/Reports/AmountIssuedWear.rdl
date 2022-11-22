@@ -1513,20 +1513,20 @@
         <CommandText>select 
     if(@summary, NULL, objects.id) as subdivision_id, 
     if(@summary, NULL, objects.name) as object, 
+    if(@summary, NULL, objects.code) as subdivision_code,
     if(@showCostCenter, CONCAT_WS(' ', cost_center.code, cost_center.name), NULL) as cost_center_name,
     IF(@byEmployee, wear_cards.personnel_number, NULL) AS personnel_number,
     IF(@byEmployee, CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name), NULL) AS employee,
     IF(@byEmployee, posts.name, NULL) AS post,
+    IF(@byEmployee, issuance_sheet_items.issuance_sheet_id, NULL) as issuance_sheet,
     nomenclature.name as nomen, 
     sum(issued) as sum, 
     nomenclature.number, 
     if(@alternativeName, IFNULL(sizeAlias.alternative_name, sizeAlias.name), sizeAlias.name) as size, 
-    heightAlias.name as growth, 
-    objects.code, 
+    heightAlias.name as growth,
     if(@showOwners, owners.name, null) as owner_name,
     (nomenclature.sale_cost) AS cost,
-    (sum(issued) * nomenclature.sale_cost) AS cost_sum,
-    issuance_sheet_items.issuance_sheet_id as issuance_sheet
+    (sum(issued) * nomenclature.sale_cost) AS cost_sum
 FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
@@ -1547,8 +1547,8 @@ and operation_issued_by_employee.returned = 0 AND ((@withoutsub AND objects.id I
 and (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
 and (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
 AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
-GROUP BY cost_center.id, IF(@summary, NULL, objects.id), IF(@byEmployee, wear_cards.id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL)
-ORDER BY cost_center_name, CAST(objects.code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
+GROUP BY IF(@showCostCenter, cost_center.id, NULL), IF(@summary, NULL, objects.id), IF(@byEmployee, wear_cards.id, NULL), IF(@byEmployee, issuance_sheet_items.issuance_sheet_id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL)
+ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
             <Value>=Format({?dateStart}, "yyyy-MM-dd")</Value>
@@ -1630,7 +1630,7 @@ ORDER BY cost_center_name, CAST(objects.code AS UNSIGNED), employee, nomen, size
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="code">
-          <DataField>code</DataField>
+          <DataField>subdivision_code</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="owner_name">

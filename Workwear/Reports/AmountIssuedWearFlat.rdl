@@ -560,7 +560,8 @@
         <DataSourceName>DS1</DataSourceName>
         <CommandText>select 
     if(@summary, NULL, objects.id) as subdivision_id, 
-    if(@summary, NULL, objects.name) as object, 
+    if(@summary, NULL, objects.name) as object,
+    if(@summary, NULL, objects.code) as subdivision_code, 
     IF(@byEmployee, wear_cards.personnel_number, NULL) AS personnel_number,
     IF(@byEmployee, CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name), NULL) AS employee,
     IF(@byEmployee, posts.name, NULL) AS post,
@@ -569,7 +570,6 @@
     nomenclature.number, 
     if(@alternativeName, IFNULL(sizeAlias.alternative_name, sizeAlias.name), sizeAlias.name) as size, 
     heightAlias.name as growth, 
-    objects.code, 
     if(@showOwners, owners.name, null) as owner_name,
     (nomenclature.sale_cost) AS cost,
     (sum(issued) * nomenclature.sale_cost) AS cost_sum,
@@ -599,7 +599,7 @@ and (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
 and (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
 AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
 GROUP BY IF(@summary, NULL, objects.id), IF(@byEmployee, wear_cards.id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL)
-ORDER BY CAST(objects.code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
+ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
             <Value>=Format({?dateStart}, "yyyy-MM-dd")</Value>
@@ -678,7 +678,7 @@ ORDER BY CAST(objects.code AS UNSIGNED), employee, nomen, size, growth;</Command
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="code">
-          <DataField>code</DataField>
+          <DataField>subdivision_code</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="owner_name">
