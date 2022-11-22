@@ -142,6 +142,8 @@ namespace Workwear.Domain.Stock.Documents
 
 		#endregion
 		public Income () { }
+
+		#region Строки документа
 		public virtual void AddItem(SubdivisionIssueOperation issuedOperation, int count) {
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
@@ -209,9 +211,7 @@ namespace Workwear.Domain.Stock.Documents
 			if(Operation != IncomeOperations.Enter)
 				throw new InvalidOperationException("Добавление номенклатуры возможно только во входящую накладную. " +
 				                                    "Возвраты должны добавляться с указанием строки выдачи.");
-			var item = ObservableItems
-				.FirstOrDefault(i => i.Nomenclature.Id == nomenclature.Id 
-				                     && i.Height == height && i.WearSize == size && i.Owner == owner);
+			var item = FindItem(nomenclature, size, height, owner);
 			if(item == null) {
 				item = new IncomeItem(this) {
 					Amount = amount,
@@ -232,6 +232,11 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual void RemoveItem(IncomeItem item) {
 			ObservableItems.Remove (item);
 		}
+
+		public virtual IncomeItem FindItem(Nomenclature nomenclature, Size size, Size height, Owner owner) => Items
+			.FirstOrDefault(i => i.Nomenclature.Id == nomenclature.Id
+			                     && i.Height == height && i.WearSize == size && i.Owner == owner);
+		#endregion
 
 		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser) {
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));

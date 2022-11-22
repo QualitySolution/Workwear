@@ -252,9 +252,15 @@ namespace workwear
 		}
 		private void SelectWearSize_SizeSelected(object sender , AddedSizesEventArgs e) {
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
-			e.SizesWithAmount.ToList()
-				.ForEach(i => IncomeDoc
-					.AddItem(e.Source,  i.Key, e.Height, i.Value, item.Certificate, item.Cost, item.Owner));
+			foreach (var i in e.SizesWithAmount.ToList()) {
+				var exist = IncomeDoc.FindItem(e.Source, i.Key, e.Height, item.Owner);
+				if(exist != null)
+					exist.Amount = i.Value;
+				else 
+					IncomeDoc.AddItem(e.Source,  i.Key, e.Height, i.Value, item.Certificate, item.Cost, item.Owner);
+			}
+			if(item.WearSize == null)
+				IncomeDoc.RemoveItem(item);
 			CalculateTotal();
 		}
 	}
