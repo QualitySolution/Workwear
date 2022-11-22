@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -3489,7 +3489,7 @@
                 <property name="Icon">stock:gtk-execute Menu</property>
                 <property name="Label" translatable="yes">Добавить размеры</property>
                 <property name="UseUnderline">True</property>
-                <signal name="Clicked" handler="OnButtonAddSizesCliked" />
+                <signal name="Clicked" handler="OnButtonAddSizesClicked" />
               </widget>
               <packing>
                 <property name="Position">2</property>

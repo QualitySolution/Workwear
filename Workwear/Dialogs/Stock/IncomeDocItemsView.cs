@@ -241,7 +241,7 @@ namespace workwear
 			}
 		}
 
-		private void OnButtonAddSizesCliked(object sender, EventArgs e) {
+		private void OnButtonAddSizesClicked(object sender, EventArgs e) {
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
 			if(item.Nomenclature == null)
 				return;
