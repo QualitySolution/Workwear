@@ -246,8 +246,9 @@ namespace workwear
 			if(item.Nomenclature == null)
 				return;
 
+			var existItems = IncomeDoc.Items.Where(i => i.Nomenclature.IsSame(item.Nomenclature) && i.Owner == item.Owner).ToList();
 			var page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, IncomeItem, IUnitOfWork, IList<IncomeItem>>
-				(null, item, UoW, ytreeItems.ItemsDataSource as IList<IncomeItem>);
+				(null, item, UoW, existItems);
 			page.ViewModel.AddedSizes += SelectWearSize_SizeSelected;
 		}
 		private void SelectWearSize_SizeSelected(object sender , AddedSizesEventArgs e) {
