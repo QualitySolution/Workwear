@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -14166,7 +14166,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Widgets.SizeWidgetView" design-size="208 701">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Widgets.SizeWidgetView" design-size="243 701">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -14176,9 +14176,6 @@
         <property name="NColumns">3</property>
         <property name="RowSpacing">6</property>
         <property name="ColumnSpacing">6</property>
-        <child>
-          <placeholder />
-        </child>
         <child>
           <placeholder />
         </child>
@@ -14292,7 +14289,7 @@
                     <property name="IsTextCombo">False</property>
                     <property name="Items" translatable="yes" />
                     <property name="AddIfNotExist">False</property>
-                    <property name="DefaultFirst">False</property>
+                    <property name="DefaultFirst">True</property>
                   </widget>
                   <packing>
                     <property name="Position">1</property>
@@ -14320,6 +14317,25 @@
             <property name="YExpand">False</property>
             <property name="YFill">True</property>
             <property name="YShrink">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gamma.GtkWidgets.yLabel" id="labelTotal">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Total</property>
+          </widget>
+          <packing>
+            <property name="LeftAttach">1</property>
+            <property name="RightAttach">2</property>
+            <property name="AutoSize">True</property>
+            <property name="XOptions">Fill</property>
+            <property name="YOptions">Fill</property>
+            <property name="XExpand">False</property>
+            <property name="XFill">True</property>
+            <property name="XShrink">False</property>
+            <property name="YExpand">False</property>
+            <property name="YFill">True</property>
+            <property name="YShrink">False</property>
           </packing>
         </child>
       </widget>

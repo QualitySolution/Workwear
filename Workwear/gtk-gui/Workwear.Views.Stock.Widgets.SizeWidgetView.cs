@@ -22,6 +22,8 @@ namespace Workwear.Views.Stock.Widgets
 
 		private global::Gamma.Widgets.yListComboBox GrowthBox;
 
+		private global::Gamma.GtkWidgets.yLabel labelTotal;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -30,6 +32,7 @@ namespace Workwear.Views.Stock.Widgets
 			this.Name = "Workwear.Views.Stock.Widgets.SizeWidgetView";
 			// Container child Workwear.Views.Stock.Widgets.SizeWidgetView.Gtk.Container+ContainerChild
 			this.table1 = new global::Gtk.Table(((uint)(3)), ((uint)(3)), false);
+			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild
@@ -97,7 +100,7 @@ namespace Workwear.Views.Stock.Widgets
 			this.GrowthBox = new global::Gamma.Widgets.yListComboBox();
 			this.GrowthBox.Name = "GrowthBox";
 			this.GrowthBox.AddIfNotExist = false;
-			this.GrowthBox.DefaultFirst = false;
+			this.GrowthBox.DefaultFirst = true;
 			this.GrowthInfoBox.Add(this.GrowthBox);
 			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.GrowthInfoBox[this.GrowthBox]));
 			w9.Position = 1;
@@ -112,6 +115,16 @@ namespace Workwear.Views.Stock.Widgets
 			w11.BottomAttach = ((uint)(2));
 			w11.RightAttach = ((uint)(3));
 			w11.YOptions = ((global::Gtk.AttachOptions)(6));
+			// Container child table1.Gtk.Table+TableChild
+			this.labelTotal = new global::Gamma.GtkWidgets.yLabel();
+			this.labelTotal.Name = "labelTotal";
+			this.labelTotal.LabelProp = global::Mono.Unix.Catalog.GetString("Total");
+			this.table1.Add(this.labelTotal);
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1[this.labelTotal]));
+			w12.LeftAttach = ((uint)(1));
+			w12.RightAttach = ((uint)(2));
+			w12.XOptions = ((global::Gtk.AttachOptions)(4));
+			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.table1);
 			if ((this.Child != null))
 			{
