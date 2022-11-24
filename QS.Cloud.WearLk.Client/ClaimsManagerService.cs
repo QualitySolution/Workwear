@@ -45,18 +45,21 @@ namespace QS.Cloud.WearLk.Client
 		public event EventHandler<ReceiveNeedForResponseCountEventArgs> NeedForResponseCountChanged;
 		private DateTime? FailSince;
 
+		private CancellationTokenSource cancellation;
+		private Task responseReaderTask;
 		public void SubscribeNeedForResponseCount() {
-			SubscribeNeedForResponseCountConnect(new CancellationToken());
+			cancellation = new CancellationTokenSource();
+			SubscribeNeedForResponseCountConnect(cancellation.Token);
 		}
 		private void SubscribeNeedForResponseCountConnect(CancellationToken token)
 		{
 			var client = new ClaimManager.ClaimManagerClient(Channel);
 
 			var request = new NeedForResponseCountRequest();
-			var response = client.NeedForResponseCount(request);
+			var response = client.NeedForResponseCount(request, Headers);
 			//var watcher = new NotificationConnectionWatcher(channel, OnChanalStateChanged);
 
-			var responseReaderTask = Task.Run(async () =>
+			responseReaderTask = Task.Run(async () =>
 				{
 					while(await response.ResponseStream.MoveNext(token))
 					{
@@ -93,8 +96,12 @@ namespace QS.Cloud.WearLk.Client
 		{
 			NeedForResponseCountChanged?.Invoke(this, new ReceiveNeedForResponseCountEventArgs{Count = count});
 		}
-		
 		#endregion
+
+		public override void Dispose() {
+			cancellation.Cancel();
+			base.Dispose();
+		}
 	}
 	
 	public class ReceiveNeedForResponseCountEventArgs : EventArgs
