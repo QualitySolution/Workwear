@@ -4,6 +4,7 @@ using Autofac;
 using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Transform;
+using NPOI.SS.Formula.Functions;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -50,8 +51,9 @@ namespace workwear.Journal.ViewModels.Company {
 				NodeActionsList.Add(setCostCenterAction);
 
 				var listCostCenters = UoW.GetAll<CostCenter>().OrderBy(x => x.Code).ThenBy(x => x.Name).ToList();
+				listCostCenters.Insert(0, null);
 				foreach(CostCenter costCenter in listCostCenters) {
-					var updateCostCenterAction = new JournalAction(costCenter.Title,
+					var updateCostCenterAction = new JournalAction(costCenter?.Title ?? "Очистить",
 						(selected) => selected.Any(),
 						(selected) => true,
 						(selected) => SetCostCenter(selected.Cast<PostJournalNode>().ToArray(), costCenter)
@@ -82,6 +84,7 @@ namespace workwear.Journal.ViewModels.Company {
 				.Left.JoinAlias(x => x.CostCenter, () => costCenterAlias)
 				.Where(GetSearchCriterion(
 					() => postAlias.Name,
+					() => postAlias.Comments,
 					() => departmentAlias.Name,
 					() => subdivisionAlias.Name,
 					() => professionAlias.Name,
@@ -95,6 +98,7 @@ namespace workwear.Journal.ViewModels.Company {
 			query.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
+					.Select(x => x.Comments).WithAlias(() => resultAlias.Comments)
 					.Select(() => professionAlias.Name).WithAlias(() => resultAlias.Profession)
 					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 					.Select(() => departmentAlias.Name).WithAlias(() => resultAlias.Department)
@@ -129,6 +133,7 @@ namespace workwear.Journal.ViewModels.Company {
 		public string Profession { get; set; }
 		public string CostCenterCode { get; set; }
 		public string CostCenterName { get; set; }
+		public string Comments { get; set; }
 
 		public string CostCenterText => String.IsNullOrEmpty(CostCenterCode) ? CostCenterName : $"{CostCenterCode} {CostCenterName}";
 	}

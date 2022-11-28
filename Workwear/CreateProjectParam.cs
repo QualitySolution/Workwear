@@ -62,6 +62,7 @@ using Workwear.Models.Company;
 using Workwear.Models.Import.Employees;
 using Workwear.Models.Import.Issuance;
 using Workwear.Models.Import.Norms;
+using Workwear.Models.Sizes;
 using workwear.Models.Stock;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
@@ -225,12 +226,14 @@ namespace workwear
 			)).As<IGtkViewResolver>();
 			#endregion
 
-			#region Главное окно
+			#region Прогрес бар
 			builder.Register((ctx) => MainWin.ProgressBar).As<IProgressBarDisplayable>().ExternallyOwned();
+			builder.RegisterType<ModalProgressCreator>().AsSelf();
 			#endregion
 
 			#region Размеры
 			builder.RegisterType<SizeService>().AsSelf();
+			builder.RegisterType<SizeTypeReplaceModel>().AsSelf();
 			#endregion
 
 			#region Старые диалоги

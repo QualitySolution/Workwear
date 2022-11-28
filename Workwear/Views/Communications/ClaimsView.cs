@@ -12,16 +12,12 @@ namespace Workwear.Views.Communications
 		public ClaimsView(ClaimsViewModel viewModel) : base(viewModel) 
 		{
 			this.Build();
-
-			yComboStatus.ItemsEnum = typeof(ClaimsViewModel.TranslateClaimState);
-			yComboStatus.Binding
-				.AddSource(ViewModel)
-				.AddBinding(wm => wm.SelectClaimState, w => w.SelectedItemOrNull)
-				.InitializeFromSource();
+			
 			ytreeClaims.ColumnsConfig = ColumnsConfigFactory.Create<Claim>()
-				.AddColumn("Обращение").AddTextRenderer(c => c.Title)
+				.AddColumn("Сотрудник").AddTextRenderer(c => ViewModel.GetEmployeeName(c.UserPhone))
+				.AddColumn("Тема").AddTextRenderer(c => c.Title)
 				.RowCells()
-				.AddSetter<Gtk.CellRendererText>((c, x) => c.Weight = GetWeight(x))
+				.AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = GetClaimColor(x))
 				.Finish();
 			ViewModel.RefreshClaims();
 			ytreeClaims.Binding
@@ -30,7 +26,7 @@ namespace Workwear.Views.Communications
 				.AddBinding(vm => vm.SelectClaim, w=> w.SelectedRow)
 				.InitializeFromSource();
 			ytreeClaimMessages.ColumnsConfig = ColumnsConfigFactory.Create<ClaimMessage>()
-				.AddColumn("Время").AddTextRenderer(c => c.SendTime.ToDateTime().ToString("dd MMM HH:mm:ss"))
+				.AddColumn("Время").AddTextRenderer(c => c.SendTime.ToDateTime().ToLocalTime().ToString("dd MMM HH:mm:ss"))
 				.AddColumn("Автор").AddTextRenderer(c => c.SenderName)
 				.AddColumn("Текст").AddTextRenderer(c => c.Text)
 				.RowCells()
@@ -46,14 +42,13 @@ namespace Workwear.Views.Communications
 			ycheckbuttonShowClosed.Binding
 				.AddBinding(ViewModel, vm => vm.ShowClosed, w => w.Active)
 				.InitializeFromSource();
-			ybuttonSend.Binding
+			buttonAnswer.Binding
 				.AddBinding(ViewModel, vm => vm.SensitiveSend, w => w.Sensitive)
 				.InitializeFromSource();
-			ybuttonChangeStatus.Binding
-				.AddBinding(ViewModel, vm => vm.SensitiveChangeState, w => w.Sensitive)
+			buttonClose.Binding
+				.AddBinding(ViewModel, vm => vm.SensitiveCloseClaim, w => w.Sensitive)
 				.InitializeFromSource();
-			
-			ybuttonSend.Clicked += ViewModel.Send;
+
 			ytreeClaims.Vadjustment.ValueChanged += OnScroll;
 		}
 		
@@ -67,17 +62,25 @@ namespace Workwear.Views.Communications
 			ytreeClaims.Vadjustment.Value = lastPos;
 		}
 
-		private int GetWeight(Claim claim) {
+		private string GetClaimColor(Claim claim) {
 			switch(claim.ClaimState) {
 				case ClaimState.Closed:
-					return 200;
+					return "gray";
 				case ClaimState.WaitSupport:
-					return 600;
+					return "blue";
 				case  ClaimState.WaitUser:
-					return 400;
+					return "black";
 				default:
 					throw new ArgumentException();
 			}
+		}
+
+		protected void OnButtonAnswerClicked(object sender, EventArgs e) {
+			ViewModel.SendAnswer();
+		}
+
+		protected void OnButtonCloseClicked(object sender, EventArgs e) {
+			ViewModel.CloseClaim();
 		}
 	}
 }

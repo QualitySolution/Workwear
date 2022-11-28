@@ -387,7 +387,7 @@ namespace workwear.Journal.ViewModels.Communications
 		public UserStatusInfo StatusInfo;
 
 		public string UnreadMessagesText => StatusInfo?.UnreadMessages > 0 ? StatusInfo.UnreadMessages.ToString() : String.Empty;
-		public string LastVisit => StatusInfo?.LastVisit?.ToDateTime().ToString("g");
+		public string LastVisit => StatusInfo?.LastVisit?.ToDateTime().ToLocalTime().ToString("g");
 		
 		public string StatusText {
 			get {

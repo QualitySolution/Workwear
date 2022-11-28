@@ -25,7 +25,9 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<MessageTemplate>();
 			#endregion
 			#region Организация
-
+			DeleteConfig.AddHibernateDeleteInfo<CostCenter>()
+				.AddClearDependence<Post>(x => x.CostCenter);
+			
 			DeleteConfig.AddHibernateDeleteInfo<Department>()
 				.AddClearDependence<EmployeeCard>(x => x.Department)
 				.AddClearDependence<Post>(x => x.Department);

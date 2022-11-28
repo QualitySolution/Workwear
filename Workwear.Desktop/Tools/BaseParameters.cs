@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
+using System.Reflection;
 using QS.BaseParameters;
 
 namespace Workwear.Tools
@@ -10,7 +12,12 @@ namespace Workwear.Tools
 		/// <summary>
 		/// Используется только для тестов!!!
 		/// </summary>
-		public BaseParameters() { }
+		public BaseParameters() {
+			var exe = Assembly.GetEntryAssembly();
+			if(exe?.ManifestModule.Name == "workwear.exe")
+				throw new InvalidProgramException(
+					$"Использовать пустой конструктор для {nameof(BaseParameters)} можно только в тестах.");
+		}
 		#region Типизированный доступ и дефолтные значения
 		//Ключевое слово virtual у свойств необходимо для возможности подмены в тестах.
 		public virtual bool DefaultAutoWriteoff {

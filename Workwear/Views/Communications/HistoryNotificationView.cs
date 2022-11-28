@@ -24,6 +24,6 @@ namespace Workwear.Views.Communications
                 .InitializeFromSource();
         }
         private string TitleBuild(MessageItem item) => 
-            $"{item.SendTime.ToDateTime():g} {item.SenderName} {(string.IsNullOrEmpty(item.SenderName)? String.Empty : ":")} {item.Title}";
+            $"{item.SendTime.ToDateTime().ToLocalTime():g} {item.SenderName} {(string.IsNullOrEmpty(item.SenderName)? String.Empty : ":")} {item.Title}";
     }
 }

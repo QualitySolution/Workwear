@@ -65,7 +65,8 @@ namespace Workwear.ViewModels.Tools
 		#endregion
 
 		#region Sensetive
-		public bool SensitiveReplaceButton => !InProgress && SourceEntryViewModel.Entity != null && TargetEntryViewModel.Entity != null && TotalLinks > 0;
+		public bool SensitiveReplaceButton => !InProgress && SourceEntryViewModel.Entity != null && TargetEntryViewModel.Entity != null && TotalLinks > 0 
+		                                      && !TargetEntryViewModel.Entity.IsSame(SourceEntryViewModel.Entity);
 		#endregion
 
 		#region Internal

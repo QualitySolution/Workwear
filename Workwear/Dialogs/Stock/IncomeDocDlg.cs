@@ -183,7 +183,7 @@ namespace workwear
 								Name = notFoundNomenclature.Name, 
 								Number = notFoundNomenclature.Article,
 								Type = type,
-								Comment = "Созданно при загрузке поступления из файла"
+								Comment = "Создано при загрузке поступления из файла"
 							};
 							UoW.Save(nomenclature);
 						}
@@ -203,7 +203,6 @@ namespace workwear
 					Entity.AddItem(item.Nomenclature, item.Size, item.Height, item.Amount, null, item.Cost);
 			else
 				interactiveService.ShowMessage(ImportanceLevel.Info, "Указанный файл не содержит строк поступления");
-
 		}
 
 		private string Open1CFile() {

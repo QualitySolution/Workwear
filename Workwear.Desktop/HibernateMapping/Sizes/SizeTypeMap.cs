@@ -18,6 +18,8 @@ namespace Workwear.HibernateMapping.Sizes
             Map(x => x.UseInEmployee).Column("use_in_employee");
             Map(x => x.CategorySizeType).Column("category");
             Map(x => x.Position).Column("position");
+            
+            HasMany(x => x.Sizes).KeyColumn("size_type_id").Inverse().LazyLoad();
         }
     }
 }

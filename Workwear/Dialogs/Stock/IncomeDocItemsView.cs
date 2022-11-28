@@ -241,20 +241,27 @@ namespace workwear
 			}
 		}
 
-		private void OnButtonAddSizesCliked(object sender, EventArgs e) {
+		private void OnButtonAddSizesClicked(object sender, EventArgs e) {
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
 			if(item.Nomenclature == null)
 				return;
 
+			var existItems = IncomeDoc.Items.Where(i => i.Nomenclature.IsSame(item.Nomenclature) && i.Owner == item.Owner).ToList();
 			var page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, IncomeItem, IUnitOfWork, IList<IncomeItem>>
-				(null, item, UoW, ytreeItems.ItemsDataSource as IList<IncomeItem>);
+				(null, item, UoW, existItems);
 			page.ViewModel.AddedSizes += SelectWearSize_SizeSelected;
 		}
 		private void SelectWearSize_SizeSelected(object sender , AddedSizesEventArgs e) {
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
-			e.SizesWithAmount.ToList()
-				.ForEach(i => IncomeDoc
-					.AddItem(e.Source,  i.Key, e.Height, i.Value, item.Certificate, item.Cost, item.Owner));
+			foreach (var i in e.SizesWithAmount.ToList()) {
+				var exist = IncomeDoc.FindItem(e.Source, i.Size, e.Height, item.Owner);
+				if(exist != null)
+					exist.Amount = i.Amount;
+				else 
+					IncomeDoc.AddItem(e.Source,  i.Size, e.Height, i.Amount, item.Certificate, item.Cost, item.Owner);
+			}
+			if(item.WearSize == null)
+				IncomeDoc.RemoveItem(item);
 			CalculateTotal();
 		}
 	}

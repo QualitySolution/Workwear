@@ -43,6 +43,15 @@ namespace Workwear.Domain.Sizes
             get => position;
             set => SetField(ref position, value);
         }
+
+        #region Коллекции
+        private IList<Size> sizes;
+        [Display(Name = "Размеры")]
+        public virtual IList<Size> Sizes {
+	        get => sizes;
+	        set => SetField(ref sizes, value);
+        }
+        #endregion
         #endregion
         #region IValidatableObject implementation
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {

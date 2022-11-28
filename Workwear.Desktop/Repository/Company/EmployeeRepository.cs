@@ -151,6 +151,23 @@ namespace Workwear.Repository.Company
 				, Projections.Constant("Ё"), Projections.Constant("Е"));
 		}
 		#endregion
+
+		#region EmployeeNames
+		public Dictionary<string,FIO> GetFioByPhones(string[] phones) {
+			FIO fioAlias = null;
+
+			return RepoUow.Session.QueryOver<EmployeeCard>()
+				.Where(e => e.PhoneNumber.IsIn(phones))
+				.SelectList(list => list
+					.Select(e => e.PhoneNumber).WithAlias(() => fioAlias.UserData)	
+					.Select(e => e.LastName).WithAlias(() => fioAlias.LastName)
+					.Select(e => e.FirstName).WithAlias(() => fioAlias.FirstName)
+					.Select(e => e.Patronymic).WithAlias(() => fioAlias.Patronymic)
+				).TransformUsing(Transformers.AliasToBean<FIO>())
+				.List<FIO>()
+				.ToDictionary(x => (string)x.UserData, x => x);
+		}
+		#endregion
 	}
 }
 
