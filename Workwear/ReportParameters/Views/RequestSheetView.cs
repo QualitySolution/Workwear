@@ -1,26 +1,33 @@
 ﻿using System;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
+using QS.Utilities;
+using QS.Utilities.Text;
 using QS.Views;
-using Workwear.Domain.Stock;
 using workwear.ReportParameters.ViewModels;
+using Workwear.Domain.Stock;
 
-namespace workwear.ReportParameters.Views
-{
+namespace workwear.ReportParameters.Views {
 	public partial class RequestSheetView : ViewBase<RequestSheetViewModel>
 	{
 		public RequestSheetView(RequestSheetViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
-			labelPeriodType.Binding.AddBinding(ViewModel, v => v.PeriodLabel, w => w.LabelProp).InitializeFromSource();
-			comboQuarter.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.PeriodList, w => w.ItemsList)
-				.AddBinding(v => v.SelectedPeriod, w => w.SelectedItem)
-				.InitializeFromSource();
-			ViewModel.PeriodType = PeriodType.Month;
+
 			yenumIssueType.ItemsEnum = typeof(IssueType);
 			yenumIssueType.Binding.AddBinding(ViewModel, v => v.IssueTypeOptions, w => w.SelectedItemOrNull).InitializeFromSource();
+
+			spinStartYear.Binding.AddBinding(ViewModel, v => v.BeginYear, w => w.ValueAsInt).InitializeFromSource();
+			spinEndYear.Binding.AddBinding(ViewModel, v => v.EndYear, w => w.ValueAsInt).InitializeFromSource();
+
+			comboStartMonth.SetRenderTextFunc<int>(x => DateHelper.GetMonthName(x).StringToTitleCase());
+			comboStartMonth.ItemsList = Enumerable.Range(1, 12);
+			comboStartMonth.Binding.AddBinding(ViewModel, v => v.BeginMonth, w => w.SelectedItem).InitializeFromSource();
+
+			comboEndMonth.SetRenderTextFunc<int>(x => DateHelper.GetMonthName(x).StringToTitleCase());
+			comboEndMonth.ItemsList = Enumerable.Range(1, 12);
+			comboEndMonth.Binding.AddBinding(ViewModel, v => v.EndMonth, w => w.SelectedItem).InitializeFromSource();
 
 			ytreeNomenclature.CreateFluentColumnsConfig<SelectedProtectionTools>()
 				.AddColumn("🗹").AddToggleRenderer(x => x.Select).Editing()
@@ -38,29 +45,13 @@ namespace workwear.ReportParameters.Views
 			ycheckExcludeInVacation.Binding
 				.AddBinding(viewModel, w => w.ExcludeInVacation, v => v.Active)
 				.InitializeFromSource();
+
+			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveRunReport, w => w.Sensitive).InitializeFromSource();
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)
 		{
 			ViewModel.LoadReport();
-		}
-
-		protected void OnRadioMonthToggled(object sender, EventArgs e)
-		{
-			if (radioMonth.Active)
-				ViewModel.PeriodType = PeriodType.Month;
-		}
-
-		protected void OnRadioQuarterToggled(object sender, EventArgs e)
-		{
-			if (radioQuarter.Active)
-				ViewModel.PeriodType = PeriodType.Quarter;
-		}
-
-		protected void OnRadioYearToggled(object sender, EventArgs e)
-		{
-			if (radioYear.Active)
-				ViewModel.PeriodType = PeriodType.Year;
 		}
 
 		protected void SelectAll(object sender, EventArgs e)

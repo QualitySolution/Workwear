@@ -32,10 +32,7 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>41.3pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>236.5pt</Width>
+            <Width>250.5pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>25.8pt</Width>
@@ -44,19 +41,19 @@
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>41.8pt</Width>
+            <Width>52.2pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>62.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>48.4pt</Width>
+            <Width>61.1pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>25.7pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>38.5pt</Width>
+            <Width>40.9pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>55.5pt</Width>
@@ -67,24 +64,6 @@
             <TableRow>
               <Height>25.5pt</Height>
               <TableCells>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox1">
-                      <Value>№</Value>
-                      <Style>
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox13">
@@ -175,7 +154,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox31">
                       <Value>Ед.</Value>
@@ -243,23 +222,6 @@
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox2">
-                      <Value>=RowNumber()</Value>
-                      <CanGrow>true</CanGrow>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
                     <Textbox Name="Textbox14">
                       <Value>=Fields!protection_tools_name.Value</Value>
                       <Style>
@@ -292,7 +254,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox10">
-                      <Value>={size}</Value>
+                      <Value>=Iif(Fields!size.IsMissing and not Fields!sizeTypeId.IsMissing, 'не указан', {size})</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -302,13 +264,14 @@
                         <TextAlign>Center</TextAlign>
                         <VerticalAlign>Middle</VerticalAlign>
                       </Style>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox8">
-                      <Value>={growth}</Value>
+                      <Value>=Iif((Fields!growth.IsMissing and not Fields!heightTypeId.IsMissing), 'не указан', {growth})</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -338,7 +301,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox32">
                       <Value>={unit}</Value>
@@ -375,7 +338,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox54">
-                      <Value>={in_stock}</Value>
+                      <Value>=Iif(Fields!in_stock.IsMissing, 0, {in_stock})</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -410,31 +373,15 @@
               <RepeatOnNewPage>false</RepeatOnNewPage>
               <TableRows>
                 <TableRow>
-                  <Height>.2in</Height>
+                  <Height>13.7pt</Height>
                   <TableCells>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox6">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Right>None</Right>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                          </Style>
-                          <Value>
-                          </Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox11">
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
-                              <Left>None</Left>
+                              <Left>Solid</Left>
                               <Right>None</Right>
                             </BorderStyle>
                             <BorderColor />
@@ -473,27 +420,12 @@
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
+                            <TextAlign >Right</TextAlign>
                           </Style>
-                          <Value>
-                          </Value>
+                          <Value>Всего по номеклатуре:</Value>
                         </Textbox>
                       </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox15">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Left>None</Left>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <TextAlign>Right</TextAlign>
-                          </Style>
-                          <Value>Всего:</Value>
-                        </Textbox>
-                      </ReportItems>
+                      <ColSpan >2</ColSpan>
                     </TableCell>
                     <TableCell>
                       <ReportItems>
@@ -511,7 +443,7 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox34">
                           <Value>
@@ -584,24 +516,14 @@
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox21">
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                      </Style>
-                      <Value>
-                      </Value>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
                     <Textbox Name="Textbox22">
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Right >None</Right>
                         </BorderStyle>
+                        <BorderColor  />
+                        <BorderWidth  />
                       </Style>
                       <Value>
                       </Value>
@@ -614,7 +536,11 @@
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Right >None</Right>
+                          <Left >None</Left>
                         </BorderStyle>
+                        <BorderColor  />
+                        <BorderWidth  />
                       </Style>
                       <Value>
                       </Value>
@@ -627,27 +553,17 @@
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Right >None</Right>
+                          <Left >None</Left>
                         </BorderStyle>
-                      </Style>
-                      <Value>
-                      </Value>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox25">
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Right</TextAlign>
+                        <BorderColor  />
+                        <BorderWidth  />
+                        <TextAlign >Right</TextAlign>
                       </Style>
                       <Value>Общий итог:</Value>
                     </Textbox>
                   </ReportItems>
+                  <ColSpan >2</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
@@ -658,12 +574,13 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign >Center</TextAlign>
                       </Style>
                       <Value>=Sum({protection_tools_assessed_cost})</Value>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox33">
                       <Value>
@@ -685,9 +602,11 @@
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
+                        <BorderColor  />
+                        <BorderWidth  />
+                        <TextAlign >Center</TextAlign>
                       </Style>
-                      <Value>
-                      </Value>
+                      <Value>=Sum({amount})</Value>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -744,40 +663,45 @@
     protection_tools.assessed_cost * SUM(norms_item.amount) AS protection_tools_assessed_cost,
     wear_cards_item.protection_tools_id,
     wear_cards.sex,
+    sizeTypeAlias.id as sizeTypeId,
+    heightTypeAlias.id as heightTypeId,
     sizeAlias.name AS size,
 	heightAlias.name AS growth,
-measurement_units.name AS unit,
-SUM(norms_item.amount) AS amount,
-(
-    SELECT
-        (
-            SUM(
-                CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
-            END
-        ) - SUM(
-            CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
-        END
-)
-) AS SUM
-FROM
-    operation_warehouse
-WHERE
-    operation_warehouse.operation_time &lt;= CONVERT(@report_date, DATE) AND operation_warehouse.nomenclature_id IN(
-    SELECT
-        protection_tools_nomenclature.nomenclature_id
-    FROM
-        protection_tools_nomenclature
-    WHERE
-        protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id OR protection_tools_nomenclature.protection_tools_id IN(
+    measurement_units.name AS unit,
+    SUM(norms_item.amount) AS amount,
+    (
         SELECT
-            protection_tools_replacement.protection_tools_analog_id
-        FROM
-            protection_tools_replacement
-        WHERE
-            protection_tools_replacement.protection_tools_id = wear_cards_item.protection_tools_id
+            (
+                SUM(
+                    CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+                END
+            ) - SUM(
+                CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+            END
     )
-)
-) AS in_stock
+    ) AS SUM
+    FROM
+        operation_warehouse
+    WHERE
+        operation_warehouse.operation_time &lt;= CONVERT(@report_date, DATE) AND operation_warehouse.nomenclature_id IN(
+        SELECT
+            protection_tools_nomenclature.nomenclature_id
+        FROM
+            protection_tools_nomenclature
+        JOIN nomenclature n ON n.id = protection_tools_nomenclature.nomenclature_id
+        WHERE
+            (@show_sex = 0 OR n.sex = 'Universal' OR (n.sex = 'Men' AND wear_cards.sex = 'M') OR (n.sex = 'Women' AND wear_cards.sex = 'F'))
+            AND protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id OR protection_tools_nomenclature.protection_tools_id IN(
+            SELECT
+                protection_tools_replacement.protection_tools_analog_id
+            FROM
+                protection_tools_replacement
+            WHERE
+                protection_tools_replacement.protection_tools_id = wear_cards_item.protection_tools_id
+        ))
+        AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
+        AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
+    ) AS in_stock
 FROM
     wear_cards_item
 JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
@@ -867,6 +791,14 @@ ORDER BY
           <DataField>protection_tools_assessed_cost</DataField>
           <TypeName>System.Decimal</TypeName>
         </Field>
+        <Field Name="sizeTypeId">
+          <DataField>sizeTypeId</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
+        <Field Name="heightTypeId">
+          <DataField>heightTypeId</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="One">
@@ -891,7 +823,7 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
@@ -947,7 +879,8 @@ ORDER BY
       <Nullable>false</Nullable>
       <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt>
+      </Prompt>
     </ReportParameter>
   </ReportParameters>
 </Report>
