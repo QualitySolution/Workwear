@@ -113,6 +113,7 @@ namespace Workwear.Test.Sql
 		{
 			StartSqlServer(server);
 			//Создаем чистую базу
+			TestContext.Progress.WriteLine($"Создаем чистую базу {currentDdName} на сервере {server.Name}");
 			var creator = new TestingCreateDbController(server);
 			var success = creator.StartCreation(ScriptsConfiguration.MakeCreationScript(), currentDdName);
 			Assert.That(success, Is.True);

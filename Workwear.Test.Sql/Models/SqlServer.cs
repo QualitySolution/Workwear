@@ -58,7 +58,7 @@ namespace QS.DBScripts.Models
 		
 		public void Stop()
 		{
-			RunCommand(CommandStop, false);
+			RunCommand(CommandStop, true);
 		}
 
 		private void RunCommand(string command, bool wait)
@@ -72,8 +72,11 @@ namespace QS.DBScripts.Models
 			var args = parts.Length > 1 ? parts[1] : null;
 			
 			var process = System.Diagnostics.Process.Start(filename, args);
-			if (wait)
+			if(wait) {
 				process?.WaitForExit();
+				if(process?.ExitCode != 0)
+					Console.WriteLine($"Ошибка выполнения команды: {process?.ExitCode}");
+			}
 		}
 		#endregion
 		
