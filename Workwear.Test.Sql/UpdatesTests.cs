@@ -15,6 +15,8 @@ using Workwear.Sql;
 
 namespace Workwear.Test.Sql
 {
+	[TestFixture]
+	[NonParallelizable]
 	public class UpdatesTests
 	{
 		private static readonly string currentDdName = "workwear_sqltest_current";
@@ -125,6 +127,7 @@ namespace Workwear.Test.Sql
 			if(RunningServer != null) {
 				TestContext.Progress.WriteLine($"Останавливаем сервер {RunningServer.Name}");
 				RunningServer.Stop();
+				RunningServer = null;
 			}
 			TestContext.Progress.WriteLine($"Запускаем сервер {server.Name}");
 			server.Start();
