@@ -35,7 +35,7 @@ namespace QS.DBScripts.Models
 			var connect = new MySqlConnection(conStr);
 			var endTime = DateTime.Now.AddSeconds(waitingConnection);
 			
-			Console.WriteLine($"Connecting to {Name}");
+			Console.Write($"Connecting to {Name}");
 			//Ниже пробуем подключится в течении какого то времени. Так как после выполнения команды запуска, серверу
 			//обычно требуется какое то время, прежде чем к нему может быть возможно подключится.
 			while (true)

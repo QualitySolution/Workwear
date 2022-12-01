@@ -49,6 +49,7 @@ namespace Workwear.Test.Sql
 			
 			//Создаем чистую базу
 			StartSqlServer(server);
+			TestContext.Progress.WriteLine($"Создаем базу {sample.DbName}");
 			var creator = new TestingCreateDbController(server);
 			var success = creator.StartCreation(sample);
 			Assert.That(success, Is.True);
@@ -121,8 +122,11 @@ namespace Workwear.Test.Sql
 		{
 			if(server.Equals(RunningServer))
 				return;
-			if(RunningServer != null)
+			if(RunningServer != null) {
+				TestContext.Progress.WriteLine($"Останавливаем сервер {RunningServer.Name}");
 				RunningServer.Stop();
+			}
+			TestContext.Progress.WriteLine($"Запускаем сервер {server.Name}");
 			server.Start();
 			RunningServer = server;
 		}
@@ -132,6 +136,7 @@ namespace Workwear.Test.Sql
 		{
 			if(RunningServer != null)
 				RunningServer.Stop();
+			RunningServer = null;
 		}
 		
 		#endregion
