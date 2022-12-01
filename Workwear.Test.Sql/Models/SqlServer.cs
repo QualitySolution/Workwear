@@ -8,7 +8,7 @@ namespace QS.DBScripts.Models
 {
 	public class SqlServer
 	{
-		private static int waitingConnection = 30; //Seconds
+		private static int waitingConnection = 60; //Seconds
 		public string Name { get; set; }
 		public string Address { get; set; }
 		public uint Port { get; set; }
@@ -35,7 +35,7 @@ namespace QS.DBScripts.Models
 			var connect = new MySqlConnection(conStr);
 			var endTime = DateTime.Now.AddSeconds(waitingConnection);
 			
-			Console.Write($"Connecting to {Name}");
+			Console.WriteLine($"Connecting to {Name}");
 			//Ниже пробуем подключится в течении какого то времени. Так как после выполнения команды запуска, серверу
 			//обычно требуется какое то время, прежде чем к нему может быть возможно подключится.
 			while (true)
@@ -52,7 +52,7 @@ namespace QS.DBScripts.Models
 
 				if (DateTime.Now > endTime)
 					Assert.Fail($"Не удалось подключится к серверу {Name} за {waitingConnection} секунд.");
-				Thread.Sleep(300);
+				Thread.Sleep(500);
 			}
 		}
 		
@@ -65,6 +65,8 @@ namespace QS.DBScripts.Models
 		{
 			if(String.IsNullOrEmpty(command))
 				return;
+			
+			Console.WriteLine($"Run command: " + command);
 			var parts = command.Split(' ', 2);
 			var filename = parts.First();
 			var args = parts.Length > 1 ? parts[1] : null;
