@@ -38,7 +38,8 @@ namespace Workwear.ViewModels.Stock.Widgets
 			this.uoW = uoW;
 			ExistItems = existItems;
 			ConfigureSizes();
-			Height = selectItem.Height ?? WearHeights.First();
+			height = selectItem.Height ?? WearHeights?.FirstOrDefault();
+			UpdateAmounts();
 		}
 
 		/// <summary>
@@ -59,7 +60,7 @@ namespace Workwear.ViewModels.Stock.Widgets
 		}
 
 		void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
-			OnPropertyChanged(nameof(SensetiveAddButton));
+			OnPropertyChanged(nameof(SensitiveAddButton));
 			OnPropertyChanged(nameof(TotalText));
 		}
 
@@ -69,15 +70,12 @@ namespace Workwear.ViewModels.Stock.Widgets
 			get => height;
 			set {
 				if(SetField(ref height, value)) {
-					foreach(var item in SizeItems) {
-						if(!item.IsUsed)
-							item.Amount = ExistItems.Where(x => x.Height == Height && x.WearSize == item.Size).Select(x => x.Amount).FirstOrDefault();
-					}
+					UpdateAmounts();
 				}
 			}
 		}
 
-		public bool SensetiveAddButton => SizeItems.Any(x => x.IsUsed && x.Amount > 0);
+		public bool SensitiveAddButton => SizeItems.Any(x => x.IsUsed && x.Amount > 0);
 		public string TotalText => $"Размеров выбрано: {SizeItems.Count(x => x.IsUsed)}\nКоличество итого: {SizeItems.Where(x => x.IsUsed).Sum(x => x.Amount)}";
 		#endregion
 
@@ -89,6 +87,16 @@ namespace Workwear.ViewModels.Stock.Widgets
 			var args = new AddedSizesEventArgs(nomenclature, Height, SizeItems.Where(x => x.IsUsed).ToList());
 			AddedSizes(this, args);
 			Close(false, CloseSource.Save);
+		}
+		#endregion
+
+		#region private
+
+		private void UpdateAmounts() {
+			foreach(var item in SizeItems) {
+				if(!item.IsUsed)
+					item.Amount = ExistItems.Where(x => x.Height == Height && x.WearSize == item.Size).Select(x => x.Amount).FirstOrDefault();
+			}
 		}
 		#endregion
 	}
