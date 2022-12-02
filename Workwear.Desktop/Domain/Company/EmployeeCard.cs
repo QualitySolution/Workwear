@@ -317,6 +317,10 @@ namespace Workwear.Domain.Company
 		#endregion
 		#region Функции для работы с коллекцией норм
 		public virtual void AddUsedNorm(Norm norm) {
+			if(norm == null) {
+				logger.Warn ("Попытка добавить null вместо нормы! Ай-Ай-Ай!");
+				return;
+			}
 			if(UsedNorms.Any (p => DomainHelper.EqualDomainObjects (p, norm))) {
 				logger.Warn ("Такая норма уже добавлена. Пропускаем...");
 				return;
