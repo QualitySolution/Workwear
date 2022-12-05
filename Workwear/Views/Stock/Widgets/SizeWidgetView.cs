@@ -16,7 +16,7 @@ namespace Workwear.Views.Stock.Widgets {
 
 		private void ConfigureDlg() {
 			labelTotal.Binding.AddBinding(ViewModel, v => v.TotalText, w => w.LabelProp).InitializeFromSource();
-			AddButton.Binding.AddBinding(ViewModel, v => v.SensetiveAddButton, w => w.Sensitive).InitializeFromSource();
+			AddButton.Binding.AddBinding(ViewModel, v => v.SensitiveAddButton, w => w.Sensitive).InitializeFromSource();
 			if(ViewModel.IsUseHeight) {
 				GrowthBox.SetRenderTextFunc<Size>(s => s.Name);
 				GrowthBox.ItemsList = ViewModel.WearHeights;

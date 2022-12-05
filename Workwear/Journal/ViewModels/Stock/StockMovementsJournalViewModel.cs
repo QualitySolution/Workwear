@@ -216,6 +216,7 @@ namespace workwear.Journal.ViewModels.Stock
 					//Ссылки
 					.Select(() => expenseItemAlias.Id).WithAlias(() => resultAlias.ExpenceItemId)
 					.Select(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenceId)
+					.Select(() => expenseAlias.Operation).WithAlias(() => resultAlias.ExpenseOperation)
 					.Select(() => collectiveExpenseItemAlias.Id).WithAlias(() => resultAlias.CollectiveExpenseItemId)
 					.Select(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
 					.Select(() => incomeItemAlias.Id).WithAlias(() => resultAlias.IncomeItemId)
