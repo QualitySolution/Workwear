@@ -15,6 +15,8 @@ using Workwear.Sql;
 
 namespace Workwear.Test.Sql
 {
+	[TestFixture]
+	[NonParallelizable]
 	public class UpdatesTests
 	{
 		private static readonly string currentDdName = "workwear_sqltest_current";
@@ -49,6 +51,7 @@ namespace Workwear.Test.Sql
 			
 			//Создаем чистую базу
 			StartSqlServer(server);
+			TestContext.Progress.WriteLine($"Создаем базу {sample.DbName}");
 			var creator = new TestingCreateDbController(server);
 			var success = creator.StartCreation(sample);
 			Assert.That(success, Is.True);
@@ -110,6 +113,7 @@ namespace Workwear.Test.Sql
 		{
 			StartSqlServer(server);
 			//Создаем чистую базу
+			TestContext.Progress.WriteLine($"Создаем чистую базу {currentDdName} на сервере {server.Name}");
 			var creator = new TestingCreateDbController(server);
 			var success = creator.StartCreation(ScriptsConfiguration.MakeCreationScript(), currentDdName);
 			Assert.That(success, Is.True);
@@ -121,8 +125,12 @@ namespace Workwear.Test.Sql
 		{
 			if(server.Equals(RunningServer))
 				return;
-			if(RunningServer != null)
+			if(RunningServer != null) {
+				TestContext.Progress.WriteLine($"Останавливаем сервер {RunningServer.Name}");
 				RunningServer.Stop();
+				RunningServer = null;
+			}
+			TestContext.Progress.WriteLine($"Запускаем сервер {server.Name}");
 			server.Start();
 			RunningServer = server;
 		}
@@ -132,6 +140,7 @@ namespace Workwear.Test.Sql
 		{
 			if(RunningServer != null)
 				RunningServer.Stop();
+			RunningServer = null;
 		}
 		
 		#endregion
