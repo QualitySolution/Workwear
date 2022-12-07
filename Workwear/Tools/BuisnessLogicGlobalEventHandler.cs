@@ -41,7 +41,7 @@ namespace workwear.Tools
 					var end = employeeGroup.Max(x => (DateTime)x.GetOldValue<EmployeeVacation>(e => e.EndDate));
 					var employee = uow.GetById<EmployeeCard>(employeeGroup.Key);
 
-					employee.RecalculateDatesOfIssueOperations(uow, new Repository.Operations.EmployeeIssueRepository(), baseParameters, InteractiveQuestion, start, end);
+					employee?.RecalculateDatesOfIssueOperations(uow, new Repository.Operations.EmployeeIssueRepository(), baseParameters, InteractiveQuestion, start, end);
 				}
 				uow.Commit();
 			}
