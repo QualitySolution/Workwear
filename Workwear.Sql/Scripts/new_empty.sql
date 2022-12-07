@@ -54,12 +54,19 @@ CREATE TABLE IF NOT EXISTS `objects` (
   `address` TEXT NULL DEFAULT NULL,
   `name` VARCHAR(240) NOT NULL,
   `warehouse_id` INT UNSIGNED NULL DEFAULT NULL,
+  `parent_object_id` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_objects_1_idx` (`warehouse_id` ASC),
+  INDEX `fk_objects_2_idx` (`parent_object_id` ASC),
   CONSTRAINT `fk_objects_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
     ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_objects_2`
+    FOREIGN KEY (`parent_object_id`)
+    REFERENCES `objects` (`id`)
+    ON DELETE SET NULL
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
@@ -147,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `wear_cards` (
   `post_id` INT UNSIGNED NULL DEFAULT NULL,
   `leader_id` INT UNSIGNED NULL DEFAULT NULL,
   `sex` ENUM('F','M') NULL DEFAULT NULL,
-  `fill_date` DATE NULL DEFAULT NULL,
+  `birth_date` DATE NULL DEFAULT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `wear_growth` VARCHAR(10) NULL DEFAULT NULL,
   `size_wear` VARCHAR(10) NULL DEFAULT NULL,
@@ -271,6 +278,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `size_std` VARCHAR(20) NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `number` INT UNSIGNED NULL DEFAULT NULL,
+  `archival` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `fk_nomenclature_type_idx` (`type_id` ASC),
   CONSTRAINT `fk_nomenclature_type`
@@ -281,6 +289,80 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `history_changeset`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `history_changeset` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+  `user_login` VARCHAR(50) NULL DEFAULT NULL,
+  `action_name` VARCHAR(100) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_history_changeset_1_idx` (`user_id` ASC),
+  INDEX `history_changeset_login_idx` (`user_login` ASC),
+  CONSTRAINT `fk_history_changeset_1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1;
+
+
+-- -----------------------------------------------------
+-- Table `history_changed_entities`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `history_changed_entities` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `changeset_id` INT(10) UNSIGNED NOT NULL,
+  `datetime` DATETIME NOT NULL,
+  `operation` ENUM('Create', 'Change', 'Delete') NOT NULL,
+  `entity_class` VARCHAR(45) NOT NULL,
+  `entity_id` INT(10) UNSIGNED NOT NULL,
+  `entity_title` VARCHAR(200) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `ix_changeset_operation` (`operation` ASC),
+  INDEX `fk_history_changed_entities_1_idx` (`changeset_id` ASC),
+  INDEX `history_changed_entities_datetime_IDX` USING BTREE (`datetime`),
+  INDEX `history_changed_entities_entity_class_IDX` USING BTREE (`entity_class`),
+  INDEX `history_changed_entities_entity_id_IDX` USING BTREE (`entity_id`),
+  CONSTRAINT `fk_history_changed_entities_1`
+    FOREIGN KEY (`changeset_id`)
+    REFERENCES `history_changeset` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1;
+
+
+-- -----------------------------------------------------
+-- Table `history_changes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `history_changes` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `changed_entity_id` INT(10) UNSIGNED NOT NULL,
+  `type` ENUM('Added', 'Changed', 'Removed', 'Unchanged') NOT NULL DEFAULT 'Unchanged',
+  `field_name` VARCHAR(80) NOT NULL,
+  `old_value` TEXT NULL DEFAULT NULL,
+  `old_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+  `new_value` TEXT NULL DEFAULT NULL,
+  `new_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_change_entity_id_idx` (`changed_entity_id` ASC),
+  INDEX `index_changesets_path` (`field_name` ASC),
+  INDEX `history_changes_old_id_IDX` USING BTREE (`old_id`),
+  INDEX `history_changes_new_id_IDX` USING BTREE (`new_id`),
+  INDEX `history_changes_old_value_IDX` USING BTREE (`old_value`(100)),
+  INDEX `history_changes_new_value_IDX` USING BTREE (`new_value`(100)),
+  CONSTRAINT `fk_change_entity_id`
+    FOREIGN KEY (`changed_entity_id`)
+    REFERENCES `history_changed_entities` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1;
 
 
 -- -----------------------------------------------------
@@ -296,6 +378,7 @@ CREATE TABLE IF NOT EXISTS `stock_income` (
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `object_id` INT UNSIGNED NULL,
   `comment` TEXT NULL DEFAULT NULL,
+  `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_income_wear_card_idx` (`wear_card_id` ASC),
   INDEX `fk_stock_income_user_idx` (`user_id` ASC),
@@ -450,6 +533,8 @@ CREATE TABLE IF NOT EXISTS `norm_conditions` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `sex` ENUM('ForAll', 'OnlyMen', 'OnlyWomen') NOT NULL DEFAULT 'ForAll',
+  `issuance_start` DATETIME NULL DEFAULT NULL,
+  `issuance_end` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -697,6 +782,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off` (
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL,
   `comment` TEXT NULL DEFAULT NULL,
+  `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_write_off_user_idx` (`user_id` ASC),
   CONSTRAINT `fk_stock_write_off_user`
@@ -722,6 +808,7 @@ CREATE TABLE IF NOT EXISTS `stock_expense` (
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `write_off_doc` INT UNSIGNED NULL DEFAULT NULL,
+  `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_expense_wear_card_idx` (`wear_card_id` ASC),
   INDEX `fk_stock_expense_user_idx` (`user_id` ASC),
@@ -954,6 +1041,7 @@ CREATE TABLE IF NOT EXISTS `wear_cards_item` (
   `last_issue` DATE NULL,
   `next_issue` DATE NULL,
   `amount` INT NOT NULL DEFAULT 0,
+  `next_issue_annotation` VARCHAR(240) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_wear_cards_item_1_idx` (`wear_card_id` ASC),
   INDEX `fk_wear_cards_item_3_idx` (`norm_item_id` ASC),
@@ -1082,6 +1170,7 @@ CREATE TABLE IF NOT EXISTS `stock_mass_expense` (
   `warehouse_id` INT UNSIGNED NOT NULL DEFAULT 1,
   `user_id` INT UNSIGNED NOT NULL,
   `comment` TEXT NULL,
+  `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_mass_sending_document_1_idx` (`user_id` ASC),
   INDEX `fk_stock_mass_expense_warehouse_idx` (`warehouse_id` ASC),
@@ -1107,6 +1196,7 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
+  `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_expense_user_idx` (`user_id` ASC),
   INDEX `fk_stock_expense_1_idx` (`warehouse_id` ASC),
@@ -1398,6 +1488,7 @@ CREATE TABLE IF NOT EXISTS `stock_transfer` (
   `date` DATETIME NOT NULL,
   `user_id` INT(10) UNSIGNED NULL,
   `comment` TEXT NULL,
+  `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   INDEX `fk_stock_transfer_1_idx` (`warehouse_from_id` ASC),
@@ -1508,6 +1599,85 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `stock_completion`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `stock_completion` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `date` DATE NOT NULL,
+  `user_id` INT UNSIGNED NULL DEFAULT NULL,
+  `warehouse_receipt_id` INT UNSIGNED NULL DEFAULT NULL,
+  `comment` TEXT NULL DEFAULT NULL,
+  `warehouse_expense_id` INT UNSIGNED NULL DEFAULT NULL,
+  `creation_date` DATETIME NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_stock_completion_user_id_idx` (`user_id` ASC),
+  INDEX `fk_stock_completion_warehouse_receipt_idx` (`warehouse_receipt_id` ASC),
+  INDEX `fk_stock_completion_warehouse_expense_idx` (`warehouse_expense_id` ASC),
+  CONSTRAINT `fk_stock_completion_user_id`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stock_completion_warehouse_receipt`
+    FOREIGN KEY (`warehouse_receipt_id`)
+    REFERENCES `warehouse` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stock_completion_warehouse_expense`
+    FOREIGN KEY (`warehouse_expense_id`)
+    REFERENCES `warehouse` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `stock_completion_source_item`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `stock_completion_source_item` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `stock_completion_id` INT UNSIGNED NOT NULL,
+  `warehouse_operation_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_stock_completion_id_idx` (`stock_completion_id` ASC),
+  INDEX `fk_stock_completion_detail_operation_idx` (`warehouse_operation_id` ASC),
+  CONSTRAINT `fk_source_stock_completion_id`
+    FOREIGN KEY (`stock_completion_id`)
+    REFERENCES `stock_completion` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_source_stock_completion_detail_operation`
+    FOREIGN KEY (`warehouse_operation_id`)
+    REFERENCES `operation_warehouse` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `stock_completion_result_item`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `stock_completion_result_item` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `stock_completion_id` INT UNSIGNED NOT NULL,
+  `warehouse_operation_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_stock_completion_id_idx` (`stock_completion_id` ASC),
+  INDEX `fk_stock_completion_detail_operation_idx` (`warehouse_operation_id` ASC),
+  CONSTRAINT `fk_result_stock_completion_id`
+    FOREIGN KEY (`stock_completion_id`)
+    REFERENCES `stock_completion` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_result_stock_completion_result_operation`
+    FOREIGN KEY (`warehouse_operation_id`)
+    REFERENCES `operation_warehouse` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- function count_issue
 -- -----------------------------------------------------
 
@@ -1548,7 +1718,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.6.1');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.7');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;
@@ -1567,10 +1737,10 @@ COMMIT;
 -- Data for table `measurement_units`
 -- -----------------------------------------------------
 START TRANSACTION;
-INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (1, 'шт.', 0, '796');
-INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (2, 'пара', 0, '715');
-INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (3, 'компл.', 0, '839');
-INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (4, 'набор', 0, '704');
+INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (DEFAULT, 'шт.', 0, '796');
+INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (DEFAULT, 'пара', 0, '715');
+INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (DEFAULT, 'компл.', 0, '839');
+INSERT INTO `measurement_units` (`id`, `name`, `digits`, `okei`) VALUES (DEFAULT, 'набор', 0, '704');
 
 COMMIT;
 
