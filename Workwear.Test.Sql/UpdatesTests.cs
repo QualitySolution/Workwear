@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Dapper;
 using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
 using Microsoft.Extensions.Configuration;
@@ -147,6 +148,9 @@ namespace Workwear.Test.Sql
 		#region Compare DB
 		private void ComparisonSchema(MySqlConnection connection, string db1, string db2) {
 			TestContext.Progress.WriteLine($"Сравниваем схемы базы {db1} и {db2}.");
+			var versionDb1 = GetVersion(connection, db1);
+			var versionDb2 = GetVersion(connection, db2);
+			Assert.That(versionDb1, Is.EqualTo(versionDb2), "Версии у баз различаются.");
 			string schema1 = GetSchema(connection, db1);
 			string schema2 = GetSchema(connection, db2);
 
@@ -185,6 +189,11 @@ namespace Workwear.Test.Sql
 			Assert.That(schema1, Is.EqualTo(schema2));
 		}
 
+		private string GetVersion(MySqlConnection connection, string db) {
+			var sql = $"SELECT `str_value` FROM {db}.`base_parameters` WHERE `name` = 'version';";
+			return (string)connection.ExecuteScalar(sql);
+		}
+		
 		private string GetSchema(MySqlConnection connection, string db)
 		{
 			TestContext.Progress.WriteLine($"Чтение схемы {db}...");
