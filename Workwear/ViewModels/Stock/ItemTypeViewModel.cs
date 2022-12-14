@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -66,7 +67,7 @@ namespace Workwear.ViewModels.Stock
 			if(!Validate())
 				return false;
 			//Обрабатываем размеры
-			if(!UoW.IsNew && (lastSizeType != null || lastHeightType != null)) {
+			if(!UoW.IsNew && ((lastSizeType != null && !lastSizeType.IsSame(Entity.SizeType)) || (lastHeightType != null && !lastHeightType.IsSame(Entity.HeightType)))) {
 				if(!sizeTypeReplaceModel.TryReplaceSizes(UoW, interactive, progressCreator, Entity.Nomenclatures.ToArray(), lastSizeType, Entity.SizeType, lastHeightType, Entity.HeightType))
 					return false;
 			}
