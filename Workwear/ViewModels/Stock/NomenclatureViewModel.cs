@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Autofac;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -98,7 +99,7 @@ namespace Workwear.ViewModels.Stock
 			if(!Validate())
 				return false;
 			//Обрабатываем размеры
-			if(!UoW.IsNew && (lastSizeType != null || lastHeightType != null)) {
+			if(!UoW.IsNew && ((lastSizeType != null && !lastSizeType.IsSame(Entity.Type.SizeType)) || (lastHeightType != null && !lastHeightType.IsSame(Entity.Type.HeightType)))) {
 				if(!sizeTypeReplaceModel.TryReplaceSizes(UoW, interactive, progressCreator, new []{Entity}, lastSizeType, Entity.Type.SizeType, lastHeightType, Entity.Type.HeightType))
 					return false;
 			}
