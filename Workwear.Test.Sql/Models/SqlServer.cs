@@ -8,7 +8,7 @@ namespace QS.DBScripts.Models
 {
 	public class SqlServer
 	{
-		private static int waitingConnection = 60; //Seconds
+		private static int waitingConnection = 120; //Seconds
 		public string Name { get; set; }
 		public string Address { get; set; }
 		public uint Port { get; set; }
@@ -32,7 +32,6 @@ namespace QS.DBScripts.Models
 		{
 			RunCommand(CommandStart, true);
 			var conStr = ConnectionStringBuilder.GetConnectionString(true);
-			var connect = new MySqlConnection(conStr);
 			var endTime = DateTime.Now.AddSeconds(waitingConnection);
 			
 			Console.Write($"Connecting to {Name}");
@@ -42,6 +41,7 @@ namespace QS.DBScripts.Models
 			{
 				try
 				{
+					var connect = new MySqlConnection(conStr);
 					connect.Open();
 					connect.Close();
 					break;
