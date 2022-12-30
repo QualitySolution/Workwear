@@ -17,7 +17,7 @@
     <PrintOnLastPage>false</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>108.2pt</Height>
+    <Height>119.7pt</Height>
     <Columns>1</Columns>
     <ReportItems>
       <Table Name="Table1">
@@ -264,7 +264,7 @@
                         <TextAlign>Center</TextAlign>
                         <VerticalAlign>Middle</VerticalAlign>
                       </Style>
-                      <CanGrow >true</CanGrow>
+                      <CanGrow>true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -356,10 +356,55 @@
                 </TableCell>
               </TableCells>
             </TableRow>
+            <TableRow >
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox1">
+                      <Value>={employees}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Left >Solid</Left>
+                          <Right >None</Right>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                  <ColSpan>7</ColSpan>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox36">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Left >None</Left>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <Format>0</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+              <Visibility>
+                <Hidden>=!{?show_employees}</Hidden>
+              </Visibility>
+            </TableRow>
           </TableRows>
         </Details>
         <Left>0.8pt</Left>
-        <Top>34.5pt</Top>
+        <Top>33.7pt</Top>
         <TableGroups>
           <TableGroup>
             <Grouping Name="ProtectionTools">
@@ -420,12 +465,12 @@
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
-                            <TextAlign >Right</TextAlign>
+                            <TextAlign>Right</TextAlign>
                           </Style>
                           <Value>Всего по номеклатуре:</Value>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan >2</ColSpan>
+                      <ColSpan>2</ColSpan>
                     </TableCell>
                     <TableCell>
                       <ReportItems>
@@ -520,10 +565,10 @@
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Right >None</Right>
+                          <Right>None</Right>
                         </BorderStyle>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                       <Value>
                       </Value>
@@ -536,11 +581,11 @@
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Right >None</Right>
-                          <Left >None</Left>
+                          <Right>None</Right>
+                          <Left>None</Left>
                         </BorderStyle>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                       <Value>
                       </Value>
@@ -553,17 +598,17 @@
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Right >None</Right>
-                          <Left >None</Left>
+                          <Right>None</Right>
+                          <Left>None</Left>
                         </BorderStyle>
-                        <BorderColor  />
-                        <BorderWidth  />
-                        <TextAlign >Right</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Right</TextAlign>
                       </Style>
                       <Value>Общий итог:</Value>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan >2</ColSpan>
+                  <ColSpan>2</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
@@ -574,7 +619,7 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
-                        <TextAlign >Center</TextAlign>
+                        <TextAlign>Center</TextAlign>
                       </Style>
                       <Value>=Sum({protection_tools_assessed_cost})</Value>
                     </Textbox>
@@ -602,9 +647,9 @@
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
-                        <BorderColor  />
-                        <BorderWidth  />
-                        <TextAlign >Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
                       </Style>
                       <Value>=Sum({amount})</Value>
                     </Textbox>
@@ -662,6 +707,14 @@
     protection_tools.name AS protection_tools_name,
     protection_tools.assessed_cost * SUM(norms_item.amount) AS protection_tools_assessed_cost,
     wear_cards_item.protection_tools_id,
+    GROUP_CONCAT( CONCAT_WS('',
+            CONCAT(wear_cards.last_name, ' '),
+            IF(wear_cards.first_name = '',
+                NULL,
+                CONCAT(LEFT(wear_cards.first_name, 1), '.')),
+            IF(wear_cards.patronymic_name = '',
+                NULL,
+                CONCAT(LEFT(wear_cards.patronymic_name, 1), '.'))) SEPARATOR ', ') AS employees,
     wear_cards.sex,
     sizeTypeAlias.id as sizeTypeId,
     heightTypeAlias.id as heightTypeId,
@@ -799,6 +852,10 @@ ORDER BY
           <DataField>heightTypeId</DataField>
           <TypeName>System.UInt32</TypeName>
         </Field>
+        <Field Name="employees">
+          <DataField>employees</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="One">
@@ -865,6 +922,13 @@ ORDER BY
       <MultiValue>false</MultiValue>
       <Prompt>
       </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_employees">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
     <ReportParameter Name="exclude_in_vacation">
       <DataType>Boolean</DataType>
