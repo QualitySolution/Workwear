@@ -211,17 +211,6 @@ namespace workwear.Domain.Stock
 		#endregion
 
 		#region Методы
-		public virtual void CleanupItemsWriteOff()
-		{
-			if(this.WriteOffDoc == null) return;
-
-			var toRemove = WriteOffDoc.Items
-				.Where(writeoffItem => !Items.Any(expenseItem => DomainHelper.EqualDomainObjects(writeoffItem.EmployeeWriteoffOperation, expenseItem.EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff))).ToList();
-			foreach(var item in toRemove) {
-				this.WriteOffDoc.RemoveItem(item);
-			}
-		}
-
 		public virtual void FillCanWriteoffInfo(EmployeeIssueRepository employeeRepository) {
 			var operationIds = Items.Where(x => x.EmployeeIssueOperation?.Id > 0).Select(x => x.EmployeeIssueOperation.Id).ToArray();
 			var itemsBalance = employeeRepository.ItemsBalance(Employee, Date, operationIds);
@@ -252,6 +241,7 @@ namespace workwear.Domain.Stock
 			UoW.Save(Employee);
 		}
 
+		#region Ведомость
 		public virtual void CreateIssuanceSheet(UserSettings userSettings)
 		{
 			if(IssuanceSheet != null)
@@ -284,12 +274,32 @@ namespace workwear.Domain.Stock
 
 				if(item.IssuanceSheetItem != null)
 					item.IssuanceSheetItem.UpdateFromExpense();
-
-				if(item.IssuanceSheetItem != null && item.Amount == 0)
-					IssuanceSheet.Items.Remove(item.IssuanceSheetItem);
 			}
 		}
+		
+		public virtual void CleanupIssuanceSheetItems()
+		{
+			if(IssuanceSheet == null) return;
+		
+			var toRemove = IssuanceSheet.Items
+				.Where(item => !Items.Any(expenseItem => item.ExpenseItem.IsSame(expenseItem))).ToList();
+			foreach(var item in toRemove) {
+				IssuanceSheet.Items.Remove(item);
+			}
+		}
+		#endregion
+		#region Списание
+		public virtual void CleanupItemsWriteOff()
+		{
+			if(this.WriteOffDoc == null) return;
 
+			var toRemove = WriteOffDoc.Items
+				.Where(writeoffItem => !Items.Any(expenseItem => DomainHelper.EqualDomainObjects(writeoffItem.EmployeeWriteoffOperation, expenseItem.EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff))).ToList();
+			foreach(var item in toRemove) {
+				this.WriteOffDoc.RemoveItem(item);
+			}
+		}
+		
 		public virtual void UpdateIssuedWriteOffOperation()
 		{
 			if(WriteOffDoc == null)
@@ -304,7 +314,7 @@ namespace workwear.Domain.Stock
 			}
 
 		}
-
+		#endregion
 		#endregion
 	}
 
