@@ -17,6 +17,7 @@ using workwear.Journal.ViewModels.Regulations;
 using workwear.Repository.Company;
 using workwear.Repository.Operations;
 using workwear.ViewModels.Company;
+using workwear.Tools.Features;
 
 namespace workwear.ViewModels.Regulations
 {
@@ -32,6 +33,7 @@ namespace workwear.ViewModels.Regulations
 			EmployeeIssueRepository employeeIssueRepository,
 			INavigationManager navigation, 
 			IInteractiveQuestion interactive,
+			FeaturesService featuresService,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
@@ -40,6 +42,7 @@ namespace workwear.ViewModels.Regulations
 
 			NormConditions = UoW.GetAll<NormCondition>().ToList();
 			NormConditions.Insert(0, null);
+			VisibleNormCondition = featuresService.Available(WorkwearFeature.ConditionNorm);
 		}
 
 		/// <summary>
@@ -65,6 +68,10 @@ namespace workwear.ViewModels.Regulations
 			set => SetField(ref cancelSensitive, value);
 		}
 
+		#endregion
+		
+		#region Visible
+		public bool VisibleNormCondition { get; }
 		#endregion
 
 		#region Свойства

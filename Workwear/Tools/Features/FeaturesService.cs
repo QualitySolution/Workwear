@@ -79,6 +79,8 @@ namespace workwear.Tools.Features
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.HistoryLog:
 					return ProductEdition == 2 || ProductEdition == 3;
+				case WorkwearFeature.ConditionNorm:
+					return ProductEdition == 2 || ProductEdition == 3;
 				case WorkwearFeature.Communications:
 				case WorkwearFeature.EmployeeLk:
 					if(ProductEdition != 2 && ProductEdition != 3)
@@ -112,6 +114,8 @@ namespace workwear.Tools.Features
 		BatchProcessing,
 		[Display(Name = "История изменений")]
 		HistoryLog,
+		[Display(Name = "Ограничения нормы")]
+		ConditionNorm,
 		#endregion
 		#region С облаком
 		[Display(Name = "Мобильный кабинет сотрудника")]
