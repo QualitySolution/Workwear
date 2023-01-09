@@ -290,7 +290,7 @@ namespace WorkwearTest.ViewModels.Stock
 					item2.Amount = 10;
 					
 					//Создаем ведомость
-					vmCreateIssue.CreateIssuanceSheet();
+					vmCreateIssue.CreateIssuenceSheet();
 
 					Assert.That(vmCreateIssue.Save(), Is.True);
 					expenseIdForResave = vmCreateIssue.Entity.Id;
@@ -436,7 +436,7 @@ namespace WorkwearTest.ViewModels.Stock
 					item2.Amount = 10;
 					
 					//Создаем ведомость
-					vmCreateIssue.CreateIssuanceSheet();
+					vmCreateIssue.CreateIssuenceSheet();
 					itemLast.Amount = 0; //Тест падал из за этого, стока будет удалена, а в ведомости уже создана.
 					
 					Assert.That(vmCreateIssue.Save(), Is.True);

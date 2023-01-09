@@ -139,8 +139,6 @@ namespace workwear.ViewModels.Stock
 				progress.Close();
 				return false;
 			}
-			if(Entity.Id == 0)
-				Entity.CreationDate = DateTime.Now;
 
 			//Так как сохранение достаточно сложное, рядом сохраняется еще два документа, при чтобы оно не ломалось из за зависимостей между объектами.
 			//Придерживайтесь следующего порядка:
