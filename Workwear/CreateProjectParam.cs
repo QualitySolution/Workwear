@@ -13,6 +13,7 @@ using QS.Deletion.Views;
 using QS.Dialog;
 using QS.Dialog.GtkUI;
 using QS.Dialog.ViewModels;
+using QS.Dialog.Views;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.ErrorReporting;
@@ -154,10 +155,12 @@ namespace workwear
 			#endregion
 
 			#region Временные будут переопределены
+			containerBuilder.RegisterType<ProgressWindowViewModel>().AsSelf();
 			containerBuilder.RegisterType<GtkWindowsNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
 			containerBuilder.Register((ctx) => new AutofacViewModelsGtkPageFactory(startupContainer)).As<IViewModelsPageFactory>();
 			containerBuilder.Register(cc => new ClassNamesBaseGtkViewResolver(
-				typeof(UpdateProcessView)
+				typeof(UpdateProcessView),
+				typeof(ProgressWindowView)
 			)).As<IGtkViewResolver>();
 			#endregion
 		}
