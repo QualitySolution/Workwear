@@ -78,7 +78,6 @@ namespace workwear.Tools.Features
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.HistoryLog:
-					return ProductEdition == 2 || ProductEdition == 3;
 				case WorkwearFeature.ConditionNorm:
 					return ProductEdition == 2 || ProductEdition == 3;
 				case WorkwearFeature.Communications:
