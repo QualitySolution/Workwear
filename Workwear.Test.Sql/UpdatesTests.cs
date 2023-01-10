@@ -145,8 +145,8 @@ namespace Workwear.Test.Sql
 		}
 		
 		#endregion
-		#region Compare DB
-		private void ComparisonSchema(MySqlConnection connection, string db1, string db2) {
+		#region Compare DB Text
+		private void ComparisonSchemaText(MySqlConnection connection, string db1, string db2) {
 			TestContext.Progress.WriteLine($"Сравниваем схемы базы {db1} и {db2}.");
 			var versionDb1 = GetVersion(connection, db1);
 			var versionDb2 = GetVersion(connection, db2);
@@ -204,6 +204,18 @@ namespace Workwear.Test.Sql
 			mb.ExportInfo.ResetAutoIncrement = true;
 			var result = mb.ExportToString();
 			return result.Replace("  ", " "); //Особенности MySqlBackup в месте где удаляется AutoIncrement образуется двойной пробел.
+		}
+		#endregion
+		
+		#region Compare DB
+
+		private void ComparisonSchema(MySqlConnection connection, string db1, string db2) {
+			TestContext.Progress.WriteLine($"Сравниваем схемы базы {db1} и {db2}.");
+			var versionDb1 = GetVersion(connection, db1);
+			var versionDb2 = GetVersion(connection, db2);
+			Assert.That(versionDb1, Is.EqualTo(versionDb2), "Версии у баз различаются.");
+			var schema1 = connection.GetSchema();
+			var schema2 = GetSchema(connection, db2);
 		}
 		#endregion
 	}
