@@ -5,6 +5,23 @@ ADD INDEX `fk_objects_2_idx` (`parent_object_id` ASC);
 ALTER TABLE `nomenclature` 
 ADD COLUMN `archival` TINYINT(1) NOT NULL DEFAULT 0 AFTER `number`;
 
+CREATE TABLE IF NOT EXISTS `history_changeset` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+  `user_login` VARCHAR(50) NULL DEFAULT NULL,
+  `action_name` VARCHAR(100) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_history_changeset_1_idx` (`user_id` ASC),
+  INDEX `history_changeset_login_idx` (`user_login` ASC),
+  CONSTRAINT `fk_history_changeset_1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8mb4;
+
 CREATE TABLE IF NOT EXISTS `history_changed_entities` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `changeset_id` INT(10) UNSIGNED NOT NULL,
@@ -48,23 +65,6 @@ CREATE TABLE IF NOT EXISTS `history_changes` (
     FOREIGN KEY (`changed_entity_id`)
     REFERENCES `history_changed_entities` (`id`)
     ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `history_changeset` (
-  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `user_id` INT(10) UNSIGNED NULL DEFAULT NULL,
-  `user_login` VARCHAR(50) NULL DEFAULT NULL,
-  `action_name` VARCHAR(100) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_history_changeset_1_idx` (`user_id` ASC),
-  INDEX `history_changeset_login_idx` (`user_login` ASC),
-  CONSTRAINT `fk_history_changeset_1`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `users` (`id`)
-    ON DELETE SET NULL
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
