@@ -19,6 +19,7 @@ namespace workwear.Domain.Regulations
 		public virtual int Id { get; set; }
 
 		private string name;
+		[Required(ErrorMessage = "Название является обязательным")]
 		[Display(Name = "Название")]
 		public virtual string Name {
 			get => name;

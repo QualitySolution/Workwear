@@ -47,7 +47,13 @@ node {
    }
    if (params.SQLTests) {
       stage('SQLTests'){
-         sh 'dotnet test Workwear/Workwear.Test.Sql/Workwear.Test.Sql.csproj '
+         sh 'rm -rf Workwear/Workwear.Test.Sql/TestResults'
+         try {  
+            sh 'dotnet test Workwear/Workwear.Test.Sql/Workwear.Test.Sql.csproj '
+         } catch (e) {}
+         finally{
+            mstest testResultsFile:"**/*.trx", keepLongStdio: true
+         }
       }
    }
    if (params.Publish) {
