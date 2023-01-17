@@ -24,11 +24,16 @@ namespace QS.DBScripts.Models {
 				return true;
 			}
 
-			for(int i = 4; i < 20; i++) {
-				if(Row[i].ToString() != another[i].ToString()) {
-					log($@"У {Row[1]}.{FullName} и {another[1]}.{another[2]}.{another[3]} отличаются {Row.Table.Columns[i]}");
-					result = true;
+			if(Row.ItemArray.Length == another.ItemArray.Length)
+				for(int i = 4; i < Row.ItemArray.Length; i++) {
+					if(Row[i].ToString() != another[i].ToString()) {
+						log($@"У {Row[1]}.{FullName} и {another[1]}.{another[2]}.{another[3]} отличаются {Row.Table.Columns[i]}");
+						result = true;
+					}
 				}
+			else {
+				log("GetSchem Вернул разное колличество параметров.");
+				return true;
 			}
 
 			return result;

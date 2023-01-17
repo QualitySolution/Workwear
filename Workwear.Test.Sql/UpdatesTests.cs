@@ -75,10 +75,7 @@ namespace Workwear.Test.Sql
 				using(var connectionСurrentDd = new MySqlConnection(connectionstringСurrentDd)) {
 					connectionСurrentDd.Open();
 
-					//Версии баз до 2.5 отличаются не принципиально, например порядком индексов,
-					//Это не имеет смысл специально исправлять. Поэтому проверка этих версия пропущена.
-					if(sample.TypedVersion >= new Version(2, 5))
-						ComparisonSchema(connectionСurrentDd, connection);
+					ComparisonSchema(connectionСurrentDd, connection);
 				}
 			}
 
