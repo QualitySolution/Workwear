@@ -151,6 +151,7 @@ namespace Workwear.Test.Sql
 		
 		#endregion
 		#region Compare DB Text
+		//TODO: Удааить метод и методы используемые только в нём, если ComparisonSchema будет нормально работать
 		private void ComparisonSchemaText(MySqlConnection connection, string db1, string db2) {
 			TestContext.Progress.WriteLine($"Сравниваем схемы базы {db1} и {db2}.");
 			var versionDb1 = GetVersion(connection, db1);
