@@ -74,7 +74,6 @@ namespace Workwear.Test.Sql
 				var connectionstringСurrentDd = builder.GetConnectionString(true);
 				using(var connectionСurrentDd = new MySqlConnection(connectionstringСurrentDd)) {
 					connectionСurrentDd.Open();
-
 					ComparisonSchema(connectionСurrentDd, connection);
 				}
 			}
@@ -221,28 +220,30 @@ namespace Workwear.Test.Sql
 			Assert.That(versionDb1, Is.EqualTo(versionDb2), "Версии у баз различаются.");
 
 			Assert.That(DBSchemaCompare(connection1, connection2, Console.WriteLine), Is.True,"Схемы баз отличаются");
+			Assert.That(DBSchemaCompare(connection2, connection1, Console.WriteLine), Is.True,"Схемы баз отличаются");
 		}
 
-		private bool DBSchemaCompare(MySqlConnection connection1, MySqlConnection connection2, ColumnOfTable.Log log)
-		{
+		private bool DBSchemaCompare(MySqlConnection connection1, MySqlConnection connection2, RowOfSchema.Log log) {
 			bool result = true;
 
-			var db1 = connection1.GetSchema("Columns").Rows
-				.Cast<DataRow>()
-				.Select(x => new ColumnOfTable ((string)x[2], (string)x[3], x))
-				.ToDictionary(x => x.FullName, x => x);
-            
-			var db2 = connection2.GetSchema("Columns").Rows
-				.Cast<DataRow>()
-				.Select(x => new ColumnOfTable ((string)x[2], (string)x[3], x))
-				.ToDictionary(x => x.FullName, x => x);
- 
-			foreach (var column in db1)
-			{
-				if (db2.ContainsKey(column.Key))
-					db1[column.Key].IsDiff(db2[column.Key], log);
-				else 
-					log($" {column.Value} в базе {connection2.Database} отсутствует.");
+			foreach(string schema in new List<string> {"Tables", "Foreign Keys", "Indexes", "Columns"}) {
+				var tmp = connection1.GetSchema(schema).Rows;
+				var db1 = connection1.GetSchema(schema).Rows
+					.Cast<DataRow>()
+					.Select(x => new RowOfSchema(schema, connection1.Database, x))
+					.ToDictionary(x => x.FullName, x => x);
+
+				var db2 = connection2.GetSchema(schema).Rows
+					.Cast<DataRow>()
+					.Select(x => new RowOfSchema(schema, connection2.Database, x))
+					.ToDictionary(x => x.FullName, x => x);
+
+				foreach(var column in db1) {
+					if(db2.ContainsKey(column.Key))
+						db1[column.Key].IsDiff(db2[column.Key], log);
+					else
+						log($" {column.Value} в базе {connection2.Database} отсутствует.");
+				}
 			}
 
 			return result;
