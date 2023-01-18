@@ -343,93 +343,6 @@ namespace Workwear.Domain.Operations
 			RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 		}
 
-		public virtual void RecalculateDatesOfIssueOperation(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser)
-		{
-			if(ProtectionTools == null) {
-				logger.Error(
-					$"Для операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} не указана " +
-					$"'Номеклатура нормы' поэтому прерасчет даты выдачи и использования не возможен.");
-				return;
-			}
-
-			if(NormItem == null) {
-				//Пробуем найти норму сами.
-				var cardItem = Employee.WorkwearItems.FirstOrDefault(x => ProtectionTools.IsSame(x.ProtectionTools));
-				NormItem = cardItem?.ActiveNormItem;
-			}
-
-			if (NormItem == null){
-				logger.Error(
-					$"Для операциия id:{Id} выдачи {Nomenclature?.Name ?? ProtectionTools?.Name} " +
-					$"от {OperationTime} не установлена норма поэтому прерасчет даты выдачи и использования не возможен.");
-				return;
-			}
-			StartOfUse = operationTime;
-
-			var amountAtEndDay = graph.UsedAmountAtEndOfDay(OperationTime.Date, this);
-			var amountByNorm = NormItem.Amount;
-			if (amountAtEndDay >= amountByNorm) {
-				//Ищем первый интервал где числящееся меньше нормы.
-				var firstLessNorm = graph.Intervals
-					.Where(x => x.StartDate.Date >= OperationTime.Date)
-					.OrderBy(x => x.StartDate)
-					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
-				if (firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.ColDayAheadOfShedule) > OperationTime.Date) {
-					switch(baseParameters.ShiftExpluatacion) {
-						case AnswerOptions.Ask:
-							if(askUser.Question(
-								$"На {operationTime:d} за {Employee.ShortName} уже числится {amountAtEndDay} " +
-								$"x {ProtectionTools.Name}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. " +
-								$"Передвинуть начало эксплуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?"))
-								startOfUse = firstLessNorm.StartDate;
-							break;
-						case AnswerOptions.Yes:
-							startOfUse = firstLessNorm.StartDate;
-							break;
-						case AnswerOptions.No:
-							break;
-						default:
-							throw new NotImplementedException();
-					}
-				}
-			}
-
-			ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value);
-			
-			if(Issued > amountByNorm && amountByNorm > 0)
-			{
-				switch(baseParameters.ExtendPeriod) {
-					case AnswerOptions.Ask:
-						if(askUser.Question(
-							$"Сотруднику {Employee.ShortName} за раз выдается {Issued} x {ProtectionTools.Name} " +
-							$"это больше чем положено по норме {amountByNorm}. " +
-							$"Увеличить период эксплуатации выданного пропорционально количеству?")) {
-							ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
-						}
-						break;
-					case AnswerOptions.Yes:
-						ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
-						break;
-					case AnswerOptions.No:
-						break;
-					default:
-						throw new NotImplementedException();
-				}
-			}
-
-			//Обрабатываем отпуска
-			if(Employee.Vacations.Any(v => v.BeginDate <= ExpiryByNorm && v.EndDate >= StartOfUse && v.VacationType.ExcludeFromWearing)) {
-				var ranges = Employee.Vacations
-					.Where(v => v.VacationType.ExcludeFromWearing)
-					.Select(v => new DateRange(v.BeginDate, v.EndDate));
-				var wearTime = new DateRange(StartOfUse.Value, DateTime.MaxValue);
-				wearTime.ExcludedRanges.AddRange(ranges);
-				var endWearDate = wearTime.FillIntervals((ExpiryByNorm - StartOfUse.Value).Value.Days);
-				ExpiryByNorm = endWearDate;
-			}
-
-			AutoWriteoffDate = UseAutoWriteoff ? ExpiryByNorm : null;
-		}
 		public virtual void Update(IUnitOfWork uow, IInteractiveQuestion askUser, IncomeItem item) {
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)
@@ -467,6 +380,113 @@ namespace Workwear.Domain.Operations
 			WearSize = item.WearSize;
 			Height = item.Height;
 		}
+		#endregion
+		#region Пересчет выдачи
+
+		public virtual void RecalculateDatesOfIssueOperation(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser) {
+			RecalculateStartOfUse(graph, baseParameters, askUser);
+			RecalculateExpiryByNorm(baseParameters, askUser);
+		}
+
+		private bool CheckRecalculateCondition() {
+			if(ProtectionTools == null) {
+				logger.Error(
+					$"Для операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} не указана " +
+					$"'Номеклатура нормы' поэтому прерасчет даты выдачи и использования не возможен.");
+				return false;
+			}
+
+			if(NormItem == null) {
+				//Пробуем найти норму сами.
+				var cardItem = Employee.WorkwearItems.FirstOrDefault(x => ProtectionTools.IsSame(x.ProtectionTools));
+				NormItem = cardItem?.ActiveNormItem;
+			}
+
+			if(NormItem == null) {
+				logger.Error(
+					$"Для операциия id:{Id} выдачи {Nomenclature?.Name ?? ProtectionTools?.Name} " +
+					$"от {OperationTime} не установлена норма поэтому прерасчет даты выдачи и использования не возможен.");
+				return false;
+			}
+
+			return true;
+		}
+
+		public virtual void RecalculateStartOfUse(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser) {
+			if(!CheckRecalculateCondition())
+				return;
+			
+			StartOfUse = operationTime;
+
+			var amountAtEndDay = graph.UsedAmountAtEndOfDay(OperationTime.Date, this);
+			if(amountAtEndDay >= NormItem.Amount) {
+				//Ищем первый интервал где числящееся меньше нормы.
+				var firstLessNorm = graph.Intervals
+					.Where(x => x.StartDate.Date >= OperationTime.Date)
+					.OrderBy(x => x.StartDate)
+					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
+				if(firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.ColDayAheadOfShedule) > OperationTime.Date) {
+					switch(baseParameters.ShiftExpluatacion) {
+						case AnswerOptions.Ask:
+							if(askUser.Question(
+								   $"На {operationTime:d} за {Employee.ShortName} уже числится {amountAtEndDay} " +
+								   $"x {ProtectionTools.Name}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. " +
+								   $"Передвинуть начало эксплуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?"))
+								StartOfUse = firstLessNorm.StartDate;
+							break;
+						case AnswerOptions.Yes:
+							StartOfUse = firstLessNorm.StartDate;
+							break;
+						case AnswerOptions.No:
+							break;
+						default:
+							throw new NotImplementedException();
+					}
+				}
+			}
+		}
+
+		public virtual void RecalculateExpiryByNorm(BaseParameters baseParameters, IInteractiveQuestion askUser){
+			if(!CheckRecalculateCondition())
+				return;
+			
+			ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value);
+			
+			if(Issued > NormItem.Amount && NormItem.Amount > 0)
+			{
+				switch(baseParameters.ExtendPeriod) {
+					case AnswerOptions.Ask:
+						if(askUser.Question(
+							$"Сотруднику {Employee.ShortName} за раз выдается {Issued} x {ProtectionTools.Name} " +
+							$"это больше чем положено по норме {NormItem.Amount}. " +
+							$"Увеличить период эксплуатации выданного пропорционально количеству?")) {
+							ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
+						}
+						break;
+					case AnswerOptions.Yes:
+						ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
+						break;
+					case AnswerOptions.No:
+						break;
+					default:
+						throw new NotImplementedException();
+				}
+			}
+
+			//Обрабатываем отпуска
+			if(Employee.Vacations.Any(v => v.BeginDate <= ExpiryByNorm && v.EndDate >= StartOfUse && v.VacationType.ExcludeFromWearing)) {
+				var ranges = Employee.Vacations
+					.Where(v => v.VacationType.ExcludeFromWearing)
+					.Select(v => new DateRange(v.BeginDate, v.EndDate));
+				var wearTime = new DateRange(StartOfUse.Value, DateTime.MaxValue);
+				wearTime.ExcludedRanges.AddRange(ranges);
+				var endWearDate = wearTime.FillIntervals((ExpiryByNorm - StartOfUse.Value).Value.Days);
+				ExpiryByNorm = endWearDate;
+			}
+
+			AutoWriteoffDate = UseAutoWriteoff ? ExpiryByNorm : null;
+		}
+
 		#endregion
 	}
 }
