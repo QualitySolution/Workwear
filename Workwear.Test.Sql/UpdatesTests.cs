@@ -238,11 +238,17 @@ namespace Workwear.Test.Sql
 					.Select(x => new RowOfSchema(schema, connection2.Database, x))
 					.ToDictionary(x => x.FullName, x => x);
 
-				foreach(var column in db1) {
-					if(db2.ContainsKey(column.Key))
-						db1[column.Key].IsDiff(db2[column.Key], log);
-					else
-						log($" {column.Value} в базе {connection2.Database} отсутствует.");
+				foreach(var row in db1) {
+					if(db2.ContainsKey(row.Key)) {
+						if(db1[row.Key].IsDiff(db2[row.Key], log)) {
+							//детали переданы в log()
+							result = false;
+						}
+					}
+					else {
+						log($"{schema}: {connection1.Database}.{row.Value.FullName} в базе {connection2.Database} отсутствует.");
+						result = false;
+					}
 				}
 			}
 
