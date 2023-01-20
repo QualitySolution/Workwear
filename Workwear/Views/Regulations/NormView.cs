@@ -6,7 +6,6 @@ using QSWidgetLib;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.ViewModels.Regulations;
-using Workwear.Domain.Regulations;
 
 namespace Workwear.Views.Regulations
 {
@@ -130,7 +129,7 @@ namespace Workwear.Views.Regulations
 				var menu = new Menu();
 				var selected = ytreeItems.GetSelectedObject<NormItem>();
 				var menuItem = 
-					new MenuItemId<NormItem>("пересчитать сроки носки в документах выдачи");
+					new MenuItemId<NormItem>("Пересчитать сроки носки в документах выдачи");
 				menuItem.ID = selected;
 				menuItem.Activated += (sender, e) => ViewModel.ReSaveLastIssue(((MenuItemId<NormItem>)sender).ID);
 				menu.Add(menuItem);

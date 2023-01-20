@@ -122,11 +122,13 @@ namespace Workwear.Repository.Operations
 		/// </summary>
 		/// <returns></returns>
 		public IList<EmployeeIssueOperation> GetOperationsForNormItem(
-			NormItem normItem, Action<IQueryOver<EmployeeIssueOperation, 
-				EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null)
-		{
+			NormItem[] normItems, Action<IQueryOver<EmployeeIssueOperation, 
+				EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null, DateTime? beginDate = null) {
+			var itemIds = normItems.Select(i => i.Id).ToArray();
 			var query = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>()
-				.Where(o => o.NormItem == normItem);
+				.Where(o => o.NormItem.Id.IsIn(itemIds));
+			if(beginDate.HasValue)
+				query.Where(o => o.OperationTime >= beginDate);
 			makeEager?.Invoke(query);
 			return query.List();
 		}
