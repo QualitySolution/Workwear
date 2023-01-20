@@ -246,8 +246,8 @@ namespace workwear
 			if(item.Nomenclature == null)
 				return;
 
-			var existItems = IncomeDoc.Items.Where(i => i.Nomenclature.IsSame(item.Nomenclature) && i.Owner == item.Owner).ToList();
-			var page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, IncomeItem, IUnitOfWork, IList<IncomeItem>>
+			var existItems = IncomeDoc.Items.Where(i => i.Nomenclature.IsSame(item.Nomenclature) && i.Owner == item.Owner).Cast<IDocItemSizeInfo>().ToList();
+			var page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, IDocItemSizeInfo, IUnitOfWork, IList<IDocItemSizeInfo>>
 				(null, item, UoW, existItems);
 			page.ViewModel.AddedSizes += SelectWearSize_SizeSelected;
 		}
