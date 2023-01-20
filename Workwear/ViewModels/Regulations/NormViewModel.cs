@@ -17,6 +17,7 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
+using Workwear.Tools;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
 
@@ -29,6 +30,7 @@ namespace Workwear.ViewModels.Regulations
 		private readonly IInteractiveQuestion interactive;
 		private readonly IChangeMonitor<NormItem> changeMonitor;
 		private readonly EmployeeRepository employeeRepository;
+		private readonly BaseParameters baseParameters;
 
 		public NormViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -38,11 +40,15 @@ namespace Workwear.ViewModels.Regulations
 			IInteractiveQuestion interactive,
 			IChangeMonitor<NormItem> changeMonitor,
 			EmployeeRepository employeeRepository,
+			BaseParameters baseParameters,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			employeeIssueRepository.RepoUow = UoW;
 			this.interactive = interactive;
+			this.changeMonitor = changeMonitor;
+			this.employeeRepository = employeeRepository;
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
 			NormConditions = UoW.GetAll<NormCondition>().ToList();
 			NormConditions.Insert(0, null);
@@ -50,9 +56,6 @@ namespace Workwear.ViewModels.Regulations
 			changeMonitor.AddSetTargetUnitOfWorks(UoW);
 			changeMonitor.SubscribeToCreate(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
 			changeMonitor.SubscribeToUpdates(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
-
-			this.changeMonitor = changeMonitor;
-			this.employeeRepository = employeeRepository;
 		}
 
 		/// <summary>
@@ -256,67 +259,115 @@ namespace Workwear.ViewModels.Regulations
 
 		public void ReSaveLastIssue(NormItem normItem) 
 		{
+			if(UoW.HasChanges && !Save())
+				return;
+				
 			logger.Info("Пересчитываем последнии выдачи сотрудников");
-			
 			var operations = employeeIssueRepository.GetOperationsForNormItem(
-				normItem, 
+				new []{normItem}, 
 				q => q.Fetch(
 					SelectMode.Fetch, 
-					x => x.Employee)
-				);
+					x => x.Employee),
+				beginDate: Entity.DateFrom);
 
-			operations = operations
+			var operationsLasts = operations
 				.GroupBy(x => x.Employee)
 				.Select(o => 
 					o.OrderByDescending(d => d.OperationTime).First())
 				.ToList();
-
-			foreach (var operation in operations)
+			
+			var answer = interactive.Question(
+				new[] { "Все выдачи", "Только последние" },
+				Entity.DateFrom.HasValue
+					? $"C {Entity.DateFrom:d} по "
+					: "По " +
+					  $"строке нормы было выполнено {operations.Count} выдач из них последних {operationsLasts.Count}. " +
+					  $"Какие выдачи пересчитывать?");
+			if(answer == null)
+				return;
+			
+			var modifiableOperations = answer == "Только последние" ? operationsLasts : operations;
+			foreach (var operation in modifiableOperations)
 			{
-				var dateStart = operation.StartOfUse ?? operation.OperationTime;
-				var dateExpiryByNorm = normItem.CalculateExpireDate(dateStart, operation.Issued);
-				operation.ExpiryByNorm = dateExpiryByNorm;
-				if (operation.UseAutoWriteoff)
-					operation.AutoWriteoffDate = dateExpiryByNorm;
+				operation.RecalculateExpiryByNorm(baseParameters, interactive);
+				UoW.Save(operation);
 
 				var cardItem = operation.Employee.WorkwearItems
 						.FirstOrDefault(x => 
 							DomainHelper.EqualDomainObjects(x.ProtectionTools, normItem.ProtectionTools));
 
-				cardItem?.UpdateNextIssue(UoW);
+				if(cardItem != null) {
+					cardItem.UpdateNextIssue(UoW);
+					UoW.Save(cardItem);
+				}
 			}
+			UoW.Commit();
+			logger.Info($"{modifiableOperations.Count()} операций обновлено.");
 		}
-		
+		#endregion
 		#region Сохранение
 		public override bool Save() 
 		{
 			if(!base.Save())
 				return false;
-			
+
+			//Проверяем если есть активные выдачи измененным строкам нормы, предлагаем пользователю их пересчитать.
+			if(changeMonitor.IdsUpdateEntities.Any()) {
+				var operations = employeeIssueRepository.GetOperationsForNormItem(
+					Entity.Items.Where(i => changeMonitor.IdsUpdateEntities.Contains(i.Id)).ToArray(), 
+					q => q.Fetch(
+						SelectMode.Fetch, 
+						x => x.Employee),
+					beginDate: Entity.DateFrom
+				);
+				//Оставляем только последние
+				var operationsLasts = operations
+					.GroupBy(x => $"{x.Employee.Id}.{x.NormItem.Id}")
+					.Select(o => o.OrderByDescending(d => d.OperationTime).First())
+					.ToList();
+
+				if(operations.Any()) {
+					var answer = interactive.Question(
+						new[] { "Все выдачи", "Только последние", "Не пересчитывать" },
+						Entity.DateFrom.HasValue
+							? $"C {Entity.DateFrom:d} по "
+							: "По " +
+							  $"измененным строкам нормы было выполнено {operations.Count} выдач из них последних {operationsLasts.Count}. " +
+							  $"Пересчитать сроки носки у уже выданного в соответствии с изменениями?");
+					if(answer == "Все выдачи" || answer == "Только последние"){
+						var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
+						var progress = progressPage.ViewModel.Progress;
+						var modifiableOperations = answer == "Только последние" ? operationsLasts : operations;
+						progress.Start(modifiableOperations.Count, text: "Обновляем операции выдачи");
+						foreach(var operation in modifiableOperations) {
+							progress.Add();
+							operation.RecalculateExpiryByNorm(baseParameters, interactive);
+							UoW.Save(operation);
+						}
+
+						progress.Add(text: "Завершаем...");
+						UoW.Commit();
+						NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+					}
+				}
+			}
+
 			var employees = employeeRepository.GetEmployeesUseNorm(new []{Entity}, UoW);
-			
 			if (employees.Any() && (changeMonitor.IdsCreateEntities.Any() || changeMonitor.IdsUpdateEntities.Any())) 
 			{
-				if(!interactive.Question(
-					    "Для сохранения требуется обновить потребности сотрудников. \n Продолжить ?"))
-					return false;
-				
 				logger.Info("Пересчитываем сотрудников");
-				
 				var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
 				var progress = progressPage.ViewModel.Progress;
-				if (employees.Any()) {
-					progress.Start(employees.Count, text: "Обновляем потребности сотрудников");
-					foreach (var employee in employees) {
-						progress.Add(text: $"Обработка {employee.ShortName}");
-						employee.UpdateWorkwearItems();
-						UoW.Save(employee);
-					}
-					progress.Add(text: "Завершаем...");
-					UoW.Commit();
-					NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
-					logger.Info("Ok");
+				progress.Start(employees.Count, text: "Обновляем потребности сотрудников");
+				foreach (var employee in employees) {
+					progress.Add(text: $"Обработка {employee.ShortName}");
+					employee.UpdateWorkwearItems();
+					UoW.Save(employee);
 				}
+				progress.Add(text: "Завершаем...");
+				UoW.Commit();
+				NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+				logger.Info("Ok");
 			}
 			return true;
 		}
