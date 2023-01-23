@@ -7,6 +7,7 @@ using QSOrmProject;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Widgets;
 using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
 namespace Workwear.Views.Stock
@@ -26,13 +27,17 @@ namespace Workwear.Views.Stock
 			buttonAddReceiptNomenclature.Clicked += AddResultItems;
 			buttonDelExpenseNomenclature.Clicked += DelSourceItems;
 			buttonDelReceiptNomenclature.Clicked += DelResultItems;
+			buttonAddSizesReceiptNomenclature.Clicked += AddSizessResultItems;
 			ytreeExpenseItems.Selection.Changed += ytreeExpenseItems_Selection_Changed;
 			ytreeReceiptItems.Selection.Changed += ytreeReceiptItems_Selection_Changed;
 			buttonDelExpenseNomenclature.Binding
-				.AddBinding(ViewModel, vm => vm.CanDelItemSource, b => b.Sensitive)
+				.AddBinding(ViewModel, vm => vm.SensetiveDellSourceItemButton, b => b.Sensitive)
 				.InitializeFromSource();
 			buttonDelReceiptNomenclature.Binding
-				.AddBinding(ViewModel, vm => vm.CanDelItemResult, b => b.Sensitive)
+				.AddBinding(ViewModel, vm => vm.SensetiveDellResultItemButton, b => b.Sensitive)
+				.InitializeFromSource(); 
+			buttonAddSizesReceiptNomenclature.Binding
+				.AddBinding(ViewModel, vm => vm.SensetiveAddSizesResultButton, b => b.Sensitive)
 				.InitializeFromSource();
 
 			ylabelId.Binding.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
@@ -103,12 +108,12 @@ namespace Workwear.Views.Stock
 		
 		void ytreeExpenseItems_Selection_Changed(object sender, EventArgs e)
 		{
-			buttonDelExpenseNomenclature.Sensitive = ytreeExpenseItems.Selection.CountSelectedRows() > 0;
+			ViewModel.SelectedSourceItem = ytreeExpenseItems.GetSelectedObject<CompletionSourceItem>();
 		}
 		
 		void ytreeReceiptItems_Selection_Changed(object sender, EventArgs e)
 		{
-			buttonDelReceiptNomenclature.Sensitive = ytreeReceiptItems.Selection.CountSelectedRows() > 0;
+			ViewModel.SelectedResultItem = ytreeReceiptItems.GetSelectedObject<CompletionResultItem>();
 		}
 		void AddSourceItems(object sender, EventArgs eventArgs) {
 			ViewModel.AddSourceItems();
@@ -121,6 +126,9 @@ namespace Workwear.Views.Stock
 		}
 		void DelResultItems(object sender, EventArgs eventArgs) {
 			ViewModel.DelResultItems(ytreeReceiptItems.GetSelectedObject<CompletionResultItem> ());
+		}
+		void AddSizessResultItems(object sender, EventArgs eventArgs) {
+			ViewModel.AddSizesResultItems(ytreeReceiptItems.GetSelectedObject<CompletionResultItem> ());
 		}
 	}
 }
