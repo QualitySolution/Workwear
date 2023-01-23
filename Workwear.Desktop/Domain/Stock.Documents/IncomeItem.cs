@@ -38,13 +38,11 @@ namespace Workwear.Domain.Stock.Documents
 			set { SetField (ref nomenclature, value, () => Nomenclature); }
 		}
 
-		private SizeType heightType;
 		[Display(Name = "Тип Роста")]
 		public virtual SizeType HeightType {
 			get => nomenclature.Type.HeightType;
 		}
 		
-		private SizeType wearSizeType;
 		[Display(Name = "Тип размера одежды")]
 		public virtual SizeType WearSizeType {
 			get => nomenclature.Type.SizeType;

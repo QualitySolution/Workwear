@@ -7,7 +7,8 @@ using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
 using Workwear.Repository.Stock;
-using Workwear.Tools;using Workwear.Domain.Sizes;
+using Workwear.Tools;
+using Workwear.Domain.Sizes;
 using BindingsObservableSourceList =  System.Data.Bindings.Collections.Generic.GenericObservableList<Workwear.Domain.Stock.Documents.CompletionSourceItem>;
 using BindingsObservableResultList =  System.Data.Bindings.Collections.Generic.GenericObservableList<Workwear.Domain.Stock.Documents.CompletionResultItem>;
 

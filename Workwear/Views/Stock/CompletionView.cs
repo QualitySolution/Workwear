@@ -108,13 +108,11 @@ namespace Workwear.Views.Stock
 		
 		void ytreeExpenseItems_Selection_Changed(object sender, EventArgs e)
 		{
-			buttonDelExpenseNomenclature.Sensitive = ytreeExpenseItems.Selection.CountSelectedRows() > 0;
 			ViewModel.SelectedSourceItem = ytreeExpenseItems.GetSelectedObject<CompletionSourceItem>();
 		}
 		
 		void ytreeReceiptItems_Selection_Changed(object sender, EventArgs e)
 		{
-			buttonDelReceiptNomenclature.Sensitive = ytreeReceiptItems.Selection.CountSelectedRows() > 0;
 			ViewModel.SelectedResultItem = ytreeReceiptItems.GetSelectedObject<CompletionResultItem>();
 		}
 		void AddSourceItems(object sender, EventArgs eventArgs) {

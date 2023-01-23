@@ -90,6 +90,7 @@ namespace Workwear.ViewModels.Stock
 			set {
 				selectedResultItem = value;	
 				OnPropertyChanged(nameof(SensetiveAddSizesResultButton));
+				OnPropertyChanged(nameof(SensetiveDellResultItemButton));
 			}
 		}
 		private CompletionSourceItem selectedSourseItem;

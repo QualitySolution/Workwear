@@ -36,7 +36,6 @@ namespace Workwear.Domain.Stock.Documents
             get => warehouseOperation;
             set => SetField(ref warehouseOperation, value);
         }
-
         [Display(Name = "Процент износа")]
         public virtual decimal WearPercent {
             get => WarehouseOperation?.WearPercent ?? 0;
@@ -55,13 +54,10 @@ namespace Workwear.Domain.Stock.Documents
             get => WarehouseOperation.Height;
             set => WarehouseOperation.Height = value;
         }
-        private SizeType heightType;
         [Display(Name = "Тип Роста")]
         public virtual SizeType HeightType {
 	        get => warehouseOperation.Nomenclature.Type.HeightType;
         }
-		
-        private SizeType wearSizeType;
         [Display(Name = "Тип размера одежды")]
         public virtual SizeType WearSizeType {
 	        get => warehouseOperation.Nomenclature.Type.SizeType;

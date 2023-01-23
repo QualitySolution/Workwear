@@ -22,7 +22,6 @@ namespace Workwear.ViewModels.Stock.Widgets
 		private readonly SizeService sizeService;
 
 		private IDocItemSizeInfo selectItemInput;
-		//private readonly Nomenclature nomenclature;
 		private readonly IUnitOfWork uoW;
 		public Action<object, AddedSizesEventArgs> AddedSizes { get; set; } = (s,e) => { };
 		public SizeWidgetViewModel(
