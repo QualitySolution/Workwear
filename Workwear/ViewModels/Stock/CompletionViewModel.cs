@@ -80,8 +80,27 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		#region View
-		public bool CanDelItemSource => Entity.ObservableSourceItems.Count > 0;
-		public bool CanDelItemResult => Entity.ObservableResultItems.Count > 0;
+		public bool SensetiveDellSourceItemButton => SelectedSourceItem != null;
+		public bool SensetiveDellResultItemButton => SelectedResultItem != null;
+		public bool SensetiveAddSizesResultButton => SelectedResultItem != null && SelectedResultItem.WearSizeType != null; 
+		
+		private CompletionResultItem selectedResultItem;
+		public virtual CompletionResultItem SelectedResultItem {
+			get => selectedResultItem;
+			set {
+				selectedResultItem = value;	
+				OnPropertyChanged(nameof(SensetiveAddSizesResultButton));
+			}
+		}
+		private CompletionSourceItem selectedSourseItem;
+		public virtual CompletionSourceItem SelectedSourceItem {
+			get => selectedSourseItem;
+			set {
+				selectedSourseItem = value;
+				OnPropertyChanged(nameof(SensetiveDellSourceItemButton));
+			}
+		}
+
 		public bool ShowWarehouses => featuresService.Available(WorkwearFeature.Warehouses);
 
 		private IList<Owner> owners;
@@ -107,7 +126,6 @@ namespace Workwear.ViewModels.Stock
 					return;
 				}
 			}
-			OnPropertyChanged(nameof(CanDelItemSource));
 			lastWarehouse = Entity.SourceWarehouse;
 		}
 		#endregion
@@ -143,11 +161,26 @@ namespace Workwear.ViewModels.Stock
 		}
 		public void DelSourceItems(CompletionSourceItem item) {
 			Entity.ObservableSourceItems.Remove(item);
-			OnPropertyChanged(nameof(CanDelItemSource));
 		}
 		public void DelResultItems(CompletionResultItem item) {
 			Entity.ObservableResultItems.Remove(item);
-			OnPropertyChanged(nameof(CanDelItemResult));
+		}
+		public void AddSizesResultItems(CompletionResultItem item) {
+			if(item == null || item.Nomenclature == null)
+				return;
+			var existItems = Entity.ResultItems.Cast<IDocItemSizeInfo>().ToList();
+			var page = base.NavigationManager.OpenViewModel<SizeWidgetViewModel,IDocItemSizeInfo, IUnitOfWork, IList<IDocItemSizeInfo>>
+				(null, item, UoW,existItems);
+			page.ViewModel.AddedSizes += (i, args) => AddResultSizes(item, args);
+		}
+		private void AddResultSizes(CompletionResultItem item, AddedSizesEventArgs args) {
+			foreach(var s in args.SizesWithAmount) {
+				var exist = Entity.FindResultItem(item.Nomenclature, s.Size, args.Height, item.Owner);
+				if(exist != null)
+					exist.Amount = s.Amount;
+				else
+					Entity.AddResultItem(item.Nomenclature, s.Size, args.Height, s.Amount, item.Owner);
+			}
 		}
 		#endregion
 		#region Save
