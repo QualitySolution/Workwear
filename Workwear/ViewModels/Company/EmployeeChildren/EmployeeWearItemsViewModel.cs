@@ -26,11 +26,14 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 {
 	public class EmployeeWearItemsViewModel : ViewModelBase, IDisposable
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+		
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly IInteractiveService interactive;
 		private readonly ITdiCompatibilityNavigation navigation;
 		private readonly OpenStockDocumentsModel stockDocumentsModel;
+		private readonly IProgressBarDisplayable progress;
 
 		public readonly BaseParameters BaseParameters;
 		public EmployeeWearItemsViewModel(
@@ -40,13 +43,15 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			IInteractiveService interactive,
 			ITdiCompatibilityNavigation navigation,
 			OpenStockDocumentsModel stockDocumentsModel,
-			FeaturesService featuresService)
+			FeaturesService featuresService,
+			IProgressBarDisplayable progress)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.stockDocumentsModel = stockDocumentsModel ?? throw new ArgumentNullException(nameof(stockDocumentsModel));
+			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 
@@ -68,9 +73,15 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if (isConfigured) return;
 			isConfigured = true;
-			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
+			var start = DateTime.Now;
+			progress.Start(2+4);
+			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now, progressStep: () => progress.Add());
+			progress.Add();
 			Entity.FillWearRecivedInfo(employeeIssueRepository);
+			progress.Add();
 			OnPropertyChanged(nameof(ObservableWorkwearItems));
+			progress.Close();
+			logger.Debug($"Время заполнения таблицы «Спецодежда по нормам»: {(DateTime.Now - start).TotalSeconds} сек." );
 		}
 
 		#endregion

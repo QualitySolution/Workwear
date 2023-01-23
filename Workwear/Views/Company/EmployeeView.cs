@@ -173,11 +173,11 @@ namespace Workwear.Views.Company
 		#region Sizes
 		private void SizeBuild() {
 			var sizes = ViewModel.SizeService
-				.GetSize(ViewModel.UoW, null, true);
+				.GetSize(ViewModel.UoW, null, true, fetchSuitableSizes: true);
 			var excludeSizes = Entity.Sizes
 				.Where(s => s.Size.ShowInEmployee == false)
 				.Select(x => x.Size);
-			//добавляем исключенные размеры если они уже привязаны к сотруднику, чтобы они не проподали при пересохранении
+			//добавляем исключенные размеры если они уже привязаны к сотруднику, чтобы они не пропадали при пересохранении
 			sizes.AddRange(excludeSizes);
 			var sizeTypes = 
 				ViewModel.SizeService.GetSizeType(ViewModel.UoW, true).OrderBy(x => x.Position).ToList();
