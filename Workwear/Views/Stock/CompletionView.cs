@@ -7,6 +7,7 @@ using QSOrmProject;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Widgets;
 using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
 namespace Workwear.Views.Stock
@@ -26,6 +27,7 @@ namespace Workwear.Views.Stock
 			buttonAddReceiptNomenclature.Clicked += AddResultItems;
 			buttonDelExpenseNomenclature.Clicked += DelSourceItems;
 			buttonDelReceiptNomenclature.Clicked += DelResultItems;
+			buttonAddSizesReceiptNomenclature.Clicked += AddSizessResultItems;
 			ytreeExpenseItems.Selection.Changed += ytreeExpenseItems_Selection_Changed;
 			ytreeReceiptItems.Selection.Changed += ytreeReceiptItems_Selection_Changed;
 			buttonDelExpenseNomenclature.Binding
@@ -33,6 +35,9 @@ namespace Workwear.Views.Stock
 				.InitializeFromSource();
 			buttonDelReceiptNomenclature.Binding
 				.AddBinding(ViewModel, vm => vm.CanDelItemResult, b => b.Sensitive)
+				.InitializeFromSource(); 
+			buttonAddSizesReceiptNomenclature.Binding
+				.AddBinding(ViewModel, vm => vm.SensetiveAddSizesResultButton, b => b.Sensitive)
 				.InitializeFromSource();
 
 			ylabelId.Binding.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
@@ -121,6 +126,9 @@ namespace Workwear.Views.Stock
 		}
 		void DelResultItems(object sender, EventArgs eventArgs) {
 			ViewModel.DelResultItems(ytreeReceiptItems.GetSelectedObject<CompletionResultItem> ());
+		}
+		void AddSizessResultItems(object sender, EventArgs eventArgs) {
+			ViewModel.AddSizesResultItems(ytreeReceiptItems.GetSelectedObject<CompletionResultItem> ());
 		}
 	}
 }

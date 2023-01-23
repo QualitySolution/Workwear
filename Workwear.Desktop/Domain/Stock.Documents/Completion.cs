@@ -7,7 +7,7 @@ using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
 using Workwear.Repository.Stock;
-using Workwear.Tools;
+using Workwear.Tools;using Workwear.Domain.Sizes;
 using BindingsObservableSourceList =  System.Data.Bindings.Collections.Generic.GenericObservableList<Workwear.Domain.Stock.Documents.CompletionSourceItem>;
 using BindingsObservableResultList =  System.Data.Bindings.Collections.Generic.GenericObservableList<Workwear.Domain.Stock.Documents.CompletionResultItem>;
 
@@ -131,7 +131,7 @@ namespace Workwear.Domain.Stock.Documents
             };
             ObservableSourceItems.Add(item);
         }
-        public virtual CompletionResultItem AddResultItem(Nomenclature nomenclature) {
+        public virtual CompletionResultItem AddResultItem(Nomenclature nomenclature, Size wearSize = null, Size height = null, int amount = 0, Owner owner = null) {
             var item = new CompletionResultItem {
                 Completion = this,
                 WarehouseOperation = new WarehouseOperation
@@ -139,7 +139,11 @@ namespace Workwear.Domain.Stock.Documents
                     Nomenclature = nomenclature,
                     OperationTime = Date,
                     ReceiptWarehouse = ResultWarehouse
-                }
+                },
+                WearSize = wearSize,
+                Height = height,
+                Amount = amount,
+                Owner = owner
             };
             ObservableResultItems.Add(item);
             return item;
@@ -154,6 +158,8 @@ namespace Workwear.Domain.Stock.Documents
                 item.WarehouseOperation.OperationTime = Date;
             }
         }
+        public virtual CompletionItem FindResultItem(Nomenclature nomenclature, Size size, Size height, Owner owner) => 
+	        ResultItems.FirstOrDefault(i => i.Nomenclature.Id == nomenclature.Id && i.Height == height && i.WearSize == size && i.Owner == owner);
         #endregion
     }
 }

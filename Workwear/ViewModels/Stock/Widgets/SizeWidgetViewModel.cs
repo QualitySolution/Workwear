@@ -126,11 +126,9 @@ namespace Workwear.ViewModels.Stock.Widgets
 	/// Класс содержащий объекты номенклатуры, с добавленными размерами
 	/// </summary>
 	public class AddedSizesEventArgs : EventArgs {
-		public readonly IDocItemSizeInfo Source;
 		public readonly Size Height;
 		public readonly List<AddSizeItem> SizesWithAmount;
 		public AddedSizesEventArgs(IDocItemSizeInfo itemInput, Size height, List<AddSizeItem> sizesWithAmount) {
-			Source = itemInput;
 			Height = height;
 			SizesWithAmount = sizesWithAmount;
 		}

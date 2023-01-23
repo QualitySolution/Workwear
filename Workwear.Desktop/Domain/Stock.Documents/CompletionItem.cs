@@ -7,7 +7,7 @@ using Workwear.Domain.Sizes;
 
 namespace Workwear.Domain.Stock.Documents
 {
-    public class CompletionItem : PropertyChangedBase, IDomainObject
+    public class CompletionItem : PropertyChangedBase, IDomainObject, IDocItemSizeInfo
     {
         #region Свойства
         public virtual int Id { get; }
@@ -55,7 +55,17 @@ namespace Workwear.Domain.Stock.Documents
             get => WarehouseOperation.Height;
             set => WarehouseOperation.Height = value;
         }
-        
+        private SizeType heightType;
+        [Display(Name = "Тип Роста")]
+        public virtual SizeType HeightType {
+	        get => warehouseOperation.Nomenclature.Type.HeightType;
+        }
+		
+        private SizeType wearSizeType;
+        [Display(Name = "Тип размера одежды")]
+        public virtual SizeType WearSizeType {
+	        get => warehouseOperation.Nomenclature.Type.SizeType;
+        }
         [Display(Name = "Собственник имущества")]
         public virtual Owner Owner {
 	        get => WarehouseOperation.Owner;
