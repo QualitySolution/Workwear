@@ -36,7 +36,7 @@ namespace QS.Cloud.WearLk.Client
 		
 		public void CloseClaim(int claimId, string text) {
 			var client = new ClaimManager.ClaimManagerClient(Channel);
-			var request = new CloseClaimRequest { ClaimId = claimId, Text = text};
+			var request = new CloseClaimRequest { ClaimId = claimId, Text = text ?? String.Empty};
 			client.CloseClaim(request, Headers);
 		}
 		#endregion
