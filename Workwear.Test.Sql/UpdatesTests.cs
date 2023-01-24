@@ -50,7 +50,7 @@ namespace Workwear.Test.Sql
 			if(!updateConfiguration.GetHopsToLast(sample.TypedVersion).Any())
 				Assert.Ignore($"Образец базы {sample} версии пропущен. Так как версию базы {sample.Version} невозможно обновить.");
 
-			//Создаем чистую базу
+			//Загружаем образец базы на SQL сервер.
 			StartSqlServer(server);
 			TestContext.Progress.WriteLine($"Создаем базу {sample.DbName}");
 			var creator = new TestingCreateDbController(server);
@@ -59,8 +59,8 @@ namespace Workwear.Test.Sql
 			//Выполняем обновление
 			var builder = server.ConnectionStringBuilder;
 			builder.Database = sample.DbName;
-			var connectionstring = builder.GetConnectionString(true);
-			using(var connection = new MySqlConnection(connectionstring)) {
+			var connectionString = builder.GetConnectionString(true);
+			using(var connection = new MySqlConnection(connectionString)) {
 				connection.Open();
 				foreach(var hop in updateConfiguration.GetHopsToLast(sample.TypedVersion)) {
 					TestContext.Progress.WriteLine(
@@ -69,12 +69,12 @@ namespace Workwear.Test.Sql
 				}
 
 				//Сравнение обновлённой базы и новой
-				var builderСurrentDd = server.ConnectionStringBuilder;
-				builderСurrentDd.Database = currentDdName;
-				var connectionstringСurrentDd = builder.GetConnectionString(true);
-				using(var connectionСurrentDd = new MySqlConnection(connectionstringСurrentDd)) {
-					connectionСurrentDd.Open();
-					ComparisonSchema(connectionСurrentDd, connection);
+				var builderCurrentDd = server.ConnectionStringBuilder;
+				builderCurrentDd.Database = currentDdName;
+				var connectionStringCurrentDd = builderCurrentDd.GetConnectionString(true);
+				using(var connectionCurrentDd = new MySqlConnection(connectionStringCurrentDd)) {
+					connectionCurrentDd.Open();
+					ComparisonSchema(connectionCurrentDd, connection);
 				}
 			}
 
@@ -150,7 +150,7 @@ namespace Workwear.Test.Sql
 		
 		#endregion
 		#region Compare DB Text
-		//TODO: Удааить метод и методы используемые только в нём, если ComparisonSchema будет нормально работать
+		//TODO: Удалить метод и методы используемые только в нём, если ComparisonSchema будет нормально работать
 		private void ComparisonSchemaText(MySqlConnection connection, string db1, string db2) {
 			TestContext.Progress.WriteLine($"Сравниваем схемы базы {db1} и {db2}.");
 			var versionDb1 = GetVersion(connection, db1);
