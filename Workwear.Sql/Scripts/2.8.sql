@@ -1089,6 +1089,10 @@ ALTER TABLE `posts`
 			ON DELETE NO ACTION
 			ON UPDATE CASCADE;
 
+-- Удаляем более не используемое поле
+ALTER TABLE `wear_cards_item`
+DROP COLUMN `amount`;
+
 -- Обновляем хранимую процедуру
 DROP function IF EXISTS `count_issue`;
 
