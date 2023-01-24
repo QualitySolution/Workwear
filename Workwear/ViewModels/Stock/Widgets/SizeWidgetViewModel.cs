@@ -18,27 +18,27 @@ namespace Workwear.ViewModels.Stock.Widgets
 		public IList<Size> WearSizes { get;private set; }
 		public IList<AddSizeItem> SizeItems { get; private set; }
 		public bool IsUseHeight { get; set; }
-		public IList<IncomeItem> ExistItems { get; set; }
+		public IList<IDocItemSizeInfo> ExistItems { get; set; }
 		private readonly SizeService sizeService;
 
-		private readonly Nomenclature nomenclature;
+		private IDocItemSizeInfo selectItemInput;
 		private readonly IUnitOfWork uoW;
 		public Action<object, AddedSizesEventArgs> AddedSizes { get; set; } = (s,e) => { };
 		public SizeWidgetViewModel(
-			IncomeItem selectItem,
+			IDocItemSizeInfo selectItem,
 			INavigationManager navigationManager,
 			IUnitOfWork uoW,
 			SizeService sizeService,
-			IList<IncomeItem> existItems = null) : base(navigationManager)
+			IList<IDocItemSizeInfo> existItems = null) : base(navigationManager)
 		{
 			this.sizeService = sizeService;
 			IsModal = true;
 			Title = "Добавить размеры:";
-			nomenclature = selectItem.Nomenclature;
 			this.uoW = uoW;
+			selectItemInput = selectItem;
 			ExistItems = existItems;
 			ConfigureSizes();
-			height = selectItem.Height ?? WearHeights?.FirstOrDefault();
+			height = selectItemInput.Height ?? WearHeights?.FirstOrDefault();
 			UpdateAmounts();
 		}
 
@@ -46,12 +46,12 @@ namespace Workwear.ViewModels.Stock.Widgets
 		/// Конфигурирует списки ростов и размеров
 		/// </summary>
 		private void ConfigureSizes() {
-			if (nomenclature.Type.HeightType != null) {
-				WearHeights = sizeService.GetSize(uoW, nomenclature.Type.HeightType,false, true).ToList();
+			if (selectItemInput.HeightType != null) {
+				WearHeights = sizeService.GetSize(uoW, selectItemInput.HeightType,false, true).ToList();
 				IsUseHeight = true;
 			}
-			WearSizes = nomenclature?.Type?.SizeType != null ? 
-				sizeService.GetSize(uoW, nomenclature.Type.SizeType,false, true).ToList() : new List<Size>();
+			WearSizes = selectItemInput.WearSizeType != null ? 
+				sizeService.GetSize(uoW, selectItemInput.WearSizeType,false, true).ToList() : new List<Size>();
 
 			SizeItems = WearSizes.Select(s => new AddSizeItem(s)).ToList();
 			foreach(var item in SizeItems) {
@@ -84,7 +84,7 @@ namespace Workwear.ViewModels.Stock.Widgets
 		/// Добавляет размеры, превращая их в объекты номенклатуры и вызывает закрытие диалога
 		/// </summary>
 		public void AddSizes() {
-			var args = new AddedSizesEventArgs(nomenclature, Height, SizeItems.Where(x => x.IsUsed).ToList());
+			var args = new AddedSizesEventArgs(selectItemInput, Height, SizeItems.Where(x => x.IsUsed).ToList());
 			AddedSizes(this, args);
 			Close(false, CloseSource.Save);
 		}
@@ -125,11 +125,9 @@ namespace Workwear.ViewModels.Stock.Widgets
 	/// Класс содержащий объекты номенклатуры, с добавленными размерами
 	/// </summary>
 	public class AddedSizesEventArgs : EventArgs {
-		public readonly Nomenclature Source;
 		public readonly Size Height;
 		public readonly List<AddSizeItem> SizesWithAmount;
-		public AddedSizesEventArgs(Nomenclature nomenclature, Size height, List<AddSizeItem> sizesWithAmount) {
-			Source = nomenclature;
+		public AddedSizesEventArgs(IDocItemSizeInfo itemInput, Size height, List<AddSizeItem> sizesWithAmount) {
 			Height = height;
 			SizesWithAmount = sizesWithAmount;
 		}
