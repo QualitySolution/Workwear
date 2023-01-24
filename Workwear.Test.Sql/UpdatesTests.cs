@@ -217,7 +217,7 @@ namespace Workwear.Test.Sql
 			TestContext.Progress.WriteLine($"Сравниваем схемы базы {connection1.Database} и {connection2.Database}.");
 			var versionDb1 = GetVersion(connection1, connection1.Database);
 			var versionDb2 = GetVersion(connection2, connection2.Database);
-			//Assert.That(versionDb1, Is.EqualTo(versionDb2), $"Версии у баз различаются. { versionDb1} и {versionDb2}");
+			Assert.That(versionDb1, Is.EqualTo(versionDb2), $"Версии у баз различаются. { versionDb1} и {versionDb2}");
 
 			Assert.That(DBSchemaEqual(connection1, connection2, Console.WriteLine), Is.True,"Схемы баз отличаются");
 			Assert.That(DBSchemaEqual(connection2, connection1, Console.WriteLine), Is.True,"Схемы баз отличаются");
