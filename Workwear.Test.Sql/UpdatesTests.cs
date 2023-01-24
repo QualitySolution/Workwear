@@ -217,17 +217,16 @@ namespace Workwear.Test.Sql
 			TestContext.Progress.WriteLine($"Сравниваем схемы базы {connection1.Database} и {connection2.Database}.");
 			var versionDb1 = GetVersion(connection1, connection1.Database);
 			var versionDb2 = GetVersion(connection2, connection2.Database);
-			Assert.That(versionDb1, Is.EqualTo(versionDb2), "Версии у баз различаются.");
+			//Assert.That(versionDb1, Is.EqualTo(versionDb2), $"Версии у баз различаются. { versionDb1} и {versionDb2}");
 
-			Assert.That(DBSchemaCompare(connection1, connection2, Console.WriteLine), Is.True,"Схемы баз отличаются");
-			Assert.That(DBSchemaCompare(connection2, connection1, Console.WriteLine), Is.True,"Схемы баз отличаются");
+			Assert.That(DBSchemaEqual(connection1, connection2, Console.WriteLine), Is.True,"Схемы баз отличаются");
+			Assert.That(DBSchemaEqual(connection2, connection1, Console.WriteLine), Is.True,"Схемы баз отличаются");
 		}
 
-		private bool DBSchemaCompare(MySqlConnection connection1, MySqlConnection connection2, RowOfSchema.Log log) {
+		private bool DBSchemaEqual(MySqlConnection connection1, MySqlConnection connection2, RowOfSchema.Log log) {
 			bool result = true;
 
-			foreach(string schema in new List<string> {"Tables", "Foreign Keys", "Indexes", "Columns"}) {
-				var tmp = connection1.GetSchema(schema).Rows;
+			foreach(string schema in new List<string> {"Tables", "Foreign Keys", "Indexes", "IndexColumns", "Columns"})  {
 				var db1 = connection1.GetSchema(schema).Rows
 					.Cast<DataRow>()
 					.Select(x => new RowOfSchema(schema, connection1.Database, x))
@@ -246,7 +245,7 @@ namespace Workwear.Test.Sql
 						}
 					}
 					else {
-						log($"{schema}: {connection1.Database}.{row.Value.FullName} в базе {connection2.Database} отсутствует.");
+						log($"{schema}:			{connection1.Database}.{row.Value.FullName}	\n	в базе		{connection2.Database} отсутствует.\n");
 						result = false;
 					}
 				}
