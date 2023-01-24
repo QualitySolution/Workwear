@@ -91,9 +91,11 @@ namespace Workwear.Test.Integration.Organization
 				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
 
-				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22));
-				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.GreaterThan(0));
-				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters).First();
+				var today = new DateTime(2020, 07, 22);
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, today);
+				Assert.That(employee.GetUnderreceivedItems(baseParameters, today).Count(), Is.GreaterThan(0));
+				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters, today).First();
 				Assert.That(employeeCardItem.BestChoiceInStock.Count(), Is.GreaterThan(0));
 
 				var bestChoice = employeeCardItem.BestChoiceInStock.First();
@@ -193,10 +195,12 @@ namespace Workwear.Test.Integration.Organization
 				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
 
-				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22));
-				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.GreaterThan(0));
-				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters).First();
-				var employeeCardItemCount = employee.GetUnderreceivedItems(baseParameters).Count();
+				var today = new DateTime(2020, 07, 22);
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, today);
+				Assert.That(employee.GetUnderreceivedItems(baseParameters, today).Count(), Is.GreaterThan(0));
+				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters, today).First();
+				var employeeCardItemCount = employee.GetUnderreceivedItems(baseParameters, today).Count();
 
 				var inStock = employeeCardItem.InStock;
 
@@ -325,12 +329,13 @@ namespace Workwear.Test.Integration.Organization
 				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(3));
 
-				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22));
-				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.GreaterThan(0));
+				var today = new DateTime(2020, 07, 22);
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
+				employee.FillWearInStockInfo(uow, baseParameters, warehouse, today);
+				Assert.That(employee.GetUnderreceivedItems(baseParameters, today).Count(), Is.GreaterThan(0));
+				Assert.That(employee.GetUnderreceivedItems(baseParameters, today).Count(), Is.EqualTo(2));
 
-				Assert.That(employee.GetUnderreceivedItems(baseParameters).Count(), Is.EqualTo(2));
-
-				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters).First();
+				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters, today).First();
 				Assert.That(employeeCardItem.InStock.Count(), Is.GreaterThan(0));
 
 				var bestChoiceInStock = employeeCardItem.BestChoiceInStock;
@@ -442,7 +447,7 @@ namespace Workwear.Test.Integration.Organization
 
 		#endregion
 
-		#region FillWearRecivedInfo
+		#region FillWearReceivedInfo
 
 		[Test(Description = "Проверяем что при заполнении выданной спецодежды проверяем аналоги тоже.")]
 		[Category("real case")]
@@ -504,7 +509,7 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(operation);
 				uow.Commit();
 
-				employee.FillWearRecivedInfo(new EmployeeIssueRepository(uow));
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
 				Assert.That(item.Amount, Is.EqualTo(1));
 				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2018, 1, 20)));
@@ -588,7 +593,7 @@ namespace Workwear.Test.Integration.Organization
 
 				uow.Commit();
 
-				employee.FillWearRecivedInfo(new EmployeeIssueRepository(uow));
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
 				Assert.That(item.Amount, Is.EqualTo(1));
 				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2019, 1, 20)));
@@ -689,7 +694,7 @@ namespace Workwear.Test.Integration.Organization
 
 				uow.Commit();
 
-				employee.FillWearRecivedInfo(new EmployeeIssueRepository(uow));
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
 				Assert.That(item.Amount, Is.EqualTo(5));
 				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2019, 1, 20)));
@@ -769,7 +774,7 @@ namespace Workwear.Test.Integration.Organization
 
 				uow.Commit();
 
-				employee.FillWearRecivedInfo(new EmployeeIssueRepository(uow));
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
 				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2018, 1, 20)));
 				Assert.That(item.Amount, Is.EqualTo(1));
@@ -836,7 +841,7 @@ namespace Workwear.Test.Integration.Organization
 
 				uow.Commit();
 
-				employee.FillWearRecivedInfo(new EmployeeIssueRepository(uow));
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
 				Assert.That(item.Amount, Is.EqualTo(1));
 				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2018, 1, 20)));
@@ -929,7 +934,7 @@ namespace Workwear.Test.Integration.Organization
 
 				uow.Commit();
 
-				employee.FillWearRecivedInfo(new EmployeeIssueRepository(uow));
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item1 = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normItem);
 				Assert.That(item1.Amount, Is.EqualTo(1));
 				var item2 = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normItem2);

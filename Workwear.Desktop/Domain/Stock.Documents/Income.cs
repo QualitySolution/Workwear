@@ -246,7 +246,7 @@ namespace Workwear.Domain.Stock.Documents
 			EmployeeCard.UpdateNextIssue(Items
 				.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
 				.Where(x => x != null).Distinct().ToArray());
-			EmployeeCard.FillWearRecivedInfo(new EmployeeIssueRepository(UoW));
+			EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
 			UoW.Save(EmployeeCard);
 		}
 	}

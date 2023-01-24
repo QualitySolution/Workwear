@@ -14,7 +14,6 @@ namespace Workwear.HibernateMapping.Company
 			else 
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
-			Map (x => x.Amount).Column ("amount");
 			Map (x => x.Created).Column ("created");
 			Map (x => x.LastIssue).Column ("last_issue");
 			Map (x => x.NextIssue).Column ("next_issue");

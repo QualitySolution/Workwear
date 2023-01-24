@@ -260,8 +260,8 @@ namespace Workwear.Domain.Company
 
 		#endregion
 		#region Фильтрованные коллекции
-		public virtual IEnumerable<EmployeeCardItem> GetUnderreceivedItems(BaseParameters baseParameters) => 
-			WorkwearItems.Where(x => x.CalculateRequiredIssue(baseParameters) > 0);
+		public virtual IEnumerable<EmployeeCardItem> GetUnderreceivedItems(BaseParameters baseParameters, DateTime onDate) => 
+			WorkwearItems.Where(x => x.CalculateRequiredIssue(baseParameters, onDate) > 0);
 		#endregion
 		public EmployeeCard () { }
 		#region IValidatableObject implementation
@@ -403,22 +403,25 @@ namespace Workwear.Domain.Company
 			}
 		}
 
-		public virtual void FillWearRecivedInfo(EmployeeIssueRepository issueRepository) {
-			if (Id == 0) // Не надо проверять выдачи, так как сотрудник еще не сохранен.
-				return; 
+		/// <summary>
+		/// Метод заполняет поля Amount и LastIssue, для всех строк карточки.
+		/// </summary>
+		public virtual void FillWearReceivedInfo(EmployeeIssueRepository issueRepository) {
 			foreach(var item in WorkwearItems) {
+				item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
 				item.Amount = 0;
 				item.LastIssue = null;
 			}
 
-			var receiveds = 
-				issueRepository
-					.AllOperationsForEmployee(this)
-					.Where(x => x.Issued > 0);
+			if(Id == 0) { // Не лезть в базу, так как сотрудник еще не сохранен.
+				return;
+			}
+
+			var operations = issueRepository.AllOperationsForEmployee(this);
 			var protectionGroups = 
-				receiveds
+				operations
 					.Where(x => x.ProtectionTools != null)
-					.GroupBy(x => x.ProtectionTools?.Id)
+					.GroupBy(x => x.ProtectionTools.Id)
 					.ToDictionary(g => g.Key, g => g);
 
 			//Основное заполнение выдачи
@@ -439,12 +442,14 @@ namespace Workwear.Domain.Company
 			}
 		}
 
-		private void SetLastIssue(EmployeeCardItem item, int protectionToolsId,  Dictionary<int?,IGrouping<int?,EmployeeIssueOperation>> protectionGroups) {
-			var operations = protectionGroups[protectionToolsId];
+		private void SetLastIssue(EmployeeCardItem item, int protectionToolsId, Dictionary<int,IGrouping<int, EmployeeIssueOperation>> protectionGroups) {
+			var operations = protectionGroups[protectionToolsId].ToList();
+			item.Graph = new IssueGraph(operations);
 			//В сортировке ManualOperation, чтобы в ситуации когда на одну дату есть несколько операция,
 			//чтобы выводилась именно ручная.
 			var lastOperation = 
 				operations
+					.Where(i => i.Issued > 0)
 					.OrderByDescending(x => x.OperationTime.Date)
 					.ThenByDescending(x => x.ManualOperation).First();
 			var lastDate = lastOperation.OperationTime.Date;
@@ -461,7 +466,7 @@ namespace Workwear.Domain.Company
 			DateTime onTime, 
 			bool onlyUnderreceived = false, Action progressStep = null)
 		{
-			var actualItems = onlyUnderreceived ? GetUnderreceivedItems(baseParameters) : WorkwearItems;
+			var actualItems = onlyUnderreceived ? GetUnderreceivedItems(baseParameters, onTime) : WorkwearItems;
 			FillWearInStockInfo(uow, warehouse, onTime, actualItems);
 		}
 		
@@ -482,7 +487,7 @@ namespace Workwear.Domain.Company
 			var stock = stockRepo.StockBalances(uow, warehouse, allNomenclatures, onTime);
 			progressStep?.Invoke();
 			foreach(var item in items) {
-				item.InStock = stock.Where(x => item.MatcheStockPosition(x.StockPosition)).ToList();
+				item.InStock = stock.Where(x => item.MatchStockPosition(x.StockPosition)).ToList();
 			}
 		}
 

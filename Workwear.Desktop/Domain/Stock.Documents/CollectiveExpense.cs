@@ -164,16 +164,16 @@ namespace Workwear.Domain.Stock.Documents
 			if(Items.Any(x => employeeCardItem.IsSame(x.EmployeeCardItem)))
 				return null;
 
-			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
+			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters, Date); //Количество которое нужно выдать
 			if (employeeCardItem.BestChoiceInStock.Any()) {
 				foreach (var position in employeeCardItem.BestChoiceInStock) {
-					var expancePositionAmount =
+					var expensePositionAmount =
 						Items.Where(item => item.Nomenclature == position.Nomenclature
 						                    && item.WearSize?.Id == position.WearSize?.Id
 						                    && item.Height?.Id == position.Height?.Id)
 							.Aggregate(position.Amount, (current, item) => current - item.Amount); //Есть на складе
 
-					if (expancePositionAmount >= needPositionAmount && position.WearPercent == 0)
+					if (expensePositionAmount >= needPositionAmount && position.WearPercent == 0)
 						return AddItem(employeeCardItem, position.StockPosition, needPositionAmount);
 				}
 
@@ -232,7 +232,7 @@ namespace Workwear.Domain.Stock.Documents
 				progress.Add(text: $"Обновляем потребности {employeeGroup.Key.ShortName}");
 				employeeGroup.Key.UpdateNextIssue(employeeGroup.Select(x => x.ProtectionTools).ToArray());
 				progress.Add();
-				employeeGroup.Key.FillWearRecivedInfo(new EmployeeIssueRepository(UoW));
+				employeeGroup.Key.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
 				UoW.Save(employeeGroup.Key);
 			}
 		}

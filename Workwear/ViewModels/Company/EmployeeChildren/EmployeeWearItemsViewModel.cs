@@ -77,7 +77,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			progress.Start(2+4);
 			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now, progressStep: () => progress.Add());
 			progress.Add();
-			Entity.FillWearRecivedInfo(employeeIssueRepository);
+			Entity.FillWearReceivedInfo(employeeIssueRepository);
 			progress.Add();
 			OnPropertyChanged(nameof(ObservableWorkwearItems));
 			progress.Close();
@@ -177,7 +177,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		void SetIssueDateManual_PageClosed(ProtectionTools protectionTools)
 		{
 			UoW.Commit();
-			Entity.FillWearRecivedInfo(employeeIssueRepository);
+			Entity.FillWearReceivedInfo(employeeIssueRepository);
 			Entity.UpdateNextIssue(protectionTools);
 			UoW.Save();
 		}
@@ -233,7 +233,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				UoW.Session.Refresh(item);
 			}
 			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
-			Entity.FillWearRecivedInfo(employeeIssueRepository);
+			Entity.FillWearReceivedInfo(employeeIssueRepository);
 		}
 
 		public void Dispose()

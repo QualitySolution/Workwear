@@ -58,13 +58,6 @@ namespace Workwear.Domain.Company
 			set => SetField (ref created, value);
 		}
 
-		private int amount;
-		[Display (Name = "Выданное количество")]
-		public virtual int Amount {
-			get => amount;
-			set => SetField (ref amount, value);
-		}
-
 		private DateTime? lastIssue;
 		[Display (Name = "Последняя выдача")]
 		public virtual DateTime? LastIssue {
@@ -88,6 +81,17 @@ namespace Workwear.Domain.Company
 		}
 		#endregion
 		#region Не хранимое в базе значение
+		private int amount;
+		/// <summary>
+		/// Внимание! значение не хранится в базе, для его заполнения используете метод EmployeeCard.FillWearReceivedInfo()
+		/// </summary>
+		[Display (Name = "Выданное количество")]
+		[Obsolete("УДАЛИТЬ")]
+		public virtual int Amount {
+			get => amount;
+			set => SetField (ref amount, value);
+		}
+		
 		private IList<StockBalanceDTO> inStock;
 		[Display (Name = "На складе")]
 		public virtual IList<StockBalanceDTO> InStock {
@@ -95,6 +99,7 @@ namespace Workwear.Domain.Company
 			set => SetField (ref inStock, value);
 		}
 		public virtual EmployeeIssueOperation LastIssueOperation { get; set; }
+		public virtual IssueGraph Graph { get; set; }
 		#endregion
 		#region Расчетное
 		public virtual string AmountColor {
@@ -149,6 +154,7 @@ namespace Workwear.Domain.Company
 			}
 		}
 		#endregion
+		#region Расчетное для View
 		public virtual string MatchedNomenclatureShortText {
 			get {
 				if(InStockState == StockStateInfo.UnknownNomenclature)
@@ -166,7 +172,6 @@ namespace Workwear.Domain.Company
 				return text;
 			}
 		}
-		#region Расчетное для View
 		public virtual string AmountByNormText => 
 			ProtectionTools?.Type?.Units?.MakeAmountShortStr(ActiveNormItem?.Amount ?? 0) ?? ActiveNormItem?.Amount.ToString();
 		public virtual string InStockText => 
@@ -187,21 +192,22 @@ namespace Workwear.Domain.Company
 
 		#region Methods
 		/// <summary>
-		/// Необходимое к выдачи количество.
-		/// Внимание! Не корректно считает сложные ситуации, с неполной выдачей.
+		/// Получить необходимое к выдачи количество.
 		/// </summary>
-		public virtual int CalculateRequiredIssue(BaseParameters parameters) {
-			if (ActiveNormItem?.NormCondition?.IssuanceStart != null && ActiveNormItem?.NormCondition?.IssuanceEnd != null) {
-				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(DateTime.Today);
-				if (DateTime.Today < nextPeriod.Begin)
+		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate) {
+			if(ActiveNormItem == null)
+				return 0;
+			
+			if (ActiveNormItem.NormCondition?.IssuanceStart != null && ActiveNormItem.NormCondition?.IssuanceEnd != null) {
+				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(onDate);
+				if (onDate < nextPeriod.Begin)
 					return 0;
 			}
-			if(NextIssue.HasValue && NextIssue.Value.AddDays(-parameters.ColDayAheadOfShedule) <= DateTime.Today)
-				return ActiveNormItem.Amount;
-			return ActiveNormItem.Amount <= Amount ? 0 : ActiveNormItem.Amount - Amount;
+
+			return ActiveNormItem.Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule));
 		}
 
-		public virtual bool MatcheStockPosition(StockPosition stockPosition) {
+		public virtual bool MatchStockPosition(StockPosition stockPosition) {
 			if (ProtectionTools.MatchedNomenclatures.All(n => n.Id != stockPosition.Nomenclature.Id))
 				return false;
 			if (stockPosition.Nomenclature.MatchingEmployeeSex(EmployeeCard.Sex) == false)

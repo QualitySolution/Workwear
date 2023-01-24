@@ -253,7 +253,7 @@ namespace Workwear.Test.Domain.Company
 		#region CalculateRequiredIssue
 
 		[Test(Description = "Не получали совсем, должны получить все")]
-		public void CalculateRequiredIssue_NotRecivedCase()
+		public void CalculateRequiredIssue_NotReceivedCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
@@ -265,13 +265,14 @@ namespace Workwear.Test.Domain.Company
 				ActiveNormItem = norm,
 				Amount = 0,
 				LastIssue = null,
+				Graph = new IssueGraph(new List<EmployeeIssueOperation>()),
 				NextIssue = DateTime.Today.AddDays(30)
 			};
-			Assert.That(item.CalculateRequiredIssue(baseParameters), Is.EqualTo(5));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(5));
 		}
 
 		[Test(Description = "Все получили")]
-		public void CalculateRequiredIssue_RecivedFullyCase()
+		public void CalculateRequiredIssue_ReceivedFullyCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
@@ -282,14 +283,23 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				ActiveNormItem = norm,
 				Amount = 4,
+				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
+					new EmployeeIssueOperation {
+						OperationTime = DateTime.Today.AddDays(-30),
+						StartOfUse = DateTime.Today.AddDays(-30),
+						ExpiryByNorm = DateTime.Today.AddDays(30),
+						AutoWriteoffDate = DateTime.Today.AddDays(30),
+						Issued = 4
+					}
+				}),
 				LastIssue = DateTime.Today.AddDays(-30),
 				NextIssue = DateTime.Today.AddDays(30)
 			};
-			Assert.That(item.CalculateRequiredIssue(baseParameters), Is.EqualTo(0));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(0));
 		}
 		
 		[Test(Description = "Получили частично")]
-		public void CalculateRequiredIssue_RecivedPartCase()
+		public void CalculateRequiredIssue_ReceivedPartCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
@@ -297,17 +307,25 @@ namespace Workwear.Test.Domain.Company
 			var norm = new NormItem {
 				Amount = 4
 			};
-			//FIXME Возможно некоректная ситуация, надо подумать как в этом месте будет более правильно поставить дату следующей выдачи
 			var item = new EmployeeCardItem {
 				ActiveNormItem = norm,
 				Amount = 1,
+				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
+					new EmployeeIssueOperation {
+						OperationTime = DateTime.Today.AddDays(-30),
+						StartOfUse = DateTime.Today.AddDays(-30),
+						ExpiryByNorm = DateTime.Today.AddDays(30),
+						AutoWriteoffDate = DateTime.Today.AddDays(30),
+						Issued = 1
+					}
+				}),
 				LastIssue = DateTime.Today.AddDays(-30),
 				NextIssue = DateTime.Today.AddDays(30)
 			};
-			Assert.That(item.CalculateRequiredIssue(baseParameters), Is.EqualTo(3));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(3));
 		}
 		
-		[Test(Description = "Получили, но дожны получить заново")]
+		[Test(Description = "Получили до износа.")]
 		public void CalculateRequiredIssue_NextIssueIsNullCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
@@ -319,14 +337,24 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				ActiveNormItem = norm,
 				Amount = 2,
-				LastIssue = DateTime.Today.AddDays(-30),
+				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
+					new EmployeeIssueOperation {
+						OperationTime = DateTime.Today.AddMonths(-30),
+						StartOfUse = DateTime.Today.AddMonths(-30),
+						ExpiryByNorm = null,
+						AutoWriteoffDate = null,
+						UseAutoWriteoff = false,
+						Issued = 2
+					}
+				}),
+				LastIssue = DateTime.Today.AddMonths(-30),
 				NextIssue = null
 			};
-			Assert.That(item.CalculateRequiredIssue(baseParameters), Is.EqualTo(0));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(0));
 		}
 		
-		[Test(Description = "Проверяем учитывает ли расчет даты следущей выдачи дату автосписания.")]
-		public void CalculateRequiredIssue_ReciveExpiredCase()
+		[Test(Description = "Проверяем учитывает ли расчет даты следующей выдачи дату автосписания.")]
+		public void CalculateRequiredIssue_ReceiveExpiredCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
@@ -337,13 +365,22 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				ActiveNormItem = norm,
 				Amount = 1,
+				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
+					new EmployeeIssueOperation {
+						OperationTime = DateTime.Today.AddDays(-40),
+						StartOfUse = DateTime.Today.AddDays(-40),
+						ExpiryByNorm = DateTime.Today.AddDays(-10),
+						AutoWriteoffDate = DateTime.Today.AddDays(-10),
+						Issued = 1
+					}
+				}),
 				LastIssue = DateTime.Today.AddDays(-40),
 				NextIssue = DateTime.Today.AddDays(-10)
 			};
-			Assert.That(item.CalculateRequiredIssue(baseParameters), Is.EqualTo(1));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(1));
 		}
 		[Test(Description = "В настройках базы стоит возможность выдачи раньше на 30 дней.")]
-		public void CalculateRequiredIssue_ReciveBeforeExpiredCase()
+		public void CalculateRequiredIssue_ReceiveBeforeExpiredCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(30);
@@ -354,14 +391,23 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				ActiveNormItem = norm,
 				Amount = 1,
+				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
+					new EmployeeIssueOperation {
+						OperationTime = DateTime.Today.AddMonths(-5),
+						StartOfUse = DateTime.Today.AddMonths(-5),
+						ExpiryByNorm = DateTime.Today.AddDays(-10),
+						AutoWriteoffDate = DateTime.Today.AddDays(-10),
+						Issued = 1
+					}
+				}),
 				LastIssue = DateTime.Today.AddMonths(-5),
 				NextIssue = DateTime.Today.AddDays(-10)
 			};
-			Assert.That(item.CalculateRequiredIssue(baseParameters), Is.EqualTo(1));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(1));
 		}
 		
 		#endregion
-		#region MatcheStockPosition
+		#region MatchStockPosition
 
 		[Test(Description = "Проверяем случай при котором у складской позиции отсутствует рост, " +
 		                    "значит эта номенклатура без роста и не надо сравнивать ее по росту с сотрудником.")]
@@ -388,7 +434,7 @@ namespace Workwear.Test.Domain.Company
 			var employeeCardItem = new EmployeeCardItem(employee, normItem);
 
 			var stockPosition = new StockPosition(nomenclature, 0, size,null, null);
-			Assert.That(employeeCardItem.MatcheStockPosition(stockPosition)); 
+			Assert.That(employeeCardItem.MatchStockPosition(stockPosition)); 
 		}
 
 		[Test(Description = "Проверяем что находим соответствие размеров.")]
@@ -414,7 +460,7 @@ namespace Workwear.Test.Domain.Company
 			var employeeItem = new EmployeeCardItem(employee, normItem);
 
 			var stockPosition = new StockPosition(nomenclature, 0, size,null, null);
-			var result = employeeItem.MatcheStockPosition(stockPosition);
+			var result = employeeItem.MatchStockPosition(stockPosition);
 			Assert.That(result, Is.True);
 		}
 
@@ -447,7 +493,7 @@ namespace Workwear.Test.Domain.Company
 
 			var employeeItem = new EmployeeCardItem(employee, normItem);
 			var stockPosition = new StockPosition(nomenclature, 0, size52,null, null);
-			var result = employeeItem.MatcheStockPosition(stockPosition);
+			var result = employeeItem.MatchStockPosition(stockPosition);
 			Assert.That(result, Is.True);
 		}
 
@@ -485,7 +531,7 @@ namespace Workwear.Test.Domain.Company
 			var employeeItem = new EmployeeCardItem(employee, normItem);
 
 			var stockPosition = new StockPosition(nomenclature, 0, size52, height170, null);
-			var result = employeeItem.MatcheStockPosition(stockPosition);
+			var result = employeeItem.MatchStockPosition(stockPosition);
 			Assert.That(result, Is.True);
 		}
 
@@ -516,7 +562,7 @@ namespace Workwear.Test.Domain.Company
 			normItem.ProtectionTools.Returns(protectionTools);
 			var employeeItem = new EmployeeCardItem(employee, normItem);
 
-			return employeeItem.MatcheStockPosition(new StockPosition(nomenclature, 0, null, null, null));
+			return employeeItem.MatchStockPosition(new StockPosition(nomenclature, 0, null, null, null));
 		}
 		#endregion
 	}

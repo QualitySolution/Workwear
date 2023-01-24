@@ -50,7 +50,7 @@ namespace Workwear.Repository.Operations
 			var employeeIds = employees.Select(x => x.Id).Distinct().ToArray();
 			var query = RepoUow.Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.Employee.Id.IsIn(employeeIds))
-				//Проверяем попадает ли операция в диапазон, обратным стравлением условий.
+				//Проверяем попадает ли операция в диапазон, обратным сравнением условий.
 				//Проверяем 2 даты и начала и конца,
 				//так как по сути для наса важны StartOfUse и ExpiryByNorm но они могут быть null.
 				.Where(o => (o.OperationTime < end.Date.AddDays(1)) && (o.OperationTime >= begin));
@@ -67,7 +67,7 @@ namespace Workwear.Repository.Operations
 
 			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.Employee.Id.IsIn(employeeIds))
-				//Проверяем попадает ли операция в диапазон, обратным стравлением условий.
+				//Проверяем попадает ли операция в диапазон, обратным сравнением условий.
 				//Проверяем 2 даты и начала и конца,
 				//так как по сути для наса важны StartOfUse и ExpiryByNorm но они могут быть null.
 				.Where(o => (o.OperationTime <= end || o.StartOfUse <= end) 

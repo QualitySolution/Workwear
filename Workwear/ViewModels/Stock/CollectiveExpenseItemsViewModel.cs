@@ -173,7 +173,19 @@ namespace Workwear.ViewModels.Stock
 			OnPropertyChanged(nameof(Sum));
 		}
 		#endregion
+		#region Расчет для View
+		public string GetRowColor(CollectiveExpenseItem item) {
+			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date);
+			if(requiredIssue > 0 && item.Nomenclature == null)
+				return item.Amount == 0 ? "red" : "Dark red";
+			if(requiredIssue > 0 && item.Amount == 0)
+				return "blue";
+			if(requiredIssue <= 0 && item.Amount == 0)
+				return "gray";
+			return null;
+		}
 
+		#endregion
 		#region Обновление документа
 
 		public void RefreshAll()

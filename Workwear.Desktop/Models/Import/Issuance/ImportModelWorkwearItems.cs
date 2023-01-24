@@ -50,8 +50,7 @@ namespace Workwear.Models.Import.Issuance
 					var last = itemGroup.OrderByDescending(x => x.Date).First();
 					if(itemGroup.Key.LastIssue == null || itemGroup.Key.LastIssue < last.Date) {
 						itemGroup.Key.LastIssue = last.Date;
-						itemGroup.Key.Amount = last.Operation.Issued;
-						itemGroup.Key.NextIssue = itemGroup.Key.ActiveNormItem.CalculateExpireDate(last.Date.Value, itemGroup.Key.Amount);
+						itemGroup.Key.NextIssue = itemGroup.Key.ActiveNormItem.CalculateExpireDate(last.Date.Value, last.Operation.Issued);
 						dataParser.ChangedEmployees.Add(employeeGroup.Key);
 					}
 				}

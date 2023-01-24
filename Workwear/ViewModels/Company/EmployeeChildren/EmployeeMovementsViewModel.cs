@@ -92,7 +92,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		
 		void SetIssueDateManual_PageClosed(ProtectionTools protectionTools) {
 			UoW.Commit();
-			Entity.FillWearRecivedInfo(employeeIssueRepository);
+			Entity.FillWearReceivedInfo(employeeIssueRepository);
 			Entity.UpdateNextIssue(protectionTools);
 		}
 
