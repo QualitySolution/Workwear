@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
@@ -335,8 +335,6 @@ namespace Workwear.Test.Integration.Organization
 
 				var bestChoiceInStock = employeeCardItem.BestChoiceInStock;
 				var bestChoiceCount = employeeCardItem.BestChoiceInStock.Count();
-				Assert.That(employeeCardItem.BestChoiceInStock.Count(), Is.GreaterThan(0));
-
 				Assert.That(employeeCardItem.BestChoiceInStock.Count(), Is.EqualTo(2));
 			}
 		}
