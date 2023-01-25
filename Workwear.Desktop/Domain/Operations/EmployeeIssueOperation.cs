@@ -114,21 +114,21 @@ namespace Workwear.Domain.Operations
 		[Display(Name = "Начало использования")]
 		public virtual DateTime? StartOfUse {
 			get => startOfUse;
-			set => SetField(ref startOfUse, value);
+			set => SetField(ref startOfUse, value?.Date);
 		}
 
 		private DateTime? expiryByNorm;
 		[Display(Name = "Износ по норме")]
 		public virtual DateTime? ExpiryByNorm {
 			get => expiryByNorm;
-			set => SetField(ref expiryByNorm, value);
+			set => SetField(ref expiryByNorm, value?.Date);
 		}
 
 		private DateTime? autoWriteoffDate;
 		[Display(Name = "Дата автосписания")]
 		public virtual DateTime? AutoWriteoffDate {
 			get => autoWriteoffDate;
-			set => SetField(ref autoWriteoffDate, value);
+			set => SetField(ref autoWriteoffDate, value?.Date);
 		}
 
 		private EmployeeIssueOperation issuedOperation;
