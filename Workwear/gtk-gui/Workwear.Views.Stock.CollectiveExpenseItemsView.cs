@@ -18,7 +18,7 @@ namespace Workwear.Views.Stock
 
 		private global::Gtk.HBox hbox1;
 
-		private global::Gamma.GtkWidgets.yButton buttonAdd;
+		private global::QS.Widgets.MenuButton buttonAdd;
 
 		private global::Gamma.GtkWidgets.yButton buttonRefreshEmployee;
 
@@ -89,10 +89,12 @@ namespace Workwear.Views.Stock
 			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.buttonAdd = new global::Gamma.GtkWidgets.yButton();
+			this.buttonAdd = new global::QS.Widgets.MenuButton();
 			this.buttonAdd.CanFocus = true;
 			this.buttonAdd.Name = "buttonAdd";
 			this.buttonAdd.UseUnderline = true;
+			this.buttonAdd.UseMarkup = false;
+			this.buttonAdd.LabelXAlign = 0F;
 			this.buttonAdd.Label = global::Mono.Unix.Catalog.GetString("Добавить сотрудника");
 			global::Gtk.Image w7 = new global::Gtk.Image();
 			w7.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);

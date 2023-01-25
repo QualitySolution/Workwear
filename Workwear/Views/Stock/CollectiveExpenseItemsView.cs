@@ -40,8 +40,6 @@ namespace Workwear.Views.Stock
 				.InitializeFromSource();
 
 			labelSum.Binding.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp).InitializeFromSource();
-			buttonAdd.Binding.AddBinding(ViewModel, v => v.SensetiveAddButton, w => w.Sensitive).InitializeFromSource();
-
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 			MakeMenu();
 		}
@@ -83,15 +81,25 @@ namespace Workwear.Views.Stock
 		}
 
 		void MakeMenu() {
-			var menu = new Menu();
+			var delMenu = new Menu();
 			var item = new MenuItem("Удалить строку");
 			item.Activated += (sender, e) => ViewModel.Delete(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
-			menu.Add(item);
+			delMenu.Add(item);
 			item = new MenuItem("Удалить все строки сотрудника");
 			item.Activated += (sender, e) => ViewModel.DeleteEmployee(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
-			menu.Add(item);
-			buttonDel.Menu = menu;
-			menu.ShowAll();
+			delMenu.Add(item);
+			buttonDel.Menu = delMenu;
+			delMenu.ShowAll();
+			
+			var addMenu = new Menu();
+			item = new MenuItem("Добавить сотрудника");
+			item.Activated += (sender, e) => ViewModel.AddItem();//AddEmployees(sender,ytreeItems.GetSelectedObject);
+			addMenu.Add(item);
+			item = new MenuItem("Добавить сотрудника и номенклатуру");
+			//item.Activated += (sender, e) => ViewModel.DeleteEmployee(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+			addMenu.Add(item);
+			buttonAdd.Menu = addMenu;
+			addMenu.ShowAll();
 		}
 
 		#region PopupMenu
