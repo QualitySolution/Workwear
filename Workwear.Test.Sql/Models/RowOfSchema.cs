@@ -55,14 +55,12 @@ namespace QS.DBScripts.Models {
 		private DataRow Row { get; }
 
 		private static readonly Dictionary<string, string[]> skippedFields = new Dictionary<string, string[]>() {
-			{"Tables", new string[] {"CREATE_TIME", "TABLE_SCHEMA", "UPDATE_TIME","AVG_ROW_LENGTH","TABLE_ROWS","AUTO_INCREMENT","INDEX_LENGTH","DATA_LENGTH"}},
+			{"Tables", new string[] {"CREATE_TIME", "TABLE_SCHEMA", "UPDATE_TIME","AVG_ROW_LENGTH","TABLE_ROWS","AUTO_INCREMENT","INDEX_LENGTH","DATA_LENGTH", "TABLE_COLLATION"}},
 			{"Foreign Keys", new string[] {"TABLE_SCHEMA", "CONSTRAINT_SCHEMA", "REFERENCED_TABLE_SCHEMA" }},
 			{"Indexes", new string[] {"CONSTRAINT_SCHEMA", "INDEX_SCHEMA",}},
 			{"IndexColumns", new string[] {"CONSTRAINT_SCHEMA", "INDEX_SCHEMA" }},
-			{"Columns", new string[] {"TABLE_SCHEMA" }}
+			{"Columns", new string[] {"TABLE_SCHEMA", "COLLATION_NAME" }}
 		};
-
-		delegate void Message(string str);
 
 		public bool IsDiff(RowOfSchema another, Log log) {
 			bool result = false;
@@ -75,21 +73,17 @@ namespace QS.DBScripts.Models {
 				for(int i = 0; i < Row.ItemArray.Length; i++) {
 					if(!skippedFields[Schema].Contains(Row.Table.Columns[i].ToString().ToUpper()) && Row.ItemArray[i].ToString() != another.Row.ItemArray[i].ToString()) { 
 						log($@"{Schema} - Отличается {Row.Table.Columns[i].ToString().ToUpper()}
-		{DataBase}.{FullName}.{Row.Table.Columns[i]} = {Row.ItemArray[i].ToString()}
-		{another.DataBase}.{another.FullName}.{Row.Table.Columns[i]} = {another.Row.ItemArray[i].ToString()}");	
+		{DataBase}.{FullName}.{Row.Table.Columns[i]} = {Row.ItemArray[i]}
+		{another.DataBase}.{another.FullName}.{Row.Table.Columns[i]} = {another.Row.ItemArray[i]}");
 						result = true;
 					}
 				}
 			else {
-				log("GetSchem Вернул разное колличество параметров.");
+				log("GetSchema вернул разное количество параметров.");
 				return true;
 			}
 
 			return result;
-		}
-
-		public bool IsDiff(DataRow another, Log log) {
-			return this.IsDiff(new RowOfSchema(Schema,DataBase,another),log);
 		}
 	}
 }

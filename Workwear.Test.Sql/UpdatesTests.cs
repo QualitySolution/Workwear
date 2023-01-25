@@ -22,9 +22,7 @@ namespace Workwear.Test.Sql
 	public class UpdatesTests
 	{
 		private static readonly string currentDdName = "workwear_sqltest_current";
-		private int showDiffLinesBefore = 30;
-		private int showDiffLinesAfter = 5;
-		
+
 		private SqlServer RunningServer { get; set; }
 		
 		public static IEnumerable<object[]> DbSamples {
@@ -149,70 +147,12 @@ namespace Workwear.Test.Sql
 		}
 		
 		#endregion
-		#region Compare DB Text
-		//TODO: Удалить метод и методы используемые только в нём, если ComparisonSchema будет нормально работать
-		private void ComparisonSchemaText(MySqlConnection connection, string db1, string db2) {
-			TestContext.Progress.WriteLine($"Сравниваем схемы базы {db1} и {db2}.");
-			var versionDb1 = GetVersion(connection, db1);
-			var versionDb2 = GetVersion(connection, db2);
-			Assert.That(versionDb1, Is.EqualTo(versionDb2), "Версии у баз различаются.");
-			string schema1 = GetSchema(connection, db1);
-			string schema2 = GetSchema(connection, db2);
-
-			if (schema1 != schema2) {
-				var diff = InlineDiffBuilder.Diff(schema1, schema2);
-				
-				for (int i = 0; i < diff.Lines.Count; i++)
-				{
-					bool showLine = false;
-					for (int x = Math.Max(0, i - showDiffLinesAfter); x < Math.Min(diff.Lines.Count, i + showDiffLinesBefore); x++)
-						if (diff.Lines[x].Type == ChangeType.Inserted || diff.Lines[x].Type == ChangeType.Deleted) {
-							showLine = true;
-							break;
-						}
-					
-					if(!showLine)
-						continue;
-
-					var line = diff.Lines[i];
-					switch (line.Type)
-					{
-						case ChangeType.Inserted:
-							Console.Write("+ ");
-							break;
-						case ChangeType.Deleted:
-							Console.Write("- ");
-							break;
-						default:
-							Console.Write("  ");
-							break;
-					}
-					Console.WriteLine(line.Text);
-				}
-			}
-			
-			Assert.That(schema1, Is.EqualTo(schema2));
-		}
-
+		#region Compare DB
 		private string GetVersion(MySqlConnection connection, string db) {
 			var sql = $"SELECT `str_value` FROM {db}.`base_parameters` WHERE `name` = 'version';";
 			return (string)connection.ExecuteScalar(sql);
 		}
-		
-		private string GetSchema(MySqlConnection connection, string db)
-		{
-			TestContext.Progress.WriteLine($"Чтение схемы {db}...");
-			connection.ChangeDatabase(db);
-			using MySqlBackup mb = new MySqlBackup(connection.CreateCommand());
-			mb.ExportInfo.ExportRows = false;
-			mb.ExportInfo.RecordDumpTime = false;
-			mb.ExportInfo.ResetAutoIncrement = true;
-			var result = mb.ExportToString();
-			return result.Replace("  ", " "); //Особенности MySqlBackup в месте где удаляется AutoIncrement образуется двойной пробел.
-		}
-		#endregion
-		
-		#region Compare DB
+
 		private void ComparisonSchema(MySqlConnection connection1, MySqlConnection connection2) {
 			TestContext.Progress.WriteLine($"Сравниваем схемы базы {connection1.Database} и {connection2.Database}.");
 			var versionDb1 = GetVersion(connection1, connection1.Database);
@@ -245,7 +185,9 @@ namespace Workwear.Test.Sql
 						}
 					}
 					else {
-						log($"{schema}:			{connection1.Database}.{row.Value.FullName}	\n	в базе		{connection2.Database} отсутствует.\n");
+						log($"{schema} — значение {row.Value.FullName}\n" +
+						    $"присутствует в   {connection1.Database}\n" +
+						    $"но отсутствует в {connection2.Database}");
 						result = false;
 					}
 				}
