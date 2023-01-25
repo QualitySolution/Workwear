@@ -379,6 +379,7 @@ namespace Workwear.Test.Domain.Company
 			};
 			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(1));
 		}
+		
 		[Test(Description = "В настройках базы стоит возможность выдачи раньше на 30 дней.")]
 		public void CalculateRequiredIssue_ReceiveBeforeExpiredCase()
 		{
@@ -404,6 +405,77 @@ namespace Workwear.Test.Domain.Company
 				NextIssue = DateTime.Today.AddDays(-10)
 			};
 			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(1));
+		}
+		
+		[Test(Description = "Проверяем что не выдаем до начала периода выдачи, если не выдавали.")]
+		public void CalculateRequiredIssue_NormCondition_NotIssueCase()
+		{
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0); //Тут вопрос не ясен, должна ли эта настройка учитываться в случае периода выдачи.
+
+			var normCondition = new NormCondition {
+				Name = "Зима",
+				IssuanceStart = new DateTime(2001, 10, 1),
+				IssuanceEnd = new DateTime(2001, 4, 15)
+			};
+			
+			var norm = new NormItem {
+				Amount = 1,
+				NormCondition = normCondition
+			};
+			var item = new EmployeeCardItem {
+				ActiveNormItem = norm,
+				Amount = 0,
+				Graph = new IssueGraph(new List<EmployeeIssueOperation>()),
+				NextIssue = new DateTime(2022, 5, 20)
+			};
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2022, 9, 20)), Is.EqualTo(0));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2022, 5, 20)), Is.EqualTo(0));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2022, 10, 1)), Is.EqualTo(1));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2022, 10, 20)), Is.EqualTo(1));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2023, 4, 15)), Is.EqualTo(1));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2023, 4, 16)), Is.EqualTo(0));
+		}
+		
+		[Test(Description = "Проверяем что не выдаем до начала периода выдачи, если выдавали но износилось ранее.")]
+		public void CalculateRequiredIssue_NormCondition_IssuedBeforeCase()
+		{
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);  //Тут вопрос не ясен, должна ли эта настройка учитываться в случае периода выдачи.
+			
+			var normCondition = new NormCondition {
+				Name = "Зима",
+				IssuanceStart = new DateTime(2001, 10, 1),
+				IssuanceEnd = new DateTime(2001, 4, 15)
+			};
+			
+			var norm = new NormItem {
+				Amount = 1,
+				NormCondition = normCondition
+			};
+			var item = new EmployeeCardItem {
+				ActiveNormItem = norm,
+				Amount = 1,
+				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
+					new EmployeeIssueOperation {
+						OperationTime = new DateTime(2021, 5, 20),
+						StartOfUse = new DateTime(2021, 5, 20),
+						ExpiryByNorm = new DateTime(2022, 5, 20),
+						AutoWriteoffDate = new DateTime(2022, 5, 20),
+						Issued = 1
+					}
+				}),
+				LastIssue = new DateTime(2021, 5, 20),
+				NextIssue = new DateTime(2022, 5, 20)
+			};
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2022, 3, 20)), Is.EqualTo(0));//Еще действует старая выдача
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2022, 9, 20)), Is.EqualTo(0));//Не положено
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2022, 5, 20)), Is.EqualTo(0));//Не положено
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2022, 10, 1)), Is.EqualTo(1));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2022, 10, 20)), Is.EqualTo(1));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2023, 4, 15)), Is.EqualTo(1));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2023, 4, 16)), Is.EqualTo(0));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2024, 3, 10)), Is.EqualTo(1));
 		}
 		
 		#endregion
