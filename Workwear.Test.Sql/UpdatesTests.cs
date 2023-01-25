@@ -186,8 +186,8 @@ namespace Workwear.Test.Sql
 					}
 					else {
 						log($"{schema} — значение {row.Value.FullName}\n" +
-						    $"присутствует в   {connection1.Database}\n" +
-						    $"но отсутствует в {connection2.Database}");
+						    $"  присутствует в    {connection1.Database}\n" +
+						    $"  но отсутствует в  {connection2.Database}");
 						result = false;
 					}
 				}
