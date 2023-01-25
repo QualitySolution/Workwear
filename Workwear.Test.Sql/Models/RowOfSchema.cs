@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 namespace QS.DBScripts.Models {
 	public class RowOfSchema {
@@ -16,26 +18,31 @@ namespace QS.DBScripts.Models {
 			Schema = schema;
 			DataBase = db;
 			Row = row;
-
+			
 			switch(schema) {
 				
 				case "Tables":
-					FullName = Name = (string)row[2];
+					FullName = Name = (string)row[row.Table.Columns.IndexOf("TABLE_NAME")]; 
 					break;
 				case "Columns":
-					Table = (string)row[2];
-					Name = (string)row[3];
+					Table = (string)row[row.Table.Columns.IndexOf("TABLE_NAME")]; 
+					Name = (string)row[row.Table.Columns.IndexOf("COLUMN_NAME")];
 					FullName = $"{Table}.{Name}";
 					break;
 				case "Foreign Keys":
-					FullName = Name = (string)row[2];
+					FullName = Name = (string)row[row.Table.Columns.IndexOf("CONSTRAINT_NAME")];
 					break;
 				case "Indexes":
-					Table = (string)row[3];
-					Name = (string)row[2];
+					Table = (string)row[row.Table.Columns.IndexOf("TABLE_NAME")];
+					Name = (string)row[row.Table.Columns.IndexOf("INDEX_NAME")];
 					FullName = Name + Table;
 					break;
-					
+				case "IndexColumns":
+					Table = (string)row[row.Table.Columns.IndexOf("TABLE_NAME")];
+					Name = (string)row[row.Table.Columns.IndexOf("COLUMN_NAME")] +"."+ (string)row[row.Table.Columns.IndexOf("INDEX_NAME")];
+					FullName = Name + Table;
+					break;
+
 			}
 			
 		}
@@ -46,7 +53,14 @@ namespace QS.DBScripts.Models {
 		public string Name { get; }
 		public string FullName { get; } 
 		private DataRow Row { get; }
-		delegate void Message(string str);
+
+		private static readonly Dictionary<string, string[]> skippedFields = new Dictionary<string, string[]>() {
+			{"Tables", new string[] {"CREATE_TIME", "TABLE_SCHEMA", "UPDATE_TIME","AVG_ROW_LENGTH","TABLE_ROWS","AUTO_INCREMENT","INDEX_LENGTH","DATA_LENGTH", "TABLE_COLLATION", "DATA_FREE"}},
+			{"Foreign Keys", new string[] {"TABLE_SCHEMA", "CONSTRAINT_SCHEMA", "REFERENCED_TABLE_SCHEMA" }},
+			{"Indexes", new string[] {"CONSTRAINT_SCHEMA", "INDEX_SCHEMA",}},
+			{"IndexColumns", new string[] {"CONSTRAINT_SCHEMA", "INDEX_SCHEMA" }},
+			{"Columns", new string[] {"TABLE_SCHEMA", "COLLATION_NAME" }}
+		};
 
 		public bool IsDiff(RowOfSchema another, Log log) {
 			bool result = false;
@@ -57,21 +71,19 @@ namespace QS.DBScripts.Models {
 
 			if(Row.ItemArray.Length == another.Row.ItemArray.Length)
 				for(int i = 0; i < Row.ItemArray.Length; i++) {
-					if(Row.ItemArray[i].ToString() != another.Row.ItemArray[i].ToString()) { //есть некоторые не строковые параметры, но их пока опускаю
-						log($@"{Schema} - У {DataBase}.{FullName} и {another.DataBase}.{another.FullName} отличаются {Row.Table.Columns[i]}");
+					if(!skippedFields[Schema].Contains(Row.Table.Columns[i].ToString().ToUpper()) && Row.ItemArray[i].ToString() != another.Row.ItemArray[i].ToString()) { 
+						log($@"{Schema} - Отличается {Row.Table.Columns[i].ToString().ToUpper()}
+		{DataBase}.{FullName}.{Row.Table.Columns[i]} = {Row.ItemArray[i]}
+		{another.DataBase}.{another.FullName}.{Row.Table.Columns[i]} = {another.Row.ItemArray[i]}");
 						result = true;
 					}
 				}
 			else {
-				log("GetSchem Вернул разное колличество параметров.");
+				log("GetSchema вернул разное количество параметров.");
 				return true;
 			}
 
 			return result;
-		}
-
-		public bool IsDiff(DataRow another, Log log) {
-			return this.IsDiff(new RowOfSchema(Schema,DataBase,another),log);
 		}
 	}
 }
