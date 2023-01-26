@@ -22,6 +22,7 @@ using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 using Workwear.Measurements;
+using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -106,11 +107,15 @@ namespace Workwear.ViewModels.Stock
 		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
 		#endregion
 		#region Действия View
-		public void AddItem()
+		public void AddItems()
 		{
 			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += AddEmployees;
+		}
+
+		public void AddItemsAdvanced(){
+			var page = navigation.OpenViewModel<IssueWidgetViewModel>(null);
 		}
 
 		public void AddEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e)

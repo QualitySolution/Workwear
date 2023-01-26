@@ -92,11 +92,11 @@ namespace Workwear.Views.Stock
 			delMenu.ShowAll();
 			
 			var addMenu = new Menu();
-			item = new MenuItem("Добавить сотрудника");
-			item.Activated += (sender, e) => ViewModel.AddItem();//AddEmployees(sender,ytreeItems.GetSelectedObject);
+			item = new MenuItem("Добавление сотрудников");
+			item.Activated += (sender, e) => ViewModel.AddItems();
 			addMenu.Add(item);
-			item = new MenuItem("Добавить сотрудника и номенклатуру");
-			//item.Activated += (sender, e) => ViewModel.DeleteEmployee(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+			item = new MenuItem("Расширенное добавление");
+			item.Activated += (sender, e) => ViewModel.AddItemsAdvanced();
 			addMenu.Add(item);
 			buttonAdd.Menu = addMenu;
 			addMenu.ShowAll();
@@ -175,7 +175,7 @@ namespace Workwear.Views.Stock
 
 		protected void OnButtonAddClicked(object sender, EventArgs e)
 		{
-			ViewModel.AddItem();
+			ViewModel.AddItems();
 		}
 
 		protected void OnButtonShowAllSizeClicked(object sender, EventArgs e)
