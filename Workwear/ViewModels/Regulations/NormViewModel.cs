@@ -277,9 +277,7 @@ namespace Workwear.ViewModels.Regulations
 			
 			var answer = interactive.Question(
 				new[] { "Все выдачи", "Только последние" },
-				Entity.DateFrom.HasValue
-					? $"C {Entity.DateFrom:d} по "
-					: "По " +
+				(Entity.DateFrom.HasValue ? $"C {Entity.DateFrom:d} по " : "По ") +
 					  $"строке нормы было выполнено {operations.Count} выдач из них последних {operationsLasts.Count}. " +
 					  $"Какие выдачи пересчитывать?");
 			if(answer == null)
@@ -328,11 +326,9 @@ namespace Workwear.ViewModels.Regulations
 				if(operations.Any()) {
 					var answer = interactive.Question(
 						new[] { "Все выдачи", "Только последние", "Не пересчитывать" },
-						Entity.DateFrom.HasValue
-							? $"C {Entity.DateFrom:d} по "
-							: "По " +
-							  $"измененным строкам нормы было выполнено {operations.Count} выдач из них последних {operationsLasts.Count}. " +
-							  $"Пересчитать сроки носки у уже выданного в соответствии с изменениями?");
+						(Entity.DateFrom.HasValue ? $"C {Entity.DateFrom:d} по " : "По ") + 
+						$"измененным строкам нормы было выполнено {operations.Count} выдач из них последних {operationsLasts.Count}. " + 
+						"Пересчитать сроки носки у уже выданного в соответствии с изменениями?");
 					if(answer == "Все выдачи" || answer == "Только последние"){
 						var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
 						var progress = progressPage.ViewModel.Progress;
