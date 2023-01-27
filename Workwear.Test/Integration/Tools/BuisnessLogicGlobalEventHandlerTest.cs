@@ -50,6 +50,8 @@ namespace Workwear.Test.Integration.Tools
 		{
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+            baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления")) {
 				MakeBaseParametersTable(uow);
@@ -206,7 +208,7 @@ namespace Workwear.Test.Integration.Tools
 				uow.Save(expenseOp2);
 				uow.Commit();
 
-				vacation.UpdateRelatedOperations(uow, new EmployeeIssueRepository(), baseParameters, ask);
+				employee.RecalculateDatesOfIssueOperations(uow, new EmployeeIssueRepository(), baseParameters, ask, vacation);
 				uow.Commit();
 
 				Assert.That(employee.WorkwearItems[0].NextIssue, Is.EqualTo(new DateTime(2021, 1, 11)));

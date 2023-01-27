@@ -72,15 +72,6 @@ namespace Workwear.Domain.Company
 
 		#endregion
 
-		#region Публичные методы
-
-		public virtual void UpdateRelatedOperations(IUnitOfWork uow, EmployeeIssueRepository employeeIssueRepository, BaseParameters baseParameters, IInteractiveQuestion askUser)
-		{
-			Employee.RecalculateDatesOfIssueOperations(uow, employeeIssueRepository, baseParameters, askUser, BeginDate, EndDate);
-		}
-
-		#endregion
-
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
 		{

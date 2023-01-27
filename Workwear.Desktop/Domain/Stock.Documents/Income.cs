@@ -243,10 +243,10 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		public virtual void UpdateEmployeeWearItems() {
+			EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
 			EmployeeCard.UpdateNextIssue(Items
 				.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
 				.Where(x => x != null).Distinct().ToArray());
-			EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
 			UoW.Save(EmployeeCard);
 		}
 	}

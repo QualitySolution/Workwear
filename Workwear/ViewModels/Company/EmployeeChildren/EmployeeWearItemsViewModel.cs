@@ -218,9 +218,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 						operation.NormItem = norm;
 				}
 			}
-			var graph = IssueGraph.MakeIssueGraph(UoW, row.EmployeeCard, operation.ProtectionTools);
-			operation.RecalculateDatesOfIssueOperation(graph, BaseParameters, interactive);
-				row.UpdateNextIssue(UoW);
+			operation.RecalculateDatesOfIssueOperation(row.Graph, BaseParameters, interactive);
+			row.UpdateNextIssue(UoW);
 		}
 
 		#endregion

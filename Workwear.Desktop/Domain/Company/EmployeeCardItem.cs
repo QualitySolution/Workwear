@@ -195,6 +195,9 @@ namespace Workwear.Domain.Company
 		/// Получить необходимое к выдачи количество.
 		/// </summary>
 		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate) {
+			if(Graph == null)
+				throw new NullReferenceException("Перед выполнением расчета CalculateRequiredIssue, Graph должен быть заполнен!");
+			
 			if(ActiveNormItem == null)
 				return 0;
 			
@@ -247,18 +250,21 @@ namespace Workwear.Domain.Company
 			return suitableStockPositionHeights.Contains(employeeHeight);
 		}
 
+		/// <summary>
+		/// Обновляет дату следующей выдачи.
+		/// Перед вызовом метода Graph должен быть заполнен!
+		/// </summary>
+		/// <param name="uow">Необходим для сохранения строки.</param>
+		/// <exception cref="NullReferenceException"></exception>
 		public virtual void UpdateNextIssue(IUnitOfWork uow) {
-			IssueGraph graph = null;
-
-			if(EmployeeCard.Id > 0){ //Если карточка еще не разу не сохранялась. То и нечего запрашивать выдачи.
-				graph = GetIssueGraphForItem(uow);
-			}
-
+			if(Graph == null)
+				throw new NullReferenceException("Перед выполнением расчета UpdateNextIssue, Graph должен быть заполнен!");
+			
 			DateTime? wantIssue = new DateTime();
 			NextIssueAnnotation = null;
-			if(graph != null && graph.Intervals.Any())
+			if(Graph.Intervals.Any())
 			{
-				var listReverse = graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
+				var listReverse = Graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
 				var lastInterval = listReverse.First();
 				if(lastInterval.CurrentCount >= ActiveNormItem.Amount) {
 					//Нет автосписания, следующая выдача чисто информативно проставляется по сроку носки
@@ -314,11 +320,6 @@ namespace Workwear.Domain.Company
 				NextIssueAnnotation = $"У строки нормы указан период - до износа";
 			if(ActiveNormItem.NormPeriod == NormPeriodType.Duty)
 				NextIssueAnnotation = $"У строки нормы указан период - дежурный";
-		}
-		#endregion
-		#region Зазоры для тестирования
-		protected internal virtual IssueGraph GetIssueGraphForItem(IUnitOfWork uow) {
-			return IssueGraph.MakeIssueGraph(uow, EmployeeCard, ProtectionTools);
 		}
 		#endregion
 	}

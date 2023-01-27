@@ -37,9 +37,9 @@ namespace Workwear.Test.Domain.Company
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(10);
 
-			var item = new EmployeeCardItemTested();
+			var item = new EmployeeCardItem();
 			item.EmployeeCard = employee;
-			item.GetIssueGraphForItemFunc = () => graph;
+			item.Graph = graph;
 			item.ActiveNormItem = norm;
 
 			item.UpdateNextIssue(uow);
@@ -65,9 +65,9 @@ namespace Workwear.Test.Domain.Company
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(10);
 
-			var item = new EmployeeCardItemTested();
+			var item = new EmployeeCardItem();
 			item.EmployeeCard = employee;
-			item.GetIssueGraphForItemFunc = () => graph;
+			item.Graph = graph;
 			item.ActiveNormItem = norm;
 
 			item.UpdateNextIssue(uow);
@@ -93,9 +93,9 @@ namespace Workwear.Test.Domain.Company
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(10);
 
-			var item = new EmployeeCardItemTested();
+			var item = new EmployeeCardItem();
 			item.EmployeeCard = employee;
-			item.GetIssueGraphForItemFunc = () => graph;
+			item.Graph = graph;
 			item.ActiveNormItem = norm;
 
 			item.UpdateNextIssue(uow);
@@ -127,9 +127,9 @@ namespace Workwear.Test.Domain.Company
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(10);
 
-			var item = new EmployeeCardItemTested();
+			var item = new EmployeeCardItem();
 			item.EmployeeCard = employee;
-			item.GetIssueGraphForItemFunc = () => graph;
+			item.Graph = graph;
 			item.ActiveNormItem = norm;
 
 			item.UpdateNextIssue(uow);
@@ -145,9 +145,9 @@ namespace Workwear.Test.Domain.Company
 			var employee = Substitute.For<EmployeeCard>();
 			var normItem = Substitute.For<NormItem>();
 
-			var item = new EmployeeCardItemTested();
+			var item = new EmployeeCardItem();
 			item.EmployeeCard = employee;
-			item.GetIssueGraphForItemFunc = () => graph;
+			item.Graph = graph;
 			item.Created = new DateTime(2018, 1, 15);
 			item.ActiveNormItem = normItem;
 
@@ -174,9 +174,9 @@ namespace Workwear.Test.Domain.Company
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(10);
 
-			var item = new EmployeeCardItemTested();
+			var item = new EmployeeCardItem();
 			item.EmployeeCard = employee;
-			item.GetIssueGraphForItemFunc = () => graph;
+			item.Graph = graph;
 			item.Created = new DateTime(2018, 1, 15);
 			item.ActiveNormItem = norm;
 
@@ -207,9 +207,9 @@ namespace Workwear.Test.Domain.Company
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(10);
 
-			var item = new EmployeeCardItemTested();
+			var item = new EmployeeCardItem();
 			item.EmployeeCard = employee;
-			item.GetIssueGraphForItemFunc = () => graph;
+			item.Graph = graph;
 			item.ActiveNormItem = norm;
 
 			item.UpdateNextIssue(uow);
@@ -240,9 +240,9 @@ namespace Workwear.Test.Domain.Company
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(10);
 
-			var item = new EmployeeCardItemTested();
+			var item = new EmployeeCardItem();
 			item.EmployeeCard = employee;
-			item.GetIssueGraphForItemFunc = () => graph;
+			item.Graph = graph;
 			item.ActiveNormItem = norm;
 
 			item.UpdateNextIssue(uow);
@@ -637,15 +637,5 @@ namespace Workwear.Test.Domain.Company
 			return employeeItem.MatchStockPosition(new StockPosition(nomenclature, 0, null, null, null));
 		}
 		#endregion
-	}
-
-	public class EmployeeCardItemTested : EmployeeCardItem
-	{
-		public Func<IssueGraph> GetIssueGraphForItemFunc;
-
-		protected internal override IssueGraph GetIssueGraphForItem(IUnitOfWork uow)
-		{
-			return GetIssueGraphForItemFunc();
-		}
 	}
 }

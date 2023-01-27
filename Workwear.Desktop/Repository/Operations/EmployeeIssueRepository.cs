@@ -27,7 +27,7 @@ namespace Workwear.Repository.Operations
 		/// Получаем все операции выдачи сотруднику отсортированные в порядке убывания.
 		/// </summary>
 		/// <returns></returns>
-		public IList<EmployeeIssueOperation> AllOperationsForEmployee(
+		public virtual IList<EmployeeIssueOperation> AllOperationsForEmployee(
 			EmployeeCard employee, 
 			Action<IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null)
 		{

@@ -232,6 +232,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(expense);
 				uow.Commit();
 
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				employee.UpdateNextIssue(expense.Items.Select(x => x.ProtectionTools).ToArray());
 
 				//Тут ожидаем предложение перенести дату использование второй номенклатуры на год.

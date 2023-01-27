@@ -230,9 +230,9 @@ namespace Workwear.Domain.Stock.Documents
 			
 			foreach(var employeeGroup in groups) {
 				progress.Add(text: $"Обновляем потребности {employeeGroup.Key.ShortName}");
-				employeeGroup.Key.UpdateNextIssue(employeeGroup.Select(x => x.ProtectionTools).ToArray());
-				progress.Add();
 				employeeGroup.Key.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
+				progress.Add();
+				employeeGroup.Key.UpdateNextIssue(employeeGroup.Select(x => x.ProtectionTools).ToArray());
 				UoW.Save(employeeGroup.Key);
 			}
 		}

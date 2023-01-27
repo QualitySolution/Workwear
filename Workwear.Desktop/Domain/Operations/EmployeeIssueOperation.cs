@@ -228,6 +228,15 @@ namespace Workwear.Domain.Operations
 		public virtual decimal CalculatePercentWear(DateTime atDate) => 
 			CalculatePercentWear(atDate, StartOfUse, ExpiryByNorm, WearPercent);
 
+		public virtual decimal CalculateDepreciationCost(DateTime atDate) => 
+			CalculateDepreciationCost(atDate, StartOfUse, ExpiryByNorm, WarehouseOperation.Cost);
+
+		public virtual bool IsTouchDates(DateTime start, DateTime end) =>
+			(OperationTime <= end || StartOfUse <= end)
+			&& (ExpiryByNorm >= start || AutoWriteoffDate >= start || (ExpiryByNorm == null && AutoWriteoffDate == null));
+		#endregion
+
+		#region Статические методы
 		public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent) {
 			if(startOfUse == null || expiryByNorm == null)
 				return 0;
@@ -238,9 +247,6 @@ namespace Workwear.Domain.Operations
 
 			return beginWearPercent + (decimal)addPercent;
 		}
-
-		public virtual decimal CalculateDepreciationCost(DateTime atDate) => 
-			CalculateDepreciationCost(atDate, StartOfUse, ExpiryByNorm, WarehouseOperation.Cost);
 
 		public static decimal CalculateDepreciationCost(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginCost) {
 			if(startOfUse == null || expiryByNorm == null)

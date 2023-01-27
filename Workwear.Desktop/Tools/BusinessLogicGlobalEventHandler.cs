@@ -5,6 +5,7 @@ using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using Workwear.Repository.Operations;
 
 namespace Workwear.Tools
 {
@@ -56,6 +57,7 @@ namespace Workwear.Tools
 						continue; //Видимо сотрудник был удален, поэтому пересчитывать глупо.
 					var protectionTools = employeeGroup.Select(x => x.GetOldValueCast<EmployeeIssueOperation, ProtectionTools>(e => e.ProtectionTools))
 						.Where(x => x != null).Distinct().ToArray();
+					employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 					employee.UpdateNextIssue(protectionTools);
 				}
 				uow.Commit();
