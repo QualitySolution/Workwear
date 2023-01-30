@@ -12,6 +12,7 @@ using QS.Tools;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
+using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
@@ -27,7 +28,7 @@ namespace Workwear.ViewModels.Regulations
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly EmployeeIssueRepository employeeIssueRepository;
-		private readonly IInteractiveQuestion interactive;
+		private readonly IInteractiveService interactive;
 		private readonly IChangeMonitor<NormItem> changeMonitor;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly BaseParameters baseParameters;
@@ -37,7 +38,7 @@ namespace Workwear.ViewModels.Regulations
 			IUnitOfWorkFactory unitOfWorkFactory,
 			EmployeeIssueRepository employeeIssueRepository,
 			INavigationManager navigation, 
-			IInteractiveQuestion interactive,
+			IInteractiveService interactive,
 			IChangeMonitor<NormItem> changeMonitor,
 			EmployeeRepository employeeRepository,
 			BaseParameters baseParameters,
@@ -256,6 +257,10 @@ namespace Workwear.ViewModels.Regulations
 		}
 		#endregion
 
+		/// <summary>
+		/// Ручной перечет в отличии от пересчета при сохранении так же может изменять дату начала использования.
+		/// Возможно в будущем пересчет при изменении нормы нужно будет сделать таким же.
+		/// </summary>
 		public void ReSaveLastIssue(NormItem normItem) 
 		{
 			if(UoW.HasChanges && !Save())
@@ -269,6 +274,12 @@ namespace Workwear.ViewModels.Regulations
 					x => x.Employee),
 				beginDate: Entity.DateFrom);
 
+			if(!operations.Any()) {
+				interactive.ShowMessage(ImportanceLevel.Warning, "Последние выдачи отсутствуют. Нечего пересчитывать.");
+				logger.Info("Нечего пересчитывать.");
+				return;
+			}
+
 			var operationsLasts = operations
 				.GroupBy(x => x.Employee)
 				.Select(o => 
@@ -279,26 +290,39 @@ namespace Workwear.ViewModels.Regulations
 				new[] { "Все выдачи", "Только последние" },
 				(Entity.DateFrom.HasValue ? $"C {Entity.DateFrom:d} по " : "По ") +
 					  $"строке нормы было выполнено {operations.Count} выдач из них последних {operationsLasts.Count}. " +
+				$"В зависимости от настроек учета, данный пересчет может так же изменять сроки начала использования СИЗ. " +
 					  $"Какие выдачи пересчитывать?");
 			if(answer == null)
 				return;
 			
 			var modifiableOperations = answer == "Только последние" ? operationsLasts : operations;
-			foreach (var operation in modifiableOperations)
-			{
-				operation.RecalculateExpiryByNorm(baseParameters, interactive);
-				UoW.Save(operation);
+			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
+			progressPage.ViewModel.Title = "Обновляем операции выдачи";
+			var progress = progressPage.ViewModel.Progress;
+			progress.Start(modifiableOperations.Select(x => x.Employee).Distinct().Count());
+			foreach(var employeeGroup in modifiableOperations.GroupBy(x => x.Employee)) {
+				progress.Add(text: $"Обработка {employeeGroup.Key.ShortName}");
+				employeeGroup.Key.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
 
-				var cardItem = operation.Employee.WorkwearItems
-						.FirstOrDefault(x => 
-							DomainHelper.EqualDomainObjects(x.ProtectionTools, normItem.ProtectionTools));
+				foreach(var operation in employeeGroup) {
+					var cardItem = operation.Employee.WorkwearItems
+						.FirstOrDefault(x =>
+							DomainHelper.EqualDomainObjects(x.ProtectionTools, operation.ProtectionTools));
 
-				if(cardItem != null) {
-					cardItem.UpdateNextIssue(UoW);
-					UoW.Save(cardItem);
+					var graph = cardItem?.Graph ?? IssueGraph.MakeIssueGraph(UoW, employeeGroup.Key, operation.ProtectionTools);
+					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, interactive);
+					UoW.Save(operation);
+
+					if(cardItem != null) {
+						cardItem.UpdateNextIssue(UoW);
+						UoW.Save(cardItem);
+					}
 				}
 			}
+
+			progress.Add(text: "Завершаем...");
 			UoW.Commit();
+			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
 			logger.Info($"{modifiableOperations.Count()} операций обновлено.");
 		}
 		#endregion
