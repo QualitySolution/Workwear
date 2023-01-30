@@ -132,8 +132,10 @@ namespace Workwear.ViewModels.Stock
 				progress.Add(text: employee.ShortName);
 				employee.FillWearInStockInfo(UoW, BaseParameters, Warehouse, Entity.Date);
 				progress.Add();
-				Entity.AddItems(employee, BaseParameters);
+				//Entity.AddItems(employee, BaseParameters);
 			}
+			Entity.AddItems(employees.ToList(), BaseParameters);
+//Хотя, может везде IList проставить будет правильнее
 			Entity.ResortItems();
 			OnPropertyChanged(nameof(Sum));
 			progress.Close();
@@ -184,15 +186,13 @@ namespace Workwear.ViewModels.Stock
 		public void RefreshAll()
 		{
 			var Employees = Entity.Items.Select(x => x.Employee).Distinct().ToList();
-			foreach(var employee in Employees) {
-				Entity.AddItems(employee, BaseParameters);
-			}
-			Entity.ResortItems();
+				Entity.AddItems(Employees, BaseParameters);
+				Entity.ResortItems();
 		}
 
 		public void RefreshItem(CollectiveExpenseItem item)
 		{
-			Entity.AddItems(item.Employee, BaseParameters);
+			Entity.AddItemsEmploee(item.Employee, BaseParameters);
 			Entity.ResortItems();
 		}
 
