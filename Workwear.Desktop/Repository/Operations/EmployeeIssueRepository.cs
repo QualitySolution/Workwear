@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate.Criterion;
@@ -37,6 +37,28 @@ namespace Workwear.Repository.Operations
 			makeEager?.Invoke(query);
 
 			return query.OrderBy(x => x.OperationTime).Desc.List();
+		}
+
+		/// <summary>
+		/// Получаем все операции выдачи сотрудникам.
+		/// </summary>
+		/// <returns></returns>
+		public virtual IList<EmployeeIssueOperation> AllOperationsFor(
+			EmployeeCard[] employees = null,
+			ProtectionTools[] protectionTools = null,
+			Action<IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null,
+			IUnitOfWork uow = null)
+		{
+			var query = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>();
+			if(employees != null && employees.Any())
+				query.Where(o => o.Employee.IsIn(employees));
+
+			if(protectionTools != null && protectionTools.Any())
+				query.Where(o => o.ProtectionTools.IsIn(protectionTools));
+
+			makeEager?.Invoke(query);
+
+			return query.List();
 		}
 
 		/// <summary>

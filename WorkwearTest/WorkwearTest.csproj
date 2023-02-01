@@ -51,6 +51,7 @@
     <Compile Include="ConfigureOneTime.cs" />
     <Compile Include="Integration\ReportExportTest.cs" />
     <Compile Include="ViewModels\EntityViewModelsTests.cs" />
+    <Compile Include="ViewModels\Regulations\NormViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
   </ItemGroup>

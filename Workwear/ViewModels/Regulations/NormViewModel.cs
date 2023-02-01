@@ -16,6 +16,7 @@ using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
+using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
@@ -32,6 +33,8 @@ namespace Workwear.ViewModels.Regulations
 		private readonly IChangeMonitor<NormItem> changeMonitor;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly BaseParameters baseParameters;
+		private readonly EmployeeIssueModel issueModel;
+		private readonly ModalProgressCreator progressCreator;
 
 		public NormViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -42,6 +45,8 @@ namespace Workwear.ViewModels.Regulations
 			IChangeMonitor<NormItem> changeMonitor,
 			EmployeeRepository employeeRepository,
 			BaseParameters baseParameters,
+			EmployeeIssueModel issueModel,
+			ModalProgressCreator progressCreator,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
@@ -50,6 +55,8 @@ namespace Workwear.ViewModels.Regulations
 			this.changeMonitor = changeMonitor;
 			this.employeeRepository = employeeRepository;
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 
 			NormConditions = UoW.GetAll<NormCondition>().ToList();
 			NormConditions.Insert(0, null);
@@ -296,33 +303,9 @@ namespace Workwear.ViewModels.Regulations
 				return;
 			
 			var modifiableOperations = answer == "Только последние" ? operationsLasts : operations;
-			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
-			progressPage.ViewModel.Title = "Обновляем операции выдачи";
-			var progress = progressPage.ViewModel.Progress;
-			progress.Start(modifiableOperations.Select(x => x.Employee).Distinct().Count());
-			foreach(var employeeGroup in modifiableOperations.GroupBy(x => x.Employee)) {
-				progress.Add(text: $"Обработка {employeeGroup.Key.ShortName}");
-				employeeGroup.Key.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
-
-				foreach(var operation in employeeGroup) {
-					var cardItem = operation.Employee.WorkwearItems
-						.FirstOrDefault(x =>
-							DomainHelper.EqualDomainObjects(x.ProtectionTools, operation.ProtectionTools));
-
-					var graph = cardItem?.Graph ?? IssueGraph.MakeIssueGraph(UoW, employeeGroup.Key, operation.ProtectionTools);
-					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, interactive);
-					UoW.Save(operation);
-
-					if(cardItem != null) {
-						cardItem.UpdateNextIssue(UoW);
-						UoW.Save(cardItem);
-					}
-				}
-			}
-
-			progress.Add(text: "Завершаем...");
-			UoW.Commit();
-			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+			progressCreator.Title = "Обновляем операции выдачи";
+			issueModel.UoW = UoW;
+			issueModel.RecalculateDateOfIssue(modifiableOperations, baseParameters, interactive, progressCreator);
 			logger.Info($"{modifiableOperations.Count()} операций обновлено.");
 		}
 		#endregion
