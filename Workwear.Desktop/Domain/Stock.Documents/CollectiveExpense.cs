@@ -199,18 +199,18 @@ namespace Workwear.Domain.Stock.Documents
 			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
 			if (employeeCardItem.BestChoiceInStock.Any()) {
 				foreach (var position in employeeCardItem.BestChoiceInStock) {
-					var expancePositionAmount =
+					var spentPositionAmount = 
 						Items.Where(item => item.Nomenclature == position.Nomenclature
 						                    && item.WearSize?.Id == position.WearSize?.Id
-						                    && item.Height?.Id == position.Height?.Id)
-							.Aggregate(position.Amount, (current, item) => current - item.Amount); //Есть на складе с учётом документа 
-					expancePositionAmount += 
+					                        && item.Height?.Id == position.Height?.Id)
+								.Aggregate(0, (current, item) => current + item.Amount); //выдаётся в документе 
+					spentPositionAmount += 
 						addedItems.Where(item => item.Nomenclature == position.Nomenclature 
-						                     && item.WearSize?.Id == position.WearSize?.Id
-						                     && item.Height?.Id == position.Height?.Id)
-							.Aggregate(position.Amount, (current, item) => current - item.Amount); //С учётом добавляемого
+					                     && item.WearSize?.Id == position.WearSize?.Id
+					                     && item.Height?.Id == position.Height?.Id)
+								.Aggregate(0, (current, item) => current + item.Amount); //выдаётся в добавляемом списке
 					
-					if (expancePositionAmount >= needPositionAmount && position.WearPercent == 0)
+					if (position.Amount - spentPositionAmount >= needPositionAmount && position.WearPercent == 0)
 						return AddingItem(employeeCardItem, position.StockPosition, needPositionAmount);
 				}
 
