@@ -13456,7 +13456,7 @@
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-redo Menu</property>
-                <property name="Label" translatable="yes">Перезаполнить документ</property>
+                <property name="Label" translatable="yes">Перезаполнить всех</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonRefreshEmployeesClicked" />
               </widget>

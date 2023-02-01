@@ -252,16 +252,16 @@ namespace Workwear.ViewModels.Stock
 
 		#region Обновление документа
 
-		public void RefreshAll()
-		{
+		public void RefreshAll() {
 			var Employees = Entity.Items.Select(x => x.Employee).Distinct().ToList();
-				Entity.AddItems(Employees, BaseParameters);
-				Entity.ResortItems();
+			Entity.ObservableItems.Clear();
+			AddEmployeesList(Employees);
+			Entity.ResortItems();
 		}
 
-		public void RefreshItem(CollectiveExpenseItem item)
-		{
-			Entity.AddItemsEmploee(item.Employee, BaseParameters);
+		public void RefreshItem(CollectiveExpenseItem item) {
+			DeleteEmployee(item);
+			AddEmployeesList(new List<EmployeeCard>(){item.Employee});
 			Entity.ResortItems();
 		}
 

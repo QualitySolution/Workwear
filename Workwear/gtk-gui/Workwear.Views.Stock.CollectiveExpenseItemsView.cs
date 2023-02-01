@@ -57,7 +57,7 @@ namespace Workwear.Views.Stock
 			this.buttonRefreshEmployees.CanFocus = true;
 			this.buttonRefreshEmployees.Name = "buttonRefreshEmployees";
 			this.buttonRefreshEmployees.UseUnderline = true;
-			this.buttonRefreshEmployees.Label = global::Mono.Unix.Catalog.GetString("Перезаполнить документ");
+			this.buttonRefreshEmployees.Label = global::Mono.Unix.Catalog.GetString("Перезаполнить всех");
 			global::Gtk.Image w2 = new global::Gtk.Image();
 			w2.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-redo", global::Gtk.IconSize.Menu);
 			this.buttonRefreshEmployees.Image = w2;
