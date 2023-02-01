@@ -12,7 +12,6 @@ using QS.Tools;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
-using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
@@ -265,8 +264,7 @@ namespace Workwear.ViewModels.Regulations
 		#endregion
 
 		/// <summary>
-		/// Ручной перечет в отличии от пересчета при сохранении так же может изменять дату начала использования.
-		/// Возможно в будущем пересчет при изменении нормы нужно будет сделать таким же.
+		/// Ручной перечет операций выдачи через контекстное меню строки нормы.
 		/// </summary>
 		public void ReSaveLastIssue(NormItem normItem) 
 		{
@@ -337,19 +335,10 @@ namespace Workwear.ViewModels.Regulations
 						$"измененным строкам нормы было выполнено {operations.Count} выдач из них последних {operationsLasts.Count}. " + 
 						"Пересчитать сроки носки у уже выданного в соответствии с изменениями?");
 					if(answer == "Все выдачи" || answer == "Только последние"){
-						var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
-						var progress = progressPage.ViewModel.Progress;
 						var modifiableOperations = answer == "Только последние" ? operationsLasts : operations;
-						progress.Start(modifiableOperations.Count, text: "Обновляем операции выдачи");
-						foreach(var operation in modifiableOperations) {
-							progress.Add();
-							operation.RecalculateExpiryByNorm(baseParameters, interactive);
-							UoW.Save(operation);
-						}
-
-						progress.Add(text: "Завершаем...");
-						UoW.Commit();
-						NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+						progressCreator.Title = "Обновляем операции выдачи";
+						issueModel.UoW = UoW;
+						issueModel.RecalculateDateOfIssue(modifiableOperations, baseParameters, interactive, progressCreator);
 					}
 				}
 			}
