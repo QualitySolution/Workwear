@@ -95,7 +95,7 @@ namespace Workwear.Views.Stock
 			this.buttonAdd.UseUnderline = true;
 			this.buttonAdd.UseMarkup = false;
 			this.buttonAdd.LabelXAlign = 0F;
-			this.buttonAdd.Label = global::Mono.Unix.Catalog.GetString("Добавить сотрудника");
+			this.buttonAdd.Label = global::Mono.Unix.Catalog.GetString("Добавить");
 			global::Gtk.Image w7 = new global::Gtk.Image();
 			w7.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
 			this.buttonAdd.Image = w7;
@@ -168,7 +168,7 @@ namespace Workwear.Views.Stock
 			}
 			this.Hide();
 			this.buttonRefreshEmployees.Clicked += new global::System.EventHandler(this.OnButtonRefreshEmployeesClicked);
-			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonAddClicked);
+			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
 			this.buttonRefreshEmployee.Clicked += new global::System.EventHandler(this.OnButtonRefreshEmployeeClicked);
 			this.buttonDel.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
 			this.buttonShowAllSize.Clicked += new global::System.EventHandler(this.OnButtonShowAllSizeClicked);

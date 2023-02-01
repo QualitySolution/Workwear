@@ -92,11 +92,11 @@ namespace Workwear.Views.Stock
 			delMenu.ShowAll();
 			
 			var addMenu = new Menu();
-			item = new MenuItem("Добавление сотрудников");
+			item = new MenuItem("Коллективные выдачи");
 			item.Activated += (sender, e) => ViewModel.AddItems();
 			addMenu.Add(item);
-			item = new MenuItem("Расширенное добавление");
-			item.Activated += (sender, e) => ViewModel.AddItemsAdvanced();
+			item = new MenuItem("Все типы выдач");
+			item.Activated += (sender, e) => ViewModel.AddEmploeesAdvanced();
 			addMenu.Add(item);
 			buttonAdd.Menu = addMenu;
 			addMenu.ShowAll();

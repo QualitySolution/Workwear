@@ -12,7 +12,7 @@ namespace Workwear.Views.Stock.Widgets
 
 		private global::Gamma.GtkWidgets.yButton SelectAll_ybutton;
 
-		private global::Gamma.GtkWidgets.yButton DeSelectAll_ybutton;
+		private global::Gamma.GtkWidgets.yButton UnSelectAll_ybutton;
 
 		private global::Gtk.ScrolledWindow scrolledwindow1;
 
@@ -62,16 +62,16 @@ namespace Workwear.Views.Stock.Widgets
 			w4.Expand = false;
 			w4.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.DeSelectAll_ybutton = new global::Gamma.GtkWidgets.yButton();
-			this.DeSelectAll_ybutton.CanFocus = true;
-			this.DeSelectAll_ybutton.Name = "DeSelectAll_ybutton";
-			this.DeSelectAll_ybutton.UseUnderline = true;
-			this.DeSelectAll_ybutton.Label = global::Mono.Unix.Catalog.GetString("Снять выделение");
+			this.UnSelectAll_ybutton = new global::Gamma.GtkWidgets.yButton();
+			this.UnSelectAll_ybutton.CanFocus = true;
+			this.UnSelectAll_ybutton.Name = "UnSelectAll_ybutton";
+			this.UnSelectAll_ybutton.UseUnderline = true;
+			this.UnSelectAll_ybutton.Label = global::Mono.Unix.Catalog.GetString("Снять выделение");
 			global::Gtk.Image w5 = new global::Gtk.Image();
 			w5.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-close", global::Gtk.IconSize.Menu);
-			this.DeSelectAll_ybutton.Image = w5;
-			this.hbox1.Add(this.DeSelectAll_ybutton);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.DeSelectAll_ybutton]));
+			this.UnSelectAll_ybutton.Image = w5;
+			this.hbox1.Add(this.UnSelectAll_ybutton);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.UnSelectAll_ybutton]));
 			w6.Position = 2;
 			w6.Expand = false;
 			w6.Fill = false;
@@ -105,6 +105,8 @@ namespace Workwear.Views.Stock.Widgets
 				this.Child.ShowAll();
 			}
 			this.Hide();
+			this.AddToDocument_ybutton.Clicked += new global::System.EventHandler(this.OnAddToDocumentYbuttonClicked);
+			this.SelectAll_ybutton.Clicked += new global::System.EventHandler(this.OnSelectAllYbuttonClicked);
 		}
 	}
 }

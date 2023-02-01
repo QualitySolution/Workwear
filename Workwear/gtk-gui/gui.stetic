@@ -13503,7 +13503,7 @@
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-add Menu</property>
-                <property name="Label" translatable="yes">Добавить сотрудника</property>
+                <property name="Label" translatable="yes">Добавить</property>
                 <property name="UseUnderline">True</property>
                 <property name="UseMarkup">False</property>
                 <property name="LabelXAlign">0</property>
@@ -21086,6 +21086,7 @@
                 <property name="Icon">stock:gtk-add Menu</property>
                 <property name="Label" translatable="yes">Добавить в документ</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnAddToDocumentYbuttonClicked" />
               </widget>
               <packing>
                 <property name="Position">0</property>
@@ -21102,6 +21103,7 @@
                 <property name="Icon">stock:gtk-apply Menu</property>
                 <property name="Label" translatable="yes">Выделить все</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnSelectAllYbuttonClicked" />
               </widget>
               <packing>
                 <property name="Position">1</property>
@@ -21111,7 +21113,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yButton" id="DeSelectAll_ybutton">
+              <widget class="Gamma.GtkWidgets.yButton" id="UnSelectAll_ybutton">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>

@@ -114,8 +114,56 @@ namespace Workwear.ViewModels.Stock
 			selectJournal.ViewModel.OnSelectResult += AddEmployees;
 		}
 
-		public void AddItemsAdvanced(){
-			var page = navigation.OpenViewModel<IssueWidgetViewModel>(null);
+		public void AddEmploeesAdvanced(){
+			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += AddEmployeesAdv;
+		}
+		public void AddEmployeesAdv(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		{
+			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
+			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
+			var progress = progressPage.ViewModel.Progress; 
+
+			progress.Start(employeeIds.Length * 2 + 1, text: "Загружаем сотрудников");
+			var employees = UoW.Query<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.List();
+		
+			foreach(var employee in employees) {
+				progress.Add(text: employee.ShortName);
+				employee.FillWearInStockInfo(UoW, BaseParameters, Entity.Warehouse, Entity.Date);
+				progress.Add();
+			}
+			
+			progress.Add(text: "Формирую список");
+			List<EmployeeCardItem> needs = employees.SelectMany(x => x.WorkwearItems).ToList();
+			
+			var itemsList = Entity.FillListItems(needs, BaseParameters, false);
+			Dictionary<int, IssueWidgetItem> wigetList = new Dictionary<int, IssueWidgetItem>();
+			foreach(var item in itemsList) {
+				if(wigetList.Any(x => x.Key == item.ProtectionTools.Id))
+					wigetList[item.ProtectionTools.Id].NumberOfNeeds ++;
+				else
+					wigetList.Add(item.ProtectionTools.Id,new IssueWidgetItem(item.ProtectionTools,item.Nomenclature,1,
+						 item.ProtectionTools.Type.IssueType == IssueType.Collective ? true : false));
+			}
+			
+			navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
+			var page = navigation.OpenViewModel<IssueWidgetViewModel, CollectiveExpenseItemsViewModel, Dictionary<int,IssueWidgetItem>>
+				(null,this, wigetList.OrderByDescending(x => x.Value.Active).ToDictionary(x=>x.Key, x=>x.Value));
+			page.ViewModel.AddItems += () => AddItemsAdvanced(itemsList, wigetList,page);
+		}
+
+		public void AddItemsAdvanced(List<CollectiveExpenseItem> itemsList, Dictionary<int, IssueWidgetItem> wigetItems, IPage<IssueWidgetViewModel> page) {
+			
+			for (int i = itemsList.Count - 1; i >= 0; i--) //корректировка в соответствии с данными виджета
+				if(!wigetItems.First(x => x.Key == itemsList[i].ProtectionTools.Id)
+				   .Value.Active)
+					itemsList.RemoveAt(i); 
+			
+			Entity.AddListItems(itemsList);
+			navigation.ForceClosePage(page);
 		}
 
 		public void AddEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
@@ -132,10 +180,8 @@ namespace Workwear.ViewModels.Stock
 				progress.Add(text: employee.ShortName);
 				employee.FillWearInStockInfo(UoW, BaseParameters, Warehouse, Entity.Date);
 				progress.Add();
-				//Entity.AddItems(employee, BaseParameters);
 			}
 			Entity.AddItems(employees.ToList(), BaseParameters);
-//Хотя, может везде IList проставить будет правильнее
 			Entity.ResortItems();
 			OnPropertyChanged(nameof(Sum));
 			progress.Close();
