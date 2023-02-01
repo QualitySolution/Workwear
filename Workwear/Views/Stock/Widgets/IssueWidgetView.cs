@@ -77,7 +77,7 @@ namespace Workwear.Views.Stock.Widgets {
 			ViewModel.SelectAll();
 		}
 
-		protected void OnDeSelectAllYbuttonClicked(object sender, EventArgs e) {
+		protected void OnUnSelectAllYbuttonClicked(object sender, EventArgs e) {
 			ViewModel.UnSelectAll();
 		}
 	}

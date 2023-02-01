@@ -107,6 +107,7 @@ namespace Workwear.Views.Stock.Widgets
 			this.Hide();
 			this.AddToDocument_ybutton.Clicked += new global::System.EventHandler(this.OnAddToDocumentYbuttonClicked);
 			this.SelectAll_ybutton.Clicked += new global::System.EventHandler(this.OnSelectAllYbuttonClicked);
+			this.UnSelectAll_ybutton.Clicked += new global::System.EventHandler(this.OnUnSelectAllYbuttonClicked);
 		}
 	}
 }

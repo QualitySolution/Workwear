@@ -40,11 +40,16 @@ namespace Workwear.ViewModels.Stock.Widgets {
 		public Action AddItems;
 		
 		public void SelectAll() {
-			throw new NotImplementedException();
+			foreach(var item in items) 
+				if(!item.Value.Active)
+					item.Value.Active = true;
+			
 		}
 
 		public void UnSelectAll() {
-			throw new NotImplementedException();
+			foreach(var item in items) 
+				if(item.Value.Active)
+					item.Value.Active = false;
 		}
 	};
 }
