@@ -128,7 +128,10 @@ namespace Workwear.Domain.Stock.Documents
 
 		#region Добавление удаление строк
 
-		public virtual void AddItems(List<EmployeeCard> employees, BaseParameters baseParameters, bool onlyCollectiveIissueType = true) {
+		/// <summary>
+		/// Добавить в документ потребности списка сотрудников
+		/// </summary>
+		public virtual void AddEmproees(List<EmployeeCard> employees, BaseParameters baseParameters, bool onlyCollectiveIissueType = true) {
 			List<EmployeeCardItem> items = new List<EmployeeCardItem>();
 			foreach(var employee in employees) {
 				foreach(var item in employee.WorkwearItems) {
@@ -137,41 +140,40 @@ namespace Workwear.Domain.Stock.Documents
 					items.Add(item);
 				}
 			}
-			
 			AddListItems(FillListItems(items, baseParameters, onlyCollectiveIissueType));
 		}
-
-		public virtual void AddItemsEmploee(EmployeeCard employee, BaseParameters baseParameters, bool onlyCollectiveIissueType = true) { 
-//*пришлось добавить из-за пересчёта сотрудника
-			List<EmployeeCardItem> items = new List<EmployeeCardItem>();
-			foreach(var item in employee.WorkwearItems) {
-				if(item.ProtectionTools?.Type.IssueType != IssueType.Collective)
-					continue;
-				items.Add(item);
-			}
-			AddListItems(FillListItems(items, baseParameters, onlyCollectiveIissueType));
-		}
-
+		
+		/// <summary>
+		/// Сформировать список строк документа(выдач) из списка потребностей
+		/// </summary>
+		/// <param name="onlyCollectiveIissueType"></param> для отсечения строк только коллективной выдачи
+		/// <returns></returns>
 		public virtual List<CollectiveExpenseItem> FillListItems(List<EmployeeCardItem> items, BaseParameters baseParameters,  bool onlyCollectiveIissueType = true) { 
 //*Возможно стоит добавить IssueType.Any
 			List<CollectiveExpenseItem> result = new List<CollectiveExpenseItem>(); 
 			foreach(var item in items) {
 				if(onlyCollectiveIissueType && item.ProtectionTools?.Type.IssueType != IssueType.Collective)
-//*Дублируется, но я хочу чтобы этот метод можно было использовать снаружи
 					continue;
-				var itemResult = AddingItem(item, result, baseParameters);
+				var itemResult = PickItem(item, result, baseParameters);
 				if(itemResult != null) result.Add(itemResult);
 			}
 			return result;
 		}
+		
+		/// <summary>
+		/// Добавить в документ списк строк
+		/// </summary>
 		public virtual void AddListItems(List<CollectiveExpenseItem> list)
 		{
 			foreach(var item in list) {
 				ObservableItems.Add(item);
 			}
 		}
-
-		public virtual CollectiveExpenseItem AddingItem(EmployeeCardItem employeeCardItem, StockPosition position = null, int amount = 0) 
+	
+		/// <summary>
+		/// Создание строки документа. 
+		/// </summary>
+		public virtual CollectiveExpenseItem MakeItem(EmployeeCardItem employeeCardItem, StockPosition position = null, int amount = 0) 
 		{
 			var newItem = new CollectiveExpenseItem() {
 				Document = this,
@@ -188,7 +190,14 @@ namespace Workwear.Domain.Stock.Documents
 			return newItem;
 		}
 
-		public virtual CollectiveExpenseItem AddingItem(EmployeeCardItem employeeCardItem, List<CollectiveExpenseItem> addedItems, BaseParameters baseParameters)
+		/// <summary>
+		/// Подобрать номенклатуру по потребности с учётом текущего документа
+		/// </summary>
+		/// <param name="employeeCardItem"></param> потребность
+		/// <param name="addedItems"></param>формируемый список строк, который ещё в документ не добавлен 
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception> 1 выдача (не ввыдаёт частично, не выдаёт разные по одной потребности)
+		public virtual CollectiveExpenseItem PickItem(EmployeeCardItem employeeCardItem, List<CollectiveExpenseItem> addedItems, BaseParameters baseParameters)
 		{
 			if(employeeCardItem == null)
 				throw new ArgumentNullException(nameof(employeeCardItem));
@@ -199,25 +208,22 @@ namespace Workwear.Domain.Stock.Documents
 			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
 			if (employeeCardItem.BestChoiceInStock.Any()) {
 				foreach (var position in employeeCardItem.BestChoiceInStock) {
-					var spentPositionAmount = 
-						Items.Where(item => item.Nomenclature == position.Nomenclature
-						                    && item.WearSize?.Id == position.WearSize?.Id
-					                        && item.Height?.Id == position.Height?.Id)
-								.Aggregate(0, (current, item) => current + item.Amount); //выдаётся в документе 
-					spentPositionAmount += 
-						addedItems.Where(item => item.Nomenclature == position.Nomenclature 
-					                     && item.WearSize?.Id == position.WearSize?.Id
-					                     && item.Height?.Id == position.Height?.Id)
-								.Aggregate(0, (current, item) => current + item.Amount); //выдаётся в добавляемом списке
-					
-					if (position.Amount - spentPositionAmount >= needPositionAmount && position.WearPercent == 0)
-						return AddingItem(employeeCardItem, position.StockPosition, needPositionAmount);
+			
+					if (position.Amount - AmountInList(position,addedItems) - AmountInList(position, Items) >= needPositionAmount && position.WearPercent == 0) //Частичных выдач не деелаем
+						return MakeItem(employeeCardItem, position.StockPosition, needPositionAmount);
 				}
-
-				return AddingItem(employeeCardItem);
+				//Нехватает
+				return MakeItem(employeeCardItem);
 			}
+			//Нет подходящих
+			return MakeItem(employeeCardItem);
+		}
 
-			return AddingItem(employeeCardItem);
+		public virtual int AmountInList(StockBalanceDTO position, IList<CollectiveExpenseItem> addedItems) { //уже выданное в списке
+			return addedItems.Where(item => item.Nomenclature == position.Nomenclature 
+			                                && item.WearSize?.Id == position.WearSize?.Id
+			                                && item.Height?.Id == position.Height?.Id)
+				.Aggregate(0, (current, item) => current + item.Amount); 
 		}
 
 		public virtual void RemoveItem(CollectiveExpenseItem item)

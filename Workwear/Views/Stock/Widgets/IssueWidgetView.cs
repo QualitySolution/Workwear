@@ -52,6 +52,7 @@ namespace Workwear.Views.Stock.Widgets {
 					label.Justify = Justification.Left;
 					label.Xalign = 0;
 					label.Wrap = true;
+					//label.WidthChars = 60;
 					ItemListTable.Attach(label, 2, 3, i, i + 1, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
 
 					//label = new Label{LabelProp = item?.Nomenclature.Name};
