@@ -32,11 +32,11 @@ namespace Workwear.Models.Operations {
 
 		#region public
 		public void RecalculateDateOfIssue(IList<EmployeeIssueOperation> operations, BaseParameters baseParameters, IInteractiveQuestion interactive, IProgressBarDisplayable progress = null) {
-			progress.Start(operations.Count() + 2);
+			progress?.Start(operations.Count() + 2);
 			CheckAndPrepareGraphs(operations.Select(o => o.Employee).Distinct().ToArray(), operations.Select(o => o.ProtectionTools).Distinct().ToArray());
-			progress.Add();
+			progress?.Add();
 			foreach(var employeeGroup in operations.GroupBy(x => x.Employee)) {
-				progress.Update($"Обработка {employeeGroup.Key.ShortName}");
+				progress?.Update($"Обработка {employeeGroup.Key.ShortName}");
 
 				foreach(var operation in employeeGroup.OrderBy(x => x.OperationTime)) {
 					var graph = graphs[GetKey(employeeGroup.Key, operation.ProtectionTools)];
@@ -53,13 +53,13 @@ namespace Workwear.Models.Operations {
 						cardItem.UpdateNextIssue(UoW);
 						UoW.Save(cardItem);
 					}
-					progress.Add();
+					progress?.Add();
 				}
 			}
 
-			progress.Add(text: "Завершаем...");
+			progress?.Add(text: "Завершаем...");
 			UoW.Commit();
-			progress.Close();
+			progress?.Close();
 		}
 		#endregion
 
