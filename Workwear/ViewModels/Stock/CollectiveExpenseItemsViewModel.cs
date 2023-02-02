@@ -128,8 +128,10 @@ namespace Workwear.ViewModels.Stock
 		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
 			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
+//Нужно корректное прерывание			
+//			progressPage.PageClosed += 
+			
 			var progress = progressPage.ViewModel.Progress;
-
 			progress.Start(employeeIds.Length * 2 + 1, text: "Загружаем сотрудников");
 			var employees = UoW.Query<EmployeeCard>()
 				.Where(x => x.Id.IsIn(employeeIds))
@@ -146,12 +148,14 @@ namespace Workwear.ViewModels.Stock
 		private void LoadSubdivizions(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var subdivizionIds = e.GetSelectedObjects<SubdivisionJournalNode>().Select(x => x.Id).ToArray();
 			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			var progress = progressPage.ViewModel.Progress;
+			
 
 			var employees = UoW.Query<EmployeeCard>()
 				.Where(x => x.Subdivision.Id.IsIn(subdivizionIds))
 				.List();
-
+			
+			var progress = progressPage.ViewModel.Progress;
+			progress.Start(employees.Count * 2 + 1, text: "Загружаем сотрудников");
 			foreach(var employee in employees) {
 				progress.Add(text: employee.ShortName);
 				employee.FillWearInStockInfo(UoW, BaseParameters, Entity.Warehouse, Entity.Date);
